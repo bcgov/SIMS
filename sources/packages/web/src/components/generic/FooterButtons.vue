@@ -10,25 +10,27 @@
       @click="$emit('secondaryClick')"
       >{{ secondaryLabel }}</v-btn
     >
-    <v-btn
-      :disabled="processing || disablePrimaryButton"
-      v-if="showPrimaryButton"
-      class="ml-2"
-      variant="elevated"
-      data-cy="primaryFooterButton"
-      color="primary"
-      @click="$emit('primaryClick')"
-    >
-      <v-progress-circular
-        v-if="processing"
-        bg-color="white"
-        indeterminate
-        color="secondary"
+    <slot name="primary-buttons" :disabled="processing || disablePrimaryButton">
+      <v-btn
+        :disabled="processing || disablePrimaryButton"
+        v-if="showPrimaryButton"
         class="ml-2"
-        :size="20"
-      />{{ primaryLabel }}</v-btn
-    ></v-row
-  >
+        variant="elevated"
+        data-cy="primaryFooterButton"
+        color="primary"
+        @click="$emit('primaryClick')"
+      >
+        <v-progress-circular
+          v-if="processing"
+          bg-color="white"
+          indeterminate
+          color="secondary"
+          class="ml-2"
+          :size="20"
+        />{{ primaryLabel }}</v-btn
+      >
+    </slot>
+  </v-row>
 </template>
 <script lang="ts">
 export default {

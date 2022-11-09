@@ -32,7 +32,6 @@ import {
   OfferingAssessmentAPIInDTO,
   OfferingChangeRequestAPIOutDTO,
   PrecedingOfferingSummaryAPIOutDTO,
-  transformToProgramOfferingDTO,
   EducationProgramOfferingAPIOutDTO,
   OfferingChangeAssessmentAPIInDTO,
   EducationProgramOfferingSummaryAPIOutDTO,
@@ -118,7 +117,9 @@ export class EducationProgramOfferingAESTController extends BaseController {
     if (!offering) {
       throw new NotFoundException("Offering not found.");
     }
-    return transformToProgramOfferingDTO(offering);
+    return this.educationProgramOfferingControllerService.transformToProgramOfferingDTO(
+      offering,
+    );
   }
 
   /**
@@ -190,7 +191,9 @@ export class EducationProgramOfferingAESTController extends BaseController {
     if (!offering) {
       throw new NotFoundException("Offering not found.");
     }
-    return transformToProgramOfferingDTO(offering);
+    return this.educationProgramOfferingControllerService.transformToProgramOfferingDTO(
+      offering,
+    );
   }
 
   /**

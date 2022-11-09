@@ -2,38 +2,84 @@
   <formio-container
     formName="educationProgramOffering"
     :formData="formData"
-    @submitted="saveOffering"
+    @loaded="$emit('loaded', $event)"
+    @changed="(form, event) => $emit('changed', form, event)"
+    @submitted="submitOffering"
   >
-    <template #actions="{ submit }" v-if="!readOnly">
+    <template
+      #actions="{ submit }"
+      v-if="formMode !== OfferingFormModes.Readonly"
+    >
       <footer-buttons
+        justify="space-between"
         :processing="processing"
-        primaryLabel="Submit"
-        @primaryClick="submit"
         @secondaryClick="cancel"
-      />
+        class="mx-0"
+      >
+        <template #primary-buttons="{ disabled }">
+          <span>
+            <v-btn
+              v-if="formMode === OfferingFormModes.Editable"
+              :disabled="disabled"
+              variant="elevated"
+              data-cy="offeringValidationButton"
+              color="primary"
+              @click="submit({ validationOnly: true })"
+              prepend-icon="fa:fa fa-check"
+              >Validate
+            </v-btn>
+            <v-btn
+              :disabled="disabled"
+              class="ml-2"
+              variant="elevated"
+              data-cy="offeringSubmitButton"
+              color="primary"
+              @click="submit({ validationOnly: false })"
+              >{{ submitLabel }}
+            </v-btn>
+          </span>
+        </template>
+      </footer-buttons>
     </template>
   </formio-container>
 </template>
 
 <script lang="ts">
-import { FormIOForm, OfferingFormModel } from "@/types";
-import { SetupContext, computed } from "vue";
+import { FormIOForm, OfferingFormModel, OfferingFormModes } from "@/types";
+import { defineComponent, PropType, computed } from "vue";
 import { useOffering } from "@/composables";
-import { AuthService } from "@/services/AuthService";
 import { EducationProgramOfferingAPIInDTO } from "@/services/http/dto";
 
-export default {
+interface SubmitArgs {
+  validationOnly: true;
+}
+
+export default defineComponent({
+  emits: {
+    validateOffering: (data: EducationProgramOfferingAPIInDTO) => {
+      return !!data;
+    },
+    saveOffering: (data: EducationProgramOfferingAPIInDTO) => {
+      return !!data;
+    },
+    loaded: null,
+    cancel: null,
+  },
   props: {
     data: {
-      type: Object,
+      type: Object as PropType<OfferingFormModel>,
       required: true,
       default: {} as OfferingFormModel,
     },
-    //For view only purpose where submit action not required.
-    readOnly: {
-      type: Boolean,
+    formMode: {
+      type: String as PropType<OfferingFormModes>,
+      required: true,
+      default: OfferingFormModes.Readonly,
+    },
+    submitLabel: {
+      type: String,
       required: false,
-      default: true,
+      default: "Submit",
     },
     processing: {
       type: Boolean,
@@ -41,14 +87,20 @@ export default {
       default: false,
     },
   },
-  emits: ["saveOffering", "cancel"],
-  setup(props: any, context: SetupContext) {
+  setup(props, context) {
     const { mapOfferingChipStatus } = useOffering();
-    const saveOffering = (
+
+    const submitOffering = (
       form: FormIOForm<EducationProgramOfferingAPIInDTO>,
+      args: SubmitArgs,
     ) => {
-      context.emit("saveOffering", form.data);
+      if (args.validationOnly) {
+        context.emit("validateOffering", form.data);
+      } else {
+        context.emit("saveOffering", form.data);
+      }
     };
+
     /**
      * The property clientType is populated for institution because
      * the form.io for education program offering has a logic at it's root level panel
@@ -65,8 +117,7 @@ export default {
         offeringChipStatus: props.data.offeringStatus
           ? mapOfferingChipStatus(props.data.offeringStatus)
           : undefined,
-        offeringStatusToDisplay: props.data.offeringStatus,
-        clientType: AuthService.shared.authClientType,
+        mode: props.formMode,
       }),
     );
 
@@ -75,10 +126,11 @@ export default {
     };
 
     return {
-      saveOffering,
+      submitOffering,
       formData,
       cancel,
+      OfferingFormModes,
     };
   },
-};
+});
 </script>

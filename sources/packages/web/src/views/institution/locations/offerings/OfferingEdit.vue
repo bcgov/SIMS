@@ -60,36 +60,38 @@
         }"
       />
     </template>
-    <offering-form
+    <offering-form-submit
+      submitLabel="Update offering now"
       :data="initialData"
-      :readOnly="readOnly"
-      @saveOffering="saveOffering"
-      :processing="processing"
+      :formMode="formMode"
+      :locationId="locationId"
+      :programId="programId"
+      @submit="submit"
       @cancel="goBack"
-    ></offering-form>
+    ></offering-form-submit>
   </full-page-container>
 </template>
 
 <script lang="ts">
 import { useRouter } from "vue-router";
 import { EducationProgramOfferingService } from "@/services/EducationProgramOfferingService";
-import { EducationProgramService } from "@/services/EducationProgramService";
-import { onMounted, ref, computed } from "vue";
-import { OfferingFormBaseModel, OfferingStatus } from "@/types";
+import { onMounted, ref, computed, defineComponent } from "vue";
+import { OfferingFormModes, OfferingStatus } from "@/types";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
-import { useSnackBar, ModalDialog } from "@/composables";
+import { ModalDialog, useSnackBar } from "@/composables";
 import {
   EducationProgramOfferingAPIInDTO,
+  EducationProgramOfferingAPIOutDTO,
   OfferingAssessmentAPIInDTO,
 } from "@/services/http/dto";
 import ProgramOfferingDetailHeader from "@/components/common/ProgramOfferingDetailHeader.vue";
-import OfferingForm from "@/components/common/OfferingForm.vue";
+import OfferingFormSubmit from "@/components/common/OfferingFormSubmit.vue";
 import { BannerTypes } from "@/types/contracts/Banner";
 
-export default {
+export default defineComponent({
   components: {
     ProgramOfferingDetailHeader,
-    OfferingForm,
+    OfferingFormSubmit,
   },
   props: {
     locationId: {
@@ -109,10 +111,11 @@ export default {
       required: false,
     },
   },
-  setup(props: any) {
-    const processing = ref(false);
-    const snackBar = useSnackBar();
+  setup(props) {
     const router = useRouter();
+    const snackBar = useSnackBar();
+    const processing = ref(false);
+    const formMode = ref(OfferingFormModes.Readonly);
     const items = [
       {
         label: "Request Change",
@@ -128,7 +131,7 @@ export default {
         },
       },
     ];
-    const initialData = ref({} as OfferingFormBaseModel);
+    const initialData = ref({} as EducationProgramOfferingAPIOutDTO);
     const assessOfferingModalRef = ref(
       {} as ModalDialog<OfferingAssessmentAPIInDTO | boolean>,
     );
@@ -147,66 +150,71 @@ export default {
         initialData.value.offeringStatus === OfferingStatus.Approved,
     );
 
-    const readOnly = computed(
-      () =>
-        ![
-          OfferingStatus.Approved,
-          OfferingStatus.CreationPending,
-          OfferingStatus.CreationDeclined,
-        ].includes(initialData.value.offeringStatus),
-    );
+    const hasReadonlyStatus = (status: OfferingStatus): boolean => {
+      return ![
+        OfferingStatus.Approved,
+        OfferingStatus.CreationPending,
+        OfferingStatus.CreationDeclined,
+      ].includes(status);
+    };
 
     const loadFormData = async () => {
-      const programDetails =
-        await EducationProgramService.shared.getEducationProgram(
-          props.programId,
-        );
-
       const programOffering =
         await EducationProgramOfferingService.shared.getOfferingDetailsByLocationAndProgram(
           props.locationId,
           props.programId,
           props.offeringId,
         );
-      const offeringModel: OfferingFormBaseModel = {
-        programIntensity: programDetails.programIntensity,
-        programDeliveryTypes: programDetails.programDeliveryTypes,
-        hasWILComponent: programDetails.hasWILComponent,
-        ...programOffering,
-        ...programOffering.breaksAndWeeks,
-      };
-      initialData.value = offeringModel;
+
+      let mode = OfferingFormModes.Readonly;
+      const isReadonly = hasReadonlyStatus(programOffering.offeringStatus);
+      if (!isReadonly) {
+        mode = programOffering.hasExistingApplication
+          ? OfferingFormModes.AssessmentDataReadonly
+          : OfferingFormModes.Editable;
+      }
+      formMode.value = mode;
+      initialData.value = programOffering;
     };
 
     onMounted(async () => {
       await loadFormData();
     });
 
-    const goBack = () => {
-      router.push(routeLocation.value);
-    };
-
-    const saveOffering = async (data: EducationProgramOfferingAPIInDTO) => {
+    const submit = async (data: EducationProgramOfferingAPIInDTO) => {
       try {
         processing.value = true;
-        //Update offering
-        await EducationProgramOfferingService.shared.updateProgramOffering(
-          props.locationId,
-          props.programId,
-          props.offeringId,
-          data,
-        );
-        snackBar.success("Education Offering updated successfully!");
+        if (initialData.value.hasExistingApplication) {
+          await EducationProgramOfferingService.shared.updateProgramOfferingBasicInformation(
+            props.locationId,
+            props.programId,
+            props.offeringId,
+            data,
+          );
+        } else {
+          await EducationProgramOfferingService.shared.updateProgramOffering(
+            props.locationId,
+            props.programId,
+            props.offeringId,
+            data,
+          );
+        }
+        snackBar.success("Offering updated.");
         goBack();
       } catch {
-        snackBar.error("An error happened during the Offering saving process.");
+        snackBar.error(
+          "Unexpected error happened while creating the offering.",
+        );
       } finally {
         processing.value = false;
       }
     };
 
+    const goBack = () => {
+      router.push(routeLocation.value);
+    };
+
     return {
-      saveOffering,
       initialData,
       InstitutionRoutesConst,
       OfferingStatus,
@@ -215,10 +223,11 @@ export default {
       hasExistingApplication,
       items,
       routeLocation,
-      readOnly,
+      formMode,
       processing,
+      submit,
       goBack,
     };
   },
-};
+});
 </script>

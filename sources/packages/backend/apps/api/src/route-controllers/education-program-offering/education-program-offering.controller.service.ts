@@ -15,6 +15,7 @@ import {
 } from "../../services/education-program-offering/education-program-offering-import-csv.models";
 import { ApiProcessError } from "../../types";
 import {
+  EducationProgramOffering,
   OfferingIntensity,
   OfferingStatus,
   OfferingTypes,
@@ -26,10 +27,7 @@ import {
   OfferingValidationModel,
   CreateFromValidatedOfferingError,
 } from "../../services";
-import {
-  getISODateOnlyString,
-  getOfferingNameAndPeriod,
-} from "../../utilities";
+import { getOfferingNameAndPeriod, getUserFullName } from "../../utilities";
 import { OptionItemAPIOutDTO } from "../models/common.dto";
 import {
   OfferingsPaginationOptionsAPIInDTO,
@@ -37,6 +35,7 @@ import {
 } from "../models/pagination.dto";
 import {
   EducationProgramOfferingAPIInDTO,
+  EducationProgramOfferingAPIOutDTO,
   EducationProgramOfferingSummaryAPIOutDTO,
   OfferingBulkInsertValidationResultAPIOutDTO,
 } from "./models/education-program-offering.dto";
@@ -80,8 +79,8 @@ export class EducationProgramOfferingControllerService {
       results: offerings.results.map((offering) => ({
         id: offering.id,
         name: offering.name,
-        studyStartDate: getISODateOnlyString(offering.studyStartDate),
-        studyEndDate: getISODateOnlyString(offering.studyEndDate),
+        studyStartDate: offering.studyStartDate,
+        studyEndDate: offering.studyEndDate,
         offeringDelivered: offering.offeringDelivered,
         offeringIntensity: offering.offeringIntensity,
         offeringType: offering.offeringType,
@@ -165,7 +164,7 @@ export class EducationProgramOfferingControllerService {
     return {
       ...payload,
       locationId,
-      studyBreaks: payload.breaksAndWeeks?.studyBreaks,
+      studyBreaks: payload.studyBreaks,
       programContext: program,
     };
   }
@@ -278,5 +277,58 @@ export class EducationProgramOfferingControllerService {
         validationResults,
       ),
     );
+  }
+
+  /**
+   * Transformation util for Program Offering.
+   * @param offering
+   * @param hasExistingApplication is the offering linked to any application.
+   * @returns program offering.
+   */
+  async transformToProgramOfferingDTO(
+    offering: EducationProgramOffering,
+    hasExistingApplication?: boolean,
+  ): Promise<EducationProgramOfferingAPIOutDTO> {
+    const validatedOffering = await this.offeringService.validateOfferingById(
+      offering.id,
+    );
+
+    return {
+      id: offering.id,
+      offeringName: offering.name,
+      studyStartDate: offering.studyStartDate,
+      studyEndDate: offering.studyEndDate,
+      actualTuitionCosts: offering.actualTuitionCosts,
+      programRelatedCosts: offering.programRelatedCosts,
+      mandatoryFees: offering.mandatoryFees,
+      exceptionalExpenses: offering.exceptionalExpenses,
+      offeringDelivered: offering.offeringDelivered,
+      lacksStudyBreaks: offering.lacksStudyBreaks,
+      offeringIntensity: offering.offeringIntensity,
+      yearOfStudy: offering.yearOfStudy,
+      showYearOfStudy: offering.showYearOfStudy,
+      hasOfferingWILComponent: offering.hasOfferingWILComponent,
+      offeringWILComponentType: offering.offeringWILType,
+      studyBreaks: offering.studyBreaks?.studyBreaks,
+      studyPeriodBreakdown: {
+        fundedStudyPeriodDays: offering.studyBreaks?.fundedStudyPeriodDays,
+        totalDays: offering.studyBreaks?.totalDays,
+        totalFundedWeeks: offering.studyBreaks?.totalFundedWeeks,
+        unfundedStudyPeriodDays: offering.studyBreaks?.unfundedStudyPeriodDays,
+      },
+      offeringDeclaration: offering.offeringDeclaration,
+      submittedDate: offering.submittedDate,
+      offeringStatus: offering.offeringStatus,
+      offeringType: offering.offeringType,
+      locationName: offering.institutionLocation.name,
+      institutionName: offering.institutionLocation.institution.operatingName,
+      assessedBy: getUserFullName(offering.assessedBy),
+      assessedDate: offering.assessedDate,
+      courseLoad: offering.courseLoad,
+      hasExistingApplication,
+      warnings: validatedOffering.warnings.map(
+        (warning) => warning.warningType,
+      ),
+    };
   }
 }

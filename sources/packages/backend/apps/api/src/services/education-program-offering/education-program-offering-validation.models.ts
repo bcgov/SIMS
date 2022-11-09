@@ -8,7 +8,6 @@ import {
   IsNotEmptyObject,
   IsNumber,
   IsNumberOptions,
-  IsOptional,
   IsPositive,
   Max,
   MaxLength,
@@ -180,9 +179,10 @@ export type CalculatedStudyBreaksAndWeeks = StudyBreaksAndWeeks & {
 
 /**
  * Possible warnings unique identifiers.
+ * !These keys are also consumed in the UI to display/hide warning banners.
  */
 export enum OfferingValidationWarnings {
-  InvalidStudyBreakAmountOfDays = "InvalidStudyBreakAmountOfDays",
+  InvalidStudyBreakAmountOfDays = "invalidStudyBreakAmountOfDays",
   InvalidStudyBreaksCombinedThresholdPercentage = "invalidStudyBreaksCombinedThresholdPercentage",
   ProgramOfferingIntensityMismatch = "programOfferingIntensityMismatch",
   ProgramOfferingDeliveryMismatch = "programOfferingDeliveryMismatch",
@@ -484,9 +484,12 @@ export class OfferingValidationModel {
   })
   offeringType: OfferingTypes;
   /**
-   * Indicates offering course load.
+   * Indicates the offering course load for part-time application only.
    */
-  @IsOptional()
+  @ValidateIf(
+    (offering: OfferingValidationModel) =>
+      offering.offeringIntensity === OfferingIntensity.partTime,
+  )
   @Min(OFFERING_COURSE_LOAD_MIN_VALUE, {
     message: getMinFormatMessage(
       userFriendlyNames.courseLoad,

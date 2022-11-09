@@ -10,11 +10,12 @@
   ></formio>
   <slot name="actions" :submit="submit"></slot>
 </template>
+
 <script lang="ts">
-import { SetupContext } from "vue";
-import { FormIOForm } from "@/types";
+import { defineComponent } from "vue";
+import { FormIOChangeEvent, FormIOForm } from "@/types";
 import { useFormioUtils } from "@/composables";
-export default {
+export default defineComponent({
   emits: ["submitted", "loaded", "customEvent", "render", "changed"],
   props: {
     formName: {
@@ -31,7 +32,7 @@ export default {
       default: false,
     },
   },
-  setup(_props: any, context: SetupContext) {
+  setup(_props, context) {
     const { checkFormioValidity } = useFormioUtils();
     let formioForm: FormIOForm;
 
@@ -40,9 +41,9 @@ export default {
       context.emit("loaded", form);
     };
 
-    const submit = async () => {
+    const submit = async (args: unknown) => {
       if (await checkFormioValidity([formioForm])) {
-        context.emit("submitted", formioForm);
+        context.emit("submitted", formioForm, args);
       }
     };
 
@@ -50,7 +51,7 @@ export default {
       context.emit("render");
     };
 
-    const formChanged = (form: FormIOForm, event: any) => {
+    const formChanged = (form: FormIOForm, event: FormIOChangeEvent) => {
       context.emit("changed", form, event);
     };
 
@@ -60,5 +61,5 @@ export default {
 
     return { formLoaded, submit, formRender, formChanged, formCustomEvent };
   },
-};
+});
 </script>

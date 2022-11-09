@@ -31,6 +31,7 @@ import {
   OfferingsFilter,
   PrecedingOfferingSummaryModel,
   ApplicationAssessmentSummary,
+  EducationProgramOfferingBasicData,
 } from "./education-program-offering.service.models";
 import {
   FieldSortOrder,
@@ -40,9 +41,13 @@ import {
   dateDifference,
   OFFERING_STUDY_BREAK_MAX_DAYS,
   OFFERING_VALIDATIONS_STUDY_BREAK_COMBINED_PERCENTAGE_THRESHOLD,
+  decimalRound,
 } from "../../utilities";
 import { CustomNamedError } from "@sims/utilities";
-import { OFFERING_NOT_VALID } from "../../constants";
+import {
+  OFFERING_INVALID_OPERATION_IN_THE_CURRENT_STATE,
+  OFFERING_NOT_VALID,
+} from "../../constants";
 import {
   CalculatedStudyBreaksAndWeeks,
   CreateFromValidatedOfferingError,
@@ -50,6 +55,8 @@ import {
   OfferingStudyBreakCalculationContext,
   OfferingValidationResult,
   OfferingValidationModel,
+  OfferingDeliveryOptions,
+  WILComponentOptions,
 } from "./education-program-offering-validation.models";
 import { EducationProgramOfferingValidationService } from "./education-program-offering-validation.service";
 import * as os from "os";
@@ -329,6 +336,25 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
   }
 
   /**
+   * Updates basic offering data that does not affect the assessment
+   * and does not require the complete offering validation.
+   * @param offeringId id of the offering to be updated.
+   * @param basicOfferingData information to be updated.
+   * @param auditUserId user that should be considered the one that is causing the changes.
+   * @returns Education program offering created.
+   */
+  async updateEducationProgramOfferingBasicData(
+    offeringId: number,
+    basicOfferingData: EducationProgramOfferingBasicData,
+    auditUserId: number,
+  ): Promise<UpdateResult> {
+    return this.repo.update(offeringId, {
+      name: basicOfferingData.offeringName,
+      modifier: { id: auditUserId } as User,
+    });
+  }
+
+  /**
    * Creates a new education program offering at program level
    * @param educationProgramOffering Information used to create the program offering.
    * @param userId User who updates the offering.
@@ -346,9 +372,14 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     const hasExistingApplication = await this.hasExistingApplication(
       offeringId,
     );
+    if (hasExistingApplication) {
+      throw new CustomNamedError(
+        "The offering cannot be updated because it is already associated with some assessment.",
+        OFFERING_INVALID_OPERATION_IN_THE_CURRENT_STATE,
+      );
+    }
     const programOffering = this.populateProgramOffering(
       offeringValidation.offeringModel,
-      hasExistingApplication,
     );
     programOffering.offeringStatus = offeringValidation.offeringStatus;
     programOffering.modifier = { id: userId } as User;
@@ -357,68 +388,177 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
 
   private populateProgramOffering(
     educationProgramOffering: OfferingValidationModel,
-    hasExistingApplication?: boolean,
   ): EducationProgramOffering {
     const programOffering = new EducationProgramOffering();
     programOffering.name = educationProgramOffering.offeringName;
-    if (!hasExistingApplication) {
-      programOffering.studyStartDate = educationProgramOffering.studyStartDate;
-      programOffering.studyEndDate = educationProgramOffering.studyEndDate;
-      programOffering.actualTuitionCosts =
-        educationProgramOffering.actualTuitionCosts;
-      programOffering.programRelatedCosts =
-        educationProgramOffering.programRelatedCosts;
-      programOffering.mandatoryFees = educationProgramOffering.mandatoryFees;
-      programOffering.exceptionalExpenses =
-        educationProgramOffering.exceptionalExpenses;
-      programOffering.offeringDelivered =
-        educationProgramOffering.offeringDelivered;
-      programOffering.lacksStudyBreaks =
-        educationProgramOffering.lacksStudyBreaks;
-      programOffering.offeringType =
-        educationProgramOffering.offeringType ?? OfferingTypes.Public;
-      programOffering.educationProgram = {
-        id: educationProgramOffering.programContext.id,
-      } as EducationProgram;
-      programOffering.institutionLocation = {
-        id: educationProgramOffering.locationId,
-      } as InstitutionLocation;
-      programOffering.offeringIntensity =
-        educationProgramOffering.offeringIntensity;
-      programOffering.yearOfStudy = educationProgramOffering.yearOfStudy;
-      programOffering.showYearOfStudy =
-        educationProgramOffering.showYearOfStudy;
-      programOffering.hasOfferingWILComponent =
-        educationProgramOffering.hasOfferingWILComponent;
-      programOffering.offeringWILType =
-        educationProgramOffering.offeringWILComponentType;
-      programOffering.offeringDeclaration =
-        educationProgramOffering.offeringDeclaration;
-      programOffering.offeringType = educationProgramOffering.offeringType;
-      programOffering.courseLoad = educationProgramOffering.courseLoad;
-      // Study Breaks calculation.
-      const calculatedBreaks =
-        EducationProgramOfferingService.getCalculatedStudyBreaksAndWeeks(
-          educationProgramOffering,
-        );
-      // Ensures that no additional properties will be assigned to studyBreaks
-      // since calculatedStudyBreaks could received extra properties that are
-      // not required to be saved to the database.
-      programOffering.studyBreaks = {
-        fundedStudyPeriodDays: calculatedBreaks.fundedStudyPeriodDays,
-        totalDays: calculatedBreaks.totalDays,
-        totalFundedWeeks: calculatedBreaks.totalFundedWeeks,
-        unfundedStudyPeriodDays: calculatedBreaks.unfundedStudyPeriodDays,
-        studyBreaks: calculatedBreaks.studyBreaks?.map((studyBreak) => ({
-          breakStartDate: studyBreak.breakStartDate,
-          breakEndDate: studyBreak.breakEndDate,
-          breakDays: studyBreak.breakDays,
-          eligibleBreakDays: studyBreak.eligibleBreakDays,
-          ineligibleBreakDays: studyBreak.ineligibleBreakDays,
-        })),
-      };
-    }
+    programOffering.studyStartDate = educationProgramOffering.studyStartDate;
+    programOffering.studyEndDate = educationProgramOffering.studyEndDate;
+    programOffering.actualTuitionCosts =
+      educationProgramOffering.actualTuitionCosts;
+    programOffering.programRelatedCosts =
+      educationProgramOffering.programRelatedCosts;
+    programOffering.mandatoryFees = educationProgramOffering.mandatoryFees;
+    programOffering.exceptionalExpenses =
+      educationProgramOffering.exceptionalExpenses;
+    programOffering.offeringDelivered =
+      educationProgramOffering.offeringDelivered;
+    programOffering.lacksStudyBreaks =
+      educationProgramOffering.lacksStudyBreaks;
+    programOffering.offeringType =
+      educationProgramOffering.offeringType ?? OfferingTypes.Public;
+    programOffering.educationProgram = {
+      id: educationProgramOffering.programContext.id,
+    } as EducationProgram;
+    programOffering.institutionLocation = {
+      id: educationProgramOffering.locationId,
+    } as InstitutionLocation;
+    programOffering.offeringIntensity =
+      educationProgramOffering.offeringIntensity;
+    programOffering.yearOfStudy = educationProgramOffering.yearOfStudy;
+    programOffering.showYearOfStudy = educationProgramOffering.showYearOfStudy;
+    programOffering.hasOfferingWILComponent =
+      educationProgramOffering.hasOfferingWILComponent;
+    programOffering.offeringWILType =
+      educationProgramOffering.offeringWILComponentType;
+    programOffering.offeringDeclaration =
+      educationProgramOffering.offeringDeclaration;
+    programOffering.offeringType = educationProgramOffering.offeringType;
+    programOffering.courseLoad = educationProgramOffering.courseLoad;
+    // Study Breaks calculation.
+    const calculatedBreaks =
+      EducationProgramOfferingService.getCalculatedStudyBreaksAndWeeks(
+        educationProgramOffering,
+      );
+    // Ensures that no additional properties will be assigned to studyBreaks
+    // since calculatedStudyBreaks could received extra properties that are
+    // not required to be saved to the database.
+    programOffering.studyBreaks = {
+      fundedStudyPeriodDays: calculatedBreaks.fundedStudyPeriodDays,
+      totalDays: calculatedBreaks.totalDays,
+      totalFundedWeeks: calculatedBreaks.totalFundedWeeks,
+      unfundedStudyPeriodDays: calculatedBreaks.unfundedStudyPeriodDays,
+      studyBreaks: calculatedBreaks.studyBreaks?.map((studyBreak) => ({
+        breakStartDate: studyBreak.breakStartDate,
+        breakEndDate: studyBreak.breakEndDate,
+        breakDays: studyBreak.breakDays,
+        eligibleBreakDays: studyBreak.eligibleBreakDays,
+        ineligibleBreakDays: studyBreak.ineligibleBreakDays,
+      })),
+    };
+
     return programOffering;
+  }
+
+  /**
+   * Retrieves from the database the offering data needed
+   * to perform all the validations, process the validation
+   * and return its result.
+   * @param offeringId offering id.
+   * @returns offering validation result.
+   */
+  async validateOfferingById(
+    offeringId: number,
+  ): Promise<OfferingValidationResult> {
+    const validationModel = await this.createValidationModelFromOfferingId(
+      offeringId,
+    );
+    return this.offeringValidationService.validateOfferingModel(
+      validationModel,
+      true,
+    );
+  }
+
+  /**
+   * Converts an offering entity model to the validation model.
+   * @param offeringId offering id.
+   * @returns offering validation model.
+   */
+  private async createValidationModelFromOfferingId(
+    offeringId: number,
+  ): Promise<OfferingValidationModel> {
+    const offering = await this.getOfferingForValidation(offeringId);
+    if (!offering) {
+      throw new Error("Offering was not found.");
+    }
+    const offeringValidationModel = new OfferingValidationModel();
+    offeringValidationModel.offeringName = offering.name;
+    offeringValidationModel.studyStartDate = offering.studyStartDate;
+    offeringValidationModel.studyEndDate = offering.studyEndDate;
+    offeringValidationModel.actualTuitionCosts = offering.actualTuitionCosts;
+    offeringValidationModel.programRelatedCosts = offering.programRelatedCosts;
+    offeringValidationModel.mandatoryFees = offering.mandatoryFees;
+    offeringValidationModel.exceptionalExpenses = offering.exceptionalExpenses;
+    offeringValidationModel.offeringDelivered =
+      offering.offeringDelivered as OfferingDeliveryOptions;
+    offeringValidationModel.lacksStudyBreaks = offering.lacksStudyBreaks;
+    offeringValidationModel.offeringType = offering.offeringType;
+    offeringValidationModel.programContext = offering.educationProgram;
+    offeringValidationModel.locationId = offering.institutionLocation.id;
+    offeringValidationModel.offeringIntensity = offering.offeringIntensity;
+    offeringValidationModel.yearOfStudy = offering.yearOfStudy;
+    offeringValidationModel.showYearOfStudy = offering.showYearOfStudy;
+    offeringValidationModel.hasOfferingWILComponent =
+      offering.hasOfferingWILComponent as WILComponentOptions;
+    offeringValidationModel.offeringWILComponentType = offering.offeringWILType;
+    offeringValidationModel.offeringDeclaration = offering.offeringDeclaration;
+    offeringValidationModel.offeringType = offering.offeringType;
+    offeringValidationModel.courseLoad = offering.courseLoad;
+    offeringValidationModel.studyBreaks = offering.studyBreaks.studyBreaks;
+    return offeringValidationModel;
+  }
+
+  /**
+   * Gets an offering with all the expected data to a complete
+   * validation be performed.
+   * @param offeringId offering to have the data selected.
+   * @returns offering with data to be validated.
+   */
+  async getOfferingForValidation(
+    offeringId: number,
+  ): Promise<EducationProgramOffering> {
+    return this.repo.findOne({
+      select: {
+        id: true,
+        name: true,
+        studyStartDate: true,
+        studyEndDate: true,
+        actualTuitionCosts: true,
+        programRelatedCosts: true,
+        mandatoryFees: true,
+        exceptionalExpenses: true,
+        offeringDelivered: true,
+        lacksStudyBreaks: true,
+        offeringType: true,
+        educationProgram: {
+          id: true,
+          programIntensity: true,
+          hasWILComponent: true,
+          deliveredOnSite: true,
+          deliveredOnline: true,
+        },
+        institutionLocation: {
+          id: true,
+        },
+        offeringIntensity: true,
+        yearOfStudy: true,
+        showYearOfStudy: true,
+        hasOfferingWILComponent: true,
+        offeringWILType: true,
+        offeringDeclaration: true,
+        courseLoad: true,
+        // TODO: change studyBreaks to the unknown type.
+        studyBreaks: {
+          studyBreaks: true,
+        },
+      },
+      relations: {
+        institutionLocation: true,
+        educationProgram: true,
+      },
+      where: {
+        id: offeringId,
+      },
+    });
   }
 
   /**
@@ -1096,25 +1236,29 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
   ): CalculatedStudyBreaksAndWeeks {
     let sumOfTotalEligibleBreakDays = 0;
     let sumOfTotalIneligibleBreakDays = 0;
-    const studyBreaks = offering.studyBreaks?.map((eachBreak) => {
-      const newStudyBreak = {} as StudyBreak;
-      newStudyBreak.breakDays = dateDifference(
-        eachBreak.breakEndDate,
-        eachBreak.breakStartDate,
-      );
-      newStudyBreak.breakStartDate = eachBreak.breakStartDate;
-      newStudyBreak.breakEndDate = eachBreak.breakEndDate;
-      newStudyBreak.eligibleBreakDays = Math.min(
-        newStudyBreak.breakDays,
-        OFFERING_STUDY_BREAK_MAX_DAYS,
-      );
-      newStudyBreak.ineligibleBreakDays =
-        newStudyBreak.breakDays - newStudyBreak.eligibleBreakDays;
-      sumOfTotalEligibleBreakDays += newStudyBreak.eligibleBreakDays;
-      sumOfTotalIneligibleBreakDays += newStudyBreak.ineligibleBreakDays;
+    const studyBreaks = offering.studyBreaks
+      ?.filter(
+        (eachBreak) => !!eachBreak.breakStartDate && !!eachBreak.breakEndDate,
+      )
+      .map((eachBreak) => {
+        const newStudyBreak = {} as StudyBreak;
+        newStudyBreak.breakDays = dateDifference(
+          eachBreak.breakEndDate,
+          eachBreak.breakStartDate,
+        );
+        newStudyBreak.breakStartDate = eachBreak.breakStartDate;
+        newStudyBreak.breakEndDate = eachBreak.breakEndDate;
+        newStudyBreak.eligibleBreakDays = Math.min(
+          newStudyBreak.breakDays,
+          OFFERING_STUDY_BREAK_MAX_DAYS,
+        );
+        newStudyBreak.ineligibleBreakDays =
+          newStudyBreak.breakDays - newStudyBreak.eligibleBreakDays;
+        sumOfTotalEligibleBreakDays += newStudyBreak.eligibleBreakDays;
+        sumOfTotalIneligibleBreakDays += newStudyBreak.ineligibleBreakDays;
 
-      return newStudyBreak;
-    });
+        return newStudyBreak;
+      });
 
     // Offering total days.
     const totalDays = dateDifference(
@@ -1144,10 +1288,10 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
 
     const studyBreaksAndWeeks: CalculatedStudyBreaksAndWeeks = {
       studyBreaks,
-      fundedStudyPeriodDays,
+      fundedStudyPeriodDays: decimalRound(fundedStudyPeriodDays),
       totalDays,
       totalFundedWeeks: Math.ceil(fundedStudyPeriodDays / 7),
-      unfundedStudyPeriodDays,
+      unfundedStudyPeriodDays: decimalRound(unfundedStudyPeriodDays),
       sumOfTotalEligibleBreakDays,
       sumOfTotalIneligibleBreakDays,
       allowableStudyBreaksDaysAmount,
