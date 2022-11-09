@@ -2,7 +2,7 @@
   <full-page-container>
     <template #header>
       <header-navigator
-        title="Program detail"
+        title="Edit Offering"
         :routeLocation="editLocationOfferingsRoute"
         subTitle="Request to Change"
       />
