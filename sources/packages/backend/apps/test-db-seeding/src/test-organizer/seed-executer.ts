@@ -88,20 +88,23 @@ export class SeedExecuter implements OnModuleInit {
     name: string;
     order?: number;
   }>[][] {
-    const result = discoveredClass
-      .sort((a, b) => (a.meta.order < b.meta.order ? -1 : 1))
-      .reduce((r, o) => {
-        let temp = r.find(
-          ([
-            {
-              meta: { order },
-            },
-          ]) => order === o.meta.order,
-        );
-        if (!temp) r.push((temp = []));
-        temp.push(o);
-        return r;
-      }, []);
-    return result;
+    const sortedArray = discoveredClass.sort((a, b) =>
+      a.meta.order < b.meta.order ? -1 : 1,
+    );
+
+    return sortedArray.reduce((r, o) => {
+      let temp = r.find(
+        ([
+          {
+            meta: { order },
+          },
+        ]) => order === o.meta.order,
+      );
+      if (!temp) {
+        r.push((temp = []));
+      }
+      temp.push(o);
+      return r;
+    }, []);
   }
 }

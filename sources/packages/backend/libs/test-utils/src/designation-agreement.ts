@@ -65,7 +65,6 @@ export function createFakeDesignationAgreement(
     fakeDesignationAgreement.endDate = dayjs()
       .add(1, "year")
       .format("MM/DD/YYYY");
-    // TODO: ANN CHECK save note
   }
   return fakeDesignationAgreement;
 }
