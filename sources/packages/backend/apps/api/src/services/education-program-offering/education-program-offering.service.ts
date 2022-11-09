@@ -339,17 +339,17 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
    * Updates basic offering data that does not affect the assessment
    * and does not require the complete offering validation.
    * @param offeringId id of the offering to be updated.
-   * @param basicOffering information to be updated.
+   * @param basicOfferingData information to be updated.
    * @param auditUserId user that should be considered the one that is causing the changes.
    * @returns Education program offering created.
    */
   async updateEducationProgramOfferingBasicData(
     offeringId: number,
-    basicOffering: EducationProgramOfferingBasicData,
+    basicOfferingData: EducationProgramOfferingBasicData,
     auditUserId: number,
   ): Promise<UpdateResult> {
     return this.repo.update(offeringId, {
-      name: basicOffering.offeringName,
+      name: basicOfferingData.offeringName,
       modifier: { id: auditUserId } as User,
     });
   }

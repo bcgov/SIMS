@@ -40,6 +40,11 @@ export class StudyPeriodBreakdownAPIOutDTO {
   unfundedStudyPeriodDays: number;
 }
 
+/**
+ * Complete offering data to execute create, update or
+ * request a change.
+ *!The validations are handled by the OfferingValidationModel.
+ */
 export class EducationProgramOfferingAPIInDTO {
   @Allow()
   offeringName: string;
