@@ -59,20 +59,11 @@ export class IERRequestService {
     const uploadResult: IERUploadResult[] = [];
     try {
       this.logger.log("Creating IER request content...");
-      Object.keys(fileRecords).forEach(async (institutionCode) => {
-        // Create the Request content for the IER file by populating the content.
-        const fileContent = this.ierIntegrationService.createIERRequestContent(
-          fileRecords[institutionCode],
-        );
-        // Create the request filename with the file path for the each and every institutionCode.
-        const fileInfo = this.createRequestFileName(institutionCode);
-        this.logger.log("Uploading content...");
-        const ierUploadResult = await this.ierIntegrationService.uploadContent(
-          fileContent,
-          fileInfo.filePath,
-        );
+      for await (const ierUploadResult of Object.keys(fileRecords).map(
+        (institutionCode) => this.uploadContent(institutionCode, fileRecords),
+      )) {
         uploadResult.push(ierUploadResult);
-      });
+      }
     } catch (error) {
       this.logger.error(
         `Error while uploading content for IER Request: ${error}`,
@@ -80,6 +71,29 @@ export class IERRequestService {
       throw error;
     }
     return uploadResult;
+  }
+
+  /**
+   * Upload the content in SFTP server location.
+   * @param institutionCode Institution code for the file generated.
+   * @param fileRecords Total records with institutionCode.
+   * @returns Updated records count with filepath.
+   */
+  async uploadContent(
+    institutionCode: string,
+    fileRecords: Record<string, IERRecord[]>,
+  ): Promise<IERUploadResult> {
+    // Create the Request content for the IER file by populating the content.
+    const fileContent = this.ierIntegrationService.createIERRequestContent(
+      fileRecords[institutionCode],
+    );
+    // Create the request filename with the file path for the each and every institutionCode.
+    const fileInfo = this.createRequestFileName(institutionCode);
+    this.logger.log("Uploading content...");
+    return await this.ierIntegrationService.uploadContent(
+      fileContent,
+      fileInfo.filePath,
+    );
   }
 
   /**
