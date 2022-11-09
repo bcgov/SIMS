@@ -34,10 +34,14 @@ export class EducationProgramOfferingApi extends HttpBaseClient {
     payload: EducationProgramOfferingAPIInDTO,
   ): Promise<OfferingValidationResultAPIOutDTO> {
     const url = `education-program-offering/location/${locationId}/education-program/${programId}/validation`;
-    return this.postCall<
+    const offeringValidation = await this.postCallFullResponse<
       EducationProgramOfferingAPIInDTO,
       OfferingValidationResultAPIOutDTO
     >(this.addClientRoot(url), payload);
+    return {
+      ...offeringValidation.data,
+      validationDate: new Date(offeringValidation.headers["last-modified"]),
+    };
   }
 
   /**

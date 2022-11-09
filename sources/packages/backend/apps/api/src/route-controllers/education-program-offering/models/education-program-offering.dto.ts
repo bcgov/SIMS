@@ -187,7 +187,6 @@ export class OfferingValidationResultAPIOutDTO {
   errors: string[];
   warnings: ValidationWarningResultAPIOutDTO[];
   studyPeriodBreakdown: StudyPeriodBreakdownAPIOutDTO;
-  validationDate: Date;
 }
 
 /**

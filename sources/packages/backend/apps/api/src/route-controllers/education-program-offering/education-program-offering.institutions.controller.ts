@@ -13,6 +13,7 @@ import {
   Patch,
   Post,
   Query,
+  Req,
   UnprocessableEntityException,
   UploadedFile,
   UseInterceptors,
@@ -70,6 +71,7 @@ import {
   OFFERING_VALIDATION_CSV_PARSE_ERROR,
 } from "../../constants";
 import { OfferingCSVModel } from "../../services/education-program-offering/education-program-offering-import-csv.models";
+import { Request } from "express";
 
 @AllowAuthorizedParty(AuthorizedParties.institution)
 @Controller("education-program-offering")
@@ -106,6 +108,7 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
     @Param("programId", ParseIntPipe) programId: number,
     @Body() payload: EducationProgramOfferingAPIInDTO,
     @UserToken() userToken: IInstitutionUserToken,
+    @Req() request: Request,
   ): Promise<OfferingValidationResultAPIOutDTO> {
     const offeringValidationModel =
       await this.educationProgramOfferingControllerService.buildOfferingValidationModel(
@@ -126,6 +129,8 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
         offeringValidationModel,
       );
 
+    request.res.header("Last-Modified", new Date().toString());
+
     return {
       offeringStatus: offeringValidation.offeringStatus,
       errors: offeringValidation.errors,
@@ -136,7 +141,6 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
         totalFundedWeeks: calculatedStudyBreaks.totalFundedWeeks,
         unfundedStudyPeriodDays: calculatedStudyBreaks.unfundedStudyPeriodDays,
       },
-      validationDate: new Date(),
     };
   }
 
