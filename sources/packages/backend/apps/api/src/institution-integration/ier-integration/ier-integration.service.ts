@@ -81,7 +81,6 @@ export class IERIntegrationService {
       (line: IERRequestFileLine) => line.getFixedFormat(),
     );
     const ierFileContent = fixedFormattedLines.join("\r\n");
-
     // Send the file to ftp.
     this.logger.log("Creating new SFTP client to start upload...");
     const client = await this.getClient();

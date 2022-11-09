@@ -98,6 +98,11 @@ export class IERFileDetail implements IERRequestFileLine {
     return record.toString();
   }
 
+  /**
+   * Populate the grants for the given grant code.
+   * @param valueCode
+   * @returns Rounded value amount for the grant.
+   */
   private populateGrants(valueCode: string) {
     return round(
       parseInt(
@@ -108,6 +113,11 @@ export class IERFileDetail implements IERRequestFileLine {
     );
   }
 
+  /**
+   * Creates an accumulated disbursement values of the multiple disbursement
+   * schedules for the particular assessment.
+   * @returns totalGrants from the disbursementSchedules.
+   */
   private getTotalGrantsFromDisbursementSchedule(): DisbursementValue[] {
     const accumulatedDisbursementSchedule = Object.values(
       this.disbursementSchedules.reduce(

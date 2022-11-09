@@ -56,7 +56,6 @@ export class IERRequestService {
         this.createIERRecord(pendingAssessment),
       );
     });
-    //Create records and create the unique file sequence number
     const uploadResult: IERUploadResult[] = [];
     try {
       this.logger.log("Creating IER request content...");
@@ -68,12 +67,11 @@ export class IERRequestService {
         // Create the request filename with the file path for the each and every institutionCode.
         const fileInfo = this.createRequestFileName(institutionCode);
         this.logger.log("Uploading content...");
-        uploadResult.push(
-          await this.ierIntegrationService.uploadContent(
-            fileContent,
-            fileInfo.filePath,
-          ),
+        const ierUploadResult = await this.ierIntegrationService.uploadContent(
+          fileContent,
+          fileInfo.filePath,
         );
+        uploadResult.push(ierUploadResult);
       });
     } catch (error) {
       this.logger.error(
