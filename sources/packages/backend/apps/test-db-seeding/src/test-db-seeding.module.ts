@@ -1,18 +1,27 @@
 import { Module } from "@nestjs/common";
-import { DesignationAgreementPendingService } from "./designation-agreement/designation-agreement-pending.service";
 import {
   DatabaseModule,
   DesignationAgreement,
   Institution,
   InstitutionLocation,
+  InstitutionUser,
+  InstitutionUserAuth,
+  InstitutionUserTypeAndRole,
   User,
 } from "@sims/sims-db";
-import { DesignationAgreementApprovalService } from "./designation-agreement/designation-agreement-approval.service";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { DiscoveryModule, MetadataScanner } from "@nestjs/core";
-import { TestOrganizerService } from "./test-organizer/test-organizer.service";
+import { SeedExecuter } from "./test-organizer/seed-executer";
 import { DiscoveryService } from "@golevelup/nestjs-discovery";
-import { CleanDbService } from "./clean-db/clean-db.service";
+import { CleanDb } from "./clean-db/clean-db";
+import {
+  DesignationAgreementService,
+  InstitutionUserService,
+} from "./db-seeding/02-institution";
+import {
+  InstitutionHelperService,
+  UserTypeRoleHelperService,
+} from "./test-helper-services";
 
 @Module({
   imports: [
@@ -23,17 +32,21 @@ import { CleanDbService } from "./clean-db/clean-db.service";
       User,
       InstitutionLocation,
       DiscoveryModule,
+      InstitutionUser,
+      InstitutionUserTypeAndRole,
+      InstitutionUserAuth,
     ]),
   ],
   controllers: [],
   providers: [
-    DesignationAgreementPendingService,
-    DesignationAgreementApprovalService,
-    TestOrganizerService,
-    TestOrganizerService,
+    DesignationAgreementService,
+    SeedExecuter,
     DiscoveryService,
     MetadataScanner,
-    CleanDbService,
+    CleanDb,
+    InstitutionUserService,
+    InstitutionHelperService,
+    UserTypeRoleHelperService,
   ],
 })
 export class TestDbSeedingModule {}

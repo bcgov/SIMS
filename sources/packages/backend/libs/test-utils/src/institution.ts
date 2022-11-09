@@ -27,6 +27,7 @@ export function createFakeInstitution(): Institution {
       addressLine2: faker.address.secondaryAddress(),
       provinceState: "BC",
       country: "canada",
+      selectedCountry: "Canada",
       city: "Victoria",
       postalCode: faker.address.zipCode("A9A9A9"),
     },

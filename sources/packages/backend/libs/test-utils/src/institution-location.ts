@@ -14,6 +14,7 @@ export function createFakeInstitutionLocation(
       city: "Victoria",
       provinceState: "BC",
       country: "canada",
+      selectedCountry: "Canada",
       postalCode: faker.address.zipCode("A9A9A9"),
     },
   };
@@ -23,6 +24,10 @@ export function createFakeInstitutionLocation(
     email: faker.internet.email(),
     phone: faker.phone.phoneNumber(),
   };
+  institutionLocation.institutionCode = faker.random.alpha({
+    count: 4,
+    upcase: true,
+  });
   return institutionLocation;
 }
 
