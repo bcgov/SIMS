@@ -27,11 +27,7 @@ import {
   OfferingValidationModel,
   CreateFromValidatedOfferingError,
 } from "../../services";
-import {
-  getISODateOnlyString,
-  getOfferingNameAndPeriod,
-  getUserFullName,
-} from "../../utilities";
+import { getOfferingNameAndPeriod, getUserFullName } from "../../utilities";
 import { OptionItemAPIOutDTO } from "../models/common.dto";
 import {
   OfferingsPaginationOptionsAPIInDTO,
@@ -83,8 +79,8 @@ export class EducationProgramOfferingControllerService {
       results: offerings.results.map((offering) => ({
         id: offering.id,
         name: offering.name,
-        studyStartDate: getISODateOnlyString(offering.studyStartDate),
-        studyEndDate: getISODateOnlyString(offering.studyEndDate),
+        studyStartDate: offering.studyStartDate,
+        studyEndDate: offering.studyEndDate,
         offeringDelivered: offering.offeringDelivered,
         offeringIntensity: offering.offeringIntensity,
         offeringType: offering.offeringType,
@@ -300,8 +296,8 @@ export class EducationProgramOfferingControllerService {
     return {
       id: offering.id,
       offeringName: offering.name,
-      studyStartDate: getISODateOnlyString(offering.studyStartDate),
-      studyEndDate: getISODateOnlyString(offering.studyEndDate),
+      studyStartDate: offering.studyStartDate,
+      studyEndDate: offering.studyEndDate,
       actualTuitionCosts: offering.actualTuitionCosts,
       programRelatedCosts: offering.programRelatedCosts,
       mandatoryFees: offering.mandatoryFees,
