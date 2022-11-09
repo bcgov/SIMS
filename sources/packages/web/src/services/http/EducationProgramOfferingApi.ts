@@ -12,6 +12,8 @@ import {
   OfferingStartDateAPIOutDTO,
   OptionItemAPIOutDTO,
   EducationProgramOfferingAPIOutDTO,
+  OfferingValidationResultAPIOutDTO,
+  EducationProgramOfferingBasicDataAPIInDTO,
 } from "@/services/http/dto";
 import { AxiosRequestConfig } from "axios";
 import ApiClient from "./ApiClient";
@@ -19,21 +21,49 @@ import { FileUploadProgressEventArgs } from "@/services/http/common/FileUploadPr
 
 export class EducationProgramOfferingApi extends HttpBaseClient {
   /**
+   * Validates an offering payload providing the validation result and
+   * study break calculations also used to perform the validation process.
+   * @param locationId location id.
+   * @param programId program id.
+   * @param payload offering data to be validated.
+   * @returns offering validation result.
+   */
+  async validateOffering(
+    locationId: number,
+    programId: number,
+    payload: EducationProgramOfferingAPIInDTO,
+  ): Promise<OfferingValidationResultAPIOutDTO> {
+    const url = `education-program-offering/location/${locationId}/education-program/${programId}/validation`;
+    const offeringValidation = await this.postCallFullResponse<
+      EducationProgramOfferingAPIInDTO,
+      OfferingValidationResultAPIOutDTO
+    >(this.addClientRoot(url), payload);
+    return {
+      ...offeringValidation.data,
+      validationDate: new Date(offeringValidation.headers["last-modified"]),
+    };
+  }
+
+  /**
    * Creates offering.
    * @param locationId offering location.
    * @param programId offering program.
    * @param payload offering data.
    */
-  public async createOffering(
+  async createOffering(
     locationId: number,
     programId: number,
     payload: EducationProgramOfferingAPIInDTO,
   ): Promise<void> {
-    const url = `education-program-offering/location/${locationId}/education-program/${programId}`;
-    await this.postCall<EducationProgramOfferingAPIInDTO>(
-      this.addClientRoot(url),
-      payload,
-    );
+    try {
+      const url = `education-program-offering/location/${locationId}/education-program/${programId}`;
+      await this.postCall<EducationProgramOfferingAPIInDTO>(
+        this.addClientRoot(url),
+        payload,
+      );
+    } catch (error: unknown) {
+      this.handleAPICustomError(error);
+    }
   }
 
   /**
@@ -44,7 +74,7 @@ export class EducationProgramOfferingApi extends HttpBaseClient {
    * @param paginationOptions pagination options.
    * @returns offering summary results.
    */
-  public async getOfferingsSummary(
+  async getOfferingsSummary(
     locationId: number,
     programId: number,
     paginationOptions: PaginationOptions,
@@ -64,7 +94,7 @@ export class EducationProgramOfferingApi extends HttpBaseClient {
    * @param offeringId offering.
    * @returns offering details.
    */
-  public async getOfferingDetailsByLocationAndProgram(
+  async getOfferingDetailsByLocationAndProgram(
     locationId: number,
     programId: number,
     offeringId: number,
@@ -80,7 +110,7 @@ export class EducationProgramOfferingApi extends HttpBaseClient {
    * @param offeringId offering.
    * @returns offering details.
    */
-  public async getOfferingDetails(
+  async getOfferingDetails(
     offeringId: number,
   ): Promise<EducationProgramOfferingAPIOutDTO> {
     const url = `education-program-offering/${offeringId}`;
@@ -94,22 +124,48 @@ export class EducationProgramOfferingApi extends HttpBaseClient {
    ** An offering which has at least one student aid application submitted
    ** cannot be modified further except the offering name. In such cases
    ** the offering must be requested for change.
-   * @param payload offering data to be updated.
    * @param locationId offering location.
    * @param programId offering program.
    * @param offeringId offering to be modified.
+   * @param payload offering data to be updated.
    */
-  public async updateProgramOffering(
+  async updateProgramOffering(
     locationId: number,
     programId: number,
     offeringId: number,
     payload: EducationProgramOfferingAPIInDTO,
   ): Promise<void> {
-    const url = `education-program-offering/location/${locationId}/education-program/${programId}/offering/${offeringId}`;
-    await this.patchCall<EducationProgramOfferingAPIInDTO>(
-      this.addClientRoot(url),
-      payload,
-    );
+    try {
+      const url = `education-program-offering/location/${locationId}/education-program/${programId}/offering/${offeringId}`;
+      await this.patchCall<EducationProgramOfferingAPIInDTO>(
+        this.addClientRoot(url),
+        payload,
+      );
+    } catch (error: unknown) {
+      this.handleAPICustomError(error);
+    }
+  }
+
+  /**
+   * Updates offering basic information that can be freely changed
+   * without affecting the assessment.
+   * @param locationId offering location.
+   * @param programId offering program.
+   * @param offeringId offering to be modified.
+   * @param payload offering data to be updated.
+   */
+  async updateProgramOfferingBasicInformation(
+    locationId: number,
+    programId: number,
+    offeringId: number,
+    payload: EducationProgramOfferingBasicDataAPIInDTO,
+  ): Promise<void> {
+    try {
+      const url = `education-program-offering/location/${locationId}/education-program/${programId}/offering/${offeringId}/basic`;
+      await this.patchCall(this.addClientRoot(url), payload);
+    } catch (error: unknown) {
+      this.handleAPICustomError(error);
+    }
   }
 
   /**
@@ -123,7 +179,7 @@ export class EducationProgramOfferingApi extends HttpBaseClient {
    * and not active program year are considered.
    * @returns offerings in client lookup format.
    */
-  public async getProgramOfferingsOptionsList(
+  async getProgramOfferingsOptionsList(
     locationId: number,
     programId: number,
     programYearId: number,
@@ -143,7 +199,7 @@ export class EducationProgramOfferingApi extends HttpBaseClient {
    * @param offeringId offering id
    * @returns offering with start date value.
    */
-  public async getProgramOfferingStartDate(
+  async getProgramOfferingStartDate(
     offeringId: number,
   ): Promise<OfferingStartDateAPIOutDTO> {
     const url = `education-program-offering/${offeringId}`;
@@ -157,7 +213,7 @@ export class EducationProgramOfferingApi extends HttpBaseClient {
    * @param offeringId
    * @param payload
    */
-  public async assessOffering(
+  async assessOffering(
     offeringId: number,
     payload: OfferingAssessmentAPIInDTO,
   ): Promise<void> {
@@ -172,10 +228,10 @@ export class EducationProgramOfferingApi extends HttpBaseClient {
    * properties that affect the assessment of student application.
    **During this process a new offering is created by copying the existing
    * offering and modifying the properties required.
-   * @param locationId
-   * @param programId
-   * @param offeringId
-   * @param payload
+   * @param locationId location to which the offering belongs to.
+   * @param programId program to which the offering belongs to.
+   * @param offeringId offering to which change is requested.
+   * @param payload offering data to create the new offering.
    */
   async requestChange(
     locationId: number,
@@ -183,11 +239,15 @@ export class EducationProgramOfferingApi extends HttpBaseClient {
     offeringId: number,
     payload: EducationProgramOfferingAPIInDTO,
   ): Promise<void> {
-    const url = `education-program-offering/${offeringId}/location/${locationId}/education-program/${programId}/request-change`;
-    await this.postCall<EducationProgramOfferingAPIInDTO>(
-      this.addClientRoot(url),
-      payload,
-    );
+    try {
+      const url = `education-program-offering/${offeringId}/location/${locationId}/education-program/${programId}/request-change`;
+      await this.postCall<EducationProgramOfferingAPIInDTO>(
+        this.addClientRoot(url),
+        payload,
+      );
+    } catch (error: unknown) {
+      this.handleAPICustomError(error);
+    }
   }
 
   /**

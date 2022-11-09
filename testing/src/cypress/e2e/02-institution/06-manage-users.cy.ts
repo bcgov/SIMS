@@ -13,6 +13,10 @@ describe("Manage Users", () => {
     manageUsersObject.manageUsersButton().click();
   });
 
+  beforeEach(() => {
+    manageUsersObject.searchButton().click().clear().type("{enter}");
+  });
+
   it("Verify that user is redirected to manage user summary page", () => {
     manageUsersObject.manageUsersSummary().should("be.visible");
   });
@@ -22,12 +26,15 @@ describe("Manage Users", () => {
   });
 
   it("Verify that number of retrieved users in the list view", () => {
-    manageUsersObject.getUsersList().eq(2);
+    manageUsersObject
+      .getUsersList()
+      .should("be.visible")
+      .should("have.length", 1);
   });
 
   it("Verify that user is able to search for the users listed", () => {
-    manageUsersObject.searchButton().click().clear().type("AutoUser{enter}");
-    manageUsersObject.getUsersList().eq(2);
+    manageUsersObject.searchButton().click().clear().type("SIMS{enter}");
+    manageUsersObject.getUsersList().should("have.length", 1);
   });
 
   it("Verify that 'no records found' is displayed when search returns no results", () => {
@@ -36,7 +43,9 @@ describe("Manage Users", () => {
   });
 
   it("Verify that 'edit user' CTA will open the edit user modal for non-admin", () => {
-    manageUsersObject.clickOnEdit("cypressautomation2@auto.test");
+    manageUsersObject.clickOnEdit("automationuser1@test.com");
+    manageUsersObject.editUserModal().should("be.visible");
+    manageUsersObject.cancelButton().click();
   });
 
   it("Verify that 'Add new user' CTA exists", () => {
@@ -52,41 +61,46 @@ describe("Manage Users - Add new user", () => {
     institutionHelperActions.loginIntoInstitutionSingleLocation();
     dashboardInstitutionObject.manageInstitutionButton().click();
     manageUsersObject.manageUsersButton().click();
+  });
+
+  beforeEach(() => {
     manageUsersObject.addNewUserButton().click();
   });
 
-  it("Validate add new user modal", () => {
-    expect(
-      manageUsersObject.addNewUserModal().should("be.visible")
-    ).to.contain.text("Add new user ");
+  afterEach(() => {
+    manageUsersObject.cancelButton().click();
+  });
 
-    expect(
-      manageUsersObject.inputUserIdOnAddUserModal().should("be.visible")
-    ).to.contain.text("Business BCeID user Id");
+  it("Validate add new user modal", () => {
+    manageUsersObject.addNewUserModal().should("be.visible");
+    manageUsersObject.addNewUserModalTitle().should("be.visible");
     manageUsersObject.inputUserIdOnAddUserModal().should("be.visible");
-    expect(
-      manageUsersObject.isAdminRadioButton().should("be.visible")
-    ).to.contain.text("Admin");
-    expect(
-      manageUsersObject.isLegalSigningAuthorityButton().should("be.visible")
-    ).to.contain.text("Legal signing authority");
+    manageUsersObject
+      .inputUserIdOnAddUserModal()
+      .should("be.visible")
+      .should("contain", "Business BCeID user Id");
+
+    manageUsersObject
+      .isAdminRadioButton()
+      .should("be.visible")
+      .should("have.text", "Admin");
+    manageUsersObject
+      .isLegalSigningAuthorityButton()
+      .should("have.text", "Legal signing authority");
     manageUsersObject.addUserNowButton().should("be.visible");
     manageUsersObject.cancelButton().should("be.visible");
   });
 
   it("Validate 'legal signing authority' is only enabled when admin is enabled", () => {
     manageUsersObject.isAdminRadioButton().should("not.be.checked");
-    manageUsersObject.isLegalSigningAuthorityButton().should("be.disabled");
-    manageUsersObject.isAdminRadioButton().check();
+    manageUsersObject.isAdminRadioButton().click();
     manageUsersObject.isLegalSigningAuthorityButton().should("not.be.disabled");
-    manageUsersObject.assignLocationToUserText().should("not.be.visible");
-    manageUsersObject.isLegalSigningAuthorityButton().uncheck();
+    manageUsersObject.isLegalSigningAuthorityButton().click();
     manageUsersObject.isAdminRadioButton().should("not.be.checked");
-    manageUsersObject.isLegalSigningAuthorityButton().should("be.disabled");
   });
 
   it("Validate all the institution locations are displayed", () => {
-    manageUsersObject.locationsFromAddUserModal().eq(2);
+    manageUsersObject.locationsFromAddUserModal().should("have.length", "1");
   });
 
   it("Validate Errors displayed when mandatory information is not filled in", () => {
@@ -101,13 +115,13 @@ describe("Manage Users - Add new user", () => {
   });
 
   it("Validate user is able to be searchable by BCeID + UserId", () => {
-    manageUsersObject.inputUserIdOnAddUserModal().click();
-    cy.contains("SIMS").should("be.visible");
+    manageUsersObject.inputUserIdOnAddUserModal().type("SIMS COLLF");
+    manageUsersObject.addNewUserModal().parent().contains("SIMS COLLF").click();
   });
 
   it("Search for the users no user is returned", () => {
     manageUsersObject.inputUserIdOnAddUserModal().type("SIMS-ON");
-    cy.contains("No data available").should("not.be.visible");
+    cy.contains("No data available").should("be.visible");
   });
 });
 
@@ -119,7 +133,7 @@ describe("Manage Users - edit user modal", () => {
   });
 
   it("Validate edit user default modal", () => {
-    manageUsersObject.clickOnEdit("cypressautomation2@auto.test");
+    manageUsersObject.clickOnEdit("automationuser1@test.com");
     manageUsersObject.editUserModal().should("be.visible");
     manageUsersObject.isAdminRadioButton().should("be.checked");
     manageUsersObject.isAdminRadioButton().should("be.unchecked");
@@ -128,7 +142,8 @@ describe("Manage Users - edit user modal", () => {
   });
 });
 
-describe("Manage Users - Adding a user", () => {
+describe.skip("Manage Users - Adding a user", () => {
+  //TODO intentionally skipped once we have the dedicated set of users to test this institution. For now keeping the test cases
   before(() => {
     institutionHelperActions.loginIntoInstitutionSingleLocation();
     dashboardInstitutionObject.manageInstitutionButton().click();
@@ -139,26 +154,20 @@ describe("Manage Users - Adding a user", () => {
     manageUsersObject.addNewUserButton();
     manageUsersObject
       .inputUserIdOnAddUserModal()
-      .type("cypressautomation@auto.test");
+      .type("automationuser2@test.com");
     manageUsersObject.userLocationAccess().click();
     manageUsersObject.addUserNowButton().click();
-    manageUsersObject.getUsersList().eq(3);
+    manageUsersObject.getUsersList().should("have.length", 1);
   });
 
   it("Validate adding user to as an admin", () => {
+    //TODO this will needs to separated to a new institution. Will change once the cypress test data scripts are ready
     manageUsersObject.addNewUserButton();
     manageUsersObject
       .inputUserIdOnAddUserModal()
-      .type("cypressautomation@auto.test");
+      .type("automationuser3@test.com");
     manageUsersObject.isAdminRadioButton().click();
     manageUsersObject.isLegalSigningAuthorityButton().click();
-    manageUsersObject.addUserNowButton().click();
-    manageUsersObject.getUsersList().eq(3);
-  });
-
-  it("Validate Edit user", () => {
-    manageUsersObject.clickOnEdit("cypressautomation2@auto.test");
-    manageUsersObject.userLocationAccess().click();
     manageUsersObject.addUserNowButton().click();
     manageUsersObject.getUsersList().eq(3);
   });

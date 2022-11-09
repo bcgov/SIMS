@@ -1,5 +1,4 @@
 <template>
-  <!-- TODO: ANN form definition -->
   <formio-container
     formName="reportScholasticStandingChange"
     :formData="data"

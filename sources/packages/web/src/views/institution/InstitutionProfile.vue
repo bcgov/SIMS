@@ -6,11 +6,11 @@
     <template #alerts>
       <banner
         :type="BannerTypes.Info"
-        header="How to request a change"
-        summary="For the fields you can't change yourself, please email us with the information you'd like to change."
+        header="How to update information"
+        summary="Please send us an email to request a change. For your institution's mailing address, you can update it without emailing a request."
       >
         <template #actions>
-          <v-btn color="info">Email studentaidbc@gov.bc.ca</v-btn>
+          <v-btn color="info">Email designat@gov.bc.ca</v-btn>
         </template>
       </banner>
     </template>

@@ -1,10 +1,5 @@
+import { StatusChipTypes } from "@/components/generic/StatusChip.models";
 import { EducationProgramOfferingAPIOutDTO } from "@/services/http/dto";
-import {
-  ClientIdType,
-  OfferingStatus,
-  ProgramIntensity,
-  ProgramDeliveryTypes,
-} from "@/types";
 
 /**
  * Valid Intensity of the Offerings.
@@ -24,22 +19,8 @@ export enum OfferingIntensity {
  * Education program offering form.io model.
  */
 export type OfferingFormModel = EducationProgramOfferingAPIOutDTO & {
-  /**
-   * Education program intensity. Used to perform offering validations.
-   */
-  programIntensity: ProgramIntensity;
-  /**
-   * Education program delivery type. Used to perform offering validations.
-   */
-  programDeliveryTypes: ProgramDeliveryTypes;
-  /**
-   * Indicates if the education program has WIL(work-integrated learning).
-   * Used to perform offering validations.
-   */
-  hasWILComponent: string;
-  clientType?: ClientIdType;
-  offeringStatusToDisplay: OfferingStatus;
-  hasExistingApplication?: boolean;
+  offeringChipStatus?: StatusChipTypes;
+  mode: OfferingFormModes;
 };
 
 /**
@@ -47,17 +28,14 @@ export type OfferingFormModel = EducationProgramOfferingAPIOutDTO & {
  */
 export type OfferingFormBaseModel = Omit<
   OfferingFormModel,
-  "offeringChipStatus" | "offeringStatusToDisplay" | "clientType"
+  "offeringChipStatus"
 >;
 
 /**
  * Offering form create model which consists of program related properties to
  * validate offering on creation.
  */
-export type OfferingFormCreateModel = Pick<
-  OfferingFormModel,
-  "programIntensity" | "programDeliveryTypes" | "hasWILComponent"
->;
+export type OfferingFormCreateModel = Pick<OfferingFormModel, "mode">;
 
 /**
  * Dto for study break item.
@@ -80,4 +58,26 @@ export interface StudyBreaksAndWeeks {
 export enum OfferingRelationType {
   ActualOffering = "Actual offering",
   PrecedingOffering = "Preceding offering",
+}
+
+/**
+ * Possible modes that the offering form can
+ * be adapted for different scenarios supported.
+ */
+export enum OfferingFormModes {
+  /**
+   * All controls are available to be edited.
+   */
+  Editable = "editable",
+  /**
+   * Form is completely readonly.
+   */
+  Readonly = "readonly",
+  /**
+   * All assessment related components are readonly.
+   * Offerings already associated with some assessment are no longer
+   * open for modifications with exception of fields like "Offering Name"
+   * that will not impact the assessment calculation.
+   */
+  AssessmentDataReadonly = "assessment-data-readonly",
 }

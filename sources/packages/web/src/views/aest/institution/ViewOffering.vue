@@ -50,12 +50,14 @@
 
 <script lang="ts">
 import { EducationProgramOfferingService } from "@/services/EducationProgramOfferingService";
-import { EducationProgramService } from "@/services/EducationProgramService";
 import { onMounted, ref, computed } from "vue";
-import { OfferingFormBaseModel, OfferingStatus, Role } from "@/types";
+import { OfferingStatus, Role } from "@/types";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import { useSnackBar, ModalDialog } from "@/composables";
-import { OfferingAssessmentAPIInDTO } from "@/services/http/dto";
+import {
+  EducationProgramOfferingAPIOutDTO,
+  OfferingAssessmentAPIInDTO,
+} from "@/services/http/dto";
 import { BannerTypes } from "@/types/contracts/Banner";
 import ProgramOfferingDetailHeader from "@/components/common/ProgramOfferingDetailHeader.vue";
 import OfferingForm from "@/components/common/OfferingForm.vue";
@@ -89,7 +91,7 @@ export default {
   },
   setup(props: any) {
     const snackBar = useSnackBar();
-    const initialData = ref({} as OfferingFormBaseModel);
+    const initialData = ref({} as EducationProgramOfferingAPIOutDTO);
     const assessOfferingModalRef = ref(
       {} as ModalDialog<OfferingAssessmentAPIInDTO | boolean>,
     );
@@ -106,21 +108,10 @@ export default {
       () => initialData.value.offeringStatus === OfferingStatus.CreationPending,
     );
     const loadFormData = async () => {
-      const programDetails =
-        await EducationProgramService.shared.getEducationProgram(
-          props.programId,
-        );
-      const programOffering =
+      initialData.value =
         await EducationProgramOfferingService.shared.getOfferingDetails(
           props.offeringId,
         );
-
-      initialData.value = {
-        ...programOffering,
-        programIntensity: programDetails.programIntensity,
-        programDeliveryTypes: programDetails.programDeliveryTypes,
-        hasWILComponent: programDetails.hasWILComponent,
-      };
     };
 
     const assessOffering = async (offeringStatus: OfferingStatus) => {

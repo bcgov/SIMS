@@ -35,12 +35,16 @@ export default class ManageUsersObject {
     return cy.get("[data-cy='addNewUserModal']");
   }
 
+  addNewUserModalTitle() {
+    return this.addNewUserModal().contains("Add new user");
+  }
+
   isAdminRadioButton() {
     return cy.get("[data-cy='isAdmin']");
   }
 
   isLegalSigningAuthorityButton() {
-    return cy.get("[data-cy='isLegalSigningAuthority]");
+    return cy.get("[data-cy='isLegalSigningAuthority']");
   }
 
   addUserToAccountMessage() {
@@ -72,7 +76,7 @@ export default class ManageUsersObject {
   }
 
   getUsersList() {
-    return cy.get("[data-cy='usersList']").get("[role='row']");
+    return cy.get("[data-cy='userType']").parent();
   }
 
   inputUserIdOnAddUserModal() {
@@ -89,7 +93,7 @@ export default class ManageUsersObject {
 
   clickOnEdit(userEmail: string) {
     cy.get("[data-cy='usersList']")
-      .get("[role='cell']")
+      .parent()
       .contains(userEmail)
       .parent()
       .get("[data-cy='editUser']")

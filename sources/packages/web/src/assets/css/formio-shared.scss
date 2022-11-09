@@ -600,3 +600,14 @@
     text-decoration: none;
   }
 }
+
+// Align style for read-only dropdowns (e.g. province, canada, institution code).
+[disabled] {
+  background-color: $read-only-background;
+}
+
+// Align style for read-only form elements
+.form-control:disabled,
+.form-control[readonly] {
+  cursor: not-allowed;
+}

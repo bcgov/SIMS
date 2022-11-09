@@ -31,6 +31,9 @@ export function IsPeriodStartDate() {
 export function getPeriodStartDateProperty(
   target: unknown,
 ): string | undefined {
+  if (!target) {
+    return undefined;
+  }
   for (const property of Object.keys(target)) {
     const isStartDate = isPeriodStartDate(target, property);
     if (isStartDate) {

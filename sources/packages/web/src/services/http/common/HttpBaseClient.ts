@@ -72,6 +72,29 @@ export default abstract class HttpBaseClient {
   }
 
   /**
+   * Executes the POST call and returns Axios complete response.
+   * @param url url to execute the POST call.
+   * @param payload payload to be send.
+   * @returns complete Axios response.
+   */
+  protected async postCallFullResponse<T, TResult = PrimaryIdentifierAPIOutDTO>(
+    url: string,
+    payload: T,
+  ): Promise<AxiosResponse<TResult>> {
+    try {
+      const response = await this.apiClient.post(
+        url,
+        payload,
+        this.addAuthHeader(),
+      );
+      return response as AxiosResponse<TResult>;
+    } catch (error) {
+      this.handleRequestError(error);
+      throw error;
+    }
+  }
+
+  /**
    * Http call to download a file as response from API.
    ** When payload is passed, the file is downloaded on post call
    ** otherwise it is downloaded as get call.

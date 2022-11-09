@@ -14,14 +14,35 @@
 <script lang="ts">
 import { onMounted, ref, watch } from "vue";
 import { Formio } from "formiojs";
-import { SetupContext } from "vue";
+import { defineComponent } from "vue";
 import ApiClient from "@/services/http/ApiClient";
 import FormUploadService from "@/services/FormUploadService";
-import { FormIOCustomEvent } from "@/types";
+import {
+  FormIOChangeEvent,
+  FormIOComponent,
+  FormIOCustomEvent,
+  FormIOForm,
+} from "@/types";
 import { v4 as uuid } from "uuid";
 
-export default {
-  emits: ["submitted", "loaded", "changed", "customEvent", "render"],
+export default defineComponent({
+  emits: {
+    submitted: (submission: unknown, form: FormIOForm) => {
+      return !!submission && !!form;
+    },
+    changed: (form: FormIOForm, event: FormIOChangeEvent) => {
+      return !!form && !!event;
+    },
+    loaded: (form: FormIOForm) => {
+      return !!form;
+    },
+    customEvent: (form: FormIOForm, event: FormIOCustomEvent) => {
+      return !!form && !!event;
+    },
+    render: (form: FormIOForm, event: HTMLElement) => {
+      return !!form && !!event;
+    },
+  },
   props: {
     formName: {
       type: String,
@@ -39,11 +60,11 @@ export default {
       required: false,
     },
   },
-  setup(props: any, context: SetupContext) {
+  setup(props, context) {
     const formioContainerRef = ref(null);
     // Wait to show the spinner when there is an API call.
     const hideSpinner = ref(true);
-    let form: any;
+    let form: FormIOForm;
 
     // Update the form submission data and triggers the form redraw.
     // Redrawing ensures that components like dropdowns are going to
@@ -98,9 +119,9 @@ export default {
       // to avoid issues with HTML features that rely on the unique IDs.
       if (props.scoped) {
         const uniqueId = uuid();
-        const createUniqueIDs = (parentComponent: any) => {
+        const createUniqueIDs = (parentComponent: FormIOComponent) => {
           if (parentComponent.components) {
-            parentComponent.components.forEach((childComponent: any) => {
+            parentComponent.components.forEach((childComponent) => {
               childComponent.id = `${childComponent.id}${uniqueId}`;
               createUniqueIDs(childComponent);
             });
@@ -125,7 +146,7 @@ export default {
       context.emit("loaded", form);
 
       // Triggered when any component in the form is changed.
-      form.on("change", (event: any) => {
+      form.on("change", (event: FormIOChangeEvent) => {
         context.emit("changed", form, event);
       });
 
@@ -165,5 +186,5 @@ export default {
 
     return { formioContainerRef, hideSpinner };
   },
-};
+});
 </script>

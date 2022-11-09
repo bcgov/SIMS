@@ -21,7 +21,7 @@
           v-if="isAuthenticated && isAdmin"
           variant="text"
           :to="{
-            name: InstitutionRoutesConst.MANAGE_LOCATIONS,
+            name: InstitutionRoutesConst.INSTITUTION_PROFILE_EDIT,
           }"
           >Manage Institution</v-btn
         >

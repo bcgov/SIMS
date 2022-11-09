@@ -5,12 +5,7 @@
 <script lang="ts">
 import { onMounted, ref, SetupContext } from "vue";
 import { EducationProgramOfferingService } from "@/services/EducationProgramOfferingService";
-import { EducationProgramService } from "@/services/EducationProgramService";
-import {
-  OfferingFormBaseModel,
-  OfferingStatus,
-  OfferingRelationType,
-} from "@/types";
+import { OfferingStatus, OfferingRelationType } from "@/types";
 import { EducationProgramOfferingAPIOutDTO } from "@/services/http/dto";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import { BannerTypes } from "@/types/contracts/Banner";
@@ -40,37 +35,22 @@ export default {
   //TODO: is enhanced to load header values with it's own API call.
   emits: ["getHeaderDetails"],
   setup(props: any, context: SetupContext) {
-    const initialData = ref({} as OfferingFormBaseModel);
+    const initialData = ref({} as EducationProgramOfferingAPIOutDTO);
 
     onMounted(async () => {
-      const programPromise = EducationProgramService.shared.getEducationProgram(
-        props.programId,
-      );
-      let offeringPromise: Promise<EducationProgramOfferingAPIOutDTO>;
-
+      let offering: EducationProgramOfferingAPIOutDTO;
       if (props.relationType === OfferingRelationType.ActualOffering) {
-        offeringPromise =
-          EducationProgramOfferingService.shared.getOfferingDetails(
+        offering =
+          await EducationProgramOfferingService.shared.getOfferingDetails(
             props.offeringId,
           );
       } else {
-        offeringPromise =
-          EducationProgramOfferingService.shared.getPrecedingOfferingByActualOfferingId(
+        offering =
+          await EducationProgramOfferingService.shared.getPrecedingOfferingByActualOfferingId(
             props.offeringId,
           );
       }
-
-      const [program, offering] = await Promise.all([
-        programPromise,
-        offeringPromise,
-      ]);
-
-      initialData.value = {
-        ...offering,
-        programIntensity: program.programIntensity,
-        programDeliveryTypes: program.programDeliveryTypes,
-        hasWILComponent: program.hasWILComponent,
-      };
+      initialData.value = offering;
       context.emit("getHeaderDetails", {
         institutionName: offering.institutionName,
         submittedDate: offering.submittedDate,
