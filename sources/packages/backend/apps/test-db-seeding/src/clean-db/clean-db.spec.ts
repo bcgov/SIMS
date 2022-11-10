@@ -1,3 +1,4 @@
+require("../../../../env_setup");
 import { Test, TestingModule } from "@nestjs/testing";
 import { DatabaseModule } from "@sims/sims-db";
 import { CleanDb } from "./clean-db";

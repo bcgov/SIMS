@@ -17,13 +17,13 @@ import {
   createFakeUser,
 } from "@sims/test-utils";
 import { Repository } from "typeorm";
-import { UserTypeRoleHelperService } from "../../test-helper-services";
+import { UserTypeRoleHelperService } from "../../../test-helper-services";
 import {
   DataSeed,
   DataSeedMethod,
   SeedPriorityOrder,
-} from "../../test-organizer/data-seed.decorator";
-import { institutionEmail01, institutionEmail02 } from "../constants";
+} from "../../../test-organizer/data-seed.decorator";
+import { institutionUserName01, institutionUserName02 } from "../../constants";
 
 @Injectable()
 @DataSeed("provider", SeedPriorityOrder.FirstBatch)
@@ -46,7 +46,7 @@ export class InstitutionUserService {
   @DataSeedMethod("method")
   async createInstitutionLegalSigningAuthUser(): Promise<void> {
     // Create fake user.
-    const institutionUserName = institutionEmail01;
+    const institutionUserName = institutionUserName01;
     const fakeUser = createFakeUser(institutionUserName);
     const createdFakeUser = await this.userRepo.save(fakeUser);
 
@@ -86,7 +86,7 @@ export class InstitutionUserService {
   @DataSeedMethod("method")
   async createInstitutionAdmin(): Promise<void> {
     // Create fake user.
-    const institutionUserName = institutionEmail02;
+    const institutionUserName = institutionUserName02;
     const fakeUser = createFakeUser(institutionUserName);
     const createdFakeUser = await this.userRepo.save(fakeUser);
 

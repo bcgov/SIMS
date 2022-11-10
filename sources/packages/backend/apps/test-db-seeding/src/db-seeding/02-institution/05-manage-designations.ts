@@ -16,7 +16,7 @@ import {
   DataSeedMethod,
   SeedPriorityOrder,
 } from "../../test-organizer/data-seed.decorator";
-import { institutionEmail01, institutionEmail02 } from "../constants";
+import { institutionUserName01, institutionUserName02 } from "../constants";
 
 @Injectable()
 @DataSeed("provider", SeedPriorityOrder.LastBatch)
@@ -34,7 +34,7 @@ export class DesignationAgreementService {
    */
   @DataSeedMethod("method")
   async createApprovalDesignationAgreement(): Promise<void> {
-    const InstitutionLegalSigningUser = institutionEmail01;
+    const InstitutionLegalSigningUser = institutionUserName01;
 
     // Get fake institution.
     const fakeInstitution =
@@ -66,7 +66,7 @@ export class DesignationAgreementService {
    */
   @DataSeedMethod("method")
   async createPendingDesignationAgreement(): Promise<void> {
-    const InstitutionAdminUser = institutionEmail02;
+    const InstitutionAdminUser = institutionUserName02;
     // Get fake institution.
     const fakeInstitution =
       await this.institutionHelperService.getInstitutionByUserName(
