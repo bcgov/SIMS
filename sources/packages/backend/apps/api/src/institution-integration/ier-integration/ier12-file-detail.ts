@@ -54,7 +54,7 @@ export class IER12FileDetail implements IER12RequestFileLine {
   getFixedFormat(): string {
     this.totalGrants = this.getTotalGrantsFromDisbursementSchedule();
     const record = new StringBuilder();
-    record.appendWithStartFiller(this.assessmentId, 10, "0");
+    record.appendWithStartFiller(this.assessmentId, 10, NUMBER_FILLER);
     record.append(this.applicationNumber, 10);
     record.append(this.sin, 9);
     record.appendWithEndFiller(this.studentLastName, 25, SPACE_FILLER);
