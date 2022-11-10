@@ -134,6 +134,7 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
     return {
       offeringStatus: offeringValidation.offeringStatus,
       errors: offeringValidation.errors,
+      infos: offeringValidation.infos,
       warnings: offeringValidation.warnings,
       studyPeriodBreakdown: {
         fundedStudyPeriodDays: calculatedStudyBreaks.fundedStudyPeriodDays,

@@ -174,7 +174,7 @@
                       v-for="warning in slotProps.data.warnings"
                       :key="warning"
                     >
-                      {{ warning.warningMessage }}
+                      {{ warning.message }}
                     </li>
                   </ul>
                 </div>
@@ -188,7 +188,7 @@
 </template>
 
 <script lang="ts">
-import { ref, computed } from "vue";
+import { ref, computed, defineComponent } from "vue";
 import {
   OfferingsUploadBulkInsert,
   DEFAULT_PAGE_LIMIT,
@@ -208,7 +208,7 @@ import { OFFERING_VALIDATION_CSV_PARSE_ERROR } from "@/constants";
 const ACCEPTED_FILE_TYPE = "text/csv";
 const MAX_OFFERING_UPLOAD_SIZE = 4194304;
 
-export default {
+export default defineComponent({
   components: {
     StatusChipOffering,
   },
@@ -338,5 +338,5 @@ export default {
       uploadProgress,
     };
   },
-};
+});
 </script>

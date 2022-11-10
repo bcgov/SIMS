@@ -9,6 +9,7 @@ import { Allow, IsEnum, IsIn, IsNotEmpty, MaxLength } from "class-validator";
 import { Type } from "class-transformer";
 import {
   OfferingDeliveryOptions,
+  OfferingValidationInfos,
   OfferingValidationWarnings,
   WILComponentOptions,
 } from "../../../services";
@@ -125,7 +126,8 @@ export class EducationProgramOfferingAPIOutDTO {
   hasExistingApplication?: boolean;
   locationName?: string;
   institutionName?: string;
-  warnings: string[];
+  validationWarnings: string[];
+  validationInfos: string[];
 }
 
 export class EducationProgramOfferingSummaryAPIOutDTO {
@@ -185,7 +187,8 @@ export class OfferingChangeAssessmentAPIInDTO {
 export class OfferingValidationResultAPIOutDTO {
   offeringStatus?: OfferingStatus.Approved | OfferingStatus.CreationPending;
   errors: string[];
-  warnings: ValidationWarningResultAPIOutDTO[];
+  infos: ValidationResultAPIOutDTO[];
+  warnings: ValidationResultAPIOutDTO[];
   studyPeriodBreakdown: StudyPeriodBreakdownAPIOutDTO;
 }
 
@@ -202,15 +205,16 @@ export class OfferingBulkInsertValidationResultAPIOutDTO {
   endDate?: string;
   offeringStatus?: OfferingStatus.Approved | OfferingStatus.CreationPending;
   errors: string[];
-  warnings: ValidationWarningResultAPIOutDTO[];
+  warnings: ValidationResultAPIOutDTO[];
 }
 
 /**
  * Represents an error considered not critical for
  * an offering and provides a user-friendly message
- * and a type that uniquely identifies this warning.
+ * and a type that uniquely identifies this warning
+ * or info.
  */
-export class ValidationWarningResultAPIOutDTO {
-  warningType: OfferingValidationWarnings;
-  warningMessage: string;
+export class ValidationResultAPIOutDTO {
+  typeCode: OfferingValidationWarnings | OfferingValidationInfos;
+  message: string;
 }

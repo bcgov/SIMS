@@ -42,7 +42,7 @@ import {
   EducationProgramOfferingAPIInDTO,
   OfferingValidationResultAPIOutDTO,
   StudyPeriodBreakdownAPIOutDTO,
-  ValidationWarningResultAPIOutDTO,
+  ValidationResultAPIOutDTO,
 } from "@/services/http/dto";
 import ConfirmModal from "@/components/common/modals/ConfirmModal.vue";
 import { EducationProgramOfferingService } from "@/services/EducationProgramOfferingService";
@@ -107,7 +107,7 @@ export default defineComponent({
             data,
           );
         const warningsTypes = validationResult.warnings.map(
-          (warning) => warning.warningType,
+          (warning) => warning.typeCode,
         );
         setComponentValue(
           offeringForm,
@@ -160,11 +160,9 @@ export default defineComponent({
     /**
      * Move the screen to the first warning banner, is any.
      */
-    const scrollToWarningBanner = (
-      warnings: ValidationWarningResultAPIOutDTO[],
-    ) => {
+    const scrollToWarningBanner = (warnings: ValidationResultAPIOutDTO[]) => {
       const [warningToScroll] = warnings;
-      const warningBannerComponent = `formio-component-${warningToScroll.warningType}`;
+      const warningBannerComponent = `formio-component-${warningToScroll.typeCode}`;
       const [warningBanner] = document.getElementsByClassName(
         warningBannerComponent,
       );

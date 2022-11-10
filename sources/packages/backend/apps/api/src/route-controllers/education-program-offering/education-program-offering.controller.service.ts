@@ -233,8 +233,8 @@ export class EducationProgramOfferingControllerService {
             offeringStatus: validation.offeringStatus,
             errors: validation.errors,
             warnings: validation.warnings.map((warning) => ({
-              warningType: warning.warningType,
-              warningMessage: warning.warningMessage,
+              typeCode: warning.typeCode,
+              message: warning.message,
             })),
           };
         });
@@ -326,8 +326,9 @@ export class EducationProgramOfferingControllerService {
       assessedDate: offering.assessedDate,
       courseLoad: offering.courseLoad,
       hasExistingApplication,
-      warnings: validatedOffering.warnings.map(
-        (warning) => warning.warningType,
+      validationInfos: validatedOffering.infos.map((info) => info.typeCode),
+      validationWarnings: validatedOffering.warnings.map(
+        (warning) => warning.typeCode,
       ),
     };
   }

@@ -110,7 +110,8 @@ export interface EducationProgramOfferingAPIOutDTO {
   hasExistingApplication?: boolean;
   locationName?: string;
   institutionName?: string;
-  warnings: string[];
+  validationWarnings: string[];
+  validationInfos: string[];
 }
 
 export interface StudyBreakAPIOutDTO {
@@ -146,17 +147,18 @@ export interface OfferingBulkInsertValidationResultAPIOutDTO {
   endDate?: string;
   offeringStatus?: OfferingStatus.Approved | OfferingStatus.CreationPending;
   errors: string[];
-  warnings: ValidationWarningResultAPIOutDTO[];
+  warnings: ValidationResultAPIOutDTO[];
 }
 
 /**
  * Represents an error considered not critical for
  * an offering and provides a user-friendly message
- * and a type that uniquely identifies this warning.
+ * and a type that uniquely identifies this warning
+ * or info.
  */
-export interface ValidationWarningResultAPIOutDTO {
-  warningType: string;
-  warningMessage: string;
+export interface ValidationResultAPIOutDTO {
+  typeCode: string;
+  message: string;
 }
 
 export interface StudyPeriodBreakdownAPIOutDTO {
@@ -173,7 +175,7 @@ export interface StudyPeriodBreakdownAPIOutDTO {
 export interface OfferingValidationResultAPIOutDTO {
   offeringStatus?: OfferingStatus.Approved | OfferingStatus.CreationPending;
   errors: string[];
-  warnings: ValidationWarningResultAPIOutDTO[];
+  warnings: ValidationResultAPIOutDTO[];
   studyPeriodBreakdown: StudyPeriodBreakdownAPIOutDTO;
   validationDate: Date;
 }
