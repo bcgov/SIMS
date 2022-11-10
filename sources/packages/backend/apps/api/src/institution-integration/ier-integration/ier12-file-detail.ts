@@ -17,14 +17,14 @@ import {
   SPACE_FILLER,
 } from "../../cra-integration/cra-integration.models";
 import { round, StringBuilder } from "../../utilities";
-import { IER12RequestFileLine } from "./models/ier12-integration.model";
+import { IER12FileLine } from "./models/ier12-integration.model";
 
 /**
  * Record of a IER12 request file.
  * The documentation about it is available on the document
  * 'SIMSSFAS - Institution File layouts In Analysis Folder'.
  */
-export class IER12FileDetail implements IER12RequestFileLine {
+export class IER12FileDetail implements IER12FileLine {
   assessmentId: number;
   applicationNumber: string;
   sin: string;

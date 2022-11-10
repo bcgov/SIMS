@@ -67,7 +67,7 @@ import { DisbursementReceiptRequestService } from "./esdc-integration/disburseme
 import { FedRestrictionProcessingService } from "./esdc-integration/fed-restriction-integration/fed-restriction-processing.service";
 import { FedRestrictionIntegrationService } from "./esdc-integration/fed-restriction-integration/fed-restriction-integration.service";
 import { WorkflowClientService, SequenceControlService } from "@sims/services";
-import { IER12RequestService } from "./institution-integration/ier-integration/ier12-request.service";
+import { IER12FileService } from "./institution-integration/ier-integration/ier12-file.service";
 import { IER12IntegrationService } from "./institution-integration/ier-integration/ier12-integration.service";
 
 @Module({
@@ -113,7 +113,7 @@ import { IER12IntegrationService } from "./institution-integration/ier-integrati
     SFASIntegrationService,
     SFASIndividualService,
     SFASRestrictionService,
-    IER12RequestService,
+    IER12FileService,
     IER12IntegrationService,
     ECertFileHandler,
     DisbursementScheduleErrorsService,

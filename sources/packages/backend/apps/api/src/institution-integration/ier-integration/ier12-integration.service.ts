@@ -7,7 +7,7 @@ import { SFTPConfig } from "../../types";
 import { IER12FileDetail } from "./ier12-file-detail";
 import {
   IER12Record,
-  IER12RequestFileLine,
+  IER12FileLine,
   IER12UploadResult,
 } from "./models/ier12-integration.model";
 
@@ -31,10 +31,8 @@ export class IER12IntegrationService {
    * program and application objects data.
    * @returns Complete IERFileLines record as an array.
    */
-  createIER12RequestContent(
-    ier12Records: IER12Record[],
-  ): IER12RequestFileLine[] {
-    const ierFileLines: IER12RequestFileLine[] = [];
+  createIER12FileContent(ier12Records: IER12Record[]): IER12FileLine[] {
+    const ierFileLines: IER12FileLine[] = [];
     const fileRecords = ier12Records.map((ierRecord) => {
       const ierFileDetail = new IER12FileDetail();
       ierFileDetail.applicationNumber = ierRecord.applicationNumber;
@@ -75,12 +73,12 @@ export class IER12IntegrationService {
    * @returns Upload result.
    */
   async uploadContent(
-    ierFileLines: IER12RequestFileLine[],
+    ierFileLines: IER12FileLine[],
     remoteFilePath: string,
   ): Promise<IER12UploadResult> {
     // Generate fixed formatted file.
     const fixedFormattedLines: string[] = ierFileLines.map(
-      (line: IER12RequestFileLine) => line.getFixedFormat(),
+      (line: IER12FileLine) => line.getFixedFormat(),
     );
     const ierFileContent = fixedFormattedLines.join("\r\n");
     // Send the file to ftp.

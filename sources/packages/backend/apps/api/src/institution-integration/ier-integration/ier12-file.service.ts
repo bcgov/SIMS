@@ -12,7 +12,7 @@ import {
 } from "./models/ier12-integration.model";
 
 @Injectable()
-export class IER12RequestService {
+export class IER12FileService {
   InstitutionIntegrationConfig: InstitutionIntegrationConfig;
   constructor(
     config: ConfigService,
@@ -34,9 +34,7 @@ export class IER12RequestService {
    * particular institution is generated.
    * @returns Processing IER 12 request result.
    */
-  async processIER12Request(
-    generatedDate?: Date,
-  ): Promise<IER12UploadResult[]> {
+  async processIER12File(generatedDate?: Date): Promise<IER12UploadResult[]> {
     this.logger.log(
       `Retrieving pending assessment on ${generatedDate} for IER 12 request...`,
     );
@@ -90,7 +88,7 @@ export class IER12RequestService {
     fileRecords: Record<string, IER12Record[]>,
   ): Promise<IER12UploadResult> {
     // Create the Request content for the IER 12 file by populating the content.
-    const fileContent = this.ierIntegrationService.createIER12RequestContent(
+    const fileContent = this.ierIntegrationService.createIER12FileContent(
       fileRecords[institutionCode],
     );
     // Create the request filename with the file path for the each and every institutionCode.

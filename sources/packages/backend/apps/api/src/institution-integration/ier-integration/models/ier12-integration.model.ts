@@ -14,7 +14,7 @@ export interface IER12UploadResult {
  * interface allow the object to be represented
  * as a formatted fixed string.
  */
-export interface IER12RequestFileLine {
+export interface IER12FileLine {
   getFixedFormat(): string;
 }
 
