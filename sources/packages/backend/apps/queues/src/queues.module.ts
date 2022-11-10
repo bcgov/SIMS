@@ -1,7 +1,6 @@
 require("../../../env_setup_apps");
 import { Module } from "@nestjs/common";
-import { QueueRootModule } from "@sims/queue";
-import { QueueRegistryModule } from "@sims/queue";
+import { QueueRootModule, QueueRegistryModule } from "@sims/queue";
 import { StartApplicationAssessmentProcessor } from "./processors";
 import { WorkflowClientService, ZeebeModule } from "@sims/services";
 
