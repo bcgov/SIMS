@@ -83,6 +83,11 @@ export default defineComponent({
       type: Number,
       required: true,
     },
+    enableValidationsOnInit: {
+      type: Boolean,
+      required: true,
+      default: false,
+    },
   },
   setup(props, context) {
     const snackBar = useSnackBar();
@@ -93,6 +98,10 @@ export default defineComponent({
     // further validations to happen automatically when a component
     // tagged with FORMIO_EXECUTE_VALIDATION_TAG changes.
     let validationStarted = false;
+
+    const allowValidation = (): boolean => {
+      return validationStarted || props.enableValidationsOnInit;
+    };
 
     // Keep the form reference once it is created
     // to use the setComponentValue later.
@@ -123,7 +132,7 @@ export default defineComponent({
           validationResult.studyPeriodBreakdown,
         );
         // Avoid updating the validation fields if the validation was never manually requested.
-        if (validationStarted) {
+        if (allowValidation()) {
           const warningsTypes = validationResult.warnings.map(
             (warning) => warning.typeCode,
           );
@@ -235,12 +244,13 @@ export default defineComponent({
       event: FormIOChangeEvent,
     ) => {
       if (
-        event.changed?.component?.tags?.includes(FORMIO_EXECUTE_CALCULATION_TAG)
-      ) {
-        await validateOfferingData(form.data);
-      } else if (
-        validationStarted &&
-        event.changed?.component?.tags?.includes(FORMIO_EXECUTE_VALIDATION_TAG)
+        event.changed?.component?.tags?.includes(
+          FORMIO_EXECUTE_CALCULATION_TAG,
+        ) ||
+        (allowValidation() &&
+          event.changed?.component?.tags?.includes(
+            FORMIO_EXECUTE_VALIDATION_TAG,
+          ))
       ) {
         await validateOfferingData(form.data);
       }
