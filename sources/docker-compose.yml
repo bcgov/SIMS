@@ -17,6 +17,9 @@ services:
       - POSTGRES_DB=${POSTGRES_DB}
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - REDIS_HOST=${REDIS_HOST}
+      - REDIS_PORT=${REDIS_PORT}
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
       - KEYCLOAK_AUTH_URL=${KEYCLOAK_AUTH_URL}
       - KEYCLOAK_REALM=${KEYCLOAK_REALM}
       - KEYCLOAK_CLIENT_STUDENT=${KEYCLOAK_CLIENT_STUDENT}
@@ -95,7 +98,10 @@ services:
       - POSTGRES_PORT=${POSTGRES_PORT}
       - POSTGRES_DB=${POSTGRES_DB}
       - POSTGRES_USER=${POSTGRES_USER}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}    
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - REDIS_HOST=${REDIS_HOST}
+      - REDIS_PORT=${REDIS_PORT}
+      - REDIS_PASSWORD=${REDIS_PASSWORD}    
       - ZEEBE_ADDRESS=${ZEEBE_ADDRESS}
       - ZEEBE_CLIENT_ID=${ZEEBE_CLIENT_ID}
       - ZEEBE_CLIENT_SECRET=${ZEEBE_CLIENT_SECRET}
@@ -146,6 +152,20 @@ services:
     networks:
       - local-network
   # - Postgres
+  # Redis
+  redis:
+    image: redis-${PROJECT_NAME}:${BUILD_REF}-${BUILD_ID}
+    container_name: queue-${PROJECT_NAME}-${BUILD_REF}-${BUILD_ID}
+    build:
+      context: ./.docker/redis
+    ports:
+      - ${REDIS_PORT}:${REDIS_PORT}
+    command: "--port ${REDIS_PORT} --requirepass ${REDIS_PASSWORD} --appendonly yes --appendfsync no"
+    volumes:
+      - redis:/var/lib/redis/data
+    networks:
+      - local-network
+  # - Redis
   # - services
   # Networks
 networks:
@@ -156,5 +176,6 @@ networks:
 volumes:
   postgres:
     name: postgres-${PROJECT_NAME}-${BUILD_REF}-${BUILD_ID}
-
+  redis:
+    name: redis-${PROJECT_NAME}-${BUILD_REF}-${BUILD_ID}
 # - Volumes

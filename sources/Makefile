@@ -12,6 +12,9 @@ export POSTGRES_PORT := $(or $(POSTGRES_PORT), 5432)
 export POSTGRES_USER := $(or $(POSTGRES_USER), admin)
 export POSTGRES_PASSWORD := $(or $(POSTGRES_PASSWORD), aest_sim)
 export POSTGRES_DB := $(or $(POSTGRES_DB), aest)
+# Queue
+export REDIS_PORT := $(or $(REDIS_PORT), 6379)
+export REDIS_PASSWORD := $(or $(REDIS_PASSWORD), redisPassword)
 # Key Cloak
 export KEYCLOAK_AUTH_URL := $(or $(KEYCLOAK_AUTH_URL), https://dev.oidc.gov.bc.ca/auth/)
 export KEYCLOAK_REALM := $(or $(KEYCLOAK_REALM), jxoe2o46)
@@ -37,6 +40,7 @@ local-api: | print-status local-build api-only
 local-api-detached: | print-status local-build api-detached
 db: | print-status postgres
 test-api: | print-status local-api-test
+queue: | print-status redis
 
 ####################################################################
 ## Status Output
@@ -55,6 +59,9 @@ print-status:
 	@echo " | POSTGRES_DB: $(POSTGRES_DB) "
 	@echo " | POSTGRES_USER: $(POSTGRES_USER) "
 	@echo " | POSTGRES_PASSWORD: $(POSTGRES_PASSWORD) "
+	@echo " | Queue Configs"
+	@echo " | REDIS_PORT: $(REDIS_PORT) "
+	@echo " | REDIS_PASSWORD: $(REDIS_PASSWORD) "
 	@echo " | Key Cloak Configs"
 	@echo " | KEYCLOAK_AUTH_URL: $(KEYCLOAK_AUTH_URL) "
 	@echo " | KEYCLOAK_REALM: $(KEYCLOAK_REALM) "
@@ -100,15 +107,22 @@ postgres:
 	@echo "+\n++ Make: Run local db.\n+"
 	@docker-compose -f docker-compose.yml up postgres
 
+# Local Queue
+redis:
+	@echo "+\n++ Make: Run local queue.\n+"
+	@docker-compose -f docker-compose.yml up redis
+
 # Local API only
 api-only:
 	@echo "+\n++ Make: Building and running API only"
 	@docker-compose -f docker-compose.yml up -d postgres
+	@docker-compose -f docker-compose.yml up -d redis
 	@docker-compose -f docker-compose.yml up api
 
 api-detached:
 	@echo "+\n++ Make: Running DB and API only"
 	@docker-compose -f docker-compose.yml up -d postgres
+	@docker-compose -f docker-compose.yml up -d redis
 	@docker-compose -f docker-compose.yml up -d api
 
 # Local App
