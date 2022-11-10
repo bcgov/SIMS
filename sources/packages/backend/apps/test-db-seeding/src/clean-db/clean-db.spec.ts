@@ -1,7 +1,5 @@
 import { Test, TestingModule } from "@nestjs/testing";
-import { TypeOrmModule } from "@nestjs/typeorm";
 import { DatabaseModule } from "@sims/sims-db";
-import { DataSource } from "typeorm";
 import { CleanDb } from "./clean-db";
 
 jest.setTimeout(15000);

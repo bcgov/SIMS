@@ -88,11 +88,9 @@ export class SeedExecuter implements OnModuleInit {
     name: string;
     order?: number;
   }>[][] {
-    const sortedArray = discoveredClass.sort((a, b) =>
-      a.meta.order < b.meta.order ? -1 : 1,
-    );
+    discoveredClass.sort((a, b) => (a.meta.order < b.meta.order ? -1 : 1));
 
-    return sortedArray.reduce((r, o) => {
+    return discoveredClass.reduce((r, o) => {
       let temp = r.find(
         ([
           {
@@ -101,7 +99,8 @@ export class SeedExecuter implements OnModuleInit {
         ]) => order === o.meta.order,
       );
       if (!temp) {
-        r.push((temp = []));
+        temp = [];
+        r.push(temp);
       }
       temp.push(o);
       return r;
