@@ -1,9 +1,9 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { InstitutionService, InstitutionTypeService } from "../../services";
-import { INSTITUTION_TYPE_BC_PRIVATE } from "../../utilities";
 import { AddressInfo } from "@sims/sims-db";
 import { InstitutionDetailAPIOutDTO } from "./models/institution.dto";
 import { OptionItemAPIOutDTO } from "../models/common.dto";
+import { INSTITUTION_TYPE_BC_PRIVATE } from "@sims/test-utils/constants";
 
 /**
  * Service/Provider for Institutions controller to wrap the common methods.
