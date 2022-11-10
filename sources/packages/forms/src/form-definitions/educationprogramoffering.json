@@ -661,6 +661,9 @@
             },
             {
               "label": "HTML",
+              "labelWidth": "",
+              "labelMargin": "",
+              "tag": "p",
               "className": "alert alert-info fa fa-info-circle w-100",
               "attrs": [
                 {
@@ -671,11 +674,27 @@
               "content": "<strong class=\"ml-2\"> Here’s an example of what students will see.</strong>\n<br>e.g. 2022 Winter co-op (Jan 15 2022 - Mar 20 2022) - Year 1",
               "refreshOnChange": false,
               "customClass": "banner-info",
+              "hidden": false,
+              "modalEdit": false,
               "key": "html7",
+              "tags": [],
+              "properties": {},
               "conditional": {
                 "show": true,
                 "when": "showYearOfStudy",
-                "eq": "true"
+                "eq": "true",
+                "json": ""
+              },
+              "customConditional": "",
+              "logic": [],
+              "attributes": {},
+              "overlay": {
+                "style": "",
+                "page": "",
+                "left": "",
+                "top": "",
+                "width": "",
+                "height": ""
               },
               "type": "htmlelement",
               "input": false,
@@ -688,11 +707,9 @@
               "protected": false,
               "unique": false,
               "persistent": false,
-              "hidden": false,
               "clearOnHide": true,
               "refreshOn": "",
               "redrawOn": "",
-              "modalEdit": false,
               "dataGridLabel": false,
               "labelPosition": "top",
               "description": "",
@@ -707,7 +724,6 @@
               "calculateValue": "",
               "calculateServer": false,
               "widget": null,
-              "attributes": {},
               "validateOn": "change",
               "validate": {
                 "required": false,
@@ -717,22 +733,13 @@
                 "multiple": false,
                 "unique": false
               },
-              "overlay": {
-                "style": "",
-                "left": "",
-                "top": "",
-                "width": "",
-                "height": ""
-              },
               "allowCalculateOverride": false,
               "encrypted": false,
               "showCharCount": false,
               "showWordCount": false,
-              "properties": {},
               "allowMultipleMasks": false,
               "addons": [],
-              "tag": "p",
-              "id": "exactv"
+              "id": "ey5iid"
             },
             {
               "label": "How will this be offered?",
@@ -788,7 +795,9 @@
               "errorLabel": "",
               "errors": "",
               "key": "offeringIntensity",
-              "tags": [],
+              "tags": [
+                "execute-validation"
+              ],
               "properties": {},
               "conditional": {
                 "show": null,
@@ -826,7 +835,7 @@
               "addons": [],
               "inputType": "radio",
               "fieldSet": false,
-              "id": "evasqch",
+              "id": "epwmfzr",
               "defaultValue": ""
             },
             {
@@ -1069,9 +1078,21 @@
             },
             {
               "label": "How will this offering be delivered?",
+              "labelPosition": "top",
+              "labelWidth": "",
+              "labelMargin": "",
               "optionsLabelPosition": "right",
+              "description": "",
+              "tooltip": "",
+              "customClass": "",
+              "tabindex": "",
               "inline": false,
+              "hidden": false,
+              "hideLabel": false,
+              "autofocus": false,
+              "disabled": false,
               "tableView": false,
+              "modalEdit": false,
               "values": [
                 {
                   "label": "Onsite",
@@ -1089,73 +1110,74 @@
                   "shortcut": ""
                 }
               ],
+              "dataType": "",
+              "persistent": true,
+              "protected": false,
+              "dbIndex": false,
+              "encrypted": false,
+              "redrawOn": "",
+              "clearOnHide": true,
+              "customDefaultValue": "",
+              "calculateValue": "",
+              "calculateServer": false,
+              "allowCalculateOverride": false,
               "validate": {
                 "required": true,
                 "onlyAvailableItems": true,
+                "customMessage": "",
                 "custom": "",
                 "customPrivate": false,
+                "json": "",
                 "strictDateValidation": false,
                 "multiple": false,
                 "unique": false
               },
+              "errorLabel": "",
+              "errors": "",
               "key": "offeringDelivered",
+              "tags": [
+                "execute-validation"
+              ],
+              "properties": {},
+              "conditional": {
+                "show": null,
+                "when": null,
+                "eq": "",
+                "json": ""
+              },
+              "customConditional": "",
+              "logic": [],
               "attributes": {
                 "data-cy": "offeringDelivered"
+              },
+              "overlay": {
+                "style": "",
+                "page": "",
+                "left": "",
+                "top": "",
+                "width": "",
+                "height": ""
               },
               "type": "radio",
               "input": true,
               "hideOnChildrenHidden": false,
               "placeholder": "",
               "prefix": "",
-              "customClass": "",
               "suffix": "",
               "multiple": false,
-              "defaultValue": null,
-              "protected": false,
               "unique": false,
-              "persistent": true,
-              "hidden": false,
-              "clearOnHide": true,
               "refreshOn": "",
-              "redrawOn": "",
-              "modalEdit": false,
               "dataGridLabel": false,
-              "labelPosition": "top",
-              "description": "",
-              "errorLabel": "",
-              "tooltip": "",
-              "hideLabel": false,
-              "tabindex": "",
-              "disabled": false,
-              "autofocus": false,
-              "dbIndex": false,
-              "customDefaultValue": "",
-              "calculateValue": "",
-              "calculateServer": false,
               "widget": null,
               "validateOn": "change",
-              "conditional": {
-                "show": null,
-                "when": null,
-                "eq": ""
-              },
-              "overlay": {
-                "style": "",
-                "left": "",
-                "top": "",
-                "width": "",
-                "height": ""
-              },
-              "allowCalculateOverride": false,
-              "encrypted": false,
               "showCharCount": false,
               "showWordCount": false,
-              "properties": {},
               "allowMultipleMasks": false,
               "addons": [],
               "inputType": "radio",
               "fieldSet": false,
-              "id": "eal85aq"
+              "id": "edsywf7",
+              "defaultValue": ""
             },
             {
               "label": "HTML",
@@ -1235,9 +1257,21 @@
             },
             {
               "label": "Does this contain a work-integrated learning component?",
+              "labelPosition": "top",
+              "labelWidth": "",
+              "labelMargin": "",
               "optionsLabelPosition": "right",
+              "description": "",
+              "tooltip": "",
+              "customClass": "",
+              "tabindex": "",
               "inline": false,
+              "hidden": false,
+              "hideLabel": false,
+              "autofocus": false,
+              "disabled": false,
               "tableView": false,
+              "modalEdit": false,
               "values": [
                 {
                   "label": "Yes",
@@ -1250,72 +1284,73 @@
                   "shortcut": ""
                 }
               ],
+              "dataType": "",
+              "persistent": true,
+              "protected": false,
+              "dbIndex": false,
+              "encrypted": false,
+              "redrawOn": "",
+              "clearOnHide": true,
+              "customDefaultValue": "",
+              "calculateValue": "",
+              "calculateServer": false,
+              "allowCalculateOverride": false,
               "validate": {
                 "required": true,
                 "onlyAvailableItems": true,
+                "customMessage": "",
                 "custom": "",
                 "customPrivate": false,
+                "json": "",
                 "strictDateValidation": false,
                 "multiple": false,
                 "unique": false
               },
-              "key": "hasOfferingWILComponent",
-              "attributes": {
-                "data-cy": "hasOfferingWILComponent"
-              },
-              "type": "radio",
-              "input": true,
-              "placeholder": "",
-              "prefix": "",
-              "customClass": "",
-              "suffix": "",
-              "multiple": false,
-              "defaultValue": null,
-              "protected": false,
-              "unique": false,
-              "persistent": true,
-              "hidden": false,
-              "clearOnHide": true,
-              "refreshOn": "",
-              "redrawOn": "",
-              "modalEdit": false,
-              "dataGridLabel": false,
-              "labelPosition": "top",
-              "description": "",
               "errorLabel": "",
-              "tooltip": "",
-              "hideLabel": false,
-              "tabindex": "",
-              "disabled": false,
-              "autofocus": false,
-              "dbIndex": false,
-              "customDefaultValue": "",
-              "calculateValue": "",
-              "calculateServer": false,
-              "widget": null,
-              "validateOn": "change",
+              "errors": "",
+              "key": "hasOfferingWILComponent",
+              "tags": [
+                "execute-validation"
+              ],
+              "properties": {},
               "conditional": {
                 "show": null,
                 "when": null,
-                "eq": ""
+                "eq": "",
+                "json": ""
+              },
+              "customConditional": "",
+              "logic": [],
+              "attributes": {
+                "data-cy": "hasOfferingWILComponent"
               },
               "overlay": {
                 "style": "",
+                "page": "",
                 "left": "",
                 "top": "",
                 "width": "",
                 "height": ""
               },
-              "allowCalculateOverride": false,
-              "encrypted": false,
+              "type": "radio",
+              "input": true,
+              "placeholder": "",
+              "prefix": "",
+              "suffix": "",
+              "multiple": false,
+              "unique": false,
+              "refreshOn": "",
+              "dataGridLabel": false,
+              "widget": null,
+              "validateOn": "change",
               "showCharCount": false,
               "showWordCount": false,
-              "properties": {},
               "allowMultipleMasks": false,
               "addons": [],
               "inputType": "radio",
               "fieldSet": false,
-              "id": "eh3xnvp"
+              "id": "er8r2ja",
+              "defaultValue": ""
             },
             {
               "label": "HTML",
@@ -1728,7 +1763,7 @@
                               "errors": "",
                               "key": "studyStartDate",
                               "tags": [
-                                "execute-calculation"
+                                "execute-validation"
                               ],
                               "properties": {},
                               "conditional": {
@@ -1756,7 +1791,7 @@
                               "dataGridLabel": false,
                               "addons": [],
                               "inputType": "text",
-                              "id": "earft89",
+                              "id": "e9c0jo",
                               "defaultValue": ""
                             }
                           ],
@@ -1847,7 +1882,7 @@
                               "errors": "",
                               "key": "studyEndDate",
                               "tags": [
-                                "execute-calculation"
+                                "execute-validation"
                               ],
                               "properties": {},
                               "conditional": {
@@ -1875,7 +1910,7 @@
                               "dataGridLabel": false,
                               "addons": [],
                               "inputType": "text",
-                              "id": "ecipe58",
+                              "id": "ef8521a",
                               "defaultValue": ""
                             }
                           ],
@@ -2556,7 +2591,7 @@
                       "errors": "",
                       "key": "breakStartDate",
                       "tags": [
-                        "execute-calculation"
+                        "execute-validation"
                       ],
                       "properties": {},
                       "conditional": {
@@ -2583,7 +2618,7 @@
                       "refreshOn": "",
                       "addons": [],
                       "inputType": "text",
-                      "id": "eya3d0r0000000000000000000000",
+                      "id": "ejgboq00",
                       "defaultValue": ""
                     },
                     {
@@ -2665,7 +2700,7 @@
                       "errors": "",
                       "key": "breakEndDate",
                       "tags": [
-                        "execute-calculation"
+                        "execute-validation"
                       ],
                       "properties": {},
                       "conditional": {
@@ -2692,7 +2727,7 @@
                       "refreshOn": "",
                       "addons": [],
                       "inputType": "text",
-                      "id": "eke9ttb000000000000000000000",
+                      "id": "esg89z90",
                       "defaultValue": ""
                     },
                     {
@@ -2723,7 +2758,7 @@
                       "key": "breakDays",
                       "type": "number",
                       "input": true,
-                      "id": "ewdj5ald0000000000000000000000000000000000000000000",
+                      "id": "ewdj5ald0000000000000000000000000000000000000000000000000000000000000000",
                       "placeholder": "",
                       "prefix": "",
                       "customClass": "",
@@ -2798,7 +2833,7 @@
                       "key": "eligibleBreakDays",
                       "type": "number",
                       "input": true,
-                      "id": "eqifkdp0000000000000000000000000000000000000000000",
+                      "id": "eqifkdp0000000000000000000000000000000000000000000000000000000000000000",
                       "placeholder": "",
                       "prefix": "",
                       "customClass": "",
@@ -2874,7 +2909,7 @@
                       "key": "ineligibleBreakDays",
                       "type": "number",
                       "input": true,
-                      "id": "e3snjj70000000000000000000000000000000000000000000",
+                      "id": "e3snjj70000000000000000000000000000000000000000000000000000000000000000",
                       "placeholder": "",
                       "prefix": "",
                       "customClass": "",
@@ -3869,7 +3904,10 @@
             },
             {
               "label": "HTML",
-              "className": "alert alert-warning fa fa-exclamation-triangle w-100",
+              "labelWidth": "",
+              "labelMargin": "",
+              "tag": "p",
+              "className": "alert alert-info fa fa-info-circle w-100",
               "attrs": [
                 {
                   "attr": "",
@@ -3878,9 +3916,29 @@
               ],
               "content": "<strong class=\"ml-2\">The combined study breaks exceed the 10% threshold as outlined in StudentAid BC policy</strong>\n<br>\n<span>Excess break will be deducted from total funded study period weeks.</span>",
               "refreshOnChange": true,
-              "customClass": "banner-warning",
+              "customClass": "banner-info",
+              "hidden": false,
+              "modalEdit": false,
               "key": "invalidStudyBreaksCombinedThresholdPercentage",
-              "customConditional": "show = data.warnings.indexOf(component.key) !== -1;",
+              "tags": [],
+              "properties": {},
+              "conditional": {
+                "show": null,
+                "when": null,
+                "eq": "",
+                "json": ""
+              },
+              "customConditional": "show = data.infos.indexOf(component.key) !== -1;",
+              "logic": [],
+              "attributes": {},
+              "overlay": {
+                "style": "",
+                "page": "",
+                "left": "",
+                "top": "",
+                "width": "",
+                "height": ""
+              },
               "type": "htmlelement",
               "input": false,
               "tableView": false,
@@ -3892,11 +3950,9 @@
               "protected": false,
               "unique": false,
               "persistent": false,
-              "hidden": false,
               "clearOnHide": true,
               "refreshOn": "",
               "redrawOn": "",
-              "modalEdit": false,
               "dataGridLabel": false,
               "labelPosition": "top",
               "description": "",
@@ -3911,7 +3967,6 @@
               "calculateValue": "",
               "calculateServer": false,
               "widget": null,
-              "attributes": {},
               "validateOn": "change",
               "validate": {
                 "required": false,
@@ -3921,27 +3976,13 @@
                 "multiple": false,
                 "unique": false
               },
-              "conditional": {
-                "show": null,
-                "when": null,
-                "eq": ""
-              },
-              "overlay": {
-                "style": "",
-                "left": "",
-                "top": "",
-                "width": "",
-                "height": ""
-              },
               "allowCalculateOverride": false,
               "encrypted": false,
               "showCharCount": false,
               "showWordCount": false,
-              "properties": {},
               "allowMultipleMasks": false,
               "addons": [],
-              "tag": "p",
-              "id": "edzxabs"
+              "id": "e6gjslr"
             },
             {
               "label": "HTML",
@@ -5427,6 +5468,79 @@
       "addons": [],
       "inputType": "hidden",
       "id": "ectrof5"
+    },
+    {
+      "label": "Array of offerings information (banners) calculated on the server and used to display warnings banners",
+      "labelWidth": "",
+      "labelMargin": "",
+      "customClass": "",
+      "modalEdit": false,
+      "defaultValue": null,
+      "persistent": "client-only",
+      "protected": false,
+      "dbIndex": false,
+      "encrypted": false,
+      "redrawOn": "",
+      "customDefaultValue": "",
+      "calculateValue": "",
+      "calculateServer": false,
+      "key": "infos",
+      "tags": [],
+      "properties": {},
+      "logic": [],
+      "attributes": {},
+      "overlay": {
+        "style": "",
+        "page": "",
+        "left": "",
+        "top": "",
+        "width": "",
+        "height": ""
+      },
+      "type": "hidden",
+      "input": true,
+      "tableView": false,
+      "placeholder": "",
+      "prefix": "",
+      "suffix": "",
+      "multiple": false,
+      "unique": false,
+      "hidden": false,
+      "clearOnHide": true,
+      "refreshOn": "",
+      "dataGridLabel": false,
+      "labelPosition": "top",
+      "description": "",
+      "errorLabel": "",
+      "tooltip": "",
+      "hideLabel": false,
+      "tabindex": "",
+      "disabled": false,
+      "autofocus": false,
+      "widget": {
+        "type": "input"
+      },
+      "validateOn": "change",
+      "validate": {
+        "required": false,
+        "custom": "",
+        "customPrivate": false,
+        "strictDateValidation": false,
+        "multiple": false,
+        "unique": false
+      },
+      "conditional": {
+        "show": null,
+        "when": null,
+        "eq": ""
+      },
+      "allowCalculateOverride": false,
+      "showCharCount": false,
+      "showWordCount": false,
+      "allowMultipleMasks": false,
+      "addons": [],
+      "inputType": "hidden",
+      "id": "ex1qhin"
     },
     {
       "label": "applicationId",
