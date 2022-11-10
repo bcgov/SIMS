@@ -23,7 +23,6 @@ import {
 } from "apps/test-db-seeding/src/seed-executors";
 import { Repository } from "typeorm";
 import { UserTypeRoleHelperService } from "../../../test-seed-helper-services";
-
 import { institutionUserName01, institutionUserName02 } from "../../constants";
 
 @Injectable()

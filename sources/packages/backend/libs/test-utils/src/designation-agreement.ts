@@ -6,8 +6,8 @@ import {
   InstitutionLocation,
   User,
 } from "@sims/sims-db";
-import { INSTITUTION_TYPE_BC_PRIVATE } from "apps/api/src/utilities";
 import * as faker from "faker";
+import { INSTITUTION_TYPE_BC_PRIVATE } from "./constants";
 
 export function createFakeDesignationAgreement(
   fakeInstitution: Institution,
