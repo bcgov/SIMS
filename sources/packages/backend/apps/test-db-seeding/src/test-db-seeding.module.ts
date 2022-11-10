@@ -11,7 +11,7 @@ import {
 } from "@sims/sims-db";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { DiscoveryModule, MetadataScanner } from "@nestjs/core";
-import { SeedExecuter } from "./test-organizer/seed-executer";
+import { SeedExecutor } from "./seed-executors/seed-executor";
 import { DiscoveryService } from "@golevelup/nestjs-discovery";
 import { CleanDb } from "./clean-db/clean-db";
 import {
@@ -21,7 +21,7 @@ import {
 import {
   InstitutionHelperService,
   UserTypeRoleHelperService,
-} from "./test-helper-services";
+} from "./test-seed-helper-services";
 
 @Module({
   imports: [
@@ -40,7 +40,7 @@ import {
   controllers: [],
   providers: [
     DesignationAgreementService,
-    SeedExecuter,
+    SeedExecutor,
     DiscoveryService,
     MetadataScanner,
     CleanDb,

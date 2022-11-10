@@ -6,7 +6,7 @@ import {
   InstitutionLocation,
   User,
 } from "@sims/sims-db";
-import * as dayjs from "dayjs";
+import { INSTITUTION_TYPE_BC_PRIVATE } from "apps/api/src/utilities";
 import * as faker from "faker";
 
 export function createFakeDesignationAgreement(
@@ -21,30 +21,33 @@ export function createFakeDesignationAgreement(
   fakeDesignationAgreement.institution = {
     id: fakeInstitution.id,
   } as Institution;
+  const isBCPrivate =
+    fakeInstitution.institutionType.id === INSTITUTION_TYPE_BC_PRIVATE;
   fakeDesignationAgreement.submittedData = {
     legalAuthorityName: faker.name.findName(),
     legalAuthorityEmailAddress: faker.internet.email(),
-    scheduleA: true,
-    scheduleB: true,
-    scheduleD: true,
-    agreementAccepted: true,
+    scheduleA: isBCPrivate ? true : false,
+    scheduleB: isBCPrivate ? true : false,
+    scheduleD: isBCPrivate ? true : false,
+    agreementAccepted: isBCPrivate ? true : false,
     enrolmentOfficers: [
       {
-        name: faker.name.findName(),
-        email: faker.internet.email(),
-        phone: faker.phone.phoneNumberFormat(),
-        positionTitle: faker.name.jobTitle(),
+        name: isBCPrivate ? faker.name.findName() : "",
+        email: isBCPrivate ? faker.internet.email() : "",
+        phone: isBCPrivate ? faker.phone.phoneNumber("##########") : "",
+        positionTitle: isBCPrivate ? faker.name.jobTitle() : "",
       },
     ],
     eligibilityOfficers: [
       {
-        name: faker.name.findName(),
-        email: faker.internet.email(),
-        phone: faker.phone.phoneNumberFormat(),
-        positionTitle: faker.name.jobTitle(),
+        name: isBCPrivate ? faker.name.findName() : "",
+        email: isBCPrivate ? faker.internet.email() : "",
+        phone: isBCPrivate ? faker.phone.phoneNumber("##########") : "",
+        positionTitle: isBCPrivate ? faker.name.jobTitle() : "",
       },
     ],
   };
+
   fakeDesignationAgreement.designationStatus =
     designationStatus ?? DesignationAgreementStatus.Pending;
   fakeDesignationAgreement.submittedBy = fakeUser;
@@ -60,11 +63,6 @@ export function createFakeDesignationAgreement(
       newLocation.createdAt = now;
       return newLocation;
     });
-  if (designationStatus === DesignationAgreementStatus.Approved) {
-    fakeDesignationAgreement.startDate = dayjs().format("MM/DD/YYYY");
-    fakeDesignationAgreement.endDate = dayjs()
-      .add(1, "year")
-      .format("MM/DD/YYYY");
-  }
+
   return fakeDesignationAgreement;
 }

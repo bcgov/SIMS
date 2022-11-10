@@ -2,7 +2,7 @@ require("../../../env_setup_apps");
 import { NestFactory } from "@nestjs/core";
 import { CleanDb } from "./clean-db/clean-db";
 import { TestDbSeedingModule } from "./test-db-seeding.module";
-import { SeedExecuter } from "./test-organizer/seed-executer";
+import { SeedExecutor } from "./seed-executors/seed-executor";
 // Clean db command line parameter.
 const CLEAN_DB = "--task=clean-db";
 
@@ -25,12 +25,12 @@ async function bootstrap() {
   if (process.argv.length === 3) {
     {
       const testClassList = process.argv[2].split(",");
-      await app.get(SeedExecuter).onModuleInit(testClassList);
+      await app.get(SeedExecutor).onModuleInit(testClassList);
       return;
     }
   }
 
   // If nothing is passed as a parameter then all test seed services will be executed.
-  await app.get(SeedExecuter).onModuleInit();
+  await app.get(SeedExecutor).onModuleInit();
 }
 bootstrap();

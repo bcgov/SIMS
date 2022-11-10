@@ -16,13 +16,14 @@ import {
   createFakeInstitutionUserAuth,
   createFakeUser,
 } from "@sims/test-utils";
-import { Repository } from "typeorm";
-import { UserTypeRoleHelperService } from "../../../test-helper-services";
 import {
   DataSeed,
   DataSeedMethod,
   SeedPriorityOrder,
-} from "../../../test-organizer/data-seed.decorator";
+} from "apps/test-db-seeding/src/seed-executors";
+import { Repository } from "typeorm";
+import { UserTypeRoleHelperService } from "../../../test-seed-helper-services";
+
 import { institutionUserName01, institutionUserName02 } from "../../constants";
 
 @Injectable()

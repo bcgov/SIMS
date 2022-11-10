@@ -22,7 +22,7 @@ export function createFakeInstitutionLocation(
     firstName: faker.name.firstName(),
     lastName: faker.name.lastName(),
     email: faker.internet.email(),
-    phone: faker.phone.phoneNumber(),
+    phone: faker.phone.phoneNumber("##########"),
   };
   institutionLocation.institutionCode = faker.random.alpha({
     count: 4,

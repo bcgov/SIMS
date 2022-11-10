@@ -6,7 +6,7 @@ import { Injectable, OnModuleInit } from "@nestjs/common";
 import { DATA_SEED, DATA_SEED_METHOD } from "./data-seed.decorator";
 
 @Injectable()
-export class SeedExecuter implements OnModuleInit {
+export class SeedExecutor implements OnModuleInit {
   constructor(private readonly discoveryService: DiscoveryService) {}
 
   async onModuleInit(testServicesClasses?: string[]): Promise<void> {

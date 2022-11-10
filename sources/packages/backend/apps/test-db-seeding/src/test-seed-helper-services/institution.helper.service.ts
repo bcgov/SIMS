@@ -20,6 +20,9 @@ export class InstitutionHelperService {
       select: {
         id: true,
         users: true,
+        institutionType: {
+          id: true,
+        },
       },
       where: {
         users: {
@@ -32,6 +35,7 @@ export class InstitutionHelperService {
         users: {
           user: true,
         },
+        institutionType: true,
       },
     });
   }
