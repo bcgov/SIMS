@@ -121,10 +121,10 @@ export class IER12FileDetail implements IER12RequestFileLine {
   private getTotalGrantsFromDisbursementSchedule(): DisbursementValue[] {
     const accumulatedDisbursementSchedule = Object.values(
       this.disbursementSchedules.reduce(
-        (previousDisbursementschedule, { disbursementValues }) => {
-          previousDisbursementschedule.disbursementValues = Object.values(
+        (previousDisbursementSchedule, { disbursementValues }) => {
+          previousDisbursementSchedule.disbursementValues = Object.values(
             [
-              ...previousDisbursementschedule.disbursementValues,
+              ...previousDisbursementSchedule.disbursementValues,
               ...disbursementValues,
             ].reduce((disbursementValue, { valueCode, valueAmount }) => {
               disbursementValue[valueCode] = {
@@ -137,7 +137,7 @@ export class IER12FileDetail implements IER12RequestFileLine {
               return disbursementValue;
             }, {}),
           );
-          return previousDisbursementschedule;
+          return previousDisbursementSchedule;
         },
       ),
     );
