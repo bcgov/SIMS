@@ -51,7 +51,7 @@ export class IER12FileDetail implements IER12RequestFileLine {
   disbursementSchedules: DisbursementSchedule[];
   totalGrants: DisbursementValue[];
 
-  public getFixedFormat(): string {
+  getFixedFormat(): string {
     this.totalGrants = this.getTotalGrantsFromDisbursementSchedule();
     const record = new StringBuilder();
     record.appendWithStartFiller(this.assessmentId, 10, "0");
