@@ -47,9 +47,10 @@ import ConfirmModal from "@/components/common/modals/ConfirmModal.vue";
 import { EducationProgramOfferingService } from "@/services/EducationProgramOfferingService";
 import OfferingForm from "@/components/common/OfferingForm.vue";
 
-const FORMIO_WARNINGS_HIDDEN_FIELD_KEY = "warnings";
-const FORMIO_INFOS_HIDDEN_FIELD_KEY = "infos";
+const FORMIO_WARNINGS_HIDDEN_FIELD_KEY = "validationWarnings";
+const FORMIO_INFOS_HIDDEN_FIELD_KEY = "validationInfos";
 const FORMIO_STUDY_PERIOD_BREAK_DOWN_KEY = "studyPeriodBreakdown";
+const FORMIO_EXECUTE_CALCULATION_TAG = "execute-calculation";
 const FORMIO_EXECUTE_VALIDATION_TAG = "execute-validation";
 
 export default defineComponent({
@@ -88,6 +89,10 @@ export default defineComponent({
     const { setComponentValue } = useFormioUtils();
     const processing = ref(false);
     const offeringWarningsModal = ref({} as ModalDialog<boolean>);
+    // Defines when the first manual validation happened to allow the
+    // further validations to happen automatically when a component
+    // tagged with FORMIO_EXECUTE_VALIDATION_TAG changes.
+    let validationStarted = false;
 
     // Keep the form reference once it is created
     // to use the setComponentValue later.
@@ -116,20 +121,23 @@ export default defineComponent({
         );
         setComponentValue(
           offeringForm,
-          FORMIO_WARNINGS_HIDDEN_FIELD_KEY,
-          warningsTypes,
-        );
-        const infoTypes = validationResult.infos.map((info) => info.typeCode);
-        setComponentValue(
-          offeringForm,
-          FORMIO_INFOS_HIDDEN_FIELD_KEY,
-          infoTypes,
-        );
-        setComponentValue(
-          offeringForm,
           FORMIO_STUDY_PERIOD_BREAK_DOWN_KEY,
           validationResult.studyPeriodBreakdown,
         );
+        if (validationStarted) {
+          // Avoid updating the validation fields if the validation was never manually requested.
+          setComponentValue(
+            offeringForm,
+            FORMIO_WARNINGS_HIDDEN_FIELD_KEY,
+            warningsTypes,
+          );
+          const infoTypes = validationResult.infos.map((info) => info.typeCode);
+          setComponentValue(
+            offeringForm,
+            FORMIO_INFOS_HIDDEN_FIELD_KEY,
+            infoTypes,
+          );
+        }
       }
       return validationResult;
     };
@@ -150,6 +158,7 @@ export default defineComponent({
 
     const validateOffering = async (data: EducationProgramOfferingAPIInDTO) => {
       try {
+        validationStarted = true;
         processing.value = true;
         const validationResult = await validateOfferingData(data);
         if (validationResult.offeringStatus === OfferingStatus.Approved) {
@@ -171,6 +180,7 @@ export default defineComponent({
     };
 
     const saveOffering = async (data: EducationProgramOfferingAPIInDTO) => {
+      validationStarted = true;
       if (props.formMode === OfferingFormModes.AssessmentDataReadonly) {
         // No validations are needed to update basic offering data.
         context.emit("submit", data);
@@ -224,6 +234,11 @@ export default defineComponent({
       event: FormIOChangeEvent,
     ) => {
       if (
+        event.changed?.component?.tags?.includes(FORMIO_EXECUTE_CALCULATION_TAG)
+      ) {
+        await validateOfferingData(form.data);
+      } else if (
+        validationStarted &&
         event.changed?.component?.tags?.includes(FORMIO_EXECUTE_VALIDATION_TAG)
       ) {
         await validateOfferingData(form.data);
