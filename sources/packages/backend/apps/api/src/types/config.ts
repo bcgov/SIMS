@@ -13,7 +13,7 @@ export interface IConfig {
   ATBCIntegration: ATBCIntegrationConfig;
   ESDCIntegration: ESDCIntegrationConfig;
   SFASIntegrationConfig: SFASIntegrationConfig;
-  IERIntegrationConfig: IERIntegrationConfig;
+  InstitutionIntegrationConfig: InstitutionIntegrationConfig;
   /** This is a flag to bypass the validations which blocks the application flow at local environment due to the environmental constraints
    *  like absence of camunda engine etc.
    *  This flag should not be present in any other environment other than local.
@@ -129,6 +129,6 @@ export interface SFASIntegrationConfig {
   ftpReceiveFolder: string;
 }
 
-export interface IERIntegrationConfig {
+export interface InstitutionIntegrationConfig {
   ftpRequestFolder: string;
 }

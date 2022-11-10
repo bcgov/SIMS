@@ -3,22 +3,22 @@ import { DisbursementSchedule } from "@sims/sims-db";
 /**
  * Result of a file uploaded to SFTP on ZONE B network.
  */
-export interface IERUploadResult {
+export interface IER12UploadResult {
   generatedFile: string;
   uploadedRecords: number;
 }
 
 /**
- * Represents a single line in a IER file.
+ * Represents a single line in a IER 12 file.
  * When implemented in a derived class this
  * interface allow the object to be represented
  * as a formatted fixed string.
  */
-export interface IERRequestFileLine {
+export interface IER12RequestFileLine {
   getFixedFormat(): string;
 }
 
-export interface IERRecord {
+export interface IER12Record {
   assessmentId: number;
   applicationNumber: string;
   sin: string;

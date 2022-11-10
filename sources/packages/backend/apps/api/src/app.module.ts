@@ -53,7 +53,7 @@ import {
   SequenceControlService,
   WorkflowClientService,
 } from "@sims/services";
-import { IERIntegrationModule } from "./institution-integration/ier-integration/ier-integration.module";
+import { IER12IntegrationModule } from "./institution-integration/ier-integration/ier12-integration.module";
 
 @Module({
   imports: [
@@ -66,7 +66,7 @@ import { IERIntegrationModule } from "./institution-integration/ier-integration/
     SFASIntegrationModule,
     ECertIntegrationModule,
     FedRestrictionIntegrationModule,
-    IERIntegrationModule,
+    IER12IntegrationModule,
     DisbursementReceiptIntegrationModule,
     AppAESTModule,
     AppInstitutionsModule,

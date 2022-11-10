@@ -6,8 +6,8 @@ import {
   SshService,
   StudentAssessmentService,
 } from "../../services";
-import { IERIntegrationService } from "./ier-integration.service";
-import { IERRequestService } from "./ier-request.service";
+import { IER12IntegrationService } from "./ier12-integration.service";
+import { IER12RequestService } from "./ier12-request.service";
 
 @Module({
   imports: [AuthModule],
@@ -15,10 +15,10 @@ import { IERRequestService } from "./ier-request.service";
     SshService,
     StudentAssessmentService,
     ConfigService,
-    IERRequestService,
+    IER12RequestService,
     WorkflowClientService,
-    IERIntegrationService,
+    IER12IntegrationService,
   ],
-  exports: [IERRequestService],
+  exports: [IER12RequestService],
 })
-export class IERIntegrationModule {}
+export class IER12IntegrationModule {}

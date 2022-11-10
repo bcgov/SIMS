@@ -3,20 +3,24 @@ import { StudentAssessment } from "@sims/sims-db";
 import { InjectLogger } from "../../common";
 import { LoggerService } from "../../logger/logger.service";
 import { ConfigService, StudentAssessmentService } from "../../services";
-import { IERIntegrationConfig } from "../../types";
+import { InstitutionIntegrationConfig } from "../../types";
 import { getFileNameAsCurrentTimestamp } from "../../utilities";
-import { IERIntegrationService } from "./ier-integration.service";
-import { IERRecord, IERUploadResult } from "./models/ier-integration.model";
+import { IER12IntegrationService } from "./ier12-integration.service";
+import {
+  IER12Record,
+  IER12UploadResult,
+} from "./models/ier12-integration.model";
 
 @Injectable()
-export class IERRequestService {
-  ierIntegrationConfig: IERIntegrationConfig;
+export class IER12RequestService {
+  InstitutionIntegrationConfig: InstitutionIntegrationConfig;
   constructor(
     config: ConfigService,
-    private readonly ierIntegrationService: IERIntegrationService,
+    private readonly ierIntegrationService: IER12IntegrationService,
     private readonly studentAssessmentService: StudentAssessmentService,
   ) {
-    this.ierIntegrationConfig = config.getConfig().IERIntegrationConfig;
+    this.InstitutionIntegrationConfig =
+      config.getConfig().InstitutionIntegrationConfig;
   }
 
   /**
@@ -30,7 +34,9 @@ export class IERRequestService {
    * particular institution is generated.
    * @returns Processing IER 12 request result.
    */
-  async processIER12Request(generatedDate?: Date): Promise<IERUploadResult[]> {
+  async processIER12Request(
+    generatedDate?: Date,
+  ): Promise<IER12UploadResult[]> {
     this.logger.log(
       `Retrieving pending assessment on ${generatedDate} for IER 12 request...`,
     );
@@ -45,7 +51,7 @@ export class IERRequestService {
       ];
     }
     this.logger.log(`Found ${pendingAssessments.length} assessments.`);
-    const fileRecords: Record<string, IERRecord[]> = {};
+    const fileRecords: Record<string, IER12Record[]> = {};
     pendingAssessments.forEach((pendingAssessment) => {
       const institutionCode =
         pendingAssessment.offering.institutionLocation.institutionCode;
@@ -53,12 +59,12 @@ export class IERRequestService {
         fileRecords[institutionCode] = [];
       }
       fileRecords[institutionCode].push(
-        this.createIERRecord(pendingAssessment),
+        this.createIER12Record(pendingAssessment),
       );
     });
-    const uploadResult: IERUploadResult[] = [];
+    const uploadResult: IER12UploadResult[] = [];
     try {
-      this.logger.log("Creating IER request content...");
+      this.logger.log("Creating IER 12 request content...");
       for await (const ierUploadResult of Object.keys(fileRecords).map(
         (institutionCode) => this.uploadContent(institutionCode, fileRecords),
       )) {
@@ -66,7 +72,7 @@ export class IERRequestService {
       }
     } catch (error) {
       this.logger.error(
-        `Error while uploading content for IER Request: ${error}`,
+        `Error while uploading content for IER 12 Request: ${error}`,
       );
       throw error;
     }
@@ -81,10 +87,10 @@ export class IERRequestService {
    */
   async uploadContent(
     institutionCode: string,
-    fileRecords: Record<string, IERRecord[]>,
-  ): Promise<IERUploadResult> {
-    // Create the Request content for the IER file by populating the content.
-    const fileContent = this.ierIntegrationService.createIERRequestContent(
+    fileRecords: Record<string, IER12Record[]>,
+  ): Promise<IER12UploadResult> {
+    // Create the Request content for the IER 12 file by populating the content.
+    const fileContent = this.ierIntegrationService.createIER12RequestContent(
       fileRecords[institutionCode],
     );
     // Create the request filename with the file path for the each and every institutionCode.
@@ -97,7 +103,7 @@ export class IERRequestService {
   }
 
   /**
-   * Create file name IER records file.
+   * Create file name IER 12 records file.
    * @param reportName Report name to be a part of filename.
    * @returns Full file path of the file to be saved on the SFTP.
    */
@@ -107,13 +113,13 @@ export class IERRequestService {
   } {
     const timestamp = getFileNameAsCurrentTimestamp();
     const fileName = `IER_012_${timestamp}.txt`;
-    const filePath = `${this.ierIntegrationConfig.ftpRequestFolder}\\${institutionCode}\\${fileName}`;
+    const filePath = `${this.InstitutionIntegrationConfig.ftpRequestFolder}\\${institutionCode}\\${fileName}`;
     return {
       fileName,
       filePath,
     };
   }
-  private createIERRecord(pendingAssessment: StudentAssessment): IERRecord {
+  private createIER12Record(pendingAssessment: StudentAssessment): IER12Record {
     const application = pendingAssessment.application;
     const student = application.student;
     const user = student.user;

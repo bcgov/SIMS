@@ -3,7 +3,7 @@ import { ApiTags } from "@nestjs/swagger";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { AllowAuthorizedParty } from "../../auth/decorators";
 import { InjectLogger } from "../../common";
-import { IERRequestService } from "../../institution-integration/ier-integration/ier-request.service";
+import { IER12RequestService } from "../../institution-integration/ier-integration/ier12-request.service";
 import { LoggerService } from "../../logger/logger.service";
 import { ClientTypeBaseRoute } from "../../types";
 import BaseController from "../BaseController";
@@ -13,7 +13,7 @@ import { IER12ResultAPIOutDTO } from "./models/ier.dto";
 @Controller("ier-integration")
 @ApiTags(`${ClientTypeBaseRoute.SystemAccess}-ier-integration`)
 export class IERIntegrationSystemAccessController extends BaseController {
-  constructor(private readonly ierRequest: IERRequestService) {
+  constructor(private readonly ierRequest: IER12RequestService) {
     super();
   }
 

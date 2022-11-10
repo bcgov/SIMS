@@ -4,21 +4,21 @@ import { InjectLogger } from "../../common";
 import { LoggerService } from "../../logger/logger.service";
 import { ConfigService, SshService } from "../../services";
 import { SFTPConfig } from "../../types";
-import { IERFileDetail } from "./ier-file-detail";
+import { IER12FileDetail } from "./ier12-file-detail";
 import {
-  IERRecord,
-  IERRequestFileLine,
-  IERUploadResult,
-} from "./models/ier-integration.model";
+  IER12Record,
+  IER12RequestFileLine,
+  IER12UploadResult,
+} from "./models/ier12-integration.model";
 
 /**
  * Manages the creation of the content files that needs to be sent
- * to IER request. These files are created based
+ * to IER 12 request. These files are created based
  * on a fixed size format and uploaded to a SFTP on Government
  * ZONE B network for further processing and final send to servers.
  */
 @Injectable()
-export class IERIntegrationService {
+export class IER12IntegrationService {
   private readonly ftpConfig: SFTPConfig;
 
   constructor(config: ConfigService, private readonly sshService: SshService) {
@@ -26,15 +26,17 @@ export class IERIntegrationService {
   }
 
   /**
-   * Create the IER request content, by populating the records.
-   * @param ierRecords - Assessment, Student, User, offering,
+   * Create the IER 12 request content, by populating the records.
+   * @param ier12Records - Assessment, Student, User, offering,
    * program and application objects data.
    * @returns Complete IERFileLines record as an array.
    */
-  createIERRequestContent(ierRecords: IERRecord[]): IERRequestFileLine[] {
-    const ierFileLines: IERRequestFileLine[] = [];
-    const fileRecords = ierRecords.map((ierRecord) => {
-      const ierFileDetail = new IERFileDetail();
+  createIER12RequestContent(
+    ier12Records: IER12Record[],
+  ): IER12RequestFileLine[] {
+    const ierFileLines: IER12RequestFileLine[] = [];
+    const fileRecords = ier12Records.map((ierRecord) => {
+      const ierFileDetail = new IER12FileDetail();
       ierFileDetail.applicationNumber = ierRecord.applicationNumber;
       ierFileDetail.assessmentId = ierRecord.assessmentId;
       ierFileDetail.applicationNumber = ierRecord.applicationNumber;
@@ -68,17 +70,17 @@ export class IERIntegrationService {
 
   /**
    * Converts the IERFileLines to the final content and upload it.
-   * @param IERFileLines Array of lines to be converted to a formatted fixed size file.
+   * @param ierFileLines Array of lines to be converted to a formatted fixed size file.
    * @param remoteFilePath Remote location to upload the file (path + file name).
    * @returns Upload result.
    */
   async uploadContent(
-    ierFileLines: IERRequestFileLine[],
+    ierFileLines: IER12RequestFileLine[],
     remoteFilePath: string,
-  ): Promise<IERUploadResult> {
+  ): Promise<IER12UploadResult> {
     // Generate fixed formatted file.
     const fixedFormattedLines: string[] = ierFileLines.map(
-      (line: IERRequestFileLine) => line.getFixedFormat(),
+      (line: IER12RequestFileLine) => line.getFixedFormat(),
     );
     const ierFileContent = fixedFormattedLines.join("\r\n");
     // Send the file to ftp.
