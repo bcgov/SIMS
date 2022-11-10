@@ -147,6 +147,7 @@ export interface OfferingBulkInsertValidationResultAPIOutDTO {
   endDate?: string;
   offeringStatus?: OfferingStatus.Approved | OfferingStatus.CreationPending;
   errors: string[];
+  infos: ValidationResultAPIOutDTO[];
   warnings: ValidationResultAPIOutDTO[];
 }
 
