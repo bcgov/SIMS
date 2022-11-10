@@ -116,16 +116,17 @@ export default defineComponent({
         validationResult.validationDate > lastCalculationDate
       ) {
         // Update the form component only if the API result is the most recent.
-        const warningsTypes = validationResult.warnings.map(
-          (warning) => warning.typeCode,
-        );
+
         setComponentValue(
           offeringForm,
           FORMIO_STUDY_PERIOD_BREAK_DOWN_KEY,
           validationResult.studyPeriodBreakdown,
         );
+        // Avoid updating the validation fields if the validation was never manually requested.
         if (validationStarted) {
-          // Avoid updating the validation fields if the validation was never manually requested.
+          const warningsTypes = validationResult.warnings.map(
+            (warning) => warning.typeCode,
+          );
           setComponentValue(
             offeringForm,
             FORMIO_WARNINGS_HIDDEN_FIELD_KEY,

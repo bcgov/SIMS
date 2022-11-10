@@ -205,6 +205,13 @@ export enum OfferingValidationInfos {
  * the warning or information contexts will not be considered critical.
  */
 export class ValidationContext {
+  /**
+   * Creates an error context that will make the error downgrade to
+   * a condition of a warning information will force the offering
+   * to be reviewed by the Ministry.
+   * @param warningTypeCode warning code that uniquely identifies this condition.
+   * @returns the warning context.
+   */
   static CreateWarning(
     warningTypeCode: OfferingValidationWarnings,
   ): ValidationContext {
@@ -213,18 +220,33 @@ export class ValidationContext {
     newContext.typeCode = warningTypeCode;
     return newContext;
   }
-
+  /**
+   * Creates an error context that will make the error downgraded to
+   * a condition of a simple information that will still allow the
+   * offering to be automatically approved.
+   * @param infoTypeCode information code that uniquely identifies this condition.
+   * @returns the information context.
+   */
   static CreateInfo(infoTypeCode: OfferingValidationInfos): ValidationContext {
     const newContext = new ValidationContext();
     newContext.type = ValidationContextTypes.Information;
     newContext.typeCode = infoTypeCode;
     return newContext;
   }
-
+  /**
+   * Context type.
+   */
   type: ValidationContextTypes;
+  /**
+   * Unique identifier of the validation error.
+   */
   typeCode: OfferingValidationWarnings | OfferingValidationInfos;
 }
 
+/**
+ * Types of non-critical errors that will not prevent
+ * the offering from being saved.
+ */
 export enum ValidationContextTypes {
   Warning = "warning",
   Information = "information",
