@@ -1,17 +1,5 @@
 import { DisbursementSchedule, DisbursementValue } from "@sims/sims-db";
 import {
-  BCAG,
-  BCSG,
-  BCSL,
-  BGPD,
-  CSGD,
-  CSGF,
-  CSGP,
-  CSGT,
-  CSLF,
-  SBSD,
-} from "../../constants";
-import {
   DATE_FORMAT,
   NUMBER_FILLER,
   SPACE_FILLER,
@@ -47,10 +35,17 @@ export class IER12FileDetail implements IER12FileLine {
   exceptionExpenses: number;
   totalFundedWeeks: number;
   disbursementSchedules: DisbursementSchedule[];
-  totalGrants: DisbursementValue[];
 
   getFixedFormat(): string {
-    this.totalGrants = this.getTotalGrantsFromDisbursementSchedule();
+    const disbursementValuesTotal: DisbursementValue[] =
+      this.disbursementSchedules.flatMap(
+        (disbursement) => disbursement.disbursementValues,
+      );
+    const awardsSum: Record<string, number> = {};
+    disbursementValuesTotal.forEach((award) => {
+      awardsSum[award.valueCode] =
+        (awardsSum[award.valueCode] ?? 0) + round(+award.valueAmount);
+    });
     const record = new StringBuilder();
     record.appendWithStartFiller(this.assessmentId, 10, NUMBER_FILLER);
     record.append(this.applicationNumber, 10);
@@ -79,62 +74,6 @@ export class IER12FileDetail implements IER12FileLine {
     record.append(this.totalFundedWeeks.toString(), 2);
     record.repeatAppend(SPACE_FILLER, 3);
     record.append("F", 1);
-    record.appendWithStartFiller(this.populateGrants(CSLF), 8, NUMBER_FILLER);
-    record.appendWithStartFiller(this.populateGrants(CSGP), 8, NUMBER_FILLER);
-    record.appendWithStartFiller(this.populateGrants(CSGD), 8, NUMBER_FILLER);
-    record.appendWithStartFiller(this.populateGrants(CSGF), 8, NUMBER_FILLER);
-    record.appendWithStartFiller(this.populateGrants(CSGT), 8, NUMBER_FILLER);
-    record.appendWithStartFiller(this.populateGrants(BCSL), 8, NUMBER_FILLER);
-    record.appendWithStartFiller(this.populateGrants(BCAG), 8, NUMBER_FILLER);
-    record.appendWithStartFiller(this.populateGrants(BGPD), 8, NUMBER_FILLER);
-    record.appendWithStartFiller(this.populateGrants(SBSD), 8, NUMBER_FILLER);
-    record.appendWithStartFiller(this.populateGrants(BCSG), 8, NUMBER_FILLER);
     return record.toString();
-  }
-
-  /**
-   * Populate the grants for the given grant code.
-   * @param valueCode
-   * @returns Rounded value amount for the grant.
-   */
-  private populateGrants(valueCode: string) {
-    return round(
-      parseInt(
-        this.totalGrants.find(
-          (disbursementValue) => (disbursementValue.valueCode = valueCode),
-        ).valueAmount,
-      ),
-    );
-  }
-
-  /**
-   * Creates an accumulated disbursement values of the multiple disbursement
-   * schedules for the particular assessment.
-   * @returns totalGrants from the disbursementSchedules.
-   */
-  private getTotalGrantsFromDisbursementSchedule(): DisbursementValue[] {
-    const accumulatedDisbursementSchedule = Object.values(
-      this.disbursementSchedules.reduce(
-        (previousDisbursementSchedule, { disbursementValues }) => {
-          previousDisbursementSchedule.disbursementValues = Object.values(
-            [
-              ...previousDisbursementSchedule.disbursementValues,
-              ...disbursementValues,
-            ].reduce((disbursementValue, { valueCode, valueAmount }) => {
-              disbursementValue[valueCode] = {
-                valueCode,
-                valueAmount:
-                  (disbursementValue[valueCode]
-                    ? round(parseInt(disbursementValue[valueCode].valueAmount))
-                    : 0) + round(parseInt(valueAmount)),
-              };
-              return disbursementValue;
-            }, {}),
-          );
-          return previousDisbursementSchedule;
-        },
-      ),
-    );
-    return accumulatedDisbursementSchedule[1];
   }
 }
