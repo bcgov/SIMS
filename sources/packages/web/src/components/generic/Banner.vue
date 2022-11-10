@@ -9,14 +9,14 @@
       <div class="label-bold-normal">{{ header }}</div>
     </template>
     <v-row>
-      <v-col md="10">
+      <v-col md="8">
         <div class="label-value-normal">
           <slot name="content">{{ summary }}</slot>
         </div>
       </v-col>
-      <v-col md="2">
-        <div class="float-right"><slot name="actions"></slot></div
-      ></v-col>
+      <v-col md="4">
+        <div class="float-right"><slot name="actions"></slot></div>
+      </v-col>
     </v-row>
   </v-alert>
 </template>
