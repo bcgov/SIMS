@@ -46,8 +46,6 @@ export class IER12FileDetail implements IER12FileLine {
   mandatoryFees: number;
   exceptionExpenses: number;
   totalFundedWeeks: number;
-  courseLoad: number;
-  offeringIntensity: string;
   disbursementSchedules: DisbursementSchedule[];
   totalGrants: DisbursementValue[];
 
@@ -79,12 +77,8 @@ export class IER12FileDetail implements IER12FileLine {
     record.append(this.mandatoryFees.toString(), 8);
     record.append(this.exceptionExpenses.toString(), 8);
     record.append(this.totalFundedWeeks.toString(), 2);
-    record.appendWithEndFiller(
-      this.courseLoad ? this.courseLoad.toString() : "",
-      3,
-      SPACE_FILLER,
-    );
-    record.append(this.offeringIntensity, 1);
+    record.repeatAppend(SPACE_FILLER, 3);
+    record.append("F", 1);
     record.appendWithStartFiller(this.populateGrants(CSLF), 8, NUMBER_FILLER);
     record.appendWithStartFiller(this.populateGrants(CSGP), 8, NUMBER_FILLER);
     record.appendWithStartFiller(this.populateGrants(CSGD), 8, NUMBER_FILLER);

@@ -125,8 +125,6 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
           mandatoryFees: true,
           exceptionalExpenses: true,
           studyBreaks: { totalFundedWeeks: true },
-          courseLoad: true,
-          offeringIntensity: true,
         },
         disbursementSchedules: {
           id: true,

@@ -64,7 +64,8 @@ export class IER12FileService {
     try {
       this.logger.log("Creating IER 12 request content...");
       for await (const ierUploadResult of Object.keys(fileRecords).map(
-        (institutionCode) => this.uploadContent(institutionCode, fileRecords),
+        (institutionCode) =>
+          this.uploadIER12Content(institutionCode, fileRecords),
       )) {
         uploadResult.push(ierUploadResult);
       }
@@ -83,26 +84,38 @@ export class IER12FileService {
    * @param fileRecords Total records with institutionCode.
    * @returns Updated records count with filepath.
    */
-  async uploadContent(
+  async uploadIER12Content(
     institutionCode: string,
     fileRecords: Record<string, IER12Record[]>,
   ): Promise<IER12UploadResult> {
-    // Create the Request content for the IER 12 file by populating the content.
-    const fileContent = this.ierIntegrationService.createIER12FileContent(
-      fileRecords[institutionCode],
-    );
-    // Create the request filename with the file path for the each and every institutionCode.
-    const fileInfo = this.createRequestFileName(institutionCode);
-    this.logger.log("Uploading content...");
-    return await this.ierIntegrationService.uploadContent(
-      fileContent,
-      fileInfo.filePath,
-    );
+    try {
+      // Create the Request content for the IER 12 file by populating the content.
+      const fileContent = this.ierIntegrationService.createIER12FileContent(
+        fileRecords[institutionCode],
+      );
+      // Create the request filename with the file path for the each and every institutionCode.
+      const fileInfo = this.createRequestFileName(institutionCode);
+      this.logger.log("Uploading content...");
+      await this.ierIntegrationService.uploadContent(
+        fileContent,
+        fileInfo.filePath,
+      );
+      this.logger.log("Content uploaded.");
+      return {
+        generatedFile: fileInfo.filePath,
+        uploadedRecords: fileContent.length,
+      };
+    } catch (error) {
+      this.logger.error(
+        `Error while uploading content for IER 12 file: ${error}`,
+      );
+      throw error;
+    }
   }
 
   /**
    * Create file name IER 12 records file.
-   * @param reportName Report name to be a part of filename.
+   * @param institutionCode institutionCode to be a part of the filename.
    * @returns Full file path of the file to be saved on the SFTP.
    */
   createRequestFileName(institutionCode: string): {

@@ -1,15 +1,10 @@
 import { Injectable } from "@nestjs/common";
-import * as Client from "ssh2-sftp-client";
 import { InjectLogger } from "../../common";
 import { LoggerService } from "../../logger/logger.service";
 import { ConfigService, SshService } from "../../services";
-import { SFTPConfig } from "../../types";
+import { SFTPIntegrationBase } from "../../services/ssh/sftp-integration-base";
 import { IER12FileDetail } from "./ier12-file-detail";
-import {
-  IER12Record,
-  IER12FileLine,
-  IER12UploadResult,
-} from "./models/ier12-integration.model";
+import { IER12FileLine, IER12Record } from "./models/ier12-integration.model";
 
 /**
  * Manages the creation of the content files that needs to be sent
@@ -18,13 +13,10 @@ import {
  * ZONE B network for further processing and final send to servers.
  */
 @Injectable()
-export class IER12IntegrationService {
-  private readonly ftpConfig: SFTPConfig;
-
-  constructor(config: ConfigService, private readonly sshService: SshService) {
-    this.ftpConfig = config.getConfig().zoneBSFTP;
+export class IER12IntegrationService extends SFTPIntegrationBase<void> {
+  constructor(config: ConfigService, sshService: SshService) {
+    super(config.getConfig().zoneBSFTP, sshService);
   }
-
   /**
    * Create the IER 12 request content, by populating the records.
    * @param ier12Records - Assessment, Student, User, offering,
@@ -57,53 +49,11 @@ export class IER12IntegrationService {
       ierFileDetail.mandatoryFees = ierRecord.mandatoryFees;
       ierFileDetail.exceptionExpenses = ierRecord.exceptionExpenses;
       ierFileDetail.totalFundedWeeks = ierRecord.totalFundedWeeks;
-      ierFileDetail.courseLoad = ierRecord.courseLoad;
-      ierFileDetail.offeringIntensity = ierRecord.offeringIntensity;
       ierFileDetail.disbursementSchedules = ierRecord.disbursementSchedules;
       return ierFileDetail;
     });
     ierFileLines.push(...fileRecords);
     return ierFileLines;
-  }
-
-  /**
-   * Converts the IERFileLines to the final content and upload it.
-   * @param ierFileLines Array of lines to be converted to a formatted fixed size file.
-   * @param remoteFilePath Remote location to upload the file (path + file name).
-   * @returns Upload result.
-   */
-  async uploadContent(
-    ierFileLines: IER12FileLine[],
-    remoteFilePath: string,
-  ): Promise<IER12UploadResult> {
-    // Generate fixed formatted file.
-    const fixedFormattedLines: string[] = ierFileLines.map(
-      (line: IER12FileLine) => line.getFixedFormat(),
-    );
-    const ierFileContent = fixedFormattedLines.join("\r\n");
-    // Send the file to ftp.
-    this.logger.log("Creating new SFTP client to start upload...");
-    const client = await this.getClient();
-    try {
-      this.logger.log(`Uploading ${remoteFilePath}`);
-      await client.put(Buffer.from(ierFileContent), remoteFilePath);
-      return {
-        generatedFile: remoteFilePath,
-        uploadedRecords: ierFileLines.length,
-      };
-    } finally {
-      this.logger.log("Finalizing SFTP client...");
-      await SshService.closeQuietly(client);
-      this.logger.log("SFTP client finalized.");
-    }
-  }
-
-  /**
-   * Generates a new connected SFTP client ready to be used.
-   * @returns client
-   */
-  private async getClient(): Promise<Client> {
-    return this.sshService.createClient(this.ftpConfig);
   }
 
   @InjectLogger()
