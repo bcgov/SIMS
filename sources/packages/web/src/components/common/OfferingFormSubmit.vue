@@ -41,7 +41,6 @@ import { ModalDialog, useFormioUtils, useSnackBar } from "@/composables";
 import {
   EducationProgramOfferingAPIInDTO,
   OfferingValidationResultAPIOutDTO,
-  StudyPeriodBreakdownAPIOutDTO,
   ValidationResultAPIOutDTO,
 } from "@/services/http/dto";
 import ConfirmModal from "@/components/common/modals/ConfirmModal.vue";
@@ -49,7 +48,9 @@ import { EducationProgramOfferingService } from "@/services/EducationProgramOffe
 import OfferingForm from "@/components/common/OfferingForm.vue";
 
 const FORMIO_WARNINGS_HIDDEN_FIELD_KEY = "warnings";
+const FORMIO_INFOS_HIDDEN_FIELD_KEY = "infos";
 const FORMIO_STUDY_PERIOD_BREAK_DOWN_KEY = "studyPeriodBreakdown";
+const FORMIO_EXECUTE_VALIDATION_TAG = "execute-validation";
 
 export default defineComponent({
   components: { OfferingForm, ConfirmModal },
@@ -95,17 +96,21 @@ export default defineComponent({
       offeringForm = form;
     };
 
+    let lastCalculationDate: Date | undefined = undefined;
     const validateOfferingData = async (
       data: EducationProgramOfferingAPIInDTO,
     ): Promise<OfferingValidationResultAPIOutDTO> => {
-      try {
-        processing.value = true;
-        const validationResult =
-          await EducationProgramOfferingService.shared.validateOffering(
-            props.locationId,
-            props.programId,
-            data,
-          );
+      const validationResult =
+        await EducationProgramOfferingService.shared.validateOffering(
+          props.locationId,
+          props.programId,
+          data,
+        );
+      if (
+        !lastCalculationDate ||
+        validationResult.validationDate > lastCalculationDate
+      ) {
+        // Update the form component only if the API result is the most recent.
         const warningsTypes = validationResult.warnings.map(
           (warning) => warning.typeCode,
         );
@@ -114,51 +119,23 @@ export default defineComponent({
           FORMIO_WARNINGS_HIDDEN_FIELD_KEY,
           warningsTypes,
         );
-        setCalculateStudyPeriodBreakdown(validationResult.studyPeriodBreakdown);
-        return validationResult;
-      } finally {
-        processing.value = false;
+        const infoTypes = validationResult.infos.map((info) => info.typeCode);
+        setComponentValue(
+          offeringForm,
+          FORMIO_INFOS_HIDDEN_FIELD_KEY,
+          infoTypes,
+        );
+        setComponentValue(
+          offeringForm,
+          FORMIO_STUDY_PERIOD_BREAK_DOWN_KEY,
+          validationResult.studyPeriodBreakdown,
+        );
       }
-    };
-
-    let lastCalculationDate: Date | undefined = undefined;
-    const calculateStudyPeriodBreakdown = async (
-      data: EducationProgramOfferingAPIInDTO,
-    ): Promise<void> => {
-      try {
-        const validationResult =
-          await EducationProgramOfferingService.shared.validateOffering(
-            props.locationId,
-            props.programId,
-            data,
-          );
-        // Update the result only if it is the most updated received.
-        if (
-          !lastCalculationDate ||
-          validationResult.validationDate > lastCalculationDate
-        ) {
-          setCalculateStudyPeriodBreakdown(
-            validationResult.studyPeriodBreakdown,
-          );
-          lastCalculationDate = validationResult.validationDate;
-        }
-      } catch {
-        setCalculateStudyPeriodBreakdown({} as StudyPeriodBreakdownAPIOutDTO);
-      }
-    };
-
-    const setCalculateStudyPeriodBreakdown = (
-      calculatedValues: StudyPeriodBreakdownAPIOutDTO,
-    ) => {
-      setComponentValue(
-        offeringForm,
-        FORMIO_STUDY_PERIOD_BREAK_DOWN_KEY,
-        calculatedValues,
-      );
+      return validationResult;
     };
 
     /**
-     * Move the screen to the first warning banner, is any.
+     * Move the screen to the first warning banner, if any.
      */
     const scrollToWarningBanner = (warnings: ValidationResultAPIOutDTO[]) => {
       const [warningToScroll] = warnings;
@@ -173,6 +150,7 @@ export default defineComponent({
 
     const validateOffering = async (data: EducationProgramOfferingAPIInDTO) => {
       try {
+        processing.value = true;
         const validationResult = await validateOfferingData(data);
         if (validationResult.offeringStatus === OfferingStatus.Approved) {
           snackBar.success(
@@ -187,6 +165,8 @@ export default defineComponent({
         snackBar.error(
           "Unexpected error happened during the offering validation.",
         );
+      } finally {
+        processing.value = false;
       }
     };
 
@@ -196,24 +176,41 @@ export default defineComponent({
         context.emit("submit", data);
         return;
       }
-
       try {
         const validationResult = await validateOfferingData(data);
-        if (
-          validationResult.offeringStatus === OfferingStatus.CreationPending
-        ) {
-          const proceedWithWarnings =
-            await offeringWarningsModal.value.showModal();
-          if (proceedWithWarnings) {
-            // There are warnings but the user agreed to proceed.
-            context.emit("submit", data);
-          } else {
-            scrollToWarningBanner(validationResult.warnings);
-          }
-        }
-        if (validationResult.offeringStatus === OfferingStatus.Approved) {
-          // The offering is ready to be automatically approved.
-          context.emit("submit", data);
+        switch (validationResult.offeringStatus) {
+          case OfferingStatus.Approved:
+            {
+              // The offering is ready to be automatically approved.
+              context.emit("submit", data);
+            }
+            break;
+          case OfferingStatus.CreationPending:
+            {
+              // Offering need to be reviewed. User must agree to proceed.
+              const proceedWithWarnings =
+                await offeringWarningsModal.value.showModal();
+              if (proceedWithWarnings) {
+                // There are warnings but the user agreed to proceed.
+                context.emit("submit", data);
+              } else {
+                scrollToWarningBanner(validationResult.warnings);
+              }
+            }
+            break;
+          default:
+            {
+              // All errors at this level are supposed to be dealt with at the form.io definition. If the server
+              // validations are out of sync with the form, this message can help to quickly troubleshoot
+              // the issue and allow the user to proceed. The expected messages to be displayed are the same
+              // user-friendly messages also displayed during the offering bulk upload.
+              snackBar.error(
+                `Unexpected error(s) happened during the submission: ${validationResult.errors.join(
+                  ", ",
+                )}`,
+              );
+            }
+            break;
         }
       } catch {
         snackBar.error(
@@ -222,12 +219,14 @@ export default defineComponent({
       }
     };
 
-    const formChanged = (
+    const formChanged = async (
       form: FormIOForm<EducationProgramOfferingAPIInDTO>,
       event: FormIOChangeEvent,
     ) => {
-      if (event.changed?.component?.tags?.includes("execute-calculation")) {
-        calculateStudyPeriodBreakdown(form.data);
+      if (
+        event.changed?.component?.tags?.includes(FORMIO_EXECUTE_VALIDATION_TAG)
+      ) {
+        await validateOfferingData(form.data);
       }
     };
 

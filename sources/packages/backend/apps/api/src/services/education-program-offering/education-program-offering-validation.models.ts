@@ -205,16 +205,20 @@ export enum OfferingValidationInfos {
  * the warning or information contexts will not be considered critical.
  */
 export class ValidationContext {
-  static CreateWarning(warningTypeCode: OfferingValidationWarnings) {
+  static CreateWarning(
+    warningTypeCode: OfferingValidationWarnings,
+  ): ValidationContext {
     const newContext = new ValidationContext();
     newContext.type = ValidationContextTypes.Warning;
     newContext.typeCode = warningTypeCode;
+    return newContext;
   }
 
-  static CreateInfo(infoTypeCode: OfferingValidationInfos) {
+  static CreateInfo(infoTypeCode: OfferingValidationInfos): ValidationContext {
     const newContext = new ValidationContext();
     newContext.type = ValidationContextTypes.Information;
     newContext.typeCode = infoTypeCode;
+    return newContext;
   }
 
   type: ValidationContextTypes;

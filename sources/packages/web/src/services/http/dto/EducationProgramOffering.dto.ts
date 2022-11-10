@@ -175,6 +175,7 @@ export interface StudyPeriodBreakdownAPIOutDTO {
 export interface OfferingValidationResultAPIOutDTO {
   offeringStatus?: OfferingStatus.Approved | OfferingStatus.CreationPending;
   errors: string[];
+  infos: ValidationResultAPIOutDTO[];
   warnings: ValidationResultAPIOutDTO[];
   studyPeriodBreakdown: StudyPeriodBreakdownAPIOutDTO;
   validationDate: Date;

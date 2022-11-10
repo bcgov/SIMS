@@ -178,6 +178,16 @@
                     </li>
                   </ul>
                 </div>
+                <div
+                  class="alert alert-info"
+                  v-if="slotProps.data.infos.length"
+                >
+                  <ul class="m-2">
+                    <li v-for="info in slotProps.data.infos" :key="info">
+                      {{ info.message }}
+                    </li>
+                  </ul>
+                </div>
               </template></Column
             >
           </DataTable>
