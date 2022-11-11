@@ -1,5 +1,4 @@
-import { InjectLogger } from "../../common";
-import { LoggerService } from "../../logger/logger.service";
+import { LoggerService, InjectLogger } from "@sims/utilities/logger";
 import { SshService } from "./ssh.service";
 import { SFTPConfig } from "../../types";
 import { FixedFormatFileLine } from "./sftp-integration-base.models";

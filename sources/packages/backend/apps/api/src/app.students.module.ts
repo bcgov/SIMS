@@ -8,7 +8,6 @@ import {
   EducationProgramOfferingService,
   SFASApplicationService,
   SFASPartTimeApplicationsService,
-  ConfigService,
   DisbursementScheduleService,
   InstitutionLocationService,
   EducationProgramService,
@@ -48,14 +47,14 @@ import {
   RestrictionStudentsController,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
-import { LoggerModule } from "./logger/logger.module";
 import { ApplicationControllerService } from "./route-controllers/application/application.controller.service";
 import { StudentAccountApplicationsService } from "./services/student-account-applications/student-account-applications.service";
 import { ATBCStudentController } from "./route-controllers/atbc/atbc.students.controller";
 import { WorkflowClientService, SequenceControlService } from "@sims/services";
+import { ConfigModule } from "@sims/utilities/config";
 
 @Module({
-  imports: [LoggerModule, DatabaseModule, AuthModule],
+  imports: [DatabaseModule, AuthModule, ConfigModule],
   controllers: [
     ApplicationStudentsController,
     StudentStudentsController,
@@ -77,7 +76,6 @@ import { WorkflowClientService, SequenceControlService } from "@sims/services";
     EducationProgramOfferingService,
     SFASApplicationService,
     SFASPartTimeApplicationsService,
-    ConfigService,
     DisbursementScheduleService,
     InstitutionLocationService,
     EducationProgramService,

@@ -4,7 +4,6 @@ import {
   ATBCService,
   StudentService,
   ApplicationExceptionService,
-  ConfigService,
   DisbursementScheduleService,
   EducationProgramOfferingService,
   StudentAssessmentService,
@@ -45,7 +44,6 @@ import {
   ATBCSystemAccessController,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
-import { LoggerModule } from "./logger/logger.module";
 import { SINValidationModule } from "./esdc-integration/sin-validation/sin-validation.module";
 import { SINValidationSystemAccessController } from "./route-controllers/esdc-integration/sin-validation.system-access.controller";
 import { MSFAARequestService } from "./esdc-integration/msfaa-integration/msfaa-request.service";
@@ -68,7 +66,7 @@ import { FedRestrictionIntegrationService } from "./esdc-integration/fed-restric
 import { WorkflowClientService, SequenceControlService } from "@sims/services";
 
 @Module({
-  imports: [LoggerModule, DatabaseModule, AuthModule, SINValidationModule],
+  imports: [DatabaseModule, AuthModule, SINValidationModule],
   controllers: [
     ATBCSystemAccessController,
     SINValidationSystemAccessController,
@@ -83,7 +81,6 @@ import { WorkflowClientService, SequenceControlService } from "@sims/services";
     WorkflowClientService,
     ATBCService,
     StudentService,
-    ConfigService,
     StudentAssessmentService,
     EducationProgramOfferingService,
     DisbursementScheduleService,

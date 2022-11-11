@@ -2,7 +2,6 @@ import { Module } from "@nestjs/common";
 import { DatabaseModule } from "@sims/sims-db";
 import {
   ApplicationService,
-  ConfigService,
   FormService,
   MSFAANumberService,
   SFASApplicationService,
@@ -24,10 +23,9 @@ import {
 import { SequenceControlService, WorkflowClientService } from "@sims/services";
 import { SupportingUserSupportingUsersController } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
-import { LoggerModule } from "./logger/logger.module";
 
 @Module({
-  imports: [LoggerModule, DatabaseModule, AuthModule],
+  imports: [DatabaseModule, AuthModule],
   controllers: [SupportingUserSupportingUsersController],
   providers: [
     SupportingUserService,
@@ -37,7 +35,6 @@ import { LoggerModule } from "./logger/logger.module";
     SequenceControlService,
     StudentFileService,
     MSFAANumberService,
-    ConfigService,
     SFASApplicationService,
     SFASPartTimeApplicationsService,
     GCNotifyService,

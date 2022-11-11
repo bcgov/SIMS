@@ -1,5 +1,3 @@
-export * from "./config/config.service";
-export * from "./config/config.model";
 export * from "./msfaa-number/msfaa-number.service";
 export * from "./application/application.service";
 export * from "./student-assessment/student-assessment.service";

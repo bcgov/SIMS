@@ -1,16 +1,15 @@
 import { Injectable } from "@nestjs/common";
-import { ConfigService } from "..";
 import axios, { AxiosError } from "axios";
 import { GCNotifyResult } from "./gc-notify.model";
-import { InjectLogger } from "../../common";
-import { LoggerService } from "../../logger/logger.service";
+import { LoggerService, InjectLogger } from "@sims/utilities/logger";
 import { GCNotify } from "../../types";
+import { ConfigService } from "@sims/utilities/config";
 
 @Injectable()
 export class GCNotifyService {
   private readonly gcNotifyConfig: GCNotify;
   constructor(private readonly configService: ConfigService) {
-    this.gcNotifyConfig = this.configService.getConfig().gcNotify;
+    this.gcNotifyConfig = this.configService.notify;
   }
 
   ministryToAddress() {

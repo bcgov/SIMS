@@ -7,8 +7,7 @@ import {
   Student,
   User,
 } from "@sims/sims-db";
-import { InjectLogger } from "../../common";
-import { LoggerService } from "../../logger/logger.service";
+import { LoggerService, InjectLogger } from "@sims/utilities/logger";
 import {
   SINValidationRecord,
   SINValidationUpdateResult,

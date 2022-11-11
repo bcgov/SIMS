@@ -31,7 +31,8 @@ import {
   InstitutionLocationService,
 } from "../../services";
 import { ClientTypeBaseRoute } from "../../types";
-import { getISODateOnlyString, getUserFullName } from "../../utilities";
+import { getUserFullName } from "../../utilities";
+import { getISODateOnlyString } from "@sims/utilities";
 import {
   ActiveApplicationDataAPIOutDTO,
   ActiveApplicationSummaryAPIOutDTO,

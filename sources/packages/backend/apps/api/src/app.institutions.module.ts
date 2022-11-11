@@ -1,7 +1,6 @@
 import { Module } from "@nestjs/common";
 import { DatabaseModule } from "@sims/sims-db";
 import {
-  ConfigService,
   DesignationAgreementService,
   FormService,
   InstitutionService,
@@ -52,12 +51,11 @@ import {
   EducationProgramOfferingControllerService,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
-import { LoggerModule } from "./logger/logger.module";
 import { EducationProgramOfferingValidationService } from "./services/education-program-offering/education-program-offering-validation.service";
 import { WorkflowClientService, SequenceControlService } from "@sims/services";
 
 @Module({
-  imports: [LoggerModule, DatabaseModule, AuthModule],
+  imports: [DatabaseModule, AuthModule],
   controllers: [
     DesignationAgreementInstitutionsController,
     InstitutionInstitutionsController,
@@ -72,7 +70,6 @@ import { WorkflowClientService, SequenceControlService } from "@sims/services";
   providers: [
     WorkflowClientService,
     FormService,
-    ConfigService,
     DesignationAgreementService,
     DesignationAgreementControllerService,
     InstitutionService,

@@ -1,17 +1,16 @@
 import axios from "axios";
 import { Injectable } from "@nestjs/common";
 import { stringify } from "qs";
-import { ConfigService } from "../../config/config.service";
 import { IAuthConfig } from "../../../types/config";
 import { TokenResponse } from "./token-response.model";
 import { RealmConfig } from "./realm-config.model";
 import { OpenIdConfig } from "./openid-config.model";
 import { KeycloakConfig } from "../../../auth/keycloakConfig";
-import { InjectLogger } from "../../../common";
-import { LoggerService } from "../../../logger/logger.service";
+import { LoggerService, InjectLogger } from "@sims/utilities/logger";
+import { ConfigService } from "@sims/utilities/config";
 
 /**
- * Manage the HTTP requests that need to be exeuted to Keycloak.
+ * Manage the HTTP requests that need to be executed to Keycloak.
  * This service allows a singleton access to the KeycloakService
  * with the intention to be used on areas of the application that
  * are not part of the dependency injection framework.
@@ -26,7 +25,7 @@ export class KeycloakService {
   logger: LoggerService;
 
   constructor(configService: ConfigService) {
-    this.authConfig = configService.getConfig().auth;
+    this.authConfig = configService.auth;
   }
 
   private static _shared: KeycloakService;

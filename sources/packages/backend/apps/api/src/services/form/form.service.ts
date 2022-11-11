@@ -4,10 +4,9 @@ import {
   DryRunSubmissionResult,
   SubmissionResult,
 } from "../../types";
-import { ConfigService } from "../config/config.service";
+import { ConfigService } from "@sims/utilities/config";
 import axios from "axios";
-import { LoggerService } from "../../logger/logger.service";
-import { InjectLogger } from "../../common";
+import { LoggerService, InjectLogger } from "@sims/utilities/logger";
 import { JwtService } from "@nestjs/jwt";
 import { TokenCacheService } from "..";
 import { TokenCacheResponse } from "../auth/token-cache.service.models";
@@ -29,7 +28,7 @@ export class FormService {
   }
 
   get config(): FormsConfig {
-    return this.configService.getConfig().forms;
+    return this.configService.forms;
   }
 
   /**

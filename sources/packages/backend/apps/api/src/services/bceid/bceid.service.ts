@@ -1,9 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { BasicAuthSecurity, Client, createClientAsync } from "soap";
-import { InjectLogger } from "../../common";
-import { BCeIDConfig } from "../../types/config";
-import { LoggerService } from "../../logger/logger.service";
-import { ConfigService } from "../config/config.service";
+import { LoggerService, InjectLogger } from "@sims/utilities/logger";
+import { ConfigService, BCeIDConfig } from "@sims/utilities/config";
 import { AccountDetails } from "./account-details.model";
 import {
   SearchAccountOptions,
@@ -28,7 +26,7 @@ import {
 export class BCeIDService {
   private bceidConfig: BCeIDConfig;
   constructor(private readonly config: ConfigService) {
-    this.bceidConfig = this.config.getConfig().bceid;
+    this.bceidConfig = this.config.bceid;
   }
 
   /**

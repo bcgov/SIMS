@@ -1,7 +1,7 @@
 import { Module } from "@nestjs/common";
+import { ConfigModule } from "@sims/utilities/config";
 import { AuthModule } from "../auth/auth.module";
 import {
-  ConfigService,
   SshService,
   SFASIndividualService,
   SFASApplicationService,
@@ -13,10 +13,9 @@ import { SFASIntegrationProcessingService } from "./sfas-integration-processing.
 import { SFASIntegrationService } from "./sfas-integration.service";
 
 @Module({
-  imports: [AuthModule],
+  imports: [AuthModule, ConfigModule],
   providers: [
     SshService,
-    ConfigService,
     SFASIntegrationService,
     SFASIntegrationProcessingService,
     SFASIndividualService,

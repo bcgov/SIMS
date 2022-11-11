@@ -1,5 +1,5 @@
-import { Injectable, LoggerService } from "@nestjs/common";
-import { InjectLogger } from "../../common";
+import { Injectable } from "@nestjs/common";
+import { LoggerService, InjectLogger } from "@sims/utilities/logger";
 import { MSFAANumberService } from "../../services";
 import { ProcessSFTPResponseResult } from "../models/esdc-integration.model";
 import { MSFAASFTPResponseFile } from "./models/msfaa-integration.model";

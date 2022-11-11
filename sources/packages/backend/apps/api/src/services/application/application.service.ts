@@ -7,8 +7,7 @@ import {
   Brackets,
   FindOneOptions,
 } from "typeorm";
-import { LoggerService } from "../../logger/logger.service";
-import { InjectLogger } from "../../common";
+import { LoggerService, InjectLogger } from "@sims/utilities/logger";
 import {
   RecordDataModelService,
   Application,
@@ -32,7 +31,6 @@ import {
 } from "./application.models";
 import { MSFAANumberService } from "../msfaa-number/msfaa-number.service";
 import {
-  dateDifference,
   COE_WINDOW,
   PIR_DENIED_REASON_OTHER_ID,
   sortApplicationsColumnMap,
@@ -43,11 +41,10 @@ import {
   FieldSortOrder,
   OrderByCondition,
 } from "../../utilities";
-import { CustomNamedError } from "@sims/utilities";
+import { CustomNamedError, dateDifference } from "@sims/utilities";
 import { SFASApplicationService } from "../sfas/sfas-application.service";
 import { SFASPartTimeApplicationsService } from "../sfas/sfas-part-time-application.service";
 import { EducationProgramOfferingService } from "../education-program-offering/education-program-offering.service";
-import { ConfigService } from "../config/config.service";
 import { IConfig } from "../../types";
 import { StudentRestrictionService } from "../restriction/student-restriction.service";
 import {
@@ -56,6 +53,7 @@ import {
   OFFERING_NOT_VALID,
 } from "../../constants";
 import { SequenceControlService, WorkflowClientService } from "@sims/services";
+import { ConfigService } from "@sims/utilities/config";
 
 export const APPLICATION_DRAFT_NOT_FOUND = "APPLICATION_DRAFT_NOT_FOUND";
 export const MORE_THAN_ONE_APPLICATION_DRAFT_ERROR =
@@ -75,7 +73,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
   logger: LoggerService;
   private readonly config: IConfig;
   constructor(
-    configService: ConfigService,
+    private readonly configService: ConfigService,
     private readonly dataSource: DataSource,
     private readonly sfasApplicationService: SFASApplicationService,
     private readonly sfasPartTimeApplicationsService: SFASPartTimeApplicationsService,
@@ -87,8 +85,6 @@ export class ApplicationService extends RecordDataModelService<Application> {
     private readonly offeringService: EducationProgramOfferingService,
   ) {
     super(dataSource.getRepository(Application));
-    this.config = configService.getConfig();
-    this.logger.log("[Created]");
   }
 
   /**

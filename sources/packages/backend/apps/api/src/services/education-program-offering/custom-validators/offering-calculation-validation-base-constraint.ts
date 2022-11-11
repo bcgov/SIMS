@@ -1,5 +1,5 @@
 import { ValidationArguments } from "class-validator";
-import { Period } from "../../../utilities";
+import { Period } from "@sims/utilities";
 import {
   OfferingStudyBreakCalculationContext,
   StudyBreak,

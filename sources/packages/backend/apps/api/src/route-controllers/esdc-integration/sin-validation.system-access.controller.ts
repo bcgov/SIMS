@@ -1,6 +1,5 @@
 import { Controller, Post } from "@nestjs/common";
-import { InjectLogger } from "../../common";
-import { LoggerService } from "../../logger/logger.service";
+import { LoggerService, InjectLogger } from "@sims/utilities/logger";
 import { AllowAuthorizedParty, UserToken } from "../../auth/decorators";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { ApiTags } from "@nestjs/swagger";

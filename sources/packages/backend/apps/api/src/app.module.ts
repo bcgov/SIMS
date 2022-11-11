@@ -5,7 +5,6 @@ import { DatabaseModule } from "@sims/sims-db";
 import { RouterModule } from "@nestjs/core";
 import {
   UserService,
-  ConfigService,
   ApplicationService,
   BCeIDServiceProvider,
   InstitutionUserAuthService,
@@ -35,7 +34,6 @@ import {
   DynamicFormController,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
-import { LoggerModule } from "./logger/logger.module";
 import { CraIntegrationModule } from "./cra-integration/cra-integration.module";
 import { MSFAAIntegrationModule } from "./esdc-integration/msfaa-integration/msfaa-integration.module";
 import { SFASIntegrationModule } from "./sfas-integration/sfas-integration.module";
@@ -53,10 +51,13 @@ import {
   SequenceControlService,
   WorkflowClientService,
 } from "@sims/services";
+import { LoggerModule } from "@sims/utilities/logger";
+import { ConfigModule } from "@sims/utilities/config";
 
 @Module({
   imports: [
     LoggerModule,
+    ConfigModule,
     DatabaseModule,
     AuthModule,
     ZeebeModule.forRoot(),
@@ -104,7 +105,6 @@ import {
   providers: [
     AppService,
     UserService,
-    ConfigService,
     BCeIDServiceProvider,
     FormService,
     ApplicationService,

@@ -4,12 +4,12 @@ import {
   NUMBER_FILLER,
 } from "./models/esdc-integration.model";
 import { StringBuilder } from "../utilities/string-builder";
-import { ConfigService } from "../services";
+import { ConfigService } from "@sims/utilities/config";
 import { ESDCIntegrationConfig } from "../types";
 export abstract class ESDCFileHandler {
   esdcConfig: ESDCIntegrationConfig;
   constructor(config: ConfigService) {
-    this.esdcConfig = config.getConfig().ESDCIntegration;
+    this.esdcConfig = config.esdcIntegration;
   }
   /**
    * Expected file name of the request file.

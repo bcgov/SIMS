@@ -1,8 +1,9 @@
 import { Injectable } from "@nestjs/common";
-import { KeycloakService, ConfigService, TokenCacheService } from "..";
+import { KeycloakService, TokenCacheService } from "..";
 import { ClientCredential } from "../../types";
 import { TokenCacheResponse } from "./token-cache.service.models";
 import { JwtService } from "@nestjs/jwt";
+import { ConfigService } from "@sims/utilities/config";
 
 /**
  * Helper class to provide easy access to tokens that
@@ -35,7 +36,7 @@ export class TokensService {
    * @returns sims api client token
    */
   private async getSimsApiClientToken(): Promise<TokenCacheResponse> {
-    const credential = this.configService.getConfig().simsApiClientCredential;
+    const credential = this.configService.simsApiClientCredential;
     return this.getTokenFromClientSecret(credential);
   }
 

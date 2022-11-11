@@ -5,7 +5,7 @@ import {
   ValidationOptions,
   ValidationArguments,
 } from "class-validator";
-import { dateDifference, getDateOnlyFormat } from "../../date-utils";
+import { dateDifference, getDateOnlyFormat } from "@sims/utilities";
 
 /**
  * Checks if the number of days between the property date decorated with this

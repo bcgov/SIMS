@@ -1,7 +1,6 @@
-import { InjectLogger } from "../common";
-import { LoggerService } from "../logger/logger.service";
+import { LoggerService, InjectLogger } from "@sims/utilities/logger";
 import { Injectable } from "@nestjs/common";
-import { ConfigService } from "../services";
+import { ConfigService } from "@sims/utilities/config";
 import { SshService } from "../services/ssh/ssh.service";
 import {
   CRAPersonRecord,
@@ -30,8 +29,8 @@ export class CRAIntegrationService extends SFTPIntegrationBase<CRASFTPResponseFi
   private readonly craConfig: CRAIntegrationConfig;
 
   constructor(config: ConfigService, sshService: SshService) {
-    super(config.getConfig().zoneBSFTP, sshService);
-    this.craConfig = config.getConfig().CRAIntegration;
+    super(config.zoneBSFTP, sshService);
+    this.craConfig = config.craIntegration;
   }
 
   /**

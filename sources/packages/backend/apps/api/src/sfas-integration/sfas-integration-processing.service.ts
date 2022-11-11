@@ -1,6 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { InjectLogger } from "../common";
-import { LoggerService } from "../logger/logger.service";
+import { LoggerService, InjectLogger } from "@sims/utilities/logger";
 import {
   DownloadResult,
   ProcessSftpResponseResult,
@@ -8,7 +7,6 @@ import {
 } from "./sfas-integration.models";
 import { SFASIntegrationService } from "./sfas-integration.service";
 import {
-  ConfigService,
   SFASApplicationService,
   SFASDataImporter,
   SFASIndividualService,
@@ -17,6 +15,7 @@ import {
 } from "../services";
 import { SFAS_IMPORT_RECORDS_PROGRESS_REPORT_PACE } from "../utilities";
 import * as os from "os";
+import { ConfigService } from "@sims/utilities/config";
 
 @Injectable()
 export class SFASIntegrationProcessingService {
@@ -29,8 +28,7 @@ export class SFASIntegrationProcessingService {
     private readonly sfasPartTimeApplicationsService: SFASPartTimeApplicationsService,
     config: ConfigService,
   ) {
-    this.ftpReceiveFolder =
-      config.getConfig().SFASIntegrationConfig.ftpReceiveFolder;
+    this.ftpReceiveFolder = config.sfasIntegration.ftpReceiveFolder;
   }
 
   /**

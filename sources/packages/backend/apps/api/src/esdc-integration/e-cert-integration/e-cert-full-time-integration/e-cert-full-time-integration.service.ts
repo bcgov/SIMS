@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { ConfigService, SshService } from "../../../services";
+import { SshService } from "../../../services";
 import {
   combineDecimalPlaces,
   getDisbursementValuesByType,
@@ -21,6 +21,7 @@ import { ECertFullTimeFileRecord } from "./e-cert-files/e-cert-file-record";
 import { DisbursementValueType, OfferingIntensity } from "@sims/sims-db";
 import { ECertIntegrationService } from "../e-cert-integration.service";
 import { ECertResponseRecord } from "../e-cert-files/e-cert-response-record";
+import { ConfigService } from "@sims/utilities/config";
 
 /**
  * Manages the file content generation and methods to
@@ -34,7 +35,7 @@ export class ECertFullTimeIntegrationService extends ECertIntegrationService {
     config: ConfigService,
     sshService: SshService,
   ) {
-    super(config.getConfig().zoneBSFTP, sshService);
+    super(config.zoneBSFTP, sshService);
   }
 
   /**

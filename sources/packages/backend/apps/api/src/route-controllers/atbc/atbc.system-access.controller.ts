@@ -1,7 +1,6 @@
 import { Controller, Patch } from "@nestjs/common";
 import { ATBCService, StudentService } from "../../services";
-import { InjectLogger } from "../../common";
-import { LoggerService } from "../../logger/logger.service";
+import { LoggerService, InjectLogger } from "@sims/utilities/logger";
 import { AllowAuthorizedParty } from "../../auth/decorators";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { Student } from "@sims/sims-db";

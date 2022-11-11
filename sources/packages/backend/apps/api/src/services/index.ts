@@ -1,4 +1,3 @@
-export * from "./config/config.service";
 export * from "./auth/keycloak/keycloak.service";
 export * from "./auth/token-cache.service";
 export * from "./auth/tokens.service";
