@@ -220,6 +220,7 @@ export class ValidationContext {
     newContext.typeCode = warningTypeCode;
     return newContext;
   }
+
   /**
    * Creates an error context that will make the error downgraded to
    * a condition of a simple information that will still allow the
@@ -233,6 +234,7 @@ export class ValidationContext {
     newContext.typeCode = infoTypeCode;
     return newContext;
   }
+
   /**
    * Context type.
    */
