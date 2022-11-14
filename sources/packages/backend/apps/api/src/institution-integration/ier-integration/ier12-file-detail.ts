@@ -8,7 +8,7 @@ import { round, StringBuilder } from "../../utilities";
 import { IER12FileLine } from "./models/ier12-integration.model";
 
 /**
- * Record of a IER12 request file.
+ * Record of a IER12 file.
  * The documentation about it is available on the document
  * 'SIMSSFAS - Institution File layouts In Analysis Folder'.
  */
@@ -72,8 +72,8 @@ export class IER12FileDetail implements IER12FileLine {
     record.append(this.mandatoryFees.toString(), 8);
     record.append(this.exceptionExpenses.toString(), 8);
     record.append(this.totalFundedWeeks.toString(), 2);
-    record.repeatAppend(SPACE_FILLER, 3);
-    record.append("F", 1);
+    record.repeatAppend(SPACE_FILLER, 3); //We have hardcoded the courseLoad to 100 as its only for FullTime.
+    record.append("F", 1); //This implementation is only for FullTime, so hardcoding it to F.
     return record.toString();
   }
 }

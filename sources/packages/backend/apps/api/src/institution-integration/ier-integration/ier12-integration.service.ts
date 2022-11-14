@@ -1,6 +1,4 @@
 import { Injectable } from "@nestjs/common";
-import { InjectLogger } from "../../common";
-import { LoggerService } from "../../logger/logger.service";
 import { ConfigService, SshService } from "../../services";
 import { SFTPIntegrationBase } from "../../services/ssh/sftp-integration-base";
 import { IER12FileDetail } from "./ier12-file-detail";
@@ -55,7 +53,4 @@ export class IER12IntegrationService extends SFTPIntegrationBase<void> {
     ierFileLines.push(...fileRecords);
     return ierFileLines;
   }
-
-  @InjectLogger()
-  logger: LoggerService;
 }

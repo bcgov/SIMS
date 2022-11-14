@@ -130,6 +130,12 @@ export class IER12FileService {
       filePath,
     };
   }
+
+  /**
+   * Create the Request content for the IER 12 file by populating the content.
+   * @param pendingAssessment pending assessment of institutions.
+   * @returns IER 12 record.
+   */
   private createIER12Record(pendingAssessment: StudentAssessment): IER12Record {
     const application = pendingAssessment.application;
     const student = application.student;
@@ -159,10 +165,6 @@ export class IER12FileService {
       mandatoryFees: offering.mandatoryFees,
       exceptionExpenses: offering.exceptionalExpenses,
       totalFundedWeeks: offering.studyBreaks.totalFundedWeeks,
-      // As this implementation is only for FT,
-      // we have hardcoded the courseLoad to 100 and offering Intensity to F.
-      courseLoad: null,
-      offeringIntensity: "F",
       disbursementSchedules: pendingAssessment.disbursementSchedules,
     };
   }

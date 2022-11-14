@@ -40,7 +40,5 @@ export interface IER12Record {
   mandatoryFees: number;
   exceptionExpenses: number;
   totalFundedWeeks: number;
-  courseLoad: number;
-  offeringIntensity: string;
   disbursementSchedules: DisbursementSchedule[];
 }
