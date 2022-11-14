@@ -1,12 +1,21 @@
 <template>
-  <student-page-container>
+  <student-page-container
+    container-class="student-start-new-application"
+    :full-width="true"
+  >
+    <template #header>
+      <header-navigator
+        title="Applications"
+        subTitle="Financial Aid Application"
+      >
+      </header-navigator>
+    </template>
     <body-header>
       <template #actions>
         <v-row class="m-0 p-0 float-right">
           <v-btn
             color="primary"
-            v-if="!notDraft"
-            v-show="!isFirstPage && !submittingApplication"
+            v-if="!notDraft && !isFirstPage && !submittingApplication"
             variant="outlined"
             :loading="savingDraft"
             @click="saveDraft()"
@@ -14,10 +23,9 @@
             {{ savingDraft ? "Saving..." : "Save draft" }}</v-btn
           >
           <v-btn
-            v-if="!isReadOnly"
+            v-if="!isReadOnly && !isFirstPage"
             class="ml-2"
             :disabled="!isLastPage || submittingApplication"
-            v-show="!isFirstPage"
             color="primary"
             @click="wizardSubmit()"
           >
@@ -34,6 +42,7 @@
         </v-row>
       </template>
     </body-header>
+
     <StudentApplication
       :selectedForm="selectedForm"
       :initialData="initialData"
@@ -45,6 +54,37 @@
       @pageChanged="pageChanged"
     />
   </student-page-container>
+  <v-row v-if="showNav">
+    <v-col>
+      <v-btn
+        color="primary"
+        v-show="!isFirstPage"
+        variant="outlined"
+        data-cy="previousSection"
+        @click="wizardGoNext"
+        >Start your application</v-btn
+      >
+    </v-col>
+    <v-col>
+      <v-btn
+        class="float-right"
+        color="primary"
+        v-show="!isLastPage"
+        @click="wizardGoNext"
+        >Next step</v-btn
+      >
+      <v-btn
+        class="float-right"
+        :disabled="!isLastPage || submitting"
+        v-show="!isFirstPage"
+        color="primary"
+        @click="wizardSubmit()"
+        :loading="submitting"
+      >
+        {{ submitting ? "Submitting..." : "Submit form" }}
+      </v-btn>
+    </v-col>
+  </v-row>
   <ConfirmEditApplication
     ref="editApplicationModal"
     @confirmEditApplication="editApplication"

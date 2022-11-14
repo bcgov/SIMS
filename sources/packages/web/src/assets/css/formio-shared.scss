@@ -69,6 +69,14 @@
   line-height: $line-height-header-lg;
 }
 
+/** 
+*  Inline header to avoid mandatory sign (asterisk) 
+*  to be just after the header and not break the line.
+*/
+.inline-header {
+  display: inline;
+}
+
 /**Typography styles for small header**/
 .text-small {
   font-style: $font-style-normal;
