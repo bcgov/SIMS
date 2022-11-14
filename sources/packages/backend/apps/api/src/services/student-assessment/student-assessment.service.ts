@@ -21,6 +21,7 @@ import {
   StudentAssessmentStatus,
 } from "./student-assessment.models";
 import { WorkflowClientService } from "@sims/services";
+import { addDays, dateEqualTo } from "../../utilities";
 
 /**
  * Manages the student assessment related operations.
@@ -89,6 +90,63 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
       query.andWhere("student.id = :studentId", { studentId });
     }
     return query.getOne();
+  }
+
+  /**
+   * Get the pending assessment for the institutions which have integration true for the particular date.
+   * @param generatedDate Date in which the assessment for
+   * particular institution is generated.
+   * @returns Pending assessment for the institution location.
+   */
+  async getPendingAssessment(
+    generatedDate?: Date,
+  ): Promise<StudentAssessment[]> {
+    const processingDate = generatedDate ? generatedDate : addDays(-1);
+    return this.repo.find({
+      select: {
+        id: true,
+        application: {
+          applicationNumber: true,
+          student: {
+            sinValidation: { sin: true },
+            user: { lastName: true, firstName: true },
+            birthDate: true,
+          },
+        },
+        offering: {
+          educationProgram: {
+            name: true,
+            description: true,
+            credentialType: true,
+            cipCode: true,
+            nocCode: true,
+            sabcCode: true,
+            institutionProgramCode: true,
+          },
+          yearOfStudy: true,
+          studyStartDate: true,
+          studyEndDate: true,
+          actualTuitionCosts: true,
+          programRelatedCosts: true,
+          mandatoryFees: true,
+          exceptionalExpenses: true,
+          studyBreaks: { totalFundedWeeks: true },
+        },
+        disbursementSchedules: {
+          id: true,
+          disbursementValues: { id: true, valueCode: true, valueAmount: true },
+        },
+      },
+      relations: {
+        disbursementSchedules: { disbursementValues: true },
+        application: { student: { sinValidation: true, user: true } },
+        offering: { institutionLocation: true, educationProgram: true },
+      },
+      where: {
+        assessmentDate: dateEqualTo(processingDate),
+        offering: { institutionLocation: { hasIntegration: true } },
+      },
+    });
   }
 
   /**

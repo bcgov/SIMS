@@ -78,6 +78,9 @@ export class ConfigService {
       SFASIntegrationConfig: {
         ftpReceiveFolder: process.env.SFAS_RECEIVE_FOLDER,
       },
+      InstitutionIntegrationConfig: {
+        ftpRequestFolder: process.env.INSTITUTION_REQUEST_FOLDER,
+      },
       bypassApplicationSubmitValidations:
         process.env.BYPASS_APPLICATION_SUBMIT_VALIDATIONS === "true",
       applicationArchiveDays: +process.env.APPLICATION_ARCHIVE_DAYS,
