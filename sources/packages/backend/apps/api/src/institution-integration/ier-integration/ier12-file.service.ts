@@ -13,13 +13,13 @@ import {
 
 @Injectable()
 export class IER12FileService {
-  InstitutionIntegrationConfig: InstitutionIntegrationConfig;
+  institutionIntegrationConfig: InstitutionIntegrationConfig;
   constructor(
     config: ConfigService,
     private readonly ierIntegrationService: IER12IntegrationService,
     private readonly studentAssessmentService: StudentAssessmentService,
   ) {
-    this.InstitutionIntegrationConfig =
+    this.institutionIntegrationConfig =
       config.getConfig().InstitutionIntegrationConfig;
   }
 
@@ -124,7 +124,7 @@ export class IER12FileService {
   } {
     const timestamp = getFileNameAsCurrentTimestamp();
     const fileName = `IER_012_${timestamp}.txt`;
-    const filePath = `${this.InstitutionIntegrationConfig.ftpRequestFolder}\\${institutionCode}\\${fileName}`;
+    const filePath = `${this.institutionIntegrationConfig.ftpRequestFolder}\\${institutionCode}\\${fileName}`;
     return {
       fileName,
       filePath,
