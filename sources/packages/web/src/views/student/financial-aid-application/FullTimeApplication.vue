@@ -25,15 +25,8 @@
             :disabled="!isLastPage || submittingApplication"
             color="primary"
             @click="wizardSubmit()"
+            :loading="submittingApplication"
           >
-            <v-progress-circular
-              v-if="submittingApplication"
-              class="mr-3"
-              bg-color="white"
-              indeterminate
-              color="secondary"
-              size="23"
-            />
             {{ submittingApplication ? "Submitting..." : "Submit application" }}
           </v-btn>
         </v-row>
@@ -51,37 +44,7 @@
       @pageChanged="pageChanged"
     />
   </student-page-container>
-  <v-row v-if="showNav">
-    <v-col>
-      <v-btn
-        color="primary"
-        v-show="!isFirstPage"
-        variant="outlined"
-        data-cy="previousSection"
-        @click="wizardGoNext"
-        >Start your application</v-btn
-      >
-    </v-col>
-    <v-col>
-      <v-btn
-        class="float-right"
-        color="primary"
-        v-show="!isLastPage"
-        @click="wizardGoNext"
-        >Next step</v-btn
-      >
-      <v-btn
-        class="float-right"
-        :disabled="!isLastPage || submitting"
-        v-show="!isFirstPage"
-        color="primary"
-        @click="wizardSubmit()"
-        :loading="submitting"
-      >
-        {{ submitting ? "Submitting..." : "Submit form" }}
-      </v-btn>
-    </v-col>
-  </v-row>
+
   <ConfirmEditApplication
     ref="editApplicationModal"
     @confirmEditApplication="editApplication"
