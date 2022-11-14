@@ -3,8 +3,9 @@ import { OfferingStatus } from "@sims/sims-db";
 import {
   OfferingValidationResult,
   OfferingValidationModel,
-  ValidationWarning,
-  ValidationWarningResult,
+  ValidationResult,
+  ValidationContext,
+  ValidationContextTypes,
 } from "./education-program-offering-validation.models";
 import { validateSync, ValidationError } from "class-validator";
 import { plainToClass } from "class-transformer";
@@ -53,11 +54,13 @@ export class EducationProgramOfferingValidationService {
       });
       const validationsErrors = validateSync(offeringModel);
       const allErrors: string[] = [];
-      const allWarnings: ValidationWarningResult[] = [];
+      const allWarnings: ValidationResult[] = [];
+      const allInfos: ValidationResult[] = [];
       validationsErrors.forEach((error) => {
-        const [errors, warnings] = this.extractErrorsAndWarnings(error);
-        allErrors.push(...errors);
-        allWarnings.push(...warnings);
+        const validation = this.extractValidationsByType(error);
+        allErrors.push(...validation.errors);
+        allWarnings.push(...validation.warnings);
+        allInfos.push(...validation.infos);
       });
 
       const offeringStatus = this.getOfferingSavingStatus(
@@ -77,6 +80,7 @@ export class EducationProgramOfferingValidationService {
         index,
         offeringModel,
         offeringStatus,
+        infos: allInfos,
         warnings: allWarnings,
         errors: allErrors,
       };
@@ -85,37 +89,47 @@ export class EducationProgramOfferingValidationService {
 
   /**
    * Inspect the validation error and its children checking when an error
-   * happen as has a warning context (must be considered a warning) or it is
-   * a critical error (has no warning context).
+   * happen as has an additional context (must be considered a warning or a info)
+   * or it is a critical error (has no warning or info context).
    * @param error error to be inspected.
-   * @returns errors and warnings.
+   * @returns errors, warnings and infos.
    */
-  private extractErrorsAndWarnings(
-    error: ValidationError,
-  ): [errors: string[], warnings: ValidationWarningResult[]] {
+  private extractValidationsByType(error: ValidationError): {
+    errors: string[];
+    warnings: ValidationResult[];
+    infos: ValidationResult[];
+  } {
     const errors: string[] = [];
-    const warnings: ValidationWarningResult[] = [];
+    const warnings: ValidationResult[] = [];
+    const infos: ValidationResult[] = [];
     const flattenedErrors = flattenErrors(error);
     flattenedErrors.forEach((error) => {
       Object.keys(error.constraints).forEach((errorConstraintKey) => {
-        let associatedContext: ValidationWarning = undefined;
+        let associatedContext: ValidationContext = undefined;
         if (error.contexts) {
           associatedContext = error.contexts[
             errorConstraintKey
-          ] as ValidationWarning;
+          ] as ValidationContext;
         }
         const errorDescription = error.constraints[errorConstraintKey];
-        if (associatedContext?.isWarning) {
+        if (associatedContext?.type === ValidationContextTypes.Warning) {
           warnings.push({
-            warningType: associatedContext.warningType,
-            warningMessage: errorDescription,
+            typeCode: associatedContext.typeCode,
+            message: errorDescription,
+          });
+        } else if (
+          associatedContext?.type === ValidationContextTypes.Information
+        ) {
+          infos.push({
+            typeCode: associatedContext.typeCode,
+            message: errorDescription,
           });
         } else {
           errors.push(errorDescription);
         }
       });
     });
-    return [errors, warnings];
+    return { errors, warnings, infos };
   }
 
   /**

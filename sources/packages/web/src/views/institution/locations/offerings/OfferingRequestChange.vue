@@ -98,7 +98,6 @@ export default defineComponent({
     });
 
     const submit = async (data: EducationProgramOfferingAPIInDTO) => {
-      console.log(data);
       try {
         processing.value = true;
         await EducationProgramOfferingService.shared.requestChange(
