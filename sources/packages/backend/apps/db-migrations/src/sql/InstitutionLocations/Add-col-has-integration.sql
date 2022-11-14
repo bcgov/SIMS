@@ -4,4 +4,4 @@ ALTER TABLE
 ADD
   COLUMN IF NOT EXISTS has_integration BOOLEAN NOT NULL DEFAULT FALSE;
 
-COMMENT ON COLUMN sims.institution_locations.has_integration IS 'Identifies if the institution uses integrations';
+COMMENT ON COLUMN sims.institution_locations.has_integration IS 'Identifies if the institution uses integrations.';
