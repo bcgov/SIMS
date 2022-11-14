@@ -28,16 +28,14 @@ export class IER12FileService {
    * 2. Create the Request content for the IER 12 file by populating the
    * header, footer and trailer content.
    * 3. Create the request filename with the file path with respect to the institution code
-   * for the IER 12 Request sent File.
+   * for the IER 12 sent File.
    * 4. Upload the content to the zoneB SFTP server.
    * @param generatedDate date in which the assessment for
    * particular institution is generated.
-   * @returns Processing IER 12 request result.
+   * @returns Processing IER 12 result.
    */
   async processIER12File(generatedDate?: Date): Promise<IER12UploadResult[]> {
-    this.logger.log(
-      `Retrieving pending assessment on ${generatedDate} for IER 12 request...`,
-    );
+    this.logger.log(`Retrieving pending assessment for IER 12...`);
     const pendingAssessments =
       await this.studentAssessmentService.getPendingAssessment(generatedDate);
     if (!pendingAssessments.length) {
@@ -62,7 +60,7 @@ export class IER12FileService {
     });
     const uploadResult: IER12UploadResult[] = [];
     try {
-      this.logger.log("Creating IER 12 request content...");
+      this.logger.log("Creating IER 12 content...");
       for await (const ierUploadResult of Object.keys(fileRecords).map(
         (institutionCode) =>
           this.uploadIER12Content(institutionCode, fileRecords),
@@ -70,9 +68,7 @@ export class IER12FileService {
         uploadResult.push(ierUploadResult);
       }
     } catch (error) {
-      this.logger.error(
-        `Error while uploading content for IER 12 Request: ${error}`,
-      );
+      this.logger.error(`Error while uploading content for IER 12: ${error}`);
       throw error;
     }
     return uploadResult;

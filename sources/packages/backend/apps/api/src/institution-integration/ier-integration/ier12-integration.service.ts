@@ -6,7 +6,7 @@ import { IER12FileLine, IER12Record } from "./models/ier12-integration.model";
 
 /**
  * Manages the creation of the content files that needs to be sent
- * to IER 12 request. These files are created based
+ * to IER 12. These files are created based
  * on a fixed size format and uploaded to a SFTP on Government
  * ZONE B network for further processing and final send to servers.
  */
@@ -16,7 +16,7 @@ export class IER12IntegrationService extends SFTPIntegrationBase<void> {
     super(config.getConfig().zoneBSFTP, sshService);
   }
   /**
-   * Create the IER 12 request content, by populating the records.
+   * Create the IER 12 content, by populating the records.
    * @param ier12Records - Assessment, Student, User, offering,
    * program and application objects data.
    * @returns Complete IERFileLines record as an array.
