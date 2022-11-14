@@ -1,8 +1,5 @@
 <template>
-  <student-page-container
-    container-class="student-start-new-application"
-    :full-width="true"
-  >
+  <student-page-container :full-width="true">
     <template #header>
       <header-navigator
         title="Applications"
