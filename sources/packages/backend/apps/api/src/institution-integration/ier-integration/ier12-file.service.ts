@@ -61,11 +61,11 @@ export class IER12FileService {
     const uploadResult: IER12UploadResult[] = [];
     try {
       this.logger.log("Creating IER 12 content...");
-      const fileUploadedContent = Object.keys(fileRecords).map(
-        (institutionCode) =>
-          this.uploadIER12Content(institutionCode, fileRecords),
-      );
-      for await (const ierUploadResult of fileUploadedContent) {
+      for (const institutionCode of Object.keys(fileRecords)) {
+        const ierUploadResult = await this.uploadIER12Content(
+          institutionCode,
+          fileRecords,
+        );
         uploadResult.push(ierUploadResult);
       }
     } catch (error) {
