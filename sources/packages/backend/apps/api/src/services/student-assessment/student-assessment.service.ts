@@ -138,6 +138,7 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
       },
       where: {
         assessmentDate: dateEqualTo(processingDate),
+        offering: { institutionLocation: { hasIntegration: true } },
       },
     });
   }
