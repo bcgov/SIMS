@@ -170,10 +170,11 @@ export const addDays = (daysToAdd: number, date?: Date | string): Date => {
 
 /**
  * @param date in which the search has to happen
- * from 00:00 00:000 hrs to 23:59 59:999 hrs.
+ * from midnight to next day midnight.
  * @returns typeorm findOperator object between the date.
  */
 export const dateEqualTo = (date?: Date): FindOperator<Date> => {
+  // TODO method can be updated when typeorm updates the AND operator in the where clause.
   return Between(
     new Date(date.setHours(0, 0, 0, 0)),
     new Date(date.setDate(date.getDate() + 1)),
