@@ -99,9 +99,11 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
    * @returns Pending assessment for the institution location.
    */
   async getPendingAssessment(
-    generatedDate?: Date,
+    generatedDate?: string,
   ): Promise<StudentAssessment[]> {
-    const processingDate = generatedDate ? generatedDate : addDays(-1);
+    const processingDate = generatedDate
+      ? new Date(generatedDate)
+      : addDays(-1);
     return this.repo.find({
       select: {
         id: true,

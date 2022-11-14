@@ -1,4 +1,4 @@
-import { Controller, Post } from "@nestjs/common";
+import { Controller, Post, Query } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { AllowAuthorizedParty } from "../../auth/decorators";
@@ -26,7 +26,7 @@ export class IERIntegrationSystemAccessController extends BaseController {
    */
   @Post("process-ier-12")
   async processIER12File(
-    generatedDate?: Date,
+    @Query("generatedDate") generatedDate?: string,
   ): Promise<IER12ResultAPIOutDTO[]> {
     this.logger.log("Executing IER 12 file generation ...");
     const uploadResult = await this.ierRequest.processIER12File(generatedDate);
