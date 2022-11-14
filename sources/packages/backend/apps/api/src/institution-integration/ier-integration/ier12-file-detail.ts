@@ -72,7 +72,7 @@ export class IER12FileDetail implements IER12FileLine {
     record.append(this.mandatoryFees.toString(), 8);
     record.append(this.exceptionExpenses.toString(), 8);
     record.append(this.totalFundedWeeks.toString(), 2);
-    record.repeatAppend(SPACE_FILLER, 3); //We have hardcoded the courseLoad to 100 as its only for FullTime.
+    record.repeatAppend(SPACE_FILLER, 3); //We have hardcoded the courseLoad to null as its only for FullTime.
     record.append("F", 1); //This implementation is only for FullTime, so hardcoding it to F.
     Object.keys(awardsSum).forEach((award: string) => {
       record.append(award, 4);

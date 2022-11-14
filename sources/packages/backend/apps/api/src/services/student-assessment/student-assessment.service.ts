@@ -94,7 +94,8 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
 
   /**
    * Get the pending assessment for the institutions which have integration true for the particular date.
-   * @param generatedDate Date in which the previous days records has to be fetched.
+   * @param generatedDate Date in which the assessment for
+   * particular institution is generated.
    * @returns Pending assessment for the institution location.
    */
   async getPendingAssessment(

@@ -20,6 +20,8 @@ export class IERIntegrationSystemAccessController extends BaseController {
   /**
    * Identifies all the applications which are in assessment
    * for a particular institution and generate the request file.
+   * @params Date in which the assessment for
+   * particular institution is generated.
    * @returns Processing result log.
    */
   @Post("process-ier-12")
