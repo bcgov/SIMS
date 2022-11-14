@@ -4,11 +4,10 @@ import {
   DisbursementScheduleService,
   DisbursementReceiptService,
 } from "../../services";
-import { ESDCIntegrationConfig } from "../../types";
 import { DisbursementReceiptIntegrationService } from "./disbursement-receipt-integration.service";
 import { ProcessSFTPResponseResult } from "../models/esdc-integration.model";
 import { DisbursementReceiptDownloadResponse } from "./models/disbursement-receipt-integration.model";
-import { ConfigService } from "@sims/utilities/config";
+import { ConfigService, ESDCIntegrationConfig } from "@sims/utilities/config";
 
 /**
  * Disbursement schedule map which consists of disbursement schedule id for a document number.

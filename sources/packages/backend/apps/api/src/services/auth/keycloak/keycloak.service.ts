@@ -1,13 +1,12 @@
 import axios from "axios";
 import { Injectable } from "@nestjs/common";
 import { stringify } from "qs";
-import { IAuthConfig } from "../../../types/config";
 import { TokenResponse } from "./token-response.model";
 import { RealmConfig } from "./realm-config.model";
 import { OpenIdConfig } from "./openid-config.model";
 import { KeycloakConfig } from "../../../auth/keycloakConfig";
 import { LoggerService, InjectLogger } from "@sims/utilities/logger";
-import { ConfigService } from "@sims/utilities/config";
+import { AuthConfig, ConfigService } from "@sims/utilities/config";
 
 /**
  * Manage the HTTP requests that need to be executed to Keycloak.
@@ -19,7 +18,7 @@ import { ConfigService } from "@sims/utilities/config";
  */
 @Injectable()
 export class KeycloakService {
-  private readonly authConfig: IAuthConfig;
+  private readonly authConfig: AuthConfig;
 
   @InjectLogger()
   logger: LoggerService;

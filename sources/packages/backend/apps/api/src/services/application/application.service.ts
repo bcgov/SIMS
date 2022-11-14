@@ -29,7 +29,6 @@ import {
   ApplicationScholasticStandingStatus as ApplicationScholasticStandingStatus,
   ApplicationSubmissionResult,
 } from "./application.models";
-import { MSFAANumberService } from "../msfaa-number/msfaa-number.service";
 import {
   COE_WINDOW,
   PIR_DENIED_REASON_OTHER_ID,
@@ -45,7 +44,6 @@ import { CustomNamedError, dateDifference } from "@sims/utilities";
 import { SFASApplicationService } from "../sfas/sfas-application.service";
 import { SFASPartTimeApplicationsService } from "../sfas/sfas-part-time-application.service";
 import { EducationProgramOfferingService } from "../education-program-offering/education-program-offering.service";
-import { IConfig } from "../../types";
 import { StudentRestrictionService } from "../restriction/student-restriction.service";
 import {
   PIR_DENIED_REASON_NOT_FOUND_ERROR,
@@ -69,9 +67,6 @@ export const INSUFFICIENT_APPLICATION_SEARCH_PARAMS =
 
 @Injectable()
 export class ApplicationService extends RecordDataModelService<Application> {
-  @InjectLogger()
-  logger: LoggerService;
-  private readonly config: IConfig;
   constructor(
     private readonly configService: ConfigService,
     private readonly dataSource: DataSource,
@@ -80,7 +75,6 @@ export class ApplicationService extends RecordDataModelService<Application> {
     private readonly sequenceService: SequenceControlService,
     private readonly fileService: StudentFileService,
     private readonly workflowClientService: WorkflowClientService,
-    private readonly msfaaNumberService: MSFAANumberService,
     private readonly studentRestrictionService: StudentRestrictionService,
     private readonly offeringService: EducationProgramOfferingService,
   ) {
@@ -1255,7 +1249,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
     studyStartDate: string,
     studyEndDate: string,
   ): Promise<void> {
-    if (!this.config.bypassApplicationSubmitValidations) {
+    if (!this.configService.bypassApplicationSubmitValidations) {
       const existingOverlapApplication = this.validatePIRAndDateOverlap(
         userId,
         studyStartDate,
@@ -1331,7 +1325,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
       .setParameter("completed", ApplicationStatus.completed)
       .setParameter(
         "applicationArchiveDays",
-        this.config.applicationArchiveDays,
+        this.configService.applicationArchiveDays,
       )
       .setParameter("isApplicationArchived", true)
       .execute();
@@ -1398,4 +1392,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
       },
     });
   }
+
+  @InjectLogger()
+  logger: LoggerService;
 }

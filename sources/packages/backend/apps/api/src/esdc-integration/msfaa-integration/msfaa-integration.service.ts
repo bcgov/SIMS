@@ -5,7 +5,6 @@ import {
   ReceivedStatusCode,
 } from "../msfaa-integration/models/msfaa-integration.model";
 import { SshService } from "../../services";
-import { SFTPConfig, ESDCIntegrationConfig } from "../../types";
 import {
   getGenderCode,
   getMaritalStatusCode,
@@ -24,7 +23,11 @@ import { MSFAAFileHeader } from "./msfaa-files/msfaa-file-header";
 import { MSFAAResponseReceivedRecord } from "./msfaa-files/msfaa-response-received-record";
 import { MSFAAResponseCancelledRecord } from "./msfaa-files/msfaa-response-cancelled-record";
 import { MSFAAResponseRecordIdentification } from "./msfaa-files/msfaa-response-record-identification";
-import { ConfigService } from "@sims/utilities/config";
+import {
+  ConfigService,
+  ESDCIntegrationConfig,
+  SFTPConfig,
+} from "@sims/utilities/config";
 
 /**
  * Manages the creation of the content files that needs to be sent

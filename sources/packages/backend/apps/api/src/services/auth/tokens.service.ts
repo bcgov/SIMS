@@ -1,9 +1,8 @@
 import { Injectable } from "@nestjs/common";
 import { KeycloakService, TokenCacheService } from "..";
-import { ClientCredential } from "../../types";
 import { TokenCacheResponse } from "./token-cache.service.models";
 import { JwtService } from "@nestjs/jwt";
-import { ConfigService } from "@sims/utilities/config";
+import { ClientCredential, ConfigService } from "@sims/utilities/config";
 
 /**
  * Helper class to provide easy access to tokens that

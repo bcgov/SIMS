@@ -2,7 +2,6 @@ import { LoggerService, InjectLogger } from "@sims/utilities/logger";
 import { Injectable } from "@nestjs/common";
 import { SINValidationService, StudentService } from "../../services";
 import { SequenceControlService } from "@sims/services";
-import { ESDCIntegrationConfig } from "../../types";
 import { SINValidationIntegrationService } from "./sin-validation-integration.service";
 import { SINValidation, Student } from "@sims/sims-db";
 import { ESDC_SIN_VALIDATION_SEQUENCE_GROUP_NAME } from "../../utilities";
@@ -15,7 +14,7 @@ import {
 import { ProcessSFTPResponseResult } from "../models/esdc-integration.model";
 import * as path from "path";
 import { EntityManager } from "typeorm";
-import { ConfigService } from "@sims/utilities/config";
+import { ConfigService, ESDCIntegrationConfig } from "@sims/utilities/config";
 
 /**
  * Manages the process to generate SIN validations requests to ESDC and allow

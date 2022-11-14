@@ -4,8 +4,8 @@ import {
   NUMBER_FILLER,
 } from "./models/esdc-integration.model";
 import { StringBuilder } from "../utilities/string-builder";
-import { ConfigService } from "@sims/utilities/config";
-import { ESDCIntegrationConfig } from "../types";
+import { ConfigService, ESDCIntegrationConfig } from "@sims/utilities/config";
+
 export abstract class ESDCFileHandler {
   esdcConfig: ESDCIntegrationConfig;
   constructor(config: ConfigService) {

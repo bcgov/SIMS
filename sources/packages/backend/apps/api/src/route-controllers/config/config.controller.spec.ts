@@ -1,6 +1,6 @@
 require("../../../../../env_setup");
 import { Test, TestingModule } from "@nestjs/testing";
-import { ConfigService } from "../../services/config/config.service";
+import { ConfigModule } from "@sims/utilities/config";
 import { ConfigController } from "./config.controller";
 
 describe("ConfigController", () => {
@@ -8,7 +8,7 @@ describe("ConfigController", () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [ConfigService],
+      imports: [ConfigModule],
       controllers: [ConfigController],
     }).compile();
     await module.init();

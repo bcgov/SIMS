@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { ConfigService } from "@sims/utilities/config";
+import { ATBCIntegrationConfig, ConfigService } from "@sims/utilities/config";
 import axios from "axios";
 import { LoggerService, InjectLogger } from "@sims/utilities/logger";
 import {
@@ -7,7 +7,6 @@ import {
   ATBCAuthTokenResponse,
 } from "../auth/token-cache.service.models";
 import {
-  ATBCIntegrationConfig,
   ATBCCreateClientResponse,
   ATBCCreateClientPayload,
   ATBCPDCheckerResponse,

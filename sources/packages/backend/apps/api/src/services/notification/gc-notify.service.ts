@@ -2,8 +2,7 @@ import { Injectable } from "@nestjs/common";
 import axios, { AxiosError } from "axios";
 import { GCNotifyResult } from "./gc-notify.model";
 import { LoggerService, InjectLogger } from "@sims/utilities/logger";
-import { GCNotify } from "../../types";
-import { ConfigService } from "@sims/utilities/config";
+import { ConfigService, GCNotify } from "@sims/utilities/config";
 
 @Injectable()
 export class GCNotifyService {

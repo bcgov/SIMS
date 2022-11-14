@@ -18,8 +18,7 @@ import {
 } from "../models/esdc-integration.model";
 import { FixedFormatFileLine } from "../../services/ssh/sftp-integration-base.models";
 import { SINValidationFileRequest } from "./sin-validation-files/sin-validation-file-request";
-import { ESDCIntegrationConfig } from "../../types";
-import { ConfigService } from "@sims/utilities/config";
+import { ConfigService, ESDCIntegrationConfig } from "@sims/utilities/config";
 
 @Injectable()
 export class SINValidationIntegrationService extends SFTPIntegrationBase<SINValidationResponseResult> {

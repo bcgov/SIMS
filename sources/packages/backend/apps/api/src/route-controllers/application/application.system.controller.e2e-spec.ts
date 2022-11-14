@@ -7,7 +7,6 @@ import { DatabaseModule } from "@sims/sims-db";
 import { AuthModule } from "../../auth/auth.module";
 import {
   ApplicationService,
-  ConfigService,
   DisbursementScheduleService,
   EducationProgramOfferingService,
   KeycloakService,
@@ -40,6 +39,7 @@ import {
 import { createMockedJwtService } from "../../testHelpers/mocked-providers/jwt-service-mock";
 import { CraIntegrationModule } from "../../cra-integration/cra-integration.module";
 import { ApplicationSystemAccessController } from "./application.system-access.controller";
+import { ConfigModule } from "@sims/utilities/config";
 
 describe.skip("Test system-access/application Controller", () => {
   let accesstoken: string;
@@ -59,7 +59,7 @@ describe.skip("Test system-access/application Controller", () => {
     );
     accesstoken = token.access_token;
     const module: TestingModule = await Test.createTestingModule({
-      imports: [DatabaseModule, AuthModule, CraIntegrationModule],
+      imports: [DatabaseModule, AuthModule, CraIntegrationModule, ConfigModule],
       controllers: [ApplicationSystemAccessController],
       providers: [
         ApplicationService,
@@ -67,7 +67,6 @@ describe.skip("Test system-access/application Controller", () => {
         EducationProgramOfferingService,
         SequenceControlService,
         KeycloakService,
-        ConfigService,
         TokensService,
         MSFAANumberService,
         SupportingUserService,

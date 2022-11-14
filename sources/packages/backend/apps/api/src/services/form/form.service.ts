@@ -1,10 +1,6 @@
 import { HttpStatus, Injectable } from "@nestjs/common";
-import {
-  FormsConfig,
-  DryRunSubmissionResult,
-  SubmissionResult,
-} from "../../types";
-import { ConfigService } from "@sims/utilities/config";
+import { DryRunSubmissionResult, SubmissionResult } from "../../types";
+import { ConfigService, FormsConfig } from "@sims/utilities/config";
 import axios from "axios";
 import { LoggerService, InjectLogger } from "@sims/utilities/logger";
 import { JwtService } from "@nestjs/jwt";

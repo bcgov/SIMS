@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { ConfigService } from "@sims/utilities/config";
+import { ConfigService, ESDCIntegrationConfig } from "@sims/utilities/config";
 import { SshService } from "../../services/ssh/ssh.service";
 import { SFTPIntegrationBase } from "../../services/ssh/sftp-integration-base";
 import {
@@ -10,7 +10,6 @@ import { DisbursementReceiptHeader } from "./disbursement-receipt-files/disburse
 import { DisbursementReceiptFooter } from "./disbursement-receipt-files/disbursement-receipt-file-footer";
 import { DisbursementReceiptDetail } from "./disbursement-receipt-files/disbursement-receipt-file-detail";
 import { getFileNameAsCurrentTimestamp } from "@sims/utilities";
-import { ESDCIntegrationConfig } from "../../types";
 
 @Injectable()
 export class DisbursementReceiptIntegrationService extends SFTPIntegrationBase<DisbursementReceiptDownloadResponse> {

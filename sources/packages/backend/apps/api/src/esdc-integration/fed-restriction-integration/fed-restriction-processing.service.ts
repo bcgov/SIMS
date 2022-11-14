@@ -2,7 +2,6 @@ import { LoggerService, InjectLogger } from "@sims/utilities/logger";
 import { Injectable } from "@nestjs/common";
 import { FederalRestrictionService, RestrictionService } from "../../services";
 import { FedRestrictionIntegrationService } from "./fed-restriction-integration.service";
-import { ESDCIntegrationConfig } from "../../types";
 import * as os from "os";
 import { DataSource, InsertResult } from "typeorm";
 import { FederalRestriction, Restriction } from "@sims/sims-db";
@@ -10,7 +9,7 @@ import { FEDERAL_RESTRICTIONS_BULK_INSERT_AMOUNT } from "../../utilities";
 import { getISODateOnlyString } from "@sims/utilities";
 import { FedRestrictionFileRecord } from "./fed-restriction-files/fed-restriction-file-record";
 import { ProcessSFTPResponseResult } from "../models/esdc-integration.model";
-import { ConfigService } from "@sims/utilities/config";
+import { ConfigService, ESDCIntegrationConfig } from "@sims/utilities/config";
 
 /**
  * Manages the process to import the entire snapshot of federal

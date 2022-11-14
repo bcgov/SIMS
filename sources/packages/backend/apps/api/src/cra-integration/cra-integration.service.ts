@@ -1,6 +1,6 @@
 import { LoggerService, InjectLogger } from "@sims/utilities/logger";
 import { Injectable } from "@nestjs/common";
-import { ConfigService } from "@sims/utilities/config";
+import { ConfigService, CRAIntegrationConfig } from "@sims/utilities/config";
 import { SshService } from "../services/ssh/ssh.service";
 import {
   CRAPersonRecord,
@@ -8,7 +8,6 @@ import {
   TransactionSubCodes,
   CRASFTPResponseFile,
 } from "./cra-integration.models";
-import { CRAIntegrationConfig } from "../types";
 import { CRAFileHeader } from "./cra-files/cra-file-header";
 import { CRAFileFooter } from "./cra-files/cra-file-footer";
 import { CRAFileIVRequestRecord } from "./cra-files/cra-file-iv-request-record";
