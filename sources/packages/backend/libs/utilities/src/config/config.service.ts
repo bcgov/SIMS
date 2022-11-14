@@ -173,6 +173,13 @@ export class ConfigService {
     );
   }
 
+  /**
+   * Avoids reading the env configuration every time and creates
+   * a property to store the value and keep reading from it.
+   * @param key cache key.
+   * @param defaultValue default value to be set when none is available.
+   * @returns the cached value.
+   */
   private getCachedConfig<T>(key: string, defaultValue: T): T {
     if (this[key] === undefined) {
       this[key] = defaultValue;
