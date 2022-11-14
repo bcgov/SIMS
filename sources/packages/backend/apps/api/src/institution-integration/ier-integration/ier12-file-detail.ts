@@ -44,7 +44,7 @@ export class IER12FileDetail implements IER12FileLine {
     const awardsSum: Record<string, number> = {};
     disbursementValuesTotal.forEach((award) => {
       awardsSum[award.valueCode] =
-        (awardsSum[award.valueCode] ?? 0) + round(+award.valueAmount);
+        (awardsSum[award.valueCode] ?? 0) + round(award.valueAmount);
     });
     const record = new StringBuilder();
     record.appendWithStartFiller(this.assessmentId, 10, NUMBER_FILLER);
