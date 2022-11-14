@@ -18,12 +18,15 @@
         @click="wizardGoPrevious"
         >Previous section</v-btn
       >
+      <v-btn color="primary" v-show="isFirstPage" @click="wizardGoNext"
+        >Start your application</v-btn
+      >
     </v-col>
     <v-col>
       <v-btn
         class="float-right"
         color="primary"
-        v-show="!isLastPage"
+        v-show="!isLastPage && !isFirstPage"
         @click="wizardGoNext"
         >Next section</v-btn
       >
