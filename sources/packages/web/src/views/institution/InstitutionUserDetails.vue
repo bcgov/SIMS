@@ -1,7 +1,11 @@
 <template>
   <full-page-container :full-width="true">
     <template #header>
-      <header-navigator title="Manage institution" subTitle="Manage Users" />
+      <header-navigator
+        title="Manage institution"
+        data-cy="manageUserLandingPage"
+        subTitle="Manage Users"
+      />
     </template>
     <institution-user-summary
       :hasBusinessGuid="hasBusinessGuid"

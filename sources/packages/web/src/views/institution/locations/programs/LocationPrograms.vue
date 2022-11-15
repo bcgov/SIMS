@@ -1,7 +1,11 @@
 <template>
   <full-page-container :full-width="true">
     <template #header>
-      <header-navigator :title="locationName" subTitle="Programs" />
+      <header-navigator
+        :title="locationName"
+        data-cy="programs"
+        subTitle="Programs"
+      />
     </template>
     <body-header title="All programs" :recordsCount="programAndCount.count">
       <template #actions>
@@ -20,6 +24,7 @@
             class="ml-2"
             color="primary"
             @click="goToAddNewProgram()"
+            data-cy="createProgram"
             prepend-icon="fa:fa fa-plus-circle"
           >
             Create program
