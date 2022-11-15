@@ -254,10 +254,6 @@
                             {
                               "attr": "role",
                               "value": "img"
-                            },
-                            {
-                              "attr": "alt",
-                              "value": "An illustration of a student with a clipboard. Illustration by Storyset."
                             }
                           ],
                           "content": "",
@@ -329,7 +325,7 @@
                           "showWordCount": false,
                           "allowMultipleMasks": false,
                           "addons": [],
-                          "id": "e8wanjt"
+                          "id": "e0oiolp"
                         }
                       ],
                       "offset": 0,
@@ -1651,76 +1647,24 @@
               "components": [
                 {
                   "label": "The program I will be attending:",
-                  "widget": "choicesjs",
-                  "placeholder": "<i class='fa fa-search'></i> search for your program",
-                  "customClass": "font-weight-bold",
-                  "tableView": true,
-                  "refreshOn": "howWillYouBeAttendingTheProgram",
-                  "refreshOnBlur": "howWillYouBeAttendingTheProgram",
-                  "clearOnRefresh": true,
-                  "validate": {
-                    "required": true,
-                    "custom": "",
-                    "customPrivate": false,
-                    "strictDateValidation": false,
-                    "multiple": false,
-                    "unique": false,
-                    "onlyAvailableItems": false
-                  },
-                  "key": "selectedProgram",
-                  "properties": {
-                    "disabled": "data['selectedProgram']"
-                  },
-                  "customConditional": "show =\r\n  !!data.selectedLocation &&\r\n  !!!data.mySchoolIsNotListed &&\r\n  !!data.howWillYouBeAttendingTheProgram &&\r\n  !(data.myProgramNotListed ? data.myProgramNotListed.programnotListed : false) &&\r\n  !!!data.isReadOnly;\r\n  \r\n\r\n",
-                  "type": "select",
-                  "input": true,
-                  "lockKey": true,
-                  "searchThreshold": 0.3,
-                  "prefix": "",
-                  "suffix": "",
-                  "multiple": false,
-                  "defaultValue": null,
-                  "protected": false,
-                  "unique": false,
-                  "persistent": true,
-                  "hidden": false,
-                  "clearOnHide": true,
-                  "redrawOn": "",
-                  "modalEdit": false,
-                  "dataGridLabel": false,
                   "labelPosition": "top",
+                  "widget": "choicesjs",
+                  "labelWidth": "",
+                  "labelMargin": "",
+                  "placeholder": "<i class='fa fa-search'></i> search for your program",
                   "description": "",
-                  "errorLabel": "",
                   "tooltip": "",
-                  "hideLabel": false,
+                  "customClass": "font-weight-bold",
                   "tabindex": "",
-                  "disabled": false,
+                  "hidden": false,
+                  "hideLabel": false,
+                  "uniqueOptions": false,
                   "autofocus": false,
-                  "dbIndex": false,
-                  "customDefaultValue": "",
-                  "calculateValue": "",
-                  "calculateServer": false,
-                  "attributes": {},
-                  "validateOn": "change",
-                  "conditional": {
-                    "show": null,
-                    "when": null,
-                    "eq": ""
-                  },
-                  "overlay": {
-                    "style": "",
-                    "left": "",
-                    "top": "",
-                    "width": "",
-                    "height": ""
-                  },
-                  "allowCalculateOverride": false,
-                  "encrypted": false,
-                  "showCharCount": false,
-                  "showWordCount": false,
-                  "allowMultipleMasks": false,
-                  "addons": [],
-                  "idPath": "id",
+                  "disabled": false,
+                  "tableView": true,
+                  "modalEdit": false,
+                  "multiple": false,
+                  "dataSrc": "values",
                   "data": {
                     "values": [
                       {
@@ -1728,37 +1672,97 @@
                         "value": ""
                       }
                     ],
+                    "resource": "",
                     "json": "",
                     "url": "",
-                    "resource": "",
                     "custom": ""
                   },
-                  "limit": 100,
-                  "dataSrc": "values",
+                  "dataType": "",
+                  "idPath": "id",
                   "valueProperty": "",
-                  "lazyLoad": true,
-                  "filter": "",
+                  "limit": 100,
+                  "template": "<span>{{ item.label }}</span>",
+                  "refreshOn": "howWillYouBeAttendingTheProgram",
+                  "refreshOnBlur": "howWillYouBeAttendingTheProgram",
+                  "clearOnRefresh": true,
                   "searchEnabled": true,
-                  "searchDebounce": 0.3,
-                  "searchField": "",
-                  "minSearch": 0,
+                  "selectThreshold": 0.3,
                   "readOnlyValue": false,
+                  "customOptions": {},
+                  "useExactSearch": false,
+                  "persistent": true,
+                  "protected": false,
+                  "dbIndex": false,
+                  "encrypted": false,
+                  "clearOnHide": true,
+                  "customDefaultValue": "",
+                  "calculateValue": "",
+                  "calculateServer": false,
+                  "allowCalculateOverride": false,
+                  "validateOn": "change",
+                  "validate": {
+                    "required": true,
+                    "onlyAvailableItems": false,
+                    "customMessage": "",
+                    "custom": "",
+                    "customPrivate": false,
+                    "json": "",
+                    "strictDateValidation": false,
+                    "multiple": false,
+                    "unique": false
+                  },
+                  "unique": false,
+                  "errorLabel": "",
+                  "errors": "",
+                  "key": "selectedProgram",
+                  "tags": [],
+                  "properties": {},
+                  "conditional": {
+                    "show": null,
+                    "when": null,
+                    "eq": "",
+                    "json": ""
+                  },
+                  "customConditional": "show =\r\n  !!data.selectedLocation &&\r\n  !!!data.mySchoolIsNotListed &&\r\n  !!data.howWillYouBeAttendingTheProgram &&\r\n  !(data.myProgramNotListed ? data.myProgramNotListed.programnotListed : false) &&\r\n  !!!data.isReadOnly;\r\n  \r\n\r\n",
+                  "logic": [],
+                  "attributes": {},
+                  "overlay": {
+                    "style": "",
+                    "page": "",
+                    "left": "",
+                    "top": "",
+                    "width": "",
+                    "height": ""
+                  },
+                  "type": "select",
+                  "indexeddb": {
+                    "filter": {}
+                  },
+                  "selectFields": "",
+                  "searchField": "",
+                  "searchDebounce": 0.3,
+                  "minSearch": 0,
+                  "filter": "",
+                  "redrawOn": "",
+                  "input": true,
+                  "lockKey": true,
+                  "searchThreshold": 0.3,
+                  "prefix": "",
+                  "suffix": "",
+                  "dataGridLabel": false,
+                  "showCharCount": false,
+                  "showWordCount": false,
+                  "allowMultipleMasks": false,
+                  "addons": [],
+                  "lazyLoad": true,
                   "authenticate": false,
                   "ignoreCache": false,
-                  "template": "<span>{{ item.label }}</span>",
-                  "selectFields": "",
-                  "selectThreshold": 0.3,
-                  "uniqueOptions": false,
                   "fuseOptions": {
                     "include": "score",
                     "threshold": 0.3
                   },
-                  "indexeddb": {
-                    "filter": {}
-                  },
-                  "customOptions": {},
-                  "useExactSearch": false,
-                  "id": "euhpbb"
+                  "id": "eopfm7h",
+                  "defaultValue": ""
                 },
                 {
                   "label": "The program I will be attending:",
@@ -4067,16 +4071,41 @@
                   "id": "ehrxohq"
                 },
                 {
+                  "title": "Course information panel",
+                  "labelWidth": "",
+                  "labelMargin": "",
+                  "theme": "default",
+                  "tooltip": "",
+                  "customClass": "",
                   "collapsible": false,
+                  "hidden": false,
                   "hideLabel": true,
+                  "disabled": false,
+                  "modalEdit": false,
                   "key": "panel1",
+                  "tags": [],
+                  "properties": {},
+                  "customConditional": "",
                   "conditional": {
+                    "json": "",
                     "show": true,
                     "when": "howWillYouBeAttendingTheProgram",
                     "eq": "Part Time"
                   },
+                  "logic": [],
+                  "attributes": {},
+                  "overlay": {
+                    "style": "",
+                    "page": "",
+                    "left": "",
+                    "top": "",
+                    "width": "",
+                    "height": ""
+                  },
                   "type": "panel",
                   "label": "Panel",
+                  "breadcrumb": "default",
+                  "tabindex": "",
                   "input": false,
                   "tableView": false,
                   "components": [
@@ -4153,7 +4182,7 @@
                       "properties": {},
                       "allowMultipleMasks": false,
                       "addons": [],
-                      "id": "e4tixai"
+                      "id": "efhriqd"
                     },
                     {
                       "label": "HTML",
@@ -4227,7 +4256,7 @@
                       "allowMultipleMasks": false,
                       "addons": [],
                       "tag": "p",
-                      "id": "e48bi7"
+                      "id": "emh3t8f"
                     },
                     {
                       "label": "Course information",
@@ -4338,7 +4367,7 @@
                                       "displayMask": "",
                                       "spellcheck": true,
                                       "truncateMultipleSpaces": false,
-                                      "id": "eaz2nl8"
+                                      "id": "e6uctnl"
                                     }
                                   ],
                                   "width": 6,
@@ -4426,7 +4455,7 @@
                                       "displayMask": "",
                                       "spellcheck": true,
                                       "truncateMultipleSpaces": false,
-                                      "id": "eymxj8"
+                                      "id": "eqkr5x"
                                     }
                                   ],
                                   "size": "md",
@@ -4502,7 +4531,7 @@
                               "tree": false,
                               "lazyLoad": false,
                               "autoAdjust": false,
-                              "id": "es65cur"
+                              "id": "e1cu6ql"
                             },
                             {
                               "label": "Columns",
@@ -4598,7 +4627,7 @@
                                       "displayMask": "",
                                       "spellcheck": true,
                                       "truncateMultipleSpaces": false,
-                                      "id": "ep6n3at"
+                                      "id": "ehhui5b"
                                     }
                                   ],
                                   "width": 6,
@@ -4699,7 +4728,7 @@
                                       "displayMask": "",
                                       "spellcheck": true,
                                       "truncateMultipleSpaces": false,
-                                      "id": "ehtu7nn"
+                                      "id": "epcwxa"
                                     }
                                   ],
                                   "size": "md",
@@ -4774,10 +4803,10 @@
                               "tree": false,
                               "lazyLoad": false,
                               "autoAdjust": false,
-                              "id": "e8jd6vd"
+                              "id": "ebc86yc"
                             }
                           ],
-                          "id": "ebfc07",
+                          "id": "eler3if",
                           "placeholder": "",
                           "prefix": "",
                           "customClass": "",
@@ -4898,37 +4927,30 @@
                       "tree": true,
                       "lazyLoad": false,
                       "disableAddingRemovingRows": false,
-                      "id": "e2ukpf"
+                      "id": "eh5vyhe"
                     }
                   ],
                   "placeholder": "",
                   "prefix": "",
-                  "customClass": "",
                   "suffix": "",
                   "multiple": false,
                   "defaultValue": null,
                   "protected": false,
                   "unique": false,
                   "persistent": false,
-                  "hidden": false,
                   "clearOnHide": false,
                   "refreshOn": "",
                   "redrawOn": "",
-                  "modalEdit": false,
                   "dataGridLabel": false,
                   "labelPosition": "top",
                   "description": "",
                   "errorLabel": "",
-                  "tooltip": "",
-                  "tabindex": "",
-                  "disabled": false,
                   "autofocus": false,
                   "dbIndex": false,
                   "customDefaultValue": "",
                   "calculateValue": "",
                   "calculateServer": false,
                   "widget": null,
-                  "attributes": {},
                   "validateOn": "change",
                   "validate": {
                     "required": false,
@@ -4938,26 +4960,15 @@
                     "multiple": false,
                     "unique": false
                   },
-                  "overlay": {
-                    "style": "",
-                    "left": "",
-                    "top": "",
-                    "width": "",
-                    "height": ""
-                  },
                   "allowCalculateOverride": false,
                   "encrypted": false,
                   "showCharCount": false,
                   "showWordCount": false,
-                  "properties": {},
                   "allowMultipleMasks": false,
                   "addons": [],
                   "tree": false,
                   "lazyLoad": false,
-                  "title": "Panel",
-                  "theme": "default",
-                  "breadcrumb": "default",
-                  "id": "e2o3jsj"
+                  "id": "emhghx5"
                 }
               ],
               "placeholder": "",
@@ -10831,7 +10842,7 @@
                       "key": "firstName",
                       "type": "textfield",
                       "input": true,
-                      "id": "e49yblg000000000000000",
+                      "id": "e49yblg0000000000000000000000000",
                       "placeholder": "",
                       "prefix": "",
                       "suffix": "",
@@ -10908,7 +10919,7 @@
                       "key": "lastName",
                       "type": "textfield",
                       "input": true,
-                      "id": "eip2yug000000000000000",
+                      "id": "eip2yug0000000000000000000000000",
                       "placeholder": "",
                       "prefix": "",
                       "suffix": "",
@@ -11069,7 +11080,7 @@
                       "addons": [],
                       "inputType": "radio",
                       "fieldSet": false,
-                      "id": "ego9ype00",
+                      "id": "ego9ype000000000000",
                       "defaultValue": ""
                     }
                   ],
@@ -11090,24 +11101,27 @@
                   "id": "eyqyky"
                 },
                 {
-                  "label": "roiWell",
+                  "title": "Student Aid BC Declaration panel",
                   "labelWidth": "",
                   "labelMargin": "",
-                  "customClass": "",
+                  "theme": "default",
+                  "tooltip": "",
+                  "customClass": "formio-panel-bg-secondary",
+                  "collapsible": false,
                   "hidden": false,
-                  "hideLabel": false,
+                  "hideLabel": true,
                   "disabled": false,
                   "modalEdit": false,
-                  "key": "roiWell",
+                  "key": "panel4",
                   "tags": [],
                   "properties": {},
-                  "conditional": {
-                    "show": true,
-                    "when": "addTrustContactToContactSABC",
-                    "eq": "yes",
-                    "json": ""
-                  },
                   "customConditional": "",
+                  "conditional": {
+                    "json": "",
+                    "show": null,
+                    "when": null,
+                    "eq": ""
+                  },
                   "logic": [],
                   "attributes": {},
                   "overlay": {
@@ -11118,15 +11132,15 @@
                     "width": "",
                     "height": ""
                   },
-                  "type": "well",
+                  "type": "panel",
+                  "label": "Panel",
+                  "breadcrumb": "default",
+                  "tabindex": "",
                   "input": false,
                   "tableView": false,
                   "components": [
                     {
                       "label": "HTML",
-                      "labelWidth": "",
-                      "labelMargin": "",
-                      "tag": "p",
                       "className": "category-header-medium primary-color",
                       "attrs": [
                         {
@@ -11136,43 +11150,24 @@
                       ],
                       "content": "StudentAid BC Declaration",
                       "refreshOnChange": false,
-                      "customClass": "",
-                      "hidden": false,
-                      "modalEdit": false,
                       "key": "html5",
-                      "tags": [],
-                      "properties": {},
-                      "conditional": {
-                        "show": null,
-                        "when": null,
-                        "eq": "",
-                        "json": ""
-                      },
-                      "customConditional": "",
-                      "logic": [],
-                      "attributes": {},
-                      "overlay": {
-                        "style": "",
-                        "page": "",
-                        "left": "",
-                        "top": "",
-                        "width": "",
-                        "height": ""
-                      },
                       "type": "htmlelement",
                       "input": false,
                       "tableView": false,
                       "placeholder": "",
                       "prefix": "",
+                      "customClass": "",
                       "suffix": "",
                       "multiple": false,
                       "defaultValue": null,
                       "protected": false,
                       "unique": false,
                       "persistent": false,
+                      "hidden": false,
                       "clearOnHide": true,
                       "refreshOn": "",
                       "redrawOn": "",
+                      "modalEdit": false,
                       "dataGridLabel": false,
                       "labelPosition": "top",
                       "description": "",
@@ -11187,6 +11182,7 @@
                       "calculateValue": "",
                       "calculateServer": false,
                       "widget": null,
+                      "attributes": {},
                       "validateOn": "change",
                       "validate": {
                         "required": false,
@@ -11196,13 +11192,27 @@
                         "multiple": false,
                         "unique": false
                       },
+                      "conditional": {
+                        "show": null,
+                        "when": null,
+                        "eq": ""
+                      },
+                      "overlay": {
+                        "style": "",
+                        "left": "",
+                        "top": "",
+                        "width": "",
+                        "height": ""
+                      },
                       "allowCalculateOverride": false,
                       "encrypted": false,
                       "showCharCount": false,
                       "showWordCount": false,
+                      "properties": {},
                       "allowMultipleMasks": false,
                       "addons": [],
-                      "id": "ee5nqrq"
+                      "tag": "p",
+                      "id": "e2x6dd"
                     },
                     {
                       "label": "HTML",
@@ -11276,7 +11286,7 @@
                       "allowMultipleMasks": false,
                       "addons": [],
                       "tag": "p",
-                      "id": "e99g75f"
+                      "id": "esnordm"
                     },
                     {
                       "label": "HTML",
@@ -11350,7 +11360,7 @@
                       "allowMultipleMasks": false,
                       "addons": [],
                       "tag": "p",
-                      "id": "en8hr9"
+                      "id": "e0dlfor"
                     },
                     {
                       "label": "HTML",
@@ -11424,7 +11434,7 @@
                       "allowMultipleMasks": false,
                       "addons": [],
                       "tag": "p",
-                      "id": "emx2dq"
+                      "id": "e7fwi1n"
                     },
                     {
                       "label": "HTML",
@@ -11498,7 +11508,7 @@
                       "allowMultipleMasks": false,
                       "addons": [],
                       "tag": "p",
-                      "id": "exr5d3m"
+                      "id": "eds51he"
                     }
                   ],
                   "placeholder": "",
@@ -11509,15 +11519,13 @@
                   "protected": false,
                   "unique": false,
                   "persistent": false,
-                  "clearOnHide": true,
+                  "clearOnHide": false,
                   "refreshOn": "",
                   "redrawOn": "",
                   "dataGridLabel": false,
                   "labelPosition": "top",
                   "description": "",
                   "errorLabel": "",
-                  "tooltip": "",
-                  "tabindex": "",
                   "autofocus": false,
                   "dbIndex": false,
                   "customDefaultValue": "",
@@ -11541,7 +11549,7 @@
                   "addons": [],
                   "tree": false,
                   "lazyLoad": false,
-                  "id": "e16freq"
+                  "id": "ergd0ji"
                 },
                 {
                   "label": "I agree to share my application information with the trusted contacts entered above.",
@@ -14037,7 +14045,7 @@
                           "id": "ewllvk"
                         }
                       ],
-                      "id": "eja9nnp000000000000000",
+                      "id": "eja9nnp0000000000000000",
                       "placeholder": "",
                       "prefix": "",
                       "customClass": "",
@@ -19746,7 +19754,7 @@
                           "key": "ageAtStartOfYourStudyPeriod",
                           "type": "number",
                           "input": true,
-                          "id": "eg5h6zw0000000",
+                          "id": "eg5h6zw00000000",
                           "placeholder": "",
                           "prefix": "",
                           "customClass": "",
@@ -19831,7 +19839,7 @@
                           },
                           "type": "radio",
                           "input": true,
-                          "id": "exfr1w0000000",
+                          "id": "exfr1w00000000",
                           "placeholder": "",
                           "prefix": "",
                           "customClass": "",
@@ -19915,7 +19923,7 @@
                           },
                           "type": "radio",
                           "input": true,
-                          "id": "eziwklp0000000",
+                          "id": "eziwklp00000000",
                           "placeholder": "",
                           "prefix": "",
                           "customClass": "",
@@ -22721,24 +22729,27 @@
               "addons": []
             },
             {
-              "label": "CRA well",
+              "title": "CRA consent panel",
               "labelWidth": "",
               "labelMargin": "",
-              "customClass": "",
+              "theme": "default",
+              "tooltip": "",
+              "customClass": "formio-panel-bg-secondary",
+              "collapsible": false,
               "hidden": false,
               "hideLabel": true,
               "disabled": false,
               "modalEdit": false,
-              "key": "craWell",
+              "key": "craConsentPanel",
               "tags": [],
               "properties": {},
+              "customConditional": "",
               "conditional": {
+                "json": "",
                 "show": null,
                 "when": null,
-                "eq": "",
-                "json": ""
+                "eq": ""
               },
-              "customConditional": "",
               "logic": [],
               "attributes": {},
               "overlay": {
@@ -22749,7 +22760,10 @@
                 "width": "",
                 "height": ""
               },
-              "type": "well",
+              "type": "panel",
+              "label": "Panel",
+              "breadcrumb": "default",
+              "tabindex": "",
               "input": false,
               "placeholder": "",
               "prefix": "",
@@ -22759,7 +22773,7 @@
               "protected": false,
               "unique": false,
               "persistent": false,
-              "clearOnHide": true,
+              "clearOnHide": false,
               "refreshOn": "",
               "redrawOn": "",
               "tableView": false,
@@ -22767,8 +22781,6 @@
               "labelPosition": "top",
               "description": "",
               "errorLabel": "",
-              "tooltip": "",
-              "tabindex": "",
               "autofocus": false,
               "dbIndex": false,
               "customDefaultValue": "",
@@ -22949,7 +22961,7 @@
                   "addons": []
                 }
               ],
-              "id": "euenn7m"
+              "id": "eo4yj69"
             },
             {
               "label": "I give the Canadian Revenue Agency consent to verify the data I have provided in my application.",
@@ -31221,24 +31233,27 @@
           "addons": []
         },
         {
-          "label": "Declarations well",
+          "title": "Declarations panel",
           "labelWidth": "",
           "labelMargin": "",
-          "customClass": "",
+          "theme": "default",
+          "tooltip": "",
+          "customClass": "formio-panel-bg-secondary",
+          "collapsible": false,
           "hidden": false,
           "hideLabel": true,
           "disabled": false,
           "modalEdit": false,
-          "key": "declarationsWell",
+          "key": "declarationsPanel",
           "tags": [],
           "properties": {},
+          "customConditional": "",
           "conditional": {
+            "json": "",
             "show": null,
             "when": null,
-            "eq": "",
-            "json": ""
+            "eq": ""
           },
-          "customConditional": "",
           "logic": [],
           "attributes": {},
           "overlay": {
@@ -31249,55 +31264,15 @@
             "width": "",
             "height": ""
           },
-          "type": "well",
-          "input": false,
-          "placeholder": "",
-          "prefix": "",
-          "suffix": "",
-          "multiple": false,
-          "defaultValue": null,
-          "protected": false,
-          "unique": false,
-          "persistent": false,
-          "clearOnHide": true,
-          "refreshOn": "",
-          "redrawOn": "",
-          "tableView": false,
-          "dataGridLabel": false,
-          "labelPosition": "top",
-          "description": "",
-          "errorLabel": "",
-          "tooltip": "",
+          "type": "panel",
+          "label": "Panel",
+          "breadcrumb": "default",
           "tabindex": "",
-          "autofocus": false,
-          "dbIndex": false,
-          "customDefaultValue": "",
-          "calculateValue": "",
-          "calculateServer": false,
-          "widget": null,
-          "validateOn": "change",
-          "validate": {
-            "required": false,
-            "custom": "",
-            "customPrivate": false,
-            "strictDateValidation": false,
-            "multiple": false,
-            "unique": false
-          },
-          "allowCalculateOverride": false,
-          "encrypted": false,
-          "showCharCount": false,
-          "showWordCount": false,
-          "allowMultipleMasks": false,
-          "addons": [],
-          "tree": false,
-          "lazyLoad": false,
+          "input": false,
+          "tableView": false,
           "components": [
             {
               "label": "HTML",
-              "labelWidth": "",
-              "labelMargin": "",
-              "tag": "p",
               "className": "category-header-medium-small pb-2",
               "attrs": [
                 {
@@ -31308,28 +31283,7 @@
               "content": "Declarations",
               "refreshOnChange": false,
               "customClass": "header-md",
-              "hidden": false,
-              "modalEdit": false,
               "key": "html108",
-              "tags": [],
-              "properties": {},
-              "conditional": {
-                "show": null,
-                "when": null,
-                "eq": "",
-                "json": ""
-              },
-              "customConditional": "",
-              "logic": [],
-              "attributes": {},
-              "overlay": {
-                "style": "",
-                "page": "",
-                "left": "",
-                "top": "",
-                "width": "",
-                "height": ""
-              },
               "type": "htmlelement",
               "input": false,
               "tableView": false,
@@ -31341,9 +31295,11 @@
               "protected": false,
               "unique": false,
               "persistent": false,
+              "hidden": false,
               "clearOnHide": true,
               "refreshOn": "",
               "redrawOn": "",
+              "modalEdit": false,
               "dataGridLabel": false,
               "labelPosition": "top",
               "description": "",
@@ -31358,6 +31314,7 @@
               "calculateValue": "",
               "calculateServer": false,
               "widget": null,
+              "attributes": {},
               "validateOn": "change",
               "validate": {
                 "required": false,
@@ -31367,20 +31324,30 @@
                 "multiple": false,
                 "unique": false
               },
+              "conditional": {
+                "show": null,
+                "when": null,
+                "eq": ""
+              },
+              "overlay": {
+                "style": "",
+                "left": "",
+                "top": "",
+                "width": "",
+                "height": ""
+              },
               "allowCalculateOverride": false,
               "encrypted": false,
               "showCharCount": false,
               "showWordCount": false,
+              "properties": {},
               "allowMultipleMasks": false,
               "addons": [],
-              "id": "eyp37ke"
+              "tag": "p",
+              "id": "e342tgn"
             },
             {
               "label": "HTML",
-              "labelWidth": "",
-              "labelMargin": "",
-              "tag": "p",
-              "className": "",
               "attrs": [
                 {
                   "attr": "",
@@ -31389,43 +31356,24 @@
               ],
               "content": "<strong>StudentAid BC consent</strong>",
               "refreshOnChange": false,
-              "customClass": "",
-              "hidden": false,
-              "modalEdit": false,
               "key": "html1",
-              "tags": [],
-              "properties": {},
-              "conditional": {
-                "show": null,
-                "when": null,
-                "eq": "",
-                "json": ""
-              },
-              "customConditional": "",
-              "logic": [],
-              "attributes": {},
-              "overlay": {
-                "style": "",
-                "page": "",
-                "left": "",
-                "top": "",
-                "width": "",
-                "height": ""
-              },
               "type": "htmlelement",
               "input": false,
               "tableView": false,
               "placeholder": "",
               "prefix": "",
+              "customClass": "",
               "suffix": "",
               "multiple": false,
               "defaultValue": null,
               "protected": false,
               "unique": false,
               "persistent": false,
+              "hidden": false,
               "clearOnHide": true,
               "refreshOn": "",
               "redrawOn": "",
+              "modalEdit": false,
               "dataGridLabel": false,
               "labelPosition": "top",
               "description": "",
@@ -31440,6 +31388,7 @@
               "calculateValue": "",
               "calculateServer": false,
               "widget": null,
+              "attributes": {},
               "validateOn": "change",
               "validate": {
                 "required": false,
@@ -31449,13 +31398,27 @@
                 "multiple": false,
                 "unique": false
               },
+              "conditional": {
+                "show": null,
+                "when": null,
+                "eq": ""
+              },
+              "overlay": {
+                "style": "",
+                "left": "",
+                "top": "",
+                "width": "",
+                "height": ""
+              },
               "allowCalculateOverride": false,
               "encrypted": false,
               "showCharCount": false,
               "showWordCount": false,
+              "properties": {},
               "allowMultipleMasks": false,
               "addons": [],
-              "id": "ef8o7m9"
+              "tag": "p",
+              "id": "ebh8ug"
             },
             {
               "label": "HTML",
@@ -31527,12 +31490,50 @@
               "showWordCount": false,
               "properties": {},
               "allowMultipleMasks": false,
+              "addons": [],
               "tag": "p",
-              "id": "ezhjy",
-              "addons": []
+              "id": "e09oa3u"
             }
           ],
-          "id": "ee2hbgl"
+          "placeholder": "",
+          "prefix": "",
+          "suffix": "",
+          "multiple": false,
+          "defaultValue": null,
+          "protected": false,
+          "unique": false,
+          "persistent": false,
+          "clearOnHide": false,
+          "refreshOn": "",
+          "redrawOn": "",
+          "dataGridLabel": false,
+          "labelPosition": "top",
+          "description": "",
+          "errorLabel": "",
+          "autofocus": false,
+          "dbIndex": false,
+          "customDefaultValue": "",
+          "calculateValue": "",
+          "calculateServer": false,
+          "widget": null,
+          "validateOn": "change",
+          "validate": {
+            "required": false,
+            "custom": "",
+            "customPrivate": false,
+            "strictDateValidation": false,
+            "multiple": false,
+            "unique": false
+          },
+          "allowCalculateOverride": false,
+          "encrypted": false,
+          "showCharCount": false,
+          "showWordCount": false,
+          "allowMultipleMasks": false,
+          "addons": [],
+          "tree": false,
+          "lazyLoad": false,
+          "id": "eiwesth"
         },
         {
           "label": "I give StudentAid BC consent to verify the data I have provided in my application",
