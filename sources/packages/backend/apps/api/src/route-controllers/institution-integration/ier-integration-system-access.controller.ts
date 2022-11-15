@@ -7,7 +7,7 @@ import { IER12FileService } from "../../institution-integration/ier-integration/
 import { LoggerService } from "../../logger/logger.service";
 import { ClientTypeBaseRoute } from "../../types";
 import BaseController from "../BaseController";
-import { IER12ResultAPIOutDTO } from "./models/ier.dto";
+import { GeneratedDateAPIInDTO, IER12ResultAPIOutDTO } from "./models/ier.dto";
 
 @AllowAuthorizedParty(AuthorizedParties.formsFlowBPM)
 @Controller("ier-integration")
@@ -26,10 +26,12 @@ export class IERIntegrationSystemAccessController extends BaseController {
    */
   @Post("process-ier-12")
   async processIER12File(
-    @Query("generatedDate") generatedDate?: string,
+    @Query() generatedDateAPIInDTO: GeneratedDateAPIInDTO,
   ): Promise<IER12ResultAPIOutDTO[]> {
     this.logger.log("Executing IER 12 file generation ...");
-    const uploadResult = await this.ierRequest.processIER12File(generatedDate);
+    const uploadResult = await this.ierRequest.processIER12File(
+      generatedDateAPIInDTO.generatedDate,
+    );
     this.logger.log("IER 12 file generation completed.");
     return uploadResult;
   }
