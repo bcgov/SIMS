@@ -34,7 +34,7 @@ export class IER12FileService {
    * particular institution is generated.
    * @returns Processing IER 12 result.
    */
-  async processIER12File(generatedDate?: Date): Promise<IER12UploadResult[]> {
+  async processIER12File(generatedDate?: string): Promise<IER12UploadResult[]> {
     this.logger.log(`Retrieving pending assessment for IER 12...`);
     const pendingAssessments =
       await this.studentAssessmentService.getPendingAssessment(generatedDate);
