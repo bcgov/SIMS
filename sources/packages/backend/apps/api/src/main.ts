@@ -55,7 +55,7 @@ async function bootstrap() {
   // pipes
   setGlobalPipes(app);
 
-  // Configure Swagger
+  // Configure Swagger.
   if (process.env.SWAGGER_ENABLED?.toLowerCase() === "true") {
     const options = new DocumentBuilder()
       .setTitle(process.env.PROJECT_NAME)
