@@ -90,7 +90,6 @@
         <bpmn:flowNodeRef>Gateway_1138sgq</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Gateway_1mgn0u8</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Gateway_1nsy8sj</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Gateway_0qyaxyn</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Gateway_0u6r40r</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Gateway_1g0qy1m</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Event_0yl24j2</bpmn:flowNodeRef>
@@ -236,7 +235,6 @@
             <bpmn:flowNodeRef>Gateway_1z05bsy</bpmn:flowNodeRef>
             <bpmn:flowNodeRef>Gateway_1mgn0u8</bpmn:flowNodeRef>
             <bpmn:flowNodeRef>Gateway_1nsy8sj</bpmn:flowNodeRef>
-            <bpmn:flowNodeRef>Gateway_0qyaxyn</bpmn:flowNodeRef>
             <bpmn:flowNodeRef>Gateway_0u6r40r</bpmn:flowNodeRef>
             <bpmn:flowNodeRef>Gateway_1g0qy1m</bpmn:flowNodeRef>
             <bpmn:flowNodeRef>Event_0yl24j2</bpmn:flowNodeRef>
@@ -427,7 +425,7 @@
       <bpmn:outgoing>Flow_1cec10j</bpmn:outgoing>
     </bpmn:parallelGateway>
     <bpmn:parallelGateway id="Gateway_1138sgq">
-      <bpmn:incoming>Flow_10zt1rw</bpmn:incoming>
+      <bpmn:incoming>Flow_19233hh</bpmn:incoming>
       <bpmn:outgoing>Flow_0033jsx</bpmn:outgoing>
       <bpmn:outgoing>Flow_03pyjz4</bpmn:outgoing>
     </bpmn:parallelGateway>
@@ -442,10 +440,6 @@
       <bpmn:incoming>Flow_1rmhi03</bpmn:incoming>
       <bpmn:incoming>Flow_01ijr39</bpmn:incoming>
       <bpmn:outgoing>Flow_1v94c64</bpmn:outgoing>
-    </bpmn:exclusiveGateway>
-    <bpmn:exclusiveGateway id="Gateway_0qyaxyn">
-      <bpmn:incoming>Flow_19233hh</bpmn:incoming>
-      <bpmn:outgoing>Flow_10zt1rw</bpmn:outgoing>
     </bpmn:exclusiveGateway>
     <bpmn:parallelGateway id="Gateway_0u6r40r">
       <bpmn:incoming>Flow_0a38n52</bpmn:incoming>
@@ -680,7 +674,6 @@ or (calculatedDataPartnerFedralProvincialPDReceiptCost &gt; 0)</bpmn:conditionEx
     <bpmn:sequenceFlow id="Flow_1cec10j" sourceRef="Gateway_1z05bsy" targetRef="Event_0cktmsz" />
     <bpmn:sequenceFlow id="Flow_1l0zlgv" sourceRef="Gateway_1435f79" targetRef="Gateway_1z05bsy" />
     <bpmn:sequenceFlow id="Flow_0ucemn4" sourceRef="Gateway_1yg7yl9" targetRef="Gateway_1z05bsy" />
-    <bpmn:sequenceFlow id="Flow_10zt1rw" sourceRef="Gateway_0qyaxyn" targetRef="Gateway_1138sgq" />
     <bpmn:sequenceFlow id="Flow_0033jsx" name="Federal" sourceRef="Gateway_1138sgq" targetRef="Event_0kosrko" />
     <bpmn:sequenceFlow id="Flow_03pyjz4" name="Provincial" sourceRef="Gateway_1138sgq" targetRef="Event_1lvfk9r" />
     <bpmn:sequenceFlow id="Flow_1bqdzcz" sourceRef="Event_0qy3g8o" targetRef="Gateway_0wg9yz8" />
@@ -695,7 +688,7 @@ or (calculatedDataPartnerFedralProvincialPDReceiptCost &gt; 0)</bpmn:conditionEx
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= (studentDataRelationshipStatus = "single" or studentDataRelationshipStatus = "other") and studentDataDependantstatus = "dependant"</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="Flow_01ijr39" sourceRef="Gateway_0wg9yz8" targetRef="Gateway_1nsy8sj" />
-    <bpmn:sequenceFlow id="Flow_19233hh" sourceRef="Gateway_1g0qy1m" targetRef="Gateway_0qyaxyn" />
+    <bpmn:sequenceFlow id="Flow_19233hh" sourceRef="Gateway_1g0qy1m" targetRef="Gateway_1138sgq" />
     <bpmn:sequenceFlow id="Flow_0a38n52" sourceRef="Activity_10ktupo" targetRef="Gateway_0u6r40r" />
     <bpmn:sequenceFlow id="Flow_0x83b7k" sourceRef="Gateway_0u6r40r" targetRef="Gateway_1g0qy1m" />
     <bpmn:sequenceFlow id="Flow_1dck6a9" sourceRef="Event_0yl24j2" targetRef="Gateway_1q7topm" />
@@ -2246,9 +2239,6 @@ DMNX (comes from DMN)</bpmn:text>
       <bpmndi:BPMNShape id="Gateway_1nsy8sj_di" bpmnElement="Gateway_1nsy8sj" isMarkerVisible="true">
         <dc:Bounds x="6925" y="1115" width="50" height="50" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Gateway_0qyaxyn_di" bpmnElement="Gateway_0qyaxyn" isMarkerVisible="true">
-        <dc:Bounds x="8365" y="1115" width="50" height="50" />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Gateway_0mo29yb_di" bpmnElement="Gateway_0u6r40r">
         <dc:Bounds x="7695" y="1115" width="50" height="50" />
       </bpmndi:BPMNShape>
@@ -3302,12 +3292,6 @@ DMNX (comes from DMN)</bpmn:text>
         <di:waypoint x="4700" y="1432" />
         <di:waypoint x="4700" y="1165" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_10zt1rw_di" bpmnElement="Flow_10zt1rw">
-        <di:waypoint x="8415" y="1140" />
-        <di:waypoint x="8430" y="1140" />
-        <di:waypoint x="8430" y="2130" />
-        <di:waypoint x="8636" y="2130" />
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0033jsx_di" bpmnElement="Flow_0033jsx">
         <di:waypoint x="8661" y="2105" />
         <di:waypoint x="8661" y="2040" />
@@ -3369,7 +3353,9 @@ DMNX (comes from DMN)</bpmn:text>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_19233hh_di" bpmnElement="Flow_19233hh">
         <di:waypoint x="7925" y="1140" />
-        <di:waypoint x="8365" y="1140" />
+        <di:waypoint x="8510" y="1140" />
+        <di:waypoint x="8510" y="2130" />
+        <di:waypoint x="8636" y="2130" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0a38n52_di" bpmnElement="Flow_0a38n52">
         <di:waypoint x="7670" y="1140" />
