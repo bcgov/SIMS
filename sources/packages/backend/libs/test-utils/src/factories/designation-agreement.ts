@@ -6,8 +6,9 @@ import {
   InstitutionLocation,
   User,
 } from "@sims/sims-db";
+import { INSTITUTION_TYPE_BC_PRIVATE } from "@sims/sims-db/constant";
 import * as faker from "faker";
-import { INSTITUTION_TYPE_BC_PRIVATE } from "../constants";
+import { createFakeInstitution } from "./institution";
 
 export function createFakeDesignationAgreement(
   fakeInstitution: Institution,
@@ -18,9 +19,8 @@ export function createFakeDesignationAgreement(
   const now = new Date();
 
   const fakeDesignationAgreement = new DesignationAgreement();
-  fakeDesignationAgreement.institution = {
-    id: fakeInstitution.id,
-  } as Institution;
+  fakeDesignationAgreement.institution =
+    fakeInstitution ?? createFakeInstitution();
   const isBCPrivate =
     fakeInstitution.institutionType.id === INSTITUTION_TYPE_BC_PRIVATE;
   fakeDesignationAgreement.submittedData = {

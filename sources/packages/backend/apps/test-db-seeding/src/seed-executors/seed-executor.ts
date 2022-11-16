@@ -2,36 +2,45 @@ import {
   DiscoveredClassWithMeta,
   DiscoveryService,
 } from "@golevelup/nestjs-discovery";
-import { Injectable, OnModuleInit } from "@nestjs/common";
-import { DATA_SEED, DATA_SEED_METHOD } from "./data-seed.decorator";
+import { Injectable } from "@nestjs/common";
+import {
+  DATA_SEED,
+  DATA_SEED_METHOD,
+  MethodInterface,
+  ProviderInterface,
+} from "./data-seed.decorator";
 
 @Injectable()
-export class SeedExecutor implements OnModuleInit {
+export class SeedExecutor {
   constructor(private readonly discoveryService: DiscoveryService) {}
 
-  async onModuleInit(testServicesClasses?: string[]): Promise<void> {
+  /**
+   * Method execute the seeds, if the class names are provided, then it will only
+   * execute only provided non skipped classes, else it will execute all
+   * non skipped classes according to the priority order.
+   * @param classToBeSeeded is a optional parameter. it the list of classes
+   * to be seeded. if its not provided, the all classes will be seeded.
+   */
+  async executeSeed(classToBeSeeded?: string[]): Promise<void> {
     // Discovers all providers in the test-db-seeding app that have meta at a specific
     // key and returns the provider(s) and associated meta.
     const discoveredClasses =
-      await this.discoveryService.providersWithMetaAtKey<{
-        name: string;
-        order: number;
-        skip: boolean;
-      }>(DATA_SEED);
+      await this.discoveryService.providersWithMetaAtKey<ProviderInterface>(
+        DATA_SEED,
+      );
 
     // Remove skipped classes.
     let classesToBeSeeded = discoveredClasses.filter(
       (eachClass) => !eachClass.meta.skip,
     );
-
     // Filtering of certain provider class that need to executed (which are passed as comma separated  parameter with the npm command).
-    if (testServicesClasses && testServicesClasses.length > 0) {
+    if (classToBeSeeded && classToBeSeeded.length > 0) {
       classesToBeSeeded = [];
-      testServicesClasses.forEach((testServicesClasses) => {
+      classToBeSeeded.forEach((classToBeSeeded) => {
         classesToBeSeeded = classesToBeSeeded.concat(
           discoveredClasses.filter(
             (eachClass) =>
-              eachClass.discoveredClass.name === testServicesClasses &&
+              eachClass.discoveredClass.name === classToBeSeeded &&
               !eachClass.meta.skip,
           ),
         );
@@ -55,10 +64,11 @@ export class SeedExecutor implements OnModuleInit {
 
       sortedAndGroupedDiscoveredClasses.forEach((discoveredClasses) => {
         // Discovers all method handlers matching a particular metakey from the provider class.
-        const metMethods = this.discoveryService.classMethodsWithMetaAtKey<{
-          name: string;
-          skip: boolean;
-        }>(discoveredClasses.discoveredClass, DATA_SEED_METHOD);
+        const metMethods =
+          this.discoveryService.classMethodsWithMetaAtKey<MethodInterface>(
+            discoveredClasses.discoveredClass,
+            DATA_SEED_METHOD,
+          );
 
         // Remove skipped methods.
         const methodsToBeSeeded = metMethods.filter(
@@ -74,16 +84,11 @@ export class SeedExecutor implements OnModuleInit {
           ),
         );
       });
-
       await Promise.all(testMethods);
     }
   }
-
-  sortAndGroup(
-    discoveredClass: DiscoveredClassWithMeta<{
-      name: string;
-      order?: number;
-    }>[],
+  private sortAndGroup(
+    discoveredClass: DiscoveredClassWithMeta<ProviderInterface>[],
   ): DiscoveredClassWithMeta<{
     name: string;
     order?: number;

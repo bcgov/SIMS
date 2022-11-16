@@ -1,10 +1,10 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { InstitutionUserTypeAndRole } from "@sims/sims-db";
 import {
   InstitutionUserRoles,
+  InstitutionUserTypeAndRole,
   InstitutionUserTypes,
-} from "@sims/sims-db/entities/user-types.enum";
+} from "@sims/sims-db";
 import { IsNull, Repository } from "typeorm";
 
 @Injectable()

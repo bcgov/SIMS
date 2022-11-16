@@ -26,10 +26,7 @@
     "migration:revert": "npx typeorm-ts-node-commonjs migration:revert -d apps/db-migrations/src/data-source.ts",
     "db:seed:test": "npm run build test-db-seeding && npm run migration:run &&  node dist/apps/test-db-seeding/main.js",
     "//db:seed:test:clean": "Drops the database and all its data. Be careful with this command on production since this command will erase all your database tables and their data.",
-    "db:seed:test:clean": "node dist/apps/test-db-seeding/main.js --task=clean-db"
-  },
-  "scriptsComments": {
-    "db:seed:test:clean": "Drops the database and all its data. Be careful with this command on production since this command will erase all your database tables and their data."
+    "db:seed:test:clean": "node dist/apps/test-db-seeding/main.js task=clean-db"
   },
   "dependencies": {
     "@golevelup/nestjs-discovery": "^3.0.0",

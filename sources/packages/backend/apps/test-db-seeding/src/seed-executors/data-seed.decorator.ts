@@ -7,34 +7,54 @@ export const DATA_SEED_METHOD = Symbol.for("DATA_SEED_METHOD");
 
 // Seed priority order.
 export enum SeedPriorityOrder {
-  FirstBatch = 1,
-  LastBatch = 2,
+  Priority1 = 1,
+  Unknown = Number.MAX_SAFE_INTEGER,
+}
+
+// Provided interface.
+export interface ProviderInterface {
+  order?: number;
+  skip?: boolean;
+}
+
+// Method interface.
+export interface MethodInterface {
+  skip?: boolean;
 }
 
 /**
  * Decorator for data seed provider classes.
  * If a class is not decorated with this decorator,
  * then it will not be considered for seeding.
- * @param name name of the decorator.
- * @param order order of the class.
+ * @param options options for the decorator.
+ * @options [order] order of the class.
  * If nothing is not passed, its considered as last batch.
- * @param skip default is false, if
+ * @options [skip] default is false, if
  * any class needs to be skip while seeding pass true.
  */
-export const DataSeed = (
-  name: string,
-  order = SeedPriorityOrder.LastBatch,
-  skip = false,
-): ClassDecorator => SetMetadata(DATA_SEED, { name, order, skip });
+export const DataSeed = (options: ProviderInterface): ClassDecorator => {
+  const newOptions: ProviderInterface = {
+    order: options.order ?? SeedPriorityOrder.Unknown,
+    skip: options.skip ?? false,
+  };
+  return SetMetadata(DATA_SEED, newOptions);
+};
 
 /**
  * Decorator for data seed methods.
  * If a method is not decorated with this decorator,
  * then it will not be considered for seeding.
- * @param name name of the decorator.
- * @param skip default is false, if
- * any method needs to be skip while seeding pass true.
-
+ * @param options options for the decorator.
+ * @options [skip] default is false, if
+ * any method needs to be skipped while seeding pass true.
  */
-export const DataSeedMethod = (name: string, skip = false): MethodDecorator =>
-  SetMetadata(DATA_SEED_METHOD, { name, skip });
+export const DataSeedMethod = (
+  options: MethodInterface = {
+    skip: false,
+  },
+): MethodDecorator => {
+  const newOptions: MethodInterface = {
+    skip: options.skip ?? false,
+  };
+  return SetMetadata(DATA_SEED_METHOD, newOptions);
+};

@@ -11,30 +11,29 @@ import {
   DataSeedMethod,
   SeedPriorityOrder,
 } from "../../seed-executors";
-import { InstitutionHelperService } from "../../test-seed-helper-services";
-import { institutionUserName01 } from "../constants";
+import { InstitutionHelperService } from "../../services";
+import { SIMS_COLL_F_LEGAL_SIGNING_USER } from "../constants";
 
 @Injectable()
-@DataSeed("provider", SeedPriorityOrder.LastBatch)
+@DataSeed({ order: SeedPriorityOrder.Unknown })
 export class DesignationAgreementService {
   constructor(
     @InjectRepository(DesignationAgreement)
-    private designationAgreementRepo: Repository<DesignationAgreement>,
+    private readonly designationAgreementRepo: Repository<DesignationAgreement>,
     @InjectRepository(InstitutionLocation)
-    private institutionLocationRepo: Repository<InstitutionLocation>,
-    private institutionHelperService: InstitutionHelperService,
+    private readonly institutionLocationRepo: Repository<InstitutionLocation>,
+    private readonly institutionHelperService: InstitutionHelperService,
   ) {}
 
   /**
    * Method to seed fake pending designation agreement.
    */
-  @DataSeedMethod("method")
+  @DataSeedMethod()
   async createPendingDesignationAgreement(): Promise<void> {
-    const InstitutionAdminUser = institutionUserName01;
     // Get fake institution.
     const fakeInstitution =
       await this.institutionHelperService.getInstitutionByUserName(
-        InstitutionAdminUser,
+        SIMS_COLL_F_LEGAL_SIGNING_USER,
       );
     const [fakeInstitutionUser] = fakeInstitution.users;
 

@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
-import { INSTITUTION_TYPE_BC_PRIVATE } from "@sims/test-utils/constants";
+import { INSTITUTION_TYPE_BC_PRIVATE } from "@sims/sims-db/constant";
 import { DesignationAgreementService } from "../../services";
 import { getISODateOnlyString } from "../../utilities";
 import {

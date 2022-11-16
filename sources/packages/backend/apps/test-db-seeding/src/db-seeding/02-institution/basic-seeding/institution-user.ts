@@ -4,12 +4,10 @@ import {
   Institution,
   InstitutionUser,
   InstitutionUserAuth,
-  User,
-} from "@sims/sims-db";
-import {
   InstitutionUserRoles,
   InstitutionUserTypes,
-} from "@sims/sims-db/entities/user-types.enum";
+  User,
+} from "@sims/sims-db";
 import {
   createFakeInstitution,
   createFakeInstitutionUser,
@@ -20,34 +18,36 @@ import {
   DataSeed,
   DataSeedMethod,
   SeedPriorityOrder,
-} from "apps/test-db-seeding/src/seed-executors";
+} from "../../../seed-executors";
 import { Repository } from "typeorm";
-import { UserTypeRoleHelperService } from "../../../test-seed-helper-services";
-import { institutionUserName01, institutionUserName02 } from "../../constants";
+import { UserTypeRoleHelperService } from "../../../services";
+import {
+  SIMS_COLL_F_LEGAL_SIGNING_USER,
+  SIMS_COLL_C_ADMIN,
+} from "../../constants";
 
 @Injectable()
-@DataSeed("provider", SeedPriorityOrder.FirstBatch)
+@DataSeed({ order: SeedPriorityOrder.Priority1 })
 export class InstitutionUserService {
   constructor(
     @InjectRepository(InstitutionUser)
-    private institutionUserRepo: Repository<InstitutionUser>,
+    private readonly institutionUserRepo: Repository<InstitutionUser>,
     @InjectRepository(Institution)
-    private institutionRepo: Repository<Institution>,
+    private readonly institutionRepo: Repository<Institution>,
     @InjectRepository(User)
-    private userRepo: Repository<User>,
+    private readonly userRepo: Repository<User>,
     @InjectRepository(InstitutionUserAuth)
-    private institutionUserAuthRepo: Repository<InstitutionUserAuth>,
-    private userTypeRoleHelperService: UserTypeRoleHelperService,
+    private readonly institutionUserAuthRepo: Repository<InstitutionUserAuth>,
+    private readonly userTypeRoleHelperService: UserTypeRoleHelperService,
   ) {}
 
   /**
    * Method to seed fake institution legal signing user.
    */
-  @DataSeedMethod("method")
+  @DataSeedMethod()
   async createInstitutionLegalSigningAuthUser(): Promise<void> {
     // Create fake user.
-    const institutionUserName = institutionUserName01;
-    const fakeUser = createFakeUser(institutionUserName);
+    const fakeUser = createFakeUser(SIMS_COLL_F_LEGAL_SIGNING_USER);
     const createdFakeUser = await this.userRepo.save(fakeUser);
 
     // Create fake institution.
@@ -83,11 +83,10 @@ export class InstitutionUserService {
   /**
    * Method to seed fake institution admin.
    */
-  @DataSeedMethod("method")
+  @DataSeedMethod()
   async createInstitutionAdmin(): Promise<void> {
     // Create fake user.
-    const institutionUserName = institutionUserName02;
-    const fakeUser = createFakeUser(institutionUserName);
+    const fakeUser = createFakeUser(SIMS_COLL_C_ADMIN);
     const createdFakeUser = await this.userRepo.save(fakeUser);
 
     // Create fake institution.

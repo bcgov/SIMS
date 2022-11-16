@@ -1,6 +1,6 @@
 import * as faker from "faker";
 import { Institution, InstitutionType } from "@sims/sims-db";
-import { INSTITUTION_TYPE_BC_PRIVATE } from "../constants";
+import { INSTITUTION_TYPE_BC_PRIVATE } from "@sims/sims-db/constant";
 
 export function createFakeInstitution(): Institution {
   const institution = new Institution();

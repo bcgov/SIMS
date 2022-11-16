@@ -3,7 +3,7 @@ import { InstitutionService, InstitutionTypeService } from "../../services";
 import { AddressInfo } from "@sims/sims-db";
 import { InstitutionDetailAPIOutDTO } from "./models/institution.dto";
 import { OptionItemAPIOutDTO } from "../models/common.dto";
-import { INSTITUTION_TYPE_BC_PRIVATE } from "@sims/test-utils/constants";
+import { INSTITUTION_TYPE_BC_PRIVATE } from "@sims/sims-db/constant";
 
 /**
  * Service/Provider for Institutions controller to wrap the common methods.
