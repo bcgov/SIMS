@@ -21,7 +21,7 @@
   </bpmn:collaboration>
   <bpmn:process id="assessment-2021-2022" isExecutable="true">
     <bpmn:laneSet id="LaneSet_0i75wz3">
-      <bpmn:lane id="Lane_1gxyyjh" name="npm run start:dev">
+      <bpmn:lane id="Lane_1gxyyjh" name="Load and Determine Data to Use">
         <bpmn:flowNodeRef>Activity_048jfh0</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Event_123oime</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Event_0s8ztj5</bpmn:flowNodeRef>
