@@ -8,30 +8,28 @@
     @submitted="submitted"
     @customEvent="customEvent"
   ></formio>
-  <v-row v-if="showNav">
-    <v-col>
-      <v-btn
-        color="primary"
-        v-show="!isFirstPage"
-        variant="outlined"
-        data-cy="previousSection"
-        @click="wizardGoPrevious"
-        >Previous section</v-btn
-      >
-      <v-btn color="primary" v-show="isFirstPage" @click="wizardGoNext"
-        >Start your application</v-btn
-      >
-    </v-col>
-    <v-col>
-      <v-btn
-        class="float-right"
-        color="primary"
-        v-show="!isLastPage && !isFirstPage"
-        @click="wizardGoNext"
-        >Next section</v-btn
-      >
-    </v-col>
-  </v-row>
+  <footer-buttons
+    justify="space-between"
+    :processing="processing"
+    @secondaryClick="wizardGoPrevious"
+    :showSecondaryButton="!isFirstPage"
+    secondaryLabel="Previous section"
+    class="mx-0"
+  >
+    <template #primary-buttons="{ disabled }">
+      <span>
+        <v-btn
+          :disabled="disabled"
+          class="ml-2"
+          variant="elevated"
+          color="primary"
+          @click="wizardGoNext"
+          v-if="!isLastPage"
+          >{{ !isFirstPage ? "Next section" : "Start your application" }}
+        </v-btn>
+      </span>
+    </template>
+  </footer-buttons>
 </template>
 
 <script lang="ts">
@@ -89,6 +87,7 @@ export default {
     const isFirstPage = ref(true);
     const isLastPage = ref(false);
     const showNav = ref(false);
+    const processing = ref(false);
 
     const getSelectedId = (form: any) => {
       return formioUtils.getComponentValueByKey(form, LOCATIONS_DROPDOWN_KEY);
@@ -272,6 +271,7 @@ export default {
     };
 
     const submitted = (args: any, form: any) => {
+      processing.value = true;
       context.emit("submitApplication", args, form);
     };
 
@@ -295,6 +295,7 @@ export default {
       submitted,
       customEvent,
       showNav,
+      processing,
     };
   },
 };
