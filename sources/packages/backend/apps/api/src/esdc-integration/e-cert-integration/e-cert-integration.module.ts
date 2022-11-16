@@ -1,7 +1,6 @@
 import { Module } from "@nestjs/common";
 import { AuthModule } from "../../auth/auth.module";
 import {
-  ConfigService,
   DisbursementScheduleService,
   SshService,
   StudentRestrictionService,
@@ -18,9 +17,10 @@ import { ECertFullTimeIntegrationService } from "./e-cert-full-time-integration/
 import { ECertPartTimeFileFooter } from "./e-cert-part-time-integration/e-cert-files/e-cert-file-footer";
 import { ECertPartTimeFileHeader } from "./e-cert-part-time-integration/e-cert-files/e-cert-file-header";
 import { ECertPartTimeIntegrationService } from "./e-cert-part-time-integration/e-cert-part-time-integration.service";
+import { ConfigModule } from "@sims/utilities/config";
 
 @Module({
-  imports: [AuthModule],
+  imports: [AuthModule, ConfigModule],
   providers: [
     SshService,
     ECertFullTimeIntegrationService,
@@ -28,7 +28,6 @@ import { ECertPartTimeIntegrationService } from "./e-cert-part-time-integration/
     SequenceControlService,
     DisbursementScheduleService,
     StudentRestrictionService,
-    ConfigService,
     ECertFileHandler,
     ECertPartTimeFileHeader,
     ECertPartTimeFileFooter,

@@ -1,6 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { InjectLogger } from "../../common";
-import { LoggerService } from "../../logger/logger.service";
+import { InjectLogger, LoggerService } from "@sims/utilities/logger";
 import { DisbursementReceiptService, ReportService } from "../../services";
 import { ReportsFilterModel } from "../../services/report/report.models";
 import { DisbursementReceiptIntegrationService } from "./disbursement-receipt-integration.service";

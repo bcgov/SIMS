@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { ConfigService } from "../../services";
+import { ConfigService } from "@sims/utilities/config";
 import { SshService } from "../../services/ssh/ssh.service";
 import { SFTPIntegrationBase } from "../../services/ssh/sftp-integration-base";
 import { FedRestrictionFileRecord } from "./fed-restriction-files/fed-restriction-file-record";
@@ -9,7 +9,7 @@ export class FedRestrictionIntegrationService extends SFTPIntegrationBase<
   FedRestrictionFileRecord[]
 > {
   constructor(config: ConfigService, sshService: SshService) {
-    super(config.getConfig().zoneBSFTP, sshService);
+    super(config.zoneBSFTP, sshService);
   }
 
   /**

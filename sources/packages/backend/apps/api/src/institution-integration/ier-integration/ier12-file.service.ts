@@ -1,10 +1,12 @@
 import { Injectable } from "@nestjs/common";
 import { StudentAssessment } from "@sims/sims-db";
-import { InjectLogger } from "../../common";
-import { LoggerService } from "../../logger/logger.service";
-import { ConfigService, StudentAssessmentService } from "../../services";
-import { InstitutionIntegrationConfig } from "../../types";
-import { getFileNameAsCurrentTimestamp } from "../../utilities";
+import { LoggerService, InjectLogger } from "@sims/utilities/logger";
+import { StudentAssessmentService } from "../../services";
+import {
+  ConfigService,
+  InstitutionIntegrationConfig,
+} from "@sims/utilities/config";
+import { getFileNameAsCurrentTimestamp } from "@sims/utilities";
 import { IER12IntegrationService } from "./ier12-integration.service";
 import {
   IER12Record,
@@ -19,8 +21,7 @@ export class IER12FileService {
     private readonly ierIntegrationService: IER12IntegrationService,
     private readonly studentAssessmentService: StudentAssessmentService,
   ) {
-    this.institutionIntegrationConfig =
-      config.getConfig().InstitutionIntegrationConfig;
+    this.institutionIntegrationConfig = config.institutionIntegration;
   }
 
   /**

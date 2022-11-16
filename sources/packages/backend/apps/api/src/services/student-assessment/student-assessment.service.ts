@@ -10,7 +10,7 @@ import {
   mapFromRawAndEntities,
 } from "@sims/sims-db";
 import { Brackets, DataSource } from "typeorm";
-import { CustomNamedError } from "@sims/utilities";
+import { CustomNamedError, addDays, dateEqualTo } from "@sims/utilities";
 import {
   ASSESSMENT_ALREADY_IN_PROGRESS,
   ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE,
@@ -21,7 +21,6 @@ import {
   StudentAssessmentStatus,
 } from "./student-assessment.models";
 import { WorkflowClientService } from "@sims/services";
-import { addDays, dateEqualTo } from "../../utilities";
 
 /**
  * Manages the student assessment related operations.

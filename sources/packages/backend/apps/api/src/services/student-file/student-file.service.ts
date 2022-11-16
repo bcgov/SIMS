@@ -1,7 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { DataSource, EntityManager, In, UpdateResult } from "typeorm";
-import { LoggerService } from "../../logger/logger.service";
-import { InjectLogger } from "../../common";
+import { LoggerService, InjectLogger } from "@sims/utilities/logger";
 import {
   RecordDataModelService,
   StudentFile,

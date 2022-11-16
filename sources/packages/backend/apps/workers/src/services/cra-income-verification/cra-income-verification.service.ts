@@ -6,7 +6,7 @@ import {
   CRAIncomeVerification,
   SupportingUser,
 } from "@sims/sims-db";
-import { ConfigService } from "..";
+import { ConfigService } from "@sims/utilities/config";
 import { WorkflowClientService } from "@sims/services";
 
 /**
@@ -64,7 +64,7 @@ export class CRAIncomeVerificationService extends RecordDataModelService<CRAInco
   async checkForCRAIncomeVerificationBypass(
     verificationId: number,
   ): Promise<void> {
-    if (this.configService.env.bypassCRAIncomeVerification !== true) {
+    if (this.configService.bypassCRAIncomeVerification !== true) {
       return;
     }
     const now = new Date();

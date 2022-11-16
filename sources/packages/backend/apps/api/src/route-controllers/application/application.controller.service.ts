@@ -13,12 +13,12 @@ import {
 } from "./models/application.model";
 import {
   credentialTypeToDisplay,
-  getDateOnlyFormat,
   deliveryMethod,
   getCOEDeniedReason,
   getOfferingNameAndPeriod,
   getPIRDeniedReason,
 } from "../../utilities";
+import { getDateOnlyFormat } from "@sims/utilities";
 import {
   Application,
   ApplicationData,

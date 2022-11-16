@@ -1,7 +1,6 @@
 import { Controller, Post } from "@nestjs/common";
 import { MSFAARequestResultAPIOutDTO } from "./models/msfaa-file-result.dto";
-import { InjectLogger } from "../../common";
-import { LoggerService } from "../../logger/logger.service";
+import { LoggerService, InjectLogger } from "@sims/utilities/logger";
 import { AllowAuthorizedParty } from "../../auth/decorators";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { OfferingIntensity } from "@sims/sims-db";

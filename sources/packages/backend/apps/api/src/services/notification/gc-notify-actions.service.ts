@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { NotificationMessageType } from "@sims/sims-db";
-import { getDateOnlyFormat, getPSTPDTDateTime } from "../../utilities";
+import { getDateOnlyFormat, getPSTPDTDateTime } from "@sims/utilities";
 import { NotificationMessageService } from "../notification-message/notification-message.service";
 import {
   GCNotifyResult,

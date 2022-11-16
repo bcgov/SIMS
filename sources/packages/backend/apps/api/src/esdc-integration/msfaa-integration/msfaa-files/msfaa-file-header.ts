@@ -8,7 +8,8 @@ import {
   DATE_FORMAT,
   TIME_FORMAT,
 } from "../../models/esdc-integration.model";
-import { StringBuilder, getDateOnlyFromFormat } from "../../../utilities";
+import { StringBuilder } from "../../../utilities";
+import { getDateOnlyFromFormat } from "@sims/utilities";
 
 const ORIGINATOR_CODE = "BC";
 

@@ -2,7 +2,6 @@ import { Module } from "@nestjs/common";
 import { AuthModule } from "../auth/auth.module";
 import {
   ApplicationService,
-  ConfigService,
   CRAIntegrationService,
   CRAPersonalVerificationService,
   MSFAANumberService,
@@ -24,16 +23,16 @@ import {
   NotificationMessageService,
 } from "../services";
 import { SequenceControlService, WorkflowClientService } from "@sims/services";
+import { ConfigModule } from "@sims/utilities/config";
 
 @Module({
-  imports: [AuthModule],
+  imports: [AuthModule, ConfigModule],
   providers: [
     SshService,
     CRAIntegrationService,
     CRAPersonalVerificationService,
     SequenceControlService,
     StudentService,
-    ConfigService,
     ApplicationService,
     StudentFileService,
     MSFAANumberService,

@@ -40,7 +40,6 @@ import { ProgramAllowsOfferingWIL } from "./custom-validators/program-allows-off
 import { StudyBreaksCombinedMustNotExceedsThreshold } from "./custom-validators/study-break-has-valid-consecutive-threshold";
 import { HasValidOfferingPeriodForFundedDays } from "./custom-validators/has-valid-offering-period-for-funded-days";
 import {
-  DATE_ONLY_ISO_FORMAT,
   MONEY_VALUE_FOR_UNKNOWN_MAX_VALUE,
   OFFERING_COURSE_LOAD_MAX_VALUE,
   OFFERING_COURSE_LOAD_MIN_VALUE,
@@ -51,6 +50,7 @@ import {
   OFFERING_YEAR_OF_STUDY_MAX_VALUE,
   OFFERING_YEAR_OF_STUDY_MIN_VALUE,
 } from "../../utilities";
+import { DATE_ONLY_ISO_FORMAT } from "@sims/utilities";
 
 const userFriendlyNames = {
   offeringName: "Name",

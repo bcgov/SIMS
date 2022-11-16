@@ -1,5 +1,6 @@
 import { Injectable } from "@nestjs/common";
-import { ConfigService, SshService } from "../../services";
+import { SshService } from "../../services";
+import { ConfigService } from "@sims/utilities/config";
 import { SFTPIntegrationBase } from "../../services/ssh/sftp-integration-base";
 import { IER12FileDetail } from "./ier12-file-detail";
 import { IER12FileLine, IER12Record } from "./models/ier12-integration.model";
@@ -13,7 +14,7 @@ import { IER12FileLine, IER12Record } from "./models/ier12-integration.model";
 @Injectable()
 export class IER12IntegrationService extends SFTPIntegrationBase<void> {
   constructor(config: ConfigService, sshService: SshService) {
-    super(config.getConfig().zoneBSFTP, sshService);
+    super(config.zoneBSFTP, sshService);
   }
   /**
    * Create the IER 12 content, by populating the records.

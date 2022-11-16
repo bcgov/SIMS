@@ -5,7 +5,7 @@ import {
   ValidationOptions,
   ValidationArguments,
 } from "class-validator";
-import { getDateOnlyFormat, isBetweenPeriod, Period } from "../..";
+import { getDateOnlyFormat, isBetweenPeriod, Period } from "@sims/utilities";
 import { getPeriodStartDateProperty, getPeriodEndDateProperty } from "..";
 
 /**

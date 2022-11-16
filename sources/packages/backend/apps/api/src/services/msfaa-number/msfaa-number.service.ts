@@ -5,7 +5,7 @@ import {
   MSFAANumber,
   OfferingIntensity,
 } from "@sims/sims-db";
-import { getISODateOnlyString } from "../../utilities";
+import { getISODateOnlyString } from "@sims/utilities";
 
 /**
  * Service layer for MSFAA (Master Student Financial Aid Agreement)

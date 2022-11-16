@@ -1,12 +1,10 @@
 import { Injectable } from "@nestjs/common";
-import { InjectLogger } from "../../common";
-import { LoggerService } from "../../logger/logger.service";
+import { LoggerService, InjectLogger } from "@sims/utilities/logger";
 import {
   MSFAASFTPResponseFile,
   ReceivedStatusCode,
 } from "../msfaa-integration/models/msfaa-integration.model";
-import { ConfigService, SshService } from "../../services";
-import { SFTPConfig, ESDCIntegrationConfig } from "../../types";
+import { SshService } from "../../services";
 import {
   getGenderCode,
   getMaritalStatusCode,
@@ -25,6 +23,11 @@ import { MSFAAFileHeader } from "./msfaa-files/msfaa-file-header";
 import { MSFAAResponseReceivedRecord } from "./msfaa-files/msfaa-response-received-record";
 import { MSFAAResponseCancelledRecord } from "./msfaa-files/msfaa-response-cancelled-record";
 import { MSFAAResponseRecordIdentification } from "./msfaa-files/msfaa-response-record-identification";
+import {
+  ConfigService,
+  ESDCIntegrationConfig,
+  SFTPConfig,
+} from "@sims/utilities/config";
 
 /**
  * Manages the creation of the content files that needs to be sent
@@ -38,8 +41,8 @@ export class MSFAAIntegrationService {
   private readonly ftpConfig: SFTPConfig;
 
   constructor(config: ConfigService, private readonly sshService: SshService) {
-    this.esdcConfig = config.getConfig().ESDCIntegration;
-    this.ftpConfig = config.getConfig().zoneBSFTP;
+    this.esdcConfig = config.esdcIntegration;
+    this.ftpConfig = config.zoneBSFTP;
   }
 
   /**

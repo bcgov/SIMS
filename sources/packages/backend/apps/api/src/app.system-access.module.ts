@@ -4,7 +4,6 @@ import {
   ATBCService,
   StudentService,
   ApplicationExceptionService,
-  ConfigService,
   DisbursementScheduleService,
   EducationProgramOfferingService,
   StudentAssessmentService,
@@ -46,7 +45,6 @@ import {
   IERIntegrationSystemAccessController,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
-import { LoggerModule } from "./logger/logger.module";
 import { SINValidationModule } from "./esdc-integration/sin-validation/sin-validation.module";
 import { SINValidationSystemAccessController } from "./route-controllers/esdc-integration/sin-validation.system-access.controller";
 import { MSFAARequestService } from "./esdc-integration/msfaa-integration/msfaa-request.service";
@@ -71,7 +69,7 @@ import { IER12FileService } from "./institution-integration/ier-integration/ier1
 import { IER12IntegrationService } from "./institution-integration/ier-integration/ier12-integration.service";
 
 @Module({
-  imports: [LoggerModule, DatabaseModule, AuthModule, SINValidationModule],
+  imports: [DatabaseModule, AuthModule, SINValidationModule],
   controllers: [
     ATBCSystemAccessController,
     SINValidationSystemAccessController,
@@ -87,7 +85,6 @@ import { IER12IntegrationService } from "./institution-integration/ier-integrati
     WorkflowClientService,
     ATBCService,
     StudentService,
-    ConfigService,
     StudentAssessmentService,
     EducationProgramOfferingService,
     DisbursementScheduleService,

@@ -8,7 +8,7 @@ import {
   User,
 } from "@sims/sims-db";
 import { DisbursementReceiptModel } from "./disbursement-receipt.model";
-import { getISODateOnlyString } from "../../utilities";
+import { getISODateOnlyString } from "@sims/utilities";
 
 /**
  * Service for disbursement receipts.

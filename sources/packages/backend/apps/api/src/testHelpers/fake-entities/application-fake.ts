@@ -9,7 +9,7 @@ import {
 } from "@sims/sims-db";
 import { createFakeProgramYear } from "./program-year-fake";
 import { createFakeStudent } from "./student-fake";
-import { getUTCNow } from "../../utilities/date-utils";
+import { getUTCNow } from "@sims/utilities";
 
 export function createFakeApplication(
   student?: Student,

@@ -5,7 +5,7 @@ import {
   ValidationOptions,
   ValidationArguments,
 } from "class-validator";
-import { hasSomePeriodOverlap, Period } from "../../date-utils";
+import { hasSomePeriodOverlap, Period } from "@sims/utilities";
 import { getPeriodEndDateProperty, getPeriodStartDateProperty } from "..";
 
 /**
