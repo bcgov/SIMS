@@ -8,6 +8,7 @@ import {
   ESDCIntegrationConfig,
   FormsConfig,
   GCNotify,
+  InstitutionIntegrationConfig,
   SFASIntegrationConfig,
   SFTPConfig,
 } from "./config.models";
@@ -171,6 +172,15 @@ export class ConfigService {
       "applicationArchiveDaysConfig",
       +process.env.APPLICATION_ARCHIVE_DAYS,
     );
+  }
+
+  /**
+   * Institutions integration configuration.
+   */
+  get institutionIntegration(): InstitutionIntegrationConfig {
+    return this.getCachedConfig("institutionIntegrationConfig", {
+      ftpRequestFolder: process.env.INSTITUTION_REQUEST_FOLDER,
+    });
   }
 
   /**
