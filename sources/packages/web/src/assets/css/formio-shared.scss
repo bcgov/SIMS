@@ -465,6 +465,13 @@
   min-height: $image-min-height;
 }
 
+.student-with-clipboard-img {
+  @extend .img-background;
+  background-image: url("../../assets/images/person-with-clipboard.svg");
+  min-height: 350px;
+  background-position: 50%;
+}
+
 .muted-content {
   color: $color-muted;
 }
