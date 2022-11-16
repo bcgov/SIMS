@@ -131,6 +131,12 @@ export default defineComponent({
           FORMIO_STUDY_PERIOD_BREAK_DOWN_KEY,
           validationResult.studyPeriodBreakdown,
         );
+        const infoTypes = validationResult.infos.map((info) => info.typeCode);
+        setComponentValue(
+          offeringForm,
+          FORMIO_INFOS_HIDDEN_FIELD_KEY,
+          infoTypes,
+        );
         // Avoid updating the validation fields if the validation was never manually requested.
         if (allowValidation()) {
           const warningsTypes = validationResult.warnings.map(
@@ -140,12 +146,6 @@ export default defineComponent({
             offeringForm,
             FORMIO_WARNINGS_HIDDEN_FIELD_KEY,
             warningsTypes,
-          );
-          const infoTypes = validationResult.infos.map((info) => info.typeCode);
-          setComponentValue(
-            offeringForm,
-            FORMIO_INFOS_HIDDEN_FIELD_KEY,
-            infoTypes,
           );
         }
       }

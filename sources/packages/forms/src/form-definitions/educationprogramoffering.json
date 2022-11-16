@@ -2649,7 +2649,7 @@
                       "refreshOn": "",
                       "addons": [],
                       "inputType": "text",
-                      "id": "eufdf4l00",
+                      "id": "eufdf4l0000000",
                       "defaultValue": ""
                     },
                     {
@@ -2759,7 +2759,7 @@
                       "refreshOn": "",
                       "addons": [],
                       "inputType": "text",
-                      "id": "endqveo0",
+                      "id": "endqveo000000",
                       "defaultValue": ""
                     },
                     {
@@ -2790,7 +2790,7 @@
                       "key": "breakDays",
                       "type": "number",
                       "input": true,
-                      "id": "eumrjyw00",
+                      "id": "eumrjyw0000000",
                       "placeholder": "",
                       "prefix": "",
                       "customClass": "",
@@ -2865,7 +2865,7 @@
                       "key": "eligibleBreakDays",
                       "type": "number",
                       "input": true,
-                      "id": "etjg41y00",
+                      "id": "etjg41y0000000",
                       "placeholder": "",
                       "prefix": "",
                       "customClass": "",
@@ -2941,7 +2941,7 @@
                       "key": "ineligibleBreakDays",
                       "type": "number",
                       "input": true,
-                      "id": "el99z42d00",
+                      "id": "el99z42d0000000",
                       "placeholder": "",
                       "prefix": "",
                       "customClass": "",
@@ -3863,7 +3863,7 @@
               "labelWidth": "",
               "labelMargin": "",
               "tag": "p",
-              "className": "alert alert-warning fa fa-exclamation-triangle w-100",
+              "className": "alert alert-info fa fa-info-circle w-100",
               "attrs": [
                 {
                   "attr": "",
@@ -3872,7 +3872,7 @@
               ],
               "content": "<strong class=\"ml-2\">This study break exceeds the 21 consecutive day threshold as outlined in StudentAid BC policy</strong>\n<br>\n<span>Excess break will be deducted from total funded study period weeks.</span>",
               "refreshOnChange": true,
-              "customClass": "banner-warning",
+              "customClass": "banner-info",
               "hidden": false,
               "modalEdit": false,
               "key": "invalidStudyBreakAmountOfDays",
@@ -3884,7 +3884,7 @@
                 "eq": "",
                 "json": ""
               },
-              "customConditional": "show = data.validationWarnings.indexOf(component.key) !== -1;",
+              "customConditional": "show = data.validationInfos.indexOf(component.key) !== -1;",
               "logic": [],
               "attributes": {},
               "overlay": {
@@ -3938,7 +3938,7 @@
               "showWordCount": false,
               "allowMultipleMasks": false,
               "addons": [],
-              "id": "e0ddt67"
+              "id": "eygtwd"
             },
             {
               "label": "HTML",
@@ -4020,7 +4020,7 @@
               "showWordCount": false,
               "allowMultipleMasks": false,
               "addons": [],
-              "id": "enjgj8f"
+              "id": "edpt89"
             },
             {
               "label": "HTML",

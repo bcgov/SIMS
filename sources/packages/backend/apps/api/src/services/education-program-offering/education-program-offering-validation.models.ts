@@ -182,7 +182,6 @@ export type CalculatedStudyBreaksAndWeeks = StudyBreaksAndWeeks & {
  * !These keys are also consumed in the UI to display/hide warning banners.
  */
 export enum OfferingValidationWarnings {
-  InvalidStudyBreakAmountOfDays = "invalidStudyBreakAmountOfDays",
   ProgramOfferingIntensityMismatch = "programOfferingIntensityMismatch",
   ProgramOfferingDeliveryMismatch = "programOfferingDeliveryMismatch",
   ProgramOfferingWILMismatch = "programOfferingWILMismatch",
@@ -194,6 +193,7 @@ export enum OfferingValidationWarnings {
  * !These keys are also consumed in the UI to display/hide info banners.
  */
 export enum OfferingValidationInfos {
+  InvalidStudyBreakAmountOfDays = "invalidStudyBreakAmountOfDays",
   InvalidStudyBreaksCombinedThresholdPercentage = "invalidStudyBreaksCombinedThresholdPercentage",
 }
 
@@ -300,8 +300,8 @@ export class StudyBreak {
     OFFERING_STUDY_BREAK_MAX_DAYS,
     userFriendlyNames.breakEndDate,
     {
-      context: ValidationContext.CreateWarning(
-        OfferingValidationWarnings.InvalidStudyBreakAmountOfDays,
+      context: ValidationContext.CreateInfo(
+        OfferingValidationInfos.InvalidStudyBreakAmountOfDays,
       ),
     },
   )

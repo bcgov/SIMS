@@ -503,7 +503,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     offeringValidationModel.offeringDeclaration = offering.offeringDeclaration;
     offeringValidationModel.offeringType = offering.offeringType;
     offeringValidationModel.courseLoad = offering.courseLoad;
-    offeringValidationModel.studyBreaks = offering.studyBreaks.studyBreaks;
+    offeringValidationModel.studyBreaks = offering.studyBreaks?.studyBreaks;
     return offeringValidationModel;
   }
 
