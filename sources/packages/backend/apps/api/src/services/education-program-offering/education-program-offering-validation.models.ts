@@ -183,7 +183,6 @@ export type CalculatedStudyBreaksAndWeeks = StudyBreaksAndWeeks & {
  */
 export enum OfferingValidationWarnings {
   InvalidStudyBreakAmountOfDays = "invalidStudyBreakAmountOfDays",
-  InvalidStudyBreaksCombinedThresholdPercentage = "invalidStudyBreaksCombinedThresholdPercentage",
   ProgramOfferingIntensityMismatch = "programOfferingIntensityMismatch",
   ProgramOfferingDeliveryMismatch = "programOfferingDeliveryMismatch",
   ProgramOfferingWILMismatch = "programOfferingWILMismatch",
@@ -191,15 +190,68 @@ export enum OfferingValidationWarnings {
 }
 
 /**
- * Represent the context of an error that should be considered a warning.
- * All validations when failed will generate an error. The ones that have
- * the warning context will be considered as warnings then.
+ * Possible information unique identifiers.
+ * !These keys are also consumed in the UI to display/hide info banners.
  */
-export class ValidationWarning {
-  constructor(public readonly warningType: OfferingValidationWarnings) {
-    this.isWarning = true;
+export enum OfferingValidationInfos {
+  InvalidStudyBreaksCombinedThresholdPercentage = "invalidStudyBreaksCombinedThresholdPercentage",
+}
+
+/**
+ * Represent the context of an error that has an additional context to
+ * express a possible warning or some relevant information captured during
+ * the validation process.
+ * All validations when failed will generate an error. The ones that have
+ * the warning or information contexts will not be considered critical.
+ */
+export class ValidationContext {
+  /**
+   * Creates an error context that will make the error downgrade to
+   * a condition of a warning information will force the offering
+   * to be reviewed by the Ministry.
+   * @param warningTypeCode warning code that uniquely identifies this condition.
+   * @returns the warning context.
+   */
+  static CreateWarning(
+    warningTypeCode: OfferingValidationWarnings,
+  ): ValidationContext {
+    const newContext = new ValidationContext();
+    newContext.type = ValidationContextTypes.Warning;
+    newContext.typeCode = warningTypeCode;
+    return newContext;
   }
-  readonly isWarning: boolean;
+
+  /**
+   * Creates an error context that will make the error downgraded to
+   * a condition of a simple information that will still allow the
+   * offering to be automatically approved.
+   * @param infoTypeCode information code that uniquely identifies this condition.
+   * @returns the information context.
+   */
+  static CreateInfo(infoTypeCode: OfferingValidationInfos): ValidationContext {
+    const newContext = new ValidationContext();
+    newContext.type = ValidationContextTypes.Information;
+    newContext.typeCode = infoTypeCode;
+    return newContext;
+  }
+
+  /**
+   * Context type.
+   */
+  type: ValidationContextTypes;
+  /**
+   * Unique identifier of the validation error.
+   */
+  typeCode: OfferingValidationWarnings | OfferingValidationInfos;
+}
+
+/**
+ * Types of non-critical errors that will not prevent
+ * the offering from being saved.
+ */
+export enum ValidationContextTypes {
+  Warning = "warning",
+  Information = "information",
 }
 
 /**
@@ -248,7 +300,7 @@ export class StudyBreak {
     OFFERING_STUDY_BREAK_MAX_DAYS,
     userFriendlyNames.breakEndDate,
     {
-      context: new ValidationWarning(
+      context: ValidationContext.CreateWarning(
         OfferingValidationWarnings.InvalidStudyBreakAmountOfDays,
       ),
     },
@@ -304,7 +356,7 @@ export class OfferingValidationModel {
     OFFERING_STUDY_PERIOD_MIN_DAYS,
     userFriendlyNames.studyEndDate,
     {
-      context: new ValidationWarning(
+      context: ValidationContext.CreateWarning(
         OfferingValidationWarnings.InvalidStudyDatesPeriodLength,
       ),
     },
@@ -314,7 +366,7 @@ export class OfferingValidationModel {
     OFFERING_STUDY_PERIOD_MAX_DAYS,
     userFriendlyNames.studyEndDate,
     {
-      context: new ValidationWarning(
+      context: ValidationContext.CreateWarning(
         OfferingValidationWarnings.InvalidStudyDatesPeriodLength,
       ),
     },
@@ -395,7 +447,7 @@ export class OfferingValidationModel {
   })
   @ValidateIf((offering: OfferingValidationModel) => !!offering.programContext)
   @ProgramAllowsOfferingDelivery(userFriendlyNames.offeringDelivered, {
-    context: new ValidationWarning(
+    context: ValidationContext.CreateWarning(
       OfferingValidationWarnings.ProgramOfferingDeliveryMismatch,
     ),
   })
@@ -406,7 +458,7 @@ export class OfferingValidationModel {
   @IsEnum(OfferingIntensity)
   @ValidateIf((offering: OfferingValidationModel) => !!offering.programContext)
   @ProgramAllowsOfferingIntensity(userFriendlyNames.offeringIntensity, {
-    context: new ValidationWarning(
+    context: ValidationContext.CreateWarning(
       OfferingValidationWarnings.ProgramOfferingIntensityMismatch,
     ),
   })
@@ -445,7 +497,7 @@ export class OfferingValidationModel {
   })
   @ValidateIf((offering: OfferingValidationModel) => !!offering.programContext)
   @ProgramAllowsOfferingWIL(userFriendlyNames.hasOfferingWILComponent, {
-    context: new ValidationWarning(
+    context: ValidationContext.CreateWarning(
       OfferingValidationWarnings.ProgramOfferingWILMismatch,
     ),
   })
@@ -535,8 +587,8 @@ export class OfferingValidationModel {
     studyStartDateProperty,
     studyEndDateProperty,
     {
-      context: new ValidationWarning(
-        OfferingValidationWarnings.InvalidStudyBreaksCombinedThresholdPercentage,
+      context: ValidationContext.CreateInfo(
+        OfferingValidationInfos.InvalidStudyBreaksCombinedThresholdPercentage,
       ),
     },
   )
@@ -544,7 +596,7 @@ export class OfferingValidationModel {
     studyStartDateProperty,
     studyEndDateProperty,
     {
-      context: new ValidationWarning(
+      context: ValidationContext.CreateWarning(
         OfferingValidationWarnings.InvalidStudyDatesPeriodLength,
       ),
     },
@@ -572,9 +624,9 @@ export class OfferingValidationModel {
  * Validation warning with a unique type and
  * a user-friendly message to be displayed.
  */
-export interface ValidationWarningResult {
-  warningType: OfferingValidationWarnings;
-  warningMessage: string;
+export interface ValidationResult {
+  typeCode: OfferingValidationWarnings | OfferingValidationInfos;
+  message: string;
 }
 
 /**
@@ -599,9 +651,13 @@ export interface OfferingValidationResult {
    */
   offeringStatus?: OfferingStatus.Approved | OfferingStatus.CreationPending;
   /**
+   * Infos, if any.
+   */
+  infos: ValidationResult[];
+  /**
    * Warnings, if any.
    */
-  warnings: ValidationWarningResult[];
+  warnings: ValidationResult[];
   /**
    * Users friendly errors list, if any.
    */

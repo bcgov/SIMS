@@ -52,4 +52,13 @@ export class InstitutionLocation extends RecordDataModel {
     nullable: false,
   })
   primaryContact: PrimaryContact;
+
+  /*
+   * Institution location has integration with other systems or not?.
+   */
+  @Column({
+    name: "has_integration",
+    nullable: false,
+  })
+  hasIntegration?: boolean;
 }

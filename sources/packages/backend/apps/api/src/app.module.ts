@@ -53,6 +53,7 @@ import {
 } from "@sims/services";
 import { LoggerModule } from "@sims/utilities/logger";
 import { ConfigModule } from "@sims/utilities/config";
+import { IER12IntegrationModule } from "./institution-integration/ier-integration/ier12-integration.module";
 
 @Module({
   imports: [
@@ -66,6 +67,7 @@ import { ConfigModule } from "@sims/utilities/config";
     SFASIntegrationModule,
     ECertIntegrationModule,
     FedRestrictionIntegrationModule,
+    IER12IntegrationModule,
     DisbursementReceiptIntegrationModule,
     AppAESTModule,
     AppInstitutionsModule,

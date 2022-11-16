@@ -94,3 +94,7 @@ export interface ESDCIntegrationConfig {
 export interface SFASIntegrationConfig {
   ftpReceiveFolder: string;
 }
+
+export interface InstitutionIntegrationConfig {
+  ftpRequestFolder: string;
+}
