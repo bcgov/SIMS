@@ -188,6 +188,7 @@ export class EducationProgramOfferingControllerService {
           startDate: validation.csvModel.studyStartDate,
           endDate: validation.csvModel.studyEndDate,
           errors: validation.errors,
+          infos: [],
           warnings: [],
         }));
       throw new BadRequestException(
@@ -232,9 +233,13 @@ export class EducationProgramOfferingControllerService {
             endDate: validation.offeringModel.studyEndDate,
             offeringStatus: validation.offeringStatus,
             errors: validation.errors,
+            infos: validation.infos.map((info) => ({
+              typeCode: info.typeCode,
+              message: info.message,
+            })),
             warnings: validation.warnings.map((warning) => ({
-              warningType: warning.warningType,
-              warningMessage: warning.warningMessage,
+              typeCode: warning.typeCode,
+              message: warning.message,
             })),
           };
         });
@@ -267,6 +272,7 @@ export class EducationProgramOfferingControllerService {
         startDate: error.validatedOffering.offeringModel.studyStartDate,
         endDate: error.validatedOffering.offeringModel.studyEndDate,
         errors: [error.error],
+        infos: [],
         warnings: [],
       },
     ];
@@ -326,8 +332,9 @@ export class EducationProgramOfferingControllerService {
       assessedDate: offering.assessedDate,
       courseLoad: offering.courseLoad,
       hasExistingApplication,
-      warnings: validatedOffering.warnings.map(
-        (warning) => warning.warningType,
+      validationInfos: validatedOffering.infos.map((info) => info.typeCode),
+      validationWarnings: validatedOffering.warnings.map(
+        (warning) => warning.typeCode,
       ),
     };
   }

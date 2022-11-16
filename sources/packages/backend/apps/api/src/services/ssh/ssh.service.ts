@@ -1,11 +1,11 @@
-import { Injectable, Scope } from "@nestjs/common";
-import { SFTPConfig } from "../../types";
+import { Injectable } from "@nestjs/common";
+import { SFTPConfig } from "@sims/utilities/config";
 import * as Client from "ssh2-sftp-client";
 
 @Injectable()
 export class SshService {
   /**
-   * Creates a conneced server ready to execute commands.
+   * Creates a connected server ready to execute commands.
    * @param config
    * @returns Connected client.
    */

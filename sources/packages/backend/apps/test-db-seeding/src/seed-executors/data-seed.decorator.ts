@@ -32,10 +32,10 @@ export interface MethodInterface {
  * @options [skip] default is false, if
  * any class needs to be skip while seeding pass true.
  */
-export const DataSeed = (options: ProviderInterface): ClassDecorator => {
+export const DataSeed = (options?: ProviderInterface): ClassDecorator => {
   const newOptions: ProviderInterface = {
-    order: options.order ?? SeedPriorityOrder.Unknown,
-    skip: options.skip ?? false,
+    order: options?.order ?? SeedPriorityOrder.Unknown,
+    skip: options?.skip ?? false,
   };
   return SetMetadata(DATA_SEED, newOptions);
 };
@@ -48,13 +48,9 @@ export const DataSeed = (options: ProviderInterface): ClassDecorator => {
  * @options [skip] default is false, if
  * any method needs to be skipped while seeding pass true.
  */
-export const DataSeedMethod = (
-  options: MethodInterface = {
-    skip: false,
-  },
-): MethodDecorator => {
+export const DataSeedMethod = (options?: MethodInterface): MethodDecorator => {
   const newOptions: MethodInterface = {
-    skip: options.skip ?? false,
+    skip: options?.skip ?? false,
   };
   return SetMetadata(DATA_SEED_METHOD, newOptions);
 };

@@ -5,7 +5,7 @@ import {
   ValidationOptions,
   ValidationArguments,
 } from "class-validator";
-import { getDateOnlyFormat, isAfter } from "../../date-utils";
+import { getDateOnlyFormat, isAfter } from "@sims/utilities";
 
 /**
  * Checks if the date decorated is after the date provided as a reference in the

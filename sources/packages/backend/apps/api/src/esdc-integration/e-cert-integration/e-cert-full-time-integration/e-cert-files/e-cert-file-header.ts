@@ -1,4 +1,5 @@
-import { StringBuilder, getDateOnlyFromFormat } from "../../../../utilities";
+import { StringBuilder } from "../../../../utilities";
+import { getDateOnlyFromFormat } from "@sims/utilities";
 import {
   ECERT_SENT_TITLE,
   RecordTypeCodes,

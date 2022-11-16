@@ -38,12 +38,11 @@ import {
   sortOfferingsColumnMap,
   PaginationOptions,
   PaginatedResults,
-  dateDifference,
   OFFERING_STUDY_BREAK_MAX_DAYS,
   OFFERING_VALIDATIONS_STUDY_BREAK_COMBINED_PERCENTAGE_THRESHOLD,
   decimalRound,
 } from "../../utilities";
-import { CustomNamedError } from "@sims/utilities";
+import { CustomNamedError, dateDifference } from "@sims/utilities";
 import {
   OFFERING_INVALID_OPERATION_IN_THE_CURRENT_STATE,
   OFFERING_NOT_VALID,
@@ -60,8 +59,7 @@ import {
 } from "./education-program-offering-validation.models";
 import { EducationProgramOfferingValidationService } from "./education-program-offering-validation.service";
 import * as os from "os";
-import { InjectLogger } from "../../common";
-import { LoggerService } from "../../logger/logger.service";
+import { LoggerService, InjectLogger } from "@sims/utilities/logger";
 import { WorkflowClientService } from "@sims/services";
 import { CreateProcessInstanceResponse } from "zeebe-node";
 
@@ -503,7 +501,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     offeringValidationModel.offeringDeclaration = offering.offeringDeclaration;
     offeringValidationModel.offeringType = offering.offeringType;
     offeringValidationModel.courseLoad = offering.courseLoad;
-    offeringValidationModel.studyBreaks = offering.studyBreaks.studyBreaks;
+    offeringValidationModel.studyBreaks = offering.studyBreaks?.studyBreaks;
     return offeringValidationModel;
   }
 

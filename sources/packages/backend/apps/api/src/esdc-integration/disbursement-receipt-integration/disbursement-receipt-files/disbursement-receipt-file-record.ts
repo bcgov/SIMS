@@ -1,4 +1,4 @@
-import { getDateOnlyFromFormat } from "../../../utilities";
+import { getDateOnlyFromFormat } from "@sims/utilities";
 import { DATE_FORMAT } from "../../models/esdc-integration.model";
 import { DisbursementReceiptRecordType } from "../models/disbursement-receipt-integration.model";
 

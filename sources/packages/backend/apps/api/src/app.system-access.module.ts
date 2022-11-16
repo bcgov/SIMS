@@ -4,7 +4,6 @@ import {
   ATBCService,
   StudentService,
   ApplicationExceptionService,
-  ConfigService,
   DisbursementScheduleService,
   EducationProgramOfferingService,
   StudentAssessmentService,
@@ -43,9 +42,9 @@ import {
   ECertIntegrationSystemAccessController,
   FedRestrictionsIntegrationSystemAccessController,
   ATBCSystemAccessController,
+  IERIntegrationSystemAccessController,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
-import { LoggerModule } from "./logger/logger.module";
 import { SINValidationModule } from "./esdc-integration/sin-validation/sin-validation.module";
 import { SINValidationSystemAccessController } from "./route-controllers/esdc-integration/sin-validation.system-access.controller";
 import { MSFAARequestService } from "./esdc-integration/msfaa-integration/msfaa-request.service";
@@ -66,9 +65,11 @@ import { DisbursementReceiptRequestService } from "./esdc-integration/disburseme
 import { FedRestrictionProcessingService } from "./esdc-integration/fed-restriction-integration/fed-restriction-processing.service";
 import { FedRestrictionIntegrationService } from "./esdc-integration/fed-restriction-integration/fed-restriction-integration.service";
 import { WorkflowClientService, SequenceControlService } from "@sims/services";
+import { IER12FileService } from "./institution-integration/ier-integration/ier12-file.service";
+import { IER12IntegrationService } from "./institution-integration/ier-integration/ier12-integration.service";
 
 @Module({
-  imports: [LoggerModule, DatabaseModule, AuthModule, SINValidationModule],
+  imports: [DatabaseModule, AuthModule, SINValidationModule],
   controllers: [
     ATBCSystemAccessController,
     SINValidationSystemAccessController,
@@ -78,12 +79,12 @@ import { WorkflowClientService, SequenceControlService } from "@sims/services";
     SFASIntegrationSystemAccessController,
     ECertIntegrationSystemAccessController,
     FedRestrictionsIntegrationSystemAccessController,
+    IERIntegrationSystemAccessController,
   ],
   providers: [
     WorkflowClientService,
     ATBCService,
     StudentService,
-    ConfigService,
     StudentAssessmentService,
     EducationProgramOfferingService,
     DisbursementScheduleService,
@@ -109,6 +110,8 @@ import { WorkflowClientService, SequenceControlService } from "@sims/services";
     SFASIntegrationService,
     SFASIndividualService,
     SFASRestrictionService,
+    IER12FileService,
+    IER12IntegrationService,
     ECertFileHandler,
     DisbursementScheduleErrorsService,
     ECertFullTimeIntegrationService,

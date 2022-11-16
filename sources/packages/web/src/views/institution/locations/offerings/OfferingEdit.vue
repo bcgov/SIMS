@@ -66,6 +66,7 @@
       :formMode="formMode"
       :locationId="locationId"
       :programId="programId"
+      :enableValidationsOnInit="true"
       @submit="submit"
       @cancel="goBack"
     ></offering-form-submit>

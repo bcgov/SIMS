@@ -1,5 +1,4 @@
-import { InjectLogger } from "../../common";
-import { LoggerService } from "../../logger/logger.service";
+import { LoggerService, InjectLogger } from "@sims/utilities/logger";
 import { needRenewJwtToken, tokenTimeToDate } from "../../utilities/auth-utils";
 import { TokenCacheResponse } from "./token-cache.service.models";
 
@@ -11,10 +10,10 @@ import { TokenCacheResponse } from "./token-cache.service.models";
 export const TOKEN_RENEWAL_SECONDS = 30;
 
 /**
- * Keeps a token that could be shared accross the application
+ * Keeps a token that could be shared across the application
  * and monitors the expiration time to determined when it
  * need to be renewed.
- * The responsability of this service is to mantain a cache for
+ * The responsibility of this service is to maintain a cache for
  * a token and monitors its expiration. The actual method that
  * retrieves the token will be provide as a parameter.
  */

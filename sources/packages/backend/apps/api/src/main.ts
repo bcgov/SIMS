@@ -4,42 +4,25 @@ import { NestFactory, HttpAdapterHost } from "@nestjs/core";
 import { NestExpressApplication } from "@nestjs/platform-express";
 import { AppModule } from "./app.module";
 import { KeycloakConfig } from "./auth/keycloakConfig";
-import { LoggerService } from "./logger/logger.service";
+import { LoggerService } from "@sims/utilities/logger";
 import { AppAllExceptionsFilter } from "./app.exception.filter";
 import { exit } from "process";
 import { setGlobalPipes } from "./utilities/auth-utils";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
+import { Request, Response } from "express";
 
 async function bootstrap() {
   await KeycloakConfig.load();
-  const app = await NestFactory.create<NestExpressApplication>(AppModule, {});
+  const app = await NestFactory.create<NestExpressApplication>(AppModule, {
+    bufferLogs: true,
+  });
 
-  // Configure Swagger
-  if (process.env.SWAGGER_ENABLED?.toLowerCase() === "true") {
-    const options = new DocumentBuilder()
-      .setTitle(process.env.PROJECT_NAME)
-      .setDescription(`The ${process.env.PROJECT_NAME} API description`)
-      .setVersion("1.0.0")
-      .addBearerAuth(
-        {
-          name: "Authorization",
-          type: "http",
-          in: "Header",
-        },
-        "access-token",
-      )
-      .addServer("/api")
-      .build();
-    const document = SwaggerModule.createDocument(app, options);
-    SwaggerModule.setup("swagger", app, document);
-  }
+  // Get the injected logger.
+  const logger = await app.resolve(LoggerService);
+  app.useLogger(logger);
 
   // Setting global prefix
   app.setGlobalPrefix("api");
-
-  // Using LoggerService as app logger
-  const logger = new LoggerService();
-  app.useLogger(logger);
 
   // Exception filter
   const { httpAdapter } = app.get(HttpAdapterHost);
@@ -59,25 +42,52 @@ async function bootstrap() {
     origin: allowAnyOrigin,
   });
 
-  // Setting express middleware for req
-  app.use(LoggerService.apiLogger);
+  // Log every request.
+  app.use((req: Request, _res: Response, next: () => void) => {
+    logger.log(
+      `Request - ${req.method} ${req.path} From ${
+        req.headers.origin ?? "unknown"
+      } | ${req.headers["user-agent"] ?? "unknown"}`,
+    );
+    next();
+  });
 
   // pipes
   setGlobalPipes(app);
 
+  // Configure Swagger.
+  if (process.env.SWAGGER_ENABLED?.toLowerCase() === "true") {
+    const options = new DocumentBuilder()
+      .setTitle(process.env.PROJECT_NAME)
+      .setDescription(`The ${process.env.PROJECT_NAME} API description`)
+      .setVersion("1.0.0")
+      .addBearerAuth(
+        {
+          name: "Authorization",
+          type: "http",
+          in: "Header",
+        },
+        "access-token",
+      )
+      .addServer("/api")
+      .build();
+    const document = SwaggerModule.createDocument(app, options);
+    SwaggerModule.setup("swagger", app, document);
+  }
+
   // Starting application
   await app.listen(port);
   // Logging node http server error
-  app.getHttpServer().on("error", (excp) => {
-    logger.error(`Application server receive ${excp}`, undefined, "Bootstrap");
+  app.getHttpServer().on("error", (error: unknown) => {
+    logger.error(`Application server receive ${error}`, undefined, "Bootstrap");
     exit(1);
   });
   logger.log(`Application is listing on port ${port}`, "Bootstrap");
 }
-bootstrap().catch((excp) => {
+bootstrap().catch((error: unknown) => {
   const logger = new LoggerService();
   logger.error(
-    `Application bootstrap exception: ${excp}`,
+    `Application bootstrap exception: ${error}`,
     undefined,
     "Bootstrap-Main",
   );

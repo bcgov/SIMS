@@ -8,7 +8,8 @@ import {
   NUMBER_FILLER,
   SPACE_FILLER,
 } from "../../../esdc-integration/models/esdc-integration.model";
-import { getDateOnlyFromFormat, StringBuilder } from "../../..//utilities";
+import { StringBuilder } from "../../../utilities";
+import { getDateOnlyFromFormat } from "@sims/utilities";
 
 /**
  * Header of an ESDC SIN validation file.

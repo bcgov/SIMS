@@ -5,7 +5,7 @@ import {
   ValidationOptions,
   ValidationArguments,
 } from "class-validator";
-import { dateDifference, getDateOnlyFormat } from "../../date-utils";
+import { dateDifference, getDateOnlyFormat } from "@sims/utilities";
 
 /**
  * Checks if the number of days between the property date decorated with this
@@ -17,9 +17,10 @@ class PeriodMaxLengthConstraint implements ValidatorConstraintInterface {
   validate(value: Date | string, args: ValidationArguments): boolean {
     const [startDateProperty, maxDaysAllowed] = args.constraints;
     const periodStartDate = startDateProperty(args.object);
-    if (!periodStartDate) {
-      // The related property does not exists in the provided object to be compared.
-      return false;
+    if (!value || !periodStartDate) {
+      // While the two dates are not provided just ignore this validation.
+      // The presence of both dates must be ensured by other validators.
+      return true;
     }
     return dateDifference(value, periodStartDate) <= maxDaysAllowed;
   }

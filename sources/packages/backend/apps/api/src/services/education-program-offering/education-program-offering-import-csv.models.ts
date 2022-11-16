@@ -11,7 +11,8 @@ import {
   ValidateIf,
   ValidateNested,
 } from "class-validator";
-import { DATE_ONLY_ISO_FORMAT, removeDoubleWhiteSpaces } from "../../utilities";
+import { removeDoubleWhiteSpaces } from "../../utilities";
+import { DATE_ONLY_ISO_FORMAT } from "@sims/utilities";
 import { OfferingIntensity } from "@sims/sims-db";
 import {
   currencyNumberOptions,

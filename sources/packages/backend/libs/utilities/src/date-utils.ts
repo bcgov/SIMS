@@ -7,6 +7,7 @@ import * as localizedFormat from "dayjs/plugin/localizedFormat";
 import * as timezone from "dayjs/plugin/timezone";
 import * as dayOfYear from "dayjs/plugin/dayOfYear";
 import * as isBetween from "dayjs/plugin/isBetween";
+import { Between, FindOperator } from "typeorm";
 dayjs.extend(utc);
 dayjs.extend(localizedFormat);
 dayjs.extend(timezone);
@@ -161,8 +162,23 @@ export function getDateOnlyFormat(date?: string | Date): string | undefined {
  * @param daysToAdd
  * @returns Date.
  */
-export const addDays = (date: Date | string, daysToAdd: number): Date => {
-  return dayjs(date).add(daysToAdd, "day").toDate();
+export const addDays = (daysToAdd: number, date?: Date | string): Date => {
+  return dayjs(date ? date : new Date())
+    .add(daysToAdd, "day")
+    .toDate();
+};
+
+/**
+ * @param date in which the search has to happen
+ * from midnight to next day midnight.
+ * @returns typeorm findOperator object between the date.
+ */
+export const dateEqualTo = (date?: Date): FindOperator<Date> => {
+  // TODO method can be updated when typeorm updates the AND operator in the where clause.
+  return Between(
+    new Date(date.setHours(0, 0, 0, 0)),
+    new Date(date.setDate(date.getDate() + 1)),
+  );
 };
 
 /**

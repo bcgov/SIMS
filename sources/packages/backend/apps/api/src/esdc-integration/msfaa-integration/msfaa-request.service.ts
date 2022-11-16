@@ -1,10 +1,9 @@
 import { Injectable } from "@nestjs/common";
-import { InjectLogger } from "../../common";
 import { MSFAANumber, OfferingIntensity } from "@sims/sims-db";
-import { LoggerService } from "../../logger/logger.service";
-import { getUTCNow, getISODateOnlyString } from "../../utilities";
+import { LoggerService, InjectLogger } from "@sims/utilities/logger";
+import { getUTCNow, getISODateOnlyString } from "@sims/utilities";
 import { EntityManager } from "typeorm";
-import { ConfigService, MSFAANumberService } from "../../services";
+import { MSFAANumberService } from "../../services";
 import { SequenceControlService } from "@sims/services";
 import {
   MSFAARecord,
@@ -12,6 +11,7 @@ import {
 } from "./models/msfaa-integration.model";
 import { MSFAAIntegrationService } from "./msfaa-integration.service";
 import { ESDCFileHandler } from "../esdc-file-handler";
+import { ConfigService } from "@sims/utilities/config";
 
 @Injectable()
 export class MSFAARequestService extends ESDCFileHandler {

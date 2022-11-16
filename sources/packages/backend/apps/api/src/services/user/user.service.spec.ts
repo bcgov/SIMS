@@ -1,8 +1,8 @@
 require("../../../../../env_setup");
 import { Test, TestingModule } from "@nestjs/testing";
 import { DatabaseModule } from "@sims/sims-db";
+import { ConfigModule } from "@sims/utilities/config";
 import { BCeIDService } from "../bceid/bceid.service";
-import { ConfigService } from "../config/config.service";
 import { UserService } from "./user.service";
 
 describe("UserService", () => {
@@ -10,8 +10,8 @@ describe("UserService", () => {
 
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [DatabaseModule],
-      providers: [UserService, BCeIDService, ConfigService],
+      imports: [DatabaseModule, ConfigModule],
+      providers: [UserService, BCeIDService],
     }).compile();
 
     await module.init();

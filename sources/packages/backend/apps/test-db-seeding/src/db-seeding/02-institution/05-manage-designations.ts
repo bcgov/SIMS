@@ -6,16 +6,12 @@ import {
   createMultipleFakeInstitutionLocations,
 } from "@sims/test-utils";
 import { Repository } from "typeorm";
-import {
-  DataSeed,
-  DataSeedMethod,
-  SeedPriorityOrder,
-} from "../../seed-executors";
+import { DataSeed, DataSeedMethod } from "../../seed-executors";
 import { InstitutionHelperService } from "../../services";
 import { SIMS_COLL_F_LEGAL_SIGNING_USER } from "../constants";
 
 @Injectable()
-@DataSeed({ order: SeedPriorityOrder.Unknown })
+@DataSeed()
 export class DesignationAgreementService {
   constructor(
     @InjectRepository(DesignationAgreement)

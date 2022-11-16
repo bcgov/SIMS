@@ -19,8 +19,7 @@ import { parse } from "papaparse";
 import { removeUTF8BOM } from "../../utilities";
 import { CustomNamedError } from "@sims/utilities";
 import { OFFERING_VALIDATION_CSV_PARSE_ERROR } from "../../constants";
-import { InjectLogger } from "../../common";
-import { LoggerService } from "../../logger/logger.service";
+import { LoggerService, InjectLogger } from "@sims/utilities/logger";
 
 const MAX_STUDY_BREAKS_ENTRIES = 5;
 type InstitutionCodeToIdMap = Record<string, number>;

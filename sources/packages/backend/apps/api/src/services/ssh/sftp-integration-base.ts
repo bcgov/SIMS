@@ -1,10 +1,9 @@
-import { InjectLogger } from "../../common";
-import { LoggerService } from "../../logger/logger.service";
+import { LoggerService, InjectLogger } from "@sims/utilities/logger";
 import { SshService } from "./ssh.service";
-import { SFTPConfig } from "../../types";
 import { FixedFormatFileLine } from "./sftp-integration-base.models";
 import * as Client from "ssh2-sftp-client";
 import * as path from "path";
+import { SFTPConfig } from "@sims/utilities/config";
 
 /**
  * Provides the basic features to enable the SFTP integration.
@@ -112,7 +111,9 @@ export abstract class SFTPIntegrationBase<DownloadType> {
    * in parsed objects specific to the integration process.
    * @param remoteFilePath full remote file path with file name.
    */
-  abstract downloadResponseFile(remoteFilePath: string): Promise<DownloadType>;
+  downloadResponseFile(remoteFilePath: string): Promise<DownloadType> {
+    throw new Error(`Method not implemented, ${remoteFilePath} not used.`);
+  }
 
   /**
    * Delete a file from SFTP.

@@ -1,9 +1,9 @@
 import {
   credentialTypeToDisplay,
   deliveryMethod,
-  getISODateOnlyString,
   getUserFullName,
 } from "../../../utilities";
+import { getISODateOnlyString } from "@sims/utilities";
 import {
   Application,
   ApplicationStatus,
