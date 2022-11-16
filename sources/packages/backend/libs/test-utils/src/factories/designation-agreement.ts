@@ -9,12 +9,14 @@ import {
 import { INSTITUTION_TYPE_BC_PRIVATE } from "@sims/sims-db/constant";
 import * as faker from "faker";
 import { createFakeInstitution } from "./institution";
+import { createFakeInstitutionLocation } from "./institution-location";
+import { createFakeUser } from "./user";
 
 export function createFakeDesignationAgreement(
-  fakeInstitution: Institution,
-  fakeUser: User,
-  fakeInstitutionLocations: InstitutionLocation[],
-  designationStatus?: DesignationAgreementStatus,
+  fakeInstitution?: Institution,
+  fakeUser?: User,
+  fakeInstitutionLocations?: InstitutionLocation[],
+  designationStatus = DesignationAgreementStatus.Pending,
 ): DesignationAgreement {
   const now = new Date();
 
@@ -47,19 +49,21 @@ export function createFakeDesignationAgreement(
       },
     ],
   };
-
-  fakeDesignationAgreement.designationStatus =
-    designationStatus ?? DesignationAgreementStatus.Pending;
-  fakeDesignationAgreement.submittedBy = fakeUser;
+  const newFakeUser = fakeUser ?? createFakeUser();
+  const newFakeInstitutionLocation = fakeInstitutionLocations ?? [
+    createFakeInstitutionLocation(),
+  ];
+  fakeDesignationAgreement.designationStatus = designationStatus;
+  fakeDesignationAgreement.submittedBy = newFakeUser;
   fakeDesignationAgreement.submittedDate = now;
-  fakeDesignationAgreement.creator = fakeUser;
+  fakeDesignationAgreement.creator = newFakeUser;
   fakeDesignationAgreement.createdAt = now;
   fakeDesignationAgreement.designationAgreementLocations =
-    fakeInstitutionLocations.map((location: InstitutionLocation) => {
+    newFakeInstitutionLocation.map((location: InstitutionLocation) => {
       const newLocation = new DesignationAgreementLocation();
       newLocation.institutionLocation = location;
       newLocation.requested = true;
-      newLocation.creator = fakeUser;
+      newLocation.creator = newFakeUser;
       newLocation.createdAt = now;
       return newLocation;
     });

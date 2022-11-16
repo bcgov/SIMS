@@ -13,6 +13,7 @@ export function createFakeInstitutionUserAuth(
   const auth = new InstitutionUserAuth();
   auth.authType = userTypeRole;
   auth.institutionUser = institutionUser;
+  // For institution admin there is no location.
   auth.location = location;
   return auth;
 }

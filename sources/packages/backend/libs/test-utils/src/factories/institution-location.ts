@@ -1,13 +1,14 @@
 import { Institution, InstitutionLocation } from "@sims/sims-db";
 import * as faker from "faker";
+import { createFakeInstitution } from "./institution";
 
 export function createFakeInstitutionLocation(
-  institution: Institution,
+  institution?: Institution,
 ): InstitutionLocation {
   const institutionLocation = new InstitutionLocation();
 
   institutionLocation.name = faker.company.companyName();
-  institutionLocation.institution = institution;
+  institutionLocation.institution = institution ?? createFakeInstitution();
   institutionLocation.data = {
     address: {
       addressLine1: faker.address.streetAddress(),

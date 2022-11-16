@@ -1,5 +1,6 @@
 import {
   DiscoveredClassWithMeta,
+  DiscoveredMethodWithMeta,
   DiscoveryService,
 } from "@golevelup/nestjs-discovery";
 import { Injectable } from "@nestjs/common";
@@ -8,7 +9,14 @@ import {
   DATA_SEED_METHOD,
   MethodInterface,
   ProviderInterface,
+  SeedPriorityOrder,
 } from "./data-seed.decorator";
+import * as os from "os";
+
+interface ClassMethods {
+  class: DiscoveredClassWithMeta<ProviderInterface>;
+  method: DiscoveredMethodWithMeta<MethodInterface>;
+}
 
 @Injectable()
 export class SeedExecutor {
@@ -18,97 +26,109 @@ export class SeedExecutor {
    * Method execute the seeds, if the class names are provided, then it will only
    * execute only provided non skipped classes, else it will execute all
    * non skipped classes according to the priority order.
-   * @param classToBeSeeded is a optional parameter. it the list of classes
-   * to be seeded. if its not provided, the all classes will be seeded.
+   * @param classesToBeSeeded is a optional parameter. It's the list of classes
+   * to be seeded. If its not provided, the all classes will be seeded.
    */
-  async executeSeed(classToBeSeeded?: string[]): Promise<void> {
-    // Discovers all providers in the test-db-seeding app that have meta at a specific
-    // key and returns the provider(s) and associated meta.
+  async executeSeed(classesToBeSeeded?: string[]): Promise<void> {
+    // Get all class methods.
+    const allMethodsWithMetaData =
+      await this.getAllDiscoveredClassesAndMethods();
+
+    let allMethodsToBeSeeded = allMethodsWithMetaData;
+
+    // Filtering of certain provider class that need to executed
+    // (which are passed as comma separated  parameter with the npm command).
+    if (classesToBeSeeded && classesToBeSeeded.length > 0) {
+      allMethodsToBeSeeded = [];
+      classesToBeSeeded.forEach((classToBeSeeded) => {
+        allMethodsToBeSeeded = allMethodsToBeSeeded.concat(
+          allMethodsWithMetaData.filter(
+            (eachClass) =>
+              eachClass.class.discoveredClass.name === classToBeSeeded,
+          ),
+        );
+      });
+    }
+
+    // Execute Priority order 1 methods after removing skipped classes and
+    // skipped methods.
+    await this.executeSeedMethods(
+      allMethodsToBeSeeded,
+      SeedPriorityOrder.Priority1,
+    );
+
+    // Execute other (priority order : unknown) methods after removing skipped
+    // classes and skipped methods.
+    await this.executeSeedMethods(allMethodsToBeSeeded);
+  }
+
+  /**
+   * Method to get all discovered methods of the discovered classes.
+   */
+  private async getAllDiscoveredClassesAndMethods(): Promise<ClassMethods[]> {
+    // Get discovered classes.
     const discoveredClasses =
       await this.discoveryService.providersWithMetaAtKey<ProviderInterface>(
         DATA_SEED,
       );
 
-    // Remove skipped classes.
-    let classesToBeSeeded = discoveredClasses.filter(
-      (eachClass) => !eachClass.meta.skip,
-    );
-    // Filtering of certain provider class that need to executed (which are passed as comma separated  parameter with the npm command).
-    if (classToBeSeeded && classToBeSeeded.length > 0) {
-      classesToBeSeeded = [];
-      classToBeSeeded.forEach((classToBeSeeded) => {
-        classesToBeSeeded = classesToBeSeeded.concat(
-          discoveredClasses.filter(
-            (eachClass) =>
-              eachClass.discoveredClass.name === classToBeSeeded &&
-              !eachClass.meta.skip,
-          ),
-        );
-      });
-    }
-    // Discovered provider class are sorted and grouped with respect to
-    // the priority order of the class, if there is no priority order passed, it is considered as last.
-    // eg,
-    // [
-    //   [
-    //     { meta: { order: 1, name: "provider" }, discoveredMethod: {...} },
-    //     { meta: { order: 1, name: "provider" }, discoveredMethod: {...} },
-    //   ],
-    //   [{ meta: { order: 2, name: "provider" }, discoveredMethod: {...} }],
-    // ];
-    const sortedAndGroupedDiscoveredClassBatch =
-      this.sortAndGroup(classesToBeSeeded);
+    const allMetaData = [];
 
-    for (const sortedAndGroupedDiscoveredClasses of sortedAndGroupedDiscoveredClassBatch) {
-      let testMethods = [];
-
-      sortedAndGroupedDiscoveredClasses.forEach((discoveredClasses) => {
-        // Discovers all method handlers matching a particular metakey from the provider class.
-        const metMethods =
-          this.discoveryService.classMethodsWithMetaAtKey<MethodInterface>(
-            discoveredClasses.discoveredClass,
-            DATA_SEED_METHOD,
-          );
-
-        // Remove skipped methods.
-        const methodsToBeSeeded = metMethods.filter(
-          (eachMethod) => !eachMethod.meta.skip,
+    discoveredClasses.forEach((discoveredClass) => {
+      // Get the discovered methods of the discovered classes.
+      const metaMethods =
+        this.discoveryService.classMethodsWithMetaAtKey<MethodInterface>(
+          discoveredClass.discoveredClass,
+          DATA_SEED_METHOD,
         );
 
-        testMethods = testMethods.concat(
-          methodsToBeSeeded.map((metadata) =>
-            // Calling the decorated methods.
-            metadata.discoveredMethod.handler.bind(
-              metadata.discoveredMethod.parentClass.instance,
-            )(),
-          ),
-        );
-      });
-      await Promise.all(testMethods);
-    }
-  }
-  private sortAndGroup(
-    discoveredClass: DiscoveredClassWithMeta<ProviderInterface>[],
-  ): DiscoveredClassWithMeta<{
-    name: string;
-    order?: number;
-  }>[][] {
-    discoveredClass.sort((a, b) => (a.meta.order < b.meta.order ? -1 : 1));
-
-    return discoveredClass.reduce((r, o) => {
-      let temp = r.find(
-        ([
-          {
-            meta: { order },
-          },
-        ]) => order === o.meta.order,
+      metaMethods.forEach((metaMethod) =>
+        allMetaData.push({ class: discoveredClass, method: metaMethod }),
       );
-      if (!temp) {
-        temp = [];
-        r.push(temp);
+    });
+
+    return allMetaData;
+  }
+
+  /**
+   * Executes seed methods as per the seed priority order, after
+   * removing skipped classes and methods.
+   * @param allMethodsToBeSeeded method array to be seeded.
+   * @param order order that need to be seeded. If nothing is passed,
+   * it will execute as seed priority "unknow".
+   */
+  private async executeSeedMethods(
+    allMethodsToBeSeeded: ClassMethods[],
+    order = SeedPriorityOrder.Unknown,
+  ): Promise<void> {
+    // Used to limit the number of asynchronous operations
+    // that will start at the same time.
+    const maxPromisesAllowed = os.cpus().length;
+    // Hold all the promises that must be processed.
+    const promises: Promise<undefined>[] = [];
+
+    for (const eachMethod of allMethodsToBeSeeded) {
+      if (
+        eachMethod.class.meta.order === order &&
+        !(eachMethod.class.meta.skip || eachMethod.method.meta.skip)
+      ) {
+        // Calling the decorated methods.
+        promises.push(
+          eachMethod.method.discoveredMethod.handler.bind(
+            eachMethod.method.discoveredMethod.parentClass.instance,
+          )(),
+        );
+        if (promises.length >= maxPromisesAllowed) {
+          // Waits for all be executed.
+          await Promise.allSettled(promises);
+          // Clear the array.
+          promises.length = 0;
+        }
       }
-      temp.push(o);
-      return r;
-    }, []);
+    }
+    if (promises.length > 0) {
+      // Waits for methods if any outside the loop.
+      await Promise.allSettled(promises);
+    }
   }
 }
