@@ -35,11 +35,11 @@ objects:
     spec:
       ports:
         - name: client
-          port: 6379
-          targetPort: 6379
+          port: ${{REDIS_PORT}}
+          targetPort: ${{REDIS_PORT}}
         - name: gossip
-          port: 16379
-          targetPort: 16379
+          port: ${{REDIS_BUS_PORT}}
+          targetPort: ${{REDIS_BUS_PORT}}
       selector:
         app: ${NAME}
   - apiVersion: apps/v1
@@ -48,6 +48,7 @@ objects:
       name: ${NAME}
       labels:
         app: ${NAME}
+        app.kubernetes.io/part-of: "shared_database"
     spec:
       replicas: ${{REPLICAS}}
       revisionHistoryLimit: 10
@@ -95,9 +96,9 @@ objects:
                 timeoutSeconds: 1
                 failureThreshold: 3
               ports:
-                - containerPort: 6379
+                - containerPort: ${{REDIS_PORT}}
                   name: client
-                - containerPort: 16379
+                - containerPort: ${{REDIS_BUS_PORT}}
                   name: gossip
               readinessProbe:
                 exec:
@@ -155,7 +156,7 @@ parameters:
     description: The number of StatefulSet replicas to use.
     displayName: Replicas
     required: true
-    value: "3"
+    value: "6"
   - name: IMAGE_REGISTRY
     description: The base docker registry
     displayName: Docker Image Registry
@@ -185,7 +186,7 @@ parameters:
     description: Starting amount of memory the container can use.
     displayName: Memory Request
     required: true
-    value: 64Mi
+    value: 256Mi
   - name: MEMORY_LIMIT
     description: Maximum amount of memory the container can use.
     displayName: Memory Limit
@@ -195,9 +196,19 @@ parameters:
     description: The size of the persistent volume to create.
     displayName: Persistent Volume Size
     required: true
-    value: 512Mi
+    value: 1Gi
   - name: STORAGE_CLASS
     description: The type of the persistent volume to create.
     displayName: Persistent Volume Class
     required: true
     value: netapp-file-standard
+  - name: REDIS_PORT
+    description: Redis port.
+    displayName: Redis client port.
+    required: true
+    value: "6379"
+  - name: REDIS_BUS_PORT
+    description: Redis cluster bus port.
+    displayName: Redis cluster bus port used for node to node communication.
+    required: true
+    value: "16379"

@@ -315,8 +315,15 @@ init-patroni:
 	@echo "++\n Init Patroni in $(NAMESPACE) \n++"
 	@oc -n $(NAMESPACE) process -f openshift/patroni-pre-req.yml | oc -n $(NAMESPACE) apply -f -
 
+init-redis:
+	@echo "++\n Init Redis in $(NAMESPACE) \n++"
+	@oc -n $(NAMESPACE) process -f openshift/redis-secrets.yml | oc -n $(NAMESPACE) apply -f -
+
 deploy-patroni:
 	@oc -n $(NAMESPACE) process -f openshift/patroni-deploy.yml -p BUILD_NAMESPACE=$(BUILD_NAMESPACE) -p IMAGE_STREAM_TAG=patroni:12-latest | oc -n $(NAMESPACE) apply -f -
+
+deploy-redis:
+	@oc -n $(NAMESPACE) process -f openshift/redis-ha-deploy.yml -p IMAGE_NAME="redis-6" -p IMAGE_TAG="1" -p IMAGE_REGISTRY="artifacts.developer.gov.bc.ca/redhat-docker-remote/rhel8/" | oc -n $(NAMESPACE) apply -f -
 
 create-db:
 	test -n $(DB_NAME)
