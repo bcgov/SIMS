@@ -36,6 +36,12 @@
       ],
       "@sims/queue/*": [
         "libs/queue/src/*"
+      ],
+      "@sims/test-utils": [
+        "libs/test-utils/src"
+      ],
+      "@sims/test-utils/*": [
+        "libs/test-utils/src/*"
       ]
     }
   }

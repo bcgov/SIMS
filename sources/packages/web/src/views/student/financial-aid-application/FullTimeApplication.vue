@@ -1,12 +1,18 @@
 <template>
-  <student-page-container>
+  <student-page-container :full-width="true">
+    <template #header>
+      <header-navigator
+        title="Applications"
+        subTitle="Financial Aid Application"
+      >
+      </header-navigator>
+    </template>
     <body-header>
       <template #actions>
         <v-row class="m-0 p-0 float-right">
           <v-btn
             color="primary"
-            v-if="!notDraft"
-            v-show="!isFirstPage && !submittingApplication"
+            v-if="!notDraft && !isFirstPage && !submittingApplication"
             variant="outlined"
             :loading="savingDraft"
             @click="saveDraft()"
@@ -14,21 +20,13 @@
             {{ savingDraft ? "Saving..." : "Save draft" }}</v-btn
           >
           <v-btn
-            v-if="!isReadOnly"
+            v-if="!isReadOnly && !isFirstPage"
             class="ml-2"
             :disabled="!isLastPage || submittingApplication"
-            v-show="!isFirstPage"
             color="primary"
             @click="wizardSubmit()"
+            :loading="submittingApplication"
           >
-            <v-progress-circular
-              v-if="submittingApplication"
-              class="mr-3"
-              bg-color="white"
-              indeterminate
-              color="secondary"
-              size="23"
-            />
             {{ submittingApplication ? "Submitting..." : "Submit application" }}
           </v-btn>
         </v-row>
@@ -43,6 +41,7 @@
       @submitApplication="submitApplication"
       @customEventCallback="customEventCallback"
       @pageChanged="pageChanged"
+      :processing="submittingApplication"
     />
   </student-page-container>
   <ConfirmEditApplication

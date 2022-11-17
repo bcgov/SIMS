@@ -88,6 +88,24 @@
       "compilerOptions": {
         "tsConfigPath": "libs/queue/tsconfig.lib.json"
       }
+    },
+    "test-db-seeding": {
+      "type": "application",
+      "root": "apps/test-db-seeding",
+      "entryFile": "main",
+      "sourceRoot": "apps/test-db-seeding/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/test-db-seeding/tsconfig.app.json"
+      }
+    },
+    "test-utils": {
+      "type": "library",
+      "root": "libs/test-utils",
+      "entryFile": "index",
+      "sourceRoot": "libs/test-utils/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/test-utils/tsconfig.lib.json"
+      }
     }
   },
   "monorepo": true,
