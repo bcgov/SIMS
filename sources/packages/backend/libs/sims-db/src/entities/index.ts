@@ -74,3 +74,4 @@ export * from "./restriction-notification-type.type";
 export * from "./primary-contact.type";
 export * from "./notification.model";
 export * from "./notification-message.model";
+export * from "./user-types.enum";

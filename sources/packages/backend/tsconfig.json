@@ -30,6 +30,12 @@
       ],
       "@sims/utilities/*": [
         "libs/utilities/src/*"
+      ],
+      "@sims/test-utils": [
+        "libs/test-utils/src"
+      ],
+      "@sims/test-utils/*": [
+        "libs/test-utils/src/*"
       ]
     }
   }

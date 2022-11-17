@@ -55,3 +55,5 @@ export const TableNames = {
   Messages: "notification_messages",
   Notifications: "notifications",
 };
+
+export const INSTITUTION_TYPE_BC_PRIVATE = 2;

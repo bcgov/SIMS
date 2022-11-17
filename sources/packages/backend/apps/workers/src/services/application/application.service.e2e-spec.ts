@@ -28,8 +28,8 @@ import {
   createFakeStudent,
   createFakeStudentAssessment,
 } from "../../../../api/src/testHelpers/fake-entities";
-import { MAX_MSFAA_VALID_DAYS } from "../../../../api/src/utilities/system-configurations-constants";
 import * as dayjs from "dayjs";
+import { MAX_MSFAA_VALID_DAYS } from "@sims/utilities";
 
 const createFakeApplicationInAssessment = (student: Student): Application => {
   const fakeApplication = createFakeApplication();
