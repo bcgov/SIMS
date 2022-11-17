@@ -1,3 +1,4 @@
+require("../../../env_setup_apps");
 import { Queues } from "@sims/queue";
 import { createBullBoard } from "@bull-board/api";
 import { BullAdapter } from "@bull-board/api/bullAdapter";
@@ -5,6 +6,7 @@ import { ExpressAdapter } from "@bull-board/express";
 import { NestFactory } from "@nestjs/core";
 import { Queue } from "bull";
 import { QueuesModule } from "./queues.module";
+import * as basicAuth from "express-basic-auth";
 
 async function bootstrap() {
   const app = await NestFactory.create(QueuesModule);
@@ -21,7 +23,14 @@ async function bootstrap() {
     queues: bullBoardQueues,
     serverAdapter,
   });
-  app.use("/admin/queues", serverAdapter.getRouter());
+  app.use(
+    "/admin/queues",
+    basicAuth({
+      users: { "queue-admin": process.env.QUEUE_ADMIN_PASSWORD },
+      challenge: true,
+    }),
+    serverAdapter.getRouter(),
+  );
 
   await app.listen(3001);
 }
