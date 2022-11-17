@@ -22,7 +22,7 @@ export class DesignationAgreementService {
   ) {}
 
   /**
-   * Method to seed fake pending designation agreement.
+   * Seed fake pending designation agreement.
    */
   @DataSeedMethod()
   async createPendingDesignationAgreement(): Promise<void> {

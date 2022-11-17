@@ -11,14 +11,18 @@ export enum SeedPriorityOrder {
   Unknown = Number.MAX_SAFE_INTEGER,
 }
 
-// Provided interface.
-export interface ProviderInterface {
+/**
+ * Provided interface.
+ */
+export interface DataSeedOptions {
   order?: number;
   skip?: boolean;
 }
 
-// Method interface.
-export interface MethodInterface {
+/**
+ * Method interface.
+ */
+export interface DataSeedMethodOptions {
   skip?: boolean;
 }
 
@@ -32,8 +36,8 @@ export interface MethodInterface {
  * @options [skip] default is false, if
  * any class needs to be skip while seeding pass true.
  */
-export const DataSeed = (options?: ProviderInterface): ClassDecorator => {
-  const newOptions: ProviderInterface = {
+export const DataSeed = (options?: DataSeedOptions): ClassDecorator => {
+  const newOptions: DataSeedOptions = {
     order: options?.order ?? SeedPriorityOrder.Unknown,
     skip: options?.skip ?? false,
   };
@@ -48,8 +52,10 @@ export const DataSeed = (options?: ProviderInterface): ClassDecorator => {
  * @options [skip] default is false, if
  * any method needs to be skipped while seeding pass true.
  */
-export const DataSeedMethod = (options?: MethodInterface): MethodDecorator => {
-  const newOptions: MethodInterface = {
+export const DataSeedMethod = (
+  options?: DataSeedMethodOptions,
+): MethodDecorator => {
+  const newOptions: DataSeedMethodOptions = {
     skip: options?.skip ?? false,
   };
   return SetMetadata(DATA_SEED_METHOD, newOptions);

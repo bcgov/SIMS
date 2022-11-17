@@ -17,13 +17,13 @@ async function bootstrap() {
     // Clean db.
     if (process.env.POSTGRES_DB?.includes(QA_DB_NAME)) {
       await app.get(CleanDatabase).cleanDatabase();
-      console.info("Database cleaned!!");
+      console.info("Database cleaned.");
     }
     return;
   }
 
   /**
-   * Checks for db seed class name as parameter. and executes only passed classes.
+   * Checks for db seed class name as parameter and executes only passed classes.
    * Multiple class name is passed as a comma separated values without space.
    * @command example: npm run db:seed:test DesignationAgreementApprovalService,DesignationAgreementPendingService
    * If nothing is passed as a parameter then all test seed services will be executed.
@@ -36,7 +36,7 @@ async function bootstrap() {
   });
 
   if (filterClassesIndex !== -1) {
-    // array contains substring match
+    // Array contains substring match.
     testClassList = process.argv[filterClassesIndex]
       .replace(FILTER_CLASSES, "")
       .split(",");

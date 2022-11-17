@@ -7,15 +7,15 @@ import { Injectable } from "@nestjs/common";
 import {
   DATA_SEED,
   DATA_SEED_METHOD,
-  MethodInterface,
-  ProviderInterface,
+  DataSeedMethodOptions,
+  DataSeedOptions,
   SeedPriorityOrder,
 } from "./data-seed.decorator";
 import * as os from "os";
 
 interface ClassMethods {
-  class: DiscoveredClassWithMeta<ProviderInterface>;
-  method: DiscoveredMethodWithMeta<MethodInterface>;
+  class: DiscoveredClassWithMeta<DataSeedOptions>;
+  method: DiscoveredMethodWithMeta<DataSeedMethodOptions>;
 }
 
 @Injectable()
@@ -38,7 +38,7 @@ export class SeedExecutor {
 
     // Filtering of certain provider class that need to executed
     // (which are passed as comma separated  parameter with the npm command).
-    if (classesToBeSeeded && classesToBeSeeded.length > 0) {
+    if (classesToBeSeeded?.length) {
       allMethodsToBeSeeded = [];
       classesToBeSeeded.forEach((classToBeSeeded) => {
         allMethodsToBeSeeded = allMethodsToBeSeeded.concat(
@@ -68,7 +68,7 @@ export class SeedExecutor {
   private async getAllDiscoveredClassesAndMethods(): Promise<ClassMethods[]> {
     // Get discovered classes.
     const discoveredClasses =
-      await this.discoveryService.providersWithMetaAtKey<ProviderInterface>(
+      await this.discoveryService.providersWithMetaAtKey<DataSeedOptions>(
         DATA_SEED,
       );
 
@@ -77,7 +77,7 @@ export class SeedExecutor {
     discoveredClasses.forEach((discoveredClass) => {
       // Get the discovered methods of the discovered classes.
       const metaMethods =
-        this.discoveryService.classMethodsWithMetaAtKey<MethodInterface>(
+        this.discoveryService.classMethodsWithMetaAtKey<DataSeedMethodOptions>(
           discoveredClass.discoveredClass,
           DATA_SEED_METHOD,
         );
@@ -95,7 +95,7 @@ export class SeedExecutor {
    * removing skipped classes and methods.
    * @param allMethodsToBeSeeded method array to be seeded.
    * @param order order that need to be seeded. If nothing is passed,
-   * it will execute as seed priority "unknow".
+   * it will execute as seed priority "unknown".
    */
   private async executeSeedMethods(
     allMethodsToBeSeeded: ClassMethods[],
@@ -120,15 +120,15 @@ export class SeedExecutor {
         );
         if (promises.length >= maxPromisesAllowed) {
           // Waits for all be executed.
-          await Promise.allSettled(promises);
+          await Promise.all(promises);
           // Clear the array.
           promises.length = 0;
         }
       }
     }
     if (promises.length > 0) {
-      // Waits for methods if any outside the loop.
-      await Promise.allSettled(promises);
+      // Waits for methods, if any outside the loop.
+      await Promise.all(promises);
     }
   }
 }

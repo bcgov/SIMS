@@ -42,7 +42,7 @@ export class InstitutionUserService {
   ) {}
 
   /**
-   * Method to seed fake institution legal signing user.
+   * Seed fake institution legal signing user.
    */
   @DataSeedMethod()
   async createInstitutionLegalSigningAuthUser(): Promise<void> {
@@ -64,7 +64,7 @@ export class InstitutionUserService {
     const createdFakeInstitutionUser = await this.institutionUserRepo.save(
       fakeInstitutionUser,
     );
-    // Get 'legal-signing-authority'  user type role.
+    // Get 'legal-signing-authority' user type role.
     const userTypeRole =
       await this.userTypeRoleHelperService.getInstitutionUserTypeAndRole(
         InstitutionUserTypes.admin,
