@@ -88,6 +88,15 @@
       "compilerOptions": {
         "tsConfigPath": "libs/test-utils/tsconfig.lib.json"
       }
+    },
+    "integration": {
+      "type": "library",
+      "root": "libs/integration",
+      "entryFile": "index",
+      "sourceRoot": "libs/integration/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/integration/tsconfig.lib.json"
+      }
     }
   },
   "monorepo": true,
