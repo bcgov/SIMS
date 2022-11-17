@@ -32,7 +32,6 @@
         </v-row>
       </template>
     </body-header>
-
     <StudentApplication
       :selectedForm="selectedForm"
       :initialData="initialData"
@@ -45,7 +44,6 @@
       :processing="submittingApplication"
     />
   </student-page-container>
-
   <ConfirmEditApplication
     ref="editApplicationModal"
     @confirmEditApplication="editApplication"

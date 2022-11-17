@@ -11,24 +11,14 @@
   <footer-buttons
     justify="space-between"
     :processing="processing"
+    @primaryClick="wizardGoNext"
     @secondaryClick="wizardGoPrevious"
+    :showPrimaryButton="!isLastPage"
     :showSecondaryButton="!isFirstPage"
+    :primaryLabel="!isFirstPage ? 'Next section' : 'Start your application'"
     secondaryLabel="Previous section"
     class="mx-0"
   >
-    <template #primary-buttons="{ disabled }">
-      <span>
-        <v-btn
-          :disabled="disabled"
-          class="ml-2"
-          variant="elevated"
-          color="primary"
-          @click="wizardGoNext"
-          v-if="!isLastPage"
-          >{{ !isFirstPage ? "Next section" : "Start your application" }}
-        </v-btn>
-      </span>
-    </template>
   </footer-buttons>
 </template>
 
