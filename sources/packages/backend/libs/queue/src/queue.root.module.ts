@@ -20,8 +20,8 @@ function getConnectionFactory():
   | Promise<BullRootModuleOptions>
   | BullRootModuleOptions {
   const redisConnectionOptions: RedisOptions = {
-    host: process.env.REDIS_HOST,
-    port: +process.env.REDIS_PORT,
+    host: process.env.REDIS_HOST || "localhost",
+    port: +process.env.REDIS_PORT || 6379,
     password: process.env.REDIS_PASSWORD,
   };
   if (process.env.REDIS_STANDALONE_MODE === "true") {

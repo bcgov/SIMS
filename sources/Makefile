@@ -15,7 +15,7 @@ export POSTGRES_PASSWORD := $(or $(POSTGRES_PASSWORD), aest_sim)
 export POSTGRES_DB := $(or $(POSTGRES_DB), aest)
 # Queue
 export REDIS_PORT := $(or $(REDIS_PORT), 6379)
-export REDIS_PASSWORD := $(or $(REDIS_PASSWORD), redisPassword)
+export REDIS_PASSWORD := $(or $(REDIS_PASSWORD), redis)
 export REDIS_STANDALONE_MODE := $(or $(REDIS_STANDALONE_MODE), true)
 export QUEUE_DASHBOARD_PASSWORD := $(or $(QUEUE_DASHBOARD_PASSWORD), queueboardpass)
 # Key Cloak
@@ -44,7 +44,7 @@ local:	| print-status local-build-run
 local-api: | print-status local-build api-only
 local-api-detached: | print-status local-build api-detached
 db: | print-status postgres
-redis-queue: | print-status redis
+local-redis: | print-status redis
 test-api: | print-status local-api-test
 
 ####################################################################
@@ -158,3 +158,8 @@ camunda-stop:
 	@echo "Stopping Camunda locally..."
 	@docker-compose -f camunda-docker-compose-core.yml down
 
+queues:
+	@echo "+\n++ Make: Queue only"
+	@docker-compose -f docker-compose.yml up -d postgres
+	@docker-compose -f docker-compose.yml up -d redis
+	@docker-compose -f docker-compose.yml up queues
