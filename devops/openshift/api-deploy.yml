@@ -52,6 +52,8 @@ objects:
                   value: "${PORT}"
                 - name: POSTGRES_HOST
                   value: "${DB_SERVICE}"
+                - name: REDIS_HOST
+                  value: "${REDIS_SERVICE}"
                 - name: POSTGRES_USER
                   valueFrom:
                     secretKeyRef:
@@ -235,6 +237,11 @@ objects:
                   value: ${SWAGGER_ENABLED}
                 - name: APPLICATION_ARCHIVE_DAYS
                   value: ${APPLICATION_ARCHIVE_DAYS}
+                - name: REDIS_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      key: ${REDIS_PASSWORD_KEY}
+                      name: ${REDIS_SECRET_NAME}
                 - name: ZEEBE_ADDRESS
                   valueFrom:
                     secretKeyRef:
@@ -492,3 +499,9 @@ parameters:
   - name: ZEEBE_AUTHORIZATION_SERVER_URL_KEY
     value: zeebe-authorization-server-url
     require: true
+  - name: REDIS_SERVICE
+    value: redis
+  - name: REDIS_SECRET_NAME
+    value: redis-creds
+  - name: REDIS_PASSWORD_KEY
+    value: password

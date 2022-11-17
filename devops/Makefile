@@ -23,6 +23,7 @@ export SWAGGER_ENABLED := $(or ${SWAGGER_ENABLED}, true)
 export APPLICATION_ARCHIVE_DAYS := $(or ${APPLICATION_ARCHIVE_DAYS}, 43)
 export API := $(or ${API}, api-$(APP_NAME))
 export WORKERS := $(or ${WORKERS}, workers-$(APP_NAME))
+export QUEUES := $(or ${QUEUES}, queues-$(APP_NAME))
 export WEB := $(or ${WEB}, web-$(APP_NAME))
 export API_PORT := $(or ${API_PORT}, 7070)
 export WEB_PORT := $(or ${WEB_PORT}, 3030)
@@ -31,6 +32,7 @@ export DB_NAME := $(or ${DB_NAME}, SIMSDB)
 export SWAGGER_NAME := $(or ${SWAGGER_NAME}, swagger)
 export API_BUILD_REF := $(or ${API_BUILD_REF}, api-${APP_NAME})
 export WORKERS_BUILD_REF := $(or ${WORKERS_BUILD_REF}, workers-${APP_NAME})
+export QUEUES_BUILD_REF := $(or ${QUEUES_BUILD_REF}, workers-${APP_NAME})
 export WEB_BUILD_REF := $(or ${WEB_BUILD_REF}, web-${APP_NAME})
 
 define QA_DB_NAME
@@ -169,6 +171,8 @@ oc-build-api: | print-status build-api
 oc-deploy-api: | print-status deploy-api
 oc-build-workers: | print-status build-workers
 oc-deploy-workers: | print-status deploy-workers
+oc-build-queues: | print-status build-queues
+oc-deploy-queues: | print-status deploy-queues
 oc-create-db: | print-status create-db
 oc-build-web: | print-status build-web
 oc-deploy-web: | print-status deploy-web
@@ -305,6 +309,15 @@ build-workers:
 	@oc -n $(BUILD_NAMESPACE) process -f $(BUILD_TEMPLATE_PATH) -p TAG=$(BUILD_TAG) -p SOURCE_REPOSITORY_REF=$(BUILD_REF) -p BASE_IMAGE_NAME="nodejs-16" -p BASE_IMAGE_TAG="1" -p BASE_IMAGE_REPO="artifacts.developer.gov.bc.ca/redhat-docker-remote/ubi8/" -p SOURCE_CONTEXT_DIR=sources/packages/backend -p DOCKER_FILE_PATH=apps/workers/Dockerfile -p NAME=$(WORKERS) | oc -n $(BUILD_NAMESPACE) apply -f -
 	@oc -n $(BUILD_NAMESPACE) start-build bc/$(WORKERS) --wait
 
+build-queues:
+	test -n "$(BUILD_NAMESPACE)"
+	test -n "$(BUILD_REF)"
+	test -n "$(BUILD_TAG)"
+	test -n "$(QUEUES)"
+	@echo "+\n++ BUILDING QUEUES with tag: $(BUILD_TAG)\n+"
+	@oc -n $(BUILD_NAMESPACE) process -f $(BUILD_TEMPLATE_PATH) -p TAG=$(BUILD_TAG) -p SOURCE_REPOSITORY_REF=$(BUILD_REF) -p BASE_IMAGE_NAME="nodejs-16" -p BASE_IMAGE_TAG="1" -p BASE_IMAGE_REPO="artifacts.developer.gov.bc.ca/redhat-docker-remote/ubi8/" -p SOURCE_CONTEXT_DIR=sources/packages/backend -p DOCKER_FILE_PATH=apps/queues/Dockerfile -p NAME=$(QUEUES) | oc -n $(BUILD_NAMESPACE) apply -f -
+	@oc -n $(BUILD_NAMESPACE) start-build bc/$(QUEUES) --wait
+
 build-web:
 	test -n "$(BUILD_REF)"
 	test -n "$(BUILD_NAMESPACE)"
@@ -410,6 +423,27 @@ deploy-workers:
 		-p BYPASS_CRA_INCOME_VERIFICATION=$(BYPASS_CRA_INCOME_VERIFICATION) \
 		| oc -n $(NAMESPACE) apply -f -
 	$(call rollout_and_wait,dc/$(WORKERS))
+
+deploy-queues:
+	test -n "$(NAMESPACE)"
+	test -n "$(BUILD_NAMESPACE)"
+	test -n "$(BUILD_TAG)"
+	test -n "$(QUEUES_BUILD_REF)"
+	test -n "$(DB_SERVICE_NAME)"
+	test -n "$(DATABASE_NAME_KEY)"
+	test -n "$(QUEUES_SECRET_NAME)"
+	test -n "$(QUEUES)"
+	@echo "+\n++ Deploying Queues with tag: $(BUILD_TAG)\n+"
+	@oc -n $(NAMESPACE) process -f openshift/queues-deploy.yml \
+		-p NAME=$(QUEUES) \
+		-p QUEUES_SECRET_NAME=$(QUEUES_SECRET_NAME) \
+		-p BUILD_NAMESPACE=$(BUILD_NAMESPACE) \
+		-p DB_SERVICE=$(DB_SERVICE_NAME) \
+		-p IMAGE_STREAM_TAG="$(QUEUES_BUILD_REF):$(BUILD_TAG)" \
+		-p BUILD_TAG=$(BUILD_TAG) \
+		-p DATABASE_NAME_KEY=$(DATABASE_NAME_KEY) \
+		| oc -n $(NAMESPACE) apply -f -
+	$(call rollout_and_wait,dc/$(QUEUES))
 
 deploy-web:
 	test -n "$(NAMESPACE)"

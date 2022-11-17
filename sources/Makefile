@@ -158,6 +158,7 @@ camunda-stop:
 	@echo "Stopping Camunda locally..."
 	@docker-compose -f camunda-docker-compose-core.yml down
 
+# Runs queues consumer application
 queues:
 	@echo "+\n++ Make: Queue only"
 	@docker-compose -f docker-compose.yml up -d postgres
