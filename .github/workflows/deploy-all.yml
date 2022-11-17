@@ -73,6 +73,7 @@ jobs:
       BYPASS_CRA_INCOME_VERIFICATION: ${{ secrets.BYPASS_CRA_INCOME_VERIFICATION }}
       API_SECRET_NAME: ${{ secrets.OPENSHIFT_SIMS_CREDS_NAME }}
       WORKERS_SECRET_NAME: ${{ secrets.OPENSHIFT_SIMS_CREDS_NAME }}
+      QUEUES_SECRET_NAME: ${{ secrets.OPENSHIFT_SIMS_CREDS_NAME }}
       API_PORT: ${{ secrets.API_PORT }}
       WEB_PORT: ${{ secrets.WEB_PORT }}
       API: ${{ format('{0}api-sims', secrets.HOST_PREFIX) }}
