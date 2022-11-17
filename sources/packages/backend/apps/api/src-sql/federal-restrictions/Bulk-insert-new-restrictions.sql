@@ -9,10 +9,10 @@ INSERT INTO
 SELECT
     fed_restrictions.student_id student_id,
     fed_restrictions.restriction_id restriction_id,
-    true is_active
+    TRUE is_active
 FROM
     sims.federal_restrictions fed_restrictions
-    INNER JOIN sims.students students on students.id = fed_restrictions.student_id
+    INNER JOIN sims.students students ON students.id = fed_restrictions.student_id
 WHERE
     NOT EXISTS (
         SELECT
@@ -22,5 +22,6 @@ WHERE
         WHERE
             student_restrictions.student_id = fed_restrictions.student_id
             AND student_restrictions.restriction_id = fed_restrictions.restriction_id
-            AND student_restrictions.is_active = true
-    )
+            AND student_restrictions.is_active = TRUE
+    ) RETURNING id,
+    student_id;

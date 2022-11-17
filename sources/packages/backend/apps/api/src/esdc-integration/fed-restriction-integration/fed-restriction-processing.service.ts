@@ -42,9 +42,10 @@ export class FedRestrictionProcessingService {
   async process(): Promise<ProcessSFTPResponseResult> {
     // Get the list of all files from SFTP ordered by file name.
     const fileSearch = new RegExp(
-      `^${this.esdcConfig.environmentCode}CSLS.PBC.RESTR.LIST.D[\w]*\.[0-9]*`,
+      `^${this.esdcConfig.environmentCode}CSLS\\.PBC\\.RESTR\\.LIST\\.D[\\w]*\\.[\\d]*$`,
       "i",
     );
+
     const filePaths = await this.integrationService.getResponseFilesFullPath(
       this.esdcConfig.ftpResponseFolder,
       fileSearch,
@@ -228,11 +229,14 @@ export class FedRestrictionProcessingService {
       this.logger.log(
         "Starting bulk operations to update student restrictions.",
       );
-      await this.federalRestrictionService.executeBulkStepsChanges(
-        queryRunner.manager,
-      );
+      const newlyInsertedRestrictions =
+        await this.federalRestrictionService.executeBulkStepsChanges(
+          queryRunner.manager,
+        );
 
       await queryRunner.commitTransaction();
+      // TODO: insert into notifications message table.
+      console.log(newlyInsertedRestrictions);
       this.logger.log("Process finished, transaction committed.");
     } catch (error) {
       const logMessage =
