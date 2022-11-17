@@ -23,5 +23,4 @@ WHERE
             student_restrictions.student_id = fed_restrictions.student_id
             AND student_restrictions.restriction_id = fed_restrictions.restriction_id
             AND student_restrictions.is_active = TRUE
-    ) RETURNING id,
-    student_id;
+    ) RETURNING id
