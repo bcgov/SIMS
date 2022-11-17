@@ -10,39 +10,41 @@
       >
       </header-navigator>
     </template>
-    <v-form ref="startApplicationForm">
-      <h2 class="category-header-large primary-color pb-4">
-        Apply for funding
-      </h2>
-      <content-group>
-        <p class="category-header-medium-small pa-2">
-          Financial Aid Application
-        </p>
-        <p class="px-2">
-          Apply to see if you are applicable for provincial or federal loans and
-          grant. This is for students attending full-time or part-time
-          post-secondary studies.
-        </p>
-        <v-select
-          v-model="programYearId"
-          :items="programYearOptions"
-          variant="outlined"
-          density="compact"
-          label="Select program year"
-          class="px-2 pb-4"
-          :rules="[(v) => checkNullOrEmptyRule(v, 'Year')]"
-          hide-details="auto"
-        ></v-select>
-        <v-btn
-          class="ma-2"
-          variant="elevated"
-          data-cy="primaryFooterButton"
-          color="primary"
-          @click="startApplication"
-          >Start Application</v-btn
-        >
-      </content-group>
-    </v-form>
+    <v-card class="mt-4 p-4 w-100">
+      <v-form ref="startApplicationForm">
+        <h2 class="category-header-large primary-color pb-4">
+          Apply for funding
+        </h2>
+        <content-group>
+          <p class="category-header-medium-small pa-2">
+            Financial Aid Application
+          </p>
+          <p class="px-2">
+            Apply to see if you are applicable for provincial or federal loans
+            and grant. This is for students attending full-time or part-time
+            post-secondary studies.
+          </p>
+          <v-select
+            v-model="programYearId"
+            :items="programYearOptions"
+            variant="outlined"
+            density="compact"
+            label="Select program year"
+            class="px-2 pb-4"
+            :rules="[(v) => checkNullOrEmptyRule(v, 'Year')]"
+            hide-details="auto"
+          ></v-select>
+          <v-btn
+            class="ma-2"
+            variant="elevated"
+            data-cy="primaryFooterButton"
+            color="primary"
+            @click="startApplication"
+            >Start Application</v-btn
+          >
+        </content-group>
+      </v-form>
+    </v-card>
   </student-page-container>
   <confirm-modal
     title="Application already in progress"
