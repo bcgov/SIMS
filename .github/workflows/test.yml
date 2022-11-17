@@ -27,6 +27,10 @@ jobs:
       POSTGRES_DB: sims
       POSTGRES_PORT: 5432
       POSTGRES_USER: admin
+      REDIS_HOST: localhost
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: queue
+      REDIS_STANDALONE_MODE: "true"
       API_PORT: 3000
       APP_PORT: 8080
       DB_SCHEMA: sims
