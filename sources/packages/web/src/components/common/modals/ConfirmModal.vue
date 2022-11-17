@@ -16,6 +16,7 @@
         @primaryClick="resolvePromise(true)"
         @secondaryClick="resolvePromise(false)"
         :disablePrimaryButton="disablePrimaryButton"
+        :showSecondaryButton="showSecondaryButton"
       />
     </template>
   </modal-dialog-base>
@@ -56,6 +57,11 @@ export default {
       type: Boolean,
       required: false,
       default: false,
+    },
+    showSecondaryButton: {
+      type: Boolean,
+      required: false,
+      default: true,
     },
   },
   setup() {
