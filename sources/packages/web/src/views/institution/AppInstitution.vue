@@ -61,7 +61,7 @@
             <template v-for="(item, index) in menuItems" :key="index">
               <v-list-item :value="index" @click="item.command">
                 <v-list-item-title>
-                  <span class="label-bold" data-cy="settingsButton1">{{
+                  <span class="label-bold" data-cy="settingsButton">{{
                     item.label
                   }}</span>
                 </v-list-item-title>

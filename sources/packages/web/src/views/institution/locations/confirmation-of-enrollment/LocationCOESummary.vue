@@ -4,7 +4,7 @@
       <header-navigator
         :title="locationName"
         subTitle="Confirmation Of Enrolment"
-        data-cy="confirmationOfEnrolment"
+        data-cy="confirmationOfEnrolmentHeader"
       />
     </template>
     <template #tab-header>

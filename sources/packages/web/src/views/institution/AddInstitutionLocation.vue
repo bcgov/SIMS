@@ -5,7 +5,7 @@
         title="Manage locations"
         :routeLocation="{ name: InstitutionRoutesConst.MANAGE_LOCATIONS }"
         subTitle="Add Location"
-        data-cy="manageLocationLandingPage"
+        data-cy="manageLocationHeader"
       />
     </template>
     <formio-container formName="institutionLocation" @submitted="submitted">

@@ -3,7 +3,7 @@
     <template #header>
       <header-navigator
         :title="locationName"
-        data-cy="programs"
+        data-cy="programsHeader"
         subTitle="Programs"
       />
     </template>

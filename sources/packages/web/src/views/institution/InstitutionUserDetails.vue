@@ -3,7 +3,7 @@
     <template #header>
       <header-navigator
         title="Manage institution"
-        data-cy="manageUserLandingPage"
+        data-cy="manageUserHeader"
         subTitle="Manage Users"
       />
     </template>

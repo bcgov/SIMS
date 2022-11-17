@@ -2,7 +2,7 @@
   <full-page-container
     :full-width="true"
     layout-template="centered"
-    data-cy="institutionLandingPage"
+    data-cy="institutionWelcomePage"
   >
     <formio-container formName="institutionWelcomePage" />
   </full-page-container>

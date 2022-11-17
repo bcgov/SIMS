@@ -3,7 +3,7 @@
     <template #header>
       <header-navigator
         :title="locationName"
-        data-cy="reportAChange"
+        data-cy="reportAChangeHeader"
         subTitle="Report a Change"
       />
     </template>
@@ -13,7 +13,7 @@
           :value="ActiveApplicationTab.AvailableToReportTab"
           :ripple="false"
         >
-          <span class="label-bold" data-cy="availableToReport">
+          <span class="label-bold" data-cy="availableToReportTab">
             Available to report
           </span>
         </v-tab>
@@ -21,7 +21,7 @@
           :value="ActiveApplicationTab.UnavailableToReportTab"
           :ripple="false"
         >
-          <span class="label-bold" data-cy="unavailableToReport">
+          <span class="label-bold" data-cy="unavailableToReportTab">
             Unavailable to report
           </span>
         </v-tab>
