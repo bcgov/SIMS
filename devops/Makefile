@@ -32,7 +32,7 @@ export DB_NAME := $(or ${DB_NAME}, SIMSDB)
 export SWAGGER_NAME := $(or ${SWAGGER_NAME}, swagger)
 export API_BUILD_REF := $(or ${API_BUILD_REF}, api-${APP_NAME})
 export WORKERS_BUILD_REF := $(or ${WORKERS_BUILD_REF}, workers-${APP_NAME})
-export QUEUES_BUILD_REF := $(or ${QUEUES_BUILD_REF}, workers-${APP_NAME})
+export QUEUES_BUILD_REF := $(or ${QUEUES_BUILD_REF}, queues-${APP_NAME})
 export WEB_BUILD_REF := $(or ${WEB_BUILD_REF}, web-${APP_NAME})
 
 define QA_DB_NAME
