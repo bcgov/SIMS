@@ -3,6 +3,7 @@ import { NotificationMessageType } from "@sims/sims-db";
 import { getDateOnlyFormat, getPSTPDTDateTime } from "@sims/utilities";
 import { NotificationMessageService } from "../notification-message/notification-message.service";
 import {
+  FederalStudentRestrictionPersonalization,
   GCNotifyResult,
   MinistryStudentFileUploadNotification,
   StudentFileUploadNotification,
@@ -90,6 +91,35 @@ export class GCNotifyActionsService {
     );
 
     return this.notificationService.sendEmailNotification(notificationSaved.id);
+  }
+
+  async sendFederalStudentRestrictionNotification(
+    notifications: FederalStudentRestrictionPersonalization[],
+    auditUserId: number,
+  ): Promise<void> {
+    const templateId = await this.notificationMessageService.getTemplateId(
+      NotificationMessageType.FederalStudentRestriction,
+    );
+
+    const notificationsToSend = notifications.map((notification) => ({
+      userId: notification.userId,
+      messageType: NotificationMessageType.FederalStudentRestriction,
+      messagePayload: {
+        email_address: notification.toAddress,
+        template_id: templateId,
+        personalisation: {
+          givenNames: notification.givenNames ?? "",
+          lastName: notification.lastName,
+          date: this.getDateTimeOnPSTTimeZone(),
+        },
+      },
+    }));
+
+    // Save notification into notification table.
+    await this.notificationService.saveNotifications(
+      notificationsToSend,
+      auditUserId,
+    );
   }
 
   /**

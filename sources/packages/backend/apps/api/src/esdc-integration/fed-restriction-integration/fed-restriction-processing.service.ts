@@ -1,6 +1,11 @@
 import { LoggerService, InjectLogger } from "@sims/utilities/logger";
 import { Injectable } from "@nestjs/common";
-import { FederalRestrictionService, RestrictionService } from "../../services";
+import {
+  FederalRestrictionService,
+  GCNotifyActionsService,
+  RestrictionService,
+  StudentRestrictionService,
+} from "../../services";
 import { FedRestrictionIntegrationService } from "./fed-restriction-integration.service";
 import * as os from "os";
 import { DataSource, InsertResult } from "typeorm";
@@ -26,6 +31,8 @@ export class FedRestrictionProcessingService {
     private readonly restrictionService: RestrictionService,
     private readonly federalRestrictionService: FederalRestrictionService,
     private readonly integrationService: FedRestrictionIntegrationService,
+    private readonly studentRestrictionService: StudentRestrictionService,
+    private readonly gcNotifyActionsService: GCNotifyActionsService,
   ) {
     this.esdcConfig = config.esdcIntegration;
   }
@@ -229,15 +236,22 @@ export class FedRestrictionProcessingService {
       this.logger.log(
         "Starting bulk operations to update student restrictions.",
       );
-      const newlyInsertedRestrictions =
+      const insertedRestrictionsIDs =
         await this.federalRestrictionService.executeBulkStepsChanges(
           queryRunner.manager,
         );
 
       await queryRunner.commitTransaction();
-      // TODO: insert into notifications message table.
-      console.log(newlyInsertedRestrictions);
       this.logger.log("Process finished, transaction committed.");
+
+      try {
+        result.processSummary.push("Generating notifications.");
+        await this.createNotifications(insertedRestrictionsIDs, 1);
+        result.processSummary.push("Notifications generated.");
+      } catch (error: unknown) {
+        result.errorsSummary.push(`Error while generating notifications.`);
+        this.logger.error(`Error while generating notifications. ${error}`);
+      }
     } catch (error) {
       const logMessage =
         "Unexpected error while processing federal restrictions. Executing rollback.";
@@ -251,6 +265,26 @@ export class FedRestrictionProcessingService {
     }
 
     return result;
+  }
+
+  private async createNotifications(
+    restrictionsIds: number[],
+    auditUserId: number,
+  ) {
+    const restrictions =
+      await this.studentRestrictionService.getRestrictionsForNotifications(
+        restrictionsIds,
+      );
+    const notifications = restrictions.map((restriction) => ({
+      givenNames: restriction.student.user.firstName,
+      lastName: restriction.student.user.lastName,
+      toAddress: restriction.student.user.email,
+      userId: restriction.student.user.id,
+    }));
+    await this.gcNotifyActionsService.sendFederalStudentRestrictionNotification(
+      notifications,
+      auditUserId,
+    );
   }
 
   @InjectLogger()

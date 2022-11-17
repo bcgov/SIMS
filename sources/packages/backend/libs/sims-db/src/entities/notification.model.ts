@@ -71,11 +71,15 @@ export class Notification extends RecordDataModel {
  */
 export enum NotificationMessageType {
   /**
-   * Notification Message type student file upload.
+   * Student uploaded a file into his account.
    */
   StudentFileUpload = 1,
   /**
-   * Notification  Message type ministry file upload.
+   * Ministry uploaded a file to the student account.
    */
   MinistryFileUpload = 2,
+  /**
+   * New federal restriction added to the student account.
+   */
+  FederalStudentRestriction = 3,
 }

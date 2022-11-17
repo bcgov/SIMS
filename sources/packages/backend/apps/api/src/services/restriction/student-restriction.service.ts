@@ -11,7 +11,14 @@ import {
   EducationProgramOffering,
   RestrictionActionType,
 } from "@sims/sims-db";
-import { DataSource, EntityManager, SelectQueryBuilder } from "typeorm";
+import {
+  ArrayContains,
+  DataSource,
+  EntityManager,
+  In,
+  Not,
+  SelectQueryBuilder,
+} from "typeorm";
 import { CustomNamedError } from "@sims/utilities";
 import { RestrictionService } from "./restriction.service";
 import { StudentService } from "../student/student.service";
@@ -408,5 +415,33 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
       );
       await entityManager.getRepository(StudentRestriction).save(restriction);
     }
+  }
+
+  async getRestrictionsForNotifications(
+    restrictionIds: number[],
+  ): Promise<StudentRestriction[]> {
+    return this.repo.find({
+      select: {
+        id: true,
+        student: {
+          id: true,
+          user: {
+            id: true,
+            firstName: true,
+            lastName: true,
+            email: true,
+          },
+        },
+      },
+      relations: {
+        student: { user: true },
+      },
+      where: {
+        id: In(restrictionIds),
+        restriction: {
+          restrictionType: Not(ArrayContains([RestrictionActionType.NoEffect])),
+        },
+      },
+    });
   }
 }

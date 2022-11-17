@@ -62,18 +62,18 @@ export class FederalRestrictionService extends DataModelService<FederalRestricti
    * present in the federal data.
    * 4. Update modified date for the active restrictions. The time between creation
    * date and modified date can provide for how long that restriction is active.
-   * @returns inserted records.
+   * @returns inserted records ids.
    */
-  async executeBulkStepsChanges(
-    manager: EntityManager,
-  ): Promise<FederalStudentRestrictionInsertedRecord[]> {
+  async executeBulkStepsChanges(manager: EntityManager): Promise<number[]> {
     // STEP 1
     // ! This bulk update MUST happen before the next operations to assign
     // ! the student foreign keys correctly.
     await this.bulkUpdateStudentsForeignKey(manager);
     // This bulk updates expects that the student foreign key is updated.
     // STEP 2
-    const insertedRestrictions = await this.bulkInsertNewRestrictions(manager);
+    const insertedRestrictionsIDs = await this.bulkInsertNewRestrictions(
+      manager,
+    );
     // STEP 3
     await this.bulkDeactivateRestrictions(manager);
     // This last update is not critical but allows the system to keep track
@@ -81,7 +81,7 @@ export class FederalRestrictionService extends DataModelService<FederalRestricti
     // STEP 4
     await this.bulkUpdateActiveRestrictions(manager);
 
-    return insertedRestrictions;
+    return insertedRestrictionsIDs;
   }
 
   /*
@@ -101,19 +101,15 @@ export class FederalRestrictionService extends DataModelService<FederalRestricti
    * that are not present and active in the table. The same federal restriction
    * can be activated and deactivated multiple times for the same student,
    * generating a new record for every time that the restriction changes its state.
-   * @returns inserted records.
+   * @returns inserted records ids.
    */
   private async bulkInsertNewRestrictions(
     manager: EntityManager,
-  ): Promise<FederalStudentRestrictionInsertedRecord[]> {
-    const insertedRestrictions: {
-      id: number;
-      student_id: number;
-    }[] = await manager.query(this.bulkInsertNewRestrictionsSQL);
-    return insertedRestrictions.map((restriction) => ({
-      id: restriction.id,
-      studentId: restriction.student_id,
-    }));
+  ): Promise<number[]> {
+    const insertedRestrictions: { id: number }[] = await manager.query(
+      this.bulkInsertNewRestrictionsSQL,
+    );
+    return insertedRestrictions.map((restriction) => restriction.id);
   }
 
   /*

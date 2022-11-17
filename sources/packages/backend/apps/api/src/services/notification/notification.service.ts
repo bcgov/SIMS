@@ -6,9 +6,10 @@ import {
   NotificationMessage,
   NotificationMessageType,
 } from "@sims/sims-db";
-import { DataSource, UpdateResult } from "typeorm";
+import { DataSource, InsertResult, UpdateResult } from "typeorm";
 import { GCNotifyResult } from "./gc-notify.model";
 import { GCNotifyService } from "./gc-notify.service";
+import { SaveNotificationModel } from "./notification.model";
 
 @Injectable()
 export class NotificationService extends RecordDataModelService<Notification> {
@@ -23,10 +24,10 @@ export class NotificationService extends RecordDataModelService<Notification> {
    * Creates the inbox notification record.
    * @param userId id of the user who will receive the message.
    * @param messageType message type of the notification.
-   * @param templateId template id of the notification.
    * @param auditUserId id of the user creating the notification.
    * @param messagePayload notification payload.
    * @returns payload of the record created.
+   * @deprecated please use saveNotifications method instead.
    */
   async saveNotification(
     userId: number,
@@ -43,6 +44,28 @@ export class NotificationService extends RecordDataModelService<Notification> {
     } as NotificationMessage;
 
     return this.repo.save(notification);
+  }
+
+  /**
+   * Saves all notifications at once.
+   * @param notifications information to create the notification.
+   * @param auditUserId id of the user creating the notification.
+   * @returns created notification ids.
+   */
+  async saveNotifications(
+    notifications: SaveNotificationModel[],
+    auditUserId: number,
+  ): Promise<InsertResult> {
+    const newNotifications = notifications.map((notification) => ({
+      user: { id: notification.userId } as User,
+      creator: { id: auditUserId } as User,
+      messagePayload: notification.messagePayload,
+      notificationMessage: {
+        id: notification.messageType,
+      } as NotificationMessage,
+    }));
+    const insertResult = await this.repo.insert(newNotifications);
+    return insertResult;
   }
 
   /**

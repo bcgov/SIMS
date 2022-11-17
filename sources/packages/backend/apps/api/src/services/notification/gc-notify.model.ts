@@ -52,3 +52,10 @@ export interface MinistryStudentFileUploadPersonalization {
   givenNames: string;
   lastName: string;
 }
+
+export interface FederalStudentRestrictionPersonalization {
+  givenNames: string;
+  lastName: string;
+  toAddress: string;
+  userId: number;
+}
