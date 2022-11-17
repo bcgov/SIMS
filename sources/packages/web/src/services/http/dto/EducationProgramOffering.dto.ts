@@ -101,7 +101,8 @@ export interface EducationProgramOfferingAPIOutDTO {
   offeringType: OfferingTypes;
   offeringWILComponentType?: string;
   showYearOfStudy?: boolean;
-  breaksAndWeeks?: StudyBreaksAndWeeksAPIOutDTO;
+  studyBreaks: StudyBreakAPIOutDTO[];
+  studyPeriodBreakdown: StudyPeriodBreakdownAPIOutDTO;
   assessedBy?: string;
   assessedDate?: Date;
   submittedDate: Date;
@@ -109,14 +110,8 @@ export interface EducationProgramOfferingAPIOutDTO {
   hasExistingApplication?: boolean;
   locationName?: string;
   institutionName?: string;
-}
-
-export interface StudyBreaksAndWeeksAPIOutDTO {
-  studyBreaks: StudyBreakAPIOutDTO[];
-  fundedStudyPeriodDays: number;
-  totalDays: number;
-  totalFundedWeeks: number;
-  unfundedStudyPeriodDays: number;
+  validationWarnings: string[];
+  validationInfos: string[];
 }
 
 export interface StudyBreakAPIOutDTO {
@@ -152,15 +147,45 @@ export interface OfferingBulkInsertValidationResultAPIOutDTO {
   endDate?: string;
   offeringStatus?: OfferingStatus.Approved | OfferingStatus.CreationPending;
   errors: string[];
-  warnings: ValidationWarningResultAPIOutDTO[];
+  infos: ValidationResultAPIOutDTO[];
+  warnings: ValidationResultAPIOutDTO[];
 }
 
 /**
  * Represents an error considered not critical for
  * an offering and provides a user-friendly message
- * and a type that uniquely identifies this warning.
+ * and a type that uniquely identifies this warning
+ * or info.
  */
-export interface ValidationWarningResultAPIOutDTO {
-  warningType: string;
-  warningMessage: string;
+export interface ValidationResultAPIOutDTO {
+  typeCode: string;
+  message: string;
+}
+
+export interface StudyPeriodBreakdownAPIOutDTO {
+  fundedStudyPeriodDays: number;
+  totalDays: number;
+  totalFundedWeeks: number;
+  unfundedStudyPeriodDays: number;
+}
+
+/**
+ * Status of an offering validation during creation or during
+ * an complete update when the status is determined.
+ */
+export interface OfferingValidationResultAPIOutDTO {
+  offeringStatus?: OfferingStatus.Approved | OfferingStatus.CreationPending;
+  errors: string[];
+  infos: ValidationResultAPIOutDTO[];
+  warnings: ValidationResultAPIOutDTO[];
+  studyPeriodBreakdown: StudyPeriodBreakdownAPIOutDTO;
+  validationDate: Date;
+}
+
+/**
+ * Offering data that can be freely changed and will not affect
+ * the assessment in case there is one associated.
+ */
+export interface EducationProgramOfferingBasicDataAPIInDTO {
+  offeringName: string;
 }

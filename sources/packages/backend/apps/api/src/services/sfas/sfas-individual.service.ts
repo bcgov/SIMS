@@ -2,7 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { DataSource } from "typeorm";
 import { DataModelService, SFASIndividual } from "@sims/sims-db";
 import { SFASIndividualRecord } from "../../sfas-integration/sfas-files/sfas-individual-record";
-import { getUTC, getISODateOnlyString } from "../../utilities";
+import { getUTC, getISODateOnlyString } from "@sims/utilities";
 import { SFASDataImporter } from "./sfas-data-importer";
 import { SFASRecordIdentification } from "../../sfas-integration/sfas-files/sfas-record-identification";
 

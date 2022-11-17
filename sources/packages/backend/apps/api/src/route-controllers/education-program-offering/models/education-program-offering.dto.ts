@@ -3,21 +3,13 @@ import {
   OfferingStatus,
   NOTE_DESCRIPTION_MAX_LENGTH,
   OfferingIntensity,
-  EducationProgramOffering,
+  OFFERING_NAME_MAX_LENGTH,
 } from "@sims/sims-db";
-import { getISODateOnlyString, getUserFullName } from "../../../utilities";
-import {
-  Allow,
-  IsBoolean,
-  IsEnum,
-  IsIn,
-  IsNotEmpty,
-  IsOptional,
-  MaxLength,
-} from "class-validator";
+import { Allow, IsEnum, IsIn, IsNotEmpty, MaxLength } from "class-validator";
 import { Type } from "class-transformer";
 import {
   OfferingDeliveryOptions,
+  OfferingValidationInfos,
   OfferingValidationWarnings,
   WILComponentOptions,
 } from "../../../services";
@@ -42,28 +34,18 @@ export class StudyBreaksAndWeeksOutDTO {
   unfundedStudyPeriodDays: number;
 }
 
-export class StudyBreaksAndWeeksInDTO {
-  @Allow()
-  @Type(() => StudyBreakInDTO)
-  studyBreaks: StudyBreakInDTO[];
-  @Allow()
-  fundedStudyPeriodDays: number;
-  @Allow()
-  totalDays: number;
-  @Allow()
-  totalFundedWeeks: number;
-  @Allow()
-  unfundedStudyPeriodDays: number;
-}
-
-export class StudyBreaksAndWeeksAPIOutDTO {
-  studyBreaks: StudyBreakAPIOutDTO[];
+export class StudyPeriodBreakdownAPIOutDTO {
   fundedStudyPeriodDays: number;
   totalDays: number;
   totalFundedWeeks: number;
   unfundedStudyPeriodDays: number;
 }
 
+/**
+ * Complete offering data to execute create, update or
+ * request a change.
+ *!The validations are handled by the OfferingValidationModel.
+ */
 export class EducationProgramOfferingAPIInDTO {
   @Allow()
   offeringName: string;
@@ -95,14 +77,25 @@ export class EducationProgramOfferingAPIInDTO {
   offeringStatus: OfferingStatus;
   @Allow()
   offeringType: OfferingTypes;
-  @IsOptional()
+  @Allow()
   offeringWILComponentType?: string;
-  @IsBoolean()
+  @Allow()
   showYearOfStudy: boolean;
-  @IsOptional()
-  breaksAndWeeks?: StudyBreaksAndWeeksInDTO;
-  @IsOptional()
+  @Allow()
+  @Type(() => StudyBreakInDTO)
+  studyBreaks: StudyBreakInDTO[];
+  @Allow()
   courseLoad?: number;
+}
+
+/**
+ * Offering data that can be freely changed and will not
+ * affect the assessment in case there is one associated.
+ */
+export class EducationProgramOfferingBasicDataAPIInDTO {
+  @IsNotEmpty()
+  @MaxLength(OFFERING_NAME_MAX_LENGTH)
+  offeringName: string;
 }
 
 export class EducationProgramOfferingAPIOutDTO {
@@ -124,7 +117,8 @@ export class EducationProgramOfferingAPIOutDTO {
   offeringType: OfferingTypes;
   offeringWILComponentType?: string;
   showYearOfStudy?: boolean;
-  breaksAndWeeks?: StudyBreaksAndWeeksAPIOutDTO;
+  studyBreaks: StudyBreakAPIOutDTO[];
+  studyPeriodBreakdown: StudyPeriodBreakdownAPIOutDTO;
   assessedBy?: string;
   assessedDate?: Date;
   submittedDate: Date;
@@ -132,6 +126,8 @@ export class EducationProgramOfferingAPIOutDTO {
   hasExistingApplication?: boolean;
   locationName?: string;
   institutionName?: string;
+  validationWarnings: string[];
+  validationInfos: string[];
 }
 
 export class EducationProgramOfferingSummaryAPIOutDTO {
@@ -148,46 +144,6 @@ export class EducationProgramOfferingSummaryAPIOutDTO {
 export class OfferingStartDateAPIOutDTO {
   studyStartDate: string;
 }
-
-/**
- * Transformation util for Program Offering.
- * @param offering
- * @param hasExistingApplication is the offering linked to any application.
- * @returns program offering.
- */
-export const transformToProgramOfferingDTO = (
-  offering: EducationProgramOffering,
-  hasExistingApplication?: boolean,
-): EducationProgramOfferingAPIOutDTO => {
-  return {
-    id: offering.id,
-    offeringName: offering.name,
-    studyStartDate: getISODateOnlyString(offering.studyStartDate),
-    studyEndDate: getISODateOnlyString(offering.studyEndDate),
-    actualTuitionCosts: offering.actualTuitionCosts,
-    programRelatedCosts: offering.programRelatedCosts,
-    mandatoryFees: offering.mandatoryFees,
-    exceptionalExpenses: offering.exceptionalExpenses,
-    offeringDelivered: offering.offeringDelivered,
-    lacksStudyBreaks: offering.lacksStudyBreaks,
-    offeringIntensity: offering.offeringIntensity,
-    yearOfStudy: offering.yearOfStudy,
-    showYearOfStudy: offering.showYearOfStudy,
-    hasOfferingWILComponent: offering.hasOfferingWILComponent,
-    offeringWILComponentType: offering.offeringWILType,
-    breaksAndWeeks: offering.studyBreaks,
-    offeringDeclaration: offering.offeringDeclaration,
-    submittedDate: offering.submittedDate,
-    offeringStatus: offering.offeringStatus,
-    offeringType: offering.offeringType,
-    locationName: offering.institutionLocation.name,
-    institutionName: offering.institutionLocation.institution.operatingName,
-    assessedBy: getUserFullName(offering.assessedBy),
-    assessedDate: offering.assessedDate,
-    courseLoad: offering.courseLoad,
-    hasExistingApplication,
-  };
-};
 
 export class OfferingAssessmentAPIInDTO {
   @IsEnum(OfferingStatus)
@@ -225,6 +181,18 @@ export class OfferingChangeAssessmentAPIInDTO {
 }
 
 /**
+ * Offering validation result including study period breakdown
+ * calculations that also supports the validation process.
+ */
+export class OfferingValidationResultAPIOutDTO {
+  offeringStatus?: OfferingStatus.Approved | OfferingStatus.CreationPending;
+  errors: string[];
+  infos: ValidationResultAPIOutDTO[];
+  warnings: ValidationResultAPIOutDTO[];
+  studyPeriodBreakdown: StudyPeriodBreakdownAPIOutDTO;
+}
+
+/**
  * Represents the possible errors that can happen during the
  * offerings bulk insert and provides a detailed description
  * for every record that has an error.
@@ -237,15 +205,17 @@ export class OfferingBulkInsertValidationResultAPIOutDTO {
   endDate?: string;
   offeringStatus?: OfferingStatus.Approved | OfferingStatus.CreationPending;
   errors: string[];
-  warnings: ValidationWarningResultAPIOutDTO[];
+  infos: ValidationResultAPIOutDTO[];
+  warnings: ValidationResultAPIOutDTO[];
 }
 
 /**
  * Represents an error considered not critical for
  * an offering and provides a user-friendly message
- * and a type that uniquely identifies this warning.
+ * and a type that uniquely identifies this warning
+ * or info.
  */
-export class ValidationWarningResultAPIOutDTO {
-  warningType: OfferingValidationWarnings;
-  warningMessage: string;
+export class ValidationResultAPIOutDTO {
+  typeCode: OfferingValidationWarnings | OfferingValidationInfos;
+  message: string;
 }

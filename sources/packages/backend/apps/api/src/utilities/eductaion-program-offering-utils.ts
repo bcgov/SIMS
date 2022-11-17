@@ -1,5 +1,5 @@
 import { EducationProgramOffering } from "@sims/sims-db";
-import { getDateOnlyFormat } from ".";
+import { getDateOnlyFormat } from "@sims/utilities";
 
 /**
  * Utility to get year of study label.

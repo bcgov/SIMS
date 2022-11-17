@@ -1,15 +1,13 @@
 import { Injectable } from "@nestjs/common";
-import { InjectLogger } from "../../common";
-import { LoggerService } from "../../logger/logger.service";
+import { LoggerService, InjectLogger } from "@sims/utilities/logger";
 import {
-  ConfigService,
   DisbursementScheduleService,
   DisbursementReceiptService,
 } from "../../services";
-import { ESDCIntegrationConfig } from "../../types";
 import { DisbursementReceiptIntegrationService } from "./disbursement-receipt-integration.service";
 import { ProcessSFTPResponseResult } from "../models/esdc-integration.model";
 import { DisbursementReceiptDownloadResponse } from "./models/disbursement-receipt-integration.model";
+import { ConfigService, ESDCIntegrationConfig } from "@sims/utilities/config";
 
 /**
  * Disbursement schedule map which consists of disbursement schedule id for a document number.
@@ -31,7 +29,7 @@ export class DisbursementReceiptProcessingService {
     private readonly disbursementScheduleService: DisbursementScheduleService,
     private readonly disbursementReceiptService: DisbursementReceiptService,
   ) {
-    this.esdcConfig = config.getConfig().ESDCIntegration;
+    this.esdcConfig = config.esdcIntegration;
   }
 
   /**

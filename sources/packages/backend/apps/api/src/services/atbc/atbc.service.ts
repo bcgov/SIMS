@@ -1,14 +1,12 @@
 import { Injectable } from "@nestjs/common";
-import { ConfigService } from "../config/config.service";
+import { ATBCIntegrationConfig, ConfigService } from "@sims/utilities/config";
 import axios from "axios";
-import { LoggerService } from "../../logger/logger.service";
-import { InjectLogger } from "../../common";
+import { LoggerService, InjectLogger } from "@sims/utilities/logger";
 import {
   ATBCHeader,
   ATBCAuthTokenResponse,
 } from "../auth/token-cache.service.models";
 import {
-  ATBCIntegrationConfig,
   ATBCCreateClientResponse,
   ATBCCreateClientPayload,
   ATBCPDCheckerResponse,
@@ -28,7 +26,7 @@ export class ATBCService {
   }
 
   private get config(): ATBCIntegrationConfig {
-    return this.configService.getConfig().ATBCIntegration;
+    return this.configService.atbcIntegration;
   }
   /**
    * Executes the token request

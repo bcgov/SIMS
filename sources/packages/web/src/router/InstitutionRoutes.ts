@@ -28,8 +28,8 @@ import InstitutionHomeSideBar from "@/components/layouts/Institution/sidebar/Hom
 import LocationProgramAddEdit from "@/views/institution/locations/programs/LocationProgramAddEdit.vue";
 import LocationCOERequest from "@/views/institution/locations/confirmation-of-enrollment/ApplicationDetailsForCOE.vue";
 import LocationProgramView from "@/views/institution/locations/programs/LocationProgramView.vue";
-import LocationProgramOfferingCreate from "@/views/institution/locations/programs/LocationProgramOfferingCreate.vue";
-import LocationProgramOfferingEdit from "@/views/institution/locations/programs/LocationProgramOfferingEdit.vue";
+import LocationProgramOfferingCreate from "@/views/institution/locations/offerings/OfferingCreate.vue";
+import LocationProgramOfferingEdit from "@/views/institution/locations/offerings/OfferingEdit.vue";
 import LocationEditProgramInfoRequest from "@/views/institution/locations/program-info-request/LocationEditProgramInfoRequest.vue";
 import { RouteHelper } from "@/helpers";
 import { AuthService } from "@/services/AuthService";

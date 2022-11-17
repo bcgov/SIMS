@@ -4,6 +4,8 @@ import {
   Controller,
   DefaultValuePipe,
   Get,
+  HttpCode,
+  HttpStatus,
   NotFoundException,
   Param,
   ParseBoolPipe,
@@ -11,6 +13,7 @@ import {
   Patch,
   Post,
   Query,
+  Req,
   UnprocessableEntityException,
   UploadedFile,
   UseInterceptors,
@@ -46,8 +49,9 @@ import { EducationProgramOfferingControllerService } from "./education-program-o
 import {
   EducationProgramOfferingAPIInDTO,
   EducationProgramOfferingAPIOutDTO,
+  EducationProgramOfferingBasicDataAPIInDTO,
   EducationProgramOfferingSummaryAPIOutDTO,
-  transformToProgramOfferingDTO,
+  OfferingValidationResultAPIOutDTO,
 } from "./models/education-program-offering.dto";
 import {
   csvFileFilter,
@@ -62,10 +66,12 @@ import { FileInterceptor } from "@nestjs/platform-express";
 import { EducationProgramOfferingImportCSVService } from "../../services/education-program-offering/education-program-offering-import-csv.service";
 import { EducationProgramOfferingValidationService } from "../../services/education-program-offering/education-program-offering-validation.service";
 import {
+  OFFERING_INVALID_OPERATION_IN_THE_CURRENT_STATE,
   OFFERING_VALIDATION_CRITICAL_ERROR,
   OFFERING_VALIDATION_CSV_PARSE_ERROR,
 } from "../../constants";
 import { OfferingCSVModel } from "../../services/education-program-offering/education-program-offering-import-csv.models";
+import { Request } from "express";
 
 @AllowAuthorizedParty(AuthorizedParties.institution)
 @Controller("education-program-offering")
@@ -76,8 +82,67 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
     private readonly educationProgramOfferingControllerService: EducationProgramOfferingControllerService,
     private readonly educationProgramOfferingImportCSVService: EducationProgramOfferingImportCSVService,
     private readonly educationProgramOfferingValidationService: EducationProgramOfferingValidationService,
+    private readonly offeringValidationService: EducationProgramOfferingValidationService,
   ) {
     super();
+  }
+
+  /**
+   * Validates an offering payload providing the validation result and
+   * study break calculations also used to perform the validation process.
+   * Return a 200 HTTP status instead of 201 to indicate that the operation
+   * was completed with success but no resource was created.
+   * @param locationId location id.
+   * @param programId program id.
+   * @param payload offering data to be validated.
+   * @returns offering validation result.
+   */
+  @HasLocationAccess("locationId")
+  @ApiNotFoundResponse({
+    description: "Not able to find the program in the provided location.",
+  })
+  @Post("location/:locationId/education-program/:programId/validation")
+  @HttpCode(HttpStatus.OK)
+  async validateOffering(
+    @Param("locationId", ParseIntPipe) locationId: number,
+    @Param("programId", ParseIntPipe) programId: number,
+    @Body() payload: EducationProgramOfferingAPIInDTO,
+    @UserToken() userToken: IInstitutionUserToken,
+    @Req() request: Request,
+  ): Promise<OfferingValidationResultAPIOutDTO> {
+    const offeringValidationModel =
+      await this.educationProgramOfferingControllerService.buildOfferingValidationModel(
+        userToken.authorizations.institutionId,
+        locationId,
+        programId,
+        payload,
+      );
+
+    const offeringValidation =
+      this.offeringValidationService.validateOfferingModel(
+        offeringValidationModel,
+        true,
+      );
+
+    const calculatedStudyBreaks =
+      EducationProgramOfferingService.getCalculatedStudyBreaksAndWeeks(
+        offeringValidationModel,
+      );
+
+    request.res.header("Last-Modified", new Date().toString());
+
+    return {
+      offeringStatus: offeringValidation.offeringStatus,
+      errors: offeringValidation.errors,
+      infos: offeringValidation.infos,
+      warnings: offeringValidation.warnings,
+      studyPeriodBreakdown: {
+        fundedStudyPeriodDays: calculatedStudyBreaks.fundedStudyPeriodDays,
+        totalDays: calculatedStudyBreaks.totalDays,
+        totalFundedWeeks: calculatedStudyBreaks.totalFundedWeeks,
+        unfundedStudyPeriodDays: calculatedStudyBreaks.unfundedStudyPeriodDays,
+      },
+    };
   }
 
   /**
@@ -94,6 +159,9 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
   })
   @ApiUnprocessableEntityResponse({
     description: "Not able to a create an offering due to an invalid request.",
+  })
+  @ApiNotFoundResponse({
+    description: "Not able to find the program in the provided location.",
   })
   @Post("location/:locationId/education-program/:programId")
   async createOffering(
@@ -141,7 +209,7 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
   @ApiUnprocessableEntityResponse({
     description:
       "Either offering for the program and location is not found " +
-      "or the offering is not in the appropriate status to be updated " +
+      "or the offering is not in the appropriate state to be updated " +
       "or the request is invalid.",
   })
   @Patch(
@@ -180,14 +248,57 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
         userToken.userId,
       );
     } catch (error: unknown) {
-      if (
-        error instanceof CustomNamedError &&
-        error.name === OFFERING_VALIDATION_CRITICAL_ERROR
-      ) {
-        throw new BadRequestException(error.objectInfo, error.message);
+      if (error instanceof CustomNamedError) {
+        switch (error.name) {
+          case OFFERING_INVALID_OPERATION_IN_THE_CURRENT_STATE:
+            throw new UnprocessableEntityException(error.message);
+          case OFFERING_VALIDATION_CRITICAL_ERROR:
+            throw new BadRequestException(error.objectInfo, error.message);
+        }
       }
       throw error;
     }
+  }
+
+  /**
+   * Updates offering basic information that can be freely changed
+   * without affecting the assessment.
+   * @param payload offering data to be updated.
+   * @param locationId offering location.
+   * @param programId offering program.
+   * @param offeringId offering to be modified.
+   */
+  @HasLocationAccess("locationId")
+  @ApiUnprocessableEntityResponse({
+    description:
+      "Either offering for the program and location is not found or the offering is not in the appropriate status to be updated.",
+  })
+  @Patch(
+    "location/:locationId/education-program/:programId/offering/:offeringId/basic",
+  )
+  async updateProgramOfferingBasicInformation(
+    @UserToken() userToken: IInstitutionUserToken,
+    @Param("locationId", ParseIntPipe) locationId: number,
+    @Param("programId", ParseIntPipe) programId: number,
+    @Param("offeringId", ParseIntPipe) offeringId: number,
+    @Body() payload: EducationProgramOfferingBasicDataAPIInDTO,
+  ): Promise<void> {
+    const offering = await this.programOfferingService.getProgramOffering(
+      locationId,
+      programId,
+      offeringId,
+      true,
+    );
+    if (!offering) {
+      throw new UnprocessableEntityException(
+        "Either offering for the program and location is not found or the offering is not in the appropriate status to be updated.",
+      );
+    }
+    await this.programOfferingService.updateEducationProgramOfferingBasicData(
+      offeringId,
+      payload,
+      userToken.userId,
+    );
   }
 
   /**
@@ -251,7 +362,10 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
         "Not able to find an Education Program Offering associated with the current Education Program, Location and offering.",
       );
     }
-    return transformToProgramOfferingDTO(offering, hasExistingApplication);
+    return this.educationProgramOfferingControllerService.transformToProgramOfferingDTO(
+      offering,
+      hasExistingApplication,
+    );
   }
 
   /**

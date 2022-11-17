@@ -1,11 +1,9 @@
 import { Injectable } from "@nestjs/common";
 import { CRAIncomeVerification, Student } from "@sims/sims-db";
 import { EntityManager } from "typeorm";
-import { InjectLogger } from "../common";
-import { LoggerService } from "../logger/logger.service";
+import { LoggerService, InjectLogger } from "@sims/utilities/logger";
 import {
   CRAIntegrationService,
-  ConfigService,
   CRAIncomeVerificationService,
 } from "../services";
 import { SequenceControlService, WorkflowClientService } from "@sims/services";
@@ -19,8 +17,9 @@ import {
   CRASFTPResponseFile,
   ProcessSftpResponseResult,
 } from "./cra-integration.models";
-import { getUTCNow } from "../utilities";
+import { getUTCNow } from "@sims/utilities";
 import * as path from "path";
+import { ConfigService } from "@sims/utilities/config";
 
 const INCOME_VERIFICATION_TAG = "VERIFICATION_ID";
 
@@ -41,8 +40,7 @@ export class CRAPersonalVerificationService {
     private readonly workflowClientService: WorkflowClientService,
     config: ConfigService,
   ) {
-    this.ftpResponseFolder =
-      config.getConfig().CRAIntegration.ftpResponseFolder;
+    this.ftpResponseFolder = config.craIntegration.ftpResponseFolder;
   }
 
   /**
@@ -191,9 +189,7 @@ export class CRAPersonalVerificationService {
    * @returns Sequence group name for the CRA file.
    */
   private getCRAFileSequenceName(): string {
-    return `CRA_${
-      this.configService.getConfig().CRAIntegration.programAreaCode
-    }`;
+    return `CRA_${this.configService.craIntegration.programAreaCode}`;
   }
 
   /**

@@ -22,7 +22,8 @@ import {
   RequestAssessmentTypeAPIOutDTO,
   AssessmentHistorySummaryAPIOutDTO,
 } from "./models/assessment.dto";
-import { getDateOnlyFormat, getUserFullName } from "../../utilities";
+import { getUserFullName } from "../../utilities";
+import { getDateOnlyFormat } from "@sims/utilities";
 import { StudentAssessmentStatus } from "../../services/student-assessment/student-assessment.models";
 
 @Injectable()

@@ -1,4 +1,5 @@
-import { StringBuilder, getDateOnlyFromFormat } from "../../../../utilities";
+import { StringBuilder } from "../../../../utilities";
+import { getDateOnlyFromFormat } from "@sims/utilities";
 import {
   SPACE_FILLER,
   TIME_FORMAT,

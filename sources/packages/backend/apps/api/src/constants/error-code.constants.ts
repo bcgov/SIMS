@@ -102,6 +102,13 @@ export const OFFERING_VALIDATION_CSV_CONTENT_FORMAT_ERROR =
  */
 export const OFFERING_CREATION_CRITICAL_ERROR =
   "OFFERING_CREATION_CRITICAL_ERROR";
+/**
+ * Offering is trying to be updated but it is not in the correct state, either
+ * due to an expected status or any other condition. For instance, an offering
+ * cannot have certain data update if it is associated with an assessment.
+ */
+export const OFFERING_INVALID_OPERATION_IN_THE_CURRENT_STATE =
+  "OFFERING_INVALID_OPERATION_IN_THE_CURRENT_STATE";
 
 export const STUDENT_SIN_CONSENT_NOT_CHECKED =
   "STUDENT_SIN_CONSENT_NOT_CHECKED";

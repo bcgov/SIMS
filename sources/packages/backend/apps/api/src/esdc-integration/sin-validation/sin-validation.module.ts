@@ -1,7 +1,6 @@
 import { Module } from "@nestjs/common";
 import { AuthModule } from "../../auth/auth.module";
 import {
-  ConfigService,
   SFASIndividualService,
   SINValidationService,
   SshService,
@@ -10,9 +9,10 @@ import {
 import { SequenceControlService } from "@sims/services";
 import { SINValidationIntegrationService } from "./sin-validation-integration.service";
 import { SINValidationProcessingService } from "./sin-validation-processing.service";
+import { ConfigModule } from "@sims/utilities/config";
 
 @Module({
-  imports: [AuthModule],
+  imports: [AuthModule, ConfigModule],
   providers: [
     SshService,
     SFASIndividualService,
@@ -21,7 +21,6 @@ import { SINValidationProcessingService } from "./sin-validation-processing.serv
     SINValidationIntegrationService,
     SINValidationProcessingService,
     SequenceControlService,
-    ConfigService,
   ],
   exports: [SINValidationIntegrationService, SINValidationProcessingService],
 })

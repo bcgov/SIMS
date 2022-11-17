@@ -2,7 +2,6 @@ import { Module } from "@nestjs/common";
 import { DatabaseModule } from "@sims/sims-db";
 import {
   ApplicationService,
-  ConfigService,
   MSFAANumberService,
   StudentFileService,
   SupportingUserService,
@@ -68,14 +67,13 @@ import {
   RestrictionAESTController,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
-import { LoggerModule } from "./logger/logger.module";
 import { ApplicationControllerService } from "./route-controllers/application/application.controller.service";
 import { InstitutionUserControllerService } from "./route-controllers/institution-user/institution-user.controller.service";
 import { WorkflowClientService, SequenceControlService } from "@sims/services";
 import { QueueRegistryModule } from "@sims/queue";
 
 @Module({
-  imports: [LoggerModule, DatabaseModule, AuthModule, QueueRegistryModule],
+  imports: [DatabaseModule, AuthModule, QueueRegistryModule],
   controllers: [
     SupportingUserAESTController,
     DesignationAgreementAESTController,
@@ -103,7 +101,6 @@ import { QueueRegistryModule } from "@sims/queue";
     SequenceControlService,
     StudentFileService,
     MSFAANumberService,
-    ConfigService,
     TokensService,
     DesignationAgreementService,
     DesignationAgreementControllerService,

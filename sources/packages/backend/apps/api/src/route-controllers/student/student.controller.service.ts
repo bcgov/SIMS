@@ -11,11 +11,8 @@ import {
   ApplicationPaginationOptionsAPIInDTO,
   PaginatedResultsAPIOutDTO,
 } from "../models/pagination.dto";
-import {
-  determinePDStatus,
-  getISODateOnlyString,
-  getUserFullName,
-} from "../../utilities";
+import { determinePDStatus, getUserFullName } from "../../utilities";
+import { getISODateOnlyString } from "@sims/utilities";
 import { AddressInfo, Application } from "@sims/sims-db";
 import {
   ApplicationSummaryAPIOutDTO,

@@ -29,6 +29,9 @@ export function IsPeriodEndDate() {
  * @returns first property found with the decorator or undefined.
  */
 export function getPeriodEndDateProperty(target: unknown): string | undefined {
+  if (!target) {
+    return undefined;
+  }
   for (const property of Object.keys(target)) {
     const isEndDate = isPeriodEndDate(target, property);
     if (isEndDate) {

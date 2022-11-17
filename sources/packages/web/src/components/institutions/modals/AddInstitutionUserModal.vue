@@ -46,6 +46,7 @@
             <footer-buttons
               :processing="processing"
               primaryLabel="Add user now"
+              data-cy="addNewUserModal"
               @primaryClick="submit"
               @secondaryClick="cancel"
               :disablePrimaryButton="notAllowed"

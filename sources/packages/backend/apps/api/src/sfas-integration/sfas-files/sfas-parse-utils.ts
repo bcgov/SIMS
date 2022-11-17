@@ -1,4 +1,4 @@
-import { getDateOnlyFromFormat } from "../../utilities";
+import { getDateOnlyFromFormat } from "@sims/utilities";
 import * as dayjs from "dayjs";
 
 // Expected date only format received from SFAS.

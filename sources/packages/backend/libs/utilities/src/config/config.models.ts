@@ -1,33 +1,6 @@
 export type ClientType = "student" | "institution" | "aest" | "supportingUsers";
 
-export interface IConfig {
-  auth: IAuthConfig;
-  bceid: BCeIDConfig;
-  gcNotify: GCNotify;
-  workflow: WorkflowConfig;
-  forms: FormsConfig;
-  formFlowApiUrl: string;
-  zoneBSFTP: SFTPConfig;
-  CRAIntegration: CRAIntegrationConfig;
-  simsApiClientCredential: ClientCredential;
-  ATBCIntegration: ATBCIntegrationConfig;
-  ESDCIntegration: ESDCIntegrationConfig;
-  SFASIntegrationConfig: SFASIntegrationConfig;
-  /** This is a flag to bypass the validations which blocks the application flow at local environment due to the environmental constraints
-   *  like absence of camunda engine etc.
-   *  This flag should not be present in any other environment other than local.
-   **Note: Until the data clean is done in Dev environment, it may exist there temporarily.
-   * TODO: Once the dev data cleanup is done, remove this environment variable from deployment config.
-   * */
-  bypassApplicationSubmitValidations: boolean;
-  /** This is an attribute to set the number of days passed which will be used to archive an application
-   *  when the difference between the current date and of study end date is greater than the assigned
-   *  value.
-   * */
-  applicationArchiveDays: number;
-}
-
-export interface IAuthConfig {
+export interface AuthConfig {
   url: string;
   realm: string;
   clientIds: { [K in ClientType]: string };
@@ -84,12 +57,6 @@ export interface ClientCredential {
   clientSecret: string;
 }
 
-export interface WorkflowConfig {
-  ruleEngineUrl: string;
-
-  serviceAccountCredential: UserPasswordCredential;
-}
-
 export interface FormsConfig {
   formsUrl: string;
   serviceAccountCredential: UserPasswordCredential;
@@ -126,4 +93,8 @@ export interface ESDCIntegrationConfig {
 
 export interface SFASIntegrationConfig {
   ftpReceiveFolder: string;
+}
+
+export interface InstitutionIntegrationConfig {
+  ftpRequestFolder: string;
 }

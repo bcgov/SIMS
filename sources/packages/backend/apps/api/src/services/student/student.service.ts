@@ -13,14 +13,10 @@ import {
 } from "@sims/sims-db";
 import { DataSource, EntityManager } from "typeorm";
 import { StudentUserToken } from "../../auth/userToken.interface";
-import { LoggerService } from "../../logger/logger.service";
-import { InjectLogger } from "../../common";
-import {
-  getUTCNow,
-  removeWhiteSpaces,
-  transformAddressDetails,
-} from "../../utilities";
-import { CustomNamedError } from "@sims/utilities";
+import { LoggerService, InjectLogger } from "@sims/utilities/logger";
+import { removeWhiteSpaces, transformAddressDetails } from "../../utilities";
+
+import { CustomNamedError, getUTCNow } from "@sims/utilities";
 import {
   CreateStudentUserInfo,
   StudentInfo,

@@ -2,8 +2,8 @@
   <full-page-container>
     <template #header>
       <header-navigator
-        title="Program detail"
-        :routeLocation="programDetailRoute"
+        title="Edit Offering"
+        :routeLocation="editLocationOfferingsRoute"
         subTitle="Request to Change"
       />
       <program-offering-detail-header
@@ -24,31 +24,37 @@
         summary="Please be advised if the request is approved, the students who applied for financial aid for this offering will go through a reassessment and it may change their funding amount."
       />
     </template>
-    <offering-form
+    <offering-form-submit
+      submitLabel="Request a change now"
       :data="initialData"
-      :readOnly="false"
-      @saveOffering="saveOffering"
-    ></offering-form>
+      :formMode="OfferingFormModes.Editable"
+      :locationId="locationId"
+      :programId="programId"
+      @submit="submit"
+      @cancel="goToEditLocationOfferings"
+    ></offering-form-submit>
   </full-page-container>
 </template>
 
 <script lang="ts">
 import { useRouter } from "vue-router";
 import { EducationProgramOfferingService } from "@/services/EducationProgramOfferingService";
-import { EducationProgramService } from "@/services/EducationProgramService";
-import { onMounted, ref, computed } from "vue";
-import { OfferingFormBaseModel, OfferingStatus } from "@/types";
-import { EducationProgramOfferingAPIInDTO } from "@/services/http/dto";
+import { onMounted, ref, defineComponent } from "vue";
+import { OfferingFormModes, OfferingStatus } from "@/types";
+import {
+  EducationProgramOfferingAPIInDTO,
+  EducationProgramOfferingAPIOutDTO,
+} from "@/services/http/dto";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import { BannerTypes } from "@/types/contracts/Banner";
-import { useSnackBar } from "@/composables";
 import ProgramOfferingDetailHeader from "@/components/common/ProgramOfferingDetailHeader.vue";
-import OfferingForm from "@/components/common/OfferingForm.vue";
+import OfferingFormSubmit from "@/components/common/OfferingFormSubmit.vue";
+import { useSnackBar } from "@/composables";
 
-export default {
+export default defineComponent({
   components: {
     ProgramOfferingDetailHeader,
-    OfferingForm,
+    OfferingFormSubmit,
   },
   props: {
     locationId: {
@@ -64,51 +70,43 @@ export default {
       required: true,
     },
   },
-
-  setup(props: any) {
-    const snackBar = useSnackBar();
+  setup(props) {
     const router = useRouter();
-    const initialData = ref({} as OfferingFormBaseModel);
-    const programDetailRoute = computed(() => ({
+    const snackBar = useSnackBar();
+    const processing = ref(false);
+    const initialData = ref({} as EducationProgramOfferingAPIOutDTO);
+    const editLocationOfferingsRoute = {
       name: InstitutionRoutesConst.EDIT_LOCATION_OFFERINGS,
       params: {
         programId: props.programId,
         locationId: props.locationId,
         offeringId: props.offeringId,
       },
-    }));
+    };
 
-    const loadFormData = async () => {
-      const programDetails =
-        await EducationProgramService.shared.getEducationProgram(
-          props.programId,
-        );
-      const programOffering =
+    const goToEditLocationOfferings = () => {
+      router.push(editLocationOfferingsRoute);
+    };
+
+    onMounted(async () => {
+      initialData.value =
         await EducationProgramOfferingService.shared.getOfferingDetailsByLocationAndProgram(
           props.locationId,
           props.programId,
           props.offeringId,
         );
-      initialData.value = {
-        ...programOffering,
-        programIntensity: programDetails.programIntensity,
-        programDeliveryTypes: programDetails.programDeliveryTypes,
-        hasWILComponent: programDetails.hasWILComponent,
-        hasExistingApplication: false,
-      };
-    };
-    onMounted(async () => {
-      await loadFormData();
     });
-    const saveOffering = async (data: EducationProgramOfferingAPIInDTO) => {
+
+    const submit = async (data: EducationProgramOfferingAPIInDTO) => {
       try {
+        processing.value = true;
         await EducationProgramOfferingService.shared.requestChange(
           props.locationId,
           props.programId,
           props.offeringId,
           data,
         );
-        snackBar.success("Request for change has been submitted.");
+        snackBar.success("Offering change requested.");
         router.push({
           name: InstitutionRoutesConst.VIEW_LOCATION_PROGRAMS,
           params: {
@@ -116,19 +114,25 @@ export default {
             locationId: props.locationId,
           },
         });
-      } catch (error: unknown) {
+      } catch {
         snackBar.error(
-          "An error happened while requesting a change to the offering.",
+          "Unexpected error happened while requesting the offering change.",
         );
+      } finally {
+        processing.value = false;
       }
     };
+
     return {
-      saveOffering,
       initialData,
-      programDetailRoute,
       OfferingStatus,
       BannerTypes,
+      OfferingFormModes,
+      editLocationOfferingsRoute,
+      goToEditLocationOfferings,
+      submit,
+      processing,
     };
   },
-};
+});
 </script>

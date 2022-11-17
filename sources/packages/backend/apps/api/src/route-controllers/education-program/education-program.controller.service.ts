@@ -20,11 +20,10 @@ import {
 } from "./models/education-program.dto";
 import {
   credentialTypeToDisplay,
-  getISODateOnlyString,
   getUserFullName,
   INSTITUTION_TYPE_BC_PRIVATE,
 } from "../../utilities";
-import { CustomNamedError } from "@sims/utilities";
+import { CustomNamedError, getISODateOnlyString } from "@sims/utilities";
 import { FormNames } from "../../services/form/constants";
 import { EDUCATION_PROGRAM_NOT_FOUND } from "../../constants";
 

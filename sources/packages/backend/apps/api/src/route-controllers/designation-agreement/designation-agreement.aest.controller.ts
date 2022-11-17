@@ -16,7 +16,8 @@ import {
   InstitutionLocationService,
 } from "../../services";
 import { DesignationAgreementStatus } from "@sims/sims-db";
-import { getISODateOnlyString, PaginationParams } from "../../utilities";
+import { PaginationParams } from "../../utilities";
+import { getISODateOnlyString } from "@sims/utilities";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import {
   AllowAuthorizedParty,
