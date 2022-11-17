@@ -47,6 +47,7 @@ dotenv.config({ path: path.join(__dirname, "../../../../.env") });
       (filePath) => path.extname(filePath) === DECISIONS_EXTENSION
     );
     for (const decisionFilename of decisionsFileNames) {
+      console.info(`Deploying decision: ${path.basename(decisionFilename)}`);
       const deploymentResult = await zeebeClient.deployResource({
         decisionFilename,
       });
@@ -97,6 +98,7 @@ dotenv.config({ path: path.join(__dirname, "../../../../.env") });
       (filePath) => path.extname(filePath) === PROCESSES_EXTENSION
     );
     for (const processFilename of processes) {
+      console.info(`Deploying process: ${path.basename(processFilename)}`);
       const deploymentResult = await zeebeClient.deployResource({
         processFilename,
       });
@@ -112,7 +114,7 @@ dotenv.config({ path: path.join(__dirname, "../../../../.env") });
 
     console.info(`\nDeployment successful!\n`);
     console.info(
-      "Please see below the definitions deployed (non-modified definitions will not generate a new version).\n"
+      "Please see below the definitions deployed (non-modified definitions will not generate a new version)."
     );
 
     console.info("\nSummary of decisions(DMN) deployments\n");
