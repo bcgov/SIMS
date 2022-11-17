@@ -10,8 +10,8 @@ import * as dotenv from "dotenv";
 import {
   DecisionDeploymentResult,
   DECISIONS_EXTENSION,
-  DEPLOYMENT_METADATA_TYPE,
-  DeployMetadataTypes,
+  DEPLOYMENT_METADATA_PROPERTY_NAME,
+  DeploymentMetadataTypes,
   ProcessDeploymentResult,
   PROCESSES_EXTENSION,
 } from "./deploy.models";
@@ -35,7 +35,10 @@ dotenv.config({ path: path.join(__dirname, "../../../../.env") });
   const filesPaths = fileNames.map((fileName) =>
     path.join(directory, fileName)
   );
-  console.info(`Files found: ${fileNames.join(", ")}`);
+
+  console.info(`\nFiles found:`);
+  console.table(fileNames);
+
   const zeebeClient = new ZBClient();
   try {
     // Deploy all decision files (BPMNs).
@@ -48,8 +51,8 @@ dotenv.config({ path: path.join(__dirname, "../../../../.env") });
         decisionFilename,
       });
       deploymentResult.deployments.forEach((deployment: Deployment) => {
-        switch (deployment[DEPLOYMENT_METADATA_TYPE]) {
-          case DeployMetadataTypes.DecisionRequirements:
+        switch (deployment[DEPLOYMENT_METADATA_PROPERTY_NAME]) {
+          case DeploymentMetadataTypes.DecisionRequirements:
             {
               const decisionRequirement =
                 deployment as DecisionRequirementsDeployment;
@@ -58,14 +61,14 @@ dotenv.config({ path: path.join(__dirname, "../../../../.env") });
                 requirementsId: decision.dmnDecisionRequirementsId,
                 requirementsName: decision.dmnDecisionRequirementsName,
                 requirementsKey: decision.decisionRequirementsKey,
-                metadata: deployment[DEPLOYMENT_METADATA_TYPE],
+                metadata: deployment[DEPLOYMENT_METADATA_PROPERTY_NAME],
                 resourceName: path.basename(decision.resourceName),
                 version: decision.version,
                 deploymentKey: deploymentResult.key,
               });
             }
             break;
-          case DeployMetadataTypes.Decision:
+          case DeploymentMetadataTypes.Decision:
             {
               const decisionDeployment = deployment as DecisionDeployment;
               const decision = decisionDeployment.decision;
@@ -73,7 +76,7 @@ dotenv.config({ path: path.join(__dirname, "../../../../.env") });
                 requirementsId: decision.dmnDecisionId,
                 requirementsName: decision.dmnDecisionName,
                 requirementsKey: decision.decisionRequirementsKey,
-                metadata: deployment[DEPLOYMENT_METADATA_TYPE],
+                metadata: deployment[DEPLOYMENT_METADATA_PROPERTY_NAME],
                 resourceName: null,
                 version: decision.version,
                 deploymentKey: deploymentResult.key,

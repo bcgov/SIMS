@@ -1,8 +1,8 @@
 export const PROCESSES_EXTENSION = ".bpmn";
 export const DECISIONS_EXTENSION = ".dmn";
-export const DEPLOYMENT_METADATA_TYPE = "Metadata";
+export const DEPLOYMENT_METADATA_PROPERTY_NAME = "Metadata";
 
-export enum DeployMetadataTypes {
+export enum DeploymentMetadataTypes {
   DecisionRequirements = "decisionRequirements",
   Decision = "decision",
 }
