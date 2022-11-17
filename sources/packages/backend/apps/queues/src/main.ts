@@ -26,7 +26,7 @@ async function bootstrap() {
   app.use(
     "/admin/queues",
     basicAuth({
-      users: { "queue-admin": process.env.QUEUE_ADMIN_PASSWORD },
+      users: { "queue-dashboard-admin": process.env.QUEUE_DASHBOARD_PASSWORD },
       challenge: true,
     }),
     serverAdapter.getRouter(),

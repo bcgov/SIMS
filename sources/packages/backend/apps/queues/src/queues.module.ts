@@ -3,9 +3,15 @@ import { Module } from "@nestjs/common";
 import { QueueRootModule, QueueRegistryModule } from "@sims/queue";
 import { StartApplicationAssessmentProcessor } from "./processors";
 import { WorkflowClientService, ZeebeModule } from "@sims/services";
+import { DatabaseModule } from "@sims/sims-db";
 
 @Module({
-  imports: [QueueRootModule, QueueRegistryModule, ZeebeModule.forRoot()],
+  imports: [
+    DatabaseModule,
+    QueueRootModule,
+    QueueRegistryModule,
+    ZeebeModule.forRoot(),
+  ],
   providers: [StartApplicationAssessmentProcessor, WorkflowClientService],
 })
 export class QueuesModule {}

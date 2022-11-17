@@ -1,0 +1,30 @@
+# Base Image
+FROM node:16.17.0-alpine3.16
+
+LABEL maintainer="BC GOV"
+
+# Updating container path variable with node bin
+ENV PATH $PATH:/app/node_modules/.bin
+
+WORKDIR /app
+
+# Queue Port
+ENV PORT 3001
+
+# Copying package.json and package-lock.json
+COPY ./package*.json ./
+
+# Installing dependencies
+RUN npm ci
+
+# Copying sources
+COPY . .
+
+# Building app
+RUN npm run build queues
+
+# Exposing queue port
+EXPOSE ${PORT}
+
+# Entry point
+CMD [ "npm", "run", "docker:start:queues" ]
