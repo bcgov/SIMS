@@ -5,3 +5,5 @@ export const Queues: Record<string, QueueModel> = {
     name: "start-application-assessment",
   },
 };
+
+export const QUEUE_PREFIX = "{sims}";

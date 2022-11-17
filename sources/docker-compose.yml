@@ -84,6 +84,7 @@ services:
     restart: always
     depends_on:
       - postgres
+      - redis
   # - API
   # Workers
   workers:
@@ -114,6 +115,7 @@ services:
     restart: always
     depends_on:
       - postgres
+      - redis
   # - Workers
   # Web
   web:

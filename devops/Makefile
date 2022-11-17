@@ -323,7 +323,12 @@ deploy-patroni:
 	@oc -n $(NAMESPACE) process -f openshift/patroni-deploy.yml -p BUILD_NAMESPACE=$(BUILD_NAMESPACE) -p IMAGE_STREAM_TAG=patroni:12-latest | oc -n $(NAMESPACE) apply -f -
 
 deploy-redis:
-	@oc -n $(NAMESPACE) process -f openshift/redis-ha-deploy.yml -p IMAGE_NAME="redis-6" -p IMAGE_TAG="1" -p IMAGE_REGISTRY="artifacts.developer.gov.bc.ca/redhat-docker-remote/rhel8/" | oc -n $(NAMESPACE) apply -f -
+	@oc -n $(NAMESPACE) process -f openshift/redis-ha-deploy.yml -p IMAGE_NAME="redis" -p IMAGE_TAG="6.0.9-alpine" -p IMAGE_REGISTRY="artifacts.developer.gov.bc.ca/docker-remote" | oc -n $(NAMESPACE) apply -f -
+
+# Command to initialize the redis cluster.
+# Make sure that all the redis pods are up and running before initializing the cluster.
+init-redis-cluster:
+	@oc exec -n $(NAMESPACE) -it redis-0 -- redis-cli -a $(oc get secret -n $(NAMESPACE) redis-creds -o jsonpath='{.data.password}' | base64 -d) --cluster create --cluster-replicas 1 $(oc get pods -n $(NAMESPACE) -l app=redis -o jsonpath='{range.items[*]}{.status.podIP}:6379 ')
 
 create-db:
 	test -n $(DB_NAME)
@@ -637,3 +642,8 @@ db-backup-deploy-delete-mongodb:
 # The below PVCs are not deleted.
 # pvc/$(BACKUP_MONGODB_APP_NAME)-pvc
 # pvc/$(BACKUP_MONGODB_APP_NAME)-verification-pvc
+
+# Remove redis and resources including secrets from openshift namespace.
+delete-redis:
+	@echo "+\n++ Removing redis and resources on $(NAMESPACE)\n+"
+	@oc delete -n $(NAMESPACE) all,rc,svc,dc,route,pvc,secret,configmap,sa,RoleBinding -l app=redis

@@ -61,6 +61,8 @@ objects:
           labels:
             app: ${NAME}
         spec:
+          imagePullSecrets:
+            - name: artifactory-creds
           containers:
             - name: ${NAME}
               image: ${IMAGE_REGISTRY}/${IMAGE_NAME}:${IMAGE_TAG}
