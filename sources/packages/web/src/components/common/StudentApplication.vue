@@ -69,6 +69,10 @@ export default {
       type: Number,
       required: true,
     },
+    processing: {
+      type: Boolean,
+      required: false,
+    },
   },
   setup(props: any, context: SetupContext) {
     // Component's names on Form.IO definition that will be manipulated.
@@ -87,7 +91,6 @@ export default {
     const isFirstPage = ref(true);
     const isLastPage = ref(false);
     const showNav = ref(false);
-    const processing = ref(false);
 
     const getSelectedId = (form: any) => {
       return formioUtils.getComponentValueByKey(form, LOCATIONS_DROPDOWN_KEY);
@@ -271,7 +274,6 @@ export default {
     };
 
     const submitted = (args: any, form: any) => {
-      processing.value = true;
       context.emit("submitApplication", args, form);
     };
 
@@ -295,7 +297,6 @@ export default {
       submitted,
       customEvent,
       showNav,
-      processing,
     };
   },
 };

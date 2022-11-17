@@ -42,6 +42,7 @@
       @submitApplication="submitApplication"
       @customEventCallback="customEventCallback"
       @pageChanged="pageChanged"
+      :processing="submittingApplication"
     />
   </student-page-container>
 
