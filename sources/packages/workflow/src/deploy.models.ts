@@ -11,7 +11,7 @@ export interface DecisionDeploymentResult {
   requirementsId: string;
   requirementsName: string;
   requirementsKey: number;
-  resourceName: string;
+  resourceName: string | undefined;
   metadata: string;
   version: number;
   deploymentKey: number;

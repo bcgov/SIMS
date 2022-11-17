@@ -78,7 +78,7 @@ dotenv.config({ path: path.join(__dirname, "../../../../.env") });
                 requirementsName: decision.dmnDecisionName,
                 requirementsKey: decision.decisionRequirementsKey,
                 metadata: deployment[DEPLOYMENT_METADATA_PROPERTY_NAME],
-                resourceName: null,
+                resourceName: undefined,
                 version: decision.version,
                 deploymentKey: deploymentResult.key,
               });
