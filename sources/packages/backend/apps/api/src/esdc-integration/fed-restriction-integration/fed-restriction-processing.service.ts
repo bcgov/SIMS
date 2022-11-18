@@ -245,8 +245,8 @@ export class FedRestrictionProcessingService {
       this.logger.log("Process finished, transaction committed.");
 
       // The process of sending the notifications happens after the restrictions are committed
-      // because the notifications are considered as a lower priority and any error related to
-      // the notification should not interfere in the federal restriction process.
+      // because the notifications are considered a lower priority and any error related to the
+      // notification should not interfere with the federal restriction process.
       try {
         if (insertedRestrictionsIDs?.length) {
           this.logger.log(

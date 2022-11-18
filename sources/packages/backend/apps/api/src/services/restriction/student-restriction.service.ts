@@ -417,6 +417,12 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
     }
   }
 
+  /**
+   * Gets the notifications information for student restrictions that are
+   * eligible to generate a notification (actionType not defined as NoEffect).
+   * @param restrictionIds student restriction ids.
+   * @returns student restrictions eligible to generate a notification.
+   */
   async getRestrictionsForNotifications(
     restrictionIds: number[],
   ): Promise<StudentRestriction[]> {

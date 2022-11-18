@@ -2,7 +2,6 @@ import { Injectable } from "@nestjs/common";
 import { DataModelService, FederalRestriction } from "@sims/sims-db";
 import { DataSource, EntityManager } from "typeorm";
 import { getSQLFileData } from "../../utilities";
-import { FederalStudentRestrictionInsertedRecord } from "./models/federal-restriction.model";
 
 const FEDERAL_RESTRICTIONS_RAW_SQL_FOLDER = "federal-restrictions";
 
