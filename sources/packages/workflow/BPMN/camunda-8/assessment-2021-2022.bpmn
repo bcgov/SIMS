@@ -1363,90 +1363,7 @@ or (calculatedDataPartnerFedralProvincialPDReceiptCost &gt; 0)</bpmn:conditionEx
       <bpmn:outgoing>Flow_1ekiozl</bpmn:outgoing>
     </bpmn:exclusiveGateway>
     <bpmn:startEvent id="StartEvent_1" name="start">
-      <bpmn:extensionElements>
-        <zeebe:ioMapping>
-          <zeebe:output source="=if is defined(institutionLocationProvince) = false then null else institutionLocationProvince" target="institutionLocationProvince" />
-          <zeebe:output source="=institutionType" target="institutionType" />
-          <zeebe:output source="=offeringActualTuitionCosts" target="offeringActualTuitionCosts" />
-          <zeebe:output source="=offeringBreakEndDate" target="offeringBreakEndDate" />
-          <zeebe:output source="=offeringBreakStartDate" target="offeringBreakStartDate" />
-          <zeebe:output source="=offeringCourseLoad" target="offeringCourseLoad" />
-          <zeebe:output source="=offeringDelivered" target="offeringDelivered" />
-          <zeebe:output source="=offeringExceptionalExpenses" target="offeringExceptionalExpenses" />
-          <zeebe:output source="=offeringIntensity" target="offeringIntensity" />
-          <zeebe:output source="=offeringMandatoryFees" target="offeringMandatoryFees" />
-          <zeebe:output source="=offeringStudyEndDate" target="offeringStudyEndDate" />
-          <zeebe:output source="=offeringStudyStartDate" target="offeringStudyStartDate" />
-          <zeebe:output source="=offeringWeeks" target="offeringWeeks" />
-          <zeebe:output source="=parent1Contributions" target="parent1Contributions" />
-          <zeebe:output source="=parent1CppEmployment" target="parent1CppEmployment" />
-          <zeebe:output source="=parent1CppSelfemploymentOther" target="parent1CppSelfemploymentOther" />
-          <zeebe:output source="=parent1CRAReportedIncome" target="parent1CRAReportedIncome" />
-          <zeebe:output source="=parent1DependentTable" target="parent1DependentTable" />
-          <zeebe:output source="=parent1Ei" target="parent1Ei" />
-          <zeebe:output source="=parent1NetAssests" target="parent1NetAssests" />
-          <zeebe:output source="=parent1SupportingUserId" target="parent1SupportingUserId" />
-          <zeebe:output source="=parent1Tax" target="parent1Tax" />
-          <zeebe:output source="=parent1TotalIncome" target="parent1TotalIncome" />
-          <zeebe:output source="=parent2Contributions" target="parent2Contributions" />
-          <zeebe:output source="=parent2CppEmployment" target="parent2CppEmployment" />
-          <zeebe:output source="=parent2CppSelfemploymentOther" target="parent2CppSelfemploymentOther" />
-          <zeebe:output source="=parent2CRAReportedIncome" target="parent2CRAReportedIncome" />
-          <zeebe:output source="=parent2DependentTable" target="parent2DependentTable" />
-          <zeebe:output source="=parent2Ei" target="parent2Ei" />
-          <zeebe:output source="=parent2NetAssests" target="parent2NetAssests" />
-          <zeebe:output source="=parent2SupportingUserId" target="parent2SupportingUserId" />
-          <zeebe:output source="=parent2Tax" target="parent2Tax" />
-          <zeebe:output source="=parent2TotalIncome" target="parent2TotalIncome" />
-          <zeebe:output source="=partner1ChildSpousalSupportCost" target="partner1ChildSpousalSupportCost" />
-          <zeebe:output source="=partner1CRAReportedIncome" target="partner1CRAReportedIncome" />
-          <zeebe:output source="=partner1SocialAssistance" target="partner1SocialAssistance" />
-          <zeebe:output source="=partner1EmploymentInsuranceBenefits" target="partner1EmploymentInsuranceBenefits" />
-          <zeebe:output source="=partner1PermanentDisabilityBenefits" target="partner1PermanentDisabilityBenefits" />
-          <zeebe:output source="=partner1StudentStudyWeeks" target="partner1StudentStudyWeeks" />
-          <zeebe:output source="=partner1SupportingUserId" target="partner1SupportingUserId" />
-          <zeebe:output source="=partner1TotalIncome" target="partner1TotalIncome" />
-          <zeebe:output source="=partner1TotalStudentLoan" target="partner1TotalStudentLoan" />
-          <zeebe:output source="=programCredentialType" target="programCredentialType" />
-          <zeebe:output source="=programLength" target="programLength" />
-          <zeebe:output source="=programRelatedCosts" target="offeringProgramRelatedCosts" />
-          <zeebe:output source="=programYear" target="programYear" />
-          <zeebe:output source="=programYearStartDate" target="programYearStartDate" />
-          <zeebe:output source="=studentDataChildSupportAndOrSpousalSupport" target="studentDataChildSupportAndOrSpousalSupport" />
-          <zeebe:output source="=studentDataCRAReportedIncome" target="studentDataCRAReportedIncome" />
-          <zeebe:output source="=studentDataDaycareCosts11YearsOrUnder" target="studentDataDaycareCosts11YearsOrUnder" />
-          <zeebe:output source="=studentDataDaycareCosts12YearsOrOver" target="studentDataDaycareCosts12YearsOrOver" />
-          <zeebe:output source="=studentDataDependantstatus" target="studentDataDependantstatus" />
-          <zeebe:output source="=studentDataDoYourParentSStepParentSponsorLegalGuardianHaveAValidSinNumber" target="studentDataDoYourParentSStepParentSponsorLegalGuardianHaveAValidSinNumber" />
-          <zeebe:output source="=studentDataEstimatedSpouseIncome" target="studentDataEstimatedSpouseIncome" />
-          <zeebe:output source="=studentDataHasDependents" target="studentDataHasDependents" />
-          <zeebe:output source="=studentDataIndigenousStatus" target="studentDataIndigenousStatus" />
-          <zeebe:output source="=studentDataIsYourSpouseACanadianCitizen" target="studentDataIsYourSpouseACanadianCitizen" />
-          <zeebe:output source="=studentDataLivingathomeRent" target="studentDataLivingathomeRent" />
-          <zeebe:output source="=studentDataLivingWithParents" target="studentDataLivingWithParents" />
-          <zeebe:output source="=studentDataLivingWithPartner" target="studentDataLivingWithPartner" />
-          <zeebe:output source="=studentDataNumberOfParents" target="studentDataNumberOfParents" />
-          <zeebe:output source="=studentDataPleaseProvideAnEstimationOfYourParentsIncome" target="studentDataPleaseProvideAnEstimationOfYourParentsIncome" />
-          <zeebe:output source="=studentDataRelationshipStatus" target="studentDataRelationshipStatus" />
-          <zeebe:output source="=studentDataScholarshipAmount" target="studentDataScholarshipAmount" />
-          <zeebe:output source="=studentDataSelectedLocation" target="studentDataSelectedLocation" />
-          <zeebe:output source="=studentDataSelectedOffering" target="studentDataSelectedOffering" />
-          <zeebe:output source="=studentDataSelectedProgram" target="studentDataSelectedProgram" />
-          <zeebe:output source="=studentDataTaxReturnIncome" target="studentDataTaxReturnIncome" />
-          <zeebe:output source="=studentDataTransportationCost" target="studentDataTransportationCost" />
-          <zeebe:output source="=studentDataVoluntaryContributions" target="studentDataVoluntaryContributions" />
-          <zeebe:output source="=studentDataWhenDidYouGraduateOrLeaveHighSchool" target="studentDataWhenDidYouGraduateOrLeaveHighSchool" />
-          <zeebe:output source="=studentDataYouthInCare" target="studentDataYouthInCare" />
-          <zeebe:output source="=studentPDStatus" target="studentPDStatus" />
-          <zeebe:output source="=studentTaxYear" target="studentTaxYear" />
-          <zeebe:output source="=studentDataGovernmentFundingCosts" target="studentDataGovernmentFundingCosts" />
-          <zeebe:output source="=studentDataNongovernmentFundingCosts" target="studentDataNongovernmentFundingCosts" />
-          <zeebe:output source="=studentDataPartnerStudyWeeks" target="studentDataPartnerStudyWeeks" />
-          <zeebe:output source="=studentDataPartnerEmploymentInsurance" target="studentDataPartnerEmploymentInsurance" />
-          <zeebe:output source="=studentDataPartnerFedralProvincialPDReceiptCost" target="studentDataPartnerFedralProvincialPDReceiptCost" />
-          <zeebe:output source="=0" target="studentParentNetAssests" />
-        </zeebe:ioMapping>
-      </bpmn:extensionElements>
+      <bpmn:extensionElements />
       <bpmn:outgoing>Flow_1tcyqyg</bpmn:outgoing>
     </bpmn:startEvent>
     <bpmn:intermediateThrowEvent id="Event_0hxxmu9" name="Define Total Income">
@@ -2151,10 +2068,6 @@ DMNX (comes from DMN)</bpmn:text>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Lane_1gxyyjh_di" bpmnElement="Lane_1gxyyjh" isHorizontal="true">
         <dc:Bounds x="190" y="80" width="12380" height="817" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="TextAnnotation_0ymh6jx_di" bpmnElement="TextAnnotation_0ymh6jx">
-        <dc:Bounds x="280" y="482" width="253.75823723228996" height="41.73531026908292" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_1amcd6c_di" bpmnElement="Activity_1ty6u6b">
@@ -3143,10 +3056,10 @@ DMNX (comes from DMN)</bpmn:text>
         <dc:Bounds x="310" y="238" width="361.99267976278725" height="112.67605633802818" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="Association_1i7iirc_di" bpmnElement="Association_1i7iirc">
-        <di:waypoint x="438" y="607" />
-        <di:waypoint x="356" y="524" />
-      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="TextAnnotation_0ymh6jx_di" bpmnElement="TextAnnotation_0ymh6jx">
+        <dc:Bounds x="280" y="482" width="253.75823723228996" height="41.73531026908292" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_1fd7dws_di" bpmnElement="Flow_1fd7dws">
         <di:waypoint x="3305" y="1140" />
         <di:waypoint x="3320" y="1140" />
@@ -4178,6 +4091,10 @@ DMNX (comes from DMN)</bpmn:text>
       <bpmndi:BPMNEdge id="Association_0yc2t6b_di" bpmnElement="Association_0yc2t6b">
         <di:waypoint x="650" y="602" />
         <di:waypoint x="650" y="546" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_1i7iirc_di" bpmnElement="Association_1i7iirc">
+        <di:waypoint x="438" y="607" />
+        <di:waypoint x="356" y="524" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="Group_0lerduq_di" bpmnElement="Group_0lerduq">
         <dc:Bounds x="4170" y="920" width="700" height="850" />
