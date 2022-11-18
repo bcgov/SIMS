@@ -16,6 +16,14 @@ import { QUEUE_PREFIX } from "./constants/queue.constant";
 })
 export class QueueRootModule {}
 
+/**
+ * Connection factory which returns connection properties
+ * to connect redis.
+ * Depending upon the environment variable it uses standalone
+ * or cluster connection.
+ ** While running in local env make sure to set REDIS_STANDALONE_MODE as true.
+ * @returns redis connection factory
+ */
 function getConnectionFactory():
   | Promise<BullRootModuleOptions>
   | BullRootModuleOptions {
