@@ -4,7 +4,7 @@
 
 # Use Node image, maintained by Docker:
 # hub.docker.com/r/_/node/
-FROM node:lts-alpine3.10
+FROM docker.io/library/node:lts-alpine3.10
 
 # set working directory
 WORKDIR /forms
