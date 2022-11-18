@@ -1,5 +1,6 @@
 import { Module } from "@nestjs/common";
 import { DatabaseModule } from "@sims/sims-db";
+import { BullModule } from "@nestjs/bull";
 import {
   ApplicationService,
   FormService,
@@ -55,7 +56,13 @@ import { ConfigModule } from "@sims/utilities/config";
 import { QueueRegistryModule } from "@sims/queue";
 
 @Module({
-  imports: [DatabaseModule, AuthModule, ConfigModule, QueueRegistryModule],
+  imports: [
+    DatabaseModule,
+    AuthModule,
+    ConfigModule,
+    QueueRegistryModule,
+    BullModule.registerQueue({ name: "start-application-assessment" }),
+  ],
   controllers: [
     ApplicationStudentsController,
     StudentStudentsController,
