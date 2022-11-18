@@ -31,6 +31,7 @@ RUN echo "prefix = $NPM_PACKAGES" >> ~/.npmrc
 
 # Include details of the required dependencies
 RUN mkdir -p $NPM_PACKAGES/
+RUN ls -lrt
 # Include details of the required dependencies
 COPY ./package.json $NPM_PACKAGES/
 COPY ./package-lock.json $NPM_PACKAGES/
