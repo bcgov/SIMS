@@ -53,7 +53,7 @@ export interface MinistryStudentFileUploadPersonalization {
   lastName: string;
 }
 
-export interface FederalStudentRestrictionPersonalization {
+export interface StudentRestrictionAddedPersonalization {
   givenNames: string;
   lastName: string;
   toAddress: string;

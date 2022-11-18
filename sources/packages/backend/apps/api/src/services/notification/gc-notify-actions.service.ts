@@ -3,7 +3,7 @@ import { NotificationMessageType } from "@sims/sims-db";
 import { getDateOnlyFormat, getPSTPDTDateTime } from "@sims/utilities";
 import { NotificationMessageService } from "../notification-message/notification-message.service";
 import {
-  FederalStudentRestrictionPersonalization,
+  StudentRestrictionAddedPersonalization,
   GCNotifyResult,
   MinistryStudentFileUploadNotification,
   StudentFileUploadNotification,
@@ -93,17 +93,22 @@ export class GCNotifyActionsService {
     return this.notificationService.sendEmailNotification(notificationSaved.id);
   }
 
-  async sendFederalStudentRestrictionNotification(
-    notifications: FederalStudentRestrictionPersonalization[],
+  /**
+   * Creates a new notification when a new restriction is added to the student account.
+   * @param notifications notifications information.
+   * @param auditUserId user that should be considered the one that is causing the changes.
+   */
+  async sendStudentRestrictionAddedNotification(
+    notifications: StudentRestrictionAddedPersonalization[],
     auditUserId: number,
   ): Promise<void> {
     const templateId = await this.notificationMessageService.getTemplateId(
-      NotificationMessageType.FederalStudentRestriction,
+      NotificationMessageType.StudentRestrictionAdded,
     );
 
     const notificationsToSend = notifications.map((notification) => ({
       userId: notification.userId,
-      messageType: NotificationMessageType.FederalStudentRestriction,
+      messageType: NotificationMessageType.StudentRestrictionAdded,
       messagePayload: {
         email_address: notification.toAddress,
         template_id: templateId,
@@ -116,10 +121,15 @@ export class GCNotifyActionsService {
     }));
 
     // Save notification into notification table.
-    await this.notificationService.saveNotifications(
+    const notificationsIds = await this.notificationService.saveNotifications(
       notificationsToSend,
       auditUserId,
     );
+
+    // TODO: Temporary code to be removed once queue/schedulers are in place.
+    for (const id of notificationsIds) {
+      await this.notificationService.sendEmailNotification(id);
+    }
   }
 
   /**

@@ -439,7 +439,7 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
       where: {
         id: In(restrictionIds),
         restriction: {
-          restrictionType: Not(ArrayContains([RestrictionActionType.NoEffect])),
+          actionType: Not(ArrayContains([RestrictionActionType.NoEffect])),
         },
       },
     });

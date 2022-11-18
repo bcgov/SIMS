@@ -244,12 +244,27 @@ export class FedRestrictionProcessingService {
       await queryRunner.commitTransaction();
       this.logger.log("Process finished, transaction committed.");
 
+      // The process of sending the notifications happens after the restrictions are committed
+      // because the notifications are considered as a lower priority and any error related to
+      // the notification should not interfere in the federal restriction process.
       try {
-        result.processSummary.push("Generating notifications.");
-        await this.createNotifications(insertedRestrictionsIDs, 1);
-        result.processSummary.push("Notifications generated.");
+        if (insertedRestrictionsIDs?.length) {
+          this.logger.log(
+            `Generating ${insertedRestrictionsIDs.length} notification(s).`,
+          );
+          await this.createNotifications(insertedRestrictionsIDs, 1);
+          result.processSummary.push(
+            `${insertedRestrictionsIDs.length} notification(s) generated.`,
+          );
+        } else {
+          result.processSummary.push(
+            "No notifications were generated because no new student restriction record was created.",
+          );
+        }
       } catch (error: unknown) {
-        result.errorsSummary.push(`Error while generating notifications.`);
+        result.errorsSummary.push(
+          "Error while generating notifications. See logs for details",
+        );
         this.logger.error(`Error while generating notifications. ${error}`);
       }
     } catch (error) {
@@ -267,6 +282,11 @@ export class FedRestrictionProcessingService {
     return result;
   }
 
+  /**
+   * Generate notifications for newly created student restrictions.
+   * @param restrictionsIds ids to generate the notifications.
+   * @param auditUserId user that should be considered the one that is causing the changes.
+   */
   private async createNotifications(
     restrictionsIds: number[],
     auditUserId: number,
@@ -281,7 +301,7 @@ export class FedRestrictionProcessingService {
       toAddress: restriction.student.user.email,
       userId: restriction.student.user.id,
     }));
-    await this.gcNotifyActionsService.sendFederalStudentRestrictionNotification(
+    await this.gcNotifyActionsService.sendStudentRestrictionAddedNotification(
       notifications,
       auditUserId,
     );

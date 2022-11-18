@@ -55,7 +55,7 @@ export class NotificationService extends RecordDataModelService<Notification> {
   async saveNotifications(
     notifications: SaveNotificationModel[],
     auditUserId: number,
-  ): Promise<InsertResult> {
+  ): Promise<number[]> {
     const newNotifications = notifications.map((notification) => ({
       user: { id: notification.userId } as User,
       creator: { id: auditUserId } as User,
@@ -65,7 +65,7 @@ export class NotificationService extends RecordDataModelService<Notification> {
       } as NotificationMessage,
     }));
     const insertResult = await this.repo.insert(newNotifications);
-    return insertResult;
+    return insertResult.identifiers.map((identifier) => +identifier.id);
   }
 
   /**

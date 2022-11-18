@@ -62,7 +62,7 @@ export class FederalRestrictionService extends DataModelService<FederalRestricti
    * present in the federal data.
    * 4. Update modified date for the active restrictions. The time between creation
    * date and modified date can provide for how long that restriction is active.
-   * @returns inserted records ids.
+   * @returns inserted records ids into student restrictions.
    */
   async executeBulkStepsChanges(manager: EntityManager): Promise<number[]> {
     // STEP 1
