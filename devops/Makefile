@@ -26,6 +26,7 @@ export WORKERS := $(or ${WORKERS}, workers-$(APP_NAME))
 export QUEUES := $(or ${QUEUES}, queues-$(APP_NAME))
 export WEB := $(or ${WEB}, web-$(APP_NAME))
 export API_PORT := $(or ${API_PORT}, 7070)
+export QUEUES_PORT := $(or ${QUEUES_PORT}, 7000)
 export WEB_PORT := $(or ${WEB_PORT}, 3030)
 export DATABASE_NAME_KEY := $(or ${DATABASE_NAME_KEY}, database-name)
 export DB_NAME := $(or ${DB_NAME}, SIMSDB)
@@ -433,6 +434,7 @@ deploy-queues:
 	test -n "$(DATABASE_NAME_KEY)"
 	test -n "$(QUEUES_SECRET_NAME)"
 	test -n "$(QUEUES)"
+	test -n "$(QUEUES_PORT)"
 	@echo "+\n++ Deploying Queues with tag: $(BUILD_TAG)\n+"
 	@oc -n $(NAMESPACE) process -f openshift/queues-deploy.yml \
 		-p NAME=$(QUEUES) \
@@ -442,6 +444,8 @@ deploy-queues:
 		-p IMAGE_STREAM_TAG="$(QUEUES_BUILD_REF):$(BUILD_TAG)" \
 		-p BUILD_TAG=$(BUILD_TAG) \
 		-p DATABASE_NAME_KEY=$(DATABASE_NAME_KEY) \
+		-p PORT=$(QUEUES_PORT) \
+		-p HOST_NAME=$(HOST) \
 		| oc -n $(NAMESPACE) apply -f -
 	$(call rollout_and_wait,dc/$(QUEUES))
 

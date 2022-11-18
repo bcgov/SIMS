@@ -28,6 +28,8 @@ objects:
                   value: ${BUILD_TAG}
                 - name: NODE_ENV
                   value: ${NODE_ENV}
+                - name: PORT
+                  value: "${PORT}"
                 - name: POSTGRES_HOST
                   value: "${DB_SERVICE}"
                 - name: REDIS_HOST
@@ -87,6 +89,8 @@ objects:
               image: ${IMAGE_REGISTRY}/${BUILD_NAMESPACE}/${IMAGE_STREAM_TAG}
               imagePullPolicy: Always
               name: ${NAME}
+              ports:
+                - containerPort: "${{PORT}}"
               resources:
                 limits:
                   cpu: ${CPU_LIMIT}
@@ -94,6 +98,48 @@ objects:
                 requests:
                   cpu: ${CPU_REQUEST}
                   memory: ${MEMORY_REQUEST}
+              readinessProbe:
+                failureThreshold: 10
+                httpGet:
+                  path: /
+                  port: "${{PORT}}"
+                initialDelaySeconds: 40
+                periodSeconds: 30
+                timeoutSeconds: 30
+              livenessProbe:
+                failureThreshold: 10
+                httpGet:
+                  path: /
+                  port: "${{PORT}}"
+                  scheme: HTTP
+                initialDelaySeconds: 10
+                periodSeconds: 30
+                timeoutSeconds: 15
+  - apiVersion: v1
+    kind: Service
+    metadata:
+      name: ${NAME}
+    spec:
+      ports:
+        - name: http
+          port: 80
+          targetPort: ${{PORT}}
+      selector:
+        deploymentconfig: ${NAME}
+      type: ClusterIP
+  - apiVersion: route.openshift.io/v1
+    kind: Route
+    metadata:
+      name: ${NAME}
+    spec:
+      host: ${HOST_NAME}
+      path: ${PATH}
+      tls:
+        insecureEdgeTerminationPolicy: Redirect
+        termination: edge
+      to:
+        kind: Service
+        name: ${NAME}
 parameters:
   - name: NAME
     required: true
@@ -156,6 +202,12 @@ parameters:
   - name: REDIS_PASSWORD_KEY
     value: password
   - name: DASHBOARD_PASSWORD_KEY
-    value: queueDashboardPassword
+    value: queue-dashboard-password
   - name: DASHBOARD_USER_KEY
-    value: queueDashboardUser
+    value: queue-dashboard-user
+  - name: PATH
+    value: "/admin/queues/"
+  - name: PORT
+    required: true
+  - name: HOST_NAME
+    required: true
