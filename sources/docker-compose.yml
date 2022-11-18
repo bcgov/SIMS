@@ -17,10 +17,6 @@ services:
       - POSTGRES_DB=${POSTGRES_DB}
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-      - REDIS_HOST=redis
-      - REDIS_PORT=${REDIS_PORT}
-      - REDIS_PASSWORD=${REDIS_PASSWORD}
-      - REDIS_STANDALONE_MODE=${REDIS_STANDALONE_MODE}
       - KEYCLOAK_AUTH_URL=${KEYCLOAK_AUTH_URL}
       - KEYCLOAK_REALM=${KEYCLOAK_REALM}
       - KEYCLOAK_CLIENT_STUDENT=${KEYCLOAK_CLIENT_STUDENT}
@@ -106,10 +102,6 @@ services:
       - ZEEBE_CLIENT_SECRET=${ZEEBE_CLIENT_SECRET}
       - ZEEBE_AUTHORIZATION_SERVER_URL=${ZEEBE_AUTHORIZATION_SERVER_URL}
       - BYPASS_CRA_INCOME_VERIFICATION=${BYPASS_CRA_INCOME_VERIFICATION}
-      - REDIS_HOST=redis
-      - REDIS_PORT=${REDIS_PORT}
-      - REDIS_PASSWORD=${REDIS_PASSWORD}
-      - REDIS_STANDALONE_MODE=${REDIS_STANDALONE_MODE}
     volumes:
       - ./packages/backend/apps/workers/src:/app/src
     networks:
@@ -118,38 +110,6 @@ services:
     depends_on:
       - postgres
   # - Workers
-  queues:
-    image: queues-${PROJECT_NAME}:${BUILD_REF}-${BUILD_ID}
-    container_name: queues-${PROJECT_NAME}-${BUILD_REF}-${BUILD_ID}
-    build:
-      context: ./packages/backend
-      dockerfile: ./apps/queues/Dockerfile.dev
-    environment:
-      - NODE_ENV=docker
-      - POSTGRES_HOST=postgres
-      - POSTGRES_PORT=${POSTGRES_PORT}
-      - POSTGRES_DB=${POSTGRES_DB}
-      - POSTGRES_USER=${POSTGRES_USER}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-      - ZEEBE_ADDRESS=${ZEEBE_ADDRESS}
-      - ZEEBE_CLIENT_ID=${ZEEBE_CLIENT_ID}
-      - ZEEBE_CLIENT_SECRET=${ZEEBE_CLIENT_SECRET}
-      - ZEEBE_AUTHORIZATION_SERVER_URL=${ZEEBE_AUTHORIZATION_SERVER_URL}
-      - REDIS_HOST=redis
-      - REDIS_PORT=${REDIS_PORT}
-      - REDIS_PASSWORD=${REDIS_PASSWORD}
-      - REDIS_STANDALONE_MODE=${REDIS_STANDALONE_MODE}
-      - QUEUE_DASHBOARD_PASSWORD=${QUEUE_DASHBOARD_PASSWORD}
-    ports:
-      - ${QUEUES_PORT}:${QUEUES_PORT}
-    volumes:
-      - ./packages/backend/apps/queues/src:/app/src
-    networks:
-      - local-network
-    restart: always
-    depends_on:
-      - postgres
-  # - Queues
   # Web
   web:
     image: web-${PROJECT_NAME}:${BUILD_REF}-${BUILD_ID}

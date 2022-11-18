@@ -6,18 +6,12 @@ export PROJECT_NAME := $(or $(PROJECT_NAME), aest-sims)
 export BUILD_REF :=  $(or $(BUILD_REF), dev)
 export BUILD_ID := $(or $(BUILD_ID), 0)
 export API_PORT := $(or $(API_PORT), 3000)
-export QUEUES_PORT := $(or $(QUEUES_PORT), 3001)
 export APP_PORT := $(or $(APP_PORT), 8080)
 # Database
 export POSTGRES_PORT := $(or $(POSTGRES_PORT), 5432)
 export POSTGRES_USER := $(or $(POSTGRES_USER), admin)
 export POSTGRES_PASSWORD := $(or $(POSTGRES_PASSWORD), aest_sim)
 export POSTGRES_DB := $(or $(POSTGRES_DB), aest)
-# Queue
-export REDIS_PORT := $(or $(REDIS_PORT), 6379)
-export REDIS_PASSWORD := $(or $(REDIS_PASSWORD), redis)
-export REDIS_STANDALONE_MODE := $(or $(REDIS_STANDALONE_MODE), true)
-export QUEUE_DASHBOARD_PASSWORD := $(or $(QUEUE_DASHBOARD_PASSWORD), queueboardpass)
 # Key Cloak
 export KEYCLOAK_AUTH_URL := $(or $(KEYCLOAK_AUTH_URL), https://dev.oidc.gov.bc.ca/auth/)
 export KEYCLOAK_REALM := $(or $(KEYCLOAK_REALM), jxoe2o46)
@@ -63,10 +57,6 @@ print-status:
 	@echo " | POSTGRES_DB: $(POSTGRES_DB) "
 	@echo " | POSTGRES_USER: $(POSTGRES_USER) "
 	@echo " | POSTGRES_PASSWORD: $(POSTGRES_PASSWORD) "
-	@echo " | Queue Configs"
-	@echo " | REDIS_PORT: $(REDIS_PORT) "
-	@echo " | REDIS_PASSWORD: $(REDIS_PASSWORD) "
-	@echo " | REDIS_STANDALONE_MODE: $(REDIS_STANDALONE_MODE) "
 	@echo " | Key Cloak Configs"
 	@echo " | KEYCLOAK_AUTH_URL: $(KEYCLOAK_AUTH_URL) "
 	@echo " | KEYCLOAK_REALM: $(KEYCLOAK_REALM) "
