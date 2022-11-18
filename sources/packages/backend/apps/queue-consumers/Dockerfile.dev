@@ -21,10 +21,10 @@ RUN npm ci
 COPY . .
 
 # Building app
-RUN npm run build queues
+RUN npm run build queue-consumers
 
 # Exposing queue port
 EXPOSE ${PORT}
 
 # Entry point
-CMD [ "npm", "run", "docker:start:queues" ]
+CMD [ "npm", "run", "docker:start:queue-consumers" ]

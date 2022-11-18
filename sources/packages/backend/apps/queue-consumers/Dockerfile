@@ -13,7 +13,7 @@ RUN npm ci
 COPY . .
 
 # Building app
-RUN npm run build queues
+RUN npm run build queue-consumers
 
 # Entry point
-CMD [ "npm", "run", "start:prod:queues" ]
+CMD [ "npm", "run", "start:prod:queue-consumers" ]

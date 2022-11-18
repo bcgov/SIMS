@@ -6,7 +6,7 @@ export PROJECT_NAME := $(or $(PROJECT_NAME), aest-sims)
 export BUILD_REF :=  $(or $(BUILD_REF), dev)
 export BUILD_ID := $(or $(BUILD_ID), 0)
 export API_PORT := $(or $(API_PORT), 3000)
-export QUEUES_PORT := $(or $(QUEUES_PORT), 3001)
+export QUEUE_CONSUMERS_PORT := $(or $(QUEUE_CONSUMERS_PORT), 3001)
 export APP_PORT := $(or $(APP_PORT), 8080)
 # Database
 export POSTGRES_PORT := $(or $(POSTGRES_PORT), 5432)
@@ -160,9 +160,9 @@ camunda-stop:
 	@echo "Stopping Camunda locally..."
 	@docker-compose -f camunda-docker-compose-core.yml down
 
-# Runs queues consumer application
-queues:
+# Runs queue consumer application
+queue-consumers:
 	@echo "+\n++ Make: Queue only"
-	@docker-compose -f docker-compose.yml up queues -d
+	@docker-compose -f docker-compose.yml up -d queue-consumers
 
 

@@ -120,12 +120,13 @@ services:
       - postgres
       - redis
   # - Workers
-  queues:
-    image: queues-${PROJECT_NAME}:${BUILD_REF}-${BUILD_ID}
-    container_name: queues-${PROJECT_NAME}-${BUILD_REF}-${BUILD_ID}
+  # Queue consumers
+  queue-consumers:
+    image: queue-consumers-${PROJECT_NAME}:${BUILD_REF}-${BUILD_ID}
+    container_name: queue-consumers-${PROJECT_NAME}-${BUILD_REF}-${BUILD_ID}
     build:
       context: ./packages/backend
-      dockerfile: ./apps/queues/Dockerfile.dev
+      dockerfile: ./apps/queue-consumers/Dockerfile.dev
     environment:
       - NODE_ENV=docker
       - POSTGRES_HOST=postgres
@@ -144,9 +145,9 @@ services:
       - QUEUE_DASHBOARD_USER=${QUEUE_DASHBOARD_USER}
       - QUEUE_DASHBOARD_PASSWORD=${QUEUE_DASHBOARD_PASSWORD}
     ports:
-      - ${QUEUES_PORT}:${QUEUES_PORT}
+      - ${QUEUE_CONSUMERS_PORT}:${QUEUE_CONSUMERS_PORT}
     volumes:
-      - ./packages/backend/apps/queues/src:/app/src
+      - ./packages/backend/apps/queue-consumers/src:/app/src
     networks:
       - local-network
     restart: always

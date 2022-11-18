@@ -71,13 +71,13 @@
         "tsConfigPath": "libs/utilities/tsconfig.lib.json"
       }
     },
-    "queues": {
+    "queue-consumers": {
       "type": "application",
-      "root": "apps/queues",
+      "root": "apps/queue-consumers",
       "entryFile": "main",
-      "sourceRoot": "apps/queues/src",
+      "sourceRoot": "apps/queue-consumers/src",
       "compilerOptions": {
-        "tsConfigPath": "apps/queues/tsconfig.app.json"
+        "tsConfigPath": "apps/queue-consumers/tsconfig.app.json"
       }
     },
     "queue": {

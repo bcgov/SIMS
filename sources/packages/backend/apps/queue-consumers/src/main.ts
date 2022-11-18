@@ -11,6 +11,9 @@ import * as basicAuth from "express-basic-auth";
 async function bootstrap() {
   const app = await NestFactory.create(QueuesModule);
 
+  //Application port.
+  const port = process.env.QUEUE_CONSUMERS_PORT || 3001;
+
   // Create bull board UI dashboard for queue management.
   const serverAdapter = new ExpressAdapter();
   serverAdapter.setBasePath("/admin/queues");
@@ -36,6 +39,6 @@ async function bootstrap() {
     serverAdapter.getRouter(),
   );
 
-  await app.listen(3001);
+  await app.listen(port);
 }
 bootstrap();
