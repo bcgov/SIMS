@@ -18,7 +18,7 @@
           <v-btn
             v-if="!isReadOnly && !isFirstPage"
             class="ml-2"
-            :disabled="!isLastPage || submittingApplication"
+            :disabled="submittingApplication"
             color="primary"
             @click="wizardSubmit()"
             :loading="submittingApplication"
