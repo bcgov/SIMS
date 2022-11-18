@@ -108,6 +108,11 @@ jobs:
         working-directory: "./devops/"
         run: |
           make oc-deploy-workers
+      # Deploy Queues
+      - name: Deploy Queues
+        working-directory: "./devops/"
+        run: |
+          make oc-deploy-queues
       # Deploy Deploy Web/Frontend
       - name: Deploy Web/Frontend
         working-directory: "./devops/"

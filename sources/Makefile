@@ -18,6 +18,7 @@ export REDIS_PORT := $(or $(REDIS_PORT), 6379)
 export REDIS_PASSWORD := $(or $(REDIS_PASSWORD), redis)
 export REDIS_STANDALONE_MODE := $(or $(REDIS_STANDALONE_MODE), true)
 export QUEUE_DASHBOARD_PASSWORD := $(or $(QUEUE_DASHBOARD_PASSWORD), queueboardpass)
+export QUEUE_DASHBOARD_USER := $(or $(QUEUE_DASHBOARD_USER), queueBoardUser)
 # Key Cloak
 export KEYCLOAK_AUTH_URL := $(or $(KEYCLOAK_AUTH_URL), https://dev.oidc.gov.bc.ca/auth/)
 export KEYCLOAK_REALM := $(or $(KEYCLOAK_REALM), jxoe2o46)
@@ -40,12 +41,13 @@ export INSTITUTION_REQUEST_FOLDER := $(or $(INSTITUTION_REQUEST_FOLDER), Institu
 export SWAGGER_ENABLED := $(or ${SWAGGER_ENABLED}, true)
 export APPLICATION_ARCHIVE_DAYS := $(or ${APPLICATION_ARCHIVE_DAYS}, 43)
 
+
 local:	| print-status local-build-run
 local-api: | print-status local-build api-only
 local-api-detached: | print-status local-build api-detached
 db: | print-status postgres
 local-redis: | print-status redis
-test-api: | print-status local-api-test
+test-api: | print-status local-api-test 
 
 ####################################################################
 ## Status Output
@@ -161,4 +163,6 @@ camunda-stop:
 # Runs queues consumer application
 queues:
 	@echo "+\n++ Make: Queue only"
-	@docker-compose -f docker-compose.yml up queues
+	@docker-compose -f docker-compose.yml up queues -d
+
+

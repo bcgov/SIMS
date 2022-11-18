@@ -52,11 +52,16 @@ objects:
                     secretKeyRef:
                       key: ${REDIS_PASSWORD_KEY}
                       name: ${REDIS_SECRET_NAME}
+                - name: QUEUE_DASHBOARD_USER
+                  valueFrom:
+                    secretKeyRef:
+                      key: ${DASHBOARD_USER_KEY}
+                      name: ${QUEUES_SECRET_NAME}
                 - name: QUEUE_DASHBOARD_PASSWORD
                   valueFrom:
                     secretKeyRef:
                       key: ${DASHBOARD_PASSWORD_KEY}
-                      name: ${REDIS_SECRET_NAME}
+                      name: ${QUEUES_SECRET_NAME}
                 - name: ZEEBE_ADDRESS
                   valueFrom:
                     secretKeyRef:
@@ -152,3 +157,5 @@ parameters:
     value: password
   - name: DASHBOARD_PASSWORD_KEY
     value: queueDashboardPassword
+  - name: DASHBOARD_USER_KEY
+    value: queueDashboardUser

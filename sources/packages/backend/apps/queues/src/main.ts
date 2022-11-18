@@ -23,10 +23,14 @@ async function bootstrap() {
     queues: bullBoardQueues,
     serverAdapter,
   });
+  // Bull board user for basic authentication.
+  const queueDashboardUsers = {};
+  queueDashboardUsers[process.env.QUEUE_DASHBOARD_USER] =
+    process.env.QUEUE_DASHBOARD_PASSWORD;
   app.use(
     "/admin/queues",
     basicAuth({
-      users: { "queue-dashboard-admin": process.env.QUEUE_DASHBOARD_PASSWORD },
+      users: queueDashboardUsers,
       challenge: true,
     }),
     serverAdapter.getRouter(),

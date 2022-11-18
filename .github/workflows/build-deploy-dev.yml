@@ -54,6 +54,10 @@ jobs:
         working-directory: "./devops"
         run: |
           make oc-build-workers
+      - name: Build Queues Image
+        working-directory: "./devops"
+        run: |
+          make oc-build-queues
       - name: Build Web/Frontend Image
         working-directory: "./devops"
         run: |
@@ -122,6 +126,11 @@ jobs:
         working-directory: "./devops/"
         run: |
           make oc-deploy-workers
+      # Deploy Queues
+      - name: Deploy Queues
+        working-directory: "./devops/"
+        run: |
+          make oc-deploy-queues
       # Deploy Deploy Web/Frontend
       - name: Deploy Web/Frontend
         working-directory: "./devops/"
