@@ -23,8 +23,9 @@ function getConnectionFactory():
     host: process.env.REDIS_HOST || "localhost",
     port: +process.env.REDIS_PORT || 6379,
     password: process.env.REDIS_PASSWORD,
+    lazyConnect: true,
   };
-  if (process.env.REDIS_STANDALONE_MODE !== "true") {
+  if (process.env.REDIS_STANDALONE_MODE === "true") {
     return {
       redis: redisConnectionOptions,
       prefix: QUEUE_PREFIX,
