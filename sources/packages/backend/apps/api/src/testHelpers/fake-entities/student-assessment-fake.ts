@@ -5,7 +5,7 @@ import {
   StudentAssessment,
   User,
 } from "@sims/sims-db";
-import { createFakeUser } from "./user-fake";
+import { createFakeUser } from "@sims/test-utils";
 
 export function createFakeStudentAssessment(
   application?: Application,

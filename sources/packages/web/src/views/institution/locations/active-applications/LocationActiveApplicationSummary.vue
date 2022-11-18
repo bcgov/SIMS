@@ -1,7 +1,11 @@
 <template>
   <full-page-container layout-template="centered-tab" :full-width="true">
     <template #header>
-      <header-navigator :title="locationName" subTitle="Report a Change" />
+      <header-navigator
+        :title="locationName"
+        data-cy="reportAChangeHeader"
+        subTitle="Report a Change"
+      />
     </template>
     <template #tab-header>
       <v-tabs v-model="tab" stacked color="primary">
@@ -9,13 +13,17 @@
           :value="ActiveApplicationTab.AvailableToReportTab"
           :ripple="false"
         >
-          <span class="label-bold"> Available to report </span>
+          <span class="label-bold" data-cy="availableToReportTab">
+            Available to report
+          </span>
         </v-tab>
         <v-tab
           :value="ActiveApplicationTab.UnavailableToReportTab"
           :ripple="false"
         >
-          <span class="label-bold"> Unavailable to report </span>
+          <span class="label-bold" data-cy="unavailableToReportTab">
+            Unavailable to report
+          </span>
         </v-tab>
       </v-tabs>
     </template>

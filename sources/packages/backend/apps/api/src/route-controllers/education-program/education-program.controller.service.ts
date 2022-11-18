@@ -21,11 +21,11 @@ import {
 import {
   credentialTypeToDisplay,
   getUserFullName,
-  INSTITUTION_TYPE_BC_PRIVATE,
 } from "../../utilities";
 import { CustomNamedError, getISODateOnlyString } from "@sims/utilities";
 import { FormNames } from "../../services/form/constants";
 import { EDUCATION_PROGRAM_NOT_FOUND } from "../../constants";
+import { INSTITUTION_TYPE_BC_PRIVATE } from "@sims/sims-db/constant";
 
 @Injectable()
 export class EducationProgramControllerService {
