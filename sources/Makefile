@@ -44,7 +44,6 @@ local:	| print-status local-build-run
 local-api: | print-status local-build api-only
 local-api-detached: | print-status local-build api-detached
 db: | print-status postgres
-local-redis: | print-status redis
 test-api: | print-status local-api-test
 
 ####################################################################
@@ -113,22 +112,15 @@ postgres:
 	@echo "+\n++ Make: Run local db.\n+"
 	@docker-compose -f docker-compose.yml up postgres
 
-# Local Queue
-redis:
-	@echo "+\n++ Make: Run local queue.\n+"
-	@docker-compose -f docker-compose.yml up redis
-
 # Local API only
 api-only:
 	@echo "+\n++ Make: Building and running API only"
 	@docker-compose -f docker-compose.yml up -d postgres
-	@docker-compose -f docker-compose.yml up -d redis
 	@docker-compose -f docker-compose.yml up api
 
 api-detached:
 	@echo "+\n++ Make: Running DB and API only"
 	@docker-compose -f docker-compose.yml up -d postgres
-	@docker-compose -f docker-compose.yml up -d redis
 	@docker-compose -f docker-compose.yml up -d api
 
 # Local App
@@ -157,10 +149,3 @@ camunda:
 camunda-stop:
 	@echo "Stopping Camunda locally..."
 	@docker-compose -f camunda-docker-compose-core.yml down
-
-# Runs queues consumer application
-queues:
-	@echo "+\n++ Make: Queue only"
-	@docker-compose -f docker-compose.yml up -d postgres
-	@docker-compose -f docker-compose.yml up -d redis
-	@docker-compose -f docker-compose.yml up queues
