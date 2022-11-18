@@ -54,4 +54,4 @@ RUN set -x \
 
 # This will initialize the application based on
 # some questions to the user (login email, password, etc.)
-ENTRYPOINT [ "npm", "run", "start:dev" ]
+ENTRYPOINT [ "npm", "start" ]
