@@ -7,6 +7,13 @@ import { QUEUE_PREFIX } from "./constants/queue.constant";
  * Creates root connection to redis standalone or redis cluster
  * based on environment variable.
  */
+@Module({
+  imports: [
+    BullModule.forRootAsync({
+      useFactory: getConnectionFactory,
+    }),
+  ],
+})
 export class QueueRootModule {}
 
 function getConnectionFactory():
