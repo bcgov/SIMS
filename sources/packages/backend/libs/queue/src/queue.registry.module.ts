@@ -3,7 +3,7 @@ import { Module } from "@nestjs/common";
 import { getQueueModules } from "./utilities/queue.util";
 
 @Module({
-  imports: [BullModule.registerQueue(...getQueueModules())],
-  exports: [BullModule.registerQueue(...getQueueModules())],
+  imports: [BullModule.registerQueueAsync(...getQueueModules())],
+  exports: [BullModule.registerQueueAsync(...getQueueModules())],
 })
 export class QueueRegistryModule {}
