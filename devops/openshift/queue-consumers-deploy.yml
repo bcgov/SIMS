@@ -58,32 +58,32 @@ objects:
                   valueFrom:
                     secretKeyRef:
                       key: ${DASHBOARD_USER_KEY}
-                      name: ${QUEUES_SECRET_NAME}
+                      name: ${QUEUE_CONSUMERS_SECRET_NAME}
                 - name: QUEUE_DASHBOARD_PASSWORD
                   valueFrom:
                     secretKeyRef:
                       key: ${DASHBOARD_PASSWORD_KEY}
-                      name: ${QUEUES_SECRET_NAME}
+                      name: ${QUEUE_CONSUMERS_SECRET_NAME}
                 - name: ZEEBE_ADDRESS
                   valueFrom:
                     secretKeyRef:
                       key: ${ZEEBE_ADDRESS_KEY}
-                      name: ${QUEUES_SECRET_NAME}
+                      name: ${QUEUE_CONSUMERS_SECRET_NAME}
                 - name: ZEEBE_CLIENT_ID
                   valueFrom:
                     secretKeyRef:
                       key: ${ZEEBE_CLIENT_ID_KEY}
-                      name: ${QUEUES_SECRET_NAME}
+                      name: ${QUEUE_CONSUMERS_SECRET_NAME}
                 - name: ZEEBE_CLIENT_SECRET
                   valueFrom:
                     secretKeyRef:
                       key: ${ZEEBE_CLIENT_SECRET_KEY}
-                      name: ${QUEUES_SECRET_NAME}
+                      name: ${QUEUE_CONSUMERS_SECRET_NAME}
                 - name: ZEEBE_AUTHORIZATION_SERVER_URL
                   valueFrom:
                     secretKeyRef:
                       key: ${ZEEBE_AUTHORIZATION_SERVER_URL_KEY}
-                      name: ${QUEUES_SECRET_NAME}
+                      name: ${QUEUE_CONSUMERS_SECRET_NAME}
                 - name: BYPASS_CRA_INCOME_VERIFICATION
                   value: ${BYPASS_CRA_INCOME_VERIFICATION}
               image: ${IMAGE_REGISTRY}/${BUILD_NAMESPACE}/${IMAGE_STREAM_TAG}
@@ -146,7 +146,7 @@ parameters:
   - name: PROJECT
     value: sims
   - name: SERVICE_NAME
-    value: queues
+    value: queue-consumers
   - name: CPU_LIMIT
     value: "1.0"
   - name: MEMORY_LIMIT
@@ -177,7 +177,7 @@ parameters:
     value: "production"
   - name: BUILD_TAG
     value: "0"
-  - name: QUEUES_SECRET_NAME
+  - name: QUEUE_CONSUMERS_SECRET_NAME
     require: true
   - name: ATBC_LOGIN_ENDPOINT
     require: true
