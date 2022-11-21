@@ -6,7 +6,7 @@ import {
   NotificationMessage,
   NotificationMessageType,
 } from "@sims/sims-db";
-import { DataSource, InsertResult, UpdateResult } from "typeorm";
+import { DataSource, EntityManager, UpdateResult } from "typeorm";
 import { GCNotifyResult } from "./gc-notify.model";
 import { GCNotifyService } from "./gc-notify.service";
 import { SaveNotificationModel } from "./notification.model";
@@ -50,11 +50,15 @@ export class NotificationService extends RecordDataModelService<Notification> {
    * Saves all notifications at once.
    * @param notifications information to create the notification.
    * @param auditUserId id of the user creating the notification.
+   * @param entityManager optional repository that can be provided, for instance,
+   * to include the command as part of an existing transaction. If not provided
+   * the local repository will be used instead.
    * @returns created notification ids.
    */
   async saveNotifications(
     notifications: SaveNotificationModel[],
     auditUserId: number,
+    entityManager: EntityManager,
   ): Promise<number[]> {
     const newNotifications = notifications.map((notification) => ({
       user: { id: notification.userId } as User,
@@ -64,7 +68,8 @@ export class NotificationService extends RecordDataModelService<Notification> {
         id: notification.messageType,
       } as NotificationMessage,
     }));
-    const insertResult = await this.repo.insert(newNotifications);
+    const repository = entityManager?.getRepository(Notification) ?? this.repo;
+    const insertResult = await repository.insert(newNotifications);
     return insertResult.identifiers.map((identifier) => +identifier.id);
   }
 

@@ -1,6 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { NotificationMessageType } from "@sims/sims-db";
 import { getDateOnlyFormat, getPSTPDTDateTime } from "@sims/utilities";
+import { EntityManager } from "typeorm";
 import { NotificationMessageService } from "../notification-message/notification-message.service";
 import {
   StudentRestrictionAddedPersonalization,
@@ -97,10 +98,14 @@ export class GCNotifyActionsService {
    * Creates a new notification when a new restriction is added to the student account.
    * @param notifications notifications information.
    * @param auditUserId user that should be considered the one that is causing the changes.
+   * @param entityManager optional repository that can be provided, for instance,
+   * to include the command as part of an existing transaction. If not provided
+   * the local repository will be used instead.
    */
   async sendStudentRestrictionAddedNotification(
     notifications: StudentRestrictionAddedPersonalization[],
     auditUserId: number,
+    entityManager?: EntityManager,
   ): Promise<void> {
     const templateId = await this.notificationMessageService.getTemplateId(
       NotificationMessageType.StudentRestrictionAdded,
@@ -124,6 +129,7 @@ export class GCNotifyActionsService {
     const notificationsIds = await this.notificationService.saveNotifications(
       notificationsToSend,
       auditUserId,
+      entityManager,
     );
 
     // TODO: Temporary code to be removed once queue/schedulers are in place.
