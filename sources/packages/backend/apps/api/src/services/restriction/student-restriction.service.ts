@@ -28,6 +28,12 @@ export const RESTRICTION_NOT_ACTIVE = "RESTRICTION_NOT_ACTIVE";
 export const RESTRICTION_NOT_PROVINCIAL = "RESTRICTION_NOT_PROVINCIAL";
 
 /**
+ * While performing a possible huge amount of select,
+ * breaks the execution in chunks.
+ */
+const NOTIFICATIONS_SELECT_CHUNK_SIZE = 1000;
+
+/**
  * Service layer for Student Restriction.
  */
 @Injectable()
@@ -443,16 +449,17 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
     restrictionsIds: number[],
     auditUserId: number,
     entityManager?: EntityManager,
-  ) {
-    if (!restrictionsIds?.length) {
-      // No restrictions were provided.
-      return;
-    }
-
+  ): Promise<void> {
     const restrictions = await this.getRestrictionsForNotifications(
       restrictionsIds,
       entityManager,
     );
+
+    if (!restrictions?.length) {
+      // There are no notifications to be sent.
+      return;
+    }
+
     const notifications = restrictions.map((restriction) => ({
       givenNames: restriction.student.user.firstName,
       lastName: restriction.student.user.lastName,
@@ -480,28 +487,38 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
   ): Promise<StudentRestriction[]> {
     const repository =
       entityManager?.getRepository(StudentRestriction) ?? this.repo;
-    return repository.find({
-      select: {
-        id: true,
-        student: {
+    const allRestrictions: StudentRestriction[] = [];
+    while (restrictionIds.length > 0) {
+      // Breaks the execution in chunks to allow the selects of a huge amount of records.
+      // The query will fail over a 65535 parameters. Even not being the expected amount of records,
+      // the code will be able to process this amount under an unusual circumstance.
+      const ids = restrictionIds.splice(0, NOTIFICATIONS_SELECT_CHUNK_SIZE);
+      const restrictions = await repository.find({
+        select: {
           id: true,
-          user: {
+          student: {
             id: true,
-            firstName: true,
-            lastName: true,
-            email: true,
+            user: {
+              id: true,
+              firstName: true,
+              lastName: true,
+              email: true,
+            },
           },
         },
-      },
-      relations: {
-        student: { user: true },
-      },
-      where: {
-        id: In(restrictionIds),
-        restriction: {
-          actionType: Not(ArrayContains([RestrictionActionType.NoEffect])),
+        relations: {
+          student: { user: true },
         },
-      },
-    });
+        where: {
+          id: In(ids),
+          restriction: {
+            actionType: Not(ArrayContains([RestrictionActionType.NoEffect])),
+          },
+        },
+      });
+      restrictions.push(...restrictions);
+    }
+
+    return allRestrictions;
   }
 }

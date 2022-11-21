@@ -6,10 +6,16 @@ import {
   NotificationMessage,
   NotificationMessageType,
 } from "@sims/sims-db";
-import { DataSource, EntityManager, UpdateResult } from "typeorm";
+import { DataSource, EntityManager, InsertResult, UpdateResult } from "typeorm";
 import { GCNotifyResult } from "./gc-notify.model";
 import { GCNotifyService } from "./gc-notify.service";
 import { SaveNotificationModel } from "./notification.model";
+
+/**
+ * While performing a possible huge amount of inserts,
+ * breaks the execution in chunks.
+ */
+const NOTIFICATIONS_INSERT_CHUNK_SIZE = 1000;
 
 @Injectable()
 export class NotificationService extends RecordDataModelService<Notification> {
@@ -69,8 +75,23 @@ export class NotificationService extends RecordDataModelService<Notification> {
       } as NotificationMessage,
     }));
     const repository = entityManager?.getRepository(Notification) ?? this.repo;
-    const insertResult = await repository.insert(newNotifications);
-    return insertResult.identifiers.map((identifier) => +identifier.id);
+    // Breaks the execution in chunks to allow the inserts of a huge amount of records.
+    // During the tests the execution started to failed at 20,000 records. Even not being
+    // the expected amount of records, the code will be able to process this amount under
+    // an unusual circumstance. The TypeOrm "save" method has the chunk size as an option
+    // but the TypeOrm "insert" performance is way better due to the simplicity of the operation.
+    const insertResults: InsertResult[] = [];
+    while (newNotifications.length) {
+      const insertChunk = newNotifications.splice(
+        0,
+        NOTIFICATIONS_INSERT_CHUNK_SIZE,
+      );
+      const insertResult = await repository.insert(insertChunk);
+      insertResults.push(insertResult);
+    }
+    return insertResults
+      .flatMap((insertResult) => insertResult.identifiers)
+      .map((identifier) => +identifier.id);
   }
 
   /**
