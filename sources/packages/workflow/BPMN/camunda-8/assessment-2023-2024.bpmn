@@ -1147,6 +1147,7 @@ or (calculatedDataPartnerFedralProvincialPDReceiptCost &gt; 0)</bpmn:conditionEx
         <zeebe:ioMapping>
           <zeebe:output source="=if calculatedDataTotalEligibleParent1Dependants &#62; calculatedDataTotalEligibleParent2Dependants &#10;then calculatedDataTotalEligibleParent1Dependants&#10;else calculatedDataTotalEligibleParent2Dependants" target="calculatedDataTotalParentEligibleDependants" />
           <zeebe:output source="=if calculatedDataTotalEligibleParent1ContributionDependants &#62; calculatedDataTotalEligibleParent2ContributionDependants &#10;then calculatedDataTotalEligibleParent1ContributionDependants&#10;else calculatedDataTotalEligibleParent2ContributionDependants" target="calculatedDataTotalParentEligibleContributionDependants" />
+          <zeebe:output source="=0" target="calculatedDataTotalEligibleDependants" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1qjiacd</bpmn:incoming>
@@ -1155,7 +1156,7 @@ or (calculatedDataPartnerFedralProvincialPDReceiptCost &gt; 0)</bpmn:conditionEx
     <bpmn:intermediateThrowEvent id="Event_1xkbsov" name="calculatedDataTotalEligibleParent2Dependants">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
-          <zeebe:output source="=if parent1DependentTable = null then 0 else&#10;  count(&#10;parent2DependentTable[&#10;// 0-18 years of age: eligible.&#10;date(item.dateOfBirth) &#62;= (today() - duration(&#34;P18Y&#34;))&#10;// 19-22 years of age: post-sec must be Yes or Tax is Yes.&#10;or (&#10;  date(item.dateOfBirth) &#60; (today() - duration(&#34;P18Y&#34;))&#10;  and date(item.dateOfBirth) &#62;= (today() - duration(&#34;P22Y&#34;))&#10;  and (item.attendingPostSecondarySchool = &#34;yes&#34; or item.declaredOnTaxes = &#34;yes&#34;)&#10;)&#10;// &#62; 22 years: eligible if Tax is Yes.&#10;or (&#10;  date(item.dateOfBirth) &#60; (today() - duration(&#34;P22Y&#34;))&#10;  and item.declaredOnTaxes = &#34;yes&#34;&#10;)&#10;]&#10;  )" target="calculatedDataTotalEligibleParent2Dependants" />
+          <zeebe:output source="=if parent2DependentTable = null then 0 else&#10;  count(&#10;parent2DependentTable[&#10;// 0-18 years of age: eligible.&#10;date(item.dateOfBirth) &#62;= (today() - duration(&#34;P18Y&#34;))&#10;// 19-22 years of age: post-sec must be Yes or Tax is Yes.&#10;or (&#10;  date(item.dateOfBirth) &#60; (today() - duration(&#34;P18Y&#34;))&#10;  and date(item.dateOfBirth) &#62;= (today() - duration(&#34;P22Y&#34;))&#10;  and (item.attendingPostSecondarySchool = &#34;yes&#34; or item.declaredOnTaxes = &#34;yes&#34;)&#10;)&#10;// &#62; 22 years: eligible if Tax is Yes.&#10;or (&#10;  date(item.dateOfBirth) &#60; (today() - duration(&#34;P22Y&#34;))&#10;  and item.declaredOnTaxes = &#34;yes&#34;&#10;)&#10;]&#10;  )" target="calculatedDataTotalEligibleParent2Dependants" />
           <zeebe:output source="=// 19-22 years of age: post-sec must be Yes&#10;if parent2DependentTable = null then 0 else&#10;  count(&#10;parent2DependentTable[&#10;  date(item.dateOfBirth) &#60; (today() - duration(&#34;P18Y&#34;))&#10;  and date(item.dateOfBirth) &#62;= (today() - duration(&#34;P22Y&#34;))&#10;  and item.attendingPostSecondarySchool = &#34;yes&#34;&#10;]&#10;  )" target="calculatedDataTotalEligibleParent2ContributionDependants" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
@@ -1177,6 +1178,7 @@ or (calculatedDataPartnerFedralProvincialPDReceiptCost &gt; 0)</bpmn:conditionEx
         <zeebe:ioMapping>
           <zeebe:output source="=if studentDataParentDependentTable = null then 0 else&#10;  count(&#10;studentDataParentDependentTable[&#10;// 0-18 years of age: eligible.&#10;date(item.dateOfBirth) &#62;= (today() - duration(&#34;P18Y&#34;))&#10;// 19-22 years of age: post-sec must be Yes or Tax is Yes.&#10;or (&#10;  date(item.dateOfBirth) &#60; (today() - duration(&#34;P18Y&#34;))&#10;  and date(item.dateOfBirth) &#62;= (today() - duration(&#34;P22Y&#34;))&#10;  and (item.attendingPostSecondarySchool = &#34;yes&#34; or item.declaredOnTaxes = &#34;yes&#34;)&#10;)&#10;// &#62; 22 years: eligible if Tax is Yes.&#10;or (&#10;  date(item.dateOfBirth) &#60; (today() - duration(&#34;P22Y&#34;))&#10;  and item.declaredOnTaxes = &#34;yes&#34;&#10;)&#10;]&#10;  )" target="calculatedDataTotalParentEligibleDependants" />
           <zeebe:output source="=// 19-22 years of age: post-sec must be Yes&#10;if studentDataParentDependentTable = null then 0 else&#10;  count(&#10;studentDataParentDependentTable[&#10;  date(item.dateOfBirth) &#60; (today() - duration(&#34;P18Y&#34;))&#10;  and date(item.dateOfBirth) &#62;= (today() - duration(&#34;P22Y&#34;))&#10;  and item.attendingPostSecondarySchool = &#34;yes&#34;&#10;]&#10;  )" target="calculatedDataTotalParentEligibleContributionDependants" />
+          <zeebe:output source="=0" target="calculatedDataTotalEligibleDependants" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_0riboyg</bpmn:incoming>
@@ -1185,8 +1187,8 @@ or (calculatedDataPartnerFedralProvincialPDReceiptCost &gt; 0)</bpmn:conditionEx
     <bpmn:intermediateThrowEvent id="Event_0l38vd4" name="calculatedDataTotalParentNetIncome">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
-          <zeebe:output source="=calculatedDatapartner1TotalIncome - parent1Tax - min(2898,(parent1CppEmployment + parent1CppSelfemploymentOther)) - min(856,parent1Ei)" target="calculatedDataParent1NetIncome" />
-          <zeebe:output source="=calculatedDatapartner2TotalIncome - parent2Tax - min(2898,(parent2CppEmployment + parent2CppSelfemploymentOther)) - min(856,parent2Ei)" target="calculatedDataParent2NetIncome" />
+          <zeebe:output source="=calculatedDataparent1TotalIncome - parent1Tax - min(2898,(parent1CppEmployment + parent1CppSelfemploymentOther)) - min(856,parent1Ei)" target="calculatedDataParent1NetIncome" />
+          <zeebe:output source="=calculatedDataparent2TotalIncome - parent2Tax - min(2898,(parent2CppEmployment + parent2CppSelfemploymentOther)) - min(856,parent2Ei)" target="calculatedDataParent2NetIncome" />
           <zeebe:output source="=sum([&#10;  calculatedDataParent1NetIncome,&#10;  calculatedDataParent2NetIncome&#10;  ][item != null])" target="calculatedDataTotalParentNetIncome" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
@@ -1221,6 +1223,7 @@ or (calculatedDataPartnerFedralProvincialPDReceiptCost &gt; 0)</bpmn:conditionEx
         <zeebe:ioMapping>
           <zeebe:output source="=if parent1DependentTable = null then 0 else&#10;  count(&#10;parent1DependentTable[&#10;// 0-18 years of age: eligible.&#10;date(item.dateOfBirth) &#62;= (today() - duration(&#34;P18Y&#34;))&#10;// 19-22 years of age: post-sec must be Yes or Tax is Yes.&#10;or (&#10;  date(item.dateOfBirth) &#60; (today() - duration(&#34;P18Y&#34;))&#10;  and date(item.dateOfBirth) &#62;= (today() - duration(&#34;P22Y&#34;))&#10;  and (item.attendingPostSecondarySchool = &#34;yes&#34; or item.declaredOnTaxes = &#34;yes&#34;)&#10;)&#10;// &#62; 22 years: eligible if Tax is Yes.&#10;or (&#10;  date(item.dateOfBirth) &#60; (today() - duration(&#34;P22Y&#34;))&#10;  and item.declaredOnTaxes = &#34;yes&#34;&#10;)&#10;]&#10;  )" target="calculatedDataTotalParentEligibleDependants" />
           <zeebe:output source="=// 19-22 years of age: post-sec must be Yes&#10;if parent1DependentTable = null then 0 else&#10;  count(&#10;parent1DependentTable[&#10;  date(item.dateOfBirth) &#60; (today() - duration(&#34;P18Y&#34;))&#10;  and date(item.dateOfBirth) &#62;= (today() - duration(&#34;P22Y&#34;))&#10;  and item.attendingPostSecondarySchool = &#34;yes&#34;&#10;]&#10;  )" target="calculatedDataTotalParentEligibleContributionDependants" />
+          <zeebe:output source="=0" target="calculatedDataTotalEligibleDependants" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1li9w29</bpmn:incoming>
@@ -1229,8 +1232,8 @@ or (calculatedDataPartnerFedralProvincialPDReceiptCost &gt; 0)</bpmn:conditionEx
     <bpmn:intermediateThrowEvent id="Event_19k9jpj" name="calculatedDataTotalParentNetIncome">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
-          <zeebe:output source="=calculatedDatapartner1TotalIncome - parent1Tax - min(2898,(parent1CppEmployment + parent1CppSelfemploymentOther)) - min(856,parent1Ei)" target="calculatedDataParent1NetIncome" />
-          <zeebe:output source="=calculatedDatapartner2TotalIncome - parent2Tax - min(2898,(parent2CppEmployment + parent2CppSelfemploymentOther)) - min(856,parent2Ei)" target="calculatedDataParent2NetIncome" />
+          <zeebe:output source="=calculatedDataparent1TotalIncome - parent1Tax - min(2898,(parent1CppEmployment + parent1CppSelfemploymentOther)) - min(856,parent1Ei)" target="calculatedDataParent1NetIncome" />
+          <zeebe:output source="=calculatedDataparent2TotalIncome - parent2Tax - min(2898,(parent2CppEmployment + parent2CppSelfemploymentOther)) - min(856,parent2Ei)" target="calculatedDataParent2NetIncome" />
           <zeebe:output source="=sum([&#10;  calculatedDataParent1NetIncome,&#10;  calculatedDataParent2NetIncome&#10;  ][item != null])" target="calculatedDataTotalParentNetIncome" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
@@ -1275,10 +1278,10 @@ or (calculatedDataPartnerFedralProvincialPDReceiptCost &gt; 0)</bpmn:conditionEx
     <bpmn:sequenceFlow id="Flow_1cl7iq9" sourceRef="Event_123oime" targetRef="Event_1k4n9fq" />
     <bpmn:sequenceFlow id="Flow_0mhxp8e" sourceRef="Event_0s8ztj5" targetRef="Event_0bdny14" />
     <bpmn:sequenceFlow id="Flow_08mnfio" name="yes" sourceRef="Gateway_0zmvhsj" targetRef="Event_00c1iyh">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=isYourSpouseACanadianCitizen = "yes"</bpmn:conditionExpression>
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=studentDataIsYourSpouseACanadianCitizen = "yes"</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="Flow_1fbmivh" name="no" sourceRef="Gateway_0zmvhsj" targetRef="Event_02st413">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=isYourSpouseACanadianCitizen = "no"</bpmn:conditionExpression>
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=studentDataIsYourSpouseACanadianCitizen = "no"</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="Flow_0y2zl5a" name="yes" sourceRef="Gateway_13qzd4v" targetRef="Gateway_1hun062">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=studentDataParentValidSinNumber = "yes"</bpmn:conditionExpression>
@@ -1332,7 +1335,7 @@ or (calculatedDataPartnerFedralProvincialPDReceiptCost &gt; 0)</bpmn:conditionEx
           <zeebe:output source="=if&#10;  partner1CRAReportedIncome = null&#10;then&#10;  partner1TotalIncome&#10;else&#10;  partner1CRAReportedIncome" target="calculatedDatapartner1TotalIncome" />
           <zeebe:output source="=if&#10;  studentDataCRAReportedIncome = null&#10;then&#10;  studentDataTaxReturnIncome&#10;else&#10;  studentDataCRAReportedIncome" target="calculatedDataStudentTotalIncome" />
           <zeebe:output source="=if&#10;  parent2CRAReportedIncome = null&#10;then&#10;  parent2TotalIncome&#10;else&#10;  parent2CRAReportedIncome" target="calculatedDataparent2TotalIncome" />
-          <zeebe:output source="=if&#10;  parent1CRAReportedIncome = null&#10;then&#10;  parent1TotalIncome&#10;else&#10;  parent1CRAReportedIncome" target="calculatedDataparent1TotalIncome" />
+          <zeebe:output source="=if&#10;  parent1CRAReportedIncome = null&#10;then &#10;  parent1TotalIncome&#10;else&#10;  parent1CRAReportedIncome" target="calculatedDataparent1TotalIncome" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_0j0eoj2</bpmn:incoming>
@@ -1350,6 +1353,7 @@ or (calculatedDataPartnerFedralProvincialPDReceiptCost &gt; 0)</bpmn:conditionEx
           <zeebe:output source="=if studentDataGovernmentFundingCosts = null&#10;then 0&#10;else&#10;  studentDataGovernmentFundingCosts" target="studentDataGovernmentFundingCosts" />
           <zeebe:output source="=if studentDataNongovernmentFundingCosts = null&#10;then 0&#10;else&#10;  studentDataNongovernmentFundingCosts" target="studentDataNongovernmentFundingCosts" />
           <zeebe:output source="=if studentDataParentVoluntaryContributionsCosts = null&#10;then 0&#10;else&#10;  studentDataParentVoluntaryContributionsCosts" target="studentDataParentVoluntaryContributionsCosts" />
+          <zeebe:output source="=if studentPDStatus = null&#10;then false&#10;else&#10;  studentPDStatus" target="studentPDStatus" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1tcyqyg</bpmn:incoming>
@@ -1443,7 +1447,7 @@ or (calculatedDataPartnerFedralProvincialPDReceiptCost &gt; 0)</bpmn:conditionEx
     <bpmn:intermediateThrowEvent id="Event_1bl5l5x" name="calculatedDataPartnerFedralProvincialPDReceiptCost">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
-          <zeebe:output source="=partner1PermanentDisabilityBenefits" target="calculatedDataPartnerFedralProvincialPDReceiptCost" />
+          <zeebe:output source="=if partner1PermanentDisabilityBenefits = null then 0 else partner1PermanentDisabilityBenefits" target="calculatedDataPartnerFedralProvincialPDReceiptCost" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_0wb0sz0</bpmn:incoming>
@@ -1452,7 +1456,7 @@ or (calculatedDataPartnerFedralProvincialPDReceiptCost &gt; 0)</bpmn:conditionEx
     <bpmn:intermediateThrowEvent id="Event_1tx3et1" name="calculatedDataPartnerFedralProvincialPDReceiptCost">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
-          <zeebe:output source="=studentDataPartnerFedralProvincialPDReceiptCost" target="calculatedDataPartnerFedralProvincialPDReceiptCost" />
+          <zeebe:output source="=if studentDataPartnerFedralProvincialPDReceiptCost = null then 0 else studentDataPartnerFedralProvincialPDReceiptCost" target="calculatedDataPartnerFedralProvincialPDReceiptCost" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1x3k5dl</bpmn:incoming>
@@ -2699,7 +2703,7 @@ DMNX (comes from DMN)</bpmn:text>
       <bpmndi:BPMNShape id="Event_1duborc_di" bpmnElement="Event_1duborc">
         <dc:Bounds x="2242" y="412" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="2219" y="455.5" width="82" height="27" />
+          <dc:Bounds x="2219" y="456" width="82" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_14zsww4" bpmnElement="Event_105ptqe">
@@ -3831,7 +3835,7 @@ DMNX (comes from DMN)</bpmn:text>
       <bpmndi:BPMNEdge id="Flow_0ri2jnh_di" bpmnElement="Flow_0ri2jnh">
         <di:waypoint x="7720" y="1165" />
         <di:waypoint x="7720" y="1700" />
-        <di:waypoint x="7792" y="1700" />
+        <di:waypoint x="7790" y="1700" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_157t178_di" bpmnElement="Flow_157t178">
         <di:waypoint x="7720" y="1165" />

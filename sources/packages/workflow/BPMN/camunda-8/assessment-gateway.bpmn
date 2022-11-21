@@ -379,7 +379,7 @@
           <zeebe:output source="=null" target="applicationExceptionStatus" />
           <zeebe:output source="=null" target="studentDataSelectedOffering" />
           <zeebe:output source="=null" target="studentDataDependantstatus" />
-          <zeebe:output source="=null" target="studentDataDoYourParentSStepParentSponsorLegalGuardianHaveAValidSinNumber" />
+          <zeebe:output source="=null" target="studentDataParentValidSinNumber" />
           <zeebe:output source="=null" target="studentDataNumberOfParents" />
           <zeebe:output source="=null" target="studentDataRelationshipStatus" />
           <zeebe:output source="=null" target="studentDataIsYourSpouseACanadianCitizen" />
@@ -425,10 +425,10 @@
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=studentDataDependantstatus != "dependant"</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="parents-verification-has-sin-gateway-yes-flow" name="Parents have SIN" sourceRef="parents-verification-has-sin-gateway" targetRef="create-supporting-users-for-parents-task">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=studentDataDoYourParentSStepParentSponsorLegalGuardianHaveAValidSinNumber = "yes"</bpmn:conditionExpression>
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=studentDataParentValidSinNumber = "yes"</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="parents-verification-has-sin-gateway-no-flow" name="Parents do not have SIN" sourceRef="parents-verification-has-sin-gateway" targetRef="Gateway_0ny5tkb">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=studentDataDoYourParentSStepParentSponsorLegalGuardianHaveAValidSinNumber != "yes"</bpmn:conditionExpression>
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=studentDataParentValidSinNumber != "yes"</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="parents-verification-dependantstatus-dependant-flow" name="Dependant" sourceRef="parents-verification-has-dependant-gateway" targetRef="parents-verification-has-sin-gateway">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=studentDataDependantstatus = "dependant"</bpmn:conditionExpression>
