@@ -4,6 +4,7 @@
       <header-navigator
         :title="locationName"
         subTitle="Confirmation Of Enrolment"
+        data-cy="confirmationOfEnrolmentHeader"
       />
     </template>
     <template #tab-header>
@@ -11,14 +12,18 @@
         <v-tab :value="COETab.ConfirmEnrollmentTab" :ripple="false">
           <div>
             <v-icon start icon="fa:far fa-check-square"></v-icon>
-            <span class="label-bold"> Confirm enrolment </span>
+            <span class="label-bold" data-cy="confirmEnrolmentTab">
+              Confirm enrolment
+            </span>
           </div>
         </v-tab>
 
         <v-tab :value="COETab.UpcomingEnrollmentTab" :ripple="false">
           <div>
             <v-icon start icon="fa:far fa-folder-open" class="px-1"></v-icon>
-            <span class="label-bold"> Upcoming enrolment </span>
+            <span class="label-bold" data-cy="upcomingEnrolmentTab">
+              Upcoming enrolment
+            </span>
           </div>
         </v-tab>
       </v-tabs></template

@@ -11,6 +11,7 @@
           v-if="isAuthenticated"
           class="nav-item-label"
           variant="text"
+          data-cy="institutionHome"
           :to="{
             name: InstitutionRoutesConst.INSTITUTION_DASHBOARD,
           }"
@@ -20,6 +21,7 @@
           class="nav-item-label"
           v-if="isAuthenticated && isAdmin"
           variant="text"
+          data-cy="manageInstitutions"
           :to="{
             name: InstitutionRoutesConst.INSTITUTION_PROFILE_EDIT,
           }"
@@ -30,6 +32,7 @@
           class="nav-item-label"
           v-if="isAuthenticated"
           variant="text"
+          data-cy="myProfile"
           :to="{
             name: InstitutionRoutesConst.INSTITUTION_USER_PROFILE,
           }"
@@ -46,6 +49,7 @@
               color="secondary"
               v-bind="props"
               aria-label="settings"
+              data-cy="settings"
             ></v-btn>
           </template>
           <v-list
@@ -57,7 +61,9 @@
             <template v-for="(item, index) in menuItems" :key="index">
               <v-list-item :value="index" @click="item.command">
                 <v-list-item-title>
-                  <span class="label-bold">{{ item.label }}</span>
+                  <span class="label-bold" data-cy="settingsButton">{{
+                    item.label
+                  }}</span>
                 </v-list-item-title>
               </v-list-item>
             </template>

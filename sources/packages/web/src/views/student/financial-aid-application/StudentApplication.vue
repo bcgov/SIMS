@@ -1,5 +1,5 @@
 <template>
-  <student-page-container :layout-template="LayoutTemplates.Centered">
+  <student-page-container>
     <template #header>
       <header-navigator
         title="Applications"

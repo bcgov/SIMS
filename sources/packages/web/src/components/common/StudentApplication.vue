@@ -8,27 +8,18 @@
     @submitted="submitted"
     @customEvent="customEvent"
   ></formio>
-  <v-row v-if="showNav">
-    <v-col>
-      <v-btn
-        color="primary"
-        v-show="!isFirstPage"
-        variant="outlined"
-        data-cy="previousSection"
-        @click="wizardGoPrevious"
-        >Previous section</v-btn
-      >
-    </v-col>
-    <v-col>
-      <v-btn
-        class="float-right"
-        color="primary"
-        v-show="!isLastPage"
-        @click="wizardGoNext"
-        >Next section</v-btn
-      >
-    </v-col>
-  </v-row>
+  <footer-buttons
+    justify="space-between"
+    :processing="processing"
+    @primaryClick="wizardGoNext"
+    @secondaryClick="wizardGoPrevious"
+    :showPrimaryButton="!isLastPage"
+    :showSecondaryButton="!isFirstPage"
+    :primaryLabel="!isFirstPage ? 'Next section' : 'Start your application'"
+    secondaryLabel="Previous section"
+    class="mx-0"
+  >
+  </footer-buttons>
 </template>
 
 <script lang="ts">
@@ -67,6 +58,10 @@ export default {
     programYearId: {
       type: Number,
       required: true,
+    },
+    processing: {
+      type: Boolean,
+      required: false,
     },
   },
   setup(props: any, context: SetupContext) {

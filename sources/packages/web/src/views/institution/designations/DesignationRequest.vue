@@ -5,6 +5,7 @@
         title="Manage designations"
         :routeLocation="goBackRouteParams"
         subTitle="Request Designation"
+        data-cy="manageDesignationHeader"
       />
     </template>
     <designation-agreement-form

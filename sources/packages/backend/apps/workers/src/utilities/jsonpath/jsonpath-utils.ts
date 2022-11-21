@@ -121,7 +121,11 @@ export function filterObjectProperties(
   const resultObject = {} as Record<string, unknown>;
   Object.keys(filter).forEach((filterKey: string) => {
     if (object) {
-      resultObject[filterKey] = getJsonPathNodeValue(object, filter[filterKey]);
+      // If the value returned by getJsonPathNodeValue is undefined null will be used as fallback.
+      // This method is mostly used to return values to the Workflow and if the property
+      // is set as undefined it will prevent the variable from being created on Camunda.
+      resultObject[filterKey] =
+        getJsonPathNodeValue(object, filter[filterKey]) ?? null;
     } else {
       resultObject[filterKey] = null;
     }
