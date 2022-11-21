@@ -81,8 +81,8 @@ export enum NotificationMessageType {
   /**
    * A new restriction was added to the student account.
    * Possible scenarios:
-   * 1. Ministry places restriction on student account;
-   * 2. System-generated restrictions on student account;
+   * 1. Ministry places restriction on student account.
+   * 2. System-generated restrictions on student account.
    * 3. Federal restriction placed on student account.
    */
   StudentRestrictionAdded = 3,

@@ -487,12 +487,15 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
   ): Promise<StudentRestriction[]> {
     const repository =
       entityManager?.getRepository(StudentRestriction) ?? this.repo;
+    // Copy the input array to avoid changing the one received by parameter.
+    const idsToProcess = [...restrictionIds];
+    // Restrictions to be returned and must have a notification created.
     const allRestrictions: StudentRestriction[] = [];
-    while (restrictionIds.length > 0) {
+    while (idsToProcess.length > 0) {
       // Breaks the execution in chunks to allow the selects of a huge amount of records.
       // The query will fail over a 65535 parameters. Even not being the expected amount of records,
       // the code will be able to process this amount under an unusual circumstance.
-      const ids = restrictionIds.splice(0, NOTIFICATIONS_SELECT_CHUNK_SIZE);
+      const ids = idsToProcess.splice(0, NOTIFICATIONS_SELECT_CHUNK_SIZE);
       const restrictions = await repository.find({
         select: {
           id: true,

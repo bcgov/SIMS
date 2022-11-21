@@ -55,8 +55,8 @@ export class FederalRestrictionService extends DataModelService<FederalRestricti
   /**
    * Once the table with all federal restriction is fully imported, these
    * process executes the sequence of bulk operations to:
-   * 1. Create new active restrictions;
-   * 2. Deactivate restrictions that are no longer present in the federal data;
+   * 1. Create new active restrictions.
+   * 2. Deactivate restrictions that are no longer present in the federal data.
    * 3. Update the updated_at date for the active restrictions that are still
    * present in the federal data.
    * 4. Update modified date for the active restrictions. The time between creation

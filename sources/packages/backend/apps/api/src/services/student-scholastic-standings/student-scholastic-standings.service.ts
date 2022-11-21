@@ -245,7 +245,7 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
       // Left as the last step to ensure that everything else was processed with
       // success and the notification will not be generated otherwise.
       if (createdRestriction) {
-        this.studentRestrictionService.createNotifications(
+        await this.studentRestrictionService.createNotifications(
           [createdRestriction.id],
           auditUserId,
           transactionalEntityManager,
