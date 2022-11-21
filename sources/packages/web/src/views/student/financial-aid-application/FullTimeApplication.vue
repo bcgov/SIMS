@@ -1,15 +1,11 @@
 <template>
-  <student-page-container :full-width="true">
+  <student-page-container>
     <template #header>
       <header-navigator
         title="Applications"
         subTitle="Financial Aid Application"
       >
-      </header-navigator>
-    </template>
-    <body-header>
-      <template #actions>
-        <v-row class="m-0 p-0 float-right">
+        <template #buttons>
           <v-btn
             color="primary"
             v-if="!notDraft && !isFirstPage && !submittingApplication"
@@ -22,16 +18,16 @@
           <v-btn
             v-if="!isReadOnly && !isFirstPage"
             class="ml-2"
-            :disabled="!isLastPage || submittingApplication"
+            :disabled="submittingApplication"
             color="primary"
             @click="wizardSubmit()"
             :loading="submittingApplication"
           >
             {{ submittingApplication ? "Submitting..." : "Submit application" }}
           </v-btn>
-        </v-row>
-      </template>
-    </body-header>
+        </template>
+      </header-navigator>
+    </template>
     <StudentApplication
       :selectedForm="selectedForm"
       :initialData="initialData"
