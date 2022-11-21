@@ -442,7 +442,7 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
    * @param restrictionsIds ids to generate the notifications.
    * @param auditUserId user that should be considered the one that is causing the changes.
    * @param entityManager optional repository that can be provided, for instance,
-   * to include the command as part of an existing transaction. If not provided
+   * to execute the command as part of an existing transaction. If not provided
    * the local repository will be used instead.
    */
   async createNotifications(
@@ -477,7 +477,7 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
    * eligible to generate a notification (actionType not defined as NoEffect).
    * @param restrictionIds student restriction ids.
    * @param entityManager optional repository that can be provided, for instance,
-   * to include the command as part of an existing transaction. If not provided
+   * to execute the command as part of an existing transaction. If not provided
    * the local repository will be used instead.
    * @returns student restrictions eligible to generate a notification.
    */

@@ -53,11 +53,11 @@ export class NotificationService extends RecordDataModelService<Notification> {
   }
 
   /**
-   * Saves all notifications at once.
-   * @param notifications information to create the notification.
-   * @param auditUserId id of the user creating the notification.
+   * Saves all notifications.
+   * @param notifications information to create the notifications.
+   * @param auditUserId id of the user creating the notifications.
    * @param entityManager optional repository that can be provided, for instance,
-   * to include the command as part of an existing transaction. If not provided
+   * to execute the command as part of an existing transaction. If not provided
    * the local repository will be used instead.
    * @returns created notification ids.
    */

@@ -3,6 +3,8 @@
  * that are not present and active in the table. The same federal restriction
  * can be activated and deactivated multiple times for the same student,
  * generating a new record for every time that the restriction changes its state.
+ * The returned IDs in this query is used to generate notifications for the new
+ * restrictions added to the student account.
  */
 INSERT INTO
     sims.student_restrictions(student_id, restriction_id, is_active)

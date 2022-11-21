@@ -99,7 +99,7 @@ export class GCNotifyActionsService {
    * @param notifications notifications information.
    * @param auditUserId user that should be considered the one that is causing the changes.
    * @param entityManager optional repository that can be provided, for instance,
-   * to include the command as part of an existing transaction. If not provided
+   * to execute the command as part of an existing transaction. If not provided
    * the local repository will be used instead.
    */
   async sendStudentRestrictionAddedNotification(
