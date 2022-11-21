@@ -10,17 +10,15 @@ const CLEAN_DB = "task=clean-db";
 const FILTER_CLASSES = "filter=";
 // QA DB name. for safe DB clean.
 const QA_DB_NAME = "QASIMSDB";
-// Config instance.
-const configService = new ConfigService();
 
 async function bootstrap() {
   const app = await NestFactory.create(TestDbSeedingModule);
+  // Config instance.
+  const configService = app.get(ConfigService);
   // Checking for CLEAN_DB parameter.
   if (process.argv.includes(CLEAN_DB)) {
     // Clean db.
-    if (
-      configService.testDatabaseSeeding.qaDatabaseName?.includes(QA_DB_NAME)
-    ) {
+    if (configService.databaseConfig.databaseName?.includes(QA_DB_NAME)) {
       await app.get(CleanDatabase).cleanDatabase();
       console.info("Database cleaned.");
     }

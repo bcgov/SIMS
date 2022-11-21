@@ -11,7 +11,7 @@ import {
   InstitutionIntegrationConfig,
   SFASIntegrationConfig,
   SFTPConfig,
-  TestDatabaseSeedingConfig,
+  DatabaseConfiguration,
 } from "./config.models";
 
 @Injectable()
@@ -185,11 +185,11 @@ export class ConfigService {
   }
 
   /**
-   * Database seeding for testing configuration.
+   * Database configuration.
    */
-  get testDatabaseSeeding(): TestDatabaseSeedingConfig {
-    return this.getCachedConfig("testDatabaseSeedingConfig", {
-      qaDatabaseName: process.env.POSTGRES_DB,
+  get databaseConfig(): DatabaseConfiguration {
+    return this.getCachedConfig("databaseConfiguration", {
+      databaseName: process.env.POSTGRES_DB,
     });
   }
 
