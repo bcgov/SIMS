@@ -3,19 +3,24 @@ import { NestFactory } from "@nestjs/core";
 import { CleanDatabase } from "./clean-db/clean-db";
 import { TestDbSeedingModule } from "./test-db-seeding.module";
 import { SeedExecutor } from "./seed-executors/seed-executor";
+import { ConfigService } from "@sims/utilities/config";
 // Clean db command line identifier.
 const CLEAN_DB = "task=clean-db";
 // Filter classes to be seeded command line identifier.
 const FILTER_CLASSES = "filter=";
 // QA DB name. for safe DB clean.
 const QA_DB_NAME = "QASIMSDB";
+// Config instance.
+const configService = new ConfigService();
 
 async function bootstrap() {
   const app = await NestFactory.create(TestDbSeedingModule);
   // Checking for CLEAN_DB parameter.
   if (process.argv.includes(CLEAN_DB)) {
     // Clean db.
-    if (process.env.POSTGRES_DB?.includes(QA_DB_NAME)) {
+    if (
+      configService.testDatabaseSeeding.qaDatabaseName?.includes(QA_DB_NAME)
+    ) {
       await app.get(CleanDatabase).cleanDatabase();
       console.info("Database cleaned.");
     }

@@ -11,6 +11,7 @@ import {
   InstitutionIntegrationConfig,
   SFASIntegrationConfig,
   SFTPConfig,
+  TestDatabaseSeedingConfig,
 } from "./config.models";
 
 @Injectable()
@@ -180,6 +181,15 @@ export class ConfigService {
   get institutionIntegration(): InstitutionIntegrationConfig {
     return this.getCachedConfig("institutionIntegrationConfig", {
       ftpRequestFolder: process.env.INSTITUTION_REQUEST_FOLDER,
+    });
+  }
+
+  /**
+   * Database seeding for testing configuration.
+   */
+  get testDatabaseSeeding(): TestDatabaseSeedingConfig {
+    return this.getCachedConfig("testDatabaseSeedingConfig", {
+      qaDatabaseName: process.env.POSTGRES_DB,
     });
   }
 
