@@ -149,9 +149,9 @@ export class NotificationActionsService {
     );
 
     if (!options?.notificationsDelayed) {
-      // Execute all the notifications in parallel and return the promisees
+      // Execute all the notifications in parallel and return the promises
       // to allow the method to await them all.
-      const notificationPromisees = notificationsIds.map((notificationId) =>
+      const notificationPromises = notificationsIds.map((notificationId) =>
         // Not intended to be used for large volume of notifications. If a large
         // volume is expected, the notificationsDelayed must be set to true.
         this.notificationService.sendEmailNotification(
@@ -161,8 +161,8 @@ export class NotificationActionsService {
       );
 
       try {
-        // Wait all promisees.
-        await Promise.all(notificationPromisees);
+        // Wait all promises.
+        await Promise.all(notificationPromises);
       } catch (error: unknown) {
         // Silently failing. In case there is an issue this error
         // should not cancel any process or transaction.
