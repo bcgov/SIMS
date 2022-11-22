@@ -35,7 +35,7 @@ import {
   StudentFileService,
   StudentService,
 } from "../../services";
-import { NotifyActionsService } from "@sims/services/notifications";
+import { NotificationActionsService } from "@sims/services/notifications";
 import BaseController from "../BaseController";
 import {
   ApplicationSummaryAPIOutDTO,
@@ -80,7 +80,7 @@ export class StudentStudentsController extends BaseController {
   constructor(
     private readonly fileService: StudentFileService,
     private readonly studentControllerService: StudentControllerService,
-    private readonly notifyActionsService: NotifyActionsService,
+    private readonly notificationActionsService: NotificationActionsService,
     private readonly applicationService: ApplicationService,
     private readonly studentService: StudentService,
     private readonly formService: FormService,
@@ -278,7 +278,7 @@ export class StudentStudentsController extends BaseController {
     // This method will be executed alongside with the transaction during the
     // execution of the method updateStudentFiles.
     const sendFileUploadNotification = () =>
-      this.notifyActionsService.sendFileUploadNotification(
+      this.notificationActionsService.sendFileUploadNotification(
         {
           firstName: student.user.firstName,
           lastName: student.user.lastName,

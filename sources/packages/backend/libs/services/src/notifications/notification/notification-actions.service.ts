@@ -13,7 +13,7 @@ import { GCNotifyService } from "./gc-notify.service";
 import { NotificationService } from "./notification.service";
 
 @Injectable()
-export class NotifyActionsService {
+export class NotificationActionsService {
   constructor(
     private readonly gcNotifyService: GCNotifyService,
     private readonly notificationService: NotificationService,

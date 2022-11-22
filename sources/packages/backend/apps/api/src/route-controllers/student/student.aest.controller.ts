@@ -25,7 +25,7 @@ import {
   StudentRestrictionService,
   StudentService,
 } from "../../services";
-import { NotifyActionsService } from "@sims/services/notifications";
+import { NotificationActionsService } from "@sims/services/notifications";
 import { ClientTypeBaseRoute } from "../../types";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import {
@@ -86,7 +86,7 @@ export class StudentAESTController extends BaseController {
     private readonly fileService: StudentFileService,
     private readonly studentService: StudentService,
     private readonly studentControllerService: StudentControllerService,
-    private readonly notifyActionsService: NotifyActionsService,
+    private readonly notificationActionsService: NotificationActionsService,
     private readonly studentRestrictionService: StudentRestrictionService,
     private readonly sinValidationService: SINValidationService,
   ) {
@@ -199,7 +199,7 @@ export class StudentAESTController extends BaseController {
     // This method will be executed alongside with the transaction during the
     // execution of the method updateStudentFiles.
     const sendFileUploadNotification = () =>
-      this.notifyActionsService.sendMinistryFileUploadNotification(
+      this.notificationActionsService.sendMinistryFileUploadNotification(
         {
           firstName: student.user.firstName,
           lastName: student.user.lastName,
