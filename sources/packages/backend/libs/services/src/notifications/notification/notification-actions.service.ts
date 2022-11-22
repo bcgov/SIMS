@@ -7,9 +7,11 @@ import {
   StudentRestrictionAddedNotification,
   MinistryStudentFileUploadNotification,
   StudentFileUploadNotification,
+  StudentRestrictionAddedNotificationOptions,
 } from "..";
 import { GCNotifyService } from "./gc-notify.service";
 import { NotificationService } from "./notification.service";
+import { InjectLogger, LoggerService } from "@sims/utilities/logger";
 
 @Injectable()
 export class NotificationActionsService {
@@ -116,14 +118,12 @@ export class NotificationActionsService {
    * Creates a new notification when a new restriction is added to the student account.
    * @param notifications notifications information.
    * @param auditUserId user that should be considered the one that is causing the changes.
-   * @param entityManager optional repository that can be provided, for instance,
-   * to execute the command as part of an existing transaction. If not provided
-   * the local repository will be used instead.
+   * @param options options for the student restriction notification.
    */
   async sendStudentRestrictionAddedNotification(
     notifications: StudentRestrictionAddedNotification[],
     auditUserId: number,
-    entityManager?: EntityManager,
+    options?: StudentRestrictionAddedNotificationOptions,
   ): Promise<void> {
     const templateId = await this.notificationMessageService.getTemplateId(
       NotificationMessageType.StudentRestrictionAdded,
@@ -147,12 +147,29 @@ export class NotificationActionsService {
     const notificationsIds = await this.notificationService.saveNotifications(
       notificationsToSend,
       auditUserId,
-      entityManager,
+      options?.entityManager,
     );
 
-    // TODO: Temporary code to be removed once queue/schedulers are in place.
-    for (const id of notificationsIds) {
-      await this.notificationService.sendEmailNotification(id, entityManager);
+    if (!options?.notificationsDelayed) {
+      // Execute all the notifications in parallel and return the promisees
+      // to allow the method to await them all.
+      const notificationPromisees = notificationsIds.map((notificationId) =>
+        // Not intended to be used for large volume of notifications. If a large
+        // volume is expected, the notificationsDelayed must be set to true
+        this.notificationService.sendEmailNotification(
+          notificationId,
+          options?.entityManager,
+        ),
+      );
+
+      try {
+        // Wait all promisees.
+        await Promise.all(notificationPromisees);
+      } catch (error: unknown) {
+        // Silently failing. In case there is an issue this error
+        // should not cancel any process or transaction.
+        this.logger.error(`Error while sending notification. ${error}`);
+      }
     }
   }
 
@@ -165,4 +182,7 @@ export class NotificationActionsService {
   private getDateTimeOnPSTTimeZone(date = new Date()): string {
     return `${getPSTPDTDateTime(date)} PST/PDT`;
   }
+
+  @InjectLogger()
+  logger: LoggerService;
 }
