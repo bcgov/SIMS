@@ -664,7 +664,7 @@
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= studentDataRelationshipStatus = "married"</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="Flow_0vmv4zl" name="Exempt" sourceRef="Gateway_12kudry" targetRef="Event_051d6z6">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=(calculatedDatapartner1TotalIncome &lt;= DMNCalculatedDataIncomeThreshold.calculatedDataProvincialContributionIncomeThreshold) 
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=(calculatedDataPartner1TotalIncome &lt;= DMNCalculatedDataIncomeThreshold.calculatedDataProvincialContributionIncomeThreshold) 
  or (studentDataPartnerStudyWeeks &gt;= offeringWeeks) 
 or (calculatedDataPartnerEmploymentInsturanceBenefits = "yes") 
 or (calculatedDataPartnerSocialAssistance &gt; 0) 
@@ -1187,8 +1187,8 @@ or (calculatedDataPartnerFedralProvincialPDReceiptCost &gt; 0)</bpmn:conditionEx
     <bpmn:intermediateThrowEvent id="Event_0l38vd4" name="calculatedDataTotalParentNetIncome">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
-          <zeebe:output source="=calculatedDataparent1TotalIncome - parent1Tax - min(2898,(parent1CppEmployment + parent1CppSelfemploymentOther)) - min(856,parent1Ei)" target="calculatedDataParent1NetIncome" />
-          <zeebe:output source="=calculatedDataparent2TotalIncome - parent2Tax - min(2898,(parent2CppEmployment + parent2CppSelfemploymentOther)) - min(856,parent2Ei)" target="calculatedDataParent2NetIncome" />
+          <zeebe:output source="=calculatedDataParent1TotalIncome - parent1Tax - min(2898,(parent1CppEmployment + parent1CppSelfemploymentOther)) - min(856,parent1Ei)" target="calculatedDataParent1NetIncome" />
+          <zeebe:output source="=calculatedDataParent2TotalIncome - parent2Tax - min(2898,(parent2CppEmployment + parent2CppSelfemploymentOther)) - min(856,parent2Ei)" target="calculatedDataParent2NetIncome" />
           <zeebe:output source="=sum([&#10;  calculatedDataParent1NetIncome,&#10;  calculatedDataParent2NetIncome&#10;  ][item != null])" target="calculatedDataTotalParentNetIncome" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
@@ -1232,8 +1232,8 @@ or (calculatedDataPartnerFedralProvincialPDReceiptCost &gt; 0)</bpmn:conditionEx
     <bpmn:intermediateThrowEvent id="Event_19k9jpj" name="calculatedDataTotalParentNetIncome">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
-          <zeebe:output source="=calculatedDataparent1TotalIncome - parent1Tax - min(2898,(parent1CppEmployment + parent1CppSelfemploymentOther)) - min(856,parent1Ei)" target="calculatedDataParent1NetIncome" />
-          <zeebe:output source="=calculatedDataparent2TotalIncome - parent2Tax - min(2898,(parent2CppEmployment + parent2CppSelfemploymentOther)) - min(856,parent2Ei)" target="calculatedDataParent2NetIncome" />
+          <zeebe:output source="=calculatedDataParent1TotalIncome - parent1Tax - min(2898,(parent1CppEmployment + parent1CppSelfemploymentOther)) - min(856,parent1Ei)" target="calculatedDataParent1NetIncome" />
+          <zeebe:output source="=calculatedDataParent2TotalIncome - parent2Tax - min(2898,(parent2CppEmployment + parent2CppSelfemploymentOther)) - min(856,parent2Ei)" target="calculatedDataParent2NetIncome" />
           <zeebe:output source="=sum([&#10;  calculatedDataParent1NetIncome,&#10;  calculatedDataParent2NetIncome&#10;  ][item != null])" target="calculatedDataTotalParentNetIncome" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
@@ -1332,10 +1332,10 @@ or (calculatedDataPartnerFedralProvincialPDReceiptCost &gt; 0)</bpmn:conditionEx
     <bpmn:intermediateThrowEvent id="Event_0hxxmu9" name="Define Total Income">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
-          <zeebe:output source="=if&#10;  partner1CRAReportedIncome = null&#10;then&#10;  partner1TotalIncome&#10;else&#10;  partner1CRAReportedIncome" target="calculatedDatapartner1TotalIncome" />
+          <zeebe:output source="=if&#10;  partner1CRAReportedIncome = null&#10;then&#10;  partner1TotalIncome&#10;else&#10;  partner1CRAReportedIncome" target="calculatedDataPartner1TotalIncome" />
           <zeebe:output source="=if&#10;  studentDataCRAReportedIncome = null&#10;then&#10;  studentDataTaxReturnIncome&#10;else&#10;  studentDataCRAReportedIncome" target="calculatedDataStudentTotalIncome" />
-          <zeebe:output source="=if&#10;  parent2CRAReportedIncome = null&#10;then&#10;  parent2TotalIncome&#10;else&#10;  parent2CRAReportedIncome" target="calculatedDataparent2TotalIncome" />
-          <zeebe:output source="=if&#10;  parent1CRAReportedIncome = null&#10;then &#10;  parent1TotalIncome&#10;else&#10;  parent1CRAReportedIncome" target="calculatedDataparent1TotalIncome" />
+          <zeebe:output source="=if&#10;  parent2CRAReportedIncome = null&#10;then&#10;  parent2TotalIncome&#10;else&#10;  parent2CRAReportedIncome" target="calculatedDataParent2TotalIncome" />
+          <zeebe:output source="=if&#10;  parent1CRAReportedIncome = null&#10;then &#10;  parent1TotalIncome&#10;else&#10;  parent1CRAReportedIncome" target="calculatedDataParent1TotalIncome" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_0j0eoj2</bpmn:incoming>
@@ -1372,19 +1372,19 @@ or (calculatedDataPartnerFedralProvincialPDReceiptCost &gt; 0)</bpmn:conditionEx
       <bpmn:outgoing>Flow_0y2zl5a</bpmn:outgoing>
       <bpmn:outgoing>Flow_0g6wvij</bpmn:outgoing>
     </bpmn:exclusiveGateway>
-    <bpmn:intermediateThrowEvent id="Event_00c1iyh" name="calculatedDatapartner1TotalIncome">
+    <bpmn:intermediateThrowEvent id="Event_00c1iyh" name="calculatedDataPartner1TotalIncome">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
-          <zeebe:output source="=calculatedDatapartner1TotalIncome" target="calculatedDatapartner1TotalIncome" />
+          <zeebe:output source="=calculatedDataPartner1TotalIncome" target="calculatedDataPartner1TotalIncome" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_08mnfio</bpmn:incoming>
       <bpmn:outgoing>Flow_1d1sl5k</bpmn:outgoing>
     </bpmn:intermediateThrowEvent>
-    <bpmn:intermediateThrowEvent id="Event_02st413" name="calculatedDatapartner1TotalIncome">
+    <bpmn:intermediateThrowEvent id="Event_02st413" name="calculatedDataPartner1TotalIncome">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
-          <zeebe:output source="=studentDataEstimatedSpouseIncome" target="calculatedDatapartner1TotalIncome" />
+          <zeebe:output source="=studentDataEstimatedSpouseIncome" target="calculatedDataPartner1TotalIncome" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1fbmivh</bpmn:incoming>
@@ -1523,7 +1523,7 @@ or (calculatedDataPartnerFedralProvincialPDReceiptCost &gt; 0)</bpmn:conditionEx
     <bpmn:intermediateThrowEvent id="Event_0zn13zd" name="Calculate Family Income">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
-          <zeebe:output source="= calculatedDataStudentTotalIncome + calculatedDatapartner1TotalIncome" target="calculatedDataTotalFamilyIncome" />
+          <zeebe:output source="= calculatedDataStudentTotalIncome + calculatedDataPartner1TotalIncome" target="calculatedDataTotalFamilyIncome" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_189jv8b</bpmn:incoming>
