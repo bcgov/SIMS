@@ -29,7 +29,6 @@ export class NotificationActionsService {
    * @param entityManager optional repository that can be provided, for instance,
    * to execute the command as part of an existing transaction. If not provided
    * the local repository will be used instead.
-   * @returns GC Notify API call response.
    */
   async sendFileUploadNotification(
     notification: StudentFileUploadNotification,
@@ -76,7 +75,6 @@ export class NotificationActionsService {
    * @param entityManager optional repository that can be provided, for instance,
    * to execute the command as part of an existing transaction. If not provided
    * the local repository will be used instead.
-   * @returns GC Notify API call response.
    */
   async sendMinistryFileUploadNotification(
     notification: MinistryStudentFileUploadNotification,
