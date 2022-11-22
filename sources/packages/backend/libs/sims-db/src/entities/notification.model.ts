@@ -22,12 +22,12 @@ export class Notification extends RecordDataModel {
   /**
    * User associated with this notification.
    */
-  @ManyToOne(() => User, { eager: false, cascade: false })
+  @ManyToOne(() => User, { eager: false, cascade: false, nullable: true })
   @JoinColumn({
     name: "user_id",
     referencedColumnName: ColumnNames.ID,
   })
-  user: User;
+  user?: User;
   /**
    * Message notification payload.
    */
@@ -71,11 +71,19 @@ export class Notification extends RecordDataModel {
  */
 export enum NotificationMessageType {
   /**
-   * Notification Message type student file upload.
+   * Student uploaded a file into his account.
    */
   StudentFileUpload = 1,
   /**
-   * Notification  Message type ministry file upload.
+   * Ministry uploaded a file to the student account.
    */
   MinistryFileUpload = 2,
+  /**
+   * A new restriction was added to the student account.
+   * Possible scenarios:
+   * 1. Ministry places restriction on student account.
+   * 2. System-generated restrictions on student account.
+   * 3. Federal restriction placed on student account.
+   */
+  StudentRestrictionAdded = 3,
 }

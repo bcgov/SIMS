@@ -143,8 +143,10 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
         auditUserId,
         application.id,
       );
+      let createdRestriction: StudentRestriction | undefined = undefined;
       if (studentRestriction) {
-        await transactionalEntityManager
+        // Used later to send the notification at the end of the process.
+        createdRestriction = await transactionalEntityManager
           .getRepository(StudentRestriction)
           .save(studentRestriction);
       }
@@ -238,6 +240,17 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
       await transactionalEntityManager
         .getRepository(Application)
         .save(application);
+
+      // Case a restriction was created, send a notification to the student.
+      // Left as the last step to ensure that everything else was processed with
+      // success and the notification will not be generated otherwise.
+      if (createdRestriction) {
+        await this.studentRestrictionService.createNotifications(
+          [createdRestriction.id],
+          auditUserId,
+          transactionalEntityManager,
+        );
+      }
 
       return studentScholasticStanding;
     });

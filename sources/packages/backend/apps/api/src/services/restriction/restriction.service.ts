@@ -2,6 +2,8 @@ import { Injectable } from "@nestjs/common";
 import {
   RecordDataModelService,
   Restriction,
+  RestrictionActionType,
+  RestrictionNotificationType,
   RestrictionType,
 } from "@sims/sims-db";
 import { DataSource, Repository } from "typeorm";
@@ -88,6 +90,11 @@ export class RestrictionService extends RecordDataModelService<Restriction> {
     newRestriction.description = FEDERAL_RESTRICTIONS_UNIDENTIFIED_DESCRIPTION;
     newRestriction.restrictionCode = code;
     newRestriction.restrictionType = RestrictionType.Federal;
+    newRestriction.notificationType = RestrictionNotificationType.Error;
+    newRestriction.actionType = [
+      RestrictionActionType.StopFullTimeDisbursement,
+      RestrictionActionType.StopPartTimeDisbursement,
+    ];
     /*  Restriction Category is hard coded for federal restrictions.  */
     newRestriction.restrictionCategory = "Federal";
     return repo.save(newRestriction);
