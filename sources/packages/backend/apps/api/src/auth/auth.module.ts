@@ -29,14 +29,13 @@ import {
 } from "./guards";
 import { RolesGuard } from "./guards/roles.guard";
 import { ConfigModule } from "@sims/utilities/config";
-import { NotificationsModule } from "@sims/services/notifications";
 
 const jwtModule = JwtModule.register({
   publicKey: KeycloakConfig.PEM_PublicKey,
 });
 
 @Module({
-  imports: [ConfigModule, PassportModule, jwtModule, NotificationsModule],
+  imports: [ConfigModule, PassportModule, jwtModule],
   providers: [
     UserService,
     InstitutionLocationService,

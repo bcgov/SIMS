@@ -20,10 +20,9 @@ import {
 } from "../services";
 import { SequenceControlService, WorkflowClientService } from "@sims/services";
 import { ConfigModule } from "@sims/utilities/config";
-import { NotificationsModule } from "@sims/services/notifications";
 
 @Module({
-  imports: [AuthModule, ConfigModule, NotificationsModule],
+  imports: [AuthModule, ConfigModule],
   providers: [
     SshService,
     CRAIntegrationService,

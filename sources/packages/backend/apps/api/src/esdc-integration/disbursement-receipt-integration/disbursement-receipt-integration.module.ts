@@ -15,10 +15,9 @@ import { DisbursementReceiptProcessingService } from "./disbursement-receipt-pro
 import { DisbursementReceiptRequestService } from "./disbursement-receipt-request.service";
 import { LoggerModule } from "@sims/utilities/logger";
 import { ConfigModule } from "@sims/utilities/config";
-import { NotificationsModule } from "@sims/services/notifications";
 
 @Module({
-  imports: [LoggerModule, ConfigModule, NotificationsModule],
+  imports: [LoggerModule, ConfigModule],
   providers: [
     SshService,
     DisbursementReceiptIntegrationService,
