@@ -13,6 +13,7 @@ import {
   InstitutionHelperService,
   UserTypeRoleHelperService,
 } from "./services";
+import { ConfigService } from "@sims/utilities/config";
 
 @Module({
   imports: [DatabaseModule, TypeOrmModule.forFeature(DBEntities)],
@@ -25,6 +26,7 @@ import {
     InstitutionUserService,
     InstitutionHelperService,
     UserTypeRoleHelperService,
+    ConfigService,
   ],
 })
 export class TestDbSeedingModule {}
