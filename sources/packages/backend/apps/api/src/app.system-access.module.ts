@@ -69,11 +69,18 @@ import { DisbursementReceiptRequestService } from "./esdc-integration/disburseme
 import { FedRestrictionProcessingService } from "./esdc-integration/fed-restriction-integration/fed-restriction-processing.service";
 import { FedRestrictionIntegrationService } from "./esdc-integration/fed-restriction-integration/fed-restriction-integration.service";
 import { WorkflowClientService, SequenceControlService } from "@sims/services";
-import { IER12FileService } from "./institution-integration/ier-integration/ier12-file.service";
-import { IER12IntegrationService } from "./institution-integration/ier-integration/ier12-integration.service";
-
+import { IER12FileService } from "@sims/integration/institution-integration/ier-integration/ier12-file.service";
+import { IER12IntegrationService } from "@sims/integration/institution-integration/ier-integration/ier12-integration.service";
+import {
+  SshService1,
+  StudentAssessmentService1,
+} from "@sims/integration/services";
+import { IntegrationModule } from "@sims/integration";
+// import { IER12FileService } from "./institution-integration/ier-integration/ier12-file.service";
+// import { IER12IntegrationService } from "./institution-integration/ier-integration/ier12-integration.service";
+// todo: ann remove all imports from lib
 @Module({
-  imports: [DatabaseModule, AuthModule, SINValidationModule],
+  imports: [DatabaseModule, AuthModule, SINValidationModule, IntegrationModule],
   controllers: [
     ATBCSystemAccessController,
     SINValidationSystemAccessController,
@@ -89,6 +96,7 @@ import { IER12IntegrationService } from "./institution-integration/ier-integrati
     WorkflowClientService,
     ATBCService,
     StudentService,
+    StudentAssessmentService1,
     StudentAssessmentService,
     EducationProgramOfferingService,
     DisbursementScheduleService,
@@ -106,6 +114,7 @@ import { IER12IntegrationService } from "./institution-integration/ier-integrati
     MSFAANumberService,
     CRAPersonalVerificationService,
     CRAIntegrationService,
+    SshService1,
     SshService,
     MSFAARequestService,
     MSFAAIntegrationService,

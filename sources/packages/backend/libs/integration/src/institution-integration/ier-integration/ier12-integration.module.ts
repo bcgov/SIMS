@@ -1,19 +1,17 @@
 import { Module } from "@nestjs/common";
 import { WorkflowClientService } from "@sims/services";
-// import { AuthModule } from "../../auth/auth.module";
 import { ConfigService } from "@sims/utilities/config";
 import { IER12IntegrationService } from "./ier12-integration.service";
 import { IER12FileService } from "./ier12-file.service";
 import {
-  SshService,
-  StudentAssessmentService,
+  SshService1,
+  StudentAssessmentService1,
 } from "@sims/integration/services";
-// todo ann commneted
+
 @Module({
-  // imports: [AuthModule],
   providers: [
-    SshService,
-    StudentAssessmentService,
+    SshService1,
+    StudentAssessmentService1,
     ConfigService,
     IER12FileService,
     WorkflowClientService,

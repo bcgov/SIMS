@@ -10,7 +10,7 @@ import {
   IER12Record,
   IER12UploadResult,
 } from "./models/ier12-integration.model";
-import { StudentAssessmentService } from "@sims/integration/services";
+import { StudentAssessmentService1 } from "@sims/integration/services";
 import { IER12IntegrationService } from "./ier12-integration.service";
 
 @Injectable()
@@ -19,7 +19,7 @@ export class IER12FileService {
   constructor(
     config: ConfigService,
     private readonly ierIntegrationService: IER12IntegrationService,
-    private readonly studentAssessmentService: StudentAssessmentService,
+    private readonly studentAssessmentService: StudentAssessmentService1,
   ) {
     this.institutionIntegrationConfig = config.institutionIntegration;
   }

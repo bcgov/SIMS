@@ -1,11 +1,7 @@
+import { DATE_FORMAT, NUMBER_FILLER, SPACE_FILLER } from "@sims/integration";
+import { IER12FileLine } from "@sims/integration/institution-integration/ier-integration/models/ier12-integration.model";
+import { round, StringBuilder } from "@sims/integration/utilities";
 import { DisbursementSchedule, DisbursementValue } from "@sims/sims-db";
-import {
-  DATE_FORMAT,
-  NUMBER_FILLER,
-  SPACE_FILLER,
-} from "../../cra-integration/cra-integration.models";
-import { round, StringBuilder } from "../../utilities";
-import { IER12FileLine } from "./models/ier12-integration.model";
 
 /**
  * Record of a IER12 file.

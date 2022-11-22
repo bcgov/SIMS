@@ -3,7 +3,7 @@ import { SFTPConfig } from "@sims/utilities/config";
 import * as Client from "ssh2-sftp-client";
 
 @Injectable()
-export class SshService {
+export class SshService1 {
   /**
    * Creates a connected server ready to execute commands.
    * @param config
