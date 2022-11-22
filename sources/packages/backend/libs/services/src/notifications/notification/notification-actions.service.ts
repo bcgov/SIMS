@@ -153,7 +153,7 @@ export class NotificationActionsService {
       // to allow the method to await them all.
       const notificationPromisees = notificationsIds.map((notificationId) =>
         // Not intended to be used for large volume of notifications. If a large
-        // volume is expected, the notificationsDelayed must be set to true
+        // volume is expected, the notificationsDelayed must be set to true.
         this.notificationService.sendEmailNotification(
           notificationId,
           options?.entityManager,
