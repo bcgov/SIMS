@@ -1,7 +1,4 @@
 import { Module } from "@nestjs/common";
-import { NotificationsModule } from "@sims/services/notifications";
-import { ConfigModule } from "@sims/utilities/config";
-import { AuthModule } from "../../auth/auth.module";
 import {
   FederalRestrictionService,
   RestrictionService,
@@ -14,7 +11,6 @@ import { FedRestrictionIntegrationService } from "./fed-restriction-integration.
 import { FedRestrictionProcessingService } from "./fed-restriction-processing.service";
 
 @Module({
-  imports: [AuthModule, ConfigModule, NotificationsModule],
   providers: [
     SshService,
     FedRestrictionIntegrationService,
