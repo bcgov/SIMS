@@ -4,11 +4,10 @@ import { getDateOnlyFormat, getPSTPDTDateTime } from "@sims/utilities";
 import { EntityManager } from "typeorm";
 import { NotificationMessageService } from "../notification-message/notification-message.service";
 import {
-  StudentRestrictionAddedPersonalization,
-  GCNotifyResult,
+  StudentRestrictionAddedNotification,
   MinistryStudentFileUploadNotification,
   StudentFileUploadNotification,
-} from "./gc-notify.model";
+} from "..";
 import { GCNotifyService } from "./gc-notify.service";
 import { NotificationService } from "./notification.service";
 
@@ -24,74 +23,87 @@ export class NotificationActionsService {
    * This method is used to send email notification to SABC
    * when a student uploads documents and submits it in the file uploader screen.
    * @param notification input parameters to generate the notification.
-   * @param userId id of the user who will receive the message.
-   * @param auditUserId id of the user creating the notification.
+   * @param auditUserId user that should be considered the one that is causing the changes.
+   * @param entityManager optional repository that can be provided, for instance,
+   * to execute the command as part of an existing transaction. If not provided
+   * the local repository will be used instead.
    * @returns GC Notify API call response.
    */
   async sendFileUploadNotification(
     notification: StudentFileUploadNotification,
-    userId: number,
     auditUserId: number,
-  ): Promise<GCNotifyResult> {
+    entityManager?: EntityManager,
+  ): Promise<void> {
     const templateId = await this.notificationMessageService.getTemplateId(
       NotificationMessageType.StudentFileUpload,
     );
-    const payload = {
-      email_address: this.gcNotifyService.ministryToAddress(),
-      template_id: templateId,
-      personalisation: {
-        givenNames: notification.firstName ?? "",
-        lastName: notification.lastName,
-        dob: getDateOnlyFormat(notification.birthDate),
-        applicationNumber: notification.applicationNumber,
-        documentPurpose: notification.documentPurpose,
-        date: this.getDateTimeOnPSTTimeZone(),
+    const notificationToSend = {
+      userId: notification.userId,
+      messageType: NotificationMessageType.StudentFileUpload,
+      messagePayload: {
+        email_address: this.gcNotifyService.ministryToAddress(),
+        template_id: templateId,
+        personalisation: {
+          givenNames: notification.firstName ?? "",
+          lastName: notification.lastName,
+          dob: getDateOnlyFormat(notification.birthDate),
+          applicationNumber: notification.applicationNumber,
+          documentPurpose: notification.documentPurpose,
+          date: this.getDateTimeOnPSTTimeZone(),
+        },
       },
     };
+
     // Save notification into notification table.
-    const notificationSaved = await this.notificationService.saveNotification(
-      userId,
-      NotificationMessageType.StudentFileUpload,
-      payload,
+    const [notificationId] = await this.notificationService.saveNotifications(
+      [notificationToSend],
       auditUserId,
+      entityManager,
     );
-    return this.notificationService.sendEmailNotification(notificationSaved.id);
+
+    await this.notificationService.sendEmailNotification(notificationId);
   }
 
   /**
    * Sends an email notification to the student when the Ministry uploads a file to his account.
    * @param notification input parameters to generate the notification.
-   * @param userId id of the user who will receive the message.
-   * @param auditUserId id of the user creating the notification.
+   * @param auditUserId user that should be considered the one that is causing the changes.
+   * @param entityManager optional repository that can be provided, for instance,
+   * to execute the command as part of an existing transaction. If not provided
+   * the local repository will be used instead.
    * @returns GC Notify API call response.
    */
   async sendMinistryFileUploadNotification(
     notification: MinistryStudentFileUploadNotification,
-    userId: number,
     auditUserId: number,
-  ): Promise<GCNotifyResult> {
+    entityManager?: EntityManager,
+  ): Promise<void> {
     const templateId = await this.notificationMessageService.getTemplateId(
       NotificationMessageType.MinistryFileUpload,
     );
-    const payload = {
-      email_address: notification.toAddress,
-      template_id: templateId,
-      personalisation: {
-        givenNames: notification.firstName ?? "",
-        lastName: notification.lastName,
-        date: this.getDateTimeOnPSTTimeZone(),
+
+    const notificationToSend = {
+      userId: notification.userId,
+      messageType: NotificationMessageType.MinistryFileUpload,
+      messagePayload: {
+        email_address: notification.toAddress,
+        template_id: templateId,
+        personalisation: {
+          givenNames: notification.firstName ?? "",
+          lastName: notification.lastName,
+          date: this.getDateTimeOnPSTTimeZone(),
+        },
       },
     };
 
     // Save notification into notification table.
-    const notificationSaved = await this.notificationService.saveNotification(
-      userId,
-      NotificationMessageType.MinistryFileUpload,
-      payload,
+    const [notificationId] = await this.notificationService.saveNotifications(
+      [notificationToSend],
       auditUserId,
+      entityManager,
     );
 
-    return this.notificationService.sendEmailNotification(notificationSaved.id);
+    await this.notificationService.sendEmailNotification(notificationId);
   }
 
   /**
@@ -103,7 +115,7 @@ export class NotificationActionsService {
    * the local repository will be used instead.
    */
   async sendStudentRestrictionAddedNotification(
-    notifications: StudentRestrictionAddedPersonalization[],
+    notifications: StudentRestrictionAddedNotification[],
     auditUserId: number,
     entityManager?: EntityManager,
   ): Promise<void> {

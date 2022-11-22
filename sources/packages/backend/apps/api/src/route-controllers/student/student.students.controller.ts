@@ -67,6 +67,7 @@ import {
   STUDENT_ACCOUNT_CREATION_FOUND_SIN_WITH_MISMATCH_DATA,
   STUDENT_ACCOUNT_CREATION_MULTIPLES_SIN_FOUND,
 } from "../../constants";
+import { EntityManager } from "typeorm";
 
 /**
  * Student controller for Student Client.
@@ -277,7 +278,7 @@ export class StudentStudentsController extends BaseController {
 
     // This method will be executed alongside with the transaction during the
     // execution of the method updateStudentFiles.
-    const sendFileUploadNotification = () =>
+    const sendFileUploadNotification = (entityManager: EntityManager) =>
       this.notificationActionsService.sendFileUploadNotification(
         {
           firstName: student.user.firstName,
@@ -285,9 +286,10 @@ export class StudentStudentsController extends BaseController {
           birthDate: new Date(student.birthDate),
           documentPurpose: payload.submittedForm.documentPurpose,
           applicationNumber: payload.submittedForm.applicationNumber,
+          userId: student.user.id,
         },
-        student.user.id,
-        studentUserToken.userId, // This is the user who uploaded the file
+        studentUserToken.userId,
+        entityManager,
       );
 
     const fileMetadata = payload.submittedForm.applicationNumber

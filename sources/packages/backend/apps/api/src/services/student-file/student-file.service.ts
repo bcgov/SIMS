@@ -123,9 +123,7 @@ export class StudentFileService extends RecordDataModelService<StudentFile> {
     uniqueFileNames: string[],
     fileOrigin: FileOriginType,
     groupName: string,
-    sendNotification?: (
-      entityManager: EntityManager,
-    ) => Promise<GCNotifyResult>,
+    sendNotification?: (entityManager: EntityManager) => Promise<void>,
     metadata?: StudentFileMetadata,
   ): Promise<UpdateResult> {
     let updateResult: UpdateResult;
