@@ -23,7 +23,7 @@ import { CustomNamedError } from "@sims/utilities";
 import { RestrictionService } from "./restriction.service";
 import { StudentService } from "../student/student.service";
 import { RestrictionCode } from "./models/restriction.model";
-import { GCNotifyActionsService } from "../notification/gc-notify-actions.service";
+import { NotifyActionsService } from "@sims/services/notifications";
 export const RESTRICTION_NOT_ACTIVE = "RESTRICTION_NOT_ACTIVE";
 export const RESTRICTION_NOT_PROVINCIAL = "RESTRICTION_NOT_PROVINCIAL";
 
@@ -42,7 +42,7 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
     private readonly dataSource: DataSource,
     private readonly restrictionService: RestrictionService,
     private readonly studentService: StudentService,
-    private readonly gcNotifyActionsService: GCNotifyActionsService,
+    private readonly notifyActionsService: NotifyActionsService,
   ) {
     super(dataSource.getRepository(StudentRestriction));
   }
@@ -466,7 +466,7 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
       toAddress: restriction.student.user.email,
       userId: restriction.student.user.id,
     }));
-    await this.gcNotifyActionsService.sendStudentRestrictionAddedNotification(
+    await this.notifyActionsService.sendStudentRestrictionAddedNotification(
       notifications,
       auditUserId,
     );
@@ -519,7 +519,7 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
           },
         },
       });
-      restrictions.push(...restrictions);
+      allRestrictions.push(...restrictions);
     }
 
     return allRestrictions;

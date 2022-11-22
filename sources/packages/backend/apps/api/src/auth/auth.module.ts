@@ -14,10 +14,6 @@ import {
   SINValidationService,
   DesignationAgreementLocationService,
   RestrictionService,
-  GCNotifyService,
-  GCNotifyActionsService,
-  NotificationService,
-  NotificationMessageService,
 } from "../services";
 import { JwtAuthGuard } from "./guards/jwt-auth.guard";
 import { JwtStrategy } from "./jwt.strategy";
@@ -33,13 +29,14 @@ import {
 } from "./guards";
 import { RolesGuard } from "./guards/roles.guard";
 import { ConfigModule } from "@sims/utilities/config";
+import { NotificationsModule } from "@sims/services/notifications";
 
 const jwtModule = JwtModule.register({
   publicKey: KeycloakConfig.PEM_PublicKey,
 });
 
 @Module({
-  imports: [ConfigModule, PassportModule, jwtModule],
+  imports: [ConfigModule, PassportModule, jwtModule, NotificationsModule],
   providers: [
     UserService,
     InstitutionLocationService,
@@ -53,10 +50,6 @@ const jwtModule = JwtModule.register({
     SINValidationService,
     RestrictionService,
     DesignationAgreementLocationService,
-    GCNotifyService,
-    GCNotifyActionsService,
-    NotificationService,
-    NotificationMessageService,
     {
       provide: APP_GUARD,
       useClass: JwtAuthGuard,

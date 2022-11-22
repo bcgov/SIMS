@@ -20,12 +20,12 @@ import {
   ApiUnprocessableEntityResponse,
 } from "@nestjs/swagger";
 import {
-  GCNotifyActionsService,
   SINValidationService,
   StudentFileService,
   StudentRestrictionService,
   StudentService,
 } from "../../services";
+import { NotifyActionsService } from "@sims/services/notifications";
 import { ClientTypeBaseRoute } from "../../types";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import {
@@ -86,7 +86,7 @@ export class StudentAESTController extends BaseController {
     private readonly fileService: StudentFileService,
     private readonly studentService: StudentService,
     private readonly studentControllerService: StudentControllerService,
-    private readonly gcNotifyActionsService: GCNotifyActionsService,
+    private readonly notifyActionsService: NotifyActionsService,
     private readonly studentRestrictionService: StudentRestrictionService,
     private readonly sinValidationService: SINValidationService,
   ) {
@@ -199,7 +199,7 @@ export class StudentAESTController extends BaseController {
     // This method will be executed alongside with the transaction during the
     // execution of the method updateStudentFiles.
     const sendFileUploadNotification = () =>
-      this.gcNotifyActionsService.sendMinistryFileUploadNotification(
+      this.notifyActionsService.sendMinistryFileUploadNotification(
         {
           firstName: student.user.firstName,
           lastName: student.user.lastName,

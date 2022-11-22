@@ -8,10 +8,6 @@ import {
   ReportService,
   StudentService,
   SFASIndividualService,
-  GCNotifyActionsService,
-  GCNotifyService,
-  NotificationService,
-  NotificationMessageService,
 } from "../../services";
 import { SequenceControlService } from "@sims/services";
 import { DisbursementReceiptIntegrationService } from "./disbursement-receipt-integration.service";
@@ -19,9 +15,10 @@ import { DisbursementReceiptProcessingService } from "./disbursement-receipt-pro
 import { DisbursementReceiptRequestService } from "./disbursement-receipt-request.service";
 import { LoggerModule } from "@sims/utilities/logger";
 import { ConfigModule } from "@sims/utilities/config";
+import { NotificationsModule } from "@sims/services/notifications";
 
 @Module({
-  imports: [LoggerModule, ConfigModule],
+  imports: [LoggerModule, ConfigModule, NotificationsModule],
   providers: [
     SshService,
     DisbursementReceiptIntegrationService,
@@ -35,10 +32,6 @@ import { ConfigModule } from "@sims/utilities/config";
     RestrictionService,
     StudentService,
     SFASIndividualService,
-    GCNotifyService,
-    GCNotifyActionsService,
-    NotificationService,
-    NotificationMessageService,
   ],
   exports: [
     DisbursementReceiptIntegrationService,

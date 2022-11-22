@@ -1,12 +1,9 @@
 import { Module } from "@nestjs/common";
+import { NotificationsModule } from "@sims/services/notifications";
 import { ConfigModule } from "@sims/utilities/config";
 import { AuthModule } from "../../auth/auth.module";
 import {
   FederalRestrictionService,
-  GCNotifyActionsService,
-  GCNotifyService,
-  NotificationMessageService,
-  NotificationService,
   RestrictionService,
   SFASIndividualService,
   SshService,
@@ -17,7 +14,7 @@ import { FedRestrictionIntegrationService } from "./fed-restriction-integration.
 import { FedRestrictionProcessingService } from "./fed-restriction-processing.service";
 
 @Module({
-  imports: [AuthModule, ConfigModule],
+  imports: [AuthModule, ConfigModule, NotificationsModule],
   providers: [
     SshService,
     FedRestrictionIntegrationService,
@@ -27,10 +24,6 @@ import { FedRestrictionProcessingService } from "./fed-restriction-processing.se
     StudentRestrictionService,
     SFASIndividualService,
     FederalRestrictionService,
-    GCNotifyActionsService,
-    GCNotifyService,
-    NotificationService,
-    NotificationMessageService,
   ],
   exports: [FedRestrictionIntegrationService, FedRestrictionProcessingService],
 })
