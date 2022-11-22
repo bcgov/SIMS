@@ -4,10 +4,7 @@ import { EntityManager } from "typeorm";
 export interface SaveNotificationModel {
   userId?: number;
   messageType: NotificationMessageType;
-  messagePayload: {
-    email_address: string;
-    template_id: string;
-  };
+  messagePayload: unknown;
 }
 
 export interface StudentFileUploadNotification {

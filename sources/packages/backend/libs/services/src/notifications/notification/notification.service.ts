@@ -4,7 +4,6 @@ import {
   Notification,
   User,
   NotificationMessage,
-  NotificationMessageType,
 } from "@sims/sims-db";
 import { DataSource, EntityManager, InsertResult, UpdateResult } from "typeorm";
 import { GCNotifyResult } from "./gc-notify.model";
