@@ -13,10 +13,10 @@ import {
   InstitutionHelperService,
   UserTypeRoleHelperService,
 } from "./services";
-import { ConfigService } from "@sims/utilities/config";
+import { ConfigModule } from "@sims/utilities/config";
 
 @Module({
-  imports: [DatabaseModule, TypeOrmModule.forFeature(DBEntities)],
+  imports: [DatabaseModule, TypeOrmModule.forFeature(DBEntities), ConfigModule],
   providers: [
     DesignationAgreementService,
     SeedExecutor,
@@ -26,7 +26,6 @@ import { ConfigService } from "@sims/utilities/config";
     InstitutionUserService,
     InstitutionHelperService,
     UserTypeRoleHelperService,
-    ConfigService,
   ],
 })
 export class TestDbSeedingModule {}
