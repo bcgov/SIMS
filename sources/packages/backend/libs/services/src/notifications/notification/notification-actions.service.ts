@@ -61,7 +61,10 @@ export class NotificationActionsService {
       entityManager,
     );
 
-    await this.notificationService.sendEmailNotification(notificationId);
+    await this.notificationService.sendEmailNotification(
+      notificationId,
+      entityManager,
+    );
   }
 
   /**
@@ -103,7 +106,10 @@ export class NotificationActionsService {
       entityManager,
     );
 
-    await this.notificationService.sendEmailNotification(notificationId);
+    await this.notificationService.sendEmailNotification(
+      notificationId,
+      entityManager,
+    );
   }
 
   /**
@@ -146,7 +152,7 @@ export class NotificationActionsService {
 
     // TODO: Temporary code to be removed once queue/schedulers are in place.
     for (const id of notificationsIds) {
-      await this.notificationService.sendEmailNotification(id);
+      await this.notificationService.sendEmailNotification(id, entityManager);
     }
   }
 

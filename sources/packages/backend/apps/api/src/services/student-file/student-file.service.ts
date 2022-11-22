@@ -10,7 +10,6 @@ import {
   StudentFileMetadata,
 } from "@sims/sims-db";
 import { CreateFile } from "./student-file.model";
-import { GCNotifyResult } from "@sims/services/notifications";
 
 @Injectable()
 export class StudentFileService extends RecordDataModelService<StudentFile> {
