@@ -8,6 +8,10 @@ import {
   RestrictionService,
   StudentService,
   SFASIndividualService,
+  GCNotifyService,
+  GCNotifyActionsService,
+  NotificationService,
+  NotificationMessageService,
 } from "../../services";
 import { SequenceControlService } from "@sims/services";
 import { ECertFileHandler } from "./e-cert-file-handler";
@@ -37,6 +41,10 @@ import { ConfigModule } from "@sims/utilities/config";
     RestrictionService,
     StudentService,
     SFASIndividualService,
+    GCNotifyService,
+    GCNotifyActionsService,
+    NotificationService,
+    NotificationMessageService,
   ],
   exports: [
     ECertFullTimeIntegrationService,

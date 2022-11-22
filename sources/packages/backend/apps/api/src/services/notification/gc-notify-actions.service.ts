@@ -1,8 +1,10 @@
 import { Injectable } from "@nestjs/common";
 import { NotificationMessageType } from "@sims/sims-db";
 import { getDateOnlyFormat, getPSTPDTDateTime } from "@sims/utilities";
+import { EntityManager } from "typeorm";
 import { NotificationMessageService } from "../notification-message/notification-message.service";
 import {
+  StudentRestrictionAddedPersonalization,
   GCNotifyResult,
   MinistryStudentFileUploadNotification,
   StudentFileUploadNotification,
@@ -90,6 +92,50 @@ export class GCNotifyActionsService {
     );
 
     return this.notificationService.sendEmailNotification(notificationSaved.id);
+  }
+
+  /**
+   * Creates a new notification when a new restriction is added to the student account.
+   * @param notifications notifications information.
+   * @param auditUserId user that should be considered the one that is causing the changes.
+   * @param entityManager optional repository that can be provided, for instance,
+   * to execute the command as part of an existing transaction. If not provided
+   * the local repository will be used instead.
+   */
+  async sendStudentRestrictionAddedNotification(
+    notifications: StudentRestrictionAddedPersonalization[],
+    auditUserId: number,
+    entityManager?: EntityManager,
+  ): Promise<void> {
+    const templateId = await this.notificationMessageService.getTemplateId(
+      NotificationMessageType.StudentRestrictionAdded,
+    );
+
+    const notificationsToSend = notifications.map((notification) => ({
+      userId: notification.userId,
+      messageType: NotificationMessageType.StudentRestrictionAdded,
+      messagePayload: {
+        email_address: notification.toAddress,
+        template_id: templateId,
+        personalisation: {
+          givenNames: notification.givenNames ?? "",
+          lastName: notification.lastName,
+          date: this.getDateTimeOnPSTTimeZone(),
+        },
+      },
+    }));
+
+    // Save notification into notification table.
+    const notificationsIds = await this.notificationService.saveNotifications(
+      notificationsToSend,
+      auditUserId,
+      entityManager,
+    );
+
+    // TODO: Temporary code to be removed once queue/schedulers are in place.
+    for (const id of notificationsIds) {
+      await this.notificationService.sendEmailNotification(id);
+    }
   }
 
   /**

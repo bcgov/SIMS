@@ -11,6 +11,7 @@ import {
   InstitutionIntegrationConfig,
   SFASIntegrationConfig,
   SFTPConfig,
+  DatabaseConfiguration,
 } from "./config.models";
 
 @Injectable()
@@ -180,6 +181,15 @@ export class ConfigService {
   get institutionIntegration(): InstitutionIntegrationConfig {
     return this.getCachedConfig("institutionIntegrationConfig", {
       ftpRequestFolder: process.env.INSTITUTION_REQUEST_FOLDER,
+    });
+  }
+
+  /**
+   * Database configuration.
+   */
+  get databaseConfig(): DatabaseConfiguration {
+    return this.getCachedConfig("databaseConfiguration", {
+      databaseName: process.env.POSTGRES_DB,
     });
   }
 

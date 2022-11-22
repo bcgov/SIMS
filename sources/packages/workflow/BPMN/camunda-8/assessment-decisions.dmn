@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/" xmlns:dmndi="https://www.omg.org/spec/DMN/20191111/DMNDI/" xmlns:dc="http://www.omg.org/spec/DMN/20180521/DC/" xmlns:biodi="http://bpmn.io/schema/dmn/biodi/2.0" xmlns:modeler="http://camunda.org/schema/modeler/1.0" xmlns:camunda="http://camunda.org/schema/1.0/dmn" id="Definitions_bd367b5f-1e0c-46b5-b457-e44330357182" name="DRD" namespace="http://camunda.org/schema/1.0/dmn" exporter="Camunda Modeler" exporterVersion="5.4.2" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.1.0" camunda:diagramRelationId="1a575ead-1e6d-468c-901a-766a35569b38">
-  <decision id="programYearMaximums" name="programYearMaximums">
+  <decision id="DMNProgramYearMaximums" name="DMNProgramYearMaximums">
     <decisionTable id="DecisionTable_1oyvbif">
       <input id="InputClause_02zjhj9" label="programYear">
         <inputExpression id="LiteralExpression_0yellvk" typeRef="string">
@@ -94,7 +94,7 @@
       </rule>
     </decisionTable>
   </decision>
-  <decision id="applicationBooksMaximum" name="applicationBooksMaximum">
+  <decision id="DMNApplicationBooksMaximum" name="DMNApplicationBooksMaximum">
     <decisionTable id="DecisionTable_0okv6wx" hitPolicy="COLLECT">
       <input id="InputClause_06rd4pc" label="programYear">
         <inputExpression id="LiteralExpression_1bgo7gt" typeRef="string">
@@ -208,7 +208,7 @@
       </rule>
     </decisionTable>
   </decision>
-  <decision id="applicationTransportationMaximum" name="applicationTransportationMaximum">
+  <decision id="DMNApplicationTransportationMaximum" name="DMNApplicationTransportationMaximum">
     <decisionTable id="DecisionTable_0rutev3">
       <input id="InputClause_02c9ycy" label="programYear">
         <inputExpression id="LiteralExpression_0y6gngq" typeRef="string">
@@ -289,7 +289,7 @@
       </rule>
     </decisionTable>
   </decision>
-  <decision id="livingCategory" name="livingCategory">
+  <decision id="DMNLivingCategory" name="DMNLivingCategory">
     <decisionTable id="DecisionTable_1njb3c0" hitPolicy="FIRST">
       <input id="InputClause_0996gkj" label="studentDataRelationshipStatus" biodi:width="191">
         <inputExpression id="LiteralExpression_0b8i7u8" typeRef="string">
@@ -445,7 +445,7 @@
       </rule>
     </decisionTable>
   </decision>
-  <decision id="MSOLAllowance" name="MSOLAllowance">
+  <decision id="DMNMSOLAllowance" name="DMNMSOLAllowance">
     <decisionTable id="DecisionTable_1thb86c">
       <input id="InputClause_18prkav" label="programYear">
         <inputExpression id="LiteralExpression_0cw7hw9" typeRef="string">
@@ -1242,7 +1242,7 @@
       </rule>
     </decisionTable>
   </decision>
-  <decision id="incomeThresholds" name="incomeThresholds">
+  <decision id="DMNIncomeThresholds" name="DMNIncomeThresholds">
     <decisionTable id="DecisionTable_1grg4wv">
       <input id="InputClause_0dih7du" label="programYear">
         <inputExpression id="LiteralExpression_0h4s20x" typeRef="string">
@@ -1680,7 +1680,7 @@
       </rule>
     </decisionTable>
   </decision>
-  <decision id="parentsMSOL" name="parentsMSOL">
+  <decision id="DMNParentsMSOL" name="DMNParentsMSOL">
     <decisionTable id="DecisionTable_0eg7p8c">
       <input id="InputClause_1lacfk9" label="programYear">
         <inputExpression id="LiteralExpression_1gt690x" typeRef="string">
@@ -1992,7 +1992,7 @@
       </rule>
     </decisionTable>
   </decision>
-  <decision id="DMNAwardAllowableLimit" name="DMNAwardAllowableLimit">
+  <decision id="DMNAwardAllowableLimits" name="DMNAwardAllowableLimits">
     <decisionTable id="DecisionTable_0xxr4m4">
       <input id="InputClause_0pb5vlw" label="programYear">
         <inputExpression id="LiteralExpression_1vgq21t" typeRef="string">
@@ -2371,7 +2371,7 @@
           <text>31868</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_1u665kl">
-          <text>0.0238 / 8 * 12 / 52</text>
+          <text>0.0238 * 3 / 13</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_04xgl80">
           <text>63381</text>
@@ -2406,7 +2406,7 @@
           <text>45068</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_11lwmk8">
-          <text>0.0172 / 8 * 12 / 52</text>
+          <text>0.0172 * 3 / 13</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_0b1yx3o">
           <text>88673</text>
@@ -2441,7 +2441,7 @@
           <text>55196</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_1e660ie">
-          <text>0.0148 / 8 * 12 / 52</text>
+          <text>0.0148 * 3 / 13</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_08e2kzl">
           <text>105872</text>
@@ -2476,7 +2476,7 @@
           <text>63735</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_15egtw4">
-          <text>0.0142 / 8 * 12 / 52</text>
+          <text>0.0142 * 3 / 13</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_0zgxuem">
           <text>116552</text>
@@ -2511,7 +2511,7 @@
           <text>71258</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_1u28utu">
-          <text>0.0136 / 8 * 12 / 52</text>
+          <text>0.0136 * 3 / 13</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_1qxg9qf">
           <text>126405</text>
@@ -2546,7 +2546,7 @@
           <text>78060</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_0glgmt9">
-          <text>0.013 / 8 * 12 / 52</text>
+          <text>0.013 * 3 / 13</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_0vkh92f">
           <text>135752</text>
@@ -2581,7 +2581,7 @@
           <text>84313</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_076a8f8">
-          <text>0.0126 / 8 * 12 / 52</text>
+          <text>0.0126 * 3 / 13</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_1n2ewjv">
           <text>143837</text>
@@ -2616,7 +2616,7 @@
           <text>31868</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_004zref">
-          <text>0.0238 / 8 * 12 / 52</text>
+          <text>0.0238 * 3 / 13</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_18176y4">
           <text>63381</text>
@@ -2651,7 +2651,7 @@
           <text>45068</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_0ctn9op">
-          <text>0.0172 / 8 * 12 / 52</text>
+          <text>0.0172 * 3 / 13</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_1glnksj">
           <text>88673</text>
@@ -2686,7 +2686,7 @@
           <text>55196</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_1bquh4n">
-          <text>0.0148 / 8 * 12 / 52</text>
+          <text>0.0148 * 3 / 13</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_026zfot">
           <text>105872</text>
@@ -2721,7 +2721,7 @@
           <text>63735</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_0rpwpgi">
-          <text>0.0142 / 8 * 12 / 52</text>
+          <text>0.0142 * 3 / 13</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_1xbzhqv">
           <text>116552</text>
@@ -2756,7 +2756,7 @@
           <text>71258</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_195aijd">
-          <text>0.0136 / 8 * 12 / 52</text>
+          <text>0.0136 * 3 / 13</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_0o2vg2f">
           <text>126405</text>
@@ -2791,7 +2791,7 @@
           <text>78060</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_0itbxbs">
-          <text>0.013 / 8 * 12 / 52</text>
+          <text>0.013 * 3 / 13</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_0xxigq7">
           <text>135752</text>
@@ -2826,7 +2826,7 @@
           <text>84313</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_112w2n9">
-          <text>0.0126 / 8 * 12 / 52</text>
+          <text>0.0126 * 3 / 13</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_1qwnd3m">
           <text>143837</text>
@@ -2861,7 +2861,7 @@
           <text>31868</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_0ab27rs">
-          <text>0.0238 / 8 * 12 / 52</text>
+          <text>0.0238 * 3 / 13</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_18zmrix">
           <text>63381</text>
@@ -2896,7 +2896,7 @@
           <text>45068</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_0iriugc">
-          <text>0.0172 / 8 * 12 / 52</text>
+          <text>0.0172 * 3 / 13</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_1xis5mn">
           <text>88673</text>
@@ -2931,7 +2931,7 @@
           <text>55196</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_0hfy8a0">
-          <text>0.0148 / 8 * 12 / 52</text>
+          <text>0.0148 * 3 / 13</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_16xiaou">
           <text>105872</text>
@@ -2966,7 +2966,7 @@
           <text>63735</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_0p1hztg">
-          <text>0.0142 / 8 * 12 / 52</text>
+          <text>0.0142 * 3 / 13</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_1eh5p72">
           <text>116552</text>
@@ -3001,7 +3001,7 @@
           <text>71258</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_156b6k0">
-          <text>0.0136 / 8 * 12 / 52</text>
+          <text>0.0136 * 3 / 13</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_18jitec">
           <text>126405</text>
@@ -3036,7 +3036,7 @@
           <text>78060</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_0oc8cvl">
-          <text>0.013 / 8 * 12 / 52</text>
+          <text>0.013 * 3 / 13</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_0yt9wp6">
           <text>135752</text>
@@ -3071,7 +3071,7 @@
           <text>84313</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_077uhw5">
-          <text>0.0126 / 8 * 12 / 52</text>
+          <text>0.0126 * 3 / 13</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_0pe3w4o">
           <text>143837</text>
@@ -3099,28 +3099,28 @@
   </decision>
   <dmndi:DMNDI>
     <dmndi:DMNDiagram>
-      <dmndi:DMNShape id="DMNShape_19k3gt6" dmnElementRef="programYearMaximums">
+      <dmndi:DMNShape id="DMNShape_19k3gt6" dmnElementRef="DMNProgramYearMaximums">
         <dc:Bounds height="80" width="180" x="880" y="100" />
       </dmndi:DMNShape>
-      <dmndi:DMNShape id="DMNShape_02nsnj3" dmnElementRef="applicationBooksMaximum">
+      <dmndi:DMNShape id="DMNShape_02nsnj3" dmnElementRef="DMNApplicationBooksMaximum">
         <dc:Bounds height="80" width="180" x="420" y="100" />
       </dmndi:DMNShape>
-      <dmndi:DMNShape id="DMNShape_1i64x53" dmnElementRef="applicationTransportationMaximum">
+      <dmndi:DMNShape id="DMNShape_1i64x53" dmnElementRef="DMNApplicationTransportationMaximum">
         <dc:Bounds height="80" width="180" x="660" y="100" />
       </dmndi:DMNShape>
-      <dmndi:DMNShape id="DMNShape_0o9a2zi" dmnElementRef="livingCategory">
+      <dmndi:DMNShape id="DMNShape_0o9a2zi" dmnElementRef="DMNLivingCategory">
         <dc:Bounds height="80" width="180" x="160" y="100" />
       </dmndi:DMNShape>
-      <dmndi:DMNShape id="DMNShape_0nyfuer" dmnElementRef="MSOLAllowance">
+      <dmndi:DMNShape id="DMNShape_0nyfuer" dmnElementRef="DMNMSOLAllowance">
         <dc:Bounds height="80" width="180" x="1100" y="100" />
       </dmndi:DMNShape>
-      <dmndi:DMNShape id="DMNShape_1vslqi2" dmnElementRef="incomeThresholds">
+      <dmndi:DMNShape id="DMNShape_1vslqi2" dmnElementRef="DMNIncomeThresholds">
         <dc:Bounds height="80" width="180" x="1350" y="100" />
       </dmndi:DMNShape>
-      <dmndi:DMNShape id="DMNShape_1f0j7z6" dmnElementRef="parentsMSOL">
+      <dmndi:DMNShape id="DMNShape_1f0j7z6" dmnElementRef="DMNParentsMSOL">
         <dc:Bounds height="80" width="180" x="1580" y="100" />
       </dmndi:DMNShape>
-      <dmndi:DMNShape id="DMNShape_0ftd9z4" dmnElementRef="DMNAwardAllowableLimit">
+      <dmndi:DMNShape id="DMNShape_0ftd9z4" dmnElementRef="DMNAwardAllowableLimits">
         <dc:Bounds height="80" width="180" x="150" y="310" />
       </dmndi:DMNShape>
       <dmndi:DMNShape id="DMNShape_0skwxll" dmnElementRef="DMNAwardFamilySizeVariables">
