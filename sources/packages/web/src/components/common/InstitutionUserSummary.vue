@@ -2,22 +2,30 @@
 <template>
   <body-header title="All users" :recordsCount="usersListAndCount.count">
     <template #subtitle>
-      <ul class="ml-6 mb-0">
+      <ul class="list-group">
         <li>
-          Admin roles can perform <strong>all tasks</strong
+          Admin roles can access <strong>all features</strong
           ><tooltip-icon
-            >All tasks includes managing your institution profile, locations,
-            designation, users, and bulk uploads of offerings. To obtain a Legal
-            Signing Authority role, the user must be an admin role
-            first.</tooltip-icon
+            >Admin's can setup and manage your users, institution profile,
+            locations, designation, and offering uploads including performing
+            user role duties.</tooltip-icon
           >
         </li>
         <li>
-          User roles can perform <strong>some tasks</strong
+          User roles can access <strong>some features</strong
           ><tooltip-icon
-            >Users can only manage programs, offerings, program information
-            requests, confirming enrolment, and reporting on scholastic
-            standings</tooltip-icon
+            >Users can only manage programs and offerings within their
+            locations, program information requests, confirming enrolment, and
+            reporting on scholastic standings.</tooltip-icon
+          >
+        </li>
+        <li>
+          Legal Signing Authority role is an admin with
+          <strong>an additional feature</strong
+          ><tooltip-icon
+            >This role is only to request a designation for your institution.
+            The user must be an admin first to get assigned this
+            role.</tooltip-icon
           >
         </li>
       </ul>

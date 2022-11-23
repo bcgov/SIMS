@@ -330,3 +330,12 @@ html * {
   background-color: $default-background;
   border: 2px solid $common-border-color !important;
 }
+
+// List style - apply to lists used in content
+ul.list-group {
+  margin-left: 20px;
+
+  li {
+    line-height: $formio-content-lh;
+  }
+}
