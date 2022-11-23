@@ -161,7 +161,7 @@ export class NotificationActionsService {
       );
 
       try {
-        // Wait all promises.
+        // Wait for all promises.
         await Promise.all(notificationPromises);
       } catch (error: unknown) {
         // Silently failing. In case there is an issue this error
