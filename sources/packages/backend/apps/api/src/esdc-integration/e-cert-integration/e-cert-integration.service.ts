@@ -1,6 +1,4 @@
 import { Injectable } from "@nestjs/common";
-import { FixedFormatFileLine } from "../../services/ssh/sftp-integration-base.models";
-import { SFTPIntegrationBase } from "../../services/ssh/sftp-integration-base";
 import { ECertFileFooter } from "./e-cert-files/e-cert-file-footer";
 import { ECertFileHeader } from "./e-cert-files/e-cert-file-header";
 import { ECertResponseRecord } from "./e-cert-files/e-cert-response-record";
@@ -8,6 +6,8 @@ import { ECertRecord } from "./models/e-cert-integration-model";
 import { OfferingIntensity } from "@sims/sims-db";
 import { ECertPartTimeResponseRecord } from "./e-cert-part-time-integration/e-cert-files/e-cert-response-record";
 import { ECertFullTimeResponseRecord } from "./e-cert-full-time-integration/e-cert-files/e-cert-response-record";
+import { SFTPIntegrationBase } from "@sims/integration/services";
+import { FixedFormatFileLine } from "@sims/integration/services/ssh/sftp-integration-base.models";
 
 @Injectable()
 export abstract class ECertIntegrationService extends SFTPIntegrationBase<

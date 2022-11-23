@@ -1,17 +1,17 @@
 import { Injectable } from "@nestjs/common";
 import { StudentAssessment } from "@sims/sims-db";
 import { LoggerService, InjectLogger } from "@sims/utilities/logger";
+import { StudentAssessmentService } from "@sims/integration/services";
 import {
   ConfigService,
   InstitutionIntegrationConfig,
 } from "@sims/utilities/config";
 import { getFileNameAsCurrentTimestamp } from "@sims/utilities";
+import { IER12IntegrationService } from "./ier12-integration.service";
 import {
   IER12Record,
   IER12UploadResult,
 } from "./models/ier12-integration.model";
-import { StudentAssessmentService } from "@sims/integration/services";
-import { IER12IntegrationService } from "./ier12-integration.service";
 
 @Injectable()
 export class IER12FileService {

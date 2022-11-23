@@ -18,7 +18,6 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
    * particular institution is generated.
    * @returns Pending assessment for the institution location.
    */
-  // todo: ann 1
   async getPendingAssessment(
     generatedDate?: string,
   ): Promise<StudentAssessment[]> {

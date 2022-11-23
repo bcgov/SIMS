@@ -1,10 +1,10 @@
-import { StringBuilder } from "../../../utilities/string-builder";
 import {
   MSFAARequestFileLine,
   MSFAA_SENT_STATUS_CODE,
   RecordTypeCodes,
 } from "../models/msfaa-integration.model";
-import { SPACE_FILLER, DATE_FORMAT } from "../../models/esdc-integration.model";
+import { DATE_FORMAT, SPACE_FILLER } from "@sims/integration";
+import { StringBuilder } from "@sims/integration/utilities";
 
 /**
  * Record of a MSFAA request file.

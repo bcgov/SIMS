@@ -1,7 +1,5 @@
 import { LoggerService, InjectLogger } from "@sims/utilities/logger";
 import { Injectable } from "@nestjs/common";
-import { SshService } from "../../services/ssh/ssh.service";
-import { SFTPIntegrationBase } from "../../services/ssh/sftp-integration-base";
 import { SINValidationFileResponse } from "./sin-validation-files/sin-validation-file-response";
 import { SINValidationFileHeader } from "./sin-validation-files/sin-validation-file-header";
 import {
@@ -11,14 +9,14 @@ import {
   SINValidationResponseResult,
 } from "./models/sin-validation-models";
 import { SINValidationFileFooter } from "./sin-validation-files/sin-validation-file-footer";
-import { getGenderCode, StringBuilder } from "../../utilities";
-import {
-  CreateRequestFileNameResult,
-  NUMBER_FILLER,
-} from "../models/esdc-integration.model";
-import { FixedFormatFileLine } from "../../services/ssh/sftp-integration-base.models";
+import { getGenderCode } from "../../utilities";
+import { CreateRequestFileNameResult } from "../models/esdc-integration.model";
 import { SINValidationFileRequest } from "./sin-validation-files/sin-validation-file-request";
 import { ConfigService, ESDCIntegrationConfig } from "@sims/utilities/config";
+import { SFTPIntegrationBase, SshService } from "@sims/integration/services";
+import { FixedFormatFileLine } from "@sims/integration/services/ssh/sftp-integration-base.models";
+import { StringBuilder } from "@sims/integration/utilities";
+import { NUMBER_FILLER } from "@sims/integration";
 
 @Injectable()
 export class SINValidationIntegrationService extends SFTPIntegrationBase<SINValidationResponseResult> {

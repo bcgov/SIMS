@@ -1,2 +1,2 @@
 export * from "./integration.module";
-export * from "./contacts";
+export * from "./constants";

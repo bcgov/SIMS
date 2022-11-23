@@ -1,8 +1,5 @@
-import { StringBuilder } from "../../../../utilities/string-builder";
-import {
-  SPACE_FILLER,
-  NUMBER_FILLER,
-} from "../../../models/esdc-integration.model";
+import { StringBuilder } from "@sims/integration/utilities";
+import { NUMBER_FILLER, SPACE_FILLER } from "@sims/integration";
 import { ECertFileFooter } from "../../e-cert-files/e-cert-file-footer";
 import {
   ECERT_SENT_TITLE,

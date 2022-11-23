@@ -2,7 +2,6 @@ import { Module } from "@nestjs/common";
 import {
   DisbursementScheduleService,
   DisbursementReceiptService,
-  SshService,
   StudentRestrictionService,
   RestrictionService,
   ReportService,
@@ -15,6 +14,7 @@ import { DisbursementReceiptProcessingService } from "./disbursement-receipt-pro
 import { DisbursementReceiptRequestService } from "./disbursement-receipt-request.service";
 import { LoggerModule } from "@sims/utilities/logger";
 import { ConfigModule } from "@sims/utilities/config";
+import { SshService } from "@sims/integration/services";
 
 @Module({
   imports: [LoggerModule, ConfigModule],

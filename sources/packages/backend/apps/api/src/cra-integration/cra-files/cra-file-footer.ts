@@ -1,11 +1,7 @@
-import { StringBuilder } from "../../utilities/string-builder";
-import {
-  DATE_FORMAT,
-  SPACE_FILLER,
-  NUMBER_FILLER,
-  TransactionCodes,
-} from "../cra-integration.models";
-import { FixedFormatFileLine } from "../../services/ssh/sftp-integration-base.models";
+import { DATE_FORMAT, NUMBER_FILLER, SPACE_FILLER } from "@sims/integration";
+import { FixedFormatFileLine } from "@sims/integration/services/ssh/sftp-integration-base.models";
+import { StringBuilder } from "@sims/integration/utilities";
+import { TransactionCodes } from "../cra-integration.models";
 
 /**
  * Footer of a CRA request/response file.

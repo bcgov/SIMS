@@ -1,11 +1,7 @@
-import { StringBuilder } from "../../../../utilities/string-builder";
 import { RecordTypeCodes, Award } from "../../models/e-cert-integration-model";
-import {
-  DATE_FORMAT,
-  SPACE_FILLER,
-  NUMBER_FILLER,
-} from "../../../models/esdc-integration.model";
+import { DATE_FORMAT, NUMBER_FILLER, SPACE_FILLER } from "@sims/integration";
 import { ECertFileRecord } from "../../e-cert-files/e-cert-file-record";
+import { StringBuilder } from "@sims/integration/utilities";
 
 /**
  * Number of possible awards available to be provided (code and amount).

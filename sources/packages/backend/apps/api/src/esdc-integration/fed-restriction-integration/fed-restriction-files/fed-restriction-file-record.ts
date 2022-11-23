@@ -1,5 +1,5 @@
 import { getDateOnlyFromFormat } from "@sims/utilities";
-import { DATE_FORMAT } from "../../models/esdc-integration.model";
+import { DATE_FORMAT } from "@sims/integration";
 
 /**
  * Federal restriction record that contains the restriction code and restriction reason

@@ -49,13 +49,10 @@ import {
 } from "@sims/services";
 import { LoggerModule } from "@sims/utilities/logger";
 import { ConfigModule } from "@sims/utilities/config";
-import { IntegrationModule } from "@sims/integration";
 import { NotificationsModule } from "@sims/services/notifications";
 
 @Module({
   imports: [
-    // IER12IntegrationModule,
-    IntegrationModule,
     LoggerModule,
     ConfigModule,
     DatabaseModule,

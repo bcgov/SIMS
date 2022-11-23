@@ -1,5 +1,3 @@
-// todo: ann 1
-// todo: remove other function that are not used
 /**
  * Round a number or string to the nearest integer (0.5 rounds up).
  * @param decimalValue decimal value as number or string.

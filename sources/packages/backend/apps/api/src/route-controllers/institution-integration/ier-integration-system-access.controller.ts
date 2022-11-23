@@ -1,9 +1,9 @@
 import { Controller, Post, Query } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
-import { IER12FileService } from "@sims/integration/institution-integration/ier-integration/ier12-file.service";
-import { InjectLogger, LoggerService } from "@sims/utilities/logger";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { AllowAuthorizedParty } from "../../auth/decorators";
+import { LoggerService, InjectLogger } from "@sims/utilities/logger";
+import { IER12FileService } from "@sims/integration/institution-integration/ier-integration";
 import { ClientTypeBaseRoute } from "../../types";
 import BaseController from "../BaseController";
 import { GeneratedDateAPIInDTO, IER12ResultAPIOutDTO } from "./models/ier.dto";

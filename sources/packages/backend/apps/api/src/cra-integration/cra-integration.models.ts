@@ -1,10 +1,6 @@
 import { CRAResponseStatusRecord } from "./cra-files/cra-response-status-record";
 import { CRAResponseTotalIncomeRecord } from "./cra-files/cra-response-total-income-record";
 
-export const DATE_FORMAT = "YYYYMMDD";
-export const SPACE_FILLER = " ";
-export const NUMBER_FILLER = "0";
-
 /**
  * Codes used to start all the lines of the files sent to CRA.
  */

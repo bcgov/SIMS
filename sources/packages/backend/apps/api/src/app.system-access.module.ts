@@ -18,7 +18,6 @@ import {
   MSFAANumberService,
   CRAPersonalVerificationService,
   CRAIntegrationService,
-  SshService,
   SFASIndividualService,
   SFASRestrictionService,
   DisbursementScheduleErrorsService,
@@ -65,16 +64,10 @@ import { DisbursementReceiptRequestService } from "./esdc-integration/disburseme
 import { FedRestrictionProcessingService } from "./esdc-integration/fed-restriction-integration/fed-restriction-processing.service";
 import { FedRestrictionIntegrationService } from "./esdc-integration/fed-restriction-integration/fed-restriction-integration.service";
 import { WorkflowClientService, SequenceControlService } from "@sims/services";
-// todo: ann needed?
 import { IntegrationModule } from "@sims/integration";
+import { SshService } from "@sims/integration/services";
 @Module({
-  imports: [
-    DatabaseModule,
-    AuthModule,
-    SINValidationModule,
-    IntegrationModule,
-    // IER12IntegrationModule,
-  ],
+  imports: [DatabaseModule, AuthModule, SINValidationModule, IntegrationModule],
   controllers: [
     ATBCSystemAccessController,
     SINValidationSystemAccessController,
@@ -84,18 +77,14 @@ import { IntegrationModule } from "@sims/integration";
     SFASIntegrationSystemAccessController,
     ECertIntegrationSystemAccessController,
     FedRestrictionsIntegrationSystemAccessController,
-    // // todo: ann remove it when moved to schuler.
-    // IERIntegrationSystemAccessController,
+    IERIntegrationSystemAccessController,
   ],
   providers: [
-    // integrationSshService,
     SshService,
-    // IER12IntegrationService,
     WorkflowClientService,
     ATBCService,
     StudentService,
     StudentAssessmentService,
-    // integrationStudentAssessmentService,
     EducationProgramOfferingService,
     DisbursementScheduleService,
     SequenceControlService,
@@ -112,7 +101,6 @@ import { IntegrationModule } from "@sims/integration";
     MSFAANumberService,
     CRAPersonalVerificationService,
     CRAIntegrationService,
-    // SshService,
     MSFAARequestService,
     MSFAAIntegrationService,
     MSFAAResponseService,

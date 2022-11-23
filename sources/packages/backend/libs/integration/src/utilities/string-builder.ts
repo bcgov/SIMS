@@ -1,7 +1,5 @@
 import * as dayjs from "dayjs";
 
-// todo: ann 2
-// todo: remove other function that are not used
 /**
  * Allow the construction of a large string piece by
  * piece with some useful methods to help the
