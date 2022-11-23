@@ -37,7 +37,7 @@ export class StringBuilder {
    */
   public appendWithEndFiller(s: string, length: number, filler: string) {
     if (s.length > length) {
-      s = s.substr(0, length);
+      s = s.substring(0, length);
     }
     this.append(s.padEnd(length, filler));
   }

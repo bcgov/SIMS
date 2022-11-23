@@ -80,7 +80,6 @@ import { SshService } from "@sims/integration/services";
     IERIntegrationSystemAccessController,
   ],
   providers: [
-    SshService,
     WorkflowClientService,
     ATBCService,
     StudentService,
@@ -101,6 +100,7 @@ import { SshService } from "@sims/integration/services";
     MSFAANumberService,
     CRAPersonalVerificationService,
     CRAIntegrationService,
+    SshService,
     MSFAARequestService,
     MSFAAIntegrationService,
     MSFAAResponseService,

@@ -6,7 +6,7 @@ import {
 } from "../../models/e-cert-integration-model";
 import { ECertFileHeader } from "../../e-cert-files/e-cert-file-header";
 import { StringBuilder } from "@sims/integration/utilities";
-import { DATE_FORMAT, NUMBER_FILLER, SPACE_FILLER } from "@sims/integration";
+import { DATE_FORMAT, SPACE_FILLER } from "@sims/integration";
 
 const ORIGINATOR_CODE = "BC";
 
