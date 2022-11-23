@@ -133,23 +133,6 @@ objects:
         app: ${NAME}
     status:
       loadBalancer: {}
-  - apiVersion: v1
-    kind: Service
-    metadata:
-      annotations:
-      creationTimestamp: null
-      labels:
-        app: ${NAME}
-      name: ${NAME}
-    spec:
-      ports:
-        - name: "8080"
-          port: 8080
-          targetPort: 8080
-      selector:
-        app: ${NAME}
-    status:
-      loadBalancer: {}
   - kind: Route
     apiVersion: route.openshift.io/v1
     metadata:
@@ -157,31 +140,13 @@ objects:
         app: ${NAME}
       name: ${NAME}
     spec:
-      host: ${FORMS_BUILDER_URL}
+      host: ${FFA_FORMS_URL}
       to:
         kind: Service
         name: ${NAME}
         weight: 100
       port:
         targetPort: "3001"
-      tls:
-        termination: edge
-        insecureEdgeTerminationPolicy: Redirect
-      wildcardPolicy: None
-  - kind: Route
-    apiVersion: route.openshift.io/v1
-    metadata:
-      labels:
-        app: ${NAME}
-      name: ${NAME}
-    spec:
-      host: ${FORMS_BUILDER_URL}
-      to:
-        kind: Service
-        name: ${NAME}
-        weight: 100
-      port:
-        targetPort: "8080"
       tls:
         termination: edge
         insecureEdgeTerminationPolicy: Redirect
