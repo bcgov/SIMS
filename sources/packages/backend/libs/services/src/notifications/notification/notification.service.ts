@@ -119,7 +119,7 @@ export class NotificationService extends RecordDataModelService<Notification> {
     );
 
     // Update date sent column in notification table after sending email notification successfully.
-    await this.updateNotification(notification.id);
+    await this.updateNotification(notification.id, entityManager);
 
     return gcNotifyResult;
   }
