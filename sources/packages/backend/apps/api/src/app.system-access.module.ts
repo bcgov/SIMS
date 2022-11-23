@@ -64,10 +64,16 @@ import { DisbursementReceiptRequestService } from "./esdc-integration/disburseme
 import { FedRestrictionProcessingService } from "./esdc-integration/fed-restriction-integration/fed-restriction-processing.service";
 import { FedRestrictionIntegrationService } from "./esdc-integration/fed-restriction-integration/fed-restriction-integration.service";
 import { WorkflowClientService, SequenceControlService } from "@sims/services";
-import { IntegrationModule } from "@sims/integration";
+// todo: once all integration are moved. remove sshservice.
 import { SshService } from "@sims/integration/services";
+import { IER12IntegrationModule } from "@sims/integration/institution-integration/ier-integration/ier12-integration.module";
 @Module({
-  imports: [DatabaseModule, AuthModule, SINValidationModule, IntegrationModule],
+  imports: [
+    DatabaseModule,
+    AuthModule,
+    SINValidationModule,
+    IER12IntegrationModule,
+  ],
   controllers: [
     ATBCSystemAccessController,
     SINValidationSystemAccessController,

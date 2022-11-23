@@ -1,6 +1,8 @@
 import { getDateOnlyFromFormat } from "@sims/utilities";
-import { DATE_FORMAT } from "@sims/integration";
-import { DisbursementReceiptRecordType } from "../models/disbursement-receipt-integration.model";
+import {
+  DATE_FORMAT,
+  DisbursementReceiptRecordType,
+} from "../models/disbursement-receipt-integration.model";
 
 /**
  * Base class for disbursement receipt record.

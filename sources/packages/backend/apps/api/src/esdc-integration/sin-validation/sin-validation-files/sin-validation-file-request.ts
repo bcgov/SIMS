@@ -1,7 +1,11 @@
-import { RecordTypeCodes } from "../models/sin-validation-models";
-import { DATE_FORMAT, NUMBER_FILLER, SPACE_FILLER } from "@sims/integration";
-import { FixedFormatFileLine } from "@sims/integration/services/ssh/sftp-integration-base.models";
-import { StringBuilder } from "@sims/integration/utilities";
+import {
+  DATE_FORMAT,
+  NUMBER_FILLER,
+  RecordTypeCodes,
+  SPACE_FILLER,
+} from "../models/sin-validation-models";
+import { FixedFormatFileLine } from "@sims/integration/services/ssh";
+import { StringBuilder } from "@sims/utilities";
 
 /**
  * File request record of an ESDC SIN validation file.

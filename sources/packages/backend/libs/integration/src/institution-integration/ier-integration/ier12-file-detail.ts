@@ -1,11 +1,11 @@
 import { DisbursementSchedule, DisbursementValue } from "@sims/sims-db";
+import { round, StringBuilder } from "@sims/utilities";
 import {
   DATE_FORMAT,
+  IER12FileLine,
   NUMBER_FILLER,
   SPACE_FILLER,
-} from "@sims/integration/constants";
-import { round, StringBuilder } from "@sims/integration/utilities";
-import { IER12FileLine } from "./models/ier12-integration.model";
+} from "./models/ier12-integration.model";
 
 /**
  * Record of a IER12 file.

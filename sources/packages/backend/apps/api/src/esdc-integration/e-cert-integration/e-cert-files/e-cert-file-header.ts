@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { FixedFormatFileLine } from "@sims/integration/services/ssh/sftp-integration-base.models";
+import { FixedFormatFileLine } from "@sims/integration/services/ssh";
 import { RecordTypeCodes } from "../models/e-cert-integration-model";
 
 /**

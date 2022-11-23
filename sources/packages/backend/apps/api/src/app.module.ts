@@ -50,9 +50,11 @@ import {
 import { LoggerModule } from "@sims/utilities/logger";
 import { ConfigModule } from "@sims/utilities/config";
 import { NotificationsModule } from "@sims/services/notifications";
+import { IER12IntegrationModule } from "@sims/integration/institution-integration/ier-integration/ier12-integration.module";
 
 @Module({
   imports: [
+    IER12IntegrationModule,
     LoggerModule,
     ConfigModule,
     DatabaseModule,

@@ -2,9 +2,9 @@ import {
   MSFAARequestFileLine,
   MSFAA_SENT_TITLE,
   RecordTypeCodes,
+  SPACE_FILLER,
 } from "../models/msfaa-integration.model";
-import { SPACE_FILLER } from "@sims/integration";
-import { StringBuilder } from "@sims/integration/utilities";
+import { StringBuilder } from "@sims/utilities";
 
 /**
  * Footer of a MSFAA request/response file.

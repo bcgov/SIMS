@@ -1,10 +1,11 @@
-import { FixedFormatFileLine } from "@sims/integration/services/ssh/sftp-integration-base.models";
-import { StringBuilder } from "@sims/integration/utilities";
+import { FixedFormatFileLine } from "@sims/integration/services/ssh";
+import { StringBuilder } from "@sims/utilities";
 import {
+  DATE_FORMAT,
+  SPACE_FILLER,
   TransactionCodes,
   TransactionSubCodes,
 } from "../cra-integration.models";
-import { DATE_FORMAT, SPACE_FILLER } from "@sims/integration";
 
 /**
  * Record of a CRA IV(income verification) request file (0020).

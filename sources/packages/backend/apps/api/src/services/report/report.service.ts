@@ -4,7 +4,7 @@ import { RecordDataModelService, ReportConfig } from "@sims/sims-db";
 import { CustomNamedError } from "@sims/utilities";
 import { ReportsFilterModel } from "./report.models";
 import { REPORT_CONFIG_NOT_FOUND, FILTER_PARAMS_MISMATCH } from "./constants";
-import { StringBuilder } from "@sims/integration/utilities";
+import { StringBuilder } from "@sims/utilities";
 /**
  * Service layer for reports.
  */

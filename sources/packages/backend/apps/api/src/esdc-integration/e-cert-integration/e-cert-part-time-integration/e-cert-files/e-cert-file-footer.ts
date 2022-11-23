@@ -1,7 +1,10 @@
-import { RecordTypeCodes } from "../../models/e-cert-integration-model";
-import { NUMBER_FILLER, SPACE_FILLER } from "@sims/integration";
+import {
+  NUMBER_FILLER,
+  RecordTypeCodes,
+  SPACE_FILLER,
+} from "../../models/e-cert-integration-model";
 import { ECertFileFooter } from "../../e-cert-files/e-cert-file-footer";
-import { StringBuilder } from "@sims/integration/utilities";
+import { StringBuilder } from "@sims/utilities";
 
 /**
  * Footer of a Part-Time E-Cert file.

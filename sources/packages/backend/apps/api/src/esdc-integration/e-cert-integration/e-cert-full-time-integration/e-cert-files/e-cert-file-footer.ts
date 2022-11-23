@@ -1,9 +1,10 @@
-import { StringBuilder } from "@sims/integration/utilities";
-import { NUMBER_FILLER, SPACE_FILLER } from "@sims/integration";
+import { StringBuilder } from "@sims/utilities";
 import { ECertFileFooter } from "../../e-cert-files/e-cert-file-footer";
 import {
   ECERT_SENT_TITLE,
+  NUMBER_FILLER,
   RecordTypeCodes,
+  SPACE_FILLER,
 } from "../../models/e-cert-integration-model";
 
 /**

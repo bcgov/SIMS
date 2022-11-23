@@ -7,7 +7,7 @@ import { OfferingIntensity } from "@sims/sims-db";
 import { ECertPartTimeResponseRecord } from "./e-cert-part-time-integration/e-cert-files/e-cert-response-record";
 import { ECertFullTimeResponseRecord } from "./e-cert-full-time-integration/e-cert-files/e-cert-response-record";
 import { SFTPIntegrationBase } from "@sims/integration/services";
-import { FixedFormatFileLine } from "@sims/integration/services/ssh/sftp-integration-base.models";
+import { FixedFormatFileLine } from "@sims/integration/services/ssh";
 
 @Injectable()
 export abstract class ECertIntegrationService extends SFTPIntegrationBase<

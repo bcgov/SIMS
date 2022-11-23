@@ -1,12 +1,13 @@
 import {
+  DATE_FORMAT,
   MSFAARequestFileLine,
   MSFAA_SENT_TITLE,
   RecordTypeCodes,
+  SPACE_FILLER,
 } from "../models/msfaa-integration.model";
 import { TIME_FORMAT } from "../../models/esdc-integration.model";
 import { getDateOnlyFromFormat } from "@sims/utilities";
-import { StringBuilder } from "@sims/integration/utilities";
-import { DATE_FORMAT, SPACE_FILLER } from "@sims/integration";
+import { StringBuilder } from "@sims/utilities";
 
 const ORIGINATOR_CODE = "BC";
 

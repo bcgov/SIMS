@@ -21,9 +21,9 @@ import { DisbursementValueType, OfferingIntensity } from "@sims/sims-db";
 import { ECertIntegrationService } from "../e-cert-integration.service";
 import { ECertResponseRecord } from "../e-cert-files/e-cert-response-record";
 import { ConfigService } from "@sims/utilities/config";
-import { FixedFormatFileLine } from "@sims/integration/services/ssh/sftp-integration-base.models";
+import { FixedFormatFileLine } from "@sims/integration/services/ssh";
 import { SshService } from "@sims/integration/services";
-import { round } from "@sims/integration/utilities";
+import { round } from "@sims/utilities";
 
 /**
  * Manages the file content generation and methods to

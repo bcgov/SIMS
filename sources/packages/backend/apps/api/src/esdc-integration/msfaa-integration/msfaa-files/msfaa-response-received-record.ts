@@ -1,5 +1,5 @@
 import { getDateOnlyFromFormat } from "@sims/utilities";
-import { DATE_FORMAT } from "@sims/integration";
+import { DATE_FORMAT } from "../models/msfaa-integration.model";
 import { MSFAAResponseRecordIdentification } from "./msfaa-response-record-identification";
 
 /**

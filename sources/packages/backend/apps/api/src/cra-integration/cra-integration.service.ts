@@ -14,7 +14,7 @@ import { CRAResponseRecordIdentification } from "./cra-files/cra-response-record
 import { CRAResponseStatusRecord } from "./cra-files/cra-response-status-record";
 import { CRAResponseTotalIncomeRecord } from "./cra-files/cra-response-total-income-record";
 import { SFTPIntegrationBase, SshService } from "@sims/integration/services";
-import { FixedFormatFileLine } from "@sims/integration/services/ssh/sftp-integration-base.models";
+import { FixedFormatFileLine } from "@sims/integration/services/ssh";
 
 /**
  * Manages the creation of the content files that needs to be sent

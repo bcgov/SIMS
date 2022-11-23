@@ -2,6 +2,10 @@ import { RelationshipStatus } from "@sims/sims-db";
 import { MSFAAResponseCancelledRecord } from "../msfaa-files/msfaa-response-cancelled-record";
 import { MSFAAResponseReceivedRecord } from "../msfaa-files/msfaa-response-received-record";
 
+export const DATE_FORMAT = "YYYYMMDD";
+export const SPACE_FILLER = " ";
+export const NUMBER_FILLER = "0";
+
 export const MSFAA_SENT_TITLE = "MSFAA SENT";
 export const MSFAA_SENT_STATUS_CODE = "P";
 /**

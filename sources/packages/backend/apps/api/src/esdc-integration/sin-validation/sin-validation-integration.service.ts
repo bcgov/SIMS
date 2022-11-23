@@ -3,6 +3,7 @@ import { Injectable } from "@nestjs/common";
 import { SINValidationFileResponse } from "./sin-validation-files/sin-validation-file-response";
 import { SINValidationFileHeader } from "./sin-validation-files/sin-validation-file-header";
 import {
+  NUMBER_FILLER,
   PROVINCE_CODE,
   RecordTypeCodes,
   SINValidationRecord,
@@ -14,9 +15,8 @@ import { CreateRequestFileNameResult } from "../models/esdc-integration.model";
 import { SINValidationFileRequest } from "./sin-validation-files/sin-validation-file-request";
 import { ConfigService, ESDCIntegrationConfig } from "@sims/utilities/config";
 import { SFTPIntegrationBase, SshService } from "@sims/integration/services";
-import { FixedFormatFileLine } from "@sims/integration/services/ssh/sftp-integration-base.models";
-import { StringBuilder } from "@sims/integration/utilities";
-import { NUMBER_FILLER } from "@sims/integration";
+import { FixedFormatFileLine } from "@sims/integration/services/ssh";
+import { StringBuilder } from "@sims/utilities";
 
 @Injectable()
 export class SINValidationIntegrationService extends SFTPIntegrationBase<SINValidationResponseResult> {
