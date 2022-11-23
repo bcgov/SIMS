@@ -1,6 +1,28 @@
 <!-- This component is shared between ministry and student users -->
 <template>
   <body-header title="All users" :recordsCount="usersListAndCount.count">
+    <template #subtitle>
+      <ul class="ml-6 mb-0">
+        <li>
+          Admin roles can perform <strong>all tasks</strong
+          ><tooltip-icon
+            >All tasks includes managing your institution profile, locations,
+            designation, users, and bulk uploads of offerings. To obtain a Legal
+            Signing Authority role, the user must be an admin role
+            first.</tooltip-icon
+          >
+        </li>
+        <li>
+          User roles can perform <strong>some tasks</strong
+          ><tooltip-icon
+            >Users can only manage programs, offerings, program information
+            requests, confirming enrolment, and reporting on scholastic
+            standings</tooltip-icon
+          >
+        </li>
+      </ul>
+    </template>
+
     <template #actions>
       <v-row class="m-0 p-0">
         <v-text-field
@@ -69,7 +91,9 @@
       >
       <Column :field="UserFields.Roles" header="Role">
         <template #body="slotProps">
-          {{ institutionUserRoleToDisplay(slotProps.data.roles[0]) }}
+          <span class="text-capitalize"
+            >{{ institutionUserRoleToDisplay(slotProps.data.roles[0]) }}
+          </span>
         </template>
       </Column>
       <Column :field="UserFields.Locations" header="Locations"

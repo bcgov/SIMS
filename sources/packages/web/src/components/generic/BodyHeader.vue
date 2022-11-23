@@ -10,7 +10,7 @@
   </v-row>
   <v-row class="mb-4">
     <v-col>
-      {{ subTitle }}
+      <slot name="subtitle">{{ subTitle }}</slot>
     </v-col>
   </v-row>
 </template>
