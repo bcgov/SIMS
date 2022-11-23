@@ -4,14 +4,14 @@ import { ConfigService } from "@sims/utilities/config";
 import { IER12IntegrationService } from "./ier12-integration.service";
 import { IER12FileService } from "./ier12-file.service";
 import {
-  SshService1,
-  StudentAssessmentService1,
+  SshService,
+  StudentAssessmentService,
 } from "@sims/integration/services";
 
 @Module({
   providers: [
-    SshService1,
-    StudentAssessmentService1,
+    SshService,
+    StudentAssessmentService,
     ConfigService,
     IER12FileService,
     WorkflowClientService,

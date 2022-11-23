@@ -1,5 +1,5 @@
 import { LoggerService, InjectLogger } from "@sims/utilities/logger";
-import { SshService1 } from "./ssh.service";
+import { SshService } from "./ssh.service";
 import * as Client from "ssh2-sftp-client";
 import * as path from "path";
 import { SFTPConfig } from "@sims/utilities/config";
@@ -16,7 +16,7 @@ export abstract class SFTPIntegrationBase<DownloadType> {
    */
   constructor(
     private readonly sftpConfig: SFTPConfig,
-    private readonly sshService: SshService1,
+    private readonly sshService: SshService,
   ) {}
 
   /**
@@ -55,7 +55,7 @@ export abstract class SFTPIntegrationBase<DownloadType> {
       return await client.put(Buffer.from(rawContent), remoteFilePath);
     } finally {
       this.logger.log("Finalizing SFTP client...");
-      await SshService1.closeQuietly(client);
+      await SshService.closeQuietly(client);
       this.logger.log("SFTP client finalized.");
     }
   }
@@ -75,7 +75,7 @@ export abstract class SFTPIntegrationBase<DownloadType> {
     try {
       filesToProcess = await client.list(remoteDownloadFolder, fileRegexSearch);
     } finally {
-      await SshService1.closeQuietly(client);
+      await SshService.closeQuietly(client);
     }
 
     return filesToProcess
@@ -102,7 +102,7 @@ export abstract class SFTPIntegrationBase<DownloadType> {
         .split(/\r\n|\n\r|\n|\r/)
         .filter((line) => line.length > 0);
     } finally {
-      await SshService1.closeQuietly(client);
+      await SshService.closeQuietly(client);
     }
   }
 
@@ -124,7 +124,7 @@ export abstract class SFTPIntegrationBase<DownloadType> {
     try {
       await client.delete(remoteFilePath);
     } finally {
-      await SshService1.closeQuietly(client);
+      await SshService.closeQuietly(client);
     }
   }
 
