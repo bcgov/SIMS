@@ -6,7 +6,12 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from "typeorm";
-import { User, COEStatus, COEDeniedReason } from ".";
+import {
+  User,
+  COEStatus,
+  COEDeniedReason,
+  DisbursementScheduleStatus,
+} from ".";
 import { ColumnNames, TableNames } from "../constant";
 import { dateOnlyTransformer } from "../transformers/date-only.transformer";
 import { DisbursementValue } from "./disbursement-values.model";
@@ -143,4 +148,15 @@ export class DisbursementSchedule extends RecordDataModel {
     nullable: false,
   })
   tuitionRemittanceRequestedAmount: number;
+  /**
+   * Indicates if the money amount information was already sent to be paid to the student.
+   */
+  @Column({
+    name: "disbursement_schedule_status",
+    type: "enum",
+    enum: DisbursementScheduleStatus,
+    enumName: "DisbursementScheduleStatus",
+    nullable: false,
+  })
+  disbursementScheduleStatus: DisbursementScheduleStatus;
 }
