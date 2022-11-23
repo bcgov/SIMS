@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/" xmlns:dmndi="https://www.omg.org/spec/DMN/20191111/DMNDI/" xmlns:dc="http://www.omg.org/spec/DMN/20180521/DC/" xmlns:biodi="http://bpmn.io/schema/dmn/biodi/2.0" xmlns:modeler="http://camunda.org/schema/modeler/1.0" xmlns:camunda="http://camunda.org/schema/1.0/dmn" id="Definitions_bd367b5f-1e0c-46b5-b457-e44330357182" name="DRD" namespace="http://camunda.org/schema/1.0/dmn" exporter="Camunda Modeler" exporterVersion="5.4.2" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.1.0" camunda:diagramRelationId="1a575ead-1e6d-468c-901a-766a35569b38">
-  <decision id="DMNProgramYearMaximums" name="DMNProgramYearMaximums">
+  <decision id="dmnFullTimeProgramYearMaximums" name="dmnFullTimeProgramYearMaximums">
     <decisionTable id="DecisionTable_1oyvbif">
       <input id="InputClause_02zjhj9" label="programYear">
         <inputExpression id="LiteralExpression_0yellvk" typeRef="string">
@@ -10,7 +10,6 @@
       <output id="OutputClause_01j97oq" label="limitWeeklyChildCare" name="limitWeeklyChildCare" typeRef="string" />
       <output id="OutputClause_05wibwn" label="limitWeeklyAlimonyChildSupport" name="limitWeeklyAlimonyChildSupport" typeRef="string" />
       <output id="OutputClause_0o0ynbc" label="limitWeeklySecondResidence" name="limitWeeklySecondResidence" typeRef="string" />
-      <output id="OutputClause_0zht304" label="limitWeeklyDayCareAllowancePerChild" name="daycareallowanceperchildLimit" typeRef="string" />
       <output id="OutputClause_0pshgc9" label="limitWeeklytransportationAllownace" name="transportationweeklyAllownace" typeRef="string" />
       <output id="OutputClause_1c5j7zc" label="limitWeeklyCPPperParent" name="limitWeeklyCPPperParent" typeRef="string" />
       <output id="OutputClause_1m4w70h" label="limitWeeklyEIPerParent" name="limitWeeklyEIPerParent" typeRef="string" />
@@ -26,9 +25,6 @@
         </outputEntry>
         <outputEntry id="LiteralExpression_1o2q3ej">
           <text>212</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_08jxbuu">
-          <text>268</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_1utnor3">
           <text>23</text>
@@ -53,9 +49,6 @@
         <outputEntry id="LiteralExpression_16vb1cx">
           <text>213</text>
         </outputEntry>
-        <outputEntry id="LiteralExpression_1wnoxiy">
-          <text>269</text>
-        </outputEntry>
         <outputEntry id="LiteralExpression_1atose5">
           <text>24</text>
         </outputEntry>
@@ -79,9 +72,6 @@
         <outputEntry id="LiteralExpression_0jul2og">
           <text>214</text>
         </outputEntry>
-        <outputEntry id="LiteralExpression_118g1c7">
-          <text>270</text>
-        </outputEntry>
         <outputEntry id="LiteralExpression_09tbz8c">
           <text>25</text>
         </outputEntry>
@@ -94,7 +84,7 @@
       </rule>
     </decisionTable>
   </decision>
-  <decision id="DMNApplicationBooksMaximum" name="DMNApplicationBooksMaximum">
+  <decision id="dmnFullTimeApplicationBooksMaximum" name="dmnFullTimeApplicationBooksMaximum">
     <decisionTable id="DecisionTable_0okv6wx" hitPolicy="COLLECT">
       <input id="InputClause_06rd4pc" label="programYear">
         <inputExpression id="LiteralExpression_1bgo7gt" typeRef="string">
@@ -208,7 +198,7 @@
       </rule>
     </decisionTable>
   </decision>
-  <decision id="DMNApplicationTransportationMaximum" name="DMNApplicationTransportationMaximum">
+  <decision id="dmnFullTimeApplicationTransportationMaximum" name="dmnFullTimeApplicationTransportationMaximum">
     <decisionTable id="DecisionTable_0rutev3">
       <input id="InputClause_02c9ycy" label="programYear">
         <inputExpression id="LiteralExpression_0y6gngq" typeRef="string">
@@ -289,7 +279,7 @@
       </rule>
     </decisionTable>
   </decision>
-  <decision id="DMNLivingCategory" name="DMNLivingCategory">
+  <decision id="dmnFullTimeLivingCategory" name="dmnFullTimeLivingCategory">
     <decisionTable id="DecisionTable_1njb3c0" hitPolicy="FIRST">
       <input id="InputClause_0996gkj" label="studentDataRelationshipStatus" biodi:width="191">
         <inputExpression id="LiteralExpression_0b8i7u8" typeRef="string">
@@ -445,16 +435,16 @@
       </rule>
     </decisionTable>
   </decision>
-  <decision id="DMNMSOLAllowance" name="DMNMSOLAllowance">
+  <decision id="dmnFullTimeMSOLAllowance" name="dmnFullTimeMSOLAllowance">
     <decisionTable id="DecisionTable_1thb86c">
       <input id="InputClause_18prkav" label="programYear">
         <inputExpression id="LiteralExpression_0cw7hw9" typeRef="string">
           <text>programYear</text>
         </inputExpression>
       </input>
-      <input id="InputClause_0fkjedx" label="DMNCalculatedDataLivingCategory">
+      <input id="InputClause_0fkjedx" label="dmnFullTimeCalculatedDataLivingCategory">
         <inputExpression id="LiteralExpression_10mpivq" typeRef="string">
-          <text>DMNCalculatedDataLivingCategory</text>
+          <text>dmnFullTimeCalculatedDataLivingCategory</text>
         </inputExpression>
       </input>
       <input id="InputClause_182s6kc" label="lookupType">
@@ -1242,7 +1232,7 @@
       </rule>
     </decisionTable>
   </decision>
-  <decision id="DMNIncomeThresholds" name="DMNIncomeThresholds">
+  <decision id="dmnFullTimeIncomeThresholds" name="dmnFullTimeIncomeThresholds">
     <decisionTable id="DecisionTable_1grg4wv">
       <input id="InputClause_0dih7du" label="programYear">
         <inputExpression id="LiteralExpression_0h4s20x" typeRef="string">
@@ -1680,7 +1670,7 @@
       </rule>
     </decisionTable>
   </decision>
-  <decision id="DMNParentsMSOL" name="DMNParentsMSOL">
+  <decision id="dmnFullTimeParentsMSOL" name="dmnFullTimeParentsMSOL">
     <decisionTable id="DecisionTable_0eg7p8c">
       <input id="InputClause_1lacfk9" label="programYear">
         <inputExpression id="LiteralExpression_1gt690x" typeRef="string">
@@ -1992,7 +1982,7 @@
       </rule>
     </decisionTable>
   </decision>
-  <decision id="DMNAwardAllowableLimits" name="DMNAwardAllowableLimits">
+  <decision id="dmnFullTimeAwardAllowableLimits" name="dmnFullTimeAwardAllowableLimits">
     <decisionTable id="DecisionTable_0xxr4m4">
       <input id="InputClause_0pb5vlw" label="programYear">
         <inputExpression id="LiteralExpression_1vgq21t" typeRef="string">
@@ -2339,7 +2329,7 @@
       </rule>
     </decisionTable>
   </decision>
-  <decision id="DMNAwardFamilySizeVariables" name="DMNAwardFamilySizeVariables">
+  <decision id="dmnFullTimeAwardFamilySizeVariables" name="dmnFullTimeAwardFamilySizeVariables">
     <decisionTable id="DecisionTable_1n76gw9">
       <input id="InputClause_0tc86o2" label="programYear">
         <inputExpression id="LiteralExpression_1yturt5" typeRef="string">
@@ -3099,31 +3089,31 @@
   </decision>
   <dmndi:DMNDI>
     <dmndi:DMNDiagram>
-      <dmndi:DMNShape id="DMNShape_19k3gt6" dmnElementRef="DMNProgramYearMaximums">
+      <dmndi:DMNShape id="DMNShape_19k3gt6" dmnElementRef="dmnFullTimeProgramYearMaximums">
         <dc:Bounds height="80" width="180" x="880" y="100" />
       </dmndi:DMNShape>
-      <dmndi:DMNShape id="DMNShape_02nsnj3" dmnElementRef="DMNApplicationBooksMaximum">
+      <dmndi:DMNShape id="DMNShape_02nsnj3" dmnElementRef="dmnFullTimeApplicationBooksMaximum">
         <dc:Bounds height="80" width="180" x="420" y="100" />
       </dmndi:DMNShape>
-      <dmndi:DMNShape id="DMNShape_1i64x53" dmnElementRef="DMNApplicationTransportationMaximum">
+      <dmndi:DMNShape id="DMNShape_1i64x53" dmnElementRef="dmnFullTimeApplicationTransportationMaximum">
         <dc:Bounds height="80" width="180" x="660" y="100" />
       </dmndi:DMNShape>
-      <dmndi:DMNShape id="DMNShape_0o9a2zi" dmnElementRef="DMNLivingCategory">
+      <dmndi:DMNShape id="DMNShape_0o9a2zi" dmnElementRef="dmnFullTimeLivingCategory">
         <dc:Bounds height="80" width="180" x="160" y="100" />
       </dmndi:DMNShape>
-      <dmndi:DMNShape id="DMNShape_0nyfuer" dmnElementRef="DMNMSOLAllowance">
+      <dmndi:DMNShape id="DMNShape_0nyfuer" dmnElementRef="dmnFullTimeMSOLAllowance">
         <dc:Bounds height="80" width="180" x="1100" y="100" />
       </dmndi:DMNShape>
-      <dmndi:DMNShape id="DMNShape_1vslqi2" dmnElementRef="DMNIncomeThresholds">
+      <dmndi:DMNShape id="DMNShape_1vslqi2" dmnElementRef="dmnFullTimeIncomeThresholds">
         <dc:Bounds height="80" width="180" x="1350" y="100" />
       </dmndi:DMNShape>
-      <dmndi:DMNShape id="DMNShape_1f0j7z6" dmnElementRef="DMNParentsMSOL">
+      <dmndi:DMNShape id="DMNShape_1f0j7z6" dmnElementRef="dmnFullTimeParentsMSOL">
         <dc:Bounds height="80" width="180" x="1580" y="100" />
       </dmndi:DMNShape>
-      <dmndi:DMNShape id="DMNShape_0ftd9z4" dmnElementRef="DMNAwardAllowableLimits">
+      <dmndi:DMNShape id="DMNShape_0ftd9z4" dmnElementRef="dmnFullTimeAwardAllowableLimits">
         <dc:Bounds height="80" width="180" x="150" y="310" />
       </dmndi:DMNShape>
-      <dmndi:DMNShape id="DMNShape_0skwxll" dmnElementRef="DMNAwardFamilySizeVariables">
+      <dmndi:DMNShape id="DMNShape_0skwxll" dmnElementRef="dmnFullTimeAwardFamilySizeVariables">
         <dc:Bounds height="80" width="180" x="440" y="320" />
       </dmndi:DMNShape>
     </dmndi:DMNDiagram>
