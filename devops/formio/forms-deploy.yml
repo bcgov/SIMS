@@ -128,7 +128,7 @@ objects:
       ports:
         - name: "3001"
           port: 3001
-          targetPort: 3010
+          targetPort: 3001
       selector:
         app: ${NAME}
     status:
@@ -145,7 +145,7 @@ objects:
       ports:
         - name: "8080"
           port: 8080
-          targetPort: 8081
+          targetPort: 8080
       selector:
         app: ${NAME}
     status:
