@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { DataSource, Repository } from "typeorm";
+import { DataSource, EntityManager, In, Repository } from "typeorm";
 import {
   RecordDataModelService,
   DisbursementSchedule,
@@ -7,6 +7,8 @@ import {
   StudentAssessment,
   AssessmentTriggerType,
   ApplicationStatus,
+  DisbursementValueType,
+  DisbursementScheduleStatus,
 } from "@sims/sims-db";
 import { Disbursement } from "./disbursement-schedule.models";
 import { CustomNamedError } from "@sims/utilities";
@@ -22,7 +24,7 @@ import {
 @Injectable()
 export class DisbursementScheduleService extends RecordDataModelService<DisbursementSchedule> {
   private readonly assessmentRepo: Repository<StudentAssessment>;
-  constructor(dataSource: DataSource) {
+  constructor(private readonly dataSource: DataSource) {
     super(dataSource.getRepository(DisbursementSchedule));
     this.assessmentRepo = dataSource.getRepository(StudentAssessment);
   }
@@ -41,7 +43,11 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
       select: {
         id: true,
         triggerType: true,
-        application: { id: true, applicationStatus: true },
+        application: {
+          id: true,
+          applicationStatus: true,
+          applicationNumber: true,
+        },
         disbursementSchedules: { id: true },
       },
       relations: {
@@ -103,7 +109,125 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
       assessment.disbursementSchedules.push(newDisbursement);
     }
 
+    await this.dataSource.transaction(async (transactionEntityManager) => {
+      // Step 1
+      // Get disbursed values to know the amount that the student already payed.
+      // Get pending values to be cancelled.
+      const currentDisbursements = await this.getDisbursementsForOverawards(
+        assessment.application.applicationNumber,
+        transactionEntityManager,
+      );
+      // Step 2
+      // Cancel pending disbursements.
+      // Add possible overawards (present in cancelled record) back to the disbursement_overawards table.
+      await this.cancelPendingDisbursements(
+        currentDisbursements,
+        transactionEntityManager,
+      );
+      // Step 3
+      // Sum total disbursed values per loan type (Federal or Provincial).
+      const totalDisbursedValues =
+        this.sumDisbursedValuesPerValueCode(currentDisbursements);
+    });
+
     await this.assessmentRepo.save(assessment);
     return assessment.disbursementSchedules;
+  }
+
+  /**
+   * Sum all the disbursed Canada/BC loans (CSLF, CSPT, BCSL).
+   * The result object will be as the one in the example below
+   * where CSLF and BCSL are the valueCode in the disbursement value.
+   * @example
+   * {
+   *    CSLF: 5532,
+   *    BCSL: 1256
+   * }
+   * @param disbursementSchedules
+   * @returns sum of all the disbursed Canada/BC loans (CSLF, CSPT, BCSL).
+   */
+  sumDisbursedValuesPerValueCode(
+    disbursementSchedules: DisbursementSchedule[],
+  ): Record<string, number> {
+    const totalPerValueCode: Record<string, number> = {};
+    disbursementSchedules
+      .filter(
+        (disbursementSchedule) =>
+          disbursementSchedule.disbursementScheduleStatus ===
+          DisbursementScheduleStatus.Disbursed,
+      )
+      .flatMap(
+        (disbursementSchedule) => disbursementSchedule.disbursementValues,
+      )
+      .forEach((disbursementValue) => {
+        totalPerValueCode[disbursementValue.valueCode] =
+          (totalPerValueCode[disbursementValue.valueCode] ?? 0) +
+          +disbursementValue.valueAmount;
+      });
+    return totalPerValueCode;
+  }
+
+  async cancelPendingDisbursements(
+    disbursementSchedules: DisbursementSchedule[],
+    entityManager: EntityManager,
+  ) {
+    const pendingDisbursementsValues = disbursementSchedules
+      .filter(
+        (disbursementSchedule) =>
+          disbursementSchedule.disbursementScheduleStatus ===
+          DisbursementScheduleStatus.Pending,
+      )
+      .flatMap(
+        (disbursementSchedule) => disbursementSchedule.disbursementValues,
+      );
+    for (const pendingDisbursementValue of pendingDisbursementsValues) {
+      console.log("Insert into disbursement_overawards");
+      console.log(pendingDisbursementValue);
+    }
+  }
+
+  /**
+   * Get disbursement schedules values that are either pending or were already disbursed.
+   * All possible versions of the same application will be considered, including overridden ones.
+   * For instance, if a disbursement schedule was ever marked as disbursed it will matter for
+   * overaward calculations.
+   * @param applicationNumber application number to have the disbursements retrieved.
+   * @param entityManager used to execute the queries in the same transaction.
+   * @returns disbursement schedules relevant to overaward calculation.
+   */
+  async getDisbursementsForOverawards(
+    applicationNumber: string,
+    entityManager: EntityManager,
+  ): Promise<DisbursementSchedule[]> {
+    const disbursementScheduleRepo =
+      entityManager.getRepository(DisbursementSchedule);
+    return disbursementScheduleRepo.find({
+      select: {
+        id: true,
+        disbursementValues: {
+          valueType: true,
+          valueCode: true,
+          overaward: true,
+        },
+      },
+      relations: {
+        disbursementValues: true,
+      },
+      where: {
+        studentAssessment: {
+          application: { applicationNumber },
+        },
+        disbursementScheduleStatus: In([
+          DisbursementScheduleStatus.Pending,
+          DisbursementScheduleStatus.Disbursed,
+        ]),
+        disbursementValues: {
+          valueType: In([
+            DisbursementValueType.CanadaLoan,
+            DisbursementValueType.BCLoan,
+          ]),
+        },
+      },
+    });
   }
 }
