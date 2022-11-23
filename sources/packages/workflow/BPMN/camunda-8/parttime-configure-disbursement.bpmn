@@ -43,7 +43,7 @@
     <bpmn:intermediateThrowEvent id="Event_14qii8a" name="disbursmenentScheduleDate2Potential">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
-          <zeebe:output source="=date(offeringStudyStartDate) + (duration(&#34;P&#34; + string(((date(offeringStudyEndDate) - date(offeringStudyStartDate)).days / 2)) + &#34;D&#34;))" target="disbursmenentScheduleDate2Potential" />
+          <zeebe:output source="=date(offeringStudyStartDate) + (duration(&#34;P&#34; + string(floor(((date(offeringStudyEndDate) - date(offeringStudyStartDate)).days / 2))) + &#34;D&#34;))" target="disbursmenentScheduleDate2Potential" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_0vow7x8</bpmn:incoming>
@@ -58,7 +58,8 @@
           <zeebe:output source="=[&#10;  {&#10;    disbursementDate: disbursmenentScheduleDate1,&#10;    negotiatedExpiryDate: disbursmenentScheduleDate1,&#10;    disbursements: [&#10;      {&#10;        valueCode: &#34;CSLP&#34;,&#10;        valueType: &#34;Canada Loan&#34;,&#10;        valueAmount: decimal(finalFederalAwardNetCSLPAmount,0),&#10;        awardEligibility: true&#10;      },&#10;      {&#10;        valueCode: &#34;CSGP&#34;,&#10;        valueType: &#34;Canada Grant&#34;,&#10;        valueAmount: decimal(finalFederalAwardNetCSGPAmount, 0),&#10;        awardEligibility: awardEligibilityCSGP&#10;      },&#10;      {&#10;        valueCode: &#34;CSGD&#34;,&#10;        valueType: &#34;Canada Grant&#34;,&#10;        valueAmount: decimal(finalFederalAwardNetCSGDAmount, 0),&#10;        awardEligibility: awardEligibilityCSGD&#10;      },&#10;      {&#10;        valueCode: &#34;CSPT&#34;,&#10;        valueType: &#34;Canada Grant&#34;,&#10;        valueAmount: decimal(finalFederalAwardNetCSPTAmount, 0),&#10;        awardEligibility: awardEligibilityCSPT&#10;      },&#10;      {&#10;        valueCode: &#34;BCAG&#34;,&#10;        valueType: &#34;BC Grant&#34;,&#10;        valueAmount: decimal(finalProvincialAwardNetBCAGAmount, 0),&#10;        awardEligibility: awardEligibilityBCAG&#10;      },&#10;      {&#10;        valueCode: &#34;SBSD&#34;,&#10;        valueType: &#34;BC Grant&#34;,&#10;        valueAmount: decimal(finalProvincialAwardNetSBSDAmount, 0),&#10;        awardEligibility: awardEligibilitySBSD&#10;      },&#10;      {&#10;        valueCode: &#34;BCSG&#34;,&#10;        valueType: &#34;BC Grant&#34;,&#10;        valueAmount: decimal(sum([finalProvincialAwardNetBCAGAmount,finalProvincialAwardNetSBSDAmount]), 0),&#10;        awardEligibility: true&#10;      }&#10;    ]&#10;    [item.awardEligibility != false]&#10;  }&#10;]" target="disbursementSchedules" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
-      <bpmn:incoming>Flow_0jthu1b</bpmn:incoming>
+      <bpmn:incoming>Flow_12dnfdw</bpmn:incoming>
+      <bpmn:incoming>Flow_1bx16ip</bpmn:incoming>
       <bpmn:outgoing>Flow_1kesibu</bpmn:outgoing>
     </bpmn:intermediateThrowEvent>
     <bpmn:intermediateThrowEvent id="Event_0aunmqb" name="Configure Payload">
@@ -69,17 +70,6 @@
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_0f8d1jy</bpmn:incoming>
       <bpmn:outgoing>Flow_0dr1i43</bpmn:outgoing>
-    </bpmn:intermediateThrowEvent>
-    <bpmn:intermediateThrowEvent id="Event_0d25zby" name="disbursementScheduleNumber">
-      <bpmn:extensionElements>
-        <zeebe:ioMapping>
-          <zeebe:output source="=1" target="disbursementScheduleNumber" />
-          <zeebe:output source="=today()" target="disbursmenentScheduleDate1" />
-        </zeebe:ioMapping>
-      </bpmn:extensionElements>
-      <bpmn:incoming>Flow_12dnfdw</bpmn:incoming>
-      <bpmn:incoming>Flow_1bx16ip</bpmn:incoming>
-      <bpmn:outgoing>Flow_0jthu1b</bpmn:outgoing>
     </bpmn:intermediateThrowEvent>
     <bpmn:sequenceFlow id="Flow_0pl9xpo" name="offeringStudyStartDate after Today" sourceRef="Gateway_0hiv6nu" targetRef="Event_0qz9wzt">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=date(offeringStudyStartDate) &gt;= today()</bpmn:conditionExpression>
@@ -92,14 +82,14 @@
     <bpmn:sequenceFlow id="Flow_0vow7x8" name="yes 2 Potential Disbursements" sourceRef="Gateway_1enmsgy" targetRef="Event_14qii8a">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=offeringWeeks &gt;= 17</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="Flow_1bx16ip" name="no 1 Disbursement" sourceRef="Gateway_1enmsgy" targetRef="Event_0d25zby">
+    <bpmn:sequenceFlow id="Flow_1bx16ip" name="no 1 Disbursement" sourceRef="Gateway_1enmsgy" targetRef="Event_1koar33">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=offeringWeeks &lt; 17</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="Flow_1dv5ufr" sourceRef="Event_14qii8a" targetRef="Gateway_18insz0" />
     <bpmn:sequenceFlow id="Flow_1vbepy0" name="2 Disbursements" sourceRef="Gateway_18insz0" targetRef="Event_1khr1nv">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=date(disbursmenentScheduleDate2Potential) &gt; today()</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="Flow_12dnfdw" name="1 Disbursement" sourceRef="Gateway_18insz0" targetRef="Event_0d25zby">
+    <bpmn:sequenceFlow id="Flow_12dnfdw" name="1 Disbursement" sourceRef="Gateway_18insz0" targetRef="Event_1koar33">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=date(disbursmenentScheduleDate2Potential) &lt;= today()</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:startEvent id="Event_0i5ejaz">
@@ -108,7 +98,6 @@
     <bpmn:sequenceFlow id="Flow_16jouca" sourceRef="Event_0i5ejaz" targetRef="Gateway_0hiv6nu" />
     <bpmn:sequenceFlow id="Flow_0dr1i43" sourceRef="Event_0aunmqb" targetRef="Gateway_1pqqwt9" />
     <bpmn:sequenceFlow id="Flow_1kesibu" sourceRef="Event_1koar33" targetRef="Gateway_1pqqwt9" />
-    <bpmn:sequenceFlow id="Flow_0jthu1b" sourceRef="Event_0d25zby" targetRef="Event_1koar33" />
     <bpmn:sequenceFlow id="Flow_0f8d1jy" sourceRef="Event_1khr1nv" targetRef="Event_0aunmqb" />
     <bpmn:exclusiveGateway id="Gateway_17hh8u0">
       <bpmn:incoming>Flow_0kgyqie</bpmn:incoming>
@@ -178,12 +167,6 @@
           <dc:Bounds x="1396" y="165" width="48" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_0d25zby_di" bpmnElement="Event_0d25zby">
-        <dc:Bounds x="1122" y="272" width="36" height="36" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="1100" y="316" width="80" height="27" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_0i5ejaz_di" bpmnElement="Event_0i5ejaz">
         <dc:Bounds x="152" y="192" width="36" height="36" />
       </bpmndi:BPMNShape>
@@ -236,7 +219,7 @@
       <bpmndi:BPMNEdge id="Flow_1bx16ip_di" bpmnElement="Flow_1bx16ip">
         <di:waypoint x="710" y="235" />
         <di:waypoint x="710" y="290" />
-        <di:waypoint x="1122" y="290" />
+        <di:waypoint x="1402" y="290" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="725" y="256" width="69" height="27" />
         </bpmndi:BPMNLabel>
@@ -254,9 +237,10 @@
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_12dnfdw_di" bpmnElement="Flow_12dnfdw">
         <di:waypoint x="1140" y="165" />
-        <di:waypoint x="1140" y="272" />
+        <di:waypoint x="1140" y="290" />
+        <di:waypoint x="1402" y="290" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="1141" y="178" width="78" height="14" />
+          <dc:Bounds x="1150" y="243" width="78" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_16jouca_di" bpmnElement="Flow_16jouca">
@@ -272,10 +256,6 @@
         <di:waypoint x="1438" y="290" />
         <di:waypoint x="1530" y="290" />
         <di:waypoint x="1530" y="235" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0jthu1b_di" bpmnElement="Flow_0jthu1b">
-        <di:waypoint x="1158" y="290" />
-        <di:waypoint x="1402" y="290" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0f8d1jy_di" bpmnElement="Flow_0f8d1jy">
         <di:waypoint x="1308" y="140" />
