@@ -23,7 +23,10 @@ import { CustomNamedError } from "@sims/utilities";
 import { RestrictionService } from "./restriction.service";
 import { StudentService } from "../student/student.service";
 import { RestrictionCode } from "./models/restriction.model";
-import { GCNotifyActionsService } from "../notification/gc-notify-actions.service";
+import {
+  NotificationActionsService,
+  StudentRestrictionAddedNotificationOptions,
+} from "@sims/services/notifications";
 export const RESTRICTION_NOT_ACTIVE = "RESTRICTION_NOT_ACTIVE";
 export const RESTRICTION_NOT_PROVINCIAL = "RESTRICTION_NOT_PROVINCIAL";
 
@@ -42,7 +45,7 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
     private readonly dataSource: DataSource,
     private readonly restrictionService: RestrictionService,
     private readonly studentService: StudentService,
-    private readonly gcNotifyActionsService: GCNotifyActionsService,
+    private readonly notificationActionsService: NotificationActionsService,
   ) {
     super(dataSource.getRepository(StudentRestriction));
   }
@@ -206,11 +209,9 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
       const newRestriction = await transactionalEntityManager
         .getRepository(StudentRestriction)
         .save(studentRestriction);
-      await this.createNotifications(
-        [newRestriction.id],
-        auditUserId,
-        transactionalEntityManager,
-      );
+      await this.createNotifications([newRestriction.id], auditUserId, {
+        entityManager: transactionalEntityManager,
+      });
       return studentRestriction;
     });
   }
@@ -429,11 +430,9 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
       const newRestriction = await entityManager
         .getRepository(StudentRestriction)
         .save(restriction);
-      await this.createNotifications(
-        [newRestriction.id],
-        auditUserId,
+      await this.createNotifications([newRestriction.id], auditUserId, {
         entityManager,
-      );
+      });
     }
   }
 
@@ -441,18 +440,16 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
    * Generate notifications for newly created student restrictions when needed.
    * @param restrictionsIds ids to generate the notifications.
    * @param auditUserId user that should be considered the one that is causing the changes.
-   * @param entityManager optional repository that can be provided, for instance,
-   * to execute the command as part of an existing transaction. If not provided
-   * the local repository will be used instead.
+   * @param options options for the student restriction notification.
    */
   async createNotifications(
     restrictionsIds: number[],
     auditUserId: number,
-    entityManager?: EntityManager,
+    options?: StudentRestrictionAddedNotificationOptions,
   ): Promise<void> {
     const restrictions = await this.getRestrictionsForNotifications(
       restrictionsIds,
-      entityManager,
+      options?.entityManager,
     );
 
     if (!restrictions?.length) {
@@ -466,9 +463,10 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
       toAddress: restriction.student.user.email,
       userId: restriction.student.user.id,
     }));
-    await this.gcNotifyActionsService.sendStudentRestrictionAddedNotification(
+    await this.notificationActionsService.sendStudentRestrictionAddedNotification(
       notifications,
       auditUserId,
+      options,
     );
   }
 
@@ -519,7 +517,7 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
           },
         },
       });
-      restrictions.push(...restrictions);
+      allRestrictions.push(...restrictions);
     }
 
     return allRestrictions;

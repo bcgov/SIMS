@@ -32,10 +32,6 @@ import {
   StudentAppealService,
   StudentAppealRequestsService,
   StudentScholasticStandingsService,
-  GCNotifyActionsService,
-  GCNotifyService,
-  NotificationService,
-  NotificationMessageService,
 } from "./services";
 import {
   AssessmentControllerService,
@@ -139,10 +135,6 @@ import { IER12IntegrationService } from "./institution-integration/ier-integrati
     StudentAppealService,
     StudentAppealRequestsService,
     StudentScholasticStandingsService,
-    GCNotifyActionsService,
-    GCNotifyService,
-    NotificationService,
-    NotificationMessageService,
   ],
 })
 export class AppSystemAccessModule {}

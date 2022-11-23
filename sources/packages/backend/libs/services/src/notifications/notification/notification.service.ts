@@ -4,7 +4,6 @@ import {
   Notification,
   User,
   NotificationMessage,
-  NotificationMessageType,
 } from "@sims/sims-db";
 import { DataSource, EntityManager, InsertResult, UpdateResult } from "typeorm";
 import { GCNotifyResult } from "./gc-notify.model";
@@ -24,32 +23,6 @@ export class NotificationService extends RecordDataModelService<Notification> {
     private readonly gcNotifyService: GCNotifyService,
   ) {
     super(dataSource.getRepository(Notification));
-  }
-
-  /**
-   * Creates the inbox notification record.
-   * @param userId id of the user who will receive the message.
-   * @param messageType message type of the notification.
-   * @param auditUserId id of the user creating the notification.
-   * @param messagePayload notification payload.
-   * @returns payload of the record created.
-   * @deprecated please use saveNotifications method instead.
-   */
-  async saveNotification(
-    userId: number,
-    messageType: NotificationMessageType,
-    messagePayload: unknown,
-    auditUserId: number,
-  ): Promise<Notification> {
-    const notification = new Notification();
-    notification.user = { id: userId } as User;
-    notification.creator = { id: auditUserId } as User;
-    notification.messagePayload = messagePayload;
-    notification.notificationMessage = {
-      id: messageType,
-    } as NotificationMessage;
-
-    return this.repo.save(notification);
   }
 
   /**
@@ -97,10 +70,18 @@ export class NotificationService extends RecordDataModelService<Notification> {
   /**
    * Updates the date sent column of the inbox notification record.
    * @param notificationId notification id.
+   * @param entityManager optional repository that can be provided, for instance,
+   * to execute the command as part of an existing transaction. If not provided
+   * the local repository will be used instead.
    * @returns result of the record updated.
    */
-  async updateNotification(notificationId: number): Promise<UpdateResult> {
-    return this.repo.update(
+  async updateNotification(
+    notificationId: number,
+    entityManager?: EntityManager,
+  ): Promise<UpdateResult> {
+    const notificationRepo =
+      entityManager?.getRepository(Notification) ?? this.repo;
+    return notificationRepo.update(
       {
         id: notificationId,
       },
@@ -112,10 +93,18 @@ export class NotificationService extends RecordDataModelService<Notification> {
    * Invokes the sendEmailNotification method of the GC Notification service.
    * @param notificationId notification id used to retrieve the payload that will be passed
    * as a parameter to the sendMailNotification method.
+   * @param entityManager optional repository that can be provided, for instance,
+   * to execute the command as part of an existing transaction. If not provided
+   * the local repository will be used instead.
    * @returns GC Notify API call response.
    */
-  async sendEmailNotification(notificationId: number): Promise<GCNotifyResult> {
-    const notification = await this.repo.findOne({
+  async sendEmailNotification(
+    notificationId: number,
+    entityManager?: EntityManager,
+  ): Promise<GCNotifyResult> {
+    const notificationRepo =
+      entityManager?.getRepository(Notification) ?? this.repo;
+    const notification = await notificationRepo.findOne({
       select: {
         id: true,
         messagePayload: true,

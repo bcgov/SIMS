@@ -44,8 +44,6 @@ export * from "./student-assessment/student-assessment.constants";
 export * from "./student-appeal/student-appeal.service";
 export * from "./student-appeal-request/student-appeal-request.service";
 export * from "./student-scholastic-standings/student-scholastic-standings.service";
-export * from "./notification/gc-notify.service";
-export * from "./notification/gc-notify-actions.service";
 export * from "./report/report.service";
 export * from "./application-exception/application-exception.service";
 export * from "./disbursement-receipt/disbursement-receipt.service";
@@ -54,5 +52,3 @@ export * from "./student-account-applications/student-account-applications.model
 export * from "./education-program-offering/education-program-offering-import-csv.service";
 export * from "./education-program-offering/education-program-offering-validation.models";
 export * from "./education-program-offering/education-program-offering-validation.service";
-export * from "./notification/notification.service";
-export * from "./notification-message/notification-message.service";
