@@ -46,7 +46,7 @@ import {
   ECertIntegrationSystemAccessController,
   FedRestrictionsIntegrationSystemAccessController,
   ATBCSystemAccessController,
-  // IERIntegrationSystemAccessController,
+  IERIntegrationSystemAccessController,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
 import { SINValidationModule } from "./esdc-integration/sin-validation/sin-validation.module";
@@ -69,8 +69,23 @@ import { DisbursementReceiptRequestService } from "./esdc-integration/disburseme
 import { FedRestrictionProcessingService } from "./esdc-integration/fed-restriction-integration/fed-restriction-processing.service";
 import { FedRestrictionIntegrationService } from "./esdc-integration/fed-restriction-integration/fed-restriction-integration.service";
 import { WorkflowClientService, SequenceControlService } from "@sims/services";
+// todo: ann needed?
+import { IntegrationModule } from "@sims/integration";
+import { IER12IntegrationModule } from "@sims/integration/institution-integration/ier-integration/ier12-integration.module";
+// import { IER12FileService } from "@sims/integration/institution-integration/ier-integration/ier12-file.service";
+// import { IER12IntegrationService } from "@sims/integration/institution-integration/ier-integration/ier12-integration.service";
+// import {
+//   SshService as integrationSshService,
+//   StudentAssessmentService as integrationStudentAssessmentService,
+// } from "@sims/integration/services";
 @Module({
-  imports: [DatabaseModule, AuthModule, SINValidationModule],
+  imports: [
+    DatabaseModule,
+    AuthModule,
+    SINValidationModule,
+    IntegrationModule,
+    // IER12IntegrationModule,
+  ],
   controllers: [
     ATBCSystemAccessController,
     SINValidationSystemAccessController,
@@ -80,14 +95,18 @@ import { WorkflowClientService, SequenceControlService } from "@sims/services";
     SFASIntegrationSystemAccessController,
     ECertIntegrationSystemAccessController,
     FedRestrictionsIntegrationSystemAccessController,
-    // todo: ann remove it when moved to schuler.
+    // // todo: ann remove it when moved to schuler.
     // IERIntegrationSystemAccessController,
   ],
   providers: [
+    // integrationSshService,
+    SshService,
+    // IER12IntegrationService,
     WorkflowClientService,
     ATBCService,
     StudentService,
     StudentAssessmentService,
+    // integrationStudentAssessmentService,
     EducationProgramOfferingService,
     DisbursementScheduleService,
     SequenceControlService,
@@ -104,7 +123,7 @@ import { WorkflowClientService, SequenceControlService } from "@sims/services";
     MSFAANumberService,
     CRAPersonalVerificationService,
     CRAIntegrationService,
-    SshService,
+    // SshService,
     MSFAARequestService,
     MSFAAIntegrationService,
     MSFAAResponseService,
@@ -139,6 +158,7 @@ import { WorkflowClientService, SequenceControlService } from "@sims/services";
     GCNotifyService,
     NotificationService,
     NotificationMessageService,
+    // IER12FileService,
   ],
 })
 export class AppSystemAccessModule {}

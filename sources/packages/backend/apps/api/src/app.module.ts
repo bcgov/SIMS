@@ -54,10 +54,12 @@ import {
 import { LoggerModule } from "@sims/utilities/logger";
 import { ConfigModule } from "@sims/utilities/config";
 import { IntegrationModule } from "@sims/integration";
+import { IER12IntegrationModule } from "@sims/integration/institution-integration/ier-integration/ier12-integration.module";
+// todo: ann remove if not needed
 
 @Module({
   imports: [
-    // todo: ann remove if not needed
+    // IER12IntegrationModule,
     IntegrationModule,
     LoggerModule,
     ConfigModule,

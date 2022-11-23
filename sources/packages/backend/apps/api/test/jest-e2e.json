@@ -18,6 +18,8 @@
     "@sims/utilities/(.*)": "<rootDir>/../../libs/utilities/src/$1",
     "@sims/utilities": "<rootDir>/../../libs/utilities/src",
     "@sims/test-utils/(.*)": "<rootDir>/../../libs/test-utils/src/$1",
-    "@sims/test-utils": "<rootDir>/../../libs/test-utils/src"
+    "@sims/test-utils": "<rootDir>/../../libs/test-utils/src",
+    "@sims/integration/(.*)": "<rootDir>/../../libs/integration/src/$1",
+    "@sims/integration": "<rootDir>/../../libs/integration/src"
   }
 }
