@@ -24,38 +24,3 @@ export interface RequestPayload<T> {
   template_id: string; //API payload require this naming convention, so we are not following camelCase.
   personalisation: T;
 }
-
-export interface StudentFileUploadNotification {
-  firstName: string;
-  lastName: string;
-  birthDate: Date;
-  applicationNumber?: string;
-  documentPurpose: string;
-}
-
-export interface StudentFileUploadPersonalization {
-  givenNames: string;
-  lastName: string;
-  dob: string;
-  applicationNumber?: string;
-  documentPurpose: string;
-  date: string;
-}
-
-export interface MinistryStudentFileUploadNotification {
-  firstName: string;
-  lastName: string;
-  toAddress: string;
-}
-
-export interface MinistryStudentFileUploadPersonalization {
-  givenNames: string;
-  lastName: string;
-}
-
-export interface StudentRestrictionAddedPersonalization {
-  givenNames: string;
-  lastName: string;
-  toAddress: string;
-  userId: number;
-}

@@ -32,10 +32,6 @@ import {
   StudentAppealService,
   StudentAppealRequestsService,
   StudentScholasticStandingsService,
-  GCNotifyActionsService,
-  GCNotifyService,
-  NotificationService,
-  NotificationMessageService,
 } from "./services";
 import {
   AssessmentControllerService,
@@ -71,13 +67,6 @@ import { FedRestrictionIntegrationService } from "./esdc-integration/fed-restric
 import { WorkflowClientService, SequenceControlService } from "@sims/services";
 // todo: ann needed?
 import { IntegrationModule } from "@sims/integration";
-import { IER12IntegrationModule } from "@sims/integration/institution-integration/ier-integration/ier12-integration.module";
-// import { IER12FileService } from "@sims/integration/institution-integration/ier-integration/ier12-file.service";
-// import { IER12IntegrationService } from "@sims/integration/institution-integration/ier-integration/ier12-integration.service";
-// import {
-//   SshService as integrationSshService,
-//   StudentAssessmentService as integrationStudentAssessmentService,
-// } from "@sims/integration/services";
 @Module({
   imports: [
     DatabaseModule,
@@ -154,11 +143,6 @@ import { IER12IntegrationModule } from "@sims/integration/institution-integratio
     StudentAppealService,
     StudentAppealRequestsService,
     StudentScholasticStandingsService,
-    GCNotifyActionsService,
-    GCNotifyService,
-    NotificationService,
-    NotificationMessageService,
-    // IER12FileService,
   ],
 })
 export class AppSystemAccessModule {}

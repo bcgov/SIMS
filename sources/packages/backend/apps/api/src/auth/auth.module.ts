@@ -14,10 +14,6 @@ import {
   SINValidationService,
   DesignationAgreementLocationService,
   RestrictionService,
-  GCNotifyService,
-  GCNotifyActionsService,
-  NotificationService,
-  NotificationMessageService,
 } from "../services";
 import { JwtAuthGuard } from "./guards/jwt-auth.guard";
 import { JwtStrategy } from "./jwt.strategy";
@@ -53,10 +49,6 @@ const jwtModule = JwtModule.register({
     SINValidationService,
     RestrictionService,
     DesignationAgreementLocationService,
-    GCNotifyService,
-    GCNotifyActionsService,
-    NotificationService,
-    NotificationMessageService,
     {
       provide: APP_GUARD,
       useClass: JwtAuthGuard,

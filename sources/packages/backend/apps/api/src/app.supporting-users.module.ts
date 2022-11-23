@@ -9,16 +9,12 @@ import {
   StudentFileService,
   SupportingUserService,
   UserService,
-  GCNotifyService,
-  GCNotifyActionsService,
   StudentRestrictionService,
   RestrictionService,
   EducationProgramOfferingService,
   StudentService,
   SFASIndividualService,
   EducationProgramOfferingValidationService,
-  NotificationService,
-  NotificationMessageService,
 } from "./services";
 import { SequenceControlService, WorkflowClientService } from "@sims/services";
 import { SupportingUserSupportingUsersController } from "./route-controllers";
@@ -37,8 +33,6 @@ import { AuthModule } from "./auth/auth.module";
     MSFAANumberService,
     SFASApplicationService,
     SFASPartTimeApplicationsService,
-    GCNotifyService,
-    GCNotifyActionsService,
     RestrictionService,
     StudentRestrictionService,
     EducationProgramOfferingService,
@@ -46,8 +40,6 @@ import { AuthModule } from "./auth/auth.module";
     SFASIndividualService,
     EducationProgramOfferingValidationService,
     WorkflowClientService,
-    NotificationService,
-    NotificationMessageService,
   ],
 })
 export class AppSupportingUsersModule {}

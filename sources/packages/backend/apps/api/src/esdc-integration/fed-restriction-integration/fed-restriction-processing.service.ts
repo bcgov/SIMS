@@ -262,6 +262,7 @@ export class FedRestrictionProcessingService {
           await this.studentRestrictionService.createNotifications(
             insertedRestrictionsIDs,
             auditUserId,
+            { notificationsDelayed: true },
           );
           result.processSummary.push(
             `${insertedRestrictionsIDs.length} notification(s) generated.`,

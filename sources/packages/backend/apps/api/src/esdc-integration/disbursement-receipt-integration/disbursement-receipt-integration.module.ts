@@ -8,10 +8,6 @@ import {
   ReportService,
   StudentService,
   SFASIndividualService,
-  GCNotifyActionsService,
-  GCNotifyService,
-  NotificationService,
-  NotificationMessageService,
 } from "../../services";
 import { SequenceControlService } from "@sims/services";
 import { DisbursementReceiptIntegrationService } from "./disbursement-receipt-integration.service";
@@ -35,10 +31,6 @@ import { ConfigModule } from "@sims/utilities/config";
     RestrictionService,
     StudentService,
     SFASIndividualService,
-    GCNotifyService,
-    GCNotifyActionsService,
-    NotificationService,
-    NotificationMessageService,
   ],
   exports: [
     DisbursementReceiptIntegrationService,

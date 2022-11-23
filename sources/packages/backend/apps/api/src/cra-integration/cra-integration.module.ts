@@ -13,14 +13,10 @@ import {
   SINValidationService,
   SFASApplicationService,
   SFASPartTimeApplicationsService,
-  GCNotifyService,
-  GCNotifyActionsService,
   StudentRestrictionService,
   RestrictionService,
   EducationProgramOfferingService,
   EducationProgramOfferingValidationService,
-  NotificationService,
-  NotificationMessageService,
 } from "../services";
 import { SequenceControlService, WorkflowClientService } from "@sims/services";
 import { ConfigModule } from "@sims/utilities/config";
@@ -41,15 +37,11 @@ import { ConfigModule } from "@sims/utilities/config";
     SINValidationService,
     SFASApplicationService,
     SFASPartTimeApplicationsService,
-    GCNotifyService,
-    GCNotifyActionsService,
     RestrictionService,
     StudentRestrictionService,
     EducationProgramOfferingService,
     EducationProgramOfferingValidationService,
     WorkflowClientService,
-    NotificationService,
-    NotificationMessageService,
   ],
   exports: [
     CRAPersonalVerificationService,

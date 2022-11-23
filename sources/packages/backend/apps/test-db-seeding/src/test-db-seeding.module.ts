@@ -13,9 +13,10 @@ import {
   InstitutionHelperService,
   UserTypeRoleHelperService,
 } from "./services";
+import { ConfigModule } from "@sims/utilities/config";
 
 @Module({
-  imports: [DatabaseModule, TypeOrmModule.forFeature(DBEntities)],
+  imports: [DatabaseModule, TypeOrmModule.forFeature(DBEntities), ConfigModule],
   providers: [
     DesignationAgreementService,
     SeedExecutor,
