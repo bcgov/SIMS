@@ -112,3 +112,12 @@ export const OFFERING_INVALID_OPERATION_IN_THE_CURRENT_STATE =
 
 export const STUDENT_SIN_CONSENT_NOT_CHECKED =
   "STUDENT_SIN_CONSENT_NOT_CHECKED";
+/**
+ * Duplicate location code for the institution.
+ */
+export const DUPLICATE_INSTITUTION_LOCATION_CODE =
+  "DUPLICATE_INSTITUTION_LOCATION_CODE";
+/**
+ * Duplicate SABC code for the institution.
+ */
+export const DUPLICATE_SABC_CODE = "DUPLICATE_SABC_CODE";

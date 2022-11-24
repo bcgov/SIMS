@@ -18,14 +18,15 @@ import {
   EducationProgramsSummaryAPIOutDTO,
   EducationProgramAPIInDTO,
 } from "./models/education-program.dto";
-import {
-  credentialTypeToDisplay,
-  getUserFullName,
-} from "../../utilities";
+import { credentialTypeToDisplay, getUserFullName } from "../../utilities";
 import { CustomNamedError, getISODateOnlyString } from "@sims/utilities";
 import { FormNames } from "../../services/form/constants";
-import { EDUCATION_PROGRAM_NOT_FOUND } from "../../constants";
+import {
+  EDUCATION_PROGRAM_NOT_FOUND,
+  DUPLICATE_SABC_CODE,
+} from "../../constants";
 import { INSTITUTION_TYPE_BC_PRIVATE } from "@sims/sims-db/constant";
+import { ApiProcessError } from "../../types";
 
 @Injectable()
 export class EducationProgramControllerService {
@@ -92,6 +93,17 @@ export class EducationProgramControllerService {
       FormNames.EducationProgram,
       payload,
     );
+
+    const programsWithTheSameSABCCode =
+      await this.programService.getProgramsBySABCCodes(institutionId, [
+        payload.sabcCode,
+      ]);
+
+    if (programsWithTheSameSABCCode?.length > 0) {
+      throw new UnprocessableEntityException(
+        new ApiProcessError("Duplicate SABC code.", DUPLICATE_SABC_CODE),
+      );
+    }
 
     if (!submissionResult.valid) {
       throw new UnprocessableEntityException(

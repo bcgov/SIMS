@@ -11,6 +11,7 @@ import {
   Patch,
   Post,
   Query,
+  UnprocessableEntityException,
 } from "@nestjs/common";
 import {
   ApiBadRequestResponse,
@@ -30,7 +31,7 @@ import {
   FormService,
   InstitutionLocationService,
 } from "../../services";
-import { ClientTypeBaseRoute } from "../../types";
+import { ClientTypeBaseRoute, ApiProcessError } from "../../types";
 import { getUserFullName } from "../../utilities";
 import { getISODateOnlyString } from "@sims/utilities";
 import {
@@ -52,7 +53,7 @@ import {
   ApplicationStatusPaginationOptionsAPIInDTO,
   PaginatedResultsAPIOutDTO,
 } from "../models/pagination.dto";
-
+import { DUPLICATE_INSTITUTION_LOCATION_CODE } from "../../constants";
 /**
  * Institution location controller for institutions Client.
  */
@@ -91,6 +92,21 @@ export class InstitutionLocationInstitutionsController extends BaseController {
     if (!dryRunSubmissionResult.valid) {
       throw new BadRequestException(
         "Not able to create the institution location due to an invalid request.",
+      );
+    }
+
+    const isInstitutionCodeDuplicate =
+      !(await this.locationService.validateLocationCodeIsUniqueForInstitution(
+        userToken.authorizations.institutionId,
+        payload.institutionCode,
+      ));
+
+    if (isInstitutionCodeDuplicate) {
+      throw new UnprocessableEntityException(
+        new ApiProcessError(
+          "Duplicate institution location code.",
+          DUPLICATE_INSTITUTION_LOCATION_CODE,
+        ),
       );
     }
 

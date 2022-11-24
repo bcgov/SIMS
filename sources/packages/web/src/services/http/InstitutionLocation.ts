@@ -13,10 +13,14 @@ export class InstitutionLocationApi extends HttpBaseClient {
   public async createInstitutionLocation(
     createInstitutionLocationDto: InstitutionLocationFormAPIInDTO,
   ): Promise<void> {
-    await this.postCall<InstitutionLocationFormAPIInDTO>(
-      this.addClientRoot("location"),
-      createInstitutionLocationDto,
-    );
+    try {
+      await this.postCall<InstitutionLocationFormAPIInDTO>(
+        this.addClientRoot("location"),
+        createInstitutionLocationDto,
+      );
+    } catch (error) {
+      this.handleAPICustomError(error);
+    }
   }
 
   public async updateInstitutionLocation(

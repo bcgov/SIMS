@@ -213,6 +213,25 @@ export class InstitutionLocationService extends RecordDataModelService<Instituti
   }
 
   /**
+   * Validate if location code is unique for the institution.
+   * @param institutionId
+   * @param locationCode
+   * @returns whether there is already a location code for the institution.
+   */
+  async validateLocationCodeIsUniqueForInstitution(
+    institutionId: number,
+    locationCode: string,
+  ): Promise<boolean> {
+    const found = await this.repo
+      .createQueryBuilder("location")
+      .select("1")
+      .where("location.institution.id = :institutionId", { institutionId })
+      .andWhere("location.institutionCode = :locationCode", { locationCode })
+      .getRawMany();
+    return found.length === 0;
+  }
+
+  /**
    * Get institution location by location id.
    * @param locationId location id
    * @returns InstitutionLocation.

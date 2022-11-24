@@ -49,7 +49,7 @@ import {
   AESTRoutesConst,
 } from "@/constants/routes/RouteConstants";
 import { onMounted, ref, computed } from "vue";
-import { ClientIdType, FormIOForm } from "@/types";
+import { ApiProcessError, ClientIdType, FormIOForm } from "@/types";
 import { useSnackBar } from "@/composables";
 import { AuthService } from "@/services/AuthService";
 import { BannerTypes } from "@/types/contracts/Banner";
@@ -191,8 +191,12 @@ export default {
             snackBar.success("Education Program created successfully!");
           }
           goBack();
-        } catch {
-          snackBar.error("An error happened during the saving process.");
+        } catch (error) {
+          if (error instanceof ApiProcessError) {
+            snackBar.error(error.message);
+          } else {
+            snackBar.error("An error happened during the saving process.");
+          }
         } finally {
           processing.value = false;
         }
