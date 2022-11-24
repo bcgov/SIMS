@@ -53,6 +53,8 @@ objects:
                       name: ${FORMIO_SECRET}
                 - name: FORMIO_DOMAIN
                   value: ${FFA_FORMS_URL}
+                - name: PORTAL_ENABLED
+                  value: "true"
                 - name: FORMIO_JWT_SECRET
                   valueFrom:
                     secretKeyRef:

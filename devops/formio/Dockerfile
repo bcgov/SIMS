@@ -18,8 +18,8 @@ RUN apk update && \
   apk add git
 
 # Clone code
-RUN git clone -b 3.0.x https://github.com/formio/formio.git /tmp/forms-flow-forms/
-RUN cp -r /tmp/forms-flow-forms/. /forms/
+RUN git clone -b master https://github.com/AOT-Technologies/forms-flow-ai.git /tmp/forms-flow-ai/
+RUN cp -r /tmp/forms-flow-ai/forms-flow-forms/. /forms/
 
 # Using an alternative package install location
 # to allow overwriting the /app folder at runtime
@@ -54,4 +54,4 @@ RUN set -x \
 
 # This will initialize the application based on
 # some questions to the user (login email, password, etc.)
-ENTRYPOINT [ "node", "main" ]
+ENTRYPOINT [ "npm", "run", "start:dev" ]
