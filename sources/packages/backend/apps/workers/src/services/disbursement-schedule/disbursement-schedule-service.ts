@@ -11,6 +11,7 @@ import {
   DisbursementScheduleStatus,
   DisbursementOveraward,
   DisbursementOverawardOriginType,
+  Student,
 } from "@sims/sims-db";
 import { Disbursement } from "./disbursement-schedule.models";
 import { CustomNamedError } from "@sims/utilities";
@@ -119,9 +120,10 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
         transactionEntityManager,
       );
       // Step 2
+      // Cancel all pending disbursements.
       // Rollback non-payed overawards. Add possible overawards (present in pending records)
       // back to the disbursement overawards table.
-      await this.rollbackPendingOverawards(
+      await this.cancelPendingOverawards(
         currentDisbursements,
         transactionEntityManager,
       );
@@ -134,13 +136,10 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
           assessment.application.student.id,
           transactionEntityManager,
         );
-      console.log(totalOverawards);
       // Step 4
       // Sum total disbursed values per loan type (Federal or Provincial).
       const totalAlreadyDisbursedValues =
         this.sumDisbursedValuesPerValueCode(currentDisbursements);
-      console.log(totalAlreadyDisbursedValues);
-
       // Step final
       // Save the disbursements to DB with the adjusted overaward values.
       const disbursementSchedules: DisbursementSchedule[] = [];
@@ -161,18 +160,25 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
         disbursementSchedules.push(newDisbursement);
       }
 
+      assessment.disbursementSchedules = disbursementSchedules;
+
+      // Save the disbursements.
+      const studentAssessmentRepo =
+        transactionEntityManager.getRepository(StudentAssessment);
+      await studentAssessmentRepo.save(assessment);
+
       // Do the magic :D
       await this.applyOverawards(
+        assessment.application.student.id,
         disbursementSchedules,
         totalOverawards,
         totalAlreadyDisbursedValues,
         transactionEntityManager,
       );
 
-      assessment.disbursementSchedules = disbursementSchedules;
-      await transactionEntityManager
-        .getRepository(StudentAssessment)
-        .save(assessment);
+      // Persist overaward changes.
+      await studentAssessmentRepo.save(assessment);
+
       return assessment.disbursementSchedules;
     });
   }
@@ -239,7 +245,7 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
   }
 
   /**
-   * Get all pending disbursements and, if there is any overaward value
+   * Cancel all pending disbursements and, if there is any overaward value
    * present, add it back to the disbursement overaward table.
    * An overaward value that was never sent (disbursed) is not
    * considered as payed and must be added back to the overaward table for history
@@ -249,7 +255,7 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
    * application including the overwritten ones.
    * @param entityManager used to execute the queries in the same transaction.
    */
-  private async rollbackPendingOverawards(
+  private async cancelPendingOverawards(
     disbursementSchedules: DisbursementSchedule[],
     entityManager: EntityManager,
   ) {
@@ -261,6 +267,8 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
     const rollbackOverawards: QueryDeepPartialEntity<DisbursementOveraward>[] =
       [];
     for (const pendingDisbursement of pendingDisbursements) {
+      pendingDisbursement.disbursementScheduleStatus =
+        DisbursementScheduleStatus.Cancelled;
       for (const pendingDisbursementValue of pendingDisbursement.disbursementValues) {
         if (pendingDisbursementValue.overaward) {
           rollbackOverawards.push({
@@ -312,11 +320,14 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
   }
 
   async applyOverawards(
+    studentId: number,
     disbursementSchedules: DisbursementSchedule[],
     totalOverawards: Record<string, number>,
     totalAlreadyDisbursedValues: Record<string, number>,
     entityManager: EntityManager,
   ) {
+    const overawardsToInert: QueryDeepPartialEntity<DisbursementOveraward>[] =
+      [];
     const loanAwards = disbursementSchedules
       .flatMap(
         (disbursementSchedule) => disbursementSchedule.disbursementValues,
@@ -338,31 +349,55 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
       );
       // Total already received and/or owed by the student due to some previous overaward.
       let totalStudentDebit =
-        (totalAlreadyDisbursedValues[valueCode] ?? 0) +
-        (totalOverawards[valueCode] ?? 0);
+        (+totalAlreadyDisbursedValues[valueCode] ?? 0) +
+        (+totalOverawards[valueCode] ?? 0);
 
       for (let i = 0; i < loans.length; i++) {
         const loan = loans[i];
+        // Find the disbursement from where this loan is part of.
+        const [disbursementSchedule] = disbursementSchedules.filter(
+          (disbursementSchedule) =>
+            disbursementSchedule.disbursementValues.some(
+              (disbursementValue) => disbursementValue.id === loan.id,
+            ),
+        );
         if (+loan.valueAmount >= totalStudentDebit) {
           // Current disbursement value is enough to pay the debit.
           loan.valueAmount = (+loan.valueAmount - totalStudentDebit).toString();
           loan.overaward = totalStudentDebit.toString();
           totalStudentDebit = 0;
-          // TODO: Insert credit in the overaward table.
         } else {
           // Current disbursement is not enough to pay the debit.
           // Updates total student debit.
-          totalStudentDebit = -+loan.valueAmount;
+          totalStudentDebit -= +loan.valueAmount;
+          loan.overaward = loan.valueAmount;
           loan.valueAmount = "0";
-          loan.overaward = totalStudentDebit.toString();
-          // TODO: Insert credit in the overaward table.
+        }
+        if (+loan.overaward > 0) {
+          // If there was some overaward value, save it.
+          overawardsToInert.push({
+            disbursementSchedule: disbursementSchedule,
+            student: { id: studentId } as Student,
+            disbursementValueCode: loan.valueCode,
+            overawardValue: (+loan.overaward * -1).toString(), // -1 to invert the value signal.
+            originType: DisbursementOverawardOriginType.Reassessment,
+          });
+        }
+        if (loans.length === i - 1 && totalStudentDebit > 0) {
+          // If it is the last iteration and there is some remaining student debit.
+          overawardsToInert.push({
+            disbursementSchedule: disbursementSchedule,
+            student: disbursementSchedule.studentAssessment.application.student,
+            disbursementValueCode: loan.valueCode,
+            overawardValue: totalStudentDebit.toString(),
+            originType: DisbursementOverawardOriginType.Reassessment,
+          });
         }
       }
-
-      if (totalStudentDebit > 0) {
-        // There is some remaining student debit.
-        // TODO: Insert debit in the overaward table.
-      }
     }
+    // Save all the generated overawards.
+    await entityManager
+      .getRepository(DisbursementOveraward)
+      .insert(overawardsToInert);
   }
 }

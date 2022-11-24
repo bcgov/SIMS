@@ -17,5 +17,5 @@ export enum DisbursementScheduleStatus {
    * but are not limited to, when a reassessment happens or when the
    * application is canceled.
    */
-  Declined = "Cancelled",
+  Cancelled = "Cancelled",
 }
