@@ -1,8 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import {
-  SFTPIntegrationBase,
-  SshService,
-} from "@sims/integrations/services";
+import { SFTPIntegrationBase, SshService } from "@sims/integrations/services";
 import { ConfigService } from "@sims/utilities/config";
 import { FedRestrictionFileRecord } from "./fed-restriction-files/fed-restriction-file-record";
 
