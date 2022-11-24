@@ -31,7 +31,7 @@ export class DisbursementOverawardService extends RecordDataModelService<Disburs
       .getRawMany<{ valueCode: string; total: number }>();
     const result: Record<string, number> = {};
     for (const totalAward of totalAwardsPerValueCodes) {
-      result[totalAward.valueCode] = totalAward.total;
+      result[totalAward.valueCode] = +totalAward.total;
     }
     return result;
   }
