@@ -8,7 +8,7 @@ import { DisbursementReceiptHeader } from "./disbursement-receipt-files/disburse
 import { DisbursementReceiptFooter } from "./disbursement-receipt-files/disbursement-receipt-file-footer";
 import { DisbursementReceiptDetail } from "./disbursement-receipt-files/disbursement-receipt-file-detail";
 import { getFileNameAsCurrentTimestamp } from "@sims/utilities";
-import { SFTPIntegrationBase, SshService } from "@sims/integration/services";
+import { SFTPIntegrationBase, SshService } from "@sims/integrations/services";
 
 @Injectable()
 export class DisbursementReceiptIntegrationService extends SFTPIntegrationBase<DisbursementReceiptDownloadResponse> {

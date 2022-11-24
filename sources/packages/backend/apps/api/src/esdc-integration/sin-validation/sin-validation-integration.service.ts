@@ -14,8 +14,8 @@ import { getGenderCode } from "../../utilities";
 import { CreateRequestFileNameResult } from "../models/esdc-integration.model";
 import { SINValidationFileRequest } from "./sin-validation-files/sin-validation-file-request";
 import { ConfigService, ESDCIntegrationConfig } from "@sims/utilities/config";
-import { SFTPIntegrationBase, SshService } from "@sims/integration/services";
-import { FixedFormatFileLine } from "@sims/integration/services/ssh";
+import { SFTPIntegrationBase, SshService } from "@sims/integrations/services";
+import { FixedFormatFileLine } from "@sims/integrations/services/ssh";
 import { StringBuilder } from "@sims/utilities";
 
 @Injectable()

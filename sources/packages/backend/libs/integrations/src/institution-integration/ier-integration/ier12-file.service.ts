@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { StudentAssessment } from "@sims/sims-db";
 import { LoggerService, InjectLogger } from "@sims/utilities/logger";
-import { StudentAssessmentService } from "@sims/integration/services";
+import { StudentAssessmentService } from "@sims/integrations/services";
 import {
   ConfigService,
   InstitutionIntegrationConfig,

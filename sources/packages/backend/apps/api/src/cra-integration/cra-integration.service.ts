@@ -13,8 +13,8 @@ import { CRAFileIVRequestRecord } from "./cra-files/cra-file-iv-request-record";
 import { CRAResponseRecordIdentification } from "./cra-files/cra-response-record-identification";
 import { CRAResponseStatusRecord } from "./cra-files/cra-response-status-record";
 import { CRAResponseTotalIncomeRecord } from "./cra-files/cra-response-total-income-record";
-import { SFTPIntegrationBase, SshService } from "@sims/integration/services";
-import { FixedFormatFileLine } from "@sims/integration/services/ssh";
+import { SFTPIntegrationBase, SshService } from "@sims/integrations/services";
+import { FixedFormatFileLine } from "@sims/integrations/services/ssh";
 
 /**
  * Manages the creation of the content files that needs to be sent

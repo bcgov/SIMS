@@ -1,4 +1,4 @@
-import { FixedFormatFileLine } from "@sims/integration/services/ssh";
+import { FixedFormatFileLine } from "@sims/integrations/services/ssh";
 import { StringBuilder } from "@sims/utilities";
 import {
   DATE_FORMAT,

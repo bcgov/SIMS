@@ -6,7 +6,7 @@ import {
   SPACE_FILLER,
 } from "../models/sin-validation-models";
 import { getDateOnlyFromFormat, StringBuilder } from "@sims/utilities";
-import { FixedFormatFileLine } from "@sims/integration/services/ssh";
+import { FixedFormatFileLine } from "@sims/integrations/services/ssh";
 
 /**
  * Header of an ESDC SIN validation file.

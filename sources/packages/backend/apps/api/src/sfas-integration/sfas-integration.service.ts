@@ -4,7 +4,10 @@ import { ConfigService } from "@sims/utilities/config";
 import { SFASRecordIdentification } from "./sfas-files/sfas-record-identification";
 import { DownloadResult, RecordTypeCodes } from "./sfas-integration.models";
 import { SFASHeader } from "./sfas-files/sfas-header";
-import { SFTPIntegrationBase, SshService } from "@sims/integration/services";
+import {
+  SFTPIntegrationBase,
+  SshService,
+} from "@sims/integrations/services";
 
 @Injectable()
 export class SFASIntegrationService extends SFTPIntegrationBase<DownloadResult> {

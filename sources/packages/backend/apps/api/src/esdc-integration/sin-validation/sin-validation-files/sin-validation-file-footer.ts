@@ -3,7 +3,7 @@ import {
   RecordTypeCodes,
   SPACE_FILLER,
 } from "../models/sin-validation-models";
-import { FixedFormatFileLine } from "@sims/integration/services/ssh";
+import { FixedFormatFileLine } from "libs/integrations/src/services/ssh";
 import { StringBuilder } from "@sims/utilities";
 
 /**

@@ -27,7 +27,7 @@ import {
   ESDCIntegrationConfig,
   SFTPConfig,
 } from "@sims/utilities/config";
-import { SshService } from "@sims/integration/services";
+import { SshService } from "@sims/integrations/services";
 
 /**
  * Manages the creation of the content files that needs to be sent

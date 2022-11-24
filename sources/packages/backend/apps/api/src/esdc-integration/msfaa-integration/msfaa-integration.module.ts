@@ -6,7 +6,7 @@ import { MSFAAIntegrationService } from "./msfaa-integration.service";
 import { MSFAARequestService } from "./msfaa-request.service";
 import { MSFAAResponseService } from "./msfaa-response.service";
 import { ConfigModule } from "@sims/utilities/config";
-import { SshService } from "@sims/integration/services";
+import { SshService } from "@sims/integrations/services";
 
 @Module({
   imports: [AuthModule, ConfigModule],

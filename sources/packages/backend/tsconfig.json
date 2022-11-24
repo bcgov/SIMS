@@ -37,11 +37,11 @@
       "@sims/test-utils/*": [
         "libs/test-utils/src/*"
       ],
-      "@sims/integration": [
-        "libs/integration/src"
+      "@sims/integrations": [
+        "libs/integrations/src"
       ],
-      "@sims/integration/*": [
-        "libs/integration/src/*"
+      "@sims/integrations/*": [
+        "libs/integrations/src/*"
       ]
     }
   }

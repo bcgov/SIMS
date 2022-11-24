@@ -117,7 +117,7 @@
       "^@sims/services(|/.*)$": "<rootDir>/libs/services/src/$1",
       "^@sims/utilities(|/.*)$": "<rootDir>/libs/utilities/src/$1",
       "^@sims/test-utils(|/.*)$": "<rootDir>/libs/test-utils/src/$1",
-      "^@sims/integration(|/.*)$": "<rootDir>/libs/integration/src/$1"
+      "^@sims/integrations(|/.*)$": "<rootDir>/libs/integrations/src/$1"
     }
   }
 }

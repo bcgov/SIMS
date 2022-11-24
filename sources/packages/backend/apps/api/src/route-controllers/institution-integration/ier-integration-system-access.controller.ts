@@ -3,10 +3,10 @@ import { ApiTags } from "@nestjs/swagger";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { AllowAuthorizedParty } from "../../auth/decorators";
 import { LoggerService, InjectLogger } from "@sims/utilities/logger";
-import { IER12FileService } from "@sims/integration/institution-integration/ier-integration";
 import { ClientTypeBaseRoute } from "../../types";
 import BaseController from "../BaseController";
 import { GeneratedDateAPIInDTO, IER12ResultAPIOutDTO } from "./models/ier.dto";
+import { IER12FileService } from "@sims/integrations/institution-integration/ier-integration";
 
 @AllowAuthorizedParty(AuthorizedParties.formsFlowBPM)
 @Controller("ier-integration")

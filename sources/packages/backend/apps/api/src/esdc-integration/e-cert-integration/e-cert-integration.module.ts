@@ -17,7 +17,7 @@ import { ECertPartTimeFileFooter } from "./e-cert-part-time-integration/e-cert-f
 import { ECertPartTimeFileHeader } from "./e-cert-part-time-integration/e-cert-files/e-cert-file-header";
 import { ECertPartTimeIntegrationService } from "./e-cert-part-time-integration/e-cert-part-time-integration.service";
 import { ConfigModule } from "@sims/utilities/config";
-import { SshService } from "@sims/integration/services";
+import { SshService } from "@sims/integrations/services";
 
 @Module({
   imports: [AuthModule, ConfigModule],

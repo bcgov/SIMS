@@ -89,13 +89,13 @@
         "tsConfigPath": "libs/test-utils/tsconfig.lib.json"
       }
     },
-    "integration": {
+    "integrations": {
       "type": "library",
-      "root": "libs/integration",
+      "root": "libs/integrations",
       "entryFile": "index",
-      "sourceRoot": "libs/integration/src",
+      "sourceRoot": "libs/integrations/src",
       "compilerOptions": {
-        "tsConfigPath": "libs/integration/tsconfig.lib.json"
+        "tsConfigPath": "libs/integrations/tsconfig.lib.json"
       }
     }
   },
