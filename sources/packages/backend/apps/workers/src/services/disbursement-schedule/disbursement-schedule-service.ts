@@ -22,6 +22,11 @@ import {
 import { QueryDeepPartialEntity } from "typeorm/query-builder/QueryPartialEntity";
 import { DisbursementOverawardService } from "..";
 
+const LOAN_TYPES = [
+  DisbursementValueType.CanadaLoan,
+  DisbursementValueType.BCLoan,
+];
+
 /**
  * Service layer for Student Application disbursement schedules.
  */
@@ -132,12 +137,13 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
       console.log(totalOverawards);
       // Step 4
       // Sum total disbursed values per loan type (Federal or Provincial).
-      const totalDisbursedValues =
+      const totalAlreadyDisbursedValues =
         this.sumDisbursedValuesPerValueCode(currentDisbursements);
-      console.log(totalDisbursedValues);
+      console.log(totalAlreadyDisbursedValues);
 
       // Step final
       // Save the disbursements to DB with the adjusted overaward values.
+      const disbursementSchedules: DisbursementSchedule[] = [];
       for (const disbursement of disbursements) {
         const newDisbursement = new DisbursementSchedule();
         newDisbursement.disbursementDate = disbursement.disbursementDate;
@@ -152,8 +158,18 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
             return newValue;
           },
         );
-        assessment.disbursementSchedules.push(newDisbursement);
+        disbursementSchedules.push(newDisbursement);
       }
+
+      // Do the magic :D
+      await this.applyOverawards(
+        disbursementSchedules,
+        totalOverawards,
+        totalAlreadyDisbursedValues,
+        transactionEntityManager,
+      );
+
+      assessment.disbursementSchedules = disbursementSchedules;
       await transactionEntityManager
         .getRepository(StudentAssessment)
         .save(assessment);
@@ -179,13 +195,17 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
     return disbursementScheduleRepo.find({
       select: {
         id: true,
+        disbursementScheduleStatus: true,
         disbursementValues: {
           valueType: true,
           valueCode: true,
+          valueAmount: true,
           overaward: true,
         },
         studentAssessment: {
+          id: true,
           application: {
+            id: true,
             student: {
               id: true,
             },
@@ -289,5 +309,60 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
           +disbursementValue.valueAmount;
       });
     return totalPerValueCode;
+  }
+
+  async applyOverawards(
+    disbursementSchedules: DisbursementSchedule[],
+    totalOverawards: Record<string, number>,
+    totalAlreadyDisbursedValues: Record<string, number>,
+    entityManager: EntityManager,
+  ) {
+    const loanAwards = disbursementSchedules
+      .flatMap(
+        (disbursementSchedule) => disbursementSchedule.disbursementValues,
+      )
+      .filter((disbursementValue) =>
+        LOAN_TYPES.includes(disbursementValue.valueType),
+      );
+    // Loans can be present multiple times in one or more disbursements.
+    // Get only the distinct value codes present on this disbursement.
+    const distinctValueCodes = [
+      ...loanAwards.map((loanAward) => loanAward.valueCode),
+    ];
+
+    for (const valueCode of distinctValueCodes) {
+      // Checks if the loan is present in multiple disbursements.
+      // Find all the values in all the schedules (expected one or two).
+      const loans = loanAwards.filter(
+        (loanAward) => loanAward.valueCode === valueCode,
+      );
+      // Total already received and/or owed by the student due to some previous overaward.
+      let totalStudentDebit =
+        (totalAlreadyDisbursedValues[valueCode] ?? 0) +
+        (totalOverawards[valueCode] ?? 0);
+
+      for (let i = 0; i < loans.length; i++) {
+        const loan = loans[i];
+        if (+loan.valueAmount >= totalStudentDebit) {
+          // Current disbursement value is enough to pay the debit.
+          loan.valueAmount = (+loan.valueAmount - totalStudentDebit).toString();
+          loan.overaward = totalStudentDebit.toString();
+          totalStudentDebit = 0;
+          // TODO: Insert credit in the overaward table.
+        } else {
+          // Current disbursement is not enough to pay the debit.
+          // Updates total student debit.
+          totalStudentDebit = -+loan.valueAmount;
+          loan.valueAmount = "0";
+          loan.overaward = totalStudentDebit.toString();
+          // TODO: Insert credit in the overaward table.
+        }
+      }
+
+      if (totalStudentDebit > 0) {
+        // There is some remaining student debit.
+        // TODO: Insert debit in the overaward table.
+      }
+    }
   }
 }
