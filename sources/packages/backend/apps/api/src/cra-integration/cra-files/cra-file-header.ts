@@ -1,6 +1,5 @@
 import { FixedFormatFileLine } from "@sims/integration/services/ssh";
-import { StringBuilder } from "@sims/utilities";
-import { getDateOnlyFromFormat } from "@sims/utilities";
+import { StringBuilder, getDateOnlyFromFormat } from "@sims/utilities";
 import {
   DATE_FORMAT,
   NUMBER_FILLER,

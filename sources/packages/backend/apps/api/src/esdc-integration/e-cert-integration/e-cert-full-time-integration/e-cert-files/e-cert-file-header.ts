@@ -1,4 +1,4 @@
-import { getDateOnlyFromFormat } from "@sims/utilities";
+import { getDateOnlyFromFormat, StringBuilder } from "@sims/utilities";
 import {
   DATE_FORMAT,
   ECERT_SENT_TITLE,
@@ -8,7 +8,6 @@ import {
 } from "../../models/e-cert-integration-model";
 import { TIME_FORMAT } from "../../../models/esdc-integration.model";
 import { ECertFileHeader } from "../../e-cert-files/e-cert-file-header";
-import { StringBuilder } from "@sims/utilities";
 
 const ORIGINATOR_CODE = "BC";
 

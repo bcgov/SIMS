@@ -5,9 +5,8 @@ import {
   RecordTypeCodes,
   SPACE_FILLER,
 } from "../models/sin-validation-models";
-import { getDateOnlyFromFormat } from "@sims/utilities";
+import { getDateOnlyFromFormat, StringBuilder } from "@sims/utilities";
 import { FixedFormatFileLine } from "@sims/integration/services/ssh";
-import { StringBuilder } from "@sims/utilities";
 
 /**
  * Header of an ESDC SIN validation file.
