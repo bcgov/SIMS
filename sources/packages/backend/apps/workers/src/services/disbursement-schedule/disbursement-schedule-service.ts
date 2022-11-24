@@ -349,8 +349,7 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
       );
       // Total already received and/or owed by the student due to some previous overaward.
       let totalStudentDebit =
-        (+totalAlreadyDisbursedValues[valueCode] ?? 0) +
-        (+totalOverawards[valueCode] ?? 0);
+        totalAlreadyDisbursedValues[valueCode] + totalOverawards[valueCode];
 
       for (let i = 0; i < loans.length; i++) {
         const loan = loans[i];
