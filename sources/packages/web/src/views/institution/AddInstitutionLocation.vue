@@ -31,7 +31,6 @@ import { InstitutionRoutesConst } from "../../constants/routes/RouteConstants";
 import { useSnackBar } from "@/composables";
 import { ref } from "vue";
 import { FormIOForm, ApiProcessError } from "@/types";
-import { DUPLICATE_INSTITUTION_LOCATION_CODE } from "@/constants";
 
 export default {
   props: {
