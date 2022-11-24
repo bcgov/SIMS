@@ -173,7 +173,7 @@ parameters:
     description: Redis Image Tag
     displayName: Image Tag
     required: true
-    value: 6.0.9-alpine
+    value: 6.2.7-alpine
   - name: CPU_REQUEST
     description: Starting amount of CPU the container can use.
     displayName: CPU Request

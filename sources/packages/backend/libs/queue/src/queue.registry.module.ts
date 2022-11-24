@@ -7,6 +7,6 @@ import { getQueueModules } from "./utilities/queue.util";
  */
 @Module({
   imports: [BullModule.registerQueue(...getQueueModules())],
-  exports: [BullModule.registerQueue(...getQueueModules())],
+  exports: [BullModule],
 })
 export class QueueRegistryModule {}

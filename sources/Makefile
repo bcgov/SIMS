@@ -123,14 +123,10 @@ redis:
 # Local API only
 api-only:
 	@echo "+\n++ Make: Building and running API only"
-	@docker-compose -f docker-compose.yml up -d postgres
-	@docker-compose -f docker-compose.yml up -d redis
 	@docker-compose -f docker-compose.yml up api
 
 api-detached:
 	@echo "+\n++ Make: Running DB and API only"
-	@docker-compose -f docker-compose.yml up -d postgres
-	@docker-compose -f docker-compose.yml up -d redis
 	@docker-compose -f docker-compose.yml up -d api
 
 # Local App

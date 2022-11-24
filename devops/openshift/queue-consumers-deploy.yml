@@ -179,8 +179,6 @@ parameters:
     value: "0"
   - name: QUEUE_CONSUMERS_SECRET_NAME
     require: true
-  - name: ATBC_LOGIN_ENDPOINT
-    require: true
   - name: ZEEBE_ADDRESS_KEY
     value: zeebe-address
     require: true
