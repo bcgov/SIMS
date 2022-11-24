@@ -3,8 +3,8 @@ import {
   DATE_FORMAT,
   NUMBER_FILLER,
 } from "./models/esdc-integration.model";
-import { StringBuilder } from "../utilities/string-builder";
 import { ConfigService, ESDCIntegrationConfig } from "@sims/utilities/config";
+import { StringBuilder } from "@sims/utilities";
 
 export abstract class ESDCFileHandler {
   esdcConfig: ESDCIntegrationConfig;

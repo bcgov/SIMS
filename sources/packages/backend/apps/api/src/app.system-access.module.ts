@@ -18,7 +18,6 @@ import {
   MSFAANumberService,
   CRAPersonalVerificationService,
   CRAIntegrationService,
-  SshService,
   SFASIndividualService,
   SFASRestrictionService,
   DisbursementScheduleErrorsService,
@@ -65,11 +64,17 @@ import { DisbursementReceiptRequestService } from "./esdc-integration/disburseme
 import { FedRestrictionProcessingService } from "./esdc-integration/fed-restriction-integration/fed-restriction-processing.service";
 import { FedRestrictionIntegrationService } from "./esdc-integration/fed-restriction-integration/fed-restriction-integration.service";
 import { WorkflowClientService, SequenceControlService } from "@sims/services";
-import { IER12FileService } from "./institution-integration/ier-integration/ier12-file.service";
-import { IER12IntegrationService } from "./institution-integration/ier-integration/ier12-integration.service";
+// todo: once all integration are moved. remove sshservice.
+import { SshService } from "@sims/integrations/services";
+import { IER12IntegrationModule } from "@sims/integrations/institution-integration/ier-integration/ier12-integration.module";
 
 @Module({
-  imports: [DatabaseModule, AuthModule, SINValidationModule],
+  imports: [
+    DatabaseModule,
+    AuthModule,
+    SINValidationModule,
+    IER12IntegrationModule,
+  ],
   controllers: [
     ATBCSystemAccessController,
     SINValidationSystemAccessController,
@@ -110,8 +115,6 @@ import { IER12IntegrationService } from "./institution-integration/ier-integrati
     SFASIntegrationService,
     SFASIndividualService,
     SFASRestrictionService,
-    IER12FileService,
-    IER12IntegrationService,
     ECertFileHandler,
     DisbursementScheduleErrorsService,
     ECertFullTimeIntegrationService,

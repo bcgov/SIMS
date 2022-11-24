@@ -1,9 +1,9 @@
 import { Module } from "@nestjs/common";
+import { SshService } from "@sims/integrations/services";
 import {
   FederalRestrictionService,
   RestrictionService,
   SFASIndividualService,
-  SshService,
   StudentRestrictionService,
   StudentService,
 } from "../../services";

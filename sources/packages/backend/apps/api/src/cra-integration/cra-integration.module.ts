@@ -5,7 +5,6 @@ import {
   CRAIntegrationService,
   CRAPersonalVerificationService,
   MSFAANumberService,
-  SshService,
   StudentFileService,
   StudentService,
   CRAIncomeVerificationService,
@@ -20,6 +19,7 @@ import {
 } from "../services";
 import { SequenceControlService, WorkflowClientService } from "@sims/services";
 import { ConfigModule } from "@sims/utilities/config";
+import { SshService } from "@sims/integrations/services";
 
 @Module({
   imports: [AuthModule, ConfigModule],

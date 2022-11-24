@@ -2,6 +2,10 @@ import { SINValidation } from "@sims/sims-db";
 import { SINValidationFileHeader } from "../sin-validation-files/sin-validation-file-header";
 import { SINValidationFileResponse } from "../sin-validation-files/sin-validation-file-response";
 
+export const DATE_FORMAT = "YYYYMMDD";
+export const SPACE_FILLER = " ";
+export const NUMBER_FILLER = "0";
+
 /**
  * Province code used for ESDC SIN validation.
  */

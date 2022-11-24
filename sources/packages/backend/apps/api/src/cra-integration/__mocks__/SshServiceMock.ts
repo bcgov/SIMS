@@ -1,7 +1,7 @@
-import { SshService } from "../../services";
 import * as Client from "ssh2-sftp-client";
 import * as fs from "fs";
 import * as path from "path";
+import { SshService } from "@sims/integrations/services";
 
 const MOCKED_RESPONSE_FILES = [
   "CCRA_RESPONSE_ABCSL00001.TXT",
