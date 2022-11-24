@@ -16,6 +16,7 @@ import {
   CRAIncomeVerificationService,
   DisbursementScheduleService,
   MSFAANumberService,
+  DisbursementOverawardService,
 } from "./services";
 import { ZeebeTransportStrategy } from "./zeebe";
 import {
@@ -47,6 +48,7 @@ import { ConfigModule } from "@sims/utilities/config";
     DisbursementScheduleService,
     SequenceControlService,
     MSFAANumberService,
+    DisbursementOverawardService,
   ],
 })
 export class WorkersModule {}

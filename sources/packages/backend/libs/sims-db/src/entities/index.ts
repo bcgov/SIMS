@@ -76,3 +76,5 @@ export * from "./notification.model";
 export * from "./notification-message.model";
 export * from "./user-types.enum";
 export * from "./disbursement-schedule-status.type";
+export * from "./disbursement-overaward-origin.type";
+export * from "./disbursement-overaward.model";
