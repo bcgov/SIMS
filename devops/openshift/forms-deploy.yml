@@ -6,7 +6,7 @@ objects:
   - apiVersion: v1
     kind: Secret
     metadata:
-      name: ${NAME}-creds
+      name: ${NAME}
     stringData:
       DEBUG: formio:*
       FORMIO_ROOT_EMAIL: "${FORMIO_ROOT_EMAIL}"
