@@ -32,6 +32,7 @@ export class QueueModule {}
  * Depending upon the environment variable it uses standalone
  * or cluster connection.
  ** While running in local env make sure to set REDIS_STANDALONE_MODE as true.
+ * @param configService
  * @returns redis connection factory
  */
 async function getConnectionFactory(
