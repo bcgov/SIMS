@@ -1,11 +1,11 @@
 import { Global, Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { DatabaseModule, DBEntities } from "@sims/sims-db";
+import { DBEntities } from "@sims/sims-db";
 import { SystemUsersService } from "./system-users.service";
 
 @Global()
 @Module({
-  imports: [DatabaseModule, TypeOrmModule.forFeature(DBEntities)],
+  imports: [TypeOrmModule.forFeature(DBEntities)],
   providers: [SystemUsersService],
   exports: [SystemUsersService],
 })
