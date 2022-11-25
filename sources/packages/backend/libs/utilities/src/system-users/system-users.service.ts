@@ -2,6 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { User } from "@sims/sims-db";
 import { Repository } from "typeorm";
+import { SERVICE_ACCOUNT_DEFAULT_USER_EMAIL } from "../system-configurations-constants";
 import { SystemUser, SystemUserDetails } from "./system-users.models";
 
 @Injectable()
@@ -33,7 +34,7 @@ export class SystemUsersService {
     user.userName = SystemUser.UserName;
     user.firstName = null;
     user.lastName = SystemUser.LastName;
-    user.email = SystemUser.Email;
+    user.email = SERVICE_ACCOUNT_DEFAULT_USER_EMAIL;
     return this.userRepo.save(user);
   }
 
