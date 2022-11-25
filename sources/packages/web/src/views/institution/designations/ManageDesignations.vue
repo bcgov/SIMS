@@ -7,8 +7,8 @@
       />
     </template>
     <body-header
-      title="Designation agreements"
-      subTitle="Ensure you have an active designation to administer student financial aid."
+      title="Designation requests"
+      subTitle="Ensure you have an approved designation to administer financial aid to students. To request a designation here, you must be assigned the role of a Legal Signing Authority."
       :recordsCount="designations.length"
     >
       <template #actions>
