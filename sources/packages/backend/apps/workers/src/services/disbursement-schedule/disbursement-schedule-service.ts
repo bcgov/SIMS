@@ -293,7 +293,7 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
       disbursementSchedule: overaward.disbursementSchedule,
       student: overaward.student,
       disbursementValueCode: overaward.disbursementValueCode,
-      overawardValue: (+overaward.overawardValue * 1).toString(),
+      overawardValue: (+overaward.overawardValue * -1).toString(),
       originType: DisbursementOverawardOriginType.CancelledDisbursement,
     }));
     await entityManager
