@@ -1,7 +1,11 @@
 <template>
   <full-page-container>
     <template #header>
-      <header-navigator title="Manage institution" subTitle="Manage Profile" />
+      <header-navigator
+        title="Manage institution"
+        data-cy="manageProfileHeader"
+        subTitle="Manage Profile"
+      />
     </template>
     <template #alerts>
       <banner

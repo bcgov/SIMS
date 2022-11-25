@@ -19,8 +19,6 @@ import {
   StudentAssessmentService,
   StudentAppealService,
   StudentAppealRequestsService,
-  GCNotifyService,
-  GCNotifyActionsService,
   ATBCService,
   RestrictionService,
   EducationProgramOfferingValidationService,
@@ -29,8 +27,6 @@ import {
   StudentScholasticStandingsService,
   CRAIncomeVerificationService,
   SupportingUserService,
-  NotificationService,
-  NotificationMessageService,
 } from "./services";
 import {
   ApplicationStudentsController,
@@ -89,8 +85,6 @@ import { ConfigModule } from "@sims/utilities/config";
     ApplicationControllerService,
     StudentAppealService,
     StudentAppealRequestsService,
-    GCNotifyService,
-    GCNotifyActionsService,
     AssessmentControllerService,
     StudentControllerService,
     ATBCService,
@@ -103,8 +97,6 @@ import { ConfigModule } from "@sims/utilities/config";
     StudentScholasticStandingsService,
     CRAIncomeVerificationService,
     SupportingUserService,
-    NotificationService,
-    NotificationMessageService,
   ],
 })
 export class AppStudentsModule {}

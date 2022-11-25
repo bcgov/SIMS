@@ -1,6 +1,10 @@
 import { LoggerService, InjectLogger } from "@sims/utilities/logger";
 import { Injectable } from "@nestjs/common";
-import { FederalRestrictionService, RestrictionService } from "../../services";
+import {
+  FederalRestrictionService,
+  RestrictionService,
+  StudentRestrictionService,
+} from "../../services";
 import { FedRestrictionIntegrationService } from "./fed-restriction-integration.service";
 import * as os from "os";
 import { DataSource, InsertResult } from "typeorm";
@@ -26,25 +30,28 @@ export class FedRestrictionProcessingService {
     private readonly restrictionService: RestrictionService,
     private readonly federalRestrictionService: FederalRestrictionService,
     private readonly integrationService: FedRestrictionIntegrationService,
+    private readonly studentRestrictionService: StudentRestrictionService,
   ) {
     this.esdcConfig = config.esdcIntegration;
   }
 
   /**
    * Import all the federal restrictions from the SFTP and process as below:
-   * 1 - If the restriction is present on federal data and not on the
+   * 1. If the restriction is present on federal data and not on the
    * student data, create a new active restriction;
-   * 2 - If the restriction in present and active on the student data
+   * 2. If the restriction in present and active on the student data
    * but it is not present on federal data, deactivate it;
-   * 3 - If the restriction is present on federal data and it is also
+   * 3. If the restriction is present on federal data and it is also
    * present and active on student data, update the updated_at only.
+   * @param auditUserId user that should be considered the one that is causing the changes.
    */
-  async process(): Promise<ProcessSFTPResponseResult> {
+  async process(auditUserId: number): Promise<ProcessSFTPResponseResult> {
     // Get the list of all files from SFTP ordered by file name.
     const fileSearch = new RegExp(
-      `^${this.esdcConfig.environmentCode}CSLS.PBC.RESTR.LIST.D[\w]*\.[0-9]*`,
+      `^${this.esdcConfig.environmentCode}CSLS\\.PBC\\.RESTR\\.LIST\\.D[\\w]*\\.[\\d]*$`,
       "i",
     );
+
     const filePaths = await this.integrationService.getResponseFilesFullPath(
       this.esdcConfig.ftpResponseFolder,
       fileSearch,
@@ -55,6 +62,7 @@ export class FedRestrictionProcessingService {
       // Process only the most updated file.
       result = await this.processAllRestrictions(
         filePaths[filePaths.length - 1],
+        auditUserId,
       );
       // If there are more than one file, delete it.
       // Only the most updated file matters because it represents the entire data snapshot.
@@ -78,8 +86,15 @@ export class FedRestrictionProcessingService {
     return result;
   }
 
+  /**
+   * Process all the federal restrictions records in the file.
+   * @param remoteFilePath remote file to be processed.
+   * @param auditUserId user that should be considered the one that is causing the changes.
+   * @returns result of the processing, summary and errors.
+   */
   private async processAllRestrictions(
     remoteFilePath: string,
+    auditUserId: number,
   ): Promise<ProcessSFTPResponseResult> {
     const result = new ProcessSFTPResponseResult();
     result.processSummary.push(`Processing file ${remoteFilePath}.`);
@@ -228,12 +243,41 @@ export class FedRestrictionProcessingService {
       this.logger.log(
         "Starting bulk operations to update student restrictions.",
       );
-      await this.federalRestrictionService.executeBulkStepsChanges(
-        queryRunner.manager,
-      );
+      const insertedRestrictionsIDs =
+        await this.federalRestrictionService.executeBulkStepsChanges(
+          queryRunner.manager,
+        );
 
       await queryRunner.commitTransaction();
       this.logger.log("Process finished, transaction committed.");
+
+      // The process of sending the notifications happens after the restrictions are committed
+      // because the notifications are considered a lower priority and any error related to the
+      // notification should not interfere with the federal restriction process.
+      try {
+        if (insertedRestrictionsIDs?.length) {
+          this.logger.log(
+            `Generating ${insertedRestrictionsIDs.length} notification(s).`,
+          );
+          await this.studentRestrictionService.createNotifications(
+            insertedRestrictionsIDs,
+            auditUserId,
+            { notificationsDelayed: true },
+          );
+          result.processSummary.push(
+            `${insertedRestrictionsIDs.length} notification(s) generated.`,
+          );
+        } else {
+          result.processSummary.push(
+            "No notifications were generated because no new student restriction record was created.",
+          );
+        }
+      } catch (error: unknown) {
+        result.errorsSummary.push(
+          "Error while generating notifications. See logs for details",
+        );
+        this.logger.error(`Error while generating notifications. ${error}`);
+      }
     } catch (error) {
       const logMessage =
         "Unexpected error while processing federal restrictions. Executing rollback.";

@@ -19,13 +19,9 @@ import {
   StudentRestrictionService,
   RestrictionService,
   DesignationAgreementLocationService,
-  GCNotifyService,
-  GCNotifyActionsService,
   StudentService,
   SFASIndividualService,
   EducationProgramOfferingValidationService,
-  NotificationService,
-  NotificationMessageService,
 } from "./services";
 import {
   UserController,
@@ -53,22 +49,24 @@ import {
 } from "@sims/services";
 import { LoggerModule } from "@sims/utilities/logger";
 import { ConfigModule } from "@sims/utilities/config";
-import { IER12IntegrationModule } from "./institution-integration/ier-integration/ier12-integration.module";
+import { NotificationsModule } from "@sims/services/notifications";
+import { IER12IntegrationModule } from "@sims/integrations/institution-integration/ier-integration/ier12-integration.module";
 import { QueueModule } from "@sims/services/queue";
 
 @Module({
   imports: [
+    IER12IntegrationModule,
     LoggerModule,
     ConfigModule,
     DatabaseModule,
     AuthModule,
     ZeebeModule.forRoot(),
+    NotificationsModule,
     CraIntegrationModule,
     MSFAAIntegrationModule,
     SFASIntegrationModule,
     ECertIntegrationModule,
     FedRestrictionIntegrationModule,
-    IER12IntegrationModule,
     DisbursementReceiptIntegrationModule,
     AppAESTModule,
     AppInstitutionsModule,
@@ -124,13 +122,9 @@ import { QueueModule } from "@sims/services/queue";
     StudentRestrictionService,
     RestrictionService,
     DesignationAgreementLocationService,
-    GCNotifyService,
-    GCNotifyActionsService,
     StudentService,
     SFASIndividualService,
     EducationProgramOfferingValidationService,
-    NotificationService,
-    NotificationMessageService,
     WorkflowClientService,
   ],
 })

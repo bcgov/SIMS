@@ -11,10 +11,6 @@ on:
         description: "Build Id"
         required: true
         default: "NULL"
-      resourcesFolder:
-        description: "Folder with the resources to be deployed"
-        required: true
-        default: "BPMN/camunda-8"
       environment:
         required: true
         type: environment
@@ -32,9 +28,6 @@ on:
         required: true
         type: string
       buildId:
-        required: true
-        type: string
-      resourcesFolder:
         required: true
         type: string
       environment:
@@ -125,7 +118,6 @@ jobs:
       - deploy
     uses: ./.github/workflows/deploy-camunda-definitions.yml
     with:
-      resourcesFolder: ${{ github.event.inputs.resourcesFolder }}
       environment: ${{ github.event.inputs.environment }}
     secrets: inherit
   deployFormioDefinitions:

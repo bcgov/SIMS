@@ -1,12 +1,11 @@
-import { getDateOnlyFromFormat } from "@sims/utilities";
-import { StringBuilder } from "../../utilities/string-builder";
+import { FixedFormatFileLine } from "@sims/integrations/services/ssh";
+import { StringBuilder, getDateOnlyFromFormat } from "@sims/utilities";
 import {
   DATE_FORMAT,
-  SPACE_FILLER,
   NUMBER_FILLER,
+  SPACE_FILLER,
   TransactionCodes,
 } from "../cra-integration.models";
-import { FixedFormatFileLine } from "../../services/ssh/sftp-integration-base.models";
 
 /**
  * Header of a CRA request/response file.

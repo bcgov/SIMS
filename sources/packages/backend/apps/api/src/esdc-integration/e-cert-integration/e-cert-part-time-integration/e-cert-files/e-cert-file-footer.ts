@@ -1,10 +1,10 @@
-import { StringBuilder } from "../../../../utilities/string-builder";
-import { RecordTypeCodes } from "../../models/e-cert-integration-model";
 import {
-  SPACE_FILLER,
   NUMBER_FILLER,
-} from "../../../models/esdc-integration.model";
+  RecordTypeCodes,
+  SPACE_FILLER,
+} from "../../models/e-cert-integration-model";
 import { ECertFileFooter } from "../../e-cert-files/e-cert-file-footer";
+import { StringBuilder } from "@sims/utilities";
 
 /**
  * Footer of a Part-Time E-Cert file.

@@ -1,11 +1,11 @@
-import { StringBuilder } from "../../../../utilities/string-builder";
-import { RecordTypeCodes } from "../../models/e-cert-integration-model";
 import {
-  SPACE_FILLER,
-  NUMBER_FILLER,
   DATE_FORMAT,
-} from "../../../models/esdc-integration.model";
+  NUMBER_FILLER,
+  RecordTypeCodes,
+  SPACE_FILLER,
+} from "../../models/e-cert-integration-model";
 import { ECertFileRecord } from "../../e-cert-files/e-cert-file-record";
+import { StringBuilder } from "@sims/utilities";
 
 /**
  * Record of an Entitlement Part-Time E-Cert file.

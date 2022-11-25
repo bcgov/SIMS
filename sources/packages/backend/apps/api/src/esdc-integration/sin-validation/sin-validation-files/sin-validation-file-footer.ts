@@ -1,10 +1,10 @@
-import { StringBuilder } from "../../../utilities";
 import {
   NUMBER_FILLER,
+  RecordTypeCodes,
   SPACE_FILLER,
-} from "../../../esdc-integration/models/esdc-integration.model";
-import { FixedFormatFileLine } from "../../../services/ssh/sftp-integration-base.models";
-import { RecordTypeCodes } from "../models/sin-validation-models";
+} from "../models/sin-validation-models";
+import { FixedFormatFileLine } from "@sims/integrations/services/ssh";
+import { StringBuilder } from "@sims/utilities";
 
 /**
  * Footer of an ESDC SIN validation file.

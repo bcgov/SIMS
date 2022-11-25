@@ -1,6 +1,6 @@
-import { Injectable } from "@nestjs/common";
-import { FixedFormatFileLine } from "../../../services/ssh/sftp-integration-base.models";
 import { RecordTypeCodes } from "../models/e-cert-integration-model";
+import { FixedFormatFileLine } from "@sims/integrations/services/ssh";
+import { Injectable } from "@nestjs/common";
 
 /**
  * Footer of an E-Cert file.

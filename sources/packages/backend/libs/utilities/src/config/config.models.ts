@@ -98,3 +98,7 @@ export interface SFASIntegrationConfig {
 export interface InstitutionIntegrationConfig {
   ftpRequestFolder: string;
 }
+
+export interface DatabaseConfiguration {
+  databaseName: string;
+}

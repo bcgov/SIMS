@@ -4,10 +4,12 @@
       <header-navigator
         :title="locationName"
         subTitle="Program Information Requests"
+        data-cy="programInformationRequestsHeader"
       />
     </template>
     <body-header
       title="Active applications"
+      data-cy="activeApplicationsTab"
       :recordsCount="applications.length"
     />
     <content-group>
