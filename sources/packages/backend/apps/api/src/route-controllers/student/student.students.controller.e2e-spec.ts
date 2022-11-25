@@ -17,6 +17,7 @@ import { AuthModule } from "../../auth/auth.module";
 import { AppStudentsModule } from "../../app.students.module";
 import { createMockedZeebeModule } from "../../testHelpers/mocked-providers/zeebe-client-mock";
 import { NotificationsModule } from "@sims/services/notifications";
+import { MockedQueueModule } from "../../testHelpers/mocked-providers/queue-module-mock";
 
 jest.setTimeout(15000);
 
@@ -44,6 +45,7 @@ describe("Test ATBC Controller", () => {
         AppStudentsModule,
         NotificationsModule,
         createMockedZeebeModule(),
+        MockedQueueModule,
       ],
     }).compile();
     userService = await moduleFixture.get(UserService);

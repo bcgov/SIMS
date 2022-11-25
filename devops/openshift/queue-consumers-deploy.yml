@@ -1,0 +1,211 @@
+apiVersion: template.openshift.io/v1
+kind: Template
+metadata:
+  name: ${NAME}
+labels:
+  project: ${PROJECT}
+  service: ${SERVICE_NAME}
+objects:
+  - apiVersion: apps.openshift.io/v1
+    kind: DeploymentConfig
+    metadata:
+      name: ${NAME}
+    spec:
+      replicas: "${{REPLICAS}}"
+      revisionHistoryLimit: 10
+      selector:
+        deploymentconfig: ${NAME}
+      strategy:
+        type: Rolling
+      template:
+        metadata:
+          labels:
+            deploymentconfig: ${NAME}
+        spec:
+          containers:
+            - env:
+                - name: VERSION
+                  value: ${BUILD_TAG}
+                - name: NODE_ENV
+                  value: ${NODE_ENV}
+                - name: PORT
+                  value: "${PORT}"
+                - name: POSTGRES_HOST
+                  value: "${DB_SERVICE}"
+                - name: REDIS_HOST
+                  value: "${REDIS_SERVICE}"
+                - name: POSTGRES_USER
+                  valueFrom:
+                    secretKeyRef:
+                      key: ${DB_USERNAME_KEY}
+                      name: ${DB_SECRET_NAME}
+                - name: POSTGRES_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      key: ${DB_PASSWORD_KEY}
+                      name: ${DB_SECRET_NAME}
+                - name: POSTGRES_DB
+                  valueFrom:
+                    secretKeyRef:
+                      key: ${DATABASE_NAME_KEY}
+                      name: ${DB_SECRET_NAME}
+                - name: REDIS_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      key: ${REDIS_PASSWORD_KEY}
+                      name: ${REDIS_SECRET_NAME}
+                - name: QUEUE_DASHBOARD_USER
+                  valueFrom:
+                    secretKeyRef:
+                      key: ${DASHBOARD_USER_KEY}
+                      name: ${QUEUE_CONSUMERS_SECRET_NAME}
+                - name: QUEUE_DASHBOARD_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      key: ${DASHBOARD_PASSWORD_KEY}
+                      name: ${QUEUE_CONSUMERS_SECRET_NAME}
+                - name: ZEEBE_ADDRESS
+                  valueFrom:
+                    secretKeyRef:
+                      key: ${ZEEBE_ADDRESS_KEY}
+                      name: ${QUEUE_CONSUMERS_SECRET_NAME}
+                - name: ZEEBE_CLIENT_ID
+                  valueFrom:
+                    secretKeyRef:
+                      key: ${ZEEBE_CLIENT_ID_KEY}
+                      name: ${QUEUE_CONSUMERS_SECRET_NAME}
+                - name: ZEEBE_CLIENT_SECRET
+                  valueFrom:
+                    secretKeyRef:
+                      key: ${ZEEBE_CLIENT_SECRET_KEY}
+                      name: ${QUEUE_CONSUMERS_SECRET_NAME}
+                - name: ZEEBE_AUTHORIZATION_SERVER_URL
+                  valueFrom:
+                    secretKeyRef:
+                      key: ${ZEEBE_AUTHORIZATION_SERVER_URL_KEY}
+                      name: ${QUEUE_CONSUMERS_SECRET_NAME}
+                - name: BYPASS_CRA_INCOME_VERIFICATION
+                  value: ${BYPASS_CRA_INCOME_VERIFICATION}
+              image: ${IMAGE_REGISTRY}/${BUILD_NAMESPACE}/${IMAGE_STREAM_TAG}
+              imagePullPolicy: Always
+              name: ${NAME}
+              ports:
+                - containerPort: "${{PORT}}"
+              resources:
+                limits:
+                  cpu: ${CPU_LIMIT}
+                  memory: ${MEMORY_LIMIT}
+                requests:
+                  cpu: ${CPU_REQUEST}
+                  memory: ${MEMORY_REQUEST}
+              readinessProbe:
+                failureThreshold: 10
+                httpGet:
+                  path: /
+                  port: "${{PORT}}"
+                initialDelaySeconds: 40
+                periodSeconds: 30
+                timeoutSeconds: 30
+              livenessProbe:
+                failureThreshold: 10
+                httpGet:
+                  path: /
+                  port: "${{PORT}}"
+                  scheme: HTTP
+                initialDelaySeconds: 10
+                periodSeconds: 30
+                timeoutSeconds: 15
+  - apiVersion: v1
+    kind: Service
+    metadata:
+      name: ${NAME}
+    spec:
+      ports:
+        - name: http
+          port: 80
+          targetPort: ${{PORT}}
+      selector:
+        deploymentconfig: ${NAME}
+      type: ClusterIP
+  - apiVersion: route.openshift.io/v1
+    kind: Route
+    metadata:
+      name: ${NAME}
+    spec:
+      host: ${HOST_NAME}
+      path: ${PATH}
+      tls:
+        insecureEdgeTerminationPolicy: Redirect
+        termination: edge
+      to:
+        kind: Service
+        name: ${NAME}
+parameters:
+  - name: NAME
+    required: true
+  - name: PROJECT
+    value: sims
+  - name: SERVICE_NAME
+    value: queue-consumers
+  - name: CPU_LIMIT
+    value: "1.0"
+  - name: MEMORY_LIMIT
+    value: "2000M"
+  - name: CPU_REQUEST
+    value: "0.5"
+  - name: MEMORY_REQUEST
+    value: "1000M"
+  - name: REPLICAS
+    value: "1"
+  - name: DB_SERVICE
+    value: patroni-master
+  - name: DB_SECRET_NAME
+    value: patroni-creds
+  - name: DB_USERNAME_KEY
+    value: superuser-username
+  - name: DB_PASSWORD_KEY
+    value: superuser-password
+  - name: DATABASE_NAME_KEY
+    required: true
+  - name: IMAGE_STREAM_TAG
+    required: true
+  - name: BUILD_NAMESPACE
+    required: true
+  - name: IMAGE_REGISTRY
+    value: image-registry.openshift-image-registry.svc:5000
+  - name: NODE_ENV
+    value: "production"
+  - name: BUILD_TAG
+    value: "0"
+  - name: QUEUE_CONSUMERS_SECRET_NAME
+    required: true
+  - name: ZEEBE_ADDRESS_KEY
+    value: zeebe-address
+    required: true
+  - name: ZEEBE_CLIENT_ID_KEY
+    value: zeebe-client-id
+    required: true
+  - name: ZEEBE_CLIENT_SECRET_KEY
+    value: zeebe-client-secret
+    required: true
+  - name: ZEEBE_AUTHORIZATION_SERVER_URL_KEY
+    value: zeebe-authorization-server-url
+    required: true
+  - name: BYPASS_CRA_INCOME_VERIFICATION
+    value: "false"
+  - name: REDIS_SERVICE
+    value: redis
+  - name: REDIS_SECRET_NAME
+    value: redis-creds
+  - name: REDIS_PASSWORD_KEY
+    value: password
+  - name: DASHBOARD_PASSWORD_KEY
+    value: queue-dashboard-password
+  - name: DASHBOARD_USER_KEY
+    value: queue-dashboard-user
+  - name: PATH
+    value: "/admin/queues/"
+  - name: PORT
+    required: true
+  - name: HOST_NAME
+    required: true

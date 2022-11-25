@@ -102,3 +102,10 @@ export interface InstitutionIntegrationConfig {
 export interface DatabaseConfiguration {
   databaseName: string;
 }
+
+export interface RedisConfiguration {
+  redisHost: string;
+  redisPort: number;
+  redisPassword: string;
+  redisStandaloneMode: boolean;
+}

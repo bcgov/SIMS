@@ -18,7 +18,7 @@ async function bootstrap() {
   // Checking for CLEAN_DB parameter.
   if (process.argv.includes(CLEAN_DB)) {
     // Clean db.
-    if (configService.databaseConfig.databaseName?.includes(QA_DB_NAME)) {
+    if (configService.database.databaseName?.includes(QA_DB_NAME)) {
       await app.get(CleanDatabase).cleanDatabase();
       console.info("Database cleaned.");
     }

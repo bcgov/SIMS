@@ -71,6 +71,15 @@
         "tsConfigPath": "libs/utilities/tsconfig.lib.json"
       }
     },
+    "queue-consumers": {
+      "type": "application",
+      "root": "apps/queue-consumers",
+      "entryFile": "main",
+      "sourceRoot": "apps/queue-consumers/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/queue-consumers/tsconfig.app.json"
+      }
+    },
     "test-db-seeding": {
       "type": "application",
       "root": "apps/test-db-seeding",
