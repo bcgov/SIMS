@@ -67,15 +67,9 @@ import { FedRestrictionIntegrationService } from "./esdc-integration/fed-restric
 import { WorkflowClientService, SequenceControlService } from "@sims/services";
 import { IER12FileService } from "./institution-integration/ier-integration/ier12-file.service";
 import { IER12IntegrationService } from "./institution-integration/ier-integration/ier12-integration.service";
-import { QueueRegistryModule } from "@sims/queue";
 
 @Module({
-  imports: [
-    DatabaseModule,
-    AuthModule,
-    SINValidationModule,
-    QueueRegistryModule,
-  ],
+  imports: [DatabaseModule, AuthModule, SINValidationModule],
   controllers: [
     ATBCSystemAccessController,
     SINValidationSystemAccessController,

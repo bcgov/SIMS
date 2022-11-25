@@ -52,8 +52,6 @@ objects:
                   value: "${PORT}"
                 - name: POSTGRES_HOST
                   value: "${DB_SERVICE}"
-                - name: REDIS_HOST
-                  value: "${REDIS_SERVICE}"
                 - name: POSTGRES_USER
                   valueFrom:
                     secretKeyRef:
@@ -237,6 +235,8 @@ objects:
                   value: ${SWAGGER_ENABLED}
                 - name: APPLICATION_ARCHIVE_DAYS
                   value: ${APPLICATION_ARCHIVE_DAYS}
+                - name: REDIS_HOST
+                  value: "${REDIS_SERVICE}"
                 - name: REDIS_PASSWORD
                   valueFrom:
                     secretKeyRef:

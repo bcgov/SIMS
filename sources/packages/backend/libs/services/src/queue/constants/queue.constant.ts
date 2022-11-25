@@ -5,10 +5,14 @@ import { QueueModel } from "../model/queue.model";
  * Any queue which is a part of application must be added here.
  * Queue modules and bull dashboard use this value to dynamically register the queues.
  */
-export const Queues = {
-  StartApplicationAssessment: {
+export const Queues: QueueModel[] = [
+  {
     name: "start-application-assessment",
-  } as QueueModel,
-};
+  },
+];
 
 export const QUEUE_PREFIX = "{sims}";
+
+export enum QueueNames {
+  StartApplicationAssessment = "start-application-assessment",
+}

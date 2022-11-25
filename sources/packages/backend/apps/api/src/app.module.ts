@@ -54,7 +54,7 @@ import {
 import { LoggerModule } from "@sims/utilities/logger";
 import { ConfigModule } from "@sims/utilities/config";
 import { IER12IntegrationModule } from "./institution-integration/ier-integration/ier12-integration.module";
-import { QueueRootModule } from "@sims/queue";
+import { QueueModule } from "@sims/services/queue";
 
 @Module({
   imports: [
@@ -75,7 +75,7 @@ import { QueueRootModule } from "@sims/queue";
     AppStudentsModule,
     AppSystemAccessModule,
     AppSupportingUsersModule,
-    QueueRootModule,
+    QueueModule,
     RouterModule.register([
       {
         path: ClientTypeBaseRoute.Institution,

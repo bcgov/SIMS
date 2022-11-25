@@ -1,12 +1,12 @@
 import { Process, Processor } from "@nestjs/bull";
 import { Job } from "bull";
-import { Queues, StartAssessmentQueueInDTO } from "@sims/queue";
+import { QueueNames, StartAssessmentQueueInDTO } from "@sims/services/queue";
 import { WorkflowClientService } from "@sims/services";
 
 /**
  * Process messages sent to start assessment queue.
  */
-@Processor(Queues.StartApplicationAssessment.name)
+@Processor(QueueNames.StartApplicationAssessment)
 export class StartApplicationAssessmentProcessor {
   constructor(private readonly workflowClientService: WorkflowClientService) {}
   @Process()

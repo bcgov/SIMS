@@ -17,8 +17,6 @@
     "@sims/services": "<rootDir>/../../libs/services/src",
     "@sims/utilities/(.*)": "<rootDir>/../../libs/utilities/src/$1",
     "@sims/utilities": "<rootDir>/../../libs/utilities/src",
-    "@sims/queue/(.*)": "<rootDir>/../../libs/queue/src/$1",
-    "@sims/queue": "<rootDir>/../../libs/queue/src",
     "@sims/test-utils/(.*)": "<rootDir>/../../libs/test-utils/src/$1",
     "@sims/test-utils": "<rootDir>/../../libs/test-utils/src"
   }

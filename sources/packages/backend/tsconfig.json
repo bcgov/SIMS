@@ -31,12 +31,6 @@
       "@sims/utilities/*": [
         "libs/utilities/src/*"
       ],
-      "@sims/queue": [
-        "libs/queue/src"
-      ],
-      "@sims/queue/*": [
-        "libs/queue/src/*"
-      ],
       "@sims/test-utils": [
         "libs/test-utils/src"
       ],

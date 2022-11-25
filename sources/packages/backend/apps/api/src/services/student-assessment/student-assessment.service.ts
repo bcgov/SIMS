@@ -22,7 +22,7 @@ import {
   AssessmentHistory,
   StudentAssessmentStatus,
 } from "./student-assessment.models";
-import { Queues, StartAssessmentQueueInDTO } from "@sims/queue";
+import { QueueNames, StartAssessmentQueueInDTO } from "@sims/services/queue";
 
 /**
  * Manages the student assessment related operations.
@@ -31,7 +31,7 @@ import { Queues, StartAssessmentQueueInDTO } from "@sims/queue";
 export class StudentAssessmentService extends RecordDataModelService<StudentAssessment> {
   constructor(
     dataSource: DataSource,
-    @InjectQueue(Queues.StartApplicationAssessment.name)
+    @InjectQueue(QueueNames.StartApplicationAssessment)
     private readonly startAssessmentQueue: Queue<StartAssessmentQueueInDTO>,
   ) {
     super(dataSource.getRepository(StudentAssessment));

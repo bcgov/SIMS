@@ -5,10 +5,9 @@ import { SshService, StudentAssessmentService } from "../../services";
 import { ConfigService } from "@sims/utilities/config";
 import { IER12IntegrationService } from "./ier12-integration.service";
 import { IER12FileService } from "./ier12-file.service";
-import { QueueRegistryModule } from "@sims/queue";
 
 @Module({
-  imports: [AuthModule, QueueRegistryModule],
+  imports: [AuthModule],
   providers: [
     SshService,
     StudentAssessmentService,
