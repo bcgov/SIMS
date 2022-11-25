@@ -2,9 +2,9 @@
 kind: Template
 apiVersion: template.openshift.io/v1
 metadata:
-  name: forms-db
+  name: forms
   labels:
-    app: forms-db
+    app: forms
   annotations:
     description: "MongoDB database running as replicate set"
     tags: "mongodb,replication"
@@ -90,7 +90,7 @@ parameters:
   - name: MONGODB_DATABASE
     displayName: "MongoDB Database Name"
     description: "Name of the MongoDB database accessed."
-    value: forms-db
+    value: forms
     required: true
 
 objects:
@@ -113,7 +113,7 @@ objects:
     metadata:
       name: "${MONGODB_SERVICE_NAME}"
       labels:
-        app: forms-db
+        app: forms
     spec:
       ports:
         - name: mongodb
@@ -125,7 +125,7 @@ objects:
     metadata:
       name: "${MONGODB_SERVICE_NAME}-internal"
       labels:
-        app: forms-db
+        app: forms
       annotations:
         service.alpha.kubernetes.io/tolerate-unready-endpoints: "true"
     spec:
@@ -140,7 +140,7 @@ objects:
     metadata:
       name: "${MONGODB_SERVICE_NAME}"
       labels:
-        app: forms-db
+        app: forms
     spec:
       selector:
         matchLabels:
@@ -150,7 +150,7 @@ objects:
       template:
         metadata:
           labels:
-            app: forms-db
+            app: forms
             statefulset: ${MONGODB_SERVICE_NAME}
         spec:
           affinity:
@@ -225,7 +225,7 @@ objects:
             name: mongo-data
             labels:
               name: "${MONGODB_SERVICE_NAME}"
-              app: forms-db
+              app: forms
           spec:
             accessModes: [ReadWriteOnce]
             storageClassName: "${SC_MONGO}"
