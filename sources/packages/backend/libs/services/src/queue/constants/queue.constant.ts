@@ -1,5 +1,9 @@
 import { QueueModel } from "../model/queue.model";
 
+export enum QueueNames {
+  StartApplicationAssessment = "start-application-assessment",
+}
+
 /**
  * Constant which holds the collection of all the queues.
  * Any queue which is a part of application must be added here.
@@ -7,12 +11,8 @@ import { QueueModel } from "../model/queue.model";
  */
 export const Queues: QueueModel[] = [
   {
-    name: "start-application-assessment",
+    name: QueueNames.StartApplicationAssessment,
   },
 ];
 
 export const QUEUE_PREFIX = "{sims}";
-
-export enum QueueNames {
-  StartApplicationAssessment = "start-application-assessment",
-}

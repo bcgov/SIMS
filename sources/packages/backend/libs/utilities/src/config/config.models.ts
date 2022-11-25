@@ -109,8 +109,3 @@ export interface RedisConfiguration {
   redisPassword: string;
   redisStandaloneMode: boolean;
 }
-
-export interface QueueDashboardConfiguration {
-  queueDashboardUser: string;
-  queueDashboardPassword: string;
-}

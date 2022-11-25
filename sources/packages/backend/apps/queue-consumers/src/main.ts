@@ -15,7 +15,7 @@ async function bootstrap() {
   const config = app.get<ConfigService>(ConfigService);
 
   //Application port.
-  const port = config.queueConsumersPort || 3001;
+  const port = config.queueConsumersPort;
 
   // Create bull board UI dashboard for queue management.
   const serverAdapter = new ExpressAdapter();
@@ -31,8 +31,8 @@ async function bootstrap() {
   });
   // Bull board user for basic authentication.
   const queueDashboardUsers = {};
-  queueDashboardUsers[config.queueDashboard.queueDashboardUser] =
-    config.queueDashboard.queueDashboardPassword;
+  queueDashboardUsers[config.queueDashboardCredential.userName] =
+    config.queueDashboardCredential.password;
   app.use(
     "/admin/queues",
     basicAuth({

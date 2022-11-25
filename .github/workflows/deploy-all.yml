@@ -102,7 +102,7 @@ jobs:
         run: |
           make oc-deploy-workers
       # Deploy Queues
-      - name: Deploy Queues
+      - name: Deploy Queue Consumers
         working-directory: "./devops/"
         run: |
           make oc-deploy-queue-consumers

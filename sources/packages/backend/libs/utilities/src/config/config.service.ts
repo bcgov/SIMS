@@ -13,7 +13,7 @@ import {
   SFTPConfig,
   DatabaseConfiguration,
   RedisConfiguration,
-  QueueDashboardConfiguration,
+  UserPasswordCredential,
 } from "./config.models";
 
 @Injectable()
@@ -200,8 +200,8 @@ export class ConfigService {
    */
   get redis(): RedisConfiguration {
     return this.getCachedConfig("redisConfiguration", {
-      redisHost: process.env.REDIS_HOST,
-      redisPort: +process.env.REDIS_PORT,
+      redisHost: process.env.REDIS_HOST || "localhost",
+      redisPort: +process.env.REDIS_PORT || 6379,
       redisPassword: process.env.REDIS_PASSWORD,
       redisStandaloneMode: process.env.REDIS_STANDALONE_MODE === "true",
     });
@@ -210,10 +210,10 @@ export class ConfigService {
   /**
    * Queue dashboard configuration.
    */
-  get queueDashboard(): QueueDashboardConfiguration {
-    return this.getCachedConfig("queueDashboardConfig", {
-      queueDashboardUser: process.env.QUEUE_DASHBOARD_USER,
-      queueDashboardPassword: process.env.QUEUE_DASHBOARD_PASSWORD,
+  get queueDashboardCredential(): UserPasswordCredential {
+    return this.getCachedConfig("queueDashboardCredentialConfig", {
+      userName: process.env.QUEUE_DASHBOARD_USER,
+      password: process.env.QUEUE_DASHBOARD_PASSWORD,
     });
   }
 
@@ -223,7 +223,7 @@ export class ConfigService {
   get queueConsumersPort(): number {
     return this.getCachedConfig(
       "queueConsumersPortConfig",
-      +process.env.QUEUE_CONSUMERS_PORT,
+      +process.env.QUEUE_CONSUMERS_PORT || 3001,
     );
   }
 

@@ -38,8 +38,8 @@ async function getConnectionFactory(
   configService: ConfigService,
 ): Promise<BullRootModuleOptions> {
   const redisConnectionOptions: RedisOptions = {
-    host: configService.redis.redisHost || "localhost",
-    port: configService.redis.redisPort || 6379,
+    host: configService.redis.redisHost,
+    port: configService.redis.redisPort,
     password: configService.redis.redisPassword,
   };
   if (configService.redis.redisStandaloneMode) {
