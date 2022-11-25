@@ -9,6 +9,7 @@ import { WorkflowClientService } from "@sims/services";
 @Processor(QueueNames.StartApplicationAssessment)
 export class StartApplicationAssessmentProcessor {
   constructor(private readonly workflowClientService: WorkflowClientService) {}
+
   @Process()
   async startAssessment(job: Job<StartAssessmentQueueInDTO>) {
     await this.workflowClientService.startApplicationAssessment(

@@ -14,9 +14,6 @@ async function bootstrap() {
 
   const config = app.get<ConfigService>(ConfigService);
 
-  //Application port.
-  const port = config.queueConsumersPort;
-
   // Create bull board UI dashboard for queue management.
   const serverAdapter = new ExpressAdapter();
   serverAdapter.setBasePath("/admin/queues");
@@ -42,6 +39,6 @@ async function bootstrap() {
     serverAdapter.getRouter(),
   );
 
-  await app.listen(port);
+  await app.listen(config.queueConsumersPort);
 }
 bootstrap();
