@@ -96,7 +96,8 @@ html * {
   color: $brand-grey;
 }
 
-.p-paginator.p-dropdown {
+// Reset initial styles
+.p-paginator .p-dropdown.p-inputwrapper {
   height: auto;
 }
 
