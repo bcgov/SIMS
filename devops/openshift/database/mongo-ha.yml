@@ -50,7 +50,7 @@ parameters:
   - name: MONGODB_SECRET_NAME
     displayName: MongoDB Secret.
     description: Name of the Secret containing MongoDB Assets
-    value: "mongodb-creds"
+    value: "mongodb-ha-creds"
     required: true
   - name: MONGODB_USER
     displayName: "MongoDB Connection Username"

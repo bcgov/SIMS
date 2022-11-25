@@ -81,8 +81,12 @@ define FORMS_DEPLOY_TEMPLATE_PATH
 "openshift/forms-deploy.yml"
 endef
 
+define FORMS_PARAM_PATH
+"openshift/forms-secrets.yml"
+endef
+
 define FORMS_URL
-"$(HOST_PREFIX)aest-ffa-forms.$(DOMAIN)"
+"$(HOST_PREFIX)aest-forms.$(DOMAIN)"
 endef
 
 define SOURCE_REPOSITORY_URL
@@ -366,7 +370,7 @@ deploy-forms:
 	test -n "$(NAMESPACE)"
 	test -n "$(BUILD_NAMESPACE)"
 	@echo "+\n++ Deploying forms-flow-forms with tag: $(BUILD_TAG)\n+"
-	@oc -n $(NAMESPACE) process -f $(FORM_AI_FORMS_DEPLOY_TEMPLATE_PATH) -p NAME=$(FORMS_NAME) -p FFA_FORMS_URL=$(FORM_AI_FORMS_URL) -p TOOLS_NAMESPACE=$(BUILD_NAMESPACE) -p IMAGE_STREAM_TAG="$(BUILD_TAG)" | oc -n $(NAMESPACE) apply -f -
+	@oc -n $(NAMESPACE) process -f $(FORMS_DEPLOY_TEMPLATE_PATH) --param-file=$(FORMS_PARAM_PATH) -p NAME=$(FORMS_NAME) -p FORMS_URL=$(FORMS_URL) -p TOOLS_NAMESPACE=$(BUILD_NAMESPACE) -p IMAGE_STREAM_TAG="$(BUILD_TAG)" | oc -n $(NAMESPACE) apply -f -
 	$(call rollout_and_wait,dc/$(FORMS_NAME))
 
 # Create database backup structure (build/configmap/deploy)
