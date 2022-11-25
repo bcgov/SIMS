@@ -13,9 +13,9 @@ export class SystemUsersService {
   ) {}
 
   /**
-   * Get system user.If not found will create a new
-   * system user and return the user details.
-   * @return system user id.
+   * Get system user. If not found create a new
+   * system user and return the user.
+   * @return system user.
    */
   private async getSystemUser(): Promise<User> {
     const existingUser = await this.userRepo.findOne({
@@ -26,9 +26,11 @@ export class SystemUsersService {
         userName: SystemUser.UserName,
       },
     });
+
     if (existingUser) {
       return existingUser;
     }
+
     // Create new system user if not exists.
     const user = new User();
     user.userName = SystemUser.UserName;
@@ -44,14 +46,17 @@ export class SystemUsersService {
    * and return the user details.
    * @return system user details.
    */
-  async queueSystemUser(): Promise<SystemUserDetails> {
+  async systemUser(): Promise<SystemUserDetails> {
     const systemUserKey = "systemUserDetails";
+
     if (this[systemUserKey]) {
-      return this[systemUserKey] as SystemUserDetails;
+      return this[systemUserKey];
     }
+
     this[systemUserKey] = {
       id: (await this.getSystemUser()).id,
     };
+
     return this[systemUserKey];
   }
 }
