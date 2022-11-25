@@ -74,7 +74,7 @@ define SECRETS_PARAM_PATH
 endef
 
 define FORMS_BUILD_TEMPLATE_PATH
-"openshift/FORMS-build.yml"
+"openshift/forms-build.yml"
 endef
 
 define FORMS_DEPLOY_TEMPLATE_PATH
