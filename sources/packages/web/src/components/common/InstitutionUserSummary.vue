@@ -2,7 +2,7 @@
 <template>
   <body-header title="All users" :recordsCount="usersListAndCount.count">
     <template #subtitle>
-      <ul class="list-group">
+      <ul>
         <li>
           Admin roles can access <strong>all features</strong
           ><tooltip-icon
@@ -130,7 +130,9 @@
                 append-icon="mdi-pencil-outline"
                 data-cy="editUser"
               >
-                <span class="text-decoration-underline">Edit</span>
+                <span class="text-decoration-underline"
+                  ><strong>Edit</strong></span
+                >
               </v-btn>
             </template>
           </check-permission-role>
@@ -144,9 +146,11 @@
                 append-icon="fa:far fa-user"
                 data-cy="disableUser"
               >
-                <span class="text-decoration-underline">{{
-                  slotProps.data.isActive ? "Disable" : "Enable"
-                }}</span>
+                <span class="text-decoration-underline"
+                  ><strong>{{
+                    slotProps.data.isActive ? "Disable" : "Enable"
+                  }}</strong></span
+                >
               </v-btn>
             </template>
           </check-permission-role>

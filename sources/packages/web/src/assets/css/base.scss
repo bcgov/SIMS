@@ -86,7 +86,7 @@ html * {
   margin-top: 8px;
 }
 
-.p-paginator-bottom {
+.p-datatable.p-paginator-bottom {
   border-bottom: 0;
 }
 
@@ -94,6 +94,10 @@ html * {
   font-family: $font-bold;
   font-weight: $font-weight-bold; // Fallback
   color: $brand-grey;
+}
+
+.p-paginator.p-dropdown {
+  height: auto;
 }
 
 /** muted heading **/
@@ -347,8 +351,9 @@ html * {
 }
 
 // List style - apply to lists used in content
-ul.list-group {
+ul {
   margin-left: 20px;
+  margin-bottom: 0;
 
   li {
     line-height: $formio-content-lh;
@@ -358,5 +363,5 @@ ul.list-group {
 // Typography styles
 b,
 strong {
-  font-family: $font-bold;
+  font-weight: $font-weight-bold;
 }
