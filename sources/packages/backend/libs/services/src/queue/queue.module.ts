@@ -45,7 +45,6 @@ async function getConnectionFactory(
   if (configService.redis.redisStandaloneMode) {
     return {
       redis: redisConnectionOptions,
-      prefix: QUEUE_PREFIX,
     };
   }
   return {
@@ -60,7 +59,6 @@ async function getConnectionFactory(
         { redisOptions: { password: redisConnectionOptions.password } },
       );
     },
-    prefix: QUEUE_PREFIX,
   };
 }
 
