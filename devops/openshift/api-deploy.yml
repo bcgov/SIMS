@@ -101,12 +101,12 @@ objects:
                   valueFrom:
                     secretKeyRef:
                       key: ${FORMS_SA_USER_NAME_NAME_KEY}
-                      name: ${API_SECRET_NAME}
+                      name: ${FORMS_SECRET_NAME}
                 - name: FORMS_SA_PASSWORD
                   valueFrom:
                     secretKeyRef:
                       key: ${FORMS_SA_PASSWORD_NAME_KEY}
-                      name: ${API_SECRET_NAME}
+                      name: ${FORMS_SECRET_NAME}
                 - name: SITE_MINDER_LOGOUT_URL
                   value: ${SITE_MINDER_LOGOUT_URL}
                 - name: FORMS_FLOW_API_URL
@@ -400,6 +400,8 @@ parameters:
     value: "0"
   - name: API_SECRET_NAME
     value: sims-api-creds
+  - name: FORMS_SECRET_NAME
+    value: forms
   - name: BCeID_WEB_SERVICE_ONLINE_SERVICE_ID_NAME_KEY
     value: bceid-web-service-online-service-id
   - name: BCeID_WEB_SERVICE_REQUESTER_USER_GUID_NAME_KEY
@@ -413,9 +415,9 @@ parameters:
   - name: WORKFLOW_SA_PASSWORD_NAME_KEY
     value: workflow-sa-password
   - name: FORMS_SA_USER_NAME_NAME_KEY
-    value: forms-sa-user-name
+    value: FORMIO_ROOT_EMAIL
   - name: FORMS_SA_PASSWORD_NAME_KEY
-    value: forms-sa-password
+    value: FORMIO_ROOT_PASSWORD
   - name: SITE_MINDER_LOGOUT_URL
     require: true
   - name: FORMS_FLOW_API_URL
