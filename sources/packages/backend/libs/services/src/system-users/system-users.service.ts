@@ -2,11 +2,16 @@ import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { User } from "@sims/sims-db";
 import { Repository } from "typeorm";
-import { SERVICE_ACCOUNT_DEFAULT_USER_EMAIL } from "../system-configurations-constants";
-import { SystemUser, SystemUserDetails } from "./system-users.models";
+import { SERVICE_ACCOUNT_DEFAULT_USER_EMAIL } from "../../../utilities/src/system-configurations-constants";
+import {
+  SYSTEM_USER_LAST_NAME,
+  SYSTEM_USER_USER_NAME,
+} from "./system-users.models";
 
 @Injectable()
 export class SystemUsersService {
+  private systemUserDetails: User = undefined;
+
   constructor(
     @InjectRepository(User)
     private userRepo: Repository<User>,
@@ -23,7 +28,7 @@ export class SystemUsersService {
         id: true,
       },
       where: {
-        userName: SystemUser.UserName,
+        userName: SYSTEM_USER_USER_NAME,
       },
     });
 
@@ -33,9 +38,9 @@ export class SystemUsersService {
 
     // Create new system user if not exists.
     const user = new User();
-    user.userName = SystemUser.UserName;
+    user.userName = SYSTEM_USER_USER_NAME;
     user.firstName = null;
-    user.lastName = SystemUser.LastName;
+    user.lastName = SYSTEM_USER_LAST_NAME;
     user.email = SERVICE_ACCOUNT_DEFAULT_USER_EMAIL;
     return this.userRepo.save(user);
   }
@@ -46,17 +51,12 @@ export class SystemUsersService {
    * and return the user details.
    * @return system user details.
    */
-  async systemUser(): Promise<SystemUserDetails> {
-    const systemUserKey = "systemUserDetails";
-
-    if (this[systemUserKey]) {
-      return this[systemUserKey];
+  async systemUser(): Promise<User> {
+    if (this.systemUserDetails) {
+      return this.systemUserDetails;
     }
 
-    this[systemUserKey] = {
-      id: (await this.getSystemUser()).id,
-    };
-
-    return this[systemUserKey];
+    this.systemUserDetails = await this.getSystemUser();
+    return this.systemUserDetails;
   }
 }
