@@ -28,6 +28,11 @@ const LOAN_TYPES = [
   DisbursementValueType.BCLoan,
 ];
 
+const GRANT_TYPES = [
+  DisbursementValueType.CanadaGrant,
+  DisbursementValueType.BCGrant,
+];
+
 /**
  * Service layer for Student Application disbursement schedules.
  */
@@ -127,6 +132,12 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
         currentDisbursements,
         transactionEntityManager,
       );
+
+      await this.createOverawardReverseRecords(
+        assessment.application.applicationNumber,
+        transactionEntityManager,
+      );
+
       // Step 3
       // Get the student current overaward balance.
       // !This must be executed after the step 2 (rollback non-payed overawards) to ensure that all
@@ -206,7 +217,8 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
           valueType: true,
           valueCode: true,
           valueAmount: true,
-          overaward: true,
+          overawardAmountSubtracted: true,
+          disbursedAmountSubtracted: true,
         },
         studentAssessment: {
           id: true,
@@ -244,6 +256,51 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
     });
   }
 
+  private async createOverawardReverseRecords(
+    applicationNumber: string,
+    entityManager: EntityManager,
+  ): Promise<void> {
+    const disbursementOverawardRepo = entityManager.getRepository(
+      DisbursementOveraward,
+    );
+    const applicationOverawards = await disbursementOverawardRepo.find({
+      select: {
+        id: true,
+        student: {
+          id: true,
+        },
+        disbursementSchedule: {
+          id: true,
+        },
+        overawardValue: true,
+        disbursementValueCode: true,
+      },
+      relations: {
+        student: true,
+        disbursementSchedule: true,
+      },
+      where: {
+        disbursementSchedule: {
+          studentAssessment: {
+            application: {
+              applicationNumber,
+            },
+          },
+        },
+      },
+    });
+    const reverseOverawardsRecords = applicationOverawards.map((overaward) => ({
+      disbursementSchedule: overaward.disbursementSchedule,
+      student: overaward.student,
+      disbursementValueCode: overaward.disbursementValueCode,
+      overawardValue: (+overaward.overawardValue * 1).toString(),
+      originType: DisbursementOverawardOriginType.CancelledDisbursement,
+    }));
+    await entityManager
+      .getRepository(DisbursementOveraward)
+      .insert(reverseOverawardsRecords);
+  }
+
   /**
    * Cancel all pending disbursements and, if there is any overaward value
    * present, add it back to the disbursement overaward table.
@@ -270,12 +327,12 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
       pendingDisbursement.disbursementScheduleStatus =
         DisbursementScheduleStatus.Cancelled;
       for (const pendingDisbursementValue of pendingDisbursement.disbursementValues) {
-        if (pendingDisbursementValue.overaward) {
+        if (+pendingDisbursementValue.overawardAmountSubtracted > 0) {
           rollbackOverawards.push({
             disbursementSchedule: pendingDisbursement,
             student: pendingDisbursement.studentAssessment.application.student,
             disbursementValueCode: pendingDisbursementValue.valueCode,
-            overawardValue: pendingDisbursementValue.overaward,
+            overawardValue: pendingDisbursementValue.overawardAmountSubtracted,
             originType: DisbursementOverawardOriginType.CancelledDisbursement,
           });
         }
@@ -326,8 +383,10 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
     totalAlreadyDisbursedValues: Record<string, number>,
     entityManager: EntityManager,
   ) {
-    const overawardsToInert: QueryDeepPartialEntity<DisbursementOveraward>[] =
-      [];
+    const disbursementOverawardRepo = entityManager.getRepository(
+      DisbursementOveraward,
+    );
+
     const loanAwards = disbursementSchedules
       .flatMap(
         (disbursementSchedule) => disbursementSchedule.disbursementValues,
@@ -347,57 +406,79 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
       const loans = loanAwards.filter(
         (loanAward) => loanAward.valueCode === valueCode,
       );
-      // Total already received and/or owed by the student due to some previous overaward.
-      let totalStudentDebit =
-        (totalAlreadyDisbursedValues[valueCode] ?? 0) +
-        (totalOverawards[valueCode] ?? 0);
+      // Total already received by the student for this award for this application.
+      const alreadyDisbursed = totalAlreadyDisbursedValues[valueCode] ?? 0;
+      // Subtract the debit from the current awards in the current assessment.
+      const alreadyDisbursedRemainingStudentDebit = this.subtractStudentDebit(
+        loans,
+        alreadyDisbursed,
+        "PreviousDisbursement",
+      );
+      // If there is some remaining student debit, generate an overaward.
+      if (alreadyDisbursedRemainingStudentDebit) {
+        // There is no more money to be subtracted from this assessment.
+        // Insert the remaining student debit into the overaward.
+        await disbursementOverawardRepo.insert({
+          disbursementSchedule: disbursementSchedules[0],
+          student: { id: studentId } as Student,
+          disbursementValueCode: valueCode,
+          overawardValue: alreadyDisbursedRemainingStudentDebit.toString(),
+          originType: DisbursementOverawardOriginType.Reassessment,
+        });
+        return;
+      }
 
-      for (let i = 0; i < loans.length; i++) {
-        const loan = loans[i];
-        // Find the disbursement from where this loan is part of.
-        const [disbursementSchedule] = disbursementSchedules.filter(
-          (disbursementSchedule) =>
-            disbursementSchedule.disbursementValues.some(
-              (disbursementValue) => disbursementValue.id === loan.id,
-            ),
-        );
-        if (+loan.valueAmount >= totalStudentDebit) {
-          // Current disbursement value is enough to pay the debit.
-          loan.valueAmount = (+loan.valueAmount - totalStudentDebit).toString();
-          loan.overaward = totalStudentDebit.toString();
-          totalStudentDebit = 0;
-        } else {
-          // Current disbursement is not enough to pay the debit.
-          // Updates total student debit.
-          totalStudentDebit -= +loan.valueAmount;
-          loan.overaward = loan.valueAmount;
-          loan.valueAmount = "0";
-        }
-        if (+loan.overaward > 0) {
-          // If there was some overaward value, save it.
-          overawardsToInert.push({
-            disbursementSchedule: disbursementSchedule,
-            student: { id: studentId } as Student,
-            disbursementValueCode: loan.valueCode,
-            overawardValue: (+loan.overaward * -1).toString(), // -1 to invert the value signal.
-            originType: DisbursementOverawardOriginType.Reassessment,
-          });
-        }
-        if (loans.length === i - 1 && totalStudentDebit > 0) {
-          // If it is the last iteration and there is some remaining student debit.
-          overawardsToInert.push({
-            disbursementSchedule: disbursementSchedule,
-            student: disbursementSchedule.studentAssessment.application.student,
-            disbursementValueCode: loan.valueCode,
-            overawardValue: totalStudentDebit.toString(),
-            originType: DisbursementOverawardOriginType.Reassessment,
-          });
-        }
+      // Total owed by the student due to some previous overaward.
+      const overawardBalance = totalOverawards[valueCode] ?? 0;
+      const remainingOverawardBalance = this.subtractStudentDebit(
+        loans,
+        overawardBalance,
+        "Overaward",
+      );
+      // If there is some remaining student debit, generate an overaward.
+      if (remainingOverawardBalance) {
+        await disbursementOverawardRepo.insert({
+          disbursementSchedule: disbursementSchedules[0],
+          student: { id: studentId } as Student,
+          disbursementValueCode: valueCode,
+          overawardValue: (
+            remainingOverawardBalance - overawardBalance
+          ).toString(),
+          originType: DisbursementOverawardOriginType.Reassessment,
+        });
       }
     }
-    // Save all the generated overawards.
-    await entityManager
-      .getRepository(DisbursementOveraward)
-      .insert(overawardsToInert);
+  }
+
+  subtractStudentDebit(
+    awards: DisbursementValue[],
+    totalStudentDebit: number,
+    subtractOrigin: "Overaward" | "PreviousDisbursement",
+  ): number {
+    let studentDebit = totalStudentDebit;
+    for (let i = 0; i < awards.length; i++) {
+      const award = awards[i];
+      if (+award.valueAmount >= totalStudentDebit) {
+        // Current disbursement value is enough to pay the debit.
+        award.valueAmount = (+award.valueAmount - studentDebit).toString();
+        if (subtractOrigin === "Overaward") {
+          award.overawardAmountSubtracted = studentDebit.toString();
+        } else {
+          award.disbursedAmountSubtracted = studentDebit.toString();
+        }
+        studentDebit = 0;
+      } else {
+        // Current disbursement is not enough to pay the debit.
+        // Updates total student debit.
+        studentDebit -= +award.valueAmount;
+        if (subtractOrigin === "Overaward") {
+          award.overawardAmountSubtracted = award.valueAmount;
+        } else {
+          award.disbursedAmountSubtracted = award.valueAmount;
+        }
+        award.valueAmount = "0";
+      }
+    }
+    return studentDebit;
   }
 }
