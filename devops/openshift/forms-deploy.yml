@@ -1,8 +1,20 @@
 apiVersion: template.openshift.io/v1
 kind: Template
 metadata:
-  name: forms-flow-forms
+  name: forms
 objects:
+  - apiVersion: v1
+    kind: Secret
+    metadata:
+      name: ${NAME}
+    stringData:
+      DEBUG: formio:*
+      FORMIO_ROOT_EMAIL: "${FORMIO_ROOT_EMAIL}"
+      FORMIO_ROOT_PASSWORD: "${FORMIO_ROOT_PASSWORD}"
+      MONGODB_URI: "${MONGODB_URI}"
+      NODE_CONFIG: '{"mongo": "${MONGODB_URI}"}'
+    type: Opaque
+
   - apiVersion: apps.openshift.io/v1
     kind: DeploymentConfig
     metadata:
@@ -44,25 +56,15 @@ objects:
                 - name: ROOT_EMAIL
                   valueFrom:
                     secretKeyRef:
-                      key: formio_root_email
+                      key: FORMIO_ROOT_EMAIL
                       name: ${FORMIO_SECRET}
                 - name: ROOT_PASSWORD
                   valueFrom:
                     secretKeyRef:
-                      key: formio_root_password
+                      key: FORMIO_ROOT_PASSWORD
                       name: ${FORMIO_SECRET}
                 - name: FORMIO_DOMAIN
-                  value: ${FFA_FORMS_URL}
-                - name: FORMIO_JWT_SECRET
-                  valueFrom:
-                    secretKeyRef:
-                      key: formio_jwt_secret
-                      name: ${FORMIO_SECRET}
-                - name: FORMIO_JWT_EXPIRE
-                  valueFrom:
-                    secretKeyRef:
-                      key: formio_jwt_expire
-                      name: ${FORMIO_SECRET}
+                  value: ${FORMS_URL}
               image: ${IMAGE_REGISTRY}/${TOOLS_NAMESPACE}/${NAME}:${IMAGE_STREAM_TAG}
               name: ${NAME}
               ports:
@@ -133,7 +135,6 @@ objects:
         app: ${NAME}
     status:
       loadBalancer: {}
-
   - kind: Route
     apiVersion: route.openshift.io/v1
     metadata:
@@ -141,14 +142,14 @@ objects:
         app: ${NAME}
       name: ${NAME}
     spec:
-      host: ${FFA_FORMS_URL}
+      host: ${FORMS_URL}
       to:
         kind: Service
         name: ${NAME}
         weight: 100
       port:
         targetPort: "3001"
-      tls:
+      tls:        
         termination: edge
         insecureEdgeTerminationPolicy: Redirect
       wildcardPolicy: None
@@ -160,21 +161,31 @@ parameters:
       The name assigned to all of the OpenShift resources associated to the
       server instance.
     required: true
-    value: forms-flow-forms
+    value: forms
   - name: TOOLS_NAMESPACE
     displayName: Image TOOLS_NAMESPACE
     required: true
     description:
       The TOOLS_NAMESPACE of the OpenShift project containing the imagestream for
       the application.
+  - name: MONGODB_URI
+    description: MONGODB_URI
+    required: true
+  - name: FORMIO_ROOT_EMAIL
+    description: FORMIO_ROOT_EMAIL
+    required: true
+  - name: FORMIO_ROOT_PASSWORD
+    description: FORMIO_ROOT_PASSWORD
+    generate: expression
+    from: "[a-zA-Z0-9]{16}"
   - name: FORMIO_SECRET
     description: Secrets are referred from this.
     required: true
-    value: forms-flow-ai
-  - name: FFA_FORMS_URL
-    displayName: FFA_FORMS_URL
+    value: forms
+  - name: FORMS_URL
+    displayName: FORMS_URL
     required: true
-    description: Forms Flow AI Forms URL
+    description: Forms URL
   - name: IMAGE_REGISTRY
     value: image-registry.openshift-image-registry.svc:5000
   - name: IMAGE_STREAM_TAG

@@ -7,7 +7,7 @@
 FROM docker.io/library/node:lts-alpine3.10
 
 # set working directory
-WORKDIR /forms
+WORKDIR /formio
 
 # "bcrypt" requires python/make/g++, all must be installed in alpine
 # (note: using pinned versions to ensure immutable build environment)
@@ -18,8 +18,7 @@ RUN apk update && \
   apk add git
 
 # Clone code
-RUN git clone -b 3.0.x https://github.com/formio/formio.git /tmp/forms-flow-forms/
-RUN cp -r /tmp/forms-flow-forms/. /forms/
+RUN git clone -b ${FORMIO_SOURCE_REPO_BRANCH} ${FORMIO_SOURCE_REPO_URL} /formio/
 
 # Using an alternative package install location
 # to allow overwriting the /app folder at runtime
@@ -47,10 +46,8 @@ RUN ln -sf $NPM_PACKAGES/node_modules node_modules
 #   DEBUG=formio:*
 ENV DEBUG=""
 
-#RUN cp /forms/forms-flow-forms/ /forms-flow-forms/app/
-
 RUN set -x \
-  && chmod -R 777 /forms/
+  && chmod -R 777 /formio/
 
 # This will initialize the application based on
 # some questions to the user (login email, password, etc.)

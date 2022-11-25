@@ -58,10 +58,6 @@ parameters:
     value: https://github.com/bcgov/SIMS.git
   - name: SOURCE_REPOSITORY_REF
     required: true
-  - name: FORMIO_SOURCE_REPO_URL
-    required: true
-  - name: FORMIO_SOURCE_REPO_BRANCH
-    required: true
   - name: TAG
     required: true
   - name: CPU_LIMIT
