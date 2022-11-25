@@ -39,7 +39,6 @@ export class SystemUsersService {
     // Create new system user if not exists.
     const user = new User();
     user.userName = SYSTEM_USER_USER_NAME;
-    user.firstName = null;
     user.lastName = SYSTEM_USER_LAST_NAME;
     user.email = SERVICE_ACCOUNT_DEFAULT_USER_EMAIL;
     return this.userRepo.save(user);
