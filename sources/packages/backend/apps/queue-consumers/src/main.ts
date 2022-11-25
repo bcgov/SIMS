@@ -1,5 +1,6 @@
 require("../../../env_setup_apps");
 import { Queues } from "@sims/services/queue";
+import { ConfigService } from "@sims/utilities/config";
 import { createBullBoard } from "@bull-board/api";
 import { BullAdapter } from "@bull-board/api/bullAdapter";
 import { ExpressAdapter } from "@bull-board/express";
@@ -11,8 +12,10 @@ import * as basicAuth from "express-basic-auth";
 async function bootstrap() {
   const app = await NestFactory.create(QueueConsumersModule);
 
+  const config = app.get<ConfigService>(ConfigService);
+
   //Application port.
-  const port = process.env.QUEUE_CONSUMERS_PORT || 3001;
+  const port = config.queueConsumersPort || 3001;
 
   // Create bull board UI dashboard for queue management.
   const serverAdapter = new ExpressAdapter();
@@ -28,8 +31,8 @@ async function bootstrap() {
   });
   // Bull board user for basic authentication.
   const queueDashboardUsers = {};
-  queueDashboardUsers[process.env.QUEUE_DASHBOARD_USER] =
-    process.env.QUEUE_DASHBOARD_PASSWORD;
+  queueDashboardUsers[config.queueDashboard.queueDashboardUser] =
+    config.queueDashboard.queueDashboardPassword;
   app.use(
     "/admin/queues",
     basicAuth({

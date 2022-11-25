@@ -6,6 +6,7 @@ import {
 } from "@nestjs/bull";
 import Redis, { Cluster, RedisOptions } from "ioredis";
 import { QUEUE_PREFIX, Queues } from "./constants/queue.constant";
+import { ConfigModule, ConfigService } from "@sims/utilities/config";
 
 /**
  * Creates root connection to redis standalone or redis cluster
@@ -14,7 +15,11 @@ import { QUEUE_PREFIX, Queues } from "./constants/queue.constant";
 @Global()
 @Module({
   imports: [
-    BullModule.forRoot(getConnectionFactory()),
+    BullModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: getConnectionFactory,
+      inject: [ConfigService],
+    }),
     BullModule.registerQueue(...getQueueModules()),
   ],
   exports: [BullModule],
@@ -29,13 +34,15 @@ export class QueueModule {}
  ** While running in local env make sure to set REDIS_STANDALONE_MODE as true.
  * @returns redis connection factory
  */
-function getConnectionFactory(): BullRootModuleOptions {
+async function getConnectionFactory(
+  configService: ConfigService,
+): Promise<BullRootModuleOptions> {
   const redisConnectionOptions: RedisOptions = {
-    host: process.env.REDIS_HOST || "localhost",
-    port: +process.env.REDIS_PORT || 6379,
-    password: process.env.REDIS_PASSWORD,
+    host: configService.redis.redisHost || "localhost",
+    port: configService.redis.redisPort || 6379,
+    password: configService.redis.redisPassword,
   };
-  if (process.env.REDIS_STANDALONE_MODE === "true") {
+  if (configService.redis.redisStandaloneMode) {
     return {
       redis: redisConnectionOptions,
       prefix: QUEUE_PREFIX,
@@ -50,7 +57,7 @@ function getConnectionFactory(): BullRootModuleOptions {
             port: redisConnectionOptions.port,
           },
         ],
-        { redisOptions: { password: process.env.REDIS_PASSWORD } },
+        { redisOptions: { password: redisConnectionOptions.password } },
       );
     },
     prefix: QUEUE_PREFIX,
