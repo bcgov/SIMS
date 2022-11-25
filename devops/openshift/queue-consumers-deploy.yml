@@ -178,19 +178,19 @@ parameters:
   - name: BUILD_TAG
     value: "0"
   - name: QUEUE_CONSUMERS_SECRET_NAME
-    require: true
+    required: true
   - name: ZEEBE_ADDRESS_KEY
     value: zeebe-address
-    require: true
+    required: true
   - name: ZEEBE_CLIENT_ID_KEY
     value: zeebe-client-id
-    require: true
+    required: true
   - name: ZEEBE_CLIENT_SECRET_KEY
     value: zeebe-client-secret
-    require: true
+    required: true
   - name: ZEEBE_AUTHORIZATION_SERVER_URL_KEY
     value: zeebe-authorization-server-url
-    require: true
+    required: true
   - name: BYPASS_CRA_INCOME_VERIFICATION
     value: "false"
   - name: REDIS_SERVICE
