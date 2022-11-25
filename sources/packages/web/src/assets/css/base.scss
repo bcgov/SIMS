@@ -80,22 +80,25 @@ html * {
   border-color: $badge-border-error !important;
 }
 
-// Data table styles
-// Style to align records per page with arrows in data table.
+// Todo: when datatable is updated, remove this class.
+//** Style to align records per page with arrows in data table. **//
 .p-paginator .p-dropdown .p-dropdown-label {
   margin-top: 8px;
 }
 
+// Todo: when datatable is updated, remove this class.
 .p-datatable.p-paginator-bottom {
   border-bottom: 0;
 }
 
+// Todo: when datatable is updated, remove this class.
 .p-column-title {
   font-family: $font-bold;
   font-weight: $font-weight-bold; // Fallback
   color: $brand-grey;
 }
 
+// Todo: when datatable is updated, remove this class.
 // Reset initial styles
 .p-paginator .p-dropdown.p-inputwrapper {
   height: auto;
@@ -355,7 +358,6 @@ html * {
 ul {
   margin-left: 20px;
   margin-bottom: 0;
-
   li {
     line-height: $formio-content-lh;
   }
