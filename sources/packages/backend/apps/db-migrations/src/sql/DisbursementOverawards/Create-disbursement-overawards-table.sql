@@ -1,12 +1,14 @@
 CREATE TABLE IF NOT EXISTS sims.disbursement_overawards(
   id SERIAL PRIMARY KEY,
   student_id INT NOT NULL REFERENCES sims.students(id),
+  student_assessment_id INT REFERENCES sims.student_assessments(id),
   disbursement_schedule_id INT REFERENCES sims.disbursement_schedules(id),
   overaward_value NUMERIC(8, 2) NOT NULL,
   disbursement_value_code VARCHAR(10) NOT NULL,
   origin_type sims.disbursement_overaward_origin_types NOT NULL,
   created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+  deleted_at TIMESTAMP WITH TIME ZONE,
   creator INT NULL DEFAULT NULL REFERENCES sims.users(id) ON DELETE
   SET
     NULL,
@@ -22,7 +24,9 @@ COMMENT ON COLUMN sims.disbursement_overawards.id IS 'Auto-generated sequential 
 
 COMMENT ON COLUMN sims.disbursement_overawards.student_id IS 'Student related to the overaward.';
 
-COMMENT ON COLUMN sims.disbursement_overawards.disbursement_schedule_id IS 'Related disbursement schedule. When not present, it represents a manual entry.';
+COMMENT ON COLUMN sims.disbursement_overawards.student_assessment_id IS 'Related the student assessment. When not present, it represents a manual entry.';
+
+COMMENT ON COLUMN sims.disbursement_overawards.disbursement_schedule_id IS 'Related disbursement schedule. When not present, it represents a manual entry or an overaward at the disbursement level, not at the schedule level.';
 
 COMMENT ON COLUMN sims.disbursement_overawards.overaward_value IS 'Overaward value (a positive value indicates the amount the student owes).';
 

@@ -3,19 +3,23 @@
  */
 export enum DisbursementOverawardOriginType {
   /**
-   * Entry manually added by the Ministry user.
-   */
-  ManualEntry = "Manual entry",
-  /**
    * The result of an assessment recalculation generated
    * some overaward that exceeded the reassessment value.
    */
-  Reassessment = "Reassessment",
+  ReassessmentOveraward = "Reassessment overaward",
   /**
-   * A disbursement that included an overaward was cancelled and
-   * the overaward value must to be added back to the student account.
+   * Part of an overaward balance was used to change an award value.
    */
-  CancelledDisbursement = "Cancelled disbursement",
+  AwardValueAdjusted = "Award value adjusted",
+  /**
+   * An award that included an overaward was cancelled and
+   * the overaward value must to be added back to the overaward balance.
+   */
+  PendingAwardCancelled = "Pending award cancelled",
+  /**
+   * Entry manually added by the Ministry user.
+   */
+  ManuallyEntered = "Manually entered",
   /**
    * Imported value from SFAS added during student creation or when SFAS
    * data is imported to the system.

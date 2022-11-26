@@ -1,5 +1,6 @@
 import {
   Column,
+  DeleteDateColumn,
   Entity,
   JoinColumn,
   ManyToOne,
@@ -10,6 +11,7 @@ import {
   DisbursementSchedule,
   RecordDataModel,
   Student,
+  StudentAssessment,
 } from ".";
 import { ColumnNames, TableNames } from "../constant";
 
@@ -30,7 +32,21 @@ export class DisbursementOveraward extends RecordDataModel {
   })
   student: Student;
   /**
-   * Related disbursement schedule. When not present, it represents a manual entry.
+   * Related assessment. When not present, it represents a manual entry.
+   */
+  @ManyToOne(() => StudentAssessment, {
+    eager: false,
+    cascade: false,
+    nullable: true,
+  })
+  @JoinColumn({
+    name: "student_assessment_id",
+    referencedColumnName: ColumnNames.ID,
+  })
+  studentAssessment?: StudentAssessment;
+  /**
+   * Related disbursement schedule. When not present, it represents a manual entry
+   * or an overaward at the disbursement level, not at the schedule level.
    */
   @ManyToOne(() => DisbursementSchedule, {
     eager: false,
@@ -70,4 +86,13 @@ export class DisbursementOveraward extends RecordDataModel {
     nullable: false,
   })
   originType: DisbursementOverawardOriginType;
+  /**
+   * When set indicates that the record is considered deleted.
+   */
+  @DeleteDateColumn({
+    name: "deleted_at",
+    type: "timestamptz",
+    nullable: true,
+  })
+  deletedAt?: Date;
 }
