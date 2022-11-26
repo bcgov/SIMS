@@ -149,10 +149,10 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
           assessment.application.student.id,
           transactionEntityManager,
         );
-      // Sum total disbursed values per loan type (Federal or Provincial).
+      // Sum total disbursed values per award type (Federal or Provincial).
       const totalAlreadyDisbursedValues =
         this.sumDisbursedValuesPerValueCode(currentDisbursements);
-      // Save the disbursements to DB with the adjusted overaward values.
+      // Save the disbursements to DB.
       const disbursementSchedules: DisbursementSchedule[] = [];
       for (const disbursement of disbursements) {
         const newDisbursement = new DisbursementSchedule();
@@ -175,7 +175,12 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
       const studentAssessmentRepo =
         transactionEntityManager.getRepository(StudentAssessment);
       await studentAssessmentRepo.save(assessment);
-      // Adjust the saved disbursement with the overawards.
+      // Adjust the saved grants disbursements with the values already disbursed.
+      this.applyGrantsAlreadyDisbursedValues(
+        disbursementSchedules,
+        totalAlreadyDisbursedValues,
+      );
+      // Adjust the saved loans disbursements with the overawards.
       await this.applyOverawards(
         assessment.id,
         assessment.application.student.id,
@@ -184,7 +189,7 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
         totalAlreadyDisbursedValues,
         transactionEntityManager,
       );
-      // Persist overaward changes.
+      // Persist changes for grants and loans.
       await studentAssessmentRepo.save(assessment);
 
       return assessment.disbursementSchedules;
@@ -266,12 +271,6 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
           application: { applicationNumber: In(applicationNumbers) },
         },
         disbursementScheduleStatus: status,
-        disbursementValues: {
-          valueType: In([
-            DisbursementValueType.CanadaLoan,
-            DisbursementValueType.BCLoan,
-          ]),
-        },
       },
     });
   }
@@ -372,6 +371,33 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
     return totalPerValueCode;
   }
 
+  async applyGrantsAlreadyDisbursedValues(
+    disbursementSchedules: DisbursementSchedule[],
+    totalAlreadyDisbursedValues: Record<string, number>,
+  ) {
+    const grantsAwards = this.getAwardsByAwardType(disbursementSchedules, [
+      DisbursementValueType.CanadaGrant,
+      DisbursementValueType.BCGrant,
+    ]);
+    const distinctValueCodes = this.getDistinctValueCodes(grantsAwards);
+    for (const valueCode of distinctValueCodes) {
+      // Checks if the grant is present in multiple disbursements.
+      // Find all the values in all the schedules (expected one or two).
+      const grants = grantsAwards.filter(
+        (grantAward) => grantAward.valueCode === valueCode,
+      );
+      // Total value already received by the student for this grant for this application.
+      const alreadyDisbursed = totalAlreadyDisbursedValues[valueCode] ?? 0;
+      // Subtract the debit from the current grant in the current assessment.
+      this.subtractStudentDebit(
+        grants,
+        alreadyDisbursed,
+        "PreviousDisbursement",
+      );
+      // If there is some remaining student debit it will be just not considered.
+    }
+  }
+
   async applyOverawards(
     assessmentId: number,
     studentId: number,
@@ -384,30 +410,22 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
       DisbursementOveraward,
     );
 
-    const loanAwards = disbursementSchedules
-      .flatMap(
-        (disbursementSchedule) => disbursementSchedule.disbursementValues,
-      )
-      .filter((disbursementValue) =>
-        LOAN_TYPES.includes(disbursementValue.valueType),
-      );
-    // Loans can be present multiple times in one or more disbursements.
-    // Get only the distinct value codes present on this disbursement.
-    const distinctValueCodes = [
-      ...loanAwards.map((loanAward) => loanAward.valueCode),
-    ];
-
+    const loanAwards = this.getAwardsByAwardType(disbursementSchedules, [
+      DisbursementValueType.CanadaLoan,
+      DisbursementValueType.BCLoan,
+    ]);
+    const distinctValueCodes = this.getDistinctValueCodes(loanAwards);
     for (const valueCode of distinctValueCodes) {
       // Checks if the loan is present in multiple disbursements.
       // Find all the values in all the schedules (expected one or two).
-      const awards = loanAwards.filter(
+      const loans = loanAwards.filter(
         (loanAward) => loanAward.valueCode === valueCode,
       );
-      // Total already received by the student for this award for this application.
+      // Total value already received by the student for this loan for this application.
       const alreadyDisbursed = totalAlreadyDisbursedValues[valueCode] ?? 0;
       // Subtract the debit from the current awards in the current assessment.
       const alreadyDisbursedRemainingStudentDebit = this.subtractStudentDebit(
-        awards,
+        loans,
         alreadyDisbursed,
         "PreviousDisbursement",
       );
@@ -426,20 +444,20 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
       }
       // Total owed by the student due to some previous overaward balance.
       const overawardBalance = totalOverawards[valueCode] ?? 0;
-      this.subtractStudentDebit(awards, overawardBalance, "Overaward");
-      for (const award of awards) {
-        if (+award.overawardAmountSubtracted) {
+      this.subtractStudentDebit(loans, overawardBalance, "Overaward");
+      for (const loan of loans) {
+        if (+loan.overawardAmountSubtracted) {
           // Find the schedule associated with this award.
           const [relatedDisbursement] = disbursementSchedules
             .flatMap((schedule) => schedule.disbursementValues)
-            .filter((disbursementValue) => disbursementValue.id === award.id);
+            .filter((disbursementValue) => disbursementValue.id === loan.id);
           // If there was any overaward generated, reduce it from the overaward balance.
           await disbursementOverawardRepo.insert({
             student: { id: studentId } as Student,
             studentAssessment: { id: assessmentId } as StudentAssessment,
             disbursementSchedule: relatedDisbursement,
             disbursementValueCode: valueCode,
-            overawardValue: (+award.overawardAmountSubtracted * -1).toString(),
+            overawardValue: (+loan.overawardAmountSubtracted * -1).toString(),
             originType: DisbursementOverawardOriginType.AwardValueAdjusted,
           });
         }
@@ -477,5 +495,36 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
       }
     }
     return studentDebit;
+  }
+
+  /**
+   * Get awards by the award type.
+   * @param disbursementSchedules schedules with awards to be extracted.
+   * @param valueTypes types to be considered.
+   * @returns awards of the specified type.
+   */
+  private getAwardsByAwardType(
+    disbursementSchedules: DisbursementSchedule[],
+    valueTypes: DisbursementValueType[],
+  ): DisbursementValue[] {
+    return disbursementSchedules
+      .flatMap(
+        (disbursementSchedule) => disbursementSchedule.disbursementValues,
+      )
+      .filter((disbursementValue) =>
+        valueTypes.includes(disbursementValue.valueType),
+      );
+  }
+
+  /**
+   * Loans can be present multiple times in one or more disbursements.
+   * Get only the distinct value codes present on this disbursement.
+   * @param awards awards to retrieve unique codes.
+   * @returns unique awards codes.
+   */
+  private getDistinctValueCodes(awards: DisbursementValue[]) {
+    // Loans can be present multiple times in one or more disbursements.
+    // Get only the distinct value codes present on this disbursement.
+    return [...awards.map((award) => award.valueCode)];
   }
 }
