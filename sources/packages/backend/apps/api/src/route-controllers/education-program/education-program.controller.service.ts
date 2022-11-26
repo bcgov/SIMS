@@ -94,17 +94,6 @@ export class EducationProgramControllerService {
       payload,
     );
 
-    const programsWithTheSameSABCCode =
-      await this.programService.getProgramsBySABCCodes(institutionId, [
-        payload.sabcCode,
-      ]);
-
-    if (programsWithTheSameSABCCode?.length > 0) {
-      throw new UnprocessableEntityException(
-        new ApiProcessError("Duplicate SABC code.", DUPLICATE_SABC_CODE),
-      );
-    }
-
     if (!submissionResult.valid) {
       throw new UnprocessableEntityException(
         "Not able to a save the program due to an invalid request.",
@@ -125,6 +114,11 @@ export class EducationProgramControllerService {
       if (error instanceof CustomNamedError) {
         if (error.name === EDUCATION_PROGRAM_NOT_FOUND) {
           throw new NotFoundException(error.message);
+        }
+        if (error.name === DUPLICATE_SABC_CODE) {
+          throw new UnprocessableEntityException(
+            new ApiProcessError(error.message, error.name),
+          );
         }
       }
       throw error;

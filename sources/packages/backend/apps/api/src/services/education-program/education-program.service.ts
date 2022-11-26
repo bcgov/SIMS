@@ -26,8 +26,10 @@ import {
 } from "../../utilities";
 import { CustomNamedError } from "@sims/utilities";
 import { EducationProgramOfferingService } from "../education-program-offering/education-program-offering.service";
-import { EDUCATION_PROGRAM_NOT_FOUND } from "../../constants";
-
+import {
+  EDUCATION_PROGRAM_NOT_FOUND,
+  DUPLICATE_SABC_CODE,
+} from "../../constants";
 @Injectable()
 export class EducationProgramService extends RecordDataModelService<EducationProgram> {
   private readonly offeringsRepo: Repository<EducationProgramOffering>;
@@ -117,6 +119,33 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
         await this.educationProgramOfferingService.hasExistingOffering(
           programId,
         );
+
+      // In case it is an update, it is needed to know if the SABC code is being updated.
+      const persistedProgram = await this.getEducationProgramDetails(
+        programId,
+        institutionId,
+      );
+      // If the SABC code is being updated and it is not the same as it is persisted,
+      // then it is needed to check if it has an existing program with the same SABC code.
+      if (
+        educationProgram.sabcCode &&
+        educationProgram.sabcCode !== persistedProgram.sabcCode &&
+        (await this.hasExistingProgramWithSameSABCCode(
+          institutionId,
+          educationProgram.sabcCode,
+        ))
+      ) {
+        throw new CustomNamedError("Duplicate SABC code.", DUPLICATE_SABC_CODE);
+      }
+    } else if (
+      // In case of a new program.
+      educationProgram.sabcCode &&
+      (await this.hasExistingProgramWithSameSABCCode(
+        institutionId,
+        educationProgram.sabcCode,
+      ))
+    ) {
+      throw new CustomNamedError("Duplicate SABC code.", DUPLICATE_SABC_CODE);
     }
 
     // Assign attributes for update from payload only if existing program has no offering(s).
@@ -125,7 +154,10 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
       program.credentialType = educationProgram.credentialType;
       program.cipCode = educationProgram.cipCode;
       program.nocCode = educationProgram.nocCode;
-      program.sabcCode = educationProgram.sabcCode;
+      // Save SABC code as null in case of not answered in the form.
+      // This way it can be saved when multiple programs does not have a SABC code.
+      program.sabcCode =
+        educationProgram.sabcCode === "" ? null : educationProgram.sabcCode;
       program.regulatoryBody = educationProgram.regulatoryBody;
       program.deliveredOnSite =
         educationProgram.programDeliveryTypes.deliveredOnSite ?? false;
@@ -633,5 +665,28 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
         },
       },
     });
+  }
+  /**
+   * Check if the given institution has already a program with the given SABC code.
+   * @param institutionId id of the institution to have the programs retrieved.
+   * @param sabcCode SABC code.
+   * @returns the id of the first record found.
+   */
+  async hasExistingProgramWithSameSABCCode(
+    institutionId: number,
+    sabcCode: string,
+  ) {
+    const result = await this.repo.findOne({
+      select: {
+        id: true,
+      },
+      where: {
+        sabcCode: sabcCode,
+        institution: {
+          id: institutionId,
+        },
+      },
+    });
+    return !!result?.id;
   }
 }
