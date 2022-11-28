@@ -9,6 +9,9 @@ FROM docker.io/library/node:lts-alpine3.10
 # set working directory
 WORKDIR /formio
 
+# Application Port
+ENV FORMIO_PORT 3001
+
 # "bcrypt" requires python/make/g++, all must be installed in alpine
 # (note: using pinned versions to ensure immutable build environment)
 RUN apk update && \
@@ -48,6 +51,9 @@ ENV DEBUG=""
 
 RUN set -x \
   && chmod -R 777 /formio/
+
+# Exposing application port
+EXPOSE ${FORMIO_PORT}
 
 # This will initialize the application based on
 # some questions to the user (login email, password, etc.)
