@@ -1,8 +1,8 @@
 import { Injectable } from "@nestjs/common";
-import { SERVICE_ACCOUNT_DEFAULT_USER_EMAIL } from "../../utilities";
 import { DataSource, UpdateResult } from "typeorm";
 import { DataModelService, Student, User } from "@sims/sims-db";
 import { UserLoginInfo } from "./user.model";
+import { SERVICE_ACCOUNT_DEFAULT_USER_EMAIL } from "@sims/utilities";
 
 @Injectable()
 export class UserService extends DataModelService<User> {

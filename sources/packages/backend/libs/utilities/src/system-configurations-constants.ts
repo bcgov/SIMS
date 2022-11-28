@@ -8,3 +8,10 @@
  * Student Application being submitted is inside the allowed period.
  */
 export const MAX_MSFAA_VALID_DAYS = 730;
+
+/**
+ * Email used during service account creation. It is the same across all the
+ * environment and there is no actual use for it right now. Used because the email
+ * is an mandatory field while creating a new user.
+ */
+export const SERVICE_ACCOUNT_DEFAULT_USER_EMAIL = "dev_sabc@gov.bc.ca";
