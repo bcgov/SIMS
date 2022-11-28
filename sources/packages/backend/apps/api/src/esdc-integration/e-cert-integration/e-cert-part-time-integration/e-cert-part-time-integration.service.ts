@@ -1,12 +1,10 @@
 import { Injectable } from "@nestjs/common";
-import { SshService } from "../../../services";
 import {
   combineDecimalPlaces,
   getDisbursementAmountByValueCode,
   getGenderCode,
   getPartTimeMaritalStatusCode,
   getTotalDisbursementAmount,
-  round,
 } from "../../../utilities";
 import {
   RecordTypeCodes,
@@ -16,7 +14,6 @@ import {
   Award,
   ECertRecord,
 } from "../models/e-cert-integration-model";
-import { FixedFormatFileLine } from "../../../services/ssh/sftp-integration-base.models";
 import { ECertPartTimeFileHeader } from "./e-cert-files/e-cert-file-header";
 import { ECertPartTimeFileFooter } from "./e-cert-files/e-cert-file-footer";
 import { ECertPartTimeFileRecord } from "./e-cert-files/e-cert-file-record";
@@ -24,6 +21,9 @@ import { DisbursementValueType, OfferingIntensity } from "@sims/sims-db";
 import { ECertIntegrationService } from "../e-cert-integration.service";
 import { ECertResponseRecord } from "../e-cert-files/e-cert-response-record";
 import { ConfigService } from "@sims/utilities/config";
+import { FixedFormatFileLine } from "@sims/integrations/services/ssh";
+import { SshService } from "@sims/integrations/services";
+import { round } from "@sims/utilities";
 
 /**
  * Manages the file content generation and methods to

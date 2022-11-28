@@ -1,13 +1,10 @@
-import { StringBuilder } from "../../../../utilities";
-import { getDateOnlyFromFormat } from "@sims/utilities";
+import { getDateOnlyFromFormat, StringBuilder } from "@sims/utilities";
+import { TIME_FORMAT } from "../../../models/esdc-integration.model";
 import {
-  SPACE_FILLER,
-  TIME_FORMAT,
   DATE_FORMAT,
-} from "../../../models/esdc-integration.model";
-import {
   ECERT_SENT_TITLE,
   RecordTypeCodes,
+  SPACE_FILLER,
 } from "../../models/e-cert-integration-model";
 import { ECertFileHeader } from "../../e-cert-files/e-cert-file-header";
 

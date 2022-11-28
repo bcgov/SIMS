@@ -1,6 +1,7 @@
 import { DisbursementReceiptDetail } from "../disbursement-receipt-files/disbursement-receipt-file-detail";
 import { DisbursementReceiptHeader } from "../disbursement-receipt-files/disbursement-receipt-file-header";
 
+export const DATE_FORMAT = "YYYYMMDD";
 /**
  * Record type of disbursement receipt records.
  */

@@ -1,15 +1,12 @@
-import { StringBuilder } from "../../../../utilities";
-import { getDateOnlyFromFormat } from "@sims/utilities";
-import {
-  ECERT_SENT_TITLE,
-  RecordTypeCodes,
-} from "../../models/e-cert-integration-model";
+import { getDateOnlyFromFormat, StringBuilder } from "@sims/utilities";
 import {
   DATE_FORMAT,
-  SPACE_FILLER,
+  ECERT_SENT_TITLE,
   NUMBER_FILLER,
-  TIME_FORMAT,
-} from "../../../models/esdc-integration.model";
+  RecordTypeCodes,
+  SPACE_FILLER,
+} from "../../models/e-cert-integration-model";
+import { TIME_FORMAT } from "../../../models/esdc-integration.model";
 import { ECertFileHeader } from "../../e-cert-files/e-cert-file-header";
 
 const ORIGINATOR_CODE = "BC";

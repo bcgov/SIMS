@@ -4,7 +4,6 @@ import {
   MSFAASFTPResponseFile,
   ReceivedStatusCode,
 } from "../msfaa-integration/models/msfaa-integration.model";
-import { SshService } from "../../services";
 import {
   getGenderCode,
   getMaritalStatusCode,
@@ -28,6 +27,7 @@ import {
   ESDCIntegrationConfig,
   SFTPConfig,
 } from "@sims/utilities/config";
+import { SshService } from "@sims/integrations/services";
 
 /**
  * Manages the creation of the content files that needs to be sent

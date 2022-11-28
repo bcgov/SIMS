@@ -1,9 +1,9 @@
 import { LoggerService, InjectLogger } from "@sims/utilities/logger";
 import { SshService } from "./ssh.service";
-import { FixedFormatFileLine } from "./sftp-integration-base.models";
 import * as Client from "ssh2-sftp-client";
 import * as path from "path";
 import { SFTPConfig } from "@sims/utilities/config";
+import { FixedFormatFileLine } from "./sftp-integration-base.models";
 
 /**
  * Provides the basic features to enable the SFTP integration.

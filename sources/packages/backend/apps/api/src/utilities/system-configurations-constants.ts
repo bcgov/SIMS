@@ -61,13 +61,6 @@ export const ECERT_FULL_TIME_FEEDBACK_FILE_CODE = "EDU.PBC.FTECERTSFB.*";
 export const ECERT_PART_TIME_FEEDBACK_FILE_CODE = "EDU.PBC.ECERTSFB.PT.*";
 
 /**
- * Email used during service account creation. It is the same across all the
- * environment and there is no actual use for it right now. Used because the email
- * is an mandatory field while creating a new user.
- */
-export const SERVICE_ACCOUNT_DEFAULT_USER_EMAIL = "dev_sabc@gov.bc.ca";
-
-/**
  * For multipart forms, the max number of file fields.
  */
 export const MAX_UPLOAD_FILES = 1;

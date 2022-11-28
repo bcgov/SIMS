@@ -1,7 +1,6 @@
 import { LoggerService, InjectLogger } from "@sims/utilities/logger";
 import { Injectable } from "@nestjs/common";
 import { ConfigService, CRAIntegrationConfig } from "@sims/utilities/config";
-import { SshService } from "../services/ssh/ssh.service";
 import {
   CRAPersonRecord,
   TransactionCodes,
@@ -14,8 +13,8 @@ import { CRAFileIVRequestRecord } from "./cra-files/cra-file-iv-request-record";
 import { CRAResponseRecordIdentification } from "./cra-files/cra-response-record-identification";
 import { CRAResponseStatusRecord } from "./cra-files/cra-response-status-record";
 import { CRAResponseTotalIncomeRecord } from "./cra-files/cra-response-total-income-record";
-import { FixedFormatFileLine } from "../services/ssh/sftp-integration-base.models";
-import { SFTPIntegrationBase } from "../services/ssh/sftp-integration-base";
+import { SFTPIntegrationBase, SshService } from "@sims/integrations/services";
+import { FixedFormatFileLine } from "@sims/integrations/services/ssh";
 
 /**
  * Manages the creation of the content files that needs to be sent
