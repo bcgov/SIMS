@@ -80,8 +80,10 @@ html * {
   border-color: $badge-border-error !important;
 }
 
-// Todo: when datatable is updated, remove this class.
-//** Style to align records per page with arrows in data table. **//
+/**
+* Todo: when datatable is updated, remove this class.
+* Style to align records per page with arrows in data table.
+*/
 .p-paginator .p-dropdown .p-dropdown-label {
   margin-top: 8px;
 }
@@ -98,8 +100,10 @@ html * {
   color: $brand-grey;
 }
 
-// Todo: when datatable is updated, remove this class.
-// Reset initial styles
+/**
+* Todo: when datatable is updated, remove this class.
+* Reset initial styles.
+*/
 .p-paginator .p-dropdown.p-inputwrapper {
   height: auto;
 }
