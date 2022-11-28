@@ -31,16 +31,6 @@ import {
 import { QueryDeepPartialEntity } from "typeorm/query-builder/QueryPartialEntity";
 import { DisbursementOverawardService } from "..";
 
-const LOAN_TYPES = [
-  DisbursementValueType.CanadaLoan,
-  DisbursementValueType.BCLoan,
-];
-
-const GRANT_TYPES = [
-  DisbursementValueType.CanadaGrant,
-  DisbursementValueType.BCGrant,
-];
-
 /**
  * Service layer for Student Application disbursement schedules.
  */
@@ -135,15 +125,15 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
         assessment.offering.studyStartDate,
         transactionEntityManager,
       );
-      // Get already disbursed values to know the amount that the student already payed.
+      // Get already sent (disbursed) values to know the amount that the student already received.
       const currentDisbursements = await this.getDisbursementsForOverawards(
         [assessment.application.applicationNumber],
         DisbursementScheduleStatus.Sent,
         transactionEntityManager,
       );
       // Get the student current overaward balance.
-      // !This must be executed after the step 2 (rollback non-payed overawards) to ensure that all
-      // !values are present in the disbursement overaward table.
+      // !This must be executed after the step 1 (rollback non-disbursed overawards) to
+      // !ensure that all values are present in the disbursement overaward table.
       const totalOverawards =
         await this.disbursementOverawardService.getOverawardBalance(
           assessment.application.student.id,
@@ -180,8 +170,9 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
         disbursementSchedules,
         totalAlreadyDisbursedValues,
       );
-      // Adjust the saved loans disbursements with the overawards.
-      await this.applyOverawards(
+      // Adjust the saved loans disbursements with the values already disbursed
+      // and generate possible overawards.
+      await this.applyLoansOverawards(
         assessment.id,
         assessment.application.student.id,
         disbursementSchedules,
@@ -339,18 +330,20 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
   }
 
   /**
-   * Sum all the disbursed Canada/BC loans (CSLF, CSPT, BCSL).
+   * Sum all the disbursed Canada/BC loans and grants per loan/grant value code.
    * The result object will be as the one in the example below
    * where CSLF and BCSL are the valueCode in the disbursement value.
-   * @param disbursementSchedules
+   * @param disbursementSchedules disbursement schedules and values from DB.
    * @returns sum of all the disbursed Canada/BC loans (CSLF, CSPT, BCSL).
    * @example
    * {
    *    CSLF: 5532,
-   *    BCSL: 1256
+   *    BCSL: 1256,
+   *    CSGP: 5555,
+   *    BGPD: 1234
    * }
    */
-  sumDisbursedValuesPerValueCode(
+  private sumDisbursedValuesPerValueCode(
     disbursementSchedules: DisbursementSchedule[],
   ): Record<string, number> {
     const totalPerValueCode: Record<string, number> = {};
@@ -394,11 +387,12 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
         alreadyDisbursed,
         "PreviousDisbursement",
       );
-      // If there is some remaining student debit it will be just not considered.
+      // If there is some remaining student debit for grants it will be just
+      // not considered (loans generated overawards, grants do not).
     }
   }
 
-  async applyOverawards(
+  async applyLoansOverawards(
     assessmentId: number,
     studentId: number,
     disbursementSchedules: DisbursementSchedule[],
