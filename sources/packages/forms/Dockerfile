@@ -4,7 +4,7 @@
 
 # Use Node image, maintained by Docker:
 # hub.docker.com/r/_/node/
-FROM docker.io/library/node:12.2.0-alpine
+FROM docker.io/library/node:lts-alpine3.10
 
 # set working directory
 WORKDIR /formio
