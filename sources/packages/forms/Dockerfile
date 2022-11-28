@@ -4,7 +4,7 @@
 
 # Use Node image, maintained by Docker:
 # hub.docker.com/r/_/node/
-FROM docker.io/node:12.2.0-alpine
+FROM docker.io/library/node:12.2.0-alpine
 
 # set working directory
 WORKDIR /formio
@@ -48,6 +48,9 @@ ENV DEBUG=""
 
 RUN set -x \
   && chmod -R 777 /formio/
+
+# Exposing application port
+EXPOSE 3001
 
 # This will initialize the application based on
 # some questions to the user (login email, password, etc.)
