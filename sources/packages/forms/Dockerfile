@@ -50,7 +50,7 @@ RUN set -x \
   && chmod -R 777 /formio/
 
 # Exposing application port
-EXPOSE 3001
+EXPOSE 3002
 
 # This will initialize the application based on
 # some questions to the user (login email, password, etc.)
