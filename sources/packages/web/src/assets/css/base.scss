@@ -11,7 +11,8 @@ html * {
 
 .bold-text {
   font-style: $font-style-normal;
-  font-weight: $font-weight-bold;
+  font-family: $font-bold;
+  font-weight: $font-weight-bold; // Fallback
   line-height: 36px;
   letter-spacing: -0.2px;
   color: $brand-blue;
@@ -79,15 +80,39 @@ html * {
   border-color: $badge-border-error !important;
 }
 
-/** Style to align records per page with arrows in data table. **/
+/**
+* Todo: when datatable is updated, remove this class.
+* Style to align records per page with arrows in data table.
+*/
 .p-paginator .p-dropdown .p-dropdown-label {
   margin-top: 8px;
+}
+
+// Todo: when datatable is updated, remove this class.
+.p-datatable.p-paginator-bottom {
+  border-bottom: 0;
+}
+
+// Todo: when datatable is updated, remove this class.
+.p-column-title {
+  font-family: $font-bold;
+  font-weight: $font-weight-bold; // Fallback
+  color: $brand-grey;
+}
+
+/**
+* Todo: when datatable is updated, remove this class.
+* Reset initial styles.
+*/
+.p-paginator .p-dropdown.p-inputwrapper {
+  height: auto;
 }
 
 /** muted heading **/
 .muted-heading-text {
   font-style: $font-style-normal;
-  font-weight: $font-weight-bold;
+  font-family: $font-bold;
+  font-weight: $font-weight-bold; // Fallback
   font-size: $font-header-medium;
   line-height: $line-height-header-md;
   /* Black */
@@ -99,7 +124,8 @@ html * {
 /** large heading **/
 .heading-x-large {
   font-style: $font-style-normal;
-  font-weight: $font-weight-bold;
+  font-family: $font-bold;
+  font-weight: $font-weight-bold; //Fallback
   font-size: $font-header-xlarge;
   line-height: $line-height-header-xlg;
   /* identical to box height, or 106% */
@@ -117,7 +143,8 @@ html * {
 }
 
 .header-sub-title {
-  font-weight: $font-weight-bold;
+  font-family: $font-bold;
+  font-weight: $font-weight-bold; // Fallback
   color: $brand-black;
   line-height: $line-height-header-xlg;
   font-size: $font-header-xlarge;
@@ -329,4 +356,19 @@ html * {
 .content-group-info {
   background-color: $default-background;
   border: 2px solid $common-border-color !important;
+}
+
+// List style - apply to lists used in content
+ul {
+  margin-left: 20px;
+  margin-bottom: 0;
+  li {
+    line-height: $formio-content-lh;
+  }
+}
+
+// Typography styles
+b,
+strong {
+  font-weight: $font-weight-bold;
 }

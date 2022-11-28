@@ -28,7 +28,7 @@ objects:
                   value: ${BUILD_TAG}
                 - name: NODE_ENV
                   value: ${NODE_ENV}
-                - name: PORT
+                - name: QUEUE_CONSUMERS_PORT
                   value: "${PORT}"
                 - name: POSTGRES_HOST
                   value: "${DB_SERVICE}"
@@ -98,23 +98,6 @@ objects:
                 requests:
                   cpu: ${CPU_REQUEST}
                   memory: ${MEMORY_REQUEST}
-              readinessProbe:
-                failureThreshold: 10
-                httpGet:
-                  path: /
-                  port: "${{PORT}}"
-                initialDelaySeconds: 40
-                periodSeconds: 30
-                timeoutSeconds: 30
-              livenessProbe:
-                failureThreshold: 10
-                httpGet:
-                  path: /
-                  port: "${{PORT}}"
-                  scheme: HTTP
-                initialDelaySeconds: 10
-                periodSeconds: 30
-                timeoutSeconds: 15
   - apiVersion: v1
     kind: Service
     metadata:
