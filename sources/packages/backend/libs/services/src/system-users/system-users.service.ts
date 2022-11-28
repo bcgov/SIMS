@@ -1,8 +1,8 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { User } from "@sims/sims-db";
+import { SERVICE_ACCOUNT_DEFAULT_USER_EMAIL } from "@sims/utilities";
 import { Repository } from "typeorm";
-import { SERVICE_ACCOUNT_DEFAULT_USER_EMAIL } from "../../../utilities/src/system-configurations-constants";
 import {
   SYSTEM_USER_LAST_NAME,
   SYSTEM_USER_USER_NAME,
