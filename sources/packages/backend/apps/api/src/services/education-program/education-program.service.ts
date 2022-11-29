@@ -130,6 +130,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
     if (educationProgram.sabcCode && isSABCCodeDuplicate) {
       throw new CustomNamedError("Duplicate SABC code.", DUPLICATE_SABC_CODE);
     }
+
     // Assign attributes for update from payload only if existing program has no offering(s).
     if (!hasExistingOffering) {
       program.fieldOfStudyCode = educationProgram.fieldOfStudyCode;
@@ -659,7 +660,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
   async hasExistingProgramWithSameSABCCode(
     institutionId: number,
     sabcCode: string,
-    programId: number,
+    programId: number | undefined,
   ): Promise<boolean> {
     const result = await this.repo.findOne({
       select: {
