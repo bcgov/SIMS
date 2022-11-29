@@ -50,7 +50,7 @@ export class DisbursementValue extends RecordDataModel {
   })
   valueAmount: string;
   /**
-   * TODO: Add comments.
+   * Overaward amount value subtracted from the award calculated.
    * !Decimal values are retrieved by Typeorm as string from Postgres.
    */
   @Column({
@@ -60,7 +60,8 @@ export class DisbursementValue extends RecordDataModel {
   })
   overawardAmountSubtracted: string;
   /**
-   * TODO: Add comments.
+   * Value amount already disbursed for the same application and
+   * the same award that was subtracted from the calculated award.
    * !Decimal values are retrieved by Typeorm as string from Postgres.
    */
   @Column({
