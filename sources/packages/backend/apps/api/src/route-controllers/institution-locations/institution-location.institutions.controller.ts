@@ -34,7 +34,7 @@ import {
 } from "../../services";
 import { ClientTypeBaseRoute, ApiProcessError } from "../../types";
 import { getUserFullName } from "../../utilities";
-import { getISODateOnlyString } from "@sims/utilities";
+import { getISODateOnlyString, CustomNamedError } from "@sims/utilities";
 import {
   ActiveApplicationDataAPIOutDTO,
   ActiveApplicationSummaryAPIOutDTO,
@@ -55,7 +55,6 @@ import {
   PaginatedResultsAPIOutDTO,
 } from "../models/pagination.dto";
 import { DUPLICATE_INSTITUTION_LOCATION_CODE } from "../../constants";
-import { CustomNamedError } from "@sims/utilities";
 import { InstitutionLocation } from "@sims/sims-db";
 
 /**

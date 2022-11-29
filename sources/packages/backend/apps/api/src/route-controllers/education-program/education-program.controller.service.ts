@@ -27,10 +27,7 @@ import {
 } from "../../constants";
 import { INSTITUTION_TYPE_BC_PRIVATE } from "@sims/sims-db/constant";
 import { ApiProcessError } from "../../types";
-import {
-  ApiNotFoundResponse,
-  ApiUnprocessableEntityResponse,
-} from "@nestjs/swagger";
+import { ApiUnprocessableEntityResponse } from "@nestjs/swagger";
 
 @Injectable()
 export class EducationProgramControllerService {
