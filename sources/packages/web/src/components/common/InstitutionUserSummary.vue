@@ -1,6 +1,36 @@
 <!-- This component is shared between ministry and student users -->
 <template>
   <body-header title="All users" :recordsCount="usersListAndCount.count">
+    <template #subtitle>
+      <ul>
+        <li>
+          Admin roles can access <strong>all features</strong
+          ><tooltip-icon
+            >Admin's can setup and manage your users, institution profile,
+            locations, designation, and offering uploads including performing
+            user role duties.</tooltip-icon
+          >
+        </li>
+        <li>
+          User roles can access <strong>some features</strong
+          ><tooltip-icon
+            >Users can only manage programs and offerings within their
+            locations, program information requests, confirming enrolment, and
+            reporting on scholastic standings.</tooltip-icon
+          >
+        </li>
+        <li>
+          Legal Signing Authority role is an admin with
+          <strong>an additional feature</strong
+          ><tooltip-icon
+            >This role is only to request a designation for your institution.
+            The user must be an admin first to get assigned this
+            role.</tooltip-icon
+          >
+        </li>
+      </ul>
+    </template>
+
     <template #actions>
       <v-row class="m-0 p-0">
         <v-text-field
@@ -69,7 +99,9 @@
       >
       <Column :field="UserFields.Roles" header="Role">
         <template #body="slotProps">
-          {{ institutionUserRoleToDisplay(slotProps.data.roles[0]) }}
+          <span class="text-capitalize"
+            >{{ institutionUserRoleToDisplay(slotProps.data.roles[0]) }}
+          </span>
         </template>
       </Column>
       <Column :field="UserFields.Locations" header="Locations"
@@ -98,7 +130,9 @@
                 append-icon="mdi-pencil-outline"
                 data-cy="editUser"
               >
-                <span class="text-decoration-underline">Edit</span>
+                <span class="text-decoration-underline"
+                  ><strong>Edit</strong></span
+                >
               </v-btn>
             </template>
           </check-permission-role>
@@ -112,9 +146,11 @@
                 append-icon="fa:far fa-user"
                 data-cy="disableUser"
               >
-                <span class="text-decoration-underline">{{
-                  slotProps.data.isActive ? "Disable" : "Enable"
-                }}</span>
+                <span class="text-decoration-underline"
+                  ><strong>{{
+                    slotProps.data.isActive ? "Disable" : "Enable"
+                  }}</strong></span
+                >
               </v-btn>
             </template>
           </check-permission-role>

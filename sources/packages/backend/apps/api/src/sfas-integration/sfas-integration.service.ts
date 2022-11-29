@@ -1,11 +1,13 @@
 import { LoggerService, InjectLogger } from "@sims/utilities/logger";
 import { Injectable } from "@nestjs/common";
 import { ConfigService } from "@sims/utilities/config";
-import { SshService } from "../services/ssh/ssh.service";
 import { SFASRecordIdentification } from "./sfas-files/sfas-record-identification";
 import { DownloadResult, RecordTypeCodes } from "./sfas-integration.models";
 import { SFASHeader } from "./sfas-files/sfas-header";
-import { SFTPIntegrationBase } from "../services/ssh/sftp-integration-base";
+import {
+  SFTPIntegrationBase,
+  SshService,
+} from "@sims/integrations/services";
 
 @Injectable()
 export class SFASIntegrationService extends SFTPIntegrationBase<DownloadResult> {

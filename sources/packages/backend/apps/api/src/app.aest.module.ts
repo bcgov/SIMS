@@ -20,8 +20,6 @@ import {
   StudentAssessmentService,
   SFASApplicationService,
   SFASPartTimeApplicationsService,
-  GCNotifyService,
-  GCNotifyActionsService,
   ReportService,
   StudentService,
   SFASIndividualService,
@@ -36,8 +34,6 @@ import {
   InstitutionRestrictionService,
   EducationProgramOfferingValidationService,
   DisbursementReceiptService,
-  NotificationService,
-  NotificationMessageService,
 } from "./services";
 import {
   SupportingUserAESTController,
@@ -119,8 +115,6 @@ import { WorkflowClientService, SequenceControlService } from "@sims/services";
     SFASApplicationService,
     SFASPartTimeApplicationsService,
     InstitutionLocationControllerService,
-    GCNotifyService,
-    GCNotifyActionsService,
     AssessmentControllerService,
     ReportService,
     StudentControllerService,
@@ -140,8 +134,6 @@ import { WorkflowClientService, SequenceControlService } from "@sims/services";
     EducationProgramOfferingControllerService,
     EducationProgramOfferingValidationService,
     DisbursementReceiptService,
-    NotificationService,
-    NotificationMessageService,
   ],
 })
 export class AppAESTModule {}

@@ -1,9 +1,8 @@
 import { Injectable } from "@nestjs/common";
 import { Connection } from "typeorm";
 import { RecordDataModelService, ReportConfig } from "@sims/sims-db";
-import { CustomNamedError } from "@sims/utilities";
+import { CustomNamedError, StringBuilder } from "@sims/utilities";
 import { ReportsFilterModel } from "./report.models";
-import { StringBuilder } from "../../utilities/string-builder";
 import { REPORT_CONFIG_NOT_FOUND, FILTER_PARAMS_MISMATCH } from "./constants";
 /**
  * Service layer for reports.

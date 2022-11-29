@@ -31,12 +31,11 @@ import {
 import {
   ApplicationService,
   APPLICATION_NOT_FOUND,
-  ATBCService,
   FormService,
-  GCNotifyActionsService,
   StudentFileService,
   StudentService,
 } from "../../services";
+import { NotificationActionsService } from "@sims/services/notifications";
 import BaseController from "../BaseController";
 import {
   ApplicationSummaryAPIOutDTO,
@@ -68,6 +67,7 @@ import {
   STUDENT_ACCOUNT_CREATION_FOUND_SIN_WITH_MISMATCH_DATA,
   STUDENT_ACCOUNT_CREATION_MULTIPLES_SIN_FOUND,
 } from "../../constants";
+import { EntityManager } from "typeorm";
 
 /**
  * Student controller for Student Client.
@@ -81,11 +81,10 @@ export class StudentStudentsController extends BaseController {
   constructor(
     private readonly fileService: StudentFileService,
     private readonly studentControllerService: StudentControllerService,
-    private readonly gcNotifyActionsService: GCNotifyActionsService,
+    private readonly notificationActionsService: NotificationActionsService,
     private readonly applicationService: ApplicationService,
     private readonly studentService: StudentService,
     private readonly formService: FormService,
-    private readonly atbcService: ATBCService,
   ) {
     super();
   }
@@ -279,17 +278,18 @@ export class StudentStudentsController extends BaseController {
 
     // This method will be executed alongside with the transaction during the
     // execution of the method updateStudentFiles.
-    const sendFileUploadNotification = () =>
-      this.gcNotifyActionsService.sendFileUploadNotification(
+    const sendFileUploadNotification = (entityManager: EntityManager) =>
+      this.notificationActionsService.sendFileUploadNotification(
         {
           firstName: student.user.firstName,
           lastName: student.user.lastName,
           birthDate: new Date(student.birthDate),
           documentPurpose: payload.submittedForm.documentPurpose,
           applicationNumber: payload.submittedForm.applicationNumber,
+          userId: student.user.id,
         },
-        student.user.id,
-        studentUserToken.userId, // This is the user who uploaded the file
+        studentUserToken.userId,
+        entityManager,
       );
 
     const fileMetadata = payload.submittedForm.applicationNumber

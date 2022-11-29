@@ -44,7 +44,7 @@ export class FederalRestrictionService extends DataModelService<FederalRestricti
    * of the entire federal restrictions snapshot. The process of deleting the entire data
    * and bulk inserting again proved to be faster and more efficient.
    */
-  async resetFederalRestrictionsTable(manager: EntityManager): Promise<any> {
+  async resetFederalRestrictionsTable(manager: EntityManager): Promise<void> {
     await manager.query(
       `TRUNCATE TABLE ${
         this.dataSource.getMetadata(FederalRestriction).tablePath
@@ -55,25 +55,32 @@ export class FederalRestrictionService extends DataModelService<FederalRestricti
   /**
    * Once the table with all federal restriction is fully imported, these
    * process executes the sequence of bulk operations to:
-   * 1 - Create new active restrictions;
-   * 2 - Deactivate restrictions that are no longer present in the federal data;
-   * 3 - Update the updated_at date for the active restrictions that are still
+   * 1. Create new active restrictions.
+   * 2. Deactivate restrictions that are no longer present in the federal data.
+   * 3. Update the updated_at date for the active restrictions that are still
    * present in the federal data.
+   * 4. Update modified date for the active restrictions. The time between creation
+   * date and modified date can provide for how long that restriction is active.
+   * @returns inserted records ids into student restrictions.
    */
-  async executeBulkStepsChanges(manager: EntityManager): Promise<void> {
+  async executeBulkStepsChanges(manager: EntityManager): Promise<number[]> {
     // STEP 1
     // ! This bulk update MUST happen before the next operations to assign
     // ! the student foreign keys correctly.
     await this.bulkUpdateStudentsForeignKey(manager);
     // This bulk updates expects that the student foreign key is updated.
     // STEP 2
-    await this.bulkInsertNewRestrictions(manager);
+    const insertedRestrictionsIDs = await this.bulkInsertNewRestrictions(
+      manager,
+    );
     // STEP 3
     await this.bulkDeactivateRestrictions(manager);
     // This last update is not critical but allows the system to keep track
     // of the last time that an active restriction was received.
     // STEP 4
     await this.bulkUpdateActiveRestrictions(manager);
+
+    return insertedRestrictionsIDs;
   }
 
   /*
@@ -93,11 +100,15 @@ export class FederalRestrictionService extends DataModelService<FederalRestricti
    * that are not present and active in the table. The same federal restriction
    * can be activated and deactivated multiple times for the same student,
    * generating a new record for every time that the restriction changes its state.
+   * @returns inserted records ids.
    */
   private async bulkInsertNewRestrictions(
     manager: EntityManager,
-  ): Promise<void> {
-    await manager.query(this.bulkInsertNewRestrictionsSQL);
+  ): Promise<number[]> {
+    const insertedRestrictions: { id: number }[] = await manager.query(
+      this.bulkInsertNewRestrictionsSQL,
+    );
+    return insertedRestrictions.map((restriction) => restriction.id);
   }
 
   /*

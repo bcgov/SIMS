@@ -3,8 +3,8 @@ import { CRAIncomeVerification, Student } from "@sims/sims-db";
 import { EntityManager } from "typeorm";
 import { LoggerService, InjectLogger } from "@sims/utilities/logger";
 import {
-  CRAIntegrationService,
   CRAIncomeVerificationService,
+  CRAIntegrationService,
 } from "../services";
 import { SequenceControlService, WorkflowClientService } from "@sims/services";
 import { CRAResponseStatusRecord } from "./cra-files/cra-response-status-record";

@@ -40,22 +40,6 @@ export class StudentService extends RecordDataModelService<Student> {
     this.logger.log("[Created]");
   }
 
-  async getStudentByUserName(userName: string): Promise<Student> {
-    const student = await this.repo
-      .createQueryBuilder("student")
-      .leftJoinAndSelect("student.user", "user")
-      .innerJoin("student.sinValidation", "sinValidation")
-      .select([
-        "student",
-        "user",
-        "sinValidation.isValidSIN",
-        "sinValidation.id",
-      ])
-      .where("user.userName = :userNameParam", { userNameParam: userName })
-      .getOne();
-    return student;
-  }
-
   /**
    * Gets the student by id.
    * @param studentId student id.
@@ -382,9 +366,7 @@ export class StudentService extends RecordDataModelService<Student> {
   async synchronizeFromUserToken(
     studentToken: StudentUserToken,
   ): Promise<Student> {
-    const studentToSync = await this.getStudentByUserName(
-      studentToken.userName,
-    );
+    const studentToSync = await this.getStudentById(studentToken.studentId);
     let mustSave = false;
     if (studentToken.givenNames === undefined) {
       studentToken.givenNames = null;
@@ -394,11 +376,12 @@ export class StudentService extends RecordDataModelService<Student> {
       studentToken.lastName !== studentToSync.user.lastName ||
       studentToken.givenNames !== studentToSync.user.firstName
     ) {
-      const sinValidation = new SINValidation();
       studentToSync.birthDate = studentToken.birthdate;
       studentToSync.user.lastName = studentToken.lastName;
       studentToSync.user.firstName = studentToken.givenNames;
+      const sinValidation = new SINValidation();
       sinValidation.student = studentToSync;
+      sinValidation.sin = studentToSync.sinValidation.sin;
       studentToSync.sinValidation = sinValidation;
       mustSave = true;
     }

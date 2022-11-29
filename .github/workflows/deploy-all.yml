@@ -11,10 +11,6 @@ on:
         description: "Build Id"
         required: true
         default: "NULL"
-      resourcesFolder:
-        description: "Folder with the resources to be deployed"
-        required: true
-        default: "BPMN/camunda-8"
       environment:
         required: true
         type: environment
@@ -32,9 +28,6 @@ on:
         required: true
         type: string
       buildId:
-        required: true
-        type: string
-      resourcesFolder:
         required: true
         type: string
       environment:
@@ -73,6 +66,7 @@ jobs:
       BYPASS_CRA_INCOME_VERIFICATION: ${{ secrets.BYPASS_CRA_INCOME_VERIFICATION }}
       API_SECRET_NAME: ${{ secrets.OPENSHIFT_SIMS_CREDS_NAME }}
       WORKERS_SECRET_NAME: ${{ secrets.OPENSHIFT_SIMS_CREDS_NAME }}
+      QUEUE_CONSUMERS_SECRET_NAME: ${{ secrets.OPENSHIFT_SIMS_CREDS_NAME }}
       API_PORT: ${{ secrets.API_PORT }}
       WEB_PORT: ${{ secrets.WEB_PORT }}
       API: ${{ format('{0}api-sims', secrets.HOST_PREFIX) }}
@@ -107,6 +101,11 @@ jobs:
         working-directory: "./devops/"
         run: |
           make oc-deploy-workers
+      # Deploy Queues
+      - name: Deploy Queue Consumers
+        working-directory: "./devops/"
+        run: |
+          make oc-deploy-queue-consumers
       # Deploy Deploy Web/Frontend
       - name: Deploy Web/Frontend
         working-directory: "./devops/"
@@ -119,7 +118,6 @@ jobs:
       - deploy
     uses: ./.github/workflows/deploy-camunda-definitions.yml
     with:
-      resourcesFolder: ${{ github.event.inputs.resourcesFolder }}
       environment: ${{ github.event.inputs.environment }}
     secrets: inherit
   deployFormioDefinitions:

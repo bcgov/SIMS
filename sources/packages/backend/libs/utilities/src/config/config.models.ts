@@ -98,3 +98,14 @@ export interface SFASIntegrationConfig {
 export interface InstitutionIntegrationConfig {
   ftpRequestFolder: string;
 }
+
+export interface DatabaseConfiguration {
+  databaseName: string;
+}
+
+export interface RedisConfiguration {
+  redisHost: string;
+  redisPort: number;
+  redisPassword: string;
+  redisStandaloneMode: boolean;
+}

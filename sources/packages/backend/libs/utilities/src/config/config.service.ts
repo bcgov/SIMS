@@ -11,6 +11,9 @@ import {
   InstitutionIntegrationConfig,
   SFASIntegrationConfig,
   SFTPConfig,
+  DatabaseConfiguration,
+  RedisConfiguration,
+  UserPasswordCredential,
 } from "./config.models";
 
 @Injectable()
@@ -181,6 +184,47 @@ export class ConfigService {
     return this.getCachedConfig("institutionIntegrationConfig", {
       ftpRequestFolder: process.env.INSTITUTION_REQUEST_FOLDER,
     });
+  }
+
+  /**
+   * Database configuration.
+   */
+  get database(): DatabaseConfiguration {
+    return this.getCachedConfig("databaseConfiguration", {
+      databaseName: process.env.POSTGRES_DB,
+    });
+  }
+
+  /**
+   * Redis configuration.
+   */
+  get redis(): RedisConfiguration {
+    return this.getCachedConfig("redisConfiguration", {
+      redisHost: process.env.REDIS_HOST || "localhost",
+      redisPort: +process.env.REDIS_PORT || 6379,
+      redisPassword: process.env.REDIS_PASSWORD,
+      redisStandaloneMode: process.env.REDIS_STANDALONE_MODE === "true",
+    });
+  }
+
+  /**
+   * Queue dashboard configuration.
+   */
+  get queueDashboardCredential(): UserPasswordCredential {
+    return this.getCachedConfig("queueDashboardCredentialConfig", {
+      userName: process.env.QUEUE_DASHBOARD_USER,
+      password: process.env.QUEUE_DASHBOARD_PASSWORD,
+    });
+  }
+
+  /**
+   * Queue consumers port.
+   */
+  get queueConsumersPort(): number {
+    return this.getCachedConfig(
+      "queueConsumersPortConfig",
+      +process.env.QUEUE_CONSUMERS_PORT || 3001,
+    );
   }
 
   /**

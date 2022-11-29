@@ -54,6 +54,10 @@ jobs:
         working-directory: "./devops"
         run: |
           make oc-build-workers
+      - name: Build Queues Image
+        working-directory: "./devops"
+        run: |
+          make oc-build-queue-consumers
       - name: Build Web/Frontend Image
         working-directory: "./devops"
         run: |
@@ -87,6 +91,7 @@ jobs:
       BYPASS_CRA_INCOME_VERIFICATION: ${{ secrets.BYPASS_CRA_INCOME_VERIFICATION }}
       API_SECRET_NAME: ${{ secrets.OPENSHIFT_SIMS_CREDS_NAME }}
       WORKERS_SECRET_NAME: ${{ secrets.OPENSHIFT_SIMS_CREDS_NAME }}
+      QUEUE_CONSUMERS_SECRET_NAME: ${{ secrets.OPENSHIFT_SIMS_CREDS_NAME }}
       API_PORT: ${{ secrets.API_PORT }}
       WEB_PORT: ${{ secrets.WEB_PORT }}
       API: ${{ format('{0}api-sims', secrets.HOST_PREFIX) }}
@@ -121,6 +126,11 @@ jobs:
         working-directory: "./devops/"
         run: |
           make oc-deploy-workers
+      # Deploy Queues
+      - name: Deploy Queues
+        working-directory: "./devops/"
+        run: |
+          make oc-deploy-queue-consumers
       # Deploy Deploy Web/Frontend
       - name: Deploy Web/Frontend
         working-directory: "./devops/"

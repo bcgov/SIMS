@@ -1,12 +1,13 @@
 import { Controller, Post } from "@nestjs/common";
 import { LoggerService, InjectLogger } from "@sims/utilities/logger";
-import { AllowAuthorizedParty } from "../../auth/decorators";
+import { AllowAuthorizedParty, UserToken } from "../../auth/decorators";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { FedRestrictionProcessingService } from "../../esdc-integration/fed-restriction-integration/fed-restriction-processing.service";
 import { ESDCFileResponseAPIOutDTO } from "./models/esdc.dto";
 import { ApiTags } from "@nestjs/swagger";
 import BaseController from "../BaseController";
 import { ClientTypeBaseRoute } from "../../types";
+import { IUserToken } from "../../auth/userToken.interface";
 
 @AllowAuthorizedParty(AuthorizedParties.formsFlowBPM)
 @Controller("fed-restrictions")
@@ -19,9 +20,11 @@ export class FedRestrictionsIntegrationSystemAccessController extends BaseContro
   }
 
   @Post("process")
-  async processFedRestrictionsImport(): Promise<ESDCFileResponseAPIOutDTO> {
+  async processFedRestrictionsImport(
+    @UserToken() userToken: IUserToken,
+  ): Promise<ESDCFileResponseAPIOutDTO> {
     this.logger.log("Starting federal restrictions import...");
-    const uploadResult = await this.processingService.process();
+    const uploadResult = await this.processingService.process(userToken.userId);
     this.logger.log("Federal restrictions import process finished.");
     return {
       processSummary: uploadResult.processSummary,

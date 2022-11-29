@@ -7,6 +7,7 @@
       active-color="primary"
       class="no-wrap"
       :items="items"
+      data-cy="institutionSideBar"
     />
   </v-navigation-drawer>
 </template>

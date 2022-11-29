@@ -23,7 +23,7 @@
           <v-switch
             hide-details
             :disabled="!formModel.isAdmin"
-            label="Legal signing authority"
+            label="Legal Signing Authority"
             inset
             color="primary"
             v-model="formModel.isLegalSigningAuthority"

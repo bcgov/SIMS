@@ -6,12 +6,19 @@ export PROJECT_NAME := $(or $(PROJECT_NAME), aest-sims)
 export BUILD_REF :=  $(or $(BUILD_REF), dev)
 export BUILD_ID := $(or $(BUILD_ID), 0)
 export API_PORT := $(or $(API_PORT), 3000)
+export QUEUE_CONSUMERS_PORT := $(or $(QUEUE_CONSUMERS_PORT), 3001)
 export APP_PORT := $(or $(APP_PORT), 8080)
 # Database
 export POSTGRES_PORT := $(or $(POSTGRES_PORT), 5432)
 export POSTGRES_USER := $(or $(POSTGRES_USER), admin)
 export POSTGRES_PASSWORD := $(or $(POSTGRES_PASSWORD), aest_sim)
 export POSTGRES_DB := $(or $(POSTGRES_DB), aest)
+# Queue
+export REDIS_PORT := $(or $(REDIS_PORT), 6379)
+export REDIS_PASSWORD := $(or $(REDIS_PASSWORD), redis)
+export REDIS_STANDALONE_MODE := $(or $(REDIS_STANDALONE_MODE), true)
+export QUEUE_DASHBOARD_PASSWORD := $(or $(QUEUE_DASHBOARD_PASSWORD), queueboardpass)
+export QUEUE_DASHBOARD_USER := $(or $(QUEUE_DASHBOARD_USER), queueBoardUser)
 # Key Cloak
 export KEYCLOAK_AUTH_URL := $(or $(KEYCLOAK_AUTH_URL), https://dev.oidc.gov.bc.ca/auth/)
 export KEYCLOAK_REALM := $(or $(KEYCLOAK_REALM), jxoe2o46)
@@ -37,11 +44,13 @@ export APPLICATION_ARCHIVE_DAYS := $(or ${APPLICATION_ARCHIVE_DAYS}, 43)
 export FORMIO_SOURCE_REPO_URL := $(or ${FORMIO_SOURCE_REPO_URL}, https://github.com/formio/formio.git)
 export FORMIO_SOURCE_REPO_TAG := $(or ${FORMIO_SOURCE_REPO_TAG}, v2.5.3)
 
+
 local:	| print-status local-build-run
 local-api: | print-status local-build api-only
 local-api-detached: | print-status local-build api-detached
 db: | print-status postgres
-test-api: | print-status local-api-test
+local-redis: | print-status redis
+test-api: | print-status local-api-test 
 
 ####################################################################
 ## Status Output
@@ -60,6 +69,10 @@ print-status:
 	@echo " | POSTGRES_DB: $(POSTGRES_DB) "
 	@echo " | POSTGRES_USER: $(POSTGRES_USER) "
 	@echo " | POSTGRES_PASSWORD: $(POSTGRES_PASSWORD) "
+	@echo " | Queue Configs"
+	@echo " | REDIS_PORT: $(REDIS_PORT) "
+	@echo " | REDIS_PASSWORD: $(REDIS_PASSWORD) "
+	@echo " | REDIS_STANDALONE_MODE: $(REDIS_STANDALONE_MODE) "
 	@echo " | Key Cloak Configs"
 	@echo " | KEYCLOAK_AUTH_URL: $(KEYCLOAK_AUTH_URL) "
 	@echo " | KEYCLOAK_REALM: $(KEYCLOAK_REALM) "
@@ -105,15 +118,18 @@ postgres:
 	@echo "+\n++ Make: Run local db.\n+"
 	@docker-compose -f docker-compose.yml up postgres
 
+# Local Queue
+redis:
+	@echo "+\n++ Make: Run local queue.\n+"
+	@docker-compose -f docker-compose.yml up redis
+
 # Local API only
 api-only:
 	@echo "+\n++ Make: Building and running API only"
-	@docker-compose -f docker-compose.yml up -d postgres
 	@docker-compose -f docker-compose.yml up api
 
 api-detached:
 	@echo "+\n++ Make: Running DB and API only"
-	@docker-compose -f docker-compose.yml up -d postgres
 	@docker-compose -f docker-compose.yml up -d api
 
 # Local App
@@ -154,3 +170,10 @@ forms:
 forms-stop:
 	@echo "+\n++ Stopping formio forms locally...\n+"
 	@docker-compose -f forms-docker-compose.yml down
+	
+# Runs queue consumer application
+queue-consumers:
+	@echo "+\n++ Make: Queue only"
+	@docker-compose -f docker-compose.yml up -d queue-consumers
+
+
