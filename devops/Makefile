@@ -102,7 +102,7 @@ define FORMIO_SOURCE_REPO_TAG
 endef
 
 define SOURCE_REPOSITORY_REF
-"feature/#1493-Remove_Formsflow_Implement_Formio"
+"main"
 endef
 
 define SOURCE_CONTEXT_DIR
