@@ -34,7 +34,7 @@ import {
 } from "../../constants";
 import { QueryDeepPartialEntity } from "typeorm/query-builder/QueryPartialEntity";
 import { DisbursementOverawardService } from "..";
-import { SystemUsersService } from "@sims/services/system-users/system-users.service";
+//import { SystemUsersService } from "@sims/services/system-users/system-users.service";
 
 // Timeout to handle the worst-case scenario where the commit/rollback
 // was not executed due to a possible catastrophic failure.
@@ -68,8 +68,7 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
   private readonly assessmentRepo: Repository<StudentAssessment>;
   constructor(
     private readonly dataSource: DataSource,
-    private readonly disbursementOverawardService: DisbursementOverawardService,
-    private readonly systemUsersService: SystemUsersService,
+    private readonly disbursementOverawardService: DisbursementOverawardService, //private readonly systemUsersService: SystemUsersService,
   ) {
     super(dataSource.getRepository(DisbursementSchedule));
     this.assessmentRepo = dataSource.getRepository(StudentAssessment);
@@ -85,7 +84,7 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
     assessmentId: number,
     disbursements: DisbursementSaveModel[],
   ): Promise<DisbursementSchedule[]> {
-    const auditUser = await this.systemUsersService.systemUser();
+    //const auditUser = await this.systemUsersService.systemUser();
     return this.dataSource.transaction(async (transactionEntityManager) => {
       await configureIdleTransactionSessionTimeout(
         transactionEntityManager.queryRunner,
@@ -117,7 +116,7 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
       const disbursementSchedules: DisbursementSchedule[] = [];
       for (const disbursement of disbursements) {
         const newDisbursement = new DisbursementSchedule();
-        newDisbursement.creator = auditUser;
+        //newDisbursement.creator = auditUser;
         newDisbursement.disbursementDate = disbursement.disbursementDate;
         newDisbursement.negotiatedExpiryDate =
           disbursement.negotiatedExpiryDate;
@@ -127,14 +126,14 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
             newValue.valueType = disbursementValue.valueType;
             newValue.valueCode = disbursementValue.valueCode;
             newValue.valueAmount = disbursementValue.valueAmount.toString();
-            newValue.creator = auditUser;
+            //newValue.creator = auditUser;
             return newValue;
           },
         );
         disbursementSchedules.push(newDisbursement);
       }
       assessment.disbursementSchedules = disbursementSchedules;
-      assessment.modifier = auditUser;
+      //assessment.modifier = auditUser;
       // Save the disbursements.
       const studentAssessmentRepo =
         transactionEntityManager.getRepository(StudentAssessment);
@@ -379,9 +378,9 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
       return;
     }
     const deletedAt = new Date();
-    const auditUser = await this.systemUsersService.systemUser();
+    //const auditUser = await this.systemUsersService.systemUser();
     overawardsToDelete.forEach((overaward) => {
-      overaward.modifier = auditUser;
+      //overaward.modifier = auditUser;
       overaward.deletedAt = deletedAt;
     });
     await disbursementOverawardRepo.save(overawardsToDelete, {
@@ -403,7 +402,7 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
     applicationNumbers: string[],
     entityManager: EntityManager,
   ) {
-    const auditUser = await this.systemUsersService.systemUser();
+    //const auditUser = await this.systemUsersService.systemUser();
     // Get all pending awards that must be cancelled.
     const pendingDisbursements = await this.getDisbursementsForOverawards(
       applicationNumbers,
@@ -414,7 +413,7 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
     const rollbackOverawards: QueryDeepPartialEntity<DisbursementOveraward>[] =
       [];
     for (const pendingDisbursement of pendingDisbursements) {
-      pendingDisbursement.modifier = auditUser;
+      //pendingDisbursement.modifier = auditUser;
       pendingDisbursement.disbursementScheduleStatus =
         DisbursementScheduleStatus.Cancelled;
       for (const pendingDisbursementValue of pendingDisbursement.disbursementValues) {
@@ -425,7 +424,7 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
             disbursementValueCode: pendingDisbursementValue.valueCode,
             overawardValue: pendingDisbursementValue.overawardAmountSubtracted,
             originType: DisbursementOverawardOriginType.PendingAwardCancelled,
-            creator: auditUser,
+            //creator: auditUser,
           } as DisbursementOveraward);
         }
       }
@@ -547,7 +546,7 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
     totalAlreadyDisbursedValues: Record<string, number>,
     entityManager: EntityManager,
   ): Promise<void> {
-    const auditUser = await this.systemUsersService.systemUser();
+    //const auditUser = await this.systemUsersService.systemUser();
     // Get the student current overaward balance.
     const totalOverawards =
       await this.disbursementOverawardService.getOverawardBalance(
@@ -586,7 +585,7 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
           disbursementValueCode: valueCode,
           overawardValue: alreadyDisbursedRemainingStudentDebit.toString(),
           originType: DisbursementOverawardOriginType.ReassessmentOveraward,
-          creator: auditUser,
+          //creator: auditUser,
         } as DisbursementOveraward);
         return;
       }
@@ -613,7 +612,7 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
                 +loan.disbursementValue.overawardAmountSubtracted * -1
               ).toString(),
               originType: DisbursementOverawardOriginType.AwardValueAdjusted,
-              creator: auditUser,
+              //creator: auditUser,
             } as DisbursementOveraward),
         );
       await disbursementOverawardRepo.insert(overawardsAwardsToInsert);
@@ -628,7 +627,7 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
   private async calculateBCTotalGrants(
     disbursementSchedules: DisbursementSchedule[],
   ): Promise<void> {
-    const auditUser = await this.systemUsersService.systemUser();
+    //const auditUser = await this.systemUsersService.systemUser();
     for (const disbursementSchedule of disbursementSchedules) {
       // For each schedule calculate the total BC grants.
       let bcTotalGrant = disbursementSchedule.disbursementValues.find(
@@ -638,7 +637,7 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
       if (!bcTotalGrant) {
         // If the 'BC Total Grant' is not present, add it.
         bcTotalGrant = new DisbursementValue();
-        bcTotalGrant.creator = auditUser;
+        //bcTotalGrant.creator = auditUser;
         bcTotalGrant.valueCode = "BCSG";
         bcTotalGrant.valueType = DisbursementValueType.BCTotalGrant;
         disbursementSchedule.disbursementValues.push(bcTotalGrant);
