@@ -223,8 +223,15 @@ export class ConfigService {
   get queueConsumersPort(): number {
     return this.getCachedConfig(
       "queueConsumersPortConfig",
-      +process.env.QUEUE_CONSUMERS_PORT || 3001,
+      +process.env.QUEUE_CONSUMERS_PORT || 3010,
     );
+  }
+
+  /**
+   * Queue prefix.
+   */
+  get queuePrefix(): string {
+    return this.getCachedConfig("queuePrefixConfig", process.env.QUEUE_PREFIX);
   }
 
   /**
