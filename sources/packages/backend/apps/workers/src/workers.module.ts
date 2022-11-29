@@ -26,9 +26,16 @@ import {
 } from "@sims/services";
 import { LoggerModule } from "@sims/utilities/logger";
 import { ConfigModule } from "@sims/utilities/config";
+import { SystemUserModule } from "@sims/services/system-users/system-users.module";
 
 @Module({
-  imports: [DatabaseModule, ConfigModule, LoggerModule, ZeebeModule.forRoot()],
+  imports: [
+    DatabaseModule,
+    ConfigModule,
+    LoggerModule,
+    ZeebeModule.forRoot(),
+    SystemUserModule,
+  ],
   controllers: [
     AssessmentController,
     ApplicationController,

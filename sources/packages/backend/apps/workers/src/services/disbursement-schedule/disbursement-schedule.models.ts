@@ -1,13 +1,18 @@
-import { DisbursementValueType } from "@sims/sims-db";
+import { DisbursementValue, DisbursementValueType } from "@sims/sims-db";
 
-export interface DisbursementValue {
+export interface DisbursementSaveValue {
   valueCode: string;
   valueType: DisbursementValueType;
   valueAmount: number;
 }
 
-export interface Disbursement {
+export interface DisbursementSaveModel {
   disbursementDate: string;
   negotiatedExpiryDate: string;
-  disbursements: DisbursementValue[];
+  disbursements: DisbursementSaveValue[];
+}
+
+export interface DisbursementScheduleValue {
+  disbursementScheduleId: number;
+  disbursementValue: DisbursementValue;
 }
