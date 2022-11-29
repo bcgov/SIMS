@@ -662,33 +662,19 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
     sabcCode: string,
     programId: number,
   ): Promise<boolean> {
-    let result: EducationProgram;
-    if (programId) {
-      result = await this.repo.findOne({
-        select: {
-          id: true,
+    const result = await this.repo.findOne({
+      select: {
+        id: true,
+      },
+      where: {
+        sabcCode: sabcCode,
+        institution: {
+          id: institutionId,
         },
-        where: {
-          sabcCode: sabcCode,
-          institution: {
-            id: institutionId,
-          },
-          id: Not(Equal(programId)),
-        },
-      });
-    } else {
-      result = await this.repo.findOne({
-        select: {
-          id: true,
-        },
-        where: {
-          sabcCode: sabcCode,
-          institution: {
-            id: institutionId,
-          },
-        },
-      });
-    }
+        ...(programId && { id: Not(Equal(programId)) }),
+      },
+    });
+
     return !!result?.id;
   }
 }
