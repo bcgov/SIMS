@@ -98,6 +98,7 @@ jobs:
       API: ${{ format('{0}api-sims', secrets.HOST_PREFIX) }}
       WEB: ${{ format('{0}web-sims', secrets.HOST_PREFIX) }}
       WORKERS: ${{ format('{0}workers-sims', secrets.HOST_PREFIX) }}
+      QUEUE_CONSUMERS: ${{ format('{0}queue-consumers-sims', secrets.HOST_PREFIX) }}
       SWAGGER_NAME: ${{ format('{0}swagger', secrets.HOST_PREFIX) }}
       DATABASE_NAME_KEY: ${{ secrets.DATABASE_NAME_KEY }}
     steps:
