@@ -23,10 +23,7 @@ import {
   StudentAssessmentStatus,
 } from "./student-assessment.models";
 import { QueueNames, StartAssessmentQueueInDTO } from "@sims/services/queue";
-import {
-  QUEUE_RETRY_ATTEMPTS,
-  QUEUE_RETRY_DELAY,
-} from "@sims/services/constants";
+import { QUEUE_RETRY_DEFAULT_CONFIG } from "@sims/services/constants";
 
 /**
  * Manages the student assessment related operations.
@@ -171,7 +168,10 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
         workflowName: assessment.application.data.workflowName,
         assessmentId: assessment.id,
       },
-      { attempts: QUEUE_RETRY_ATTEMPTS, backoff: QUEUE_RETRY_DELAY },
+      {
+        attempts: QUEUE_RETRY_DEFAULT_CONFIG.attempts,
+        backoff: QUEUE_RETRY_DEFAULT_CONFIG.delay,
+      },
     );
   }
 

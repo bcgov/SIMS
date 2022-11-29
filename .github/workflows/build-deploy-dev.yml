@@ -20,9 +20,9 @@ jobs:
           echo Git Pull Request Ref: ${{ github.event.pull_request.head.sha }}
           echo OC CLI Version: $(oc version)
 
-  # Build Web, SIMS-Api and Workers
+  # Building all packages
   build:
-    name: Build Web, SIMS-Api and Workers
+    name: Building all packages
     environment: DEV
     runs-on: ubuntu-latest
     if: ${{ github.event.pull_request.merged == true}}
@@ -63,9 +63,9 @@ jobs:
         run: |
           make oc-build-web
 
-  # Deploy Web, SIMS-Api and Workers
+  # Deploying all packages
   deployDev:
-    name: Deploy Web, SIMS-Api and Workers to DEV environment
+    name: Deploying all packages
     runs-on: ubuntu-latest
     environment: DEV
     needs:

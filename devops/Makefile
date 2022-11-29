@@ -449,7 +449,7 @@ deploy-queue-consumers:
 		-p DATABASE_NAME_KEY=$(DATABASE_NAME_KEY) \
 		-p PORT=$(QUEUE_CONSUMERS_PORT) \
 		-p HOST_NAME=$(HOST) \
-		-p HOST_NAME=$(QUEUE_PREFIX) \
+		-p QUEUE_PREFIX=$(QUEUE_PREFIX) \
 		| oc -n $(NAMESPACE) apply -f -
 	$(call rollout_and_wait,dc/$(QUEUE_CONSUMERS))
 
