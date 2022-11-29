@@ -155,6 +155,8 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
         totalAlreadyDisbursedValues,
         transactionEntityManager,
       );
+      // Calculate BC Total grant to be used in e-Cert files.
+      await this.calculateBCTotalGrants(disbursementSchedules);
       // Persist changes for grants and loans.
       await studentAssessmentRepo.save(assessment);
 
@@ -615,6 +617,43 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
             } as DisbursementOveraward),
         );
       await disbursementOverawardRepo.insert(overawardsAwardsToInsert);
+    }
+  }
+
+  /**
+   * Calculate the total BC grants for each disbursement since they
+   * can be affected by the overawards calculations.
+   * @param disbursementSchedules disbursements to have the BC grants calculated.
+   */
+  private async calculateBCTotalGrants(
+    disbursementSchedules: DisbursementSchedule[],
+  ): Promise<void> {
+    const auditUser = await this.systemUsersService.systemUser();
+    for (const disbursementSchedule of disbursementSchedules) {
+      // For each schedule calculate the total BC grants.
+      let bcTotalGrant = disbursementSchedule.disbursementValues.find(
+        (disbursementValue) =>
+          disbursementValue.valueType === DisbursementValueType.BCTotalGrant,
+      );
+      if (!bcTotalGrant) {
+        // If the 'BC Total Grant' is not present, add it.
+        bcTotalGrant = new DisbursementValue();
+        bcTotalGrant.creator = auditUser;
+        bcTotalGrant.valueCode = "BCSG";
+        bcTotalGrant.valueType = DisbursementValueType.BCTotalGrant;
+        disbursementSchedule.disbursementValues.push(bcTotalGrant);
+      }
+      bcTotalGrant.valueAmount = disbursementSchedule.disbursementValues
+        // Filter all BC grants.
+        .filter(
+          (disbursementValue) =>
+            disbursementValue.valueType === DisbursementValueType.BCGrant,
+        )
+        // Sum all BC grants.
+        .reduce((previousValue, currentValue) => {
+          return previousValue + +currentValue.valueAmount;
+        }, 0)
+        .toString();
     }
   }
 
