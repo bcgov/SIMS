@@ -8,7 +8,7 @@ export const ZEEBE_PUBLISH_MESSAGE_DEFAULT_TIME_TO_LEAVE =
   Duration.seconds.of(10);
 
 /**
- * Number of attempts that a queue will re-try a failed job.
+ * Number of attempts that a queue will retry a failed job.
  */
 const QUEUE_RETRY_ATTEMPTS = 3;
 
@@ -23,7 +23,7 @@ const QUEUE_RETRY_DELAY = 180000;
  */
 export const QUEUE_RETRY_DEFAULT_CONFIG = {
   /**
-   * Number of attempts that a queue will re-try a failed job.
+   * Number of attempts that a queue will retry a failed job.
    */
   attempts: QUEUE_RETRY_ATTEMPTS,
   /**
