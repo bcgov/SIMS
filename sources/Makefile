@@ -159,12 +159,13 @@ camunda-stop:
 	@echo "Stopping Camunda locally..."
 	@docker-compose -f camunda-docker-compose-core.yml down
 
-# Build and run froms locally
+# Build, deploy forms and deploy form-definitions locally.
 forms:
-	@echo "Create formio forms locally... \n+"
+	@echo "Build, deploy forms and deploy form-definitions locally... \n+"
 	@echo "Login to http://localhost:3001 \n+"
 	@echo "Default user/password as admin@example.com/CHANGEME \n+"
-	@docker-compose -f forms-docker-compose.yml up --build
+	@docker-compose -f forms-docker-compose.yml up --build -d
+	@cd ./packages/forms && npm i && npm run deploy
 
 # Stop locally
 forms-stop:
