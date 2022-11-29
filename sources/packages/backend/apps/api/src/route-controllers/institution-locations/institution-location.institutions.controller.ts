@@ -101,14 +101,15 @@ export class InstitutionLocationInstitutionsController extends BaseController {
       );
     }
 
-    let createdInstitutionLocation: InstitutionLocation;
     try {
       // If the data is valid the location is saved to SIMS DB.
-      createdInstitutionLocation = await this.locationService.saveLocation(
-        userToken.authorizations.institutionId,
-        dryRunSubmissionResult.data.data,
-        userToken.userId,
-      );
+      const createdInstitutionLocation =
+        await this.locationService.saveLocation(
+          userToken.authorizations.institutionId,
+          dryRunSubmissionResult.data.data,
+          userToken.userId,
+        );
+      return { id: createdInstitutionLocation.id };
     } catch (error: unknown) {
       if (error instanceof CustomNamedError) {
         if (error.name === DUPLICATE_INSTITUTION_LOCATION_CODE) {
@@ -118,8 +119,6 @@ export class InstitutionLocationInstitutionsController extends BaseController {
         }
       }
     }
-
-    return { id: createdInstitutionLocation.id };
   }
 
   /**
