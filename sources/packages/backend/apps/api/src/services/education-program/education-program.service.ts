@@ -122,14 +122,12 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
         );
     }
 
-    if (
-      educationProgram.sabcCode &&
-      (await this.hasExistingProgramWithSameSABCCode(
-        institutionId,
-        educationProgram.sabcCode,
-        programId,
-      ))
-    ) {
+    const isSABCCodeDuplicate = await this.hasExistingProgramWithSameSABCCode(
+      institutionId,
+      educationProgram.sabcCode,
+      programId,
+    );
+    if (educationProgram.sabcCode && isSABCCodeDuplicate) {
       throw new CustomNamedError("Duplicate SABC code.", DUPLICATE_SABC_CODE);
     }
     // Assign attributes for update from payload only if existing program has no offering(s).
