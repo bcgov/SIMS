@@ -33,6 +33,9 @@ export SFAS_RECEIVE_FOLDER := $(or $(SFAS_RECEIVE_FOLDER), SFAS-Receive)
 export INSTITUTION_REQUEST_FOLDER := $(or $(INSTITUTION_REQUEST_FOLDER), Institution-Request)
 export SWAGGER_ENABLED := $(or ${SWAGGER_ENABLED}, true)
 export APPLICATION_ARCHIVE_DAYS := $(or ${APPLICATION_ARCHIVE_DAYS}, 43)
+#Formio forms integration
+export FORMIO_SOURCE_REPO_URL := $(or ${FORMIO_SOURCE_REPO_URL}, https://github.com/formio/formio.git)
+export FORMIO_SOURCE_REPO_TAG := $(or ${FORMIO_SOURCE_REPO_TAG}, v2.5.3)
 
 local:	| print-status local-build-run
 local-api: | print-status local-build api-only
@@ -139,3 +142,15 @@ camunda:
 camunda-stop:
 	@echo "Stopping Camunda locally..."
 	@docker-compose -f camunda-docker-compose-core.yml down
+
+# Build and run froms locally
+forms:
+	@echo "Create formio forms locally... \n+"
+	@echo "Login to http://localhost:3001 \n+"
+	@echo "Default user/password as admin@example.com/CHANGEME \n+"
+	@docker-compose -f forms-docker-compose.yml up --build
+
+# Stop locally
+forms-stop:
+	@echo "+\n++ Stopping formio forms locally...\n+"
+	@docker-compose -f forms-docker-compose.yml down
