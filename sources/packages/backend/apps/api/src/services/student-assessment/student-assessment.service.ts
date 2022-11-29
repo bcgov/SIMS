@@ -168,10 +168,7 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
         workflowName: assessment.application.data.workflowName,
         assessmentId: assessment.id,
       },
-      {
-        attempts: QUEUE_RETRY_DEFAULT_CONFIG.attempts,
-        backoff: QUEUE_RETRY_DEFAULT_CONFIG.delay,
-      },
+      QUEUE_RETRY_DEFAULT_CONFIG,
     );
   }
 

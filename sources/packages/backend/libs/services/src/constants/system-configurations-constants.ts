@@ -29,5 +29,5 @@ export const QUEUE_RETRY_DEFAULT_CONFIG = {
   /**
    * Delay in milliseconds at which every retry operation is performed on a failed job.
    */
-  delay: QUEUE_RETRY_DELAY,
+  backoff: QUEUE_RETRY_DELAY,
 };

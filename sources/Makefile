@@ -160,11 +160,8 @@ camunda-stop:
 # Runs queue consumer application
 queue-consumers:
 	@echo "+\n++ Make: Queue only"
+	@docker-compose -f docker-compose.yml build queue-consumers
 	@docker-compose -f docker-compose.yml up -d queue-consumers
 
-# Builds queue consumer application
-queue-consumers-build:
-	@echo "+\n++ Make: Queue only"
-	@docker-compose -f docker-compose.yml build queue-consumers
 
 
