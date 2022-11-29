@@ -122,13 +122,15 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
         );
     }
 
-    const isSABCCodeDuplicate = await this.hasExistingProgramWithSameSABCCode(
-      institutionId,
-      educationProgram.sabcCode,
-      programId,
-    );
-    if (educationProgram.sabcCode && isSABCCodeDuplicate) {
-      throw new CustomNamedError("Duplicate SABC code.", DUPLICATE_SABC_CODE);
+    if (educationProgram.sabcCode) {
+      const isSABCCodeDuplicate = await this.hasExistingProgramWithSameSABCCode(
+        institutionId,
+        educationProgram.sabcCode,
+        programId,
+      );
+      if (isSABCCodeDuplicate) {
+        throw new CustomNamedError("Duplicate SABC code.", DUPLICATE_SABC_CODE);
+      }
     }
 
     // Assign attributes for update from payload only if existing program has no offering(s).
@@ -660,18 +662,18 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
   async hasExistingProgramWithSameSABCCode(
     institutionId: number,
     sabcCode: string,
-    programId: number | undefined,
+    programId?: number,
   ): Promise<boolean> {
     const result = await this.repo.findOne({
       select: {
         id: true,
       },
       where: {
+        id: programId ? Not(Equal(programId)) : undefined,
         sabcCode: sabcCode,
         institution: {
           id: institutionId,
         },
-        ...(programId && { id: Not(Equal(programId)) }),
       },
     });
 

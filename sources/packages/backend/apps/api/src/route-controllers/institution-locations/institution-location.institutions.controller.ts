@@ -117,6 +117,7 @@ export class InstitutionLocationInstitutionsController extends BaseController {
           );
         }
       }
+      throw error;
     }
   }
 
