@@ -752,6 +752,8 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
    * @returns unique awards codes.
    */
   private getDistinctValueCodes(awards: DisbursementScheduleValue[]) {
-    return [...awards.map((award) => award.disbursementValue.valueCode)];
+    return [
+      ...new Set(awards.map((award) => award.disbursementValue.valueCode)),
+    ];
   }
 }
