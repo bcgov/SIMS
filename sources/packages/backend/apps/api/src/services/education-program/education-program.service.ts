@@ -120,17 +120,17 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
         await this.educationProgramOfferingService.hasExistingOffering(
           programId,
         );
+    }
 
-      if (
-        educationProgram.sabcCode &&
-        (await this.hasExistingProgramWithSameSABCCode(
-          institutionId,
-          educationProgram.sabcCode,
-          programId,
-        ))
-      ) {
-        throw new CustomNamedError("Duplicate SABC code.", DUPLICATE_SABC_CODE);
-      }
+    if (
+      educationProgram.sabcCode &&
+      (await this.hasExistingProgramWithSameSABCCode(
+        institutionId,
+        educationProgram.sabcCode,
+        programId,
+      ))
+    ) {
+      throw new CustomNamedError("Duplicate SABC code.", DUPLICATE_SABC_CODE);
     }
     // Assign attributes for update from payload only if existing program has no offering(s).
     if (!hasExistingOffering) {
@@ -662,18 +662,33 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
     sabcCode: string,
     programId: number,
   ): Promise<boolean> {
-    const result = await this.repo.findOne({
-      select: {
-        id: true,
-      },
-      where: {
-        sabcCode: sabcCode,
-        institution: {
-          id: institutionId,
+    let result: EducationProgram;
+    if (programId) {
+      result = await this.repo.findOne({
+        select: {
+          id: true,
         },
-        id: Not(Equal(programId)),
-      },
-    });
+        where: {
+          sabcCode: sabcCode,
+          institution: {
+            id: institutionId,
+          },
+          id: Not(Equal(programId)),
+        },
+      });
+    } else {
+      result = await this.repo.findOne({
+        select: {
+          id: true,
+        },
+        where: {
+          sabcCode: sabcCode,
+          institution: {
+            id: institutionId,
+          },
+        },
+      });
+    }
     return !!result?.id;
   }
 }
