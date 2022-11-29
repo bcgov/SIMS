@@ -4,7 +4,7 @@
 export enum DisbursementOverawardOriginType {
   /**
    * The result of an assessment recalculation generated
-   * some overaward that exceeded the reassessment value.
+   * an award that was less than the disbursed amount.
    */
   ReassessmentOveraward = "Reassessment overaward",
   /**
