@@ -13,7 +13,7 @@ import {
   InstitutionLocation,
   getRawCount,
 } from "@sims/sims-db";
-import { DataSource, In, Repository } from "typeorm";
+import { DataSource, In, Repository, Not, Equal } from "typeorm";
 import {
   SaveEducationProgram,
   EducationProgramsSummary,
@@ -30,6 +30,7 @@ import {
   EDUCATION_PROGRAM_NOT_FOUND,
   DUPLICATE_SABC_CODE,
 } from "../../constants";
+
 @Injectable()
 export class EducationProgramService extends RecordDataModelService<EducationProgram> {
   private readonly offeringsRepo: Repository<EducationProgramOffering>;
@@ -120,34 +121,16 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
           programId,
         );
 
-      // In case it is an update, it is needed to know if the SABC code is being updated.
-      const persistedProgram = await this.getEducationProgramDetails(
-        programId,
-        institutionId,
-      );
-      // If the SABC code is being updated and it is not the same as it is persisted,
-      // then it is needed to check if it has an existing program with the same SABC code.
-      if (
-        educationProgram.sabcCode &&
-        educationProgram.sabcCode !== persistedProgram.sabcCode &&
-        (await this.hasExistingProgramWithSameSABCCode(
-          institutionId,
-          educationProgram.sabcCode,
-        ))
+      if (educationProgram.sabcCode &&
+          (await this.hasExistingProgramWithSameSABCCode(
+            institutionId,
+            educationProgram.sabcCode,
+            programId,
+          ))
       ) {
         throw new CustomNamedError("Duplicate SABC code.", DUPLICATE_SABC_CODE);
       }
-    } else if (
-      // In case of a new program.
-      educationProgram.sabcCode &&
-      (await this.hasExistingProgramWithSameSABCCode(
-        institutionId,
-        educationProgram.sabcCode,
-      ))
-    ) {
-      throw new CustomNamedError("Duplicate SABC code.", DUPLICATE_SABC_CODE);
-    }
-
+    
     // Assign attributes for update from payload only if existing program has no offering(s).
     if (!hasExistingOffering) {
       program.fieldOfStudyCode = educationProgram.fieldOfStudyCode;
@@ -666,16 +649,18 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
       },
     });
   }
+
   /**
    * Check if the given institution has already a program with the given SABC code.
    * @param institutionId id of the institution to have the programs retrieved.
    * @param sabcCode SABC code.
-   * @returns the id of the first record found.
+   * @returns true in case it has already a SABC code for the institution.
    */
   async hasExistingProgramWithSameSABCCode(
     institutionId: number,
     sabcCode: string,
-  ) {
+    programId: number,
+  ): Promise<boolean> {
     const result = await this.repo.findOne({
       select: {
         id: true,
@@ -685,6 +670,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
         institution: {
           id: institutionId,
         },
+        id: Not(Equal(programId)),
       },
     });
     return !!result?.id;

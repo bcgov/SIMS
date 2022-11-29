@@ -12,6 +12,8 @@ import {
   InstitutionLocationPrimaryContactModel,
 } from "./institution-location.models";
 import { transformAddressDetails } from "../../utilities";
+import { CustomNamedError } from "@sims/utilities";
+import { DUPLICATE_INSTITUTION_LOCATION_CODE } from "../../constants";
 
 @Injectable()
 export class InstitutionLocationService extends RecordDataModelService<InstitutionLocation> {
@@ -39,6 +41,18 @@ export class InstitutionLocationService extends RecordDataModelService<Instituti
   ): Promise<InstitutionLocation> {
     const auditUser = { id: auditUserId } as User;
     const institution = { id: institutionId };
+
+    const isInstitutionCodeDuplicate = await this.hasLocationCodeForInstitution(
+      institutionId,
+      data.institutionCode,
+    );
+
+    if (isInstitutionCodeDuplicate) {
+      throw new CustomNamedError(
+        "Duplicate institution location code.",
+        DUPLICATE_INSTITUTION_LOCATION_CODE,
+      );
+    }
     const saveLocation: InstitutionLocation = {
       name: data.locationName,
       data: {
@@ -213,22 +227,27 @@ export class InstitutionLocationService extends RecordDataModelService<Instituti
   }
 
   /**
-   * Validate if location code is unique for the institution.
-   * @param institutionId
-   * @param locationCode
-   * @returns whether there is already a location code for the institution.
+   * Check if location code is already registered for the institution.
+   * @param institutionId institution id.
+   * @param locationCode location code.
+   * @returns true in case there is already a location code for the institution.
    */
-  async validateLocationCodeIsUniqueForInstitution(
+  async hasLocationCodeForInstitution(
     institutionId: number,
     locationCode: string,
   ): Promise<boolean> {
-    const found = await this.repo
-      .createQueryBuilder("location")
-      .select("1")
-      .where("location.institution.id = :institutionId", { institutionId })
-      .andWhere("location.institutionCode = :locationCode", { locationCode })
-      .getRawMany();
-    return found.length === 0;
+    const result = await this.repo.findOne({
+      select: {
+        id: true,
+      },
+      where: {
+        institution: {
+          id: institutionId,
+        },
+        institutionCode: locationCode,
+      },
+    });
+    return !!result?.id;
   }
 
   /**

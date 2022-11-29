@@ -17,6 +17,7 @@ import {
   ApiBadRequestResponse,
   ApiNotFoundResponse,
   ApiTags,
+  ApiUnprocessableEntityResponse,
 } from "@nestjs/swagger";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { IInstitutionUserToken } from "../../auth/userToken.interface";
@@ -54,6 +55,9 @@ import {
   PaginatedResultsAPIOutDTO,
 } from "../models/pagination.dto";
 import { DUPLICATE_INSTITUTION_LOCATION_CODE } from "../../constants";
+import { CustomNamedError } from "@sims/utilities";
+import { InstitutionLocation } from "@sims/sims-db";
+
 /**
  * Institution location controller for institutions Client.
  */
@@ -77,6 +81,9 @@ export class InstitutionLocationInstitutionsController extends BaseController {
   @ApiBadRequestResponse({
     description: "Invalid request to create an institution location.",
   })
+  @ApiUnprocessableEntityResponse({
+    description: "Duplicate institution location code.",
+  })
   @IsInstitutionAdmin()
   @Post()
   async create(
@@ -95,27 +102,23 @@ export class InstitutionLocationInstitutionsController extends BaseController {
       );
     }
 
-    const isInstitutionCodeDuplicate =
-      !(await this.locationService.validateLocationCodeIsUniqueForInstitution(
+    let createdInstitutionLocation: InstitutionLocation;
+    try {
+      // If the data is valid the location is saved to SIMS DB.
+      createdInstitutionLocation = await this.locationService.saveLocation(
         userToken.authorizations.institutionId,
-        payload.institutionCode,
-      ));
-
-    if (isInstitutionCodeDuplicate) {
-      throw new UnprocessableEntityException(
-        new ApiProcessError(
-          "Duplicate institution location code.",
-          DUPLICATE_INSTITUTION_LOCATION_CODE,
-        ),
+        dryRunSubmissionResult.data.data,
+        userToken.userId,
       );
+    } catch (error: unknown) {
+      if (error instanceof CustomNamedError) {
+        if (error.name === DUPLICATE_INSTITUTION_LOCATION_CODE) {
+          throw new UnprocessableEntityException(
+            new ApiProcessError(error.message, error.name),
+          );
+        }
+      }
     }
-
-    // If the data is valid the location is saved to SIMS DB.
-    const createdInstitutionLocation = await this.locationService.saveLocation(
-      userToken.authorizations.institutionId,
-      dryRunSubmissionResult.data.data,
-      userToken.userId,
-    );
 
     return { id: createdInstitutionLocation.id };
   }

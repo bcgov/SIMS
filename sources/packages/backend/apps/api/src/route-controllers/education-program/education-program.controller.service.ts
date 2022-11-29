@@ -27,6 +27,10 @@ import {
 } from "../../constants";
 import { INSTITUTION_TYPE_BC_PRIVATE } from "@sims/sims-db/constant";
 import { ApiProcessError } from "../../types";
+import {
+  ApiNotFoundResponse,
+  ApiUnprocessableEntityResponse,
+} from "@nestjs/swagger";
 
 @Injectable()
 export class EducationProgramControllerService {
@@ -83,6 +87,11 @@ export class EducationProgramControllerService {
    * @param auditUserId user that should be considered the one that is causing the changes.
    * @returns inserted/updated program.
    */
+  @ApiUnprocessableEntityResponse({
+    description:
+      "Not able to a save the program due to an invalid request or " +
+      "SABC code is duplicated.",
+  })
   async saveProgram(
     payload: EducationProgramAPIInDTO,
     institutionId: number,

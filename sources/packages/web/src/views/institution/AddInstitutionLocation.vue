@@ -56,9 +56,9 @@ export default {
           router.push({ name: InstitutionRoutesConst.MANAGE_LOCATIONS });
           store.dispatch("institution/getUserInstitutionLocationDetails");
           snackBar.success("Institution Location created Successfully!");
-        } catch (excp) {
-          if (excp instanceof ApiProcessError) {
-            snackBar.error(excp.message);
+        } catch (error: unknown) {
+          if (error instanceof ApiProcessError) {
+            snackBar.error(error.message);
           } else {
             snackBar.error("An error happened during the create process.");
           }
