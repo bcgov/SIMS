@@ -14,5 +14,3 @@ export const Queues: QueueModel[] = [
     name: QueueNames.StartApplicationAssessment,
   },
 ];
-
-export const QUEUE_PREFIX = "{sims}";

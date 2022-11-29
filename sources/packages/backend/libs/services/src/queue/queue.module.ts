@@ -3,9 +3,10 @@ import {
   BullModule,
   BullRootModuleOptions,
   BullModuleOptions,
+  BullModuleAsyncOptions,
 } from "@nestjs/bull";
 import Redis, { Cluster, RedisOptions } from "ioredis";
-import { QUEUE_PREFIX, Queues } from "./constants/queue.constant";
+import { Queues } from "./constants/queue.constant";
 import { ConfigModule, ConfigService } from "@sims/utilities/config";
 
 /**
@@ -20,7 +21,7 @@ import { ConfigModule, ConfigService } from "@sims/utilities/config";
       useFactory: getConnectionFactory,
       inject: [ConfigService],
     }),
-    BullModule.registerQueue(...getQueueModules()),
+    BullModule.registerQueueAsync(...getQueueModules()),
   ],
   exports: [BullModule],
 })
@@ -67,9 +68,15 @@ async function getConnectionFactory(
  * Builds the bull module options to register queues in a dynamic way.
  * @returns bull module options with all existing queues.
  */
-function getQueueModules(): BullModuleOptions[] {
-  return Queues.map<BullModuleOptions>((queue) => ({
+function getQueueModules(): BullModuleAsyncOptions[] {
+  return Queues.map<BullModuleAsyncOptions>((queue) => ({
     name: queue.name,
-    prefix: QUEUE_PREFIX,
+    imports: [ConfigModule],
+    useFactory: async (
+      configService: ConfigService,
+    ): Promise<BullModuleOptions> => ({
+      prefix: configService.queuePrefix,
+    }),
+    inject: [ConfigService],
   }));
 }

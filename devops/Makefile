@@ -374,6 +374,7 @@ deploy-api:
 	test -n "$(API)"
 	test -n "$(API_SECRET_NAME)"
 	test -n "$(SWAGGER_NAME)"
+	test -n "$(QUEUE_PREFIX)"
 	test -n "$(API_PORT)"
 	@echo "+\n++ Deploying API with tag: $(BUILD_TAG)\n+"
 	@oc -n $(NAMESPACE) process -f openshift/api-deploy.yml \
@@ -399,6 +400,7 @@ deploy-api:
 		-p SWAGGER_ENABLED=$(SWAGGER_ENABLED) \
 		-p APPLICATION_ARCHIVE_DAYS=$(APPLICATION_ARCHIVE_DAYS) \
 		-p SWAGGER_NAME=$(SWAGGER_NAME) \
+		-p QUEUE_PREFIX=$(QUEUE_PREFIX) \
 		| oc -n $(NAMESPACE) apply -f -
 	$(call rollout_and_wait,dc/$(API))
 
@@ -435,6 +437,7 @@ deploy-queue-consumers:
 	test -n "$(QUEUE_CONSUMERS_SECRET_NAME)"
 	test -n "$(QUEUE_CONSUMERS)"
 	test -n "$(QUEUE_CONSUMERS_PORT)"
+	test -n "$(QUEUE_PREFIX)"
 	@echo "+\n++ Deploying Queues with tag: $(BUILD_TAG)\n+"
 	@oc -n $(NAMESPACE) process -f openshift/queue-consumers-deploy.yml \
 		-p NAME=$(QUEUE_CONSUMERS) \
@@ -446,6 +449,7 @@ deploy-queue-consumers:
 		-p DATABASE_NAME_KEY=$(DATABASE_NAME_KEY) \
 		-p PORT=$(QUEUE_CONSUMERS_PORT) \
 		-p HOST_NAME=$(HOST) \
+		-p HOST_NAME=$(QUEUE_PREFIX) \
 		| oc -n $(NAMESPACE) apply -f -
 	$(call rollout_and_wait,dc/$(QUEUE_CONSUMERS))
 

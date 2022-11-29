@@ -67,6 +67,7 @@ jobs:
       API_SECRET_NAME: ${{ secrets.OPENSHIFT_SIMS_CREDS_NAME }}
       WORKERS_SECRET_NAME: ${{ secrets.OPENSHIFT_SIMS_CREDS_NAME }}
       QUEUE_CONSUMERS_SECRET_NAME: ${{ secrets.OPENSHIFT_SIMS_CREDS_NAME }}
+      QUEUE_PREFIX: ${{ secrets.QUEUE_PREFIX }}
       API_PORT: ${{ secrets.API_PORT }}
       WEB_PORT: ${{ secrets.WEB_PORT }}
       API: ${{ format('{0}api-sims', secrets.HOST_PREFIX) }}

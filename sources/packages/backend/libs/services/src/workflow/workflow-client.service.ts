@@ -32,7 +32,7 @@ export class WorkflowClientService {
         `Error while starting application assessment workflow: ${workflowName}`,
       );
       this.logger.error(error);
-      // The error is not thrown here, as we are failing silently.
+      throw error;
     }
   }
 
