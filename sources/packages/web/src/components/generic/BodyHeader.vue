@@ -8,9 +8,9 @@
       <slot name="actions"></slot>
     </v-col>
   </v-row>
-  <v-row class="mb-4">
+  <v-row class="mb-2">
     <v-col>
-      {{ subTitle }}
+      <slot name="subtitle">{{ subTitle }}</slot>
     </v-col>
   </v-row>
 </template>
