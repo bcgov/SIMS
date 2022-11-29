@@ -55,7 +55,6 @@ import {
   PaginatedResultsAPIOutDTO,
 } from "../models/pagination.dto";
 import { DUPLICATE_INSTITUTION_LOCATION_CODE } from "../../constants";
-import { InstitutionLocation } from "@sims/sims-db";
 
 /**
  * Institution location controller for institutions Client.
