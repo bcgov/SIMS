@@ -181,11 +181,6 @@ objects:
                     secretKeyRef:
                       key: ${SFAS_RECEIVE_FOLDER_NAME_KEY}
                       name: ${API_SECRET_NAME}
-                - name: INSTITUTION_REQUEST_FOLDER
-                  valueFrom:
-                    secretKeyRef:
-                      key: ${INSTITUTION_REQUEST_FOLDER_NAME_KEY}
-                      name: ${API_SECRET_NAME}
                 - name: ESDC_ENVIRONMENT_CODE
                   valueFrom:
                     secretKeyRef:
@@ -477,8 +472,6 @@ parameters:
     value: esdc-environment-code
   - name: SFAS_RECEIVE_FOLDER_NAME_KEY
     value: sfas-receive-folder
-  - name: INSTITUTION_REQUEST_FOLDER_NAME_KEY
-    value: institution-request-folder
   - name: GC_NOTIFY_URL_NAME_KEY
     value: gc-notify-url
   - name: GC_NOTIFY_API_KEY_NAME_KEY

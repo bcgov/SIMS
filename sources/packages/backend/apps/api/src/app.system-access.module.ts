@@ -41,7 +41,6 @@ import {
   ECertIntegrationSystemAccessController,
   FedRestrictionsIntegrationSystemAccessController,
   ATBCSystemAccessController,
-  IERIntegrationSystemAccessController,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
 import { SINValidationModule } from "./esdc-integration/sin-validation/sin-validation.module";
@@ -84,7 +83,6 @@ import { IER12IntegrationModule } from "@sims/integrations/institution-integrati
     SFASIntegrationSystemAccessController,
     ECertIntegrationSystemAccessController,
     FedRestrictionsIntegrationSystemAccessController,
-    IERIntegrationSystemAccessController,
   ],
   providers: [
     WorkflowClientService,

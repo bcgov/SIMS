@@ -38,7 +38,6 @@ async function bootstrap() {
     }),
     serverAdapter.getRouter(),
   );
-
   await app.listen(config.queueConsumersPort);
 }
 bootstrap();

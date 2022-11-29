@@ -86,6 +86,11 @@ objects:
                     secretKeyRef:
                       key: ${ZEEBE_AUTHORIZATION_SERVER_URL_KEY}
                       name: ${QUEUE_CONSUMERS_SECRET_NAME}
+                - name: INSTITUTION_REQUEST_FOLDER
+                  valueFrom:
+                    secretKeyRef:
+                      key: ${INSTITUTION_REQUEST_FOLDER_NAME_KEY}
+                      name: ${QUEUE_CONSUMERS_SECRET_NAME}
                 - name: BYPASS_CRA_INCOME_VERIFICATION
                   value: ${BYPASS_CRA_INCOME_VERIFICATION}
               image: ${IMAGE_REGISTRY}/${BUILD_NAMESPACE}/${IMAGE_STREAM_TAG}
@@ -176,6 +181,8 @@ parameters:
   - name: ZEEBE_AUTHORIZATION_SERVER_URL_KEY
     value: zeebe-authorization-server-url
     required: true
+  - name: INSTITUTION_REQUEST_FOLDER_NAME_KEY
+    value: institution-request-folder
   - name: BYPASS_CRA_INCOME_VERIFICATION
     value: "false"
   - name: REDIS_SERVICE
