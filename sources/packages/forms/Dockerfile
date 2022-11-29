@@ -31,11 +31,10 @@ RUN echo "prefix = $NPM_PACKAGES" >> ~/.npmrc
 # Include details of the required dependencies
 RUN mkdir -p $NPM_PACKAGES/
 # Include details of the required dependencies
-COPY package.json $NPM_PACKAGES/
-COPY package-lock.json $NPM_PACKAGES/
+RUN cp package.json $NPM_PACKAGES/
 
 # Use "Continuous Integration" to install as-is from package-lock.json
-RUN npm ci --prefix=$NPM_PACKAGES
+RUN npm i --prefix=$NPM_PACKAGES
 
 # Link in the global install because `require()` only looks for ./node_modules
 # WARNING: This is overwritten by volume-mount at runtime!
