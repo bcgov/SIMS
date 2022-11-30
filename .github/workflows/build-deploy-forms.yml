@@ -1,4 +1,4 @@
-name: Deploy Formio forms Resources
+name: Build and Deploy Formio forms
 
 on:
   workflow_dispatch:
@@ -23,19 +23,17 @@ on:
 
 jobs:
   deploy:
-    name: Deploy Formio forms resources
+    name: Build and Deploy Formio forms
     runs-on: ubuntu-latest
     environment: ${{ github.event.inputs.environment }}
     env:
-      SOURCE_REPOSITORY_URL: ${{}}
-      SOURCE_REPOSITORY_REF: ${{}}
-      FORMIO_SOURCE_REPO_URL: ${{}}
       FORMIO_SOURCE_REPO_TAG: ${{ github.event.inputs.formioTag }}
-      FORMS_NAME: ${{}}
+      FORMS_NAME: forms
       BUILD_ID: ${{ github.event.inputs.buildId }}
       NAMESPACE: ${{ secrets.OPENSHIFT_ENV_NAMESPACE }}
       BUILD_REF: ${{ github.event.inputs.buildRef }}
       HOST_PREFIX: ${{ secrets.HOST_PREFIX }}
+      MONGODB_URI: ${{ secrets.MONGODB_URI }}
       BUILD_NAMESPACE: 0c27fb-tools
     steps:
       - name: Print env

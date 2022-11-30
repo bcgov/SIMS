@@ -35,6 +35,8 @@ export API_BUILD_REF := $(or ${API_BUILD_REF}, api-${APP_NAME})
 export WORKERS_BUILD_REF := $(or ${WORKERS_BUILD_REF}, workers-${APP_NAME})
 export QUEUE_CONSUMERS_BUILD_REF := $(or ${QUEUE_CONSUMERS_BUILD_REF}, queue-consumers-${APP_NAME})
 export WEB_BUILD_REF := $(or ${WEB_BUILD_REF}, web-${APP_NAME})
+export FORMIO_ROOT_EMAIL := $(or ${FORMIO_ROOT_EMAIL}, dev_sabc@gov.bc.ca)
+export MONGODB_URI := $(or ${MONGODB_URI}, $$MONGODB_URI)
 
 define QA_DB_NAME
 "QASIMSDB"
@@ -417,9 +419,24 @@ deploy-ha-mongo:
 
 deploy-forms:
 	test -n "$(NAMESPACE)"
+	test -n "$(FORMS_DEPLOY_TEMPLATE_PATH)"
+	test -n "$(FORMS_NAME)"
+	test -n "$(FORMS_URL)"
 	test -n "$(BUILD_NAMESPACE)"
+	test -n "$(BUILD_TAG)"
+	test -n "$(HOST_PREFIX)"
+	test -n "$(FORMIO_ROOT_EMAIL)"
+	test -n "$(MONGODB_URI)"
 	@echo "+\n++ Deploying forms-flow-forms with tag: $(BUILD_TAG)\n+"
-	@oc -n $(NAMESPACE) process -f $(FORMS_DEPLOY_TEMPLATE_PATH) --param-file=$(FORMS_PARAM_PATH) -p NAME=$(FORMS_NAME) -p FORMS_URL=$(FORMS_URL) -p TOOLS_NAMESPACE=$(BUILD_NAMESPACE) -p IMAGE_STREAM_TAG="$(BUILD_TAG)" -p HOST_PREFIX="$(HOST_PREFIX)" | oc -n $(NAMESPACE) apply -f -
+	@oc -n $(NAMESPACE) process -f $(FORMS_DEPLOY_TEMPLATE_PATH) \
+	-p NAME=$(FORMS_NAME) \
+	-p FORMS_URL=$(FORMS_URL) \
+	-p TOOLS_NAMESPACE=$(BUILD_NAMESPACE) \
+	-p IMAGE_STREAM_TAG=$(BUILD_TAG) \
+	-p HOST_PREFIX=$(HOST_PREFIX) \
+	-p FORMIO_ROOT_EMAIL=$(FORMIO_ROOT_EMAIL) \
+	-p MONGODB_URI=$(MONGODB_URI) \
+	| oc -n $(NAMESPACE) apply -f -
 	$(call rollout_and_wait,dc/$(HOST_PREFIX)$(FORMS_NAME))
 
 # Create database backup structure (build/configmap/deploy)
