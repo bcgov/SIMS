@@ -73,7 +73,7 @@ export class EducationProgramApi extends HttpBaseClient {
   ): Promise<void> {
     try {
       await this.postCall(this.addClientRoot("education-program"), payload);
-    } catch (error) {
+    } catch (error: unknown) {
       this.handleAPICustomError(error);
     }
   }
@@ -92,7 +92,7 @@ export class EducationProgramApi extends HttpBaseClient {
         this.addClientRoot(`education-program/${programId}`),
         payload,
       );
-    } catch (error) {
+    } catch (error: unknown) {
       this.handleAPICustomError(error);
     }
   }

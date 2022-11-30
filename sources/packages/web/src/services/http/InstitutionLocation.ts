@@ -18,7 +18,7 @@ export class InstitutionLocationApi extends HttpBaseClient {
         this.addClientRoot("location"),
         createInstitutionLocationDto,
       );
-    } catch (error) {
+    } catch (error: unknown) {
       this.handleAPICustomError(error);
     }
   }
@@ -29,12 +29,16 @@ export class InstitutionLocationApi extends HttpBaseClient {
       | InstitutionLocationPrimaryContactAPIInDTO
       | InstitutionLocationAPIInDTO,
   ): Promise<void> {
-    return this.patchCall<
-      InstitutionLocationPrimaryContactAPIInDTO | InstitutionLocationAPIInDTO
-    >(
-      this.addClientRoot(`location/${locationId}`),
-      updateInstitutionLocationDto,
-    );
+    try {
+      return await this.patchCall<
+        InstitutionLocationPrimaryContactAPIInDTO | InstitutionLocationAPIInDTO
+      >(
+        this.addClientRoot(`location/${locationId}`),
+        updateInstitutionLocationDto,
+      );
+    } catch (error: unknown) {
+      this.handleAPICustomError(error);
+    }
   }
 
   public async getInstitutionLocation(

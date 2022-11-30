@@ -191,7 +191,7 @@ export default {
             snackBar.success("Education Program created successfully!");
           }
           goBack();
-        } catch (error) {
+        } catch (error: unknown) {
           if (error instanceof ApiProcessError) {
             snackBar.error(error.message);
           } else {

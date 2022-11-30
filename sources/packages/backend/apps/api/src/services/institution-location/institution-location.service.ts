@@ -33,7 +33,7 @@ export class InstitutionLocationService extends RecordDataModelService<Instituti
    * @param locationId location to be updated.
    * @returns persisted location.
    */
-  async saveLocation(
+  async createLocation(
     institutionId: number,
     data: InstitutionLocationModel,
     auditUserId: number,
@@ -43,8 +43,9 @@ export class InstitutionLocationService extends RecordDataModelService<Instituti
     const institution = { id: institutionId };
 
     const isInstitutionCodeDuplicate = await this.hasLocationCodeForInstitution(
-      institutionId,
       data.institutionCode,
+      locationId,
+      institutionId,
     );
 
     if (isInstitutionCodeDuplicate) {
@@ -53,6 +54,7 @@ export class InstitutionLocationService extends RecordDataModelService<Instituti
         DUPLICATE_INSTITUTION_LOCATION_CODE,
       );
     }
+
     const saveLocation: InstitutionLocation = {
       name: data.locationName,
       data: {
@@ -69,11 +71,7 @@ export class InstitutionLocationService extends RecordDataModelService<Instituti
       id: locationId ?? undefined,
     } as InstitutionLocation;
 
-    if (locationId) {
-      saveLocation.modifier = auditUser;
-    } else {
-      saveLocation.creator = auditUser;
-    }
+    saveLocation.creator = auditUser;
 
     return this.repo.save(saveLocation);
   }
@@ -115,6 +113,18 @@ export class InstitutionLocationService extends RecordDataModelService<Instituti
     locationId: number,
     auditUserId: number,
   ): Promise<InstitutionLocation> {
+    const isInstitutionCodeDuplicate = await this.hasLocationCodeForInstitution(
+      institutionLocationData.institutionCode,
+      locationId,
+    );
+
+    if (isInstitutionCodeDuplicate) {
+      throw new CustomNamedError(
+        "Duplicate institution location code.",
+        DUPLICATE_INSTITUTION_LOCATION_CODE,
+      );
+    }
+
     const saveLocation: InstitutionLocation = {
       name: institutionLocationData.locationName,
       data: {
@@ -233,21 +243,50 @@ export class InstitutionLocationService extends RecordDataModelService<Instituti
    * @returns true in case there is already a location code for the institution.
    */
   async hasLocationCodeForInstitution(
-    institutionId: number,
     locationCode: string,
+    locationId?: number,
+    institutionId?: number,
   ): Promise<boolean> {
-    const result = await this.repo.findOne({
-      select: {
-        id: true,
-      },
-      where: {
-        institution: {
-          id: institutionId,
-        },
-        institutionCode: locationCode,
-      },
-    });
-    return !!result?.id;
+    // const result = await this.repo.findOne({
+    //   select: {
+    //     id: true,
+    //   },
+    //   where: {
+    //     institution: {
+    //       id: institutionId,
+    //     },
+    //     institutionCode: locationCode,
+    //   },
+    // });
+    // return !!result?.id;
+
+    const institutionIdQueryBuilder = await this.repo
+      .createQueryBuilder("sublocation")
+      .select("sublocation.institution.id")
+      .where("sublocation.id = :locationId", { locationId });
+
+    const queryBuilder = this.repo
+      .createQueryBuilder("location")
+      .select("1")
+      .where("location.institutionCode = :locationCode", { locationCode });
+
+    if (locationId) {
+      queryBuilder
+        .andWhere(
+          "location.institution.id = (" +
+            institutionIdQueryBuilder.getQuery() +
+            ")",
+        )
+        .setParameters(institutionIdQueryBuilder.getParameters())
+        .andWhere("location.id != :locationId", { locationId });
+    } else {
+      queryBuilder.andWhere("location.institution.id = :institutionId", {
+        institutionId,
+      });
+    }
+    const found = await queryBuilder.getRawOne();
+
+    return !!found;
   }
 
   /**
