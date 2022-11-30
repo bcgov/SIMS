@@ -35,7 +35,8 @@ export class IERIntegrationScheduler implements OnApplicationBootstrap {
   }
 
   async onApplicationBootstrap() {
-    // todo: ann do we lifecycle hooks
+    // todo: ann do we lifecycle hooks.
+    // todo: ann find how to pass parameter.
     await this.startIERSchedulerQueue.add(undefined, this.ierCronOptions);
     // TO REMOVE THE JOB
     // await this.startIERSchedulerQueue.removeRepeatable(
