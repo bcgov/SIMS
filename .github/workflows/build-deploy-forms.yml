@@ -1,0 +1,46 @@
+name: Deploy Formio forms Resources
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        required: true
+        type: environment
+    formioTag:
+        description: "Formio tag, please refer https://github.com/formio/formio/tags to deploy the appropriate tag."
+        required: true
+        default: "v2.5.3"
+  workflow_call:
+    inputs:
+      environment:
+        required: true
+        type: string
+    formioTag:
+        description: "Formio tag, please refer https://github.com/formio/formio/tags to deploy the appropriate tag."
+        required: true
+        default: "v2.5.3"
+
+jobs:
+  deploy:
+    name: Deploy Formio forms resources
+    runs-on: ubuntu-latest
+    environment: ${{ github.event.inputs.environment }}
+    env:
+       BUILD_ID: ${{ github.event.inputs.formioTag }}
+    steps:
+      - name: Print env variables
+        run: |
+          echo ZEEBE_ADDRESS: $ZEEBE_ADDRESS
+          echo RESOURCES_FOLDER: $RESOURCES_FOLDER
+      - name: Checkout Target Branch
+        uses: actions/checkout@v3
+      - name: Setup Nodejs
+        uses: actions/setup-node@v3
+        with:
+          node-version: "16.x"
+      - name: Downloading packages
+        working-directory: "./sources/packages/workflow"
+        run: npm ci
+      - name: Executing deployment
+        working-directory: "./sources/packages/workflow"
+        run: npm run deploy
