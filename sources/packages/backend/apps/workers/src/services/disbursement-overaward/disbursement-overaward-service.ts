@@ -15,7 +15,12 @@ export class DisbursementOverawardService extends RecordDataModelService<Disburs
    * Sum the total overawards per value code (e.g. CSLF, BCSL) for the student.
    * @param studentId student to get the balance.
    * @param entityManager used to execute the queries in the same transaction.
-   * @returns
+   * @returns the sum of the overawards grouped by the value type, as the below example.
+   * @example
+   * {
+   *    CSLF: 5532,
+   *    BCSL: 1256,
+   * }
    */
   async getOverawardBalance(
     studentId: number,

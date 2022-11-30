@@ -40,6 +40,16 @@ import { SystemUsersService } from "@sims/services/system-users/system-users.ser
 // was not executed due to a possible catastrophic failure.
 const TRANSACTION_IDLE_TIMEOUT_SECONDS = 600;
 
+const LOAN_TYPES = [
+  DisbursementValueType.CanadaLoan,
+  DisbursementValueType.BCLoan,
+];
+
+const GRANTS_TYPES = [
+  DisbursementValueType.CanadaGrant,
+  DisbursementValueType.BCGrant,
+];
+
 /**
  * Service layer for Student Application disbursement schedules.
  * Assumptions and concepts:
@@ -470,14 +480,16 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
         (disbursementSchedule) => disbursementSchedule.disbursementValues,
       )
       .forEach((disbursementValue) => {
+        // For grants this is the value to be considered as paid.
+        let awardValue = +disbursementValue.valueAmount;
+        if (LOAN_TYPES.includes(disbursementValue.valueType)) {
+          // Only for loans, when the award was already sent (disbursed) there will be
+          // no rollback for this award so the real amount paid should be the combination
+          // of the award and the overaward subtracted.
+          awardValue += +disbursementValue.overawardAmountSubtracted;
+        }
         totalPerValueCode[disbursementValue.valueCode] =
-          (totalPerValueCode[disbursementValue.valueCode] ?? 0) +
-          // When the award was already sent (disbursed) there will be no rollback for this award so
-          // the real amount paid should be the combination of all the three values below
-          // that results in the real award value calculated for the assessment/reassessment.
-          +disbursementValue.valueAmount +
-          +disbursementValue.disbursedAmountSubtracted +
-          +disbursementValue.overawardAmountSubtracted;
+          (totalPerValueCode[disbursementValue.valueCode] ?? 0) + awardValue;
       });
     return totalPerValueCode;
   }
@@ -498,10 +510,10 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
     disbursementSchedules: DisbursementSchedule[],
     totalAlreadyDisbursedValues: Record<string, number>,
   ): Promise<void> {
-    const grantsAwards = this.getAwardsByAwardType(disbursementSchedules, [
-      DisbursementValueType.CanadaGrant,
-      DisbursementValueType.BCGrant,
-    ]);
+    const grantsAwards = this.getAwardsByAwardType(
+      disbursementSchedules,
+      GRANTS_TYPES,
+    );
     const distinctValueCodes = this.getDistinctValueCodes(grantsAwards);
     for (const valueCode of distinctValueCodes) {
       // Checks if the grant is present in multiple disbursements.
@@ -557,10 +569,10 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
     const disbursementOverawardRepo = entityManager.getRepository(
       DisbursementOveraward,
     );
-    const loanAwards = this.getAwardsByAwardType(disbursementSchedules, [
-      DisbursementValueType.CanadaLoan,
-      DisbursementValueType.BCLoan,
-    ]);
+    const loanAwards = this.getAwardsByAwardType(
+      disbursementSchedules,
+      LOAN_TYPES,
+    );
     const distinctValueCodes = this.getDistinctValueCodes(loanAwards);
     for (const valueCode of distinctValueCodes) {
       // Checks if the loan is present in multiple disbursements.
