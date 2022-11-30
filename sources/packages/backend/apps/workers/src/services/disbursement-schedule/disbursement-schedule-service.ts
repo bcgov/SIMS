@@ -39,29 +39,6 @@ import { DisbursementOverawardService } from "..";
 // was not executed due to a possible catastrophic failure.
 //const TRANSACTION_IDLE_TIMEOUT_SECONDS = 600;
 
-/**
- * Service layer for Student Application disbursement schedules.
- * Assumptions and concepts:
- * - sims.disbursement_overawards can also be referred as overaward balance table or overaward history table.
- * - One assessment/reassessment will have one or two dates to be disbursed, a.k.a. disbursement schedule.
- * - Awards are the loans/grants associated with one disbursement schedule (e.g. CSLF, CSPT, BCSL).
- * - The same award can be present in one or two schedules.
- * - A student debt can be a value already received by the student for the same application or prior application.
- *     - Values already paid(sent/disbursed): sum of all the awards already disbursed for that application number grouped by its code value (e.g. CSLF, CSPT, BCSL).
- *     - Overaward balance: value from a prior application that must be deducted from the awards, if possible.
- *     - During a reassessment, the new award calculated will be deducted from all the values already paid for that particular
- * application. If any award is still to be received, the process will check for possible overaward balance to be deducted.
- * - If there is a student debt, the priority is to deduct the value as much as possible from the sooner disbursement schedule.
- * This means that, in case there are two disbursements for the same award, the process will try to deduct as much as possible
- * from the first disbursement.
- * - All values once paid(sent/disbursed) for any application associated with an application number (independent of the status)
- * must be considered as paid.
- * - Upon reassessment, awards in pending state will have their possible overaward deduction rolled back (added back to the overaward balance table).
- * - Upon reassessment, if the previous assessment of the same application caused an overaward, this overaward will be soft deleted from the overaward balance table.
- * - All process are executed in a DB transaction to ensure the schedule values and overaward values are adjusted at the same time.
- * - A DB lock is acquired at the start of the process to avoid two processes to be executed in parallel. Once the first one is executed
- * the second one will be able to detect that the fist one already processed the disbursements.
- */
 @Injectable()
 export class DisbursementScheduleService extends RecordDataModelService<DisbursementSchedule> {
   private readonly assessmentRepo: Repository<StudentAssessment>;
