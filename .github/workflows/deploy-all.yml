@@ -56,8 +56,6 @@ jobs:
       BCeID_WEB_SERVICE_WSDL: ${{ secrets.BCeID_WEB_SERVICE_WSDL }}
       FORMS_URL: ${{ secrets.FORMS_URL }}
       SITE_MINDER_LOGOUT_URL: ${{ secrets.SITE_MINDER_LOGOUT_URL }}
-      RULE_ENGINE_URL: TO_BE_REMOVED
-      FORMS_FLOW_API_URL: TO_BE_REMOVED
       ATBC_LOGIN_ENDPOINT: ${{ secrets.ATBC_LOGIN_ENDPOINT }}
       ATBC_ENDPOINT: ${{ secrets.ATBC_ENDPOINT }}
       SWAGGER_ENABLED: true
@@ -111,6 +109,11 @@ jobs:
         working-directory: "./devops/"
         run: |
           make oc-deploy-web
+      # Deploy Forms
+      - name: Deploy Forms
+        working-directory: "./devops/"
+        run: |
+          make oc-deploy-forms
   deployCamundaDefinitions:
     if: ${{ github.event.inputs.deployCamundaDefinitions == 'true' }}
     name: Deploy BPMNs and DMNs to Camunda

@@ -4,10 +4,12 @@ on:
   workflow_dispatch:
     inputs:
       environment:
+        description: "Environment the formio is deployed."
         required: true
         type: environment
-    formioTag:
+      formioTag:
         description: "Formio tag, please refer https://github.com/formio/formio/tags to deploy the appropriate tag."
+        type: string
         required: true
         default: "v2.5.3"
   workflow_call:
@@ -15,10 +17,9 @@ on:
       environment:
         required: true
         type: string
-    formioTag:
-        description: "Formio tag, please refer https://github.com/formio/formio/tags to deploy the appropriate tag."
+      formioTag:
+        type: string
         required: true
-        default: "v2.5.3"
 
 jobs:
   deploy:
@@ -26,21 +27,40 @@ jobs:
     runs-on: ubuntu-latest
     environment: ${{ github.event.inputs.environment }}
     env:
-       BUILD_ID: ${{ github.event.inputs.formioTag }}
+      SOURCE_REPOSITORY_URL: ${{}}
+      SOURCE_REPOSITORY_REF: ${{}}
+      FORMIO_SOURCE_REPO_URL: ${{}}
+      FORMIO_SOURCE_REPO_TAG: ${{ github.event.inputs.formioTag }}
+      FORMS_NAME: ${{}}
+      BUILD_ID: ${{ github.event.inputs.buildId }}
+      NAMESPACE: ${{ secrets.OPENSHIFT_ENV_NAMESPACE }}
+      BUILD_REF: ${{ github.event.inputs.buildRef }}
+      HOST_PREFIX: ${{ secrets.HOST_PREFIX }}
+      BUILD_NAMESPACE: 0c27fb-tools
     steps:
-      - name: Print env variables
+      - name: Print env
         run: |
-          echo ZEEBE_ADDRESS: $ZEEBE_ADDRESS
-          echo RESOURCES_FOLDER: $RESOURCES_FOLDER
+          echo BUILD ID: $BUILD_ID
+          echo BUILD NAMESPACE: $BUILD_NAMESPACE
+          echo NAMESPACE: $NAMESPACE
+          echo BRANCH: $BUILD_REF
+          echo HOST_PREFIX: $HOST_PREFIX
+      # Checkout the PR branch
       - name: Checkout Target Branch
-        uses: actions/checkout@v3
-      - name: Setup Nodejs
-        uses: actions/setup-node@v3
-        with:
-          node-version: "16.x"
-      - name: Downloading packages
-        working-directory: "./sources/packages/workflow"
-        run: npm ci
-      - name: Executing deployment
-        working-directory: "./sources/packages/workflow"
-        run: npm run deploy
+        uses: actions/checkout@v1
+      # Log in to OpenShift.
+      # Note: The secrets needed to log in are NOT available if the PR comes from a FORK.
+      # PR's must originate from a branch off the original repo or else all openshift `oc` commands will fail.
+      - name: Log in to OpenShift
+        run: |
+          oc login --token=${{ secrets.SA_TOKEN }} --server=https://api.silver.devops.gov.bc.ca:6443
+      # Build Forms
+      - name: Build Forms
+        working-directory: "./devops/"
+        run: |
+          make oc-build-forms
+      # Deploy Forms
+      - name: Deploy Forms
+        working-directory: "./devops/"
+        run: |
+          make oc-deploy-forms

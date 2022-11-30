@@ -42,8 +42,6 @@ objects:
                   value: ${KEYCLOAK_AUTH_URL}
                 - name: BCeID_WEB_SERVICE_WSDL
                   value: ${BCeID_WEB_SERVICE_WSDL}
-                - name: RULE_ENGINE_URL
-                  value: ${RULE_ENGINE_URL}
                 - name: FORMS_URL
                   value: ${FORMS_URL}
                 - name: NODE_ENV
@@ -109,8 +107,6 @@ objects:
                       name: ${FORMS_SECRET_NAME}
                 - name: SITE_MINDER_LOGOUT_URL
                   value: ${SITE_MINDER_LOGOUT_URL}
-                - name: FORMS_FLOW_API_URL
-                  value: ${FORMS_FLOW_API_URL}
                 - name: SIMS_API_CLIENT_ID
                   valueFrom:
                     secretKeyRef:
@@ -397,8 +393,6 @@ parameters:
     required: true
   - name: BCeID_WEB_SERVICE_WSDL
     required: true
-  - name: RULE_ENGINE_URL
-    required: true
   - name: FORMS_URL
     required: true
   - name: DATABASE_NAME_KEY
@@ -426,8 +420,6 @@ parameters:
   - name: FORMS_SA_PASSWORD_NAME_KEY
     value: FORMIO_ROOT_PASSWORD
   - name: SITE_MINDER_LOGOUT_URL
-    require: true
-  - name: FORMS_FLOW_API_URL
     require: true
   - name: SIMS_API_CLIENT_ID_NAME_KEY
     value: sims-api-client-id
