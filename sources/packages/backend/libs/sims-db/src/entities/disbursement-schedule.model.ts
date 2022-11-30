@@ -152,7 +152,7 @@ export class DisbursementSchedule extends RecordDataModel {
    * Indicates if the money amount information was already sent to be paid to the student.
    */
   @Column({
-    name: "disbursement_schedule_status",
+    name: "disbursement_schedule_status_1",
     type: "enum",
     enum: DisbursementScheduleStatus,
     enumName: "DisbursementScheduleStatus",
