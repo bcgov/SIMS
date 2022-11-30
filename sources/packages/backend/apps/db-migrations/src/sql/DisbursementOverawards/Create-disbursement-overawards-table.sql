@@ -6,9 +6,9 @@ CREATE TABLE IF NOT EXISTS sims.disbursement_overawards(
   overaward_value NUMERIC(8, 2) NOT NULL,
   disbursement_value_code VARCHAR(10) NOT NULL,
   origin_type sims.disbursement_overaward_origin_types NOT NULL,
+  deleted_at TIMESTAMP WITH TIME ZONE,
   created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
-  deleted_at TIMESTAMP WITH TIME ZONE,
   creator INT NULL DEFAULT NULL REFERENCES sims.users(id) ON DELETE
   SET
     NULL,
@@ -33,6 +33,8 @@ COMMENT ON COLUMN sims.disbursement_overawards.overaward_value IS 'Overaward val
 COMMENT ON COLUMN sims.disbursement_overawards.disbursement_value_code IS 'Value code related to the overaward_value, for instance, CSLF, CSPT, BCSL.';
 
 COMMENT ON COLUMN sims.disbursement_overawards.origin_type IS 'Origin of the record.';
+
+COMMENT ON COLUMN sims.disbursement_overawards.deleted_at IS 'When set indicates that the record is considered deleted.';
 
 COMMENT ON COLUMN sims.disbursement_overawards.created_at IS 'Record creation timestamp';
 
