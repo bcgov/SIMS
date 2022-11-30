@@ -1,24 +1,18 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 import { getSQLFileData } from "../utilities/sqlLoader";
 
-export class CreateDisbursementOverawardsTable1669696847691
+export class AddDisbursementValuesOverawardColumns1669779883143
   implements MigrationInterface
 {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      getSQLFileData(
-        "Create-disbursement-overawards-table.sql",
-        "DisbursementOverawards",
-      ),
+      getSQLFileData("Add-overaward-cols.sql", "DisbursementValues"),
     );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      getSQLFileData(
-        "Drop-disbursement-overawards-table.sql",
-        "DisbursementOverawards",
-      ),
+      getSQLFileData("Drop-overaward-cols.sql", "DisbursementValues"),
     );
   }
 }

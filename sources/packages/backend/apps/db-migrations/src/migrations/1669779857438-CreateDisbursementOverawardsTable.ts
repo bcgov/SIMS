@@ -1,14 +1,14 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 import { getSQLFileData } from "../utilities/sqlLoader";
 
-export class AddDisbursementScheduleStatusColumn1669696897007
+export class CreateDisbursementOverawardsTable1669779857438
   implements MigrationInterface
 {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
       getSQLFileData(
-        "Add-disbursement-schedule-status-col.sql",
-        "DisbursementSchedules",
+        "Create-disbursement-overawards-table.sql",
+        "DisbursementOverawards",
       ),
     );
   }
@@ -16,8 +16,8 @@ export class AddDisbursementScheduleStatusColumn1669696897007
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
       getSQLFileData(
-        "Drop-disbursement-schedule-status-col.sql",
-        "DisbursementSchedules",
+        "Drop-disbursement-overawards-table.sql",
+        "DisbursementOverawards",
       ),
     );
   }
