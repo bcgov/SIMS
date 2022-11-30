@@ -247,19 +247,6 @@ export class InstitutionLocationService extends RecordDataModelService<Instituti
     locationId?: number,
     institutionId?: number,
   ): Promise<boolean> {
-    // const result = await this.repo.findOne({
-    //   select: {
-    //     id: true,
-    //   },
-    //   where: {
-    //     institution: {
-    //       id: institutionId,
-    //     },
-    //     institutionCode: locationCode,
-    //   },
-    // });
-    // return !!result?.id;
-
     const institutionIdQueryBuilder = await this.repo
       .createQueryBuilder("sublocation")
       .select("sublocation.institution.id")

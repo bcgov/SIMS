@@ -75,15 +75,10 @@ export class InstitutionService {
       | InstitutionLocationPrimaryContactAPIInDTO
       | InstitutionLocationAPIInDTO,
   ): Promise<void> {
-    try {
-      await ApiClient.InstitutionLocation.updateInstitutionLocation(
-        locationId,
-        institutionLocation,
-      );
-    } catch (error: unknown) {
-      console.log("error", error);
-      throw error;
-    }
+    await ApiClient.InstitutionLocation.updateInstitutionLocation(
+      locationId,
+      institutionLocation,
+    );
   }
 
   async getInstitutionLocation(
