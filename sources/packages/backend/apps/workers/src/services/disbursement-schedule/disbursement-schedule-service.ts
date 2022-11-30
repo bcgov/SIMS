@@ -161,7 +161,7 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
     const assessment = await studentAssessmentRepo.findOne({
       select: {
         id: true,
-        updatedAt: true,
+        //updatedAt: true,
         triggerType: true,
         application: {
           id: true,
@@ -401,7 +401,8 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
             overawardValue: pendingDisbursementValue.overawardAmountSubtracted,
             originType: DisbursementOverawardOriginType.PendingAwardCancelled,
             //creator: auditUser,
-          } as DisbursementOveraward);
+            //} as DisbursementOveraward);
+          });
         }
       }
     }
@@ -447,12 +448,13 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
       .forEach((disbursementValue) => {
         totalPerValueCode[disbursementValue.valueCode] =
           (totalPerValueCode[disbursementValue.valueCode] ?? 0) +
-          // When the award was already sent (disbursed) there will be no rollback for this award so
-          // the real amount paid should be the combination of all the three values below
-          // that results in the real award value calculated for the assessment/reassessment.
-          +disbursementValue.valueAmount +
-          +disbursementValue.disbursedAmountSubtracted +
-          +disbursementValue.overawardAmountSubtracted;
+          +disbursementValue.valueAmount;
+        // When the award was already sent (disbursed) there will be no rollback for this award so
+        // the real amount paid should be the combination of all the three values below
+        // that results in the real award value calculated for the assessment/reassessment.
+        // +disbursementValue.valueAmount +
+        // +disbursementValue.disbursedAmountSubtracted +
+        // +disbursementValue.overawardAmountSubtracted;
       });
     return totalPerValueCode;
   }
@@ -562,7 +564,8 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
           overawardValue: alreadyDisbursedRemainingStudentDebit.toString(),
           originType: DisbursementOverawardOriginType.ReassessmentOveraward,
           //creator: auditUser,
-        } as DisbursementOveraward);
+          //} as DisbursementOveraward);
+        });
         return;
       }
       // Total owed by the student due to some previous overaward balance.
@@ -574,23 +577,36 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
       );
       const overawardsAwardsToInsert = loans
         .filter((loan) => +loan.disbursementValue.overawardAmountSubtracted)
-        .map(
-          (loan) =>
-            ({
-              // If there was any overaward generated, subtract it from the overaward balance.
-              student: { id: studentId } as Student,
-              studentAssessment: { id: assessmentId } as StudentAssessment,
-              disbursementSchedule: {
-                id: loan.disbursementScheduleId,
-              } as DisbursementSchedule,
-              disbursementValueCode: valueCode,
-              overawardValue: (
-                +loan.disbursementValue.overawardAmountSubtracted * -1
-              ).toString(),
-              originType: DisbursementOverawardOriginType.AwardValueAdjusted,
-              //creator: auditUser,
-            } as DisbursementOveraward),
-        );
+        .map((loan) => ({
+          // If there was any overaward generated, subtract it from the overaward balance.
+          student: { id: studentId } as Student,
+          studentAssessment: { id: assessmentId } as StudentAssessment,
+          disbursementSchedule: {
+            id: loan.disbursementScheduleId,
+          } as DisbursementSchedule,
+          disbursementValueCode: valueCode,
+          overawardValue: (
+            +loan.disbursementValue.overawardAmountSubtracted * -1
+          ).toString(),
+          originType: DisbursementOverawardOriginType.AwardValueAdjusted,
+        }));
+      // .map(
+      //   (loan) =>
+      //     ({
+      //       // If there was any overaward generated, subtract it from the overaward balance.
+      //       student: { id: studentId } as Student,
+      //       studentAssessment: { id: assessmentId } as StudentAssessment,
+      //       disbursementSchedule: {
+      //         id: loan.disbursementScheduleId,
+      //       } as DisbursementSchedule,
+      //       disbursementValueCode: valueCode,
+      //       overawardValue: (
+      //         +loan.disbursementValue.overawardAmountSubtracted * -1
+      //       ).toString(),
+      //       originType: DisbursementOverawardOriginType.AwardValueAdjusted,
+      //       //creator: auditUser,
+      //     } as DisbursementOveraward),
+      // );
       await disbursementOverawardRepo.insert(overawardsAwardsToInsert);
     }
   }
