@@ -20,7 +20,6 @@ import {
   DisbursementOverawardOriginType,
   Student,
   Application,
-  configureIdleTransactionSessionTimeout,
 } from "@sims/sims-db";
 import {
   DisbursementSaveModel,
@@ -38,7 +37,7 @@ import { DisbursementOverawardService } from "..";
 
 // Timeout to handle the worst-case scenario where the commit/rollback
 // was not executed due to a possible catastrophic failure.
-const TRANSACTION_IDLE_TIMEOUT_SECONDS = 600;
+//const TRANSACTION_IDLE_TIMEOUT_SECONDS = 600;
 
 /**
  * Service layer for Student Application disbursement schedules.
@@ -86,10 +85,10 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
   ): Promise<DisbursementSchedule[]> {
     //const auditUser = await this.systemUsersService.systemUser();
     return this.dataSource.transaction(async (transactionEntityManager) => {
-      await configureIdleTransactionSessionTimeout(
-        transactionEntityManager.queryRunner,
-        TRANSACTION_IDLE_TIMEOUT_SECONDS,
-      );
+      // await configureIdleTransactionSessionTimeout(
+      //   transactionEntityManager.queryRunner,
+      //   TRANSACTION_IDLE_TIMEOUT_SECONDS,
+      // );
       // Gets the assessment and lock the record. Only the record will be locked and
       // it will be locked only to perform updates.
       const assessment = await this.getStudentAssessment(
@@ -177,11 +176,11 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
     const studentAssessmentRepo =
       entityManager.getRepository(StudentAssessment);
     // Lock the assessment record for update.
-    await studentAssessmentRepo.findOne({
-      select: { id: true },
-      where: { id: assessmentId },
-      lock: { mode: "pessimistic_write" },
-    });
+    // await studentAssessmentRepo.findOne({
+    //   select: { id: true },
+    //   where: { id: assessmentId },
+    //   lock: { mode: "pessimistic_write" },
+    // });
     const assessment = await studentAssessmentRepo.findOne({
       select: {
         id: true,
