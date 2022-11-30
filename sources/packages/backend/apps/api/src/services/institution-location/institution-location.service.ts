@@ -238,8 +238,9 @@ export class InstitutionLocationService extends RecordDataModelService<Instituti
 
   /**
    * Check if location code is already registered for the institution.
-   * @param institutionId institution id.
    * @param locationCode location code.
+   * @param locationId location id in case it is an update of the location.
+   * @param institutionId institution id in case it is a new location.
    * @returns true in case there is already a location code for the institution.
    */
   async hasLocationCodeForInstitution(
