@@ -45,8 +45,8 @@ export class DisbursementOveraward extends RecordDataModel {
   })
   studentAssessment?: StudentAssessment;
   /**
-   * Related disbursement schedule. When not present, it represents a manual entry
-   * or an overaward at the disbursement level, not at the schedule level.
+   * Related disbursement schedule. When not present, it represents a manual entry or an
+   * overaward at the assessment level, not at the disbursement schedule level (award).
    */
   @ManyToOne(() => DisbursementSchedule, {
     eager: false,

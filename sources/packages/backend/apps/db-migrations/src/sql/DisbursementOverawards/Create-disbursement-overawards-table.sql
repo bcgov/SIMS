@@ -26,7 +26,7 @@ COMMENT ON COLUMN sims.disbursement_overawards.student_id IS 'Student related to
 
 COMMENT ON COLUMN sims.disbursement_overawards.student_assessment_id IS 'Related the student assessment. When not present, it represents a manual entry.';
 
-COMMENT ON COLUMN sims.disbursement_overawards.disbursement_schedule_id IS 'Related disbursement schedule. When not present, it represents a manual entry or an overaward at the disbursement level, not at the schedule level.';
+COMMENT ON COLUMN sims.disbursement_overawards.disbursement_schedule_id IS 'Related disbursement schedule. When not present, it represents a manual entry or an overaward at the assessment level, not at the disbursement schedule level (award).';
 
 COMMENT ON COLUMN sims.disbursement_overawards.overaward_value IS 'Overaward value (a positive value indicates the amount the student owes).';
 

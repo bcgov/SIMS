@@ -26,7 +26,7 @@ import {
 } from "@sims/services";
 import { LoggerModule } from "@sims/utilities/logger";
 import { ConfigModule } from "@sims/utilities/config";
-import { SystemUserModule } from "@sims/services/system-users/system-users.module";
+import { SystemUserModule } from "@sims/services/system-users";
 
 @Module({
   imports: [

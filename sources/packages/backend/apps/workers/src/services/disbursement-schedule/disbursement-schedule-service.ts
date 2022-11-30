@@ -34,7 +34,7 @@ import {
 } from "../../constants";
 import { QueryDeepPartialEntity } from "typeorm/query-builder/QueryPartialEntity";
 import { DisbursementOverawardService } from "..";
-import { SystemUsersService } from "@sims/services/system-users/system-users.service";
+import { SystemUsersService } from "@sims/services/system-users";
 
 // Timeout to handle the worst-case scenario where the commit/rollback
 // was not executed due to a possible catastrophic failure.

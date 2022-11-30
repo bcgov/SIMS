@@ -1,5 +1,5 @@
 /**
- * Origin of the overword added to the student account.
+ * Origin of the overaward added to the student account.
  */
 export enum DisbursementOverawardOriginType {
   /**
@@ -12,7 +12,7 @@ export enum DisbursementOverawardOriginType {
    */
   AwardValueAdjusted = "Award value adjusted",
   /**
-   * An award that included an overaward was cancelled and
+   * An pending award that included an overaward was cancelled and
    * the overaward value must to be added back to the overaward balance.
    */
   PendingAwardCancelled = "Pending award cancelled",

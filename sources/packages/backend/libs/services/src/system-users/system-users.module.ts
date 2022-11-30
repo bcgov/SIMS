@@ -1,7 +1,7 @@
 import { Global, Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { DBEntities } from "@sims/sims-db";
-import { SystemUsersService } from "./system-users.service";
+import { SystemUsersService } from ".";
 
 @Global()
 @Module({
