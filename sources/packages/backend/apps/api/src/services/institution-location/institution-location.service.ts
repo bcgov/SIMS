@@ -69,9 +69,8 @@ export class InstitutionLocationService extends RecordDataModelService<Instituti
       institution: institution,
       institutionCode: data.institutionCode,
       id: locationId ?? undefined,
+      creator: auditUser,
     } as InstitutionLocation;
-
-    saveLocation.creator = auditUser;
 
     return this.repo.save(saveLocation);
   }
