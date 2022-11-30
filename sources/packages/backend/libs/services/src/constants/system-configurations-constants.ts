@@ -31,3 +31,5 @@ export const QUEUE_RETRY_DEFAULT_CONFIG = {
    */
   backoff: QUEUE_RETRY_DELAY,
 };
+
+export const IER_SCHEDULER_JOB_ID = "IER_SCHEDULER_JOB_ID";

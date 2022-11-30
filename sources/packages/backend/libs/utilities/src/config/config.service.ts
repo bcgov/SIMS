@@ -14,6 +14,7 @@ import {
   DatabaseConfiguration,
   RedisConfiguration,
   UserPasswordCredential,
+  QueueSchedulerCrons,
 } from "./config.models";
 
 @Injectable()
@@ -234,6 +235,14 @@ export class ConfigService {
     return this.getCachedConfig("queuePrefixConfig", process.env.QUEUE_PREFIX);
   }
 
+  /**
+   * Queue scheduler crons.
+   */
+  get queueSchedulerCrons(): QueueSchedulerCrons {
+    return this.getCachedConfig("queueSchedulerCronsConfig", {
+      ierCron: process.env.IER_CRON || "0 9 * * *",
+    });
+  }
   /**
    * Avoids reading the env configuration every time and creates
    * a property to store the value and keep reading from it.
