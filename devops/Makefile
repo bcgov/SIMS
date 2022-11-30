@@ -420,8 +420,8 @@ deploy-forms:
 	test -n "$(NAMESPACE)"
 	test -n "$(BUILD_NAMESPACE)"
 	@echo "+\n++ Deploying forms-flow-forms with tag: $(BUILD_TAG)\n+"
-	@oc -n $(NAMESPACE) process -f $(FORMS_DEPLOY_TEMPLATE_PATH) --param-file=$(FORMS_PARAM_PATH) -p NAME=$(FORMS_NAME) -p FORMS_URL=$(FORMS_URL) -p TOOLS_NAMESPACE=$(BUILD_NAMESPACE) -p IMAGE_STREAM_TAG="$(BUILD_TAG)" | oc -n $(NAMESPACE) apply -f -
-	$(call rollout_and_wait,dc/$(FORMS_NAME))
+	@oc -n $(NAMESPACE) process -f $(FORMS_DEPLOY_TEMPLATE_PATH) --param-file=$(FORMS_PARAM_PATH) -p NAME=$(FORMS_NAME) -p FORMS_URL=$(FORMS_URL) -p TOOLS_NAMESPACE=$(BUILD_NAMESPACE) -p IMAGE_STREAM_TAG="$(BUILD_TAG)" -p HOST_PREFIX="$(HOST_PREFIX)" | oc -n $(NAMESPACE) apply -f -
+	$(call rollout_and_wait,dc/$(HOST_PREFIX)$(FORMS_NAME))
 
 # Create database backup structure (build/configmap/deploy)
 

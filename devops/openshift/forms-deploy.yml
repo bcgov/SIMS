@@ -21,12 +21,12 @@ objects:
       annotations:
       creationTimestamp: null
       labels:
-        app: ${NAME}
-      name: ${NAME}
+        app: ${HOST_PREFIX}${NAME}
+      name: ${HOST_PREFIX}${NAME}
     spec:
       replicas: 2
       selector:
-        app: ${NAME}
+        app: ${HOST_PREFIX}${NAME}
       strategy:
         type: Rolling
         rollingParams:
@@ -39,7 +39,7 @@ objects:
         metadata:
           creationTimestamp: null
           labels:
-            app: ${NAME}
+            app: ${HOST_PREFIX}${NAME}
         spec:
           containers:
             - env:
@@ -66,7 +66,7 @@ objects:
                 - name: FORMIO_DOMAIN
                   value: ${FORMS_URL}
               image: ${IMAGE_REGISTRY}/${TOOLS_NAMESPACE}/${NAME}:${IMAGE_STREAM_TAG}
-              name: ${NAME}
+              name: ${HOST_PREFIX}${NAME}
               ports:
                 - containerPort: 3001
               resources:
@@ -110,7 +110,7 @@ objects:
         - imageChangeParams:
             automatic: true
             containerNames:
-              - ${NAME}
+              - ${HOST_PREFIX}${NAME}
             from:
               kind: ImageStreamTag
               namespace: "${TOOLS_NAMESPACE}"
@@ -124,28 +124,28 @@ objects:
       annotations:
       creationTimestamp: null
       labels:
-        app: ${NAME}
-      name: ${NAME}
+        app: ${HOST_PREFIX}${NAME}
+      name: ${HOST_PREFIX}${NAME}
     spec:
       ports:
         - name: "3001"
           port: 3001
           targetPort: 3001
       selector:
-        app: ${NAME}
+        app: ${HOST_PREFIX}${NAME}
     status:
       loadBalancer: {}
   - kind: Route
     apiVersion: route.openshift.io/v1
     metadata:
       labels:
-        app: ${NAME}
-      name: ${NAME}
+        app: ${HOST_PREFIX}${NAME}
+      name: ${HOST_PREFIX}${NAME}
     spec:
       host: ${FORMS_URL}
       to:
         kind: Service
-        name: ${NAME}
+        name: ${HOST_PREFIX}${NAME}
         weight: 100
       port:
         targetPort: "3001"
@@ -182,6 +182,9 @@ parameters:
     description: Secrets are referred from this.
     required: true
     value: forms
+  - name: HOST_PREFIX
+    description: Host in which the container is deployed.
+    required: true
   - name: FORMS_URL
     displayName: FORMS_URL
     required: true
