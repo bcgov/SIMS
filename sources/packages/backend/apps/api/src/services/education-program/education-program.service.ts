@@ -141,7 +141,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
       program.nocCode = educationProgram.nocCode;
       // Save SABC code as null in case of not answered in the form.
       // This way it can be saved when multiple programs does not have a SABC code.
-      program.sabcCode = educationProgram.sabcCode?.trim() || null;
+      program.sabcCode = program.sabcCode?.trim() || null;
       program.regulatoryBody = educationProgram.regulatoryBody;
       program.deliveredOnSite =
         educationProgram.programDeliveryTypes.deliveredOnSite ?? false;
