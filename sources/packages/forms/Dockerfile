@@ -16,7 +16,7 @@ ARG FORMIO_SOURCE_REPO_TAG
 # (note: using pinned versions to ensure immutable build environment)
 RUN apk update && \
   apk upgrade && \
-  apk add make=4.2.1-r2 && \
+  apk add make=4.3-r0 && \
   apk add g++=8.3.0-r0 &&\
   apk add git
 
