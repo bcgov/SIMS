@@ -30,6 +30,7 @@ jobs:
       BUILD_ID: ${{ github.event.number }}
       BUILD_NAMESPACE: 0c27fb-tools
       BUILD_REF: ${{ github.base_ref }}
+      HOST_PREFIX: ${{ secrets.HOST_PREFIX }}
     steps:
       # Checkout the PR branch
       - name: Print env

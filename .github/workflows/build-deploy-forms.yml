@@ -14,7 +14,7 @@ on:
         default: "v2.5.3"
 
 jobs:
-  deploy:
+  build_deploy:
     name: Build and Deploy Formio Server.
     runs-on: ubuntu-latest
     environment: ${{ github.event.inputs.environment }}

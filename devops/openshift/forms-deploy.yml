@@ -47,22 +47,22 @@ objects:
                   valueFrom:
                     secretKeyRef:
                       key: DEBUG
-                      name: ${FORMIO_SECRET}
+                      name: ${NAME}
                 - name: NODE_CONFIG
                   valueFrom:
                     secretKeyRef:
                       key: NODE_CONFIG
-                      name: ${FORMIO_SECRET}
+                      name: ${NAME}
                 - name: ROOT_EMAIL
                   valueFrom:
                     secretKeyRef:
                       key: FORMIO_ROOT_EMAIL
-                      name: ${FORMIO_SECRET}
+                      name: ${NAME}
                 - name: ROOT_PASSWORD
                   valueFrom:
                     secretKeyRef:
                       key: FORMIO_ROOT_PASSWORD
-                      name: ${FORMIO_SECRET}
+                      name: ${NAME}
                 - name: FORMIO_DOMAIN
                   value: ${FORMS_URL}
               image: ${IMAGE_REGISTRY}/${TOOLS_NAMESPACE}/${NAME}:${IMAGE_STREAM_TAG}
@@ -178,10 +178,6 @@ parameters:
     description: FORMIO_ROOT_PASSWORD
     generate: expression
     from: "[a-zA-Z0-9]{16}"
-  - name: FORMIO_SECRET
-    description: Secrets are referred from this.
-    required: true
-    value: forms
   - name: HOST_PREFIX
     description: Host in which the container is deployed.
     required: true
