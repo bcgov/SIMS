@@ -4,7 +4,7 @@
 
 # Use Node image, maintained by Docker:
 # hub.docker.com/r/_/node/
-FROM artifacts.developer.gov.bc.ca/docker-remote/node:alpine3.16
+FROM artifacts.developer.gov.bc.ca/docker-remote/node:19.2-alpine
 
 # set working directory
 WORKDIR /formio
@@ -16,8 +16,8 @@ ARG FORMIO_SOURCE_REPO_TAG
 # (note: using pinned versions to ensure immutable build environment)
 RUN apk update && \
   apk upgrade && \
-  apk add make=4.3-r0 && \
-  apk add g++=8.3.0-r0 &&\
+  apk add make && \
+  apk add g++ &&\
   apk add git
 
 # Clone code
