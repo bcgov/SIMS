@@ -16,9 +16,7 @@ N.B: ROOT means repository root directory
     - [OpenShift Template files](#openshift-template-files)
       - [Database Backups](#database-backups)
     - [OpenShift Setup](#openshift-setup)
-      - [FORMSFLOWAI Setup](#formsflowai-setup)
-        - [New Environment Setup](#new-environment-setup)
-        - [Upgrade a New Version](#upgrade-a-new-version)
+      - [FORMS Setup](#forms-setup)
   - [CI-CD Pipeline And Github Actions](#ci-cd-pipeline-and-github-actions)
 
 ## Prerequisites
@@ -156,7 +154,7 @@ Now we can perform following steps to setup any namespace.
 
 - Create Mongo DB: `make oc-deploy-ha-mongo NAMESPACE=${NAMESPACE}`
 
-- Fetch the MONGODB_URI from the mongo secrets
+- Fetch the MONGODB_URI from the mongo secrets.
 
 - Build the formio server : `make oc-build-forms HOST_PREFIX=${HOST_PREFIX}`
 
