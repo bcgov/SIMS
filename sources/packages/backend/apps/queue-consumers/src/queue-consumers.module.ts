@@ -4,10 +4,7 @@ import { QueueModule } from "@sims/services/queue";
 import { StartApplicationAssessmentProcessor } from "./processors";
 import { WorkflowClientService, ZeebeModule } from "@sims/services";
 import { DatabaseModule } from "@sims/sims-db";
-import {
-  IER12FileService,
-  IER12IntegrationService,
-} from "@sims/integrations/institution-integration/ier-integration";
+import { IER12IntegrationService } from "@sims/integrations/institution-integration/ier-integration";
 import {
   SshService,
   StudentAssessmentService,
@@ -26,7 +23,6 @@ import { IERIntegrationScheduler } from "./processors/schedulers/ier-Integration
     StartApplicationAssessmentProcessor,
     WorkflowClientService,
     IERIntegrationScheduler,
-    IER12FileService,
     IER12IntegrationService,
     StudentAssessmentService,
     SshService,

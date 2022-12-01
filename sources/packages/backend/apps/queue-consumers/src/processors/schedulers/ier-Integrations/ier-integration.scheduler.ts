@@ -15,8 +15,6 @@ import {
   IER12ResultQueueOutDTO,
 } from "./models/ier.model";
 
-// todo: ann check about system worker quueue audit user
-// todo: ann rest the real scenario with guru.
 @Processor(QueueNames.StartIERIntegration)
 export class IERIntegrationScheduler extends BaseScheduler<GeneratedDateQueueIInDTO> {
   cronOptions: Bull.JobOptions = undefined;
@@ -33,7 +31,6 @@ export class IERIntegrationScheduler extends BaseScheduler<GeneratedDateQueueIIn
       ...QUEUE_RETRY_DEFAULT_CONFIG,
       jobId: IER_SCHEDULER_JOB_ID,
       repeat: {
-        // cron: "* * * * *",
         cron: config.queueSchedulerCrons.ierCron,
         tz: PST_TIMEZONE,
       } as CronRepeatOptions,

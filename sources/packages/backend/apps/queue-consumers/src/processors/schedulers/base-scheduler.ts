@@ -22,7 +22,8 @@ export abstract class BaseScheduler<T> implements OnApplicationBootstrap {
    * change in cron option, then a new job is created the old job
    * will be still there in the queue) and delete it and add the
    * new job to the queue.
-   * Note: If there is an old is retrying job, it won't be deleted.
+   * Note: If there is an old retrying job, it won't be deleted,
+   * as "getRepeatableJobs" will not fetch retrying jobs.
    */
   async deleteOldRepeatableJobs(): Promise<void> {
     const getAllRepeatableJobs = await this.schedulerQueue.getRepeatableJobs();
@@ -32,7 +33,6 @@ export abstract class BaseScheduler<T> implements OnApplicationBootstrap {
         job.id === this.cronOptions.jobId &&
         job.cron !== cronRepeatOption.cron
       ) {
-        console.log(job);
         this.schedulerQueue.removeRepeatableByKey(job.key);
       }
     });
