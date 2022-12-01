@@ -30,7 +30,7 @@ import { InstitutionRoutesConst } from "../../constants/routes/RouteConstants";
 
 import { useSnackBar } from "@/composables";
 import { ref } from "vue";
-import { FormIOForm } from "@/types";
+import { FormIOForm, ApiProcessError } from "@/types";
 
 export default {
   props: {
@@ -56,8 +56,12 @@ export default {
           router.push({ name: InstitutionRoutesConst.MANAGE_LOCATIONS });
           store.dispatch("institution/getUserInstitutionLocationDetails");
           snackBar.success("Institution Location created Successfully!");
-        } catch (excp) {
-          snackBar.error("An error happened during the create process.");
+        } catch (error: unknown) {
+          if (error instanceof ApiProcessError) {
+            snackBar.error(error.message);
+          } else {
+            snackBar.error("An error happened during the create process.");
+          }
         } finally {
           processing.value = false;
         }

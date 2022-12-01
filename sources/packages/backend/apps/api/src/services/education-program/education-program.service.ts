@@ -13,7 +13,7 @@ import {
   InstitutionLocation,
   getRawCount,
 } from "@sims/sims-db";
-import { DataSource, In, Repository } from "typeorm";
+import { DataSource, In, Repository, Not, Equal } from "typeorm";
 import {
   SaveEducationProgram,
   EducationProgramsSummary,
@@ -26,7 +26,10 @@ import {
 } from "../../utilities";
 import { CustomNamedError } from "@sims/utilities";
 import { EducationProgramOfferingService } from "../education-program-offering/education-program-offering.service";
-import { EDUCATION_PROGRAM_NOT_FOUND } from "../../constants";
+import {
+  EDUCATION_PROGRAM_NOT_FOUND,
+  DUPLICATE_SABC_CODE,
+} from "../../constants";
 
 @Injectable()
 export class EducationProgramService extends RecordDataModelService<EducationProgram> {
@@ -119,13 +122,26 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
         );
     }
 
+    if (educationProgram.sabcCode) {
+      const isSABCCodeDuplicate = await this.hasExistingProgramWithSameSABCCode(
+        institutionId,
+        educationProgram.sabcCode,
+        programId,
+      );
+      if (isSABCCodeDuplicate) {
+        throw new CustomNamedError("Duplicate SABC code.", DUPLICATE_SABC_CODE);
+      }
+    }
+
     // Assign attributes for update from payload only if existing program has no offering(s).
     if (!hasExistingOffering) {
       program.fieldOfStudyCode = educationProgram.fieldOfStudyCode;
       program.credentialType = educationProgram.credentialType;
       program.cipCode = educationProgram.cipCode;
       program.nocCode = educationProgram.nocCode;
-      program.sabcCode = educationProgram.sabcCode;
+      // Save SABC code as null in case of not answered in the form.
+      // This way it can be saved when multiple programs does not have a SABC code.
+      program.sabcCode = program.sabcCode?.trim() || null;
       program.regulatoryBody = educationProgram.regulatoryBody;
       program.deliveredOnSite =
         educationProgram.programDeliveryTypes.deliveredOnSite ?? false;
@@ -633,5 +649,33 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
         },
       },
     });
+  }
+
+  /**
+   * Check if the given institution has already a program with the given SABC code.
+   * @param institutionId id of the institution to have the programs retrieved.
+   * @param sabcCode SABC code.
+   * @param programId programId in case it is an update. It will be ignored in case of `undefined`.
+   * @returns true in case it has already a SABC code for the institution.
+   */
+  async hasExistingProgramWithSameSABCCode(
+    institutionId: number,
+    sabcCode: string,
+    programId?: number,
+  ): Promise<boolean> {
+    const result = await this.repo.findOne({
+      select: {
+        id: true,
+      },
+      where: {
+        id: programId ? Not(Equal(programId)) : undefined,
+        sabcCode: sabcCode,
+        institution: {
+          id: institutionId,
+        },
+      },
+    });
+
+    return !!result?.id;
   }
 }

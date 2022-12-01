@@ -12,6 +12,8 @@ import {
   InstitutionLocationPrimaryContactModel,
 } from "./institution-location.models";
 import { transformAddressDetails } from "../../utilities";
+import { CustomNamedError } from "@sims/utilities";
+import { DUPLICATE_INSTITUTION_LOCATION_CODE } from "../../constants";
 
 @Injectable()
 export class InstitutionLocationService extends RecordDataModelService<InstitutionLocation> {
@@ -28,17 +30,28 @@ export class InstitutionLocationService extends RecordDataModelService<Instituti
    * belongs.
    * @param data location data.
    * @param auditUserId user who is making the changes.
-   * @param locationId location to be updated.
    * @returns persisted location.
    */
-  async saveLocation(
+  async createLocation(
     institutionId: number,
     data: InstitutionLocationModel,
     auditUserId: number,
-    locationId?: number,
   ): Promise<InstitutionLocation> {
     const auditUser = { id: auditUserId } as User;
     const institution = { id: institutionId };
+
+    const isInstitutionCodeDuplicate = await this.hasLocationCodeForInstitution(
+      data.institutionCode,
+      { institutionId },
+    );
+
+    if (isInstitutionCodeDuplicate) {
+      throw new CustomNamedError(
+        "Duplicate institution location code.",
+        DUPLICATE_INSTITUTION_LOCATION_CODE,
+      );
+    }
+
     const saveLocation: InstitutionLocation = {
       name: data.locationName,
       data: {
@@ -52,14 +65,8 @@ export class InstitutionLocationService extends RecordDataModelService<Instituti
       },
       institution: institution,
       institutionCode: data.institutionCode,
-      id: locationId ?? undefined,
+      creator: auditUser,
     } as InstitutionLocation;
-
-    if (locationId) {
-      saveLocation.modifier = auditUser;
-    } else {
-      saveLocation.creator = auditUser;
-    }
 
     return this.repo.save(saveLocation);
   }
@@ -101,6 +108,18 @@ export class InstitutionLocationService extends RecordDataModelService<Instituti
     locationId: number,
     auditUserId: number,
   ): Promise<InstitutionLocation> {
+    const isInstitutionCodeDuplicate = await this.hasLocationCodeForInstitution(
+      institutionLocationData.institutionCode,
+      { locationId },
+    );
+
+    if (isInstitutionCodeDuplicate) {
+      throw new CustomNamedError(
+        "Duplicate institution location code.",
+        DUPLICATE_INSTITUTION_LOCATION_CODE,
+      );
+    }
+
     const saveLocation: InstitutionLocation = {
       name: institutionLocationData.locationName,
       data: {
@@ -210,6 +229,56 @@ export class InstitutionLocationService extends RecordDataModelService<Instituti
       })
       .getRawMany();
     return found.length === locations.length;
+  }
+
+  /**
+   * Check if location code is already registered for the institution.
+   * @param locationCode location code.
+   * @param options object that should contain:
+   * - `locationId` location id in case it is an update of the location or
+   * - `institutionId` institution id in case it is a new location.
+   * @returns true in case there is already a location code for the institution.
+   */
+  async hasLocationCodeForInstitution(
+    locationCode: string,
+    options: {
+      locationId?: number;
+      institutionId?: number;
+    },
+  ): Promise<boolean> {
+    const queryBuilder = this.repo
+      .createQueryBuilder("location")
+      .select("1")
+      .where("location.institutionCode = :locationCode", { locationCode });
+
+    if (options.locationId) {
+      const institutionIdQueryBuilder = this.repo
+        .createQueryBuilder("subQueryLocation")
+        .select("subQueryLocation.institution.id")
+        .where("subQueryLocation.id = :locationId", {
+          locationId: options.locationId,
+        });
+
+      queryBuilder
+        .andWhere(
+          "location.institution.id = (" +
+            institutionIdQueryBuilder.getQuery() +
+            ")",
+        )
+        .setParameters(institutionIdQueryBuilder.getParameters())
+        .andWhere("location.id != :locationId", {
+          locationId: options.locationId,
+        });
+    } else if (options.institutionId) {
+      queryBuilder.andWhere("location.institution.id = :institutionId", {
+        institutionId: options.institutionId,
+      });
+    } else {
+      throw new Error("At least one optional parameter is required.");
+    }
+    const found = await queryBuilder.getRawOne();
+
+    return !!found;
   }
 
   /**
