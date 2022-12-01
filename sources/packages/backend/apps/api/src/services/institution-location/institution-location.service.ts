@@ -37,15 +37,13 @@ export class InstitutionLocationService extends RecordDataModelService<Instituti
     institutionId: number,
     data: InstitutionLocationModel,
     auditUserId: number,
-    locationId?: number,
   ): Promise<InstitutionLocation> {
     const auditUser = { id: auditUserId } as User;
     const institution = { id: institutionId };
 
     const isInstitutionCodeDuplicate = await this.hasLocationCodeForInstitution(
       data.institutionCode,
-      locationId,
-      institutionId,
+      { institutionId },
     );
 
     if (isInstitutionCodeDuplicate) {
@@ -68,7 +66,6 @@ export class InstitutionLocationService extends RecordDataModelService<Instituti
       },
       institution: institution,
       institutionCode: data.institutionCode,
-      id: locationId ?? undefined,
       creator: auditUser,
     } as InstitutionLocation;
 
@@ -114,7 +111,7 @@ export class InstitutionLocationService extends RecordDataModelService<Instituti
   ): Promise<InstitutionLocation> {
     const isInstitutionCodeDuplicate = await this.hasLocationCodeForInstitution(
       institutionLocationData.institutionCode,
-      locationId,
+      { locationId },
     );
 
     if (isInstitutionCodeDuplicate) {
@@ -238,26 +235,31 @@ export class InstitutionLocationService extends RecordDataModelService<Instituti
   /**
    * Check if location code is already registered for the institution.
    * @param locationCode location code.
-   * @param locationId location id in case it is an update of the location.
-   * @param institutionId institution id in case it is a new location.
+   * @param options object that should contain:
+   * - `locationId` location id in case it is an update of the location or
+   * - `institutionId` institution id in case it is a new location.
    * @returns true in case there is already a location code for the institution.
    */
   async hasLocationCodeForInstitution(
     locationCode: string,
-    locationId?: number,
-    institutionId?: number,
+    options: {
+      locationId?: number;
+      institutionId?: number;
+    },
   ): Promise<boolean> {
-    const institutionIdQueryBuilder = await this.repo
-      .createQueryBuilder("sublocation")
-      .select("sublocation.institution.id")
-      .where("sublocation.id = :locationId", { locationId });
-
     const queryBuilder = this.repo
       .createQueryBuilder("location")
       .select("1")
       .where("location.institutionCode = :locationCode", { locationCode });
 
-    if (locationId) {
+    if (options.locationId) {
+      const institutionIdQueryBuilder = this.repo
+        .createQueryBuilder("subQueryLocation")
+        .select("subQueryLocation.institution.id")
+        .where("subQueryLocation.id = :locationId", {
+          locationId: options.locationId,
+        });
+
       queryBuilder
         .andWhere(
           "location.institution.id = (" +
@@ -265,11 +267,15 @@ export class InstitutionLocationService extends RecordDataModelService<Instituti
             ")",
         )
         .setParameters(institutionIdQueryBuilder.getParameters())
-        .andWhere("location.id != :locationId", { locationId });
-    } else {
+        .andWhere("location.id != :locationId", {
+          locationId: options.locationId,
+        });
+    } else if (options.institutionId) {
       queryBuilder.andWhere("location.institution.id = :institutionId", {
-        institutionId,
+        institutionId: options.institutionId,
       });
+    } else {
+      throw new Error("Options must contain locationId or institutionId.");
     }
     const found = await queryBuilder.getRawOne();
 
