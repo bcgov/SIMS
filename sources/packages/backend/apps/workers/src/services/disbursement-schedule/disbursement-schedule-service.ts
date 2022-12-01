@@ -275,7 +275,7 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
     // Submitted applications are not allowed to have overlaps what makes possible
     // to use the offering start date to order them.
     // !Please note that, when doing local development and using
-    // !BYPASS_APPLICATION_SUBMIT_VALIDATIONS=true the application can be created !with overlaps,
+    // !BYPASS_APPLICATION_SUBMIT_VALIDATIONS=true the application can be created with overlaps,
     // !which is not a problem unless they have the same offering start date.
     const applicationsToRollback = await entityManager
       .getRepository(Application)
@@ -372,7 +372,7 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
     const overawardsToDelete = await disbursementOverawardRepo.find({
       select: { id: true },
       where: {
-        // Only delete overawards not related to awards (disbursement_schedule_is IS NULL).
+        // Only delete overawards not related to awards (disbursement_schedule_id IS NULL).
         // Overawards associated with some award must be rolled back only if the
         // award is still on pending and this is taken care in a separated process.
         disbursementSchedule: {
