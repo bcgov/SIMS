@@ -236,7 +236,7 @@ build-api:
 	test -n "$(BUILD_REF)"
 	test -n "$(BUILD_NAMESPACE)"
 	@echo "+\n++ BUILDING API with tag: $(BUILD_TAG)\n+"
-	@oc -n $(BUILD_NAMESPACE) process -f $(BUILD_TEMPLATE_PATH) -p TAG=$(BUILD_TAG) -p SOURCE_REPOSITORY_REF=$(BUILD_REF) -p BASE_IMAGE_NAME="nodejs-16" -p BASE_IMAGE_TAG="1" -p BASE_IMAGE_REPO="artifacts.developer.gov.bc.ca/redhat-docker-remote/ubi8/" -p SOURCE_CONTEXT_DIR=sources/packages/backend -p DOCKER_FILE_PATH=apps/api/Dockerfile -p NAME=$(API) | oc -n $(BUILD_NAMESPACE) apply -f -
+	@oc -n $(BUILD_NAMESPACE) process -f $(BUILD_TEMPLATE_PATH) -p TAG=$(BUILD_TAG) -p SOURCE_REPOSITORY_REF=$(BUILD_REF) -p BASE_IMAGE_NAME="nodejs-16" -p BASE_IMAGE_TAG="1" -p BASE_IMAGE_REPO="artifacts.developer.gov.bc.ca/redhat-docker-remote/ubi8/" -p SOURCE_CONTEXT_DIR=$(SOURCE_CONTEXT_DIR)backend -p DOCKER_FILE_PATH=apps/api/Dockerfile -p NAME=$(API) | oc -n $(BUILD_NAMESPACE) apply -f -
 	@oc -n $(BUILD_NAMESPACE) start-build bc/$(API) --wait
 
 build-workers:
@@ -245,7 +245,7 @@ build-workers:
 	test -n "$(BUILD_TAG)"
 	test -n "$(WORKERS)"
 	@echo "+\n++ BUILDING WORKERS with tag: $(BUILD_TAG)\n+"
-	@oc -n $(BUILD_NAMESPACE) process -f $(BUILD_TEMPLATE_PATH) -p TAG=$(BUILD_TAG) -p SOURCE_REPOSITORY_REF=$(BUILD_REF) -p BASE_IMAGE_NAME="nodejs-16" -p BASE_IMAGE_TAG="1" -p BASE_IMAGE_REPO="artifacts.developer.gov.bc.ca/redhat-docker-remote/ubi8/" -p SOURCE_CONTEXT_DIR=sources/packages/backend -p DOCKER_FILE_PATH=apps/workers/Dockerfile -p NAME=$(WORKERS) | oc -n $(BUILD_NAMESPACE) apply -f -
+	@oc -n $(BUILD_NAMESPACE) process -f $(BUILD_TEMPLATE_PATH) -p TAG=$(BUILD_TAG) -p SOURCE_REPOSITORY_REF=$(BUILD_REF) -p BASE_IMAGE_NAME="nodejs-16" -p BASE_IMAGE_TAG="1" -p BASE_IMAGE_REPO="artifacts.developer.gov.bc.ca/redhat-docker-remote/ubi8/" -p SOURCE_CONTEXT_DIR=$(SOURCE_CONTEXT_DIR)backend -p DOCKER_FILE_PATH=apps/workers/Dockerfile -p NAME=$(WORKERS) | oc -n $(BUILD_NAMESPACE) apply -f -
 	@oc -n $(BUILD_NAMESPACE) start-build bc/$(WORKERS) --wait
 
 build-queue-consumers:
@@ -254,14 +254,14 @@ build-queue-consumers:
 	test -n "$(BUILD_TAG)"
 	test -n "$(QUEUE_CONSUMERS)"
 	@echo "+\n++ BUILDING QUEUE_CONSUMERS with tag: $(BUILD_TAG)\n+"
-	@oc -n $(BUILD_NAMESPACE) process -f $(BUILD_TEMPLATE_PATH) -p TAG=$(BUILD_TAG) -p SOURCE_REPOSITORY_REF=$(BUILD_REF) -p BASE_IMAGE_NAME="nodejs-16" -p BASE_IMAGE_TAG="1" -p BASE_IMAGE_REPO="artifacts.developer.gov.bc.ca/redhat-docker-remote/ubi8/" -p SOURCE_CONTEXT_DIR=sources/packages/backend -p DOCKER_FILE_PATH=apps/queue-consumers/Dockerfile -p NAME=$(QUEUE_CONSUMERS) | oc -n $(BUILD_NAMESPACE) apply -f -
+	@oc -n $(BUILD_NAMESPACE) process -f $(BUILD_TEMPLATE_PATH) -p TAG=$(BUILD_TAG) -p SOURCE_REPOSITORY_REF=$(BUILD_REF) -p BASE_IMAGE_NAME="nodejs-16" -p BASE_IMAGE_TAG="1" -p BASE_IMAGE_REPO="artifacts.developer.gov.bc.ca/redhat-docker-remote/ubi8/" -p SOURCE_CONTEXT_DIR=$(SOURCE_CONTEXT_DIR)backend -p DOCKER_FILE_PATH=apps/queue-consumers/Dockerfile -p NAME=$(QUEUE_CONSUMERS) | oc -n $(BUILD_NAMESPACE) apply -f -
 	@oc -n $(BUILD_NAMESPACE) start-build bc/$(QUEUE_CONSUMERS) --wait
 
 build-web:
 	test -n "$(BUILD_REF)"
 	test -n "$(BUILD_NAMESPACE)"
 	@echo "+\n++ BUILDING WEB with tag: $(BUILD_TAG)\n+"
-	@oc -n $(BUILD_NAMESPACE) process -f $(BUILD_TEMPLATE_PATH) -p TAG=$(BUILD_TAG) -p SOURCE_REPOSITORY_REF=$(BUILD_REF) -p BASE_IMAGE_NAME="nodejs-16" -p BASE_IMAGE_TAG="1" -p BASE_IMAGE_REPO="artifacts.developer.gov.bc.ca/redhat-docker-remote/ubi8/" -p SOURCE_CONTEXT_DIR=sources/packages/web -p NAME=$(WEB) | oc -n $(BUILD_NAMESPACE) apply -f -
+	@oc -n $(BUILD_NAMESPACE) process -f $(BUILD_TEMPLATE_PATH) -p TAG=$(BUILD_TAG) -p SOURCE_REPOSITORY_REF=$(BUILD_REF) -p BASE_IMAGE_NAME="nodejs-16" -p BASE_IMAGE_TAG="1" -p BASE_IMAGE_REPO="artifacts.developer.gov.bc.ca/redhat-docker-remote/ubi8/" -p SOURCE_CONTEXT_DIR=$(SOURCE_CONTEXT_DIR)web -p NAME=$(WEB) | oc -n $(BUILD_NAMESPACE) apply -f -
 	@oc -n $(BUILD_NAMESPACE) start-build bc/$(WEB) --wait
 
 init-patroni:
@@ -276,7 +276,7 @@ deploy-patroni:
 	@oc -n $(NAMESPACE) process -f openshift/database/patroni-deploy.yml -p BUILD_NAMESPACE=$(BUILD_NAMESPACE) -p IMAGE_STREAM_TAG=patroni:12-latest | oc -n $(NAMESPACE) apply -f -
 
 deploy-redis:
-	@oc -n $(NAMESPACE) process -f openshift/redis-ha-deploy.yml -p IMAGE_NAME="redis" -p IMAGE_TAG="6.2.7-alpine" -p IMAGE_REGISTRY="artifacts.developer.gov.bc.ca/docker-remote" | oc -n $(NAMESPACE) apply -f -
+	@oc -n $(NAMESPACE) process -f openshift/database/redis-ha-deploy.yml -p IMAGE_NAME="redis" -p IMAGE_TAG="6.2.7-alpine" -p IMAGE_REGISTRY="artifacts.developer.gov.bc.ca/docker-remote" | oc -n $(NAMESPACE) apply -f -
 
 # Command to initialize the redis cluster.
 # Make sure that all the redis pods are up and running before initializing the cluster.
@@ -398,6 +398,10 @@ create-qa-api-db:
 	@echo "+\n++ Creating DB ($(QA_DB_NAME)) in $(NAMESPACE) patroni db cluster"
 	@oc -n $(NAMESPACE) process -f openshift/database/createdb-job.yml -p DB_NAME=$(QA_DB_NAME) -p BUILD_NAMESPACE=$(BUILD_NAMESPACE) -p JOB_NAME=qa-api-db | oc -n $(NAMESPACE) apply -f -
 
+deploy-ha-mongo:
+	test -n "$(NAMESPACE)"
+	@oc -n $(NAMESPACE) process -f $(HAMONGO_DB_TEMPLATE_PATH) --param-file=$(HAMONGO_DB_PARAM_PATH) | oc -n $(NAMESPACE) apply -f -
+
 build-forms:
 	test -n "$(BUILD_NAMESPACE)"
 	test -n "$(FORMS_NAME)"
@@ -408,14 +412,9 @@ build-forms:
 	test -n "$(SOURCE_REPOSITORY_REF)"
 	test -n "$(FORMIO_SOURCE_REPO_URL)"
 	test -n "$(FORMIO_SOURCE_REPO_TAG)"
-	@echo "+\n++ BUILDING $(FORMS_NAME)"
 	@echo "+\n++ BUILDING $(FORMS_NAME) DIR: $(SOURCE_CONTEXT_DIR)$(FORMS_NAME) BuildFile:$(FORMS_BUILD_TEMPLATE_PATH) BUILD_TAG:$(BUILD_TAG)\n+"
 	@oc -n $(BUILD_NAMESPACE) process -f $(FORMS_BUILD_TEMPLATE_PATH) -p NAME=$(FORMS_NAME) -p TAG=$(BUILD_TAG) -p FORMIO_SOURCE_REPO_URL=$(FORMIO_SOURCE_REPO_URL) -p FORMIO_SOURCE_REPO_TAG=$(FORMIO_SOURCE_REPO_TAG) -p SOURCE_REPOSITORY_URL=$(SOURCE_REPOSITORY_URL) -p SOURCE_REPOSITORY_REF=$(SOURCE_REPOSITORY_REF) -p SOURCE_CONTEXT_DIR=$(SOURCE_CONTEXT_DIR)$(FORMS_NAME)| oc -n $(BUILD_NAMESPACE) apply -f -
 	@oc -n $(BUILD_NAMESPACE) start-build bc/$(FORMS_NAME) --wait
-
-deploy-ha-mongo:
-	test -n "$(NAMESPACE)"
-	@oc -n $(NAMESPACE) process -f $(HAMONGO_DB_TEMPLATE_PATH) --param-file=$(HAMONGO_DB_PARAM_PATH) | oc -n $(NAMESPACE) apply -f -
 
 deploy-forms:
 	test -n "$(NAMESPACE)"

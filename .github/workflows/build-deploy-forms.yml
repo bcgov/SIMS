@@ -1,4 +1,4 @@
-name: Build and Deploy Formio forms
+name: Build and Deploy Formio Server.
 
 on:
   workflow_dispatch:
@@ -12,18 +12,10 @@ on:
         type: string
         required: true
         default: "v2.5.3"
-  workflow_call:
-    inputs:
-      environment:
-        required: true
-        type: string
-      formioTag:
-        type: string
-        required: true
 
 jobs:
   deploy:
-    name: Build and Deploy Formio forms
+    name: Build and Deploy Formio Server.
     runs-on: ubuntu-latest
     environment: ${{ github.event.inputs.environment }}
     env:
