@@ -30,7 +30,6 @@ export class InstitutionLocationService extends RecordDataModelService<Instituti
    * belongs.
    * @param data location data.
    * @param auditUserId user who is making the changes.
-   * @param locationId location to be updated.
    * @returns persisted location.
    */
   async createLocation(
