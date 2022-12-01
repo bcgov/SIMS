@@ -275,7 +275,7 @@ export class InstitutionLocationService extends RecordDataModelService<Instituti
         institutionId: options.institutionId,
       });
     } else {
-      throw new Error("Options must contain locationId or institutionId.");
+      throw new Error("At least one optional parameter is required.");
     }
     const found = await queryBuilder.getRawOne();
 
