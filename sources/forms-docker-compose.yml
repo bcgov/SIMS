@@ -24,6 +24,8 @@ services:
     # The application wants to download things to the local directory
     volumes:
       - ./:/app:rw
+    networks:
+      - local-network
     environment:
       DEBUG: formio:*
       NODE_CONFIG: '{"mongo": "mongodb://mongo:27017/formio"}'
@@ -31,6 +33,11 @@ services:
       ROOT_PASSWORD: CHANGEME
     stdin_open: true  # -i
     tty: true         # -t
+
+# Networks
+networks:
+  local-network:
+    driver: bridge
 
 volumes:
   mdb-data:

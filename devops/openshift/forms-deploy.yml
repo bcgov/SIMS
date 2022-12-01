@@ -21,12 +21,12 @@ objects:
       annotations:
       creationTimestamp: null
       labels:
-        app: ${HOST_PREFIX}${NAME}
-      name: ${HOST_PREFIX}${NAME}
+        app: ${NAME}
+      name: ${NAME}
     spec:
       replicas: 2
       selector:
-        app: ${HOST_PREFIX}${NAME}
+        app: ${NAME}
       strategy:
         type: Rolling
         rollingParams:
@@ -39,7 +39,7 @@ objects:
         metadata:
           creationTimestamp: null
           labels:
-            app: ${HOST_PREFIX}${NAME}
+            app: ${NAME}
         spec:
           containers:
             - env:
@@ -66,7 +66,7 @@ objects:
                 - name: FORMIO_DOMAIN
                   value: ${FORMS_URL}
               image: ${IMAGE_REGISTRY}/${TOOLS_NAMESPACE}/${NAME}:${IMAGE_STREAM_TAG}
-              name: ${HOST_PREFIX}${NAME}
+              name: ${NAME}
               ports:
                 - containerPort: 3001
               resources:
@@ -110,7 +110,7 @@ objects:
         - imageChangeParams:
             automatic: true
             containerNames:
-              - ${HOST_PREFIX}${NAME}
+              - ${NAME}
             from:
               kind: ImageStreamTag
               namespace: "${TOOLS_NAMESPACE}"
@@ -124,28 +124,28 @@ objects:
       annotations:
       creationTimestamp: null
       labels:
-        app: ${HOST_PREFIX}${NAME}
-      name: ${HOST_PREFIX}${NAME}
+        app: ${NAME}
+      name: ${NAME}
     spec:
       ports:
         - name: "3001"
           port: 3001
           targetPort: 3001
       selector:
-        app: ${HOST_PREFIX}${NAME}
+        app: ${NAME}
     status:
       loadBalancer: {}
   - kind: Route
     apiVersion: route.openshift.io/v1
     metadata:
       labels:
-        app: ${HOST_PREFIX}${NAME}
-      name: ${HOST_PREFIX}${NAME}
+        app: ${NAME}
+      name: ${NAME}
     spec:
       host: ${FORMS_URL}
       to:
         kind: Service
-        name: ${HOST_PREFIX}${NAME}
+        name: ${NAME}
         weight: 100
       port:
         targetPort: "3001"

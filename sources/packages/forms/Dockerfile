@@ -4,7 +4,7 @@
 
 # Use Node image, maintained by Docker:
 # hub.docker.com/r/_/node/
-FROM docker.io/library/node:lts-alpine3.10
+FROM artifacts.developer.gov.bc.ca/docker-remote/node:19.2-alpine
 
 # set working directory
 WORKDIR /formio
@@ -36,7 +36,7 @@ RUN mkdir -p $NPM_PACKAGES/
 # Include details of the required dependencies
 RUN cp package.json $NPM_PACKAGES/
 
-# Use "Continuous Integration" to install as-is from package-lock.json
+# Use install as-is from package.json
 RUN npm i --prefix=$NPM_PACKAGES
 
 # Link in the global install because `require()` only looks for ./node_modules

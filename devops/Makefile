@@ -59,7 +59,7 @@ define DB_SERVICE_NAME
 endef
 
 define FORMS_NAME
-"forms"
+"$(HOST_PREFIX)forms"
 endef
 
 define HAMONGO_DB_TEMPLATE_PATH
@@ -70,26 +70,6 @@ define HAMONGO_DB_PARAM_PATH
 "openshift/database/mongo-ha-param.yml"
 endef
 
-define SECRETS_TEMPLATE_PATH
-"openshift/secrets.yml"
-endef
-
-define SECRETS_PARAM_PATH
-"openshift/secrets-param.yml"
-endef
-
-define FORMS_BUILD_TEMPLATE_PATH
-"openshift/forms-build.yml"
-endef
-
-define FORMS_DEPLOY_TEMPLATE_PATH
-"openshift/forms-deploy.yml"
-endef
-
-define FORMS_PARAM_PATH
-"openshift/forms-secrets.yml"
-endef
-
 define FORMS_URL
 "$(HOST_PREFIX)aest-forms.$(DOMAIN)"
 endef
@@ -98,16 +78,16 @@ define SOURCE_REPOSITORY_URL
 "https://github.com/bcgov/SIMS.git"
 endef
 
+define SOURCE_REPOSITORY_REF
+"main"
+endef
+
 define FORMIO_SOURCE_REPO_URL
 "https://github.com/formio/formio.git"
 endef
 
 define FORMIO_SOURCE_REPO_TAG
 "v2.5.3"
-endef
-
-define SOURCE_REPOSITORY_REF
-"main"
 endef
 
 define SOURCE_CONTEXT_DIR
@@ -270,7 +250,7 @@ init-patroni:
 
 init-redis:
 	@echo "++\n Init Redis in $(NAMESPACE) \n++"
-	@oc -n $(NAMESPACE) process -f openshift/redis-secrets.yml | oc -n $(NAMESPACE) apply -f -
+	@oc -n $(NAMESPACE) process -f openshift/database/redis-secrets.yml | oc -n $(NAMESPACE) apply -f -
 
 deploy-patroni:
 	@oc -n $(NAMESPACE) process -f openshift/database/patroni-deploy.yml -p BUILD_NAMESPACE=$(BUILD_NAMESPACE) -p IMAGE_STREAM_TAG=patroni:12-latest | oc -n $(NAMESPACE) apply -f -
@@ -407,18 +387,16 @@ build-forms:
 	test -n "$(FORMS_NAME)"
 	test -n "$(BUILD_TAG)"
 	test -n "$(SOURCE_CONTEXT_DIR)"
-	test -n "$(FORMS_BUILD_TEMPLATE_PATH)"
 	test -n "$(SOURCE_REPOSITORY_URL)"
 	test -n "$(SOURCE_REPOSITORY_REF)"
 	test -n "$(FORMIO_SOURCE_REPO_URL)"
 	test -n "$(FORMIO_SOURCE_REPO_TAG)"
-	@echo "+\n++ BUILDING $(FORMS_NAME) DIR: $(SOURCE_CONTEXT_DIR)$(FORMS_NAME) BuildFile:$(FORMS_BUILD_TEMPLATE_PATH) BUILD_TAG:$(BUILD_TAG)\n+"
-	@oc -n $(BUILD_NAMESPACE) process -f $(FORMS_BUILD_TEMPLATE_PATH) -p NAME=$(FORMS_NAME) -p TAG=$(BUILD_TAG) -p FORMIO_SOURCE_REPO_URL=$(FORMIO_SOURCE_REPO_URL) -p FORMIO_SOURCE_REPO_TAG=$(FORMIO_SOURCE_REPO_TAG) -p SOURCE_REPOSITORY_URL=$(SOURCE_REPOSITORY_URL) -p SOURCE_REPOSITORY_REF=$(SOURCE_REPOSITORY_REF) -p SOURCE_CONTEXT_DIR=$(SOURCE_CONTEXT_DIR)$(FORMS_NAME)| oc -n $(BUILD_NAMESPACE) apply -f -
+	@echo "+\n++ BUILDING $(FORMS_NAME) DIR: $(SOURCE_CONTEXT_DIR)$(FORMS_NAME) BUILD_TAG:$(BUILD_TAG)\n+"
+	@oc -n $(BUILD_NAMESPACE) process -f openshift/forms-build.yml -p NAME=$(FORMS_NAME) -p TAG=$(BUILD_TAG) -p FORMIO_SOURCE_REPO_URL=$(FORMIO_SOURCE_REPO_URL) -p FORMIO_SOURCE_REPO_TAG=$(FORMIO_SOURCE_REPO_TAG) -p SOURCE_REPOSITORY_URL=$(SOURCE_REPOSITORY_URL) -p SOURCE_REPOSITORY_REF=$(SOURCE_REPOSITORY_REF) -p SOURCE_CONTEXT_DIR=$(SOURCE_CONTEXT_DIR)$(FORMS_NAME)| oc -n $(BUILD_NAMESPACE) apply -f -
 	@oc -n $(BUILD_NAMESPACE) start-build bc/$(FORMS_NAME) --wait
 
 deploy-forms:
 	test -n "$(NAMESPACE)"
-	test -n "$(FORMS_DEPLOY_TEMPLATE_PATH)"
 	test -n "$(FORMS_NAME)"
 	test -n "$(FORMS_URL)"
 	test -n "$(BUILD_NAMESPACE)"
@@ -427,7 +405,7 @@ deploy-forms:
 	test -n "$(FORMIO_ROOT_EMAIL)"
 	test -n "$(MONGODB_URI)"
 	@echo "+\n++ Deploying forms-flow-forms with tag: $(BUILD_TAG)\n+"
-	@oc -n $(NAMESPACE) process -f $(FORMS_DEPLOY_TEMPLATE_PATH) \
+	@oc -n $(NAMESPACE) process -f openshift/forms-deploy.yml \
 	-p NAME=$(FORMS_NAME) \
 	-p FORMS_URL=$(FORMS_URL) \
 	-p TOOLS_NAMESPACE=$(BUILD_NAMESPACE) \
@@ -436,7 +414,7 @@ deploy-forms:
 	-p FORMIO_ROOT_EMAIL=$(FORMIO_ROOT_EMAIL) \
 	-p MONGODB_URI=$(MONGODB_URI) \
 	| oc -n $(NAMESPACE) apply -f -
-	$(call rollout_and_wait,dc/$(HOST_PREFIX)$(FORMS_NAME))
+	$(call rollout_and_wait,dc/$(FORMS_NAME))
 
 # Create database backup structure (build/configmap/deploy)
 

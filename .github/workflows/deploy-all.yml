@@ -72,7 +72,6 @@ jobs:
       WORKERS: ${{ format('{0}workers-sims', secrets.HOST_PREFIX) }}
       SWAGGER_NAME: ${{ format('{0}swagger', secrets.HOST_PREFIX) }}
       DATABASE_NAME_KEY: ${{ secrets.DATABASE_NAME_KEY }}
-      MONGODB_URI: ${{ secrets.MONGODB_URI }}
     steps:
       - name: Print env
         run: |
@@ -110,11 +109,6 @@ jobs:
         working-directory: "./devops/"
         run: |
           make oc-deploy-web
-      # Deploy Forms
-      - name: Deploy Forms
-        working-directory: "./devops/"
-        run: |
-          make oc-deploy-forms
   deployCamundaDefinitions:
     if: ${{ github.event.inputs.deployCamundaDefinitions == 'true' }}
     name: Deploy BPMNs and DMNs to Camunda
