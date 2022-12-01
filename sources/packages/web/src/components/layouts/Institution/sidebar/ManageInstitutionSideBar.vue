@@ -7,6 +7,7 @@
       class="sidebar-item no-wrap"
       active-class="active-list-item"
       :items="items"
+      data-cy="sideBarMenu"
     >
     </v-list
     ><template #append>
@@ -17,6 +18,7 @@
         active-class="active-list-item"
         bg-color="default"
         active-color="primary"
+        data-cy="offeringsUpload"
       >
         <v-list-item
           :to="{ name: InstitutionRoutesConst.OFFERINGS_UPLOAD }"

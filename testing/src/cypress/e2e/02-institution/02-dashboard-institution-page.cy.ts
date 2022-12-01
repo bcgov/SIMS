@@ -6,7 +6,18 @@ const dashboardObject = new DashboardInstitutionObject();
 const manageInstitutionObject = new ManageInstitutionObject();
 const institutionHelperActions = new InstitutionHelperActions();
 
-describe("[Institution Dashboard] - fields and titles ", () => {
+enum Locations {
+  Vancouver = "Vancouver",
+}
+
+enum SideBarButtons {
+  Programs = "Programs",
+  ProgramInfomationRequests = "Program Information Requests",
+  ConfirmEnrollment = "Confirm Enrollment",
+  ReportChange = "Report Change",
+}
+
+describe("Institution Dashboard", () => {
   beforeEach(() => {
     institutionHelperActions.loginIntoInstitutionSingleLocation();
   });
@@ -28,7 +39,7 @@ describe("[Institution Dashboard] - fields and titles ", () => {
       .should("have.attr", "href", "https://studentaidbc.ca/help-centre");
   });
 
-  it("Verify that all buttons are clickable in dashboard and redirect to appropriate pages.", () => {
+  it("Verify that buttons displayed on the dashboard page are clickable", () => {
     dashboardObject.homeButton().click();
     dashboardObject.locationButton().click();
     dashboardObject.manageInstitutionButton().click();
@@ -41,8 +52,13 @@ describe("[Institution Dashboard] - fields and titles ", () => {
     dashboardObject.logOutButton().click();
   });
 
-  it("Verify that clicking on manage institution leads Location Summary page", () => {
+  it("Verify that clicking on Manage Institution should navigate “Manage Institutions Page”", () => {
     dashboardObject.manageInstitutionButton().click();
-    dashboardObject.allLocationsText().should("be.visible");
+    dashboardObject.manageInstitutionProfileHeader().should("be.visible");
+  });
+
+  it("Verify that clicking on Manage Profile should navigate “My Profile Page”", () => {
+    dashboardObject.myProfileButton().click();
+    dashboardObject.manageInstitutionProfileHeader().should("be.visible");
   });
 });

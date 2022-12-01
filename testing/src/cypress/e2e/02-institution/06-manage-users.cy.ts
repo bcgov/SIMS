@@ -1,6 +1,7 @@
 import DashboardInstitutionObject from "../../page-objects/Institution-objects/DashboardInstitutionObject";
 import ManageUsersObject from "../../page-objects/Institution-objects/ManageUsersObject";
 import InstitutionHelperActions from "../../custom-command/institution/common-helper-functions.cy";
+import { it } from "mocha";
 
 const dashboardInstitutionObject = new DashboardInstitutionObject();
 const manageUsersObject = new ManageUsersObject();
@@ -56,7 +57,7 @@ describe("Manage Users", () => {
   });
 });
 
-describe("Manage Users - Add new user", () => {
+describe.skip("Manage Users - Add new user", () => {
   before(() => {
     institutionHelperActions.loginIntoInstitutionSingleLocation();
     dashboardInstitutionObject.manageInstitutionButton().click();
@@ -125,7 +126,7 @@ describe("Manage Users - Add new user", () => {
   });
 });
 
-describe("Manage Users - edit user modal", () => {
+describe.skip("Manage Users - edit user modal", () => {
   before(() => {
     institutionHelperActions.loginIntoInstitutionSingleLocation();
     dashboardInstitutionObject.manageInstitutionButton().click();
@@ -135,8 +136,10 @@ describe("Manage Users - edit user modal", () => {
   it("Validate edit user default modal", () => {
     manageUsersObject.clickOnEdit("automationuser1@test.com");
     manageUsersObject.editUserModal().should("be.visible");
-    manageUsersObject.isAdminRadioButton().should("be.checked");
-    manageUsersObject.isAdminRadioButton().should("be.unchecked");
+    manageUsersObject
+      .isAdminRadioButton()
+      .get("[type='checkbox']")
+      .should("be.checked");
     manageUsersObject.editUserNowButton().should("be.visible");
     manageUsersObject.cancelButton().should("be.visible");
   });
