@@ -240,7 +240,7 @@ export class ConfigService {
    */
   get queueSchedulerCrons(): QueueSchedulerCrons {
     return this.getCachedConfig("queueSchedulerCronsConfig", {
-      ierCron: process.env.IER_CRON || "0 9 * * *",
+      ierCron: process.env.SCHEDULERS_IER_CRON || "0 9 * * *",
     });
   }
   /**

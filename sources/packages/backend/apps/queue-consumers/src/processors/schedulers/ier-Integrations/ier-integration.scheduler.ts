@@ -11,17 +11,17 @@ import { InjectLogger, LoggerService } from "@sims/utilities/logger";
 import Bull, { CronRepeatOptions, Job, Queue } from "bull";
 import { BaseScheduler } from "../base-scheduler";
 import {
-  GeneratedDateQueueIInDTO,
+  GeneratedDateQueueInDTO,
   IER12ResultQueueOutDTO,
 } from "./models/ier.model";
 
-@Processor(QueueNames.StartIERIntegration)
-export class IERIntegrationScheduler extends BaseScheduler<GeneratedDateQueueIInDTO> {
+@Processor(QueueNames.IERIntegration)
+export class IERIntegrationScheduler extends BaseScheduler<GeneratedDateQueueInDTO> {
   cronOptions: Bull.JobOptions = undefined;
 
   constructor(
-    @InjectQueue(QueueNames.StartIERIntegration)
-    readonly schedulerQueue: Queue<GeneratedDateQueueIInDTO>,
+    @InjectQueue(QueueNames.IERIntegration)
+    readonly schedulerQueue: Queue<GeneratedDateQueueInDTO>,
     private readonly ierRequest: IER12FileService,
     config: ConfigService,
   ) {
@@ -40,7 +40,7 @@ export class IERIntegrationScheduler extends BaseScheduler<GeneratedDateQueueIIn
   /**
    * Add scheduler to the queue.
    */
-  async initializeScheduler() {
+  async initializeScheduler(): Promise<void> {
     await this.schedulerQueue.add(undefined, this.cronOptions);
   }
 
@@ -53,7 +53,7 @@ export class IERIntegrationScheduler extends BaseScheduler<GeneratedDateQueueIIn
    */
   @Process()
   async processIER12File(
-    job: Job<GeneratedDateQueueIInDTO | undefined>,
+    job: Job<GeneratedDateQueueInDTO | undefined>,
   ): Promise<IER12ResultQueueOutDTO[]> {
     this.logger.log("Executing IER 12 file generation ...");
     const uploadResult = await this.ierRequest.processIER12File(
@@ -64,7 +64,7 @@ export class IERIntegrationScheduler extends BaseScheduler<GeneratedDateQueueIIn
   }
 
   @OnQueueActive()
-  onActive(job: Job<GeneratedDateQueueIInDTO | undefined>) {
+  onActive(job: Job<GeneratedDateQueueInDTO | undefined>) {
     this.logger.log(
       `Processing IER integration job ${job.id} of type ${job.name}.`,
     );

@@ -3,6 +3,6 @@ export class IER12ResultQueueOutDTO {
   uploadedRecords: number;
 }
 
-export class GeneratedDateQueueIInDTO {
+export class GeneratedDateQueueInDTO {
   generatedDate?: string;
 }

@@ -2,8 +2,11 @@ import { OnApplicationBootstrap } from "@nestjs/common";
 import Bull, { CronRepeatOptions, Queue } from "bull";
 
 export abstract class BaseScheduler<T> implements OnApplicationBootstrap {
-  abstract initializeScheduler(): void;
+  // When overridden in a derived class, it add the scheduler to the queue.
+  abstract initializeScheduler(): Promise<void>;
+  // When overridden in a derived class, it holds the crons options.
   abstract cronOptions: Bull.JobOptions;
+  // When overridden in a derived class, its the queue instance.
   abstract schedulerQueue: Queue<T>;
 
   /**
@@ -12,7 +15,7 @@ export abstract class BaseScheduler<T> implements OnApplicationBootstrap {
    * delete it and add the new job to the
    * queue.
    */
-  async onApplicationBootstrap() {
+  async onApplicationBootstrap(): Promise<void> {
     await this.deleteOldRepeatableJobs();
     this.initializeScheduler();
   }
@@ -25,7 +28,7 @@ export abstract class BaseScheduler<T> implements OnApplicationBootstrap {
    * Note: If there is an old retrying job, it won't be deleted,
    * as "getRepeatableJobs" will not fetch retrying jobs.
    */
-  async deleteOldRepeatableJobs(): Promise<void> {
+  private async deleteOldRepeatableJobs(): Promise<void> {
     const getAllRepeatableJobs = await this.schedulerQueue.getRepeatableJobs();
     const cronRepeatOption = this.cronOptions.repeat as CronRepeatOptions;
     getAllRepeatableJobs.forEach((job) => {
