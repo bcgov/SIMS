@@ -21,22 +21,34 @@ export BYPASS_CRA_INCOME_VERIFICATION := $(or $(BYPASS_CRA_INCOME_VERIFICATION),
 export BYPASS_APPLICATION_SUBMIT_VALIDATIONS := $(or $(BYPASS_APPLICATION_SUBMIT_VALIDATIONS), false)
 export SWAGGER_ENABLED := $(or ${SWAGGER_ENABLED}, true)
 export APPLICATION_ARCHIVE_DAYS := $(or ${APPLICATION_ARCHIVE_DAYS}, 43)
-export API := $(or ${API}, api-$(APP_NAME))
-export WORKERS := $(or ${WORKERS}, workers-$(APP_NAME))
 export QUEUE_CONSUMERS := $(or ${QUEUE_CONSUMERS}, queue-consumers-$(APP_NAME))
-export WEB := $(or ${WEB}, web-$(APP_NAME))
 export API_PORT := $(or ${API_PORT}, 7070)
 export QUEUE_CONSUMERS_PORT := $(or ${QUEUE_CONSUMERS_PORT}, 7000)
 export WEB_PORT := $(or ${WEB_PORT}, 3030)
 export DATABASE_NAME_KEY := $(or ${DATABASE_NAME_KEY}, database-name)
 export DB_NAME := $(or ${DB_NAME}, SIMSDB)
-export SWAGGER_NAME := $(or ${SWAGGER_NAME}, swagger)
 export API_BUILD_REF := $(or ${API_BUILD_REF}, api-${APP_NAME})
 export WORKERS_BUILD_REF := $(or ${WORKERS_BUILD_REF}, workers-${APP_NAME})
 export QUEUE_CONSUMERS_BUILD_REF := $(or ${QUEUE_CONSUMERS_BUILD_REF}, queue-consumers-${APP_NAME})
 export WEB_BUILD_REF := $(or ${WEB_BUILD_REF}, web-${APP_NAME})
 export FORMIO_ROOT_EMAIL := $(or ${FORMIO_ROOT_EMAIL}, dev_sabc@gov.bc.ca)
 export MONGODB_URI := $(or ${MONGODB_URI}, $$MONGODB_URI)
+
+define API
+"$(HOST_PREFIX)api-$(APP_NAME)"
+endef
+
+define WORKERS
+"$(HOST_PREFIX)workers-$(APP_NAME)"
+endef
+
+define WEB
+"$(HOST_PREFIX)web-$(APP_NAME)"
+endef
+
+define SWAGGER_NAME
+"$(HOST_PREFIX)swagger"
+endef
 
 define QA_DB_NAME
 "QASIMSDB"
@@ -391,8 +403,8 @@ build-forms:
 	test -n "$(SOURCE_REPOSITORY_REF)"
 	test -n "$(FORMIO_SOURCE_REPO_URL)"
 	test -n "$(FORMIO_SOURCE_REPO_TAG)"
-	@echo "+\n++ BUILDING $(FORMS_NAME) DIR: $(SOURCE_CONTEXT_DIR)$(FORMS_NAME) BUILD_TAG:$(BUILD_TAG)\n+"
-	@oc -n $(BUILD_NAMESPACE) process -f openshift/forms-build.yml -p NAME=$(FORMS_NAME) -p TAG=$(BUILD_TAG) -p FORMIO_SOURCE_REPO_URL=$(FORMIO_SOURCE_REPO_URL) -p FORMIO_SOURCE_REPO_TAG=$(FORMIO_SOURCE_REPO_TAG) -p SOURCE_REPOSITORY_URL=$(SOURCE_REPOSITORY_URL) -p SOURCE_REPOSITORY_REF=$(SOURCE_REPOSITORY_REF) -p SOURCE_CONTEXT_DIR=$(SOURCE_CONTEXT_DIR)$(FORMS_NAME)| oc -n $(BUILD_NAMESPACE) apply -f -
+	@echo "+\n++ BUILDING $(FORMS_NAME) DIR: $(SOURCE_CONTEXT_DIR)forms BUILD_TAG:$(BUILD_TAG)\n+"
+	@oc -n $(BUILD_NAMESPACE) process -f openshift/forms-build.yml -p NAME=$(FORMS_NAME) -p TAG=$(BUILD_TAG) -p FORMIO_SOURCE_REPO_URL=$(FORMIO_SOURCE_REPO_URL) -p FORMIO_SOURCE_REPO_TAG=$(FORMIO_SOURCE_REPO_TAG) -p SOURCE_REPOSITORY_URL=$(SOURCE_REPOSITORY_URL) -p SOURCE_REPOSITORY_REF=$(SOURCE_REPOSITORY_REF) -p SOURCE_CONTEXT_DIR=$(SOURCE_CONTEXT_DIR)forms| oc -n $(BUILD_NAMESPACE) apply -f -
 	@oc -n $(BUILD_NAMESPACE) start-build bc/$(FORMS_NAME) --wait
 
 deploy-forms:
@@ -404,7 +416,7 @@ deploy-forms:
 	test -n "$(HOST_PREFIX)"
 	test -n "$(FORMIO_ROOT_EMAIL)"
 	test -n "$(MONGODB_URI)"
-	@echo "+\n++ Deploying forms-flow-forms with tag: $(BUILD_TAG)\n+"
+	@echo "+\n++ Deploying forms with tag: $(BUILD_TAG)\n+"
 	@oc -n $(NAMESPACE) process -f openshift/forms-deploy.yml \
 	-p NAME=$(FORMS_NAME) \
 	-p FORMS_URL=$(FORMS_URL) \
