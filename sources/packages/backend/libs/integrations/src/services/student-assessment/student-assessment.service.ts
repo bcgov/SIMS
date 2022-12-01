@@ -24,6 +24,7 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
     const processingDate = generatedDate
       ? new Date(generatedDate)
       : addDays(-1);
+    console.log(processingDate);
     return this.repo.find({
       select: {
         id: true,

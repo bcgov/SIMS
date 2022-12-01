@@ -1,5 +1,4 @@
 import { InjectQueue, OnQueueActive, Process, Processor } from "@nestjs/bull";
-import { OnApplicationBootstrap } from "@nestjs/common";
 import { IER12FileService } from "@sims/integrations/institution-integration/ier-integration";
 import {
   IER_SCHEDULER_JOB_ID,
@@ -9,39 +8,43 @@ import { QueueNames } from "@sims/services/queue";
 import { PST_TIMEZONE } from "@sims/utilities";
 import { ConfigService } from "@sims/utilities/config";
 import { InjectLogger, LoggerService } from "@sims/utilities/logger";
-import Bull, { Job, Queue } from "bull";
+import Bull, { CronRepeatOptions, Job, Queue } from "bull";
+import { BaseScheduler } from "../base-scheduler";
 import {
   GeneratedDateQueueIInDTO,
   IER12ResultQueueOutDTO,
 } from "./models/ier.model";
 
+// todo: ann check about system worker quueue audit user
+// todo: ann rest the real scenario with guru.
 @Processor(QueueNames.StartIERIntegration)
-export class IERIntegrationScheduler implements OnApplicationBootstrap {
-  private ierCronOptions: Bull.JobOptions = undefined;
+export class IERIntegrationScheduler extends BaseScheduler<GeneratedDateQueueIInDTO> {
+  cronOptions: Bull.JobOptions = undefined;
+
   constructor(
     @InjectQueue(QueueNames.StartIERIntegration)
-    private readonly startIERSchedulerQueue: Queue<GeneratedDateQueueIInDTO>,
+    readonly schedulerQueue: Queue<GeneratedDateQueueIInDTO>,
     private readonly ierRequest: IER12FileService,
     config: ConfigService,
   ) {
-    this.ierCronOptions = {
+    super();
+    // cron options.
+    this.cronOptions = {
       ...QUEUE_RETRY_DEFAULT_CONFIG,
       jobId: IER_SCHEDULER_JOB_ID,
       repeat: {
+        // cron: "* * * * *",
         cron: config.queueSchedulerCrons.ierCron,
         tz: PST_TIMEZONE,
-      },
+      } as CronRepeatOptions,
     };
   }
 
-  async onApplicationBootstrap() {
-    // todo: ann do we lifecycle hooks.
-    // todo: ann find how to pass parameter.
-    await this.startIERSchedulerQueue.add(undefined, this.ierCronOptions);
-    // TO REMOVE THE JOB
-    // await this.startIERSchedulerQueue.removeRepeatable(
-    //   this.ierCronOptions.repeat,
-    // );
+  /**
+   * Add scheduler to the queue.
+   */
+  async initializeScheduler() {
+    await this.schedulerQueue.add(undefined, this.cronOptions);
   }
 
   /**
@@ -62,11 +65,11 @@ export class IERIntegrationScheduler implements OnApplicationBootstrap {
     this.logger.log("IER 12 file generation completed.");
     return uploadResult;
   }
-  // todo: ann if its a universal event? ann test the student appliacion
+
   @OnQueueActive()
-  onActive(job: Job) {
+  onActive(job: Job<GeneratedDateQueueIInDTO | undefined>) {
     this.logger.log(
-      `Processing job ${job.id} of type ${job.name} with data ${job.data}...`,
+      `Processing IER integration job ${job.id} of type ${job.name}.`,
     );
   }
 

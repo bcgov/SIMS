@@ -13,7 +13,7 @@ import {
   StudentAssessmentService,
 } from "@sims/integrations/services";
 import { IER12IntegrationModule } from "@sims/integrations/institution-integration/ier-integration/ier12-integration.module";
-import { IERIntegrationScheduler } from "./processors/ier-Integrations/ier-integration.scheduler";
+import { IERIntegrationScheduler } from "./processors/schedulers/ier-Integrations/ier-integration.scheduler";
 
 @Module({
   imports: [
