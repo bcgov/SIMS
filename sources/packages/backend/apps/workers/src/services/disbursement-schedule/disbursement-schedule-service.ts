@@ -196,7 +196,6 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
     const assessment = await studentAssessmentRepo.findOne({
       select: {
         id: true,
-        updatedAt: true,
         triggerType: true,
         application: {
           id: true,
