@@ -1,5 +1,5 @@
 import { InjectQueue, Process, Processor } from "@nestjs/bull";
-import { IER12FileService } from "@sims/integrations/institution-integration/ier-integration";
+import { IER12FileService } from "@sims/integrations/institution-integration/ier12-integration";
 import { QueueNames } from "@sims/services/queue";
 import { ConfigService } from "@sims/utilities/config";
 import { InjectLogger, LoggerService } from "@sims/utilities/logger";
@@ -10,10 +10,10 @@ import {
   IER12ResultQueueOutDTO,
 } from "./models/ier.model";
 
-@Processor(QueueNames.IERIntegration)
+@Processor(QueueNames.IER12Integration)
 export class IER12IntegrationScheduler extends BaseScheduler<GeneratedDateQueueInDTO> {
   constructor(
-    @InjectQueue(QueueNames.IERIntegration)
+    @InjectQueue(QueueNames.IER12Integration)
     protected readonly schedulerQueue: Queue<GeneratedDateQueueInDTO>,
     private readonly ierRequest: IER12FileService,
     private readonly config: ConfigService,

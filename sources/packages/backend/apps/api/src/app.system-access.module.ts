@@ -65,7 +65,7 @@ import { FedRestrictionIntegrationService } from "./esdc-integration/fed-restric
 import { WorkflowClientService, SequenceControlService } from "@sims/services";
 // todo: once all integration are moved. remove sshservice.
 import { SshService } from "@sims/integrations/services";
-import { IER12IntegrationModule } from "@sims/integrations/institution-integration/ier-integration/ier12-integration.module";
+import { IER12IntegrationModule } from "@sims/integrations/institution-integration/ier12-integration/ier12-integration.module";
 
 @Module({
   imports: [

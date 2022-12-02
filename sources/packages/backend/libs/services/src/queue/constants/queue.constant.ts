@@ -2,7 +2,7 @@ import { QueueModel } from "../model/queue.model";
 
 export enum QueueNames {
   StartApplicationAssessment = "start-application-assessment",
-  IERIntegration = "ier-integration",
+  IER12Integration = "ier12-integration",
 }
 
 /**
@@ -15,6 +15,6 @@ export const Queues: QueueModel[] = [
     name: QueueNames.StartApplicationAssessment,
   },
   {
-    name: QueueNames.IERIntegration,
+    name: QueueNames.IER12Integration,
   },
 ];
