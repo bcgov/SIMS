@@ -130,7 +130,7 @@ function verifyPrimaryContactDetailsAreMandatory() {
 }
 
 function verifyNoInputFieldsAcceptMoreThan100Chars(createView: boolean) {
-  if (createView == true) {
+  if (createView) {
     verifyThatFieldDoesNotAcceptMoreThan100Chars(
       institutionManageLocationObject.locationName(),
       institutionManageLocationObject.locationMoreThan100CharsErrorMessage()
