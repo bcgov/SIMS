@@ -40,9 +40,17 @@
                 " /></v-col
           ></v-row>
         </content-group>
-        <v-divider></v-divider>
+        <v-divider
+          v-if="
+            restrictionData.isActive &&
+            restrictionData.restrictionCategory !== 'Federal'
+          "
+        ></v-divider>
         <v-textarea
-          v-if="restrictionData.isActive"
+          v-if="
+            restrictionData.isActive &&
+            restrictionData.restrictionCategory !== 'Federal'
+          "
           label="Resolution reason"
           placeholder="Long text..."
           v-model="formModel.resolutionNote"
@@ -76,11 +84,19 @@
             <footer-buttons
               :processing="processing"
               primaryLabel="Resolve restriction"
-              :secondaryLabel="restrictionData.isActive ? 'Cancel' : 'Close'"
+              :secondaryLabel="
+                !restrictionData.isActive ||
+                restrictionData.restrictionCategory === 'Federal'
+                  ? 'Close'
+                  : 'Cancel'
+              "
               @primaryClick="submit"
               @secondaryClick="cancel"
               :disablePrimaryButton="notAllowed"
-              :showPrimaryButton="restrictionData.isActive"
+              :showPrimaryButton="
+                restrictionData.isActive &&
+                restrictionData.restrictionCategory !== 'Federal'
+              "
             />
           </template>
         </check-permission-role>
