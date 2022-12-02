@@ -40,17 +40,9 @@
                 " /></v-col
           ></v-row>
         </content-group>
-        <v-divider
-          v-if="
-            restrictionData.isActive &&
-            restrictionData.restrictionCategory !== 'Federal'
-          "
-        ></v-divider>
+        <v-divider v-if="allowUserToEdit"></v-divider>
         <v-textarea
-          v-if="
-            restrictionData.isActive &&
-            restrictionData.restrictionCategory !== 'Federal'
-          "
+          v-if="allowUserToEdit"
           label="Resolution reason"
           placeholder="Long text..."
           v-model="formModel.resolutionNote"
@@ -84,19 +76,11 @@
             <footer-buttons
               :processing="processing"
               primaryLabel="Resolve restriction"
-              :secondaryLabel="
-                !restrictionData.isActive ||
-                restrictionData.restrictionCategory === 'Federal'
-                  ? 'Close'
-                  : 'Cancel'
-              "
+              :secondaryLabel="allowUserToEdit ? 'Cancel' : 'Close'"
               @primaryClick="submit"
               @secondaryClick="cancel"
               :disablePrimaryButton="notAllowed"
-              :showPrimaryButton="
-                restrictionData.isActive &&
-                restrictionData.restrictionCategory !== 'Federal'
-              "
+              :showPrimaryButton="allowUserToEdit"
             />
           </template>
         </check-permission-role>
@@ -106,7 +90,7 @@
 </template>
 
 <script lang="ts">
-import { PropType, ref, reactive } from "vue";
+import { PropType, ref, reactive, computed } from "vue";
 import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
 import ErrorSummary from "@/components/generic/ErrorSummary.vue";
 import { useModalDialog, useValidators } from "@/composables";
@@ -168,6 +152,12 @@ export default {
       return "Resolution reason is required.";
     };
 
+    const allowUserToEdit = computed(
+      () =>
+        props.restrictionData.isActive &&
+        props.restrictionData.restrictionType !== RestrictionType.Federal,
+    );
+
     return {
       showDialog,
       showModal,
@@ -179,6 +169,7 @@ export default {
       formModel,
       RestrictionStatus,
       checkResolutionNotesLength,
+      allowUserToEdit,
     };
   },
 };
