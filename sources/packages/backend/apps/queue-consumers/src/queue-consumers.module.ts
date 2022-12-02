@@ -10,7 +10,7 @@ import {
   StudentAssessmentService,
 } from "@sims/integrations/services";
 import { IER12IntegrationModule } from "@sims/integrations/institution-integration/ier-integration/ier12-integration.module";
-import { IERIntegrationScheduler } from "./processors/schedulers/ier-Integrations/ier-integration.scheduler";
+import { IER12IntegrationScheduler } from "./processors/schedulers/institution-integration/ier12-Integrations/ier12-integration.scheduler";
 
 @Module({
   imports: [
@@ -22,7 +22,7 @@ import { IERIntegrationScheduler } from "./processors/schedulers/ier-Integration
   providers: [
     StartApplicationAssessmentProcessor,
     WorkflowClientService,
-    IERIntegrationScheduler,
+    IER12IntegrationScheduler,
     IER12IntegrationService,
     StudentAssessmentService,
     SshService,

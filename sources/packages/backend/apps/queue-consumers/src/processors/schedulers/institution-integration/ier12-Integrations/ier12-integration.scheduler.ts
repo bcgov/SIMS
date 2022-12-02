@@ -4,14 +4,14 @@ import { QueueNames } from "@sims/services/queue";
 import { ConfigService } from "@sims/utilities/config";
 import { InjectLogger, LoggerService } from "@sims/utilities/logger";
 import { Job, Queue } from "bull";
-import { BaseScheduler } from "../base-scheduler";
+import { BaseScheduler } from "../../base-scheduler";
 import {
   GeneratedDateQueueInDTO,
   IER12ResultQueueOutDTO,
 } from "./models/ier.model";
 
 @Processor(QueueNames.IERIntegration)
-export class IERIntegrationScheduler extends BaseScheduler<GeneratedDateQueueInDTO> {
+export class IER12IntegrationScheduler extends BaseScheduler<GeneratedDateQueueInDTO> {
   constructor(
     @InjectQueue(QueueNames.IERIntegration)
     protected readonly schedulerQueue: Queue<GeneratedDateQueueInDTO>,
