@@ -12,8 +12,6 @@ import {
 
 @Processor(QueueNames.IERIntegration)
 export class IERIntegrationScheduler extends BaseScheduler<GeneratedDateQueueInDTO> {
-  protected repeatableJobId = QueueNames.IERIntegration;
-
   constructor(
     @InjectQueue(QueueNames.IERIntegration)
     protected readonly schedulerQueue: Queue<GeneratedDateQueueInDTO>,

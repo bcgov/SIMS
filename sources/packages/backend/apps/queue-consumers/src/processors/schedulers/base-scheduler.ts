@@ -1,12 +1,9 @@
 import { OnApplicationBootstrap } from "@nestjs/common";
 import { QUEUE_RETRY_DEFAULT_CONFIG } from "@sims/services/constants";
-import { QueueNames } from "@sims/services/queue";
 import { PST_TIMEZONE } from "@sims/utilities";
 import Bull, { CronRepeatOptions, Queue } from "bull";
 
 export abstract class BaseScheduler<T> implements OnApplicationBootstrap {
-  // When overridden in a derived class, it hold the repeatable job id.
-  protected abstract repeatableJobId: QueueNames;
   // When overridden in a derived class, it hold the repeatable cron expression.
   protected abstract cronExpression: string;
 
@@ -15,7 +12,6 @@ export abstract class BaseScheduler<T> implements OnApplicationBootstrap {
   protected get cronOptions(): Bull.JobOptions {
     return {
       ...QUEUE_RETRY_DEFAULT_CONFIG,
-      jobId: this.repeatableJobId,
       repeat: {
         cron: this.cronExpression,
         tz: PST_TIMEZONE,
@@ -47,10 +43,7 @@ export abstract class BaseScheduler<T> implements OnApplicationBootstrap {
     const getAllRepeatableJobs = await this.schedulerQueue.getRepeatableJobs();
     const cronRepeatOption = this.cronOptions.repeat as CronRepeatOptions;
     getAllRepeatableJobs.forEach((job) => {
-      if (
-        job.id === this.cronOptions.jobId &&
-        job.cron !== cronRepeatOption.cron
-      ) {
+      if (job.cron !== cronRepeatOption.cron) {
         this.schedulerQueue.removeRepeatableByKey(job.key);
       }
     });
