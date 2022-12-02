@@ -8,10 +8,13 @@ services:
     environment:
       MONGO_INITDB_ROOT_USERNAME:
       MONGO_INITDB_ROOT_PASSWORD:
+    networks:
+      - local-network
   
   formio:
     build:
       context: ./packages/forms
+      dockerfile: Dockerfile.dev
       args:
         - FORMIO_SOURCE_REPO_URL=${FORMIO_SOURCE_REPO_URL}
         - FORMIO_SOURCE_REPO_TAG=${FORMIO_SOURCE_REPO_TAG}

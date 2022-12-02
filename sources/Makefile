@@ -160,12 +160,15 @@ camunda-stop:
 	@echo "Stopping Camunda locally..."
 	@docker-compose -f camunda-docker-compose-core.yml down
 
-# Build, deploy forms and deploy form-definitions locally.
+# Build and deploy forms locally.
 forms:
 	@echo "Build, deploy forms and deploy form-definitions locally... \n+"
 	@echo "Login to http://localhost:3001 \n+"
 	@echo "Default user/password as admin@example.com/CHANGEME \n+"
 	@docker-compose -f forms-docker-compose.yml up --build -d
+
+#deploy form-definitions locally
+deploy-form-definitions:
 	@cd ./packages/forms && npm i && npm run deploy
 
 # Stop locally
