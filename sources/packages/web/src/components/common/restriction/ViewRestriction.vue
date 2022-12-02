@@ -40,14 +40,17 @@
                 " /></v-col
           ></v-row>
         </content-group>
-        <v-divider v-if="allowUserToEdit"></v-divider>
-        <v-textarea
-          v-if="allowUserToEdit"
-          label="Resolution reason"
-          placeholder="Long text..."
-          v-model="formModel.resolutionNote"
-          variant="outlined"
-          :rules="[(v) => checkResolutionNotesLength(v)]" />
+        <template v-if="allowUserToEdit">
+          <v-divider></v-divider>
+          <v-textarea
+            v-if="allowUserToEdit"
+            label="Resolution reason"
+            placeholder="Long text..."
+            v-model="formModel.resolutionNote"
+            variant="outlined"
+            :rules="[(v) => checkResolutionNotesLength(v)]"
+          />
+        </template>
         <h4
           class="category-header-medium mb-5"
           v-if="!restrictionData.isActive"
