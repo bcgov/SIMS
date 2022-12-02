@@ -17,11 +17,11 @@ import {
 
 @Processor(QueueNames.IERIntegration)
 export class IERIntegrationScheduler extends BaseScheduler<GeneratedDateQueueInDTO> {
-  cronOptions: Bull.JobOptions = undefined;
+  protected cronOptions: Bull.JobOptions = undefined;
 
   constructor(
     @InjectQueue(QueueNames.IERIntegration)
-    readonly schedulerQueue: Queue<GeneratedDateQueueInDTO>,
+    protected readonly schedulerQueue: Queue<GeneratedDateQueueInDTO>,
     private readonly ierRequest: IER12FileService,
     config: ConfigService,
   ) {

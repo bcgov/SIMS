@@ -5,9 +5,9 @@ export abstract class BaseScheduler<T> implements OnApplicationBootstrap {
   // When overridden in a derived class, it add the scheduler to the queue.
   abstract initializeScheduler(): Promise<void>;
   // When overridden in a derived class, it holds the crons options.
-  abstract cronOptions: Bull.JobOptions;
+  protected abstract cronOptions: Bull.JobOptions;
   // When overridden in a derived class, its the queue instance.
-  abstract schedulerQueue: Queue<T>;
+  protected abstract schedulerQueue: Queue<T>;
 
   /**
    * Once all modules have been initialized
