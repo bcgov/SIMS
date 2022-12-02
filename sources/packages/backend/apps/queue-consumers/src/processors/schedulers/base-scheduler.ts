@@ -13,15 +13,13 @@ export abstract class BaseScheduler<T> implements OnApplicationBootstrap {
       ...QUEUE_RETRY_DEFAULT_CONFIG,
       repeat: {
         cron: this.cronExpression,
-      } as CronRepeatOptions,
+      },
     };
   }
 
   /**
-   * Once all modules have been initialized
-   * it will check, if there is any old cron job
-   * delete it and add the new job to the
-   * queue.
+   * Once all modules have been initialized it will check, if there is
+   * any old cron job delete it and add the new job to the queue.
    */
   async onApplicationBootstrap(): Promise<void> {
     await this.deleteOldRepeatableJobs();
