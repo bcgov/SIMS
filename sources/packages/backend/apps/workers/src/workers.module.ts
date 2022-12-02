@@ -16,6 +16,7 @@ import {
   CRAIncomeVerificationService,
   DisbursementScheduleService,
   MSFAANumberService,
+  DisbursementOverawardService,
 } from "./services";
 import { ZeebeTransportStrategy } from "./zeebe";
 import {
@@ -25,9 +26,16 @@ import {
 } from "@sims/services";
 import { LoggerModule } from "@sims/utilities/logger";
 import { ConfigModule } from "@sims/utilities/config";
+import { SystemUserModule } from "@sims/services/system-users";
 
 @Module({
-  imports: [DatabaseModule, ConfigModule, LoggerModule, ZeebeModule.forRoot()],
+  imports: [
+    DatabaseModule,
+    ConfigModule,
+    LoggerModule,
+    ZeebeModule.forRoot(),
+    SystemUserModule,
+  ],
   controllers: [
     AssessmentController,
     ApplicationController,
@@ -47,6 +55,7 @@ import { ConfigModule } from "@sims/utilities/config";
     DisbursementScheduleService,
     SequenceControlService,
     MSFAANumberService,
+    DisbursementOverawardService,
   ],
 })
 export class WorkersModule {}
