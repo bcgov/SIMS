@@ -33,6 +33,8 @@ export WEB_BUILD_REF := $(or ${WEB_BUILD_REF}, web-${APP_NAME})
 export FORMS_BUILD_REF := $(or ${FORMS_BUILD_REF}, forms)
 export FORMIO_ROOT_EMAIL := $(or ${FORMIO_ROOT_EMAIL}, dev_sabc@gov.bc.ca)
 export MONGODB_URI := $(or ${MONGODB_URI}, $$MONGODB_URI)
+export QUEUE_PREFIX := $(or $(QUEUE_PREFIX), {sims-local})
+export SCHEDULERS_IER_CRON := $(or $(SCHEDULERS_IER_CRON), '0 17 * * *')
 
 define API
 "$(HOST_PREFIX)api-$(APP_NAME)"
@@ -374,6 +376,7 @@ deploy-queue-consumers:
 	test -n "$(QUEUE_CONSUMERS)"
 	test -n "$(QUEUE_CONSUMERS_PORT)"
 	test -n "$(QUEUE_PREFIX)"
+	test -n "$(SCHEDULERS_IER_CRON)"
 	@echo "+\n++ Deploying Queues with tag: $(BUILD_TAG)\n+"
 	@oc -n $(NAMESPACE) process -f openshift/queue-consumers-deploy.yml \
 		-p NAME=$(QUEUE_CONSUMERS) \
@@ -386,6 +389,7 @@ deploy-queue-consumers:
 		-p PORT=$(QUEUE_CONSUMERS_PORT) \
 		-p HOST_NAME=$(HOST) \
 		-p QUEUE_PREFIX=$(QUEUE_PREFIX) \
+		-p SCHEDULERS_IER_CRON=$(SCHEDULERS_IER_CRON) \
 		| oc -n $(NAMESPACE) apply -f -
 	$(call rollout_and_wait,dc/$(QUEUE_CONSUMERS))
 

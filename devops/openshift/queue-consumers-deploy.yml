@@ -34,6 +34,8 @@ objects:
                   value: "${DB_SERVICE}"
                 - name: REDIS_HOST
                   value: "${REDIS_SERVICE}"
+                - name: SCHEDULERS_IER_CRON
+                  value: "${SCHEDULERS_IER_CRON}"
                 - name: POSTGRES_USER
                   valueFrom:
                     secretKeyRef:
@@ -93,6 +95,31 @@ objects:
                       name: ${QUEUE_CONSUMERS_SECRET_NAME}
                 - name: BYPASS_CRA_INCOME_VERIFICATION
                   value: ${BYPASS_CRA_INCOME_VERIFICATION}
+                - name: ZONE_B_SFTP_SERVER
+                  valueFrom:
+                    secretKeyRef:
+                      key: ${ZONE_B_SFTP_SERVER_NAME_KEY}
+                      name: ${ZONE_B_SFTP_SECRET_NAME}
+                - name: ZONE_B_SFTP_SERVER_PORT
+                  valueFrom:
+                    secretKeyRef:
+                      key: ${ZONE_B_SFTP_SERVER_PORT_NAME_KEY}
+                      name: ${ZONE_B_SFTP_SECRET_NAME}
+                - name: ZONE_B_SFTP_USER_NAME
+                  valueFrom:
+                    secretKeyRef:
+                      key: ${ZONE_B_SFTP_USER_NAME_NAME_KEY}
+                      name: ${ZONE_B_SFTP_SECRET_NAME}
+                - name: ZONE_B_SFTP_PRIVATE_KEY_PASSPHRASE
+                  valueFrom:
+                    secretKeyRef:
+                      key: ${ZONE_B_SFTP_PRIVATE_KEY_PASSPHRASE_NAME_KEY}
+                      name: ${ZONE_B_SFTP_SECRET_NAME}
+                - name: ZONE_B_SFTP_PRIVATE_KEY
+                  valueFrom:
+                    secretKeyRef:
+                      key: ${ZONE_B_SFTP_PRIVATE_KEY_NAME_KEY}
+                      name: ${ZONE_B_SFTP_SECRET_NAME}
               image: ${IMAGE_REGISTRY}/${BUILD_NAMESPACE}/${IMAGE_STREAM_TAG}
               imagePullPolicy: Always
               name: ${NAME}
@@ -203,3 +230,17 @@ parameters:
     required: true
   - name: QUEUE_PREFIX
     required: true
+  - name: SCHEDULERS_IER_CRON
+    required: true
+  - name: ZONE_B_SFTP_SECRET_NAME
+    value: zone-b-sftp
+  - name: ZONE_B_SFTP_SERVER_NAME_KEY
+    value: server
+  - name: ZONE_B_SFTP_SERVER_PORT_NAME_KEY
+    value: server-port
+  - name: ZONE_B_SFTP_USER_NAME_NAME_KEY
+    value: user-name
+  - name: ZONE_B_SFTP_PRIVATE_KEY_PASSPHRASE_NAME_KEY
+    value: private-key-passphrase
+  - name: ZONE_B_SFTP_PRIVATE_KEY_NAME_KEY
+    value: private-key
