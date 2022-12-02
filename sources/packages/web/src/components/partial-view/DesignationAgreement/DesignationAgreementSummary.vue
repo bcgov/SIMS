@@ -7,26 +7,34 @@
         :rows="DEFAULT_PAGE_LIMIT"
         :rowsPerPageOptions="PAGINATION_LIST"
         :totalRecords="designations.length"
+        data-cy="designationsList"
       >
         <Column header="Date submitted"
           ><template #body="slotProps">
-            <span>{{ dateOnlyLongString(slotProps.data.submittedDate) }}</span>
+            <span data-cy="designationSubmittedDate">{{
+              dateOnlyLongString(slotProps.data.submittedDate)
+            }}</span>
           </template>
         </Column>
         <Column header="Start date"
           ><template #body="slotProps">
-            <span>{{ dateOnlyLongString(slotProps.data.startDate) }}</span>
+            <span data-cy="designationStartDate">{{
+              dateOnlyLongString(slotProps.data.startDate)
+            }}</span>
           </template>
         </Column>
         <Column header="Expiry date"
           ><template #body="slotProps">
-            <span>{{ dateOnlyLongString(slotProps.data.endDate) }}</span>
+            <span data-cy="designationEndDate">{{
+              dateOnlyLongString(slotProps.data.endDate)
+            }}</span>
           </template>
         </Column>
         <Column header="Status"
           ><template #body="slotProps">
             <status-chip-designation
               :status="slotProps.data.designationStatus"
+              data-cy="designationStatus"
             /> </template
         ></Column>
         <Column header="Action">
