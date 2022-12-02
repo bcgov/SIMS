@@ -27,10 +27,7 @@ export QUEUE_CONSUMERS_PORT := $(or ${QUEUE_CONSUMERS_PORT}, 7000)
 export WEB_PORT := $(or ${WEB_PORT}, 3030)
 export DATABASE_NAME_KEY := $(or ${DATABASE_NAME_KEY}, database-name)
 export DB_NAME := $(or ${DB_NAME}, SIMSDB)
-export API_BUILD_REF := $(or ${API_BUILD_REF}, api-${APP_NAME})
-export WORKERS_BUILD_REF := $(or ${WORKERS_BUILD_REF}, workers-${APP_NAME})
 export QUEUE_CONSUMERS_BUILD_REF := $(or ${QUEUE_CONSUMERS_BUILD_REF}, queue-consumers-${APP_NAME})
-export WEB_BUILD_REF := $(or ${WEB_BUILD_REF}, web-${APP_NAME})
 export FORMIO_ROOT_EMAIL := $(or ${FORMIO_ROOT_EMAIL}, dev_sabc@gov.bc.ca)
 export MONGODB_URI := $(or ${MONGODB_URI}, $$MONGODB_URI)
 
@@ -312,7 +309,7 @@ deploy-api:
 		-p PORT=$(API_PORT) \
 		-p DB_SERVICE=$(DB_SERVICE_NAME) \
 		-p BUILD_NAMESPACE=$(BUILD_NAMESPACE) \
-		-p IMAGE_STREAM_TAG="$(API_BUILD_REF):$(BUILD_TAG)" \
+		-p IMAGE_STREAM_TAG="$(API):$(BUILD_TAG)" \
 		-p KEYCLOAK_REALM=$(KEYCLOAK_REALM) \
 		-p KEYCLOAK_AUTH_URL=$(KEYCLOAK_AUTH_URL) \
 		-p BCeID_WEB_SERVICE_WSDL=$(BCeID_WEB_SERVICE_WSDL) \
@@ -334,7 +331,6 @@ deploy-workers:
 	test -n "$(NAMESPACE)"
 	test -n "$(BUILD_NAMESPACE)"
 	test -n "$(BUILD_TAG)"
-	test -n "$(WORKERS_BUILD_REF)"
 	test -n "$(DB_SERVICE_NAME)"
 	test -n "$(DATABASE_NAME_KEY)"
 	test -n "$(WORKERS_SECRET_NAME)"
@@ -346,7 +342,7 @@ deploy-workers:
 		-p WORKERS_SECRET_NAME=$(WORKERS_SECRET_NAME) \
 		-p BUILD_NAMESPACE=$(BUILD_NAMESPACE) \
 		-p DB_SERVICE=$(DB_SERVICE_NAME) \
-		-p IMAGE_STREAM_TAG="$(WORKERS_BUILD_REF):$(BUILD_TAG)" \
+		-p IMAGE_STREAM_TAG="$(WORKERS):$(BUILD_TAG)" \
 		-p BUILD_TAG=$(BUILD_TAG) \
 		-p DATABASE_NAME_KEY=$(DATABASE_NAME_KEY) \
 		-p BYPASS_CRA_INCOME_VERIFICATION=$(BYPASS_CRA_INCOME_VERIFICATION) \
@@ -385,7 +381,7 @@ deploy-web:
 	test -n "$(WEB)"
 	test -n "$(WEB_PORT)"
 	@echo "+\n++ Deploying WEB with tag: $(BUILD_TAG)\n+"
-	@oc -n $(NAMESPACE) process -f openshift/web-deploy.yml -p NAME=$(WEB) -p PORT=$(WEB_PORT) -p HOST_NAME=$(HOST) -p BUILD_NAMESPACE=$(BUILD_NAMESPACE) -p IMAGE_STREAM_TAG="$(WEB_BUILD_REF):$(BUILD_TAG)"  | oc -n $(NAMESPACE) apply -f -
+	@oc -n $(NAMESPACE) process -f openshift/web-deploy.yml -p NAME=$(WEB) -p PORT=$(WEB_PORT) -p HOST_NAME=$(HOST) -p BUILD_NAMESPACE=$(BUILD_NAMESPACE) -p IMAGE_STREAM_TAG="$(WEB):$(BUILD_TAG)"  | oc -n $(NAMESPACE) apply -f -
 	$(call rollout_and_wait,dc/$(WEB))
 
 create-qa-api-db:
