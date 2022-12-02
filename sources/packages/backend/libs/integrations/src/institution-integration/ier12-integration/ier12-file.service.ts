@@ -18,7 +18,7 @@ export class IER12FileService {
   institutionIntegrationConfig: InstitutionIntegrationConfig;
   constructor(
     config: ConfigService,
-    private readonly ierIntegrationService: IER12IntegrationService,
+    private readonly ier12IntegrationService: IER12IntegrationService,
     private readonly studentAssessmentService: StudentAssessmentService,
   ) {
     this.institutionIntegrationConfig = config.institutionIntegration;
@@ -88,13 +88,13 @@ export class IER12FileService {
   ): Promise<IER12UploadResult> {
     try {
       // Create the Request content for the IER 12 file by populating the content.
-      const fileContent = this.ierIntegrationService.createIER12FileContent(
+      const fileContent = this.ier12IntegrationService.createIER12FileContent(
         fileRecords[institutionCode],
       );
       // Create the request filename with the file path for the each and every institutionCode.
       const fileInfo = this.createRequestFileName(institutionCode);
       this.logger.log("Uploading content...");
-      await this.ierIntegrationService.uploadContent(
+      await this.ier12IntegrationService.uploadContent(
         fileContent,
         fileInfo.filePath,
       );

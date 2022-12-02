@@ -20,6 +20,7 @@ export REDIS_STANDALONE_MODE := $(or $(REDIS_STANDALONE_MODE), true)
 export QUEUE_DASHBOARD_PASSWORD := $(or $(QUEUE_DASHBOARD_PASSWORD), queueboardpass)
 export QUEUE_DASHBOARD_USER := $(or $(QUEUE_DASHBOARD_USER), queueBoardUser)
 export QUEUE_PREFIX := $(or $(QUEUE_PREFIX), {sims-local})
+export SCHEDULERS_IER_CRON := $(or $(SCHEDULERS_IER_CRON), 0 17 * * *)
 # Key Cloak
 export KEYCLOAK_AUTH_URL := $(or $(KEYCLOAK_AUTH_URL), https://dev.oidc.gov.bc.ca/auth/)
 export KEYCLOAK_REALM := $(or $(KEYCLOAK_REALM), jxoe2o46)

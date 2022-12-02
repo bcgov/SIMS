@@ -12,7 +12,6 @@ export * from "./atbc/atbc.system-access.controller";
 export * from "./program-info-request/program-info-request.institutions.controller";
 export * from "./confirmation-of-enrollment/confirmation-of-enrollment.institutions.controller";
 export * from "./supporting-user/supporting-user.supporting-users.controller";
-export * from "./institution-integration/ier-integration-system-access.controller";
 export * from "./esdc-integration/msfaa-integration.system-access.controller";
 export * from "./sfas-integration/sfas-integration.system-access.controller";
 export * from "./esdc-integration/e-cert-integration.system-access.controller";
