@@ -133,7 +133,7 @@ function verifyNoInputFieldsAcceptMoreThan100Chars(createView: boolean) {
   if (createView == true) {
     verifyThatFieldDoesNotAcceptMoreThan100Chars(
       institutionManageLocationObject.locationName(),
-      "Location name must have no more than 100 characters."
+      institutionManageLocationObject.locationMoreThan100CharsErrorMessage()
     );
     verifyThatFieldDoesNotAcceptMoreThan100Chars(
       institutionManageLocationObject.address1(),
@@ -212,12 +212,12 @@ function createInstitutionLocation(
     .type(institutionCode)
     .should("have.value", institutionCode);
   institutionManageLocationObject
-    .addressLine1()
+    .address1()
     .clear()
     .type(`Addrline1-${uniqeId}`)
     .should("have.value", `Addrline1-${uniqeId}`);
   institutionManageLocationObject
-    .addressLine2()
+    .address2()
     .clear()
     .type(`Addrline2-${uniqeId}`)
     .should("have.value", `Addrline2-${uniqeId}`);
@@ -390,7 +390,7 @@ describe("Manage Location", () => {
   it("Verify that location name should not accept more than 100 chars when on the Add new location view", () => {
     /**
     Location Name
-    Adress1 and Adress2
+    Address1 and Address2
     City
      */
     verifyNoInputFieldsAcceptMoreThan100Chars(true);
@@ -504,7 +504,7 @@ describe("Manage Location", () => {
   });
 
   it("Verify that “Phone number” should not accept any alphabets when editing a location primary contact details", () => {
-    verifyPhoneNumberFieldAcceptNumBetween10And20();
+    verifyPhoneNumberFieldValidations();
   });
 });
 
@@ -607,13 +607,11 @@ describe("Manage Location", () => {
 
   it("Verify that selecting 'Other' Country field should not accept more than 100 chars", () => {
     institutionManageLocationObject.countryOtherFromDropDownMenu().click();
-    data.invalidData.stringWithMoreThan100Chars.forEach((text: string) => {
-      institutionManageLocationObject
-        .otherCountryInputText()
-        .clear()
-        .type(text);
-      cy.get("Other country must").should("not.equal");
-    });
+    institutionManageLocationObject
+      .otherCountryInputText()
+      .clear()
+      .type(data.invalidData.stringWithMoreThan100Chars);
+    cy.get("Other country must").should("not.exist");
   });
 });
 

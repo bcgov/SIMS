@@ -226,4 +226,8 @@ export default class ManageLocationObject extends BaseMethods {
   cityMoreThan100CharsErrorMessage() {
     return cy.contains("City must have no more than 100 characters.");
   }
+
+  locationMoreThan100CharsErrorMessage() {
+    return cy.contains("Location name must have no more than 100 characters.");
+  }
 }

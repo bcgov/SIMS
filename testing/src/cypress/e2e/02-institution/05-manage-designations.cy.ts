@@ -1,7 +1,9 @@
 import DashboardInstitutionObject from "../../page-objects/Institution-objects/DashboardInstitutionObject";
 import ManageDesignationsObject from "../../page-objects/Institution-objects/ManageDesignationsObject";
 import InstitutionHelperActions from "../../custom-command/institution/common-helper-functions.cy";
-import ManageInstitutionObject from "../../page-objects/Institution-objects/ManageInstitutionObject";
+import ManageInstitutionObject, {
+  SideBarMenuItems,
+} from "../../page-objects/Institution-objects/ManageInstitutionObject";
 
 const dashboardInstitutionObject = new DashboardInstitutionObject();
 const manageDesignationObject = new ManageDesignationsObject();
@@ -12,22 +14,24 @@ describe("Manage Designations", () => {
   before(() => {
     institutionHelperActions.loginIntoInstitutionSingleLocation();
     dashboardInstitutionObject.manageInstitutionButton().click();
-    manageDesignationObject.manageDesignationButton().click();
+    manageInstitutionObject.clickOnSideBar(SideBarMenuItems.ManageDesignation);
   });
 
-  it("Verify that user redirect to institution manage designation page", () => {
-    dashboardInstitutionObject.manageInstitutionButton().click();
-    manageDesignationObject.manageDesignationButton().click();
-    manageDesignationObject.designationAgreementsText().should("be.visible");
-  });
-
-  it("Verify that user redirect to correct url of institution manage designation", () => {
-    dashboardInstitutionObject.manageInstitutionButton().click();
-    manageDesignationObject.manageDesignationButton().click();
+  it("Verify that user is navigated to Designation agreements page when clicked on Manage Designations", () => {
+    manageDesignationObject
+      .designationAgreementsHeaderText()
+      .should("be.visible");
     cy.url().should("contain", "/manage-designation");
   });
 
-  it("Verify that view button exists and clicking on should open up the designation agreement be able to navigate back", () => {
+  it("Verify the list of details for the designation agreements", () => {
+    /**
+    Validating using no of designation status retrieved
+     */
+    manageDesignationObject.designationStatus().should("have.length", 1);
+  });
+
+  it("Verify that user is able to view the designation agreement", () => {
     manageDesignationObject
       .viewDesignationButton()
       .should("be.visible")
@@ -37,19 +41,31 @@ describe("Manage Designations", () => {
       .manageDesignationsBackButton()
       .should("be.visible")
       .click();
-    manageDesignationObject.designationAgreementsText().should("be.visible");
+    manageDesignationObject
+      .designationAgreementsHeaderText()
+      .should("be.visible");
   });
 });
 
-describe("Designation Details", () => {
+describe("Manage Designation", () => {
   before(() => {
     institutionHelperActions.loginIntoInstitutionSingleLocation();
   });
 
   beforeEach(() => {
     dashboardInstitutionObject.manageInstitutionButton().click();
-    manageDesignationObject.manageDesignationButton().click();
+    manageInstitutionObject.clickOnSideBar(SideBarMenuItems.ManageDesignation);
     manageDesignationObject.viewDesignationButton().click();
+  });
+
+  it("Verify that user is able to navigate back from view Designation to manage designation page", () => {
+    manageDesignationObject
+      .manageDesignationsBackButton()
+      .should("be.visible")
+      .click();
+    manageDesignationObject
+      .designationAgreementsHeaderText()
+      .should("be.visible");
   });
 
   it("Verify that heading, labels and hyperlinks are properly displayed ", () => {
@@ -115,7 +131,7 @@ describe("Designation Details", () => {
   });
 });
 
-describe("Request Designation", () => {
+describe("Manage Designation", () => {
   //TODO Intentionally skipped until we have control over the data that is created. Since we can have one `request for designation` in progress
   before(() => {
     institutionHelperActions.loginIntoInstitutionSingleLocation();
@@ -123,7 +139,7 @@ describe("Request Designation", () => {
 
   beforeEach(() => {
     dashboardInstitutionObject.manageInstitutionButton().click();
-    manageDesignationObject.manageDesignationButton().click();
+    manageInstitutionObject.clickOnSideBar(SideBarMenuItems.ManageDesignation);
     manageDesignationObject.requestDesignationButton().click();
   });
 
@@ -134,7 +150,9 @@ describe("Request Designation", () => {
 
   it("Clicking on cancel should navigate back to manage designations page", () => {
     manageDesignationObject.cancelAgreementButton().scrollIntoView().click();
-    manageDesignationObject.designationAgreementsText().should("be.visible");
+    manageDesignationObject
+      .designationAgreementsHeaderText()
+      .should("be.visible");
   });
 
   it.skip("Request a new designation", () => {

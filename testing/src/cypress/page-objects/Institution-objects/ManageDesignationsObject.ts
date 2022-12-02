@@ -1,22 +1,24 @@
-export default class ManageDesignationsObject {
-  manageDesignationButton() {
-    return cy.contains("Manage Designation");
+import BaseMethods from "./BaseMethods";
+
+export default class ManageDesignationsObject extends BaseMethods {
+  designationAgreementsHeaderText() {
+    return this.getElementByCyId("manageDesignationHeader");
   }
 
-  designationAgreementsText() {
-    return cy.contains("Designation agreements");
+  manageDesignationsBackButton() {
+    return cy.contains("Manage designations");
   }
 
   viewDesignationButton() {
-    return cy.get("[data-cy='viewDesignation']").eq(0);
+    return this.getElementByCyId("viewDesignation").eq(0);
   }
 
   viewDesignationText() {
     return cy.contains("View Designation");
   }
 
-  manageDesignationsBackButton() {
-    return cy.contains("Manage designations");
+  designationStatus() {
+    return this.getElementByCyId("designationStatus");
   }
 
   designationDetailsText() {
