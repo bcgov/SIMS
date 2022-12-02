@@ -31,9 +31,15 @@ export default class DashboardInstitutionObject extends BaseMethods {
   settingButton() {
     return this.getElementByCyId("settings");
   }
-  /**
-   * Elements identified by text only
-   */
+
+  homeButton() {
+    return this.getElementByCyId("institutionHome");
+  }
+
+  iconButton() {
+    return this.getElementByCyId("settings");
+  }
+  
   dashboardWelcomeMessage() {
     return cy.contains("Welcome!");
   }
@@ -52,26 +58,6 @@ export default class DashboardInstitutionObject extends BaseMethods {
 
   programsButton() {
     return cy.contains("Programs");
-  }
-
-  activeApplicationsButton() {
-    return cy.contains("Report a change");
-  }
-
-  programInfoRequestsButton() {
-    return cy.contains("Program Info Requests");
-  }
-
-  confirmationOfEnrollment() {
-    return cy.contains("Confirmation of Enrollment");
-  }
-
-  homeButton() {
-    return cy.contains("Home");
-  }
-
-  iconButton() {
-    return cy.get(".fa-user");
   }
 
   logOutButton() {

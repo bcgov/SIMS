@@ -8,7 +8,6 @@ export const enum SideBarMenuItems {
 }
 
 export default class ManageInstitutionObject extends BaseMethods {
-
   clickOnSideBar(menuItem: string) {
     this.getElementByCyId("sideBarMenu")
       .get(".v-list-item-title")
@@ -16,11 +15,6 @@ export default class ManageInstitutionObject extends BaseMethods {
       .click();
   }
 
-
-  /**
-   *
-   * @returns
-   */
   manageProfile() {
     return cy.contains("Manage Profile");
   }

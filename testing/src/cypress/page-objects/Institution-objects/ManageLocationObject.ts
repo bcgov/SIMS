@@ -88,12 +88,7 @@ export default class ManageLocationObject extends BaseMethods {
   addLocationButton() {
     return this.getElementByCyId("addLocation");
   }
-
-  /**
-   *
-   * @returns
-   */
-
+  
   manageLocationsBackButton() {
     return cy.contains("Manage location");
   }
