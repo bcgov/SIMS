@@ -14,6 +14,7 @@ const dashboardInstitutionObject = new DashboardInstitutionObject();
 const institutionManageLocationObject = new ManageLocationObject();
 const institutionHelperActions = new InstitutionHelperActions();
 const manageInstitutionObject = new ManageInstitutionObject();
+
 function loginAndClickOnManageInstitution() {
   institutionHelperActions.loginIntoInstitutionSingleLocation();
   dashboardInstitutionObject.manageInstitutionButton().click();
@@ -88,21 +89,90 @@ function verifyContactDetailsAreVisibleAndEnabled() {
   );
 }
 
-function verifyInvalidEmailFormatsAreNotAllowed() {
+function verifyEmailInputFieldValidations() {
+  /**
+    valid formats are allowed
+    invalid formats are not allowed
+     */
   data.invalidData.emailAddress.forEach((text: string) => {
     institutionManageLocationObject.emailInputText().clear().type(text);
     cy.contains("Email must be a valid email.").should("be.visible");
   });
-}
-
-function verifyValidEmailFormatsAreAllowed() {
   data.validData.emailAddress.forEach((text: string) => {
     institutionManageLocationObject.emailInputText().clear().type(text);
     cy.contains("Email must be a valid email.").should("not.exist");
   });
 }
 
-function verifyPhoneNumberFieldNotAcceptNumBelow10Above20() {
+function verifyPrimaryContactDetailsAreMandatory() {
+  /**
+  first name
+  last name
+  email
+  phone number
+   */
+  verifyThatFieldShouldNotBeEmpty(
+    institutionManageLocationObject.firstNameInputText(),
+    institutionManageLocationObject.firstNameIsRequiredErrorMessage()
+  );
+  verifyThatFieldShouldNotBeEmpty(
+    institutionManageLocationObject.lastNameInputText(),
+    institutionManageLocationObject.lastNameIsRequiredErrorMessage()
+  );
+  verifyThatFieldShouldNotBeEmpty(
+    institutionManageLocationObject.emailInputText(),
+    institutionManageLocationObject.emailIsRequiredErrorMessage()
+  );
+  verifyThatFieldShouldNotBeEmpty(
+    institutionManageLocationObject.phoneInputText(),
+    institutionManageLocationObject.phoneNumberIsRequiredErrorMessage()
+  );
+}
+
+function verifyNoInputFieldsAcceptMoreThan100Chars(createView: boolean) {
+  if (createView == true) {
+    verifyThatFieldDoesNotAcceptMoreThan100Chars(
+      institutionManageLocationObject.locationName(),
+      "Location name must have no more than 100 characters."
+    );
+    verifyThatFieldDoesNotAcceptMoreThan100Chars(
+      institutionManageLocationObject.address1(),
+      institutionManageLocationObject.address1MoreThan100CharsErrorMessage()
+    );
+    verifyThatFieldDoesNotAcceptMoreThan100Chars(
+      institutionManageLocationObject.address2(),
+      institutionManageLocationObject.address2MoreThan100CharsErrorMessage()
+    );
+    verifyThatFieldDoesNotAcceptMoreThan100Chars(
+      institutionManageLocationObject.cityInputText(),
+      institutionManageLocationObject.cityMoreThan100CharsErrorMessage()
+    );
+  }
+  /**
+    first name
+    last name
+    email
+     */
+  verifyThatFieldDoesNotAcceptMoreThan100Chars(
+    institutionManageLocationObject.firstNameInputText(),
+    institutionManageLocationObject.firstNameIsMoreThan100CharsErrorMessage()
+  );
+  verifyThatFieldDoesNotAcceptMoreThan100Chars(
+    institutionManageLocationObject.lastNameInputText(),
+    institutionManageLocationObject.lastNameIsMoreThan100CharsErrorMessage()
+  );
+  verifyThatFieldDoesNotAcceptMoreThan100Chars(
+    institutionManageLocationObject.emailInputText(),
+    institutionManageLocationObject.emailIsMoreThan100CharsErrorMessage()
+  );
+}
+
+function verifyPhoneNumberFieldValidations() {
+  /**
+    not accept more than 20 numbers
+    not accept any alphabets
+    only accept between 10 and 20 numbers
+     */
   data.invalidData.phoneNumberBelow10.forEach((text: string) => {
     institutionManageLocationObject.phoneInputText().clear().type(text);
     cy.contains("Phone number must have at least 10 characters.").should(
@@ -115,9 +185,6 @@ function verifyPhoneNumberFieldNotAcceptNumBelow10Above20() {
       "be.visible"
     );
   });
-}
-
-function verifyPhoneNumberFieldAcceptNumBetween10And20() {
   data.validData.phoneNumber.forEach((text: string) => {
     institutionManageLocationObject.phoneInputText().clear().type(text);
     cy.contains("Phone number must have no more than 20 characters.").should(
@@ -246,65 +313,20 @@ describe("Manage Location", () => {
     verifyContactDetailsAreVisibleAndEnabled();
   });
 
-  it("Verify that “First name” is a mandatory field when editing a location primary contact details", () => {
-    verifyThatFieldShouldNotBeEmpty(
-      institutionManageLocationObject.firstNameInputText(),
-      institutionManageLocationObject.firstNameIsRequiredErrorMessage()
-    );
+  it("Verify that primary contact details are mandatory when editing a institution location", () => {
+    verifyPrimaryContactDetailsAreMandatory();
   });
 
-  it("Verify that “First name” should not accept more than 100 chars when editing a location primary contact details", () => {
-    verifyThatFieldDoesNotAcceptMoreThan100Chars(
-      institutionManageLocationObject.firstNameInputText(),
-      institutionManageLocationObject.firstNameIsMoreThan100CharsErrorMessage()
-    );
-  });
-
-  it("Verify that “Last name” is a mandatory field when editing a location primary contact details", () => {
-    verifyThatFieldShouldNotBeEmpty(
-      institutionManageLocationObject.lastNameInputText(),
-      institutionManageLocationObject.lastNameIsRequiredErrorMessage()
-    );
-  });
-
-  it("Verify that “Last name” should not accept more than 100 chars when editing a location primary contact details", () => {
-    verifyThatFieldDoesNotAcceptMoreThan100Chars(
-      institutionManageLocationObject.lastNameInputText(),
-      institutionManageLocationObject.lastNameIsMoreThan100CharsErrorMessage()
-    );
-  });
-
-  it("Verify that “Email” is a mandatory field when editing a location primary contact details", () => {
-    verifyThatFieldShouldNotBeEmpty(
-      institutionManageLocationObject.emailInputText(),
-      institutionManageLocationObject.emailIsRequiredErrorMessage()
-    );
-  });
-
-  it("Verify that “Email” should not accept more than 100 chars when editing a location primary contact details", () => {
-    verifyThatFieldDoesNotAcceptMoreThan100Chars(
-      institutionManageLocationObject.emailInputText(),
-      institutionManageLocationObject.emailIsMoreThan100CharsErrorMessage()
-    );
+  it("Verify that primary contact details should not accept more than 100 chars when editing a institution location", () => {
+    verifyNoInputFieldsAcceptMoreThan100Chars(false);
   });
 
   it("Verify the “Email” field should accept only valid formatted emails", () => {
-    verifyInvalidEmailFormatsAreNotAllowed();
+    verifyEmailInputFieldValidations();
   });
 
-  it("Verify that “Phone number” is a mandatory field when editing a location primary contact details", () => {
-    verifyThatFieldShouldNotBeEmpty(
-      institutionManageLocationObject.phoneInputText(),
-      institutionManageLocationObject.phoneNumberIsRequiredErrorMessage()
-    );
-  });
-
-  it("Verify that “Phone number” should not accept more than 20 numbers when editing a location primary contact details", () => {
-    verifyPhoneNumberFieldNotAcceptNumBelow10Above20();
-  });
-
-  it("Verify that “Phone number” should not accept any alphabets when editing a location primary contact details", () => {
-    verifyPhoneNumberFieldAcceptNumBetween10And20();
+  it("Verify that “Phone number” should have proper validations when editing a location primary contact details", () => {
+    verifyPhoneNumberFieldValidations();
   });
 
   it("Verify that clicking on “Manage locations” back button will navigate the user back ", () => {
@@ -366,10 +388,12 @@ describe("Manage Location", () => {
   });
 
   it("Verify that location name should not accept more than 100 chars when on the Add new location view", () => {
-    verifyThatFieldDoesNotAcceptMoreThan100Chars(
-      institutionManageLocationObject.locationName(),
-      "Location name must have no more than 100 characters."
-    );
+    /**
+    Location Name
+    Adress1 and Adress2
+    City
+     */
+    verifyNoInputFieldsAcceptMoreThan100Chars(true);
   });
 
   it("Verify that institution code is mandatory when adding a new location", () => {
@@ -416,23 +440,12 @@ describe("Manage Location", () => {
     );
   });
 
-  it("Verify that Address 1 and Address 2 should not have more than 100 chars when on the Add new location view", () => {
-    verifyThatFieldDoesNotAcceptMoreThan100Chars(
-      institutionManageLocationObject.addressLine1(),
-      institutionManageLocationObject.address1MoreThan100CharsErrorMessage()
-    );
-    verifyThatFieldDoesNotAcceptMoreThan100Chars(
-      institutionManageLocationObject.addressLine2(),
-      institutionManageLocationObject.address2MoreThan100CharsErrorMessage()
-    );
-  });
-
   it("Verify that Address 1 and Address 2 should accept more alpha numeric and special", () => {
     data.validData.stringsWithAlphaNumericSpecialChars.forEach(
       (text: string) => {
-        institutionManageLocationObject.addressLine1().clear().type(text);
+        institutionManageLocationObject.address1().clear().type(text);
         cy.contains("Address 1 must have ").should("not.exist");
-        institutionManageLocationObject.addressLine2().clear().type(text);
+        institutionManageLocationObject.address2().clear().type(text);
         cy.contains("Address 2 must have ").should("not.exist");
       }
     );
@@ -454,24 +467,10 @@ describe("Manage Location", () => {
     );
   });
 
-  it("Verify that city field should not accept more than chars 100 chars", () => {
-    verifyThatFieldDoesNotAcceptMoreThan100Chars(
-      institutionManageLocationObject.cityInputText(),
-      institutionManageLocationObject.cityMoreThan100CharsErrorMessage()
-    );
-  });
-
   it("Verify that “First name” is a mandatory field when editing a location primary contact details", () => {
     verifyThatFieldShouldNotBeEmpty(
       institutionManageLocationObject.firstNameInputText(),
       institutionManageLocationObject.firstNameIsRequiredErrorMessage()
-    );
-  });
-
-  it("Verify that “First name” should not accept more than 100 chars when editing a location primary contact details", () => {
-    verifyThatFieldDoesNotAcceptMoreThan100Chars(
-      institutionManageLocationObject.firstNameInputText(),
-      institutionManageLocationObject.firstNameIsMoreThan100CharsErrorMessage()
     );
   });
 
@@ -482,13 +481,6 @@ describe("Manage Location", () => {
     );
   });
 
-  it("Verify that “Last name” should not accept more than 100 chars when editing a location primary contact details", () => {
-    verifyThatFieldDoesNotAcceptMoreThan100Chars(
-      institutionManageLocationObject.lastNameInputText(),
-      institutionManageLocationObject.lastNameIsMoreThan100CharsErrorMessage()
-    );
-  });
-
   it("Verify that “Email” is a mandatory field when editing a location primary contact details", () => {
     verifyThatFieldShouldNotBeEmpty(
       institutionManageLocationObject.emailInputText(),
@@ -496,15 +488,8 @@ describe("Manage Location", () => {
     );
   });
 
-  it("Verify that “Email” should not accept more than 100 chars when editing a location primary contact details", () => {
-    verifyThatFieldDoesNotAcceptMoreThan100Chars(
-      institutionManageLocationObject.emailInputText(),
-      institutionManageLocationObject.emailIsMoreThan100CharsErrorMessage()
-    );
-  });
-
   it("Verify the “Email” field should accept only valid formatted emails", () => {
-    verifyInvalidEmailFormatsAreNotAllowed();
+    verifyEmailInputfieldsValidations();
   });
 
   it("Verify that “Phone number” is a mandatory field when editing a location primary contact details", () => {
@@ -515,7 +500,7 @@ describe("Manage Location", () => {
   });
 
   it("Verify that “Phone number” should not accept more than 20 numbers when editing a location primary contact details", () => {
-    verifyPhoneNumberFieldNotAcceptNumBelow10Above20();
+    verifyPhoneNumberFieldValidations();
   });
 
   it("Verify that “Phone number” should not accept any alphabets when editing a location primary contact details", () => {
