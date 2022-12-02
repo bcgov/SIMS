@@ -1,14 +1,9 @@
 import { InjectQueue, OnQueueActive, Process, Processor } from "@nestjs/bull";
 import { IER12FileService } from "@sims/integrations/institution-integration/ier-integration";
-import {
-  IER_SCHEDULER_JOB_ID,
-  QUEUE_RETRY_DEFAULT_CONFIG,
-} from "@sims/services/constants";
 import { QueueNames } from "@sims/services/queue";
-import { PST_TIMEZONE } from "@sims/utilities";
 import { ConfigService } from "@sims/utilities/config";
 import { InjectLogger, LoggerService } from "@sims/utilities/logger";
-import Bull, { CronRepeatOptions, Job, Queue } from "bull";
+import { Job, Queue } from "bull";
 import { BaseScheduler } from "../base-scheduler";
 import {
   GeneratedDateQueueInDTO,
@@ -17,31 +12,23 @@ import {
 
 @Processor(QueueNames.IERIntegration)
 export class IERIntegrationScheduler extends BaseScheduler<GeneratedDateQueueInDTO> {
-  protected cronOptions: Bull.JobOptions = undefined;
+  protected repeatableJobId = QueueNames.IERIntegration;
 
   constructor(
     @InjectQueue(QueueNames.IERIntegration)
     protected readonly schedulerQueue: Queue<GeneratedDateQueueInDTO>,
     private readonly ierRequest: IER12FileService,
-    config: ConfigService,
+    private readonly config: ConfigService,
   ) {
-    super();
-    // cron options.
-    this.cronOptions = {
-      ...QUEUE_RETRY_DEFAULT_CONFIG,
-      jobId: IER_SCHEDULER_JOB_ID,
-      repeat: {
-        cron: config.queueSchedulerCrons.ierCron,
-        tz: PST_TIMEZONE,
-      } as CronRepeatOptions,
-    };
+    super(schedulerQueue);
   }
 
   /**
-   * Add scheduler to the queue.
+   * Cron expression from the IER integration.
+   * @returns cron expression.
    */
-  async initializeScheduler(): Promise<void> {
-    await this.schedulerQueue.add(undefined, this.cronOptions);
+  protected get cronExpression(): string {
+    return this.config.queueSchedulerCrons.ierCron;
   }
 
   /**

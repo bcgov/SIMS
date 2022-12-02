@@ -1,13 +1,27 @@
 import { OnApplicationBootstrap } from "@nestjs/common";
+import { QUEUE_RETRY_DEFAULT_CONFIG } from "@sims/services/constants";
+import { QueueNames } from "@sims/services/queue";
+import { PST_TIMEZONE } from "@sims/utilities";
 import Bull, { CronRepeatOptions, Queue } from "bull";
 
 export abstract class BaseScheduler<T> implements OnApplicationBootstrap {
-  // When overridden in a derived class, it add the scheduler to the queue.
-  abstract initializeScheduler(): Promise<void>;
-  // When overridden in a derived class, it holds the crons options.
-  protected abstract cronOptions: Bull.JobOptions;
-  // When overridden in a derived class, its the queue instance.
-  protected abstract schedulerQueue: Queue<T>;
+  // When overridden in a derived class, it hold the repeatable job id.
+  protected abstract repeatableJobId: QueueNames;
+  // When overridden in a derived class, it hold the repeatable cron expression.
+  protected abstract cronExpression: string;
+
+  constructor(protected schedulerQueue: Queue<T>) {}
+
+  protected get cronOptions(): Bull.JobOptions {
+    return {
+      ...QUEUE_RETRY_DEFAULT_CONFIG,
+      jobId: this.repeatableJobId,
+      repeat: {
+        cron: this.cronExpression,
+        tz: PST_TIMEZONE,
+      } as CronRepeatOptions,
+    };
+  }
 
   /**
    * Once all modules have been initialized
@@ -17,7 +31,8 @@ export abstract class BaseScheduler<T> implements OnApplicationBootstrap {
    */
   async onApplicationBootstrap(): Promise<void> {
     await this.deleteOldRepeatableJobs();
-    this.initializeScheduler();
+    // Add the cron to the queue.
+    await this.schedulerQueue.add(undefined, this.cronOptions);
   }
 
   /**

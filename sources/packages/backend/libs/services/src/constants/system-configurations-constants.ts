@@ -33,4 +33,4 @@ export const QUEUE_RETRY_DEFAULT_CONFIG = {
   backoff: QUEUE_RETRY_DELAY,
 };
 
-export const IER_SCHEDULER_JOB_ID = QueueNames.IERIntegration;
+// export const IER_SCHEDULER_JOB_ID = QueueNames.IERIntegration;
