@@ -65,7 +65,7 @@ objects:
                       name: ${NAME}
                 - name: FORMIO_DOMAIN
                   value: ${FORMS_URL}
-              image: ${IMAGE_REGISTRY}/${TOOLS_NAMESPACE}/${NAME}:${IMAGE_STREAM_TAG}
+              image: ${IMAGE_REGISTRY}/${TOOLS_NAMESPACE}/${IMAGE_STREAM_TAG}
               name: ${NAME}
               ports:
                 - containerPort: 3001
@@ -114,7 +114,7 @@ objects:
             from:
               kind: ImageStreamTag
               namespace: "${TOOLS_NAMESPACE}"
-              name: "${NAME}:${IMAGE_STREAM_TAG}"
+              name: "${IMAGE_STREAM_TAG}"
           type: ImageChange
     status: {}
 
