@@ -138,4 +138,4 @@ QUEUE_DASHBOARD_USER=
 QUEUE_PREFIX={sims-local}
 
 #Queue scheduler crons
-SCHEDULERS_IER_CRON=0 9 * * *
+SCHEDULERS_IER_CRON=0 17 * * *

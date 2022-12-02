@@ -1,6 +1,5 @@
 import { OnApplicationBootstrap } from "@nestjs/common";
 import { QUEUE_RETRY_DEFAULT_CONFIG } from "@sims/services/constants";
-import { PST_TIMEZONE } from "@sims/utilities";
 import Bull, { CronRepeatOptions, Queue } from "bull";
 
 export abstract class BaseScheduler<T> implements OnApplicationBootstrap {
@@ -14,7 +13,6 @@ export abstract class BaseScheduler<T> implements OnApplicationBootstrap {
       ...QUEUE_RETRY_DEFAULT_CONFIG,
       repeat: {
         cron: this.cronExpression,
-        tz: PST_TIMEZONE,
       } as CronRepeatOptions,
     };
   }
