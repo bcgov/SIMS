@@ -255,7 +255,7 @@ build-queue-consumers:
 	@oc -n $(BUILD_NAMESPACE) start-build bc/$(QUEUE_CONSUMERS) --wait
 
 build-web:
-test -n "$(BUILD_NAMESPACE)"
+  test -n "$(BUILD_NAMESPACE)"
 	test -n "$(BUILD_REF)"
 	test -n "$(BUILD_TAG)"
 	test -n "$(WEB_BUILD_REF)"
