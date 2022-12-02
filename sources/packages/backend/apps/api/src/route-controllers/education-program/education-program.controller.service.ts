@@ -18,14 +18,16 @@ import {
   EducationProgramsSummaryAPIOutDTO,
   EducationProgramAPIInDTO,
 } from "./models/education-program.dto";
-import {
-  credentialTypeToDisplay,
-  getUserFullName,
-} from "../../utilities";
+import { credentialTypeToDisplay, getUserFullName } from "../../utilities";
 import { CustomNamedError, getISODateOnlyString } from "@sims/utilities";
 import { FormNames } from "../../services/form/constants";
-import { EDUCATION_PROGRAM_NOT_FOUND } from "../../constants";
+import {
+  EDUCATION_PROGRAM_NOT_FOUND,
+  DUPLICATE_SABC_CODE,
+} from "../../constants";
 import { INSTITUTION_TYPE_BC_PRIVATE } from "@sims/sims-db/constant";
+import { ApiProcessError } from "../../types";
+import { ApiUnprocessableEntityResponse } from "@nestjs/swagger";
 
 @Injectable()
 export class EducationProgramControllerService {
@@ -82,6 +84,11 @@ export class EducationProgramControllerService {
    * @param auditUserId user that should be considered the one that is causing the changes.
    * @returns inserted/updated program.
    */
+  @ApiUnprocessableEntityResponse({
+    description:
+      "Not able to a save the program due to an invalid request or " +
+      "SABC code is duplicated.",
+  })
   async saveProgram(
     payload: EducationProgramAPIInDTO,
     institutionId: number,
@@ -113,6 +120,11 @@ export class EducationProgramControllerService {
       if (error instanceof CustomNamedError) {
         if (error.name === EDUCATION_PROGRAM_NOT_FOUND) {
           throw new NotFoundException(error.message);
+        }
+        if (error.name === DUPLICATE_SABC_CODE) {
+          throw new UnprocessableEntityException(
+            new ApiProcessError(error.message, error.name),
+          );
         }
       }
       throw error;

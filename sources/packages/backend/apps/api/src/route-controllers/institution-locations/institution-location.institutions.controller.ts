@@ -11,11 +11,13 @@ import {
   Patch,
   Post,
   Query,
+  UnprocessableEntityException,
 } from "@nestjs/common";
 import {
   ApiBadRequestResponse,
   ApiNotFoundResponse,
   ApiTags,
+  ApiUnprocessableEntityResponse,
 } from "@nestjs/swagger";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { IInstitutionUserToken } from "../../auth/userToken.interface";
@@ -30,9 +32,9 @@ import {
   FormService,
   InstitutionLocationService,
 } from "../../services";
-import { ClientTypeBaseRoute } from "../../types";
+import { ClientTypeBaseRoute, ApiProcessError } from "../../types";
 import { getUserFullName } from "../../utilities";
-import { getISODateOnlyString } from "@sims/utilities";
+import { getISODateOnlyString, CustomNamedError } from "@sims/utilities";
 import {
   ActiveApplicationDataAPIOutDTO,
   ActiveApplicationSummaryAPIOutDTO,
@@ -52,6 +54,7 @@ import {
   ApplicationStatusPaginationOptionsAPIInDTO,
   PaginatedResultsAPIOutDTO,
 } from "../models/pagination.dto";
+import { DUPLICATE_INSTITUTION_LOCATION_CODE } from "../../constants";
 
 /**
  * Institution location controller for institutions Client.
@@ -76,6 +79,9 @@ export class InstitutionLocationInstitutionsController extends BaseController {
   @ApiBadRequestResponse({
     description: "Invalid request to create an institution location.",
   })
+  @ApiUnprocessableEntityResponse({
+    description: "Duplicate institution location code.",
+  })
   @IsInstitutionAdmin()
   @Post()
   async create(
@@ -94,14 +100,25 @@ export class InstitutionLocationInstitutionsController extends BaseController {
       );
     }
 
-    // If the data is valid the location is saved to SIMS DB.
-    const createdInstitutionLocation = await this.locationService.saveLocation(
-      userToken.authorizations.institutionId,
-      dryRunSubmissionResult.data.data,
-      userToken.userId,
-    );
-
-    return { id: createdInstitutionLocation.id };
+    try {
+      // If the data is valid the location is saved to SIMS DB.
+      const createdInstitutionLocation =
+        await this.locationService.createLocation(
+          userToken.authorizations.institutionId,
+          dryRunSubmissionResult.data.data,
+          userToken.userId,
+        );
+      return { id: createdInstitutionLocation.id };
+    } catch (error: unknown) {
+      if (error instanceof CustomNamedError) {
+        if (error.name === DUPLICATE_INSTITUTION_LOCATION_CODE) {
+          throw new UnprocessableEntityException(
+            new ApiProcessError(error.message, error.name),
+          );
+        }
+      }
+      throw error;
+    }
   }
 
   /**

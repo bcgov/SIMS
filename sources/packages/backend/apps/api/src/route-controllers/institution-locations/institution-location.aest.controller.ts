@@ -5,8 +5,13 @@ import {
   Param,
   ParseIntPipe,
   Patch,
+  UnprocessableEntityException,
 } from "@nestjs/common";
-import { ApiNotFoundResponse, ApiTags } from "@nestjs/swagger";
+import {
+  ApiNotFoundResponse,
+  ApiTags,
+  ApiUnprocessableEntityResponse,
+} from "@nestjs/swagger";
 import { InstitutionLocationService } from "../../services";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import {
@@ -17,7 +22,7 @@ import {
 } from "../../auth/decorators";
 import { UserGroups } from "../../auth/user-groups.enum";
 import { IUserToken } from "../../auth/userToken.interface";
-import { ClientTypeBaseRoute } from "../../types";
+import { ClientTypeBaseRoute, ApiProcessError } from "../../types";
 import BaseController from "../BaseController";
 import { InstitutionLocationControllerService } from "./institution-location.controller.service";
 import {
@@ -25,6 +30,8 @@ import {
   InstitutionLocationDetailsAPIOutDTO,
 } from "./models/institution-location.dto";
 import { Role } from "../../auth/roles.enum";
+import { CustomNamedError } from "@sims/utilities";
+import { DUPLICATE_INSTITUTION_LOCATION_CODE } from "../../constants";
 
 /**
  * Institution location controller for institutions Client.
@@ -60,6 +67,9 @@ export class InstitutionLocationAESTController extends BaseController {
    * @param locationId
    * @param payload
    */
+  @ApiUnprocessableEntityResponse({
+    description: "Duplicate institution location code.",
+  })
   @Roles(Role.InstitutionEditLocationDetails)
   @Patch(":locationId")
   async update(
@@ -67,10 +77,21 @@ export class InstitutionLocationAESTController extends BaseController {
     @Body() payload: AESTInstitutionLocationAPIInDTO,
     @UserToken() userToken: IUserToken,
   ): Promise<void> {
-    await this.locationService.updateLocation(
-      payload,
-      locationId,
-      userToken.userId,
-    );
+    try {
+      await this.locationService.updateLocation(
+        payload,
+        locationId,
+        userToken.userId,
+      );
+    } catch (error: unknown) {
+      if (error instanceof CustomNamedError) {
+        if (error.name === DUPLICATE_INSTITUTION_LOCATION_CODE) {
+          throw new UnprocessableEntityException(
+            new ApiProcessError(error.message, error.name),
+          );
+        }
+      }
+      throw error;
+    }
   }
 }

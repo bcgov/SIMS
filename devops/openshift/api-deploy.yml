@@ -238,6 +238,8 @@ objects:
                     secretKeyRef:
                       key: ${REDIS_PASSWORD_KEY}
                       name: ${REDIS_SECRET_NAME}
+                - name: QUEUE_PREFIX
+                  value: "${QUEUE_PREFIX}"
                 - name: ZEEBE_ADDRESS
                   valueFrom:
                     secretKeyRef:
@@ -499,3 +501,5 @@ parameters:
     value: redis-creds
   - name: REDIS_PASSWORD_KEY
     value: password
+  - name: QUEUE_PREFIX
+    required: true

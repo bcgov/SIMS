@@ -20,9 +20,9 @@ jobs:
           echo Git Pull Request Ref: ${{ github.event.pull_request.head.sha }}
           echo OC CLI Version: $(oc version)
 
-  # Build Web, SIMS-Api and Workers
+  # Building all packages
   build:
-    name: Build Web, SIMS-Api and Workers
+    name: Building all packages
     environment: DEV
     runs-on: ubuntu-latest
     if: ${{ github.event.pull_request.merged == true}}
@@ -55,7 +55,7 @@ jobs:
         working-directory: "./devops"
         run: |
           make oc-build-workers
-      - name: Build Queues Image
+      - name: Build Queue Consumers Image
         working-directory: "./devops"
         run: |
           make oc-build-queue-consumers
@@ -64,9 +64,9 @@ jobs:
         run: |
           make oc-build-web
 
-  # Deploy Web, SIMS-Api and Workers
+  # Deploying all packages
   deployDev:
-    name: Deploy Web, SIMS-Api and Workers to DEV environment
+    name: Deploying all packages
     runs-on: ubuntu-latest
     environment: DEV
     needs:
@@ -91,11 +91,13 @@ jobs:
       API_SECRET_NAME: ${{ secrets.OPENSHIFT_SIMS_CREDS_NAME }}
       WORKERS_SECRET_NAME: ${{ secrets.OPENSHIFT_SIMS_CREDS_NAME }}
       QUEUE_CONSUMERS_SECRET_NAME: ${{ secrets.OPENSHIFT_SIMS_CREDS_NAME }}
+      QUEUE_PREFIX: ${{ secrets.QUEUE_PREFIX }}
       API_PORT: ${{ secrets.API_PORT }}
       WEB_PORT: ${{ secrets.WEB_PORT }}
       API: ${{ format('{0}api-sims', secrets.HOST_PREFIX) }}
       WEB: ${{ format('{0}web-sims', secrets.HOST_PREFIX) }}
       WORKERS: ${{ format('{0}workers-sims', secrets.HOST_PREFIX) }}
+      QUEUE_CONSUMERS: ${{ format('{0}queue-consumers-sims', secrets.HOST_PREFIX) }}
       SWAGGER_NAME: ${{ format('{0}swagger', secrets.HOST_PREFIX) }}
       DATABASE_NAME_KEY: ${{ secrets.DATABASE_NAME_KEY }}
     steps:
@@ -125,8 +127,8 @@ jobs:
         working-directory: "./devops/"
         run: |
           make oc-deploy-workers
-      # Deploy Queues
-      - name: Deploy Queues
+      # Deploy Queue Consumers
+      - name: Deploy Queue Consumers
         working-directory: "./devops/"
         run: |
           make oc-deploy-queue-consumers

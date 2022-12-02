@@ -36,6 +36,7 @@ export const TableNames = {
   DisbursementValue: "disbursement_values",
   FederalRestrictions: "federal_restrictions",
   DisbursementFeedbackErrors: "disbursement_feedback_errors",
+  DisbursementOverawards: "disbursement_overawards",
   Notes: "notes",
   StudentNotes: "student_notes",
   InstitutionNotes: "institution_notes",

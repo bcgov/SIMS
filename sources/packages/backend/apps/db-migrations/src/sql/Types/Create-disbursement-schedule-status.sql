@@ -1,0 +1,1 @@
+CREATE TYPE sims.disbursement_schedule_status AS ENUM ('Pending', 'Sent', 'Cancelled');

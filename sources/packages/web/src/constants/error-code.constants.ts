@@ -64,3 +64,12 @@ export const OFFERING_VALIDATION_CSV_CONTENT_FORMAT_ERROR =
  */
 export const OFFERING_CREATION_CRITICAL_ERROR =
   "OFFERING_CREATION_CRITICAL_ERROR";
+/**
+ * Duplicate location code for the institution.
+ */
+export const DUPLICATE_INSTITUTION_LOCATION_CODE =
+  "DUPLICATE_INSTITUTION_LOCATION_CODE";
+/**
+ * Duplicate SABC code for the institution.
+ */
+export const DUPLICATE_SABC_CODE = "DUPLICATE_SABC_CODE";

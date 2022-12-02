@@ -64,6 +64,8 @@ objects:
                     secretKeyRef:
                       key: ${DASHBOARD_PASSWORD_KEY}
                       name: ${QUEUE_CONSUMERS_SECRET_NAME}
+                - name: QUEUE_PREFIX
+                  value: "${QUEUE_PREFIX}"
                 - name: ZEEBE_ADDRESS
                   valueFrom:
                     secretKeyRef:
@@ -191,4 +193,6 @@ parameters:
   - name: PORT
     required: true
   - name: HOST_NAME
+    required: true
+  - name: QUEUE_PREFIX
     required: true
