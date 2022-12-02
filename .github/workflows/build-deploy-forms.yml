@@ -45,12 +45,12 @@ jobs:
         run: |
           oc login --token=${{ secrets.SA_TOKEN }} --server=https://api.silver.devops.gov.bc.ca:6443
       # Build Forms
-      - name: Build Forms
+      - name: Build Forms server
         working-directory: "./devops/"
         run: |
           make oc-build-forms
       # Deploy Forms
-      - name: Deploy Forms
+      - name: Deploy Forms server
         working-directory: "./devops/"
         run: |
           make oc-deploy-forms
