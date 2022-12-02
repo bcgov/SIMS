@@ -1,5 +1,4 @@
 import { Duration } from "zeebe-node";
-import { QueueNames } from "../queue";
 
 /**
  * Default time that a message can wait, once it is delivery to the broker,
@@ -32,5 +31,3 @@ export const QUEUE_RETRY_DEFAULT_CONFIG = {
    */
   backoff: QUEUE_RETRY_DELAY,
 };
-
-// export const IER_SCHEDULER_JOB_ID = QueueNames.IERIntegration;
