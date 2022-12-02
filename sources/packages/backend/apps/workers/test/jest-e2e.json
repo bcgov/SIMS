@@ -16,6 +16,8 @@
     "@sims/services/(.*)": "<rootDir>/../../libs/services/src/$1",
     "@sims/services": "<rootDir>/../../libs/services/src",
     "@sims/utilities/(.*)": "<rootDir>/../../libs/utilities/src/$1",
-    "@sims/utilities": "<rootDir>/../../libs/utilities/src"
+    "@sims/utilities": "<rootDir>/../../libs/utilities/src",
+    "@sims/test-utils/(.*)": "<rootDir>/../../libs/test-utils/src/$1",
+    "@sims/test-utils": "<rootDir>/../../libs/test-utils/src"
   }
 }

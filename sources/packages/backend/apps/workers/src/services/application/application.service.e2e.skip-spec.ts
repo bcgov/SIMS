@@ -77,7 +77,7 @@ describe.skip("ApplicationService", () => {
     jest.spyOn(msfaaNumberService, "createMSFAANumber");
   });
 
-  describe("associateMSFAANumber", () => {
+  describe.skip("associateMSFAANumber", () => {
     it("should throw an exception when application is not in the correct state", async () => {
       // Create fake application to have the MSFAA associated.
       const fakeApplication = createFakeApplication();
@@ -222,7 +222,7 @@ describe.skip("ApplicationService", () => {
     });
   });
 
-  describe("getPreviouslySignedApplication", () => {
+  describe.skip("getPreviouslySignedApplication", () => {
     it("should be able to find a completed application with an MSFAA number associated", async () => {
       // Student used along this test.
       const testStudent = await studentRepository.save(createFakeStudent());

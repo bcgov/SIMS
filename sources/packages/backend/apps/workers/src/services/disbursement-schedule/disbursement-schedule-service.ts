@@ -115,6 +115,7 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
       );
       // Get already sent (disbursed) values to know the amount that the student already received.
       const currentDisbursements = await this.getDisbursementsForOverawards(
+        assessment.application.student.id,
         [assessment.application.applicationNumber],
         DisbursementScheduleStatus.Sent,
         transactionEntityManager,
@@ -292,8 +293,12 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
     );
 
     await Promise.all([
-      this.deleteOverawardRecords(applicationNumbers, entityManager),
-      this.cancelPendingOverawards(applicationNumbers, entityManager),
+      this.deleteOverawardRecords(studentId, applicationNumbers, entityManager),
+      this.cancelPendingOverawards(
+        studentId,
+        applicationNumbers,
+        entityManager,
+      ),
     ]);
   }
 
@@ -302,11 +307,13 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
    * All possible versions of the same application will be considered, including overridden ones.
    * For instance, if a disbursement schedule was ever marked as disbursed it will matter for
    * overaward calculations.
+   * @param studentId student id.
    * @param applicationNumbers application number to have the disbursements retrieved.
    * @param entityManager used to execute the commands in the same transaction.
    * @returns disbursement schedules relevant to overaward calculation.
    */
   private async getDisbursementsForOverawards(
+    studentId: number,
     applicationNumbers: string[],
     status: DisbursementScheduleStatus,
     entityManager: EntityManager,
@@ -345,7 +352,12 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
       },
       where: {
         studentAssessment: {
-          application: { applicationNumber: In(applicationNumbers) },
+          application: {
+            student: {
+              id: studentId,
+            },
+            applicationNumber: In(applicationNumbers),
+          },
         },
         disbursementScheduleStatus: status,
       },
@@ -357,11 +369,13 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
    * not related directly to any award. Overawards associated with some
    * award must be rolled back only if the award is still on pending
    * and this is taken care in a separated process.
+   * @param studentId student id.
    * @param applicationNumbers application number to be rolled back.
    * @param entityManager
    * @returns
    */
   private async deleteOverawardRecords(
+    studentId: number,
     applicationNumbers: string[],
     entityManager: EntityManager,
   ): Promise<void> {
@@ -379,6 +393,9 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
         },
         studentAssessment: {
           application: {
+            student: {
+              id: studentId,
+            },
             applicationNumber: In(applicationNumbers),
           },
         },
@@ -405,16 +422,19 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
    * considered as payed and must be added back to the overaward table for history
    * and also to be part of the sum to determined the total overaward for the
    * reassessment.
+   * @param studentId student id.
    * @param applicationNumbers application that must have their pending awards cancelled.
    * @param entityManager used to execute the commands in the same transaction.
    */
   private async cancelPendingOverawards(
+    studentId: number,
     applicationNumbers: string[],
     entityManager: EntityManager,
   ) {
     const auditUser = await this.systemUsersService.systemUser();
     // Get all pending awards that must be cancelled.
     const pendingDisbursements = await this.getDisbursementsForOverawards(
+      studentId,
       applicationNumbers,
       DisbursementScheduleStatus.Pending,
       entityManager,
