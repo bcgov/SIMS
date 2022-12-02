@@ -1,4 +1,4 @@
-import { InjectQueue, OnQueueActive, Process, Processor } from "@nestjs/bull";
+import { InjectQueue, Process, Processor } from "@nestjs/bull";
 import { IER12FileService } from "@sims/integrations/institution-integration/ier-integration";
 import { QueueNames } from "@sims/services/queue";
 import { ConfigService } from "@sims/utilities/config";
@@ -40,19 +40,15 @@ export class IERIntegrationScheduler extends BaseScheduler<GeneratedDateQueueInD
   async processIER12File(
     job: Job<GeneratedDateQueueInDTO | undefined>,
   ): Promise<IER12ResultQueueOutDTO[]> {
+    this.logger.log(
+      `Processing IER integration job ${job.id} of type ${job.name}.`,
+    );
     this.logger.log("Executing IER 12 file generation ...");
     const uploadResult = await this.ierRequest.processIER12File(
       job.data.generatedDate,
     );
     this.logger.log("IER 12 file generation completed.");
     return uploadResult;
-  }
-
-  @OnQueueActive()
-  onActive(job: Job<GeneratedDateQueueInDTO | undefined>) {
-    this.logger.log(
-      `Processing IER integration job ${job.id} of type ${job.name}.`,
-    );
   }
 
   @InjectLogger()
