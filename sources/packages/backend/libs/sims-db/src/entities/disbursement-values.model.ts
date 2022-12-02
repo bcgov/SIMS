@@ -50,6 +50,27 @@ export class DisbursementValue extends RecordDataModel {
   })
   valueAmount: string;
   /**
+   * Overaward amount value subtracted from the award calculated.
+   * !Decimal values are retrieved by Typeorm as string from Postgres.
+   */
+  @Column({
+    name: "overaward_amount_subtracted",
+    type: "numeric",
+    nullable: false,
+  })
+  overawardAmountSubtracted: string;
+  /**
+   * Value amount already disbursed for the same application and
+   * the same award that was subtracted from the calculated award.
+   * !Decimal values are retrieved by Typeorm as string from Postgres.
+   */
+  @Column({
+    name: "disbursed_amount_subtracted",
+    type: "numeric",
+    nullable: true,
+  })
+  disbursedAmountSubtracted?: string;
+  /**
    * Disbursement value ids.
    */
   @RelationId(

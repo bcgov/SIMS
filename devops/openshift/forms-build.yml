@@ -1,4 +1,4 @@
-# Generalised template for building from Dockerfile in a git repo.
+# Generalized template for building from Dockerfile in a git repo.
 # Includes importing the base image as an imagestream.
 apiVersion: template.openshift.io/v1
 kind: Template
@@ -40,8 +40,8 @@ objects:
           env:
             - name: FORMIO_SOURCE_REPO_URL
               value: "${FORMIO_SOURCE_REPO_URL}"
-            - name: FORMIO_SOURCE_REPO_BRANCH
-              value: "${FORMIO_SOURCE_REPO_BRANCH}"
+            - name: FORMIO_SOURCE_REPO_TAG
+              value: "${FORMIO_SOURCE_REPO_TAG}"
         type: Docker
       triggers:
         - type: ImageChange
@@ -55,12 +55,11 @@ parameters:
     required: true
   - name: SOURCE_REPOSITORY_URL
     required: true
-    value: https://github.com/bcgov/SIMS.git
-  - name: SOURCE_REPOSITORY_REF
-    required: true
   - name: FORMIO_SOURCE_REPO_URL
     required: true
-  - name: FORMIO_SOURCE_REPO_BRANCH
+  - name: FORMIO_SOURCE_REPO_TAG
+    required: true
+  - name: SOURCE_REPOSITORY_REF
     required: true
   - name: TAG
     required: true
