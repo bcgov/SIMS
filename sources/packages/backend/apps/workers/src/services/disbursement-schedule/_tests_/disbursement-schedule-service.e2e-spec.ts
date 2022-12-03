@@ -1,10 +1,12 @@
-require("../../../../../env_setup");
+require("../../../../../../env_setup");
 import { Test, TestingModule } from "@nestjs/testing";
 import {
   Application,
   ApplicationStatus,
   AssessmentTriggerType,
   DisbursementOveraward,
+  DisbursementOverawardOriginType,
+  DisbursementSchedule,
   DisbursementScheduleStatus,
   DisbursementValueType,
   EducationProgramOffering,
@@ -85,7 +87,7 @@ describe("Disbursement Schedule Service - Create disbursement", () => {
         createFakeDisbursementValue(
           DisbursementValueType.BCLoan,
           "BCSL",
-          "500",
+          "800",
         ),
       ],
     });
@@ -142,37 +144,67 @@ describe("Disbursement Schedule Service - Create disbursement", () => {
     // Assert disbursement already paid subtracted.
     expect(createdDisbursements).toBeDefined();
     expect(createdDisbursements).toHaveLength(2);
-    // Check Canada Loan, an overaward should be generated.
-    const subtractedCanadaLoanAward = createdDisbursements
-      .flatMap((disbursement) => disbursement.disbursementValues)
-      .find(
-        (scheduleValue) =>
-          scheduleValue.valueType === DisbursementValueType.CanadaLoan &&
-          scheduleValue.valueAmount === "500" &&
-          scheduleValue.disbursedAmountSubtracted === "500",
-      );
-    expect(subtractedCanadaLoanAward).toBeDefined();
-    expect(subtractedCanadaLoanAward).toHaveLength(1);
-    // Check BC Loan, no overaward, just already paid award.
-    const subtractedAward = createdDisbursements
-      .flatMap((disbursement) => disbursement.disbursementValues)
-      .find(
-        (scheduleValue) =>
-          scheduleValue.valueType === DisbursementValueType.BCLoan &&
-          scheduleValue.valueAmount === "500" &&
-          scheduleValue.disbursedAmountSubtracted === "500",
-      );
-    expect(subtractedAward).toBeDefined();
-    expect(subtractedAward).toHaveLength(1);
-
+    const [firstDisbursement, secondDisbursement] = createdDisbursements;
+    // Assert firstDisbursement.
+    assertAwardDeduction(firstDisbursement, DisbursementValueType.CanadaLoan, {
+      valueAmount: 200,
+      disbursedAmountSubtracted: 1000,
+      overawardAmountSubtracted: 0,
+    });
+    assertAwardDeduction(firstDisbursement, DisbursementValueType.BCLoan, {
+      valueAmount: 0,
+      disbursedAmountSubtracted: 300,
+      overawardAmountSubtracted: null,
+    });
+    // Assert secondDisbursement.
+    assertAwardDeduction(secondDisbursement, DisbursementValueType.BCLoan, {
+      valueAmount: 0,
+      disbursedAmountSubtracted: 300,
+      overawardAmountSubtracted: null,
+    });
     // Assert overaward creation.
     const overawards = await disbursementOverawardRepo.find({
       where: { student: { id: savedStudent.id } },
     });
-    expect(overawards).toBeDefined();
-    expect(overawards).toHaveLength(1);
-    const [overaward] = overawards;
-    expect(overaward.overawardValue).toBe("500");
-    expect(overaward.disbursementValueCode).toBe("CSLF");
+    assertOveraward(overawards, "BCSL", 200);
   });
+
+  async function assertAwardDeduction(
+    createdDisbursement: DisbursementSchedule,
+    valueType: DisbursementValueType,
+    assertValues: {
+      valueAmount: number;
+      overawardAmountSubtracted?: number;
+      disbursedAmountSubtracted?: number;
+    },
+  ) {
+    const award = createdDisbursement.disbursementValues.find(
+      (scheduleValue) => scheduleValue.valueType === valueType,
+    );
+    expect(award).toBeDefined();
+    expect(+award.valueAmount).toBe(assertValues.valueAmount);
+    expect(award.overawardAmountSubtracted).toBe(
+      assertValues.overawardAmountSubtracted?.toString(),
+    );
+    expect(award.disbursedAmountSubtracted).toBe(
+      assertValues.disbursedAmountSubtracted?.toString(),
+    );
+  }
+
+  async function assertOveraward(
+    overawards: DisbursementOveraward[],
+    awardCode: string,
+    awardValue: number,
+  ) {
+    expect(overawards).toBeDefined();
+    const awardOverawards = overawards.filter(
+      (overaward) => overaward.disbursementValueCode === awardCode,
+    );
+    expect(awardOverawards).toHaveLength(1);
+    const [overaward] = awardOverawards;
+    expect(+overaward.overawardValue).toBe(awardValue);
+    expect(overaward.originType).toBe(
+      DisbursementOverawardOriginType.ReassessmentOveraward,
+    );
+  }
 });
