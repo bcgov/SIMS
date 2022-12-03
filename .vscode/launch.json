@@ -1,0 +1,52 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Attach Nest JS",
+      "request": "attach",
+      "sourceMapPathOverrides": {
+        "webpack:///./~/*": "${workspaceFolder}/sources/packages/backend/node_modules/*",
+        "webpack://?:*/*": "${workspaceFolder}/sources/packages/backend/*"
+      },
+      "type": "node",
+      "sourceMaps": true
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Current Test File",
+      "program": "${workspaceFolder}/sources/packages/backend/node_modules/.bin/jest",
+      "args": [
+        "${fileBasenameNoExtension}",
+        "--runInBand",
+        "--config",
+        "./sources/packages/backend/apps/workers/test/jest-e2e.json",
+        "--forceExit"
+      ],
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
+      "disableOptimisticBPs": true,
+      "windows": {
+        "program": "${workspaceFolder}/sources/packages/backend/node_modules/jest/bin/jest"
+      }
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Wrokers - all tests",
+      "program": "${workspaceFolder}/sources/packages/backend/node_modules/.bin/jest",
+      "args": [
+        "--runInBand",
+        "--config",
+        "./sources/packages/backend/apps/workers/test/jest-e2e.json",
+        "--forceExit"
+      ],
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
+      "disableOptimisticBPs": true,
+      "windows": {
+        "program": "${workspaceFolder}/sources/packages/backend/node_modules/jest/bin/jest"
+      }
+    }
+  ]
+}

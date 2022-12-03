@@ -67,7 +67,7 @@ describe("Disbursement Schedule Service - Create disbursement", () => {
     const disbursementSchedulesPayload = createFakeDisbursementPayload();
     const savedUser = await userRepo.save(createFakeUser());
     const savedStudent = await studentRepo.save(createFakeStudent(savedUser));
-    const fakeApplication = createFakeApplication(savedStudent);
+    const fakeApplication = createFakeApplication({ student: savedStudent });
     fakeApplication.applicationNumber = "OA_TEST001";
     const savedApplication = await applicationRepo.save(fakeApplication);
     // Original assessment.
