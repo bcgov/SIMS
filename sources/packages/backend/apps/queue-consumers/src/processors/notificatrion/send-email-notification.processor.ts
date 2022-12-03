@@ -1,17 +1,27 @@
 import { Process, Processor } from "@nestjs/bull";
 import { Job } from "bull";
-import { QueueNames, StartAssessmentQueueInDTO } from "@sims/services/queue";
-import { WorkflowClientService } from "@sims/services";
+import {
+  QueueNames,
+  SendEmailNotificationQueueInDTO,
+} from "@sims/services/queue";
+import {
+  NotificationService,
+  GCNotifyResult,
+} from "@sims/services/notifications";
 
 /**
  * Process messages sent to send email notification.
  */
 @Processor(QueueNames.SendEmailNotification)
 export class SendEmailNotificationProcessor {
-  constructor(private readonly workflowClientService: WorkflowClientService) {}
+  constructor(private readonly notificationService: NotificationService) {}
 
   @Process()
-  async startAssessment(job: Job<StartAssessmentQueueInDTO>) {
-    console.log(job.data);
+  async sendEmailNotification(
+    job: Job<SendEmailNotificationQueueInDTO>,
+  ): Promise<GCNotifyResult> {
+    return await this.notificationService.sendEmailNotification(
+      job.data.notificationId,
+    );
   }
 }

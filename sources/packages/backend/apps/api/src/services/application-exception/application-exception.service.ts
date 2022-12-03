@@ -20,6 +20,8 @@ import {
   STUDENT_APPLICATION_EXCEPTION_INVALID_STATE,
   STUDENT_APPLICATION_EXCEPTION_NOT_FOUND,
 } from "../../constants";
+import { NotificationActionsService } from "@sims/services/notifications";
+import { ApproveExceptionResult } from "./application-exception.models";
 
 /**
  * Manages student applications exceptions detected upon full-time/part-time application
@@ -27,7 +29,10 @@ import {
  */
 @Injectable()
 export class ApplicationExceptionService extends RecordDataModelService<ApplicationException> {
-  constructor(private readonly dataSource: DataSource) {
+  constructor(
+    private readonly dataSource: DataSource,
+    private readonly notificationActionsService: NotificationActionsService,
+  ) {
     super(dataSource.getRepository(ApplicationException));
   }
 
@@ -97,7 +102,7 @@ export class ApplicationExceptionService extends RecordDataModelService<Applicat
     exceptionStatus: ApplicationExceptionStatus,
     noteDescription: string,
     auditUserId: number,
-  ): Promise<ApplicationException> {
+  ): Promise<ApproveExceptionResult> {
     return this.dataSource.transaction(async (transactionalEntityManager) => {
       const applicationExceptionRepo =
         transactionalEntityManager.getRepository(ApplicationException);
@@ -108,9 +113,14 @@ export class ApplicationExceptionService extends RecordDataModelService<Applicat
           "exception.exceptionStatus",
           "application.id",
           "student.id",
+          "user.id",
+          "user.firstName",
+          "user.lastName",
+          "user.email",
         ])
         .innerJoin("exception.application", "application")
         .innerJoin("application.student", "student")
+        .innerJoin("student.user", "user")
         .where("exception.id = :exceptionId", { exceptionId })
         .getOne();
 
@@ -155,7 +165,21 @@ export class ApplicationExceptionService extends RecordDataModelService<Applicat
       exceptionToUpdate.assessedDate = now;
       exceptionToUpdate.modifier = auditUser;
       exceptionToUpdate.updatedAt = now;
-      return applicationExceptionRepo.save(exceptionToUpdate);
+
+      const exception = await applicationExceptionRepo.save(exceptionToUpdate);
+
+      const notificationId =
+        await this.notificationActionsService.createChangeRequestCompleteNotification(
+          {
+            givenNames: exceptionToUpdate.application.student.user.firstName,
+            lastName: exceptionToUpdate.application.student.user.lastName,
+            toAddress: exceptionToUpdate.application.student.user.email,
+            userId: exceptionToUpdate.application.student.user.id,
+          },
+          auditUserId,
+          transactionalEntityManager,
+        );
+      return { exception, notificationId };
     });
   }
 

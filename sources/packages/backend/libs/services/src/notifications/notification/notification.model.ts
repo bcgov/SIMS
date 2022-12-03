@@ -43,3 +43,10 @@ export interface StudentRestrictionAddedNotificationOptions {
    */
   entityManager?: EntityManager;
 }
+
+export interface StudentNotification {
+  givenNames: string;
+  lastName: string;
+  toAddress: string;
+  userId: number;
+}

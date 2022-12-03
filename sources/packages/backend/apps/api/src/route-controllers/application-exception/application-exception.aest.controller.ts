@@ -9,6 +9,8 @@ import {
   Query,
   UnprocessableEntityException,
 } from "@nestjs/common";
+import { InjectQueue } from "@nestjs/bull";
+import { Queue } from "bull";
 import { ApplicationExceptionService } from "../../services";
 import {
   AllowAuthorizedParty,
@@ -44,6 +46,10 @@ import {
 } from "../models/pagination.dto";
 import { Role } from "../../auth/roles.enum";
 import { WorkflowClientService } from "@sims/services";
+import {
+  QueueNames,
+  SendEmailNotificationQueueInDTO,
+} from "@sims/services/queue";
 
 @AllowAuthorizedParty(AuthorizedParties.aest)
 @Groups(UserGroups.AESTUser)
@@ -53,6 +59,8 @@ export class ApplicationExceptionAESTController extends BaseController {
   constructor(
     private readonly applicationExceptionService: ApplicationExceptionService,
     private readonly workflowClientService: WorkflowClientService,
+    @InjectQueue(QueueNames.SendEmailNotification)
+    private readonly sendEmailNotificationQueue: Queue<SendEmailNotificationQueueInDTO>,
   ) {
     super();
   }
@@ -108,7 +116,7 @@ export class ApplicationExceptionAESTController extends BaseController {
     @UserToken() userToken: IUserToken,
   ): Promise<void> {
     try {
-      const updatedException =
+      const { exception, notificationId } =
         await this.applicationExceptionService.approveException(
           exceptionId,
           payload.exceptionStatus,
@@ -116,9 +124,10 @@ export class ApplicationExceptionAESTController extends BaseController {
           userToken.userId,
         );
       await this.workflowClientService.sendApplicationExceptionApproval(
-        updatedException.id,
-        updatedException.exceptionStatus,
+        exception.id,
+        exception.exceptionStatus,
       );
+      await this.sendEmailNotificationQueue.add({ notificationId });
     } catch (error: unknown) {
       if (error instanceof CustomNamedError) {
         switch (error.name) {

@@ -8,6 +8,7 @@ import {
   MinistryStudentFileUploadNotification,
   StudentFileUploadNotification,
   StudentRestrictionAddedNotificationOptions,
+  StudentNotification,
 } from "..";
 import { GCNotifyService } from "./gc-notify.service";
 import { NotificationService } from "./notification.service";
@@ -169,6 +170,126 @@ export class NotificationActionsService {
         this.logger.error(`Error while sending notification. ${error}`);
       }
     }
+  }
+
+  /**
+   * Create exception complete notification to notify
+   * student when an application exception is completed by ministry.
+   * @param notification notification details.
+   * @param auditUserId user who completes the exception.
+   * @param entityManager entity manager to execute in transaction.
+   * @returns notification created.
+   */
+  async createExceptionCompleteNotification(
+    notification: StudentNotification,
+    auditUserId: number,
+    entityManager: EntityManager,
+  ): Promise<number> {
+    const templateId = await this.notificationMessageService.getTemplateId(
+      NotificationMessageType.MinistryCompletesException,
+    );
+
+    const exceptionCompleteNotification = {
+      userId: notification.userId,
+      messageType: NotificationMessageType.MinistryCompletesException,
+      messagePayload: {
+        email_address: notification.toAddress,
+        template_id: templateId,
+        personalisation: {
+          givenNames: notification.givenNames ?? "",
+          lastName: notification.lastName,
+          date: this.getDateTimeOnPSTTimeZone(),
+        },
+      },
+    };
+
+    const [notificationId] = await this.notificationService.saveNotifications(
+      [exceptionCompleteNotification],
+      auditUserId,
+      entityManager,
+    );
+
+    return notificationId;
+  }
+
+  /**
+   * Create change request complete notification to notify student
+   * when a change request is completed by ministry.
+   * @param notification notification details.
+   * @param auditUserId user who completes the change request.
+   * @param entityManager entity manager to execute in transaction.
+   * @returns notification created.
+   */
+  async createChangeRequestCompleteNotification(
+    notification: StudentNotification,
+    auditUserId: number,
+    entityManager: EntityManager,
+  ) {
+    const templateId = await this.notificationMessageService.getTemplateId(
+      NotificationMessageType.MinistryCompletesChange,
+    );
+
+    const changeRequestCompleteNotification = {
+      userId: notification.userId,
+      messageType: NotificationMessageType.MinistryCompletesChange,
+      messagePayload: {
+        email_address: notification.toAddress,
+        template_id: templateId,
+        personalisation: {
+          givenNames: notification.givenNames ?? "",
+          lastName: notification.lastName,
+          date: this.getDateTimeOnPSTTimeZone(),
+        },
+      },
+    };
+
+    const [notificationId] = await this.notificationService.saveNotifications(
+      [changeRequestCompleteNotification],
+      auditUserId,
+      entityManager,
+    );
+
+    return notificationId;
+  }
+
+  /**
+   * Create institution report change notification to notify student
+   * when institution reports a change to their application.
+   * @param notification notification details.
+   * @param auditUserId user who reports the change.
+   * @param entityManager entity manager to execute in transaction.
+   * @returns notification created.
+   */
+  async createInstitutionReportChangeNotification(
+    notification: StudentNotification,
+    auditUserId: number,
+    entityManager: EntityManager,
+  ) {
+    const templateId = await this.notificationMessageService.getTemplateId(
+      NotificationMessageType.InstitutionReportsChange,
+    );
+
+    const institutionReportChangeNotification = {
+      userId: notification.userId,
+      messageType: NotificationMessageType.InstitutionReportsChange,
+      messagePayload: {
+        email_address: notification.toAddress,
+        template_id: templateId,
+        personalisation: {
+          givenNames: notification.givenNames ?? "",
+          lastName: notification.lastName,
+          date: this.getDateTimeOnPSTTimeZone(),
+        },
+      },
+    };
+
+    const [notificationId] = await this.notificationService.saveNotifications(
+      [institutionReportChangeNotification],
+      auditUserId,
+      entityManager,
+    );
+
+    return notificationId;
   }
 
   /**
