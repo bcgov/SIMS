@@ -30,6 +30,7 @@ jobs:
       BUILD_ID: ${{ github.event.number }}
       BUILD_NAMESPACE: 0c27fb-tools
       BUILD_REF: ${{ github.base_ref }}
+      HOST_PREFIX: ${{ secrets.HOST_PREFIX }}
     steps:
       # Checkout the PR branch
       - name: Print env
@@ -81,8 +82,6 @@ jobs:
       BCeID_WEB_SERVICE_WSDL: ${{ secrets.BCeID_WEB_SERVICE_WSDL }}
       FORMS_URL: ${{ secrets.FORMS_URL }}
       SITE_MINDER_LOGOUT_URL: ${{ secrets.SITE_MINDER_LOGOUT_URL }}
-      RULE_ENGINE_URL: TO_BE_REMOVED
-      FORMS_FLOW_API_URL: TO_BE_REMOVED
       ATBC_LOGIN_ENDPOINT: ${{ secrets.ATBC_LOGIN_ENDPOINT }}
       ATBC_ENDPOINT: ${{ secrets.ATBC_ENDPOINT }}
       SWAGGER_ENABLED: true
@@ -92,7 +91,9 @@ jobs:
       API_SECRET_NAME: ${{ secrets.OPENSHIFT_SIMS_CREDS_NAME }}
       WORKERS_SECRET_NAME: ${{ secrets.OPENSHIFT_SIMS_CREDS_NAME }}
       QUEUE_CONSUMERS_SECRET_NAME: ${{ secrets.OPENSHIFT_SIMS_CREDS_NAME }}
+      FORMS_SECRET_NAME: ${{ secrets.FORMS_SECRET_NAME }}
       QUEUE_PREFIX: ${{ secrets.QUEUE_PREFIX }}
+      SCHEDULERS_IER_CRON: ${{ secrets.SCHEDULERS_IER_CRON }}
       API_PORT: ${{ secrets.API_PORT }}
       WEB_PORT: ${{ secrets.WEB_PORT }}
       API: ${{ format('{0}api-sims', secrets.HOST_PREFIX) }}

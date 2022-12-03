@@ -29,7 +29,7 @@ services:
     volumes:
       - zeebe:/usr/local/zeebe/data
     networks:
-      - camunda-platform
+      - local-network
     depends_on:
       - elasticsearch
 
@@ -43,7 +43,7 @@ services:
       - CAMUNDA_OPERATE_ELASTICSEARCH_URL=http://elasticsearch:9200
       - CAMUNDA_OPERATE_ZEEBEELASTICSEARCH_URL=http://elasticsearch:9200
     networks:
-      - camunda-platform
+      - local-network
     depends_on:
       - zeebe
       - elasticsearch
@@ -58,7 +58,7 @@ services:
       - CAMUNDA_TASKLIST_ELASTICSEARCH_URL=http://elasticsearch:9200
       - CAMUNDA_TASKLIST_ZEEBEELASTICSEARCH_URL=http://elasticsearch:9200
     networks:
-      - camunda-platform
+      - local-network
     depends_on:
       - zeebe
       - elasticsearch
@@ -70,7 +70,7 @@ services:
       - ZEEBE_ADDRESS=zeebe:26500
       - ZEEBE_INSECURE=true
     networks:
-      - camunda-platform
+      - local-network
     depends_on:
       - zeebe
 
@@ -100,7 +100,7 @@ services:
     volumes:
       - elastic:/usr/share/elasticsearch/data
     networks:
-      - camunda-platform
+      - local-network
 
   kibana:
     image: docker.elastic.co/kibana/kibana:${ELASTIC_VERSION:-7.17.0}
@@ -110,7 +110,7 @@ services:
     volumes:
       - kibana:/usr/share/kibana/data
     networks:
-      - camunda-platform
+      - local-network
     depends_on:
       - elasticsearch
     profiles:
@@ -122,4 +122,4 @@ volumes:
   kibana:
 
 networks:
-  camunda-platform:
+  local-network:

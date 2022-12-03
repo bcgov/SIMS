@@ -42,8 +42,6 @@ objects:
                   value: ${KEYCLOAK_AUTH_URL}
                 - name: BCeID_WEB_SERVICE_WSDL
                   value: ${BCeID_WEB_SERVICE_WSDL}
-                - name: RULE_ENGINE_URL
-                  value: ${RULE_ENGINE_URL}
                 - name: FORMS_URL
                   value: ${FORMS_URL}
                 - name: NODE_ENV
@@ -101,16 +99,14 @@ objects:
                   valueFrom:
                     secretKeyRef:
                       key: ${FORMS_SA_USER_NAME_NAME_KEY}
-                      name: ${API_SECRET_NAME}
+                      name: ${FORMS_SECRET_NAME}
                 - name: FORMS_SA_PASSWORD
                   valueFrom:
                     secretKeyRef:
                       key: ${FORMS_SA_PASSWORD_NAME_KEY}
-                      name: ${API_SECRET_NAME}
+                      name: ${FORMS_SECRET_NAME}
                 - name: SITE_MINDER_LOGOUT_URL
                   value: ${SITE_MINDER_LOGOUT_URL}
-                - name: FORMS_FLOW_API_URL
-                  value: ${FORMS_FLOW_API_URL}
                 - name: SIMS_API_CLIENT_ID
                   valueFrom:
                     secretKeyRef:
@@ -180,11 +176,6 @@ objects:
                   valueFrom:
                     secretKeyRef:
                       key: ${SFAS_RECEIVE_FOLDER_NAME_KEY}
-                      name: ${API_SECRET_NAME}
-                - name: INSTITUTION_REQUEST_FOLDER
-                  valueFrom:
-                    secretKeyRef:
-                      key: ${INSTITUTION_REQUEST_FOLDER_NAME_KEY}
                       name: ${API_SECRET_NAME}
                 - name: ESDC_ENVIRONMENT_CODE
                   valueFrom:
@@ -399,8 +390,6 @@ parameters:
     required: true
   - name: BCeID_WEB_SERVICE_WSDL
     required: true
-  - name: RULE_ENGINE_URL
-    required: true
   - name: FORMS_URL
     required: true
   - name: DATABASE_NAME_KEY
@@ -409,6 +398,8 @@ parameters:
     value: "0"
   - name: API_SECRET_NAME
     value: sims-api-creds
+  - name: FORMS_SECRET_NAME
+    value: forms
   - name: BCeID_WEB_SERVICE_ONLINE_SERVICE_ID_NAME_KEY
     value: bceid-web-service-online-service-id
   - name: BCeID_WEB_SERVICE_REQUESTER_USER_GUID_NAME_KEY
@@ -422,12 +413,10 @@ parameters:
   - name: WORKFLOW_SA_PASSWORD_NAME_KEY
     value: workflow-sa-password
   - name: FORMS_SA_USER_NAME_NAME_KEY
-    value: forms-sa-user-name
+    value: FORMIO_ROOT_EMAIL
   - name: FORMS_SA_PASSWORD_NAME_KEY
-    value: forms-sa-password
+    value: FORMIO_ROOT_PASSWORD
   - name: SITE_MINDER_LOGOUT_URL
-    require: true
-  - name: FORMS_FLOW_API_URL
     require: true
   - name: SIMS_API_CLIENT_ID_NAME_KEY
     value: sims-api-client-id
@@ -477,8 +466,6 @@ parameters:
     value: esdc-environment-code
   - name: SFAS_RECEIVE_FOLDER_NAME_KEY
     value: sfas-receive-folder
-  - name: INSTITUTION_REQUEST_FOLDER_NAME_KEY
-    value: institution-request-folder
   - name: GC_NOTIFY_URL_NAME_KEY
     value: gc-notify-url
   - name: GC_NOTIFY_API_KEY_NAME_KEY

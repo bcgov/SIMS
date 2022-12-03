@@ -2,6 +2,7 @@ import { QueueModel } from "../model/queue.model";
 
 export enum QueueNames {
   StartApplicationAssessment = "start-application-assessment",
+  IER12Integration = "ier12-integration",
   SendEmailNotification = "send-email-notification",
 }
 
@@ -13,6 +14,9 @@ export enum QueueNames {
 export const Queues: QueueModel[] = [
   {
     name: QueueNames.StartApplicationAssessment,
+  },
+  {
+    name: QueueNames.IER12Integration,
   },
   { name: QueueNames.SendEmailNotification },
 ];
