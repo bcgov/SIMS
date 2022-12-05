@@ -59,7 +59,7 @@ function verifyThatElementIsVisibleAndEnabled(
 function verifyThatFieldDoesNotAcceptMoreThanSpecificChars(
   element: Cypress.Chainable<JQuery<HTMLElement>>,
   errorMessage: Cypress.Chainable<undefined>,
-  noOfCharsToBeValidated: Number
+  noOfCharsToBeValidated: number
 ) {
   if (noOfCharsToBeValidated == 100) {
     element.clear().type(data.invalidData.stringWithMoreThan100Chars);
