@@ -65,7 +65,10 @@ objects:
                       key: FORMIO_ROOT_PASSWORD
                       name: ${NAME}
                 - name: FORMIO_DOMAIN
-                  value: ${FORMS_URL}
+                  valueFrom:
+                    secretKeyRef:
+                      key: FORMS_URL
+                      name: ${NAME}
               image: ${IMAGE_REGISTRY}/${TOOLS_NAMESPACE}/${IMAGE_STREAM_TAG}
               name: ${NAME}
               ports:
