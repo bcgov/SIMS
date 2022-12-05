@@ -57,7 +57,6 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
         name: InstitutionRoutesConst.DISABLED_LOGIN,
         component: Login,
         props: {
-          showBasicBCeIDMessage: false,
           showDisabledUserMessage: true,
         },
         meta: {
@@ -70,7 +69,6 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
         name: InstitutionRoutesConst.UNKNOWN_LOGIN,
         component: Login,
         props: {
-          showBasicBCeIDMessage: false,
           showDisabledUserMessage: false,
           showUnknownUserMessage: true,
         },

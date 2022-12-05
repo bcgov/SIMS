@@ -62,11 +62,6 @@ import { BannerTypes } from "@/types/contracts/Banner";
 
 export default {
   props: {
-    showBasicBCeIDMessage: {
-      type: Boolean,
-      required: false,
-      default: false,
-    },
     showDisabledUserMessage: {
       type: Boolean,
       required: false,
@@ -85,8 +80,6 @@ export default {
     };
     const errorMessage = computed(() => {
       switch (true) {
-        case props.showBasicBCeIDMessage:
-          return "No such Business account has been found with BCeID. Please login with your Business BCeId.";
         case props.showDisabledUserMessage:
           return "Your access was disabled. Please contact your institution's admin to enable your access.";
         case props.showUnknownUserMessage:
