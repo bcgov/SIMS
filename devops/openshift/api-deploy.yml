@@ -42,8 +42,6 @@ objects:
                   value: ${KEYCLOAK_AUTH_URL}
                 - name: BCeID_WEB_SERVICE_WSDL
                   value: ${BCeID_WEB_SERVICE_WSDL}
-                - name: FORMS_URL
-                  value: ${FORMS_URL}
                 - name: NODE_ENV
                   value: ${NODE_ENV}
                 - name: PORT
@@ -98,12 +96,17 @@ objects:
                 - name: FORMS_SA_USER_NAME
                   valueFrom:
                     secretKeyRef:
-                      key: ${FORMS_SA_USER_NAME_NAME_KEY}
+                      key: ${FORMIO_ROOT_EMAIL_NAME_KEY}
                       name: ${FORMS_SECRET_NAME}
                 - name: FORMS_SA_PASSWORD
                   valueFrom:
                     secretKeyRef:
-                      key: ${FORMS_SA_PASSWORD_NAME_KEY}
+                      key: ${FORMIO_ROOT_PASSWORD_NAME_KEY}
+                      name: ${FORMS_SECRET_NAME}
+                - name: FORMS_URL
+                  valueFrom:
+                    secretKeyRef:
+                      key: ${FORMS_URL_NAME_KEY}
                       name: ${FORMS_SECRET_NAME}
                 - name: SITE_MINDER_LOGOUT_URL
                   value: ${SITE_MINDER_LOGOUT_URL}
@@ -390,8 +393,6 @@ parameters:
     required: true
   - name: BCeID_WEB_SERVICE_WSDL
     required: true
-  - name: FORMS_URL
-    required: true
   - name: DATABASE_NAME_KEY
     required: true
   - name: BUILD_TAG
@@ -412,10 +413,12 @@ parameters:
     value: workflow-sa-user-name
   - name: WORKFLOW_SA_PASSWORD_NAME_KEY
     value: workflow-sa-password
-  - name: FORMS_SA_USER_NAME_NAME_KEY
+  - name: FORMIO_ROOT_EMAIL_NAME_KEY
     value: FORMIO_ROOT_EMAIL
-  - name: FORMS_SA_PASSWORD_NAME_KEY
+  - name: FORMIO_ROOT_PASSWORD_NAME_KEY
     value: FORMIO_ROOT_PASSWORD
+  - name: FORMS_URL_NAME_KEY
+    value: FORMS_URL
   - name: SITE_MINDER_LOGOUT_URL
     require: true
   - name: SIMS_API_CLIENT_ID_NAME_KEY
