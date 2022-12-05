@@ -32,11 +32,6 @@ export interface StudentRestrictionAddedNotification {
 
 export interface StudentRestrictionAddedNotificationOptions {
   /**
-   * When set to false or not defined (default option) will send the message right away,
-   * otherwise, the message will be added to a queue to be sent later.
-   */
-  notificationsDelayed?: boolean;
-  /**
    * Optional repository that can be provided, for instance,
    * to execute the command as part of an existing transaction. If not provided
    * the local repository will be used instead.

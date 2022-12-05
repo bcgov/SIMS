@@ -5,8 +5,8 @@ import {
   SendEmailNotificationQueueInDTO,
 } from "@sims/services/queue";
 import {
-  NotificationService,
   GCNotifyResult,
+  NotificationService,
 } from "@sims/services/notifications";
 
 /**

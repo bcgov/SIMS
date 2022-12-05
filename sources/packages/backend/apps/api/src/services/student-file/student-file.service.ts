@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { DataSource, EntityManager, In, UpdateResult } from "typeorm";
+import { DataSource, In, UpdateResult } from "typeorm";
 import { LoggerService, InjectLogger } from "@sims/utilities/logger";
 import {
   RecordDataModelService,
@@ -7,13 +7,22 @@ import {
   Student,
   User,
   FileOriginType,
-  StudentFileMetadata,
 } from "@sims/sims-db";
-import { CreateFile } from "./student-file.model";
+import { CreateFile, FileUploadOptions } from "./student-file.model";
+import { InjectQueue } from "@nestjs/bull";
+import {
+  QueueNames,
+  SendEmailNotificationQueueInDTO,
+} from "@sims/services/queue";
+import { Queue } from "bull";
 
 @Injectable()
 export class StudentFileService extends RecordDataModelService<StudentFile> {
-  constructor(private readonly dataSource: DataSource) {
+  constructor(
+    private readonly dataSource: DataSource,
+    @InjectQueue(QueueNames.SendEmailNotification)
+    private readonly sendEmailNotificationQueue: Queue<SendEmailNotificationQueueInDTO>,
+  ) {
     super(dataSource.getRepository(StudentFile));
   }
 
@@ -113,7 +122,7 @@ export class StudentFileService extends RecordDataModelService<StudentFile> {
    * @param uniqueFileNames list of unique file names.
    * @param fileOrigin origin of the file being saved.
    * @param groupName group name of the file being save.
-   * @param sendNotification optional notification message to be sent.
+   * @param saveNotification optional notification message to be sent.
    * @param metadata optional metadata of the file being save.
    */
   async updateStudentFiles(
@@ -122,10 +131,10 @@ export class StudentFileService extends RecordDataModelService<StudentFile> {
     uniqueFileNames: string[],
     fileOrigin: FileOriginType,
     groupName: string,
-    sendNotification?: (entityManager: EntityManager) => Promise<void>,
-    metadata?: StudentFileMetadata,
+    options?: FileUploadOptions,
   ): Promise<UpdateResult> {
     let updateResult: UpdateResult;
+    let notificationId: number;
     await this.dataSource.transaction(async (transactionalEntityManager) => {
       updateResult = await transactionalEntityManager
         .getRepository(StudentFile)
@@ -137,16 +146,24 @@ export class StudentFileService extends RecordDataModelService<StudentFile> {
           {
             groupName,
             fileOrigin,
-            metadata,
+            metadata: options?.metadata,
             modifier: { id: auditUserId } as User,
           },
         );
       // Executes the send notification inside the transaction to allow the rollback
       // of the DB updates in the case of the notification failure.
-      if (sendNotification) {
-        await sendNotification(transactionalEntityManager);
+      if (options?.saveFileUploadNotification) {
+        notificationId = await options.saveFileUploadNotification(
+          transactionalEntityManager,
+        );
       }
     });
+
+    // Add message to the queue to send notification email on file upload.
+    if (notificationId) {
+      await this.sendEmailNotificationQueue.add({ notificationId });
+    }
+
     return updateResult;
   }
 

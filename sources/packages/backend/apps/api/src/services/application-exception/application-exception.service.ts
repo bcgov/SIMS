@@ -169,7 +169,7 @@ export class ApplicationExceptionService extends RecordDataModelService<Applicat
       const exception = await applicationExceptionRepo.save(exceptionToUpdate);
 
       const notificationId =
-        await this.notificationActionsService.createChangeRequestCompleteNotification(
+        await this.notificationActionsService.createExceptionCompleteNotification(
           {
             givenNames: exceptionToUpdate.application.student.user.firstName,
             lastName: exceptionToUpdate.application.student.user.lastName,

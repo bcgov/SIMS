@@ -52,6 +52,12 @@ import {
 } from "../../constants";
 import { SequenceControlService, WorkflowClientService } from "@sims/services";
 import { ConfigService } from "@sims/utilities/config";
+import { InjectQueue } from "@nestjs/bull";
+import {
+  QueueNames,
+  SendEmailNotificationQueueInDTO,
+} from "@sims/services/queue";
+import { Queue } from "bull";
 
 export const APPLICATION_DRAFT_NOT_FOUND = "APPLICATION_DRAFT_NOT_FOUND";
 export const MORE_THAN_ONE_APPLICATION_DRAFT_ERROR =
@@ -77,6 +83,8 @@ export class ApplicationService extends RecordDataModelService<Application> {
     private readonly workflowClientService: WorkflowClientService,
     private readonly studentRestrictionService: StudentRestrictionService,
     private readonly offeringService: EducationProgramOfferingService,
+    @InjectQueue(QueueNames.SendEmailNotification)
+    private readonly sendEmailNotificationQueue: Queue<SendEmailNotificationQueueInDTO>,
   ) {
     super(dataSource.getRepository(Application));
   }
@@ -113,6 +121,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
     applicationData: ApplicationData,
     associatedFiles: string[],
   ): Promise<ApplicationSubmissionResult> {
+    let sinRestrictionNotificationId: number;
     const application = await this.getApplicationToSave(
       studentId,
       undefined,
@@ -193,15 +202,23 @@ export class ApplicationService extends RecordDataModelService<Application> {
 
         // If the offering will be set in the assessment check for possible SIN restrictions.
         if (originalAssessment.offering) {
-          await this.studentRestrictionService.assessSINRestrictionForOfferingId(
-            studentId,
-            originalAssessment.offering.id,
-            application.id,
-            auditUserId,
-            transactionalEntityManager,
-          );
+          const assessSINRestrictionResult =
+            await this.studentRestrictionService.assessSINRestrictionForOfferingId(
+              studentId,
+              originalAssessment.offering.id,
+              application.id,
+              auditUserId,
+              transactionalEntityManager,
+            );
+          sinRestrictionNotificationId =
+            assessSINRestrictionResult?.sinRestrictionNotificationId;
         }
       });
+      if (sinRestrictionNotificationId) {
+        await this.sendEmailNotificationQueue.add({
+          notificationId: sinRestrictionNotificationId,
+        });
+      }
       return { application, createdAssessment: originalAssessment };
     }
     /**
@@ -690,7 +707,10 @@ export class ApplicationService extends RecordDataModelService<Application> {
     offeringId: number,
     auditUserId: number,
   ): Promise<Application> {
-    return this.dataSource.transaction(async (transactionalEntityManager) => {
+    let updatedApplication: Application;
+    let sinRestrictionNotificationId: number;
+
+    await this.dataSource.transaction(async (transactionalEntityManager) => {
       const applicationRepo =
         transactionalEntityManager.getRepository(Application);
       const application = await applicationRepo
@@ -729,15 +749,24 @@ export class ApplicationService extends RecordDataModelService<Application> {
       application.pirStatus = ProgramInfoStatus.completed;
       application.modifier = auditUser;
       application.updatedAt = now;
-      await this.studentRestrictionService.assessSINRestrictionForOfferingId(
-        application.student.id,
-        offeringId,
-        applicationId,
-        auditUserId,
-        transactionalEntityManager,
-      );
-      return applicationRepo.save(application);
+      const assessSINRestrictionResult =
+        await this.studentRestrictionService.assessSINRestrictionForOfferingId(
+          application.student.id,
+          offeringId,
+          applicationId,
+          auditUserId,
+          transactionalEntityManager,
+        );
+      sinRestrictionNotificationId =
+        assessSINRestrictionResult?.sinRestrictionNotificationId;
+      updatedApplication = await applicationRepo.save(application);
     });
+    if (sinRestrictionNotificationId) {
+      await this.sendEmailNotificationQueue.add({
+        notificationId: sinRestrictionNotificationId,
+      });
+    }
+    return updatedApplication;
   }
 
   /**

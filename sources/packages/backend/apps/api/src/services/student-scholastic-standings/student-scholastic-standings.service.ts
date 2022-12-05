@@ -28,6 +28,12 @@ import {
   SCHOLASTIC_STANDING_STUDENT_DID_NOT_COMPLETE_PROGRAM,
   SCHOLASTIC_STANDING_STUDENT_WITHDREW_FROM_PROGRAM,
 } from "./constants";
+import { InjectQueue } from "@nestjs/bull";
+import {
+  QueueNames,
+  SendEmailNotificationQueueInDTO,
+} from "@sims/services/queue";
+import { Queue } from "bull";
 
 /**
  * Manages the student scholastic standings related operations.
@@ -41,6 +47,8 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
     private readonly dataSource: DataSource,
     private readonly studentAssessmentService: StudentAssessmentService,
     private readonly studentRestrictionService: StudentRestrictionService,
+    @InjectQueue(QueueNames.SendEmailNotification)
+    private readonly sendEmailNotificationQueue: Queue<SendEmailNotificationQueueInDTO>,
   ) {
     super(dataSource.getRepository(StudentScholasticStanding));
     this.applicationRepo = dataSource.getRepository(Application);
@@ -123,6 +131,7 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
     return this.dataSource.transaction(async (transactionalEntityManager) => {
       const now = new Date();
       const auditUser = { id: auditUserId } as User;
+      let restrictionNotificationId: number;
 
       // Get existing offering.
       const existingOffering = await this.offeringRepo
@@ -245,11 +254,18 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
       // Left as the last step to ensure that everything else was processed with
       // success and the notification will not be generated otherwise.
       if (createdRestriction) {
-        await this.studentRestrictionService.createNotifications(
-          [createdRestriction.id],
-          auditUserId,
-          { entityManager: transactionalEntityManager },
-        );
+        [restrictionNotificationId] =
+          await this.studentRestrictionService.createNotifications(
+            [createdRestriction.id],
+            auditUserId,
+            { entityManager: transactionalEntityManager },
+          );
+      }
+
+      if (restrictionNotificationId) {
+        await this.sendEmailNotificationQueue.add({
+          notificationId: restrictionNotificationId,
+        });
       }
 
       return studentScholasticStanding;

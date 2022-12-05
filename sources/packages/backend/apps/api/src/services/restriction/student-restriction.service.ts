@@ -27,6 +27,7 @@ import {
   NotificationActionsService,
   StudentRestrictionAddedNotificationOptions,
 } from "@sims/services/notifications";
+import { AssessSINRestrictionResult } from "./models/student-restriction.model";
 export const RESTRICTION_NOT_ACTIVE = "RESTRICTION_NOT_ACTIVE";
 export const RESTRICTION_NOT_PROVINCIAL = "RESTRICTION_NOT_PROVINCIAL";
 
@@ -377,7 +378,7 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
     applicationId: number,
     auditUserId: number,
     entityManager: EntityManager,
-  ): Promise<void> {
+  ): Promise<AssessSINRestrictionResult> {
     const student = await entityManager
       .getRepository(Student)
       .createQueryBuilder("student")
@@ -430,9 +431,17 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
       const newRestriction = await entityManager
         .getRepository(StudentRestriction)
         .save(restriction);
-      await this.createNotifications([newRestriction.id], auditUserId, {
-        entityManager,
-      });
+      const [notificationId] = await this.createNotifications(
+        [newRestriction.id],
+        auditUserId,
+        {
+          entityManager,
+        },
+      );
+      return {
+        newSINRestrictionId: restriction.id,
+        sinRestrictionNotificationId: notificationId,
+      };
     }
   }
 
@@ -446,7 +455,7 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
     restrictionsIds: number[],
     auditUserId: number,
     options?: StudentRestrictionAddedNotificationOptions,
-  ): Promise<void> {
+  ): Promise<number[]> {
     const restrictions = await this.getRestrictionsForNotifications(
       restrictionsIds,
       options?.entityManager,
@@ -463,7 +472,7 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
       toAddress: restriction.student.user.email,
       userId: restriction.student.user.id,
     }));
-    await this.notificationActionsService.sendStudentRestrictionAddedNotification(
+    return this.notificationActionsService.saveStudentRestrictionAddedNotification(
       notifications,
       auditUserId,
       options,

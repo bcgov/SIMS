@@ -31,11 +31,11 @@ export class NotificationActionsService {
    * to execute the command as part of an existing transaction. If not provided
    * the local repository will be used instead.
    */
-  async sendFileUploadNotification(
+  async saveFileUploadNotification(
     notification: StudentFileUploadNotification,
     auditUserId: number,
     entityManager?: EntityManager,
-  ): Promise<void> {
+  ): Promise<number> {
     const templateId = await this.notificationMessageService.getTemplateId(
       NotificationMessageType.StudentFileUpload,
     );
@@ -63,10 +63,7 @@ export class NotificationActionsService {
       entityManager,
     );
 
-    await this.notificationService.sendEmailNotification(
-      notificationId,
-      entityManager,
-    );
+    return notificationId;
   }
 
   /**
@@ -77,11 +74,11 @@ export class NotificationActionsService {
    * to execute the command as part of an existing transaction. If not provided
    * the local repository will be used instead.
    */
-  async sendMinistryFileUploadNotification(
+  async saveMinistryFileUploadNotification(
     notification: MinistryStudentFileUploadNotification,
     auditUserId: number,
     entityManager?: EntityManager,
-  ): Promise<void> {
+  ): Promise<number> {
     const templateId = await this.notificationMessageService.getTemplateId(
       NotificationMessageType.MinistryFileUpload,
     );
@@ -107,10 +104,7 @@ export class NotificationActionsService {
       entityManager,
     );
 
-    await this.notificationService.sendEmailNotification(
-      notificationId,
-      entityManager,
-    );
+    return notificationId;
   }
 
   /**
@@ -119,11 +113,11 @@ export class NotificationActionsService {
    * @param auditUserId user that should be considered the one that is causing the changes.
    * @param options options for the student restriction notification.
    */
-  async sendStudentRestrictionAddedNotification(
+  async saveStudentRestrictionAddedNotification(
     notifications: StudentRestrictionAddedNotification[],
     auditUserId: number,
     options?: StudentRestrictionAddedNotificationOptions,
-  ): Promise<void> {
+  ): Promise<number[]> {
     const templateId = await this.notificationMessageService.getTemplateId(
       NotificationMessageType.StudentRestrictionAdded,
     );
@@ -143,33 +137,11 @@ export class NotificationActionsService {
     }));
 
     // Save notification into notification table.
-    const notificationsIds = await this.notificationService.saveNotifications(
+    return this.notificationService.saveNotifications(
       notificationsToSend,
       auditUserId,
       options?.entityManager,
     );
-
-    if (!options?.notificationsDelayed) {
-      // Execute all the notifications in parallel and return the promises
-      // to allow the method to await them all.
-      const notificationPromises = notificationsIds.map((notificationId) =>
-        // Not intended to be used for large volume of notifications. If a large
-        // volume is expected, the notificationsDelayed must be set to true.
-        this.notificationService.sendEmailNotification(
-          notificationId,
-          options?.entityManager,
-        ),
-      );
-
-      try {
-        // Wait for all promises.
-        await Promise.all(notificationPromises);
-      } catch (error: unknown) {
-        // Silently failing. In case there is an issue this error
-        // should not cancel any process or transaction.
-        this.logger.error(`Error while sending notification. ${error}`);
-      }
-    }
   }
 
   /**
