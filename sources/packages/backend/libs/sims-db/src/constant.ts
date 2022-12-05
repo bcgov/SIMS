@@ -55,6 +55,7 @@ export const TableNames = {
   DisbursementReceiptValues: "disbursement_receipt_values",
   Messages: "notification_messages",
   Notifications: "notifications",
+  QueueConfigurations: "queue_configurations",
 };
 
 export const INSTITUTION_TYPE_BC_PRIVATE = 2;
