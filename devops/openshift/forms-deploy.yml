@@ -13,6 +13,7 @@ objects:
       FORMIO_ROOT_PASSWORD: "${FORMIO_ROOT_PASSWORD}"
       MONGODB_URI: "${MONGODB_URI}"
       NODE_CONFIG: '{"mongo": "${MONGODB_URI}"}'
+      FORMS_URL: 'https://${FORMS_URL}'
     type: Opaque
     
   - apiVersion: apps.openshift.io/v1
