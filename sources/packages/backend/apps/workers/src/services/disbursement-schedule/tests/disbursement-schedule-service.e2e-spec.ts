@@ -80,7 +80,7 @@ describe("Disbursement Schedule Service - Create disbursement", () => {
       auditUser: savedUser,
       disbursementValues: [
         createFakeDisbursementValue(
-          DisbursementValueType.CanadaGrant,
+          DisbursementValueType.CanadaLoan,
           "CSLF",
           "1000",
         ),
