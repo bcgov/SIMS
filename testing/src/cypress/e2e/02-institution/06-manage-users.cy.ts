@@ -57,7 +57,7 @@ describe("Manage Users", () => {
   });
 });
 
-describe.skip("Manage Users - Add new user", () => {
+describe("Manage Users - Add new user", () => {
   before(() => {
     institutionHelperActions.loginIntoInstitutionSingleLocation();
     dashboardInstitutionObject.manageInstitutionButton().click();
@@ -126,7 +126,7 @@ describe.skip("Manage Users - Add new user", () => {
   });
 });
 
-describe.skip("Manage Users - edit user modal", () => {
+describe("Manage Users - edit user modal", () => {
   before(() => {
     institutionHelperActions.loginIntoInstitutionSingleLocation();
     dashboardInstitutionObject.manageInstitutionButton().click();

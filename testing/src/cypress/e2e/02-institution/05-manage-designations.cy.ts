@@ -25,9 +25,7 @@ describe("Manage Designations", () => {
   });
 
   it("Verify the list of details for the designation agreements", () => {
-    /**
-    Validating using no of designation status retrieved
-     */
+    //Validates using number of designation status
     manageDesignationObject.designationStatus().should("have.length", 1);
   });
 

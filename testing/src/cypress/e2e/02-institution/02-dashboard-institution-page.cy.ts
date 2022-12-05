@@ -6,17 +6,6 @@ const dashboardObject = new DashboardInstitutionObject();
 const manageInstitutionObject = new ManageInstitutionObject();
 const institutionHelperActions = new InstitutionHelperActions();
 
-enum Locations {
-  Vancouver = "Vancouver",
-}
-
-enum SideBarButtons {
-  Programs = "Programs",
-  ProgramInfomationRequests = "Program Information Requests",
-  ConfirmEnrollment = "Confirm Enrollment",
-  ReportChange = "Report Change",
-}
-
 describe("Institution Dashboard", () => {
   beforeEach(() => {
     institutionHelperActions.loginIntoInstitutionSingleLocation();

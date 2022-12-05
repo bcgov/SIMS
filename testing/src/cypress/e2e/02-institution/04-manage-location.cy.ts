@@ -8,7 +8,9 @@ import data from "../data/institution/manage-location.json";
 import Authorization, {
   ClientId,
 } from "../../custom-command/common/authorization";
-import ManageInstitutionObject from "../../page-objects/Institution-objects/ManageInstitutionObject";
+import ManageInstitutionObject, {
+  SideBarMenuItems,
+} from "../../page-objects/Institution-objects/ManageInstitutionObject";
 
 const dashboardInstitutionObject = new DashboardInstitutionObject();
 const institutionManageLocationObject = new ManageLocationObject();
@@ -18,13 +20,6 @@ const manageInstitutionObject = new ManageInstitutionObject();
 function loginAndClickOnManageInstitution() {
   institutionHelperActions.loginIntoInstitutionSingleLocation();
   dashboardInstitutionObject.manageInstitutionButton().click();
-}
-
-const enum SideBarMenuItems {
-  ManageProfile = "Manage Profile",
-  ManageLocations = "Manage Locations",
-  ManageDesignation = "Manage Designations",
-  ManageUsers = "Manage Users",
 }
 
 function loginAndClickOnEditLocation(locationName: string) {
@@ -61,12 +56,15 @@ function verifyThatElementIsVisibleAndEnabled(
   element.should("be.visible").should("not.be.disabled");
 }
 
-function verifyThatFieldDoesNotAcceptMoreThan100Chars(
+function verifyThatFieldDoesNotAcceptMoreThanSpecificChars(
   element: Cypress.Chainable<JQuery<HTMLElement>>,
-  errorMessage: Cypress.Chainable<undefined>
+  errorMessage: Cypress.Chainable<undefined>,
+  noOfCharsToBeValidated: Number
 ) {
-  element.clear().type(data.invalidData.stringWithMoreThan100Chars);
-  errorMessage.should("be.visible");
+  if (noOfCharsToBeValidated == 100) {
+    element.clear().type(data.invalidData.stringWithMoreThan100Chars);
+    errorMessage.should("be.visible");
+  }
 }
 
 function verifyContactDetailsAreVisibleAndEnabled() {
@@ -89,11 +87,11 @@ function verifyContactDetailsAreVisibleAndEnabled() {
   );
 }
 
+/**
+ * Checks for valid format of emails are allowed
+ * Checks for invalid format emails are not not allowed
+ */
 function verifyEmailInputFieldValidations() {
-  /**
-    valid formats are allowed
-    invalid formats are not allowed
-     */
   data.invalidData.emailAddress.forEach((text: string) => {
     institutionManageLocationObject.emailInputText().clear().type(text);
     cy.contains("Email must be a valid email.").should("be.visible");
@@ -104,13 +102,10 @@ function verifyEmailInputFieldValidations() {
   });
 }
 
+/**
+ * Validates first name, last name, email and phone number
+ */
 function verifyPrimaryContactDetailsAreMandatory() {
-  /**
-  first name
-  last name
-  email
-  phone number
-   */
   verifyThatFieldShouldNotBeEmpty(
     institutionManageLocationObject.firstNameInputText(),
     institutionManageLocationObject.firstNameIsRequiredErrorMessage()
@@ -130,49 +125,54 @@ function verifyPrimaryContactDetailsAreMandatory() {
 }
 
 function verifyNoInputFieldsAcceptMoreThan100Chars(createView: boolean) {
+  const noOfCharsForValidations = 100;
   if (createView) {
-    verifyThatFieldDoesNotAcceptMoreThan100Chars(
+    verifyThatFieldDoesNotAcceptMoreThanSpecificChars(
       institutionManageLocationObject.locationName(),
-      institutionManageLocationObject.locationMoreThan100CharsErrorMessage()
+      institutionManageLocationObject.locationMoreThan100CharsErrorMessage(),
+      noOfCharsForValidations
     );
-    verifyThatFieldDoesNotAcceptMoreThan100Chars(
+    verifyThatFieldDoesNotAcceptMoreThanSpecificChars(
       institutionManageLocationObject.address1(),
-      institutionManageLocationObject.address1MoreThan100CharsErrorMessage()
+      institutionManageLocationObject.address1MoreThan100CharsErrorMessage(),
+      noOfCharsForValidations
     );
-    verifyThatFieldDoesNotAcceptMoreThan100Chars(
+    verifyThatFieldDoesNotAcceptMoreThanSpecificChars(
       institutionManageLocationObject.address2(),
-      institutionManageLocationObject.address2MoreThan100CharsErrorMessage()
+      institutionManageLocationObject.address2MoreThan100CharsErrorMessage(),
+      noOfCharsForValidations
     );
-    verifyThatFieldDoesNotAcceptMoreThan100Chars(
+    verifyThatFieldDoesNotAcceptMoreThanSpecificChars(
       institutionManageLocationObject.cityInputText(),
-      institutionManageLocationObject.cityMoreThan100CharsErrorMessage()
+      institutionManageLocationObject.cityMoreThan100CharsErrorMessage(),
+      noOfCharsForValidations
     );
   }
-  /**
-    first name
-    last name
-    email
-     */
-  verifyThatFieldDoesNotAcceptMoreThan100Chars(
+
+  verifyThatFieldDoesNotAcceptMoreThanSpecificChars(
     institutionManageLocationObject.firstNameInputText(),
-    institutionManageLocationObject.firstNameIsMoreThan100CharsErrorMessage()
+    institutionManageLocationObject.firstNameIsMoreThan100CharsErrorMessage(),
+    noOfCharsForValidations
   );
-  verifyThatFieldDoesNotAcceptMoreThan100Chars(
+
+  verifyThatFieldDoesNotAcceptMoreThanSpecificChars(
     institutionManageLocationObject.lastNameInputText(),
-    institutionManageLocationObject.lastNameIsMoreThan100CharsErrorMessage()
+    institutionManageLocationObject.lastNameIsMoreThan100CharsErrorMessage(),
+    noOfCharsForValidations
   );
-  verifyThatFieldDoesNotAcceptMoreThan100Chars(
+
+  verifyThatFieldDoesNotAcceptMoreThanSpecificChars(
     institutionManageLocationObject.emailInputText(),
-    institutionManageLocationObject.emailIsMoreThan100CharsErrorMessage()
+    institutionManageLocationObject.emailIsMoreThan100CharsErrorMessage(),
+    noOfCharsForValidations
   );
 }
 
+/**
+ * Validates that phone number field does not accept > 20 chars and not accept any chars
+ * and only accept between 10 and 20 numbers
+ */
 function verifyPhoneNumberFieldValidations() {
-  /**
-    not accept more than 20 numbers
-    not accept any alphabets
-    only accept between 10 and 20 numbers
-     */
   data.invalidData.phoneNumberBelow10.forEach((text: string) => {
     institutionManageLocationObject.phoneInputText().clear().type(text);
     cy.contains("Phone number must have at least 10 characters.").should(
@@ -197,15 +197,15 @@ function verifyPhoneNumberFieldValidations() {
 }
 
 function createInstitutionLocation(
-  uniqeId: string,
+  uniqueId: string,
   institutionCode: string,
   phoneNumber: string
 ) {
   institutionManageLocationObject
     .locationName()
     .clear()
-    .type(uniqeId)
-    .should("have.value", uniqeId);
+    .type(uniqueId)
+    .should("have.value", uniqueId);
   institutionManageLocationObject
     .institutionCode()
     .clear()
@@ -214,13 +214,13 @@ function createInstitutionLocation(
   institutionManageLocationObject
     .address1()
     .clear()
-    .type(`Addrline1-${uniqeId}`)
-    .should("have.value", `Addrline1-${uniqeId}`);
+    .type(`Addrline1-${uniqueId}`)
+    .should("have.value", `Addrline1-${uniqueId}`);
   institutionManageLocationObject
     .address2()
     .clear()
-    .type(`Addrline2-${uniqeId}`)
-    .should("have.value", `Addrline2-${uniqeId}`);
+    .type(`Addrline2-${uniqueId}`)
+    .should("have.value", `Addrline2-${uniqueId}`);
   institutionManageLocationObject.countryDropDownMenu().click();
   institutionManageLocationObject.countryCanadaFromDropDownMenu().click();
   institutionManageLocationObject.provinceDropDownMenu().click();
@@ -229,24 +229,24 @@ function createInstitutionLocation(
     .click();
   institutionManageLocationObject
     .cityInputText()
-    .type(`city-${uniqeId}`)
-    .should("have.value", `city-${uniqeId}`);
+    .type(`city-${uniqueId}`)
+    .should("have.value", `city-${uniqueId}`);
   institutionManageLocationObject
     .canadaPostalCode()
     .type("A1A2A3")
     .should("have.value", "A1A 2A3");
   institutionManageLocationObject
     .firstNameInputText()
-    .type(`fname-${uniqeId}`)
-    .should("have.value", `fname-${uniqeId}`);
+    .type(`fname-${uniqueId}`)
+    .should("have.value", `fname-${uniqueId}`);
   institutionManageLocationObject
     .lastNameInputText()
-    .type(`lname-${uniqeId}`)
-    .should("have.value", `lname-${uniqeId}`);
+    .type(`lname-${uniqueId}`)
+    .should("have.value", `lname-${uniqueId}`);
   institutionManageLocationObject
     .emailInputText()
-    .type(`${uniqeId}@gov.test`)
-    .should("have.value", `${uniqeId}@gov.test`);
+    .type(`${uniqueId}@gov.test`)
+    .should("have.value", `${uniqueId}@gov.test`);
   institutionManageLocationObject
     .phoneInputText()
     .type(phoneNumber)
@@ -278,9 +278,7 @@ describe("Manage Location", () => {
 });
 
 describe("Manage Location", () => {
-  /**
-  Edit Location
-   */
+  // Edit location test cases
   before(() => {
     loginAndClickOnEditLocation("Vancouver");
   });
@@ -336,9 +334,7 @@ describe("Manage Location", () => {
 });
 
 describe("Manage Location", () => {
-  /**
-  add location
-   */
+  // Add location test cases
   before(() => {
     loginAndClickOnManageInstitution();
     manageInstitutionObject.clickOnSideBar(SideBarMenuItems.ManageLocations);
@@ -617,8 +613,8 @@ describe("Manage Location", () => {
 
 describe("Add New Location and update for the institution", () => {
   let token: string;
-  const uniqeId1 = institutionHelperActions.getUniqueId();
-  const uniqeId2 = institutionHelperActions.getUniqueId();
+  const uniqueId1 = institutionHelperActions.getUniqueId();
+  const uniqueId2 = institutionHelperActions.getUniqueId();
   const phoneNumber = "1236549871";
   const USERNAME = institutionHelperActions.getUserNameForAPITest();
   const PASSWORD = institutionHelperActions.getUserPasswordForAPITest();
@@ -641,19 +637,23 @@ describe("Add New Location and update for the institution", () => {
   it("Create new institution location", async () => {
     const institutionCode =
       await institutionHelperActions.getUniqueInstitutionCode(token);
-    createInstitutionLocation(uniqeId1, institutionCode, phoneNumber);
+    createInstitutionLocation(uniqueId1, institutionCode, phoneNumber);
     dashboardInstitutionObject.allLocationsText().should("be.visible");
-    cy.contains(`fname-${uniqeId1}`).scrollIntoView().should("be.visible");
-    cy.contains(`lname-${uniqeId1}`).scrollIntoView().should("be.visible");
-    cy.contains(`${uniqeId1}@gov.test`).scrollIntoView().should("be.visible");
+    cy.contains(`fname-${uniqueId1}`).scrollIntoView().should("be.visible");
+    cy.contains(`lname-${uniqueId1}`).scrollIntoView().should("be.visible");
+    cy.contains(`${uniqueId1}@gov.test`).scrollIntoView().should("be.visible");
   });
 
   it("Update institution primary contact details", () => {
     const institutionCode = institutionHelperActions.getRandomInstitutionCode();
-    createInstitutionLocation(uniqeId2, institutionCode, phoneNumber);
+    createInstitutionLocation(uniqueId2, institutionCode, phoneNumber);
     dashboardInstitutionObject.allLocationsText().should("be.visible");
     cy.intercept("GET", "**/location/**").as("location");
-    cy.contains(uniqeId2).parents(".v-row").children().contains("Edit").click();
+    cy.contains(uniqueId2)
+      .parents(".v-row")
+      .children()
+      .contains("Edit")
+      .click();
     cy.wait("@location");
     const updateuniqeId = institutionHelperActions.getUniqueId();
     const name = `test-${updateuniqeId}`;

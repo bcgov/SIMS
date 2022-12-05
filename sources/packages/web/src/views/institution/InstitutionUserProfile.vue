@@ -2,7 +2,7 @@
   <full-page-container>
     <template #header>
       <header-navigator
-        data-cy="myProfileHeader"
+        data-cy="institutionUserProfileHeader"
         title="Institution"
         subTitle="My Profile"
       />
