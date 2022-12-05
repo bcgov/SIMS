@@ -2,6 +2,7 @@ import { QueueNames } from "@sims/services/queue";
 import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 import { TableNames } from "../constant";
 import { EXCEPTION_NAME_MAX_LENGTH } from "./application-exception-requests.model";
+import { QueueConfigurationDetails } from "./queue-configuration.type";
 import { RecordDataModel } from "./record.model";
 
 @Entity({ name: TableNames.QueueConfigurations })
@@ -27,5 +28,5 @@ export class QueueConfiguration extends RecordDataModel {
     nullable: false,
     type: "jsonb",
   })
-  queueConfiguration: string;
+  queueConfiguration: QueueConfigurationDetails;
 }

@@ -1,7 +1,7 @@
 /**
  * Queue configurations.
  */
-export interface QueueConfiguration {
+export interface QueueConfigurationDetails {
   cron?: string;
   backoff: number;
   attempts: number;
