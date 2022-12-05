@@ -11,7 +11,8 @@ export function createFakeStudent(user?: User): Student {
     address: {
       addressLine1: faker.address.streetAddress(),
       city: faker.address.city(),
-      country: "CAN",
+      country: "canada",
+      selectedCountry: "Canada",
       provinceState: "BC",
       postalCode: faker.address.zipCode(),
     },
