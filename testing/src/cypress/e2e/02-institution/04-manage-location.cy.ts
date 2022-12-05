@@ -88,8 +88,8 @@ function verifyContactDetailsAreVisibleAndEnabled() {
 }
 
 /**
- * Checks for valid format of emails are allowed
- * Checks for invalid format emails are not not allowed
+ * Checks for valid format of emails are allowed.
+ * Checks for invalid format emails are not not allowed.
  */
 function verifyEmailInputFieldValidations() {
   data.invalidData.emailAddress.forEach((text: string) => {
@@ -103,7 +103,7 @@ function verifyEmailInputFieldValidations() {
 }
 
 /**
- * Validates first name, last name, email and phone number
+ * Validates first name, last name, email and phone number that they are mandatory and are * * not empty.
  */
 function verifyPrimaryContactDetailsAreMandatory() {
   verifyThatFieldShouldNotBeEmpty(
@@ -170,7 +170,7 @@ function verifyNoInputFieldsAcceptMoreThan100Chars(createView: boolean) {
 
 /**
  * Validates that phone number field does not accept > 20 chars and not accept any chars
- * and only accept between 10 and 20 numbers
+ * and only accept between 10 and 20 numbers.
  */
 function verifyPhoneNumberFieldValidations() {
   data.invalidData.phoneNumberBelow10.forEach((text: string) => {
@@ -258,6 +258,7 @@ describe("Manage Location", () => {
   before(() => {
     loginAndClickOnManageInstitution();
   });
+
   beforeEach(() => {
     manageInstitutionObject.clickOnSideBar(SideBarMenuItems.ManageLocations);
   });
@@ -278,7 +279,7 @@ describe("Manage Location", () => {
 });
 
 describe("Manage Location", () => {
-  // Edit location test cases
+  // This section contains tests cases for "Edit" existing location view
   before(() => {
     loginAndClickOnEditLocation("Vancouver");
   });
@@ -334,7 +335,7 @@ describe("Manage Location", () => {
 });
 
 describe("Manage Location", () => {
-  // Add location test cases
+  // This section contains tests cases for "Add" new location view
   before(() => {
     loginAndClickOnManageInstitution();
     manageInstitutionObject.clickOnSideBar(SideBarMenuItems.ManageLocations);
@@ -384,11 +385,6 @@ describe("Manage Location", () => {
   });
 
   it("Verify that location name should not accept more than 100 chars when on the Add new location view", () => {
-    /**
-    Location Name
-    Address1 and Address2
-    City
-     */
     verifyNoInputFieldsAcceptMoreThan100Chars(true);
   });
 
@@ -485,7 +481,7 @@ describe("Manage Location", () => {
   });
 
   it("Verify the “Email” field should accept only valid formatted emails", () => {
-    verifyEmailInputfieldsValidations();
+    verifyEmailInputFieldValidations();
   });
 
   it("Verify that “Phone number” is a mandatory field when editing a location primary contact details", () => {

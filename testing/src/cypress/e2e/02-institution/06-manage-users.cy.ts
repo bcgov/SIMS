@@ -1,7 +1,6 @@
 import DashboardInstitutionObject from "../../page-objects/Institution-objects/DashboardInstitutionObject";
 import ManageUsersObject from "../../page-objects/Institution-objects/ManageUsersObject";
 import InstitutionHelperActions from "../../custom-command/institution/common-helper-functions.cy";
-import { it } from "mocha";
 
 const dashboardInstitutionObject = new DashboardInstitutionObject();
 const manageUsersObject = new ManageUsersObject();
