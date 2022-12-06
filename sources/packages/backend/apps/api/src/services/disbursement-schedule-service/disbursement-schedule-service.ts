@@ -9,7 +9,14 @@ import {
   OrderByCondition,
 } from "../../utilities";
 import { addDays } from "@sims/utilities";
-import { DataSource, In, Repository, UpdateResult, Brackets } from "typeorm";
+import {
+  DataSource,
+  In,
+  Repository,
+  UpdateResult,
+  Brackets,
+  EntityManager,
+} from "typeorm";
 import { SequenceControlService } from "@sims/services";
 import { StudentRestrictionService } from "..";
 import {
@@ -29,6 +36,7 @@ import {
   EnrollmentPeriod,
 } from "./disbursement-schedule.models";
 import * as dayjs from "dayjs";
+import { NotificationActionsService } from "@sims/services/notifications";
 
 const DISBURSEMENT_DOCUMENT_NUMBER_SEQUENCE_GROUP =
   "DISBURSEMENT_DOCUMENT_NUMBER";
@@ -43,6 +51,7 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
     private readonly dataSource: DataSource,
     private readonly sequenceService: SequenceControlService,
     private readonly studentRestrictionService: StudentRestrictionService,
+    private readonly notificationActionsService: NotificationActionsService,
   ) {
     super(dataSource.getRepository(DisbursementSchedule));
     this.assessmentRepo = dataSource.getRepository(StudentAssessment);
@@ -237,7 +246,8 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
     const documentNumber = await this.getNextDocumentNumber();
     const auditUser = { id: userId } as User;
     const now = new Date();
-    return this.dataSource.transaction(async (transactionalEntityManager) => {
+
+    await this.dataSource.transaction(async (transactionalEntityManager) => {
       await transactionalEntityManager
         .getRepository(DisbursementSchedule)
         .createQueryBuilder()
@@ -267,6 +277,12 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
           .where("id = :applicationId", { applicationId })
           .execute();
       }
+      // Create a student notification when COE is confirmed.
+      await this.createNotificationForDisbursementUpdate(
+        disbursementScheduleId,
+        userId,
+        transactionalEntityManager,
+      );
     });
   }
 
@@ -611,5 +627,51 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
         documentNumbers,
       })
       .getMany();
+  }
+
+  /**
+   * Create institution confirm COE notification to notify student
+   * when institution confirms a COE to their application.
+   * @param disbursementScheduleId updated disbursement schedule.
+   * @param auditUserId user who creates notification.
+   * @param transactionalEntityManager entity manager to execute in transaction.
+   */
+  async createNotificationForDisbursementUpdate(
+    disbursementScheduleId: number,
+    auditUserId: number,
+    transactionalEntityManager: EntityManager,
+  ): Promise<void> {
+    const disbursement = await transactionalEntityManager
+      .getRepository(DisbursementSchedule)
+      .findOne({
+        select: {
+          id: true,
+          studentAssessment: {
+            application: {
+              student: {
+                user: {
+                  id: true,
+                  firstName: true,
+                  lastName: true,
+                  email: true,
+                },
+              },
+            },
+          },
+        },
+        where: { id: disbursementScheduleId },
+      });
+
+    const studentUser = disbursement.studentAssessment.application.student.user;
+    await this.notificationActionsService.saveInstitutionConfirmCOENotification(
+      {
+        givenNames: studentUser.firstName,
+        lastName: studentUser.lastName,
+        toAddress: studentUser.email,
+        userId: studentUser.id,
+      },
+      auditUserId,
+      transactionalEntityManager,
+    );
   }
 }

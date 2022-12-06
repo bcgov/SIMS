@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { DataSource, EntityManager, In, UpdateResult } from "typeorm";
+import { DataSource, In, UpdateResult } from "typeorm";
 import { LoggerService, InjectLogger } from "@sims/utilities/logger";
 import {
   RecordDataModelService,
@@ -7,9 +7,8 @@ import {
   Student,
   User,
   FileOriginType,
-  StudentFileMetadata,
 } from "@sims/sims-db";
-import { CreateFile } from "./student-file.model";
+import { CreateFile, FileUploadOptions } from "./student-file.model";
 
 @Injectable()
 export class StudentFileService extends RecordDataModelService<StudentFile> {
@@ -113,8 +112,7 @@ export class StudentFileService extends RecordDataModelService<StudentFile> {
    * @param uniqueFileNames list of unique file names.
    * @param fileOrigin origin of the file being saved.
    * @param groupName group name of the file being save.
-   * @param sendNotification optional notification message to be sent.
-   * @param metadata optional metadata of the file being save.
+   * @param options file upload options.
    */
   async updateStudentFiles(
     studentId: number,
@@ -122,8 +120,7 @@ export class StudentFileService extends RecordDataModelService<StudentFile> {
     uniqueFileNames: string[],
     fileOrigin: FileOriginType,
     groupName: string,
-    sendNotification?: (entityManager: EntityManager) => Promise<void>,
-    metadata?: StudentFileMetadata,
+    options?: FileUploadOptions,
   ): Promise<UpdateResult> {
     let updateResult: UpdateResult;
     await this.dataSource.transaction(async (transactionalEntityManager) => {
@@ -137,16 +134,17 @@ export class StudentFileService extends RecordDataModelService<StudentFile> {
           {
             groupName,
             fileOrigin,
-            metadata,
+            metadata: options?.metadata,
             modifier: { id: auditUserId } as User,
           },
         );
-      // Executes the send notification inside the transaction to allow the rollback
-      // of the DB updates in the case of the notification failure.
-      if (sendNotification) {
-        await sendNotification(transactionalEntityManager);
+
+      // Create student notification on file upload.
+      if (options?.saveFileUploadNotification) {
+        await options.saveFileUploadNotification(transactionalEntityManager);
       }
     });
+
     return updateResult;
   }
 

@@ -34,6 +34,7 @@ import {
   STUDENT_APPEAL_NOT_FOUND,
 } from "./constants";
 import { StudentAssessmentService } from "../student-assessment/student-assessment.service";
+import { NotificationActionsService } from "@sims/services/notifications";
 
 /**
  * Service layer for Student appeals.
@@ -44,6 +45,7 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
     private readonly dataSource: DataSource,
     private readonly studentAppealRequestsService: StudentAppealRequestsService,
     private readonly studentAssessmentService: StudentAssessmentService,
+    private readonly notificationActionsService: NotificationActionsService,
   ) {
     super(dataSource.getRepository(StudentAppeal));
   }
@@ -259,11 +261,16 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
         "appealRequest.id",
         "application.id",
         "student.id",
+        "user.id",
+        "user.firstName",
+        "user.lastName",
+        "user.email",
       ])
       .innerJoin("studentAppeal.appealRequests", "appealRequest")
       .innerJoin("studentAppeal.application", "application")
       .innerJoin("application.currentAssessment", "currentAssessment")
       .innerJoin("application.student", "student")
+      .innerJoin("student.user", "user")
       .leftJoin("studentAppeal.studentAssessment", "studentAssessment")
       .where("studentAppeal.id = :appealId", { appealId })
       // Ensures that the provided appeal requests IDs belongs to the appeal.
@@ -357,9 +364,23 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
         } as StudentAssessment;
       }
 
-      return transactionalEntityManager
+      const updatedStudentAppeal = await transactionalEntityManager
         .getRepository(StudentAppeal)
         .save(appealToUpdate);
+
+      // Create student notification when ministry completes student appeal.
+      const studentUser = appealToUpdate.application.student.user;
+      await this.notificationActionsService.saveChangeRequestCompleteNotification(
+        {
+          givenNames: studentUser.firstName,
+          lastName: studentUser.lastName,
+          toAddress: studentUser.email,
+          userId: studentUser.id,
+        },
+        auditUserId,
+        transactionalEntityManager,
+      );
+      return updatedStudentAppeal;
     });
   }
 

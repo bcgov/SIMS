@@ -20,6 +20,7 @@ import {
   STUDENT_APPLICATION_EXCEPTION_INVALID_STATE,
   STUDENT_APPLICATION_EXCEPTION_NOT_FOUND,
 } from "../../constants";
+import { NotificationActionsService } from "@sims/services/notifications";
 
 /**
  * Manages student applications exceptions detected upon full-time/part-time application
@@ -27,7 +28,10 @@ import {
  */
 @Injectable()
 export class ApplicationExceptionService extends RecordDataModelService<ApplicationException> {
-  constructor(private readonly dataSource: DataSource) {
+  constructor(
+    private readonly dataSource: DataSource,
+    private readonly notificationActionsService: NotificationActionsService,
+  ) {
     super(dataSource.getRepository(ApplicationException));
   }
 
@@ -108,9 +112,14 @@ export class ApplicationExceptionService extends RecordDataModelService<Applicat
           "exception.exceptionStatus",
           "application.id",
           "student.id",
+          "user.id",
+          "user.firstName",
+          "user.lastName",
+          "user.email",
         ])
         .innerJoin("exception.application", "application")
         .innerJoin("application.student", "student")
+        .innerJoin("student.user", "user")
         .where("exception.id = :exceptionId", { exceptionId })
         .getOne();
 
@@ -155,7 +164,22 @@ export class ApplicationExceptionService extends RecordDataModelService<Applicat
       exceptionToUpdate.assessedDate = now;
       exceptionToUpdate.modifier = auditUser;
       exceptionToUpdate.updatedAt = now;
-      return applicationExceptionRepo.save(exceptionToUpdate);
+
+      const exception = await applicationExceptionRepo.save(exceptionToUpdate);
+
+      // Create a student notification when ministry completes an exception.
+      const studentUser = exceptionToUpdate.application.student.user;
+      await this.notificationActionsService.saveExceptionCompleteNotification(
+        {
+          givenNames: studentUser.firstName,
+          lastName: studentUser.lastName,
+          toAddress: studentUser.email,
+          userId: studentUser.id,
+        },
+        auditUserId,
+        transactionalEntityManager,
+      );
+      return exception;
     });
   }
 

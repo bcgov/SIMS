@@ -9,6 +9,7 @@ import {
   SshService,
   StudentAssessmentService,
 } from "@sims/integrations/services";
+import { NotificationsModule } from "@sims/services/notifications";
 import { IER12IntegrationModule } from "@sims/integrations/institution-integration/ier12-integration/ier12-integration.module";
 import { IER12IntegrationScheduler } from "./processors/schedulers/institution-integration/ier12-integration/ier12-integration.scheduler";
 
@@ -18,6 +19,7 @@ import { IER12IntegrationScheduler } from "./processors/schedulers/institution-i
     QueueModule,
     ZeebeModule.forRoot(),
     IER12IntegrationModule,
+    NotificationsModule,
   ],
   providers: [
     StartApplicationAssessmentProcessor,
