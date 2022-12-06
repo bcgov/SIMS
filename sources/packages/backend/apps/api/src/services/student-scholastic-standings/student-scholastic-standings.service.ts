@@ -265,6 +265,7 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
         );
       }
 
+      // Create a student notification when institution reports a change.
       await this.notificationActionsService.saveInstitutionReportChangeNotification(
         {
           givenNames: application.student.user.firstName,
