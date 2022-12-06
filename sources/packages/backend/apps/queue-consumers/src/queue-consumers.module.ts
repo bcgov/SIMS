@@ -1,9 +1,9 @@
 require("../../../env_setup_apps");
 import { Module } from "@nestjs/common";
-import { QueueModule } from "@sims/services/queue";
+import { QueueModule, QueueService } from "@sims/services/queue";
 import { StartApplicationAssessmentProcessor } from "./processors";
 import { WorkflowClientService, ZeebeModule } from "@sims/services";
-import { DatabaseModule } from "@sims/sims-db";
+import { DatabaseModule, DBEntities } from "@sims/sims-db";
 import { IER12IntegrationService } from "@sims/integrations/institution-integration/ier12-integration";
 import {
   SshService,
@@ -11,6 +11,7 @@ import {
 } from "@sims/integrations/services";
 import { IER12IntegrationModule } from "@sims/integrations/institution-integration/ier12-integration/ier12-integration.module";
 import { IER12IntegrationScheduler } from "./processors/schedulers/institution-integration/ier12-integration/ier12-integration.scheduler";
+import { TypeOrmModule } from "@nestjs/typeorm";
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { IER12IntegrationScheduler } from "./processors/schedulers/institution-i
     QueueModule,
     ZeebeModule.forRoot(),
     IER12IntegrationModule,
+    TypeOrmModule.forFeature(DBEntities),
   ],
   providers: [
     StartApplicationAssessmentProcessor,
@@ -26,6 +28,7 @@ import { IER12IntegrationScheduler } from "./processors/schedulers/institution-i
     IER12IntegrationService,
     StudentAssessmentService,
     SshService,
+    QueueService,
   ],
 })
 export class QueueConsumersModule {}
