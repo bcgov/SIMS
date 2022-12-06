@@ -369,12 +369,13 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
         .save(appealToUpdate);
 
       // Create student notification when ministry completes student appeal.
+      const studentUser = appealToUpdate.application.student.user;
       await this.notificationActionsService.saveChangeRequestCompleteNotification(
         {
-          givenNames: appealToUpdate.application.student.user.firstName,
-          lastName: appealToUpdate.application.student.user.lastName,
-          toAddress: appealToUpdate.application.student.user.email,
-          userId: appealToUpdate.application.student.user.id,
+          givenNames: studentUser.firstName,
+          lastName: studentUser.lastName,
+          toAddress: studentUser.email,
+          userId: studentUser.id,
         },
         auditUserId,
         transactionalEntityManager,
