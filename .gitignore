@@ -6,7 +6,8 @@ dist/
 **/dist/
 .DS_Store
 **/.DS_Store
-.vscode/
+.vscode/*
+!.vscode/launch.json
 *.log
 
 #cypress

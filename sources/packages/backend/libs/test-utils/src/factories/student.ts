@@ -2,9 +2,6 @@ import * as faker from "faker";
 import { Student, User } from "@sims/sims-db";
 import { createFakeUser } from "@sims/test-utils";
 
-/**
- * @deprecated use the factories from @sims/test-utils.
- */
 export function createFakeStudent(user?: User): Student {
   const student = new Student();
   student.user = user ?? createFakeUser();
@@ -14,11 +11,13 @@ export function createFakeStudent(user?: User): Student {
     address: {
       addressLine1: faker.address.streetAddress(),
       city: faker.address.city(),
-      country: "CAN",
+      country: "canada",
+      selectedCountry: "Canada",
       provinceState: "BC",
       postalCode: faker.address.zipCode(),
     },
     phone: faker.phone.phoneNumber(),
   };
+  student.sinConsent = true;
   return student;
 }
