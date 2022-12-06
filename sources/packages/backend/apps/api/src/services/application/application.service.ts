@@ -204,7 +204,6 @@ export class ApplicationService extends RecordDataModelService<Application> {
           );
         }
       });
-
       return { application, createdAssessment: originalAssessment };
     }
     /**
