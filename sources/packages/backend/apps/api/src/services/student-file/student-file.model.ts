@@ -11,11 +11,11 @@ export interface CreateFile {
 
 export interface FileUploadOptions {
   /**
-   * optional notification message to be sent
+   * Optional notification message to be sent.
    */
   saveFileUploadNotification?: (entityManager: EntityManager) => Promise<void>;
   /**
-   * optional metadata of the file being saved.
+   * Optional metadata of the file being saved.
    */
   metadata?: StudentFileMetadata;
 }

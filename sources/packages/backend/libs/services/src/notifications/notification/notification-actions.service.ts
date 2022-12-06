@@ -107,7 +107,6 @@ export class NotificationActionsService {
    * @param notifications notifications information.
    * @param auditUserId user that should be considered the one that is causing the changes.
    * @param entityManager entity manager to execute in transaction.
-   * @returns notification id created.
    */
   async saveStudentRestrictionAddedNotification(
     notifications: StudentRestrictionAddedNotification[],
