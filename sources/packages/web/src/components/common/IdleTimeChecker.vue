@@ -13,12 +13,18 @@
 <script lang="ts">
 import { onMounted, ref, computed } from "vue";
 import { ClientIdType } from "@/types";
-import { ModalDialog, useInstitutionAuth, useFormatters } from "@/composables";
+import {
+  ModalDialog,
+  useInstitutionAuth,
+  useAuth,
+  useFormatters,
+} from "@/composables";
 import {
   MINIMUM_IDLE_TIME_FOR_WARNING_SUPPORTING_USER,
   MINIMUM_IDLE_TIME_FOR_WARNING_STUDENT,
   MINIMUM_IDLE_TIME_FOR_WARNING_INSTITUTION,
   MINIMUM_IDLE_TIME_FOR_WARNING_AEST,
+  COUNT_DOWN_TIMER_FOR_LOGOUT,
 } from "@/constants/system-constants";
 import ConfirmExtendTime from "@/components/common/modals/ConfirmExtendTime.vue";
 
@@ -37,7 +43,11 @@ export default {
     const extendTimeModal = ref({} as ModalDialog<boolean>);
     const { isAuthenticated } = useInstitutionAuth();
     const { getDatesDiff } = useFormatters();
+    const { executeLogout } = useAuth();
 
+    const logoff = async () => {
+      await executeLogout(props.clientIdType);
+    };
     const minimumIdleTime = computed(() => {
       switch (props.clientIdType) {
         case ClientIdType.Student:
@@ -58,7 +68,7 @@ export default {
       clearInterval(interval.value);
       if (isAuthenticated.value) {
         /* eslint-disable */
-        interval.value = setInterval(checkIdle, 30000);
+        interval.value = setInterval(checkIdle, 1000);
         /* eslint-enable */
       }
     };
@@ -69,15 +79,21 @@ export default {
         resetIdleCheckerTimer();
       }
     };
-
+    let n = 0;
     const checkIdle = () => {
-      const idleTimeInMintutes = getDatesDiff(
+      console.log("Seconds: ", ++n);
+      const idleTimeInMinutes = getDatesDiff(
         lastActivityLogin.value,
         new Date(),
         "second",
         true,
       );
-      if (idleTimeInMintutes >= minimumIdleTime.value) {
+      if (idleTimeInMinutes > minimumIdleTime.value) {
+        logoff();
+      } else if (
+        idleTimeInMinutes >=
+        minimumIdleTime.value - COUNT_DOWN_TIMER_FOR_LOGOUT
+      ) {
         confirmExtendTimeModal();
       }
     };

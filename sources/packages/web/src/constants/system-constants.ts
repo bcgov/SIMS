@@ -2,7 +2,7 @@
 export const MINIMUM_TOKEN_VALIDITY = 180;
 // TODO : for development  added all IDLE timeout as 1hour, revert it back to 4.5 before merging to PROD
 // * MINIMUM_IDLE_TIME_FOR_WARNING_STUDENT in seconds, i,e 270 seconds is 4.5 minutes
-export const MINIMUM_IDLE_TIME_FOR_WARNING_STUDENT = 3600;
+export const MINIMUM_IDLE_TIME_FOR_WARNING_STUDENT = 60;
 // * MINIMUM_IDLE_TIME_FOR_WARNING_STUDENT in seconds i,e 270 seconds is 4.5 minutes
 export const MINIMUM_IDLE_TIME_FOR_WARNING_INSTITUTION = 3600;
 // * MINIMUM_IDLE_TIME_FOR_WARNING_STUDENT in seconds i,e 270 seconds is 4.5 minutes
