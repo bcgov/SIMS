@@ -7,7 +7,6 @@ import {
   StudentRestrictionAddedNotification,
   MinistryStudentFileUploadNotification,
   StudentFileUploadNotification,
-  StudentRestrictionAddedNotificationOptions,
   StudentNotification,
 } from "..";
 import { GCNotifyService } from "./gc-notify.service";
@@ -107,13 +106,13 @@ export class NotificationActionsService {
    * Creates a new notification when a new restriction is added to the student account.
    * @param notifications notifications information.
    * @param auditUserId user that should be considered the one that is causing the changes.
-   * @param options options for the student restriction notification.
+   * @param entityManager entity manager to execute in transaction.
    * @returns notification id created.
    */
   async saveStudentRestrictionAddedNotification(
     notifications: StudentRestrictionAddedNotification[],
     auditUserId: number,
-    options?: StudentRestrictionAddedNotificationOptions,
+    entityManager?: EntityManager,
   ): Promise<void> {
     const templateId = await this.notificationMessageService.getTemplateId(
       NotificationMessageType.StudentRestrictionAdded,
@@ -137,7 +136,7 @@ export class NotificationActionsService {
     await this.notificationService.saveNotifications(
       notificationsToSend,
       auditUserId,
-      options?.entityManager,
+      entityManager,
     );
   }
 

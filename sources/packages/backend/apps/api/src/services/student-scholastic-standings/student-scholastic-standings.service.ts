@@ -261,7 +261,7 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
         await this.studentRestrictionService.createNotifications(
           [createdRestriction.id],
           auditUserId,
-          { entityManager: transactionalEntityManager },
+          transactionalEntityManager,
         );
       }
 

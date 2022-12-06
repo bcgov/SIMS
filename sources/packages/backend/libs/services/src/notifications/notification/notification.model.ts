@@ -1,5 +1,4 @@
 import { NotificationMessageType } from "@sims/sims-db";
-import { EntityManager } from "typeorm";
 
 export interface SaveNotificationModel {
   userId?: number;
@@ -28,15 +27,6 @@ export interface StudentRestrictionAddedNotification {
   lastName: string;
   toAddress: string;
   userId: number;
-}
-
-export interface StudentRestrictionAddedNotificationOptions {
-  /**
-   * Optional repository that can be provided, for instance,
-   * to execute the command as part of an existing transaction. If not provided
-   * the local repository will be used instead.
-   */
-  entityManager?: EntityManager;
 }
 
 export interface StudentNotification {
