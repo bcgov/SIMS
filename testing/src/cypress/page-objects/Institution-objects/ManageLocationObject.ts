@@ -1,3 +1,5 @@
+import BaseMethods from "./BaseMethods";
+
 export enum Provinces {
   Alberta = "AB",
   BritishColumbia = "BC",
@@ -14,93 +16,105 @@ export enum Provinces {
   Nunavut = "NU",
 }
 
-export default class ManageLocationObject {
-  manageLocationButton() {
-    return cy.get(".v-list > :nth-child(2)");
+export default class ManageLocationObject extends BaseMethods {
+  manageLocationHeader() {
+    return this.getElementByCyId("manageLocationHeader");
   }
 
-  editLocationButton() {
-    return cy.contains("Edit");
+  getInstitutionsList() {
+    return this.getElementByCyId("institutionLocation");
   }
 
-  additionalInstitutionLocationMessage() {
-    return cy.contains("Let’s add an additional institution location");
+  getInstitutionByLocationName(locationName: string) {
+    return this.getElementByCyId("locationName")
+      .contains(locationName)
+      .parentsUntil("[data-cy='institutionLocation']");
   }
 
-  locationDetailsText() {
-    return cy.contains("Location details");
+  editLocationButton(locationName: string) {
+    return this.getInstitutionByLocationName(locationName).get(
+      "[data-cy='editLocation']"
+    );
   }
 
-  addLocationMessage() {
-    return cy.contains("Add Location");
-  }
-
-  addLocationButton() {
-    return cy.contains("Add location");
-  }
-
-  submitButton() {
-    return cy.contains("Submit");
+  editLocationHeader() {
+    return this.getElementByCyId("editLocationHeader");
   }
 
   institutionCode() {
-    return cy.get("[data-cy='institutionCode']");
+    return this.getElementByCyId("institutionCode");
+  }
+
+  locationName() {
+    return this.getElementByCyId("locationName");
+  }
+
+  address1() {
+    return this.getElementByCyId("addressLine1");
+  }
+
+  address2() {
+    return this.getElementByCyId("addressLine2");
+  }
+
+  country() {
+    return this.getElementByCyId("selectedCountry");
+  }
+
+  provinceText() {
+    return this.getElementByCyId("provinceState");
+  }
+
+  city() {
+    return this.getElementByCyId("city");
+  }
+
+  canadaPostalCode() {
+    return this.getElementByCyId("canadaPostalCode");
+  }
+
+  otherPostalCode() {
+    return this.getElementByCyId("otherPostalCode");
+  }
+
+  lastNameInputText() {
+    return this.getElementByCyId("primaryContactLastName");
+  }
+
+  submitButton() {
+    return this.getElementByCyId("primaryFooterButton");
+  }
+
+  addLocationButton() {
+    return this.getElementByCyId("addLocation");
+  }
+  
+  manageLocationsBackButton() {
+    return cy.contains("Manage location");
   }
 
   institutionCodeErrorMessage() {
     return cy.contains("Institution code is required");
   }
 
-  locationName() {
-    return cy.get("[data-cy='locationName']");
-  }
-
   locationNameErrorMessage() {
     return cy.contains("Location name is required");
   }
 
-  addressLine1() {
-    return cy.get("[data-cy='addressLine1']");
-  }
-
-  addressErrorMessage() {
-    return cy.contains("Address 1 is required");
-  }
-
-  addressLine2() {
-    return cy.get("[data-cy='addressLine2']");
-  }
-
   cityInputText() {
-    return cy.get("[data-cy='city']");
+    return this.getElementByCyId("city");
+  }
+
+  address1ErrorMessage() {
+    return cy.contains("Address1 is required");
   }
 
   cityErrorMessage() {
     return cy.contains("City is required");
   }
 
-  canadaPostalCode() {
-    return cy.get("[data-cy='canadaPostalCode']");
-  }
-
-  otherPostalCode() {
-    return cy.get("[data-cy='otherPostalCode']");
-  }
-
-  postalErrorMessage() {
-    return cy.contains("Postal/ZIP code is required");
-  }
-
-  stateInputText() {
-    return cy.get("[name='data[provinceState]']");
-  }
-
   stateErrorMessage() {
     return cy.contains("Province/State is required");
-  }
-
-  countryInputText() {
-    return cy.get("[name='data[country]']");
   }
 
   countryErrorMessage() {
@@ -108,7 +122,7 @@ export default class ManageLocationObject {
   }
 
   countryDropDownMenu() {
-    return cy.get("[data-cy='selectedCountry']").parent();
+    return this.getElementByCyId("selectedCountry").parent();
   }
 
   countryCanadaFromDropDownMenu() {
@@ -120,11 +134,11 @@ export default class ManageLocationObject {
   }
 
   otherCountryInputText() {
-    return cy.get("[data-cy='otherCountry']");
+    return this.getElementByCyId("otherCountry");
   }
 
   provinceDropDownMenu() {
-    return cy.get("[data-cy='provinceState']").parent();
+    return this.getElementByCyId("provinceState").parent();
   }
 
   getProvinceFromDropdown(province: Provinces) {
@@ -132,67 +146,45 @@ export default class ManageLocationObject {
   }
 
   firstNameInputText() {
-    return cy.get("[data-cy='primaryContactFirstName']");
+    return this.getElementByCyId("primaryContactFirstName");
   }
 
-  errorMessage() {
-    return cy.get(".form-text.error");
+  firstNameIsRequiredErrorMessage() {
+    return cy.contains("First name is required");
   }
 
-  firstNameErrorMessage() {
-    return cy.get("First name is required");
+  firstNameIsMoreThan100CharsErrorMessage() {
+    return cy.contains("First name must have no more than 100 characters.");
   }
 
-  lastNameInputText() {
-    return cy.get("[data-cy='primaryContactLastName']");
-  }
-
-  lastNameErrorMessage() {
+  lastNameIsRequiredErrorMessage() {
     return cy.contains("Last Name is required");
   }
 
-  emailInputText() {
-    return cy.get("[data-cy='primaryContactEmail']");
+  lastNameIsMoreThan100CharsErrorMessage() {
+    return cy.contains("Last name must have no more than 100 characters.");
   }
 
-  emailErrorMessage() {
+  emailInputText() {
+    return this.getElementByCyId("primaryContactEmail");
+  }
+
+  emailIsRequiredErrorMessage() {
     return cy.contains("Email is required");
   }
-
+  emailIsMoreThan100CharsErrorMessage() {
+    return cy.contains("Last name must have no more than 100 characters.");
+  }
   phoneInputText() {
-    return cy.get("[data-cy='primaryContactPhone']");
+    return this.getElementByCyId("primaryContactPhone");
   }
 
-  phoneNumberErrorMessage() {
+  phoneNumberIsRequiredErrorMessage() {
     return cy.contains("Phone Number is required");
   }
 
   locationNameText() {
     return cy.contains("Location name");
-  }
-
-  institutionCodeText() {
-    return cy.contains("Institution code");
-  }
-
-  address1Text() {
-    return cy.contains("Address 1");
-  }
-
-  address2Text() {
-    return cy.contains("Address 2");
-  }
-
-  countryText() {
-    return cy.contains("Country");
-  }
-
-  provinceText() {
-    return cy.contains("Province");
-  }
-
-  cityText() {
-    return cy.contains("City");
   }
 
   postalCodeText() {
@@ -217,5 +209,20 @@ export default class ManageLocationObject {
 
   phoneNumberText() {
     return cy.contains("Phone number");
+  }
+
+  address1MoreThan100CharsErrorMessage() {
+    return cy.contains("Address 1 must have no more than 100 characters.");
+  }
+  address2MoreThan100CharsErrorMessage() {
+    return cy.contains("Address 2 must have no more than 100 characters.");
+  }
+
+  cityMoreThan100CharsErrorMessage() {
+    return cy.contains("City must have no more than 100 characters.");
+  }
+
+  locationMoreThan100CharsErrorMessage() {
+    return cy.contains("Location name must have no more than 100 characters.");
   }
 }

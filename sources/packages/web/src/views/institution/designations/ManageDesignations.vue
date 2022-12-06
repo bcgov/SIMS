@@ -4,6 +4,7 @@
       <header-navigator
         title="Manage institution"
         subTitle="Manage Designations"
+        data-cy="manageDesignationHeader"
       />
     </template>
     <body-header
