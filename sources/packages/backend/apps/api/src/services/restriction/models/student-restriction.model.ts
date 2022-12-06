@@ -4,8 +4,3 @@ export interface StudentRestrictionStatus {
   hasProvincialRestriction: boolean;
   restrictionMessage: string;
 }
-
-export interface AssessSINRestrictionResult {
-  newSINRestrictionId: number;
-  sinRestrictionNotificationId: number;
-}

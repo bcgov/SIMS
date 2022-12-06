@@ -9,20 +9,10 @@ import {
   FileOriginType,
 } from "@sims/sims-db";
 import { CreateFile, FileUploadOptions } from "./student-file.model";
-import { InjectQueue } from "@nestjs/bull";
-import {
-  QueueNames,
-  SendEmailNotificationQueueInDTO,
-} from "@sims/services/queue";
-import { Queue } from "bull";
 
 @Injectable()
 export class StudentFileService extends RecordDataModelService<StudentFile> {
-  constructor(
-    private readonly dataSource: DataSource,
-    @InjectQueue(QueueNames.SendEmailNotification)
-    private readonly sendEmailNotificationQueue: Queue<SendEmailNotificationQueueInDTO>,
-  ) {
+  constructor(private readonly dataSource: DataSource) {
     super(dataSource.getRepository(StudentFile));
   }
 
@@ -122,8 +112,7 @@ export class StudentFileService extends RecordDataModelService<StudentFile> {
    * @param uniqueFileNames list of unique file names.
    * @param fileOrigin origin of the file being saved.
    * @param groupName group name of the file being save.
-   * @param saveNotification optional notification message to be sent.
-   * @param metadata optional metadata of the file being save.
+   * @param options file upload options.
    */
   async updateStudentFiles(
     studentId: number,
@@ -134,7 +123,6 @@ export class StudentFileService extends RecordDataModelService<StudentFile> {
     options?: FileUploadOptions,
   ): Promise<UpdateResult> {
     let updateResult: UpdateResult;
-    let notificationId: number;
     await this.dataSource.transaction(async (transactionalEntityManager) => {
       updateResult = await transactionalEntityManager
         .getRepository(StudentFile)
@@ -150,19 +138,12 @@ export class StudentFileService extends RecordDataModelService<StudentFile> {
             modifier: { id: auditUserId } as User,
           },
         );
-      // Executes the send notification inside the transaction to allow the rollback
-      // of the DB updates in the case of the notification failure.
+
+      // Create student notification on file upload.
       if (options?.saveFileUploadNotification) {
-        notificationId = await options.saveFileUploadNotification(
-          transactionalEntityManager,
-        );
+        await options.saveFileUploadNotification(transactionalEntityManager);
       }
     });
-
-    // Add message to the queue to send notification email on file upload.
-    if (notificationId) {
-      await this.sendEmailNotificationQueue.add({ notificationId });
-    }
 
     return updateResult;
   }

@@ -21,12 +21,6 @@ import {
   STUDENT_APPLICATION_EXCEPTION_NOT_FOUND,
 } from "../../constants";
 import { NotificationActionsService } from "@sims/services/notifications";
-import { InjectQueue } from "@nestjs/bull";
-import {
-  QueueNames,
-  SendEmailNotificationQueueInDTO,
-} from "@sims/services/queue";
-import { Queue } from "bull";
 
 /**
  * Manages student applications exceptions detected upon full-time/part-time application
@@ -37,8 +31,6 @@ export class ApplicationExceptionService extends RecordDataModelService<Applicat
   constructor(
     private readonly dataSource: DataSource,
     private readonly notificationActionsService: NotificationActionsService,
-    @InjectQueue(QueueNames.SendEmailNotification)
-    private readonly sendEmailNotificationQueue: Queue<SendEmailNotificationQueueInDTO>,
   ) {
     super(dataSource.getRepository(ApplicationException));
   }
@@ -110,9 +102,7 @@ export class ApplicationExceptionService extends RecordDataModelService<Applicat
     noteDescription: string,
     auditUserId: number,
   ): Promise<ApplicationException> {
-    let updatedException: ApplicationException;
-    let exceptionCompleteNotificationId: number;
-    await this.dataSource.transaction(async (transactionalEntityManager) => {
+    return this.dataSource.transaction(async (transactionalEntityManager) => {
       const applicationExceptionRepo =
         transactionalEntityManager.getRepository(ApplicationException);
       const exceptionToUpdate = await applicationExceptionRepo
@@ -175,28 +165,20 @@ export class ApplicationExceptionService extends RecordDataModelService<Applicat
       exceptionToUpdate.modifier = auditUser;
       exceptionToUpdate.updatedAt = now;
 
-      updatedException = await applicationExceptionRepo.save(exceptionToUpdate);
+      const exception = await applicationExceptionRepo.save(exceptionToUpdate);
 
-      exceptionCompleteNotificationId =
-        await this.notificationActionsService.saveExceptionCompleteNotification(
-          {
-            givenNames: exceptionToUpdate.application.student.user.firstName,
-            lastName: exceptionToUpdate.application.student.user.lastName,
-            toAddress: exceptionToUpdate.application.student.user.email,
-            userId: exceptionToUpdate.application.student.user.id,
-          },
-          auditUserId,
-          transactionalEntityManager,
-        );
+      await this.notificationActionsService.saveExceptionCompleteNotification(
+        {
+          givenNames: exceptionToUpdate.application.student.user.firstName,
+          lastName: exceptionToUpdate.application.student.user.lastName,
+          toAddress: exceptionToUpdate.application.student.user.email,
+          userId: exceptionToUpdate.application.student.user.id,
+        },
+        auditUserId,
+        transactionalEntityManager,
+      );
+      return exception;
     });
-
-    //Add message to the queue to send notification email.
-    if (exceptionCompleteNotificationId) {
-      await this.sendEmailNotificationQueue.add({
-        notificationId: exceptionCompleteNotificationId,
-      });
-    }
-    return updatedException;
   }
 
   /**

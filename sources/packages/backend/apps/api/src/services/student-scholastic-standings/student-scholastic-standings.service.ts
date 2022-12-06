@@ -28,12 +28,6 @@ import {
   SCHOLASTIC_STANDING_STUDENT_DID_NOT_COMPLETE_PROGRAM,
   SCHOLASTIC_STANDING_STUDENT_WITHDREW_FROM_PROGRAM,
 } from "./constants";
-import { InjectQueue } from "@nestjs/bull";
-import {
-  QueueNames,
-  SendEmailNotificationQueueInDTO,
-} from "@sims/services/queue";
-import { Queue } from "bull";
 import { NotificationActionsService } from "@sims/services/notifications";
 
 /**
@@ -48,8 +42,6 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
     private readonly dataSource: DataSource,
     private readonly studentAssessmentService: StudentAssessmentService,
     private readonly studentRestrictionService: StudentRestrictionService,
-    @InjectQueue(QueueNames.SendEmailNotification)
-    private readonly sendEmailNotificationQueue: Queue<SendEmailNotificationQueueInDTO>,
     private readonly notificationActionsService: NotificationActionsService,
   ) {
     super(dataSource.getRepository(StudentScholasticStanding));
@@ -141,10 +133,7 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
     application: Application,
     scholasticStandingData: ScholasticStanding,
   ): Promise<StudentScholasticStanding> {
-    const notificationIds: number[] = [];
-    let studentScholasticStanding: StudentScholasticStanding;
-
-    await this.dataSource.transaction(async (transactionalEntityManager) => {
+    return this.dataSource.transaction(async (transactionalEntityManager) => {
       const now = new Date();
       const auditUser = { id: auditUserId } as User;
 
@@ -246,7 +235,7 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
           scholasticStandingData.numberOfUnsuccessfulWeeks;
       }
 
-      studentScholasticStanding = await transactionalEntityManager
+      const studentScholasticStanding = await transactionalEntityManager
         .getRepository(StudentScholasticStanding)
         .save(scholasticStanding);
 
@@ -269,38 +258,26 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
       // Left as the last step to ensure that everything else was processed with
       // success and the notification will not be generated otherwise.
       if (createdRestriction) {
-        const [studentRestrictionNotificationId] =
-          await this.studentRestrictionService.createNotifications(
-            [createdRestriction.id],
-            auditUserId,
-            { entityManager: transactionalEntityManager },
-          );
-        notificationIds.push(studentRestrictionNotificationId);
+        await this.studentRestrictionService.createNotifications(
+          [createdRestriction.id],
+          auditUserId,
+          { entityManager: transactionalEntityManager },
+        );
       }
 
-      const institutionReportChangeNotificationId =
-        await this.notificationActionsService.saveInstitutionReportChangeNotification(
-          {
-            givenNames: application.student.user.firstName,
-            lastName: application.student.user.lastName,
-            toAddress: application.student.user.email,
-            userId: application.student.user.id,
-          },
-          auditUserId,
-          transactionalEntityManager,
-        );
-
-      notificationIds.push(institutionReportChangeNotificationId);
-    });
-
-    if (notificationIds.length) {
-      const queueMessageData = notificationIds.map(
-        (notificationId: number) => ({ data: { notificationId } }),
+      await this.notificationActionsService.saveInstitutionReportChangeNotification(
+        {
+          givenNames: application.student.user.firstName,
+          lastName: application.student.user.lastName,
+          toAddress: application.student.user.email,
+          userId: application.student.user.id,
+        },
+        auditUserId,
+        transactionalEntityManager,
       );
-      await this.sendEmailNotificationQueue.addBulk(queueMessageData);
-    }
 
-    return studentScholasticStanding;
+      return studentScholasticStanding;
+    });
   }
 
   /**

@@ -37,12 +37,6 @@ import {
 } from "./disbursement-schedule.models";
 import * as dayjs from "dayjs";
 import { NotificationActionsService } from "@sims/services/notifications";
-import { InjectQueue } from "@nestjs/bull";
-import {
-  QueueNames,
-  SendEmailNotificationQueueInDTO,
-} from "@sims/services/queue";
-import { Queue } from "bull";
 
 const DISBURSEMENT_DOCUMENT_NUMBER_SEQUENCE_GROUP =
   "DISBURSEMENT_DOCUMENT_NUMBER";
@@ -58,8 +52,6 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
     private readonly sequenceService: SequenceControlService,
     private readonly studentRestrictionService: StudentRestrictionService,
     private readonly notificationActionsService: NotificationActionsService,
-    @InjectQueue(QueueNames.SendEmailNotification)
-    private readonly sendEmailNotificationQueue: Queue<SendEmailNotificationQueueInDTO>,
   ) {
     super(dataSource.getRepository(DisbursementSchedule));
     this.assessmentRepo = dataSource.getRepository(StudentAssessment);
@@ -254,7 +246,6 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
     const documentNumber = await this.getNextDocumentNumber();
     const auditUser = { id: userId } as User;
     const now = new Date();
-    let institutionConfirmCOENotificationId: number;
 
     await this.dataSource.transaction(async (transactionalEntityManager) => {
       await transactionalEntityManager
@@ -286,20 +277,13 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
           .where("id = :applicationId", { applicationId })
           .execute();
       }
-      institutionConfirmCOENotificationId =
-        await this.createNotificationForDisbursementUpdate(
-          disbursementScheduleId,
-          userId,
-          transactionalEntityManager,
-        );
+      // Create a student notification when COE is confirmed.
+      await this.createNotificationForDisbursementUpdate(
+        disbursementScheduleId,
+        userId,
+        transactionalEntityManager,
+      );
     });
-
-    //Add message to queue to send notification email.
-    if (institutionConfirmCOENotificationId) {
-      await this.sendEmailNotificationQueue.add({
-        notificationId: institutionConfirmCOENotificationId,
-      });
-    }
   }
 
   /**
@@ -657,7 +641,7 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
     disbursementScheduleId: number,
     auditUserId: number,
     transactionalEntityManager: EntityManager,
-  ): Promise<number> {
+  ): Promise<void> {
     const disbursement = await transactionalEntityManager
       .getRepository(DisbursementSchedule)
       .findOne({
@@ -679,7 +663,7 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
         where: { id: disbursementScheduleId },
       });
 
-    return await this.notificationActionsService.saveInstitutionConfirmCOENotification(
+    await this.notificationActionsService.saveInstitutionConfirmCOENotification(
       {
         givenNames:
           disbursement.studentAssessment.application.student.user.firstName,

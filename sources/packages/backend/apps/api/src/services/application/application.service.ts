@@ -52,12 +52,6 @@ import {
 } from "../../constants";
 import { SequenceControlService, WorkflowClientService } from "@sims/services";
 import { ConfigService } from "@sims/utilities/config";
-import { InjectQueue } from "@nestjs/bull";
-import {
-  QueueNames,
-  SendEmailNotificationQueueInDTO,
-} from "@sims/services/queue";
-import { Queue } from "bull";
 import { NotificationActionsService } from "@sims/services/notifications";
 
 export const APPLICATION_DRAFT_NOT_FOUND = "APPLICATION_DRAFT_NOT_FOUND";
@@ -84,8 +78,6 @@ export class ApplicationService extends RecordDataModelService<Application> {
     private readonly workflowClientService: WorkflowClientService,
     private readonly studentRestrictionService: StudentRestrictionService,
     private readonly offeringService: EducationProgramOfferingService,
-    @InjectQueue(QueueNames.SendEmailNotification)
-    private readonly sendEmailNotificationQueue: Queue<SendEmailNotificationQueueInDTO>,
     private readonly notificationActionsService: NotificationActionsService,
   ) {
     super(dataSource.getRepository(Application));
@@ -123,7 +115,6 @@ export class ApplicationService extends RecordDataModelService<Application> {
     applicationData: ApplicationData,
     associatedFiles: string[],
   ): Promise<ApplicationSubmissionResult> {
-    let sinRestrictionNotificationId: number;
     const application = await this.getApplicationToSave(
       studentId,
       undefined,
@@ -204,25 +195,16 @@ export class ApplicationService extends RecordDataModelService<Application> {
 
         // If the offering will be set in the assessment check for possible SIN restrictions.
         if (originalAssessment.offering) {
-          const assessSINRestrictionResult =
-            await this.studentRestrictionService.assessSINRestrictionForOfferingId(
-              studentId,
-              originalAssessment.offering.id,
-              application.id,
-              auditUserId,
-              transactionalEntityManager,
-            );
-          sinRestrictionNotificationId =
-            assessSINRestrictionResult?.sinRestrictionNotificationId;
+          await this.studentRestrictionService.assessSINRestrictionForOfferingId(
+            studentId,
+            originalAssessment.offering.id,
+            application.id,
+            auditUserId,
+            transactionalEntityManager,
+          );
         }
       });
 
-      //Add message to the queue to send notification email.
-      if (sinRestrictionNotificationId) {
-        await this.sendEmailNotificationQueue.add({
-          notificationId: sinRestrictionNotificationId,
-        });
-      }
       return { application, createdAssessment: originalAssessment };
     }
     /**
@@ -711,10 +693,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
     offeringId: number,
     auditUserId: number,
   ): Promise<Application> {
-    let updatedApplication: Application;
-    const notificationIds: number[] = [];
-
-    await this.dataSource.transaction(async (transactionalEntityManager) => {
+    return this.dataSource.transaction(async (transactionalEntityManager) => {
       const applicationRepo =
         transactionalEntityManager.getRepository(Application);
       const application = await applicationRepo
@@ -753,45 +732,30 @@ export class ApplicationService extends RecordDataModelService<Application> {
       application.pirStatus = ProgramInfoStatus.completed;
       application.modifier = auditUser;
       application.updatedAt = now;
-      const assessSINRestrictionResult =
-        await this.studentRestrictionService.assessSINRestrictionForOfferingId(
-          application.student.id,
-          offeringId,
-          applicationId,
-          auditUserId,
-          transactionalEntityManager,
-        );
+      await this.studentRestrictionService.assessSINRestrictionForOfferingId(
+        application.student.id,
+        offeringId,
+        applicationId,
+        auditUserId,
+        transactionalEntityManager,
+      );
 
-      if (assessSINRestrictionResult?.sinRestrictionNotificationId) {
-        notificationIds.push(
-          assessSINRestrictionResult.sinRestrictionNotificationId,
-        );
-      }
-      updatedApplication = await applicationRepo.save(application);
+      const updatedApplication = await applicationRepo.save(application);
 
       //Create PIR complete notification.
-      const studentAppealCompleteNotificationId =
-        await this.notificationActionsService.saveInstitutionCompletePIRNotification(
-          {
-            givenNames: application.student.user.firstName,
-            lastName: application.student.user.lastName,
-            toAddress: application.student.user.email,
-            userId: application.student.user.id,
-          },
-          auditUserId,
-          transactionalEntityManager,
-        );
-      notificationIds.push(studentAppealCompleteNotificationId);
-    });
-
-    if (notificationIds.length) {
-      const queueMessageData = notificationIds.map(
-        (notificationId: number) => ({ data: { notificationId } }),
+      await this.notificationActionsService.saveInstitutionCompletePIRNotification(
+        {
+          givenNames: application.student.user.firstName,
+          lastName: application.student.user.lastName,
+          toAddress: application.student.user.email,
+          userId: application.student.user.id,
+        },
+        auditUserId,
+        transactionalEntityManager,
       );
-      await this.sendEmailNotificationQueue.addBulk(queueMessageData);
-    }
 
-    return updatedApplication;
+      return updatedApplication;
+    });
   }
 
   /**
@@ -1037,9 +1001,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
     auditUserId: number,
     otherReasonDesc?: string,
   ): Promise<Application> {
-    let updatedApplication: Application;
-    let institutionCompletePIRNotificationId: number;
-    await this.dataSource.transaction(async (transactionalEntityManager) => {
+    return this.dataSource.transaction(async (transactionalEntityManager) => {
       const application = await transactionalEntityManager
         .getRepository(Application)
         .createQueryBuilder("application")
@@ -1087,31 +1049,23 @@ export class ApplicationService extends RecordDataModelService<Application> {
       application.pirDeniedOtherDesc = otherReasonDesc;
       application.pirStatus = ProgramInfoStatus.declined;
       application.modifier = { id: auditUserId } as User;
-      updatedApplication = await transactionalEntityManager
+      await transactionalEntityManager
         .getRepository(Application)
         .save(application);
 
-      institutionCompletePIRNotificationId =
-        await this.notificationActionsService.saveInstitutionCompletePIRNotification(
-          {
-            givenNames: updatedApplication.student.user.firstName,
-            lastName: updatedApplication.student.user.lastName,
-            toAddress: updatedApplication.student.user.email,
-            userId: updatedApplication.student.user.id,
-          },
-          auditUserId,
-          transactionalEntityManager,
-        );
+      // Create institution complete PIR notification.
+      await this.notificationActionsService.saveInstitutionCompletePIRNotification(
+        {
+          givenNames: application.student.user.firstName,
+          lastName: application.student.user.lastName,
+          toAddress: application.student.user.email,
+          userId: application.student.user.id,
+        },
+        auditUserId,
+        transactionalEntityManager,
+      );
+      return application;
     });
-
-    //Add message to the queue to send notification email.
-    if (institutionCompletePIRNotificationId) {
-      await this.sendEmailNotificationQueue.add({
-        notificationId: institutionCompletePIRNotificationId,
-      });
-    }
-
-    return updatedApplication;
   }
 
   /**
