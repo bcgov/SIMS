@@ -5,6 +5,7 @@
         title="Manage locations"
         :routeLocation="goBackRouteParams"
         subTitle="Edit Location"
+        data-cy="editLocationHeader"
       />
     </template>
     <location-edit-form

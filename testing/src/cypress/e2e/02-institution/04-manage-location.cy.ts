@@ -8,20 +8,25 @@ import data from "../data/institution/manage-location.json";
 import Authorization, {
   ClientId,
 } from "../../custom-command/common/authorization";
+import ManageInstitutionObject, {
+  SideBarMenuItems,
+} from "../../page-objects/Institution-objects/ManageInstitutionObject";
 
 const dashboardInstitutionObject = new DashboardInstitutionObject();
 const institutionManageLocationObject = new ManageLocationObject();
 const institutionHelperActions = new InstitutionHelperActions();
+const manageInstitutionObject = new ManageInstitutionObject();
+
 function loginAndClickOnManageInstitution() {
   institutionHelperActions.loginIntoInstitutionSingleLocation();
   dashboardInstitutionObject.manageInstitutionButton().click();
 }
 
-function loginAndClickOnEditLocation() {
+function loginAndClickOnEditLocation(locationName: string) {
   loginAndClickOnManageInstitution();
   cy.intercept("GET", "**/location/**").as("location");
-  institutionManageLocationObject.manageLocationButton().click();
-  institutionManageLocationObject.editLocationButton().click();
+  manageInstitutionObject.clickOnSideBar(SideBarMenuItems.ManageLocations);
+  institutionManageLocationObject.editLocationButton(locationName).click();
   cy.wait("@location");
 }
 
@@ -30,34 +35,144 @@ function loginAndClickOnAddNewLocation() {
   institutionManageLocationObject.addLocationButton().click();
 }
 
-function verifyLocationAndContactDetails() {
-  institutionManageLocationObject.institutionCode().should("be.visible");
-  institutionManageLocationObject.address1Text().should("be.visible");
-  institutionManageLocationObject.address2Text().should("be.visible");
-  institutionManageLocationObject.countryText().should("be.visible");
-  institutionManageLocationObject.cityText().should("be.visible");
-  institutionManageLocationObject.primaryContactText().should("be.visible");
-  institutionManageLocationObject.firstNameText().should("be.visible");
-  institutionManageLocationObject.lastNameText().should("be.visible");
-  institutionManageLocationObject.phoneNumberText().should("be.visible");
-  institutionManageLocationObject.emailText().should("be.visible");
+function verifyThatFieldShouldNotBeEmpty(
+  element: Cypress.Chainable<JQuery<HTMLElement>>,
+  errorMessage: Cypress.Chainable<undefined>
+) {
+  element.clear();
+  institutionManageLocationObject.submitButton().click();
+  errorMessage.should("be.visible");
 }
 
-function verifyInvalidEmailFormatsAreNotAllowed() {
+function verifyThatElementIsVisibleAndDisabled(
+  element: Cypress.Chainable<JQuery<HTMLElement>>
+) {
+  element.should("be.visible").should("have.attr", "disabled", "disabled");
+}
+
+function verifyThatElementIsVisibleAndEnabled(
+  element: Cypress.Chainable<JQuery<HTMLElement>>
+) {
+  element.should("be.visible").should("not.be.disabled");
+}
+
+function verifyThatFieldDoesNotAcceptMoreThanSpecificChars(
+  element: Cypress.Chainable<JQuery<HTMLElement>>,
+  errorMessage: Cypress.Chainable<undefined>,
+  noOfCharsToBeValidated: number
+) {
+  if (noOfCharsToBeValidated == 100) {
+    element.clear().type(data.invalidData.stringWithMoreThan100Chars);
+    errorMessage.should("be.visible");
+  }
+}
+
+function verifyContactDetailsAreVisibleAndEnabled() {
+  institutionManageLocationObject.primaryContactText().should("be.visible");
+  institutionManageLocationObject.firstNameText().should("be.visible");
+  verifyThatElementIsVisibleAndEnabled(
+    institutionManageLocationObject.firstNameInputText()
+  );
+  institutionManageLocationObject.lastNameText().should("be.visible");
+  verifyThatElementIsVisibleAndEnabled(
+    institutionManageLocationObject.lastNameInputText()
+  );
+  institutionManageLocationObject.emailText().should("be.visible");
+  verifyThatElementIsVisibleAndEnabled(
+    institutionManageLocationObject.emailInputText()
+  );
+  institutionManageLocationObject.phoneNumberText().should("be.visible");
+  verifyThatElementIsVisibleAndEnabled(
+    institutionManageLocationObject.phoneInputText()
+  );
+}
+
+/**
+ * Checks for valid format of emails are allowed.
+ * Checks for invalid format emails are not not allowed.
+ */
+function verifyEmailInputFieldValidations() {
   data.invalidData.emailAddress.forEach((text: string) => {
     institutionManageLocationObject.emailInputText().clear().type(text);
     cy.contains("Email must be a valid email.").should("be.visible");
   });
-}
-
-function verifyValidEmailFormatsAreAllowed() {
   data.validData.emailAddress.forEach((text: string) => {
     institutionManageLocationObject.emailInputText().clear().type(text);
     cy.contains("Email must be a valid email.").should("not.exist");
   });
 }
 
-function verifyPhoneNumberFieldNotAcceptNumBelow10Above20() {
+/**
+ * Validates first name, last name, email and phone number that they are mandatory and are * * not empty.
+ */
+function verifyPrimaryContactDetailsAreMandatory() {
+  verifyThatFieldShouldNotBeEmpty(
+    institutionManageLocationObject.firstNameInputText(),
+    institutionManageLocationObject.firstNameIsRequiredErrorMessage()
+  );
+  verifyThatFieldShouldNotBeEmpty(
+    institutionManageLocationObject.lastNameInputText(),
+    institutionManageLocationObject.lastNameIsRequiredErrorMessage()
+  );
+  verifyThatFieldShouldNotBeEmpty(
+    institutionManageLocationObject.emailInputText(),
+    institutionManageLocationObject.emailIsRequiredErrorMessage()
+  );
+  verifyThatFieldShouldNotBeEmpty(
+    institutionManageLocationObject.phoneInputText(),
+    institutionManageLocationObject.phoneNumberIsRequiredErrorMessage()
+  );
+}
+
+function verifyNoInputFieldsAcceptMoreThan100Chars(createView: boolean) {
+  const noOfCharsForValidations = 100;
+  if (createView) {
+    verifyThatFieldDoesNotAcceptMoreThanSpecificChars(
+      institutionManageLocationObject.locationName(),
+      institutionManageLocationObject.locationMoreThan100CharsErrorMessage(),
+      noOfCharsForValidations
+    );
+    verifyThatFieldDoesNotAcceptMoreThanSpecificChars(
+      institutionManageLocationObject.address1(),
+      institutionManageLocationObject.address1MoreThan100CharsErrorMessage(),
+      noOfCharsForValidations
+    );
+    verifyThatFieldDoesNotAcceptMoreThanSpecificChars(
+      institutionManageLocationObject.address2(),
+      institutionManageLocationObject.address2MoreThan100CharsErrorMessage(),
+      noOfCharsForValidations
+    );
+    verifyThatFieldDoesNotAcceptMoreThanSpecificChars(
+      institutionManageLocationObject.cityInputText(),
+      institutionManageLocationObject.cityMoreThan100CharsErrorMessage(),
+      noOfCharsForValidations
+    );
+  }
+
+  verifyThatFieldDoesNotAcceptMoreThanSpecificChars(
+    institutionManageLocationObject.firstNameInputText(),
+    institutionManageLocationObject.firstNameIsMoreThan100CharsErrorMessage(),
+    noOfCharsForValidations
+  );
+
+  verifyThatFieldDoesNotAcceptMoreThanSpecificChars(
+    institutionManageLocationObject.lastNameInputText(),
+    institutionManageLocationObject.lastNameIsMoreThan100CharsErrorMessage(),
+    noOfCharsForValidations
+  );
+
+  verifyThatFieldDoesNotAcceptMoreThanSpecificChars(
+    institutionManageLocationObject.emailInputText(),
+    institutionManageLocationObject.emailIsMoreThan100CharsErrorMessage(),
+    noOfCharsForValidations
+  );
+}
+
+/**
+ * Validates that phone number field does not accept > 20 chars and not accept any chars
+ * and only accept between 10 and 20 numbers.
+ */
+function verifyPhoneNumberFieldValidations() {
   data.invalidData.phoneNumberBelow10.forEach((text: string) => {
     institutionManageLocationObject.phoneInputText().clear().type(text);
     cy.contains("Phone number must have at least 10 characters.").should(
@@ -70,9 +185,6 @@ function verifyPhoneNumberFieldNotAcceptNumBelow10Above20() {
       "be.visible"
     );
   });
-}
-
-function verifyPhoneNumberFieldAcceptNumBetween10And20() {
   data.validData.phoneNumber.forEach((text: string) => {
     institutionManageLocationObject.phoneInputText().clear().type(text);
     cy.contains("Phone number must have no more than 20 characters.").should(
@@ -85,30 +197,30 @@ function verifyPhoneNumberFieldAcceptNumBetween10And20() {
 }
 
 function createInstitutionLocation(
-  uniqeId: string,
+  uniqueId: string,
   institutionCode: string,
   phoneNumber: string
 ) {
   institutionManageLocationObject
     .locationName()
     .clear()
-    .type(uniqeId)
-    .should("have.value", uniqeId);
+    .type(uniqueId)
+    .should("have.value", uniqueId);
   institutionManageLocationObject
     .institutionCode()
     .clear()
     .type(institutionCode)
     .should("have.value", institutionCode);
   institutionManageLocationObject
-    .addressLine1()
+    .address1()
     .clear()
-    .type(`Addrline1-${uniqeId}`)
-    .should("have.value", `Addrline1-${uniqeId}`);
+    .type(`Addrline1-${uniqueId}`)
+    .should("have.value", `Addrline1-${uniqueId}`);
   institutionManageLocationObject
-    .addressLine2()
+    .address2()
     .clear()
-    .type(`Addrline2-${uniqeId}`)
-    .should("have.value", `Addrline2-${uniqeId}`);
+    .type(`Addrline2-${uniqueId}`)
+    .should("have.value", `Addrline2-${uniqueId}`);
   institutionManageLocationObject.countryDropDownMenu().click();
   institutionManageLocationObject.countryCanadaFromDropDownMenu().click();
   institutionManageLocationObject.provinceDropDownMenu().click();
@@ -117,24 +229,24 @@ function createInstitutionLocation(
     .click();
   institutionManageLocationObject
     .cityInputText()
-    .type(`city-${uniqeId}`)
-    .should("have.value", `city-${uniqeId}`);
+    .type(`city-${uniqueId}`)
+    .should("have.value", `city-${uniqueId}`);
   institutionManageLocationObject
     .canadaPostalCode()
     .type("A1A2A3")
     .should("have.value", "A1A 2A3");
   institutionManageLocationObject
     .firstNameInputText()
-    .type(`fname-${uniqeId}`)
-    .should("have.value", `fname-${uniqeId}`);
+    .type(`fname-${uniqueId}`)
+    .should("have.value", `fname-${uniqueId}`);
   institutionManageLocationObject
     .lastNameInputText()
-    .type(`lname-${uniqeId}`)
-    .should("have.value", `lname-${uniqeId}`);
+    .type(`lname-${uniqueId}`)
+    .should("have.value", `lname-${uniqueId}`);
   institutionManageLocationObject
     .emailInputText()
-    .type(`${uniqeId}@gov.test`)
-    .should("have.value", `${uniqeId}@gov.test`);
+    .type(`${uniqueId}@gov.test`)
+    .should("have.value", `${uniqueId}@gov.test`);
   institutionManageLocationObject
     .phoneInputText()
     .type(phoneNumber)
@@ -142,93 +254,127 @@ function createInstitutionLocation(
   institutionManageLocationObject.submitButton().click();
 }
 
-describe("[Institution Manage Location] - Fields and Titles", () => {
-  beforeEach(() => {
+describe("Manage Location", () => {
+  before(() => {
     loginAndClickOnManageInstitution();
   });
 
+  beforeEach(() => {
+    manageInstitutionObject.clickOnSideBar(SideBarMenuItems.ManageLocations);
+  });
+
   it("Verify that user is redirected to institution manage location page", () => {
-    dashboardInstitutionObject.allLocationsText().should("be.visible");
-    institutionManageLocationObject.manageLocationButton().click();
-    dashboardInstitutionObject.manageLocationsText().should("be.visible");
-    dashboardInstitutionObject.allLocationsText().should("be.visible");
+    institutionManageLocationObject.manageLocationHeader().should("be.visible");
   });
 
-  it("Verify that user is redirected to edit page of institution manage location", () => {
-    institutionManageLocationObject.manageLocationButton().click();
-    institutionManageLocationObject.editLocationButton().click();
+  it("Verify that all the institution locations are displayed", () => {
+    institutionManageLocationObject.getInstitutionsList().should("eq", 2);
+  });
+
+  it("Verify that User is able to click on edit for an existing institution", () => {
+    institutionManageLocationObject.editLocationButton("Vancouver").click();
     cy.url().should("contain", "/edit-institution-location");
-  });
-
-  it("Verify that user is redirected to edit some of the fields", () => {
-    institutionManageLocationObject.manageLocationButton().click();
-    institutionManageLocationObject.editLocationButton().click();
-    institutionManageLocationObject.locationDetailsText().should("be.visible");
-    verifyLocationAndContactDetails();
-  });
-
-  it("Verify that is redirected to 'Add New Location' page", () => {
-    institutionManageLocationObject.manageLocationButton().click();
-    institutionManageLocationObject.addLocationButton().click();
-    institutionManageLocationObject.locationDetailsText().should("be.visible");
-    verifyLocationAndContactDetails();
+    institutionManageLocationObject.editLocationHeader().should("be.visible");
   });
 });
 
-describe("[Institution Manage Location] - 'Edit Location' page inline error and validations", () => {
+describe("Manage Location", () => {
+  // This section contains tests cases for "Edit" existing location view
   before(() => {
-    loginAndClickOnEditLocation();
+    loginAndClickOnEditLocation("Vancouver");
   });
 
-  it("Verify that error messages are displayed when mandatory fields are not filled out", () => {
-    institutionManageLocationObject.firstNameInputText().clear();
-    cy.contains("First name is required").should("be.visible");
-    institutionManageLocationObject.lastNameInputText().clear();
-    cy.contains("Last name is required").should("be.visible");
-    institutionManageLocationObject.emailInputText().clear();
-    cy.contains("Email is required").should("be.visible");
-    institutionManageLocationObject.phoneInputText().clear();
-    cy.contains("Phone number is required").should("be.visible");
-  });
-
-  it("Verify that email field does not accept invalid email formats", () => {
-    verifyInvalidEmailFormatsAreNotAllowed();
-  });
-
-  it("Verify that email field accepts valid email formats", () => {
-    verifyValidEmailFormatsAreAllowed();
-  });
-
-  it("Verify that phone number field does not accept numbers below 10 and above 20", () => {
-    verifyPhoneNumberFieldNotAcceptNumBelow10Above20();
-  });
-
-  it("Verify that phone number field accepts valid number formats", () => {
-    verifyPhoneNumberFieldAcceptNumBetween10And20();
-  });
-});
-
-describe("[Institution Manage Location] - 'Add New Location' inline errors validation", () => {
-  before(() => {
-    loginAndClickOnAddNewLocation();
-  });
-
-  it("All mandatory fields - and inline error validations", () => {
-    institutionManageLocationObject.submitButton().click();
-    cy.contains("Please fix the following errors before submitting.").should(
-      "be.visible"
+  it("Verify the location details (non-editable) when on the Edit view of the institution location", () => {
+    verifyThatElementIsVisibleAndDisabled(
+      institutionManageLocationObject.locationName()
     );
-    cy.contains("Institution code is required").should("be.visible");
-    cy.contains("Address 1 is required").should("be.visible");
-    cy.contains("Country is required").should("be.visible");
-    cy.contains("City is required").should("be.visible");
-    cy.contains("First name is required").should("be.visible");
-    cy.contains("Last name is required").should("be.visible");
-    cy.contains("Email is required").should("be.visible");
-    cy.contains("Phone number is required").should("be.visible");
+    verifyThatElementIsVisibleAndDisabled(
+      institutionManageLocationObject.institutionCode()
+    );
+    verifyThatElementIsVisibleAndDisabled(
+      institutionManageLocationObject.address1()
+    );
+    verifyThatElementIsVisibleAndDisabled(
+      institutionManageLocationObject.address2()
+    );
+    verifyThatElementIsVisibleAndDisabled(
+      institutionManageLocationObject.country()
+    );
+    verifyThatElementIsVisibleAndDisabled(
+      institutionManageLocationObject.city()
+    );
+    verifyThatElementIsVisibleAndDisabled(
+      institutionManageLocationObject.canadaPostalCode()
+    );
   });
 
-  it("Verify that location name should accept aplha-numeric and special chars", () => {
+  it("Verify the location details (editable) when on the Edit view of the institution location", () => {
+    verifyContactDetailsAreVisibleAndEnabled();
+  });
+
+  it("Verify that primary contact details are mandatory when editing a institution location", () => {
+    verifyPrimaryContactDetailsAreMandatory();
+  });
+
+  it("Verify that primary contact details should not accept more than 100 chars when editing a institution location", () => {
+    verifyNoInputFieldsAcceptMoreThan100Chars(false);
+  });
+
+  it("Verify the “Email” field should accept only valid formatted emails", () => {
+    verifyEmailInputFieldValidations();
+  });
+
+  it("Verify that “Phone number” should have proper validations when editing a location primary contact details", () => {
+    verifyPhoneNumberFieldValidations();
+  });
+
+  it("Verify that clicking on “Manage locations” back button will navigate the user back ", () => {
+    institutionManageLocationObject.manageLocationsBackButton().click();
+    institutionManageLocationObject.manageLocationHeader().should("be.visible");
+  });
+});
+
+describe("Manage Location", () => {
+  // This section contains tests cases for "Add" new location view
+  before(() => {
+    loginAndClickOnManageInstitution();
+    manageInstitutionObject.clickOnSideBar(SideBarMenuItems.ManageLocations);
+    institutionManageLocationObject.addLocationButton().click();
+  });
+
+  it("Verify that location details are mandatory when adding a new location", () => {
+    verifyThatFieldShouldNotBeEmpty(
+      institutionManageLocationObject.locationName(),
+      institutionManageLocationObject.locationNameErrorMessage()
+    );
+  });
+
+  it("Verify the location details (editable) when on the Add new location view ", () => {
+    verifyThatElementIsVisibleAndEnabled(
+      institutionManageLocationObject.locationName()
+    );
+    verifyThatElementIsVisibleAndEnabled(
+      institutionManageLocationObject.institutionCode()
+    );
+    verifyThatElementIsVisibleAndEnabled(
+      institutionManageLocationObject.address1()
+    );
+    verifyThatElementIsVisibleAndEnabled(
+      institutionManageLocationObject.address2()
+    );
+    verifyThatElementIsVisibleAndEnabled(
+      institutionManageLocationObject.country()
+    );
+    verifyThatElementIsVisibleAndEnabled(
+      institutionManageLocationObject.city()
+    );
+    verifyThatElementIsVisibleAndEnabled(
+      institutionManageLocationObject.canadaPostalCode()
+    );
+    verifyContactDetailsAreVisibleAndEnabled();
+  });
+
+  it("Verify that location name should accept alpha-numeric and special chars when on the Add new location view", () => {
     data.validData.stringsWithAlphaNumericSpecialChars.forEach(
       (text: string) => {
         institutionManageLocationObject.locationName().clear().type(text);
@@ -238,16 +384,18 @@ describe("[Institution Manage Location] - 'Add New Location' inline errors valid
     );
   });
 
-  it("Verify that location name should not accept more than 100 chars", () => {
-    data.invalidData.stringWithMoreThan100Chars.forEach((text: string) => {
-      institutionManageLocationObject.locationName().clear().type(text);
-      cy.contains(
-        "Location name must have no more than 100 characters."
-      ).should("be.visible");
-    });
+  it("Verify that location name should not accept more than 100 chars when on the Add new location view", () => {
+    verifyNoInputFieldsAcceptMoreThan100Chars(true);
   });
 
-  it("Verify that institution code should accept only alphabets", () => {
+  it("Verify that institution code is mandatory when adding a new location", () => {
+    verifyThatFieldShouldNotBeEmpty(
+      institutionManageLocationObject.institutionCode(),
+      institutionManageLocationObject.institutionCodeErrorMessage()
+    );
+  });
+
+  it("Verify that institution code should accept only alphabets when on the Add new location view", () => {
     data.invalidData.institutionCodeNonAplhabets.forEach((text: string) => {
       institutionManageLocationObject.institutionCode().clear().type(text);
       cy.contains("Institution code does not match the pattern [A-Z]*").should(
@@ -262,7 +410,7 @@ describe("[Institution Manage Location] - 'Add New Location' inline errors valid
     });
   });
 
-  it("Verify that institution code should accept only 4 chars", () => {
+  it("Verify that institution code should accept only 4 chars when on the Add new location view", () => {
     data.invalidData.institutionCodeBelow4.forEach((text: string) => {
       institutionManageLocationObject.institutionCode().clear().type(text);
       cy.contains("Institution code must have at least 4 characters.").should(
@@ -277,27 +425,28 @@ describe("[Institution Manage Location] - 'Add New Location' inline errors valid
     });
   });
 
-  it("Verify that Address 1 and Address 2 should not have more than 100 chars", () => {
-    data.invalidData.stringWithMoreThan100Chars.forEach((text: string) => {
-      institutionManageLocationObject.addressLine1().clear().type(text);
-      cy.contains("Address 1 must have no more than 100 characters.").should(
-        "be.visible"
-      );
-      institutionManageLocationObject.addressLine2().clear().type(text);
-      cy.contains("Address 2 must have no more than 100 characters.").should(
-        "be.visible"
-      );
-    });
+  it("Verify that address1  is mandatory when adding a new location", () => {
+    verifyThatFieldShouldNotBeEmpty(
+      institutionManageLocationObject.address1(),
+      institutionManageLocationObject.address1ErrorMessage()
+    );
   });
 
   it("Verify that Address 1 and Address 2 should accept more alpha numeric and special", () => {
     data.validData.stringsWithAlphaNumericSpecialChars.forEach(
       (text: string) => {
-        institutionManageLocationObject.addressLine1().clear().type(text);
+        institutionManageLocationObject.address1().clear().type(text);
         cy.contains("Address 1 must have ").should("not.exist");
-        institutionManageLocationObject.addressLine2().clear().type(text);
+        institutionManageLocationObject.address2().clear().type(text);
         cy.contains("Address 2 must have ").should("not.exist");
       }
+    );
+  });
+
+  it("Verify that city is mandatory when adding a new location", () => {
+    verifyThatFieldShouldNotBeEmpty(
+      institutionManageLocationObject.city(),
+      institutionManageLocationObject.cityErrorMessage()
     );
   });
 
@@ -309,17 +458,49 @@ describe("[Institution Manage Location] - 'Add New Location' inline errors valid
       }
     );
   });
-  it("Verify that city field should not accept more than chars 100 chars", () => {
-    data.invalidData.stringWithMoreThan100Chars.forEach((text: string) => {
-      institutionManageLocationObject.cityInputText().clear().type(text);
-      cy.contains("City must have no more than 100 characters.").should(
-        "be.visible"
-      );
-    });
+
+  it("Verify that “First name” is a mandatory field when editing a location primary contact details", () => {
+    verifyThatFieldShouldNotBeEmpty(
+      institutionManageLocationObject.firstNameInputText(),
+      institutionManageLocationObject.firstNameIsRequiredErrorMessage()
+    );
+  });
+
+  it("Verify that “Last name” is a mandatory field when editing a location primary contact details", () => {
+    verifyThatFieldShouldNotBeEmpty(
+      institutionManageLocationObject.lastNameInputText(),
+      institutionManageLocationObject.lastNameIsRequiredErrorMessage()
+    );
+  });
+
+  it("Verify that “Email” is a mandatory field when editing a location primary contact details", () => {
+    verifyThatFieldShouldNotBeEmpty(
+      institutionManageLocationObject.emailInputText(),
+      institutionManageLocationObject.emailIsRequiredErrorMessage()
+    );
+  });
+
+  it("Verify the “Email” field should accept only valid formatted emails", () => {
+    verifyEmailInputFieldValidations();
+  });
+
+  it("Verify that “Phone number” is a mandatory field when editing a location primary contact details", () => {
+    verifyThatFieldShouldNotBeEmpty(
+      institutionManageLocationObject.phoneInputText(),
+      institutionManageLocationObject.phoneNumberIsRequiredErrorMessage()
+    );
+  });
+
+  it("Verify that “Phone number” should not accept more than 20 numbers when editing a location primary contact details", () => {
+    verifyPhoneNumberFieldValidations();
+  });
+
+  it("Verify that “Phone number” should not accept any alphabets when editing a location primary contact details", () => {
+    verifyPhoneNumberFieldValidations();
   });
 });
 
-describe("[Institution Manage Location] - Country drop-down items and provinces", () => {
+describe("Manage Location", () => {
   beforeEach(() => {
     loginAndClickOnAddNewLocation();
     institutionManageLocationObject.countryDropDownMenu().click();
@@ -418,73 +599,18 @@ describe("[Institution Manage Location] - Country drop-down items and provinces"
 
   it("Verify that selecting 'Other' Country field should not accept more than 100 chars", () => {
     institutionManageLocationObject.countryOtherFromDropDownMenu().click();
-    data.invalidData.stringWithMoreThan100Chars.forEach((text: string) => {
-      institutionManageLocationObject
-        .otherCountryInputText()
-        .clear()
-        .type(text);
-      cy.get("Other country must").should("not.equal");
-    });
-  });
-});
-
-describe("[Institution Manage Location] - Primary Contact Information Validation", () => {
-  beforeEach(() => {
-    loginAndClickOnAddNewLocation();
-  });
-  it("Verify that FirstName should accept alpha numeric and special chars", () => {
-    data.validData.stringsWithAlphaNumericSpecialChars.forEach(
-      (text: string) => {
-        institutionManageLocationObject.firstNameInputText().clear().type(text);
-        cy.contains("First name must ").should("not.exist");
-      }
-    );
-  });
-
-  it("Verify that FirstName should not accept more than 100 chars", () => {
-    data.invalidData.stringWithMoreThan100Chars.forEach((text: string) => {
-      institutionManageLocationObject.firstNameInputText().clear().type(text);
-      cy.contains("First name must ").should("not.exist");
-    });
-  });
-
-  it("Verify that LastName should accept alpha numeric and special chars", () => {
-    data.validData.stringsWithAlphaNumericSpecialChars.forEach(
-      (text: string) => {
-        institutionManageLocationObject.lastNameInputText().clear().type(text);
-        cy.contains("Last name must ").should("not.exist");
-      }
-    );
-  });
-
-  it("Verify that LastName should not accept more than 100 chars", () => {
-    data.invalidData.stringWithMoreThan100Chars.forEach((text: string) => {
-      institutionManageLocationObject.lastNameInputText().clear().type(text);
-      cy.contains("Last name must ").should("not.exist");
-    });
-  });
-
-  it("Verify that email field does not accept invalid emails", () => {
-    verifyInvalidEmailFormatsAreNotAllowed();
-  });
-
-  it("Verify that email field accepts valid emails", () => {
-    verifyValidEmailFormatsAreAllowed();
-  });
-
-  it("Verify that phone number field does not accept numbers below 10 and above 20", () => {
-    verifyPhoneNumberFieldNotAcceptNumBelow10Above20();
-  });
-
-  it("Verify that phone number field accepts valid numbers", () => {
-    verifyPhoneNumberFieldAcceptNumBetween10And20();
+    institutionManageLocationObject
+      .otherCountryInputText()
+      .clear()
+      .type(data.invalidData.stringWithMoreThan100Chars);
+    cy.get("Other country must").should("not.exist");
   });
 });
 
 describe("Add New Location and update for the institution", () => {
   let token: string;
-  const uniqeId1 = institutionHelperActions.getUniqueId();
-  const uniqeId2 = institutionHelperActions.getUniqueId();
+  const uniqueId1 = institutionHelperActions.getUniqueId();
+  const uniqueId2 = institutionHelperActions.getUniqueId();
   const phoneNumber = "1236549871";
   const USERNAME = institutionHelperActions.getUserNameForAPITest();
   const PASSWORD = institutionHelperActions.getUserPasswordForAPITest();
@@ -507,19 +633,23 @@ describe("Add New Location and update for the institution", () => {
   it("Create new institution location", async () => {
     const institutionCode =
       await institutionHelperActions.getUniqueInstitutionCode(token);
-    createInstitutionLocation(uniqeId1, institutionCode, phoneNumber);
+    createInstitutionLocation(uniqueId1, institutionCode, phoneNumber);
     dashboardInstitutionObject.allLocationsText().should("be.visible");
-    cy.contains(`fname-${uniqeId1}`).scrollIntoView().should("be.visible");
-    cy.contains(`lname-${uniqeId1}`).scrollIntoView().should("be.visible");
-    cy.contains(`${uniqeId1}@gov.test`).scrollIntoView().should("be.visible");
+    cy.contains(`fname-${uniqueId1}`).scrollIntoView().should("be.visible");
+    cy.contains(`lname-${uniqueId1}`).scrollIntoView().should("be.visible");
+    cy.contains(`${uniqueId1}@gov.test`).scrollIntoView().should("be.visible");
   });
 
   it("Update institution primary contact details", () => {
     const institutionCode = institutionHelperActions.getRandomInstitutionCode();
-    createInstitutionLocation(uniqeId2, institutionCode, phoneNumber);
+    createInstitutionLocation(uniqueId2, institutionCode, phoneNumber);
     dashboardInstitutionObject.allLocationsText().should("be.visible");
     cy.intercept("GET", "**/location/**").as("location");
-    cy.contains(uniqeId2).parents(".v-row").children().contains("Edit").click();
+    cy.contains(uniqueId2)
+      .parents(".v-row")
+      .children()
+      .contains("Edit")
+      .click();
     cy.wait("@location");
     const updateuniqeId = institutionHelperActions.getUniqueId();
     const name = `test-${updateuniqeId}`;

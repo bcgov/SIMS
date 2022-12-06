@@ -1,10 +1,12 @@
-export default class LoginInstitutionObject {
+import BaseMethods from "./BaseMethods";
+
+export default class LoginInstitutionObject extends BaseMethods {
   loginScreenWelcome() {
     return cy.get(".category-header-large");
   }
 
   loginOrRegisterWithBCEID() {
-    return cy.get("[data-cy='login']");
+    return this.getElementByCyId("login");
   }
 
   loginInWithBCEIDtext() {
