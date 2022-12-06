@@ -632,10 +632,9 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
   /**
    * Create institution confirm COE notification to notify student
    * when institution confirms a COE to their application.
-   * @param disbursementScheduleId
-   * @param auditUserId
-   * @param transactionalEntityManager
-   * @returns notification id created.
+   * @param disbursementScheduleId updated disbursement schedule.
+   * @param auditUserId user who creates notification.
+   * @param transactionalEntityManager entity manager to execute in transaction.
    */
   async createNotificationForDisbursementUpdate(
     disbursementScheduleId: number,
@@ -663,15 +662,13 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
         where: { id: disbursementScheduleId },
       });
 
+    const studentUser = disbursement.studentAssessment.application.student.user;
     await this.notificationActionsService.saveInstitutionConfirmCOENotification(
       {
-        givenNames:
-          disbursement.studentAssessment.application.student.user.firstName,
-        lastName:
-          disbursement.studentAssessment.application.student.user.lastName,
-        toAddress:
-          disbursement.studentAssessment.application.student.user.email,
-        userId: disbursement.studentAssessment.application.student.user.id,
+        givenNames: studentUser.firstName,
+        lastName: studentUser.lastName,
+        toAddress: studentUser.email,
+        userId: studentUser.id,
       },
       auditUserId,
       transactionalEntityManager,

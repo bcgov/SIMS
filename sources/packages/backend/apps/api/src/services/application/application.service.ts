@@ -741,7 +741,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
 
       const updatedApplication = await applicationRepo.save(application);
 
-      //Create student notification when institution completes PIR.
+      // Create student notification when institution completes PIR.
       await this.notificationActionsService.saveInstitutionCompletePIRNotification(
         {
           givenNames: application.student.user.firstName,
@@ -1052,7 +1052,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
         .getRepository(Application)
         .save(application);
 
-      //Create student notification when institution completes PIR.
+      // Create student notification when institution completes PIR.
       await this.notificationActionsService.saveInstitutionCompletePIRNotification(
         {
           givenNames: application.student.user.firstName,

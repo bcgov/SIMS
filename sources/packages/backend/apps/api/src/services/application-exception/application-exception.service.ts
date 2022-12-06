@@ -168,12 +168,13 @@ export class ApplicationExceptionService extends RecordDataModelService<Applicat
       const exception = await applicationExceptionRepo.save(exceptionToUpdate);
 
       // Create a student notification when ministry completes an exception.
+      const studentUser = exceptionToUpdate.application.student.user;
       await this.notificationActionsService.saveExceptionCompleteNotification(
         {
-          givenNames: exceptionToUpdate.application.student.user.firstName,
-          lastName: exceptionToUpdate.application.student.user.lastName,
-          toAddress: exceptionToUpdate.application.student.user.email,
-          userId: exceptionToUpdate.application.student.user.id,
+          givenNames: studentUser.firstName,
+          lastName: studentUser.lastName,
+          toAddress: studentUser.email,
+          userId: studentUser.id,
         },
         auditUserId,
         transactionalEntityManager,

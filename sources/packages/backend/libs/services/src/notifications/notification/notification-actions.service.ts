@@ -35,7 +35,7 @@ export class NotificationActionsService {
     notification: StudentFileUploadNotification,
     auditUserId: number,
     entityManager?: EntityManager,
-  ): Promise<number> {
+  ): Promise<void> {
     const templateId = await this.notificationMessageService.getTemplateId(
       NotificationMessageType.StudentFileUpload,
     );
@@ -57,13 +57,11 @@ export class NotificationActionsService {
     };
 
     // Save notification into notification table.
-    const [notificationId] = await this.notificationService.saveNotifications(
+    await this.notificationService.saveNotifications(
       [notificationToSend],
       auditUserId,
       entityManager,
     );
-
-    return notificationId;
   }
 
   /**
@@ -78,7 +76,7 @@ export class NotificationActionsService {
     notification: MinistryStudentFileUploadNotification,
     auditUserId: number,
     entityManager?: EntityManager,
-  ): Promise<number> {
+  ): Promise<void> {
     const templateId = await this.notificationMessageService.getTemplateId(
       NotificationMessageType.MinistryFileUpload,
     );
@@ -98,13 +96,11 @@ export class NotificationActionsService {
     };
 
     // Save notification into notification table.
-    const [notificationId] = await this.notificationService.saveNotifications(
+    await this.notificationService.saveNotifications(
       [notificationToSend],
       auditUserId,
       entityManager,
     );
-
-    return notificationId;
   }
 
   /**
@@ -112,12 +108,13 @@ export class NotificationActionsService {
    * @param notifications notifications information.
    * @param auditUserId user that should be considered the one that is causing the changes.
    * @param options options for the student restriction notification.
+   * @returns notification id created.
    */
   async saveStudentRestrictionAddedNotification(
     notifications: StudentRestrictionAddedNotification[],
     auditUserId: number,
     options?: StudentRestrictionAddedNotificationOptions,
-  ): Promise<number[]> {
+  ): Promise<void> {
     const templateId = await this.notificationMessageService.getTemplateId(
       NotificationMessageType.StudentRestrictionAdded,
     );
@@ -137,7 +134,7 @@ export class NotificationActionsService {
     }));
 
     // Save notification into notification table.
-    return this.notificationService.saveNotifications(
+    await this.notificationService.saveNotifications(
       notificationsToSend,
       auditUserId,
       options?.entityManager,
@@ -150,13 +147,12 @@ export class NotificationActionsService {
    * @param notification notification details.
    * @param auditUserId user who completes the exception.
    * @param entityManager entity manager to execute in transaction.
-   * @returns notification created.
    */
   async saveExceptionCompleteNotification(
     notification: StudentNotification,
     auditUserId: number,
     entityManager: EntityManager,
-  ): Promise<number> {
+  ): Promise<void> {
     const templateId = await this.notificationMessageService.getTemplateId(
       NotificationMessageType.MinistryCompletesException,
     );
@@ -175,13 +171,11 @@ export class NotificationActionsService {
       },
     };
 
-    const [notificationId] = await this.notificationService.saveNotifications(
+    await this.notificationService.saveNotifications(
       [exceptionCompleteNotification],
       auditUserId,
       entityManager,
     );
-
-    return notificationId;
   }
 
   /**
@@ -190,13 +184,12 @@ export class NotificationActionsService {
    * @param notification notification details.
    * @param auditUserId user who completes the change request.
    * @param entityManager entity manager to execute in transaction.
-   * @returns notification created.
    */
   async saveChangeRequestCompleteNotification(
     notification: StudentNotification,
     auditUserId: number,
     entityManager: EntityManager,
-  ) {
+  ): Promise<void> {
     const templateId = await this.notificationMessageService.getTemplateId(
       NotificationMessageType.MinistryCompletesChange,
     );
@@ -215,13 +208,11 @@ export class NotificationActionsService {
       },
     };
 
-    const [notificationId] = await this.notificationService.saveNotifications(
+    await this.notificationService.saveNotifications(
       [changeRequestCompleteNotification],
       auditUserId,
       entityManager,
     );
-
-    return notificationId;
   }
 
   /**
@@ -230,13 +221,12 @@ export class NotificationActionsService {
    * @param notification notification details.
    * @param auditUserId user who reports the change.
    * @param entityManager entity manager to execute in transaction.
-   * @returns notification created.
    */
   async saveInstitutionReportChangeNotification(
     notification: StudentNotification,
     auditUserId: number,
     entityManager: EntityManager,
-  ) {
+  ): Promise<void> {
     const templateId = await this.notificationMessageService.getTemplateId(
       NotificationMessageType.InstitutionReportsChange,
     );
@@ -255,13 +245,11 @@ export class NotificationActionsService {
       },
     };
 
-    const [notificationId] = await this.notificationService.saveNotifications(
+    await this.notificationService.saveNotifications(
       [institutionReportChangeNotification],
       auditUserId,
       entityManager,
     );
-
-    return notificationId;
   }
 
   /**
@@ -270,13 +258,12 @@ export class NotificationActionsService {
    * @param notification notification details.
    * @param auditUserId user who completes PIR.
    * @param entityManager entity manager to execute in transaction.
-   * @returns notification created.
    */
   async saveInstitutionCompletePIRNotification(
     notification: StudentNotification,
     auditUserId: number,
     entityManager: EntityManager,
-  ) {
+  ): Promise<void> {
     const templateId = await this.notificationMessageService.getTemplateId(
       NotificationMessageType.InstitutionCompletesPIR,
     );
@@ -295,13 +282,11 @@ export class NotificationActionsService {
       },
     };
 
-    const [notificationId] = await this.notificationService.saveNotifications(
+    await this.notificationService.saveNotifications(
       [institutionCompletePIRNotification],
       auditUserId,
       entityManager,
     );
-
-    return notificationId;
   }
 
   /**
@@ -310,13 +295,12 @@ export class NotificationActionsService {
    * @param notification notification details.
    * @param auditUserId user who confirms COE.
    * @param entityManager entity manager to execute in transaction.
-   * @returns notification created.
    */
   async saveInstitutionConfirmCOENotification(
     notification: StudentNotification,
     auditUserId: number,
     entityManager: EntityManager,
-  ) {
+  ): Promise<void> {
     const templateId = await this.notificationMessageService.getTemplateId(
       NotificationMessageType.InstitutionConfirmsCOE,
     );
@@ -335,13 +319,11 @@ export class NotificationActionsService {
       },
     };
 
-    const [notificationId] = await this.notificationService.saveNotifications(
+    await this.notificationService.saveNotifications(
       [institutionConfirmCOENotification],
       auditUserId,
       entityManager,
     );
-
-    return notificationId;
   }
 
   /**
