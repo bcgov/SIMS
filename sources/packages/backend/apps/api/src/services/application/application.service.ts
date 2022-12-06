@@ -58,6 +58,7 @@ import {
   SendEmailNotificationQueueInDTO,
 } from "@sims/services/queue";
 import { Queue } from "bull";
+import { NotificationActionsService } from "@sims/services/notifications";
 
 export const APPLICATION_DRAFT_NOT_FOUND = "APPLICATION_DRAFT_NOT_FOUND";
 export const MORE_THAN_ONE_APPLICATION_DRAFT_ERROR =
@@ -85,6 +86,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
     private readonly offeringService: EducationProgramOfferingService,
     @InjectQueue(QueueNames.SendEmailNotification)
     private readonly sendEmailNotificationQueue: Queue<SendEmailNotificationQueueInDTO>,
+    private readonly notificationActionsService: NotificationActionsService,
   ) {
     super(dataSource.getRepository(Application));
   }
@@ -214,6 +216,8 @@ export class ApplicationService extends RecordDataModelService<Application> {
             assessSINRestrictionResult?.sinRestrictionNotificationId;
         }
       });
+
+      //Add message to the queue to send notification email.
       if (sinRestrictionNotificationId) {
         await this.sendEmailNotificationQueue.add({
           notificationId: sinRestrictionNotificationId,
@@ -708,7 +712,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
     auditUserId: number,
   ): Promise<Application> {
     let updatedApplication: Application;
-    let sinRestrictionNotificationId: number;
+    const notificationIds: number[] = [];
 
     await this.dataSource.transaction(async (transactionalEntityManager) => {
       const applicationRepo =
@@ -757,15 +761,36 @@ export class ApplicationService extends RecordDataModelService<Application> {
           auditUserId,
           transactionalEntityManager,
         );
-      sinRestrictionNotificationId =
-        assessSINRestrictionResult?.sinRestrictionNotificationId;
+
+      if (assessSINRestrictionResult?.sinRestrictionNotificationId) {
+        notificationIds.push(
+          assessSINRestrictionResult.sinRestrictionNotificationId,
+        );
+      }
       updatedApplication = await applicationRepo.save(application);
+
+      //Create PIR complete notification.
+      const studentAppealCompleteNotificationId =
+        await this.notificationActionsService.saveInstitutionCompletePIRNotification(
+          {
+            givenNames: application.student.user.firstName,
+            lastName: application.student.user.lastName,
+            toAddress: application.student.user.email,
+            userId: application.student.user.id,
+          },
+          auditUserId,
+          transactionalEntityManager,
+        );
+      notificationIds.push(studentAppealCompleteNotificationId);
     });
-    if (sinRestrictionNotificationId) {
-      await this.sendEmailNotificationQueue.add({
-        notificationId: sinRestrictionNotificationId,
-      });
+
+    if (notificationIds.length) {
+      const queueMessageData = notificationIds.map(
+        (notificationId: number) => ({ data: { notificationId } }),
+      );
+      await this.sendEmailNotificationQueue.addBulk(queueMessageData);
     }
+
     return updatedApplication;
   }
 
@@ -1012,40 +1037,81 @@ export class ApplicationService extends RecordDataModelService<Application> {
     auditUserId: number,
     otherReasonDesc?: string,
   ): Promise<Application> {
-    const application = await this.repo
-      .createQueryBuilder("application")
-      .select(["application.id", "currentAssessment.assessmentWorkflowId"])
-      .innerJoin("application.currentAssessment", "currentAssessment")
-      .where("application.id = :applicationId", { applicationId })
-      .andWhere("application.location.id = :locationId", { locationId })
-      .andWhere("application.applicationStatus != :applicationStatus", {
-        applicationStatus: ApplicationStatus.overwritten,
-      })
-      .andWhere("application.pirStatus = :pirStatus", {
-        pirStatus: ProgramInfoStatus.required,
-      })
-      .getOne();
+    let updatedApplication: Application;
+    let institutionCompletePIRNotificationId: number;
+    await this.dataSource.transaction(async (transactionalEntityManager) => {
+      const application = await transactionalEntityManager
+        .getRepository(Application)
+        .createQueryBuilder("application")
+        .select([
+          "application.id",
+          "currentAssessment.assessmentWorkflowId",
+          "student.id",
+          "user.id",
+          "user.firstName",
+          "user.lastName",
+          "user.email",
+        ])
+        .innerJoin("application.currentAssessment", "currentAssessment")
+        .innerJoin("application.student", "student")
+        .innerJoin("student.user", "user")
+        .where("application.id = :applicationId", { applicationId })
+        .andWhere("application.location.id = :locationId", { locationId })
+        .andWhere("application.applicationStatus != :applicationStatus", {
+          applicationStatus: ApplicationStatus.overwritten,
+        })
+        .andWhere("application.pirStatus = :pirStatus", {
+          pirStatus: ProgramInfoStatus.required,
+        })
+        .getOne();
 
-    if (!application) {
-      throw new CustomNamedError(
-        "Not able to find an application that requires a PIR to be completed.",
-        PIR_REQUEST_NOT_FOUND_ERROR,
-      );
+      if (!application) {
+        throw new CustomNamedError(
+          "Not able to find an application that requires a PIR to be completed.",
+          PIR_REQUEST_NOT_FOUND_ERROR,
+        );
+      }
+
+      application.pirDeniedReasonId = {
+        id: pirDeniedReasonId,
+      } as PIRDeniedReason;
+      if (
+        PIR_DENIED_REASON_OTHER_ID === pirDeniedReasonId &&
+        !otherReasonDesc
+      ) {
+        throw new CustomNamedError(
+          "Other is selected as PIR reason, specify the reason for the PIR denial.",
+          PIR_DENIED_REASON_NOT_FOUND_ERROR,
+        );
+      }
+      application.pirDeniedOtherDesc = otherReasonDesc;
+      application.pirStatus = ProgramInfoStatus.declined;
+      application.modifier = { id: auditUserId } as User;
+      updatedApplication = await transactionalEntityManager
+        .getRepository(Application)
+        .save(application);
+
+      institutionCompletePIRNotificationId =
+        await this.notificationActionsService.saveInstitutionCompletePIRNotification(
+          {
+            givenNames: updatedApplication.student.user.firstName,
+            lastName: updatedApplication.student.user.lastName,
+            toAddress: updatedApplication.student.user.email,
+            userId: updatedApplication.student.user.id,
+          },
+          auditUserId,
+          transactionalEntityManager,
+        );
+    });
+
+    //Add message to the queue to send notification email.
+    if (institutionCompletePIRNotificationId) {
+      await this.sendEmailNotificationQueue.add({
+        notificationId: institutionCompletePIRNotificationId,
+      });
     }
 
-    application.pirDeniedReasonId = {
-      id: pirDeniedReasonId,
-    } as PIRDeniedReason;
-    if (PIR_DENIED_REASON_OTHER_ID === pirDeniedReasonId && !otherReasonDesc) {
-      throw new CustomNamedError(
-        "Other is selected as PIR reason, specify the reason for the PIR denial.",
-        PIR_DENIED_REASON_NOT_FOUND_ERROR,
-      );
-    }
-    application.pirDeniedOtherDesc = otherReasonDesc;
-    application.pirStatus = ProgramInfoStatus.declined;
-    application.modifier = { id: auditUserId } as User;
-    return this.repo.save(application);
+    return updatedApplication;
   }
 
   /**

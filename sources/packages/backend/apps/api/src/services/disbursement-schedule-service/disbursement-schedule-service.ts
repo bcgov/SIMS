@@ -9,7 +9,14 @@ import {
   OrderByCondition,
 } from "../../utilities";
 import { addDays } from "@sims/utilities";
-import { DataSource, In, Repository, UpdateResult, Brackets } from "typeorm";
+import {
+  DataSource,
+  In,
+  Repository,
+  UpdateResult,
+  Brackets,
+  EntityManager,
+} from "typeorm";
 import { SequenceControlService } from "@sims/services";
 import { StudentRestrictionService } from "..";
 import {
@@ -29,6 +36,13 @@ import {
   EnrollmentPeriod,
 } from "./disbursement-schedule.models";
 import * as dayjs from "dayjs";
+import { NotificationActionsService } from "@sims/services/notifications";
+import { InjectQueue } from "@nestjs/bull";
+import {
+  QueueNames,
+  SendEmailNotificationQueueInDTO,
+} from "@sims/services/queue";
+import { Queue } from "bull";
 
 const DISBURSEMENT_DOCUMENT_NUMBER_SEQUENCE_GROUP =
   "DISBURSEMENT_DOCUMENT_NUMBER";
@@ -43,6 +57,9 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
     private readonly dataSource: DataSource,
     private readonly sequenceService: SequenceControlService,
     private readonly studentRestrictionService: StudentRestrictionService,
+    private readonly notificationActionsService: NotificationActionsService,
+    @InjectQueue(QueueNames.SendEmailNotification)
+    private readonly sendEmailNotificationQueue: Queue<SendEmailNotificationQueueInDTO>,
   ) {
     super(dataSource.getRepository(DisbursementSchedule));
     this.assessmentRepo = dataSource.getRepository(StudentAssessment);
@@ -237,7 +254,9 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
     const documentNumber = await this.getNextDocumentNumber();
     const auditUser = { id: userId } as User;
     const now = new Date();
-    return this.dataSource.transaction(async (transactionalEntityManager) => {
+    let institutionConfirmCOENotificationId: number;
+
+    await this.dataSource.transaction(async (transactionalEntityManager) => {
       await transactionalEntityManager
         .getRepository(DisbursementSchedule)
         .createQueryBuilder()
@@ -267,7 +286,20 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
           .where("id = :applicationId", { applicationId })
           .execute();
       }
+      institutionConfirmCOENotificationId =
+        await this.createNotificationForDisbursementUpdate(
+          disbursementScheduleId,
+          userId,
+          transactionalEntityManager,
+        );
     });
+
+    //Add message to queue to send notification email.
+    if (institutionConfirmCOENotificationId) {
+      await this.sendEmailNotificationQueue.add({
+        notificationId: institutionConfirmCOENotificationId,
+      });
+    }
   }
 
   /**
@@ -611,5 +643,54 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
         documentNumbers,
       })
       .getMany();
+  }
+
+  /**
+   * Create institution confirm COE notification to notify student
+   * when institution confirms a COE to their application.
+   * @param disbursementScheduleId
+   * @param auditUserId
+   * @param transactionalEntityManager
+   * @returns notification id created.
+   */
+  async createNotificationForDisbursementUpdate(
+    disbursementScheduleId: number,
+    auditUserId: number,
+    transactionalEntityManager: EntityManager,
+  ): Promise<number> {
+    const disbursement = await transactionalEntityManager
+      .getRepository(DisbursementSchedule)
+      .findOne({
+        select: {
+          id: true,
+          studentAssessment: {
+            application: {
+              student: {
+                user: {
+                  id: true,
+                  firstName: true,
+                  lastName: true,
+                  email: true,
+                },
+              },
+            },
+          },
+        },
+        where: { id: disbursementScheduleId },
+      });
+
+    return await this.notificationActionsService.saveInstitutionConfirmCOENotification(
+      {
+        givenNames:
+          disbursement.studentAssessment.application.student.user.firstName,
+        lastName:
+          disbursement.studentAssessment.application.student.user.lastName,
+        toAddress:
+          disbursement.studentAssessment.application.student.user.email,
+        userId: disbursement.studentAssessment.application.student.user.id,
+      },
+      auditUserId,
+      transactionalEntityManager,
+    );
   }
 }

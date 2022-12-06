@@ -34,6 +34,13 @@ import {
   STUDENT_APPEAL_NOT_FOUND,
 } from "./constants";
 import { StudentAssessmentService } from "../student-assessment/student-assessment.service";
+import { NotificationActionsService } from "@sims/services/notifications";
+import { InjectQueue } from "@nestjs/bull";
+import {
+  QueueNames,
+  SendEmailNotificationQueueInDTO,
+} from "@sims/services/queue";
+import { Queue } from "bull";
 
 /**
  * Service layer for Student appeals.
@@ -44,6 +51,9 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
     private readonly dataSource: DataSource,
     private readonly studentAppealRequestsService: StudentAppealRequestsService,
     private readonly studentAssessmentService: StudentAssessmentService,
+    private readonly notificationActionsService: NotificationActionsService,
+    @InjectQueue(QueueNames.SendEmailNotification)
+    private readonly sendEmailNotificationQueue: Queue<SendEmailNotificationQueueInDTO>,
   ) {
     super(dataSource.getRepository(StudentAppeal));
   }
@@ -248,6 +258,8 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
     approvals: StudentAppealRequestApproval[],
     auditUserId: number,
   ): Promise<StudentAppeal> {
+    let updatedStudentAppeal: StudentAppeal;
+    let studentAppealCompleteNotificationId: number;
     const appealRequestsIDs = approvals.map((approval) => approval.id);
     const appealToUpdate = await this.repo
       .createQueryBuilder("studentAppeal")
@@ -259,11 +271,16 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
         "appealRequest.id",
         "application.id",
         "student.id",
+        "user.id",
+        "user.firstName",
+        "user.lastName",
+        "user.email",
       ])
       .innerJoin("studentAppeal.appealRequests", "appealRequest")
       .innerJoin("studentAppeal.application", "application")
       .innerJoin("application.currentAssessment", "currentAssessment")
       .innerJoin("application.student", "student")
+      .innerJoin("student.user", "user")
       .leftJoin("studentAppeal.studentAssessment", "studentAssessment")
       .where("studentAppeal.id = :appealId", { appealId })
       // Ensures that the provided appeal requests IDs belongs to the appeal.
@@ -309,7 +326,7 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
     const auditUser = { id: auditUserId } as User;
     const auditDate = new Date();
 
-    return this.dataSource.transaction(async (transactionalEntityManager) => {
+    await this.dataSource.transaction(async (transactionalEntityManager) => {
       appealToUpdate.appealRequests = [];
       for (const approval of approvals) {
         // Create the new note.
@@ -357,10 +374,31 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
         } as StudentAssessment;
       }
 
-      return transactionalEntityManager
+      updatedStudentAppeal = await transactionalEntityManager
         .getRepository(StudentAppeal)
         .save(appealToUpdate);
+
+      studentAppealCompleteNotificationId =
+        await this.notificationActionsService.saveChangeRequestCompleteNotification(
+          {
+            givenNames: appealToUpdate.application.student.user.firstName,
+            lastName: appealToUpdate.application.student.user.lastName,
+            toAddress: appealToUpdate.application.student.user.email,
+            userId: appealToUpdate.application.student.user.id,
+          },
+          auditUserId,
+          transactionalEntityManager,
+        );
     });
+
+    //Add message to the queue to send notification email.
+    if (studentAppealCompleteNotificationId) {
+      await this.sendEmailNotificationQueue.add({
+        notificationId: studentAppealCompleteNotificationId,
+      });
+    }
+
+    return updatedStudentAppeal;
   }
 
   /**

@@ -23,8 +23,8 @@ export class NotificationActionsService {
   ) {}
 
   /**
-   * This method is used to send email notification to SABC
-   * when a student uploads documents and submits it in the file uploader screen.
+   * Creates a notification when a student uploads documents
+   * and submits it in the file uploader screen.
    * @param notification input parameters to generate the notification.
    * @param auditUserId user that should be considered the one that is causing the changes.
    * @param entityManager optional repository that can be provided, for instance,
@@ -67,7 +67,7 @@ export class NotificationActionsService {
   }
 
   /**
-   * Sends an email notification to the student when the Ministry uploads a file to his account.
+   * Creates a notification when the Ministry uploads a file to student account.
    * @param notification input parameters to generate the notification.
    * @param auditUserId user that should be considered the one that is causing the changes.
    * @param entityManager optional repository that can be provided, for instance,
@@ -152,7 +152,7 @@ export class NotificationActionsService {
    * @param entityManager entity manager to execute in transaction.
    * @returns notification created.
    */
-  async createExceptionCompleteNotification(
+  async saveExceptionCompleteNotification(
     notification: StudentNotification,
     auditUserId: number,
     entityManager: EntityManager,
@@ -192,7 +192,7 @@ export class NotificationActionsService {
    * @param entityManager entity manager to execute in transaction.
    * @returns notification created.
    */
-  async createChangeRequestCompleteNotification(
+  async saveChangeRequestCompleteNotification(
     notification: StudentNotification,
     auditUserId: number,
     entityManager: EntityManager,
@@ -232,7 +232,7 @@ export class NotificationActionsService {
    * @param entityManager entity manager to execute in transaction.
    * @returns notification created.
    */
-  async createInstitutionReportChangeNotification(
+  async saveInstitutionReportChangeNotification(
     notification: StudentNotification,
     auditUserId: number,
     entityManager: EntityManager,
@@ -257,6 +257,86 @@ export class NotificationActionsService {
 
     const [notificationId] = await this.notificationService.saveNotifications(
       [institutionReportChangeNotification],
+      auditUserId,
+      entityManager,
+    );
+
+    return notificationId;
+  }
+
+  /**
+   * Create institution complete PIR notification to notify student
+   * when institution completes PIR to their application.
+   * @param notification notification details.
+   * @param auditUserId user who completes PIR.
+   * @param entityManager entity manager to execute in transaction.
+   * @returns notification created.
+   */
+  async saveInstitutionCompletePIRNotification(
+    notification: StudentNotification,
+    auditUserId: number,
+    entityManager: EntityManager,
+  ) {
+    const templateId = await this.notificationMessageService.getTemplateId(
+      NotificationMessageType.InstitutionCompletesPIR,
+    );
+
+    const institutionCompletePIRNotification = {
+      userId: notification.userId,
+      messageType: NotificationMessageType.InstitutionCompletesPIR,
+      messagePayload: {
+        email_address: notification.toAddress,
+        template_id: templateId,
+        personalisation: {
+          givenNames: notification.givenNames ?? "",
+          lastName: notification.lastName,
+          date: this.getDateTimeOnPSTTimeZone(),
+        },
+      },
+    };
+
+    const [notificationId] = await this.notificationService.saveNotifications(
+      [institutionCompletePIRNotification],
+      auditUserId,
+      entityManager,
+    );
+
+    return notificationId;
+  }
+
+  /**
+   * Create institution confirm COE notification to notify student
+   * when institution confirms a COE to their application.
+   * @param notification notification details.
+   * @param auditUserId user who confirms COE.
+   * @param entityManager entity manager to execute in transaction.
+   * @returns notification created.
+   */
+  async saveInstitutionConfirmCOENotification(
+    notification: StudentNotification,
+    auditUserId: number,
+    entityManager: EntityManager,
+  ) {
+    const templateId = await this.notificationMessageService.getTemplateId(
+      NotificationMessageType.InstitutionConfirmsCOE,
+    );
+
+    const institutionConfirmCOENotification = {
+      userId: notification.userId,
+      messageType: NotificationMessageType.InstitutionConfirmsCOE,
+      messagePayload: {
+        email_address: notification.toAddress,
+        template_id: templateId,
+        personalisation: {
+          givenNames: notification.givenNames ?? "",
+          lastName: notification.lastName,
+          date: this.getDateTimeOnPSTTimeZone(),
+        },
+      },
+    };
+
+    const [notificationId] = await this.notificationService.saveNotifications(
+      [institutionConfirmCOENotification],
       auditUserId,
       entityManager,
     );

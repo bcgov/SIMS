@@ -34,6 +34,7 @@ import {
   SendEmailNotificationQueueInDTO,
 } from "@sims/services/queue";
 import { Queue } from "bull";
+import { NotificationActionsService } from "@sims/services/notifications";
 
 /**
  * Manages the student scholastic standings related operations.
@@ -49,6 +50,7 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
     private readonly studentRestrictionService: StudentRestrictionService,
     @InjectQueue(QueueNames.SendEmailNotification)
     private readonly sendEmailNotificationQueue: Queue<SendEmailNotificationQueueInDTO>,
+    private readonly notificationActionsService: NotificationActionsService,
   ) {
     super(dataSource.getRepository(StudentScholasticStanding));
     this.applicationRepo = dataSource.getRepository(Application);
@@ -73,10 +75,21 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
   ): Promise<StudentScholasticStanding> {
     const application = await this.applicationRepo
       .createQueryBuilder("application")
-      .select(["application", "currentAssessment.id", "offering.id"])
+      .select([
+        "application",
+        "currentAssessment.id",
+        "offering.id",
+        "student.id",
+        "user.id",
+        "user.firstName",
+        "user.lastName",
+        "user.email",
+      ])
       .innerJoin("application.currentAssessment", "currentAssessment")
       .innerJoin("currentAssessment.offering", "offering")
       .innerJoin("application.location", "location")
+      .innerJoin("application.student", "student")
+      .innerJoin("student.user", "user")
       .where("application.id = :applicationId", { applicationId })
       .andWhere("location.id = :locationId", { locationId })
       .getOne();
@@ -128,10 +141,12 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
     application: Application,
     scholasticStandingData: ScholasticStanding,
   ): Promise<StudentScholasticStanding> {
-    return this.dataSource.transaction(async (transactionalEntityManager) => {
+    const notificationIds: number[] = [];
+    let studentScholasticStanding: StudentScholasticStanding;
+
+    await this.dataSource.transaction(async (transactionalEntityManager) => {
       const now = new Date();
       const auditUser = { id: auditUserId } as User;
-      let restrictionNotificationId: number;
 
       // Get existing offering.
       const existingOffering = await this.offeringRepo
@@ -231,7 +246,7 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
           scholasticStandingData.numberOfUnsuccessfulWeeks;
       }
 
-      const studentScholasticStanding = await transactionalEntityManager
+      studentScholasticStanding = await transactionalEntityManager
         .getRepository(StudentScholasticStanding)
         .save(scholasticStanding);
 
@@ -254,22 +269,38 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
       // Left as the last step to ensure that everything else was processed with
       // success and the notification will not be generated otherwise.
       if (createdRestriction) {
-        [restrictionNotificationId] =
+        const [studentRestrictionNotificationId] =
           await this.studentRestrictionService.createNotifications(
             [createdRestriction.id],
             auditUserId,
             { entityManager: transactionalEntityManager },
           );
+        notificationIds.push(studentRestrictionNotificationId);
       }
 
-      if (restrictionNotificationId) {
-        await this.sendEmailNotificationQueue.add({
-          notificationId: restrictionNotificationId,
-        });
-      }
+      const institutionReportChangeNotificationId =
+        await this.notificationActionsService.saveInstitutionReportChangeNotification(
+          {
+            givenNames: application.student.user.firstName,
+            lastName: application.student.user.lastName,
+            toAddress: application.student.user.email,
+            userId: application.student.user.id,
+          },
+          auditUserId,
+          transactionalEntityManager,
+        );
 
-      return studentScholasticStanding;
+      notificationIds.push(institutionReportChangeNotificationId);
     });
+
+    if (notificationIds.length) {
+      const queueMessageData = notificationIds.map(
+        (notificationId: number) => ({ data: { notificationId } }),
+      );
+      await this.sendEmailNotificationQueue.addBulk(queueMessageData);
+    }
+
+    return studentScholasticStanding;
   }
 
   /**
