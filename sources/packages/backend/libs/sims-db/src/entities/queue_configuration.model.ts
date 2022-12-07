@@ -1,8 +1,9 @@
-import { QueueNames } from "@sims/services/queue";
+import { QueueNames } from "@sims/utilities";
 import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 import { TableNames } from "../constant";
 import { QueueConfigurationDetails } from "./queue-configuration.type";
 import { RecordDataModel } from "./record.model";
+
 const QUEUE_NAME_MAX_LENGTH = 100;
 
 @Entity({ name: TableNames.QueueConfigurations })

@@ -1,5 +1,5 @@
 -- Create new table queue_configurations.
-CREATE TABLE IF NOT EXISTS queue_configurations(
+CREATE TABLE IF NOT EXISTS sims.queue_configurations(
   id SERIAL PRIMARY KEY,
   queue_name VARCHAR(100) UNIQUE NOT NULL,
   queue_configuration jsonb NOT NULL,

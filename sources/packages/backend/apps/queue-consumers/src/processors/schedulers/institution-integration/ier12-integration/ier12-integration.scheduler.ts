@@ -1,6 +1,6 @@
 import { InjectQueue, Process, Processor } from "@nestjs/bull";
 import { IER12FileService } from "@sims/integrations/institution-integration/ier12-integration";
-import { QueueNames } from "@sims/services/queue";
+import { QueueNames } from "@sims/utilities";
 import { ConfigService } from "@sims/utilities/config";
 import { InjectLogger, LoggerService } from "@sims/utilities/logger";
 import { Job, Queue } from "bull";

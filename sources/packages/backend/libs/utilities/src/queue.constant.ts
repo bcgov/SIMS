@@ -24,5 +24,5 @@ export enum QueueNames {
   SFASSIntegration = "sfass-integration",
   ATBCIntegration = "atbc-integration",
   ATBCResponseIntegration = "atbc-response-integration",
-  SendEmailNotification = "send-email-notification",
+  ProcessNotifications = "process-notifications",
 }

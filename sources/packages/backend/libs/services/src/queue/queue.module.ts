@@ -6,7 +6,7 @@ import {
   BullModuleAsyncOptions,
 } from "@nestjs/bull";
 import Redis, { Cluster, RedisOptions } from "ioredis";
-import { QueueNames } from "./constants/queue.constant";
+import { QueueNames } from "../../../utilities/src/queue.constant";
 import { ConfigModule, ConfigService } from "@sims/utilities/config";
 
 /**

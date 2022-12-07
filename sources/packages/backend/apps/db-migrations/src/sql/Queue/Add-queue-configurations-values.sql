@@ -283,7 +283,7 @@ INSERT INTO
   queue_configurations(queue_name, queue_configuration)
 VALUES
   (
-    'send-email-notification',
+    'process-notifications',
     '{
         "attempts": 3,
         "backoff": 180000,

@@ -50,8 +50,8 @@ import {
   Notification,
   NotificationMessage,
   DisbursementOveraward,
+  QueueConfiguration,
 } from "./entities";
-import { QueueConfiguration } from "./entities/queue_configuration.model";
 
 export const ormConfig: PostgresConnectionOptions = {
   type: "postgres",
