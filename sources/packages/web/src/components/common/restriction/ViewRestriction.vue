@@ -47,7 +47,12 @@
           v-model="formModel.resolutionNote"
           variant="outlined"
           :rules="[(v) => checkResolutionNotesLength(v)]" />
-        <content-group v-if="!restrictionData.isActive">
+        <content-group
+          v-if="
+            !restrictionData.isActive &&
+            restrictionData.restrictionType !== RestrictionType.Federal
+          "
+        >
           <title-value
             propertyTitle="Resolution reason"
             :propertyValue="restrictionData.resolutionNote"
