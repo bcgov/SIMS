@@ -5,7 +5,7 @@
     class="m-1"
     :recordsCount="institutionLocationList.length"
     ><template #actions>
-      <!-- Todo: We to eventually eliminate the logic which is based 
+      <!-- Todo: We to eventually eliminate the logic which is based
       on the client type on the vue components.-->
       <v-btn
         v-if="clientType === ClientIdType.Institution"
@@ -13,6 +13,7 @@
         color="primary"
         @click="goToAddNewLocation()"
         prepend-icon="fa:fa fa-plus-circle"
+        data-cy="addLocation"
       >
         Add location
       </v-btn>
@@ -22,13 +23,19 @@
     v-for="item in institutionLocationList"
     :key="item"
     class="ma-2"
+    data-cy="institutionLocation"
   >
     <v-row>
       <v-col md="10">
         <div>
           <v-icon icon="mdi-map-marker-outline"></v-icon>
-          <span class="category-header-medium mx-1">{{ item.name }}</span>
-          <status-chip-designation-agreement :status="item.designationStatus" />
+          <span data-cy="locationName" class="category-header-medium mx-1">{{
+            item.name
+          }}</span>
+          <status-chip-designation-agreement
+            data-cy="institutionDesignationStatus"
+            :status="item.designationStatus"
+          />
         </div>
       </v-col>
       <v-col>
@@ -41,6 +48,7 @@
               :disabled="notAllowed"
               @click="$emit('editLocation', item.id)"
               prepend-icon="fa:fa fa-gear"
+              data-cy="editLocation"
             >
               Edit
             </v-btn>
@@ -56,6 +64,7 @@
           class="label-value muted-content clearfix"
           v-for="addressLine in addressList1(item)"
           :key="addressLine"
+          data-cy="institutionAddress1"
         >
           {{ addressLine }}
         </span>
@@ -64,7 +73,7 @@
       <!-- Address 2 -->
       <v-col>
         <title-value propertyTitle="Address line 2" />
-        <span>---</span>
+        <span data-cy="institutionAddress2">---</span>
       </v-col>
 
       <!-- Primary contact -->
@@ -74,6 +83,7 @@
           class="label-value muted-content clearfix"
           v-for="contactLine in primaryContactList(item)"
           :key="contactLine"
+          data-cy="institutionPrimaryContact"
         >
           {{ contactLine }}
         </span>
@@ -81,7 +91,10 @@
       <!-- Institution code -->
       <v-col>
         <title-value propertyTitle="Institution code" />
-        <span class="label-value muted-content clearfix">
+        <span
+          data-cy="institutionCode"
+          class="label-value muted-content clearfix"
+        >
           {{ item.institutionCode }}
         </span>
       </v-col>

@@ -9,6 +9,7 @@ import {
   SshService,
   StudentAssessmentService,
 } from "@sims/integrations/services";
+import { NotificationsModule } from "@sims/services/notifications";
 import { IER12IntegrationModule } from "@sims/integrations/institution-integration/ier12-integration/ier12-integration.module";
 import { IER12IntegrationScheduler } from "./processors/schedulers/institution-integration/ier12-integration/ier12-integration.scheduler";
 import { TypeOrmModule } from "@nestjs/typeorm";
@@ -20,6 +21,7 @@ import { TypeOrmModule } from "@nestjs/typeorm";
     ZeebeModule.forRoot(),
     IER12IntegrationModule,
     TypeOrmModule.forFeature(DBEntities),
+    NotificationsModule,
   ],
   providers: [
     StartApplicationAssessmentProcessor,

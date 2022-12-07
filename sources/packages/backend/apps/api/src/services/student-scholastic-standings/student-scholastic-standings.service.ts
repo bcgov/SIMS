@@ -28,6 +28,7 @@ import {
   SCHOLASTIC_STANDING_STUDENT_DID_NOT_COMPLETE_PROGRAM,
   SCHOLASTIC_STANDING_STUDENT_WITHDREW_FROM_PROGRAM,
 } from "./constants";
+import { NotificationActionsService } from "@sims/services/notifications";
 
 /**
  * Manages the student scholastic standings related operations.
@@ -41,6 +42,7 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
     private readonly dataSource: DataSource,
     private readonly studentAssessmentService: StudentAssessmentService,
     private readonly studentRestrictionService: StudentRestrictionService,
+    private readonly notificationActionsService: NotificationActionsService,
   ) {
     super(dataSource.getRepository(StudentScholasticStanding));
     this.applicationRepo = dataSource.getRepository(Application);
@@ -65,10 +67,21 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
   ): Promise<StudentScholasticStanding> {
     const application = await this.applicationRepo
       .createQueryBuilder("application")
-      .select(["application", "currentAssessment.id", "offering.id"])
+      .select([
+        "application",
+        "currentAssessment.id",
+        "offering.id",
+        "student.id",
+        "user.id",
+        "user.firstName",
+        "user.lastName",
+        "user.email",
+      ])
       .innerJoin("application.currentAssessment", "currentAssessment")
       .innerJoin("currentAssessment.offering", "offering")
       .innerJoin("application.location", "location")
+      .innerJoin("application.student", "student")
+      .innerJoin("student.user", "user")
       .where("application.id = :applicationId", { applicationId })
       .andWhere("location.id = :locationId", { locationId })
       .getOne();
@@ -248,9 +261,21 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
         await this.studentRestrictionService.createNotifications(
           [createdRestriction.id],
           auditUserId,
-          { entityManager: transactionalEntityManager },
+          transactionalEntityManager,
         );
       }
+
+      // Create a student notification when institution reports a change.
+      await this.notificationActionsService.saveInstitutionReportChangeNotification(
+        {
+          givenNames: application.student.user.firstName,
+          lastName: application.student.user.lastName,
+          toAddress: application.student.user.email,
+          userId: application.student.user.id,
+        },
+        auditUserId,
+        transactionalEntityManager,
+      );
 
       return studentScholasticStanding;
     });

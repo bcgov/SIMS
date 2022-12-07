@@ -135,8 +135,10 @@ describe("Manage Users - edit user modal", () => {
   it("Validate edit user default modal", () => {
     manageUsersObject.clickOnEdit("automationuser1@test.com");
     manageUsersObject.editUserModal().should("be.visible");
-    manageUsersObject.isAdminRadioButton().should("be.checked");
-    manageUsersObject.isAdminRadioButton().should("be.unchecked");
+    manageUsersObject
+      .isAdminRadioButton()
+      .get("[type='checkbox']")
+      .should("be.checked");
     manageUsersObject.editUserNowButton().should("be.visible");
     manageUsersObject.cancelButton().should("be.visible");
   });

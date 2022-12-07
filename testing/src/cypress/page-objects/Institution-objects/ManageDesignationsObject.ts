@@ -1,22 +1,24 @@
-export default class ManageDesignationsObject {
-  manageDesignationButton() {
-    return cy.contains("Manage Designation");
+import BaseMethods from "./BaseMethods";
+
+export default class ManageDesignationsObject extends BaseMethods {
+  designationAgreementsHeaderText() {
+    return this.getElementByCyId("manageDesignationHeader");
   }
 
-  designationAgreementsText() {
-    return cy.contains("Designation agreements");
+  manageDesignationsBackButton() {
+    return cy.contains("Manage designations");
   }
 
   viewDesignationButton() {
-    return cy.get("[data-cy='viewDesignation']").eq(0);
+    return this.getElementByCyId("viewDesignation").eq(0);
   }
 
   viewDesignationText() {
     return cy.contains("View Designation");
   }
 
-  manageDesignationsBackButton() {
-    return cy.contains("Manage designations");
+  designationStatus() {
+    return this.getElementByCyId("designationStatus");
   }
 
   designationDetailsText() {
@@ -60,7 +62,7 @@ export default class ManageDesignationsObject {
   }
 
   requestDesignationButton() {
-    return cy.get("[data-cy='requestDesignation']");
+    return this.getElementByCyId("requestDesignation");
   }
 
   requestDesignationHeader() {
@@ -68,55 +70,55 @@ export default class ManageDesignationsObject {
   }
 
   requestForDesignationCheckBox() {
-    return cy.get("[data-cy='requestForDesignationCheckBox']").eq(0);
+    return this.getElementByCyId("requestForDesignationCheckBox").eq(0);
   }
 
   eligibilityOfficerName() {
-    return cy.get("[data-cy='eligibilityOfficerName']");
+    return this.getElementByCyId("eligibilityOfficerName");
   }
 
   eligibilityOfficerPosition() {
-    return cy.get("[data-cy='eligibilityOfficerPosition']");
+    return this.getElementByCyId("eligibilityOfficerPosition");
   }
 
   eligibilityOfficerEmail() {
-    return cy.get("[data-cy='eligibilityOfficerEmail']");
+    return this.getElementByCyId("eligibilityOfficerEmail");
   }
 
   eligibilityOfficerPhone() {
-    return cy.get("[data-cy='eligibilityOfficerPhone']");
+    return this.getElementByCyId("eligibilityOfficerPhone");
   }
 
   enrolmentOfficerName() {
-    return cy.get("[data-cy='enrolmentOfficerName']");
+    return this.getElementByCyId("enrolmentOfficerName");
   }
 
   enrolmentOfficerPosition() {
-    return cy.get("[data-cy='enrolmentOfficerPosition']");
+    return this.getElementByCyId("enrolmentOfficerPosition");
   }
 
   enrolmentOfficerEmail() {
-    return cy.get("[data-cy='enrolmentOfficerEmail']");
+    return this.getElementByCyId("enrolmentOfficerEmail");
   }
 
   enrolmentOfficerPhone() {
-    return cy.get("[data-cy='enrolmentOfficerPhone']");
+    return this.getElementByCyId("enrolmentOfficerPhone");
   }
 
   scheduleACheckbox() {
-    return cy.get("[data-cy='scheduleA']");
+    return this.getElementByCyId("scheduleA");
   }
 
   scheduleBCheckbox() {
-    return cy.get("[data-cy='scheduleB']");
+    return this.getElementByCyId("scheduleB");
   }
 
   scheduleDCheckbox() {
-    return cy.get("[data-cy='scheduleD']");
+    return this.getElementByCyId("scheduleD");
   }
 
   agreementAcceptedCheckbox() {
-    return cy.get("[data-cy='agreementAccepted']");
+    return this.getElementByCyId("agreementAccepted");
   }
 
   submitAgreementButton() {

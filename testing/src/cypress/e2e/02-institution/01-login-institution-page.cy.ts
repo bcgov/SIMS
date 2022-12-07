@@ -11,7 +11,7 @@ const institutionHelperActions = new InstitutionHelperActions();
 const [URL, USERNAME, PASSWORD] =
   institutionHelperActions.getBaseUrlAndLoginCredentialsInstitution();
 
-describe("[Institution Login] - Login Page", () => {
+describe("Login Page", () => {
   beforeEach(() => {
     cy.visit(URL);
   });
@@ -24,8 +24,9 @@ describe("[Institution Login] - Login Page", () => {
       .should("have.text", "The user ID or password you entered is incorrect");
   });
 
-  it("Verify login successfully", () => {
+  it("Verify successful login in to institution dashboard", () => {
     institutionCustomCommand.loginWithCredentials(USERNAME, PASSWORD);
+    dashboardObject.institutionLandingPage().should("be.visible");
     dashboardObject.dashboardWelcomeMessage().should("be.visible");
   });
 

@@ -199,8 +199,8 @@ export class StudentAESTController extends BaseController {
 
     // This method will be executed alongside with the transaction during the
     // execution of the method updateStudentFiles.
-    const sendFileUploadNotification = (entityManager: EntityManager) =>
-      this.notificationActionsService.sendMinistryFileUploadNotification(
+    const saveFileUploadNotification = (entityManager: EntityManager) =>
+      this.notificationActionsService.saveMinistryFileUploadNotification(
         {
           firstName: student.user.firstName,
           lastName: student.user.lastName,
@@ -217,7 +217,7 @@ export class StudentAESTController extends BaseController {
       payload.associatedFiles,
       FileOriginType.Ministry,
       MINISTRY_FILE_UPLOAD_GROUP_NAME,
-      sendFileUploadNotification,
+      { saveFileUploadNotification },
     );
   }
 

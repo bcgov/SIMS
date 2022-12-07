@@ -23,10 +23,7 @@ import { CustomNamedError } from "@sims/utilities";
 import { RestrictionService } from "./restriction.service";
 import { StudentService } from "../student/student.service";
 import { RestrictionCode } from "./models/restriction.model";
-import {
-  NotificationActionsService,
-  StudentRestrictionAddedNotificationOptions,
-} from "@sims/services/notifications";
+import { NotificationActionsService } from "@sims/services/notifications";
 export const RESTRICTION_NOT_ACTIVE = "RESTRICTION_NOT_ACTIVE";
 export const RESTRICTION_NOT_PROVINCIAL = "RESTRICTION_NOT_PROVINCIAL";
 
@@ -209,9 +206,11 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
       const newRestriction = await transactionalEntityManager
         .getRepository(StudentRestriction)
         .save(studentRestriction);
-      await this.createNotifications([newRestriction.id], auditUserId, {
-        entityManager: transactionalEntityManager,
-      });
+      await this.createNotifications(
+        [newRestriction.id],
+        auditUserId,
+        transactionalEntityManager,
+      );
       return studentRestriction;
     });
   }
@@ -430,26 +429,28 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
       const newRestriction = await entityManager
         .getRepository(StudentRestriction)
         .save(restriction);
-      await this.createNotifications([newRestriction.id], auditUserId, {
+      await this.createNotifications(
+        [newRestriction.id],
+        auditUserId,
         entityManager,
-      });
+      );
     }
   }
 
   /**
-   * Generate notifications for newly created student restrictions when needed.
+   * Create notifications for newly created student restrictions when needed.
    * @param restrictionsIds ids to generate the notifications.
    * @param auditUserId user that should be considered the one that is causing the changes.
-   * @param options options for the student restriction notification.
+   * @param entityManager entity manager to execute in transaction.
    */
   async createNotifications(
     restrictionsIds: number[],
     auditUserId: number,
-    options?: StudentRestrictionAddedNotificationOptions,
+    entityManager?: EntityManager,
   ): Promise<void> {
     const restrictions = await this.getRestrictionsForNotifications(
       restrictionsIds,
-      options?.entityManager,
+      entityManager,
     );
 
     if (!restrictions?.length) {
@@ -463,10 +464,10 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
       toAddress: restriction.student.user.email,
       userId: restriction.student.user.id,
     }));
-    await this.notificationActionsService.sendStudentRestrictionAddedNotification(
+    await this.notificationActionsService.saveStudentRestrictionAddedNotification(
       notifications,
       auditUserId,
-      options,
+      entityManager,
     );
   }
 
