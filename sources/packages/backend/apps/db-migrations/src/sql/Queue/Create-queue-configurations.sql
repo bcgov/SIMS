@@ -2,16 +2,7 @@
 CREATE TABLE IF NOT EXISTS sims.queue_configurations(
   id SERIAL PRIMARY KEY,
   queue_name VARCHAR(100) UNIQUE NOT NULL,
-  queue_configuration jsonb NOT NULL,
-  -- Audit columns
-  created_at timestamp without time zone NOT NULL DEFAULT now(),
-  updated_at timestamp without time zone NOT NULL DEFAULT now(),
-  creator INT NULL DEFAULT NULL REFERENCES users(id) ON DELETE
-  SET
-    NULL,
-    modifier INT NULL DEFAULT NULL REFERENCES users(id) ON DELETE
-  SET
-    NULL
+  queue_configuration jsonb NOT NULL
 );
 
 -- ## Comments
@@ -22,11 +13,3 @@ COMMENT ON COLUMN sims.queue_configurations.id IS 'Auto-generated sequential pri
 COMMENT ON COLUMN sims.queue_configurations.queue_name IS 'Hold the queue name.';
 
 COMMENT ON COLUMN sims.queue_configurations.queue_configuration IS 'Contains the queue configuration.';
-
-COMMENT ON COLUMN sims.queue_configurations.created_at IS 'Record creation timestamp';
-
-COMMENT ON COLUMN sims.queue_configurations.updated_at IS 'Record update timestamp';
-
-COMMENT ON COLUMN sims.queue_configurations.creator IS 'Creator of the record. Null specified the record is created by system';
-
-COMMENT ON COLUMN sims.queue_configurations.modifier IS 'Modifier of the record. Null specified the record is modified by system';

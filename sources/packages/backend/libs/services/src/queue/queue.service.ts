@@ -1,7 +1,8 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { QueueConfiguration } from "@sims/sims-db";
-import { Repository } from "typeorm";
+import { QueueConfigurationDetails } from "@sims/sims-db/entities/queue-configuration.type";
+import { FindOptionsSelect, Repository } from "typeorm";
 import { QueueModel } from "./model/queue.model";
 
 @Injectable()
@@ -19,12 +20,8 @@ export class QueueService {
     return this.queueConfigurationRepo.find({
       select: {
         queueName: true,
-        queueConfiguration: {
-          cron: true,
-          backoff: true,
-          attempts: true,
-          dashboardReadonly: true,
-        },
+        queueConfiguration:
+          true as FindOptionsSelect<QueueConfigurationDetails>,
       },
     });
   }
@@ -35,6 +32,7 @@ export class QueueService {
    */
   async queueConfigurationModel(): Promise<QueueModel[]> {
     const queues = await this.getAllQueueConfigurations();
+    console.log(queues);
     return queues.map((queue) => ({
       name: queue.queueName,
       dashboardReadonly: queue.queueConfiguration.dashboardReadonly,

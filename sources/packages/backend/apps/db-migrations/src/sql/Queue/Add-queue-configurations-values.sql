@@ -4,288 +4,227 @@ INSERT INTO
 VALUES
   (
     'start-application-assessment',
-    '{ "attempts": 3, "backoff": 180000, "dashboardReadonly": false }' :: json
-  );
-
-INSERT INTO
-  queue_configurations(queue_name, queue_configuration)
-VALUES
+    '{
+        "retry": 3,
+        "retryInterval": 180000,
+        "dashboardReadonly": false,
+        "cleanUpPeriod": 86400000
+      }' :: json
+  ),
   (
     'ier12-integration',
     '{
-        "attempts": 3,
-        "backoff": 180000,
+        "retry": 3,
+        "retryInterval": 180000,
         "dashboardReadonly": false,
-        "cron": "0 14 * * *"
+        "cron": "0 14 * * *",
+        "cleanUpPeriod": 2592000000
       }' :: json
-  );
-
-INSERT INTO
-  queue_configurations(queue_name, queue_configuration)
-VALUES
+  ),
   (
     'cra-process-integration',
     '{
-        "attempts": 3,
-        "backoff": 180000,
+        "retry": 3,
+        "retryInterval": 180000,
         "dashboardReadonly": false,
-        "cron": "0 2,8,14,20 * * *"
+        "cron": "0 2,8,14,20 * * *",
+        "cleanUpPeriod": 2592000000
       }' :: json
-  );
-
-INSERT INTO
-  queue_configurations(queue_name, queue_configuration)
-VALUES
+  ),
   (
     'cra-response-integration',
     '{
-        "attempts": 3,
-        "backoff": 180000,
+        "retry": 3,
+        "retryInterval": 180000,
         "dashboardReadonly": false,
-        "cron": "0 5,11,17,23 * * *"
+        "cron": "0 5,11,17,23 * * *",
+        "cleanUpPeriod": 2592000000
       }' :: json
-  );
-
-INSERT INTO
-  queue_configurations(queue_name, queue_configuration)
-VALUES
+  ),
   (
     'sin-validation-process-integration',
     '{
-        "attempts": 3,
-        "backoff": 180000,
+        "retry": 3,
+        "retryInterval": 180000,
         "dashboardReadonly": false,
-        "cron": "0 17 * * *"
+        "cron": "0 17 * * *",
+        "cleanUpPeriod": 2592000000
       }' :: json
-  );
-
-INSERT INTO
-  queue_configurations(queue_name, queue_configuration)
-VALUES
+  ),
   (
     'sin-validation-request-integration',
     '{
-        "attempts": 3,
-        "backoff": 180000,
+        "retry": 3,
+        "retryInterval": 180000,
         "dashboardReadonly": false,
-        "cron": "0 17 * * *"
+        "cron": "0 17 * * *",
+        "cleanUpPeriod": 2592000000
       }' :: json
-  );
-
-INSERT INTO
-  queue_configurations(queue_name, queue_configuration)
-VALUES
+  ),
   (
-    'pt-msfaa-process-integration',
+    'part-time-msfaa-process-integration',
     '{
-        "attempts": 3,
-        "backoff": 180000,
+        "retry": 3,
+        "retryInterval": 180000,
         "dashboardReadonly": false,
-        "cron": "0 14 * * *"
+        "cron": "0 14 * * *",
+        "cleanUpPeriod": 2592000000
       }' :: json
-  );
-
-INSERT INTO
-  queue_configurations(queue_name, queue_configuration)
-VALUES
+  ),
   (
-    'pt-e-cert-integration',
+    'part-time-e-cert-integration',
     '{
-        "attempts": 3,
-        "backoff": 180000,
+        "retry": 3,
+        "retryInterval": 180000,
         "dashboardReadonly": false,
-        "cron": "0 14 * * *"
+        "cron": "0 14 * * *",
+        "cleanUpPeriod": 2592000000
       }' :: json
-  );
-
-INSERT INTO
-  queue_configurations(queue_name, queue_configuration)
-VALUES
+  ),
   (
-    'pt-feedback-integration',
+    'part-time-feedback-integration',
     '{
-        "attempts": 3,
-        "backoff": 180000,
+        "retry": 3,
+        "retryInterval": 180000,
         "dashboardReadonly": false,
-        "cron": "0 17 * * *"
+        "cron": "0 17 * * *",
+        "cleanUpPeriod": 2592000000
       }' :: json
-  );
-
-INSERT INTO
-  queue_configurations(queue_name, queue_configuration)
-VALUES
+  ),
   (
-    'ft-msfaa-integration',
+    'full-time-msfaa-integration',
     '{
-        "attempts": 3,
-        "backoff": 180000,
+        "retry": 3,
+        "retryInterval": 180000,
         "dashboardReadonly": false,
-        "cron": "0 14 * * *"
+        "cron": "0 14 * * *",
+        "cleanUpPeriod": 2592000000
       }' :: json
-  );
-
-INSERT INTO
-  queue_configurations(queue_name, queue_configuration)
-VALUES
+  ),
   (
-    'ft-e-cert-integration',
+    'full-time-e-cert-integration',
     '{
-        "attempts": 3,
-        "backoff": 180000,
+        "retry": 3,
+        "retryInterval": 180000,
         "dashboardReadonly": false,
-        "cron": "0 14 * * *"
+        "cron": "0 14 * * *",
+        "cleanUpPeriod": 2592000000
       }' :: json
-  );
-
-INSERT INTO
-  queue_configurations(queue_name, queue_configuration)
-VALUES
+  ),
   (
-    'ft-feedback-integration',
+    'full-time-feedback-integration',
     '{
-        "attempts": 3,
-        "backoff": 180000,
+        "retry": 3,
+        "retryInterval": 180000,
         "dashboardReadonly": false,
-        "cron": "0 17 * * *"
+        "cron": "0 17 * * *",
+        "cleanUpPeriod": 2592000000
       }' :: json
-  );
-
-INSERT INTO
-  queue_configurations(queue_name, queue_configuration)
-VALUES
+  ),
   (
     'federal-restrictions-integration',
     '{
-        "attempts": 3,
-        "backoff": 180000,
+        "retry": 3,
+        "retryInterval": 180000,
         "dashboardReadonly": false,
-        "cron": "0 11 * * *"
+        "cron": "0 11 * * *",
+        "cleanUpPeriod": 2592000000
       }' :: json
-  );
-
-INSERT INTO
-  queue_configurations(queue_name, queue_configuration)
-VALUES
+  ),
   (
-    'ft-disbursement-receipts-file-integration',
+    'full-time-disbursement-receipts-file-integration',
     '{
-        "attempts": 3,
-        "backoff": 180000,
+        "retry": 3,
+        "retryInterval": 180000,
         "dashboardReadonly": false,
-        "cron": "0 17 * * *"
+        "cron": "0 17 * * *",
+        "cleanUpPeriod": 2592000000
       }' :: json
-  );
-
-INSERT INTO
-  queue_configurations(queue_name, queue_configuration)
-VALUES
+  ),
   (
     'ece-process-integration',
     '{
-        "attempts": 3,
-        "backoff": 180000,
+        "retry": 3,
+        "retryInterval": 180000,
         "dashboardReadonly": false,
-        "cron": "0 14 * * *"
+        "cron": "0 14 * * *",
+        "cleanUpPeriod": 2592000000
       }' :: json
-  );
-
-INSERT INTO
-  queue_configurations(queue_name, queue_configuration)
-VALUES
+  ),
   (
     'ece-process-response-integration',
     '{
-        "attempts": 3,
-        "backoff": 180000,
+        "retry": 3,
+        "retryInterval": 180000,
         "dashboardReadonly": false,
-        "cron": "0 14 * * *"
+        "cron": "0 14 * * *",
+        "cleanUpPeriod": 2592000000
       }' :: json
-  );
-
-INSERT INTO
-  queue_configurations(queue_name, queue_configuration)
-VALUES
+  ),
   (
     'fin-process-provincial-daily-disbursements-integration',
     '{
-        "attempts": 3,
-        "backoff": 180000,
+        "retry": 3,
+        "retryInterval": 180000,
         "dashboardReadonly": false,
-        "cron": "0 18 * * *"
+        "cron": "0 18 * * *",
+        "cleanUpPeriod": 2592000000
       }' :: json
-  );
-
-INSERT INTO
-  queue_configurations(queue_name, queue_configuration)
-VALUES
+  ),
   (
-    'pt-msfaa-process-response-integration',
+    'part-time-msfaa-process-response-integration',
     '{
-        "attempts": 3,
-        "backoff": 180000,
+        "retry": 3,
+        "retryInterval": 180000,
         "dashboardReadonly": false,
-        "cron": "0 17 * * *"
+        "cron": "0 17 * * *",
+        "cleanUpPeriod": 2592000000
       }' :: json
-  );
-
-INSERT INTO
-  queue_configurations(queue_name, queue_configuration)
-VALUES
+  ),
   (
-    'ft-msfaa-process-response-integration',
+    'full-time-msfaa-process-response-integration',
     '{
-        "attempts": 3,
-        "backoff": 180000,
+        "retry": 3,
+        "retryInterval": 180000,
         "dashboardReadonly": false,
-        "cron": "0 17 * * *"
+        "cron": "0 17 * * *",
+        "cleanUpPeriod": 2592000000
       }' :: json
-  );
-
-INSERT INTO
-  queue_configurations(queue_name, queue_configuration)
-VALUES
+  ),
   (
     'sfass-integration',
     '{
-        "attempts": 3,
-        "backoff": 180000,
+        "retry": 3,
+        "retryInterval": 180000,
         "dashboardReadonly": false,
-        "cron": "0 12 * * *"
+        "cron": "0 12 * * *",
+        "cleanUpPeriod": 2592000000
       }' :: json
-  );
-
-INSERT INTO
-  queue_configurations(queue_name, queue_configuration)
-VALUES
+  ),
   (
     'atbc-integration',
     '{
-        "attempts": 3,
-        "backoff": 180000,
+        "retry": 3,
+        "retryInterval": 180000,
         "dashboardReadonly": false
       }' :: json
-  );
-
-INSERT INTO
-  queue_configurations(queue_name, queue_configuration)
-VALUES
+  ),
   (
     'atbc-response-integration',
     '{
-        "attempts": 3,
-        "backoff": 180000,
+        "retry": 3,
+        "retryInterval": 180000,
         "dashboardReadonly": false,
-        "cron": "0 17 * * *"
+        "cron": "0 17 * * *",
+        "cleanUpPeriod": 2592000000
       }' :: json
-  );
-
-INSERT INTO
-  queue_configurations(queue_name, queue_configuration)
-VALUES
+  ),
   (
     'process-notifications',
     '{
         "dashboardReadonly": false,
-        "cron": "* * * * *"
+        "cron": "* * * * *",
+        "cleanUpPeriod": 1800000,
+        "pollingRecordLimit": 100
       }' :: json
   );
