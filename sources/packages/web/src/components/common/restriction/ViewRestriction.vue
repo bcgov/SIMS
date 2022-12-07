@@ -35,7 +35,9 @@
                 " /></v-col
           ></v-row>
         </content-group>
-        <template v-if="allowUserToEdit || !restrictionData.isActive">
+        <template
+          v-if="restrictionData.restrictionType !== RestrictionType.Federal"
+        >
           <v-divider></v-divider>
           <h3 class="category-header-medium mb-5">Resolution</h3>
         </template>
