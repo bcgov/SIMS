@@ -16,6 +16,7 @@ import {
 } from "@sims/sims-db";
 import {
   createFakeApplication,
+  createFakeDisbursementOveraward,
   createFakeEducationProgramOffering,
   createFakeStudent,
   createFakeStudentAssessment,
@@ -29,7 +30,7 @@ import { WorkersModule } from "../../../workers.module";
 import { DisbursementScheduleService } from "../disbursement-schedule-service";
 import { createFakeDisbursementPayload } from "./disbursement-payloads";
 
-jest.setTimeout(15000);
+jest.setTimeout(60000);
 
 describe("Disbursement Schedule Service - Create disbursement", () => {
   let userRepo: Repository<User>;
@@ -82,12 +83,18 @@ describe("Disbursement Schedule Service - Create disbursement", () => {
         createFakeDisbursementValue(
           DisbursementValueType.CanadaLoan,
           "CSLF",
-          "1000",
+          "1250",
         ),
         createFakeDisbursementValue(
           DisbursementValueType.BCLoan,
           "BCSL",
           "800",
+          { disbursedAmountSubtracted: "50" },
+        ),
+        createFakeDisbursementValue(
+          DisbursementValueType.CanadaGrant,
+          "CSGP",
+          "1500",
         ),
       ],
     });
@@ -124,13 +131,23 @@ describe("Disbursement Schedule Service - Create disbursement", () => {
     });
     fakeReassessment.triggerType = AssessmentTriggerType.OfferingChange;
     fakeReassessment.application = savedApplication;
-    const [, savedReassessment] = await studentAssessmentRepo.save([
-      fakeOriginalAssessment,
-      fakeReassessment,
-    ]);
+    const [savedOriginalAssessment, savedReassessment] =
+      await studentAssessmentRepo.save([
+        fakeOriginalAssessment,
+        fakeReassessment,
+      ]);
     savedApplication.currentAssessment = fakeReassessment;
     savedApplication.applicationStatus = ApplicationStatus.completed;
     await applicationRepo.save(savedApplication);
+
+    const fakeOverawardForSameApplication = createFakeDisbursementOveraward();
+    fakeOverawardForSameApplication.student = savedStudent;
+    fakeOverawardForSameApplication.studentAssessment = savedOriginalAssessment;
+    fakeOverawardForSameApplication.originType =
+      DisbursementOverawardOriginType.ReassessmentOveraward;
+    const preExistingOveraward = await disbursementOverawardRepo.save(
+      fakeOverawardForSameApplication,
+    );
 
     // Act
     const createdDisbursements =
@@ -141,32 +158,67 @@ describe("Disbursement Schedule Service - Create disbursement", () => {
 
     // Asserts
 
+    // Assert overawards for the same application were deleted.
+    // Deleted means deletedAt has a value defined.
+    const softDeletedPreExistingOveraward =
+      await disbursementOverawardRepo.findOne({
+        select: {
+          id: true,
+          deletedAt: true,
+        },
+        where: {
+          id: preExistingOveraward.id,
+        },
+        withDeleted: true,
+      });
+    expect(softDeletedPreExistingOveraward).toBeDefined();
+    expect(softDeletedPreExistingOveraward.deletedAt).toBeTruthy();
+
     // Assert disbursement already paid subtracted.
     expect(createdDisbursements).toBeDefined();
     expect(createdDisbursements).toHaveLength(2);
     const [firstDisbursement, secondDisbursement] = createdDisbursements;
     // Assert firstDisbursement.
+    // For Canada Loan there will be an overaward of 250 that should not be created
+    // because there is a constraint to create overawards for student only if the debt
+    // is greater than 250.
     assertAwardDeduction(firstDisbursement, DisbursementValueType.CanadaLoan, {
-      valueAmount: 200,
+      valueAmount: 1000,
       disbursedAmountSubtracted: 1000,
-      overawardAmountSubtracted: 0,
     });
     assertAwardDeduction(firstDisbursement, DisbursementValueType.BCLoan, {
-      valueAmount: 0,
-      disbursedAmountSubtracted: 300,
-      overawardAmountSubtracted: null,
+      valueAmount: 250,
+      disbursedAmountSubtracted: 250,
     });
     // Assert secondDisbursement.
     assertAwardDeduction(secondDisbursement, DisbursementValueType.BCLoan, {
-      valueAmount: 0,
-      disbursedAmountSubtracted: 300,
-      overawardAmountSubtracted: null,
+      valueAmount: 350,
+      disbursedAmountSubtracted: 350,
     });
-    // Assert overaward creation.
+    // Grants do not generate overaward. The the Canada grant CSGP got 1500 already
+    // disbursed value so the student already received $300 extra. For this case the
+    // student will not receive the money for the grant but will no be charged either
+    // for the $300 already received.
+    assertAwardDeduction(
+      secondDisbursement,
+      DisbursementValueType.CanadaGrant,
+      {
+        valueAmount: 1200,
+        disbursedAmountSubtracted: 1200,
+      },
+    );
+
+    // Overaward asserts
     const overawards = await disbursementOverawardRepo.find({
       where: { student: { id: savedStudent.id } },
     });
-    assertOveraward(overawards, "BCSL", 200);
+    // Assert overaward not created for grants.
+    const grantOveraward = overawards.find(
+      (overaward) => overaward.disbursementValueCode === "CSGP",
+    );
+    expect(grantOveraward).toBeUndefined();
+    // Assert overaward creation.
+    assertOveraward(overawards, "BCSL", 150);
   });
 
   async function assertAwardDeduction(
@@ -174,7 +226,6 @@ describe("Disbursement Schedule Service - Create disbursement", () => {
     valueType: DisbursementValueType,
     assertValues: {
       valueAmount: number;
-      overawardAmountSubtracted?: number;
       disbursedAmountSubtracted?: number;
     },
   ) {
@@ -183,9 +234,6 @@ describe("Disbursement Schedule Service - Create disbursement", () => {
     );
     expect(award).toBeDefined();
     expect(+award.valueAmount).toBe(assertValues.valueAmount);
-    expect(award.overawardAmountSubtracted).toBe(
-      assertValues.overawardAmountSubtracted?.toString(),
-    );
     expect(award.disbursedAmountSubtracted).toBe(
       assertValues.disbursedAmountSubtracted?.toString(),
     );

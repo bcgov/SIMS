@@ -12,12 +12,12 @@ export function createFakeDisbursementPayload(): DisbursementSaveModel[] {
         {
           valueCode: "CSLF",
           valueType: DisbursementValueType.CanadaLoan,
-          valueAmount: 1200,
+          valueAmount: 1000,
         },
         {
           valueCode: "BCSL",
           valueType: DisbursementValueType.BCLoan,
-          valueAmount: 300,
+          valueAmount: 250,
         },
       ],
     },
@@ -28,7 +28,12 @@ export function createFakeDisbursementPayload(): DisbursementSaveModel[] {
         {
           valueCode: "BCSL",
           valueType: DisbursementValueType.BCLoan,
-          valueAmount: 300,
+          valueAmount: 350,
+        },
+        {
+          valueCode: "CSGP",
+          valueType: DisbursementValueType.CanadaGrant,
+          valueAmount: 1200,
         },
       ],
     },
