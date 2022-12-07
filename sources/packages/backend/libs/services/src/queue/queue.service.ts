@@ -32,7 +32,6 @@ export class QueueService {
    */
   async queueConfigurationModel(): Promise<QueueModel[]> {
     const queues = await this.getAllQueueConfigurations();
-    console.log(queues);
     return queues.map((queue) => ({
       name: queue.queueName,
       dashboardReadonly: queue.queueConfiguration.dashboardReadonly,
