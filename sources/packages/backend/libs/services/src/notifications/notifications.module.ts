@@ -12,6 +12,6 @@ import { NotificationService } from "./notification/notification.service";
     NotificationService,
     NotificationMessageService,
   ],
-  exports: [NotificationActionsService],
+  exports: [NotificationActionsService, NotificationService],
 })
 export class NotificationsModule {}

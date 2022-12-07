@@ -647,8 +647,11 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
         select: {
           id: true,
           studentAssessment: {
+            id: true,
             application: {
+              id: true,
               student: {
+                id: true,
                 user: {
                   id: true,
                   firstName: true,
@@ -658,6 +661,9 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
               },
             },
           },
+        },
+        relations: {
+          studentAssessment: { application: { student: { user: true } } },
         },
         where: { id: disbursementScheduleId },
       });

@@ -701,10 +701,15 @@ export class ApplicationService extends RecordDataModelService<Application> {
           "application.id",
           "currentAssessment.id",
           "student.id",
+          "user.id",
+          "user.firstName",
+          "user.lastName",
+          "user.email",
           "currentAssessment.assessmentWorkflowId",
         ])
         .innerJoin("application.currentAssessment", "currentAssessment")
         .innerJoin("application.student", "student")
+        .innerJoin("student.user", "user")
         .where("application.id = :applicationId", { applicationId })
         .andWhere("application.location.id = :locationId", { locationId })
         .andWhere("application.applicationStatus != :applicationStatus", {
@@ -1268,10 +1273,16 @@ export class ApplicationService extends RecordDataModelService<Application> {
         applicationStatus: ApplicationStatus.completed,
       },
     };
-    if (applicationId) {
+    if (applicationNumber) {
       findQuery.where = {
         ...findQuery.where,
         applicationNumber: applicationNumber,
+      };
+    }
+    if (applicationId) {
+      findQuery.where = {
+        ...findQuery.where,
+        id: applicationId,
       };
     }
     return this.repo.findOne(findQuery);

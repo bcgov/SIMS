@@ -35,3 +35,8 @@ export interface StudentNotification {
   toAddress: string;
   userId: number;
 }
+
+export interface NotificationProcessingStatus {
+  notifications: number;
+  successfullyProcessed: number;
+}

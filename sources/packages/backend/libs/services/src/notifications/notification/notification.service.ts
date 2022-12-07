@@ -6,9 +6,12 @@ import {
   NotificationMessage,
 } from "@sims/sims-db";
 import { DataSource, EntityManager, InsertResult, UpdateResult } from "typeorm";
-import { GCNotifyResult } from "./gc-notify.model";
 import { GCNotifyService } from "./gc-notify.service";
-import { SaveNotificationModel } from "./notification.model";
+import {
+  NotificationProcessingStatus,
+  SaveNotificationModel,
+} from "./notification.model";
+import { LoggerService, InjectLogger } from "@sims/utilities/logger";
 
 /**
  * While performing a possible huge amount of inserts,
@@ -90,37 +93,56 @@ export class NotificationService extends RecordDataModelService<Notification> {
   }
 
   /**
-   * Invokes the sendEmailNotification method of the GC Notification service.
-   * @param notificationId notification id used to retrieve the payload that will be passed
-   * as a parameter to the sendMailNotification method.
-   * @param entityManager optional repository that can be provided, for instance,
-   * to execute the command as part of an existing transaction. If not provided
-   * the local repository will be used instead.
-   * @returns GC Notify API call response.
+   * Process all the unsent notifications with a polling limit.
+   * Call GCNotify to send email notification.
+   * @param pollingLimit
    */
-  async sendEmailNotification(
-    notificationId: number,
-    entityManager?: EntityManager,
-  ): Promise<GCNotifyResult> {
-    const notificationRepo =
-      entityManager?.getRepository(Notification) ?? this.repo;
-    const notification = await notificationRepo.findOne({
-      select: {
-        id: true,
-        messagePayload: true,
-      },
-      where: {
-        id: notificationId,
-      },
-    });
-    // Call GC Notify send email method.
-    const gcNotifyResult = await this.gcNotifyService.sendEmailNotification(
-      notification.messagePayload,
+  async processUnsentNotifications(
+    pollingLimit: number,
+  ): Promise<NotificationProcessingStatus> {
+    const notificationsToProcess = await this.getNotificationsToProcess(
+      pollingLimit,
     );
-
-    // Update date sent column in notification table after sending email notification successfully.
-    await this.updateNotification(notification.id, entityManager);
-
-    return gcNotifyResult;
+    if (notificationsToProcess.length) {
+      this.logger.log(
+        `Processing ${notificationsToProcess.length} notifications`,
+      );
+    }
+    let successfullyProcessedCount = 0;
+    for (const notification of notificationsToProcess) {
+      // Call GC Notify send email method.
+      try {
+        await this.gcNotifyService.sendEmailNotification(
+          notification.messagePayload,
+        );
+        await this.updateNotification(notification.id);
+        ++successfullyProcessedCount;
+      } catch (error: unknown) {
+        this.logger.error(`Error while processing notification: ${error}`);
+      }
+    }
+    return {
+      notifications: notificationsToProcess.length,
+      successfullyProcessed: successfullyProcessedCount,
+    };
   }
+
+  /**
+   * Get notifications
+   * @param pollingLimit
+   * @returns
+   */
+  private async getNotificationsToProcess(
+    pollingLimit: number,
+  ): Promise<Notification[]> {
+    return this.repo
+      .createQueryBuilder("notification")
+      .select(["notification.id", "notification.messagePayload"])
+      .where("notification.dateSent IS NULL")
+      .limit(pollingLimit)
+      .getMany();
+  }
+
+  @InjectLogger()
+  logger: LoggerService;
 }

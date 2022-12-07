@@ -1,7 +1,10 @@
 require("../../../env_setup_apps");
 import { Module } from "@nestjs/common";
 import { QueueModule } from "@sims/services/queue";
-import { StartApplicationAssessmentProcessor } from "./processors";
+import {
+  StartApplicationAssessmentProcessor,
+  ProcessNotificationScheduler,
+} from "./processors";
 import { WorkflowClientService, ZeebeModule } from "@sims/services";
 import { DatabaseModule } from "@sims/sims-db";
 import { IER12IntegrationService } from "@sims/integrations/institution-integration/ier12-integration";
@@ -26,6 +29,7 @@ import { IER12IntegrationScheduler } from "./processors/schedulers/institution-i
     WorkflowClientService,
     IER12IntegrationScheduler,
     IER12IntegrationService,
+    ProcessNotificationScheduler,
     StudentAssessmentService,
     SshService,
   ],
