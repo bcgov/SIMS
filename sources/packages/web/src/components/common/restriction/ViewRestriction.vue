@@ -3,12 +3,7 @@
     <modal-dialog-base title="View restriction" :showDialog="showDialog">
       <template #content>
         <error-summary :errors="viewRestrictionForm.errors" />
-        <h4
-          class="category-header-medium mb-5"
-          v-if="!restrictionData.isActive"
-        >
-          Restriction information
-        </h4>
+        <h3 class="category-header-medium mb-5">Restriction information</h3>
         <content-group>
           <title-value
             propertyTitle="Category"
@@ -40,23 +35,16 @@
                 " /></v-col
           ></v-row>
         </content-group>
-        <template v-if="allowUserToEdit">
+        <template v-if="allowUserToEdit || !restrictionData.isActive">
           <v-divider></v-divider>
-          <v-textarea
-            v-if="allowUserToEdit"
-            label="Resolution reason"
-            placeholder="Long text..."
-            v-model="formModel.resolutionNote"
-            variant="outlined"
-            :rules="[(v) => checkResolutionNotesLength(v)]"
-          />
+          <h3 class="category-header-medium mb-5">Resolution</h3>
         </template>
-        <h4
-          class="category-header-medium mb-5"
-          v-if="!restrictionData.isActive"
-        >
-          Resolution
-        </h4>
+        <v-textarea
+          v-if="allowUserToEdit"
+          label="Resolution reason"
+          v-model="formModel.resolutionNote"
+          variant="outlined"
+          :rules="[(v) => checkResolutionNotesLength(v)]" />
         <content-group v-if="!restrictionData.isActive">
           <title-value
             propertyTitle="Resolution reason"
@@ -78,12 +66,12 @@
           <template #="{ notAllowed }">
             <footer-buttons
               :processing="processing"
-              primaryLabel="Resolve restriction"
-              :secondaryLabel="allowUserToEdit ? 'Cancel' : 'Close'"
-              @primaryClick="submit"
+              :primaryLabel="allowUserToEdit ? 'Resolve restriction' : 'Close'"
+              secondaryLabel="Cancel"
+              @primaryClick="allowUserToEdit ? submit() : cancel()"
               @secondaryClick="cancel"
               :disablePrimaryButton="notAllowed"
-              :showPrimaryButton="allowUserToEdit"
+              :showSecondaryButton="allowUserToEdit"
             />
           </template>
         </check-permission-role>
