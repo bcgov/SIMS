@@ -69,7 +69,7 @@ async function getConnectionFactory(
  * @returns bull module options with all existing queues.
  */
 function getQueueModules(): BullModuleAsyncOptions[] {
-  return Object.values(QueueNames).map((queue) => ({
+  return Object.values(QueueNames).map<BullModuleAsyncOptions>((queue) => ({
     name: queue,
     imports: [ConfigModule],
     useFactory: async (
