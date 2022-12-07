@@ -7,6 +7,10 @@ import {
   ProcessNotificationsResponseQueueOutDTO,
 } from "./models/notification.dto";
 import { BaseScheduler } from "../base-scheduler";
+import {
+  PROCESS_NOTIFICATIONS_POLLING_LIMIT,
+  PROCESS_NOTIFICATION_CLEANUP_PERIOD,
+} from "@sims/services/constants";
 
 /**
  * Process messages sent to send email notification.
@@ -34,15 +38,18 @@ export class ProcessNotificationScheduler extends BaseScheduler<ProcessNotificat
   }
 
   protected get payload(): ProcessNotificationsQueueInDTO {
-    return { pollingLimit: 100 };
+    return { pollingLimit: PROCESS_NOTIFICATIONS_POLLING_LIMIT };
   }
 
   @Process()
   async sendEmailNotification(
     job: Job<ProcessNotificationsQueueInDTO>,
   ): Promise<ProcessNotificationsResponseQueueOutDTO> {
-    return await this.notificationService.processUnsentNotifications(
-      job.data.pollingLimit,
-    );
+    const processNotificationResponse =
+      await this.notificationService.processUnsentNotifications(
+        job.data.pollingLimit,
+      );
+    this.schedulerQueue.clean(PROCESS_NOTIFICATION_CLEANUP_PERIOD, "completed");
+    return processNotificationResponse;
   }
 }
