@@ -6,8 +6,8 @@ import {
   BullModuleAsyncOptions,
 } from "@nestjs/bull";
 import Redis, { Cluster, RedisOptions } from "ioredis";
-import { QueueNames } from "../../../utilities/src/queue.constant";
 import { ConfigModule, ConfigService } from "@sims/utilities/config";
+import { QueueNames } from "@sims/utilities";
 
 /**
  * Creates root connection to redis standalone or redis cluster

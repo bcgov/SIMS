@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { QueueConfiguration } from "@sims/sims-db/entities/queue_configuration.model";
+import { QueueConfiguration } from "@sims/sims-db";
 import { Repository } from "typeorm";
 import { QueueModel } from "./model/queue.model";
 

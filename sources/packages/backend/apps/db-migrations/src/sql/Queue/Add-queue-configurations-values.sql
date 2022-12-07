@@ -285,8 +285,6 @@ VALUES
   (
     'process-notifications',
     '{
-        "attempts": 3,
-        "backoff": 180000,
         "dashboardReadonly": false,
         "cron": "* * * * *"
       }' :: json
