@@ -79,21 +79,21 @@ export default {
         resetIdleCheckerTimer();
       }
     };
-    let n = 0;
     const checkIdle = () => {
-      console.log("Seconds: ", ++n);
-      const idleTimeInMinutes = getDatesDiff(
+      const idleTimeInSeconds = getDatesDiff(
         lastActivityLogin.value,
         new Date(),
         "second",
-        true,
+        false,
       );
-      if (idleTimeInMinutes > minimumIdleTime.value) {
-        logoff();
-      } else if (
-        idleTimeInMinutes >=
-        minimumIdleTime.value - COUNT_DOWN_TIMER_FOR_LOGOUT
+      console.log("idleTimeInSeconds", idleTimeInSeconds);
+      if (
+        idleTimeInSeconds >
+        minimumIdleTime.value + COUNT_DOWN_TIMER_FOR_LOGOUT
       ) {
+        // Logoff immediately in case session is expired.
+        logoff();
+      } else if (idleTimeInSeconds >= minimumIdleTime.value) {
         confirmExtendTimeModal();
       }
     };
