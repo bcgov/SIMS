@@ -141,7 +141,8 @@ export class NotificationService extends RecordDataModelService<Notification> {
       if (promises.length > 0) {
         // Waits for methods, if any outside the loop.
         const processingResult = await Promise.all(promises);
-        notificationsSuccessfullyProcessed +
+        notificationsSuccessfullyProcessed =
+          notificationsSuccessfullyProcessed +
           processingResult.filter((result) => result).length;
       }
       //Assign the value for total notifications processed.
@@ -150,17 +151,19 @@ export class NotificationService extends RecordDataModelService<Notification> {
 
       // Calling process notification in recursion until all the notifications
       // are processed.
-      await this.processUnsentNotifications(
+      const response = await this.processUnsentNotifications(
         pollingLimit,
         notificationsProcessed,
         notificationsSuccessfullyProcessed,
       );
-    } else {
-      return {
-        notificationsProcessed,
-        notificationsSuccessfullyProcessed,
-      };
+      notificationsProcessed = response.notificationsProcessed;
+      notificationsSuccessfullyProcessed =
+        response.notificationsSuccessfullyProcessed;
     }
+    return {
+      notificationsProcessed,
+      notificationsSuccessfullyProcessed,
+    };
   }
 
   /**

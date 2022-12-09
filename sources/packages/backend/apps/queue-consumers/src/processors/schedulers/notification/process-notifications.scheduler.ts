@@ -38,7 +38,7 @@ export class ProcessNotificationScheduler extends BaseScheduler<ProcessNotificat
   }
 
   @Process()
-  async sendEmailNotification(
+  async processNotifications(
     job: Job<ProcessNotificationsQueueInDTO>,
   ): Promise<ProcessNotificationsResponseQueueOutDTO> {
     const processNotificationResponse =
