@@ -165,13 +165,15 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
     const queueConfig = await this.queueService.getQueueConfiguration(
       this.startAssessmentQueue.name as QueueNames,
     );
-    // todo: ann test the below queueConfig, if its consideed as scheduler
     await this.startAssessmentQueue.add(
       {
         workflowName: assessment.application.data.workflowName,
         assessmentId: assessment.id,
       },
-      queueConfig,
+      {
+        attempts: queueConfig.attempts,
+        backoff: queueConfig.backoff,
+      },
     );
   }
 

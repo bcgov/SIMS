@@ -30,7 +30,6 @@ import {
   DynamicFormController,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
-import { CraIntegrationModule } from "./cra-integration/cra-integration.module";
 import { MSFAAIntegrationModule } from "./esdc-integration/msfaa-integration/msfaa-integration.module";
 import { SFASIntegrationModule } from "./sfas-integration/sfas-integration.module";
 import { ECertIntegrationModule } from "./esdc-integration/e-cert-integration/e-cert-integration.module";
@@ -62,7 +61,6 @@ import { QueueModule } from "@sims/services/queue";
     AuthModule,
     ZeebeModule.forRoot(),
     NotificationsModule,
-    CraIntegrationModule,
     MSFAAIntegrationModule,
     SFASIntegrationModule,
     ECertIntegrationModule,
