@@ -2,7 +2,7 @@ import BaseMethods from "./BaseMethods";
 
 export default class DashboardInstitutionObject extends BaseMethods {
   institutionLandingPage() {
-    return this.getElementByCyId("institutionHeader");
+    return this.getElementByCyId("institutionWelcomePage");
   }
 
   clickOnSideBar(location: string, menuItem: string) {
@@ -18,6 +18,10 @@ export default class DashboardInstitutionObject extends BaseMethods {
 
   manageInstitutionProfileHeader() {
     return this.getElementByCyId("manageProfileHeader");
+  }
+
+  manageInstitutionMyProfileHeader() {
+    return this.getElementByCyId("institutionUserProfileHeader");
   }
 
   manageInstitutionButton() {
@@ -39,7 +43,7 @@ export default class DashboardInstitutionObject extends BaseMethods {
   iconButton() {
     return this.getElementByCyId("settings");
   }
-  
+
   dashboardWelcomeMessage() {
     return cy.contains("Welcome!");
   }

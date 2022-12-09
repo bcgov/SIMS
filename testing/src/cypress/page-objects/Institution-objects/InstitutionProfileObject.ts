@@ -1,4 +1,6 @@
-export default class InstitutionProfileObject {
+import BaseMethods from "./BaseMethods";
+
+export default class InstitutionProfileObject extends BaseMethods {
   manageProfileButton() {
     return cy.contains("Manage Profile");
   }
@@ -8,15 +10,31 @@ export default class InstitutionProfileObject {
   }
 
   legalOperatingNameInputText() {
-    return cy.get("[data-cy='legalOperatingName']");
+    return this.getElementByCyId("legalOperatingName");
+  }
+
+  operatingName() {
+    return this.getElementByCyId("operatingName");
+  }
+
+  institutionType() {
+    return this.getElementByCyId("institutionType");
+  }
+
+  institutionRegulatingBody() {
+    return this.getElementByCyId("regulatingBody").parent();
+  }
+
+  institutionEstablishedDate() {
+    return this.getElementByCyId("establishedDate");
   }
 
   primaryEmailInputText() {
-    return cy.get("[data-cy='primaryContactEmail']");
+    return this.getElementByCyId("primaryContactEmail");
   }
 
   submitButton() {
-    return cy.get("[data-cy='submit']]");
+    return this.getElementByCyId("submit");
   }
 
   unexpectedErrorMessage() {
@@ -24,11 +42,11 @@ export default class InstitutionProfileObject {
   }
 
   primaryPhoneNumberInputText() {
-    return cy.get("[data-cy='primaryPhone']");
+    return this.getElementByCyId("primaryPhone");
   }
 
   institutionWebsiteInputText() {
-    return cy.get("[data-cy='website']");
+    return this.getElementByCyId("website");
   }
 
   institutionRegulationBodyDropdown() {
@@ -44,66 +62,98 @@ export default class InstitutionProfileObject {
   }
 
   firstNameInstitutionInputText() {
-    return cy.get("[data-cy='primaryContactFirstName']");
+    return this.getElementByCyId("primaryContactFirstName");
   }
 
   lastNameInstitutionInputText() {
-    return cy.get("[data-cy='primaryContactLastName']");
+    return this.getElementByCyId("primaryContactLastName");
   }
 
   emailInstitutionInputText() {
-    return cy.get("[data-cy='primaryContactEmail']");
+    return this.getElementByCyId("primaryContactEmail");
   }
 
   phoneNumberInstitutionInputText() {
-    return cy.get("[data-cy='primaryContactPhone']");
+    return this.getElementByCyId("primaryContactPhone");
   }
 
   firstNameAuthorizedInputText() {
-    return cy.get("[data-cy='primaryContactFirstName']");
+    return this.getElementByCyId("primaryContactFirstName");
   }
 
   lastNameAuthorizedInputText() {
-    return cy.get("[data-cy='primaryContactLastName]");
+    return this.getElementByCyId("primaryContactLastName");
   }
 
   emailAuthorizedInputText() {
-    return cy.get("[data-cy='primaryContactEmail']");
+    return this.getElementByCyId("primaryContactEmail");
   }
 
   phoneNumberAuthorizedInputText() {
-    return cy.get("[data-cy='primaryContactPhone]");
+    return this.getElementByCyId("primaryContactPhone");
   }
 
   addressInstitutionInputText() {
-    return cy.get("[data-cy='addressLine1']");
+    return this.getElementByCyId("addressLine1");
   }
 
   cityInputText() {
-    return cy.get("[data-cy='city']");
+    return this.getElementByCyId("city");
   }
 
   postalInputText() {
-    return cy.get("[data-cy='canadaPostalCode']");
+    return this.getElementByCyId("canadaPostalCode");
+  }
+
+  countryInput() {
+    return this.getElementByCyId("selectedCountry");
   }
 
   countryInputText() {
-    return cy.xpath("//div[@id='e96525o']//div[@role='combobox']");
+    return this.getElementByCyId("selectedCountry").parent();
   }
 
   countrySearchInputText(country: string) {
     return cy
-      .xpath("//div[@id='e96525o']//input[@role='textbox']")
-      .type(country);
+      .get("[role='textbox']")
+      .eq(1)
+      .clear()
+      .type(country, { force: true });
+  }
+
+  countryDropdownMenu() {
+    return this.getElementByCyId("selectedCountry").parent().parent();
   }
 
   provinceInputText() {
-    return cy.xpath("//div[@id='etbe9cx']//div[@role='combobox']");
+    return this.getElementByCyId("provinceState").parent();
   }
 
   provinceSearchInputText(province: string) {
     return cy
-      .xpath("//div[@id='etbe9cx']//input[@role='textbox']")
-      .type(province);
+      .get("[role='textbox']")
+      .eq(2)
+      .clear()
+      .type(province, { force: true });
+  }
+
+  provinceDropdownMenu() {
+    return this.getElementByCyId("provinceState").parent().parent();
+  }
+
+  otherCountryInputText() {
+    return this.getElementByCyId("otherCountry");
+  }
+
+  address1IsRequiredErrorMessage() {
+    return cy.contains("Address line 1 is required");
+  }
+
+  countryIsRequiredErrorMessage() {
+    return cy.contains("Country is required");
+  }
+
+  cityIsRequiredErrorMessage() {
+    return cy.contains("City is required");
   }
 }
