@@ -12,7 +12,7 @@ import {
 import { Brackets, DataSource } from "typeorm";
 import { InjectQueue } from "@nestjs/bull";
 import { Queue } from "bull";
-import { CustomNamedError } from "@sims/utilities";
+import { CustomNamedError, QueueNames } from "@sims/utilities";
 import {
   ASSESSMENT_ALREADY_IN_PROGRESS,
   ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE,
@@ -22,7 +22,8 @@ import {
   AssessmentHistory,
   StudentAssessmentStatus,
 } from "./student-assessment.models";
-import { QueueNames, StartAssessmentQueueInDTO } from "@sims/services/queue";
+import { StartAssessmentQueueInDTO } from "@sims/services/queue";
+import { QUEUE_RETRY_DEFAULT_CONFIG } from "@sims/services/constants";
 
 /**
  * Manages the student assessment related operations.
@@ -162,10 +163,13 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
       );
     }
 
-    await this.startAssessmentQueue.add({
-      workflowName: assessment.application.data.workflowName,
-      assessmentId: assessment.id,
-    });
+    await this.startAssessmentQueue.add(
+      {
+        workflowName: assessment.application.data.workflowName,
+        assessmentId: assessment.id,
+      },
+      QUEUE_RETRY_DEFAULT_CONFIG,
+    );
   }
 
   /**

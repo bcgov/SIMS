@@ -14,6 +14,7 @@ import {
   DatabaseConfiguration,
   RedisConfiguration,
   UserPasswordCredential,
+  QueueSchedulerCrons,
 } from "./config.models";
 
 @Injectable()
@@ -223,10 +224,25 @@ export class ConfigService {
   get queueConsumersPort(): number {
     return this.getCachedConfig(
       "queueConsumersPortConfig",
-      +process.env.QUEUE_CONSUMERS_PORT || 3001,
+      +process.env.QUEUE_CONSUMERS_PORT || 3010,
     );
   }
 
+  /**
+   * Queue prefix.
+   */
+  get queuePrefix(): string {
+    return this.getCachedConfig("queuePrefixConfig", process.env.QUEUE_PREFIX);
+  }
+
+  /**
+   * Queue scheduler crons.
+   */
+  get queueSchedulerCrons(): QueueSchedulerCrons {
+    return this.getCachedConfig("queueSchedulerCronsConfig", {
+      ierCron: process.env.SCHEDULERS_IER_CRON || "0 17 * * *",
+    });
+  }
   /**
    * Avoids reading the env configuration every time and creates
    * a property to store the value and keep reading from it.

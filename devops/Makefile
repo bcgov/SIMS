@@ -21,20 +21,40 @@ export BYPASS_CRA_INCOME_VERIFICATION := $(or $(BYPASS_CRA_INCOME_VERIFICATION),
 export BYPASS_APPLICATION_SUBMIT_VALIDATIONS := $(or $(BYPASS_APPLICATION_SUBMIT_VALIDATIONS), false)
 export SWAGGER_ENABLED := $(or ${SWAGGER_ENABLED}, true)
 export APPLICATION_ARCHIVE_DAYS := $(or ${APPLICATION_ARCHIVE_DAYS}, 43)
-export API := $(or ${API}, api-$(APP_NAME))
-export WORKERS := $(or ${WORKERS}, workers-$(APP_NAME))
-export QUEUE_CONSUMERS := $(or ${QUEUE_CONSUMERS}, queue-consumers-$(APP_NAME))
-export WEB := $(or ${WEB}, web-$(APP_NAME))
 export API_PORT := $(or ${API_PORT}, 7070)
 export QUEUE_CONSUMERS_PORT := $(or ${QUEUE_CONSUMERS_PORT}, 7000)
 export WEB_PORT := $(or ${WEB_PORT}, 3030)
 export DATABASE_NAME_KEY := $(or ${DATABASE_NAME_KEY}, database-name)
 export DB_NAME := $(or ${DB_NAME}, SIMSDB)
-export SWAGGER_NAME := $(or ${SWAGGER_NAME}, swagger)
 export API_BUILD_REF := $(or ${API_BUILD_REF}, api-${APP_NAME})
 export WORKERS_BUILD_REF := $(or ${WORKERS_BUILD_REF}, workers-${APP_NAME})
 export QUEUE_CONSUMERS_BUILD_REF := $(or ${QUEUE_CONSUMERS_BUILD_REF}, queue-consumers-${APP_NAME})
 export WEB_BUILD_REF := $(or ${WEB_BUILD_REF}, web-${APP_NAME})
+export FORMS_BUILD_REF := $(or ${FORMS_BUILD_REF}, forms)
+export FORMIO_ROOT_EMAIL := $(or ${FORMIO_ROOT_EMAIL}, dev_sabc@gov.bc.ca)
+export MONGODB_URI := $(or ${MONGODB_URI}, $$MONGODB_URI)
+export QUEUE_PREFIX := $(or $(QUEUE_PREFIX), {sims-local})
+export SCHEDULERS_IER_CRON := $(or $(SCHEDULERS_IER_CRON), '0 17 * * *')
+
+define API
+"$(HOST_PREFIX)api-$(APP_NAME)"
+endef
+
+define WORKERS
+"$(HOST_PREFIX)workers-$(APP_NAME)"
+endef
+
+define WEB
+"$(HOST_PREFIX)web-$(APP_NAME)"
+endef
+
+define QUEUE_CONSUMERS
+"$(HOST_PREFIX)queue-consumers-$(APP_NAME)"
+endef
+
+define SWAGGER_NAME
+"$(HOST_PREFIX)swagger"
+endef
 
 define QA_DB_NAME
 "QASIMSDB"
@@ -56,108 +76,40 @@ define DB_SERVICE_NAME
 "patroni-master"
 endef
 
-define FORMSFLOW_FORMS_NAME
-"forms-flow-forms"
-endef
-
-define FORMSFLOW_BPM_NAME
-"forms-flow-bpm"
-endef
-
-define FORMSFLOW_API_NAME
-"forms-flow-api"
-endef
-
-define FORMSFLOW_WEB_NAME
-"forms-flow-web"
+define FORMS_NAME
+"$(HOST_PREFIX)forms"
 endef
 
 define HAMONGO_DB_TEMPLATE_PATH
-"openshift/forms-flow-ai/database/mongo-ha.yml"
+"openshift/database/mongo-ha.yml"
 endef
 
 define HAMONGO_DB_PARAM_PATH
-"openshift/forms-flow-ai/database/mongo-ha-param.yml"
+"openshift/database/mongo-ha-param.yml"
 endef
 
-define SECRETS_PATRONI_DB_TEMPLATE_PATH
-"openshift/forms-flow-ai/secrets/ffa-patroni-secrets.yml"
+define FORMS_URL
+"$(HOST_PREFIX)aest-forms.$(DOMAIN)"
 endef
 
-define CREATE_FFA_DB_TEMPLATE_PATH
-"openshift/forms-flow-ai/database/create-ffa-db.yml"
-endef
-
-define FFA_BPM_DB_NAME
-"FFA_BPM_DB"
-endef
-
-define FFA_API_DB_NAME
-"FFA_API_DB"
-endef
-
-define SECRETS_TEMPLATE_PATH
-"openshift/forms-flow-ai/secrets/secrets.yml"
-endef
-
-define SECRETS_PARAM_PATH
-"openshift/forms-flow-ai/secrets/secrets-param.yml"
-endef
-
-define FORM_AI_BUILD_TEMPLATE_PATH
-"openshift/forms-flow-ai/build.yml"
-endef
-
-define FORM_AI_FORMS_DEPLOY_TEMPLATE_PATH
-"openshift/forms-flow-ai/forms-deploy.yml"
-endef
-
-define FORM_AI_FORMS_URL
-"$(HOST_PREFIX)aest-ffa-forms.$(DOMAIN)"
-endef
-
-define FORM_AI_BPM_DEPLOY_TEMPLATE_PATH
-"openshift/forms-flow-ai/bpm-deploy.yml"
-endef
-
-define FORM_AI_BPM_URL
-"$(HOST_PREFIX)aest-ffa-bpm.$(DOMAIN)"
-endef
-
-define FORM_AI_API_DEPLOY_TEMPLATE_PATH
-"openshift/forms-flow-ai/api-deploy.yml"
-endef
-
-define FORM_AI_API_URL
-"$(HOST_PREFIX)aest-ffa-api.$(DOMAIN)"
-endef
-
-define FORM_AI_WEB_DEPLOY_TEMPLATE_PATH
-"openshift/forms-flow-ai/web-deploy.yml"
-endef
-
-define FORM_AI_WEB_URL
-"$(HOST_PREFIX)aest-ffa-serviceflow.$(DOMAIN)"
-endef
-
-define WEB_PARAM_PATH
-"openshift/forms-flow-ai/web-config.yml"
-endef
-
-define FORMSFLOW_SOURCE_REPO_URL
-"https://github.com/AOT-Technologies/forms-flow-ai.git"
-endef
-
-define FORMSFLOW_SOURCE_REPO_BRANCH
-"master"
+define SOURCE_REPOSITORY_URL
+"https://github.com/bcgov/SIMS.git"
 endef
 
 define SOURCE_REPOSITORY_REF
 "main"
 endef
 
+define FORMIO_SOURCE_REPO_URL
+"https://github.com/formio/formio.git"
+endef
+
+define FORMIO_SOURCE_REPO_TAG
+"v2.5.3"
+endef
+
 define SOURCE_CONTEXT_DIR
-"devops/forms-flow-ai/"
+"./sources/packages/"
 endef
 
 define rollout_and_wait
@@ -180,26 +132,10 @@ oc-deploy-web: | print-status deploy-web
 
 oc-create-qa-api-db: | print-status create-qa-api-db
 
-oc-build-forms-flow-forms: | print-status build-forms-flow-forms
-oc-build-forms-flow-bpm: | print-status build-forms-flow-bpm
-oc-build-forms-flow-api: | print-status build-forms-flow-api
-oc-build-forms-flow-web: | print-status build-forms-flow-web
-
+#Build and deploy forms.
+oc-build-forms: | print-status build-forms
 oc-deploy-ha-mongo: | print-status deploy-ha-mongo
-oc-deploy-forms-flow-db-secrets: | print-status deploy-forms-flow-db-secrets
-oc-create-ffa-bpm-db: | print-status create-ffa-bpm-db
-oc-create-ffa-api-db: | print-status create-ffa-api-db
-oc-deploy-forms-flow-secrets: | print-status deploy-forms-flow-secrets
-
-oc-deploy-forms-flow-forms: | print-status deploy-forms-flow-forms
-oc-deploy-forms-flow-bpm: | print-status deploy-forms-flow-bpm
-oc-deploy-forms-flow-api: | print-status deploy-forms-flow-api
-oc-deploy-forms-flow-web: | print-status deploy-forms-flow-web
-
-oc-build-forms-flow-ai: | print-status build-forms-flow-forms build-forms-flow-bpm build-forms-flow-api build-forms-flow-web
-oc-forms-flow-ai-db: | print-status oc-deploy-forms-flow-db-secrets oc-create-ffa-bpm-db oc-create-ffa-api-db
-oc-forms-flow-ai-secrets: | print-status oc-deploy-forms-flow-secrets
-oc-deploy-forms-flow-ai: | print-status deploy-forms-flow-forms deploy-forms-flow-bpm deploy-forms-flow-api deploy-forms-flow-web
+oc-deploy-forms: | print-status deploy-forms
 
 # Create/delete backup structure
 # Create/delete config map shared accross postgresql and mongodb.
@@ -295,50 +231,54 @@ init-artifactory-secret-credential:
 	@oc secrets link builder artifactory-secret-credential
 
 build-api:
-	test -n "$(BUILD_REF)"
 	test -n "$(BUILD_NAMESPACE)"
+	test -n "$(BUILD_REF)"
+	test -n "$(BUILD_TAG)"
+	test -n "$(API_BUILD_REF)"
 	@echo "+\n++ BUILDING API with tag: $(BUILD_TAG)\n+"
-	@oc -n $(BUILD_NAMESPACE) process -f $(BUILD_TEMPLATE_PATH) -p TAG=$(BUILD_TAG) -p SOURCE_REPOSITORY_REF=$(BUILD_REF) -p BASE_IMAGE_NAME="nodejs-16" -p BASE_IMAGE_TAG="1" -p BASE_IMAGE_REPO="artifacts.developer.gov.bc.ca/redhat-docker-remote/ubi8/" -p SOURCE_CONTEXT_DIR=sources/packages/backend -p DOCKER_FILE_PATH=apps/api/Dockerfile -p NAME=$(API) | oc -n $(BUILD_NAMESPACE) apply -f -
-	@oc -n $(BUILD_NAMESPACE) start-build bc/$(API) --wait
+	@oc -n $(BUILD_NAMESPACE) process -f $(BUILD_TEMPLATE_PATH) -p TAG=$(BUILD_TAG) -p SOURCE_REPOSITORY_REF=$(BUILD_REF) -p BASE_IMAGE_NAME="nodejs-16" -p BASE_IMAGE_TAG="1" -p BASE_IMAGE_REPO="artifacts.developer.gov.bc.ca/redhat-docker-remote/ubi8/" -p SOURCE_CONTEXT_DIR=$(SOURCE_CONTEXT_DIR)backend -p DOCKER_FILE_PATH=apps/api/Dockerfile -p NAME=$(API_BUILD_REF) | oc -n $(BUILD_NAMESPACE) apply -f -
+	@oc -n $(BUILD_NAMESPACE) start-build bc/$(API_BUILD_REF) --wait
 
 build-workers:
 	test -n "$(BUILD_NAMESPACE)"
 	test -n "$(BUILD_REF)"
 	test -n "$(BUILD_TAG)"
-	test -n "$(WORKERS)"
+	test -n "$(WORKERS_BUILD_REF)"
 	@echo "+\n++ BUILDING WORKERS with tag: $(BUILD_TAG)\n+"
-	@oc -n $(BUILD_NAMESPACE) process -f $(BUILD_TEMPLATE_PATH) -p TAG=$(BUILD_TAG) -p SOURCE_REPOSITORY_REF=$(BUILD_REF) -p BASE_IMAGE_NAME="nodejs-16" -p BASE_IMAGE_TAG="1" -p BASE_IMAGE_REPO="artifacts.developer.gov.bc.ca/redhat-docker-remote/ubi8/" -p SOURCE_CONTEXT_DIR=sources/packages/backend -p DOCKER_FILE_PATH=apps/workers/Dockerfile -p NAME=$(WORKERS) | oc -n $(BUILD_NAMESPACE) apply -f -
-	@oc -n $(BUILD_NAMESPACE) start-build bc/$(WORKERS) --wait
+	@oc -n $(BUILD_NAMESPACE) process -f $(BUILD_TEMPLATE_PATH) -p TAG=$(BUILD_TAG) -p SOURCE_REPOSITORY_REF=$(BUILD_REF) -p BASE_IMAGE_NAME="nodejs-16" -p BASE_IMAGE_TAG="1" -p BASE_IMAGE_REPO="artifacts.developer.gov.bc.ca/redhat-docker-remote/ubi8/" -p SOURCE_CONTEXT_DIR=$(SOURCE_CONTEXT_DIR)backend -p DOCKER_FILE_PATH=apps/workers/Dockerfile -p NAME=$(WORKERS_BUILD_REF) | oc -n $(BUILD_NAMESPACE) apply -f -
+	@oc -n $(BUILD_NAMESPACE) start-build bc/$(WORKERS_BUILD_REF) --wait
 
 build-queue-consumers:
 	test -n "$(BUILD_NAMESPACE)"
 	test -n "$(BUILD_REF)"
 	test -n "$(BUILD_TAG)"
-	test -n "$(QUEUE_CONSUMERS)"
+	test -n "$(QUEUE_CONSUMERS_BUILD_REF)"
 	@echo "+\n++ BUILDING QUEUE_CONSUMERS with tag: $(BUILD_TAG)\n+"
-	@oc -n $(BUILD_NAMESPACE) process -f $(BUILD_TEMPLATE_PATH) -p TAG=$(BUILD_TAG) -p SOURCE_REPOSITORY_REF=$(BUILD_REF) -p BASE_IMAGE_NAME="nodejs-16" -p BASE_IMAGE_TAG="1" -p BASE_IMAGE_REPO="artifacts.developer.gov.bc.ca/redhat-docker-remote/ubi8/" -p SOURCE_CONTEXT_DIR=sources/packages/backend -p DOCKER_FILE_PATH=apps/queue-consumers/Dockerfile -p NAME=$(QUEUE_CONSUMERS) | oc -n $(BUILD_NAMESPACE) apply -f -
-	@oc -n $(BUILD_NAMESPACE) start-build bc/$(QUEUE_CONSUMERS) --wait
+	@oc -n $(BUILD_NAMESPACE) process -f $(BUILD_TEMPLATE_PATH) -p TAG=$(BUILD_TAG) -p SOURCE_REPOSITORY_REF=$(BUILD_REF) -p BASE_IMAGE_NAME="nodejs-16" -p BASE_IMAGE_TAG="1" -p BASE_IMAGE_REPO="artifacts.developer.gov.bc.ca/redhat-docker-remote/ubi8/" -p SOURCE_CONTEXT_DIR=$(SOURCE_CONTEXT_DIR)backend -p DOCKER_FILE_PATH=apps/queue-consumers/Dockerfile -p NAME=$(QUEUE_CONSUMERS_BUILD_REF) | oc -n $(BUILD_NAMESPACE) apply -f -
+	@oc -n $(BUILD_NAMESPACE) start-build bc/$(QUEUE_CONSUMERS_BUILD_REF) --wait
 
 build-web:
-	test -n "$(BUILD_REF)"
 	test -n "$(BUILD_NAMESPACE)"
+	test -n "$(BUILD_REF)"
+	test -n "$(BUILD_TAG)"
+	test -n "$(WEB_BUILD_REF)"
 	@echo "+\n++ BUILDING WEB with tag: $(BUILD_TAG)\n+"
-	@oc -n $(BUILD_NAMESPACE) process -f $(BUILD_TEMPLATE_PATH) -p TAG=$(BUILD_TAG) -p SOURCE_REPOSITORY_REF=$(BUILD_REF) -p BASE_IMAGE_NAME="nodejs-16" -p BASE_IMAGE_TAG="1" -p BASE_IMAGE_REPO="artifacts.developer.gov.bc.ca/redhat-docker-remote/ubi8/" -p SOURCE_CONTEXT_DIR=sources/packages/web -p NAME=$(WEB) | oc -n $(BUILD_NAMESPACE) apply -f -
-	@oc -n $(BUILD_NAMESPACE) start-build bc/$(WEB) --wait
+	@oc -n $(BUILD_NAMESPACE) process -f $(BUILD_TEMPLATE_PATH) -p TAG=$(BUILD_TAG) -p SOURCE_REPOSITORY_REF=$(BUILD_REF) -p BASE_IMAGE_NAME="nodejs-16" -p BASE_IMAGE_TAG="1" -p BASE_IMAGE_REPO="artifacts.developer.gov.bc.ca/redhat-docker-remote/ubi8/" -p SOURCE_CONTEXT_DIR=$(SOURCE_CONTEXT_DIR)web -p NAME=$(WEB_BUILD_REF) | oc -n $(BUILD_NAMESPACE) apply -f -
+	@oc -n $(BUILD_NAMESPACE) start-build bc/$(WEB_BUILD_REF) --wait
 
 init-patroni:
 	@echo "++\n Init Patroni in $(NAMESPACE) \n++"
-	@oc -n $(NAMESPACE) process -f openshift/patroni-pre-req.yml | oc -n $(NAMESPACE) apply -f -
+	@oc -n $(NAMESPACE) process -f openshift/database/patroni-pre-req.yml | oc -n $(NAMESPACE) apply -f -
 
 init-redis:
 	@echo "++\n Init Redis in $(NAMESPACE) \n++"
-	@oc -n $(NAMESPACE) process -f openshift/redis-secrets.yml | oc -n $(NAMESPACE) apply -f -
+	@oc -n $(NAMESPACE) process -f openshift/database/redis-secrets.yml | oc -n $(NAMESPACE) apply -f -
 
 deploy-patroni:
-	@oc -n $(NAMESPACE) process -f openshift/patroni-deploy.yml -p BUILD_NAMESPACE=$(BUILD_NAMESPACE) -p IMAGE_STREAM_TAG=patroni:12-latest | oc -n $(NAMESPACE) apply -f -
+	@oc -n $(NAMESPACE) process -f openshift/database/patroni-deploy.yml -p BUILD_NAMESPACE=$(BUILD_NAMESPACE) -p IMAGE_STREAM_TAG=patroni:12-latest | oc -n $(NAMESPACE) apply -f -
 
 deploy-redis:
-	@oc -n $(NAMESPACE) process -f openshift/redis-ha-deploy.yml -p IMAGE_NAME="redis" -p IMAGE_TAG="6.2.7-alpine" -p IMAGE_REGISTRY="artifacts.developer.gov.bc.ca/docker-remote" | oc -n $(NAMESPACE) apply -f -
+	@oc -n $(NAMESPACE) process -f openshift/database/redis-ha-deploy.yml -p IMAGE_NAME="redis" -p IMAGE_TAG="6.2.7-alpine" -p IMAGE_REGISTRY="artifacts.developer.gov.bc.ca/docker-remote" | oc -n $(NAMESPACE) apply -f -
 
 # Command to initialize the redis cluster.
 # Make sure that all the redis pods are up and running before initializing the cluster.
@@ -349,14 +289,14 @@ create-db:
 	test -n $(DB_NAME)
 	test -n $(NAMESPACE)
 	@echo "+\n++ Creating DB ($(DB_NAME)) in $(NAMESPACE) patroni db cluster"
-	@oc -n $(NAMESPACE) process -f openshift/createdb-job.yml -p DB_NAME=$(DB_NAME) -p BUILD_NAMESPACE=$(BUILD_NAMESPACE) -p JOB_NAME=main | oc -n $(NAMESPACE) apply -f -
+	@oc -n $(NAMESPACE) process -f openshift/database/createdb-job.yml -p DB_NAME=$(DB_NAME) -p BUILD_NAMESPACE=$(BUILD_NAMESPACE) -p JOB_NAME=main | oc -n $(NAMESPACE) apply -f -
 
 create-new-db:
 	test -n $(NEW_DB)
 	test -n $(NAMESPACE)
 	test -n $(JOB_NAME)
 	@echo "+\n++ Creating DB ($(NEW_DB)) in $(NAMESPACE) patroni db cluster"
-	@oc -n $(NAMESPACE) process -f openshift/createdb-job.yml -p DB_NAME=$(NEW_DB) -p BUILD_NAMESPACE=$(BUILD_NAMESPACE) -p JOB_NAME=$(JOB_NAME) | oc -n $(NAMESPACE) apply -f -
+	@oc -n $(NAMESPACE) process -f openshift/database/createdb-job.yml -p DB_NAME=$(NEW_DB) -p BUILD_NAMESPACE=$(BUILD_NAMESPACE) -p JOB_NAME=$(JOB_NAME) | oc -n $(NAMESPACE) apply -f -
 
 deploy-api:
 	test -n "$(NAMESPACE)"
@@ -364,16 +304,15 @@ deploy-api:
 	test -n "$(KEYCLOAK_REALM)"	
 	test -n "$(KEYCLOAK_AUTH_URL)"
 	test -n "$(BCeID_WEB_SERVICE_WSDL)"
-	test -n "$(RULE_ENGINE_URL)"
-	test -n "$(FORMS_URL)"
+	test -n "$(FORMS_SECRET_NAME)"
 	test -n "$(SITE_MINDER_LOGOUT_URL)"
-	test -n "$(FORMS_FLOW_API_URL)"
 	test -n "$(ATBC_LOGIN_ENDPOINT)"
 	test -n "$(ATBC_ENDPOINT)"
 	test -n "$(DATABASE_NAME_KEY)"
 	test -n "$(API)"
 	test -n "$(API_SECRET_NAME)"
 	test -n "$(SWAGGER_NAME)"
+	test -n "$(QUEUE_PREFIX)"
 	test -n "$(API_PORT)"
 	@echo "+\n++ Deploying API with tag: $(BUILD_TAG)\n+"
 	@oc -n $(NAMESPACE) process -f openshift/api-deploy.yml \
@@ -387,18 +326,17 @@ deploy-api:
 		-p KEYCLOAK_REALM=$(KEYCLOAK_REALM) \
 		-p KEYCLOAK_AUTH_URL=$(KEYCLOAK_AUTH_URL) \
 		-p BCeID_WEB_SERVICE_WSDL=$(BCeID_WEB_SERVICE_WSDL) \
-		-p RULE_ENGINE_URL=$(RULE_ENGINE_URL) \
-		-p FORMS_URL=$(FORMS_URL) \
+		-p FORMS_SECRET_NAME=$(FORMS_SECRET_NAME) \
 		-p BUILD_TAG=$(BUILD_TAG) \
 		-p DATABASE_NAME_KEY=$(DATABASE_NAME_KEY) \
 		-p SITE_MINDER_LOGOUT_URL=$(SITE_MINDER_LOGOUT_URL) \
-		-p FORMS_FLOW_API_URL=$(FORMS_FLOW_API_URL) \
 		-p ATBC_LOGIN_ENDPOINT=$(ATBC_LOGIN_ENDPOINT) \
 		-p ATBC_ENDPOINT=$(ATBC_ENDPOINT) \
 		-p BYPASS_APPLICATION_SUBMIT_VALIDATIONS=$(BYPASS_APPLICATION_SUBMIT_VALIDATIONS) \
 		-p SWAGGER_ENABLED=$(SWAGGER_ENABLED) \
 		-p APPLICATION_ARCHIVE_DAYS=$(APPLICATION_ARCHIVE_DAYS) \
 		-p SWAGGER_NAME=$(SWAGGER_NAME) \
+		-p QUEUE_PREFIX=$(QUEUE_PREFIX) \
 		| oc -n $(NAMESPACE) apply -f -
 	$(call rollout_and_wait,dc/$(API))
 
@@ -435,6 +373,8 @@ deploy-queue-consumers:
 	test -n "$(QUEUE_CONSUMERS_SECRET_NAME)"
 	test -n "$(QUEUE_CONSUMERS)"
 	test -n "$(QUEUE_CONSUMERS_PORT)"
+	test -n "$(QUEUE_PREFIX)"
+	test -n "$(SCHEDULERS_IER_CRON)"
 	@echo "+\n++ Deploying Queues with tag: $(BUILD_TAG)\n+"
 	@oc -n $(NAMESPACE) process -f openshift/queue-consumers-deploy.yml \
 		-p NAME=$(QUEUE_CONSUMERS) \
@@ -446,6 +386,8 @@ deploy-queue-consumers:
 		-p DATABASE_NAME_KEY=$(DATABASE_NAME_KEY) \
 		-p PORT=$(QUEUE_CONSUMERS_PORT) \
 		-p HOST_NAME=$(HOST) \
+		-p QUEUE_PREFIX=$(QUEUE_PREFIX) \
+		-p SCHEDULERS_IER_CRON=$(SCHEDULERS_IER_CRON) \
 		| oc -n $(NAMESPACE) apply -f -
 	$(call rollout_and_wait,dc/$(QUEUE_CONSUMERS))
 
@@ -453,111 +395,62 @@ deploy-web:
 	test -n "$(NAMESPACE)"
 	test -n "$(BUILD_NAMESPACE)"
 	test -n "$(WEB)"
+	test -n "$(WEB_BUILD_REF)"
+	test -n "$(BUILD_TAG)"
 	test -n "$(WEB_PORT)"
 	@echo "+\n++ Deploying WEB with tag: $(BUILD_TAG)\n+"
-	@oc -n $(NAMESPACE) process -f openshift/web-deploy.yml -p NAME=$(WEB) -p PORT=$(WEB_PORT) -p HOST_NAME=$(HOST) -p BUILD_NAMESPACE=$(BUILD_NAMESPACE) -p IMAGE_STREAM_TAG="$(WEB_BUILD_REF):$(BUILD_TAG)"  | oc -n $(NAMESPACE) apply -f -
+	@oc -n $(NAMESPACE) process -f openshift/web-deploy.yml \
+	-p NAME=$(WEB) \
+	-p PORT=$(WEB_PORT) \
+	-p HOST_NAME=$(HOST) \
+	-p BUILD_NAMESPACE=$(BUILD_NAMESPACE) \
+	-p IMAGE_STREAM_TAG="$(WEB_BUILD_REF):$(BUILD_TAG)"  \
+	| oc -n $(NAMESPACE) apply -f -
 	$(call rollout_and_wait,dc/$(WEB))
 
 create-qa-api-db:
 	test -n $(QA_DB_NAME)
 	test -n $(NAMESPACE)
 	@echo "+\n++ Creating DB ($(QA_DB_NAME)) in $(NAMESPACE) patroni db cluster"
-	@oc -n $(NAMESPACE) process -f openshift/createdb-job.yml -p DB_NAME=$(QA_DB_NAME) -p BUILD_NAMESPACE=$(BUILD_NAMESPACE) -p JOB_NAME=qa-api-db | oc -n $(NAMESPACE) apply -f -
-
-build-forms-flow-forms:
-	test -n "$(BUILD_NAMESPACE)"
-	test -n "$(FORMSFLOW_FORMS_NAME)"
-	test -n "$(SOURCE_REPOSITORY_REF)"
-	test -n "$(BUILD_TAG)"
-	test -n "$(SOURCE_CONTEXT_DIR)"
-	test -n "$(FORM_AI_BUILD_TEMPLATE_PATH)"
-	@echo "+\n++ BUILDING $(FORMSFLOW_FORMS_NAME)"
-	@echo "+\n++ BUILDING $(FORMSFLOW_FORMS_NAME) DIR: $(SOURCE_CONTEXT_DIR)$(FORMSFLOW_FORMS_NAME) BuildFile:$(FORM_AI_BUILD_TEMPLATE_PATH) BUILD_TAG:$(BUILD_TAG)\n+"
-	@oc -n $(BUILD_NAMESPACE) process -f $(FORM_AI_BUILD_TEMPLATE_PATH) -p NAME=$(FORMSFLOW_FORMS_NAME) -p TAG=$(BUILD_TAG) -p FORMSFLOW_SOURCE_REPO_URL=$(FORMSFLOW_SOURCE_REPO_URL) -p FORMSFLOW_SOURCE_REPO_BRANCH=$(FORMSFLOW_SOURCE_REPO_BRANCH) -p SOURCE_REPOSITORY_REF=$(SOURCE_REPOSITORY_REF) -p SOURCE_CONTEXT_DIR=$(SOURCE_CONTEXT_DIR)$(FORMSFLOW_FORMS_NAME)| oc -n $(BUILD_NAMESPACE) apply -f -
-	@oc -n $(BUILD_NAMESPACE) start-build bc/$(FORMSFLOW_FORMS_NAME) --wait
-
-build-forms-flow-bpm:
-	test -n "$(BUILD_NAMESPACE)"
-	test -n "$(FORMSFLOW_BPM_NAME)"
-	test -n "$(SOURCE_REPOSITORY_REF)"
-	test -n "$(SOURCE_CONTEXT_DIR)"
-	test -n "$(FORM_AI_BUILD_TEMPLATE_PATH)"
-	@echo "+\n++ BUILDING $(FORMSFLOW_BPM_NAME)"
-	@echo "+\n++ BUILDING $(FORMSFLOW_BPM_NAME) DIR: $(SOURCE_CONTEXT_DIR)$(FORMSFLOW_BPM_NAME) BuildFile:$(FORM_AI_BUILD_TEMPLATE_PATH)\n+"
-	@oc -n $(BUILD_NAMESPACE) process -f $(FORM_AI_BUILD_TEMPLATE_PATH) -p NAME=$(FORMSFLOW_BPM_NAME) -p TAG=$(BUILD_TAG) -p FORMSFLOW_SOURCE_REPO_URL=$(FORMSFLOW_SOURCE_REPO_URL) -p FORMSFLOW_SOURCE_REPO_BRANCH=$(FORMSFLOW_SOURCE_REPO_BRANCH) -p SOURCE_REPOSITORY_REF=$(SOURCE_REPOSITORY_REF) -p SOURCE_CONTEXT_DIR=$(SOURCE_CONTEXT_DIR)$(FORMSFLOW_BPM_NAME)| oc -n $(BUILD_NAMESPACE) apply -f -
-	@oc -n $(BUILD_NAMESPACE) start-build bc/$(FORMSFLOW_BPM_NAME) --wait
-
-build-forms-flow-api:
-	test -n "$(BUILD_NAMESPACE)"
-	test -n "$(FORMSFLOW_API_NAME)"
-	test -n "$(SOURCE_REPOSITORY_REF)"
-	test -n "$(SOURCE_CONTEXT_DIR)"
-	test -n "$(FORM_AI_BUILD_TEMPLATE_PATH)"
-	@echo "+\n++ BUILDING $(FORMSFLOW_API_NAME)"
-	@echo "+\n++ BUILDING $(FORMSFLOW_API_NAME) DIR: $(SOURCE_CONTEXT_DIR)$(FORMSFLOW_API_NAME) BuildFile:$(FORM_AI_BUILD_TEMPLATE_PATH)\n+"
-	@oc -n $(BUILD_NAMESPACE) process -f $(FORM_AI_BUILD_TEMPLATE_PATH) -p NAME=$(FORMSFLOW_API_NAME) -p TAG=$(BUILD_TAG) -p FORMSFLOW_SOURCE_REPO_URL=$(FORMSFLOW_SOURCE_REPO_URL) -p FORMSFLOW_SOURCE_REPO_BRANCH=$(FORMSFLOW_SOURCE_REPO_BRANCH) -p SOURCE_REPOSITORY_REF=$(SOURCE_REPOSITORY_REF) -p SOURCE_CONTEXT_DIR=$(SOURCE_CONTEXT_DIR)$(FORMSFLOW_API_NAME)| oc -n $(BUILD_NAMESPACE) apply -f -
-	@oc -n $(BUILD_NAMESPACE) start-build bc/$(FORMSFLOW_API_NAME) --wait
-
-build-forms-flow-web:
-	test -n "$(BUILD_NAMESPACE)"
-	test -n "$(FORMSFLOW_WEB_NAME)"
-	test -n "$(SOURCE_REPOSITORY_REF)"
-	test -n "$(SOURCE_CONTEXT_DIR)"
-	test -n "$(FORM_AI_BUILD_TEMPLATE_PATH)"
-	@echo "+\n++ BUILDING $(FORMSFLOW_WEB_NAME)"
-	@echo "+\n++ BUILDING $(FORMSFLOW_WEB_NAME) DIR: $(SOURCE_CONTEXT_DIR)$(FORMSFLOW_WEB_NAME) BuildFile:$(FORM_AI_BUILD_TEMPLATE_PATH)\n+"
-	@oc -n $(BUILD_NAMESPACE) process -f $(FORM_AI_BUILD_TEMPLATE_PATH) -p NAME=$(FORMSFLOW_WEB_NAME) -p TAG=$(BUILD_TAG) -p FORMSFLOW_SOURCE_REPO_URL=$(FORMSFLOW_SOURCE_REPO_URL) -p FORMSFLOW_SOURCE_REPO_BRANCH=$(FORMSFLOW_SOURCE_REPO_BRANCH) -p SOURCE_REPOSITORY_REF=$(SOURCE_REPOSITORY_REF) -p SOURCE_CONTEXT_DIR=$(SOURCE_CONTEXT_DIR)$(FORMSFLOW_WEB_NAME)| oc -n $(BUILD_NAMESPACE) apply -f -
-	@oc -n $(BUILD_NAMESPACE) start-build bc/$(FORMSFLOW_WEB_NAME) --wait
+	@oc -n $(NAMESPACE) process -f openshift/database/createdb-job.yml -p DB_NAME=$(QA_DB_NAME) -p BUILD_NAMESPACE=$(BUILD_NAMESPACE) -p JOB_NAME=qa-api-db | oc -n $(NAMESPACE) apply -f -
 
 deploy-ha-mongo:
 	test -n "$(NAMESPACE)"
 	@oc -n $(NAMESPACE) process -f $(HAMONGO_DB_TEMPLATE_PATH) --param-file=$(HAMONGO_DB_PARAM_PATH) | oc -n $(NAMESPACE) apply -f -
 
-deploy-forms-flow-db-secrets:
-	test -n "$(NAMESPACE)"
-	@oc -n $(NAMESPACE) process -f $(SECRETS_PATRONI_DB_TEMPLATE_PATH) | oc -n $(NAMESPACE) apply -f -
-
-create-ffa-bpm-db:
-	test -n $(NAMESPACE)
-	@echo "+\n++ Creating DB (FFA_BPM_DB) in $(NAMESPACE) patroni db cluster"
-	@oc -n $(NAMESPACE) process -f $(CREATE_FFA_DB_TEMPLATE_PATH) -p DB_NAME=$(FFA_BPM_DB_NAME) -p BUILD_NAMESPACE=$(BUILD_NAMESPACE) -p JOB_NAME=bpm | oc -n $(NAMESPACE) apply -f -
-
-create-ffa-api-db:
-	test -n $(NAMESPACE)
-	@echo "+\n++ Creating DB (FFA_API_DB) in $(NAMESPACE) patroni db cluster"
-	@oc -n $(NAMESPACE) process -f $(CREATE_FFA_DB_TEMPLATE_PATH) -p DB_NAME=$(FFA_API_DB_NAME) -p BUILD_NAMESPACE=$(BUILD_NAMESPACE) -p JOB_NAME=api | oc -n $(NAMESPACE) apply -f -
-
-deploy-forms-flow-secrets:
-	test -n "$(NAMESPACE)"
-	@oc -n $(NAMESPACE) process -f $(SECRETS_TEMPLATE_PATH) --param-file=$(SECRETS_PARAM_PATH) | oc -n $(NAMESPACE) apply -f -
-
-deploy-forms-flow-forms:
-	test -n "$(NAMESPACE)"
+build-forms:
 	test -n "$(BUILD_NAMESPACE)"
-	@echo "+\n++ Deploying forms-flow-forms with tag: $(BUILD_TAG)\n+"
-	@oc -n $(NAMESPACE) process -f $(FORM_AI_FORMS_DEPLOY_TEMPLATE_PATH) -p NAME=$(FORMSFLOW_FORMS_NAME) -p FFA_FORMS_URL=$(FORM_AI_FORMS_URL) -p TOOLS_NAMESPACE=$(BUILD_NAMESPACE) -p IMAGE_STREAM_TAG="$(BUILD_TAG)" | oc -n $(NAMESPACE) apply -f -
-	$(call rollout_and_wait,dc/$(FORMSFLOW_FORMS_NAME))
+	test -n "$(FORMS_NAME)"
+	test -n "$(BUILD_TAG)"
+	test -n "$(SOURCE_CONTEXT_DIR)"
+	test -n "$(SOURCE_REPOSITORY_URL)"
+	test -n "$(SOURCE_REPOSITORY_REF)"
+	test -n "$(FORMIO_SOURCE_REPO_URL)"
+	test -n "$(FORMIO_SOURCE_REPO_TAG)"
+	@echo "+\n++ BUILDING $(FORMS_NAME) DIR: $(SOURCE_CONTEXT_DIR)forms BUILD_TAG:$(BUILD_TAG)\n+"
+	@oc -n $(BUILD_NAMESPACE) process -f openshift/forms-build.yml -p NAME=$(FORMS_BUILD_REF) -p TAG=$(BUILD_TAG) -p FORMIO_SOURCE_REPO_URL=$(FORMIO_SOURCE_REPO_URL) -p FORMIO_SOURCE_REPO_TAG=$(FORMIO_SOURCE_REPO_TAG) -p SOURCE_REPOSITORY_URL=$(SOURCE_REPOSITORY_URL) -p SOURCE_REPOSITORY_REF=$(SOURCE_REPOSITORY_REF) -p SOURCE_CONTEXT_DIR=$(SOURCE_CONTEXT_DIR)forms| oc -n $(BUILD_NAMESPACE) apply -f -
+	@oc -n $(BUILD_NAMESPACE) start-build bc/$(FORMS_BUILD_REF) --wait
 
-deploy-forms-flow-bpm:
+deploy-forms:
 	test -n "$(NAMESPACE)"
+	test -n "$(FORMS_NAME)"
+	test -n "$(FORMS_URL)"
 	test -n "$(BUILD_NAMESPACE)"
-	@echo "+\n++ Deploying forms-flow-bpm with tag: $(BUILD_TAG)\n+"
-	@oc -n $(NAMESPACE) process -f $(FORM_AI_BPM_DEPLOY_TEMPLATE_PATH) -p NAME=$(FORMSFLOW_BPM_NAME) -p CAMUNDA_URL=$(FORM_AI_BPM_URL) -p TOOLS_NAMESPACE=$(BUILD_NAMESPACE) -p IMAGE_STREAM_TAG="$(BUILD_TAG)" | oc -n $(NAMESPACE) apply -f -
-	$(call rollout_and_wait,dc/$(FORMSFLOW_BPM_NAME))
-
-deploy-forms-flow-api:
-	test -n "$(NAMESPACE)"
-	test -n "$(BUILD_NAMESPACE)"
-	@echo "+\n++ Deploying forms-flow-api with tag: $(BUILD_TAG)\n+"
-	@oc -n $(NAMESPACE) process -f $(FORM_AI_API_DEPLOY_TEMPLATE_PATH) -p NAME=$(FORMSFLOW_API_NAME) -p WEBAPI_URL=$(FORM_AI_API_URL) -p TOOLS_NAMESPACE=$(BUILD_NAMESPACE) -p IMAGE_STREAM_TAG="$(BUILD_TAG)" | oc -n $(NAMESPACE) apply -f -
-	$(call rollout_and_wait,dc/$(FORMSFLOW_API_NAME))
-
-deploy-forms-flow-web:
-	test -n "$(NAMESPACE)"
-	test -n "$(BUILD_NAMESPACE)"
-	@echo "+\n++ Deploying forms-flow-web with tag: $(BUILD_TAG)\n+"
-	@oc -n $(NAMESPACE) process -f $(FORM_AI_WEB_DEPLOY_TEMPLATE_PATH) --param-file=$(WEB_PARAM_PATH) -p NAME=$(FORMSFLOW_WEB_NAME) -p FFAWEB_URL=$(FORM_AI_WEB_URL) -p TOOLS_NAMESPACE=$(BUILD_NAMESPACE) -p IMAGE_STREAM_TAG="$(BUILD_TAG)" | oc -n $(NAMESPACE) apply -f -
-	$(call rollout_and_wait,dc/$(FORMSFLOW_WEB_NAME))
+	test -n "$(BUILD_TAG)"
+	test -n "$(HOST_PREFIX)"
+	test -n "$(FORMIO_ROOT_EMAIL)"
+	test -n "$(MONGODB_URI)"
+	@echo "+\n++ Deploying forms with tag: $(BUILD_TAG)\n+"
+	@oc -n $(NAMESPACE) process -f openshift/forms-deploy.yml \
+	-p NAME=$(FORMS_NAME) \
+	-p FORMS_URL=$(FORMS_URL) \
+	-p TOOLS_NAMESPACE=$(BUILD_NAMESPACE) \
+	-p IMAGE_STREAM_TAG="$(FORMS_BUILD_REF):$(BUILD_TAG)" \
+	-p HOST_PREFIX=$(HOST_PREFIX) \
+	-p FORMIO_ROOT_EMAIL=$(FORMIO_ROOT_EMAIL) \
+	-p MONGODB_URI=$(MONGODB_URI) \
+	| oc -n $(NAMESPACE) apply -f -
+	$(call rollout_and_wait,dc/$(FORMS_NAME))
 
 # Create database backup structure (build/configmap/deploy)
 

@@ -2,6 +2,9 @@ import * as faker from "faker";
 import { Student, User } from "@sims/sims-db";
 import { createFakeUser } from "@sims/test-utils";
 
+/**
+ * @deprecated use the factories from @sims/test-utils.
+ */
 export function createFakeStudent(user?: User): Student {
   const student = new Student();
   student.user = user ?? createFakeUser();

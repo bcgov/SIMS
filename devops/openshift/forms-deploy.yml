@@ -1,0 +1,218 @@
+apiVersion: template.openshift.io/v1
+kind: Template
+metadata:
+  name: forms
+objects:
+  - apiVersion: v1
+    kind: Secret
+    metadata:
+      name: ${NAME}
+    stringData:
+      DEBUG: formio:*
+      FORMIO_ROOT_EMAIL: "${FORMIO_ROOT_EMAIL}"
+      FORMIO_ROOT_PASSWORD: "${FORMIO_ROOT_PASSWORD}"
+      MONGODB_URI: "${MONGODB_URI}"
+      NODE_CONFIG: '{"mongo": "${MONGODB_URI}"}'
+      FORMS_URL: 'https://${FORMS_URL}'
+    type: Opaque
+    
+  - apiVersion: apps.openshift.io/v1
+    kind: DeploymentConfig
+    metadata:
+      annotations:
+      creationTimestamp: null
+      labels:
+        app: ${NAME}
+      name: ${NAME}
+    spec:
+      replicas: 2
+      selector:
+        app: ${NAME}
+      strategy:
+        type: Rolling
+        rollingParams:
+          updatePeriodSeconds: 1
+          intervalSeconds: 1
+          timeoutSeconds: 600
+          maxUnavailable: 25%
+          maxSurge: 25%
+      template:
+        metadata:
+          creationTimestamp: null
+          labels:
+            app: ${NAME}
+        spec:
+          containers:
+            - env:
+                - name: DEBUG
+                  valueFrom:
+                    secretKeyRef:
+                      key: DEBUG
+                      name: ${NAME}
+                - name: NODE_CONFIG
+                  valueFrom:
+                    secretKeyRef:
+                      key: NODE_CONFIG
+                      name: ${NAME}
+                - name: ROOT_EMAIL
+                  valueFrom:
+                    secretKeyRef:
+                      key: FORMIO_ROOT_EMAIL
+                      name: ${NAME}
+                - name: ROOT_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      key: FORMIO_ROOT_PASSWORD
+                      name: ${NAME}
+                - name: FORMIO_DOMAIN
+                  valueFrom:
+                    secretKeyRef:
+                      key: FORMS_URL
+                      name: ${NAME}
+              image: ${IMAGE_REGISTRY}/${TOOLS_NAMESPACE}/${IMAGE_STREAM_TAG}
+              name: ${NAME}
+              ports:
+                - containerPort: 3001
+              resources:
+                requests:
+                  cpu: "${CPU_REQUEST}"
+                  memory: "${MEMORY_REQUEST}"
+                limits:
+                  cpu: "${CPU_LIMIT}"
+                  memory: "${MEMORY_LIMIT}"
+              livenessProbe:
+                tcpSocket:
+                  path: "/ops/healthz"
+                  port: 3001
+                  scheme: HTTP
+                timeoutSeconds: 1
+                periodSeconds: 10
+                successThreshold: 1
+                failureThreshold: 3
+              readinessProbe:
+                tcpSocket:
+                  path: "/ops/readyz"
+                  port: 3001
+                  scheme: HTTP
+                timeoutSeconds: 1
+                periodSeconds: 10
+                successThreshold: 1
+                failureThreshold: 3
+              terminationMessagePath: "/dev/termination-log"
+              terminationMessagePolicy: File
+              imagePullPolicy: Always
+              stdin: true
+              tty: true
+          restartPolicy: Always
+          terminationGracePeriodSeconds: 30
+          dnsPolicy: ClusterFirst
+          securityContext: {}
+          schedulerName: default-scheduler
+      test: false
+      triggers:
+        - type: ConfigChange
+        - imageChangeParams:
+            automatic: true
+            containerNames:
+              - ${NAME}
+            from:
+              kind: ImageStreamTag
+              namespace: "${TOOLS_NAMESPACE}"
+              name: "${IMAGE_STREAM_TAG}"
+          type: ImageChange
+    status: {}
+
+  - apiVersion: v1
+    kind: Service
+    metadata:
+      annotations:
+      creationTimestamp: null
+      labels:
+        app: ${NAME}
+      name: ${NAME}
+    spec:
+      ports:
+        - name: "3001"
+          port: 3001
+          targetPort: 3001
+      selector:
+        app: ${NAME}
+    status:
+      loadBalancer: {}
+  - kind: Route
+    apiVersion: route.openshift.io/v1
+    metadata:
+      labels:
+        app: ${NAME}
+      name: ${NAME}
+    spec:
+      host: ${FORMS_URL}
+      to:
+        kind: Service
+        name: ${NAME}
+        weight: 100
+      port:
+        targetPort: "3001"
+      tls:        
+        termination: edge
+        insecureEdgeTerminationPolicy: Redirect
+      wildcardPolicy: None
+
+parameters:
+  - name: NAME
+    displayName: Name
+    description:
+      The name assigned to all of the OpenShift resources associated to the
+      server instance.
+    required: true
+    value: forms
+  - name: TOOLS_NAMESPACE
+    displayName: Image TOOLS_NAMESPACE
+    required: true
+    description:
+      The TOOLS_NAMESPACE of the OpenShift project containing the imagestream for
+      the application.
+  - name: MONGODB_URI
+    description: MONGODB_URI
+    required: true
+  - name: FORMIO_ROOT_EMAIL
+    description: FORMIO_ROOT_EMAIL
+    required: true
+  - name: FORMIO_ROOT_PASSWORD
+    description: FORMIO_ROOT_PASSWORD
+    generate: expression
+    from: "[a-zA-Z0-9]{16}"
+  - name: HOST_PREFIX
+    description: Host in which the container is deployed.
+    required: true
+  - name: FORMS_URL
+    displayName: FORMS_URL
+    required: true
+    description: Forms URL
+  - name: IMAGE_REGISTRY
+    value: image-registry.openshift-image-registry.svc:5000
+  - name: IMAGE_STREAM_TAG
+    displayName: Environment TAG name
+    description: The TAG name for this environment, e.g., dev, test, prod
+    required: true
+    value: latest
+  - name: CPU_REQUEST
+    displayName: Resources CPU Request
+    description: The resources CPU request (in cores) for this build.
+    required: true
+    value: 250m
+  - name: CPU_LIMIT
+    displayName: Resources CPU Limit
+    description: The resources CPU limit (in cores) for this build.
+    required: true
+    value: "2"
+  - name: MEMORY_REQUEST
+    displayName: Resources Memory Request
+    description: The resources Memory request (in Mi, Gi, etc) for this build.
+    required: true
+    value: 250Mi
+  - name: MEMORY_LIMIT
+    displayName: Resources Memory Limit
+    description: The resources Memory limit (in Mi, Gi, etc) for this build.
+    required: true
+    value: 2Gi

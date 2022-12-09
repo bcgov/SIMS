@@ -13,10 +13,14 @@ export class InstitutionLocationApi extends HttpBaseClient {
   public async createInstitutionLocation(
     createInstitutionLocationDto: InstitutionLocationFormAPIInDTO,
   ): Promise<void> {
-    await this.postCall<InstitutionLocationFormAPIInDTO>(
-      this.addClientRoot("location"),
-      createInstitutionLocationDto,
-    );
+    try {
+      await this.postCall<InstitutionLocationFormAPIInDTO>(
+        this.addClientRoot("location"),
+        createInstitutionLocationDto,
+      );
+    } catch (error: unknown) {
+      this.handleAPICustomError(error);
+    }
   }
 
   public async updateInstitutionLocation(
@@ -25,12 +29,16 @@ export class InstitutionLocationApi extends HttpBaseClient {
       | InstitutionLocationPrimaryContactAPIInDTO
       | InstitutionLocationAPIInDTO,
   ): Promise<void> {
-    return this.patchCall<
-      InstitutionLocationPrimaryContactAPIInDTO | InstitutionLocationAPIInDTO
-    >(
-      this.addClientRoot(`location/${locationId}`),
-      updateInstitutionLocationDto,
-    );
+    try {
+      return await this.patchCall<
+        InstitutionLocationPrimaryContactAPIInDTO | InstitutionLocationAPIInDTO
+      >(
+        this.addClientRoot(`location/${locationId}`),
+        updateInstitutionLocationDto,
+      );
+    } catch (error: unknown) {
+      this.handleAPICustomError(error);
+    }
   }
 
   public async getInstitutionLocation(

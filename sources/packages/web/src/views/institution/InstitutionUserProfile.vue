@@ -1,7 +1,11 @@
 <template>
   <full-page-container>
     <template #header>
-      <header-navigator title="Institution" subTitle="My Profile" />
+      <header-navigator
+        data-cy="institutionUserProfileHeader"
+        title="Institution"
+        subTitle="My Profile"
+      />
     </template>
     <template #alerts>
       <banner :type="BannerTypes.Info" header="Updating read-only information">

@@ -1,0 +1,1 @@
+DROP TYPE IF EXISTS sims.disbursement_overaward_origin_types;

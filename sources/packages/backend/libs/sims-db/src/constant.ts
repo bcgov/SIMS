@@ -36,6 +36,7 @@ export const TableNames = {
   DisbursementValue: "disbursement_values",
   FederalRestrictions: "federal_restrictions",
   DisbursementFeedbackErrors: "disbursement_feedback_errors",
+  DisbursementOverawards: "disbursement_overawards",
   Notes: "notes",
   StudentNotes: "student_notes",
   InstitutionNotes: "institution_notes",
@@ -54,6 +55,7 @@ export const TableNames = {
   DisbursementReceiptValues: "disbursement_receipt_values",
   Messages: "notification_messages",
   Notifications: "notifications",
+  QueueConfigurations: "queue_configurations",
 };
 
 export const INSTITUTION_TYPE_BC_PRIVATE = 2;

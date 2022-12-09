@@ -3,12 +3,7 @@
     <modal-dialog-base title="View restriction" :showDialog="showDialog">
       <template #content>
         <error-summary :errors="viewRestrictionForm.errors" />
-        <h4
-          class="category-header-medium mb-5"
-          v-if="!restrictionData.isActive"
-        >
-          Restriction information
-        </h4>
+        <h3 class="category-header-medium mb-5">Restriction information</h3>
         <content-group>
           <title-value
             propertyTitle="Category"
@@ -40,21 +35,24 @@
                 " /></v-col
           ></v-row>
         </content-group>
-        <v-divider></v-divider>
+        <template
+          v-if="restrictionData.restrictionType !== RestrictionType.Federal"
+        >
+          <v-divider></v-divider>
+          <h3 class="category-header-medium mb-5">Resolution</h3>
+        </template>
         <v-textarea
-          v-if="restrictionData.isActive"
+          v-if="allowUserToEdit"
           label="Resolution reason"
-          placeholder="Long text..."
           v-model="formModel.resolutionNote"
           variant="outlined"
           :rules="[(v) => checkResolutionNotesLength(v)]" />
-        <h4
-          class="category-header-medium mb-5"
-          v-if="!restrictionData.isActive"
+        <content-group
+          v-if="
+            !restrictionData.isActive &&
+            restrictionData.restrictionType !== RestrictionType.Federal
+          "
         >
-          Resolution
-        </h4>
-        <content-group v-if="!restrictionData.isActive">
           <title-value
             propertyTitle="Resolution reason"
             :propertyValue="restrictionData.resolutionNote"
@@ -75,12 +73,12 @@
           <template #="{ notAllowed }">
             <footer-buttons
               :processing="processing"
-              primaryLabel="Resolve restriction"
-              :secondaryLabel="restrictionData.isActive ? 'Cancel' : 'Close'"
-              @primaryClick="submit"
+              :primaryLabel="allowUserToEdit ? 'Resolve restriction' : 'Close'"
+              secondaryLabel="Cancel"
+              @primaryClick="allowUserToEdit ? submit() : cancel()"
               @secondaryClick="cancel"
               :disablePrimaryButton="notAllowed"
-              :showPrimaryButton="restrictionData.isActive"
+              :showSecondaryButton="allowUserToEdit"
             />
           </template>
         </check-permission-role>
@@ -90,7 +88,7 @@
 </template>
 
 <script lang="ts">
-import { PropType, ref, reactive } from "vue";
+import { PropType, ref, reactive, computed } from "vue";
 import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
 import ErrorSummary from "@/components/generic/ErrorSummary.vue";
 import { useModalDialog, useValidators } from "@/composables";
@@ -152,6 +150,12 @@ export default {
       return "Resolution reason is required.";
     };
 
+    const allowUserToEdit = computed(
+      () =>
+        props.restrictionData.isActive &&
+        props.restrictionData.restrictionType !== RestrictionType.Federal,
+    );
+
     return {
       showDialog,
       showModal,
@@ -163,6 +167,7 @@ export default {
       formModel,
       RestrictionStatus,
       checkResolutionNotesLength,
+      allowUserToEdit,
     };
   },
 };

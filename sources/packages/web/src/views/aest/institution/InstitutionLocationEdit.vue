@@ -20,7 +20,7 @@ import { computed, onMounted, ref } from "vue";
 import { InstitutionService } from "@/services/InstitutionService";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import LocationEditForm from "@/components/institutions/locations/LocationEditForm.vue";
-import { InstitutionLocationEdit } from "@/types";
+import { InstitutionLocationEdit, ApiProcessError } from "@/types";
 import { InstitutionLocationAPIInDTO } from "@/services/http/dto";
 import { useSnackBar } from "@/composables";
 import { AuthService } from "@/services/AuthService";
@@ -49,8 +49,12 @@ export default {
         snackBar.success(
           `Your location information for ${data.locationName} have been updated`,
         );
-      } catch (excp) {
-        snackBar.error("An error happened during the update process.");
+      } catch (error: unknown) {
+        if (error instanceof ApiProcessError) {
+          snackBar.error(error.message);
+        } else {
+          snackBar.error("An error happened during the update process.");
+        }
       }
     };
     onMounted(async () => {

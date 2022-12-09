@@ -86,4 +86,24 @@ export enum NotificationMessageType {
    * 3. Federal restriction placed on student account.
    */
   StudentRestrictionAdded = 3,
+  /**
+   * Ministry completes updating exception for an application.
+   */
+  MinistryCompletesException = 4,
+  /**
+   * Ministry completes updating a change requested by student.
+   */
+  MinistryCompletesChange = 5,
+  /**
+   * Institution reporting a change on application.
+   */
+  InstitutionReportsChange = 6,
+  /**
+   * Institution completes updating PIR.
+   */
+  InstitutionCompletesPIR = 7,
+  /**
+   * Institution confirms enrolment for an application.
+   */
+  InstitutionConfirmsCOE = 8,
 }

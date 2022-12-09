@@ -54,10 +54,7 @@ jobs:
       KEYCLOAK_REALM: "jxoe2o46"
       KEYCLOAK_AUTH_URL: ${{ secrets.KEYCLOAK_AUTH_URL }}
       BCeID_WEB_SERVICE_WSDL: ${{ secrets.BCeID_WEB_SERVICE_WSDL }}
-      FORMS_URL: ${{ secrets.FORMS_URL }}
       SITE_MINDER_LOGOUT_URL: ${{ secrets.SITE_MINDER_LOGOUT_URL }}
-      RULE_ENGINE_URL: TO_BE_REMOVED
-      FORMS_FLOW_API_URL: TO_BE_REMOVED
       ATBC_LOGIN_ENDPOINT: ${{ secrets.ATBC_LOGIN_ENDPOINT }}
       ATBC_ENDPOINT: ${{ secrets.ATBC_ENDPOINT }}
       SWAGGER_ENABLED: true
@@ -67,12 +64,11 @@ jobs:
       API_SECRET_NAME: ${{ secrets.OPENSHIFT_SIMS_CREDS_NAME }}
       WORKERS_SECRET_NAME: ${{ secrets.OPENSHIFT_SIMS_CREDS_NAME }}
       QUEUE_CONSUMERS_SECRET_NAME: ${{ secrets.OPENSHIFT_SIMS_CREDS_NAME }}
+      FORMS_SECRET_NAME: ${{ secrets.FORMS_SECRET_NAME }}
+      QUEUE_PREFIX: ${{ secrets.QUEUE_PREFIX }}
+      SCHEDULERS_IER_CRON: ${{ secrets.SCHEDULERS_IER_CRON }}
       API_PORT: ${{ secrets.API_PORT }}
       WEB_PORT: ${{ secrets.WEB_PORT }}
-      API: ${{ format('{0}api-sims', secrets.HOST_PREFIX) }}
-      WEB: ${{ format('{0}web-sims', secrets.HOST_PREFIX) }}
-      WORKERS: ${{ format('{0}workers-sims', secrets.HOST_PREFIX) }}
-      SWAGGER_NAME: ${{ format('{0}swagger', secrets.HOST_PREFIX) }}
       DATABASE_NAME_KEY: ${{ secrets.DATABASE_NAME_KEY }}
     steps:
       - name: Print env
