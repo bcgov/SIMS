@@ -5,21 +5,6 @@ import { SshService } from "@sims/integrations/services";
 import { AuthModule } from "apps/api/src/auth/auth.module";
 import { CRAIntegrationService } from "./cra-integration.service";
 import { CRAPersonalVerificationService } from "./cra-personal-verification.service";
-// todo:ann move thee functions
-import // ApplicationService,
-// SFASIndividualService,
-// StudentFileService,
-// StudentService,
-// MSFAANumberService,
-// CRAIncomeVerificationService,
-// SINValidationService,
-// SFASApplicationService,
-// SFASPartTimeApplicationsService,
-// RestrictionService,
-// StudentRestrictionService,
-// EducationProgramOfferingService,
-// EducationProgramOfferingValidationService,
-"apps/api/src/services";
 
 @Module({
   imports: [AuthModule, ConfigModule],
@@ -28,25 +13,8 @@ import // ApplicationService,
     CRAIntegrationService,
     CRAPersonalVerificationService,
     SequenceControlService,
-    // StudentService,
-    // ApplicationService,
-    // StudentFileService,
-    // MSFAANumberService,
-    // CRAIncomeVerificationService,
-    // SFASIndividualService,
-    // SINValidationService,
-    // SFASApplicationService,
-    // SFASPartTimeApplicationsService,
-    // RestrictionService,
-    // StudentRestrictionService,
-    // EducationProgramOfferingService,
-    // EducationProgramOfferingValidationService,
     WorkflowClientService,
   ],
-  exports: [
-    CRAPersonalVerificationService,
-    CRAIntegrationService,
-    // CRAIncomeVerificationService,
-  ],
+  exports: [CRAPersonalVerificationService, CRAIntegrationService],
 })
 export class CraIntegrationModule {}
