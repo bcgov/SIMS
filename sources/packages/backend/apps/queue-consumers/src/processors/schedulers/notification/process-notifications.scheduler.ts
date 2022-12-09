@@ -1,6 +1,5 @@
 import { InjectQueue, Process, Processor } from "@nestjs/bull";
-import Bull, { Job, Queue } from "bull";
-import { QueueNames } from "@sims/services/queue";
+import { Job, Queue } from "bull";
 import { NotificationService } from "@sims/services/notifications";
 import {
   ProcessNotificationsQueueInDTO,
@@ -11,6 +10,7 @@ import {
   PROCESS_NOTIFICATIONS_POLLING_LIMIT,
   PROCESS_NOTIFICATION_CLEANUP_PERIOD,
 } from "@sims/services/constants";
+import { QueueNames } from "@sims/utilities";
 
 /**
  * Process messages sent to send email notification.
@@ -26,15 +26,11 @@ export class ProcessNotificationScheduler extends BaseScheduler<ProcessNotificat
   }
 
   /**
-   * Queue configuration for the scheduler.
-   * TODO: Change the hardcoded value to be assigned from db.
+   * TODO:This method will be removed in next PR of #1551.
+   * @returns cron expression.
    */
-  protected get queueConfiguration(): Bull.JobOptions {
-    return {
-      repeat: {
-        cron: "* * * * *",
-      },
-    };
+  protected get cronExpression(): string {
+    return "* * * * *";
   }
 
   protected get payload(): ProcessNotificationsQueueInDTO {

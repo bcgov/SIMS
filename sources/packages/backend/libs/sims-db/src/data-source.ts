@@ -50,6 +50,7 @@ import {
   Notification,
   NotificationMessage,
   DisbursementOveraward,
+  QueueConfiguration,
 } from "./entities";
 
 export const ormConfig: PostgresConnectionOptions = {
@@ -118,4 +119,5 @@ export const DBEntities = [
   Notification,
   NotificationMessage,
   DisbursementOveraward,
+  QueueConfiguration,
 ];

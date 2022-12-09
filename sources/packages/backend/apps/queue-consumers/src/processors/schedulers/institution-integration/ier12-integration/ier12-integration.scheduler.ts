@@ -1,10 +1,9 @@
 import { InjectQueue, Process, Processor } from "@nestjs/bull";
 import { IER12FileService } from "@sims/integrations/institution-integration/ier12-integration";
-import { QUEUE_RETRY_DEFAULT_CONFIG } from "@sims/services/constants";
-import { QueueNames } from "@sims/services/queue";
+import { QueueNames } from "@sims/utilities";
 import { ConfigService } from "@sims/utilities/config";
 import { InjectLogger, LoggerService } from "@sims/utilities/logger";
-import Bull, { Job, Queue } from "bull";
+import { Job, Queue } from "bull";
 import { BaseScheduler } from "../../base-scheduler";
 import {
   GeneratedDateQueueInDTO,
@@ -23,15 +22,11 @@ export class IER12IntegrationScheduler extends BaseScheduler<GeneratedDateQueueI
   }
 
   /**
-   * Queue configuration for the scheduler.
+   * Cron expression from the IER integration.
+   * @returns cron expression.
    */
-  protected get queueConfiguration(): Bull.JobOptions {
-    return {
-      ...QUEUE_RETRY_DEFAULT_CONFIG,
-      repeat: {
-        cron: this.config.queueSchedulerCrons.ierCron,
-      },
-    };
+  protected get cronExpression(): string {
+    return this.config.queueSchedulerCrons.ierCron;
   }
 
   /**
