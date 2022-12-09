@@ -261,30 +261,35 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
     assessmentId: number,
     entityManager: EntityManager,
   ): Promise<void> {
-    const applicationsToRollback = await entityManager
-      .getRepository(Application)
-      .find({
-        select: { applicationNumber: true, student: { id: true } },
-        relations: {
-          student: true,
-        },
-        where: {
-          currentAssessment: {
-            id: assessmentId,
+    const assessmentToRollback = await entityManager
+      .getRepository(StudentAssessment)
+      .findOne({
+        select: {
+          id: true,
+          application: {
+            id: true,
+            applicationNumber: true,
+            student: {
+              id: true,
+            },
           },
         },
+        relations: {
+          application: { student: true },
+        },
+        where: {
+          id: assessmentId,
+        },
       });
-
-    const [applicationToRollback] = applicationsToRollback;
     await Promise.all([
       this.deleteOverawardRecords(
-        applicationToRollback.student.id,
-        applicationToRollback.applicationNumber,
+        assessmentToRollback.application.student.id,
+        assessmentToRollback.application.applicationNumber,
         entityManager,
       ),
       this.cancelPendingDisbursements(
-        applicationToRollback.student.id,
-        applicationToRollback.applicationNumber,
+        assessmentToRollback.application.student.id,
+        assessmentToRollback.application.applicationNumber,
         entityManager,
       ),
     ]);
@@ -353,7 +358,7 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
   }
 
   /**
-   * Soft delete overawards records generated from reassessments
+   * Soft delete overawards records, if any, generated from reassessments
    * of this application.
    * @param studentId student id.
    * @param applicationNumber application number to be rolled back.
