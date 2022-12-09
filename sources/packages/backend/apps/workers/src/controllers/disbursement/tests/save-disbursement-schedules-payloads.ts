@@ -1,10 +1,16 @@
 import { DisbursementValueType } from "@sims/sims-db";
 import { getISODateOnlyString } from "@sims/utilities";
-import { DisbursementSaveModel } from "../disbursement-schedule.models";
+import { createFakeWorkerJob } from "../../../../test/utils/worker-job-mock";
+import { ICustomHeaders, IOutputVariables, ZeebeJob } from "zeebe-node";
+import { SaveDisbursementSchedulesJobInDTO } from "../disbursement.dto";
 
-export function createFakeDisbursementPayload(): DisbursementSaveModel[] {
+export function createFakeSaveDisbursementSchedulesPayload(
+  assessmentId: number,
+): Readonly<
+  ZeebeJob<SaveDisbursementSchedulesJobInDTO, ICustomHeaders, IOutputVariables>
+> {
   const nowString = getISODateOnlyString(new Date());
-  return [
+  const disbursementSchedules = [
     {
       disbursementDate: nowString,
       negotiatedExpiryDate: nowString,
@@ -38,4 +44,10 @@ export function createFakeDisbursementPayload(): DisbursementSaveModel[] {
       ],
     },
   ];
+
+  const variables = {
+    assessmentId,
+    disbursementSchedules,
+  };
+  return createFakeWorkerJob<SaveDisbursementSchedulesJobInDTO>({ variables });
 }

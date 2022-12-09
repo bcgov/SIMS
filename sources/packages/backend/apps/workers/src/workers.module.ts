@@ -14,12 +14,12 @@ import {
   ApplicationExceptionService,
   SupportingUserService,
   CRAIncomeVerificationService,
-  DisbursementScheduleService,
   MSFAANumberService,
   DisbursementOverawardService,
 } from "./services";
 import { ZeebeTransportStrategy } from "./zeebe";
 import {
+  DisbursementScheduleService,
   SequenceControlService,
   WorkflowClientService,
   ZeebeModule,

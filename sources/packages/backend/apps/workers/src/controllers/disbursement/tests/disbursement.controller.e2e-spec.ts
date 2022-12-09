@@ -27,8 +27,9 @@ import { createFakeDisbursementValue } from "@sims/test-utils/factories/disburse
 import { DataSource, Repository } from "typeorm";
 import { ZBClient } from "zeebe-node";
 import { WorkersModule } from "../../../workers.module";
-import { DisbursementScheduleService } from "../disbursement-schedule-service";
-import { createFakeDisbursementPayload } from "./disbursement-payloads";
+import { createFakeSaveDisbursementSchedulesPayload } from "./save-disbursement-schedules-payloads";
+import { DisbursementController } from "../disbursement.controller";
+import { MockedZeebeJobResult } from "../../../../test/utils/worker-job-mock";
 
 jest.setTimeout(60000);
 
@@ -39,7 +40,8 @@ describe("Disbursement Schedule Service - Create disbursement", () => {
   let studentAssessmentRepo: Repository<StudentAssessment>;
   let educationProgramOfferingRepo: Repository<EducationProgramOffering>;
   let disbursementOverawardRepo: Repository<DisbursementOveraward>;
-  let disbursementScheduleService: DisbursementScheduleService;
+  let disbursementScheduleRepo: Repository<DisbursementSchedule>;
+  let disbursementController: DisbursementController;
 
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -60,12 +62,12 @@ describe("Disbursement Schedule Service - Create disbursement", () => {
       EducationProgramOffering,
     );
     disbursementOverawardRepo = dataSource.getRepository(DisbursementOveraward);
-    disbursementScheduleService = app.get(DisbursementScheduleService);
+    disbursementScheduleRepo = dataSource.getRepository(DisbursementSchedule);
+    disbursementController = app.get(DisbursementController);
   });
 
   it("Should generate an overaward when a reassessment happens and the student is entitled to less money", async () => {
     // Arrange
-    const disbursementSchedulesPayload = createFakeDisbursementPayload();
     const savedUser = await userRepo.save(createFakeUser());
     const savedStudent = await studentRepo.save(createFakeStudent(savedUser));
     const fakeApplication = createFakeApplication({ student: savedStudent });
@@ -150,13 +152,14 @@ describe("Disbursement Schedule Service - Create disbursement", () => {
     );
 
     // Act
-    const createdDisbursements =
-      await disbursementScheduleService.createDisbursementSchedules(
-        savedReassessment.id,
-        disbursementSchedulesPayload,
-      );
+    const saveDisbursementSchedulesPayload =
+      createFakeSaveDisbursementSchedulesPayload(savedReassessment.id);
+    const saveResult = await disbursementController.saveDisbursementSchedules(
+      saveDisbursementSchedulesPayload,
+    );
 
     // Asserts
+    expect(saveResult).toBe(MockedZeebeJobResult.Complete);
 
     // Assert overawards for the same application were deleted.
     // Deleted means deletedAt has a value defined.
@@ -174,6 +177,14 @@ describe("Disbursement Schedule Service - Create disbursement", () => {
     expect(softDeletedPreExistingOveraward).toBeDefined();
     expect(softDeletedPreExistingOveraward.deletedAt).toBeTruthy();
 
+    const createdDisbursements = await disbursementScheduleRepo.find({
+      relations: {
+        disbursementValues: true,
+      },
+      where: {
+        studentAssessment: { id: savedReassessment.id },
+      },
+    });
     // Assert disbursement already paid subtracted.
     expect(createdDisbursements).toBeDefined();
     expect(createdDisbursements).toHaveLength(2);
@@ -233,9 +244,9 @@ describe("Disbursement Schedule Service - Create disbursement", () => {
       (scheduleValue) => scheduleValue.valueType === valueType,
     );
     expect(award).toBeDefined();
-    expect(+award.valueAmount).toBe(assertValues.valueAmount);
-    expect(award.disbursedAmountSubtracted).toBe(
-      assertValues.disbursedAmountSubtracted?.toString(),
+    expect(+award.valueAmount).toBe(+assertValues.valueAmount);
+    expect(+award.disbursedAmountSubtracted).toBe(
+      +assertValues.disbursedAmountSubtracted?.toString(),
     );
   }
 

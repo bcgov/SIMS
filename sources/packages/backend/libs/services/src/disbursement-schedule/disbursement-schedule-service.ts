@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { DataSource, EntityManager, IsNull } from "typeorm";
+import { DataSource, EntityManager } from "typeorm";
 import {
   RecordDataModelService,
   DisbursementSchedule,
@@ -24,7 +24,7 @@ import {
   ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE,
   ASSESSMENT_NOT_FOUND,
   DISBURSEMENT_SCHEDULES_ALREADY_CREATED,
-} from "../../constants";
+} from "../constants";
 import { SystemUsersService } from "@sims/services/system-users";
 
 // Timeout to handle the worst-case scenario where the commit/rollback
@@ -59,6 +59,8 @@ const GRANTS_TYPES = [
  * - All process are executed in a DB transaction to ensure the schedule values and overaward values are adjusted at the same time.
  * - A DB lock is acquired at the start of the process to avoid two processes to be executed in parallel. Once the first one is executed
  * the second one will be able to detect that the fist one already processed the disbursements.
+ *!A reassessment only produces an overaward if the application had some money sent(disbursed) already. Applications that have all theirs disbursements in 'pending'
+ *!state will be freely recalculated but will never generate an overaward.
  */
 @Injectable()
 export class DisbursementScheduleService extends RecordDataModelService<DisbursementSchedule> {
@@ -358,12 +360,6 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
     const overawardsToDelete = await disbursementOverawardRepo.find({
       select: { id: true },
       where: {
-        // Only delete overawards not related to awards (disbursement_schedule_id IS NULL).
-        // Overawards associated with some award were already sent in some e-Cert and are
-        // considered paid.
-        disbursementSchedule: {
-          id: IsNull(),
-        },
         studentAssessment: {
           application: {
             student: {
