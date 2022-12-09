@@ -44,6 +44,8 @@ export class GCNotifyService {
             axiosError.response.data,
           )}`,
         );
+        // When the error is identified to be GC Notify error
+        // throw a custom error with all GC Notify error details.
         throw new CustomNamedError(
           axiosError.message,
           GC_NOTIFY_PERMANENT_FAILURE_ERROR,

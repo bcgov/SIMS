@@ -33,23 +33,10 @@ export interface GCNotifyErrorDetail {
 }
 
 /**
- * Error response returned by GCNotify
- * when notification request fails.
+ * Error response returned by GC notify
+ * if an error occurs on adding a notification
+ * to it.
  */
-// export class GCNotifyError extends Error {
-//   constructor(
-//     message: string,
-//     errors: GCNotifyErrorDetail[],
-//     status_code: HttpStatus,
-//   ) {
-//     super(message);
-//     this.errors = errors;
-//     this.status_code = status_code;
-//   }
-//   readonly errors: GCNotifyErrorDetail[];
-//   readonly status_code: HttpStatus;
-// }
-
 export interface GCNotifyErrorResponse {
   errors: GCNotifyErrorDetail[];
   status_code: HttpStatus;

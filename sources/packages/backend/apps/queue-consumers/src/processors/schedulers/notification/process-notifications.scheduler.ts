@@ -13,7 +13,7 @@ import {
 import { QueueNames } from "@sims/utilities";
 
 /**
- * Process messages sent to send email notification.
+ * Process notifications which are unsent.
  */
 @Processor(QueueNames.ProcessNotifications)
 export class ProcessNotificationScheduler extends BaseScheduler<ProcessNotificationsQueueInDTO> {
@@ -37,6 +37,12 @@ export class ProcessNotificationScheduler extends BaseScheduler<ProcessNotificat
     return { pollingLimit: PROCESS_NOTIFICATIONS_POLLING_LIMIT };
   }
 
+  /**
+   * Process all the unsent notifications and return
+   * summary of processing.
+   * @param job process notification job.
+   * @returns processing summary.
+   */
   @Process()
   async processNotifications(
     job: Job<ProcessNotificationsQueueInDTO>,
