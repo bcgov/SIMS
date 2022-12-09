@@ -6,14 +6,14 @@ import {
   MustReturnJobActionAcknowledgement,
   IOutputVariables,
 } from "zeebe-node";
-import { DisbursementScheduleService } from "../../services";
+import { DisbursementScheduleService } from "@sims/services";
 import { SaveDisbursementSchedulesJobInDTO } from "./disbursement.dto";
 import { CustomNamedError } from "@sims/utilities";
 import {
   ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE,
   ASSESSMENT_NOT_FOUND,
   DISBURSEMENT_SCHEDULES_ALREADY_CREATED,
-} from "../../constants";
+} from "@sims/services/constants";
 import {
   ASSESSMENT_ID,
   DISBURSEMENT_SCHEDULES,
