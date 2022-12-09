@@ -147,8 +147,14 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
     assessmentData: unknown,
   ): Promise<UpdateResult> {
     return this.repo.update(
-      { id: assessmentId, assessmentData: IsNull() },
-      { assessmentData },
+      {
+        id: assessmentId,
+        assessmentData: IsNull(),
+      },
+      {
+        assessmentData,
+        assessmentDate: new Date(),
+      },
     );
   }
 

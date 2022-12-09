@@ -15,10 +15,7 @@ import {
   Application,
   configureIdleTransactionSessionTimeout,
 } from "@sims/sims-db";
-import {
-  DisbursementSaveModel,
-  DisbursementScheduleValue,
-} from "./disbursement-schedule.models";
+import { DisbursementSaveModel } from "./disbursement-schedule.models";
 import { CustomNamedError, MIN_CANADA_LOAN_OVERAWARD } from "@sims/utilities";
 import {
   ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE,
@@ -142,10 +139,6 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
       }
       assessment.disbursementSchedules = disbursementSchedules;
       assessment.modifier = auditUser;
-      // Save the disbursements.
-      const studentAssessmentRepo =
-        transactionEntityManager.getRepository(StudentAssessment);
-      await studentAssessmentRepo.save(assessment);
       // Adjust the saved grants disbursements with the values already disbursed.
       // !Intended to process only grants (CanadaGrant/BCGrant)
       this.applyGrantsAlreadyDisbursedValues(
@@ -165,7 +158,9 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
       // Calculate BC Total grant to be used in e-Cert files.
       await this.calculateBCTotalGrants(disbursementSchedules);
       // Persist changes for grants and loans.
-      await studentAssessmentRepo.save(assessment);
+      await transactionEntityManager
+        .getRepository(StudentAssessment)
+        .save(assessment);
 
       return assessment.disbursementSchedules;
     });
@@ -204,6 +199,7 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
         },
         disbursementSchedules: { id: true },
         offering: {
+          id: true,
           studyStartDate: true,
         },
       },
@@ -491,13 +487,13 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
       // Checks if the grant is present in multiple disbursements.
       // Find all the values in all the schedules (expected one or two).
       const grants = grantsAwards.filter(
-        (grantAward) => grantAward.disbursementValue.valueCode === valueCode,
+        (grantAward) => grantAward.valueCode === valueCode,
       );
       // Total value already received by the student for this grant for this application.
       const alreadyDisbursed = totalAlreadyDisbursedValues[valueCode] ?? 0;
       // Subtract the debt from the current grant in the current assessment.
       this.subtractStudentDebit(
-        grants.map((grant) => grant.disbursementValue),
+        grants,
         alreadyDisbursed,
         "PreviousDisbursement",
       );
@@ -541,20 +537,20 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
       // Checks if the loan is present in multiple disbursements.
       // Find all the values in all the schedules (expected one or two).
       const loans = loanAwards.filter(
-        (loanAward) => loanAward.disbursementValue.valueCode === valueCode,
+        (loanAward) => loanAward.valueCode === valueCode,
       );
       // Total value already received by the student for this loan for this application.
       const alreadyDisbursed = totalAlreadyDisbursedValues[valueCode] ?? 0;
       // Subtract the debit from the current awards in the current assessment.
       const remainingStudentDebit = this.subtractStudentDebit(
-        loans.map((loan) => loan.disbursementValue),
+        loans,
         alreadyDisbursed,
         "PreviousDisbursement",
       );
       // If there is some remaining student debit, generate an overaward.
       const [referenceAward] = loans;
       const shouldGenerateOveraward = this.shouldGenerateOveraward(
-        referenceAward.disbursementValue.valueType,
+        referenceAward.valueType,
         remainingStudentDebit,
       );
       if (shouldGenerateOveraward) {
@@ -583,11 +579,14 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
     disbursementValueType: DisbursementValueType,
     studentOveraward: number,
   ): boolean {
-    return (
-      disbursementValueType !== DisbursementValueType.CanadaLoan ||
-      (disbursementValueType === DisbursementValueType.CanadaLoan &&
-        studentOveraward > MIN_CANADA_LOAN_OVERAWARD)
-    );
+    switch (disbursementValueType) {
+      case DisbursementValueType.CanadaLoan:
+        return studentOveraward > MIN_CANADA_LOAN_OVERAWARD;
+      case DisbursementValueType.BCLoan:
+        return studentOveraward !== 0;
+      default:
+        return false;
+    }
   }
 
   /**
@@ -698,19 +697,10 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
   private getAwardsByAwardType(
     disbursementSchedules: DisbursementSchedule[],
     valueTypes: DisbursementValueType[],
-  ): DisbursementScheduleValue[] {
-    const results: DisbursementScheduleValue[] = [];
-    for (const schedule of disbursementSchedules) {
-      for (const scheduleValue of schedule.disbursementValues) {
-        if (valueTypes.includes(scheduleValue.valueType)) {
-          results.push({
-            disbursementScheduleId: schedule.id,
-            disbursementValue: scheduleValue,
-          });
-        }
-      }
-    }
-    return results;
+  ): DisbursementValue[] {
+    return disbursementSchedules
+      .flatMap((schedule) => schedule.disbursementValues)
+      .filter((scheduleValue) => valueTypes.includes(scheduleValue.valueType));
   }
 
   /**
@@ -719,9 +709,7 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
    * @param awards awards to retrieve unique codes.
    * @returns unique awards codes.
    */
-  private getDistinctValueCodes(awards: DisbursementScheduleValue[]) {
-    return [
-      ...new Set(awards.map((award) => award.disbursementValue.valueCode)),
-    ];
+  private getDistinctValueCodes(awards: DisbursementValue[]): string[] {
+    return [...new Set(awards.map((award) => award.valueCode))];
   }
 }
