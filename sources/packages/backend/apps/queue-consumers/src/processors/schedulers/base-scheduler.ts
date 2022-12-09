@@ -1,20 +1,18 @@
 import { OnApplicationBootstrap } from "@nestjs/common";
-import { QUEUE_RETRY_DEFAULT_CONFIG } from "@sims/services/constants";
+import { QueueService } from "@sims/services/queue";
+import { QueueNames } from "@sims/utilities";
 import Bull, { CronRepeatOptions, Queue } from "bull";
 
 export abstract class BaseScheduler<T> implements OnApplicationBootstrap {
-  // When overridden in a derived class, it hold the repeatable cron expression.
-  protected abstract cronExpression: string;
+  constructor(
+    protected schedulerQueue: Queue<T>,
+    protected queueService: QueueService,
+  ) {}
 
-  constructor(protected schedulerQueue: Queue<T>) {}
-
-  protected get cronOptions(): Bull.JobOptions {
-    return {
-      ...QUEUE_RETRY_DEFAULT_CONFIG,
-      repeat: {
-        cron: this.cronExpression,
-      },
-    };
+  async queueConfiguration(): Promise<Bull.JobOptions> {
+    return this.queueService.getQueueConfiguration(
+      this.schedulerQueue.name as QueueNames,
+    );
   }
 
   /**
@@ -24,7 +22,8 @@ export abstract class BaseScheduler<T> implements OnApplicationBootstrap {
   async onApplicationBootstrap(): Promise<void> {
     await this.deleteOldRepeatableJobs();
     // Add the cron to the queue.
-    await this.schedulerQueue.add(undefined, this.cronOptions);
+    const queueConfig = await this.queueConfiguration();
+    await this.schedulerQueue.add(undefined, queueConfig);
   }
 
   /**
@@ -37,7 +36,8 @@ export abstract class BaseScheduler<T> implements OnApplicationBootstrap {
    */
   private async deleteOldRepeatableJobs(): Promise<void> {
     const getAllRepeatableJobs = await this.schedulerQueue.getRepeatableJobs();
-    const cronRepeatOption = this.cronOptions.repeat as CronRepeatOptions;
+    const queueConfig = await this.queueConfiguration();
+    const cronRepeatOption = queueConfig.repeat as CronRepeatOptions;
     getAllRepeatableJobs.forEach((job) => {
       if (job.cron !== cronRepeatOption.cron) {
         this.schedulerQueue.removeRepeatableByKey(job.key);

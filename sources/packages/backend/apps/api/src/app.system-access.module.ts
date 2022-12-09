@@ -1,5 +1,5 @@
 import { Module } from "@nestjs/common";
-import { DatabaseModule } from "@sims/sims-db";
+import { DatabaseModule, DBEntities } from "@sims/sims-db";
 import {
   ATBCService,
   StudentService,
@@ -66,6 +66,8 @@ import { WorkflowClientService, SequenceControlService } from "@sims/services";
 // todo: once all integration are moved. remove sshservice.
 import { SshService } from "@sims/integrations/services";
 import { IER12IntegrationModule } from "@sims/integrations/institution-integration/ier12-integration/ier12-integration.module";
+import { QueueService } from "@sims/services/queue";
+import { TypeOrmModule } from "@nestjs/typeorm";
 
 @Module({
   imports: [
@@ -73,6 +75,8 @@ import { IER12IntegrationModule } from "@sims/integrations/institution-integrati
     AuthModule,
     SINValidationModule,
     IER12IntegrationModule,
+    TypeOrmModule.forFeature(DBEntities),
+    DatabaseModule,
   ],
   controllers: [
     ATBCSystemAccessController,
@@ -136,6 +140,7 @@ import { IER12IntegrationModule } from "@sims/integrations/institution-integrati
     StudentAppealService,
     StudentAppealRequestsService,
     StudentScholasticStandingsService,
+    QueueService,
   ],
 })
 export class AppSystemAccessModule {}

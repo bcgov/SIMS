@@ -1,5 +1,5 @@
 import { Module } from "@nestjs/common";
-import { DatabaseModule } from "@sims/sims-db";
+import { DatabaseModule, DBEntities } from "@sims/sims-db";
 import {
   DesignationAgreementService,
   FormService,
@@ -49,9 +49,16 @@ import {
 import { AuthModule } from "./auth/auth.module";
 import { EducationProgramOfferingValidationService } from "./services/education-program-offering/education-program-offering-validation.service";
 import { WorkflowClientService, SequenceControlService } from "@sims/services";
+import { QueueService } from "@sims/services/queue";
+import { TypeOrmModule } from "@nestjs/typeorm";
 
 @Module({
-  imports: [DatabaseModule, AuthModule],
+  imports: [
+    DatabaseModule,
+    AuthModule,
+    TypeOrmModule.forFeature(DBEntities),
+    DatabaseModule,
+  ],
   controllers: [
     DesignationAgreementInstitutionsController,
     InstitutionInstitutionsController,
@@ -101,6 +108,7 @@ import { WorkflowClientService, SequenceControlService } from "@sims/services";
     SFASIndividualService,
     EducationProgramOfferingImportCSVService,
     EducationProgramOfferingValidationService,
+    QueueService,
   ],
 })
 export class AppInstitutionsModule {}

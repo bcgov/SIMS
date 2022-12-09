@@ -1,7 +1,7 @@
 import { InjectQueue, Process, Processor } from "@nestjs/bull";
 import { IER12FileService } from "@sims/integrations/institution-integration/ier12-integration";
+import { QueueService } from "@sims/services/queue";
 import { QueueNames } from "@sims/utilities";
-import { ConfigService } from "@sims/utilities/config";
 import { InjectLogger, LoggerService } from "@sims/utilities/logger";
 import { Job, Queue } from "bull";
 import { BaseScheduler } from "../../base-scheduler";
@@ -16,17 +16,9 @@ export class IER12IntegrationScheduler extends BaseScheduler<GeneratedDateQueueI
     @InjectQueue(QueueNames.IER12Integration)
     protected readonly schedulerQueue: Queue<GeneratedDateQueueInDTO>,
     private readonly ierRequest: IER12FileService,
-    private readonly config: ConfigService,
+    protected readonly queueService: QueueService,
   ) {
-    super(schedulerQueue);
-  }
-
-  /**
-   * Cron expression from the IER integration.
-   * @returns cron expression.
-   */
-  protected get cronExpression(): string {
-    return this.config.queueSchedulerCrons.ierCron;
+    super(schedulerQueue, queueService);
   }
 
   /**
@@ -40,6 +32,9 @@ export class IER12IntegrationScheduler extends BaseScheduler<GeneratedDateQueueI
   async processIER12File(
     job: Job<GeneratedDateQueueInDTO | undefined>,
   ): Promise<IER12ResultQueueOutDTO[]> {
+    const queueCleanUpPeriod = await this.queueService.getQueueCleanUpPeriod(
+      this.schedulerQueue.name as QueueNames,
+    );
     this.logger.log(
       `Processing IER integration job ${job.id} of type ${job.name}.`,
     );
@@ -48,6 +43,7 @@ export class IER12IntegrationScheduler extends BaseScheduler<GeneratedDateQueueI
       job.data.generatedDate,
     );
     this.logger.log("IER 12 file generation completed.");
+    this.schedulerQueue.clean(queueCleanUpPeriod, "completed");
     return uploadResult;
   }
 

@@ -109,7 +109,3 @@ export interface RedisConfiguration {
   redisPassword: string;
   redisStandaloneMode: boolean;
 }
-
-export interface QueueSchedulerCrons {
-  ierCron: string;
-}

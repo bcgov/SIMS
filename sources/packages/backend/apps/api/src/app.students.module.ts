@@ -1,5 +1,5 @@
 import { Module } from "@nestjs/common";
-import { DatabaseModule } from "@sims/sims-db";
+import { DatabaseModule, DBEntities } from "@sims/sims-db";
 import {
   ApplicationService,
   FormService,
@@ -48,9 +48,16 @@ import { StudentAccountApplicationsService } from "./services/student-account-ap
 import { ATBCStudentController } from "./route-controllers/atbc/atbc.students.controller";
 import { WorkflowClientService, SequenceControlService } from "@sims/services";
 import { ConfigModule } from "@sims/utilities/config";
-
+import { QueueService } from "@sims/services/queue";
+import { TypeOrmModule } from "@nestjs/typeorm";
 @Module({
-  imports: [DatabaseModule, AuthModule, ConfigModule],
+  imports: [
+    DatabaseModule,
+    AuthModule,
+    ConfigModule,
+    TypeOrmModule.forFeature(DBEntities),
+    DatabaseModule,
+  ],
   controllers: [
     ApplicationStudentsController,
     StudentStudentsController,
@@ -97,6 +104,7 @@ import { ConfigModule } from "@sims/utilities/config";
     StudentScholasticStandingsService,
     CRAIncomeVerificationService,
     SupportingUserService,
+    QueueService,
   ],
 })
 export class AppStudentsModule {}
