@@ -40,7 +40,7 @@ export function createFakeWorkerJob<
   job.complete = jest.fn().mockResolvedValue({
     resultType: MockedZeebeJobResult.Complete,
   } as FakeWorkerJobResult);
-  job.error = jest.fn().mockImplementation(
+  job.fail = jest.fn().mockImplementation(
     (errorMessage: string, retries?: number) =>
       ({
         resultType: MockedZeebeJobResult.Fail,
