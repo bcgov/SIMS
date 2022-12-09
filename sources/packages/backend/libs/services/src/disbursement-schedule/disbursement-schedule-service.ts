@@ -59,8 +59,22 @@ const GRANTS_TYPES = [
  * - All process are executed in a DB transaction to ensure the schedule values and overaward values are adjusted at the same time.
  * - A DB lock is acquired at the start of the process to avoid two processes to be executed in parallel. Once the first one is executed
  * the second one will be able to detect that the fist one already processed the disbursements.
- *!A reassessment only produces an overaward if the application had some money sent(disbursed) already. Applications that have all theirs disbursements in 'pending'
- *!state will be freely recalculated but will never generate an overaward.
+ * - A reassessment only produces an overaward if the application had some money sent(disbursed) already. Applications that have all theirs disbursements in 'pending'
+ * state will be freely recalculated but will never generate an overaward.
+ * - An application will only have money disbursed during between its offering start/end dates. The disbursement schedules are generated always between start and and dates,
+ * which also means that the money will only be sent sometime between offering start/end dates.
+ * - Considering the above assumptions and below applications for a same student where current date is Dec 2022.
+ * -------------------------------------
+ * | Application | Start    | End      |
+ * |-------------|----------|----------|
+ * | 1000000001  | Jan-2023 | May-2023 |
+ * | 1000000002  | Jul-2023 | Dec-2023 |
+ * | 1000000003  | Feb-2024 | Oct-2024 |
+ * -------------------------------------
+ * - Application 1000000001 will have money disbursed only between Jan-2023 and May-2023 and while this is happening, applications 1000000002 and 1000000003
+ * will never generate an overaward. For instance, application 1000000002 will never have any money disbursed before its start date (Jul-2023), which means that
+ * any reassessment will just generate new numbers, remember, no money sent no overaward generated ever.
+ * - Any deviation from the above statements is considered an edge case and must be adjusted and adjusted manually by the Ministry.
  */
 @Injectable()
 export class DisbursementScheduleService extends RecordDataModelService<DisbursementSchedule> {

@@ -29,7 +29,10 @@ import { ZBClient } from "zeebe-node";
 import { WorkersModule } from "../../../workers.module";
 import { createFakeSaveDisbursementSchedulesPayload } from "./save-disbursement-schedules-payloads";
 import { DisbursementController } from "../disbursement.controller";
-import { MockedZeebeJobResult } from "../../../../test/utils/worker-job-mock";
+import {
+  FAKE_WORKER_JOB_RESULT_PROPERTY,
+  MockedZeebeJobResult,
+} from "../../../../test/utils/worker-job-mock";
 
 jest.setTimeout(60000);
 
@@ -159,7 +162,10 @@ describe("Disbursement Schedule Service - Create disbursement", () => {
     );
 
     // Asserts
-    expect(saveResult).toBe(MockedZeebeJobResult.Complete);
+    expect(saveResult).toHaveProperty(
+      FAKE_WORKER_JOB_RESULT_PROPERTY,
+      MockedZeebeJobResult.Complete,
+    );
 
     // Assert overawards for the same application were deleted.
     // Deleted means deletedAt has a value defined.
