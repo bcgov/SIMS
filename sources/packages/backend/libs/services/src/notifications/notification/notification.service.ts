@@ -12,7 +12,7 @@ import {
   GC_NOTIFY_PERMANENT_FAILURE_ERROR,
 } from "./gc-notify.service";
 import {
-  NotificationProcessingStatus,
+  NotificationProcessingSummary,
   SaveNotificationModel,
 } from "./notification.model";
 import { LoggerService, InjectLogger } from "@sims/utilities/logger";
@@ -99,77 +99,14 @@ export class NotificationService extends RecordDataModelService<Notification> {
    * Process all the unsent notifications with a polling limit.
    * Processing continues recursively until all the records are processed.
    * Call GCNotify to send email notification.
-   * @param pollingLimit
-   * @param notificationsProcessed optional param used to
-   * increment count on recursion.
-   * @param notificationsSuccessfullyProcessed optional param used to
-   * increment count on recursion.
+   * @param pollingRecordsLimit Maximum number of notifications to be processed in one chunk of
+   * processing.
    * @returns processing summary.
    */
   async processUnsentNotifications(
-    pollingLimit: number,
-    notificationsProcessed = 0,
-    notificationsSuccessfullyProcessed = 0,
-  ): Promise<NotificationProcessingStatus> {
-    const notificationsToProcess = await this.repo
-      .createQueryBuilder("notification")
-      .select(["notification.id", "notification.messagePayload"])
-      .where("notification.dateSent IS NULL")
-      .limit(pollingLimit)
-      .getMany();
-
-    if (notificationsToProcess.length) {
-      this.logger.log(
-        `Processing ${notificationsToProcess.length} notifications`,
-      );
-
-      // Used to limit the number of asynchronous operations
-      // that will start at the same time.
-      const maxPromisesAllowed = os.cpus().length;
-
-      // Hold all the promises that must be processed.
-      const promises: Promise<boolean>[] = [];
-
-      for (const notification of notificationsToProcess) {
-        promises.push(this.sendEmailNotification(notification));
-
-        if (promises.length >= maxPromisesAllowed) {
-          // Waits for all be executed.
-          const processingResult = await Promise.all(promises);
-          notificationsSuccessfullyProcessed =
-            notificationsSuccessfullyProcessed +
-            processingResult.filter((result) => result).length;
-          // Clear the array.
-          promises.splice(0, promises.length);
-        }
-      }
-
-      if (promises.length > 0) {
-        // Waits for methods, if any outside the loop.
-        const processingResult = await Promise.all(promises);
-        notificationsSuccessfullyProcessed =
-          notificationsSuccessfullyProcessed +
-          processingResult.filter((result) => result).length;
-      }
-      //Assign the value for total notifications processed.
-      notificationsProcessed =
-        notificationsProcessed + notificationsToProcess.length;
-
-      // Calling process notification in recursion until all the notifications
-      // are processed.
-      const response = await this.processUnsentNotifications(
-        pollingLimit,
-        notificationsProcessed,
-        notificationsSuccessfullyProcessed,
-      );
-      notificationsProcessed = response.notificationsProcessed;
-      notificationsSuccessfullyProcessed =
-        response.notificationsSuccessfullyProcessed;
-    }
-    return {
-      notificationsProcessed,
-      notificationsSuccessfullyProcessed,
-    };
+    pollingRecordsLimit: number,
+  ): Promise<NotificationProcessingSummary> {
+    return await this.processUnsentNotificationsRecursive(pollingRecordsLimit);
   }
 
   /**
@@ -202,6 +139,83 @@ export class NotificationService extends RecordDataModelService<Notification> {
       }
     }
     return false;
+  }
+
+  /**
+   * Process all the unsent notifications with a polling limit recursively.
+   * Processing continues recursively until all the records are processed.
+   * Call GCNotify to send email notification.
+   * @param pollingLimit
+   * @param notificationsProcessed optional param used to
+   * increment count on recursion.
+   * @param notificationsSuccessfullyProcessed optional param used to
+   * increment count on recursion.
+   * @returns processing summary.
+   */
+  private async processUnsentNotificationsRecursive(
+    pollingRecordsLimit: number,
+    notificationsProcessed = 0,
+    notificationsSuccessfullyProcessed = 0,
+  ): Promise<NotificationProcessingSummary> {
+    const notificationsToProcess = await this.repo
+      .createQueryBuilder("notification")
+      .select(["notification.id", "notification.messagePayload"])
+      .where("notification.dateSent IS NULL")
+      .orderBy("notification.createdAt", "ASC")
+      .limit(pollingRecordsLimit)
+      .getMany();
+
+    if (notificationsToProcess.length) {
+      this.logger.log(
+        `Processing ${notificationsToProcess.length} notifications`,
+      );
+
+      // Used to limit the number of asynchronous operations
+      // that will start at the same time.
+      const maxPromisesAllowed = os.cpus().length;
+
+      // Hold all the promises that must be processed.
+      const promises: Promise<boolean>[] = [];
+
+      for (const notification of notificationsToProcess) {
+        promises.push(this.sendEmailNotification(notification));
+
+        if (promises.length >= maxPromisesAllowed) {
+          // Waits for all be executed.
+          const processingResult = await Promise.all(promises);
+          notificationsSuccessfullyProcessed += processingResult.filter(
+            (result) => result,
+          ).length;
+          // Clear the array.
+          promises.splice(0, promises.length);
+        }
+      }
+
+      if (promises.length > 0) {
+        // Waits for methods, if any outside the loop.
+        const processingResult = await Promise.all(promises);
+        notificationsSuccessfullyProcessed += processingResult.filter(
+          (result) => result,
+        ).length;
+      }
+      //Assign the value for total notifications processed.
+      notificationsProcessed += notificationsToProcess.length;
+
+      // Calling process notification in recursion until all the notifications
+      // are processed.
+      const response = await this.processUnsentNotificationsRecursive(
+        pollingRecordsLimit,
+        notificationsProcessed,
+        notificationsSuccessfullyProcessed,
+      );
+      notificationsProcessed = response.notificationsProcessed;
+      notificationsSuccessfullyProcessed =
+        response.notificationsSuccessfullyProcessed;
+    }
+    return {
+      notificationsProcessed,
+      notificationsSuccessfullyProcessed,
+    };
   }
 
   @InjectLogger()

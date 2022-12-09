@@ -36,7 +36,6 @@ export class GCNotifyService {
       const axiosError = error as AxiosError<GCNotifyErrorResponse>;
       if (
         axiosError.isAxiosError &&
-        axiosError.response?.data &&
         axiosError.response?.data?.status_code === HttpStatus.BAD_REQUEST
       ) {
         this.logger.error(

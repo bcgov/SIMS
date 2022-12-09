@@ -1,12 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import {
-  DataSource,
-  In,
-  Not,
-  UpdateResult,
-  Brackets,
-  FindOneOptions,
-} from "typeorm";
+import { DataSource, In, Not, UpdateResult, Brackets } from "typeorm";
 import { LoggerService, InjectLogger } from "@sims/utilities/logger";
 import {
   RecordDataModelService,
@@ -1262,7 +1255,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
     applicationNumber?: string,
     applicationId?: number,
   ): Promise<Application> {
-    const findQuery: FindOneOptions<Application> = {
+    return this.repo.findOne({
       select: {
         id: true,
         applicationNumber: true,
@@ -1271,21 +1264,10 @@ export class ApplicationService extends RecordDataModelService<Application> {
       where: {
         student: { user: { id: userId } },
         applicationStatus: ApplicationStatus.completed,
-      },
-    };
-    if (applicationNumber) {
-      findQuery.where = {
-        ...findQuery.where,
-        applicationNumber: applicationNumber,
-      };
-    }
-    if (applicationId) {
-      findQuery.where = {
-        ...findQuery.where,
+        applicationNumber,
         id: applicationId,
-      };
-    }
-    return this.repo.findOne(findQuery);
+      },
+    });
   }
 
   /**

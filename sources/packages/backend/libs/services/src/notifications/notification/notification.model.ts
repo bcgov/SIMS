@@ -36,7 +36,7 @@ export interface StudentNotification {
   userId: number;
 }
 
-export interface NotificationProcessingStatus {
+export interface NotificationProcessingSummary {
   notificationsProcessed: number;
   notificationsSuccessfullyProcessed: number;
 }

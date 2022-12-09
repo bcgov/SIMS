@@ -34,7 +34,7 @@ export class ProcessNotificationScheduler extends BaseScheduler<ProcessNotificat
   }
 
   protected get payload(): ProcessNotificationsQueueInDTO {
-    return { pollingLimit: PROCESS_NOTIFICATIONS_POLLING_LIMIT };
+    return { pollingRecordsLimit: PROCESS_NOTIFICATIONS_POLLING_LIMIT };
   }
 
   /**
@@ -49,7 +49,7 @@ export class ProcessNotificationScheduler extends BaseScheduler<ProcessNotificat
   ): Promise<ProcessNotificationsResponseQueueOutDTO> {
     const processNotificationResponse =
       await this.notificationService.processUnsentNotifications(
-        job.data.pollingLimit,
+        job.data.pollingRecordsLimit,
       );
     await this.schedulerQueue.clean(
       PROCESS_NOTIFICATION_CLEANUP_PERIOD,
