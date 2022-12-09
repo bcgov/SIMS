@@ -12,7 +12,6 @@ import {
   DisbursementOveraward,
   DisbursementOverawardOriginType,
   Student,
-  Application,
   configureIdleTransactionSessionTimeout,
 } from "@sims/sims-db";
 import { DisbursementSaveModel } from "./disbursement-schedule.models";
