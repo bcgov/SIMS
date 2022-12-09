@@ -5,16 +5,12 @@ import InstitutionHelperActions from "../../custom-command/institution/common-he
 import ManageInstitutionObject, {
   SideBarMenuItems,
 } from "../../page-objects/Institution-objects/ManageInstitutionObject";
-import ManageLocationObject, {
-  Provinces,
-} from "../../page-objects/Institution-objects/ManageLocationObject";
-import { indexOf } from "cypress/types/lodash";
+import { Provinces } from "../../page-objects/Institution-objects/ManageLocationObject";
 
 const dashboardInstitutionObject = new DashboardInstitutionObject();
 const institutionObject = new InstitutionProfileObject();
 const institutionHelperActions = new InstitutionHelperActions();
 const manageInstitutionObject = new ManageInstitutionObject();
-const manageLocationObject = new ManageLocationObject();
 
 describe("Institution Manage Profile", () => {
   before(() => {
@@ -31,57 +27,45 @@ describe("Institution Manage Profile", () => {
   });
 
   it("Verify “Manage Institution Profile” should contain institution profile details", () => {
+    institutionObject.verifyThatElementIsVisibleAndIsEnabled(
+      institutionObject.legalOperatingNameInputText()
+    );
+    institutionObject.verifyThatElementIsVisibleAndIsEnabled(
+      institutionObject.operatingName()
+    );
+    institutionObject.verifyThatElementIsVisibleAndIsEnabled(
+      institutionObject.institutionType()
+    );
+    institutionObject.verifyThatElementIsVisibleAndIsEnabled(
+      institutionObject.establishedDate()
+    );
     institutionObject
-      .legalOperatingNameInputText()
-      .should("be.visible")
-      .should("be.disabled");
-    institutionObject
-      .operatingName()
-      .should("be.visible")
-      .should("be.disabled");
-    institutionObject
-      .institutionType()
-      .should("be.visible")
-      .should("be.disabled");
-    // institutionObject
-    //   .institutionRegulatingBody()
-    //   .should("be.visible")
-    //   .should("be.disabled");
-    institutionObject
-      .establishedDate()
-      .should("be.visible")
-      .should("be.disabled");
-    institutionObject
-      .primaryEmailInputText()
-      .should("be.visible")
-      .should("be.disabled");
-    institutionObject
-      .primaryPhoneNumberInputText()
-      .should("be.visible")
-      .should("be.disabled");
-    institutionObject
-      .institutionWebsiteInputText()
-      .should("be.visible")
-      .should("be.disabled");
+      .institutionRegulatingBody()
+      .should("have.attr", "disabled");
+    institutionObject.verifyThatElementIsVisibleAndIsEnabled(
+      institutionObject.primaryEmailInputText()
+    );
+    institutionObject.verifyThatElementIsVisibleAndIsEnabled(
+      institutionObject.primaryPhoneNumberInputText()
+    );
+    institutionObject.verifyThatElementIsVisibleAndIsEnabled(
+      institutionObject.institutionWebsiteInputText()
+    );
   });
 
-  it("Verify “Manage Institution Profile” should contain institution contact details", () => {
-    institutionObject
-      .firstNameInstitutionInputText()
-      .should("be.visible")
-      .should("be.disabled");
-    institutionObject
-      .lastNameInstitutionInputText()
-      .should("be.visible")
-      .should("be.disabled");
-    institutionObject
-      .emailInstitutionInputText()
-      .should("be.visible")
-      .should("be.disabled");
-    institutionObject
-      .phoneNumberInstitutionInputText()
-      .should("be.visible")
-      .should("be.disabled");
+  it.only("Verify “Manage Institution Profile” should contain institution contact details", () => {
+    institutionObject.verifyThatElementIsVisibleAndIsEnabled(
+      institutionObject.firstNameInstitutionInputText()
+    );
+    institutionObject.verifyThatElementIsVisibleAndIsEnabled(
+      institutionObject.lastNameInstitutionInputText()
+    );
+    institutionObject.verifyThatElementIsVisibleAndIsEnabled(
+      institutionObject.emailInstitutionInputText()
+    );
+    institutionObject.verifyThatElementIsVisibleAndIsEnabled(
+      institutionObject.phoneNumberInstitutionInputText()
+    );
   });
 
   it("Verify “Manage Institution Profile” should contain institution mailing address details", () => {

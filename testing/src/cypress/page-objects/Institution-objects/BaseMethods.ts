@@ -22,12 +22,12 @@ export default class BaseMethods {
    * @returns The complete error message
    */
   errorMessageConstructor(fieldName: string, errorType: ErrorTypes) {
-    fieldName.trim();
+    const fieldNameTrimmed = fieldName.trim();
     switch (errorType) {
       case 1:
-        return `${fieldName} is required`;
+        return `${fieldNameTrimmed} is required`;
       case 2:
-        return `${fieldName} must have no more than 100 characters`;
+        return `${fieldNameTrimmed} must have no more than 100 characters`;
     }
   }
 
