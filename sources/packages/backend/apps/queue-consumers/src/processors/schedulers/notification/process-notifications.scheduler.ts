@@ -49,7 +49,10 @@ export class ProcessNotificationScheduler extends BaseScheduler<ProcessNotificat
       await this.notificationService.processUnsentNotifications(
         job.data.pollingLimit,
       );
-    this.schedulerQueue.clean(PROCESS_NOTIFICATION_CLEANUP_PERIOD, "completed");
+    await this.schedulerQueue.clean(
+      PROCESS_NOTIFICATION_CLEANUP_PERIOD,
+      "completed",
+    );
     return processNotificationResponse;
   }
 }

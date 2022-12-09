@@ -4,14 +4,21 @@ import {
   Notification,
   User,
   NotificationMessage,
+  PermanentFailureError,
 } from "@sims/sims-db";
 import { DataSource, EntityManager, InsertResult, UpdateResult } from "typeorm";
-import { GCNotifyService } from "./gc-notify.service";
+import {
+  GCNotifyService,
+  GC_NOTIFY_PERMANENT_FAILURE_ERROR,
+} from "./gc-notify.service";
 import {
   NotificationProcessingStatus,
   SaveNotificationModel,
 } from "./notification.model";
 import { LoggerService, InjectLogger } from "@sims/utilities/logger";
+import { GCNotifyErrorResponse } from "./gc-notify.model";
+import { CustomNamedError } from "@sims/utilities";
+import * as os from "os";
 
 /**
  * While performing a possible huge amount of inserts,
@@ -73,22 +80,18 @@ export class NotificationService extends RecordDataModelService<Notification> {
   /**
    * Updates the date sent column of the inbox notification record.
    * @param notificationId notification id.
-   * @param entityManager optional repository that can be provided, for instance,
-   * to execute the command as part of an existing transaction. If not provided
-   * the local repository will be used instead.
+   * @param permanentFailureError Error details of a permanent failure if occurred while processing the notification.
    * @returns result of the record updated.
    */
   async updateNotification(
     notificationId: number,
-    entityManager?: EntityManager,
+    permanentFailureError?: PermanentFailureError[],
   ): Promise<UpdateResult> {
-    const notificationRepo =
-      entityManager?.getRepository(Notification) ?? this.repo;
-    return notificationRepo.update(
+    return this.repo.update(
       {
         id: notificationId,
       },
-      { dateSent: new Date() },
+      { dateSent: new Date(), permanentFailureError },
     );
   }
 
@@ -99,48 +102,97 @@ export class NotificationService extends RecordDataModelService<Notification> {
    */
   async processUnsentNotifications(
     pollingLimit: number,
+    notificationsProcessed = 0,
+    notificationsSuccessfullyProcessed = 0,
   ): Promise<NotificationProcessingStatus> {
-    const notificationsToProcess = await this.getNotificationsToProcess(
-      pollingLimit,
-    );
-    if (notificationsToProcess.length) {
-      this.logger.log(
-        `Processing ${notificationsToProcess.length} notifications`,
-      );
-    }
-    let successfullyProcessedCount = 0;
-    for (const notification of notificationsToProcess) {
-      // Call GC Notify send email method.
-      try {
-        await this.gcNotifyService.sendEmailNotification(
-          notification.messagePayload,
-        );
-        await this.updateNotification(notification.id);
-        ++successfullyProcessedCount;
-      } catch (error: unknown) {
-        this.logger.error(`Error while processing notification: ${error}`);
-      }
-    }
-    return {
-      notifications: notificationsToProcess.length,
-      successfullyProcessed: successfullyProcessedCount,
-    };
-  }
-
-  /**
-   * Get notifications
-   * @param pollingLimit
-   * @returns
-   */
-  private async getNotificationsToProcess(
-    pollingLimit: number,
-  ): Promise<Notification[]> {
-    return this.repo
+    const notificationsToProcess = await this.repo
       .createQueryBuilder("notification")
       .select(["notification.id", "notification.messagePayload"])
       .where("notification.dateSent IS NULL")
       .limit(pollingLimit)
       .getMany();
+
+    if (notificationsToProcess.length) {
+      this.logger.log(
+        `Processing ${notificationsToProcess.length} notifications`,
+      );
+
+      // Used to limit the number of asynchronous operations
+      // that will start at the same time.
+      const maxPromisesAllowed = os.cpus().length;
+
+      // Hold all the promises that must be processed.
+      const promises: Promise<boolean>[] = [];
+
+      for (const notification of notificationsToProcess) {
+        promises.push(this.sendEmailNotification(notification));
+
+        if (promises.length >= maxPromisesAllowed) {
+          // Waits for all be executed.
+          const processingResult = await Promise.all(promises);
+          notificationsSuccessfullyProcessed =
+            notificationsSuccessfullyProcessed +
+            processingResult.filter((result) => result).length;
+          // Clear the array.
+          promises.splice(0, promises.length);
+        }
+      }
+
+      if (promises.length > 0) {
+        // Waits for methods, if any outside the loop.
+        const processingResult = await Promise.all(promises);
+        notificationsSuccessfullyProcessed +
+          processingResult.filter((result) => result).length;
+      }
+      //Assign the value for total notifications processed.
+      notificationsProcessed =
+        notificationsProcessed + notificationsToProcess.length;
+
+      // Calling process notification in recursion until all the notifications
+      // are processed.
+      await this.processUnsentNotifications(
+        pollingLimit,
+        notificationsProcessed,
+        notificationsSuccessfullyProcessed,
+      );
+    } else {
+      return {
+        notificationsProcessed,
+        notificationsSuccessfullyProcessed,
+      };
+    }
+  }
+
+  /**
+   * Call GC Notify to process the given notification.
+   * @param notification notification to be processed.
+   * @returns status of notification processing.
+   */
+  private async sendEmailNotification(
+    notification: Notification,
+  ): Promise<boolean> {
+    // Call GC Notify send email method.
+    try {
+      await this.gcNotifyService.sendEmailNotification(
+        notification.messagePayload,
+      );
+      await this.updateNotification(notification.id);
+      return true;
+    } catch (error: unknown) {
+      this.logger.error(`Error while processing notification: ${error}`);
+      if (
+        error instanceof CustomNamedError &&
+        error.name === GC_NOTIFY_PERMANENT_FAILURE_ERROR
+      ) {
+        const processNotificationError =
+          error.objectInfo as GCNotifyErrorResponse;
+        await this.updateNotification(
+          notification.id,
+          processNotificationError.errors,
+        );
+      }
+    }
+    return false;
   }
 
   @InjectLogger()

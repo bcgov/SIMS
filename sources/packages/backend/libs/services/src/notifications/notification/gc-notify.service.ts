@@ -1,8 +1,12 @@
-import { Injectable } from "@nestjs/common";
+import { HttpStatus, Injectable } from "@nestjs/common";
 import axios, { AxiosError } from "axios";
-import { GCNotifyResult } from "./gc-notify.model";
+import { GCNotifyErrorResponse, GCNotifyResult } from "./gc-notify.model";
 import { LoggerService, InjectLogger } from "@sims/utilities/logger";
 import { ConfigService, GCNotify } from "@sims/utilities/config";
+import { CustomNamedError } from "@sims/utilities";
+
+export const GC_NOTIFY_PERMANENT_FAILURE_ERROR =
+  "GC_NOTIFY_PERMANENT_FAILURE_ERROR";
 
 @Injectable()
 export class GCNotifyService {
@@ -29,12 +33,21 @@ export class GCNotifyService {
       });
       return response.data as GCNotifyResult;
     } catch (error: unknown) {
-      const axiosError = error as AxiosError;
-      if (axiosError.isAxiosError && axiosError.response?.data) {
+      const axiosError = error as AxiosError<GCNotifyErrorResponse>;
+      if (
+        axiosError.isAxiosError &&
+        axiosError.response?.data &&
+        axiosError.response?.data?.status_code === HttpStatus.BAD_REQUEST
+      ) {
         this.logger.error(
           `Error while sending email notification: ${JSON.stringify(
             axiosError.response.data,
           )}`,
+        );
+        throw new CustomNamedError(
+          axiosError.message,
+          GC_NOTIFY_PERMANENT_FAILURE_ERROR,
+          axiosError.response.data,
         );
       } else {
         this.logger.error(

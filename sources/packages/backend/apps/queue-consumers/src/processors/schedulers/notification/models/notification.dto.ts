@@ -4,6 +4,6 @@ export interface ProcessNotificationsQueueInDTO {
 }
 
 export interface ProcessNotificationsResponseQueueOutDTO {
-  notifications: number;
-  successfullyProcessed: number;
+  notificationsProcessed: number;
+  notificationsSuccessfullyProcessed: number;
 }
