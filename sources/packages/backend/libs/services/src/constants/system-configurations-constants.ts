@@ -35,7 +35,7 @@ export const QUEUE_RETRY_DEFAULT_CONFIG = {
 /**
  * Maximum number of notifications to process per schedule
  */
-export const PROCESS_NOTIFICATIONS_POLLING_LIMIT = 1;
+export const PROCESS_NOTIFICATIONS_POLLING_LIMIT = 100;
 
 /**
  * cleans all jobs that completed over given period in milliseconds.
