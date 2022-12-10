@@ -11,7 +11,6 @@ import Authorization, {
 import ManageInstitutionObject, {
   SideBarMenuItems,
 } from "../../page-objects/Institution-objects/ManageInstitutionObject";
-import { profileData } from "../../../data/dev/institution-data/institutionProfileData";
 import InstitutionProfileObject from "../../page-objects/Institution-objects/InstitutionProfileObject";
 
 const dashboardInstitutionObject = new DashboardInstitutionObject();
@@ -254,7 +253,6 @@ describe("Manage Location", () => {
   });
 
   it("Verify the location details (non-editable) when on the Edit view of the institution location", () => {
-    institutionManageLocationObject.verifyThatElementIsVisibleAndIsEnabled;
     institutionManageLocationObject.verifyThatElementIsVisibleAndIsEnabled(
       institutionManageLocationObject.locationName()
     );
