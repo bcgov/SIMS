@@ -1,4 +1,5 @@
 import { Injectable } from "@nestjs/common";
+
 import {
   AssessmentStatus,
   RecordDataModelService,
@@ -8,10 +9,10 @@ import {
 import { CustomNamedError } from "@sims/utilities";
 import { DataSource, IsNull, UpdateResult } from "typeorm";
 import {
+  ASSESSMENT_NOT_FOUND,
   ASSESSMENT_ALREADY_ASSOCIATED_TO_WORKFLOW,
   ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE,
-  ASSESSMENT_NOT_FOUND,
-} from "../../constants";
+} from "@sims/services/constants";
 
 /**
  * Manages the student assessment related operations.
@@ -146,8 +147,14 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
     assessmentData: unknown,
   ): Promise<UpdateResult> {
     return this.repo.update(
-      { id: assessmentId, assessmentData: IsNull() },
-      { assessmentData },
+      {
+        id: assessmentId,
+        assessmentData: IsNull(),
+      },
+      {
+        assessmentData,
+        assessmentDate: new Date(),
+      },
     );
   }
 
