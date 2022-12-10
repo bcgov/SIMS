@@ -13,10 +13,7 @@ import {
   IsNull,
   UpdateResult,
 } from "typeorm";
-import {
-  GCNotifyService,
-  GC_NOTIFY_PERMANENT_FAILURE_ERROR,
-} from "./gc-notify.service";
+import { GCNotifyService } from "./gc-notify.service";
 import {
   NotificationProcessingSummary,
   SaveNotificationModel,
@@ -25,6 +22,7 @@ import { LoggerService, InjectLogger } from "@sims/utilities/logger";
 import { GCNotifyErrorResponse } from "./gc-notify.model";
 import { CustomNamedError } from "@sims/utilities";
 import * as os from "os";
+import { GC_NOTIFY_PERMANENT_FAILURE_ERROR } from "@sims/services/constants";
 
 /**
  * While performing a possible huge amount of inserts,
