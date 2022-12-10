@@ -6,7 +6,13 @@ import {
   NotificationMessage,
   PermanentFailureError,
 } from "@sims/sims-db";
-import { DataSource, EntityManager, InsertResult, UpdateResult } from "typeorm";
+import {
+  DataSource,
+  EntityManager,
+  InsertResult,
+  IsNull,
+  UpdateResult,
+} from "typeorm";
 import {
   GCNotifyService,
   GC_NOTIFY_PERMANENT_FAILURE_ERROR,
@@ -157,13 +163,19 @@ export class NotificationService extends RecordDataModelService<Notification> {
     notificationsProcessed = 0,
     notificationsSuccessfullyProcessed = 0,
   ): Promise<NotificationProcessingSummary> {
-    const notificationsToProcess = await this.repo
-      .createQueryBuilder("notification")
-      .select(["notification.id", "notification.messagePayload"])
-      .where("notification.dateSent IS NULL")
-      .orderBy("notification.createdAt", "ASC")
-      .limit(pollingRecordsLimit)
-      .getMany();
+    const notificationsToProcess = await this.repo.find({
+      select: {
+        id: true,
+        messagePayload: true,
+      },
+      where: {
+        dateSent: IsNull(),
+      },
+      order: {
+        createdAt: "ASC",
+      },
+      take: pollingRecordsLimit,
+    });
 
     if (notificationsToProcess.length) {
       this.logger.log(
@@ -182,9 +194,9 @@ export class NotificationService extends RecordDataModelService<Notification> {
 
         if (promises.length >= maxPromisesAllowed) {
           // Waits for all be executed.
-          const processingResult = await Promise.all(promises);
+          const processingResult = await Promise.allSettled(promises);
           notificationsSuccessfullyProcessed += processingResult.filter(
-            (result) => result,
+            (result) => result.status === "fulfilled" && result.value,
           ).length;
           // Clear the array.
           promises.splice(0, promises.length);
@@ -193,9 +205,9 @@ export class NotificationService extends RecordDataModelService<Notification> {
 
       if (promises.length > 0) {
         // Waits for methods, if any outside the loop.
-        const processingResult = await Promise.all(promises);
+        const processingResult = await Promise.allSettled(promises);
         notificationsSuccessfullyProcessed += processingResult.filter(
-          (result) => result,
+          (result) => result.status === "fulfilled" && result.value,
         ).length;
       }
       //Assign the value for total notifications processed.
