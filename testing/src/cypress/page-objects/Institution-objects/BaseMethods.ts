@@ -38,7 +38,7 @@ export default class BaseMethods {
    */
   verifyThatElementIsVisibleAndIsEnabled(
     element: Cypress.Chainable<JQuery<HTMLElement>>,
-    shouldBeEnabled?: false
+    shouldBeEnabled?: boolean
   ) {
     if (shouldBeEnabled) {
       element.should("be.visible").should("not.be.disabled");
@@ -56,7 +56,7 @@ export default class BaseMethods {
   verifyThatFieldDoesNotAcceptMoreThanSpecificChars(
     element: Cypress.Chainable<JQuery<HTMLElement>>,
     fieldName: string,
-    noOfCharsToBeValidated?: 100
+    noOfCharsToBeValidated?: number
   ) {
     if (noOfCharsToBeValidated == 100) {
       const errorMessage = this.errorMessageConstructor(

@@ -11,11 +11,14 @@ import Authorization, {
 import ManageInstitutionObject, {
   SideBarMenuItems,
 } from "../../page-objects/Institution-objects/ManageInstitutionObject";
+import { profileData } from "../../../data/dev/institution-data/institutionProfileData";
+import InstitutionProfileObject from "../../page-objects/Institution-objects/InstitutionProfileObject";
 
 const dashboardInstitutionObject = new DashboardInstitutionObject();
 const institutionManageLocationObject = new ManageLocationObject();
 const institutionHelperActions = new InstitutionHelperActions();
 const manageInstitutionObject = new ManageInstitutionObject();
+const institutionObject = new InstitutionProfileObject();
 
 function loginAndClickOnManageInstitution() {
   institutionHelperActions.loginIntoInstitutionSingleLocation();
@@ -35,55 +38,27 @@ function loginAndClickOnAddNewLocation() {
   institutionManageLocationObject.addLocationButton().click();
 }
 
-function verifyThatFieldShouldNotBeEmpty(
-  element: Cypress.Chainable<JQuery<HTMLElement>>,
-  errorMessage: Cypress.Chainable<undefined>
-) {
-  element.clear();
-  institutionManageLocationObject.submitButton().click();
-  errorMessage.should("be.visible");
-}
-
-function verifyThatElementIsVisibleAndDisabled(
-  element: Cypress.Chainable<JQuery<HTMLElement>>
-) {
-  element.should("be.visible").should("have.attr", "disabled", "disabled");
-}
-
-function verifyThatElementIsVisibleAndEnabled(
-  element: Cypress.Chainable<JQuery<HTMLElement>>
-) {
-  element.should("be.visible").should("not.be.disabled");
-}
-
-function verifyThatFieldDoesNotAcceptMoreThanSpecificChars(
-  element: Cypress.Chainable<JQuery<HTMLElement>>,
-  errorMessage: Cypress.Chainable<undefined>,
-  noOfCharsToBeValidated: number
-) {
-  if (noOfCharsToBeValidated == 100) {
-    element.clear().type(data.invalidData.stringWithMoreThan100Chars);
-    errorMessage.should("be.visible");
-  }
-}
-
 function verifyContactDetailsAreVisibleAndEnabled() {
   institutionManageLocationObject.primaryContactText().should("be.visible");
   institutionManageLocationObject.firstNameText().should("be.visible");
-  verifyThatElementIsVisibleAndEnabled(
-    institutionManageLocationObject.firstNameInputText()
+  institutionManageLocationObject.verifyThatElementIsVisibleAndIsEnabled(
+    institutionManageLocationObject.firstNameInputText(),
+    true
   );
   institutionManageLocationObject.lastNameText().should("be.visible");
-  verifyThatElementIsVisibleAndEnabled(
-    institutionManageLocationObject.lastNameInputText()
+  institutionManageLocationObject.verifyThatElementIsVisibleAndIsEnabled(
+    institutionManageLocationObject.lastNameInputText(),
+    true
   );
   institutionManageLocationObject.emailText().should("be.visible");
-  verifyThatElementIsVisibleAndEnabled(
-    institutionManageLocationObject.emailInputText()
+  institutionManageLocationObject.verifyThatElementIsVisibleAndIsEnabled(
+    institutionManageLocationObject.emailInputText(),
+    true
   );
   institutionManageLocationObject.phoneNumberText().should("be.visible");
-  verifyThatElementIsVisibleAndEnabled(
-    institutionManageLocationObject.phoneInputText()
+  institutionManageLocationObject.verifyThatElementIsVisibleAndIsEnabled(
+    institutionManageLocationObject.phoneInputText(),
+    true
   );
 }
 
@@ -106,64 +81,56 @@ function verifyEmailInputFieldValidations() {
  * Validates first name, last name, email and phone number that they are mandatory and are * * not empty.
  */
 function verifyPrimaryContactDetailsAreMandatory() {
-  verifyThatFieldShouldNotBeEmpty(
+  institutionManageLocationObject.verifyThatFieldShouldNotBeEmpty(
     institutionManageLocationObject.firstNameInputText(),
-    institutionManageLocationObject.firstNameIsRequiredErrorMessage()
+    "First Name"
   );
-  verifyThatFieldShouldNotBeEmpty(
+  institutionManageLocationObject.verifyThatFieldShouldNotBeEmpty(
     institutionManageLocationObject.lastNameInputText(),
-    institutionManageLocationObject.lastNameIsRequiredErrorMessage()
+    "Last Name"
   );
-  verifyThatFieldShouldNotBeEmpty(
+  institutionManageLocationObject.verifyThatFieldShouldNotBeEmpty(
     institutionManageLocationObject.emailInputText(),
-    institutionManageLocationObject.emailIsRequiredErrorMessage()
+    "Email"
   );
-  verifyThatFieldShouldNotBeEmpty(
+  institutionManageLocationObject.verifyThatFieldShouldNotBeEmpty(
     institutionManageLocationObject.phoneInputText(),
-    institutionManageLocationObject.phoneNumberIsRequiredErrorMessage()
+    "Phone Number"
   );
 }
 
 function verifyNoInputFieldsAcceptMoreThan100Chars(createView: boolean) {
   const noOfCharsForValidations = 100;
   if (createView) {
-    verifyThatFieldDoesNotAcceptMoreThanSpecificChars(
+    institutionManageLocationObject.verifyThatFieldDoesNotAcceptMoreThanSpecificChars(
       institutionManageLocationObject.locationName(),
-      institutionManageLocationObject.locationMoreThan100CharsErrorMessage(),
+      "Location name",
       noOfCharsForValidations
     );
-    verifyThatFieldDoesNotAcceptMoreThanSpecificChars(
+    institutionManageLocationObject.verifyThatFieldDoesNotAcceptMoreThanSpecificChars(
       institutionManageLocationObject.address1(),
-      institutionManageLocationObject.address1MoreThan100CharsErrorMessage(),
+      "Address 1",
       noOfCharsForValidations
     );
-    verifyThatFieldDoesNotAcceptMoreThanSpecificChars(
+    institutionManageLocationObject.verifyThatFieldDoesNotAcceptMoreThanSpecificChars(
       institutionManageLocationObject.address2(),
-      institutionManageLocationObject.address2MoreThan100CharsErrorMessage(),
+      "Address 2",
       noOfCharsForValidations
     );
-    verifyThatFieldDoesNotAcceptMoreThanSpecificChars(
+    institutionManageLocationObject.verifyThatFieldDoesNotAcceptMoreThanSpecificChars(
       institutionManageLocationObject.cityInputText(),
-      institutionManageLocationObject.cityMoreThan100CharsErrorMessage(),
+      "City",
       noOfCharsForValidations
     );
   }
-
-  verifyThatFieldDoesNotAcceptMoreThanSpecificChars(
+  institutionManageLocationObject.verifyThatFieldDoesNotAcceptMoreThanSpecificChars(
     institutionManageLocationObject.firstNameInputText(),
-    institutionManageLocationObject.firstNameIsMoreThan100CharsErrorMessage(),
+    "First name",
     noOfCharsForValidations
   );
-
-  verifyThatFieldDoesNotAcceptMoreThanSpecificChars(
+  institutionManageLocationObject.verifyThatFieldDoesNotAcceptMoreThanSpecificChars(
     institutionManageLocationObject.lastNameInputText(),
-    institutionManageLocationObject.lastNameIsMoreThan100CharsErrorMessage(),
-    noOfCharsForValidations
-  );
-
-  verifyThatFieldDoesNotAcceptMoreThanSpecificChars(
-    institutionManageLocationObject.emailInputText(),
-    institutionManageLocationObject.emailIsMoreThan100CharsErrorMessage(),
+    "Last name",
     noOfCharsForValidations
   );
 }
@@ -268,7 +235,9 @@ describe("Manage Location", () => {
   });
 
   it("Verify that all the institution locations are displayed", () => {
-    institutionManageLocationObject.getInstitutionsList().should("eq", 2);
+    institutionManageLocationObject
+      .getInstitutionsList()
+      .should("have.length", 1);
   });
 
   it("Verify that User is able to click on edit for an existing institution", () => {
@@ -285,25 +254,26 @@ describe("Manage Location", () => {
   });
 
   it("Verify the location details (non-editable) when on the Edit view of the institution location", () => {
-    verifyThatElementIsVisibleAndDisabled(
+    institutionManageLocationObject.verifyThatElementIsVisibleAndIsEnabled;
+    institutionManageLocationObject.verifyThatElementIsVisibleAndIsEnabled(
       institutionManageLocationObject.locationName()
     );
-    verifyThatElementIsVisibleAndDisabled(
+    institutionManageLocationObject.verifyThatElementIsVisibleAndIsEnabled(
       institutionManageLocationObject.institutionCode()
     );
-    verifyThatElementIsVisibleAndDisabled(
+    institutionManageLocationObject.verifyThatElementIsVisibleAndIsEnabled(
       institutionManageLocationObject.address1()
     );
-    verifyThatElementIsVisibleAndDisabled(
+    institutionManageLocationObject.verifyThatElementIsVisibleAndIsEnabled(
       institutionManageLocationObject.address2()
     );
-    verifyThatElementIsVisibleAndDisabled(
+    institutionManageLocationObject.verifyThatElementIsVisibleAndIsEnabled(
       institutionManageLocationObject.country()
     );
-    verifyThatElementIsVisibleAndDisabled(
+    institutionManageLocationObject.verifyThatElementIsVisibleAndIsEnabled(
       institutionManageLocationObject.city()
     );
-    verifyThatElementIsVisibleAndDisabled(
+    institutionManageLocationObject.verifyThatElementIsVisibleAndIsEnabled(
       institutionManageLocationObject.canadaPostalCode()
     );
   });
@@ -343,33 +313,36 @@ describe("Manage Location", () => {
   });
 
   it("Verify that location details are mandatory when adding a new location", () => {
-    verifyThatFieldShouldNotBeEmpty(
+    institutionManageLocationObject.verifyThatFieldShouldNotBeEmpty(
       institutionManageLocationObject.locationName(),
-      institutionManageLocationObject.locationNameErrorMessage()
+      "Location name"
     );
   });
 
   it("Verify the location details (editable) when on the Add new location view ", () => {
-    verifyThatElementIsVisibleAndEnabled(
-      institutionManageLocationObject.locationName()
+    institutionManageLocationObject.verifyThatElementIsVisibleAndIsEnabled(
+      institutionManageLocationObject.locationName(),
+      true
     );
-    verifyThatElementIsVisibleAndEnabled(
-      institutionManageLocationObject.institutionCode()
+    institutionManageLocationObject.verifyThatElementIsVisibleAndIsEnabled(
+      institutionManageLocationObject.institutionCode(),
+      true
     );
-    verifyThatElementIsVisibleAndEnabled(
-      institutionManageLocationObject.address1()
+    institutionManageLocationObject.verifyThatElementIsVisibleAndIsEnabled(
+      institutionManageLocationObject.address1(),
+      true
     );
-    verifyThatElementIsVisibleAndEnabled(
-      institutionManageLocationObject.address2()
+    institutionManageLocationObject.verifyThatElementIsVisibleAndIsEnabled(
+      institutionManageLocationObject.address2(),
+      true
     );
-    verifyThatElementIsVisibleAndEnabled(
-      institutionManageLocationObject.country()
+    institutionManageLocationObject.verifyThatElementIsVisibleAndIsEnabled(
+      institutionManageLocationObject.country(),
+      true
     );
-    verifyThatElementIsVisibleAndEnabled(
-      institutionManageLocationObject.city()
-    );
-    verifyThatElementIsVisibleAndEnabled(
-      institutionManageLocationObject.canadaPostalCode()
+    institutionManageLocationObject.verifyThatElementIsVisibleAndIsEnabled(
+      institutionManageLocationObject.city(),
+      true
     );
     verifyContactDetailsAreVisibleAndEnabled();
   });
@@ -389,14 +362,14 @@ describe("Manage Location", () => {
   });
 
   it("Verify that institution code is mandatory when adding a new location", () => {
-    verifyThatFieldShouldNotBeEmpty(
+    institutionManageLocationObject.verifyThatFieldShouldNotBeEmpty(
       institutionManageLocationObject.institutionCode(),
-      institutionManageLocationObject.institutionCodeErrorMessage()
+      "Institution code"
     );
   });
 
   it("Verify that institution code should accept only alphabets when on the Add new location view", () => {
-    data.invalidData.institutionCodeNonAplhabets.forEach((text: string) => {
+    data.invalidData.institutionCodeNonAlphabets.forEach((text: string) => {
       institutionManageLocationObject.institutionCode().clear().type(text);
       cy.contains("Institution code does not match the pattern [A-Z]*").should(
         "be.visible"
@@ -426,9 +399,9 @@ describe("Manage Location", () => {
   });
 
   it("Verify that address1  is mandatory when adding a new location", () => {
-    verifyThatFieldShouldNotBeEmpty(
+    institutionManageLocationObject.verifyThatFieldShouldNotBeEmpty(
       institutionManageLocationObject.address1(),
-      institutionManageLocationObject.address1ErrorMessage()
+      "Address1"
     );
   });
 
@@ -444,9 +417,9 @@ describe("Manage Location", () => {
   });
 
   it("Verify that city is mandatory when adding a new location", () => {
-    verifyThatFieldShouldNotBeEmpty(
+    institutionManageLocationObject.verifyThatFieldShouldNotBeEmpty(
       institutionManageLocationObject.city(),
-      institutionManageLocationObject.cityErrorMessage()
+      "City"
     );
   });
 
@@ -460,23 +433,23 @@ describe("Manage Location", () => {
   });
 
   it("Verify that “First name” is a mandatory field when editing a location primary contact details", () => {
-    verifyThatFieldShouldNotBeEmpty(
+    institutionManageLocationObject.verifyThatFieldShouldNotBeEmpty(
       institutionManageLocationObject.firstNameInputText(),
-      institutionManageLocationObject.firstNameIsRequiredErrorMessage()
+      "First name"
     );
   });
 
   it("Verify that “Last name” is a mandatory field when editing a location primary contact details", () => {
-    verifyThatFieldShouldNotBeEmpty(
+    institutionManageLocationObject.verifyThatFieldShouldNotBeEmpty(
       institutionManageLocationObject.lastNameInputText(),
-      institutionManageLocationObject.lastNameIsRequiredErrorMessage()
+      "Last name"
     );
   });
 
   it("Verify that “Email” is a mandatory field when editing a location primary contact details", () => {
-    verifyThatFieldShouldNotBeEmpty(
+    institutionManageLocationObject.verifyThatFieldShouldNotBeEmpty(
       institutionManageLocationObject.emailInputText(),
-      institutionManageLocationObject.emailIsRequiredErrorMessage()
+      "Email"
     );
   });
 
@@ -485,9 +458,9 @@ describe("Manage Location", () => {
   });
 
   it("Verify that “Phone number” is a mandatory field when editing a location primary contact details", () => {
-    verifyThatFieldShouldNotBeEmpty(
+    institutionManageLocationObject.verifyThatFieldShouldNotBeEmpty(
       institutionManageLocationObject.phoneInputText(),
-      institutionManageLocationObject.phoneNumberIsRequiredErrorMessage()
+      "Phone Number"
     );
   });
 
@@ -501,8 +474,17 @@ describe("Manage Location", () => {
 });
 
 describe("Manage Location", () => {
+  before(() => {
+    loginAndClickOnManageInstitution();
+    manageInstitutionObject.clickOnSideBar(SideBarMenuItems.ManageLocations);
+    institutionManageLocationObject.addLocationButton().click();
+  });
+
   beforeEach(() => {
-    loginAndClickOnAddNewLocation();
+    institutionManageLocationObject.countryDropDownMenu().click();
+  });
+
+  afterEach(() => {
     institutionManageLocationObject.countryDropDownMenu().click();
   });
 
@@ -516,7 +498,7 @@ describe("Manage Location", () => {
   });
 
   it("Verify that selecting Canada should display available Provinces and Postal code", () => {
-    institutionManageLocationObject.countryCanadaFromDropDownMenu().click();
+    institutionManageLocationObject.countrySearchInputText("Canada");
     institutionManageLocationObject.provinceDropDownMenu().click();
     institutionManageLocationObject
       .getProvinceFromDropdown(Provinces.Alberta)
@@ -574,7 +556,7 @@ describe("Manage Location", () => {
   });
 
   it("Verify that selecting Other Country should display field to enter country and postal code format changes", () => {
-    institutionManageLocationObject.countryOtherFromDropDownMenu().click();
+    institutionManageLocationObject.countrySearchInputText("Other");
     institutionManageLocationObject
       .otherCountryInputText()
       .should("be.visible");
@@ -585,7 +567,7 @@ describe("Manage Location", () => {
   });
 
   it("Verify that selecting 'Other' Country field should accept alpha numeric chars", () => {
-    institutionManageLocationObject.countryOtherFromDropDownMenu().click();
+    institutionManageLocationObject.countrySearchInputText("Other");
     data.validData.stringsWithAlphaNumericSpecialChars.forEach(
       (text: string) => {
         institutionManageLocationObject
@@ -598,7 +580,8 @@ describe("Manage Location", () => {
   });
 
   it("Verify that selecting 'Other' Country field should not accept more than 100 chars", () => {
-    institutionManageLocationObject.countryOtherFromDropDownMenu().click();
+    institutionManageLocationObject.countrySearchInputText("Other");
+
     institutionManageLocationObject
       .otherCountryInputText()
       .clear()

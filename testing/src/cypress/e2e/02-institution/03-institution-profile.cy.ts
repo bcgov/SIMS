@@ -88,9 +88,8 @@ describe("Institution Manage Profile", () => {
       .type(profileData.addressInput);
     institutionObject.cityInputText().clear().type(profileData.cityInput);
     institutionObject.countryInputText().click();
-    institutionObject
-      .countrySearchInputText(profileData.countryInput)
-      .type("{enter}");
+    institutionObject.countrySearchInputText(profileData.countryInput);
+
     institutionObject.provinceInputText().click({ force: true });
     institutionObject
       .provinceSearchInputText(profileData.provinceState)
@@ -139,9 +138,7 @@ describe("Institution Manage Profile", () => {
 
   it("Verify that selecting Canada from country dropdown makes the pre-populate the provinces available", () => {
     institutionObject.countryInputText().click({ force: true });
-    institutionObject
-      .countrySearchInputText(profileData.countryInput)
-      .type("{enter}");
+    institutionObject.countrySearchInputText(profileData.countryInput);
     institutionObject.provinceInputText().click();
     const provinceIds = Object.values(Provinces);
     for (let i = 0; i < provinceIds.length; i++) {
@@ -155,7 +152,7 @@ describe("Institution Manage Profile", () => {
 
   it("Verify that selecting Other from country dropdown enables the user to input a different Country", () => {
     institutionObject.countryInputText().click({ force: true });
-    institutionObject.countrySearchInputText("Other").type("{enter}");
+    institutionObject.countrySearchInputText("Other");
     institutionObject.otherCountryInputText().should("be.visible");
     institutionObject.verifyThatFieldShouldNotBeEmpty(
       institutionObject.otherCountryInputText(),
