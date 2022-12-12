@@ -63,7 +63,6 @@ import { WorkflowClientService, SequenceControlService } from "@sims/services";
 // todo: once all integration are moved. remove sshservice.
 import { SshService } from "@sims/integrations/services";
 import { IER12IntegrationModule } from "@sims/integrations/institution-integration/ier12-integration/ier12-integration.module";
-import { QueueService } from "@sims/services/queue";
 import { TypeOrmModule } from "@nestjs/typeorm";
 
 @Module({
@@ -72,8 +71,6 @@ import { TypeOrmModule } from "@nestjs/typeorm";
     AuthModule,
     SINValidationModule,
     IER12IntegrationModule,
-    TypeOrmModule.forFeature(DBEntities),
-    DatabaseModule,
   ],
   controllers: [
     ATBCSystemAccessController,
@@ -134,7 +131,6 @@ import { TypeOrmModule } from "@nestjs/typeorm";
     StudentAppealService,
     StudentAppealRequestsService,
     StudentScholasticStandingsService,
-    QueueService,
   ],
 })
 export class AppSystemAccessModule {}

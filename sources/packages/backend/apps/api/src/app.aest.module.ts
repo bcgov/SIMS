@@ -66,16 +66,10 @@ import { AuthModule } from "./auth/auth.module";
 import { ApplicationControllerService } from "./route-controllers/application/application.controller.service";
 import { InstitutionUserControllerService } from "./route-controllers/institution-user/institution-user.controller.service";
 import { WorkflowClientService, SequenceControlService } from "@sims/services";
-import { QueueService } from "@sims/services/queue";
 import { TypeOrmModule } from "@nestjs/typeorm";
 
 @Module({
-  imports: [
-    DatabaseModule,
-    AuthModule,
-    TypeOrmModule.forFeature(DBEntities),
-    DatabaseModule,
-  ],
+  imports: [DatabaseModule, AuthModule],
   controllers: [
     SupportingUserAESTController,
     DesignationAgreementAESTController,
@@ -141,7 +135,6 @@ import { TypeOrmModule } from "@nestjs/typeorm";
     EducationProgramOfferingControllerService,
     EducationProgramOfferingValidationService,
     DisbursementReceiptService,
-    QueueService,
   ],
 })
 export class AppAESTModule {}

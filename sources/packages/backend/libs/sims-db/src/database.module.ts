@@ -9,6 +9,8 @@ import { DBEntities, ormConfig } from "./data-source";
       logging: ["error", "warn"],
       entities: DBEntities,
     }),
+    TypeOrmModule.forFeature(DBEntities),
   ],
+  exports: [TypeOrmModule],
 })
 export class DatabaseModule {}

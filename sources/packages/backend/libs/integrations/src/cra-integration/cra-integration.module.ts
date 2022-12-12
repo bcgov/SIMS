@@ -2,12 +2,11 @@ import { Module } from "@nestjs/common";
 import { SequenceControlService, WorkflowClientService } from "@sims/services";
 import { ConfigModule } from "@sims/utilities/config";
 import { SshService } from "@sims/integrations/services";
-import { AuthModule } from "apps/api/src/auth/auth.module";
 import { CRAIntegrationService } from "./cra-integration.service";
 import { CRAPersonalVerificationService } from "./cra-personal-verification.service";
 
 @Module({
-  imports: [AuthModule, ConfigModule],
+  imports: [ConfigModule],
   providers: [
     SshService,
     CRAIntegrationService,
@@ -17,4 +16,4 @@ import { CRAPersonalVerificationService } from "./cra-personal-verification.serv
   ],
   exports: [CRAPersonalVerificationService, CRAIntegrationService],
 })
-export class CraIntegrationModule {}
+export class CRAIntegrationModule {}

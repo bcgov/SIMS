@@ -8,7 +8,7 @@ import { BaseScheduler } from "../base-scheduler";
 import { CRAValidationResultQueueOutDTO } from "./models/cra-validation-result.dto";
 
 @Processor(QueueNames.CRAProcessIntegration)
-export default class CRAProcessIntegrationScheduler extends BaseScheduler<void> {
+export class CRAProcessIntegrationScheduler extends BaseScheduler<void> {
   constructor(
     @InjectQueue(QueueNames.CRAProcessIntegration)
     protected readonly schedulerQueue: Queue<void>,
@@ -33,12 +33,12 @@ export default class CRAProcessIntegrationScheduler extends BaseScheduler<void> 
       this.schedulerQueue.name as QueueNames,
     );
     this.logger.log(
-      `Processing IER integration job ${job.id} of type ${job.name}.`,
+      `Processing CRA integration job ${job.id} of type ${job.name}.`,
     );
     this.logger.log("Executing income validation...");
     const uploadResult = await this.cra.createIncomeVerificationRequest();
     this.logger.log("Income validation executed.");
-    this.schedulerQueue.clean(queueCleanUpPeriod, "completed");
+    await this.schedulerQueue.clean(queueCleanUpPeriod, "completed");
     return {
       generatedFile: uploadResult.generatedFile,
       uploadedRecords: uploadResult.uploadedRecords,

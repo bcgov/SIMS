@@ -8,7 +8,7 @@ import { BaseScheduler } from "../base-scheduler";
 import { ProcessResponseQueueOutDTO } from "./models/process-response.dto";
 
 @Processor(QueueNames.CRAResponseIntegration)
-export default class CRAResponseIntegrationScheduler extends BaseScheduler<void> {
+export class CRAResponseIntegrationScheduler extends BaseScheduler<void> {
   constructor(
     @InjectQueue(QueueNames.CRAResponseIntegration)
     protected readonly schedulerQueue: Queue<void>,
@@ -31,10 +31,10 @@ export default class CRAResponseIntegrationScheduler extends BaseScheduler<void>
       this.schedulerQueue.name as QueueNames,
     );
     this.logger.log(
-      `Processing IER integration job ${job.id} of type ${job.name}.`,
+      `Processing CRA integration job ${job.id} of type ${job.name}.`,
     );
     const results = await this.cra.processResponses();
-    this.schedulerQueue.clean(queueCleanUpPeriod, "completed");
+    await this.schedulerQueue.clean(queueCleanUpPeriod, "completed");
     return results.map((result) => {
       return {
         processSummary: result.processSummary,

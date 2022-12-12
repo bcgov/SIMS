@@ -162,19 +162,11 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
         ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE,
       );
     }
-    const queueConfig = await this.queueService.getQueueConfiguration(
-      this.startAssessmentQueue.name as QueueNames,
-    );
-    await this.startAssessmentQueue.add(
-      {
-        workflowName: assessment.application.data.workflowName,
-        assessmentId: assessment.id,
-      },
-      {
-        attempts: queueConfig.attempts,
-        backoff: queueConfig.backoff,
-      },
-    );
+
+    await this.startAssessmentQueue.add({
+      workflowName: assessment.application.data.workflowName,
+      assessmentId: assessment.id,
+    });
   }
 
   /**

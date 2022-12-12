@@ -45,12 +45,12 @@ export class QueueService {
 
   /**
    * Get queue configuration
-   * @param name queue name
+   * @param queueName queue name
    * @returns queue configuration.
    */
-  async getQueueConfiguration(name: QueueNames): Promise<Bull.JobOptions> {
+  async getQueueConfiguration(queueName: QueueNames): Promise<Bull.JobOptions> {
     const queues = await this.getAllQueueConfigurations();
-    const [queueConfig] = queues.filter((queue) => queue.queueName === name);
+    const queueConfig = queues.find((queue) => queue.queueName === queueName);
     return {
       attempts: queueConfig.queueConfiguration.retry,
       backoff: queueConfig.queueConfiguration.retryInterval,
@@ -62,12 +62,14 @@ export class QueueService {
 
   /**
    * Get queue clean up period.
-   * @param name queue name
+   * @param queueName queue name
    * @returns queue clean up period.
    */
-  async getQueueCleanUpPeriod(name: QueueNames): Promise<number | undefined> {
+  async getQueueCleanUpPeriod(
+    queueName: QueueNames,
+  ): Promise<number | undefined> {
     const queues = await this.getAllQueueConfigurations();
-    const [queueConfig] = queues.filter((queue) => queue.queueName === name);
+    const queueConfig = queues.find((queue) => queue.queueName === queueName);
     return queueConfig.queueConfiguration.cleanUpPeriod;
   }
 }

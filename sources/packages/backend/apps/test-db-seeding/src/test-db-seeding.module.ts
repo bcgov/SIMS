@@ -16,7 +16,7 @@ import {
 import { ConfigModule } from "@sims/utilities/config";
 
 @Module({
-  imports: [DatabaseModule, TypeOrmModule.forFeature(DBEntities), ConfigModule],
+  imports: [DatabaseModule, ConfigModule],
   providers: [
     DesignationAgreementService,
     SeedExecutor,

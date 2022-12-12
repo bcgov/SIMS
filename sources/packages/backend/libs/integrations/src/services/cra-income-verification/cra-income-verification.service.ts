@@ -62,7 +62,7 @@ export class CRAIncomeVerificationsService extends RecordDataModelService<CRAInc
     dateSent: Date,
     fileSent: string,
     externalRepo?: Repository<CRAIncomeVerification>,
-  ) {
+  ): Promise<UpdateResult> {
     if (!dateSent || !fileSent) {
       throw new Error(
         "Not all required fields to update an income verification sent file were provided.",
