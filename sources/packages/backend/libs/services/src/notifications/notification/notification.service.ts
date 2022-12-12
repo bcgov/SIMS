@@ -140,9 +140,10 @@ export class NotificationService extends RecordDataModelService<Notification> {
           notification.id,
           processNotificationError.errors,
         );
+        return false;
       }
+      throw error;
     }
-    return false;
   }
 
   /**
@@ -192,9 +193,9 @@ export class NotificationService extends RecordDataModelService<Notification> {
 
         if (promises.length >= maxPromisesAllowed) {
           // Waits for all be executed.
-          const processingResult = await Promise.allSettled(promises);
+          const processingResult = await Promise.all(promises);
           notificationsSuccessfullyProcessed += processingResult.filter(
-            (result) => result.status === "fulfilled" && result.value,
+            (result) => result,
           ).length;
           // Clear the array.
           promises.splice(0, promises.length);
@@ -203,9 +204,9 @@ export class NotificationService extends RecordDataModelService<Notification> {
 
       if (promises.length > 0) {
         // Waits for methods, if any outside the loop.
-        const processingResult = await Promise.allSettled(promises);
+        const processingResult = await Promise.all(promises);
         notificationsSuccessfullyProcessed += processingResult.filter(
-          (result) => result.status === "fulfilled" && result.value,
+          (result) => result,
         ).length;
       }
       //Assign the value for total notifications processed.
