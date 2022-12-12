@@ -39,6 +39,6 @@ INSERT INTO
 VALUES
     (
         8,
-        'Institution confirms enrolment for an application.',
+        'Institution completes enrolment for an application.',
         '8535a144-17bb-4d55-babb-875a70ebedb3'
     );

@@ -116,7 +116,7 @@ export enum NotificationMessageType {
    */
   InstitutionCompletesPIR = 7,
   /**
-   * Institution confirms enrolment for an application.
+   * Institution completes enrolment for an application.
    */
-  InstitutionConfirmsCOE = 8,
+  InstitutionCompletesCOE = 8,
 }
