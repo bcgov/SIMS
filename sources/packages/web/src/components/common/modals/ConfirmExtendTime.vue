@@ -28,8 +28,7 @@
 
 <script lang="ts">
 import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
-import { useModalDialog, useAuth } from "@/composables";
-import { ref } from "vue";
+import { useModalDialog } from "@/composables";
 import { ClientIdType } from "@/types/contracts/ConfigContract";
 
 export default {
@@ -51,23 +50,14 @@ export default {
       required: true,
     },
   },
-  setup(props: any) {
+  setup() {
     const { resolvePromise, showModal } = useModalDialog<boolean>();
-    const interval = ref();
-    const { executeLogout } = useAuth();
-
-    const logoff = async () => {
-      await executeLogout(props.clientIdType);
-    };
 
     const dialogClosed = () => {
-      clearInterval(interval.value);
-      logoff();
       resolvePromise(false);
     };
 
     const extendTime = async () => {
-      clearInterval(interval.value);
       resolvePromise(true);
     };
 

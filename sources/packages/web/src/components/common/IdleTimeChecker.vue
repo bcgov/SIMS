@@ -26,11 +26,13 @@ import {
   useFormatters,
 } from "@/composables";
 import {
-  MINIMUM_IDLE_TIME_FOR_WARNING_SUPPORTING_USER,
-  MINIMUM_IDLE_TIME_FOR_WARNING_STUDENT,
-  MINIMUM_IDLE_TIME_FOR_WARNING_INSTITUTION,
-  MINIMUM_IDLE_TIME_FOR_WARNING_AEST,
+  MAXIMUM_IDLE_TIME_FOR_WARNING_SUPPORTING_USER,
+  MAXIMUM_IDLE_TIME_FOR_WARNING_STUDENT,
+  MAXIMUM_IDLE_TIME_FOR_WARNING_INSTITUTION,
+  MAXIMUM_IDLE_TIME_FOR_WARNING_AEST,
   COUNT_DOWN_TIMER_FOR_LOGOUT,
+  LAST_ACTIVITY_TIME_LOCAL_STORAGE_ITEM,
+  LOGGED_OUT_LOCAL_STORAGE_ITEM,
 } from "@/constants/system-constants";
 import ConfirmExtendTime from "@/components/common/modals/ConfirmExtendTime.vue";
 
@@ -57,22 +59,22 @@ export default {
     onMounted(async () => {
       setLastActivityTime();
       resetIdleCheckerTimer();
-      localStorage.removeItem("loggedOut");
+      localStorage.removeItem(LOGGED_OUT_LOCAL_STORAGE_ITEM);
     });
 
     const logoff = async () => {
       await executeLogout(props.clientIdType);
     };
-    const minimumIdleTime = computed(() => {
+    const maximumIdleTime = computed(() => {
       switch (props.clientIdType) {
         case ClientIdType.Student:
-          return MINIMUM_IDLE_TIME_FOR_WARNING_STUDENT;
+          return MAXIMUM_IDLE_TIME_FOR_WARNING_STUDENT;
         case ClientIdType.Institution:
-          return MINIMUM_IDLE_TIME_FOR_WARNING_INSTITUTION;
+          return MAXIMUM_IDLE_TIME_FOR_WARNING_INSTITUTION;
         case ClientIdType.SupportingUsers:
-          return MINIMUM_IDLE_TIME_FOR_WARNING_SUPPORTING_USER;
+          return MAXIMUM_IDLE_TIME_FOR_WARNING_SUPPORTING_USER;
         case ClientIdType.AEST:
-          return MINIMUM_IDLE_TIME_FOR_WARNING_AEST;
+          return MAXIMUM_IDLE_TIME_FOR_WARNING_AEST;
         default:
           console.error("Invalid Client type");
           return 0;
@@ -92,7 +94,7 @@ export default {
         if (newValue) {
           countdownInterval.value = setInterval(() => {
             if (countdown.value > 0) {
-              countdown.value = minimumIdleTime.value - idleTimeInSeconds.value;
+              countdown.value = maximumIdleTime.value - idleTimeInSeconds.value;
             }
           }, 1000);
         } else {
@@ -133,7 +135,7 @@ export default {
       console.log("idleTimeInSeconds", idleTimeInSeconds.value);
 
       // Exceeded user session time.
-      if (idleTimeInSeconds.value > minimumIdleTime.value) {
+      if (idleTimeInSeconds.value > maximumIdleTime.value) {
         if (modalOpen.value === true) {
           modalOpen.value = false;
           clearInterval(countdownInterval.value);
@@ -142,7 +144,7 @@ export default {
         logoff();
       } else if (
         idleTimeInSeconds.value >=
-        minimumIdleTime.value - COUNT_DOWN_TIMER_FOR_LOGOUT
+        maximumIdleTime.value - COUNT_DOWN_TIMER_FOR_LOGOUT
       ) {
         confirmExtendTimeModal();
       } else {
@@ -155,14 +157,16 @@ export default {
     const setLastActivityTime = () => {
       if (isAuthenticated.value) {
         localStorage.setItem(
-          "lastActivityTime",
+          LAST_ACTIVITY_TIME_LOCAL_STORAGE_ITEM,
           new Date().getTime().toString(),
         );
       }
     };
 
     const getLastActivityTime = () => {
-      const localStorageValue = localStorage.getItem("lastActivityTime");
+      const localStorageValue = localStorage.getItem(
+        LAST_ACTIVITY_TIME_LOCAL_STORAGE_ITEM,
+      );
       if (localStorageValue) {
         return new Date(+localStorageValue);
       }
@@ -170,11 +174,13 @@ export default {
     };
 
     const setLoggedOut = () => {
-      localStorage.setItem("loggedOut", "true");
+      localStorage.setItem(LOGGED_OUT_LOCAL_STORAGE_ITEM, "true");
     };
 
     const getLoggedOut = () => {
-      const localStorageValue = localStorage.getItem("loggedOut");
+      const localStorageValue = localStorage.getItem(
+        LOGGED_OUT_LOCAL_STORAGE_ITEM,
+      );
       if (localStorageValue === "true") {
         return true;
       }
