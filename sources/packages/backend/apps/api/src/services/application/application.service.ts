@@ -1,12 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import {
-  DataSource,
-  In,
-  Not,
-  UpdateResult,
-  Brackets,
-  FindOneOptions,
-} from "typeorm";
+import { DataSource, In, Not, UpdateResult, Brackets } from "typeorm";
 import { LoggerService, InjectLogger } from "@sims/utilities/logger";
 import {
   RecordDataModelService,
@@ -701,10 +694,15 @@ export class ApplicationService extends RecordDataModelService<Application> {
           "application.id",
           "currentAssessment.id",
           "student.id",
+          "user.id",
+          "user.firstName",
+          "user.lastName",
+          "user.email",
           "currentAssessment.assessmentWorkflowId",
         ])
         .innerJoin("application.currentAssessment", "currentAssessment")
         .innerJoin("application.student", "student")
+        .innerJoin("student.user", "user")
         .where("application.id = :applicationId", { applicationId })
         .andWhere("application.location.id = :locationId", { locationId })
         .andWhere("application.applicationStatus != :applicationStatus", {
@@ -1257,7 +1255,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
     applicationNumber?: string,
     applicationId?: number,
   ): Promise<Application> {
-    const findQuery: FindOneOptions<Application> = {
+    return this.repo.findOne({
       select: {
         id: true,
         applicationNumber: true,
@@ -1266,15 +1264,10 @@ export class ApplicationService extends RecordDataModelService<Application> {
       where: {
         student: { user: { id: userId } },
         applicationStatus: ApplicationStatus.completed,
+        applicationNumber,
+        id: applicationId,
       },
-    };
-    if (applicationId) {
-      findQuery.where = {
-        ...findQuery.where,
-        applicationNumber: applicationNumber,
-      };
-    }
-    return this.repo.findOne(findQuery);
+    });
   }
 
   /**
