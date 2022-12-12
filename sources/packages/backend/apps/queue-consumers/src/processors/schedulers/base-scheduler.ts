@@ -6,8 +6,18 @@ export abstract class BaseScheduler<T> implements OnApplicationBootstrap {
   // When overridden in a derived class, it hold the repeatable cron expression.
   protected abstract cronExpression: string;
 
+  /**
+   * Payload data which could be overridden if required by the implementing subclass.
+   */
+  protected get payload(): T {
+    return undefined;
+  }
+
   constructor(protected schedulerQueue: Queue<T>) {}
 
+  /**
+   * TODO:This method will be removed in next PR of #1551
+   */
   protected get cronOptions(): Bull.JobOptions {
     return {
       ...QUEUE_RETRY_DEFAULT_CONFIG,
@@ -24,7 +34,7 @@ export abstract class BaseScheduler<T> implements OnApplicationBootstrap {
   async onApplicationBootstrap(): Promise<void> {
     await this.deleteOldRepeatableJobs();
     // Add the cron to the queue.
-    await this.schedulerQueue.add(undefined, this.cronOptions);
+    await this.schedulerQueue.add(this.payload, this.cronOptions);
   }
 
   /**

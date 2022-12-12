@@ -294,18 +294,18 @@ export class NotificationActionsService {
    * @param auditUserId user who confirms COE.
    * @param entityManager entity manager to execute in transaction.
    */
-  async saveInstitutionConfirmCOENotification(
+  async saveInstitutionCompletesCOENotification(
     notification: StudentNotification,
     auditUserId: number,
     entityManager: EntityManager,
   ): Promise<void> {
     const templateId = await this.notificationMessageService.getTemplateId(
-      NotificationMessageType.InstitutionConfirmsCOE,
+      NotificationMessageType.InstitutionCompletesCOE,
     );
 
     const institutionConfirmCOENotification = {
       userId: notification.userId,
-      messageType: NotificationMessageType.InstitutionConfirmsCOE,
+      messageType: NotificationMessageType.InstitutionCompletesCOE,
       messagePayload: {
         email_address: notification.toAddress,
         template_id: templateId,
