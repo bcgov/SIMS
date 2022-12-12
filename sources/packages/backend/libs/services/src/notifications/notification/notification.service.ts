@@ -152,9 +152,9 @@ export class NotificationService extends RecordDataModelService<Notification> {
    * Call GCNotify to send email notification.
    * @param pollingLimit
    * @param notificationsProcessed optional param used to
-   * increment count on recursion.
+   * increment the total count on recursion.
    * @param notificationsSuccessfullyProcessed optional param used to
-   * increment count on recursion.
+   * increment the successfully processed count count on recursion.
    * @returns processing summary.
    */
   private async processUnsentNotificationsRecursive(

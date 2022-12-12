@@ -48,12 +48,11 @@ export class GCNotifyService {
           GC_NOTIFY_PERMANENT_FAILURE_ERROR,
           axiosError.response.data,
         );
-      } else {
-        this.logger.error(
-          `Error while sending email notification: ${error}),
-          )}`,
-        );
       }
+      this.logger.error(
+        `Error while sending email notification: ${error}),
+          )}`,
+      );
       throw error;
     }
   }
