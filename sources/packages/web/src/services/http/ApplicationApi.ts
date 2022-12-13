@@ -2,7 +2,6 @@ import { addPaginationOptions, addSortOptions } from "@/helpers";
 import {
   SaveStudentApplicationDto,
   ApplicationWithProgramYearDto,
-  ApplicationStatusToBeUpdatedDto,
   GetApplicationDataDto,
   GetApplicationBaseDTO,
   DEFAULT_PAGE_NUMBER,
@@ -33,20 +32,11 @@ export class ApplicationApi extends HttpBaseClient {
     }
   }
 
-  async updateStudentApplicationStatus(
-    applicationId: number,
-    payload: ApplicationStatusToBeUpdatedDto,
-  ): Promise<void> {
-    try {
-      await this.apiClient.patch(
-        this.addClientRoot(`application/${applicationId}/status`),
-        payload,
-        this.addAuthHeader(),
-      );
-    } catch (error) {
-      this.handleRequestError(error);
-      throw error;
-    }
+  async cancelStudentApplication(applicationId: number): Promise<void> {
+    await this.patchCall(
+      this.addClientRoot(`application/${applicationId}/cancel`),
+      null,
+    );
   }
 
   async createApplicationDraft(

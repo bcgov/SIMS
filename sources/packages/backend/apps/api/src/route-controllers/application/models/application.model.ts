@@ -96,10 +96,6 @@ export class GetApplicationDataDto extends GetApplicationBaseDTO {
   submittedDate?: Date;
 }
 
-export interface ApplicationStatusToBeUpdatedDto {
-  applicationStatus: ApplicationStatus;
-}
-
 export interface ApplicationWithProgramYearDto {
   applicationId: number;
   formName: string;

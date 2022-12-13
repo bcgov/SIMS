@@ -50,7 +50,11 @@ import {
   PIR_REQUEST_NOT_FOUND_ERROR,
   OFFERING_NOT_VALID,
 } from "../../constants";
-import { SequenceControlService, WorkflowClientService } from "@sims/services";
+import {
+  DisbursementScheduleService,
+  SequenceControlService,
+  WorkflowClientService,
+} from "@sims/services";
 import { ConfigService } from "@sims/utilities/config";
 import { NotificationActionsService } from "@sims/services/notifications";
 
@@ -79,6 +83,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
     private readonly studentRestrictionService: StudentRestrictionService,
     private readonly offeringService: EducationProgramOfferingService,
     private readonly notificationActionsService: NotificationActionsService,
+    private readonly disbursementScheduleService: DisbursementScheduleService,
   ) {
     super(dataSource.getRepository(Application));
   }
@@ -497,65 +502,74 @@ export class ApplicationService extends RecordDataModelService<Application> {
       })
       .getOne();
   }
+
   /**
-   * Fetches application by applicationId and userId (optional).
-   * @param applicationId
-   * @param userId
-   * @returns
+   * Gets a student application by applicationId.
+   * Student id can be provided for authorization purposes.
+   * @param applicationId application id.
+   * @param studentId optional student id for authorization purposes.
+   * @returns student application.
    */
-  async getApplicationByIdAndUser(
+  async getApplicationById(
     applicationId: number,
-    userId?: number,
+    options?: { loadDynamicData?: boolean; studentId?: number },
   ): Promise<Application> {
-    const applicationQuery = this.repo
-      .createQueryBuilder("application")
-      .select([
-        "application.id",
-        "application.data",
-        "application.applicationStatus",
-        "application.pirStatus",
-        "application.applicationStatusUpdatedOn",
-        "application.applicationNumber",
-        "application.pirDeniedOtherDesc",
-        "currentAssessment.id",
-        "currentAssessment.assessmentWorkflowId",
-        "currentAssessment.noaApprovalStatus",
-        "offering.id",
-        "offering.offeringIntensity",
-        "offering.studyStartDate",
-        "offering.studyEndDate",
-        "offering.offeringStatus",
-        "location.id",
-        "location.name",
-        "pirDeniedReasonId.id",
-        "pirDeniedReasonId.reason",
-        "programYear.id",
-        "programYear.formName",
-        "programYear.startDate",
-        "programYear.endDate",
-        "applicationException.exceptionStatus",
-        "application.submittedDate",
-      ])
-      .leftJoin("application.currentAssessment", "currentAssessment")
-      .leftJoin("currentAssessment.offering", "offering")
-      .leftJoin("application.location", "location")
-      .leftJoin("location.institution", "institution")
-      .leftJoin("institution.institutionType", "institutionType")
-      .innerJoin("application.student", "student")
-      .innerJoin("student.user", "user")
-      .innerJoin("application.programYear", "programYear")
-      .leftJoin("application.pirDeniedReasonId", "pirDeniedReasonId")
-      .leftJoin("application.applicationException", "applicationException")
-      .where("application.id = :applicationIdParam", {
-        applicationIdParam: applicationId,
-      })
-      .andWhere("application.applicationStatus != :overwrittenStatus", {
-        overwrittenStatus: ApplicationStatus.overwritten,
-      });
-    if (userId) {
-      applicationQuery.andWhere("user.id = :userId", { userId });
-    }
-    return applicationQuery.getOne();
+    return this.repo.findOne({
+      select: {
+        id: true,
+        data: options?.loadDynamicData ? (true as unknown) : undefined,
+        applicationStatus: true,
+        pirStatus: true,
+        applicationStatusUpdatedOn: true,
+        applicationNumber: true,
+        pirDeniedOtherDesc: true,
+        submittedDate: true,
+        applicationException: {
+          id: true,
+          exceptionStatus: true,
+        },
+        currentAssessment: {
+          id: true,
+          assessmentWorkflowId: true,
+          noaApprovalStatus: true,
+          offering: {
+            id: true,
+            offeringIntensity: true,
+            studyStartDate: true,
+            studyEndDate: true,
+            offeringStatus: true,
+          },
+        },
+        location: {
+          id: true,
+          name: true,
+        },
+        pirDeniedReasonId: {
+          id: true,
+          reason: true,
+        },
+        programYear: {
+          id: true,
+          formName: true,
+          startDate: true,
+          endDate: true,
+        },
+      },
+      relations: {
+        applicationException: true,
+        currentAssessment: { offering: true },
+        location: true,
+        pirDeniedReasonId: true,
+        programYear: true,
+      },
+      where: {
+        id: applicationId,
+        applicationStatus: Not(ApplicationStatus.overwritten),
+        student: {
+          id: options?.studentId,
+        },
+      },
+    });
   }
 
   /**
@@ -923,39 +937,75 @@ export class ApplicationService extends RecordDataModelService<Application> {
         .getMany()
     );
   }
+
   /**
-   * Update Student Application status.
+   * Update Student Application status to cancelled.
    * Only allows the update on applications that are not in a final status.
    * The final statuses of an application are Completed, Overwritten and Cancelled.
    * @param applicationId application id.
-   * @param applicationStatus application status that need to be updated.
+   * @param studentId student id for authorization purposes.
    * @param auditUserId user who is making the changes.
-   * @returns student Application UpdateResult.
+   * @returns student application update result.
    */
-  async updateApplicationStatus(
+  async cancelStudentApplication(
     applicationId: number,
-    applicationStatus: ApplicationStatus,
+    studentId: number,
     auditUserId: number,
-  ): Promise<UpdateResult> {
-    const now = new Date();
-    return this.repo.update(
-      {
-        id: applicationId,
-        applicationStatus: Not(
-          In([
-            ApplicationStatus.completed,
-            ApplicationStatus.overwritten,
-            ApplicationStatus.cancelled,
-          ]),
-        ),
-      },
-      {
-        applicationStatus: applicationStatus,
-        applicationStatusUpdatedOn: now,
-        modifier: { id: auditUserId } as User,
-        updatedAt: now,
-      },
-    );
+  ): Promise<Application> {
+    return this.dataSource.transaction(async (transactionEntityManager) => {
+      const applicationRepo =
+        transactionEntityManager.getRepository(Application);
+      const application = await applicationRepo.findOne({
+        select: {
+          id: true,
+          currentAssessment: {
+            id: true,
+            assessmentWorkflowId: true,
+          },
+        },
+        where: {
+          id: applicationId,
+          student: {
+            id: studentId,
+          },
+          applicationStatus: Not(
+            In([
+              ApplicationStatus.completed,
+              ApplicationStatus.overwritten,
+              ApplicationStatus.cancelled,
+            ]),
+          ),
+        },
+      });
+      if (!application) {
+        throw new CustomNamedError(
+          "Application not found or it is not in the correct state to be cancelled.",
+          APPLICATION_NOT_FOUND,
+        );
+      }
+      // Updates the application status to cancelled.
+      const now = new Date();
+      application.applicationStatus = ApplicationStatus.cancelled;
+      application.applicationStatusUpdatedOn = now;
+      application.modifier = { id: auditUserId } as User;
+      application.updatedAt = now;
+      await applicationRepo.save(application);
+      // Delete workflow and rollback overawards if the workflow started.
+      // Workflow doest not exists for draft or submitted application, for instance.
+      if (application.currentAssessment?.assessmentWorkflowId) {
+        // TODO: move both call to the queue.
+        // Calling the API cancel the workflow.
+        await this.workflowClientService.deleteApplicationAssessment(
+          application.currentAssessment.assessmentWorkflowId,
+        );
+        // Overawards rollback.
+        await this.disbursementScheduleService.rollbackOverawards(
+          application.currentAssessment.id,
+          transactionEntityManager,
+        );
+      }
+      return application;
+    });
   }
 
   /**
