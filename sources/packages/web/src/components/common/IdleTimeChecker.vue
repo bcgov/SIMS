@@ -113,7 +113,6 @@ export default {
     };
 
     const confirmExtendTimeModal = async () => {
-      console.log("confirmExtendTimeModal");
       modalOpen.value = true;
       if (await extendTimeModal.value.showModal()) {
         extendUserSessionTime();
@@ -132,7 +131,6 @@ export default {
         "second",
         false,
       );
-      console.log("idleTimeInSeconds", idleTimeInSeconds.value);
 
       // Exceeded user session time.
       if (idleTimeInSeconds.value > maximumIdleTime.value) {
