@@ -9,9 +9,17 @@
     </template>
     <body-header
       title="Designation requests"
-      subTitle="Ensure you have an approved designation to administer financial aid to students. To request a designation, you must have the user role of a Legal Signing Authority to request it here."
       :recordsCount="designations.length"
     >
+      <template #subtitle>
+        Ensure you have an approved designation to administer financial aid to
+        students
+        <tooltip-icon
+          >To request a designation, you must have the user role of a Legal
+          Signing Authority to access the request button here.</tooltip-icon
+        >
+      </template>
+
       <template #actions>
         <v-btn
           v-if="isLegalSigningAuthority"
