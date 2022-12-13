@@ -1,8 +1,8 @@
 import data from "../../e2e/data/institution/manage-location.json";
 
 enum ErrorTypes {
-  fieldIsMandatory = 1,
-  fieldContainsMoreThanAllowedChars = 2,
+  FieldIsMandatory = 1,
+  FieldContainsMoreThanAllowedChars = 2,
 }
 export default class BaseMethods {
   /**
@@ -10,7 +10,7 @@ export default class BaseMethods {
    * @param cyId data-cy id for the Element
    * @returns Cypress.Chainable<JQuery<HTMLElement>>
    */
-  getElementByCyId(cyId: string) {
+  getElementByCyId(cyId: string): Cypress.Chainable<JQuery<HTMLElement>> {
     cy.get(`[data-cy='${cyId}']`).scrollIntoView();
     return cy.get(`[data-cy='${cyId}']`);
   }
@@ -21,12 +21,12 @@ export default class BaseMethods {
    * @param errorType What kind of error message to be constructed
    * @returns The complete error message
    */
-  errorMessageConstructor(fieldName: string, errorType: ErrorTypes) {
+  errorMessageConstructor(fieldName: string, errorType: ErrorTypes): string {
     const fieldNameTrimmed = fieldName.trim();
     switch (errorType) {
-      case 1:
+      case ErrorTypes.FieldIsMandatory:
         return `${fieldNameTrimmed} is required`;
-      case 2:
+      case ErrorTypes.FieldContainsMoreThanAllowedChars:
         return `${fieldNameTrimmed} must have no more than 100 characters`;
     }
   }
@@ -61,7 +61,7 @@ export default class BaseMethods {
     if (noOfCharsToBeValidated == 100) {
       const errorMessage = this.errorMessageConstructor(
         fieldName,
-        ErrorTypes.fieldContainsMoreThanAllowedChars
+        ErrorTypes.FieldContainsMoreThanAllowedChars
       );
       element.clear().type(data.invalidData.stringWithMoreThan100Chars);
       cy.contains(`${errorMessage}`);
@@ -84,7 +84,7 @@ export default class BaseMethods {
     if (checkForErrorMessage) {
       const errorMessage = this.errorMessageConstructor(
         fieldName,
-        ErrorTypes.fieldIsMandatory
+        ErrorTypes.FieldIsMandatory
       );
       cy.contains(`${errorMessage}`);
     }
@@ -92,8 +92,8 @@ export default class BaseMethods {
 
   /**
    *
-   * @param element
-   * @param dropDownOption
+   * @param element Cypress.Chainable<JQuery<HTMLElement>>
+   * @param dropDownOption The value for dropdown selections
    */
   verifyTheDropDownOptionsAreVisible(
     element: Cypress.Chainable<JQuery<HTMLElement>>,

@@ -114,11 +114,11 @@ export default class InstitutionProfileObject extends BaseMethods {
   }
 
   countrySearchInputText(country: string) {
-    return cy
-      .get("[role='textbox']")
+    cy.get("[role='textbox']")
       .eq(1)
       .clear()
-      .type(country, { force: true });
+      .type(country, { force: true })
+      .type("{enter}");
   }
 
   countryDropdownMenu() {
