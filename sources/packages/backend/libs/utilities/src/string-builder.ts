@@ -1,6 +1,6 @@
 import * as dayjs from "dayjs";
 
-export const NEXT_LINE = "\r\n";
+export const END_OF_LINE = "\r\n";
 /**
  * Allow the construction of a large string piece by
  * piece with some useful methods to help the
