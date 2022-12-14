@@ -1,5 +1,4 @@
 import { Module } from "@nestjs/common";
-import { DatabaseModule, DBEntities } from "@sims/sims-db";
 import {
   ApplicationService,
   MSFAANumberService,
@@ -66,10 +65,9 @@ import { AuthModule } from "./auth/auth.module";
 import { ApplicationControllerService } from "./route-controllers/application/application.controller.service";
 import { InstitutionUserControllerService } from "./route-controllers/institution-user/institution-user.controller.service";
 import { WorkflowClientService, SequenceControlService } from "@sims/services";
-import { TypeOrmModule } from "@nestjs/typeorm";
 
 @Module({
-  imports: [DatabaseModule, AuthModule],
+  imports: [AuthModule],
   controllers: [
     SupportingUserAESTController,
     DesignationAgreementAESTController,

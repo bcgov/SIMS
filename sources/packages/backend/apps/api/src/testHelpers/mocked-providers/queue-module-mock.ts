@@ -1,10 +1,11 @@
 import { Global, Module, Provider } from "@nestjs/common";
+import { QueueService } from "@sims/services/queue";
 import { QueueNames } from "@sims/utilities";
 
 @Global()
 @Module({
-  providers: getMockedQueueProviders(),
-  exports: getMockedQueueProviders(),
+  providers: [...getMockedQueueProviders(), QueueService],
+  exports: [...getMockedQueueProviders(), QueueService],
 })
 export class MockedQueueModule {}
 

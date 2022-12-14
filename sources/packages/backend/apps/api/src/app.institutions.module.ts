@@ -1,5 +1,4 @@
 import { Module } from "@nestjs/common";
-import { DatabaseModule, DBEntities } from "@sims/sims-db";
 import {
   DesignationAgreementService,
   FormService,
@@ -49,13 +48,9 @@ import {
 import { AuthModule } from "./auth/auth.module";
 import { EducationProgramOfferingValidationService } from "./services/education-program-offering/education-program-offering-validation.service";
 import { WorkflowClientService, SequenceControlService } from "@sims/services";
-import { TypeOrmModule } from "@nestjs/typeorm";
 
 @Module({
-  imports: [
-    DatabaseModule,
-    AuthModule,
-  ],
+  imports: [AuthModule],
   controllers: [
     DesignationAgreementInstitutionsController,
     InstitutionInstitutionsController,

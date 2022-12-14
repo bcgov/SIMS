@@ -1,5 +1,4 @@
 import { Module } from "@nestjs/common";
-import { DatabaseModule, DBEntities } from "@sims/sims-db";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { MetadataScanner } from "@nestjs/core";
 import { SeedExecutor } from "./seed-executors/seed-executor";
@@ -16,7 +15,7 @@ import {
 import { ConfigModule } from "@sims/utilities/config";
 
 @Module({
-  imports: [DatabaseModule, ConfigModule],
+  imports: [ConfigModule],
   providers: [
     DesignationAgreementService,
     SeedExecutor,

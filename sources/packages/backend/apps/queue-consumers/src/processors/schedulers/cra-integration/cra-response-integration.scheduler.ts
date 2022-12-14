@@ -27,14 +27,11 @@ export class CRAResponseIntegrationScheduler extends BaseScheduler<void> {
   async processResponses(
     job: Job<void>,
   ): Promise<ProcessResponseQueueOutDTO[]> {
-    const queueCleanUpPeriod = await this.queueService.getQueueCleanUpPeriod(
-      this.schedulerQueue.name as QueueNames,
-    );
     this.logger.log(
       `Processing CRA integration job ${job.id} of type ${job.name}.`,
     );
     const results = await this.cra.processResponses();
-    await this.schedulerQueue.clean(queueCleanUpPeriod, "completed");
+    await this.cleanSchedulerQueueHistory();
     return results.map((result) => {
       return {
         processSummary: result.processSummary,

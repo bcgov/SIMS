@@ -1,5 +1,4 @@
 import { Module } from "@nestjs/common";
-import { DatabaseModule, DBEntities } from "@sims/sims-db";
 import {
   ApplicationService,
   FormService,
@@ -48,13 +47,9 @@ import { StudentAccountApplicationsService } from "./services/student-account-ap
 import { ATBCStudentController } from "./route-controllers/atbc/atbc.students.controller";
 import { WorkflowClientService, SequenceControlService } from "@sims/services";
 import { ConfigModule } from "@sims/utilities/config";
-import { TypeOrmModule } from "@nestjs/typeorm";
+
 @Module({
-  imports: [
-    DatabaseModule,
-    AuthModule,
-    ConfigModule
-  ],
+  imports: [AuthModule, ConfigModule],
   controllers: [
     ApplicationStudentsController,
     StudentStudentsController,

@@ -13,7 +13,6 @@ import {
 import { SequenceControlService } from "@sims/services";
 import { DataSource, Repository } from "typeorm";
 import {
-  DatabaseModule,
   Application,
   ApplicationStatus,
   MSFAANumber,
@@ -54,7 +53,6 @@ describe.skip("ApplicationService", () => {
 
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [DatabaseModule],
       providers: [
         ApplicationService,
         StudentFileService,

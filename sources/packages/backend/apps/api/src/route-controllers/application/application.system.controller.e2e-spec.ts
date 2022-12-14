@@ -3,7 +3,6 @@ import { Test, TestingModule } from "@nestjs/testing";
 import { HttpStatus, INestApplication } from "@nestjs/common";
 import * as request from "supertest";
 import { KeycloakConfig } from "../../auth/keycloakConfig";
-import { DatabaseModule } from "@sims/sims-db";
 import { AuthModule } from "../../auth/auth.module";
 import {
   ApplicationService,
@@ -57,7 +56,7 @@ describe.skip("Test system-access/application Controller", () => {
     );
     accesstoken = token.access_token;
     const module: TestingModule = await Test.createTestingModule({
-      imports: [DatabaseModule, AuthModule, ConfigModule],
+      imports: [AuthModule, ConfigModule],
       controllers: [ApplicationSystemAccessController],
       providers: [
         ApplicationService,

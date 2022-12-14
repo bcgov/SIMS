@@ -1,6 +1,7 @@
-import { OnApplicationBootstrap } from "@nestjs/common";
+import { LoggerService, OnApplicationBootstrap } from "@nestjs/common";
 import { QueueService } from "@sims/services/queue";
 import { QueueNames } from "@sims/utilities";
+import { InjectLogger } from "@sims/utilities/logger";
 import Bull, { CronRepeatOptions, Queue } from "bull";
 
 export abstract class BaseScheduler<T> implements OnApplicationBootstrap {
@@ -9,7 +10,24 @@ export abstract class BaseScheduler<T> implements OnApplicationBootstrap {
     protected queueService: QueueService,
   ) {}
 
-  async queueConfiguration(): Promise<Bull.JobOptions> {
+  /**
+   * Clean the queue scheduler history.
+   */
+  protected async cleanSchedulerQueueHistory(): Promise<void> {
+    try {
+      const queueCleanUpPeriod = await this.queueService.getQueueCleanUpPeriod(
+        this.schedulerQueue.name as QueueNames,
+      );
+      await this.schedulerQueue.clean(queueCleanUpPeriod, "completed");
+    } catch (error: unknown) {
+      this.logger.error(error);
+    }
+  }
+
+  /**
+   * Get queue configurations.
+   */
+  private async queueConfiguration(): Promise<Bull.JobOptions> {
     return this.queueService.getQueueConfiguration(
       this.schedulerQueue.name as QueueNames,
     );
@@ -43,4 +61,7 @@ export abstract class BaseScheduler<T> implements OnApplicationBootstrap {
       }
     });
   }
+
+  @InjectLogger()
+  logger: LoggerService;
 }

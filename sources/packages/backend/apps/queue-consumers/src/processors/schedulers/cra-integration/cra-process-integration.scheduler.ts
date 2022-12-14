@@ -29,16 +29,13 @@ export class CRAProcessIntegrationScheduler extends BaseScheduler<void> {
   async processIncomeVerification(
     job: Job<void>,
   ): Promise<CRAValidationResultQueueOutDTO> {
-    const queueCleanUpPeriod = await this.queueService.getQueueCleanUpPeriod(
-      this.schedulerQueue.name as QueueNames,
-    );
     this.logger.log(
       `Processing CRA integration job ${job.id} of type ${job.name}.`,
     );
     this.logger.log("Executing income validation...");
     const uploadResult = await this.cra.createIncomeVerificationRequest();
     this.logger.log("Income validation executed.");
-    await this.schedulerQueue.clean(queueCleanUpPeriod, "completed");
+    await this.cleanSchedulerQueueHistory();
     return {
       generatedFile: uploadResult.generatedFile,
       uploadedRecords: uploadResult.uploadedRecords,

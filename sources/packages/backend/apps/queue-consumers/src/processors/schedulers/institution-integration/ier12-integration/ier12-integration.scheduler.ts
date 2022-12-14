@@ -32,9 +32,6 @@ export class IER12IntegrationScheduler extends BaseScheduler<GeneratedDateQueueI
   async processIER12File(
     job: Job<GeneratedDateQueueInDTO | undefined>,
   ): Promise<IER12ResultQueueOutDTO[]> {
-    const queueCleanUpPeriod = await this.queueService.getQueueCleanUpPeriod(
-      this.schedulerQueue.name as QueueNames,
-    );
     this.logger.log(
       `Processing IER integration job ${job.id} of type ${job.name}.`,
     );
@@ -43,7 +40,7 @@ export class IER12IntegrationScheduler extends BaseScheduler<GeneratedDateQueueI
       job.data.generatedDate,
     );
     this.logger.log("IER 12 file generation completed.");
-    await this.schedulerQueue.clean(queueCleanUpPeriod, "completed");
+    await this.cleanSchedulerQueueHistory();
     return uploadResult;
   }
 

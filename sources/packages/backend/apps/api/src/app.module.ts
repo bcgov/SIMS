@@ -1,7 +1,6 @@
 import { Module } from "@nestjs/common";
 import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
-import { DatabaseModule } from "@sims/sims-db";
 import { RouterModule } from "@nestjs/core";
 import {
   UserService,
@@ -50,12 +49,13 @@ import { LoggerModule } from "@sims/utilities/logger";
 import { ConfigModule } from "@sims/utilities/config";
 import { NotificationsModule } from "@sims/services/notifications";
 import { QueueModule } from "@sims/services/queue";
+import { DatabaseModule } from "@sims/sims-db";
 
 @Module({
   imports: [
+    DatabaseModule,
     LoggerModule,
     ConfigModule,
-    DatabaseModule,
     AuthModule,
     ZeebeModule.forRoot(),
     NotificationsModule,
