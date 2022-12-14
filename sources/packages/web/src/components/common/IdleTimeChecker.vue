@@ -8,7 +8,6 @@
     <slot></slot>
     <confirm-extend-time
       ref="extendTimeModal"
-      :clientIdType="clientIdType"
       :countdown="countdown"
       @dialogClosedEvent="extendUserSessionTime"
     />
