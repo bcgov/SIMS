@@ -29,7 +29,6 @@ import {
   MAXIMUM_IDLE_TIME_FOR_WARNING_INSTITUTION,
   MAXIMUM_IDLE_TIME_FOR_WARNING_AEST,
   COUNT_DOWN_TIMER_FOR_LOGOUT,
-  LOGGED_OUT_LOCAL_STORAGE_ITEM,
 } from "@/constants/system-constants";
 import ConfirmExtendTime from "@/components/common/modals/ConfirmExtendTime.vue";
 
@@ -47,7 +46,7 @@ export default {
     const extendTimeModal = ref({} as ModalDialog<boolean>);
     const { isAuthenticated } = useInstitutionAuth();
     const { getDatesDiff } = useFormatters();
-    const { executeLogout } = useAuth();
+    const { executeLogout, isLoggedOut, resetLoggedOut } = useAuth();
     const countdown = ref(COUNT_DOWN_TIMER_FOR_LOGOUT);
     const IDLE_CHECKER_TIMER_INTERVAL = 1000;
     const COUNTDOWN_INTERVAL = 1000;
@@ -58,7 +57,7 @@ export default {
     onMounted(async () => {
       setLastActivityTime();
       resetIdleCheckerTimer();
-      localStorage.removeItem(LOGGED_OUT_LOCAL_STORAGE_ITEM);
+      resetLoggedOut();
     });
 
     const logoff = async () => {
@@ -117,15 +116,17 @@ export default {
       if (await extendTimeModal.value.showModal()) {
         extendUserSessionTime();
       } else {
-        setLoggedOut();
+        logoff();
       }
     };
 
     const checkIdle = () => {
-      if (getLoggedOut()) {
+      // Check if it was logged out from another tab/window.
+      if (isLoggedOut()) {
         logoff();
         return;
       }
+
       idleTimeInSeconds = getDatesDiff(
         getLastActivityTime(),
         new Date(),
@@ -141,7 +142,11 @@ export default {
         idleTimeInSeconds >=
         maximumIdleTime.value - COUNT_DOWN_TIMER_FOR_LOGOUT
       ) {
+        // Open modal.
         confirmExtendTimeModal();
+      } else {
+        // Close modal.
+        extendTimeModal.value.showDialog = false;
       }
     };
 
@@ -162,20 +167,6 @@ export default {
         return new Date(+epochLastActivityTimeStringValue);
       }
       return new Date();
-    };
-
-    const setLoggedOut = () => {
-      localStorage.setItem(LOGGED_OUT_LOCAL_STORAGE_ITEM, "true");
-    };
-
-    const getLoggedOut = () => {
-      const loggedOutStringValue = localStorage.getItem(
-        LOGGED_OUT_LOCAL_STORAGE_ITEM,
-      );
-      if (loggedOutStringValue === "true") {
-        return true;
-      }
-      return false;
     };
 
     return {

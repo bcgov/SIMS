@@ -13,6 +13,3 @@ export const MAXIMUM_IDLE_TIME_FOR_WARNING_AEST = 3600;
 export const COUNT_DOWN_TIMER_FOR_LOGOUT = 30;
 // * renew auth token if expired checker should happen every seconds
 export const RENEW_AUTH_TOKEN_TIMER = 30;
-
-// * LocalStorage item name for the loggedOut boolean flag
-export const LOGGED_OUT_LOCAL_STORAGE_ITEM = "loggedOut";
