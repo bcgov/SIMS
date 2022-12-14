@@ -58,7 +58,7 @@ export default class ManageLocationObject extends BaseMethods {
   }
 
   country() {
-    return this.getElementByCyId("selectedCountry");
+    return this.getElementByCyId("selectedCountry").parent();
   }
 
   provinceText() {
@@ -88,7 +88,7 @@ export default class ManageLocationObject extends BaseMethods {
   addLocationButton() {
     return this.getElementByCyId("addLocation");
   }
-  
+
   manageLocationsBackButton() {
     return cy.contains("Manage location");
   }
@@ -123,6 +123,14 @@ export default class ManageLocationObject extends BaseMethods {
 
   countryDropDownMenu() {
     return this.getElementByCyId("selectedCountry").parent();
+  }
+
+  countrySearchInputText(country: string) {
+    cy.get("[role='textbox']")
+      .eq(0)
+      .clear()
+      .type(country, { force: true })
+      .type("{enter}");
   }
 
   countryCanadaFromDropDownMenu() {

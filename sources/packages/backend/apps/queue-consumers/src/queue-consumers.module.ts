@@ -1,11 +1,12 @@
 require("../../../env_setup_apps");
-import { Global, Module } from "@nestjs/common";
+import { Module } from "@nestjs/common";
 import { QueueModule, QueueService } from "@sims/services/queue";
 import {
   IER12IntegrationScheduler,
-  StartApplicationAssessmentProcessor,
   CRAResponseIntegrationScheduler,
   CRAProcessIntegrationScheduler,
+  StartApplicationAssessmentProcessor,
+  ProcessNotificationScheduler,
 } from "./processors";
 import {
   SequenceControlService,
@@ -35,6 +36,7 @@ import { CRAIntegrationModule } from "@sims/integrations/cra-integration/cra-int
     WorkflowClientService,
     IER12IntegrationScheduler,
     IER12IntegrationService,
+    ProcessNotificationScheduler,
     StudentAssessmentService,
     SshService,
     QueueService,

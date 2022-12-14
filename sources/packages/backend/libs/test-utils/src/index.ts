@@ -10,3 +10,4 @@ export * from "./factories/program-year";
 export * from "./factories/student-assessment";
 export * from "./factories/education-program-offering";
 export * from "./factories/disbursement-schedule";
+export * from "./factories/disbursement-overaward";

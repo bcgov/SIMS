@@ -15,3 +15,7 @@ export const MAX_MSFAA_VALID_DAYS = 730;
  * is an mandatory field while creating a new user.
  */
 export const SERVICE_ACCOUNT_DEFAULT_USER_EMAIL = "dev_sabc@gov.bc.ca";
+/**
+ * Minimum value amount to generate an overaward for a federal loan.
+ */
+export const MIN_CANADA_LOAN_OVERAWARD = 250;

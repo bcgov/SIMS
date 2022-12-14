@@ -34,13 +34,20 @@ export abstract class BaseScheduler<T> implements OnApplicationBootstrap {
   }
 
   /**
+   * Payload data which could be overridden if required by the implementing subclass.
+   */
+  protected async payload(): Promise<T> {
+    return undefined;
+  }
+
+  /**
    * Once all modules have been initialized it will check, if there is
    * any old cron job delete it and add the new job to the queue.
    */
   async onApplicationBootstrap(): Promise<void> {
     await this.deleteOldRepeatableJobs();
     // Add the cron to the queue.
-    await this.schedulerQueue.add(undefined);
+    await this.schedulerQueue.add(await this.payload());
   }
 
   /**

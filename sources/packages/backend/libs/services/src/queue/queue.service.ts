@@ -62,13 +62,18 @@ export class QueueService {
    */
   async getQueueConfiguration(queueName: QueueNames): Promise<Bull.JobOptions> {
     const queueConfig = await this.queueConfigurationDetails(queueName);
-    return {
-      attempts: queueConfig.queueConfiguration.retry,
-      backoff: queueConfig.queueConfiguration.retryInterval,
-      repeat: {
+    const config = {} as Bull.JobOptions;
+    const queueConfiguration = queueConfig.queueConfiguration;
+    if (queueConfiguration.retry && queueConfiguration.retryInterval) {
+      config.attempts = queueConfiguration.retry;
+      config.backoff = queueConfiguration.retryInterval;
+    }
+    if (queueConfig.queueConfiguration.cron) {
+      config.repeat = {
         cron: queueConfig.queueConfiguration.cron,
-      },
-    };
+      };
+    }
+    return config;
   }
 
   /**
@@ -81,5 +86,17 @@ export class QueueService {
   ): Promise<number | undefined> {
     const queueConfig = await this.queueConfigurationDetails(queueName);
     return queueConfig.queueConfiguration.cleanUpPeriod;
+  }
+
+  /**
+   * Get queue polling record limit.
+   * @param queueName queue name
+   * @returns queue polling record limit.
+   */
+  async getQueuePollingRecordLimit(
+    queueName: QueueNames,
+  ): Promise<number | undefined> {
+    const queueConfig = await this.queueConfigurationDetails(queueName);
+    return queueConfig.queueConfiguration.pollingRecordLimit;
   }
 }

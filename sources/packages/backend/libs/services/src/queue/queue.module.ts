@@ -81,16 +81,10 @@ function getQueueModules(): BullModuleAsyncOptions[] {
       queueService: QueueService,
     ): Promise<BullModuleOptions> => {
       const queueConfig = await queueService.getQueueConfiguration(queue);
-      const queueOptions: BullModuleOptions = {
+      return {
         prefix: configService.queuePrefix,
+        defaultJobOptions: queueConfig,
       };
-      if (queueConfig.attempts && queueConfig.backoff) {
-        queueOptions.defaultJobOptions = {
-          attempts: queueConfig.attempts,
-          backoff: queueConfig.backoff,
-        };
-      }
-      return queueOptions;
     },
     inject: [ConfigService, QueueService],
   }));

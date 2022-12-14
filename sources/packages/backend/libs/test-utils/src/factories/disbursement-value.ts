@@ -8,8 +8,10 @@ export function createFakeDisbursementValue(
   valueType: DisbursementValueType,
   valueCode: string,
   valueAmount: string,
-  overawardAmountSubtracted?: string,
-  disbursedAmountSubtracted?: string,
+  options?: {
+    overawardAmountSubtracted?: string;
+    disbursedAmountSubtracted?: string;
+  },
   relations?: {
     disbursementSchedule: DisbursementSchedule;
   },
@@ -18,8 +20,10 @@ export function createFakeDisbursementValue(
   disbursementValue.valueType = valueType;
   disbursementValue.valueCode = valueCode;
   disbursementValue.valueAmount = valueAmount;
-  disbursementValue.overawardAmountSubtracted = overawardAmountSubtracted;
-  disbursementValue.disbursedAmountSubtracted = disbursedAmountSubtracted;
+  disbursementValue.overawardAmountSubtracted =
+    options?.overawardAmountSubtracted;
+  disbursementValue.disbursedAmountSubtracted =
+    options?.disbursedAmountSubtracted;
   disbursementValue.disbursementSchedule = relations?.disbursementSchedule;
   return disbursementValue;
 }

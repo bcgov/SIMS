@@ -29,7 +29,7 @@ import {
   ASSESSMENT_ALREADY_ASSOCIATED_TO_WORKFLOW,
   ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE,
   ASSESSMENT_NOT_FOUND,
-} from "../../constants";
+} from "@sims/services/constants";
 import {
   ASSESSMENT_DATA,
   ASSESSMENT_ID,
