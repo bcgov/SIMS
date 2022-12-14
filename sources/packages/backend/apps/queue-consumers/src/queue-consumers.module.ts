@@ -4,6 +4,7 @@ import { QueueModule, QueueService } from "@sims/services/queue";
 import {
   StartApplicationAssessmentProcessor,
   ProcessNotificationScheduler,
+  ATBCIntegrationProcessor,
 } from "./processors";
 import { WorkflowClientService, ZeebeModule } from "@sims/services";
 import { DatabaseModule, DBEntities } from "@sims/sims-db";
@@ -32,6 +33,7 @@ import { TypeOrmModule } from "@nestjs/typeorm";
     IER12IntegrationScheduler,
     IER12IntegrationService,
     ProcessNotificationScheduler,
+    ATBCIntegrationProcessor,
     StudentAssessmentService,
     SshService,
     QueueService,
