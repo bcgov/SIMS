@@ -1,5 +1,4 @@
 import { Module } from "@nestjs/common";
-import { TypeOrmModule } from "@nestjs/typeorm";
 import { MetadataScanner } from "@nestjs/core";
 import { SeedExecutor } from "./seed-executors/seed-executor";
 import { DiscoveryService } from "@golevelup/nestjs-discovery";

@@ -2,7 +2,7 @@ import { LoggerService, OnApplicationBootstrap } from "@nestjs/common";
 import { QueueService } from "@sims/services/queue";
 import { QueueNames } from "@sims/utilities";
 import { InjectLogger } from "@sims/utilities/logger";
-import Bull, { CronRepeatOptions, Queue } from "bull";
+import { CronRepeatOptions, Queue } from "bull";
 
 export abstract class BaseScheduler<T> implements OnApplicationBootstrap {
   constructor(
