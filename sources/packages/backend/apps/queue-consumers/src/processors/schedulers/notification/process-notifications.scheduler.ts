@@ -6,11 +6,8 @@ import {
   ProcessNotificationsResponseQueueOutDTO,
 } from "./models/notification.dto";
 import { BaseScheduler } from "../base-scheduler";
-import {
-  PROCESS_NOTIFICATIONS_POLLING_LIMIT,
-  PROCESS_NOTIFICATION_CLEANUP_PERIOD,
-} from "@sims/services/constants";
 import { QueueNames } from "@sims/utilities";
+import { QueueService } from "@sims/services/queue";
 
 /**
  * Process notifications which are unsent.
@@ -21,20 +18,17 @@ export class ProcessNotificationScheduler extends BaseScheduler<ProcessNotificat
     @InjectQueue(QueueNames.ProcessNotifications)
     protected readonly schedulerQueue: Queue<ProcessNotificationsQueueInDTO>,
     private readonly notificationService: NotificationService,
+    protected readonly queueService: QueueService,
   ) {
-    super(schedulerQueue);
+    super(schedulerQueue, queueService);
   }
 
-  /**
-   * TODO:This method will be removed in next PR of #1551.
-   * @returns cron expression.
-   */
-  protected get cronExpression(): string {
-    return "* * * * *";
-  }
-
-  protected get payload(): ProcessNotificationsQueueInDTO {
-    return { pollingRecordsLimit: PROCESS_NOTIFICATIONS_POLLING_LIMIT };
+  protected async payload(): Promise<ProcessNotificationsQueueInDTO> {
+    const queuePollingRecordsLimit =
+      await this.queueService.getQueuePollingRecordLimit(
+        this.schedulerQueue.name as QueueNames,
+      );
+    return { pollingRecordsLimit: queuePollingRecordsLimit };
   }
 
   /**
@@ -51,10 +45,7 @@ export class ProcessNotificationScheduler extends BaseScheduler<ProcessNotificat
       await this.notificationService.processUnsentNotifications(
         job.data.pollingRecordsLimit,
       );
-    await this.schedulerQueue.clean(
-      PROCESS_NOTIFICATION_CLEANUP_PERIOD,
-      "completed",
-    );
+    await this.cleanSchedulerQueueHistory();
     return processNotificationResponse;
   }
 }

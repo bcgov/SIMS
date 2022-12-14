@@ -1,5 +1,4 @@
 import { Module } from "@nestjs/common";
-import { DatabaseModule } from "@sims/sims-db";
 import {
   ApplicationService,
   FormService,
@@ -50,7 +49,7 @@ import { WorkflowClientService, SequenceControlService } from "@sims/services";
 import { ConfigModule } from "@sims/utilities/config";
 
 @Module({
-  imports: [DatabaseModule, AuthModule, ConfigModule],
+  imports: [AuthModule, ConfigModule],
   controllers: [
     ApplicationStudentsController,
     StudentStudentsController,
