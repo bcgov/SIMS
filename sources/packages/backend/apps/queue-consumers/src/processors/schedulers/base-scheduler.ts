@@ -20,17 +20,19 @@ export abstract class BaseScheduler<T> implements OnApplicationBootstrap {
       );
       await this.schedulerQueue.clean(queueCleanUpPeriod, "completed");
     } catch (error: unknown) {
+      // Fail silently.
       this.logger.error(error);
     }
   }
 
   /**
-   * Get queue configurations.
+   * Get queue cron configurations.
    */
-  private async queueConfiguration(): Promise<Bull.JobOptions> {
-    return this.queueService.getQueueConfiguration(
+  private async queueCronConfiguration(): Promise<CronRepeatOptions> {
+    const queueConfig = await this.queueService.getQueueConfiguration(
       this.schedulerQueue.name as QueueNames,
     );
+    return queueConfig.repeat as CronRepeatOptions;
   }
 
   /**
@@ -60,8 +62,7 @@ export abstract class BaseScheduler<T> implements OnApplicationBootstrap {
    */
   private async deleteOldRepeatableJobs(): Promise<void> {
     const getAllRepeatableJobs = await this.schedulerQueue.getRepeatableJobs();
-    const queueConfig = await this.queueConfiguration();
-    const cronRepeatOption = queueConfig.repeat as CronRepeatOptions;
+    const cronRepeatOption = await this.queueCronConfiguration();
     getAllRepeatableJobs.forEach((job) => {
       if (job.cron !== cronRepeatOption.cron) {
         this.schedulerQueue.removeRepeatableByKey(job.key);
