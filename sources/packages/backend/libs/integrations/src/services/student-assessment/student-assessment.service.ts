@@ -56,6 +56,10 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
         },
         disbursementSchedules: {
           id: true,
+          coeStatus: true,
+          disbursementScheduleStatus: true,
+          disbursementDate: true,
+          dateSent: true,
           disbursementValues: { id: true, valueCode: true, valueAmount: true },
         },
       },
