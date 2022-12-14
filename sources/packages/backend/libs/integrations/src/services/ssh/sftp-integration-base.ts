@@ -4,6 +4,7 @@ import * as Client from "ssh2-sftp-client";
 import * as path from "path";
 import { SFTPConfig } from "@sims/utilities/config";
 import { FixedFormatFileLine } from "./sftp-integration-base.models";
+import { NEXT_LINE } from "@sims/utilities";
 
 /**
  * Provides the basic features to enable the SFTP integration.
@@ -33,7 +34,7 @@ export abstract class SFTPIntegrationBase<DownloadType> {
     const fixedFormattedLines: string[] = fileLines.map((line) =>
       line.getFixedFormat(),
     );
-    const fileContent = fixedFormattedLines.join("\r\n");
+    const fileContent = fixedFormattedLines.join(NEXT_LINE);
     return this.uploadRawContent(fileContent, remoteFilePath);
   }
 

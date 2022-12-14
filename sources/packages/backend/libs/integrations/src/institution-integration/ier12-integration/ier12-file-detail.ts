@@ -1,5 +1,5 @@
 import { DisbursementSchedule, DisbursementValue } from "@sims/sims-db";
-import { StringBuilder } from "@sims/utilities";
+import { NEXT_LINE, StringBuilder } from "@sims/utilities";
 import {
   DATE_FORMAT,
   IER12FileLine,
@@ -37,8 +37,9 @@ export class IER12FileDetail implements IER12FileLine {
   disbursementSchedules: DisbursementSchedule[];
 
   getFixedFormat(): string {
-    const record = new StringBuilder();
+    const records: string[] = [];
     this.disbursementSchedules.forEach((disbursement) => {
+      const record = new StringBuilder();
       record.appendWithStartFiller(this.assessmentId, 10, NUMBER_FILLER);
       record.appendWithStartFiller(disbursement.id, 10, NUMBER_FILLER);
       record.appendWithStartFiller(this.applicationNumber, 10, NUMBER_FILLER);
@@ -109,8 +110,8 @@ export class IER12FileDetail implements IER12FileLine {
           );
         },
       );
-      record.append("\r\n");
+      records.push(record.toString());
     });
-    return record.toString();
+    return records.join(NEXT_LINE);
   }
 }
