@@ -4,6 +4,7 @@
       <header-navigator
         title="Manage institution"
         subTitle="Manage Locations"
+        data-cy="manageLocationHeader"
       />
     </template>
     <location-summary @editLocation="gotToEditLocation" />

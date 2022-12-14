@@ -7,7 +7,7 @@ const manageInstitutionObject = new ManageInstitutionObject();
 const institutionHelperActions = new InstitutionHelperActions();
 
 describe("Institution Dashboard", () => {
-  beforeEach(() => {
+  before(() => {
     institutionHelperActions.loginIntoInstitutionSingleLocation();
   });
 
@@ -38,7 +38,6 @@ describe("Institution Dashboard", () => {
     manageInstitutionObject.manageUsers().should("be.visible");
     dashboardObject.myProfileButton().click();
     dashboardObject.iconButton().click();
-    dashboardObject.logOutButton().click();
   });
 
   it("Verify that clicking on Manage Institution should navigate “Manage Institutions Page”", () => {
@@ -48,6 +47,6 @@ describe("Institution Dashboard", () => {
 
   it("Verify that clicking on Manage Profile should navigate “My Profile Page”", () => {
     dashboardObject.myProfileButton().click();
-    dashboardObject.manageInstitutionProfileHeader().should("be.visible");
+    dashboardObject.manageInstitutionMyProfileHeader().should("be.visible");
   });
 });

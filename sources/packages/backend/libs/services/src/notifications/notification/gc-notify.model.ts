@@ -1,3 +1,5 @@
+import { HttpStatus } from "@nestjs/common";
+
 export interface GCNotifyResult {
   content: ContentPayload;
   id: string;
@@ -23,4 +25,19 @@ export interface RequestPayload<T> {
   email_address: string; //API payload require this naming convention, so we are not following camelCase.
   template_id: string; //API payload require this naming convention, so we are not following camelCase.
   personalisation: T;
+}
+
+export interface GCNotifyErrorDetail {
+  error: string;
+  message: string;
+}
+
+/**
+ * Error response returned by GC notify
+ * if an error occurs on adding a notification
+ * to it.
+ */
+export interface GCNotifyErrorResponse {
+  errors: GCNotifyErrorDetail[];
+  status_code: HttpStatus;
 }

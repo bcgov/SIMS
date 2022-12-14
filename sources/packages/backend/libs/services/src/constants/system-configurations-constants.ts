@@ -31,3 +31,13 @@ export const QUEUE_RETRY_DEFAULT_CONFIG = {
    */
   backoff: QUEUE_RETRY_DELAY,
 };
+
+/**
+ * Maximum number of notifications to process per schedule
+ */
+export const PROCESS_NOTIFICATIONS_POLLING_LIMIT = 100;
+
+/**
+ * cleans all jobs that completed over given period in milliseconds.
+ */
+export const PROCESS_NOTIFICATION_CLEANUP_PERIOD = 1000 * 60 * 30;

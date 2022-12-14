@@ -4,6 +4,7 @@ import { QueueModule, QueueService } from "@sims/services/queue";
 import {
   CancelApplicationAssessmentProcessor,
   StartApplicationAssessmentProcessor,
+  ProcessNotificationScheduler,
 } from "./processors";
 import {
   DisbursementScheduleService,
@@ -36,6 +37,7 @@ import { SystemUserModule } from "@sims/services/system-users";
     WorkflowClientService,
     IER12IntegrationScheduler,
     IER12IntegrationService,
+    ProcessNotificationScheduler,
     StudentAssessmentService,
     SshService,
     QueueService,
