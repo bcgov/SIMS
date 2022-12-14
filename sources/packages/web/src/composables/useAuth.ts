@@ -2,6 +2,7 @@ import { RouteHelper } from "@/helpers";
 import { AuthService } from "@/services/AuthService";
 import { AppIDPType, ClientIdType, Role } from "@/types";
 import { computed } from "vue";
+import { LOGGED_OUT_LOCAL_STORAGE_ITEM } from "@/constants/system-constants";
 
 export function useAuth() {
   const isAuthenticated = computed(
@@ -21,7 +22,12 @@ export function useAuth() {
   };
 
   const executeLogout = async (clientType: ClientIdType): Promise<void> => {
+    setLoggedOut();
     await AuthService.shared.logout(clientType);
+  };
+
+  const setLoggedOut = () => {
+    localStorage.setItem(LOGGED_OUT_LOCAL_STORAGE_ITEM, "true");
   };
 
   const hasRole = (role: Role): boolean => {

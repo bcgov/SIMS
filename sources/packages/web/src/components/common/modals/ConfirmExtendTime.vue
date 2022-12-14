@@ -3,7 +3,6 @@
     title="Confirm Extend Time"
     dialogType="warning"
     :showDialog="showDialog"
-    @click="extendTime"
   >
     <template v-slot:content>
       <v-container class="p-component text-dark">
@@ -19,8 +18,8 @@
       <footer-buttons
         primaryLabel="Yes"
         secondaryLabel="No"
-        @primaryClick="extendTime"
-        @secondaryClick="dialogClosed"
+        @primaryClick="resolvePromise(true)"
+        @secondaryClick="resolvePromise(false)"
       />
     </template>
   </modal-dialog-base>
@@ -29,42 +28,24 @@
 <script lang="ts">
 import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
 import { useModalDialog } from "@/composables";
-import { ClientIdType } from "@/types/contracts/ConfigContract";
 
 export default {
   components: {
     ModalDialogBase,
   },
   props: {
-    clientIdType: {
-      type: String,
-      required: true,
-      default: "" as ClientIdType,
-    },
     countdown: {
       type: Number,
       required: true,
     },
-    showDialog: {
-      type: Boolean,
-      required: true,
-    },
   },
   setup() {
-    const { resolvePromise, showModal } = useModalDialog<boolean>();
-
-    const dialogClosed = () => {
-      resolvePromise(false);
-    };
-
-    const extendTime = async () => {
-      resolvePromise(true);
-    };
+    const { resolvePromise, showModal, showDialog } = useModalDialog<boolean>();
 
     return {
       showModal,
-      dialogClosed,
-      extendTime,
+      resolvePromise,
+      showDialog,
     };
   },
 };

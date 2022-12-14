@@ -6,11 +6,10 @@
     @keyup="setLastActivityTime"
   >
     <slot></slot>
-    <ConfirmExtendTime
+    <confirm-extend-time
       ref="extendTimeModal"
       :clientIdType="clientIdType"
       :countdown="countdown"
-      :showDialog="modalOpen"
       @dialogClosedEvent="extendUserSessionTime"
     />
   </div>
@@ -31,7 +30,6 @@ import {
   MAXIMUM_IDLE_TIME_FOR_WARNING_INSTITUTION,
   MAXIMUM_IDLE_TIME_FOR_WARNING_AEST,
   COUNT_DOWN_TIMER_FOR_LOGOUT,
-  LAST_ACTIVITY_TIME_LOCAL_STORAGE_ITEM,
   LOGGED_OUT_LOCAL_STORAGE_ITEM,
 } from "@/constants/system-constants";
 import ConfirmExtendTime from "@/components/common/modals/ConfirmExtendTime.vue";
@@ -52,9 +50,12 @@ export default {
     const { getDatesDiff } = useFormatters();
     const { executeLogout } = useAuth();
     const countdown = ref(COUNT_DOWN_TIMER_FOR_LOGOUT);
-    const countdownInterval = ref(0);
     const modalOpen = ref(false);
-    const idleTimeInSeconds = ref(0);
+    const IDLE_CHECKER_TIMER_INTERVAL = 1000;
+    const COUNTDOWN_INTERVAL = 1000;
+    const LAST_ACTIVITY_TIME_LOCAL_STORAGE_ITEM = "lastActivityTime";
+    let countdownInterval = 0;
+    let idleTimeInSeconds = 0;
 
     onMounted(async () => {
       setLastActivityTime();
@@ -65,6 +66,7 @@ export default {
     const logoff = async () => {
       await executeLogout(props.clientIdType);
     };
+
     const maximumIdleTime = computed(() => {
       switch (props.clientIdType) {
         case ClientIdType.Student:
@@ -84,21 +86,21 @@ export default {
     const resetIdleCheckerTimer = () => {
       clearInterval(interval.value);
       if (isAuthenticated.value) {
-        interval.value = setInterval(checkIdle, 1000);
+        interval.value = setInterval(checkIdle, IDLE_CHECKER_TIMER_INTERVAL);
       }
     };
 
     watch(
-      () => modalOpen.value,
+      () => extendTimeModal.value.showDialog,
       (newValue: boolean) => {
         if (newValue) {
-          countdownInterval.value = setInterval(() => {
+          countdownInterval = setInterval(() => {
             if (countdown.value > 0) {
-              countdown.value = maximumIdleTime.value - idleTimeInSeconds.value;
+              countdown.value = maximumIdleTime.value - idleTimeInSeconds;
             }
-          }, 1000);
+          }, COUNTDOWN_INTERVAL);
         } else {
-          clearInterval(countdownInterval.value);
+          clearInterval(countdownInterval);
           countdown.value = COUNT_DOWN_TIMER_FOR_LOGOUT;
         }
       },
@@ -107,13 +109,13 @@ export default {
     const extendUserSessionTime = () => {
       setLastActivityTime();
       resetIdleCheckerTimer();
-      modalOpen.value = false;
-      clearInterval(countdownInterval.value);
+      extendTimeModal.value.showDialog = false;
+      clearInterval(countdownInterval);
       countdown.value = COUNT_DOWN_TIMER_FOR_LOGOUT;
     };
 
     const confirmExtendTimeModal = async () => {
-      modalOpen.value = true;
+      extendTimeModal.value.showDialog = true;
       if (await extendTimeModal.value.showModal()) {
         extendUserSessionTime();
       } else {
@@ -124,8 +126,9 @@ export default {
     const checkIdle = () => {
       if (getLoggedOut()) {
         logoff();
+        return;
       }
-      idleTimeInSeconds.value = getDatesDiff(
+      idleTimeInSeconds = getDatesDiff(
         getLastActivityTime(),
         new Date(),
         "second",
@@ -133,22 +136,14 @@ export default {
       );
 
       // Exceeded user session time.
-      if (idleTimeInSeconds.value > maximumIdleTime.value) {
-        if (modalOpen.value === true) {
-          modalOpen.value = false;
-          clearInterval(countdownInterval.value);
-        }
+      if (idleTimeInSeconds > maximumIdleTime.value) {
         // Logoff immediately in case session is expired.
         logoff();
       } else if (
-        idleTimeInSeconds.value >=
+        idleTimeInSeconds >=
         maximumIdleTime.value - COUNT_DOWN_TIMER_FOR_LOGOUT
       ) {
         confirmExtendTimeModal();
-      } else {
-        // Close the modal in case idleTimeInSeconds has changed
-        // because lastAcitivityTime changed from activity in other tab/window.
-        modalOpen.value = false;
       }
     };
 
@@ -162,11 +157,11 @@ export default {
     };
 
     const getLastActivityTime = () => {
-      const localStorageValue = localStorage.getItem(
+      const epochLastActivityTimeStringValue = localStorage.getItem(
         LAST_ACTIVITY_TIME_LOCAL_STORAGE_ITEM,
       );
-      if (localStorageValue) {
-        return new Date(+localStorageValue);
+      if (epochLastActivityTimeStringValue) {
+        return new Date(+epochLastActivityTimeStringValue);
       }
       return new Date();
     };
@@ -176,10 +171,10 @@ export default {
     };
 
     const getLoggedOut = () => {
-      const localStorageValue = localStorage.getItem(
+      const loggedOutStringValue = localStorage.getItem(
         LOGGED_OUT_LOCAL_STORAGE_ITEM,
       );
-      if (localStorageValue === "true") {
+      if (loggedOutStringValue === "true") {
         return true;
       }
       return false;
