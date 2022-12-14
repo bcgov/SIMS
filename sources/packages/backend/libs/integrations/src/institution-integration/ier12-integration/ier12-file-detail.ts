@@ -41,7 +41,7 @@ export class IER12FileDetail implements IER12FileLine {
       const record = new StringBuilder();
       record.appendWithStartFiller(this.assessmentId, 10, NUMBER_FILLER);
       record.appendWithStartFiller(disbursement.id, 10, NUMBER_FILLER);
-      record.appendWithStartFiller(this.applicationNumber, 10, NUMBER_FILLER);
+      record.append(this.applicationNumber, 10);
       record.append(this.sin, 9);
       record.appendWithEndFiller(this.studentLastName, 25, SPACE_FILLER);
       record.appendWithEndFiller(this.studentGivenName ?? "", 15, SPACE_FILLER);
@@ -87,13 +87,9 @@ export class IER12FileDetail implements IER12FileLine {
       );
       record.repeatAppend(SPACE_FILLER, 3); //We have hardcoded the courseLoad to null as its only for FullTime.
       record.append("F", 1); //This implementation is only for FullTime, so hardcoding it to F.
+      record.appendWithEndFiller(disbursement.coeStatus, 10, SPACE_FILLER);
       record.appendWithEndFiller(
-        disbursement.coeStatus ?? "",
-        10,
-        SPACE_FILLER,
-      );
-      record.appendWithEndFiller(
-        disbursement.disbursementScheduleStatus ?? "",
+        disbursement.disbursementScheduleStatus,
         10,
         SPACE_FILLER,
       );
