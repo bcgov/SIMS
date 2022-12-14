@@ -50,7 +50,6 @@ export default {
     const { getDatesDiff } = useFormatters();
     const { executeLogout } = useAuth();
     const countdown = ref(COUNT_DOWN_TIMER_FOR_LOGOUT);
-    const modalOpen = ref(false);
     const IDLE_CHECKER_TIMER_INTERVAL = 1000;
     const COUNTDOWN_INTERVAL = 1000;
     const LAST_ACTIVITY_TIME_LOCAL_STORAGE_ITEM = "lastActivityTime";
@@ -185,7 +184,6 @@ export default {
       extendTimeModal,
       isAuthenticated,
       countdown,
-      modalOpen,
       extendUserSessionTime,
     };
   },
