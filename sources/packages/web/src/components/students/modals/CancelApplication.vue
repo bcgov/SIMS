@@ -21,7 +21,6 @@
 import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
 import { useModalDialog, useSnackBar } from "@/composables";
 import { ApplicationService } from "@/services/ApplicationService";
-import { ApplicationStatus } from "@/types";
 import { defineComponent } from "vue";
 
 export default defineComponent({

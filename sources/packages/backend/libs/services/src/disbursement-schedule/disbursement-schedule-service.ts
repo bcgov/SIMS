@@ -253,6 +253,8 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
   /**
    * Rollback overawards from the current application being reassessed.
    * Past pending assessment will not be impacted.
+   * This method is safe to be called independently of the workflow state but it makes sense only after the
+   * application moves from the 'In progress' status when the disbursements are generated.
    * @param assessmentId assessment id.
    * @param entityManager used to execute the commands in the same transaction.
    */

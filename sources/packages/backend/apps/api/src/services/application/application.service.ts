@@ -1,12 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import {
-  DataSource,
-  In,
-  Not,
-  UpdateResult,
-  Brackets,
-  FindOneOptions,
-} from "typeorm";
+import { DataSource, In, Not, Brackets, FindOneOptions } from "typeorm";
 import { LoggerService, InjectLogger } from "@sims/utilities/logger";
 import {
   RecordDataModelService,
@@ -40,7 +33,7 @@ import {
   FieldSortOrder,
   OrderByCondition,
 } from "../../utilities";
-import { CustomNamedError, dateDifference } from "@sims/utilities";
+import { CustomNamedError, dateDifference, QueueNames } from "@sims/utilities";
 import { SFASApplicationService } from "../sfas/sfas-application.service";
 import { SFASPartTimeApplicationsService } from "../sfas/sfas-part-time-application.service";
 import { EducationProgramOfferingService } from "../education-program-offering/education-program-offering.service";
@@ -50,13 +43,12 @@ import {
   PIR_REQUEST_NOT_FOUND_ERROR,
   OFFERING_NOT_VALID,
 } from "../../constants";
-import {
-  DisbursementScheduleService,
-  SequenceControlService,
-  WorkflowClientService,
-} from "@sims/services";
+import { SequenceControlService, WorkflowClientService } from "@sims/services";
 import { ConfigService } from "@sims/utilities/config";
 import { NotificationActionsService } from "@sims/services/notifications";
+import { InjectQueue } from "@nestjs/bull";
+import { Queue } from "bull";
+import { CancelAssessmentQueueInDTO } from "@sims/services/queue";
 
 export const APPLICATION_DRAFT_NOT_FOUND = "APPLICATION_DRAFT_NOT_FOUND";
 export const MORE_THAN_ONE_APPLICATION_DRAFT_ERROR =
@@ -83,7 +75,8 @@ export class ApplicationService extends RecordDataModelService<Application> {
     private readonly studentRestrictionService: StudentRestrictionService,
     private readonly offeringService: EducationProgramOfferingService,
     private readonly notificationActionsService: NotificationActionsService,
-    private readonly disbursementScheduleService: DisbursementScheduleService,
+    @InjectQueue(QueueNames.CancelApplicationAssessment)
+    private readonly cancelAssessmentQueue: Queue<CancelAssessmentQueueInDTO>,
   ) {
     super(dataSource.getRepository(Application));
   }
@@ -263,9 +256,9 @@ export class ApplicationService extends RecordDataModelService<Application> {
     });
     // Deleting the existing workflow, if there is one.
     if (application.currentAssessment.assessmentWorkflowId) {
-      await this.workflowClientService.deleteApplicationAssessment(
-        application.currentAssessment.assessmentWorkflowId,
-      );
+      await this.cancelAssessmentQueue.add({
+        assessmentId: application.currentAssessment.id,
+      });
     }
 
     return { application, createdAssessment: originalAssessment };
@@ -963,6 +956,9 @@ export class ApplicationService extends RecordDataModelService<Application> {
             assessmentWorkflowId: true,
           },
         },
+        relations: {
+          currentAssessment: true,
+        },
         where: {
           id: applicationId,
           student: {
@@ -985,7 +981,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
       }
       // Updates the application status to cancelled.
       const now = new Date();
-      application.applicationStatus = ApplicationStatus.cancelled;
+      //application.applicationStatus = ApplicationStatus.cancelled;
       application.applicationStatusUpdatedOn = now;
       application.modifier = { id: auditUserId } as User;
       application.updatedAt = now;
@@ -993,16 +989,9 @@ export class ApplicationService extends RecordDataModelService<Application> {
       // Delete workflow and rollback overawards if the workflow started.
       // Workflow doest not exists for draft or submitted application, for instance.
       if (application.currentAssessment?.assessmentWorkflowId) {
-        // TODO: move both call to the queue.
-        // Calling the API cancel the workflow.
-        await this.workflowClientService.deleteApplicationAssessment(
-          application.currentAssessment.assessmentWorkflowId,
-        );
-        // Overawards rollback.
-        await this.disbursementScheduleService.rollbackOverawards(
-          application.currentAssessment.id,
-          transactionEntityManager,
-        );
+        this.cancelAssessmentQueue.add({
+          assessmentId: application.currentAssessment.id,
+        });
       }
       return application;
     });
