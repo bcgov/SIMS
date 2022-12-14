@@ -25,7 +25,7 @@ export class ProcessNotificationScheduler extends BaseScheduler<ProcessNotificat
 
   protected async payload(): Promise<ProcessNotificationsQueueInDTO> {
     const queuePollingRecordsLimit =
-      await this.queueService.getQueueCleanUpPeriod(
+      await this.queueService.getQueuePollingRecordLimit(
         this.schedulerQueue.name as QueueNames,
       );
     return { pollingRecordsLimit: queuePollingRecordsLimit };

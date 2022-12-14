@@ -17,5 +17,6 @@ export class StartApplicationAssessmentProcessor {
       job.data.workflowName,
       job.data.assessmentId,
     );
+    // Todo: add queue history cleaning logic as in schedulers.
   }
 }

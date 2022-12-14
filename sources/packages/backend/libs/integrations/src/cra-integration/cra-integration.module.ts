@@ -18,6 +18,10 @@ import { CRAPersonalVerificationService } from "./cra-personal-verification.serv
     WorkflowClientService,
     CRAIncomeVerificationsService,
   ],
-  exports: [CRAPersonalVerificationService, CRAIntegrationService],
+  exports: [
+    CRAPersonalVerificationService,
+    CRAIntegrationService,
+    CRAIncomeVerificationsService,
+  ],
 })
 export class CRAIntegrationModule {}

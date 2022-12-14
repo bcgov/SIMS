@@ -2,6 +2,7 @@ require("../../../../../env_setup");
 import { Test, TestingModule } from "@nestjs/testing";
 import { SequenceControlService } from "@sims/services";
 import { MSFAANumberService } from "../../services/msfaa-number/msfaa-number.service";
+import { DatabaseModule } from "@sims/sims-db";
 import * as dayjs from "dayjs";
 import { MAX_MSFAA_VALID_DAYS } from "@sims/utilities";
 
@@ -10,6 +11,7 @@ describe("MSFAANumberService", () => {
 
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
+      imports: [DatabaseModule],
       providers: [MSFAANumberService, SequenceControlService],
     }).compile();
 

@@ -8,6 +8,7 @@ import {
   StartApplicationAssessmentProcessor,
   ProcessNotificationScheduler,
 } from "./processors";
+import { DatabaseModule } from "@sims/sims-db";
 import {
   SequenceControlService,
   WorkflowClientService,
@@ -15,7 +16,6 @@ import {
 } from "@sims/services";
 import { IER12IntegrationService } from "@sims/integrations/institution-integration/ier12-integration";
 import {
-  CRAIncomeVerificationsService,
   SshService,
   StudentAssessmentService,
 } from "@sims/integrations/services";
@@ -25,6 +25,7 @@ import { CRAIntegrationModule } from "@sims/integrations/cra-integration/cra-int
 
 @Module({
   imports: [
+    DatabaseModule,
     QueueModule,
     ZeebeModule.forRoot(),
     IER12IntegrationModule,
@@ -43,7 +44,6 @@ import { CRAIntegrationModule } from "@sims/integrations/cra-integration/cra-int
     CRAResponseIntegrationScheduler,
     CRAProcessIntegrationScheduler,
     SequenceControlService,
-    CRAIncomeVerificationsService,
     WorkflowClientService,
   ],
   exports: [QueueService],
