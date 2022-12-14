@@ -986,7 +986,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
       }
       // Updates the application status to cancelled.
       const now = new Date();
-      //application.applicationStatus = ApplicationStatus.cancelled;
+      application.applicationStatus = ApplicationStatus.cancelled;
       application.applicationStatusUpdatedOn = now;
       application.modifier = { id: auditUserId } as User;
       application.updatedAt = now;
