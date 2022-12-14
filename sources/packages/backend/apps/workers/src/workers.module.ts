@@ -1,4 +1,5 @@
 import { Module } from "@nestjs/common";
+import { DatabaseModule } from "@sims/sims-db";
 import {
   AssessmentController,
   ApplicationController,
@@ -29,6 +30,7 @@ import { SystemUserModule } from "@sims/services/system-users";
 
 @Module({
   imports: [
+    DatabaseModule,
     ConfigModule,
     LoggerModule,
     ZeebeModule.forRoot(),
