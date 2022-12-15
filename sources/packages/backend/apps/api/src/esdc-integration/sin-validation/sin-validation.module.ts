@@ -1,11 +1,8 @@
 import { Module } from "@nestjs/common";
 import { AuthModule } from "../../auth/auth.module";
-import {
-  SFASIndividualService,
-  SINValidationService,
-  StudentService,
-} from "../../services";
+import { SINValidationService, StudentService } from "../../services";
 import { SequenceControlService } from "@sims/services";
+import { SFASIndividualService } from "@sims/services/sfas";
 import { SINValidationIntegrationService } from "./sin-validation-integration.service";
 import { SINValidationProcessingService } from "./sin-validation-processing.service";
 import { ConfigModule } from "@sims/utilities/config";

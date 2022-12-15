@@ -10,8 +10,6 @@ import {
   ApplicationService,
   StudentFileService,
   MSFAANumberService,
-  SFASApplicationService,
-  SFASPartTimeApplicationsService,
   StudentRestrictionService,
   RestrictionService,
   StudentScholasticStandingsService,
@@ -24,7 +22,6 @@ import {
   EducationProgramService,
   PIRDeniedReasonService,
   StudentService,
-  SFASIndividualService,
   EducationProgramOfferingImportCSVService,
 } from "./services";
 import {
@@ -48,6 +45,11 @@ import {
 import { AuthModule } from "./auth/auth.module";
 import { EducationProgramOfferingValidationService } from "./services/education-program-offering/education-program-offering-validation.service";
 import { WorkflowClientService, SequenceControlService } from "@sims/services";
+import {
+  SFASIndividualService,
+  SFASApplicationService,
+  SFASPartTimeApplicationsService,
+} from "@sims/services/sfas";
 
 @Module({
   imports: [AuthModule],
@@ -78,8 +80,6 @@ import { WorkflowClientService, SequenceControlService } from "@sims/services";
     SequenceControlService,
     StudentFileService,
     MSFAANumberService,
-    SFASApplicationService,
-    SFASPartTimeApplicationsService,
     StudentRestrictionService,
     RestrictionService,
     StudentScholasticStandingsService,
@@ -98,6 +98,8 @@ import { WorkflowClientService, SequenceControlService } from "@sims/services";
     EducationProgramOfferingControllerService,
     StudentService,
     SFASIndividualService,
+    SFASApplicationService,
+    SFASPartTimeApplicationsService,
     EducationProgramOfferingImportCSVService,
     EducationProgramOfferingValidationService,
   ],

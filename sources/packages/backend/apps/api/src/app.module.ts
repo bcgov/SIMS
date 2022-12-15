@@ -19,7 +19,6 @@ import {
   RestrictionService,
   DesignationAgreementLocationService,
   StudentService,
-  SFASIndividualService,
   EducationProgramOfferingValidationService,
 } from "./services";
 import {
@@ -30,7 +29,6 @@ import {
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
 import { MSFAAIntegrationModule } from "./esdc-integration/msfaa-integration/msfaa-integration.module";
-import { SFASIntegrationModule } from "./sfas-integration/sfas-integration.module";
 import { ECertIntegrationModule } from "./esdc-integration/e-cert-integration/e-cert-integration.module";
 import { FedRestrictionIntegrationModule } from "./esdc-integration/fed-restriction-integration/fed-restriction-integration.module";
 import { DisbursementReceiptIntegrationModule } from "./esdc-integration/disbursement-receipt-integration/disbursement-receipt-integration.module";
@@ -45,6 +43,11 @@ import {
   SequenceControlService,
   WorkflowClientService,
 } from "@sims/services";
+import {
+  SFASIndividualService,
+  SFASApplicationService,
+  SFASPartTimeApplicationsService,
+} from "@sims/services/sfas";
 import { LoggerModule } from "@sims/utilities/logger";
 import { ConfigModule } from "@sims/utilities/config";
 import { NotificationsModule } from "@sims/services/notifications";
@@ -60,7 +63,6 @@ import { DatabaseModule } from "@sims/sims-db";
     ZeebeModule.forRoot(),
     NotificationsModule,
     MSFAAIntegrationModule,
-    SFASIntegrationModule,
     ECertIntegrationModule,
     FedRestrictionIntegrationModule,
     DisbursementReceiptIntegrationModule,
@@ -120,6 +122,8 @@ import { DatabaseModule } from "@sims/sims-db";
     DesignationAgreementLocationService,
     StudentService,
     SFASIndividualService,
+    SFASApplicationService,
+    SFASPartTimeApplicationsService,
     EducationProgramOfferingValidationService,
     WorkflowClientService,
   ],

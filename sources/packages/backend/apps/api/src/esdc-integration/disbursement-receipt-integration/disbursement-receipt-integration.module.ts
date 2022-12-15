@@ -6,9 +6,9 @@ import {
   RestrictionService,
   ReportService,
   StudentService,
-  SFASIndividualService,
 } from "../../services";
 import { SequenceControlService } from "@sims/services";
+import { SFASIndividualService } from "@sims/services/sfas";
 import { DisbursementReceiptIntegrationService } from "./disbursement-receipt-integration.service";
 import { DisbursementReceiptProcessingService } from "./disbursement-receipt-processing.service";
 import { DisbursementReceiptRequestService } from "./disbursement-receipt-request.service";

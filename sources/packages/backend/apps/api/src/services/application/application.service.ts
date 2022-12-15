@@ -34,8 +34,10 @@ import {
   OrderByCondition,
 } from "../../utilities";
 import { CustomNamedError, dateDifference } from "@sims/utilities";
-import { SFASApplicationService } from "../sfas/sfas-application.service";
-import { SFASPartTimeApplicationsService } from "../sfas/sfas-part-time-application.service";
+import {
+  SFASApplicationService,
+  SFASPartTimeApplicationsService,
+} from "@sims/services/sfas";
 import { EducationProgramOfferingService } from "../education-program-offering/education-program-offering.service";
 import { StudentRestrictionService } from "../restriction/student-restriction.service";
 import {
