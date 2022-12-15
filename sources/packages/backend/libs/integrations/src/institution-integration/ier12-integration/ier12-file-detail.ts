@@ -1,5 +1,5 @@
 import { DisbursementSchedule, DisbursementValue } from "@sims/sims-db";
-import { END_OF_LINE, StringBuilder } from "@sims/utilities";
+import { END_OF_LINE, round, StringBuilder } from "@sims/utilities";
 import {
   DATE_FORMAT,
   IER12FileLine,
@@ -94,12 +94,14 @@ export class IER12FileDetail implements IER12FileLine {
         SPACE_FILLER,
       );
       record.appendDate(disbursement.disbursementDate, DATE_FORMAT);
-      record.appendDate(disbursement.dateSent, DATE_FORMAT);
+      disbursement.dateSent
+        ? record.appendDate(disbursement.dateSent, DATE_FORMAT)
+        : record.repeatAppend(SPACE_FILLER, 8);
       disbursement.disbursementValues.map(
         (disbursementValue: DisbursementValue) => {
           record.append(disbursementValue.valueCode, 4);
           record.appendWithStartFiller(
-            disbursementValue.valueAmount,
+            round(disbursementValue.valueAmount),
             8,
             NUMBER_FILLER,
           );
