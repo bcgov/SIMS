@@ -1,4 +1,4 @@
-import { ref } from "vue";
+import { Ref, ref } from "vue";
 
 export function useModalDialog<T, TParameter = any>() {
   const showDialog = ref(false);
@@ -28,4 +28,5 @@ export function useModalDialog<T, TParameter = any>() {
 
 export interface ModalDialog<T, TParameter = any> {
   showModal: (params?: TParameter) => Promise<T>;
+  showDialog: Ref<boolean>;
 }

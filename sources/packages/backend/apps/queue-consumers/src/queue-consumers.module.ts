@@ -5,21 +5,26 @@ import {
   CancelApplicationAssessmentProcessor,
   StartApplicationAssessmentProcessor,
   ProcessNotificationScheduler,
+  IER12IntegrationScheduler,
+  CRAResponseIntegrationScheduler,
+  CRAProcessIntegrationScheduler,
+  StartApplicationAssessmentProcessor,
+  ProcessNotificationScheduler,
 } from "./processors";
 import {
   DisbursementScheduleService,
   WorkflowClientService,
+  SequenceControlService,
   ZeebeModule,
 } from "@sims/services";
-import { DatabaseModule, DBEntities } from "@sims/sims-db";
+import { DatabaseModule } from "@sims/sims-db";
 import { IER12IntegrationService } from "@sims/integrations/institution-integration/ier12-integration";
 import { SshService } from "@sims/integrations/services";
 import { NotificationsModule } from "@sims/services/notifications";
 import { IER12IntegrationModule } from "@sims/integrations/institution-integration/ier12-integration/ier12-integration.module";
-import { IER12IntegrationScheduler } from "./processors/schedulers/institution-integration/ier12-integration/ier12-integration.scheduler";
-import { TypeOrmModule } from "@nestjs/typeorm";
 import { StudentAssessmentService } from "./services";
 import { SystemUserModule } from "@sims/services/system-users";
+import { CRAIntegrationModule } from "@sims/integrations/cra-integration/cra-integration.module";
 
 @Module({
   imports: [
@@ -27,9 +32,9 @@ import { SystemUserModule } from "@sims/services/system-users";
     QueueModule,
     ZeebeModule.forRoot(),
     IER12IntegrationModule,
-    TypeOrmModule.forFeature(DBEntities),
     NotificationsModule,
     SystemUserModule,
+    CRAIntegrationModule,
   ],
   providers: [
     StartApplicationAssessmentProcessor,
@@ -42,6 +47,11 @@ import { SystemUserModule } from "@sims/services/system-users";
     SshService,
     QueueService,
     DisbursementScheduleService,
+    CRAResponseIntegrationScheduler,
+    CRAProcessIntegrationScheduler,
+    SequenceControlService,
+    WorkflowClientService,
   ],
+  exports: [QueueService],
 })
 export class QueueConsumersModule {}

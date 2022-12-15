@@ -1,7 +1,6 @@
 import { Module } from "@nestjs/common";
 import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
-import { DatabaseModule } from "@sims/sims-db";
 import { RouterModule } from "@nestjs/core";
 import {
   UserService,
@@ -30,7 +29,6 @@ import {
   DynamicFormController,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
-import { CraIntegrationModule } from "./cra-integration/cra-integration.module";
 import { MSFAAIntegrationModule } from "./esdc-integration/msfaa-integration/msfaa-integration.module";
 import { SFASIntegrationModule } from "./sfas-integration/sfas-integration.module";
 import { ECertIntegrationModule } from "./esdc-integration/e-cert-integration/e-cert-integration.module";
@@ -50,19 +48,17 @@ import {
 import { LoggerModule } from "@sims/utilities/logger";
 import { ConfigModule } from "@sims/utilities/config";
 import { NotificationsModule } from "@sims/services/notifications";
-import { IER12IntegrationModule } from "@sims/integrations/institution-integration/ier12-integration/ier12-integration.module";
 import { QueueModule } from "@sims/services/queue";
+import { DatabaseModule } from "@sims/sims-db";
 
 @Module({
   imports: [
-    IER12IntegrationModule,
+    DatabaseModule,
     LoggerModule,
     ConfigModule,
-    DatabaseModule,
     AuthModule,
     ZeebeModule.forRoot(),
     NotificationsModule,
-    CraIntegrationModule,
     MSFAAIntegrationModule,
     SFASIntegrationModule,
     ECertIntegrationModule,

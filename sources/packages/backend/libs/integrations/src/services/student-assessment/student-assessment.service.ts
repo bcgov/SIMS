@@ -56,6 +56,10 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
         },
         disbursementSchedules: {
           id: true,
+          coeStatus: true,
+          disbursementScheduleStatus: true,
+          disbursementDate: true,
+          dateSent: true,
           disbursementValues: { id: true, valueCode: true, valueAmount: true },
         },
       },
@@ -64,10 +68,16 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
         application: { student: { sinValidation: true, user: true } },
         offering: { institutionLocation: true, educationProgram: true },
       },
-      where: {
-        assessmentDate: dateEqualTo(processingDate),
-        offering: { institutionLocation: { hasIntegration: true } },
-      },
+      where: [
+        {
+          assessmentDate: dateEqualTo(processingDate),
+          offering: { institutionLocation: { hasIntegration: true } },
+        },
+        {
+          disbursementSchedules: { updatedAt: dateEqualTo(processingDate) },
+          offering: { institutionLocation: { hasIntegration: true } },
+        },
+      ],
     });
   }
 }
