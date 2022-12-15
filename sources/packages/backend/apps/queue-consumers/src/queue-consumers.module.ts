@@ -2,14 +2,12 @@ require("../../../env_setup_apps");
 import { Module } from "@nestjs/common";
 import { QueueModule, QueueService } from "@sims/services/queue";
 import {
-  CancelApplicationAssessmentProcessor,
   StartApplicationAssessmentProcessor,
+  CancelApplicationAssessmentProcessor,
   ProcessNotificationScheduler,
   IER12IntegrationScheduler,
   CRAResponseIntegrationScheduler,
   CRAProcessIntegrationScheduler,
-  StartApplicationAssessmentProcessor,
-  ProcessNotificationScheduler,
 } from "./processors";
 import {
   DisbursementScheduleService,
