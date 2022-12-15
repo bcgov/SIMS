@@ -21,7 +21,7 @@ export enum QueueNames {
   FINProcessProvincialDailyDisbursementsIntegration = "fin-process-provincial-daily-disbursements-integration",
   PartTimeMSFAAProcessResponseIntegration = "part-time-msfaa-process-response-integration",
   FullTimeMSFAAProcessResponseIntegration = "full-time-msfaa-process-response-integration",
-  SFASSIntegration = "sfass-integration",
+  SFASIntegration = "sfas-integration",
   ATBCIntegration = "atbc-integration",
   ATBCResponseIntegration = "atbc-response-integration",
   ProcessNotifications = "process-notifications",

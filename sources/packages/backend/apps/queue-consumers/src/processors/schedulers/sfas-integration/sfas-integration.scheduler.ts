@@ -4,17 +4,18 @@ import { SFASProcessingResultQueueOutDTO } from "./models/sfas-integration.dto";
 import { BaseScheduler } from "../base-scheduler";
 import { QueueNames } from "@sims/utilities";
 import { QueueService } from "@sims/services/queue";
-import { LoggerService, InjectLogger } from "@sims/utilities/logger";
+import { SFASIntegrationProcessingService } from "@sims/integrations/sfas-integration";
 
 /**
  * Process all SFAS integration files from the SFTP location.
  */
-@Processor(QueueNames.SFASSIntegration)
+@Processor(QueueNames.SFASIntegration)
 export class SFASIntegrationScheduler extends BaseScheduler<void> {
   constructor(
-    @InjectQueue(QueueNames.SFASSIntegration)
+    @InjectQueue(QueueNames.SFASIntegration)
     protected readonly schedulerQueue: Queue<void>,
-    protected readonly queueService: QueueService,
+    private readonly sfasIntegrationProcessingService: SFASIntegrationProcessingService,
+    queueService: QueueService,
   ) {
     super(schedulerQueue, queueService);
   }
@@ -29,12 +30,14 @@ export class SFASIntegrationScheduler extends BaseScheduler<void> {
   async processNotifications(
     job: Job<void>,
   ): Promise<SFASProcessingResultQueueOutDTO[]> {
-    this.logger.log("Processing SFAS integration files...");
-    console.log(job.data);
-    this.logger.log("Completed processing SFAS integration files.");
-    return [];
+    job.log("Processing SFAS integration files...");
+    const processingResults =
+      await this.sfasIntegrationProcessingService.process();
+    job.log("Completed processing SFAS integration files.");
+    await this.cleanSchedulerQueueHistory();
+    return processingResults.map((result) => ({
+      summary: result.summary,
+      success: result.success,
+    }));
   }
-
-  @InjectLogger()
-  logger: LoggerService;
 }

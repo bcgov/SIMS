@@ -5,3 +5,4 @@ export * from "./schedulers/institution-integration/ier12-integration/ier12-inte
 export * from "./schedulers/base-scheduler";
 export * from "./schedulers/notification/process-notifications.scheduler";
 export * from "./atbc/atbc-integration-processor";
+export * from "./schedulers/sfas-integration/sfas-integration.scheduler";

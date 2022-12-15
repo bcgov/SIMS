@@ -8,6 +8,7 @@ import {
   StartApplicationAssessmentProcessor,
   ProcessNotificationScheduler,
   ATBCIntegrationProcessor,
+  SFASIntegrationScheduler,
 } from "./processors";
 import { DatabaseModule } from "@sims/sims-db";
 import {
@@ -42,6 +43,7 @@ import { SFASIntegrationModule } from "@sims/integrations/sfas-integration";
     IER12IntegrationService,
     ProcessNotificationScheduler,
     ATBCIntegrationProcessor,
+    SFASIntegrationScheduler,
     StudentAssessmentService,
     SshService,
     QueueService,
