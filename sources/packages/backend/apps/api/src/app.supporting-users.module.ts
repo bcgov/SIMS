@@ -1,5 +1,4 @@
 import { Module } from "@nestjs/common";
-import { DatabaseModule } from "@sims/sims-db";
 import {
   ApplicationService,
   FormService,
@@ -21,7 +20,7 @@ import { SupportingUserSupportingUsersController } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
 
 @Module({
-  imports: [DatabaseModule, AuthModule],
+  imports: [AuthModule],
   controllers: [SupportingUserSupportingUsersController],
   providers: [
     SupportingUserService,

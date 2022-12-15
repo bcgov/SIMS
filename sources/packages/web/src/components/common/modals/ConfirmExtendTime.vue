@@ -3,7 +3,6 @@
     title="Confirm Extend Time"
     dialogType="warning"
     :showDialog="showDialog"
-    @click="extendTime"
   >
     <template v-slot:content>
       <v-container class="p-component text-dark">
@@ -19,8 +18,8 @@
       <footer-buttons
         primaryLabel="Yes"
         secondaryLabel="No"
-        @primaryClick="extendTime"
-        @secondaryClick="dialogClosed"
+        @primaryClick="resolvePromise(true)"
+        @secondaryClick="resolvePromise(false)"
       />
     </template>
   </modal-dialog-base>
@@ -28,80 +27,25 @@
 
 <script lang="ts">
 import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
-import { useModalDialog, useAuth } from "@/composables";
-import { COUNT_DOWN_TIMER_FOR_LOGOUT } from "@/constants/system-constants";
-import { ref, watch } from "vue";
-import { ClientIdType } from "@/types/contracts/ConfigContract";
+import { useModalDialog } from "@/composables";
 
 export default {
   components: {
     ModalDialogBase,
   },
   props: {
-    clientIdType: {
-      type: String,
+    countdown: {
+      type: Number,
       required: true,
-      default: "" as ClientIdType,
     },
   },
-  setup(props: any) {
-    const countdown = ref(COUNT_DOWN_TIMER_FOR_LOGOUT);
-    const { showDialog, resolvePromise, showModal } = useModalDialog<boolean>();
-    const interval = ref();
-    const { executeLogout } = useAuth();
-
-    const logoff = async () => {
-      await executeLogout(props.clientIdType);
-    };
-
-    const dialogClosed = () => {
-      clearInterval(interval.value);
-      logoff();
-      resolvePromise(false);
-    };
-
-    const updateTimer = () => {
-      if (countdown.value > 0) {
-        countdown.value--;
-      } else {
-        dialogClosed();
-      }
-    };
-
-    const initializeCounter = () => {
-      countdown.value = COUNT_DOWN_TIMER_FOR_LOGOUT;
-    };
-
-    const countDownTimer = () => {
-      clearInterval(interval.value);
-      initializeCounter();
-      // * Set timer for 1 second, every 1 second updateTimer will be called.
-      interval.value = setInterval(updateTimer, 1000);
-    };
-
-    const extendTime = async () => {
-      clearInterval(interval.value);
-      resolvePromise(true);
-      initializeCounter();
-    };
-
-    watch(
-      () => showDialog.value,
-      (currValue: boolean) => {
-        if (currValue) {
-          countDownTimer();
-        } else {
-          clearInterval(interval.value);
-        }
-      },
-    );
+  setup() {
+    const { resolvePromise, showModal, showDialog } = useModalDialog<boolean>();
 
     return {
-      showDialog,
       showModal,
-      dialogClosed,
-      extendTime,
-      countdown,
+      resolvePromise,
+      showDialog,
     };
   },
 };

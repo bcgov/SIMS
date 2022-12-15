@@ -34,8 +34,6 @@ objects:
                   value: "${DB_SERVICE}"
                 - name: REDIS_HOST
                   value: "${REDIS_SERVICE}"
-                - name: SCHEDULERS_IER_CRON
-                  value: "${SCHEDULERS_IER_CRON}"
                 - name: POSTGRES_USER
                   valueFrom:
                     secretKeyRef:
@@ -244,8 +242,6 @@ parameters:
   - name: HOST_NAME
     required: true
   - name: QUEUE_PREFIX
-    required: true
-  - name: SCHEDULERS_IER_CRON
     required: true
   - name: ZONE_B_SFTP_SECRET_NAME
     value: zone-b-sftp

@@ -1,5 +1,4 @@
 import { Module } from "@nestjs/common";
-import { DatabaseModule } from "@sims/sims-db";
 import {
   ATBCService,
   StudentService,
@@ -16,8 +15,6 @@ import {
   SFASPartTimeApplicationsService,
   StudentFileService,
   MSFAANumberService,
-  CRAPersonalVerificationService,
-  CRAIntegrationService,
   SFASIndividualService,
   SFASRestrictionService,
   DisbursementScheduleErrorsService,
@@ -35,7 +32,6 @@ import {
 import {
   AssessmentControllerService,
   ApplicationSystemAccessController,
-  CRAIntegrationSystemAccessController,
   MSFAAIntegrationSystemAccessController,
   SFASIntegrationSystemAccessController,
   ECertIntegrationSystemAccessController,
@@ -68,17 +64,11 @@ import { SshService } from "@sims/integrations/services";
 import { IER12IntegrationModule } from "@sims/integrations/institution-integration/ier12-integration/ier12-integration.module";
 
 @Module({
-  imports: [
-    DatabaseModule,
-    AuthModule,
-    SINValidationModule,
-    IER12IntegrationModule,
-  ],
+  imports: [AuthModule, SINValidationModule, IER12IntegrationModule],
   controllers: [
     ATBCSystemAccessController,
     SINValidationSystemAccessController,
     ApplicationSystemAccessController,
-    CRAIntegrationSystemAccessController,
     MSFAAIntegrationSystemAccessController,
     SFASIntegrationSystemAccessController,
     ECertIntegrationSystemAccessController,
@@ -103,8 +93,6 @@ import { IER12IntegrationModule } from "@sims/integrations/institution-integrati
     SFASPartTimeApplicationsService,
     StudentFileService,
     MSFAANumberService,
-    CRAPersonalVerificationService,
-    CRAIntegrationService,
     SshService,
     MSFAARequestService,
     MSFAAIntegrationService,

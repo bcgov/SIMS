@@ -6,19 +6,29 @@
     @keyup="setLastActivityTime"
   >
     <slot></slot>
-    <ConfirmExtendTime ref="extendTimeModal" :clientIdType="clientIdType" />
+    <confirm-extend-time
+      ref="extendTimeModal"
+      :countdown="countdown"
+      @dialogClosedEvent="extendUserSessionTime"
+    />
   </div>
 </template>
 
 <script lang="ts">
-import { onMounted, ref, computed } from "vue";
+import { onMounted, ref, computed, watch } from "vue";
 import { ClientIdType } from "@/types";
-import { ModalDialog, useInstitutionAuth, useFormatters } from "@/composables";
 import {
-  MINIMUM_IDLE_TIME_FOR_WARNING_SUPPORTING_USER,
-  MINIMUM_IDLE_TIME_FOR_WARNING_STUDENT,
-  MINIMUM_IDLE_TIME_FOR_WARNING_INSTITUTION,
-  MINIMUM_IDLE_TIME_FOR_WARNING_AEST,
+  ModalDialog,
+  useInstitutionAuth,
+  useAuth,
+  useFormatters,
+} from "@/composables";
+import {
+  MAXIMUM_IDLE_TIME_FOR_WARNING_SUPPORTING_USER,
+  MAXIMUM_IDLE_TIME_FOR_WARNING_STUDENT,
+  MAXIMUM_IDLE_TIME_FOR_WARNING_INSTITUTION,
+  MAXIMUM_IDLE_TIME_FOR_WARNING_AEST,
+  COUNT_DOWN_TIMER_FOR_LOGOUT,
 } from "@/constants/system-constants";
 import ConfirmExtendTime from "@/components/common/modals/ConfirmExtendTime.vue";
 
@@ -32,22 +42,38 @@ export default {
     },
   },
   setup(props: any) {
-    const lastActivityLogin = ref(new Date());
     const interval = ref();
     const extendTimeModal = ref({} as ModalDialog<boolean>);
     const { isAuthenticated } = useInstitutionAuth();
     const { getDatesDiff } = useFormatters();
+    const { executeLogout, isLoggedOut, resetLoggedOut } = useAuth();
+    const countdown = ref(COUNT_DOWN_TIMER_FOR_LOGOUT);
+    const IDLE_CHECKER_TIMER_INTERVAL = 1000;
+    const COUNTDOWN_INTERVAL = 1000;
+    const LAST_ACTIVITY_TIME_LOCAL_STORAGE_ITEM = "lastActivityTime";
+    let countdownInterval = 0;
+    let idleTimeInSeconds = 0;
 
-    const minimumIdleTime = computed(() => {
+    onMounted(async () => {
+      setLastActivityTime();
+      resetIdleCheckerTimer();
+      resetLoggedOut();
+    });
+
+    const logoff = async () => {
+      await executeLogout(props.clientIdType);
+    };
+
+    const maximumIdleTime = computed(() => {
       switch (props.clientIdType) {
         case ClientIdType.Student:
-          return MINIMUM_IDLE_TIME_FOR_WARNING_STUDENT;
+          return MAXIMUM_IDLE_TIME_FOR_WARNING_STUDENT;
         case ClientIdType.Institution:
-          return MINIMUM_IDLE_TIME_FOR_WARNING_INSTITUTION;
+          return MAXIMUM_IDLE_TIME_FOR_WARNING_INSTITUTION;
         case ClientIdType.SupportingUsers:
-          return MINIMUM_IDLE_TIME_FOR_WARNING_SUPPORTING_USER;
+          return MAXIMUM_IDLE_TIME_FOR_WARNING_SUPPORTING_USER;
         case ClientIdType.AEST:
-          return MINIMUM_IDLE_TIME_FOR_WARNING_AEST;
+          return MAXIMUM_IDLE_TIME_FOR_WARNING_AEST;
         default:
           console.error("Invalid Client type");
           return 0;
@@ -57,44 +83,98 @@ export default {
     const resetIdleCheckerTimer = () => {
       clearInterval(interval.value);
       if (isAuthenticated.value) {
-        /* eslint-disable */
-        interval.value = setInterval(checkIdle, 30000);
-        /* eslint-enable */
+        interval.value = setInterval(checkIdle, IDLE_CHECKER_TIMER_INTERVAL);
       }
     };
 
+    watch(
+      () => extendTimeModal.value.showDialog,
+      (newValue: boolean) => {
+        if (newValue) {
+          countdownInterval = setInterval(() => {
+            if (countdown.value > 0) {
+              countdown.value = maximumIdleTime.value - idleTimeInSeconds;
+            }
+          }, COUNTDOWN_INTERVAL);
+        } else {
+          clearInterval(countdownInterval);
+          countdown.value = COUNT_DOWN_TIMER_FOR_LOGOUT;
+        }
+      },
+    );
+
+    const extendUserSessionTime = () => {
+      setLastActivityTime();
+      resetIdleCheckerTimer();
+      extendTimeModal.value.showDialog = false;
+      clearInterval(countdownInterval);
+      countdown.value = COUNT_DOWN_TIMER_FOR_LOGOUT;
+    };
+
     const confirmExtendTimeModal = async () => {
+      extendTimeModal.value.showDialog = true;
       if (await extendTimeModal.value.showModal()) {
-        lastActivityLogin.value = new Date();
-        resetIdleCheckerTimer();
+        extendUserSessionTime();
+      } else {
+        logoff();
       }
     };
 
     const checkIdle = () => {
-      const idleTimeInMintutes = getDatesDiff(
-        lastActivityLogin.value,
+      // Check if it was logged out from another tab/window.
+      if (isLoggedOut()) {
+        logoff();
+        return;
+      }
+
+      idleTimeInSeconds = getDatesDiff(
+        getLastActivityTime(),
         new Date(),
         "second",
-        true,
+        false,
       );
-      if (idleTimeInMintutes >= minimumIdleTime.value) {
+
+      // Exceeded user session time.
+      if (idleTimeInSeconds > maximumIdleTime.value) {
+        // Logoff immediately in case session is expired.
+        logoff();
+      } else if (
+        idleTimeInSeconds >=
+        maximumIdleTime.value - COUNT_DOWN_TIMER_FOR_LOGOUT
+      ) {
+        // Open modal.
         confirmExtendTimeModal();
+      } else {
+        // Close modal.
+        extendTimeModal.value.showDialog = false;
       }
     };
-
-    onMounted(async () => {
-      resetIdleCheckerTimer();
-    });
 
     const setLastActivityTime = () => {
       if (isAuthenticated.value) {
-        lastActivityLogin.value = new Date();
+        localStorage.setItem(
+          LAST_ACTIVITY_TIME_LOCAL_STORAGE_ITEM,
+          new Date().getTime().toString(),
+        );
       }
     };
+
+    const getLastActivityTime = () => {
+      const epochLastActivityTimeStringValue = localStorage.getItem(
+        LAST_ACTIVITY_TIME_LOCAL_STORAGE_ITEM,
+      );
+      if (epochLastActivityTimeStringValue) {
+        return new Date(+epochLastActivityTimeStringValue);
+      }
+      return new Date();
+    };
+
     return {
       setLastActivityTime,
       extendTimeModal,
       isAuthenticated,
+      countdown,
+      extendUserSessionTime,
     };
   },
 };

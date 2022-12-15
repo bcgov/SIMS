@@ -3,7 +3,6 @@ import { Test, TestingModule } from "@nestjs/testing";
 import { HttpStatus, INestApplication } from "@nestjs/common";
 import * as request from "supertest";
 import { KeycloakConfig } from "../../auth/keycloakConfig";
-import { DatabaseModule } from "@sims/sims-db";
 import { AuthModule } from "../../auth/auth.module";
 import {
   ApplicationService,
@@ -35,7 +34,6 @@ import {
   createFakeEducationProgramOffering,
 } from "../../testHelpers/fake-entities";
 import { createMockedJwtService } from "../../testHelpers/mocked-providers/jwt-service-mock";
-import { CraIntegrationModule } from "../../cra-integration/cra-integration.module";
 import { ApplicationSystemAccessController } from "./application.system-access.controller";
 import { createFakeInstitution, createFakeUser } from "@sims/test-utils";
 import { ConfigModule } from "@sims/utilities/config";
@@ -58,7 +56,7 @@ describe.skip("Test system-access/application Controller", () => {
     );
     accesstoken = token.access_token;
     const module: TestingModule = await Test.createTestingModule({
-      imports: [DatabaseModule, AuthModule, CraIntegrationModule, ConfigModule],
+      imports: [AuthModule, ConfigModule],
       controllers: [ApplicationSystemAccessController],
       providers: [
         ApplicationService,

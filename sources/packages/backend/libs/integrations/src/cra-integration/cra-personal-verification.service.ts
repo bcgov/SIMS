@@ -2,10 +2,6 @@ import { Injectable } from "@nestjs/common";
 import { CRAIncomeVerification, Student } from "@sims/sims-db";
 import { EntityManager } from "typeorm";
 import { LoggerService, InjectLogger } from "@sims/utilities/logger";
-import {
-  CRAIncomeVerificationService,
-  CRAIntegrationService,
-} from "../services";
 import { SequenceControlService, WorkflowClientService } from "@sims/services";
 import { CRAResponseStatusRecord } from "./cra-files/cra-response-status-record";
 import { CRAResponseTotalIncomeRecord } from "./cra-files/cra-response-total-income-record";
@@ -20,6 +16,8 @@ import {
 import { getUTCNow } from "@sims/utilities";
 import * as path from "path";
 import { ConfigService } from "@sims/utilities/config";
+import { CRAIntegrationService } from "./cra-integration.service";
+import { CRAIncomeVerificationsService } from "../services";
 
 const INCOME_VERIFICATION_TAG = "VERIFICATION_ID";
 
@@ -36,7 +34,7 @@ export class CRAPersonalVerificationService {
     private readonly craService: CRAIntegrationService,
     private readonly configService: ConfigService,
     private readonly sequenceService: SequenceControlService,
-    private readonly incomeVerificationService: CRAIncomeVerificationService,
+    private readonly incomeVerificationService: CRAIncomeVerificationsService,
     private readonly workflowClientService: WorkflowClientService,
     config: ConfigService,
   ) {
