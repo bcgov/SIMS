@@ -43,7 +43,7 @@ export class CancelApplicationAssessmentProcessor {
         await this.workflowClientService.deleteApplicationAssessment(
           assessment.assessmentWorkflowId,
         );
-        await job.log(`Workflow instance successfully cancelled.`);
+        await job.log("Workflow instance successfully cancelled.");
       } catch (error: unknown) {
         if (
           error instanceof ZeebeGRPCError &&

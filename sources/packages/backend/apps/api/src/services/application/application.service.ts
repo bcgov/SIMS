@@ -500,7 +500,9 @@ export class ApplicationService extends RecordDataModelService<Application> {
    * Gets a student application by applicationId.
    * Student id can be provided for authorization purposes.
    * @param applicationId application id.
-   * @param studentId optional student id for authorization purposes.
+   * @param options object that should contain:
+   * - `loadDynamicData` indicates if the dynamic data(JSONB) should be loaded.
+   * - `studentId` student id.
    * @returns student application.
    */
   async getApplicationById(
@@ -510,7 +512,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
     return this.repo.findOne({
       select: {
         id: true,
-        data: options?.loadDynamicData ? (true as unknown) : undefined,
+        data: !!options?.loadDynamicData as unknown,
         applicationStatus: true,
         pirStatus: true,
         applicationStatusUpdatedOn: true,
@@ -994,7 +996,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
       // Delete workflow and rollback overawards if the workflow started.
       // Workflow doest not exists for draft or submitted application, for instance.
       if (application.currentAssessment?.assessmentWorkflowId) {
-        this.cancelAssessmentQueue.add({
+        await this.cancelAssessmentQueue.add({
           assessmentId: application.currentAssessment.id,
         });
       }
