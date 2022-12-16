@@ -10,8 +10,11 @@ import { QueueNames } from "@sims/utilities";
 export class MockedQueueModule {}
 
 function getMockedQueueProviders(): Provider[] {
+  const mockAddQueue = (): any => {
+    return "fake queue";
+  };
   return Object.values(QueueNames).map<Provider>((queue) => ({
     provide: `BullQueue_${queue}`,
-    useValue: {},
+    useValue: { add: mockAddQueue },
   }));
 }

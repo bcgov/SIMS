@@ -30,10 +30,10 @@ export class SFASIntegrationScheduler extends BaseScheduler<void> {
   async processNotifications(
     job: Job<void>,
   ): Promise<SFASProcessingResultQueueOutDTO[]> {
-    job.log("Processing SFAS integration files...");
+    await job.log("Processing SFAS integration files...");
     const processingResults =
       await this.sfasIntegrationProcessingService.process();
-    job.log("Completed processing SFAS integration files.");
+    await job.log("Completed processing SFAS integration files.");
     await this.cleanSchedulerQueueHistory();
     return processingResults.map((result) => ({
       summary: result.summary,
