@@ -2,19 +2,16 @@ import { Injectable } from "@nestjs/common";
 import { ATBCIntegrationConfig, ConfigService } from "@sims/utilities/config";
 import axios from "axios";
 import { LoggerService, InjectLogger } from "@sims/utilities/logger";
-import {
-  ATBCHeader,
-  ATBCAuthTokenResponse,
-} from "../auth/token-cache.service.models";
+import { ATBCHeader, ATBCAuthTokenResponse } from "./models/atbc-auth.model";
 import {
   ATBCCreateClientResponse,
   ATBCCreateClientPayload,
   ATBCPDCheckerResponse,
   ATBCPDCheckerPayload,
-} from "../../types";
+} from "./models/atbc.model";
 import { Student } from "@sims/sims-db";
 import { StudentService } from "../../services";
-import { ATBCPDStatus } from "./atbc.models";
+import { ATBCPDStatus } from "./models/atbc.model";
 
 @Injectable()
 export class ATBCService {

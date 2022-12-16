@@ -25,6 +25,7 @@ import { NotificationsModule } from "@sims/services/notifications";
 import { IER12IntegrationModule } from "@sims/integrations/institution-integration/ier12-integration/ier12-integration.module";
 import { CRAIntegrationModule } from "@sims/integrations/cra-integration/cra-integration.module";
 import { SFASIntegrationModule } from "@sims/integrations/sfas-integration";
+import { ATBCIntegrationModule } from "@sims/integrations/atbc-integration";
 
 @Module({
   imports: [
@@ -35,6 +36,7 @@ import { SFASIntegrationModule } from "@sims/integrations/sfas-integration";
     NotificationsModule,
     CRAIntegrationModule,
     SFASIntegrationModule,
+    ATBCIntegrationModule,
   ],
   providers: [
     StartApplicationAssessmentProcessor,

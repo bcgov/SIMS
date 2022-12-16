@@ -1,6 +1,5 @@
 import { Module } from "@nestjs/common";
 import {
-  ATBCService,
   StudentService,
   ApplicationExceptionService,
   DisbursementScheduleService,
@@ -31,7 +30,6 @@ import {
   MSFAAIntegrationSystemAccessController,
   ECertIntegrationSystemAccessController,
   FedRestrictionsIntegrationSystemAccessController,
-  ATBCSystemAccessController,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
 import { SINValidationModule } from "./esdc-integration/sin-validation/sin-validation.module";
@@ -64,7 +62,6 @@ import { IER12IntegrationModule } from "@sims/integrations/institution-integrati
 @Module({
   imports: [AuthModule, SINValidationModule, IER12IntegrationModule],
   controllers: [
-    ATBCSystemAccessController,
     SINValidationSystemAccessController,
     ApplicationSystemAccessController,
     MSFAAIntegrationSystemAccessController,
@@ -73,7 +70,6 @@ import { IER12IntegrationModule } from "@sims/integrations/institution-integrati
   ],
   providers: [
     WorkflowClientService,
-    ATBCService,
     StudentService,
     StudentAssessmentService,
     EducationProgramOfferingService,

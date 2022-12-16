@@ -7,7 +7,6 @@ export * from "./education-program/education-program.aest.controller";
 export * from "./education-program/education-program.institutions.controller";
 export * from "./education-program/education-program.students.controller";
 export * from "./application/application.system-access.controller";
-export * from "./atbc/atbc.system-access.controller";
 export * from "./program-info-request/program-info-request.institutions.controller";
 export * from "./confirmation-of-enrollment/confirmation-of-enrollment.institutions.controller";
 export * from "./supporting-user/supporting-user.supporting-users.controller";

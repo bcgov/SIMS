@@ -4,7 +4,7 @@ import {
   UnprocessableEntityException,
 } from "@nestjs/common";
 import { ApiTags, ApiUnprocessableEntityResponse } from "@nestjs/swagger";
-import { ATBCService, StudentService } from "../../services";
+import { StudentService } from "../../services";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import {
   AllowAuthorizedParty,
@@ -12,8 +12,12 @@ import {
   UserToken,
 } from "../../auth/decorators";
 import { StudentUserToken } from "../../auth/userToken.interface";
-import { ATBCCreateClientPayload, ClientTypeBaseRoute } from "../../types";
+import { ClientTypeBaseRoute } from "../../types";
+import { RequestPDStatusQueueInDTO } from "@sims/services/queue";
 import BaseController from "../BaseController";
+import { InjectQueue } from "@nestjs/bull";
+import { QueueNames } from "@sims/utilities";
+import { Queue } from "bull";
 
 @AllowAuthorizedParty(AuthorizedParties.student)
 @RequiresStudentAccount()
@@ -21,8 +25,9 @@ import BaseController from "../BaseController";
 @ApiTags(`${ClientTypeBaseRoute.Student}-atbc`)
 export class ATBCStudentController extends BaseController {
   constructor(
-    private readonly atbcService: ATBCService,
     private readonly studentService: StudentService,
+    @InjectQueue(QueueNames.StartApplicationAssessment)
+    private readonly atbcIntegrationQueue: Queue<RequestPDStatusQueueInDTO>,
   ) {
     super();
   }
@@ -58,23 +63,6 @@ export class ATBCStudentController extends BaseController {
         "Either the client does not have a validated SIN or the request was already sent to ATBC.",
       );
     }
-
-    // Create client payload.
-    const payload: ATBCCreateClientPayload = {
-      SIN: student.sinValidation.sin,
-      firstName: student.user.firstName,
-      lastName: student.user.lastName,
-      email: student.user.email,
-      birthDate: new Date(student.birthDate),
-    };
-    // API to create student profile in ATBC.
-    const response = await this.atbcService.ATBCCreateClient(payload);
-    if (response) {
-      // Update PD sent date.
-      await this.studentService.updatePDSentDate(
-        student.id,
-        studentUserToken.userId,
-      );
-    }
+    await this.atbcIntegrationQueue.add({ studentId: student.id });
   }
 }
