@@ -1,7 +1,6 @@
 import DashboardInstitutionObject, {
   CredentialTypes,
 } from "../../page-objects/Institution-objects/DashboardInstitutionObject";
-import ManageUsersObject from "../../page-objects/Institution-objects/ManageUsersObject";
 import LocationProgramObject from "../../page-objects/Institution-objects/LocationProgramObject";
 import InstitutionHelperActions from "../../custom-command/institution/common-helper-functions.cy";
 import ProgramDetailViewObject from "../../page-objects/Institution-objects/ProgramDetailViewObject";
