@@ -6,25 +6,33 @@ import {
   ParseIntPipe,
 } from "@nestjs/common";
 import { ProgramYearService } from "../../services";
-import { OptionItem } from "../../types";
+import { ClientTypeBaseRoute } from "../../types";
 import BaseController from "../BaseController";
 import { AllowAuthorizedParty } from "../../auth/decorators/authorized-party.decorator";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
-import { ProgramYearDto } from "./models/program-year.dto";
-import { ApiTags } from "@nestjs/swagger";
+import { ProgramYearAPIOutDTO } from "./models/program-year.dto";
+import { ApiNotFoundResponse, ApiTags } from "@nestjs/swagger";
 import { RequiresStudentAccount } from "../../auth/decorators";
+import { OptionItemAPIOutDTO } from "../models/common.dto";
 
 @AllowAuthorizedParty(AuthorizedParties.student)
 @RequiresStudentAccount()
 @Controller("program-year")
-@ApiTags("program-year")
+@ApiTags(`${ClientTypeBaseRoute.Student}-program-year`)
 export class ProgramYearController extends BaseController {
   constructor(private readonly programYearService: ProgramYearService) {
     super();
   }
 
+  /**
+   * Gets a list of program years returned as option items (id/description pair).
+   * @returns an array of program years as OptionItemAPIOutDTO.
+   */
   @Get("/options-list")
-  async getProgramYears(): Promise<OptionItem[]> {
+  @ApiNotFoundResponse({
+    description: "No program years were found.",
+  })
+  async getProgramYears(): Promise<OptionItemAPIOutDTO[]> {
     const programYears = await this.programYearService.getProgramYears();
 
     if (!programYears) {
@@ -37,17 +45,22 @@ export class ProgramYearController extends BaseController {
     }));
   }
 
+  /**
+   * Gets an active program year given an id.
+   * @param id program year id.
+   * @returns an active program year with the id provided.
+   */
   @Get(":id/active")
+  @ApiNotFoundResponse({
+    description:
+      "Not able to find an active program year with the provided id.",
+  })
   async getActiveProgramYearById(
-    @Param("id", ParseIntPipe) programYearId: number,
-  ): Promise<ProgramYearDto> {
-    const programYear = await this.programYearService.getActiveProgramYear(
-      programYearId,
-    );
+    @Param("id", ParseIntPipe) id: number,
+  ): Promise<ProgramYearAPIOutDTO> {
+    const programYear = await this.programYearService.getActiveProgramYear(id);
     if (!programYear) {
-      throw new NotFoundException(
-        `Program Year Id ${programYearId} was not found.`,
-      );
+      throw new NotFoundException(`Program Year Id ${id} was not found.`);
     }
     return {
       id: programYear.id,
