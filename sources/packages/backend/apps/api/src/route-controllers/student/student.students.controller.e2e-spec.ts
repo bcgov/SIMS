@@ -3,7 +3,6 @@ import * as faker from "faker";
 import { DatabaseModule, SINValidation, Student, User } from "@sims/sims-db";
 import {
   StudentService,
-  ATBCService,
   UserService,
   SINValidationService,
 } from "../../services";
@@ -12,7 +11,6 @@ import { KeycloakService } from "../../services/auth/keycloak/keycloak.service";
 import { HttpStatus, INestApplication } from "@nestjs/common";
 import { Test, TestingModule } from "@nestjs/testing";
 import * as request from "supertest";
-import { ATBCCreateClientResponse } from "../../types";
 import { AuthModule } from "../../auth/auth.module";
 import { AppStudentsModule } from "../../app.students.module";
 import { createMockedZeebeModule } from "../../testHelpers/mocked-providers/zeebe-client-mock";
@@ -26,7 +24,6 @@ describe("Test ATBC Controller", () => {
   let accesstoken: string;
   let app: INestApplication;
   let studentService: StudentService;
-  let atbcService: ATBCService;
   let userService: UserService;
   let sinValidationService: SINValidationService;
 
@@ -49,7 +46,6 @@ describe("Test ATBC Controller", () => {
       ],
     }).compile();
     userService = await moduleFixture.get(UserService);
-    atbcService = await moduleFixture.get(ATBCService);
     studentService = await moduleFixture.get(StudentService);
     sinValidationService = await moduleFixture.get(SINValidationService);
     app = moduleFixture.createNestApplication();
@@ -89,11 +85,6 @@ describe("Test ATBC Controller", () => {
     sinValidation.sin = "706941291";
 
     await studentService.save(fakeStudent);
-
-    // creating mockup for ATBCCreateClient, this function actually calls the ATBC server to create the student profile
-    jest.spyOn(atbcService, "ATBCCreateClient").mockImplementation(async () => {
-      return {} as ATBCCreateClientResponse;
-    });
 
     try {
       // call to the controller, to apply for the PD
