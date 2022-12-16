@@ -48,16 +48,22 @@
           @sort="paginationAndSortEvent($event)"
           :loading="loading"
         >
-          <Column :field="ProgramSummaryFields.CipCode" header="CIP"></Column>
+          <Column
+            :field="ProgramSummaryFields.CipCode"
+            header="CIP"
+            data-type="programCIP"
+          ></Column>
           <Column
             :field="ProgramSummaryFields.ProgramName"
             header="Program Name"
             :sortable="true"
+            data-cy="programName"
           ></Column>
           <Column
             :field="ProgramSummaryFields.CredentialType"
             header="Credential"
             :sortable="true"
+            data-cy="programCredential"
           >
             <template #body="slotProps">
               <div>
@@ -68,11 +74,13 @@
           <Column
             :field="ProgramSummaryFields.TotalOfferings"
             header="Study periods"
+            data-cy="programStudyPeriods"
           ></Column>
           <Column
             :field="ProgramSummaryFields.ProgramStatus"
             header="Status"
             :sortable="true"
+            data-cy="programStatus"
             ><template #body="slotProps">
               <status-chip-program
                 :status="slotProps.data.programStatus"
@@ -83,6 +91,7 @@
               <v-btn
                 color="primary"
                 @click="goToViewProgram(slotProps.data.programId)"
+                data-cy="viewProgram"
                 >View</v-btn
               >
             </template>

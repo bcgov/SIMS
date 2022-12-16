@@ -1,9 +1,10 @@
 <template>
-  <body-header :title="educationProgram.name">
+  <body-header :title="educationProgram.name" data-cy="programName">
     <template #status-chip>
       <status-chip-program
         class="ml-2 mb-2"
         :status="educationProgram.programStatus"
+        data-cy="programStatus"
       ></status-chip-program>
     </template>
     <template #actions>
@@ -12,6 +13,7 @@
         variant="outlined"
         @click="programButtonAction"
         color="primary"
+        data-cy="programEditButton"
       >
         {{ programActionLabel }}
       </v-btn>
@@ -22,10 +24,11 @@
       <title-value
         propertyTitle="Description"
         :propertyValue="educationProgram.description"
+        data-cy="programDescription"
       />
     </v-col>
     <v-col md="4">
-      <title-value propertyTitle="Offering" />
+      <title-value propertyTitle="Offering" data-cy="programOffering" />
       <p class="label-value muted-content clearfix">
         <span
           v-if="
@@ -49,6 +52,7 @@
       <title-value
         propertyTitle="Credential Type"
         :propertyValue="educationProgram.credentialTypeToDisplay"
+        data-cy="programCredential"
       />
     </v-col>
   </v-row>
@@ -57,18 +61,21 @@
       <title-value
         propertyTitle="Classification of Instructional Programs (CIP)"
         :propertyValue="educationProgram.cipCode"
+        data-cy="programCIP"
       />
     </v-col>
     <v-col md="4"
       ><title-value
         propertyTitle="National Occupational Classification (NOC)"
         :propertyValue="educationProgram.nocCode"
+        data-cy="programNOCCode"
       />
     </v-col>
     <v-col
       ><title-value
         propertyTitle="Institution Program Code"
         :propertyValue="educationProgram.institutionProgramCode"
+        data-cy="programCode"
       />
     </v-col>
   </v-row>

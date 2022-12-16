@@ -17,6 +17,15 @@ export default class BaseMethods {
 
   /**
    *
+   * @param cyId data-cy id for the Element
+   * @param optionToCheck checkbox to be selected
+   */
+  selectCheckBox(cyId: string, optionToCheck: string) {
+    cy.get(`[data-cy='${cyId}']`).check(optionToCheck);
+  }
+
+  /**
+   *
    * @param fieldName Field Name that needs to be in the error message
    * @param errorType What kind of error message to be constructed
    * @returns The complete error message
