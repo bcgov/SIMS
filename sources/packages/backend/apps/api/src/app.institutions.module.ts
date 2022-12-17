@@ -9,7 +9,6 @@ import {
   DesignationAgreementLocationService,
   ApplicationService,
   StudentFileService,
-  MSFAANumberService,
   SFASApplicationService,
   SFASPartTimeApplicationsService,
   StudentRestrictionService,
@@ -48,6 +47,9 @@ import {
 import { AuthModule } from "./auth/auth.module";
 import { EducationProgramOfferingValidationService } from "./services/education-program-offering/education-program-offering-validation.service";
 import { WorkflowClientService, SequenceControlService } from "@sims/services";
+import { MSFAANumberService } from "@sims/integrations/services/msfaa-number/msfaa-number.service";
+import { StudentRestrictionService as StudentRestrictionsService } from "@sims/integrations/services/restriction/student-restriction.service";
+// todo: check if the schduler imposrts are needed, after removing the routr-controller.
 
 @Module({
   imports: [AuthModule],
@@ -100,6 +102,8 @@ import { WorkflowClientService, SequenceControlService } from "@sims/services";
     SFASIndividualService,
     EducationProgramOfferingImportCSVService,
     EducationProgramOfferingValidationService,
+    // todo: ann review the StudentRestrictionsService
+    StudentRestrictionsService,
   ],
 })
 export class AppInstitutionsModule {}

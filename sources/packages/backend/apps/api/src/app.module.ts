@@ -14,7 +14,6 @@ import {
   StudentFileService,
   ProgramYearService,
   InstitutionTypeService,
-  MSFAANumberService,
   StudentRestrictionService,
   RestrictionService,
   DesignationAgreementLocationService,
@@ -29,11 +28,7 @@ import {
   DynamicFormController,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
-import { MSFAAIntegrationModule } from "./esdc-integration/msfaa-integration/msfaa-integration.module";
 import { SFASIntegrationModule } from "./sfas-integration/sfas-integration.module";
-import { ECertIntegrationModule } from "./esdc-integration/e-cert-integration/e-cert-integration.module";
-import { FedRestrictionIntegrationModule } from "./esdc-integration/fed-restriction-integration/fed-restriction-integration.module";
-import { DisbursementReceiptIntegrationModule } from "./esdc-integration/disbursement-receipt-integration/disbursement-receipt-integration.module";
 import { AppAESTModule } from "./app.aest.module";
 import { AppInstitutionsModule } from "./app.institutions.module";
 import { ClientTypeBaseRoute } from "./types";
@@ -50,6 +45,11 @@ import { ConfigModule } from "@sims/utilities/config";
 import { NotificationsModule } from "@sims/services/notifications";
 import { QueueModule } from "@sims/services/queue";
 import { DatabaseModule } from "@sims/sims-db";
+import { MSFAANumberService } from "@sims/integrations/services/msfaa-number/msfaa-number.service";
+import { MSFAAIntegrationModule } from "@sims/integrations/esdc-integration/msfaa-integration/msfaa-integration.module";
+import { ECertIntegrationModule } from "@sims/integrations/esdc-integration/e-cert-integration/e-cert-integration.module";
+import { FedRestrictionIntegrationModule } from "@sims/integrations/esdc-integration/fed-restriction-integration/fed-restriction-integration.module";
+import { DisbursementReceiptIntegrationModule } from "@sims/integrations/esdc-integration/disbursement-receipt-integration/disbursement-receipt-integration.module";
 
 @Module({
   imports: [

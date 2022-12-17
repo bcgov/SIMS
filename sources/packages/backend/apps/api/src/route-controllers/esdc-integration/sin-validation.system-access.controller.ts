@@ -5,7 +5,7 @@ import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { ApiTags } from "@nestjs/swagger";
 import BaseController from "../BaseController";
 import { ClientTypeBaseRoute } from "../../types";
-import { SINValidationProcessingService } from "../../esdc-integration/sin-validation/sin-validation-processing.service";
+import { SINValidationProcessingService } from "../../../../../libs/integrations/src/esdc-integration/sin-validation/sin-validation-processing.service";
 import {
   ESDCFileResultAPIOutDTO,
   ProcessResponseAPIOutDTO,

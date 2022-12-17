@@ -1,7 +1,6 @@
 import { Module } from "@nestjs/common";
 import {
   ApplicationService,
-  MSFAANumberService,
   StudentFileService,
   SupportingUserService,
   TokensService,
@@ -19,7 +18,6 @@ import {
   StudentAssessmentService,
   SFASApplicationService,
   SFASPartTimeApplicationsService,
-  ReportService,
   StudentService,
   SFASIndividualService,
   StudentRestrictionService,
@@ -65,6 +63,9 @@ import { AuthModule } from "./auth/auth.module";
 import { ApplicationControllerService } from "./route-controllers/application/application.controller.service";
 import { InstitutionUserControllerService } from "./route-controllers/institution-user/institution-user.controller.service";
 import { WorkflowClientService, SequenceControlService } from "@sims/services";
+import { ReportService } from "@sims/integrations/services/report/report.service";
+import { MSFAANumberService } from "@sims/integrations/services/msfaa-number/msfaa-number.service";
+import { StudentRestrictionService as StudentRestrictionsService } from "@sims/integrations/services/restriction/student-restriction.service";
 
 @Module({
   imports: [AuthModule],
@@ -133,6 +134,8 @@ import { WorkflowClientService, SequenceControlService } from "@sims/services";
     EducationProgramOfferingControllerService,
     EducationProgramOfferingValidationService,
     DisbursementReceiptService,
+    // todo: ann review the StudentRestrictionsService
+    StudentRestrictionsService,
   ],
 })
 export class AppAESTModule {}

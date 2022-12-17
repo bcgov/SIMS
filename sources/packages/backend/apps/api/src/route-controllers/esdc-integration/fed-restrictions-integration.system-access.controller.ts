@@ -2,7 +2,7 @@ import { Controller, Post } from "@nestjs/common";
 import { LoggerService, InjectLogger } from "@sims/utilities/logger";
 import { AllowAuthorizedParty, UserToken } from "../../auth/decorators";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
-import { FedRestrictionProcessingService } from "../../esdc-integration/fed-restriction-integration/fed-restriction-processing.service";
+import { FedRestrictionProcessingService } from "../../../../../libs/integrations/src/esdc-integration/fed-restriction-integration/fed-restriction-processing.service";
 import { ESDCFileResponseAPIOutDTO } from "./models/esdc.dto";
 import { ApiTags } from "@nestjs/swagger";
 import BaseController from "../BaseController";

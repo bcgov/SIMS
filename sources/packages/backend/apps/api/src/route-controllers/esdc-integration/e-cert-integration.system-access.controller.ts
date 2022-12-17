@@ -3,8 +3,8 @@ import { LoggerService, InjectLogger } from "@sims/utilities/logger";
 import { AllowAuthorizedParty, UserToken } from "../../auth/decorators";
 import { IUserToken } from "../../auth/userToken.interface";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
-import { DisbursementReceiptProcessingService } from "../../esdc-integration/disbursement-receipt-integration/disbursement-receipt-processing.service";
-import { ECertFileHandler } from "../../esdc-integration/e-cert-integration/e-cert-file-handler";
+import { DisbursementReceiptProcessingService } from "../../../../../libs/integrations/src/esdc-integration/disbursement-receipt-integration/disbursement-receipt-processing.service";
+import { ECertFileHandler } from "../../../../../libs/integrations/src/esdc-integration/e-cert-integration/e-cert-file-handler";
 import {
   DailyDisbursementReportAPIInDTO,
   ESDCFileResponseAPIOutDTO,
@@ -12,7 +12,7 @@ import {
 } from "./models/esdc.dto";
 import { ApiTags } from "@nestjs/swagger";
 import BaseController from "../BaseController";
-import { DisbursementReceiptRequestService } from "../../esdc-integration/disbursement-receipt-integration/disbursement-receipt-request.service";
+import { DisbursementReceiptRequestService } from "../../../../../libs/integrations/src/esdc-integration/disbursement-receipt-integration/disbursement-receipt-request.service";
 import { ClientTypeBaseRoute } from "../../types";
 
 @AllowAuthorizedParty(AuthorizedParties.formsFlowBPM)

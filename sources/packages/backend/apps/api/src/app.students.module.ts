@@ -11,7 +11,6 @@ import {
   InstitutionLocationService,
   EducationProgramService,
   StudentFileService,
-  MSFAANumberService,
   SFASIndividualService,
   StudentRestrictionService,
   DesignationAgreementLocationService,
@@ -47,6 +46,8 @@ import { StudentAccountApplicationsService } from "./services/student-account-ap
 import { ATBCStudentController } from "./route-controllers/atbc/atbc.students.controller";
 import { WorkflowClientService, SequenceControlService } from "@sims/services";
 import { ConfigModule } from "@sims/utilities/config";
+import { MSFAANumberService } from "@sims/integrations/services/msfaa-number/msfaa-number.service";
+import { StudentRestrictionService as StudentRestrictionsService } from "@sims/integrations/services/restriction/student-restriction.service";
 
 @Module({
   imports: [AuthModule, ConfigModule],
@@ -96,6 +97,8 @@ import { ConfigModule } from "@sims/utilities/config";
     StudentScholasticStandingsService,
     CRAIncomeVerificationService,
     SupportingUserService,
+    // todo: ann review the StudentRestrictionService
+    StudentRestrictionsService,
   ],
 })
 export class AppStudentsModule {}

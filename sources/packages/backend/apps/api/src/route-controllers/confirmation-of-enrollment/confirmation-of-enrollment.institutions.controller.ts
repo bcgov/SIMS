@@ -28,11 +28,14 @@ import {
   COE_WINDOW,
   getCOEDeniedReason,
   COE_DENIED_REASON_OTHER_ID,
-  getTotalDisbursementAmount,
   credentialTypeToDisplay,
   deliveryMethod,
 } from "../../utilities";
-import { getDateOnlyFormat, getISODateOnlyString } from "@sims/utilities";
+import {
+  getDateOnlyFormat,
+  getISODateOnlyString,
+  getTotalDisbursementAmount,
+} from "@sims/utilities";
 import {
   ApplicationDetailsForCOEAPIOutDTO,
   DenyConfirmationOfEnrollmentAPIInDTO,

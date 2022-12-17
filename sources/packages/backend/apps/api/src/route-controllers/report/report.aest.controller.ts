@@ -16,7 +16,7 @@ import { Readable } from "stream";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { AllowAuthorizedParty, Groups, Roles } from "../../auth/decorators";
 import { UserGroups } from "../../auth/user-groups.enum";
-import { ReportService, FormService } from "../../services";
+import { FormService } from "../../services";
 import { ClientTypeBaseRoute } from "../../types";
 import {
   CustomNamedError,
@@ -25,11 +25,12 @@ import {
 import BaseController from "../BaseController";
 import { ReportsFilterAPIInDTO } from "./models/report.dto";
 import { FormNames } from "../../services/form/constants";
-import {
-  REPORT_CONFIG_NOT_FOUND,
-  FILTER_PARAMS_MISMATCH,
-} from "../../services/report/constants";
 import { Role } from "../../auth/roles.enum";
+import {
+  FILTER_PARAMS_MISMATCH,
+  REPORT_CONFIG_NOT_FOUND,
+} from "@sims/integrations/services/report/constants";
+import { ReportService } from "@sims/integrations/services/report/report.service";
 
 /**
  * Controller for Reports for AEST Client.

@@ -4,8 +4,8 @@ import { LoggerService, InjectLogger } from "@sims/utilities/logger";
 import { AllowAuthorizedParty } from "../../auth/decorators";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { OfferingIntensity } from "@sims/sims-db";
-import { MSFAARequestService } from "../../esdc-integration/msfaa-integration/msfaa-request.service";
-import { MSFAAResponseService } from "../../esdc-integration/msfaa-integration/msfaa-response.service";
+import { MSFAARequestService } from "../../../../../libs/integrations/src/esdc-integration/msfaa-integration/msfaa-request.service";
+import { MSFAAResponseService } from "../../../../../libs/integrations/src/esdc-integration/msfaa-integration/msfaa-response.service";
 import { ApiTags } from "@nestjs/swagger";
 import BaseController from "../BaseController";
 import {
