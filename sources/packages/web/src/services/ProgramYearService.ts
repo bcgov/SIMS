@@ -8,9 +8,11 @@ export class ProgramYearService {
   static get shared(): ProgramYearService {
     return this.instance || (this.instance = new this());
   }
+
   async getProgramYearOptions(): Promise<OptionItemAPIOutDTO[]> {
     return ApiClient.ProgramYear.getProgramYears();
   }
+
   async getActiveProgramYear(
     programYearId: number,
   ): Promise<ProgramYearAPIOutDTO> {
