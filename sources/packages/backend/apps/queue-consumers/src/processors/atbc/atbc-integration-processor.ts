@@ -3,6 +3,7 @@ import { Job } from "bull";
 import { RequestPDStatusQueueInDTO } from "@sims/services/queue";
 import { QueueNames } from "@sims/utilities";
 import { RequestPDStatusResponseQueueOutDTO } from "./models/atbc.dto";
+import { ATBCIntegrationProcessingService } from "@sims/integrations/atbc-integration";
 
 /**
  * Process PD request by student calling the ATBC
@@ -10,14 +11,30 @@ import { RequestPDStatusResponseQueueOutDTO } from "./models/atbc.dto";
  */
 @Processor(QueueNames.ATBCIntegration)
 export class ATBCIntegrationProcessor {
+  constructor(
+    private readonly atbcIntegrationProcessingService: ATBCIntegrationProcessingService,
+  ) {}
+
+  /**
+   * Call ATBC endpoint to apply PD status for a student.
+   * @param job ATBC integration job.
+   * @returns PD status processing response.
+   */
   @Process()
-  async requestPDStatus(
+  async applyForPDStatus(
     job: Job<RequestPDStatusQueueInDTO>,
   ): Promise<RequestPDStatusResponseQueueOutDTO> {
-    job.log("job starts");
+    await job.log(`Requesting PD status for student id ${job.data.studentId}`);
+    const response =
+      await this.atbcIntegrationProcessingService.applyForPDStatus(
+        job.data.studentId,
+      );
+    await job.log(
+      `Completed requesting PD status for student with response code ${response.code}`,
+    );
     return {
-      code: 0,
-      message: "test",
+      code: response.code,
+      message: response.message,
     };
   }
 }

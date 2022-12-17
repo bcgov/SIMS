@@ -8,10 +8,10 @@ import {
   ATBCCreateClientPayload,
   ATBCPDCheckerResponse,
   ATBCPDCheckerPayload,
+  ATBCStudentModel,
 } from "./models/atbc.model";
 import { Student } from "@sims/sims-db";
 import { StudentService } from "../../services";
-import { ATBCPDStatus } from "./models/atbc.model";
 
 @Injectable()
 export class ATBCService {
@@ -46,7 +46,7 @@ export class ATBCService {
    * @returns the token that is needed to bearer authentication.
    */
   private async getAuthToken(): Promise<string> {
-    const authResponse = await this.ATBCLogin();
+    const authResponse = await this.loginToATBC();
     return authResponse?.accessToken;
   }
 
@@ -55,7 +55,7 @@ export class ATBCService {
    * @returns the result of a success full authentication or throws an exception
    * in case the result is anything different from HTTP 200 code.
    */
-  public async ATBCLogin(): Promise<ATBCAuthTokenResponse> {
+  async loginToATBC(): Promise<ATBCAuthTokenResponse> {
     try {
       const agent = new (require("https").Agent)({
         rejectUnauthorized: false,
@@ -83,7 +83,7 @@ export class ATBCService {
    * @returns the result of a success full authentication or throws an exception
    * in case the result is anything different from HTTP 200 code.
    */
-  public async ATBCCreateClient(
+  async createClient(
     payload: ATBCCreateClientPayload,
   ): Promise<ATBCCreateClientResponse> {
     try {
@@ -102,7 +102,7 @@ export class ATBCService {
    * @returns the result of a success full authentication or throws an exception
    * in case the result is anything different from HTTP 200 code.
    */
-  private async ATBCPDChecker(
+  private async checkPDStatus(
     payload: ATBCPDCheckerPayload,
   ): Promise<ATBCPDCheckerResponse> {
     try {
@@ -119,43 +119,25 @@ export class ATBCService {
     }
   }
 
-  public async PDCheckerProcess(eachStudent: Student) {
+  /**
+   * Check PD status for a student.
+   * @param student student.
+   */
+  async checkStudentPDStatus(
+    student: ATBCStudentModel,
+  ): Promise<ATBCPDCheckerResponse> {
     try {
-      this.logger.log(`Creating Payload for student id ${eachStudent.id}`);
       // create PD checker payload
       const payload: ATBCPDCheckerPayload = {
-        id: eachStudent.sinValidation.sin,
+        id: student.sin,
       };
       // api to check the student PD status in ATBC
-      this.logger.log(
-        `Check starting for PD status of student ${eachStudent.id}`,
-      );
+      this.logger.log(`Checking PD status of student ${student.id}`);
       // try {
-      const response = await this.ATBCPDChecker(payload);
-      // e9yStatusId === 1 , PD Confirmed
-      // e9yStatusId === 2 , PD Denied
-      // e9yStatusId === 0 , Processing, In Queue
-
-      this.logger.log(
-        `PD Status for student ${eachStudent.id}, status ${response?.e9yStatusId} ${response?.e9yStatus}, `,
-      );
-      if (
-        response?.e9yStatusId === ATBCPDStatus.Confirmed ||
-        response?.e9yStatusId === ATBCPDStatus.Denied
-      ) {
-        // code to set PD Status
-        let status = false;
-        if (response?.e9yStatusId === 1) {
-          status = true;
-        }
-        this.logger.log(
-          `Updating PD Status for student ${eachStudent.id}, status ${response?.e9yStatusId} ${response?.e9yStatus}, `,
-        );
-        await this.studentService.updatePDStatusNDate(eachStudent.id, status);
-      }
+      return await this.checkPDStatus(payload);
     } catch (excp) {
       this.logger.error(
-        `Received exception while checking the PD status at ATBC`,
+        `Received exception while checking the PD status of student ${student.id} at ATBC`,
       );
       this.logger.error(excp);
       throw excp;

@@ -9,6 +9,7 @@ import {
   ProcessNotificationScheduler,
   ATBCIntegrationProcessor,
   SFASIntegrationScheduler,
+  ATBCResponseIntegrationScheduler,
 } from "./processors";
 import { DatabaseModule } from "@sims/sims-db";
 import {
@@ -46,6 +47,7 @@ import { ATBCIntegrationModule } from "@sims/integrations/atbc-integration";
     ProcessNotificationScheduler,
     ATBCIntegrationProcessor,
     SFASIntegrationScheduler,
+    ATBCResponseIntegrationScheduler,
     StudentAssessmentService,
     SshService,
     QueueService,

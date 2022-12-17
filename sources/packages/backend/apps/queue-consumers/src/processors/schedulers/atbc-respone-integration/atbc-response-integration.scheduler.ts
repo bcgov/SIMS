@@ -4,6 +4,7 @@ import { BaseScheduler } from "../base-scheduler";
 import { QueueNames } from "@sims/utilities";
 import { QueueService } from "@sims/services/queue";
 import { ProcessPDRequestQueueOutDTO } from "./models/atbc-response-integration.dto";
+import { ATBCIntegrationProcessingService } from "@sims/integrations/atbc-integration";
 
 /**
  * Process all the applied PD requests to verify the status with ATBC.
@@ -13,6 +14,7 @@ export class ATBCResponseIntegrationScheduler extends BaseScheduler<void> {
   constructor(
     @InjectQueue(QueueNames.ATBCResponseIntegration)
     protected readonly schedulerQueue: Queue<void>,
+    private readonly atbcIntegrationProcessingService: ATBCIntegrationProcessingService,
     queueService: QueueService,
   ) {
     super(schedulerQueue, queueService);
@@ -28,10 +30,11 @@ export class ATBCResponseIntegrationScheduler extends BaseScheduler<void> {
   async processPendingPDRequests(
     job: Job<void>,
   ): Promise<ProcessPDRequestQueueOutDTO> {
-    job.log("Processing SFAS integration files...");
-    //Processing code here.
-    job.log("Completed processing SFAS integration files.");
+    job.log("Processing PD status for students.");
+    const processingResult =
+      await this.atbcIntegrationProcessingService.processPendingPDRequests();
+    job.log("Completed processing PD status.");
     await this.cleanSchedulerQueueHistory();
-    return { pdRequestsProcessed: 0 };
+    return processingResult;
   }
 }

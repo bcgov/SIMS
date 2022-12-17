@@ -6,3 +6,4 @@ export * from "./schedulers/base-scheduler";
 export * from "./schedulers/notification/process-notifications.scheduler";
 export * from "./atbc/atbc-integration-processor";
 export * from "./schedulers/sfas-integration/sfas-integration.scheduler";
+export * from "./schedulers/atbc-respone-integration/atbc-response-integration.scheduler";

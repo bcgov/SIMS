@@ -27,3 +27,8 @@ export interface ATBCPDCheckerResponse {
   e9yStatusId: number;
   e9yStatus: string;
 }
+
+export interface ATBCStudentModel {
+  id: number;
+  sin: string;
+}

@@ -26,7 +26,7 @@ import { Queue } from "bull";
 export class ATBCStudentController extends BaseController {
   constructor(
     private readonly studentService: StudentService,
-    @InjectQueue(QueueNames.StartApplicationAssessment)
+    @InjectQueue(QueueNames.ATBCIntegration)
     private readonly atbcIntegrationQueue: Queue<RequestPDStatusQueueInDTO>,
   ) {
     super();

@@ -72,7 +72,7 @@ export class StudentApi extends HttpBaseClient {
    * SIN validation must be already done with a successful result.
    */
   async applyForPDStatus(): Promise<void> {
-    await this.patchCall(this.addClientRoot("/atbc/apply-pd-status"), null);
+    await this.patchCall(this.addClientRoot("atbc/apply-pd-status"), null);
   }
 
   /**
