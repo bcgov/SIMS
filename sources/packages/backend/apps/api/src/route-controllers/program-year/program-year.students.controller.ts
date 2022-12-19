@@ -26,9 +26,9 @@ export class ProgramYearController extends BaseController {
 
   /**
    * Gets a list of program years returned as option items (id/description pair).
-   * @returns an array of program years as OptionItemAPIOutDTO.
+   * @returns an array of program years as id/description objects.
    */
-  @Get("/options-list")
+  @Get("options-list")
   @ApiNotFoundResponse({
     description: "No program years were found.",
   })
