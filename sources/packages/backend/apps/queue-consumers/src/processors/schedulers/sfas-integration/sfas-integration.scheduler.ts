@@ -27,7 +27,7 @@ export class SFASIntegrationScheduler extends BaseScheduler<void> {
    * @returns processing result.
    */
   @Process()
-  async processNotifications(
+  async processSFASIntegrationFiles(
     job: Job<void>,
   ): Promise<SFASProcessingResultQueueOutDTO[]> {
     await job.log("Processing SFAS integration files...");
