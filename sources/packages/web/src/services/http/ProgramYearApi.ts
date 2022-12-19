@@ -8,7 +8,7 @@ export class ProgramYearApi extends HttpBaseClient {
    */
   async getProgramYears(): Promise<OptionItemAPIOutDTO[]> {
     return this.getCallTyped<OptionItemAPIOutDTO[]>(
-      "program-year/options-list",
+      this.addClientRoot("program-year/options-list"),
     );
   }
 
@@ -21,7 +21,7 @@ export class ProgramYearApi extends HttpBaseClient {
     programYearId: number,
   ): Promise<ProgramYearAPIOutDTO> {
     return this.getCallTyped<ProgramYearAPIOutDTO>(
-      `program-year/${programYearId}/active`,
+      this.addClientRoot(`program-year/${programYearId}/active`),
     );
   }
 }
