@@ -9,6 +9,8 @@ import { QueueNames } from "@sims/utilities";
 import { StudentAssessmentService } from "../../services";
 import { DataSource } from "typeorm";
 import { ZeebeGRPCError, ZeebeGRPCErrorTypes } from "@sims/services/zeebe";
+import { APPLICATION_STATUS_NOT_ALLOWED_FOR_CANCELLATION } from "@sims/services/constants/student-application.constants";
+import { InjectLogger, LoggerService } from "@sims/utilities/logger";
 
 /**
  * Process the workflow cancellation.
@@ -31,10 +33,21 @@ export class CancelApplicationAssessmentProcessor {
   async cancelAssessment(
     job: Job<CancelAssessmentQueueInDTO>,
   ): Promise<string> {
-    await job.log(`Start processing, attempt ${job.attemptsMade + 1}.`);
     const assessment = await this.studentAssessmentService.getAssessmentById(
       job.data.assessmentId,
     );
+
+    if (
+      APPLICATION_STATUS_NOT_ALLOWED_FOR_CANCELLATION.includes(
+        assessment.application.applicationStatus,
+      )
+    ) {
+      await job.discard();
+      throw new Error(
+        `Applications is not in the expected status to be cancelled. Current status is ${assessment.application.applicationStatus}.`,
+      );
+    }
+
     // Try to cancel the workflow if an workflow id is present.
     // TODO: once the assessment has a proper status flag to be marked as completed we can check if the workflow needed to be cancelled.
     if (assessment.assessmentWorkflowId) {
@@ -80,4 +93,7 @@ export class CancelApplicationAssessmentProcessor {
       return "Assessment cancelled with success.";
     });
   }
+
+  @InjectLogger()
+  logger: LoggerService;
 }

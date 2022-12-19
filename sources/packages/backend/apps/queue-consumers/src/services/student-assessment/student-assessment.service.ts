@@ -24,6 +24,12 @@ export class StudentAssessmentService {
       select: {
         id: true,
         assessmentWorkflowId: true,
+        application: {
+          applicationStatus: true,
+        },
+      },
+      relations: {
+        application: true,
       },
       where: {
         id: assessmentId,

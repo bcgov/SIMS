@@ -49,6 +49,7 @@ import { NotificationActionsService } from "@sims/services/notifications";
 import { InjectQueue } from "@nestjs/bull";
 import { Queue } from "bull";
 import { CancelAssessmentQueueInDTO } from "@sims/services/queue";
+import { APPLICATION_STATUS_NOT_ALLOWED_FOR_CANCELLATION } from "@sims/services/constants/student-application.constants";
 
 export const APPLICATION_DRAFT_NOT_FOUND = "APPLICATION_DRAFT_NOT_FOUND";
 export const MORE_THAN_ONE_APPLICATION_DRAFT_ERROR =
@@ -972,11 +973,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
             id: studentId,
           },
           applicationStatus: Not(
-            In([
-              ApplicationStatus.completed,
-              ApplicationStatus.overwritten,
-              ApplicationStatus.cancelled,
-            ]),
+            In(APPLICATION_STATUS_NOT_ALLOWED_FOR_CANCELLATION),
           ),
         },
       });
