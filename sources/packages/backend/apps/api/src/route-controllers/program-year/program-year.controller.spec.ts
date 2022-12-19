@@ -1,20 +1,22 @@
 require("../../../../../env_setup");
 import { Test, TestingModule } from "@nestjs/testing";
 import { ProgramYearService } from "../../services";
-import { ProgramYearController } from "./program-year.controller";
+import { ProgramYearStudentsController } from "./program-year.students.controller";
 import { DatabaseModule } from "@sims/sims-db";
 
 describe("ProgramYearController", () => {
-  let controller: ProgramYearController;
+  let controller: ProgramYearStudentsController;
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [DatabaseModule],
       providers: [ProgramYearService],
-      controllers: [ProgramYearController],
+      controllers: [ProgramYearStudentsController],
     }).compile();
     await module.init();
 
-    controller = module.get<ProgramYearController>(ProgramYearController);
+    controller = module.get<ProgramYearStudentsController>(
+      ProgramYearStudentsController,
+    );
   });
 
   it("should be defined", () => {

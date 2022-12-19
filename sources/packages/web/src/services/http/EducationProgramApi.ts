@@ -1,4 +1,4 @@
-import { OptionItemDto, PaginationOptions } from "@/types";
+import { PaginationOptions } from "@/types";
 import HttpBaseClient from "./common/HttpBaseClient";
 import { getPaginationQueryString } from "@/helpers";
 import {
@@ -119,12 +119,12 @@ export class EducationProgramApi extends HttpBaseClient {
     locationId: number,
     programYearId: number,
     isIncludeInActiveProgramYear?: boolean,
-  ): Promise<OptionItemDto[]> {
+  ): Promise<OptionItemAPIOutDTO[]> {
     let url = `education-program/location/${locationId}/program-year/${programYearId}/options-list`;
     if (isIncludeInActiveProgramYear) {
       url = `${url}?isIncludeInActiveProgramYear=${isIncludeInActiveProgramYear}`;
     }
-    return this.getCallTyped<OptionItemDto[]>(this.addClientRoot(url));
+    return this.getCallTyped<OptionItemAPIOutDTO[]>(this.addClientRoot(url));
   }
 
   /**
@@ -132,7 +132,7 @@ export class EducationProgramApi extends HttpBaseClient {
    * @returns key/value pair list of all approved programs.
    */
   async getProgramsListForInstitutions(): Promise<OptionItemAPIOutDTO[]> {
-    return this.getCallTyped<OptionItemDto[]>(
+    return this.getCallTyped<OptionItemAPIOutDTO[]>(
       this.addClientRoot("education-program/programs-list"),
     );
   }
