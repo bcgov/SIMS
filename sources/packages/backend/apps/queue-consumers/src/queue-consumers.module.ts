@@ -7,7 +7,6 @@ import {
   CRAProcessIntegrationScheduler,
   StartApplicationAssessmentProcessor,
   ProcessNotificationScheduler,
-  ATBCIntegrationProcessor,
   SFASIntegrationScheduler,
   ATBCResponseIntegrationScheduler,
 } from "./processors";
@@ -45,7 +44,6 @@ import { ATBCIntegrationModule } from "@sims/integrations/atbc-integration";
     IER12IntegrationScheduler,
     IER12IntegrationService,
     ProcessNotificationScheduler,
-    ATBCIntegrationProcessor,
     SFASIntegrationScheduler,
     ATBCResponseIntegrationScheduler,
     StudentAssessmentService,

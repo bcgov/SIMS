@@ -48,9 +48,10 @@ import {
   SFASPartTimeApplicationsService,
 } from "@sims/services/sfas";
 import { ConfigModule } from "@sims/utilities/config";
+import { ATBCIntegrationModule } from "@sims/integrations/atbc-integration";
 
 @Module({
-  imports: [AuthModule, ConfigModule],
+  imports: [AuthModule, ConfigModule, ATBCIntegrationModule],
   controllers: [
     ApplicationStudentsController,
     StudentStudentsController,

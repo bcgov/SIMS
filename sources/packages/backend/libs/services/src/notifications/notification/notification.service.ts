@@ -20,8 +20,7 @@ import {
 } from "./notification.model";
 import { LoggerService, InjectLogger } from "@sims/utilities/logger";
 import { GCNotifyErrorResponse } from "./gc-notify.model";
-import { CustomNamedError } from "@sims/utilities";
-import * as os from "os";
+import { CustomNamedError, processRequestsInParallel } from "@sims/utilities";
 import { GC_NOTIFY_PERMANENT_FAILURE_ERROR } from "@sims/services/constants";
 
 /**
@@ -182,34 +181,16 @@ export class NotificationService extends RecordDataModelService<Notification> {
         `Processing ${notificationsToProcess.length} notifications`,
       );
 
-      // Used to limit the number of asynchronous operations
-      // that will start at the same time.
-      const maxPromisesAllowed = os.cpus().length;
+      const resolvedResponses = await processRequestsInParallel(
+        (notification: Notification) =>
+          this.sendEmailNotification(notification),
+        notificationsToProcess,
+      );
 
-      // Hold all the promises that must be processed.
-      const promises: Promise<boolean>[] = [];
+      notificationsSuccessfullyProcessed += resolvedResponses.filter(
+        (result) => result,
+      ).length;
 
-      for (const notification of notificationsToProcess) {
-        promises.push(this.sendEmailNotification(notification));
-
-        if (promises.length >= maxPromisesAllowed) {
-          // Waits for all be executed.
-          const processingResult = await Promise.all(promises);
-          notificationsSuccessfullyProcessed += processingResult.filter(
-            (result) => result,
-          ).length;
-          // Clear the array.
-          promises.splice(0, promises.length);
-        }
-      }
-
-      if (promises.length > 0) {
-        // Waits for methods, if any outside the loop.
-        const processingResult = await Promise.all(promises);
-        notificationsSuccessfullyProcessed += processingResult.filter(
-          (result) => result,
-        ).length;
-      }
       //Assign the value for total notifications processed.
       notificationsProcessed += notificationsToProcess.length;
 

@@ -13,11 +13,8 @@ import {
 } from "../../auth/decorators";
 import { StudentUserToken } from "../../auth/userToken.interface";
 import { ClientTypeBaseRoute } from "../../types";
-import { RequestPDStatusQueueInDTO } from "@sims/services/queue";
 import BaseController from "../BaseController";
-import { InjectQueue } from "@nestjs/bull";
-import { QueueNames } from "@sims/utilities";
-import { Queue } from "bull";
+import { ATBCIntegrationProcessingService } from "@sims/integrations/atbc-integration";
 
 @AllowAuthorizedParty(AuthorizedParties.student)
 @RequiresStudentAccount()
@@ -26,8 +23,7 @@ import { Queue } from "bull";
 export class ATBCStudentController extends BaseController {
   constructor(
     private readonly studentService: StudentService,
-    @InjectQueue(QueueNames.ATBCIntegration)
-    private readonly atbcIntegrationQueue: Queue<RequestPDStatusQueueInDTO>,
+    private readonly atbcIntegrationProcessingService: ATBCIntegrationProcessingService,
   ) {
     super();
   }
@@ -63,6 +59,10 @@ export class ATBCStudentController extends BaseController {
         "Either the client does not have a validated SIN or the request was already sent to ATBC.",
       );
     }
-    await this.atbcIntegrationQueue.add({ studentId: student.id });
+    // This is the only place in application where we call an external application
+    // in API instead of using queues. This is because once the student applies for PD,
+    // after a successful API call the apply for PD button needs to be disabled to avoid
+    // duplicate requests coming.
+    await this.atbcIntegrationProcessingService.applyForPDStatus(student.id);
   }
 }
