@@ -51,7 +51,7 @@
           <Column
             :field="ProgramSummaryFields.CipCode"
             header="CIP"
-            data-type="programCIP"
+            data-cy="programCIP"
           ></Column>
           <Column
             :field="ProgramSummaryFields.ProgramName"

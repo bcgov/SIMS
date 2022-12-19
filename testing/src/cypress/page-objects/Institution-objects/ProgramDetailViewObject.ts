@@ -10,7 +10,7 @@ export default class ProgramDetailViewObject extends BaseMethods {
   }
 
   editButton() {
-    return this.getElementByCyId("programEditButton");
+    return this.getElementByCyId("programButtonAction");
   }
 
   programDescription() {

@@ -1,13 +1,13 @@
 import BaseMethods from "./BaseMethods";
 
 export enum CredentialTypes {
-  UndergraduateCertificate = "undergraduateCertificate",
-  UndergraduateDiploma = "undergraduateDiploma",
-  UndergraduateDegree = "undergraduateDegree",
+  UnderGraduateCertificate = "undergraduateCertificate",
+  UnderGraduateDiploma = "undergraduateDiploma",
+  UnderGraduateDegree = "undergraduateDegree",
   GraduateCertificate = "graduateCertificate",
   GraduateDiploma = "graduateDiploma",
   GraduateDegreeOrMasters = "graduateDegreeOrMasters",
-  PostgraduateOrDoctorate = "postGraduateOrDoctorate",
+  PostGraduateOrDoctorate = "postGraduateOrDoctorate",
   QualifyingStudies = "qualifyingStudies",
 }
 
@@ -15,7 +15,8 @@ export enum ProgramLengthOptions {
   WeeksToLessThanYear = "12WeeksToLessThan1Year",
   OneToTwoYears = "1YearToLessThan2Years",
   TwoToThreeYears = "2YearsToLessThan3Years",
-  ThreeToFourYears = "4YearsToLessThan5Years",
+  ThreeToFourYears = "3YearsToLessThan4Years",
+  FourToFiveYears = "4YearsToLessThan5Years",
   FiveOrMoreYears = "5YearsOrMore",
 }
 

@@ -13,7 +13,7 @@
         variant="outlined"
         @click="programButtonAction"
         color="primary"
-        data-cy="programEditButton"
+        data-cy="programButtonAction"
       >
         {{ programActionLabel }}
       </v-btn>
