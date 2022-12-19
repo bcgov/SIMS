@@ -1,4 +1,4 @@
-export interface ProgramYearAPIOutDTO {
+export class ProgramYearAPIOutDTO {
   programYear: string;
   programYearDesc: string;
   formName: string;

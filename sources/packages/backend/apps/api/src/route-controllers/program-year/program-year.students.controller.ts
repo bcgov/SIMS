@@ -19,7 +19,7 @@ import { OptionItemAPIOutDTO } from "../models/common.dto";
 @RequiresStudentAccount()
 @Controller("program-year")
 @ApiTags(`${ClientTypeBaseRoute.Student}-program-year`)
-export class ProgramYearController extends BaseController {
+export class ProgramYearStudentsController extends BaseController {
   constructor(private readonly programYearService: ProgramYearService) {
     super();
   }

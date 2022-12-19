@@ -40,7 +40,7 @@ import {
   EducationProgramOfferingStudentsController,
   EducationProgramOfferingControllerService,
   RestrictionStudentsController,
-  ProgramYearController,
+  ProgramYearStudentsController,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
 import { ApplicationControllerService } from "./route-controllers/application/application.controller.service";
@@ -62,7 +62,7 @@ import { ConfigModule } from "@sims/utilities/config";
     EducationProgramOfferingStudentsController,
     RestrictionStudentsController,
     ATBCStudentController,
-    ProgramYearController,
+    ProgramYearStudentsController,
   ],
   providers: [
     WorkflowClientService,

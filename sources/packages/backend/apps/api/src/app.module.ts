@@ -24,7 +24,7 @@ import {
 } from "./services";
 import {
   UserController,
-  ProgramYearController,
+  ProgramYearStudentsController,
   ConfigController,
   DynamicFormController,
 } from "./route-controllers";
@@ -96,7 +96,7 @@ import { DatabaseModule } from "@sims/sims-db";
   controllers: [
     AppController,
     UserController,
-    ProgramYearController,
+    ProgramYearStudentsController,
     ConfigController,
     DynamicFormController,
   ],
