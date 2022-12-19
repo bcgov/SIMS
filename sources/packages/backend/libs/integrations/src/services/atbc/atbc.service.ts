@@ -10,14 +10,10 @@ import {
   ATBCPDCheckerPayload,
   ATBCStudentModel,
 } from "./models/atbc.model";
-import { StudentService } from "../../services";
 
 @Injectable()
 export class ATBCService {
-  constructor(
-    private readonly configService: ConfigService,
-    private readonly studentService: StudentService,
-  ) {
+  constructor(private readonly configService: ConfigService) {
     this.logger.log("[Created]");
   }
 

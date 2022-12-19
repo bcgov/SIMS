@@ -16,6 +16,10 @@ import { AppStudentsModule } from "../../app.students.module";
 import { createMockedZeebeModule } from "../../testHelpers/mocked-providers/zeebe-client-mock";
 import { NotificationsModule } from "@sims/services/notifications";
 import { MockedQueueModule } from "../../testHelpers/mocked-providers/queue-module-mock";
+import {
+  ATBCCreateClientResponse,
+  ATBCService,
+} from "@sims/integrations/services";
 
 jest.setTimeout(15000);
 
@@ -24,6 +28,7 @@ describe("Test ATBC Controller", () => {
   let accesstoken: string;
   let app: INestApplication;
   let studentService: StudentService;
+  let atbcService: ATBCService;
   let userService: UserService;
   let sinValidationService: SINValidationService;
 
@@ -46,6 +51,7 @@ describe("Test ATBC Controller", () => {
       ],
     }).compile();
     userService = await moduleFixture.get(UserService);
+    atbcService = await moduleFixture.get(ATBCService);
     studentService = await moduleFixture.get(StudentService);
     sinValidationService = await moduleFixture.get(SINValidationService);
     app = moduleFixture.createNestApplication();
@@ -77,6 +83,11 @@ describe("Test ATBC Controller", () => {
 
     // Save the student in SIMS.
     await studentService.save(fakeStudent);
+
+    // creating mockup for ATBCCreateClient, this function actually calls the ATBC server to create the student profile
+    jest.spyOn(atbcService, "createClient").mockImplementation(async () => {
+      return {} as ATBCCreateClientResponse;
+    });
 
     const sinValidation = new SINValidation();
     sinValidation.student = fakeStudent;
