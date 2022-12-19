@@ -10,7 +10,6 @@ import {
   ATBCPDCheckerPayload,
   ATBCStudentModel,
 } from "./models/atbc.model";
-import { Student } from "@sims/sims-db";
 import { StudentService } from "../../services";
 
 @Injectable()
