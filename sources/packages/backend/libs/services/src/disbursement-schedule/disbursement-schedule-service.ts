@@ -81,7 +81,7 @@ const GRANTS_TYPES = [
  * - Any deviation from the above statements is considered an edge case and must be adjusted and adjusted manually by the Ministry.
  */
 @Injectable()
-export class DisbursementScheduleService extends RecordDataModelService<DisbursementSchedule> {
+export class DisbursementSchedulerService extends RecordDataModelService<DisbursementSchedule> {
   constructor(
     private readonly dataSource: DataSource,
     private readonly systemUsersService: SystemUsersService,

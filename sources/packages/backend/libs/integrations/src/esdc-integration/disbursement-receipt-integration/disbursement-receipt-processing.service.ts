@@ -5,7 +5,7 @@ import { ProcessSFTPResponseResult } from "../models/esdc-integration.model";
 import { DisbursementReceiptDownloadResponse } from "./models/disbursement-receipt-integration.model";
 import { ConfigService, ESDCIntegrationConfig } from "@sims/utilities/config";
 import { DisbursementReceiptService } from "@sims/integrations/services/disbursement-receipt/disbursement-receipt.service";
-import { DisbursementScheduleService } from "@sims/integrations/services/disbursement-schedule-service/disbursement-schedule-service";
+import { DisbursementSchedulerService } from "@sims/integrations/services/disbursement-schedule-service/disbursement-schedule-service";
 
 /**
  * Disbursement schedule map which consists of disbursement schedule id for a document number.
@@ -24,7 +24,7 @@ export class DisbursementReceiptProcessingService {
   constructor(
     config: ConfigService,
     private readonly integrationService: DisbursementReceiptIntegrationService,
-    private readonly disbursementScheduleService: DisbursementScheduleService,
+    private readonly DisbursementSchedulerService: DisbursementSchedulerService,
     private readonly disbursementReceiptService: DisbursementReceiptService,
   ) {
     this.esdcConfig = config.esdcIntegration;
@@ -84,7 +84,7 @@ export class DisbursementReceiptProcessingService {
       (record) => record.documentNumber,
     );
     const disbursementSchedules =
-      await this.disbursementScheduleService.getDisbursementsByDocumentNumbers(
+      await this.DisbursementSchedulerService.getDisbursementsByDocumentNumbers(
         documentNumbers,
       );
     const disbursementScheduleMap: DisbursementScheduleMap = {};

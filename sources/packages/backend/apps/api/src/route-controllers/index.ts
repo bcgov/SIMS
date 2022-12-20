@@ -13,8 +13,6 @@ export * from "./confirmation-of-enrollment/confirmation-of-enrollment.instituti
 export * from "./supporting-user/supporting-user.supporting-users.controller";
 export * from "./esdc-integration/msfaa-integration.system-access.controller";
 export * from "./sfas-integration/sfas-integration.system-access.controller";
-export * from "./esdc-integration/e-cert-integration.system-access.controller";
-export * from "./esdc-integration/fed-restrictions-integration.system-access.controller";
 export * from "./note/note.aest.controller";
 export * from "./restriction/restriction.aest.controller";
 export * from "./restriction/restriction.students.controller";

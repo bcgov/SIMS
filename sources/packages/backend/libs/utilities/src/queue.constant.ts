@@ -14,7 +14,7 @@ export enum QueueNames {
   FullTimeMSFAAIntegration = "full-time-msfaa-integration",
   FullTimeECertIntegration = "full-time-e-cert-integration",
   FullTimeFeedbackIntegration = "full-time-feedback-integration",
-  FerdralRestrictionsIntegration = "federal-restrictions-integration",
+  FederalRestrictionsIntegration = "federal-restrictions-integration",
   FullTimeDisbursementReceiptsFileIntegration = "full-time-disbursement-receipts-file-integration",
   ECEProcessIntegration = "ece-process-integration",
   ECEProcessResponseIntegration = "ece-process-response-integration",

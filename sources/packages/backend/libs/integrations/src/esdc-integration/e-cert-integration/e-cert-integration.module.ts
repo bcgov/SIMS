@@ -1,6 +1,6 @@
 import { Module } from "@nestjs/common";
 import {
-  DisbursementScheduleService,
+  DisbursementSchedulerService,
   SequenceControlService,
 } from "@sims/services";
 import { ECertFileHandler } from "./e-cert-file-handler";
@@ -26,7 +26,7 @@ import { SystemUsersService } from "@sims/services/system-users";
     ECertFullTimeIntegrationService,
     ECertPartTimeIntegrationService,
     SequenceControlService,
-    DisbursementScheduleService,
+    DisbursementSchedulerService,
     StudentRestrictionService,
     ECertFileHandler,
     ECertPartTimeFileHeader,

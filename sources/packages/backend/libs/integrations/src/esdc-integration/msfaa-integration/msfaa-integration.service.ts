@@ -1,11 +1,9 @@
 import { Injectable } from "@nestjs/common";
 import { LoggerService, InjectLogger } from "@sims/utilities/logger";
+import * as Client from "ssh2-sftp-client";
 import {
   MSFAASFTPResponseFile,
   ReceivedStatusCode,
-} from "./models/msfaa-integration.model";
-import * as Client from "ssh2-sftp-client";
-import {
   MSFAARecord,
   MSFAARequestFileLine,
   MSFAAUploadResult,

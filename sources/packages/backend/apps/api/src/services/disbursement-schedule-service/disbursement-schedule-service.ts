@@ -35,7 +35,7 @@ const DISBURSEMENT_DOCUMENT_NUMBER_SEQUENCE_GROUP =
  * Service layer for Student Application disbursement schedules.
  */
 @Injectable()
-export class DisbursementScheduleService extends RecordDataModelService<DisbursementSchedule> {
+export class DisbursementSchedulerService extends RecordDataModelService<DisbursementSchedule> {
   private readonly assessmentRepo: Repository<StudentAssessment>;
   constructor(
     private readonly dataSource: DataSource,

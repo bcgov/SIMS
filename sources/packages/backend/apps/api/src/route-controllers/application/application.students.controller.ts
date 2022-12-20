@@ -24,7 +24,7 @@ import {
   APPLICATION_NOT_FOUND,
   APPLICATION_NOT_VALID,
   EducationProgramOfferingService,
-  DisbursementScheduleService,
+  DisbursementSchedulerService,
   StudentAssessmentService,
   INVALID_OPERATION_IN_THE_CURRENT_STATUS,
   ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE,
@@ -79,7 +79,7 @@ export class ApplicationStudentsController extends BaseController {
     private readonly studentService: StudentService,
     private readonly programYearService: ProgramYearService,
     private readonly offeringService: EducationProgramOfferingService,
-    private readonly disbursementScheduleService: DisbursementScheduleService,
+    private readonly DisbursementSchedulerService: DisbursementSchedulerService,
     private readonly assessmentService: StudentAssessmentService,
     private readonly applicationControllerService: ApplicationControllerService,
     private readonly craIncomeVerificationService: CRAIncomeVerificationService,
@@ -114,7 +114,7 @@ export class ApplicationStudentsController extends BaseController {
         application.data,
       );
     const firstCOEPromise =
-      this.disbursementScheduleService.getFirstDisbursementSchedule({
+      this.DisbursementSchedulerService.getFirstDisbursementSchedule({
         applicationId,
       });
     const [applicationData, firstCOE] = await Promise.all([

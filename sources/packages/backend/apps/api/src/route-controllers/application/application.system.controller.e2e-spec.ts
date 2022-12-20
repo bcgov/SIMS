@@ -6,7 +6,7 @@ import { KeycloakConfig } from "../../auth/keycloakConfig";
 import { AuthModule } from "../../auth/auth.module";
 import {
   ApplicationService,
-  DisbursementScheduleService,
+  DisbursementSchedulerService,
   EducationProgramOfferingService,
   KeycloakService,
   MSFAANumberService,
@@ -68,7 +68,7 @@ describe.skip("Test system-access/application Controller", () => {
         MSFAANumberService,
         SupportingUserService,
         createMockedJwtService(),
-        DisbursementScheduleService,
+        DisbursementSchedulerService,
         StudentRestrictionService,
       ],
     }).compile();

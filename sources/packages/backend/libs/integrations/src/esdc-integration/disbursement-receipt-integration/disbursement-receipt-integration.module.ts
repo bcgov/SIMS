@@ -7,7 +7,7 @@ import { LoggerModule } from "@sims/utilities/logger";
 import { ConfigModule } from "@sims/utilities/config";
 import { SshService } from "@sims/integrations/services";
 import { DisbursementReceiptService } from "@sims/integrations/services/disbursement-receipt/disbursement-receipt.service";
-import { DisbursementScheduleService } from "@sims/integrations/services/disbursement-schedule-service/disbursement-schedule-service";
+import { DisbursementSchedulerService } from "@sims/integrations/services/disbursement-schedule-service/disbursement-schedule-service";
 import { ReportService } from "@sims/integrations/services/report/report.service";
 
 @Module({
@@ -18,7 +18,7 @@ import { ReportService } from "@sims/integrations/services/report/report.service
     DisbursementReceiptProcessingService,
     DisbursementReceiptRequestService,
     DisbursementReceiptService,
-    DisbursementScheduleService,
+    DisbursementSchedulerService,
     SequenceControlService,
     // StudentRestrictionService,
     ReportService,

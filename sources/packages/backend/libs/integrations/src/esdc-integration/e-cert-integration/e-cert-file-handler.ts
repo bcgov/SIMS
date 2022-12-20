@@ -2,7 +2,7 @@ import { LoggerService, InjectLogger } from "@sims/utilities/logger";
 import { DisbursementSchedule, OfferingIntensity } from "@sims/sims-db";
 
 import {
-  DisbursementScheduleService,
+  DisbursementSchedulerService,
   SequenceControlService,
 } from "@sims/services";
 import { getISODateOnlyString } from "@sims/utilities";
@@ -39,7 +39,7 @@ export class ECertFileHandler extends ESDCFileHandler {
   constructor(
     configService: ConfigService,
     private readonly sequenceService: SequenceControlService,
-    private readonly disbursementScheduleService: DisbursementScheduleService,
+    private readonly DisbursementSchedulerService: DisbursementSchedulerService,
     private readonly disbursementScheduleErrorsService: DisbursementScheduleErrorsService,
     private readonly eCertFullTimeIntegrationService: ECertFullTimeIntegrationService,
     private readonly eCertPartTimeIntegrationService: ECertPartTimeIntegrationService,
@@ -119,7 +119,7 @@ export class ECertFileHandler extends ESDCFileHandler {
       `Retrieving ${offeringIntensity} disbursements to generate the e-Cert file...`,
     );
     const disbursements =
-      await this.disbursementScheduleService.getECertInformationToBeSent(
+      await this.DisbursementSchedulerService.getECertInformationToBeSent(
         offeringIntensity,
       );
     if (!disbursements.length) {
@@ -166,7 +166,7 @@ export class ECertFileHandler extends ESDCFileHandler {
           // sequence number.
           const disbursementScheduleRepo =
             entityManager.getRepository(DisbursementSchedule);
-          await this.disbursementScheduleService.updateRecordsInSentFile(
+          await this.DisbursementSchedulerService.updateRecordsInSentFile(
             disbursementIds,
             now,
             disbursementScheduleRepo,
@@ -343,7 +343,7 @@ export class ECertFileHandler extends ESDCFileHandler {
     feedbackRecord: ECertFullTimeResponseRecord,
   ): Promise<void> {
     const disbursementSchedule =
-      await this.disbursementScheduleService.getDisbursementScheduleByDocumentNumber(
+      await this.DisbursementSchedulerService.getDisbursementScheduleByDocumentNumber(
         feedbackRecord.documentNumber,
       );
     if (disbursementSchedule) {

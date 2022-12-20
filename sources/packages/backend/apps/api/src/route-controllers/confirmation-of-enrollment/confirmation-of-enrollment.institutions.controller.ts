@@ -20,7 +20,7 @@ import { IUserToken } from "../../auth/userToken.interface";
 import {
   ApplicationService,
   COEDeniedReasonService,
-  DisbursementScheduleService,
+  DisbursementSchedulerService,
 } from "../../services";
 import { DisbursementSchedule, DisbursementValueType } from "@sims/sims-db";
 import { getUserFullName } from "../../utilities/auth-utils";
@@ -76,7 +76,7 @@ const INVALID_TUITION_REMITTANCE_AMOUNT_MESSAGE =
 )
 export class ConfirmationOfEnrollmentInstitutionsController extends BaseController {
   constructor(
-    private readonly disbursementScheduleService: DisbursementScheduleService,
+    private readonly DisbursementSchedulerService: DisbursementSchedulerService,
     private readonly applicationService: ApplicationService,
     private readonly deniedCOEReasonService: COEDeniedReasonService,
   ) {
@@ -103,7 +103,7 @@ export class ConfirmationOfEnrollmentInstitutionsController extends BaseControll
     paginationOptions: ConfirmationOfEnrollmentPaginationOptionsAPIInDTO,
   ): Promise<PaginatedResultsAPIOutDTO<COESummaryAPIOutDTO>> {
     const disbursementPaginatedResult =
-      await this.disbursementScheduleService.getCOEByLocation(
+      await this.DisbursementSchedulerService.getCOEByLocation(
         locationId,
         enrollmentPeriod,
         paginationOptions,
@@ -150,7 +150,7 @@ export class ConfirmationOfEnrollmentInstitutionsController extends BaseControll
     disbursementScheduleId: number,
   ): Promise<ApplicationDetailsForCOEAPIOutDTO> {
     const disbursementSchedule =
-      await this.disbursementScheduleService.getDisbursementAndApplicationDetails(
+      await this.DisbursementSchedulerService.getDisbursementAndApplicationDetails(
         locationId,
         disbursementScheduleId,
       );
@@ -235,7 +235,7 @@ export class ConfirmationOfEnrollmentInstitutionsController extends BaseControll
   ): Promise<void> {
     // Get the disbursement and application summary for COE.
     const disbursementSchedule =
-      await this.disbursementScheduleService.getDisbursementAndApplicationSummary(
+      await this.DisbursementSchedulerService.getDisbursementAndApplicationSummary(
         locationId,
         disbursementScheduleId,
       );
@@ -255,7 +255,7 @@ export class ConfirmationOfEnrollmentInstitutionsController extends BaseControll
     }
 
     const firstOutstandingDisbursement =
-      await this.disbursementScheduleService.getFirstDisbursementSchedule({
+      await this.DisbursementSchedulerService.getFirstDisbursementSchedule({
         disbursementScheduleId: disbursementSchedule.id,
         onlyPendingCOE: true,
       });
@@ -297,7 +297,7 @@ export class ConfirmationOfEnrollmentInstitutionsController extends BaseControll
       );
     }
 
-    await this.disbursementScheduleService.updateDisbursementAndApplicationCOEApproval(
+    await this.DisbursementSchedulerService.updateDisbursementAndApplicationCOEApproval(
       disbursementScheduleId,
       userToken.userId,
       disbursementSchedule.studentAssessment.application.id,
@@ -337,7 +337,7 @@ export class ConfirmationOfEnrollmentInstitutionsController extends BaseControll
       );
     }
     const disbursementSchedule =
-      await this.disbursementScheduleService.getDisbursementAndApplicationSummary(
+      await this.DisbursementSchedulerService.getDisbursementAndApplicationSummary(
         locationId,
         disbursementScheduleId,
       );
@@ -347,7 +347,7 @@ export class ConfirmationOfEnrollmentInstitutionsController extends BaseControll
         "Unable to find a COE which could be completed.",
       );
     }
-    await this.disbursementScheduleService.updateCOEToDenied(
+    await this.DisbursementSchedulerService.updateCOEToDenied(
       disbursementSchedule.id,
       userToken.userId,
       payload.coeDenyReasonId,

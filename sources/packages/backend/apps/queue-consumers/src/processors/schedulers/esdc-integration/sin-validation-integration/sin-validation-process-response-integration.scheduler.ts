@@ -6,12 +6,12 @@ import { QueueNames } from "@sims/utilities";
 import { InjectLogger, LoggerService } from "@sims/utilities/logger";
 import { Job, Queue } from "bull";
 import { BaseScheduler } from "../../base-scheduler";
-import { ESDCFileResultQueueOutDTO } from "../models/esdc.dto";
+import { ProcessResponseQueueOutDTO } from "../models/esdc.dto";
 
-@Processor(QueueNames.SINValidationProcessIntegration)
-export class SINValidationProcessIntegrationScheduler extends BaseScheduler<void> {
+@Processor(QueueNames.SINValidationRequestIntegration)
+export class SINValidationRequestIntegrationScheduler extends BaseScheduler<void> {
   constructor(
-    @InjectQueue(QueueNames.SINValidationProcessIntegration)
+    @InjectQueue(QueueNames.SINValidationRequestIntegration)
     protected readonly schedulerQueue: Queue<void>,
     protected readonly queueService: QueueService,
     private readonly sinValidationProcessingService: SINValidationProcessingService,
@@ -21,30 +21,30 @@ export class SINValidationProcessIntegrationScheduler extends BaseScheduler<void
   }
 
   /**
-   * Identifies all the students that still do not have their SIN
-   * validated and create the validation request for ESDC processing.
+   * Download all SIN validation files from ESDC response folder on SFTP and process them all.
    * @params job job details.
-   * @returns processing result log.
+   * @returns summary with what was processed and the list of all errors, if any.
    */
   @Process()
-  async processSINValidation(
+  async processSINValidationResponse(
     job: Job<void>,
-  ): Promise<ESDCFileResultQueueOutDTO> {
+  ): Promise<ProcessResponseQueueOutDTO[]> {
     this.logger.log(
       `Processing CRA integration job ${job.id} of type ${job.name}.`,
     );
-    this.logger.log("Sending ESDC SIN validation request file.");
+    this.logger.log("Processing ESDC SIN validation response files.");
     const auditUser = await this.systemUsersService.systemUser();
-    const uploadResult =
-      await this.sinValidationProcessingService.uploadSINValidationRequests(
-        auditUser.id,
-      );
-    this.logger.log("ESDC SIN validation request file sent.");
+    const results = await this.sinValidationProcessingService.processResponses(
+      auditUser.id,
+    );
+    this.logger.log("ESDC SIN validation response files processed.");
     await this.cleanSchedulerQueueHistory();
-    return {
-      generatedFile: uploadResult.generatedFile,
-      uploadedRecords: uploadResult.uploadedRecords,
-    };
+    return results.map((result) => {
+      return {
+        processSummary: result.processSummary,
+        errorsSummary: result.errorsSummary,
+      };
+    });
   }
 
   @InjectLogger()

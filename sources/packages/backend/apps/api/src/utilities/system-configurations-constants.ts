@@ -12,13 +12,6 @@ export const SUPPORTING_USERS_TRANSACTION_IDLE_TIMEOUT_SECONDS = 10;
 export const SFAS_IMPORT_RECORDS_PROGRESS_REPORT_PACE = 1000;
 
 /**
- * These constants are used to specify the filename code
- * created for Full-Time/ Part-Time files while MSFAA request file is generated.
- */
-export const MSFAA_FULL_TIME_FILE_CODE = "PBC.EDU.MSFA.SENT.";
-export const MSFAA_PART_TIME_FILE_CODE = "PBC.EDU.MSFA.SENT.PT.";
-
-/**
  * For multipart forms, the max number of file fields.
  */
 export const MAX_UPLOAD_FILES = 1;

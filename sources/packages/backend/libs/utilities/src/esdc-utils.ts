@@ -1,5 +1,4 @@
-import { RelationshipStatus } from "@sims/sims-db";
-import { OfferingIntensity } from "@sims/sims-db";
+import { RelationshipStatus, OfferingIntensity } from "@sims/sims-db";
 
 /**
  * Gets the offering intensity code conversion for the MSFAA request file

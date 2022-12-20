@@ -8,12 +8,12 @@ import { MSFAARequestService } from "../../../../../libs/integrations/src/esdc-i
 import { MSFAAResponseService } from "../../../../../libs/integrations/src/esdc-integration/msfaa-integration/msfaa-response.service";
 import { ApiTags } from "@nestjs/swagger";
 import BaseController from "../BaseController";
+import { ClientTypeBaseRoute } from "../../types";
+import { ProcessResponseAPIOutDTO } from "./models/esdc.dto";
 import {
   MSFAA_FULL_TIME_FILE_CODE,
   MSFAA_PART_TIME_FILE_CODE,
-} from "../../utilities";
-import { ClientTypeBaseRoute } from "../../types";
-import { ProcessResponseAPIOutDTO } from "./models/esdc.dto";
+} from "@sims/services/constants";
 
 @AllowAuthorizedParty(AuthorizedParties.formsFlowBPM)
 @Controller("msfaa-integration")
@@ -68,6 +68,7 @@ export class MSFAAIntegrationSystemAccessController extends BaseController {
   /**
    * Download all files from MSFAA Response folder on SFTP and process them all.
    * @returns Summary with what was processed and the list of all errors, if any.
+   * todo: check with guru -> if its FT or PT
    */
   @Post("process-responses")
   async processResponses(): Promise<ProcessResponseAPIOutDTO[]> {

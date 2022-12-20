@@ -29,14 +29,12 @@ import {
   ApplicationSystemAccessController,
   MSFAAIntegrationSystemAccessController,
   SFASIntegrationSystemAccessController,
-  ECertIntegrationSystemAccessController,
-  FedRestrictionsIntegrationSystemAccessController,
   ATBCSystemAccessController,
 } from "./route-controllers";
 import {
   WorkflowClientService,
   SequenceControlService,
-  DisbursementScheduleService,
+  DisbursementSchedulerService,
 } from "@sims/services";
 // todo: once all integration are moved. remove sshservice.
 import { SshService } from "@sims/integrations/services";
@@ -49,7 +47,6 @@ import { StudentRestrictionService as StudentRestrictionsService } from "@sims/i
 import { SystemUsersService } from "@sims/services/system-users";
 import { AuthModule } from "./auth/auth.module";
 import { SINValidationModule } from "@sims/integrations/esdc-integration/sin-validation/sin-validation.module";
-import { SINValidationSystemAccessController } from "./route-controllers/esdc-integration/sin-validation.system-access.controller";
 import { MSFAARequestService } from "@sims/integrations/esdc-integration/msfaa-integration/msfaa-request.service";
 import { MSFAAIntegrationService } from "@sims/integrations/esdc-integration/msfaa-integration/msfaa-integration.service";
 import { MSFAAResponseService } from "@sims/integrations/esdc-integration/msfaa-integration/msfaa-response.service";
@@ -67,7 +64,7 @@ import { DisbursementReceiptIntegrationService } from "@sims/integrations/esdc-i
 import { DisbursementReceiptRequestService } from "@sims/integrations/esdc-integration/disbursement-receipt-integration/disbursement-receipt-request.service";
 import { FedRestrictionProcessingService } from "@sims/integrations/esdc-integration/fed-restriction-integration/fed-restriction-processing.service";
 import { FedRestrictionIntegrationService } from "@sims/integrations/esdc-integration/fed-restriction-integration/fed-restriction-integration.service";
-import { DisbursementScheduleService as DisbursementsScheduleService } from "@sims/integrations/services/disbursement-schedule-service/disbursement-schedule-service";
+import { DisbursementSchedulerService as DisbursementsScheduleService } from "@sims/integrations/services/disbursement-schedule-service/disbursement-schedule-service";
 // todo: ann module part3 when schdulers are done, remember to reovethe service used in the deleted controllers
 import { DisbursementReceiptService as DisbursementReceiptsService } from "@sims/integrations/services/disbursement-receipt/disbursement-receipt.service";
 import { RestrictionService as RestrictionsService } from "@sims/integrations/services/restriction/restriction.service";
@@ -76,12 +73,9 @@ import { RestrictionService as RestrictionsService } from "@sims/integrations/se
   imports: [AuthModule, SINValidationModule, IER12IntegrationModule],
   controllers: [
     ATBCSystemAccessController,
-    SINValidationSystemAccessController,
     ApplicationSystemAccessController,
     MSFAAIntegrationSystemAccessController,
     SFASIntegrationSystemAccessController,
-    ECertIntegrationSystemAccessController,
-    FedRestrictionsIntegrationSystemAccessController,
   ],
   providers: [
     WorkflowClientService,
@@ -89,7 +83,7 @@ import { RestrictionService as RestrictionsService } from "@sims/integrations/se
     StudentService,
     StudentAssessmentService,
     EducationProgramOfferingService,
-    DisbursementScheduleService,
+    DisbursementSchedulerService,
     SequenceControlService,
     StudentRestrictionService,
     AssessmentControllerService,

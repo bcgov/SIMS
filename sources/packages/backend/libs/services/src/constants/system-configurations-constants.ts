@@ -56,3 +56,10 @@ export const FEDERAL_RESTRICTIONS_UNIDENTIFIED_DESCRIPTION =
  * SIN validation generated files.
  */
 export const ESDC_SIN_VALIDATION_SEQUENCE_GROUP_NAME = "ESDC_SIN_VALIDATION";
+
+/**
+ * These constants are used to specify the filename code
+ * created for Full-Time/ Part-Time files while MSFAA request file is generated.
+ */
+export const MSFAA_FULL_TIME_FILE_CODE = "PBC.EDU.MSFA.SENT.";
+export const MSFAA_PART_TIME_FILE_CODE = "PBC.EDU.MSFA.SENT.PT.";
