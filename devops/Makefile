@@ -373,6 +373,8 @@ deploy-queue-consumers:
 	test -n "$(QUEUE_CONSUMERS)"
 	test -n "$(QUEUE_CONSUMERS_PORT)"
 	test -n "$(QUEUE_PREFIX)"
+	test -n "$(ATBC_LOGIN_ENDPOINT)"
+	test -n "$(ATBC_ENDPOINT)"
 	@echo "+\n++ Deploying Queues with tag: $(BUILD_TAG)\n+"
 	@oc -n $(NAMESPACE) process -f openshift/queue-consumers-deploy.yml \
 		-p NAME=$(QUEUE_CONSUMERS) \
@@ -385,6 +387,8 @@ deploy-queue-consumers:
 		-p PORT=$(QUEUE_CONSUMERS_PORT) \
 		-p HOST_NAME=$(HOST) \
 		-p QUEUE_PREFIX=$(QUEUE_PREFIX) \
+		-p ATBC_LOGIN_ENDPOINT=$(ATBC_LOGIN_ENDPOINT) \
+		-p ATBC_ENDPOINT=$(ATBC_ENDPOINT) \
 		| oc -n $(NAMESPACE) apply -f -
 	$(call rollout_and_wait,dc/$(QUEUE_CONSUMERS))
 
