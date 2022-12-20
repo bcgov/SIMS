@@ -13,9 +13,9 @@ import { ATBCIntegrationProcessingService } from "@sims/integrations/atbc-integr
 export class ATBCResponseIntegrationScheduler extends BaseScheduler<void> {
   constructor(
     @InjectQueue(QueueNames.ATBCResponseIntegration)
-    protected readonly schedulerQueue: Queue<void>,
-    private readonly atbcIntegrationProcessingService: ATBCIntegrationProcessingService,
+    schedulerQueue: Queue<void>,
     queueService: QueueService,
+    private readonly atbcIntegrationProcessingService: ATBCIntegrationProcessingService,
   ) {
     super(schedulerQueue, queueService);
   }
@@ -30,10 +30,10 @@ export class ATBCResponseIntegrationScheduler extends BaseScheduler<void> {
   async processPendingPDRequests(
     job: Job<void>,
   ): Promise<ProcessPDRequestQueueOutDTO> {
-    job.log("Processing PD status for students.");
+    await job.log("Processing PD status for students.");
     const processingResult =
       await this.atbcIntegrationProcessingService.processPendingPDRequests();
-    job.log("Completed processing PD status.");
+    await job.log("Completed processing PD status.");
     await this.cleanSchedulerQueueHistory();
     return processingResult;
   }

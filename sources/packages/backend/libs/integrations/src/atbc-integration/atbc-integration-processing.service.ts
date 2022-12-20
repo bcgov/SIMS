@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { LoggerService, InjectLogger } from "@sims/utilities/logger";
-import * as os from "os";
+import { processInParallel } from "@sims/utilities";
 import { SystemUsersService } from "@sims/services/system-users";
 import {
   StudentService,
@@ -37,13 +37,13 @@ export class ATBCIntegrationProcessingService {
     };
     // Call ATBC endpoint to apply for PD status.
     const response = await this.atbcService.createClient(payload);
-    const auditUser = await this.systemUsersService.systemUser();
 
     // TODO: The if condition needs to be enhanced to check the response code
-    // TODO: to confirm that API call was successful. At this moment there is no information
-    // TODO: on how the response codes could be.
-    // TODO: The response code must be used to validate bad request as well.
+    // to confirm that API call was successful. At this moment there is no information
+    // on how the response codes could be.
+    // The response code must be used to validate bad request as well.
     if (response) {
+      const auditUser = await this.systemUsersService.systemUser();
       // Update PD sent date.
       await this.studentService.updatePDSentDate(student.id, auditUser);
     }
@@ -60,30 +60,15 @@ export class ATBCIntegrationProcessingService {
 
     if (students.length) {
       this.logger.log(`Processing PD requests for ${students.length} students`);
-      // Used to limit the number of asynchronous operations
-      // that will start at the same time.
-      const maxPromisesAllowed = os.cpus().length;
 
-      // Hold all the promises that must be processed.
-      const promises: Promise<boolean>[] = [];
-      for (const student of students) {
-        promises.push(this.processStudentPDStatus(student));
-        if (promises.length >= maxPromisesAllowed) {
-          const processingResults = await Promise.all(promises);
-          updatedPDstatusCount += processingResults.filter(
-            (result) => result,
-          ).length;
-          // Clear the array.
-          promises.splice(0, promises.length);
-        }
-      }
-      if (promises.length > 0) {
-        // Waits for methods, if any outside the loop.
-        const processingResults = await Promise.all(promises);
-        updatedPDstatusCount += processingResults.filter(
-          (result) => result,
-        ).length;
-      }
+      const processingResults = await processInParallel(
+        (student: Student) => this.processStudentPDStatus(student),
+        students,
+      );
+
+      updatedPDstatusCount += processingResults.filter(
+        (result) => result,
+      ).length;
     }
     return {
       pdRequestsProcessed: students.length,

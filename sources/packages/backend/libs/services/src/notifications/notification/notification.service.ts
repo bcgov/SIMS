@@ -20,7 +20,7 @@ import {
 } from "./notification.model";
 import { LoggerService, InjectLogger } from "@sims/utilities/logger";
 import { GCNotifyErrorResponse } from "./gc-notify.model";
-import { CustomNamedError, processRequestsInParallel } from "@sims/utilities";
+import { CustomNamedError, processInParallel } from "@sims/utilities";
 import { GC_NOTIFY_PERMANENT_FAILURE_ERROR } from "@sims/services/constants";
 
 /**
@@ -181,7 +181,7 @@ export class NotificationService extends RecordDataModelService<Notification> {
         `Processing ${notificationsToProcess.length} notifications`,
       );
 
-      const resolvedResponses = await processRequestsInParallel(
+      const resolvedResponses = await processInParallel(
         (notification: Notification) =>
           this.sendEmailNotification(notification),
         notificationsToProcess,

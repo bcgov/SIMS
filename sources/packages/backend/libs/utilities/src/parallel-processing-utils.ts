@@ -5,12 +5,12 @@ import * as os from "os";
  * of records to improve the performance in a controlled fashion.
  * @param createPromise Implementation that calls processing function which
  * returns a promise.
- * @param inputs input data from which the bulk processing is done.
- * @param maxParallelRequests  Maximum number of parallel processes allowed to be executed at same time.
+ * @param inputs Input data from which the bulk processing is done.
+ * @param maxParallelRequests Maximum number of parallel processes allowed to be executed at same time.
  * @returns resolved responses of promise.
  */
-export const processRequestsInParallel = async <P, I>(
-  createPromise: (record: I) => Promise<P>,
+export const processInParallel = async <P, I>(
+  createPromise: (input: I) => Promise<P>,
   inputs: I[],
   maxParallelRequests?: number,
 ): Promise<P[]> => {

@@ -13,9 +13,9 @@ import { SFASIntegrationProcessingService } from "@sims/integrations/sfas-integr
 export class SFASIntegrationScheduler extends BaseScheduler<void> {
   constructor(
     @InjectQueue(QueueNames.SFASIntegration)
-    protected readonly schedulerQueue: Queue<void>,
-    private readonly sfasIntegrationProcessingService: SFASIntegrationProcessingService,
+    schedulerQueue: Queue<void>,
     queueService: QueueService,
+    private readonly sfasIntegrationProcessingService: SFASIntegrationProcessingService,
   ) {
     super(schedulerQueue, queueService);
   }

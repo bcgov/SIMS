@@ -14,11 +14,11 @@ export class SFASPartTimeApplicationsService extends DataModelService<SFASPartTi
 
   /**
    * Validates before an application submission to see if there is an overlapping SFAS part-time application existing.
-   * @param sin
-   * @param birthDate
-   * @param lastName
-   * @param studyStartDate
-   * @param studyEndDate
+   * @param sin Student SIN number.
+   * @param birthDate Student date of birth.
+   * @param lastName Student last name.
+   * @param studyStartDate Study period start date.
+   * @param studyEndDate Study period end date.
    * @returns SFAS part-time application.
    */
   async validateDateOverlap(
