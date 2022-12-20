@@ -8,6 +8,7 @@
           params: { locationId: locationId },
         }"
         subTitle="Program Detail"
+        data-cy="programDetailHeader"
       />
     </template>
     <template #details-header>

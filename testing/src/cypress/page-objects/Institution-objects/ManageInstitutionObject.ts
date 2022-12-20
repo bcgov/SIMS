@@ -3,7 +3,7 @@ import BaseMethods from "./BaseMethods";
 export const enum SideBarMenuItems {
   ManageProfile = "Manage Profile",
   ManageLocations = "Manage Locations",
-  ManageDesignation = "Manage Designations",
+  ManageDesignation = "Manage Designation",
   ManageUsers = "Manage Users",
 }
 

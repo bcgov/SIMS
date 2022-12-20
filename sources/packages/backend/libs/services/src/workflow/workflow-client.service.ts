@@ -2,6 +2,7 @@ import { Injectable, Logger } from "@nestjs/common";
 import { ApplicationExceptionStatus, ProgramInfoStatus } from "@sims/sims-db";
 import { CreateProcessInstanceResponse, ZBClient } from "zeebe-node";
 import { ZEEBE_PUBLISH_MESSAGE_DEFAULT_TIME_TO_LEAVE } from "../constants";
+import { ZeebeGRPCError } from "../zeebe/zeebe.models";
 import {
   APPLICATION_EXCEPTION_STATUS,
   PROGRAM_INFO_STATUS,
@@ -95,8 +96,10 @@ export class WorkflowClientService {
   }
 
   /**
-   * delete application assessment.
+   * Delete application assessment.
    * @param assessmentWorkflowId workflow Id to be deleted.
+   * @throws ZeebeGRPCError case there is a GRPC error, a specific
+   * exception is generated with error code and details.
    */
   async deleteApplicationAssessment(
     assessmentWorkflowId: string,
@@ -104,11 +107,11 @@ export class WorkflowClientService {
     try {
       await this.zeebeClient.cancelProcessInstance(assessmentWorkflowId);
     } catch (error: unknown) {
-      this.logger.error(
-        `Error while deleting application assessment workflow: ${assessmentWorkflowId}.`,
+      ZeebeGRPCError.throwIfZeebeGRPCError(
+        error,
+        "Error while cancelling a process instance.",
       );
-      this.logger.error(error);
-      //The error is not thrown here, as we are failing silently
+      throw error;
     }
   }
 

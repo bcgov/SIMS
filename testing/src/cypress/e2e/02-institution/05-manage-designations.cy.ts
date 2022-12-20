@@ -129,7 +129,7 @@ describe("Manage Designation", () => {
   });
 });
 
-describe("Manage Designation", () => {
+describe.skip("Manage Designation", () => {
   //TODO Intentionally skipped until we have control over the data that is created. Since we can have one `request for designation` in progress
   before(() => {
     institutionHelperActions.loginIntoInstitutionSingleLocation();

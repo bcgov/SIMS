@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { DataSource, In, Not, UpdateResult, Brackets } from "typeorm";
+import { DataSource, In, Not, Brackets } from "typeorm";
 import { LoggerService, InjectLogger } from "@sims/utilities/logger";
 import {
   RecordDataModelService,
@@ -33,7 +33,7 @@ import {
   FieldSortOrder,
   OrderByCondition,
 } from "../../utilities";
-import { CustomNamedError, dateDifference } from "@sims/utilities";
+import { CustomNamedError, dateDifference, QueueNames } from "@sims/utilities";
 import {
   SFASApplicationService,
   SFASPartTimeApplicationsService,
@@ -48,6 +48,9 @@ import {
 import { SequenceControlService, WorkflowClientService } from "@sims/services";
 import { ConfigService } from "@sims/utilities/config";
 import { NotificationActionsService } from "@sims/services/notifications";
+import { InjectQueue } from "@nestjs/bull";
+import { Queue } from "bull";
+import { CancelAssessmentQueueInDTO } from "@sims/services/queue";
 
 export const APPLICATION_DRAFT_NOT_FOUND = "APPLICATION_DRAFT_NOT_FOUND";
 export const MORE_THAN_ONE_APPLICATION_DRAFT_ERROR =
@@ -74,6 +77,8 @@ export class ApplicationService extends RecordDataModelService<Application> {
     private readonly studentRestrictionService: StudentRestrictionService,
     private readonly offeringService: EducationProgramOfferingService,
     private readonly notificationActionsService: NotificationActionsService,
+    @InjectQueue(QueueNames.CancelApplicationAssessment)
+    private readonly cancelAssessmentQueue: Queue<CancelAssessmentQueueInDTO>,
   ) {
     super(dataSource.getRepository(Application));
   }
@@ -253,9 +258,9 @@ export class ApplicationService extends RecordDataModelService<Application> {
     });
     // Deleting the existing workflow, if there is one.
     if (application.currentAssessment.assessmentWorkflowId) {
-      await this.workflowClientService.deleteApplicationAssessment(
-        application.currentAssessment.assessmentWorkflowId,
-      );
+      await this.cancelAssessmentQueue.add({
+        assessmentId: application.currentAssessment.id,
+      });
     }
 
     return { application, createdAssessment: originalAssessment };
@@ -492,65 +497,76 @@ export class ApplicationService extends RecordDataModelService<Application> {
       })
       .getOne();
   }
+
   /**
-   * Fetches application by applicationId and userId (optional).
-   * @param applicationId
-   * @param userId
-   * @returns
+   * Gets a student application by applicationId.
+   * Student id can be provided for authorization purposes.
+   * @param applicationId application id.
+   * @param options object that should contain:
+   * - `loadDynamicData` indicates if the dynamic data(JSONB) should be loaded.
+   * - `studentId` student id.
+   * @returns student application.
    */
-  async getApplicationByIdAndUser(
+  async getApplicationById(
     applicationId: number,
-    userId?: number,
+    options?: { loadDynamicData?: boolean; studentId?: number },
   ): Promise<Application> {
-    const applicationQuery = this.repo
-      .createQueryBuilder("application")
-      .select([
-        "application.id",
-        "application.data",
-        "application.applicationStatus",
-        "application.pirStatus",
-        "application.applicationStatusUpdatedOn",
-        "application.applicationNumber",
-        "application.pirDeniedOtherDesc",
-        "currentAssessment.id",
-        "currentAssessment.assessmentWorkflowId",
-        "currentAssessment.noaApprovalStatus",
-        "offering.id",
-        "offering.offeringIntensity",
-        "offering.studyStartDate",
-        "offering.studyEndDate",
-        "offering.offeringStatus",
-        "location.id",
-        "location.name",
-        "pirDeniedReasonId.id",
-        "pirDeniedReasonId.reason",
-        "programYear.id",
-        "programYear.formName",
-        "programYear.startDate",
-        "programYear.endDate",
-        "applicationException.exceptionStatus",
-        "application.submittedDate",
-      ])
-      .leftJoin("application.currentAssessment", "currentAssessment")
-      .leftJoin("currentAssessment.offering", "offering")
-      .leftJoin("application.location", "location")
-      .leftJoin("location.institution", "institution")
-      .leftJoin("institution.institutionType", "institutionType")
-      .innerJoin("application.student", "student")
-      .innerJoin("student.user", "user")
-      .innerJoin("application.programYear", "programYear")
-      .leftJoin("application.pirDeniedReasonId", "pirDeniedReasonId")
-      .leftJoin("application.applicationException", "applicationException")
-      .where("application.id = :applicationIdParam", {
-        applicationIdParam: applicationId,
-      })
-      .andWhere("application.applicationStatus != :overwrittenStatus", {
-        overwrittenStatus: ApplicationStatus.overwritten,
-      });
-    if (userId) {
-      applicationQuery.andWhere("user.id = :userId", { userId });
-    }
-    return applicationQuery.getOne();
+    return this.repo.findOne({
+      select: {
+        id: true,
+        data: !!options?.loadDynamicData as unknown,
+        applicationStatus: true,
+        pirStatus: true,
+        applicationStatusUpdatedOn: true,
+        applicationNumber: true,
+        pirDeniedOtherDesc: true,
+        submittedDate: true,
+        applicationException: {
+          id: true,
+          exceptionStatus: true,
+        },
+        currentAssessment: {
+          id: true,
+          assessmentWorkflowId: true,
+          noaApprovalStatus: true,
+          offering: {
+            id: true,
+            offeringIntensity: true,
+            studyStartDate: true,
+            studyEndDate: true,
+            offeringStatus: true,
+          },
+        },
+        location: {
+          id: true,
+          name: true,
+        },
+        pirDeniedReasonId: {
+          id: true,
+          reason: true,
+        },
+        programYear: {
+          id: true,
+          formName: true,
+          startDate: true,
+          endDate: true,
+        },
+      },
+      relations: {
+        applicationException: true,
+        currentAssessment: { offering: true },
+        location: true,
+        pirDeniedReasonId: true,
+        programYear: true,
+      },
+      where: {
+        id: applicationId,
+        applicationStatus: Not(ApplicationStatus.overwritten),
+        student: {
+          id: options?.studentId,
+        },
+      },
+    });
   }
 
   /**
@@ -923,24 +939,37 @@ export class ApplicationService extends RecordDataModelService<Application> {
         .getMany()
     );
   }
+
   /**
-   * Update Student Application status.
+   * Update Student Application status to cancelled.
    * Only allows the update on applications that are not in a final status.
    * The final statuses of an application are Completed, Overwritten and Cancelled.
    * @param applicationId application id.
-   * @param applicationStatus application status that need to be updated.
+   * @param studentId student id for authorization purposes.
    * @param auditUserId user who is making the changes.
-   * @returns student Application UpdateResult.
+   * @returns student application update result.
    */
-  async updateApplicationStatus(
+  async cancelStudentApplication(
     applicationId: number,
-    applicationStatus: ApplicationStatus,
+    studentId: number,
     auditUserId: number,
-  ): Promise<UpdateResult> {
-    const now = new Date();
-    return this.repo.update(
-      {
+  ): Promise<Application> {
+    const application = await this.repo.findOne({
+      select: {
+        id: true,
+        currentAssessment: {
+          id: true,
+          assessmentWorkflowId: true,
+        },
+      },
+      relations: {
+        currentAssessment: true,
+      },
+      where: {
         id: applicationId,
+        student: {
+          id: studentId,
+        },
         applicationStatus: Not(
           In([
             ApplicationStatus.completed,
@@ -949,13 +978,28 @@ export class ApplicationService extends RecordDataModelService<Application> {
           ]),
         ),
       },
-      {
-        applicationStatus: applicationStatus,
-        applicationStatusUpdatedOn: now,
-        modifier: { id: auditUserId } as User,
-        updatedAt: now,
-      },
-    );
+    });
+    if (!application) {
+      throw new CustomNamedError(
+        "Application not found or it is not in the correct state to be cancelled.",
+        APPLICATION_NOT_FOUND,
+      );
+    }
+    // Updates the application status to cancelled.
+    const now = new Date();
+    application.applicationStatus = ApplicationStatus.cancelled;
+    application.applicationStatusUpdatedOn = now;
+    application.modifier = { id: auditUserId } as User;
+    application.updatedAt = now;
+    await this.repo.save(application);
+    // Delete workflow and rollback overawards if the workflow started.
+    // Workflow doest not exists for draft or submitted application, for instance.
+    if (application.currentAssessment?.assessmentWorkflowId) {
+      await this.cancelAssessmentQueue.add({
+        assessmentId: application.currentAssessment.id,
+      });
+    }
+    return application;
   }
 
   /**

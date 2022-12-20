@@ -36,6 +36,7 @@ import {
   EducationProgramOfferingStudentsController,
   EducationProgramOfferingControllerService,
   RestrictionStudentsController,
+  ProgramYearStudentsController,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
 import { ApplicationControllerService } from "./route-controllers/application/application.controller.service";
@@ -63,6 +64,7 @@ import { ATBCIntegrationModule } from "@sims/integrations/atbc-integration";
     EducationProgramOfferingStudentsController,
     RestrictionStudentsController,
     ATBCStudentController,
+    ProgramYearStudentsController,
   ],
   providers: [
     WorkflowClientService,

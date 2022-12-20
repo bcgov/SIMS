@@ -39,8 +39,9 @@ export class ApplicationAESTController extends BaseController {
   async getApplication(
     @Param("applicationId", ParseIntPipe) applicationId: number,
   ): Promise<GetApplicationBaseDTO> {
-    const application = await this.applicationService.getApplicationByIdAndUser(
+    const application = await this.applicationService.getApplicationById(
       applicationId,
+      { loadDynamicData: true },
     );
     if (!application) {
       throw new NotFoundException(

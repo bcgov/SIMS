@@ -2,7 +2,6 @@ import {
   CreateApplicationDraftResult,
   SaveStudentApplicationDto,
   ApplicationWithProgramYearDto,
-  ApplicationStatusToBeUpdatedDto,
   GetApplicationDataDto,
   GetApplicationBaseDTO,
   DataTableSortOrder,
@@ -23,27 +22,21 @@ export class ApplicationService {
   // Share Instance
   private static instance: ApplicationService;
 
-  public static get shared(): ApplicationService {
+  static get shared(): ApplicationService {
     return this.instance || (this.instance = new this());
   }
 
-  public async updateStudentApplicationStatus(
-    applicationId: number,
-    payload: ApplicationStatusToBeUpdatedDto,
-  ): Promise<void> {
-    await ApiClient.Application.updateStudentApplicationStatus(
-      applicationId,
-      payload,
-    );
+  async cancelStudentApplication(applicationId: number): Promise<void> {
+    await ApiClient.Application.cancelStudentApplication(applicationId);
   }
 
-  public async getApplicationData(
+  async getApplicationData(
     applicationId: number,
   ): Promise<GetApplicationDataDto> {
     return ApiClient.Application.getApplicationData(applicationId);
   }
 
-  public async createApplicationDraft(
+  async createApplicationDraft(
     payload: SaveStudentApplicationDto,
   ): Promise<CreateApplicationDraftResult> {
     try {
@@ -61,21 +54,21 @@ export class ApplicationService {
     }
   }
 
-  public async saveApplicationDraft(
+  async saveApplicationDraft(
     applicationId: number,
     payload: SaveStudentApplicationDto,
   ): Promise<number> {
     return ApiClient.Application.saveApplicationDraft(applicationId, payload);
   }
 
-  public async submitApplication(
+  async submitApplication(
     applicationId: number,
     payload: SaveStudentApplicationDto,
   ): Promise<void> {
     return ApiClient.Application.submitApplication(applicationId, payload);
   }
 
-  public async getApplicationWithPY(
+  async getApplicationWithPY(
     applicationId: number,
     isIncludeInActiveProgramYear?: boolean,
   ): Promise<ApplicationWithProgramYearDto> {
@@ -121,7 +114,7 @@ export class ApplicationService {
     );
   }
 
-  public async getApplicationForRequestChange(
+  async getApplicationForRequestChange(
     applicationNumber: string,
   ): Promise<ApplicationIdentifiersDTO> {
     return ApiClient.Application.getApplicationForRequestChange(

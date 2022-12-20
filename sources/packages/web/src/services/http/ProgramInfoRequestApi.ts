@@ -20,7 +20,7 @@ export class ProgramInfoRequestApi extends HttpBaseClient {
     locationId: number,
     applicationId: number,
   ): Promise<ProgramInfoRequestAPIOutDTO> {
-    return this.getCallTyped(
+    return this.getCallTyped<ProgramInfoRequestAPIOutDTO>(
       this.addClientRoot(
         `location/${locationId}/program-info-request/application/${applicationId}`,
       ),
