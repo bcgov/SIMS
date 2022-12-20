@@ -41,6 +41,9 @@ export class CancelApplicationAssessmentProcessor {
       appLogger: this.logger,
       jobLogger: job,
     });
+    summary.info(
+      `Cancelling application assessment id ${job.data.assessmentId}`,
+    );
     const assessment = await this.studentAssessmentService.getAssessmentById(
       job.data.assessmentId,
     );
@@ -77,6 +80,7 @@ export class CancelApplicationAssessmentProcessor {
           error.code !== ZeebeGRPCErrorTypes.NOT_FOUND
         ) {
           // An unexpected error happen and the process must be aborted.
+          this.logger.error(error);
           throw error;
         }
         // NOT_FOUND error means that the call to Camunda was successful but the workflow instance was not found.
