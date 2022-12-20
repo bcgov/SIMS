@@ -31,7 +31,7 @@
       "123456789654987456123"
     ],
     "stringWithMoreThan100Chars": "wertyuiopawertyuiopawertyuiopawertyuiopawertyuiopawertyuiopawertyuiopawertyuiopawertyuiopawertyuiopadf",
-    "institutionCodeNonAplhabets": [
+    "institutionCodeNonAlphabets": [
       "123",
       "abd8",
       "&jkh"
@@ -43,6 +43,21 @@
     "institutionCodeAbove4": [
       "ASSCD",
       "YOIUpl"
+    ],
+    "CIP": [
+      "ABM",
+      "3215",
+      "AB.IOPO"
+    ],
+    "NOC": [
+      "UI",
+      "KJHK",
+      "IO78"
+    ],
+    "SABC": [
+      "AA88",
+      "AA0",
+      "3213"
     ]
   },
   "validData": {
