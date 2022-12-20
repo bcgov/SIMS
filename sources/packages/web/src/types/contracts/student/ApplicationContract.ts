@@ -91,10 +91,6 @@ export enum ApplicationScholasticStandingStatus {
   Unavailable = "Unavailable",
 }
 
-export interface ApplicationStatusToBeUpdatedDto {
-  applicationStatus: ApplicationStatus;
-}
-
 /**
  * DTO with primary identifiers of application.
  */

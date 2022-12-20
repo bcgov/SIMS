@@ -40,6 +40,11 @@ export interface PrecedingOfferingSummaryModel {
  * and delete the existing workflow instance for an application.
  */
 export class ApplicationAssessmentSummary extends Application {
+  /**
+   * Assessment id prior to the application be prepared for the reassessment.
+   * Useful to keep the information to cancel the application.
+   */
+  assessmentId: number;
   assessmentWorkflowId: string;
   workflowName: string;
   hasAssessmentData: boolean;
