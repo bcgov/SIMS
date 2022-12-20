@@ -49,7 +49,6 @@ import { NotificationActionsService } from "@sims/services/notifications";
 import { InjectQueue } from "@nestjs/bull";
 import { Queue } from "bull";
 import { CancelAssessmentQueueInDTO } from "@sims/services/queue";
-import { APPLICATION_STATUS_NOT_ALLOWED_FOR_CANCELLATION } from "@sims/services/constants/student-application.constants";
 
 export const APPLICATION_DRAFT_NOT_FOUND = "APPLICATION_DRAFT_NOT_FOUND";
 export const MORE_THAN_ONE_APPLICATION_DRAFT_ERROR =
@@ -953,52 +952,52 @@ export class ApplicationService extends RecordDataModelService<Application> {
     studentId: number,
     auditUserId: number,
   ): Promise<Application> {
-    return this.dataSource.transaction(async (transactionEntityManager) => {
-      const applicationRepo =
-        transactionEntityManager.getRepository(Application);
-      const application = await applicationRepo.findOne({
-        select: {
+    const application = await this.repo.findOne({
+      select: {
+        id: true,
+        currentAssessment: {
           id: true,
-          currentAssessment: {
-            id: true,
-            assessmentWorkflowId: true,
-          },
+          assessmentWorkflowId: true,
         },
-        relations: {
-          currentAssessment: true,
+      },
+      relations: {
+        currentAssessment: true,
+      },
+      where: {
+        id: applicationId,
+        student: {
+          id: studentId,
         },
-        where: {
-          id: applicationId,
-          student: {
-            id: studentId,
-          },
-          applicationStatus: Not(
-            In(APPLICATION_STATUS_NOT_ALLOWED_FOR_CANCELLATION),
-          ),
-        },
-      });
-      if (!application) {
-        throw new CustomNamedError(
-          "Application not found or it is not in the correct state to be cancelled.",
-          APPLICATION_NOT_FOUND,
-        );
-      }
-      // Updates the application status to cancelled.
-      const now = new Date();
-      application.applicationStatus = ApplicationStatus.cancelled;
-      application.applicationStatusUpdatedOn = now;
-      application.modifier = { id: auditUserId } as User;
-      application.updatedAt = now;
-      await applicationRepo.save(application);
-      // Delete workflow and rollback overawards if the workflow started.
-      // Workflow doest not exists for draft or submitted application, for instance.
-      if (application.currentAssessment?.assessmentWorkflowId) {
-        await this.cancelAssessmentQueue.add({
-          assessmentId: application.currentAssessment.id,
-        });
-      }
-      return application;
+        applicationStatus: Not(
+          In([
+            ApplicationStatus.completed,
+            ApplicationStatus.overwritten,
+            ApplicationStatus.cancelled,
+          ]),
+        ),
+      },
     });
+    if (!application) {
+      throw new CustomNamedError(
+        "Application not found or it is not in the correct state to be cancelled.",
+        APPLICATION_NOT_FOUND,
+      );
+    }
+    // Updates the application status to cancelled.
+    const now = new Date();
+    application.applicationStatus = ApplicationStatus.cancelled;
+    application.applicationStatusUpdatedOn = now;
+    application.modifier = { id: auditUserId } as User;
+    application.updatedAt = now;
+    await this.repo.save(application);
+    // Delete workflow and rollback overawards if the workflow started.
+    // Workflow doest not exists for draft or submitted application, for instance.
+    if (application.currentAssessment?.assessmentWorkflowId) {
+      await this.cancelAssessmentQueue.add({
+        assessmentId: application.currentAssessment.id,
+      });
+    }
+    return application;
   }
 
   /**
