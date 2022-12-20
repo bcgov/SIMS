@@ -46,16 +46,18 @@ export class CancelApplicationAssessmentProcessor {
     );
     if (!assessment) {
       await job.discard();
-      throw new Error("Assessment was not found.");
+      const errorMessage = `Assessment id ${job.data.assessmentId} was not found.`;
+      this.logger.error(errorMessage);
+      throw new Error(errorMessage);
     }
 
     if (
       assessment.application.applicationStatus !== ApplicationStatus.cancelled
     ) {
       await job.discard();
-      throw new Error(
-        `Application must be in the ${ApplicationStatus.cancelled} state to have the assessment cancelled.`,
-      );
+      const errorMessage = `Application must be in the ${ApplicationStatus.cancelled} state to have the assessment cancelled.`;
+      this.logger.error(errorMessage);
+      throw new Error(errorMessage);
     }
 
     // Try to cancel the workflow if a workflow id is present.
