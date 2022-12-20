@@ -48,10 +48,9 @@ export class StudentService extends RecordDataModelService<Student> {
 
   /**
    * Update the PD Sent Date
-   * TODO: This method seems to be used in an obsolete method of
-   * TODO: ATBC service. Needs to be remove on analysis.
-   * @param studentId
-   * @param status
+   * @param studentId Student id.
+   * @param status PD status.
+   * @returns updated student.
    */
   async updatePDStatusNDate(
     studentId: number,

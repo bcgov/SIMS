@@ -4,22 +4,9 @@ import { AppService } from "./app.service";
 import { RouterModule } from "@nestjs/core";
 import {
   UserService,
-  ApplicationService,
   BCeIDServiceProvider,
-  InstitutionUserAuthService,
-  EducationProgramService,
-  EducationProgramOfferingService,
   FormService,
-  InstitutionLocationService,
-  StudentFileService,
   ProgramYearService,
-  InstitutionTypeService,
-  MSFAANumberService,
-  StudentRestrictionService,
-  RestrictionService,
-  DesignationAgreementLocationService,
-  StudentService,
-  EducationProgramOfferingValidationService,
 } from "./services";
 import {
   UserController,
@@ -38,16 +25,7 @@ import { ClientTypeBaseRoute } from "./types";
 import { AppStudentsModule } from "./app.students.module";
 import { AppSystemAccessModule } from "./app.system-access.module";
 import { AppSupportingUsersModule } from "./app.supporting-users.module";
-import {
-  ZeebeModule,
-  SequenceControlService,
-  WorkflowClientService,
-} from "@sims/services";
-import {
-  SFASIndividualService,
-  SFASApplicationService,
-  SFASPartTimeApplicationsService,
-} from "@sims/services/sfas";
+import { ZeebeModule } from "@sims/services";
 import { LoggerModule } from "@sims/utilities/logger";
 import { ConfigModule } from "@sims/utilities/config";
 import { NotificationsModule } from "@sims/services/notifications";
@@ -107,25 +85,7 @@ import { DatabaseModule } from "@sims/sims-db";
     UserService,
     BCeIDServiceProvider,
     FormService,
-    ApplicationService,
-    InstitutionLocationService,
-    InstitutionUserAuthService,
-    EducationProgramService,
-    EducationProgramOfferingService,
-    StudentFileService,
     ProgramYearService,
-    SequenceControlService,
-    InstitutionTypeService,
-    MSFAANumberService,
-    StudentRestrictionService,
-    RestrictionService,
-    DesignationAgreementLocationService,
-    StudentService,
-    SFASIndividualService,
-    SFASApplicationService,
-    SFASPartTimeApplicationsService,
-    EducationProgramOfferingValidationService,
-    WorkflowClientService,
   ],
 })
 export class AppModule {}

@@ -12,18 +12,15 @@ import * as os from "os";
 export const processInParallel = async <P, I>(
   createPromise: (input: I) => Promise<P>,
   inputs: I[],
-  maxParallelRequests?: number,
+  maxParallelRequests = os.cpus().length,
 ): Promise<P[]> => {
   const resolvedResponses: P[] = [];
-  // Used to limit the number of asynchronous operations
-  // that will start at the same time.
-  const maxPromisesAllowed = maxParallelRequests ?? os.cpus().length;
 
   // Hold all the promises that must be processed.
   const promises: Promise<P>[] = [];
   for (const input of inputs) {
     promises.push(createPromise(input));
-    if (promises.length >= maxPromisesAllowed) {
+    if (promises.length >= maxParallelRequests) {
       // Waits for all be executed.
       const response = await Promise.all(promises);
       resolvedResponses.push(...response);

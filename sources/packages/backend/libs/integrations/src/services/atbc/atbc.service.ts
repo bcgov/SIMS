@@ -117,6 +117,7 @@ export class ATBCService {
   /**
    * Check PD status for a student.
    * @param student student.
+   * @returns PD status response.
    */
   async checkStudentPDStatus(
     student: ATBCStudentModel,

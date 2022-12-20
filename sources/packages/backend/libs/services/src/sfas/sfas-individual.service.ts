@@ -1,6 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { DataSource } from "typeorm";
 import { DataModelService, SFASIndividual } from "@sims/sims-db";
+
 /**
  * Manages the data related to an individual/student in SFAS.
  */
