@@ -4,8 +4,3 @@ export interface ProcessNotificationsQueueInDTO {
    */
   pollingRecordsLimit: number;
 }
-
-export interface ProcessNotificationsResponseQueueOutDTO {
-  notificationsProcessed: number;
-  notificationsSuccessfullyProcessed: number;
-}

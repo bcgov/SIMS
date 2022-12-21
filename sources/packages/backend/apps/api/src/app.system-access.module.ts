@@ -1,6 +1,5 @@
 import { Module } from "@nestjs/common";
 import {
-  ATBCService,
   StudentService,
   ApplicationExceptionService,
   DisbursementScheduleService,
@@ -11,12 +10,8 @@ import {
   SupportingUserService,
   CRAIncomeVerificationService,
   ApplicationService,
-  SFASApplicationService,
-  SFASPartTimeApplicationsService,
   StudentFileService,
   MSFAANumberService,
-  SFASIndividualService,
-  SFASRestrictionService,
   DisbursementScheduleErrorsService,
   DisbursementReceiptService,
   ReportService,
@@ -33,10 +28,8 @@ import {
   AssessmentControllerService,
   ApplicationSystemAccessController,
   MSFAAIntegrationSystemAccessController,
-  SFASIntegrationSystemAccessController,
   ECertIntegrationSystemAccessController,
   FedRestrictionsIntegrationSystemAccessController,
-  ATBCSystemAccessController,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
 import { SINValidationModule } from "./esdc-integration/sin-validation/sin-validation.module";
@@ -44,8 +37,6 @@ import { SINValidationSystemAccessController } from "./route-controllers/esdc-in
 import { MSFAARequestService } from "./esdc-integration/msfaa-integration/msfaa-request.service";
 import { MSFAAIntegrationService } from "./esdc-integration/msfaa-integration/msfaa-integration.service";
 import { MSFAAResponseService } from "./esdc-integration/msfaa-integration/msfaa-response.service";
-import { SFASIntegrationProcessingService } from "./sfas-integration/sfas-integration-processing.service";
-import { SFASIntegrationService } from "./sfas-integration/sfas-integration.service";
 import { ECertFileHandler } from "./esdc-integration/e-cert-integration/e-cert-file-handler";
 import { ECertFullTimeIntegrationService } from "./esdc-integration/e-cert-integration/e-cert-full-time-integration/e-cert-full-time-integration.service";
 import { ECertPartTimeIntegrationService } from "./esdc-integration/e-cert-integration/e-cert-part-time-integration/e-cert-part-time-integration.service";
@@ -61,22 +52,24 @@ import { FedRestrictionIntegrationService } from "./esdc-integration/fed-restric
 import { WorkflowClientService, SequenceControlService } from "@sims/services";
 // todo: once all integration are moved. remove sshservice.
 import { SshService } from "@sims/integrations/services";
+import {
+  SFASIndividualService,
+  SFASApplicationService,
+  SFASPartTimeApplicationsService,
+} from "@sims/services/sfas";
 import { IER12IntegrationModule } from "@sims/integrations/institution-integration/ier12-integration/ier12-integration.module";
 
 @Module({
   imports: [AuthModule, SINValidationModule, IER12IntegrationModule],
   controllers: [
-    ATBCSystemAccessController,
     SINValidationSystemAccessController,
     ApplicationSystemAccessController,
     MSFAAIntegrationSystemAccessController,
-    SFASIntegrationSystemAccessController,
     ECertIntegrationSystemAccessController,
     FedRestrictionsIntegrationSystemAccessController,
   ],
   providers: [
     WorkflowClientService,
-    ATBCService,
     StudentService,
     StudentAssessmentService,
     EducationProgramOfferingService,
@@ -89,18 +82,15 @@ import { IER12IntegrationModule } from "@sims/integrations/institution-integrati
     SupportingUserService,
     CRAIncomeVerificationService,
     ApplicationService,
-    SFASApplicationService,
-    SFASPartTimeApplicationsService,
     StudentFileService,
     MSFAANumberService,
     SshService,
     MSFAARequestService,
     MSFAAIntegrationService,
     MSFAAResponseService,
-    SFASIntegrationProcessingService,
-    SFASIntegrationService,
     SFASIndividualService,
-    SFASRestrictionService,
+    SFASApplicationService,
+    SFASPartTimeApplicationsService,
     ECertFileHandler,
     DisbursementScheduleErrorsService,
     ECertFullTimeIntegrationService,

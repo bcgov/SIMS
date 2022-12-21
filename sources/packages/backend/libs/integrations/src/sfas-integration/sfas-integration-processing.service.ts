@@ -12,8 +12,8 @@ import {
   SFASIndividualService,
   SFASRestrictionService,
   SFASPartTimeApplicationsService,
-} from "../services";
-import { SFAS_IMPORT_RECORDS_PROGRESS_REPORT_PACE } from "../utilities";
+} from "../services/sfas";
+import { SFAS_IMPORT_RECORDS_PROGRESS_REPORT_PACE } from "@sims/services/constants";
 import * as os from "os";
 import { ConfigService } from "@sims/utilities/config";
 
