@@ -3,20 +3,18 @@ import {
   Controller,
   Get,
   Patch,
-  Put,
   UnprocessableEntityException,
 } from "@nestjs/common";
 import { BCeIDService, UserService } from "../../services";
 import BaseController from "../BaseController";
 import { UserToken } from "../../auth/decorators/userToken.decorator";
 import { IUserToken } from "../../auth/userToken.interface";
-import { BCeIDDetailsDto } from "./models/bceid-account.dto";
-import { InstitutionUserDto } from "./models/institution-user.dto";
-import { InstitutionUserPersistDto } from "./models/institution-user-persist.dto";
+import { BCeIDDetailsAPIOutDTO } from "./models/bceid-account.dto";
+import { InstitutionUserAPIOutDTO } from "./models/institution-user.dto";
+import { InstitutionUserPersistAPIInDTO } from "./models/institution-user-persist.dto";
 import { SearchAccountOptions } from "../../services/bceid/search-bceid.model";
-import { BCeIDAccountsDto } from "./models/bceid-accounts.dto";
+import { BCeIDAccountsAPIOutDTO } from "./models/bceid-accounts.dto";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
-import { UserGroups } from "../../auth/user-groups.enum";
 import {
   AllowAuthorizedParty,
   AllowInactiveUser,
@@ -25,9 +23,10 @@ import {
 import { ApiTags } from "@nestjs/swagger";
 import { BCeIDAccountTypeCodes } from "../../services/bceid/bceid.models";
 
+@AllowAuthorizedParty(AuthorizedParties.institution)
 @Controller("users")
 @ApiTags("users")
-export class UserController extends BaseController {
+export class UserInstitutionsController extends BaseController {
   constructor(
     private readonly service: UserService,
     private readonly bceidService: BCeIDService,
@@ -35,12 +34,11 @@ export class UserController extends BaseController {
     super();
   }
 
-  @AllowAuthorizedParty(AuthorizedParties.institution)
   @AllowInactiveUser()
   @Get("bceid-account")
   async getBCeID(
     @UserToken() userToken: IUserToken,
-  ): Promise<BCeIDDetailsDto | null> {
+  ): Promise<BCeIDDetailsAPIOutDTO | null> {
     const account = await this.bceidService.getAccountDetails(
       userToken.idp_user_name,
       // TODO: To be changed to allow basic BCeID sign in.
@@ -65,11 +63,10 @@ export class UserController extends BaseController {
     }
   }
 
-  @AllowAuthorizedParty(AuthorizedParties.institution, AuthorizedParties.aest)
   @Get("bceid-accounts")
   async getAllBCeIDs(
     @UserToken() userToken: IUserToken,
-  ): Promise<BCeIDAccountsDto> {
+  ): Promise<BCeIDAccountsAPIOutDTO> {
     // Only business BCeID will execute a search on BCeID Web Services.
     // Basic BCeID need to have the full user name provided to execute the
     // getAccountDetail method on BCeID Web Services.
@@ -108,48 +105,30 @@ export class UserController extends BaseController {
     };
   }
 
-  @AllowAuthorizedParty(AuthorizedParties.institution)
   @Get("/institution")
   async institutionDetail(
     @UserToken() userToken: IUserToken,
-  ): Promise<InstitutionUserDto> {
+  ): Promise<InstitutionUserAPIOutDTO> {
     const user = await this.service.getActiveUser(userToken.userName);
     if (!user) {
       throw new UnprocessableEntityException("No user record found for user");
     }
-    const institutionUser = new InstitutionUserDto();
+    const institutionUser = new InstitutionUserAPIOutDTO();
     institutionUser.userEmail = user.email;
     institutionUser.userFirstName = user.firstName;
     institutionUser.userLastName = user.lastName;
     return institutionUser;
   }
 
-  @AllowAuthorizedParty(AuthorizedParties.institution)
   @Patch("/institution")
   async updateInstitutionUser(
     @UserToken() userToken: IUserToken,
-    @Body() body: InstitutionUserPersistDto,
+    @Body() body: InstitutionUserPersistAPIInDTO,
   ): Promise<void> {
     const user = await this.service.getActiveUser(userToken.userName);
     if (!user) {
       throw new UnprocessableEntityException("No user record found for user");
     }
     this.service.updateUserEmail(user.id, body.userEmail);
-  }
-
-  /**
-   * Creates or updates Ministry user information.
-   * @param userToken user token information to be updated.
-   */
-  @AllowAuthorizedParty(AuthorizedParties.aest)
-  @Groups(UserGroups.AESTUser)
-  @Put("aest")
-  async syncAESTUser(@UserToken() userToken: IUserToken): Promise<void> {
-    await this.service.syncUser(
-      userToken.userName,
-      userToken.email,
-      userToken.givenNames,
-      userToken.lastName,
-    );
   }
 }

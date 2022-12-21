@@ -48,6 +48,7 @@ import {
 import { AuthModule } from "./auth/auth.module";
 import { EducationProgramOfferingValidationService } from "./services/education-program-offering/education-program-offering-validation.service";
 import { WorkflowClientService, SequenceControlService } from "@sims/services";
+import { UserInstitutionsController } from "./route-controllers/user/user.institutions.controller";
 
 @Module({
   imports: [AuthModule],
@@ -61,6 +62,7 @@ import { WorkflowClientService, SequenceControlService } from "@sims/services";
     EducationProgramInstitutionsController,
     ProgramInfoRequestInstitutionsController,
     EducationProgramOfferingInstitutionsController,
+    UserInstitutionsController,
   ],
   providers: [
     WorkflowClientService,

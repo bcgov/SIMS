@@ -1,9 +1,9 @@
-export interface BCeIDDetailsDto {
-  user: UserDetailsDto;
-  institution: InstitutionAccountDetailsDto;
+export interface BCeIDDetailsAPIOutDTO {
+  user: UserDetailsAPIOutDTO;
+  institution: InstitutionLocationDetailsAPIOutDTO;
 }
 
-export interface UserDetailsDto {
+export interface UserDetailsAPIOutDTO {
   guid: string;
   displayName: string;
   firstname: string;
@@ -11,12 +11,12 @@ export interface UserDetailsDto {
   email: string;
 }
 
-export interface InstitutionAccountDetailsDto {
+export interface InstitutionLocationDetailsAPIOutDTO {
   guid: string;
   legalName: string;
 }
 
-export interface BCeIDAccountDto {
+export interface BCeIDAccountAPIOutDTO {
   displayName: string;
   email: string;
   firstname: string;
@@ -25,8 +25,8 @@ export interface BCeIDAccountDto {
   surname: string;
   telephone?: string;
 }
-export interface BCeIDAccountsDto {
-  accounts: BCeIDAccountDto[];
+export interface BCeIDAccountsAPIOutDTO {
+  accounts: BCeIDAccountAPIOutDTO[];
 }
 
 export interface InstitutionUserDetailsDto {
@@ -35,6 +35,6 @@ export interface InstitutionUserDetailsDto {
   userEmail: string;
 }
 
-export interface InstitutionUserPersistDto {
+export interface InstitutionUserPersistAPIInDTO {
   userEmail: string;
 }

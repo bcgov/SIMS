@@ -43,7 +43,7 @@ import { useSnackBar } from "@/composables";
 import {
   FormIOForm,
   InstitutionUserDetailsDto,
-  InstitutionUserPersistDto,
+  InstitutionUserPersistAPIInDTO,
 } from "../../types";
 import { InstitutionRoutesConst } from "../../constants/routes/RouteConstants";
 import { BannerTypes } from "@/types/contracts/Banner";
@@ -58,14 +58,12 @@ export default {
     const processing = ref(false);
 
     const submitted = async (form: FormIOForm<InstitutionUserDetailsDto>) => {
-      const institutionUserPersistDto: InstitutionUserPersistDto = {
+      const institutionUserPersist: InstitutionUserPersistAPIInDTO = {
         userEmail: form.data.userEmail,
       };
       try {
         processing.value = true;
-        await UserService.shared.updateInstitutionUser(
-          institutionUserPersistDto,
-        );
+        await UserService.shared.updateInstitutionUser(institutionUserPersist);
         snackBar.success("Institution User successfully updated!");
         router.push({
           name: InstitutionRoutesConst.INSTITUTION_DASHBOARD,

@@ -1,4 +1,4 @@
-export class InstitutionUserDto {
+export class InstitutionUserAPIOutDTO {
   userFirstName: string;
 
   userLastName: string;

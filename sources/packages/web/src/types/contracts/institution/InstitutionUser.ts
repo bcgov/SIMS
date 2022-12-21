@@ -29,7 +29,7 @@ export interface InstitutionUserRoleLocation {
   locationId?: number;
   userType?: string;
 }
-export interface InstitutionUserDto {
+export interface InstitutionUserAPIOutDTO {
   userId?: string;
   permissions: UserPermissionDto[];
 }

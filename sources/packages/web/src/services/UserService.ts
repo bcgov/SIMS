@@ -1,9 +1,9 @@
 import ApiClient from "./http/ApiClient";
 import {
-  BCeIDDetailsDto,
-  BCeIDAccountsDto,
+  BCeIDDetailsAPIOutDTO,
+  BCeIDAccountsAPIOutDTO,
   InstitutionUserDetailsDto,
-  InstitutionUserPersistDto,
+  InstitutionUserPersistAPIInDTO,
 } from "../types/contracts/UserContract";
 
 export class UserService {
@@ -14,13 +14,13 @@ export class UserService {
     return this.instance || (this.instance = new this());
   }
 
-  async getBCeIDAccountDetails(authHeader?: any): Promise<BCeIDDetailsDto> {
-    return ApiClient.User.bceidAccount(authHeader);
+  async getBCeIDAccountDetails(): Promise<BCeIDDetailsAPIOutDTO> {
+    return ApiClient.User.bceidAccount();
   }
 
-  async getBCeIDAccounts(authHeader?: any): Promise<BCeIDAccountsDto | null> {
+  async getBCeIDAccounts(): Promise<BCeIDAccountsAPIOutDTO | null> {
     try {
-      return await ApiClient.User.bceidAccounts(authHeader);
+      return await ApiClient.User.bceidAccounts();
     } catch (excp) {
       return null;
     }
@@ -30,7 +30,9 @@ export class UserService {
     return ApiClient.User.getinstitutionUser();
   }
 
-  async updateInstitutionUser(data: InstitutionUserPersistDto): Promise<void> {
+  async updateInstitutionUser(
+    data: InstitutionUserPersistAPIInDTO,
+  ): Promise<void> {
     return ApiClient.User.updateInstitutionUser(data);
   }
 

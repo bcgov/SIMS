@@ -1,8 +1,8 @@
-export interface BCeIDAccountsDto {
-  accounts: BCeIDAccountDto[];
+export class BCeIDAccountsAPIOutDTO {
+  accounts: BCeIDAccountAPIOutDTO[];
 }
 
-export interface BCeIDAccountDto {
+export class BCeIDAccountAPIOutDTO {
   guid: string;
   displayName: string;
   email: string;

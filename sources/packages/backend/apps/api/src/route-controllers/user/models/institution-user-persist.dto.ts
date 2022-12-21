@@ -1,6 +1,6 @@
 import { IsNotEmpty } from "class-validator";
 
-export class InstitutionUserPersistDto {
+export class InstitutionUserPersistAPIInDTO {
   @IsNotEmpty()
   userEmail: string;
 }
