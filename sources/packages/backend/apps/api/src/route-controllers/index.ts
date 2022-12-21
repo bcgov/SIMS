@@ -1,4 +1,3 @@
-export * from "./user/user.controller";
 export * from "./program-year/program-year.students.controller";
 export * from "./config/config.controller";
 export * from "./dynamic-form/dynamic-form.controller";

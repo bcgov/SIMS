@@ -22,11 +22,7 @@ import {
   SFASIndividualService,
   EducationProgramOfferingValidationService,
 } from "./services";
-import {
-  UserController,
-  ConfigController,
-  DynamicFormController,
-} from "./route-controllers";
+import { ConfigController, DynamicFormController } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
 import { MSFAAIntegrationModule } from "./esdc-integration/msfaa-integration/msfaa-integration.module";
 import { SFASIntegrationModule } from "./sfas-integration/sfas-integration.module";
@@ -92,12 +88,7 @@ import { DatabaseModule } from "@sims/sims-db";
       },
     ]),
   ],
-  controllers: [
-    AppController,
-    UserController,
-    ConfigController,
-    DynamicFormController,
-  ],
+  controllers: [AppController, ConfigController, DynamicFormController],
   providers: [
     AppService,
     UserService,
