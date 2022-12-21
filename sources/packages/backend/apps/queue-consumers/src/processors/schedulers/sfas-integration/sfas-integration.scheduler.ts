@@ -5,6 +5,7 @@ import { BaseScheduler } from "../base-scheduler";
 import { QueueNames } from "@sims/utilities";
 import { QueueService } from "@sims/services/queue";
 import { SFASIntegrationProcessingService } from "@sims/integrations/sfas-integration";
+import { QueueProcessSummary } from "../../models/processors.models";
 
 /**
  * Process all SFAS integration files from the SFTP location.
@@ -30,10 +31,14 @@ export class SFASIntegrationScheduler extends BaseScheduler<void> {
   async processSFASIntegrationFiles(
     job: Job<void>,
   ): Promise<SFASProcessingResult[]> {
-    await job.log("Processing SFAS integration files...");
+    const summary = new QueueProcessSummary({
+      appLogger: this.logger,
+      jobLogger: job,
+    });
+    await summary.info("Processing SFAS integration files...");
     const processingResults =
       await this.sfasIntegrationProcessingService.process();
-    await job.log("Completed processing SFAS integration files.");
+    await summary.info("Completed processing SFAS integration files.");
     await this.cleanSchedulerQueueHistory();
     return processingResults.map((result) => ({
       summary: result.summary,
