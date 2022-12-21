@@ -1,4 +1,4 @@
-export interface ProcessPDRequestQueueOutDTO {
+export interface ProcessPDRequestSummary {
   pdRequestsProcessed: number;
   pdRequestsUpdated: number;
 }

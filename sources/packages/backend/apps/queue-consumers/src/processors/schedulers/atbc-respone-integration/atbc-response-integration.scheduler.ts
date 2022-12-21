@@ -3,7 +3,7 @@ import { Job, Queue } from "bull";
 import { BaseScheduler } from "../base-scheduler";
 import { QueueNames } from "@sims/utilities";
 import { QueueService } from "@sims/services/queue";
-import { ProcessPDRequestQueueOutDTO } from "./models/atbc-response-integration.dto";
+import { ProcessPDRequestSummary } from "./models/atbc-response-integration.dto";
 import { ATBCIntegrationProcessingService } from "@sims/integrations/atbc-integration";
 
 /**
@@ -29,7 +29,7 @@ export class ATBCResponseIntegrationScheduler extends BaseScheduler<void> {
   @Process()
   async processPendingPDRequests(
     job: Job<void>,
-  ): Promise<ProcessPDRequestQueueOutDTO> {
+  ): Promise<ProcessPDRequestSummary> {
     await job.log("Processing PD status for students.");
     const processingResult =
       await this.atbcIntegrationProcessingService.processPendingPDRequests();

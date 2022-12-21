@@ -15,7 +15,6 @@ import { DataSource, EntityManager } from "typeorm";
 import { StudentUserToken } from "../../auth/userToken.interface";
 import { LoggerService, InjectLogger } from "@sims/utilities/logger";
 import { removeWhiteSpaces, transformAddressDetails } from "../../utilities";
-
 import { CustomNamedError } from "@sims/utilities";
 import {
   CreateStudentUserInfo,
