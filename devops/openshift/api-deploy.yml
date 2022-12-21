@@ -175,11 +175,6 @@ objects:
                     secretKeyRef:
                       key: ${ESDC_RESPONSE_FOLDER_NAME_KEY}
                       name: ${API_SECRET_NAME}
-                - name: SFAS_RECEIVE_FOLDER
-                  valueFrom:
-                    secretKeyRef:
-                      key: ${SFAS_RECEIVE_FOLDER_NAME_KEY}
-                      name: ${API_SECRET_NAME}
                 - name: ESDC_ENVIRONMENT_CODE
                   valueFrom:
                     secretKeyRef:
@@ -452,8 +447,6 @@ parameters:
     value: esdc-response-folder
   - name: ESDC_ENVIRONMENT_CODE_NAME_KEY
     value: esdc-environment-code
-  - name: SFAS_RECEIVE_FOLDER_NAME_KEY
-    value: sfas-receive-folder
   - name: SWAGGER_ENABLED
     value: "true"
   - name: APPLICATION_ARCHIVE_DAYS
