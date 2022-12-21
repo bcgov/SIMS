@@ -3,8 +3,11 @@ import { Job, Queue } from "bull";
 import { BaseScheduler } from "../base-scheduler";
 import { QueueNames } from "@sims/utilities";
 import { QueueService } from "@sims/services/queue";
-import { ProcessPDRequestSummary } from "./models/atbc-response-integration.dto";
 import { ATBCIntegrationProcessingService } from "@sims/integrations/atbc-integration";
+import {
+  QueueProcessSummary,
+  QueueProcessSummaryResult,
+} from "../../models/processors.models";
 
 /**
  * Process all the applied PD requests to verify the status with ATBC.
@@ -29,12 +32,22 @@ export class ATBCResponseIntegrationScheduler extends BaseScheduler<void> {
   @Process()
   async processPendingPDRequests(
     job: Job<void>,
-  ): Promise<ProcessPDRequestSummary> {
-    await job.log("Processing PD status for students.");
+  ): Promise<QueueProcessSummaryResult> {
+    const summary = new QueueProcessSummary({
+      appLogger: this.logger,
+      jobLogger: job,
+    });
+    await summary.info("Processing PD status for students.");
     const processingResult =
       await this.atbcIntegrationProcessingService.processPendingPDRequests();
-    await job.log("Completed processing PD status.");
+    await summary.info(
+      `Total PD request status processed ${processingResult.pdRequestsProcessed}`,
+    );
+    await summary.info(
+      `Total PD request status updated ${processingResult.pdRequestsUpdated}`,
+    );
+    await summary.info("Completed processing PD status.");
     await this.cleanSchedulerQueueHistory();
-    return processingResult;
+    return summary.getSummary();
   }
 }

@@ -1,13 +1,14 @@
 import { InjectQueue, Process, Processor } from "@nestjs/bull";
 import { Job, Queue } from "bull";
 import { NotificationService } from "@sims/services/notifications";
-import {
-  ProcessNotificationsQueueInDTO,
-  ProcessNotificationsResponseQueueOutDTO,
-} from "./models/notification.dto";
+import { ProcessNotificationsQueueInDTO } from "./models/notification.dto";
 import { BaseScheduler } from "../base-scheduler";
 import { QueueNames } from "@sims/utilities";
 import { QueueService } from "@sims/services/queue";
+import {
+  QueueProcessSummary,
+  QueueProcessSummaryResult,
+} from "../../models/processors.models";
 
 /**
  * Process notifications which are unsent.
@@ -40,12 +41,24 @@ export class ProcessNotificationScheduler extends BaseScheduler<ProcessNotificat
   @Process()
   async processNotifications(
     job: Job<ProcessNotificationsQueueInDTO>,
-  ): Promise<ProcessNotificationsResponseQueueOutDTO> {
+  ): Promise<QueueProcessSummaryResult> {
+    const summary = new QueueProcessSummary({
+      appLogger: this.logger,
+      jobLogger: job,
+    });
     const processNotificationResponse =
       await this.notificationService.processUnsentNotifications(
         job.data.pollingRecordsLimit,
       );
+    await summary.info(
+      `Total notifications processed ${processNotificationResponse.notificationsProcessed}`,
+      true,
+    );
+    await summary.info(
+      `Total notifications successfully processed ${processNotificationResponse.notificationsSuccessfullyProcessed}`,
+      true,
+    );
     await this.cleanSchedulerQueueHistory();
-    return processNotificationResponse;
+    return summary.getSummary();
   }
 }
