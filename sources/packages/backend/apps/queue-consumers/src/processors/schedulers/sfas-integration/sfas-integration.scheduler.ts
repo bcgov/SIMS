@@ -1,6 +1,6 @@
 import { InjectQueue, Process, Processor } from "@nestjs/bull";
 import { Job, Queue } from "bull";
-import { SFASProcessingResultQueueOutDTO } from "./models/sfas-integration.dto";
+import { SFASProcessingResult } from "./models/sfas-integration.dto";
 import { BaseScheduler } from "../base-scheduler";
 import { QueueNames } from "@sims/utilities";
 import { QueueService } from "@sims/services/queue";
@@ -29,7 +29,7 @@ export class SFASIntegrationScheduler extends BaseScheduler<void> {
   @Process()
   async processSFASIntegrationFiles(
     job: Job<void>,
-  ): Promise<SFASProcessingResultQueueOutDTO[]> {
+  ): Promise<SFASProcessingResult[]> {
     await job.log("Processing SFAS integration files...");
     const processingResults =
       await this.sfasIntegrationProcessingService.process();
