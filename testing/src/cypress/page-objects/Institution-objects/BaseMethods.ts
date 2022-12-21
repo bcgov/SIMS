@@ -21,7 +21,7 @@ export default class BaseMethods {
    * @param optionToCheck checkbox to be selected
    */
   selectCheckBox(cyId: string, optionToCheck: string) {
-    cy.get(`[data-cy='${cyId}']`).check(optionToCheck);
+    cy.get(`[data-cy='${cyId}']`).check(optionToCheck).should("be.checked");
   }
 
   /**
@@ -102,12 +102,24 @@ export default class BaseMethods {
   /**
    *
    * @param element Cypress.Chainable<JQuery<HTMLElement>>
-   * @param dropDownOption The value for dropdown selections
+   * @param dropDownOption The value for dropdown selections identified by data value
    */
-  verifyTheDropDownOptionsAreVisible(
+  verifyTheDropDownOptionsAreVisibleByDataValue(
     element: Cypress.Chainable<JQuery<HTMLElement>>,
     dropDownOption: string
   ) {
     element.get(`[data-value='${dropDownOption}']`).should("be.visible");
+  }
+
+  /**
+   *
+   * @param element Cypress.Chainable<JQuery<HTMLElement>>
+   * @param dropDownOption The value for dropdown selections identified by value
+   */
+  verifyTheDropDownOptionsAreVisibleByValue(
+    element: Cypress.Chainable<JQuery<HTMLElement>>,
+    dropDownOption: string
+  ) {
+    element.get(`[value='${dropDownOption}']`).should("be.visible");
   }
 }
