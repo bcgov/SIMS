@@ -16,9 +16,9 @@ import { QueueService } from "@sims/services/queue";
 export class ProcessNotificationScheduler extends BaseScheduler<ProcessNotificationsQueueInDTO> {
   constructor(
     @InjectQueue(QueueNames.ProcessNotifications)
-    protected readonly schedulerQueue: Queue<ProcessNotificationsQueueInDTO>,
+    schedulerQueue: Queue<ProcessNotificationsQueueInDTO>,
     private readonly notificationService: NotificationService,
-    protected readonly queueService: QueueService,
+    queueService: QueueService,
   ) {
     super(schedulerQueue, queueService);
   }

@@ -7,14 +7,14 @@ import { QueueNames } from "@sims/utilities";
 import { InjectLogger, LoggerService } from "@sims/utilities/logger";
 import { Job, Queue } from "bull";
 import { BaseScheduler } from "../../base-scheduler";
-import { MSFAARequestResultQueueOutDTO } from "../models/msfaa-file-result.dto";
+import { MSFAARequestResult } from "../models/msfaa-file-result.dto";
 
 @Processor(QueueNames.FullTimeMSFAAIntegration)
 export class FullTimeMSFAAProcessIntegrationScheduler extends BaseScheduler<void> {
   constructor(
     @InjectQueue(QueueNames.FullTimeMSFAAIntegration)
-    protected readonly schedulerQueue: Queue<void>,
-    protected readonly queueService: QueueService,
+    schedulerQueue: Queue<void>,
+    queueService: QueueService,
     private readonly msfaaRequestService: MSFAARequestService,
   ) {
     super(schedulerQueue, queueService);
@@ -29,7 +29,7 @@ export class FullTimeMSFAAProcessIntegrationScheduler extends BaseScheduler<void
    * @returns Processing result log.
    */
   @Process()
-  async processMSFAA(job: Job<void>): Promise<MSFAARequestResultQueueOutDTO[]> {
+  async processMSFAA(job: Job<void>): Promise<MSFAARequestResult[]> {
     this.logger.log(
       `Processing CRA integration job ${job.id} of type ${job.name}.`,
     );

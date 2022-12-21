@@ -6,14 +6,14 @@ import { QueueNames } from "@sims/utilities";
 import { InjectLogger, LoggerService } from "@sims/utilities/logger";
 import { Job, Queue } from "bull";
 import { BaseScheduler } from "../../base-scheduler";
-import { ESDCFileResponseQueueOutDTO } from "../models/esdc.dto";
+import { ESDCFileResponse } from "../models/esdc.dto";
 
 @Processor(QueueNames.FederalRestrictionsIntegration)
 export class FederalRestrictionsIntegrationScheduler extends BaseScheduler<void> {
   constructor(
     @InjectQueue(QueueNames.FederalRestrictionsIntegration)
-    protected readonly schedulerQueue: Queue<void>,
-    protected readonly queueService: QueueService,
+    schedulerQueue: Queue<void>,
+    queueService: QueueService,
     private readonly processingService: FedRestrictionProcessingService,
     private readonly systemUsersService: SystemUsersService,
   ) {
@@ -28,7 +28,7 @@ export class FederalRestrictionsIntegrationScheduler extends BaseScheduler<void>
   @Process()
   async processFedRestrictionsImport(
     job: Job<void>,
-  ): Promise<ESDCFileResponseQueueOutDTO> {
+  ): Promise<ESDCFileResponse> {
     this.logger.log(
       `Processing CRA integration job ${job.id} of type ${job.name}.`,
     );

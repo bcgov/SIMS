@@ -68,7 +68,6 @@ export class MSFAAIntegrationSystemAccessController extends BaseController {
   /**
    * Download all files from MSFAA Response folder on SFTP and process them all.
    * @returns Summary with what was processed and the list of all errors, if any.
-   * todo: check with guru -> if its FT or PT
    */
   @Post("process-responses")
   async processResponses(): Promise<ProcessResponseAPIOutDTO[]> {

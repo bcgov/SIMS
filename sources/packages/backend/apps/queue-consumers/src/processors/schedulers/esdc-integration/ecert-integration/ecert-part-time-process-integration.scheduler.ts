@@ -5,15 +5,15 @@ import { QueueNames } from "@sims/utilities";
 import { InjectLogger, LoggerService } from "@sims/utilities/logger";
 import { Job, Queue } from "bull";
 import { BaseScheduler } from "../../base-scheduler";
-import { ESDCFileResultQueueOutDTO } from "../models/esdc.dto";
+import { ESDCFileResult } from "../models/esdc.dto";
 
 // todo: ann check the job.log
 @Processor(QueueNames.PartTimeECertIntegration)
 export class PartTimeECertProcessIntegrationScheduler extends BaseScheduler<void> {
   constructor(
     @InjectQueue(QueueNames.PartTimeECertIntegration)
-    protected readonly schedulerQueue: Queue<void>,
-    protected readonly queueService: QueueService,
+    schedulerQueue: Queue<void>,
+    queueService: QueueService,
     private readonly eCertFileHandler: ECertFileHandler,
   ) {
     super(schedulerQueue, queueService);
@@ -27,9 +27,7 @@ export class PartTimeECertProcessIntegrationScheduler extends BaseScheduler<void
    * amount of records added to the file.
    */
   @Process()
-  async processPartTimeECert(
-    job: Job<void>,
-  ): Promise<ESDCFileResultQueueOutDTO> {
+  async processPartTimeECert(job: Job<void>): Promise<ESDCFileResult> {
     this.logger.log(
       `Processing CRA integration job ${job.id} of type ${job.name}.`,
     );

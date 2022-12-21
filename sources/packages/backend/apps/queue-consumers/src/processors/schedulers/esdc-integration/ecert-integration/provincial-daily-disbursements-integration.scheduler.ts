@@ -11,8 +11,8 @@ import { DailyDisbursementReportQueueInDTO } from "../models/esdc.dto";
 export class FINProcessProvincialDailyDisbursementsIntegrationScheduler extends BaseScheduler<DailyDisbursementReportQueueInDTO> {
   constructor(
     @InjectQueue(QueueNames.FINProcessProvincialDailyDisbursementsIntegration)
-    protected readonly schedulerQueue: Queue<DailyDisbursementReportQueueInDTO>,
-    protected readonly queueService: QueueService,
+    schedulerQueue: Queue<DailyDisbursementReportQueueInDTO>,
+    queueService: QueueService,
     private readonly disbursementReceiptRequestService: DisbursementReceiptRequestService,
   ) {
     super(schedulerQueue, queueService);

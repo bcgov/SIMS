@@ -1,10 +1,10 @@
 import { IsDateString, IsOptional } from "class-validator";
 
-export class ESDCFileResultQueueOutDTO {
+export class ESDCFileResult {
   generatedFile: string;
   uploadedRecords: number;
 }
-export class ESDCFileResponseQueueOutDTO {
+export class ESDCFileResponse {
   processSummary: string[];
   errorsSummary: string[];
 }
@@ -15,7 +15,7 @@ export class DailyDisbursementReportQueueInDTO {
   batchRunDate?: string;
 }
 
-export class ProcessResponseQueueOutDTO {
+export class ProcessResponseQueue {
   processSummary: string[];
   errorsSummary: string[];
 }

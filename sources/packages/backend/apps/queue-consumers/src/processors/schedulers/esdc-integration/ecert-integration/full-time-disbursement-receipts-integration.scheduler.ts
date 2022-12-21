@@ -6,14 +6,14 @@ import { QueueNames } from "@sims/utilities";
 import { InjectLogger, LoggerService } from "@sims/utilities/logger";
 import { Job, Queue } from "bull";
 import { BaseScheduler } from "../../base-scheduler";
-import { ESDCFileResponseQueueOutDTO } from "../models/esdc.dto";
+import { ESDCFileResponse } from "../models/esdc.dto";
 
 @Processor(QueueNames.FullTimeDisbursementReceiptsFileIntegration)
 export class FullTimeDisbursementReceiptsFileIntegrationScheduler extends BaseScheduler<void> {
   constructor(
     @InjectQueue(QueueNames.FullTimeDisbursementReceiptsFileIntegration)
-    protected readonly schedulerQueue: Queue<void>,
-    protected readonly queueService: QueueService,
+    schedulerQueue: Queue<void>,
+    queueService: QueueService,
     private readonly disbursementReceiptProcessingService: DisbursementReceiptProcessingService,
     private readonly systemUsersService: SystemUsersService,
   ) {
@@ -28,7 +28,7 @@ export class FullTimeDisbursementReceiptsFileIntegrationScheduler extends BaseSc
   @Process()
   async processDisbursementReceipts(
     job: Job<void>,
-  ): Promise<ESDCFileResponseQueueOutDTO[]> {
+  ): Promise<ESDCFileResponse[]> {
     this.logger.log(
       `Processing CRA integration job ${job.id} of type ${job.name}.`,
     );

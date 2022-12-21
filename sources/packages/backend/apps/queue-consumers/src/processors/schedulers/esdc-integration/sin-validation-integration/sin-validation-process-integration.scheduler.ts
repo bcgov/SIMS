@@ -6,14 +6,14 @@ import { QueueNames } from "@sims/utilities";
 import { InjectLogger, LoggerService } from "@sims/utilities/logger";
 import { Job, Queue } from "bull";
 import { BaseScheduler } from "../../base-scheduler";
-import { ESDCFileResultQueueOutDTO } from "../models/esdc.dto";
+import { ESDCFileResult } from "../models/esdc.dto";
 
 @Processor(QueueNames.SINValidationProcessIntegration)
 export class SINValidationProcessIntegrationScheduler extends BaseScheduler<void> {
   constructor(
     @InjectQueue(QueueNames.SINValidationProcessIntegration)
-    protected readonly schedulerQueue: Queue<void>,
-    protected readonly queueService: QueueService,
+    schedulerQueue: Queue<void>,
+    queueService: QueueService,
     private readonly sinValidationProcessingService: SINValidationProcessingService,
     private readonly systemUsersService: SystemUsersService,
   ) {
@@ -27,9 +27,7 @@ export class SINValidationProcessIntegrationScheduler extends BaseScheduler<void
    * @returns processing result log.
    */
   @Process()
-  async processSINValidation(
-    job: Job<void>,
-  ): Promise<ESDCFileResultQueueOutDTO> {
+  async processSINValidation(job: Job<void>): Promise<ESDCFileResult> {
     this.logger.log(
       `Processing CRA integration job ${job.id} of type ${job.name}.`,
     );
