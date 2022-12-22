@@ -17,7 +17,10 @@ import {
   Brackets,
   EntityManager,
 } from "typeorm";
-import { SequenceControlService } from "@sims/services";
+import {
+  DisbursementOverawardService,
+  SequenceControlService,
+} from "@sims/services";
 import { StudentRestrictionService } from "..";
 import {
   RecordDataModelService,
@@ -26,10 +29,10 @@ import {
   COEStatus,
   DisbursementSchedule,
   OfferingIntensity,
-  StudentAssessment,
   User,
   RestrictionActionType,
   mapFromRawAndEntities,
+  DisbursementScheduleStatus,
 } from "@sims/sims-db";
 import {
   ECertDisbursementSchedule,
@@ -37,6 +40,7 @@ import {
 } from "./disbursement-schedule.models";
 import * as dayjs from "dayjs";
 import { NotificationActionsService } from "@sims/services/notifications";
+import { DisbursementScheduleService as SharedDisbursementScheduleService } from "@sims/services";
 
 const DISBURSEMENT_DOCUMENT_NUMBER_SEQUENCE_GROUP =
   "DISBURSEMENT_DOCUMENT_NUMBER";
@@ -46,15 +50,15 @@ const DISBURSEMENT_DOCUMENT_NUMBER_SEQUENCE_GROUP =
  */
 @Injectable()
 export class DisbursementScheduleService extends RecordDataModelService<DisbursementSchedule> {
-  private readonly assessmentRepo: Repository<StudentAssessment>;
   constructor(
     private readonly dataSource: DataSource,
     private readonly sequenceService: SequenceControlService,
     private readonly studentRestrictionService: StudentRestrictionService,
     private readonly notificationActionsService: NotificationActionsService,
+    private readonly disbursementOverawardService: DisbursementOverawardService,
+    private readonly sharedDisbursementScheduleService: SharedDisbursementScheduleService,
   ) {
     super(dataSource.getRepository(DisbursementSchedule));
-    this.assessmentRepo = dataSource.getRepository(StudentAssessment);
   }
 
   /**
@@ -82,6 +86,7 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
    * - No restrictions in the student account that prevents the disbursement;
    * - Application status must be 'Completed';
    * - Confirmation of enrollment(COE) must be 'Completed'.
+   * - Disbursement schedule on pending status.
    */
   async getECertInformationToBeSent(
     offeringIntensity: OfferingIntensity,
@@ -107,6 +112,8 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
         "disbursement.negotiatedExpiryDate",
         "disbursement.disbursementDate",
         "disbursement.tuitionRemittanceRequestedAmount",
+        "disbursement.coeUpdatedAt",
+        "application.id",
         "application.applicationNumber",
         "application.data",
         "application.relationshipStatus",
@@ -118,6 +125,7 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
         "offering.studyStartDate",
         "offering.studyEndDate",
         "offering.yearOfStudy",
+        "educationProgram.id",
         "educationProgram.fieldOfStudyCode",
         "educationProgram.completionYears",
         "user.firstName",
@@ -125,15 +133,16 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
         "user.email",
         "sinValidation.id",
         "sinValidation.sin",
+        "student.id",
         "student.birthDate",
         "student.gender",
         "student.contactInfo",
         "institutionLocation.id",
         "institutionLocation.institutionCode",
+        "disbursementValue.id",
         "disbursementValue.valueType",
         "disbursementValue.valueCode",
         "disbursementValue.valueAmount",
-        "disbursement.coeUpdatedAt",
         "studentAssessment.id",
       ])
       .addSelect(
@@ -177,17 +186,58 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
           .getExistsBlockRestrictionQuery()
           .getSql()})`,
       )
+      .andWhere(
+        "disbursement.disbursementScheduleStatus = :disbursementScheduleStatus",
+        {
+          disbursementScheduleStatus: DisbursementScheduleStatus.Pending,
+        },
+      )
       .andWhere("disbursement.coeStatus = :coeStatus", {
         coeStatus: COEStatus.completed,
       })
       .setParameter("restrictionActionType", stopFullTimeBCFunding)
       // 'restrictionActions' parameter used inside sub-query.
       .setParameter("restrictionActions", possibleRestrictionActions)
+      // Necessary, for instance, for the overawards processing.
+      .orderBy("disbursement.disbursementDate")
       .getRawAndEntities();
     return mapFromRawAndEntities<ECertDisbursementSchedule>(
       queryResult,
       "stopFullTimeBCFunding",
     );
+  }
+
+  async applyOverawards(
+    disbursements: ECertDisbursementSchedule[],
+    entityManager: EntityManager,
+  ) {
+    const studentsIds = disbursements.map((student) => student.id);
+    // Get all the overawards balances for the students that are part of the disbursements.
+    const overawardsBalance =
+      await this.disbursementOverawardService.getOverawardBalance(
+        studentsIds,
+        entityManager,
+      );
+    // Apply the overawards for every student, if needed.
+    for (const studentId of studentsIds) {
+      const studentDisbursements = disbursements.filter(
+        (disbursement) =>
+          disbursement.studentAssessment.application.student.id === studentId,
+      );
+
+      for (const studentDisbursement of studentDisbursements) {
+        this.sharedDisbursementScheduleService.studentDisbursement
+          .disbursementValues;
+      }
+
+      // TODO: To be continued!
+
+      const studentBalance = overawardsBalance[studentId];
+      if (!studentBalance) {
+        // If there is not overaward balance, skip the student.
+        continue;
+      }
+    }
   }
 
   /**

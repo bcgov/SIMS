@@ -1,6 +1,10 @@
 import { Injectable } from "@nestjs/common";
 import { DataSource, EntityManager } from "typeorm";
 import { RecordDataModelService, DisbursementOveraward } from "@sims/sims-db";
+import {
+  AwardOverawardBalance,
+  StudentOverawardBalance,
+} from "./disbursement-overaward.models";
 
 /**
  * Service layer for Student Application disbursement schedules.
@@ -15,28 +19,31 @@ export class DisbursementOverawardService extends RecordDataModelService<Disburs
    * Sum the total overawards per value code (e.g. CSLF, BCSL) for the student.
    * @param studentId student to get the balance.
    * @param entityManager used to execute the queries in the same transaction.
-   * @returns the sum of the overawards grouped by the value type, as the below example.
-   * @example
-   * {
-   *    CSLF: 5532,
-   *    BCSL: 1256,
-   * }
+   * @returns the sum of the overawards grouped by the award type and them by
+   * the student id.
    */
   async getOverawardBalance(
-    studentId: number,
+    studentIds: number[],
     entityManager: EntityManager,
-  ): Promise<Record<string, number>> {
-    const totalAwardsPerValueCodes = await entityManager
+  ): Promise<StudentOverawardBalance> {
+    const totalAwards = await entityManager
       .getRepository(DisbursementOveraward)
       .createQueryBuilder("disbursementOveraward")
-      .select("disbursementOveraward.disbursementValueCode", "valueCode")
+      .select("student.id", "studentId")
+      .addSelect("disbursementOveraward.disbursementValueCode", "valueCode")
       .addSelect("SUM(disbursementOveraward.overawardValue)", "total")
-      .where("disbursementOveraward.student.id = :studentId", { studentId })
+      .innerJoin("disbursementOveraward.student", "student")
+      .where("student.id = (:...studentIds)", {
+        studentIds,
+      })
       .groupBy("disbursementOveraward.disbursementValueCode")
-      .getRawMany<{ valueCode: string; total: number }>();
-    const result: Record<string, number> = {};
-    for (const totalAward of totalAwardsPerValueCodes) {
-      result[totalAward.valueCode] = +totalAward.total;
+      .getRawMany<{ studentId: number; valueCode: string; total: number }>();
+    const result: StudentOverawardBalance = {};
+    for (const totalAward of totalAwards) {
+      if (!result[totalAward.studentId]) {
+        result[totalAward.studentId] = {} as AwardOverawardBalance;
+      }
+      result[totalAward.studentId][totalAward.valueCode] = +totalAward.total;
     }
     return result;
   }

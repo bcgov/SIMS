@@ -22,6 +22,7 @@ import {
   DISBURSEMENT_SCHEDULES_ALREADY_CREATED,
 } from "../constants";
 import { SystemUsersService } from "@sims/services/system-users";
+import { StudentOverawardBalance } from "../disbursement-overaward/disbursement-overaward.models";
 
 // Timeout to handle the worst-case scenario where the commit/rollback
 // was not executed due to a possible catastrophic failure.
@@ -574,6 +575,59 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
     }
   }
 
+  private async applyOverawardsDeductions(
+    assessmentId: number, // TODO: It could be more than one!?
+    studentId: number,
+    disbursementSchedules: DisbursementSchedule[],
+    studentsOverawardBalance: StudentOverawardBalance,
+    entityManager: EntityManager,
+  ): Promise<void> {
+    if (!studentsOverawardBalance[studentId]) {
+      // No overaward balance is present for the student.
+      return;
+    }
+    const disbursementOverawardRepo = entityManager.getRepository(
+      DisbursementOveraward,
+    );
+    const auditUser = await this.systemUsersService.systemUser();
+    const loanAwards = this.getAwardsByAwardType(
+      disbursementSchedules,
+      LOAN_TYPES,
+    );
+    const distinctValueCodes = this.getDistinctValueCodes(loanAwards);
+    for (const valueCode of distinctValueCodes) {
+      // Checks if the loan is present in multiple disbursements.
+      // Find all the values in all the schedules.
+      const loans = loanAwards.filter(
+        (loanAward) => loanAward.valueCode === valueCode,
+      );
+
+      // Total overaward balance for the student for this particular award.
+      const overawardBalance =
+        studentsOverawardBalance[studentId][valueCode] ?? 0;
+      if (!overawardBalance) {
+        // There are overawards to be subtracted for this award.
+        continue;
+      }
+      // Subtract the debit from the current awards in the current assessment.
+      this.subtractOverawardBalance(loans, overawardBalance);
+      for (const loan of loans) {
+        if (loan.overawardAmountSubtracted) {
+          // An overaward was subtracted from an award and the same must be
+          // deducted from the student balance.
+          await disbursementOverawardRepo.insert({
+            student: { id: studentId } as Student,
+            studentAssessment: { id: assessmentId } as StudentAssessment,
+            disbursementValueCode: valueCode,
+            overawardValue: (+loan.overawardAmountSubtracted * -1).toString(),
+            originType: DisbursementOverawardOriginType.AwardValueAdjusted,
+            creator: auditUser,
+          } as DisbursementOveraward);
+        }
+      }
+    }
+  }
+
   /**
    * Checks if an overaward should be generated.
    * Not every overaward should be added to the student account.
@@ -692,6 +746,60 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
       }
     }
     return studentDebit;
+  }
+
+  /**
+   * Try to settle a student debit from one of the two situations below:
+   * 1. Money already received by the student for the same application that is being reassessed.
+   * 2. Money owed by the student due to some previous overaward in some previous application.
+   * In both cases, the reassessment will result in some amount of money that the student must
+   * receive, witch will receive deductions based on the two scenarios above.
+   * @param awards specific award being adjusted (e.g CSLF, BGPD, BCSL). This will contain one or
+   * two entries, always from the same award, from where the student debit will be deducted.
+   * The debit will try to be settle as much as possible with the first entry. If it is not enough
+   * if will check for the second entry, when present, if it is not enough, the remaining value will
+   * be returned to let the caller of the method aware that part of the debit was not payed.
+   * @param totalStudentDebit total student debit to be deducted.
+   * @param subtractOrigin indicates if the debit comes from values already payed for the application
+   * being processed (PreviousDisbursement) or if it is from some existing overaward prior to this
+   * application (Overaward)
+   * @returns the remaining student debit in case the awards were not enough to pay it.
+   */
+  private subtractOverawardBalance(
+    awards: DisbursementValue[],
+    overawardBalance: number,
+  ) {
+    let currentBalance = overawardBalance;
+    for (const award of awards) {
+      // Award amount that is available to be taken for the overaward balance adjustment.
+      const awardValueAmount =
+        +award.valueAmount - +award.disbursedAmountSubtracted;
+      if (awardValueAmount >= currentBalance) {
+        // Current disbursement value is enough to pay the debit.
+        // For instance:
+        // - Award: $1000
+        // - Student Debit: $750
+        // Then
+        // - New award: $250 ($1000 - $750)
+        // - Student debit: $0
+        award.overawardAmountSubtracted = currentBalance.toString();
+        currentBalance = 0;
+      } else {
+        // Current disbursement is not enough to pay the debit.
+        // Updates total student debit.
+        // For instance:
+        // - Award: $500
+        // - Student Debit: $750
+        // Then
+        // - New award: $0
+        // - Student debit: $250
+        // If there is one more disbursement with the same award, the $250
+        // student debit will be taken from there, if possible executing the
+        // second iteration of this for loop.
+        currentBalance -= awardValueAmount;
+        award.overawardAmountSubtracted = awardValueAmount.toString();
+      }
+    }
   }
 
   /**

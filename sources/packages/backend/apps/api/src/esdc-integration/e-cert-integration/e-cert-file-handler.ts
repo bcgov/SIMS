@@ -103,7 +103,7 @@ export class ECertFileHandler extends ESDCFileHandler {
    * @param eCertIntegrationService
    * @param offeringIntensity disbursement offering intensity.
    * @param fileCode File code applicable for Part-Time or Full-Time.
-   * @param sequenceGroup Sequence group application for Part-Time or Full-Time.
+   * @param sequenceGroupPrefix Sequence group application for Part-Time or Full-Time.
    * @returns result of the file upload with the file generated and the
    * amount of records added to the file.
    */
@@ -111,7 +111,7 @@ export class ECertFileHandler extends ESDCFileHandler {
     eCertIntegrationService: ECertIntegrationService,
     offeringIntensity: OfferingIntensity,
     fileCode: string,
-    sequenceGroup: string,
+    sequenceGroupPrefix: string,
   ): Promise<ECertUploadResult> {
     this.logger.log(
       `Retrieving ${offeringIntensity} disbursements to generate the e-Cert file...`,
@@ -129,22 +129,19 @@ export class ECertFileHandler extends ESDCFileHandler {
     this.logger.log(
       `Found ${disbursements.length} ${offeringIntensity} disbursements schedules.`,
     );
-    const disbursementRecords = disbursements.map((disbursement) => {
-      return this.createECertRecord(disbursement);
-    });
 
-    // Fetches the disbursements ids, for further update in the DB.
-    const disbursementIds = disbursements.map(
-      (disbursement) => disbursement.id,
-    );
-
-    //Create records and create the unique file sequence number.
+    // Create records and create the unique file sequence number.
     let uploadResult: ECertUploadResult;
     const now = new Date();
+    const sequenceGroup = `${sequenceGroupPrefix}_${getISODateOnlyString(now)}`;
     await this.sequenceService.consumeNextSequence(
-      `${sequenceGroup}_${getISODateOnlyString(new Date())}`,
+      sequenceGroup,
       async (nextSequenceNumber: number, entityManager: EntityManager) => {
         try {
+          const disbursementRecords = disbursements.map((disbursement) => {
+            return this.createECertRecord(disbursement);
+          });
+
           this.logger.log(
             `Creating  ${offeringIntensity} e-Cert file content...`,
           );
@@ -159,6 +156,10 @@ export class ECertFileHandler extends ESDCFileHandler {
             nextSequenceNumber,
           );
 
+          // Fetches the disbursements ids, for further update in the DB.
+          const disbursementIds = disbursements.map(
+            (disbursement) => disbursement.id,
+          );
           // Creates the repository based on the entity manager that
           // holds the transaction already created to manage the
           // sequence number.
