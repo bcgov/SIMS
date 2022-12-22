@@ -4,11 +4,10 @@ module.exports = {
     new CopyPlugin({
       patterns: [
         {
-          from: "apps/queue-consumers/src-sql",
-          to: "apps/queue-consumers/src-sql",
+          from: "libs/src-sql",
+          to: "libs/src-sql",
         },
       ],
     }),
   ],
 };
-// todo: ann check with andrew

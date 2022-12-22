@@ -1,7 +1,7 @@
 import * as fs from "fs";
 import * as path from "path";
 
-let sqlDirPath = "src-sql";
+let sqlDirPath = "../../libs/src-sql";
 if (process.env.ENVIRONMENT === "test") {
   sqlDirPath = "../../src-sql";
 }

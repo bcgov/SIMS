@@ -1,9 +1,9 @@
 import { InjectQueue, Process, Processor } from "@nestjs/bull";
-import { ECertFileHandler } from "@sims/integrations/esdc-integration/e-cert-integration/e-cert-file-handler";
+import { ECertFileHandler } from "@sims/integrations/esdc-integration";
 import { QueueService } from "@sims/services/queue";
 import { QueueNames } from "@sims/utilities";
-import { InjectLogger, LoggerService } from "@sims/utilities/logger";
 import { Job, Queue } from "bull";
+import { QueueProcessSummary } from "../../../models/processors.models";
 import { BaseScheduler } from "../../base-scheduler";
 import { ESDCFileResponse } from "../models/esdc.dto";
 
@@ -25,7 +25,11 @@ export class FullTimeECertFeedbackIntegrationScheduler extends BaseScheduler<voi
    */
   @Process()
   async processFullTimeResponses(job: Job<void>): Promise<ESDCFileResponse[]> {
-    this.logger.log(
+    const summary = new QueueProcessSummary({
+      appLogger: this.logger,
+      jobLogger: job,
+    });
+    await summary.info(
       `Processing CRA integration job ${job.id} of type ${job.name}.`,
     );
     const fullTimeResults =
@@ -36,7 +40,4 @@ export class FullTimeECertFeedbackIntegrationScheduler extends BaseScheduler<voi
       errorsSummary: fullTimeResult.errorsSummary,
     }));
   }
-
-  @InjectLogger()
-  logger: LoggerService;
 }

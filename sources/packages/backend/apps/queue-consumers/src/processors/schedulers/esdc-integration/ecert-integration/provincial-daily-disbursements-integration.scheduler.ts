@@ -1,9 +1,9 @@
 import { InjectQueue, Process, Processor } from "@nestjs/bull";
-import { DisbursementReceiptRequestService } from "@sims/integrations/esdc-integration/disbursement-receipt-integration/disbursement-receipt-request.service";
+import { DisbursementReceiptRequestService } from "@sims/integrations/esdc-integration";
 import { QueueService } from "@sims/services/queue";
 import { QueueNames } from "@sims/utilities";
-import { InjectLogger, LoggerService } from "@sims/utilities/logger";
 import { Job, Queue } from "bull";
+import { QueueProcessSummary } from "../../../models/processors.models";
 import { BaseScheduler } from "../../base-scheduler";
 import { DailyDisbursementReportQueueInDTO } from "../models/esdc.dto";
 
@@ -27,7 +27,11 @@ export class FINProcessProvincialDailyDisbursementsIntegrationScheduler extends 
   async processDisbursementReceipts(
     job: Job<DailyDisbursementReportQueueInDTO>,
   ): Promise<string> {
-    this.logger.log(
+    const summary = new QueueProcessSummary({
+      appLogger: this.logger,
+      jobLogger: job,
+    });
+    await summary.info(
       `Processing CRA integration job ${job.id} of type ${job.name}.`,
     );
     const batchRunDate = job.data.batchRunDate
@@ -38,7 +42,4 @@ export class FINProcessProvincialDailyDisbursementsIntegrationScheduler extends 
       batchRunDate,
     );
   }
-
-  @InjectLogger()
-  logger: LoggerService;
 }

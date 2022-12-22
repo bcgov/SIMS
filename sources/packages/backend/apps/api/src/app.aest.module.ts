@@ -58,14 +58,16 @@ import {
   EducationProgramOfferingControllerService,
   NoteAESTController,
   RestrictionAESTController,
+  InstitutionUserControllerService,
+  ApplicationControllerService,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
-import { ApplicationControllerService } from "./route-controllers/application/application.controller.service";
-import { InstitutionUserControllerService } from "./route-controllers/institution-user/institution-user.controller.service";
-import { WorkflowClientService, SequenceControlService } from "@sims/services";
-import { ReportService } from "@sims/integrations/services/report/report.service";
-import { MSFAANumberService } from "@sims/integrations/services/msfaa-number/msfaa-number.service";
-import { StudentRestrictionService as StudentRestrictionsService } from "@sims/integrations/services/restriction/student-restriction.service";
+import { SequenceControlService, WorkflowClientService } from "@sims/services";
+import {
+  MSFAANumberService,
+  ReportService,
+  StudentRestrictionService as StudentRestrictionsService,
+} from "@sims/integrations/services";
 
 @Module({
   imports: [AuthModule],

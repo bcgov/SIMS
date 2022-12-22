@@ -1,5 +1,5 @@
 export * from "./user/user.controller";
-export * from "./program-year/program-year.controller";
+export * from "./program-year/program-year.students.controller";
 export * from "./config/config.controller";
 export * from "./dynamic-form/dynamic-form.controller";
 export * from "./education-program/education-program.controller.service";
@@ -11,7 +11,6 @@ export * from "./atbc/atbc.system-access.controller";
 export * from "./program-info-request/program-info-request.institutions.controller";
 export * from "./confirmation-of-enrollment/confirmation-of-enrollment.institutions.controller";
 export * from "./supporting-user/supporting-user.supporting-users.controller";
-export * from "./esdc-integration/msfaa-integration.system-access.controller";
 export * from "./sfas-integration/sfas-integration.system-access.controller";
 export * from "./note/note.aest.controller";
 export * from "./restriction/restriction.aest.controller";
@@ -52,3 +51,4 @@ export * from "./student-account-applications/student-account-application.studen
 export * from "./education-program-offering/education-program-offering.institutions.controller";
 export * from "./education-program-offering/education-program-offering.controller.service";
 export * from "./education-program-offering/education-program-offering.students.controller";
+export * from "./application/application.controller.service";

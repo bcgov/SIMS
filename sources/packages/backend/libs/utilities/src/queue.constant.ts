@@ -3,6 +3,7 @@
  */
 export enum QueueNames {
   StartApplicationAssessment = "start-application-assessment",
+  CancelApplicationAssessment = "cancel-application-assessment",
   IER12Integration = "ier12-integration",
   CRAProcessIntegration = "cra-process-integration",
   CRAResponseIntegration = "cra-response-integration",

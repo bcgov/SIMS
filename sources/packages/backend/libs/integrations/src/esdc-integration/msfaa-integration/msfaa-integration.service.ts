@@ -26,6 +26,7 @@ import {
   getMaritalStatusCode,
   getOfferingIntensityCode,
 } from "@sims/utilities";
+import { OfferingIntensity } from "@sims/sims-db";
 
 /**
  * Manages the creation of the content files that needs to be sent
@@ -141,19 +142,33 @@ export class MSFAAIntegrationService {
   /**
    * Get the list of all response files waiting to be downloaded from the
    * SFTP filtering by the the regex pattern '/PE*\.txt/i'.
+   * @param offeringIntensity offering intensity.
    * @returns full file paths for all response files present on SFTP.
    */
-  async getResponseFilesFullPath(): Promise<string[]> {
+  async getResponseFilesFullPath(
+    offeringIntensity: OfferingIntensity,
+  ): Promise<string[]> {
     let filesToProcess: Client.FileInfo[];
     const client = await this.getClient();
     try {
-      filesToProcess = await client.list(
-        `${this.esdcConfig.ftpResponseFolder}`,
-        new RegExp(
-          `^${this.esdcConfig.environmentCode}EDU.PBC.MSFA.REC.*`,
-          "i",
-        ),
-      );
+      if (offeringIntensity === OfferingIntensity.fullTime) {
+        filesToProcess = await client.list(
+          `${this.esdcConfig.ftpResponseFolder}`,
+          new RegExp(
+            `^${this.esdcConfig.environmentCode}EDU\\.PBC\\.MSFA\\.REC.[\\d]{8}*`,
+            "i",
+          ),
+        );
+      }
+      if (offeringIntensity === OfferingIntensity.partTime) {
+        filesToProcess = await client.list(
+          `${this.esdcConfig.ftpResponseFolder}`,
+          new RegExp(
+            `^${this.esdcConfig.environmentCode}EDU\\.PBC\\.MSFA\\.REC.PT.[\\d]{8}*`,
+            "i",
+          ),
+        );
+      }
     } finally {
       await SshService.closeQuietly(client);
     }

@@ -11,10 +11,12 @@ import { ECertPartTimeFileFooter } from "./e-cert-part-time-integration/e-cert-f
 import { ECertPartTimeFileHeader } from "./e-cert-part-time-integration/e-cert-files/e-cert-file-header";
 import { ECertPartTimeIntegrationService } from "./e-cert-part-time-integration/e-cert-part-time-integration.service";
 import { ConfigModule } from "@sims/utilities/config";
-import { SshService } from "@sims/integrations/services";
-import { StudentRestrictionService } from "@sims/integrations/services/restriction/student-restriction.service";
-import { DisbursementScheduleErrorsService } from "@sims/integrations/services/disbursement-schedule-errors/disbursement-schedule-errors.service";
-import { RestrictionService } from "@sims/integrations/services/restriction/restriction.service";
+import {
+  DisbursementScheduleErrorsService,
+  RestrictionService,
+  SshService,
+  StudentRestrictionService,
+} from "@sims/integrations/services";
 import { StudentService } from "@sims/services/student/student.service";
 import { SystemUsersService } from "@sims/services/system-users";
 

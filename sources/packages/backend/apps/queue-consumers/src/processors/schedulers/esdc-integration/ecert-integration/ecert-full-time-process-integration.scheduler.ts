@@ -1,13 +1,12 @@
 import { InjectQueue, Process, Processor } from "@nestjs/bull";
-import { ECertFileHandler } from "@sims/integrations/esdc-integration/e-cert-integration/e-cert-file-handler";
+import { ECertFileHandler } from "@sims/integrations/esdc-integration";
 import { QueueService } from "@sims/services/queue";
 import { QueueNames } from "@sims/utilities";
-import { InjectLogger, LoggerService } from "@sims/utilities/logger";
 import { Job, Queue } from "bull";
+import { QueueProcessSummary } from "../../../models/processors.models";
 import { BaseScheduler } from "../../base-scheduler";
 import { ESDCFileResult } from "../models/esdc.dto";
 
-// todo: ann check the job.log
 @Processor(QueueNames.FullTimeECertIntegration)
 export class FullTimeECertProcessIntegrationScheduler extends BaseScheduler<void> {
   constructor(
@@ -28,20 +27,21 @@ export class FullTimeECertProcessIntegrationScheduler extends BaseScheduler<void
    */
   @Process()
   async processFullTimeECert(job: Job<void>): Promise<ESDCFileResult> {
-    this.logger.log(
+    const summary = new QueueProcessSummary({
+      appLogger: this.logger,
+      jobLogger: job,
+    });
+    await summary.info(
       `Processing CRA integration job ${job.id} of type ${job.name}.`,
     );
-    this.logger.log("Sending Full-Time E-Cert File...");
+    await summary.info("Sending Full-Time E-Cert File...");
     const uploadFullTimeResult =
       await this.eCertFileHandler.generateFullTimeECert();
-    this.logger.log("E-Cert Full-Time file sent.");
+    await summary.info("E-Cert Full-Time file sent.");
     await this.cleanSchedulerQueueHistory();
     return {
       generatedFile: uploadFullTimeResult.generatedFile,
       uploadedRecords: uploadFullTimeResult.uploadedRecords,
     };
   }
-
-  @InjectLogger()
-  logger: LoggerService;
 }

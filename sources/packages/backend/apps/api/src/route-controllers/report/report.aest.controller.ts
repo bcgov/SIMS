@@ -28,9 +28,9 @@ import { FormNames } from "../../services/form/constants";
 import { Role } from "../../auth/roles.enum";
 import {
   FILTER_PARAMS_MISMATCH,
+  ReportService,
   REPORT_CONFIG_NOT_FOUND,
-} from "@sims/integrations/services/report/constants";
-import { ReportService } from "@sims/integrations/services/report/report.service";
+} from "@sims/integrations/services";
 
 /**
  * Controller for Reports for AEST Client.

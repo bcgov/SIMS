@@ -1,7 +1,5 @@
 import * as fs from "fs";
 import * as path from "path";
-// todo: ann check with team. why do we have same 2 files in api and db-migrations?
-// todo: sources/packages/backend/apps/api/src/utilities/sqlLoader.ts
 const sqlDirPath = "apps/db-migrations/src/sql";
 
 /**

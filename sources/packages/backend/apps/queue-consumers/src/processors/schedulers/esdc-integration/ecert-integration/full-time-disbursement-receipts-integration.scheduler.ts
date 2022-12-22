@@ -1,10 +1,10 @@
 import { InjectQueue, Process, Processor } from "@nestjs/bull";
-import { DisbursementReceiptProcessingService } from "@sims/integrations/esdc-integration/disbursement-receipt-integration/disbursement-receipt-processing.service";
+import { DisbursementReceiptProcessingService } from "@sims/integrations/esdc-integration";
 import { QueueService } from "@sims/services/queue";
 import { SystemUsersService } from "@sims/services/system-users";
 import { QueueNames } from "@sims/utilities";
-import { InjectLogger, LoggerService } from "@sims/utilities/logger";
 import { Job, Queue } from "bull";
+import { QueueProcessSummary } from "../../../models/processors.models";
 import { BaseScheduler } from "../../base-scheduler";
 import { ESDCFileResponse } from "../models/esdc.dto";
 
@@ -29,10 +29,13 @@ export class FullTimeDisbursementReceiptsFileIntegrationScheduler extends BaseSc
   async processDisbursementReceipts(
     job: Job<void>,
   ): Promise<ESDCFileResponse[]> {
-    this.logger.log(
+    const summary = new QueueProcessSummary({
+      appLogger: this.logger,
+      jobLogger: job,
+    });
+    await summary.info(
       `Processing CRA integration job ${job.id} of type ${job.name}.`,
     );
-
     const auditUser = await this.systemUsersService.systemUser();
     const processResponse =
       await this.disbursementReceiptProcessingService.process(auditUser.id);
@@ -42,7 +45,4 @@ export class FullTimeDisbursementReceiptsFileIntegrationScheduler extends BaseSc
       errorsSummary: response.errorsSummary,
     }));
   }
-
-  @InjectLogger()
-  logger: LoggerService;
 }

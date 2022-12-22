@@ -25,6 +25,7 @@ import {
   StudentService,
   SFASIndividualService,
   EducationProgramOfferingImportCSVService,
+  EducationProgramOfferingValidationService,
 } from "./services";
 import {
   DesignationAgreementInstitutionsController,
@@ -45,10 +46,12 @@ import {
   EducationProgramOfferingControllerService,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
-import { EducationProgramOfferingValidationService } from "./services/education-program-offering/education-program-offering-validation.service";
-import { WorkflowClientService, SequenceControlService } from "@sims/services";
-import { MSFAANumberService } from "@sims/integrations/services/msfaa-number/msfaa-number.service";
-import { StudentRestrictionService as StudentRestrictionsService } from "@sims/integrations/services/restriction/student-restriction.service";
+import { SequenceControlService, WorkflowClientService } from "@sims/services";
+import {
+  MSFAANumberService,
+  StudentRestrictionService as StudentRestrictionsService,
+} from "@sims/integrations/services";
+
 // todo: check if the schduler imposrts are needed, after removing the routr-controller.
 
 @Module({

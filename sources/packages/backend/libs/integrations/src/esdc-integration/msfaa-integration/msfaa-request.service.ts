@@ -11,7 +11,7 @@ import {
 import { MSFAAIntegrationService } from "./msfaa-integration.service";
 import { ESDCFileHandler } from "../esdc-file-handler";
 import { ConfigService } from "@sims/utilities/config";
-import { MSFAANumberService } from "@sims/integrations/services/msfaa-number/msfaa-number.service";
+import { MSFAANumberService } from "@sims/integrations/services";
 
 @Injectable()
 export class MSFAARequestService extends ESDCFileHandler {

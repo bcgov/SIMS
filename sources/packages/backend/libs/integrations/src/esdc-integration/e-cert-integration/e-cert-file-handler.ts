@@ -1,6 +1,5 @@
 import { LoggerService, InjectLogger } from "@sims/utilities/logger";
 import { DisbursementSchedule, OfferingIntensity } from "@sims/sims-db";
-
 import {
   DisbursementSchedulerService,
   SequenceControlService,
@@ -21,14 +20,16 @@ import { ECertPartTimeIntegrationService } from "./e-cert-part-time-integration/
 import { ECertFullTimeResponseRecord } from "./e-cert-full-time-integration/e-cert-files/e-cert-response-record";
 import { ProcessSFTPResponseResult } from "../models/esdc-integration.model";
 import { ConfigService, ESDCIntegrationConfig } from "@sims/utilities/config";
-import { DisbursementScheduleErrorsService } from "@sims/integrations/services/disbursement-schedule-errors/disbursement-schedule-errors.service";
 import {
   ECERT_FULL_TIME_FEEDBACK_FILE_CODE,
   ECERT_FULL_TIME_FILE_CODE,
   ECERT_PART_TIME_FEEDBACK_FILE_CODE,
   ECERT_PART_TIME_FILE_CODE,
 } from "@sims/services/constants";
-import { ECertDisbursementSchedule } from "@sims/integrations/services/disbursement-schedule-service/disbursement-schedule.models";
+import {
+  DisbursementScheduleErrorsService,
+  ECertDisbursementSchedule,
+} from "@sims/integrations/services";
 
 const ECERT_FULL_TIME_SENT_FILE_SEQUENCE_GROUP = "ECERT_FT_SENT_FILE";
 const ECERT_PART_TIME_SENT_FILE_SEQUENCE_GROUP = "ECERT_PT_SENT_FILE";
@@ -39,7 +40,7 @@ export class ECertFileHandler extends ESDCFileHandler {
   constructor(
     configService: ConfigService,
     private readonly sequenceService: SequenceControlService,
-    private readonly DisbursementSchedulerService: DisbursementSchedulerService,
+    private readonly disbursementSchedulerService: DisbursementSchedulerService,
     private readonly disbursementScheduleErrorsService: DisbursementScheduleErrorsService,
     private readonly eCertFullTimeIntegrationService: ECertFullTimeIntegrationService,
     private readonly eCertPartTimeIntegrationService: ECertPartTimeIntegrationService,
@@ -119,7 +120,7 @@ export class ECertFileHandler extends ESDCFileHandler {
       `Retrieving ${offeringIntensity} disbursements to generate the e-Cert file...`,
     );
     const disbursements =
-      await this.DisbursementSchedulerService.getECertInformationToBeSent(
+      await this.disbursementSchedulerService.getECertInformationToBeSent(
         offeringIntensity,
       );
     if (!disbursements.length) {
@@ -166,7 +167,7 @@ export class ECertFileHandler extends ESDCFileHandler {
           // sequence number.
           const disbursementScheduleRepo =
             entityManager.getRepository(DisbursementSchedule);
-          await this.DisbursementSchedulerService.updateRecordsInSentFile(
+          await this.disbursementSchedulerService.updateRecordsInSentFile(
             disbursementIds,
             now,
             disbursementScheduleRepo,
@@ -343,7 +344,7 @@ export class ECertFileHandler extends ESDCFileHandler {
     feedbackRecord: ECertFullTimeResponseRecord,
   ): Promise<void> {
     const disbursementSchedule =
-      await this.DisbursementSchedulerService.getDisbursementScheduleByDocumentNumber(
+      await this.disbursementSchedulerService.getDisbursementScheduleByDocumentNumber(
         feedbackRecord.documentNumber,
       );
     if (disbursementSchedule) {

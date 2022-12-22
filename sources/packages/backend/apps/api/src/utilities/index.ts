@@ -1,4 +1,3 @@
-export * from "./sqlLoader";
 export * from "./system-configurations-constants";
 export * from "./application-utils";
 export * from "./auth-utils";

@@ -25,6 +25,7 @@ import {
   StudentScholasticStandingsService,
   CRAIncomeVerificationService,
   SupportingUserService,
+  StudentAccountApplicationsService,
 } from "./services";
 import {
   ApplicationStudentsController,
@@ -39,15 +40,17 @@ import {
   EducationProgramOfferingStudentsController,
   EducationProgramOfferingControllerService,
   RestrictionStudentsController,
+  ProgramYearStudentsController,
+  ApplicationControllerService,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
-import { ApplicationControllerService } from "./route-controllers/application/application.controller.service";
-import { StudentAccountApplicationsService } from "./services/student-account-applications/student-account-applications.service";
-import { ATBCStudentController } from "./route-controllers/atbc/atbc.students.controller";
-import { WorkflowClientService, SequenceControlService } from "@sims/services";
 import { ConfigModule } from "@sims/utilities/config";
-import { MSFAANumberService } from "@sims/integrations/services/msfaa-number/msfaa-number.service";
-import { StudentRestrictionService as StudentRestrictionsService } from "@sims/integrations/services/restriction/student-restriction.service";
+import { ATBCStudentController } from "./route-controllers/atbc/atbc.students.controller";
+import { SequenceControlService, WorkflowClientService } from "@sims/services";
+import {
+  MSFAANumberService,
+  StudentRestrictionService as StudentRestrictionsService,
+} from "@sims/integrations/services";
 
 @Module({
   imports: [AuthModule, ConfigModule],
@@ -62,6 +65,7 @@ import { StudentRestrictionService as StudentRestrictionsService } from "@sims/i
     EducationProgramOfferingStudentsController,
     RestrictionStudentsController,
     ATBCStudentController,
+    ProgramYearStudentsController,
   ],
   providers: [
     WorkflowClientService,

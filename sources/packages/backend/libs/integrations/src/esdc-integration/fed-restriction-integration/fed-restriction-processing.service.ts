@@ -9,9 +9,11 @@ import { FedRestrictionFileRecord } from "./fed-restriction-files/fed-restrictio
 import { ProcessSFTPResponseResult } from "../models/esdc-integration.model";
 import { ConfigService, ESDCIntegrationConfig } from "@sims/utilities/config";
 import { FEDERAL_RESTRICTIONS_BULK_INSERT_AMOUNT } from "@sims/services/constants";
-import { StudentRestrictionService } from "@sims/integrations/services/restriction/student-restriction.service";
-import { RestrictionService } from "@sims/integrations/services/restriction/restriction.service";
-import { FederalRestrictionService } from "@sims/integrations/services/restriction/federal-restriction.service";
+import {
+  FederalRestrictionService,
+  RestrictionService,
+  StudentRestrictionService,
+} from "@sims/integrations/services";
 
 /**
  * Manages the process to import the entire snapshot of federal

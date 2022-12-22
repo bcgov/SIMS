@@ -45,6 +45,7 @@ import {
   CustomNamedError,
   dateDifference,
   decimalRound,
+  QueueNames,
 } from "@sims/utilities";
 import {
   OFFERING_INVALID_OPERATION_IN_THE_CURRENT_STATE,
@@ -65,6 +66,9 @@ import * as os from "os";
 import { LoggerService, InjectLogger } from "@sims/utilities/logger";
 import { WorkflowClientService } from "@sims/services";
 import { CreateProcessInstanceResponse } from "zeebe-node";
+import { Job, Queue } from "bull";
+import { CancelAssessmentQueueInDTO } from "@sims/services/queue";
+import { InjectQueue } from "@nestjs/bull";
 
 @Injectable()
 export class EducationProgramOfferingService extends RecordDataModelService<EducationProgramOffering> {
@@ -72,6 +76,8 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     private readonly dataSource: DataSource,
     private readonly workflowClientService: WorkflowClientService,
     private readonly offeringValidationService: EducationProgramOfferingValidationService,
+    @InjectQueue(QueueNames.CancelApplicationAssessment)
+    private readonly cancelAssessmentQueue: Queue<CancelAssessmentQueueInDTO>,
   ) {
     super(dataSource.getRepository(EducationProgramOffering));
   }
@@ -998,7 +1004,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       .createQueryBuilder("application")
       .select("application.id")
       .addSelect("application.applicationStatus")
-      .addSelect("assessment.id")
+      .addSelect("assessment.id", "assessmentId")
       .addSelect("assessment.assessmentData IS NULL", "hasAssessmentData")
       .addSelect("application.data->>'workflowName'", "workflowName")
       .addSelect("assessment.assessmentWorkflowId", "assessmentWorkflowId")
@@ -1021,6 +1027,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       .getRawAndEntities();
     return mapFromRawAndEntities<ApplicationAssessmentSummary>(
       applications,
+      "assessmentId",
       "workflowName",
       "assessmentWorkflowId",
       "hasAssessmentData",
@@ -1160,7 +1167,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
   private async startOfferingChangeAssessments(
     applications: ApplicationAssessmentSummary[],
   ): Promise<void> {
-    const promises: Promise<void | CreateProcessInstanceResponse>[] = [];
+    const promises: Promise<Job | CreateProcessInstanceResponse>[] = [];
     // Used to limit the number of asynchronous operations
     // that will start at the same time based on length of cpus.
     // TODO: Currently the parallel processing is limited logical CPU core count but this approach
@@ -1170,10 +1177,9 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       // When the assessment data is populated, the workflow is complete.
       // Only running workflow instances can be deleted.
       if (application.assessmentWorkflowId && !application.hasAssessmentData) {
-        const deleteAssessmentPromise =
-          this.workflowClientService.deleteApplicationAssessment(
-            application.assessmentWorkflowId,
-          );
+        const deleteAssessmentPromise = this.cancelAssessmentQueue.add({
+          assessmentId: application.assessmentId,
+        });
         promises.push(deleteAssessmentPromise);
       }
       if (application.applicationStatus === ApplicationStatus.completed) {

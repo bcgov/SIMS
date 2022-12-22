@@ -29,7 +29,7 @@ import {
   SCHOLASTIC_STANDING_STUDENT_WITHDREW_FROM_PROGRAM,
 } from "./constants";
 import { NotificationActionsService } from "@sims/services/notifications";
-import { StudentRestrictionService as StudentRestrictionsService } from "@sims/integrations/services/restriction/student-restriction.service";
+import { StudentRestrictionService as StudentRestrictionsService } from "@sims/integrations/services";
 
 /**
  * Manages the student scholastic standings related operations.

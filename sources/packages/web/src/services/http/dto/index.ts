@@ -17,3 +17,4 @@ export * from "@/services/http/dto/StudentAccountApplication.dto";
 export * from "@/services/http/dto/Note.dto";
 export * from "@/services/http/dto/Restriction.dto";
 export * from "@/services/http/dto/Application.dto";
+export * from "@/services/http/dto/ProgramYear.dto";

@@ -1,5 +1,6 @@
 import { Injectable } from "@nestjs/common";
-import { MSFAANumberService } from "@sims/integrations/services/msfaa-number/msfaa-number.service";
+import { MSFAANumberService } from "@sims/integrations/services";
+import { OfferingIntensity } from "@sims/sims-db";
 import { LoggerService, InjectLogger } from "@sims/utilities/logger";
 import { ProcessSFTPResponseResult } from "../models/esdc-integration.model";
 import { MSFAASFTPResponseFile } from "./models/msfaa-integration.model";
@@ -15,10 +16,15 @@ export class MSFAAResponseService {
   ) {}
   /**
    * Download all files from MSFAA Response folder on SFTP and process them all.
+   * @param offeringIntensity offering intensity.
    * @returns Summary with what was processed and the list of all errors, if any.
    */
-  async processResponses(): Promise<ProcessSFTPResponseResult[]> {
-    const filePaths = await this.msfaaService.getResponseFilesFullPath();
+  async processResponses(
+    offeringIntensity: OfferingIntensity,
+  ): Promise<ProcessSFTPResponseResult[]> {
+    const filePaths = await this.msfaaService.getResponseFilesFullPath(
+      offeringIntensity,
+    );
     const processFiles: ProcessSFTPResponseResult[] = [];
     for (const filePath of filePaths) {
       processFiles.push(await this.processFile(filePath));

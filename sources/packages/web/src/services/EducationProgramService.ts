@@ -1,5 +1,4 @@
 import {
-  OptionItemDto,
   PaginationOptions,
   EducationProgramsSummary,
   PaginatedResults,
@@ -133,7 +132,7 @@ export class EducationProgramService {
     locationId: number,
     programYearId: number,
     isIncludeInActiveProgramYear?: boolean,
-  ): Promise<OptionItemDto[]> {
+  ): Promise<OptionItemAPIOutDTO[]> {
     return ApiClient.EducationProgram.getLocationProgramsOptionList(
       locationId,
       programYearId,

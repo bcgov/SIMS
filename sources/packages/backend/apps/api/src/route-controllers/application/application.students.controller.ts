@@ -36,7 +36,6 @@ import BaseController from "../BaseController";
 import {
   SaveApplicationDto,
   GetApplicationDataDto,
-  ApplicationStatusToBeUpdatedDto,
   ApplicationWithProgramYearDto,
   ApplicationIdentifiersDTO,
   ApplicationNumberParamAPIInDTO,
@@ -49,7 +48,6 @@ import {
 } from "../../auth/decorators";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { ApiProcessError, ClientTypeBaseRoute } from "../../types";
-import { ApplicationStatus } from "@sims/sims-db";
 import { getPIRDeniedReason, PIR_OR_DATE_OVERLAP_ERROR } from "../../utilities";
 import {
   INVALID_APPLICATION_NUMBER,
@@ -66,6 +64,7 @@ import {
 import { ApplicationControllerService } from "./application.controller.service";
 import { InProgressApplicationDetailsAPIOutDTO } from "./models/application.system.dto";
 import { WorkflowClientService } from "@sims/services";
+import { CustomNamedError } from "@sims/utilities";
 
 @AllowAuthorizedParty(AuthorizedParties.student)
 @RequiresStudentAccount()
@@ -97,11 +96,11 @@ export class ApplicationStudentsController extends BaseController {
   })
   async getByApplicationId(
     @Param("id", ParseIntPipe) applicationId: number,
-    @UserToken() userToken: IUserToken,
+    @UserToken() userToken: StudentUserToken,
   ): Promise<GetApplicationDataDto> {
-    const application = await this.applicationService.getApplicationByIdAndUser(
+    const application = await this.applicationService.getApplicationById(
       applicationId,
-      userToken.userId,
+      { loadDynamicData: true, studentId: userToken.studentId },
     );
     if (!application) {
       throw new NotFoundException(
@@ -330,54 +329,32 @@ export class ApplicationStudentsController extends BaseController {
   }
 
   /**
-   * Generic method to update all Student Application status from frontend.
-   * @param applicationId application id to be updated.
-   * @body payload contains the status, that need to be updated
+   * Cancel a student application.
+   * @param applicationId application id to be cancelled.
    */
-  @ApiOkResponse({ description: "Student Application status updated." })
-  @ApiNotFoundResponse({ description: "Application not found." })
   @ApiUnprocessableEntityResponse({
-    description: "Application Status update failed.",
+    description:
+      "Application not found or it is not in the correct state to be cancelled.",
   })
-  @Patch(":applicationId/status")
-  async updateStudentApplicationStatus(
-    @UserToken() userToken: IUserToken,
+  @Patch(":applicationId/cancel")
+  async cancelStudentApplication(
+    @UserToken() userToken: StudentUserToken,
     @Param("applicationId", ParseIntPipe) applicationId: number,
-    @Body() payload: ApplicationStatusToBeUpdatedDto,
   ): Promise<void> {
-    const studentApplication =
-      await this.applicationService.getApplicationByIdAndUser(
+    try {
+      await this.applicationService.cancelStudentApplication(
         applicationId,
+        userToken.studentId,
         userToken.userId,
       );
-
-    if (!studentApplication) {
-      throw new NotFoundException(
-        `Application ${applicationId} associated with requested student does not exist.`,
-      );
-    }
-    // Delete workflow if the payload status is cancelled.
-    // Workflow doest not exists for draft or submitted application, for instance.
-    if (
-      payload?.applicationStatus === ApplicationStatus.cancelled &&
-      studentApplication.currentAssessment?.assessmentWorkflowId
-    ) {
-      // Calling the API to stop assessment process
-      await this.workflowClientService.deleteApplicationAssessment(
-        studentApplication.currentAssessment.assessmentWorkflowId,
-      );
-    }
-    // updating the application status
-    const updateResult = await this.applicationService.updateApplicationStatus(
-      studentApplication.id,
-      payload.applicationStatus,
-      userToken.userId,
-    );
-
-    if (updateResult.affected === 0) {
-      throw new UnprocessableEntityException(
-        `Application Status update for Application ${applicationId} failed.`,
-      );
+    } catch (error: unknown) {
+      if (
+        error instanceof CustomNamedError &&
+        error.name === APPLICATION_NOT_FOUND
+      ) {
+        throw new NotFoundException(error.message);
+      }
+      throw error;
     }
   }
 
