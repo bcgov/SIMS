@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { DataSource, Brackets } from "typeorm";
+import { DataSource } from "typeorm";
 import { DataModelService, SFASApplication } from "@sims/sims-db";
 import { LoggerService, InjectLogger } from "@sims/utilities/logger";
 import { getUTC, getISODateOnlyString } from "@sims/utilities";
@@ -52,51 +52,6 @@ export class SFASApplicationService
     );
     application.extractedAt = getUTC(extractedDate);
     await this.repo.save(application, { reload: false, transaction: false });
-  }
-  /**
-   * Validates before an application submission to see if there is an overlapping SFAS fulltime application existing.
-   * @param sin
-   * @param birthDate
-   * @param lastName
-   * @param studyStartDate
-   * @param studyEndDate
-   * @returns SFAS fulltime application.
-   */
-  async validateDateOverlap(
-    sin: string,
-    birthDate: string,
-    lastName: string,
-    studyStartDate: string,
-    studyEndDate: string,
-  ): Promise<SFASApplication> {
-    return this.repo
-      .createQueryBuilder("sfasApplication")
-      .select(["sfasApplication.id"])
-      .innerJoin("sfasApplication.individual", "sfasFTstudent")
-      .where("lower(sfasFTstudent.lastName) = lower(:lastName)", { lastName })
-      .andWhere("sfasFTstudent.sin = :sin", { sin })
-      .andWhere("sfasFTstudent.birthDate = :birthDate", { birthDate })
-      .andWhere(
-        new Brackets((qb) => {
-          qb.where(
-            "sfasApplication.startDate BETWEEN :startDateFT AND :endDateFT",
-            { startDateFT: studyStartDate, endDateFT: studyEndDate },
-          )
-            .orWhere(
-              "sfasApplication.endDate BETWEEN :startDateFT AND :endDateFT",
-              { startDateFT: studyStartDate, endDateFT: studyEndDate },
-            )
-            .orWhere(
-              ":startDateFT BETWEEN sfasApplication.startDate AND sfasApplication.endDate",
-              { startDateFT: studyStartDate },
-            )
-            .orWhere(
-              ":endDateFT BETWEEN sfasApplication.startDate AND sfasApplication.endDate",
-              { endDateFT: studyEndDate },
-            );
-        }),
-      )
-      .getOne();
   }
 
   @InjectLogger()

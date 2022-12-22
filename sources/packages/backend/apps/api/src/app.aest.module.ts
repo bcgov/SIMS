@@ -17,11 +17,8 @@ import {
   StudentAppealRequestsService,
   StudentAppealService,
   StudentAssessmentService,
-  SFASApplicationService,
-  SFASPartTimeApplicationsService,
   ReportService,
   StudentService,
-  SFASIndividualService,
   StudentRestrictionService,
   RestrictionService,
   ApplicationExceptionService,
@@ -65,9 +62,13 @@ import { AuthModule } from "./auth/auth.module";
 import { ApplicationControllerService } from "./route-controllers/application/application.controller.service";
 import { InstitutionUserControllerService } from "./route-controllers/institution-user/institution-user.controller.service";
 import { WorkflowClientService, SequenceControlService } from "@sims/services";
+import {
+  SFASIndividualService,
+  SFASApplicationService,
+  SFASPartTimeApplicationsService,
+} from "@sims/services/sfas";
 import { UserAESTController } from "./route-controllers/user/user.aest.controller";
 import { UserControllerService } from "./route-controllers/user/user.controller.service";
-
 @Module({
   imports: [AuthModule],
   controllers: [
@@ -114,14 +115,14 @@ import { UserControllerService } from "./route-controllers/user/user.controller.
     StudentAppealRequestsService,
     StudentAppealService,
     StudentAssessmentService,
-    SFASApplicationService,
-    SFASPartTimeApplicationsService,
     InstitutionLocationControllerService,
     AssessmentControllerService,
     ReportService,
     StudentControllerService,
     StudentService,
     SFASIndividualService,
+    SFASApplicationService,
+    SFASPartTimeApplicationsService,
     StudentRestrictionService,
     RestrictionService,
     ApplicationExceptionService,

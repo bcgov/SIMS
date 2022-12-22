@@ -3,12 +3,12 @@ import { SshService } from "@sims/integrations/services";
 import {
   FederalRestrictionService,
   RestrictionService,
-  SFASIndividualService,
   StudentRestrictionService,
   StudentService,
 } from "../../services";
 import { FedRestrictionIntegrationService } from "./fed-restriction-integration.service";
 import { FedRestrictionProcessingService } from "./fed-restriction-processing.service";
+import { SFASIndividualService } from "@sims/services/sfas";
 
 @Module({
   providers: [

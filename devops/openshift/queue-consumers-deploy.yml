@@ -133,6 +133,30 @@ objects:
                     secretKeyRef:
                       key: ${GC_NOTIFY_TO_ADDRESS_NAME_KEY}
                       name: ${QUEUE_CONSUMERS_SECRET_NAME}
+                - name: SFAS_RECEIVE_FOLDER
+                  valueFrom:
+                    secretKeyRef:
+                      key: ${SFAS_RECEIVE_FOLDER_NAME_KEY}
+                      name: ${QUEUE_CONSUMERS_SECRET_NAME}
+                - name: ATBC_LOGIN_ENDPOINT
+                  value: ${ATBC_LOGIN_ENDPOINT}
+                - name: ATBC_ENDPOINT
+                  value: ${ATBC_ENDPOINT}
+                - name: ATBC_USERNAME
+                  valueFrom:
+                    secretKeyRef:
+                      key: ${ATBC_USERNAME_NAME_KEY}
+                      name: ${QUEUE_CONSUMERS_SECRET_NAME}
+                - name: ATBC_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      key: ${ATBC_PASSWORD_NAME_KEY}
+                      name: ${QUEUE_CONSUMERS_SECRET_NAME}
+                - name: ATBC_APP
+                  valueFrom:
+                    secretKeyRef:
+                      key: ${ATBC_APP_NAME_KEY}
+                      name: ${QUEUE_CONSUMERS_SECRET_NAME}
               image: ${IMAGE_REGISTRY}/${BUILD_NAMESPACE}/${IMAGE_STREAM_TAG}
               imagePullPolicy: Always
               name: ${NAME}
@@ -261,3 +285,15 @@ parameters:
     value: gc-notify-api-key
   - name: GC_NOTIFY_TO_ADDRESS_NAME_KEY
     value: gc-notify-to-address
+  - name: SFAS_RECEIVE_FOLDER_NAME_KEY
+    value: sfas-receive-folder
+  - name: ATBC_LOGIN_ENDPOINT
+    required: true
+  - name: ATBC_ENDPOINT
+    require: true
+  - name: ATBC_USERNAME_NAME_KEY
+    value: atbc-username
+  - name: ATBC_PASSWORD_NAME_KEY
+    value: atbc-password
+  - name: ATBC_APP_NAME_KEY
+    value: atbc-app

@@ -44,6 +44,12 @@ export APPLICATION_ARCHIVE_DAYS := $(or ${APPLICATION_ARCHIVE_DAYS}, 43)
 #Formio forms integration
 export FORMIO_SOURCE_REPO_URL := $(or ${FORMIO_SOURCE_REPO_URL}, https://github.com/formio/formio.git)
 export FORMIO_SOURCE_REPO_TAG := $(or ${FORMIO_SOURCE_REPO_TAG}, v2.5.3)
+#ATBC Integration
+export ATBC_USERNAME := $(or $(ATBC_USERNAME), )
+export ATBC_PASSWORD := $(or $(ATBC_PASSWORD), )
+export ATBC_APP := $(or $(ATBC_APP), )
+export ATBC_ENDPOINT := $(or $(ATBC_ENDPOINT), )
+export ATBC_LOGIN_ENDPOINT := $(or $(ATBC_LOGIN_ENDPOINT), )
 
 
 local:	| print-status local-build-run

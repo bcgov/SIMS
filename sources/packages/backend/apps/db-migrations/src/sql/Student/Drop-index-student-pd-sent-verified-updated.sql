@@ -1,0 +1,1 @@
+DROP INDEX IF EXISTS sims.student_pd_sent_verified_updated;

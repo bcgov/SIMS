@@ -8,6 +8,8 @@ import {
   IER12IntegrationScheduler,
   CRAResponseIntegrationScheduler,
   CRAProcessIntegrationScheduler,
+  SFASIntegrationScheduler,
+  ATBCResponseIntegrationScheduler,
 } from "./processors";
 import {
   DisbursementScheduleService,
@@ -23,6 +25,8 @@ import { IER12IntegrationModule } from "@sims/integrations/institution-integrati
 import { StudentAssessmentService } from "./services";
 import { SystemUserModule } from "@sims/services/system-users";
 import { CRAIntegrationModule } from "@sims/integrations/cra-integration/cra-integration.module";
+import { SFASIntegrationModule } from "@sims/integrations/sfas-integration";
+import { ATBCIntegrationModule } from "@sims/integrations/atbc-integration";
 
 @Module({
   imports: [
@@ -33,6 +37,8 @@ import { CRAIntegrationModule } from "@sims/integrations/cra-integration/cra-int
     NotificationsModule,
     SystemUserModule,
     CRAIntegrationModule,
+    SFASIntegrationModule,
+    ATBCIntegrationModule,
   ],
   providers: [
     StartApplicationAssessmentProcessor,
@@ -41,6 +47,8 @@ import { CRAIntegrationModule } from "@sims/integrations/cra-integration/cra-int
     IER12IntegrationScheduler,
     IER12IntegrationService,
     ProcessNotificationScheduler,
+    SFASIntegrationScheduler,
+    ATBCResponseIntegrationScheduler,
     StudentAssessmentService,
     SshService,
     QueueService,

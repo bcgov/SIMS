@@ -30,29 +30,44 @@ export class QueueProcessSummary {
 
   /**
    * General log for the queue processing.
+   * @param message info message.
+   * @param appendOnlySummary when true append the message only
+   * to summary and not perform logging.
    */
-  async info(message: string): Promise<void> {
+  async info(message: string, appendOnlySummary?: boolean): Promise<void> {
     this.summary.push(message);
-    this.loggers?.appLogger.log(message);
-    await this.loggers?.jobLogger.log(message);
+    if (!appendOnlySummary) {
+      this.loggers?.appLogger.log(message);
+      await this.loggers?.jobLogger.log(message);
+    }
   }
 
   /**
    * Warnings issues that did not stopped the process from continue.
+   * @param message info message.
+   * @param appendOnlySummary when true append the message only
+   * to summary and not perform logging.
    */
-  async warn(message: string): Promise<void> {
+  async warn(message: string, appendOnlySummary?: boolean): Promise<void> {
     this.warnings.push(message);
-    this.loggers?.appLogger.warn(message);
-    await this.loggers?.jobLogger.log(`Warning: ${message}`);
+    if (!appendOnlySummary) {
+      this.loggers?.appLogger.warn(message);
+      await this.loggers?.jobLogger.log(`Warning: ${message}`);
+    }
   }
 
   /**
    * Errors that did not stopped the process from continue.
+   * @param message info message.
+   * @param appendOnlySummary when true append the message only
+   * to summary and not perform logging.
    */
-  async error(message: string): Promise<void> {
+  async error(message: string, appendOnlySummary?: boolean): Promise<void> {
     this.errors.push(message);
-    this.loggers?.appLogger.error(message);
-    await this.loggers?.jobLogger.log(`Error: ${message}`);
+    if (!appendOnlySummary) {
+      this.loggers?.appLogger.error(message);
+      await this.loggers?.jobLogger.log(`Error: ${message}`);
+    }
   }
 
   /**
