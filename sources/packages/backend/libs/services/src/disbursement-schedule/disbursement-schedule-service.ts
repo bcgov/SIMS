@@ -27,9 +27,11 @@ import {
   DISBURSEMENT_SCHEDULES_ALREADY_CREATED,
 } from "../constants";
 import { SystemUsersService } from "@sims/services/system-users";
-import { ECertDisbursementSchedule } from "@sims/integrations/services/disbursement-schedule-service/disbursement-schedule.models";
 import * as dayjs from "dayjs";
-import { StudentRestrictionService } from "@sims/integrations/services/restriction/student-restriction.service";
+import {
+  ECertDisbursementSchedule,
+  IntegrationStudentRestrictionService,
+} from "@sims/integrations/services";
 
 // Timeout to handle the worst-case scenario where the commit/rollback
 // was not executed due to a possible catastrophic failure.
@@ -85,7 +87,7 @@ export class DisbursementSchedulerService extends RecordDataModelService<Disburs
   constructor(
     private readonly dataSource: DataSource,
     private readonly systemUsersService: SystemUsersService,
-    private readonly studentRestrictionService: StudentRestrictionService,
+    private readonly integrationStudentRestrictionService: IntegrationStudentRestrictionService,
   ) {
     super(dataSource.getRepository(DisbursementSchedule));
   }
@@ -804,7 +806,7 @@ export class DisbursementSchedulerService extends RecordDataModelService<Disburs
       ])
       .addSelect(
         `CASE
-              WHEN EXISTS(${this.studentRestrictionService
+              WHEN EXISTS(${this.integrationStudentRestrictionService
                 .getExistsBlockRestrictionQuery(
                   false,
                   false,
@@ -839,7 +841,7 @@ export class DisbursementSchedulerService extends RecordDataModelService<Disburs
         offeringIntensity,
       })
       .andWhere(
-        `NOT EXISTS(${this.studentRestrictionService
+        `NOT EXISTS(${this.integrationStudentRestrictionService
           .getExistsBlockRestrictionQuery()
           .getSql()})`,
       )

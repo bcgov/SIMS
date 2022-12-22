@@ -16,7 +16,7 @@ import { CustomNamedError } from "@sims/utilities";
 import { RestrictionService } from "./restriction.service";
 import { StudentService } from "../student/student.service";
 import { RestrictionCode } from "./models/restriction.model";
-import { StudentRestrictionService as StudentRestrictionsService } from "@sims/integrations/services/restriction/student-restriction.service";
+import { IntegrationStudentRestrictionService } from "@sims/integrations/services";
 export const RESTRICTION_NOT_ACTIVE = "RESTRICTION_NOT_ACTIVE";
 export const RESTRICTION_NOT_PROVINCIAL = "RESTRICTION_NOT_PROVINCIAL";
 
@@ -29,7 +29,7 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
     private readonly dataSource: DataSource,
     private readonly restrictionService: RestrictionService,
     private readonly studentService: StudentService,
-    private readonly studentRestrictionService: StudentRestrictionsService,
+    private readonly integrationStudentRestrictionService: IntegrationStudentRestrictionService,
   ) {
     super(dataSource.getRepository(StudentRestriction));
   }
@@ -143,7 +143,7 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
       const newRestriction = await transactionalEntityManager
         .getRepository(StudentRestriction)
         .save(studentRestriction);
-      await this.studentRestrictionService.createNotifications(
+      await this.integrationStudentRestrictionService.createNotifications(
         [newRestriction.id],
         auditUserId,
         transactionalEntityManager,
@@ -226,7 +226,7 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
     restrictionActions: RestrictionActionType[],
     checkAll = false,
   ): Promise<boolean> {
-    const query = this.studentRestrictionService
+    const query = this.integrationStudentRestrictionService
       .getExistsBlockRestrictionQuery(checkAll, true)
       .setParameters({
         studentId,
@@ -365,7 +365,7 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
       const newRestriction = await entityManager
         .getRepository(StudentRestriction)
         .save(restriction);
-      await this.studentRestrictionService.createNotifications(
+      await this.integrationStudentRestrictionService.createNotifications(
         [newRestriction.id],
         auditUserId,
         entityManager,

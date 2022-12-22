@@ -35,17 +35,17 @@ import {
   SequenceControlService,
   DisbursementSchedulerService,
 } from "@sims/services";
-// todo: once all integration are moved. remove sshservice.
+// todo:ann ---> once all integration are moved. remove sshservice.
 import {
   DisbursementScheduleErrorsService,
   FederalRestrictionService,
   MSFAANumberService,
   ReportService,
   SshService,
-  StudentRestrictionService as StudentRestrictionsService,
-  DisbursementSchedulerService as DisbursementsScheduleService,
-  DisbursementReceiptService as DisbursementReceiptsService,
-  RestrictionService as RestrictionsService,
+  IntegrationStudentRestrictionService,
+  IntegrationDisbursementSchedulerService,
+  IntegrationDisbursementReceiptService,
+  IntegrationRestrictionService,
 } from "@sims/integrations/services";
 import { AuthModule } from "./auth/auth.module";
 import {
@@ -128,12 +128,11 @@ import { SystemUsersService } from "@sims/services/system-users";
     StudentAppealService,
     StudentAppealRequestsService,
     StudentScholasticStandingsService,
-    // todo: ann review the StudentRestrictionsService
-    StudentRestrictionsService,
+    IntegrationStudentRestrictionService,
     SystemUsersService,
-    DisbursementsScheduleService,
-    DisbursementReceiptsService,
-    RestrictionsService,
+    IntegrationDisbursementSchedulerService,
+    IntegrationDisbursementReceiptService,
+    IntegrationRestrictionService,
   ],
 })
 export class AppSystemAccessModule {}

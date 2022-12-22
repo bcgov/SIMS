@@ -39,16 +39,16 @@ import {
   SystemUsersService,
 } from "@sims/services/system-users";
 import {
-  DisbursementReceiptService,
+  IntegrationDisbursementReceiptService,
   DisbursementScheduleErrorsService,
-  DisbursementSchedulerService as DisbursementSchedulersService,
+  IntegrationDisbursementSchedulerService,
   FederalRestrictionService,
   MSFAANumberService,
   ReportService,
-  RestrictionService,
+  IntegrationRestrictionService,
   SshService,
   StudentAssessmentService as StudentsAssessmentService,
-  StudentRestrictionService,
+  IntegrationStudentRestrictionService,
 } from "@sims/integrations/services";
 import {
   DisbursementReceiptIntegrationService,
@@ -74,7 +74,6 @@ import { StudentAssessmentService } from "./services";
 import { SINValidationService } from "@sims/services/sin-validation/sin-validation.service";
 import { StudentService } from "@sims/services/student/student.service";
 
-// todo: ann continue from here
 @Module({
   imports: [
     DatabaseModule,
@@ -115,11 +114,11 @@ import { StudentService } from "@sims/services/student/student.service";
     PartTimeECertProcessIntegrationScheduler,
     ECertFileHandler,
     DisbursementSchedulerService,
-    DisbursementSchedulersService,
+    IntegrationDisbursementSchedulerService,
     DisbursementScheduleErrorsService,
     ECertFullTimeIntegrationService,
     ECertPartTimeIntegrationService,
-    StudentRestrictionService,
+    IntegrationStudentRestrictionService,
     ECertFullTimeFileHeader,
     ECertFullTimeFileFooter,
     ECertPartTimeFileHeader,
@@ -130,13 +129,13 @@ import { StudentService } from "@sims/services/student/student.service";
     FullTimeDisbursementReceiptsFileIntegrationScheduler,
     DisbursementReceiptProcessingService,
     DisbursementReceiptIntegrationService,
-    DisbursementReceiptService,
+    IntegrationDisbursementReceiptService,
     FINProcessProvincialDailyDisbursementsIntegrationScheduler,
     DisbursementReceiptRequestService,
     ReportService,
     FederalRestrictionsIntegrationScheduler,
     FedRestrictionProcessingService,
-    RestrictionService,
+    IntegrationRestrictionService,
     FederalRestrictionService,
     FedRestrictionIntegrationService,
     FullTimeMSFAAProcessResponseIntegrationScheduler,

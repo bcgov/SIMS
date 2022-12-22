@@ -7,13 +7,11 @@ import { SshService } from "@sims/integrations/services";
 import { StudentService } from "@sims/services/student/student.service";
 import { SINValidationService } from "@sims/services/sin-validation/sin-validation.service";
 
-// todo: ann check for this service is needed or not SFASIndividualService
 @Module({
   imports: [ConfigModule],
   providers: [
     SshService,
     SINValidationService,
-    // SFASIndividualService,
     StudentService,
     SINValidationIntegrationService,
     SINValidationProcessingService,

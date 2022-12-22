@@ -49,7 +49,7 @@ import { ATBCStudentController } from "./route-controllers/atbc/atbc.students.co
 import { SequenceControlService, WorkflowClientService } from "@sims/services";
 import {
   MSFAANumberService,
-  StudentRestrictionService as StudentRestrictionsService,
+  IntegrationStudentRestrictionService,
 } from "@sims/integrations/services";
 
 @Module({
@@ -101,8 +101,7 @@ import {
     StudentScholasticStandingsService,
     CRAIncomeVerificationService,
     SupportingUserService,
-    // todo: ann review the StudentRestrictionService
-    StudentRestrictionsService,
+    IntegrationStudentRestrictionService,
   ],
 })
 export class AppStudentsModule {}

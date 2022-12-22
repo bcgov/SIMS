@@ -13,15 +13,14 @@ import { ECertPartTimeIntegrationService } from "./e-cert-part-time-integration/
 import { ConfigModule } from "@sims/utilities/config";
 import {
   DisbursementScheduleErrorsService,
-  RestrictionService,
+  IntegrationRestrictionService,
   SshService,
-  StudentRestrictionService,
+  IntegrationStudentRestrictionService,
 } from "@sims/integrations/services";
 import { StudentService } from "@sims/services/student/student.service";
 import { SystemUsersService } from "@sims/services/system-users";
 
 @Module({
-  // imports: [AuthModule, ConfigModule],
   imports: [ConfigModule],
   providers: [
     SshService,
@@ -29,24 +28,22 @@ import { SystemUsersService } from "@sims/services/system-users";
     ECertPartTimeIntegrationService,
     SequenceControlService,
     DisbursementSchedulerService,
-    StudentRestrictionService,
+    IntegrationStudentRestrictionService,
     ECertFileHandler,
     ECertPartTimeFileHeader,
     ECertPartTimeFileFooter,
     ECertFullTimeFileHeader,
     ECertFullTimeFileFooter,
     DisbursementScheduleErrorsService,
-    RestrictionService,
+    IntegrationRestrictionService,
     StudentService,
-    // SFASIndividualService,
-    // todo: ann SystemUsersService was nt there before
     SystemUsersService,
   ],
   exports: [
     ECertFullTimeIntegrationService,
     ECertPartTimeIntegrationService,
     ECertFileHandler,
-    StudentRestrictionService,
+    IntegrationStudentRestrictionService,
   ],
 })
 export class ECertIntegrationModule {}

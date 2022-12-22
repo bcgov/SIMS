@@ -6,10 +6,10 @@ import { DisbursementReceiptRequestService } from "./disbursement-receipt-reques
 import { LoggerModule } from "@sims/utilities/logger";
 import { ConfigModule } from "@sims/utilities/config";
 import {
-  DisbursementReceiptService,
+  IntegrationDisbursementReceiptService,
   ReportService,
   SshService,
-  DisbursementSchedulerService,
+  IntegrationDisbursementSchedulerService,
 } from "@sims/integrations/services";
 
 @Module({
@@ -19,14 +19,10 @@ import {
     DisbursementReceiptIntegrationService,
     DisbursementReceiptProcessingService,
     DisbursementReceiptRequestService,
-    DisbursementReceiptService,
-    DisbursementSchedulerService,
+    IntegrationDisbursementReceiptService,
+    IntegrationDisbursementSchedulerService,
     SequenceControlService,
-    // StudentRestrictionService,
     ReportService,
-    // RestrictionService,
-    // StudentService,
-    // SFASIndividualService,
   ],
   exports: [
     DisbursementReceiptIntegrationService,

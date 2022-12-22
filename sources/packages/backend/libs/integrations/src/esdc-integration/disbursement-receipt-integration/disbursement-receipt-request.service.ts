@@ -3,7 +3,7 @@ import { InjectLogger, LoggerService } from "@sims/utilities/logger";
 import { DisbursementReceiptIntegrationService } from "./disbursement-receipt-integration.service";
 import { DAILY_DISBURSEMENT_REPORT_NAME } from "@sims/services/constants";
 import {
-  DisbursementReceiptService,
+  IntegrationDisbursementReceiptService,
   ReportService,
   ReportsFilterModel,
 } from "@sims/integrations/services";
@@ -12,7 +12,7 @@ import {
 export class DisbursementReceiptRequestService {
   constructor(
     private readonly reportService: ReportService,
-    private readonly disbursementReceiptService: DisbursementReceiptService,
+    private readonly integrationDisbursementReceiptService: IntegrationDisbursementReceiptService,
     private readonly integrationService: DisbursementReceiptIntegrationService,
   ) {}
 
@@ -33,7 +33,7 @@ export class DisbursementReceiptRequestService {
     // into account and the report will be generated.
     if (!batchRunDate) {
       batchRunDate =
-        await this.disbursementReceiptService.getMaxDisbursementReceiptDate();
+        await this.integrationDisbursementReceiptService.getMaxDisbursementReceiptDate();
     }
     this.logger.log(
       `Fetches the Daily disbursement information which are not sent on ${batchRunDate}`,

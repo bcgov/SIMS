@@ -66,7 +66,7 @@ import { SequenceControlService, WorkflowClientService } from "@sims/services";
 import {
   MSFAANumberService,
   ReportService,
-  StudentRestrictionService as StudentRestrictionsService,
+  IntegrationStudentRestrictionService,
 } from "@sims/integrations/services";
 
 @Module({
@@ -136,8 +136,7 @@ import {
     EducationProgramOfferingControllerService,
     EducationProgramOfferingValidationService,
     DisbursementReceiptService,
-    // todo: ann review the StudentRestrictionsService
-    StudentRestrictionsService,
+    IntegrationStudentRestrictionService,
   ],
 })
 export class AppAESTModule {}

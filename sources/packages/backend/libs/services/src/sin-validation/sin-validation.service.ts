@@ -2,7 +2,6 @@ import { Injectable } from "@nestjs/common";
 import { DataSource, Repository } from "typeorm";
 import { RecordDataModelService, SINValidation, User } from "@sims/sims-db";
 import { LoggerService, InjectLogger } from "@sims/utilities/logger";
-// todo: ann 2 imports review
 import { StudentService } from "../student/student.service";
 import { SINValidationFileResponse } from "@sims/integrations/esdc-integration";
 import {

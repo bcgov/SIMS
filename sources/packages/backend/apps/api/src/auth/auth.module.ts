@@ -29,7 +29,7 @@ import {
 } from "./guards";
 import { RolesGuard } from "./guards/roles.guard";
 import { ConfigModule } from "@sims/utilities/config";
-import { StudentRestrictionService as StudentRestrictionsService } from "@sims/integrations/services/restriction/student-restriction.service";
+import { IntegrationStudentRestrictionService } from "@sims/integrations/services";
 
 const jwtModule = JwtModule.register({
   publicKey: KeycloakConfig.PEM_PublicKey,
@@ -50,8 +50,7 @@ const jwtModule = JwtModule.register({
     SINValidationService,
     RestrictionService,
     DesignationAgreementLocationService,
-    // todo: ann review the StudentRestrictionsService
-    StudentRestrictionsService,
+    IntegrationStudentRestrictionService,
     {
       provide: APP_GUARD,
       useClass: JwtAuthGuard,

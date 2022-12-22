@@ -25,7 +25,7 @@ const NOTIFICATIONS_SELECT_CHUNK_SIZE = 1000;
  * Service layer for Student Restriction.
  */
 @Injectable()
-export class StudentRestrictionService extends RecordDataModelService<StudentRestriction> {
+export class IntegrationStudentRestrictionService extends RecordDataModelService<StudentRestriction> {
   constructor(
     private readonly dataSource: DataSource,
     private readonly notificationActionsService: NotificationActionsService,

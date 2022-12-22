@@ -155,7 +155,7 @@ export class MSFAAIntegrationService {
         filesToProcess = await client.list(
           `${this.esdcConfig.ftpResponseFolder}`,
           new RegExp(
-            `^${this.esdcConfig.environmentCode}EDU\\.PBC\\.MSFA\\.REC.[\\d]{8}*`,
+            `^${this.esdcConfig.environmentCode}EDU\.PBC\.MSFA\.REC\.[0-9]{8}\.*`,
             "i",
           ),
         );
@@ -164,7 +164,7 @@ export class MSFAAIntegrationService {
         filesToProcess = await client.list(
           `${this.esdcConfig.ftpResponseFolder}`,
           new RegExp(
-            `^${this.esdcConfig.environmentCode}EDU\\.PBC\\.MSFA\\.REC.PT.[\\d]{8}*`,
+            `^${this.esdcConfig.environmentCode}EDU\.PBC\.MSFA\.REC\.PT\.[0-9]{8}\.*`,
             "i",
           ),
         );

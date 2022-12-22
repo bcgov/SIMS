@@ -14,7 +14,7 @@ import { EnsureFederalRestrictionResult } from "./models/federal-restriction.mod
  * Service layer for restrictions.
  */
 @Injectable()
-export class RestrictionService extends RecordDataModelService<Restriction> {
+export class IntegrationRestrictionService extends RecordDataModelService<Restriction> {
   constructor(dataSource: DataSource) {
     super(dataSource.getRepository(Restriction));
   }
