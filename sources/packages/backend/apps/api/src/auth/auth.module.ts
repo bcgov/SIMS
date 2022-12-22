@@ -10,7 +10,6 @@ import {
   TokensService,
   UserService,
   StudentService,
-  SFASIndividualService,
   SINValidationService,
   DesignationAgreementLocationService,
   RestrictionService,
@@ -30,6 +29,7 @@ import {
 import { RolesGuard } from "./guards/roles.guard";
 import { ConfigModule } from "@sims/utilities/config";
 import { IntegrationStudentRestrictionService } from "@sims/integrations/services";
+import { SFASIndividualService } from "@sims/services/sfas";
 
 const jwtModule = JwtModule.register({
   publicKey: KeycloakConfig.PEM_PublicKey,

@@ -63,3 +63,10 @@ export const ESDC_SIN_VALIDATION_SEQUENCE_GROUP_NAME = "ESDC_SIN_VALIDATION";
  */
 export const MSFAA_FULL_TIME_FILE_CODE = "PBC.EDU.MSFA.SENT.";
 export const MSFAA_PART_TIME_FILE_CODE = "PBC.EDU.MSFA.SENT.PT.";
+
+/**
+ * Report the SFAS import progress every time that certain
+ * amount of records are imported to avoid reporting the progress
+ * all the time.
+ */
+export const SFAS_IMPORT_RECORDS_PROGRESS_REPORT_PACE = 1000;

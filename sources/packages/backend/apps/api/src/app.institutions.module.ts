@@ -9,8 +9,6 @@ import {
   DesignationAgreementLocationService,
   ApplicationService,
   StudentFileService,
-  SFASApplicationService,
-  SFASPartTimeApplicationsService,
   StudentRestrictionService,
   RestrictionService,
   StudentScholasticStandingsService,
@@ -23,7 +21,6 @@ import {
   EducationProgramService,
   PIRDeniedReasonService,
   StudentService,
-  SFASIndividualService,
   EducationProgramOfferingImportCSVService,
   EducationProgramOfferingValidationService,
 } from "./services";
@@ -51,6 +48,12 @@ import {
   MSFAANumberService,
   IntegrationStudentRestrictionService,
 } from "@sims/integrations/services";
+import {
+  SFASIndividualService,
+  SFASApplicationService,
+  SFASPartTimeApplicationsService,
+} from "@sims/services/sfas";
+
 
 @Module({
   imports: [AuthModule],
@@ -81,8 +84,6 @@ import {
     SequenceControlService,
     StudentFileService,
     MSFAANumberService,
-    SFASApplicationService,
-    SFASPartTimeApplicationsService,
     StudentRestrictionService,
     RestrictionService,
     StudentScholasticStandingsService,
@@ -101,6 +102,8 @@ import {
     EducationProgramOfferingControllerService,
     StudentService,
     SFASIndividualService,
+    SFASApplicationService,
+    SFASPartTimeApplicationsService,
     EducationProgramOfferingImportCSVService,
     EducationProgramOfferingValidationService,
     IntegrationStudentRestrictionService,

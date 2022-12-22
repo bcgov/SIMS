@@ -4,6 +4,7 @@ export const COE_WINDOW = 21;
 // Timeout to handle the worst-case scenario where the commit/rollback
 // was not executed due to a possible catastrophic failure.
 export const SUPPORTING_USERS_TRANSACTION_IDLE_TIMEOUT_SECONDS = 10;
+
 /**
  * Report the SFAS import progress every time that certain
  * amount of records are imported to avoid reporting the progress

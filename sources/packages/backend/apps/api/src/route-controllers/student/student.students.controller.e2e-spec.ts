@@ -3,7 +3,6 @@ import * as faker from "faker";
 import { DatabaseModule, SINValidation, Student, User } from "@sims/sims-db";
 import {
   StudentService,
-  ATBCService,
   UserService,
   SINValidationService,
 } from "../../services";
@@ -12,12 +11,15 @@ import { KeycloakService } from "../../services/auth/keycloak/keycloak.service";
 import { HttpStatus, INestApplication } from "@nestjs/common";
 import { Test, TestingModule } from "@nestjs/testing";
 import * as request from "supertest";
-import { ATBCCreateClientResponse } from "../../types";
 import { AuthModule } from "../../auth/auth.module";
 import { AppStudentsModule } from "../../app.students.module";
 import { createMockedZeebeModule } from "../../testHelpers/mocked-providers/zeebe-client-mock";
 import { NotificationsModule } from "@sims/services/notifications";
 import { MockedQueueModule } from "../../testHelpers/mocked-providers/queue-module-mock";
+import {
+  ATBCCreateClientResponse,
+  ATBCService,
+} from "@sims/integrations/services";
 
 jest.setTimeout(15000);
 
@@ -82,6 +84,11 @@ describe("Test ATBC Controller", () => {
     // Save the student in SIMS.
     await studentService.save(fakeStudent);
 
+    // creating mockup for ATBCCreateClient, this function actually calls the ATBC server to create the student profile
+    jest.spyOn(atbcService, "createClient").mockImplementation(async () => {
+      return {} as ATBCCreateClientResponse;
+    });
+
     const sinValidation = new SINValidation();
     sinValidation.student = fakeStudent;
     sinValidation.isValidSIN = true;
@@ -89,11 +96,6 @@ describe("Test ATBC Controller", () => {
     sinValidation.sin = "706941291";
 
     await studentService.save(fakeStudent);
-
-    // creating mockup for ATBCCreateClient, this function actually calls the ATBC server to create the student profile
-    jest.spyOn(atbcService, "ATBCCreateClient").mockImplementation(async () => {
-      return {} as ATBCCreateClientResponse;
-    });
 
     try {
       // call to the controller, to apply for the PD

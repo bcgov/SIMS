@@ -16,10 +16,7 @@ import {
   StudentAppealRequestsService,
   StudentAppealService,
   StudentAssessmentService,
-  SFASApplicationService,
-  SFASPartTimeApplicationsService,
   StudentService,
-  SFASIndividualService,
   StudentRestrictionService,
   RestrictionService,
   ApplicationExceptionService,
@@ -68,6 +65,12 @@ import {
   ReportService,
   IntegrationStudentRestrictionService,
 } from "@sims/integrations/services";
+import {
+  SFASIndividualService,
+  SFASApplicationService,
+  SFASPartTimeApplicationsService,
+} from "@sims/services/sfas";
+
 
 @Module({
   imports: [AuthModule],
@@ -114,14 +117,14 @@ import {
     StudentAppealRequestsService,
     StudentAppealService,
     StudentAssessmentService,
-    SFASApplicationService,
-    SFASPartTimeApplicationsService,
     InstitutionLocationControllerService,
     AssessmentControllerService,
     ReportService,
     StudentControllerService,
     StudentService,
     SFASIndividualService,
+    SFASApplicationService,
+    SFASPartTimeApplicationsService,
     StudentRestrictionService,
     RestrictionService,
     ApplicationExceptionService,

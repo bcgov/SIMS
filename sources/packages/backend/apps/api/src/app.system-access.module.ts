@@ -1,6 +1,5 @@
 import { Module } from "@nestjs/common";
 import {
-  ATBCService,
   StudentService,
   ApplicationExceptionService,
   EducationProgramOfferingService,
@@ -10,11 +9,7 @@ import {
   SupportingUserService,
   CRAIncomeVerificationService,
   ApplicationService,
-  SFASApplicationService,
-  SFASPartTimeApplicationsService,
   StudentFileService,
-  SFASIndividualService,
-  SFASRestrictionService,
   DisbursementReceiptService,
   InstitutionLocationService,
   DesignationAgreementLocationService,
@@ -27,15 +22,13 @@ import {
 import {
   AssessmentControllerService,
   ApplicationSystemAccessController,
-  SFASIntegrationSystemAccessController,
-  ATBCSystemAccessController,
 } from "./route-controllers";
 import {
   WorkflowClientService,
   SequenceControlService,
   DisbursementSchedulerService,
 } from "@sims/services";
-// todo:ann ---> once all integration are moved. remove sshservice.
+// todo: once all integration are moved. remove sshservice.
 import {
   DisbursementScheduleErrorsService,
   FederalRestrictionService,
@@ -67,20 +60,18 @@ import {
   SINValidationModule,
 } from "@sims/integrations/esdc-integration";
 import { IER12IntegrationModule } from "@sims/integrations/institution-integration/ier12-integration";
-import { SFASIntegrationProcessingService } from "./sfas-integration/sfas-integration-processing.service";
-import { SFASIntegrationService } from "./sfas-integration/sfas-integration.service";
 import { SystemUsersService } from "@sims/services/system-users";
+import {
+  SFASIndividualService,
+  SFASApplicationService,
+  SFASPartTimeApplicationsService,
+} from "@sims/services/sfas";
 
 @Module({
   imports: [AuthModule, SINValidationModule, IER12IntegrationModule],
-  controllers: [
-    ATBCSystemAccessController,
-    ApplicationSystemAccessController,
-    SFASIntegrationSystemAccessController,
-  ],
+  controllers: [ApplicationSystemAccessController],
   providers: [
     WorkflowClientService,
-    ATBCService,
     StudentService,
     StudentAssessmentService,
     EducationProgramOfferingService,
@@ -93,18 +84,15 @@ import { SystemUsersService } from "@sims/services/system-users";
     SupportingUserService,
     CRAIncomeVerificationService,
     ApplicationService,
-    SFASApplicationService,
-    SFASPartTimeApplicationsService,
     StudentFileService,
     MSFAANumberService,
     SshService,
     MSFAARequestService,
     MSFAAIntegrationService,
     MSFAAResponseService,
-    SFASIntegrationProcessingService,
-    SFASIntegrationService,
     SFASIndividualService,
-    SFASRestrictionService,
+    SFASApplicationService,
+    SFASPartTimeApplicationsService,
     ECertFileHandler,
     DisbursementScheduleErrorsService,
     ECertFullTimeIntegrationService,

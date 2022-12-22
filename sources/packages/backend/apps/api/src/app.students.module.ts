@@ -5,19 +5,15 @@ import {
   StudentService,
   ProgramYearService,
   EducationProgramOfferingService,
-  SFASApplicationService,
-  SFASPartTimeApplicationsService,
   DisbursementSchedulerService,
   InstitutionLocationService,
   EducationProgramService,
   StudentFileService,
-  SFASIndividualService,
   StudentRestrictionService,
   DesignationAgreementLocationService,
   StudentAssessmentService,
   StudentAppealService,
   StudentAppealRequestsService,
-  ATBCService,
   RestrictionService,
   EducationProgramOfferingValidationService,
   DisbursementReceiptService,
@@ -51,9 +47,15 @@ import {
   MSFAANumberService,
   IntegrationStudentRestrictionService,
 } from "@sims/integrations/services";
+import {
+  SFASIndividualService,
+  SFASApplicationService,
+  SFASPartTimeApplicationsService,
+} from "@sims/services/sfas";
+import { ATBCIntegrationModule } from "@sims/integrations/atbc-integration";
 
 @Module({
-  imports: [AuthModule, ConfigModule],
+  imports: [AuthModule, ConfigModule, ATBCIntegrationModule],
   controllers: [
     ApplicationStudentsController,
     StudentStudentsController,
@@ -74,8 +76,6 @@ import {
     StudentService,
     ProgramYearService,
     EducationProgramOfferingService,
-    SFASApplicationService,
-    SFASPartTimeApplicationsService,
     DisbursementSchedulerService,
     InstitutionLocationService,
     EducationProgramService,
@@ -83,6 +83,8 @@ import {
     StudentFileService,
     MSFAANumberService,
     SFASIndividualService,
+    SFASApplicationService,
+    SFASPartTimeApplicationsService,
     StudentRestrictionService,
     DesignationAgreementLocationService,
     StudentAssessmentService,
@@ -91,7 +93,6 @@ import {
     StudentAppealRequestsService,
     AssessmentControllerService,
     StudentControllerService,
-    ATBCService,
     RestrictionService,
     StudentAccountApplicationsService,
     EducationProgramOfferingControllerService,
