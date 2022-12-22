@@ -23,7 +23,7 @@ import { MaxJobsToActivate } from "../../types";
 @Controller()
 export class DisbursementController {
   constructor(
-    private readonly DisbursementSchedulerService: DisbursementSchedulerService,
+    private readonly disbursementSchedulerService: DisbursementSchedulerService,
   ) {}
 
   /**
@@ -43,7 +43,7 @@ export class DisbursementController {
     >,
   ): Promise<MustReturnJobActionAcknowledgement> {
     try {
-      await this.DisbursementSchedulerService.createDisbursementSchedules(
+      await this.disbursementSchedulerService.createDisbursementSchedules(
         job.variables.assessmentId,
         job.variables.disbursementSchedules,
       );
