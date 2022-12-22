@@ -15,7 +15,7 @@ import { InstitutionUserPersistAPIInDTO } from "./models/institution-user-persis
 import { BCeIDAccountsAPIOutDTO } from "./models/bceid-accounts.dto";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { AllowAuthorizedParty, AllowInactiveUser } from "../../auth/decorators";
-import { ApiTags } from "@nestjs/swagger";
+import { ApiTags, ApiUnprocessableEntityResponse } from "@nestjs/swagger";
 import { BCeIDAccountTypeCodes } from "../../services/bceid/bceid.models";
 import { UserControllerService } from "..";
 
@@ -60,6 +60,10 @@ export class UserInstitutionsController extends BaseController {
     }
   }
 
+  @ApiUnprocessableEntityResponse({
+    description:
+      "Not able to retrieve BCeID business account details for the current authenticated user.",
+  })
   @Get("bceid-accounts")
   async getAllBCeIDs(
     @UserToken() userToken: IUserToken,
@@ -67,13 +71,16 @@ export class UserInstitutionsController extends BaseController {
     return await this.userControllerService.getAllBCeIDs(userToken);
   }
 
-  @Get("/institution")
+  @ApiUnprocessableEntityResponse({
+    description: "No user record found for user.",
+  })
+  @Get("institution")
   async institutionDetail(
     @UserToken() userToken: IUserToken,
   ): Promise<InstitutionUserAPIOutDTO> {
     const user = await this.service.getActiveUser(userToken.userName);
     if (!user) {
-      throw new UnprocessableEntityException("No user record found for user");
+      throw new UnprocessableEntityException("No user record found for user.");
     }
     const institutionUser = new InstitutionUserAPIOutDTO();
     institutionUser.userEmail = user.email;
@@ -82,14 +89,17 @@ export class UserInstitutionsController extends BaseController {
     return institutionUser;
   }
 
-  @Patch("/institution")
+  @ApiUnprocessableEntityResponse({
+    description: "No user record found for user.",
+  })
+  @Patch("institution")
   async updateInstitutionUser(
     @UserToken() userToken: IUserToken,
     @Body() body: InstitutionUserPersistAPIInDTO,
   ): Promise<void> {
     const user = await this.service.getActiveUser(userToken.userName);
     if (!user) {
-      throw new UnprocessableEntityException("No user record found for user");
+      throw new UnprocessableEntityException("No user record found for user.");
     }
     this.service.updateUserEmail(user.id, body.userEmail);
   }

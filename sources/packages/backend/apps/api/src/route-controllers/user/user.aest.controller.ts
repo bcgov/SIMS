@@ -7,7 +7,7 @@ import { BCeIDAccountsAPIOutDTO } from "./models/bceid-accounts.dto";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { UserGroups } from "../../auth/user-groups.enum";
 import { AllowAuthorizedParty, Groups } from "../../auth/decorators";
-import { ApiTags } from "@nestjs/swagger";
+import { ApiTags, ApiUnprocessableEntityResponse } from "@nestjs/swagger";
 import { UserControllerService } from "..";
 
 @AllowAuthorizedParty(AuthorizedParties.aest)
@@ -21,6 +21,10 @@ export class UserAESTController extends BaseController {
     super();
   }
 
+  @ApiUnprocessableEntityResponse({
+    description:
+      "Not able to retrieve BCeID business account details for the current authenticated user.",
+  })
   @Get("bceid-accounts")
   async getAllBCeIDs(
     @UserToken() userToken: IUserToken,
