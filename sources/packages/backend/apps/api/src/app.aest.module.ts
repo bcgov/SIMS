@@ -66,6 +66,7 @@ import { ApplicationControllerService } from "./route-controllers/application/ap
 import { InstitutionUserControllerService } from "./route-controllers/institution-user/institution-user.controller.service";
 import { WorkflowClientService, SequenceControlService } from "@sims/services";
 import { UserAESTController } from "./route-controllers/user/user.aest.controller";
+import { UserControllerService } from "./route-controllers/user/user.controller.service";
 
 @Module({
   imports: [AuthModule],
@@ -135,6 +136,7 @@ import { UserAESTController } from "./route-controllers/user/user.aest.controlle
     EducationProgramOfferingControllerService,
     EducationProgramOfferingValidationService,
     DisbursementReceiptService,
+    UserControllerService,
   ],
 })
 export class AppAESTModule {}

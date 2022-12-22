@@ -49,6 +49,7 @@ import { AuthModule } from "./auth/auth.module";
 import { EducationProgramOfferingValidationService } from "./services/education-program-offering/education-program-offering-validation.service";
 import { WorkflowClientService, SequenceControlService } from "@sims/services";
 import { UserInstitutionsController } from "./route-controllers/user/user.institutions.controller";
+import { UserControllerService } from "./route-controllers";
 
 @Module({
   imports: [AuthModule],
@@ -102,6 +103,7 @@ import { UserInstitutionsController } from "./route-controllers/user/user.instit
     SFASIndividualService,
     EducationProgramOfferingImportCSVService,
     EducationProgramOfferingValidationService,
+    UserControllerService,
   ],
 })
 export class AppInstitutionsModule {}
