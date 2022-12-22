@@ -1,5 +1,22 @@
 import DashboardInstitutionObject, {
+  CourseLoadCalculationOptions,
   CredentialTypes,
+  DeliveredOnlineAlsoOnsiteOptions,
+  EntranceRequirementsOptions,
+  EslEligibilityOptions,
+  HasInternationalExchangeOptions,
+  HasInternationalExchangeProgramEligibilityOptions,
+  HasTravelOptions,
+  IncludeMinimum15InstructionalHours,
+  IncludeMinimum20InstructionalHours,
+  IsAviationProgram,
+  JointInstitutionOptions as JointInstitutionPartnershipOptions,
+  ProgramDeliveryOptions,
+  ProgramIntensityOptions,
+  ProgramLengthOptions,
+  RegulatoryBodyOptions,
+  TravelProgramEligibilityOptions,
+  WILComponentOptions,
 } from "../../page-objects/Institution-objects/DashboardInstitutionObject";
 import LocationProgramObject from "../../page-objects/Institution-objects/LocationProgramObject";
 import InstitutionHelperActions from "../../custom-command/institution/common-helper-functions.cy";
@@ -12,6 +29,10 @@ const institutionHelperActions = new InstitutionHelperActions();
 const programDetailViewObject = new ProgramDetailViewObject();
 
 describe("Location Program", () => {
+  // This will be replaced if necessary with the program created by the data seeds
+  const existingProgram = "existingProgram";
+  const nonExistingProgram = "nonExistingProgram";
+
   before(() => {
     institutionHelperActions.loginIntoInstitutionSingleLocation();
   });
@@ -29,7 +50,7 @@ describe("Location Program", () => {
   it("Verify that user when searched for incorrect programs will return correct results", () => {
     dashboardInstitutionObject
       .institutionSearchInputBox()
-      .type("Dummy")
+      .type(nonExistingProgram)
       .type("{enter}");
     dashboardInstitutionObject.noProgramsYetText().should("be.visible");
   });
@@ -37,7 +58,7 @@ describe("Location Program", () => {
   it("Verify that user when searched for programs will display correct results", () => {
     dashboardInstitutionObject
       .institutionSearchInputBox()
-      .type("Testing")
+      .type(existingProgram)
       .type("{enter}");
     dashboardInstitutionObject
       .institutionProgramName()
@@ -62,7 +83,7 @@ describe("Location Program", () => {
   it("Verify that user is able to view the detail of the program", () => {
     dashboardInstitutionObject
       .institutionSearchInputBox()
-      .type("Offering1")
+      .type(existingProgram)
       .type("{enter}");
     dashboardInstitutionObject.viewProgramButton().click();
     programDetailViewObject.programDetailHeader().should("be.visible");
@@ -76,7 +97,6 @@ describe("Location Program", () => {
 });
 
 describe("Location Program", () => {
-  // Create
   before(() => {
     institutionHelperActions.loginIntoInstitutionSingleLocation();
   });
@@ -125,9 +145,7 @@ describe("Location Program", () => {
         .institutionProgramCIPInputText()
         .clear()
         .type(data);
-      dashboardInstitutionObject
-        .incorrectFormatErrorText()
-        .should("be.visible");
+      dashboardInstitutionObject.invalidFormatErrorText().should("be.visible");
     });
   });
 
@@ -137,9 +155,7 @@ describe("Location Program", () => {
         .institutionProgramCIPInputText()
         .clear()
         .type(data);
-      dashboardInstitutionObject
-        .incorrectFormatErrorText()
-        .should("be.visible");
+      dashboardInstitutionObject.invalidFormatErrorText().should("be.visible");
     });
   });
 
@@ -150,6 +166,7 @@ describe("Location Program", () => {
   });
 
   it("Verify that without filling mandatory fields, proper error message must be displayed", () => {
+    locationProgramObject.submitButton().click();
     locationProgramObject
       .percentageOfProgramESLErrorMessage()
       .should("be.visible");
@@ -166,7 +183,150 @@ describe("Location Program", () => {
     locationProgramObject.declarationErrorMessage().should("be.visible");
   });
 
-  it.only("Verify that all credential types exist", () => {
-    dashboardInstitutionObject.studentPartTimeBasisRadioButton();
+  it("Verify that there are two options (yes and no) for program intensity question", () => {
+    Object.values(ProgramIntensityOptions).forEach((option) => {
+      dashboardInstitutionObject.studentPartTimeBasisRadioButton(option);
+    });
+  });
+
+  it("Verify that there are two options (onsite and offsite) for program deliverability question", () => {
+    Object.values(ProgramDeliveryOptions).forEach((option) => {
+      dashboardInstitutionObject.deliverabilityOnsiteRadioButton(option);
+    });
+  });
+
+  it("Verify that there are two options (yes and no) for program delivered 100% on site question", () => {
+    dashboardInstitutionObject.deliverabilityOnsiteRadioButton(
+      ProgramDeliveryOptions.Online
+    );
+    Object.values(DeliveredOnlineAlsoOnsiteOptions).forEach((option) => {
+      dashboardInstitutionObject.deliveredOnlineAlsoRadioButton(option);
+    });
+  });
+
+  it("Verify that there are two options (yes and no) for credits earned when course delivered on-site question", () => {
+    dashboardInstitutionObject.deliverabilityOnsiteRadioButton(
+      ProgramDeliveryOptions.Online
+    );
+    Object.values(DeliveredOnlineAlsoOnsiteOptions).forEach((option) => {
+      dashboardInstitutionObject.deliveredOnlineAlsoRadioButton(option);
+    });
+  });
+
+  it("Verify that all the options are available for program length dropdown", () => {
+    Object.values(ProgramLengthOptions).forEach((option) => {
+      dashboardInstitutionObject.selectProgramLength(option);
+    });
+  });
+
+  it("Verify that there are two options (credit based and hours based) for program course load question", () => {
+    Object.values(CourseLoadCalculationOptions).forEach((option) => {
+      dashboardInstitutionObject.courseLoadCalculationRadioButton(option);
+    });
+  });
+
+  it("Verify that there are two options (yes and no) for minimum instructional hours per week question is displayed", () => {
+    dashboardInstitutionObject.courseLoadCalculationRadioButton(
+      CourseLoadCalculationOptions.HoursBased
+    );
+    Object.values(IncludeMinimum20InstructionalHours).forEach((option) => {
+      dashboardInstitutionObject.includeMinimum20InstructionalHoursRadioButton(
+        option
+      );
+    });
+  });
+
+  it("Verify that there are two options (yes and no) for is Aviation program", () => {
+    dashboardInstitutionObject.courseLoadCalculationRadioButton(
+      CourseLoadCalculationOptions.HoursBased
+    );
+    dashboardInstitutionObject.includeMinimum20InstructionalHoursRadioButton(
+      IncludeMinimum20InstructionalHours.No
+    );
+    Object.values(IsAviationProgram).forEach((option) => {
+      dashboardInstitutionObject.isAviationProgramRadioButton(option);
+    });
+  });
+
+  it("Verify that there are two options (yes and no) for minimum instructional hours for Aviation program", () => {
+    dashboardInstitutionObject.courseLoadCalculationRadioButton(
+      CourseLoadCalculationOptions.HoursBased
+    );
+    dashboardInstitutionObject.includeMinimum20InstructionalHoursRadioButton(
+      IncludeMinimum20InstructionalHours.No
+    );
+    dashboardInstitutionObject.isAviationProgramRadioButton(
+      IsAviationProgram.Yes
+    );
+    Object.values(IncludeMinimum15InstructionalHours).forEach((option) => {
+      dashboardInstitutionObject.includeMinimum15InstructionalHoursRadioButton(
+        option
+      );
+    });
+  });
+
+  it("Verify that all regulatory body options exist", () => {
+    Object.values(RegulatoryBodyOptions).forEach((regulatoryBody) => {
+      dashboardInstitutionObject.selectRegulatoryBody(regulatoryBody);
+    });
+  });
+
+  it("Verify that all options are available for entrance requirement question", () => {
+    Object.values(EntranceRequirementsOptions).forEach((option) => {
+      dashboardInstitutionObject.entranceRequirementsRadioButton(option);
+    });
+  });
+
+  it("Verify that two options (<20% and >20%) for ESL content question", () => {
+    Object.values(EslEligibilityOptions).forEach((option) => {
+      dashboardInstitutionObject.eslEligibilityRadioButton(option);
+    });
+  });
+
+  it("Verify that two options (yes and no) for partnership with institution question", () => {
+    Object.values(JointInstitutionPartnershipOptions).forEach((option) => {
+      dashboardInstitutionObject.hasJointInstitutionRadioButton(option);
+    });
+  });
+
+  it("Verify that two options (yes and no) for work integrated learning question", () => {
+    dashboardInstitutionObject.hasJointInstitutionRadioButton(
+      JointInstitutionPartnershipOptions.No
+    );
+    Object.values(WILComponentOptions).forEach((option) => {
+      dashboardInstitutionObject.hasWILComponentRadioButton(option);
+    });
+  });
+
+  it("Verify that two options (yes and no) for field trip question", () => {
+    Object.values(HasTravelOptions).forEach((option) => {
+      dashboardInstitutionObject.hasTravelRadioButton(option);
+    });
+  });
+
+  it("Verify that two options (yes and no) for field trip travel eligibility question", () => {
+    dashboardInstitutionObject.hasTravelRadioButton(HasTravelOptions.Yes);
+    Object.values(TravelProgramEligibilityOptions).forEach((option) => {
+      dashboardInstitutionObject.hasTravelEligibilityRadioButton(option);
+    });
+  });
+
+  it("Verify that two options (yes and no) for international exchange question", () => {
+    Object.values(HasInternationalExchangeOptions).forEach((option) => {
+      dashboardInstitutionObject.hasInternationalExchangeRadioButton(option);
+    });
+  });
+
+  it("Verify that two options (yes and no) for international exchange question", () => {
+    dashboardInstitutionObject.hasInternationalExchangeRadioButton(
+      HasInternationalExchangeOptions.Yes
+    );
+    Object.values(HasInternationalExchangeProgramEligibilityOptions).forEach(
+      (option) => {
+        dashboardInstitutionObject.hasInternationalExchangeEligibilityRadioButton(
+          option
+        );
+      }
+    );
   });
 });

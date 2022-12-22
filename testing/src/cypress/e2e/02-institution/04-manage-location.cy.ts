@@ -588,7 +588,7 @@ describe("Manage Location", () => {
   });
 });
 
-describe("Add New Location and update for the institution", () => {
+describe.skip("Add New Location and update for the institution", () => {
   let token: string;
   const uniqueId1 = institutionHelperActions.getUniqueId();
   const uniqueId2 = institutionHelperActions.getUniqueId();
