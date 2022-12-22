@@ -18,7 +18,7 @@ export default class BaseMethods {
   /**
    *
    * @param cyId data-cy id for the Element
-   * @param optionToCheck checkbox to be selected
+   * @param optionToCheck checkbox/radio button to be selected
    */
   selectCheckBox(cyId: string, optionToCheck: string) {
     cy.get(`[data-cy='${cyId}']`).check(optionToCheck).should("be.checked");

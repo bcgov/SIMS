@@ -208,9 +208,6 @@ describe("Location Program", () => {
     dashboardInstitutionObject.deliverabilityOnsiteRadioButton(
       ProgramDeliveryOptions.Online
     );
-    dashboardInstitutionObject.deliverabilityOnsiteRadioButton(
-      ProgramDeliveryOptions.Online
-    );
     Object.values(DeliveredOnlineAlsoOnsiteOptions).forEach((option) => {
       dashboardInstitutionObject.deliveredOnlineAlsoRadioButton(option);
     });
