@@ -1,6 +1,6 @@
 export * from "./ssh/ssh.service";
 export * from "./ssh/sftp-integration-base";
-export * from "./student-assessment/student-assessment.service";
+export * from "./student-assessment/integration-student-assessment.service";
 export * from "./cra-income-verification/cra-income-verification.service";
 export * from "./disbursement-receipt/disbursement-receipt.model";
 export * from "./disbursement-receipt/disbursement-receipt.service";
@@ -14,7 +14,6 @@ export * from "./report/report.service";
 export * from "./restriction/federal-restriction.service";
 export * from "./restriction/models/federal-restriction.model";
 export * from "./restriction/integration-restriction.service";
-export * from "../../../services/src/restriction/student-restriction.service";
 export * from "./student/student.service";
 export * from "./atbc/atbc.service";
 export * from "./atbc/models/atbc.model";

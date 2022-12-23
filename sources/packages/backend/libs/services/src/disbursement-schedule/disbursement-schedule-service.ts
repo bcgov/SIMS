@@ -28,10 +28,8 @@ import {
 } from "../constants";
 import { SystemUsersService } from "@sims/services/system-users";
 import * as dayjs from "dayjs";
-import {
-  ECertDisbursementSchedule,
-  StudentRestrictionsService,
-} from "@sims/integrations/services";
+import { ECertDisbursementSchedule } from "@sims/integrations/services";
+import { StudentRestrictionsService } from "../restriction/student-restriction.service";
 
 // Timeout to handle the worst-case scenario where the commit/rollback
 // was not executed due to a possible catastrophic failure.

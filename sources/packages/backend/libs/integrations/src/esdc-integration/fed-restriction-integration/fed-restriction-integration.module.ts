@@ -3,8 +3,8 @@ import {
   FederalRestrictionService,
   IntegrationRestrictionService,
   SshService,
-  StudentRestrictionsService,
 } from "@sims/integrations/services";
+import { StudentRestrictionsService } from "@sims/services";
 import { FedRestrictionIntegrationService } from "./fed-restriction-integration.service";
 import { FedRestrictionProcessingService } from "./fed-restriction-processing.service";
 

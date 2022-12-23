@@ -7,7 +7,7 @@ import { addDays, dateEqualTo } from "@sims/utilities";
  * Manages the student assessment related operations.
  */
 @Injectable()
-export class StudentAssessmentService extends RecordDataModelService<StudentAssessment> {
+export class IntegrationStudentAssessmentService extends RecordDataModelService<StudentAssessment> {
   constructor(dataSource: DataSource) {
     super(dataSource.getRepository(StudentAssessment));
   }

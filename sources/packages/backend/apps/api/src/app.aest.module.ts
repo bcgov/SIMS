@@ -59,12 +59,12 @@ import {
   ApplicationControllerService,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
-import { SequenceControlService, WorkflowClientService } from "@sims/services";
 import {
-  MSFAANumberService,
-  ReportService,
+  SequenceControlService,
   StudentRestrictionsService,
-} from "@sims/integrations/services";
+  WorkflowClientService,
+} from "@sims/services";
+import { MSFAANumberService, ReportService } from "@sims/integrations/services";
 import {
   SFASIndividualService,
   SFASApplicationService,

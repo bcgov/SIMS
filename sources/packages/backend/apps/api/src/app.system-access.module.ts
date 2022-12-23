@@ -26,8 +26,8 @@ import {
   WorkflowClientService,
   SequenceControlService,
   DisbursementSchedulerService,
+  StudentRestrictionsService,
 } from "@sims/services";
-import { StudentRestrictionsService } from "@sims/integrations/services";
 import { AuthModule } from "./auth/auth.module";
 import {
   SFASIndividualService,

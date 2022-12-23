@@ -42,11 +42,12 @@ import {
 import { AuthModule } from "./auth/auth.module";
 import { ConfigModule } from "@sims/utilities/config";
 import { ATBCStudentController } from "./route-controllers/atbc/atbc.students.controller";
-import { SequenceControlService, WorkflowClientService } from "@sims/services";
 import {
-  MSFAANumberService,
+  SequenceControlService,
   StudentRestrictionsService,
-} from "@sims/integrations/services";
+  WorkflowClientService,
+} from "@sims/services";
+import { MSFAANumberService } from "@sims/integrations/services";
 import {
   SFASIndividualService,
   SFASApplicationService,

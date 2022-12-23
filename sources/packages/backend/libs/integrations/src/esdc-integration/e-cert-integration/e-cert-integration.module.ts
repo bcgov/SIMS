@@ -2,6 +2,7 @@ import { Module } from "@nestjs/common";
 import {
   DisbursementSchedulerService,
   SequenceControlService,
+  StudentRestrictionsService,
 } from "@sims/services";
 import { ECertFileHandler } from "./e-cert-file-handler";
 import { ECertFullTimeFileFooter } from "./e-cert-full-time-integration/e-cert-files/e-cert-file-footer";
@@ -15,7 +16,7 @@ import {
   DisbursementScheduleErrorsService,
   IntegrationRestrictionService,
   SshService,
-  StudentRestrictionsService,
+  IntegrationStudentAssessmentService,
 } from "@sims/integrations/services";
 import { StudentService } from "@sims/services/student/student.service";
 import { SystemUsersService } from "@sims/services/system-users";
@@ -28,7 +29,7 @@ import { SystemUsersService } from "@sims/services/system-users";
     ECertPartTimeIntegrationService,
     SequenceControlService,
     DisbursementSchedulerService,
-    StudentRestrictionsService,
+    IntegrationStudentAssessmentService,
     ECertFileHandler,
     ECertPartTimeFileHeader,
     ECertPartTimeFileFooter,
@@ -38,6 +39,7 @@ import { SystemUsersService } from "@sims/services/system-users";
     IntegrationRestrictionService,
     StudentService,
     SystemUsersService,
+    StudentRestrictionsService,
   ],
   exports: [
     ECertFullTimeIntegrationService,
@@ -49,6 +51,7 @@ import { SystemUsersService } from "@sims/services/system-users";
     ECertFullTimeFileFooter,
     DisbursementScheduleErrorsService,
     IntegrationRestrictionService,
+    IntegrationStudentAssessmentService,
   ],
 })
 export class ECertIntegrationModule {}

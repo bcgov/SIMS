@@ -28,8 +28,8 @@ import {
 } from "./guards";
 import { RolesGuard } from "./guards/roles.guard";
 import { ConfigModule } from "@sims/utilities/config";
-import { StudentRestrictionsService } from "@sims/integrations/services";
 import { SFASIndividualService } from "@sims/services/sfas";
+import { StudentRestrictionsService } from "@sims/services";
 
 const jwtModule = JwtModule.register({
   publicKey: KeycloakConfig.PEM_PublicKey,

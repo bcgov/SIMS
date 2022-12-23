@@ -12,9 +12,9 @@ import { FEDERAL_RESTRICTIONS_BULK_INSERT_AMOUNT } from "@sims/services/constant
 import {
   FederalRestrictionService,
   IntegrationRestrictionService,
-  StudentRestrictionsService,
 } from "@sims/integrations/services";
 import { SystemUsersService } from "@sims/services/system-users";
+import { StudentRestrictionsService } from "@sims/services";
 
 /**
  * Manages the process to import the entire snapshot of federal

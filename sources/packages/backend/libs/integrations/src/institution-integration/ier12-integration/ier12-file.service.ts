@@ -1,7 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { StudentAssessment } from "@sims/sims-db";
 import { LoggerService, InjectLogger } from "@sims/utilities/logger";
-import { StudentAssessmentService } from "@sims/integrations/services";
 import {
   ConfigService,
   InstitutionIntegrationConfig,
@@ -12,6 +11,7 @@ import {
   IER12Record,
   IER12UploadResult,
 } from "./models/ier12-integration.model";
+import { IntegrationStudentAssessmentService } from "@sims/integrations/services";
 
 @Injectable()
 export class IER12FileService {
@@ -19,7 +19,7 @@ export class IER12FileService {
   constructor(
     config: ConfigService,
     private readonly ier12IntegrationService: IER12IntegrationService,
-    private readonly studentAssessmentService: StudentAssessmentService,
+    private readonly integrationStudentAssessmentService: IntegrationStudentAssessmentService,
   ) {
     this.institutionIntegrationConfig = config.institutionIntegration;
   }
@@ -38,7 +38,9 @@ export class IER12FileService {
   async processIER12File(generatedDate?: string): Promise<IER12UploadResult[]> {
     this.logger.log(`Retrieving pending assessment for IER 12...`);
     const pendingAssessments =
-      await this.studentAssessmentService.getPendingAssessment(generatedDate);
+      await this.integrationStudentAssessmentService.getPendingAssessment(
+        generatedDate,
+      );
     if (!pendingAssessments.length) {
       return [
         {

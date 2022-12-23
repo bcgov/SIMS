@@ -43,11 +43,12 @@ import {
   EducationProgramOfferingControllerService,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
-import { SequenceControlService, WorkflowClientService } from "@sims/services";
 import {
-  MSFAANumberService,
+  SequenceControlService,
   StudentRestrictionsService,
-} from "@sims/integrations/services";
+  WorkflowClientService,
+} from "@sims/services";
+import { MSFAANumberService } from "@sims/integrations/services";
 import {
   SFASIndividualService,
   SFASApplicationService,

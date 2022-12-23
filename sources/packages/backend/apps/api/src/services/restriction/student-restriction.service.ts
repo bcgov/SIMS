@@ -16,7 +16,7 @@ import { CustomNamedError } from "@sims/utilities";
 import { RestrictionService } from "./restriction.service";
 import { StudentService } from "../student/student.service";
 import { RestrictionCode } from "./models/restriction.model";
-import { StudentRestrictionsService } from "@sims/integrations/services";
+import { StudentRestrictionsService } from "@sims/services";
 export const RESTRICTION_NOT_ACTIVE = "RESTRICTION_NOT_ACTIVE";
 export const RESTRICTION_NOT_PROVINCIAL = "RESTRICTION_NOT_PROVINCIAL";
 
