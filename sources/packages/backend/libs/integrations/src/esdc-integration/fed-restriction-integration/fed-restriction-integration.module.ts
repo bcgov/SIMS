@@ -3,7 +3,7 @@ import {
   FederalRestrictionService,
   IntegrationRestrictionService,
   SshService,
-  IntegrationStudentRestrictionService,
+  StudentRestrictionsService,
 } from "@sims/integrations/services";
 import { FedRestrictionIntegrationService } from "./fed-restriction-integration.service";
 import { FedRestrictionProcessingService } from "./fed-restriction-processing.service";
@@ -14,9 +14,14 @@ import { FedRestrictionProcessingService } from "./fed-restriction-processing.se
     FedRestrictionIntegrationService,
     FedRestrictionProcessingService,
     IntegrationRestrictionService,
-    IntegrationStudentRestrictionService,
+    StudentRestrictionsService,
     FederalRestrictionService,
   ],
-  exports: [FedRestrictionIntegrationService, FedRestrictionProcessingService],
+  exports: [
+    FedRestrictionIntegrationService,
+    FedRestrictionProcessingService,
+    FederalRestrictionService,
+    IntegrationRestrictionService,
+  ],
 })
 export class FedRestrictionIntegrationModule {}

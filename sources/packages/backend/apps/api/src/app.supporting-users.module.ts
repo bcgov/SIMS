@@ -21,7 +21,7 @@ import { SupportingUserSupportingUsersController } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
 import {
   MSFAANumberService,
-  IntegrationStudentRestrictionService,
+  StudentRestrictionsService,
 } from "@sims/integrations/services";
 
 @Module({
@@ -44,7 +44,7 @@ import {
     SFASPartTimeApplicationsService,
     EducationProgramOfferingValidationService,
     WorkflowClientService,
-    IntegrationStudentRestrictionService,
+    StudentRestrictionsService,
   ],
 })
 export class AppSupportingUsersModule {}

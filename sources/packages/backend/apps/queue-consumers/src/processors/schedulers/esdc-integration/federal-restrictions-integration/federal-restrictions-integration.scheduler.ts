@@ -1,12 +1,11 @@
 import { InjectQueue, Process, Processor } from "@nestjs/bull";
 import { FedRestrictionProcessingService } from "@sims/integrations/esdc-integration";
 import { QueueService } from "@sims/services/queue";
-import { SystemUsersService } from "@sims/services/system-users";
 import { QueueNames } from "@sims/utilities";
 import { Job, Queue } from "bull";
 import { QueueProcessSummary } from "../../../models/processors.models";
 import { BaseScheduler } from "../../base-scheduler";
-import { ESDCFileResponse } from "../models/esdc.dto";
+import { ESDCFileResponse } from "../models/esdc";
 
 @Processor(QueueNames.FederalRestrictionsIntegration)
 export class FederalRestrictionsIntegrationScheduler extends BaseScheduler<void> {
@@ -15,7 +14,6 @@ export class FederalRestrictionsIntegrationScheduler extends BaseScheduler<void>
     schedulerQueue: Queue<void>,
     queueService: QueueService,
     private readonly processingService: FedRestrictionProcessingService,
-    private readonly systemUsersService: SystemUsersService,
   ) {
     super(schedulerQueue, queueService);
   }
@@ -34,13 +32,15 @@ export class FederalRestrictionsIntegrationScheduler extends BaseScheduler<void>
       jobLogger: job,
     });
     await summary.info(
-      `Processing CRA integration job ${job.id} of type ${job.name}.`,
+      `Processing federal restriction integration job ${job.id} of type ${job.name}.`,
     );
     await summary.info("Starting federal restrictions import...");
-    const auditUser = await this.systemUsersService.systemUser();
-    const uploadResult = await this.processingService.process(auditUser.id);
+    const uploadResult = await this.processingService.process();
     await summary.info("Federal restrictions import process finished.");
     await this.cleanSchedulerQueueHistory();
+    await summary.info(
+      `Completed federal restriction integration job ${job.id} of type ${job.name}.`,
+    );
     return {
       processSummary: uploadResult.processSummary,
       errorsSummary: uploadResult.errorsSummary,

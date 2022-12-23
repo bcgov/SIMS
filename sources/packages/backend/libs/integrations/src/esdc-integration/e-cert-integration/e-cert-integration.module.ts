@@ -15,7 +15,7 @@ import {
   DisbursementScheduleErrorsService,
   IntegrationRestrictionService,
   SshService,
-  IntegrationStudentRestrictionService,
+  StudentRestrictionsService,
 } from "@sims/integrations/services";
 import { StudentService } from "@sims/services/student/student.service";
 import { SystemUsersService } from "@sims/services/system-users";
@@ -28,7 +28,7 @@ import { SystemUsersService } from "@sims/services/system-users";
     ECertPartTimeIntegrationService,
     SequenceControlService,
     DisbursementSchedulerService,
-    IntegrationStudentRestrictionService,
+    StudentRestrictionsService,
     ECertFileHandler,
     ECertPartTimeFileHeader,
     ECertPartTimeFileFooter,
@@ -43,7 +43,12 @@ import { SystemUsersService } from "@sims/services/system-users";
     ECertFullTimeIntegrationService,
     ECertPartTimeIntegrationService,
     ECertFileHandler,
-    IntegrationStudentRestrictionService,
+    ECertPartTimeFileHeader,
+    ECertPartTimeFileFooter,
+    ECertFullTimeFileHeader,
+    ECertFullTimeFileFooter,
+    DisbursementScheduleErrorsService,
+    IntegrationRestrictionService,
   ],
 })
 export class ECertIntegrationModule {}

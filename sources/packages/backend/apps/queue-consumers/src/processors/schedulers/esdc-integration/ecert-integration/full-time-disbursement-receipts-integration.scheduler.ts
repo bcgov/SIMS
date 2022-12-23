@@ -6,7 +6,7 @@ import { QueueNames } from "@sims/utilities";
 import { Job, Queue } from "bull";
 import { QueueProcessSummary } from "../../../models/processors.models";
 import { BaseScheduler } from "../../base-scheduler";
-import { ESDCFileResponse } from "../models/esdc.dto";
+import { ESDCFileResponse } from "../models/esdc";
 
 @Processor(QueueNames.FullTimeDisbursementReceiptsFileIntegration)
 export class FullTimeDisbursementReceiptsFileIntegrationScheduler extends BaseScheduler<void> {
@@ -34,12 +34,15 @@ export class FullTimeDisbursementReceiptsFileIntegrationScheduler extends BaseSc
       jobLogger: job,
     });
     await summary.info(
-      `Processing CRA integration job ${job.id} of type ${job.name}.`,
+      `Processing full time disbursement receipts integration job ${job.id} of type ${job.name}.`,
     );
     const auditUser = await this.systemUsersService.systemUser();
     const processResponse =
       await this.disbursementReceiptProcessingService.process(auditUser.id);
     await this.cleanSchedulerQueueHistory();
+    await summary.info(
+      `Completed full time disbursement receipts integration job ${job.id} of type ${job.name}.`,
+    );
     return processResponse.map((response) => ({
       processSummary: response.processSummary,
       errorsSummary: response.errorsSummary,

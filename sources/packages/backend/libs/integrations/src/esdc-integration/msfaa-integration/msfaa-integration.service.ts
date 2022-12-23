@@ -151,24 +151,20 @@ export class MSFAAIntegrationService {
     let filesToProcess: Client.FileInfo[];
     const client = await this.getClient();
     try {
-      if (offeringIntensity === OfferingIntensity.fullTime) {
-        filesToProcess = await client.list(
-          `${this.esdcConfig.ftpResponseFolder}`,
-          new RegExp(
-            `^${this.esdcConfig.environmentCode}EDU\.PBC\.MSFA\.REC\.[0-9]{8}\.*`,
-            "i",
-          ),
-        );
-      }
-      if (offeringIntensity === OfferingIntensity.partTime) {
-        filesToProcess = await client.list(
-          `${this.esdcConfig.ftpResponseFolder}`,
-          new RegExp(
-            `^${this.esdcConfig.environmentCode}EDU\.PBC\.MSFA\.REC\.PT\.[0-9]{8}\.*`,
-            "i",
-          ),
-        );
-      }
+      const pattern =
+        offeringIntensity === OfferingIntensity.fullTime
+          ? new RegExp(
+              `^${this.esdcConfig.environmentCode}EDU\.PBC\.MSFA\.REC\.[0-9]{8}\.*`,
+              "i",
+            )
+          : new RegExp(
+              `^${this.esdcConfig.environmentCode}EDU\.PBC\.MSFA\.REC\.PT\.[0-9]{8}\.*`,
+              "i",
+            );
+      filesToProcess = await client.list(
+        `${this.esdcConfig.ftpResponseFolder}`,
+        pattern,
+      );
     } finally {
       await SshService.closeQuietly(client);
     }

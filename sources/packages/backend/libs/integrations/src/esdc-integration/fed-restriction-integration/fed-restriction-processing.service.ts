@@ -12,8 +12,9 @@ import { FEDERAL_RESTRICTIONS_BULK_INSERT_AMOUNT } from "@sims/services/constant
 import {
   FederalRestrictionService,
   IntegrationRestrictionService,
-  IntegrationStudentRestrictionService,
+  StudentRestrictionsService,
 } from "@sims/integrations/services";
+import { SystemUsersService } from "@sims/services/system-users";
 
 /**
  * Manages the process to import the entire snapshot of federal
@@ -30,7 +31,8 @@ export class FedRestrictionProcessingService {
     private readonly integrationRestrictionService: IntegrationRestrictionService,
     private readonly federalRestrictionService: FederalRestrictionService,
     private readonly integrationService: FedRestrictionIntegrationService,
-    private readonly integrationStudentRestrictionService: IntegrationStudentRestrictionService,
+    private readonly studentRestrictionsService: StudentRestrictionsService,
+    private readonly systemUsersService: SystemUsersService,
   ) {
     this.esdcConfig = config.esdcIntegration;
   }
@@ -43,9 +45,10 @@ export class FedRestrictionProcessingService {
    * but it is not present on federal data, deactivate it;
    * 3. If the restriction is present on federal data and it is also
    * present and active on student data, update the updated_at only.
-   * @param auditUserId user that should be considered the one that is causing the changes.
+   * @returns process response.
    */
-  async process(auditUserId: number): Promise<ProcessSFTPResponseResult> {
+  async process(): Promise<ProcessSFTPResponseResult> {
+    const auditUser = await this.systemUsersService.systemUser();
     // Get the list of all files from SFTP ordered by file name.
     const fileSearch = new RegExp(
       `^${this.esdcConfig.environmentCode}CSLS\\.PBC\\.RESTR\\.LIST\\.D[\\w]*\\.[\\d]*$`,
@@ -62,7 +65,7 @@ export class FedRestrictionProcessingService {
       // Process only the most updated file.
       result = await this.processAllRestrictions(
         filePaths[filePaths.length - 1],
-        auditUserId,
+        auditUser.id,
       );
       // If there are more than one file, delete it.
       // Only the most updated file matters because it represents the entire data snapshot.
@@ -259,7 +262,7 @@ export class FedRestrictionProcessingService {
           this.logger.log(
             `Generating ${insertedRestrictionsIDs.length} notification(s).`,
           );
-          await this.integrationStudentRestrictionService.createNotifications(
+          await this.studentRestrictionsService.createNotifications(
             insertedRestrictionsIDs,
             auditUserId,
           );

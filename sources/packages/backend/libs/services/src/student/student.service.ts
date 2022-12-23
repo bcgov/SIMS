@@ -38,6 +38,11 @@ export class StudentService extends RecordDataModelService<Student> {
       .andWhere("sinValidation.dateSent is null")
       .getMany();
   }
+
+  /**
+   * Gets all the students applied for PD.
+   * @returns Students applied for PD.
+   */
   async getStudentsAppliedForPD(): Promise<Student[]> {
     return this.repo
       .createQueryBuilder("student")

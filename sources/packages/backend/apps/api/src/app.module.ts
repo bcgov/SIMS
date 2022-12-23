@@ -26,12 +26,6 @@ import { LoggerModule } from "@sims/utilities/logger";
 import { ConfigModule } from "@sims/utilities/config";
 import { DatabaseModule } from "@sims/sims-db";
 import { NotificationsModule } from "@sims/services/notifications";
-import {
-  DisbursementReceiptIntegrationModule,
-  ECertIntegrationModule,
-  FedRestrictionIntegrationModule,
-  MSFAAIntegrationModule,
-} from "@sims/integrations/esdc-integration";
 import { QueueModule } from "@sims/services/queue";
 
 @Module({
@@ -42,10 +36,6 @@ import { QueueModule } from "@sims/services/queue";
     AuthModule,
     ZeebeModule.forRoot(),
     NotificationsModule,
-    MSFAAIntegrationModule,
-    ECertIntegrationModule,
-    FedRestrictionIntegrationModule,
-    DisbursementReceiptIntegrationModule,
     AppAESTModule,
     AppInstitutionsModule,
     AppStudentsModule,

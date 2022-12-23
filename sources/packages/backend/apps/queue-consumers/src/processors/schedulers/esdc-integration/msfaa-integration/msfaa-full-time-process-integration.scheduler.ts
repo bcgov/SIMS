@@ -7,7 +7,7 @@ import { QueueNames } from "@sims/utilities";
 import { Job, Queue } from "bull";
 import { QueueProcessSummary } from "../../../models/processors.models";
 import { BaseScheduler } from "../../base-scheduler";
-import { MSFAARequestResult } from "../models/msfaa-file-result.dto";
+import { MSFAARequestResult } from "../models/msfaa-file-result";
 
 @Processor(QueueNames.FullTimeMSFAAIntegration)
 export class FullTimeMSFAAProcessIntegrationScheduler extends BaseScheduler<void> {
@@ -35,19 +35,19 @@ export class FullTimeMSFAAProcessIntegrationScheduler extends BaseScheduler<void
       jobLogger: job,
     });
     await summary.info(
-      `Processing CRA integration job ${job.id} of type ${job.name}.`,
+      `Processing MSFAA full time integration job ${job.id} of type ${job.name}.`,
     );
     await summary.info("Sending MSFAA request File...");
-    const uploadFullTimeResult = this.msfaaRequestService.processMSFAARequest(
+    // Wait for queries to finish.
+    const fullTimeResponse = await this.msfaaRequestService.processMSFAARequest(
       MSFAA_FULL_TIME_FILE_CODE,
       OfferingIntensity.fullTime,
     );
-
-    // Wait for queries to finish.
-    const [fullTimeResponse] = await Promise.all([uploadFullTimeResult]);
     await summary.info("MSFAA request file sent.");
     await this.cleanSchedulerQueueHistory();
-
+    await summary.info(
+      `Completed MSFAA full time integration job ${job.id} of type ${job.name}.`,
+    );
     return [
       {
         offeringIntensity: OfferingIntensity.fullTime,

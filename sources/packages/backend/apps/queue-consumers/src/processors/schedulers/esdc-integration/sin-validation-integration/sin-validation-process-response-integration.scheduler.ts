@@ -6,7 +6,7 @@ import { QueueNames } from "@sims/utilities";
 import { Job, Queue } from "bull";
 import { QueueProcessSummary } from "../../../models/processors.models";
 import { BaseScheduler } from "../../base-scheduler";
-import { ProcessResponseQueue } from "../models/esdc.dto";
+import { ProcessResponseQueue } from "../models/esdc";
 
 @Processor(QueueNames.SINValidationRequestIntegration)
 export class SINValidationRequestIntegrationScheduler extends BaseScheduler<void> {
@@ -34,7 +34,7 @@ export class SINValidationRequestIntegrationScheduler extends BaseScheduler<void
       jobLogger: job,
     });
     await summary.info(
-      `Processing CRA integration job ${job.id} of type ${job.name}.`,
+      `Processing SIN validation integration job ${job.id} of type ${job.name}.`,
     );
     await summary.info("Processing ESDC SIN validation response files.");
     const auditUser = await this.systemUsersService.systemUser();
@@ -43,6 +43,9 @@ export class SINValidationRequestIntegrationScheduler extends BaseScheduler<void
     );
     await summary.info("ESDC SIN validation response files processed.");
     await this.cleanSchedulerQueueHistory();
+    await summary.info(
+      `Completed SIN validation integration job ${job.id} of type ${job.name}.`,
+    );
     return results.map((result) => {
       return {
         processSummary: result.processSummary,

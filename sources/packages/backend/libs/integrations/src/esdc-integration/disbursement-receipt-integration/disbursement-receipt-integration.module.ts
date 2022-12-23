@@ -28,6 +28,9 @@ import {
     DisbursementReceiptIntegrationService,
     DisbursementReceiptProcessingService,
     DisbursementReceiptRequestService,
+    IntegrationDisbursementReceiptService,
+    IntegrationDisbursementSchedulerService,
+    ReportService,
   ],
 })
 export class DisbursementReceiptIntegrationModule {}

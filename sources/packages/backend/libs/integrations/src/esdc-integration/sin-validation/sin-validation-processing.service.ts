@@ -16,6 +16,7 @@ import { ConfigService, ESDCIntegrationConfig } from "@sims/utilities/config";
 import { ESDC_SIN_VALIDATION_SEQUENCE_GROUP_NAME } from "@sims/services/constants";
 import { SINValidationService } from "@sims/services/sin-validation/sin-validation.service";
 import { StudentService } from "@sims/services/student/student.service";
+import { SystemUsersService } from "@sims/services/system-users";
 
 /**
  * Manages the process to generate SIN validations requests to ESDC and allow
@@ -30,6 +31,7 @@ export class SINValidationProcessingService {
     private readonly studentService: StudentService,
     private readonly sequenceService: SequenceControlService,
     private readonly sinValidationIntegrationService: SINValidationIntegrationService,
+    private readonly systemUsersService: SystemUsersService,
   ) {
     this.esdcConfig = config.esdcIntegration;
   }
@@ -37,13 +39,10 @@ export class SINValidationProcessingService {
   /**
    * Identifies all the students that still do not have their SIN
    * validated and create the validation request for ESDC processing.
-   * @param auditUserId user that should be considered the one that is
-   * causing the changes.
    * @returns result of the upload operation.
    */
-  async uploadSINValidationRequests(
-    auditUserId: number,
-  ): Promise<SINValidationUploadResult> {
+  async uploadSINValidationRequests(): Promise<SINValidationUploadResult> {
+    const auditUser = await this.systemUsersService.systemUser();
     this.logger.log("Retrieving students with pending SIN validation...");
     const students =
       await this.studentService.getStudentsPendingSinValidation();
@@ -83,7 +82,7 @@ export class SINValidationProcessingService {
           await this.sinValidationService.updateSentRecords(
             sinValidationRecords,
             fileInfo.fileName,
-            auditUserId,
+            auditUser.id,
             sinValidationRepo,
           );
           this.logger.log("SIN Validation table updated.");

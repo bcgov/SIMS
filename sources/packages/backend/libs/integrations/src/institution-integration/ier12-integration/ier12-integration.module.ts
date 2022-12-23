@@ -18,6 +18,6 @@ import {
     WorkflowClientService,
     IER12IntegrationService,
   ],
-  exports: [IER12FileService],
+  exports: [IER12FileService, IER12IntegrationService],
 })
 export class IER12IntegrationModule {}

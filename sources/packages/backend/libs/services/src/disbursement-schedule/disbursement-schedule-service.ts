@@ -30,7 +30,7 @@ import { SystemUsersService } from "@sims/services/system-users";
 import * as dayjs from "dayjs";
 import {
   ECertDisbursementSchedule,
-  IntegrationStudentRestrictionService,
+  StudentRestrictionsService,
 } from "@sims/integrations/services";
 
 // Timeout to handle the worst-case scenario where the commit/rollback
@@ -87,7 +87,7 @@ export class DisbursementSchedulerService extends RecordDataModelService<Disburs
   constructor(
     private readonly dataSource: DataSource,
     private readonly systemUsersService: SystemUsersService,
-    private readonly integrationStudentRestrictionService: IntegrationStudentRestrictionService,
+    private readonly studentRestrictionsService: StudentRestrictionsService,
   ) {
     super(dataSource.getRepository(DisbursementSchedule));
   }
@@ -740,6 +740,7 @@ export class DisbursementSchedulerService extends RecordDataModelService<Disburs
   private getDistinctValueCodes(awards: DisbursementValue[]): string[] {
     return [...new Set(awards.map((award) => award.valueCode))];
   }
+
   /**
    * Get all records that must be part of the e-Cert files and that were not sent yet.
    * Criteria to be a valid disbursement to be sent.
@@ -806,7 +807,7 @@ export class DisbursementSchedulerService extends RecordDataModelService<Disburs
       ])
       .addSelect(
         `CASE
-              WHEN EXISTS(${this.integrationStudentRestrictionService
+              WHEN EXISTS(${this.studentRestrictionsService
                 .getExistsBlockRestrictionQuery(
                   false,
                   false,
@@ -841,7 +842,7 @@ export class DisbursementSchedulerService extends RecordDataModelService<Disburs
         offeringIntensity,
       })
       .andWhere(
-        `NOT EXISTS(${this.integrationStudentRestrictionService
+        `NOT EXISTS(${this.studentRestrictionsService
           .getExistsBlockRestrictionQuery()
           .getSql()})`,
       )
@@ -857,6 +858,7 @@ export class DisbursementSchedulerService extends RecordDataModelService<Disburs
       "stopFullTimeBCFunding",
     );
   }
+
   /**
    * Once the e-Cert file is sent, updates the date that the file was uploaded.
    * @param disbursementIds records that are part of the generated

@@ -17,6 +17,10 @@ import { SINValidationService } from "@sims/services/sin-validation/sin-validati
     SINValidationProcessingService,
     SequenceControlService,
   ],
-  exports: [SINValidationIntegrationService, SINValidationProcessingService],
+  exports: [
+    SINValidationIntegrationService,
+    SINValidationProcessingService,
+    SINValidationService,
+  ],
 })
 export class SINValidationModule {}

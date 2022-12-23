@@ -4,20 +4,19 @@ import {
   ApplicationExceptionService,
   EducationProgramOfferingService,
   StudentAssessmentService,
-  StudentRestrictionService,
   RestrictionService,
   SupportingUserService,
   CRAIncomeVerificationService,
   ApplicationService,
   StudentFileService,
   DisbursementReceiptService,
-  InstitutionLocationService,
   DesignationAgreementLocationService,
   EducationProgramService,
   EducationProgramOfferingValidationService,
   StudentAppealService,
   StudentAppealRequestsService,
   StudentScholasticStandingsService,
+  StudentRestrictionService,
 } from "./services";
 import {
   AssessmentControllerService,
@@ -28,39 +27,8 @@ import {
   SequenceControlService,
   DisbursementSchedulerService,
 } from "@sims/services";
-// todo: once all integration are moved. remove sshservice.
-import {
-  DisbursementScheduleErrorsService,
-  FederalRestrictionService,
-  MSFAANumberService,
-  ReportService,
-  SshService,
-  IntegrationStudentRestrictionService,
-  IntegrationDisbursementSchedulerService,
-  IntegrationDisbursementReceiptService,
-  IntegrationRestrictionService,
-} from "@sims/integrations/services";
+import { StudentRestrictionsService } from "@sims/integrations/services";
 import { AuthModule } from "./auth/auth.module";
-import {
-  DisbursementReceiptIntegrationService,
-  DisbursementReceiptProcessingService,
-  DisbursementReceiptRequestService,
-  ECertFileHandler,
-  ECertFullTimeFileFooter,
-  ECertFullTimeFileHeader,
-  ECertFullTimeIntegrationService,
-  ECertPartTimeFileFooter,
-  ECertPartTimeFileHeader,
-  ECertPartTimeIntegrationService,
-  FedRestrictionIntegrationService,
-  FedRestrictionProcessingService,
-  MSFAAIntegrationService,
-  MSFAARequestService,
-  MSFAAResponseService,
-  SINValidationModule,
-} from "@sims/integrations/esdc-integration";
-import { IER12IntegrationModule } from "@sims/integrations/institution-integration/ier12-integration";
-import { SystemUsersService } from "@sims/services/system-users";
 import {
   SFASIndividualService,
   SFASApplicationService,
@@ -68,7 +36,7 @@ import {
 } from "@sims/services/sfas";
 
 @Module({
-  imports: [AuthModule, SINValidationModule, IER12IntegrationModule],
+  imports: [AuthModule],
   controllers: [ApplicationSystemAccessController],
   providers: [
     WorkflowClientService,
@@ -85,42 +53,17 @@ import {
     CRAIncomeVerificationService,
     ApplicationService,
     StudentFileService,
-    MSFAANumberService,
-    SshService,
-    MSFAARequestService,
-    MSFAAIntegrationService,
-    MSFAAResponseService,
     SFASIndividualService,
     SFASApplicationService,
     SFASPartTimeApplicationsService,
-    ECertFileHandler,
-    DisbursementScheduleErrorsService,
-    ECertFullTimeIntegrationService,
-    ECertPartTimeIntegrationService,
-    ECertFullTimeFileHeader,
-    ECertFullTimeFileFooter,
-    ECertPartTimeFileHeader,
-    ECertPartTimeFileFooter,
-    DisbursementReceiptProcessingService,
-    DisbursementReceiptIntegrationService,
     DisbursementReceiptService,
-    DisbursementReceiptRequestService,
-    ReportService,
-    FedRestrictionProcessingService,
-    FederalRestrictionService,
-    FedRestrictionIntegrationService,
-    InstitutionLocationService,
     DesignationAgreementLocationService,
     EducationProgramService,
     EducationProgramOfferingValidationService,
     StudentAppealService,
     StudentAppealRequestsService,
     StudentScholasticStandingsService,
-    IntegrationStudentRestrictionService,
-    SystemUsersService,
-    IntegrationDisbursementSchedulerService,
-    IntegrationDisbursementReceiptService,
-    IntegrationRestrictionService,
+    StudentRestrictionsService,
   ],
 })
 export class AppSystemAccessModule {}

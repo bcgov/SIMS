@@ -7,7 +7,7 @@ import { QueueNames } from "@sims/utilities";
 import { Job, Queue } from "bull";
 import { QueueProcessSummary } from "../../../models/processors.models";
 import { BaseScheduler } from "../../base-scheduler";
-import { MSFAARequestResult } from "../models/msfaa-file-result.dto";
+import { MSFAARequestResult } from "../models/msfaa-file-result";
 
 @Processor(QueueNames.PartTimeMSFAAProcessIntegration)
 export class PartTimeMSFAAProcessIntegrationScheduler extends BaseScheduler<void> {
@@ -23,7 +23,7 @@ export class PartTimeMSFAAProcessIntegrationScheduler extends BaseScheduler<void
   /**
    * Identifies all the records where the MSFAA number
    * is not requested i.e. has date_requested=null
-   * Create a fixed file for full time and send file
+   * Create a fixed file for part time and send file
    * to the sftp server for processing.
    * @params job job details.
    * @returns Processing result log.
@@ -35,17 +35,19 @@ export class PartTimeMSFAAProcessIntegrationScheduler extends BaseScheduler<void
       jobLogger: job,
     });
     await summary.info(
-      `Processing CRA integration job ${job.id} of type ${job.name}.`,
+      `Processing MSFAA part time integration job ${job.id} of type ${job.name}.`,
     );
     await summary.info("Sending MSFAA request File...");
-    const uploadPartTimeResult = this.msfaaRequestService.processMSFAARequest(
+    // Wait for queries to finish.
+    const partTimeResponse = await this.msfaaRequestService.processMSFAARequest(
       MSFAA_PART_TIME_FILE_CODE,
       OfferingIntensity.partTime,
     );
-    // Wait for queries to finish.
-    const [partTimeResponse] = await Promise.all([uploadPartTimeResult]);
     await summary.info("MSFAA request file sent.");
     await this.cleanSchedulerQueueHistory();
+    await summary.info(
+      `Completed MSFAA part time integration job ${job.id} of type ${job.name}.`,
+    );
     return [
       {
         offeringIntensity: OfferingIntensity.partTime,

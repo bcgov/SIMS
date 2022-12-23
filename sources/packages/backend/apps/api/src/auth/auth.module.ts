@@ -28,7 +28,7 @@ import {
 } from "./guards";
 import { RolesGuard } from "./guards/roles.guard";
 import { ConfigModule } from "@sims/utilities/config";
-import { IntegrationStudentRestrictionService } from "@sims/integrations/services";
+import { StudentRestrictionsService } from "@sims/integrations/services";
 import { SFASIndividualService } from "@sims/services/sfas";
 
 const jwtModule = JwtModule.register({
@@ -50,7 +50,7 @@ const jwtModule = JwtModule.register({
     SINValidationService,
     RestrictionService,
     DesignationAgreementLocationService,
-    IntegrationStudentRestrictionService,
+    StudentRestrictionsService,
     {
       provide: APP_GUARD,
       useClass: JwtAuthGuard,

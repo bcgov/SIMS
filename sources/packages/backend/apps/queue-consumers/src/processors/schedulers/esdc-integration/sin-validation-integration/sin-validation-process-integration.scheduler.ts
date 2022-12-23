@@ -1,12 +1,11 @@
 import { InjectQueue, Process, Processor } from "@nestjs/bull";
 import { SINValidationProcessingService } from "@sims/integrations/esdc-integration";
 import { QueueService } from "@sims/services/queue";
-import { SystemUsersService } from "@sims/services/system-users";
 import { QueueNames } from "@sims/utilities";
 import { Job, Queue } from "bull";
 import { QueueProcessSummary } from "../../../models/processors.models";
 import { BaseScheduler } from "../../base-scheduler";
-import { ESDCFileResult } from "../models/esdc.dto";
+import { ESDCFileResult } from "../models/esdc";
 
 @Processor(QueueNames.SINValidationProcessIntegration)
 export class SINValidationProcessIntegrationScheduler extends BaseScheduler<void> {
@@ -15,7 +14,6 @@ export class SINValidationProcessIntegrationScheduler extends BaseScheduler<void
     schedulerQueue: Queue<void>,
     queueService: QueueService,
     private readonly sinValidationProcessingService: SINValidationProcessingService,
-    private readonly systemUsersService: SystemUsersService,
   ) {
     super(schedulerQueue, queueService);
   }
@@ -33,16 +31,16 @@ export class SINValidationProcessIntegrationScheduler extends BaseScheduler<void
       jobLogger: job,
     });
     await summary.info(
-      `Processing CRA integration job ${job.id} of type ${job.name}.`,
+      `Processing SIN validation integration job ${job.id} of type ${job.name}.`,
     );
     await summary.info("Sending ESDC SIN validation request file.");
-    const auditUser = await this.systemUsersService.systemUser();
     const uploadResult =
-      await this.sinValidationProcessingService.uploadSINValidationRequests(
-        auditUser.id,
-      );
+      await this.sinValidationProcessingService.uploadSINValidationRequests();
     await summary.info("ESDC SIN validation request file sent.");
     await this.cleanSchedulerQueueHistory();
+    await summary.info(
+      `Completed SIN validation integration job ${job.id} of type ${job.name}.`,
+    );
     return {
       generatedFile: uploadResult.generatedFile,
       uploadedRecords: uploadResult.uploadedRecords,

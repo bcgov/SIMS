@@ -46,14 +46,13 @@ import { AuthModule } from "./auth/auth.module";
 import { SequenceControlService, WorkflowClientService } from "@sims/services";
 import {
   MSFAANumberService,
-  IntegrationStudentRestrictionService,
+  StudentRestrictionsService,
 } from "@sims/integrations/services";
 import {
   SFASIndividualService,
   SFASApplicationService,
   SFASPartTimeApplicationsService,
 } from "@sims/services/sfas";
-
 
 @Module({
   imports: [AuthModule],
@@ -106,7 +105,7 @@ import {
     SFASPartTimeApplicationsService,
     EducationProgramOfferingImportCSVService,
     EducationProgramOfferingValidationService,
-    IntegrationStudentRestrictionService,
+    StudentRestrictionsService,
   ],
 })
 export class AppInstitutionsModule {}
