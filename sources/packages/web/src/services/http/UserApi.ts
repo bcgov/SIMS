@@ -2,9 +2,9 @@ import { AxiosError } from "axios";
 import {
   BCeIDDetailsAPIOutDTO,
   BCeIDAccountsAPIOutDTO,
-  InstitutionUserDetailsDto,
+  InstitutionUserAPIOutDTO,
   InstitutionUserPersistAPIInDTO,
-} from "../../types/contracts/UserContract";
+} from "@/services/http/dto/User.dto";
 import HttpBaseClient from "./common/HttpBaseClient";
 import { StatusCodes } from "http-status-codes";
 
@@ -21,9 +21,9 @@ export class UserApi extends HttpBaseClient {
     );
   }
 
-  async getinstitutionUser(): Promise<InstitutionUserDetailsDto> {
-    return this.getCallTyped<InstitutionUserDetailsDto>(
-      this.addClientRoot("users/institution"),
+  async getInstitutionUser(): Promise<InstitutionUserAPIOutDTO> {
+    return this.getCallTyped<InstitutionUserAPIOutDTO>(
+      this.addClientRoot("users"),
     );
   }
 
@@ -31,7 +31,7 @@ export class UserApi extends HttpBaseClient {
     data: InstitutionUserPersistAPIInDTO,
   ): Promise<void> {
     return this.patchCall<InstitutionUserPersistAPIInDTO>(
-      this.addClientRoot("users/institution"),
+      this.addClientRoot("users"),
       data,
     );
   }
@@ -44,7 +44,7 @@ export class UserApi extends HttpBaseClient {
   async syncAESTUser(authHeader?: any): Promise<boolean> {
     try {
       await this.apiClient.put(
-        this.addClientRoot("users/aest"),
+        this.addClientRoot("users"),
         // The data to perform the create/update
         // will come from the authentication token.
         null,

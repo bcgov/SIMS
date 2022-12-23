@@ -25,11 +25,12 @@ export interface BCeIDAccountAPIOutDTO {
   surname: string;
   telephone?: string;
 }
+
 export interface BCeIDAccountsAPIOutDTO {
   accounts: BCeIDAccountAPIOutDTO[];
 }
 
-export interface InstitutionUserDetailsDto {
+export interface InstitutionUserAPIOutDTO {
   userFirstName: string;
   userLastName: string;
   userEmail: string;

@@ -1,16 +1,13 @@
 import { UnprocessableEntityException, Injectable } from "@nestjs/common";
 import { IUserToken } from "../../auth/userToken.interface";
-import { UserService, BCeIDService } from "../../services";
+import { BCeIDService } from "../../services";
 import { BCeIDAccountTypeCodes } from "../../services/bceid/bceid.models";
 import { SearchAccountOptions } from "../../services/bceid/search-bceid.model";
 import { BCeIDAccountsAPIOutDTO } from "./models/bceid-accounts.dto";
 
 @Injectable()
 export class UserControllerService {
-  constructor(
-    private readonly service: UserService,
-    private readonly bceidService: BCeIDService,
-  ) {}
+  constructor(private readonly bceidService: BCeIDService) {}
 
   async getAllBCeIDs(userToken: IUserToken): Promise<BCeIDAccountsAPIOutDTO> {
     // Only business BCeID will execute a search on BCeID Web Services.

@@ -18,19 +18,26 @@ import { AllowAuthorizedParty, AllowInactiveUser } from "../../auth/decorators";
 import { ApiTags, ApiUnprocessableEntityResponse } from "@nestjs/swagger";
 import { BCeIDAccountTypeCodes } from "../../services/bceid/bceid.models";
 import { UserControllerService } from "..";
+import { ClientTypeBaseRoute } from "../../types";
 
 @AllowAuthorizedParty(AuthorizedParties.institution)
 @Controller("users")
-@ApiTags("users")
+@ApiTags(`${ClientTypeBaseRoute.Institution}-user`)
 export class UserInstitutionsController extends BaseController {
   constructor(
-    private readonly service: UserService,
+    private readonly userService: UserService,
     private readonly bceidService: BCeIDService,
     private readonly userControllerService: UserControllerService,
   ) {
     super();
   }
 
+  /**
+   * Get the BCeID account information from BCeID Web services
+   * for the currently authenticated user.
+   * @param userToken authenticated user token.
+   * @returns BCeID account information from BCeID Web services.
+   */
   @AllowInactiveUser()
   @Get("bceid-account")
   async getBCeID(
@@ -38,7 +45,6 @@ export class UserInstitutionsController extends BaseController {
   ): Promise<BCeIDDetailsAPIOutDTO | null> {
     const account = await this.bceidService.getAccountDetails(
       userToken.idp_user_name,
-      // TODO: To be changed to allow basic BCeID sign in.
       BCeIDAccountTypeCodes.Business,
     );
     if (account == null) {
@@ -60,6 +66,12 @@ export class UserInstitutionsController extends BaseController {
     }
   }
 
+  /**
+   * Gets all business BCeID accounts information for the
+   * for the currently authenticated user.
+   * @param userToken authenticated user token.
+   * @returns all business BCeID accounts.
+   */
   @ApiUnprocessableEntityResponse({
     description:
       "Not able to retrieve BCeID business account details for the current authenticated user.",
@@ -71,36 +83,46 @@ export class UserInstitutionsController extends BaseController {
     return await this.userControllerService.getAllBCeIDs(userToken);
   }
 
+  /**
+   * Gets the user details for the authenticated institution user.
+   * @param userToken authenticated user token.
+   * @returns institution user details.
+   */
   @ApiUnprocessableEntityResponse({
     description: "No user record found for user.",
   })
-  @Get("institution")
+  @Get()
   async institutionDetail(
     @UserToken() userToken: IUserToken,
   ): Promise<InstitutionUserAPIOutDTO> {
-    const user = await this.service.getActiveUser(userToken.userName);
+    const user = await this.userService.getActiveUser(userToken.userName);
     if (!user) {
       throw new UnprocessableEntityException("No user record found for user.");
     }
-    const institutionUser = new InstitutionUserAPIOutDTO();
-    institutionUser.userEmail = user.email;
-    institutionUser.userFirstName = user.firstName;
-    institutionUser.userLastName = user.lastName;
-    return institutionUser;
+    return {
+      userEmail: user.email,
+      userFirstName: user.firstName,
+      userLastName: user.lastName,
+    };
   }
 
+  /**
+   * Updates the institution user details.
+   * @param userToken authenticated user token.
+   * @param body institution user details.
+   */
   @ApiUnprocessableEntityResponse({
     description: "No user record found for user.",
   })
-  @Patch("institution")
+  @Patch()
   async updateInstitutionUser(
     @UserToken() userToken: IUserToken,
     @Body() body: InstitutionUserPersistAPIInDTO,
   ): Promise<void> {
-    const user = await this.service.getActiveUser(userToken.userName);
+    const user = await this.userService.getActiveUser(userToken.userName);
     if (!user) {
       throw new UnprocessableEntityException("No user record found for user.");
     }
-    this.service.updateUserEmail(user.id, body.userEmail);
+    await this.userService.updateUserEmail(user.id, body.userEmail);
   }
 }

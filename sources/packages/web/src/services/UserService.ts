@@ -2,9 +2,9 @@ import ApiClient from "./http/ApiClient";
 import {
   BCeIDDetailsAPIOutDTO,
   BCeIDAccountsAPIOutDTO,
-  InstitutionUserDetailsDto,
+  InstitutionUserAPIOutDTO,
   InstitutionUserPersistAPIInDTO,
-} from "../types/contracts/UserContract";
+} from "@/services/http/dto/User.dto";
 
 export class UserService {
   // Share Instance
@@ -14,20 +14,16 @@ export class UserService {
     return this.instance || (this.instance = new this());
   }
 
-  async getBCeIDAccountDetails(): Promise<BCeIDDetailsAPIOutDTO> {
+  async getBCeIDAccount(): Promise<BCeIDDetailsAPIOutDTO> {
     return ApiClient.User.bceidAccount();
   }
 
   async getBCeIDAccounts(): Promise<BCeIDAccountsAPIOutDTO | null> {
-    try {
-      return await ApiClient.User.bceidAccounts();
-    } catch (excp) {
-      return null;
-    }
+    return await ApiClient.User.bceidAccounts();
   }
 
-  async getInstitutionUser(): Promise<InstitutionUserDetailsDto> {
-    return ApiClient.User.getinstitutionUser();
+  async getInstitutionUser(): Promise<InstitutionUserAPIOutDTO> {
+    return ApiClient.User.getInstitutionUser();
   }
 
   async updateInstitutionUser(

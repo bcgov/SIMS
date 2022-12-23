@@ -9,18 +9,25 @@ import { UserGroups } from "../../auth/user-groups.enum";
 import { AllowAuthorizedParty, Groups } from "../../auth/decorators";
 import { ApiTags, ApiUnprocessableEntityResponse } from "@nestjs/swagger";
 import { UserControllerService } from "..";
+import { ClientTypeBaseRoute } from "../../types";
 
 @AllowAuthorizedParty(AuthorizedParties.aest)
+@Groups(UserGroups.AESTUser)
 @Controller("users")
-@ApiTags("users")
+@ApiTags(`${ClientTypeBaseRoute.AEST}-user`)
 export class UserAESTController extends BaseController {
   constructor(
-    private readonly service: UserService,
+    private readonly userService: UserService,
     private readonly userControllerService: UserControllerService,
   ) {
     super();
   }
 
+  /**
+   * Retrieves business BCeIDs accounts managed by the user.
+   * @param userToken authenticated user token.
+   * @returns BCeID accounts managed by the user.
+   */
   @ApiUnprocessableEntityResponse({
     description:
       "Not able to retrieve BCeID business account details for the current authenticated user.",
@@ -29,17 +36,16 @@ export class UserAESTController extends BaseController {
   async getAllBCeIDs(
     @UserToken() userToken: IUserToken,
   ): Promise<BCeIDAccountsAPIOutDTO> {
-    return await this.userControllerService.getAllBCeIDs(userToken);
+    return this.userControllerService.getAllBCeIDs(userToken);
   }
 
   /**
    * Creates or updates Ministry user information.
    * @param userToken user token information to be updated.
    */
-  @Groups(UserGroups.AESTUser)
-  @Put("aest")
+  @Put()
   async syncAESTUser(@UserToken() userToken: IUserToken): Promise<void> {
-    await this.service.syncUser(
+    await this.userService.syncUser(
       userToken.userName,
       userToken.email,
       userToken.givenNames,

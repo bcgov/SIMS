@@ -57,18 +57,19 @@ import {
   EducationProgramOfferingControllerService,
   NoteAESTController,
   RestrictionAESTController,
+  UserAESTController,
+  UserControllerService,
+  ApplicationControllerService,
+  InstitutionUserControllerService,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
-import { ApplicationControllerService } from "./route-controllers/application/application.controller.service";
-import { InstitutionUserControllerService } from "./route-controllers/institution-user/institution-user.controller.service";
 import { WorkflowClientService, SequenceControlService } from "@sims/services";
 import {
   SFASIndividualService,
   SFASApplicationService,
   SFASPartTimeApplicationsService,
 } from "@sims/services/sfas";
-import { UserAESTController } from "./route-controllers/user/user.aest.controller";
-import { UserControllerService } from "./route-controllers/user/user.controller.service";
+
 @Module({
   imports: [AuthModule],
   controllers: [
