@@ -72,7 +72,6 @@ export default {
         givenNames: supportingUsersData.firstName,
         lastName: supportingUsersData.lastName,
         email: supportingUsersData.email,
-        gender: supportingUsersData.gender,
         dateOfBirth: dateOnlyLongString(supportingUsersData.birthDate),
         sin: supportingUsersData.sin,
         phone: supportingUsersData.contactInfo.phone,

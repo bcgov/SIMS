@@ -44,7 +44,6 @@ export interface SupportingUserFormDataApiOutDTO {
   contactInfo: ContactInformationAPIOutDTO;
   sin: string;
   birthDate: string;
-  gender: string;
   email: string;
   firstName: string;
   lastName: string;

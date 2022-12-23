@@ -63,7 +63,6 @@ export class SupportingUserFormDataApiOutDTO {
   contactInfo: ContactInfo;
   sin: string;
   birthDate: string;
-  gender: string;
   email: string;
   firstName: string;
   lastName: string;

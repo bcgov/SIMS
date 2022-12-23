@@ -87,7 +87,6 @@ export class SupportingUserService extends RecordDataModelService<SupportingUser
       userToUpdate.contactInfo = updateInfo.contactInfo;
       userToUpdate.sin = sinWithNoSpaces;
       userToUpdate.birthDate = updateInfo.birthDate;
-      userToUpdate.gender = updateInfo.gender;
       userToUpdate.supportingData = updateInfo.supportingData;
       userToUpdate.user = { id: updateInfo.userId } as User;
       userToUpdate.modifier = { id: auditUserId } as User;
