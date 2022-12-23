@@ -313,6 +313,14 @@ export default class DashboardInstitutionObject extends BaseMethods {
     return this.getElementByCyId("fieldOfStudyCode");
   }
 
+  programDeclarationCheckBox() {
+    return this.getElementByCyId("programDeclaration");
+  }
+
+  programSubmitButton() {
+    return this.getElementByCyId("primaryFooterButton");
+  }
+
   invalidFormatErrorText() {
     return cy.contains("Invalid format");
   }
