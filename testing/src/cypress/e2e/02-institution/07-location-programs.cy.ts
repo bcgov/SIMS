@@ -330,3 +330,59 @@ describe("Location Program", () => {
     );
   });
 });
+
+describe("Location Program", () => {
+  before(() => {
+    institutionHelperActions.loginIntoInstitutionSingleLocation();
+  });
+
+  beforeEach(() => {
+    dashboardInstitutionObject.homeButton().click();
+    dashboardInstitutionObject.clickOnSideBar("Vancouver", "Programs");
+    dashboardInstitutionObject.createInstitutionProgram().click();
+  });
+
+  it("Create a basic default program", () => {
+    dashboardInstitutionObject
+      .institutionProgramName()
+      .type("NewlyCreatedByAutomation");
+    dashboardInstitutionObject.selectCredentialType(
+      CredentialTypes.GraduateCertificate
+    );
+    dashboardInstitutionObject.institutionProgramCIPInputText().type("21.1234");
+    dashboardInstitutionObject.studentPartTimeBasisRadioButton(
+      ProgramIntensityOptions.Yes
+    );
+    dashboardInstitutionObject.deliverabilityOnsiteRadioButton(
+      ProgramDeliveryOptions.OnSite
+    );
+    dashboardInstitutionObject.selectProgramLength(
+      ProgramLengthOptions.WeeksToLessThanYear
+    );
+    dashboardInstitutionObject.courseLoadCalculationRadioButton(
+      CourseLoadCalculationOptions.CreditBased
+    );
+    dashboardInstitutionObject.selectRegulatoryBody(RegulatoryBodyOptions.DQAB);
+    dashboardInstitutionObject.entranceRequirementsRadioButton(
+      EntranceRequirementsOptions.HighSchoolMinimum
+    );
+
+    dashboardInstitutionObject.eslEligibilityRadioButton(
+      EslEligibilityOptions.lessThanTwenty
+    );
+    dashboardInstitutionObject.hasJointInstitutionRadioButton(
+      JointInstitutionPartnershipOptions.No
+    );
+    dashboardInstitutionObject.hasWILComponentRadioButton(
+      WILComponentOptions.No
+    );
+    dashboardInstitutionObject.hasTravelRadioButton(HasTravelOptions.No);
+
+    dashboardInstitutionObject.hasInternationalExchangeRadioButton(
+      HasInternationalExchangeOptions.No
+    );
+    dashboardInstitutionObject.programDeclarationCheckBox().click();
+    dashboardInstitutionObject.programSubmitButton().click();
+    dashboardInstitutionObject.institutionProgramsHeader().should("be.visible");
+  });
+});
