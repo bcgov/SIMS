@@ -4,7 +4,7 @@ import {
   BCeIDAccountsAPIOutDTO,
   InstitutionUserDetailsAPIOutDTO,
   InstitutionUserPersistAPIInDTO,
-} from "@/services/http/dto/User.dto";
+} from "@/services/http/dto";
 import HttpBaseClient from "./common/HttpBaseClient";
 import { StatusCodes } from "http-status-codes";
 
