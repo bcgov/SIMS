@@ -10,7 +10,7 @@ import BaseController from "../BaseController";
 import { UserToken } from "../../auth/decorators/userToken.decorator";
 import { IUserToken } from "../../auth/userToken.interface";
 import { BCeIDDetailsAPIOutDTO } from "./models/bceid-account.dto";
-import { InstitutionUserAPIOutDTO } from "./models/institution-user.dto";
+import { InstitutionUserDetailsAPIOutDTO } from "./models/institution-user.dto";
 import { InstitutionUserPersistAPIInDTO } from "./models/institution-user-persist.dto";
 import { BCeIDAccountsAPIOutDTO } from "./models/bceid-accounts.dto";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
@@ -94,7 +94,7 @@ export class UserInstitutionsController extends BaseController {
   @Get()
   async institutionDetail(
     @UserToken() userToken: IUserToken,
-  ): Promise<InstitutionUserAPIOutDTO> {
+  ): Promise<InstitutionUserDetailsAPIOutDTO> {
     const user = await this.userService.getActiveUser(userToken.userName);
     if (!user) {
       throw new UnprocessableEntityException("No user record found for user.");

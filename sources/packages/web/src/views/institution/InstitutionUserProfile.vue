@@ -41,7 +41,7 @@ import { useRouter } from "vue-router";
 import { UserService } from "../../services/UserService";
 import { useSnackBar } from "@/composables";
 import { FormIOForm } from "../../types";
-import { InstitutionUserAPIOutDTO } from "@/services/http/dto/User.dto";
+import { InstitutionUserDetailsAPIOutDTO } from "@/services/http/dto/User.dto";
 import { InstitutionRoutesConst } from "../../constants/routes/RouteConstants";
 import { BannerTypes } from "@/types/contracts/Banner";
 
@@ -54,7 +54,9 @@ export default {
     const initialData = ref({});
     const processing = ref(false);
 
-    const submitted = async (form: FormIOForm<InstitutionUserAPIOutDTO>) => {
+    const submitted = async (
+      form: FormIOForm<InstitutionUserDetailsAPIOutDTO>,
+    ) => {
       try {
         processing.value = true;
         await UserService.shared.updateInstitutionUser({

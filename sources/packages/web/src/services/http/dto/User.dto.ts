@@ -30,7 +30,7 @@ export interface BCeIDAccountsAPIOutDTO {
   accounts: BCeIDAccountAPIOutDTO[];
 }
 
-export interface InstitutionUserAPIOutDTO {
+export interface InstitutionUserDetailsAPIOutDTO {
   userFirstName: string;
   userLastName: string;
   userEmail: string;

@@ -2,7 +2,7 @@ import ApiClient from "./http/ApiClient";
 import {
   BCeIDDetailsAPIOutDTO,
   BCeIDAccountsAPIOutDTO,
-  InstitutionUserAPIOutDTO,
+  InstitutionUserDetailsAPIOutDTO,
   InstitutionUserPersistAPIInDTO,
 } from "@/services/http/dto/User.dto";
 
@@ -19,10 +19,10 @@ export class UserService {
   }
 
   async getBCeIDAccounts(): Promise<BCeIDAccountsAPIOutDTO | null> {
-    return await ApiClient.User.bceidAccounts();
+    return ApiClient.User.bceidAccounts();
   }
 
-  async getInstitutionUser(): Promise<InstitutionUserAPIOutDTO> {
+  async getInstitutionUser(): Promise<InstitutionUserDetailsAPIOutDTO> {
     return ApiClient.User.getInstitutionUser();
   }
 

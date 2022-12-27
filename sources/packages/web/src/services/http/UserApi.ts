@@ -2,7 +2,7 @@ import { AxiosError } from "axios";
 import {
   BCeIDDetailsAPIOutDTO,
   BCeIDAccountsAPIOutDTO,
-  InstitutionUserAPIOutDTO,
+  InstitutionUserDetailsAPIOutDTO,
   InstitutionUserPersistAPIInDTO,
 } from "@/services/http/dto/User.dto";
 import HttpBaseClient from "./common/HttpBaseClient";
@@ -21,8 +21,8 @@ export class UserApi extends HttpBaseClient {
     );
   }
 
-  async getInstitutionUser(): Promise<InstitutionUserAPIOutDTO> {
-    return this.getCallTyped<InstitutionUserAPIOutDTO>(
+  async getInstitutionUser(): Promise<InstitutionUserDetailsAPIOutDTO> {
+    return this.getCallTyped<InstitutionUserDetailsAPIOutDTO>(
       this.addClientRoot("users"),
     );
   }
