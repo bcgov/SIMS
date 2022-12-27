@@ -8,12 +8,7 @@ import {
   FormService,
   ProgramYearService,
 } from "./services";
-import {
-  UserController,
-  ProgramYearStudentsController,
-  ConfigController,
-  DynamicFormController,
-} from "./route-controllers";
+import { ConfigController, DynamicFormController } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
 import { MSFAAIntegrationModule } from "./esdc-integration/msfaa-integration/msfaa-integration.module";
 import { ECertIntegrationModule } from "./esdc-integration/e-cert-integration/e-cert-integration.module";
@@ -73,13 +68,7 @@ import { DatabaseModule } from "@sims/sims-db";
       },
     ]),
   ],
-  controllers: [
-    AppController,
-    UserController,
-    ProgramYearStudentsController,
-    ConfigController,
-    DynamicFormController,
-  ],
+  controllers: [AppController, ConfigController, DynamicFormController],
   providers: [
     AppService,
     UserService,

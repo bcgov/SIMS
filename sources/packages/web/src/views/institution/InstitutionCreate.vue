@@ -69,7 +69,7 @@ export default {
     };
 
     onMounted(async () => {
-      const bceidAccount = await UserService.shared.getBCeIDAccountDetails();
+      const bceidAccount = await UserService.shared.getBCeIDAccount();
       if (bceidAccount) {
         initialData.value = {
           userFirstName: bceidAccount.user.firstname,

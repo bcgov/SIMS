@@ -1,9 +1,9 @@
-export interface BCeIDDetailsDto {
-  user: UserDetailsDto;
-  institution: InstitutionDetailsDto;
+export class BCeIDDetailsAPIOutDTO {
+  user: UserDetailsAPIOutDTO;
+  institution: InstitutionLocationDetailsAPIOutDTO;
 }
 
-export interface UserDetailsDto {
+export class UserDetailsAPIOutDTO {
   guid: string;
   displayName: string;
   firstname: string;
@@ -11,7 +11,7 @@ export interface UserDetailsDto {
   email: string;
 }
 
-export interface InstitutionDetailsDto {
+export class InstitutionLocationDetailsAPIOutDTO {
   guid: string;
   legalName: string;
 }

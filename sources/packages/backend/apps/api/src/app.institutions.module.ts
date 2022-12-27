@@ -50,6 +50,8 @@ import {
   SFASApplicationService,
   SFASPartTimeApplicationsService,
 } from "@sims/services/sfas";
+import { UserInstitutionsController } from "./route-controllers/user/user.institutions.controller";
+import { UserControllerService } from "./route-controllers/user/user.controller.service";
 
 @Module({
   imports: [AuthModule],
@@ -63,6 +65,7 @@ import {
     EducationProgramInstitutionsController,
     ProgramInfoRequestInstitutionsController,
     EducationProgramOfferingInstitutionsController,
+    UserInstitutionsController,
   ],
   providers: [
     WorkflowClientService,
@@ -102,6 +105,7 @@ import {
     SFASPartTimeApplicationsService,
     EducationProgramOfferingImportCSVService,
     EducationProgramOfferingValidationService,
+    UserControllerService,
   ],
 })
 export class AppInstitutionsModule {}

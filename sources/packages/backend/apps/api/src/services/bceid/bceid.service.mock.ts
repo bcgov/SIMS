@@ -46,7 +46,7 @@ export class BCeIDServiceMock {
     }
   }
   public async getAccountDetails(userName: string): Promise<AccountDetails> {
-    const respData = await this.getDevResponse("/users/bceid-account");
+    const respData = await this.getDevResponse("/user/bceid-account");
     if (respData) {
       return respData as AccountDetails;
     }
@@ -57,7 +57,7 @@ export class BCeIDServiceMock {
   public async searchBCeIDAccounts(
     options: SearchAccountOptions,
   ): Promise<SearchBCeIDAccountResult> {
-    const respData = await this.getDevResponse("/users/bceid-accounts");
+    const respData = await this.getDevResponse("/user/bceid-accounts");
     if (respData) {
       return respData as SearchBCeIDAccountResult;
     }
