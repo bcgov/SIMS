@@ -41,7 +41,7 @@ import { useRouter } from "vue-router";
 import { UserService } from "../../services/UserService";
 import { useSnackBar } from "@/composables";
 import { FormIOForm } from "../../types";
-import { InstitutionUserDetailsAPIOutDTO } from "@/services/http/dto/User.dto";
+import { InstitutionUserDetailsAPIOutDTO } from "@/services/http/dto";
 import { InstitutionRoutesConst } from "../../constants/routes/RouteConstants";
 import { BannerTypes } from "@/types/contracts/Banner";
 
