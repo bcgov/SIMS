@@ -75,10 +75,10 @@ export class UserInstitutionsController extends BaseController {
       "Not able to retrieve BCeID business account details for the current authenticated user.",
   })
   @Get("bceid-accounts")
-  async getAllBCeIDs(
+  getAllBCeIDs(
     @UserToken() userToken: IUserToken,
   ): Promise<BCeIDAccountsAPIOutDTO> {
-    return await this.userControllerService.getAllBCeIDs(userToken);
+    return this.userControllerService.getAllBCeIDs(userToken);
   }
 
   /**

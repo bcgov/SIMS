@@ -33,7 +33,7 @@ export class UserAESTController extends BaseController {
       "Not able to retrieve BCeID business account details for the current authenticated user.",
   })
   @Get("bceid-accounts")
-  async getAllBCeIDs(
+  getAllBCeIDs(
     @UserToken() userToken: IUserToken,
   ): Promise<BCeIDAccountsAPIOutDTO> {
     return this.userControllerService.getAllBCeIDs(userToken);
