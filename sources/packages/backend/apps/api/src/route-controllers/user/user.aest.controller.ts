@@ -13,7 +13,7 @@ import { ClientTypeBaseRoute } from "../../types";
 
 @AllowAuthorizedParty(AuthorizedParties.aest)
 @Groups(UserGroups.AESTUser)
-@Controller("users")
+@Controller("user")
 @ApiTags(`${ClientTypeBaseRoute.AEST}-user`)
 export class UserAESTController extends BaseController {
   constructor(

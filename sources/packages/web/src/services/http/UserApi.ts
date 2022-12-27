@@ -11,19 +11,19 @@ import { StatusCodes } from "http-status-codes";
 export class UserApi extends HttpBaseClient {
   async bceidAccount(): Promise<BCeIDDetailsAPIOutDTO> {
     return this.getCallTyped<BCeIDDetailsAPIOutDTO>(
-      this.addClientRoot("users/bceid-account"),
+      this.addClientRoot("user/bceid-account"),
     );
   }
 
   async bceidAccounts(): Promise<BCeIDAccountsAPIOutDTO | null> {
     return this.getCallTyped<BCeIDAccountsAPIOutDTO>(
-      this.addClientRoot("users/bceid-accounts"),
+      this.addClientRoot("user/bceid-accounts"),
     );
   }
 
   async getInstitutionUser(): Promise<InstitutionUserDetailsAPIOutDTO> {
     return this.getCallTyped<InstitutionUserDetailsAPIOutDTO>(
-      this.addClientRoot("users"),
+      this.addClientRoot("user"),
     );
   }
 
@@ -31,7 +31,7 @@ export class UserApi extends HttpBaseClient {
     data: InstitutionUserPersistAPIInDTO,
   ): Promise<void> {
     return this.patchCall<InstitutionUserPersistAPIInDTO>(
-      this.addClientRoot("users"),
+      this.addClientRoot("user"),
       data,
     );
   }
@@ -44,7 +44,7 @@ export class UserApi extends HttpBaseClient {
   async syncAESTUser(authHeader?: any): Promise<boolean> {
     try {
       await this.apiClient.put(
-        this.addClientRoot("users"),
+        this.addClientRoot("user"),
         // The data to perform the create/update
         // will come from the authentication token.
         null,

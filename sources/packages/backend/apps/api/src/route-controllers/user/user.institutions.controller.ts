@@ -21,7 +21,7 @@ import { UserControllerService } from "..";
 import { ClientTypeBaseRoute } from "../../types";
 
 @AllowAuthorizedParty(AuthorizedParties.institution)
-@Controller("users")
+@Controller("user")
 @ApiTags(`${ClientTypeBaseRoute.Institution}-user`)
 export class UserInstitutionsController extends BaseController {
   constructor(
@@ -35,7 +35,6 @@ export class UserInstitutionsController extends BaseController {
   /**
    * Get the BCeID account information from BCeID Web services
    * for the currently authenticated user.
-   * @param userToken authenticated user token.
    * @returns BCeID account information from BCeID Web services.
    */
   @AllowInactiveUser()
@@ -69,7 +68,6 @@ export class UserInstitutionsController extends BaseController {
   /**
    * Gets all business BCeID accounts information for the
    * for the currently authenticated user.
-   * @param userToken authenticated user token.
    * @returns all business BCeID accounts.
    */
   @ApiUnprocessableEntityResponse({
@@ -108,7 +106,6 @@ export class UserInstitutionsController extends BaseController {
 
   /**
    * Updates the institution user details.
-   * @param userToken authenticated user token.
    * @param body institution user details.
    */
   @ApiUnprocessableEntityResponse({
