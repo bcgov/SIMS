@@ -138,6 +138,14 @@ export class ECertFileHandler extends ESDCFileHandler {
       sequenceGroup,
       async (nextSequenceNumber: number, entityManager: EntityManager) => {
         try {
+          await this.disbursementScheduleService.applyOverawardsDeductions(
+            disbursements,
+            entityManager,
+          );
+          await this.disbursementScheduleService.saveAwardsEffectiveValue(
+            disbursements,
+            entityManager,
+          );
           const disbursementRecords = disbursements.map((disbursement) => {
             return this.createECertRecord(disbursement);
           });
@@ -211,6 +219,7 @@ export class ECertFileHandler extends ESDCFileHandler {
           valueType: disbursementValue.valueType,
           valueCode: disbursementValue.valueCode,
           valueAmount: disbursementValue.valueAmount,
+          effectiveAmount: disbursementValue.effectiveAmount,
         } as Award),
     );
 

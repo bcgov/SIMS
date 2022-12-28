@@ -14,7 +14,10 @@ import {
   Student,
   configureIdleTransactionSessionTimeout,
 } from "@sims/sims-db";
-import { DisbursementSaveModel } from "./disbursement-schedule.models";
+import {
+  AwardValueWithRelatedSchedule,
+  DisbursementSaveModel,
+} from "./disbursement-schedule.models";
 import { CustomNamedError, MIN_CANADA_LOAN_OVERAWARD } from "@sims/utilities";
 import {
   ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE,
@@ -499,11 +502,7 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
       // Total value already received by the student for this grant for this application.
       const alreadyDisbursed = totalAlreadyDisbursedValues[valueCode] ?? 0;
       // Subtract the debt from the current grant in the current assessment.
-      this.subtractStudentDebit(
-        grants,
-        alreadyDisbursed,
-        "PreviousDisbursement",
-      );
+      this.subtractPreviousDisbursementDebit(grants, alreadyDisbursed);
       // If there is some remaining student debit for grants it will be just
       // not considered (loans generate overawards, grants do not).
     }
@@ -549,10 +548,9 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
       // Total value already received by the student for this loan for this application.
       const alreadyDisbursed = totalAlreadyDisbursedValues[valueCode] ?? 0;
       // Subtract the debit from the current awards in the current assessment.
-      const remainingStudentDebit = this.subtractStudentDebit(
+      const remainingStudentDebit = this.subtractPreviousDisbursementDebit(
         loans,
         alreadyDisbursed,
-        "PreviousDisbursement",
       );
       // If there is some remaining student debit, generate an overaward.
       const [referenceAward] = loans;
@@ -575,10 +573,9 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
     }
   }
 
-  private async applyOverawardsDeductions(
-    assessmentId: number, // TODO: It could be more than one!?
+  async applyOverawardsDeductionsForECertGeneration(
     studentId: number,
-    disbursementSchedules: DisbursementSchedule[],
+    allDisbursementSchedules: DisbursementSchedule[],
     studentsOverawardBalance: StudentOverawardBalance,
     entityManager: EntityManager,
   ): Promise<void> {
@@ -586,22 +583,26 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
       // No overaward balance is present for the student.
       return;
     }
-    const disbursementOverawardRepo = entityManager.getRepository(
-      DisbursementOveraward,
+    // Filter the disbursements for the student.
+    const studentSchedules = allDisbursementSchedules.filter(
+      (disbursement) =>
+        disbursement.studentAssessment.application.student.id === studentId,
     );
-    const auditUser = await this.systemUsersService.systemUser();
-    const loanAwards = this.getAwardsByAwardType(
-      disbursementSchedules,
+    // List of loan awards with the associated disbursement schedule.
+    const loanAwards = this.getAwardsByTypeWithRelatedSchedule(
+      studentSchedules,
       LOAN_TYPES,
     );
-    const distinctValueCodes = this.getDistinctValueCodes(loanAwards);
+    // Unique codes to allow the overawards deduction to happen in a sequential way.
+    const distinctValueCodes = this.getDistinctValueCodes(
+      loanAwards.map((loan) => loan.awardValue),
+    );
     for (const valueCode of distinctValueCodes) {
       // Checks if the loan is present in multiple disbursements.
       // Find all the values in all the schedules.
       const loans = loanAwards.filter(
-        (loanAward) => loanAward.valueCode === valueCode,
+        (loanAward) => loanAward.awardValue.valueCode === valueCode,
       );
-
       // Total overaward balance for the student for this particular award.
       const overawardBalance =
         studentsOverawardBalance[studentId][valueCode] ?? 0;
@@ -610,16 +611,28 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
         continue;
       }
       // Subtract the debit from the current awards in the current assessment.
-      this.subtractOverawardBalance(loans, overawardBalance);
+      this.subtractOverawardBalance(
+        loans.map((loan) => loan.awardValue),
+        overawardBalance,
+      );
+      // Prepare to update the overaward balance with any deduction
+      // that was applied to any award on the method subtractOverawardBalance.
+      const disbursementOverawardRepo = entityManager.getRepository(
+        DisbursementOveraward,
+      );
+      const auditUser = await this.systemUsersService.systemUser();
       for (const loan of loans) {
-        if (loan.overawardAmountSubtracted) {
+        if (loan.awardValue.overawardAmountSubtracted) {
           // An overaward was subtracted from an award and the same must be
           // deducted from the student balance.
           await disbursementOverawardRepo.insert({
             student: { id: studentId } as Student,
-            studentAssessment: { id: assessmentId } as StudentAssessment,
+            studentAssessment: loan.relatedSchedule.studentAssessment,
+            disbursementSchedule: loan.relatedSchedule,
             disbursementValueCode: valueCode,
-            overawardValue: (+loan.overawardAmountSubtracted * -1).toString(),
+            overawardValue: (
+              +loan.awardValue.overawardAmountSubtracted * -1
+            ).toString(),
             originType: DisbursementOverawardOriginType.AwardValueAdjusted,
             creator: auditUser,
           } as DisbursementOveraward);
@@ -703,10 +716,9 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
    * application (Overaward)
    * @returns the remaining student debit in case the awards were not enough to pay it.
    */
-  private subtractStudentDebit(
+  private subtractPreviousDisbursementDebit(
     awards: DisbursementValue[],
     totalStudentDebit: number,
-    subtractOrigin: "PreviousDisbursement" | "Overaward",
   ): number {
     let studentDebit = totalStudentDebit;
     for (const award of awards) {
@@ -719,11 +731,7 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
         // Then
         // - New award: $250 ($1000 - $750)
         // - Student debit: $0
-        if (subtractOrigin === "Overaward") {
-          award.overawardAmountSubtracted = studentDebit.toString();
-        } else {
-          award.disbursedAmountSubtracted = studentDebit.toString();
-        }
+        award.disbursedAmountSubtracted = studentDebit.toString();
         studentDebit = 0;
       } else {
         // Current disbursement is not enough to pay the debit.
@@ -738,11 +746,7 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
         // student debit will be taken from there, if possible executing the
         // second iteration of this for loop.
         studentDebit -= awardValueAmount;
-        if (subtractOrigin === "Overaward") {
-          award.overawardAmountSubtracted = award.valueAmount;
-        } else {
-          award.disbursedAmountSubtracted = award.valueAmount;
-        }
+        award.disbursedAmountSubtracted = award.valueAmount;
       }
     }
     return studentDebit;
@@ -815,6 +819,21 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
     return disbursementSchedules
       .flatMap((schedule) => schedule.disbursementValues)
       .filter((scheduleValue) => valueTypes.includes(scheduleValue.valueType));
+  }
+
+  private getAwardsByTypeWithRelatedSchedule(
+    disbursementSchedules: DisbursementSchedule[],
+    valueTypes: DisbursementValueType[],
+  ): AwardValueWithRelatedSchedule[] {
+    const result: AwardValueWithRelatedSchedule[] = [];
+    for (const relatedSchedule of disbursementSchedules) {
+      for (const awardValue of relatedSchedule.disbursementValues) {
+        if (valueTypes.includes(awardValue.valueType)) {
+          result.push({ relatedSchedule, awardValue });
+        }
+      }
+    }
+    return result;
   }
 
   /**

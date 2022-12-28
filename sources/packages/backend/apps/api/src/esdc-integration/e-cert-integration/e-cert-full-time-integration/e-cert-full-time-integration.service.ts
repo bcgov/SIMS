@@ -64,6 +64,8 @@ export class ECertFullTimeIntegrationService extends ECertIntegrationService {
       DisbursementValueType.BCTotalGrant,
       DisbursementValueType.BCLoan,
     ];
+    // TODO: 1 - do the check for stopFullTimeBCFunding at overaward calculation process.
+    // TODO: 2 - calculate BCTotalGrant after overaward calculation.
     const fileRecords = ecertRecords.map((ecertRecord) => {
       let filterAwards = ecertRecord.awards;
       if (ecertRecord.stopFullTimeBCFunding) {
@@ -78,7 +80,8 @@ export class ECertFullTimeIntegrationService extends ECertIntegrationService {
           ({
             valueType: award.valueType,
             valueCode: award.valueCode,
-            valueAmount: round(award.valueAmount).toString(),
+            valueAmount: award.valueAmount,
+            effectiveAmount: round(award.effectiveAmount).toString(),
           } as Award),
       );
 
@@ -148,7 +151,7 @@ export class ECertFullTimeIntegrationService extends ECertIntegrationService {
       record.grantAwards = getDisbursementValuesByType(roundedAwards, [
         DisbursementValueType.CanadaGrant,
         DisbursementValueType.BCTotalGrant,
-      ]).filter((grantAward) => +grantAward.valueAmount > 0);
+      ]).filter((grantAward) => +grantAward.effectiveAmount > 0);
 
       return record;
     });

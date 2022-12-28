@@ -33,6 +33,7 @@ import {
   RestrictionActionType,
   mapFromRawAndEntities,
   DisbursementScheduleStatus,
+  DisbursementValue,
 } from "@sims/sims-db";
 import {
   ECertDisbursementSchedule,
@@ -44,6 +45,11 @@ import { DisbursementScheduleService as SharedDisbursementScheduleService } from
 
 const DISBURSEMENT_DOCUMENT_NUMBER_SEQUENCE_GROUP =
   "DISBURSEMENT_DOCUMENT_NUMBER";
+/**
+ * While performing a possible huge amount of updates,
+ * breaks the execution in chunks.
+ */
+const DISBURSEMENT_VALUES_UPDATE_CHUNK_SIZE = 1000;
 
 /**
  * Service layer for Student Application disbursement schedules.
@@ -207,7 +213,7 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
     );
   }
 
-  async applyOverawards(
+  async applyOverawardsDeductions(
     disbursements: ECertDisbursementSchedule[],
     entityManager: EntityManager,
   ) {
@@ -220,24 +226,37 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
       );
     // Apply the overawards for every student, if needed.
     for (const studentId of studentsIds) {
-      const studentDisbursements = disbursements.filter(
-        (disbursement) =>
-          disbursement.studentAssessment.application.student.id === studentId,
+      await this.sharedDisbursementScheduleService.applyOverawardsDeductionsForECertGeneration(
+        studentId,
+        disbursements,
+        overawardsBalance,
+        entityManager,
       );
-
-      for (const studentDisbursement of studentDisbursements) {
-        this.sharedDisbursementScheduleService.studentDisbursement
-          .disbursementValues;
-      }
-
-      // TODO: To be continued!
-
-      const studentBalance = overawardsBalance[studentId];
-      if (!studentBalance) {
-        // If there is not overaward balance, skip the student.
-        continue;
-      }
     }
+  }
+
+  async saveAwardsEffectiveValue(
+    disbursements: ECertDisbursementSchedule[],
+    entityManager: EntityManager,
+  ) {
+    const disbursementValues = disbursements.flatMap(
+      (disbursement) => disbursement.disbursementValues,
+    );
+
+    for (const disbursementValue of disbursementValues) {
+      const effectiveValue =
+        +disbursementValue.valueAmount -
+        (+disbursementValue.disbursedAmountSubtracted ?? 0) -
+        (+disbursementValue.overawardAmountSubtracted ?? 0);
+      disbursementValue.effectiveAmount = effectiveValue.toString();
+    }
+
+    await entityManager
+      .getRepository(DisbursementValue)
+      .save(disbursementValues, {
+        chunk: DISBURSEMENT_VALUES_UPDATE_CHUNK_SIZE,
+        reload: false,
+      });
   }
 
   /**
