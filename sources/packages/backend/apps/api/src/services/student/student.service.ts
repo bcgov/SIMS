@@ -143,7 +143,7 @@ export class StudentService extends RecordDataModelService<Student> {
 
     student.user = user;
     student.birthDate = userInfo.birthdate;
-    student.gender = userInfo.gender;
+    student.gender = studentInfo.gender;
     student.contactInfo = {
       address: transformAddressDetails(studentInfo),
       phone: studentInfo.phone,
@@ -336,23 +336,23 @@ export class StudentService extends RecordDataModelService<Student> {
   /**
    * Updates the student contact information.
    * @param studentId student to be updated.
-   * @param contact contact information to be updated.
+   * @param studentInfo student information to be updated.
    * @param auditUserId user who is making the changes.
    * @returns updated student.
    */
   async updateStudentContactByStudentId(
     studentId: number,
-    contact: StudentInfo,
+    studentInfo: StudentInfo,
     auditUserId: number,
   ): Promise<Student> {
     const student = new Student();
     student.id = studentId;
     student.contactInfo = {
-      address: transformAddressDetails(contact),
-      phone: contact.phone,
+      address: transformAddressDetails(studentInfo),
+      phone: studentInfo.phone,
     };
     student.modifier = { id: auditUserId } as User;
-
+    student.gender = studentInfo.gender;
     return this.save(student);
   }
 

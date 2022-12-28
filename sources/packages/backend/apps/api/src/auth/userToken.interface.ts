@@ -31,7 +31,6 @@ export interface IUserToken {
   lastName: string;
   birthdate: string;
   email_verified: string;
-  gender: string;
   displayName: string;
   givenNames: string;
   identity_assurance_level: string;
