@@ -156,7 +156,6 @@ export class SupportingUserService extends RecordDataModelService<SupportingUser
         "supportingUser.contactInfo",
         "supportingUser.sin",
         "supportingUser.birthDate",
-        "supportingUser.gender",
         "supportingUser.supportingData",
         "user.firstName",
         "user.lastName",
