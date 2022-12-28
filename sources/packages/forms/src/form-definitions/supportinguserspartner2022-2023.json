@@ -1,9 +1,9 @@
 {
   "title": "Supporting Users Partner",
-  "display": "wizard",
-  "type": "form",
   "name": "supportinguserspartner2022-2023",
   "path": "supportinguserspartner2022-2023",
+  "type": "form",
+  "display": "wizard",
   "tags": [
     "common"
   ],
@@ -315,84 +315,6 @@
                       "spellcheck": true,
                       "truncateMultipleSpaces": false,
                       "id": "el85p1q"
-                    },
-                    {
-                      "label": "Verified email",
-                      "disabled": true,
-                      "tableView": true,
-                      "persistent": false,
-                      "key": "email",
-                      "type": "textfield",
-                      "input": true,
-                      "hideOnChildrenHidden": false,
-                      "placeholder": "",
-                      "prefix": "",
-                      "customClass": "",
-                      "suffix": "",
-                      "multiple": false,
-                      "defaultValue": null,
-                      "protected": false,
-                      "unique": false,
-                      "hidden": false,
-                      "clearOnHide": true,
-                      "refreshOn": "",
-                      "redrawOn": "",
-                      "modalEdit": false,
-                      "dataGridLabel": false,
-                      "labelPosition": "top",
-                      "description": "",
-                      "errorLabel": "",
-                      "tooltip": "",
-                      "hideLabel": false,
-                      "tabindex": "",
-                      "autofocus": false,
-                      "dbIndex": false,
-                      "customDefaultValue": "",
-                      "calculateValue": "",
-                      "calculateServer": false,
-                      "widget": {
-                        "type": "input"
-                      },
-                      "attributes": {},
-                      "validateOn": "change",
-                      "validate": {
-                        "required": false,
-                        "custom": "",
-                        "customPrivate": false,
-                        "strictDateValidation": false,
-                        "multiple": false,
-                        "unique": false,
-                        "minLength": "",
-                        "maxLength": "",
-                        "pattern": ""
-                      },
-                      "conditional": {
-                        "show": null,
-                        "when": null,
-                        "eq": ""
-                      },
-                      "overlay": {
-                        "style": "",
-                        "left": "",
-                        "top": "",
-                        "width": "",
-                        "height": ""
-                      },
-                      "allowCalculateOverride": false,
-                      "encrypted": false,
-                      "showCharCount": false,
-                      "showWordCount": false,
-                      "properties": {},
-                      "allowMultipleMasks": false,
-                      "addons": [],
-                      "mask": false,
-                      "inputType": "text",
-                      "inputFormat": "plain",
-                      "inputMask": "",
-                      "displayMask": "",
-                      "spellcheck": true,
-                      "truncateMultipleSpaces": false,
-                      "id": "em1a0hl"
                     }
                   ],
                   "width": 6,
@@ -483,17 +405,17 @@
                       "id": "eg4wir"
                     },
                     {
-                      "label": "Gender",
-                      "customClass": "text-capitalize",
+                      "label": "Verified email",
                       "disabled": true,
                       "tableView": true,
                       "persistent": false,
-                      "key": "gender",
+                      "key": "email",
                       "type": "textfield",
                       "input": true,
                       "hideOnChildrenHidden": false,
                       "placeholder": "",
                       "prefix": "",
+                      "customClass": "",
                       "suffix": "",
                       "multiple": false,
                       "defaultValue": null,
@@ -509,7 +431,6 @@
                       "description": "",
                       "errorLabel": "",
                       "tooltip": "",
-                      "hideLabel": false,
                       "tabindex": "",
                       "autofocus": false,
                       "dbIndex": false,
@@ -558,7 +479,7 @@
                       "displayMask": "",
                       "spellcheck": true,
                       "truncateMultipleSpaces": false,
-                      "id": "e0nl20s"
+                      "id": "em1a0hl"
                     }
                   ],
                   "width": 6,
@@ -790,7 +711,8 @@
               "allowMultipleMasks": false,
               "addons": [],
               "content": "",
-              "id": "efvsdll"
+              "id": "efvsdll",
+              "className": ""
             },
             {
               "label": "Columns",
