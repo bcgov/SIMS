@@ -1,6 +1,5 @@
 import { Injectable } from "@nestjs/common";
 import {
-  DISBURSEMENT_FILE_GENERATION_ANTICIPATION_DAYS,
   COE_WINDOW,
   COE_DENIED_REASON_OTHER_ID,
   PaginationOptions,
@@ -9,47 +8,21 @@ import {
   OrderByCondition,
 } from "../../utilities";
 import { addDays } from "@sims/utilities";
-import {
-  DataSource,
-  In,
-  Repository,
-  UpdateResult,
-  Brackets,
-  EntityManager,
-} from "typeorm";
-import {
-  DisbursementOverawardService,
-  SequenceControlService,
-} from "@sims/services";
-import { StudentRestrictionService } from "..";
+import { DataSource, UpdateResult, Brackets, EntityManager } from "typeorm";
+import { SequenceControlService } from "@sims/services";
 import {
   RecordDataModelService,
   Application,
   ApplicationStatus,
   COEStatus,
   DisbursementSchedule,
-  OfferingIntensity,
   User,
-  RestrictionActionType,
-  mapFromRawAndEntities,
-  DisbursementScheduleStatus,
-  DisbursementValue,
 } from "@sims/sims-db";
-import {
-  ECertDisbursementSchedule,
-  EnrollmentPeriod,
-} from "./disbursement-schedule.models";
-import * as dayjs from "dayjs";
+import { EnrollmentPeriod } from "./disbursement-schedule.models";
 import { NotificationActionsService } from "@sims/services/notifications";
-import { DisbursementScheduleService as SharedDisbursementScheduleService } from "@sims/services";
 
 const DISBURSEMENT_DOCUMENT_NUMBER_SEQUENCE_GROUP =
   "DISBURSEMENT_DOCUMENT_NUMBER";
-/**
- * While performing a possible huge amount of updates,
- * breaks the execution in chunks.
- */
-const DISBURSEMENT_VALUES_UPDATE_CHUNK_SIZE = 1000;
 
 /**
  * Service layer for Student Application disbursement schedules.
@@ -59,10 +32,7 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
   constructor(
     private readonly dataSource: DataSource,
     private readonly sequenceService: SequenceControlService,
-    private readonly studentRestrictionService: StudentRestrictionService,
     private readonly notificationActionsService: NotificationActionsService,
-    private readonly disbursementOverawardService: DisbursementOverawardService,
-    private readonly sharedDisbursementScheduleService: SharedDisbursementScheduleService,
   ) {
     super(dataSource.getRepository(DisbursementSchedule));
   }
@@ -80,208 +50,6 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
       },
     );
     return nextDocumentNumber;
-  }
-
-  /**
-   * Get all records that must be part of the e-Cert files and that were not sent yet.
-   * Criteria to be a valid disbursement to be sent.
-   * - Not sent yet;
-   * - Disbursement date in the past or in the near future (defined by DISBURSEMENT_FILE_GENERATION_ANTICIPATION_DAYS);
-   * - Student had the SIN number validated by the CRA;
-   * - Student has a valid signed MSFAA;
-   * - No restrictions in the student account that prevents the disbursement;
-   * - Application status must be 'Completed';
-   * - Confirmation of enrollment(COE) must be 'Completed'.
-   * - Disbursement schedule on pending status.
-   */
-  async getECertInformationToBeSent(
-    offeringIntensity: OfferingIntensity,
-  ): Promise<ECertDisbursementSchedule[]> {
-    const possibleRestrictionActions: RestrictionActionType[] =
-      offeringIntensity === OfferingIntensity.fullTime
-        ? [RestrictionActionType.StopFullTimeDisbursement]
-        : [RestrictionActionType.StopPartTimeDisbursement];
-    const stopFullTimeBCFunding: RestrictionActionType[] = [
-      RestrictionActionType.StopFullTimeBCFunding,
-    ];
-
-    // Define the minimum date to send a disbursement.
-    const disbursementMinDate = dayjs()
-      .add(DISBURSEMENT_FILE_GENERATION_ANTICIPATION_DAYS, "days")
-      .toDate();
-
-    const queryResult = await this.repo
-      .createQueryBuilder("disbursement")
-      .select([
-        "disbursement.id",
-        "disbursement.documentNumber",
-        "disbursement.negotiatedExpiryDate",
-        "disbursement.disbursementDate",
-        "disbursement.tuitionRemittanceRequestedAmount",
-        "disbursement.coeUpdatedAt",
-        "application.id",
-        "application.applicationNumber",
-        "application.data",
-        "application.relationshipStatus",
-        "application.studentNumber",
-        "currentAssessment.id",
-        "currentAssessment.assessmentData",
-        "offering.id",
-        "offering.courseLoad",
-        "offering.studyStartDate",
-        "offering.studyEndDate",
-        "offering.yearOfStudy",
-        "educationProgram.id",
-        "educationProgram.fieldOfStudyCode",
-        "educationProgram.completionYears",
-        "user.firstName",
-        "user.lastName",
-        "user.email",
-        "sinValidation.id",
-        "sinValidation.sin",
-        "student.id",
-        "student.birthDate",
-        "student.gender",
-        "student.contactInfo",
-        "institutionLocation.id",
-        "institutionLocation.institutionCode",
-        "disbursementValue.id",
-        "disbursementValue.valueType",
-        "disbursementValue.valueCode",
-        "disbursementValue.valueAmount",
-        "studentAssessment.id",
-      ])
-      .addSelect(
-        `CASE
-            WHEN EXISTS(${this.studentRestrictionService
-              .getExistsBlockRestrictionQuery(
-                false,
-                false,
-                "restrictionActionType",
-              )
-              .getSql()}) THEN true
-            ELSE false
-        END`,
-        "stopFullTimeBCFunding",
-      )
-      .innerJoin("disbursement.studentAssessment", "studentAssessment")
-      .innerJoin("studentAssessment.application", "application")
-      .innerJoin("application.currentAssessment", "currentAssessment") // * This is to fetch the current assessment of the application, even though we have multiple reassessments
-      .innerJoin("currentAssessment.offering", "offering")
-      .innerJoin("offering.institutionLocation", "institutionLocation")
-      .innerJoin("offering.educationProgram", "educationProgram")
-      .innerJoin("application.student", "student") // ! The student alias here is also used in sub query 'getExistsBlockRestrictionQuery'.
-      .innerJoin("student.user", "user")
-      .innerJoin("student.sinValidation", "sinValidation")
-      .innerJoin("application.msfaaNumber", "msfaaNumber")
-      .innerJoin("disbursement.disbursementValues", "disbursementValue")
-      .where("disbursement.dateSent is null")
-      .andWhere("disbursement.disbursementDate <= :disbursementMinDate", {
-        disbursementMinDate,
-      })
-      .andWhere("application.applicationStatus = :applicationStatus", {
-        applicationStatus: ApplicationStatus.completed,
-      })
-      .andWhere("msfaaNumber.dateSigned is not null")
-      .andWhere("sinValidation.isValidSIN = true")
-      .andWhere("offering.offeringIntensity = :offeringIntensity", {
-        offeringIntensity,
-      })
-      .andWhere(
-        `NOT EXISTS(${this.studentRestrictionService
-          .getExistsBlockRestrictionQuery()
-          .getSql()})`,
-      )
-      .andWhere(
-        "disbursement.disbursementScheduleStatus = :disbursementScheduleStatus",
-        {
-          disbursementScheduleStatus: DisbursementScheduleStatus.Pending,
-        },
-      )
-      .andWhere("disbursement.coeStatus = :coeStatus", {
-        coeStatus: COEStatus.completed,
-      })
-      .setParameter("restrictionActionType", stopFullTimeBCFunding)
-      // 'restrictionActions' parameter used inside sub-query.
-      .setParameter("restrictionActions", possibleRestrictionActions)
-      // Necessary, for instance, for the overawards processing.
-      .orderBy("disbursement.disbursementDate")
-      .getRawAndEntities();
-    return mapFromRawAndEntities<ECertDisbursementSchedule>(
-      queryResult,
-      "stopFullTimeBCFunding",
-    );
-  }
-
-  async applyOverawardsDeductions(
-    disbursements: ECertDisbursementSchedule[],
-    entityManager: EntityManager,
-  ) {
-    const studentsIds = disbursements.map((student) => student.id);
-    // Get all the overawards balances for the students that are part of the disbursements.
-    const overawardsBalance =
-      await this.disbursementOverawardService.getOverawardBalance(
-        studentsIds,
-        entityManager,
-      );
-    // Apply the overawards for every student, if needed.
-    for (const studentId of studentsIds) {
-      await this.sharedDisbursementScheduleService.applyOverawardsDeductionsForECertGeneration(
-        studentId,
-        disbursements,
-        overawardsBalance,
-        entityManager,
-      );
-    }
-  }
-
-  async saveAwardsEffectiveValue(
-    disbursements: ECertDisbursementSchedule[],
-    entityManager: EntityManager,
-  ) {
-    const disbursementValues = disbursements.flatMap(
-      (disbursement) => disbursement.disbursementValues,
-    );
-
-    for (const disbursementValue of disbursementValues) {
-      const effectiveValue =
-        +disbursementValue.valueAmount -
-        (+disbursementValue.disbursedAmountSubtracted ?? 0) -
-        (+disbursementValue.overawardAmountSubtracted ?? 0);
-      disbursementValue.effectiveAmount = effectiveValue.toString();
-    }
-
-    await entityManager
-      .getRepository(DisbursementValue)
-      .save(disbursementValues, {
-        chunk: DISBURSEMENT_VALUES_UPDATE_CHUNK_SIZE,
-        reload: false,
-      });
-  }
-
-  /**
-   * Once the e-Cert file is sent, updates the date that the file was uploaded.
-   * @param disbursementIds records that are part of the generated
-   * file that must have the date sent updated.
-   * @param dateSent date that the file was uploaded.
-   * @param [disbursementScheduleRepo] when provided, it is used instead of the
-   * local repository (this.repo). Useful when the command must be executed,
-   * for instance, as part of an existing transaction manage externally to this
-   * service.
-   * @returns the result of the update.
-   */
-  async updateRecordsInSentFile(
-    disbursementIds: number[],
-    dateSent: Date,
-    disbursementScheduleRepo?: Repository<DisbursementSchedule>,
-  ) {
-    if (!dateSent) {
-      throw new Error(
-        "Date sent field is not provided to update the disbursement records.",
-      );
-    }
-    const repository = disbursementScheduleRepo ?? this.repo;
-    return repository.update({ id: In(disbursementIds) }, { dateSent });
   }
 
   /**

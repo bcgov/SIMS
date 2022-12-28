@@ -1,3 +1,4 @@
+import { ECertDisbursementSchedule } from "@sims/integrations/services";
 import {
   DisbursementSchedule,
   DisbursementValue,
@@ -17,6 +18,6 @@ export interface DisbursementSaveModel {
 }
 
 export interface AwardValueWithRelatedSchedule {
-  relatedSchedule: DisbursementSchedule;
+  relatedSchedule: ECertDisbursementSchedule;
   awardValue: DisbursementValue;
 }

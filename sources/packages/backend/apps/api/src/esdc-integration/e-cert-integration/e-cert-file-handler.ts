@@ -11,7 +11,7 @@ import {
   ECERT_FULL_TIME_FEEDBACK_FILE_CODE,
   ECERT_PART_TIME_FEEDBACK_FILE_CODE,
 } from "../../utilities";
-import { getISODateOnlyString } from "@sims/utilities";
+import { CustomNamedError, getISODateOnlyString } from "@sims/utilities";
 import { EntityManager } from "typeorm";
 import { ESDCFileHandler } from "../esdc-file-handler";
 import {
@@ -28,6 +28,7 @@ import { ECertFullTimeResponseRecord } from "./e-cert-full-time-integration/e-ce
 import { ProcessSFTPResponseResult } from "../models/esdc-integration.model";
 import { ECertDisbursementSchedule } from "../../services/disbursement-schedule-service/disbursement-schedule.models";
 import { ConfigService, ESDCIntegrationConfig } from "@sims/utilities/config";
+import { ECertGenerationService } from "@sims/integrations/services";
 
 const ECERT_FULL_TIME_SENT_FILE_SEQUENCE_GROUP = "ECERT_FT_SENT_FILE";
 const ECERT_PART_TIME_SENT_FILE_SEQUENCE_GROUP = "ECERT_PT_SENT_FILE";
@@ -38,6 +39,7 @@ export class ECertFileHandler extends ESDCFileHandler {
     configService: ConfigService,
     private readonly sequenceService: SequenceControlService,
     private readonly disbursementScheduleService: DisbursementScheduleService,
+    private readonly eCertGenerationService: ECertGenerationService,
     private readonly disbursementScheduleErrorsService: DisbursementScheduleErrorsService,
     private readonly eCertFullTimeIntegrationService: ECertFullTimeIntegrationService,
     private readonly eCertPartTimeIntegrationService: ECertPartTimeIntegrationService,
@@ -116,19 +118,6 @@ export class ECertFileHandler extends ESDCFileHandler {
     this.logger.log(
       `Retrieving ${offeringIntensity} disbursements to generate the e-Cert file...`,
     );
-    const disbursements =
-      await this.disbursementScheduleService.getECertInformationToBeSent(
-        offeringIntensity,
-      );
-    if (!disbursements.length) {
-      return {
-        generatedFile: "none",
-        uploadedRecords: 0,
-      };
-    }
-    this.logger.log(
-      `Found ${disbursements.length} ${offeringIntensity} disbursements schedules.`,
-    );
 
     // Create records and create the unique file sequence number.
     let uploadResult: ECertUploadResult;
@@ -138,13 +127,24 @@ export class ECertFileHandler extends ESDCFileHandler {
       sequenceGroup,
       async (nextSequenceNumber: number, entityManager: EntityManager) => {
         try {
-          await this.disbursementScheduleService.applyOverawardsDeductions(
-            disbursements,
-            entityManager,
-          );
-          await this.disbursementScheduleService.saveAwardsEffectiveValue(
-            disbursements,
-            entityManager,
+          const disbursements =
+            await this.eCertGenerationService.prepareDisbursementsForECertGeneration(
+              offeringIntensity,
+              entityManager,
+            );
+          if (!disbursements.length) {
+            throw new CustomNamedError(
+              `There are no records available to generate an e-Cert file for ${offeringIntensity}`,
+              "TRANSACTION_ABORTED",
+            );
+            // TODO: handle the exception.
+            // return {
+            //   generatedFile: "none",
+            //   uploadedRecords: 0,
+            // };
+          }
+          this.logger.log(
+            `Found ${disbursements.length} ${offeringIntensity} disbursements schedules.`,
           );
           const disbursementRecords = disbursements.map((disbursement) => {
             return this.createECertRecord(disbursement);
@@ -162,21 +162,6 @@ export class ECertFileHandler extends ESDCFileHandler {
           const fileInfo = await this.createRequestFileName(
             fileCode,
             nextSequenceNumber,
-          );
-
-          // Fetches the disbursements ids, for further update in the DB.
-          const disbursementIds = disbursements.map(
-            (disbursement) => disbursement.id,
-          );
-          // Creates the repository based on the entity manager that
-          // holds the transaction already created to manage the
-          // sequence number.
-          const disbursementScheduleRepo =
-            entityManager.getRepository(DisbursementSchedule);
-          await this.disbursementScheduleService.updateRecordsInSentFile(
-            disbursementIds,
-            now,
-            disbursementScheduleRepo,
           );
 
           this.logger.log(`Uploading ${offeringIntensity} content...`);
