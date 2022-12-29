@@ -139,7 +139,7 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
       // Adjust the saved loans disbursements with the values already disbursed
       // and generate possible overawards.
       // !Intended to process only loans (CanadaLoan/BCLoan)
-      await this.applyLoansOverawards(
+      await this.createLoansOverawards(
         assessment.id,
         assessment.application.student.id,
         disbursementSchedules,
@@ -367,6 +367,9 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
       select: { id: true },
       where: {
         deletedAt: IsNull(),
+        // disbursementSchedule is populated when an overaward has a deduction during the e-Cert
+        // generation when the award was paid (Sent), these records are not deleted.
+        disbursementSchedule: IsNull(),
         studentAssessment: {
           application: {
             student: {
@@ -449,12 +452,9 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
         (disbursementSchedule) => disbursementSchedule.disbursementValues,
       )
       .forEach((disbursementValue) => {
-        const realAwardPaidValue =
-          +disbursementValue.valueAmount -
-          +disbursementValue.disbursedAmountSubtracted;
         totalPerValueCode[disbursementValue.valueCode] =
           (totalPerValueCode[disbursementValue.valueCode] ?? 0) +
-          realAwardPaidValue;
+          +disbursementValue.effectiveAmount;
       });
     return totalPerValueCode;
   }
@@ -510,7 +510,7 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
    * @param entityManager used to execute the commands in the same transaction.
    * @returns
    */
-  private async applyLoansOverawards(
+  private async createLoansOverawards(
     assessmentId: number,
     studentId: number,
     disbursementSchedules: DisbursementSchedule[],

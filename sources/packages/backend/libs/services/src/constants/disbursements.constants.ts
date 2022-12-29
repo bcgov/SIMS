@@ -17,6 +17,15 @@ export const GRANTS_TYPES = [
 ];
 
 /**
+ * Types of disbursements values related to the province.
+ */
+export const BC_FUNDING_TYPES = [
+  DisbursementValueType.BCLoan,
+  DisbursementValueType.BCGrant,
+  DisbursementValueType.BCTotalGrant,
+];
+
+/**
  * Code for the BC total grants calculated during e-Cert generation.
  * BC individual grants are not part of the e-Cert, only the sum of them,
  * that is represented by this code.

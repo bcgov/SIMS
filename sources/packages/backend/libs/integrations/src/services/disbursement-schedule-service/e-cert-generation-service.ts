@@ -21,10 +21,10 @@ import {
   DisbursementOverawardOriginType,
 } from "@sims/sims-db";
 import { ECertDisbursementSchedule } from "./e-cert-generation.models";
-import { DisbursementScheduleService as SharedDisbursementScheduleService } from "@sims/services";
 import { StudentRestrictionsService } from "../restriction/student-restriction.service";
 import { StudentOverawardBalance } from "@sims/services/disbursement-overaward/disbursement-overaward.models";
 import {
+  BC_FUNDING_TYPES,
   BC_TOTAL_GRANT_AWARD_CODE,
   LOAN_TYPES,
 } from "@sims/services/constants";
@@ -41,7 +41,6 @@ export class ECertGenerationService {
   constructor(
     private readonly studentRestrictionService: StudentRestrictionsService,
     private readonly disbursementOverawardService: DisbursementOverawardService,
-    private readonly sharedDisbursementScheduleService: SharedDisbursementScheduleService,
     private readonly systemUsersService: SystemUsersService,
   ) {}
 
@@ -59,10 +58,10 @@ export class ECertGenerationService {
 
     // Step 1 - Check student balance and execute the possible deductions from the awards.
     await this.applyOverawardsDeductions(disbursements, entityManager);
-    // Step 2 - Execute the calculation to define the final value to be used for the e-Cert.
+    // Step 2 - Calculate BC total grants after all others calculations are done.
+    this.createBCTotalGrants(disbursements);
+    // Step 3 - Execute the calculation to define the final value to be used for the e-Cert.
     this.calculateEffectiveValue(disbursements);
-    // Step 3 - Calculate BC total grants after all others calculations are done.
-    this.createBCTotalGrants(disbursements, offeringIntensity);
     // Step 4 - Mark all disbursements as 'sent'.
     const now = new Date();
     disbursements.forEach((disbursement) => {
@@ -205,6 +204,7 @@ export class ECertGenerationService {
       // Necessary, for instance, for the overawards processing.
       .orderBy("disbursement.disbursementDate")
       .getRawAndEntities();
+    // TODO: ensure stopFullTimeBCFunding is false for Part time.
     return mapFromRawAndEntities<ECertDisbursementSchedule>(
       queryResult,
       "stopFullTimeBCFunding",
@@ -235,15 +235,18 @@ export class ECertGenerationService {
   }
 
   private calculateEffectiveValue(disbursements: ECertDisbursementSchedule[]) {
-    const disbursementValues = disbursements.flatMap(
-      (disbursement) => disbursement.disbursementValues,
-    );
-    for (const disbursementValue of disbursementValues) {
-      const effectiveValue =
-        +disbursementValue.valueAmount -
-        (+disbursementValue.disbursedAmountSubtracted ?? 0) -
-        (+disbursementValue.overawardAmountSubtracted ?? 0);
-      disbursementValue.effectiveAmount = effectiveValue.toString();
+    for (const disbursement of disbursements) {
+      for (const disbursementValue of disbursement.disbursementValues) {
+        if (this.shouldStopFunding(disbursement, disbursementValue)) {
+          disbursementValue.effectiveAmount = "0";
+        } else {
+          const effectiveValue =
+            +disbursementValue.valueAmount -
+            (+disbursementValue.disbursedAmountSubtracted ?? 0) -
+            (+disbursementValue.overawardAmountSubtracted ?? 0);
+          disbursementValue.effectiveAmount = effectiveValue.toString();
+        }
+      }
     }
   }
 
@@ -255,7 +258,6 @@ export class ECertGenerationService {
    */
   private async createBCTotalGrants(
     disbursementSchedules: ECertDisbursementSchedule[],
-    offeringIntensity: OfferingIntensity,
   ): Promise<void> {
     const auditUser = await this.systemUsersService.systemUser();
     for (const disbursementSchedule of disbursementSchedules) {
@@ -283,14 +285,7 @@ export class ECertGenerationService {
           return previousValue + +currentValue.effectiveAmount;
         }, 0)
         .toString();
-      if (
-        offeringIntensity === OfferingIntensity.fullTime &&
-        disbursementSchedule.stopFullTimeBCFunding
-      ) {
-        bcTotalGrant.effectiveAmount = "0";
-      } else {
-        bcTotalGrant.effectiveAmount = bcTotalGrant.valueAmount;
-      }
+      bcTotalGrant.effectiveAmount = bcTotalGrant.valueAmount;
     }
   }
 
@@ -309,12 +304,22 @@ export class ECertGenerationService {
       (disbursement) =>
         disbursement.studentAssessment.application.student.id === studentId,
     );
-    // TODO: filter to not calculate overawards when stop BC funding.
     // List of loan awards with the associated disbursement schedule.
+    // Filter possible awards that will not be disbursed due to a restriction.
+    // If the award will not be disbursed the overaward should not be deducted
+    // because the student will not be receiving any money for the award, in this
+    // case the BC Loan (BCSL).
     const loanAwards = this.getAwardsByTypeWithRelatedSchedule(
       studentSchedules,
       LOAN_TYPES,
+    ).filter(
+      (loanAward) =>
+        !this.shouldStopFunding(
+          loanAward.relatedSchedule,
+          loanAward.awardValue,
+        ),
     );
+
     // Unique codes to allow the overawards deduction to happen in a sequential way.
     const distinctValueCodes = [
       ...new Set(loanAwards.map((loan) => loan.awardValue.valueCode)),
@@ -361,6 +366,16 @@ export class ECertGenerationService {
         }
       }
     }
+  }
+
+  private shouldStopFunding(
+    schedule: ECertDisbursementSchedule,
+    disbursementValue: DisbursementValue,
+  ): boolean {
+    return (
+      schedule.stopFullTimeBCFunding &&
+      BC_FUNDING_TYPES.includes(disbursementValue.valueType)
+    );
   }
 
   private getAwardsByTypeWithRelatedSchedule(
