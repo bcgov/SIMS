@@ -1610,59 +1610,7 @@
           "customOptions": {},
           "useExactSearch": false,
           "id": "etuq3h",
-          "tags": [],
-          "isNew": false
-        },
-        {
-          "autofocus": false,
-          "input": true,
-          "tableView": true,
-          "label": "Select test",
-          "key": "stest",
-          "placeholder": "",
-          "data": {
-            "values": [
-              {
-                "value": "val1",
-                "label": "val1"
-              },
-              {
-                "value": "val2",
-                "label": "val2"
-              }
-            ],
-            "json": "",
-            "url": "",
-            "resource": "",
-            "custom": ""
-          },
-          "dataSrc": "values",
-          "valueProperty": "",
-          "defaultValue": "",
-          "refreshOn": "",
-          "filter": "",
-          "authenticate": false,
-          "template": "<span>{{ item.label }}</span>",
-          "multiple": false,
-          "protected": false,
-          "unique": false,
-          "persistent": true,
-          "hidden": false,
-          "clearOnHide": true,
-          "validate": {
-            "required": true
-          },
-          "type": "select",
-          "labelPosition": "top",
-          "tags": [],
-          "conditional": {
-            "show": "",
-            "when": null,
-            "eq": ""
-          },
-          "properties": {},
-          "lockKey": true,
-          "isNew": false
+          "tags": []
         },
         {
           "label": "Permanent disability (PD) status",
