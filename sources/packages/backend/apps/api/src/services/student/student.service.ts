@@ -340,7 +340,7 @@ export class StudentService extends RecordDataModelService<Student> {
    * @param auditUserId user who is making the changes.
    * @returns updated student.
    */
-  async updateStudentInfoStudentId(
+  async updateStudentInfo(
     studentId: number,
     studentInfo: StudentInfo,
     auditUserId: number,
