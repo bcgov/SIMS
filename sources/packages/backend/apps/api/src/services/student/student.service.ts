@@ -143,7 +143,7 @@ export class StudentService extends RecordDataModelService<Student> {
 
     student.user = user;
     student.birthDate = userInfo.birthdate;
-    student.gender = userInfo.gender;
+    student.gender = studentInfo.gender;
     student.contactInfo = {
       address: transformAddressDetails(studentInfo),
       phone: studentInfo.phone,
@@ -334,25 +334,25 @@ export class StudentService extends RecordDataModelService<Student> {
   }
 
   /**
-   * Updates the student contact information.
+   * Updates student information.
    * @param studentId student to be updated.
-   * @param contact contact information to be updated.
+   * @param studentInfo student information to be updated.
    * @param auditUserId user who is making the changes.
    * @returns updated student.
    */
-  async updateStudentContactByStudentId(
+  async updateStudentInfo(
     studentId: number,
-    contact: StudentInfo,
+    studentInfo: StudentInfo,
     auditUserId: number,
   ): Promise<Student> {
     const student = new Student();
     student.id = studentId;
     student.contactInfo = {
-      address: transformAddressDetails(contact),
-      phone: contact.phone,
+      address: transformAddressDetails(studentInfo),
+      phone: studentInfo.phone,
     };
     student.modifier = { id: auditUserId } as User;
-
+    student.gender = studentInfo.gender;
     return this.save(student);
   }
 
@@ -384,13 +384,9 @@ export class StudentService extends RecordDataModelService<Student> {
       studentToSync.sinValidation = sinValidation;
       mustSave = true;
     }
-    // This condition is not added above, as email and gender does not trigger SIN validation request.
-    if (
-      studentToken.email !== studentToSync.user.email ||
-      studentToken.gender !== studentToSync.gender
-    ) {
+    // This condition is not added above, as email does not trigger SIN validation request.
+    if (studentToken.email !== studentToSync.user.email) {
       studentToSync.user.email = studentToken.email;
-      studentToSync.gender = studentToken.gender;
       mustSave = true;
     }
 

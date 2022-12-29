@@ -65,7 +65,6 @@ export default {
         data.firstName = bcscParsedToken.givenNames;
         data.lastName = bcscParsedToken.lastName;
         data.email = bcscParsedToken.email;
-        data.gender = bcscParsedToken.gender;
         data.dateOfBirth = dateOnlyLongString(bcscParsedToken.birthdate);
       } else if (AuthService.shared.userToken?.IDP === AppIDPType.BCeID) {
         data.email = bceidParsedToken.email;

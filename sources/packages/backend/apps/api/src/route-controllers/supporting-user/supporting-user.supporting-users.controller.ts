@@ -239,7 +239,6 @@ export class SupportingUserSupportingUsersController extends BaseController {
           contactInfo,
           sin: payload.sin,
           birthDate: userToken.birthdate,
-          gender: userToken.gender,
           supportingData: payload.supportingData,
           userId: user.id,
         },

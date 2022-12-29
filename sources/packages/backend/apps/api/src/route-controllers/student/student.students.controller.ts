@@ -331,7 +331,7 @@ export class StudentStudentsController extends BaseController {
         "Not able to update a student due to an invalid request.",
       );
     }
-    await this.studentService.updateStudentContactByStudentId(
+    await this.studentService.updateStudentInfo(
       studentUserToken.studentId,
       submissionResult.data.data,
       studentUserToken.userId,
