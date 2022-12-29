@@ -334,7 +334,7 @@ export class StudentService extends RecordDataModelService<Student> {
   }
 
   /**
-   * Updates the student contact information.
+   * Updates student information.
    * @param studentId student to be updated.
    * @param studentInfo student information to be updated.
    * @param auditUserId user who is making the changes.
