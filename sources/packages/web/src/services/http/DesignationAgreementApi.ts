@@ -1,11 +1,11 @@
 import HttpBaseClient from "@/services/http/common/HttpBaseClient";
 import {
-  SubmitDesignationAgreementDto,
-  GetDesignationAgreementDto,
-  GetDesignationAgreementsDto,
-  PendingDesignationDto,
+  SubmitDesignationAgreementAPIInDTO,
+  DesignationAgreementAPIOutDTO,
+  DesignationAgreementDetailsAPIOutDTO,
+  PendingDesignationAgreementDetailsAPIOutDTO,
   DesignationAgreementStatus,
-  UpdateDesignationDto,
+  UpdateDesignationDetailsAPIInDTO,
 } from "@/types/contracts/DesignationAgreementContract";
 import { PaginationParams } from "@/types";
 
@@ -14,7 +14,7 @@ import { PaginationParams } from "@/types";
  */
 export class DesignationAgreementApi extends HttpBaseClient {
   async submitDesignationAgreement(
-    designationAgreement: SubmitDesignationAgreementDto,
+    designationAgreement: SubmitDesignationAgreementAPIInDTO,
   ): Promise<void> {
     await this.postCall(
       this.addClientRoot("designation-agreement"),
@@ -24,19 +24,19 @@ export class DesignationAgreementApi extends HttpBaseClient {
 
   async getDesignationAgreement(
     designationId: number,
-  ): Promise<GetDesignationAgreementDto> {
-    return this.getCallTyped<GetDesignationAgreementDto>(
+  ): Promise<DesignationAgreementAPIOutDTO> {
+    return this.getCallTyped<DesignationAgreementAPIOutDTO>(
       this.addClientRoot(`designation-agreement/${designationId}`),
     );
   }
 
   async getDesignationsAgreements(
     institutionId?: number,
-  ): Promise<GetDesignationAgreementsDto[]> {
+  ): Promise<DesignationAgreementDetailsAPIOutDTO[]> {
     const url = institutionId
       ? `designation-agreement/institution/${institutionId}`
       : "designation-agreement";
-    return this.getCallTyped<GetDesignationAgreementsDto[]>(
+    return this.getCallTyped<DesignationAgreementDetailsAPIOutDTO[]>(
       this.addClientRoot(url),
     );
   }
@@ -44,19 +44,21 @@ export class DesignationAgreementApi extends HttpBaseClient {
   async getDesignationByStatus(
     designationStatus: DesignationAgreementStatus,
     searchCriteria?: string,
-  ): Promise<PendingDesignationDto[]> {
+  ): Promise<PendingDesignationAgreementDetailsAPIOutDTO[]> {
     let url = `designation-agreement/status/${designationStatus}`;
     if (searchCriteria) {
       url = `${url}?${PaginationParams.SearchCriteria}=${searchCriteria}`;
     }
-    return this.getCallTyped<PendingDesignationDto[]>(this.addClientRoot(url));
+    return this.getCallTyped<PendingDesignationAgreementDetailsAPIOutDTO[]>(
+      this.addClientRoot(url),
+    );
   }
 
   async updateDesignationAgreement(
     designationId: number,
-    designation: UpdateDesignationDto,
+    designation: UpdateDesignationDetailsAPIInDTO,
   ): Promise<void> {
-    await this.patchCall<UpdateDesignationDto>(
+    await this.patchCall<UpdateDesignationDetailsAPIInDTO>(
       this.addClientRoot(`designation-agreement/${designationId}`),
       designation,
     );

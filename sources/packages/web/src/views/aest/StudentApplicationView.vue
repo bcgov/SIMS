@@ -31,7 +31,7 @@
 <script lang="ts">
 import { onMounted, ref } from "vue";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
-import { GetApplicationBaseDTO } from "@/types";
+import { GetApplicationBaseAPIOutDTO } from "@/types";
 import { ApplicationService } from "@/services/ApplicationService";
 import StudentApplication from "@/components/common/StudentApplication.vue";
 
@@ -50,7 +50,7 @@ export default {
     },
   },
   setup(props: any) {
-    const applicationDetail = ref({} as GetApplicationBaseDTO);
+    const applicationDetail = ref({} as GetApplicationBaseAPIOutDTO);
     const initialData = ref({});
     const selectedForm = ref();
 

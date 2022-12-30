@@ -67,7 +67,7 @@
 import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
 import {
-  PendingDesignationDto,
+  PendingDesignationAgreementDetailsAPIOutDTO,
   DesignationAgreementStatus,
 } from "@/types/contracts/DesignationAgreementContract";
 import { DesignationAgreementService } from "@/services/DesignationAgreementService";
@@ -88,7 +88,9 @@ export default {
 
   setup() {
     const router = useRouter();
-    const designations = ref([] as PendingDesignationDto[]);
+    const designations = ref(
+      [] as PendingDesignationAgreementDetailsAPIOutDTO[],
+    );
     const { dateOnlyLongString } = useFormatters();
     const searchCriteria = ref();
 

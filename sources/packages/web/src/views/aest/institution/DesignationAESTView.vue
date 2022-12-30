@@ -60,10 +60,10 @@ import DesignationAgreementForm from "@/components/partial-view/DesignationAgree
 import { DesignationAgreementService } from "@/services/DesignationAgreementService";
 import { InstitutionService } from "@/services/InstitutionService";
 import {
-  UpdateDesignationDto,
+  UpdateDesignationDetailsAPIInDTO,
   DesignationAgreementStatus,
-  UpdateDesignationLocationDto,
-  GetDesignationAgreementDto,
+  DesignationLocationAPIInDTO,
+  DesignationAgreementAPIOutDTO,
 } from "@/types/contracts/DesignationAgreementContract";
 import {
   DesignationModel,
@@ -93,7 +93,7 @@ export default {
   setup(props: any) {
     const formatter = useFormatters();
     const { mapDesignationChipStatus } = useDesignationAgreement();
-    const designationAgreement = ref({} as GetDesignationAgreementDto);
+    const designationAgreement = ref({} as DesignationAgreementAPIOutDTO);
     const designationFormModel = ref({} as DesignationModel);
     const processing = ref(false);
     const snackBar = useSnackBar();
@@ -105,10 +105,10 @@ export default {
     );
 
     const approveDenyDesignationModal = ref(
-      {} as ModalDialog<UpdateDesignationDto | boolean>,
+      {} as ModalDialog<UpdateDesignationDetailsAPIInDTO | boolean>,
     );
 
-    const updateDesignationModel = ref({} as UpdateDesignationDto);
+    const updateDesignationModel = ref({} as UpdateDesignationDetailsAPIInDTO);
 
     const routeLocation = computed(() =>
       props.institutionId
@@ -172,7 +172,7 @@ export default {
 
         updateDesignationModel.value.locationsDesignations =
           institutionLocations?.map((institutionLocation) => {
-            const designationLocation = {} as UpdateDesignationLocationDto;
+            const designationLocation = {} as DesignationLocationAPIInDTO;
             designationLocation.locationId = institutionLocation.id;
             designationLocation.locationName = institutionLocation.name;
             designationLocation.locationAddress = formatter.getFormattedAddress(
@@ -199,7 +199,7 @@ export default {
           processing.value = true;
           await DesignationAgreementService.shared.updateDesignationAgreement(
             props.designationId,
-            response as UpdateDesignationDto,
+            response as UpdateDesignationDetailsAPIInDTO,
           );
           snackBar.success(
             `The given designation has been ${designationStatus.toLowerCase()} and notes added.`,
@@ -214,7 +214,7 @@ export default {
         }
       }
       //If cancel click from approval modal, Update data must be cleared.
-      updateDesignationModel.value = {} as UpdateDesignationDto;
+      updateDesignationModel.value = {} as UpdateDesignationDetailsAPIInDTO;
     };
 
     return {

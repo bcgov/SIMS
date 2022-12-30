@@ -5,7 +5,7 @@ import {
   OfferingIntensity,
 } from "@/types";
 
-export interface SaveStudentApplicationDto {
+export interface SaveApplicationAPIInDTO {
   programYearId: number;
   data: any;
   associatedFiles: string[];
@@ -16,7 +16,7 @@ export interface CreateApplicationDraftResult {
   draftId?: number;
 }
 
-export interface ApplicationWithProgramYearDto {
+export interface ApplicationWithProgramYearAPIOutDTO {
   applicationId: number;
   formName: string;
   programYearId: number;
@@ -94,7 +94,7 @@ export enum ApplicationScholasticStandingStatus {
 /**
  * DTO with primary identifiers of application.
  */
-export interface ApplicationIdentifiersDTO {
+export interface ApplicationIdentifiersAPIOutDTO {
   id: number;
   applicationNumber: string;
 }
@@ -102,7 +102,8 @@ export interface ApplicationIdentifiersDTO {
 /**
  * Base DTO for application dynamic data
  */
-export interface GetApplicationBaseDTO extends ApplicationIdentifiersDTO {
+export interface GetApplicationBaseAPIOutDTO
+  extends ApplicationIdentifiersAPIOutDTO {
   assessmentId?: number;
   data: any;
   applicationStatus: ApplicationStatus;
@@ -113,7 +114,8 @@ export interface GetApplicationBaseDTO extends ApplicationIdentifiersDTO {
 /**
  * DTO for detailed application data
  */
-export interface GetApplicationDataDto extends GetApplicationBaseDTO {
+export interface GetApplicationDataAPIOutDTO
+  extends GetApplicationBaseAPIOutDTO {
   applicationStatusUpdatedOn: string;
   applicationOfferingIntensity: OfferingIntensity;
   applicationStartDate: string;
@@ -152,7 +154,7 @@ export interface StudentApplicationDetailsForTracking {
 /**
  * Interface for application summary
  */
-export interface ApplicationSummaryDTO extends ApplicationIdentifiersDTO {
+export interface ApplicationSummaryDTO extends ApplicationIdentifiersAPIOutDTO {
   studyStartPeriod: string;
   studyEndPeriod: string;
   applicationName: string;

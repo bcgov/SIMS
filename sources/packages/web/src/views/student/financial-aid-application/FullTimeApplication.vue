@@ -61,7 +61,7 @@ import {
   FormIOCustomEvent,
   FormIOCustomEventTypes,
   ApplicationStatus,
-  GetApplicationDataDto,
+  GetApplicationDataAPIOutDTO,
   ApiProcessError,
 } from "@/types";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
@@ -107,7 +107,7 @@ export default {
     const isLastPage = ref(false);
     const isReadOnly = ref(false);
     const notDraft = ref(false);
-    const existingApplication = ref({} as GetApplicationDataDto);
+    const existingApplication = ref({} as GetApplicationDataAPIOutDTO);
     const editApplicationModal = ref({} as ModalDialog<boolean>);
 
     const checkProgramYear = async () => {

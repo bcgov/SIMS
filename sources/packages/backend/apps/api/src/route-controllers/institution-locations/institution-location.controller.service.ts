@@ -61,8 +61,8 @@ export class InstitutionLocationControllerService {
 
   /**
    * Retrieve designation status of institution.
-   * @param institutionId
-   * @returns designation status of an institution'.
+   * @param institutionId id of the institution with designation status to be retrieved.
+   * @returns designation status of an institution.
    */
   async getInstitutionDesignationStatus(
     institutionId: number,
@@ -78,8 +78,8 @@ export class InstitutionLocationControllerService {
 
   /**
    * Get the Institution Location details.
-   * @param institutionId
-   * @param locationId
+   * @param institutionId id of the institution.
+   * @param locationId id of the location.
    * @returns institution location details.
    */
   async getInstitutionLocation(

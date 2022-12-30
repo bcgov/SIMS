@@ -6,11 +6,11 @@ import {
   StudentRestrictionService,
 } from "../../services";
 import {
-  ApplicationFormData,
-  GetApplicationBaseDTO,
-  GetApplicationDataDto,
+  ApplicationFormDataAPIOutDTO,
+  GetApplicationBaseAPIOutDTO,
+  GetApplicationDataAPIOutDTO,
   SuccessWaitingStatus,
-} from "./models/application.model";
+} from "./models/application.dto";
 import {
   credentialTypeToDisplay,
   deliveryMethod,
@@ -33,8 +33,8 @@ import {
 import { ApiProcessError } from "../../types";
 import { ACTIVE_STUDENT_RESTRICTION } from "../../constants";
 import {
-  ApplicationIncomeVerification,
-  ApplicationSupportingUserDetails,
+  ApplicationIncomeVerificationAPIOutDTO,
+  ApplicationSupportingUserDetailsAPIOutDTO,
 } from "./models/application.system.dto";
 
 /**
@@ -61,8 +61,8 @@ export class ApplicationControllerService {
    */
   async generateApplicationFormData(
     data: ApplicationData,
-  ): Promise<ApplicationFormData> {
-    const additionalFormData = {} as ApplicationFormData;
+  ): Promise<ApplicationFormDataAPIOutDTO> {
+    const additionalFormData = {} as ApplicationFormDataAPIOutDTO;
     // Check wether the selected location is designated or not.
     // If selected location is not designated, then make the
     // selectedLocation null
@@ -130,7 +130,7 @@ export class ApplicationControllerService {
    */
   async transformToApplicationForAESTDTO(
     application: Application,
-  ): Promise<GetApplicationBaseDTO> {
+  ): Promise<GetApplicationBaseAPIOutDTO> {
     return {
       data: application.data,
       id: application.id,
@@ -138,7 +138,7 @@ export class ApplicationControllerService {
       applicationNumber: application.applicationNumber,
       applicationFormName: application.programYear.formName,
       applicationProgramYearID: application.programYear.id,
-    } as GetApplicationBaseDTO;
+    } as GetApplicationBaseAPIOutDTO;
   }
 
   /**
@@ -150,7 +150,7 @@ export class ApplicationControllerService {
   async transformToApplicationDetailForStudentDTO(
     applicationDetail: Application,
     disbursement: DisbursementSchedule,
-  ): Promise<GetApplicationDataDto> {
+  ): Promise<GetApplicationDataAPIOutDTO> {
     const offering = applicationDetail.currentAssessment?.offering;
     return {
       id: applicationDetail.id,
@@ -220,8 +220,9 @@ export class ApplicationControllerService {
    */
   processApplicationIncomeVerificationDetails(
     craIncomeVerification: CRAIncomeVerification[],
-  ): ApplicationIncomeVerification {
-    const incomeVerificationDetails = {} as ApplicationIncomeVerification;
+  ): ApplicationIncomeVerificationAPIOutDTO {
+    const incomeVerificationDetails =
+      {} as ApplicationIncomeVerificationAPIOutDTO;
     // Student.
     const [student] = craIncomeVerification.filter(
       (incomeVerification) => !incomeVerification.supportingUser,
@@ -275,8 +276,9 @@ export class ApplicationControllerService {
    */
   processApplicationSupportingUserDetails(
     supportingUser: SupportingUser[],
-  ): ApplicationSupportingUserDetails {
-    const supportingUserDetails = {} as ApplicationSupportingUserDetails;
+  ): ApplicationSupportingUserDetailsAPIOutDTO {
+    const supportingUserDetails =
+      {} as ApplicationSupportingUserDetailsAPIOutDTO;
     // Parent.
     const [parent1, parent2] = supportingUser.filter(
       (incomeVerification) =>

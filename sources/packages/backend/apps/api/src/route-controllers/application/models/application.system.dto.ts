@@ -5,24 +5,24 @@ import {
   OfferingStatus,
   ProgramInfoStatus,
 } from "@sims/sims-db";
-import { SuccessWaitingStatus } from "./application.model";
+import { SuccessWaitingStatus } from "./application.dto";
 
-export class ApplicationIncomeVerification {
+export class ApplicationIncomeVerificationAPIOutDTO {
   parent1IncomeVerificationStatus?: SuccessWaitingStatus;
   parent2IncomeVerificationStatus?: SuccessWaitingStatus;
   partnerIncomeVerificationStatus?: SuccessWaitingStatus;
   studentIncomeVerificationStatus?: SuccessWaitingStatus;
 }
 
-export class ApplicationSupportingUserDetails {
+export class ApplicationSupportingUserDetailsAPIOutDTO {
   parent1Info?: SuccessWaitingStatus;
   parent2Info?: SuccessWaitingStatus;
   partnerInfo?: SuccessWaitingStatus;
 }
 
 export class InProgressApplicationDetailsAPIOutDTO extends IntersectionType(
-  ApplicationSupportingUserDetails,
-  ApplicationIncomeVerification,
+  ApplicationSupportingUserDetailsAPIOutDTO,
+  ApplicationIncomeVerificationAPIOutDTO,
 ) {
   id: number;
   applicationStatus: ApplicationStatus;

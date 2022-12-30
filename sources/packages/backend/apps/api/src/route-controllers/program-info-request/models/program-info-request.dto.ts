@@ -29,12 +29,12 @@ export class ProgramInfoRequestAPIOutDTO {
   offeringDelivered: string;
   offeringType: OfferingTypes;
   offeringIntensity: OfferingIntensity;
-  courseDetails?: CourseDetails[];
+  courseDetails?: CourseDetailsAPIOutDTO[];
   pirDenyReasonId?: number;
   otherReasonDesc?: string;
 }
 
-export class CourseDetails {
+export class CourseDetailsAPIOutDTO {
   courseName: string;
   courseCode: string;
   courseStartDate: string;

@@ -28,20 +28,21 @@ import {
 import { IUserToken } from "../../auth/userToken.interface";
 import { UserGroups } from "../../auth/user-groups.enum";
 import {
-  GetDesignationAgreementDto,
-  GetDesignationAgreementsDto,
-  PendingDesignationDto,
-} from "./models/designation-agreement.model";
-import { UpdateDesignationAPIInDto } from "./models/designation-agreement.dto";
+  DesignationAgreementAPIOutDTO,
+  DesignationAgreementDetailsAPIOutDTO,
+  PendingDesignationAgreementDetailsAPIOutDTO,
+} from "./models/designation-agreement.dto";
+import { UpdateDesignationAPIInDTO } from "./models/designation-agreement.dto";
 import { DesignationAgreementControllerService } from "./designation-agreement.controller.service";
 import { ApiTags } from "@nestjs/swagger";
 import BaseController from "../BaseController";
 import { Role } from "../../auth/roles.enum";
+import { ClientTypeBaseRoute } from "../../types";
 
 @AllowAuthorizedParty(AuthorizedParties.aest)
 @Groups(UserGroups.AESTUser)
 @Controller("designation-agreement")
-@ApiTags("designation-agreement")
+@ApiTags(`${ClientTypeBaseRoute.AEST}-designation-agreement`)
 export class DesignationAgreementAESTController extends BaseController {
   constructor(
     private readonly designationAgreementControllerService: DesignationAgreementControllerService,
@@ -55,13 +56,13 @@ export class DesignationAgreementAESTController extends BaseController {
   /**
    * Retrieve the designation agreement information and
    * the associated locations approvals.
-   * @param designationId
+   * @param designationId id of the designation to be retrieved.
    * @returns designation agreement information.
    */
   @Get(":designationId")
   async getDesignationAgreement(
     @Param("designationId", ParseIntPipe) designationId: number,
-  ): Promise<GetDesignationAgreementDto> {
+  ): Promise<DesignationAgreementAPIOutDTO> {
     return this.designationAgreementControllerService.getDesignationAgreement(
       designationId,
     );
@@ -70,14 +71,14 @@ export class DesignationAgreementAESTController extends BaseController {
   /**
    * Get the list of all the designations that belongs to
    * the institution.
-   * @param institutionId
+   * @param institutionId id of the institution to be retrieved.
    * @returns the list of all the designations that
    * belongs to the institution.
    */
   @Get("institution/:institutionId")
   async getDesignationAgreements(
     @Param("institutionId", ParseIntPipe) institutionId: number,
-  ): Promise<GetDesignationAgreementsDto[]> {
+  ): Promise<DesignationAgreementDetailsAPIOutDTO[]> {
     return this.designationAgreementControllerService.getDesignationAgreements(
       institutionId,
     );
@@ -85,7 +86,7 @@ export class DesignationAgreementAESTController extends BaseController {
 
   /**
    * API to retrieve all designations by status.
-   * @param designationStatus
+   * @param designationStatus status to be searched.
    * @param searchCriteria to search designation.
    * @returns Pending designations.
    */
@@ -94,7 +95,7 @@ export class DesignationAgreementAESTController extends BaseController {
     @Param("designationStatus", new ParseEnumPipe(DesignationAgreementStatus))
     designationStatus: DesignationAgreementStatus,
     @Query(PaginationParams.SearchCriteria) searchCriteria: string,
-  ): Promise<PendingDesignationDto[]> {
+  ): Promise<PendingDesignationAgreementDetailsAPIOutDTO[]> {
     const pendingDesignations =
       await this.designationAgreementService.getDesignationAgreementsByStatus(
         designationStatus,
@@ -109,21 +110,20 @@ export class DesignationAgreementAESTController extends BaseController {
           startDate: getISODateOnlyString(pendingDesignation.startDate),
           endDate: getISODateOnlyString(pendingDesignation.endDate),
           legalOperatingName: pendingDesignation.institution.legalOperatingName,
-        } as PendingDesignationDto),
+        } as PendingDesignationAgreementDetailsAPIOutDTO),
     );
   }
 
   /**
    * Update designation for Approval/Denial or re-approve by ministry(AEST).
-   * @param designationId
+   * @param designationId id of the designation to be updated.
    * @param payload Designation which is going to be updated.
-   * @param userToken
    */
   @Roles(Role.InstitutionApproveDeclineDesignation)
   @Patch(":designationId")
   async updateDesignationAgreement(
     @Param("designationId", ParseIntPipe) designationId: number,
-    @Body() payload: UpdateDesignationAPIInDto,
+    @Body() payload: UpdateDesignationAPIInDTO,
     @UserToken() userToken: IUserToken,
   ): Promise<void> {
     const designation =

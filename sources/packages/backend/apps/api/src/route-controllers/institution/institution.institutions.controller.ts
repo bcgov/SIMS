@@ -104,7 +104,7 @@ export class InstitutionInstitutionsController extends BaseController {
 
   /**
    * Update institution profile details.
-   * @param payload
+   * @param payload institution details to be updated.
    */
   @IsInstitutionAdmin()
   @Patch()
@@ -121,7 +121,6 @@ export class InstitutionInstitutionsController extends BaseController {
 
   /**
    * Controller method to get institution locations with designation status for the given institution.
-   * @param userToken
    * @returns Details of all locations of an institution.
    */
   @IsInstitutionAdmin()

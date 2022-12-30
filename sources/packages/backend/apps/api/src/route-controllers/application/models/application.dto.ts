@@ -9,7 +9,7 @@ import {
   APPLICATION_NUMBER_LENGTH,
 } from "@sims/sims-db";
 
-export class SaveApplicationDto {
+export class SaveApplicationAPIInDTO {
   /**
    * Application dynamic data.
    */
@@ -29,7 +29,7 @@ export class SaveApplicationDto {
   programYearId: number;
 }
 
-export interface ApplicationFormData extends ApplicationData {
+export interface ApplicationFormDataAPIOutDTO extends ApplicationData {
   /**
    * Offering name selected by the student.
    * This is for html component of readonly form.
@@ -65,7 +65,7 @@ export interface ApplicationFormData extends ApplicationData {
 /**
  * Application DTO with primary identifier(s)
  */
-export class ApplicationIdentifiersDTO {
+export class ApplicationIdentifiersAPIOutDTO {
   id: number;
   applicationNumber: string;
 }
@@ -73,14 +73,14 @@ export class ApplicationIdentifiersDTO {
 /**
  * Base DTO for application
  */
-export class GetApplicationBaseDTO extends ApplicationIdentifiersDTO {
+export class GetApplicationBaseAPIOutDTO extends ApplicationIdentifiersAPIOutDTO {
   assessmentId?: number;
-  data: ApplicationFormData;
+  data: ApplicationFormDataAPIOutDTO;
   applicationStatus: ApplicationStatus;
   applicationFormName: string;
   applicationProgramYearID: number;
 }
-export class GetApplicationDataDto extends GetApplicationBaseDTO {
+export class GetApplicationDataAPIOutDTO extends GetApplicationBaseAPIOutDTO {
   applicationStatusUpdatedOn: Date;
   applicationOfferingIntensity: OfferingIntensity;
   applicationStartDate: string;
@@ -96,7 +96,7 @@ export class GetApplicationDataDto extends GetApplicationBaseDTO {
   submittedDate?: Date;
 }
 
-export interface ApplicationWithProgramYearDto {
+export class ApplicationWithProgramYearAPIOutDTO {
   applicationId: number;
   formName: string;
   programYearId: number;

@@ -71,7 +71,7 @@
 <script lang="ts">
 import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
 import {
-  UpdateDesignationDto,
+  UpdateDesignationDetailsAPIInDTO,
   DesignationAgreementStatus,
 } from "@/types/contracts/DesignationAgreementContract";
 import { useModalDialog, useRules } from "@/composables";
@@ -100,9 +100,9 @@ export default defineComponent({
       showDialog,
       resolvePromise,
       showModal: showModalInternal,
-    } = useModalDialog<UpdateDesignationDto | boolean>();
+    } = useModalDialog<UpdateDesignationDetailsAPIInDTO | boolean>();
     const approveDenyDesignation = ref({} as VForm);
-    const formModel = reactive({} as UpdateDesignationDto);
+    const formModel = reactive({} as UpdateDesignationDetailsAPIInDTO);
     const title = ref("");
     const subTitle = ref("");
     const submitLabel = ref("");
@@ -110,7 +110,7 @@ export default defineComponent({
     const { checkNotesLengthRule, checkStringDateFormatRule } = useRules();
 
     //Setting the title values based on the DesignationAgreementStatus status passed to show modal.
-    const showModal = async (designation: UpdateDesignationDto) => {
+    const showModal = async (designation: UpdateDesignationDetailsAPIInDTO) => {
       formModel.note = "";
       formModel.designationStatus = designation.designationStatus;
       formModel.locationsDesignations = designation.locationsDesignations;

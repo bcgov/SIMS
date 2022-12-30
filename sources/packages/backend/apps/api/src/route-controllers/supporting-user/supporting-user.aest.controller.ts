@@ -10,8 +10,8 @@ import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { AllowAuthorizedParty, Groups } from "../../auth/decorators";
 import { UserGroups } from "../../auth/user-groups.enum";
 import {
-  ApplicationSupportingUsersApiOutDTO,
-  SupportingUserFormDataApiOutDTO,
+  ApplicationSupportingUsersAPIOutDTO,
+  SupportingUserFormDataAPIOutDTO,
 } from "./models/supporting-user.dto";
 import { getSupportingUserForm } from "../../utilities";
 import { ApiNotFoundResponse, ApiTags } from "@nestjs/swagger";
@@ -33,7 +33,7 @@ export class SupportingUserAESTController {
   @Get("application/:applicationId")
   async getSupportingUsersOfAnApplication(
     @Param("applicationId", ParseIntPipe) applicationId: number,
-  ): Promise<ApplicationSupportingUsersApiOutDTO[]> {
+  ): Promise<ApplicationSupportingUsersAPIOutDTO[]> {
     const supportingUserForApplication =
       await this.supportingUserService.getSupportingUsersByApplicationId(
         applicationId,
@@ -57,7 +57,7 @@ export class SupportingUserAESTController {
   })
   async getSupportingUserFormDetails(
     @Param("supportingUserId", ParseIntPipe) supportingUserId: number,
-  ): Promise<SupportingUserFormDataApiOutDTO> {
+  ): Promise<SupportingUserFormDataAPIOutDTO> {
     const supportingUserForApplication =
       await this.supportingUserService.getSupportingUsersDetails(
         supportingUserId,

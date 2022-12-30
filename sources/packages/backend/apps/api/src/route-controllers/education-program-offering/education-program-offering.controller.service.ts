@@ -287,7 +287,7 @@ export class EducationProgramOfferingControllerService {
 
   /**
    * Transformation util for Program Offering.
-   * @param offering
+   * @param offering to be transformed.
    * @param hasExistingApplication is the offering linked to any application.
    * @returns program offering.
    */

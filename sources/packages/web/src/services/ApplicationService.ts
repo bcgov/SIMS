@@ -1,14 +1,14 @@
 import {
   CreateApplicationDraftResult,
-  SaveStudentApplicationDto,
-  ApplicationWithProgramYearDto,
-  GetApplicationDataDto,
-  GetApplicationBaseDTO,
+  SaveApplicationAPIInDTO,
+  ApplicationWithProgramYearAPIOutDTO,
+  GetApplicationDataAPIOutDTO,
+  GetApplicationBaseAPIOutDTO,
   DataTableSortOrder,
   StudentApplicationFields,
   DEFAULT_PAGE_LIMIT,
   DEFAULT_PAGE_NUMBER,
-  ApplicationIdentifiersDTO,
+  ApplicationIdentifiersAPIOutDTO,
 } from "@/types";
 import { MORE_THAN_ONE_APPLICATION_DRAFT_ERROR } from "@/types/contracts/ApiProcessError";
 import ApiClient from "../services/http/ApiClient";
@@ -32,12 +32,12 @@ export class ApplicationService {
 
   async getApplicationData(
     applicationId: number,
-  ): Promise<GetApplicationDataDto> {
+  ): Promise<GetApplicationDataAPIOutDTO> {
     return ApiClient.Application.getApplicationData(applicationId);
   }
 
   async createApplicationDraft(
-    payload: SaveStudentApplicationDto,
+    payload: SaveApplicationAPIInDTO,
   ): Promise<CreateApplicationDraftResult> {
     try {
       const applicationId = await ApiClient.Application.createApplicationDraft(
@@ -56,14 +56,14 @@ export class ApplicationService {
 
   async saveApplicationDraft(
     applicationId: number,
-    payload: SaveStudentApplicationDto,
+    payload: SaveApplicationAPIInDTO,
   ): Promise<number> {
     return ApiClient.Application.saveApplicationDraft(applicationId, payload);
   }
 
   async submitApplication(
     applicationId: number,
-    payload: SaveStudentApplicationDto,
+    payload: SaveApplicationAPIInDTO,
   ): Promise<void> {
     return ApiClient.Application.submitApplication(applicationId, payload);
   }
@@ -71,7 +71,7 @@ export class ApplicationService {
   async getApplicationWithPY(
     applicationId: number,
     isIncludeInActiveProgramYear?: boolean,
-  ): Promise<ApplicationWithProgramYearDto> {
+  ): Promise<ApplicationWithProgramYearAPIOutDTO> {
     return ApiClient.Application.getApplicationWithPY(
       applicationId,
       isIncludeInActiveProgramYear,
@@ -79,13 +79,13 @@ export class ApplicationService {
   }
 
   /**
-   * Get application detail of given application
-   * @param applicationId
-   * @returns GetApplicationBaseDTO
+   * Get application detail of given application.
+   * @param applicationId for the application.
+   * @returns application details.
    */
   async getApplicationDetail(
     applicationId: number,
-  ): Promise<GetApplicationBaseDTO> {
+  ): Promise<GetApplicationBaseAPIOutDTO> {
     return ApiClient.Application.getApplicationDetails(applicationId);
   }
 
@@ -116,7 +116,7 @@ export class ApplicationService {
 
   async getApplicationForRequestChange(
     applicationNumber: string,
-  ): Promise<ApplicationIdentifiersDTO> {
+  ): Promise<ApplicationIdentifiersAPIOutDTO> {
     return ApiClient.Application.getApplicationForRequestChange(
       applicationNumber,
     );

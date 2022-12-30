@@ -1,18 +1,18 @@
 import { SupportingUserType } from "@/types";
 import HttpBaseClient from "./common/HttpBaseClient";
 import {
-  ApplicationApiOutDTO,
-  ApplicationIdentifierApiInDTO,
-  ApplicationSupportingUsersApiOutDTO,
-  SupportingUserFormDataApiOutDTO,
-  UpdateSupportingUserApiInDTO,
+  ApplicationAPIOutDTO,
+  ApplicationIdentifierAPIInDTO,
+  ApplicationSupportingUsersAPIOutDTO,
+  SupportingUserFormDataAPIOutDTO,
+  UpdateSupportingUserAPIInDTO,
 } from "./dto/SupportingUser.dto";
 
 export class SupportingUserApi extends HttpBaseClient {
   public async getApplicationDetails(
     supportingUserType: SupportingUserType,
-    payload: ApplicationIdentifierApiInDTO,
-  ): Promise<ApplicationApiOutDTO> {
+    payload: ApplicationIdentifierAPIInDTO,
+  ): Promise<ApplicationAPIOutDTO> {
     try {
       return await this.postCall(
         this.addClientRoot(`supporting-user/${supportingUserType}/application`),
@@ -26,7 +26,7 @@ export class SupportingUserApi extends HttpBaseClient {
 
   public async updateSupportingInformation(
     supportingUserType: SupportingUserType,
-    payload: UpdateSupportingUserApiInDTO,
+    payload: UpdateSupportingUserAPIInDTO,
   ): Promise<void> {
     try {
       await this.patchCall(
@@ -41,16 +41,16 @@ export class SupportingUserApi extends HttpBaseClient {
 
   async getSupportingUsersForSideBar(
     applicationId: number,
-  ): Promise<ApplicationSupportingUsersApiOutDTO[]> {
-    return this.getCallTyped<ApplicationSupportingUsersApiOutDTO[]>(
+  ): Promise<ApplicationSupportingUsersAPIOutDTO[]> {
+    return this.getCallTyped<ApplicationSupportingUsersAPIOutDTO[]>(
       this.addClientRoot(`supporting-user/application/${applicationId}`),
     );
   }
 
   async getSupportingUserData(
     supportingUserId: number,
-  ): Promise<SupportingUserFormDataApiOutDTO> {
-    return this.getCallTyped<SupportingUserFormDataApiOutDTO>(
+  ): Promise<SupportingUserFormDataAPIOutDTO> {
+    return this.getCallTyped<SupportingUserFormDataAPIOutDTO>(
       this.addClientRoot(`supporting-user/${supportingUserId}`),
     );
   }

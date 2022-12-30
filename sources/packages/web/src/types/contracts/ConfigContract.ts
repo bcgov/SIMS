@@ -1,5 +1,5 @@
-export interface GetConfig {
-  auth: AuthConfig;
+export interface ConfigAPIOutDTO {
+  auth: AuthConfigAPIOutDTO;
 }
 
 export enum ClientIdType {
@@ -16,7 +16,7 @@ export enum ClientTypeBaseRoute {
   SupportingUser = "supporting-users",
 }
 
-export interface AuthConfig {
+export interface AuthConfigAPIOutDTO {
   url: string;
   realm: string;
   clientIds: { [Value in ClientIdType]: string };
@@ -24,6 +24,6 @@ export interface AuthConfig {
 }
 
 export interface AppConfig {
-  authConfig: AuthConfig;
+  authConfig: AuthConfigAPIOutDTO;
   updateTime: Date;
 }

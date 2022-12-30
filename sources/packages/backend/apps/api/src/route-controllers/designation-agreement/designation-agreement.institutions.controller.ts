@@ -18,10 +18,10 @@ import {
 } from "../../auth/decorators";
 import { DesignationAgreementService, FormService } from "../../services";
 import {
-  GetDesignationAgreementDto,
-  GetDesignationAgreementsDto,
-  SubmitDesignationAgreementDto,
-} from "./models/designation-agreement.model";
+  DesignationAgreementAPIOutDTO,
+  DesignationAgreementDetailsAPIOutDTO,
+  SubmitDesignationAgreementAPIInDTO,
+} from "./models/designation-agreement.dto";
 import { InstitutionUserRoles } from "../../auth/user-types.enum";
 import { FormNames } from "../../services/form/constants";
 import { DesignationAgreementControllerService } from "./designation-agreement.controller.service";
@@ -53,7 +53,7 @@ export class DesignationAgreementInstitutionsController extends BaseController {
   @Post()
   async submitDesignationAgreement(
     @UserToken() userToken: IInstitutionUserToken,
-    @Body() payload: SubmitDesignationAgreementDto,
+    @Body() payload: SubmitDesignationAgreementAPIInDTO,
   ) {
     // Validates if the user has the right role.
     const isLegalSigningAuthority = userToken.authorizations.hasAdminRole(
@@ -109,7 +109,7 @@ export class DesignationAgreementInstitutionsController extends BaseController {
   async getDesignationAgreement(
     @UserToken() userToken: IInstitutionUserToken,
     @Param("designationId", ParseIntPipe) designationId: number,
-  ): Promise<GetDesignationAgreementDto> {
+  ): Promise<DesignationAgreementAPIOutDTO> {
     return this.designationAgreementControllerService.getDesignationAgreement(
       designationId,
       userToken.authorizations.institutionId,
@@ -126,7 +126,7 @@ export class DesignationAgreementInstitutionsController extends BaseController {
   @Get()
   async getDesignationAgreements(
     @UserToken() userToken: IInstitutionUserToken,
-  ): Promise<GetDesignationAgreementsDto[]> {
+  ): Promise<DesignationAgreementDetailsAPIOutDTO[]> {
     return this.designationAgreementControllerService.getDesignationAgreements(
       userToken.authorizations.institutionId,
     );

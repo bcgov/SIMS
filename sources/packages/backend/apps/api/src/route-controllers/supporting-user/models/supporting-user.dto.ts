@@ -6,7 +6,7 @@ import { ContactInfo, SupportingUserType } from "@sims/sims-db";
  * The application must be search using at least 3 criteria as
  * per defined by the Ministry policies.
  */
-export class ApplicationIdentifierApiInDTO {
+export class ApplicationIdentifierAPIInDTO {
   @IsNotEmpty()
   applicationNumber: string;
   @IsNotEmpty()
@@ -20,7 +20,7 @@ export class ApplicationIdentifierApiInDTO {
  * The validation of the entire model will (and
  * must) be done by the Form.IO dry run.
  */
-export class UpdateSupportingUserApiInDTO {
+export class UpdateSupportingUserAPIInDTO {
   @IsNotEmpty()
   applicationNumber: string;
   @IsNotEmpty()
@@ -47,17 +47,17 @@ export class UpdateSupportingUserApiInDTO {
   supportingData: any;
 }
 
-export class ApplicationApiOutDTO {
+export class ApplicationAPIOutDTO {
   programYearStartDate: string;
   formName: string;
 }
 
-export class ApplicationSupportingUsersApiOutDTO {
+export class ApplicationSupportingUsersAPIOutDTO {
   supportingUserId: number;
   supportingUserType: SupportingUserType;
 }
 
-export class SupportingUserFormDataApiOutDTO {
+export class SupportingUserFormDataAPIOutDTO {
   formName: string;
   supportingData: any;
   contactInfo: ContactInfo;
