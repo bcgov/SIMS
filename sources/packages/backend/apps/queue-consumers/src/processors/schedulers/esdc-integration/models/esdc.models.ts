@@ -2,11 +2,13 @@ export interface ESDCFileResult {
   generatedFile: string;
   uploadedRecords: number;
 }
+
 export interface ESDCFileResponse {
   processSummary: string[];
   errorsSummary: string[];
 }
-export interface DailyDisbursementReportQueueInDTO {
+
+export interface DailyDisbursementReport {
   batchRunDate?: string;
 }
 

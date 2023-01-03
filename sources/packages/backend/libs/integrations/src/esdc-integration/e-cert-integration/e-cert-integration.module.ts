@@ -1,8 +1,8 @@
 import { Module } from "@nestjs/common";
 import {
-  DisbursementSchedulerService,
+  DisbursementScheduleService,
   SequenceControlService,
-  StudentRestrictionsService,
+  StudentRestrictionSharedService,
 } from "@sims/services";
 import { ECertFileHandler } from "./e-cert-file-handler";
 import { ECertFullTimeFileFooter } from "./e-cert-full-time-integration/e-cert-files/e-cert-file-footer";
@@ -14,11 +14,9 @@ import { ECertPartTimeIntegrationService } from "./e-cert-part-time-integration/
 import { ConfigModule } from "@sims/utilities/config";
 import {
   DisbursementScheduleErrorsService,
-  IntegrationRestrictionService,
+  RestrictionService,
   SshService,
-  IntegrationStudentAssessmentService,
 } from "@sims/integrations/services";
-import { StudentService } from "@sims/services/student/student.service";
 import { SystemUsersService } from "@sims/services/system-users";
 
 @Module({
@@ -28,30 +26,17 @@ import { SystemUsersService } from "@sims/services/system-users";
     ECertFullTimeIntegrationService,
     ECertPartTimeIntegrationService,
     SequenceControlService,
-    DisbursementSchedulerService,
-    IntegrationStudentAssessmentService,
+    DisbursementScheduleService,
     ECertFileHandler,
     ECertPartTimeFileHeader,
     ECertPartTimeFileFooter,
     ECertFullTimeFileHeader,
     ECertFullTimeFileFooter,
     DisbursementScheduleErrorsService,
-    IntegrationRestrictionService,
-    StudentService,
+    RestrictionService,
     SystemUsersService,
-    StudentRestrictionsService,
+    StudentRestrictionSharedService,
   ],
-  exports: [
-    ECertFullTimeIntegrationService,
-    ECertPartTimeIntegrationService,
-    ECertFileHandler,
-    ECertPartTimeFileHeader,
-    ECertPartTimeFileFooter,
-    ECertFullTimeFileHeader,
-    ECertFullTimeFileFooter,
-    DisbursementScheduleErrorsService,
-    IntegrationRestrictionService,
-    IntegrationStudentAssessmentService,
-  ],
+  exports: [ECertFileHandler],
 })
 export class ECertIntegrationModule {}

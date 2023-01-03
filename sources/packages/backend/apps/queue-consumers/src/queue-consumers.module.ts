@@ -25,10 +25,9 @@ import {
   ATBCResponseIntegrationScheduler,
 } from "./processors";
 import {
-  DisbursementSchedulerService,
+  DisbursementScheduleService,
   SequenceControlService,
-  StudentRestrictionsService,
-  StudentService,
+  StudentRestrictionSharedService,
   WorkflowClientService,
   ZeebeModule,
 } from "@sims/services";
@@ -36,11 +35,7 @@ import { DatabaseModule } from "@sims/sims-db";
 import { IER12IntegrationModule } from "@sims/integrations/institution-integration/ier12-integration";
 import { NotificationsModule } from "@sims/services/notifications";
 import { SystemUserModule } from "@sims/services/system-users";
-import {
-  MSFAANumberService,
-  SshService,
-  IntegrationStudentAssessmentService,
-} from "@sims/integrations/services";
+import { MSFAANumberService, SshService } from "@sims/integrations/services";
 import {
   DisbursementReceiptIntegrationModule,
   ECertIntegrationModule,
@@ -79,7 +74,6 @@ import { ATBCIntegrationModule } from "@sims/integrations/atbc-integration";
     SFASIntegrationScheduler,
     ATBCResponseIntegrationScheduler,
     StudentAssessmentService,
-    IntegrationStudentAssessmentService,
     SshService,
     QueueService,
     CRAResponseIntegrationScheduler,
@@ -87,14 +81,13 @@ import { ATBCIntegrationModule } from "@sims/integrations/atbc-integration";
     SequenceControlService,
     WorkflowClientService,
     SINValidationProcessIntegrationScheduler,
-    StudentService,
     SINValidationRequestIntegrationScheduler,
     FullTimeMSFAAProcessIntegrationScheduler,
     MSFAANumberService,
     PartTimeMSFAAProcessIntegrationScheduler,
     PartTimeECertProcessIntegrationScheduler,
-    DisbursementSchedulerService,
-    StudentRestrictionsService,
+    DisbursementScheduleService,
+    StudentRestrictionSharedService,
     FullTimeECertProcessIntegrationScheduler,
     FullTimeECertFeedbackIntegrationScheduler,
     PartTimeECertFeedbackIntegrationScheduler,

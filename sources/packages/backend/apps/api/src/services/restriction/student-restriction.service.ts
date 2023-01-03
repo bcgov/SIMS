@@ -16,7 +16,7 @@ import { CustomNamedError } from "@sims/utilities";
 import { RestrictionService } from "./restriction.service";
 import { StudentService } from "../student/student.service";
 import { RestrictionCode } from "./models/restriction.model";
-import { StudentRestrictionsService } from "@sims/services";
+import { StudentRestrictionSharedService } from "@sims/services";
 export const RESTRICTION_NOT_ACTIVE = "RESTRICTION_NOT_ACTIVE";
 export const RESTRICTION_NOT_PROVINCIAL = "RESTRICTION_NOT_PROVINCIAL";
 
@@ -29,7 +29,7 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
     readonly dataSource: DataSource,
     private readonly restrictionService: RestrictionService,
     private readonly studentService: StudentService,
-    private readonly studentRestrictionsService: StudentRestrictionsService,
+    private readonly studentRestrictionsService: StudentRestrictionSharedService,
   ) {
     super(dataSource.getRepository(StudentRestriction));
   }

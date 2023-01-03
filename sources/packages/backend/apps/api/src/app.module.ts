@@ -19,6 +19,7 @@ import { AppAESTModule } from "./app.aest.module";
 import { AppInstitutionsModule } from "./app.institutions.module";
 import { ClientTypeBaseRoute } from "./types";
 import { AppStudentsModule } from "./app.students.module";
+// Todo: delete and remove AppSystemAccessModule when the last integration (archieve application is moved) to integration
 import { AppSystemAccessModule } from "./app.system-access.module";
 import { AppSupportingUsersModule } from "./app.supporting-users.module";
 import { ZeebeModule } from "@sims/services";

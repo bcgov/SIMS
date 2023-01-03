@@ -3,15 +3,18 @@ import { DisbursementReceiptRequestService } from "@sims/integrations/esdc-integ
 import { QueueService } from "@sims/services/queue";
 import { QueueNames } from "@sims/utilities";
 import { Job, Queue } from "bull";
-import { QueueProcessSummary } from "../../../models/processors.models";
+import {
+  QueueProcessSummary,
+  QueueProcessSummaryResult,
+} from "../../../models/processors.models";
 import { BaseScheduler } from "../../base-scheduler";
-import { DailyDisbursementReportQueueInDTO } from "../models/esdc";
+import { DailyDisbursementReport } from "../models/esdc.models";
 
 @Processor(QueueNames.FINProcessProvincialDailyDisbursementsIntegration)
-export class FINProcessProvincialDailyDisbursementsIntegrationScheduler extends BaseScheduler<DailyDisbursementReportQueueInDTO> {
+export class FINProcessProvincialDailyDisbursementsIntegrationScheduler extends BaseScheduler<DailyDisbursementReport> {
   constructor(
     @InjectQueue(QueueNames.FINProcessProvincialDailyDisbursementsIntegration)
-    schedulerQueue: Queue<DailyDisbursementReportQueueInDTO>,
+    schedulerQueue: Queue<DailyDisbursementReport>,
     queueService: QueueService,
     private readonly disbursementReceiptRequestService: DisbursementReceiptRequestService,
   ) {
@@ -25,8 +28,8 @@ export class FINProcessProvincialDailyDisbursementsIntegrationScheduler extends 
    */
   @Process()
   async processFINProvincialDailyDisbursements(
-    job: Job<DailyDisbursementReportQueueInDTO>,
-  ): Promise<string> {
+    job: Job<DailyDisbursementReport>,
+  ): Promise<QueueProcessSummaryResult> {
     const summary = new QueueProcessSummary({
       appLogger: this.logger,
       jobLogger: job,
@@ -37,12 +40,15 @@ export class FINProcessProvincialDailyDisbursementsIntegrationScheduler extends 
     const batchRunDate = job.data.batchRunDate
       ? new Date(job.data.batchRunDate)
       : null;
-    await this.cleanSchedulerQueueHistory();
+    await summary.info(
+      await this.disbursementReceiptRequestService.processProvincialDailyDisbursements(
+        batchRunDate,
+      ),
+    );
     await summary.info(
       `Completed FIN provincial daily disbursement integration job ${job.id} of type ${job.name}.`,
     );
-    return this.disbursementReceiptRequestService.processProvincialDailyDisbursements(
-      batchRunDate,
-    );
+    await this.cleanSchedulerQueueHistory();
+    return summary.getSummary();
   }
 }

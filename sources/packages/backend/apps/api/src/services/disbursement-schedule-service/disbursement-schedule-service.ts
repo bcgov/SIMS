@@ -25,8 +25,8 @@ import {
   StudentAssessment,
   User,
 } from "@sims/sims-db";
-import { EnrollmentPeriod } from "./disbursement-schedule.models";
 import { NotificationActionsService } from "@sims/services/notifications";
+import { EnrollmentPeriod } from "./disbursement-schedule.models";
 
 const DISBURSEMENT_DOCUMENT_NUMBER_SEQUENCE_GROUP =
   "DISBURSEMENT_DOCUMENT_NUMBER";
@@ -35,7 +35,7 @@ const DISBURSEMENT_DOCUMENT_NUMBER_SEQUENCE_GROUP =
  * Service layer for Student Application disbursement schedules.
  */
 @Injectable()
-export class DisbursementSchedulerService extends RecordDataModelService<DisbursementSchedule> {
+export class DisbursementScheduleService extends RecordDataModelService<DisbursementSchedule> {
   private readonly assessmentRepo: Repository<StudentAssessment>;
   constructor(
     private readonly dataSource: DataSource,

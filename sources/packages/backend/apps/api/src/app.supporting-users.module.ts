@@ -13,7 +13,7 @@ import {
 } from "./services";
 import {
   SequenceControlService,
-  StudentRestrictionsService,
+  StudentRestrictionSharedService,
   WorkflowClientService,
 } from "@sims/services";
 import {
@@ -23,7 +23,6 @@ import {
 } from "@sims/services/sfas";
 import { SupportingUserSupportingUsersController } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
-import { MSFAANumberService } from "@sims/integrations/services";
 
 @Module({
   imports: [AuthModule],
@@ -35,7 +34,6 @@ import { MSFAANumberService } from "@sims/integrations/services";
     FormService,
     SequenceControlService,
     StudentFileService,
-    MSFAANumberService,
     RestrictionService,
     StudentRestrictionService,
     EducationProgramOfferingService,
@@ -45,7 +43,7 @@ import { MSFAANumberService } from "@sims/integrations/services";
     SFASPartTimeApplicationsService,
     EducationProgramOfferingValidationService,
     WorkflowClientService,
-    StudentRestrictionsService,
+    StudentRestrictionSharedService,
   ],
 })
 export class AppSupportingUsersModule {}

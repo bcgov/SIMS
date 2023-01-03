@@ -6,7 +6,7 @@ import { QueueNames } from "@sims/utilities";
 import { Job, Queue } from "bull";
 import { QueueProcessSummary } from "../../../models/processors.models";
 import { BaseScheduler } from "../../base-scheduler";
-import { ProcessResponseQueue } from "../models/esdc";
+import { ProcessResponseQueue } from "../models/esdc.models";
 
 @Processor(QueueNames.PartTimeMSFAAProcessResponseIntegration)
 export class PartTimeMSFAAProcessResponseIntegrationScheduler extends BaseScheduler<void> {
@@ -31,14 +31,14 @@ export class PartTimeMSFAAProcessResponseIntegrationScheduler extends BaseSchedu
       jobLogger: job,
     });
     await summary.info(
-      `Processing MSFAA part time integration job ${job.id} of type ${job.name}.`,
+      `Processing MSFAA Part-time integration job ${job.id} of type ${job.name}.`,
     );
     const results = await this.msfaaResponseService.processResponses(
       OfferingIntensity.partTime,
     );
     await this.cleanSchedulerQueueHistory();
     await summary.info(
-      `Completed MSFAA part time integration job ${job.id} of type ${job.name}.`,
+      `Completed MSFAA Part-time integration job ${job.id} of type ${job.name}.`,
     );
     return results.map((result) => {
       return {

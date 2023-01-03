@@ -1,3 +1,4 @@
+// Todo: remove this module when archive application `/route-controllers/application/application.system-access.controller.ts` is moved to integartion.
 import { Module } from "@nestjs/common";
 import {
   StudentService,
@@ -25,8 +26,8 @@ import {
 import {
   WorkflowClientService,
   SequenceControlService,
-  DisbursementSchedulerService,
-  StudentRestrictionsService,
+  DisbursementScheduleService,
+  StudentRestrictionSharedService,
 } from "@sims/services";
 import { AuthModule } from "./auth/auth.module";
 import {
@@ -43,7 +44,7 @@ import {
     StudentService,
     StudentAssessmentService,
     EducationProgramOfferingService,
-    DisbursementSchedulerService,
+    DisbursementScheduleService,
     SequenceControlService,
     StudentRestrictionService,
     AssessmentControllerService,
@@ -63,7 +64,7 @@ import {
     StudentAppealService,
     StudentAppealRequestsService,
     StudentScholasticStandingsService,
-    StudentRestrictionsService,
+    StudentRestrictionSharedService,
   ],
 })
 export class AppSystemAccessModule {}

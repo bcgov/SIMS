@@ -30,7 +30,7 @@ import {
   FILTER_PARAMS_MISMATCH,
   ReportService,
   REPORT_CONFIG_NOT_FOUND,
-} from "@sims/integrations/services";
+} from "@sims/services";
 
 /**
  * Controller for Reports for AEST Client.

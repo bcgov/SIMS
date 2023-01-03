@@ -5,7 +5,7 @@ import { RecordDataModelService, DisbursementSchedule } from "@sims/sims-db";
  * Service layer for Student Application disbursement schedules.
  */
 @Injectable()
-export class IntegrationDisbursementSchedulerService extends RecordDataModelService<DisbursementSchedule> {
+export class DisbursementScheduleService extends RecordDataModelService<DisbursementSchedule> {
   /**
    * Get disbursement schedules by document numbers.
    * @param documentNumbers document numbers of disbursements.

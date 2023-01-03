@@ -5,7 +5,7 @@ import {
   StudentService,
   ProgramYearService,
   EducationProgramOfferingService,
-  DisbursementSchedulerService,
+  DisbursementScheduleService,
   InstitutionLocationService,
   EducationProgramService,
   StudentFileService,
@@ -44,10 +44,9 @@ import { ConfigModule } from "@sims/utilities/config";
 import { ATBCStudentController } from "./route-controllers/atbc/atbc.students.controller";
 import {
   SequenceControlService,
-  StudentRestrictionsService,
+  StudentRestrictionSharedService,
   WorkflowClientService,
 } from "@sims/services";
-import { MSFAANumberService } from "@sims/integrations/services";
 import {
   SFASIndividualService,
   SFASApplicationService,
@@ -77,12 +76,11 @@ import { ATBCIntegrationModule } from "@sims/integrations/atbc-integration";
     StudentService,
     ProgramYearService,
     EducationProgramOfferingService,
-    DisbursementSchedulerService,
+    DisbursementScheduleService,
     InstitutionLocationService,
     EducationProgramService,
     SequenceControlService,
     StudentFileService,
-    MSFAANumberService,
     SFASIndividualService,
     SFASApplicationService,
     SFASPartTimeApplicationsService,
@@ -103,7 +101,7 @@ import { ATBCIntegrationModule } from "@sims/integrations/atbc-integration";
     StudentScholasticStandingsService,
     CRAIncomeVerificationService,
     SupportingUserService,
-    StudentRestrictionsService,
+    StudentRestrictionSharedService,
   ],
 })
 export class AppStudentsModule {}

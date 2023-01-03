@@ -5,14 +5,12 @@ import { PassportModule } from "@nestjs/passport";
 import {
   InstitutionLocationService,
   InstitutionUserAuthService,
-  StudentRestrictionService,
   KeycloakService,
   TokensService,
   UserService,
   StudentService,
   SINValidationService,
   DesignationAgreementLocationService,
-  RestrictionService,
 } from "../services";
 import { JwtAuthGuard } from "./guards/jwt-auth.guard";
 import { JwtStrategy } from "./jwt.strategy";
@@ -29,7 +27,6 @@ import {
 import { RolesGuard } from "./guards/roles.guard";
 import { ConfigModule } from "@sims/utilities/config";
 import { SFASIndividualService } from "@sims/services/sfas";
-import { StudentRestrictionsService } from "@sims/services";
 
 const jwtModule = JwtModule.register({
   publicKey: KeycloakConfig.PEM_PublicKey,
@@ -41,16 +38,13 @@ const jwtModule = JwtModule.register({
     UserService,
     InstitutionLocationService,
     InstitutionUserAuthService,
-    StudentRestrictionService,
     TokensService,
     KeycloakService,
     JwtStrategy,
     StudentService,
     SFASIndividualService,
     SINValidationService,
-    RestrictionService,
     DesignationAgreementLocationService,
-    StudentRestrictionsService,
     {
       provide: APP_GUARD,
       useClass: JwtAuthGuard,

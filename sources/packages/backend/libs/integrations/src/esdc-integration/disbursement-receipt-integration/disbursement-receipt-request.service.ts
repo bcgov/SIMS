@@ -2,17 +2,14 @@ import { Injectable } from "@nestjs/common";
 import { InjectLogger, LoggerService } from "@sims/utilities/logger";
 import { DisbursementReceiptIntegrationService } from "./disbursement-receipt-integration.service";
 import { DAILY_DISBURSEMENT_REPORT_NAME } from "@sims/services/constants";
-import {
-  IntegrationDisbursementReceiptService,
-  ReportService,
-  ReportsFilterModel,
-} from "@sims/integrations/services";
+import { DisbursementReceiptService } from "@sims/integrations/services";
+import { ReportService, ReportsFilterModel } from "@sims/services";
 
 @Injectable()
 export class DisbursementReceiptRequestService {
   constructor(
     private readonly reportService: ReportService,
-    private readonly integrationDisbursementReceiptService: IntegrationDisbursementReceiptService,
+    private readonly disbursementReceiptService: DisbursementReceiptService,
     private readonly integrationService: DisbursementReceiptIntegrationService,
   ) {}
 
@@ -33,7 +30,7 @@ export class DisbursementReceiptRequestService {
     // into account and the report will be generated.
     if (!batchRunDate) {
       batchRunDate =
-        await this.integrationDisbursementReceiptService.getMaxDisbursementReceiptDate();
+        await this.disbursementReceiptService.getMaxDisbursementReceiptDate();
     }
     this.logger.log(
       `Fetches the Daily disbursement information which are not sent on ${batchRunDate}`,

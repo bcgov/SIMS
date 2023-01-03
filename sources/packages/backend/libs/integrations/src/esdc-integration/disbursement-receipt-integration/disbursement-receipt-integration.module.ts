@@ -1,15 +1,14 @@
 import { Module } from "@nestjs/common";
-import { SequenceControlService } from "@sims/services";
+import { ReportService, SequenceControlService } from "@sims/services";
 import { DisbursementReceiptIntegrationService } from "./disbursement-receipt-integration.service";
 import { DisbursementReceiptProcessingService } from "./disbursement-receipt-processing.service";
 import { DisbursementReceiptRequestService } from "./disbursement-receipt-request.service";
 import { LoggerModule } from "@sims/utilities/logger";
 import { ConfigModule } from "@sims/utilities/config";
 import {
-  IntegrationDisbursementReceiptService,
-  ReportService,
+  DisbursementReceiptService,
   SshService,
-  IntegrationDisbursementSchedulerService,
+  DisbursementScheduleService,
 } from "@sims/integrations/services";
 
 @Module({
@@ -19,18 +18,14 @@ import {
     DisbursementReceiptIntegrationService,
     DisbursementReceiptProcessingService,
     DisbursementReceiptRequestService,
-    IntegrationDisbursementReceiptService,
-    IntegrationDisbursementSchedulerService,
+    DisbursementReceiptService,
+    DisbursementScheduleService,
     SequenceControlService,
     ReportService,
   ],
   exports: [
-    DisbursementReceiptIntegrationService,
     DisbursementReceiptProcessingService,
     DisbursementReceiptRequestService,
-    IntegrationDisbursementReceiptService,
-    IntegrationDisbursementSchedulerService,
-    ReportService,
   ],
 })
 export class DisbursementReceiptIntegrationModule {}

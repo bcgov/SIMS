@@ -7,7 +7,7 @@ import { QueueNames } from "@sims/utilities";
 import { Job, Queue } from "bull";
 import { QueueProcessSummary } from "../../../models/processors.models";
 import { BaseScheduler } from "../../base-scheduler";
-import { MSFAARequestResult } from "../models/msfaa-file-result";
+import { MSFAARequestResult } from "../models/msfaa-file-result.models";
 
 @Processor(QueueNames.FullTimeMSFAAIntegration)
 export class FullTimeMSFAAProcessIntegrationScheduler extends BaseScheduler<void> {
@@ -35,7 +35,7 @@ export class FullTimeMSFAAProcessIntegrationScheduler extends BaseScheduler<void
       jobLogger: job,
     });
     await summary.info(
-      `Processing MSFAA full time integration job ${job.id} of type ${job.name}.`,
+      `Processing MSFAA Full-time integration job ${job.id} of type ${job.name}.`,
     );
     await summary.info("Sending MSFAA request File...");
     // Wait for queries to finish.
@@ -46,7 +46,7 @@ export class FullTimeMSFAAProcessIntegrationScheduler extends BaseScheduler<void
     await summary.info("MSFAA request file sent.");
     await this.cleanSchedulerQueueHistory();
     await summary.info(
-      `Completed MSFAA full time integration job ${job.id} of type ${job.name}.`,
+      `Completed MSFAA Full-time integration job ${job.id} of type ${job.name}.`,
     );
     return [
       {

@@ -5,7 +5,7 @@ import { QueueNames } from "@sims/utilities";
 import { Job, Queue } from "bull";
 import { QueueProcessSummary } from "../../../models/processors.models";
 import { BaseScheduler } from "../../base-scheduler";
-import { ESDCFileResponse } from "../models/esdc";
+import { ESDCFileResponse } from "../models/esdc.models";
 
 @Processor(QueueNames.PartTimeFeedbackIntegration)
 export class PartTimeECertFeedbackIntegrationScheduler extends BaseScheduler<void> {
@@ -30,13 +30,13 @@ export class PartTimeECertFeedbackIntegrationScheduler extends BaseScheduler<voi
       jobLogger: job,
     });
     await summary.info(
-      `Processing E-Cert part time integration job ${job.id} of type ${job.name}.`,
+      `Processing E-Cert Part-time integration job ${job.id} of type ${job.name}.`,
     );
     const partTimeResults =
       await this.eCertFileHandler.processPartTimeResponses();
     await this.cleanSchedulerQueueHistory();
     await summary.info(
-      `Completed E-Cert part time integration job ${job.id} of type ${job.name}.`,
+      `Completed E-Cert Part-time integration job ${job.id} of type ${job.name}.`,
     );
     return partTimeResults.map((partTimeResult) => ({
       processSummary: partTimeResult.processSummary,

@@ -5,7 +5,7 @@ import { QueueNames } from "@sims/utilities";
 import { Job, Queue } from "bull";
 import { QueueProcessSummary } from "../../../models/processors.models";
 import { BaseScheduler } from "../../base-scheduler";
-import { ESDCFileResponse } from "../models/esdc";
+import { ESDCFileResponse } from "../models/esdc.models";
 
 @Processor(QueueNames.FederalRestrictionsIntegration)
 export class FederalRestrictionsIntegrationScheduler extends BaseScheduler<void> {
@@ -13,7 +13,7 @@ export class FederalRestrictionsIntegrationScheduler extends BaseScheduler<void>
     @InjectQueue(QueueNames.FederalRestrictionsIntegration)
     schedulerQueue: Queue<void>,
     queueService: QueueService,
-    private readonly processingService: FedRestrictionProcessingService,
+    private readonly fedRestrictionProcessingService: FedRestrictionProcessingService,
   ) {
     super(schedulerQueue, queueService);
   }
@@ -35,7 +35,7 @@ export class FederalRestrictionsIntegrationScheduler extends BaseScheduler<void>
       `Processing federal restriction integration job ${job.id} of type ${job.name}.`,
     );
     await summary.info("Starting federal restrictions import...");
-    const uploadResult = await this.processingService.process();
+    const uploadResult = await this.fedRestrictionProcessingService.process();
     await summary.info("Federal restrictions import process finished.");
     await this.cleanSchedulerQueueHistory();
     await summary.info(

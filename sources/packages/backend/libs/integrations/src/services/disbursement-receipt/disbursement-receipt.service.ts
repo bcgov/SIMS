@@ -14,7 +14,7 @@ import { getISODateOnlyString } from "@sims/utilities";
  * Service for disbursement receipts.
  */
 @Injectable()
-export class IntegrationDisbursementReceiptService extends RecordDataModelService<DisbursementReceipt> {
+export class DisbursementReceiptService extends RecordDataModelService<DisbursementReceipt> {
   constructor(private readonly dataSource: DataSource) {
     super(dataSource.getRepository(DisbursementReceipt));
   }

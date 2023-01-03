@@ -29,7 +29,7 @@ import {
 import { SystemUsersService } from "@sims/services/system-users";
 import * as dayjs from "dayjs";
 import { ECertDisbursementSchedule } from "@sims/integrations/services";
-import { StudentRestrictionsService } from "../restriction/student-restriction.service";
+import { StudentRestrictionSharedService } from "../restriction/student-restriction-shared.service";
 
 // Timeout to handle the worst-case scenario where the commit/rollback
 // was not executed due to a possible catastrophic failure.
@@ -81,11 +81,11 @@ const GRANTS_TYPES = [
  * - Any deviation from the above statements is considered an edge case and must be adjusted and adjusted manually by the Ministry.
  */
 @Injectable()
-export class DisbursementSchedulerService extends RecordDataModelService<DisbursementSchedule> {
+export class DisbursementScheduleService extends RecordDataModelService<DisbursementSchedule> {
   constructor(
     private readonly dataSource: DataSource,
     private readonly systemUsersService: SystemUsersService,
-    private readonly studentRestrictionsService: StudentRestrictionsService,
+    private readonly studentRestrictionsService: StudentRestrictionSharedService,
   ) {
     super(dataSource.getRepository(DisbursementSchedule));
   }

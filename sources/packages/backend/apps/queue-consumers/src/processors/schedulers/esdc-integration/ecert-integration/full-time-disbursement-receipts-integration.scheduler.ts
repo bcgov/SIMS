@@ -6,7 +6,7 @@ import { QueueNames } from "@sims/utilities";
 import { Job, Queue } from "bull";
 import { QueueProcessSummary } from "../../../models/processors.models";
 import { BaseScheduler } from "../../base-scheduler";
-import { ESDCFileResponse } from "../models/esdc";
+import { ESDCFileResponse } from "../models/esdc.models";
 
 @Processor(QueueNames.FullTimeDisbursementReceiptsFileIntegration)
 export class FullTimeDisbursementReceiptsFileIntegrationScheduler extends BaseScheduler<void> {

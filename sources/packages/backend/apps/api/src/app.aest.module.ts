@@ -61,10 +61,10 @@ import {
 import { AuthModule } from "./auth/auth.module";
 import {
   SequenceControlService,
-  StudentRestrictionsService,
+  StudentRestrictionSharedService,
   WorkflowClientService,
+  ReportService,
 } from "@sims/services";
-import { MSFAANumberService, ReportService } from "@sims/integrations/services";
 import {
   SFASIndividualService,
   SFASApplicationService,
@@ -99,7 +99,6 @@ import {
     ApplicationService,
     SequenceControlService,
     StudentFileService,
-    MSFAANumberService,
     TokensService,
     DesignationAgreementService,
     DesignationAgreementControllerService,
@@ -138,7 +137,7 @@ import {
     EducationProgramOfferingControllerService,
     EducationProgramOfferingValidationService,
     DisbursementReceiptService,
-    StudentRestrictionsService,
+    StudentRestrictionSharedService,
   ],
 })
 export class AppAESTModule {}

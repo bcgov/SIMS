@@ -16,6 +16,6 @@ import { MSFAANumberService, SshService } from "@sims/integrations/services";
     MSFAANumberService,
     SequenceControlService,
   ],
-  exports: [MSFAAIntegrationService, MSFAARequestService, MSFAAResponseService],
+  exports: [MSFAARequestService, MSFAAResponseService],
 })
 export class MSFAAIntegrationModule {}

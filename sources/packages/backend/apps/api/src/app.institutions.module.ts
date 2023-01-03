@@ -14,7 +14,7 @@ import {
   StudentScholasticStandingsService,
   StudentAssessmentService,
   InstitutionUserAuthService,
-  DisbursementSchedulerService,
+  DisbursementScheduleService,
   COEDeniedReasonService,
   InstitutionTypeService,
   EducationProgramOfferingService,
@@ -45,10 +45,9 @@ import {
 import { AuthModule } from "./auth/auth.module";
 import {
   SequenceControlService,
-  StudentRestrictionsService,
+  StudentRestrictionSharedService,
   WorkflowClientService,
 } from "@sims/services";
-import { MSFAANumberService } from "@sims/integrations/services";
 import {
   SFASIndividualService,
   SFASApplicationService,
@@ -83,7 +82,6 @@ import {
     ApplicationService,
     SequenceControlService,
     StudentFileService,
-    MSFAANumberService,
     StudentRestrictionService,
     RestrictionService,
     StudentScholasticStandingsService,
@@ -91,7 +89,7 @@ import {
     ScholasticStandingControllerService,
     InstitutionUserAuthService,
     InstitutionUserControllerService,
-    DisbursementSchedulerService,
+    DisbursementScheduleService,
     COEDeniedReasonService,
     InstitutionTypeService,
     EducationProgramService,
@@ -106,7 +104,7 @@ import {
     SFASPartTimeApplicationsService,
     EducationProgramOfferingImportCSVService,
     EducationProgramOfferingValidationService,
-    StudentRestrictionsService,
+    StudentRestrictionSharedService,
   ],
 })
 export class AppInstitutionsModule {}

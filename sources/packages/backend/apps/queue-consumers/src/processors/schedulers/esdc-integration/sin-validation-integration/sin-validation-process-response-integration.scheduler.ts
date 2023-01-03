@@ -6,7 +6,7 @@ import { QueueNames } from "@sims/utilities";
 import { Job, Queue } from "bull";
 import { QueueProcessSummary } from "../../../models/processors.models";
 import { BaseScheduler } from "../../base-scheduler";
-import { ProcessResponseQueue } from "../models/esdc";
+import { ProcessResponseQueue } from "../models/esdc.models";
 
 @Processor(QueueNames.SINValidationRequestIntegration)
 export class SINValidationRequestIntegrationScheduler extends BaseScheduler<void> {

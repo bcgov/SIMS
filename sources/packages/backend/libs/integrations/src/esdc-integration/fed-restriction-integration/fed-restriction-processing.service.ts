@@ -11,10 +11,10 @@ import { ConfigService, ESDCIntegrationConfig } from "@sims/utilities/config";
 import { FEDERAL_RESTRICTIONS_BULK_INSERT_AMOUNT } from "@sims/services/constants";
 import {
   FederalRestrictionService,
-  IntegrationRestrictionService,
+  RestrictionService,
 } from "@sims/integrations/services";
 import { SystemUsersService } from "@sims/services/system-users";
-import { StudentRestrictionsService } from "@sims/services";
+import { StudentRestrictionSharedService } from "@sims/services";
 
 /**
  * Manages the process to import the entire snapshot of federal
@@ -28,10 +28,10 @@ export class FedRestrictionProcessingService {
   constructor(
     private readonly dataSource: DataSource,
     config: ConfigService,
-    private readonly integrationRestrictionService: IntegrationRestrictionService,
+    private readonly restrictionService: RestrictionService,
     private readonly federalRestrictionService: FederalRestrictionService,
     private readonly integrationService: FedRestrictionIntegrationService,
-    private readonly studentRestrictionsService: StudentRestrictionsService,
+    private readonly studentRestrictionsService: StudentRestrictionSharedService,
     private readonly systemUsersService: SystemUsersService,
   ) {
     this.esdcConfig = config.esdcIntegration;
@@ -155,7 +155,7 @@ export class FedRestrictionProcessingService {
         "Checking if all restriction codes are present on the database.",
       );
       const federalRestrictions =
-        await this.integrationRestrictionService.ensureFederalRestrictionExists(
+        await this.restrictionService.ensureFederalRestrictionExists(
           restrictionCodes,
           restrictionRepo,
         );

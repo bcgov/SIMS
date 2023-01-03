@@ -3,9 +3,11 @@ import { SequenceControlService } from "@sims/services";
 import { SINValidationIntegrationService } from "./sin-validation-integration.service";
 import { SINValidationProcessingService } from "./sin-validation-processing.service";
 import { ConfigModule } from "@sims/utilities/config";
-import { SshService } from "@sims/integrations/services";
-import { StudentService } from "@sims/services/student/student.service";
-import { SINValidationService } from "@sims/services/sin-validation/sin-validation.service";
+import {
+  StudentService,
+  SshService,
+  SINValidationService,
+} from "@sims/integrations/services";
 
 @Module({
   imports: [ConfigModule],
@@ -17,10 +19,6 @@ import { SINValidationService } from "@sims/services/sin-validation/sin-validati
     SINValidationProcessingService,
     SequenceControlService,
   ],
-  exports: [
-    SINValidationIntegrationService,
-    SINValidationProcessingService,
-    SINValidationService,
-  ],
+  exports: [SINValidationProcessingService],
 })
 export class SINValidationModule {}

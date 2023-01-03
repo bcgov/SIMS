@@ -11,7 +11,7 @@ import {
   IER12Record,
   IER12UploadResult,
 } from "./models/ier12-integration.model";
-import { IntegrationStudentAssessmentService } from "@sims/integrations/services";
+import { StudentAssessmentService } from "@sims/integrations/services";
 
 @Injectable()
 export class IER12FileService {
@@ -19,7 +19,7 @@ export class IER12FileService {
   constructor(
     config: ConfigService,
     private readonly ier12IntegrationService: IER12IntegrationService,
-    private readonly integrationStudentAssessmentService: IntegrationStudentAssessmentService,
+    private readonly studentAssessmentService: StudentAssessmentService,
   ) {
     this.institutionIntegrationConfig = config.institutionIntegration;
   }
@@ -38,9 +38,7 @@ export class IER12FileService {
   async processIER12File(generatedDate?: string): Promise<IER12UploadResult[]> {
     this.logger.log(`Retrieving pending assessment for IER 12...`);
     const pendingAssessments =
-      await this.integrationStudentAssessmentService.getPendingAssessment(
-        generatedDate,
-      );
+      await this.studentAssessmentService.getPendingAssessment(generatedDate);
     if (!pendingAssessments.length) {
       return [
         {

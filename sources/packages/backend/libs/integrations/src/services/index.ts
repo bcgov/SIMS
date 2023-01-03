@@ -8,12 +8,10 @@ export * from "./disbursement-schedule-errors/disbursement-schedule-errors.servi
 export * from "./disbursement-schedule-service/integration-disbursement-schedule-service";
 export * from "./disbursement-schedule-service/disbursement-schedule.models";
 export * from "./msfaa-number/msfaa-number.service";
-export * from "./report/constants";
-export * from "./report/report.models";
-export * from "./report/report.service";
 export * from "./restriction/federal-restriction.service";
 export * from "./restriction/models/federal-restriction.model";
 export * from "./restriction/integration-restriction.service";
 export * from "./student/student.service";
 export * from "./atbc/atbc.service";
 export * from "./atbc/models/atbc.model";
+export * from "./sin-validation/sin-validation.service";
