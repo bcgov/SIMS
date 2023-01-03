@@ -120,31 +120,6 @@ objects:
                     secretKeyRef:
                       key: ${SIMS_API_CLIENT_SECRET_NAME_KEY}
                       name: ${API_SECRET_NAME}
-                - name: ZONE_B_SFTP_SERVER
-                  valueFrom:
-                    secretKeyRef:
-                      key: ${ZONE_B_SFTP_SERVER_NAME_KEY}
-                      name: ${ZONE_B_SFTP_SECRET_NAME}
-                - name: ZONE_B_SFTP_SERVER_PORT
-                  valueFrom:
-                    secretKeyRef:
-                      key: ${ZONE_B_SFTP_SERVER_PORT_NAME_KEY}
-                      name: ${ZONE_B_SFTP_SECRET_NAME}
-                - name: ZONE_B_SFTP_USER_NAME
-                  valueFrom:
-                    secretKeyRef:
-                      key: ${ZONE_B_SFTP_USER_NAME_NAME_KEY}
-                      name: ${ZONE_B_SFTP_SECRET_NAME}
-                - name: ZONE_B_SFTP_PRIVATE_KEY_PASSPHRASE
-                  valueFrom:
-                    secretKeyRef:
-                      key: ${ZONE_B_SFTP_PRIVATE_KEY_PASSPHRASE_NAME_KEY}
-                      name: ${ZONE_B_SFTP_SECRET_NAME}
-                - name: ZONE_B_SFTP_PRIVATE_KEY
-                  valueFrom:
-                    secretKeyRef:
-                      key: ${ZONE_B_SFTP_PRIVATE_KEY_NAME_KEY}
-                      name: ${ZONE_B_SFTP_SECRET_NAME}
                 - name: FILE_UPLOAD_MAX_FILE_SIZE
                   value: ${FILE_UPLOAD_MAX_FILE_SIZE}
                 - name: FILE_UPLOAD_ALLOWED_EXTENSIONS
@@ -370,18 +345,6 @@ parameters:
     value: sims-api-client-id
   - name: SIMS_API_CLIENT_SECRET_NAME_KEY
     value: sims-api-client-secret
-  - name: ZONE_B_SFTP_SECRET_NAME
-    value: zone-b-sftp
-  - name: ZONE_B_SFTP_SERVER_NAME_KEY
-    value: server
-  - name: ZONE_B_SFTP_SERVER_PORT_NAME_KEY
-    value: server-port
-  - name: ZONE_B_SFTP_USER_NAME_NAME_KEY
-    value: user-name
-  - name: ZONE_B_SFTP_PRIVATE_KEY_PASSPHRASE_NAME_KEY
-    value: private-key-passphrase
-  - name: ZONE_B_SFTP_PRIVATE_KEY_NAME_KEY
-    value: private-key
   - name: FILE_UPLOAD_MAX_FILE_SIZE
     value: "4194304"
   - name: FILE_UPLOAD_ALLOWED_EXTENSIONS

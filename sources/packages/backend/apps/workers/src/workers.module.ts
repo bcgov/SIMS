@@ -19,7 +19,7 @@ import {
 } from "./services";
 import { ZeebeTransportStrategy } from "./zeebe";
 import {
-  DisbursementSchedulerService,
+  DisbursementScheduleService,
   SequenceControlService,
   WorkflowClientService,
   ZeebeModule,
@@ -52,7 +52,7 @@ import { SystemUserModule } from "@sims/services/system-users";
     ApplicationExceptionService,
     SupportingUserService,
     CRAIncomeVerificationService,
-    DisbursementSchedulerService,
+    DisbursementScheduleService,
     SequenceControlService,
     MSFAANumberService,
     DisbursementOverawardService,

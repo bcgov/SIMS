@@ -6,7 +6,7 @@ import {
   MustReturnJobActionAcknowledgement,
   IOutputVariables,
 } from "zeebe-node";
-import { DisbursementSchedulerService } from "@sims/services";
+import { DisbursementScheduleService } from "@sims/services";
 import { SaveDisbursementSchedulesJobInDTO } from "./disbursement.dto";
 import { CustomNamedError } from "@sims/utilities";
 import {
@@ -23,7 +23,7 @@ import { MaxJobsToActivate } from "../../types";
 @Controller()
 export class DisbursementController {
   constructor(
-    private readonly disbursementSchedulerService: DisbursementSchedulerService,
+    private readonly disbursementScheduleService: DisbursementScheduleService,
   ) {}
 
   /**
@@ -43,7 +43,7 @@ export class DisbursementController {
     >,
   ): Promise<MustReturnJobActionAcknowledgement> {
     try {
-      await this.disbursementSchedulerService.createDisbursementSchedules(
+      await this.disbursementScheduleService.createDisbursementSchedules(
         job.variables.assessmentId,
         job.variables.disbursementSchedules,
       );
