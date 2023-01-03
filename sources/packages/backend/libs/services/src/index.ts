@@ -15,3 +15,4 @@ export * from "./system-users/index";
 export * from "./report/constants";
 export * from "./report/report.models";
 export * from "./report/report.service";
+export * from "./sin-validation/models/sin-validation-models";

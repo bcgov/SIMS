@@ -1,8 +1,5 @@
-import {
-  RecordTypeCodes,
-  SINCheckStatus,
-  OkayFlag,
-} from "../models/sin-validation-models";
+import { OkayFlag, SINCheckStatus } from "@sims/services";
+import { RecordTypeCodes } from "../models/sin-validation-models";
 
 /**
  * File response record of an ESDC SIN validation file.
