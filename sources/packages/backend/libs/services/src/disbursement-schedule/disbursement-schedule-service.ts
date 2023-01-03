@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { DataSource, EntityManager, In, Repository } from "typeorm";
+import { DataSource, EntityManager } from "typeorm";
 import {
   RecordDataModelService,
   DisbursementSchedule,
@@ -13,23 +13,15 @@ import {
   DisbursementOverawardOriginType,
   Student,
   configureIdleTransactionSessionTimeout,
-  OfferingIntensity,
-  RestrictionActionType,
-  COEStatus,
-  mapFromRawAndEntities,
 } from "@sims/sims-db";
 import { DisbursementSaveModel } from "./disbursement-schedule.models";
 import { CustomNamedError, MIN_CANADA_LOAN_OVERAWARD } from "@sims/utilities";
 import {
   ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE,
   ASSESSMENT_NOT_FOUND,
-  DISBURSEMENT_FILE_GENERATION_ANTICIPATION_DAYS,
   DISBURSEMENT_SCHEDULES_ALREADY_CREATED,
 } from "../constants";
 import { SystemUsersService } from "@sims/services/system-users";
-import * as dayjs from "dayjs";
-import { ECertDisbursementSchedule } from "@sims/integrations/services";
-import { StudentRestrictionSharedService } from "../restriction/student-restriction-shared.service";
 
 // Timeout to handle the worst-case scenario where the commit/rollback
 // was not executed due to a possible catastrophic failure.
@@ -85,20 +77,8 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
   constructor(
     private readonly dataSource: DataSource,
     private readonly systemUsersService: SystemUsersService,
-    private readonly studentRestrictionsService: StudentRestrictionSharedService,
   ) {
     super(dataSource.getRepository(DisbursementSchedule));
-  }
-
-  /**
-   * Get DisbursementSchedule by documentNumber
-   * @param documentNumber document Number
-   * @returns DisbursementSchedule respective to passed documentNumber.
-   */
-  async getDisbursementScheduleByDocumentNumber(
-    documentNumber: number,
-  ): Promise<DisbursementSchedule> {
-    return this.repo.findOne({ where: { documentNumber } });
   }
 
   /**
@@ -737,148 +717,5 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
    */
   private getDistinctValueCodes(awards: DisbursementValue[]): string[] {
     return [...new Set(awards.map((award) => award.valueCode))];
-  }
-
-  /**
-   * Get all records that must be part of the e-Cert files and that were not sent yet.
-   * Criteria to be a valid disbursement to be sent.
-   * - Not sent yet;
-   * - Disbursement date in the past or in the near future (defined by DISBURSEMENT_FILE_GENERATION_ANTICIPATION_DAYS);
-   * - Student had the SIN number validated by the CRA;
-   * - Student has a valid signed MSFAA;
-   * - No restrictions in the student account that prevents the disbursement;
-   * - Application status must be 'Completed';
-   * - Confirmation of enrollment(COE) must be 'Completed'.
-   */
-  async getECertInformationToBeSent(
-    offeringIntensity: OfferingIntensity,
-  ): Promise<ECertDisbursementSchedule[]> {
-    const possibleRestrictionActions: RestrictionActionType[] =
-      offeringIntensity === OfferingIntensity.fullTime
-        ? [RestrictionActionType.StopFullTimeDisbursement]
-        : [RestrictionActionType.StopPartTimeDisbursement];
-    const stopFullTimeBCFunding: RestrictionActionType[] = [
-      RestrictionActionType.StopFullTimeBCFunding,
-    ];
-
-    // Define the minimum date to send a disbursement.
-    const disbursementMinDate = dayjs()
-      .add(DISBURSEMENT_FILE_GENERATION_ANTICIPATION_DAYS, "days")
-      .toDate();
-
-    const queryResult = await this.repo
-      .createQueryBuilder("disbursement")
-      .select([
-        "disbursement.id",
-        "disbursement.documentNumber",
-        "disbursement.negotiatedExpiryDate",
-        "disbursement.disbursementDate",
-        "disbursement.tuitionRemittanceRequestedAmount",
-        "application.applicationNumber",
-        "application.data",
-        "application.relationshipStatus",
-        "application.studentNumber",
-        "currentAssessment.id",
-        "currentAssessment.assessmentData",
-        "offering.id",
-        "offering.courseLoad",
-        "offering.studyStartDate",
-        "offering.studyEndDate",
-        "offering.yearOfStudy",
-        "educationProgram.fieldOfStudyCode",
-        "educationProgram.completionYears",
-        "user.firstName",
-        "user.lastName",
-        "user.email",
-        "sinValidation.id",
-        "sinValidation.sin",
-        "student.birthDate",
-        "student.gender",
-        "student.contactInfo",
-        "institutionLocation.id",
-        "institutionLocation.institutionCode",
-        "disbursementValue.valueType",
-        "disbursementValue.valueCode",
-        "disbursementValue.valueAmount",
-        "disbursement.coeUpdatedAt",
-        "studentAssessment.id",
-      ])
-      .addSelect(
-        `CASE
-              WHEN EXISTS(${this.studentRestrictionsService
-                .getExistsBlockRestrictionQuery(
-                  false,
-                  false,
-                  "restrictionActionType",
-                )
-                .getSql()}) THEN true
-              ELSE false
-          END`,
-        "stopFullTimeBCFunding",
-      )
-      .innerJoin("disbursement.studentAssessment", "studentAssessment")
-      .innerJoin("studentAssessment.application", "application")
-      .innerJoin("application.currentAssessment", "currentAssessment") // * This is to fetch the current assessment of the application, even though we have multiple reassessments
-      .innerJoin("currentAssessment.offering", "offering")
-      .innerJoin("offering.institutionLocation", "institutionLocation")
-      .innerJoin("offering.educationProgram", "educationProgram")
-      .innerJoin("application.student", "student") // ! The student alias here is also used in sub query 'getExistsBlockRestrictionQuery'.
-      .innerJoin("student.user", "user")
-      .innerJoin("student.sinValidation", "sinValidation")
-      .innerJoin("application.msfaaNumber", "msfaaNumber")
-      .innerJoin("disbursement.disbursementValues", "disbursementValue")
-      .where("disbursement.dateSent is null")
-      .andWhere("disbursement.disbursementDate <= :disbursementMinDate", {
-        disbursementMinDate,
-      })
-      .andWhere("application.applicationStatus = :applicationStatus", {
-        applicationStatus: ApplicationStatus.completed,
-      })
-      .andWhere("msfaaNumber.dateSigned is not null")
-      .andWhere("sinValidation.isValidSIN = true")
-      .andWhere("offering.offeringIntensity = :offeringIntensity", {
-        offeringIntensity,
-      })
-      .andWhere(
-        `NOT EXISTS(${this.studentRestrictionsService
-          .getExistsBlockRestrictionQuery()
-          .getSql()})`,
-      )
-      .andWhere("disbursement.coeStatus = :coeStatus", {
-        coeStatus: COEStatus.completed,
-      })
-      .setParameter("restrictionActionType", stopFullTimeBCFunding)
-      // 'restrictionActions' parameter used inside sub-query.
-      .setParameter("restrictionActions", possibleRestrictionActions)
-      .getRawAndEntities();
-    return mapFromRawAndEntities<ECertDisbursementSchedule>(
-      queryResult,
-      "stopFullTimeBCFunding",
-    );
-  }
-
-  /**
-   * Once the e-Cert file is sent, updates the date that the file was uploaded.
-   * @param disbursementIds records that are part of the generated
-   * file that must have the date sent updated.
-   * @param dateSent date that the file was uploaded.
-   * @param [disbursementScheduleRepo] when provided, it is used instead of the
-   * local repository (this.repo). Useful when the command must be executed,
-   * for instance, as part of an existing transaction manage externally to this
-   * service.
-   * @returns the result of the update.
-   */
-  async updateRecordsInSentFile(
-    disbursementIds: number[],
-    dateSent: Date,
-    disbursementScheduleRepo?: Repository<DisbursementSchedule>,
-  ) {
-    if (!dateSent) {
-      throw new Error(
-        "Date sent field is not provided to update the disbursement records.",
-      );
-    }
-    const repository = disbursementScheduleRepo ?? this.repo;
-    return repository.update({ id: In(disbursementIds) }, { dateSent });
   }
 }

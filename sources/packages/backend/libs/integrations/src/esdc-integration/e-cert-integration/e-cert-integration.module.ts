@@ -1,6 +1,5 @@
 import { Module } from "@nestjs/common";
 import {
-  DisbursementScheduleService,
   SequenceControlService,
   StudentRestrictionSharedService,
 } from "@sims/services";
@@ -14,6 +13,7 @@ import { ECertPartTimeIntegrationService } from "./e-cert-part-time-integration/
 import { ConfigModule } from "@sims/utilities/config";
 import {
   DisbursementScheduleErrorsService,
+  DisbursementScheduleService,
   RestrictionService,
   SshService,
 } from "@sims/integrations/services";
