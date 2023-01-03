@@ -68,6 +68,8 @@ export class CreateStudentAPIInDTO
   identityProvider: string;
   @Allow()
   sinConsent: boolean;
+  @Allow()
+  gender: string;
 }
 
 /**
@@ -84,6 +86,8 @@ export class UpdateStudentAPIInDTO
   mode: string;
   @Allow()
   identityProvider: string;
+  @Allow()
+  gender: string;
 }
 
 /**

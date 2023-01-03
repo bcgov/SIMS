@@ -40,11 +40,8 @@ import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { UserService } from "../../services/UserService";
 import { useSnackBar } from "@/composables";
-import {
-  FormIOForm,
-  InstitutionUserDetailsDto,
-  InstitutionUserPersistDto,
-} from "../../types";
+import { FormIOForm } from "../../types";
+import { InstitutionUserDetailsAPIOutDTO } from "@/services/http/dto";
 import { InstitutionRoutesConst } from "../../constants/routes/RouteConstants";
 import { BannerTypes } from "@/types/contracts/Banner";
 
@@ -57,15 +54,14 @@ export default {
     const initialData = ref({});
     const processing = ref(false);
 
-    const submitted = async (form: FormIOForm<InstitutionUserDetailsDto>) => {
-      const institutionUserPersistDto: InstitutionUserPersistDto = {
-        userEmail: form.data.userEmail,
-      };
+    const submitted = async (
+      form: FormIOForm<InstitutionUserDetailsAPIOutDTO>,
+    ) => {
       try {
         processing.value = true;
-        await UserService.shared.updateInstitutionUser(
-          institutionUserPersistDto,
-        );
+        await UserService.shared.updateInstitutionUser({
+          userEmail: form.data.userEmail,
+        });
         snackBar.success("Institution User successfully updated!");
         router.push({
           name: InstitutionRoutesConst.INSTITUTION_DASHBOARD,
@@ -95,6 +91,7 @@ export default {
       initialData,
       submitted,
       BannerTypes,
+      processing,
     };
   },
 };

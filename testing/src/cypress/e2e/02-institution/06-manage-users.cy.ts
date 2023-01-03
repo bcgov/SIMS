@@ -86,7 +86,7 @@ describe("Manage Users - Add new user", () => {
       .should("have.text", "Admin");
     manageUsersObject
       .isLegalSigningAuthorityButton()
-      .should("have.text", "Legal signing authority");
+      .should("have.text", "Legal Signing Authority");
     manageUsersObject.addUserNowButton().should("be.visible");
     manageUsersObject.cancelButton().should("be.visible");
   });

@@ -53,7 +53,7 @@ describe("Institution Manage Profile", () => {
     );
   });
 
-  it.only("Verify “Manage Institution Profile” should contain institution contact details", () => {
+  it("Verify “Manage Institution Profile” should contain institution contact details", () => {
     institutionObject.verifyThatElementIsVisibleAndIsEnabled(
       institutionObject.firstNameInstitutionInputText()
     );
@@ -129,7 +129,7 @@ describe("Institution Manage Profile", () => {
     const countryOptions = ["Canada", "other"];
     institutionObject.countryInputText().click();
     countryOptions.forEach((country) => {
-      institutionObject.verifyTheDropDownOptionsAreVisible(
+      institutionObject.verifyTheDropDownOptionsAreVisibleByDataValue(
         institutionObject.countryDropdownMenu(),
         country
       );
@@ -143,7 +143,7 @@ describe("Institution Manage Profile", () => {
     const provinceIds = Object.values(Provinces);
     for (let i = 0; i < provinceIds.length; i++) {
       institutionObject.provinceSearchInputText(Object.keys(Provinces)[i]);
-      institutionObject.verifyTheDropDownOptionsAreVisible(
+      institutionObject.verifyTheDropDownOptionsAreVisibleByDataValue(
         institutionObject.provinceDropdownMenu(),
         provinceIds[i]
       );

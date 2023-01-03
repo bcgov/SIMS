@@ -8,18 +8,13 @@ import {
   FormService,
   ProgramYearService,
 } from "./services";
-import {
-  UserController,
-  ProgramYearStudentsController,
-  ConfigController,
-  DynamicFormController,
-} from "./route-controllers";
+import { ConfigController, DynamicFormController } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
 import { AppAESTModule } from "./app.aest.module";
 import { AppInstitutionsModule } from "./app.institutions.module";
 import { ClientTypeBaseRoute } from "./types";
 import { AppStudentsModule } from "./app.students.module";
-// Todo: delete and remove AppSystemAccessModule when the last integration (archieve application is moved) to integration
+// Todo: delete and remove AppSystemAccessModule when the last integration (archive application is moved) to integration
 import { AppSystemAccessModule } from "./app.system-access.module";
 import { AppSupportingUsersModule } from "./app.supporting-users.module";
 import { ZeebeModule } from "@sims/services";
@@ -66,13 +61,7 @@ import { QueueModule } from "@sims/services/queue";
       },
     ]),
   ],
-  controllers: [
-    AppController,
-    UserController,
-    ProgramYearStudentsController,
-    ConfigController,
-    DynamicFormController,
-  ],
+  controllers: [AppController, ConfigController, DynamicFormController],
   providers: [
     AppService,
     UserService,

@@ -10,6 +10,7 @@ import { AddressDetailsFormAPIDTO } from "./Common.dto";
 export interface CreateStudentAPIInDTO extends AddressDetailsFormAPIDTO {
   phone: string;
   sinNumber: string;
+  gender: string;
 }
 
 /**
@@ -18,6 +19,7 @@ export interface CreateStudentAPIInDTO extends AddressDetailsFormAPIDTO {
  */
 export interface UpdateStudentAPIInDTO extends AddressDetailsFormAPIDTO {
   phone: string;
+  gender: string;
 }
 
 export interface StudentProfileAPIOutDTO {

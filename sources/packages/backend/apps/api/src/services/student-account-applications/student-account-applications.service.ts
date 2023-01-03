@@ -132,7 +132,6 @@ export class StudentAccountApplicationsService extends RecordDataModelService<St
       givenNames: studentProfile.firstName,
       email: studentProfile.email,
       birthdate: studentProfile.dateOfBirth,
-      gender: studentProfile.gender,
     };
 
     const studentInfo = {
@@ -150,6 +149,7 @@ export class StudentAccountApplicationsService extends RecordDataModelService<St
       // the Ministry approval would never happen, hence we are considering at this
       // moment that the student provided already the SIN consent.
       sinConsent: accountApplicationSubmittedData.sinConsent,
+      gender: studentProfile.gender,
     };
 
     return this.dataSource.transaction(async (entityManager) => {

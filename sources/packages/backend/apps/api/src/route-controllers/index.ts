@@ -1,4 +1,3 @@
-export * from "./user/user.controller";
 export * from "./program-year/program-year.students.controller";
 export * from "./config/config.controller";
 export * from "./dynamic-form/dynamic-form.controller";
@@ -49,4 +48,7 @@ export * from "./student-account-applications/student-account-application.studen
 export * from "./education-program-offering/education-program-offering.institutions.controller";
 export * from "./education-program-offering/education-program-offering.controller.service";
 export * from "./education-program-offering/education-program-offering.students.controller";
+export * from "./user/user.controller.service";
+export * from "./user/user.aest.controller";
+export * from "./user/user.institutions.controller";
 export * from "./application/application.controller.service";

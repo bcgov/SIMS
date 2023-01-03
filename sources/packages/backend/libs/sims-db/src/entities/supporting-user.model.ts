@@ -51,14 +51,6 @@ export class SupportingUser extends RecordDataModel {
   })
   birthDate?: string;
   /**
-   * Gender as received from BCSC authentication.
-   */
-  @Column({
-    name: "gender",
-    nullable: true,
-  })
-  gender?: string;
-  /**
    * Dynamic data that will be used alongside the Student Application workflow.
    */
   @Column({

@@ -9,6 +9,7 @@ export interface StudentInfo extends AddressInfo {
   phone: string;
   sinNumber: string;
   sinConsent: boolean;
+  gender: string;
 }
 
 /**
@@ -18,7 +19,7 @@ export interface StudentInfo extends AddressInfo {
  */
 export type CreateStudentUserInfo = Pick<
   UserInfo,
-  "userId" | "lastName" | "givenNames" | "email" | "birthdate" | "gender"
+  "userId" | "lastName" | "givenNames" | "email" | "birthdate"
 > & {
   /**
    * Optional userName that must be provided to alow the user creation.
