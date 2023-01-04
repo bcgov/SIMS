@@ -339,7 +339,7 @@ parameters:
   - name: CRA_PROGRAM_AREA_CODE_NAME_KEY
     value: cra-program-area-code
   - name: CRA_ENVIRONMENT_CODE_NAME_KEY
-    value: cra-program-area-code
+    value: cra-environment-code
   - name: ESDC_REQUEST_FOLDER_NAME_KEY
     value: esdc-request-folder
   - name: ESDC_RESPONSE_FOLDER_NAME_KEY
