@@ -1,3 +1,5 @@
+import { DisbursementValue } from "@sims/sims-db";
+
 export const ECE_SENT_TITLE = "CONFIRMATION REQUEST";
 
 /**
@@ -21,8 +23,7 @@ export interface ECERequestFileLine {
 export interface ECERecord {
   institutionCode: string;
   awardDisbursmentIdx: string;
-  documentType: string;
-  disbursementAmount: string;
+  disbursementValues: DisbursementValue[];
   sin: string;
   studentLastName: string;
   studentGivenName: string;

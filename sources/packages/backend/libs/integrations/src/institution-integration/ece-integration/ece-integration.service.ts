@@ -35,43 +35,33 @@ export class ECEIntegrationService extends SFTPIntegrationBase<void> {
     eceFileHeader.transactionCode = RecordTypeCodes.ECEHeader;
     eceFileHeader.processDate = processDate;
     eceRequestFileLines.push(eceFileHeader);
+    // Detail record
     const fileRecords = eceRecords.map((eceRecord) => {
       const eceRequestFileDetail = new ECERequestFileDetail();
-      eceRequestFileDetail.applicationNumber = eceRecord.applicationNumber;
-      eceRequestFileDetail.assessmentId = eceRecord.assessmentId;
-      eceRequestFileDetail.applicationNumber = eceRecord.applicationNumber;
+      eceRequestFileDetail.transactionCode = RecordTypeCodes.ECEDetail;
+      eceRequestFileDetail.institutionCode = eceRecord.institutionCode;
+      eceRequestFileDetail.awardDisbursmentIdx = eceRecord.awardDisbursmentIdx;
+      eceRequestFileDetail.disbursementValues = eceRecord.disbursementValues;
       eceRequestFileDetail.sin = eceRecord.sin;
       eceRequestFileDetail.studentLastName = eceRecord.studentLastName;
       eceRequestFileDetail.studentGivenName = eceRecord.studentGivenName;
       eceRequestFileDetail.birthDate = eceRecord.birthDate;
-      eceRequestFileDetail.programName = eceRecord.programName;
-      eceRequestFileDetail.programDescription = eceRecord.programDescription;
-      eceRequestFileDetail.credentialType = eceRecord.credentialType;
-      eceRequestFileDetail.cipCode = eceRecord.cipCode;
-      eceRequestFileDetail.nocCode = eceRecord.nocCode;
-      eceRequestFileDetail.sabcCode = eceRecord.sabcCode;
-      eceRequestFileDetail.institutionProgramCode =
-        eceRecord.institutionProgramCode;
-      eceRequestFileDetail.programLength = eceRecord.programLength;
+      eceRequestFileDetail.sfasApplicationNumber =
+        eceRecord.sfasApplicationNumber;
+      eceRequestFileDetail.institutionStudentNumber =
+        eceRecord.institutionStudentNumber;
+      eceRequestFileDetail.courseLoad = eceRecord.courseLoad;
       eceRequestFileDetail.studyStartDate = eceRecord.studyStartDate;
       eceRequestFileDetail.studyEndDate = eceRecord.studyEndDate;
-      eceRequestFileDetail.tuitionFees = eceRecord.tuitionFees;
-      eceRequestFileDetail.programRelatedCosts = eceRecord.programRelatedCosts;
-      eceRequestFileDetail.mandatoryFees = eceRecord.mandatoryFees;
-      eceRequestFileDetail.exceptionExpenses = eceRecord.exceptionExpenses;
-      eceRequestFileDetail.totalFundedWeeks = eceRecord.totalFundedWeeks;
-      eceRequestFileDetail.disbursementSchedules =
-        eceRecord.disbursementSchedules;
+      eceRequestFileDetail.disbursementDate = eceRecord.disbursementDate;
       return eceRequestFileDetail;
     });
     eceRequestFileLines.push(...fileRecords);
-
     // Footer or Trailer record
     const eceFileFooter = new ECEFileFooter();
     eceFileFooter.transactionCode = RecordTypeCodes.ECETrailer;
     eceFileFooter.recordCount = fileRecords.length;
     eceRequestFileLines.push(eceFileFooter);
-
     return eceRequestFileLines;
   }
 }

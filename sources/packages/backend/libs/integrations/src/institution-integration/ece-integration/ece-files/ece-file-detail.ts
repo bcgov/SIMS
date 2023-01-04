@@ -1,9 +1,10 @@
-import { DisbursementSchedule, DisbursementValue } from "@sims/sims-db";
+import { DisbursementValue } from "@sims/sims-db";
 import { END_OF_LINE, round, StringBuilder } from "@sims/utilities";
 import {
   DATE_FORMAT,
   ECERequestFileLine,
   NUMBER_FILLER,
+  RecordTypeCodes,
   SPACE_FILLER,
 } from "../models/ece-integration.model";
 
@@ -13,100 +14,47 @@ import {
  * 'SIMSSFAS - Institution File layouts In Analysis Folder'.
  */
 export class ECERequestFileDetail implements ECERequestFileLine {
-  assessmentId: number;
-  applicationNumber: string;
+  transactionCode: RecordTypeCodes;
+  institutionCode: string;
+  awardDisbursmentIdx: string;
+  disbursementValues: DisbursementValue[];
   sin: string;
   studentLastName: string;
   studentGivenName: string;
   birthDate: string;
-  programName: string;
-  programDescription: string;
-  credentialType: string;
-  cipCode: number;
-  nocCode: string;
-  sabcCode: string;
-  institutionProgramCode: string;
-  programLength: number;
+  sfasApplicationNumber: string;
+  institutionStudentNumber: string;
+  courseLoad: string;
   studyStartDate: string;
   studyEndDate: string;
-  tuitionFees: number;
-  programRelatedCosts: number;
-  mandatoryFees: number;
-  exceptionExpenses: number;
-  totalFundedWeeks: number;
-  disbursementSchedules: DisbursementSchedule[];
+  disbursementDate: string;
 
   getFixedFormat(): string {
-    const records = this.disbursementSchedules.map((disbursement) => {
+    const records = this.disbursementValues.map((disbursementValue) => {
       const record = new StringBuilder();
-      record.appendWithStartFiller(this.assessmentId, 10, NUMBER_FILLER);
-      record.appendWithStartFiller(disbursement.id, 10, NUMBER_FILLER);
-      record.append(this.applicationNumber, 10);
+      record.append(this.transactionCode, 1);
+      record.append(this.institutionCode, 4);
+      record.appendWithEndFiller(this.awardDisbursmentIdx, 10, SPACE_FILLER);
+      record.append(disbursementValue.valueCode, 4);
+      record.appendWithStartFiller(
+        disbursementValue.valueAmount,
+        9,
+        NUMBER_FILLER,
+      );
       record.append(this.sin, 9);
       record.appendWithEndFiller(this.studentLastName, 25, SPACE_FILLER);
       record.appendWithEndFiller(this.studentGivenName ?? "", 15, SPACE_FILLER);
       record.appendDate(this.birthDate, DATE_FORMAT);
-      record.appendWithEndFiller(this.programName, 25, SPACE_FILLER);
-      record.appendWithEndFiller(this.programDescription, 50, SPACE_FILLER);
-      record.appendWithEndFiller(this.credentialType, 25, SPACE_FILLER);
-      record.append(this.cipCode.toString(), 6);
-      record.append(this.nocCode, 4);
-      record.appendWithEndFiller(this.sabcCode ?? "", 4, SPACE_FILLER);
+      record.append(this.sfasApplicationNumber, 10);
       record.appendWithEndFiller(
-        this.institutionProgramCode ?? "",
-        25,
+        this.institutionStudentNumber,
+        12,
         SPACE_FILLER,
       );
-      record.append(this.programLength.toString(), 1);
+      record.appendWithStartFiller(this.courseLoad, 3, NUMBER_FILLER);
       record.appendDate(this.studyStartDate, DATE_FORMAT);
       record.appendDate(this.studyEndDate, DATE_FORMAT);
-      record.appendWithStartFiller(
-        this.tuitionFees.toString(),
-        8,
-        NUMBER_FILLER,
-      );
-      record.appendWithStartFiller(
-        this.programRelatedCosts.toString(),
-        8,
-        NUMBER_FILLER,
-      );
-      record.appendWithStartFiller(
-        this.mandatoryFees.toString(),
-        8,
-        NUMBER_FILLER,
-      );
-      record.appendWithStartFiller(
-        this.exceptionExpenses.toString(),
-        8,
-        NUMBER_FILLER,
-      );
-      record.appendWithStartFiller(
-        this.totalFundedWeeks.toString(),
-        2,
-        NUMBER_FILLER,
-      );
-      record.repeatAppend(SPACE_FILLER, 3); //We have hardcoded the courseLoad to null as its only for FullTime.
-      record.append("F", 1); //This implementation is only for FullTime, so hardcoding it to F.
-      record.appendWithEndFiller(disbursement.coeStatus, 10, SPACE_FILLER);
-      record.appendWithEndFiller(
-        disbursement.disbursementScheduleStatus,
-        10,
-        SPACE_FILLER,
-      );
-      record.appendDate(disbursement.disbursementDate, DATE_FORMAT);
-      disbursement.dateSent
-        ? record.appendDate(disbursement.dateSent, DATE_FORMAT)
-        : record.repeatAppend(SPACE_FILLER, 8);
-      disbursement.disbursementValues.forEach(
-        (disbursementValue: DisbursementValue) => {
-          record.append(disbursementValue.valueCode, 4);
-          record.appendWithStartFiller(
-            round(disbursementValue.valueAmount),
-            8,
-            NUMBER_FILLER,
-          );
-        },
-      );
+      record.appendDate(this.disbursementDate, DATE_FORMAT);
       return record.toString();
     });
     return records.join(END_OF_LINE);

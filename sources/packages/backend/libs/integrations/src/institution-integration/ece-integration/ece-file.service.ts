@@ -144,8 +144,7 @@ export class ECEFileService {
     return {
       institutionCode: institutionLocation.institutionCode,
       awardDisbursmentIdx: null,
-      documentType: eligibleCOE.disbursementValues[0].valueCode,
-      disbursementAmount: eligibleCOE.disbursementValues[0].valueAmount,
+      disbursementValues: eligibleCOE.disbursementValues,
       sin: sinValidation.sin,
       studentLastName: user.lastName,
       studentGivenName: user.firstName,
