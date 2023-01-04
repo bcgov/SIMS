@@ -156,7 +156,6 @@ export class ECEFileService {
       studyEndDate: offering.studyEndDate,
       disbursementDate: eligibleCOE.disbursementDate,
     };
-    return;
   }
 
   @InjectLogger()
