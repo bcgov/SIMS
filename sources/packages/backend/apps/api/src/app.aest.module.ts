@@ -1,7 +1,6 @@
 import { Module } from "@nestjs/common";
 import {
   ApplicationService,
-  MSFAANumberService,
   StudentFileService,
   SupportingUserService,
   TokensService,
@@ -17,7 +16,6 @@ import {
   StudentAppealRequestsService,
   StudentAppealService,
   StudentAssessmentService,
-  ReportService,
   StudentService,
   StudentRestrictionService,
   RestrictionService,
@@ -63,12 +61,17 @@ import {
   InstitutionUserControllerService,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
-import { WorkflowClientService, SequenceControlService } from "@sims/services";
 import {
   SFASIndividualService,
   SFASApplicationService,
   SFASPartTimeApplicationsService,
 } from "@sims/services/sfas";
+import {
+  SequenceControlService,
+  StudentRestrictionSharedService,
+  WorkflowClientService,
+  ReportService,
+} from "@sims/services";
 
 @Module({
   imports: [AuthModule],
@@ -99,7 +102,6 @@ import {
     ApplicationService,
     SequenceControlService,
     StudentFileService,
-    MSFAANumberService,
     TokensService,
     DesignationAgreementService,
     DesignationAgreementControllerService,
@@ -138,6 +140,7 @@ import {
     EducationProgramOfferingControllerService,
     EducationProgramOfferingValidationService,
     DisbursementReceiptService,
+    StudentRestrictionSharedService,
     UserControllerService,
   ],
 })

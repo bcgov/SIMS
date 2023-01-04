@@ -9,7 +9,6 @@ import {
   DesignationAgreementLocationService,
   ApplicationService,
   StudentFileService,
-  MSFAANumberService,
   StudentRestrictionService,
   RestrictionService,
   StudentScholasticStandingsService,
@@ -23,6 +22,7 @@ import {
   PIRDeniedReasonService,
   StudentService,
   EducationProgramOfferingImportCSVService,
+  EducationProgramOfferingValidationService,
 } from "./services";
 import {
   DesignationAgreementInstitutionsController,
@@ -43,8 +43,11 @@ import {
   EducationProgramOfferingControllerService,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
-import { EducationProgramOfferingValidationService } from "./services/education-program-offering/education-program-offering-validation.service";
-import { WorkflowClientService, SequenceControlService } from "@sims/services";
+import {
+  SequenceControlService,
+  StudentRestrictionSharedService,
+  WorkflowClientService,
+} from "@sims/services";
 import {
   SFASIndividualService,
   SFASApplicationService,
@@ -82,7 +85,6 @@ import { UserControllerService } from "./route-controllers/user/user.controller.
     ApplicationService,
     SequenceControlService,
     StudentFileService,
-    MSFAANumberService,
     StudentRestrictionService,
     RestrictionService,
     StudentScholasticStandingsService,
@@ -105,6 +107,7 @@ import { UserControllerService } from "./route-controllers/user/user.controller.
     SFASPartTimeApplicationsService,
     EducationProgramOfferingImportCSVService,
     EducationProgramOfferingValidationService,
+    StudentRestrictionSharedService,
     UserControllerService,
   ],
 })
