@@ -13,6 +13,7 @@ import {
 } from "@sims/sims-db";
 import { DataSource, In, Repository } from "typeorm";
 import { ECertDisbursementSchedule } from "./disbursement-schedule.models";
+import { addDays, dateEqualTo } from "@sims/utilities";
 
 /**
  * Service layer for Student Application disbursement schedules.
@@ -198,5 +199,67 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
     }
     const repository = disbursementScheduleRepo ?? this.repo;
     return repository.update({ id: In(disbursementIds) }, { dateSent });
+  }
+
+  /**
+   * Fetch the eligible COEs for a given date.
+   * @param generatedDate Date in which the eligible COE is required for an institution.
+   * @returns eligible COEs.
+   */
+  async getEligibleCOE(
+    generatedDate?: string,
+  ): Promise<DisbursementSchedule[]> {
+    const processingDate = generatedDate
+      ? new Date(generatedDate)
+      : addDays(-1);
+    return this.repo.find({
+      select: {
+        id: true,
+        disbursementDate: true,
+        disbursementValues: { id: true, valueCode: true, valueAmount: true },
+        studentAssessment: {
+          id: true,
+          offering: {
+            id: true,
+            courseLoad: true,
+            studyStartDate: true,
+            studyEndDate: true,
+            institutionLocation: {
+              institutionCode: true,
+            },
+          },
+          application: {
+            id: true,
+            applicationNumber: true,
+            studentNumber: true,
+            student: {
+              id: true,
+              birthDate: true,
+              sinValidation: { id: true, sin: true },
+              user: { id: true, lastName: true, firstName: true },
+            },
+          },
+        },
+      },
+      relations: {
+        disbursementValues: true,
+        studentAssessment: {
+          offering: { institutionLocation: true },
+          application: {
+            student: {
+              sinValidation: true,
+              user: true,
+            },
+          },
+        },
+      },
+      where: {
+        coeStatus: COEStatus.required,
+        updatedAt: processingDate,
+        studentAssessment: {
+          offering: { institutionLocation: { hasIntegration: true } },
+        },
+      },
+    });
   }
 }

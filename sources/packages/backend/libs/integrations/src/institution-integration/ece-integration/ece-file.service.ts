@@ -49,7 +49,8 @@ export class ECEFileService {
     const fileRecords: Record<string, ECERecord[]> = {};
     eligibleCOEs.forEach((eligibleCOE) => {
       const institutionCode =
-        eligibleCOE.offering.institutionLocation.institutionCode;
+        eligibleCOE.studentAssessment.offering.institutionLocation
+          .institutionCode;
       if (!fileRecords[institutionCode]) {
         fileRecords[institutionCode] = [];
       }
@@ -133,28 +134,29 @@ export class ECEFileService {
    * @returns ECE request record.
    */
   private createECERecord(eligibleCOE: DisbursementSchedule): ECERecord {
-    /*const application = eligibleCOE.application;
+    const studentAssessment = eligibleCOE.studentAssessment;
+    const application = studentAssessment.application;
     const student = application.student;
     const user = student.user;
     const sinValidation = student.sinValidation;
-    const offering = eligibleCOE.offering;
-    const educationProgram = offering.educationProgram;
+    const offering = studentAssessment.offering;
+    const institutionLocation = offering.institutionLocation;
     return {
-      institutionCode: number;
-      awardDisbursmentIdx: string;
-      documentType: string;
-      disbursementAmount: string;
-      sin: string;
-      studentLastName: string;
-      studentGivenName: string;
-      birthDate: string;
-      sfasApplicationNumber: string;
-      institutionStudentNumber: string;
-      courseLoad: string;
-      studyStartDate: string;
-      studyEndDate: string;
-      disbursementDate: string;
-    }; */
+      institutionCode: institutionLocation.institutionCode,
+      awardDisbursmentIdx: null,
+      documentType: eligibleCOE.disbursementValues[0].valueCode,
+      disbursementAmount: eligibleCOE.disbursementValues[0].valueAmount,
+      sin: sinValidation.sin,
+      studentLastName: user.lastName,
+      studentGivenName: user.firstName,
+      birthDate: student.birthDate,
+      sfasApplicationNumber: application.applicationNumber,
+      institutionStudentNumber: application.studentNumber,
+      courseLoad: offering.courseLoad.toString(),
+      studyStartDate: offering.studyStartDate,
+      studyEndDate: offering.studyEndDate,
+      disbursementDate: eligibleCOE.disbursementDate,
+    };
     return;
   }
 

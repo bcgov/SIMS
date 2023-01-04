@@ -19,7 +19,7 @@ export interface ECERequestFileLine {
 }
 
 export interface ECERecord {
-  institutionCode: number;
+  institutionCode: string;
   awardDisbursmentIdx: string;
   documentType: string;
   disbursementAmount: string;
