@@ -121,7 +121,7 @@ export class ECertFileHandler extends ESDCFileHandler {
       await this.disbursementScheduleService.getECertInformationToBeSent(
         offeringIntensity,
       );
-    if (!disbursements.length) {
+    if (!disbursements) {
       return {
         generatedFile: "none",
         uploadedRecords: 0,
