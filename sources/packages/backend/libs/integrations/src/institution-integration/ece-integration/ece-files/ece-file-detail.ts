@@ -2,17 +2,17 @@ import { DisbursementSchedule, DisbursementValue } from "@sims/sims-db";
 import { END_OF_LINE, round, StringBuilder } from "@sims/utilities";
 import {
   DATE_FORMAT,
-  ECEFileLine,
+  ECERequestFileLine,
   NUMBER_FILLER,
   SPACE_FILLER,
-} from "./models/ece-integration.model";
+} from "../models/ece-integration.model";
 
 /**
  * Record of a ECE request file.
  * The documentation about it is available on the document
  * 'SIMSSFAS - Institution File layouts In Analysis Folder'.
  */
-export class ECEFileDetail implements ECEFileLine {
+export class ECERequestFileDetail implements ECERequestFileLine {
   assessmentId: number;
   applicationNumber: string;
   sin: string;
@@ -97,7 +97,7 @@ export class ECEFileDetail implements ECEFileLine {
       disbursement.dateSent
         ? record.appendDate(disbursement.dateSent, DATE_FORMAT)
         : record.repeatAppend(SPACE_FILLER, 8);
-      disbursement.disbursementValues.map(
+      disbursement.disbursementValues.forEach(
         (disbursementValue: DisbursementValue) => {
           record.append(disbursementValue.valueCode, 4);
           record.appendWithStartFiller(

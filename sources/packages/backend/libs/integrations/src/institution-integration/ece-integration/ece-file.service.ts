@@ -1,12 +1,12 @@
 import { Injectable } from "@nestjs/common";
-import { StudentAssessment } from "@sims/sims-db";
+import { DisbursementSchedule } from "@sims/sims-db";
 import { LoggerService, InjectLogger } from "@sims/utilities/logger";
 import {
   ConfigService,
   InstitutionIntegrationConfig,
 } from "@sims/utilities/config";
 import { getFileNameAsCurrentTimestamp } from "@sims/utilities";
-import { StudentAssessmentService } from "@sims/integrations/services";
+import { DisbursementScheduleService } from "@sims/integrations/services";
 import { ECERecord, ECEUploadResult } from "./models/ece-integration.model";
 import { ECEIntegrationService } from "./ece-integration.service";
 
@@ -16,7 +16,7 @@ export class ECEFileService {
   constructor(
     config: ConfigService,
     private readonly eceIntegrationService: ECEIntegrationService,
-    private readonly studentAssessmentService: StudentAssessmentService,
+    private readonly disbursementScheduleService: DisbursementScheduleService,
   ) {
     this.institutionIntegrationConfig = config.institutionIntegration;
   }
@@ -28,15 +28,16 @@ export class ECEFileService {
    * 3. Create the request filename with the file path with respect to the institution code
    * for the ECE request sent File.
    * 4. Upload the content to the zoneB SFTP server.
-   * @param generatedDate date in which the assessment for
-   * particular institution is generated.
+   * @param generatedDate date in which the eligible coe for
+   * particular institution is required.
    * @returns Processing ECE request result.
    */
   async processECEFile(generatedDate?: string): Promise<ECEUploadResult[]> {
-    this.logger.log(`Retrieving pending assessment for ECE request...`);
-    const pendingAssessments =
-      await this.studentAssessmentService.getPendingAssessment(generatedDate);
-    if (!pendingAssessments.length) {
+    this.logger.log(`Retrieving eligible COEs for ECE request...`);
+    const eligibleCOEs = await this.disbursementScheduleService.getEligibleCOE(
+      generatedDate,
+    );
+    if (!eligibleCOEs.length) {
       return [
         {
           generatedFile: "none",
@@ -44,17 +45,15 @@ export class ECEFileService {
         },
       ];
     }
-    this.logger.log(`Found ${pendingAssessments.length} assessments.`);
+    this.logger.log(`Found ${eligibleCOEs.length} COEs.`);
     const fileRecords: Record<string, ECERecord[]> = {};
-    pendingAssessments.forEach((pendingAssessment) => {
+    eligibleCOEs.forEach((eligibleCOE) => {
       const institutionCode =
-        pendingAssessment.offering.institutionLocation.institutionCode;
+        eligibleCOE.offering.institutionLocation.institutionCode;
       if (!fileRecords[institutionCode]) {
         fileRecords[institutionCode] = [];
       }
-      fileRecords[institutionCode].push(
-        this.createECERecord(pendingAssessment),
-      );
+      fileRecords[institutionCode].push(this.createECERecord(eligibleCOE));
     });
     const uploadResult: ECEUploadResult[] = [];
     try {
@@ -130,40 +129,33 @@ export class ECEFileService {
 
   /**
    * Create the Request content for the ECE request file by populating the content.
-   * @param pendingAssessment pending assessment of institutions.
+   * @param eligibleCOE eligible COE of institutions.
    * @returns ECE request record.
    */
-  private createECERecord(pendingAssessment: StudentAssessment): ECERecord {
-    const application = pendingAssessment.application;
+  private createECERecord(eligibleCOE: DisbursementSchedule): ECERecord {
+    /*const application = eligibleCOE.application;
     const student = application.student;
     const user = student.user;
     const sinValidation = student.sinValidation;
-    const offering = pendingAssessment.offering;
+    const offering = eligibleCOE.offering;
     const educationProgram = offering.educationProgram;
     return {
-      assessmentId: pendingAssessment.id,
-      applicationNumber: application.applicationNumber,
-      sin: sinValidation.sin,
-      studentLastName: user.lastName,
-      studentGivenName: user.firstName,
-      birthDate: student.birthDate,
-      programName: educationProgram.name,
-      programDescription: educationProgram.description,
-      credentialType: educationProgram.credentialType,
-      cipCode: parseFloat(educationProgram.cipCode) * 10000,
-      nocCode: educationProgram.nocCode,
-      sabcCode: educationProgram.sabcCode,
-      institutionProgramCode: educationProgram.institutionProgramCode,
-      programLength: offering.yearOfStudy,
-      studyStartDate: offering.studyStartDate,
-      studyEndDate: offering.studyEndDate,
-      tuitionFees: offering.actualTuitionCosts,
-      programRelatedCosts: offering.programRelatedCosts,
-      mandatoryFees: offering.mandatoryFees,
-      exceptionExpenses: offering.exceptionalExpenses,
-      totalFundedWeeks: offering.studyBreaks.totalFundedWeeks,
-      disbursementSchedules: pendingAssessment.disbursementSchedules,
-    };
+      institutionCode: number;
+      awardDisbursmentIdx: string;
+      documentType: string;
+      disbursementAmount: string;
+      sin: string;
+      studentLastName: string;
+      studentGivenName: string;
+      birthDate: string;
+      sfasApplicationNumber: string;
+      institutionStudentNumber: string;
+      courseLoad: string;
+      studyStartDate: string;
+      studyEndDate: string;
+      disbursementDate: string;
+    }; */
+    return;
   }
 
   @InjectLogger()

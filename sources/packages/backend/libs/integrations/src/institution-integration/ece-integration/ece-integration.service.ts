@@ -1,8 +1,14 @@
 import { Injectable } from "@nestjs/common";
 import { SFTPIntegrationBase, SshService } from "@sims/integrations/services";
 import { ConfigService } from "@sims/utilities/config";
-import { ECEFileDetail } from "./ece-file-detail";
-import { ECEFileLine, ECERecord } from "./models/ece-integration.model";
+import { ECERequestFileDetail } from "./ece-files/ece-file-detail";
+import { ECEFileFooter } from "./ece-files/ece-file-footer";
+import { ECEFileHeader } from "./ece-files/ece-file-header";
+import {
+  ECERequestFileLine,
+  ECERecord,
+  RecordTypeCodes,
+} from "./models/ece-integration.model";
 
 /**
  * Manages the creation of the content files that needs to be sent
@@ -19,38 +25,53 @@ export class ECEIntegrationService extends SFTPIntegrationBase<void> {
    * Create the ECE request content, by populating the records.
    * @param eceRecords - Assessment, Student, User, offering,
    * program and application objects data.
-   * @returns Complete ECEFileLines record as an array.
+   * @returns Complete ECERequestFileLines record as an array.
    */
-  createECEFileContent(eceRecords: ECERecord[]): ECEFileLine[] {
-    const eceFileLines: ECEFileLine[] = [];
+  createECEFileContent(eceRecords: ECERecord[]): ECERequestFileLine[] {
+    const processDate = new Date();
+    const eceRequestFileLines: ECERequestFileLine[] = [];
+    // Header record
+    const eceFileHeader = new ECEFileHeader();
+    eceFileHeader.transactionCode = RecordTypeCodes.ECEHeader;
+    eceFileHeader.processDate = processDate;
+    eceRequestFileLines.push(eceFileHeader);
     const fileRecords = eceRecords.map((eceRecord) => {
-      const eceFileDetail = new ECEFileDetail();
-      eceFileDetail.applicationNumber = eceRecord.applicationNumber;
-      eceFileDetail.assessmentId = eceRecord.assessmentId;
-      eceFileDetail.applicationNumber = eceRecord.applicationNumber;
-      eceFileDetail.sin = eceRecord.sin;
-      eceFileDetail.studentLastName = eceRecord.studentLastName;
-      eceFileDetail.studentGivenName = eceRecord.studentGivenName;
-      eceFileDetail.birthDate = eceRecord.birthDate;
-      eceFileDetail.programName = eceRecord.programName;
-      eceFileDetail.programDescription = eceRecord.programDescription;
-      eceFileDetail.credentialType = eceRecord.credentialType;
-      eceFileDetail.cipCode = eceRecord.cipCode;
-      eceFileDetail.nocCode = eceRecord.nocCode;
-      eceFileDetail.sabcCode = eceRecord.sabcCode;
-      eceFileDetail.institutionProgramCode = eceRecord.institutionProgramCode;
-      eceFileDetail.programLength = eceRecord.programLength;
-      eceFileDetail.studyStartDate = eceRecord.studyStartDate;
-      eceFileDetail.studyEndDate = eceRecord.studyEndDate;
-      eceFileDetail.tuitionFees = eceRecord.tuitionFees;
-      eceFileDetail.programRelatedCosts = eceRecord.programRelatedCosts;
-      eceFileDetail.mandatoryFees = eceRecord.mandatoryFees;
-      eceFileDetail.exceptionExpenses = eceRecord.exceptionExpenses;
-      eceFileDetail.totalFundedWeeks = eceRecord.totalFundedWeeks;
-      eceFileDetail.disbursementSchedules = eceRecord.disbursementSchedules;
-      return eceFileDetail;
+      const eceRequestFileDetail = new ECERequestFileDetail();
+      eceRequestFileDetail.applicationNumber = eceRecord.applicationNumber;
+      eceRequestFileDetail.assessmentId = eceRecord.assessmentId;
+      eceRequestFileDetail.applicationNumber = eceRecord.applicationNumber;
+      eceRequestFileDetail.sin = eceRecord.sin;
+      eceRequestFileDetail.studentLastName = eceRecord.studentLastName;
+      eceRequestFileDetail.studentGivenName = eceRecord.studentGivenName;
+      eceRequestFileDetail.birthDate = eceRecord.birthDate;
+      eceRequestFileDetail.programName = eceRecord.programName;
+      eceRequestFileDetail.programDescription = eceRecord.programDescription;
+      eceRequestFileDetail.credentialType = eceRecord.credentialType;
+      eceRequestFileDetail.cipCode = eceRecord.cipCode;
+      eceRequestFileDetail.nocCode = eceRecord.nocCode;
+      eceRequestFileDetail.sabcCode = eceRecord.sabcCode;
+      eceRequestFileDetail.institutionProgramCode =
+        eceRecord.institutionProgramCode;
+      eceRequestFileDetail.programLength = eceRecord.programLength;
+      eceRequestFileDetail.studyStartDate = eceRecord.studyStartDate;
+      eceRequestFileDetail.studyEndDate = eceRecord.studyEndDate;
+      eceRequestFileDetail.tuitionFees = eceRecord.tuitionFees;
+      eceRequestFileDetail.programRelatedCosts = eceRecord.programRelatedCosts;
+      eceRequestFileDetail.mandatoryFees = eceRecord.mandatoryFees;
+      eceRequestFileDetail.exceptionExpenses = eceRecord.exceptionExpenses;
+      eceRequestFileDetail.totalFundedWeeks = eceRecord.totalFundedWeeks;
+      eceRequestFileDetail.disbursementSchedules =
+        eceRecord.disbursementSchedules;
+      return eceRequestFileDetail;
     });
-    eceFileLines.push(...fileRecords);
-    return eceFileLines;
+    eceRequestFileLines.push(...fileRecords);
+
+    // Footer or Trailer record
+    const eceFileFooter = new ECEFileFooter();
+    eceFileFooter.transactionCode = RecordTypeCodes.ECETrailer;
+    eceFileFooter.recordCount = fileRecords.length;
+    eceRequestFileLines.push(eceFileFooter);
+
+    return eceRequestFileLines;
   }
 }

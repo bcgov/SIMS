@@ -97,7 +97,7 @@ export class IER12FileDetail implements IER12FileLine {
       disbursement.dateSent
         ? record.appendDate(disbursement.dateSent, DATE_FORMAT)
         : record.repeatAppend(SPACE_FILLER, 8);
-      disbursement.disbursementValues.map(
+      disbursement.disbursementValues.forEach(
         (disbursementValue: DisbursementValue) => {
           record.append(disbursementValue.valueCode, 4);
           record.appendWithStartFiller(
