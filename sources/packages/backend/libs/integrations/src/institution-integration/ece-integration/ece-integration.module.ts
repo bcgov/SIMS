@@ -1,8 +1,11 @@
 import { Global, Module } from "@nestjs/common";
-import { WorkflowClientService } from "@sims/services";
+import {
+  StudentRestrictionSharedService,
+  WorkflowClientService,
+} from "@sims/services";
 import { ConfigModule } from "@sims/utilities/config";
 import {
-  StudentAssessmentService,
+  DisbursementScheduleService,
   SshService,
 } from "@sims/integrations/services";
 import { ECEFileService } from "./ece-file.service";
@@ -13,10 +16,11 @@ import { ECEIntegrationService } from "./ece-integration.service";
   imports: [ConfigModule],
   providers: [
     SshService,
-    StudentAssessmentService,
+    DisbursementScheduleService,
     ECEFileService,
     WorkflowClientService,
     ECEIntegrationService,
+    StudentRestrictionSharedService,
   ],
   exports: [ECEFileService, ECEIntegrationService],
 })
