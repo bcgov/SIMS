@@ -37,7 +37,7 @@ export class ECERequestFileDetail implements ECERequestFileLine {
       record.appendWithEndFiller(this.awardDisbursmentIdx, 10, SPACE_FILLER);
       record.append(disbursementValue.valueCode, 4);
       record.appendWithStartFiller(
-        disbursementValue.valueAmount,
+        round(disbursementValue.valueAmount),
         9,
         NUMBER_FILLER,
       );
