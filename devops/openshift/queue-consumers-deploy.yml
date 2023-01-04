@@ -333,16 +333,16 @@ parameters:
   - name: ATBC_APP_NAME_KEY
     value: atbc-app
   - name: CRA_REQUEST_FOLDER_NAME_KEY
-    value: cra_request_folder
+    value: cra-request-folder
   - name: CRA_RESPONSE_FOLDER_NAME_KEY
-    value: cra_response_folder
+    value: cra-response-folder
   - name: CRA_PROGRAM_AREA_CODE_NAME_KEY
-    value: cra_program_area_code
+    value: cra-program-area-code
   - name: CRA_ENVIRONMENT_CODE_NAME_KEY
-    value: cra_environment_code
+    value: cra-program-area-code
   - name: ESDC_REQUEST_FOLDER_NAME_KEY
-    value: esdc_request_folder
+    value: esdc-request-folder
   - name: ESDC_RESPONSE_FOLDER_NAME_KEY
-    value: esdc_response_folder
+    value: esdc-response-folder
   - name: ESDC_ENVIRONMENT_CODE_NAME_KEY
-    value: esdc_environment_code
+    value: esdc-environment-code
