@@ -102,11 +102,6 @@ export class InstitutionLocationAPIOutDTO {
   designationStatus: DesignationStatus;
 }
 
-export interface UserLocationDto {
-  id: number;
-  name: string;
-}
-
 /**
  * Possible status for a designation.
  */

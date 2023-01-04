@@ -3,7 +3,6 @@ export * from "@/types/AuthStatus";
 export * from "@/types/ApplicationToken";
 export * from "@/types/contracts/ConfigContract";
 export * from "@/types/contracts/StudentContract";
-export * from "@/types/contracts/UserContract";
 export * from "@/types/contracts/institution/InstitutionLocation";
 export * from "@/types/contracts/institution/InstitutionUser";
 export * from "@/types/contracts/EducationProgram";

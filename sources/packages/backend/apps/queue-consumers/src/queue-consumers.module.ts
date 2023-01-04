@@ -8,21 +8,45 @@ import {
   IER12IntegrationScheduler,
   CRAResponseIntegrationScheduler,
   CRAProcessIntegrationScheduler,
+  SINValidationProcessIntegrationScheduler,
+  SINValidationRequestIntegrationScheduler,
+  FullTimeMSFAAProcessIntegrationScheduler,
+  PartTimeMSFAAProcessIntegrationScheduler,
+  PartTimeECertProcessIntegrationScheduler,
+  FullTimeECertProcessIntegrationScheduler,
+  FullTimeECertFeedbackIntegrationScheduler,
+  PartTimeECertFeedbackIntegrationScheduler,
+  FullTimeDisbursementReceiptsFileIntegrationScheduler,
+  FINProcessProvincialDailyDisbursementsIntegrationScheduler,
+  FederalRestrictionsIntegrationScheduler,
+  FullTimeMSFAAProcessResponseIntegrationScheduler,
+  PartTimeMSFAAProcessResponseIntegrationScheduler,
+  SFASIntegrationScheduler,
+  ATBCResponseIntegrationScheduler,
 } from "./processors";
 import {
   DisbursementScheduleService,
-  WorkflowClientService,
   SequenceControlService,
+  StudentRestrictionSharedService,
+  WorkflowClientService,
   ZeebeModule,
 } from "@sims/services";
 import { DatabaseModule } from "@sims/sims-db";
-import { IER12IntegrationService } from "@sims/integrations/institution-integration/ier12-integration";
-import { SshService } from "@sims/integrations/services";
+import { IER12IntegrationModule } from "@sims/integrations/institution-integration/ier12-integration";
 import { NotificationsModule } from "@sims/services/notifications";
-import { IER12IntegrationModule } from "@sims/integrations/institution-integration/ier12-integration/ier12-integration.module";
-import { StudentAssessmentService } from "./services";
 import { SystemUserModule } from "@sims/services/system-users";
+import { MSFAANumberService, SshService } from "@sims/integrations/services";
+import {
+  DisbursementReceiptIntegrationModule,
+  ECertIntegrationModule,
+  FedRestrictionIntegrationModule,
+  MSFAAIntegrationModule,
+  SINValidationModule,
+} from "@sims/integrations/esdc-integration";
 import { CRAIntegrationModule } from "@sims/integrations/cra-integration/cra-integration.module";
+import { StudentAssessmentService } from "./services";
+import { SFASIntegrationModule } from "@sims/integrations/sfas-integration";
+import { ATBCIntegrationModule } from "@sims/integrations/atbc-integration";
 
 @Module({
   imports: [
@@ -33,22 +57,45 @@ import { CRAIntegrationModule } from "@sims/integrations/cra-integration/cra-int
     NotificationsModule,
     SystemUserModule,
     CRAIntegrationModule,
+    SFASIntegrationModule,
+    ATBCIntegrationModule,
+    DisbursementReceiptIntegrationModule,
+    ECertIntegrationModule,
+    FedRestrictionIntegrationModule,
+    MSFAAIntegrationModule,
+    SINValidationModule,
   ],
   providers: [
     StartApplicationAssessmentProcessor,
     CancelApplicationAssessmentProcessor,
     WorkflowClientService,
     IER12IntegrationScheduler,
-    IER12IntegrationService,
     ProcessNotificationScheduler,
+    SFASIntegrationScheduler,
+    ATBCResponseIntegrationScheduler,
     StudentAssessmentService,
     SshService,
     QueueService,
-    DisbursementScheduleService,
     CRAResponseIntegrationScheduler,
     CRAProcessIntegrationScheduler,
     SequenceControlService,
     WorkflowClientService,
+    SINValidationProcessIntegrationScheduler,
+    SINValidationRequestIntegrationScheduler,
+    FullTimeMSFAAProcessIntegrationScheduler,
+    MSFAANumberService,
+    PartTimeMSFAAProcessIntegrationScheduler,
+    PartTimeECertProcessIntegrationScheduler,
+    DisbursementScheduleService,
+    StudentRestrictionSharedService,
+    FullTimeECertProcessIntegrationScheduler,
+    FullTimeECertFeedbackIntegrationScheduler,
+    PartTimeECertFeedbackIntegrationScheduler,
+    FullTimeDisbursementReceiptsFileIntegrationScheduler,
+    FINProcessProvincialDailyDisbursementsIntegrationScheduler,
+    FederalRestrictionsIntegrationScheduler,
+    FullTimeMSFAAProcessResponseIntegrationScheduler,
+    PartTimeMSFAAProcessResponseIntegrationScheduler,
   ],
   exports: [QueueService],
 })

@@ -2,9 +2,6 @@ import { Module } from "@nestjs/common";
 import {
   ApplicationService,
   FormService,
-  MSFAANumberService,
-  SFASApplicationService,
-  SFASPartTimeApplicationsService,
   StudentFileService,
   SupportingUserService,
   UserService,
@@ -12,10 +9,18 @@ import {
   RestrictionService,
   EducationProgramOfferingService,
   StudentService,
-  SFASIndividualService,
   EducationProgramOfferingValidationService,
 } from "./services";
-import { SequenceControlService, WorkflowClientService } from "@sims/services";
+import {
+  SequenceControlService,
+  StudentRestrictionSharedService,
+  WorkflowClientService,
+} from "@sims/services";
+import {
+  SFASIndividualService,
+  SFASApplicationService,
+  SFASPartTimeApplicationsService,
+} from "@sims/services/sfas";
 import { SupportingUserSupportingUsersController } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
 
@@ -29,16 +34,16 @@ import { AuthModule } from "./auth/auth.module";
     FormService,
     SequenceControlService,
     StudentFileService,
-    MSFAANumberService,
-    SFASApplicationService,
-    SFASPartTimeApplicationsService,
     RestrictionService,
     StudentRestrictionService,
     EducationProgramOfferingService,
     StudentService,
     SFASIndividualService,
+    SFASApplicationService,
+    SFASPartTimeApplicationsService,
     EducationProgramOfferingValidationService,
     WorkflowClientService,
+    StudentRestrictionSharedService,
   ],
 })
 export class AppSupportingUsersModule {}

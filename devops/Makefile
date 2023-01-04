@@ -181,8 +181,6 @@ init-secrets:
 		-p BCeID_WEB_SERVICE_AUTH_USER_PASSWORD=$(BCeID_WEB_SERVICE_AUTH_USER_PASSWORD) \
 		-p WORKFLOW_SA_USER_NAME=$(WORKFLOW_SA_USER_NAME) \
 		-p WORKFLOW_SA_PASSWORD=$(WORKFLOW_SA_PASSWORD) \
-		-p FORMS_SA_USER_NAME=$(FORMS_SA_USER_NAME) \
-		-p FORMS_SA_PASSWORD=$(FORMS_SA_PASSWORD) \
 		-p SIMS_API_CLIENT_ID=$(SIMS_API_CLIENT_ID) \
 		-p SIMS_API_CLIENT_SECRET=$(SIMS_API_CLIENT_SECRET) \
 		-p CRA_REQUEST_FOLDER=$(CRA_REQUEST_FOLDER) \
@@ -373,6 +371,8 @@ deploy-queue-consumers:
 	test -n "$(QUEUE_CONSUMERS)"
 	test -n "$(QUEUE_CONSUMERS_PORT)"
 	test -n "$(QUEUE_PREFIX)"
+	test -n "$(ATBC_LOGIN_ENDPOINT)"
+	test -n "$(ATBC_ENDPOINT)"
 	@echo "+\n++ Deploying Queues with tag: $(BUILD_TAG)\n+"
 	@oc -n $(NAMESPACE) process -f openshift/queue-consumers-deploy.yml \
 		-p NAME=$(QUEUE_CONSUMERS) \
@@ -385,6 +385,8 @@ deploy-queue-consumers:
 		-p PORT=$(QUEUE_CONSUMERS_PORT) \
 		-p HOST_NAME=$(HOST) \
 		-p QUEUE_PREFIX=$(QUEUE_PREFIX) \
+		-p ATBC_LOGIN_ENDPOINT=$(ATBC_LOGIN_ENDPOINT) \
+		-p ATBC_ENDPOINT=$(ATBC_ENDPOINT) \
 		| oc -n $(NAMESPACE) apply -f -
 	$(call rollout_and_wait,dc/$(QUEUE_CONSUMERS))
 

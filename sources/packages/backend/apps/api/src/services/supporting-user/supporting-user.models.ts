@@ -21,11 +21,6 @@ export interface UpdateSupportingUserInfo {
    */
   birthDate: string;
   /**
-   * Gender present on the the supporting user
-   * authentication information.
-   */
-  gender: string;
-  /**
    * Additional questions answered by
    * the supporting user. This is a
    * dynamic field.

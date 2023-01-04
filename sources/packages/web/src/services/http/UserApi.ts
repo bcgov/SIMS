@@ -1,66 +1,39 @@
 import { AxiosError } from "axios";
 import {
-  BCeIDDetailsDto,
-  BCeIDAccountsDto,
-  InstitutionUserDetailsDto,
-  InstitutionUserPersistDto,
-} from "../../types/contracts/UserContract";
+  BCeIDDetailsAPIOutDTO,
+  BCeIDAccountsAPIOutDTO,
+  InstitutionUserDetailsAPIOutDTO,
+  InstitutionUserPersistAPIInDTO,
+} from "@/services/http/dto";
 import HttpBaseClient from "./common/HttpBaseClient";
 import { StatusCodes } from "http-status-codes";
 
 export class UserApi extends HttpBaseClient {
-  public async bceidAccount(headers?: any): Promise<BCeIDDetailsDto> {
-    try {
-      const response = await this.apiClient.get(
-        "users/bceid-account",
-        headers || this.addAuthHeader(),
-      );
-      return response.data as BCeIDDetailsDto;
-    } catch (error) {
-      this.handleRequestError(error);
-      throw error;
-    }
+  async bceidAccount(): Promise<BCeIDDetailsAPIOutDTO> {
+    return this.getCallTyped<BCeIDDetailsAPIOutDTO>(
+      this.addClientRoot("user/bceid-account"),
+    );
   }
 
-  public async bceidAccounts(headers?: any): Promise<BCeIDAccountsDto | null> {
-    try {
-      const response = await this.apiClient.get(
-        "users/bceid-accounts",
-        headers || this.addAuthHeader(),
-      );
-      return response.data as BCeIDAccountsDto;
-    } catch (error) {
-      this.handleRequestError(error);
-      throw error;
-    }
+  async bceidAccounts(): Promise<BCeIDAccountsAPIOutDTO | null> {
+    return this.getCallTyped<BCeIDAccountsAPIOutDTO>(
+      this.addClientRoot("user/bceid-accounts"),
+    );
   }
 
-  public async getinstitutionUser(): Promise<InstitutionUserDetailsDto> {
-    try {
-      const response = await this.apiClient.get(
-        "users/institution",
-        this.addAuthHeader(),
-      );
-      return response.data as InstitutionUserDetailsDto;
-    } catch (error) {
-      this.handleRequestError(error);
-      throw error;
-    }
+  async getInstitutionUser(): Promise<InstitutionUserDetailsAPIOutDTO> {
+    return this.getCallTyped<InstitutionUserDetailsAPIOutDTO>(
+      this.addClientRoot("user"),
+    );
   }
 
-  public async updateInstitutionUser(
-    data: InstitutionUserPersistDto,
+  async updateInstitutionUser(
+    data: InstitutionUserPersistAPIInDTO,
   ): Promise<void> {
-    try {
-      await this.apiClient.patch(
-        "users/institution",
-        data,
-        this.addAuthHeader(),
-      );
-    } catch (error) {
-      this.handleRequestError(error);
-      throw error;
-    }
+    return this.patchCall<InstitutionUserPersistAPIInDTO>(
+      this.addClientRoot("user"),
+      data,
+    );
   }
 
   /**
@@ -68,10 +41,10 @@ export class UserApi extends HttpBaseClient {
    * @returns true if the user was successfully created/updated or
    * false if the user do not have permission to access the system.
    */
-  public async syncAESTUser(authHeader?: any): Promise<boolean> {
+  async syncAESTUser(authHeader?: any): Promise<boolean> {
     try {
       await this.apiClient.put(
-        "users/aest",
+        this.addClientRoot("user"),
         // The data to perform the create/update
         // will come from the authentication token.
         null,

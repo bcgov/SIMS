@@ -49,6 +49,21 @@ export enum CourseLoadCalculationOptions {
   HoursBased = "hours",
 }
 
+export enum IncludeMinimum20InstructionalHours {
+  Yes = "yes",
+  No = "no",
+}
+
+export enum IncludeMinimum15InstructionalHours {
+  Yes = "yes",
+  No = "no",
+}
+
+export enum IsAviationProgram {
+  Yes = "yes",
+  No = "no",
+}
+
 export enum DeliveredOnlineAlsoOnsiteOptions {
   Yes = "yes",
   No = "no",
@@ -90,6 +105,16 @@ export enum HasTravelOptions {
 }
 
 export enum TravelProgramEligibilityOptions {
+  Yes = "yes",
+  No = "no",
+}
+
+export enum HasInternationalExchangeOptions {
+  Yes = "yes",
+  No = "no",
+}
+
+export enum HasInternationalExchangeProgramEligibilityOptions {
   Yes = "yes",
   No = "no",
 }
@@ -178,12 +203,24 @@ export default class DashboardInstitutionObject extends BaseMethods {
     this.getElementByCyId("credentialType").select(credentialType);
   }
 
+  selectCredentialTypeDropDown() {
+    return this.getElementByCyId("credentialType");
+  }
+
   selectProgramLength(programLength: ProgramLengthOptions) {
     this.getElementByCyId("completionYears").select(programLength);
   }
 
+  selectProgramLengthDropDown() {
+    return this.getElementByCyId("completionYears");
+  }
+
   selectRegulatoryBody(regulatoryBody: RegulatoryBodyOptions) {
     this.getElementByCyId("regulatoryBody").select(regulatoryBody);
+  }
+
+  selectRegulatoryBodyDropDown() {
+    return this.getElementByCyId("regulatoryBody");
   }
 
   studentPartTimeBasisRadioButton(checkBoxToSelect: ProgramIntensityOptions) {
@@ -204,6 +241,22 @@ export default class DashboardInstitutionObject extends BaseMethods {
     checkBoxToSelect: CourseLoadCalculationOptions
   ) {
     this.selectCheckBox("courseLoadCalculation", checkBoxToSelect);
+  }
+
+  includeMinimum20InstructionalHoursRadioButton(
+    checkBoxToSelect: IncludeMinimum20InstructionalHours
+  ) {
+    this.selectCheckBox("minHoursWeek", checkBoxToSelect);
+  }
+
+  includeMinimum15InstructionalHoursRadioButton(
+    checkBoxToSelect: IncludeMinimum15InstructionalHours
+  ) {
+    this.selectCheckBox("minHoursWeekAvi", checkBoxToSelect);
+  }
+
+  isAviationProgramRadioButton(checkBoxToSelect: IsAviationProgram) {
+    this.selectCheckBox("isAviationProgram", checkBoxToSelect);
   }
 
   entranceRequirementsRadioButton(
@@ -234,12 +287,38 @@ export default class DashboardInstitutionObject extends BaseMethods {
     this.selectCheckBox("isWILApproved", checkBoxToSelect);
   }
 
-  hasTravelRadioButton(checkBoxToSelect: TravelProgramEligibilityOptions) {
+  hasTravelRadioButton(checkBoxToSelect: HasTravelOptions) {
     this.selectCheckBox("hasTravel", checkBoxToSelect);
+  }
+
+  hasTravelEligibilityRadioButton(
+    checkBoxToSelect: TravelProgramEligibilityOptions
+  ) {
+    this.selectCheckBox("travelProgramEligibility", checkBoxToSelect);
+  }
+
+  hasInternationalExchangeRadioButton(
+    checkBoxToSelect: HasInternationalExchangeOptions
+  ) {
+    this.selectCheckBox("hasIntlExchange", checkBoxToSelect);
+  }
+
+  hasInternationalExchangeEligibilityRadioButton(
+    checkBoxToSelect: HasInternationalExchangeProgramEligibilityOptions
+  ) {
+    this.selectCheckBox("intlExchangeProgramEligibility", checkBoxToSelect);
   }
 
   fieldOfStudyCode() {
     return this.getElementByCyId("fieldOfStudyCode");
+  }
+
+  programDeclarationCheckBox() {
+    return this.getElementByCyId("programDeclaration");
+  }
+
+  programSubmitButton() {
+    return this.getElementByCyId("primaryFooterButton");
   }
 
   invalidFormatErrorText() {

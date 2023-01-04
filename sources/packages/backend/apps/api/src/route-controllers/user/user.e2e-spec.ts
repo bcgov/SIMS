@@ -38,7 +38,7 @@ describe.skip("Users controller (e2e)", () => {
   describe("bceid-account route", () => {
     it("Should return a HttpStatus OK(200) with user account information when user is valid", () => {
       return request(app.getHttpServer())
-        .get("/users/bceid-account")
+        .get("/user/bceid-account")
         .auth(accesstoken, { type: "bearer" })
         .expect(HttpStatus.OK)
         .then((resp) => {
@@ -59,7 +59,7 @@ describe.skip("Users controller (e2e)", () => {
   describe("bceid-accounts route", () => {
     it("Should return a HttpStatus OK(200) with user accounts information when user is valid", () => {
       return request(app.getHttpServer())
-        .get("/users/bceid-accounts")
+        .get("/user/bceid-accounts")
         .auth(accesstoken, { type: "bearer" })
         .expect(HttpStatus.OK)
         .then((resp) => {

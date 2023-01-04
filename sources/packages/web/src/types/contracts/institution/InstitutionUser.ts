@@ -29,10 +29,6 @@ export interface InstitutionUserRoleLocation {
   locationId?: number;
   userType?: string;
 }
-export interface InstitutionUserDto {
-  userId?: string;
-  permissions: UserPermissionDto[];
-}
 
 export interface UserPermissionDto extends InstitutionUserRoleLocation {
   userId?: string;

@@ -8,7 +8,13 @@ import {
   OrderByCondition,
 } from "../../utilities";
 import { addDays } from "@sims/utilities";
-import { DataSource, UpdateResult, Brackets, EntityManager } from "typeorm";
+import {
+  DataSource,
+  Repository,
+  UpdateResult,
+  Brackets,
+  EntityManager,
+} from "typeorm";
 import { SequenceControlService } from "@sims/services";
 import {
   RecordDataModelService,
@@ -16,10 +22,11 @@ import {
   ApplicationStatus,
   COEStatus,
   DisbursementSchedule,
+  StudentAssessment,
   User,
 } from "@sims/sims-db";
-import { EnrollmentPeriod } from "./disbursement-schedule.models";
 import { NotificationActionsService } from "@sims/services/notifications";
+import { EnrollmentPeriod } from "./disbursement-schedule.models";
 
 const DISBURSEMENT_DOCUMENT_NUMBER_SEQUENCE_GROUP =
   "DISBURSEMENT_DOCUMENT_NUMBER";
@@ -50,17 +57,6 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
       },
     );
     return nextDocumentNumber;
-  }
-
-  /**
-   * Get DisbursementSchedule by documentNumber
-   * @param documentNumber document Number
-   * @returns DisbursementSchedule respective to passed documentNumber.
-   */
-  async getDisbursementScheduleByDocumentNumber(
-    documentNumber: number,
-  ): Promise<DisbursementSchedule> {
-    return this.repo.findOne({ where: { documentNumber } });
   }
 
   /**
@@ -456,26 +452,6 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
       coeSortOptions[sortField] || "disbursementSchedule.coeStatus";
     orderByCondition[dbColumnName] = sortOrder;
     return orderByCondition;
-  }
-
-  /**
-   * Get disbursement schedules by document numbers.
-   * @param documentNumbers document numbers of disbursements.
-   * @returns disbursement schedules.
-   */
-  async getDisbursementsByDocumentNumbers(
-    documentNumbers: number[],
-  ): Promise<DisbursementSchedule[]> {
-    return this.repo
-      .createQueryBuilder("disbursementSchedule")
-      .select([
-        "disbursementSchedule.id",
-        "disbursementSchedule.documentNumber",
-      ])
-      .where("disbursementSchedule.documentNumber IN (:...documentNumbers)", {
-        documentNumbers,
-      })
-      .getMany();
   }
 
   /**

@@ -1,4 +1,4 @@
-export class ProcessResponseQueueOutDTO {
+export class ProcessResponseQueue {
   processSummary: string[];
   errorsSummary: string[];
 }

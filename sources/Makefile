@@ -44,7 +44,23 @@ export APPLICATION_ARCHIVE_DAYS := $(or ${APPLICATION_ARCHIVE_DAYS}, 43)
 #Formio forms integration
 export FORMIO_SOURCE_REPO_URL := $(or ${FORMIO_SOURCE_REPO_URL}, https://github.com/formio/formio.git)
 export FORMIO_SOURCE_REPO_TAG := $(or ${FORMIO_SOURCE_REPO_TAG}, v2.5.3)
-
+#ATBC Integration
+export ATBC_USERNAME := $(or $(ATBC_USERNAME), )
+export ATBC_PASSWORD := $(or $(ATBC_PASSWORD), )
+export ATBC_APP := $(or $(ATBC_APP), )
+export ATBC_ENDPOINT := $(or $(ATBC_ENDPOINT), )
+export ATBC_LOGIN_ENDPOINT := $(or $(ATBC_LOGIN_ENDPOINT), )
+# ESDC
+export ESDC_REQUEST_FOLDER := $(or $(ESDC_REQUEST_FOLDER), MSFT-Request)
+export ESDC_RESPONSE_FOLDER := $(or $(ESDC_RESPONSE_FOLDER), MSFT-Response)
+export ESDC_ENVIRONMENT_CODE := $(or $(ESDC_ENVIRONMENT_CODE), )
+# CRA
+export CRA_REQUEST_FOLDER := $(or $(CRA_REQUEST_FOLDER), CRA-Request)
+export CRA_RESPONSE_FOLDER := $(or $(CRA_RESPONSE_FOLDER), CRA-Response)
+export CRA_PROGRAM_AREA_CODE := $(or $(CRA_PROGRAM_AREA_CODE), )
+export CRA_ENVIRONMENT_CODE := $(or $(CRA_ENVIRONMENT_CODE), )
+#Institution Integration
+export INSTITUTION_REQUEST_FOLDER := $(or $(INSTITUTION_REQUEST_FOLDER), Institution-Request)
 
 local:	| print-status local-build-run
 local-api: | print-status local-build api-only

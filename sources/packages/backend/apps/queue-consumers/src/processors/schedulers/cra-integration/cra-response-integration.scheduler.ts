@@ -5,14 +5,14 @@ import { QueueNames } from "@sims/utilities";
 import { InjectLogger, LoggerService } from "@sims/utilities/logger";
 import { Job, Queue } from "bull";
 import { BaseScheduler } from "../base-scheduler";
-import { ProcessResponseQueueOutDTO } from "./models/process-response.dto";
+import { ProcessResponseQueue } from "./models/process-response.dto";
 
 @Processor(QueueNames.CRAResponseIntegration)
 export class CRAResponseIntegrationScheduler extends BaseScheduler<void> {
   constructor(
     @InjectQueue(QueueNames.CRAResponseIntegration)
-    protected readonly schedulerQueue: Queue<void>,
-    protected readonly queueService: QueueService,
+    schedulerQueue: Queue<void>,
+    queueService: QueueService,
     private readonly cra: CRAPersonalVerificationService,
   ) {
     super(schedulerQueue, queueService);
@@ -24,9 +24,7 @@ export class CRAResponseIntegrationScheduler extends BaseScheduler<void> {
    * @returns Summary with what was processed and the list of all errors, if any.
    */
   @Process()
-  async processResponses(
-    job: Job<void>,
-  ): Promise<ProcessResponseQueueOutDTO[]> {
+  async processResponses(job: Job<void>): Promise<ProcessResponseQueue[]> {
     this.logger.log(
       `Processing CRA integration job ${job.id} of type ${job.name}.`,
     );

@@ -1,7 +1,4 @@
-import {
-  OkayFlag,
-  SINCheckStatus,
-} from "../../esdc-integration/sin-validation/models/sin-validation-models";
+import { OkayFlag, SINCheckStatus } from "@sims/services";
 
 /**
  * File response record of an ESDC SIN validation file.
