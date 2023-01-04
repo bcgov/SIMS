@@ -276,15 +276,15 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
 
   /**
    * Summary of disbursement and application for Approval/Denial of COE.
-   * @param locationId location id.
    * @param disbursementScheduleId disbursement schedule id of COE.
+   * @param locationId location id.
    * @returns disbursement and application summary.
    */
   async getDisbursementAndApplicationSummary(
-    locationId: number,
     disbursementScheduleId: number,
+    locationId?: number,
   ): Promise<DisbursementSchedule> {
-    return this.repo
+    const disbursementAndApplicationQuery = this.repo
       .createQueryBuilder("disbursementSchedule")
       .select([
         "disbursementSchedule.id",
@@ -307,8 +307,7 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
       )
       .innerJoin("studentAssessment.application", "application")
       .innerJoin("offering.institutionLocation", "location")
-      .where("location.id = :locationId", { locationId })
-      .andWhere("disbursementSchedule.id = :disbursementScheduleId", {
+      .where("disbursementSchedule.id = :disbursementScheduleId", {
         disbursementScheduleId,
       })
       .andWhere("disbursementSchedule.coeStatus = :required", {
@@ -316,8 +315,14 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
       })
       .andWhere("application.applicationStatus IN (:...status)", {
         status: [ApplicationStatus.enrollment, ApplicationStatus.completed],
-      })
-      .getOne();
+      });
+
+    if (locationId) {
+      disbursementAndApplicationQuery.andWhere("location.id = :locationId", {
+        locationId,
+      });
+    }
+    return disbursementAndApplicationQuery.getOne();
   }
 
   /**
