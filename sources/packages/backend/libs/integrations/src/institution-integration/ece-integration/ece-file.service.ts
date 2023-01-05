@@ -100,7 +100,7 @@ export class ECEFileService {
       this.logger.log("Content uploaded.");
       return {
         generatedFile: fileInfo.filePath,
-        uploadedRecords: fileContent.length,
+        uploadedRecords: fileContent.length - 2,
       };
     } catch (error) {
       this.logger.error(
