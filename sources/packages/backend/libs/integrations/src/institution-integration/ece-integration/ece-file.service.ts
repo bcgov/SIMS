@@ -28,13 +28,13 @@ export class ECEFileService {
    * 3. Create the request filename with the file path with respect to the institution code
    * for the ECE request sent File.
    * 4. Upload the content to the zoneB SFTP server.
-   * @param generatedDate date in which the eligible coe for
+   * @param generatedDate date in which the eligible COE for
    * particular institution is required.
    * @returns Processing ECE request result.
    */
   async processECEFile(generatedDate?: string): Promise<ECEUploadResult[]> {
     this.logger.log(`Retrieving eligible COEs for ECE request...`);
-    const eligibleCOEs = await this.disbursementScheduleService.getEligibleCOE(
+    const eligibleCOEs = await this.disbursementScheduleService.getPendingCOEs(
       generatedDate,
     );
     if (!eligibleCOEs.length) {
@@ -62,7 +62,7 @@ export class ECEFileService {
       for (const institutionCode of Object.keys(fileRecords)) {
         const eceUploadResult = await this.uploadECEContent(
           institutionCode,
-          fileRecords,
+          fileRecords[institutionCode],
         );
         uploadResult.push(eceUploadResult);
       }
@@ -78,17 +78,17 @@ export class ECEFileService {
   /**
    * Upload the content in SFTP server location.
    * @param institutionCode Institution code for the file generated.
-   * @param fileRecords Total records with institutionCode.
+   * @param institutionFileRecords Total records with institutionCode.
    * @returns Updated records count with filepath.
    */
   async uploadECEContent(
     institutionCode: string,
-    fileRecords: Record<string, ECERecord[]>,
+    institutionFileRecords: ECERecord[],
   ): Promise<ECEUploadResult> {
     try {
       // Create the Request content for the ECE request file by populating the content.
       const fileContent = this.eceIntegrationService.createECEFileContent(
-        fileRecords[institutionCode],
+        institutionFileRecords,
       );
       // Create the request filename with the file path for the each and every institutionCode.
       const fileInfo = this.createRequestFileName(institutionCode);

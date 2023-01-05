@@ -1,8 +1,8 @@
-export class ECEProcessResultQueueOutDTO {
+export interface ECEProcessResultQueueOutDTO {
   generatedFile: string;
   uploadedRecords: number;
 }
 
-export class GeneratedDateQueueInDTO {
+export interface GeneratedDateQueueInDTO {
   generatedDate?: string;
 }

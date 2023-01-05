@@ -15,7 +15,7 @@ export class ECEProcessIntegrationScheduler extends BaseScheduler<GeneratedDateQ
   constructor(
     @InjectQueue(QueueNames.ECEProcessIntegration)
     schedulerQueue: Queue<GeneratedDateQueueInDTO>,
-    private readonly eceRequest: ECEFileService,
+    private readonly eceFileService: ECEFileService,
     queueService: QueueService,
   ) {
     super(schedulerQueue, queueService);
@@ -36,7 +36,7 @@ export class ECEProcessIntegrationScheduler extends BaseScheduler<GeneratedDateQ
       `Processing ECE request integration job ${job.id} of type ${job.name}.`,
     );
     this.logger.log("Executing ECE request file generation ...");
-    const uploadResult = await this.eceRequest.processECEFile(
+    const uploadResult = await this.eceFileService.processECEFile(
       job.data.generatedDate,
     );
     this.logger.log("ECE request file generation completed.");
