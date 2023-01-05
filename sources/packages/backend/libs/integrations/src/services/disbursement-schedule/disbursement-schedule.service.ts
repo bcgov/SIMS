@@ -13,7 +13,7 @@ import {
 } from "@sims/sims-db";
 import { DataSource, In, Repository } from "typeorm";
 import { ECertDisbursementSchedule } from "./disbursement-schedule.models";
-import { addDays } from "@sims/utilities";
+import { addDays, dateEqualTo, getISODateOnlyString } from "@sims/utilities";
 
 /**
  * Service layer for Student Application disbursement schedules.
@@ -255,7 +255,7 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
       },
       where: {
         coeStatus: COEStatus.required,
-        updatedAt: processingDate,
+        updatedAt: dateEqualTo(processingDate),
         studentAssessment: {
           offering: { institutionLocation: { hasIntegration: true } },
         },
