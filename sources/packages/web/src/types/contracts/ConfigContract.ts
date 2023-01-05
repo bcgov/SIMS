@@ -1,6 +1,4 @@
-export interface ConfigAPIOutDTO {
-  auth: AuthConfigAPIOutDTO;
-}
+import { AuthConfigAPIOutDTO } from "@/services/http/dto";
 
 export enum ClientIdType {
   Student = "student",
@@ -14,13 +12,6 @@ export enum ClientTypeBaseRoute {
   Institution = "institutions",
   AEST = "aest",
   SupportingUser = "supporting-users",
-}
-
-export interface AuthConfigAPIOutDTO {
-  url: string;
-  realm: string;
-  clientIds: { [Value in ClientIdType]: string };
-  externalSiteMinderLogoutUrl?: string;
 }
 
 export interface AppConfig {

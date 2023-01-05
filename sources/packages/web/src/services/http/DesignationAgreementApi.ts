@@ -6,7 +6,7 @@ import {
   PendingDesignationAgreementDetailsAPIOutDTO,
   DesignationAgreementStatus,
   UpdateDesignationDetailsAPIInDTO,
-} from "@/types/contracts/DesignationAgreementContract";
+} from "@/services/http/dto";
 import { PaginationParams } from "@/types";
 
 /**

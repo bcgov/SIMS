@@ -61,9 +61,9 @@ import {
   FormIOCustomEvent,
   FormIOCustomEventTypes,
   ApplicationStatus,
-  GetApplicationDataAPIOutDTO,
   ApiProcessError,
 } from "@/types";
+import { GetApplicationDataAPIOutDTO } from "@/services/http/dto";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 import ConfirmEditApplication from "@/components/students/modals/ConfirmEditApplication.vue";
 import {

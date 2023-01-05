@@ -73,7 +73,7 @@ import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
 import {
   UpdateDesignationDetailsAPIInDTO,
   DesignationAgreementStatus,
-} from "@/types/contracts/DesignationAgreementContract";
+} from "@/services/http/dto";
 import { useModalDialog, useRules } from "@/composables";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
 import { Role, VForm } from "@/types";

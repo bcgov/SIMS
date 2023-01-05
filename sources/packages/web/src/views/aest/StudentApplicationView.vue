@@ -31,7 +31,7 @@
 <script lang="ts">
 import { onMounted, ref } from "vue";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
-import { GetApplicationBaseAPIOutDTO } from "@/types";
+import { GetApplicationBaseAPIOutDTO } from "@/services/http/dto";
 import { ApplicationService } from "@/services/ApplicationService";
 import StudentApplication from "@/components/common/StudentApplication.vue";
 

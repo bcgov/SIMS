@@ -69,7 +69,7 @@ import { useRouter } from "vue-router";
 import {
   PendingDesignationAgreementDetailsAPIOutDTO,
   DesignationAgreementStatus,
-} from "@/types/contracts/DesignationAgreementContract";
+} from "@/services/http/dto";
 import { DesignationAgreementService } from "@/services/DesignationAgreementService";
 import {
   DEFAULT_PAGE_LIMIT,

@@ -64,7 +64,7 @@ import {
   DesignationAgreementStatus,
   DesignationLocationAPIInDTO,
   DesignationAgreementAPIOutDTO,
-} from "@/types/contracts/DesignationAgreementContract";
+} from "@/services/http/dto";
 import {
   DesignationModel,
   DesignationFormViewModes,

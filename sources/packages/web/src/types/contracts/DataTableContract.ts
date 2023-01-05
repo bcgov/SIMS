@@ -77,7 +77,7 @@ export enum PaginationParams {
   SearchCriteria = "searchCriteria",
 }
 
-/** Pagination Options DTO */
+/** Pagination Options */
 export interface PaginationOptions {
   searchCriteria?: string;
   sortField?: string;
@@ -89,7 +89,7 @@ export interface PaginationOptions {
 /**
  * Interface for data returned by
  * page and sort event of PrimeVue data table.
- * TODO:This DTO must be modified when migrating to Vuetify3 accordingly.
+ * TODO:This must be modified when migrating to Vuetify3 accordingly.
  */
 export interface PageAndSortEvent {
   page: number;

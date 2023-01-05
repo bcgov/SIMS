@@ -1,4 +1,4 @@
-import { InstitutionLocationData } from "./institutionLocationContract";
+import { InstitutionLocationData } from "@/types/contracts/institutionLocationContract";
 
 export interface SubmitDesignationAgreementAPIInDTO {
   dynamicData: any;

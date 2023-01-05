@@ -40,7 +40,7 @@ import { DesignationAgreementService } from "@/services/DesignationAgreementServ
 import {
   DesignationAgreementDetailsAPIOutDTO,
   DesignationAgreementStatus,
-} from "@/types/contracts/DesignationAgreementContract";
+} from "@/services/http/dto";
 import { useInstitutionAuth, useSnackBar } from "@/composables";
 import DesignationAgreementSummary from "@/components/partial-view/DesignationAgreement/DesignationAgreementSummary.vue";
 

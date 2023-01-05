@@ -6,7 +6,7 @@ import {
   DesignationAgreementAPIOutDTO,
   DesignationAgreementStatus,
   UpdateDesignationDetailsAPIInDTO,
-} from "@/types/contracts/DesignationAgreementContract";
+} from "@/services/http/dto";
 
 /**
  * Client service layer for Designation agreements.

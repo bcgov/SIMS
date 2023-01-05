@@ -34,7 +34,7 @@ import {
   DesignationLocationsListItem,
 } from "@/components/partial-view/DesignationAgreement/DesignationAgreementForm.models";
 import { DesignationAgreementService } from "@/services/DesignationAgreementService";
-import { SubmitDesignationAgreementAPIInDTO } from "@/types/contracts/DesignationAgreementContract";
+import { SubmitDesignationAgreementAPIInDTO } from "@/services/http/dto";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import { FormIOForm } from "@/types";
 

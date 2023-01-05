@@ -1,20 +1,23 @@
 import { addPaginationOptions, addSortOptions } from "@/helpers";
 import {
-  SaveApplicationAPIInDTO,
-  ApplicationWithProgramYearAPIOutDTO,
-  GetApplicationDataAPIOutDTO,
-  GetApplicationBaseAPIOutDTO,
   DEFAULT_PAGE_NUMBER,
   DEFAULT_PAGE_LIMIT,
   StudentApplicationFields,
   DataTableSortOrder,
-  ApplicationIdentifiersAPIOutDTO,
   ClientIdType,
 } from "@/types";
 import { AuthService } from "../AuthService";
 import HttpBaseClient from "./common/HttpBaseClient";
-import { ApplicationSummaryAPIOutDTO, PaginatedResultsAPIOutDTO } from "./dto";
-import { InProgressApplicationDetailsAPIOutDTO } from "@/services/http/dto/Application.dto";
+import {
+  ApplicationSummaryAPIOutDTO,
+  PaginatedResultsAPIOutDTO,
+  SaveApplicationAPIInDTO,
+  ApplicationWithProgramYearAPIOutDTO,
+  GetApplicationDataAPIOutDTO,
+  GetApplicationBaseAPIOutDTO,
+  ApplicationIdentifiersAPIOutDTO,
+  InProgressApplicationDetailsAPIOutDTO,
+} from "./dto";
 
 export class ApplicationApi extends HttpBaseClient {
   async getApplicationData(

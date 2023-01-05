@@ -17,7 +17,7 @@
 <script lang="ts">
 import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
-import { DesignationAgreementDetailsAPIOutDTO } from "@/types/contracts/DesignationAgreementContract";
+import { DesignationAgreementDetailsAPIOutDTO } from "@/services/http/dto";
 import { DesignationAgreementService } from "@/services/DesignationAgreementService";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import DesignationAgreementSummary from "@/components/partial-view/DesignationAgreement/DesignationAgreementSummary.vue";

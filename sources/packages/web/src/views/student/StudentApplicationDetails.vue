@@ -86,11 +86,8 @@ import {
   useSnackBar,
   useApplication,
 } from "@/composables";
-import {
-  ApplicationStatus,
-  GetApplicationDataAPIOutDTO,
-  MenuType,
-} from "@/types";
+import { ApplicationStatus, MenuType } from "@/types";
+import { GetApplicationDataAPIOutDTO } from "@/services/http/dto";
 import ApplicationProgressBar from "@/components/students/applicationTracker/ApplicationProgressBar.vue";
 import ConfirmEditApplication from "@/components/students/modals/ConfirmEditApplication.vue";
 import DetailHeader from "@/components/generic/DetailHeader.vue";

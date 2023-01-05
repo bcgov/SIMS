@@ -1,5 +1,5 @@
 import HttpBaseClient from "./common/HttpBaseClient";
-import { ConfigAPIOutDTO } from "../../types/contracts/ConfigContract";
+import { ConfigAPIOutDTO } from "@/services/http/dto";
 
 export class ConfigApi extends HttpBaseClient {
   public async getConfig(): Promise<ConfigAPIOutDTO> {

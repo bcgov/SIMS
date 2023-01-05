@@ -1,14 +1,9 @@
 import {
   CreateApplicationDraftResult,
-  SaveApplicationAPIInDTO,
-  ApplicationWithProgramYearAPIOutDTO,
-  GetApplicationDataAPIOutDTO,
-  GetApplicationBaseAPIOutDTO,
   DataTableSortOrder,
   StudentApplicationFields,
   DEFAULT_PAGE_LIMIT,
   DEFAULT_PAGE_NUMBER,
-  ApplicationIdentifiersAPIOutDTO,
 } from "@/types";
 import { MORE_THAN_ONE_APPLICATION_DRAFT_ERROR } from "@/types/contracts/ApiProcessError";
 import ApiClient from "../services/http/ApiClient";
@@ -16,7 +11,14 @@ import {
   ApplicationSummaryAPIOutDTO,
   PaginatedResultsAPIOutDTO,
 } from "@/services/http/dto";
-import { InProgressApplicationDetailsAPIOutDTO } from "@/services/http/dto/Application.dto";
+import {
+  InProgressApplicationDetailsAPIOutDTO,
+  SaveApplicationAPIInDTO,
+  ApplicationWithProgramYearAPIOutDTO,
+  GetApplicationDataAPIOutDTO,
+  GetApplicationBaseAPIOutDTO,
+  ApplicationIdentifiersAPIOutDTO,
+} from "@/services/http/dto/Application.dto";
 
 export class ApplicationService {
   // Share Instance
