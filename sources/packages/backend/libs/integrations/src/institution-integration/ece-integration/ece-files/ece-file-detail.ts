@@ -34,7 +34,11 @@ export class ECERequestFileDetail implements ECERequestFileLine {
       const record = new StringBuilder();
       record.append(this.transactionCode, 1);
       record.append(this.institutionCode, 4);
-      record.appendWithEndFiller(this.awardDisbursmentIdx, 10, SPACE_FILLER);
+      record.appendWithEndFiller(
+        this.awardDisbursmentIdx ?? "",
+        10,
+        SPACE_FILLER,
+      );
       record.append(disbursementValue.valueCode, 4);
       record.appendWithStartFiller(
         round(disbursementValue.valueAmount),
@@ -51,7 +55,7 @@ export class ECERequestFileDetail implements ECERequestFileLine {
         12,
         SPACE_FILLER,
       );
-      record.appendWithStartFiller(this.courseLoad, 3, NUMBER_FILLER);
+      record.appendWithStartFiller(this.courseLoad ?? 100, 3, NUMBER_FILLER);
       record.appendDate(this.studyStartDate, DATE_FORMAT);
       record.appendDate(this.studyEndDate, DATE_FORMAT);
       record.appendDate(this.disbursementDate, DATE_FORMAT);

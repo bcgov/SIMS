@@ -13,7 +13,7 @@ import {
 } from "@sims/sims-db";
 import { DataSource, In, Repository } from "typeorm";
 import { ECertDisbursementSchedule } from "./disbursement-schedule.models";
-import { addDays, dateEqualTo, getISODateOnlyString } from "@sims/utilities";
+import { addDays, dateEqualTo } from "@sims/utilities";
 
 /**
  * Service layer for Student Application disbursement schedules.

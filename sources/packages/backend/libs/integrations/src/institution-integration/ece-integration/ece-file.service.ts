@@ -151,7 +151,7 @@ export class ECEFileService {
       birthDate: student.birthDate,
       sfasApplicationNumber: application.applicationNumber,
       institutionStudentNumber: application.studentNumber,
-      courseLoad: offering.courseLoad.toString(),
+      courseLoad: offering.courseLoad?.toString(),
       studyStartDate: offering.studyStartDate,
       studyEndDate: offering.studyEndDate,
       disbursementDate: eligibleCOE.disbursementDate,
