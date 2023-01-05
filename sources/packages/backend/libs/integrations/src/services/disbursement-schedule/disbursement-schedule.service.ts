@@ -224,6 +224,7 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
             applicationNumber: true,
             studentNumber: true,
             currentAssessment: {
+              id: true,
               offering: {
                 id: true,
                 studyStartDate: true,

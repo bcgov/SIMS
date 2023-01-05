@@ -49,8 +49,8 @@ export class ECEFileService {
     const fileRecords: Record<string, ECERecord[]> = {};
     eligibleCOEs.forEach((eligibleCOE) => {
       const institutionCode =
-        eligibleCOE.studentAssessment.offering.institutionLocation
-          .institutionCode;
+        eligibleCOE.studentAssessment.application.currentAssessment.offering
+          .institutionLocation.institutionCode;
       if (!fileRecords[institutionCode]) {
         fileRecords[institutionCode] = [];
       }
