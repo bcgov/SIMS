@@ -18,7 +18,6 @@ import {
   ECertGenerationService,
   RestrictionService,
   SshService,
-  StudentRestrictionsService,
 } from "../../services";
 import { SystemUsersService } from "@sims/services/system-users";
 
@@ -37,7 +36,6 @@ import { SystemUsersService } from "@sims/services/system-users";
     ECertFullTimeFileFooter,
     DisbursementScheduleErrorsService,
     RestrictionService,
-    StudentRestrictionsService,
     SystemUsersService,
     StudentRestrictionSharedService,
     ECertGenerationService,

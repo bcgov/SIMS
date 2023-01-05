@@ -5,6 +5,7 @@ import { EntityManager } from "typeorm";
 import {
   AwardValueWithRelatedSchedule,
   DisbursementOverawardService,
+  StudentRestrictionSharedService,
 } from "@sims/services";
 import {
   ApplicationStatus,
@@ -21,7 +22,6 @@ import {
   DisbursementOverawardOriginType,
 } from "@sims/sims-db";
 import { ECertDisbursementSchedule } from "./e-cert-generation.models";
-import { StudentRestrictionsService } from "../restriction/student-restriction.service";
 import { StudentOverawardBalance } from "@sims/services/disbursement-overaward/disbursement-overaward.models";
 import {
   BC_FUNDING_TYPES,
@@ -39,7 +39,7 @@ const DISBURSEMENT_SCHEDULES_UPDATE_CHUNK_SIZE = 1000;
 @Injectable()
 export class ECertGenerationService {
   constructor(
-    private readonly studentRestrictionService: StudentRestrictionsService,
+    private readonly studentRestrictionService: StudentRestrictionSharedService,
     private readonly disbursementOverawardService: DisbursementOverawardService,
     private readonly systemUsersService: SystemUsersService,
   ) {}

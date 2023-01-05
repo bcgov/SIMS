@@ -12,7 +12,6 @@ export * from "./msfaa-number/msfaa-number.service";
 export * from "./restriction/federal-restriction.service";
 export * from "./restriction/models/federal-restriction.model";
 export * from "./restriction/restriction.service";
-export * from "./restriction/student-restriction.service";
 export * from "./student/student.service";
 export * from "./atbc/atbc.service";
 export * from "./atbc/models/atbc.model";
