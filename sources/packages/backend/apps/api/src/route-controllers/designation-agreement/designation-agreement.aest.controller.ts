@@ -31,8 +31,8 @@ import {
   DesignationAgreementAPIOutDTO,
   DesignationAgreementDetailsAPIOutDTO,
   PendingDesignationAgreementDetailsAPIOutDTO,
+  UpdateDesignationAPIInDTO,
 } from "./models/designation-agreement.dto";
-import { UpdateDesignationAPIInDTO } from "./models/designation-agreement.dto";
 import { DesignationAgreementControllerService } from "./designation-agreement.controller.service";
 import { ApiTags } from "@nestjs/swagger";
 import BaseController from "../BaseController";

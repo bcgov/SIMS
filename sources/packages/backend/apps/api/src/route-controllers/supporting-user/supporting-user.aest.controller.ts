@@ -28,7 +28,7 @@ export class SupportingUserAESTController {
    * an application id for AEST user.
    * @param applicationId application id.
    * @return list of supporting users of an
-   * application, i.e ApplicationSupportingUsersApiOutDTO
+   * application, i.e ApplicationSupportingUsersAPIOutDTO
    */
   @Get("application/:applicationId")
   async getSupportingUsersOfAnApplication(

@@ -1,4 +1,3 @@
-import { IsBoolean, Min } from "class-validator";
 import {
   InstitutionLocationData,
   DesignationAgreementStatus,
@@ -6,6 +5,8 @@ import {
 } from "@sims/sims-db";
 import { Type } from "class-transformer";
 import {
+  IsBoolean,
+  Min,
   IsArray,
   IsDateString,
   IsEnum,
