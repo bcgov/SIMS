@@ -136,10 +136,11 @@ export class ECEFileService {
   private createECERecord(eligibleCOE: DisbursementSchedule): ECERecord {
     const studentAssessment = eligibleCOE.studentAssessment;
     const application = studentAssessment.application;
+    const currentAssessment = application.currentAssessment;
     const student = application.student;
     const user = student.user;
     const sinValidation = student.sinValidation;
-    const offering = studentAssessment.offering;
+    const offering = currentAssessment.offering;
     const institutionLocation = offering.institutionLocation;
     return {
       institutionCode: institutionLocation.institutionCode,

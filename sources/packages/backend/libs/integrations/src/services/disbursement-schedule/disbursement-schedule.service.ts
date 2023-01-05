@@ -219,18 +219,20 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
         disbursementValues: { id: true, valueCode: true, valueAmount: true },
         studentAssessment: {
           id: true,
-          offering: {
-            id: true,
-            studyStartDate: true,
-            studyEndDate: true,
-            institutionLocation: {
-              institutionCode: true,
-            },
-          },
           application: {
             id: true,
             applicationNumber: true,
             studentNumber: true,
+            currentAssessment: {
+              offering: {
+                id: true,
+                studyStartDate: true,
+                studyEndDate: true,
+                institutionLocation: {
+                  institutionCode: true,
+                },
+              },
+            },
             student: {
               id: true,
               birthDate: true,
@@ -243,8 +245,8 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
       relations: {
         disbursementValues: true,
         studentAssessment: {
-          offering: { institutionLocation: true },
           application: {
+            currentAssessment: { offering: { institutionLocation: true } },
             student: {
               sinValidation: true,
               user: true,
