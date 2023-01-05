@@ -25,7 +25,10 @@
         >
       </template>
     </body-header>
-    <assessment-award-details :assessmentAwardData="assessmentAwardData" />
+    <assessment-award-details
+      :assessmentAwardData="assessmentAwardData"
+      :allowConfirmEnrolment="true"
+    />
   </full-page-container>
 </template>
 <script lang="ts">

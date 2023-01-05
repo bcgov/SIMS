@@ -101,7 +101,7 @@ export class AssessmentControllerService {
         schedule.coeStatus;
       disbursementDetails[`${disbursementIdentifier}TuitionRemittance`] =
         schedule.tuitionRemittanceRequestedAmount;
-
+      disbursementDetails[`${disbursementIdentifier}Id`] = schedule.id;
       if (includeDocumentNumber) {
         disbursementDetails[`${disbursementIdentifier}DocumentNumber`] =
           schedule.documentNumber;

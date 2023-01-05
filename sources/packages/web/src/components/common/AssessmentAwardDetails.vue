@@ -20,10 +20,14 @@
             identifier="disbursement1"
           />
           <div class="my-3">
-            <status-info-enrolment
+            <enrolment-status-action
               :coeStatus="
                 assessmentAwardData.estimatedAward.disbursement1Status
               "
+              :disbursementId="
+                assessmentAwardData.estimatedAward.disbursement1Id
+              "
+              :allowConfirmEnrolment="allowConfirmEnrolment"
             />
           </div>
           <div
@@ -104,10 +108,14 @@
             identifier="disbursement2"
           />
           <div class="my-3">
-            <status-info-enrolment
+            <enrolment-status-action
               :coeStatus="
                 assessmentAwardData.estimatedAward.disbursement2Status
               "
+              :disbursementId="
+                assessmentAwardData.estimatedAward.disbursement2Id
+              "
+              :allowConfirmEnrolment="allowConfirmEnrolment"
             />
           </div>
           <div
@@ -181,15 +189,19 @@ import { AwardDetailsAPIOutDTO } from "@/services/http/dto";
 import { COEStatus, StatusInfo } from "@/types";
 import { PropType, computed, defineComponent } from "vue";
 import AwardTable from "@/components/common/AwardTable.vue";
-import StatusInfoEnrolment from "@/components/common/StatusInfoEnrolment.vue";
+import EnrolmentStatusAction from "@/components/common/EnrolmentStatusAction.vue";
 
 export default defineComponent({
-  components: { AwardTable, StatusInfoEnrolment },
+  components: { AwardTable, EnrolmentStatusAction },
   props: {
     assessmentAwardData: {
       type: Object as PropType<AwardDetailsAPIOutDTO>,
       required: true,
       default: {} as AwardDetailsAPIOutDTO,
+    },
+    allowConfirmEnrolment: {
+      type: Boolean,
+      required: false,
     },
   },
   setup(props) {
