@@ -97,7 +97,7 @@ export class MSFAANumber extends RecordDataModel {
   /**
    * Student related to this MSFAA.
    */
-  @ManyToOne(() => Student, { eager: false, cascade: true })
+  @ManyToOne(() => Student, { eager: false, cascade: ["update"] })
   @JoinColumn({
     name: "student_id",
     referencedColumnName: ColumnNames.ID,

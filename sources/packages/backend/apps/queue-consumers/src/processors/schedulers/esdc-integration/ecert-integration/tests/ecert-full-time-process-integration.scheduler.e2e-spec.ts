@@ -4,12 +4,13 @@ import { ECertFileHandler } from "@sims/integrations/esdc-integration";
 import {
   Application,
   ApplicationStatus,
-  AssessmentTriggerType,
+  COEStatus,
   DisbursementOveraward,
   DisbursementSchedule,
   DisbursementScheduleStatus,
   DisbursementValueType,
   EducationProgramOffering,
+  MSFAANumber,
   OfferingIntensity,
   Student,
   StudentAssessment,
@@ -20,10 +21,12 @@ import {
   createFakeDisbursementSchedule,
   createFakeDisbursementValue,
   createFakeEducationProgramOffering,
+  createFakeMSFAANumber,
   createFakeStudent,
   createFakeStudentAssessment,
   createFakeUser,
 } from "@sims/test-utils";
+import { createFakeSINValidation } from "@sims/test-utils/factories/sin-validation";
 import { DataSource, Repository } from "typeorm";
 import { QueueConsumersModule } from "../../../../../queue-consumers.module";
 
@@ -36,6 +39,7 @@ describe("Schedulers - e-Cert full time integration - Create e-Cert file", () =>
   let applicationRepo: Repository<Application>;
   let studentAssessmentRepo: Repository<StudentAssessment>;
   let educationProgramOfferingRepo: Repository<EducationProgramOffering>;
+  let msfaaNumberRepo: Repository<MSFAANumber>;
   let disbursementOverawardRepo: Repository<DisbursementOveraward>;
   let disbursementScheduleRepo: Repository<DisbursementSchedule>;
 
@@ -55,16 +59,31 @@ describe("Schedulers - e-Cert full time integration - Create e-Cert file", () =>
     educationProgramOfferingRepo = dataSource.getRepository(
       EducationProgramOffering,
     );
+    msfaaNumberRepo = dataSource.getRepository(MSFAANumber);
     disbursementOverawardRepo = dataSource.getRepository(DisbursementOveraward);
     disbursementScheduleRepo = dataSource.getRepository(DisbursementSchedule);
   });
 
   it("Should initialize ECertIntegrationModule", async () => {
     // Arrange
+
+    // User
     const savedUser = await userRepo.save(createFakeUser());
+    // Student.
     const savedStudent = await studentRepo.save(createFakeStudent(savedUser));
+    // Student SIN Validation
+    savedStudent.sinValidation = createFakeSINValidation({
+      student: savedStudent,
+    });
+    await studentRepo.save(savedStudent);
+    // MSFAA Number.
+    const savedMSFAANumber = await msfaaNumberRepo.save(
+      createFakeMSFAANumber({ student: savedStudent }),
+    );
+    // Create and save application.
     const fakeApplication = createFakeApplication({ student: savedStudent });
-    fakeApplication.applicationNumber = "OA_TEST001";
+    fakeApplication.applicationNumber = "ECERT_TEST";
+    fakeApplication.msfaaNumber = savedMSFAANumber;
     const savedApplication = await applicationRepo.save(fakeApplication);
     // Original assessment.
     const fakeOriginalAssessment = createFakeStudentAssessment({
@@ -93,6 +112,7 @@ describe("Schedulers - e-Cert full time integration - Create e-Cert file", () =>
         ),
       ],
     });
+    firstSchedule.coeStatus = COEStatus.completed;
     firstSchedule.disbursementScheduleStatus =
       DisbursementScheduleStatus.Pending;
     // Original assessment - second disbursement.
