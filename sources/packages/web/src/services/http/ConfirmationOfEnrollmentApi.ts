@@ -5,7 +5,7 @@ import {
   ApplicationDetailsForCOEAPIOutDTO,
   COEDeniedReasonAPIOutDTO,
   COESummaryAPIOutDTO,
-  ConfirmationOfEnrollmentAPIInDTO,
+  ConfirmEnrollmentOptions,
   DenyConfirmationOfEnrollmentAPIInDTO,
   PaginatedResultsAPIOutDTO,
 } from "@/services/http/dto";
@@ -54,21 +54,22 @@ export class ConfirmationOfEnrollmentApi extends HttpBaseClient {
    * hence the COE approval happens twice for application with more than once disbursement.
    * Irrespective of number of COEs to be approved, application status is set to complete
    * on first COE approval.
-   * @param locationId location id of the application.
    * @param disbursementScheduleId disbursement schedule id of COE.
-   * @param payload COE confirmation information.
+   * @param options Confirm COE options.
    */
   async confirmEnrollment(
-    locationId: number,
     disbursementScheduleId: number,
-    payload: ConfirmationOfEnrollmentAPIInDTO,
+    options?: ConfirmEnrollmentOptions,
   ): Promise<void> {
+    const baseUrl = options?.locationId
+      ? `location/${options.locationId}/`
+      : "";
     try {
       await this.patchCall(
         this.addClientRoot(
-          `location/${locationId}/confirmation-of-enrollment/disbursement-schedule/${disbursementScheduleId}/confirm`,
+          `${baseUrl}confirmation-of-enrollment/disbursement-schedule/${disbursementScheduleId}/confirm`,
         ),
-        payload,
+        options?.payload,
       );
     } catch (error: unknown) {
       this.handleAPICustomError(error);

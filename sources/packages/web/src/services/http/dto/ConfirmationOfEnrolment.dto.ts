@@ -16,6 +16,17 @@ export interface COESummaryAPIOutDTO {
   disbursementDate: string;
 }
 
+export interface ConfirmEnrollmentOptions {
+  /**
+   * location id of the application.
+   */
+  locationId?: number;
+  /**
+   * COE confirmation information.
+   */
+  payload?: ConfirmationOfEnrollmentAPIInDTO;
+}
+
 export interface ApplicationDetailsForCOEAPIOutDTO {
   applicationProgramName: string;
   applicationProgramDescription: string;
