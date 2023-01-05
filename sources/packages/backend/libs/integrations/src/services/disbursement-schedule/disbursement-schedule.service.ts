@@ -221,7 +221,6 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
           id: true,
           offering: {
             id: true,
-            courseLoad: true,
             studyStartDate: true,
             studyEndDate: true,
             institutionLocation: {
@@ -257,7 +256,10 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
         coeStatus: COEStatus.required,
         updatedAt: dateEqualTo(processingDate),
         studentAssessment: {
-          offering: { institutionLocation: { hasIntegration: true } },
+          offering: {
+            institutionLocation: { hasIntegration: true },
+            offeringIntensity: OfferingIntensity.fullTime,
+          },
         },
       },
     });

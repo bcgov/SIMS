@@ -16,7 +16,6 @@ import {
 export class ECERequestFileDetail implements ECERequestFileLine {
   transactionCode: RecordTypeCodes;
   institutionCode: string;
-  awardDisbursmentIdx: string;
   disbursementValues: DisbursementValue[];
   sin: string;
   studentLastName: string;
@@ -34,10 +33,10 @@ export class ECERequestFileDetail implements ECERequestFileLine {
       const record = new StringBuilder();
       record.append(this.transactionCode, 1);
       record.append(this.institutionCode, 4);
-      record.appendWithEndFiller(
-        this.awardDisbursmentIdx ?? "",
+      record.appendWithStartFiller(
+        disbursementValue.id.toString(),
         10,
-        SPACE_FILLER,
+        NUMBER_FILLER,
       );
       record.append(disbursementValue.valueCode, 4);
       record.appendWithStartFiller(
@@ -55,7 +54,7 @@ export class ECERequestFileDetail implements ECERequestFileLine {
         12,
         SPACE_FILLER,
       );
-      record.appendWithStartFiller(this.courseLoad ?? 100, 3, NUMBER_FILLER);
+      record.append("100"); //Course load hardcoded to 100 as this file is only for FT.
       record.appendDate(this.studyStartDate, DATE_FORMAT);
       record.appendDate(this.studyEndDate, DATE_FORMAT);
       record.appendDate(this.disbursementDate, DATE_FORMAT);

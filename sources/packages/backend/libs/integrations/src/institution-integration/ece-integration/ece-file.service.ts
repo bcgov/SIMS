@@ -143,7 +143,6 @@ export class ECEFileService {
     const institutionLocation = offering.institutionLocation;
     return {
       institutionCode: institutionLocation.institutionCode,
-      awardDisbursmentIdx: null,
       disbursementValues: eligibleCOE.disbursementValues,
       sin: sinValidation.sin,
       studentLastName: user.lastName,
@@ -151,7 +150,6 @@ export class ECEFileService {
       birthDate: student.birthDate,
       sfasApplicationNumber: application.applicationNumber,
       institutionStudentNumber: application.studentNumber,
-      courseLoad: offering.courseLoad?.toString(),
       studyStartDate: offering.studyStartDate,
       studyEndDate: offering.studyEndDate,
       disbursementDate: eligibleCOE.disbursementDate,

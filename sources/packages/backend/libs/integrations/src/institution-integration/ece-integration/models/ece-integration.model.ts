@@ -22,7 +22,6 @@ export interface ECERequestFileLine {
 
 export interface ECERecord {
   institutionCode: string;
-  awardDisbursmentIdx: string;
   disbursementValues: DisbursementValue[];
   sin: string;
   studentLastName: string;
@@ -30,7 +29,6 @@ export interface ECERecord {
   birthDate: string;
   sfasApplicationNumber: string;
   institutionStudentNumber: string;
-  courseLoad: string;
   studyStartDate: string;
   studyEndDate: string;
   disbursementDate: string;

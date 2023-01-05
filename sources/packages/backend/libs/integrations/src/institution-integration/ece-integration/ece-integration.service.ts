@@ -35,13 +35,14 @@ export class ECEIntegrationService extends SFTPIntegrationBase<void> {
     eceFileHeader.transactionCode = RecordTypeCodes.ECEHeader;
     eceFileHeader.processDate = processDate;
     eceRequestFileLines.push(eceFileHeader);
+    let totalRecords = 0;
     // Detail record
     const fileRecords = eceRecords.map((eceRecord) => {
       const eceRequestFileDetail = new ECERequestFileDetail();
       eceRequestFileDetail.transactionCode = RecordTypeCodes.ECEDetail;
       eceRequestFileDetail.institutionCode = eceRecord.institutionCode;
-      eceRequestFileDetail.awardDisbursmentIdx = eceRecord.awardDisbursmentIdx;
       eceRequestFileDetail.disbursementValues = eceRecord.disbursementValues;
+      totalRecords += eceRecord.disbursementValues.length;
       eceRequestFileDetail.sin = eceRecord.sin;
       eceRequestFileDetail.studentLastName = eceRecord.studentLastName;
       eceRequestFileDetail.studentGivenName = eceRecord.studentGivenName;
@@ -50,7 +51,6 @@ export class ECEIntegrationService extends SFTPIntegrationBase<void> {
         eceRecord.sfasApplicationNumber;
       eceRequestFileDetail.institutionStudentNumber =
         eceRecord.institutionStudentNumber;
-      eceRequestFileDetail.courseLoad = eceRecord.courseLoad;
       eceRequestFileDetail.studyStartDate = eceRecord.studyStartDate;
       eceRequestFileDetail.studyEndDate = eceRecord.studyEndDate;
       eceRequestFileDetail.disbursementDate = eceRecord.disbursementDate;
@@ -60,7 +60,7 @@ export class ECEIntegrationService extends SFTPIntegrationBase<void> {
     // Footer or Trailer record
     const eceFileFooter = new ECEFileFooter();
     eceFileFooter.transactionCode = RecordTypeCodes.ECETrailer;
-    eceFileFooter.recordCount = fileRecords.length;
+    eceFileFooter.recordCount = totalRecords;
     eceRequestFileLines.push(eceFileFooter);
     return eceRequestFileLines;
   }
