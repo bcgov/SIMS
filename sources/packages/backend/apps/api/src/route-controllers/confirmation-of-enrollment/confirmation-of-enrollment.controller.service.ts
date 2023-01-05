@@ -3,7 +3,7 @@ import {
   NotFoundException,
   UnprocessableEntityException,
 } from "@nestjs/common";
-import { DisbursementValueType } from "@sims/sims-db";
+import { DisbursementSchedule, DisbursementValueType } from "@sims/sims-db";
 import { getTotalDisbursementAmount } from "@sims/utilities";
 import {
   COE_NOT_FOUND_MESSAGE,
@@ -66,6 +66,8 @@ export class ConfirmationOfEnrollmentControllerService extends BaseController {
       );
     }
 
+    // TODO: Add validation for past study period.
+
     const firstOutstandingDisbursement =
       await this.disbursementScheduleService.getFirstDisbursementSchedule({
         disbursementScheduleId: disbursementSchedule.id,
@@ -86,6 +88,37 @@ export class ConfirmationOfEnrollmentControllerService extends BaseController {
     const tuitionRemittanceAmount =
       options?.payload?.tuitionRemittanceAmount ?? 0;
 
+    // Validate tuition remittance amount.
+    this.validateTuitionRemittance(
+      tuitionRemittanceAmount,
+      disbursementSchedule,
+    );
+
+    await this.disbursementScheduleService.updateDisbursementAndApplicationCOEApproval(
+      disbursementScheduleId,
+      auditUserId,
+      disbursementSchedule.studentAssessment.application.id,
+      disbursementSchedule.studentAssessment.application.applicationStatus,
+      tuitionRemittanceAmount,
+    );
+  }
+
+  /**
+   * Validate Institution Users to request tuition remittance at the time
+   * of confirming enrolment, not to exceed the lesser than both
+   * (Actual tuition + Program related costs) and (Canada grants + Canada Loan + BC Loan).
+   * @param tuitionRemittanceAmount tuition remittance submitted by institution.
+   * @param disbursementSchedule disbursement schedule.
+   * @throws UnprocessableEntityException.
+   */
+  private validateTuitionRemittance(
+    tuitionRemittanceAmount: number,
+    disbursementSchedule: DisbursementSchedule,
+  ): void {
+    // If the tuition remittance amount is set to 0, then skip validation.
+    if (!tuitionRemittanceAmount) {
+      return;
+    }
     const disbursementAmount = getTotalDisbursementAmount(
       disbursementSchedule.disbursementValues,
       [
@@ -95,11 +128,6 @@ export class ConfirmationOfEnrollmentControllerService extends BaseController {
       ],
     );
 
-    /**
-     * Enable Institution Users to request tuition remittance at the time
-     * of confirming enrolment, not to exceed the lesser than both
-     * (Actual tuition + Program related costs) and (Canada grants + Canada Loan + BC Loan).
-     */
     const offering = disbursementSchedule.studentAssessment.offering;
     const offeringAmount =
       offering.actualTuitionCosts + offering.programRelatedCosts;
@@ -113,13 +141,5 @@ export class ConfirmationOfEnrollmentControllerService extends BaseController {
         ),
       );
     }
-
-    await this.disbursementScheduleService.updateDisbursementAndApplicationCOEApproval(
-      disbursementScheduleId,
-      auditUserId,
-      disbursementSchedule.studentAssessment.application.id,
-      disbursementSchedule.studentAssessment.application.applicationStatus,
-      tuitionRemittanceAmount,
-    );
   }
 }

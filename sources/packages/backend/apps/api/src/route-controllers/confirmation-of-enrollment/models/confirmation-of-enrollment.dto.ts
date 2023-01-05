@@ -75,4 +75,8 @@ export interface ConfirmEnrollmentOptions {
    * COE confirmation information.
    */
   payload?: ConfirmationOfEnrollmentAPIInDTO;
+  /**
+   * Allow study period who's study end date is past to be confirmed for enrolment.
+   */
+  allowPastStudyPeriod?: boolean;
 }
