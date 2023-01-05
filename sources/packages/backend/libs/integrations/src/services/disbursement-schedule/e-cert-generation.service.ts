@@ -52,6 +52,10 @@ export class ECertGenerationService {
       offeringIntensity,
       entityManager,
     );
+    if (!disbursements?.length) {
+      return [];
+    }
+
     // The below steps must be execute in order and they will be causing
     // changes on the disbursements objects and its children (awards) till
     // all changes are finally saved at once in the end of the processing.

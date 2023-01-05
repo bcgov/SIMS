@@ -97,6 +97,5 @@ import { ATBCIntegrationModule } from "@sims/integrations/atbc-integration";
     FullTimeMSFAAProcessResponseIntegrationScheduler,
     PartTimeMSFAAProcessResponseIntegrationScheduler,
   ],
-  exports: [QueueService],
 })
 export class QueueConsumersModule {}

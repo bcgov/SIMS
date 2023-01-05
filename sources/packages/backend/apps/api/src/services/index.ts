@@ -22,7 +22,7 @@ export * from "./coe-denied-reason/coe-denied-reason.service";
 export * from "./supporting-user/supporting-user.service";
 export * from "./restriction/restriction.service";
 export * from "./restriction/student-restriction.service";
-export * from "./disbursement-schedule-service/disbursement-schedule-service";
+export * from "./disbursement-schedule/disbursement-schedule-service";
 export * from "./restriction/institution-restriction.service";
 export * from "./designation-agreement/designation-agreement.service";
 export * from "./sin-validation/sin-validation.service";

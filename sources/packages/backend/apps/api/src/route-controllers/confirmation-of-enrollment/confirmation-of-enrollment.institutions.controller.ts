@@ -43,7 +43,7 @@ import {
   ConfirmationOfEnrollmentAPIInDTO,
   COESummaryAPIOutDTO,
 } from "./models/confirmation-of-enrollment.dto";
-import { EnrollmentPeriod } from "../../services/disbursement-schedule-service/disbursement-schedule.models";
+import { EnrollmentPeriod } from "../../services/disbursement-schedule/disbursement-schedule.models";
 import { ApiProcessError, ClientTypeBaseRoute } from "../../types";
 import {
   ApiNotFoundResponse,

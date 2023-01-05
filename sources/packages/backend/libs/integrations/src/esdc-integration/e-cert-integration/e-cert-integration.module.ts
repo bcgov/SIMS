@@ -1,5 +1,6 @@
 import { Module } from "@nestjs/common";
 import {
+  DisbursementOverawardService,
   SequenceControlService,
   StudentRestrictionSharedService,
 } from "@sims/services";
@@ -14,9 +15,11 @@ import { ConfigModule } from "@sims/utilities/config";
 import {
   DisbursementScheduleErrorsService,
   DisbursementScheduleService,
+  ECertGenerationService,
   RestrictionService,
   SshService,
-} from "@sims/integrations/services";
+  StudentRestrictionsService,
+} from "../../services";
 import { SystemUsersService } from "@sims/services/system-users";
 
 @Module({
@@ -34,8 +37,11 @@ import { SystemUsersService } from "@sims/services/system-users";
     ECertFullTimeFileFooter,
     DisbursementScheduleErrorsService,
     RestrictionService,
+    StudentRestrictionsService,
     SystemUsersService,
     StudentRestrictionSharedService,
+    ECertGenerationService,
+    DisbursementOverawardService,
   ],
   exports: [ECertFileHandler],
 })
