@@ -1,5 +1,4 @@
 <template>
-  <status-info-enrolment :coeStatus="coeStatus" />
   <check-permission-role :role="Role.StudentConfirmEnrolment">
     <template #="{ notAllowed }">
       <v-btn
@@ -35,20 +34,14 @@
 
 <script lang="ts">
 import { PropType, computed, defineComponent, ref } from "vue";
-import { StatusInfo, COEStatus, Role, ApplicationStatus } from "@/types";
+import { COEStatus, Role, ApplicationStatus } from "@/types";
 import { ModalDialog } from "@/composables";
-import StatusInfoEnrolment from "@/components/common/StatusInfoEnrolment.vue";
 import ConfirmModal from "@/components/common/modals/ConfirmModal.vue";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
 
-export interface EnrollmentStatusInfo {
-  status: StatusInfo;
-  header: string;
-}
-
 export default defineComponent({
   emits: ["confirmEnrolment"],
-  components: { StatusInfoEnrolment, ConfirmModal, CheckPermissionRole },
+  components: { ConfirmModal, CheckPermissionRole },
   props: {
     coeStatus: {
       type: Object as PropType<COEStatus>,
@@ -56,15 +49,11 @@ export default defineComponent({
     },
     applicationStatus: {
       type: Object as PropType<ApplicationStatus>,
-      required: false,
+      required: true,
     },
     disbursementId: {
       type: Number,
-      required: false,
-    },
-    allowConfirmEnrolment: {
-      type: Boolean,
-      required: false,
+      required: true,
     },
   },
   setup(props, context) {
@@ -72,7 +61,6 @@ export default defineComponent({
     const isConfirmCOEEnabled = computed<boolean>(
       () =>
         !!(
-          props.allowConfirmEnrolment &&
           props.coeStatus === COEStatus.required &&
           (props.applicationStatus === ApplicationStatus.enrollment ||
             props.applicationStatus === ApplicationStatus.completed)

@@ -20,7 +20,13 @@
             identifier="disbursement1"
           />
           <div class="my-3">
-            <enrolment-status-action
+            <status-info-enrolment
+              :coeStatus="
+                assessmentAwardData.estimatedAward.disbursement1Status
+              "
+            />
+            <confirm-enrolment
+              v-if="allowConfirmEnrolment"
               :coeStatus="
                 assessmentAwardData.estimatedAward.disbursement1Status
               "
@@ -28,7 +34,6 @@
               :disbursementId="
                 assessmentAwardData.estimatedAward.disbursement1Id
               "
-              :allowConfirmEnrolment="allowConfirmEnrolment"
               @confirmEnrolment="$emit('confirmEnrolment', $event)"
             />
           </div>
@@ -110,7 +115,13 @@
             identifier="disbursement2"
           />
           <div class="my-3">
-            <enrolment-status-action
+            <status-info-enrolment
+              :coeStatus="
+                assessmentAwardData.estimatedAward.disbursement2Status
+              "
+            />
+            <confirm-enrolment
+              v-if="allowConfirmEnrolment"
               :coeStatus="
                 assessmentAwardData.estimatedAward.disbursement2Status
               "
@@ -118,7 +129,6 @@
               :disbursementId="
                 assessmentAwardData.estimatedAward.disbursement2Id
               "
-              :allowConfirmEnrolment="allowConfirmEnrolment"
               @confirmEnrolment="$emit('confirmEnrolment', $event)"
             />
           </div>
@@ -193,11 +203,16 @@ import { AwardDetailsAPIOutDTO } from "@/services/http/dto";
 import { COEStatus, StatusInfo } from "@/types";
 import { PropType, computed, defineComponent } from "vue";
 import AwardTable from "@/components/common/AwardTable.vue";
-import EnrolmentStatusAction from "@/components/common/EnrolmentStatusAction.vue";
+import StatusInfoEnrolment from "@/components/common/StatusInfoEnrolment.vue";
+import ConfirmEnrolment from "@/components/common/ConfirmEnrolment.vue";
 
 export default defineComponent({
   emits: ["confirmEnrolment"],
-  components: { AwardTable, EnrolmentStatusAction },
+  components: {
+    AwardTable,
+    ConfirmEnrolment,
+    StatusInfoEnrolment,
+  },
   props: {
     assessmentAwardData: {
       type: Object as PropType<AwardDetailsAPIOutDTO>,
