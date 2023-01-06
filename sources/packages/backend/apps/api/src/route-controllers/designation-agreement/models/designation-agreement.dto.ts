@@ -15,6 +15,7 @@ import {
   ValidateIf,
   ValidateNested,
   Allow,
+  IsIn,
 } from "class-validator";
 
 /**
@@ -119,7 +120,10 @@ export class DesignationLocationAPIInDTO {
  * startDate, endDate and locationsDesignations used only for approval.
  */
 export class UpdateDesignationDetailsAPIInDTO {
-  @IsEnum(DesignationAgreementStatus)
+  @IsIn([
+    DesignationAgreementStatus.Approved,
+    DesignationAgreementStatus.Declined,
+  ])
   designationStatus: DesignationAgreementStatus;
   @IsNotEmpty()
   @IsDateString()

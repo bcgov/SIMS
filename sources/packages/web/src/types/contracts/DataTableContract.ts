@@ -68,7 +68,9 @@ export enum ProgramSummaryFields {
   IsActive = "isActive",
 }
 
-/**Pagination Query param constants **/
+/**
+ * Pagination Query param constants
+ */
 export enum PaginationParams {
   SortField = "sortField",
   SortOrder = "sortOrder",
@@ -77,7 +79,9 @@ export enum PaginationParams {
   SearchCriteria = "searchCriteria",
 }
 
-/** Pagination Options */
+/**
+ * Pagination Options
+ */
 export interface PaginationOptions {
   searchCriteria?: string;
   sortField?: string;

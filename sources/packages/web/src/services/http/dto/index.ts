@@ -21,3 +21,4 @@ export * from "@/services/http/dto/ProgramYear.dto";
 export * from "@/services/http/dto/User.dto";
 export * from "@/services/http/dto/Config.dto";
 export * from "@/services/http/dto/DesignationAgreement.dto";
+export * from "@/services/http/dto/SupportingUser.dto";

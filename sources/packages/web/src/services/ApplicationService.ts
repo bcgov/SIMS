@@ -10,15 +10,13 @@ import ApiClient from "../services/http/ApiClient";
 import {
   ApplicationSummaryAPIOutDTO,
   PaginatedResultsAPIOutDTO,
-} from "@/services/http/dto";
-import {
   InProgressApplicationDetailsAPIOutDTO,
   SaveApplicationAPIInDTO,
   ApplicationWithProgramYearAPIOutDTO,
   ApplicationDataAPIOutDTO,
   ApplicationBaseAPIOutDTO,
   ApplicationIdentifiersAPIOutDTO,
-} from "@/services/http/dto/Application.dto";
+} from "@/services/http/dto";
 
 export class ApplicationService {
   // Share Instance

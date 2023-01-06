@@ -17,7 +17,7 @@ import {
   ApplicationBaseAPIOutDTO,
   ApplicationIdentifiersAPIOutDTO,
   InProgressApplicationDetailsAPIOutDTO,
-} from "./dto";
+} from "@/services/http/dto";
 
 export class ApplicationApi extends HttpBaseClient {
   async getApplicationData(
