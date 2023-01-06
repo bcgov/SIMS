@@ -7,8 +7,8 @@ import {
 } from "../../services";
 import {
   ApplicationFormData,
-  GetApplicationBaseAPIOutDTO,
-  GetApplicationDataAPIOutDTO,
+  ApplicationBaseAPIOutDTO,
+  ApplicationDataAPIOutDTO,
   SuccessWaitingStatus,
 } from "./models/application.dto";
 import {
@@ -130,7 +130,7 @@ export class ApplicationControllerService {
    */
   async transformToApplicationForAESTDTO(
     application: Application,
-  ): Promise<GetApplicationBaseAPIOutDTO> {
+  ): Promise<ApplicationBaseAPIOutDTO> {
     return {
       data: application.data,
       id: application.id,
@@ -150,7 +150,7 @@ export class ApplicationControllerService {
   async transformToApplicationDetailForStudentDTO(
     applicationDetail: Application,
     disbursement: DisbursementSchedule,
-  ): Promise<GetApplicationDataAPIOutDTO> {
+  ): Promise<ApplicationDataAPIOutDTO> {
     const offering = applicationDetail.currentAssessment?.offering;
     return {
       id: applicationDetail.id,

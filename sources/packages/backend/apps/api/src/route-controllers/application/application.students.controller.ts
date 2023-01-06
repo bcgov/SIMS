@@ -35,7 +35,7 @@ import { IUserToken, StudentUserToken } from "../../auth/userToken.interface";
 import BaseController from "../BaseController";
 import {
   SaveApplicationAPIInDTO,
-  GetApplicationDataAPIOutDTO,
+  ApplicationDataAPIOutDTO,
   ApplicationWithProgramYearAPIOutDTO,
   ApplicationIdentifiersAPIOutDTO,
   ApplicationNumberParamAPIInDTO,
@@ -102,7 +102,7 @@ export class ApplicationStudentsController extends BaseController {
   async getByApplicationId(
     @Param("id", ParseIntPipe) applicationId: number,
     @UserToken() userToken: StudentUserToken,
-  ): Promise<GetApplicationDataAPIOutDTO> {
+  ): Promise<ApplicationDataAPIOutDTO> {
     const application = await this.applicationService.getApplicationById(
       applicationId,
       { loadDynamicData: true, studentId: userToken.studentId },

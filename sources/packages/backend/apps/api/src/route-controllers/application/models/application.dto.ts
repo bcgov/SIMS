@@ -73,7 +73,7 @@ export class ApplicationIdentifiersAPIOutDTO {
 /**
  * Base DTO for application
  */
-export class GetApplicationBaseAPIOutDTO extends ApplicationIdentifiersAPIOutDTO {
+export class ApplicationBaseAPIOutDTO extends ApplicationIdentifiersAPIOutDTO {
   assessmentId?: number;
   data: ApplicationFormData;
   applicationStatus: ApplicationStatus;
@@ -81,7 +81,7 @@ export class GetApplicationBaseAPIOutDTO extends ApplicationIdentifiersAPIOutDTO
   applicationProgramYearID: number;
 }
 
-export class GetApplicationDataAPIOutDTO extends GetApplicationBaseAPIOutDTO {
+export class ApplicationDataAPIOutDTO extends ApplicationBaseAPIOutDTO {
   applicationStatusUpdatedOn: Date;
   applicationOfferingIntensity: OfferingIntensity;
   applicationStartDate: string;

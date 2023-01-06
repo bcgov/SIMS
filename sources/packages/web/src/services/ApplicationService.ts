@@ -15,8 +15,8 @@ import {
   InProgressApplicationDetailsAPIOutDTO,
   SaveApplicationAPIInDTO,
   ApplicationWithProgramYearAPIOutDTO,
-  GetApplicationDataAPIOutDTO,
-  GetApplicationBaseAPIOutDTO,
+  ApplicationDataAPIOutDTO,
+  ApplicationBaseAPIOutDTO,
   ApplicationIdentifiersAPIOutDTO,
 } from "@/services/http/dto/Application.dto";
 
@@ -34,7 +34,7 @@ export class ApplicationService {
 
   async getApplicationData(
     applicationId: number,
-  ): Promise<GetApplicationDataAPIOutDTO> {
+  ): Promise<ApplicationDataAPIOutDTO> {
     return ApiClient.Application.getApplicationData(applicationId);
   }
 
@@ -87,7 +87,7 @@ export class ApplicationService {
    */
   async getApplicationDetail(
     applicationId: number,
-  ): Promise<GetApplicationBaseAPIOutDTO> {
+  ): Promise<ApplicationBaseAPIOutDTO> {
     return ApiClient.Application.getApplicationDetails(applicationId);
   }
 

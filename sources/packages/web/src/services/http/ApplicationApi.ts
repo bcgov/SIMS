@@ -13,8 +13,8 @@ import {
   PaginatedResultsAPIOutDTO,
   SaveApplicationAPIInDTO,
   ApplicationWithProgramYearAPIOutDTO,
-  GetApplicationDataAPIOutDTO,
-  GetApplicationBaseAPIOutDTO,
+  ApplicationDataAPIOutDTO,
+  ApplicationBaseAPIOutDTO,
   ApplicationIdentifiersAPIOutDTO,
   InProgressApplicationDetailsAPIOutDTO,
 } from "./dto";
@@ -22,13 +22,13 @@ import {
 export class ApplicationApi extends HttpBaseClient {
   async getApplicationData(
     applicationId: number,
-  ): Promise<GetApplicationDataAPIOutDTO> {
+  ): Promise<ApplicationDataAPIOutDTO> {
     try {
       const response = await this.apiClient.get(
         this.addClientRoot(`application/${applicationId}`),
         this.addAuthHeader(),
       );
-      return response.data as GetApplicationDataAPIOutDTO;
+      return response.data as ApplicationDataAPIOutDTO;
     } catch (error) {
       this.handleRequestError(error);
       throw error;
@@ -118,11 +118,11 @@ export class ApplicationApi extends HttpBaseClient {
    */
   async getApplicationDetails(
     applicationId: number,
-  ): Promise<GetApplicationBaseAPIOutDTO> {
+  ): Promise<ApplicationBaseAPIOutDTO> {
     const response = await this.getCall(
       this.addClientRoot(`application/${applicationId}`),
     );
-    return response.data as GetApplicationBaseAPIOutDTO;
+    return response.data as ApplicationBaseAPIOutDTO;
   }
 
   /**

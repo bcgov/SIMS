@@ -49,7 +49,7 @@ export interface ApplicationIdentifiersAPIOutDTO {
 /**
  * Base DTO for application dynamic data
  */
-export interface GetApplicationBaseAPIOutDTO
+export interface ApplicationBaseAPIOutDTO
   extends ApplicationIdentifiersAPIOutDTO {
   assessmentId?: number;
   data: any;
@@ -61,8 +61,7 @@ export interface GetApplicationBaseAPIOutDTO
 /**
  * DTO for detailed application data
  */
-export interface GetApplicationDataAPIOutDTO
-  extends GetApplicationBaseAPIOutDTO {
+export interface ApplicationDataAPIOutDTO extends ApplicationBaseAPIOutDTO {
   applicationStatusUpdatedOn: string;
   applicationOfferingIntensity: OfferingIntensity;
   applicationStartDate: string;
