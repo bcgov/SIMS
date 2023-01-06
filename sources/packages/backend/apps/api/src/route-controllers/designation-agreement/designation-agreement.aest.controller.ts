@@ -101,17 +101,14 @@ export class DesignationAgreementAESTController extends BaseController {
         designationStatus,
         searchCriteria,
       );
-    return pendingDesignations.map(
-      (pendingDesignation) =>
-        ({
-          designationId: pendingDesignation.id,
-          designationStatus: pendingDesignation.designationStatus,
-          submittedDate: pendingDesignation.submittedDate,
-          startDate: getISODateOnlyString(pendingDesignation.startDate),
-          endDate: getISODateOnlyString(pendingDesignation.endDate),
-          legalOperatingName: pendingDesignation.institution.legalOperatingName,
-        } as PendingDesignationAgreementDetailsAPIOutDTO),
-    );
+    return pendingDesignations.map((pendingDesignation) => ({
+      designationId: pendingDesignation.id,
+      designationStatus: pendingDesignation.designationStatus,
+      submittedDate: pendingDesignation.submittedDate,
+      startDate: getISODateOnlyString(pendingDesignation.startDate),
+      endDate: getISODateOnlyString(pendingDesignation.endDate),
+      legalOperatingName: pendingDesignation.institution.legalOperatingName,
+    }));
   }
 
   /**

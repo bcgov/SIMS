@@ -7,7 +7,7 @@ import {
 } from "@sims/sims-db";
 import { SuccessWaitingStatus } from "./application.dto";
 
-export class ApplicationIncomeVerificationAPIOutDTO {
+export class ApplicationIncomeVerification {
   parent1IncomeVerificationStatus?: SuccessWaitingStatus;
   parent2IncomeVerificationStatus?: SuccessWaitingStatus;
   partnerIncomeVerificationStatus?: SuccessWaitingStatus;
@@ -22,7 +22,7 @@ export class ApplicationSupportingUserDetailsAPIOutDTO {
 
 export class InProgressApplicationDetailsAPIOutDTO extends IntersectionType(
   ApplicationSupportingUserDetailsAPIOutDTO,
-  ApplicationIncomeVerificationAPIOutDTO,
+  ApplicationIncomeVerification,
 ) {
   id: number;
   applicationStatus: ApplicationStatus;

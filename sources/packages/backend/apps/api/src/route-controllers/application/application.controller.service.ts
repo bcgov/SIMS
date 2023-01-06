@@ -6,7 +6,7 @@ import {
   StudentRestrictionService,
 } from "../../services";
 import {
-  ApplicationFormDataAPIOutDTO,
+  ApplicationFormData,
   GetApplicationBaseAPIOutDTO,
   GetApplicationDataAPIOutDTO,
   SuccessWaitingStatus,
@@ -33,7 +33,7 @@ import {
 import { ApiProcessError } from "../../types";
 import { ACTIVE_STUDENT_RESTRICTION } from "../../constants";
 import {
-  ApplicationIncomeVerificationAPIOutDTO,
+  ApplicationIncomeVerification,
   ApplicationSupportingUserDetailsAPIOutDTO,
 } from "./models/application.system.dto";
 
@@ -61,8 +61,8 @@ export class ApplicationControllerService {
    */
   async generateApplicationFormData(
     data: ApplicationData,
-  ): Promise<ApplicationFormDataAPIOutDTO> {
-    const additionalFormData = {} as ApplicationFormDataAPIOutDTO;
+  ): Promise<ApplicationFormData> {
+    const additionalFormData = {} as ApplicationFormData;
     // Check wether the selected location is designated or not.
     // If selected location is not designated, then make the
     // selectedLocation null
@@ -138,7 +138,7 @@ export class ApplicationControllerService {
       applicationNumber: application.applicationNumber,
       applicationFormName: application.programYear.formName,
       applicationProgramYearID: application.programYear.id,
-    } as GetApplicationBaseAPIOutDTO;
+    };
   }
 
   /**
@@ -220,9 +220,8 @@ export class ApplicationControllerService {
    */
   processApplicationIncomeVerificationDetails(
     craIncomeVerification: CRAIncomeVerification[],
-  ): ApplicationIncomeVerificationAPIOutDTO {
-    const incomeVerificationDetails =
-      {} as ApplicationIncomeVerificationAPIOutDTO;
+  ): ApplicationIncomeVerification {
+    const incomeVerificationDetails = {} as ApplicationIncomeVerification;
     // Student.
     const [student] = craIncomeVerification.filter(
       (incomeVerification) => !incomeVerification.supportingUser,

@@ -29,7 +29,7 @@ export class SaveApplicationAPIInDTO {
   programYearId: number;
 }
 
-export interface ApplicationFormDataAPIOutDTO extends ApplicationData {
+export interface ApplicationFormData extends ApplicationData {
   /**
    * Offering name selected by the student.
    * This is for html component of readonly form.
@@ -75,7 +75,7 @@ export class ApplicationIdentifiersAPIOutDTO {
  */
 export class GetApplicationBaseAPIOutDTO extends ApplicationIdentifiersAPIOutDTO {
   assessmentId?: number;
-  data: ApplicationFormDataAPIOutDTO;
+  data: ApplicationFormData;
   applicationStatus: ApplicationStatus;
   applicationFormName: string;
   applicationProgramYearID: number;
