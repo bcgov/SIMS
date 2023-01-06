@@ -33,10 +33,11 @@ export class DisbursementOverawardService extends RecordDataModelService<Disburs
       .addSelect("disbursementOveraward.disbursementValueCode", "valueCode")
       .addSelect("SUM(disbursementOveraward.overawardValue)", "total")
       .innerJoin("disbursementOveraward.student", "student")
-      .where("student.id = (:...studentIds)", {
+      .where("student.id IN (:...studentIds)", {
         studentIds,
       })
-      .groupBy("disbursementOveraward.disbursementValueCode")
+      .groupBy("student.id")
+      .addGroupBy("disbursementOveraward.disbursementValueCode")
       .getRawMany<{ studentId: number; valueCode: string; total: number }>();
     const result: StudentOverawardBalance = {};
     for (const totalAward of totalAwards) {

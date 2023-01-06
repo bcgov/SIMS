@@ -62,10 +62,11 @@ export class ECertGenerationService {
 
     // Step 1 - Check student balance and execute the possible deductions from the awards.
     await this.applyOverawardsDeductions(disbursements, entityManager);
-    // Step 2 - Calculate BC total grants after all others calculations are done.
-    this.createBCTotalGrants(disbursements);
-    // Step 3 - Execute the calculation to define the final value to be used for the e-Cert.
+    // Step 2 - Execute the calculation to define the final value to be used for the e-Cert.
     this.calculateEffectiveValue(disbursements);
+    // Step 3 - Calculate BC total grants after all others calculations are done.
+    //!This step relies on the effective value calculation (step 2).
+    await this.createBCTotalGrants(disbursements);
     // Step 4 - Mark all disbursements as 'sent'.
     const now = new Date();
     disbursements.forEach((disbursement) => {
@@ -132,6 +133,7 @@ export class ECertGenerationService {
         "offering.studyStartDate",
         "offering.studyEndDate",
         "offering.yearOfStudy",
+        "offering.offeringIntensity",
         "educationProgram.id",
         "educationProgram.fieldOfStudyCode",
         "educationProgram.completionYears",
@@ -150,6 +152,7 @@ export class ECertGenerationService {
         "disbursementValue.valueType",
         "disbursementValue.valueCode",
         "disbursementValue.valueAmount",
+        "disbursementValue.disbursedAmountSubtracted",
         "studentAssessment.id",
       ])
       .addSelect(
@@ -246,8 +249,8 @@ export class ECertGenerationService {
         } else {
           const effectiveValue =
             +disbursementValue.valueAmount -
-            (+disbursementValue.disbursedAmountSubtracted ?? 0) -
-            (+disbursementValue.overawardAmountSubtracted ?? 0);
+            +(disbursementValue.disbursedAmountSubtracted ?? 0) -
+            +(disbursementValue.overawardAmountSubtracted ?? 0);
           disbursementValue.effectiveAmount = effectiveValue.toString();
         }
       }
@@ -378,6 +381,8 @@ export class ECertGenerationService {
   ): boolean {
     return (
       schedule.stopFullTimeBCFunding &&
+      schedule.studentAssessment.application.currentAssessment.offering
+        .offeringIntensity === OfferingIntensity.fullTime &&
       BC_FUNDING_TYPES.includes(disbursementValue.valueType)
     );
   }

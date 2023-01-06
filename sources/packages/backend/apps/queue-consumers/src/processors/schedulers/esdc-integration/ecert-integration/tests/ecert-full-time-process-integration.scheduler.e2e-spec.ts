@@ -1,9 +1,11 @@
 require("../../../../../../../../env_setup");
 import { Test, TestingModule } from "@nestjs/testing";
 import { ECertFileHandler } from "@sims/integrations/esdc-integration";
+import { SshService } from "@sims/integrations/services";
 import {
   Application,
   ApplicationStatus,
+  Assessment,
   COEStatus,
   DisbursementOveraward,
   DisbursementSchedule,
@@ -27,6 +29,7 @@ import {
   createFakeUser,
 } from "@sims/test-utils";
 import { createFakeSINValidation } from "@sims/test-utils/factories/sin-validation";
+import sshServiceMock from "@sims/test-utils/mocks/ssh-service.mock";
 import { DataSource, Repository } from "typeorm";
 import { QueueConsumersModule } from "../../../../../queue-consumers.module";
 
@@ -46,7 +49,10 @@ describe("Schedulers - e-Cert full time integration - Create e-Cert file", () =>
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [QueueConsumersModule],
-    }).compile();
+    })
+      .overrideProvider(SshService)
+      .useValue(sshServiceMock)
+      .compile();
     const app = moduleFixture.createNestApplication();
     await app.init();
 
@@ -89,6 +95,8 @@ describe("Schedulers - e-Cert full time integration - Create e-Cert file", () =>
     const fakeOriginalAssessment = createFakeStudentAssessment({
       auditUser: savedUser,
     });
+    // Weeks are needed for the e-Cert generation but does not matter for this test.
+    fakeOriginalAssessment.assessmentData = { weeks: 5 } as Assessment;
     fakeOriginalAssessment.application = savedApplication;
     // Original assessment - first disbursement.
     const firstSchedule = createFakeDisbursementSchedule({
@@ -97,46 +105,36 @@ describe("Schedulers - e-Cert full time integration - Create e-Cert file", () =>
         createFakeDisbursementValue(
           DisbursementValueType.CanadaLoan,
           "CSLF",
-          "1250",
+          "5000",
         ),
         createFakeDisbursementValue(
           DisbursementValueType.BCLoan,
           "BCSL",
-          "800",
-          { disbursedAmountSubtracted: "50" },
+          "4000",
+          { disbursedAmountSubtracted: "1000" },
         ),
         createFakeDisbursementValue(
           DisbursementValueType.CanadaGrant,
           "CSGP",
+          "2000",
+        ),
+        createFakeDisbursementValue(
+          DisbursementValueType.BCGrant,
+          "BCAG",
           "1500",
+          { disbursedAmountSubtracted: "500" },
+        ),
+        createFakeDisbursementValue(
+          DisbursementValueType.BCGrant,
+          "BGPD",
+          "2500",
         ),
       ],
     });
     firstSchedule.coeStatus = COEStatus.completed;
     firstSchedule.disbursementScheduleStatus =
       DisbursementScheduleStatus.Pending;
-    // Original assessment - second disbursement.
-    const secondSchedule = createFakeDisbursementSchedule({
-      auditUser: savedUser,
-      disbursementValues: [
-        createFakeDisbursementValue(
-          DisbursementValueType.CanadaGrant,
-          "CSLF",
-          "1000",
-        ),
-        createFakeDisbursementValue(
-          DisbursementValueType.BCLoan,
-          "BCSL",
-          "500",
-        ),
-      ],
-    });
-    secondSchedule.disbursementScheduleStatus =
-      DisbursementScheduleStatus.Pending;
-    fakeOriginalAssessment.disbursementSchedules = [
-      firstSchedule,
-      secondSchedule,
-    ];
+    fakeOriginalAssessment.disbursementSchedules = [firstSchedule];
     // Reassessment.
     const fakeOffering = createFakeEducationProgramOffering({
       auditUser: savedUser,
