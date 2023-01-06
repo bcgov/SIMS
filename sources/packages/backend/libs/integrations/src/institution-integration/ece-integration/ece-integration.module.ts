@@ -22,6 +22,6 @@ import { ECEIntegrationService } from "./ece-integration.service";
     ECEIntegrationService,
     StudentRestrictionSharedService,
   ],
-  exports: [ECEFileService, ECEIntegrationService],
+  exports: [ECEFileService],
 })
 export class ECEIntegrationModule {}

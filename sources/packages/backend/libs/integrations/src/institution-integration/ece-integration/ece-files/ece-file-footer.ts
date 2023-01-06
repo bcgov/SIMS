@@ -3,6 +3,7 @@ import {
   RecordTypeCodes,
 } from "../models/ece-integration.model";
 import { StringBuilder } from "@sims/utilities";
+import { NUMBER_FILLER } from "@sims/integrations/esdc-integration/e-cert-integration/models/e-cert-integration-model";
 
 /**
  * Footer of a ECE request file.
@@ -10,13 +11,13 @@ import { StringBuilder } from "@sims/utilities";
  * 'SIMSSFAS - Institution File layouts In Analysis Folder'.
  */
 export class ECEFileFooter implements ECERequestFileLine {
-  transactionCode: RecordTypeCodes;
+  recordTypeCodes: RecordTypeCodes;
   recordCount: number;
 
-  public getFixedFormat(): string {
+  getFixedFormat(): string {
     const footer = new StringBuilder();
-    footer.append(this.transactionCode);
-    footer.appendWithStartFiller(this.recordCount.toString(), 6, "0");
+    footer.append(this.recordTypeCodes);
+    footer.appendWithStartFiller(this.recordCount.toString(), 6, NUMBER_FILLER);
     return footer.toString();
   }
 }

@@ -32,14 +32,14 @@ export class ECEIntegrationService extends SFTPIntegrationBase<void> {
     const eceRequestFileLines: ECERequestFileLine[] = [];
     // Header record
     const eceFileHeader = new ECEFileHeader();
-    eceFileHeader.transactionCode = RecordTypeCodes.ECEHeader;
+    eceFileHeader.recordTypeCodes = RecordTypeCodes.ECEHeader;
     eceFileHeader.processDate = processDate;
     eceRequestFileLines.push(eceFileHeader);
     let totalRecords = 0;
     // Detail record
     const fileRecords = eceRecords.map((eceRecord) => {
       const eceRequestFileDetail = new ECERequestFileDetail();
-      eceRequestFileDetail.transactionCode = RecordTypeCodes.ECEDetail;
+      eceRequestFileDetail.recordTypeCodes = RecordTypeCodes.ECEDetail;
       eceRequestFileDetail.institutionCode = eceRecord.institutionCode;
       eceRequestFileDetail.disbursementValues = eceRecord.disbursementValues;
       totalRecords += eceRecord.disbursementValues.length;
@@ -47,8 +47,7 @@ export class ECEIntegrationService extends SFTPIntegrationBase<void> {
       eceRequestFileDetail.studentLastName = eceRecord.studentLastName;
       eceRequestFileDetail.studentGivenName = eceRecord.studentGivenName;
       eceRequestFileDetail.birthDate = eceRecord.birthDate;
-      eceRequestFileDetail.sfasApplicationNumber =
-        eceRecord.sfasApplicationNumber;
+      eceRequestFileDetail.applicationNumber = eceRecord.sfasApplicationNumber;
       eceRequestFileDetail.institutionStudentNumber =
         eceRecord.institutionStudentNumber;
       eceRequestFileDetail.studyStartDate = eceRecord.studyStartDate;
@@ -59,7 +58,7 @@ export class ECEIntegrationService extends SFTPIntegrationBase<void> {
     eceRequestFileLines.push(...fileRecords);
     // Footer or Trailer record
     const eceFileFooter = new ECEFileFooter();
-    eceFileFooter.transactionCode = RecordTypeCodes.ECETrailer;
+    eceFileFooter.recordTypeCodes = RecordTypeCodes.ECETrailer;
     eceFileFooter.recordCount = totalRecords;
     eceRequestFileLines.push(eceFileFooter);
     return eceRequestFileLines;

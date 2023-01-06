@@ -14,14 +14,14 @@ import {
  * 'SIMSSFAS - Institution File layouts In Analysis Folder'.
  */
 export class ECERequestFileDetail implements ECERequestFileLine {
-  transactionCode: RecordTypeCodes;
+  recordTypeCodes: RecordTypeCodes;
   institutionCode: string;
   disbursementValues: DisbursementValue[];
   sin: string;
   studentLastName: string;
   studentGivenName: string;
   birthDate: string;
-  sfasApplicationNumber: string;
+  applicationNumber: string;
   institutionStudentNumber: string;
   courseLoad: string;
   studyStartDate: string;
@@ -31,7 +31,7 @@ export class ECERequestFileDetail implements ECERequestFileLine {
   getFixedFormat(): string {
     const records = this.disbursementValues.map((disbursementValue) => {
       const record = new StringBuilder();
-      record.append(this.transactionCode, 1);
+      record.append(this.recordTypeCodes, 1);
       record.append(this.institutionCode, 4);
       record.appendWithStartFiller(
         disbursementValue.id.toString(),
@@ -48,7 +48,7 @@ export class ECERequestFileDetail implements ECERequestFileLine {
       record.appendWithEndFiller(this.studentLastName, 25, SPACE_FILLER);
       record.appendWithEndFiller(this.studentGivenName ?? "", 15, SPACE_FILLER);
       record.appendDate(this.birthDate, DATE_FORMAT);
-      record.append(this.sfasApplicationNumber, 10);
+      record.append(this.applicationNumber, 10);
       record.appendWithEndFiller(
         this.institutionStudentNumber,
         12,
