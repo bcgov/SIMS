@@ -109,13 +109,24 @@ export class DesignationLocationAPIInDTO {
   @IsBoolean()
   approved: boolean;
 }
+
 /**
  * startDate, endDate and locationsDesignations used only for approval.
  */
 export class UpdateDesignationDetailsAPIInDTO {
+  @IsEnum(DesignationAgreementStatus)
   designationStatus: DesignationAgreementStatus;
+  @IsNotEmpty()
+  @IsDateString()
   startDate?: string;
+  @IsNotEmpty()
+  @IsDateString()
   endDate?: string;
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => DesignationLocationAPIInDTO)
   locationsDesignations?: DesignationLocationAPIInDTO[];
+  @IsNotEmpty()
+  @MaxLength(NOTE_DESCRIPTION_MAX_LENGTH)
   note: string;
 }

@@ -80,6 +80,7 @@ export class GetApplicationBaseAPIOutDTO extends ApplicationIdentifiersAPIOutDTO
   applicationFormName: string;
   applicationProgramYearID: number;
 }
+
 export class GetApplicationDataAPIOutDTO extends GetApplicationBaseAPIOutDTO {
   applicationStatusUpdatedOn: Date;
   applicationOfferingIntensity: OfferingIntensity;
