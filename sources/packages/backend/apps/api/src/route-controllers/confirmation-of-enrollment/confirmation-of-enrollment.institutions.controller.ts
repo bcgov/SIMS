@@ -97,7 +97,9 @@ export class ConfirmationOfEnrollmentInstitutionsController extends BaseControll
     return {
       results: disbursementPaginatedResult.results.map(
         (disbursement: DisbursementSchedule) => {
-          const offering = disbursement.studentAssessment.offering;
+          const offering =
+            disbursement.studentAssessment.application.currentAssessment
+              .offering;
           return {
             applicationNumber:
               disbursement.studentAssessment.application.applicationNumber,

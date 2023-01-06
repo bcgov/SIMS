@@ -28,6 +28,7 @@
                 assessmentAwardData.estimatedAward.disbursement1Id
               "
               :allowConfirmEnrolment="allowConfirmEnrolment"
+              @confirmEnrolment="$emit('confirmEnrolment', $event)"
             />
           </div>
           <div
@@ -116,6 +117,7 @@
                 assessmentAwardData.estimatedAward.disbursement2Id
               "
               :allowConfirmEnrolment="allowConfirmEnrolment"
+              @confirmEnrolment="$emit('confirmEnrolment', $event)"
             />
           </div>
           <div
@@ -192,6 +194,7 @@ import AwardTable from "@/components/common/AwardTable.vue";
 import EnrolmentStatusAction from "@/components/common/EnrolmentStatusAction.vue";
 
 export default defineComponent({
+  emits: ["confirmEnrolment"],
   components: { AwardTable, EnrolmentStatusAction },
   props: {
     assessmentAwardData: {

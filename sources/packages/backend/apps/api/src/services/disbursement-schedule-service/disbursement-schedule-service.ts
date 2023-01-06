@@ -146,6 +146,7 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
         "application.applicationNumber",
         "application.id",
         "studentAssessment.id",
+        "currentAssessment.id",
         "offering.studyStartDate",
         "offering.studyEndDate",
         "student.id",
@@ -154,7 +155,8 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
       ])
       .innerJoin("disbursementSchedule.studentAssessment", "studentAssessment")
       .innerJoin("studentAssessment.application", "application")
-      .innerJoin("studentAssessment.offering", "offering")
+      .innerJoin("application.currentAssessment", "currentAssessment")
+      .innerJoin("currentAssessment.offering", "offering")
       .innerJoin("offering.institutionLocation", "location")
       .innerJoin("application.student", "student")
       .innerJoin("student.user", "user")
