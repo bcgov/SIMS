@@ -14,6 +14,7 @@ import {
   MaxLength,
   ValidateIf,
   ValidateNested,
+  Allow,
 } from "class-validator";
 
 /**
@@ -56,7 +57,9 @@ export class UpdateDesignationAPIInDTO {
  * be validated by the form.io dryrun validation.
  */
 export class SubmitDesignationAgreementAPIInDTO {
+  @Allow()
   dynamicData: any;
+  @Allow()
   locations: SubmittedLocationsAPIInDTO[];
 }
 
@@ -65,7 +68,9 @@ export class SubmitDesignationAgreementAPIInDTO {
  * be validated by the form.io dryrun validation.
  */
 export class SubmittedLocationsAPIInDTO {
+  @Allow()
   locationId: number;
+  @Allow()
   requestForDesignation: boolean;
 }
 

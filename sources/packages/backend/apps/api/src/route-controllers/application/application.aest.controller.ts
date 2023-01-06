@@ -34,7 +34,6 @@ export class ApplicationAESTController extends BaseController {
    * @returns Application details
    */
   @Get(":applicationId")
-  @ApiOkResponse({ description: "Application details fetched." })
   @ApiNotFoundResponse({ description: "Application not found." })
   async getApplication(
     @Param("applicationId", ParseIntPipe) applicationId: number,

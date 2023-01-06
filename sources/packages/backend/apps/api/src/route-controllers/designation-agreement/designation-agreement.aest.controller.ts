@@ -12,7 +12,6 @@ import {
 } from "@nestjs/common";
 import {
   DesignationAgreementService,
-  FormService,
   InstitutionLocationService,
 } from "../../services";
 import { DesignationAgreementStatus } from "@sims/sims-db";
@@ -34,7 +33,11 @@ import {
   UpdateDesignationAPIInDTO,
 } from "./models/designation-agreement.dto";
 import { DesignationAgreementControllerService } from "./designation-agreement.controller.service";
-import { ApiTags } from "@nestjs/swagger";
+import {
+  ApiNotFoundResponse,
+  ApiTags,
+  ApiUnprocessableEntityResponse,
+} from "@nestjs/swagger";
 import BaseController from "../BaseController";
 import { Role } from "../../auth/roles.enum";
 import { ClientTypeBaseRoute } from "../../types";
@@ -47,7 +50,6 @@ export class DesignationAgreementAESTController extends BaseController {
   constructor(
     private readonly designationAgreementControllerService: DesignationAgreementControllerService,
     private readonly designationAgreementService: DesignationAgreementService,
-    private readonly formService: FormService,
     private readonly institutionLocationService: InstitutionLocationService,
   ) {
     super();
@@ -60,6 +62,7 @@ export class DesignationAgreementAESTController extends BaseController {
    * @returns designation agreement information.
    */
   @Get(":designationId")
+  @ApiNotFoundResponse({ description: "Designation agreement not found." })
   async getDesignationAgreement(
     @Param("designationId", ParseIntPipe) designationId: number,
   ): Promise<DesignationAgreementAPIOutDTO> {
@@ -118,6 +121,14 @@ export class DesignationAgreementAESTController extends BaseController {
    */
   @Roles(Role.InstitutionApproveDeclineDesignation)
   @Patch(":designationId")
+  @ApiNotFoundResponse({
+    description:
+      "Designation agreement not found or it has been declined already.",
+  })
+  @ApiUnprocessableEntityResponse({
+    description:
+      "One or more locations provided does not belong to designation institution.",
+  })
   async updateDesignationAgreement(
     @Param("designationId", ParseIntPipe) designationId: number,
     @Body() payload: UpdateDesignationAPIInDTO,

@@ -12,11 +12,11 @@ export class SupportingUsersService {
   // Share Instance
   private static instance: SupportingUsersService;
 
-  public static get shared(): SupportingUsersService {
+  static get shared(): SupportingUsersService {
     return this.instance || (this.instance = new this());
   }
 
-  public async getApplicationDetails(
+  async getApplicationDetails(
     supportingUserType: SupportingUserType,
     payload: ApplicationIdentifierAPIInDTO,
   ): Promise<ApplicationAPIOutDTO> {

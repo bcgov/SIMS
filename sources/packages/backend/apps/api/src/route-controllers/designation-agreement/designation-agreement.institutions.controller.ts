@@ -25,7 +25,12 @@ import {
 import { InstitutionUserRoles } from "../../auth/user-types.enum";
 import { FormNames } from "../../services/form/constants";
 import { DesignationAgreementControllerService } from "./designation-agreement.controller.service";
-import { ApiTags } from "@nestjs/swagger";
+import {
+  ApiBadRequestResponse,
+  ApiForbiddenResponse,
+  ApiTags,
+  ApiUnprocessableEntityResponse,
+} from "@nestjs/swagger";
 import BaseController from "../BaseController";
 import { ClientTypeBaseRoute } from "../../types";
 /***
@@ -51,6 +56,17 @@ export class DesignationAgreementInstitutionsController extends BaseController {
    * @returns the new designation agreement id created.
    */
   @Post()
+  @ApiForbiddenResponse({
+    description:
+      "User does not have the rights to create a designation agreement.",
+  })
+  @ApiBadRequestResponse({
+    description:
+      "Not able to create a designation agreement due to an invalid request.",
+  })
+  @ApiUnprocessableEntityResponse({
+    description: "Institution already has a pending designation agreement.",
+  })
   async submitDesignationAgreement(
     @UserToken() userToken: IInstitutionUserToken,
     @Body() payload: SubmitDesignationAgreementAPIInDTO,
