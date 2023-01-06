@@ -168,6 +168,7 @@ export class AssessmentControllerService {
     }
     return {
       applicationNumber: assessment.application.applicationNumber,
+      applicationStatus: assessment.application.applicationStatus,
       institutionName:
         assessment.offering.educationProgram.institution.operatingName,
       offeringIntensity: assessment.offering.offeringIntensity,

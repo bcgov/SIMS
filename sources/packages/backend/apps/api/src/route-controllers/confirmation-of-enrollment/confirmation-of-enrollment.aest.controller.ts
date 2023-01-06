@@ -52,9 +52,11 @@ export class ConfirmationOfEnrollmentAESTController extends BaseController {
     disbursementScheduleId: number,
     @UserToken() userToken: IUserToken,
   ): Promise<void> {
+    // Ministry must be able to confirm enrolment(s) even outside the valid COE window.
     await this.confirmationOfEnrollmentControllerService.confirmEnrollment(
       disbursementScheduleId,
       userToken.userId,
+      { allowOutsideCOEWindow: true },
     );
   }
 }

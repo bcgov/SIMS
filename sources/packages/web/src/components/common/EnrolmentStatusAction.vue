@@ -3,7 +3,7 @@
   <check-permission-role :role="Role.StudentConfirmEnrolment">
     <template #="{ notAllowed }">
       <v-btn
-        v-if="showConfirmEnrolment"
+        v-if="isConfirmCOEEnabled"
         variant="text"
         color="primary"
         @click="submitConfirmEnrolment"
@@ -35,7 +35,7 @@
 
 <script lang="ts">
 import { PropType, computed, defineComponent, ref } from "vue";
-import { StatusInfo, COEStatus, Role } from "@/types";
+import { StatusInfo, COEStatus, Role, ApplicationStatus } from "@/types";
 import { ModalDialog } from "@/composables";
 import StatusInfoEnrolment from "@/components/common/StatusInfoEnrolment.vue";
 import ConfirmModal from "@/components/common/modals/ConfirmModal.vue";
@@ -54,9 +54,13 @@ export default defineComponent({
       type: Object as PropType<COEStatus>,
       required: true,
     },
+    applicationStatus: {
+      type: Object as PropType<ApplicationStatus>,
+      required: false,
+    },
     disbursementId: {
       type: Number,
-      required: true,
+      required: false,
     },
     allowConfirmEnrolment: {
       type: Boolean,
@@ -65,9 +69,14 @@ export default defineComponent({
   },
   setup(props, context) {
     const confirmEnrolmentModal = ref({} as ModalDialog<boolean>);
-    const showConfirmEnrolment = computed<boolean>(
+    const isConfirmCOEEnabled = computed<boolean>(
       () =>
-        props.allowConfirmEnrolment && props.coeStatus === COEStatus.required,
+        !!(
+          props.allowConfirmEnrolment &&
+          props.coeStatus === COEStatus.required &&
+          (props.applicationStatus === ApplicationStatus.enrollment ||
+            props.applicationStatus === ApplicationStatus.completed)
+        ),
     );
     const submitConfirmEnrolment = async () => {
       const enrolmentConfirmation =
@@ -77,7 +86,7 @@ export default defineComponent({
       }
     };
     return {
-      showConfirmEnrolment,
+      isConfirmCOEEnabled,
       submitConfirmEnrolment,
       confirmEnrolmentModal,
       Role,

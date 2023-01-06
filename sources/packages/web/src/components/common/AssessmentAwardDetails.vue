@@ -24,6 +24,7 @@
               :coeStatus="
                 assessmentAwardData.estimatedAward.disbursement1Status
               "
+              :applicationStatus="assessmentAwardData.applicationStatus"
               :disbursementId="
                 assessmentAwardData.estimatedAward.disbursement1Id
               "
@@ -113,6 +114,7 @@
               :coeStatus="
                 assessmentAwardData.estimatedAward.disbursement2Status
               "
+              :applicationStatus="assessmentAwardData.applicationStatus"
               :disbursementId="
                 assessmentAwardData.estimatedAward.disbursement2Id
               "

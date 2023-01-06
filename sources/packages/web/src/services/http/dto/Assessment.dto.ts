@@ -57,6 +57,7 @@ export interface AssessmentNOAAPIOutDTO {
 
 export interface AwardDetailsAPIOutDTO {
   applicationNumber: string;
+  applicationStatus: ApplicationStatus;
   institutionName: string;
   offeringIntensity: OfferingIntensity;
   offeringStudyStartDate: string;

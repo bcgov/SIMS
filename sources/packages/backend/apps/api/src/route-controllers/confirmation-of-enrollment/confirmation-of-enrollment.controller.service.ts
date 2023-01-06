@@ -57,6 +57,7 @@ export class ConfirmationOfEnrollmentControllerService extends BaseController {
     }
 
     if (
+      !options?.allowOutsideCOEWindow &&
       !this.applicationService.withinValidCOEWindow(
         new Date(disbursementSchedule.disbursementDate),
       )
