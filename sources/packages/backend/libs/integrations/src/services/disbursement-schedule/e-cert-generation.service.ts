@@ -211,7 +211,6 @@ export class ECertGenerationService {
       // Necessary, for instance, for the overawards processing.
       .orderBy("disbursement.disbursementDate")
       .getRawAndEntities();
-    // TODO: ensure stopFullTimeBCFunding is false for Part time.
     return mapFromRawAndEntities<ECertDisbursementSchedule>(
       queryResult,
       "stopFullTimeBCFunding",

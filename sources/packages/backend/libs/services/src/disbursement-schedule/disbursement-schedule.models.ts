@@ -1,9 +1,5 @@
 import { ECertDisbursementSchedule } from "@sims/integrations/services";
-import {
-  DisbursementSchedule,
-  DisbursementValue,
-  DisbursementValueType,
-} from "@sims/sims-db";
+import { DisbursementValue, DisbursementValueType } from "@sims/sims-db";
 
 export interface DisbursementSaveValue {
   valueCode: string;

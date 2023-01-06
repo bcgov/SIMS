@@ -582,20 +582,17 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
   }
 
   /**
-   * Try to settle a student debit from one of the two situations below:
-   * 1. Money already received by the student for the same application that is being reassessed.
-   * 2. Money owed by the student due to some previous overaward in some previous application.
-   * In both cases, the reassessment will result in some amount of money that the student must
-   * receive, witch will receive deductions based on the two scenarios above.
-   * @param awards specific award being adjusted (e.g CSLF, BGPD, BCSL). This will contain one or
+   * During a reassessment, if the student had already received any amount of money for the
+   * same application, this amount must be subtracted from the new reassessment awards amounts.
+   * @param awards specific award being adjusted (e.g BGPD). This will contain one or
    * two entries, always from the same award, from where the student debit will be deducted.
-   * The debit will try to be settle as much as possible with the first entry. If it is not enough
-   * if will check for the second entry, when present, if it is not enough, the remaining value will
-   * be returned to let the caller of the method aware that part of the debit was not payed.
-   * @param totalStudentDebit total student debit to be deducted.
-   * @param subtractOrigin indicates if the debit comes from values already payed for the application
-   * being processed (PreviousDisbursement) or if it is from some existing overaward prior to this
-   * application (Overaward)
+   * The debit will try to be settle as much as possible with the first award. If it is not enough
+   * if will check for the second award (second disbursement), when present, if it is not enough, the
+   * remaining value will be returned to let the caller of the method aware that part of the debit
+   * was not payed.
+   * The awards lists will be always from the same award code. For instance, the list list will contain
+   * one or two awards of type BGPD.
+   * @param totalStudentDebit total award amount already paid to be deducted.
    * @returns the remaining student debit in case the awards were not enough to pay it.
    */
   private subtractPreviousDisbursementDebit(
@@ -609,9 +606,10 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
         // Current disbursement value is enough to pay the debit.
         // For instance:
         // - Award: $1000
-        // - Student Debit: $750
+        // - Student already received: $750
         // Then
-        // - New award: $250 ($1000 - $750)
+        // - Award: $1000
+        // - disbursedAmountSubtracted: $750
         // - Student debit: $0
         award.disbursedAmountSubtracted = studentDebit.toString();
         studentDebit = 0;
@@ -620,9 +618,10 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
         // Updates total student debit.
         // For instance:
         // - Award: $500
-        // - Student Debit: $750
+        // - Student already received: $750
         // Then
-        // - New award: $0
+        // - Award: $500
+        // - disbursedAmountSubtracted: $500
         // - Student debit: $250
         // If there is one more disbursement with the same award, the $250
         // student debit will be taken from there, if possible executing the
