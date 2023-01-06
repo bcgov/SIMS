@@ -222,7 +222,9 @@ export class ECertGenerationService {
     disbursements: ECertDisbursementSchedule[],
     entityManager: EntityManager,
   ) {
-    const studentsIds = disbursements.map((student) => student.id);
+    const studentsIds = disbursements.map(
+      (disbursement) => disbursement.studentAssessment.application.student.id,
+    );
     // Get all the overawards balances for the students that are part of the disbursements.
     const overawardsBalance =
       await this.disbursementOverawardService.getOverawardBalance(

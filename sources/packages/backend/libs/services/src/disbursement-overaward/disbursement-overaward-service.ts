@@ -26,6 +26,8 @@ export class DisbursementOverawardService extends RecordDataModelService<Disburs
     studentIds: number[],
     entityManager: EntityManager,
   ): Promise<StudentOverawardBalance> {
+    // This query supports up to 65000 students.
+    const distinctStudentIds = [...new Set(studentIds)];
     const totalAwards = await entityManager
       .getRepository(DisbursementOveraward)
       .createQueryBuilder("disbursementOveraward")
@@ -34,7 +36,7 @@ export class DisbursementOverawardService extends RecordDataModelService<Disburs
       .addSelect("SUM(disbursementOveraward.overawardValue)", "total")
       .innerJoin("disbursementOveraward.student", "student")
       .where("student.id IN (:...studentIds)", {
-        studentIds,
+        studentIds: distinctStudentIds,
       })
       .groupBy("student.id")
       .addGroupBy("disbursementOveraward.disbursementValueCode")

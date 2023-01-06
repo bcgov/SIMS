@@ -8,8 +8,10 @@ import {
   Assessment,
   COEStatus,
   DisbursementOveraward,
+  DisbursementOverawardOriginType,
   DisbursementSchedule,
   DisbursementScheduleStatus,
+  DisbursementValue,
   DisbursementValueType,
   EducationProgramOffering,
   MSFAANumber,
@@ -20,6 +22,7 @@ import {
 } from "@sims/sims-db";
 import {
   createFakeApplication,
+  createFakeDisbursementOveraward,
   createFakeDisbursementSchedule,
   createFakeDisbursementValue,
   createFakeEducationProgramOffering,
@@ -30,7 +33,7 @@ import {
 } from "@sims/test-utils";
 import { createFakeSINValidation } from "@sims/test-utils/factories/sin-validation";
 import sshServiceMock from "@sims/test-utils/mocks/ssh-service.mock";
-import { DataSource, Repository } from "typeorm";
+import { DataSource, IsNull, Not, Repository } from "typeorm";
 import { QueueConsumersModule } from "../../../../../queue-consumers.module";
 
 jest.setTimeout(60000);
@@ -45,6 +48,7 @@ describe("Schedulers - e-Cert full time integration - Create e-Cert file", () =>
   let msfaaNumberRepo: Repository<MSFAANumber>;
   let disbursementOverawardRepo: Repository<DisbursementOveraward>;
   let disbursementScheduleRepo: Repository<DisbursementSchedule>;
+  let disbursementValueRepo: Repository<DisbursementValue>;
 
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -68,9 +72,10 @@ describe("Schedulers - e-Cert full time integration - Create e-Cert file", () =>
     msfaaNumberRepo = dataSource.getRepository(MSFAANumber);
     disbursementOverawardRepo = dataSource.getRepository(DisbursementOveraward);
     disbursementScheduleRepo = dataSource.getRepository(DisbursementSchedule);
+    disbursementValueRepo = dataSource.getRepository(DisbursementValue);
   });
 
-  it("Should initialize ECertIntegrationModule", async () => {
+  it("Should execute overawards deductions and calculate awards effective value", async () => {
     // Arrange
 
     // User
@@ -106,12 +111,13 @@ describe("Schedulers - e-Cert full time integration - Create e-Cert file", () =>
           DisbursementValueType.CanadaLoan,
           "CSLF",
           "5000",
+          { disbursedAmountSubtracted: "1000" },
         ),
         createFakeDisbursementValue(
           DisbursementValueType.BCLoan,
           "BCSL",
           "4000",
-          { disbursedAmountSubtracted: "1000" },
+          { disbursedAmountSubtracted: "500" },
         ),
         createFakeDisbursementValue(
           DisbursementValueType.CanadaGrant,
@@ -148,8 +154,106 @@ describe("Schedulers - e-Cert full time integration - Create e-Cert file", () =>
     savedApplication.currentAssessment = savedOriginalAssessment;
     savedApplication.applicationStatus = ApplicationStatus.completed;
     await applicationRepo.save(savedApplication);
+    // Create fake overawards.
+    const fakeCanadaLoanOverawardBalance = createFakeDisbursementOveraward({
+      student: savedStudent,
+    });
+    fakeCanadaLoanOverawardBalance.disbursementValueCode = "CSLF";
+    fakeCanadaLoanOverawardBalance.overawardValue = "4500";
+    await disbursementOverawardRepo.save(fakeCanadaLoanOverawardBalance);
 
+    // Act
     const eCertResult = await eCertFileHandler.generateFullTimeECert();
-    expect(eCertResult).toBeDefined();
+
+    // Assert
+
+    // Assert Canada Loan overawards were deducted.
+    const hasCanadaLoanOverawardDeduction =
+      await disbursementOverawardRepo.exist({
+        where: {
+          student: {
+            id: savedStudent.id,
+          },
+          overawardValue: "-4000",
+          disbursementValueCode: "CSLF",
+          originType: DisbursementOverawardOriginType.AwardValueAdjusted,
+        },
+      });
+    expect(hasCanadaLoanOverawardDeduction).toBe(true);
+
+    // Assert schedule is updated to 'sent' with the dateSent defined.
+    const scheduleIsSent = await disbursementScheduleRepo.exist({
+      where: {
+        id: firstSchedule.id,
+        dateSent: Not(IsNull()),
+        disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
+      },
+    });
+    expect(scheduleIsSent).toBe(true);
+
+    // Assert awards
+
+    // Select all awards generated for the schedule.
+    const awards = await disbursementValueRepo.find({
+      where: { disbursementSchedule: { id: firstSchedule.id } },
+    });
+    // Assert CSLF.
+    const hasExpectedCSLF = awards.filter(
+      (award) =>
+        award.valueCode === "CSLF" &&
+        award.disbursedAmountSubtracted === "1000.00" &&
+        award.overawardAmountSubtracted === "4000.00" &&
+        award.effectiveAmount === "0.00",
+    );
+    expect(hasExpectedCSLF.length).toBe(1);
+    // Assert BCSL.
+    const hasExpectedBCSL = awards.filter(
+      (award) =>
+        award.valueCode === "BCSL" &&
+        award.disbursedAmountSubtracted === "500.00" &&
+        !award.overawardAmountSubtracted &&
+        award.effectiveAmount === "3500.00",
+    );
+    expect(hasExpectedBCSL.length).toBe(1);
+    // Assert CSGP.
+    const hasExpectedCSGP = awards.filter(
+      (award) =>
+        award.valueCode === "CSGP" &&
+        !award.disbursedAmountSubtracted &&
+        !award.overawardAmountSubtracted &&
+        award.effectiveAmount === "2000.00",
+    );
+    expect(hasExpectedCSGP.length).toBe(1);
+    // Assert BCAG.
+    const hasExpectedBCAG = awards.filter(
+      (award) =>
+        award.valueCode === "BCAG" &&
+        award.disbursedAmountSubtracted === "500.00" &&
+        !award.overawardAmountSubtracted &&
+        award.effectiveAmount === "1000.00",
+    );
+    expect(hasExpectedBCAG.length).toBe(1);
+    // Assert BGPD.
+    const hasExpectedBGPD = awards.filter(
+      (award) =>
+        award.valueCode === "BGPD" &&
+        !award.disbursedAmountSubtracted &&
+        !award.overawardAmountSubtracted &&
+        award.effectiveAmount === "2500.00",
+    );
+    expect(hasExpectedBGPD.length).toBe(1);
+    // The BC total grant (BCSG) will be generated and
+    // inserted during the e-Cert process.
+    const hasExpectedBCSG = awards.filter(
+      (award) =>
+        award.valueCode === "BCSG" &&
+        !award.disbursedAmountSubtracted &&
+        !award.overawardAmountSubtracted &&
+        award.effectiveAmount === "3500.00",
+    );
+    expect(hasExpectedBCSG.length).toBe(1);
+    // At least one file must be generated.
+    expect(eCertResult.generatedFile).toBeTruthy();
+    expect(eCertResult.uploadedRecords).toBeGreaterThanOrEqual(1);
   });
 });
