@@ -57,7 +57,6 @@ import {
   ApiBadRequestResponse,
   ApiForbiddenResponse,
   ApiNotFoundResponse,
-  ApiOkResponse,
   ApiTags,
   ApiUnprocessableEntityResponse,
 } from "@nestjs/swagger";
@@ -93,9 +92,6 @@ export class ApplicationStudentsController extends BaseController {
    * @returns application details.
    */
   @Get(":id")
-  @ApiOkResponse({
-    description: "Application found.",
-  })
   @ApiNotFoundResponse({
     description: "Application id not found.",
   })
@@ -146,7 +142,6 @@ export class ApplicationStudentsController extends BaseController {
    */
   @CheckSinValidation()
   @Patch(":applicationId/submit")
-  @ApiOkResponse({ description: "Application submitted." })
   @ApiUnprocessableEntityResponse({
     description:
       "Program Year is not active or " +
@@ -257,7 +252,6 @@ export class ApplicationStudentsController extends BaseController {
    * HTTP exception if it is not possible to create it.
    */
   @CheckSinValidation()
-  @ApiOkResponse({ description: "Draft application created." })
   @ApiUnprocessableEntityResponse({
     description:
       "Program Year is not active or MORE_THAN_ONE_APPLICATION_DRAFT_ERROR.",
@@ -307,7 +301,6 @@ export class ApplicationStudentsController extends BaseController {
    */
   @CheckSinValidation()
   @Patch(":applicationId/draft")
-  @ApiOkResponse({ description: "Draft application updated." })
   @ApiNotFoundResponse({ description: "APPLICATION_DRAFT_NOT_FOUND." })
   async updateDraftApplication(
     @Body() payload: SaveApplicationAPIInDTO,
@@ -370,7 +363,6 @@ export class ApplicationStudentsController extends BaseController {
    * then consider both active and inactive program year.
    * @returns program year details of the application
    */
-  @ApiOkResponse({ description: "Program year details fetched." })
   @ApiNotFoundResponse({ description: "Student not found." })
   @Get(":applicationId/program-year")
   async programYearOfApplication(
@@ -410,9 +402,6 @@ export class ApplicationStudentsController extends BaseController {
    * @param userToken
    * @returns application
    */
-  @ApiOkResponse({
-    description: "Returns application which can be requested for change.",
-  })
   @ApiNotFoundResponse({
     description:
       "Application either not found or not eligible to request for change.",
