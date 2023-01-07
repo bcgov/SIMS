@@ -10,6 +10,8 @@ import {
   ApplicationBaseAPIOutDTO,
   ApplicationDataAPIOutDTO,
   SuccessWaitingStatus,
+  ApplicationIncomeVerification,
+  ApplicationSupportingUserDetails,
 } from "./models/application.dto";
 import {
   credentialTypeToDisplay,
@@ -32,10 +34,6 @@ import {
 } from "@sims/sims-db";
 import { ApiProcessError } from "../../types";
 import { ACTIVE_STUDENT_RESTRICTION } from "../../constants";
-import {
-  ApplicationIncomeVerification,
-  ApplicationSupportingUserDetailsAPIOutDTO,
-} from "./models/application.system.dto";
 
 /**
  * This service controller is a provider which is created to extract the implementation of
@@ -275,9 +273,8 @@ export class ApplicationControllerService {
    */
   processApplicationSupportingUserDetails(
     supportingUser: SupportingUser[],
-  ): ApplicationSupportingUserDetailsAPIOutDTO {
-    const supportingUserDetails =
-      {} as ApplicationSupportingUserDetailsAPIOutDTO;
+  ): ApplicationSupportingUserDetails {
+    const supportingUserDetails = {} as ApplicationSupportingUserDetails;
     // Parent.
     const [parent1, parent2] = supportingUser.filter(
       (incomeVerification) =>

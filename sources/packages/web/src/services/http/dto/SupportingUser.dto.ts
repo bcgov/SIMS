@@ -25,7 +25,7 @@ export interface UpdateSupportingUserAPIInDTO
   postalCode: string;
   provinceState?: string;
   sin: string;
-  supportingData: any;
+  supportingData: unknown;
 }
 
 export interface ApplicationAPIOutDTO {
@@ -40,7 +40,7 @@ export interface ApplicationSupportingUsersAPIOutDTO {
 
 export interface SupportingUserFormDataAPIOutDTO {
   formName: string;
-  supportingData: any;
+  supportingData: unknown;
   contactInfo: ContactInformationAPIOutDTO;
   sin: string;
   birthDate: string;

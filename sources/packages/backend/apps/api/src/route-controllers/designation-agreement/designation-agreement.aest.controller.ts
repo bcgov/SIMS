@@ -15,7 +15,6 @@ import {
   InstitutionLocationService,
 } from "../../services";
 import { DesignationAgreementStatus } from "@sims/sims-db";
-import { PaginationParams } from "../../utilities";
 import { getISODateOnlyString } from "@sims/utilities";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import {
@@ -31,6 +30,7 @@ import {
   DesignationAgreementDetailsAPIOutDTO,
   PendingDesignationAgreementDetailsAPIOutDTO,
   UpdateDesignationAPIInDTO,
+  DesignationAgreementSearchAPIInDTO,
 } from "./models/designation-agreement.dto";
 import { DesignationAgreementControllerService } from "./designation-agreement.controller.service";
 import {
@@ -90,19 +90,19 @@ export class DesignationAgreementAESTController extends BaseController {
   /**
    * API to retrieve all designations by status.
    * @param designationStatus status to be searched.
-   * @param searchCriteria to search designation.
+   * @param designationAgreementSearch to search designation.
    * @returns Pending designations.
    */
   @Get("status/:designationStatus")
   async getDesignationAgreementByStatus(
     @Param("designationStatus", new ParseEnumPipe(DesignationAgreementStatus))
     designationStatus: DesignationAgreementStatus,
-    @Query(PaginationParams.SearchCriteria) searchCriteria: string,
+    @Query() designationAgreementSearch: DesignationAgreementSearchAPIInDTO,
   ): Promise<PendingDesignationAgreementDetailsAPIOutDTO[]> {
     const pendingDesignations =
       await this.designationAgreementService.getDesignationAgreementsByStatus(
         designationStatus,
-        searchCriteria,
+        designationAgreementSearch?.searchCriteria,
       );
     return pendingDesignations.map((pendingDesignation) => ({
       designationId: pendingDesignation.id,

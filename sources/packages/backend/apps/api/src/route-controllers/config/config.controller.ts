@@ -3,7 +3,7 @@ import { ApiTags } from "@nestjs/swagger";
 import { Public } from "../../auth/decorators/public.decorator";
 import { ConfigService } from "@sims/utilities/config";
 import BaseController from "../BaseController";
-import { ConfigAPIOutDTO } from "./models/get-config.dto";
+import { ConfigAPIOutDTO } from "./models/config.dto";
 
 @Controller("config")
 @ApiTags("config")

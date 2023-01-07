@@ -39,6 +39,7 @@ import {
   ApplicationWithProgramYearAPIOutDTO,
   ApplicationIdentifiersAPIOutDTO,
   ApplicationNumberParamAPIInDTO,
+  InProgressApplicationDetailsAPIOutDTO,
 } from "./models/application.dto";
 import {
   AllowAuthorizedParty,
@@ -61,7 +62,6 @@ import {
   ApiUnprocessableEntityResponse,
 } from "@nestjs/swagger";
 import { ApplicationControllerService } from "./application.controller.service";
-import { InProgressApplicationDetailsAPIOutDTO } from "./models/application.system.dto";
 import { WorkflowClientService } from "@sims/services";
 import { CustomNamedError } from "@sims/utilities";
 

@@ -16,7 +16,10 @@ import {
   ValidateNested,
   Allow,
   IsIn,
+  IsOptional,
 } from "class-validator";
+
+const PAGINATION_SEARCH_MAX_LENGTH = 200;
 
 /**
  * Approve/Deny a designation agreement.
@@ -59,7 +62,7 @@ export class UpdateDesignationAPIInDTO {
  */
 export class SubmitDesignationAgreementAPIInDTO {
   @Allow()
-  dynamicData: any;
+  dynamicData: unknown;
   @Allow()
   locations: SubmittedLocationsAPIInDTO[];
 }
@@ -79,7 +82,7 @@ export class DesignationAgreementAPIOutDTO {
   designationId: number;
   designationStatus: DesignationAgreementStatus;
   locationsDesignations: LocationDesignationAPIOutDTO[];
-  submittedData: any;
+  submittedData: unknown;
   startDate: string;
   endDate: string;
   institutionId: number;
@@ -138,4 +141,13 @@ export class UpdateDesignationDetailsAPIInDTO {
   @IsNotEmpty()
   @MaxLength(NOTE_DESCRIPTION_MAX_LENGTH)
   note: string;
+}
+
+export class DesignationAgreementSearchAPIInDTO {
+  /**
+   * Criteria to be used to filter the records.
+   */
+  @IsOptional()
+  @MaxLength(PAGINATION_SEARCH_MAX_LENGTH)
+  searchCriteria?: string;
 }

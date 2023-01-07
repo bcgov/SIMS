@@ -59,7 +59,7 @@ export class DesignationAgreementControllerService {
           designationLocationId: agreementLocation.id,
         }),
       ),
-    } as DesignationAgreementAPIOutDTO;
+    };
   }
 
   /**
@@ -76,15 +76,12 @@ export class DesignationAgreementControllerService {
       await this.designationAgreementService.getInstitutionDesignationsById(
         institutionId,
       );
-    return designations.map(
-      (designation) =>
-        ({
-          designationId: designation.id,
-          designationStatus: designation.designationStatus,
-          submittedDate: designation.submittedDate,
-          startDate: getISODateOnlyString(designation.startDate),
-          endDate: getISODateOnlyString(designation.endDate),
-        } as DesignationAgreementDetailsAPIOutDTO),
-    );
+    return designations.map((designation) => ({
+      designationId: designation.id,
+      designationStatus: designation.designationStatus,
+      submittedDate: designation.submittedDate,
+      startDate: designation.startDate,
+      endDate: designation.endDate,
+    }));
   }
 }

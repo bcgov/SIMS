@@ -44,7 +44,7 @@ export class UpdateSupportingUserAPIInDTO {
   @IsNotEmpty()
   studentsLastName: string;
   @IsNotEmptyObject()
-  supportingData: any;
+  supportingData: unknown;
 }
 
 export class ApplicationAPIOutDTO {
@@ -59,7 +59,7 @@ export class ApplicationSupportingUsersAPIOutDTO {
 
 export class SupportingUserFormDataAPIOutDTO {
   formName: string;
-  supportingData: any;
+  supportingData: unknown;
   contactInfo: ContactInfo;
   sin: string;
   birthDate: string;
