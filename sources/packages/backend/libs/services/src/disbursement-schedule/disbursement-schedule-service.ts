@@ -316,6 +316,7 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
           valueAmount: true,
           overawardAmountSubtracted: true,
           disbursedAmountSubtracted: true,
+          effectiveAmount: true,
         },
         studentAssessment: {
           id: true,
@@ -455,7 +456,7 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
       .forEach((disbursementValue) => {
         totalPerValueCode[disbursementValue.valueCode] =
           (totalPerValueCode[disbursementValue.valueCode] ?? 0) +
-          +disbursementValue.effectiveAmount;
+          +(disbursementValue.effectiveAmount ?? 0);
       });
     return totalPerValueCode;
   }

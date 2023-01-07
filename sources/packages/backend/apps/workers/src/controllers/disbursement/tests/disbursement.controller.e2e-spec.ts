@@ -89,17 +89,19 @@ describe("Disbursement Schedule Service - Create disbursement", () => {
           DisbursementValueType.CanadaLoan,
           "CSLF",
           "1250",
+          { effectiveAmount: "1250" },
         ),
         createFakeDisbursementValue(
           DisbursementValueType.BCLoan,
           "BCSL",
           "800",
-          { disbursedAmountSubtracted: "50" },
+          { disbursedAmountSubtracted: "50", effectiveAmount: "750" },
         ),
         createFakeDisbursementValue(
           DisbursementValueType.CanadaGrant,
           "CSGP",
           "1500",
+          { effectiveAmount: "1500" },
         ),
       ],
     });
