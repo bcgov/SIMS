@@ -22,10 +22,7 @@ import {
   DisbursementOverawardOriginType,
 } from "@sims/sims-db";
 import { ECertDisbursementSchedule } from "./e-cert-generation.models";
-import {
-  AwardOverawardBalance,
-  StudentOverawardBalance,
-} from "@sims/services/disbursement-overaward/disbursement-overaward.models";
+import { AwardOverawardBalance } from "@sims/services/disbursement-overaward/disbursement-overaward.models";
 import {
   BC_FUNDING_TYPES,
   BC_TOTAL_GRANT_AWARD_CODE,
