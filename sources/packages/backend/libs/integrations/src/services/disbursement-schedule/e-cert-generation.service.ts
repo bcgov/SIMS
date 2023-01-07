@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { DISBURSEMENT_FILE_GENERATION_ANTICIPATION_DAYS } from "../../constants";
-import { addDays } from "@sims/utilities";
+import { addDays, round } from "@sims/utilities";
 import { EntityManager } from "typeorm";
 import {
   AwardValueWithRelatedSchedule,
@@ -22,7 +22,10 @@ import {
   DisbursementOverawardOriginType,
 } from "@sims/sims-db";
 import { ECertDisbursementSchedule } from "./e-cert-generation.models";
-import { StudentOverawardBalance } from "@sims/services/disbursement-overaward/disbursement-overaward.models";
+import {
+  AwardOverawardBalance,
+  StudentOverawardBalance,
+} from "@sims/services/disbursement-overaward/disbursement-overaward.models";
 import {
   BC_FUNDING_TYPES,
   BC_TOTAL_GRANT_AWARD_CODE,
@@ -36,6 +39,12 @@ import { SystemUsersService } from "@sims/services/system-users";
  */
 const DISBURSEMENT_SCHEDULES_UPDATE_CHUNK_SIZE = 1000;
 
+/**
+ * Manages all the preparation of the disbursements data needed to
+ * generate the e-Cert. Check and execute possible overawards deductions
+ * and calculate the awards effective values to be used to generate the e-Cert.
+ * All methods are prepared to be executed on a single transaction.
+ */
 @Injectable()
 export class ECertGenerationService {
   constructor(
@@ -44,6 +53,13 @@ export class ECertGenerationService {
     private readonly systemUsersService: SystemUsersService,
   ) {}
 
+  /**
+   * Get the information needed for the e-Cert generation, execute all
+   * calculations needed and return the records ready to generate the e-Cert file.
+   * @param offeringIntensity disbursement offering intensity.
+   * @param entityManager used to execute the commands in the same transaction.
+   * @returns records ready to generate the e-Cert file.
+   */
   async prepareDisbursementsForECertGeneration(
     offeringIntensity: OfferingIntensity,
     entityManager: EntityManager,
@@ -87,12 +103,15 @@ export class ECertGenerationService {
    * Criteria to be a valid disbursement to be sent.
    * - Not sent yet;
    * - Disbursement date in the past or in the near future (defined by DISBURSEMENT_FILE_GENERATION_ANTICIPATION_DAYS);
-   * - Student had the SIN number validated by the CRA;
-   * - Student has a valid signed MSFAA;
+   * - Student had the SIN validated by the CRA;
+   * - Student has a valid signed MSFAA and not cancelled;
    * - No restrictions in the student account that prevents the disbursement;
    * - Application status must be 'Completed';
    * - Confirmation of enrollment(COE) must be 'Completed'.
    * - Disbursement schedule on pending status.
+   * @param offeringIntensity disbursement offering intensity.
+   * @param entityManager used to execute the commands in the same transaction.
+   * @returns records that must be part of the e-Cert.
    */
   private async getECertInformationToBeSent(
     offeringIntensity: OfferingIntensity,
@@ -186,7 +205,8 @@ export class ECertGenerationService {
       .andWhere("application.applicationStatus = :applicationStatus", {
         applicationStatus: ApplicationStatus.completed,
       })
-      .andWhere("msfaaNumber.dateSigned is not null")
+      .andWhere("msfaaNumber.dateSigned IS NOT NULL")
+      .andWhere("msfaaNumber.cancelledDate IS NULL")
       .andWhere("sinValidation.isValidSIN = true")
       .andWhere("offering.offeringIntensity = :offeringIntensity", {
         offeringIntensity,
@@ -217,6 +237,12 @@ export class ECertGenerationService {
     );
   }
 
+  /**
+   * Get the overawards balance consolidated per student and per loan award to
+   * apply, if needed, the overawards deductions.
+   * @param disbursements all disbursements that are part of one e-Cert.
+   * @param entityManager used to execute the commands in the same transaction.
+   */
   private async applyOverawardsDeductions(
     disbursements: ECertDisbursementSchedule[],
     entityManager: EntityManager,
@@ -230,18 +256,31 @@ export class ECertGenerationService {
         studentsIds,
         entityManager,
       );
-
     // Apply the overawards for every student, if needed.
     for (const studentId of studentsIds) {
+      if (!overawardsBalance[studentId]) {
+        // No overaward balance is present for the student.
+        continue;
+      }
+      // Filter the disbursements for the student.
+      const studentSchedules = disbursements.filter(
+        (disbursement) =>
+          disbursement.studentAssessment.application.student.id === studentId,
+      );
       await this.applyOverawardsDeductionsForECertGeneration(
         studentId,
-        disbursements,
-        overawardsBalance,
+        studentSchedules,
+        overawardsBalance[studentId],
         entityManager,
       );
     }
   }
 
+  /**
+   * Calculate the effective value for every award. The result of this calculation
+   * will be the value used to generate the e-Cert.
+   * @param disbursements all disbursements that are part of one e-Cert.
+   */
   private calculateEffectiveValue(disbursements: ECertDisbursementSchedule[]) {
     for (const disbursement of disbursements) {
       for (const disbursementValue of disbursement.disbursementValues) {
@@ -252,7 +291,7 @@ export class ECertGenerationService {
             +disbursementValue.valueAmount -
             +(disbursementValue.disbursedAmountSubtracted ?? 0) -
             +(disbursementValue.overawardAmountSubtracted ?? 0);
-          disbursementValue.effectiveAmount = effectiveValue.toString();
+          disbursementValue.effectiveAmount = round(effectiveValue).toString();
         }
       }
     }
@@ -282,7 +321,7 @@ export class ECertGenerationService {
         bcTotalGrant.valueType = DisbursementValueType.BCTotalGrant;
         disbursementSchedule.disbursementValues.push(bcTotalGrant);
       }
-      bcTotalGrant.valueAmount = disbursementSchedule.disbursementValues
+      const bcTotalGrantValueAmount = disbursementSchedule.disbursementValues
         // Filter all BC grants.
         .filter(
           (disbursementValue) =>
@@ -293,25 +332,26 @@ export class ECertGenerationService {
           return previousValue + +currentValue.effectiveAmount;
         }, 0)
         .toString();
-      bcTotalGrant.effectiveAmount = bcTotalGrant.valueAmount;
+      bcTotalGrant.valueAmount = bcTotalGrantValueAmount;
+      bcTotalGrant.effectiveAmount = bcTotalGrantValueAmount;
     }
   }
 
+  /**
+   * For a single student, check if there is an overaward balance, updates the awards
+   * with the deductions, if needed, and adjust the student overaward balance if a
+   * deduction happen.
+   * @param studentId student to be verified.
+   * @param studentSchedules student disbursements that are part of one e-Cert.
+   * @param studentsOverawardBalance overaward balance for the student.
+   * @param entityManager used to execute the commands in the same transaction.
+   */
   private async applyOverawardsDeductionsForECertGeneration(
     studentId: number,
-    allDisbursementSchedules: ECertDisbursementSchedule[],
-    studentsOverawardBalance: StudentOverawardBalance,
+    studentSchedules: ECertDisbursementSchedule[],
+    studentOverawardBalance: AwardOverawardBalance,
     entityManager: EntityManager,
   ): Promise<void> {
-    if (!studentsOverawardBalance[studentId]) {
-      // No overaward balance is present for the student.
-      return;
-    }
-    // Filter the disbursements for the student.
-    const studentSchedules = allDisbursementSchedules.filter(
-      (disbursement) =>
-        disbursement.studentAssessment.application.student.id === studentId,
-    );
     // List of loan awards with the associated disbursement schedule.
     // Filter possible awards that will not be disbursed due to a restriction.
     // If the award will not be disbursed the overaward should not be deducted
@@ -327,7 +367,6 @@ export class ECertGenerationService {
           loanAward.awardValue,
         ),
     );
-
     // Unique codes to allow the overawards deduction to happen in a sequential way.
     const distinctValueCodes = [
       ...new Set(loanAwards.map((loan) => loan.awardValue.valueCode)),
@@ -339,8 +378,7 @@ export class ECertGenerationService {
         (loanAward) => loanAward.awardValue.valueCode === valueCode,
       );
       // Total overaward balance for the student for this particular award.
-      const overawardBalance =
-        studentsOverawardBalance[studentId][valueCode] ?? 0;
+      const overawardBalance = studentOverawardBalance[valueCode] ?? 0;
       if (!overawardBalance) {
         // There are overawards to be subtracted for this award.
         continue;
@@ -376,6 +414,13 @@ export class ECertGenerationService {
     }
   }
 
+  /**
+   * Determine when a BC Full-time funding should not be disbursed.
+   * In this case the e-Cert can still be generated with th federal funding.
+   * @param schedule disbursement to be checked.
+   * @param disbursementValue award to be checked.
+   * @returns true if the funding should not be disbursed, otherwise, false.
+   */
   private shouldStopFunding(
     schedule: ECertDisbursementSchedule,
     disbursementValue: DisbursementValue,
@@ -388,6 +433,14 @@ export class ECertGenerationService {
     );
   }
 
+  /**
+   * Get the list of the awards from all disbursements with the associated
+   * schedule. Useful to generate the overaward balance deduction record.
+   * @param disbursementSchedules schedules to have the awards listed.
+   * @param valueTypes types to be part of the final awards list.
+   * @returns awards filtered by the types requested with the associated
+   * disbursement schedule.
+   */
   private getAwardsByTypeWithRelatedSchedule(
     disbursementSchedules: ECertDisbursementSchedule[],
     valueTypes: DisbursementValueType[],
@@ -433,7 +486,7 @@ export class ECertGenerationService {
         // - overawardAmountSubtracted: $750
         // - currentBalance: $0
         award.overawardAmountSubtracted = currentBalance.toString();
-        // Cancel because there is nothing else to be subtracted.
+        // Cancel because there is nothing else to be deducted.
         return;
       } else {
         // Current disbursement is not enough to pay the debit.

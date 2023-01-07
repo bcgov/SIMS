@@ -30,7 +30,7 @@ import { SystemUsersService } from "@sims/services/system-users";
 const TRANSACTION_IDLE_TIMEOUT_SECONDS = 600;
 
 /**
- * Service layer for Student Application disbursement schedules.
+ * Service layer for the student application assessment calculations for the disbursement schedules.
  * Assumptions and concepts:
  * - sims.disbursement_overawards can also be referred as overaward balance table or overaward history table.
  * - One assessment/reassessment will have one or two dates to be disbursed, a.k.a. disbursement schedule.
@@ -49,7 +49,7 @@ const TRANSACTION_IDLE_TIMEOUT_SECONDS = 600;
  * the second one will be able to detect that the fist one already processed the disbursements.
  * - A reassessment only produces an overaward if the application had some money sent(disbursed) already. Applications that have all theirs disbursements in 'pending'
  * state will be freely recalculated but will never generate an overaward.
- * - An application will only have money disbursed during between its offering start/end dates. The disbursement schedules are generated always between start and and dates,
+ * - An application will only have money disbursed between its offering start/end dates. The disbursement schedules are generated always between start and and dates,
  * which also means that the money will only be sent sometime between offering start/end dates.
  * - Considering the above assumptions and below applications for a same student where current date is Dec 2022.
  * -------------------------------------
@@ -62,7 +62,7 @@ const TRANSACTION_IDLE_TIMEOUT_SECONDS = 600;
  * - Application 1000000001 will have money disbursed only between Jan-2023 and May-2023 and while this is happening, applications 1000000002 and 1000000003
  * will never generate an overaward. For instance, application 1000000002 will never have any money disbursed before its start date (Jul-2023), which means that
  * any reassessment will just generate new numbers, remember, no money sent no overaward generated ever.
- * - Any deviation from the above statements is considered an edge case and must be adjusted and adjusted manually by the Ministry.
+ * - Any deviation from the above statements is considered an edge case and must be adjusted manually by the Ministry.
  */
 @Injectable()
 export class DisbursementScheduleService extends RecordDataModelService<DisbursementSchedule> {
@@ -287,12 +287,13 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
   }
 
   /**
-   * Get disbursement schedules values that are either pending or were already disbursed.
+   * Get disbursement schedules (and its awards values) that are either pending or were already disbursed.
    * All possible versions of the same application will be considered, including overridden ones.
    * For instance, if a disbursement schedule was ever marked as disbursed it will matter for
    * calculations of the values already paid for the student.
    * @param studentId student id.
    * @param applicationNumber application number to have the disbursements retrieved.
+   * @param status disbursement schedule status.
    * @param entityManager used to execute the commands in the same transaction.
    * @returns disbursement schedules relevant to overaward calculation.
    */
@@ -502,13 +503,12 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
    * For a particular loan award, when the money amount already disbursed is
    * greater than the amount of money the student need to received, an
    * overaward is added to the student account.
-   * @param assessmentId assessment being processed.
-   * @param studentId student.
+   * @param assessmentId assessment id being processed.
+   * @param studentId student id.
    * @param disbursementSchedules disbursement schedules with the awards to
    * be verified and possibility adjusted.
    * @param totalAlreadyDisbursedValues total disbursed values for this the application.
    * @param entityManager used to execute the commands in the same transaction.
-   * @returns
    */
   private async createLoansOverawards(
     assessmentId: number,

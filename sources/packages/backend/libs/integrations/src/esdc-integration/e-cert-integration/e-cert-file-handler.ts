@@ -108,12 +108,14 @@ export class ECertFileHandler extends ESDCFileHandler {
   }
 
   /**
-   * Get all Full-Time/Part-Time disbursements available to be sent to ESDC.
+   * Generate the e-Cert file for Full-Time/Part-Time disbursements available to be sent to ESDC.
    * Consider any record that is scheduled in upcoming days or in the past.
-   * @param eCertIntegrationService
+   * @param eCertIntegrationService Full-Time/Part-Time integration responsible
+   * for the respective integration.
    * @param offeringIntensity disbursement offering intensity.
-   * @param fileCode File code applicable for Part-Time or Full-Time.
-   * @param sequenceGroupPrefix Sequence group application for Part-Time or Full-Time.
+   * @param fileCode file code applicable for Part-Time or Full-Time.
+   * @param sequenceGroupPrefix sequence group prefix for Part-Time or Full-Time
+   * file sequence generation.
    * @returns result of the file upload with the file generated and the
    * amount of records added to the file.
    */
@@ -127,9 +129,8 @@ export class ECertFileHandler extends ESDCFileHandler {
       `Retrieving ${offeringIntensity} disbursements to generate the e-Cert file...`,
     );
     try {
-      const now = new Date();
       const sequenceGroup = `${sequenceGroupPrefix}_${getISODateOnlyString(
-        now,
+        new Date(),
       )}`;
       let uploadResult: ECertUploadResult;
       await this.sequenceService.consumeNextSequence(
@@ -159,8 +160,19 @@ export class ECertFileHandler extends ESDCFileHandler {
     }
   }
 
+  /**
+   * Prepare the disbursements for e-Cert generation and upload the e-Cert file.
+   * @param sequenceNumber e-Cert sequence number.
+   * @param entityManager manages the current DB transaction.
+   * @param eCertIntegrationService Full-Time/Part-Time integration responsible
+   * for the respective integration.
+   * @param offeringIntensity disbursement offering intensity.
+   * @param fileCode file code applicable for Part-Time or Full-Time.
+   * @returns information of the uploaded e-Cert file.
+   * @throws CustomNamedError ECERT_GENERATION_NO_RECORDS_AVAILABLE
+   */
   private async processECert(
-    nextSequenceNumber: number,
+    sequenceNumber: number,
     entityManager: EntityManager,
     eCertIntegrationService: ECertIntegrationService,
     offeringIntensity: OfferingIntensity,
@@ -188,15 +200,11 @@ export class ECertFileHandler extends ESDCFileHandler {
       this.logger.log(`Creating  ${offeringIntensity} e-Cert file content...`);
       const fileContent = eCertIntegrationService.createRequestContent(
         disbursementRecords,
-        nextSequenceNumber,
+        sequenceNumber,
       );
 
       // Create the request filename with the file path for the e-Cert File.
-      const fileInfo = await this.createRequestFileName(
-        fileCode,
-        nextSequenceNumber,
-      );
-
+      const fileInfo = this.createRequestFileName(fileCode, sequenceNumber);
       this.logger.log(`Uploading ${offeringIntensity} content...`);
       await eCertIntegrationService.uploadContent(
         fileContent,

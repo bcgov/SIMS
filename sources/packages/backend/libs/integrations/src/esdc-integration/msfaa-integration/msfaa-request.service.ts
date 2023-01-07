@@ -87,7 +87,7 @@ export class MSFAARequestService extends ESDCFileHandler {
           );
           // Create the request filename with the file path for the MSFAA Request
           // sent File.
-          const fileInfo = await this.createRequestFileName(
+          const fileInfo = this.createRequestFileName(
             fileCode,
             nextSequenceNumber,
           );

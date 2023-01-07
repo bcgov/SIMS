@@ -141,7 +141,7 @@ describe("Schedulers - e-Cert full time integration - Create e-Cert file", () =>
     firstSchedule.disbursementScheduleStatus =
       DisbursementScheduleStatus.Pending;
     fakeOriginalAssessment.disbursementSchedules = [firstSchedule];
-    // Reassessment.
+    // Offering.
     const fakeOffering = createFakeEducationProgramOffering({
       auditUser: savedUser,
     });

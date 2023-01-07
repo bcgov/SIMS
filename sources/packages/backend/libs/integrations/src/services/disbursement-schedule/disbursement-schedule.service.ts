@@ -1,28 +1,13 @@
-import * as dayjs from "dayjs";
 import { Injectable } from "@nestjs/common";
-import { StudentRestrictionSharedService } from "@sims/services";
-import { DISBURSEMENT_FILE_GENERATION_ANTICIPATION_DAYS } from "@sims/services/constants";
-import {
-  RecordDataModelService,
-  DisbursementSchedule,
-  OfferingIntensity,
-  RestrictionActionType,
-  ApplicationStatus,
-  COEStatus,
-  mapFromRawAndEntities,
-} from "@sims/sims-db";
-import { DataSource, In, Repository } from "typeorm";
-import { ECertDisbursementSchedule } from "./disbursement-schedule.models";
+import { RecordDataModelService, DisbursementSchedule } from "@sims/sims-db";
+import { DataSource } from "typeorm";
 
 /**
  * Service layer for Student Application disbursement schedules.
  */
 @Injectable()
 export class DisbursementScheduleService extends RecordDataModelService<DisbursementSchedule> {
-  constructor(
-    readonly dataSource: DataSource,
-    private readonly studentRestrictionsService: StudentRestrictionSharedService,
-  ) {
+  constructor(readonly dataSource: DataSource) {
     super(dataSource.getRepository(DisbursementSchedule));
   }
 
