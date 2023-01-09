@@ -4,11 +4,9 @@ import { QueueService } from "@sims/services/queue";
 import { QueueNames } from "@sims/utilities";
 import { InjectLogger, LoggerService } from "@sims/utilities/logger";
 import { Job, Queue } from "bull";
+import { QueueProcessSummaryResult } from "../../../models/processors.models";
 import { BaseScheduler } from "../../base-scheduler";
-import {
-  GeneratedDateQueueInDTO,
-  ECEProcessResultQueueOutDTO,
-} from "./models/ece.model";
+import { GeneratedDateQueueInDTO } from "./models/ece.model";
 
 @Processor(QueueNames.ECEProcessIntegration)
 export class ECEProcessIntegrationScheduler extends BaseScheduler<GeneratedDateQueueInDTO> {
@@ -31,17 +29,26 @@ export class ECEProcessIntegrationScheduler extends BaseScheduler<GeneratedDateQ
   @Process()
   async processECERequest(
     job: Job<GeneratedDateQueueInDTO | undefined>,
-  ): Promise<ECEProcessResultQueueOutDTO[]> {
+  ): Promise<QueueProcessSummaryResult[]> {
     this.logger.log(
       `Processing ECE request integration job ${job.id} of type ${job.name}.`,
     );
     this.logger.log("Executing ECE request file generation ...");
-    const uploadResult = await this.eceFileService.processECEFile(
+    const uploadResults = await this.eceFileService.processECEFile(
       job.data.generatedDate,
     );
     this.logger.log("ECE request file generation completed.");
     await this.cleanSchedulerQueueHistory();
-    return uploadResult;
+
+    return uploadResults.map(
+      (uploadResult) =>
+        ({
+          summary: [
+            `The uploaded file is ${uploadResult.generatedFile}`,
+            `The number of records is ${uploadResult.uploadedRecords}`,
+          ],
+        } as QueueProcessSummaryResult),
+    );
   }
 
   @InjectLogger()

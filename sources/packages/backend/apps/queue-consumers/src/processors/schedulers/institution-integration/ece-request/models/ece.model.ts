@@ -1,6 +1,6 @@
-export interface ECEProcessResultQueueOutDTO {
-  generatedFile: string;
-  uploadedRecords: number;
+export interface ECEProcessResult {
+  processSummary: string[];
+  errorsSummary: string[];
 }
 
 export interface GeneratedDateQueueInDTO {
