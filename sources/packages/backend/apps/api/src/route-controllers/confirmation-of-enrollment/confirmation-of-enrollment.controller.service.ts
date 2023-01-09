@@ -7,9 +7,7 @@ import { DisbursementSchedule, DisbursementValueType } from "@sims/sims-db";
 import { getTotalDisbursementAmount } from "@sims/utilities";
 import {
   FIRST_COE_NOT_COMPLETE,
-  FIRST_COE_NOT_COMPLETE_MESSAGE,
   INVALID_TUITION_REMITTANCE_AMOUNT,
-  INVALID_TUITION_REMITTANCE_AMOUNT_MESSAGE,
 } from "../../constants";
 import {
   ApplicationService,
@@ -82,7 +80,7 @@ export class ConfirmationOfEnrollmentControllerService extends BaseController {
     if (disbursementSchedule.id !== firstOutstandingDisbursement.id) {
       throw new UnprocessableEntityException(
         new ApiProcessError(
-          FIRST_COE_NOT_COMPLETE_MESSAGE,
+          "First disbursement(COE) not complete. Please complete the first disbursement.",
           FIRST_COE_NOT_COMPLETE,
         ),
       );
@@ -142,7 +140,7 @@ export class ConfirmationOfEnrollmentControllerService extends BaseController {
     if (tuitionRemittanceAmount > maxTuitionAllowed) {
       throw new UnprocessableEntityException(
         new ApiProcessError(
-          INVALID_TUITION_REMITTANCE_AMOUNT_MESSAGE,
+          "Tuition amount provided should be lesser than both (Actual tuition + Program related costs) and (Canada grants + Canada Loan + BC Loan).",
           INVALID_TUITION_REMITTANCE_AMOUNT,
         ),
       );

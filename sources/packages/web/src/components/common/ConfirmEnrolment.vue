@@ -52,7 +52,7 @@ export default defineComponent({
       required: true,
     },
     applicationStatus: {
-      type: Object as PropType<ApplicationStatus>,
+      type: String as PropType<ApplicationStatus>,
       required: true,
     },
     disbursementId: {

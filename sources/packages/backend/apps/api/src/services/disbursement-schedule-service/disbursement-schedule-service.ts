@@ -409,6 +409,7 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
       ])
       .innerJoin("disbursementSchedule.studentAssessment", "studentAssessment")
       .innerJoin("studentAssessment.application", "application")
+      .innerJoin("application.currentAssessment", "currentAssessment")
       .leftJoin("disbursementSchedule.coeDeniedReason", "coeDeniedReason")
       .where("application.applicationStatus IN (:...status)", {
         status: [ApplicationStatus.enrollment, ApplicationStatus.completed],

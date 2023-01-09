@@ -121,9 +121,3 @@ export const DUPLICATE_INSTITUTION_LOCATION_CODE =
  * Duplicate SABC code for the institution.
  */
 export const DUPLICATE_SABC_CODE = "DUPLICATE_SABC_CODE";
-
-export const FIRST_COE_NOT_COMPLETE_MESSAGE =
-  "First disbursement(COE) not complete. Please complete the first disbursement.";
-
-export const INVALID_TUITION_REMITTANCE_AMOUNT_MESSAGE =
-  "Tuition amount provided should be lesser than both (Actual tuition + Program related costs) and (Canada grants + Canada Loan + BC Loan).";
