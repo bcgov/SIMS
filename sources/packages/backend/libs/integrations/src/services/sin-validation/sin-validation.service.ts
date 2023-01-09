@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { DataSource, Repository } from "typeorm";
+import { DataSource, EntityManager, Repository } from "typeorm";
 import { RecordDataModelService, SINValidation, User } from "@sims/sims-db";
 import { LoggerService, InjectLogger } from "@sims/utilities/logger";
 import { SINValidationFileResponse } from "@sims/integrations/esdc-integration";
@@ -8,6 +8,11 @@ import {
   SINValidationUpdateResult,
 } from "@sims/integrations/esdc-integration/sin-validation/models/sin-validation-models";
 import { StudentService } from "../student/student.service";
+import {
+  NotificationActionsService,
+  SINCheckStatus,
+  SystemUsersService,
+} from "@sims/services";
 
 /**
  * Service layer for SIN Validations.
@@ -15,8 +20,10 @@ import { StudentService } from "../student/student.service";
 @Injectable()
 export class SINValidationService extends RecordDataModelService<SINValidation> {
   constructor(
-    private readonly dataSource: DataSource,
+    readonly dataSource: DataSource,
+    private readonly systemUsersService: SystemUsersService,
     private readonly studentService: StudentService,
+    private readonly notificationActionsService: NotificationActionsService,
   ) {
     super(dataSource.getRepository(SINValidation));
   }
@@ -63,8 +70,10 @@ export class SINValidationService extends RecordDataModelService<SINValidation> 
    * Update the SIN validation record on DB based on the response from
    * the ESDC SIN validation response.
    * @param validationResponse SIN validation response from ESDC.
-   * @param isValidSIN defines if, after system evaluation, the SIN
-   * is considered valid or not.
+   * todo: ann remove
+  //  * @param isValidSIN defines if, after system evaluation, the SIN
+  //  * is considered valid or not.
+   * @param sinCheckStatus sin check status from the sin validation file.
    * @param receivedFileName file received with the SIN validation.
    * @param processDate date from the file received considered as
    * a processed date to be update in the DB as received date.
@@ -74,120 +83,189 @@ export class SINValidationService extends RecordDataModelService<SINValidation> 
    */
   async updateSINValidationFromESDCResponse(
     validationResponse: SINValidationFileResponse,
-    isValidSIN: boolean,
+    sinCheckStatus: SINCheckStatus,
     receivedFileName: string,
     processDate: Date,
     auditUserId: number,
   ): Promise<SINValidationUpdateResult> {
-    let operationDescription: string;
-    // If the list of the selected columns must be changed please keep in mind that
-    // these fields are also the ones used later to "clone" the record if needed,
-    // as explained further along the method.
-    const existingValidation = await this.repo
-      .createQueryBuilder("sinValidation")
-      .select([
-        "sinValidation.id",
-        "sinValidation.sin",
-        "sinValidation.sinStatus",
-        "sinValidation.dateReceived",
-        "sinValidation.validSINCheck",
-        "sinValidation.dateSent",
-        "sinValidation.fileSent",
-        "sinValidation.givenNameSent",
-        "sinValidation.surnameSent",
-        "sinValidation.dobSent",
-        "sinValidation.genderSent",
-        "sinValidation.temporarySIN",
-        "sinValidation.sinExpiryDate",
-        "student.id",
-      ])
-      .innerJoin("sinValidation.student", "student")
-      .where("sinValidation.id = :sinValidationId", {
-        sinValidationId: validationResponse.referenceIndex,
-      })
-      .getOne();
+    const isValidSIN = sinCheckStatus === SINCheckStatus.Passed;
 
-    if (!existingValidation) {
-      throw new Error(
-        `Not able to find the SIN validation id ${validationResponse.referenceIndex} to be updated with the ESDC response.`,
-      );
-    }
+    return await this.dataSource.transaction(
+      async (transactionalEntityManager) => {
+        const auditUser = await this.systemUsersService.systemUser();
+        let operationDescription: string;
+        // If the list of the selected columns must be changed please keep in mind that
+        // these fields are also the ones used later to "clone" the record if needed,
+        // as explained further along the method.
+        const existingValidation = await this.repo
+          .createQueryBuilder("sinValidation")
+          .select([
+            "sinValidation.id",
+            "sinValidation.sin",
+            "sinValidation.sinStatus",
+            "sinValidation.dateReceived",
+            "sinValidation.validSINCheck",
+            "sinValidation.dateSent",
+            "sinValidation.fileSent",
+            "sinValidation.givenNameSent",
+            "sinValidation.surnameSent",
+            "sinValidation.dobSent",
+            "sinValidation.genderSent",
+            "sinValidation.temporarySIN",
+            "sinValidation.sinExpiryDate",
+            "student.id",
+          ])
+          .innerJoin("sinValidation.student", "student")
+          .where("sinValidation.id = :sinValidationId", {
+            sinValidationId: validationResponse.referenceIndex,
+          })
+          .getOne();
 
-    const sinValidationNeverUpdated = !existingValidation.dateReceived;
-    const sinStatusChanged =
-      existingValidation.sinStatus !== validationResponse.sinCheckStatus;
+        if (!existingValidation) {
+          throw new Error(
+            `Not able to find the SIN validation id ${validationResponse.referenceIndex} to be updated with the ESDC response.`,
+          );
+        }
 
-    // Values to be updated from the ESDC response.
-    existingValidation.dateReceived = processDate;
-    existingValidation.fileReceived = receivedFileName;
-    existingValidation.isValidSIN = isValidSIN;
-    existingValidation.sinStatus = validationResponse.sinCheckStatus;
-    existingValidation.validSINCheck = validationResponse.sinOkayFlag;
-    existingValidation.validBirthdateCheck =
-      validationResponse.birthDateOkayFlag;
-    existingValidation.validFirstNameCheck =
-      validationResponse.firstNameOkayFlag;
-    existingValidation.validLastNameCheck = validationResponse.lastNameOkayFlag;
-    existingValidation.validGenderCheck = validationResponse.genderOkayFlag;
-    existingValidation.modifier = { id: auditUserId } as User;
+        const sinValidationNeverUpdated = !existingValidation.dateReceived;
+        const sinStatusChanged =
+          existingValidation.sinStatus !== validationResponse.sinCheckStatus;
 
-    if (sinValidationNeverUpdated) {
-      // The SIN validation record was never updated before,
-      // update it with the information received from ESDC.
-      // This will be most common scenario.
-      operationDescription = "SIN validation record updated.";
-      const updatedRecord = await this.repo.save(existingValidation);
-      return {
-        operationDescription,
-        record: updatedRecord,
-      };
-    }
+        // Values to be updated from the ESDC response.
+        existingValidation.dateReceived = processDate;
+        existingValidation.fileReceived = receivedFileName;
+        existingValidation.isValidSIN = isValidSIN;
+        existingValidation.sinStatus = validationResponse.sinCheckStatus;
+        existingValidation.validSINCheck = validationResponse.sinOkayFlag;
+        existingValidation.validBirthdateCheck =
+          validationResponse.birthDateOkayFlag;
+        existingValidation.validFirstNameCheck =
+          validationResponse.firstNameOkayFlag;
+        existingValidation.validLastNameCheck =
+          validationResponse.lastNameOkayFlag;
+        existingValidation.validGenderCheck = validationResponse.genderOkayFlag;
+        existingValidation.modifier = { id: auditUserId } as User;
 
-    if (sinStatusChanged) {
-      // The SIN validation is already present and the received status is different from
-      // the existing one. It can happen when the status received is 2 (under review) and later
-      // a new status will be received once the review is done, what means that one request can
-      // result in more than one response. In this case, if the received record is the most updated
-      // for the student, a "cloned" record will be inserted.
-      const mostUpdatedRecordDate = await this.repo
-        .createQueryBuilder("sinValidation")
-        .select("MAX(sinValidation.dateReceived)", "maxDate")
-        .innerJoin("sinValidation.student", "student")
-        .where("student.id = :student", {
-          student: existingValidation.student.id,
-        })
-        .getRawOne();
-      if (processDate > mostUpdatedRecordDate.maxDate) {
-        // This will force the record to be inserted with all the values selected
-        // during the initial SQL query.
-        delete existingValidation.id;
-        // Insert the new SIN validation and associate it with the student
-        // as the most updated one to be used as a current.
-        await this.studentService.updateSINValidationByStudentId(
-          existingValidation.student.id,
-          existingValidation,
-          auditUserId,
-        );
-        operationDescription = `Created a new SIN validation because the record id is already present and updated.`;
-        const clonedRecord = await this.repo.save(existingValidation);
+        if (sinValidationNeverUpdated) {
+          // The SIN validation record was never updated before,
+          // update it with the information received from ESDC.
+          // This will be most common scenario.
+          operationDescription = "SIN validation record updated.";
+          const updatedRecord = await this.repo.save(existingValidation);
+
+          if (sinCheckStatus !== SINCheckStatus.UnderReview)
+            // Create a SIN validation complete notification when SIN validation response file is processed.
+            await this.createNotificationForSINValidationComplete(
+              existingValidation.id,
+              auditUser.id,
+              transactionalEntityManager,
+            );
+
+          return {
+            operationDescription,
+            record: updatedRecord,
+          };
+        }
+
+        if (sinStatusChanged) {
+          // The SIN validation is already present and the received status is different from
+          // the existing one. It can happen when the status received is 2 (under review) and later
+          // a new status will be received once the review is done, what means that one request can
+          // result in more than one response. In this case, if the received record is the most updated
+          // for the student, a "cloned" record will be inserted.
+          const mostUpdatedRecordDate = await this.repo
+            .createQueryBuilder("sinValidation")
+            .select("MAX(sinValidation.dateReceived)", "maxDate")
+            .innerJoin("sinValidation.student", "student")
+            .where("student.id = :student", {
+              student: existingValidation.student.id,
+            })
+            .getRawOne();
+          if (processDate > mostUpdatedRecordDate.maxDate) {
+            // This will force the record to be inserted with all the values selected
+            // during the initial SQL query.
+            delete existingValidation.id;
+            // Insert the new SIN validation and associate it with the student
+            // as the most updated one to be used as a current.
+            // A new SIN validation object created when below function
+            // is executed and updated in the same variable.
+            await this.studentService.updateSINValidationByStudentId(
+              existingValidation.student.id,
+              existingValidation,
+              auditUserId,
+            );
+            operationDescription = `Created a new SIN validation because the record id is already present and updated.`;
+            // Create a SIN validation complete notification when SIN validation response file is processed.
+            await this.createNotificationForSINValidationComplete(
+              existingValidation.id,
+              auditUser.id,
+              transactionalEntityManager,
+            );
+            return {
+              operationDescription,
+              record: existingValidation,
+            };
+          }
+          operationDescription =
+            "No SIN validation was updated because the record id is already present and this is not the most updated.";
+          return {
+            operationDescription,
+            record: existingValidation,
+          };
+        }
+        operationDescription =
+          "SIN validation skipped because it is already processed and updated.";
         return {
           operationDescription,
-          record: clonedRecord,
+          record: existingValidation,
         };
-      }
-      operationDescription =
-        "No SIN validation was updated because the record id is already present and this is not the most updated.";
-      return {
-        operationDescription,
-        record: existingValidation,
-      };
-    }
-    operationDescription =
-      "SIN validation skipped because it is already processed and updated.";
-    return {
-      operationDescription,
-      record: existingValidation,
-    };
+      },
+    );
+  }
+
+  /**
+   * Create SIN Validation complete notification for student.
+   * @param sinValidationId updated sin validation id.
+   * @param auditUserId user who creates notification.
+   * @param transactionalEntityManager entity manager to execute in transaction.
+   */
+  async createNotificationForSINValidationComplete(
+    sinValidationId: number,
+    auditUserId: number,
+    transactionalEntityManager: EntityManager,
+  ): Promise<void> {
+    const sinValidation = await transactionalEntityManager
+      .getRepository(SINValidation)
+      .findOne({
+        select: {
+          id: true,
+          student: {
+            id: true,
+            user: {
+              id: true,
+              firstName: true,
+              lastName: true,
+              email: true,
+            },
+          },
+        },
+        relations: {
+          student: { user: true },
+        },
+        where: { id: sinValidationId },
+      });
+
+    const studentUser = sinValidation.student.user;
+    await this.notificationActionsService.saveSINCompleteNotification(
+      {
+        givenNames: studentUser.firstName,
+        lastName: studentUser.lastName,
+        toAddress: studentUser.email,
+        userId: studentUser.id,
+      },
+      auditUserId,
+      transactionalEntityManager,
+    );
   }
 
   @InjectLogger()

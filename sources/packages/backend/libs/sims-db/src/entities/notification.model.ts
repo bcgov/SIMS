@@ -119,4 +119,13 @@ export enum NotificationMessageType {
    * Institution completes enrolment for an application.
    */
   InstitutionCompletesCOE = 8,
+  /**
+   * Institution completes enrolment for an application.
+   * (i.e NOA approval status required or not required)
+   */
+  AssessmentReadyForConfirmation = 9,
+  /**
+   * SIN Validation complete.
+   */
+  SINValidationComplete = 10,
 }

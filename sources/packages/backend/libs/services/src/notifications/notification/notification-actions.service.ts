@@ -334,6 +334,75 @@ export class NotificationActionsService {
     return `${getPSTPDTDateTime(date)} PST/PDT`;
   }
 
+  /**
+   * Create Assessment ready for student confirmation notification to notify student
+   * when workflow update the NOA approval status.
+   * @param notification notification details.
+   * @param auditUserId user who updates NOA approval status.
+   * @param entityManager entity manager to execute in transaction.
+   */
+  async saveNOAApprovalStatusNotification(
+    notification: StudentNotification,
+    auditUserId: number,
+    entityManager: EntityManager,
+  ): Promise<void> {
+    const templateId = await this.notificationMessageService.getTemplateId(
+      NotificationMessageType.AssessmentReadyForConfirmation,
+    );
+    const assessmentReadyNotification = {
+      userId: notification.userId,
+      messageType: NotificationMessageType.AssessmentReadyForConfirmation,
+      messagePayload: {
+        email_address: notification.toAddress,
+        template_id: templateId,
+        personalisation: {
+          givenNames: notification.givenNames ?? "",
+          lastName: notification.lastName,
+          date: this.getDateTimeOnPSTTimeZone(),
+        },
+      },
+    };
+    await this.notificationService.saveNotifications(
+      [assessmentReadyNotification],
+      auditUserId,
+      entityManager,
+    );
+  }
+
+  /**
+   * Create SIN Validation complete notification for student.
+   * @param notification notification details.
+   * @param auditUserId user who updates SIN validation status.
+   * @param entityManager entity manager to execute in transaction.
+   */
+  async saveSINCompleteNotification(
+    notification: StudentNotification,
+    auditUserId: number,
+    entityManager: EntityManager,
+  ): Promise<void> {
+    const templateId = await this.notificationMessageService.getTemplateId(
+      NotificationMessageType.SINValidationComplete,
+    );
+    const sinCompleteNotification = {
+      userId: notification.userId,
+      messageType: NotificationMessageType.SINValidationComplete,
+      messagePayload: {
+        email_address: notification.toAddress,
+        template_id: templateId,
+        personalisation: {
+          givenNames: notification.givenNames ?? "",
+          lastName: notification.lastName,
+          date: this.getDateTimeOnPSTTimeZone(),
+        },
+      },
+    };
+    await this.notificationService.saveNotifications(
+      [sinCompleteNotification],
+      auditUserId,
+      entityManager,
+    );
+  }
+
   @InjectLogger()
   logger: LoggerService;
 }

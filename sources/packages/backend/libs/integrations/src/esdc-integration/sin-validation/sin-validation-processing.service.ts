@@ -195,12 +195,10 @@ export class SINValidationProcessingService {
     const fileName = path.basename(remoteFilePath);
     for (const sinValidationRecord of responseResult.records) {
       try {
-        const hasValidSIN =
-          sinValidationRecord.sinCheckStatus === SINCheckStatus.Passed;
         const updatedResult =
           await this.sinValidationService.updateSINValidationFromESDCResponse(
             sinValidationRecord,
-            hasValidSIN,
+            sinValidationRecord.sinCheckStatus,
             fileName,
             responseResult.header.processDate,
             auditUserId,
