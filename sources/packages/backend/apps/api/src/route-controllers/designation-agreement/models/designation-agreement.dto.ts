@@ -34,14 +34,14 @@ export class UpdateDesignationAPIInDTO {
   )
   @IsNotEmpty()
   @IsDateString()
-  startDate?: string;
+  startDate: string;
   @ValidateIf(
     (value: UpdateDesignationAPIInDTO) =>
       value.designationStatus === DesignationAgreementStatus.Approved,
   )
   @IsNotEmpty()
   @IsDateString()
-  endDate?: string;
+  endDate: string;
   @ValidateIf(
     (value: UpdateDesignationAPIInDTO) =>
       value.designationStatus === DesignationAgreementStatus.Approved,

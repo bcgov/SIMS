@@ -1,5 +1,14 @@
-import { IsNotEmpty, IsNotEmptyObject, IsOptional } from "class-validator";
-import { ContactInfo, SupportingUserType } from "@sims/sims-db";
+import {
+  IsNotEmpty,
+  IsNotEmptyObject,
+  IsOptional,
+  Length,
+} from "class-validator";
+import {
+  ContactInfo,
+  SupportingUserType,
+  APPLICATION_NUMBER_LENGTH,
+} from "@sims/sims-db";
 
 /**
  * Information used to uniquely identify a Student Application.
@@ -7,7 +16,7 @@ import { ContactInfo, SupportingUserType } from "@sims/sims-db";
  * per defined by the Ministry policies.
  */
 export class ApplicationIdentifierAPIInDTO {
-  @IsNotEmpty()
+  @Length(APPLICATION_NUMBER_LENGTH, APPLICATION_NUMBER_LENGTH)
   applicationNumber: string;
   @IsNotEmpty()
   studentsDateOfBirth: string;
@@ -21,7 +30,7 @@ export class ApplicationIdentifierAPIInDTO {
  * must) be done by the Form.IO dry run.
  */
 export class UpdateSupportingUserAPIInDTO {
-  @IsNotEmpty()
+  @Length(APPLICATION_NUMBER_LENGTH, APPLICATION_NUMBER_LENGTH)
   applicationNumber: string;
   @IsNotEmpty()
   addressLine1: string;
