@@ -5,14 +5,12 @@ import { PassportModule } from "@nestjs/passport";
 import {
   InstitutionLocationService,
   InstitutionUserAuthService,
-  StudentRestrictionService,
   KeycloakService,
   TokensService,
   UserService,
   StudentService,
   SINValidationService,
   DesignationAgreementLocationService,
-  RestrictionService,
 } from "../services";
 import { JwtAuthGuard } from "./guards/jwt-auth.guard";
 import { JwtStrategy } from "./jwt.strategy";
@@ -40,14 +38,12 @@ const jwtModule = JwtModule.register({
     UserService,
     InstitutionLocationService,
     InstitutionUserAuthService,
-    StudentRestrictionService,
     TokensService,
     KeycloakService,
     JwtStrategy,
     StudentService,
     SFASIndividualService,
     SINValidationService,
-    RestrictionService,
     DesignationAgreementLocationService,
     {
       provide: APP_GUARD,

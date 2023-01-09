@@ -40,9 +40,13 @@ import {
   PaginatedResults,
   OFFERING_STUDY_BREAK_MAX_DAYS,
   OFFERING_VALIDATIONS_STUDY_BREAK_COMBINED_PERCENTAGE_THRESHOLD,
-  decimalRound,
 } from "../../utilities";
-import { CustomNamedError, dateDifference, QueueNames } from "@sims/utilities";
+import {
+  CustomNamedError,
+  dateDifference,
+  decimalRound,
+  QueueNames,
+} from "@sims/utilities";
 import {
   OFFERING_INVALID_OPERATION_IN_THE_CURRENT_STATE,
   OFFERING_NOT_VALID,

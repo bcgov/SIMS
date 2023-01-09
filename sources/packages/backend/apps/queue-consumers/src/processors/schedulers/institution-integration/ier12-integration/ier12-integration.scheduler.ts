@@ -14,9 +14,9 @@ import {
 export class IER12IntegrationScheduler extends BaseScheduler<GeneratedDateQueueInDTO> {
   constructor(
     @InjectQueue(QueueNames.IER12Integration)
-    protected readonly schedulerQueue: Queue<GeneratedDateQueueInDTO>,
+    schedulerQueue: Queue<GeneratedDateQueueInDTO>,
     private readonly ierRequest: IER12FileService,
-    protected readonly queueService: QueueService,
+    queueService: QueueService,
   ) {
     super(schedulerQueue, queueService);
   }

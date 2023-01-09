@@ -28,7 +28,10 @@ import {
   SCHOLASTIC_STANDING_STUDENT_DID_NOT_COMPLETE_PROGRAM,
   SCHOLASTIC_STANDING_STUDENT_WITHDREW_FROM_PROGRAM,
 } from "./constants";
-import { NotificationActionsService } from "@sims/services/notifications";
+import {
+  NotificationActionsService,
+  StudentRestrictionSharedService,
+} from "@sims/services";
 
 /**
  * Manages the student scholastic standings related operations.
@@ -43,6 +46,7 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
     private readonly studentAssessmentService: StudentAssessmentService,
     private readonly studentRestrictionService: StudentRestrictionService,
     private readonly notificationActionsService: NotificationActionsService,
+    private readonly studentRestrictionSharedService: StudentRestrictionSharedService,
   ) {
     super(dataSource.getRepository(StudentScholasticStanding));
     this.applicationRepo = dataSource.getRepository(Application);
@@ -258,7 +262,7 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
       // Left as the last step to ensure that everything else was processed with
       // success and the notification will not be generated otherwise.
       if (createdRestriction) {
-        await this.studentRestrictionService.createNotifications(
+        await this.studentRestrictionSharedService.createNotifications(
           [createdRestriction.id],
           auditUserId,
           transactionalEntityManager,

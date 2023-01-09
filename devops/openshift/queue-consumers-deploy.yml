@@ -138,6 +138,41 @@ objects:
                     secretKeyRef:
                       key: ${SFAS_RECEIVE_FOLDER_NAME_KEY}
                       name: ${QUEUE_CONSUMERS_SECRET_NAME}
+                - name: CRA_REQUEST_FOLDER
+                  valueFrom:
+                    secretKeyRef:
+                      key: ${CRA_REQUEST_FOLDER_NAME_KEY}
+                      name: ${QUEUE_CONSUMERS_SECRET_NAME}
+                - name: CRA_RESPONSE_FOLDER
+                  valueFrom:
+                    secretKeyRef:
+                      key: ${CRA_RESPONSE_FOLDER_NAME_KEY}
+                      name: ${QUEUE_CONSUMERS_SECRET_NAME}
+                - name: CRA_PROGRAM_AREA_CODE
+                  valueFrom:
+                    secretKeyRef:
+                      key: ${CRA_PROGRAM_AREA_CODE_NAME_KEY}
+                      name: ${QUEUE_CONSUMERS_SECRET_NAME}
+                - name: CRA_ENVIRONMENT_CODE
+                  valueFrom:
+                    secretKeyRef:
+                      key: ${CRA_ENVIRONMENT_CODE_NAME_KEY}
+                      name: ${QUEUE_CONSUMERS_SECRET_NAME}
+                - name: ESDC_REQUEST_FOLDER
+                  valueFrom:
+                    secretKeyRef:
+                      key: ${ESDC_REQUEST_FOLDER_NAME_KEY}
+                      name: ${QUEUE_CONSUMERS_SECRET_NAME}
+                - name: ESDC_RESPONSE_FOLDER
+                  valueFrom:
+                    secretKeyRef:
+                      key: ${ESDC_RESPONSE_FOLDER_NAME_KEY}
+                      name: ${QUEUE_CONSUMERS_SECRET_NAME}
+                - name: ESDC_ENVIRONMENT_CODE
+                  valueFrom:
+                    secretKeyRef:
+                      key: ${ESDC_ENVIRONMENT_CODE_NAME_KEY}
+                      name: ${QUEUE_CONSUMERS_SECRET_NAME}
                 - name: ATBC_LOGIN_ENDPOINT
                   value: ${ATBC_LOGIN_ENDPOINT}
                 - name: ATBC_ENDPOINT
@@ -297,3 +332,17 @@ parameters:
     value: atbc-password
   - name: ATBC_APP_NAME_KEY
     value: atbc-app
+  - name: CRA_REQUEST_FOLDER_NAME_KEY
+    value: cra-request-folder
+  - name: CRA_RESPONSE_FOLDER_NAME_KEY
+    value: cra-response-folder
+  - name: CRA_PROGRAM_AREA_CODE_NAME_KEY
+    value: cra-program-area-code
+  - name: CRA_ENVIRONMENT_CODE_NAME_KEY
+    value: cra-environment-code
+  - name: ESDC_REQUEST_FOLDER_NAME_KEY
+    value: esdc-request-folder
+  - name: ESDC_RESPONSE_FOLDER_NAME_KEY
+    value: esdc-response-folder
+  - name: ESDC_ENVIRONMENT_CODE_NAME_KEY
+    value: esdc-environment-code
