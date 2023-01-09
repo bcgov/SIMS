@@ -1,14 +1,8 @@
-import { ConfirmationOfEnrollmentAPIInDTO } from "./confirmation-of-enrollment.dto";
-
 export interface ConfirmEnrollmentOptions {
   /**
    * location id of the application.
    */
   locationId?: number;
-  /**
-   * COE confirmation information.
-   */
-  payload?: ConfirmationOfEnrollmentAPIInDTO;
   /**
    * Allow study period who's study end date is past to be confirmed for enrolment.
    */

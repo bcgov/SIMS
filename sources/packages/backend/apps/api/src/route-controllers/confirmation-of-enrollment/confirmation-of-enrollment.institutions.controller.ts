@@ -233,7 +233,8 @@ export class ConfirmationOfEnrollmentInstitutionsController extends BaseControll
     await this.confirmationOfEnrollmentControllerService.confirmEnrollment(
       disbursementScheduleId,
       userToken.userId,
-      { locationId, payload },
+      payload,
+      { locationId },
     );
   }
 

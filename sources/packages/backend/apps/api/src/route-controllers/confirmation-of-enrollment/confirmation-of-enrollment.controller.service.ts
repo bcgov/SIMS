@@ -18,6 +18,7 @@ import {
 import { ApiProcessError } from "../../types";
 import { COE_WINDOW } from "../../utilities";
 import BaseController from "../BaseController";
+import { ConfirmationOfEnrollmentAPIInDTO } from "./models/confirmation-of-enrollment.dto";
 import { ConfirmEnrollmentOptions } from "./models/confirmation-of-enrollment.models";
 
 @Injectable()
@@ -37,11 +38,13 @@ export class ConfirmationOfEnrollmentControllerService extends BaseController {
    * on first COE approval.
    * @param disbursementScheduleId disbursement schedule id of COE.
    * @param auditUserId user who confirms enrollment.
+   * @param payload COE confirmation information.
    * @param options Confirm COE options.
    */
   async confirmEnrollment(
     disbursementScheduleId: number,
     auditUserId: number,
+    payload: ConfirmationOfEnrollmentAPIInDTO,
     options?: ConfirmEnrollmentOptions,
   ): Promise<void> {
     // Get the disbursement and application summary for COE.
@@ -87,8 +90,7 @@ export class ConfirmationOfEnrollmentControllerService extends BaseController {
 
     // If no tuition remittance is set then, it is defaulted to 0.
     // This happens when ministry confirms COE.
-    const tuitionRemittanceAmount =
-      options?.payload?.tuitionRemittanceAmount ?? 0;
+    const tuitionRemittanceAmount = payload.tuitionRemittanceAmount ?? 0;
 
     // Validate tuition remittance amount.
     this.validateTuitionRemittance(

@@ -4,7 +4,7 @@ import {
   ApplicationDetailsForCOEAPIOutDTO,
   COEDeniedReasonAPIOutDTO,
   COESummaryAPIOutDTO,
-  ConfirmEnrollmentOptions,
+  ConfirmationOfEnrollmentAPIInDTO,
   DenyConfirmationOfEnrollmentAPIInDTO,
   PaginatedResultsAPIOutDTO,
 } from "@/services/http/dto";
@@ -60,15 +60,18 @@ export class ConfirmationOfEnrollmentService {
    * Irrespective of number of COEs to be approved, application status is set to complete
    * on first COE approval.
    * @param disbursementScheduleId disbursement schedule id of COE.
-   * @param options Confirm COE options.
+   * @param locationId location id of the application.
+   * @param payload COE confirmation information.
    */
   async confirmEnrollment(
     disbursementScheduleId: number,
-    options?: ConfirmEnrollmentOptions,
+    locationId?: number,
+    payload?: ConfirmationOfEnrollmentAPIInDTO,
   ): Promise<void> {
     await ApiClient.ConfirmationOfEnrollment.confirmEnrollment(
       disbursementScheduleId,
-      options,
+      locationId,
+      payload,
     );
   }
 

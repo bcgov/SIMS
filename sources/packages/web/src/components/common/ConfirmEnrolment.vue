@@ -7,8 +7,8 @@
         color="primary"
         @click="submitConfirmEnrolment"
         :disabled="notAllowed"
-        ><span class="text-decoration-underline"
-          ><strong>Confirm Enrolment</strong></span
+        ><span class="text-decoration-underline app-font-bold"
+          >Confirm Enrolment</span
         ></v-btn
       >
     </template>

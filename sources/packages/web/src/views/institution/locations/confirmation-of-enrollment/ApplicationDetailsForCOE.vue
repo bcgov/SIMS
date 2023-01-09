@@ -133,7 +133,8 @@ export default {
         payload.tuitionRemittanceAmount = payload.tuitionRemittanceAmount ?? 0;
         await ConfirmationOfEnrollmentService.shared.confirmEnrollment(
           props.disbursementScheduleId,
-          { locationId: props.locationId, payload },
+          props.locationId,
+          payload,
         );
         snackBar.success("Confirmation of Enrollment Confirmed!");
         router.push({
