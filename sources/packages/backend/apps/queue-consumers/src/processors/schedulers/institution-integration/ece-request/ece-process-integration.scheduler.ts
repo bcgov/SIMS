@@ -35,7 +35,7 @@ export class ECEProcessIntegrationScheduler extends BaseScheduler<GeneratedDateQ
     );
     this.logger.log("Executing ECE request file generation ...");
     const uploadResults = await this.eceFileService.processECEFile(
-      job.data.generatedDate,
+      job.data.generationDate,
     );
     this.logger.log("ECE request file generation completed.");
     await this.cleanSchedulerQueueHistory();

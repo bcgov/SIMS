@@ -2,11 +2,11 @@ import { DisbursementValue } from "@sims/sims-db";
 import { END_OF_LINE, round, StringBuilder } from "@sims/utilities";
 import {
   DATE_FORMAT,
-  ECERequestFileLine,
   NUMBER_FILLER,
   RecordTypeCodes,
   SPACE_FILLER,
 } from "../models/ece-integration.model";
+import { ECERequestFileLine } from "./ece-file-line";
 
 /**
  * Record of a ECE request file.

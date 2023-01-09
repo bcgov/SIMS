@@ -4,11 +4,8 @@ import { ConfigService } from "@sims/utilities/config";
 import { ECERequestFileDetail } from "./ece-files/ece-file-detail";
 import { ECEFileFooter } from "./ece-files/ece-file-footer";
 import { ECEFileHeader } from "./ece-files/ece-file-header";
-import {
-  ECERequestFileLine,
-  ECERecord,
-  RecordTypeCodes,
-} from "./models/ece-integration.model";
+import { ECERequestFileLine } from "./ece-files/ece-file-line";
+import { ECERecord, RecordTypeCodes } from "./models/ece-integration.model";
 
 /**
  * Manages the creation of the content files that needs to be sent
@@ -47,7 +44,7 @@ export class ECEIntegrationService extends SFTPIntegrationBase<void> {
       eceRequestFileDetail.studentLastName = eceRecord.studentLastName;
       eceRequestFileDetail.studentGivenName = eceRecord.studentGivenName;
       eceRequestFileDetail.birthDate = eceRecord.birthDate;
-      eceRequestFileDetail.applicationNumber = eceRecord.sfasApplicationNumber;
+      eceRequestFileDetail.applicationNumber = eceRecord.applicationNumber;
       eceRequestFileDetail.institutionStudentNumber =
         eceRecord.institutionStudentNumber;
       eceRequestFileDetail.studyStartDate = eceRecord.studyStartDate;

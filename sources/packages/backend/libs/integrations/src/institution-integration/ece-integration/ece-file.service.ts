@@ -28,14 +28,14 @@ export class ECEFileService {
    * 3. Create the request filename with the file path with respect to the institution code
    * for the ECE request sent File.
    * 4. Upload the content to the zoneB SFTP server.
-   * @param generatedDate date in which the eligible COE for
+   * @param generationDate date in which the eligible COE for
    * particular institution is required.
    * @returns Processing ECE request result.
    */
-  async processECEFile(generatedDate?: string): Promise<ECEUploadResult[]> {
+  async processECEFile(generationDate?: Date): Promise<ECEUploadResult[]> {
     this.logger.log(`Retrieving eligible COEs for ECE request...`);
     const eligibleCOEs = await this.disbursementScheduleService.getPendingCOEs(
-      generatedDate,
+      generationDate,
     );
     if (!eligibleCOEs.length) {
       return [
@@ -149,7 +149,7 @@ export class ECEFileService {
       studentLastName: user.lastName,
       studentGivenName: user.firstName,
       birthDate: student.birthDate,
-      sfasApplicationNumber: application.applicationNumber,
+      applicationNumber: application.applicationNumber,
       institutionStudentNumber: application.studentNumber,
       studyStartDate: offering.studyStartDate,
       studyEndDate: offering.studyEndDate,

@@ -1,11 +1,11 @@
 import {
   DATE_FORMAT,
-  ECERequestFileLine,
   ECE_SENT_TITLE,
   RecordTypeCodes,
   SPACE_FILLER,
 } from "../models/ece-integration.model";
 import { StringBuilder } from "@sims/utilities";
+import { ECERequestFileLine } from "./ece-file-line";
 
 const ORIGINATOR_CODE = "SSB";
 

@@ -4,5 +4,5 @@ export interface ECEProcessResult {
 }
 
 export interface GeneratedDateQueueInDTO {
-  generatedDate?: string;
+  generationDate?: Date;
 }

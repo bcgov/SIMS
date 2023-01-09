@@ -1,9 +1,7 @@
-import {
-  ECERequestFileLine,
-  RecordTypeCodes,
-} from "../models/ece-integration.model";
+import { RecordTypeCodes } from "../models/ece-integration.model";
 import { StringBuilder } from "@sims/utilities";
 import { NUMBER_FILLER } from "@sims/integrations/esdc-integration/e-cert-integration/models/e-cert-integration-model";
+import { ECERequestFileLine } from "./ece-file-line";
 
 /**
  * Footer of a ECE request file.
