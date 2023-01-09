@@ -389,7 +389,7 @@ export class ApplicationStudentsController extends BaseController {
       programYearId: applicationProgramYear.programYear.id,
       formName: applicationProgramYear.programYear.formName,
       active: applicationProgramYear.programYear.active,
-    } as ApplicationWithProgramYearAPIOutDTO;
+    };
   }
 
   /**
