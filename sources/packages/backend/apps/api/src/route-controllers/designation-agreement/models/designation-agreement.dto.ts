@@ -130,10 +130,10 @@ export class UpdateDesignationDetailsAPIInDTO {
   designationStatus: DesignationAgreementStatus;
   @IsNotEmpty()
   @IsDateString()
-  startDate?: string;
+  startDate: string;
   @IsNotEmpty()
   @IsDateString()
-  endDate?: string;
+  endDate: string;
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => DesignationLocationAPIInDTO)
