@@ -20,9 +20,8 @@
     okLabel="Confirm enrolment now"
     cancelLabel="Cancel"
     ><template #content
-      ><strong
-        >Are you sure you want to confirm enrolment for this
-        application?</strong
+      ><span class="font-bold"
+        >Are you sure you want to confirm enrolment for this application?</span
       >
       <p class="mt-5">
         Confirming enrolment verifies this applicant is attending your
