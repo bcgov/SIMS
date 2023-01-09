@@ -3,12 +3,15 @@ import {
   IsNotEmptyObject,
   IsOptional,
   Length,
+  MaxLength,
 } from "class-validator";
 import {
   ContactInfo,
   SupportingUserType,
   APPLICATION_NUMBER_LENGTH,
 } from "@sims/sims-db";
+
+const STUDENT_LAST_NAME_MAX_LENGTH = 100;
 
 /**
  * Information used to uniquely identify a Student Application.
@@ -21,6 +24,7 @@ export class ApplicationIdentifierAPIInDTO {
   @IsNotEmpty()
   studentsDateOfBirth: string;
   @IsNotEmpty()
+  @MaxLength(STUDENT_LAST_NAME_MAX_LENGTH)
   studentsLastName: string;
 }
 
@@ -51,6 +55,7 @@ export class UpdateSupportingUserAPIInDTO {
   @IsNotEmpty()
   studentsDateOfBirth: string;
   @IsNotEmpty()
+  @MaxLength(STUDENT_LAST_NAME_MAX_LENGTH)
   studentsLastName: string;
   @IsNotEmptyObject()
   supportingData: unknown;

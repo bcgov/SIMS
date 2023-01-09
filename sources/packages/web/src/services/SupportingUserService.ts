@@ -6,7 +6,7 @@ import {
   ApplicationSupportingUsersAPIOutDTO,
   SupportingUserFormDataAPIOutDTO,
   UpdateSupportingUserAPIInDTO,
-} from "./http/dto";
+} from "@/services/http/dto";
 
 export class SupportingUsersService {
   // Share Instance
