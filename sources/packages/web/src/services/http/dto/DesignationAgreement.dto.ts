@@ -1,19 +1,19 @@
-import { InstitutionLocationData } from "./institutionLocationContract";
+import { InstitutionLocationData } from "@/types/contracts/institutionLocationContract";
 
-export interface SubmitDesignationAgreementDto {
-  dynamicData: any;
-  locations: SubmittedLocationsDto[];
+export interface SubmitDesignationAgreementAPIInDTO {
+  dynamicData: unknown;
+  locations: SubmittedLocationsAPIInDTO[];
 }
 
-export interface SubmittedLocationsDto {
+export interface SubmittedLocationsAPIInDTO {
   locationId: number;
   requestForDesignation: boolean;
 }
 
-export interface GetDesignationAgreementDto {
+export interface DesignationAgreementAPIOutDTO {
   designationId: number;
   designationStatus: DesignationAgreementStatus;
-  locationsDesignations: LocationsDesignationsDto[];
+  locationsDesignations: LocationDesignationAPIOutDTO[];
   startDate: string;
   endDate: string;
   submittedData: any;
@@ -23,7 +23,7 @@ export interface GetDesignationAgreementDto {
   isBCPrivate: boolean;
 }
 
-export interface LocationsDesignationsDto {
+export interface LocationDesignationAPIOutDTO {
   designationLocationId?: number;
   locationId: number;
   locationName: string;
@@ -32,7 +32,7 @@ export interface LocationsDesignationsDto {
   approved: boolean;
 }
 
-export interface GetDesignationAgreementsDto {
+export interface DesignationAgreementDetailsAPIOutDTO {
   designationId: number;
   designationStatus: DesignationAgreementStatus;
   submittedDate: Date;
@@ -40,7 +40,8 @@ export interface GetDesignationAgreementsDto {
   endDate?: string;
 }
 
-export interface PendingDesignationDto extends GetDesignationAgreementsDto {
+export interface PendingDesignationAgreementDetailsAPIOutDTO
+  extends DesignationAgreementDetailsAPIOutDTO {
   legalOperatingName: string;
 }
 
@@ -65,7 +66,7 @@ export enum DesignationAgreementStatus {
   Declined = "Declined",
 }
 
-export interface UpdateDesignationLocationDto {
+export interface DesignationLocationAPIInDTO {
   locationId: number;
   locationName: string;
   locationAddress: string;
@@ -76,10 +77,10 @@ export interface UpdateDesignationLocationDto {
  * DTO Object to Approve/Deny a designation agreement.
  * startDate, endDate and locationsDesignations used only for approval.
  */
-export interface UpdateDesignationDto {
+export interface UpdateDesignationDetailsAPIInDTO {
   designationStatus: DesignationAgreementStatus;
   startDate?: string;
   endDate?: string;
-  locationsDesignations?: UpdateDesignationLocationDto[];
+  locationsDesignations?: DesignationLocationAPIInDTO[];
   note: string;
 }

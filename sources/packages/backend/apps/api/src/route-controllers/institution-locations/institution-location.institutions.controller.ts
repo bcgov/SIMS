@@ -73,7 +73,7 @@ export class InstitutionLocationInstitutionsController extends BaseController {
 
   /**
    * Create an Institution location.
-   * @param payload
+   * @param payload details of the institution location to be created.
    * @returns Primary identifier of created location.
    */
   @ApiBadRequestResponse({
@@ -123,8 +123,8 @@ export class InstitutionLocationInstitutionsController extends BaseController {
 
   /**
    * Update an institution location.
-   * @param locationId
-   * @param payload
+   * @param locationId id of the institution location to be updated.
+   * @param payload details of the institution location to be updated.
    */
   @HasLocationAccess("locationId")
   @IsInstitutionAdmin()
@@ -188,8 +188,7 @@ export class InstitutionLocationInstitutionsController extends BaseController {
 
   /**
    * Controller method to retrieve institution location by id.
-   * @param locationId
-   * @param userToken
+   * @param locationId id of the location to be retrieved.
    * @returns institution location.
    */
   @HasLocationAccess("locationId")
@@ -199,7 +198,6 @@ export class InstitutionLocationInstitutionsController extends BaseController {
     @Param("locationId", ParseIntPipe) locationId: number,
     @UserToken() userToken: IInstitutionUserToken,
   ): Promise<InstitutionLocationDetailsAPIOutDTO> {
-    // Get particular institution location.
     const institutionLocation =
       await this.locationService.getInstitutionLocation(
         locationId,

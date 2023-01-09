@@ -92,8 +92,8 @@ export class InstitutionAESTController extends BaseController {
 
   /**
    * Get institution details of given institution.
-   * @param institutionId
-   * @returns InstitutionDetailDTO.
+   * @param institutionId id for the institution to be retrieved.
+   * @returns institution details.
    */
   @Get(":institutionId")
   async getInstitutionDetailById(
@@ -113,8 +113,8 @@ export class InstitutionAESTController extends BaseController {
 
   /**
    * Update institution profile details.
-   * @param institutionId
-   * @param payload
+   * @param institutionId id for the institution to be updated.
+   * @param payload institution details to be updated.
    */
   @Roles(Role.InstitutionEditProfile)
   @Patch(":institutionId")
@@ -138,7 +138,7 @@ export class InstitutionAESTController extends BaseController {
 
   /**
    * Get the Basic Institution info for the ministry institution detail page.
-   * @param institutionId
+   * @param institutionId id for the institution to retrieved.
    * @returns Basic information of institution.
    */
   @Get(":institutionId/basic-details")
@@ -162,7 +162,7 @@ export class InstitutionAESTController extends BaseController {
 
   /**
    * Controller method to get institution locations with designation status for the given institution.
-   * @param institutionId
+   * @param institutionId id for the institution to retrieve its locations.
    * @returns Institution locations form.io for drop down.
    */
   @Get(":institutionId/locations")

@@ -2,7 +2,7 @@ import { StudentAppealStatus } from "@/types";
 
 export interface StudentAppealRequestAPIInDTO {
   formName: string;
-  formData: any;
+  formData: unknown;
 }
 
 export interface StudentAppealAPIInDTO {
@@ -11,7 +11,7 @@ export interface StudentAppealAPIInDTO {
 
 export interface StudentAppealRequestAPIOutDTO {
   id: number;
-  submittedData: any;
+  submittedData: unknown;
   submittedFormName: string;
   appealStatus: StudentAppealStatus;
   assessedDate?: Date;

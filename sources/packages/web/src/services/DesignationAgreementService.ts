@@ -1,12 +1,12 @@
 import ApiClient from "@/services/http/ApiClient";
 import {
-  GetDesignationAgreementsDto,
-  SubmitDesignationAgreementDto,
-  PendingDesignationDto,
-  GetDesignationAgreementDto,
+  DesignationAgreementDetailsAPIOutDTO,
+  SubmitDesignationAgreementAPIInDTO,
+  PendingDesignationAgreementDetailsAPIOutDTO,
+  DesignationAgreementAPIOutDTO,
   DesignationAgreementStatus,
-  UpdateDesignationDto,
-} from "@/types/contracts/DesignationAgreementContract";
+  UpdateDesignationDetailsAPIInDTO,
+} from "@/services/http/dto";
 
 /**
  * Client service layer for Designation agreements.
@@ -15,47 +15,47 @@ export class DesignationAgreementService {
   // Shared Instance
   private static instance: DesignationAgreementService;
 
-  public static get shared(): DesignationAgreementService {
+  static get shared(): DesignationAgreementService {
     return this.instance || (this.instance = new this());
   }
 
-  public async submitDesignationAgreement(
-    designationAgreement: SubmitDesignationAgreementDto,
+  async submitDesignationAgreement(
+    designationAgreement: SubmitDesignationAgreementAPIInDTO,
   ): Promise<void> {
     await ApiClient.DesignationAgreement.submitDesignationAgreement(
       designationAgreement,
     );
   }
 
-  public async getDesignationAgreement(
+  async getDesignationAgreement(
     designationId: number,
-  ): Promise<GetDesignationAgreementDto> {
+  ): Promise<DesignationAgreementAPIOutDTO> {
     return ApiClient.DesignationAgreement.getDesignationAgreement(
       designationId,
     );
   }
 
-  public async getDesignationsAgreements(
+  async getDesignationsAgreements(
     institutionId?: number,
-  ): Promise<GetDesignationAgreementsDto[]> {
+  ): Promise<DesignationAgreementDetailsAPIOutDTO[]> {
     return ApiClient.DesignationAgreement.getDesignationsAgreements(
       institutionId,
     );
   }
 
-  public async getDesignationByStatus(
+  async getDesignationByStatus(
     designationStatus: DesignationAgreementStatus,
     searchCriteria?: string,
-  ): Promise<PendingDesignationDto[]> {
+  ): Promise<PendingDesignationAgreementDetailsAPIOutDTO[]> {
     return ApiClient.DesignationAgreement.getDesignationByStatus(
       designationStatus,
       searchCriteria,
     );
   }
 
-  public async updateDesignationAgreement(
+  async updateDesignationAgreement(
     designationId: number,
-    designation: UpdateDesignationDto,
+    designation: UpdateDesignationDetailsAPIInDTO,
   ): Promise<void> {
     /**Filtering the locations which are either approved or denied(already approved location) only.
      * locationsDesignations will have value only when approval is done.

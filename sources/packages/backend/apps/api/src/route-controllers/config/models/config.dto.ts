@@ -1,8 +1,8 @@
-export interface IConfig {
-  auth: IAuthConfig;
+export class ConfigAPIOutDTO {
+  auth: AuthConfigAPIOutDTO;
 }
 
-export interface IAuthConfig {
+export class AuthConfigAPIOutDTO {
   url: string;
   realm: string;
   clientIds: { [key: string]: string };

@@ -86,7 +86,8 @@ import {
   useSnackBar,
   useApplication,
 } from "@/composables";
-import { ApplicationStatus, GetApplicationDataDto, MenuType } from "@/types";
+import { ApplicationStatus, MenuType } from "@/types";
+import { ApplicationDataAPIOutDTO } from "@/services/http/dto";
 import ApplicationProgressBar from "@/components/students/applicationTracker/ApplicationProgressBar.vue";
 import ConfirmEditApplication from "@/components/students/modals/ConfirmEditApplication.vue";
 import DetailHeader from "@/components/generic/DetailHeader.vue";
@@ -110,7 +111,7 @@ export default defineComponent({
     const router = useRouter();
     const items = ref<MenuType[]>([]);
     const { dateOnlyLongString } = useFormatters();
-    const applicationDetails = ref({} as GetApplicationDataDto);
+    const applicationDetails = ref({} as ApplicationDataAPIOutDTO);
     const editApplicationModal = ref({} as ModalDialog<boolean>);
     const cancelApplicationModal = ref({} as ModalDialog<boolean>);
     const snackBar = useSnackBar();

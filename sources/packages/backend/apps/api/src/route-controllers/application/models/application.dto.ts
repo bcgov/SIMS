@@ -1,5 +1,8 @@
+import { IntersectionType } from "@nestjs/swagger";
 import { IsObject, IsOptional, IsPositive, Length } from "class-validator";
 import {
+  ApplicationExceptionStatus,
+  OfferingStatus,
   ApplicationStatus,
   ProgramInfoStatus,
   AssessmentStatus,
@@ -9,7 +12,7 @@ import {
   APPLICATION_NUMBER_LENGTH,
 } from "@sims/sims-db";
 
-export class SaveApplicationDto {
+export class SaveApplicationAPIInDTO {
   /**
    * Application dynamic data.
    */
@@ -65,7 +68,7 @@ export interface ApplicationFormData extends ApplicationData {
 /**
  * Application DTO with primary identifier(s)
  */
-export class ApplicationIdentifiersDTO {
+export class ApplicationIdentifiersAPIOutDTO {
   id: number;
   applicationNumber: string;
 }
@@ -73,14 +76,15 @@ export class ApplicationIdentifiersDTO {
 /**
  * Base DTO for application
  */
-export class GetApplicationBaseDTO extends ApplicationIdentifiersDTO {
+export class ApplicationBaseAPIOutDTO extends ApplicationIdentifiersAPIOutDTO {
   assessmentId?: number;
   data: ApplicationFormData;
   applicationStatus: ApplicationStatus;
   applicationFormName: string;
   applicationProgramYearID: number;
 }
-export class GetApplicationDataDto extends GetApplicationBaseDTO {
+
+export class ApplicationDataAPIOutDTO extends ApplicationBaseAPIOutDTO {
   applicationStatusUpdatedOn: Date;
   applicationOfferingIntensity: OfferingIntensity;
   applicationStartDate: string;
@@ -96,7 +100,7 @@ export class GetApplicationDataDto extends GetApplicationBaseDTO {
   submittedDate?: Date;
 }
 
-export interface ApplicationWithProgramYearDto {
+export class ApplicationWithProgramYearAPIOutDTO {
   applicationId: number;
   formName: string;
   programYearId: number;
@@ -111,4 +115,29 @@ export enum SuccessWaitingStatus {
 export class ApplicationNumberParamAPIInDTO {
   @Length(APPLICATION_NUMBER_LENGTH, APPLICATION_NUMBER_LENGTH)
   applicationNumber: string;
+}
+
+export class ApplicationIncomeVerification {
+  parent1IncomeVerificationStatus?: SuccessWaitingStatus;
+  parent2IncomeVerificationStatus?: SuccessWaitingStatus;
+  partnerIncomeVerificationStatus?: SuccessWaitingStatus;
+  studentIncomeVerificationStatus?: SuccessWaitingStatus;
+}
+
+export class ApplicationSupportingUserDetails {
+  parent1Info?: SuccessWaitingStatus;
+  parent2Info?: SuccessWaitingStatus;
+  partnerInfo?: SuccessWaitingStatus;
+}
+
+export class InProgressApplicationDetailsAPIOutDTO extends IntersectionType(
+  ApplicationSupportingUserDetails,
+  ApplicationIncomeVerification,
+) {
+  id: number;
+  applicationStatus: ApplicationStatus;
+  pirStatus: ProgramInfoStatus;
+  pirDeniedReason?: string;
+  offeringStatus?: OfferingStatus;
+  exceptionStatus?: ApplicationExceptionStatus;
 }
