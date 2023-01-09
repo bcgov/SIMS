@@ -204,7 +204,7 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
   }
 
   /**
-   * Create Assessment ready for student confirmation notification to notify student
+   * Create assessment ready for student confirmation notification to notify student
    * when workflow update the NOA approval status.
    * @param assessmentId updated assessment.
    * @param auditUserId user who creates notification.

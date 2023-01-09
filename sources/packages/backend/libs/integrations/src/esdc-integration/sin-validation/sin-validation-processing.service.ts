@@ -1,10 +1,6 @@
 import { LoggerService, InjectLogger } from "@sims/utilities/logger";
 import { Injectable } from "@nestjs/common";
-import {
-  SequenceControlService,
-  SINCheckStatus,
-  SystemUsersService,
-} from "@sims/services";
+import { SequenceControlService, SystemUsersService } from "@sims/services";
 import { SINValidationIntegrationService } from "./sin-validation-integration.service";
 import { SINValidation, Student } from "@sims/sims-db";
 import {

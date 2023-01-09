@@ -70,9 +70,6 @@ export class SINValidationService extends RecordDataModelService<SINValidation> 
    * Update the SIN validation record on DB based on the response from
    * the ESDC SIN validation response.
    * @param validationResponse SIN validation response from ESDC.
-   * todo: ann remove
-  //  * @param isValidSIN defines if, after system evaluation, the SIN
-  //  * is considered valid or not.
    * @param sinCheckStatus sin check status from the sin validation file.
    * @param receivedFileName file received with the SIN validation.
    * @param processDate date from the file received considered as
