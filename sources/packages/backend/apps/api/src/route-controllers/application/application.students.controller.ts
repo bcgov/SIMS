@@ -34,12 +34,13 @@ import {
 import { IUserToken, StudentUserToken } from "../../auth/userToken.interface";
 import BaseController from "../BaseController";
 import {
-  SaveApplicationDto,
-  GetApplicationDataDto,
-  ApplicationWithProgramYearDto,
-  ApplicationIdentifiersDTO,
+  SaveApplicationAPIInDTO,
+  ApplicationDataAPIOutDTO,
+  ApplicationWithProgramYearAPIOutDTO,
+  ApplicationIdentifiersAPIOutDTO,
   ApplicationNumberParamAPIInDTO,
-} from "./models/application.model";
+  InProgressApplicationDetailsAPIOutDTO,
+} from "./models/application.dto";
 import {
   AllowAuthorizedParty,
   UserToken,
@@ -57,12 +58,10 @@ import {
   ApiBadRequestResponse,
   ApiForbiddenResponse,
   ApiNotFoundResponse,
-  ApiOkResponse,
   ApiTags,
   ApiUnprocessableEntityResponse,
 } from "@nestjs/swagger";
 import { ApplicationControllerService } from "./application.controller.service";
-import { InProgressApplicationDetailsAPIOutDTO } from "./models/application.system.dto";
 import { CustomNamedError } from "@sims/utilities";
 
 @AllowAuthorizedParty(AuthorizedParties.student)
@@ -85,17 +84,19 @@ export class ApplicationStudentsController extends BaseController {
     super();
   }
 
+  /**
+   * Get application details by id.
+   * @param id for the application to be retrieved.
+   * @returns application details.
+   */
   @Get(":id")
-  @ApiOkResponse({
-    description: "Application found.",
-  })
   @ApiNotFoundResponse({
     description: "Application id not found.",
   })
   async getByApplicationId(
     @Param("id", ParseIntPipe) applicationId: number,
     @UserToken() userToken: StudentUserToken,
-  ): Promise<GetApplicationDataDto> {
+  ): Promise<ApplicationDataAPIOutDTO> {
     const application = await this.applicationService.getApplicationById(
       applicationId,
       { loadDynamicData: true, studentId: userToken.studentId },
@@ -139,7 +140,6 @@ export class ApplicationStudentsController extends BaseController {
    */
   @CheckSinValidation()
   @Patch(":applicationId/submit")
-  @ApiOkResponse({ description: "Application submitted." })
   @ApiUnprocessableEntityResponse({
     description:
       "Program Year is not active or " +
@@ -153,7 +153,7 @@ export class ApplicationStudentsController extends BaseController {
     description: "You have a restriction on your account.",
   })
   async submitApplication(
-    @Body() payload: SaveApplicationDto,
+    @Body() payload: SaveApplicationAPIInDTO,
     @Param("applicationId", ParseIntPipe) applicationId: number,
     @UserToken() studentToken: StudentUserToken,
   ): Promise<void> {
@@ -250,14 +250,13 @@ export class ApplicationStudentsController extends BaseController {
    * HTTP exception if it is not possible to create it.
    */
   @CheckSinValidation()
-  @ApiOkResponse({ description: "Draft application created." })
   @ApiUnprocessableEntityResponse({
     description:
       "Program Year is not active or MORE_THAN_ONE_APPLICATION_DRAFT_ERROR.",
   })
   @Post("draft")
   async createDraftApplication(
-    @Body() payload: SaveApplicationDto,
+    @Body() payload: SaveApplicationAPIInDTO,
     @UserToken() studentToken: StudentUserToken,
   ): Promise<number> {
     const programYear = await this.programYearService.getActiveProgramYear(
@@ -300,10 +299,9 @@ export class ApplicationStudentsController extends BaseController {
    */
   @CheckSinValidation()
   @Patch(":applicationId/draft")
-  @ApiOkResponse({ description: "Draft application updated." })
   @ApiNotFoundResponse({ description: "APPLICATION_DRAFT_NOT_FOUND." })
   async updateDraftApplication(
-    @Body() payload: SaveApplicationDto,
+    @Body() payload: SaveApplicationAPIInDTO,
     @Param("applicationId", ParseIntPipe) applicationId: number,
     @UserToken() studentToken: StudentUserToken,
   ): Promise<void> {
@@ -363,7 +361,6 @@ export class ApplicationStudentsController extends BaseController {
    * then consider both active and inactive program year.
    * @returns program year details of the application
    */
-  @ApiOkResponse({ description: "Program year details fetched." })
   @ApiNotFoundResponse({ description: "Student not found." })
   @Get(":applicationId/program-year")
   async programYearOfApplication(
@@ -371,7 +368,7 @@ export class ApplicationStudentsController extends BaseController {
     @Param("applicationId", ParseIntPipe) applicationId: number,
     @Query("includeInActivePY", new DefaultValuePipe(false), ParseBoolPipe)
     includeInActivePY: boolean,
-  ): Promise<ApplicationWithProgramYearDto> {
+  ): Promise<ApplicationWithProgramYearAPIOutDTO> {
     const student = await this.studentService.getStudentByUserId(
       userToken.userId,
     );
@@ -392,7 +389,7 @@ export class ApplicationStudentsController extends BaseController {
       programYearId: applicationProgramYear.programYear.id,
       formName: applicationProgramYear.programYear.formName,
       active: applicationProgramYear.programYear.active,
-    } as ApplicationWithProgramYearDto;
+    };
   }
 
   /**
@@ -403,9 +400,6 @@ export class ApplicationStudentsController extends BaseController {
    * @param userToken
    * @returns application
    */
-  @ApiOkResponse({
-    description: "Returns application which can be requested for change.",
-  })
   @ApiNotFoundResponse({
     description:
       "Application either not found or not eligible to request for change.",
@@ -414,7 +408,7 @@ export class ApplicationStudentsController extends BaseController {
   async getApplicationToRequestAppeal(
     @Param() applicationNumberParam: ApplicationNumberParamAPIInDTO,
     @UserToken() userToken: IUserToken,
-  ): Promise<ApplicationIdentifiersDTO> {
+  ): Promise<ApplicationIdentifiersAPIOutDTO> {
     const application =
       await this.applicationService.getApplicationToRequestAppeal(
         userToken.userId,

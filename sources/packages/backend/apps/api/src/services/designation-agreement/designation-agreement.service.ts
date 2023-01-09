@@ -12,9 +12,9 @@ import {
   User,
 } from "@sims/sims-db";
 import {
-  UpdateDesignation,
-  UpdateDesignationLocation,
-} from "../../route-controllers/designation-agreement/models/designation-agreement.model";
+  UpdateDesignationDetailsAPIInDTO,
+  DesignationLocationAPIInDTO,
+} from "../../route-controllers/designation-agreement/models/designation-agreement.dto";
 
 /**
  * Manages the operations needed for designation agreements that are submitted by the institutions
@@ -207,7 +207,7 @@ export class DesignationAgreementService extends RecordDataModelService<Designat
     designationId: number,
     institutionId: number,
     userId: number,
-    designationPayload: UpdateDesignation,
+    designationPayload: UpdateDesignationDetailsAPIInDTO,
     designationLocations: DesignationAgreementLocation[],
   ): Promise<void> {
     const auditUser = { id: userId } as User;
@@ -307,14 +307,14 @@ export class DesignationAgreementService extends RecordDataModelService<Designat
    * @returns Designation locations for approval.
    */
   private buildDesignationLocations(
-    locationsDesignations: UpdateDesignationLocation[],
+    locationsDesignations: DesignationLocationAPIInDTO[],
     designationLocations: DesignationAgreementLocation[],
     auditUserId: number,
     designationUpdatedDate: Date,
   ): DesignationAgreementLocation[] {
     const auditUser = { id: auditUserId } as User;
     return locationsDesignations.map(
-      (locationPayload: UpdateDesignationLocation) => {
+      (locationPayload: DesignationLocationAPIInDTO) => {
         const location = new DesignationAgreementLocation();
 
         location.approved = locationPayload.approved;

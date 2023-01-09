@@ -1,11 +1,10 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { INSTITUTION_TYPE_BC_PRIVATE } from "@sims/sims-db/constant";
-import { getISODateOnlyString } from "@sims/utilities";
 import { DesignationAgreementService } from "../../services";
 import {
-  GetDesignationAgreementDto,
-  GetDesignationAgreementsDto,
-} from "./models/designation-agreement.model";
+  DesignationAgreementAPIOutDTO,
+  DesignationAgreementDetailsAPIOutDTO,
+} from "./models/designation-agreement.dto";
 /**
  * This service controller is a provider which is created to extract the implementation of
  * controller in one place as their business logic is shared between different client types.
@@ -20,14 +19,14 @@ export class DesignationAgreementControllerService {
   /**
    * Retrieve the designation agreement information and
    * the associated locations approvals.
-   * @param designationId
+   * @param designationId id of the designation to be retrieved.
    * @param institutionId this value is passed only for client type Institution.
    * @returns designation agreement information.
    */
   async getDesignationAgreement(
     designationId: number,
     institutionId?: number,
-  ): Promise<GetDesignationAgreementDto> {
+  ): Promise<DesignationAgreementAPIOutDTO> {
     const designation =
       await this.designationAgreementService.getInstitutionDesignationById(
         designationId,
@@ -59,32 +58,29 @@ export class DesignationAgreementControllerService {
           designationLocationId: agreementLocation.id,
         }),
       ),
-    } as GetDesignationAgreementDto;
+    };
   }
 
   /**
    * Get the list of all the designations that belongs to
    * the institution.
-   * @param institutionId
+   * @param institutionId id of the institution that designations belong to.
    * @returns the list of all the designations that
    * belongs to the institution.
    */
   async getDesignationAgreements(
     institutionId: number,
-  ): Promise<GetDesignationAgreementsDto[]> {
+  ): Promise<DesignationAgreementDetailsAPIOutDTO[]> {
     const designations =
       await this.designationAgreementService.getInstitutionDesignationsById(
         institutionId,
       );
-    return designations.map(
-      (designation) =>
-        ({
-          designationId: designation.id,
-          designationStatus: designation.designationStatus,
-          submittedDate: designation.submittedDate,
-          startDate: getISODateOnlyString(designation.startDate),
-          endDate: getISODateOnlyString(designation.endDate),
-        } as GetDesignationAgreementsDto),
-    );
+    return designations.map((designation) => ({
+      designationId: designation.id,
+      designationStatus: designation.designationStatus,
+      submittedDate: designation.submittedDate,
+      startDate: designation.startDate,
+      endDate: designation.endDate,
+    }));
   }
 }

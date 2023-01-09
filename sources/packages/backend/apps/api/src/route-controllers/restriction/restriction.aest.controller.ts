@@ -67,8 +67,8 @@ export class RestrictionAESTController extends BaseController {
 
   /**
    * Get restrictions for a student.
-   * @param studentId
-   * @returns Student Restrictions.
+   * @param studentId id of the student to retrieve restrictions.
+   * @returns Student restrictions.
    */
   @Get("student/:studentId")
   async getStudentRestrictions(
@@ -89,6 +89,7 @@ export class RestrictionAESTController extends BaseController {
       isActive: studentRestriction.isActive,
     }));
   }
+
   /**
    * Provide the list of restriction categories for drop-down.
    * @returns Categories option list.
@@ -105,7 +106,7 @@ export class RestrictionAESTController extends BaseController {
 
   /**
    * Provide the list of restriction reasons for selected category.
-   * @param restrictionCategory Selected Category from category list.
+   * @param restrictionCategory Selected category from category list.
    * @returns Reasons option list.
    */
   @Get("category/:restrictionCategory/reasons")
@@ -124,8 +125,8 @@ export class RestrictionAESTController extends BaseController {
 
   /**
    * Get the details for view student restriction.
-   * @param studentId
-   * @param studentRestrictionId
+   * @param studentId id of the student.
+   * @param studentRestrictionId id of the student restriction.
    * @returns Student restriction detail view.
    */
   @ApiNotFoundResponse({
@@ -163,8 +164,8 @@ export class RestrictionAESTController extends BaseController {
   /**
    * Add a new provincial restriction to Student.
    * * Note: Federal restrictions are added/resolved by nightly job not through this API.
-   * @param studentId
-   * @param payload
+   * @param studentId id of the student to get a restriction.
+   * @param payload restriction details.
    */
   @Roles(Role.StudentAddRestriction)
   @ApiUnprocessableEntityResponse({
@@ -199,9 +200,9 @@ export class RestrictionAESTController extends BaseController {
   /**
    * Resolve a provincial restriction.
    * * Note: Federal restrictions are added/resolved by nightly job not through this API.
-   * @param studentId
-   * @param studentRestrictionId
-   * @param payload
+   * @param studentId id of the student.
+   * @param studentRestrictionId id of the student restriction.
+   * @param payload restriction details.
    */
   @Roles(Role.StudentResolveRestriction)
   @ApiUnprocessableEntityResponse({
@@ -239,7 +240,7 @@ export class RestrictionAESTController extends BaseController {
 
   /**
    * Get restrictions for an institution.
-   * @param institutionId
+   * @param institutionId id of the institution to retrieve its restrictions.
    * @returns Institution Restrictions.
    */
   @Get("institution/:institutionId")
@@ -265,8 +266,8 @@ export class RestrictionAESTController extends BaseController {
 
   /**
    * Get the details for view institution restriction.
-   * @param institutionId
-   * @param institutionRestrictionId
+   * @param institutionId institution id to retrieve restriction.
+   * @param institutionRestrictionId id of the institution restriction to be retrieved.
    * @returns Institution restriction detail view.
    */
   @ApiNotFoundResponse({
@@ -310,8 +311,8 @@ export class RestrictionAESTController extends BaseController {
   /**
    * Add a new provincial restriction to Institution.
    * * Note: Only provincial restriction of category Designation can be added to institution.
-   * @param institutionId
-   * @param payload
+   * @param institutionId id of the institution to get a restriction.
+   * @param payload restriction details.
    */
   @Roles(Role.InstitutionAddRestriction)
   @ApiUnprocessableEntityResponse({
@@ -354,9 +355,9 @@ export class RestrictionAESTController extends BaseController {
 
   /**
    * Resolve a provincial restriction for Institution.
-   * @param institutionId
-   * @param institutionRestrictionId
-   * @param payload
+   * @param institutionId id of the institution.
+   * @param institutionRestrictionId id of the institution restriction to be resolved.
+   * @param payload institution restriction details.
    */
   @Roles(Role.InstitutionResolveRestriction)
   @ApiUnprocessableEntityResponse({
@@ -405,8 +406,8 @@ export class RestrictionAESTController extends BaseController {
 
   /**
    * Get restriction status for an institution.
-   * @param institutionId
-   * @returns Institution Restriction.
+   * @param institutionId id of the institution.
+   * @returns Institution restriction status.
    */
   @Get("institution/:institutionId/status")
   async getRestrictionStatusById(

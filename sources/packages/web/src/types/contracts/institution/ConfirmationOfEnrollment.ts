@@ -17,7 +17,7 @@ export enum COEStatus {
 }
 
 /**
- * Read only Dto for study break item.
+ * Read only interface for study break item.
  * This is for COE where study breaks are shown in read only view.
  */
 export interface StudyBreakCOE {

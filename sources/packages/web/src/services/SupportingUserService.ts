@@ -1,25 +1,25 @@
 import { SupportingUserType } from "@/types";
 import ApiClient from "./http/ApiClient";
 import {
-  ApplicationApiOutDTO,
-  ApplicationIdentifierApiInDTO,
-  ApplicationSupportingUsersApiOutDTO,
-  SupportingUserFormDataApiOutDTO,
-  UpdateSupportingUserApiInDTO,
-} from "./http/dto/SupportingUser.dto";
+  ApplicationAPIOutDTO,
+  ApplicationIdentifierAPIInDTO,
+  ApplicationSupportingUsersAPIOutDTO,
+  SupportingUserFormDataAPIOutDTO,
+  UpdateSupportingUserAPIInDTO,
+} from "@/services/http/dto";
 
 export class SupportingUsersService {
   // Share Instance
   private static instance: SupportingUsersService;
 
-  public static get shared(): SupportingUsersService {
+  static get shared(): SupportingUsersService {
     return this.instance || (this.instance = new this());
   }
 
-  public async getApplicationDetails(
+  async getApplicationDetails(
     supportingUserType: SupportingUserType,
-    payload: ApplicationIdentifierApiInDTO,
-  ): Promise<ApplicationApiOutDTO> {
+    payload: ApplicationIdentifierAPIInDTO,
+  ): Promise<ApplicationAPIOutDTO> {
     return ApiClient.SupportingUserApi.getApplicationDetails(
       supportingUserType,
       payload,
@@ -28,7 +28,7 @@ export class SupportingUsersService {
 
   async updateSupportingInformation(
     supportingUserType: SupportingUserType,
-    payload: UpdateSupportingUserApiInDTO,
+    payload: UpdateSupportingUserAPIInDTO,
   ): Promise<void> {
     await ApiClient.SupportingUserApi.updateSupportingInformation(
       supportingUserType,
@@ -38,7 +38,7 @@ export class SupportingUsersService {
 
   async getSupportingUsersForSideBar(
     applicationId: number,
-  ): Promise<ApplicationSupportingUsersApiOutDTO[]> {
+  ): Promise<ApplicationSupportingUsersAPIOutDTO[]> {
     return ApiClient.SupportingUserApi.getSupportingUsersForSideBar(
       applicationId,
     );
@@ -46,7 +46,7 @@ export class SupportingUsersService {
 
   async getSupportingUserData(
     supportingUserId: number,
-  ): Promise<SupportingUserFormDataApiOutDTO> {
+  ): Promise<SupportingUserFormDataAPIOutDTO> {
     return ApiClient.SupportingUserApi.getSupportingUserData(supportingUserId);
   }
 }

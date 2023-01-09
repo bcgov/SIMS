@@ -38,9 +38,9 @@ import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import { onMounted, ref } from "vue";
 import { DesignationAgreementService } from "@/services/DesignationAgreementService";
 import {
-  GetDesignationAgreementsDto,
+  DesignationAgreementDetailsAPIOutDTO,
   DesignationAgreementStatus,
-} from "@/types/contracts/DesignationAgreementContract";
+} from "@/services/http/dto";
 import { useInstitutionAuth, useSnackBar } from "@/composables";
 import DesignationAgreementSummary from "@/components/partial-view/DesignationAgreement/DesignationAgreementSummary.vue";
 
@@ -52,7 +52,7 @@ export default {
     const router = useRouter();
     const snackBar = useSnackBar();
     const { isLegalSigningAuthority } = useInstitutionAuth();
-    const designations = ref([] as GetDesignationAgreementsDto[]);
+    const designations = ref([] as DesignationAgreementDetailsAPIOutDTO[]);
 
     const goToRequestDesignation = () => {
       const hasPendingDesignation = designations.value.some(

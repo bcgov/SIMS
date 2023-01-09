@@ -21,9 +21,9 @@ import { IUserToken } from "../../auth/userToken.interface";
 import { AllowAuthorizedParty } from "../../auth/decorators/authorized-party.decorator";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import {
-  ApplicationIdentifierApiInDTO,
-  ApplicationApiOutDTO,
-  UpdateSupportingUserApiInDTO,
+  ApplicationIdentifierAPIInDTO,
+  ApplicationAPIOutDTO,
+  UpdateSupportingUserAPIInDTO,
 } from "./models/supporting-user.dto";
 import { AddressInfo, ContactInfo, SupportingUserType } from "@sims/sims-db";
 import { ApiProcessError, ClientTypeBaseRoute } from "../../types";
@@ -78,8 +78,8 @@ export class SupportingUserSupportingUsersController extends BaseController {
     @UserToken() userToken: IUserToken,
     @Param("supportingUserType", new ParseEnumPipe(SupportingUserType))
     supportingUserType: SupportingUserType,
-    @Body() payload: ApplicationIdentifierApiInDTO,
-  ): Promise<ApplicationApiOutDTO> {
+    @Body() payload: ApplicationIdentifierAPIInDTO,
+  ): Promise<ApplicationAPIOutDTO> {
     const application =
       await this.applicationService.getApplicationForSupportingUser(
         payload.applicationNumber,
@@ -137,7 +137,7 @@ export class SupportingUserSupportingUsersController extends BaseController {
     @UserToken() userToken: IUserToken,
     @Param("supportingUserType", new ParseEnumPipe(SupportingUserType))
     supportingUserType: SupportingUserType,
-    @Body() payload: UpdateSupportingUserApiInDTO,
+    @Body() payload: UpdateSupportingUserAPIInDTO,
   ): Promise<void> {
     // Regardless of the API call is successful or not, create/update
     // the user being used to execute the request.

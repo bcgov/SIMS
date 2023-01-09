@@ -1,31 +1,34 @@
 import { addPaginationOptions, addSortOptions } from "@/helpers";
 import {
-  SaveStudentApplicationDto,
-  ApplicationWithProgramYearDto,
-  GetApplicationDataDto,
-  GetApplicationBaseDTO,
   DEFAULT_PAGE_NUMBER,
   DEFAULT_PAGE_LIMIT,
   StudentApplicationFields,
   DataTableSortOrder,
-  ApplicationIdentifiersDTO,
   ClientIdType,
 } from "@/types";
 import { AuthService } from "../AuthService";
 import HttpBaseClient from "./common/HttpBaseClient";
-import { ApplicationSummaryAPIOutDTO, PaginatedResultsAPIOutDTO } from "./dto";
-import { InProgressApplicationDetailsAPIOutDTO } from "@/services/http/dto/Application.dto";
+import {
+  ApplicationSummaryAPIOutDTO,
+  PaginatedResultsAPIOutDTO,
+  SaveApplicationAPIInDTO,
+  ApplicationWithProgramYearAPIOutDTO,
+  ApplicationDataAPIOutDTO,
+  ApplicationBaseAPIOutDTO,
+  ApplicationIdentifiersAPIOutDTO,
+  InProgressApplicationDetailsAPIOutDTO,
+} from "@/services/http/dto";
 
 export class ApplicationApi extends HttpBaseClient {
   async getApplicationData(
     applicationId: number,
-  ): Promise<GetApplicationDataDto> {
+  ): Promise<ApplicationDataAPIOutDTO> {
     try {
       const response = await this.apiClient.get(
         this.addClientRoot(`application/${applicationId}`),
         this.addAuthHeader(),
       );
-      return response.data as GetApplicationDataDto;
+      return response.data as ApplicationDataAPIOutDTO;
     } catch (error) {
       this.handleRequestError(error);
       throw error;
@@ -40,7 +43,7 @@ export class ApplicationApi extends HttpBaseClient {
   }
 
   async createApplicationDraft(
-    payload: SaveStudentApplicationDto,
+    payload: SaveApplicationAPIInDTO,
   ): Promise<number> {
     try {
       const response = await this.apiClient.post(
@@ -62,7 +65,7 @@ export class ApplicationApi extends HttpBaseClient {
 
   async saveApplicationDraft(
     applicationId: number,
-    payload: SaveStudentApplicationDto,
+    payload: SaveApplicationAPIInDTO,
   ): Promise<number> {
     try {
       const response = await this.apiClient.patch(
@@ -79,7 +82,7 @@ export class ApplicationApi extends HttpBaseClient {
 
   async submitApplication(
     applicationId: number,
-    payload: SaveStudentApplicationDto,
+    payload: SaveApplicationAPIInDTO,
   ): Promise<void> {
     try {
       await this.patchCall(
@@ -94,14 +97,14 @@ export class ApplicationApi extends HttpBaseClient {
   async getApplicationWithPY(
     applicationId: number,
     isIncludeInActiveProgramYear?: boolean,
-  ): Promise<ApplicationWithProgramYearDto> {
+  ): Promise<ApplicationWithProgramYearAPIOutDTO> {
     try {
       let url = this.addClientRoot(`application/${applicationId}/program-year`);
       if (isIncludeInActiveProgramYear) {
         url = `${url}?isIncludeInActiveProgramYear=${isIncludeInActiveProgramYear}`;
       }
       const response = await this.getCall(url);
-      return response.data as ApplicationWithProgramYearDto;
+      return response.data as ApplicationWithProgramYearAPIOutDTO;
     } catch (error) {
       this.handleRequestError(error);
       throw error;
@@ -115,11 +118,11 @@ export class ApplicationApi extends HttpBaseClient {
    */
   async getApplicationDetails(
     applicationId: number,
-  ): Promise<GetApplicationBaseDTO> {
+  ): Promise<ApplicationBaseAPIOutDTO> {
     const response = await this.getCall(
       this.addClientRoot(`application/${applicationId}`),
     );
-    return response.data as GetApplicationBaseDTO;
+    return response.data as ApplicationBaseAPIOutDTO;
   }
 
   /**
@@ -153,8 +156,8 @@ export class ApplicationApi extends HttpBaseClient {
 
   async getApplicationForRequestChange(
     applicationNumber: string,
-  ): Promise<ApplicationIdentifiersDTO> {
-    return this.getCallTyped<ApplicationIdentifiersDTO>(
+  ): Promise<ApplicationIdentifiersAPIOutDTO> {
+    return this.getCallTyped<ApplicationIdentifiersAPIOutDTO>(
       this.addClientRoot(`application/${applicationNumber}/appeal`),
     );
   }
