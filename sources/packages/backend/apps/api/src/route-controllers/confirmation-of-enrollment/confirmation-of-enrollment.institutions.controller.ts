@@ -52,12 +52,11 @@ import {
   PaginatedResultsAPIOutDTO,
 } from "../models/pagination.dto";
 import { ConfirmationOfEnrollmentControllerService } from "./confirmation-of-enrollment.controller.service";
-import { COE_NOT_FOUND_MESSAGE } from "../../constants";
 
 @AllowAuthorizedParty(AuthorizedParties.institution)
 @Controller("location")
 @ApiTags(
-  `${ClientTypeBaseRoute.Institution}-location[Confirmation Of Enrollment - CoE]`,
+  `${ClientTypeBaseRoute.Institution}-location[confirmation-of-enrollment]`,
 )
 export class ConfirmationOfEnrollmentInstitutionsController extends BaseController {
   constructor(
@@ -128,7 +127,10 @@ export class ConfirmationOfEnrollmentInstitutionsController extends BaseControll
    * @returns application details for COE.
    */
   @HasLocationAccess("locationId")
-  @ApiNotFoundResponse({ description: COE_NOT_FOUND_MESSAGE })
+  @ApiNotFoundResponse({
+    description:
+      "Confirmation of enrollment not found or application status not valid.",
+  })
   @Get(
     ":locationId/confirmation-of-enrollment/disbursement-schedule/:disbursementScheduleId",
   )
@@ -144,10 +146,14 @@ export class ConfirmationOfEnrollmentInstitutionsController extends BaseControll
       );
 
     if (!disbursementSchedule) {
-      throw new NotFoundException(COE_NOT_FOUND_MESSAGE);
+      throw new NotFoundException(
+        "Confirmation of enrollment not found or application status not valid.",
+      );
     }
 
-    const offering = disbursementSchedule.studentAssessment.offering;
+    const offering =
+      disbursementSchedule.studentAssessment.application.currentAssessment
+        .offering;
     return {
       applicationProgramName: offering.educationProgram.name,
       applicationProgramDescription: offering.educationProgram.description,
@@ -204,7 +210,10 @@ export class ConfirmationOfEnrollmentInstitutionsController extends BaseControll
    * @param payload COE confirmation information.
    */
   @HasLocationAccess("locationId")
-  @ApiNotFoundResponse({ description: COE_NOT_FOUND_MESSAGE })
+  @ApiNotFoundResponse({
+    description:
+      "Confirmation of enrollment not found or application status not valid.",
+  })
   @ApiUnprocessableEntityResponse({
     description:
       "Tuition amount provided should be lesser than both (actual tuition + program related costs) and (Canada grants + Canada Loan + BC Loan) " +

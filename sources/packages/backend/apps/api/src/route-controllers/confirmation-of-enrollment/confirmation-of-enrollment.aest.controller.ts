@@ -14,16 +14,14 @@ import {
 import { Role } from "../../auth/roles.enum";
 import { UserGroups } from "../../auth/user-groups.enum";
 import { IUserToken } from "../../auth/userToken.interface";
-import { COE_NOT_FOUND_MESSAGE } from "../../constants";
 import { ClientTypeBaseRoute } from "../../types";
-import { COE_WINDOW } from "../../utilities";
 import BaseController from "../BaseController";
 import { ConfirmationOfEnrollmentControllerService } from "./confirmation-of-enrollment.controller.service";
 
 @AllowAuthorizedParty(AuthorizedParties.aest)
 @Groups(UserGroups.AESTUser)
 @Controller("confirmation-of-enrollment")
-@ApiTags(`${ClientTypeBaseRoute.AEST}[Confirmation Of Enrollment - CoE]`)
+@ApiTags(`${ClientTypeBaseRoute.AEST}-confirmation-of-enrollment`)
 export class ConfirmationOfEnrollmentAESTController extends BaseController {
   constructor(
     private readonly confirmationOfEnrollmentControllerService: ConfirmationOfEnrollmentControllerService,
@@ -39,11 +37,13 @@ export class ConfirmationOfEnrollmentAESTController extends BaseController {
    * on first COE approval.
    * @param disbursementScheduleId disbursement schedule id of COE.
    */
-  @ApiNotFoundResponse({ description: COE_NOT_FOUND_MESSAGE })
+  @ApiNotFoundResponse({
+    description:
+      "Confirmation of enrollment not found or application status not valid.",
+  })
   @ApiUnprocessableEntityResponse({
     description:
-      `Confirmation of enrollment window is greater than ${COE_WINDOW} days ` +
-      "or the first disbursement(COE) is not completed and it must be completed.",
+      "The first disbursement(COE) is not completed and it must be completed.",
   })
   @Roles(Role.StudentConfirmEnrolment)
   @Patch("disbursement-schedule/:disbursementScheduleId/confirm")

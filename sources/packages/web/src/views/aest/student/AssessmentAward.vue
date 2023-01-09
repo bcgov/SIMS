@@ -68,10 +68,6 @@ export default defineComponent({
     const headerMap = ref<Record<string, string>>({});
     const snackBar = useSnackBar();
 
-    onMounted(async () => {
-      loadAssessmentAwardValues();
-    });
-
     const loadAssessmentAwardValues = async () => {
       assessmentAwardData.value =
         await StudentAssessmentsService.shared.getAssessmentAwardDetails(
@@ -79,6 +75,8 @@ export default defineComponent({
         );
       headerMap.value = mapAssessmentDetailHeader(assessmentAwardData.value);
     };
+
+    onMounted(loadAssessmentAwardValues);
 
     const goToNoticeOfAssessment = () => {
       return router.push({
@@ -97,13 +95,14 @@ export default defineComponent({
           disbursementId,
         );
         snackBar.success("Confirmation of Enrollment Confirmed!");
-        loadAssessmentAwardValues();
+        await loadAssessmentAwardValues();
       } catch (error: unknown) {
         if (
           error instanceof ApiProcessError &&
           error.errorType === FIRST_COE_NOT_COMPLETE
         ) {
           snackBar.error("First COE is not completed.");
+          return;
         }
         snackBar.error("An error happened while confirming the COE.");
       }

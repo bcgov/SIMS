@@ -6,7 +6,6 @@ import {
 import { DisbursementSchedule, DisbursementValueType } from "@sims/sims-db";
 import { getTotalDisbursementAmount } from "@sims/utilities";
 import {
-  COE_NOT_FOUND_MESSAGE,
   FIRST_COE_NOT_COMPLETE,
   FIRST_COE_NOT_COMPLETE_MESSAGE,
   INVALID_TUITION_REMITTANCE_AMOUNT,
@@ -19,7 +18,7 @@ import {
 import { ApiProcessError } from "../../types";
 import { COE_WINDOW } from "../../utilities";
 import BaseController from "../BaseController";
-import { ConfirmEnrollmentOptions } from "./models/confirmation-of-enrollment.dto";
+import { ConfirmEnrollmentOptions } from "./models/confirmation-of-enrollment.models";
 
 @Injectable()
 export class ConfirmationOfEnrollmentControllerService extends BaseController {
@@ -53,7 +52,9 @@ export class ConfirmationOfEnrollmentControllerService extends BaseController {
       );
 
     if (!disbursementSchedule) {
-      throw new NotFoundException(COE_NOT_FOUND_MESSAGE);
+      throw new NotFoundException(
+        "Confirmation of enrollment not found or application status not valid.",
+      );
     }
 
     if (
@@ -70,10 +71,10 @@ export class ConfirmationOfEnrollmentControllerService extends BaseController {
     // TODO: Add validation for past study period.
 
     const firstOutstandingDisbursement =
-      await this.disbursementScheduleService.getFirstDisbursementSchedule({
-        disbursementScheduleId: disbursementSchedule.id,
-        onlyPendingCOE: true,
-      });
+      await this.disbursementScheduleService.getFirstDisbursementScheduleByApplication(
+        disbursementSchedule.studentAssessment.application.id,
+        true,
+      );
 
     if (disbursementSchedule.id !== firstOutstandingDisbursement.id) {
       throw new UnprocessableEntityException(
@@ -129,7 +130,9 @@ export class ConfirmationOfEnrollmentControllerService extends BaseController {
       ],
     );
 
-    const offering = disbursementSchedule.studentAssessment.offering;
+    const offering =
+      disbursementSchedule.studentAssessment.application.currentAssessment
+        .offering;
     const offeringAmount =
       offering.actualTuitionCosts + offering.programRelatedCosts;
     const maxTuitionAllowed = Math.min(offeringAmount, disbursementAmount);

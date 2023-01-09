@@ -207,7 +207,11 @@ import StatusInfoEnrolment from "@/components/common/StatusInfoEnrolment.vue";
 import ConfirmEnrolment from "@/components/common/ConfirmEnrolment.vue";
 
 export default defineComponent({
-  emits: ["confirmEnrolment"],
+  emits: {
+    confirmEnrolment: (disbursementId: number) => {
+      return !!disbursementId;
+    },
+  },
   components: {
     AwardTable,
     ConfirmEnrolment,

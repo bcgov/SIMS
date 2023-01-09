@@ -40,11 +40,15 @@ import ConfirmModal from "@/components/common/modals/ConfirmModal.vue";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
 
 export default defineComponent({
-  emits: ["confirmEnrolment"],
+  emits: {
+    confirmEnrolment: (disbursementId: number) => {
+      return !!disbursementId;
+    },
+  },
   components: { ConfirmModal, CheckPermissionRole },
   props: {
     coeStatus: {
-      type: Object as PropType<COEStatus>,
+      type: String as PropType<COEStatus>,
       required: true,
     },
     applicationStatus: {

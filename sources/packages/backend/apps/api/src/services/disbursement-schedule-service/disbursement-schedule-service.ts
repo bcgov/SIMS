@@ -262,7 +262,8 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
       .innerJoin("studentAssessment.application", "application")
       .innerJoin("application.student", "student")
       .innerJoin("student.user", "user")
-      .innerJoin("studentAssessment.offering", "offering")
+      .innerJoin("application.currentAssessment", "currentAssessment")
+      .innerJoin("currentAssessment.offering", "offering")
       .innerJoin("offering.institutionLocation", "location")
       .innerJoin("offering.educationProgram", "program")
       .leftJoin("disbursement.coeDeniedReason", "coeDeniedReason")
@@ -302,12 +303,13 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
         "disbursementValues.valueAmount",
       ])
       .innerJoin("disbursementSchedule.studentAssessment", "studentAssessment")
-      .innerJoin("studentAssessment.offering", "offering")
       .innerJoin(
         "disbursementSchedule.disbursementValues",
         "disbursementValues",
       )
       .innerJoin("studentAssessment.application", "application")
+      .innerJoin("application.currentAssessment", "currentAssessment")
+      .innerJoin("currentAssessment.offering", "offering")
       .innerJoin("offering.institutionLocation", "location")
       .where("disbursementSchedule.id = :disbursementScheduleId", {
         disbursementScheduleId,
@@ -389,11 +391,10 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
    * only records with coeStatus defined as 'Required' will be considered.
    * @returns first disbursement schedule, if any.
    */
-  async getFirstDisbursementSchedule(options: {
-    disbursementScheduleId?: number;
-    applicationId?: number;
-    onlyPendingCOE?: boolean;
-  }): Promise<DisbursementSchedule> {
+  async getFirstDisbursementScheduleByApplication(
+    applicationId: number,
+    onlyPendingCOE?: boolean,
+  ): Promise<DisbursementSchedule> {
     const query = this.repo
       .createQueryBuilder("disbursementSchedule")
       .select([
@@ -411,21 +412,12 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
       .leftJoin("disbursementSchedule.coeDeniedReason", "coeDeniedReason")
       .where("application.applicationStatus IN (:...status)", {
         status: [ApplicationStatus.enrollment, ApplicationStatus.completed],
+      })
+      .andWhere("application.id = :applicationId", {
+        applicationId: applicationId,
       });
 
-    if (options.applicationId) {
-      query.andWhere("application.id = :applicationId", {
-        applicationId: options.applicationId,
-      });
-    }
-
-    if (options.disbursementScheduleId) {
-      query.andWhere("disbursementSchedule.id = :disbursementScheduleId", {
-        disbursementScheduleId: options.disbursementScheduleId,
-      });
-    }
-
-    if (options.onlyPendingCOE) {
+    if (onlyPendingCOE) {
       query.andWhere("disbursementSchedule.coeStatus = :required", {
         required: COEStatus.required,
       });

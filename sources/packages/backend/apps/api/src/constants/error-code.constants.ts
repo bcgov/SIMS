@@ -122,9 +122,6 @@ export const DUPLICATE_INSTITUTION_LOCATION_CODE =
  */
 export const DUPLICATE_SABC_CODE = "DUPLICATE_SABC_CODE";
 
-export const COE_NOT_FOUND_MESSAGE =
-  "Confirmation of enrollment not found or application status not valid.";
-
 export const FIRST_COE_NOT_COMPLETE_MESSAGE =
   "First disbursement(COE) not complete. Please complete the first disbursement.";
 
