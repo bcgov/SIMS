@@ -1,6 +1,12 @@
 import { Injectable } from "@nestjs/common";
-import { RecordDataModelService, DisbursementSchedule } from "@sims/sims-db";
-import { DataSource } from "typeorm";
+import {
+  RecordDataModelService,
+  DisbursementSchedule,
+  OfferingIntensity,
+  ApplicationStatus,
+  COEStatus,
+} from "@sims/sims-db";
+import { DataSource, In } from "typeorm";
 
 /**
  * Service layer for Student Application disbursement schedules.
