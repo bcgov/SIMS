@@ -29,7 +29,7 @@ export const SPACE_FILLER = " ";
 export const NUMBER_FILLER = "0";
 
 /**
- * Codes used to start all the lines of the files sent to ECE.
+ * Codes used to start all the lines of the files sent to Institution.
  */
 export enum RecordTypeCodes {
   ECEHeader = "1",

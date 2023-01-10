@@ -32,11 +32,10 @@ export class ECEFileService {
    * particular institution is required.
    * @returns Processing ECE request result.
    */
-  async processECEFile(generationDate?: Date): Promise<ECEUploadResult[]> {
+  async processECEFile(): Promise<ECEUploadResult[]> {
     this.logger.log(`Retrieving eligible COEs for ECE request...`);
-    const eligibleCOEs = await this.disbursementScheduleService.getPendingCOEs(
-      generationDate,
-    );
+    const eligibleCOEs =
+      await this.disbursementScheduleService.getPendingCOEs();
     if (!eligibleCOEs.length) {
       return [
         {

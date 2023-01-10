@@ -9,7 +9,7 @@ import { ECERecord, RecordTypeCodes } from "./models/ece-integration.model";
 
 /**
  * Manages the creation of the content files that needs to be sent
- * to ECE. These files are created based
+ * to Institution. These files are created based
  * on a fixed size format and uploaded to a SFTP on Government
  * ZONE B network for further processing and final send to servers.
  */

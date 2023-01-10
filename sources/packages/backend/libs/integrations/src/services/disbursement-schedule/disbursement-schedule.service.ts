@@ -206,8 +206,7 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
    * @param generationDate Date in which the eligible COE is required for an institution.
    * @returns eligible COEs.
    */
-  async getPendingCOEs(generationDate?: Date): Promise<DisbursementSchedule[]> {
-    const processingDate = generationDate ? generationDate : addDays(-1);
+  async getPendingCOEs(): Promise<DisbursementSchedule[]> {
     return this.repo.find({
       select: {
         id: true,
@@ -253,11 +252,18 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
       },
       where: {
         coeStatus: COEStatus.required,
-        updatedAt: dateEqualTo(processingDate),
         studentAssessment: {
-          offering: {
-            institutionLocation: { hasIntegration: true },
-            offeringIntensity: OfferingIntensity.fullTime,
+          application: {
+            applicationStatus: In([
+              ApplicationStatus.enrollment,
+              ApplicationStatus.completed,
+            ]),
+            currentAssessment: {
+              offering: {
+                institutionLocation: { hasIntegration: true },
+                offeringIntensity: OfferingIntensity.fullTime,
+              },
+            },
           },
         },
       },
