@@ -377,7 +377,7 @@ export class ECertGenerationService {
       // Total overaward balance for the student for this particular award.
       const overawardBalance = studentOverawardBalance[valueCode] ?? 0;
       if (!overawardBalance) {
-        // There are overawards to be subtracted for this award.
+        // There are no overawards to be subtracted for this award.
         continue;
       }
       // Subtract the debit from the current awards in the current assessment.

@@ -193,9 +193,9 @@ export class ECertFileHandler extends ESDCFileHandler {
       this.logger.log(
         `Found ${disbursements.length} ${offeringIntensity} disbursements schedules.`,
       );
-      const disbursementRecords = disbursements.map((disbursement) => {
-        return this.createECertRecord(disbursement);
-      });
+      const disbursementRecords = disbursements.map((disbursement) =>
+        this.createECertRecord(disbursement),
+      );
 
       this.logger.log(`Creating  ${offeringIntensity} e-Cert file content...`);
       const fileContent = eCertIntegrationService.createRequestContent(
