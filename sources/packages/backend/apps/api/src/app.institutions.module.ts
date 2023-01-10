@@ -41,6 +41,7 @@ import {
   EducationProgramControllerService,
   EducationProgramOfferingInstitutionsController,
   EducationProgramOfferingControllerService,
+  ConfirmationOfEnrollmentControllerService,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
 import {
@@ -109,6 +110,7 @@ import { UserControllerService } from "./route-controllers/user/user.controller.
     EducationProgramOfferingValidationService,
     StudentRestrictionSharedService,
     UserControllerService,
+    ConfirmationOfEnrollmentControllerService,
   ],
 })
 export class AppInstitutionsModule {}

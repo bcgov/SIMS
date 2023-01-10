@@ -59,18 +59,18 @@ export class ConfirmationOfEnrollmentService {
    * hence the COE approval happens twice for application with more than once disbursement.
    * Irrespective of number of COEs to be approved, application status is set to complete
    * on first COE approval.
-   * @param locationId location id of the application.
    * @param disbursementScheduleId disbursement schedule id of COE.
+   * @param locationId location id of the application.
    * @param payload COE confirmation information.
    */
   async confirmEnrollment(
-    locationId: number,
     disbursementScheduleId: number,
-    payload: ConfirmationOfEnrollmentAPIInDTO,
+    locationId?: number,
+    payload?: ConfirmationOfEnrollmentAPIInDTO,
   ): Promise<void> {
     await ApiClient.ConfirmationOfEnrollment.confirmEnrollment(
-      locationId,
       disbursementScheduleId,
+      locationId,
       payload,
     );
   }

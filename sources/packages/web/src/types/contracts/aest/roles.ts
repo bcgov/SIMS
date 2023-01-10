@@ -16,6 +16,7 @@ export enum Role {
   StudentAddSINExpiry = "student-add-sin-expiry",
   StudentAddNewSIN = "student-add-new-sin",
   StudentCreateNote = "student-create-note",
+  StudentConfirmEnrolment = "student-confirm-enrolment",
   InstitutionEditProfile = "institution-edit-profile",
   InstitutionApproveDeclineProgram = "institution-approve-decline-program",
   InstitutionApproveDeclineOffering = "institution-approve-decline-offering",

@@ -112,9 +112,9 @@ export class ApplicationStudentsController extends BaseController {
         application.data,
       );
     const firstCOEPromise =
-      this.disbursementScheduleService.getFirstDisbursementSchedule({
+      this.disbursementScheduleService.getFirstDisbursementScheduleByApplication(
         applicationId,
-      });
+      );
     const [applicationData, firstCOE] = await Promise.all([
       applicationDataPromise,
       firstCOEPromise,

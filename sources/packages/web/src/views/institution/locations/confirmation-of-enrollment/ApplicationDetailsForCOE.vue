@@ -132,8 +132,8 @@ export default {
         const payload = modalResult as ApproveConfirmEnrollmentModel;
         payload.tuitionRemittanceAmount = payload.tuitionRemittanceAmount ?? 0;
         await ConfirmationOfEnrollmentService.shared.confirmEnrollment(
-          props.locationId,
           props.disbursementScheduleId,
+          props.locationId,
           payload,
         );
         snackBar.success("Confirmation of Enrollment Confirmed!");
