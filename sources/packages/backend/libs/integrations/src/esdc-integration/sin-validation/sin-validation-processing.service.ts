@@ -194,7 +194,6 @@ export class SINValidationProcessingService {
         const updatedResult =
           await this.sinValidationService.updateSINValidationFromESDCResponse(
             sinValidationRecord,
-            sinValidationRecord.sinCheckStatus,
             fileName,
             responseResult.header.processDate,
             auditUserId,

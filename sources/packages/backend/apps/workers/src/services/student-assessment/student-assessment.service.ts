@@ -170,37 +170,29 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
    * @param status status of the assessment.
    * @returns update result.
    */
-  async updateNOAApprovalStatus(
+  async updateAssessmentReady(
     assessmentId: number,
     status: AssessmentStatus,
   ): Promise<UpdateResult> {
-    return await this.dataSource.transaction(
-      async (transactionalEntityManager) => {
-        const updateResult = await transactionalEntityManager
-          .getRepository(StudentAssessment)
-          .createQueryBuilder()
-          .update(StudentAssessment)
-          .set({
-            noaApprovalStatus: status,
-          })
-          .where("id = :assessmentId", { assessmentId })
-          .andWhere("noaApprovalStatus is NULL")
-          .execute();
+    const auditUser = await this.systemUsersService.systemUser();
+    return this.dataSource.transaction(async (transactionalEntityManager) => {
+      const updateResult = await transactionalEntityManager
+        .getRepository(StudentAssessment)
+        .update(
+          { id: assessmentId, noaApprovalStatus: IsNull() },
+          { noaApprovalStatus: status, modifier: auditUser },
+        );
 
-        if (updateResult.affected !== 1) {
-          throw new Error("Assessment not found.");
-        }
-
+      if (updateResult.affected === 1) {
         // Create a student notification when NOA approval status is updated from null.
-        const auditUser = await this.systemUsersService.systemUser();
-        await this.createNotificationForNOAApprovalStatusUpdate(
+        await this.createAssessmentReadyForConfirmationNotification(
           assessmentId,
           auditUser.id,
           transactionalEntityManager,
         );
         return updateResult;
-      },
-    );
+      }
+    });
   }
 
   /**
@@ -210,7 +202,7 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
    * @param auditUserId user who creates notification.
    * @param transactionalEntityManager entity manager to execute in transaction.
    */
-  async createNotificationForNOAApprovalStatusUpdate(
+  async createAssessmentReadyForConfirmationNotification(
     assessmentId: number,
     auditUserId: number,
     transactionalEntityManager: EntityManager,

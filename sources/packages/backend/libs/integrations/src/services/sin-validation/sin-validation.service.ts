@@ -20,7 +20,7 @@ import {
 @Injectable()
 export class SINValidationService extends RecordDataModelService<SINValidation> {
   constructor(
-    readonly dataSource: DataSource,
+    private readonly dataSource: DataSource,
     private readonly systemUsersService: SystemUsersService,
     private readonly studentService: StudentService,
     private readonly notificationActionsService: NotificationActionsService,
@@ -70,7 +70,6 @@ export class SINValidationService extends RecordDataModelService<SINValidation> 
    * Update the SIN validation record on DB based on the response from
    * the ESDC SIN validation response.
    * @param validationResponse SIN validation response from ESDC.
-   * @param sinCheckStatus sin check status from the sin validation file.
    * @param receivedFileName file received with the SIN validation.
    * @param processDate date from the file received considered as
    * a processed date to be update in the DB as received date.
@@ -80,12 +79,12 @@ export class SINValidationService extends RecordDataModelService<SINValidation> 
    */
   async updateSINValidationFromESDCResponse(
     validationResponse: SINValidationFileResponse,
-    sinCheckStatus: SINCheckStatus,
     receivedFileName: string,
     processDate: Date,
     auditUserId: number,
   ): Promise<SINValidationUpdateResult> {
-    const isValidSIN = sinCheckStatus === SINCheckStatus.Passed;
+    const isValidSIN =
+      validationResponse.sinCheckStatus === SINCheckStatus.Passed;
 
     return await this.dataSource.transaction(
       async (transactionalEntityManager) => {
@@ -150,7 +149,9 @@ export class SINValidationService extends RecordDataModelService<SINValidation> 
           operationDescription = "SIN validation record updated.";
           const updatedRecord = await this.repo.save(existingValidation);
 
-          if (sinCheckStatus !== SINCheckStatus.UnderReview) {
+          if (
+            validationResponse.sinCheckStatus !== SINCheckStatus.UnderReview
+          ) {
             // Create a SIN validation complete notification when SIN validation response file is processed.
             await this.createNotificationForSINValidationComplete(
               existingValidation.id,

@@ -139,7 +139,7 @@ export class StudentService extends RecordDataModelService<Student> {
       .getOne();
     studentToUpdate.modifier = { id: auditUserId } as User;
     studentToUpdate.sinValidation = sinValidation;
-    return this.repo.save(studentToUpdate);
+    return transactionalEntityManager.save(studentToUpdate);
   }
 
   @InjectLogger()
