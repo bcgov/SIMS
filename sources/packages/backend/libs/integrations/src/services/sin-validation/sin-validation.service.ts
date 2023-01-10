@@ -150,14 +150,14 @@ export class SINValidationService extends RecordDataModelService<SINValidation> 
           operationDescription = "SIN validation record updated.";
           const updatedRecord = await this.repo.save(existingValidation);
 
-          if (sinCheckStatus !== SINCheckStatus.UnderReview)
+          if (sinCheckStatus !== SINCheckStatus.UnderReview) {
             // Create a SIN validation complete notification when SIN validation response file is processed.
             await this.createNotificationForSINValidationComplete(
               existingValidation.id,
               auditUser.id,
               transactionalEntityManager,
             );
-
+          }
           return {
             operationDescription,
             record: updatedRecord,
@@ -190,6 +190,7 @@ export class SINValidationService extends RecordDataModelService<SINValidation> 
               existingValidation.student.id,
               existingValidation,
               auditUserId,
+              transactionalEntityManager,
             );
             operationDescription = `Created a new SIN validation because the record id is already present and updated.`;
             // Create a SIN validation complete notification when SIN validation response file is processed.
