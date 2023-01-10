@@ -41,8 +41,8 @@ export class ECEProcessIntegrationScheduler extends BaseScheduler<void> {
       (uploadResult) =>
         ({
           summary: [
-            `The uploaded file is ${uploadResult.generatedFile}`,
-            `The number of records is ${uploadResult.uploadedRecords}`,
+            `The uploaded file: ${uploadResult.generatedFile}`,
+            `The number of records: ${uploadResult.uploadedRecords}`,
           ],
         } as QueueProcessSummaryResult),
     );
