@@ -8,7 +8,7 @@ import {
   DisbursementScheduleService,
   SshService,
 } from "@sims/integrations/services";
-import { ECEFileService } from "./ece-file.service";
+import { ECEFileService } from "./ece.processing.service";
 import { ECEIntegrationService } from "./ece.integration.service";
 
 @Global()

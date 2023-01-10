@@ -37,7 +37,7 @@ export * from "./msfaa-integration/msfaa-files/msfaa-response-cancelled-record";
 export * from "./msfaa-integration/msfaa-files/msfaa-response-received-record";
 export * from "./msfaa-integration/msfaa-files/msfaa-response-record-identification";
 export * from "./msfaa-integration/msfaa-integration.module";
-export * from "./msfaa-integration/msfaa-integration.service";
+export * from "./msfaa-integration/msfaa.integration.service";
 export * from "./msfaa-integration/msfaa-request.service";
 export * from "./msfaa-integration/msfaa-response.service";
 export * from "./sin-validation/sin-validation-files/sin-validation-file-footer";
