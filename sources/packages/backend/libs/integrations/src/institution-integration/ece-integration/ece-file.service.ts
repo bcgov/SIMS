@@ -28,8 +28,6 @@ export class ECEFileService {
    * 3. Create the request filename with the file path with respect to the institution code
    * for the ECE request sent File.
    * 4. Upload the content to the zoneB SFTP server.
-   * @param generationDate date in which the eligible COE for
-   * particular institution is required.
    * @returns Processing ECE request result.
    */
   async processECEFile(): Promise<ECEUploadResult[]> {
