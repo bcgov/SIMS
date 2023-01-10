@@ -4,12 +4,15 @@ import {
 } from "@/constants/message-constants";
 import { SINValidStatus } from "@/store/modules/student/student";
 import { Address, InstitutionUserRoles, SINStatusEnum } from "@/types";
+import utc from "dayjs/plugin/utc";
 import dayjs, { QUnitType, OpUnitType } from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 dayjs.extend(customParseFormat);
+dayjs.extend(utc);
 
 const DEFAULT_EMPTY_VALUE = "-";
 export const DATE_ONLY_ISO_FORMAT = "YYYY-MM-DD";
+const MAX_ALLOWED_DAYS_PAST_STUDY_PERIOD = 4;
 
 /**
  * Helpers to adjust how values are shown in the UI.
@@ -98,6 +101,35 @@ export function useFormatters() {
       return dayjs(toDate).diff(dayjs(fromDate), unit, notInt);
     }
     return 0;
+  };
+
+  /**
+   * @param fromDate
+   * @param toDate
+   * @param unit
+   * @param notInt
+   * @returns
+   */
+  const getUTCDateDifference = (
+    fromDate: string | Date,
+    toDate: string | Date,
+    unit: QUnitType | OpUnitType,
+    notInt = false,
+  ): number => {
+    return dayjs.utc(toDate).diff(dayjs.utc(fromDate), unit, notInt);
+  };
+
+  /**
+   * Validates as per study period end date if an enrolment is valid for institution confirmation.
+   * The date validations are performed in UTC time zone.
+   * @param studyEndDate study period end date
+   * @returns Flag which states if an enrolment is valid for institution confirmation.
+   */
+  const validateCOEStudyEndDate = (studyEndDate: string | Date): boolean => {
+    return (
+      getUTCDateDifference(studyEndDate, new Date(), "day") >
+      MAX_ALLOWED_DAYS_PAST_STUDY_PERIOD
+    );
   };
 
   const getFormattedAddress = (address: Address): string => {
@@ -222,5 +254,6 @@ export function useFormatters() {
     getISODateOnlyString,
     institutionUserRoleToDisplay,
     emptyStringFiller,
+    validateCOEStudyEndDate,
   };
 }
