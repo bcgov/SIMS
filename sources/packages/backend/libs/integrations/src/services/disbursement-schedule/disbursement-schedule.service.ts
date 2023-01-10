@@ -201,8 +201,7 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
   }
 
   /**
-   * Fetch the COEs which are pending from the institution for a given date.
-   * @param generationDate Date in which the eligible COE is required for an institution.
+   * Fetch the COEs which are pending for the institution.
    * @returns eligible COEs.
    */
   async getPendingCOEs(): Promise<DisbursementSchedule[]> {
