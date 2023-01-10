@@ -15,12 +15,12 @@ const ORIGINATOR_CODE = "SSB";
  * 'SIMSSFAS - Institution File layouts In Analysis Folder'.
  */
 export class ECEFileHeader implements ECERequestFileLine {
-  recordTypeCodes: RecordTypeCodes;
+  recordTypeCode: RecordTypeCodes;
   processDate: Date;
 
   getFixedFormat(): string {
     const header = new StringBuilder();
-    header.append(this.recordTypeCodes);
+    header.append(this.recordTypeCode);
     header.appendWithEndFiller(ORIGINATOR_CODE, 4, SPACE_FILLER);
     header.appendWithEndFiller(ECE_SENT_TITLE, 20, SPACE_FILLER);
     header.appendDate(this.processDate, DATE_FORMAT);

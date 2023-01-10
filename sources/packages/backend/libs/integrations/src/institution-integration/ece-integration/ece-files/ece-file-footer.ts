@@ -9,12 +9,12 @@ import { ECERequestFileLine } from "./ece-file-line";
  * 'SIMSSFAS - Institution File layouts In Analysis Folder'.
  */
 export class ECEFileFooter implements ECERequestFileLine {
-  recordTypeCodes: RecordTypeCodes;
+  recordTypeCode: RecordTypeCodes;
   recordCount: number;
 
   getFixedFormat(): string {
     const footer = new StringBuilder();
-    footer.append(this.recordTypeCodes);
+    footer.append(this.recordTypeCode);
     footer.appendWithStartFiller(this.recordCount.toString(), 6, NUMBER_FILLER);
     return footer.toString();
   }

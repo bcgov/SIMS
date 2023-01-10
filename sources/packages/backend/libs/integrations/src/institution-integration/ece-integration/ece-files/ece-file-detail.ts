@@ -14,7 +14,7 @@ import { ECERequestFileLine } from "./ece-file-line";
  * 'SIMSSFAS - Institution File layouts In Analysis Folder'.
  */
 export class ECERequestFileDetail implements ECERequestFileLine {
-  recordTypeCodes: RecordTypeCodes;
+  recordTypeCode: RecordTypeCodes;
   institutionCode: string;
   disbursementValues: DisbursementValue[];
   sin: string;
@@ -31,7 +31,7 @@ export class ECERequestFileDetail implements ECERequestFileLine {
   getFixedFormat(): string {
     const records = this.disbursementValues.map((disbursementValue) => {
       const record = new StringBuilder();
-      record.append(this.recordTypeCodes, 1);
+      record.append(this.recordTypeCode, 1);
       record.append(this.institutionCode, 4);
       record.appendWithStartFiller(
         disbursementValue.id.toString(),

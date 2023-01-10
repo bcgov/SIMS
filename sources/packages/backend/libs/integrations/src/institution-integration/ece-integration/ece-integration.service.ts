@@ -29,14 +29,14 @@ export class ECEIntegrationService extends SFTPIntegrationBase<void> {
     const eceRequestFileLines: ECERequestFileLine[] = [];
     // Header record
     const eceFileHeader = new ECEFileHeader();
-    eceFileHeader.recordTypeCodes = RecordTypeCodes.ECEHeader;
+    eceFileHeader.recordTypeCode = RecordTypeCodes.ECEHeader;
     eceFileHeader.processDate = processDate;
     eceRequestFileLines.push(eceFileHeader);
     let totalRecords = 0;
     // Detail record
     const fileRecords = eceRecords.map((eceRecord) => {
       const eceRequestFileDetail = new ECERequestFileDetail();
-      eceRequestFileDetail.recordTypeCodes = RecordTypeCodes.ECEDetail;
+      eceRequestFileDetail.recordTypeCode = RecordTypeCodes.ECEDetail;
       eceRequestFileDetail.institutionCode = eceRecord.institutionCode;
       eceRequestFileDetail.disbursementValues = eceRecord.disbursementValues;
       totalRecords += eceRecord.disbursementValues.length;
@@ -55,7 +55,7 @@ export class ECEIntegrationService extends SFTPIntegrationBase<void> {
     eceRequestFileLines.push(...fileRecords);
     // Footer or Trailer record
     const eceFileFooter = new ECEFileFooter();
-    eceFileFooter.recordTypeCodes = RecordTypeCodes.ECETrailer;
+    eceFileFooter.recordTypeCode = RecordTypeCodes.ECETrailer;
     eceFileFooter.recordCount = totalRecords;
     eceRequestFileLines.push(eceFileFooter);
     return eceRequestFileLines;
