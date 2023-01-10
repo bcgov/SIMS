@@ -2,7 +2,7 @@
  * Filter param dynamic json.
  */
 export interface ReportFilterParamAPIInDTO {
-  [propertyName: string]: any;
+  [propertyName: string]: unknown;
 }
 /**
  * API dto to define the criteria to extract the financial report.

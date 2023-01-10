@@ -68,6 +68,7 @@ export class AssessmentNOAAPIOutDTO {
 
 export class AwardDetailsAPIOutDTO {
   applicationNumber: string;
+  applicationStatus: ApplicationStatus;
   institutionName: string;
   offeringIntensity: OfferingIntensity;
   offeringStudyStartDate: string;

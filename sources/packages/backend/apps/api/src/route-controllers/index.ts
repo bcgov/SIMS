@@ -52,3 +52,5 @@ export * from "./user/user.controller.service";
 export * from "./user/user.aest.controller";
 export * from "./user/user.institutions.controller";
 export * from "./application/application.controller.service";
+export * from "./confirmation-of-enrollment/confirmation-of-enrollment.controller.service";
+export * from "./confirmation-of-enrollment/confirmation-of-enrollment.aest.controller";

@@ -30,11 +30,6 @@ export interface InstitutionUserRoleLocation {
   userType?: string;
 }
 
-export interface UserPermissionDto extends InstitutionUserRoleLocation {
-  userId?: string;
-  userRole?: string;
-}
-
 export interface InstitutionUserWithUserType
   extends InstitutionLocationsDetails {
   userType?: {

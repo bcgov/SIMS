@@ -1,6 +1,8 @@
-import { InstitutionLocationFormAPIOutDTO } from "@/services/http/dto";
+import {
+  InstitutionLocationFormAPIOutDTO,
+  DesignationAgreementStatus,
+} from "@/services/http/dto";
 import { Address, ClientIdType } from "@/types";
-import { DesignationAgreementStatus } from "../DesignationAgreementContract";
 
 export interface InstitutionPrimaryContact {
   primaryContactEmail: string;

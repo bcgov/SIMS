@@ -1,4 +1,4 @@
-import { DesignationAgreementStatus } from "@/types/contracts/DesignationAgreementContract";
+import { DesignationAgreementStatus } from "@/services/http/dto";
 
 /**
  * Used do define conditions to change the form.io, for instance,

@@ -50,13 +50,14 @@ export interface AssessmentNOAAPIOutDTO {
   offeringStudyStartDate: string;
   offeringStudyEndDate: string;
   msfaaNumber: string;
-  disbursement: any;
+  disbursement: unknown;
   noaApprovalStatus: AssessmentStatus;
   applicationStatus: ApplicationStatus;
 }
 
 export interface AwardDetailsAPIOutDTO {
   applicationNumber: string;
+  applicationStatus: ApplicationStatus;
   institutionName: string;
   offeringIntensity: OfferingIntensity;
   offeringStudyStartDate: string;

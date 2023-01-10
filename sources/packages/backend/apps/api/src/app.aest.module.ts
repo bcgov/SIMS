@@ -28,6 +28,7 @@ import {
   InstitutionRestrictionService,
   EducationProgramOfferingValidationService,
   DisbursementReceiptService,
+  DisbursementScheduleService,
 } from "./services";
 import {
   SupportingUserAESTController,
@@ -59,6 +60,8 @@ import {
   UserControllerService,
   ApplicationControllerService,
   InstitutionUserControllerService,
+  ConfirmationOfEnrollmentAESTController,
+  ConfirmationOfEnrollmentControllerService,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
 import {
@@ -94,6 +97,7 @@ import {
     NoteAESTController,
     RestrictionAESTController,
     UserAESTController,
+    ConfirmationOfEnrollmentAESTController,
   ],
   providers: [
     WorkflowClientService,
@@ -142,6 +146,8 @@ import {
     DisbursementReceiptService,
     StudentRestrictionSharedService,
     UserControllerService,
+    ConfirmationOfEnrollmentControllerService,
+    DisbursementScheduleService,
   ],
 })
 export class AppAESTModule {}

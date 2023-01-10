@@ -48,9 +48,9 @@ export class InstitutionUserControllerService {
 
   /**
    * Get institution users with page, sort and search.
-   * @param institutionId
-   * @param paginationOptions
-   * @returns Institution Users.
+   * @param institutionId id of the institution to retrieve users.
+   * @param paginationOptions pagination options.
+   * @returns Institution users.
    */
   async getInstitutionUsers(
     institutionId: number,
@@ -71,7 +71,7 @@ export class InstitutionUserControllerService {
   }
 
   /**
-   * Util to transform institution users to DTO.
+   * Util method to transform institution users to DTO.
    * @param institutionUser institution user to be converted to the DTO.
    * @returns institution user DTO.
    */
