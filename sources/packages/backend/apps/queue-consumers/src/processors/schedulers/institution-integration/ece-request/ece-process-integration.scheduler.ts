@@ -21,8 +21,6 @@ export class ECEProcessIntegrationScheduler extends BaseScheduler<void> {
   /**
    * Identifies all the applications that have an eligible COE request waiting
    * for a particular institution.
-   * @params job has generatedDate Date in which the assessment for
-   * particular institution is generated.
    * @returns Processing result log.
    */
   @Process()

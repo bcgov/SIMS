@@ -5,7 +5,7 @@ import {
   CRAIncomeVerificationsService,
   SshService,
 } from "@sims/integrations/services";
-import { CRAIntegrationService } from "./cra-integration.service";
+import { CRAIntegrationService } from "./cra.integration.service";
 import { CRAPersonalVerificationService } from "./cra-personal-verification.service";
 
 @Module({

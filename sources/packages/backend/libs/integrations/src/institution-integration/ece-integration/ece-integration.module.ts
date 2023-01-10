@@ -9,7 +9,7 @@ import {
   SshService,
 } from "@sims/integrations/services";
 import { ECEFileService } from "./ece-file.service";
-import { ECEIntegrationService } from "./ece-integration.service";
+import { ECEIntegrationService } from "./ece.integration.service";
 
 @Global()
 @Module({

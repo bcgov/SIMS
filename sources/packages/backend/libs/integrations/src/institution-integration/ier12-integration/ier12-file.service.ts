@@ -6,7 +6,7 @@ import {
   InstitutionIntegrationConfig,
 } from "@sims/utilities/config";
 import { getFileNameAsCurrentTimestamp } from "@sims/utilities";
-import { IER12IntegrationService } from "./ier12-integration.service";
+import { IER12IntegrationService } from "./ier12.integration.service";
 import {
   IER12Record,
   IER12UploadResult,

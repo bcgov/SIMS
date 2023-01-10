@@ -4,11 +4,9 @@ import { QueueService } from "@sims/services/queue";
 import { QueueNames } from "@sims/utilities";
 import { InjectLogger, LoggerService } from "@sims/utilities/logger";
 import { Job, Queue } from "bull";
+import { QueueProcessSummaryResult } from "../../../models/processors.models";
 import { BaseScheduler } from "../../base-scheduler";
-import {
-  GeneratedDateQueueInDTO,
-  IER12ResultQueueOutDTO,
-} from "./models/ier.model";
+import { GeneratedDateQueueInDTO } from "./models/ier.model";
 
 @Processor(QueueNames.IER12Integration)
 export class IER12IntegrationScheduler extends BaseScheduler<GeneratedDateQueueInDTO> {
@@ -31,17 +29,26 @@ export class IER12IntegrationScheduler extends BaseScheduler<GeneratedDateQueueI
   @Process()
   async processIER12File(
     job: Job<GeneratedDateQueueInDTO | undefined>,
-  ): Promise<IER12ResultQueueOutDTO[]> {
+  ): Promise<QueueProcessSummaryResult[]> {
     this.logger.log(
       `Processing IER integration job ${job.id} of type ${job.name}.`,
     );
     this.logger.log("Executing IER 12 file generation ...");
-    const uploadResult = await this.ierRequest.processIER12File(
+    const uploadResults = await this.ierRequest.processIER12File(
       job.data.generatedDate,
     );
     this.logger.log("IER 12 file generation completed.");
     await this.cleanSchedulerQueueHistory();
-    return uploadResult;
+
+    return uploadResults.map(
+      (uploadResult) =>
+        ({
+          summary: [
+            `The uploaded file: ${uploadResult.generatedFile}`,
+            `The number of records: ${uploadResult.uploadedRecords}`,
+          ],
+        } as QueueProcessSummaryResult),
+    );
   }
 
   @InjectLogger()

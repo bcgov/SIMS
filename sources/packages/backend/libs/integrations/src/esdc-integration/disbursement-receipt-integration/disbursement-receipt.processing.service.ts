@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { LoggerService, InjectLogger } from "@sims/utilities/logger";
-import { DisbursementReceiptIntegrationService } from "./disbursement-receipt-integration.service";
+import { DisbursementReceiptIntegrationService } from "./disbursement-receipt.integration.service";
 import { ProcessSFTPResponseResult } from "../models/esdc-integration.model";
 import { DisbursementReceiptDownloadResponse } from "./models/disbursement-receipt-integration.model";
 import { ConfigService, ESDCIntegrationConfig } from "@sims/utilities/config";

@@ -4,8 +4,8 @@ import {
   SequenceControlService,
   StudentRestrictionSharedService,
 } from "@sims/services";
-import { DisbursementReceiptIntegrationService } from "./disbursement-receipt-integration.service";
-import { DisbursementReceiptProcessingService } from "./disbursement-receipt-processing.service";
+import { DisbursementReceiptIntegrationService } from "./disbursement-receipt.integration.service";
+import { DisbursementReceiptProcessingService } from "./disbursement-receipt.processing.service";
 import { DisbursementReceiptRequestService } from "./disbursement-receipt-request.service";
 import { LoggerModule } from "@sims/utilities/logger";
 import { ConfigModule } from "@sims/utilities/config";

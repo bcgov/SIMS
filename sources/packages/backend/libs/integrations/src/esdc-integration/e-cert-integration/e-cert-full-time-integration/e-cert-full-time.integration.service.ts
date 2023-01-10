@@ -1,28 +1,26 @@
 import { Injectable } from "@nestjs/common";
 import {
   RecordTypeCodes,
-  CSGD,
-  CSGP,
-  CSGPT,
   Award,
   ECertRecord,
 } from "../models/e-cert-integration-model";
-import { ECertPartTimeFileHeader } from "./e-cert-files/e-cert-file-header";
-import { ECertPartTimeFileFooter } from "./e-cert-files/e-cert-file-footer";
-import { ECertPartTimeFileRecord } from "./e-cert-files/e-cert-file-record";
+import { ECertFullTimeFileHeader } from "./e-cert-files/e-cert-file-header";
+import { ECertFullTimeFileFooter } from "./e-cert-files/e-cert-file-footer";
+import { ECertFullTimeFileRecord } from "./e-cert-files/e-cert-file-record";
 import { DisbursementValueType, OfferingIntensity } from "@sims/sims-db";
-import { ECertIntegrationService } from "../e-cert-integration.service";
+import { ECertIntegrationService } from "../e-cert.integration.service";
 import { ECertResponseRecord } from "../e-cert-files/e-cert-response-record";
 import { ConfigService } from "@sims/utilities/config";
 import { FixedFormatFileLine } from "@sims/integrations/services/ssh";
 import { SshService } from "@sims/integrations/services";
 import {
   combineDecimalPlaces,
-  getDisbursementAmountByValueCode,
-  getGenderCode,
-  getPartTimeMaritalStatusCode,
+  getDisbursementValuesByType,
   getTotalDisbursementAmount,
   round,
+  getGenderCode,
+  getMaritalStatusCode,
+  getTotalYearsOfStudy,
 } from "@sims/utilities";
 
 /**
@@ -30,10 +28,10 @@ import {
  * upload/download the files to SFTP.
  */
 @Injectable()
-export class ECertPartTimeIntegrationService extends ECertIntegrationService {
+export class ECertFullTimeIntegrationService extends ECertIntegrationService {
   constructor(
-    private readonly eCertPartTimeFileHeader: ECertPartTimeFileHeader,
-    private readonly eCertPartTimeFileFooter: ECertPartTimeFileFooter,
+    private readonly eCertFullTimeFileHeader: ECertFullTimeFileHeader,
+    private readonly eCertFullTimeFileFooter: ECertFullTimeFileFooter,
     config: ConfigService,
     sshService: SshService,
   ) {
@@ -44,21 +42,38 @@ export class ECertPartTimeIntegrationService extends ECertIntegrationService {
    * Create the ECert file content, by populating the
    * header, detail and trailer records.
    * @param ecertRecords student, User and application data.
+   * @param fileSequence unique file sequence.
    * @returns complete ECert content to be sent.
    */
-  createRequestContent(ecertRecords: ECertRecord[]): FixedFormatFileLine[] {
+  createRequestContent(
+    ecertRecords: ECertRecord[],
+    fileSequence: number,
+  ): FixedFormatFileLine[] {
     const fileLines: FixedFormatFileLine[] = [];
     // Header record
-    const header = new ECertPartTimeFileHeader();
-    header.recordTypeCode = RecordTypeCodes.ECertPartTimeHeader;
+    const header = new ECertFullTimeFileHeader();
+    header.recordTypeCode = RecordTypeCodes.ECertFullTimeHeader;
     header.processDate = new Date();
+    header.sequence = fileSequence;
     fileLines.push(header);
 
     // Detail records
-    // Calculated values
+
+    // Calculated values.
+    const bcAwards = [
+      DisbursementValueType.BCTotalGrant,
+      DisbursementValueType.BCLoan,
+    ];
     const fileRecords = ecertRecords.map((ecertRecord) => {
+      let filterAwards = ecertRecord.awards;
+      if (ecertRecord.stopFullTimeBCFunding) {
+        filterAwards = ecertRecord.awards.filter(
+          (disbursementValue) =>
+            !bcAwards.includes(disbursementValue.valueType),
+        );
+      }
       // ! All dollar values must be rounded to the nearest integer (0.5 rounds up)
-      const roundedAwards = ecertRecord.awards.map(
+      const roundedAwards = filterAwards.map(
         (award) =>
           ({
             valueType: award.valueType,
@@ -67,45 +82,52 @@ export class ECertPartTimeIntegrationService extends ECertIntegrationService {
           } as Award),
       );
 
-      const totalCSGPPTAmount = getDisbursementAmountByValueCode(
-        roundedAwards,
-        CSGD,
-      );
-      const totalCSGPPDAmount = getDisbursementAmountByValueCode(
-        roundedAwards,
-        CSGP,
-      );
-      const totalCSGPPTDEPAmount = getDisbursementAmountByValueCode(
-        roundedAwards,
-        CSGPT,
-      );
-
       const disbursementAmount = getTotalDisbursementAmount(roundedAwards, [
         DisbursementValueType.CanadaLoan,
+        DisbursementValueType.BCLoan,
+        DisbursementValueType.CanadaGrant,
+        DisbursementValueType.BCTotalGrant,
+      ]);
+
+      // ! All dollar values must be rounded to the nearest integer (0.5 rounds up)
+      // ! except studentAmount and schoolAmount that must have the decimal part
+      // ! combined into the integer part because the schoolAmount contains decimals
+      // ! and schoolAmount is used to determine the studentAmount.
+      const studentAmount = disbursementAmount - ecertRecord.schoolAmount;
+
+      const cslAwardAmount = getTotalDisbursementAmount(roundedAwards, [
+        DisbursementValueType.CanadaLoan,
+      ]);
+      const bcslAwardAmount = getTotalDisbursementAmount(roundedAwards, [
+        DisbursementValueType.BCLoan,
       ]);
       const totalGrantAmount = getTotalDisbursementAmount(roundedAwards, [
         DisbursementValueType.CanadaGrant,
         DisbursementValueType.BCTotalGrant,
       ]);
-      const totalBCSGAmount = getTotalDisbursementAmount(roundedAwards, [
-        DisbursementValueType.BCTotalGrant,
-      ]);
 
-      const record = new ECertPartTimeFileRecord();
-      record.recordType = RecordTypeCodes.ECertPartTimeRecord;
+      const record = new ECertFullTimeFileRecord();
+      record.recordType = RecordTypeCodes.ECertFullTimeRecord;
       record.sin = ecertRecord.sin;
-      record.courseLoad = ecertRecord.courseLoad;
-      record.certNumber = ecertRecord.documentNumber;
+      record.applicationNumber = ecertRecord.applicationNumber;
+      record.documentNumber = ecertRecord.documentNumber;
       record.disbursementDate = ecertRecord.disbursementDate;
       record.documentProducedDate = ecertRecord.documentProducedDate;
+      record.negotiatedExpiryDate = ecertRecord.negotiatedExpiryDate;
       record.disbursementAmount = disbursementAmount;
+      record.studentAmount = combineDecimalPlaces(studentAmount);
       record.schoolAmount = combineDecimalPlaces(ecertRecord.schoolAmount);
+      record.cslAwardAmount = cslAwardAmount;
+      record.bcslAwardAmount = bcslAwardAmount;
       record.educationalStartDate = ecertRecord.educationalStartDate;
       record.educationalEndDate = ecertRecord.educationalEndDate;
       record.federalInstitutionCode = ecertRecord.federalInstitutionCode;
       record.weeksOfStudy = ecertRecord.weeksOfStudy;
       record.fieldOfStudy = ecertRecord.fieldOfStudy;
       record.yearOfStudy = ecertRecord.yearOfStudy;
+      record.totalYearsOfStudy = getTotalYearsOfStudy(
+        ecertRecord.completionYears,
+      );
       record.enrollmentConfirmationDate =
         ecertRecord.enrollmentConfirmationDate;
       record.dateOfBirth = ecertRecord.dateOfBirth;
@@ -114,31 +136,34 @@ export class ECertPartTimeIntegrationService extends ECertIntegrationService {
       record.addressLine1 = ecertRecord.addressLine1;
       record.addressLine2 = ecertRecord.addressLine2;
       record.city = ecertRecord.city;
+      record.country = ecertRecord.country;
       record.emailAddress = ecertRecord.email;
+      record.postalCode = ecertRecord.postalCode;
+      record.provinceState = ecertRecord.provinceState;
       record.gender = getGenderCode(ecertRecord.gender);
-      record.maritalStatus = getPartTimeMaritalStatusCode(
-        ecertRecord.maritalStatus,
-      );
+      record.maritalStatus = getMaritalStatusCode(ecertRecord.maritalStatus);
       record.studentNumber = ecertRecord.studentNumber;
       record.totalGrantAmount = totalGrantAmount;
-      record.totalBCSGAmount = totalBCSGAmount;
-      record.totalCSGPPTAmount = totalCSGPPTAmount;
-      record.totalCSGPPDAmount = totalCSGPPDAmount;
-      record.totalCSGPPTDEPAmount = totalCSGPPTDEPAmount;
+      // List of grants to be sent ignoring grants with 0 dollar amount.
+      record.grantAwards = getDisbursementValuesByType(roundedAwards, [
+        DisbursementValueType.CanadaGrant,
+        DisbursementValueType.BCTotalGrant,
+      ]).filter((grantAward) => +grantAward.valueAmount > 0);
+
       return record;
     });
     fileLines.push(...fileRecords);
 
     // Footer or Trailer record
 
-    // Total disbursementAmount disbursed in the disbursement file.
-    const totalAmountDisbursed = fileRecords.reduce(
-      (hash, record) => hash + +record.disbursementAmount,
+    // Total hash of the Student's SIN.
+    const totalSINHash = ecertRecords.reduce(
+      (hash, record) => hash + +record.sin,
       0,
     );
-    const footer = new ECertPartTimeFileFooter();
-    footer.recordTypeCode = RecordTypeCodes.ECertPartTimeFooter;
-    footer.totalAmountDisbursed = totalAmountDisbursed;
+    const footer = new ECertFullTimeFileFooter();
+    footer.recordTypeCode = RecordTypeCodes.ECertFullTimeFooter;
+    footer.totalSINHash = totalSINHash;
     footer.recordCount = fileRecords.length;
     fileLines.push(footer);
 
@@ -153,9 +178,9 @@ export class ECertPartTimeIntegrationService extends ECertIntegrationService {
   downloadResponseFile(remoteFilePath: string): Promise<ECertResponseRecord[]> {
     return this.downloadECertResponseFile(
       remoteFilePath,
-      this.eCertPartTimeFileHeader,
-      this.eCertPartTimeFileFooter,
-      OfferingIntensity.partTime,
+      this.eCertFullTimeFileHeader,
+      this.eCertFullTimeFileFooter,
+      OfferingIntensity.fullTime,
     );
   }
 }
