@@ -149,7 +149,7 @@ export class AssessmentController {
       >
     >,
   ): Promise<MustReturnJobActionAcknowledgement> {
-    await this.studentAssessmentService.updateAssessmentReady(
+    await this.studentAssessmentService.updateNOAApprovalStatus(
       job.variables.assessmentId,
       job.customHeaders.status,
     );

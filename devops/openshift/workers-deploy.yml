@@ -65,17 +65,6 @@ objects:
                     secretKeyRef:
                       key: ${ZEEBE_AUTHORIZATION_SERVER_URL_KEY}
                       name: ${WORKERS_SECRET_NAME}
-                - name: GC_NOTIFY_URL
-                  valueFrom:
-                    secretKeyRef:
-                      key: ${GC_NOTIFY_URL_NAME_KEY}
-                      name: ${WORKERS_SECRET_NAME}
-                - name: GC_NOTIFY_API_KEY
-                  valueFrom:
-                    secretKeyRef:
-                      key: ${GC_NOTIFY_API_KEY_NAME_KEY}
-                      name: ${WORKERS_SECRET_NAME}
-                - name: GC_NOTIFY_TO_ADDRESS
                   valueFrom:
                     secretKeyRef:
                       key: ${GC_NOTIFY_TO_ADDRESS_NAME_KEY}
@@ -147,9 +136,4 @@ parameters:
     require: true
   - name: BYPASS_CRA_INCOME_VERIFICATION
     value: "false"
-  - name: GC_NOTIFY_URL_NAME_KEY
-    value: gc-notify-url
-  - name: GC_NOTIFY_API_KEY_NAME_KEY
-    value: gc-notify-api-key
-  - name: GC_NOTIFY_TO_ADDRESS_NAME_KEY
-    value: gc-notify-to-address
+    

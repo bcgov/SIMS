@@ -131,15 +131,15 @@ export class StudentService extends RecordDataModelService<Student> {
     auditUserId: number,
     transactionalEntityManager: EntityManager,
   ): Promise<Student> {
-    const studentToUpdate = await transactionalEntityManager
-      .getRepository(Student)
+    const studentRepo = transactionalEntityManager.getRepository(Student);
+    const studentToUpdate = await studentRepo
       .createQueryBuilder("student")
       .select("student.id")
       .where("student.id = :studentId", { studentId })
       .getOne();
     studentToUpdate.modifier = { id: auditUserId } as User;
     studentToUpdate.sinValidation = sinValidation;
-    return transactionalEntityManager.save(studentToUpdate);
+    return studentRepo.save(studentToUpdate);
   }
 
   @InjectLogger()

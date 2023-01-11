@@ -170,7 +170,7 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
    * @param status status of the assessment.
    * @returns update result.
    */
-  async updateAssessmentReady(
+  async updateNOAApprovalStatus(
     assessmentId: number,
     status: AssessmentStatus,
   ): Promise<UpdateResult> {
@@ -232,7 +232,7 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
       });
 
     const studentUser = studentAssessment.application.student.user;
-    await this.notificationActionsService.saveNOAApprovalStatusNotification(
+    await this.notificationActionsService.saveAssessmentReadyForConfirmationNotification(
       {
         givenNames: studentUser.firstName,
         lastName: studentUser.lastName,

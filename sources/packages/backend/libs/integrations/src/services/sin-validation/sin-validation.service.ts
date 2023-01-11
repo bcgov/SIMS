@@ -93,7 +93,10 @@ export class SINValidationService extends RecordDataModelService<SINValidation> 
         // If the list of the selected columns must be changed please keep in mind that
         // these fields are also the ones used later to "clone" the record if needed,
         // as explained further along the method.
-        const existingValidation = await this.repo
+        const sinValidationRepo =
+          transactionalEntityManager.getRepository(SINValidation);
+
+        const existingValidation = await sinValidationRepo
           .createQueryBuilder("sinValidation")
           .select([
             "sinValidation.id",
@@ -147,7 +150,9 @@ export class SINValidationService extends RecordDataModelService<SINValidation> 
           // update it with the information received from ESDC.
           // This will be most common scenario.
           operationDescription = "SIN validation record updated.";
-          const updatedRecord = await this.repo.save(existingValidation);
+          const updatedRecord = await sinValidationRepo.save(
+            existingValidation,
+          );
 
           if (
             validationResponse.sinCheckStatus !== SINCheckStatus.UnderReview
@@ -171,7 +176,7 @@ export class SINValidationService extends RecordDataModelService<SINValidation> 
           // a new status will be received once the review is done, what means that one request can
           // result in more than one response. In this case, if the received record is the most updated
           // for the student, a "cloned" record will be inserted.
-          const mostUpdatedRecordDate = await this.repo
+          const mostUpdatedRecordDate = await sinValidationRepo
             .createQueryBuilder("sinValidation")
             .select("MAX(sinValidation.dateReceived)", "maxDate")
             .innerJoin("sinValidation.student", "student")

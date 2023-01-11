@@ -341,7 +341,7 @@ export class NotificationActionsService {
    * @param auditUserId user who updates NOA approval status.
    * @param entityManager entity manager to execute in transaction.
    */
-  async saveNOAApprovalStatusNotification(
+  async saveAssessmentReadyForConfirmationNotification(
     notification: StudentNotification,
     auditUserId: number,
     entityManager: EntityManager,
