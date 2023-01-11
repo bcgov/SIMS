@@ -27,7 +27,7 @@ import { SystemUsersService } from "@sims/services/system-users";
 
 // Timeout to handle the worst-case scenario where the commit/rollback
 // was not executed due to a possible catastrophic failure.
-const TRANSACTION_IDLE_TIMEOUT_SECONDS = 600;
+const TRANSACTION_IDLE_TIMEOUT_SECONDS = 60;
 
 /**
  * Service layer for the student application assessment calculations for the disbursement schedules.

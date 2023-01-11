@@ -253,19 +253,15 @@ export class ECertGenerationService {
         studentsIds,
         entityManager,
       );
-    // Apply the overawards for every student, if needed.
-    for (const studentId of studentsIds) {
-      if (!overawardsBalance[studentId]) {
-        // No overaward balance is present for the student.
-        continue;
-      }
+    // Apply the overawards for every student that has some balance.
+    for (const studentId in overawardsBalance) {
       // Filter the disbursements for the student.
       const studentSchedules = disbursements.filter(
         (disbursement) =>
-          disbursement.studentAssessment.application.student.id === studentId,
+          disbursement.studentAssessment.application.student.id === +studentId,
       );
       await this.applyOverawardsDeductionsForECertGeneration(
-        studentId,
+        +studentId,
         studentSchedules,
         overawardsBalance[studentId],
         entityManager,
