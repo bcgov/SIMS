@@ -199,4 +199,72 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
     const repository = disbursementScheduleRepo ?? this.repo;
     return repository.update({ id: In(disbursementIds) }, { dateSent });
   }
+
+  /**
+   * Fetch the COEs which are pending for the institution.
+   * @returns eligible COEs.
+   */
+  async getPendingCOEs(): Promise<DisbursementSchedule[]> {
+    return this.repo.find({
+      select: {
+        id: true,
+        disbursementDate: true,
+        disbursementValues: { id: true, valueCode: true, valueAmount: true },
+        studentAssessment: {
+          id: true,
+          application: {
+            id: true,
+            applicationNumber: true,
+            studentNumber: true,
+            currentAssessment: {
+              id: true,
+              offering: {
+                id: true,
+                studyStartDate: true,
+                studyEndDate: true,
+                institutionLocation: {
+                  institutionCode: true,
+                },
+              },
+            },
+            student: {
+              id: true,
+              birthDate: true,
+              sinValidation: { id: true, sin: true },
+              user: { id: true, lastName: true, firstName: true },
+            },
+          },
+        },
+      },
+      relations: {
+        disbursementValues: true,
+        studentAssessment: {
+          application: {
+            currentAssessment: { offering: { institutionLocation: true } },
+            student: {
+              sinValidation: true,
+              user: true,
+            },
+          },
+        },
+      },
+      where: {
+        coeStatus: COEStatus.required,
+        studentAssessment: {
+          application: {
+            applicationStatus: In([
+              ApplicationStatus.enrollment,
+              ApplicationStatus.completed,
+            ]),
+            currentAssessment: {
+              offering: {
+                institutionLocation: { hasIntegration: true },
+                offeringIntensity: OfferingIntensity.fullTime,
+              },
+            },
+          },
+        },
+      },
+    });
+  }
 }

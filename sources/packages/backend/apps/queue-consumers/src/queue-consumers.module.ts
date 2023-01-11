@@ -47,6 +47,8 @@ import { CRAIntegrationModule } from "@sims/integrations/cra-integration/cra-int
 import { StudentAssessmentService } from "./services";
 import { SFASIntegrationModule } from "@sims/integrations/sfas-integration";
 import { ATBCIntegrationModule } from "@sims/integrations/atbc-integration";
+import { ECEIntegrationModule } from "@sims/integrations/institution-integration/ece-integration";
+import { ECEProcessIntegrationScheduler } from "./processors/schedulers/institution-integration/ece-request/ece-process-integration.scheduler";
 
 @Module({
   imports: [
@@ -54,6 +56,7 @@ import { ATBCIntegrationModule } from "@sims/integrations/atbc-integration";
     QueueModule,
     ZeebeModule.forRoot(),
     IER12IntegrationModule,
+    ECEIntegrationModule,
     NotificationsModule,
     SystemUserModule,
     CRAIntegrationModule,
@@ -70,6 +73,7 @@ import { ATBCIntegrationModule } from "@sims/integrations/atbc-integration";
     CancelApplicationAssessmentProcessor,
     WorkflowClientService,
     IER12IntegrationScheduler,
+    ECEProcessIntegrationScheduler,
     ProcessNotificationScheduler,
     SFASIntegrationScheduler,
     ATBCResponseIntegrationScheduler,

@@ -3,6 +3,7 @@ export * from "./assessment/cancel-application-assessment.processor";
 export * from "./schedulers/cra-integration/cra-process-integration.scheduler";
 export * from "./schedulers/cra-integration/cra-response-integration.scheduler";
 export * from "./schedulers/institution-integration/ier12-integration/ier12-integration.scheduler";
+export * from "./schedulers/institution-integration/ece-request/ece-process-integration.scheduler";
 export * from "./schedulers/base-scheduler";
 export * from "./schedulers/notification/process-notifications.scheduler";
 export * from "./schedulers/esdc-integration/ecert-integration/ecert-full-time-feedback-integration.scheduler";
