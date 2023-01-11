@@ -12,7 +12,12 @@ dayjs.extend(utc);
 
 const DEFAULT_EMPTY_VALUE = "-";
 export const DATE_ONLY_ISO_FORMAT = "YYYY-MM-DD";
-const MAX_ALLOWED_DAYS_PAST_STUDY_PERIOD = 4;
+/**
+ * Maximum number of days past the study period end date
+ * beyond when an institution will not be able to
+ * confirm enrolment.
+ */
+const COE_MAX_ALLOWED_DAYS_PAST_STUDY_PERIOD = 42;
 
 /**
  * Helpers to adjust how values are shown in the UI.
@@ -104,10 +109,15 @@ export function useFormatters() {
   };
 
   /**
-   * @param fromDate
-   * @param toDate
-   * @param unit
-   * @param notInt
+   * Get Date difference between given dates in UTC timezone in given units.
+   * @param fromDate from date.
+   * @param toDate to date.
+   * @param unit unit of time difference.
+   * e.g. day | week | month | year
+   * To see all the available units refer (https://day.js.org/docs/en/display/difference).
+   * @param notInt By default, dayjs#diff will truncate
+   * the result to zero decimal places, returning an integer.
+   * If you want a floating point number, pass true.
    * @returns
    */
   const getUTCDateDifference = (
@@ -128,7 +138,7 @@ export function useFormatters() {
   const validateCOEStudyEndDate = (studyEndDate: string | Date): boolean => {
     return (
       getUTCDateDifference(studyEndDate, new Date(), "day") >
-      MAX_ALLOWED_DAYS_PAST_STUDY_PERIOD
+      COE_MAX_ALLOWED_DAYS_PAST_STUDY_PERIOD
     );
   };
 

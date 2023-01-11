@@ -1,13 +1,13 @@
 /**
  * commonly used functions
  */
-import * as dayjs from "dayjs";
 import * as utc from "dayjs/plugin/utc";
 import * as localizedFormat from "dayjs/plugin/localizedFormat";
 import * as timezone from "dayjs/plugin/timezone";
 import * as dayOfYear from "dayjs/plugin/dayOfYear";
 import * as isBetween from "dayjs/plugin/isBetween";
 import { Between, FindOperator } from "typeorm";
+import dayjs, { OpUnitType, QUnitType } from "dayjs";
 dayjs.extend(utc);
 dayjs.extend(localizedFormat);
 dayjs.extend(timezone);
@@ -246,3 +246,24 @@ export function hasSomePeriodOverlap(periods: Period[]): boolean {
   }
   return false;
 }
+
+/**
+ * Get Date difference between given dates in UTC timezone in given units.
+ * @param fromDate from date.
+ * @param toDate to date.
+ * @param unit unit of time difference.
+ * e.g. day | week | month | year
+ * To see all the available units refer (https://day.js.org/docs/en/display/difference).
+ * @param notInt By default, dayjs#diff will truncate
+ * the result to zero decimal places, returning an integer.
+ * If you want a floating point number, pass true.
+ * @returns
+ */
+export const getUTCDateDifference = (
+  fromDate: string | Date,
+  toDate: string | Date,
+  unit: QUnitType | OpUnitType,
+  notInt = false,
+): number => {
+  return dayjs.utc(toDate).diff(dayjs.utc(fromDate), unit, notInt);
+};

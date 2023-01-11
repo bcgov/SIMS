@@ -4,7 +4,10 @@ import {
   UnprocessableEntityException,
 } from "@nestjs/common";
 import { DisbursementSchedule, DisbursementValueType } from "@sims/sims-db";
-import { getTotalDisbursementAmount } from "@sims/utilities";
+import {
+  getTotalDisbursementAmount,
+  getUTCDateDifference,
+} from "@sims/utilities";
 import {
   FIRST_COE_NOT_COMPLETE,
   INVALID_TUITION_REMITTANCE_AMOUNT,
@@ -14,7 +17,10 @@ import {
   DisbursementScheduleService,
 } from "../../services";
 import { ApiProcessError } from "../../types";
-import { COE_WINDOW } from "../../utilities";
+import {
+  COE_WINDOW,
+  COE_MAX_ALLOWED_DAYS_PAST_STUDY_PERIOD,
+} from "../../utilities";
 import BaseController from "../BaseController";
 import { ConfirmationOfEnrollmentAPIInDTO } from "./models/confirmation-of-enrollment.dto";
 import { ConfirmEnrollmentOptions } from "./models/confirmation-of-enrollment.models";
@@ -69,7 +75,17 @@ export class ConfirmationOfEnrollmentControllerService extends BaseController {
       );
     }
 
-    // TODO: Add validation for past study period.
+    if (
+      !options?.allowPastStudyPeriod &&
+      this.validateCOEStudyEndDate(
+        disbursementSchedule.studentAssessment.application.currentAssessment
+          .offering.studyEndDate,
+      )
+    ) {
+      throw new UnprocessableEntityException(
+        `The enrolment cannot be confirmed as the study period end date is beyond maximum allowed days.`,
+      );
+    }
 
     const firstOutstandingDisbursement =
       await this.disbursementScheduleService.getFirstDisbursementScheduleByApplication(
@@ -145,5 +161,18 @@ export class ConfirmationOfEnrollmentControllerService extends BaseController {
         ),
       );
     }
+  }
+
+  /**
+   * Validates as per study period end date if an enrolment is valid for institution confirmation.
+   * The date validations are performed in UTC time zone.
+   * @param studyEndDate study period end date
+   * @returns Flag which states if an enrolment is valid for institution confirmation.
+   */
+  private validateCOEStudyEndDate(studyEndDate: string | Date) {
+    return (
+      getUTCDateDifference(studyEndDate, new Date(), "day") >
+      COE_MAX_ALLOWED_DAYS_PAST_STUDY_PERIOD
+    );
   }
 }
