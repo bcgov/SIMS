@@ -14,6 +14,7 @@ export enum DisbursementOverawardOriginType {
   /**
    * An pending award that included an overaward was cancelled and
    * the overaward value must to be added back to the overaward balance.
+   * @deprecated to be removed.
    */
   PendingAwardCancelled = "Pending award cancelled",
   /**

@@ -71,6 +71,18 @@ export class DisbursementValue extends RecordDataModel {
   })
   disbursedAmountSubtracted?: string;
   /**
+   * Value resulted from the calculation between the award value_amount,
+   * disbursed_amount_subtracted and overaward_amount_subtracted. This is
+   * the value that was sent on the e-Cert and effectively paid to the student.
+   * !Decimal values are retrieved by Typeorm as string from Postgres.
+   */
+  @Column({
+    name: "effective_amount",
+    type: "numeric",
+    nullable: true,
+  })
+  effectiveAmount?: string;
+  /**
    * Disbursement value ids.
    */
   @RelationId(

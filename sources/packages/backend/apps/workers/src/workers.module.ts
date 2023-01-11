@@ -15,7 +15,6 @@ import {
   SupportingUserService,
   CRAIncomeVerificationService,
   MSFAANumberService,
-  DisbursementOverawardService,
 } from "./services";
 import { ZeebeTransportStrategy } from "./zeebe";
 import {
@@ -23,6 +22,7 @@ import {
   SequenceControlService,
   WorkflowClientService,
   ZeebeModule,
+  DisbursementOverawardService,
 } from "@sims/services";
 import { LoggerModule } from "@sims/utilities/logger";
 import { ConfigModule } from "@sims/utilities/config";

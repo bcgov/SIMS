@@ -8,13 +8,7 @@ import {
   OrderByCondition,
 } from "../../utilities";
 import { addDays } from "@sims/utilities";
-import {
-  DataSource,
-  Repository,
-  UpdateResult,
-  Brackets,
-  EntityManager,
-} from "typeorm";
+import { DataSource, UpdateResult, Brackets, EntityManager } from "typeorm";
 import { SequenceControlService } from "@sims/services";
 import {
   RecordDataModelService,
@@ -22,7 +16,6 @@ import {
   ApplicationStatus,
   COEStatus,
   DisbursementSchedule,
-  StudentAssessment,
   User,
 } from "@sims/sims-db";
 import { NotificationActionsService } from "@sims/services/notifications";
@@ -36,14 +29,12 @@ const DISBURSEMENT_DOCUMENT_NUMBER_SEQUENCE_GROUP =
  */
 @Injectable()
 export class DisbursementScheduleService extends RecordDataModelService<DisbursementSchedule> {
-  private readonly assessmentRepo: Repository<StudentAssessment>;
   constructor(
     private readonly dataSource: DataSource,
     private readonly sequenceService: SequenceControlService,
     private readonly notificationActionsService: NotificationActionsService,
   ) {
     super(dataSource.getRepository(DisbursementSchedule));
-    this.assessmentRepo = dataSource.getRepository(StudentAssessment);
   }
 
   /**

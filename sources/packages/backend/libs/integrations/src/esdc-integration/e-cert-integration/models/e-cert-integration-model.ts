@@ -49,7 +49,7 @@ export interface ECertRecord {
 
 export type Award = Pick<
   DisbursementValue,
-  "valueType" | "valueCode" | "valueAmount"
+  "valueType" | "valueCode" | "valueAmount" | "effectiveAmount"
 >;
 
 /**

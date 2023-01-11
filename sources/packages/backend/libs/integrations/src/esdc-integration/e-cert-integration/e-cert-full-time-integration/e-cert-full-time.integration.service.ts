@@ -1,7 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import {
   RecordTypeCodes,
-  Award,
   ECertRecord,
 } from "../models/e-cert-integration-model";
 import { ECertFullTimeFileHeader } from "./e-cert-files/e-cert-file-header";
@@ -16,8 +15,7 @@ import { SshService } from "@sims/integrations/services";
 import {
   combineDecimalPlaces,
   getDisbursementValuesByType,
-  getTotalDisbursementAmount,
-  round,
+  getTotalDisbursementEffectiveAmount,
   getGenderCode,
   getMaritalStatusCode,
   getTotalYearsOfStudy,
@@ -60,51 +58,33 @@ export class ECertFullTimeIntegrationService extends ECertIntegrationService {
     // Detail records
 
     // Calculated values.
-    const bcAwards = [
-      DisbursementValueType.BCTotalGrant,
-      DisbursementValueType.BCLoan,
-    ];
     const fileRecords = ecertRecords.map((ecertRecord) => {
-      let filterAwards = ecertRecord.awards;
-      if (ecertRecord.stopFullTimeBCFunding) {
-        filterAwards = ecertRecord.awards.filter(
-          (disbursementValue) =>
-            !bcAwards.includes(disbursementValue.valueType),
-        );
-      }
-      // ! All dollar values must be rounded to the nearest integer (0.5 rounds up)
-      const roundedAwards = filterAwards.map(
-        (award) =>
-          ({
-            valueType: award.valueType,
-            valueCode: award.valueCode,
-            valueAmount: round(award.valueAmount).toString(),
-          } as Award),
+      const disbursementAmount = getTotalDisbursementEffectiveAmount(
+        ecertRecord.awards,
+        [
+          DisbursementValueType.CanadaLoan,
+          DisbursementValueType.BCLoan,
+          DisbursementValueType.CanadaGrant,
+          DisbursementValueType.BCTotalGrant,
+        ],
       );
-
-      const disbursementAmount = getTotalDisbursementAmount(roundedAwards, [
-        DisbursementValueType.CanadaLoan,
-        DisbursementValueType.BCLoan,
-        DisbursementValueType.CanadaGrant,
-        DisbursementValueType.BCTotalGrant,
-      ]);
-
-      // ! All dollar values must be rounded to the nearest integer (0.5 rounds up)
-      // ! except studentAmount and schoolAmount that must have the decimal part
-      // ! combined into the integer part because the schoolAmount contains decimals
-      // ! and schoolAmount is used to determine the studentAmount.
+      // ! All awards effective values are rounded to the nearest integer (0.5 rounds up).
+      // ! studentAmount and schoolAmount have the decimal part combined into the integer part because
+      // ! the schoolAmount contains decimals and schoolAmount is used to determine the studentAmount.
       const studentAmount = disbursementAmount - ecertRecord.schoolAmount;
 
-      const cslAwardAmount = getTotalDisbursementAmount(roundedAwards, [
-        DisbursementValueType.CanadaLoan,
-      ]);
-      const bcslAwardAmount = getTotalDisbursementAmount(roundedAwards, [
-        DisbursementValueType.BCLoan,
-      ]);
-      const totalGrantAmount = getTotalDisbursementAmount(roundedAwards, [
-        DisbursementValueType.CanadaGrant,
-        DisbursementValueType.BCTotalGrant,
-      ]);
+      const cslAwardAmount = getTotalDisbursementEffectiveAmount(
+        ecertRecord.awards,
+        [DisbursementValueType.CanadaLoan],
+      );
+      const bcslAwardAmount = getTotalDisbursementEffectiveAmount(
+        ecertRecord.awards,
+        [DisbursementValueType.BCLoan],
+      );
+      const totalGrantAmount = getTotalDisbursementEffectiveAmount(
+        ecertRecord.awards,
+        [DisbursementValueType.CanadaGrant, DisbursementValueType.BCTotalGrant],
+      );
 
       const record = new ECertFullTimeFileRecord();
       record.recordType = RecordTypeCodes.ECertFullTimeRecord;
@@ -145,10 +125,10 @@ export class ECertFullTimeIntegrationService extends ECertIntegrationService {
       record.studentNumber = ecertRecord.studentNumber;
       record.totalGrantAmount = totalGrantAmount;
       // List of grants to be sent ignoring grants with 0 dollar amount.
-      record.grantAwards = getDisbursementValuesByType(roundedAwards, [
+      record.grantAwards = getDisbursementValuesByType(ecertRecord.awards, [
         DisbursementValueType.CanadaGrant,
         DisbursementValueType.BCTotalGrant,
-      ]).filter((grantAward) => +grantAward.valueAmount > 0);
+      ]).filter((grantAward) => +grantAward.effectiveAmount > 0);
 
       return record;
     });

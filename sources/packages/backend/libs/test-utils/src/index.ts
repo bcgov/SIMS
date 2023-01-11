@@ -11,3 +11,5 @@ export * from "./factories/student-assessment";
 export * from "./factories/education-program-offering";
 export * from "./factories/disbursement-schedule";
 export * from "./factories/disbursement-overaward";
+export * from "./factories/disbursement-value";
+export * from "./factories/msfaa-number";

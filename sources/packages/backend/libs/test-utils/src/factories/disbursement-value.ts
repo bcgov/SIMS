@@ -11,6 +11,7 @@ export function createFakeDisbursementValue(
   options?: {
     overawardAmountSubtracted?: string;
     disbursedAmountSubtracted?: string;
+    effectiveAmount?: string;
   },
   relations?: {
     disbursementSchedule: DisbursementSchedule;
@@ -25,5 +26,6 @@ export function createFakeDisbursementValue(
   disbursementValue.disbursedAmountSubtracted =
     options?.disbursedAmountSubtracted;
   disbursementValue.disbursementSchedule = relations?.disbursementSchedule;
+  disbursementValue.effectiveAmount = options?.effectiveAmount;
   return disbursementValue;
 }
