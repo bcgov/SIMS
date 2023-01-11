@@ -23,6 +23,7 @@ import {
   WorkflowClientService,
   ZeebeModule,
   DisbursementOverawardService,
+  NotificationsModule,
 } from "@sims/services";
 import { LoggerModule } from "@sims/utilities/logger";
 import { ConfigModule } from "@sims/utilities/config";
@@ -35,6 +36,7 @@ import { SystemUserModule } from "@sims/services/system-users";
     LoggerModule,
     ZeebeModule.forRoot(),
     SystemUserModule,
+    NotificationsModule,
   ],
   controllers: [
     AssessmentController,
