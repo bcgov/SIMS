@@ -1,5 +1,5 @@
 import { InjectQueue, Process, Processor } from "@nestjs/bull";
-import { DisbursementReceiptRequestService } from "@sims/integrations/esdc-integration";
+import { DailyDisbursementReceiptProcessingService } from "@sims/integrations/esdc-integration";
 import { QueueService } from "@sims/services/queue";
 import { QueueNames } from "@sims/utilities";
 import { Job, Queue } from "bull";
@@ -16,7 +16,7 @@ export class FINProcessProvincialDailyDisbursementsIntegrationScheduler extends 
     @InjectQueue(QueueNames.FINProcessProvincialDailyDisbursementsIntegration)
     schedulerQueue: Queue<DailyDisbursementReport>,
     queueService: QueueService,
-    private readonly disbursementReceiptRequestService: DisbursementReceiptRequestService,
+    private readonly disbursementReceiptRequestService: DailyDisbursementReceiptProcessingService,
   ) {
     super(schedulerQueue, queueService);
   }

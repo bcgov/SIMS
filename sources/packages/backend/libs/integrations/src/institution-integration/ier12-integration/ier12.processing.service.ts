@@ -6,7 +6,7 @@ import {
   InstitutionIntegrationConfig,
 } from "@sims/utilities/config";
 import { getFileNameAsCurrentTimestamp } from "@sims/utilities";
-import { IER12IntegrationService } from "./ier12-integration.service";
+import { IER12IntegrationService } from "./ier12.integration.service";
 import {
   IER12Record,
   IER12UploadResult,
@@ -14,7 +14,7 @@ import {
 import { StudentAssessmentService } from "@sims/integrations/services";
 
 @Injectable()
-export class IER12FileService {
+export class IER12ProcessingService {
   institutionIntegrationConfig: InstitutionIntegrationConfig;
   constructor(
     config: ConfigService,
