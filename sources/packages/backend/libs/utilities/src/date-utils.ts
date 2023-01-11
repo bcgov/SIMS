@@ -1,13 +1,13 @@
 /**
  * commonly used functions
  */
+import * as dayjs from "dayjs";
 import * as utc from "dayjs/plugin/utc";
 import * as localizedFormat from "dayjs/plugin/localizedFormat";
 import * as timezone from "dayjs/plugin/timezone";
 import * as dayOfYear from "dayjs/plugin/dayOfYear";
 import * as isBetween from "dayjs/plugin/isBetween";
 import { Between, FindOperator } from "typeorm";
-import dayjs, { OpUnitType, QUnitType } from "dayjs";
 dayjs.extend(utc);
 dayjs.extend(localizedFormat);
 dayjs.extend(timezone);
@@ -262,7 +262,7 @@ export function hasSomePeriodOverlap(periods: Period[]): boolean {
 export const getUTCDateDifference = (
   fromDate: string | Date,
   toDate: string | Date,
-  unit: QUnitType | OpUnitType,
+  unit: dayjs.QUnitType | dayjs.OpUnitType,
   notInt = false,
 ): number => {
   return dayjs.utc(toDate).diff(dayjs.utc(fromDate), unit, notInt);
