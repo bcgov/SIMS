@@ -1,5 +1,5 @@
 import { InjectQueue, Process, Processor } from "@nestjs/bull";
-import { CRAPersonalVerificationService } from "@sims/integrations/cra-integration/cra-personal-verification.service";
+import { CRAIncomeVerificationProcessingService } from "@sims/integrations/cra-integration/cra-income-verification.processing.service";
 import { QueueService } from "@sims/services/queue";
 import { QueueNames } from "@sims/utilities";
 import { InjectLogger, LoggerService } from "@sims/utilities/logger";
@@ -13,7 +13,7 @@ export class CRAProcessIntegrationScheduler extends BaseScheduler<void> {
     @InjectQueue(QueueNames.CRAProcessIntegration)
     schedulerQueue: Queue<void>,
     queueService: QueueService,
-    private readonly cra: CRAPersonalVerificationService,
+    private readonly cra: CRAIncomeVerificationProcessingService,
   ) {
     super(schedulerQueue, queueService);
   }

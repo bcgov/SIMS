@@ -14,7 +14,7 @@ import { ConfigService } from "@sims/utilities/config";
 import { MSFAANumberService } from "@sims/integrations/services";
 
 @Injectable()
-export class MSFAARequestService extends ESDCFileHandler {
+export class MSFAARequestProcessingService extends ESDCFileHandler {
   constructor(
     configService: ConfigService,
     private readonly sequenceService: SequenceControlService,

@@ -9,7 +9,7 @@ import { MSFAAResponseReceivedRecord } from "./msfaa-files/msfaa-response-receiv
 import { MSFAAIntegrationService } from "./msfaa.integration.service";
 
 @Injectable()
-export class MSFAAResponseService {
+export class MSFAAResponseProcessingService {
   constructor(
     private readonly msfaaNumberService: MSFAANumberService,
     private readonly msfaaService: MSFAAIntegrationService,

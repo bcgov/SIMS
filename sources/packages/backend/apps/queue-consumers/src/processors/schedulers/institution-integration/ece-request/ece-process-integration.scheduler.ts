@@ -1,5 +1,5 @@
 import { InjectQueue, Process, Processor } from "@nestjs/bull";
-import { ECEFileService } from "@sims/integrations/institution-integration/ece-integration";
+import { ECEProcessingService } from "@sims/integrations/institution-integration/ece-integration";
 import { QueueService } from "@sims/services/queue";
 import { QueueNames } from "@sims/utilities";
 import { InjectLogger, LoggerService } from "@sims/utilities/logger";
@@ -12,7 +12,7 @@ export class ECEProcessIntegrationScheduler extends BaseScheduler<void> {
   constructor(
     @InjectQueue(QueueNames.ECEProcessIntegration)
     schedulerQueue: Queue<void>,
-    private readonly eceFileService: ECEFileService,
+    private readonly eceFileService: ECEProcessingService,
     queueService: QueueService,
   ) {
     super(schedulerQueue, queueService);

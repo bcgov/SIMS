@@ -6,20 +6,20 @@ import {
   SshService,
 } from "@sims/integrations/services";
 import { CRAIntegrationService } from "./cra.integration.service";
-import { CRAPersonalVerificationService } from "./cra-personal-verification.service";
+import { CRAIncomeVerificationProcessingService } from "./cra-income-verification.processing.service";
 
 @Module({
   imports: [ConfigModule],
   providers: [
     SshService,
     CRAIntegrationService,
-    CRAPersonalVerificationService,
+    CRAIncomeVerificationProcessingService,
     SequenceControlService,
     WorkflowClientService,
     CRAIncomeVerificationsService,
   ],
   exports: [
-    CRAPersonalVerificationService,
+    CRAIncomeVerificationProcessingService,
     CRAIntegrationService,
     CRAIncomeVerificationsService,
   ],

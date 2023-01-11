@@ -1,8 +1,8 @@
 import { Module } from "@nestjs/common";
 import { SequenceControlService } from "@sims/services";
 import { MSFAAIntegrationService } from "./msfaa.integration.service";
-import { MSFAARequestService } from "./msfaa-request.service";
-import { MSFAAResponseService } from "./msfaa-response.service";
+import { MSFAARequestProcessingService } from "./msfaa-request.processing.service";
+import { MSFAAResponseProcessingService } from "./msfaa-response.processing.service";
 import { ConfigModule } from "@sims/utilities/config";
 import { MSFAANumberService, SshService } from "@sims/integrations/services";
 
@@ -11,11 +11,11 @@ import { MSFAANumberService, SshService } from "@sims/integrations/services";
   providers: [
     SshService,
     MSFAAIntegrationService,
-    MSFAARequestService,
-    MSFAAResponseService,
+    MSFAARequestProcessingService,
+    MSFAAResponseProcessingService,
     MSFAANumberService,
     SequenceControlService,
   ],
-  exports: [MSFAARequestService, MSFAAResponseService],
+  exports: [MSFAARequestProcessingService, MSFAAResponseProcessingService],
 })
 export class MSFAAIntegrationModule {}

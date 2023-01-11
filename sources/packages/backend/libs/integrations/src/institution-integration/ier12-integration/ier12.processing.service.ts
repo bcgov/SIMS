@@ -14,7 +14,7 @@ import {
 import { StudentAssessmentService } from "@sims/integrations/services";
 
 @Injectable()
-export class IER12FileService {
+export class IER12ProcessingService {
   institutionIntegrationConfig: InstitutionIntegrationConfig;
   constructor(
     config: ConfigService,

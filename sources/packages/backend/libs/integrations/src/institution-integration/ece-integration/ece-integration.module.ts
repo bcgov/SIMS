@@ -8,7 +8,7 @@ import {
   DisbursementScheduleService,
   SshService,
 } from "@sims/integrations/services";
-import { ECEFileService } from "./ece.processing.service";
+import { ECEProcessingService } from "./ece.processing.service";
 import { ECEIntegrationService } from "./ece.integration.service";
 
 @Global()
@@ -17,11 +17,11 @@ import { ECEIntegrationService } from "./ece.integration.service";
   providers: [
     SshService,
     DisbursementScheduleService,
-    ECEFileService,
+    ECEProcessingService,
     WorkflowClientService,
     ECEIntegrationService,
     StudentRestrictionSharedService,
   ],
-  exports: [ECEFileService],
+  exports: [ECEProcessingService],
 })
 export class ECEIntegrationModule {}

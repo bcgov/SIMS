@@ -6,7 +6,7 @@ import { DisbursementReceiptService } from "@sims/integrations/services";
 import { ReportService, ReportsFilterModel } from "@sims/services";
 
 @Injectable()
-export class DisbursementReceiptRequestService {
+export class DailyDisbursementReceiptProcessingService {
   constructor(
     private readonly reportService: ReportService,
     private readonly disbursementReceiptService: DisbursementReceiptService,

@@ -11,7 +11,7 @@ import { ECERecord, ECEUploadResult } from "./models/ece-integration.model";
 import { ECEIntegrationService } from "./ece.integration.service";
 
 @Injectable()
-export class ECEFileService {
+export class ECEProcessingService {
   institutionIntegrationConfig: InstitutionIntegrationConfig;
   constructor(
     config: ConfigService,

@@ -27,7 +27,7 @@ const INCOME_VERIFICATION_TAG = "VERIFICATION_ID";
  * by the Canada Revenue Agency (CRA).
  */
 @Injectable()
-export class CRAPersonalVerificationService {
+export class CRAIncomeVerificationProcessingService {
   private readonly ftpResponseFolder: string;
 
   constructor(
