@@ -244,7 +244,7 @@ export class ECertGenerationService {
   private async applyOverawardsDeductions(
     disbursements: ECertDisbursementSchedule[],
     entityManager: EntityManager,
-  ) {
+  ): Promise<void> {
     const studentsIds = disbursements.map(
       (disbursement) => disbursement.studentAssessment.application.student.id,
     );
@@ -464,7 +464,7 @@ export class ECertGenerationService {
   private subtractOverawardBalance(
     awards: DisbursementValue[],
     overawardBalance: number,
-  ) {
+  ): void {
     let currentBalance = overawardBalance;
     for (const award of awards) {
       // Award amount that is available to be taken for the overaward balance adjustment.
