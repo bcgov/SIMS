@@ -127,6 +127,7 @@ export class ECertGenerationService {
       DISBURSEMENT_FILE_GENERATION_ANTICIPATION_DAYS,
     );
 
+    // TODO: review this query to have it simplified and converted to Typeorm object syntax instead of string based.
     const queryResult = await entityManager
       .getRepository(DisbursementSchedule)
       .createQueryBuilder("disbursement")
