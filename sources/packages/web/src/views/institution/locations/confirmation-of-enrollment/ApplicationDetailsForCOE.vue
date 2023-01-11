@@ -46,6 +46,14 @@
         </template>
       </header-navigator>
     </template>
+    <template #alerts>
+      <banner
+        class="mb-2"
+        :type="BannerTypes.Warning"
+        header="Enrolment cannot be confirmed"
+        summary="The study end date has past and you can no longer confirm enrolment for this application."
+      />
+    </template>
     <formio-container
       formName="confirmsStudentEnrollment"
       :formData="initialData"
@@ -66,6 +74,7 @@ import {
   ApiProcessError,
   MenuType,
   ApproveConfirmEnrollmentModel,
+  BannerTypes,
 } from "@/types";
 import { useSnackBar, ModalDialog, useCOE, useFormatters } from "@/composables";
 import {
@@ -236,6 +245,7 @@ export default {
       denyCOEModal,
       InstitutionRoutesConst,
       confirmCOEModal,
+      BannerTypes,
     };
   },
 };
