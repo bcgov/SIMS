@@ -83,7 +83,7 @@ export class ConfirmationOfEnrollmentControllerService extends BaseController {
       )
     ) {
       throw new UnprocessableEntityException(
-        `The enrolment cannot be confirmed as the study period end date is beyond maximum allowed days.`,
+        "The enrolment cannot be confirmed as the study period end date is beyond maximum allowed days.",
       );
     }
 
