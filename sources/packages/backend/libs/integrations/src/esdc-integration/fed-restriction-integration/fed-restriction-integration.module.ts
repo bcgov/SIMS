@@ -5,8 +5,8 @@ import {
   SshService,
 } from "@sims/integrations/services";
 import { StudentRestrictionSharedService } from "@sims/services";
-import { FedRestrictionIntegrationService } from "./fed-restriction-integration.service";
-import { FedRestrictionProcessingService } from "./fed-restriction-processing.service";
+import { FedRestrictionIntegrationService } from "./fed-restriction.integration.service";
+import { FedRestrictionProcessingService } from "./fed-restriction.processing.service";
 
 @Module({
   providers: [

@@ -6,10 +6,10 @@ import { ProcessSFTPResponseResult } from "../models/esdc-integration.model";
 import { MSFAASFTPResponseFile } from "./models/msfaa-integration.model";
 import { MSFAAResponseCancelledRecord } from "./msfaa-files/msfaa-response-cancelled-record";
 import { MSFAAResponseReceivedRecord } from "./msfaa-files/msfaa-response-received-record";
-import { MSFAAIntegrationService } from "./msfaa-integration.service";
+import { MSFAAIntegrationService } from "./msfaa.integration.service";
 
 @Injectable()
-export class MSFAAResponseService {
+export class MSFAAResponseProcessingService {
   constructor(
     private readonly msfaaNumberService: MSFAANumberService,
     private readonly msfaaService: MSFAAIntegrationService,

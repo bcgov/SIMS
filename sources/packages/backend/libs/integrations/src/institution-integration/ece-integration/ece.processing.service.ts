@@ -8,10 +8,10 @@ import {
 import { getFileNameAsCurrentTimestamp } from "@sims/utilities";
 import { DisbursementScheduleService } from "@sims/integrations/services";
 import { ECERecord, ECEUploadResult } from "./models/ece-integration.model";
-import { ECEIntegrationService } from "./ece-integration.service";
+import { ECEIntegrationService } from "./ece.integration.service";
 
 @Injectable()
-export class ECEFileService {
+export class ECEProcessingService {
   institutionIntegrationConfig: InstitutionIntegrationConfig;
   constructor(
     config: ConfigService,

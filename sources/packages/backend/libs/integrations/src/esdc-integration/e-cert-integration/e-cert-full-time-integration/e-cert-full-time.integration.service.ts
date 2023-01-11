@@ -7,7 +7,7 @@ import { ECertFullTimeFileHeader } from "./e-cert-files/e-cert-file-header";
 import { ECertFullTimeFileFooter } from "./e-cert-files/e-cert-file-footer";
 import { ECertFullTimeFileRecord } from "./e-cert-files/e-cert-file-record";
 import { DisbursementValueType, OfferingIntensity } from "@sims/sims-db";
-import { ECertIntegrationService } from "../e-cert-integration.service";
+import { ECertIntegrationService } from "../e-cert.integration.service";
 import { ECertResponseRecord } from "../e-cert-files/e-cert-response-record";
 import { ConfigService } from "@sims/utilities/config";
 import { FixedFormatFileLine } from "@sims/integrations/services/ssh";

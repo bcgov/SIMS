@@ -8,13 +8,13 @@ import {
   MSFAARecord,
   MSFAAUploadResult,
 } from "./models/msfaa-integration.model";
-import { MSFAAIntegrationService } from "./msfaa-integration.service";
+import { MSFAAIntegrationService } from "./msfaa.integration.service";
 import { ESDCFileHandler } from "../esdc-file-handler";
 import { ConfigService } from "@sims/utilities/config";
 import { MSFAANumberService } from "@sims/integrations/services";
 
 @Injectable()
-export class MSFAARequestService extends ESDCFileHandler {
+export class MSFAARequestProcessingService extends ESDCFileHandler {
   constructor(
     configService: ConfigService,
     private readonly sequenceService: SequenceControlService,
@@ -92,11 +92,12 @@ export class MSFAARequestService extends ESDCFileHandler {
             nextSequenceNumber,
           );
           this.logger.log("Uploading content...");
-          uploadResult = await this.msfaaService.uploadContent(
-            fileContent,
-            fileInfo.filePath,
-          );
-
+          await this.msfaaService.uploadContent(fileContent, fileInfo.filePath);
+          this.logger.log("Content uploaded.");
+          uploadResult = {
+            generatedFile: fileInfo.filePath,
+            uploadedRecords: fileContent.length - 2, // Do not consider header and footer.
+          };
           // Creates the repository based on the entity manager that
           // holds the transaction already created to manage the
           // sequence number.

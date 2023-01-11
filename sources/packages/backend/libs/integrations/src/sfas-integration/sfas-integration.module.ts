@@ -7,7 +7,7 @@ import {
   SFASRestrictionService,
   SFASPartTimeApplicationsService,
 } from "../services/sfas";
-import { SFASIntegrationProcessingService } from "./sfas-integration-processing.service";
+import { SFASIntegrationProcessingService } from "./sfas-integration.processing.service";
 import { SFASIntegrationService } from "./sfas-integration.service";
 
 @Module({

@@ -5,7 +5,7 @@ import {
   SINCheckStatus,
   SystemUsersService,
 } from "@sims/services";
-import { SINValidationIntegrationService } from "./sin-validation-integration.service";
+import { SINValidationIntegrationService } from "./sin-validation.integration.service";
 import { SINValidation, Student } from "@sims/sims-db";
 import {
   SINValidationRecord,
