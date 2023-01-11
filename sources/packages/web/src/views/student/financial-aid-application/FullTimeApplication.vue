@@ -61,9 +61,9 @@ import {
   FormIOCustomEvent,
   FormIOCustomEventTypes,
   ApplicationStatus,
-  GetApplicationDataDto,
   ApiProcessError,
 } from "@/types";
+import { ApplicationDataAPIOutDTO } from "@/services/http/dto";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 import ConfirmEditApplication from "@/components/students/modals/ConfirmEditApplication.vue";
 import {
@@ -107,7 +107,7 @@ export default {
     const isLastPage = ref(false);
     const isReadOnly = ref(false);
     const notDraft = ref(false);
-    const existingApplication = ref({} as GetApplicationDataDto);
+    const existingApplication = ref({} as ApplicationDataAPIOutDTO);
     const editApplicationModal = ref({} as ModalDialog<boolean>);
 
     const checkProgramYear = async () => {

@@ -67,9 +67,9 @@
 import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
 import {
-  PendingDesignationDto,
+  PendingDesignationAgreementDetailsAPIOutDTO,
   DesignationAgreementStatus,
-} from "@/types/contracts/DesignationAgreementContract";
+} from "@/services/http/dto";
 import { DesignationAgreementService } from "@/services/DesignationAgreementService";
 import {
   DEFAULT_PAGE_LIMIT,
@@ -88,7 +88,9 @@ export default {
 
   setup() {
     const router = useRouter();
-    const designations = ref([] as PendingDesignationDto[]);
+    const designations = ref(
+      [] as PendingDesignationAgreementDetailsAPIOutDTO[],
+    );
     const { dateOnlyLongString } = useFormatters();
     const searchCriteria = ref();
 

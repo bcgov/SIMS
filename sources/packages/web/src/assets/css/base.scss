@@ -9,10 +9,16 @@ html * {
   background: $default-background;
 }
 
-.bold-text {
-  font-style: $font-style-normal;
+// Class for bold text.
+// Any other class which requires the bold fonds can extend this class.
+.font-bold {
   font-family: $font-bold;
-  font-weight: $font-weight-bold; // Fallback
+  font-weight: $font-weight-bold;
+}
+
+.bold-text {
+  @extend .font-bold;
+  font-style: $font-style-normal;
   line-height: 36px;
   letter-spacing: -0.2px;
   color: $brand-blue;

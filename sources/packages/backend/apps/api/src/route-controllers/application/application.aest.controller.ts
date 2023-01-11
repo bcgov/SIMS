@@ -7,11 +7,11 @@ import {
 } from "@nestjs/common";
 import { ApplicationService } from "../../services";
 import BaseController from "../BaseController";
-import { GetApplicationBaseDTO } from "./models/application.model";
+import { ApplicationBaseAPIOutDTO } from "./models/application.dto";
 import { AllowAuthorizedParty, Groups } from "../../auth/decorators";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { UserGroups } from "../../auth/user-groups.enum";
-import { ApiNotFoundResponse, ApiOkResponse, ApiTags } from "@nestjs/swagger";
+import { ApiNotFoundResponse, ApiTags } from "@nestjs/swagger";
 import { ClientTypeBaseRoute } from "../../types";
 import { ApplicationControllerService } from "./application.controller.service";
 
@@ -34,11 +34,10 @@ export class ApplicationAESTController extends BaseController {
    * @returns Application details
    */
   @Get(":applicationId")
-  @ApiOkResponse({ description: "Application details fetched." })
   @ApiNotFoundResponse({ description: "Application not found." })
   async getApplication(
     @Param("applicationId", ParseIntPipe) applicationId: number,
-  ): Promise<GetApplicationBaseDTO> {
+  ): Promise<ApplicationBaseAPIOutDTO> {
     const application = await this.applicationService.getApplicationById(
       applicationId,
       { loadDynamicData: true },

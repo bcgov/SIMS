@@ -9,7 +9,7 @@ import {
 /**
  * Base DTO for restriction.
  */
-export class RestrictionBaseDTO {
+export class RestrictionBaseAPIOutDTO {
   restrictionId: number;
   restrictionType: RestrictionType;
   restrictionCategory: string;
@@ -20,7 +20,7 @@ export class RestrictionBaseDTO {
 /**
  * DTO class for student/institution restriction summary.
  */
-export class RestrictionSummaryAPIOutDTO extends RestrictionBaseDTO {
+export class RestrictionSummaryAPIOutDTO extends RestrictionBaseAPIOutDTO {
   createdAt: Date;
   updatedAt: Date;
   isActive: boolean;

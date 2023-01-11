@@ -17,7 +17,7 @@ export class InstitutionControllerService {
 
   /**
    * Get institution detail.
-   * @param institutionId
+   * @param institutionId id for the institution to retrieved.
    * @returns Institution details.
    */
   async getInstitutionDetail(

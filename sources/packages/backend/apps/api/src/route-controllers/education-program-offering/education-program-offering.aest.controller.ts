@@ -124,9 +124,8 @@ export class EducationProgramOfferingAESTController extends BaseController {
 
   /**
    * API to assess and update the status of a pending offering.
-   * @param offeringId
-   * @param payload
-   * @param userToken
+   * @param offeringId id of the pending offering.
+   * @param payload payload with status of the pending offering.
    */
   @ApiNotFoundResponse({ description: "Offering not found." })
   @ApiUnprocessableEntityResponse({

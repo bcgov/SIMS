@@ -1,6 +1,6 @@
 import { LoggerService, InjectLogger } from "@sims/utilities/logger";
 import { Injectable } from "@nestjs/common";
-import { FedRestrictionIntegrationService } from "./fed-restriction-integration.service";
+import { FedRestrictionIntegrationService } from "./fed-restriction.integration.service";
 import * as os from "os";
 import { DataSource, InsertResult } from "typeorm";
 import { FederalRestriction, Restriction } from "@sims/sims-db";

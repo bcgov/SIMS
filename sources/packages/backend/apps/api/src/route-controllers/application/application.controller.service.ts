@@ -7,10 +7,12 @@ import {
 } from "../../services";
 import {
   ApplicationFormData,
-  GetApplicationBaseDTO,
-  GetApplicationDataDto,
+  ApplicationBaseAPIOutDTO,
+  ApplicationDataAPIOutDTO,
   SuccessWaitingStatus,
-} from "./models/application.model";
+  ApplicationIncomeVerification,
+  ApplicationSupportingUserDetails,
+} from "./models/application.dto";
 import {
   credentialTypeToDisplay,
   deliveryMethod,
@@ -32,10 +34,6 @@ import {
 } from "@sims/sims-db";
 import { ApiProcessError } from "../../types";
 import { ACTIVE_STUDENT_RESTRICTION } from "../../constants";
-import {
-  ApplicationIncomeVerification,
-  ApplicationSupportingUserDetails,
-} from "./models/application.system.dto";
 
 /**
  * This service controller is a provider which is created to extract the implementation of
@@ -130,7 +128,7 @@ export class ApplicationControllerService {
    */
   async transformToApplicationForAESTDTO(
     application: Application,
-  ): Promise<GetApplicationBaseDTO> {
+  ): Promise<ApplicationBaseAPIOutDTO> {
     return {
       data: application.data,
       id: application.id,
@@ -138,7 +136,7 @@ export class ApplicationControllerService {
       applicationNumber: application.applicationNumber,
       applicationFormName: application.programYear.formName,
       applicationProgramYearID: application.programYear.id,
-    } as GetApplicationBaseDTO;
+    };
   }
 
   /**
@@ -150,7 +148,7 @@ export class ApplicationControllerService {
   async transformToApplicationDetailForStudentDTO(
     applicationDetail: Application,
     disbursement: DisbursementSchedule,
-  ): Promise<GetApplicationDataDto> {
+  ): Promise<ApplicationDataAPIOutDTO> {
     const offering = applicationDetail.currentAssessment?.offering;
     return {
       id: applicationDetail.id,

@@ -1,5 +1,5 @@
 import { InjectQueue, Process, Processor } from "@nestjs/bull";
-import { MSFAARequestService } from "@sims/integrations/esdc-integration";
+import { MSFAARequestProcessingService } from "@sims/integrations/esdc-integration";
 import { MSFAA_FULL_TIME_FILE_CODE } from "@sims/services/constants";
 import { QueueService } from "@sims/services/queue";
 import { OfferingIntensity } from "@sims/sims-db";
@@ -15,7 +15,7 @@ export class FullTimeMSFAAProcessIntegrationScheduler extends BaseScheduler<void
     @InjectQueue(QueueNames.FullTimeMSFAAIntegration)
     schedulerQueue: Queue<void>,
     queueService: QueueService,
-    private readonly msfaaRequestService: MSFAARequestService,
+    private readonly msfaaRequestService: MSFAARequestProcessingService,
   ) {
     super(schedulerQueue, queueService);
   }

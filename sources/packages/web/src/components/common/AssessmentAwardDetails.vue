@@ -25,6 +25,17 @@
                 assessmentAwardData.estimatedAward.disbursement1Status
               "
             />
+            <confirm-enrolment
+              v-if="allowConfirmEnrolment"
+              :coeStatus="
+                assessmentAwardData.estimatedAward.disbursement1Status
+              "
+              :applicationStatus="assessmentAwardData.applicationStatus"
+              :disbursementId="
+                assessmentAwardData.estimatedAward.disbursement1Id
+              "
+              @confirmEnrolment="$emit('confirmEnrolment', $event)"
+            />
           </div>
           <div
             class="my-3"
@@ -109,6 +120,17 @@
                 assessmentAwardData.estimatedAward.disbursement2Status
               "
             />
+            <confirm-enrolment
+              v-if="allowConfirmEnrolment"
+              :coeStatus="
+                assessmentAwardData.estimatedAward.disbursement2Status
+              "
+              :applicationStatus="assessmentAwardData.applicationStatus"
+              :disbursementId="
+                assessmentAwardData.estimatedAward.disbursement2Id
+              "
+              @confirmEnrolment="$emit('confirmEnrolment', $event)"
+            />
           </div>
           <div
             class="my-3"
@@ -182,14 +204,28 @@ import { COEStatus, StatusInfo } from "@/types";
 import { PropType, computed, defineComponent } from "vue";
 import AwardTable from "@/components/common/AwardTable.vue";
 import StatusInfoEnrolment from "@/components/common/StatusInfoEnrolment.vue";
+import ConfirmEnrolment from "@/components/common/ConfirmEnrolment.vue";
 
 export default defineComponent({
-  components: { AwardTable, StatusInfoEnrolment },
+  emits: {
+    confirmEnrolment: (disbursementId: number) => {
+      return !!disbursementId;
+    },
+  },
+  components: {
+    AwardTable,
+    ConfirmEnrolment,
+    StatusInfoEnrolment,
+  },
   props: {
     assessmentAwardData: {
       type: Object as PropType<AwardDetailsAPIOutDTO>,
       required: true,
       default: {} as AwardDetailsAPIOutDTO,
+    },
+    allowConfirmEnrolment: {
+      type: Boolean,
+      required: false,
     },
   },
   setup(props) {

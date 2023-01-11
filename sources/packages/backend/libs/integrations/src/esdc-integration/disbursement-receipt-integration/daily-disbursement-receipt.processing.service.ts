@@ -1,12 +1,12 @@
 import { Injectable } from "@nestjs/common";
 import { InjectLogger, LoggerService } from "@sims/utilities/logger";
-import { DisbursementReceiptIntegrationService } from "./disbursement-receipt-integration.service";
+import { DisbursementReceiptIntegrationService } from "./disbursement-receipt.integration.service";
 import { DAILY_DISBURSEMENT_REPORT_NAME } from "@sims/services/constants";
 import { DisbursementReceiptService } from "@sims/integrations/services";
 import { ReportService, ReportsFilterModel } from "@sims/services";
 
 @Injectable()
-export class DisbursementReceiptRequestService {
+export class DailyDisbursementReceiptProcessingService {
   constructor(
     private readonly reportService: ReportService,
     private readonly disbursementReceiptService: DisbursementReceiptService,

@@ -15,7 +15,7 @@ export class StudentAppealRequestAPIInDTO {
   @IsNotEmpty()
   formName: string;
   @IsDefined()
-  formData: any;
+  formData: unknown;
 }
 
 /**
@@ -30,7 +30,7 @@ export class StudentAppealAPIInDTO {
 
 export class StudentAppealRequestAPIOutDTO {
   id: number;
-  submittedData: any;
+  submittedData: unknown;
   submittedFormName: string;
   appealStatus: StudentAppealStatus;
   assessedDate?: Date;
