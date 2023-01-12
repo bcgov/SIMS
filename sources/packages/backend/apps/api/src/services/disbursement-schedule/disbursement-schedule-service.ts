@@ -510,10 +510,11 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
   }
 
   /**
-   * Get COE approval period status
-   * @param disbursementDate
-   * @param studyEndDate
-   * @returns
+   * Get COE approval period status which defines
+   * if the COE can be confirmed by institution on current date.
+   * @param disbursementDate disbursement date.
+   * @param studyEndDate study end date of the offering.
+   * @returns COE approval period status.
    */
   getCOEApprovalPeriodStatus(
     disbursementDate: string | Date,

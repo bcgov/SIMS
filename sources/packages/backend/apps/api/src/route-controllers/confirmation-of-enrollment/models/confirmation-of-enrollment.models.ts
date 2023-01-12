@@ -4,8 +4,7 @@ export interface ConfirmEnrollmentOptions {
    */
   locationId?: number;
   /**
-   * Allow COEs which are outside the valid COE confirmation period to be confirmed
-   * by institution.
+   * Allow COEs which are outside the valid COE confirmation period to be confirmed.
    */
   allowOutsideCOEApprovalPeriod?: boolean;
 }

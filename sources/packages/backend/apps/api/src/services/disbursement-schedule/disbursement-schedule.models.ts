@@ -35,7 +35,7 @@ export interface ECertDisbursementSchedule extends DisbursementSchedule {
 }
 
 /**
- * COE approval period status for institution.
+ * COE approval period status.
  */
 export enum COEApprovalPeriodStatus {
   /**
