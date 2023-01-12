@@ -633,3 +633,18 @@
 .form-control[readonly] {
   cursor: not-allowed;
 }
+
+// Adjusting margin for all formio file uploader.
+.formio-component-file .fileSelector {
+  margin-top: 5px;
+}
+
+// Adjusting margin for all formio file uploader.
+.formio-component-file ul.list-group.list-group-striped {
+  margin-left: 0;
+}
+
+// Forcing the default formio style for smaller breakpoints.
+.formio-component-file ul li.list-group-item {
+  border: 1px solid rgba(0, 0, 0, 0.125) !important;
+}
