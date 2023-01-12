@@ -101,6 +101,5 @@ import { ECEProcessIntegrationScheduler } from "./processors/schedulers/institut
     FullTimeMSFAAProcessResponseIntegrationScheduler,
     PartTimeMSFAAProcessResponseIntegrationScheduler,
   ],
-  exports: [QueueService],
 })
 export class QueueConsumersModule {}

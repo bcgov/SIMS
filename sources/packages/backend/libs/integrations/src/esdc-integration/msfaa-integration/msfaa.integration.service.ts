@@ -6,7 +6,6 @@ import {
   ReceivedStatusCode,
   MSFAARecord,
   MSFAARequestFileLine,
-  MSFAAUploadResult,
   RecordTypeCodes,
 } from "./models/msfaa-integration.model";
 import { MSFAAFileDetail } from "./msfaa-files/msfaa-file-detail";
@@ -15,12 +14,8 @@ import { MSFAAFileHeader } from "./msfaa-files/msfaa-file-header";
 import { MSFAAResponseReceivedRecord } from "./msfaa-files/msfaa-response-received-record";
 import { MSFAAResponseCancelledRecord } from "./msfaa-files/msfaa-response-cancelled-record";
 import { MSFAAResponseRecordIdentification } from "./msfaa-files/msfaa-response-record-identification";
-import {
-  ConfigService,
-  ESDCIntegrationConfig,
-  SFTPConfig,
-} from "@sims/utilities/config";
-import { SshService } from "@sims/integrations/services";
+import { ConfigService, ESDCIntegrationConfig } from "@sims/utilities/config";
+import { SFTPIntegrationBase, SshService } from "@sims/integrations/services";
 import {
   getGenderCode,
   getMaritalStatusCode,
@@ -35,13 +30,12 @@ import { OfferingIntensity } from "@sims/sims-db";
  * ZONE B network for further processing and final send to servers.
  */
 @Injectable()
-export class MSFAAIntegrationService {
+export class MSFAAIntegrationService extends SFTPIntegrationBase<MSFAASFTPResponseFile> {
   private readonly esdcConfig: ESDCIntegrationConfig;
-  private readonly ftpConfig: SFTPConfig;
 
-  constructor(config: ConfigService, private readonly sshService: SshService) {
+  constructor(config: ConfigService, sshService: SshService) {
+    super(config.zoneBSFTP, sshService);
     this.esdcConfig = config.esdcIntegration;
-    this.ftpConfig = config.zoneBSFTP;
   }
 
   /**
@@ -104,39 +98,6 @@ export class MSFAAIntegrationService {
     msfaaFileLines.push(msfaaFooter);
 
     return msfaaFileLines;
-  }
-
-  /**
-   * Converts the MSFAAFileLines to the final content and upload it.
-   * @param MSFAAFileLines Array of lines to be converted to a formatted fixed size file.
-   * @param remoteFilePath Remote location to upload the file (path + file name).
-   * @returns Upload result.
-   */
-  async uploadContent(
-    msfaaFileLines: MSFAARequestFileLine[],
-    remoteFilePath: string,
-  ): Promise<MSFAAUploadResult> {
-    // Generate fixed formatted file.
-    const fixedFormattedLines: string[] = msfaaFileLines.map(
-      (line: MSFAARequestFileLine) => line.getFixedFormat(),
-    );
-    const msfaaFileContent = fixedFormattedLines.join("\r\n");
-
-    // Send the file to ftp.
-    this.logger.log("Creating new SFTP client to start upload...");
-    const client = await this.getClient();
-    try {
-      this.logger.log(`Uploading ${remoteFilePath}`);
-      await client.put(Buffer.from(msfaaFileContent), remoteFilePath);
-      return {
-        generatedFile: remoteFilePath,
-        uploadedRecords: msfaaFileLines.length - 2, // Do not consider header/footer.
-      };
-    } finally {
-      this.logger.log("Finalizing SFTP client...");
-      await SshService.closeQuietly(client);
-      this.logger.log("SFTP client finalized.");
-    }
   }
 
   /**
@@ -285,14 +246,6 @@ export class MSFAAIntegrationService {
     } finally {
       await SshService.closeQuietly(client);
     }
-  }
-
-  /**
-   * Generates a new connected SFTP client ready to be used.
-   * @returns client
-   */
-  private async getClient(): Promise<Client> {
-    return this.sshService.createClient(this.ftpConfig);
   }
 
   @InjectLogger()

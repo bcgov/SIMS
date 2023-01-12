@@ -16,7 +16,7 @@ import {
 import { getUTCNow } from "@sims/utilities";
 import * as path from "path";
 import { ConfigService } from "@sims/utilities/config";
-import { CRAIntegrationService } from "./cra-integration.service";
+import { CRAIntegrationService } from "./cra.integration.service";
 import { CRAIncomeVerificationsService } from "../services";
 
 const INCOME_VERIFICATION_TAG = "VERIFICATION_ID";
@@ -27,7 +27,7 @@ const INCOME_VERIFICATION_TAG = "VERIFICATION_ID";
  * by the Canada Revenue Agency (CRA).
  */
 @Injectable()
-export class CRAPersonalVerificationService {
+export class CRAIncomeVerificationProcessingService {
   private readonly ftpResponseFolder: string;
 
   constructor(

@@ -1,11 +1,7 @@
 import { LoggerService, InjectLogger } from "@sims/utilities/logger";
 import { Injectable } from "@nestjs/common";
-import {
-  SequenceControlService,
-  SINCheckStatus,
-  SystemUsersService,
-} from "@sims/services";
-import { SINValidationIntegrationService } from "./sin-validation-integration.service";
+import { SequenceControlService, SystemUsersService } from "@sims/services";
+import { SINValidationIntegrationService } from "./sin-validation.integration.service";
 import { SINValidation, Student } from "@sims/sims-db";
 import {
   SINValidationRecord,
@@ -195,12 +191,9 @@ export class SINValidationProcessingService {
     const fileName = path.basename(remoteFilePath);
     for (const sinValidationRecord of responseResult.records) {
       try {
-        const hasValidSIN =
-          sinValidationRecord.sinCheckStatus === SINCheckStatus.Passed;
         const updatedResult =
           await this.sinValidationService.updateSINValidationFromESDCResponse(
             sinValidationRecord,
-            hasValidSIN,
             fileName,
             responseResult.header.processDate,
             auditUserId,

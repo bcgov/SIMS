@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { DataSource, EntityManager } from "typeorm";
+import { DataSource, EntityManager, IsNull } from "typeorm";
 import {
   RecordDataModelService,
   DisbursementSchedule,
@@ -20,25 +20,17 @@ import {
   ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE,
   ASSESSMENT_NOT_FOUND,
   DISBURSEMENT_SCHEDULES_ALREADY_CREATED,
+  GRANTS_TYPES,
+  LOAN_TYPES,
 } from "../constants";
 import { SystemUsersService } from "@sims/services/system-users";
 
 // Timeout to handle the worst-case scenario where the commit/rollback
 // was not executed due to a possible catastrophic failure.
-const TRANSACTION_IDLE_TIMEOUT_SECONDS = 600;
-
-const LOAN_TYPES = [
-  DisbursementValueType.CanadaLoan,
-  DisbursementValueType.BCLoan,
-];
-
-const GRANTS_TYPES = [
-  DisbursementValueType.CanadaGrant,
-  DisbursementValueType.BCGrant,
-];
+const TRANSACTION_IDLE_TIMEOUT_SECONDS = 60;
 
 /**
- * Service layer for Student Application disbursement schedules.
+ * Service layer for the student application assessment calculations for the disbursement schedules.
  * Assumptions and concepts:
  * - sims.disbursement_overawards can also be referred as overaward balance table or overaward history table.
  * - One assessment/reassessment will have one or two dates to be disbursed, a.k.a. disbursement schedule.
@@ -57,7 +49,7 @@ const GRANTS_TYPES = [
  * the second one will be able to detect that the fist one already processed the disbursements.
  * - A reassessment only produces an overaward if the application had some money sent(disbursed) already. Applications that have all theirs disbursements in 'pending'
  * state will be freely recalculated but will never generate an overaward.
- * - An application will only have money disbursed during between its offering start/end dates. The disbursement schedules are generated always between start and and dates,
+ * - An application will only have money disbursed between its offering start/end dates. The disbursement schedules are generated always between start and and dates,
  * which also means that the money will only be sent sometime between offering start/end dates.
  * - Considering the above assumptions and below applications for a same student where current date is Dec 2022.
  * -------------------------------------
@@ -70,7 +62,7 @@ const GRANTS_TYPES = [
  * - Application 1000000001 will have money disbursed only between Jan-2023 and May-2023 and while this is happening, applications 1000000002 and 1000000003
  * will never generate an overaward. For instance, application 1000000002 will never have any money disbursed before its start date (Jul-2023), which means that
  * any reassessment will just generate new numbers, remember, no money sent no overaward generated ever.
- * - Any deviation from the above statements is considered an edge case and must be adjusted and adjusted manually by the Ministry.
+ * - Any deviation from the above statements is considered an edge case and must be adjusted manually by the Ministry.
  */
 @Injectable()
 export class DisbursementScheduleService extends RecordDataModelService<DisbursementSchedule> {
@@ -147,15 +139,13 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
       // Adjust the saved loans disbursements with the values already disbursed
       // and generate possible overawards.
       // !Intended to process only loans (CanadaLoan/BCLoan)
-      await this.applyLoansOverawards(
+      await this.createLoansOverawards(
         assessment.id,
         assessment.application.student.id,
         disbursementSchedules,
         totalAlreadyDisbursedValues,
         transactionEntityManager,
       );
-      // Calculate BC Total grant to be used in e-Cert files.
-      await this.calculateBCTotalGrants(disbursementSchedules);
       // Persist changes for grants and loans.
       await transactionEntityManager
         .getRepository(StudentAssessment)
@@ -297,12 +287,13 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
   }
 
   /**
-   * Get disbursement schedules values that are either pending or were already disbursed.
+   * Get disbursement schedules (and its awards values) that are either pending or were already disbursed.
    * All possible versions of the same application will be considered, including overridden ones.
    * For instance, if a disbursement schedule was ever marked as disbursed it will matter for
    * calculations of the values already paid for the student.
    * @param studentId student id.
    * @param applicationNumber application number to have the disbursements retrieved.
+   * @param status disbursement schedule status.
    * @param entityManager used to execute the commands in the same transaction.
    * @returns disbursement schedules relevant to overaward calculation.
    */
@@ -325,6 +316,7 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
           valueAmount: true,
           overawardAmountSubtracted: true,
           disbursedAmountSubtracted: true,
+          effectiveAmount: true,
         },
         studentAssessment: {
           id: true,
@@ -376,6 +368,10 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
     const overawardsToDelete = await disbursementOverawardRepo.find({
       select: { id: true },
       where: {
+        deletedAt: IsNull(),
+        // disbursementSchedule is populated when an overaward has a deduction during the e-Cert
+        // generation when the award was paid (Sent), these records are not deleted.
+        disbursementSchedule: IsNull(),
         studentAssessment: {
           application: {
             student: {
@@ -458,12 +454,9 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
         (disbursementSchedule) => disbursementSchedule.disbursementValues,
       )
       .forEach((disbursementValue) => {
-        const realAwardPaidValue =
-          +disbursementValue.valueAmount -
-          +disbursementValue.disbursedAmountSubtracted;
         totalPerValueCode[disbursementValue.valueCode] =
           (totalPerValueCode[disbursementValue.valueCode] ?? 0) +
-          realAwardPaidValue;
+          +(disbursementValue.effectiveAmount ?? 0);
       });
     return totalPerValueCode;
   }
@@ -498,11 +491,7 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
       // Total value already received by the student for this grant for this application.
       const alreadyDisbursed = totalAlreadyDisbursedValues[valueCode] ?? 0;
       // Subtract the debt from the current grant in the current assessment.
-      this.subtractStudentDebit(
-        grants,
-        alreadyDisbursed,
-        "PreviousDisbursement",
-      );
+      this.subtractPreviousDisbursementDebit(grants, alreadyDisbursed);
       // If there is some remaining student debit for grants it will be just
       // not considered (loans generate overawards, grants do not).
     }
@@ -515,15 +504,14 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
    * For a particular loan award, when the money amount already disbursed is
    * greater than the amount of money the student need to received, an
    * overaward is added to the student account.
-   * @param assessmentId assessment being processed.
-   * @param studentId student.
+   * @param assessmentId assessment id being processed.
+   * @param studentId student id.
    * @param disbursementSchedules disbursement schedules with the awards to
    * be verified and possibility adjusted.
    * @param totalAlreadyDisbursedValues total disbursed values for this the application.
    * @param entityManager used to execute the commands in the same transaction.
-   * @returns
    */
-  private async applyLoansOverawards(
+  private async createLoansOverawards(
     assessmentId: number,
     studentId: number,
     disbursementSchedules: DisbursementSchedule[],
@@ -548,10 +536,9 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
       // Total value already received by the student for this loan for this application.
       const alreadyDisbursed = totalAlreadyDisbursedValues[valueCode] ?? 0;
       // Subtract the debit from the current awards in the current assessment.
-      const remainingStudentDebit = this.subtractStudentDebit(
+      const remainingStudentDebit = this.subtractPreviousDisbursementDebit(
         loans,
         alreadyDisbursed,
-        "PreviousDisbursement",
       );
       // If there is some remaining student debit, generate an overaward.
       const [referenceAward] = loans;
@@ -596,63 +583,22 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
   }
 
   /**
-   * Calculate the total BC grants for each disbursement since they
-   * can be affected by the calculations for the values already paid for the student.
-   * @param disbursementSchedules disbursements to have the BC grants calculated.
-   */
-  private async calculateBCTotalGrants(
-    disbursementSchedules: DisbursementSchedule[],
-  ): Promise<void> {
-    const auditUser = await this.systemUsersService.systemUser();
-    for (const disbursementSchedule of disbursementSchedules) {
-      // For each schedule calculate the total BC grants.
-      let bcTotalGrant = disbursementSchedule.disbursementValues.find(
-        (disbursementValue) =>
-          disbursementValue.valueType === DisbursementValueType.BCTotalGrant,
-      );
-      if (!bcTotalGrant) {
-        // If the 'BC Total Grant' is not present, add it.
-        bcTotalGrant = new DisbursementValue();
-        bcTotalGrant.creator = auditUser;
-        bcTotalGrant.valueCode = "BCSG";
-        bcTotalGrant.valueType = DisbursementValueType.BCTotalGrant;
-        disbursementSchedule.disbursementValues.push(bcTotalGrant);
-      }
-      bcTotalGrant.valueAmount = disbursementSchedule.disbursementValues
-        // Filter all BC grants.
-        .filter(
-          (disbursementValue) =>
-            disbursementValue.valueType === DisbursementValueType.BCGrant,
-        )
-        // Sum all BC grants.
-        .reduce((previousValue, currentValue) => {
-          return previousValue + +currentValue.valueAmount;
-        }, 0)
-        .toString();
-    }
-  }
-
-  /**
-   * Try to settle a student debit from one of the two situations below:
-   * 1. Money already received by the student for the same application that is being reassessed.
-   * 2. Money owed by the student due to some previous overaward in some previous application.
-   * In both cases, the reassessment will result in some amount of money that the student must
-   * receive, witch will receive deductions based on the two scenarios above.
-   * @param awards specific award being adjusted (e.g CSLF, BGPD, BCSL). This will contain one or
+   * During a reassessment, if the student had already received any amount of money for the
+   * same application, this amount must be subtracted from the new reassessment awards amounts.
+   * @param awards specific award being adjusted (e.g BGPD). This will contain one or
    * two entries, always from the same award, from where the student debit will be deducted.
-   * The debit will try to be settle as much as possible with the first entry. If it is not enough
-   * if will check for the second entry, when present, if it is not enough, the remaining value will
-   * be returned to let the caller of the method aware that part of the debit was not payed.
-   * @param totalStudentDebit total student debit to be deducted.
-   * @param subtractOrigin indicates if the debit comes from values already payed for the application
-   * being processed (PreviousDisbursement) or if it is from some existing overaward prior to this
-   * application (Overaward)
+   * The debit will try to be settle as much as possible with the first award. If it is not enough
+   * if will check for the second award (second disbursement), when present, if it is not enough, the
+   * remaining value will be returned to let the caller of the method aware that part of the debit
+   * was not payed.
+   * The awards lists will be always from the same award code. For instance, the list list will contain
+   * one or two awards of type BGPD.
+   * @param totalStudentDebit total award amount already paid to be deducted.
    * @returns the remaining student debit in case the awards were not enough to pay it.
    */
-  private subtractStudentDebit(
+  private subtractPreviousDisbursementDebit(
     awards: DisbursementValue[],
     totalStudentDebit: number,
-    subtractOrigin: "PreviousDisbursement" | "Overaward",
   ): number {
     let studentDebit = totalStudentDebit;
     for (const award of awards) {
@@ -661,34 +607,28 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
         // Current disbursement value is enough to pay the debit.
         // For instance:
         // - Award: $1000
-        // - Student Debit: $750
+        // - Student already received: $750
         // Then
-        // - New award: $250 ($1000 - $750)
+        // - Award: $1000
+        // - disbursedAmountSubtracted: $750
         // - Student debit: $0
-        if (subtractOrigin === "Overaward") {
-          award.overawardAmountSubtracted = studentDebit.toString();
-        } else {
-          award.disbursedAmountSubtracted = studentDebit.toString();
-        }
+        award.disbursedAmountSubtracted = studentDebit.toString();
         studentDebit = 0;
       } else {
         // Current disbursement is not enough to pay the debit.
         // Updates total student debit.
         // For instance:
         // - Award: $500
-        // - Student Debit: $750
+        // - Student already received: $750
         // Then
-        // - New award: $0
+        // - Award: $500
+        // - disbursedAmountSubtracted: $500
         // - Student debit: $250
         // If there is one more disbursement with the same award, the $250
         // student debit will be taken from there, if possible executing the
         // second iteration of this for loop.
         studentDebit -= awardValueAmount;
-        if (subtractOrigin === "Overaward") {
-          award.overawardAmountSubtracted = award.valueAmount;
-        } else {
-          award.disbursedAmountSubtracted = award.valueAmount;
-        }
+        award.disbursedAmountSubtracted = award.valueAmount;
       }
     }
     return studentDebit;

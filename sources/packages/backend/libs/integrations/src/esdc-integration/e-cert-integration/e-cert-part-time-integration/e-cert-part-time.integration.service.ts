@@ -4,25 +4,23 @@ import {
   CSGD,
   CSGP,
   CSGPT,
-  Award,
   ECertRecord,
 } from "../models/e-cert-integration-model";
 import { ECertPartTimeFileHeader } from "./e-cert-files/e-cert-file-header";
 import { ECertPartTimeFileFooter } from "./e-cert-files/e-cert-file-footer";
 import { ECertPartTimeFileRecord } from "./e-cert-files/e-cert-file-record";
 import { DisbursementValueType, OfferingIntensity } from "@sims/sims-db";
-import { ECertIntegrationService } from "../e-cert-integration.service";
+import { ECertIntegrationService } from "../e-cert.integration.service";
 import { ECertResponseRecord } from "../e-cert-files/e-cert-response-record";
 import { ConfigService } from "@sims/utilities/config";
 import { FixedFormatFileLine } from "@sims/integrations/services/ssh";
 import { SshService } from "@sims/integrations/services";
 import {
   combineDecimalPlaces,
-  getDisbursementAmountByValueCode,
+  getDisbursementEffectiveAmountByValueCode,
   getGenderCode,
   getPartTimeMaritalStatusCode,
-  getTotalDisbursementAmount,
-  round,
+  getTotalDisbursementEffectiveAmount,
 } from "@sims/utilities";
 
 /**
@@ -57,39 +55,31 @@ export class ECertPartTimeIntegrationService extends ECertIntegrationService {
     // Detail records
     // Calculated values
     const fileRecords = ecertRecords.map((ecertRecord) => {
-      // ! All dollar values must be rounded to the nearest integer (0.5 rounds up)
-      const roundedAwards = ecertRecord.awards.map(
-        (award) =>
-          ({
-            valueType: award.valueType,
-            valueCode: award.valueCode,
-            valueAmount: round(award.valueAmount).toString(),
-          } as Award),
-      );
-
-      const totalCSGPPTAmount = getDisbursementAmountByValueCode(
-        roundedAwards,
+      const totalCSGPPTAmount = getDisbursementEffectiveAmountByValueCode(
+        ecertRecord.awards,
         CSGD,
       );
-      const totalCSGPPDAmount = getDisbursementAmountByValueCode(
-        roundedAwards,
+      const totalCSGPPDAmount = getDisbursementEffectiveAmountByValueCode(
+        ecertRecord.awards,
         CSGP,
       );
-      const totalCSGPPTDEPAmount = getDisbursementAmountByValueCode(
-        roundedAwards,
+      const totalCSGPPTDEPAmount = getDisbursementEffectiveAmountByValueCode(
+        ecertRecord.awards,
         CSGPT,
       );
 
-      const disbursementAmount = getTotalDisbursementAmount(roundedAwards, [
-        DisbursementValueType.CanadaLoan,
-      ]);
-      const totalGrantAmount = getTotalDisbursementAmount(roundedAwards, [
-        DisbursementValueType.CanadaGrant,
-        DisbursementValueType.BCTotalGrant,
-      ]);
-      const totalBCSGAmount = getTotalDisbursementAmount(roundedAwards, [
-        DisbursementValueType.BCTotalGrant,
-      ]);
+      const disbursementAmount = getTotalDisbursementEffectiveAmount(
+        ecertRecord.awards,
+        [DisbursementValueType.CanadaLoan],
+      );
+      const totalGrantAmount = getTotalDisbursementEffectiveAmount(
+        ecertRecord.awards,
+        [DisbursementValueType.CanadaGrant, DisbursementValueType.BCTotalGrant],
+      );
+      const totalBCSGAmount = getTotalDisbursementEffectiveAmount(
+        ecertRecord.awards,
+        [DisbursementValueType.BCTotalGrant],
+      );
 
       const record = new ECertPartTimeFileRecord();
       record.recordType = RecordTypeCodes.ECertPartTimeRecord;

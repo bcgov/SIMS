@@ -29,10 +29,10 @@ export function getDisbursementValuesByType(
 }
 
 /**
- * Get the sum of the awards (disbursement values)
- * for the specific types.
+ * Get the sum of the awards value amount (disbursement values)
+ * for the specific types generated during the assessment calculation.
  * @param awards list of awards (disbursement values).
- * @param types types sum and get the total.
+ * @param types types to sum and get the total.
  * @returns sum of the awards (disbursement values)
  * for the specific types.
  */
@@ -42,6 +42,26 @@ export function getTotalDisbursementAmount(
 ): number {
   return getDisbursementValuesByType(awards, types).reduce(
     (totalAmount, award) => totalAmount + +award.valueAmount,
+    0,
+  );
+}
+
+/**
+ * Get the sum of the awards effective values (disbursement values)
+ * for the specific types.
+ * !Effective award value is available only after the e-Cert is generated
+ * !and the overaward deductions or possible restrictions are applied.
+ * @param awards list of awards (disbursement values).
+ * @param types types to sum and get the total.
+ * @returns sum of the awards effective value (disbursement values)
+ * for the specific types.
+ */
+export function getTotalDisbursementEffectiveAmount(
+  awards: Award[],
+  types: DisbursementValueType[],
+): number {
+  return getDisbursementValuesByType(awards, types).reduce(
+    (totalAmount, award) => totalAmount + +award.effectiveAmount,
     0,
   );
 }
@@ -72,18 +92,19 @@ export function combineDecimalPlaces(
 }
 
 /**
- * Extract from the award amount
- * the specific types.
+ * Get the award effective amount by the award value code (e.g. CSGD, CSGP, CSGPT).
+ * !Effective award value is available only after the e-Cert is generated
+ * !and the overaward deductions or possible restrictions are applied.
  * @param awards list of awards (disbursement values).
  * @param valueCode valueCode to be extracted.
  * @returns award amount of the specified types.
  */
-export function getDisbursementAmountByValueCode(
+export function getDisbursementEffectiveAmountByValueCode(
   awards: Award[],
   valueCode: string,
 ): number {
   return +awards.find((award) => award.valueCode.includes(valueCode))
-    .valueAmount;
+    .effectiveAmount;
 }
 
 /**

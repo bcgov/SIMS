@@ -7,7 +7,7 @@ import {
 } from "@sims/sims-db";
 import { getUTCNow } from "@sims/utilities";
 import { InjectLogger, LoggerService } from "@sims/utilities/logger";
-import { DataSource } from "typeorm";
+import { DataSource, EntityManager } from "typeorm";
 
 @Injectable()
 export class StudentService extends RecordDataModelService<Student> {
@@ -122,21 +122,24 @@ export class StudentService extends RecordDataModelService<Student> {
    * @param sinValidation SIN validation record to have the
    * relationship created with the student.
    * @param auditUserId user that should be considered the one that is causing the changes.
+   * @param transactionalEntityManager entity manager to execute in transaction.
    * @returns updated student.
    */
   async updateSINValidationByStudentId(
     studentId: number,
     sinValidation: SINValidation,
     auditUserId: number,
+    transactionalEntityManager: EntityManager,
   ): Promise<Student> {
-    const studentToUpdate = await this.repo
+    const studentRepo = transactionalEntityManager.getRepository(Student);
+    const studentToUpdate = await studentRepo
       .createQueryBuilder("student")
       .select("student.id")
       .where("student.id = :studentId", { studentId })
       .getOne();
     studentToUpdate.modifier = { id: auditUserId } as User;
     studentToUpdate.sinValidation = sinValidation;
-    return this.repo.save(studentToUpdate);
+    return studentRepo.save(studentToUpdate);
   }
 
   @InjectLogger()

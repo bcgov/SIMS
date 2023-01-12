@@ -11,16 +11,17 @@ export abstract class ESDCFileHandler {
   constructor(config: ConfigService) {
     this.esdcConfig = config.esdcIntegration;
   }
+
   /**
    * Expected file name of the request file.
    * @param filenameCode different files has different filename codes, to be created.
    * @param nextSequenceNumber
    * @returns Full file path of the file to be saved on the SFTP.
    */
-  async createRequestFileName(
+  createRequestFileName(
     filenameCode: string,
     nextSequenceNumber: number,
-  ): Promise<CreateRequestFileNameResult> {
+  ): CreateRequestFileNameResult {
     const fileNameArray = new StringBuilder();
     fileNameArray.append(`${this.esdcConfig.environmentCode}${filenameCode}`);
     fileNameArray.appendDate(new Date(), DATE_FORMAT);
@@ -32,6 +33,6 @@ export abstract class ESDCFileHandler {
     );
     const fileName = fileNameArray.toString();
     const filePath = `${this.esdcConfig.ftpRequestFolder}\\${fileName}`;
-    return { fileName, filePath } as CreateRequestFileNameResult;
+    return { fileName, filePath };
   }
 }

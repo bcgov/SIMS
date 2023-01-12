@@ -1,7 +1,18 @@
 import { LoggerService, InjectLogger } from "@sims/utilities/logger";
-import { DisbursementSchedule, OfferingIntensity } from "@sims/sims-db";
+import { OfferingIntensity } from "@sims/sims-db";
+import {
+  DisbursementScheduleErrorsService,
+  DisbursementScheduleService,
+  ECertDisbursementSchedule,
+} from "../../services";
 import { SequenceControlService } from "@sims/services";
-import { getISODateOnlyString } from "@sims/utilities";
+import {
+  ECERT_FULL_TIME_FILE_CODE,
+  ECERT_PART_TIME_FILE_CODE,
+  ECERT_FULL_TIME_FEEDBACK_FILE_CODE,
+  ECERT_PART_TIME_FEEDBACK_FILE_CODE,
+} from "@sims/services/constants";
+import { CustomNamedError, getISODateOnlyString } from "@sims/utilities";
 import { EntityManager } from "typeorm";
 import { ESDCFileHandler } from "../esdc-file-handler";
 import {
@@ -11,26 +22,23 @@ import {
   ESDCFileResponse,
 } from "./models/e-cert-integration-model";
 import { Injectable } from "@nestjs/common";
-import { ECertIntegrationService } from "./e-cert-integration.service";
-import { ECertFullTimeIntegrationService } from "./e-cert-full-time-integration/e-cert-full-time-integration.service";
-import { ECertPartTimeIntegrationService } from "./e-cert-part-time-integration/e-cert-part-time-integration.service";
+import { ECertIntegrationService } from "./e-cert.integration.service";
+import { ECertFullTimeIntegrationService } from "./e-cert-full-time-integration/e-cert-full-time.integration.service";
+import { ECertPartTimeIntegrationService } from "./e-cert-part-time-integration/e-cert-part-time.integration.service";
 import { ECertFullTimeResponseRecord } from "./e-cert-full-time-integration/e-cert-files/e-cert-response-record";
 import { ProcessSFTPResponseResult } from "../models/esdc-integration.model";
 import { ConfigService, ESDCIntegrationConfig } from "@sims/utilities/config";
-import {
-  ECERT_FULL_TIME_FEEDBACK_FILE_CODE,
-  ECERT_FULL_TIME_FILE_CODE,
-  ECERT_PART_TIME_FEEDBACK_FILE_CODE,
-  ECERT_PART_TIME_FILE_CODE,
-} from "@sims/services/constants";
-import {
-  DisbursementScheduleErrorsService,
-  DisbursementScheduleService,
-  ECertDisbursementSchedule,
-} from "@sims/integrations/services";
+import { ECertGenerationService } from "@sims/integrations/services";
 
 const ECERT_FULL_TIME_SENT_FILE_SEQUENCE_GROUP = "ECERT_FT_SENT_FILE";
 const ECERT_PART_TIME_SENT_FILE_SEQUENCE_GROUP = "ECERT_PT_SENT_FILE";
+/**
+ * Used to abort the e-Cert generation process, cancel the current transaction,
+ * and let the consumer method know that it was aborted because no records are
+ * present to be processed.
+ */
+const ECERT_GENERATION_NO_RECORDS_AVAILABLE =
+  "ECERT_GENERATION_NO_RECORDS_AVAILABLE";
 
 @Injectable()
 export class ECertFileHandler extends ESDCFileHandler {
@@ -39,6 +47,7 @@ export class ECertFileHandler extends ESDCFileHandler {
     configService: ConfigService,
     private readonly sequenceService: SequenceControlService,
     private readonly disbursementScheduleService: DisbursementScheduleService,
+    private readonly eCertGenerationService: ECertGenerationService,
     private readonly disbursementScheduleErrorsService: DisbursementScheduleErrorsService,
     private readonly eCertFullTimeIntegrationService: ECertFullTimeIntegrationService,
     private readonly eCertPartTimeIntegrationService: ECertPartTimeIntegrationService,
@@ -99,12 +108,14 @@ export class ECertFileHandler extends ESDCFileHandler {
   }
 
   /**
-   * Get all Full-Time/Part-Time disbursements available to be sent to ESDC.
+   * Generate the e-Cert file for Full-Time/Part-Time disbursements available to be sent to ESDC.
    * Consider any record that is scheduled in upcoming days or in the past.
-   * @param eCertIntegrationService
+   * @param eCertIntegrationService Full-Time/Part-Time integration responsible
+   * for the respective integration.
    * @param offeringIntensity disbursement offering intensity.
-   * @param fileCode File code applicable for Part-Time or Full-Time.
-   * @param sequenceGroup Sequence group application for Part-Time or Full-Time.
+   * @param fileCode file code applicable for Part-Time or Full-Time.
+   * @param sequenceGroupPrefix sequence group prefix for Part-Time or Full-Time
+   * file sequence generation.
    * @returns result of the file upload with the file generated and the
    * amount of records added to the file.
    */
@@ -112,84 +123,108 @@ export class ECertFileHandler extends ESDCFileHandler {
     eCertIntegrationService: ECertIntegrationService,
     offeringIntensity: OfferingIntensity,
     fileCode: string,
-    sequenceGroup: string,
+    sequenceGroupPrefix: string,
   ): Promise<ECertUploadResult> {
     this.logger.log(
       `Retrieving ${offeringIntensity} disbursements to generate the e-Cert file...`,
     );
-    const disbursements =
-      await this.disbursementScheduleService.getECertInformationToBeSent(
-        offeringIntensity,
-      );
-    if (!disbursements) {
-      return {
-        generatedFile: "none",
-        uploadedRecords: 0,
-      };
-    }
-    this.logger.log(
-      `Found ${disbursements.length} ${offeringIntensity} disbursements schedules.`,
-    );
-    const disbursementRecords = disbursements.map((disbursement) => {
-      return this.createECertRecord(disbursement);
-    });
-
-    // Fetches the disbursements ids, for further update in the DB.
-    const disbursementIds = disbursements.map(
-      (disbursement) => disbursement.id,
-    );
-
-    //Create records and create the unique file sequence number.
-    let uploadResult: ECertUploadResult;
-    const now = new Date();
-    await this.sequenceService.consumeNextSequence(
-      `${sequenceGroup}_${getISODateOnlyString(new Date())}`,
-      async (nextSequenceNumber: number, entityManager: EntityManager) => {
-        try {
-          this.logger.log(
-            `Creating  ${offeringIntensity} e-Cert file content...`,
-          );
-          const fileContent = eCertIntegrationService.createRequestContent(
-            disbursementRecords,
+    try {
+      const sequenceGroup = `${sequenceGroupPrefix}_${getISODateOnlyString(
+        new Date(),
+      )}`;
+      let uploadResult: ECertUploadResult;
+      await this.sequenceService.consumeNextSequence(
+        sequenceGroup,
+        async (nextSequenceNumber: number, entityManager: EntityManager) => {
+          uploadResult = await this.processECert(
             nextSequenceNumber,
-          );
-
-          // Create the request filename with the file path for the e-Cert File.
-          const fileInfo = await this.createRequestFileName(
+            entityManager,
+            eCertIntegrationService,
+            offeringIntensity,
             fileCode,
-            nextSequenceNumber,
           );
+        },
+      );
+      return uploadResult;
+    } catch (error: unknown) {
+      if (
+        error instanceof CustomNamedError &&
+        error.name === ECERT_GENERATION_NO_RECORDS_AVAILABLE
+      ) {
+        return {
+          generatedFile: "none",
+          uploadedRecords: 0,
+        };
+      }
+      throw error;
+    }
+  }
 
-          // Creates the repository based on the entity manager that
-          // holds the transaction already created to manage the
-          // sequence number.
-          const disbursementScheduleRepo =
-            entityManager.getRepository(DisbursementSchedule);
-          await this.disbursementScheduleService.updateRecordsInSentFile(
-            disbursementIds,
-            now,
-            disbursementScheduleRepo,
-          );
+  /**
+   * Prepare the disbursements for e-Cert generation and upload the e-Cert file.
+   * @param sequenceNumber e-Cert sequence number.
+   * @param entityManager manages the current DB transaction.
+   * @param eCertIntegrationService Full-Time/Part-Time integration responsible
+   * for the respective integration.
+   * @param offeringIntensity disbursement offering intensity.
+   * @param fileCode file code applicable for Part-Time or Full-Time.
+   * @returns information of the uploaded e-Cert file.
+   * @throws CustomNamedError ECERT_GENERATION_NO_RECORDS_AVAILABLE
+   */
+  private async processECert(
+    sequenceNumber: number,
+    entityManager: EntityManager,
+    eCertIntegrationService: ECertIntegrationService,
+    offeringIntensity: OfferingIntensity,
+    fileCode: string,
+  ): Promise<ECertUploadResult> {
+    try {
+      const disbursements =
+        await this.eCertGenerationService.prepareDisbursementsForECertGeneration(
+          offeringIntensity,
+          entityManager,
+        );
+      if (!disbursements.length) {
+        throw new CustomNamedError(
+          `There are no records available to generate an e-Cert file for ${offeringIntensity}`,
+          ECERT_GENERATION_NO_RECORDS_AVAILABLE,
+        );
+      }
+      this.logger.log(
+        `Found ${disbursements.length} ${offeringIntensity} disbursements schedules.`,
+      );
+      const disbursementRecords = disbursements.map((disbursement) =>
+        this.createECertRecord(disbursement),
+      );
 
-          this.logger.log(`Uploading ${offeringIntensity} content...`);
-          await eCertIntegrationService.uploadContent(
-            fileContent,
-            fileInfo.filePath,
-          );
+      this.logger.log(`Creating  ${offeringIntensity} e-Cert file content...`);
+      const fileContent = eCertIntegrationService.createRequestContent(
+        disbursementRecords,
+        sequenceNumber,
+      );
 
-          uploadResult = {
-            generatedFile: fileInfo.filePath,
-            uploadedRecords: disbursementRecords.length,
-          };
-        } catch (error) {
-          this.logger.error(
-            `Error while uploading content for ${offeringIntensity} e-Cert file: ${error}`,
-          );
-          throw error;
-        }
-      },
-    );
-    return uploadResult;
+      // Create the request filename with the file path for the e-Cert File.
+      const fileInfo = this.createRequestFileName(fileCode, sequenceNumber);
+      this.logger.log(`Uploading ${offeringIntensity} content...`);
+      await eCertIntegrationService.uploadContent(
+        fileContent,
+        fileInfo.filePath,
+      );
+      return {
+        generatedFile: fileInfo.filePath,
+        uploadedRecords: disbursementRecords.length,
+      };
+    } catch (error: unknown) {
+      if (
+        error instanceof CustomNamedError &&
+        error.name !== ECERT_GENERATION_NO_RECORDS_AVAILABLE
+      ) {
+        this.logger.error(
+          `Error while uploading content for ${offeringIntensity} e-Cert file: ${error}`,
+        );
+      }
+      throw error;
+    }
   }
 
   /**
@@ -211,6 +246,7 @@ export class ECertFileHandler extends ESDCFileHandler {
           valueType: disbursementValue.valueType,
           valueCode: disbursementValue.valueCode,
           valueAmount: disbursementValue.valueAmount,
+          effectiveAmount: disbursementValue.effectiveAmount,
         } as Award),
     );
 
