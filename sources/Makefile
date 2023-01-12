@@ -198,6 +198,12 @@ queue-consumers:
 	@docker-compose -f docker-compose.yml build queue-consumers
 	@docker-compose -f docker-compose.yml up -d queue-consumers
 
+# Runs workers application
+workers:
+	@echo "+\n++ Make: Camunda workers only"
+	@docker-compose -f docker-compose.yml build workers
+	@docker-compose -f docker-compose.yml up -d workers
+
 # Enable local DB connection to Openshift DEV/TEST/QA
 connect-dev-db:
 	@echo "Forward local port 5454 to Openshift Patroni-master default port."
