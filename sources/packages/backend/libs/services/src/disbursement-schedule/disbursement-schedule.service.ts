@@ -454,7 +454,7 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
 
     const totalPerValueCode: Record<string, number> = {};
     // While calculating the total amount paid to the student, the overawardAmountSubtracted is added to the
-    // effectiveAmount because it should be considered part of what the student is received.
+    // effectiveAmount because it should be considered part of what the student received.
     // The overawardAmountSubtracted is money that the student is being paid but before e-Cert generation
     // it is used to deduct student debt, and the deduction is made with "student money".
     disbursementSchedules
