@@ -7,4 +7,5 @@ export interface MenuType {
   iconColor?: string;
   command?: any;
   textColor?: string;
+  disabled?: boolean;
 }

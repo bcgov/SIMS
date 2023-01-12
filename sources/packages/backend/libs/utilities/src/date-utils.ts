@@ -248,22 +248,46 @@ export function hasSomePeriodOverlap(periods: Period[]): boolean {
 }
 
 /**
- * Get Date difference between given dates in UTC timezone in given units.
- * @param fromDate from date.
- * @param toDate to date.
- * @param unit unit of time difference.
- * e.g. day | week | month | year
- * To see all the available units refer (https://day.js.org/docs/en/display/difference).
- * @param notInt By default, dayjs#diff will truncate
- * the result to zero decimal places, returning an integer.
- * If you want a floating point number, pass true.
- * @returns
+ * Validates if the date provided is within given days
+ * before now.
+ * e.g. If the current date is 10-JAN-2023 and
+ * given number of days is 4, it validates if the given date
+ * is on or after 06-JAN-2023.
+ * @param givenDate date to be validated.
+ * @param numberOfDays number of days before today.
+ * @returns result if the given date is after given days before now.
  */
-export const getUTCDateDifference = (
-  fromDate: string | Date,
-  toDate: string | Date,
-  unit: dayjs.QUnitType | dayjs.OpUnitType,
-  notInt = false,
-): number => {
-  return dayjs.utc(toDate).diff(dayjs.utc(fromDate), unit, notInt);
+export const isAfterGivenDaysBeforeNow = (
+  givenDate: string | Date,
+  numberOfDaysBeforeToday: number,
+): boolean => {
+  return dayjs(givenDate).isAfter(
+    dayjs(dayjs(new Date()).format(DATE_ONLY_ISO_FORMAT)).subtract(
+      numberOfDaysBeforeToday + 1,
+      "days",
+    ),
+  );
+};
+
+/**
+ * Validates if the date provided is before
+ * given number of days from now.
+ * e.g. If the current date is 10-JAN-2023 and
+ * given number of days is 10, it validates if the given date
+ * is on or before 20-JAN-2023.
+ * @param givenDate date to be validated.
+ * @param numberOfDaysAfterToday number of days after today.
+ * @returns result if the given date is before given days from now.
+ */
+export const isBeforeGivenDaysFromNow = (
+  givenDate: string | Date,
+  numberOfDaysAfterToday: number,
+): boolean => {
+  return dayjs
+    .utc(givenDate)
+    .isBefore(
+      dayjs
+        .utc(dayjs.utc(new Date()).format("YYYY-MM-DD"))
+        .add(numberOfDaysAfterToday + 1, "days"),
+    );
 };

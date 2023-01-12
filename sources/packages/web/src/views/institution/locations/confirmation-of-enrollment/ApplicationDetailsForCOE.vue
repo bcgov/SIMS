@@ -75,6 +75,7 @@ import {
   MenuType,
   ApproveConfirmEnrollmentModel,
   BannerTypes,
+  COEApprovalPeriodStatus,
 } from "@/types";
 import { useSnackBar, ModalDialog, useCOE, useFormatters } from "@/composables";
 import {
@@ -199,18 +200,21 @@ export default {
     };
 
     const loadMenu = () => {
+      const isCOEWithinApprovalPeriod =
+        initialData.value.coeApprovalPeriodStatus ===
+        COEApprovalPeriodStatus.WithinApprovalPeriod;
       items.value = [
         {
           label: "Confirm enrolment",
           textColor:
             COEStatus.required === initialData.value.applicationCOEStatus &&
-            !initialData.value.applicationWithinCOEWindow
+            !isCOEWithinApprovalPeriod
               ? "text-muted"
               : "",
           command: () => {
             if (
               COEStatus.required === initialData.value.applicationCOEStatus &&
-              initialData.value.applicationWithinCOEWindow
+              isCOEWithinApprovalPeriod
             ) {
               showHideConfirmCOE();
             }

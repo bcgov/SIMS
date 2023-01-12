@@ -6,8 +6,13 @@ import {
   FieldSortOrder,
   PaginatedResults,
   OrderByCondition,
+  COE_MAX_ALLOWED_DAYS_PAST_STUDY_PERIOD,
 } from "../../utilities";
-import { addDays } from "@sims/utilities";
+import {
+  addDays,
+  isBeforeGivenDaysFromNow,
+  isAfterGivenDaysBeforeNow,
+} from "@sims/utilities";
 import {
   DataSource,
   Repository,
@@ -26,7 +31,10 @@ import {
   User,
 } from "@sims/sims-db";
 import { NotificationActionsService } from "@sims/services/notifications";
-import { EnrollmentPeriod } from "./disbursement-schedule.models";
+import {
+  COEApprovalPeriodStatus,
+  EnrollmentPeriod,
+} from "./disbursement-schedule.models";
 
 const DISBURSEMENT_DOCUMENT_NUMBER_SEQUENCE_GROUP =
   "DISBURSEMENT_DOCUMENT_NUMBER";
@@ -508,5 +516,23 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
       auditUserId,
       transactionalEntityManager,
     );
+  }
+
+  getCOEApprovalPeriodStatus(
+    disbursementDate: string | Date,
+    studyEndDate: string | Date,
+  ): COEApprovalPeriodStatus {
+    if (!isBeforeGivenDaysFromNow(disbursementDate, COE_WINDOW)) {
+      return COEApprovalPeriodStatus.BeforeApprovalPeriod;
+    }
+    if (
+      !isAfterGivenDaysBeforeNow(
+        studyEndDate,
+        COE_MAX_ALLOWED_DAYS_PAST_STUDY_PERIOD,
+      )
+    ) {
+      return COEApprovalPeriodStatus.AfterApprovalPeriod;
+    }
+    return COEApprovalPeriodStatus.WithinApprovalPeriod;
   }
 }

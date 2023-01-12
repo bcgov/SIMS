@@ -4,23 +4,14 @@ import {
   UnprocessableEntityException,
 } from "@nestjs/common";
 import { DisbursementSchedule, DisbursementValueType } from "@sims/sims-db";
-import {
-  getTotalDisbursementAmount,
-  getUTCDateDifference,
-} from "@sims/utilities";
+import { getTotalDisbursementAmount } from "@sims/utilities";
 import {
   FIRST_COE_NOT_COMPLETE,
   INVALID_TUITION_REMITTANCE_AMOUNT,
 } from "../../constants";
-import {
-  ApplicationService,
-  DisbursementScheduleService,
-} from "../../services";
+import { DisbursementScheduleService } from "../../services";
+import { COEApprovalPeriodStatus } from "../../services/disbursement-schedule-service/disbursement-schedule.models";
 import { ApiProcessError } from "../../types";
-import {
-  COE_WINDOW,
-  COE_MAX_ALLOWED_DAYS_PAST_STUDY_PERIOD,
-} from "../../utilities";
 import BaseController from "../BaseController";
 import { ConfirmationOfEnrollmentAPIInDTO } from "./models/confirmation-of-enrollment.dto";
 import { ConfirmEnrollmentOptions } from "./models/confirmation-of-enrollment.models";
@@ -29,7 +20,6 @@ import { ConfirmEnrollmentOptions } from "./models/confirmation-of-enrollment.mo
 export class ConfirmationOfEnrollmentControllerService extends BaseController {
   constructor(
     private readonly disbursementScheduleService: DisbursementScheduleService,
-    private readonly applicationService: ApplicationService,
   ) {
     super();
   }
@@ -64,27 +54,20 @@ export class ConfirmationOfEnrollmentControllerService extends BaseController {
       );
     }
 
-    if (
-      !options?.allowOutsideCOEWindow &&
-      !this.applicationService.withinValidCOEWindow(
-        new Date(disbursementSchedule.disbursementDate),
-      )
-    ) {
-      throw new UnprocessableEntityException(
-        `Confirmation of Enrollment window is greater than ${COE_WINDOW} days`,
-      );
-    }
-
-    if (
-      !options?.allowPastStudyPeriod &&
-      this.validateCOEStudyEndDate(
-        disbursementSchedule.studentAssessment.application.currentAssessment
-          .offering.studyEndDate,
-      )
-    ) {
-      throw new UnprocessableEntityException(
-        "The enrolment cannot be confirmed as the study period end date is beyond maximum allowed days.",
-      );
+    if (!options?.allowOutsideCOEApprovalPeriod) {
+      const approvalPeriodStatus =
+        this.disbursementScheduleService.getCOEApprovalPeriodStatus(
+          disbursementSchedule.disbursementDate,
+          disbursementSchedule.studentAssessment.application.currentAssessment
+            .offering.studyEndDate,
+        );
+      if (
+        approvalPeriodStatus !== COEApprovalPeriodStatus.WithinApprovalPeriod
+      ) {
+        throw new UnprocessableEntityException(
+          "The enrolment cannot be confirmed as the study period end date is beyond maximum allowed days.",
+        );
+      }
     }
 
     const firstOutstandingDisbursement =
@@ -161,18 +144,5 @@ export class ConfirmationOfEnrollmentControllerService extends BaseController {
         ),
       );
     }
-  }
-
-  /**
-   * Validates as per study period end date if an enrolment is valid for institution confirmation.
-   * The date validations are performed in UTC time zone.
-   * @param studyEndDate study period end date
-   * @returns Flag which states if an enrolment is valid for institution confirmation.
-   */
-  private validateCOEStudyEndDate(studyEndDate: string | Date) {
-    return (
-      getUTCDateDifference(studyEndDate, new Date(), "day") >
-      COE_MAX_ALLOWED_DAYS_PAST_STUDY_PERIOD
-    );
   }
 }

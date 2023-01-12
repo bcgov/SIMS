@@ -154,6 +154,7 @@ export class ConfirmationOfEnrollmentInstitutionsController extends BaseControll
     const offering =
       disbursementSchedule.studentAssessment.application.currentAssessment
         .offering;
+
     return {
       applicationProgramName: offering.educationProgram.name,
       applicationProgramDescription: offering.educationProgram.description,
@@ -177,9 +178,11 @@ export class ConfirmationOfEnrollmentInstitutionsController extends BaseControll
         disbursementSchedule.studentAssessment.application.applicationStatus,
       applicationCOEStatus: disbursementSchedule.coeStatus,
       applicationId: disbursementSchedule.studentAssessment.application.id,
-      applicationWithinCOEWindow: this.applicationService.withinValidCOEWindow(
-        new Date(disbursementSchedule.disbursementDate),
-      ),
+      coeApprovalPeriodStatus:
+        this.disbursementScheduleService.getCOEApprovalPeriodStatus(
+          disbursementSchedule.disbursementDate,
+          offering.studyEndDate,
+        ),
       applicationLocationId: offering.institutionLocation.id,
       applicationDeniedReason: getCOEDeniedReason(disbursementSchedule),
       studyBreaks: offering.studyBreaks?.studyBreaks?.map((studyBreak) => ({
