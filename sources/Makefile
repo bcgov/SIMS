@@ -198,5 +198,21 @@ queue-consumers:
 	@docker-compose -f docker-compose.yml build queue-consumers
 	@docker-compose -f docker-compose.yml up -d queue-consumers
 
+# Enable local DB connection to Openshift DEV/TEST/QA
+connect-dev-db:
+	@echo "Forward local port 5454 to Openshift Patroni-master default port."
+	@echo "Use your prefered DB Manager (e.g. pgAdmin or DBeaver) to connect to the Postgres database using the local port 5454."
+	@oc project 0c27fb-dev
+	@oc port-forward services/patroni-master 5454:5432 
 
+connect-test-db:
+	@echo "Forward local port 5555 to Openshift Patroni-master default port."
+	@echo "Use your prefered DB Manager (e.g. pgAdmin or DBeaver) to connect to the Postgres database using the local port 5555."
+	@oc project 0c27fb-test
+	@oc port-forward services/patroni-master 5555:5432 
 
+connect-qa-db:
+	@echo "Forward local port 5656 to Openshift Patroni-master default port."
+	@echo "Use your prefered DB Manager (e.g. pgAdmin or DBeaver) to connect to the Postgres database using the local port 5656."
+	@oc project 0c27fb-test
+	@oc port-forward services/patroni-master 5656:5432 
