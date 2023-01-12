@@ -47,7 +47,7 @@
       </header-navigator>
     </template>
     <template #alerts>
-      <approval-warning-banner
+      <approval-disabled-banner
         v-if="initialData.applicationCOEStatus === COEStatus.required"
         :coeApprovalPeriodStatus="initialData.coeApprovalPeriodStatus"
       />
@@ -87,13 +87,13 @@ import {
 } from "@/services/http/dto";
 import ApproveCOE from "@/components/institutions/modals/confirmationOfEnrollment/ApproveCOE.vue";
 import DenyCOE from "@/components/institutions/modals/confirmationOfEnrollment/DenyCOE.vue";
-import ApprovalWarningBanner from "@/components/institutions/locations/coe/COEApprovalPeriodBanner.vue";
+import ApprovalDisabledBanner from "@/components/institutions/locations/coe/COEApprovalDisabledBanner.vue";
 
 export default {
   components: {
     ApproveCOE,
     DenyCOE,
-    ApprovalWarningBanner,
+    ApprovalDisabledBanner,
   },
   props: {
     disbursementScheduleId: {

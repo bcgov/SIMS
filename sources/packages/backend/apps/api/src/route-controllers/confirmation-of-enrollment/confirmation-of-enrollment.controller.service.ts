@@ -10,7 +10,7 @@ import {
   INVALID_TUITION_REMITTANCE_AMOUNT,
 } from "../../constants";
 import { DisbursementScheduleService } from "../../services";
-import { COEApprovalPeriodStatus } from "../../services/disbursement-schedule-service/disbursement-schedule.models";
+import { COEApprovalPeriodStatus } from "../../services/disbursement-schedule/disbursement-schedule.models";
 import { ApiProcessError } from "../../types";
 import BaseController from "../BaseController";
 import { ConfirmationOfEnrollmentAPIInDTO } from "./models/confirmation-of-enrollment.dto";
