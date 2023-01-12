@@ -47,11 +47,9 @@
       </header-navigator>
     </template>
     <template #alerts>
-      <banner
-        class="mb-2"
-        :type="BannerTypes.Warning"
-        header="Enrolment cannot be confirmed"
-        summary="The study end date has past and you can no longer confirm enrolment for this application."
+      <approval-warning-banner
+        v-if="initialData.applicationCOEStatus === COEStatus.required"
+        :coeApprovalPeriodStatus="initialData.coeApprovalPeriodStatus"
       />
     </template>
     <formio-container
@@ -89,11 +87,13 @@ import {
 } from "@/services/http/dto";
 import ApproveCOE from "@/components/institutions/modals/confirmationOfEnrollment/ApproveCOE.vue";
 import DenyCOE from "@/components/institutions/modals/confirmationOfEnrollment/DenyCOE.vue";
+import ApprovalWarningBanner from "@/components/institutions/locations/coe/COEApprovalPeriodBanner.vue";
 
 export default {
   components: {
     ApproveCOE,
     DenyCOE,
+    ApprovalWarningBanner,
   },
   props: {
     disbursementScheduleId: {
@@ -203,19 +203,15 @@ export default {
       const isCOEWithinApprovalPeriod =
         initialData.value.coeApprovalPeriodStatus ===
         COEApprovalPeriodStatus.WithinApprovalPeriod;
+      const isCOERequired =
+        COEStatus.required === initialData.value.applicationCOEStatus;
       items.value = [
         {
           label: "Confirm enrolment",
           textColor:
-            COEStatus.required === initialData.value.applicationCOEStatus &&
-            !isCOEWithinApprovalPeriod
-              ? "text-muted"
-              : "",
+            isCOERequired && !isCOEWithinApprovalPeriod ? "text-muted" : "",
           command: () => {
-            if (
-              COEStatus.required === initialData.value.applicationCOEStatus &&
-              isCOEWithinApprovalPeriod
-            ) {
+            if (isCOERequired && isCOEWithinApprovalPeriod) {
               showHideConfirmCOE();
             }
           },
