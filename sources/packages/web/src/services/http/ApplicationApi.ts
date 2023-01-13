@@ -17,22 +17,17 @@ import {
   ApplicationBaseAPIOutDTO,
   ApplicationIdentifiersAPIOutDTO,
   InProgressApplicationDetailsAPIOutDTO,
+  PrimaryIdentifierAPIOutDTO,
 } from "@/services/http/dto";
 
 export class ApplicationApi extends HttpBaseClient {
   async getApplicationData(
     applicationId: number,
   ): Promise<ApplicationDataAPIOutDTO> {
-    try {
-      const response = await this.getCall<ApplicationDataAPIOutDTO>(
-        this.addClientRoot(`application/${applicationId}`),
-        this.addAuthHeader(),
-      );
-      return response;
-    } catch (error: unknown) {
-      this.handleRequestError(error);
-      throw error;
-    }
+    return this.getCall<ApplicationDataAPIOutDTO>(
+      this.addClientRoot(`application/${applicationId}`),
+      this.addAuthHeader(),
+    );
   }
 
   async cancelStudentApplication(applicationId: number): Promise<void> {
@@ -44,64 +39,42 @@ export class ApplicationApi extends HttpBaseClient {
 
   async createApplicationDraft(
     payload: SaveApplicationAPIInDTO,
-  ): Promise<number> {
-    try {
-      const response = await this.postCall<SaveApplicationAPIInDTO>(
-        this.addClientRoot("application/draft"),
-        payload,
-      );
-      return +response;
-    } catch (error: unknown) {
-      this.handleAPICustomError(error);
-    }
+  ): Promise<PrimaryIdentifierAPIOutDTO> {
+    return this.postCall<SaveApplicationAPIInDTO>(
+      this.addClientRoot("application/draft"),
+      payload,
+    );
   }
 
   async saveApplicationDraft(
     applicationId: number,
     payload: SaveApplicationAPIInDTO,
   ): Promise<void> {
-    try {
-      await this.patchCall<SaveApplicationAPIInDTO>(
-        this.addClientRoot(`application/${applicationId}/draft`),
-        payload,
-      );
-    } catch (error: unknown) {
-      this.handleRequestError(error);
-      throw error;
-    }
+    await this.patchCall<SaveApplicationAPIInDTO>(
+      this.addClientRoot(`application/${applicationId}/draft`),
+      payload,
+    );
   }
 
   async submitApplication(
     applicationId: number,
     payload: SaveApplicationAPIInDTO,
   ): Promise<void> {
-    try {
-      await this.patchCall(
-        this.addClientRoot(`application/${applicationId}/submit`),
-        payload,
-      );
-    } catch (error: unknown) {
-      this.handleAPICustomError(error);
-    }
+    await this.patchCall(
+      this.addClientRoot(`application/${applicationId}/submit`),
+      payload,
+    );
   }
 
   async getApplicationWithPY(
     applicationId: number,
     isIncludeInActiveProgramYear?: boolean,
   ): Promise<ApplicationWithProgramYearAPIOutDTO> {
-    try {
-      let url = this.addClientRoot(`application/${applicationId}/program-year`);
-      if (isIncludeInActiveProgramYear) {
-        url = `${url}?isIncludeInActiveProgramYear=${isIncludeInActiveProgramYear}`;
-      }
-      const response = await this.getCall<ApplicationWithProgramYearAPIOutDTO>(
-        url,
-      );
-      return response;
-    } catch (error: unknown) {
-      this.handleRequestError(error);
-      throw error;
+    let url = this.addClientRoot(`application/${applicationId}/program-year`);
+    if (isIncludeInActiveProgramYear) {
+      url = `${url}?isIncludeInActiveProgramYear=${isIncludeInActiveProgramYear}`;
     }
+    return this.getCall<ApplicationWithProgramYearAPIOutDTO>(url);
   }
 
   /**
@@ -112,10 +85,9 @@ export class ApplicationApi extends HttpBaseClient {
   async getApplicationDetails(
     applicationId: number,
   ): Promise<ApplicationBaseAPIOutDTO> {
-    const response = await this.getCall<ApplicationBaseAPIOutDTO>(
+    return this.getCall<ApplicationBaseAPIOutDTO>(
       this.addClientRoot(`application/${applicationId}`),
     );
-    return response;
   }
 
   /**
@@ -150,13 +122,9 @@ export class ApplicationApi extends HttpBaseClient {
   async getApplicationForRequestChange(
     applicationNumber: string,
   ): Promise<ApplicationIdentifiersAPIOutDTO> {
-    try {
-      return this.getCall<ApplicationIdentifiersAPIOutDTO>(
-        this.addClientRoot(`application/${applicationNumber}/appeal`),
-      );
-    } catch (error: unknown) {
-      this.handleAPICustomError(error);
-    }
+    return this.getCall<ApplicationIdentifiersAPIOutDTO>(
+      this.addClientRoot(`application/${applicationNumber}/appeal`),
+    );
   }
 
   /**

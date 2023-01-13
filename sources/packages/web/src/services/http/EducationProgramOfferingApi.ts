@@ -55,15 +55,11 @@ export class EducationProgramOfferingApi extends HttpBaseClient {
     programId: number,
     payload: EducationProgramOfferingAPIInDTO,
   ): Promise<void> {
-    try {
-      const url = `education-program-offering/location/${locationId}/education-program/${programId}`;
-      await this.postCall<EducationProgramOfferingAPIInDTO>(
-        this.addClientRoot(url),
-        payload,
-      );
-    } catch (error: unknown) {
-      this.handleAPICustomError(error);
-    }
+    const url = `education-program-offering/location/${locationId}/education-program/${programId}`;
+    await this.postCall<EducationProgramOfferingAPIInDTO>(
+      this.addClientRoot(url),
+      payload,
+    );
   }
 
   /**
@@ -135,15 +131,11 @@ export class EducationProgramOfferingApi extends HttpBaseClient {
     offeringId: number,
     payload: EducationProgramOfferingAPIInDTO,
   ): Promise<void> {
-    try {
-      const url = `education-program-offering/location/${locationId}/education-program/${programId}/offering/${offeringId}`;
-      await this.patchCall<EducationProgramOfferingAPIInDTO>(
-        this.addClientRoot(url),
-        payload,
-      );
-    } catch (error: unknown) {
-      this.handleAPICustomError(error);
-    }
+    const url = `education-program-offering/location/${locationId}/education-program/${programId}/offering/${offeringId}`;
+    await this.patchCall<EducationProgramOfferingAPIInDTO>(
+      this.addClientRoot(url),
+      payload,
+    );
   }
 
   /**
@@ -160,12 +152,8 @@ export class EducationProgramOfferingApi extends HttpBaseClient {
     offeringId: number,
     payload: EducationProgramOfferingBasicDataAPIInDTO,
   ): Promise<void> {
-    try {
-      const url = `education-program-offering/location/${locationId}/education-program/${programId}/offering/${offeringId}/basic`;
-      await this.patchCall(this.addClientRoot(url), payload);
-    } catch (error: unknown) {
-      this.handleAPICustomError(error);
-    }
+    const url = `education-program-offering/location/${locationId}/education-program/${programId}/offering/${offeringId}/basic`;
+    await this.patchCall(this.addClientRoot(url), payload);
   }
 
   /**
@@ -237,15 +225,11 @@ export class EducationProgramOfferingApi extends HttpBaseClient {
     offeringId: number,
     payload: EducationProgramOfferingAPIInDTO,
   ): Promise<void> {
-    try {
-      const url = `education-program-offering/${offeringId}/location/${locationId}/education-program/${programId}/request-change`;
-      await this.postCall<EducationProgramOfferingAPIInDTO>(
-        this.addClientRoot(url),
-        payload,
-      );
-    } catch (error: unknown) {
-      this.handleAPICustomError(error);
-    }
+    const url = `education-program-offering/${offeringId}/location/${locationId}/education-program/${programId}/request-change`;
+    await this.postCall<EducationProgramOfferingAPIInDTO>(
+      this.addClientRoot(url),
+      payload,
+    );
   }
 
   /**
@@ -321,15 +305,10 @@ export class EducationProgramOfferingApi extends HttpBaseClient {
     formData.append("file", file);
     // Configure the request to provide upload progress status.
     const requestConfig: AxiosRequestConfig = { onUploadProgress };
-    try {
-      await ApiClient.FileUpload.upload(
-        `education-program-offering/bulk-insert?validation-only=${validationOnly}`,
-        formData,
-        requestConfig,
-        true,
-      );
-    } catch (error: unknown) {
-      this.handleAPICustomError(error);
-    }
+    await ApiClient.FileUpload.upload(
+      `education-program-offering/bulk-insert?validation-only=${validationOnly}`,
+      formData,
+      requestConfig,
+    );
   }
 }

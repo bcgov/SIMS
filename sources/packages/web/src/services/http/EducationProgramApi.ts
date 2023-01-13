@@ -71,11 +71,7 @@ export class EducationProgramApi extends HttpBaseClient {
   async createEducationProgram(
     payload: EducationProgramAPIInDTO,
   ): Promise<void> {
-    try {
-      await this.postCall(this.addClientRoot("education-program"), payload);
-    } catch (error: unknown) {
-      this.handleAPICustomError(error);
-    }
+    await this.postCall(this.addClientRoot("education-program"), payload);
   }
 
   /**
@@ -87,14 +83,10 @@ export class EducationProgramApi extends HttpBaseClient {
     programId: number,
     payload: EducationProgramAPIInDTO,
   ): Promise<void> {
-    try {
-      await this.patchCall(
-        this.addClientRoot(`education-program/${programId}`),
-        payload,
-      );
-    } catch (error: unknown) {
-      this.handleAPICustomError(error);
-    }
+    await this.patchCall(
+      this.addClientRoot(`education-program/${programId}`),
+      payload,
+    );
   }
 
   /**

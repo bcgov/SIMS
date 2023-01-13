@@ -70,6 +70,7 @@ import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 import { ProgramYearService } from "@/services/ProgramYearService";
 import ContentGroup from "@/components/generic/ContentGroup.vue";
 import { MORE_THAN_ONE_APPLICATION_DRAFT_ERROR } from "@/types/contracts/ApiProcessError";
+import { PrimaryIdentifierAPIOutDTO } from "@/services/http/dto";
 
 export default defineComponent({
   components: { ConfirmModal, ContentGroup },
@@ -99,7 +100,7 @@ export default defineComponent({
           return;
         }
         if (programYearId.value) {
-          const applicationId =
+          const { id }: PrimaryIdentifierAPIOutDTO =
             await ApplicationService.shared.createApplicationDraft({
               programYearId: programYearId.value,
               data: {},
@@ -108,7 +109,7 @@ export default defineComponent({
 
           const createDraftResult = {
             draftAlreadyExists: false,
-            draftId: applicationId,
+            draftId: id,
           };
           const programYear =
             await ProgramYearService.shared.getActiveProgramYear(

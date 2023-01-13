@@ -11,11 +11,6 @@ export class DynamicFormsApi extends HttpBaseClient {
   }
 
   public async getFormlist(): Promise<any> {
-    try {
-      return this.getCall(`dynamic-form`, this.addAuthHeader());
-    } catch (error: unknown) {
-      this.handleRequestError(error);
-      throw error;
-    }
+    return this.getCall(`dynamic-form`, this.addAuthHeader());
   }
 }

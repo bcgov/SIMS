@@ -64,16 +64,12 @@ export class ConfirmationOfEnrollmentApi extends HttpBaseClient {
     payload?: ConfirmationOfEnrollmentAPIInDTO,
   ): Promise<void> {
     const baseUrl = locationId ? `location/${locationId}/` : "";
-    try {
-      await this.patchCall(
-        this.addClientRoot(
-          `${baseUrl}confirmation-of-enrollment/disbursement-schedule/${disbursementScheduleId}/confirm`,
-        ),
-        payload,
-      );
-    } catch (error: unknown) {
-      this.handleAPICustomError(error);
-    }
+    await this.patchCall(
+      this.addClientRoot(
+        `${baseUrl}confirmation-of-enrollment/disbursement-schedule/${disbursementScheduleId}/confirm`,
+      ),
+      payload,
+    );
   }
 
   /**

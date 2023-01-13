@@ -58,13 +58,8 @@ export class StudentApi extends HttpBaseClient {
    * If the user account does not exists an API custom error will be returned
    * from the API with the error code MISSING_STUDENT_ACCOUNT.
    */
-  // todo: ann review patch call -> 3rd parameter
   public async synchronizeFromUserToken(): Promise<void> {
-    try {
-      await this.patchCall(this.addClientRoot("student/sync"), null, true);
-    } catch (error: unknown) {
-      this.handleAPICustomError(error);
-    }
+    await this.patchCall(this.addClientRoot("student/sync"), null);
   }
 
   /**
@@ -94,14 +89,10 @@ export class StudentApi extends HttpBaseClient {
   async saveStudentFiles(
     studentFilesPayload: StudentFileUploaderAPIInDTO,
   ): Promise<void> {
-    try {
-      await this.patchCall<StudentFileUploaderAPIInDTO>(
-        this.addClientRoot("student/save-uploaded-files"),
-        studentFilesPayload,
-      );
-    } catch (error: unknown) {
-      this.handleAPICustomError(error);
-    }
+    await this.patchCall<StudentFileUploaderAPIInDTO>(
+      this.addClientRoot("student/save-uploaded-files"),
+      studentFilesPayload,
+    );
   }
 
   /**

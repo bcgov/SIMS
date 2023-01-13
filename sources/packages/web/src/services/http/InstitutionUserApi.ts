@@ -59,14 +59,10 @@ export class InstitutionUserApi extends HttpBaseClient {
     if (AuthService.shared.authClientType === ClientIdType.AEST) {
       url = `institution-user/${institutionId}`;
     }
-    try {
-      await this.postCall<CreateInstitutionUserAPIInDTO>(
-        this.addClientRoot(url),
-        payload,
-      );
-    } catch (error: unknown) {
-      this.handleAPICustomError(error);
-    }
+    await this.postCall<CreateInstitutionUserAPIInDTO>(
+      this.addClientRoot(url),
+      payload,
+    );
   }
 
   /**
@@ -78,14 +74,10 @@ export class InstitutionUserApi extends HttpBaseClient {
     institutionUserId: number,
     payload: UpdateInstitutionUserAPIInDTO,
   ): Promise<void> {
-    try {
-      return await this.patchCall<UpdateInstitutionUserAPIInDTO>(
-        this.addClientRoot(`institution-user/${institutionUserId}`),
-        payload,
-      );
-    } catch (error: unknown) {
-      this.handleAPICustomError(error);
-    }
+    return this.patchCall<UpdateInstitutionUserAPIInDTO>(
+      this.addClientRoot(`institution-user/${institutionUserId}`),
+      payload,
+    );
   }
 
   /**
@@ -122,16 +114,12 @@ export class InstitutionUserApi extends HttpBaseClient {
     institutionUserId: number,
     isActive: boolean,
   ): Promise<void> {
-    try {
-      await this.patchCall<UserActiveStatusAPIInDTO>(
-        this.addClientRoot(`institution-user/${institutionUserId}/status`),
-        {
-          isActive,
-        },
-      );
-    } catch (error: unknown) {
-      this.handleAPICustomError(error);
-    }
+    await this.patchCall<UserActiveStatusAPIInDTO>(
+      this.addClientRoot(`institution-user/${institutionUserId}/status`),
+      {
+        isActive,
+      },
+    );
   }
 
   /**

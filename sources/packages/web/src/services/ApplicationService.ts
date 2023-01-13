@@ -14,6 +14,7 @@ import {
   ApplicationDataAPIOutDTO,
   ApplicationBaseAPIOutDTO,
   ApplicationIdentifiersAPIOutDTO,
+  PrimaryIdentifierAPIOutDTO,
 } from "@/services/http/dto";
 
 export class ApplicationService {
@@ -36,7 +37,7 @@ export class ApplicationService {
 
   async createApplicationDraft(
     payload: SaveApplicationAPIInDTO,
-  ): Promise<number> {
+  ): Promise<PrimaryIdentifierAPIOutDTO> {
     return ApiClient.Application.createApplicationDraft(payload);
   }
 
@@ -51,7 +52,7 @@ export class ApplicationService {
     applicationId: number,
     payload: SaveApplicationAPIInDTO,
   ): Promise<void> {
-    return ApiClient.Application.submitApplication(applicationId, payload);
+    await ApiClient.Application.submitApplication(applicationId, payload);
   }
 
   async getApplicationWithPY(

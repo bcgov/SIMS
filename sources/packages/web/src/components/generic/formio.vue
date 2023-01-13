@@ -102,7 +102,6 @@ export default defineComponent({
         formDefinition = await ApiClient.DynamicForms.getFormDefinition(
           props.formName,
         );
-
         try {
           sessionStorage.setItem(
             props.formName,
@@ -127,17 +126,12 @@ export default defineComponent({
             });
           }
         };
-        createUniqueIDs(formDefinition.data);
+        createUniqueIDs(formDefinition);
       }
-
-      form = await Formio.createForm(
-        formioContainerRef.value,
-        formDefinition.data,
-        {
-          fileService: new FormUploadService(),
-          readOnly: props.readOnly,
-        },
-      );
+      form = await Formio.createForm(formioContainerRef.value, formDefinition, {
+        fileService: new FormUploadService(),
+        readOnly: props.readOnly,
+      });
 
       form.nosubmit = true;
       hideSpinner.value = true;

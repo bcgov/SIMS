@@ -18,14 +18,10 @@ export class StudentAppealApi extends HttpBaseClient {
     applicationId: number,
     studentAppeal: StudentAppealAPIInDTO,
   ): Promise<void> {
-    try {
-      await this.postCall<StudentAppealAPIInDTO>(
-        this.addClientRoot(`appeal/application/${applicationId}`),
-        studentAppeal,
-      );
-    } catch (error: unknown) {
-      this.handleAPICustomError(error);
-    }
+    await this.postCall<StudentAppealAPIInDTO>(
+      this.addClientRoot(`appeal/application/${applicationId}`),
+      studentAppeal,
+    );
   }
 
   async getStudentAppealWithRequests(
@@ -40,14 +36,10 @@ export class StudentAppealApi extends HttpBaseClient {
     appealId: number,
     approvals: StudentAppealRequestApprovalAPIInDTO[],
   ): Promise<void> {
-    try {
-      await this.patchCall<StudentAppealApprovalAPIInDTO>(
-        this.addClientRoot(`appeal/${appealId}/requests`),
-        { requests: approvals },
-      );
-    } catch (error: unknown) {
-      this.handleAPICustomError(error);
-    }
+    await this.patchCall<StudentAppealApprovalAPIInDTO>(
+      this.addClientRoot(`appeal/${appealId}/requests`),
+      { requests: approvals },
+    );
   }
 
   /**

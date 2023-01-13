@@ -40,16 +40,12 @@ export class ProgramInfoRequestApi extends HttpBaseClient {
     applicationId: number,
     payload: CompleteProgramInfoRequestAPIInDTO,
   ): Promise<void> {
-    try {
-      await this.patchCall(
-        this.addClientRoot(
-          `location/${locationId}/program-info-request/application/${applicationId}/complete`,
-        ),
-        payload,
-      );
-    } catch (error: unknown) {
-      this.handleAPICustomError(error);
-    }
+    await this.patchCall(
+      this.addClientRoot(
+        `location/${locationId}/program-info-request/application/${applicationId}/complete`,
+      ),
+      payload,
+    );
   }
 
   /**

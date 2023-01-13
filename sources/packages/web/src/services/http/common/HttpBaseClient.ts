@@ -23,16 +23,20 @@ export default abstract class HttpBaseClient {
     return HttpBaseClient.createAuthHeader(AuthService.shared.keycloak?.token);
   }
 
-  protected handleRequestError(e: any) {
-    console.log(e);
+  protected handleRequestError(error: unknown) {
+    console.log(error);
+    this.handleAPICustomError(error);
   }
 
-  protected async getCall<T>(url: string, authHeader?: any): Promise<T> {
+  protected async getCall<T>(
+    url: string,
+    authHeader?: AxiosRequestConfig,
+    noHeader = false,
+  ): Promise<T> {
     try {
-      const response = await this.apiClient.get(
-        url,
-        authHeader ?? this.addAuthHeader(),
-      );
+      const response = !noHeader
+        ? await this.apiClient.get(url, authHeader ?? this.addAuthHeader())
+        : await this.apiClient.get(url);
       return response.data as T;
     } catch (error: unknown) {
       this.handleRequestError(error);
@@ -43,7 +47,7 @@ export default abstract class HttpBaseClient {
   protected async postCall<T, TResult = PrimaryIdentifierAPIOutDTO>(
     url: string,
     payload: T,
-    config?: AxiosRequestConfig | undefined,
+    config?: AxiosRequestConfig,
   ): Promise<TResult> {
     try {
       const response = await this.apiClient.post(
@@ -118,17 +122,11 @@ export default abstract class HttpBaseClient {
    * @param payload data to be sent.
    * @param suppressErrorHandler optionally skip the global error handling.
    */
-  protected async patchCall<T>(
-    url: string,
-    payload: T,
-    suppressErrorHandler = false,
-  ): Promise<void> {
+  protected async patchCall<T>(url: string, payload: T): Promise<void> {
     try {
       await this.apiClient.patch(url, payload, this.addAuthHeader());
     } catch (error: unknown) {
-      if (!suppressErrorHandler) {
-        this.handleRequestError(error);
-      }
+      this.handleRequestError(error);
       throw error;
     }
   }

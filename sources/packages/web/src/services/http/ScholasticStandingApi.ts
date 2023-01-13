@@ -32,15 +32,11 @@ export class ScholasticStandingApi extends HttpBaseClient {
     locationId: number,
     payload: ScholasticStandingDataAPIInDTO,
   ): Promise<void> {
-    try {
-      await this.postCall(
-        this.addClientRoot(
-          `scholastic-standing/location/${locationId}/application/${applicationId}`,
-        ),
-        { data: payload },
-      );
-    } catch (error: unknown) {
-      this.handleAPICustomError(error);
-    }
+    await this.postCall(
+      this.addClientRoot(
+        `scholastic-standing/location/${locationId}/application/${applicationId}`,
+      ),
+      { data: payload },
+    );
   }
 }

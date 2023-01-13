@@ -49,15 +49,10 @@ export class RestrictionApi extends HttpBaseClient {
     studentId: number,
     payload: AssignRestrictionAPIInDTO,
   ): Promise<void> {
-    try {
-      await this.postCall(
-        this.addClientRoot(`restriction/student/${studentId}`),
-        payload,
-      );
-    } catch (error: unknown) {
-      this.handleRequestError(error);
-      throw error;
-    }
+    await this.postCall(
+      this.addClientRoot(`restriction/student/${studentId}`),
+      payload,
+    );
   }
 
   async resolveStudentRestriction(
@@ -65,17 +60,12 @@ export class RestrictionApi extends HttpBaseClient {
     studentRestrictionId: number,
     payload: ResolveRestrictionAPIInDTO,
   ): Promise<void> {
-    try {
-      await this.patchCall(
-        this.addClientRoot(
-          `restriction/student/${studentId}/studentRestriction/${studentRestrictionId}/resolve`,
-        ),
-        payload,
-      );
-    } catch (error: unknown) {
-      this.handleRequestError(error);
-      throw error;
-    }
+    await this.patchCall(
+      this.addClientRoot(
+        `restriction/student/${studentId}/studentRestriction/${studentRestrictionId}/resolve`,
+      ),
+      payload,
+    );
   }
 
   async getInstitutionRestrictions(
