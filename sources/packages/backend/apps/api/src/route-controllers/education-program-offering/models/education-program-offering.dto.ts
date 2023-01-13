@@ -143,6 +143,7 @@ export class EducationProgramOfferingSummaryAPIOutDTO {
 
 export class OfferingStartDateAPIOutDTO {
   studyStartDate: string;
+  studyEndDate: string;
 }
 
 export class OfferingAssessmentAPIInDTO {

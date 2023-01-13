@@ -633,3 +633,8 @@
 .form-control[readonly] {
   cursor: not-allowed;
 }
+
+.banner-header {
+  @extend .font-bold;
+  color: $brand-black;
+}

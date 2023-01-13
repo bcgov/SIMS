@@ -90,6 +90,7 @@ export class EducationProgramOfferingStudentsController extends BaseController {
     }
     return {
       studyStartDate: offering.studyStartDate,
+      studyEndDate: offering.studyEndDate,
     };
   }
 }

@@ -10,19 +10,25 @@ import { useFormioUtils } from ".";
 export function useFormioComponentLoader() {
   const formioUtils = useFormioUtils();
   // Get offering date of the selected offering and set to the hidden field (selectedOfferingDate) in formio.
-  const loadSelectedOfferingDate = async (
+  const loadSelectedOfferingDates = async (
     form: any,
     offeringId: number,
-    fieldId: string,
+    offeringStartDateFieldId: string,
+    offeringEndDateFieldId: string,
   ) => {
     const valueToBeLoaded =
-      await EducationProgramOfferingService.shared.getProgramOfferingStartDate(
+      await EducationProgramOfferingService.shared.getProgramOfferingDates(
         offeringId,
       );
     formioUtils.setComponentValue(
       form,
-      fieldId,
+      offeringStartDateFieldId,
       valueToBeLoaded?.studyStartDate,
+    );
+    formioUtils.setComponentValue(
+      form,
+      offeringEndDateFieldId,
+      valueToBeLoaded?.studyEndDate,
     );
   };
 
@@ -41,6 +47,6 @@ export function useFormioComponentLoader() {
 
   return {
     loadProgramDesc,
-    loadSelectedOfferingDate,
+    loadSelectedOfferingDates,
   };
 }

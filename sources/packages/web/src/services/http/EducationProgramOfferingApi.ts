@@ -199,7 +199,7 @@ export class EducationProgramOfferingApi extends HttpBaseClient {
    * @param offeringId offering id
    * @returns offering with start date value.
    */
-  async getProgramOfferingStartDate(
+  async getProgramOfferingDates(
     offeringId: number,
   ): Promise<OfferingStartDateAPIOutDTO> {
     const url = `education-program-offering/${offeringId}`;

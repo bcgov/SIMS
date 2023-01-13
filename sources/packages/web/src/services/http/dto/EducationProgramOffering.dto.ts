@@ -132,6 +132,7 @@ export interface EducationProgramOfferingSummaryAPIOutDTO {
 
 export interface OfferingStartDateAPIOutDTO {
   studyStartDate: string;
+  studyEndDate: string;
 }
 
 /**

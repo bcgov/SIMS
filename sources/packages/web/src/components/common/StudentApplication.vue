@@ -69,7 +69,8 @@ export default {
     const LOCATIONS_DROPDOWN_KEY = "selectedLocation";
     const PROGRAMS_DROPDOWN_KEY = "selectedProgram";
     const OFFERINGS_DROPDOWN_KEY = "selectedOffering";
-    const SELECTED_OFFERING_DATE_KEY = "selectedOfferingDate";
+    const SELECTED_OFFERING_START_DATE_KEY = "selectedOfferingDate";
+    const SELECTED_OFFERING_END_DATE_KEY = "selectedOfferingEndDate";
     const SELECTED_PROGRAM_DESC_KEY = "selectedProgramDesc";
     const OFFERING_INTENSITY_KEY = "howWillYouBeAttendingTheProgram";
     const PROGRAM_NOT_LISTED = "myProgramNotListed";
@@ -247,10 +248,11 @@ export default {
         event.changed?.component.key === OFFERINGS_DROPDOWN_KEY &&
         +event.changed.value > 0
       ) {
-        await formioComponentLoader.loadSelectedOfferingDate(
+        await formioComponentLoader.loadSelectedOfferingDates(
           form,
           +event.changed.value,
-          SELECTED_OFFERING_DATE_KEY,
+          SELECTED_OFFERING_START_DATE_KEY,
+          SELECTED_OFFERING_END_DATE_KEY,
         );
       }
     };
