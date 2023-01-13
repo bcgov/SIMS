@@ -255,6 +255,21 @@ export default {
           SELECTED_OFFERING_END_DATE_KEY,
         );
       }
+      // If the user after selecting a study period finds that
+      // they need to check my study period not listed, then
+      // the study start date and end date of previously selected
+      // study period must be cleared.
+      if (
+        event.changed?.component.key === OFFERING_NOT_LISTED &&
+        event.changed.value?.offeringnotListed === true
+      ) {
+        formioUtils.setComponentValue(form, SELECTED_OFFERING_END_DATE_KEY, "");
+        formioUtils.setComponentValue(
+          form,
+          SELECTED_OFFERING_START_DATE_KEY,
+          "",
+        );
+      }
     };
 
     const wizardGoPrevious = () => {
