@@ -13,7 +13,15 @@ import {
  */
 export function useFormioComponentLoader() {
   const formioUtils = useFormioUtils();
-  // Get offering date of the selected offering and set to the hidden field (selectedOfferingDate) in formio.
+
+  /**
+   * Get details of given offering and populate form.io
+   * hidden fields.
+   * @param form form to be updated with hidden field values.
+   * @param offeringId offering.
+   * @param offeringFieldIds hidden field names in form.io.
+   * @param options API options to get offering details.
+   */
   const loadSelectedOfferingDetails = async (
     form: any,
     offeringId: number,
