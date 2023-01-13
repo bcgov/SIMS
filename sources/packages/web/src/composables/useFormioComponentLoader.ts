@@ -1,6 +1,10 @@
 import { EducationProgramService } from "../services/EducationProgramService";
 import { EducationProgramOfferingService } from "@/services/EducationProgramOfferingService";
 import { useFormioUtils } from ".";
+import {
+  EducationProgramOfferingAPIOutDTO,
+  OfferingStartDateAPIOutDTO,
+} from "@/services/http/dto";
 
 /**
  * Common methods to load components data on Form.IO that could
@@ -10,26 +14,46 @@ import { useFormioUtils } from ".";
 export function useFormioComponentLoader() {
   const formioUtils = useFormioUtils();
   // Get offering date of the selected offering and set to the hidden field (selectedOfferingDate) in formio.
-  const loadSelectedOfferingDates = async (
+  const loadSelectedOfferingDetails = async (
     form: any,
     offeringId: number,
-    offeringStartDateFieldId: string,
-    offeringEndDateFieldId: string,
+    offeringFieldIds: {
+      offeringEndDateFieldId: string;
+      offeringStartDateFieldId?: string;
+    },
+    options?: { locationId: number; programId: number },
   ) => {
-    const valueToBeLoaded =
-      await EducationProgramOfferingService.shared.getProgramOfferingDates(
-        offeringId,
-      );
+    let valueToBeLoaded:
+      | OfferingStartDateAPIOutDTO
+      | EducationProgramOfferingAPIOutDTO;
+
+    if (options) {
+      valueToBeLoaded =
+        await EducationProgramOfferingService.shared.getOfferingDetailsByLocationAndProgram(
+          options.locationId,
+          options.programId,
+          offeringId,
+        );
+    } else {
+      valueToBeLoaded =
+        await EducationProgramOfferingService.shared.getProgramOfferingDates(
+          offeringId,
+        );
+    }
+
     formioUtils.setComponentValue(
       form,
-      offeringStartDateFieldId,
-      valueToBeLoaded?.studyStartDate,
-    );
-    formioUtils.setComponentValue(
-      form,
-      offeringEndDateFieldId,
+      offeringFieldIds.offeringEndDateFieldId,
       valueToBeLoaded?.studyEndDate,
     );
+
+    if (offeringFieldIds.offeringStartDateFieldId) {
+      formioUtils.setComponentValue(
+        form,
+        offeringFieldIds.offeringStartDateFieldId,
+        valueToBeLoaded?.studyStartDate,
+      );
+    }
   };
 
   // Get Program description for the selected program and set to the field (programDesc) in formio.
@@ -47,6 +71,6 @@ export function useFormioComponentLoader() {
 
   return {
     loadProgramDesc,
-    loadSelectedOfferingDates,
+    loadSelectedOfferingDetails,
   };
 }

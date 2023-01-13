@@ -248,28 +248,41 @@ export default {
         event.changed?.component.key === OFFERINGS_DROPDOWN_KEY &&
         +event.changed.value > 0
       ) {
-        await formioComponentLoader.loadSelectedOfferingDates(
+        await formioComponentLoader.loadSelectedOfferingDetails(
           form,
           +event.changed.value,
-          SELECTED_OFFERING_START_DATE_KEY,
-          SELECTED_OFFERING_END_DATE_KEY,
+          {
+            offeringEndDateFieldId: SELECTED_OFFERING_END_DATE_KEY,
+            offeringStartDateFieldId: SELECTED_OFFERING_START_DATE_KEY,
+          },
         );
       }
       // If the user after selecting a study period finds that
       // they need to check my study period not listed, then
-      // the study start date and end date of previously selected
+      // the details of previously selected
       // study period must be cleared.
       if (
         event.changed?.component.key === OFFERING_NOT_LISTED &&
-        event.changed.value?.offeringnotListed === true
+        event.changed.value?.offeringnotListed
       ) {
-        formioUtils.setComponentValue(form, SELECTED_OFFERING_END_DATE_KEY, "");
-        formioUtils.setComponentValue(
-          form,
-          SELECTED_OFFERING_START_DATE_KEY,
-          "",
-        );
+        resetSelectedOfferingDetails(form);
       }
+
+      // If the user after selecting a study period finds that
+      // they need to check my program not listed, then
+      // the details of previously selected
+      // study period must be cleared.
+      if (
+        event.changed?.component.key === PROGRAM_NOT_LISTED &&
+        event.changed.value?.programnotListed
+      ) {
+        resetSelectedOfferingDetails(form);
+      }
+    };
+
+    const resetSelectedOfferingDetails = (form: any) => {
+      formioUtils.setComponentValue(form, SELECTED_OFFERING_END_DATE_KEY, "");
+      formioUtils.setComponentValue(form, SELECTED_OFFERING_START_DATE_KEY, "");
     };
 
     const wizardGoPrevious = () => {
