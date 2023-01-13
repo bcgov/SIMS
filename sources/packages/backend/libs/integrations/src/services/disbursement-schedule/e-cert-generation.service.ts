@@ -323,7 +323,7 @@ export class ECertGenerationService {
         )
         // Sum all BC grants.
         .reduce((previousValue, currentValue) => {
-          return previousValue + +currentValue.effectiveAmount;
+          return previousValue + currentValue.effectiveAmount;
         }, 0);
       bcTotalGrant.valueAmount = bcTotalGrantValueAmount;
       bcTotalGrant.effectiveAmount = bcTotalGrantValueAmount;

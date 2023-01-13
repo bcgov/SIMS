@@ -1,7 +1,7 @@
 import { ValueTransformer } from "typeorm";
 
 /***
- * Allow a numeric column type on Postgres to bo be mapped to a javascript
+ * Allow a numeric column type on Postgres to be mapped to a javascript
  * number type instead of the out-of-box conversion to a string.
  * This transformer should be used only if the expected number
  * stored on Postgres is not expected to exceed the maximum
@@ -19,6 +19,7 @@ export const numericTransformer: ValueTransformer = {
     }
     return null;
   },
+
   /**
    * Converts the number to a string as expected by Typeorm.
    * @param value number to be converted to the string.
