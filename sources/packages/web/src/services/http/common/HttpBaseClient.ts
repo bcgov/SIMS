@@ -31,10 +31,10 @@ export default abstract class HttpBaseClient {
   protected async getCall<T>(
     url: string,
     authHeader?: AxiosRequestConfig,
-    noHeader = false,
+    unAuthenticated = false,
   ): Promise<T> {
     try {
-      const response = !noHeader
+      const response = !unAuthenticated
         ? await this.apiClient.get(url, authHeader ?? this.addAuthHeader())
         : await this.apiClient.get(url);
       return response.data as T;
