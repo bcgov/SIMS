@@ -26,7 +26,6 @@ export class ApplicationApi extends HttpBaseClient {
   ): Promise<ApplicationDataAPIOutDTO> {
     return this.getCall<ApplicationDataAPIOutDTO>(
       this.addClientRoot(`application/${applicationId}`),
-      this.addAuthHeader(),
     );
   }
 
