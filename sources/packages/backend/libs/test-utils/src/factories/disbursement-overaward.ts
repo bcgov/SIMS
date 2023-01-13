@@ -18,9 +18,10 @@ export function createFakeDisbursementOveraward(relations?: {
   disbursementOveraward.student = relations?.student;
   disbursementOveraward.studentAssessment = relations?.studentAssessment;
   disbursementOveraward.disbursementSchedule = relations?.disbursementSchedule;
-  disbursementOveraward.overawardValue = faker.random
-    .number({ min: 500, max: 50000 })
-    .toString();
+  disbursementOveraward.overawardValue = faker.random.number({
+    min: 500,
+    max: 50000,
+  });
   disbursementOveraward.disbursementValueCode = faker.random
     .alpha({
       count: 4,

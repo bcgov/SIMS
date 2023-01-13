@@ -14,6 +14,7 @@ import {
   StudentAssessment,
 } from ".";
 import { ColumnNames, TableNames } from "../constant";
+import { numericTransformer } from "../transformers/numeric.transformer";
 
 /**
  * Students overawards resulted from reassessments calculations.
@@ -63,10 +64,11 @@ export class DisbursementOveraward extends RecordDataModel {
    */
   @Column({
     name: "overaward_value",
-    type: "decimal",
+    type: "numeric",
     nullable: false,
+    transformer: numericTransformer,
   })
-  overawardValue: string;
+  overawardValue: number;
   /**
    * Value code related to the overaward_value, for instance, CSLF, CSPT, BCSL.
    */

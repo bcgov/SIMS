@@ -9,6 +9,7 @@ import {
 } from "typeorm";
 import { DisbursementSchedule, DisbursementReceiptValue } from ".";
 import { ColumnNames, TableNames } from "../constant";
+import { numericTransformer } from "../transformers/numeric.transformer";
 import { RecordDataModel } from "./record.model";
 
 /**
@@ -72,8 +73,9 @@ export class DisbursementReceipt extends RecordDataModel {
     name: "total_entitled_disbursed_amount",
     type: "numeric",
     nullable: false,
+    transformer: numericTransformer,
   })
-  totalEntitledDisbursedAmount: string;
+  totalEntitledDisbursedAmount: number;
 
   /**
    * Total disbursed amount for either FE(Federal) or BC(Provincial).
@@ -82,8 +84,9 @@ export class DisbursementReceipt extends RecordDataModel {
     name: "total_disbursed_amount",
     type: "numeric",
     nullable: false,
+    transformer: numericTransformer,
   })
-  totalDisbursedAmount: string;
+  totalDisbursedAmount: number;
 
   /**
    * Financial posting date of NSLSC.
@@ -102,8 +105,9 @@ export class DisbursementReceipt extends RecordDataModel {
     name: "disburse_amount_student",
     type: "numeric",
     nullable: false,
+    transformer: numericTransformer,
   })
-  disburseAmountStudent: string;
+  disburseAmountStudent: number;
 
   /**
    * Amount disbursed to the institution.
@@ -112,8 +116,9 @@ export class DisbursementReceipt extends RecordDataModel {
     name: "disburse_amount_institution",
     type: "numeric",
     nullable: false,
+    transformer: numericTransformer,
   })
-  disburseAmountInstitution: string;
+  disburseAmountInstitution: number;
 
   /**
    * The date signed by the institution of the student at the time they receive the loan certificate.
@@ -150,8 +155,9 @@ export class DisbursementReceipt extends RecordDataModel {
     name: "total_entitled_grant_amount",
     type: "numeric",
     nullable: false,
+    transformer: numericTransformer,
   })
-  totalEntitledGrantAmount: string;
+  totalEntitledGrantAmount: number;
 
   /**
    * Total Federal or BC grant disbursed amount.
@@ -160,8 +166,9 @@ export class DisbursementReceipt extends RecordDataModel {
     name: "total_disbursed_grant_amount",
     type: "numeric",
     nullable: false,
+    transformer: numericTransformer,
   })
-  totalDisbursedGrantAmount: string;
+  totalDisbursedGrantAmount: number;
 
   /**
    * Total Federal or BC grant disbursed amount to student.
@@ -170,8 +177,9 @@ export class DisbursementReceipt extends RecordDataModel {
     name: "total_disbursed_grant_amount_student",
     type: "numeric",
     nullable: false,
+    transformer: numericTransformer,
   })
-  totalDisbursedGrantAmountStudent: string;
+  totalDisbursedGrantAmountStudent: number;
 
   /**
    * Total Federal or BC grant disbursed amount to institution.
@@ -180,8 +188,9 @@ export class DisbursementReceipt extends RecordDataModel {
     name: "total_disbursed_grant_amount_institution",
     type: "numeric",
     nullable: false,
+    transformer: numericTransformer,
   })
-  totalDisbursedGrantAmountInstitution: string;
+  totalDisbursedGrantAmountInstitution: number;
 
   /**
    * Values for this disbursement.

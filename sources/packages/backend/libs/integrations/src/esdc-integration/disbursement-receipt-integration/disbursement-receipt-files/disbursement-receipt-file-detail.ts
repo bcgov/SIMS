@@ -21,7 +21,7 @@ const GRANT_AMOUNT_LENGTH = 7;
 export class DisbursementReceiptGrant {
   constructor(
     public readonly grantType: string,
-    public readonly grantAmount: string,
+    public readonly grantAmount: number,
   ) {}
 }
 
@@ -48,11 +48,11 @@ export class DisbursementReceiptDetail extends DisbursementReceiptRecord {
   }
 
   get totalEntitledDisbursedAmount() {
-    return this.convertToAmountString(this.line.substring(37, 44));
+    return this.convertToAmount(this.line.substring(37, 44));
   }
 
   get totalDisbursedAmount() {
-    return this.convertToAmountString(this.line.substring(44, 51));
+    return this.convertToAmount(this.line.substring(44, 51));
   }
 
   get disburseDate() {
@@ -60,11 +60,11 @@ export class DisbursementReceiptDetail extends DisbursementReceiptRecord {
   }
 
   get disburseAmountStudent() {
-    return this.convertToAmountString(this.line.substring(59, 66));
+    return this.convertToAmount(this.line.substring(59, 66));
   }
 
   get disburseAmountInstitution() {
-    return this.convertToAmountString(this.line.substring(66, 73));
+    return this.convertToAmount(this.line.substring(66, 73));
   }
 
   get dateSignedInstitution() {
@@ -84,19 +84,19 @@ export class DisbursementReceiptDetail extends DisbursementReceiptRecord {
   }
 
   get totalEntitledGrantAmount() {
-    return this.convertToAmountString(this.line.substring(94, 101));
+    return this.convertToAmount(this.line.substring(94, 101));
   }
 
   get totalDisbursedGrantAmount() {
-    return this.convertToAmountString(this.line.substring(101, 108));
+    return this.convertToAmount(this.line.substring(101, 108));
   }
 
   get totalDisbursedGrantAmountStudent() {
-    return this.convertToAmountString(this.line.substring(108, 115));
+    return this.convertToAmount(this.line.substring(108, 115));
   }
 
   get totalDisbursedGrantAmountInstitution() {
-    return this.convertToAmountString(this.line.substring(115, 122));
+    return this.convertToAmount(this.line.substring(115, 122));
   }
 
   get grants() {
@@ -114,7 +114,7 @@ export class DisbursementReceiptDetail extends DisbursementReceiptRecord {
       );
       grantIndex += GRANT_AMOUNT_LENGTH;
 
-      const grantAmount = this.convertToAmountString(grantAmountText);
+      const grantAmount = this.convertToAmount(grantAmountText);
 
       if (grantType && grantAmount) {
         grants.push(new DisbursementReceiptGrant(grantType, grantAmount));
