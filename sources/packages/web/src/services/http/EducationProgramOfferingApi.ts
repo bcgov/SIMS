@@ -195,11 +195,11 @@ export class EducationProgramOfferingApi extends HttpBaseClient {
   }
 
   /**
-   * Get offering start date of a given offering.
+   * Get offering details.
    * @param offeringId offering id
-   * @returns offering with start date value.
+   * @returns offering details.
    */
-  async getProgramOfferingDates(
+  async getProgramOfferingDetails(
     offeringId: number,
   ): Promise<OfferingStartDateAPIOutDTO> {
     const url = `education-program-offering/${offeringId}`;

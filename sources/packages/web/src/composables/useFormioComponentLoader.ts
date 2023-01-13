@@ -36,7 +36,7 @@ export function useFormioComponentLoader() {
         );
     } else {
       valueToBeLoaded =
-        await EducationProgramOfferingService.shared.getProgramOfferingDates(
+        await EducationProgramOfferingService.shared.getProgramOfferingDetails(
           offeringId,
         );
     }

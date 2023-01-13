@@ -187,14 +187,14 @@ export class EducationProgramOfferingService {
   }
 
   /**
-   * Get offering start date and end date of a given offering.
+   * Get offering details.
    * @param offeringId offering id
-   * @returns offering with start and end date values.
+   * @returns offering details.
    */
-  async getProgramOfferingDates(
+  async getProgramOfferingDetails(
     offeringId: number,
   ): Promise<OfferingStartDateAPIOutDTO> {
-    return ApiClient.EducationProgramOffering.getProgramOfferingDates(
+    return ApiClient.EducationProgramOffering.getProgramOfferingDetails(
       offeringId,
     );
   }
