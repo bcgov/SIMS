@@ -20,7 +20,7 @@ export class ProgramInfoRequestApi extends HttpBaseClient {
     locationId: number,
     applicationId: number,
   ): Promise<ProgramInfoRequestAPIOutDTO> {
-    return this.getCallTyped<ProgramInfoRequestAPIOutDTO>(
+    return this.getCall<ProgramInfoRequestAPIOutDTO>(
       this.addClientRoot(
         `location/${locationId}/program-info-request/application/${applicationId}`,
       ),
@@ -79,7 +79,7 @@ export class ProgramInfoRequestApi extends HttpBaseClient {
    * @returns student application list of an institution location.
    */
   async getPIRSummary(locationId: number): Promise<PIRSummaryAPIOutDTO[]> {
-    return this.getCallTyped<PIRSummaryAPIOutDTO[]>(
+    return this.getCall<PIRSummaryAPIOutDTO[]>(
       this.addClientRoot(`location/${locationId}/program-info-request`),
     );
   }
@@ -89,7 +89,7 @@ export class ProgramInfoRequestApi extends HttpBaseClient {
    * @returns PIR denied reason list.
    */
   async getPIRDeniedReasonList(): Promise<PIRDeniedReasonAPIOutDTO[]> {
-    return this.getCallTyped(
+    return this.getCall(
       this.addClientRoot(`location/program-info-request/denied-reason`),
     );
   }

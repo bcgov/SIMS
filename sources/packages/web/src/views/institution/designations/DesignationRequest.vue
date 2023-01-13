@@ -106,7 +106,7 @@ export default {
         } as SubmitDesignationAgreementAPIInDTO);
         snackBar.success("Designation agreement submitted.");
         goBack();
-      } catch (error) {
+      } catch (error: unknown) {
         snackBar.error(
           "An unexpected error happened during the designation agreement submission.",
         );

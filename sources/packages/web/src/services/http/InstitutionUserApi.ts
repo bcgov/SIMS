@@ -17,7 +17,7 @@ export class InstitutionUserApi extends HttpBaseClient {
    * @returns user details.
    */
   async getMyInstitutionDetails(): Promise<InstitutionUserDetailAPIOutDTO> {
-    return this.getCallTyped<InstitutionUserDetailAPIOutDTO>(
+    return this.getCall<InstitutionUserDetailAPIOutDTO>(
       this.addClientRoot("institution-user/my-details"),
     );
   }
@@ -40,7 +40,7 @@ export class InstitutionUserApi extends HttpBaseClient {
         : ""
     }?`;
     url += getPaginationQueryString(paginationOptions);
-    return this.getCallTyped<PaginatedResults<InstitutionUserAPIOutDTO>>(
+    return this.getCall<PaginatedResults<InstitutionUserAPIOutDTO>>(
       this.addClientRoot(url),
     );
   }
@@ -95,7 +95,7 @@ export class InstitutionUserApi extends HttpBaseClient {
    * the decisions that need happen to complete the process.
    */
   async getInstitutionUserStatus(): Promise<InstitutionUserStatusAPIOutDTO> {
-    return this.getCallTyped<InstitutionUserStatusAPIOutDTO>(
+    return this.getCall<InstitutionUserStatusAPIOutDTO>(
       this.addClientRoot("institution-user/status"),
     );
   }
@@ -108,7 +108,7 @@ export class InstitutionUserApi extends HttpBaseClient {
   async getInstitutionUserById(
     institutionUserId: number,
   ): Promise<InstitutionUserAPIOutDTO> {
-    return this.getCallTyped<InstitutionUserAPIOutDTO>(
+    return this.getCall<InstitutionUserAPIOutDTO>(
       this.addClientRoot(`institution-user/${institutionUserId}`),
     );
   }

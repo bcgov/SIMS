@@ -4,7 +4,6 @@ import { ProgramYearApi } from "@/services/http/ProgramYearApi";
 import { UserApi } from "@/services/http/UserApi";
 import { InstitutionApi } from "@/services/http/InstitutionApi";
 import { DynamicFormsApi } from "@/services/http/DynamicForms";
-import { WorkflowApi } from "@/services/http/WorkflowApi";
 import { ApplicationApi } from "@/services/http/ApplicationApi";
 import { InstitutionLocationApi } from "@/services/http/InstitutionLocation";
 import { EducationProgramApi } from "@/services/http/EducationProgramApi";
@@ -31,7 +30,6 @@ const ApiClient = {
   User: new UserApi(),
   Institution: new InstitutionApi(),
   DynamicForms: new DynamicFormsApi(),
-  Workflow: new WorkflowApi(),
   Application: new ApplicationApi(),
   InstitutionLocation: new InstitutionLocationApi(),
   EducationProgram: new EducationProgramApi(),

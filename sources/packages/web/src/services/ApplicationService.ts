@@ -1,11 +1,9 @@
 import {
-  CreateApplicationDraftResult,
   DataTableSortOrder,
   StudentApplicationFields,
   DEFAULT_PAGE_LIMIT,
   DEFAULT_PAGE_NUMBER,
 } from "@/types";
-import { MORE_THAN_ONE_APPLICATION_DRAFT_ERROR } from "@/types/contracts/ApiProcessError";
 import ApiClient from "../services/http/ApiClient";
 import {
   ApplicationSummaryAPIOutDTO,
@@ -38,27 +36,15 @@ export class ApplicationService {
 
   async createApplicationDraft(
     payload: SaveApplicationAPIInDTO,
-  ): Promise<CreateApplicationDraftResult> {
-    try {
-      const applicationId = await ApiClient.Application.createApplicationDraft(
-        payload,
-      );
-      return { draftAlreadyExists: false, draftId: applicationId };
-    } catch (error) {
-      if (
-        error.response.data?.errorType === MORE_THAN_ONE_APPLICATION_DRAFT_ERROR
-      ) {
-        return { draftAlreadyExists: true };
-      }
-      throw error;
-    }
+  ): Promise<number> {
+    return ApiClient.Application.createApplicationDraft(payload);
   }
 
   async saveApplicationDraft(
     applicationId: number,
     payload: SaveApplicationAPIInDTO,
-  ): Promise<number> {
-    return ApiClient.Application.saveApplicationDraft(applicationId, payload);
+  ): Promise<void> {
+    await ApiClient.Application.saveApplicationDraft(applicationId, payload);
   }
 
   async submitApplication(

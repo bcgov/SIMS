@@ -27,7 +27,7 @@ export class EducationProgramApi extends HttpBaseClient {
       paginationOptions,
     )}`;
 
-    return this.getCallTyped<
+    return this.getCall<
       PaginatedResultsAPIOutDTO<EducationProgramsSummaryAPIOutDTO>
     >(this.addClientRoot(url));
   }
@@ -46,7 +46,7 @@ export class EducationProgramApi extends HttpBaseClient {
       paginationOptions,
     )}`;
 
-    return this.getCallTyped<
+    return this.getCall<
       PaginatedResultsAPIOutDTO<EducationProgramsSummaryAPIOutDTO>
     >(this.addClientRoot(url));
   }
@@ -59,7 +59,7 @@ export class EducationProgramApi extends HttpBaseClient {
   async getEducationProgram(
     programId: number,
   ): Promise<EducationProgramAPIOutDTO> {
-    return this.getCallTyped<EducationProgramAPIOutDTO>(
+    return this.getCall<EducationProgramAPIOutDTO>(
       this.addClientRoot(`education-program/${programId}`),
     );
   }
@@ -105,9 +105,7 @@ export class EducationProgramApi extends HttpBaseClient {
   async getStudentEducationProgram(
     programId: number,
   ): Promise<StudentEducationProgramAPIOutDTO> {
-    return this.getCallTyped(
-      this.addClientRoot(`education-program/${programId}`),
-    );
+    return this.getCall(this.addClientRoot(`education-program/${programId}`));
   }
 
   /**
@@ -124,7 +122,7 @@ export class EducationProgramApi extends HttpBaseClient {
     if (isIncludeInActiveProgramYear) {
       url = `${url}?isIncludeInActiveProgramYear=${isIncludeInActiveProgramYear}`;
     }
-    return this.getCallTyped<OptionItemAPIOutDTO[]>(this.addClientRoot(url));
+    return this.getCall<OptionItemAPIOutDTO[]>(this.addClientRoot(url));
   }
 
   /**
@@ -132,7 +130,7 @@ export class EducationProgramApi extends HttpBaseClient {
    * @returns key/value pair list of all approved programs.
    */
   async getProgramsListForInstitutions(): Promise<OptionItemAPIOutDTO[]> {
-    return this.getCallTyped<OptionItemAPIOutDTO[]>(
+    return this.getCall<OptionItemAPIOutDTO[]>(
       this.addClientRoot("education-program/programs-list"),
     );
   }

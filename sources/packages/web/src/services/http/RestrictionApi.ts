@@ -15,13 +15,13 @@ export class RestrictionApi extends HttpBaseClient {
   async getStudentRestrictions(
     studentId: number,
   ): Promise<RestrictionSummaryAPIOutDTO[]> {
-    return this.getCallTyped<RestrictionSummaryAPIOutDTO[]>(
+    return this.getCall<RestrictionSummaryAPIOutDTO[]>(
       this.addClientRoot(`restriction/student/${studentId}`),
     );
   }
 
   async getRestrictionCategories(): Promise<OptionItemAPIOutDTO[]> {
-    return this.getCallTyped<OptionItemAPIOutDTO[]>(
+    return this.getCall<OptionItemAPIOutDTO[]>(
       this.addClientRoot("restriction/categories/options-list"),
     );
   }
@@ -29,7 +29,7 @@ export class RestrictionApi extends HttpBaseClient {
   async getRestrictionReasons(
     restrictionCategory: string,
   ): Promise<OptionItemAPIOutDTO[]> {
-    return this.getCallTyped<OptionItemAPIOutDTO[]>(
+    return this.getCall<OptionItemAPIOutDTO[]>(
       this.addClientRoot(`restriction/category/${restrictionCategory}/reasons`),
     );
   }
@@ -38,7 +38,7 @@ export class RestrictionApi extends HttpBaseClient {
     studentId: number,
     studentRestrictionId: number,
   ): Promise<RestrictionDetailAPIOutDTO> {
-    return this.getCallTyped<RestrictionDetailAPIOutDTO>(
+    return this.getCall<RestrictionDetailAPIOutDTO>(
       this.addClientRoot(
         `restriction/student/${studentId}/studentRestriction/${studentRestrictionId}`,
       ),
@@ -54,7 +54,7 @@ export class RestrictionApi extends HttpBaseClient {
         this.addClientRoot(`restriction/student/${studentId}`),
         payload,
       );
-    } catch (error) {
+    } catch (error: unknown) {
       this.handleRequestError(error);
       throw error;
     }
@@ -72,7 +72,7 @@ export class RestrictionApi extends HttpBaseClient {
         ),
         payload,
       );
-    } catch (error) {
+    } catch (error: unknown) {
       this.handleRequestError(error);
       throw error;
     }
@@ -81,7 +81,7 @@ export class RestrictionApi extends HttpBaseClient {
   async getInstitutionRestrictions(
     institutionId: number,
   ): Promise<RestrictionSummaryAPIOutDTO[]> {
-    return this.getCallTyped<RestrictionSummaryAPIOutDTO[]>(
+    return this.getCall<RestrictionSummaryAPIOutDTO[]>(
       this.addClientRoot(`restriction/institution/${institutionId}`),
     );
   }
@@ -90,7 +90,7 @@ export class RestrictionApi extends HttpBaseClient {
     institutionId: number,
     institutionRestrictionId: number,
   ): Promise<RestrictionDetailAPIOutDTO> {
-    return this.getCallTyped<RestrictionDetailAPIOutDTO>(
+    return this.getCall<RestrictionDetailAPIOutDTO>(
       this.addClientRoot(
         `restriction/institution/${institutionId}/institutionRestriction/${institutionRestrictionId}`,
       ),
@@ -125,7 +125,7 @@ export class RestrictionApi extends HttpBaseClient {
    * @returns student restriction(wrapped by promise).
    */
   async getStudentRestriction(): Promise<StudentRestrictionAPIOutDTO[]> {
-    return this.getCallTyped<StudentRestrictionAPIOutDTO[]>(
+    return this.getCall<StudentRestrictionAPIOutDTO[]>(
       this.addClientRoot("restriction"),
     );
   }

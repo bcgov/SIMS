@@ -54,7 +54,7 @@ export default defineComponent({
         await ApplicationService.shared.cancelStudentApplication(applicationId);
         resolvePromise(true);
         snackBar.success("Your application is now cancelled!");
-      } catch (error) {
+      } catch (error: unknown) {
         snackBar.error("An error happened while cancelling the Application.");
         resolvePromise(false);
       }

@@ -84,7 +84,7 @@ export class EducationProgramOfferingApi extends HttpBaseClient {
     const url = `education-program-offering/location/${locationId}/education-program/${programId}?${getPaginationQueryString(
       paginationOptions,
     )}`;
-    return this.getCallTyped(this.addClientRoot(url));
+    return this.getCall(this.addClientRoot(url));
   }
 
   /**
@@ -100,7 +100,7 @@ export class EducationProgramOfferingApi extends HttpBaseClient {
     offeringId: number,
   ): Promise<EducationProgramOfferingAPIOutDTO> {
     const url = `education-program-offering/location/${locationId}/education-program/${programId}/offering/${offeringId}`;
-    return this.getCallTyped<EducationProgramOfferingAPIOutDTO>(
+    return this.getCall<EducationProgramOfferingAPIOutDTO>(
       this.addClientRoot(url),
     );
   }
@@ -114,7 +114,7 @@ export class EducationProgramOfferingApi extends HttpBaseClient {
     offeringId: number,
   ): Promise<EducationProgramOfferingAPIOutDTO> {
     const url = `education-program-offering/${offeringId}`;
-    return this.getCallTyped<EducationProgramOfferingAPIOutDTO>(
+    return this.getCall<EducationProgramOfferingAPIOutDTO>(
       this.addClientRoot(url),
     );
   }
@@ -191,7 +191,7 @@ export class EducationProgramOfferingApi extends HttpBaseClient {
     if (isIncludeInActiveProgramYear) {
       url = `${url}&isIncludeInActiveProgramYear=${isIncludeInActiveProgramYear}`;
     }
-    return this.getCallTyped<OptionItemAPIOutDTO[]>(this.addClientRoot(url));
+    return this.getCall<OptionItemAPIOutDTO[]>(this.addClientRoot(url));
   }
 
   /**
@@ -203,9 +203,7 @@ export class EducationProgramOfferingApi extends HttpBaseClient {
     offeringId: number,
   ): Promise<OfferingStartDateAPIOutDTO> {
     const url = `education-program-offering/${offeringId}`;
-    return this.getCallTyped<OfferingStartDateAPIOutDTO>(
-      this.addClientRoot(url),
-    );
+    return this.getCall<OfferingStartDateAPIOutDTO>(this.addClientRoot(url));
   }
 
   /**
@@ -255,7 +253,7 @@ export class EducationProgramOfferingApi extends HttpBaseClient {
    * @returns all offerings that were requested for change.
    */
   async getOfferingChangeRequests(): Promise<OfferingChangeRequestAPIOutDTO[]> {
-    return this.getCallTyped<OfferingChangeRequestAPIOutDTO[]>(
+    return this.getCall<OfferingChangeRequestAPIOutDTO[]>(
       this.addClientRoot("education-program-offering/change-requests"),
     );
   }
@@ -269,7 +267,7 @@ export class EducationProgramOfferingApi extends HttpBaseClient {
   async getPrecedingOfferingSummary(
     offeringId: number,
   ): Promise<PrecedingOfferingSummaryAPIOutDTO> {
-    return this.getCallTyped<PrecedingOfferingSummaryAPIOutDTO>(
+    return this.getCall<PrecedingOfferingSummaryAPIOutDTO>(
       this.addClientRoot(
         `education-program-offering/${offeringId}/preceding-offering-summary`,
       ),
@@ -285,7 +283,7 @@ export class EducationProgramOfferingApi extends HttpBaseClient {
   async getPrecedingOfferingByActualOfferingId(
     offeringId: number,
   ): Promise<EducationProgramOfferingAPIOutDTO> {
-    return this.getCallTyped<EducationProgramOfferingAPIOutDTO>(
+    return this.getCall<EducationProgramOfferingAPIOutDTO>(
       this.addClientRoot(
         `education-program-offering/${offeringId}/preceding-offering`,
       ),

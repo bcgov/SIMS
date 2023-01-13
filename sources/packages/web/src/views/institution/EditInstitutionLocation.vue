@@ -52,7 +52,7 @@ export default {
         router.push(goBackRouteParams.value);
         store.dispatch("institution/getUserInstitutionLocationDetails");
         snackBar.success("Location Details have been updated!");
-      } catch (excp) {
+      } catch (error: unknown) {
         snackBar.error("An error happened during the update process.");
       }
     };

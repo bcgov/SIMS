@@ -66,7 +66,7 @@ export default {
         router.push({
           name: InstitutionRoutesConst.INSTITUTION_DASHBOARD,
         });
-      } catch (excp) {
+      } catch (error: unknown) {
         snackBar.error("An error happened during the update process.");
       } finally {
         processing.value = false;

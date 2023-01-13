@@ -85,19 +85,18 @@ export default defineComponent({
         appealRequestsForms.value = form.data.formNames.map(
           (formName) => ({ formName } as StudentAppealRequest),
         );
-      } catch (error) {
+      } catch (error: unknown) {
         const errorMessage = "An error happened while requesting a change.";
         const errorLabel = "Unexpected error";
-        if (error.response.data?.errorType === INVALID_APPLICATION_NUMBER) {
-          snackBar.warn(
-            `Application not found. ${error.response.data.message}`,
-          );
-        } else {
+        if (error instanceof ApiProcessError) {
+          if (error.errorType === INVALID_APPLICATION_NUMBER) {
+            snackBar.warn(`Application not found. ${error.message}`);
+            return;
+          }
           snackBar.error(`${errorLabel}. ${errorMessage}`);
         }
       }
     };
-
     const backToRequestForm = () => {
       appealRequestsForms.value = [];
     };

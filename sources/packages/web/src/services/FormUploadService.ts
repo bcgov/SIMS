@@ -37,7 +37,7 @@ export default class FormUploadService {
         size: uploadResponse.size,
         type: uploadResponse.mimetype,
       };
-    } catch (error) {
+    } catch (error: unknown) {
       throw new Error(
         "there was an unexpected error while uploading the file.",
       );
@@ -58,7 +58,7 @@ export default class FormUploadService {
         name: fileInfo.name,
         type: fileInfo.type,
       };
-    } catch (error) {
+    } catch (error: unknown) {
       throw new Error(
         "there was an unexpected error while downloading the file.",
       );

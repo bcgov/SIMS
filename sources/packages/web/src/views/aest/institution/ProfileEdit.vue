@@ -53,7 +53,7 @@ export default {
         );
         snackBar.success("Institution successfully updated!");
         router.push(institutionProfileRoute);
-      } catch (error) {
+      } catch (error: unknown) {
         snackBar.error("Unexpected error while updating the institution.");
       }
     };

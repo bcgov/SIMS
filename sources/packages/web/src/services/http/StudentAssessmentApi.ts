@@ -20,7 +20,7 @@ export class StudentAssessmentApi extends HttpBaseClient {
   public async getAssessmentRequest(
     applicationId: number,
   ): Promise<RequestAssessmentSummaryAPIOutDTO[]> {
-    return this.getCallTyped<RequestAssessmentSummaryAPIOutDTO[]>(
+    return this.getCall<RequestAssessmentSummaryAPIOutDTO[]>(
       this.addClientRoot(`assessment/application/${applicationId}/requests`),
     );
   }
@@ -36,7 +36,7 @@ export class StudentAssessmentApi extends HttpBaseClient {
   public async getAssessmentHistory(
     applicationId: number,
   ): Promise<AssessmentHistorySummaryAPIOutDTO[]> {
-    return this.getCallTyped<AssessmentHistorySummaryAPIOutDTO[]>(
+    return this.getCall<AssessmentHistorySummaryAPIOutDTO[]>(
       this.addClientRoot(`assessment/application/${applicationId}/history`),
     );
   }
@@ -49,7 +49,7 @@ export class StudentAssessmentApi extends HttpBaseClient {
   async getAssessmentNOA(
     assessmentId: number,
   ): Promise<AssessmentNOAAPIOutDTO> {
-    return this.getCallTyped<AssessmentNOAAPIOutDTO>(
+    return this.getCall<AssessmentNOAAPIOutDTO>(
       this.addClientRoot(`assessment/${assessmentId}/noa`),
     );
   }
@@ -73,7 +73,7 @@ export class StudentAssessmentApi extends HttpBaseClient {
   async getAssessmentAwardDetails(
     assessmentId: number,
   ): Promise<AwardDetailsAPIOutDTO> {
-    return this.getCallTyped<AwardDetailsAPIOutDTO>(
+    return this.getCall<AwardDetailsAPIOutDTO>(
       this.addClientRoot(`assessment/${assessmentId}/award`),
     );
   }

@@ -16,7 +16,7 @@ export class ScholasticStandingApi extends HttpBaseClient {
   async getScholasticStanding(
     scholasticStandingId: number,
   ): Promise<ScholasticStandingSubmittedDetailsAPIOutDTO> {
-    return this.getCallTyped<ScholasticStandingSubmittedDetailsAPIOutDTO>(
+    return this.getCall<ScholasticStandingSubmittedDetailsAPIOutDTO>(
       this.addClientRoot(`scholastic-standing/${scholasticStandingId}`),
     );
   }

@@ -33,7 +33,7 @@ export class SupportingUserApi extends HttpBaseClient {
         this.addClientRoot(`supporting-user/${supportingUserType}`),
         payload,
       );
-    } catch (error) {
+    } catch (error: unknown) {
       this.handleAPICustomError(error);
       throw error;
     }
@@ -42,7 +42,7 @@ export class SupportingUserApi extends HttpBaseClient {
   async getSupportingUsersForSideBar(
     applicationId: number,
   ): Promise<ApplicationSupportingUsersAPIOutDTO[]> {
-    return this.getCallTyped<ApplicationSupportingUsersAPIOutDTO[]>(
+    return this.getCall<ApplicationSupportingUsersAPIOutDTO[]>(
       this.addClientRoot(`supporting-user/application/${applicationId}`),
     );
   }
@@ -50,7 +50,7 @@ export class SupportingUserApi extends HttpBaseClient {
   async getSupportingUserData(
     supportingUserId: number,
   ): Promise<SupportingUserFormDataAPIOutDTO> {
-    return this.getCallTyped<SupportingUserFormDataAPIOutDTO>(
+    return this.getCall<SupportingUserFormDataAPIOutDTO>(
       this.addClientRoot(`supporting-user/${supportingUserId}`),
     );
   }

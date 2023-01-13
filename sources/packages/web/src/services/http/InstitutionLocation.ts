@@ -44,13 +44,13 @@ export class InstitutionLocationApi extends HttpBaseClient {
   public async getInstitutionLocation(
     locationId: number,
   ): Promise<InstitutionLocationFormAPIOutDTO> {
-    return this.getCallTyped<InstitutionLocationFormAPIOutDTO>(
+    return this.getCall<InstitutionLocationFormAPIOutDTO>(
       this.addClientRoot(`location/${locationId}`),
     );
   }
 
   public async getOptionsList(): Promise<OptionItemAPIOutDTO[]> {
-    return this.getCallTyped<OptionItemAPIOutDTO[]>(
+    return this.getCall<OptionItemAPIOutDTO[]>(
       this.addClientRoot("location/options-list"),
     );
   }
@@ -59,7 +59,7 @@ export class InstitutionLocationApi extends HttpBaseClient {
     applicationId: number,
     locationId: number,
   ): Promise<ActiveApplicationDataAPIOutDTO> {
-    return this.getCallTyped<ActiveApplicationDataAPIOutDTO>(
+    return this.getCall<ActiveApplicationDataAPIOutDTO>(
       this.addClientRoot(
         `location/${locationId}/active-application/${applicationId}`,
       ),
@@ -73,7 +73,7 @@ export class InstitutionLocationApi extends HttpBaseClient {
   async getMyInstitutionLocationsDetails(): Promise<
     InstitutionLocationsAPIOutDTO[]
   > {
-    return this.getCallTyped<InstitutionLocationsAPIOutDTO[]>(
+    return this.getCall<InstitutionLocationsAPIOutDTO[]>(
       this.addClientRoot("location"),
     );
   }

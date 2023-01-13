@@ -11,12 +11,7 @@ export class FileUploadApi extends HttpBaseClient {
   ): Promise<T> {
     try {
       const mergedConfig = { ...this.addAuthHeader(), ...config };
-      const response = await this.apiClient.post(
-        this.addClientRoot(relativeUrl),
-        data,
-        mergedConfig,
-      );
-      return response.data;
+      return this.postCall(this.addClientRoot(relativeUrl), data, mergedConfig);
     } catch (error) {
       if (!skipGlobalErrorHandler) {
         this.handleRequestError(error);

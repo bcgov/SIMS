@@ -4,7 +4,6 @@ import HttpClient from "./HttpClient";
 import { MINIMUM_TOKEN_VALIDITY } from "@/constants/system-constants";
 import { ApiProcessError, ClientIdType, ClientTypeBaseRoute } from "@/types";
 import { PrimaryIdentifierAPIOutDTO } from "../dto";
-
 export default abstract class HttpBaseClient {
   protected apiClient = HttpClient;
 
@@ -28,27 +27,14 @@ export default abstract class HttpBaseClient {
     console.log(e);
   }
 
-  protected async getCall(url: string, authHeader?: any): Promise<any> {
-    try {
-      const response = await this.apiClient.get(
-        url,
-        authHeader ?? this.addAuthHeader(),
-      );
-      return response;
-    } catch (error) {
-      this.handleRequestError(error);
-      throw error;
-    }
-  }
-
-  protected async getCallTyped<T>(url: string, authHeader?: any): Promise<T> {
+  protected async getCall<T>(url: string, authHeader?: any): Promise<T> {
     try {
       const response = await this.apiClient.get(
         url,
         authHeader ?? this.addAuthHeader(),
       );
       return response.data as T;
-    } catch (error) {
+    } catch (error: unknown) {
       this.handleRequestError(error);
       throw error;
     }
@@ -57,15 +43,16 @@ export default abstract class HttpBaseClient {
   protected async postCall<T, TResult = PrimaryIdentifierAPIOutDTO>(
     url: string,
     payload: T,
+    config?: AxiosRequestConfig | undefined,
   ): Promise<TResult> {
     try {
       const response = await this.apiClient.post(
         url,
         payload,
-        this.addAuthHeader(),
+        config ?? this.addAuthHeader(),
       );
       return response.data;
-    } catch (error) {
+    } catch (error: unknown) {
       this.handleRequestError(error);
       throw error;
     }
@@ -88,7 +75,7 @@ export default abstract class HttpBaseClient {
         this.addAuthHeader(),
       );
       return response as AxiosResponse<TResult>;
-    } catch (error) {
+    } catch (error: unknown) {
       this.handleRequestError(error);
       throw error;
     }
@@ -119,7 +106,7 @@ export default abstract class HttpBaseClient {
         );
       }
       return this.apiClient.get(this.addClientRoot(url), requestConfig);
-    } catch (error) {
+    } catch (error: unknown) {
       this.handleRequestError(error);
       throw error;
     }
@@ -138,7 +125,7 @@ export default abstract class HttpBaseClient {
   ): Promise<void> {
     try {
       await this.apiClient.patch(url, payload, this.addAuthHeader());
-    } catch (error) {
+    } catch (error: unknown) {
       if (!suppressErrorHandler) {
         this.handleRequestError(error);
       }
@@ -156,12 +143,12 @@ export default abstract class HttpBaseClient {
   }
 
   /**
-   * Inspects the error to check if there is an ApiProcessError
+   * Inspects the error to chec if there is an ApiProcessError
    * to be handled, if yes, throw the ApiProcessError instead
    * of the AxiosError.
    * @param error error to be inspect.
    */
-  protected handleAPICustomError(error: unknown) {
+  protected handleAPICustomError(error: unknown): never {
     const axiosError = error as AxiosError;
     if (axiosError.isAxiosError && axiosError.response?.data) {
       throw new ApiProcessError(
@@ -175,7 +162,7 @@ export default abstract class HttpBaseClient {
 
   // TODO: Once all url's are updated, then this
   // function can be a private function and called
-  // by getCallTyped or patch or post function
+  // by getCall or patch or post function
   public addClientRoot(url: string) {
     switch (AuthService.shared.authClientType) {
       case ClientIdType.AEST:

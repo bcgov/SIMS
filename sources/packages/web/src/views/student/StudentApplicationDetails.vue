@@ -146,7 +146,7 @@ export default defineComponent({
             id: props.id,
           },
         });
-      } catch (error) {
+      } catch (error: unknown) {
         snackBar.error(
           "Unexpected Error",
           snackBar.EXTENDED_MESSAGE_DISPLAY_TIME,

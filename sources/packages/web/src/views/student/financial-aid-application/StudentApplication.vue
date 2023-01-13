@@ -59,11 +59,17 @@ import { onMounted, ref, defineComponent } from "vue";
 import ConfirmModal from "@/components/common/modals/ConfirmModal.vue";
 import { useSnackBar, useRules, ModalDialog } from "@/composables";
 import { useRouter } from "vue-router";
-import { VForm, SelectItemType, LayoutTemplates } from "@/types";
+import {
+  VForm,
+  SelectItemType,
+  LayoutTemplates,
+  ApiProcessError,
+} from "@/types";
 import { ApplicationService } from "@/services/ApplicationService";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 import { ProgramYearService } from "@/services/ProgramYearService";
 import ContentGroup from "@/components/generic/ContentGroup.vue";
+import { MORE_THAN_ONE_APPLICATION_DRAFT_ERROR } from "@/types/contracts/ApiProcessError";
 
 export default defineComponent({
   components: { ConfirmModal, ContentGroup },
@@ -93,16 +99,17 @@ export default defineComponent({
           return;
         }
         if (programYearId.value) {
-          const createDraftResult =
+          const applicationId =
             await ApplicationService.shared.createApplicationDraft({
               programYearId: programYearId.value,
               data: {},
               associatedFiles: [],
             });
-          if (createDraftResult.draftAlreadyExists) {
-            await draftApplicationModal.value.showModal();
-            return;
-          }
+
+          const createDraftResult = {
+            draftAlreadyExists: false,
+            draftId: applicationId,
+          };
           const programYear =
             await ProgramYearService.shared.getActiveProgramYear(
               programYearId.value,
@@ -118,7 +125,13 @@ export default defineComponent({
             });
           }
         }
-      } catch (error) {
+      } catch (error: unknown) {
+        if (error instanceof ApiProcessError) {
+          if (error.errorType === MORE_THAN_ONE_APPLICATION_DRAFT_ERROR) {
+            await draftApplicationModal.value.showModal();
+            return;
+          }
+        }
         snackBar.error(
           "An error happened while trying to start a new application.",
         );

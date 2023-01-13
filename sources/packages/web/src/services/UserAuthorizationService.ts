@@ -41,7 +41,7 @@ export class UserAuthorizationService {
         // Check if user a user and if the user has access to the requested page.
         return this.checkUserTypeIsAllowed(type, InstitutionUserTypes.user);
       });
-    } catch (error) {
+    } catch (error: unknown) {
       return false;
     }
   }

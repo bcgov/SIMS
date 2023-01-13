@@ -181,7 +181,7 @@ export default {
           associatedFiles,
         });
         snackBar.success("Application draft saved with success.");
-      } catch (error) {
+      } catch (error: unknown) {
         snackBar.error("An unexpected error happen.");
       } finally {
         savingDraft.value = false;

@@ -31,7 +31,7 @@ export class StudentAppealApi extends HttpBaseClient {
   async getStudentAppealWithRequests(
     appealId: number,
   ): Promise<StudentAppealAPIOutDTO> {
-    return this.getCallTyped<StudentAppealAPIOutDTO>(
+    return this.getCall<StudentAppealAPIOutDTO>(
       this.addClientRoot(`appeal/${appealId}/requests`),
     );
   }
@@ -60,7 +60,7 @@ export class StudentAppealApi extends HttpBaseClient {
   ): Promise<PaginatedResultsAPIOutDTO<StudentAppealPendingSummaryAPIOutDTO>> {
     let url = "appeal/pending?";
     url += getPaginationQueryString(paginationOptions);
-    return this.getCallTyped<
+    return this.getCall<
       PaginatedResultsAPIOutDTO<StudentAppealPendingSummaryAPIOutDTO>
     >(this.addClientRoot(url));
   }
