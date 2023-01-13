@@ -44,7 +44,7 @@ export class ProcessArchiveApplicationsScheduler extends BaseScheduler<void> {
     const archivedApplicationsCount =
       await this.applicationService.archiveApplications(auditUser.id);
     await summary.info(
-      `Total of applications archived ${archivedApplicationsCount}`,
+      `Total of applications archived: ${archivedApplicationsCount}`,
     );
     await summary.info("Completed applications archiving process.");
     await this.cleanSchedulerQueueHistory();

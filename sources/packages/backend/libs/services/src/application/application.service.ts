@@ -18,8 +18,8 @@ export class ApplicationService extends RecordDataModelService<Application> {
   }
 
   /**
-   * Archives one or more applications when 43 days
-   * have passed the end of the study period.
+   * Archives one or more applications when application archive days
+   * configuration have passed the end of the study period.
    * @param auditUserId user making changes to table.
    * @return the number of applications that were archived.
    */
