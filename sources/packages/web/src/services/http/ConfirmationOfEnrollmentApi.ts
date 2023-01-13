@@ -26,7 +26,7 @@ export class ConfirmationOfEnrollmentApi extends HttpBaseClient {
   ): Promise<PaginatedResultsAPIOutDTO<COESummaryAPIOutDTO>> {
     let url = `location/${locationId}/confirmation-of-enrollment/enrollmentPeriod/${enrollmentPeriod}?`;
     url += getPaginationQueryString(paginationOptions);
-    return this.getCallTyped<PaginatedResultsAPIOutDTO<COESummaryAPIOutDTO>>(
+    return this.getCall<PaginatedResultsAPIOutDTO<COESummaryAPIOutDTO>>(
       this.addClientRoot(url),
     );
   }
@@ -41,7 +41,7 @@ export class ConfirmationOfEnrollmentApi extends HttpBaseClient {
     disbursementScheduleId: number,
     locationId: number,
   ): Promise<ApplicationDetailsForCOEAPIOutDTO> {
-    return this.getCallTyped<ApplicationDetailsForCOEAPIOutDTO>(
+    return this.getCall<ApplicationDetailsForCOEAPIOutDTO>(
       this.addClientRoot(
         `location/${locationId}/confirmation-of-enrollment/disbursement-schedule/${disbursementScheduleId}`,
       ),
@@ -64,16 +64,12 @@ export class ConfirmationOfEnrollmentApi extends HttpBaseClient {
     payload?: ConfirmationOfEnrollmentAPIInDTO,
   ): Promise<void> {
     const baseUrl = locationId ? `location/${locationId}/` : "";
-    try {
-      await this.patchCall(
-        this.addClientRoot(
-          `${baseUrl}confirmation-of-enrollment/disbursement-schedule/${disbursementScheduleId}/confirm`,
-        ),
-        payload,
-      );
-    } catch (error: unknown) {
-      this.handleAPICustomError(error);
-    }
+    await this.patchCall(
+      this.addClientRoot(
+        `${baseUrl}confirmation-of-enrollment/disbursement-schedule/${disbursementScheduleId}/confirm`,
+      ),
+      payload,
+    );
   }
 
   /**
@@ -81,7 +77,7 @@ export class ConfirmationOfEnrollmentApi extends HttpBaseClient {
    * @returns COE denied reason list.
    */
   async getCOEDenialReasons(): Promise<COEDeniedReasonAPIOutDTO> {
-    return this.getCallTyped<COEDeniedReasonAPIOutDTO>(
+    return this.getCall<COEDeniedReasonAPIOutDTO>(
       this.addClientRoot("location/confirmation-of-enrollment/denial-reasons"),
     );
   }

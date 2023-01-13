@@ -7,22 +7,9 @@ export class FileUploadApi extends HttpBaseClient {
     relativeUrl: string,
     data: FormData,
     config: AxiosRequestConfig,
-    skipGlobalErrorHandler = false,
   ): Promise<T> {
-    try {
-      const mergedConfig = { ...this.addAuthHeader(), ...config };
-      const response = await this.apiClient.post(
-        this.addClientRoot(relativeUrl),
-        data,
-        mergedConfig,
-      );
-      return response.data;
-    } catch (error) {
-      if (!skipGlobalErrorHandler) {
-        this.handleRequestError(error);
-      }
-      throw error;
-    }
+    const mergedConfig = { ...this.addAuthHeader(), ...config };
+    return this.postCall(this.addClientRoot(relativeUrl), data, mergedConfig);
   }
 
   async download(relativeUrl: string): Promise<AxiosResponse<any>> {

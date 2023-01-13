@@ -29,7 +29,7 @@
         <Column
           field="restrictionCategory"
           header="Category"
-          sortable="true"
+          :sortable="true"
         ></Column>
         <Column field="description" header="Reason">
           <template #body="slotProps">{{
@@ -169,7 +169,7 @@ export default {
         snackBar.success(
           "The given restriction has been resolved and resolution notes added.",
         );
-      } catch (error) {
+      } catch {
         snackBar.error("Unexpected error while resolving the restriction.");
       }
     };
@@ -186,7 +186,7 @@ export default {
         );
         await loadInstitutionRestrictions();
         snackBar.success("The restriction has been added to institution.");
-      } catch (error) {
+      } catch {
         snackBar.error("Unexpected error while adding the restriction.");
       }
     };

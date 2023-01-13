@@ -52,7 +52,7 @@ export default {
           name: AESTRoutesConst.INSTITUTION_PROFILE,
           params: { institutionId: createdInstitution.id },
         });
-      } catch (error) {
+      } catch {
         snackBar.error("Unexpected error while creating the institution.");
       } finally {
         processing.value = false;

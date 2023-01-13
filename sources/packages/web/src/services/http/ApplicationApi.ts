@@ -17,22 +17,16 @@ import {
   ApplicationBaseAPIOutDTO,
   ApplicationIdentifiersAPIOutDTO,
   InProgressApplicationDetailsAPIOutDTO,
+  PrimaryIdentifierAPIOutDTO,
 } from "@/services/http/dto";
 
 export class ApplicationApi extends HttpBaseClient {
   async getApplicationData(
     applicationId: number,
   ): Promise<ApplicationDataAPIOutDTO> {
-    try {
-      const response = await this.apiClient.get(
-        this.addClientRoot(`application/${applicationId}`),
-        this.addAuthHeader(),
-      );
-      return response.data as ApplicationDataAPIOutDTO;
-    } catch (error) {
-      this.handleRequestError(error);
-      throw error;
-    }
+    return this.getCall<ApplicationDataAPIOutDTO>(
+      this.addClientRoot(`application/${applicationId}`),
+    );
   }
 
   async cancelStudentApplication(applicationId: number): Promise<void> {
@@ -44,71 +38,42 @@ export class ApplicationApi extends HttpBaseClient {
 
   async createApplicationDraft(
     payload: SaveApplicationAPIInDTO,
-  ): Promise<number> {
-    try {
-      const response = await this.apiClient.post(
-        this.addClientRoot("application/draft"),
-        payload,
-        this.addAuthHeader(),
-      );
-      return +response.data;
-    } catch (error) {
-      if (!error.response.data?.errorType) {
-        // If it is an not expected error,
-        // handle it the default way.
-        this.handleRequestError(error);
-      }
-
-      throw error;
-    }
+  ): Promise<PrimaryIdentifierAPIOutDTO> {
+    return this.postCall<SaveApplicationAPIInDTO>(
+      this.addClientRoot("application/draft"),
+      payload,
+    );
   }
 
   async saveApplicationDraft(
     applicationId: number,
     payload: SaveApplicationAPIInDTO,
-  ): Promise<number> {
-    try {
-      const response = await this.apiClient.patch(
-        this.addClientRoot(`application/${applicationId}/draft`),
-        payload,
-        this.addAuthHeader(),
-      );
-      return +response.data;
-    } catch (error) {
-      this.handleRequestError(error);
-      throw error;
-    }
+  ): Promise<void> {
+    await this.patchCall<SaveApplicationAPIInDTO>(
+      this.addClientRoot(`application/${applicationId}/draft`),
+      payload,
+    );
   }
 
   async submitApplication(
     applicationId: number,
     payload: SaveApplicationAPIInDTO,
   ): Promise<void> {
-    try {
-      await this.patchCall(
-        this.addClientRoot(`application/${applicationId}/submit`),
-        payload,
-      );
-    } catch (error: unknown) {
-      this.handleAPICustomError(error);
-    }
+    await this.patchCall(
+      this.addClientRoot(`application/${applicationId}/submit`),
+      payload,
+    );
   }
 
   async getApplicationWithPY(
     applicationId: number,
     isIncludeInActiveProgramYear?: boolean,
   ): Promise<ApplicationWithProgramYearAPIOutDTO> {
-    try {
-      let url = this.addClientRoot(`application/${applicationId}/program-year`);
-      if (isIncludeInActiveProgramYear) {
-        url = `${url}?isIncludeInActiveProgramYear=${isIncludeInActiveProgramYear}`;
-      }
-      const response = await this.getCall(url);
-      return response.data as ApplicationWithProgramYearAPIOutDTO;
-    } catch (error) {
-      this.handleRequestError(error);
-      throw error;
+    let url = this.addClientRoot(`application/${applicationId}/program-year`);
+    if (isIncludeInActiveProgramYear) {
+      url = `${url}?isIncludeInActiveProgramYear=${isIncludeInActiveProgramYear}`;
     }
+    return this.getCall<ApplicationWithProgramYearAPIOutDTO>(url);
   }
 
   /**
@@ -119,10 +84,9 @@ export class ApplicationApi extends HttpBaseClient {
   async getApplicationDetails(
     applicationId: number,
   ): Promise<ApplicationBaseAPIOutDTO> {
-    const response = await this.getCall(
+    return this.getCall<ApplicationBaseAPIOutDTO>(
       this.addClientRoot(`application/${applicationId}`),
     );
-    return response.data as ApplicationBaseAPIOutDTO;
   }
 
   /**
@@ -149,15 +113,15 @@ export class ApplicationApi extends HttpBaseClient {
     url = addPaginationOptions(url, page, pageCount, "?");
     //Adding Sort params. There is always a default sortField and sortOrder for COE.
     url = addSortOptions(url, sortField, sortOrder);
-    return this.getCallTyped<
-      PaginatedResultsAPIOutDTO<ApplicationSummaryAPIOutDTO>
-    >(this.addClientRoot(url));
+    return this.getCall<PaginatedResultsAPIOutDTO<ApplicationSummaryAPIOutDTO>>(
+      this.addClientRoot(url),
+    );
   }
 
   async getApplicationForRequestChange(
     applicationNumber: string,
   ): Promise<ApplicationIdentifiersAPIOutDTO> {
-    return this.getCallTyped<ApplicationIdentifiersAPIOutDTO>(
+    return this.getCall<ApplicationIdentifiersAPIOutDTO>(
       this.addClientRoot(`application/${applicationNumber}/appeal`),
     );
   }
@@ -170,7 +134,7 @@ export class ApplicationApi extends HttpBaseClient {
   async getInProgressApplicationDetails(
     applicationId: number,
   ): Promise<InProgressApplicationDetailsAPIOutDTO> {
-    return this.getCallTyped<InProgressApplicationDetailsAPIOutDTO>(
+    return this.getCall<InProgressApplicationDetailsAPIOutDTO>(
       this.addClientRoot(`application/${applicationId}/in-progress`),
     );
   }

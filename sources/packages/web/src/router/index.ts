@@ -64,9 +64,9 @@ function forEachInstitutionRoutes(
         next();
       }
     })
-    .catch((e: any) => {
-      console.error(e);
-      throw e;
+    .catch((error: unknown) => {
+      console.error(error);
+      throw error;
     });
 }
 

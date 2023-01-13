@@ -113,7 +113,7 @@ export class AuthService {
       } else {
         clearInterval(this.interval);
       }
-    } catch (error) {
+    } catch (error: unknown) {
       console.error(`Keycloak initialization error - ${clientType}`);
       console.error(error);
     }

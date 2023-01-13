@@ -2,7 +2,6 @@
   <v-form ref="addUserForm">
     <modal-dialog-base
       :showDialog="showDialog"
-      @dialogClosed="dialogClosed"
       data-cy="addNewUserModal"
       title="Add new user"
     >
