@@ -23,6 +23,7 @@ import {
   PartTimeMSFAAProcessResponseIntegrationScheduler,
   SFASIntegrationScheduler,
   ATBCResponseIntegrationScheduler,
+  ProcessArchiveApplicationsScheduler,
 } from "./processors";
 import {
   DisbursementScheduleService,
@@ -49,6 +50,8 @@ import { SFASIntegrationModule } from "@sims/integrations/sfas-integration";
 import { ATBCIntegrationModule } from "@sims/integrations/atbc-integration";
 import { ECEIntegrationModule } from "@sims/integrations/institution-integration/ece-integration";
 import { ECEProcessIntegrationScheduler } from "./processors/schedulers/institution-integration/ece-request/ece-process-integration.scheduler";
+import { SystemUsersService } from "@sims/services/system-users";
+import { ApplicationService } from "@sims/services";
 
 @Module({
   imports: [
@@ -100,6 +103,9 @@ import { ECEProcessIntegrationScheduler } from "./processors/schedulers/institut
     FederalRestrictionsIntegrationScheduler,
     FullTimeMSFAAProcessResponseIntegrationScheduler,
     PartTimeMSFAAProcessResponseIntegrationScheduler,
+    ProcessArchiveApplicationsScheduler,
+    SystemUsersService,
+    ApplicationService,
   ],
 })
 export class QueueConsumersModule {}
