@@ -13,36 +13,26 @@ export class SupportingUserApi extends HttpBaseClient {
     supportingUserType: SupportingUserType,
     payload: ApplicationIdentifierAPIInDTO,
   ): Promise<ApplicationAPIOutDTO> {
-    try {
-      return await this.postCall(
-        this.addClientRoot(`supporting-user/${supportingUserType}/application`),
-        payload,
-      );
-    } catch (error: unknown) {
-      this.handleAPICustomError(error);
-      throw error;
-    }
+    return this.postCall(
+      this.addClientRoot(`supporting-user/${supportingUserType}/application`),
+      payload,
+    );
   }
 
   public async updateSupportingInformation(
     supportingUserType: SupportingUserType,
     payload: UpdateSupportingUserAPIInDTO,
   ): Promise<void> {
-    try {
-      await this.patchCall(
-        this.addClientRoot(`supporting-user/${supportingUserType}`),
-        payload,
-      );
-    } catch (error) {
-      this.handleAPICustomError(error);
-      throw error;
-    }
+    await this.patchCall(
+      this.addClientRoot(`supporting-user/${supportingUserType}`),
+      payload,
+    );
   }
 
   async getSupportingUsersForSideBar(
     applicationId: number,
   ): Promise<ApplicationSupportingUsersAPIOutDTO[]> {
-    return this.getCallTyped<ApplicationSupportingUsersAPIOutDTO[]>(
+    return this.getCall<ApplicationSupportingUsersAPIOutDTO[]>(
       this.addClientRoot(`supporting-user/application/${applicationId}`),
     );
   }
@@ -50,7 +40,7 @@ export class SupportingUserApi extends HttpBaseClient {
   async getSupportingUserData(
     supportingUserId: number,
   ): Promise<SupportingUserFormDataAPIOutDTO> {
-    return this.getCallTyped<SupportingUserFormDataAPIOutDTO>(
+    return this.getCall<SupportingUserFormDataAPIOutDTO>(
       this.addClientRoot(`supporting-user/${supportingUserId}`),
     );
   }

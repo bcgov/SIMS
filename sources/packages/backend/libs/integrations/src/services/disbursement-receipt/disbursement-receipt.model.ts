@@ -1,24 +1,24 @@
 export interface DisbursementReceiptGrantModel {
   grantType: string;
-  grantAmount: string;
+  grantAmount: number;
 }
 
 export interface DisbursementReceiptModel {
   documentNumber: number;
   studentSIN: string;
   fundingType: string;
-  totalEntitledDisbursedAmount: string;
-  totalDisbursedAmount: string;
+  totalEntitledDisbursedAmount: number;
+  totalDisbursedAmount: number;
   disburseDate: Date;
-  disburseAmountStudent: string;
-  disburseAmountInstitution: string;
+  disburseAmountStudent: number;
+  disburseAmountInstitution: number;
   dateSignedInstitution: Date;
   institutionCode: string;
   disburseMethodStudent: string;
   studyPeriodEndDate: Date;
-  totalEntitledGrantAmount: string;
-  totalDisbursedGrantAmount: string;
-  totalDisbursedGrantAmountStudent: string;
-  totalDisbursedGrantAmountInstitution: string;
+  totalEntitledGrantAmount: number;
+  totalDisbursedGrantAmount: number;
+  totalDisbursedGrantAmountStudent: number;
+  totalDisbursedGrantAmountInstitution: number;
   grants: DisbursementReceiptGrantModel[];
 }

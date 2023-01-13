@@ -97,17 +97,14 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
       );
       // Rollback overawards from the current application (any version of current application).
       await this.rollbackOverawards(assessmentId, transactionEntityManager);
-      // Get already sent (disbursed) values to know the amount that the student already received.
-      const currentDisbursements = await this.getDisbursementsForOverawards(
-        assessment.application.student.id,
-        assessment.application.applicationNumber,
-        DisbursementScheduleStatus.Sent,
-        transactionEntityManager,
-      );
       // Sum total disbursed values per award type (Federal or Provincial).
       // !Must be execute before the new disbursement values are added.
       const totalAlreadyDisbursedValues =
-        this.sumDisbursedValuesPerValueCode(currentDisbursements);
+        await this.sumDisbursedValuesPerValueCode(
+          assessment.application.student.id,
+          assessment.application.applicationNumber,
+          transactionEntityManager,
+        );
       // Save the disbursements to DB.
       const disbursementSchedules: DisbursementSchedule[] = [];
       for (const disbursement of disbursements) {
@@ -121,7 +118,7 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
             const newValue = new DisbursementValue();
             newValue.valueType = disbursementValue.valueType;
             newValue.valueCode = disbursementValue.valueCode;
-            newValue.valueAmount = disbursementValue.valueAmount.toString();
+            newValue.valueAmount = disbursementValue.valueAmount;
             newValue.creator = auditUser;
             return newValue;
           },
@@ -430,7 +427,9 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
    * Sum all the disbursed Canada/BC loans and grants per loan/grant value code.
    * The result object will be as the one in the example below
    * where CSLF and BCSL are the valueCode in the disbursement value.
-   * @param disbursementSchedules disbursement schedules and values from DB.
+   * @param studentId student id.
+   * @param applicationNumber application number to have the money already disbursed calculated.
+   * @param entityManager used to execute the commands in the same transaction.
    * @returns sum of all the disbursed Canada/BC loans (CSLF, CSPT, BCSL).
    * @example
    * {
@@ -440,10 +439,24 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
    *    BGPD: 1234
    * }
    */
-  private sumDisbursedValuesPerValueCode(
-    disbursementSchedules: DisbursementSchedule[],
-  ): Record<string, number> {
+  private async sumDisbursedValuesPerValueCode(
+    studentId: number,
+    applicationNumber: string,
+    entityManager: EntityManager,
+  ): Promise<Record<string, number>> {
+    // Get already sent (disbursed) values to know the amount that the student already received.
+    const disbursementSchedules = await this.getDisbursementsForOverawards(
+      studentId,
+      applicationNumber,
+      DisbursementScheduleStatus.Sent,
+      entityManager,
+    );
+
     const totalPerValueCode: Record<string, number> = {};
+    // While calculating the total amount paid to the student, the overawardAmountSubtracted is added to the
+    // effectiveAmount because it should be considered part of what the student received.
+    // The overawardAmountSubtracted is money that the student is being paid but before e-Cert generation
+    // it is used to deduct student debt, and the deduction is made with "student money".
     disbursementSchedules
       .filter(
         (disbursementSchedule) =>
@@ -456,7 +469,8 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
       .forEach((disbursementValue) => {
         totalPerValueCode[disbursementValue.valueCode] =
           (totalPerValueCode[disbursementValue.valueCode] ?? 0) +
-          +(disbursementValue.effectiveAmount ?? 0);
+          (disbursementValue.overawardAmountSubtracted ?? 0) +
+          (disbursementValue.effectiveAmount ?? 0);
       });
     return totalPerValueCode;
   }
@@ -553,7 +567,7 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
           student: { id: studentId } as Student,
           studentAssessment: { id: assessmentId } as StudentAssessment,
           disbursementValueCode: valueCode,
-          overawardValue: remainingStudentDebit.toString(),
+          overawardValue: remainingStudentDebit,
           originType: DisbursementOverawardOriginType.ReassessmentOveraward,
           creator: auditUser,
         } as DisbursementOveraward);
@@ -602,8 +616,7 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
   ): number {
     let studentDebit = totalStudentDebit;
     for (const award of awards) {
-      const awardValueAmount = +award.valueAmount;
-      if (awardValueAmount >= totalStudentDebit) {
+      if (award.valueAmount >= totalStudentDebit) {
         // Current disbursement value is enough to pay the debit.
         // For instance:
         // - Award: $1000
@@ -612,7 +625,7 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
         // - Award: $1000
         // - disbursedAmountSubtracted: $750
         // - Student debit: $0
-        award.disbursedAmountSubtracted = studentDebit.toString();
+        award.disbursedAmountSubtracted = studentDebit;
         studentDebit = 0;
       } else {
         // Current disbursement is not enough to pay the debit.
@@ -627,7 +640,7 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
         // If there is one more disbursement with the same award, the $250
         // student debit will be taken from there, if possible executing the
         // second iteration of this for loop.
-        studentDebit -= awardValueAmount;
+        studentDebit -= award.valueAmount;
         award.disbursedAmountSubtracted = award.valueAmount;
       }
     }

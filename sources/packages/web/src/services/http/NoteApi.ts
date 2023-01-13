@@ -25,7 +25,7 @@ export class NoteApi extends HttpBaseClient {
     noteType?: string,
   ): Promise<NoteItemModel[]> {
     const queryString = noteType ? `?noteType=${noteType}` : ``;
-    return this.getCallTyped<NoteItemModel[]>(
+    return this.getCall<NoteItemModel[]>(
       this.addClientRoot(`note/institution/${institutionId}${queryString}`),
     );
   }
@@ -35,7 +35,7 @@ export class NoteApi extends HttpBaseClient {
     noteType?: string,
   ): Promise<NoteItemModel[]> {
     const queryString = noteType ? `?noteType=${noteType}` : ``;
-    return this.getCallTyped<NoteItemModel[]>(
+    return this.getCall<NoteItemModel[]>(
       this.addClientRoot(`note/student/${studentId}${queryString}`),
     );
   }

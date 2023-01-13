@@ -110,30 +110,30 @@ describe("Schedulers - e-Cert full time integration - Create e-Cert file", () =>
         createFakeDisbursementValue(
           DisbursementValueType.CanadaLoan,
           "CSLF",
-          "5000",
-          { disbursedAmountSubtracted: "1000" },
+          5000,
+          { disbursedAmountSubtracted: 1000 },
         ),
         createFakeDisbursementValue(
           DisbursementValueType.BCLoan,
           "BCSL",
-          "4000",
-          { disbursedAmountSubtracted: "500" },
+          4000,
+          { disbursedAmountSubtracted: 500 },
         ),
         createFakeDisbursementValue(
           DisbursementValueType.CanadaGrant,
           "CSGP",
-          "2000",
+          2000,
         ),
         createFakeDisbursementValue(
           DisbursementValueType.BCGrant,
           "BCAG",
-          "1500",
-          { disbursedAmountSubtracted: "500" },
+          1500,
+          { disbursedAmountSubtracted: 500 },
         ),
         createFakeDisbursementValue(
           DisbursementValueType.BCGrant,
           "BGPD",
-          "2500",
+          2500,
         ),
       ],
     });
@@ -159,7 +159,7 @@ describe("Schedulers - e-Cert full time integration - Create e-Cert file", () =>
       student: savedStudent,
     });
     fakeCanadaLoanOverawardBalance.disbursementValueCode = "CSLF";
-    fakeCanadaLoanOverawardBalance.overawardValue = "4500";
+    fakeCanadaLoanOverawardBalance.overawardValue = 4500;
     await disbursementOverawardRepo.save(fakeCanadaLoanOverawardBalance);
 
     // Act
@@ -174,7 +174,7 @@ describe("Schedulers - e-Cert full time integration - Create e-Cert file", () =>
           student: {
             id: savedStudent.id,
           },
-          overawardValue: "-4000",
+          overawardValue: -4000,
           disbursementValueCode: "CSLF",
           originType: DisbursementOverawardOriginType.AwardValueAdjusted,
         },
@@ -201,18 +201,18 @@ describe("Schedulers - e-Cert full time integration - Create e-Cert file", () =>
     const hasExpectedCSLF = awards.filter(
       (award) =>
         award.valueCode === "CSLF" &&
-        award.disbursedAmountSubtracted === "1000.00" &&
-        award.overawardAmountSubtracted === "4000.00" &&
-        award.effectiveAmount === "0.00",
+        award.disbursedAmountSubtracted === 1000 &&
+        award.overawardAmountSubtracted === 4000 &&
+        award.effectiveAmount === 0,
     );
     expect(hasExpectedCSLF.length).toBe(1);
     // Assert BCSL.
     const hasExpectedBCSL = awards.filter(
       (award) =>
         award.valueCode === "BCSL" &&
-        award.disbursedAmountSubtracted === "500.00" &&
+        award.disbursedAmountSubtracted === 500 &&
         !award.overawardAmountSubtracted &&
-        award.effectiveAmount === "3500.00",
+        award.effectiveAmount === 3500,
     );
     expect(hasExpectedBCSL.length).toBe(1);
     // Assert CSGP.
@@ -221,16 +221,16 @@ describe("Schedulers - e-Cert full time integration - Create e-Cert file", () =>
         award.valueCode === "CSGP" &&
         !award.disbursedAmountSubtracted &&
         !award.overawardAmountSubtracted &&
-        award.effectiveAmount === "2000.00",
+        award.effectiveAmount === 2000,
     );
     expect(hasExpectedCSGP.length).toBe(1);
     // Assert BCAG.
     const hasExpectedBCAG = awards.filter(
       (award) =>
         award.valueCode === "BCAG" &&
-        award.disbursedAmountSubtracted === "500.00" &&
+        award.disbursedAmountSubtracted === 500 &&
         !award.overawardAmountSubtracted &&
-        award.effectiveAmount === "1000.00",
+        award.effectiveAmount === 1000,
     );
     expect(hasExpectedBCAG.length).toBe(1);
     // Assert BGPD.
@@ -239,7 +239,7 @@ describe("Schedulers - e-Cert full time integration - Create e-Cert file", () =>
         award.valueCode === "BGPD" &&
         !award.disbursedAmountSubtracted &&
         !award.overawardAmountSubtracted &&
-        award.effectiveAmount === "2500.00",
+        award.effectiveAmount === 2500,
     );
     expect(hasExpectedBGPD.length).toBe(1);
     // The BC total grant (BCSG) will be generated and
@@ -249,7 +249,7 @@ describe("Schedulers - e-Cert full time integration - Create e-Cert file", () =>
         award.valueCode === "BCSG" &&
         !award.disbursedAmountSubtracted &&
         !award.overawardAmountSubtracted &&
-        award.effectiveAmount === "3500.00",
+        award.effectiveAmount === 3500,
     );
     expect(hasExpectedBCSG.length).toBe(1);
     // At least one file must be generated.

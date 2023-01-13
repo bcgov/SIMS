@@ -17,7 +17,7 @@ export class InstitutionUserApi extends HttpBaseClient {
    * @returns user details.
    */
   async getMyInstitutionDetails(): Promise<InstitutionUserDetailAPIOutDTO> {
-    return this.getCallTyped<InstitutionUserDetailAPIOutDTO>(
+    return this.getCall<InstitutionUserDetailAPIOutDTO>(
       this.addClientRoot("institution-user/my-details"),
     );
   }
@@ -40,7 +40,7 @@ export class InstitutionUserApi extends HttpBaseClient {
         : ""
     }?`;
     url += getPaginationQueryString(paginationOptions);
-    return this.getCallTyped<PaginatedResults<InstitutionUserAPIOutDTO>>(
+    return this.getCall<PaginatedResults<InstitutionUserAPIOutDTO>>(
       this.addClientRoot(url),
     );
   }
@@ -59,14 +59,10 @@ export class InstitutionUserApi extends HttpBaseClient {
     if (AuthService.shared.authClientType === ClientIdType.AEST) {
       url = `institution-user/${institutionId}`;
     }
-    try {
-      await this.postCall<CreateInstitutionUserAPIInDTO>(
-        this.addClientRoot(url),
-        payload,
-      );
-    } catch (error: unknown) {
-      this.handleAPICustomError(error);
-    }
+    await this.postCall<CreateInstitutionUserAPIInDTO>(
+      this.addClientRoot(url),
+      payload,
+    );
   }
 
   /**
@@ -78,14 +74,10 @@ export class InstitutionUserApi extends HttpBaseClient {
     institutionUserId: number,
     payload: UpdateInstitutionUserAPIInDTO,
   ): Promise<void> {
-    try {
-      return await this.patchCall<UpdateInstitutionUserAPIInDTO>(
-        this.addClientRoot(`institution-user/${institutionUserId}`),
-        payload,
-      );
-    } catch (error: unknown) {
-      this.handleAPICustomError(error);
-    }
+    return this.patchCall<UpdateInstitutionUserAPIInDTO>(
+      this.addClientRoot(`institution-user/${institutionUserId}`),
+      payload,
+    );
   }
 
   /**
@@ -95,7 +87,7 @@ export class InstitutionUserApi extends HttpBaseClient {
    * the decisions that need happen to complete the process.
    */
   async getInstitutionUserStatus(): Promise<InstitutionUserStatusAPIOutDTO> {
-    return this.getCallTyped<InstitutionUserStatusAPIOutDTO>(
+    return this.getCall<InstitutionUserStatusAPIOutDTO>(
       this.addClientRoot("institution-user/status"),
     );
   }
@@ -108,7 +100,7 @@ export class InstitutionUserApi extends HttpBaseClient {
   async getInstitutionUserById(
     institutionUserId: number,
   ): Promise<InstitutionUserAPIOutDTO> {
-    return this.getCallTyped<InstitutionUserAPIOutDTO>(
+    return this.getCall<InstitutionUserAPIOutDTO>(
       this.addClientRoot(`institution-user/${institutionUserId}`),
     );
   }
@@ -122,16 +114,12 @@ export class InstitutionUserApi extends HttpBaseClient {
     institutionUserId: number,
     isActive: boolean,
   ): Promise<void> {
-    try {
-      await this.patchCall<UserActiveStatusAPIInDTO>(
-        this.addClientRoot(`institution-user/${institutionUserId}/status`),
-        {
-          isActive,
-        },
-      );
-    } catch (error: unknown) {
-      this.handleAPICustomError(error);
-    }
+    await this.patchCall<UserActiveStatusAPIInDTO>(
+      this.addClientRoot(`institution-user/${institutionUserId}/status`),
+      {
+        isActive,
+      },
+    );
   }
 
   /**

@@ -9,6 +9,7 @@ import { getFileNameAsCurrentTimestamp } from "@sims/utilities";
 import { DisbursementScheduleService } from "@sims/integrations/services";
 import { ECERecord, ECEUploadResult } from "./models/ece-integration.model";
 import { ECEIntegrationService } from "./ece.integration.service";
+import { ECEFileFooter } from "./ece-files/ece-file-footer";
 
 @Injectable()
 export class ECEProcessingService {
@@ -95,9 +96,12 @@ export class ECEProcessingService {
         fileInfo.filePath,
       );
       this.logger.log("Content uploaded.");
+      const eceFileFooter = fileContent[
+        fileContent.length - 1
+      ] as ECEFileFooter;
       return {
         generatedFile: fileInfo.filePath,
-        uploadedRecords: fileContent.length - 2,
+        uploadedRecords: eceFileFooter.recordCount,
       };
     } catch (error) {
       this.logger.error(

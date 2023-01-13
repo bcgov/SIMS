@@ -25,7 +25,7 @@ export class DesignationAgreementApi extends HttpBaseClient {
   async getDesignationAgreement(
     designationId: number,
   ): Promise<DesignationAgreementAPIOutDTO> {
-    return this.getCallTyped<DesignationAgreementAPIOutDTO>(
+    return this.getCall<DesignationAgreementAPIOutDTO>(
       this.addClientRoot(`designation-agreement/${designationId}`),
     );
   }
@@ -36,7 +36,7 @@ export class DesignationAgreementApi extends HttpBaseClient {
     const url = institutionId
       ? `designation-agreement/institution/${institutionId}`
       : "designation-agreement";
-    return this.getCallTyped<DesignationAgreementDetailsAPIOutDTO[]>(
+    return this.getCall<DesignationAgreementDetailsAPIOutDTO[]>(
       this.addClientRoot(url),
     );
   }
@@ -49,7 +49,7 @@ export class DesignationAgreementApi extends HttpBaseClient {
     if (searchCriteria) {
       url = `${url}?${PaginationParams.SearchCriteria}=${searchCriteria}`;
     }
-    return this.getCallTyped<PendingDesignationAgreementDetailsAPIOutDTO[]>(
+    return this.getCall<PendingDesignationAgreementDetailsAPIOutDTO[]>(
       this.addClientRoot(url),
     );
   }

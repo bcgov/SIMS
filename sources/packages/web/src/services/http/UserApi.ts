@@ -10,19 +10,19 @@ import { StatusCodes } from "http-status-codes";
 
 export class UserApi extends HttpBaseClient {
   async bceidAccount(): Promise<BCeIDDetailsAPIOutDTO> {
-    return this.getCallTyped<BCeIDDetailsAPIOutDTO>(
+    return this.getCall<BCeIDDetailsAPIOutDTO>(
       this.addClientRoot("user/bceid-account"),
     );
   }
 
   async bceidAccounts(): Promise<BCeIDAccountsAPIOutDTO | null> {
-    return this.getCallTyped<BCeIDAccountsAPIOutDTO>(
+    return this.getCall<BCeIDAccountsAPIOutDTO>(
       this.addClientRoot("user/bceid-accounts"),
     );
   }
 
   async getInstitutionUser(): Promise<InstitutionUserDetailsAPIOutDTO> {
-    return this.getCallTyped<InstitutionUserDetailsAPIOutDTO>(
+    return this.getCall<InstitutionUserDetailsAPIOutDTO>(
       this.addClientRoot("user"),
     );
   }
@@ -51,7 +51,7 @@ export class UserApi extends HttpBaseClient {
         authHeader ?? this.addAuthHeader(),
       );
       return true;
-    } catch (error) {
+    } catch (error: unknown) {
       const axiosError = error as AxiosError;
       if (axiosError.response?.status === StatusCodes.FORBIDDEN) {
         // If the user do not have a proper authorization

@@ -18,20 +18,16 @@ export class StudentAppealApi extends HttpBaseClient {
     applicationId: number,
     studentAppeal: StudentAppealAPIInDTO,
   ): Promise<void> {
-    try {
-      await this.postCall<StudentAppealAPIInDTO>(
-        this.addClientRoot(`appeal/application/${applicationId}`),
-        studentAppeal,
-      );
-    } catch (error: unknown) {
-      this.handleAPICustomError(error);
-    }
+    await this.postCall<StudentAppealAPIInDTO>(
+      this.addClientRoot(`appeal/application/${applicationId}`),
+      studentAppeal,
+    );
   }
 
   async getStudentAppealWithRequests(
     appealId: number,
   ): Promise<StudentAppealAPIOutDTO> {
-    return this.getCallTyped<StudentAppealAPIOutDTO>(
+    return this.getCall<StudentAppealAPIOutDTO>(
       this.addClientRoot(`appeal/${appealId}/requests`),
     );
   }
@@ -40,14 +36,10 @@ export class StudentAppealApi extends HttpBaseClient {
     appealId: number,
     approvals: StudentAppealRequestApprovalAPIInDTO[],
   ): Promise<void> {
-    try {
-      await this.patchCall<StudentAppealApprovalAPIInDTO>(
-        this.addClientRoot(`appeal/${appealId}/requests`),
-        { requests: approvals },
-      );
-    } catch (error: unknown) {
-      this.handleAPICustomError(error);
-    }
+    await this.patchCall<StudentAppealApprovalAPIInDTO>(
+      this.addClientRoot(`appeal/${appealId}/requests`),
+      { requests: approvals },
+    );
   }
 
   /**
@@ -60,7 +52,7 @@ export class StudentAppealApi extends HttpBaseClient {
   ): Promise<PaginatedResultsAPIOutDTO<StudentAppealPendingSummaryAPIOutDTO>> {
     let url = "appeal/pending?";
     url += getPaginationQueryString(paginationOptions);
-    return this.getCallTyped<
+    return this.getCall<
       PaginatedResultsAPIOutDTO<StudentAppealPendingSummaryAPIOutDTO>
     >(this.addClientRoot(url));
   }

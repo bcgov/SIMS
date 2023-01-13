@@ -63,6 +63,7 @@ import {
 } from "@nestjs/swagger";
 import { ApplicationControllerService } from "./application.controller.service";
 import { CustomNamedError } from "@sims/utilities";
+import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
 
 @AllowAuthorizedParty(AuthorizedParties.student)
 @RequiresStudentAccount()
@@ -264,7 +265,7 @@ export class ApplicationStudentsController extends BaseController {
   async createDraftApplication(
     @Body() payload: SaveApplicationAPIInDTO,
     @UserToken() studentToken: StudentUserToken,
-  ): Promise<number> {
+  ): Promise<PrimaryIdentifierAPIOutDTO> {
     const programYear = await this.programYearService.getActiveProgramYear(
       payload.programYearId,
     );
@@ -284,7 +285,7 @@ export class ApplicationStudentsController extends BaseController {
           payload.data,
           payload.associatedFiles,
         );
-      return draftApplication.id;
+      return { id: draftApplication.id };
     } catch (error) {
       if (error.name === MORE_THAN_ONE_APPLICATION_DRAFT_ERROR) {
         throw new UnprocessableEntityException(

@@ -222,9 +222,9 @@ export const studentRoutes: Array<RouteRecordRaw> = [
             }
           }
         })
-        .catch((e) => {
-          console.error(e);
-          throw e;
+        .catch((error: unknown) => {
+          console.error(error);
+          throw error;
         });
     },
   },

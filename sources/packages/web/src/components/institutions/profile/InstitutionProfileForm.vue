@@ -47,7 +47,7 @@ export default {
     },
     allowedRole: {
       type: String as PropType<Role>,
-      required: true,
+      required: false,
     },
   },
   emits: ["submitInstitutionProfile"],
