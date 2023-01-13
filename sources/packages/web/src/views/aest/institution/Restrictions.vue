@@ -186,7 +186,7 @@ export default {
         );
         await loadInstitutionRestrictions();
         snackBar.success("The restriction has been added to institution.");
-      } catch (error: unknown) {
+      } catch {
         snackBar.error("Unexpected error while adding the restriction.");
       }
     };
