@@ -1,9 +1,9 @@
 {
   "title": "SFAA2021-22",
-  "display": "wizard",
-  "type": "form",
   "name": "SFAA2021-22",
   "path": "sfaa2021-22",
+  "type": "form",
+  "display": "wizard",
   "tags": [
     "common"
   ],
@@ -2193,7 +2193,8 @@
                       "allowMultipleMasks": false,
                       "addons": [],
                       "tag": "p",
-                      "id": "ebo8vbh"
+                      "id": "ebo8vbh",
+                      "className": ""
                     },
                     {
                       "label": "Program name",
@@ -2429,7 +2430,8 @@
                       "allowMultipleMasks": false,
                       "addons": [],
                       "tag": "p",
-                      "id": "evgar2"
+                      "id": "evgar2",
+                      "className": ""
                     },
                     {
                       "label": "HTML",
@@ -2504,7 +2506,8 @@
                       "allowMultipleMasks": false,
                       "addons": [],
                       "tag": "p",
-                      "id": "e4deel"
+                      "id": "e4deel",
+                      "className": ""
                     },
                     {
                       "label": "Columns",
@@ -2577,7 +2580,7 @@
                                 "maxWords": "",
                                 "pattern": "",
                                 "customMessage": "",
-                                "custom": "console.log('data.studystartDate', data.studystartDate)\r\nconsole.log('data.programYearStartDate', data.programYearStartDate)\r\nconsole.log('data', data)\r\n// To calculate the time difference of studystartDate and programYearStartDate\r\nconst first_difference_In_Time =\r\n  new Date(data.studystartDate).getTime() -\r\n  new Date(data.programYearStartDate).getTime();\r\n// To calculate the time difference of programYearEndDate and studystartDate\r\nconst last_difference_In_Time =\r\n  new Date(data.programYearEndDate).getTime() -\r\n  new Date(data.studystartDate).getTime();\r\n\r\n// To calculate the no. of days between two dates\r\nconst first_difference_In_Days = first_difference_In_Time / (1000 * 3600 * 24);\r\n\r\n// To calculate the no. of days between two dates\r\nconst last_difference_In_Days = last_difference_In_Time / (1000 * 3600 * 24);\r\n\r\n// studystartDate should be equal or in between program year start and end date\r\nvalid =\r\n  first_difference_In_Days >= 0 && last_difference_In_Days >= 0\r\n    ? true\r\n    : \"Study start date should be within the program year\";\r\n",
+                                "custom": "// To calculate the time difference of studystartDate and programYearStartDate\r\nconst first_difference_In_Time =\r\n  new Date(data.studystartDate).getTime() -\r\n  new Date(data.programYearStartDate).getTime();\r\n// To calculate the time difference of programYearEndDate and studystartDate\r\nconst last_difference_In_Time =\r\n  new Date(data.programYearEndDate).getTime() -\r\n  new Date(data.studystartDate).getTime();\r\n\r\n// To calculate the no. of days between two dates\r\nconst first_difference_In_Days = first_difference_In_Time / (1000 * 3600 * 24);\r\n\r\n// To calculate the no. of days between two dates\r\nconst last_difference_In_Days = last_difference_In_Time / (1000 * 3600 * 24);\r\n\r\n// studystartDate should be equal or in between program year start and end date\r\nvalid =\r\n  first_difference_In_Days >= 0 && last_difference_In_Days >= 0\r\n    ? true\r\n    : \"Study start date should be within the program year\";\r\n",
                                 "customPrivate": false,
                                 "json": "",
                                 "strictDateValidation": false,
@@ -2591,7 +2594,7 @@
                               "tags": [],
                               "properties": {},
                               "conditional": {
-                                "show": null,
+                                "show": "",
                                 "when": null,
                                 "eq": "",
                                 "json": ""
@@ -2716,7 +2719,9 @@
                               "displayMask": "",
                               "spellcheck": true,
                               "truncateMultipleSpaces": false,
-                              "id": "e3cbd2m"
+                              "id": "e3cbd2m",
+                              "tags": [],
+                              "lockKey": true
                             }
                           ],
                           "width": 6,
@@ -2793,6 +2798,31 @@
                       "lazyLoad": false,
                       "autoAdjust": false,
                       "id": "e3mfbie"
+                    },
+                    {
+                      "key": "customProgramAndOfferingStudyenddatewarning",
+                      "label": "Study end date warning",
+                      "input": false,
+                      "tag": "p",
+                      "attrs": [
+                        {
+                          "value": "",
+                          "attr": ""
+                        }
+                      ],
+                      "className": "alert alert-warning fa fa-exclamation-triangle w-100",
+                      "content": "<span class=\"banner-header ml-2\">This study end date has past</span>\n<br>\n<span>The selected study period has past and you can no longer receive funding. Continuing your application will require StudentAid BC approval to be eligible for funding.</span>",
+                      "type": "htmlelement",
+                      "hideLabel": true,
+                      "tags": [],
+                      "conditional": {
+                        "show": "true",
+                        "when": "studyEndDatePastAllowedDays",
+                        "eq": "true"
+                      },
+                      "properties": {},
+                      "customClass": "banner-warning",
+                      "customConditional": ""
                     }
                   ],
                   "allowPrevious": false,
@@ -3025,7 +3055,8 @@
                       "allowMultipleMasks": false,
                       "addons": [],
                       "tag": "p",
-                      "id": "eyhhx9p"
+                      "id": "eyhhx9p",
+                      "className": ""
                     },
                     {
                       "label": "Columns",
@@ -3191,7 +3222,8 @@
                               "allowMultipleMasks": false,
                               "addons": [],
                               "tag": "p",
-                              "id": "eovpl3k"
+                              "id": "eovpl3k",
+                              "className": ""
                             }
                           ],
                           "width": 6,
@@ -3347,7 +3379,8 @@
                               "allowMultipleMasks": false,
                               "addons": [],
                               "tag": "p",
-                              "id": "eueqprv"
+                              "id": "eueqprv",
+                              "className": ""
                             }
                           ],
                           "width": 6,
@@ -3432,7 +3465,8 @@
                               "allowMultipleMasks": false,
                               "addons": [],
                               "tag": "p",
-                              "id": "etilmiw"
+                              "id": "etilmiw",
+                              "className": ""
                             }
                           ],
                           "width": 6,
@@ -3836,7 +3870,53 @@
                   "addons": [],
                   "fieldSet": false,
                   "inline": false,
-                  "id": "eif07al"
+                  "id": "eif07al",
+                  "lockKey": true
+                },
+                {
+                  "key": "programStudyperiodwarning",
+                  "label": "Study period end date warning",
+                  "input": false,
+                  "tag": "p",
+                  "attrs": [
+                    {
+                      "value": "",
+                      "attr": ""
+                    }
+                  ],
+                  "className": "alert alert-warning fa fa-exclamation-triangle w-100",
+                  "content": "<span class=\"banner-header ml-2\">This study end date has past</span>\n<br>\n<span>The selected study period has past and you can no longer receive funding. Continuing your application will require StudentAid BC approval to be eligible for funding.</span>",
+                  "type": "htmlelement",
+                  "tags": [],
+                  "conditional": {
+                    "show": "true",
+                    "when": "selectedStudyEndDatePastAllowedDays",
+                    "eq": "true"
+                  },
+                  "properties": {},
+                  "customClass": "banner-warning",
+                  "customConditional": "",
+                  "hideLabel": true
+                },
+                {
+                  "input": true,
+                  "tableView": false,
+                  "key": "studyEndDatePastMaxAllowedDaysApplicationException",
+                  "label": "Application Exception - Maximum allowed days after study end date is past",
+                  "protected": false,
+                  "unique": false,
+                  "persistent": true,
+                  "type": "hidden",
+                  "tags": [],
+                  "conditional": {
+                    "show": "",
+                    "when": null,
+                    "eq": ""
+                  },
+                  "properties": {},
+                  "calculateValue": "value = \"studentApplicationException\";",
+                  "lockKey": true,
+                  "customConditional": "show = studyEndDatePastAllowedDays || selectedStudyEndDatePastAllowedDa;"
                 }
               ],
               "placeholder": "",
@@ -4106,7 +4186,8 @@
               "allowMultipleMasks": false,
               "addons": [],
               "tag": "p",
-              "id": "emh3t8f"
+              "id": "emh3t8f",
+              "className": ""
             },
             {
               "label": "Course information",
@@ -4716,7 +4797,8 @@
                   "addons": [],
                   "tree": false,
                   "lazyLoad": false,
-                  "legend": ""
+                  "legend": "",
+                  "inDataGrid": true
                 }
               ],
               "placeholder": "",
@@ -5325,7 +5407,87 @@
           "allowMultipleMasks": false,
           "addons": [],
           "inputType": "hidden",
-          "id": "ehrxohq"
+          "id": "ehrxohq",
+          "tags": [],
+          "lockKey": true
+        },
+        {
+          "input": true,
+          "tableView": false,
+          "key": "selectedOfferingEndDate",
+          "label": "Selected offering end date",
+          "protected": false,
+          "unique": false,
+          "persistent": true,
+          "type": "hidden",
+          "tags": [],
+          "conditional": {
+            "show": "",
+            "when": null,
+            "eq": ""
+          },
+          "properties": {},
+          "lockKey": true
+        },
+        {
+          "input": true,
+          "tableView": false,
+          "key": "maximumAllowedDaysAfterStudyEndDate",
+          "label": "Maximum allowed days after study end date",
+          "protected": false,
+          "unique": false,
+          "persistent": true,
+          "type": "hidden",
+          "tags": [],
+          "conditional": {
+            "show": "",
+            "when": null,
+            "eq": ""
+          },
+          "properties": {},
+          "lockKey": true,
+          "calculateValue": "/**\n * Maximum number of days past the study period end date\n * beyond when an application will require StudentAid BC\n * approval for funding.\n */\n \nvalue = 42;",
+          "calculateServer": true
+        },
+        {
+          "input": true,
+          "tableView": false,
+          "key": "studyEndDatePastAllowedDays",
+          "label": "Study end date past maximum allowed days",
+          "protected": false,
+          "unique": false,
+          "persistent": true,
+          "type": "hidden",
+          "tags": [],
+          "conditional": {
+            "show": "",
+            "when": null,
+            "eq": ""
+          },
+          "properties": {},
+          "lockKey": true,
+          "calculateServer": true,
+          "calculateValue": "/**\n * Validates if the date provided is within given days\n * before now.\n * e.g. If the current date is 10-JAN-2023 and\n * given number of days is 4, it validates if the given date\n * is on or after 06-JAN-2023.\n * \n */\n \nfunction isAfterGivenDaysBeforeNow(\n  givenDate,\n  numberOfDaysBeforeToday\n) {\n  return moment\n    .utc(givenDate)\n    .isAfter(\n      moment\n        .utc(moment.utc(new Date()).format(\"YYYY-MM-DD\"))\n        .subtract(numberOfDaysBeforeToday + 1, \"days\")\n    );\n}\n\nvalue = !!data.studyendDate && !isAfterGivenDaysBeforeNow(data.studyendDate,data.maximumAllowedDaysAfterStudyEndDate);"
+        },
+        {
+          "input": true,
+          "tableView": false,
+          "key": "selectedStudyEndDatePastAllowedDays",
+          "label": "Selected study end date past maximum allowed days",
+          "protected": false,
+          "unique": false,
+          "persistent": true,
+          "type": "hidden",
+          "tags": [],
+          "conditional": {
+            "show": "",
+            "when": null,
+            "eq": ""
+          },
+          "properties": {},
+          "lockKey": true,
+          "calculateServer": true,
+          "calculateValue": "/**\n * Validates if the date provided is within given days\n * before now.\n * e.g. If the current date is 10-JAN-2023 and\n * given number of days is 4, it validates if the given date\n * is on or after 06-JAN-2023.\n * \n */\n \nfunction isAfterGivenDaysBeforeNow(\n  givenDate,\n  numberOfDaysBeforeToday\n) {\n  return moment\n    .utc(givenDate)\n    .isAfter(\n      moment\n        .utc(moment.utc(new Date()).format(\"YYYY-MM-DD\"))\n        .subtract(numberOfDaysBeforeToday + 1, \"days\")\n    );\n}\n\nvalue = !!data.selectedOfferingEndDate && !isAfterGivenDaysBeforeNow(data.selectedOfferingEndDate,data.maximumAllowedDaysAfterStudyEndDate);"
         }
       ],
       "input": false,
@@ -7176,7 +7338,8 @@
                       "allowMultipleMasks": false,
                       "addons": [],
                       "inputType": "hidden",
-                      "id": "ej3ulok"
+                      "id": "ej3ulok",
+                      "lockKey": true
                     },
                     {
                       "label": "HTML",
@@ -7801,7 +7964,7 @@
                     {
                       "components": [
                         {
-                          "html": "<p>We accept <strong>JPG, PNG, DOC, DOCX, PDF, TXT</strong></p>",
+                          "html": "<p>We accept <strong>JPG, PNG, DOC, DOCX, PDF, TXT</strong></p>\n",
                           "label": "Content",
                           "customClass": "",
                           "refreshOnChange": false,
@@ -7884,7 +8047,7 @@
                     {
                       "components": [
                         {
-                          "html": "<p style=\"text-align:right;\">4MB file limit each</p>",
+                          "html": "<p style=\"text-align:right;\">4MB file limit each</p>\n",
                           "label": "Content",
                           "customClass": "",
                           "refreshOnChange": false,
@@ -8932,7 +9095,8 @@
                       "allowMultipleMasks": false,
                       "addons": [],
                       "tag": "p",
-                      "id": "exvzcx"
+                      "id": "exvzcx",
+                      "className": ""
                     },
                     {
                       "label": "HTML",
@@ -9186,7 +9350,7 @@
                         {
                           "components": [
                             {
-                              "html": "<p>We accept <strong>JPG, PNG, DOC, DOCX, PDF, TXT</strong></p>",
+                              "html": "<p>We accept <strong>JPG, PNG, DOC, DOCX, PDF, TXT</strong></p>\n",
                               "label": "Content",
                               "refreshOnChange": false,
                               "key": "content46",
@@ -9264,7 +9428,7 @@
                         {
                           "components": [
                             {
-                              "html": "<p style=\"text-align:right;\">4MB file limit each</p>",
+                              "html": "<p style=\"text-align:right;\">4MB file limit each</p>\n",
                               "label": "Content",
                               "refreshOnChange": false,
                               "key": "content47",
@@ -10767,7 +10931,8 @@
               "allowMultipleMasks": false,
               "addons": [],
               "tag": "p",
-              "id": "eqr6a1n"
+              "id": "eqr6a1n",
+              "className": ""
             },
             {
               "label": "<strong>Do you want to allow a trusted contact to interact with StudentAid BC on your behalf?</strong>",
@@ -11022,7 +11187,8 @@
                   "allowMultipleMasks": false,
                   "addons": [],
                   "tag": "p",
-                  "id": "ed9vh5c"
+                  "id": "ed9vh5c",
+                  "className": ""
                 },
                 {
                   "label": "<h4 class='category-header-medium-small'>ROI information</h4",
@@ -11183,7 +11349,8 @@
                       "inputMask": "",
                       "displayMask": "",
                       "spellcheck": true,
-                      "truncateMultipleSpaces": false
+                      "truncateMultipleSpaces": false,
+                      "inDataGrid": true
                     },
                     {
                       "label": "Last name",
@@ -11260,7 +11427,8 @@
                       "inputMask": "",
                       "displayMask": "",
                       "spellcheck": true,
-                      "truncateMultipleSpaces": false
+                      "truncateMultipleSpaces": false,
+                      "inDataGrid": true
                     },
                     {
                       "label": "<strong>What is your relationship with this contact?</strong>",
@@ -11365,7 +11533,8 @@
                       "inputType": "radio",
                       "fieldSet": false,
                       "id": "ego9ype0000000000000000000000000000000000",
-                      "defaultValue": ""
+                      "defaultValue": "",
+                      "inDataGrid": true
                     }
                   ],
                   "placeholder": "",
@@ -11570,7 +11739,8 @@
                       "allowMultipleMasks": false,
                       "addons": [],
                       "tag": "p",
-                      "id": "esnordm"
+                      "id": "esnordm",
+                      "className": ""
                     },
                     {
                       "label": "HTML",
@@ -11644,7 +11814,8 @@
                       "allowMultipleMasks": false,
                       "addons": [],
                       "tag": "p",
-                      "id": "e0dlfor"
+                      "id": "e0dlfor",
+                      "className": ""
                     },
                     {
                       "label": "HTML",
@@ -11718,7 +11889,8 @@
                       "allowMultipleMasks": false,
                       "addons": [],
                       "tag": "p",
-                      "id": "e7fwi1n"
+                      "id": "e7fwi1n",
+                      "className": ""
                     },
                     {
                       "label": "HTML",
@@ -11792,7 +11964,8 @@
                       "allowMultipleMasks": false,
                       "addons": [],
                       "tag": "p",
-                      "id": "eds51he"
+                      "id": "eds51he",
+                      "className": ""
                     }
                   ],
                   "placeholder": "",
