@@ -90,7 +90,7 @@ export default defineComponent({
         );
         viewOnly.value = true;
         snackBar.success("Confirmation of Assessment completed successfully!");
-      } catch (error: unknown) {
+      } catch {
         snackBar.error("An error happened while confirming the assessment.");
       }
     };

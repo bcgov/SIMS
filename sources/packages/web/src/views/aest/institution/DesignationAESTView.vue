@@ -205,7 +205,7 @@ export default {
             `The given designation has been ${designationStatus.toLowerCase()} and notes added.`,
           );
           await loadDesignation();
-        } catch (error: unknown) {
+        } catch {
           snackBar.error(
             "Unexpected error while approving/declining the designation.",
           );

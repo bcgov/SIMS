@@ -61,7 +61,7 @@ export default {
         router.push({
           name: InstitutionRoutesConst.INSTITUTION_DASHBOARD,
         });
-      } catch (error: unknown) {
+      } catch {
         snackBar.error("Unexpected error while creating the institution.");
       } finally {
         processing.value = false;

@@ -175,7 +175,7 @@ export default {
         snackBar.success(
           "The given restriction has been resolved and resolution notes added.",
         );
-      } catch (error: unknown) {
+      } catch {
         snackBar.error("Unexpected error while resolving the restriction.");
       }
     };
@@ -197,7 +197,7 @@ export default {
         );
         await loadStudentRestrictions();
         snackBar.success("The restriction has been added to student.");
-      } catch (error: unknown) {
+      } catch {
         snackBar.error("Unexpected error while adding the restriction.");
       }
     };

@@ -151,7 +151,7 @@ export default {
           `Application exception status is now ${approveExceptionPayload.exceptionStatus}.`,
         );
         gotToAssessmentsSummary();
-      } catch (error: unknown) {
+      } catch {
         snackBar.error("An unexpected error happened during the approval.");
       } finally {
         processing.value = false;

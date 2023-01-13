@@ -81,7 +81,7 @@ export default {
         await NoteService.shared.addStudentNote(props.studentId, data);
         await filterNotes(filteredNoteType.value);
         snackBar.success("The note has been added to the student.");
-      } catch (error: unknown) {
+      } catch {
         snackBar.error("Unexpected error while adding the note.");
       }
     };

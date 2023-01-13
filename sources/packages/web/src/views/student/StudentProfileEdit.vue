@@ -63,7 +63,7 @@ export default {
         snackBar.success(
           "Your application is submitted. The outcome will display on your profile",
         );
-      } catch (error: unknown) {
+      } catch {
         snackBar.error(
           "An error happened during the apply PD process. Please try after sometime.",
         );
