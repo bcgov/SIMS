@@ -41,7 +41,7 @@ export function getTotalDisbursementAmount(
   types: DisbursementValueType[],
 ): number {
   return getDisbursementValuesByType(awards, types).reduce(
-    (totalAmount, award) => totalAmount + +award.valueAmount,
+    (totalAmount, award) => totalAmount + award.valueAmount,
     0,
   );
 }

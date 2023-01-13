@@ -279,13 +279,13 @@ export class ECertGenerationService {
     for (const disbursement of disbursements) {
       for (const disbursementValue of disbursement.disbursementValues) {
         if (this.shouldStopFunding(disbursement, disbursementValue)) {
-          disbursementValue.effectiveAmount = "0";
+          disbursementValue.effectiveAmount = 0;
         } else {
           const effectiveValue =
-            +disbursementValue.valueAmount -
-            +(disbursementValue.disbursedAmountSubtracted ?? 0) -
-            +(disbursementValue.overawardAmountSubtracted ?? 0);
-          disbursementValue.effectiveAmount = round(effectiveValue).toString();
+            disbursementValue.valueAmount -
+            (disbursementValue.disbursedAmountSubtracted ?? 0) -
+            (disbursementValue.overawardAmountSubtracted ?? 0);
+          disbursementValue.effectiveAmount = round(effectiveValue);
         }
       }
     }
@@ -323,9 +323,8 @@ export class ECertGenerationService {
         )
         // Sum all BC grants.
         .reduce((previousValue, currentValue) => {
-          return previousValue + +currentValue.effectiveAmount;
-        }, 0)
-        .toString();
+          return previousValue + currentValue.effectiveAmount;
+        }, 0);
       bcTotalGrant.valueAmount = bcTotalGrantValueAmount;
       bcTotalGrant.effectiveAmount = bcTotalGrantValueAmount;
     }
@@ -397,9 +396,7 @@ export class ECertGenerationService {
             studentAssessment: loan.relatedSchedule.studentAssessment,
             disbursementSchedule: loan.relatedSchedule as DisbursementSchedule,
             disbursementValueCode: valueCode,
-            overawardValue: (
-              +loan.awardValue.overawardAmountSubtracted * -1
-            ).toString(),
+            overawardValue: loan.awardValue.overawardAmountSubtracted * -1,
             originType: DisbursementOverawardOriginType.AwardValueAdjusted,
             creator: auditUser,
           } as DisbursementOveraward);
@@ -469,7 +466,7 @@ export class ECertGenerationService {
     for (const award of awards) {
       // Award amount that is available to be taken for the overaward balance adjustment.
       const availableAwardValueAmount =
-        +award.valueAmount - +award.disbursedAmountSubtracted;
+        award.valueAmount - (award.disbursedAmountSubtracted ?? 0);
       if (availableAwardValueAmount >= currentBalance) {
         // Current disbursement value is enough to pay the debit.
         // For instance:
@@ -479,7 +476,7 @@ export class ECertGenerationService {
         // - Award: $1000
         // - overawardAmountSubtracted: $750
         // - currentBalance: $0
-        award.overawardAmountSubtracted = currentBalance.toString();
+        award.overawardAmountSubtracted = currentBalance;
         // Cancel because there is nothing else to be deducted.
         return;
       } else {
@@ -496,7 +493,7 @@ export class ECertGenerationService {
         // overaward balance will be taken from there, if possible executing the
         // second iteration of this for loop.
         currentBalance -= availableAwardValueAmount;
-        award.overawardAmountSubtracted = availableAwardValueAmount.toString();
+        award.overawardAmountSubtracted = availableAwardValueAmount;
       }
     }
   }

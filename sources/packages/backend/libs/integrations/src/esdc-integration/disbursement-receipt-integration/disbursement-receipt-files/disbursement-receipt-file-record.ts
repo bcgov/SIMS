@@ -32,12 +32,12 @@ export abstract class DisbursementReceiptRecord {
   }
 
   /**
-   * Parses any amount field to numeric string.
+   * Parses any amount field to number.
    ** parseInt is used to convert string like 00520 to 520.
    * @param amountText the amount field string parsed from file.
-   * @returns amount value as numeric string.
+   * @returns amount value as a number.
    */
-  protected convertToAmountString(amountText: string) {
-    return (+amountText.substring(0, 5)).toString();
+  protected convertToAmount(amountText: string): number {
+    return +amountText.substring(0, 5);
   }
 }

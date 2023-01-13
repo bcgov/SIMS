@@ -88,20 +88,18 @@ describe("Disbursement Schedule Service - Create disbursement", () => {
         createFakeDisbursementValue(
           DisbursementValueType.CanadaLoan,
           "CSLF",
-          "1250",
-          { effectiveAmount: "1250" },
+          1250,
+          { effectiveAmount: 1250 },
         ),
-        createFakeDisbursementValue(
-          DisbursementValueType.BCLoan,
-          "BCSL",
-          "800",
-          { disbursedAmountSubtracted: "50", effectiveAmount: "750" },
-        ),
+        createFakeDisbursementValue(DisbursementValueType.BCLoan, "BCSL", 800, {
+          disbursedAmountSubtracted: 50,
+          effectiveAmount: 750,
+        }),
         createFakeDisbursementValue(
           DisbursementValueType.CanadaGrant,
           "CSGP",
-          "1500",
-          { effectiveAmount: "1500" },
+          1500,
+          { effectiveAmount: 1500 },
         ),
       ],
     });
@@ -113,13 +111,9 @@ describe("Disbursement Schedule Service - Create disbursement", () => {
         createFakeDisbursementValue(
           DisbursementValueType.CanadaGrant,
           "CSLF",
-          "1000",
+          1000,
         ),
-        createFakeDisbursementValue(
-          DisbursementValueType.BCLoan,
-          "BCSL",
-          "500",
-        ),
+        createFakeDisbursementValue(DisbursementValueType.BCLoan, "BCSL", 500),
       ],
     });
     secondSchedule.disbursementScheduleStatus =
@@ -252,9 +246,9 @@ describe("Disbursement Schedule Service - Create disbursement", () => {
       (scheduleValue) => scheduleValue.valueType === valueType,
     );
     expect(award).toBeDefined();
-    expect(+award.valueAmount).toBe(+assertValues.valueAmount);
-    expect(+award.disbursedAmountSubtracted).toBe(
-      +assertValues.disbursedAmountSubtracted?.toString(),
+    expect(award.valueAmount).toBe(+assertValues.valueAmount);
+    expect(award.disbursedAmountSubtracted).toBe(
+      assertValues.disbursedAmountSubtracted,
     );
   }
 
@@ -269,7 +263,7 @@ describe("Disbursement Schedule Service - Create disbursement", () => {
     );
     expect(awardOverawards).toHaveLength(1);
     const [overaward] = awardOverawards;
-    expect(+overaward.overawardValue).toBe(awardValue);
+    expect(overaward.overawardValue).toBe(awardValue);
     expect(overaward.originType).toBe(
       DisbursementOverawardOriginType.ReassessmentOveraward,
     );

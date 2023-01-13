@@ -7,6 +7,7 @@ import {
 } from "typeorm";
 import { DisbursementReceipt } from ".";
 import { ColumnNames, TableNames } from "../constant";
+import { numericTransformer } from "../transformers/numeric.transformer";
 import { RecordDataModel } from "./record.model";
 
 /**
@@ -38,12 +39,12 @@ export class DisbursementReceiptValue extends RecordDataModel {
 
   /**
    * Grant amount.
-   * !Decimal values are retrieved by Typeorm as string from Postgres.
    */
   @Column({
     name: "grant_amount",
     type: "numeric",
     nullable: false,
+    transformer: numericTransformer,
   })
-  grantAmount: string;
+  grantAmount: number;
 }

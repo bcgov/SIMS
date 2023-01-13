@@ -118,7 +118,7 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
             const newValue = new DisbursementValue();
             newValue.valueType = disbursementValue.valueType;
             newValue.valueCode = disbursementValue.valueCode;
-            newValue.valueAmount = disbursementValue.valueAmount.toString();
+            newValue.valueAmount = disbursementValue.valueAmount;
             newValue.creator = auditUser;
             return newValue;
           },
@@ -469,8 +469,8 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
       .forEach((disbursementValue) => {
         totalPerValueCode[disbursementValue.valueCode] =
           (totalPerValueCode[disbursementValue.valueCode] ?? 0) +
-          +(disbursementValue.overawardAmountSubtracted ?? 0) +
-          +(disbursementValue.effectiveAmount ?? 0);
+          (disbursementValue.overawardAmountSubtracted ?? 0) +
+          (disbursementValue.effectiveAmount ?? 0);
       });
     return totalPerValueCode;
   }
@@ -567,7 +567,7 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
           student: { id: studentId } as Student,
           studentAssessment: { id: assessmentId } as StudentAssessment,
           disbursementValueCode: valueCode,
-          overawardValue: remainingStudentDebit.toString(),
+          overawardValue: remainingStudentDebit,
           originType: DisbursementOverawardOriginType.ReassessmentOveraward,
           creator: auditUser,
         } as DisbursementOveraward);
@@ -616,8 +616,7 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
   ): number {
     let studentDebit = totalStudentDebit;
     for (const award of awards) {
-      const awardValueAmount = +award.valueAmount;
-      if (awardValueAmount >= totalStudentDebit) {
+      if (award.valueAmount >= totalStudentDebit) {
         // Current disbursement value is enough to pay the debit.
         // For instance:
         // - Award: $1000
@@ -626,7 +625,7 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
         // - Award: $1000
         // - disbursedAmountSubtracted: $750
         // - Student debit: $0
-        award.disbursedAmountSubtracted = studentDebit.toString();
+        award.disbursedAmountSubtracted = studentDebit;
         studentDebit = 0;
       } else {
         // Current disbursement is not enough to pay the debit.
@@ -641,7 +640,7 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
         // If there is one more disbursement with the same award, the $250
         // student debit will be taken from there, if possible executing the
         // second iteration of this for loop.
-        studentDebit -= awardValueAmount;
+        studentDebit -= award.valueAmount;
         award.disbursedAmountSubtracted = award.valueAmount;
       }
     }
