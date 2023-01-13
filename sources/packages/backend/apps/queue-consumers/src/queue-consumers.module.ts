@@ -31,6 +31,7 @@ import {
   StudentRestrictionSharedService,
   WorkflowClientService,
   ZeebeModule,
+  ApplicationService,
 } from "@sims/services";
 import { DatabaseModule } from "@sims/sims-db";
 import { IER12IntegrationModule } from "@sims/integrations/institution-integration/ier12-integration";
@@ -50,8 +51,6 @@ import { SFASIntegrationModule } from "@sims/integrations/sfas-integration";
 import { ATBCIntegrationModule } from "@sims/integrations/atbc-integration";
 import { ECEIntegrationModule } from "@sims/integrations/institution-integration/ece-integration";
 import { ECEProcessIntegrationScheduler } from "./processors/schedulers/institution-integration/ece-request/ece-process-integration.scheduler";
-import { SystemUsersService } from "@sims/services/system-users";
-import { ApplicationService } from "@sims/services";
 
 @Module({
   imports: [
