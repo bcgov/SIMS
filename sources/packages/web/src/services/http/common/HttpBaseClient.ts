@@ -141,7 +141,7 @@ export default abstract class HttpBaseClient {
   }
 
   /**
-   * Inspects the error to chec if there is an ApiProcessError
+   * Inspects the error to check if there is an ApiProcessError
    * to be handled, if yes, throw the ApiProcessError instead
    * of the AxiosError.
    * @param error error to be inspect.

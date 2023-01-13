@@ -39,7 +39,7 @@ export default class FormUploadService {
       };
     } catch (error: unknown) {
       throw new Error(
-        "There was an unexpected error while uploading the file.",
+        "there was an unexpected error while uploading the file.",
       );
     }
   }
