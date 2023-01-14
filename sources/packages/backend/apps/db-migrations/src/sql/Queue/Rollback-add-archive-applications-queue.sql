@@ -1,4 +1,4 @@
 DELETE FROM
   sims.queue_configurations
 WHERE
-  queue_name = 'process-archive-applications';
+  queue_name = 'archive-applications';

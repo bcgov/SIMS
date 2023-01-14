@@ -3,7 +3,7 @@ import { Job, Queue } from "bull";
 import { BaseScheduler } from "../base-scheduler";
 import { QueueNames } from "@sims/utilities";
 import { QueueService } from "@sims/services/queue";
-import { ApplicationService } from "@sims/services";
+import { ApplicationService } from "../../../services";
 import {
   QueueProcessSummary,
   QueueProcessSummaryResult,

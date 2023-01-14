@@ -1,8 +1,8 @@
 INSERT INTO
-  queue_configurations(queue_name, queue_configuration)
+  sims.queue_configurations(queue_name, queue_configuration)
 VALUES
   (
-    'process-archive-applications',
+    'archive-applications',
     '{
         "retry": 3,
         "retryInterval": 180000,
