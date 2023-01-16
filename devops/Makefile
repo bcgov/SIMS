@@ -331,7 +331,6 @@ deploy-api:
 		-p ATBC_ENDPOINT=$(ATBC_ENDPOINT) \
 		-p BYPASS_APPLICATION_SUBMIT_VALIDATIONS=$(BYPASS_APPLICATION_SUBMIT_VALIDATIONS) \
 		-p SWAGGER_ENABLED=$(SWAGGER_ENABLED) \
-		-p APPLICATION_ARCHIVE_DAYS=$(APPLICATION_ARCHIVE_DAYS) \
 		-p SWAGGER_NAME=$(SWAGGER_NAME) \
 		-p QUEUE_PREFIX=$(QUEUE_PREFIX) \
 		| oc -n $(NAMESPACE) apply -f -
@@ -373,6 +372,7 @@ deploy-queue-consumers:
 	test -n "$(QUEUE_PREFIX)"
 	test -n "$(ATBC_LOGIN_ENDPOINT)"
 	test -n "$(ATBC_ENDPOINT)"
+	test -n "$(APPLICATION_ARCHIVE_DAYS)"
 	@echo "+\n++ Deploying Queues with tag: $(BUILD_TAG)\n+"
 	@oc -n $(NAMESPACE) process -f openshift/queue-consumers-deploy.yml \
 		-p NAME=$(QUEUE_CONSUMERS) \
@@ -387,6 +387,7 @@ deploy-queue-consumers:
 		-p QUEUE_PREFIX=$(QUEUE_PREFIX) \
 		-p ATBC_LOGIN_ENDPOINT=$(ATBC_LOGIN_ENDPOINT) \
 		-p ATBC_ENDPOINT=$(ATBC_ENDPOINT) \
+		-p APPLICATION_ARCHIVE_DAYS=$(APPLICATION_ARCHIVE_DAYS) \
 		| oc -n $(NAMESPACE) apply -f -
 	$(call rollout_and_wait,dc/$(QUEUE_CONSUMERS))
 
