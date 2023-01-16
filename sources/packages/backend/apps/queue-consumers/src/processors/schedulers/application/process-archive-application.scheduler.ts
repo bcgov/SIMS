@@ -39,7 +39,6 @@ export class ProcessArchiveApplicationsScheduler extends BaseScheduler<void> {
       jobLogger: job,
     });
     await summary.info("Processing pending applications to be archived.");
-
     const auditUser = await this.systemUsersService.systemUser();
     const archivedApplicationsCount =
       await this.applicationService.archiveApplications(auditUser.id);
