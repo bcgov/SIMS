@@ -185,8 +185,9 @@ export class ApplicationStudentsController extends BaseController {
       studyStartDate = offering.studyStartDate;
       studyEndDate = offering.studyEndDate;
       // This ensures that if an offering is selected in student application,
-      // a wrong study start date and study end date which doesn't match
-      // the selected offering id is sent to API by modifying the payload.
+      // then the study start date and study end date present in form submission payload
+      // belongs to the selected offering and hence prevents these dates being modified in the
+      // middle before coming to API.
       payload.data.selectedOfferingDate = studyStartDate;
       payload.data.selectedOfferingEndDate = studyEndDate;
     }

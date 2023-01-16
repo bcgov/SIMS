@@ -27,6 +27,7 @@ import {
   OfferingIntensity,
   WizardNavigationEvent,
   FormIOCustomEvent,
+  FormIOForm,
 } from "@/types";
 import { ref, SetupContext, watch } from "vue";
 import {
@@ -194,7 +195,7 @@ export default {
       }
     };
 
-    const formChanged = async (form: any, event: any) => {
+    const formChanged = async (form: FormIOForm, event: any) => {
       const locationId = +formioUtils.getComponentValueByKey(
         form,
         LOCATIONS_DROPDOWN_KEY,
@@ -280,7 +281,7 @@ export default {
       }
     };
 
-    const resetSelectedOfferingDetails = (form: any) => {
+    const resetSelectedOfferingDetails = (form: FormIOForm) => {
       formioUtils.setComponentValue(form, SELECTED_OFFERING_END_DATE_KEY, "");
       formioUtils.setComponentValue(form, SELECTED_OFFERING_START_DATE_KEY, "");
     };

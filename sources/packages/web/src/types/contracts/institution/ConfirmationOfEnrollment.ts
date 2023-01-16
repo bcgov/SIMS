@@ -55,16 +55,16 @@ export interface ApproveConfirmEnrollmentModel {
  */
 export enum COEApprovalPeriodStatus {
   /**
-   * COE is within it's valid approval period and can be approved.
+   * COE is within its valid approval period and can be approved.
    */
   WithinApprovalPeriod = "Within approval period",
   /**
-   * COE is currently before it's approval period
+   * COE is currently before its approval period
    * and needs to wait until approval period to be confirmed.
    */
   BeforeApprovalPeriod = "Before approval period",
   /**
-   * The COE is currently crossed it's approval period and cannot be confirmed by institution.
+   * The COE is currently crossed its approval period and cannot be confirmed by institution.
    */
   AfterApprovalPeriod = "After approval period",
 }

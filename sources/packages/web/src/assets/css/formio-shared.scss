@@ -296,8 +296,15 @@
   margin-bottom: $formio-header-margin;
 }
 
+.banner-font {
+  color: $brand-black;
+  font-size: $font-size-content;
+  line-height: $font-content-lh;
+}
+
 .banner-alert p,
 .banner-alert div {
+  @extend .banner-font;
   background: $banner-background-error;
   border: 2px solid $banner-color-error;
   box-sizing: border-box;
@@ -305,6 +312,7 @@
 }
 .banner-warning p,
 .banner-warning div {
+  @extend .banner-font;
   background: $banner-background-warning;
   border: 2px solid $banner-color-warning;
   box-sizing: border-box;
@@ -313,6 +321,7 @@
 
 .banner-info p,
 .banner-info div {
+  @extend .banner-font;
   background: $banner-background-info;
   border: 2px solid $banner-color-info;
   box-sizing: border-box;
@@ -647,9 +656,4 @@
 // Forcing the default formio style for smaller breakpoints.
 .formio-component-file ul li.list-group-item {
   border: 1px solid rgba(0, 0, 0, 0.125) !important;
-}
-
-.banner-header {
-  @extend .font-bold;
-  color: $brand-black;
 }
