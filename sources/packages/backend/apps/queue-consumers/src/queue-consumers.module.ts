@@ -23,6 +23,7 @@ import {
   PartTimeMSFAAProcessResponseIntegrationScheduler,
   SFASIntegrationScheduler,
   ATBCResponseIntegrationScheduler,
+  ProcessArchiveApplicationsScheduler,
 } from "./processors";
 import {
   DisbursementScheduleService,
@@ -34,7 +35,10 @@ import {
 import { DatabaseModule } from "@sims/sims-db";
 import { IER12IntegrationModule } from "@sims/integrations/institution-integration/ier12-integration";
 import { NotificationsModule } from "@sims/services/notifications";
-import { SystemUserModule } from "@sims/services/system-users";
+import {
+  SystemUserModule,
+  SystemUsersService,
+} from "@sims/services/system-users";
 import { MSFAANumberService, SshService } from "@sims/integrations/services";
 import {
   DisbursementReceiptIntegrationModule,
@@ -44,7 +48,7 @@ import {
   SINValidationModule,
 } from "@sims/integrations/esdc-integration";
 import { CRAIntegrationModule } from "@sims/integrations/cra-integration/cra-integration.module";
-import { StudentAssessmentService } from "./services";
+import { StudentAssessmentService, ApplicationService } from "./services";
 import { SFASIntegrationModule } from "@sims/integrations/sfas-integration";
 import { ATBCIntegrationModule } from "@sims/integrations/atbc-integration";
 import { ECEIntegrationModule } from "@sims/integrations/institution-integration/ece-integration";
@@ -100,6 +104,9 @@ import { ECEProcessIntegrationScheduler } from "./processors/schedulers/institut
     FederalRestrictionsIntegrationScheduler,
     FullTimeMSFAAProcessResponseIntegrationScheduler,
     PartTimeMSFAAProcessResponseIntegrationScheduler,
+    ProcessArchiveApplicationsScheduler,
+    SystemUsersService,
+    ApplicationService,
   ],
 })
 export class QueueConsumersModule {}

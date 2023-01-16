@@ -25,4 +25,5 @@ export enum QueueNames {
   SFASIntegration = "sfas-integration",
   ATBCResponseIntegration = "atbc-response-integration",
   ProcessNotifications = "process-notifications",
+  ProcessArchiveApplications = "archive-applications",
 }

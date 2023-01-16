@@ -14,8 +14,6 @@ import { AppAESTModule } from "./app.aest.module";
 import { AppInstitutionsModule } from "./app.institutions.module";
 import { ClientTypeBaseRoute } from "./types";
 import { AppStudentsModule } from "./app.students.module";
-// Todo: delete and remove AppSystemAccessModule when the last integration (archive application is moved) to integration
-import { AppSystemAccessModule } from "./app.system-access.module";
 import { AppSupportingUsersModule } from "./app.supporting-users.module";
 import { ZeebeModule } from "@sims/services";
 import { LoggerModule } from "@sims/utilities/logger";
@@ -35,7 +33,6 @@ import { QueueModule } from "@sims/services/queue";
     AppAESTModule,
     AppInstitutionsModule,
     AppStudentsModule,
-    AppSystemAccessModule,
     AppSupportingUsersModule,
     QueueModule,
     RouterModule.register([
@@ -54,10 +51,6 @@ import { QueueModule } from "@sims/services/queue";
       {
         path: ClientTypeBaseRoute.SupportingUser,
         module: AppSupportingUsersModule,
-      },
-      {
-        path: ClientTypeBaseRoute.SystemAccess,
-        module: AppSystemAccessModule,
       },
     ]),
   ],
