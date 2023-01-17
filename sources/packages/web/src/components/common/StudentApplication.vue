@@ -252,10 +252,8 @@ export default {
         await formioComponentLoader.loadSelectedOfferingDetails(
           form,
           +event.changed.value,
-          {
-            offeringEndDateFieldId: SELECTED_OFFERING_END_DATE_KEY,
-            offeringStartDateFieldId: SELECTED_OFFERING_START_DATE_KEY,
-          },
+          SELECTED_OFFERING_START_DATE_KEY,
+          SELECTED_OFFERING_END_DATE_KEY,
         );
       }
       // If the user after selecting a study period finds that

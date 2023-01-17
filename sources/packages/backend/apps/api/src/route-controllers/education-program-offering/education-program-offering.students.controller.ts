@@ -19,7 +19,7 @@ import { OfferingIntensity, OfferingTypes } from "@sims/sims-db";
 import { EducationProgramOfferingService } from "../../services";
 import { ClientTypeBaseRoute } from "../../types";
 import BaseController from "../BaseController";
-import { OfferingStartDateAPIOutDTO } from "./models/education-program-offering.dto";
+import { OfferingDetailsAPIOutDTO } from "./models/education-program-offering.dto";
 import { OptionItemAPIOutDTO } from "../models/common.dto";
 import { EducationProgramOfferingControllerService } from "./education-program-offering.controller.service";
 import { ParseEnumQueryPipe } from "../utils/custom-validation-pipe";
@@ -80,7 +80,7 @@ export class EducationProgramOfferingStudentsController extends BaseController {
   @Get(":offeringId")
   async getProgramOfferingDetails(
     @Param("offeringId", ParseIntPipe) offeringId: number,
-  ): Promise<OfferingStartDateAPIOutDTO> {
+  ): Promise<OfferingDetailsAPIOutDTO> {
     //To retrieve Education program offering corresponding to ProgramId and LocationId
     const offering = await this.educationProgramOfferingService.getOfferingById(
       offeringId,

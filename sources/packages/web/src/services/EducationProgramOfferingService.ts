@@ -14,7 +14,7 @@ import {
   EducationProgramOfferingAPIOutDTO,
   EducationProgramOfferingSummaryAPIOutDTO,
   EducationProgramOfferingAPIInDTO,
-  OfferingStartDateAPIOutDTO,
+  OfferingDetailsAPIOutDTO,
   OptionItemAPIOutDTO,
   OfferingBulkInsertValidationResultAPIOutDTO,
   OfferingValidationResultAPIOutDTO,
@@ -193,7 +193,7 @@ export class EducationProgramOfferingService {
    */
   async getProgramOfferingDetails(
     offeringId: number,
-  ): Promise<OfferingStartDateAPIOutDTO> {
+  ): Promise<OfferingDetailsAPIOutDTO> {
     return ApiClient.EducationProgramOffering.getProgramOfferingDetails(
       offeringId,
     );

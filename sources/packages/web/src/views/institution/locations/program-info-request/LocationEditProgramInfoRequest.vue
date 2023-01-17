@@ -174,11 +174,12 @@ export default defineComponent({
         event.changed?.component.key === OFFERINGS_DROPDOWN_KEY &&
         +event.changed.value > 0
       ) {
-        await formioComponentLoader.loadSelectedOfferingDetails(
+        await formioComponentLoader.loadSelectedOfferingDetailsByLocationAndProgram(
           form,
           +event.changed.value,
-          { offeringEndDateFieldId: SELECTED_OFFERING_END_DATE_KEY },
-          { locationId: props.locationId, programId: selectedProgramId },
+          SELECTED_OFFERING_END_DATE_KEY,
+          props.locationId,
+          selectedProgramId,
         );
       }
       // If Deny PIR is checked after offering being selected

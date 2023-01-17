@@ -1,10 +1,6 @@
 import { EducationProgramService } from "../services/EducationProgramService";
 import { EducationProgramOfferingService } from "@/services/EducationProgramOfferingService";
 import { useFormioUtils } from ".";
-import {
-  EducationProgramOfferingAPIOutDTO,
-  OfferingStartDateAPIOutDTO,
-} from "@/services/http/dto";
 
 /**
  * Common methods to load components data on Form.IO that could
@@ -25,43 +21,55 @@ export function useFormioComponentLoader() {
   const loadSelectedOfferingDetails = async (
     form: any,
     offeringId: number,
-    offeringFieldIds: {
-      offeringEndDateFieldId: string;
-      offeringStartDateFieldId?: string;
-    },
-    options?: { locationId: number; programId: number },
+    offeringStartDateFieldId: string,
+    offeringEndDateFieldId: string,
   ) => {
-    let valueToBeLoaded:
-      | OfferingStartDateAPIOutDTO
-      | EducationProgramOfferingAPIOutDTO;
-
-    if (options) {
-      valueToBeLoaded =
-        await EducationProgramOfferingService.shared.getOfferingDetailsByLocationAndProgram(
-          options.locationId,
-          options.programId,
-          offeringId,
-        );
-    } else {
-      valueToBeLoaded =
-        await EducationProgramOfferingService.shared.getProgramOfferingDetails(
-          offeringId,
-        );
-    }
+    const valueToBeLoaded =
+      await EducationProgramOfferingService.shared.getProgramOfferingDetails(
+        offeringId,
+      );
 
     formioUtils.setComponentValue(
       form,
-      offeringFieldIds.offeringEndDateFieldId,
-      valueToBeLoaded?.studyEndDate,
+      offeringStartDateFieldId,
+      valueToBeLoaded?.studyStartDate,
     );
 
-    if (offeringFieldIds.offeringStartDateFieldId) {
-      formioUtils.setComponentValue(
-        form,
-        offeringFieldIds.offeringStartDateFieldId,
-        valueToBeLoaded?.studyStartDate,
+    formioUtils.setComponentValue(
+      form,
+      offeringEndDateFieldId,
+      valueToBeLoaded?.studyEndDate,
+    );
+  };
+
+  /**
+   * Get details of given offering by location and program
+   * and populate form.io hidden fields.
+   * @param form form to be updated with hidden field values.
+   * @param offeringId offering.
+   * @param offeringEndDateFieldId hidden field name in form.io.
+   * @param locationId offering location.
+   * @param programId offering program.
+   */
+  const loadSelectedOfferingDetailsByLocationAndProgram = async (
+    form: any,
+    offeringId: number,
+    offeringEndDateFieldId: string,
+    locationId: number,
+    programId: number,
+  ) => {
+    const valueToBeLoaded =
+      await EducationProgramOfferingService.shared.getOfferingDetailsByLocationAndProgram(
+        locationId,
+        programId,
+        offeringId,
       );
-    }
+
+    formioUtils.setComponentValue(
+      form,
+      offeringEndDateFieldId,
+      valueToBeLoaded?.studyEndDate,
+    );
   };
 
   // Get Program description for the selected program and set to the field (programDesc) in formio.
@@ -80,5 +88,6 @@ export function useFormioComponentLoader() {
   return {
     loadProgramDesc,
     loadSelectedOfferingDetails,
+    loadSelectedOfferingDetailsByLocationAndProgram,
   };
 }

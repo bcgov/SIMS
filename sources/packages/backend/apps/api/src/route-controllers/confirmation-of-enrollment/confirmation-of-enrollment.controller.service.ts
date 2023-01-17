@@ -65,7 +65,7 @@ export class ConfirmationOfEnrollmentControllerService extends BaseController {
         approvalPeriodStatus !== COEApprovalPeriodStatus.WithinApprovalPeriod
       ) {
         throw new UnprocessableEntityException(
-          "The enrolment cannot be confirmed as current date is not within the valid approval period of it.",
+          "The enrolment cannot be confirmed as current date is not within the valid approval period.",
         );
       }
     }

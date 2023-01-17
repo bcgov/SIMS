@@ -9,7 +9,7 @@ import {
   EducationProgramOfferingAPIInDTO,
   EducationProgramOfferingSummaryAPIOutDTO,
   PaginatedResultsAPIOutDTO,
-  OfferingStartDateAPIOutDTO,
+  OfferingDetailsAPIOutDTO,
   OptionItemAPIOutDTO,
   EducationProgramOfferingAPIOutDTO,
   OfferingValidationResultAPIOutDTO,
@@ -189,9 +189,9 @@ export class EducationProgramOfferingApi extends HttpBaseClient {
    */
   async getProgramOfferingDetails(
     offeringId: number,
-  ): Promise<OfferingStartDateAPIOutDTO> {
+  ): Promise<OfferingDetailsAPIOutDTO> {
     const url = `education-program-offering/${offeringId}`;
-    return this.getCall<OfferingStartDateAPIOutDTO>(this.addClientRoot(url));
+    return this.getCall<OfferingDetailsAPIOutDTO>(this.addClientRoot(url));
   }
 
   /**
