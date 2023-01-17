@@ -10,8 +10,9 @@ import {
 } from "../../utilities";
 import {
   addDays,
-  isBeforeGivenDaysFromNow,
-  isAfterGivenDaysBeforeNow,
+  getISODateOnlyString,
+  isBetweenPeriod,
+  isBeforeDate,
 } from "@sims/utilities";
 import { DataSource, UpdateResult, Brackets, EntityManager } from "typeorm";
 import { SequenceControlService } from "@sims/services";
@@ -520,17 +521,29 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
     disbursementDate: string | Date,
     studyEndDate: string | Date,
   ): COEApprovalPeriodStatus {
-    if (!isBeforeGivenDaysFromNow(disbursementDate, COE_WINDOW)) {
+    // Enrolment period start date(COE_WINDOW days before disbursement date).
+    const enrolmentPeriodStart = addDays(-COE_WINDOW, disbursementDate);
+    // Enrolment period end date(COE_MAX_ALLOWED_DAYS_PAST_STUDY_PERIOD days after study end date).
+    const enrolmentPeriodEnd = addDays(
+      COE_MAX_ALLOWED_DAYS_PAST_STUDY_PERIOD,
+      studyEndDate,
+    );
+    //Current date as date only string.
+    const now = getISODateOnlyString(new Date());
+    // Is the enrolment now within eligible approval period.
+    if (
+      isBetweenPeriod(now, {
+        startDate: enrolmentPeriodStart,
+        endDate: enrolmentPeriodEnd,
+      })
+    ) {
+      return COEApprovalPeriodStatus.WithinApprovalPeriod;
+    }
+    // Is the enrolment now before the eligible approval period.
+    if (isBeforeDate(now, enrolmentPeriodStart)) {
       return COEApprovalPeriodStatus.BeforeApprovalPeriod;
     }
-    if (
-      !isAfterGivenDaysBeforeNow(
-        studyEndDate,
-        COE_MAX_ALLOWED_DAYS_PAST_STUDY_PERIOD,
-      )
-    ) {
-      return COEApprovalPeriodStatus.AfterApprovalPeriod;
-    }
-    return COEApprovalPeriodStatus.WithinApprovalPeriod;
+
+    return COEApprovalPeriodStatus.AfterApprovalPeriod;
   }
 }

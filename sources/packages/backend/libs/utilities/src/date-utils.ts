@@ -248,45 +248,16 @@ export function hasSomePeriodOverlap(periods: Period[]): boolean {
 }
 
 /**
- * Validates if the date provided is after given days
- * before now.
- * e.g. If the current date is 10-JAN-2023 and
- * given number of days is 4, it validates if the given date
- * is on or after 06-JAN-2023.
- * @param givenDate date to be validated.
- * @param numberOfDays number of days before today.
- * @returns result if the given date is after given days before now.
+ * Validates if the given date is before
+ * the date which is expected to be before given date.
+ * @param givenDate given date.
+ * @param expectedBeforeGivenDate expected before given date.
+ * @returns if the given date is before
+ * the date which is expected to be before given date.
  */
-export function isAfterGivenDaysBeforeNow(
+export function isBeforeDate(
   givenDate: string | Date,
-  numberOfDaysBeforeToday: number,
+  expectedBeforeGivenDate: string | Date,
 ): boolean {
-  return dayjs(givenDate).isAfter(
-    dayjs(getISODateOnlyString(new Date())).subtract(
-      numberOfDaysBeforeToday + 1,
-      "days",
-    ),
-  );
-}
-
-/**
- * Validates if the date provided is before
- * given number of days from now.
- * e.g. If the current date is 10-JAN-2023 and
- * given number of days is 10, it validates if the given date
- * is on or before 20-JAN-2023.
- * @param givenDate date to be validated.
- * @param numberOfDaysAfterToday number of days after today.
- * @returns result if the given date is before given days from now.
- */
-export function isBeforeGivenDaysFromNow(
-  givenDate: string | Date,
-  numberOfDaysAfterToday: number,
-): boolean {
-  return dayjs(givenDate).isBefore(
-    dayjs(getISODateOnlyString(new Date())).add(
-      numberOfDaysAfterToday + 1,
-      "days",
-    ),
-  );
+  return dayjs(givenDate).isBefore(dayjs.utc(expectedBeforeGivenDate));
 }

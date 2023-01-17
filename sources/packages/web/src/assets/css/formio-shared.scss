@@ -400,6 +400,18 @@
   color: $banner-color-warning;
 }
 
+.banner-warning .fa-info-circle:before {
+  color: $banner-color-warning;
+}
+
+.banner-info .fa-info-circle:before {
+  color: $banner-color-info;
+}
+
+.banner-alert .fa-ban:before {
+  color: $banner-color-error;
+}
+
 /* form.io status chip */
 .formio-status-chip {
   border-width: 1px;
