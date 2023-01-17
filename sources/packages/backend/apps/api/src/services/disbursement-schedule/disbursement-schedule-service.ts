@@ -524,6 +524,10 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
     // Enrolment period start date(COE_WINDOW days before disbursement date).
     const enrolmentPeriodStart = addDays(-COE_WINDOW, disbursementDate);
     // Enrolment period end date(COE_MAX_ALLOWED_DAYS_PAST_STUDY_PERIOD days after study end date).
+    // The same validation with COE_MAX_ALLOWED_DAYS_PAST_STUDY_PERIOD exists on
+    // Student application forms and program information request form.
+    // When there is an update to COE_MAX_ALLOWED_DAYS_PAST_STUDY_PERIOD please make sure
+    // to update all the above.
     const enrolmentPeriodEnd = addDays(
       COE_MAX_ALLOWED_DAYS_PAST_STUDY_PERIOD,
       studyEndDate,
