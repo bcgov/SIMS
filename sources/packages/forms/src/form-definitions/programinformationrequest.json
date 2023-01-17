@@ -1,9 +1,9 @@
 {
   "title": "Program Information Request",
-  "display": "form",
-  "type": "form",
   "name": "programInformationRequest",
   "path": "programinformationrequest",
+  "type": "form",
+  "display": "form",
   "tags": [
     "common"
   ],
@@ -365,7 +365,8 @@
           "allowMultipleMasks": false,
           "addons": [],
           "tag": "p",
-          "id": "ezdiowm"
+          "id": "ezdiowm",
+          "className": ""
         },
         {
           "label": "HTML",
@@ -1255,7 +1256,9 @@
               "properties": {},
               "allowMultipleMasks": false,
               "addons": [],
-              "tag": "p"
+              "tag": "p",
+              "inDataGrid": true,
+              "className": ""
             },
             {
               "label": "HTML",
@@ -1329,7 +1332,9 @@
               "properties": {},
               "allowMultipleMasks": false,
               "addons": [],
-              "tag": "p"
+              "tag": "p",
+              "inDataGrid": true,
+              "className": ""
             }
           ],
           "placeholder": "",
@@ -1990,6 +1995,32 @@
           "customOptions": {},
           "useExactSearch": false,
           "id": "eiulpp"
+        },
+        {
+          "key": "institutionEnteredDetailsStudyPeriodWarning",
+          "label": "Study period warning",
+          "input": false,
+          "tag": "p",
+          "attrs": [
+            {
+              "value": "",
+              "attr": ""
+            }
+          ],
+          "className": "alert alert-warning fa fa-exclamation-triangle w-100",
+          "content": "<span class=\"font-bold ml-2\">This study end date has past</span>\n<br>\n<span>The selected study period has past.  Students can no longer receive funding. Continuing with the application will require StudentAid BC approval to be eligible for funding.</span>",
+          "type": "htmlelement",
+          "hideLabel": true,
+          "tags": [],
+          "conditional": {
+            "show": "true",
+            "when": "selectedStudyEndDatePastAllowedDays",
+            "eq": "true"
+          },
+          "properties": {},
+          "customClass": "banner-warning",
+          "lockKey": true,
+          "isNew": false
         }
       ],
       "placeholder": "",
@@ -2033,7 +2064,7 @@
       "id": "eifwule"
     },
     {
-      "html": "<p style=\"text-align:center;\">or</p>",
+      "html": "<p style=\"text-align:center;\">or</p>\n",
       "label": "Content",
       "labelWidth": "",
       "labelMargin": "",
@@ -2217,7 +2248,8 @@
           "allowMultipleMasks": false,
           "addons": [],
           "tag": "p",
-          "id": "eiu32ia"
+          "id": "eiu32ia",
+          "className": ""
         },
         {
           "label": "HTML",
@@ -2292,7 +2324,8 @@
           "allowMultipleMasks": false,
           "addons": [],
           "tag": "p",
-          "id": "es7xn9"
+          "id": "es7xn9",
+          "className": ""
         },
         {
           "label": "Create program",
@@ -2634,6 +2667,64 @@
       "inputType": "hidden",
       "id": "e6z1qd9",
       "addons": []
+    },
+    {
+      "input": true,
+      "tableView": false,
+      "key": "selectedOfferingEndDate",
+      "label": "Selected offering end date",
+      "protected": false,
+      "unique": false,
+      "persistent": true,
+      "type": "hidden",
+      "tags": [],
+      "conditional": {
+        "show": "",
+        "when": null,
+        "eq": ""
+      },
+      "properties": {},
+      "lockKey": true
+    },
+    {
+      "input": true,
+      "tableView": false,
+      "key": "maximumAllowedDaysAfterStudyEndDate",
+      "label": "Maximum allowed days after study end date",
+      "protected": false,
+      "unique": false,
+      "persistent": true,
+      "type": "hidden",
+      "tags": [],
+      "conditional": {
+        "show": "",
+        "when": null,
+        "eq": ""
+      },
+      "properties": {},
+      "calculateValue": "/**\n * Maximum number of days past the study period end date\n * beyond when an application will require StudentAid BC\n * approval for funding.\n */\n \nvalue = 42;",
+      "calculateServer": true,
+      "lockKey": true
+    },
+    {
+      "input": true,
+      "tableView": false,
+      "key": "selectedStudyEndDatePastAllowedDays",
+      "label": "Selected study end date past maximum allowed days",
+      "protected": false,
+      "unique": false,
+      "persistent": true,
+      "type": "hidden",
+      "tags": [],
+      "conditional": {
+        "show": "",
+        "when": null,
+        "eq": ""
+      },
+      "properties": {},
+      "calculateValue": "/**\n * Validates if the date provided is within given days\n * before now.\n * e.g. If the current date is 10-JAN-2023 and\n * given number of days is 4, it validates if the given date\n * is on or after 06-JAN-2023.\n * \n * The same validation exists on all the student application\n * forms and also on the server side\n * based on the variable COE_MAX_ALLOWED_DAYS_PAST_STUDY_PERIOD.\n * \n * When there is an update to this logic make sure to update in all the above.\n */\n \nfunction isAfterGivenDaysBeforeNow(\n  givenDate,\n  numberOfDaysBeforeToday\n) {\n  return moment\n    .utc(givenDate)\n    .isAfter(\n      moment\n        .utc(moment.utc().format(\"YYYY-MM-DD\"))\n        .subtract(numberOfDaysBeforeToday + 1, \"days\")\n    );\n}\n\nvalue = !!data.selectedOfferingEndDate && !isAfterGivenDaysBeforeNow(data.selectedOfferingEndDate,data.maximumAllowedDaysAfterStudyEndDate);",
+      "calculateServer": true,
+      "lockKey": true
     }
   ]
 }

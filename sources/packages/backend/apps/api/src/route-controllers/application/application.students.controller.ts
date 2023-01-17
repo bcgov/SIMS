@@ -172,15 +172,6 @@ export class ApplicationStudentsController extends BaseController {
       );
     }
 
-    const submissionResult = await this.formService.dryRunSubmission(
-      programYear.formName,
-      payload.data,
-    );
-    if (!submissionResult.valid) {
-      throw new BadRequestException(
-        "Not able to create an application due to an invalid request.",
-      );
-    }
     // studyStartDate from payload is set as studyStartDate
     let studyStartDate = payload.data.studystartDate;
     let studyEndDate = payload.data.studyendDate;
@@ -193,6 +184,22 @@ export class ApplicationStudentsController extends BaseController {
       // then study start date taken from offering
       studyStartDate = offering.studyStartDate;
       studyEndDate = offering.studyEndDate;
+      // This ensures that if an offering is selected in student application,
+      // then the study start date and study end date present in form submission payload
+      // belongs to the selected offering and hence prevents these dates being modified in the
+      // middle before coming to API.
+      payload.data.selectedOfferingDate = studyStartDate;
+      payload.data.selectedOfferingEndDate = studyEndDate;
+    }
+
+    const submissionResult = await this.formService.dryRunSubmission(
+      programYear.formName,
+      payload.data,
+    );
+    if (!submissionResult.valid) {
+      throw new BadRequestException(
+        "Not able to create an application due to an invalid request.",
+      );
     }
 
     const student = await this.studentService.getStudentById(

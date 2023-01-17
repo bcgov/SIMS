@@ -27,6 +27,7 @@ import {
   OfferingIntensity,
   WizardNavigationEvent,
   FormIOCustomEvent,
+  FormIOForm,
 } from "@/types";
 import { ref, SetupContext, watch } from "vue";
 import {
@@ -69,7 +70,8 @@ export default {
     const LOCATIONS_DROPDOWN_KEY = "selectedLocation";
     const PROGRAMS_DROPDOWN_KEY = "selectedProgram";
     const OFFERINGS_DROPDOWN_KEY = "selectedOffering";
-    const SELECTED_OFFERING_DATE_KEY = "selectedOfferingDate";
+    const SELECTED_OFFERING_START_DATE_KEY = "selectedOfferingDate";
+    const SELECTED_OFFERING_END_DATE_KEY = "selectedOfferingEndDate";
     const SELECTED_PROGRAM_DESC_KEY = "selectedProgramDesc";
     const OFFERING_INTENSITY_KEY = "howWillYouBeAttendingTheProgram";
     const PROGRAM_NOT_LISTED = "myProgramNotListed";
@@ -193,7 +195,7 @@ export default {
       }
     };
 
-    const formChanged = async (form: any, event: any) => {
+    const formChanged = async (form: FormIOForm, event: any) => {
       const locationId = +formioUtils.getComponentValueByKey(
         form,
         LOCATIONS_DROPDOWN_KEY,
@@ -247,12 +249,39 @@ export default {
         event.changed?.component.key === OFFERINGS_DROPDOWN_KEY &&
         +event.changed.value > 0
       ) {
-        await formioComponentLoader.loadSelectedOfferingDate(
+        await formioComponentLoader.loadSelectedOfferingDetails(
           form,
           +event.changed.value,
-          SELECTED_OFFERING_DATE_KEY,
+          SELECTED_OFFERING_START_DATE_KEY,
+          SELECTED_OFFERING_END_DATE_KEY,
         );
       }
+      // If the user after selecting a study period finds that
+      // they need to check my study period not listed, then
+      // the details of previously selected
+      // study period must be cleared.
+      if (
+        event.changed?.component.key === OFFERING_NOT_LISTED &&
+        event.changed.value?.offeringnotListed
+      ) {
+        resetSelectedOfferingDetails(form);
+      }
+
+      // If the user after selecting a study period finds that
+      // they need to check my program not listed, then
+      // the details of previously selected
+      // study period must be cleared.
+      if (
+        event.changed?.component.key === PROGRAM_NOT_LISTED &&
+        event.changed.value?.programnotListed
+      ) {
+        resetSelectedOfferingDetails(form);
+      }
+    };
+
+    const resetSelectedOfferingDetails = (form: FormIOForm) => {
+      formioUtils.setComponentValue(form, SELECTED_OFFERING_END_DATE_KEY, "");
+      formioUtils.setComponentValue(form, SELECTED_OFFERING_START_DATE_KEY, "");
     };
 
     const wizardGoPrevious = () => {

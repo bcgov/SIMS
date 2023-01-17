@@ -29,13 +29,14 @@
 <script lang="ts">
 import { RouteLocationRaw, useRouter } from "vue-router";
 import { ProgramInfoRequestService } from "@/services/ProgramInfoRequestService";
-import { ref } from "vue";
+import { ref, defineComponent } from "vue";
 import {
   useFormioUtils,
   useFormioDropdownLoader,
   useFormatters,
   useSnackBar,
   useProgramInfoRequest,
+  useFormioComponentLoader,
 } from "@/composables";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import {
@@ -50,7 +51,7 @@ import {
 } from "@/constants";
 import { ProgramInfoRequestAPIOutDTO } from "@/services/http/dto";
 
-export default {
+export default defineComponent({
   props: {
     locationId: {
       type: Number,
@@ -58,10 +59,10 @@ export default {
     },
     applicationId: {
       type: Number,
-      required: false,
+      required: true,
     },
   },
-  setup(props: any) {
+  setup(props) {
     const processing = ref(false);
     const snackBar = useSnackBar();
     const router = useRouter();
@@ -69,27 +70,31 @@ export default {
     const initialData = ref({} as ProgramInfoRequestAPIOutDTO);
     const formioUtils = useFormioUtils();
     const formioDataLoader = useFormioDropdownLoader();
+    const formioComponentLoader = useFormioComponentLoader();
     const programRequestData = ref();
     const { mapProgramInfoChipStatus } = useProgramInfoRequest();
     const goBackRouteParams = {
       name: InstitutionRoutesConst.PROGRAM_INFO_REQUEST_SUMMARY,
     } as RouteLocationRaw;
+    let selectedProgramId;
 
     // Components names on Form.IO definition that will be manipulated.
     const PROGRAMS_DROPDOWN_KEY = "selectedProgram";
     const OFFERINGS_DROPDOWN_KEY = "selectedOffering";
     const INSTITUTION_DETAILS_PANEL = "institutionEnteredDetails";
+    const SELECTED_OFFERING_END_DATE_KEY = "selectedOfferingEndDate";
+    const DENY_PIR_KEY = "denyProgramInformationRequest";
 
     const loadOfferingsForProgram = async (form: any) => {
-      const programId = formioUtils.getComponentValueByKey(
+      selectedProgramId = formioUtils.getComponentValueByKey(
         form,
         PROGRAMS_DROPDOWN_KEY,
       );
 
-      if (programId) {
+      if (selectedProgramId) {
         await formioDataLoader.loadOfferingsForLocationForInstitution(
           form,
-          programId,
+          selectedProgramId,
           props.locationId,
           OFFERINGS_DROPDOWN_KEY,
           programRequestData.value.programYearId,
@@ -156,9 +161,44 @@ export default {
 
     const formChanged = async (form: any, event: any) => {
       if (event.changed?.component?.key === PROGRAMS_DROPDOWN_KEY) {
+        // Reset the selected offering details and
+        // offerings dropdown when selected program is changed.
+        resetSelectedOfferingDetails(form);
+        resetOfferingDropdownValue(form);
         await loadOfferingsForProgram(form);
       }
+
+      // When an offering is selected, load the offering details
+      // which are(is) required for the form.
+      if (
+        event.changed?.component.key === OFFERINGS_DROPDOWN_KEY &&
+        +event.changed.value > 0
+      ) {
+        await formioComponentLoader.loadSelectedOfferingDetailsByLocationAndProgram(
+          form,
+          +event.changed.value,
+          SELECTED_OFFERING_END_DATE_KEY,
+          props.locationId,
+          selectedProgramId,
+        );
+      }
+      // If Deny PIR is checked after offering being selected
+      // then reset the offering details that were loaded.
+      if (
+        event.changed?.component.key === DENY_PIR_KEY &&
+        event.changed.value
+      ) {
+        resetSelectedOfferingDetails(form);
+      }
       await formioDataLoader.loadPIRDeniedReasonList(form, "pirDenyReasonId");
+    };
+
+    const resetSelectedOfferingDetails = (form: FormIOForm) => {
+      formioUtils.setComponentValue(form, SELECTED_OFFERING_END_DATE_KEY, "");
+    };
+
+    const resetOfferingDropdownValue = (form: FormIOForm) => {
+      formioUtils.setComponentValue(form, OFFERINGS_DROPDOWN_KEY, "");
     };
 
     const customEventCallback = async (
@@ -236,5 +276,5 @@ export default {
       goBack,
     };
   },
-};
+});
 </script>

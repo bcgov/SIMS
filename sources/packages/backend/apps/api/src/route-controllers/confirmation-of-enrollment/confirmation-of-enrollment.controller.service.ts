@@ -9,12 +9,9 @@ import {
   FIRST_COE_NOT_COMPLETE,
   INVALID_TUITION_REMITTANCE_AMOUNT,
 } from "../../constants";
-import {
-  ApplicationService,
-  DisbursementScheduleService,
-} from "../../services";
+import { DisbursementScheduleService } from "../../services";
+import { COEApprovalPeriodStatus } from "../../services/disbursement-schedule/disbursement-schedule.models";
 import { ApiProcessError } from "../../types";
-import { COE_WINDOW } from "../../utilities";
 import BaseController from "../BaseController";
 import { ConfirmationOfEnrollmentAPIInDTO } from "./models/confirmation-of-enrollment.dto";
 import { ConfirmEnrollmentOptions } from "./models/confirmation-of-enrollment.models";
@@ -23,7 +20,6 @@ import { ConfirmEnrollmentOptions } from "./models/confirmation-of-enrollment.mo
 export class ConfirmationOfEnrollmentControllerService extends BaseController {
   constructor(
     private readonly disbursementScheduleService: DisbursementScheduleService,
-    private readonly applicationService: ApplicationService,
   ) {
     super();
   }
@@ -58,18 +54,21 @@ export class ConfirmationOfEnrollmentControllerService extends BaseController {
       );
     }
 
-    if (
-      !options?.allowOutsideCOEWindow &&
-      !this.applicationService.withinValidCOEWindow(
-        new Date(disbursementSchedule.disbursementDate),
-      )
-    ) {
-      throw new UnprocessableEntityException(
-        `Confirmation of Enrollment window is greater than ${COE_WINDOW} days`,
-      );
+    if (!options?.allowOutsideCOEApprovalPeriod) {
+      const approvalPeriodStatus =
+        this.disbursementScheduleService.getCOEApprovalPeriodStatus(
+          disbursementSchedule.disbursementDate,
+          disbursementSchedule.studentAssessment.application.currentAssessment
+            .offering.studyEndDate,
+        );
+      if (
+        approvalPeriodStatus !== COEApprovalPeriodStatus.WithinApprovalPeriod
+      ) {
+        throw new UnprocessableEntityException(
+          "The enrolment cannot be confirmed as current date is not within the valid approval period.",
+        );
+      }
     }
-
-    // TODO: Add validation for past study period.
 
     const firstOutstandingDisbursement =
       await this.disbursementScheduleService.getFirstDisbursementScheduleByApplication(
