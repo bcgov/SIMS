@@ -76,7 +76,7 @@ export class StudentAccountApplicationStudentsController extends BaseController 
       // on DB so check for possible pending student account applications.
       const hasPendingStudentAccountApplication =
         await this.studentAccountApplicationsService.hasPendingStudentAccountApplication(
-          userToken.userId,
+          userToken.userName,
         );
       if (hasPendingStudentAccountApplication) {
         throw new UnprocessableEntityException(
@@ -123,7 +123,7 @@ export class StudentAccountApplicationStudentsController extends BaseController 
   ): Promise<StudentAccountApplicationAPIOutDTO> {
     const hasPendingApplication =
       await this.studentAccountApplicationsService.hasPendingStudentAccountApplication(
-        studentUserToken.userId,
+        studentUserToken.userName,
       );
     return { hasPendingApplication };
   }
