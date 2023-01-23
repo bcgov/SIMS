@@ -9,7 +9,6 @@ jobs:
   checkEnv:
     name: Check Env variables
     runs-on: ubuntu-latest
-    environment: DEV
     steps:
       - name: Print Env Vars
         run: |
@@ -19,7 +18,6 @@ jobs:
   test:
     name: Test API in Docker env
     runs-on: ubuntu-latest
-    environment: DEV
     if: ${{ github.event.pull_request.merged == false }}
     env:
       PROJECT_NAME: aest-sims
