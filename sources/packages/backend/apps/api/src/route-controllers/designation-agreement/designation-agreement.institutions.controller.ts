@@ -105,9 +105,9 @@ export class DesignationAgreementInstitutionsController extends BaseController {
     const createdDesignation =
       await this.designationAgreementService.submitDesignationAgreement(
         userToken.authorizations.institutionId,
-        payload.dynamicData,
+        submissionResult.data.dynamicData,
         userToken.userId,
-        payload.locations
+        submissionResult.data.locations
           .filter((location) => location.requestForDesignation)
           .map((location) => location.locationId),
       );

@@ -158,11 +158,6 @@ export class ApplicationStudentsController extends BaseController {
     @Param("applicationId", ParseIntPipe) applicationId: number,
     @UserToken() studentToken: StudentUserToken,
   ): Promise<void> {
-    await this.applicationControllerService.offeringIntensityRestrictionCheck(
-      studentToken.studentId,
-      payload.data.howWillYouBeAttendingTheProgram,
-    );
-
     const programYear = await this.programYearService.getActiveProgramYear(
       payload.programYearId,
     );
@@ -201,6 +196,11 @@ export class ApplicationStudentsController extends BaseController {
         "Not able to create an application due to an invalid request.",
       );
     }
+
+    await this.applicationControllerService.offeringIntensityRestrictionCheck(
+      studentToken.studentId,
+      submissionResult.data.data.howWillYouBeAttendingTheProgram,
+    );
 
     const student = await this.studentService.getStudentById(
       studentToken.studentId,

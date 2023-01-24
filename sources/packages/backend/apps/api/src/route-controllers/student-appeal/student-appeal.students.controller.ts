@@ -5,8 +5,6 @@ import {
   Body,
   NotFoundException,
   UnprocessableEntityException,
-  BadRequestException,
-  InternalServerErrorException,
   Get,
   ParseIntPipe,
 } from "@nestjs/common";
@@ -34,16 +32,11 @@ import {
   ApiBadRequestResponse,
 } from "@nestjs/swagger";
 import BaseController from "../BaseController";
-import {
-  ClientTypeBaseRoute,
-  ApiProcessError,
-  DryRunSubmissionResult,
-} from "../../types";
+import { ClientTypeBaseRoute, ApiProcessError } from "../../types";
 import {
   APPLICATION_CHANGE_NOT_ELIGIBLE,
   INVALID_APPLICATION_NUMBER,
 } from "../../constants";
-import { StudentAppealRequestModel } from "../../services/student-appeal/student-appeal.model";
 
 @AllowAuthorizedParty(AuthorizedParties.student)
 @RequiresStudentAccount()
@@ -111,40 +104,11 @@ export class StudentAppealStudentsController extends BaseController {
         "There is already a pending appeal for this student.",
       );
     }
-    let dryRunSubmissionResults: DryRunSubmissionResult[] = [];
-    try {
-      const dryRunPromise = payload.studentAppealRequests.map((appeal) =>
-        this.formService.dryRunSubmission(appeal.formName, appeal.formData),
-      );
-      dryRunSubmissionResults = await Promise.all(dryRunPromise);
-    } catch (error) {
-      //TODO: Add a logger to log the error trace.
-      throw new InternalServerErrorException(
-        "Dry run submission failed due to unknown reason.",
-      );
-    }
-    const invalidRequest = dryRunSubmissionResults.some(
-      (result) => !result.valid,
-    );
-    if (invalidRequest) {
-      throw new BadRequestException(
-        "Not able to submit student appeal due to invalid request.",
-      );
-    }
-
-    // Generate the data to be persisted based on the result of the dry run submission.
-    const appealRequests = dryRunSubmissionResults.map(
-      (result) =>
-        ({
-          formName: result.formName,
-          formData: result.data.data,
-        } as StudentAppealRequestModel),
-    );
 
     const studentAppeal = await this.studentAppealService.saveStudentAppeals(
       applicationId,
       userToken.userId,
-      appealRequests,
+      payload.studentAppealRequests,
     );
     return {
       id: studentAppeal.id,

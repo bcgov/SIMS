@@ -4,10 +4,12 @@ import {
   IsDefined,
   IsEnum,
   IsNotEmpty,
+  IsNumber,
   IsPositive,
   ValidateNested,
 } from "class-validator";
 import { StudentAppealStatus } from "@sims/sims-db";
+
 /**
  * DTO for student appeal request.
  */
@@ -15,7 +17,19 @@ export class StudentAppealRequestAPIInDTO {
   @IsNotEmpty()
   formName: string;
   @IsDefined()
-  formData: unknown;
+  formData: StudentIncomeAppealRequest | PartnerIncomeAppealRequest;
+}
+
+export class StudentIncomeAppealRequest {
+  @IsNumber()
+  @IsPositive()
+  studentNewIncome: number;
+}
+
+export class PartnerIncomeAppealRequest {
+  @IsNumber()
+  @IsPositive()
+  partnerNewIncome: number;
 }
 
 /**

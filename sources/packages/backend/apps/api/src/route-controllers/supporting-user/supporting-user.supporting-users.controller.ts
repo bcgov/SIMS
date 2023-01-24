@@ -141,7 +141,7 @@ export class SupportingUserSupportingUsersController extends BaseController {
   ): Promise<void> {
     // Regardless of the API call is successful or not, create/update
     // the user being used to execute the request.
-    const userQuery = this.userService.syncUser(
+    const userQuery = await this.userService.syncUser(
       userToken.userName,
       userToken.email,
       userToken.givenNames,
@@ -151,7 +151,7 @@ export class SupportingUserSupportingUsersController extends BaseController {
     // The application must be search using at least 3 criteria as
     // per defined by the Ministry policies.
     const applicationQuery =
-      this.applicationService.getApplicationForSupportingUser(
+      await this.applicationService.getApplicationForSupportingUser(
         payload.applicationNumber,
         payload.studentsLastName,
         payload.studentsDateOfBirth,
@@ -218,16 +218,16 @@ export class SupportingUserSupportingUsersController extends BaseController {
 
     try {
       const addressInfo: AddressInfo = {
-        addressLine1: payload.addressLine1,
-        addressLine2: payload.addressLine2,
-        provinceState: payload.provinceState,
-        country: payload.country,
-        city: payload.city,
-        postalCode: payload.postalCode,
+        addressLine1: submissionResult.data.data.addressLine1,
+        addressLine2: submissionResult.data.data.addressLine2,
+        provinceState: submissionResult.data.data.provinceState,
+        country: submissionResult.data.data.country,
+        city: submissionResult.data.data.city,
+        postalCode: submissionResult.data.data.postalCode,
       };
 
       const contactInfo: ContactInfo = {
-        phone: payload.phone,
+        phone: submissionResult.data.data.phone,
         address: addressInfo,
       };
 
@@ -237,9 +237,9 @@ export class SupportingUserSupportingUsersController extends BaseController {
         userToken.userId,
         {
           contactInfo,
-          sin: payload.sin,
+          sin: submissionResult.data.data.sin,
           birthDate: userToken.birthdate,
-          supportingData: payload.supportingData,
+          supportingData: submissionResult.data.data.supportingData,
           userId: user.id,
         },
       );

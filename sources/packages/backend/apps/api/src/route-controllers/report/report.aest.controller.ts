@@ -66,21 +66,8 @@ export class ReportAESTController extends BaseController {
     @Body() payload: ReportsFilterAPIInDTO,
     @Res() response: Response,
   ): Promise<void> {
-    const submissionResult = await this.formService.dryRunSubmission(
-      FormNames.ExportFinancialReports,
-      payload,
-    );
-
-    if (!submissionResult.valid) {
-      throw new BadRequestException(
-        "Not able to export report due to an invalid request.",
-      );
-    }
-
     try {
-      const reportData = await this.reportService.getReportDataAsCSV(
-        submissionResult.data.data,
-      );
+      const reportData = await this.reportService.getReportDataAsCSV(payload);
       this.streamFile(response, payload.reportName, reportData);
     } catch (error: unknown) {
       if (error instanceof CustomNamedError) {
