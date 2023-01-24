@@ -1,5 +1,4 @@
 import {
-  BadRequestException,
   Body,
   Controller,
   Post,
@@ -24,7 +23,6 @@ import {
 } from "@sims/utilities";
 import BaseController from "../BaseController";
 import { ReportsFilterAPIInDTO } from "./models/report.dto";
-import { FormNames } from "../../services/form/constants";
 import { Role } from "../../auth/roles.enum";
 import {
   FILTER_PARAMS_MISMATCH,
