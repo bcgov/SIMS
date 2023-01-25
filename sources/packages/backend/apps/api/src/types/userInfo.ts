@@ -5,6 +5,5 @@ export interface UserInfo {
   email: string;
   userName: string;
   birthdate: string;
-  roles: string[];
   idp_user_name: string;
 }

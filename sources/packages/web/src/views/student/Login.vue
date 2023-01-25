@@ -21,7 +21,7 @@
                 </p>
                 <v-btn
                   color="primary"
-                  @click="login(AppIDPType.BCSC)"
+                  @click="login(IdentityProviders.BCSC)"
                   prepend-icon="fa:fa fa-user"
                 >
                   Login / Sign up with BCSC
@@ -110,7 +110,7 @@
             </p>
             <v-btn
               color="primary"
-              @click="login(AppIDPType.BCeID)"
+              @click="login(IdentityProviders.BCeID)"
               prepend-icon="fa:fa fa-user"
             >
               Login / Sign up with Basic BCeID
@@ -136,15 +136,15 @@
 
 <script lang="ts">
 import { useAuth } from "@/composables";
-import { AppIDPType, ClientIdType } from "@/types";
+import { IdentityProviders, ClientIdType } from "@/types";
 
 export default {
   setup() {
     const { executeLogin } = useAuth();
-    const login = async (idp: AppIDPType) => {
+    const login = async (idp: IdentityProviders) => {
       await executeLogin(ClientIdType.Student, idp);
     };
-    return { AppIDPType, login };
+    return { IdentityProviders, login };
   },
 };
 </script>

@@ -118,7 +118,7 @@ export class StudentStudentsController extends BaseController {
 
     // Ensure that only BCSC authenticate users can have access
     // to the student account creation.
-    if (studentUserToken.IDP !== IdentityProviders.BCSC) {
+    if (studentUserToken.identityProvider !== IdentityProviders.BCSC) {
       throw new ForbiddenException(
         "User is not allowed to create a student account.",
       );
@@ -164,7 +164,7 @@ export class StudentStudentsController extends BaseController {
   async synchronizeFromUserToken(
     @UserToken() studentUserToken: StudentUserToken,
   ): Promise<void> {
-    if (studentUserToken.IDP === IdentityProviders.BCSC) {
+    if (studentUserToken.identityProvider === IdentityProviders.BCSC) {
       await this.studentService.synchronizeFromUserToken(studentUserToken);
     }
   }

@@ -4,7 +4,7 @@ import { ClientIdType } from "../types/contracts/ConfigContract";
 import { AppConfigService } from "./AppConfigService";
 import HttpBaseClient from "./http/common/HttpBaseClient";
 import { UserService } from "./UserService";
-import { ApiProcessError, AppIDPType, ApplicationToken } from "@/types";
+import { ApiProcessError, IdentityProviders, ApplicationToken } from "@/types";
 import { RouteHelper } from "@/helpers";
 import { LocationAsRelativeRaw } from "vue-router";
 import {
@@ -25,7 +25,7 @@ export class AuthService {
   /**
    * Keycloak instance available after the method initialize is called.
    */
-  keycloak?: Keycloak.KeycloakInstance = undefined;
+  keycloak?: Keycloak = undefined;
 
   private clientType?: ClientIdType = undefined;
   /**
@@ -139,7 +139,7 @@ export class AuthService {
         error instanceof ApiProcessError &&
         error.errorType === MISSING_STUDENT_ACCOUNT
       ) {
-        if (this.userToken?.IDP === AppIDPType.BCeID) {
+        if (this.userToken?.identityProvider === IdentityProviders.BCeID) {
           const hasPendingAccountApplication =
             await StudentAccountApplicationService.shared.hasPendingAccountApplication();
           if (hasPendingAccountApplication) {

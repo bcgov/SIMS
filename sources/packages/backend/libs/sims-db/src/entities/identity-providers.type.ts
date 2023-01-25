@@ -3,7 +3,7 @@
  * and received as a token property named IDP.
  */
 export enum IdentityProviders {
-  BCeID = "BCEID",
-  BCSC = "BCSC",
-  IDIR = "IDIR",
+  BCeID = "bceidboth",
+  BCSC = "bcsc",
+  IDIR = "idir",
 }

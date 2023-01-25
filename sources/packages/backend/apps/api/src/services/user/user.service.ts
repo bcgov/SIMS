@@ -110,20 +110,6 @@ export class UserService extends DataModelService<User> {
   }
 
   /**
-   * Creates an user associated with the a service account.
-   * @param userName user name to create the user for the service account.
-   * @returns new user created.
-   */
-  async createServiceAccountUser(userName: string) {
-    const user = new User();
-    user.userName = userName;
-    user.email = SERVICE_ACCOUNT_DEFAULT_USER_EMAIL;
-    user.firstName = null;
-    user.lastName = userName;
-    return this.repo.save(user);
-  }
-
-  /**
    * Check if a user already exists on DB by the user name that is a unique column.
    * @param userName unique user name.
    * @returns true if the user exists, otherwise false.

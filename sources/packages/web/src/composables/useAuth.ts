@@ -1,6 +1,6 @@
 import { RouteHelper } from "@/helpers";
 import { AuthService } from "@/services/AuthService";
-import { AppIDPType, ClientIdType, Role } from "@/types";
+import { IdentityProviders, ClientIdType, Role } from "@/types";
 import { computed } from "vue";
 
 export function useAuth() {
@@ -14,7 +14,7 @@ export function useAuth() {
 
   const executeLogin = async (
     clientType: ClientIdType,
-    idp: AppIDPType,
+    idp: IdentityProviders,
   ): Promise<void> => {
     await AuthService.shared.keycloak?.login({
       idpHint: idp.toLowerCase(),

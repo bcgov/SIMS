@@ -39,7 +39,6 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       AuthorizedParties.institution,
       AuthorizedParties.student,
       AuthorizedParties.aest,
-      AuthorizedParties.formsFlowBPM,
     ];
     if (!authorizedParties.includes(userToken.authorizedParty)) {
       // If not present in the list just return the received token without any further processing.
@@ -75,16 +74,6 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
           userToken.userName,
         );
       return institutionUserToken;
-    }
-
-    // Ensures that there is a service account user created for forms-flow-bpm.
-    if (userToken.authorizedParty === AuthorizedParties.formsFlowBPM) {
-      // If the user does not exists on DB, create one.
-      if (!dbUser) {
-        const newServiceAccountUser =
-          await this.userService.createServiceAccountUser(userToken.userName);
-        userToken.userId = newServiceAccountUser.id;
-      }
     }
 
     return userToken;
