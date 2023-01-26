@@ -45,6 +45,9 @@ RUN apk del git
 #          See docker-compose.yml for instructions
 RUN ln -sf $NPM_PACKAGES/node_modules node_modules
 
+RUN ls
+RUN PWD
+
 # Set this to inspect more from the application. Examples:
 #   DEBUG=formio:db (see index.js for more)
 #   DEBUG=formio:*
