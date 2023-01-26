@@ -32,7 +32,7 @@ COPY ./package.json $NPM_PACKAGES/
 COPY ./package-lock.json $NPM_PACKAGES/
 
 # Use "Continuous Integration" to install as-is from package-lock.json
-RUN npm ci --prefix=$NPM_PACKAGES
+RUN npm i --prefix=$NPM_PACKAGES
 
 RUN apk del git
 
