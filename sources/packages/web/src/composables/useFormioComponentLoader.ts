@@ -9,20 +9,66 @@ import { useFormioUtils } from ".";
  */
 export function useFormioComponentLoader() {
   const formioUtils = useFormioUtils();
-  // Get offering date of the selected offering and set to the hidden field (selectedOfferingDate) in formio.
-  const loadSelectedOfferingDate = async (
+
+  /**
+   * Get details of given offering and populate form.io
+   * hidden fields.
+   * @param form form to be updated with hidden field values.
+   * @param offeringId offering.
+   * @param offeringFieldIds hidden field names in form.io.
+   * @param options API options to get offering details.
+   */
+  const loadSelectedOfferingDetails = async (
     form: any,
     offeringId: number,
-    fieldId: string,
+    offeringStartDateFieldId: string,
+    offeringEndDateFieldId: string,
   ) => {
     const valueToBeLoaded =
-      await EducationProgramOfferingService.shared.getProgramOfferingStartDate(
+      await EducationProgramOfferingService.shared.getProgramOfferingDetails(
         offeringId,
       );
+
     formioUtils.setComponentValue(
       form,
-      fieldId,
+      offeringStartDateFieldId,
       valueToBeLoaded?.studyStartDate,
+    );
+
+    formioUtils.setComponentValue(
+      form,
+      offeringEndDateFieldId,
+      valueToBeLoaded?.studyEndDate,
+    );
+  };
+
+  /**
+   * Get details of given offering by location and program
+   * and populate form.io hidden fields.
+   * @param form form to be updated with hidden field values.
+   * @param offeringId offering.
+   * @param offeringEndDateFieldId hidden field name in form.io.
+   * @param locationId offering location.
+   * @param programId offering program.
+   */
+  const loadSelectedOfferingDetailsByLocationAndProgram = async (
+    form: any,
+    offeringId: number,
+    offeringEndDateFieldId: string,
+    locationId: number,
+    programId: number,
+  ) => {
+    const valueToBeLoaded =
+      await EducationProgramOfferingService.shared.getOfferingDetailsByLocationAndProgram(
+        locationId,
+        programId,
+        offeringId,
+      );
+
+    formioUtils.setComponentValue(
+      form,
+      offeringEndDateFieldId,
+      valueToBeLoaded?.studyEndDate,
     );
   };
 
@@ -41,6 +87,7 @@ export function useFormioComponentLoader() {
 
   return {
     loadProgramDesc,
-    loadSelectedOfferingDate,
+    loadSelectedOfferingDetails,
+    loadSelectedOfferingDetailsByLocationAndProgram,
   };
 }

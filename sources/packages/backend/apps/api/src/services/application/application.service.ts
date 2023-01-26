@@ -23,7 +23,6 @@ import {
   ApplicationSubmissionResult,
 } from "./application.models";
 import {
-  COE_WINDOW,
   PIR_DENIED_REASON_OTHER_ID,
   sortApplicationsColumnMap,
   PIR_OR_DATE_OVERLAP_ERROR_MESSAGE,
@@ -33,7 +32,7 @@ import {
   FieldSortOrder,
   OrderByCondition,
 } from "../../utilities";
-import { CustomNamedError, dateDifference, QueueNames } from "@sims/utilities";
+import { CustomNamedError, QueueNames } from "@sims/utilities";
 import {
   SFASApplicationService,
   SFASPartTimeApplicationsService,
@@ -1109,17 +1108,6 @@ export class ApplicationService extends RecordDataModelService<Application> {
       );
       return application;
     });
-  }
-
-  /**
-   * Checks if the confirmation of enrollment can be executed in the present date.
-   * Institutions can execute confirmation of enrollments not before 21 days of the offering start date.
-   * After the offering start date institutions can still execute the CoE.
-   * @param offeringStartDate offering start date.
-   * @returns true if the confirmation of enrollment can happen, otherwise false.
-   */
-  withinValidCOEWindow(offeringStartDate: Date): boolean {
-    return dateDifference(new Date(), offeringStartDate) <= COE_WINDOW;
   }
 
   /**

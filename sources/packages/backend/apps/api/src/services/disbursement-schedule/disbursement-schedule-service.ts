@@ -6,8 +6,14 @@ import {
   FieldSortOrder,
   PaginatedResults,
   OrderByCondition,
+  COE_MAX_ALLOWED_DAYS_PAST_STUDY_PERIOD,
 } from "../../utilities";
-import { addDays } from "@sims/utilities";
+import {
+  addDays,
+  getISODateOnlyString,
+  isBetweenPeriod,
+  isBeforeDate,
+} from "@sims/utilities";
 import { DataSource, UpdateResult, Brackets, EntityManager } from "typeorm";
 import { SequenceControlService } from "@sims/services";
 import {
@@ -19,7 +25,10 @@ import {
   User,
 } from "@sims/sims-db";
 import { NotificationActionsService } from "@sims/services/notifications";
-import { EnrollmentPeriod } from "./disbursement-schedule.models";
+import {
+  COEApprovalPeriodStatus,
+  EnrollmentPeriod,
+} from "./disbursement-schedule.models";
 
 const DISBURSEMENT_DOCUMENT_NUMBER_SEQUENCE_GROUP =
   "DISBURSEMENT_DOCUMENT_NUMBER";
@@ -499,5 +508,46 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
       auditUserId,
       transactionalEntityManager,
     );
+  }
+
+  /**
+   * Get COE approval period status which defines
+   * if the COE can be confirmed by institution on current date.
+   * @param disbursementDate disbursement date.
+   * @param studyEndDate study end date of the offering.
+   * @returns COE approval period status.
+   */
+  getCOEApprovalPeriodStatus(
+    disbursementDate: string | Date,
+    studyEndDate: string | Date,
+  ): COEApprovalPeriodStatus {
+    // Enrolment period start date(COE_WINDOW days before disbursement date).
+    const enrolmentPeriodStart = addDays(-COE_WINDOW, disbursementDate);
+    // Enrolment period end date(COE_MAX_ALLOWED_DAYS_PAST_STUDY_PERIOD days after study end date).
+    // The same validation with COE_MAX_ALLOWED_DAYS_PAST_STUDY_PERIOD exists on
+    // Student application forms and program information request form.
+    // When there is an update to COE_MAX_ALLOWED_DAYS_PAST_STUDY_PERIOD please make sure
+    // to update all the above.
+    const enrolmentPeriodEnd = addDays(
+      COE_MAX_ALLOWED_DAYS_PAST_STUDY_PERIOD,
+      studyEndDate,
+    );
+    //Current date as date only string.
+    const now = getISODateOnlyString(new Date());
+    // Is the enrolment now within eligible approval period.
+    if (
+      isBetweenPeriod(now, {
+        startDate: enrolmentPeriodStart,
+        endDate: enrolmentPeriodEnd,
+      })
+    ) {
+      return COEApprovalPeriodStatus.WithinApprovalPeriod;
+    }
+    // Is the enrolment now before the eligible approval period.
+    if (isBeforeDate(now, enrolmentPeriodStart)) {
+      return COEApprovalPeriodStatus.BeforeApprovalPeriod;
+    }
+
+    return COEApprovalPeriodStatus.AfterApprovalPeriod;
   }
 }

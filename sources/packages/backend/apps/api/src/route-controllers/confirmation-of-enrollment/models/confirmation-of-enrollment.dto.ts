@@ -1,5 +1,6 @@
 import { Min, IsOptional } from "class-validator";
 import { COEStatus, ProgramInfoStatus } from "@sims/sims-db";
+import { COEApprovalPeriodStatus } from "../../../services/disbursement-schedule/disbursement-schedule.models";
 
 export class ApplicationDetailsForCOEAPIOutDTO {
   applicationProgramName: string;
@@ -20,7 +21,7 @@ export class ApplicationDetailsForCOEAPIOutDTO {
   applicationStatus: string;
   applicationCOEStatus: COEStatus;
   applicationId: number;
-  applicationWithinCOEWindow: boolean;
+  coeApprovalPeriodStatus: COEApprovalPeriodStatus;
   applicationLocationId: number;
   applicationDeniedReason?: string;
   studyBreaks?: StudyBreak[];

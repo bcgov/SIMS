@@ -141,8 +141,9 @@ export class EducationProgramOfferingSummaryAPIOutDTO {
   offeringStatus: OfferingStatus;
 }
 
-export class OfferingStartDateAPIOutDTO {
+export class OfferingDetailsAPIOutDTO {
   studyStartDate: string;
+  studyEndDate: string;
 }
 
 export class OfferingAssessmentAPIInDTO {

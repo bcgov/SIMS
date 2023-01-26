@@ -246,3 +246,18 @@ export function hasSomePeriodOverlap(periods: Period[]): boolean {
   }
   return false;
 }
+
+/**
+ * Validates if the given date is before
+ * the date which is expected to be before given date.
+ * @param givenDate given date.
+ * @param expectedBeforeGivenDate expected before given date.
+ * @returns if the given date is before
+ * the date which is expected to be before given date.
+ */
+export function isBeforeDate(
+  givenDate: string | Date,
+  expectedBeforeGivenDate: string | Date,
+): boolean {
+  return dayjs(givenDate).isBefore(dayjs.utc(expectedBeforeGivenDate));
+}

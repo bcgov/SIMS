@@ -1,5 +1,10 @@
 import { StatusChipTypes } from "@/components/generic/StatusChip.models";
-import { COEStatus, ProgramInfoStatus, StudyBreakCOE } from "@/types";
+import {
+  COEApprovalPeriodStatus,
+  COEStatus,
+  ProgramInfoStatus,
+  StudyBreakCOE,
+} from "@/types";
 
 export interface ConfirmationOfEnrollmentAPIInDTO {
   tuitionRemittanceAmount: number;
@@ -35,7 +40,7 @@ export interface ApplicationDetailsForCOEAPIOutDTO {
   applicationStatus: string;
   applicationCOEStatus: COEStatus;
   applicationId: number;
-  applicationWithinCOEWindow: boolean;
+  coeApprovalPeriodStatus: COEApprovalPeriodStatus;
   applicationLocationId: number;
   applicationDeniedReason?: string;
   studyBreaks?: StudyBreakCOE[];

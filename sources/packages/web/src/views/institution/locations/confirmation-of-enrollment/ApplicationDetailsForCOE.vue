@@ -46,6 +46,12 @@
         </template>
       </header-navigator>
     </template>
+    <template #alerts>
+      <approval-disabled-banner
+        v-if="initialData.applicationCOEStatus === COEStatus.required"
+        :coeApprovalPeriodStatus="initialData.coeApprovalPeriodStatus"
+      />
+    </template>
     <formio-container
       formName="confirmsStudentEnrollment"
       :formData="initialData"
@@ -66,6 +72,8 @@ import {
   ApiProcessError,
   MenuType,
   ApproveConfirmEnrollmentModel,
+  BannerTypes,
+  COEApprovalPeriodStatus,
 } from "@/types";
 import { useSnackBar, ModalDialog, useCOE, useFormatters } from "@/composables";
 import {
@@ -79,11 +87,13 @@ import {
 } from "@/services/http/dto";
 import ApproveCOE from "@/components/institutions/modals/confirmationOfEnrollment/ApproveCOE.vue";
 import DenyCOE from "@/components/institutions/modals/confirmationOfEnrollment/DenyCOE.vue";
+import ApprovalDisabledBanner from "@/components/institutions/locations/coe/COEApprovalDisabledBanner.vue";
 
 export default {
   components: {
     ApproveCOE,
     DenyCOE,
+    ApprovalDisabledBanner,
   },
   props: {
     disbursementScheduleId: {
@@ -190,19 +200,18 @@ export default {
     };
 
     const loadMenu = () => {
+      const isCOEWithinApprovalPeriod =
+        initialData.value.coeApprovalPeriodStatus ===
+        COEApprovalPeriodStatus.WithinApprovalPeriod;
+      const isCOERequired =
+        COEStatus.required === initialData.value.applicationCOEStatus;
       items.value = [
         {
           label: "Confirm enrolment",
           textColor:
-            COEStatus.required === initialData.value.applicationCOEStatus &&
-            !initialData.value.applicationWithinCOEWindow
-              ? "text-muted"
-              : "",
+            isCOERequired && !isCOEWithinApprovalPeriod ? "text-muted" : "",
           command: () => {
-            if (
-              COEStatus.required === initialData.value.applicationCOEStatus &&
-              initialData.value.applicationWithinCOEWindow
-            ) {
+            if (isCOERequired && isCOEWithinApprovalPeriod) {
               showHideConfirmCOE();
             }
           },
@@ -236,6 +245,7 @@ export default {
       denyCOEModal,
       InstitutionRoutesConst,
       confirmCOEModal,
+      BannerTypes,
     };
   },
 };

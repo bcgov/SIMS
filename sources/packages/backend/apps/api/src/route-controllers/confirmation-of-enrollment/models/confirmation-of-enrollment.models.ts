@@ -4,11 +4,7 @@ export interface ConfirmEnrollmentOptions {
    */
   locationId?: number;
   /**
-   * Allow study period who's study end date is past to be confirmed for enrolment.
+   * Allow COEs which are outside the valid COE confirmation period to be confirmed.
    */
-  allowPastStudyPeriod?: boolean;
-  /**
-   * Allow COEs which are outside the valid COE window to be confirmed.
-   */
-  allowOutsideCOEWindow?: boolean;
+  allowOutsideCOEApprovalPeriod?: boolean;
 }
