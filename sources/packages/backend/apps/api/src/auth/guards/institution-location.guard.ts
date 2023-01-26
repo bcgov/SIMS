@@ -1,5 +1,6 @@
 import { Injectable, CanActivate, ExecutionContext } from "@nestjs/common";
 import { Reflector } from "@nestjs/core";
+import { IInstitutionUserToken, IUserToken } from "..";
 import { InstitutionUserAuthorizations } from "../../services/institution-user-auth/institution-user-auth.models";
 import { AuthorizedParties } from "../authorized-parties.enum";
 import {
@@ -23,22 +24,24 @@ export class InstitutionLocationGuard implements CanActivate {
     }
 
     const { user } = context.switchToHttp().getRequest();
+    const userToken = user as IInstitutionUserToken;
     /**
      * When a controller is shared between more then one client type(e.g Institution and Ministry)
      * following logic ensures that location access is checked only for Institution user.
      * For client types except Institution, this decorator will not validate anything.
      */
-    if (user.authorizedParty !== AuthorizedParties.institution) {
+    if (userToken.azp !== AuthorizedParties.institution) {
       return true;
     }
-    const authorizations = user.authorizations as InstitutionUserAuthorizations;
+    const authorizations =
+      userToken.authorizations as InstitutionUserAuthorizations;
 
     const request = context.switchToHttp().getRequest();
     const locationId = parseInt(
       request.params[hasLocationUserType.locationIdParamName],
     );
 
-    if (!user.authorizations.hasLocationAccess(locationId)) {
+    if (!authorizations.hasLocationAccess(locationId)) {
       return false;
     }
 

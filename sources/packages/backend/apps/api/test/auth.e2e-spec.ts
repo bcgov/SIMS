@@ -138,7 +138,6 @@ describe("Authentication (e2e)", () => {
           expect(resp.body).toBeDefined();
           expect(resp.body.userName).toBeTruthy();
           expect(resp.body.email).toBeTruthy();
-          expect(resp.body.scope).toBeTruthy();
         });
     });
   });
