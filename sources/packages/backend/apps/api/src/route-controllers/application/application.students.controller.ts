@@ -456,7 +456,6 @@ export class ApplicationStudentsController extends BaseController {
       applicationId,
       studentToken.studentId,
     );
-    console.log(application);
     if (!application) {
       throw new NotFoundException(
         `Application id ${applicationId} was not found.`,
