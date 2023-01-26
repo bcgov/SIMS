@@ -5,20 +5,20 @@
 # Use Node image, maintained by Docker:
 # hub.docker.com/r/_/node/
 FROM artifacts.developer.gov.bc.ca/docker-remote/node:19.2-alpine
-
-# set working directory
-WORKDIR /formio
-
-ARG FORMIO_SOURCE_REPO_URL
-ARG FORMIO_SOURCE_REPO_TAG
+WORKDIR /app
 
 # "bcrypt" requires python/make/g++, all must be installed in alpine
 # (note: using pinned versions to ensure immutable build environment)
 RUN apk update && \
   apk upgrade && \
-  apk add make && \
-  apk add g++ &&\
-  apk add git
+  apk add make=4.2.1-r2 && \
+  apk add g++=8.3.0-r0
+
+# At least one buried package dependency is using a `git` path.
+# Hence we need to haul in git.
+RUN apk --update add git
+# Use https to avoid requiring ssh keys for public repos.
+RUN git config --global url."https://github.com/".insteadOf "ssh://git@github.com/"
 
 # Clone code
 RUN git clone ${FORMIO_SOURCE_REPO_URL} -b ${FORMIO_SOURCE_REPO_TAG} --single-branch /formio/
@@ -32,13 +32,13 @@ ENV NPM_PACKAGES=/.npm-packages \
 RUN echo "prefix = $NPM_PACKAGES" >> ~/.npmrc
 
 # Include details of the required dependencies
-RUN mkdir -p $NPM_PACKAGES/
-# Include details of the required dependencies
-# RUN cp package.json $NPM_PACKAGES/
-RUN cp package-lock.json $NPM_PACKAGES/
+COPY ./package.json $NPM_PACKAGES/
+COPY ./package-lock.json $NPM_PACKAGES/
 
-# Use install as-is from package.json
+# Use "Continuous Integration" to install as-is from package-lock.json
 RUN npm ci --prefix=$NPM_PACKAGES
+
+RUN apk del git
 
 # Link in the global install because `require()` only looks for ./node_modules
 # WARNING: This is overwritten by volume-mount at runtime!
@@ -49,9 +49,6 @@ RUN ln -sf $NPM_PACKAGES/node_modules node_modules
 #   DEBUG=formio:db (see index.js for more)
 #   DEBUG=formio:*
 ENV DEBUG=""
-
-RUN set -x \
-  && chmod -R 777 /formio/
 
 # This will initialize the application based on
 # some questions to the user (login email, password, etc.)
