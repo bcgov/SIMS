@@ -91,7 +91,8 @@ export class ApplicationDataAPIOutDTO extends ApplicationBaseAPIOutDTO {
   applicationEndDate: string;
   applicationInstitutionName: string;
   applicationPIRStatus: ProgramInfoStatus;
-  applicationCOEStatus: COEStatus;
+  applicationCOEStatus?: COEStatus;
+  applicationSecondCOEStatus?: COEStatus;
   applicationAssessmentStatus?: AssessmentStatus;
   applicationPIRDeniedReason?: string;
   applicationCOEDeniedReason?: string;
