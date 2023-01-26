@@ -4,7 +4,7 @@
 
 # Use Node image, maintained by Docker:
 # hub.docker.com/r/_/node/
-FROM artifacts.developer.gov.bc.ca/docker-remote/node:19.2-alpine
+FROM artifacts.developer.gov.bc.ca/docker-remote/node:19.2
 WORKDIR /app
 
 # "bcrypt" requires python/make/g++, all must be installed in alpine
@@ -46,7 +46,6 @@ RUN apk del git
 RUN ln -sf $NPM_PACKAGES/node_modules node_modules
 
 RUN ls
-RUN PWD
 
 # Set this to inspect more from the application. Examples:
 #   DEBUG=formio:db (see index.js for more)
@@ -55,4 +54,4 @@ ENV DEBUG=""
 
 # This will initialize the application based on
 # some questions to the user (login email, password, etc.)
-ENTRYPOINT [ "node", "main.js" ]
+ENTRYPOINT [ "node", "main" ]
