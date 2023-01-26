@@ -12,16 +12,11 @@ WORKDIR /app
 RUN apk update && \
   apk upgrade && \
   apk add make=4.2.1-r2 && \
-  apk add g++=8.3.0-r0
-
-# At least one buried package dependency is using a `git` path.
-# Hence we need to haul in git.
-RUN apk --update add git
-# Use https to avoid requiring ssh keys for public repos.
-RUN git config --global url."https://github.com/".insteadOf "ssh://git@github.com/"
+  apk add g++=8.3.0-r0 \
+  apk add git
 
 # Clone code
-RUN git clone ${FORMIO_SOURCE_REPO_URL} -b ${FORMIO_SOURCE_REPO_TAG} --single-branch /app
+RUN git clone ${FORMIO_SOURCE_REPO_URL} -b ${FORMIO_SOURCE_REPO_TAG} --single-branch /app/
 
 # Using an alternative package install location
 # to allow overwriting the /app folder at runtime
@@ -35,6 +30,7 @@ RUN echo "prefix = $NPM_PACKAGES" >> ~/.npmrc
 COPY ./package.json $NPM_PACKAGES/
 COPY ./package-lock.json $NPM_PACKAGES/
 
+RUN npm i --prefix=$NPM_PACKAGES
 # Use "Continuous Integration" to install as-is from package-lock.json
 RUN npm ci --prefix=$NPM_PACKAGES
 
@@ -51,6 +47,8 @@ RUN ls
 #   DEBUG=formio:db (see index.js for more)
 #   DEBUG=formio:*
 ENV DEBUG=""
+RUN set -x \
+  && chmod -R 777 /app/
 
 # This will initialize the application based on
 # some questions to the user (login email, password, etc.)
