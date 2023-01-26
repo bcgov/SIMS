@@ -535,15 +535,6 @@ export class ApplicationService extends RecordDataModelService<Application> {
             studyEndDate: true,
             offeringStatus: true,
           },
-          disbursementSchedules: {
-            id: true,
-            coeStatus: true,
-            disbursementDate: true,
-            coeDeniedReason: {
-              id: true,
-              reason: true,
-            },
-          },
         },
         location: {
           id: true,
@@ -562,7 +553,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
       },
       relations: {
         applicationException: true,
-        currentAssessment: { offering: true, disbursementSchedules: true },
+        currentAssessment: { offering: true },
         location: true,
         pirDeniedReasonId: true,
         programYear: true,

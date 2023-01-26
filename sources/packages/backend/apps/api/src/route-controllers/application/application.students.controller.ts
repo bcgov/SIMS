@@ -102,30 +102,29 @@ export class ApplicationStudentsController extends BaseController {
       applicationId,
       { loadDynamicData: true, studentId: userToken.studentId },
     );
-    console.log(application);
     if (!application) {
       throw new NotFoundException(
         `Application id ${applicationId} was not found.`,
       );
     }
 
-    const applicationData =
-      await this.applicationControllerService.generateApplicationFormData(
+    const applicationDataPromise =
+      this.applicationControllerService.generateApplicationFormData(
         application.data,
       );
-    const [firstDisbursement, secondDisbursement] = application
-      .currentAssessment?.disbursementSchedules
-      ? application.currentAssessment.disbursementSchedules?.sort((a, b) =>
-          a.disbursementDate < b.disbursementDate ? -1 : 1,
-        )
-      : [];
-    console.log(firstDisbursement);
-    console.log(secondDisbursement);
+    const firstCOEPromise =
+      this.disbursementScheduleService.getFirstDisbursementScheduleByApplication(
+        applicationId,
+      );
+    const [applicationData, firstCOE] = await Promise.all([
+      applicationDataPromise,
+      firstCOEPromise,
+    ]);
+
     application.data = applicationData;
     return this.applicationControllerService.transformToApplicationDetailForStudentDTO(
       application,
-      firstDisbursement,
-      secondDisbursement,
+      firstCOE,
     );
   }
 
