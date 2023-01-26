@@ -32,7 +32,8 @@ import {
   ApiUnprocessableEntityResponse,
 } from "@nestjs/swagger";
 import BaseController from "../BaseController";
-import { ClientTypeBaseRoute } from "../../types";
+import { ClientTypeBaseRoute, DryRunSubmissionResult } from "../../types";
+
 /***
  * Designation agreement dedicated controller for Institution.
  * */
@@ -81,10 +82,11 @@ export class DesignationAgreementInstitutionsController extends BaseController {
       );
     }
     // Validate the dynamic data submission.
-    const submissionResult = await this.formService.dryRunSubmission(
-      FormNames.DesignationAgreementDetails,
-      payload,
-    );
+    const submissionResult: DryRunSubmissionResult =
+      await this.formService.dryRunSubmission(
+        FormNames.DesignationAgreementDetails,
+        payload,
+      );
     if (!submissionResult.valid) {
       throw new BadRequestException(
         "Not able to create a designation agreement due to an invalid request.",
@@ -105,9 +107,9 @@ export class DesignationAgreementInstitutionsController extends BaseController {
     const createdDesignation =
       await this.designationAgreementService.submitDesignationAgreement(
         userToken.authorizations.institutionId,
-        submissionResult.data.dynamicData,
+        submissionResult.data.data.dynamicData,
         userToken.userId,
-        submissionResult.data.locations
+        payload.locations // dryrun submission result does not return locations
           .filter((location) => location.requestForDesignation)
           .map((location) => location.locationId),
       );

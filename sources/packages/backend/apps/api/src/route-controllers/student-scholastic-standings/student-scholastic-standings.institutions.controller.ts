@@ -29,7 +29,11 @@ import {
   StudentAssessmentService,
   StudentScholasticStandingsService,
 } from "../../services";
-import { ApiProcessError, ClientTypeBaseRoute } from "../../types";
+import {
+  ApiProcessError,
+  ClientTypeBaseRoute,
+  DryRunSubmissionResult,
+} from "../../types";
 import { CustomNamedError } from "@sims/utilities";
 import BaseController from "../BaseController";
 import { FormNames } from "../../services/form/constants";
@@ -78,10 +82,11 @@ export class ScholasticStandingInstitutionsController extends BaseController {
     @UserToken() userToken: IInstitutionUserToken,
   ): Promise<void> {
     try {
-      const submissionResult = await this.formService.dryRunSubmission(
-        FormNames.ReportScholasticStandingChange,
-        payload.data,
-      );
+      const submissionResult: DryRunSubmissionResult =
+        await this.formService.dryRunSubmission(
+          FormNames.ReportScholasticStandingChange,
+          payload.data,
+        );
 
       if (!submissionResult.valid) {
         throw new BadRequestException("Invalid submission.");

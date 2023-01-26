@@ -20,7 +20,11 @@ import {
   UserToken,
 } from "../../auth/decorators";
 import BaseController from "../BaseController";
-import { ApiProcessError, ClientTypeBaseRoute } from "../../types";
+import {
+  ApiProcessError,
+  ClientTypeBaseRoute,
+  DryRunSubmissionResult,
+} from "../../types";
 import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
 import {
   CreateStudentAccountApplicationAPIInDTO,
@@ -84,10 +88,11 @@ export class StudentAccountApplicationStudentsController extends BaseController 
       );
     }
 
-    const submissionResult = await this.formService.dryRunSubmission(
-      FormNames.StudentProfile,
-      payload.submittedData,
-    );
+    const submissionResult: DryRunSubmissionResult =
+      await this.formService.dryRunSubmission(
+        FormNames.StudentProfile,
+        payload.submittedData,
+      );
 
     if (!submissionResult.valid) {
       throw new BadRequestException(

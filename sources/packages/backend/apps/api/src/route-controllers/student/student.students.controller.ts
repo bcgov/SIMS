@@ -46,7 +46,11 @@ import {
   UniqueFileNameParamAPIInDTO,
   UpdateStudentAPIInDTO,
 } from "./models/student.dto";
-import { ApiProcessError, ClientTypeBaseRoute } from "../../types";
+import {
+  ApiProcessError,
+  ClientTypeBaseRoute,
+  DryRunSubmissionResult,
+} from "../../types";
 import { Response } from "express";
 import { StudentControllerService } from "..";
 import { FileInterceptor } from "@nestjs/platform-express";
@@ -124,10 +128,11 @@ export class StudentStudentsController extends BaseController {
       );
     }
 
-    const submissionResult = await this.formService.dryRunSubmission(
-      FormNames.StudentProfile,
-      payload,
-    );
+    const submissionResult: DryRunSubmissionResult =
+      await this.formService.dryRunSubmission(
+        FormNames.StudentProfile,
+        payload,
+      );
     if (!submissionResult.valid) {
       throw new UnprocessableEntityException(
         "Not able to create a student due to an invalid request.",
@@ -322,10 +327,11 @@ export class StudentStudentsController extends BaseController {
     @UserToken() studentUserToken: StudentUserToken,
     @Body() payload: UpdateStudentAPIInDTO,
   ): Promise<void> {
-    const submissionResult = await this.formService.dryRunSubmission(
-      FormNames.StudentProfile,
-      payload,
-    );
+    const submissionResult: DryRunSubmissionResult =
+      await this.formService.dryRunSubmission(
+        FormNames.StudentProfile,
+        payload,
+      );
     if (!submissionResult.valid) {
       throw new BadRequestException(
         "Not able to update a student due to an invalid request.",

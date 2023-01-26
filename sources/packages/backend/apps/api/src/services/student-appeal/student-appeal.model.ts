@@ -1,6 +1,14 @@
 import { StudentAppeal, StudentAppealStatus } from "@sims/sims-db";
 
 /**
+ * Service model for student appeal.
+ */
+export interface StudentAppealRequestModel {
+  formName: string;
+  formData: any;
+}
+
+/**
  * Service model to fetch Pending And Denied Appeals.
  */
 export interface PendingAndDeniedAppeals {

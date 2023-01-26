@@ -17,7 +17,11 @@ import {
   ApiTags,
   ApiUnprocessableEntityResponse,
 } from "@nestjs/swagger";
-import { ApiProcessError, ClientTypeBaseRoute } from "../../types";
+import {
+  ApiProcessError,
+  ClientTypeBaseRoute,
+  DryRunSubmissionResult,
+} from "../../types";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import {
   AllowAuthorizedParty,
@@ -137,10 +141,11 @@ export class StudentAccountApplicationAESTController extends BaseController {
     @Body() payload: StudentAccountApplicationApprovalAPIInDTO,
     @UserToken() userToken: IUserToken,
   ): Promise<PrimaryIdentifierAPIOutDTO> {
-    const submissionResult = await this.formService.dryRunSubmission(
-      FormNames.StudentProfile,
-      payload,
-    );
+    const submissionResult: DryRunSubmissionResult =
+      await this.formService.dryRunSubmission(
+        FormNames.StudentProfile,
+        payload,
+      );
 
     if (!submissionResult.valid) {
       throw new BadRequestException(

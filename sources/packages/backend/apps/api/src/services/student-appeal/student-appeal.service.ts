@@ -17,6 +17,7 @@ import {
 import {
   PendingAndDeniedAppeals,
   StudentAppealRequestApproval,
+  StudentAppealRequestModel,
   StudentAppealWithStatus,
 } from "./student-appeal.model";
 import { StudentAppealRequestsService } from "../student-appeal-request/student-appeal-request.service";
@@ -34,7 +35,6 @@ import {
 } from "./constants";
 import { StudentAssessmentService } from "../student-assessment/student-assessment.service";
 import { NotificationActionsService } from "@sims/services/notifications";
-import { StudentAppealRequestAPIInDTO } from "../../route-controllers/student-appeal/models/student-appeal.dto";
 
 /**
  * Service layer for Student appeals.
@@ -59,7 +59,7 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
   async saveStudentAppeals(
     applicationId: number,
     userId: number,
-    studentAppealRequests: StudentAppealRequestAPIInDTO[],
+    studentAppealRequests: StudentAppealRequestModel[],
   ): Promise<StudentAppeal> {
     const studentAppeal = new StudentAppeal();
     const currentDateTime = new Date();

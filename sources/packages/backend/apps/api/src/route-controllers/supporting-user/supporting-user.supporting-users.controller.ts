@@ -26,7 +26,11 @@ import {
   UpdateSupportingUserAPIInDTO,
 } from "./models/supporting-user.dto";
 import { AddressInfo, ContactInfo, SupportingUserType } from "@sims/sims-db";
-import { ApiProcessError, ClientTypeBaseRoute } from "../../types";
+import {
+  ApiProcessError,
+  ClientTypeBaseRoute,
+  DryRunSubmissionResult,
+} from "../../types";
 import {
   STUDENT_APPLICATION_NOT_FOUND,
   SUPPORTING_USER_ALREADY_PROVIDED_DATA,
@@ -141,7 +145,7 @@ export class SupportingUserSupportingUsersController extends BaseController {
   ): Promise<void> {
     // Regardless of the API call is successful or not, create/update
     // the user being used to execute the request.
-    const userQuery = await this.userService.syncUser(
+    const userQuery = this.userService.syncUser(
       userToken.userName,
       userToken.email,
       userToken.givenNames,
@@ -177,10 +181,8 @@ export class SupportingUserSupportingUsersController extends BaseController {
       application.programYear,
     );
 
-    const submissionResult = await this.formService.dryRunSubmission(
-      formName,
-      payload,
-    );
+    const submissionResult: DryRunSubmissionResult =
+      await this.formService.dryRunSubmission(formName, payload);
 
     if (!submissionResult.valid) {
       throw new BadRequestException(
