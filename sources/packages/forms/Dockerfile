@@ -4,9 +4,11 @@
 
 # Use Node image, maintained by Docker:
 # hub.docker.com/r/_/node/
-FROM artifacts.developer.gov.bc.ca/docker-remote/node:12.2.0-alpine
+FROM artifacts.developer.gov.bc.ca/docker-remote/node:lts-alpine3.10
 
 WORKDIR /app
+ARG FORMIO_SOURCE_REPO_URL
+ARG FORMIO_SOURCE_REPO_TAG
 
 # "bcrypt" requires python/make/g++, all must be installed in alpine
 # (note: using pinned versions to ensure immutable build environment)
