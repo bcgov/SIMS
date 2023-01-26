@@ -21,7 +21,7 @@ RUN apk --update add git
 RUN git config --global url."https://github.com/".insteadOf "ssh://git@github.com/"
 
 # Clone code
-RUN git clone ${FORMIO_SOURCE_REPO_URL} -b ${FORMIO_SOURCE_REPO_TAG} --single-branch /formio/
+RUN git clone ${FORMIO_SOURCE_REPO_URL} -b ${FORMIO_SOURCE_REPO_TAG} --single-branch /app
 
 # Using an alternative package install location
 # to allow overwriting the /app folder at runtime
@@ -52,4 +52,4 @@ ENV DEBUG=""
 
 # This will initialize the application based on
 # some questions to the user (login email, password, etc.)
-ENTRYPOINT [ "node", "main" ]
+ENTRYPOINT [ "node", "main.js" ]
