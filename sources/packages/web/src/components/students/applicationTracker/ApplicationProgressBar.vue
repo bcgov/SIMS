@@ -24,10 +24,10 @@
             class="label-bold black-color"
             >{{ tick.label }}
             <v-icon
-              v-if="hasDeclinedCard"
-              icon="fa:fas fa-exclamation-circle"
+              v-if="applicationEndStatus.isApplicationInEndStatus"
+              :icon="applicationEndStatus.endStatusIcon"
               :size="20"
-              color="danger"
+              :color="applicationEndStatus.endStatusColor"
               class="pl-4"
           /></span>
           <span class="label-value black-color" v-else>{{ tick.label }} </span>
@@ -45,7 +45,6 @@
       <in-progress
         v-else-if="applicationStatus === ApplicationStatus.inProgress"
         :application-id="applicationId"
-        @declinedEvent="declinedEvent"
       />
       <assessment
         v-else-if="applicationStatus === ApplicationStatus.assessment"
@@ -54,19 +53,31 @@
     <cancelled
       v-else
       :application-id="applicationId"
-      :cancelled-date="statusUpdatedOn"
+      :cancelled-date="applicationProgressDetails.applicationStatusUpdatedOn"
     />
   </v-card>
 </template>
 <script lang="ts">
-import { ApplicationStatus } from "@/types";
-import { PropType, ref, defineComponent, computed } from "vue";
+import {
+  ApplicationStatus,
+  ProgramInfoStatus,
+  ApplicationExceptionStatus,
+  COEStatus,
+} from "@/types";
+import { PropType, ref, defineComponent, computed, onMounted } from "vue";
+import { ApplicationProgressDetailsAPIOutDTO } from "@/services/http/dto/Application.dto";
+import { ApplicationService } from "@/services/ApplicationService";
 import Draft from "@/components/students/applicationTracker/Draft.vue";
 import Submitted from "@/components/students/applicationTracker/Submitted.vue";
 import InProgress from "@/components/students/applicationTracker/InProgress.vue";
 import Cancelled from "@/components/students/applicationTracker/Cancelled.vue";
 import Assessment from "@/components/students/applicationTracker/Assessment.vue";
 
+interface ApplicationEndStatusDetails {
+  isApplicationInEndStatus: boolean;
+  endStatusColor?: string;
+  endStatusIcon?: string;
+}
 export default defineComponent({
   emits: ["editApplication"],
   components: {
@@ -85,10 +96,6 @@ export default defineComponent({
       type: String as PropType<ApplicationStatus>,
       required: true,
     },
-    statusUpdatedOn: {
-      type: String,
-      required: true,
-    },
   },
   setup(props) {
     const hasDeclinedCard = ref(false);
@@ -99,8 +106,55 @@ export default defineComponent({
       3: ApplicationStatus.enrollment,
       4: ApplicationStatus.completed,
     });
+    const applicationProgressDetails = ref(
+      {} as ApplicationProgressDetailsAPIOutDTO,
+    );
+    const applicationEndStatus = ref({} as ApplicationEndStatusDetails);
     // trackFillColor will vary when more status are added.
-    const trackFillColor = ref("warning");
+    const trackFillColor = ref();
+
+    onMounted(async () => {
+      trackFillColor.value =
+        props.applicationStatus === ApplicationStatus.completed
+          ? "success"
+          : "warning";
+      applicationProgressDetails.value =
+        await ApplicationService.shared.getApplicationProgressDetails(
+          props.applicationId,
+        );
+      // Application is complete.
+      if (
+        applicationProgressDetails.value.firstCOEStatus ===
+          COEStatus.completed &&
+        (!applicationProgressDetails.value.secondCOEStatus ||
+          applicationProgressDetails.value.secondCOEStatus ===
+            COEStatus.completed)
+      ) {
+        trackFillColor.value = "success";
+        applicationEndStatus.value = {
+          isApplicationInEndStatus: true,
+          endStatusColor: "success",
+          endStatusIcon: "fa:fas fa-check-circle",
+        };
+      }
+      // One of the requests or confirmation is declined.
+      else if (
+        applicationProgressDetails.value.pirStatus ===
+          ProgramInfoStatus.declined ||
+        applicationProgressDetails.value.exceptionStatus ===
+          ApplicationExceptionStatus.Declined ||
+        applicationProgressDetails.value.firstCOEStatus ===
+          COEStatus.declined ||
+        applicationProgressDetails.value.secondCOEStatus === COEStatus.declined
+      ) {
+        trackFillColor.value = "error";
+        applicationEndStatus.value = {
+          isApplicationInEndStatus: true,
+          endStatusColor: "error",
+          endStatusIcon: "fa:fas fa-exclamation-circle",
+        };
+      }
+    });
 
     const applicationStatusOrder = (status: ApplicationStatus) => {
       const [key] =
@@ -134,13 +188,6 @@ export default defineComponent({
         : 0,
     );
 
-    // Emit this function whenever there is a declined card (i.e whenever
-    // exclamation icon needs to be shown). eg, Inprogress denial cards.
-    const declinedEvent = () => {
-      hasDeclinedCard.value = true;
-      trackFillColor.value = "error";
-    };
-
     return {
       applicationStatusTracker,
       trackerApplicationStatus,
@@ -150,7 +197,8 @@ export default defineComponent({
       thumbSize,
       ApplicationStatus,
       hasDeclinedCard,
-      declinedEvent,
+      applicationEndStatus,
+      applicationProgressDetails,
     };
   },
 });

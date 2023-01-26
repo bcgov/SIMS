@@ -269,7 +269,7 @@ export default defineComponent({
       required: true,
     },
   },
-  setup(props, { emit }) {
+  setup(props) {
     const applicationDetails = ref<InProgressApplicationDetailsAPIOutDTO>();
     const router = useRouter();
 
@@ -284,16 +284,6 @@ export default defineComponent({
         await ApplicationService.shared.getInProgressApplicationDetails(
           props.applicationId,
         );
-      // Any declined cards will call declined event.
-      if (
-        applicationDetails.value.pirStatus === ProgramInfoStatus.declined ||
-        applicationDetails.value.offeringStatus ===
-          OfferingStatus.ChangeOverwritten ||
-        applicationDetails.value.exceptionStatus ===
-          ApplicationExceptionStatus.Declined
-      ) {
-        emit("declinedEvent");
-      }
     });
 
     return {

@@ -10,6 +10,7 @@ import {
   ApplicationData,
   OfferingIntensity,
   APPLICATION_NUMBER_LENGTH,
+  DisbursementScheduleStatus,
 } from "@sims/sims-db";
 
 export class SaveApplicationAPIInDTO {
@@ -140,4 +141,22 @@ export class InProgressApplicationDetailsAPIOutDTO extends IntersectionType(
   pirDeniedReason?: string;
   offeringStatus?: OfferingStatus;
   exceptionStatus?: ApplicationExceptionStatus;
+}
+
+export class ApplicationProgressDetailsAPIOutDTO {
+  applicationStatusUpdatedOn: Date;
+  pirStatus?: ProgramInfoStatus;
+  firstCOEStatus?: COEStatus;
+  secondCOEStatus?: COEStatus;
+  exceptionStatus?: ApplicationExceptionStatus;
+}
+
+export class COEDetailsAPIOutDTO {
+  coeStatus: COEStatus;
+  disbursementScheduleStatus: DisbursementScheduleStatus;
+}
+
+export class ApplicationCOEDetailsAPIOutDTO {
+  firstCOE: COEDetailsAPIOutDTO;
+  secondCOE?: COEDetailsAPIOutDTO;
 }
