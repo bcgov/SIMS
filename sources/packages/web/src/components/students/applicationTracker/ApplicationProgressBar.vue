@@ -184,7 +184,7 @@ export default defineComponent({
       [ApplicationStatus.draft, ApplicationStatus.submitted].includes(
         props.applicationStatus,
       )
-        ? 20
+        ? 15
         : 0,
     );
 
