@@ -1,5 +1,5 @@
 import { InstitutionUserAuthorizations } from "../services/institution-user-auth/institution-user-auth.models";
-import { AuthorizedParties } from "./authorized-parties.enum";
+import { AuthorizedParties } from ".";
 import { IdentityProviders } from "@sims/sims-db";
 
 /**
@@ -78,16 +78,35 @@ export interface IUserToken {
    */
   idp_user_name: string;
   /**
-   * Identity provider used by the user for authentication. Used to execute
+   * Keycloak identity provider used by the user for authentication. Used to execute
    * further validations to ensure that the user was authenticated in one of the
    * expected IDPs. Also following the recommendations below
    * @see https://github.com/bcgov/sso-keycloak/wiki/Using-Your-SSO-Client#do-validate-the-idp-in-the-jwt
    */
-  identityProvider: IdentityProviders;
+  identityProvider:
+    | IdentityProviders.BCSC
+    | IdentityProviders.BCeIDBoth
+    | IdentityProviders.IDIR;
   /**
-   * Keycloak client used for the authentication.
+   * For the bceidboth identityProvider present on the token, check if it is a basic or business BCeID.
    */
-  authorizedParty: AuthorizedParties;
+  identitySpecificProvider:
+    | IdentityProviders.BCSC
+    | IdentityProviders.BCeIDBasic
+    | IdentityProviders.BCeIDBusiness
+    | IdentityProviders.IDIR;
+  /**
+   * Authorized party, Keycloak client used for the authentication.
+   */
+  azp: AuthorizedParties;
+  /**
+   * When the user is authenticated using the bceidboth IDP and the user has a business BCeID account,
+   * this property contains the guid that identifies his business.
+   * This field can also be used to differentiate a business BCeID from a Basic BCeID user.
+   * Right now this property is associated with the institution and student client on Keycloak because
+   * these are the only clients using the bceidboth IDP.
+   */
+  bceidBusinessGuid?: string;
 }
 
 export interface IInstitutionUserToken extends IUserToken {

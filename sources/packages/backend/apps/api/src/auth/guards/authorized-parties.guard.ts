@@ -5,10 +5,9 @@ import {
   ForbiddenException,
 } from "@nestjs/common";
 import { Reflector } from "@nestjs/core";
-import { AuthorizedParties } from "../authorized-parties.enum";
+import { AuthorizedParties, IUserToken } from "..";
 import { AUTHORIZED_PARTY_KEY } from "../decorators/authorized-party.decorator";
 import { IdentityProviders } from "@sims/sims-db";
-import { IUserToken } from "../userToken.interface";
 
 /**
  * Inspect the token to check if the correct authorized party
@@ -29,7 +28,7 @@ export class AuthorizedPartiesGuard implements CanActivate {
     const userToken = user as IUserToken;
 
     const hasAuthorizedParty = authorizedParties.some(
-      (authorizedParty) => authorizedParty === userToken.authorizedParty,
+      (authorizedParty) => authorizedParty === userToken.azp,
     );
     if (!hasAuthorizedParty) {
       throw new ForbiddenException(
@@ -38,7 +37,7 @@ export class AuthorizedPartiesGuard implements CanActivate {
     }
 
     const isAllowedIDP = this.isAllowedIDP(
-      userToken.authorizedParty,
+      userToken.azp,
       userToken.identityProvider,
     );
     if (!isAllowedIDP) {
@@ -62,13 +61,13 @@ export class AuthorizedPartiesGuard implements CanActivate {
   ): boolean {
     switch (authorizedParty) {
       case AuthorizedParties.student:
-        return [IdentityProviders.BCeID, IdentityProviders.BCSC].includes(
+        return [IdentityProviders.BCeIDBoth, IdentityProviders.BCSC].includes(
           identityProvider,
         );
       case AuthorizedParties.supportingUsers:
         return identityProvider === IdentityProviders.BCSC;
       case AuthorizedParties.institution:
-        return identityProvider === IdentityProviders.BCeID;
+        return identityProvider === IdentityProviders.BCeIDBoth;
       case AuthorizedParties.aest:
         return identityProvider === IdentityProviders.IDIR;
       default:
