@@ -12,7 +12,7 @@ WORKDIR /app
 RUN apk update && \
   apk upgrade && \
   apk add make=4.2.1-r2 && \
-  apk add g++=8.3.0-r0 \
+  apk add g++=8.3.0-r0 && \
   apk add git
 
 # Clone code
