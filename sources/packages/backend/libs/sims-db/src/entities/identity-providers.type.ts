@@ -30,3 +30,13 @@ export enum IdentityProviders {
    */
   IDIR = "idir",
 }
+
+/**
+ * Specific identity providers that uniquely identifies the
+ * authentication method.
+ */
+export type SpecificIdentityProviders =
+  | IdentityProviders.BCSC
+  | IdentityProviders.BCeIDBasic
+  | IdentityProviders.BCeIDBusiness
+  | IdentityProviders.IDIR;

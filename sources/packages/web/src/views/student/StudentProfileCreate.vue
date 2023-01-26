@@ -71,7 +71,7 @@ export default {
         data.dateOfBirth = dateOnlyLongString(bcscParsedToken.birthdate);
       } else if (
         AuthService.shared.userToken?.identityProvider ===
-        IdentityProviders.BCeID
+        IdentityProviders.BCeIDBoth
       ) {
         data.email = bceidParsedToken.email;
       }
@@ -97,7 +97,7 @@ export default {
           router.push({ name: StudentRoutesConst.STUDENT_DASHBOARD });
         } else if (
           AuthService.shared.userToken?.identityProvider ===
-          IdentityProviders.BCeID
+          IdentityProviders.BCeIDBoth
         ) {
           // BCeID users must have an identity verification executed by the Ministry.
           // A request will be sent to a Ministry user assess the data provided.

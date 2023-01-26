@@ -30,11 +30,7 @@ import {
   UserPermissionModel,
 } from "./institution.service.model";
 import { BCeIDAccountTypeCodes } from "../bceid/bceid.models";
-import {
-  evaluateSpecificIdentityProvider,
-  InstitutionUserRoles,
-  InstitutionUserTypes,
-} from "../../auth";
+import { InstitutionUserRoles, InstitutionUserTypes } from "../../auth";
 import {
   BCEID_ACCOUNT_NOT_FOUND,
   INSTITUTION_MUST_HAVE_AN_ADMIN,
@@ -205,7 +201,6 @@ export class InstitutionService extends RecordDataModelService<Institution> {
     user.firstName = account.user.firstname;
     user.lastName = account.user.surname;
     user.email = institutionModel.userEmail;
-    user.identityProviderType = evaluateSpecificIdentityProvider(userInfo);
 
     institution.businessGuid = account.institution.guid;
     institution.legalOperatingName = account.institution.legalName;

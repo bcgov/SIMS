@@ -57,12 +57,14 @@ export class RouteHelper {
     let allowedIDP: IdentityProviders | undefined = undefined;
     switch (clientType) {
       case ClientIdType.Student:
-        return [IdentityProviders.BCeID, IdentityProviders.BCSC].includes(idp);
+        return [IdentityProviders.BCeIDBoth, IdentityProviders.BCSC].includes(
+          idp,
+        );
       case ClientIdType.SupportingUsers:
         allowedIDP = IdentityProviders.BCSC;
         break;
       case ClientIdType.Institution:
-        allowedIDP = IdentityProviders.BCeID;
+        allowedIDP = IdentityProviders.BCeIDBoth;
         break;
       case ClientIdType.AEST:
         allowedIDP = IdentityProviders.IDIR;

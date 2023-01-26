@@ -1,7 +1,7 @@
 import { KeycloakTokenParsed } from "keycloak-js";
 
 export enum IdentityProviders {
-  BCeID = "bceidboth",
+  BCeIDBoth = "bceidboth",
   BCSC = "bcsc",
   IDIR = "idir",
 }

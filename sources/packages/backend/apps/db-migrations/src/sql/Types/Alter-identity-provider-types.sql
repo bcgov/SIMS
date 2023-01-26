@@ -11,3 +11,10 @@ ADD
     VALUE 'bceidbasic'
 AFTER
     'bceidbusiness';
+
+-- Add new enum options.
+ALTER TYPE sims.identity_provider_types
+ADD
+    VALUE 'bceidboth'
+AFTER
+    'bceidbasic';

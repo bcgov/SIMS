@@ -11,6 +11,8 @@ ALTER COLUMN
         CASE
             identity_provider_type :: text
             WHEN 'bceidbusiness' THEN 'BCEID'
+            WHEN 'bceidbasic' THEN 'BCEID'
+            WHEN 'bceidboth' THEN 'BCEID'
             WHEN 'bcsc' THEN 'BCSC'
             WHEN 'idir' THEN 'IDIR'
             ELSE identity_provider_type :: text

@@ -139,7 +139,7 @@ export class AuthService {
         error instanceof ApiProcessError &&
         error.errorType === MISSING_STUDENT_ACCOUNT
       ) {
-        if (this.userToken?.identityProvider === IdentityProviders.BCeID) {
+        if (this.userToken?.identityProvider === IdentityProviders.BCeIDBoth) {
           const hasPendingAccountApplication =
             await StudentAccountApplicationService.shared.hasPendingAccountApplication();
           if (hasPendingAccountApplication) {

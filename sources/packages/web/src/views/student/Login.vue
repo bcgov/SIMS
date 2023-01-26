@@ -110,7 +110,7 @@
             </p>
             <v-btn
               color="primary"
-              @click="login(IdentityProviders.BCeID)"
+              @click="login(IdentityProviders.BCeIDBoth)"
               prepend-icon="fa:fa fa-user"
             >
               Login / Sign up with Basic BCeID

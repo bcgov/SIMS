@@ -1,6 +1,6 @@
 import { InstitutionUserAuthorizations } from "../services/institution-user-auth/institution-user-auth.models";
 import { AuthorizedParties } from ".";
-import { IdentityProviders } from "@sims/sims-db";
+import { IdentityProviders, SpecificIdentityProviders } from "@sims/sims-db";
 
 /**
  * User Roles extracted from the token during the
@@ -90,11 +90,7 @@ export interface IUserToken {
   /**
    * For the bceidboth identityProvider present on the token, check if it is a basic or business BCeID.
    */
-  identitySpecificProvider:
-    | IdentityProviders.BCSC
-    | IdentityProviders.BCeIDBasic
-    | IdentityProviders.BCeIDBusiness
-    | IdentityProviders.IDIR;
+  identitySpecificProvider: SpecificIdentityProviders;
   /**
    * Authorized party, Keycloak client used for the authentication.
    */

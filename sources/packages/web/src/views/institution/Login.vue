@@ -76,7 +76,7 @@ export default {
   setup(props: any) {
     const { executeLogin } = useAuth();
     const login = async () => {
-      await executeLogin(ClientIdType.Institution, IdentityProviders.BCeID);
+      await executeLogin(ClientIdType.Institution, IdentityProviders.BCeIDBoth);
     };
     const errorMessage = computed(() => {
       switch (true) {

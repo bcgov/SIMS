@@ -1,5 +1,3 @@
-import { IdentityProviders } from "@sims/sims-db";
-
 export interface UserInfo {
   userId?: number;
   lastName: string;
@@ -8,9 +6,4 @@ export interface UserInfo {
   userName: string;
   birthdate: string;
   idp_user_name: string;
-  identityProvider:
-    | IdentityProviders.BCSC
-    | IdentityProviders.BCeIDBoth
-    | IdentityProviders.IDIR;
-  bceidBusinessGuid?: string;
 }

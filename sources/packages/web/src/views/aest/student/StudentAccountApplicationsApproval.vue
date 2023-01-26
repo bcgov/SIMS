@@ -108,7 +108,7 @@ export default {
         );
       const studentProfileFormModel =
         accountApplication.submittedData as StudentProfileFormModel;
-      studentProfileFormModel.identityProvider = IdentityProviders.BCeID;
+      studentProfileFormModel.identityProvider = IdentityProviders.BCeIDBoth;
       studentProfileFormModel.mode =
         StudentProfileFormModes.AESTAccountApproval;
       initialData.value = studentProfileFormModel;
