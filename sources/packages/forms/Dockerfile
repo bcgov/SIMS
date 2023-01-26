@@ -4,7 +4,7 @@
 
 # Use Node image, maintained by Docker:
 # hub.docker.com/r/_/node/
-FROM artifacts.developer.gov.bc.ca/docker-remote/node:lts-alpine3.10
+FROM artifacts.developer.gov.bc.ca/docker-remote/node:12.2.0-alpine
 
 WORKDIR /app
 
