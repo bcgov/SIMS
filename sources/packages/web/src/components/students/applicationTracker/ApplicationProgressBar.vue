@@ -16,7 +16,7 @@
         track-size="20"
         readonly
         :disabled="disabled"
-        class="application-slider"
+        class="application-slider mt-n2"
       >
         <template #tick-label="{ tick, index }">
           <span
@@ -184,7 +184,7 @@ export default defineComponent({
       [ApplicationStatus.draft, ApplicationStatus.submitted].includes(
         props.applicationStatus,
       )
-        ? 15
+        ? 14
         : 0,
     );
 
