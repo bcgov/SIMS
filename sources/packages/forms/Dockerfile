@@ -6,9 +6,7 @@
 # hub.docker.com/r/_/node/
 FROM artifacts.developer.gov.bc.ca/docker-remote/node:12.2.0-alpine
 
-# set working directory
-WORKDIR /formio
-
+WORKDIR /app
 ARG FORMIO_SOURCE_REPO_URL
 ARG FORMIO_SOURCE_REPO_TAG
 
@@ -21,7 +19,7 @@ RUN apk update && \
   apk add git
 
 # Clone code
-RUN git clone ${FORMIO_SOURCE_REPO_URL} -b ${FORMIO_SOURCE_REPO_TAG} --single-branch /formio/
+RUN git clone ${FORMIO_SOURCE_REPO_URL} -b ${FORMIO_SOURCE_REPO_TAG} --single-branch /app/
 
 # Using an alternative package install location
 # to allow overwriting the /app folder at runtime
@@ -50,7 +48,7 @@ RUN ln -sf $NPM_PACKAGES/node_modules node_modules
 ENV DEBUG=""
 
 RUN set -x \
-  && chmod -R 777 /formio/
+  && chmod -R 777 /app/
 
 # This will initialize the application based on
 # some questions to the user (login email, password, etc.)
