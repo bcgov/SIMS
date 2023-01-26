@@ -1,7 +1,6 @@
 import { Injectable, CanActivate, ExecutionContext } from "@nestjs/common";
 import { Reflector } from "@nestjs/core";
-import { IInstitutionUserToken, IUserToken } from "..";
-import { InstitutionUserAuthorizations } from "../../services/institution-user-auth/institution-user-auth.models";
+import { IInstitutionUserToken } from "..";
 import { AuthorizedParties } from "../authorized-parties.enum";
 import {
   HasLocationAccessParam,
@@ -33,21 +32,19 @@ export class InstitutionLocationGuard implements CanActivate {
     if (userToken.azp !== AuthorizedParties.institution) {
       return true;
     }
-    const authorizations =
-      userToken.authorizations as InstitutionUserAuthorizations;
 
     const request = context.switchToHttp().getRequest();
     const locationId = parseInt(
       request.params[hasLocationUserType.locationIdParamName],
     );
 
-    if (!authorizations.hasLocationAccess(locationId)) {
+    if (!userToken.authorizations.hasLocationAccess(locationId)) {
       return false;
     }
 
     if (hasLocationUserType.userType) {
       const hasSomeAccess = hasLocationUserType.userType.some((userType) =>
-        authorizations.hasLocationUserType(locationId, userType),
+        userToken.authorizations.hasLocationUserType(locationId, userType),
       );
       if (!hasSomeAccess) {
         return false;
@@ -56,7 +53,7 @@ export class InstitutionLocationGuard implements CanActivate {
 
     if (hasLocationUserType.userRoles) {
       const hasSomeRole = hasLocationUserType.userRoles.some((role) =>
-        authorizations.hasLocationRole(locationId, role),
+        userToken.authorizations.hasLocationRole(locationId, role),
       );
       if (!hasSomeRole) {
         return false;
