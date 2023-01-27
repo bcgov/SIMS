@@ -155,7 +155,7 @@ export class SupportingUserSupportingUsersController extends BaseController {
     // The application must be search using at least 3 criteria as
     // per defined by the Ministry policies.
     const applicationQuery =
-      await this.applicationService.getApplicationForSupportingUser(
+      this.applicationService.getApplicationForSupportingUser(
         payload.applicationNumber,
         payload.studentsLastName,
         payload.studentsDateOfBirth,
