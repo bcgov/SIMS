@@ -33,6 +33,7 @@ import {
 } from "@nestjs/swagger";
 import BaseController from "../BaseController";
 import { ClientTypeBaseRoute } from "../../types";
+
 /***
  * Designation agreement dedicated controller for Institution.
  * */
@@ -105,7 +106,7 @@ export class DesignationAgreementInstitutionsController extends BaseController {
     const createdDesignation =
       await this.designationAgreementService.submitDesignationAgreement(
         userToken.authorizations.institutionId,
-        payload.dynamicData,
+        submissionResult.data.data.dynamicData,
         userToken.userId,
         payload.locations
           .filter((location) => location.requestForDesignation)

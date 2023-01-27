@@ -39,6 +39,7 @@ import {
   ScholasticStandingSubmittedDetailsAPIOutDTO,
 } from "./models/student-scholastic-standings.dto";
 import { ScholasticStandingControllerService } from "./student-scholastic-standings.controller.service";
+import { ScholasticStanding } from "../../services/student-scholastic-standings/student-scholastic-standings.model";
 
 /**
  * Scholastic standing controller for institutions Client.
@@ -78,10 +79,11 @@ export class ScholasticStandingInstitutionsController extends BaseController {
     @UserToken() userToken: IInstitutionUserToken,
   ): Promise<void> {
     try {
-      const submissionResult = await this.formService.dryRunSubmission(
-        FormNames.ReportScholasticStandingChange,
-        payload.data,
-      );
+      const submissionResult =
+        await this.formService.dryRunSubmission<ScholasticStanding>(
+          FormNames.ReportScholasticStandingChange,
+          payload.data,
+        );
 
       if (!submissionResult.valid) {
         throw new BadRequestException("Invalid submission.");

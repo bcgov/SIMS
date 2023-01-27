@@ -84,10 +84,11 @@ export class StudentAccountApplicationStudentsController extends BaseController 
       );
     }
 
-    const submissionResult = await this.formService.dryRunSubmission(
-      FormNames.StudentProfile,
-      payload.submittedData,
-    );
+    const submissionResult =
+      await this.formService.dryRunSubmission<StudentAccountApplicationCreateModel>(
+        FormNames.StudentProfile,
+        payload.submittedData,
+      );
 
     if (!submissionResult.valid) {
       throw new BadRequestException(
@@ -98,7 +99,7 @@ export class StudentAccountApplicationStudentsController extends BaseController 
     const newAccountApplication =
       await this.studentAccountApplicationsService.createStudentAccountApplication(
         userToken.userName,
-        submissionResult.data.data as StudentAccountApplicationCreateModel,
+        submissionResult.data.data,
       );
 
     return { id: newAccountApplication.id };

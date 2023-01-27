@@ -64,6 +64,7 @@ import {
 import { ApplicationControllerService } from "./application.controller.service";
 import { CustomNamedError } from "@sims/utilities";
 import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
+import { ApplicationData } from "@sims/sims-db/entities/application.model";
 
 @AllowAuthorizedParty(AuthorizedParties.student)
 @RequiresStudentAccount()
@@ -144,6 +145,7 @@ export class ApplicationStudentsController extends BaseController {
   @ApiUnprocessableEntityResponse({
     description:
       "Program Year is not active or " +
+      "Selected offering id is invalid or " +
       "invalid study dates or selected study start date is not within the program year" +
       "or APPLICATION_NOT_VALID or INVALID_OPERATION_IN_THE_CURRENT_STATUS or ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE " +
       "or OFFERING_NOT_VALID.",
@@ -158,17 +160,12 @@ export class ApplicationStudentsController extends BaseController {
     @Param("applicationId", ParseIntPipe) applicationId: number,
     @UserToken() studentToken: StudentUserToken,
   ): Promise<void> {
-    await this.applicationControllerService.offeringIntensityRestrictionCheck(
-      studentToken.studentId,
-      payload.data.howWillYouBeAttendingTheProgram,
-    );
-
     const programYear = await this.programYearService.getActiveProgramYear(
       payload.programYearId,
     );
     if (!programYear) {
       throw new UnprocessableEntityException(
-        "Program Year is not active. Not able to create an application invalid request",
+        "Program Year is not active. Not able to create an application invalid request.",
       );
     }
 
@@ -179,6 +176,11 @@ export class ApplicationStudentsController extends BaseController {
       const offering = await this.offeringService.getOfferingById(
         payload.data.selectedOffering,
       );
+      if (!offering) {
+        throw new UnprocessableEntityException(
+          "Selected offering id is invalid.",
+        );
+      }
       // if  studyStartDate is not in payload
       // then selectedOffering will be there in payload,
       // then study start date taken from offering
@@ -192,15 +194,21 @@ export class ApplicationStudentsController extends BaseController {
       payload.data.selectedOfferingEndDate = studyEndDate;
     }
 
-    const submissionResult = await this.formService.dryRunSubmission(
-      programYear.formName,
-      payload.data,
-    );
+    const submissionResult =
+      await this.formService.dryRunSubmission<ApplicationData>(
+        programYear.formName,
+        payload.data,
+      );
     if (!submissionResult.valid) {
       throw new BadRequestException(
         "Not able to create an application due to an invalid request.",
       );
     }
+
+    await this.applicationControllerService.offeringIntensityRestrictionCheck(
+      studentToken.studentId,
+      submissionResult.data.data.howWillYouBeAttendingTheProgram,
+    );
 
     const student = await this.studentService.getStudentById(
       studentToken.studentId,

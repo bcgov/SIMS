@@ -68,6 +68,7 @@ import {
   STUDENT_ACCOUNT_CREATION_MULTIPLES_SIN_FOUND,
 } from "../../constants";
 import { EntityManager } from "typeorm";
+import { StudentInfo } from "../../services/student/student.service.models";
 
 /**
  * Student controller for Student Client.
@@ -124,10 +125,11 @@ export class StudentStudentsController extends BaseController {
       );
     }
 
-    const submissionResult = await this.formService.dryRunSubmission(
-      FormNames.StudentProfile,
-      payload,
-    );
+    const submissionResult =
+      await this.formService.dryRunSubmission<StudentInfo>(
+        FormNames.StudentProfile,
+        payload,
+      );
     if (!submissionResult.valid) {
       throw new UnprocessableEntityException(
         "Not able to create a student due to an invalid request.",
@@ -322,10 +324,11 @@ export class StudentStudentsController extends BaseController {
     @UserToken() studentUserToken: StudentUserToken,
     @Body() payload: UpdateStudentAPIInDTO,
   ): Promise<void> {
-    const submissionResult = await this.formService.dryRunSubmission(
-      FormNames.StudentProfile,
-      payload,
-    );
+    const submissionResult =
+      await this.formService.dryRunSubmission<StudentInfo>(
+        FormNames.StudentProfile,
+        payload,
+      );
     if (!submissionResult.valid) {
       throw new BadRequestException(
         "Not able to update a student due to an invalid request.",

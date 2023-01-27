@@ -26,7 +26,11 @@ import {
   UpdateSupportingUserAPIInDTO,
 } from "./models/supporting-user.dto";
 import { AddressInfo, ContactInfo, SupportingUserType } from "@sims/sims-db";
-import { ApiProcessError, ClientTypeBaseRoute } from "../../types";
+import {
+  ApiProcessError,
+  ClientTypeBaseRoute,
+  DryRunSubmissionResult,
+} from "../../types";
 import {
   STUDENT_APPLICATION_NOT_FOUND,
   SUPPORTING_USER_ALREADY_PROVIDED_DATA,
@@ -177,10 +181,8 @@ export class SupportingUserSupportingUsersController extends BaseController {
       application.programYear,
     );
 
-    const submissionResult = await this.formService.dryRunSubmission(
-      formName,
-      payload,
-    );
+    const submissionResult: DryRunSubmissionResult =
+      await this.formService.dryRunSubmission(formName, payload);
 
     if (!submissionResult.valid) {
       throw new BadRequestException(
@@ -218,16 +220,16 @@ export class SupportingUserSupportingUsersController extends BaseController {
 
     try {
       const addressInfo: AddressInfo = {
-        addressLine1: payload.addressLine1,
-        addressLine2: payload.addressLine2,
-        provinceState: payload.provinceState,
-        country: payload.country,
-        city: payload.city,
-        postalCode: payload.postalCode,
+        addressLine1: submissionResult.data.data.addressLine1,
+        addressLine2: submissionResult.data.data.addressLine2,
+        provinceState: submissionResult.data.data.provinceState,
+        country: submissionResult.data.data.country,
+        city: submissionResult.data.data.city,
+        postalCode: submissionResult.data.data.postalCode,
       };
 
       const contactInfo: ContactInfo = {
-        phone: payload.phone,
+        phone: submissionResult.data.data.phone,
         address: addressInfo,
       };
 
@@ -237,9 +239,9 @@ export class SupportingUserSupportingUsersController extends BaseController {
         userToken.userId,
         {
           contactInfo,
-          sin: payload.sin,
+          sin: submissionResult.data.data.sin,
           birthDate: userToken.birthdate,
-          supportingData: payload.supportingData,
+          supportingData: submissionResult.data.data.supportingData,
           userId: user.id,
         },
       );

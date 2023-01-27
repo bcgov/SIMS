@@ -28,6 +28,7 @@ import {
 import { INSTITUTION_TYPE_BC_PRIVATE } from "@sims/sims-db/constant";
 import { ApiProcessError } from "../../types";
 import { ApiUnprocessableEntityResponse } from "@nestjs/swagger";
+import { SaveEducationProgram } from "../../services/education-program/education-program.service.models";
 
 @Injectable()
 export class EducationProgramControllerService {
@@ -95,10 +96,11 @@ export class EducationProgramControllerService {
     auditUserId: number,
     programId?: number,
   ): Promise<EducationProgram> {
-    const submissionResult = await this.formService.dryRunSubmission(
-      FormNames.EducationProgram,
-      payload,
-    );
+    const submissionResult =
+      await this.formService.dryRunSubmission<SaveEducationProgram>(
+        FormNames.EducationProgram,
+        payload,
+      );
 
     if (!submissionResult.valid) {
       throw new UnprocessableEntityException(
