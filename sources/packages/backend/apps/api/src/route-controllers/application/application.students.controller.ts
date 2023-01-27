@@ -515,9 +515,11 @@ export class ApplicationStudentsController extends BaseController {
     const disbursements = application.currentAssessment?.disbursementSchedules
       ? application.currentAssessment.disbursementSchedules
       : [];
-    const [firstDisbursement, secondDisbursement] = disbursements.sort((a, b) =>
+
+    disbursements.sort((a, b) =>
       a.disbursementDate < b.disbursementDate ? -1 : 1,
     );
+    const [firstDisbursement, secondDisbursement] = disbursements;
     return {
       applicationStatusUpdatedOn: application.applicationStatusUpdatedOn,
       pirStatus: application.pirStatus,
