@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Post,
@@ -23,6 +24,7 @@ import {
 } from "@sims/utilities";
 import BaseController from "../BaseController";
 import { ReportsFilterAPIInDTO } from "./models/report.dto";
+import { FormNames } from "../../services/form/constants";
 import { Role } from "../../auth/roles.enum";
 import {
   FILTER_PARAMS_MISMATCH,
@@ -64,8 +66,21 @@ export class ReportAESTController extends BaseController {
     @Body() payload: ReportsFilterAPIInDTO,
     @Res() response: Response,
   ): Promise<void> {
+    const submissionResult = await this.formService.dryRunSubmission(
+      FormNames.ExportFinancialReports,
+      payload,
+    );
+
+    if (!submissionResult.valid) {
+      throw new BadRequestException(
+        "Not able to export report due to an invalid request.",
+      );
+    }
+
     try {
-      const reportData = await this.reportService.getReportDataAsCSV(payload);
+      const reportData = await this.reportService.getReportDataAsCSV(
+        submissionResult.data.data,
+      );
       this.streamFile(response, payload.reportName, reportData);
     } catch (error: unknown) {
       if (error instanceof CustomNamedError) {
