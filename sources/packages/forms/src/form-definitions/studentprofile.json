@@ -116,7 +116,7 @@
         "eq": "",
         "json": ""
       },
-      "customConditional": "show = data.identityProvider === \"BCEID\" && data.mode !== \"student-edit\";",
+      "customConditional": "show = data.identityProvider === \"bceidboth\" && data.mode !== \"student-edit\";",
       "logic": [],
       "attributes": {},
       "overlay": {
@@ -342,7 +342,7 @@
           "key": "bcscReadOnlyFieldsForBCeIdAllMustBeEditableForCreation",
           "tags": [],
           "properties": {},
-          "customConditional": "show = data.identityProvider === \"BCSC\" || data.mode === \"student-edit\";",
+          "customConditional": "show = data.identityProvider === \"bcsc\" || data.mode === \"student-edit\";",
           "conditional": {
             "json": "",
             "show": null,
@@ -865,7 +865,7 @@
           "key": "bceidCreateModeWhenTheUserMustProvideAllTheData",
           "tags": [],
           "properties": {},
-          "customConditional": "show = data.identityProvider === \"BCEID\" && data.mode !== \"student-edit\";",
+          "customConditional": "show = data.identityProvider === \"bceidboth\" && data.mode !== \"student-edit\";",
           "conditional": {
             "json": "",
             "show": null,
@@ -1411,7 +1411,7 @@
           "conditional": {
             "show": true,
             "when": "identityProvider",
-            "eq": "BCSC",
+            "eq": "bcsc",
             "json": ""
           },
           "customConditional": "",

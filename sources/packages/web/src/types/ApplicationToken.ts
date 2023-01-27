@@ -1,17 +1,25 @@
 import { KeycloakTokenParsed } from "keycloak-js";
 
-export enum AppIDPType {
-  BCeID = "BCEID",
-  BCSC = "BCSC",
-  IDIR = "IDIR",
-  UNKNOWN = "",
+export enum IdentityProviders {
+  BCeIDBoth = "bceidboth",
+  BCSC = "bcsc",
+  IDIR = "idir",
 }
 
 export interface ApplicationToken extends KeycloakTokenParsed {
-  IDP: AppIDPType;
+  /**
+   * Identity provider used by the user for authentication. Used to execute
+   * further validations to ensure that the user was authenticated in one of the
+   * expected IDPs. Also following the recommendations below
+   * @see https://github.com/bcgov/sso-keycloak/wiki/Using-Your-SSO-Client#do-validate-the-idp-in-the-jwt
+   */
+  identityProvider: IdentityProviders;
+  /**
+   * Unique Keycloak user name also saved as SIMS database user user_name.
+   */
   userName: string;
   /**
-   * Authorized Party.
+   * Keycloak client used for the authentication.
    */
   azp: string;
 }

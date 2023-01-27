@@ -56,7 +56,7 @@
 
 <script lang="ts">
 import { useAuth } from "@/composables";
-import { AppIDPType, ClientIdType } from "@/types";
+import { IdentityProviders, ClientIdType } from "@/types";
 import { computed } from "vue";
 import { BannerTypes } from "@/types/contracts/Banner";
 
@@ -76,7 +76,7 @@ export default {
   setup(props: any) {
     const { executeLogin } = useAuth();
     const login = async () => {
-      await executeLogin(ClientIdType.Institution, AppIDPType.BCeID);
+      await executeLogin(ClientIdType.Institution, IdentityProviders.BCeIDBoth);
     };
     const errorMessage = computed(() => {
       switch (true) {

@@ -6,7 +6,8 @@ import {
   IInstitutionUserToken,
   StudentUserToken,
   IUserToken,
-} from "./userToken.interface";
+  evaluateSpecificIdentityProvider,
+} from ".";
 import { InstitutionUserAuthService, UserService } from "../services";
 import { AuthorizedParties } from "./authorized-parties.enum";
 
@@ -30,25 +31,27 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  async validate(payload: any) {
+  /**
+   * Execute post token validation operations. Once the token is considered valid, as per the
+   * validations defined on the class constructor, this method will be invoked.
+   * @param payload validated token.
+   * @returns the original token information with additional properties depending on the
+   * client used for the authentication.
+   */
+  async validate(payload: unknown) {
     const userToken = payload as IUserToken;
-    userToken.authorizedParty = payload.azp;
-
     // Check if it is expected that a user exists on DB for the specific authorized parties.
     const authorizedParties = [
       AuthorizedParties.institution,
       AuthorizedParties.student,
       AuthorizedParties.aest,
-      AuthorizedParties.formsFlowBPM,
     ];
-    if (!authorizedParties.includes(userToken.authorizedParty)) {
+    if (!authorizedParties.includes(userToken.azp)) {
       // If not present in the list just return the received token without any further processing.
       return userToken;
     }
-
     // Get DB user information to be added to the token.
     const dbUser = await this.userService.getUserLoginInfo(userToken.userName);
-
     // Check if the user exists on DB.
     // When Students and Institutions users logins for the first time
     // there will no records until the Institution Profile or
@@ -56,19 +59,25 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     if (dbUser) {
       userToken.userId = dbUser.id;
       userToken.isActive = dbUser.isActive;
+      userToken.identitySpecificProvider =
+        evaluateSpecificIdentityProvider(userToken);
+      if (!dbUser.identityProviderType) {
+        await this.userService.updateIdentityProvider(
+          dbUser.id,
+          userToken.identitySpecificProvider,
+        );
+      }
     }
-
     // If the token represents a student, associate the student specific data
     // and return the student token specific object.
-    if (userToken.authorizedParty === AuthorizedParties.student) {
+    if (userToken.azp === AuthorizedParties.student) {
       const studentUserToken = userToken as StudentUserToken;
       studentUserToken.studentId = dbUser?.studentId;
       return studentUserToken;
     }
-
     // If the token represents an institution, loads additional information
     // from the database that is needed for authorization.
-    if (userToken.authorizedParty === AuthorizedParties.institution) {
+    if (userToken.azp === AuthorizedParties.institution) {
       const institutionUserToken = userToken as IInstitutionUserToken;
       institutionUserToken.authorizations =
         await this.institutionUserAuthService.getAuthorizationsByUserName(
@@ -76,17 +85,6 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
         );
       return institutionUserToken;
     }
-
-    // Ensures that there is a service account user created for forms-flow-bpm.
-    if (userToken.authorizedParty === AuthorizedParties.formsFlowBPM) {
-      // If the user does not exists on DB, create one.
-      if (!dbUser) {
-        const newServiceAccountUser =
-          await this.userService.createServiceAccountUser(userToken.userName);
-        userToken.userId = newServiceAccountUser.id;
-      }
-    }
-
     return userToken;
   }
 }

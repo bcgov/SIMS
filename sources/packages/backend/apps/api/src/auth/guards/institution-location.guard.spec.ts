@@ -4,10 +4,12 @@ import {
 } from "../../testHelpers";
 import { InstitutionUserAuthorizations } from "../../services/institution-user-auth/institution-user-auth.models";
 import { HasLocationAccessParam } from "../decorators";
-import { IInstitutionUserToken } from "../userToken.interface";
 import { InstitutionLocationGuard } from "./institution-location.guard";
-import { InstitutionUserTypes } from "../user-types.enum";
-import { AuthorizedParties } from "../authorized-parties.enum";
+import {
+  AuthorizedParties,
+  IInstitutionUserToken,
+  InstitutionUserTypes,
+} from "..";
 
 const activateGuard = async (
   locationId: number,
@@ -22,7 +24,7 @@ const activateGuard = async (
   const guard = new InstitutionLocationGuard(reflector);
   const user = {} as IInstitutionUserToken;
   user.authorizations = authorizations;
-  user.authorizedParty = AuthorizedParties.institution;
+  user.azp = AuthorizedParties.institution;
 
   const httpRequest = { user, params: { [locationIdParamName]: locationId } };
   const httpContext = createFakeHttpContext(httpRequest);

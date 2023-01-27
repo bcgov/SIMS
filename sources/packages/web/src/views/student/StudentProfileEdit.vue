@@ -50,7 +50,7 @@ export default {
         firstName: studentInfo.firstName,
         dateOfBirth: studentInfo.birthDateFormatted,
         mode: StudentProfileFormModes.StudentEdit,
-        identityProvider: AuthService.shared.userToken?.IDP,
+        identityProvider: AuthService.shared.userToken?.identityProvider,
       };
       initialData.value = data;
     };

@@ -3,7 +3,7 @@ import {
   SINValidationsAPIOutDTO,
   StudentProfileAPIOutDTO,
 } from "@/services/http/dto";
-import { AppIDPType } from "../ApplicationToken";
+import { IdentityProviders } from "@/types";
 
 export interface StudentFormInfo extends StudentProfileAPIOutDTO {
   birthDateFormatted: string;
@@ -79,6 +79,6 @@ export type StudentProfileFormModel = Pick<
     phone: string;
     dateOfBirth: string;
     mode: StudentProfileFormModes;
-    identityProvider?: AppIDPType;
+    identityProvider?: IdentityProviders;
     sinConsent: boolean;
   };

@@ -1,5 +1,5 @@
 import { AuthService } from "@/services/AuthService";
-import { AppIDPType, AppRoutes, AuthStatus } from "../types";
+import { IdentityProviders, AppRoutes, AuthStatus } from "../types";
 import { ClientIdType } from "../types/contracts/ConfigContract";
 
 export class RouteHelper {
@@ -52,23 +52,20 @@ export class RouteHelper {
    */
   private static isAllowedIDP(
     clientType: ClientIdType,
-    idp: AppIDPType,
+    idp: IdentityProviders,
   ): boolean {
-    let allowedIDP = AppIDPType.UNKNOWN;
     switch (clientType) {
       case ClientIdType.Student:
-        return [AppIDPType.BCeID, AppIDPType.BCSC].includes(idp);
+        return [IdentityProviders.BCeIDBoth, IdentityProviders.BCSC].includes(
+          idp,
+        );
       case ClientIdType.SupportingUsers:
-        allowedIDP = AppIDPType.BCSC;
-        break;
+        return idp === IdentityProviders.BCSC;
       case ClientIdType.Institution:
-        allowedIDP = AppIDPType.BCeID;
-        break;
+        return idp === IdentityProviders.BCeIDBoth;
       case ClientIdType.AEST:
-        allowedIDP = AppIDPType.IDIR;
-        break;
+        return idp === IdentityProviders.IDIR;
     }
-    return allowedIDP === idp;
   }
 
   /**
@@ -100,7 +97,10 @@ export class RouteHelper {
 
     if (
       !AuthService.shared.userToken ||
-      !RouteHelper.isAllowedIDP(clientType, AuthService.shared.userToken.IDP)
+      !RouteHelper.isAllowedIDP(
+        clientType,
+        AuthService.shared.userToken.identityProvider,
+      )
     ) {
       // User is not authenticated to the correct Keycloak client/IDP.
       return AuthStatus.ForbiddenUser;

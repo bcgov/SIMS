@@ -5,10 +5,9 @@ import {
   ForbiddenException,
 } from "@nestjs/common";
 import { Reflector } from "@nestjs/core";
-import { AuthorizedParties } from "../authorized-parties.enum";
+import { AuthorizedParties, IUserToken } from "..";
 import { AUTHORIZED_PARTY_KEY } from "../decorators/authorized-party.decorator";
 import { IdentityProviders } from "@sims/sims-db";
-import { IUserToken } from "../userToken.interface";
 
 /**
  * Inspect the token to check if the correct authorized party
@@ -29,7 +28,7 @@ export class AuthorizedPartiesGuard implements CanActivate {
     const userToken = user as IUserToken;
 
     const hasAuthorizedParty = authorizedParties.some(
-      (authorizedParty) => authorizedParty === userToken.authorizedParty,
+      (authorizedParty) => authorizedParty === userToken.azp,
     );
     if (!hasAuthorizedParty) {
       throw new ForbiddenException(
@@ -38,8 +37,8 @@ export class AuthorizedPartiesGuard implements CanActivate {
     }
 
     const isAllowedIDP = this.isAllowedIDP(
-      userToken.authorizedParty,
-      userToken.IDP,
+      userToken.azp,
+      userToken.identityProvider,
     );
     if (!isAllowedIDP) {
       throw new ForbiddenException(
@@ -54,23 +53,23 @@ export class AuthorizedPartiesGuard implements CanActivate {
    * Determines if the client is authorized through the expected IDP.
    * @param authorizedParty authorized party type to be checked.
    * @param idp identity provider used for authentication on Keycloak.
-   * @returns true if IDP is allowed, otherwise, false.
+   * @returns true if the identity provider is allowed, otherwise, false.
    */
   private isAllowedIDP(
     authorizedParty: AuthorizedParties,
-    idp: IdentityProviders,
+    identityProvider: IdentityProviders,
   ): boolean {
     switch (authorizedParty) {
       case AuthorizedParties.student:
-        return [IdentityProviders.BCeID, IdentityProviders.BCSC].includes(idp);
+        return [IdentityProviders.BCeIDBoth, IdentityProviders.BCSC].includes(
+          identityProvider,
+        );
       case AuthorizedParties.supportingUsers:
-        return idp === IdentityProviders.BCSC;
+        return identityProvider === IdentityProviders.BCSC;
       case AuthorizedParties.institution:
-        return idp === IdentityProviders.BCeID;
+        return identityProvider === IdentityProviders.BCeIDBoth;
       case AuthorizedParties.aest:
-        return idp === IdentityProviders.IDIR;
-      case AuthorizedParties.formsFlowBPM:
-        return true;
+        return identityProvider === IdentityProviders.IDIR;
       default:
         return false;
     }

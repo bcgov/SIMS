@@ -1,8 +1,12 @@
 import { Injectable } from "@nestjs/common";
 import { DataSource, UpdateResult } from "typeorm";
-import { DataModelService, Student, User } from "@sims/sims-db";
+import {
+  DataModelService,
+  IdentityProviders,
+  Student,
+  User,
+} from "@sims/sims-db";
 import { UserLoginInfo } from "./user.model";
-import { SERVICE_ACCOUNT_DEFAULT_USER_EMAIL } from "@sims/utilities";
 
 @Injectable()
 export class UserService extends DataModelService<User> {
@@ -29,6 +33,7 @@ export class UserService extends DataModelService<User> {
       .select("user.id", "id")
       .addSelect("user.isActive", "isActive")
       .addSelect("student.id", "studentId")
+      .addSelect("user.identityProviderType", "identityProviderType")
       .leftJoin(Student, "student", "student.user.id = user.id")
       .where("user.userName = :userName", { userName })
       .getRawOne();
@@ -44,7 +49,20 @@ export class UserService extends DataModelService<User> {
       id: user.id,
       isActive: user.isActive,
       studentId: user.studentId,
+      identityProviderType: user.identityProviderType,
     };
+  }
+
+  /**
+   * Updates the user identity provider used for authentication.
+   * @param userId user to be updated.
+   * @param identityProviderType identity provider.
+   */
+  async updateIdentityProvider(
+    userId: number,
+    identityProviderType: IdentityProviders,
+  ): Promise<void> {
+    await this.repo.update({ id: userId }, { identityProviderType });
   }
 
   /**
@@ -106,20 +124,6 @@ export class UserService extends DataModelService<User> {
     user.email = email;
     user.firstName = givenNames;
     user.lastName = lastName;
-    return this.repo.save(user);
-  }
-
-  /**
-   * Creates an user associated with the a service account.
-   * @param userName user name to create the user for the service account.
-   * @returns new user created.
-   */
-  async createServiceAccountUser(userName: string) {
-    const user = new User();
-    user.userName = userName;
-    user.email = SERVICE_ACCOUNT_DEFAULT_USER_EMAIL;
-    user.firstName = null;
-    user.lastName = userName;
     return this.repo.save(user);
   }
 

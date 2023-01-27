@@ -1,8 +1,7 @@
 import { Injectable, CanActivate, ExecutionContext } from "@nestjs/common";
 import { Reflector } from "@nestjs/core";
 import { ROLES_KEY } from "../decorators/roles.decorator";
-import { Role } from "../roles.enum";
-import { IUserToken } from "../userToken.interface";
+import { Role, IUserToken } from "..";
 
 /**
  * Allow the authorization based on roles making use
@@ -23,9 +22,8 @@ export class RolesGuard implements CanActivate {
     }
     const { user } = context.switchToHttp().getRequest();
     const userToken = user as IUserToken;
-    if (userToken.resource_access && userToken.authorizedParty) {
-      const userRoles =
-        userToken.resource_access[userToken.authorizedParty].roles;
+    if (userToken.resource_access && userToken.azp) {
+      const userRoles = userToken.resource_access[userToken.azp].roles;
       return requiredRoles.some((role) => userRoles?.includes(role));
     }
     return false;

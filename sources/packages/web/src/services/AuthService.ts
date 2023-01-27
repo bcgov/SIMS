@@ -4,7 +4,7 @@ import { ClientIdType } from "../types/contracts/ConfigContract";
 import { AppConfigService } from "./AppConfigService";
 import HttpBaseClient from "./http/common/HttpBaseClient";
 import { UserService } from "./UserService";
-import { ApiProcessError, AppIDPType, ApplicationToken } from "@/types";
+import { ApiProcessError, IdentityProviders, ApplicationToken } from "@/types";
 import { RouteHelper } from "@/helpers";
 import { LocationAsRelativeRaw } from "vue-router";
 import {
@@ -25,7 +25,7 @@ export class AuthService {
   /**
    * Keycloak instance available after the method initialize is called.
    */
-  keycloak?: Keycloak.KeycloakInstance = undefined;
+  keycloak?: Keycloak = undefined;
 
   private clientType?: ClientIdType = undefined;
   /**
@@ -78,7 +78,7 @@ export class AuthService {
     this.clientType = clientType;
     const config = await AppConfigService.shared.config();
 
-    this.keycloak = Keycloak({
+    this.keycloak = new Keycloak({
       url: config.authConfig.url,
       realm: config.authConfig.realm,
       clientId: config.authConfig.clientIds[clientType],
@@ -89,6 +89,7 @@ export class AuthService {
         onLoad: "check-sso",
         responseMode: "query",
         checkLoginIframe: false,
+        pkceMethod: "S256",
       });
 
       if (this.keycloak.authenticated) {
@@ -138,7 +139,7 @@ export class AuthService {
         error instanceof ApiProcessError &&
         error.errorType === MISSING_STUDENT_ACCOUNT
       ) {
-        if (this.userToken?.IDP === AppIDPType.BCeID) {
+        if (this.userToken?.identityProvider === IdentityProviders.BCeIDBoth) {
           const hasPendingAccountApplication =
             await StudentAccountApplicationService.shared.hasPendingAccountApplication();
           if (hasPendingAccountApplication) {
@@ -261,16 +262,28 @@ export class AuthService {
     }
   }
 
+  /**
+   * Siteminder specific logout workaround.
+   * This is a known issue with identity providers which retain session.
+   * SiteMinder (for example) will hold that session until the user is logged
+   * out using the SiteMinder logout endpoint. The result with your current flow
+   * is that although the Keycloak session is destroyed, the SM session is
+   * retained so when the login endpoint is clicked the user is logged in seamlessly.
+   * @see https://stackoverflow.developer.gov.bc.ca/questions/83
+   * @param redirectUri application redirect URI.
+   */
   private async executeSiteminderLogoff(redirectUri: string) {
     if (!this.keycloak) {
       throw new Error("Keycloak not initialized.");
     }
-    const logoutURL = this.keycloak.createLogoutUrl({
-      redirectUri,
-    });
+    const logoutURL = encodeURIComponent(
+      this.keycloak.createLogoutUrl({
+        redirectUri,
+      }),
+    );
     const config = await AppConfigService.shared.config();
     const externalLogoutUrl = config.authConfig.externalSiteMinderLogoutUrl;
-    const siteMinderLogoutURL = `${externalLogoutUrl}?returl=${logoutURL}&retnow=1`;
+    const siteMinderLogoutURL = `${externalLogoutUrl}?retnow=1&returl=${logoutURL}`;
     window.location.href = siteMinderLogoutURL;
   }
 
