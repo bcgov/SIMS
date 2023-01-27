@@ -512,12 +512,12 @@ export class ApplicationStudentsController extends BaseController {
         `Application id ${applicationId} was not found.`,
       );
     }
-    const [firstDisbursement, secondDisbursement] = application
-      .currentAssessment?.disbursementSchedules
-      ? application.currentAssessment.disbursementSchedules.sort((a, b) =>
-          a.disbursementDate < b.disbursementDate ? -1 : 1,
-        )
+    const disbursements = application.currentAssessment?.disbursementSchedules
+      ? application.currentAssessment.disbursementSchedules
       : [];
+    const [firstDisbursement, secondDisbursement] = disbursements.sort((a, b) =>
+      a.disbursementDate < b.disbursementDate ? -1 : 1,
+    );
     return {
       applicationStatusUpdatedOn: application.applicationStatusUpdatedOn,
       pirStatus: application.pirStatus,
