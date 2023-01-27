@@ -32,7 +32,7 @@ import {
   ApiUnprocessableEntityResponse,
 } from "@nestjs/swagger";
 import BaseController from "../BaseController";
-import { ClientTypeBaseRoute, DryRunSubmissionResult } from "../../types";
+import { ClientTypeBaseRoute } from "../../types";
 
 /***
  * Designation agreement dedicated controller for Institution.
