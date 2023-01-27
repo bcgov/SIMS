@@ -1,7 +1,6 @@
 import {
   ApplicationExceptionStatus,
   ApplicationStatus,
-  OfferingStatus,
   ProgramInfoStatus,
   SuccessWaitingStatus,
   COEStatus,
@@ -14,7 +13,6 @@ export interface InProgressApplicationDetailsAPIOutDTO {
   applicationStatus: ApplicationStatus;
   pirStatus: ProgramInfoStatus;
   pirDeniedReason?: string;
-  offeringStatus?: OfferingStatus;
   exceptionStatus?: ApplicationExceptionStatus;
   parent1IncomeVerificationStatus?: SuccessWaitingStatus;
   parent2IncomeVerificationStatus?: SuccessWaitingStatus;

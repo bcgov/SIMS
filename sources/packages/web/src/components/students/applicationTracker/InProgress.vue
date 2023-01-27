@@ -15,24 +15,6 @@
   >
   <application-status-tracker-banner
     v-if="
-      applicationDetails?.offeringStatus === OfferingStatus.ChangeOverwritten
-    "
-    label="Your institution updated the study period. Please re-submit your application with the updated study period."
-    icon="fa:fas fa-exclamation-circle"
-    icon-color="danger"
-    background-color="error-bg"
-    ><template #content
-      >Your institution updated the study period information. Please
-      <a href="" @click="goToStudentApplication" class="primary-color"
-        >start a new application</a
-      >, select the updated study period, and submit your application to have it
-      processed again. Please contact the Financial Aid Officer from your
-      institution if you require more information about the change in study
-      period.</template
-    ></application-status-tracker-banner
-  >
-  <application-status-tracker-banner
-    v-if="
       applicationDetails?.exceptionStatus ===
       ApplicationExceptionStatus.Declined
     "

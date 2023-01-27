@@ -2,7 +2,6 @@ import { IntersectionType } from "@nestjs/swagger";
 import { IsObject, IsOptional, IsPositive, Length } from "class-validator";
 import {
   ApplicationExceptionStatus,
-  OfferingStatus,
   ApplicationStatus,
   ProgramInfoStatus,
   AssessmentStatus,
@@ -139,7 +138,6 @@ export class InProgressApplicationDetailsAPIOutDTO extends IntersectionType(
   applicationStatus: ApplicationStatus;
   pirStatus: ProgramInfoStatus;
   pirDeniedReason?: string;
-  offeringStatus?: OfferingStatus;
   exceptionStatus?: ApplicationExceptionStatus;
 }
 

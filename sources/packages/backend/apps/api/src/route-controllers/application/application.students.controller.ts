@@ -484,7 +484,6 @@ export class ApplicationStudentsController extends BaseController {
       applicationStatus: application.applicationStatus,
       pirStatus: application.pirStatus,
       pirDeniedReason: getPIRDeniedReason(application),
-      offeringStatus: application.currentAssessment?.offering?.offeringStatus,
       exceptionStatus: application.applicationException?.exceptionStatus,
       ...incomeVerification,
       ...supportingUser,
