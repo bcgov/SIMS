@@ -77,7 +77,7 @@ jobs:
       BUILD_REF: ${{ github.base_ref }}
       HOST_PREFIX: ${{ secrets.HOST_PREFIX }}
       BUILD_NAMESPACE: 0c27fb-tools
-      KEYCLOAK_REALM: "jxoe2o46"
+      KEYCLOAK_REALM: "aestsims"
       KEYCLOAK_AUTH_URL: ${{ secrets.KEYCLOAK_AUTH_URL }}
       BCeID_WEB_SERVICE_WSDL: ${{ secrets.BCeID_WEB_SERVICE_WSDL }}
       SITE_MINDER_LOGOUT_URL: ${{ secrets.SITE_MINDER_LOGOUT_URL }}
