@@ -103,7 +103,7 @@ export class StudentAccountApplicationStudentsController extends BaseController 
     const newAccountApplication =
       await this.studentAccountApplicationsService.createStudentAccountApplication(
         userToken.userName,
-        submissionResult.data.data as StudentAccountApplicationCreateModel,
+        submissionResult.data.data,
       );
 
     return { id: newAccountApplication.id };
