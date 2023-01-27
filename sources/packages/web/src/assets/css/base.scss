@@ -320,18 +320,18 @@ html * {
   min-height: 50px;
 }
 
-// Tracker slider thumb (draft and submitted).
-.application-slider .v-slider-thumb__surface {
+// Tracker slider thumb.
+.progress-slider .v-slider-thumb__surface {
   border-radius: 6px;
 }
 
 // Remove the ripple and hover effect.
-.application-slider .v-slider-thumb__surface::before {
+.progress-slider .v-slider-thumb__surface::before {
   background-color: unset;
 }
 
 // Remove the ripple and hover effect.
-.application-slider .v-ripple__container {
+.progress-slider .v-ripple__container {
   display: none;
 }
 

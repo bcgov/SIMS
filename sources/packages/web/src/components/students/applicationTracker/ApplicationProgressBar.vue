@@ -2,38 +2,15 @@
   <v-card class="p-4">
     <template v-if="applicationStatus !== ApplicationStatus.cancelled">
       <body-header title="Track your application" />
-      <v-slider
-        v-model="trackerApplicationStatus"
-        :ticks="applicationStatusTracker"
-        :max="4"
-        step="1"
-        show-ticks="always"
-        tick-size="0"
-        track-color="readonly"
-        :track-fill-color="trackFillColor"
-        :thumb-size="thumbSize"
-        :thumb-color="thumbColor"
-        track-size="20"
-        readonly
+      <progress-bar
+        :progressBarValue="trackerApplicationStatus"
+        :progressStepLabels="applicationTrackerLabels"
+        :progressBarColor="trackFillColor"
+        :initialStepSize="thumbSize"
         :disabled="disabled"
-        class="application-slider mt-n2"
-      >
-        <template #tick-label="{ tick, index }">
-          <span
-            v-if="index === trackerApplicationStatus"
-            class="label-bold black-color"
-            >{{ tick.label }}
-            <v-icon
-              v-if="applicationEndStatus.isApplicationInEndStatus"
-              :icon="applicationEndStatus.endStatusIcon"
-              :size="20"
-              :color="applicationEndStatus.endStatusColor"
-              class="pl-4"
-          /></span>
-          <span class="label-value black-color" v-else>{{ tick.label }} </span>
-        </template>
-      </v-slider>
-
+        :progressLabelIcon="applicationEndStatus.endStatusIcon"
+        :progressLabelIconColor="applicationEndStatus.endStatusType"
+      />
       <draft
         @editApplication="$emit('editApplication')"
         v-if="applicationStatus === ApplicationStatus.draft"
@@ -67,20 +44,21 @@ import {
 import { PropType, ref, defineComponent, computed, onMounted } from "vue";
 import { ApplicationProgressDetailsAPIOutDTO } from "@/services/http/dto/Application.dto";
 import { ApplicationService } from "@/services/ApplicationService";
+import ProgressBar from "@/components/common/ProgressBar.vue";
 import Draft from "@/components/students/applicationTracker/Draft.vue";
 import Submitted from "@/components/students/applicationTracker/Submitted.vue";
 import InProgress from "@/components/students/applicationTracker/InProgress.vue";
 import Cancelled from "@/components/students/applicationTracker/Cancelled.vue";
 import Assessment from "@/components/students/applicationTracker/Assessment.vue";
 
-interface ApplicationEndStatusDetails {
-  isApplicationInEndStatus: boolean;
-  endStatusColor?: string;
+interface ApplicationEndStatusIconDetails {
+  endStatusType?: "success" | "error";
   endStatusIcon?: string;
 }
 export default defineComponent({
   emits: ["editApplication"],
   components: {
+    ProgressBar,
     Draft,
     Submitted,
     InProgress,
@@ -99,7 +77,7 @@ export default defineComponent({
   },
   setup(props) {
     const hasDeclinedCard = ref(false);
-    const applicationStatusTracker = ref<Record<number, ApplicationStatus>>({
+    const applicationTrackerLabels = ref<Record<number, ApplicationStatus>>({
       0: ApplicationStatus.submitted,
       1: ApplicationStatus.inProgress,
       2: ApplicationStatus.assessment,
@@ -109,15 +87,18 @@ export default defineComponent({
     const applicationProgressDetails = ref(
       {} as ApplicationProgressDetailsAPIOutDTO,
     );
-    const applicationEndStatus = ref({} as ApplicationEndStatusDetails);
-    // trackFillColor will vary when more status are added.
-    const trackFillColor = ref();
+    const applicationEndStatus = ref({} as ApplicationEndStatusIconDetails);
+    const trackFillColor = computed(() => {
+      if (props.applicationStatus === ApplicationStatus.completed) {
+        return "success";
+      }
+      if (applicationEndStatus.value.endStatusType === "error") {
+        return "error";
+      }
+      return "warning";
+    });
 
     onMounted(async () => {
-      trackFillColor.value =
-        props.applicationStatus === ApplicationStatus.completed
-          ? "success"
-          : "warning";
       applicationProgressDetails.value =
         await ApplicationService.shared.getApplicationProgressDetails(
           props.applicationId,
@@ -130,10 +111,8 @@ export default defineComponent({
           applicationProgressDetails.value.secondCOEStatus ===
             COEStatus.completed)
       ) {
-        trackFillColor.value = "success";
         applicationEndStatus.value = {
-          isApplicationInEndStatus: true,
-          endStatusColor: "success",
+          endStatusType: "success",
           endStatusIcon: "fa:fas fa-check-circle",
         };
       }
@@ -147,10 +126,8 @@ export default defineComponent({
           COEStatus.declined ||
         applicationProgressDetails.value.secondCOEStatus === COEStatus.declined
       ) {
-        trackFillColor.value = "error";
         applicationEndStatus.value = {
-          isApplicationInEndStatus: true,
-          endStatusColor: "error",
+          endStatusType: "error",
           endStatusIcon: "fa:fas fa-exclamation-circle",
         };
       }
@@ -158,7 +135,7 @@ export default defineComponent({
 
     const applicationStatusOrder = (status: ApplicationStatus) => {
       const [key] =
-        Object.entries(applicationStatusTracker.value).find(
+        Object.entries(applicationTrackerLabels.value).find(
           ([, value]) => value === status,
         ) ?? [];
 
@@ -189,7 +166,7 @@ export default defineComponent({
     );
 
     return {
-      applicationStatusTracker,
+      applicationTrackerLabels,
       trackerApplicationStatus,
       disabled,
       trackFillColor,
