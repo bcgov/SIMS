@@ -528,7 +528,7 @@ export class ApplicationStudentsController extends BaseController {
   }
 
   /**
-   * Get status of all requests and confirmations in student application (Exception, PIR and COE).
+   * Get status of all enrollments of a student application.
    * @param applicationId Student application.
    * @returns application progress details.
    */

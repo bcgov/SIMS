@@ -6,6 +6,7 @@ import {
   COEStatus,
   AssessmentStatus,
   OfferingIntensity,
+  DisbursementScheduleStatus,
 } from "@/types";
 
 export interface InProgressApplicationDetailsAPIOutDTO {
@@ -92,4 +93,14 @@ export interface ApplicationProgressDetailsAPIOutDTO {
   firstCOEStatus?: COEStatus;
   secondCOEStatus?: COEStatus;
   exceptionStatus?: ApplicationExceptionStatus;
+}
+
+export interface COEDetailsAPIOutDTO {
+  coeStatus: COEStatus;
+  disbursementScheduleStatus: DisbursementScheduleStatus;
+}
+
+export interface ApplicationCOEDetailsAPIOutDTO {
+  firstCOE: COEDetailsAPIOutDTO;
+  secondCOE?: COEDetailsAPIOutDTO;
 }

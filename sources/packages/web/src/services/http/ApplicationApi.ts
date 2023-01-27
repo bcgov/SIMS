@@ -19,6 +19,7 @@ import {
   InProgressApplicationDetailsAPIOutDTO,
   PrimaryIdentifierAPIOutDTO,
   ApplicationProgressDetailsAPIOutDTO,
+  ApplicationCOEDetailsAPIOutDTO,
 } from "@/services/http/dto";
 
 export class ApplicationApi extends HttpBaseClient {
@@ -150,6 +151,19 @@ export class ApplicationApi extends HttpBaseClient {
   ): Promise<ApplicationProgressDetailsAPIOutDTO> {
     return this.getCall<ApplicationProgressDetailsAPIOutDTO>(
       this.addClientRoot(`application/${applicationId}/progress-details`),
+    );
+  }
+
+  /**
+   * Get status of all enrollments of a student application.
+   * @param applicationId Student application.
+   * @returns application progress details.
+   */
+  async getApplicationEnrolmentDetails(
+    applicationId: number,
+  ): Promise<ApplicationCOEDetailsAPIOutDTO> {
+    return this.getCall<ApplicationCOEDetailsAPIOutDTO>(
+      this.addClientRoot(`application/${applicationId}/enrolment-details`),
     );
   }
 }

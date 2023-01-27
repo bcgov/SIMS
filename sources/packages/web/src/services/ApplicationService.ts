@@ -16,6 +16,7 @@ import {
   ApplicationIdentifiersAPIOutDTO,
   PrimaryIdentifierAPIOutDTO,
   ApplicationProgressDetailsAPIOutDTO,
+  ApplicationCOEDetailsAPIOutDTO,
 } from "@/services/http/dto";
 
 export class ApplicationService {
@@ -130,5 +131,16 @@ export class ApplicationService {
     applicationId: number,
   ): Promise<ApplicationProgressDetailsAPIOutDTO> {
     return ApiClient.Application.getApplicationProgressDetails(applicationId);
+  }
+
+  /**
+   * Get status of all enrollments of a student application.
+   * @param applicationId Student application.
+   * @returns application progress details.
+   */
+  async getApplicationEnrolmentDetails(
+    applicationId: number,
+  ): Promise<ApplicationCOEDetailsAPIOutDTO> {
+    return ApiClient.Application.getApplicationEnrolmentDetails(applicationId);
   }
 }

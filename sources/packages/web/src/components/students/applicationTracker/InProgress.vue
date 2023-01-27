@@ -241,7 +241,6 @@ import { ApplicationService } from "@/services/ApplicationService";
 import { InProgressApplicationDetailsAPIOutDTO } from "@/services/http/dto/Application.dto";
 
 export default defineComponent({
-  emits: ["declinedEvent"],
   components: {
     ApplicationStatusTrackerBanner,
   },

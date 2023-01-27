@@ -26,6 +26,10 @@
       <assessment
         v-else-if="applicationStatus === ApplicationStatus.assessment"
       />
+      <enrolment
+        v-else-if="applicationStatus === ApplicationStatus.enrollment"
+        :applicationId="applicationId"
+      />
     </template>
     <cancelled
       v-else
@@ -50,6 +54,7 @@ import Submitted from "@/components/students/applicationTracker/Submitted.vue";
 import InProgress from "@/components/students/applicationTracker/InProgress.vue";
 import Cancelled from "@/components/students/applicationTracker/Cancelled.vue";
 import Assessment from "@/components/students/applicationTracker/Assessment.vue";
+import Enrolment from "@/components/students/applicationTracker/Enrolment.vue";
 
 interface ApplicationEndStatusIconDetails {
   endStatusType?: "success" | "error";
@@ -64,6 +69,7 @@ export default defineComponent({
     InProgress,
     Cancelled,
     Assessment,
+    Enrolment,
   },
   props: {
     applicationId: {
