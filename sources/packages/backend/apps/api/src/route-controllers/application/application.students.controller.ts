@@ -66,7 +66,6 @@ import {
 import { ApplicationControllerService } from "./application.controller.service";
 import { CustomNamedError } from "@sims/utilities";
 import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
-import { DisbursementSchedule } from "@sims/sims-db";
 
 @AllowAuthorizedParty(AuthorizedParties.student)
 @RequiresStudentAccount()
@@ -516,8 +515,8 @@ export class ApplicationStudentsController extends BaseController {
     }
     const [firstDisbursement, secondDisbursement] = application
       .currentAssessment?.disbursementSchedules
-      ? this.sortDisbursementSchedule(
-          application.currentAssessment.disbursementSchedules,
+      ? application.currentAssessment.disbursementSchedules.sort((a, b) =>
+          a.disbursementDate < b.disbursementDate ? -1 : 1,
         )
       : [];
     return {
@@ -554,9 +553,7 @@ export class ApplicationStudentsController extends BaseController {
       );
     }
     const [firstDisbursement, secondDisbursement] =
-      this.sortDisbursementSchedule(
-        application.currentAssessment.disbursementSchedules,
-      );
+      application.currentAssessment.disbursementSchedules;
 
     const applicationCOEDetails: ApplicationCOEDetailsAPIOutDTO = {
       firstCOE: {
@@ -574,19 +571,5 @@ export class ApplicationStudentsController extends BaseController {
       };
     }
     return applicationCOEDetails;
-  }
-
-  /**
-   * Sort disbursement schedule by disbursement date
-   * to get first and second disbursement schedule.
-   * @param disbursementSchedules
-   * @returns sorted disbursement schedules.
-   */
-  private sortDisbursementSchedule(
-    disbursementSchedules: DisbursementSchedule[],
-  ) {
-    return disbursementSchedules.sort((a, b) =>
-      a.disbursementDate < b.disbursementDate ? -1 : 1,
-    );
   }
 }

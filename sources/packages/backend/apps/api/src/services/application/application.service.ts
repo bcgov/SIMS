@@ -1481,6 +1481,11 @@ export class ApplicationService extends RecordDataModelService<Application> {
           id: studentId,
         },
       },
+      order: {
+        currentAssessment: {
+          disbursementSchedules: { disbursementDate: "ASC" },
+        },
+      },
     });
   }
 
