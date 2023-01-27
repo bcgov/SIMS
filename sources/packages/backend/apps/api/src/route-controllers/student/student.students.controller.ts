@@ -46,11 +46,7 @@ import {
   UniqueFileNameParamAPIInDTO,
   UpdateStudentAPIInDTO,
 } from "./models/student.dto";
-import {
-  ApiProcessError,
-  ClientTypeBaseRoute,
-  DryRunSubmissionResult,
-} from "../../types";
+import { ApiProcessError, ClientTypeBaseRoute } from "../../types";
 import { Response } from "express";
 import { StudentControllerService } from "..";
 import { FileInterceptor } from "@nestjs/platform-express";
@@ -129,7 +125,7 @@ export class StudentStudentsController extends BaseController {
       );
     }
 
-    const submissionResult: DryRunSubmissionResult<StudentInfo> =
+    const submissionResult =
       await this.formService.dryRunSubmission<StudentInfo>(
         FormNames.StudentProfile,
         payload,
@@ -328,7 +324,7 @@ export class StudentStudentsController extends BaseController {
     @UserToken() studentUserToken: StudentUserToken,
     @Body() payload: UpdateStudentAPIInDTO,
   ): Promise<void> {
-    const submissionResult: DryRunSubmissionResult<StudentInfo> =
+    const submissionResult =
       await this.formService.dryRunSubmission<StudentInfo>(
         FormNames.StudentProfile,
         payload,

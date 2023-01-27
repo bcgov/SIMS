@@ -32,11 +32,7 @@ import {
   FormService,
   InstitutionLocationService,
 } from "../../services";
-import {
-  ClientTypeBaseRoute,
-  ApiProcessError,
-  DryRunSubmissionResult,
-} from "../../types";
+import { ClientTypeBaseRoute, ApiProcessError } from "../../types";
 import { getUserFullName } from "../../utilities";
 import { getISODateOnlyString, CustomNamedError } from "@sims/utilities";
 import {
@@ -94,7 +90,7 @@ export class InstitutionLocationInstitutionsController extends BaseController {
     @UserToken() userToken: IInstitutionUserToken,
   ): Promise<PrimaryIdentifierAPIOutDTO> {
     // Validate the location data that will be saved to SIMS DB.
-    const dryRunSubmissionResult: DryRunSubmissionResult<InstitutionLocationModel> =
+    const dryRunSubmissionResult =
       await this.formService.dryRunSubmission<InstitutionLocationModel>(
         FormNames.InstitutionLocation,
         payload,

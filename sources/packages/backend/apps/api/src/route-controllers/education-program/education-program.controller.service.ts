@@ -26,7 +26,7 @@ import {
   DUPLICATE_SABC_CODE,
 } from "../../constants";
 import { INSTITUTION_TYPE_BC_PRIVATE } from "@sims/sims-db/constant";
-import { ApiProcessError, DryRunSubmissionResult } from "../../types";
+import { ApiProcessError } from "../../types";
 import { ApiUnprocessableEntityResponse } from "@nestjs/swagger";
 import { SaveEducationProgram } from "../../services/education-program/education-program.service.models";
 
@@ -96,7 +96,7 @@ export class EducationProgramControllerService {
     auditUserId: number,
     programId?: number,
   ): Promise<EducationProgram> {
-    const submissionResult: DryRunSubmissionResult<SaveEducationProgram> =
+    const submissionResult =
       await this.formService.dryRunSubmission<SaveEducationProgram>(
         FormNames.EducationProgram,
         payload,

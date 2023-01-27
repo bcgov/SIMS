@@ -48,11 +48,7 @@ import {
   RequiresStudentAccount,
 } from "../../auth/decorators";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
-import {
-  ApiProcessError,
-  ClientTypeBaseRoute,
-  DryRunSubmissionResult,
-} from "../../types";
+import { ApiProcessError, ClientTypeBaseRoute } from "../../types";
 import { getPIRDeniedReason, PIR_OR_DATE_OVERLAP_ERROR } from "../../utilities";
 import {
   INVALID_APPLICATION_NUMBER,
@@ -198,7 +194,7 @@ export class ApplicationStudentsController extends BaseController {
       payload.data.selectedOfferingEndDate = studyEndDate;
     }
 
-    const submissionResult: DryRunSubmissionResult<ApplicationData> =
+    const submissionResult =
       await this.formService.dryRunSubmission<ApplicationData>(
         programYear.formName,
         payload.data,

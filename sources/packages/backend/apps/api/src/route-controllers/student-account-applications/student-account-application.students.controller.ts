@@ -20,11 +20,7 @@ import {
   UserToken,
 } from "../../auth/decorators";
 import BaseController from "../BaseController";
-import {
-  ApiProcessError,
-  ClientTypeBaseRoute,
-  DryRunSubmissionResult,
-} from "../../types";
+import { ApiProcessError, ClientTypeBaseRoute } from "../../types";
 import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
 import {
   CreateStudentAccountApplicationAPIInDTO,
@@ -88,7 +84,7 @@ export class StudentAccountApplicationStudentsController extends BaseController 
       );
     }
 
-    const submissionResult: DryRunSubmissionResult<StudentAccountApplicationCreateModel> =
+    const submissionResult =
       await this.formService.dryRunSubmission<StudentAccountApplicationCreateModel>(
         FormNames.StudentProfile,
         payload.submittedData,
