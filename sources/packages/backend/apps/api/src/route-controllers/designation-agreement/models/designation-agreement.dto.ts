@@ -17,6 +17,9 @@ import {
   Allow,
   IsIn,
   IsOptional,
+  IsPositive,
+  ArrayMinSize,
+  IsNumber,
 } from "class-validator";
 
 const PAGINATION_SEARCH_MAX_LENGTH = 200;
@@ -63,7 +66,10 @@ export class UpdateDesignationAPIInDTO {
 export class SubmitDesignationAgreementAPIInDTO {
   @Allow()
   dynamicData: unknown;
-  @Allow()
+  @IsArray()
+  @ArrayMinSize(1)
+  @ValidateNested({ each: true })
+  @Type(() => SubmittedLocationsAPIInDTO)
   locations: SubmittedLocationsAPIInDTO[];
 }
 
@@ -72,9 +78,10 @@ export class SubmitDesignationAgreementAPIInDTO {
  * be validated by the form.io dryrun validation.
  */
 export class SubmittedLocationsAPIInDTO {
-  @Allow()
+  @IsNumber()
+  @IsPositive()
   locationId: number;
-  @Allow()
+  @IsBoolean()
   requestForDesignation: boolean;
 }
 

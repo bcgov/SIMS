@@ -109,7 +109,7 @@ export class DesignationAgreementInstitutionsController extends BaseController {
         userToken.authorizations.institutionId,
         submissionResult.data.data.dynamicData,
         userToken.userId,
-        payload.locations // dryrun submission result does not return locations
+        payload.locations // not used in the dryrun
           .filter((location) => location.requestForDesignation)
           .map((location) => location.locationId),
       );
