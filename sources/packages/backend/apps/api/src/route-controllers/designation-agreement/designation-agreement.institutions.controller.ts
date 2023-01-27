@@ -82,11 +82,10 @@ export class DesignationAgreementInstitutionsController extends BaseController {
       );
     }
     // Validate the dynamic data submission.
-    const submissionResult: DryRunSubmissionResult =
-      await this.formService.dryRunSubmission(
-        FormNames.DesignationAgreementDetails,
-        payload,
-      );
+    const submissionResult = await this.formService.dryRunSubmission(
+      FormNames.DesignationAgreementDetails,
+      payload,
+    );
     if (!submissionResult.valid) {
       throw new BadRequestException(
         "Not able to create a designation agreement due to an invalid request.",
@@ -109,7 +108,7 @@ export class DesignationAgreementInstitutionsController extends BaseController {
         userToken.authorizations.institutionId,
         submissionResult.data.data.dynamicData,
         userToken.userId,
-        payload.locations // not used in the dryrun
+        payload.locations
           .filter((location) => location.requestForDesignation)
           .map((location) => location.locationId),
       );

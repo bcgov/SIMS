@@ -62,10 +62,10 @@ export class FormService {
    * @returns Status indicating if the data being submitted is valid or not
    * alongside with the data after formio processing.
    */
-  async dryRunSubmission(
+  async dryRunSubmission<T = any>(
     formName: string,
-    data: any,
-  ): Promise<DryRunSubmissionResult> {
+    data: unknown,
+  ): Promise<DryRunSubmissionResult<T>> {
     try {
       const authHeader = await this.createAuthHeader();
       const submissionResponse = await axios.post(

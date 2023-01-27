@@ -66,6 +66,9 @@ export class UpdateDesignationAPIInDTO {
 export class SubmitDesignationAgreementAPIInDTO {
   @Allow()
   dynamicData: unknown;
+  /**
+   * `locations` is not used in the dryrun and should be validated.
+   */
   @IsArray()
   @ArrayMinSize(1)
   @ValidateNested({ each: true })
@@ -78,7 +81,6 @@ export class SubmitDesignationAgreementAPIInDTO {
  * be validated by the form.io dryrun validation.
  */
 export class SubmittedLocationsAPIInDTO {
-  @IsNumber()
   @IsPositive()
   locationId: number;
   @IsBoolean()
