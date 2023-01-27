@@ -88,7 +88,7 @@ export class StudentAccountApplicationStudentsController extends BaseController 
       );
     }
 
-    const submissionResult: DryRunSubmissionResult =
+    const submissionResult: DryRunSubmissionResult<StudentAccountApplicationCreateModel> =
       await this.formService.dryRunSubmission(
         FormNames.StudentProfile,
         payload.submittedData,

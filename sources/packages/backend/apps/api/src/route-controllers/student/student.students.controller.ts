@@ -72,6 +72,7 @@ import {
   STUDENT_ACCOUNT_CREATION_MULTIPLES_SIN_FOUND,
 } from "../../constants";
 import { EntityManager } from "typeorm";
+import { StudentInfo } from "../../services/student/student.service.models";
 
 /**
  * Student controller for Student Client.
@@ -128,7 +129,7 @@ export class StudentStudentsController extends BaseController {
       );
     }
 
-    const submissionResult: DryRunSubmissionResult =
+    const submissionResult: DryRunSubmissionResult<StudentInfo> =
       await this.formService.dryRunSubmission(
         FormNames.StudentProfile,
         payload,
@@ -327,7 +328,7 @@ export class StudentStudentsController extends BaseController {
     @UserToken() studentUserToken: StudentUserToken,
     @Body() payload: UpdateStudentAPIInDTO,
   ): Promise<void> {
-    const submissionResult: DryRunSubmissionResult =
+    const submissionResult: DryRunSubmissionResult<StudentInfo> =
       await this.formService.dryRunSubmission(
         FormNames.StudentProfile,
         payload,

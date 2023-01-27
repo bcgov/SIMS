@@ -59,6 +59,7 @@ import {
   PaginatedResultsAPIOutDTO,
 } from "../models/pagination.dto";
 import { DUPLICATE_INSTITUTION_LOCATION_CODE } from "../../constants";
+import { InstitutionLocationModel } from "../../services/institution-location/institution-location.models";
 
 /**
  * Institution location controller for institutions Client.
@@ -93,7 +94,7 @@ export class InstitutionLocationInstitutionsController extends BaseController {
     @UserToken() userToken: IInstitutionUserToken,
   ): Promise<PrimaryIdentifierAPIOutDTO> {
     // Validate the location data that will be saved to SIMS DB.
-    const dryRunSubmissionResult: DryRunSubmissionResult =
+    const dryRunSubmissionResult: DryRunSubmissionResult<InstitutionLocationModel> =
       await this.formService.dryRunSubmission(
         FormNames.InstitutionLocation,
         payload,

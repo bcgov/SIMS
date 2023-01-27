@@ -68,6 +68,7 @@ import {
 import { ApplicationControllerService } from "./application.controller.service";
 import { CustomNamedError } from "@sims/utilities";
 import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
+import { ApplicationData } from "@sims/sims-db/entities/application.model";
 
 @AllowAuthorizedParty(AuthorizedParties.student)
 @RequiresStudentAccount()
@@ -197,7 +198,7 @@ export class ApplicationStudentsController extends BaseController {
       payload.data.selectedOfferingEndDate = studyEndDate;
     }
 
-    const submissionResult: DryRunSubmissionResult =
+    const submissionResult: DryRunSubmissionResult<ApplicationData> =
       await this.formService.dryRunSubmission(
         programYear.formName,
         payload.data,

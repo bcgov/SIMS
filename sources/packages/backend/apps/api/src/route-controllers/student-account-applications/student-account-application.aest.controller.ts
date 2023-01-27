@@ -34,6 +34,7 @@ import BaseController from "../BaseController";
 import {
   FormNames,
   FormService,
+  StudentAccountApplicationApprovalModel,
   StudentAccountApplicationsService,
 } from "../../services";
 import {
@@ -141,7 +142,7 @@ export class StudentAccountApplicationAESTController extends BaseController {
     @Body() payload: StudentAccountApplicationApprovalAPIInDTO,
     @UserToken() userToken: IUserToken,
   ): Promise<PrimaryIdentifierAPIOutDTO> {
-    const submissionResult: DryRunSubmissionResult =
+    const submissionResult: DryRunSubmissionResult<StudentAccountApplicationApprovalModel> =
       await this.formService.dryRunSubmission(
         FormNames.StudentProfile,
         payload,
