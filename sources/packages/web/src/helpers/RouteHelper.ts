@@ -54,23 +54,18 @@ export class RouteHelper {
     clientType: ClientIdType,
     idp: IdentityProviders,
   ): boolean {
-    let allowedIDP: IdentityProviders | undefined = undefined;
     switch (clientType) {
       case ClientIdType.Student:
         return [IdentityProviders.BCeIDBoth, IdentityProviders.BCSC].includes(
           idp,
         );
       case ClientIdType.SupportingUsers:
-        allowedIDP = IdentityProviders.BCSC;
-        break;
+        return idp === IdentityProviders.BCSC;
       case ClientIdType.Institution:
-        allowedIDP = IdentityProviders.BCeIDBoth;
-        break;
+        return idp === IdentityProviders.BCeIDBoth;
       case ClientIdType.AEST:
-        allowedIDP = IdentityProviders.IDIR;
-        break;
+        return idp === IdentityProviders.IDIR;
     }
-    return allowedIDP === idp;
   }
 
   /**
