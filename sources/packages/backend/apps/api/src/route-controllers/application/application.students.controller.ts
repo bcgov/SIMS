@@ -199,7 +199,7 @@ export class ApplicationStudentsController extends BaseController {
     }
 
     const submissionResult: DryRunSubmissionResult<ApplicationData> =
-      await this.formService.dryRunSubmission(
+      await this.formService.dryRunSubmission<ApplicationData>(
         programYear.formName,
         payload.data,
       );

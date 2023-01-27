@@ -95,7 +95,7 @@ export class InstitutionLocationInstitutionsController extends BaseController {
   ): Promise<PrimaryIdentifierAPIOutDTO> {
     // Validate the location data that will be saved to SIMS DB.
     const dryRunSubmissionResult: DryRunSubmissionResult<InstitutionLocationModel> =
-      await this.formService.dryRunSubmission(
+      await this.formService.dryRunSubmission<InstitutionLocationModel>(
         FormNames.InstitutionLocation,
         payload,
       );

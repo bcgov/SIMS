@@ -130,7 +130,7 @@ export class StudentStudentsController extends BaseController {
     }
 
     const submissionResult: DryRunSubmissionResult<StudentInfo> =
-      await this.formService.dryRunSubmission(
+      await this.formService.dryRunSubmission<StudentInfo>(
         FormNames.StudentProfile,
         payload,
       );
@@ -329,7 +329,7 @@ export class StudentStudentsController extends BaseController {
     @Body() payload: UpdateStudentAPIInDTO,
   ): Promise<void> {
     const submissionResult: DryRunSubmissionResult<StudentInfo> =
-      await this.formService.dryRunSubmission(
+      await this.formService.dryRunSubmission<StudentInfo>(
         FormNames.StudentProfile,
         payload,
       );

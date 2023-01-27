@@ -84,7 +84,7 @@ export class ScholasticStandingInstitutionsController extends BaseController {
   ): Promise<void> {
     try {
       const submissionResult: DryRunSubmissionResult<ScholasticStanding> =
-        await this.formService.dryRunSubmission(
+        await this.formService.dryRunSubmission<ScholasticStanding>(
           FormNames.ReportScholasticStandingChange,
           payload.data,
         );

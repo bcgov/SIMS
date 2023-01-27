@@ -97,7 +97,7 @@ export class EducationProgramControllerService {
     programId?: number,
   ): Promise<EducationProgram> {
     const submissionResult: DryRunSubmissionResult<SaveEducationProgram> =
-      await this.formService.dryRunSubmission(
+      await this.formService.dryRunSubmission<SaveEducationProgram>(
         FormNames.EducationProgram,
         payload,
       );

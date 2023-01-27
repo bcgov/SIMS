@@ -89,7 +89,7 @@ export class StudentAccountApplicationStudentsController extends BaseController 
     }
 
     const submissionResult: DryRunSubmissionResult<StudentAccountApplicationCreateModel> =
-      await this.formService.dryRunSubmission(
+      await this.formService.dryRunSubmission<StudentAccountApplicationCreateModel>(
         FormNames.StudentProfile,
         payload.submittedData,
       );
