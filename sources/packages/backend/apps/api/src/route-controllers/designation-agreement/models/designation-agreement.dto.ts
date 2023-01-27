@@ -66,7 +66,8 @@ export class SubmitDesignationAgreementAPIInDTO {
   @Allow()
   dynamicData: unknown;
   /**
-   * `locations` is not used in the dryrun and should be validated.
+   * Locations being designated.
+   * Must be validated because it is not part of the dynamic data.
    */
   @IsArray()
   @ArrayMinSize(1)
