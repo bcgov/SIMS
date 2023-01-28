@@ -1464,11 +1464,13 @@ export class ApplicationService extends RecordDataModelService<Application> {
             coeStatus: true,
             disbursementDate: true,
             disbursementScheduleStatus: true,
+            coeDeniedReason: { id: true, reason: true },
+            coeDeniedOtherDesc: true,
           },
         },
       },
       relations: {
-        currentAssessment: { disbursementSchedules: true },
+        currentAssessment: { disbursementSchedules: { coeDeniedReason: true } },
       },
       where: {
         id: applicationId,

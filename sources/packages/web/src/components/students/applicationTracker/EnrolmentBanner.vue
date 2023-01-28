@@ -1,30 +1,23 @@
 <template>
   <application-status-tracker-banner
-    label="Waiting for your confirmation of enrolment"
-    icon="fa:fas fa-clock"
-    icon-color="secondary"
-    content="Your institution will check your enrolment closer to your study start date. Please contact the Financial Aid Officer from your institution if you require more information."
-    v-if="coeStatus === COEStatus.required"
-  />
-
-  <application-status-tracker-banner
-    label="Your institution declined your enrolment status"
-    icon="fa:fas fa-clock"
-    icon-color="danger"
-    v-if="coeStatus === COEStatus.declined"
-    background-color="error-bg"
+    :label="enrolmentBannerDetails.bannerLabel"
+    :icon="enrolmentBannerDetails.bannerIcon"
+    :icon-color="enrolmentBannerDetails.iconColor"
+    :background-color="enrolmentBannerDetails.backgroundColor"
   >
     <template #content
-      ><span class="font-bold">Reason from your institution:</span> Our records
-      indicate you are not registered, please re-submit the application after
-      registration.</template
+      ><span class="font-bold" v-if="enrolmentBannerDetails.contentHeader">{{
+        enrolmentBannerDetails.contentHeader
+      }}</span>
+      {{ enrolmentBannerDetails.content }}</template
     >
   </application-status-tracker-banner>
 </template>
 <script lang="ts">
 import ApplicationStatusTrackerBanner from "@/components/students/applicationTracker/generic/ApplicationStatusTrackerBanner.vue";
 import { COEStatus } from "@/types";
-import { defineComponent, PropType } from "vue";
+import { EnrolmentBannerModel } from "@/components/students/applicationTracker/EnrolmentBanner.models";
+import { defineComponent, PropType, computed } from "vue";
 
 export default defineComponent({
   components: {
@@ -35,10 +28,45 @@ export default defineComponent({
       type: String as PropType<COEStatus>,
       required: true,
     },
+    coeDenialReason: {
+      type: String,
+      required: true,
+    },
   },
-  setup() {
+  setup(props) {
+    const enrolmentBannerDetails = computed<EnrolmentBannerModel>(() => {
+      switch (props.coeStatus) {
+        case COEStatus.completed:
+          return {
+            bannerLabel:
+              "Your enrolment has been confirmed by your institution",
+            bannerIcon: "fa:fas fa-check-circle",
+            iconColor: "success",
+            content:
+              "Your institution will check your enrolment closer to your study start date. Please contact the Financial Aid Officer from your institution if you require more information.",
+            backgroundColor: "success-bg",
+          };
+        case COEStatus.declined:
+          return {
+            bannerLabel: "Your institution declined your enrolment status",
+            bannerIcon: "fa:fas fa-exclamation-circle",
+            iconColor: "danger",
+            content: `${props.coeDenialReason}. Please note any scheduled payment(s) will be cancelled. Contact the Financial Aid Officer from your school if you require more information.`,
+            contentHeader: "Reason from your institution:",
+            backgroundColor: "error-bg",
+          };
+        default:
+          return {
+            bannerLabel: "Waiting for your confirmation of enrolment",
+            bannerIcon: "fa:fas fa-clock",
+            iconColor: "secondary",
+            content:
+              "Your institution will check your enrolment closer to your study start date. Please contact the Financial Aid Officer from your institution if you require more information.",
+          };
+      }
+    });
     return {
-      COEStatus,
+      enrolmentBannerDetails,
     };
   },
 });

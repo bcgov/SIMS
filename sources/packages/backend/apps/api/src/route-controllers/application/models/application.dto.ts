@@ -152,6 +152,7 @@ export class ApplicationProgressDetailsAPIOutDTO {
 export class COEDetailsAPIOutDTO {
   coeStatus: COEStatus;
   disbursementScheduleStatus: DisbursementScheduleStatus;
+  coeDenialReason: string;
 }
 
 export class ApplicationCOEDetailsAPIOutDTO {

@@ -98,6 +98,7 @@ export interface ApplicationProgressDetailsAPIOutDTO {
 export interface COEDetailsAPIOutDTO {
   coeStatus: COEStatus;
   disbursementScheduleStatus: DisbursementScheduleStatus;
+  coeDenialReason: string;
 }
 
 export interface ApplicationCOEDetailsAPIOutDTO {

@@ -7,6 +7,7 @@
   <enrolment-banner
     v-else
     :coeStatus="applicationCOEDetails?.firstCOE?.coeStatus"
+    :coeDenialReason="applicationCOEDetails?.firstCOE?.coeDenialReason"
   />
 </template>
 <script lang="ts">
