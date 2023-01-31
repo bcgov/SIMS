@@ -195,18 +195,7 @@ export default defineComponent({
               ? editApplication
               : confirmEditApplication,
         });
-      }
-      items.value.push({
-        label: "View application",
-        icon: "fa:fa fa-folder-open",
-        command: viewApplication,
-      });
-      if (
-        applicationDetails.value.applicationStatus !==
-          ApplicationStatus.cancelled &&
-        applicationDetails.value.applicationStatus !==
-          ApplicationStatus.completed
-      ) {
+
         items.value.push({
           label: "Cancel application",
           icon: "fa:fa fa-trash",
@@ -215,6 +204,26 @@ export default defineComponent({
           command: confirmCancelApplication,
         });
       }
+      if (
+        applicationDetails.value.applicationStatus ===
+        ApplicationStatus.completed
+      ) {
+        items.value.push({
+          label: "Request a change",
+          icon: "fa:fas fa-hand-paper",
+          command: () => {
+            router.push({
+              name: StudentRoutesConst.STUDENT_REQUEST_CHANGE,
+            });
+          },
+        });
+      }
+      // Default value in menu items.
+      items.value.push({
+        label: "View application",
+        icon: "fa:fa fa-folder-open",
+        command: viewApplication,
+      });
     };
 
     const confirmCancelApplication = async () => {

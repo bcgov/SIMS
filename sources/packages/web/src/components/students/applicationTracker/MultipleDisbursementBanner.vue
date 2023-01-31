@@ -26,11 +26,30 @@
   >
     <template #content
       ><span class="font-bold">Reason from your institution:</span>
-      {{ firstCOEDenialReason }}. Please note any scheduled payment(s) will be
+      {{ coeDenialReason }}. Please note any scheduled payment(s) will be
       cancelled. Contact the Financial Aid Officer from your school if you
       require more information.</template
     >
   </application-status-tracker-banner>
+
+  <!-- first disbursement schedule banners-->
+
+  <application-status-tracker-banner
+    v-if="firstDisbursementStatus === DisbursementScheduleStatus.Pending"
+    label="Waiting to send your first payment to NSLSC"
+    icon="fa:fas fa-clock"
+    icon-color="secondary"
+    content="StudentAid BC will let you know when your payment is sent to the National Student Loan Service Centre. Your payment will be collected there."
+  />
+
+  <application-status-tracker-banner
+    v-if="firstDisbursementStatus === DisbursementScheduleStatus.Sent"
+    label="Your first payment has been sent to NSLSC"
+    icon="fa:fas fa-check-circle"
+    icon-color="success"
+    content="Your first payment has been transferred to the National Student Loan Service Centre (NSLSC). Please collect your payment there. The payment may take time to appear on NSLSC. If you do not see the payment within 3 days, please contact NSLSC."
+    background-color="success-bg"
+  />
 
   <!-- Second enrolment banners -->
 
@@ -60,15 +79,37 @@
   >
     <template #content
       ><span class="font-bold">Reason from your institution:</span>
-      {{ secondCOEDenialReason }}. Please note any scheduled payment(s) will be
+      {{ coeDenialReason }}. Please note any scheduled payment(s) will be
       cancelled. Contact the Financial Aid Officer from your school if you
       require more information.</template
     >
   </application-status-tracker-banner>
+
+  <!-- second disbursement schedule banners-->
+
+  <application-status-tracker-banner
+    v-if="
+      secondDisbursementStatus === DisbursementScheduleStatus.Pending &&
+      secondCOEStatus !== COEStatus.declined
+    "
+    label="Waiting to send your second payment to NSLSC"
+    icon="fa:fas fa-clock"
+    icon-color="secondary"
+    content="StudentAid BC will let you know when your payment is sent to the National Student Loan Service Centre. Your payment will be collected there."
+  />
+
+  <application-status-tracker-banner
+    v-if="secondDisbursementStatus === DisbursementScheduleStatus.Sent"
+    label="Your second payment has been sent to NSLSC"
+    icon="fa:fas fa-check-circle"
+    icon-color="success"
+    content="Your second payment has been transferred to the National Student Loan Service Centre (NSLSC). Please collect your payment there. The payment may take time to appear on NSLSC. If you do not see the payment within 3 days, please contact NSLSC."
+    background-color="success-bg"
+  />
 </template>
 <script lang="ts">
 import ApplicationStatusTrackerBanner from "@/components/students/applicationTracker/generic/ApplicationStatusTrackerBanner.vue";
-import { COEStatus } from "@/types";
+import { COEStatus, DisbursementScheduleStatus } from "@/types";
 import { defineComponent, PropType } from "vue";
 
 export default defineComponent({
@@ -84,18 +125,23 @@ export default defineComponent({
       type: String as PropType<COEStatus>,
       required: true,
     },
-    firstCOEDenialReason: {
+    coeDenialReason: {
       type: String,
       required: true,
     },
-    secondCOEDenialReason: {
-      type: String,
-      required: true,
+    firstDisbursementStatus: {
+      type: String as PropType<DisbursementScheduleStatus>,
+      required: false,
+    },
+    secondDisbursementStatus: {
+      type: String as PropType<DisbursementScheduleStatus>,
+      required: false,
     },
   },
   setup() {
     return {
       COEStatus,
+      DisbursementScheduleStatus,
     };
   },
 });

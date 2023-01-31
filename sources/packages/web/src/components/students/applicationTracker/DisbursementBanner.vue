@@ -1,4 +1,5 @@
 <template>
+  <!-- COE Banners -->
   <application-status-tracker-banner
     v-if="coeStatus === COEStatus.required"
     label="Waiting for your confirmation of enrolment"
@@ -30,10 +31,29 @@
       require more information.</template
     >
   </application-status-tracker-banner>
+
+  <!-- disbursement schedule banners-->
+
+  <application-status-tracker-banner
+    v-if="disbursementStatus === DisbursementScheduleStatus.Pending"
+    label="Waiting to send your payment to NSLSC"
+    icon="fa:fas fa-clock"
+    icon-color="secondary"
+    content="StudentAid BC will let you know when your payment is sent to the National Student Loan Service Centre. Your payment will be collected there."
+  />
+
+  <application-status-tracker-banner
+    v-if="disbursementStatus === DisbursementScheduleStatus.Sent"
+    label="Your payment has been sent to NSLSC"
+    icon="fa:fas fa-check-circle"
+    icon-color="success"
+    content="Your payment has been transferred to the National Student Loan Service Centre (NSLSC). Please collect your payment there. The payment may take time to appear on NSLSC. If you do not see the payment within 3 days, please contact NSLSC."
+    background-color="success-bg"
+  />
 </template>
 <script lang="ts">
 import ApplicationStatusTrackerBanner from "@/components/students/applicationTracker/generic/ApplicationStatusTrackerBanner.vue";
-import { COEStatus } from "@/types";
+import { COEStatus, DisbursementScheduleStatus } from "@/types";
 import { defineComponent, PropType } from "vue";
 
 export default defineComponent({
@@ -49,10 +69,15 @@ export default defineComponent({
       type: String,
       required: true,
     },
+    disbursementStatus: {
+      type: String as PropType<DisbursementScheduleStatus>,
+      required: false,
+    },
   },
   setup() {
     return {
       COEStatus,
+      DisbursementScheduleStatus,
     };
   },
 });
