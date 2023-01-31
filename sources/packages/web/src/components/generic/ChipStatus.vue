@@ -23,11 +23,11 @@ export default {
     const chipColor = computed(() => {
       switch (props.status) {
         case StatusChipTypes.Success:
-          return "success-bg";
+          return "success-chip-outline";
         case StatusChipTypes.Warning:
-          return "warning-bg";
+          return "warning-chip-outline";
         case StatusChipTypes.Error:
-          return "error-bg";
+          return "error-chip-outline";
         case StatusChipTypes.Default:
           return "border";
         default:

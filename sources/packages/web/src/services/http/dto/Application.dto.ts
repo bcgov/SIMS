@@ -1,12 +1,12 @@
 import {
   ApplicationExceptionStatus,
   ApplicationStatus,
-  OfferingStatus,
   ProgramInfoStatus,
   SuccessWaitingStatus,
   COEStatus,
   AssessmentStatus,
   OfferingIntensity,
+  DisbursementScheduleStatus,
 } from "@/types";
 
 export interface InProgressApplicationDetailsAPIOutDTO {
@@ -14,7 +14,6 @@ export interface InProgressApplicationDetailsAPIOutDTO {
   applicationStatus: ApplicationStatus;
   pirStatus: ProgramInfoStatus;
   pirDeniedReason?: string;
-  offeringStatus?: OfferingStatus;
   exceptionStatus?: ApplicationExceptionStatus;
   parent1IncomeVerificationStatus?: SuccessWaitingStatus;
   parent2IncomeVerificationStatus?: SuccessWaitingStatus;
@@ -86,4 +85,23 @@ export interface ApplicationSummaryDTO extends ApplicationIdentifiersAPIOutDTO {
   applicationName: string;
   submitted: string;
   status: string;
+}
+
+export interface ApplicationProgressDetailsAPIOutDTO {
+  applicationStatusUpdatedOn: Date;
+  pirStatus?: ProgramInfoStatus;
+  firstCOEStatus?: COEStatus;
+  secondCOEStatus?: COEStatus;
+  exceptionStatus?: ApplicationExceptionStatus;
+}
+
+export interface COEDetailsAPIOutDTO {
+  coeStatus: COEStatus;
+  disbursementScheduleStatus: DisbursementScheduleStatus;
+  coeDenialReason: string;
+}
+
+export interface ApplicationCOEDetailsAPIOutDTO {
+  firstCOE: COEDetailsAPIOutDTO;
+  secondCOE?: COEDetailsAPIOutDTO;
 }

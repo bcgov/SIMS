@@ -2,7 +2,6 @@ import { IntersectionType } from "@nestjs/swagger";
 import { IsObject, IsOptional, IsPositive, Length } from "class-validator";
 import {
   ApplicationExceptionStatus,
-  OfferingStatus,
   ApplicationStatus,
   ProgramInfoStatus,
   AssessmentStatus,
@@ -10,6 +9,7 @@ import {
   ApplicationData,
   OfferingIntensity,
   APPLICATION_NUMBER_LENGTH,
+  DisbursementScheduleStatus,
 } from "@sims/sims-db";
 
 export class SaveApplicationAPIInDTO {
@@ -138,6 +138,24 @@ export class InProgressApplicationDetailsAPIOutDTO extends IntersectionType(
   applicationStatus: ApplicationStatus;
   pirStatus: ProgramInfoStatus;
   pirDeniedReason?: string;
-  offeringStatus?: OfferingStatus;
   exceptionStatus?: ApplicationExceptionStatus;
+}
+
+export class ApplicationProgressDetailsAPIOutDTO {
+  applicationStatusUpdatedOn: Date;
+  pirStatus?: ProgramInfoStatus;
+  firstCOEStatus?: COEStatus;
+  secondCOEStatus?: COEStatus;
+  exceptionStatus?: ApplicationExceptionStatus;
+}
+
+export class COEDetailsAPIOutDTO {
+  coeStatus: COEStatus;
+  disbursementScheduleStatus: DisbursementScheduleStatus;
+  coeDenialReason: string;
+}
+
+export class ApplicationCOEDetailsAPIOutDTO {
+  firstCOE: COEDetailsAPIOutDTO;
+  secondCOE?: COEDetailsAPIOutDTO;
 }

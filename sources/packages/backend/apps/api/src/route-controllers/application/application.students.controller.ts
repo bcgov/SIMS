@@ -40,6 +40,8 @@ import {
   ApplicationIdentifiersAPIOutDTO,
   ApplicationNumberParamAPIInDTO,
   InProgressApplicationDetailsAPIOutDTO,
+  ApplicationProgressDetailsAPIOutDTO,
+  ApplicationCOEDetailsAPIOutDTO,
 } from "./models/application.dto";
 import {
   AllowAuthorizedParty,
@@ -49,7 +51,11 @@ import {
 } from "../../auth/decorators";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { ApiProcessError, ClientTypeBaseRoute } from "../../types";
-import { getPIRDeniedReason, PIR_OR_DATE_OVERLAP_ERROR } from "../../utilities";
+import {
+  getPIRDeniedReason,
+  PIR_OR_DATE_OVERLAP_ERROR,
+  getCOEDeniedReason,
+} from "../../utilities";
 import {
   INVALID_APPLICATION_NUMBER,
   OFFERING_NOT_VALID,
@@ -490,10 +496,94 @@ export class ApplicationStudentsController extends BaseController {
       applicationStatus: application.applicationStatus,
       pirStatus: application.pirStatus,
       pirDeniedReason: getPIRDeniedReason(application),
-      offeringStatus: application.currentAssessment?.offering.offeringStatus,
       exceptionStatus: application.applicationException?.exceptionStatus,
       ...incomeVerification,
       ...supportingUser,
     };
+  }
+
+  /**
+   * Get status of all requests and confirmations in student application (Exception, PIR and COE).
+   * @param applicationId Student application.
+   * @returns application progress details.
+   */
+  @ApiNotFoundResponse({
+    description: "Application not found.",
+  })
+  @Get(":applicationId/progress-details")
+  async getApplicationProgressDetails(
+    @Param("applicationId", ParseIntPipe) applicationId: number,
+    @UserToken() userToken: StudentUserToken,
+  ): Promise<ApplicationProgressDetailsAPIOutDTO> {
+    const application = await this.applicationService.getApplicationDetails(
+      applicationId,
+      userToken.studentId,
+    );
+    if (!application) {
+      throw new NotFoundException(
+        `Application id ${applicationId} was not found.`,
+      );
+    }
+    const disbursements =
+      application.currentAssessment?.disbursementSchedules ?? [];
+
+    disbursements.sort((a, b) =>
+      a.disbursementDate < b.disbursementDate ? -1 : 1,
+    );
+    const [firstDisbursement, secondDisbursement] = disbursements;
+    return {
+      applicationStatusUpdatedOn: application.applicationStatusUpdatedOn,
+      pirStatus: application.pirStatus,
+      firstCOEStatus: firstDisbursement?.coeStatus,
+      secondCOEStatus: secondDisbursement?.coeStatus,
+      exceptionStatus: application.applicationException?.exceptionStatus,
+    };
+  }
+
+  /**
+   * Get status of all enrollments of a student application.
+   * @param applicationId Student application.
+   * @returns application progress details.
+   */
+  @ApiNotFoundResponse({
+    description:
+      "Application not found or not in relevant status to get enrolment details.",
+  })
+  @Get(":applicationId/enrolment-details")
+  async getApplicationEnrolmentDetails(
+    @Param("applicationId", ParseIntPipe) applicationId: number,
+    @UserToken() userToken: StudentUserToken,
+  ): Promise<ApplicationCOEDetailsAPIOutDTO> {
+    const application =
+      await this.applicationService.getApplicationEnrolmentDetails(
+        applicationId,
+        userToken.studentId,
+      );
+    if (!application) {
+      throw new NotFoundException(
+        `Application id ${applicationId} not found or not in relevant status to get enrolment details.`,
+      );
+    }
+    const [firstDisbursement, secondDisbursement] =
+      application.currentAssessment.disbursementSchedules;
+
+    const applicationCOEDetails: ApplicationCOEDetailsAPIOutDTO = {
+      firstCOE: {
+        coeStatus: firstDisbursement.coeStatus,
+        disbursementScheduleStatus:
+          firstDisbursement.disbursementScheduleStatus,
+        coeDenialReason: getCOEDeniedReason(firstDisbursement),
+      },
+    };
+
+    if (secondDisbursement) {
+      applicationCOEDetails.secondCOE = {
+        coeStatus: secondDisbursement.coeStatus,
+        disbursementScheduleStatus:
+          secondDisbursement.disbursementScheduleStatus,
+        coeDenialReason: getCOEDeniedReason(secondDisbursement),
+      };
+    }
+    return applicationCOEDetails;
   }
 }

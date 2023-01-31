@@ -1398,6 +1398,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
         },
         pirDeniedOtherDesc: true,
         currentAssessment: {
+          id: true,
           offering: {
             id: true,
             offeringStatus: true,
@@ -1405,8 +1406,15 @@ export class ApplicationService extends RecordDataModelService<Application> {
             studyEndDate: true,
             offeringIntensity: true,
           },
+          disbursementSchedules: {
+            id: true,
+            coeStatus: true,
+            disbursementDate: true,
+            disbursementScheduleStatus: true,
+          },
         },
         applicationException: {
+          id: true,
           exceptionStatus: true,
         },
         submittedDate: true,
@@ -1420,14 +1428,64 @@ export class ApplicationService extends RecordDataModelService<Application> {
       },
       relations: {
         pirDeniedReasonId: true,
-        currentAssessment: true,
+        currentAssessment: { offering: true, disbursementSchedules: true },
         applicationException: true,
         location: true,
       },
       where: {
         id: applicationId,
+        applicationStatus: Not(ApplicationStatus.overwritten),
         student: {
           id: studentId,
+        },
+      },
+    });
+  }
+
+  /**
+   * Get enrolment details of an application.
+   * While fetching the enrolment details, the application
+   * expected to be in status Assessment or Enrolment or Completed.
+   * @param applicationId application.
+   * @param studentId applicant student.
+   * @returns application details
+   */
+  async getApplicationEnrolmentDetails(
+    applicationId: number,
+    studentId?: number,
+  ): Promise<Application> {
+    return this.repo.findOne({
+      select: {
+        id: true,
+        currentAssessment: {
+          id: true,
+          disbursementSchedules: {
+            id: true,
+            coeStatus: true,
+            disbursementDate: true,
+            disbursementScheduleStatus: true,
+            coeDeniedReason: { id: true, reason: true },
+            coeDeniedOtherDesc: true,
+          },
+        },
+      },
+      relations: {
+        currentAssessment: { disbursementSchedules: { coeDeniedReason: true } },
+      },
+      where: {
+        id: applicationId,
+        applicationStatus: In([
+          ApplicationStatus.assessment,
+          ApplicationStatus.enrollment,
+          ApplicationStatus.completed,
+        ]),
+        student: {
+          id: studentId,
+        },
+      },
+      order: {
+        currentAssessment: {
+          disbursementSchedules: { disbursementDate: "ASC" },
         },
       },
     });
