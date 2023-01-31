@@ -1,7 +1,7 @@
 <template>
   <v-slider
     v-model="currentStatus"
-    :ticks="progressStepLabels"
+    :ticks="ticks"
     :max="maximumAllowedProgressValue"
     step="1"
     show-ticks="always"
@@ -13,7 +13,7 @@
     track-size="20"
     readonly
     :disabled="disabled"
-    class="progress-slider mt-n2"
+    class="stepper-progress-slider mt-n2"
   >
     <template #tick-label="{ tick, index }">
       <span v-if="index === currentStatus" class="label-bold black-color"
@@ -35,7 +35,7 @@ import { PropType, defineComponent, computed } from "vue";
 export default defineComponent({
   props: {
     progressStepLabels: {
-      type: Object as PropType<Record<number, string>>,
+      type: Array as PropType<Array<string>>,
       required: true,
     },
     progressBarValue: {
@@ -71,6 +71,13 @@ export default defineComponent({
     },
   },
   setup(props) {
+    const ticks = computed<Record<number, string>>(() => {
+      const labels = {} as Record<number, string>;
+      props.progressStepLabels.forEach((label, labelIndex) => {
+        labels[labelIndex] = label;
+      });
+      return labels;
+    });
     const currentStatus = computed(() => props.progressBarValue);
     const maximumAllowedProgressValue = computed(
       () => Object.entries(props.progressStepLabels).length - 1,
@@ -79,6 +86,7 @@ export default defineComponent({
     return {
       currentStatus,
       maximumAllowedProgressValue,
+      ticks,
     };
   },
 });

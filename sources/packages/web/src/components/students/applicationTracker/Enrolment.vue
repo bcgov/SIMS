@@ -1,10 +1,10 @@
 <template>
-  <multiple-enrolment-banner
+  <multiple-disbursement-banner
     v-if="applicationCOEDetails?.secondCOE"
     :firstCOEStatus="applicationCOEDetails?.firstCOE?.coeStatus"
     :secondCOEStatus="applicationCOEDetails?.secondCOE?.coeStatus"
   />
-  <enrolment-banner
+  <disbursement-banner
     v-else
     :coeStatus="applicationCOEDetails?.firstCOE?.coeStatus"
     :coeDenialReason="applicationCOEDetails?.firstCOE?.coeDenialReason"
@@ -15,13 +15,13 @@ import { COEStatus } from "@/types";
 import { onMounted, ref, defineComponent } from "vue";
 import { ApplicationService } from "@/services/ApplicationService";
 import { ApplicationCOEDetailsAPIOutDTO } from "@/services/http/dto/Application.dto";
-import EnrolmentBanner from "@/components/students/applicationTracker/EnrolmentBanner.vue";
-import MultipleEnrolmentBanner from "@/components/students/applicationTracker/MultipleEnrolmentBanner.vue";
+import DisbursementBanner from "@/components/students/applicationTracker/DisbursementBanner.vue";
+import MultipleDisbursementBanner from "@/components/students/applicationTracker/MultipleDisbursementBanner.vue";
 
 export default defineComponent({
   components: {
-    EnrolmentBanner,
-    MultipleEnrolmentBanner,
+    DisbursementBanner,
+    MultipleDisbursementBanner,
   },
   props: {
     applicationId: {

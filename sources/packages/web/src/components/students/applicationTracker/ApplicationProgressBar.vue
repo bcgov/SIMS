@@ -2,7 +2,7 @@
   <v-card class="p-4">
     <template v-if="applicationStatus !== ApplicationStatus.cancelled">
       <body-header title="Track your application" />
-      <progress-bar
+      <stepper-progress-bar
         :progressBarValue="trackerApplicationStatus"
         :progressStepLabels="applicationTrackerLabels"
         :progressBarColor="trackFillColor"
@@ -48,7 +48,7 @@ import {
 import { PropType, ref, defineComponent, computed, onMounted } from "vue";
 import { ApplicationProgressDetailsAPIOutDTO } from "@/services/http/dto/Application.dto";
 import { ApplicationService } from "@/services/ApplicationService";
-import ProgressBar from "@/components/common/ProgressBar.vue";
+import StepperProgressBar from "@/components/common/StepperProgressBar.vue";
 import Draft from "@/components/students/applicationTracker/Draft.vue";
 import Submitted from "@/components/students/applicationTracker/Submitted.vue";
 import InProgress from "@/components/students/applicationTracker/InProgress.vue";
@@ -60,10 +60,13 @@ interface ApplicationEndStatusIconDetails {
   endStatusType?: "success" | "error";
   endStatusIcon?: string;
 }
+const INITIAL_THUMB_SIZE = 14;
+const DEFAULT_THUMB_SIZE = 0;
+
 export default defineComponent({
   emits: ["editApplication"],
   components: {
-    ProgressBar,
+    StepperProgressBar,
     Draft,
     Submitted,
     InProgress,
@@ -83,13 +86,13 @@ export default defineComponent({
   },
   setup(props) {
     const hasDeclinedCard = ref(false);
-    const applicationTrackerLabels = ref<Record<number, ApplicationStatus>>({
-      0: ApplicationStatus.submitted,
-      1: ApplicationStatus.inProgress,
-      2: ApplicationStatus.assessment,
-      3: ApplicationStatus.enrollment,
-      4: ApplicationStatus.completed,
-    });
+    const applicationTrackerLabels = [
+      ApplicationStatus.submitted,
+      ApplicationStatus.inProgress,
+      ApplicationStatus.assessment,
+      ApplicationStatus.enrollment,
+      ApplicationStatus.completed,
+    ];
     const applicationProgressDetails = ref(
       {} as ApplicationProgressDetailsAPIOutDTO,
     );
@@ -139,23 +142,14 @@ export default defineComponent({
       }
     });
 
-    const applicationStatusOrder = (status: ApplicationStatus) => {
-      const [key] =
-        Object.entries(applicationTrackerLabels.value).find(
-          ([, value]) => value === status,
-        ) ?? [];
-
-      if (key !== undefined) {
-        return +key;
-      }
-    };
-
     const trackerApplicationStatus = computed(() =>
-      applicationStatusOrder(props.applicationStatus),
+      applicationTrackerLabels.findIndex(
+        (status) => status === props.applicationStatus,
+      ),
     );
 
-    const disabled = computed(() =>
-      props.applicationStatus === ApplicationStatus.draft ? true : false,
+    const disabled = computed(
+      () => props.applicationStatus === ApplicationStatus.draft,
     );
 
     const thumbColor = computed(() =>
@@ -167,8 +161,8 @@ export default defineComponent({
       [ApplicationStatus.draft, ApplicationStatus.submitted].includes(
         props.applicationStatus,
       )
-        ? 14
-        : 0,
+        ? INITIAL_THUMB_SIZE
+        : DEFAULT_THUMB_SIZE,
     );
 
     return {

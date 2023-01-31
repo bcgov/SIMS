@@ -321,17 +321,17 @@ html * {
 }
 
 // Tracker slider thumb.
-.progress-slider .v-slider-thumb__surface {
+.stepper-progress-slider .v-slider-thumb__surface {
   border-radius: 6px;
 }
 
 // Remove the ripple and hover effect.
-.progress-slider .v-slider-thumb__surface::before {
+.stepper-progress-slider .v-slider-thumb__surface::before {
   background-color: unset;
 }
 
 // Remove the ripple and hover effect.
-.progress-slider .v-ripple__container {
+.stepper-progress-slider .v-ripple__container {
   display: none;
 }
 

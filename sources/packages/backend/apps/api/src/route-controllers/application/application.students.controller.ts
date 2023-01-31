@@ -516,9 +516,8 @@ export class ApplicationStudentsController extends BaseController {
         `Application id ${applicationId} was not found.`,
       );
     }
-    const disbursements = application.currentAssessment?.disbursementSchedules
-      ? application.currentAssessment.disbursementSchedules
-      : [];
+    const disbursements =
+      application.currentAssessment?.disbursementSchedules ?? [];
 
     disbursements.sort((a, b) =>
       a.disbursementDate < b.disbursementDate ? -1 : 1,

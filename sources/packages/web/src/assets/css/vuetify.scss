@@ -132,8 +132,9 @@
 }
 
 // CSS to match the height of progress bar as per figma.
-.v-slider.v-input--horizontal .v-slider-track__fill,
-.v-slider.v-input--horizontal .v-slider-track__background {
+.stepper-progress-slider.v-slider.v-input--horizontal .v-slider-track__fill,
+.stepper-progress-slider.v-slider.v-input--horizontal
+  .v-slider-track__background {
   max-height: $progress-bar-height;
 }
 
