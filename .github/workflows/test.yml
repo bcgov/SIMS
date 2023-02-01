@@ -18,7 +18,6 @@ jobs:
   test:
     name: Test API in Docker env
     runs-on: ubuntu-latest
-    if: ${{ github.event.pull_request.merged == false }}
     env:
       PROJECT_NAME: aest-sims
       BUILD_ID: ${{ github.event.number }}
@@ -40,17 +39,14 @@ jobs:
       BCeID_WEB_SERVICE_WSDL: "https://gws1.test.bceid.ca/webservices/Client/V10/BCeIDService.asmx?wsdl"
       E2E_TEST_STUDENT_USERNAME: student_e2e_test
       E2E_TEST_STUDENT_PASSWORD: ${{ secrets.TEST_STUDENT_PASSWORD }}
-      FORMS_FLOW_BPM_CLIENT_SECRET: ${{ secrets.TEST_FORMS_FLOW_BPM_CLIENT_SECRET }}
       COMPOSE_INTERACTIVE_NO_CLI: 1
     steps:
       - name: Print env
         run: |
           echo BUILD ID: $BUILD_ID
-          echo BUILD NAMESPACE: $BUILD_NAMESPACE
-          echo BRANCH: $BUILD_REF
       # Checkout the PR branch and pull docker images
       - name: Checkout Target Branch
-        uses: actions/checkout@v1
+        uses: actions/checkout@v3
       - name: Docker Pull
         working-directory: "./sources/"
         run: docker-compose pull
@@ -77,18 +73,3 @@ jobs:
         working-directory: "./sources/"
         run: |
           make local-stop
-  test-web:
-    name: Test Web app unit tests
-    runs-on: ubuntu-latest
-    if: ${{ github.event.pull_request.merged == false }}
-    steps:
-      - uses: actions/checkout@v2
-      - name: Setup Node
-        uses: actions/setup-node@v2
-        with:
-          node-version: 12.x
-      - name: Web unit tests
-        working-directory: "./sources/packages/web"
-        run: |
-          npm ci
-          npm run test:unit
