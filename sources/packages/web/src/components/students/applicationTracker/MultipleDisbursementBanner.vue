@@ -14,7 +14,11 @@
     icon="fa:fas fa-check-circle"
     icon-color="success"
     content="Your institution will check your enrolment closer to your study start date. Please contact the Financial Aid Officer from your institution if you require more information."
-    background-color="success-bg"
+    :background-color="
+      recentDisbursementUpdate === DisbursementUpdates.FirstEnrolmentCompleted
+        ? 'success-bg'
+        : 'white'
+    "
   />
 
   <application-status-tracker-banner
@@ -47,7 +51,11 @@
     icon="fa:fas fa-check-circle"
     icon-color="success"
     content="Your first payment has been transferred to the National Student Loan Service Centre (NSLSC). Please collect your payment there. The payment may take time to appear on NSLSC. If you do not see the payment within 3 days, please contact NSLSC."
-    background-color="success-bg"
+    :background-color="
+      recentDisbursementUpdate === DisbursementUpdates.FirstDisbursementSent
+        ? 'success-bg'
+        : 'white'
+    "
   />
 
   <!-- Second enrolment banners -->
@@ -66,7 +74,11 @@
     icon="fa:fas fa-check-circle"
     icon-color="success"
     content="Your institution will check your enrolment closer to your study start date. Please contact the Financial Aid Officer from your institution if you require more information."
-    background-color="success-bg"
+    :background-color="
+      recentDisbursementUpdate === DisbursementUpdates.SecondEnrolmentCompleted
+        ? 'success-bg'
+        : 'white'
+    "
   />
 
   <application-status-tracker-banner
@@ -102,13 +114,25 @@
     icon="fa:fas fa-check-circle"
     icon-color="success"
     content="Your second payment has been transferred to the National Student Loan Service Centre (NSLSC). Please collect your payment there. The payment may take time to appear on NSLSC. If you do not see the payment within 3 days, please contact NSLSC."
-    background-color="success-bg"
+    :background-color="
+      recentDisbursementUpdate === DisbursementUpdates.SecondDisbursementSent
+        ? 'success-bg'
+        : 'white'
+    "
   />
 </template>
 <script lang="ts">
 import ApplicationStatusTrackerBanner from "@/components/students/applicationTracker/generic/ApplicationStatusTrackerBanner.vue";
 import { COEStatus, DisbursementScheduleStatus } from "@/types";
-import { defineComponent, PropType } from "vue";
+import { defineComponent, PropType, computed } from "vue";
+
+enum DisbursementUpdates {
+  FirstEnrolmentCompleted,
+  FirstDisbursementSent,
+  SecondEnrolmentCompleted,
+  SecondDisbursementSent,
+  SecondEnrolmentDeclined,
+}
 
 export default defineComponent({
   components: {
@@ -136,10 +160,27 @@ export default defineComponent({
       required: false,
     },
   },
-  setup() {
+  setup(props) {
+    const recentDisbursementUpdate = computed<DisbursementUpdates>(() => {
+      if (props.secondCOEStatus === COEStatus.declined) {
+        return DisbursementUpdates.SecondEnrolmentDeclined;
+      }
+      if (props.secondDisbursementStatus === DisbursementScheduleStatus.Sent) {
+        return DisbursementUpdates.SecondDisbursementSent;
+      }
+      if (props.secondCOEStatus === COEStatus.completed) {
+        return DisbursementUpdates.SecondEnrolmentCompleted;
+      }
+      if (props.firstDisbursementStatus === DisbursementScheduleStatus.Sent) {
+        return DisbursementUpdates.FirstDisbursementSent;
+      }
+      return DisbursementUpdates.FirstEnrolmentCompleted;
+    });
     return {
       COEStatus,
       DisbursementScheduleStatus,
+      DisbursementUpdates,
+      recentDisbursementUpdate,
     };
   },
 });
