@@ -104,11 +104,11 @@ export default defineComponent({
     );
     const applicationEndStatus = ref({} as ApplicationEndStatusIconDetails);
     const trackFillColor = computed(() => {
-      if (props.applicationStatus === ApplicationStatus.completed) {
-        return "success";
-      }
       if (applicationEndStatus.value.endStatusType === "error") {
         return "error";
+      }
+      if (props.applicationStatus === ApplicationStatus.completed) {
+        return "success";
       }
       return "warning";
     });

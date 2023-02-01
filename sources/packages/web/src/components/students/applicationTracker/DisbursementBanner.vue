@@ -27,8 +27,7 @@
     <template #content
       ><span class="font-bold">Reason from your institution:</span>
       {{ coeDenialReason }}. Please note any scheduled payment(s) will be
-      cancelled. Contact the Financial Aid Officer from your school if you
-      require more information.</template
+      cancelled.</template
     >
   </application-status-tracker-banner>
 
