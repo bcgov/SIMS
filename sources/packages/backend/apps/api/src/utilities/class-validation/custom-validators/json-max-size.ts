@@ -2,7 +2,6 @@ import {
   ValidatorConstraintInterface,
   ValidatorConstraint,
   registerDecorator,
-  ValidationOptions,
   ValidationArguments,
 } from "class-validator";
 
@@ -25,17 +24,16 @@ class JsonMaxSizeConstraint implements ValidatorConstraintInterface {
     return `The length for ${args.targetName}.${args.property} should not be greater than ${maxSize} bytes.`;
   }
 }
-
-export function JsonMaxSize(
-  maxSize: number,
-  validationOptions?: ValidationOptions,
-) {
+/**
+ * Json max size validation.
+ * @param maxSize maximum length in bytes.
+ */
+export function JsonMaxSize(maxSize: number) {
   return (object: unknown, propertyName: string) => {
     registerDecorator({
       name: "JsonMaxSize",
       target: object.constructor,
       propertyName,
-      options: validationOptions,
       validator: JsonMaxSizeConstraint,
       constraints: [maxSize],
     });

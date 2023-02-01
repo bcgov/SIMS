@@ -8,16 +8,16 @@ import { Reflector } from "@nestjs/core";
 import { PAYLOAD_MAX_SIZE_KEY } from "../decorators/payload-max-size.decorator";
 
 /**
- * This guard checks payload to ensure it is not greater than the max size.
+ * This guard checks the payload to ensure it is not greater than the max size.
  */
 @Injectable()
 export class PayloadMaxSizeGuard implements CanActivate {
   constructor(private reflector: Reflector) {}
   /**
    * Implementation of canActivate method in CanActivate.
-   * @param context
-   * @returns Promise<boolean>
-   * return true if the payload is not greater than max size.
+   * Checks if the payload is not greater than max size.
+   * @param context Execution context.
+   * @returns true if payload length is not greater than the max size.
    */
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const payloadMaxSize = this.reflector.getAllAndOverride<any>(
