@@ -35,7 +35,7 @@ import {
 import { EducationProgramControllerService } from "..";
 import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
 import { OptionItemAPIOutDTO } from "../models/common.dto";
-
+import { PayloadMaxSize } from "../../auth/decorators";
 @AllowAuthorizedParty(AuthorizedParties.institution)
 @Controller("education-program")
 @ApiTags(`${ClientTypeBaseRoute.Institution}-education-program`)
@@ -75,6 +75,7 @@ export class EducationProgramInstitutionsController extends BaseController {
   @ApiUnprocessableEntityResponse({
     description: "Not able to a save the program due to an invalid request.",
   })
+  @PayloadMaxSize(2048)
   @Post()
   async createEducationProgram(
     @Body() payload: EducationProgramAPIInDTO,

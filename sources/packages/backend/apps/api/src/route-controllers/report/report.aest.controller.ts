@@ -14,7 +14,12 @@ import {
 import { Response } from "express";
 import { Readable } from "stream";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
-import { AllowAuthorizedParty, Groups, Roles } from "../../auth/decorators";
+import {
+  AllowAuthorizedParty,
+  Groups,
+  PayloadMaxSize,
+  Roles,
+} from "../../auth/decorators";
 import { UserGroups } from "../../auth/user-groups.enum";
 import { FormService } from "../../services";
 import { ClientTypeBaseRoute } from "../../types";
@@ -62,6 +67,7 @@ export class ReportAESTController extends BaseController {
   })
   @Roles(Role.AESTReports)
   @Post()
+  @PayloadMaxSize(1024)
   async exportReport(
     @Body() payload: ReportsFilterAPIInDTO,
     @Res() response: Response,

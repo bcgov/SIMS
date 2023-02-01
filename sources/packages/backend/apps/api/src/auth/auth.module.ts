@@ -23,6 +23,7 @@ import {
   GroupsGuard,
   SINValidationGuard,
   RequiresStudentAccountGuard,
+  PayloadMaxSizeGuard,
 } from "./guards";
 import { RolesGuard } from "./guards/roles.guard";
 import { ConfigModule } from "@sims/utilities/config";
@@ -80,6 +81,10 @@ const jwtModule = JwtModule.register({
     {
       provide: APP_GUARD,
       useClass: SINValidationGuard,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: PayloadMaxSizeGuard,
     },
   ],
   exports: [jwtModule, TokensService, KeycloakService],
