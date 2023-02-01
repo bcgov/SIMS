@@ -31,7 +31,7 @@ export class PayloadMaxSizeGuard implements CanActivate {
 
     const request = context.switchToHttp().getRequest();
     if (request.socket.bytesRead > payloadMaxSize) {
-      throw new BadRequestException("Invalid request. Payload too large.");
+      throw new BadRequestException("Invalid request. Payload is too large.");
     }
   }
 }
