@@ -8,7 +8,7 @@ import {
   ValidateNested,
 } from "class-validator";
 import { StudentAppealStatus } from "@sims/sims-db";
-import { JsonMaxSize } from "apps/api/src/utilities/class-validation/custom-validators/json-max-size";
+import { JsonMaxSize } from "../../../utilities/class-validation";
 /**
  * DTO for student appeal request.
  */

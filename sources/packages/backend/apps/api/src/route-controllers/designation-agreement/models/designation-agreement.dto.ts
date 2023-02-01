@@ -3,7 +3,7 @@ import {
   DesignationAgreementStatus,
   NOTE_DESCRIPTION_MAX_LENGTH,
 } from "@sims/sims-db";
-import { JsonMaxSize } from "apps/api/src/utilities/class-validation/custom-validators/json-max-size";
+import { JsonMaxSize } from "../../../utilities/class-validation";
 import { Type } from "class-transformer";
 import {
   IsBoolean,

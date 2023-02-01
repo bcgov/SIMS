@@ -1,5 +1,5 @@
 import { IntersectionType } from "@nestjs/swagger";
-import { JsonMaxSize } from "apps/api/src/utilities/class-validation/custom-validators/json-max-size";
+import { JsonMaxSize } from "../../../utilities/class-validation";
 import { IsNotEmptyObject } from "class-validator";
 import { ActiveApplicationDataAPIOutDTO } from "../../../route-controllers/institution-locations/models/application.dto";
 

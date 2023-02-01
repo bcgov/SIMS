@@ -11,7 +11,7 @@ import {
   APPLICATION_NUMBER_LENGTH,
   DisbursementScheduleStatus,
 } from "@sims/sims-db";
-import { JsonMaxSize } from "apps/api/src/utilities/class-validation/custom-validators/json-max-size";
+import { JsonMaxSize } from "../../../utilities/class-validation";
 
 export class SaveApplicationAPIInDTO {
   /**

@@ -10,7 +10,7 @@ import {
   SupportingUserType,
   APPLICATION_NUMBER_LENGTH,
 } from "@sims/sims-db";
-import { JsonMaxSize } from "apps/api/src/utilities/class-validation/custom-validators/json-max-size";
+import { JsonMaxSize } from "../../../utilities/class-validation";
 
 const STUDENT_LAST_NAME_MAX_LENGTH = 100;
 
