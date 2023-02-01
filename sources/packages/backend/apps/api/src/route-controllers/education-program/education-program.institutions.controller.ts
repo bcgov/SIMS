@@ -14,6 +14,7 @@ import {
   AllowAuthorizedParty,
   HasLocationAccess,
   UserToken,
+  PayloadMaxSize,
 } from "../../auth/decorators";
 import { EducationProgramsSummary } from "../../services/education-program/education-program.service.models";
 import {
@@ -35,7 +36,7 @@ import {
 import { EducationProgramControllerService } from "..";
 import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
 import { OptionItemAPIOutDTO } from "../models/common.dto";
-import { PayloadMaxSize } from "../../auth/decorators";
+
 @AllowAuthorizedParty(AuthorizedParties.institution)
 @Controller("education-program")
 @ApiTags(`${ClientTypeBaseRoute.Institution}-education-program`)
