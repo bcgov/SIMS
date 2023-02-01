@@ -3,6 +3,7 @@ import {
   DesignationAgreementStatus,
   NOTE_DESCRIPTION_MAX_LENGTH,
 } from "@sims/sims-db";
+import { JsonMaxSize } from "apps/api/src/utilities/class-validation/custom-validators/json-max-size";
 import { Type } from "class-transformer";
 import {
   IsBoolean,
@@ -14,7 +15,6 @@ import {
   MaxLength,
   ValidateIf,
   ValidateNested,
-  Allow,
   IsIn,
   IsOptional,
   IsPositive,
@@ -63,7 +63,7 @@ export class UpdateDesignationAPIInDTO {
  * be validated by the form.io dryrun validation.
  */
 export class SubmitDesignationAgreementAPIInDTO {
-  @Allow()
+  @JsonMaxSize(20480)
   dynamicData: unknown;
   /**
    * Locations being designated.
