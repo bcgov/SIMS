@@ -86,7 +86,11 @@
     label="Your institution declined your second enrolment status"
     icon="fa:fas fa-exclamation-circle"
     icon-color="danger"
-    background-color="error-bg"
+    :background-color="
+      recentDisbursementUpdate === DisbursementUpdates.SecondEnrolmentDeclined
+        ? 'error-bg'
+        : 'white'
+    "
   >
     <template #content
       ><span class="font-bold">Reason from your institution:</span>
@@ -126,6 +130,9 @@ import ApplicationStatusTrackerBanner from "@/components/students/applicationTra
 import { COEStatus, DisbursementScheduleStatus } from "@/types";
 import { defineComponent, PropType, computed } from "vue";
 
+/**
+ * Various updates that can happen to a disbursement.
+ */
 enum DisbursementUpdates {
   FirstEnrolmentCompleted,
   FirstDisbursementSent,
@@ -161,6 +168,7 @@ export default defineComponent({
     },
   },
   setup(props) {
+    // The most recent disbursement update.
     const recentDisbursementUpdate = computed<DisbursementUpdates>(() => {
       if (props.secondCOEStatus === COEStatus.declined) {
         return DisbursementUpdates.SecondEnrolmentDeclined;
