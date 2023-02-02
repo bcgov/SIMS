@@ -64,6 +64,7 @@ export class UpdateDesignationAPIInDTO {
  * be validated by the form.io dryrun validation.
  */
 export class SubmitDesignationAgreementAPIInDTO {
+  @Allow()
   @JsonMaxSize(JSON_20KB)
   dynamicData: unknown;
   /**
