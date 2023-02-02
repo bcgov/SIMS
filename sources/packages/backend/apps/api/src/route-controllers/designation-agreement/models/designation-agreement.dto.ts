@@ -19,6 +19,7 @@ import {
   IsOptional,
   IsPositive,
   ArrayMinSize,
+  Allow,
 } from "class-validator";
 
 const PAGINATION_SEARCH_MAX_LENGTH = 200;
