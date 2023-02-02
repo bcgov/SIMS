@@ -50,7 +50,7 @@ export default {
         firstName: studentInfo.firstName,
         dateOfBirth: studentInfo.birthDateFormatted,
         mode: StudentProfileFormModes.StudentEdit,
-        identityProvider: AuthService.shared.userToken?.IDP,
+        identityProvider: AuthService.shared.userToken?.identityProvider,
       };
       initialData.value = data;
     };
@@ -63,7 +63,7 @@ export default {
         snackBar.success(
           "Your application is submitted. The outcome will display on your profile",
         );
-      } catch (error) {
+      } catch {
         snackBar.error(
           "An error happened during the apply PD process. Please try after sometime.",
         );

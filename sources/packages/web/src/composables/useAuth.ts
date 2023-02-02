@@ -1,9 +1,11 @@
 import { RouteHelper } from "@/helpers";
 import { AuthService } from "@/services/AuthService";
-import { AppIDPType, ClientIdType, Role } from "@/types";
+import { IdentityProviders, ClientIdType, Role } from "@/types";
 import { computed } from "vue";
 
 export function useAuth() {
+  const LOGGED_OUT_LOCAL_STORAGE_ITEM = "loggedOut";
+
   const isAuthenticated = computed(
     () => AuthService.shared.keycloak?.authenticated === true,
   );
@@ -12,7 +14,7 @@ export function useAuth() {
 
   const executeLogin = async (
     clientType: ClientIdType,
-    idp: AppIDPType,
+    idp: IdentityProviders,
   ): Promise<void> => {
     await AuthService.shared.keycloak?.login({
       idpHint: idp.toLowerCase(),
@@ -21,6 +23,7 @@ export function useAuth() {
   };
 
   const executeLogout = async (clientType: ClientIdType): Promise<void> => {
+    setLoggedOut();
     await AuthService.shared.logout(clientType);
   };
 
@@ -33,11 +36,28 @@ export function useAuth() {
     return false;
   };
 
+  const setLoggedOut = () => {
+    localStorage.setItem(LOGGED_OUT_LOCAL_STORAGE_ITEM, "true");
+  };
+
+  const isLoggedOut = () => {
+    const loggedOutStringValue = localStorage.getItem(
+      LOGGED_OUT_LOCAL_STORAGE_ITEM,
+    );
+    return loggedOutStringValue === "true";
+  };
+
+  const resetLoggedOut = () => {
+    localStorage.removeItem(LOGGED_OUT_LOCAL_STORAGE_ITEM);
+  };
+
   return {
     isAuthenticated,
     parsedToken,
     executeLogin,
     executeLogout,
     hasRole,
+    isLoggedOut,
+    resetLoggedOut,
   };
 }

@@ -23,7 +23,7 @@ export class ApplicationExceptionApi extends HttpBaseClient {
   async getExceptionById(
     exceptionId: number,
   ): Promise<ApplicationExceptionAPIOutDTO> {
-    return this.getCallTyped<ApplicationExceptionAPIOutDTO>(
+    return this.getCall<ApplicationExceptionAPIOutDTO>(
       this.addClientRoot(`application-exception/${exceptionId}`),
     );
   }
@@ -71,8 +71,8 @@ export class ApplicationExceptionApi extends HttpBaseClient {
     if (paginationOptions.searchCriteria) {
       url = `${url}&${PaginationParams.SearchCriteria}=${paginationOptions.searchCriteria}`;
     }
-    return this.getCallTyped<
-      PaginatedResults<ApplicationExceptionSummaryAPIOutDTO>
-    >(this.addClientRoot(url));
+    return this.getCall<PaginatedResults<ApplicationExceptionSummaryAPIOutDTO>>(
+      this.addClientRoot(url),
+    );
   }
 }

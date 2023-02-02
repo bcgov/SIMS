@@ -43,6 +43,7 @@ $line-height-header-xsm: 20px;
 $formio-content-lh: 24px;
 $formio-header-margin: 0.5rem;
 $font-size-content: 16px;
+$font-content-lh: 22px;
 
 /** SCSS Banner size variables **/
 $background-alert: rgba(217, 37, 48, 0.05);
@@ -80,3 +81,6 @@ $warning-shade: #b35600;
 // Vuetify navigation drawer default width.
 // ref: https://next.vuetifyjs.com/en/api/v-navigation-drawer/#props-width
 $navigation-drawer-width: 256px;
+
+// Progress bar height.
+$progress-bar-height: 13px;

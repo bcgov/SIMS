@@ -15,24 +15,6 @@
   >
   <application-status-tracker-banner
     v-if="
-      applicationDetails?.offeringStatus === OfferingStatus.ChangeOverwritten
-    "
-    label="Your institution updated the study period. Please re-submit your application with the updated study period."
-    icon="fa:fas fa-exclamation-circle"
-    icon-color="danger"
-    background-color="error-bg"
-    ><template #content
-      >Your institution updated the study period information. Please
-      <a href="" @click="goToStudentApplication" class="primary-color"
-        >start a new application</a
-      >, select the updated study period, and submit your application to have it
-      processed again. Please contact the Financial Aid Officer from your
-      institution if you require more information about the change in study
-      period.</template
-    ></application-status-tracker-banner
-  >
-  <application-status-tracker-banner
-    v-if="
       applicationDetails?.exceptionStatus ===
       ApplicationExceptionStatus.Declined
     "
@@ -259,7 +241,6 @@ import { ApplicationService } from "@/services/ApplicationService";
 import { InProgressApplicationDetailsAPIOutDTO } from "@/services/http/dto/Application.dto";
 
 export default defineComponent({
-  emits: ["declinedEvent"],
   components: {
     ApplicationStatusTrackerBanner,
   },
@@ -269,7 +250,7 @@ export default defineComponent({
       required: true,
     },
   },
-  setup(props, { emit }) {
+  setup(props) {
     const applicationDetails = ref<InProgressApplicationDetailsAPIOutDTO>();
     const router = useRouter();
 
@@ -284,16 +265,6 @@ export default defineComponent({
         await ApplicationService.shared.getInProgressApplicationDetails(
           props.applicationId,
         );
-      // Any declined cards will call declined event.
-      if (
-        applicationDetails.value.pirStatus === ProgramInfoStatus.declined ||
-        applicationDetails.value.offeringStatus ===
-          OfferingStatus.ChangeOverwritten ||
-        applicationDetails.value.exceptionStatus ===
-          ApplicationExceptionStatus.Declined
-      ) {
-        emit("declinedEvent");
-      }
     });
 
     return {

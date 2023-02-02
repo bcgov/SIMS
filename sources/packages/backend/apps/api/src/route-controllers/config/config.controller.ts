@@ -3,7 +3,7 @@ import { ApiTags } from "@nestjs/swagger";
 import { Public } from "../../auth/decorators/public.decorator";
 import { ConfigService } from "@sims/utilities/config";
 import BaseController from "../BaseController";
-import { IConfig } from "./models/get-config.dto";
+import { ConfigAPIOutDTO } from "./models/config.dto";
 
 @Controller("config")
 @ApiTags("config")
@@ -12,9 +12,13 @@ export class ConfigController extends BaseController {
     super();
   }
 
+  /**
+   * Gets the application configuration.
+   * @returns configuration for the application.
+   */
   @Public()
   @Get()
-  getConfig(): IConfig {
+  getConfig(): ConfigAPIOutDTO {
     const authConfig = this.configService.auth;
     return {
       auth: {

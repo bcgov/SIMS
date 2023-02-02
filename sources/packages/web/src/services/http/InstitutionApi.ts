@@ -61,7 +61,7 @@ export class InstitutionApi extends HttpBaseClient {
     authHeader?: any,
   ): Promise<InstitutionDetailAPIOutDTO> {
     const url = institutionId ? `institution/${institutionId}` : "institution";
-    return this.getCallTyped<InstitutionDetailAPIOutDTO>(
+    return this.getCall<InstitutionDetailAPIOutDTO>(
       this.addClientRoot(url),
       authHeader,
     );
@@ -73,9 +73,7 @@ export class InstitutionApi extends HttpBaseClient {
    * @returns institutions types in an option list (key/value pair) schema.
    */
   async getInstitutionTypeOptions(): Promise<OptionItemAPIOutDTO[]> {
-    return this.getCallTyped(
-      this.addClientRoot("institution/type/options-list"),
-    );
+    return this.getCall(this.addClientRoot("institution/type/options-list"));
   }
 
   async allInstitutionLocations(
@@ -84,7 +82,7 @@ export class InstitutionApi extends HttpBaseClient {
     const url = institutionId
       ? `institution/${institutionId}/locations`
       : "institution/locations";
-    return this.getCallTyped<InstitutionLocationAPIOutDTO[]>(
+    return this.getCall<InstitutionLocationAPIOutDTO[]>(
       this.addClientRoot(url),
     );
   }
@@ -116,9 +114,9 @@ export class InstitutionApi extends HttpBaseClient {
       url = `${url}&${PaginationParams.SearchCriteria}=${paginationOptions.searchCriteria}`;
     }
 
-    return this.getCallTyped<
-      PaginatedResults<ActiveApplicationSummaryAPIOutDTO>
-    >(this.addClientRoot(url));
+    return this.getCall<PaginatedResults<ActiveApplicationSummaryAPIOutDTO>>(
+      this.addClientRoot(url),
+    );
   }
 
   async searchInstitutions(
@@ -133,15 +131,13 @@ export class InstitutionApi extends HttpBaseClient {
       queryString += `operatingName=${operatingName}&`;
     }
     const url = `institution/search?${queryString.slice(0, -1)}`;
-    return this.getCallTyped<SearchInstitutionAPIOutDTO[]>(
-      this.addClientRoot(url),
-    );
+    return this.getCall<SearchInstitutionAPIOutDTO[]>(this.addClientRoot(url));
   }
 
   async getBasicInstitutionInfoById(
     institutionId: number,
   ): Promise<InstitutionBasicAPIOutDTO> {
-    return this.getCallTyped<InstitutionBasicAPIOutDTO>(
+    return this.getCall<InstitutionBasicAPIOutDTO>(
       this.addClientRoot(`institution/${institutionId}/basic-details`),
     );
   }

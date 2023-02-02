@@ -16,14 +16,10 @@ export class StudentAccountApplicationApi extends HttpBaseClient {
   async createStudentAccountApplication(
     payload: CreateStudentAccountApplicationAPIInDTO,
   ): Promise<void> {
-    try {
-      await this.postCall(
-        this.addClientRoot("student-account-application"),
-        payload,
-      );
-    } catch (error: unknown) {
-      this.handleAPICustomError(error);
-    }
+    await this.postCall(
+      this.addClientRoot("student-account-application"),
+      payload,
+    );
   }
 
   /**
@@ -34,7 +30,7 @@ export class StudentAccountApplicationApi extends HttpBaseClient {
   async getPendingStudentAccountApplications(): Promise<
     StudentAccountApplicationSummaryAPIOutDTO[]
   > {
-    return this.getCallTyped<StudentAccountApplicationSummaryAPIOutDTO[]>(
+    return this.getCall<StudentAccountApplicationSummaryAPIOutDTO[]>(
       this.addClientRoot("student-account-application/pending"),
     );
   }
@@ -48,7 +44,7 @@ export class StudentAccountApplicationApi extends HttpBaseClient {
   async getStudentAccountApplicationById(
     studentAccountApplicationId: number,
   ): Promise<AESTStudentAccountApplicationAPIOutDTO> {
-    return this.getCallTyped<AESTStudentAccountApplicationAPIOutDTO>(
+    return this.getCall<AESTStudentAccountApplicationAPIOutDTO>(
       this.addClientRoot(
         `student-account-application/${studentAccountApplicationId}`,
       ),
@@ -66,16 +62,12 @@ export class StudentAccountApplicationApi extends HttpBaseClient {
     studentAccountApplicationId: number,
     payload: StudentAccountApplicationApprovalAPIInDTO,
   ): Promise<void> {
-    try {
-      await this.postCall(
-        this.addClientRoot(
-          `student-account-application/${studentAccountApplicationId}/approve`,
-        ),
-        payload,
-      );
-    } catch (error: unknown) {
-      this.handleAPICustomError(error);
-    }
+    await this.postCall(
+      this.addClientRoot(
+        `student-account-application/${studentAccountApplicationId}/approve`,
+      ),
+      payload,
+    );
   }
 
   /**
@@ -99,7 +91,7 @@ export class StudentAccountApplicationApi extends HttpBaseClient {
    * to be assessed by the Ministry, otherwise, false.
    */
   async hasPendingAccountApplication(): Promise<StudentAccountApplicationAPIOutDTO> {
-    return this.getCallTyped(
+    return this.getCall(
       this.addClientRoot(
         "student-account-application/has-pending-account-application",
       ),

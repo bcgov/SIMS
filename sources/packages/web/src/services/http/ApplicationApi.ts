@@ -1,121 +1,81 @@
 import { addPaginationOptions, addSortOptions } from "@/helpers";
 import {
-  SaveStudentApplicationDto,
-  ApplicationWithProgramYearDto,
-  ApplicationStatusToBeUpdatedDto,
-  GetApplicationDataDto,
-  GetApplicationBaseDTO,
   DEFAULT_PAGE_NUMBER,
   DEFAULT_PAGE_LIMIT,
   StudentApplicationFields,
   DataTableSortOrder,
-  ApplicationIdentifiersDTO,
   ClientIdType,
 } from "@/types";
 import { AuthService } from "../AuthService";
 import HttpBaseClient from "./common/HttpBaseClient";
-import { ApplicationSummaryAPIOutDTO, PaginatedResultsAPIOutDTO } from "./dto";
-import { InProgressApplicationDetailsAPIOutDTO } from "@/services/http/dto/Application.dto";
+import {
+  ApplicationSummaryAPIOutDTO,
+  PaginatedResultsAPIOutDTO,
+  SaveApplicationAPIInDTO,
+  ApplicationWithProgramYearAPIOutDTO,
+  ApplicationDataAPIOutDTO,
+  ApplicationBaseAPIOutDTO,
+  ApplicationIdentifiersAPIOutDTO,
+  InProgressApplicationDetailsAPIOutDTO,
+  PrimaryIdentifierAPIOutDTO,
+  ApplicationProgressDetailsAPIOutDTO,
+  ApplicationCOEDetailsAPIOutDTO,
+} from "@/services/http/dto";
 
 export class ApplicationApi extends HttpBaseClient {
   async getApplicationData(
     applicationId: number,
-  ): Promise<GetApplicationDataDto> {
-    try {
-      const response = await this.apiClient.get(
-        this.addClientRoot(`application/${applicationId}`),
-        this.addAuthHeader(),
-      );
-      return response.data as GetApplicationDataDto;
-    } catch (error) {
-      this.handleRequestError(error);
-      throw error;
-    }
+  ): Promise<ApplicationDataAPIOutDTO> {
+    return this.getCall<ApplicationDataAPIOutDTO>(
+      this.addClientRoot(`application/${applicationId}`),
+    );
   }
 
-  async updateStudentApplicationStatus(
-    applicationId: number,
-    payload: ApplicationStatusToBeUpdatedDto,
-  ): Promise<void> {
-    try {
-      await this.apiClient.patch(
-        this.addClientRoot(`application/${applicationId}/status`),
-        payload,
-        this.addAuthHeader(),
-      );
-    } catch (error) {
-      this.handleRequestError(error);
-      throw error;
-    }
+  async cancelStudentApplication(applicationId: number): Promise<void> {
+    await this.patchCall(
+      this.addClientRoot(`application/${applicationId}/cancel`),
+      null,
+    );
   }
 
   async createApplicationDraft(
-    payload: SaveStudentApplicationDto,
-  ): Promise<number> {
-    try {
-      const response = await this.apiClient.post(
-        this.addClientRoot("application/draft"),
-        payload,
-        this.addAuthHeader(),
-      );
-      return +response.data;
-    } catch (error) {
-      if (!error.response.data?.errorType) {
-        // If it is an not expected error,
-        // handle it the default way.
-        this.handleRequestError(error);
-      }
-
-      throw error;
-    }
+    payload: SaveApplicationAPIInDTO,
+  ): Promise<PrimaryIdentifierAPIOutDTO> {
+    return this.postCall<SaveApplicationAPIInDTO>(
+      this.addClientRoot("application/draft"),
+      payload,
+    );
   }
 
   async saveApplicationDraft(
     applicationId: number,
-    payload: SaveStudentApplicationDto,
-  ): Promise<number> {
-    try {
-      const response = await this.apiClient.patch(
-        this.addClientRoot(`application/${applicationId}/draft`),
-        payload,
-        this.addAuthHeader(),
-      );
-      return +response.data;
-    } catch (error) {
-      this.handleRequestError(error);
-      throw error;
-    }
+    payload: SaveApplicationAPIInDTO,
+  ): Promise<void> {
+    await this.patchCall<SaveApplicationAPIInDTO>(
+      this.addClientRoot(`application/${applicationId}/draft`),
+      payload,
+    );
   }
 
   async submitApplication(
     applicationId: number,
-    payload: SaveStudentApplicationDto,
+    payload: SaveApplicationAPIInDTO,
   ): Promise<void> {
-    try {
-      await this.patchCall(
-        this.addClientRoot(`application/${applicationId}/submit`),
-        payload,
-      );
-    } catch (error: unknown) {
-      this.handleAPICustomError(error);
-    }
+    await this.patchCall(
+      this.addClientRoot(`application/${applicationId}/submit`),
+      payload,
+    );
   }
 
   async getApplicationWithPY(
     applicationId: number,
     isIncludeInActiveProgramYear?: boolean,
-  ): Promise<ApplicationWithProgramYearDto> {
-    try {
-      let url = this.addClientRoot(`application/${applicationId}/program-year`);
-      if (isIncludeInActiveProgramYear) {
-        url = `${url}?isIncludeInActiveProgramYear=${isIncludeInActiveProgramYear}`;
-      }
-      const response = await this.getCall(url);
-      return response.data as ApplicationWithProgramYearDto;
-    } catch (error) {
-      this.handleRequestError(error);
-      throw error;
+  ): Promise<ApplicationWithProgramYearAPIOutDTO> {
+    let url = this.addClientRoot(`application/${applicationId}/program-year`);
+    if (isIncludeInActiveProgramYear) {
+      url = `${url}?isIncludeInActiveProgramYear=${isIncludeInActiveProgramYear}`;
     }
+    return this.getCall<ApplicationWithProgramYearAPIOutDTO>(url);
   }
 
   /**
@@ -125,11 +85,10 @@ export class ApplicationApi extends HttpBaseClient {
    */
   async getApplicationDetails(
     applicationId: number,
-  ): Promise<GetApplicationBaseDTO> {
-    const response = await this.getCall(
+  ): Promise<ApplicationBaseAPIOutDTO> {
+    return this.getCall<ApplicationBaseAPIOutDTO>(
       this.addClientRoot(`application/${applicationId}`),
     );
-    return response.data as GetApplicationBaseDTO;
   }
 
   /**
@@ -156,15 +115,15 @@ export class ApplicationApi extends HttpBaseClient {
     url = addPaginationOptions(url, page, pageCount, "?");
     //Adding Sort params. There is always a default sortField and sortOrder for COE.
     url = addSortOptions(url, sortField, sortOrder);
-    return this.getCallTyped<
-      PaginatedResultsAPIOutDTO<ApplicationSummaryAPIOutDTO>
-    >(this.addClientRoot(url));
+    return this.getCall<PaginatedResultsAPIOutDTO<ApplicationSummaryAPIOutDTO>>(
+      this.addClientRoot(url),
+    );
   }
 
   async getApplicationForRequestChange(
     applicationNumber: string,
-  ): Promise<ApplicationIdentifiersDTO> {
-    return this.getCallTyped<ApplicationIdentifiersDTO>(
+  ): Promise<ApplicationIdentifiersAPIOutDTO> {
+    return this.getCall<ApplicationIdentifiersAPIOutDTO>(
       this.addClientRoot(`application/${applicationNumber}/appeal`),
     );
   }
@@ -177,8 +136,34 @@ export class ApplicationApi extends HttpBaseClient {
   async getInProgressApplicationDetails(
     applicationId: number,
   ): Promise<InProgressApplicationDetailsAPIOutDTO> {
-    return this.getCallTyped<InProgressApplicationDetailsAPIOutDTO>(
+    return this.getCall<InProgressApplicationDetailsAPIOutDTO>(
       this.addClientRoot(`application/${applicationId}/in-progress`),
+    );
+  }
+
+  /**
+   * Get status of all requests and confirmations in student application (Exception, PIR and COE).
+   * @param applicationId Student application.
+   * @returns application progress details.
+   */
+  async getApplicationProgressDetails(
+    applicationId: number,
+  ): Promise<ApplicationProgressDetailsAPIOutDTO> {
+    return this.getCall<ApplicationProgressDetailsAPIOutDTO>(
+      this.addClientRoot(`application/${applicationId}/progress-details`),
+    );
+  }
+
+  /**
+   * Get status of all enrollments of a student application.
+   * @param applicationId Student application.
+   * @returns application progress details.
+   */
+  async getApplicationEnrolmentDetails(
+    applicationId: number,
+  ): Promise<ApplicationCOEDetailsAPIOutDTO> {
+    return this.getCall<ApplicationCOEDetailsAPIOutDTO>(
+      this.addClientRoot(`application/${applicationId}/enrolment-details`),
     );
   }
 }

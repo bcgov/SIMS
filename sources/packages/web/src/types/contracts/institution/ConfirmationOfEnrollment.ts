@@ -17,7 +17,7 @@ export enum COEStatus {
 }
 
 /**
- * Read only Dto for study break item.
+ * Read only interface for study break item.
  * This is for COE where study breaks are shown in read only view.
  */
 export interface StudyBreakCOE {
@@ -48,4 +48,45 @@ export enum EnrollmentPeriod {
 export interface ApproveConfirmEnrollmentModel {
   requestedTuitionRemittance: string;
   tuitionRemittanceAmount: number;
+}
+
+/**
+ * COE approval period status for institution.
+ */
+export enum COEApprovalPeriodStatus {
+  /**
+   * COE is within its valid approval period and can be approved.
+   */
+  WithinApprovalPeriod = "Within approval period",
+  /**
+   * COE is currently before its approval period
+   * and needs to wait until approval period to be confirmed.
+   */
+  BeforeApprovalPeriod = "Before approval period",
+  /**
+   * The COE is currently crossed its approval period and cannot be confirmed by institution.
+   */
+  AfterApprovalPeriod = "After approval period",
+}
+
+/**
+ * Indicates if the money amount information was already
+ * sent to be paid to the student.
+ */
+export enum DisbursementScheduleStatus {
+  /**
+   * Waiting to be included in a e-Cert file.
+   */
+  Pending = "Pending",
+  /**
+   * The money values associated with the disbursement schedule
+   * were included in an e-Cert file to be disbursed to the student.
+   */
+  Sent = "Sent",
+  /**
+   * The disbursement will no longer happen. Possible causes can include,
+   * but are not limited to, when a reassessment happens or when the
+   * application is canceled.
+   */
+  Cancelled = "Cancelled",
 }

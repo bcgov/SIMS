@@ -1,9 +1,9 @@
 {
   "title": "Student Exceptions",
-  "display": "form",
-  "type": "form",
   "name": "studentExceptions",
   "path": "studentexceptions",
+  "type": "form",
+  "display": "form",
   "tags": [
     "common"
   ],
@@ -1662,7 +1662,8 @@
               "properties": {},
               "allowMultipleMasks": false,
               "addons": [],
-              "id": "ezno6d5"
+              "id": "ezno6d5",
+              "className": ""
             }
           ],
           "placeholder": "",
@@ -1812,7 +1813,9 @@
               "properties": {},
               "allowMultipleMasks": false,
               "addons": [],
-              "id": "eujj7zj"
+              "id": "eujj7zj",
+              "className": "",
+              "tags": []
             }
           ],
           "placeholder": "",
@@ -1856,6 +1859,49 @@
           "tree": false,
           "lazyLoad": false,
           "id": "e8t3yvl"
+        },
+        {
+          "clearOnHide": false,
+          "key": "studyEndDatePastMaxAllowedDaysApplicationException",
+          "input": false,
+          "components": [
+            {
+              "key": "studyEndDatePastMaxAllowedDaysApplicationExceptionContent",
+              "label": "Content",
+              "input": false,
+              "tag": "strong",
+              "attrs": [
+                {
+                  "value": "",
+                  "attr": ""
+                }
+              ],
+              "className": "",
+              "content": "Maximum allowed days after study end date is past",
+              "type": "htmlelement",
+              "hideLabel": true,
+              "tags": [],
+              "conditional": {
+                "show": "",
+                "when": null,
+                "eq": ""
+              },
+              "properties": {}
+            }
+          ],
+          "tableView": false,
+          "type": "well",
+          "hideLabel": true,
+          "tags": [],
+          "conditional": {
+            "show": "",
+            "when": null,
+            "eq": ""
+          },
+          "properties": {},
+          "lockKey": true,
+          "customConditional": "show = data.exceptionNames.indexOf(component.key) !== -1;",
+          "isNew": false
         }
       ],
       "placeholder": "",
@@ -2271,7 +2317,8 @@
           "allowMultipleMasks": false,
           "addons": [],
           "tag": "p",
-          "id": "eie9prg"
+          "id": "eie9prg",
+          "className": ""
         },
         {
           "label": "HTML",
@@ -2346,7 +2393,8 @@
           "allowMultipleMasks": false,
           "addons": [],
           "tag": "p",
-          "id": "e61ajka"
+          "id": "e61ajka",
+          "className": ""
         }
       ],
       "placeholder": "",

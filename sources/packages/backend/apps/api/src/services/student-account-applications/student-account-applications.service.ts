@@ -132,7 +132,6 @@ export class StudentAccountApplicationsService extends RecordDataModelService<St
       givenNames: studentProfile.firstName,
       email: studentProfile.email,
       birthdate: studentProfile.dateOfBirth,
-      gender: studentProfile.gender,
     };
 
     const studentInfo = {
@@ -150,6 +149,7 @@ export class StudentAccountApplicationsService extends RecordDataModelService<St
       // the Ministry approval would never happen, hence we are considering at this
       // moment that the student provided already the SIN consent.
       sinConsent: accountApplicationSubmittedData.sinConsent,
+      gender: studentProfile.gender,
     };
 
     return this.dataSource.transaction(async (entityManager) => {
@@ -198,11 +198,13 @@ export class StudentAccountApplicationsService extends RecordDataModelService<St
 
   /**
    * Checks if the user has a pending student account applications.
-   * @param userId user to be verified.
+   * @param userName user name to be verified.
    * @returns true, if there is a pending student account application,
    * otherwise, false.
    */
-  async hasPendingStudentAccountApplication(userId: number): Promise<boolean> {
+  async hasPendingStudentAccountApplication(
+    userName: string,
+  ): Promise<boolean> {
     const accountApplication = await this.repo.findOne({
       select: {
         id: true,
@@ -210,7 +212,7 @@ export class StudentAccountApplicationsService extends RecordDataModelService<St
       where: {
         assessedDate: IsNull(),
         user: {
-          id: userId,
+          userName,
         },
       },
     });

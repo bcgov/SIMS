@@ -7,7 +7,11 @@ export async function institutionFactory(
   const institution = new Institution();
   institution.legalOperatingName = faker.company.companyName();
   institution.operatingName = institution.legalOperatingName;
-  institution.businessGuid = faker.random.uuid();
+  // businessGuid adjusted to mimic the format received from BCeID.
+  institution.businessGuid = faker.random
+    .uuid()
+    .replace(/-/g, "")
+    .toUpperCase();
   institution.establishedDate = faker.date.past().toISOString();
   institution.website = faker.internet.url();
   institution.institutionType = {

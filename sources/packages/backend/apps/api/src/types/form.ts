@@ -1,14 +1,5 @@
-export interface DryRunSubmissionResult {
+export interface DryRunSubmissionResult<T = any> {
   valid: boolean;
-  data?: any;
+  data?: { data: T };
   formName: string;
-}
-
-export interface SubmissionResult {
-  submissionId: string;
-  state: string;
-  data: any;
-  formId: string;
-  absolutePath: string;
-  valid: boolean;
 }

@@ -113,9 +113,10 @@ export class StudentAppealStudentsController extends BaseController {
     }
     let dryRunSubmissionResults: DryRunSubmissionResult[] = [];
     try {
-      const dryRunPromise = payload.studentAppealRequests.map((appeal) =>
-        this.formService.dryRunSubmission(appeal.formName, appeal.formData),
-      );
+      const dryRunPromise: Promise<DryRunSubmissionResult>[] =
+        payload.studentAppealRequests.map((appeal) =>
+          this.formService.dryRunSubmission(appeal.formName, appeal.formData),
+        );
       dryRunSubmissionResults = await Promise.all(dryRunPromise);
     } catch (error) {
       //TODO: Add a logger to log the error trace.

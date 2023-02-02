@@ -68,7 +68,7 @@ import {
 } from "@/types/contracts/StudentContract";
 import StudentProfileForm from "@/components/common/StudentProfileForm.vue";
 import { StudentAccountApplicationService } from "@/services/StudentAccountApplicationService";
-import { ApiProcessError, AppIDPType, FormIOForm, Role } from "@/types";
+import { ApiProcessError, IdentityProviders, FormIOForm, Role } from "@/types";
 import { StudentAccountApplicationApprovalAPIInDTO } from "@/services/http/dto";
 import { ModalDialog, useFormioUtils, useSnackBar } from "@/composables";
 import ConfirmModal from "@/components/common/modals/ConfirmModal.vue";
@@ -108,7 +108,7 @@ export default {
         );
       const studentProfileFormModel =
         accountApplication.submittedData as StudentProfileFormModel;
-      studentProfileFormModel.identityProvider = AppIDPType.BCeID;
+      studentProfileFormModel.identityProvider = IdentityProviders.BCeIDBoth;
       studentProfileFormModel.mode =
         StudentProfileFormModes.AESTAccountApproval;
       initialData.value = studentProfileFormModel;

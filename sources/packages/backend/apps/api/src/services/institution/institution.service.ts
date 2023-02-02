@@ -10,6 +10,7 @@ import {
   InstitutionType,
   Note,
   NoteType,
+  IdentityProviders,
 } from "@sims/sims-db";
 import { DataSource, EntityManager, IsNull, Repository } from "typeorm";
 import { InstitutionUserType, UserInfo } from "../../types";
@@ -29,10 +30,7 @@ import {
   UserPermissionModel,
 } from "./institution.service.model";
 import { BCeIDAccountTypeCodes } from "../bceid/bceid.models";
-import {
-  InstitutionUserRoles,
-  InstitutionUserTypes,
-} from "../../auth/user-types.enum";
+import { InstitutionUserRoles, InstitutionUserTypes } from "../../auth";
 import {
   BCEID_ACCOUNT_NOT_FOUND,
   INSTITUTION_MUST_HAVE_AN_ADMIN,
@@ -77,7 +75,8 @@ export class InstitutionService extends RecordDataModelService<Institution> {
     permissionInfo: InstitutionUserModel,
     auditUserId: number,
   ): Promise<InstitutionUser> {
-    const userName = `${bceidUserAccount.user.guid}@bceid`.toLowerCase();
+    const userName =
+      `${bceidUserAccount.user.guid}@${IdentityProviders.BCeIDBoth}`.toLowerCase();
     const validateUniqueSigningAuthority = this.validateUniqueSigningAuthority(
       institutionId,
       permissionInfo.permissions,

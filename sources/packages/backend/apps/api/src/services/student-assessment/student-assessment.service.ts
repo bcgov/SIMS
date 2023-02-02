@@ -23,7 +23,6 @@ import {
   StudentAssessmentStatus,
 } from "./student-assessment.models";
 import { StartAssessmentQueueInDTO } from "@sims/services/queue";
-import { QUEUE_RETRY_DEFAULT_CONFIG } from "@sims/services/constants";
 
 /**
  * Manages the student assessment related operations.
@@ -163,13 +162,10 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
       );
     }
 
-    await this.startAssessmentQueue.add(
-      {
-        workflowName: assessment.application.data.workflowName,
-        assessmentId: assessment.id,
-      },
-      QUEUE_RETRY_DEFAULT_CONFIG,
-    );
+    await this.startAssessmentQueue.add({
+      workflowName: assessment.application.data.workflowName,
+      assessmentId: assessment.id,
+    });
   }
 
   /**

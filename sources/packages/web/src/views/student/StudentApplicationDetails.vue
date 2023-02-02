@@ -54,7 +54,6 @@
       :application-id="id"
       @editApplication="editApplication"
       :application-status="applicationDetails.applicationStatus"
-      :status-updated-on="applicationDetails.applicationStatusUpdatedOn"
     />
     <student-assessment-details :applicationId="id" v-if="showViewAssessment" />
   </student-page-container>
@@ -86,7 +85,8 @@ import {
   useSnackBar,
   useApplication,
 } from "@/composables";
-import { ApplicationStatus, GetApplicationDataDto, MenuType } from "@/types";
+import { ApplicationStatus, MenuType } from "@/types";
+import { ApplicationDataAPIOutDTO } from "@/services/http/dto";
 import ApplicationProgressBar from "@/components/students/applicationTracker/ApplicationProgressBar.vue";
 import ConfirmEditApplication from "@/components/students/modals/ConfirmEditApplication.vue";
 import DetailHeader from "@/components/generic/DetailHeader.vue";
@@ -110,7 +110,7 @@ export default defineComponent({
     const router = useRouter();
     const items = ref<MenuType[]>([]);
     const { dateOnlyLongString } = useFormatters();
-    const applicationDetails = ref({} as GetApplicationDataDto);
+    const applicationDetails = ref({} as ApplicationDataAPIOutDTO);
     const editApplicationModal = ref({} as ModalDialog<boolean>);
     const cancelApplicationModal = ref({} as ModalDialog<boolean>);
     const snackBar = useSnackBar();
@@ -145,7 +145,7 @@ export default defineComponent({
             id: props.id,
           },
         });
-      } catch (error) {
+      } catch {
         snackBar.error(
           "Unexpected Error",
           snackBar.EXTENDED_MESSAGE_DISPLAY_TIME,
@@ -195,18 +195,7 @@ export default defineComponent({
               ? editApplication
               : confirmEditApplication,
         });
-      }
-      items.value.push({
-        label: "View application",
-        icon: "fa:fa fa-folder-open",
-        command: viewApplication,
-      });
-      if (
-        applicationDetails.value.applicationStatus !==
-          ApplicationStatus.cancelled &&
-        applicationDetails.value.applicationStatus !==
-          ApplicationStatus.completed
-      ) {
+
         items.value.push({
           label: "Cancel application",
           icon: "fa:fa fa-trash",
@@ -215,6 +204,26 @@ export default defineComponent({
           command: confirmCancelApplication,
         });
       }
+      if (
+        applicationDetails.value.applicationStatus ===
+        ApplicationStatus.completed
+      ) {
+        items.value.push({
+          label: "Request a change",
+          icon: "fa:fas fa-hand-paper",
+          command: () => {
+            router.push({
+              name: StudentRoutesConst.STUDENT_REQUEST_CHANGE,
+            });
+          },
+        });
+      }
+      // Default value in menu items.
+      items.value.push({
+        label: "View application",
+        icon: "fa:fa fa-folder-open",
+        command: viewApplication,
+      });
     };
 
     const confirmCancelApplication = async () => {

@@ -1,5 +1,4 @@
 import { Module } from "@nestjs/common";
-import { DatabaseModule } from "@sims/sims-db";
 import {
   DesignationAgreementService,
   FormService,
@@ -10,9 +9,6 @@ import {
   DesignationAgreementLocationService,
   ApplicationService,
   StudentFileService,
-  MSFAANumberService,
-  SFASApplicationService,
-  SFASPartTimeApplicationsService,
   StudentRestrictionService,
   RestrictionService,
   StudentScholasticStandingsService,
@@ -25,8 +21,8 @@ import {
   EducationProgramService,
   PIRDeniedReasonService,
   StudentService,
-  SFASIndividualService,
   EducationProgramOfferingImportCSVService,
+  EducationProgramOfferingValidationService,
 } from "./services";
 import {
   DesignationAgreementInstitutionsController,
@@ -45,13 +41,24 @@ import {
   EducationProgramControllerService,
   EducationProgramOfferingInstitutionsController,
   EducationProgramOfferingControllerService,
+  ConfirmationOfEnrollmentControllerService,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
-import { EducationProgramOfferingValidationService } from "./services/education-program-offering/education-program-offering-validation.service";
-import { WorkflowClientService, SequenceControlService } from "@sims/services";
+import {
+  SequenceControlService,
+  StudentRestrictionSharedService,
+  WorkflowClientService,
+} from "@sims/services";
+import {
+  SFASIndividualService,
+  SFASApplicationService,
+  SFASPartTimeApplicationsService,
+} from "@sims/services/sfas";
+import { UserInstitutionsController } from "./route-controllers/user/user.institutions.controller";
+import { UserControllerService } from "./route-controllers/user/user.controller.service";
 
 @Module({
-  imports: [DatabaseModule, AuthModule],
+  imports: [AuthModule],
   controllers: [
     DesignationAgreementInstitutionsController,
     InstitutionInstitutionsController,
@@ -62,6 +69,7 @@ import { WorkflowClientService, SequenceControlService } from "@sims/services";
     EducationProgramInstitutionsController,
     ProgramInfoRequestInstitutionsController,
     EducationProgramOfferingInstitutionsController,
+    UserInstitutionsController,
   ],
   providers: [
     WorkflowClientService,
@@ -78,9 +86,6 @@ import { WorkflowClientService, SequenceControlService } from "@sims/services";
     ApplicationService,
     SequenceControlService,
     StudentFileService,
-    MSFAANumberService,
-    SFASApplicationService,
-    SFASPartTimeApplicationsService,
     StudentRestrictionService,
     RestrictionService,
     StudentScholasticStandingsService,
@@ -99,8 +104,13 @@ import { WorkflowClientService, SequenceControlService } from "@sims/services";
     EducationProgramOfferingControllerService,
     StudentService,
     SFASIndividualService,
+    SFASApplicationService,
+    SFASPartTimeApplicationsService,
     EducationProgramOfferingImportCSVService,
     EducationProgramOfferingValidationService,
+    StudentRestrictionSharedService,
+    UserControllerService,
+    ConfirmationOfEnrollmentControllerService,
   ],
 })
 export class AppInstitutionsModule {}

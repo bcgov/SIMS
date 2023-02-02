@@ -21,6 +21,7 @@
           @click="goToAddNewOffering()"
           color="primary"
           prepend-icon="fa:fa fa-plus-circle"
+          data-cy="addNewOfferingButton"
         >
           Add offering
         </v-btn>

@@ -15,14 +15,13 @@ import { DataSource, EntityManager } from "typeorm";
 import { StudentUserToken } from "../../auth/userToken.interface";
 import { LoggerService, InjectLogger } from "@sims/utilities/logger";
 import { removeWhiteSpaces, transformAddressDetails } from "../../utilities";
-
-import { CustomNamedError, getUTCNow } from "@sims/utilities";
+import { CustomNamedError } from "@sims/utilities";
 import {
   CreateStudentUserInfo,
   StudentInfo,
   UserInfoMatchData,
 } from "./student.service.models";
-import { SFASIndividualService } from "../sfas/sfas-individual.service";
+import { SFASIndividualService } from "@sims/services/sfas";
 import * as dayjs from "dayjs";
 import {
   STUDENT_ACCOUNT_CREATION_FOUND_SIN_WITH_MISMATCH_DATA,
@@ -144,7 +143,7 @@ export class StudentService extends RecordDataModelService<Student> {
 
     student.user = user;
     student.birthDate = userInfo.birthdate;
-    student.gender = userInfo.gender;
+    student.gender = studentInfo.gender;
     student.contactInfo = {
       address: transformAddressDetails(studentInfo),
       phone: studentInfo.phone,
@@ -335,25 +334,25 @@ export class StudentService extends RecordDataModelService<Student> {
   }
 
   /**
-   * Updates the student contact information.
+   * Updates student information.
    * @param studentId student to be updated.
-   * @param contact contact information to be updated.
+   * @param studentInfo student information to be updated.
    * @param auditUserId user who is making the changes.
    * @returns updated student.
    */
-  async updateStudentContactByStudentId(
+  async updateStudentInfo(
     studentId: number,
-    contact: StudentInfo,
+    studentInfo: StudentInfo,
     auditUserId: number,
   ): Promise<Student> {
     const student = new Student();
     student.id = studentId;
     student.contactInfo = {
-      address: transformAddressDetails(contact),
-      phone: contact.phone,
+      address: transformAddressDetails(studentInfo),
+      phone: studentInfo.phone,
     };
     student.modifier = { id: auditUserId } as User;
-
+    student.gender = studentInfo.gender;
     return this.save(student);
   }
 
@@ -385,13 +384,9 @@ export class StudentService extends RecordDataModelService<Student> {
       studentToSync.sinValidation = sinValidation;
       mustSave = true;
     }
-    // This condition is not added above, as email and gender does not trigger SIN validation request.
-    if (
-      studentToken.email !== studentToSync.user.email ||
-      studentToken.gender !== studentToSync.gender
-    ) {
+    // This condition is not added above, as email does not trigger SIN validation request.
+    if (studentToken.email !== studentToSync.user.email) {
       studentToSync.user.email = studentToken.email;
-      studentToSync.gender = studentToken.gender;
       mustSave = true;
     }
 
@@ -402,30 +397,6 @@ export class StudentService extends RecordDataModelService<Student> {
 
     // If information between token and SABC DB is same, then just returning without the database call.
     return studentToSync;
-  }
-
-  /**
-   * Gets all the students that have the SIN validation pending.
-   * @returns Students pending SIN validation.
-   */
-  async getStudentsPendingSinValidation(): Promise<Student[]> {
-    return this.repo
-      .createQueryBuilder("student")
-      .select([
-        "student.id",
-        "student.birthDate",
-        "student.gender",
-        "user.firstName",
-        "user.lastName",
-        "user.id",
-        "sinValidation.id",
-        "sinValidation.sin",
-      ])
-      .innerJoin("student.user", "user")
-      .innerJoin("student.sinValidation", "sinValidation")
-      .where("sinValidation.isValidSIN is null")
-      .andWhere("sinValidation.dateSent is null")
-      .getMany();
   }
 
   /**
@@ -442,61 +413,6 @@ export class StudentService extends RecordDataModelService<Student> {
       .select(["student.id", "sinValidation.id", "sinValidation.isValidSIN"])
       .getOne();
     return student?.sinValidation.isValidSIN;
-  }
-
-  /**
-   * Update the PD Sent Date
-   * @param studentId student who's PD status is to be updated.
-   * @param auditUserId user who is making the changes.
-   * @returns Student who's PD sent date is updated.
-   */
-  async updatePDSentDate(
-    studentId: number,
-    auditUserId: number,
-  ): Promise<Student> {
-    // get the Student Object
-    const studentToUpdate = await this.repo.findOneOrFail({
-      where: { id: studentId },
-    });
-    if (studentToUpdate) {
-      const now = new Date();
-      studentToUpdate.studentPDSentAt = now;
-      studentToUpdate.modifier = { id: auditUserId } as User;
-      studentToUpdate.updatedAt = now;
-      return this.repo.save(studentToUpdate);
-    }
-  }
-
-  /**
-   * Update the PD Sent Date
-   * @param studentId
-   * @param status
-   */
-  async updatePDStatusNDate(
-    studentId: number,
-    status: boolean,
-  ): Promise<Student> {
-    // get the Student Object
-    const studentToUpdate = await this.repo.findOneOrFail({
-      where: { id: studentId },
-    });
-    if (studentToUpdate) {
-      studentToUpdate.studentPDVerified = status;
-      // Date in UTC format
-      studentToUpdate.studentPDUpdateAt = getUTCNow();
-      return this.repo.save(studentToUpdate);
-    }
-  }
-
-  async getStudentsAppliedForPD(): Promise<Student[]> {
-    return this.repo
-      .createQueryBuilder("student")
-      .select(["student.id", "sinValidation.id", "sinValidation.sin"])
-      .innerJoin("student.sinValidation", "sinValidation")
-      .where("student.studentPDSentAt is not null")
-      .andWhere("student.studentPDUpdateAt is null")
-      .andWhere("student.studentPDVerified is null")
-      .getMany();
   }
 
   /**
@@ -643,30 +559,6 @@ export class StudentService extends RecordDataModelService<Student> {
       .of({ id: studentId } as Student)
       .add(savedNote);
     return newNote;
-  }
-
-  /**
-   * Uses the user id to identify a student that must have his
-   * SIN validation active record updated.
-   * @param studentId Student who's SIN validation is to be updated.
-   * @param sinValidation SIN validation record to have the
-   * relationship created with the student.
-   * @param auditUserId user that should be considered the one that is causing the changes.
-   * @returns updated student.
-   */
-  async updateSINValidationByStudentId(
-    studentId: number,
-    sinValidation: SINValidation,
-    auditUserId: number,
-  ): Promise<Student> {
-    const studentToUpdate = await this.repo
-      .createQueryBuilder("student")
-      .select("student.id")
-      .where("student.id = :studentId", { studentId })
-      .getOne();
-    studentToUpdate.modifier = { id: auditUserId } as User;
-    studentToUpdate.sinValidation = sinValidation;
-    return this.repo.save(studentToUpdate);
   }
 
   @InjectLogger()

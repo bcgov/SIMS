@@ -7,6 +7,7 @@ import {
   RelationId,
 } from "typeorm";
 import { ColumnNames, TableNames } from "../constant";
+import { numericTransformer } from "../transformers/numeric.transformer";
 import { DisbursementSchedule } from "./disbursement-schedule.model";
 import { DisbursementValueType } from "./disbursement-value-type";
 import { RecordDataModel } from "./record.model";
@@ -41,35 +42,47 @@ export class DisbursementValue extends RecordDataModel {
   valueCode: string;
   /**
    * Amount of money to be disbursed for one particular loan/grant.
-   * !Decimal values are retrieved by Typeorm as string from Postgres.
    */
   @Column({
     name: "value_amount",
     type: "numeric",
     nullable: false,
+    transformer: numericTransformer,
   })
-  valueAmount: string;
+  valueAmount: number;
   /**
    * Overaward amount value subtracted from the award calculated.
-   * !Decimal values are retrieved by Typeorm as string from Postgres.
    */
   @Column({
     name: "overaward_amount_subtracted",
     type: "numeric",
     nullable: false,
+    transformer: numericTransformer,
   })
-  overawardAmountSubtracted: string;
+  overawardAmountSubtracted: number;
   /**
    * Value amount already disbursed for the same application and
    * the same award that was subtracted from the calculated award.
-   * !Decimal values are retrieved by Typeorm as string from Postgres.
    */
   @Column({
     name: "disbursed_amount_subtracted",
     type: "numeric",
     nullable: true,
+    transformer: numericTransformer,
   })
-  disbursedAmountSubtracted?: string;
+  disbursedAmountSubtracted?: number;
+  /**
+   * Value resulted from the calculation between the award value_amount,
+   * disbursed_amount_subtracted and overaward_amount_subtracted. This is
+   * the value that was sent on the e-Cert and effectively paid to the student.
+   */
+  @Column({
+    name: "effective_amount",
+    type: "numeric",
+    nullable: true,
+    transformer: numericTransformer,
+  })
+  effectiveAmount?: number;
   /**
    * Disbursement value ids.
    */

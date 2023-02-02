@@ -6,7 +6,7 @@ import { ContactInformationAPIOutDTO } from "./Address.dto";
  * The application must be search using at least 3 criteria as
  * per defined by the Ministry policies.
  */
-export interface ApplicationIdentifierApiInDTO {
+export interface ApplicationIdentifierAPIInDTO {
   applicationNumber: string;
   studentsDateOfBirth: string;
   studentsLastName: string;
@@ -15,8 +15,8 @@ export interface ApplicationIdentifierApiInDTO {
 /**
  * Data send to api to update a supporting user.
  */
-export interface UpdateSupportingUserApiInDTO
-  extends ApplicationIdentifierApiInDTO {
+export interface UpdateSupportingUserAPIInDTO
+  extends ApplicationIdentifierAPIInDTO {
   addressLine1: string;
   addressLine2?: string;
   city: string;
@@ -25,26 +25,25 @@ export interface UpdateSupportingUserApiInDTO
   postalCode: string;
   provinceState?: string;
   sin: string;
-  supportingData: any;
+  supportingData: unknown;
 }
 
-export interface ApplicationApiOutDTO {
+export interface ApplicationAPIOutDTO {
   programYearStartDate: string;
   formName: string;
 }
 
-export interface ApplicationSupportingUsersApiOutDTO {
+export interface ApplicationSupportingUsersAPIOutDTO {
   supportingUserId: number;
   supportingUserType: SupportingUserType;
 }
 
-export interface SupportingUserFormDataApiOutDTO {
+export interface SupportingUserFormDataAPIOutDTO {
   formName: string;
-  supportingData: any;
+  supportingData: unknown;
   contactInfo: ContactInformationAPIOutDTO;
   sin: string;
   birthDate: string;
-  gender: string;
   email: string;
   firstName: string;
   lastName: string;

@@ -1,8 +1,9 @@
 require("../../../../../env_setup");
 import { Test, TestingModule } from "@nestjs/testing";
 import { StudentService } from "./student.service";
+import { SINValidationService } from "..";
 import { DatabaseModule } from "@sims/sims-db";
-import { SFASIndividualService, SINValidationService } from "..";
+import { SFASIndividualService } from "@sims/services/sfas";
 
 describe("StudentService", () => {
   let service: StudentService;

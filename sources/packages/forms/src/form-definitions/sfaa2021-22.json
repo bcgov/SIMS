@@ -1,9 +1,9 @@
 {
   "title": "SFAA2021-22",
-  "display": "wizard",
-  "type": "form",
   "name": "SFAA2021-22",
   "path": "sfaa2021-22",
+  "type": "form",
+  "display": "wizard",
   "tags": [
     "common"
   ],
@@ -2193,7 +2193,8 @@
                       "allowMultipleMasks": false,
                       "addons": [],
                       "tag": "p",
-                      "id": "ebo8vbh"
+                      "id": "ebo8vbh",
+                      "className": ""
                     },
                     {
                       "label": "Program name",
@@ -2429,7 +2430,8 @@
                       "allowMultipleMasks": false,
                       "addons": [],
                       "tag": "p",
-                      "id": "evgar2"
+                      "id": "evgar2",
+                      "className": ""
                     },
                     {
                       "label": "HTML",
@@ -2504,7 +2506,8 @@
                       "allowMultipleMasks": false,
                       "addons": [],
                       "tag": "p",
-                      "id": "e4deel"
+                      "id": "e4deel",
+                      "className": ""
                     },
                     {
                       "label": "Columns",
@@ -2577,7 +2580,7 @@
                                 "maxWords": "",
                                 "pattern": "",
                                 "customMessage": "",
-                                "custom": "console.log('data.studystartDate', data.studystartDate)\r\nconsole.log('data.programYearStartDate', data.programYearStartDate)\r\nconsole.log('data', data)\r\n// To calculate the time difference of studystartDate and programYearStartDate\r\nconst first_difference_In_Time =\r\n  new Date(data.studystartDate).getTime() -\r\n  new Date(data.programYearStartDate).getTime();\r\n// To calculate the time difference of programYearEndDate and studystartDate\r\nconst last_difference_In_Time =\r\n  new Date(data.programYearEndDate).getTime() -\r\n  new Date(data.studystartDate).getTime();\r\n\r\n// To calculate the no. of days between two dates\r\nconst first_difference_In_Days = first_difference_In_Time / (1000 * 3600 * 24);\r\n\r\n// To calculate the no. of days between two dates\r\nconst last_difference_In_Days = last_difference_In_Time / (1000 * 3600 * 24);\r\n\r\n// studystartDate should be equal or in between program year start and end date\r\nvalid =\r\n  first_difference_In_Days >= 0 && last_difference_In_Days >= 0\r\n    ? true\r\n    : \"Study start date should be within the program year\";\r\n",
+                                "custom": "// To calculate the time difference of studystartDate and programYearStartDate\r\nconst first_difference_In_Time =\r\n  new Date(data.studystartDate).getTime() -\r\n  new Date(data.programYearStartDate).getTime();\r\n// To calculate the time difference of programYearEndDate and studystartDate\r\nconst last_difference_In_Time =\r\n  new Date(data.programYearEndDate).getTime() -\r\n  new Date(data.studystartDate).getTime();\r\n\r\n// To calculate the no. of days between two dates\r\nconst first_difference_In_Days = first_difference_In_Time / (1000 * 3600 * 24);\r\n\r\n// To calculate the no. of days between two dates\r\nconst last_difference_In_Days = last_difference_In_Time / (1000 * 3600 * 24);\r\n\r\n// studystartDate should be equal or in between program year start and end date\r\nvalid =\r\n  first_difference_In_Days >= 0 && last_difference_In_Days >= 0\r\n    ? true\r\n    : \"Study start date should be within the program year\";\r\n",
                                 "customPrivate": false,
                                 "json": "",
                                 "strictDateValidation": false,
@@ -2591,7 +2594,7 @@
                               "tags": [],
                               "properties": {},
                               "conditional": {
-                                "show": null,
+                                "show": "",
                                 "when": null,
                                 "eq": "",
                                 "json": ""
@@ -2716,7 +2719,9 @@
                               "displayMask": "",
                               "spellcheck": true,
                               "truncateMultipleSpaces": false,
-                              "id": "e3cbd2m"
+                              "id": "e3cbd2m",
+                              "tags": [],
+                              "lockKey": true
                             }
                           ],
                           "width": 6,
@@ -2793,6 +2798,31 @@
                       "lazyLoad": false,
                       "autoAdjust": false,
                       "id": "e3mfbie"
+                    },
+                    {
+                      "key": "customProgramAndOfferingStudyenddatewarning",
+                      "label": "Study end date warning",
+                      "input": false,
+                      "tag": "p",
+                      "attrs": [
+                        {
+                          "value": "",
+                          "attr": ""
+                        }
+                      ],
+                      "className": "alert alert-warning fa fa-exclamation-triangle w-100",
+                      "content": "<span class=\"font-bold ml-2\">This study end date has past</span>\n<br>\n<span>The selected study period has past and you can no longer receive funding. Continuing your application will require StudentAid BC approval to be eligible for funding.</span>",
+                      "type": "htmlelement",
+                      "hideLabel": true,
+                      "tags": [],
+                      "conditional": {
+                        "show": "true",
+                        "when": "studyEndDatePastAllowedDays",
+                        "eq": "true"
+                      },
+                      "properties": {},
+                      "customClass": "banner-warning",
+                      "customConditional": ""
                     }
                   ],
                   "allowPrevious": false,
@@ -3025,7 +3055,8 @@
                       "allowMultipleMasks": false,
                       "addons": [],
                       "tag": "p",
-                      "id": "eyhhx9p"
+                      "id": "eyhhx9p",
+                      "className": ""
                     },
                     {
                       "label": "Columns",
@@ -3191,7 +3222,8 @@
                               "allowMultipleMasks": false,
                               "addons": [],
                               "tag": "p",
-                              "id": "eovpl3k"
+                              "id": "eovpl3k",
+                              "className": ""
                             }
                           ],
                           "width": 6,
@@ -3347,7 +3379,8 @@
                               "allowMultipleMasks": false,
                               "addons": [],
                               "tag": "p",
-                              "id": "eueqprv"
+                              "id": "eueqprv",
+                              "className": ""
                             }
                           ],
                           "width": 6,
@@ -3432,7 +3465,8 @@
                               "allowMultipleMasks": false,
                               "addons": [],
                               "tag": "p",
-                              "id": "etilmiw"
+                              "id": "etilmiw",
+                              "className": ""
                             }
                           ],
                           "width": 6,
@@ -3836,7 +3870,54 @@
                   "addons": [],
                   "fieldSet": false,
                   "inline": false,
-                  "id": "eif07al"
+                  "id": "eif07al",
+                  "lockKey": true
+                },
+                {
+                  "key": "programStudyperiodwarning",
+                  "label": "Study period end date warning",
+                  "input": false,
+                  "tag": "p",
+                  "attrs": [
+                    {
+                      "value": "",
+                      "attr": ""
+                    }
+                  ],
+                  "className": "alert alert-warning fa fa-exclamation-triangle w-100",
+                  "content": "<span class=\"font-bold ml-2\">This study end date has past</span>\n<br>\n<span>The selected study period has past and you can no longer receive funding. Continuing your application will require StudentAid BC approval to be eligible for funding.</span>",
+                  "type": "htmlelement",
+                  "tags": [],
+                  "conditional": {
+                    "show": "true",
+                    "when": "selectedStudyEndDatePastAllowedDays",
+                    "eq": "true"
+                  },
+                  "properties": {},
+                  "customClass": "banner-warning",
+                  "customConditional": "",
+                  "hideLabel": true
+                },
+                {
+                  "input": true,
+                  "tableView": false,
+                  "key": "studyEndDatePastMaxAllowedDaysApplicationException",
+                  "label": "Application Exception - Maximum allowed days after study end date is past",
+                  "protected": false,
+                  "unique": false,
+                  "persistent": true,
+                  "type": "hidden",
+                  "tags": [],
+                  "conditional": {
+                    "show": "",
+                    "when": null,
+                    "eq": ""
+                  },
+                  "properties": {},
+                  "calculateValue": "value = \"studentApplicationException\";",
+                  "lockKey": true,
+                  "customConditional": "show = data.studyEndDatePastAllowedDays || data.selectedStudyEndDatePastAllowedDays;",
+                  "calculateServer": true
                 }
               ],
               "placeholder": "",
@@ -4106,7 +4187,8 @@
               "allowMultipleMasks": false,
               "addons": [],
               "tag": "p",
-              "id": "emh3t8f"
+              "id": "emh3t8f",
+              "className": ""
             },
             {
               "label": "Course information",
@@ -4716,7 +4798,8 @@
                   "addons": [],
                   "tree": false,
                   "lazyLoad": false,
-                  "legend": ""
+                  "legend": "",
+                  "inDataGrid": true
                 }
               ],
               "placeholder": "",
@@ -5325,7 +5408,87 @@
           "allowMultipleMasks": false,
           "addons": [],
           "inputType": "hidden",
-          "id": "ehrxohq"
+          "id": "ehrxohq",
+          "tags": [],
+          "lockKey": true
+        },
+        {
+          "input": true,
+          "tableView": false,
+          "key": "selectedOfferingEndDate",
+          "label": "Selected offering end date",
+          "protected": false,
+          "unique": false,
+          "persistent": true,
+          "type": "hidden",
+          "tags": [],
+          "conditional": {
+            "show": "",
+            "when": null,
+            "eq": ""
+          },
+          "properties": {},
+          "lockKey": true
+        },
+        {
+          "input": true,
+          "tableView": false,
+          "key": "maximumAllowedDaysAfterStudyEndDate",
+          "label": "Maximum allowed days after study end date",
+          "protected": false,
+          "unique": false,
+          "persistent": true,
+          "type": "hidden",
+          "tags": [],
+          "conditional": {
+            "show": "",
+            "when": null,
+            "eq": ""
+          },
+          "properties": {},
+          "lockKey": true,
+          "calculateValue": "/**\n * Maximum number of days past the study period end date\n * beyond when an application will require StudentAid BC\n * approval for funding.\n */\n \nvalue = 42;",
+          "calculateServer": true
+        },
+        {
+          "input": true,
+          "tableView": false,
+          "key": "studyEndDatePastAllowedDays",
+          "label": "Study end date past maximum allowed days",
+          "protected": false,
+          "unique": false,
+          "persistent": true,
+          "type": "hidden",
+          "tags": [],
+          "conditional": {
+            "show": "",
+            "when": null,
+            "eq": ""
+          },
+          "properties": {},
+          "lockKey": true,
+          "calculateServer": true,
+          "calculateValue": "/**\r\n * Validates if the date provided is after given days\r\n * before now.\r\n * e.g. If the current date is 10-JAN-2023 and\r\n * given number of days is 4, it validates if the given date\r\n * is on or after 06-JAN-2023.\r\n * \r\n * The same validation exists on calculating selectedStudyEndDatePastAllowedDays,\r\n * other student application forms, program information request form \r\n * and also on the server side\r\n * based on the variable COE_MAX_ALLOWED_DAYS_PAST_STUDY_PERIOD.\r\n * \r\n * When there is an update to this logic make sure to update in all the above.\r\n * \r\n */\r\n \r\nfunction isAfterGivenDaysBeforeNow(\r\n    givenDate,\r\n    numberOfDaysBeforeToday\r\n  ) {\r\n    return moment\r\n      .utc(givenDate)\r\n      .isAfter(\r\n        moment\r\n          .utc(moment.utc(new Date()).format(\"YYYY-MM-DD\"))\r\n          .subtract(numberOfDaysBeforeToday + 1, \"days\")\r\n      );\r\n  }\r\n\r\n  // If program/study period not listed is selected, validate the study end date to be after given days before now.\r\n  value = !!data.studyendDate && !isAfterGivenDaysBeforeNow(data.studyendDate,data.maximumAllowedDaysAfterStudyEndDate);"
+        },
+        {
+          "input": true,
+          "tableView": false,
+          "key": "selectedStudyEndDatePastAllowedDays",
+          "label": "Selected study end date past maximum allowed days",
+          "protected": false,
+          "unique": false,
+          "persistent": true,
+          "type": "hidden",
+          "tags": [],
+          "conditional": {
+            "show": "",
+            "when": null,
+            "eq": ""
+          },
+          "properties": {},
+          "lockKey": true,
+          "calculateServer": true,
+          "calculateValue": "/**\r\n * Validates if the date provided is after given days\r\n * before now.\r\n * e.g. If the current date is 10-JAN-2023 and\r\n * given number of days is 4, it validates if the given date\r\n * is on or after 06-JAN-2023.\r\n * \r\n * The same validation exists on calculating studyEndDatePastAllowedDays,\r\n * other student application forms, program information request form \r\n * and also on the server side\r\n * based on the variable COE_MAX_ALLOWED_DAYS_PAST_STUDY_PERIOD.\r\n * \r\n * When there is an update to this logic make sure to update in all the above.\r\n * \r\n */\r\n \r\nfunction isAfterGivenDaysBeforeNow(\r\n    givenDate,\r\n    numberOfDaysBeforeToday\r\n  ) {\r\n    return moment\r\n      .utc(givenDate)\r\n      .isAfter(\r\n        moment\r\n          .utc(moment.utc(new Date()).format(\"YYYY-MM-DD\"))\r\n          .subtract(numberOfDaysBeforeToday + 1, \"days\")\r\n      );\r\n  }\r\n\r\n  // If a study period is selected, validate its study end date to be after given days before now.\r\n  value = !!data.selectedOfferingEndDate && !isAfterGivenDaysBeforeNow(data.selectedOfferingEndDate,data.maximumAllowedDaysAfterStudyEndDate);"
         }
       ],
       "input": false,
@@ -7176,7 +7339,8 @@
                       "allowMultipleMasks": false,
                       "addons": [],
                       "inputType": "hidden",
-                      "id": "ej3ulok"
+                      "id": "ej3ulok",
+                      "lockKey": true
                     },
                     {
                       "label": "HTML",
@@ -7801,7 +7965,7 @@
                     {
                       "components": [
                         {
-                          "html": "<p>We accept <strong>JPG, PNG, DOC, DOCX, PDF, TXT</strong></p>",
+                          "html": "<p>We accept <strong>JPG, PNG, DOC, DOCX, PDF, TXT</strong></p>\n",
                           "label": "Content",
                           "customClass": "",
                           "refreshOnChange": false,
@@ -7884,7 +8048,7 @@
                     {
                       "components": [
                         {
-                          "html": "<p style=\"text-align:right;\">4MB file limit each</p>",
+                          "html": "<p style=\"text-align:right;\">4MB file limit each</p>\n",
                           "label": "Content",
                           "customClass": "",
                           "refreshOnChange": false,
@@ -8297,7 +8461,7 @@
                   "labelWidth": "",
                   "labelMargin": "",
                   "tag": "p",
-                  "className": "alert alert-warning fa fa-exclamation-circle",
+                  "className": "alert alert-warning fa fa-exclamation-triangle w-100",
                   "attrs": [
                     {
                       "attr": "",
@@ -8313,7 +8477,7 @@
                   "tags": [],
                   "properties": {},
                   "conditional": {
-                    "show": true,
+                    "show": "true",
                     "when": "bcResident",
                     "eq": "no",
                     "json": ""
@@ -8932,7 +9096,8 @@
                       "allowMultipleMasks": false,
                       "addons": [],
                       "tag": "p",
-                      "id": "exvzcx"
+                      "id": "exvzcx",
+                      "className": ""
                     },
                     {
                       "label": "HTML",
@@ -9186,7 +9351,7 @@
                         {
                           "components": [
                             {
-                              "html": "<p>We accept <strong>JPG, PNG, DOC, DOCX, PDF, TXT</strong></p>",
+                              "html": "<p>We accept <strong>JPG, PNG, DOC, DOCX, PDF, TXT</strong></p>\n",
                               "label": "Content",
                               "refreshOnChange": false,
                               "key": "content46",
@@ -9264,7 +9429,7 @@
                         {
                           "components": [
                             {
-                              "html": "<p style=\"text-align:right;\">4MB file limit each</p>",
+                              "html": "<p style=\"text-align:right;\">4MB file limit each</p>\n",
                               "label": "Content",
                               "refreshOnChange": false,
                               "key": "content47",
@@ -10767,7 +10932,8 @@
               "allowMultipleMasks": false,
               "addons": [],
               "tag": "p",
-              "id": "eqr6a1n"
+              "id": "eqr6a1n",
+              "className": ""
             },
             {
               "label": "<strong>Do you want to allow a trusted contact to interact with StudentAid BC on your behalf?</strong>",
@@ -11022,7 +11188,8 @@
                   "allowMultipleMasks": false,
                   "addons": [],
                   "tag": "p",
-                  "id": "ed9vh5c"
+                  "id": "ed9vh5c",
+                  "className": ""
                 },
                 {
                   "label": "<h4 class='category-header-medium-small'>ROI information</h4",
@@ -11183,7 +11350,8 @@
                       "inputMask": "",
                       "displayMask": "",
                       "spellcheck": true,
-                      "truncateMultipleSpaces": false
+                      "truncateMultipleSpaces": false,
+                      "inDataGrid": true
                     },
                     {
                       "label": "Last name",
@@ -11260,7 +11428,8 @@
                       "inputMask": "",
                       "displayMask": "",
                       "spellcheck": true,
-                      "truncateMultipleSpaces": false
+                      "truncateMultipleSpaces": false,
+                      "inDataGrid": true
                     },
                     {
                       "label": "<strong>What is your relationship with this contact?</strong>",
@@ -11365,7 +11534,8 @@
                       "inputType": "radio",
                       "fieldSet": false,
                       "id": "ego9ype0000000000000000000000000000000000",
-                      "defaultValue": ""
+                      "defaultValue": "",
+                      "inDataGrid": true
                     }
                   ],
                   "placeholder": "",
@@ -11570,7 +11740,8 @@
                       "allowMultipleMasks": false,
                       "addons": [],
                       "tag": "p",
-                      "id": "esnordm"
+                      "id": "esnordm",
+                      "className": ""
                     },
                     {
                       "label": "HTML",
@@ -11644,7 +11815,8 @@
                       "allowMultipleMasks": false,
                       "addons": [],
                       "tag": "p",
-                      "id": "e0dlfor"
+                      "id": "e0dlfor",
+                      "className": ""
                     },
                     {
                       "label": "HTML",
@@ -11718,7 +11890,8 @@
                       "allowMultipleMasks": false,
                       "addons": [],
                       "tag": "p",
-                      "id": "e7fwi1n"
+                      "id": "e7fwi1n",
+                      "className": ""
                     },
                     {
                       "label": "HTML",
@@ -11792,7 +11965,8 @@
                       "allowMultipleMasks": false,
                       "addons": [],
                       "tag": "p",
-                      "id": "eds51he"
+                      "id": "eds51he",
+                      "className": ""
                     }
                   ],
                   "placeholder": "",
@@ -13917,7 +14091,7 @@
                                 {
                                   "components": [
                                     {
-                                      "html": "<p>We accept <strong>JPG, PNG, DOC, DOCX, PDF, TXT</strong></p>",
+                                      "html": "<p>We accept <strong>JPG, PNG, DOC, DOCX, PDF, TXT</strong></p>\n",
                                       "label": "Content",
                                       "refreshOnChange": false,
                                       "key": "content48",
@@ -13995,7 +14169,7 @@
                                 {
                                   "components": [
                                     {
-                                      "html": "<p style=\"text-align:right;\">4MB file limit each</p>",
+                                      "html": "<p style=\"text-align:right;\">4MB file limit each</p>\n",
                                       "label": "Content",
                                       "refreshOnChange": false,
                                       "key": "content48",
@@ -14389,7 +14563,8 @@
                       "addons": [],
                       "tree": false,
                       "lazyLoad": false,
-                      "legend": ""
+                      "legend": "",
+                      "inDataGrid": true
                     }
                   ],
                   "placeholder": "",
@@ -14825,7 +15000,8 @@
                   "allowMultipleMasks": false,
                   "addons": [],
                   "tag": "p",
-                  "id": "eyw4xqx"
+                  "id": "eyw4xqx",
+                  "className": ""
                 },
                 {
                   "label": "HTML",
@@ -15090,7 +15266,7 @@
                     {
                       "components": [
                         {
-                          "html": "<p>We accept <strong>JPG, PNG, DOC, DOCX, PDF, TXT</strong></p>",
+                          "html": "<p>We accept <strong>JPG, PNG, DOC, DOCX, PDF, TXT</strong></p>\n",
                           "label": "Content",
                           "refreshOnChange": false,
                           "key": "content48",
@@ -15168,7 +15344,7 @@
                     {
                       "components": [
                         {
-                          "html": "<p style=\"text-align:right;\">4MB file limit each</p>",
+                          "html": "<p style=\"text-align:right;\">4MB file limit each</p>\n",
                           "label": "Content",
                           "refreshOnChange": false,
                           "key": "content49",
@@ -15411,7 +15587,7 @@
           "id": "eltfaqn"
         },
         {
-          "label": "Dependantstatus",
+          "label": "Show Parent Information",
           "labelWidth": "",
           "labelMargin": "",
           "customClass": "",
@@ -15423,9 +15599,9 @@
           "encrypted": false,
           "redrawOn": "data",
           "customDefaultValue": "",
-          "calculateValue": "if (data.hasDependents === 'no' && (data.relationshipStatus === 'single' || data.relationshipStatus === 'other') && data.outOfHighSchoolFor4Years === 'no' && data.howWillYouBeAttendingTheProgram === \"Full Time\") {\n  instance.setValue ('dependant');\n}\nelse {\n  instance.setValue ('independant');\n}",
+          "calculateValue": "if (data.hasDependents === 'no' && (data.relationshipStatus === 'single' || data.relationshipStatus === 'other') && data.outOfHighSchoolFor4Years === 'no' && data.howWillYouBeAttendingTheProgram === \"Full Time\") {\n  instance.setValue (true);\n}\nelse {\n  instance.setValue (false);\n}",
           "calculateServer": true,
-          "key": "dependantstatus",
+          "key": "showParentInformation",
           "tags": [],
           "properties": {},
           "logic": [],
@@ -15471,7 +15647,7 @@
             "unique": false
           },
           "conditional": {
-            "show": null,
+            "show": "",
             "when": null,
             "eq": ""
           },
@@ -15481,7 +15657,9 @@
           "allowMultipleMasks": false,
           "addons": [],
           "inputType": "hidden",
-          "id": "essfav"
+          "id": "essfav",
+          "lockKey": true,
+          "isNew": false
         }
       ],
       "placeholder": "",
@@ -16468,7 +16646,11 @@
               "properties": {},
               "allowMultipleMasks": false,
               "addons": [],
-              "id": "e9yrlbn"
+              "id": "e9yrlbn",
+              "inputType": "text",
+              "inputMask": "",
+              "decimalLimit": 2,
+              "requireDecimal": true
             },
             {
               "label": "<strong>Will your partner be employed full-time or part-time during your study period</strong>",
@@ -16959,7 +17141,8 @@
                   "allowMultipleMasks": false,
                   "addons": [],
                   "id": "euxcw9w",
-                  "defaultValue": null
+                  "defaultValue": null,
+                  "inputType": "number"
                 }
               ],
               "allowPrevious": false,
@@ -17210,7 +17393,11 @@
                   "properties": {},
                   "allowMultipleMasks": false,
                   "addons": [],
-                  "id": "eyn3uvta"
+                  "id": "eyn3uvta",
+                  "inputType": "text",
+                  "inputMask": "",
+                  "decimalLimit": 2,
+                  "requireDecimal": true
                 }
               ],
               "allowPrevious": false,
@@ -17462,7 +17649,11 @@
                   "properties": {},
                   "allowMultipleMasks": false,
                   "addons": [],
-                  "id": "et1ybcb"
+                  "id": "et1ybcb",
+                  "inputType": "text",
+                  "inputMask": "",
+                  "decimalLimit": 2,
+                  "requireDecimal": true
                 }
               ],
               "allowPrevious": false,
@@ -17714,7 +17905,11 @@
                   "properties": {},
                   "allowMultipleMasks": false,
                   "addons": [],
-                  "id": "epl4y3b"
+                  "id": "epl4y3b",
+                  "inputType": "text",
+                  "inputMask": "",
+                  "decimalLimit": 2,
+                  "requireDecimal": true
                 }
               ],
               "allowPrevious": false,
@@ -17965,7 +18160,11 @@
                   "properties": {},
                   "allowMultipleMasks": false,
                   "addons": [],
-                  "id": "epa8hyi"
+                  "id": "epa8hyi",
+                  "inputType": "text",
+                  "inputMask": "",
+                  "decimalLimit": 2,
+                  "requireDecimal": true
                 }
               ],
               "allowPrevious": false,
@@ -18216,7 +18415,11 @@
                   "properties": {},
                   "allowMultipleMasks": false,
                   "addons": [],
-                  "id": "ecc8w6j"
+                  "id": "ecc8w6j",
+                  "inputType": "text",
+                  "inputMask": "",
+                  "decimalLimit": 2,
+                  "requireDecimal": true
                 }
               ],
               "allowPrevious": false,
@@ -18490,9 +18693,9 @@
       "customConditional": "",
       "conditional": {
         "json": "",
-        "show": true,
-        "when": "dependantstatus",
-        "eq": "dependant"
+        "show": "true",
+        "when": "showParentInformation",
+        "eq": "true"
       },
       "logic": [],
       "attributes": {},
@@ -18794,7 +18997,8 @@
               "properties": {},
               "allowMultipleMasks": false,
               "addons": [],
-              "id": "ey45d48"
+              "id": "ey45d48",
+              "tags": []
             },
             {
               "label": "<strong>Is your parent(s)/step-parent/sponsor/legal guardian a resident of B.C.?</strong>",
@@ -18888,7 +19092,9 @@
               "addons": [],
               "inputType": "radio",
               "fieldSet": false,
-              "id": "erwljzc"
+              "id": "erwljzc",
+              "tags": [],
+              "lockKey": true
             },
             {
               "label": "<strong>Does your parent(s)/step-parent/sponsor/legal guardian have a valid Social Insurance Number?</strong>",
@@ -19494,7 +19700,11 @@
                   "properties": {},
                   "allowMultipleMasks": false,
                   "addons": [],
-                  "id": "et8xql"
+                  "id": "et8xql",
+                  "inputType": "text",
+                  "inputMask": "",
+                  "decimalLimit": 2,
+                  "requireDecimal": true
                 },
                 {
                   "label": "Enter the total net value of all your parents Canadian and foreign assets (do not include RRSPs, principal residence or business). Enter ‘0’ if none.",
@@ -19571,7 +19781,11 @@
                   "properties": {},
                   "allowMultipleMasks": false,
                   "addons": [],
-                  "id": "etw5gsi"
+                  "id": "etw5gsi",
+                  "inputType": "text",
+                  "inputMask": "",
+                  "decimalLimit": 2,
+                  "requireDecimal": true
                 },
                 {
                   "label": "How much will your parents be giving the student to help meet their specific educational costs during this study period? Enter ‘0’ if none.",
@@ -19648,7 +19862,11 @@
                   "properties": {},
                   "allowMultipleMasks": false,
                   "addons": [],
-                  "id": "eewvsip"
+                  "id": "eewvsip",
+                  "inputType": "text",
+                  "inputMask": "",
+                  "decimalLimit": 2,
+                  "requireDecimal": true
                 },
                 {
                   "label": "HTML",
@@ -19722,7 +19940,8 @@
                   "allowMultipleMasks": false,
                   "addons": [],
                   "content": "",
-                  "id": "e1nb57p"
+                  "id": "e1nb57p",
+                  "className": ""
                 },
                 {
                   "label": "HTML",
@@ -19871,7 +20090,8 @@
                   "allowMultipleMasks": false,
                   "addons": [],
                   "tag": "p",
-                  "id": "e9av6ha"
+                  "id": "e9av6ha",
+                  "className": ""
                 },
                 {
                   "label": "Do your parents have dependants other than yourself?",
@@ -20126,7 +20346,8 @@
                       "allowMultipleMasks": false,
                       "addons": [],
                       "tag": "p",
-                      "id": "et0uyjp"
+                      "id": "et0uyjp",
+                      "className": ""
                     },
                     {
                       "label": "<h4 class='category-header-medium-small'>Parent dependent table</h4>",
@@ -20228,7 +20449,9 @@
                           "showWordCount": false,
                           "properties": {},
                           "allowMultipleMasks": false,
-                          "addons": []
+                          "addons": [],
+                          "inDataGrid": true,
+                          "inputType": "number"
                         },
                         {
                           "label": "<strong>Will this dependant be attending high school or full-time post-secondary school at the start of your study period?</strong>",
@@ -20312,7 +20535,8 @@
                           "allowMultipleMasks": false,
                           "addons": [],
                           "inputType": "radio",
-                          "fieldSet": false
+                          "fieldSet": false,
+                          "inDataGrid": true
                         },
                         {
                           "label": "<strong>Did you parent(s) claim this dependant on their 20xx Income Tax Return due to a disability?</strong>",
@@ -20396,7 +20620,8 @@
                           "allowMultipleMasks": false,
                           "addons": [],
                           "inputType": "radio",
-                          "fieldSet": false
+                          "fieldSet": false,
+                          "inDataGrid": true
                         }
                       ],
                       "placeholder": "",
@@ -20846,7 +21071,8 @@
               "allowMultipleMasks": false,
               "addons": [],
               "tag": "p",
-              "id": "e9zei5r"
+              "id": "e9zei5r",
+              "className": ""
             },
             {
               "label": "<strong>Please select the date you were estranged from your parents</strong>",
@@ -21025,7 +21251,8 @@
               "allowMultipleMasks": false,
               "addons": [],
               "tag": "p",
-              "id": "efwpcq"
+              "id": "efwpcq",
+              "className": ""
             },
             {
               "label": "HTML",
@@ -21292,7 +21519,7 @@
                 {
                   "components": [
                     {
-                      "html": "<p>We accept <strong>JPG, PNG, DOC, DOCX, PDF, TXT</strong></p>",
+                      "html": "<p>We accept <strong>JPG, PNG, DOC, DOCX, PDF, TXT</strong></p>\n",
                       "label": "Content",
                       "refreshOnChange": false,
                       "key": "content50",
@@ -21370,7 +21597,7 @@
                 {
                   "components": [
                     {
-                      "html": "<p style=\"text-align:right;\">4MB file limit each</p>",
+                      "html": "<p style=\"text-align:right;\">4MB file limit each</p>\n",
                       "label": "Content",
                       "refreshOnChange": false,
                       "key": "content51",
@@ -22053,7 +22280,8 @@
                   "allowMultipleMasks": false,
                   "addons": [],
                   "tag": "p",
-                  "id": "evy207m"
+                  "id": "evy207m",
+                  "className": ""
                 },
                 {
                   "label": "HTML",
@@ -22305,7 +22533,7 @@
                     {
                       "components": [
                         {
-                          "html": "<p>We accept <strong>JPG, PNG, DOC, DOCX, PDF, TXT</strong></p>",
+                          "html": "<p>We accept <strong>JPG, PNG, DOC, DOCX, PDF, TXT</strong></p>\n",
                           "label": "Content",
                           "refreshOnChange": false,
                           "key": "content52",
@@ -22383,7 +22611,7 @@
                     {
                       "components": [
                         {
-                          "html": "<p style=\"text-align:right;\">4MB file limit each</p>",
+                          "html": "<p style=\"text-align:right;\">4MB file limit each</p>\n",
                           "label": "Content",
                           "refreshOnChange": false,
                           "key": "content53",
@@ -23172,7 +23400,11 @@
               "properties": {},
               "allowMultipleMasks": false,
               "id": "ei8r8ok",
-              "addons": []
+              "addons": [],
+              "inputType": "text",
+              "inputMask": "",
+              "decimalLimit": 2,
+              "requireDecimal": true
             },
             {
               "title": "CRA consent panel",
@@ -23404,7 +23636,8 @@
                   "allowMultipleMasks": false,
                   "tag": "p",
                   "id": "e12bspp",
-                  "addons": []
+                  "addons": [],
+                  "className": ""
                 }
               ],
               "id": "eo4yj69"
@@ -24098,7 +24331,11 @@
                   "properties": {},
                   "allowMultipleMasks": false,
                   "id": "et21m",
-                  "addons": []
+                  "addons": [],
+                  "inputType": "text",
+                  "inputMask": "",
+                  "decimalLimit": 2,
+                  "requireDecimal": true
                 },
                 {
                   "label": "<strong>Select the reason for your significant decrease in income.</strong>",
@@ -24654,7 +24891,8 @@
               "allowMultipleMasks": false,
               "addons": [],
               "tag": "p",
-              "id": "elz4uo"
+              "id": "elz4uo",
+              "className": ""
             },
             {
               "label": "<strong>Do you want to submit an exemption request for exceptional expenses?</strong>",
@@ -24976,7 +25214,8 @@
                   "allowMultipleMasks": false,
                   "addons": [],
                   "tag": "p",
-                  "id": "e9vsa6r"
+                  "id": "e9vsa6r",
+                  "className": ""
                 },
                 {
                   "label": "<strong>Select the reason for your significant decrease in income:</strong>",
@@ -25318,7 +25557,8 @@
                   "allowMultipleMasks": false,
                   "addons": [],
                   "tag": "p",
-                  "id": "eq7e38"
+                  "id": "eq7e38",
+                  "className": ""
                 },
                 {
                   "label": "HTML",
@@ -25392,7 +25632,8 @@
                   "allowMultipleMasks": false,
                   "addons": [],
                   "tag": "p",
-                  "id": "evksdr7"
+                  "id": "evksdr7",
+                  "className": ""
                 },
                 {
                   "label": "HTML",
@@ -25466,7 +25707,8 @@
                   "allowMultipleMasks": false,
                   "addons": [],
                   "tag": "p",
-                  "id": "e99y2i9"
+                  "id": "e99y2i9",
+                  "className": ""
                 },
                 {
                   "label": "ExceptionalExpenseFile",
@@ -25556,7 +25798,7 @@
                     {
                       "components": [
                         {
-                          "html": "<p>We accept <strong>JPG, PNG, DOC, DOCX, PDF, TXT</strong></p>",
+                          "html": "<p>We accept <strong>JPG, PNG, DOC, DOCX, PDF, TXT</strong></p>\n",
                           "label": "Content",
                           "refreshOnChange": false,
                           "key": "content54",
@@ -25634,7 +25876,7 @@
                     {
                       "components": [
                         {
-                          "html": "<p style=\"text-align:right;\">4MB file limit each</p>",
+                          "html": "<p style=\"text-align:right;\">4MB file limit each</p>\n",
                           "label": "Content",
                           "refreshOnChange": false,
                           "key": "content55",
@@ -26264,7 +26506,11 @@
                   "allowMultipleMasks": false,
                   "addons": [],
                   "id": "ecj5fir",
-                  "defaultValue": ""
+                  "defaultValue": "",
+                  "inputType": "text",
+                  "inputMask": "",
+                  "decimalLimit": 2,
+                  "requireDecimal": true
                 }
               ],
               "allowPrevious": false,
@@ -26536,7 +26782,11 @@
                   "allowMultipleMasks": false,
                   "addons": [],
                   "id": "e3j5fb",
-                  "defaultValue": ""
+                  "defaultValue": "",
+                  "inputType": "text",
+                  "inputMask": "",
+                  "decimalLimit": 2,
+                  "requireDecimal": true
                 }
               ],
               "allowPrevious": false,
@@ -26785,7 +27035,11 @@
                   "allowMultipleMasks": false,
                   "addons": [],
                   "id": "epr14r",
-                  "defaultValue": ""
+                  "defaultValue": "",
+                  "inputType": "text",
+                  "inputMask": "",
+                  "decimalLimit": 2,
+                  "requireDecimal": true
                 }
               ],
               "allowPrevious": false,
@@ -27217,7 +27471,11 @@
                   "properties": {},
                   "allowMultipleMasks": false,
                   "addons": [],
-                  "id": "e5vnv6j"
+                  "id": "e5vnv6j",
+                  "inputType": "text",
+                  "inputMask": "",
+                  "decimalLimit": 2,
+                  "requireDecimal": true
                 }
               ],
               "placeholder": "",
@@ -27469,7 +27727,11 @@
                   "properties": {},
                   "allowMultipleMasks": false,
                   "addons": [],
-                  "id": "e1b6m3"
+                  "id": "e1b6m3",
+                  "inputType": "text",
+                  "inputMask": "",
+                  "decimalLimit": 2,
+                  "requireDecimal": true
                 }
               ],
               "placeholder": "",
@@ -27721,7 +27983,11 @@
                   "properties": {},
                   "allowMultipleMasks": false,
                   "addons": [],
-                  "id": "eci37x"
+                  "id": "eci37x",
+                  "inputType": "text",
+                  "inputMask": "",
+                  "decimalLimit": 2,
+                  "requireDecimal": true
                 }
               ],
               "placeholder": "",
@@ -27973,7 +28239,11 @@
                   "properties": {},
                   "allowMultipleMasks": false,
                   "addons": [],
-                  "id": "erxvhyh"
+                  "id": "erxvhyh",
+                  "inputType": "text",
+                  "inputMask": "",
+                  "decimalLimit": 2,
+                  "requireDecimal": true
                 }
               ],
               "placeholder": "",
@@ -28225,7 +28495,11 @@
                   "properties": {},
                   "allowMultipleMasks": false,
                   "addons": [],
-                  "id": "ea92fth"
+                  "id": "ea92fth",
+                  "inputType": "text",
+                  "inputMask": "",
+                  "decimalLimit": 2,
+                  "requireDecimal": true
                 }
               ],
               "placeholder": "",
@@ -28805,7 +29079,8 @@
                       "allowMultipleMasks": false,
                       "addons": [],
                       "tag": "p",
-                      "id": "eupcebe"
+                      "id": "eupcebe",
+                      "className": ""
                     },
                     {
                       "label": "<strong>Which of the following best describes your parent(s)/step-parent/sponsor/legal guardian situation?</strong>",
@@ -29132,7 +29407,8 @@
                       "allowMultipleMasks": false,
                       "addons": [],
                       "tag": "p",
-                      "id": "e0mhupn"
+                      "id": "e0mhupn",
+                      "className": ""
                     },
                     {
                       "label": "HTML",
@@ -29206,7 +29482,8 @@
                       "allowMultipleMasks": false,
                       "addons": [],
                       "tag": "p",
-                      "id": "en7ltf2"
+                      "id": "en7ltf2",
+                      "className": ""
                     },
                     {
                       "label": "<strong>Upload supporting documents (optional):</strong>",
@@ -29296,7 +29573,7 @@
                         {
                           "components": [
                             {
-                              "html": "<p>We accept <strong>JPG, PNG, DOC, DOCX, PDF, TXT</strong></p>",
+                              "html": "<p>We accept <strong>JPG, PNG, DOC, DOCX, PDF, TXT</strong></p>\n",
                               "label": "Content",
                               "refreshOnChange": false,
                               "key": "content56",
@@ -29374,7 +29651,7 @@
                         {
                           "components": [
                             {
-                              "html": "<p style=\"text-align:right;\">4MB file limit each</p>",
+                              "html": "<p style=\"text-align:right;\">4MB file limit each</p>\n",
                               "label": "Content",
                               "refreshOnChange": false,
                               "key": "content57",
@@ -30023,7 +30300,11 @@
                   "properties": {},
                   "allowMultipleMasks": false,
                   "id": "ea21r2t",
-                  "addons": []
+                  "addons": [],
+                  "inputType": "text",
+                  "inputMask": "",
+                  "decimalLimit": 2,
+                  "requireDecimal": true
                 }
               ],
               "allowPrevious": false,
@@ -30785,7 +31066,8 @@
                       "allowMultipleMasks": false,
                       "addons": [],
                       "tag": "p",
-                      "id": "e29azc"
+                      "id": "e29azc",
+                      "className": ""
                     },
                     {
                       "label": "HTML",
@@ -30859,7 +31141,8 @@
                       "allowMultipleMasks": false,
                       "addons": [],
                       "tag": "p",
-                      "id": "euf75k"
+                      "id": "euf75k",
+                      "className": ""
                     },
                     {
                       "label": "HTML",
@@ -30933,7 +31216,8 @@
                       "allowMultipleMasks": false,
                       "addons": [],
                       "tag": "p",
-                      "id": "eo0wfja"
+                      "id": "eo0wfja",
+                      "className": ""
                     },
                     {
                       "label": "Upload supporting documents (optional):",
@@ -31024,7 +31308,7 @@
                         {
                           "components": [
                             {
-                              "html": "<p>We accept <strong>JPG, PNG, DOC, DOCX, PDF, TXT</strong></p>",
+                              "html": "<p>We accept <strong>JPG, PNG, DOC, DOCX, PDF, TXT</strong></p>\n",
                               "label": "Content",
                               "refreshOnChange": false,
                               "key": "content58",
@@ -31102,7 +31386,7 @@
                         {
                           "components": [
                             {
-                              "html": "<p style=\"text-align:right;\">4MB file limit each</p>",
+                              "html": "<p style=\"text-align:right;\">4MB file limit each</p>\n",
                               "label": "Content",
                               "refreshOnChange": false,
                               "key": "content59",
@@ -31320,7 +31604,11 @@
                       "properties": {},
                       "allowMultipleMasks": false,
                       "addons": [],
-                      "id": "e0owegk"
+                      "id": "e0owegk",
+                      "inputType": "text",
+                      "inputMask": "",
+                      "decimalLimit": 2,
+                      "requireDecimal": true
                     }
                   ],
                   "allowPrevious": false,
@@ -31429,6 +31717,26 @@
             }
           ],
           "id": "emvzoox"
+        },
+        {
+          "input": true,
+          "tableView": false,
+          "key": "dependantstatus",
+          "label": "Dependant Status",
+          "protected": false,
+          "unique": false,
+          "persistent": true,
+          "type": "hidden",
+          "tags": [],
+          "conditional": {
+            "show": "",
+            "when": null,
+            "eq": ""
+          },
+          "properties": {},
+          "calculateServer": true,
+          "calculateValue": "/**\r\n * When parent information is entered if student selects\r\n * both the parents passed away \r\n * or estranged from both of my parents then consider the\r\n * student as not dependant.\r\n */\r\nconst isDependant =\r\n  data.showParentInformation &&\r\n  (data.parentbcResident === \"yes\" || data.parentbcResident === \"no\");\r\n\r\nvalue = isDependant ? \"dependant\" : \"independant\";",
+          "lockKey": true
         }
       ],
       "input": false,
@@ -31864,7 +32172,8 @@
               "allowMultipleMasks": false,
               "addons": [],
               "tag": "p",
-              "id": "ebh8ug"
+              "id": "ebh8ug",
+              "className": ""
             },
             {
               "label": "HTML",
@@ -31938,7 +32247,8 @@
               "allowMultipleMasks": false,
               "addons": [],
               "tag": "p",
-              "id": "e09oa3u"
+              "id": "e09oa3u",
+              "className": ""
             }
           ],
           "placeholder": "",

@@ -1,10 +1,12 @@
-export default class LocationProgramObject {
+import BaseMethods from "./BaseMethods";
+
+export default class LocationProgramObject extends BaseMethods {
   createNewProgramButton() {
     return cy.contains("Create New Program");
   }
 
   submitButton() {
-    return cy.get("[name='data[submit]']");
+    return this.getElementByCyId("primaryFooterButton");
   }
 
   wait() {

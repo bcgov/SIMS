@@ -10,8 +10,8 @@ import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { AllowAuthorizedParty, Groups } from "../../auth/decorators";
 import { UserGroups } from "../../auth/user-groups.enum";
 import {
-  ApplicationSupportingUsersApiOutDTO,
-  SupportingUserFormDataApiOutDTO,
+  ApplicationSupportingUsersAPIOutDTO,
+  SupportingUserFormDataAPIOutDTO,
 } from "./models/supporting-user.dto";
 import { getSupportingUserForm } from "../../utilities";
 import { ApiNotFoundResponse, ApiTags } from "@nestjs/swagger";
@@ -27,13 +27,12 @@ export class SupportingUserAESTController {
    * Get the list of supporting users respective to
    * an application id for AEST user.
    * @param applicationId application id.
-   * @return list of supporting users of an
-   * application, i.e ApplicationSupportingUsersApiOutDTO
+   * @return list of supporting users of an application.
    */
   @Get("application/:applicationId")
   async getSupportingUsersOfAnApplication(
     @Param("applicationId", ParseIntPipe) applicationId: number,
-  ): Promise<ApplicationSupportingUsersApiOutDTO[]> {
+  ): Promise<ApplicationSupportingUsersAPIOutDTO[]> {
     const supportingUserForApplication =
       await this.supportingUserService.getSupportingUsersByApplicationId(
         applicationId,
@@ -57,7 +56,7 @@ export class SupportingUserAESTController {
   })
   async getSupportingUserFormDetails(
     @Param("supportingUserId", ParseIntPipe) supportingUserId: number,
-  ): Promise<SupportingUserFormDataApiOutDTO> {
+  ): Promise<SupportingUserFormDataAPIOutDTO> {
     const supportingUserForApplication =
       await this.supportingUserService.getSupportingUsersDetails(
         supportingUserId,
@@ -76,7 +75,6 @@ export class SupportingUserAESTController {
       contactInfo: supportingUserForApplication.contactInfo,
       sin: supportingUserForApplication.sin,
       birthDate: supportingUserForApplication.birthDate,
-      gender: supportingUserForApplication.gender,
       email: supportingUserForApplication.user.email,
       firstName: supportingUserForApplication.user.firstName,
       lastName: supportingUserForApplication.user.lastName,

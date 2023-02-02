@@ -50,7 +50,7 @@ export class InstitutionLocationAESTController extends BaseController {
 
   /**
    * Controller method to retrieve institution location by id.
-   * @param locationId
+   * @param locationId id of the location to be retrieved.
    * @returns institution location.
    */
   @Get(":locationId")
@@ -58,14 +58,13 @@ export class InstitutionLocationAESTController extends BaseController {
   async getInstitutionLocation(
     @Param("locationId", ParseIntPipe) locationId: number,
   ): Promise<InstitutionLocationDetailsAPIOutDTO> {
-    // Get particular institution location.
     return this.locationControllerService.getInstitutionLocation(locationId);
   }
 
   /**
    * Update an institution location.
-   * @param locationId
-   * @param payload
+   * @param locationId id of the location to be updated.
+   * @param payload location details to be updated.
    */
   @ApiUnprocessableEntityResponse({
     description: "Duplicate institution location code.",

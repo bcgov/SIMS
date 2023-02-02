@@ -1,8 +1,6 @@
 import { Module } from "@nestjs/common";
-import { DatabaseModule } from "@sims/sims-db";
 import {
   ApplicationService,
-  MSFAANumberService,
   StudentFileService,
   SupportingUserService,
   TokensService,
@@ -18,11 +16,7 @@ import {
   StudentAppealRequestsService,
   StudentAppealService,
   StudentAssessmentService,
-  SFASApplicationService,
-  SFASPartTimeApplicationsService,
-  ReportService,
   StudentService,
-  SFASIndividualService,
   StudentRestrictionService,
   RestrictionService,
   ApplicationExceptionService,
@@ -34,6 +28,7 @@ import {
   InstitutionRestrictionService,
   EducationProgramOfferingValidationService,
   DisbursementReceiptService,
+  DisbursementScheduleService,
 } from "./services";
 import {
   SupportingUserAESTController,
@@ -61,14 +56,28 @@ import {
   EducationProgramOfferingControllerService,
   NoteAESTController,
   RestrictionAESTController,
+  UserAESTController,
+  UserControllerService,
+  ApplicationControllerService,
+  InstitutionUserControllerService,
+  ConfirmationOfEnrollmentAESTController,
+  ConfirmationOfEnrollmentControllerService,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
-import { ApplicationControllerService } from "./route-controllers/application/application.controller.service";
-import { InstitutionUserControllerService } from "./route-controllers/institution-user/institution-user.controller.service";
-import { WorkflowClientService, SequenceControlService } from "@sims/services";
+import {
+  SFASIndividualService,
+  SFASApplicationService,
+  SFASPartTimeApplicationsService,
+} from "@sims/services/sfas";
+import {
+  SequenceControlService,
+  StudentRestrictionSharedService,
+  WorkflowClientService,
+  ReportService,
+} from "@sims/services";
 
 @Module({
-  imports: [DatabaseModule, AuthModule],
+  imports: [AuthModule],
   controllers: [
     SupportingUserAESTController,
     DesignationAgreementAESTController,
@@ -87,6 +96,8 @@ import { WorkflowClientService, SequenceControlService } from "@sims/services";
     StudentAccountApplicationAESTController,
     NoteAESTController,
     RestrictionAESTController,
+    UserAESTController,
+    ConfirmationOfEnrollmentAESTController,
   ],
   providers: [
     WorkflowClientService,
@@ -95,7 +106,6 @@ import { WorkflowClientService, SequenceControlService } from "@sims/services";
     ApplicationService,
     SequenceControlService,
     StudentFileService,
-    MSFAANumberService,
     TokensService,
     DesignationAgreementService,
     DesignationAgreementControllerService,
@@ -112,14 +122,14 @@ import { WorkflowClientService, SequenceControlService } from "@sims/services";
     StudentAppealRequestsService,
     StudentAppealService,
     StudentAssessmentService,
-    SFASApplicationService,
-    SFASPartTimeApplicationsService,
     InstitutionLocationControllerService,
     AssessmentControllerService,
     ReportService,
     StudentControllerService,
     StudentService,
     SFASIndividualService,
+    SFASApplicationService,
+    SFASPartTimeApplicationsService,
     StudentRestrictionService,
     RestrictionService,
     ApplicationExceptionService,
@@ -134,6 +144,10 @@ import { WorkflowClientService, SequenceControlService } from "@sims/services";
     EducationProgramOfferingControllerService,
     EducationProgramOfferingValidationService,
     DisbursementReceiptService,
+    StudentRestrictionSharedService,
+    UserControllerService,
+    ConfirmationOfEnrollmentControllerService,
+    DisbursementScheduleService,
   ],
 })
 export class AppAESTModule {}

@@ -1,16 +1,9 @@
 import { Allow, IsEmail, IsNotEmpty, Length } from "class-validator";
-import { InstitutionLocationData } from "@sims/sims-db";
 import {
   AddressAPIOutDTO,
   AddressDetailsAPIInDTO,
   AddressDetailsAPIOutDTO,
 } from "../../models/common.dto";
-
-export class GetInstitutionLocationDto {
-  id: number;
-  data: InstitutionLocationData;
-  name: string;
-}
 
 /**
  * Payload/Input DTO for institution location.
@@ -70,18 +63,7 @@ export class InstitutionLocationDetailsAPIOutDTO extends AddressDetailsAPIOutDTO
   primaryContactPhone: string;
 }
 
-export class InstitutionPrimaryContactInDTO {
-  @Allow()
-  primaryContactFirstName: string;
-  @Allow()
-  primaryContactLastName: string;
-  @Allow()
-  primaryContactEmail: string;
-  @Allow()
-  primaryContactPhone: string;
-}
-
-export class InstitutionPrimaryContactOutDTO {
+export class InstitutionPrimaryContactAPIOutDTO {
   primaryContactFirstName: string;
   primaryContactLastName: string;
   primaryContactEmail: string;
@@ -97,14 +79,9 @@ export class InstitutionLocationAPIOutDTO {
   data: {
     address: AddressAPIOutDTO;
   };
-  primaryContact: InstitutionPrimaryContactOutDTO;
+  primaryContact: InstitutionPrimaryContactAPIOutDTO;
   institutionCode: string;
   designationStatus: DesignationStatus;
-}
-
-export interface UserLocationDto {
-  id: number;
-  name: string;
 }
 
 /**

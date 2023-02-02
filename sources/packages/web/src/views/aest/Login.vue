@@ -57,7 +57,7 @@
 
 <script lang="ts">
 import { useAuth } from "@/composables";
-import { AppIDPType, ClientIdType } from "@/types";
+import { IdentityProviders, ClientIdType } from "@/types";
 import { BannerTypes } from "@/types/contracts/Banner";
 
 export default {
@@ -71,7 +71,7 @@ export default {
   setup() {
     const { executeLogin } = useAuth();
     const login = async () => {
-      await executeLogin(ClientIdType.AEST, AppIDPType.IDIR);
+      await executeLogin(ClientIdType.AEST, IdentityProviders.IDIR);
     };
     return { login, BannerTypes };
   },

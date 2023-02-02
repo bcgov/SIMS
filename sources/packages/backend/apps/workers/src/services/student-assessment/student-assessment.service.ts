@@ -6,19 +6,24 @@ import {
   StudentAssessment,
 } from "@sims/sims-db";
 import { CustomNamedError } from "@sims/utilities";
-import { DataSource, IsNull, UpdateResult } from "typeorm";
+import { DataSource, EntityManager, IsNull, UpdateResult } from "typeorm";
 import {
+  ASSESSMENT_NOT_FOUND,
   ASSESSMENT_ALREADY_ASSOCIATED_TO_WORKFLOW,
   ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE,
-  ASSESSMENT_NOT_FOUND,
-} from "../../constants";
+} from "@sims/services/constants";
+import { NotificationActionsService, SystemUsersService } from "@sims/services";
 
 /**
  * Manages the student assessment related operations.
  */
 @Injectable()
 export class StudentAssessmentService extends RecordDataModelService<StudentAssessment> {
-  constructor(private readonly dataSource: DataSource) {
+  constructor(
+    private readonly dataSource: DataSource,
+    private readonly systemUsersService: SystemUsersService,
+    private readonly notificationActionsService: NotificationActionsService,
+  ) {
     super(dataSource.getRepository(StudentAssessment));
   }
 
@@ -146,8 +151,14 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
     assessmentData: unknown,
   ): Promise<UpdateResult> {
     return this.repo.update(
-      { id: assessmentId, assessmentData: IsNull() },
-      { assessmentData },
+      {
+        id: assessmentId,
+        assessmentData: IsNull(),
+      },
+      {
+        assessmentData,
+        assessmentDate: new Date(),
+      },
     );
   }
 
@@ -163,12 +174,73 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
     assessmentId: number,
     status: AssessmentStatus,
   ): Promise<UpdateResult> {
-    return this.repo.update(
+    const auditUser = await this.systemUsersService.systemUser();
+    return this.dataSource.transaction(async (transactionalEntityManager) => {
+      const updateResult = await transactionalEntityManager
+        .getRepository(StudentAssessment)
+        .update(
+          { id: assessmentId, noaApprovalStatus: IsNull() },
+          { noaApprovalStatus: status, modifier: auditUser },
+        );
+
+      if (updateResult.affected === 1) {
+        // Create a student notification when NOA approval status is updated from null.
+        await this.createAssessmentReadyForConfirmationNotification(
+          assessmentId,
+          auditUser.id,
+          transactionalEntityManager,
+        );
+        return updateResult;
+      }
+    });
+  }
+
+  /**
+   * Create assessment ready for student confirmation notification to notify student
+   * when workflow update the NOA approval status.
+   * @param assessmentId updated assessment.
+   * @param auditUserId user who creates notification.
+   * @param transactionalEntityManager entity manager to execute in transaction.
+   */
+  async createAssessmentReadyForConfirmationNotification(
+    assessmentId: number,
+    auditUserId: number,
+    transactionalEntityManager: EntityManager,
+  ): Promise<void> {
+    const studentAssessment = await transactionalEntityManager
+      .getRepository(StudentAssessment)
+      .findOne({
+        select: {
+          id: true,
+          application: {
+            id: true,
+            student: {
+              id: true,
+              user: {
+                id: true,
+                firstName: true,
+                lastName: true,
+                email: true,
+              },
+            },
+          },
+        },
+        relations: {
+          application: { student: { user: true } },
+        },
+        where: { id: assessmentId },
+      });
+
+    const studentUser = studentAssessment.application.student.user;
+    await this.notificationActionsService.saveAssessmentReadyForConfirmationNotification(
       {
-        id: assessmentId,
-        noaApprovalStatus: IsNull(),
+        givenNames: studentUser.firstName,
+        lastName: studentUser.lastName,
+        toAddress: studentUser.email,
+        userId: studentUser.id,
       },
-      { noaApprovalStatus: status },
+      auditUserId,
+      transactionalEntityManager,
     );
   }
 }

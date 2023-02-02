@@ -4,11 +4,9 @@
 
 # Use Node image, maintained by Docker:
 # hub.docker.com/r/_/node/
-FROM artifacts.developer.gov.bc.ca/docker-remote/node:19.2-alpine
+FROM artifacts.developer.gov.bc.ca/docker-remote/node:12.2.0-alpine
 
-# set working directory
-WORKDIR /formio
-
+WORKDIR /app
 ARG FORMIO_SOURCE_REPO_URL
 ARG FORMIO_SOURCE_REPO_TAG
 
@@ -16,12 +14,12 @@ ARG FORMIO_SOURCE_REPO_TAG
 # (note: using pinned versions to ensure immutable build environment)
 RUN apk update && \
   apk upgrade && \
-  apk add make && \
-  apk add g++ &&\
+  apk add make=4.2.1-r2 && \
+  apk add g++=8.3.0-r0 && \
   apk add git
 
 # Clone code
-RUN git clone ${FORMIO_SOURCE_REPO_URL} -b ${FORMIO_SOURCE_REPO_TAG} --single-branch /formio/
+RUN git clone ${FORMIO_SOURCE_REPO_URL} -b ${FORMIO_SOURCE_REPO_TAG} --single-branch /app/
 
 # Using an alternative package install location
 # to allow overwriting the /app folder at runtime
@@ -50,7 +48,7 @@ RUN ln -sf $NPM_PACKAGES/node_modules node_modules
 ENV DEBUG=""
 
 RUN set -x \
-  && chmod -R 777 /formio/
+  && chmod -R 777 /app/
 
 # This will initialize the application based on
 # some questions to the user (login email, password, etc.)

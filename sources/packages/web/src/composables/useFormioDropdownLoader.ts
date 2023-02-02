@@ -3,9 +3,9 @@ import { EducationProgramService } from "../services/EducationProgramService";
 import { ProgramInfoRequestService } from "@/services/ProgramInfoRequestService";
 import { EducationProgramOfferingService } from "@/services/EducationProgramOfferingService";
 import { ProgramYearService } from "@/services/ProgramYearService";
-import { OptionItemDto, OfferingIntensity } from "../types";
+import { OfferingIntensity } from "../types";
 import { useFormioUtils } from ".";
-
+import { OptionItemAPIOutDTO } from "@/services/http/dto";
 /**
  * Common methods to load dropdowns(selects) data on Form.IO that could
  * be reusable or at least simplify the form data load logic.
@@ -16,7 +16,7 @@ export function useFormioDropdownLoader() {
   const loadDropdown = async (
     form: any,
     dropdownName: string,
-    loadMethod: Promise<OptionItemDto[]>,
+    loadMethod: Promise<OptionItemAPIOutDTO[]>,
   ) => {
     // Find the dropdown to be populated with the locations.
     const dropdown = formioUtils.getComponent(form, dropdownName);

@@ -1,9 +1,25 @@
 {
-  "moduleFileExtensions": ["js", "json", "ts"],
-  "rootDir": ".",
+  "moduleFileExtensions": [
+    "js",
+    "json",
+    "ts"
+  ],
+  "rootDir": "../",
   "testEnvironment": "node",
   "testRegex": ".e2e-spec.ts$",
   "transform": {
     "^.+\\.(t|j)s$": "ts-jest"
+  },
+  "moduleNameMapper": {
+    "@sims/sims-db/(.*)": "<rootDir>/../../libs/sims-db/src/$1",
+    "@sims/sims-db": "<rootDir>/../../libs/sims-db/src",
+    "@sims/services/(.*)": "<rootDir>/../../libs/services/src/$1",
+    "@sims/services": "<rootDir>/../../libs/services/src",
+    "@sims/utilities/(.*)": "<rootDir>/../../libs/utilities/src/$1",
+    "@sims/utilities": "<rootDir>/../../libs/utilities/src",
+    "@sims/test-utils/(.*)": "<rootDir>/../../libs/test-utils/src/$1",
+    "@sims/test-utils": "<rootDir>/../../libs/test-utils/src",
+    "@sims/integrations/(.*)": "<rootDir>/../../libs/integrations/src/$1",
+    "@sims/integrations": "<rootDir>/../../libs/integrations/src"
   }
 }

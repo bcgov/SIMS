@@ -1,25 +1,19 @@
 import { Module } from "@nestjs/common";
-import { DatabaseModule } from "@sims/sims-db";
 import {
   ApplicationService,
   FormService,
   StudentService,
   ProgramYearService,
   EducationProgramOfferingService,
-  SFASApplicationService,
-  SFASPartTimeApplicationsService,
   DisbursementScheduleService,
   InstitutionLocationService,
   EducationProgramService,
   StudentFileService,
-  MSFAANumberService,
-  SFASIndividualService,
   StudentRestrictionService,
   DesignationAgreementLocationService,
   StudentAssessmentService,
   StudentAppealService,
   StudentAppealRequestsService,
-  ATBCService,
   RestrictionService,
   EducationProgramOfferingValidationService,
   DisbursementReceiptService,
@@ -27,6 +21,7 @@ import {
   StudentScholasticStandingsService,
   CRAIncomeVerificationService,
   SupportingUserService,
+  StudentAccountApplicationsService,
 } from "./services";
 import {
   ApplicationStudentsController,
@@ -41,16 +36,26 @@ import {
   EducationProgramOfferingStudentsController,
   EducationProgramOfferingControllerService,
   RestrictionStudentsController,
+  ProgramYearStudentsController,
+  ApplicationControllerService,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
-import { ApplicationControllerService } from "./route-controllers/application/application.controller.service";
-import { StudentAccountApplicationsService } from "./services/student-account-applications/student-account-applications.service";
-import { ATBCStudentController } from "./route-controllers/atbc/atbc.students.controller";
-import { WorkflowClientService, SequenceControlService } from "@sims/services";
 import { ConfigModule } from "@sims/utilities/config";
+import { ATBCStudentController } from "./route-controllers/atbc/atbc.students.controller";
+import {
+  SequenceControlService,
+  StudentRestrictionSharedService,
+  WorkflowClientService,
+} from "@sims/services";
+import {
+  SFASIndividualService,
+  SFASApplicationService,
+  SFASPartTimeApplicationsService,
+} from "@sims/services/sfas";
+import { ATBCIntegrationModule } from "@sims/integrations/atbc-integration";
 
 @Module({
-  imports: [DatabaseModule, AuthModule, ConfigModule],
+  imports: [AuthModule, ConfigModule, ATBCIntegrationModule],
   controllers: [
     ApplicationStudentsController,
     StudentStudentsController,
@@ -62,6 +67,7 @@ import { ConfigModule } from "@sims/utilities/config";
     EducationProgramOfferingStudentsController,
     RestrictionStudentsController,
     ATBCStudentController,
+    ProgramYearStudentsController,
   ],
   providers: [
     WorkflowClientService,
@@ -70,15 +76,14 @@ import { ConfigModule } from "@sims/utilities/config";
     StudentService,
     ProgramYearService,
     EducationProgramOfferingService,
-    SFASApplicationService,
-    SFASPartTimeApplicationsService,
     DisbursementScheduleService,
     InstitutionLocationService,
     EducationProgramService,
     SequenceControlService,
     StudentFileService,
-    MSFAANumberService,
     SFASIndividualService,
+    SFASApplicationService,
+    SFASPartTimeApplicationsService,
     StudentRestrictionService,
     DesignationAgreementLocationService,
     StudentAssessmentService,
@@ -87,7 +92,6 @@ import { ConfigModule } from "@sims/utilities/config";
     StudentAppealRequestsService,
     AssessmentControllerService,
     StudentControllerService,
-    ATBCService,
     RestrictionService,
     StudentAccountApplicationsService,
     EducationProgramOfferingControllerService,
@@ -97,6 +101,7 @@ import { ConfigModule } from "@sims/utilities/config";
     StudentScholasticStandingsService,
     CRAIncomeVerificationService,
     SupportingUserService,
+    StudentRestrictionSharedService,
   ],
 })
 export class AppStudentsModule {}

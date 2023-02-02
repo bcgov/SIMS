@@ -34,7 +34,7 @@ export default {
         router.push({
           name: StudentRoutesConst.STUDENT_APPLICATION_FORM,
         });
-      } catch (error) {
+      } catch {
         snackBar.error(
           "An error happened while trying to start an application.",
         );

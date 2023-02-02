@@ -30,6 +30,7 @@ import BaseController from "../BaseController";
 import {
   FormNames,
   FormService,
+  StudentAccountApplicationApprovalModel,
   StudentAccountApplicationsService,
 } from "../../services";
 import {
@@ -137,10 +138,11 @@ export class StudentAccountApplicationAESTController extends BaseController {
     @Body() payload: StudentAccountApplicationApprovalAPIInDTO,
     @UserToken() userToken: IUserToken,
   ): Promise<PrimaryIdentifierAPIOutDTO> {
-    const submissionResult = await this.formService.dryRunSubmission(
-      FormNames.StudentProfile,
-      payload,
-    );
+    const submissionResult =
+      await this.formService.dryRunSubmission<StudentAccountApplicationApprovalModel>(
+        FormNames.StudentProfile,
+        payload,
+      );
 
     if (!submissionResult.valid) {
       throw new BadRequestException(

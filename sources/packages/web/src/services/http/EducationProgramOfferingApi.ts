@@ -9,7 +9,7 @@ import {
   EducationProgramOfferingAPIInDTO,
   EducationProgramOfferingSummaryAPIOutDTO,
   PaginatedResultsAPIOutDTO,
-  OfferingStartDateAPIOutDTO,
+  OfferingDetailsAPIOutDTO,
   OptionItemAPIOutDTO,
   EducationProgramOfferingAPIOutDTO,
   OfferingValidationResultAPIOutDTO,
@@ -55,15 +55,11 @@ export class EducationProgramOfferingApi extends HttpBaseClient {
     programId: number,
     payload: EducationProgramOfferingAPIInDTO,
   ): Promise<void> {
-    try {
-      const url = `education-program-offering/location/${locationId}/education-program/${programId}`;
-      await this.postCall<EducationProgramOfferingAPIInDTO>(
-        this.addClientRoot(url),
-        payload,
-      );
-    } catch (error: unknown) {
-      this.handleAPICustomError(error);
-    }
+    const url = `education-program-offering/location/${locationId}/education-program/${programId}`;
+    await this.postCall<EducationProgramOfferingAPIInDTO>(
+      this.addClientRoot(url),
+      payload,
+    );
   }
 
   /**
@@ -84,7 +80,7 @@ export class EducationProgramOfferingApi extends HttpBaseClient {
     const url = `education-program-offering/location/${locationId}/education-program/${programId}?${getPaginationQueryString(
       paginationOptions,
     )}`;
-    return this.getCallTyped(this.addClientRoot(url));
+    return this.getCall(this.addClientRoot(url));
   }
 
   /**
@@ -100,7 +96,7 @@ export class EducationProgramOfferingApi extends HttpBaseClient {
     offeringId: number,
   ): Promise<EducationProgramOfferingAPIOutDTO> {
     const url = `education-program-offering/location/${locationId}/education-program/${programId}/offering/${offeringId}`;
-    return this.getCallTyped<EducationProgramOfferingAPIOutDTO>(
+    return this.getCall<EducationProgramOfferingAPIOutDTO>(
       this.addClientRoot(url),
     );
   }
@@ -114,7 +110,7 @@ export class EducationProgramOfferingApi extends HttpBaseClient {
     offeringId: number,
   ): Promise<EducationProgramOfferingAPIOutDTO> {
     const url = `education-program-offering/${offeringId}`;
-    return this.getCallTyped<EducationProgramOfferingAPIOutDTO>(
+    return this.getCall<EducationProgramOfferingAPIOutDTO>(
       this.addClientRoot(url),
     );
   }
@@ -135,15 +131,11 @@ export class EducationProgramOfferingApi extends HttpBaseClient {
     offeringId: number,
     payload: EducationProgramOfferingAPIInDTO,
   ): Promise<void> {
-    try {
-      const url = `education-program-offering/location/${locationId}/education-program/${programId}/offering/${offeringId}`;
-      await this.patchCall<EducationProgramOfferingAPIInDTO>(
-        this.addClientRoot(url),
-        payload,
-      );
-    } catch (error: unknown) {
-      this.handleAPICustomError(error);
-    }
+    const url = `education-program-offering/location/${locationId}/education-program/${programId}/offering/${offeringId}`;
+    await this.patchCall<EducationProgramOfferingAPIInDTO>(
+      this.addClientRoot(url),
+      payload,
+    );
   }
 
   /**
@@ -160,12 +152,8 @@ export class EducationProgramOfferingApi extends HttpBaseClient {
     offeringId: number,
     payload: EducationProgramOfferingBasicDataAPIInDTO,
   ): Promise<void> {
-    try {
-      const url = `education-program-offering/location/${locationId}/education-program/${programId}/offering/${offeringId}/basic`;
-      await this.patchCall(this.addClientRoot(url), payload);
-    } catch (error: unknown) {
-      this.handleAPICustomError(error);
-    }
+    const url = `education-program-offering/location/${locationId}/education-program/${programId}/offering/${offeringId}/basic`;
+    await this.patchCall(this.addClientRoot(url), payload);
   }
 
   /**
@@ -191,21 +179,19 @@ export class EducationProgramOfferingApi extends HttpBaseClient {
     if (isIncludeInActiveProgramYear) {
       url = `${url}&isIncludeInActiveProgramYear=${isIncludeInActiveProgramYear}`;
     }
-    return this.getCallTyped<OptionItemAPIOutDTO[]>(this.addClientRoot(url));
+    return this.getCall<OptionItemAPIOutDTO[]>(this.addClientRoot(url));
   }
 
   /**
-   * Get offering start date of a given offering.
+   * Get offering details.
    * @param offeringId offering id
-   * @returns offering with start date value.
+   * @returns offering details.
    */
-  async getProgramOfferingStartDate(
+  async getProgramOfferingDetails(
     offeringId: number,
-  ): Promise<OfferingStartDateAPIOutDTO> {
+  ): Promise<OfferingDetailsAPIOutDTO> {
     const url = `education-program-offering/${offeringId}`;
-    return this.getCallTyped<OfferingStartDateAPIOutDTO>(
-      this.addClientRoot(url),
-    );
+    return this.getCall<OfferingDetailsAPIOutDTO>(this.addClientRoot(url));
   }
 
   /**
@@ -239,15 +225,11 @@ export class EducationProgramOfferingApi extends HttpBaseClient {
     offeringId: number,
     payload: EducationProgramOfferingAPIInDTO,
   ): Promise<void> {
-    try {
-      const url = `education-program-offering/${offeringId}/location/${locationId}/education-program/${programId}/request-change`;
-      await this.postCall<EducationProgramOfferingAPIInDTO>(
-        this.addClientRoot(url),
-        payload,
-      );
-    } catch (error: unknown) {
-      this.handleAPICustomError(error);
-    }
+    const url = `education-program-offering/${offeringId}/location/${locationId}/education-program/${programId}/request-change`;
+    await this.postCall<EducationProgramOfferingAPIInDTO>(
+      this.addClientRoot(url),
+      payload,
+    );
   }
 
   /**
@@ -255,7 +237,7 @@ export class EducationProgramOfferingApi extends HttpBaseClient {
    * @returns all offerings that were requested for change.
    */
   async getOfferingChangeRequests(): Promise<OfferingChangeRequestAPIOutDTO[]> {
-    return this.getCallTyped<OfferingChangeRequestAPIOutDTO[]>(
+    return this.getCall<OfferingChangeRequestAPIOutDTO[]>(
       this.addClientRoot("education-program-offering/change-requests"),
     );
   }
@@ -269,7 +251,7 @@ export class EducationProgramOfferingApi extends HttpBaseClient {
   async getPrecedingOfferingSummary(
     offeringId: number,
   ): Promise<PrecedingOfferingSummaryAPIOutDTO> {
-    return this.getCallTyped<PrecedingOfferingSummaryAPIOutDTO>(
+    return this.getCall<PrecedingOfferingSummaryAPIOutDTO>(
       this.addClientRoot(
         `education-program-offering/${offeringId}/preceding-offering-summary`,
       ),
@@ -285,7 +267,7 @@ export class EducationProgramOfferingApi extends HttpBaseClient {
   async getPrecedingOfferingByActualOfferingId(
     offeringId: number,
   ): Promise<EducationProgramOfferingAPIOutDTO> {
-    return this.getCallTyped<EducationProgramOfferingAPIOutDTO>(
+    return this.getCall<EducationProgramOfferingAPIOutDTO>(
       this.addClientRoot(
         `education-program-offering/${offeringId}/preceding-offering`,
       ),
@@ -323,15 +305,10 @@ export class EducationProgramOfferingApi extends HttpBaseClient {
     formData.append("file", file);
     // Configure the request to provide upload progress status.
     const requestConfig: AxiosRequestConfig = { onUploadProgress };
-    try {
-      await ApiClient.FileUpload.upload(
-        `education-program-offering/bulk-insert?validation-only=${validationOnly}`,
-        formData,
-        requestConfig,
-        true,
-      );
-    } catch (error: unknown) {
-      this.handleAPICustomError(error);
-    }
+    await ApiClient.FileUpload.upload(
+      `education-program-offering/bulk-insert?validation-only=${validationOnly}`,
+      formData,
+      requestConfig,
+    );
   }
 }

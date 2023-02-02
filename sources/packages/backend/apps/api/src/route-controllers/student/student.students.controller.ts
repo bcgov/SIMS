@@ -68,6 +68,7 @@ import {
   STUDENT_ACCOUNT_CREATION_MULTIPLES_SIN_FOUND,
 } from "../../constants";
 import { EntityManager } from "typeorm";
+import { StudentInfo } from "../../services/student/student.service.models";
 
 /**
  * Student controller for Student Client.
@@ -118,16 +119,17 @@ export class StudentStudentsController extends BaseController {
 
     // Ensure that only BCSC authenticate users can have access
     // to the student account creation.
-    if (studentUserToken.IDP !== IdentityProviders.BCSC) {
+    if (studentUserToken.identityProvider !== IdentityProviders.BCSC) {
       throw new ForbiddenException(
         "User is not allowed to create a student account.",
       );
     }
 
-    const submissionResult = await this.formService.dryRunSubmission(
-      FormNames.StudentProfile,
-      payload,
-    );
+    const submissionResult =
+      await this.formService.dryRunSubmission<StudentInfo>(
+        FormNames.StudentProfile,
+        payload,
+      );
     if (!submissionResult.valid) {
       throw new UnprocessableEntityException(
         "Not able to create a student due to an invalid request.",
@@ -164,7 +166,7 @@ export class StudentStudentsController extends BaseController {
   async synchronizeFromUserToken(
     @UserToken() studentUserToken: StudentUserToken,
   ): Promise<void> {
-    if (studentUserToken.IDP === IdentityProviders.BCSC) {
+    if (studentUserToken.identityProvider === IdentityProviders.BCSC) {
       await this.studentService.synchronizeFromUserToken(studentUserToken);
     }
   }
@@ -322,16 +324,17 @@ export class StudentStudentsController extends BaseController {
     @UserToken() studentUserToken: StudentUserToken,
     @Body() payload: UpdateStudentAPIInDTO,
   ): Promise<void> {
-    const submissionResult = await this.formService.dryRunSubmission(
-      FormNames.StudentProfile,
-      payload,
-    );
+    const submissionResult =
+      await this.formService.dryRunSubmission<StudentInfo>(
+        FormNames.StudentProfile,
+        payload,
+      );
     if (!submissionResult.valid) {
       throw new BadRequestException(
         "Not able to update a student due to an invalid request.",
       );
     }
-    await this.studentService.updateStudentContactByStudentId(
+    await this.studentService.updateStudentInfo(
       studentUserToken.studentId,
       submissionResult.data.data,
       studentUserToken.userId,

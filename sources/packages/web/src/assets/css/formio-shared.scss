@@ -296,8 +296,15 @@
   margin-bottom: $formio-header-margin;
 }
 
+.banner-font {
+  color: $brand-black;
+  font-size: $font-size-content;
+  line-height: $font-content-lh;
+}
+
 .banner-alert p,
 .banner-alert div {
+  @extend .banner-font;
   background: $banner-background-error;
   border: 2px solid $banner-color-error;
   box-sizing: border-box;
@@ -305,6 +312,7 @@
 }
 .banner-warning p,
 .banner-warning div {
+  @extend .banner-font;
   background: $banner-background-warning;
   border: 2px solid $banner-color-warning;
   box-sizing: border-box;
@@ -313,6 +321,7 @@
 
 .banner-info p,
 .banner-info div {
+  @extend .banner-font;
   background: $banner-background-info;
   border: 2px solid $banner-color-info;
   box-sizing: border-box;
@@ -389,6 +398,18 @@
 
 .banner-warning .fa-exclamation-triangle:before {
   color: $banner-color-warning;
+}
+
+.banner-warning .fa-info-circle:before {
+  color: $banner-color-warning;
+}
+
+.banner-info .fa-info-circle:before {
+  color: $banner-color-info;
+}
+
+.banner-alert .fa-ban:before {
+  color: $banner-color-error;
 }
 
 /* form.io status chip */
@@ -632,4 +653,19 @@
 .form-control:disabled,
 .form-control[readonly] {
   cursor: not-allowed;
+}
+
+// Adjusting margin for all formio file uploader.
+.formio-component-file .fileSelector {
+  margin-top: 5px;
+}
+
+// Adjusting margin for all formio file uploader.
+.formio-component-file ul.list-group.list-group-striped {
+  margin-left: 0;
+}
+
+// Forcing the default formio style for smaller breakpoints.
+.formio-component-file ul li.list-group-item {
+  border: 1px solid rgba(0, 0, 0, 0.125) !important;
 }

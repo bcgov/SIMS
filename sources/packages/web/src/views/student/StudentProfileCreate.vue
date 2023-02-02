@@ -33,7 +33,7 @@ import { StudentAccountApplicationService } from "@/services/StudentAccountAppli
 import { CreateStudentAPIInDTO } from "@/services/http/dto/Student.dto";
 import {
   ApiProcessError,
-  AppIDPType,
+  IdentityProviders,
   FormIOForm,
   StudentProfileFormModel,
   StudentProfileFormModes,
@@ -59,15 +59,20 @@ export default {
     const getStudentDetails = async () => {
       const data = {
         mode: StudentProfileFormModes.StudentCreate,
-        identityProvider: AuthService.shared.userToken?.IDP,
+        identityProvider: AuthService.shared.userToken?.identityProvider,
       } as StudentProfileFormModel;
-      if (AuthService.shared.userToken?.IDP === AppIDPType.BCSC) {
+      if (
+        AuthService.shared.userToken?.identityProvider ===
+        IdentityProviders.BCSC
+      ) {
         data.firstName = bcscParsedToken.givenNames;
         data.lastName = bcscParsedToken.lastName;
         data.email = bcscParsedToken.email;
-        data.gender = bcscParsedToken.gender;
         data.dateOfBirth = dateOnlyLongString(bcscParsedToken.birthdate);
-      } else if (AuthService.shared.userToken?.IDP === AppIDPType.BCeID) {
+      } else if (
+        AuthService.shared.userToken?.identityProvider ===
+        IdentityProviders.BCeIDBoth
+      ) {
         data.email = bceidParsedToken.email;
       }
       initialData.value = data;
@@ -78,7 +83,10 @@ export default {
     const submitted = async (form: FormIOForm<CreateStudentAPIInDTO>) => {
       try {
         processing.value = true;
-        if (AuthService.shared.userToken?.IDP === AppIDPType.BCSC) {
+        if (
+          AuthService.shared.userToken?.identityProvider ===
+          IdentityProviders.BCSC
+        ) {
           // BCSC users can create their own accounts.
           await StudentService.shared.createStudent(form.data);
           await Promise.all([
@@ -87,7 +95,10 @@ export default {
           ]);
           snackBar.success("Student was successfully created!");
           router.push({ name: StudentRoutesConst.STUDENT_DASHBOARD });
-        } else if (AuthService.shared.userToken?.IDP === AppIDPType.BCeID) {
+        } else if (
+          AuthService.shared.userToken?.identityProvider ===
+          IdentityProviders.BCeIDBoth
+        ) {
           // BCeID users must have an identity verification executed by the Ministry.
           // A request will be sent to a Ministry user assess the data provided.
           await StudentAccountApplicationService.shared.createStudentAccountApplication(

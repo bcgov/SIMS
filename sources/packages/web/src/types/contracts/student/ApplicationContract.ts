@@ -5,23 +5,11 @@ import {
   OfferingIntensity,
 } from "@/types";
 
-export interface SaveStudentApplicationDto {
-  programYearId: number;
-  data: any;
-  associatedFiles: string[];
-}
-
 export interface CreateApplicationDraftResult {
   draftAlreadyExists: boolean;
   draftId?: number;
 }
 
-export interface ApplicationWithProgramYearDto {
-  applicationId: number;
-  formName: string;
-  programYearId: number;
-  active: boolean;
-}
 /**
  * Possible status of a Student Application.
  */
@@ -91,48 +79,6 @@ export enum ApplicationScholasticStandingStatus {
   Unavailable = "Unavailable",
 }
 
-export interface ApplicationStatusToBeUpdatedDto {
-  applicationStatus: ApplicationStatus;
-}
-
-/**
- * DTO with primary identifiers of application.
- */
-export interface ApplicationIdentifiersDTO {
-  id: number;
-  applicationNumber: string;
-}
-
-/**
- * Base DTO for application dynamic data
- */
-export interface GetApplicationBaseDTO extends ApplicationIdentifiersDTO {
-  assessmentId?: number;
-  data: any;
-  applicationStatus: ApplicationStatus;
-  applicationFormName: string;
-  applicationProgramYearID: number;
-}
-
-/**
- * DTO for detailed application data
- */
-export interface GetApplicationDataDto extends GetApplicationBaseDTO {
-  applicationStatusUpdatedOn: string;
-  applicationOfferingIntensity: OfferingIntensity;
-  applicationStartDate: string;
-  applicationEndDate: string;
-  applicationInstitutionName: string;
-  applicationPIRStatus: ProgramInfoStatus;
-  applicationAssessmentStatus: AssessmentStatus;
-  applicationCOEStatus: COEStatus;
-  applicationPIRDeniedReason?: string;
-  applicationCOEDeniedReason?: string;
-  programYearStartDate: string;
-  programYearEndDate: string;
-  submittedDate?: Date;
-}
-
 export interface StudentApplicationDetails {
   applicationStatusUpdatedOn: string;
   applicationNumber: string;
@@ -154,17 +100,6 @@ export interface StudentApplicationDetailsForTracking {
 }
 
 /**
- * Interface for application summary
- */
-export interface ApplicationSummaryDTO extends ApplicationIdentifiersDTO {
-  studyStartPeriod: string;
-  studyEndPeriod: string;
-  applicationName: string;
-  submitted: string;
-  status: string;
-}
-
-/**
  * Interface for BaseAssessment values that are shared between FullTime and PartTime
  */
 export interface BaseAssessment {
@@ -178,6 +113,7 @@ export interface BaseAssessment {
   totalFamilyIncome: number;
   totalAssessmentNeed: number;
 }
+
 /**
  * Interface for FullTime assessment payload.
  */

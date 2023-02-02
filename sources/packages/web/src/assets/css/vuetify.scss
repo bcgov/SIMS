@@ -131,6 +131,13 @@
   border-bottom: 2px solid $common-border-color;
 }
 
+// CSS to match the height of progress bar as per figma.
+.stepper-progress-slider.v-slider.v-input--horizontal .v-slider-track__fill,
+.stepper-progress-slider.v-slider.v-input--horizontal
+  .v-slider-track__background {
+  max-height: $progress-bar-height;
+}
+
 // v-btn toggle background color for notes, to match with Figma.
 .btn-toggle button:not(.selected-btn-toggle) {
   color: $color-white !important;

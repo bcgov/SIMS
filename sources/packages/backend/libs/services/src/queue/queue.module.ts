@@ -8,6 +8,8 @@ import {
 import Redis, { Cluster, RedisOptions } from "ioredis";
 import { ConfigModule, ConfigService } from "@sims/utilities/config";
 import { QueueNames } from "@sims/utilities";
+import { QueueService } from "./queue.service";
+import { DatabaseModule } from "@sims/sims-db";
 
 /**
  * Creates root connection to redis standalone or redis cluster
@@ -16,6 +18,7 @@ import { QueueNames } from "@sims/utilities";
 @Global()
 @Module({
   imports: [
+    DatabaseModule,
     BullModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: getConnectionFactory,
@@ -23,7 +26,8 @@ import { QueueNames } from "@sims/utilities";
     }),
     BullModule.registerQueueAsync(...getQueueModules()),
   ],
-  exports: [BullModule],
+  providers: [QueueService],
+  exports: [BullModule, QueueService],
 })
 export class QueueModule {}
 
@@ -74,9 +78,14 @@ function getQueueModules(): BullModuleAsyncOptions[] {
     imports: [ConfigModule],
     useFactory: async (
       configService: ConfigService,
-    ): Promise<BullModuleOptions> => ({
-      prefix: configService.queuePrefix,
-    }),
-    inject: [ConfigService],
+      queueService: QueueService,
+    ): Promise<BullModuleOptions> => {
+      const queueConfig = await queueService.getQueueConfiguration(queue);
+      return {
+        prefix: configService.queuePrefix,
+        defaultJobOptions: queueConfig,
+      };
+    },
+    inject: [ConfigService, QueueService],
   }));
 }

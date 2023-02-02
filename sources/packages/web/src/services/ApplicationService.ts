@@ -1,84 +1,66 @@
 import {
-  CreateApplicationDraftResult,
-  SaveStudentApplicationDto,
-  ApplicationWithProgramYearDto,
-  ApplicationStatusToBeUpdatedDto,
-  GetApplicationDataDto,
-  GetApplicationBaseDTO,
   DataTableSortOrder,
   StudentApplicationFields,
   DEFAULT_PAGE_LIMIT,
   DEFAULT_PAGE_NUMBER,
-  ApplicationIdentifiersDTO,
 } from "@/types";
-import { MORE_THAN_ONE_APPLICATION_DRAFT_ERROR } from "@/types/contracts/ApiProcessError";
 import ApiClient from "../services/http/ApiClient";
 import {
   ApplicationSummaryAPIOutDTO,
   PaginatedResultsAPIOutDTO,
+  InProgressApplicationDetailsAPIOutDTO,
+  SaveApplicationAPIInDTO,
+  ApplicationWithProgramYearAPIOutDTO,
+  ApplicationDataAPIOutDTO,
+  ApplicationBaseAPIOutDTO,
+  ApplicationIdentifiersAPIOutDTO,
+  PrimaryIdentifierAPIOutDTO,
+  ApplicationProgressDetailsAPIOutDTO,
+  ApplicationCOEDetailsAPIOutDTO,
 } from "@/services/http/dto";
-import { InProgressApplicationDetailsAPIOutDTO } from "@/services/http/dto/Application.dto";
 
 export class ApplicationService {
   // Share Instance
   private static instance: ApplicationService;
 
-  public static get shared(): ApplicationService {
+  static get shared(): ApplicationService {
     return this.instance || (this.instance = new this());
   }
 
-  public async updateStudentApplicationStatus(
-    applicationId: number,
-    payload: ApplicationStatusToBeUpdatedDto,
-  ): Promise<void> {
-    await ApiClient.Application.updateStudentApplicationStatus(
-      applicationId,
-      payload,
-    );
+  async cancelStudentApplication(applicationId: number): Promise<void> {
+    await ApiClient.Application.cancelStudentApplication(applicationId);
   }
 
-  public async getApplicationData(
+  async getApplicationData(
     applicationId: number,
-  ): Promise<GetApplicationDataDto> {
+  ): Promise<ApplicationDataAPIOutDTO> {
     return ApiClient.Application.getApplicationData(applicationId);
   }
 
-  public async createApplicationDraft(
-    payload: SaveStudentApplicationDto,
-  ): Promise<CreateApplicationDraftResult> {
-    try {
-      const applicationId = await ApiClient.Application.createApplicationDraft(
-        payload,
-      );
-      return { draftAlreadyExists: false, draftId: applicationId };
-    } catch (error) {
-      if (
-        error.response.data?.errorType === MORE_THAN_ONE_APPLICATION_DRAFT_ERROR
-      ) {
-        return { draftAlreadyExists: true };
-      }
-      throw error;
-    }
+  async createApplicationDraft(
+    payload: SaveApplicationAPIInDTO,
+  ): Promise<PrimaryIdentifierAPIOutDTO> {
+    return ApiClient.Application.createApplicationDraft(payload);
   }
 
-  public async saveApplicationDraft(
+  async saveApplicationDraft(
     applicationId: number,
-    payload: SaveStudentApplicationDto,
-  ): Promise<number> {
-    return ApiClient.Application.saveApplicationDraft(applicationId, payload);
-  }
-
-  public async submitApplication(
-    applicationId: number,
-    payload: SaveStudentApplicationDto,
+    payload: SaveApplicationAPIInDTO,
   ): Promise<void> {
-    return ApiClient.Application.submitApplication(applicationId, payload);
+    await ApiClient.Application.saveApplicationDraft(applicationId, payload);
   }
 
-  public async getApplicationWithPY(
+  async submitApplication(
+    applicationId: number,
+    payload: SaveApplicationAPIInDTO,
+  ): Promise<void> {
+    await ApiClient.Application.submitApplication(applicationId, payload);
+  }
+
+  async getApplicationWithPY(
     applicationId: number,
     isIncludeInActiveProgramYear?: boolean,
-  ): Promise<ApplicationWithProgramYearDto> {
+  ): Promise<ApplicationWithProgramYearAPIOutDTO> {
     return ApiClient.Application.getApplicationWithPY(
       applicationId,
       isIncludeInActiveProgramYear,
@@ -86,13 +68,13 @@ export class ApplicationService {
   }
 
   /**
-   * Get application detail of given application
-   * @param applicationId
-   * @returns GetApplicationBaseDTO
+   * Get application detail of given application.
+   * @param applicationId for the application.
+   * @returns application details.
    */
   async getApplicationDetail(
     applicationId: number,
-  ): Promise<GetApplicationBaseDTO> {
+  ): Promise<ApplicationBaseAPIOutDTO> {
     return ApiClient.Application.getApplicationDetails(applicationId);
   }
 
@@ -121,9 +103,9 @@ export class ApplicationService {
     );
   }
 
-  public async getApplicationForRequestChange(
+  async getApplicationForRequestChange(
     applicationNumber: string,
-  ): Promise<ApplicationIdentifiersDTO> {
+  ): Promise<ApplicationIdentifiersAPIOutDTO> {
     return ApiClient.Application.getApplicationForRequestChange(
       applicationNumber,
     );
@@ -138,5 +120,27 @@ export class ApplicationService {
     applicationId: number,
   ): Promise<InProgressApplicationDetailsAPIOutDTO> {
     return ApiClient.Application.getInProgressApplicationDetails(applicationId);
+  }
+
+  /**
+   * Get status of all requests and confirmations in student application (Exception, PIR and COE).
+   * @param applicationId Student application.
+   * @returns application progress details.
+   */
+  async getApplicationProgressDetails(
+    applicationId: number,
+  ): Promise<ApplicationProgressDetailsAPIOutDTO> {
+    return ApiClient.Application.getApplicationProgressDetails(applicationId);
+  }
+
+  /**
+   * Get status of all enrollments of a student application.
+   * @param applicationId Student application.
+   * @returns application progress details.
+   */
+  async getApplicationEnrolmentDetails(
+    applicationId: number,
+  ): Promise<ApplicationCOEDetailsAPIOutDTO> {
+    return ApiClient.Application.getApplicationEnrolmentDetails(applicationId);
   }
 }

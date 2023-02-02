@@ -51,7 +51,7 @@ jobs:
       BUILD_REF: ${{ github.event.inputs.buildRef }}
       HOST_PREFIX: ${{ secrets.HOST_PREFIX }}
       BUILD_NAMESPACE: 0c27fb-tools
-      KEYCLOAK_REALM: "jxoe2o46"
+      KEYCLOAK_REALM: "aestsims"
       KEYCLOAK_AUTH_URL: ${{ secrets.KEYCLOAK_AUTH_URL }}
       BCeID_WEB_SERVICE_WSDL: ${{ secrets.BCeID_WEB_SERVICE_WSDL }}
       SITE_MINDER_LOGOUT_URL: ${{ secrets.SITE_MINDER_LOGOUT_URL }}
@@ -66,7 +66,6 @@ jobs:
       QUEUE_CONSUMERS_SECRET_NAME: ${{ secrets.OPENSHIFT_SIMS_CREDS_NAME }}
       FORMS_SECRET_NAME: ${{ secrets.FORMS_SECRET_NAME }}
       QUEUE_PREFIX: ${{ secrets.QUEUE_PREFIX }}
-      SCHEDULERS_IER_CRON: ${{ secrets.SCHEDULERS_IER_CRON }}
       API_PORT: ${{ secrets.API_PORT }}
       WEB_PORT: ${{ secrets.WEB_PORT }}
       DATABASE_NAME_KEY: ${{ secrets.DATABASE_NAME_KEY }}

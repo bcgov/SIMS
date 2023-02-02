@@ -1,17 +1,30 @@
-import { IsNotEmpty, IsNotEmptyObject, IsOptional } from "class-validator";
-import { ContactInfo, SupportingUserType } from "@sims/sims-db";
+import {
+  IsNotEmpty,
+  IsNotEmptyObject,
+  IsOptional,
+  Length,
+  MaxLength,
+} from "class-validator";
+import {
+  ContactInfo,
+  SupportingUserType,
+  APPLICATION_NUMBER_LENGTH,
+} from "@sims/sims-db";
+
+const STUDENT_LAST_NAME_MAX_LENGTH = 100;
 
 /**
  * Information used to uniquely identify a Student Application.
  * The application must be search using at least 3 criteria as
  * per defined by the Ministry policies.
  */
-export class ApplicationIdentifierApiInDTO {
-  @IsNotEmpty()
+export class ApplicationIdentifierAPIInDTO {
+  @Length(APPLICATION_NUMBER_LENGTH, APPLICATION_NUMBER_LENGTH)
   applicationNumber: string;
   @IsNotEmpty()
   studentsDateOfBirth: string;
   @IsNotEmpty()
+  @MaxLength(STUDENT_LAST_NAME_MAX_LENGTH)
   studentsLastName: string;
 }
 
@@ -20,8 +33,8 @@ export class ApplicationIdentifierApiInDTO {
  * The validation of the entire model will (and
  * must) be done by the Form.IO dry run.
  */
-export class UpdateSupportingUserApiInDTO {
-  @IsNotEmpty()
+export class UpdateSupportingUserAPIInDTO {
+  @Length(APPLICATION_NUMBER_LENGTH, APPLICATION_NUMBER_LENGTH)
   applicationNumber: string;
   @IsNotEmpty()
   addressLine1: string;
@@ -42,28 +55,28 @@ export class UpdateSupportingUserApiInDTO {
   @IsNotEmpty()
   studentsDateOfBirth: string;
   @IsNotEmpty()
+  @MaxLength(STUDENT_LAST_NAME_MAX_LENGTH)
   studentsLastName: string;
   @IsNotEmptyObject()
-  supportingData: any;
+  supportingData: unknown;
 }
 
-export class ApplicationApiOutDTO {
+export class ApplicationAPIOutDTO {
   programYearStartDate: string;
   formName: string;
 }
 
-export class ApplicationSupportingUsersApiOutDTO {
+export class ApplicationSupportingUsersAPIOutDTO {
   supportingUserId: number;
   supportingUserType: SupportingUserType;
 }
 
-export class SupportingUserFormDataApiOutDTO {
+export class SupportingUserFormDataAPIOutDTO {
   formName: string;
-  supportingData: any;
+  supportingData: unknown;
   contactInfo: ContactInfo;
   sin: string;
   birthDate: string;
-  gender: string;
   email: string;
   firstName: string;
   lastName: string;

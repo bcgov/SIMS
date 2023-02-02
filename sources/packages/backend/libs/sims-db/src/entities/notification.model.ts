@@ -7,6 +7,7 @@ import {
 } from "typeorm";
 import { ColumnNames, TableNames } from "../constant";
 import { NotificationMessage } from "./notification-message.model";
+import { PermanentFailureError } from "./notification-permanent-failure-error.type";
 import { RecordDataModel } from "./record.model";
 import { User } from "./user.model";
 
@@ -64,6 +65,18 @@ export class Notification extends RecordDataModel {
     nullable: true,
   })
   dateRead?: Date;
+
+  /**
+   * Error details of a permanent failure if occurred while processing the notification.
+   * A permanent failure indicates that a notification could not be delivered to
+   * the recipient due to bad data and must not be retried.
+   */
+  @Column({
+    name: "permanent_failure_error",
+    type: "jsonb",
+    nullable: true,
+  })
+  permanentFailureError: PermanentFailureError[];
 }
 
 /**
@@ -103,7 +116,16 @@ export enum NotificationMessageType {
    */
   InstitutionCompletesPIR = 7,
   /**
-   * Institution confirms enrolment for an application.
+   * Institution completes enrolment for an application.
    */
-  InstitutionConfirmsCOE = 8,
+  InstitutionCompletesCOE = 8,
+  /**
+   * Institution completes enrolment for an application.
+   * (i.e NOA approval status required or not required)
+   */
+  AssessmentReadyForConfirmation = 9,
+  /**
+   * SIN Validation complete.
+   */
+  SINValidationComplete = 10,
 }

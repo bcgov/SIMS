@@ -3,7 +3,7 @@ import { Allow } from "class-validator";
  * Filter param dynamic json.
  */
 export class ReportFilterParamAPIInDTO {
-  [columnName: string]: any;
+  [columnName: string]: unknown;
 }
 /**
  * API dto to define the criteria to extract the financial report.

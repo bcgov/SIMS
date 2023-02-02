@@ -26,7 +26,7 @@ export class ConfirmationOfEnrollmentApi extends HttpBaseClient {
   ): Promise<PaginatedResultsAPIOutDTO<COESummaryAPIOutDTO>> {
     let url = `location/${locationId}/confirmation-of-enrollment/enrollmentPeriod/${enrollmentPeriod}?`;
     url += getPaginationQueryString(paginationOptions);
-    return this.getCallTyped<PaginatedResultsAPIOutDTO<COESummaryAPIOutDTO>>(
+    return this.getCall<PaginatedResultsAPIOutDTO<COESummaryAPIOutDTO>>(
       this.addClientRoot(url),
     );
   }
@@ -41,7 +41,7 @@ export class ConfirmationOfEnrollmentApi extends HttpBaseClient {
     disbursementScheduleId: number,
     locationId: number,
   ): Promise<ApplicationDetailsForCOEAPIOutDTO> {
-    return this.getCallTyped<ApplicationDetailsForCOEAPIOutDTO>(
+    return this.getCall<ApplicationDetailsForCOEAPIOutDTO>(
       this.addClientRoot(
         `location/${locationId}/confirmation-of-enrollment/disbursement-schedule/${disbursementScheduleId}`,
       ),
@@ -54,25 +54,22 @@ export class ConfirmationOfEnrollmentApi extends HttpBaseClient {
    * hence the COE approval happens twice for application with more than once disbursement.
    * Irrespective of number of COEs to be approved, application status is set to complete
    * on first COE approval.
-   * @param locationId location id of the application.
    * @param disbursementScheduleId disbursement schedule id of COE.
+   * @param locationId location id of the application.
    * @param payload COE confirmation information.
    */
   async confirmEnrollment(
-    locationId: number,
     disbursementScheduleId: number,
-    payload: ConfirmationOfEnrollmentAPIInDTO,
+    locationId?: number,
+    payload?: ConfirmationOfEnrollmentAPIInDTO,
   ): Promise<void> {
-    try {
-      await this.patchCall(
-        this.addClientRoot(
-          `location/${locationId}/confirmation-of-enrollment/disbursement-schedule/${disbursementScheduleId}/confirm`,
-        ),
-        payload,
-      );
-    } catch (error: unknown) {
-      this.handleAPICustomError(error);
-    }
+    const baseUrl = locationId ? `location/${locationId}/` : "";
+    await this.patchCall(
+      this.addClientRoot(
+        `${baseUrl}confirmation-of-enrollment/disbursement-schedule/${disbursementScheduleId}/confirm`,
+      ),
+      payload,
+    );
   }
 
   /**
@@ -80,7 +77,7 @@ export class ConfirmationOfEnrollmentApi extends HttpBaseClient {
    * @returns COE denied reason list.
    */
   async getCOEDenialReasons(): Promise<COEDeniedReasonAPIOutDTO> {
-    return this.getCallTyped<COEDeniedReasonAPIOutDTO>(
+    return this.getCall<COEDeniedReasonAPIOutDTO>(
       this.addClientRoot("location/confirmation-of-enrollment/denial-reasons"),
     );
   }

@@ -20,10 +20,9 @@ export REDIS_STANDALONE_MODE := $(or $(REDIS_STANDALONE_MODE), true)
 export QUEUE_DASHBOARD_PASSWORD := $(or $(QUEUE_DASHBOARD_PASSWORD), queueboardpass)
 export QUEUE_DASHBOARD_USER := $(or $(QUEUE_DASHBOARD_USER), queueBoardUser)
 export QUEUE_PREFIX := $(or $(QUEUE_PREFIX), {sims-local})
-export SCHEDULERS_IER_CRON := $(or $(SCHEDULERS_IER_CRON), 0 17 * * *)
 # Key Cloak
-export KEYCLOAK_AUTH_URL := $(or $(KEYCLOAK_AUTH_URL), https://dev.oidc.gov.bc.ca/auth/)
-export KEYCLOAK_REALM := $(or $(KEYCLOAK_REALM), jxoe2o46)
+export KEYCLOAK_AUTH_URL := $(or $(KEYCLOAK_AUTH_URL), https://dev.loginproxy.gov.bc.ca/auth/)
+export KEYCLOAK_REALM := $(or $(KEYCLOAK_REALM), aestsims)
 export KEYCLOAK_CLIENT_STUDENT := $(or $(KEYCLOAK_CLIENT_STUDENT), student)
 export KEYCLOAK_CLIENT_INSTITUTION := $(or $(KEYCLOAK_CLIENT_INSTITUTION), institution)
 export KEYCLOAK_CLIENT_AEST := $(or $(KEYCLOAK_CLIENT_AEST), aest)
@@ -45,7 +44,23 @@ export APPLICATION_ARCHIVE_DAYS := $(or ${APPLICATION_ARCHIVE_DAYS}, 43)
 #Formio forms integration
 export FORMIO_SOURCE_REPO_URL := $(or ${FORMIO_SOURCE_REPO_URL}, https://github.com/formio/formio.git)
 export FORMIO_SOURCE_REPO_TAG := $(or ${FORMIO_SOURCE_REPO_TAG}, v2.5.3)
-
+#ATBC Integration
+export ATBC_USERNAME := $(or $(ATBC_USERNAME), )
+export ATBC_PASSWORD := $(or $(ATBC_PASSWORD), )
+export ATBC_APP := $(or $(ATBC_APP), )
+export ATBC_ENDPOINT := $(or $(ATBC_ENDPOINT), )
+export ATBC_LOGIN_ENDPOINT := $(or $(ATBC_LOGIN_ENDPOINT), )
+# ESDC
+export ESDC_REQUEST_FOLDER := $(or $(ESDC_REQUEST_FOLDER), MSFT-Request)
+export ESDC_RESPONSE_FOLDER := $(or $(ESDC_RESPONSE_FOLDER), MSFT-Response)
+export ESDC_ENVIRONMENT_CODE := $(or $(ESDC_ENVIRONMENT_CODE), )
+# CRA
+export CRA_REQUEST_FOLDER := $(or $(CRA_REQUEST_FOLDER), CRA-Request)
+export CRA_RESPONSE_FOLDER := $(or $(CRA_RESPONSE_FOLDER), CRA-Response)
+export CRA_PROGRAM_AREA_CODE := $(or $(CRA_PROGRAM_AREA_CODE), )
+export CRA_ENVIRONMENT_CODE := $(or $(CRA_ENVIRONMENT_CODE), )
+#Institution Integration
+export INSTITUTION_REQUEST_FOLDER := $(or $(INSTITUTION_REQUEST_FOLDER), Institution-Request)
 
 local:	| print-status local-build-run
 local-api: | print-status local-build api-only
@@ -183,5 +198,27 @@ queue-consumers:
 	@docker-compose -f docker-compose.yml build queue-consumers
 	@docker-compose -f docker-compose.yml up -d queue-consumers
 
+# Runs workers application
+workers:
+	@echo "+\n++ Make: Camunda workers only"
+	@docker-compose -f docker-compose.yml build workers
+	@docker-compose -f docker-compose.yml up -d workers
 
+# Enable local DB connection to Openshift DEV/TEST/QA
+connect-dev-db:
+	@echo "Forward local port 5454 to Openshift Patroni-master default port."
+	@echo "Use your prefered DB Manager (e.g. pgAdmin or DBeaver) to connect to the Postgres database using the local port 5454."
+	@oc project 0c27fb-dev
+	@oc port-forward services/patroni-master 5454:5432 
 
+connect-test-db:
+	@echo "Forward local port 5555 to Openshift Patroni-master default port."
+	@echo "Use your prefered DB Manager (e.g. pgAdmin or DBeaver) to connect to the Postgres database using the local port 5555."
+	@oc project 0c27fb-test
+	@oc port-forward services/patroni-master 5555:5432 
+
+connect-qa-db:
+	@echo "Forward local port 5656 to Openshift Patroni-master default port."
+	@echo "Use your prefered DB Manager (e.g. pgAdmin or DBeaver) to connect to the Postgres database using the local port 5656."
+	@oc project 0c27fb-test
+	@oc port-forward services/patroni-master 5656:5432 

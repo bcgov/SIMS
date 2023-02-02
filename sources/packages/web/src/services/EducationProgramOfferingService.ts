@@ -14,7 +14,7 @@ import {
   EducationProgramOfferingAPIOutDTO,
   EducationProgramOfferingSummaryAPIOutDTO,
   EducationProgramOfferingAPIInDTO,
-  OfferingStartDateAPIOutDTO,
+  OfferingDetailsAPIOutDTO,
   OptionItemAPIOutDTO,
   OfferingBulkInsertValidationResultAPIOutDTO,
   OfferingValidationResultAPIOutDTO,
@@ -187,14 +187,14 @@ export class EducationProgramOfferingService {
   }
 
   /**
-   * Get offering start date of a given offering.
+   * Get offering details.
    * @param offeringId offering id
-   * @returns offering with start date value.
+   * @returns offering details.
    */
-  async getProgramOfferingStartDate(
+  async getProgramOfferingDetails(
     offeringId: number,
-  ): Promise<OfferingStartDateAPIOutDTO> {
-    return ApiClient.EducationProgramOffering.getProgramOfferingStartDate(
+  ): Promise<OfferingDetailsAPIOutDTO> {
+    return ApiClient.EducationProgramOffering.getProgramOfferingDetails(
       offeringId,
     );
   }

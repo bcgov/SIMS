@@ -1,13 +1,18 @@
 <template>
   <application-status-tracker-banner
-    label="You've cancelled your application"
+    label="Your application was cancelled"
     icon="fa:fas fa-exclamation-circle"
     icon-color="danger"
     background-color="error-bg"
     ><template #content
-      >You cancelled your application on
+      >Your application was cancelled on
       {{ dateOnlyLongString(cancelledDate) }}. However you can still view your
-      application by clicking on the “Application actions” button.
+      application by clicking on the "Application actions" button. If you did
+      not cancel your application, it means that your application has been
+      cancelled due to changes in the study period made by your institution.
+      Please contact the Financial Aid Officer from your institution if you
+      require more information about the change. You'll need to submit a new
+      application with the updated study period information to proceed.
     </template>
   </application-status-tracker-banner>
 </template>

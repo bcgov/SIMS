@@ -71,30 +71,24 @@ export class StudentAccountApplicationStudentsController extends BaseController 
     @UserToken() userToken: IUserToken,
     @Body() payload: CreateStudentAccountApplicationAPIInDTO,
   ): Promise<PrimaryIdentifierAPIOutDTO> {
-    if (userToken.userId) {
-      // If a userId is present in the token it means the user is already present
-      // on DB so check for possible pending student account applications.
-      const hasPendingStudentAccountApplication =
-        await this.studentAccountApplicationsService.hasPendingStudentAccountApplication(
-          userToken.userId,
-        );
-      if (hasPendingStudentAccountApplication) {
-        throw new UnprocessableEntityException(
-          "There is already a student account application in progress.",
-        );
-      }
+    const hasPendingStudentAccountApplication =
+      await this.studentAccountApplicationsService.hasPendingStudentAccountApplication(
+        userToken.userName,
+      );
+    if (hasPendingStudentAccountApplication) {
       throw new UnprocessableEntityException(
         new ApiProcessError(
-          "The user is already present.",
+          "There is already a student account application in progress.",
           STUDENT_ACCOUNT_APPLICATION_USER_ALREADY_EXISTS,
         ),
       );
     }
 
-    const submissionResult = await this.formService.dryRunSubmission(
-      FormNames.StudentProfile,
-      payload.submittedData,
-    );
+    const submissionResult =
+      await this.formService.dryRunSubmission<StudentAccountApplicationCreateModel>(
+        FormNames.StudentProfile,
+        payload.submittedData,
+      );
 
     if (!submissionResult.valid) {
       throw new BadRequestException(
@@ -105,7 +99,7 @@ export class StudentAccountApplicationStudentsController extends BaseController 
     const newAccountApplication =
       await this.studentAccountApplicationsService.createStudentAccountApplication(
         userToken.userName,
-        submissionResult.data.data as StudentAccountApplicationCreateModel,
+        submissionResult.data.data,
       );
 
     return { id: newAccountApplication.id };
@@ -123,7 +117,7 @@ export class StudentAccountApplicationStudentsController extends BaseController 
   ): Promise<StudentAccountApplicationAPIOutDTO> {
     const hasPendingApplication =
       await this.studentAccountApplicationsService.hasPendingStudentAccountApplication(
-        studentUserToken.userId,
+        studentUserToken.userName,
       );
     return { hasPendingApplication };
   }

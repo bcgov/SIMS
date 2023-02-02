@@ -34,7 +34,7 @@ import {
   DesignationLocationsListItem,
 } from "@/components/partial-view/DesignationAgreement/DesignationAgreementForm.models";
 import { DesignationAgreementService } from "@/services/DesignationAgreementService";
-import { SubmitDesignationAgreementDto } from "@/types/contracts/DesignationAgreementContract";
+import { SubmitDesignationAgreementAPIInDTO } from "@/services/http/dto";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import { FormIOForm } from "@/types";
 
@@ -103,10 +103,10 @@ export default {
               requestForDesignation: location.requestForDesignation,
             }),
           ),
-        } as SubmitDesignationAgreementDto);
+        } as SubmitDesignationAgreementAPIInDTO);
         snackBar.success("Designation agreement submitted.");
         goBack();
-      } catch (error) {
+      } catch {
         snackBar.error(
           "An unexpected error happened during the designation agreement submission.",
         );

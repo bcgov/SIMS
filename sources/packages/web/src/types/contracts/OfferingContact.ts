@@ -38,7 +38,7 @@ export type OfferingFormBaseModel = Omit<
 export type OfferingFormCreateModel = Pick<OfferingFormModel, "mode">;
 
 /**
- * Dto for study break item.
+ * Interface for study break item.
  */
 export interface StudyBreak {
   breakStartDate: Date;

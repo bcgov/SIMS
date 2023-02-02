@@ -21,7 +21,6 @@
 import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
 import { useModalDialog, useSnackBar } from "@/composables";
 import { ApplicationService } from "@/services/ApplicationService";
-import { ApplicationStatus, ApplicationStatusToBeUpdatedDto } from "@/types";
 import { defineComponent } from "vue";
 
 export default defineComponent({
@@ -52,16 +51,10 @@ export default defineComponent({
 
     const cancelApplication = async () => {
       try {
-        const payload: ApplicationStatusToBeUpdatedDto = {
-          applicationStatus: ApplicationStatus.cancelled,
-        };
-        await ApplicationService.shared.updateStudentApplicationStatus(
-          applicationId,
-          payload,
-        );
+        await ApplicationService.shared.cancelStudentApplication(applicationId);
         resolvePromise(true);
         snackBar.success("Your application is now cancelled!");
-      } catch (error) {
+      } catch {
         snackBar.error("An error happened while cancelling the Application.");
         resolvePromise(false);
       }

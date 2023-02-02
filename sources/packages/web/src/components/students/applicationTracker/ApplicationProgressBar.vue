@@ -2,38 +2,15 @@
   <v-card class="p-4">
     <template v-if="applicationStatus !== ApplicationStatus.cancelled">
       <body-header title="Track your application" />
-      <v-slider
-        v-model="trackerApplicationStatus"
-        :ticks="applicationStatusTracker"
-        :max="4"
-        step="1"
-        show-ticks="always"
-        tick-size="0"
-        track-color="readonly"
-        :track-fill-color="trackFillColor"
-        :thumb-size="thumbSize"
-        :thumb-color="thumbColor"
-        track-size="20"
-        readonly
+      <stepper-progress-bar
+        :progressBarValue="trackerApplicationStatus"
+        :progressStepLabels="applicationTrackerLabels"
+        :progressBarColor="trackFillColor"
+        :initialStepSize="thumbSize"
         :disabled="disabled"
-        class="application-slider"
-      >
-        <template #tick-label="{ tick, index }">
-          <span
-            v-if="index === trackerApplicationStatus"
-            class="label-bold black-color"
-            >{{ tick.label }}
-            <v-icon
-              v-if="hasDeclinedCard"
-              icon="fa:fas fa-exclamation-circle"
-              :size="20"
-              color="danger"
-              class="pl-4"
-          /></span>
-          <span class="label-value black-color" v-else>{{ tick.label }} </span>
-        </template>
-      </v-slider>
-
+        :progressLabelIcon="applicationEndStatus.endStatusIcon"
+        :progressLabelIconColor="applicationEndStatus.endStatusType"
+      />
       <draft
         @editApplication="$emit('editApplication')"
         v-if="applicationStatus === ApplicationStatus.draft"
@@ -45,36 +22,63 @@
       <in-progress
         v-else-if="applicationStatus === ApplicationStatus.inProgress"
         :application-id="applicationId"
-        @declinedEvent="declinedEvent"
       />
       <assessment
         v-else-if="applicationStatus === ApplicationStatus.assessment"
+      />
+      <enrolment
+        v-else-if="applicationStatus === ApplicationStatus.enrollment"
+        :applicationId="applicationId"
+      />
+      <completed
+        v-else-if="applicationStatus === ApplicationStatus.completed"
+        :applicationId="applicationId"
       />
     </template>
     <cancelled
       v-else
       :application-id="applicationId"
-      :cancelled-date="statusUpdatedOn"
+      :cancelled-date="applicationProgressDetails.applicationStatusUpdatedOn"
     />
   </v-card>
 </template>
 <script lang="ts">
-import { ApplicationStatus } from "@/types";
-import { PropType, ref, defineComponent, computed } from "vue";
+import {
+  ApplicationStatus,
+  ProgramInfoStatus,
+  ApplicationExceptionStatus,
+  COEStatus,
+} from "@/types";
+import { PropType, ref, defineComponent, computed, onMounted } from "vue";
+import { ApplicationProgressDetailsAPIOutDTO } from "@/services/http/dto/Application.dto";
+import { ApplicationService } from "@/services/ApplicationService";
+import StepperProgressBar from "@/components/common/StepperProgressBar.vue";
 import Draft from "@/components/students/applicationTracker/Draft.vue";
 import Submitted from "@/components/students/applicationTracker/Submitted.vue";
 import InProgress from "@/components/students/applicationTracker/InProgress.vue";
 import Cancelled from "@/components/students/applicationTracker/Cancelled.vue";
 import Assessment from "@/components/students/applicationTracker/Assessment.vue";
+import Enrolment from "@/components/students/applicationTracker/Enrolment.vue";
+import Completed from "@/components/students/applicationTracker/Completed.vue";
+
+interface ApplicationEndStatusIconDetails {
+  endStatusType?: "success" | "error";
+  endStatusIcon?: string;
+}
+const INITIAL_THUMB_SIZE = 14;
+const DEFAULT_THUMB_SIZE = 0;
 
 export default defineComponent({
   emits: ["editApplication"],
   components: {
+    StepperProgressBar,
     Draft,
     Submitted,
     InProgress,
     Cancelled,
     Assessment,
+    Enrolment,
+    Completed,
   },
   props: {
     applicationId: {
@@ -85,40 +89,73 @@ export default defineComponent({
       type: String as PropType<ApplicationStatus>,
       required: true,
     },
-    statusUpdatedOn: {
-      type: String,
-      required: true,
-    },
   },
   setup(props) {
     const hasDeclinedCard = ref(false);
-    const applicationStatusTracker = ref<Record<number, ApplicationStatus>>({
-      0: ApplicationStatus.submitted,
-      1: ApplicationStatus.inProgress,
-      2: ApplicationStatus.assessment,
-      3: ApplicationStatus.enrollment,
-      4: ApplicationStatus.completed,
-    });
-    // trackFillColor will vary when more status are added.
-    const trackFillColor = ref("warning");
-
-    const applicationStatusOrder = (status: ApplicationStatus) => {
-      const [key] =
-        Object.entries(applicationStatusTracker.value).find(
-          ([, value]) => value === status,
-        ) ?? [];
-
-      if (key !== undefined) {
-        return +key;
+    const applicationTrackerLabels = [
+      ApplicationStatus.submitted,
+      ApplicationStatus.inProgress,
+      ApplicationStatus.assessment,
+      ApplicationStatus.enrollment,
+      ApplicationStatus.completed,
+    ];
+    const applicationProgressDetails = ref(
+      {} as ApplicationProgressDetailsAPIOutDTO,
+    );
+    const applicationEndStatus = ref({} as ApplicationEndStatusIconDetails);
+    const trackFillColor = computed(() => {
+      if (applicationEndStatus.value.endStatusType === "error") {
+        return "error";
       }
-    };
+      if (props.applicationStatus === ApplicationStatus.completed) {
+        return "success";
+      }
+      return "warning";
+    });
+
+    onMounted(async () => {
+      applicationProgressDetails.value =
+        await ApplicationService.shared.getApplicationProgressDetails(
+          props.applicationId,
+        );
+      // Application is complete.
+      if (
+        applicationProgressDetails.value.firstCOEStatus ===
+          COEStatus.completed &&
+        (!applicationProgressDetails.value.secondCOEStatus ||
+          applicationProgressDetails.value.secondCOEStatus ===
+            COEStatus.completed)
+      ) {
+        applicationEndStatus.value = {
+          endStatusType: "success",
+          endStatusIcon: "fa:fas fa-check-circle",
+        };
+      }
+      // One of the requests or confirmation is declined.
+      else if (
+        applicationProgressDetails.value.pirStatus ===
+          ProgramInfoStatus.declined ||
+        applicationProgressDetails.value.exceptionStatus ===
+          ApplicationExceptionStatus.Declined ||
+        applicationProgressDetails.value.firstCOEStatus ===
+          COEStatus.declined ||
+        applicationProgressDetails.value.secondCOEStatus === COEStatus.declined
+      ) {
+        applicationEndStatus.value = {
+          endStatusType: "error",
+          endStatusIcon: "fa:fas fa-exclamation-circle",
+        };
+      }
+    });
 
     const trackerApplicationStatus = computed(() =>
-      applicationStatusOrder(props.applicationStatus),
+      applicationTrackerLabels.findIndex(
+        (status) => status === props.applicationStatus,
+      ),
     );
 
-    const disabled = computed(() =>
-      props.applicationStatus === ApplicationStatus.draft ? true : false,
+    const disabled = computed(
+      () => props.applicationStatus === ApplicationStatus.draft,
     );
 
     const thumbColor = computed(() =>
@@ -130,19 +167,12 @@ export default defineComponent({
       [ApplicationStatus.draft, ApplicationStatus.submitted].includes(
         props.applicationStatus,
       )
-        ? 20
-        : 0,
+        ? INITIAL_THUMB_SIZE
+        : DEFAULT_THUMB_SIZE,
     );
 
-    // Emit this function whenever there is a declined card (i.e whenever
-    // exclamation icon needs to be shown). eg, Inprogress denial cards.
-    const declinedEvent = () => {
-      hasDeclinedCard.value = true;
-      trackFillColor.value = "error";
-    };
-
     return {
-      applicationStatusTracker,
+      applicationTrackerLabels,
       trackerApplicationStatus,
       disabled,
       trackFillColor,
@@ -150,7 +180,8 @@ export default defineComponent({
       thumbSize,
       ApplicationStatus,
       hasDeclinedCard,
-      declinedEvent,
+      applicationEndStatus,
+      applicationProgressDetails,
     };
   },
 });

@@ -47,9 +47,9 @@ export class StudentApi extends HttpBaseClient {
   async getStudentProfile(
     studentId?: number,
   ): Promise<StudentProfileAPIOutDTO> {
-    return this.getCallTyped<
-      StudentProfileAPIOutDTO | AESTStudentProfileAPIOutDTO
-    >(this.addClientRoot(`student/${studentId ?? ""}`));
+    return this.getCall<StudentProfileAPIOutDTO | AESTStudentProfileAPIOutDTO>(
+      this.addClientRoot(`student/${studentId ?? ""}`),
+    );
   }
 
   /**
@@ -59,11 +59,7 @@ export class StudentApi extends HttpBaseClient {
    * from the API with the error code MISSING_STUDENT_ACCOUNT.
    */
   public async synchronizeFromUserToken(): Promise<void> {
-    try {
-      await this.patchCall(this.addClientRoot("student/sync"), null, true);
-    } catch (error: unknown) {
-      this.handleAPICustomError(error);
-    }
+    await this.patchCall(this.addClientRoot("student/sync"), null);
   }
 
   /**
@@ -72,7 +68,7 @@ export class StudentApi extends HttpBaseClient {
    * SIN validation must be already done with a successful result.
    */
   async applyForPDStatus(): Promise<void> {
-    await this.patchCall(this.addClientRoot("/atbc/apply-pd-status"), null);
+    await this.patchCall(this.addClientRoot("atbc/apply-pd-status"), null);
   }
 
   /**
@@ -93,14 +89,10 @@ export class StudentApi extends HttpBaseClient {
   async saveStudentFiles(
     studentFilesPayload: StudentFileUploaderAPIInDTO,
   ): Promise<void> {
-    try {
-      await this.patchCall<StudentFileUploaderAPIInDTO>(
-        this.addClientRoot("student/save-uploaded-files"),
-        studentFilesPayload,
-      );
-    } catch (error: unknown) {
-      this.handleAPICustomError(error);
-    }
+    await this.patchCall<StudentFileUploaderAPIInDTO>(
+      this.addClientRoot("student/save-uploaded-files"),
+      studentFilesPayload,
+    );
   }
 
   /**
@@ -127,7 +119,7 @@ export class StudentApi extends HttpBaseClient {
    * @return list of student documents.
    */
   async getStudentFiles(): Promise<StudentUploadFileAPIOutDTO[]> {
-    return this.getCallTyped<StudentUploadFileAPIOutDTO[]>(
+    return this.getCall<StudentUploadFileAPIOutDTO[]>(
       this.addClientRoot("student/documents"),
     );
   }
@@ -139,7 +131,7 @@ export class StudentApi extends HttpBaseClient {
   async getAESTStudentFiles(
     studentId: number,
   ): Promise<AESTStudentFileAPIOutDTO[]> {
-    return this.getCallTyped<AESTStudentFileAPIOutDTO[]>(
+    return this.getCall<AESTStudentFileAPIOutDTO[]>(
       this.addClientRoot(`student/${studentId}/documents`),
     );
   }
@@ -152,7 +144,7 @@ export class StudentApi extends HttpBaseClient {
   async getStudentSINValidations(
     studentId: number,
   ): Promise<SINValidationsAPIOutDTO[]> {
-    return this.getCallTyped<SINValidationsAPIOutDTO[]>(
+    return this.getCall<SINValidationsAPIOutDTO[]>(
       this.addClientRoot(`student/${studentId}/sin-validations`),
     );
   }

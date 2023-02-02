@@ -71,7 +71,7 @@ export class DisbursementSchedule extends RecordDataModel {
     (disbursementValue) => disbursementValue.disbursementSchedule,
     {
       eager: false,
-      cascade: true,
+      cascade: ["insert", "update"],
       onDelete: "CASCADE",
       nullable: true,
     },

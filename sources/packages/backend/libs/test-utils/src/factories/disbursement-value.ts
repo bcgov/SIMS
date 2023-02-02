@@ -7,9 +7,12 @@ import {
 export function createFakeDisbursementValue(
   valueType: DisbursementValueType,
   valueCode: string,
-  valueAmount: string,
-  overawardAmountSubtracted?: string,
-  disbursedAmountSubtracted?: string,
+  valueAmount: number,
+  options?: {
+    overawardAmountSubtracted?: number;
+    disbursedAmountSubtracted?: number;
+    effectiveAmount?: number;
+  },
   relations?: {
     disbursementSchedule: DisbursementSchedule;
   },
@@ -18,8 +21,11 @@ export function createFakeDisbursementValue(
   disbursementValue.valueType = valueType;
   disbursementValue.valueCode = valueCode;
   disbursementValue.valueAmount = valueAmount;
-  disbursementValue.overawardAmountSubtracted = overawardAmountSubtracted;
-  disbursementValue.disbursedAmountSubtracted = disbursedAmountSubtracted;
+  disbursementValue.overawardAmountSubtracted =
+    options?.overawardAmountSubtracted;
+  disbursementValue.disbursedAmountSubtracted =
+    options?.disbursedAmountSubtracted;
   disbursementValue.disbursementSchedule = relations?.disbursementSchedule;
+  disbursementValue.effectiveAmount = options?.effectiveAmount;
   return disbursementValue;
 }
