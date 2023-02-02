@@ -25,7 +25,6 @@ import { StudentUserToken } from "../../auth/userToken.interface";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import {
   AllowAuthorizedParty,
-  PayloadMaxSize,
   RequiresStudentAccount,
   UserToken,
 } from "../../auth/decorators";
@@ -107,7 +106,6 @@ export class StudentStudentsController extends BaseController {
     description: "User is not allowed to create a student account.",
   })
   @RequiresStudentAccount(false)
-  @PayloadMaxSize(2048)
   async create(
     @UserToken() studentUserToken: StudentUserToken,
     @Body() payload: CreateStudentAPIInDTO,
@@ -322,7 +320,6 @@ export class StudentStudentsController extends BaseController {
   @ApiBadRequestResponse({
     description: "Not able to update a student due to an invalid request.",
   })
-  @PayloadMaxSize(2048)
   async update(
     @UserToken() studentUserToken: StudentUserToken,
     @Body() payload: UpdateStudentAPIInDTO,

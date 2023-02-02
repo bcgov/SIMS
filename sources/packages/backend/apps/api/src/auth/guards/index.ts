@@ -6,4 +6,3 @@ export * from "./active-user.guard";
 export * from "./groups.guard";
 export * from "./sin-validation.guard";
 export * from "./requires-student-account.guard";
-export * from "./payload-max-size.guard";

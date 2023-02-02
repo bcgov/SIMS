@@ -1,22 +1,29 @@
 import { Type } from "class-transformer";
 import {
+  ArrayMaxSize,
   ArrayMinSize,
   IsDefined,
   IsEnum,
   IsNotEmpty,
   IsPositive,
+  MaxLength,
   ValidateNested,
 } from "class-validator";
 import { StudentAppealStatus } from "@sims/sims-db";
 import { JsonMaxSize } from "../../../utilities/class-validation";
+
+const JSON_10KB = 10240;
+const FORM_NAME_MAX_LENGTH = 200;
+
 /**
  * DTO for student appeal request.
  */
 export class StudentAppealRequestAPIInDTO {
   @IsNotEmpty()
+  @MaxLength(FORM_NAME_MAX_LENGTH)
   formName: string;
   @IsDefined()
-  @JsonMaxSize(10240)
+  @JsonMaxSize(JSON_10KB)
   formData: unknown;
 }
 
@@ -25,6 +32,7 @@ export class StudentAppealRequestAPIInDTO {
  */
 export class StudentAppealAPIInDTO {
   @ArrayMinSize(1)
+  @ArrayMaxSize(50)
   @ValidateNested({ each: true })
   @Type(() => StudentAppealRequestAPIInDTO)
   studentAppealRequests: StudentAppealRequestAPIInDTO[];

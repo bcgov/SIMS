@@ -14,7 +14,6 @@ import {
   AllowAuthorizedParty,
   HasLocationAccess,
   UserToken,
-  PayloadMaxSize,
 } from "../../auth/decorators";
 import { EducationProgramsSummary } from "../../services/education-program/education-program.service.models";
 import {
@@ -76,7 +75,6 @@ export class EducationProgramInstitutionsController extends BaseController {
   @ApiUnprocessableEntityResponse({
     description: "Not able to a save the program due to an invalid request.",
   })
-  @PayloadMaxSize(2048)
   @Post()
   async createEducationProgram(
     @Body() payload: EducationProgramAPIInDTO,

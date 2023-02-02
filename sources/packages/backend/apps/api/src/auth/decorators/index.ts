@@ -8,4 +8,3 @@ export * from "./allow-inactive-user.decorator";
 export * from "./groups.decorator";
 export * from "./check-sin-status.decorator";
 export * from "./requires-student-account.decorator";
-export * from "./payload-max-size.decorator";

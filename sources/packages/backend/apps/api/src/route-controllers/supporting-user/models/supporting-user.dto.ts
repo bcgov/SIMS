@@ -13,6 +13,7 @@ import {
 import { JsonMaxSize } from "../../../utilities/class-validation";
 
 const STUDENT_LAST_NAME_MAX_LENGTH = 100;
+const JSON_10KB = 10240;
 
 /**
  * Information used to uniquely identify a Student Application.
@@ -59,7 +60,7 @@ export class UpdateSupportingUserAPIInDTO {
   @MaxLength(STUDENT_LAST_NAME_MAX_LENGTH)
   studentsLastName: string;
   @IsNotEmptyObject()
-  @JsonMaxSize(10240)
+  @JsonMaxSize(JSON_10KB)
   supportingData: unknown;
 }
 

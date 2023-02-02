@@ -12,11 +12,7 @@ export class AppAllExceptionsFilter extends BaseExceptionFilter {
     // Logging Additional info
     this.logger.error("Unhandled exception");
     this.logger.error(`Request path [${request.path}]`);
-    this.logger.error(
-      `Exception details: \n ***** \n\t${
-        exception["response"] ? exception["response"]["message"] : exception
-      } \n *****`,
-    );
+    this.logger.error(`${JSON.stringify(exception)}`);
 
     // Calling super
     super.catch(exception, host);

@@ -29,7 +29,6 @@ import { INSTITUTION_TYPE_BC_PRIVATE } from "@sims/sims-db/constant";
 import { ApiProcessError } from "../../types";
 import { ApiUnprocessableEntityResponse } from "@nestjs/swagger";
 import { SaveEducationProgram } from "../../services/education-program/education-program.service.models";
-import { PayloadMaxSize } from "../../auth/decorators";
 
 @Injectable()
 export class EducationProgramControllerService {
@@ -91,7 +90,6 @@ export class EducationProgramControllerService {
       "Not able to a save the program due to an invalid request or " +
       "SABC code is duplicated.",
   })
-  @PayloadMaxSize(20480)
   async saveProgram(
     payload: EducationProgramAPIInDTO,
     institutionId: number,

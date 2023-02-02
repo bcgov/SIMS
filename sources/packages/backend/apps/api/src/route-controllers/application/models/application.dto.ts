@@ -13,12 +13,14 @@ import {
 } from "@sims/sims-db";
 import { JsonMaxSize } from "../../../utilities/class-validation";
 
+const JSON_20KB = 2048;
+
 export class SaveApplicationAPIInDTO {
   /**
    * Application dynamic data.
    */
   @IsObject()
-  @JsonMaxSize(20480)
+  @JsonMaxSize(JSON_20KB)
   data: any;
   /**
    * Array of unique file names to be associated

@@ -10,13 +10,10 @@ import {
  */
 @ValidatorConstraint()
 class JsonMaxSizeConstraint implements ValidatorConstraintInterface {
-  validate(json: object, args: ValidationArguments): boolean {
+  validate(json: unknown, args: ValidationArguments): boolean {
     const [maxSize] = args.constraints;
     const stringifiedJson = JSON.stringify(json);
-    if (stringifiedJson.length > maxSize) {
-      return false;
-    }
-    return true;
+    return stringifiedJson.length <= maxSize;
   }
 
   defaultMessage(args: ValidationArguments) {

@@ -23,7 +23,6 @@ import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import {
   AllowAuthorizedParty,
-  PayloadMaxSize,
   RequiresStudentAccount,
   UserToken,
 } from "../../auth/decorators";
@@ -76,7 +75,6 @@ export class StudentAppealStudentsController extends BaseController {
   @ApiBadRequestResponse({
     description: "Not able to submit student appeal due to invalid request.",
   })
-  @PayloadMaxSize(20480)
   @Post("application/:applicationId")
   async submitStudentAppeal(
     @Param("applicationId", ParseIntPipe) applicationId: number,

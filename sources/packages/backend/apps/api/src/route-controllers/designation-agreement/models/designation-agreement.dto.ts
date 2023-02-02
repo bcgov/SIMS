@@ -22,6 +22,7 @@ import {
 } from "class-validator";
 
 const PAGINATION_SEARCH_MAX_LENGTH = 200;
+const JSON_20KB = 2048;
 
 /**
  * Approve/Deny a designation agreement.
@@ -63,7 +64,7 @@ export class UpdateDesignationAPIInDTO {
  * be validated by the form.io dryrun validation.
  */
 export class SubmitDesignationAgreementAPIInDTO {
-  @JsonMaxSize(20480)
+  @JsonMaxSize(JSON_20KB)
   dynamicData: unknown;
   /**
    * Locations being designated.

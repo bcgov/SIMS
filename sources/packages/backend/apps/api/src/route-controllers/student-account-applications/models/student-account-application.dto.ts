@@ -2,9 +2,11 @@ import { JsonMaxSize } from "../../../utilities/class-validation";
 import { Allow, IsNotEmptyObject } from "class-validator";
 import { CreateStudentAPIInDTO } from "../../../route-controllers/student/models/student.dto";
 
+const JSON_10KB = 10240;
+
 export class CreateStudentAccountApplicationAPIInDTO {
   @IsNotEmptyObject()
-  @JsonMaxSize(10240)
+  @JsonMaxSize(JSON_10KB)
   submittedData: unknown;
 }
 

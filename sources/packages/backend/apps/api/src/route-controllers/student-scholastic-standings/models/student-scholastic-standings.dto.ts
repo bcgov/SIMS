@@ -3,6 +3,8 @@ import { JsonMaxSize } from "../../../utilities/class-validation";
 import { IsNotEmptyObject } from "class-validator";
 import { ActiveApplicationDataAPIOutDTO } from "../../../route-controllers/institution-locations/models/application.dto";
 
+const JSON_10KB = 10240;
+
 /**
  * The API will also allow other property that are not added below.
  */
@@ -21,7 +23,7 @@ export class ScholasticStandingDataAPIInDTO {
 // This DTO must/will be validated using the dryRun.
 export class ScholasticStandingAPIInDTO {
   @IsNotEmptyObject()
-  @JsonMaxSize(10240)
+  @JsonMaxSize(JSON_10KB)
   data: ScholasticStandingDataAPIInDTO;
 }
 

@@ -22,7 +22,6 @@ import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import {
   AllowAuthorizedParty,
   Groups,
-  PayloadMaxSize,
   Roles,
   UserToken,
 } from "../../auth/decorators";
@@ -132,7 +131,6 @@ export class StudentAccountApplicationAESTController extends BaseController {
       "Not able to approved the student account application due to an invalid request.",
   })
   @Roles(Role.StudentApproveDeclineAccountRequests)
-  @PayloadMaxSize(10240)
   @Post(":studentAccountApplicationId/approve")
   async approveStudentAccountApplication(
     @Param("studentAccountApplicationId", ParseIntPipe)
