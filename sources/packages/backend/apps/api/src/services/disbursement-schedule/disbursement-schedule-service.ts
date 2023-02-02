@@ -99,13 +99,13 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
         .where("id = :disbursementScheduleId", { disbursementScheduleId })
         .execute();
 
-      if (applicationStatus === ApplicationStatus.enrollment) {
+      if (applicationStatus === ApplicationStatus.Enrolment) {
         await transactionalEntityManager
           .getRepository(Application)
           .createQueryBuilder()
           .update(Application)
           .set({
-            applicationStatus: ApplicationStatus.completed,
+            applicationStatus: ApplicationStatus.Completed,
             modifier: auditUser,
             updatedAt: now,
           })
@@ -162,7 +162,7 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
       .innerJoin("student.user", "user")
       .where("location.id = :locationId", { locationId })
       .andWhere("application.applicationStatus IN (:...status)", {
-        status: [ApplicationStatus.enrollment, ApplicationStatus.completed],
+        status: [ApplicationStatus.Enrolment, ApplicationStatus.Completed],
       });
     if (enrollmentPeriod === EnrollmentPeriod.Upcoming) {
       coeQuery.andWhere(
@@ -270,7 +270,7 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
       .leftJoin("disbursement.coeDeniedReason", "coeDeniedReason")
       .where("location.id = :locationId", { locationId })
       .andWhere("application.applicationStatus IN (:...status)", {
-        status: [ApplicationStatus.enrollment, ApplicationStatus.completed],
+        status: [ApplicationStatus.Enrolment, ApplicationStatus.Completed],
       })
       .andWhere("disbursement.id = :disbursementScheduleId", {
         disbursementScheduleId,
@@ -320,7 +320,7 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
         required: COEStatus.required,
       })
       .andWhere("application.applicationStatus IN (:...status)", {
-        status: [ApplicationStatus.enrollment, ApplicationStatus.completed],
+        status: [ApplicationStatus.Enrolment, ApplicationStatus.Completed],
       });
 
     if (locationId) {
@@ -414,7 +414,7 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
       .innerJoin("application.currentAssessment", "currentAssessment")
       .leftJoin("disbursementSchedule.coeDeniedReason", "coeDeniedReason")
       .where("application.applicationStatus IN (:...status)", {
-        status: [ApplicationStatus.enrollment, ApplicationStatus.completed],
+        status: [ApplicationStatus.Enrolment, ApplicationStatus.Completed],
       })
       .andWhere("application.id = :applicationId", {
         applicationId: applicationId,

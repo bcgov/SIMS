@@ -201,7 +201,7 @@ export class ECertGenerationService {
         disbursementMinDate,
       })
       .andWhere("application.applicationStatus = :applicationStatus", {
-        applicationStatus: ApplicationStatus.completed,
+        applicationStatus: ApplicationStatus.Completed,
       })
       .andWhere("msfaaNumber.dateSigned IS NOT NULL")
       .andWhere("msfaaNumber.cancelledDate IS NULL")

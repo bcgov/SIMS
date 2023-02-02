@@ -976,8 +976,8 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
         "application.applicationStatus NOT IN (:...invalidOfferingChangeStatus)",
         {
           invalidOfferingChangeStatus: [
-            ApplicationStatus.cancelled,
-            ApplicationStatus.overwritten,
+            ApplicationStatus.Cancelled,
+            ApplicationStatus.Overwritten,
           ],
         },
       )
@@ -1018,8 +1018,8 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
         "application.applicationStatus NOT IN (:...invalidOfferingChangeStatus)",
         {
           invalidOfferingChangeStatus: [
-            ApplicationStatus.cancelled,
-            ApplicationStatus.overwritten,
+            ApplicationStatus.Cancelled,
+            ApplicationStatus.Overwritten,
           ],
         },
       )
@@ -1089,7 +1089,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       applications = await this.getApplicationsToSubmitReassessment(offeringId);
 
       for (const application of applications) {
-        if (application.applicationStatus === ApplicationStatus.completed) {
+        if (application.applicationStatus === ApplicationStatus.Completed) {
           application.currentAssessment = {
             application: { id: application.id } as Application,
             triggerType: AssessmentTriggerType.OfferingChange,
@@ -1104,7 +1104,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
         // If the application which is affected by offering change is not completed
         // then set the application as cancelled as it cannot be re-assessed.
         else {
-          application.applicationStatus = ApplicationStatus.cancelled;
+          application.applicationStatus = ApplicationStatus.Cancelled;
         }
 
         application.modifier = auditUser;
@@ -1182,7 +1182,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
         });
         promises.push(deleteAssessmentPromise);
       }
-      if (application.applicationStatus === ApplicationStatus.completed) {
+      if (application.applicationStatus === ApplicationStatus.Completed) {
         const startAssessmentPromise =
           this.workflowClientService.startApplicationAssessment(
             application.workflowName,

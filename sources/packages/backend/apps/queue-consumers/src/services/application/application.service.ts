@@ -44,7 +44,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
       .update(Application)
       .set({ isArchived: true, modifier: auditUser })
       .where(`applications.id IN (${applicationsToArchive})`)
-      .setParameter("completed", ApplicationStatus.completed)
+      .setParameter("completed", ApplicationStatus.Completed)
       .setParameter(
         "applicationArchiveDays",
         this.configService.applicationArchiveDays,

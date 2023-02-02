@@ -161,9 +161,9 @@ export class ApplicationService extends RecordDataModelService<Application> {
       );
     }
 
-    if (application.applicationStatus !== ApplicationStatus.assessment) {
+    if (application.applicationStatus !== ApplicationStatus.Assessment) {
       throw new CustomNamedError(
-        `Student Application is not in the expected status. The application must be in application status '${ApplicationStatus.assessment}' for an MSFAA number be assigned.`,
+        `Student Application is not in the expected status. The application must be in application status '${ApplicationStatus.Assessment}' for an MSFAA number be assigned.`,
         INVALID_OPERATION_IN_THE_CURRENT_STATUS,
       );
     }
@@ -240,7 +240,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
       .innerJoin("applications.msfaaNumber", "msfaaNumbers")
       .innerJoin("applications.student", "students")
       .where("applications.applicationStatus = :completedStatus", {
-        completedStatus: ApplicationStatus.completed,
+        completedStatus: ApplicationStatus.Completed,
       })
       .andWhere("assessment.triggerType = :triggerType", {
         triggerType: AssessmentTriggerType.OriginalAssessment,

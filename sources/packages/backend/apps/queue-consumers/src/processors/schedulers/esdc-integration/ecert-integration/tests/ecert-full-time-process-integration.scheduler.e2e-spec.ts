@@ -152,7 +152,7 @@ describe("Schedulers - e-Cert full time integration - Create e-Cert file", () =>
       fakeOriginalAssessment,
     );
     savedApplication.currentAssessment = savedOriginalAssessment;
-    savedApplication.applicationStatus = ApplicationStatus.completed;
+    savedApplication.applicationStatus = ApplicationStatus.Completed;
     await applicationRepo.save(savedApplication);
     // Create fake overawards.
     const fakeCanadaLoanOverawardBalance = createFakeDisbursementOveraward({

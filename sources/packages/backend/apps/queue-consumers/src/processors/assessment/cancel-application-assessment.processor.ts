@@ -55,10 +55,10 @@ export class CancelApplicationAssessmentProcessor {
     }
 
     if (
-      assessment.application.applicationStatus !== ApplicationStatus.cancelled
+      assessment.application.applicationStatus !== ApplicationStatus.Cancelled
     ) {
       await job.discard();
-      const errorMessage = `Application must be in the ${ApplicationStatus.cancelled} state to have the assessment cancelled.`;
+      const errorMessage = `Application must be in the ${ApplicationStatus.Cancelled} state to have the assessment cancelled.`;
       this.logger.error(errorMessage);
       throw new Error(errorMessage);
     }
