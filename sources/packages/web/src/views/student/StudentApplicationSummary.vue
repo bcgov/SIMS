@@ -84,7 +84,7 @@ export default {
       status: ApplicationStatus,
       applicationId: number,
     ) => {
-      if (status !== ApplicationStatus.draft)
+      if (status !== ApplicationStatus.Draft)
         confirmEditApplication(applicationId);
       else goToEditApplication(applicationId);
     };

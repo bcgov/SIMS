@@ -21,7 +21,7 @@ export function createFakeApplication(
   application.programYear = programYear ?? createFakeProgramYear();
   application.student = student ?? createFakeStudent();
   application.applicationStatusUpdatedOn = getUTCNow();
-  application.applicationStatus = ApplicationStatus.submitted;
+  application.applicationStatus = ApplicationStatus.Submitted;
   application.relationshipStatus = RelationshipStatus.Single;
   application.currentAssessment = currentStudentAssessment;
   return application;

@@ -74,8 +74,8 @@
             <span
               v-if="
                 !(
-                  slotProps.data.status === ApplicationStatus.cancelled ||
-                  slotProps.data.status === ApplicationStatus.completed
+                  slotProps.data.status === ApplicationStatus.Cancelled ||
+                  slotProps.data.status === ApplicationStatus.Completed
                 )
               "
             >

@@ -45,7 +45,7 @@
       </header-navigator>
       <detail-header
         :headerMap="headerMap"
-        v-if="applicationDetails.applicationStatus !== ApplicationStatus.draft"
+        v-if="applicationDetails.applicationStatus !== ApplicationStatus.Draft"
       />
     </template>
 
@@ -64,7 +64,7 @@
   <!-- Submitted date footer. -->
   <div
     class="text-center my-3 muted-content"
-    v-if="applicationDetails.applicationStatus !== ApplicationStatus.draft"
+    v-if="applicationDetails.applicationStatus !== ApplicationStatus.Draft"
   >
     <span class="header-text-small">Date submitted: </span
     ><span class="value-text-small">{{
@@ -119,9 +119,9 @@ export default defineComponent({
 
     const showViewAssessment = computed(() =>
       [
-        ApplicationStatus.assessment,
-        ApplicationStatus.enrollment,
-        ApplicationStatus.completed,
+        ApplicationStatus.Assessment,
+        ApplicationStatus.Enrolment,
+        ApplicationStatus.Completed,
       ].includes(applicationDetails.value?.applicationStatus),
     );
 
@@ -182,16 +182,16 @@ export default defineComponent({
       items.value = [];
       if (
         applicationDetails.value.applicationStatus !==
-          ApplicationStatus.cancelled &&
+          ApplicationStatus.Cancelled &&
         applicationDetails.value.applicationStatus !==
-          ApplicationStatus.completed
+          ApplicationStatus.Completed
       ) {
         items.value.push({
           label: "Edit application",
           icon: "fa:fa fa-pencil-alt",
           command:
             applicationDetails.value.applicationStatus ===
-            ApplicationStatus.draft
+            ApplicationStatus.Draft
               ? editApplication
               : confirmEditApplication,
         });
@@ -206,7 +206,7 @@ export default defineComponent({
       }
       if (
         applicationDetails.value.applicationStatus ===
-        ApplicationStatus.completed
+        ApplicationStatus.Completed
       ) {
         items.value.push({
           label: "Request a change",

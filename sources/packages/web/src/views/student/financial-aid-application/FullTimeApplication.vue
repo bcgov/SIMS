@@ -134,14 +134,14 @@ export default {
       // Adjust the spaces when optional fields are not present.
       isReadOnly.value =
         [
-          ApplicationStatus.completed,
-          ApplicationStatus.cancelled,
-          ApplicationStatus.overwritten,
+          ApplicationStatus.Completed,
+          ApplicationStatus.Cancelled,
+          ApplicationStatus.Overwritten,
         ].includes(applicationData.applicationStatus) || !!props.readOnly;
 
       notDraft.value =
         !!props.readOnly ||
-        ![ApplicationStatus.draft].includes(applicationData.applicationStatus);
+        ![ApplicationStatus.Draft].includes(applicationData.applicationStatus);
 
       const address = studentInfo.contact;
 
@@ -256,7 +256,7 @@ export default {
 
     const wizardSubmit = () => {
       if (
-        existingApplication.value.applicationStatus !== ApplicationStatus.draft
+        existingApplication.value.applicationStatus !== ApplicationStatus.Draft
       ) {
         confirmEditApplication();
       } else {
