@@ -1,44 +1,69 @@
 require("../../../../../../../env_setup");
-import { Test, TestingModule } from "@nestjs/testing";
 import { HttpStatus, INestApplication } from "@nestjs/common";
 import * as request from "supertest";
-import { AppModule } from "../../../../app.module";
-import { AuthorizedParties } from "../../../../auth";
-import { createMockedZeebeModule } from "../../../../testHelpers/mocked-providers/zeebe-client-mock";
 import { createFakeStudent, createFakeUser } from "@sims/test-utils";
-import { DataSource, Repository } from "typeorm";
+import { Repository } from "typeorm";
 import { Note, NoteType, Student, User } from "@sims/sims-db";
 import { createFakeNote } from "@sims/test-utils/factories/note";
 import { NoteAPIOutDTO } from "../../models/note.dto";
-import { getToken } from "../../../../testHelpers/auth/token-helpers";
+import {
+  AESTGroups,
+  BEARER_AUTH_TYPE,
+  getAESTToken,
+  createTestingAppModule,
+  assertGroupAccess,
+} from "../../../../testHelpers";
 
 jest.setTimeout(60000);
 
 describe("NoteAESTController(e2e)-getStudentNotes", () => {
   let app: INestApplication;
-  let accessToken: string;
   let studentRepo: Repository<Student>;
   let noteRepo: Repository<Note>;
   let userRepo: Repository<User>;
 
   beforeAll(async () => {
-    accessToken = await getToken(AuthorizedParties.aest);
-    const module: TestingModule = await Test.createTestingModule({
-      imports: [AppModule, createMockedZeebeModule()],
-    }).compile();
-    app = module.createNestApplication();
-    await app.init();
-    const dataSource = module.get(DataSource);
+    const { nestApplication, dataSource } = await createTestingAppModule();
+    app = nestApplication;
     studentRepo = dataSource.getRepository(Student);
     noteRepo = dataSource.getRepository(Note);
     userRepo = dataSource.getRepository(User);
+  });
+
+  it("Should allow access to the expected AEST users groups", async () => {
+    // Arrange
+    const student = await studentRepo.save(createFakeStudent());
+    const endpoint = `/aest/note/student/${student.id}`;
+    await assertGroupAccess(
+      app,
+      endpoint,
+      {
+        aestGroup: AESTGroups.BusinessAdministrators,
+        expectedHttpStatus: HttpStatus.OK,
+      },
+      {
+        aestGroup: AESTGroups.Operations,
+        expectedHttpStatus: HttpStatus.OK,
+      },
+      {
+        aestGroup: AESTGroups.OperationsAdministrators,
+        expectedHttpStatus: HttpStatus.OK,
+      },
+      {
+        aestGroup: AESTGroups.MOFOperations,
+        expectedHttpStatus: HttpStatus.OK,
+      },
+    );
   });
 
   it("Should throw NotFoundException when student was not found", async () => {
     // Arrange/Act/Assert
     return request(app.getHttpServer())
       .get("/aest/note/student/999999")
-      .auth(accessToken, { type: "bearer" })
+      .auth(
+        await getAESTToken(AESTGroups.BusinessAdministrators),
+        BEARER_AUTH_TYPE,
+      )
       .expect(HttpStatus.NOT_FOUND)
       .expect({
         statusCode: 404,
@@ -51,7 +76,10 @@ describe("NoteAESTController(e2e)-getStudentNotes", () => {
     // Arrange/Act/Assert
     return request(app.getHttpServer())
       .get("/aest/note/student/999999?noteType=invalid_node_type")
-      .auth(accessToken, { type: "bearer" })
+      .auth(
+        await getAESTToken(AESTGroups.BusinessAdministrators),
+        BEARER_AUTH_TYPE,
+      )
       .expect(HttpStatus.BAD_REQUEST)
       .expect({
         statusCode: 400,
@@ -66,7 +94,10 @@ describe("NoteAESTController(e2e)-getStudentNotes", () => {
     // Act/Assert
     return request(app.getHttpServer())
       .get(`/aest/note/student/${student.id}`)
-      .auth(accessToken, { type: "bearer" })
+      .auth(
+        await getAESTToken(AESTGroups.BusinessAdministrators),
+        BEARER_AUTH_TYPE,
+      )
       .expect(HttpStatus.OK)
       .then((response) => {
         expect(Object.keys(response.body)).toHaveLength(0);
@@ -89,7 +120,10 @@ describe("NoteAESTController(e2e)-getStudentNotes", () => {
     // Act/Assert
     return request(app.getHttpServer())
       .get(`/aest/note/student/${student.id}`)
-      .auth(accessToken, { type: "bearer" })
+      .auth(
+        await getAESTToken(AESTGroups.BusinessAdministrators),
+        BEARER_AUTH_TYPE,
+      )
       .expect(HttpStatus.OK)
       .then((response) => {
         expect(response.body).toHaveLength(2);
@@ -116,7 +150,10 @@ describe("NoteAESTController(e2e)-getStudentNotes", () => {
     // Act/Assert
     return request(app.getHttpServer())
       .get(`/aest/note/student/${student.id}?noteType=${NoteType.Application}`)
-      .auth(accessToken, { type: "bearer" })
+      .auth(
+        await getAESTToken(AESTGroups.BusinessAdministrators),
+        BEARER_AUTH_TYPE,
+      )
       .expect(HttpStatus.OK)
       .expect((response) => {
         expect(response.body).toHaveLength(1);
@@ -130,6 +167,6 @@ describe("NoteAESTController(e2e)-getStudentNotes", () => {
   });
 
   afterAll(async () => {
-    await app.close();
+    await app?.close();
   });
 });
