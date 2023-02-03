@@ -9,9 +9,10 @@ import {
   ContactInfo,
   SupportingUserType,
   APPLICATION_NUMBER_LENGTH,
+  USER_LAST_NAME_MAX_LENGTH,
 } from "@sims/sims-db";
-
-const STUDENT_LAST_NAME_MAX_LENGTH = 100;
+import { JsonMaxSize } from "../../../utilities/class-validation";
+import { JSON_10KB } from "../../../constants";
 
 /**
  * Information used to uniquely identify a Student Application.
@@ -24,7 +25,7 @@ export class ApplicationIdentifierAPIInDTO {
   @IsNotEmpty()
   studentsDateOfBirth: string;
   @IsNotEmpty()
-  @MaxLength(STUDENT_LAST_NAME_MAX_LENGTH)
+  @MaxLength(USER_LAST_NAME_MAX_LENGTH)
   studentsLastName: string;
 }
 
@@ -55,9 +56,10 @@ export class UpdateSupportingUserAPIInDTO {
   @IsNotEmpty()
   studentsDateOfBirth: string;
   @IsNotEmpty()
-  @MaxLength(STUDENT_LAST_NAME_MAX_LENGTH)
+  @MaxLength(USER_LAST_NAME_MAX_LENGTH)
   studentsLastName: string;
   @IsNotEmptyObject()
+  @JsonMaxSize(JSON_10KB)
   supportingData: unknown;
 }
 

@@ -182,7 +182,7 @@ export default {
         });
         snackBar.success("Application draft saved with success.");
       } catch {
-        snackBar.error("An unexpected error happen.");
+        snackBar.error("An unexpected error has happened.");
       } finally {
         savingDraft.value = false;
       }
@@ -204,11 +204,11 @@ export default {
         snackBar.success("Thank you, your application has been submitted.");
       } catch (error: unknown) {
         let errorLabel = "Unexpected error!";
-        let errorMsg = "An unexpected error happen.";
+        let errorMsg = "An unexpected error has happened.";
         if (error instanceof ApiProcessError) {
           switch (error.errorType) {
             case PIR_OR_DATE_OVERLAP_ERROR:
-              errorLabel = "Invalid submission";
+              errorLabel = "Invalid submission.";
               errorMsg = error.message;
               break;
             case ACTIVE_STUDENT_RESTRICTION:
@@ -217,7 +217,7 @@ export default {
               break;
           }
         }
-        snackBar.error(`${errorLabel}. ${errorMsg}`);
+        snackBar.error(`${errorLabel} ${errorMsg}`);
       } finally {
         submittingApplication.value = false;
       }
