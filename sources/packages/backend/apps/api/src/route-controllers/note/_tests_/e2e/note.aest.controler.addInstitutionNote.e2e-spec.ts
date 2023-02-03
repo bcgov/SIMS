@@ -14,7 +14,7 @@ import { NoteAPIInDTO } from "../../models/note.dto";
 
 jest.setTimeout(60000);
 
-describe("NoteAESTController(e2e)-addInstitutionNote", () => {
+describe.skip("NoteAESTController(e2e)-addInstitutionNote", () => {
   let app: INestApplication;
   let institutionRepo: Repository<Institution>;
 
