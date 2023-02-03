@@ -68,7 +68,7 @@ services:
     ports:
       - ${API_PORT}:${API_PORT}
     volumes:
-      - ./packages/backend/apps/api/src:/app/apps/api/src
+      - ./packages/backend/apps/api/src:/app/src
       - ./packages/backend/coverage/api:/app/apps/api/coverage
     networks:
       - local-network
