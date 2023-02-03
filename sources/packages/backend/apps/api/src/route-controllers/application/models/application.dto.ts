@@ -12,8 +12,7 @@ import {
   DisbursementScheduleStatus,
 } from "@sims/sims-db";
 import { JsonMaxSize } from "../../../utilities/class-validation";
-
-const JSON_20KB = 2048;
+import { JSON_20KB } from "../../../constants";
 
 export class SaveApplicationAPIInDTO {
   /**

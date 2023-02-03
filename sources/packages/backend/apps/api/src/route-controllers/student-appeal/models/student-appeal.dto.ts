@@ -11,9 +11,7 @@ import {
 } from "class-validator";
 import { StudentAppealStatus } from "@sims/sims-db";
 import { JsonMaxSize } from "../../../utilities/class-validation";
-
-const JSON_10KB = 10240;
-const FORM_NAME_MAX_LENGTH = 200;
+import { FORM_NAME_MAX_LENGTH, JSON_10KB } from "../../../constants";
 
 /**
  * DTO for student appeal request.

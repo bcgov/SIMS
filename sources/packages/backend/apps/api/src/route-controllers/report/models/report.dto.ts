@@ -1,8 +1,6 @@
 import { JsonMaxSize } from "../../../utilities/class-validation";
 import { Allow, MaxLength } from "class-validator";
-
-const JSON_10KB = 10240;
-const REPORT_NAME_MAX_LENGTH = 100;
+import { JSON_10KB, REPORT_NAME_MAX_LENGTH } from "../../../constants";
 
 /**
  * Filter param dynamic json.

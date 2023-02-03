@@ -21,9 +21,7 @@ import {
   ArrayMinSize,
   Allow,
 } from "class-validator";
-
-const PAGINATION_SEARCH_MAX_LENGTH = 200;
-const JSON_20KB = 2048;
+import { JSON_20KB, PAGINATION_SEARCH_MAX_LENGTH } from "../../../constants";
 
 /**
  * Approve/Deny a designation agreement.

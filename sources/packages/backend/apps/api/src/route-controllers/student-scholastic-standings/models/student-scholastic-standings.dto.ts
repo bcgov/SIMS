@@ -2,8 +2,7 @@ import { IntersectionType } from "@nestjs/swagger";
 import { JsonMaxSize } from "../../../utilities/class-validation";
 import { IsNotEmptyObject } from "class-validator";
 import { ActiveApplicationDataAPIOutDTO } from "../../../route-controllers/institution-locations/models/application.dto";
-
-const JSON_10KB = 10240;
+import { JSON_10KB } from "../../../constants";
 
 /**
  * The API will also allow other property that are not added below.

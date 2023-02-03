@@ -1,12 +1,6 @@
 import { IsEnum, IsIn, IsOptional, Max, MaxLength, Min } from "class-validator";
 import { FieldSortOrder } from "../../utilities";
-
-/**
- * Max length value is currently assumed from sum of
- ** user first and last name in database which could be
- ** largest possible search text.
- */
-const PAGINATION_SEARCH_MAX_LENGTH = 200;
+import { PAGINATION_SEARCH_MAX_LENGTH } from "../../constants";
 
 /**
  * Common parameters used when an API result

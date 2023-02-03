@@ -9,6 +9,8 @@ import { ColumnNames, TableNames } from "../constant";
 import { BaseModel } from "./base.model";
 import { IdentityProviders } from "./identity-providers.type";
 
+export const USER_LAST_NAME_MAX_LENGTH = 100;
+
 @Entity({ name: TableNames.User })
 export class User extends BaseModel {
   @PrimaryGeneratedColumn()
@@ -43,6 +45,7 @@ export class User extends BaseModel {
    */
   @Column({
     name: "last_name",
+    length: USER_LAST_NAME_MAX_LENGTH,
   })
   lastName: string;
   /**
