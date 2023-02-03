@@ -11,7 +11,6 @@ import {
   BEARER_AUTH_TYPE,
   getAESTToken,
   createTestingAppModule,
-  assertGroupAccess,
 } from "../../../../testHelpers";
 
 jest.setTimeout(60000);
@@ -34,9 +33,7 @@ describe("NoteAESTController(e2e)-getStudentNotes", () => {
     // Arrange
     const student = await studentRepo.save(createFakeStudent());
     const endpoint = `/aest/note/student/${student.id}`;
-    await assertGroupAccess(
-      app,
-      endpoint,
+    const expectedPermissions = [
       {
         aestGroup: AESTGroups.BusinessAdministrators,
         expectedHttpStatus: HttpStatus.OK,
@@ -53,7 +50,14 @@ describe("NoteAESTController(e2e)-getStudentNotes", () => {
         aestGroup: AESTGroups.MOFOperations,
         expectedHttpStatus: HttpStatus.OK,
       },
-    );
+    ];
+    // Act/Assert
+    for (const permission of expectedPermissions) {
+      await request(app.getHttpServer())
+        .get(endpoint)
+        .auth(await getAESTToken(permission.aestGroup), BEARER_AUTH_TYPE)
+        .expect(permission.expectedHttpStatus);
+    }
   });
 
   it("Should throw NotFoundException when student was not found", async () => {

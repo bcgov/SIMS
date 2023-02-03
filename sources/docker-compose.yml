@@ -57,10 +57,19 @@ services:
       - FILE_UPLOAD_ALLOWED_EXTENSIONS=${FILE_UPLOAD_ALLOWED_EXTENSIONS}
       - BYPASS_APPLICATION_SUBMIT_VALIDATIONS=${BYPASS_APPLICATION_SUBMIT_VALIDATIONS}
       - SWAGGER_ENABLED=${SWAGGER_ENABLED}
+      - E2E_TEST_AEST_BUSINESS_ADMINISTRATORS_USER=${E2E_TEST_AEST_BUSINESS_ADMINISTRATORS_USER}
+      - E2E_TEST_AEST_BUSINESS_ADMINISTRATORS_PASSWORD=${E2E_TEST_AEST_BUSINESS_ADMINISTRATORS_PASSWORD}
+      - E2E_TEST_AEST_OPERATIONS_USER=${E2E_TEST_AEST_OPERATIONS_USER}
+      - E2E_TEST_AEST_OPERATIONS_PASSWORD=${E2E_TEST_AEST_OPERATIONS_PASSWORD}
+      - E2E_TEST_AEST_OPERATIONS_ADMINISTRATORS_USER=${E2E_TEST_AEST_OPERATIONS_ADMINISTRATORS_USER}
+      - E2E_TEST_AEST_OPERATIONS_ADMINISTRATORS_PASSWORD=${E2E_TEST_AEST_OPERATIONS_ADMINISTRATORS_PASSWORD}
+      - E2E_TEST_AEST_MOF_OPERATIONS_USER=${E2E_TEST_AEST_MOF_OPERATIONS_USER}
+      - E2E_TEST_AEST_MOF_OPERATIONS_PASSWORD=${E2E_TEST_AEST_MOF_OPERATIONS_PASSWORD}
     ports:
       - ${API_PORT}:${API_PORT}
     volumes:
-      - ./packages/backend/apps/api/src:/app/src
+      - ./packages/backend/apps/api/src:/app/apps/api/src
+      - ./packages/backend/coverage/api:/app/apps/api/coverage
     networks:
       - local-network
     restart: always
@@ -93,6 +102,7 @@ services:
       - REDIS_STANDALONE_MODE=${REDIS_STANDALONE_MODE}
     volumes:
       - ./packages/backend/apps/workers/src:/app/src
+      - ./packages/backend/coverage/workers:/app/apps/workers/coverage
     networks:
       - local-network
     restart: always
@@ -152,6 +162,7 @@ services:
       - ${QUEUE_CONSUMERS_PORT}:${QUEUE_CONSUMERS_PORT}
     volumes:
       - ./packages/backend/apps/queue-consumers/src:/app/src
+      - ./packages/backend/coverage/queue-consumers:/app/apps/queue-consumers/coverage
     networks:
       - local-network
     restart: always

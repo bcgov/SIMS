@@ -157,7 +157,7 @@ api: ## <Helper> :: Executes into the workspace container.
 local-api-test: ## Run API tests
 	@echo "+\n++ Run API tests+\n++"
 	@docker-compose exec -T api npm run test
-	@docker-compose exec -T api npm run test:e2e
+	@docker-compose exec -T api npm run test:e2e:api
 
 local-db:
 	@echo "Make: Shelling into database workspace ..."
@@ -222,3 +222,15 @@ connect-qa-db:
 	@echo "Use your prefered DB Manager (e.g. pgAdmin or DBeaver) to connect to the Postgres database using the local port 5656."
 	@oc project 0c27fb-test
 	@oc port-forward services/patroni-master 5656:5432 
+
+e2e-tests-api:
+	@echo "+\n++ Make: Starting containers for API E2E tests...\n+"
+	@docker-compose -f docker-compose.yml run --name api-e2e-tests --rm api npm run test:e2e:api
+
+e2e-tests-workers:
+	@echo "+\n++ Make: Starting containers for Workers E2E tests...\n+"
+	@docker-compose -f docker-compose.yml run --name workers-e2e-tests --rm workers npm run test:e2e:workers
+
+e2e-tests-queue-consumers:
+	@echo "+\n++ Make: Starting containers for Queue Consumers E2E tests...\n+"
+	@docker-compose -f docker-compose.yml run --name queue-consumers-e2e-tests --rm queue-consumers npm run test:e2e:queue-consumers
