@@ -18,7 +18,7 @@
     "docker:start:workers": "npm run migration:run && node dist/apps/workers/main.js",
     "start:prod:queue-consumers": "npm run migration:run && node dist/apps/queue-consumers/main.js",
     "docker:start:queue-consumers": "npm run migration:run && node dist/apps/queue-consumers/main.js",
-    "test": "cross-env ENVIRONMENT=test jest",
+    "test": "cross-env ENVIRONMENT=test jest --forceExit",
     "test:watch": "jest --watch ",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
