@@ -43,9 +43,6 @@ export class KeycloakConfig {
       if (!KeycloakConfig._realmConfig?.public_key) {
         throw new Error("Not able to retrieve the public key.");
       }
-    }
-
-    if (!KeycloakConfig._PEM_PublicKey) {
       KeycloakConfig._PEM_PublicKey = convertStringToPEM(
         KeycloakConfig._realmConfig.public_key,
       );
