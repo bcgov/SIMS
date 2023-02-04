@@ -1,8 +1,8 @@
 name: Tests
-on: [pull_request]
+  on: [pull_request]
 
 jobs:
-  e2e-coverage:
+  api-coverage:
     runs-on: ubuntu-latest
     env:
       PROJECT_NAME: aest-sims
@@ -51,6 +51,28 @@ jobs:
           threshold_alert: 1
           threshold_warning: 50
           threshold_metric: "lines"
+  workers-coverage:
+    runs-on: ubuntu-latest
+    env:
+      PROJECT_NAME: aest-sims
+      BUILD_ID: ${{ github.event.number }}
+      POSTGRES_PASSWORD: bcgov!
+      BUILD_REF: ${{ github.base_ref }}
+      POSTGRES_DB: sims
+      POSTGRES_PORT: 5432
+      POSTGRES_USER: admin
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: redis
+      REDIS_STANDALONE_MODE: "true"
+      QUEUE_PREFIX: "{sims-local}"
+      API_PORT: 3000
+      APP_PORT: 8080
+      QUEUE_CONSUMERS_PORT: 3001
+      DB_SCHEMA: sims
+    steps:
+      # Checkout the PR branch.
+      - name: Checkout Target Branch
+        uses: actions/checkout@v3
       # Generate the coverage report for Workflow Workers
       - name: Run Workflow Workers E2E tests on Docker
         working-directory: "./sources/"
@@ -66,6 +88,28 @@ jobs:
           threshold_warning: 50
           threshold_metric: "lines"
           comment_footer: false
+  queue-consumers-coverage:
+    runs-on: ubuntu-latest
+    env:
+      PROJECT_NAME: aest-sims
+      BUILD_ID: ${{ github.event.number }}
+      POSTGRES_PASSWORD: bcgov!
+      BUILD_REF: ${{ github.base_ref }}
+      POSTGRES_DB: sims
+      POSTGRES_PORT: 5432
+      POSTGRES_USER: admin
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: redis
+      REDIS_STANDALONE_MODE: "true"
+      QUEUE_PREFIX: "{sims-local}"
+      API_PORT: 3000
+      APP_PORT: 8080
+      QUEUE_CONSUMERS_PORT: 3001
+      DB_SCHEMA: sims
+    steps:
+      # Checkout the PR branch.
+      - name: Checkout Target Branch
+        uses: actions/checkout@v3
       # Generate the coverage report for Workflow Workers
       - name: Run Queue Consumers E2E tests on Docker
         working-directory: "./sources/"
