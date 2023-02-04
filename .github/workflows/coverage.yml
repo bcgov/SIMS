@@ -86,9 +86,9 @@ jobs:
         uses: slavcodev/coverage-monitor-action@v1
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          status_context: "Workflow Workers Code Coverage"
-          comment_context: "Workflow Workers Code Coverage"
-          comment: "Workflow Workers Code Coverage"
+          status_context: "Workflow Workers Code Coverage 1"
+          comment_context: "Workflow Workers Code Coverage 2"
+          comment: "Workflow Workers Code Coverage 3"
           coverage_path: "sources/packages/backend/coverage/workers/clover.xml"
           threshold_alert: 1
           threshold_warning: 50
