@@ -2,8 +2,37 @@ name: Tests
 on: [pull_request]
 
 jobs:
-  build:
+  e2e-coverage:
     runs-on: ubuntu-latest
+    env:
+      PROJECT_NAME: aest-sims
+      BUILD_ID: ${{ github.event.number }}
+      POSTGRES_PASSWORD: bcgov!
+      BUILD_REF: ${{ github.base_ref }}
+      POSTGRES_DB: sims
+      POSTGRES_PORT: 5432
+      POSTGRES_USER: admin
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: redis
+      REDIS_STANDALONE_MODE: "true"
+      QUEUE_PREFIX: "{sims-local}"
+      API_PORT: 3000
+      APP_PORT: 8080
+      QUEUE_CONSUMERS_PORT: 3001
+      DB_SCHEMA: sims
+      KEYCLOAK_REALM: "aestsims"
+      KEYCLOAK_AUTH_URL: "https://dev.loginproxy.gov.bc.ca/auth/"
+      BCeID_WEB_SERVICE_WSDL: "https://gws1.test.bceid.ca/webservices/Client/V10/BCeIDService.asmx?wsdl"
+      E2E_TEST_STUDENT_USERNAME: student_e2e_test
+      E2E_TEST_STUDENT_PASSWORD: ${{ secrets.TEST_STUDENT_PASSWORD }}
+      E2E_TEST_AEST_BUSINESS_ADMINISTRATORS_USER: ministry-user-aest-business-administrators@e2e-tests
+      E2E_TEST_AEST_BUSINESS_ADMINISTRATORS_PASSWORD: ${{ secrets.E2E_TEST_PASSWORD }}
+      E2E_TEST_AEST_OPERATIONS_USER: ministry-user-aest-operations@e2e-tests
+      E2E_TEST_AEST_OPERATIONS_PASSWORD: ${{ secrets.E2E_TEST_PASSWORD }}
+      E2E_TEST_AEST_OPERATIONS_ADMINISTRATORS_USER: ministry-user-aest-operations-administrators@e2e-tests
+      E2E_TEST_AEST_OPERATIONS_ADMINISTRATORS_PASSWORD: ${{ secrets.E2E_TEST_PASSWORD }}
+      E2E_TEST_AEST_MOF_OPERATIONS_USER: ministry-user-mof-operations@e2e-tests
+      E2E_TEST_AEST_MOF_OPERATIONS_PASSWORD: ${{ secrets.E2E_TEST_PASSWORD }}
     steps:
       # Checkout the PR branch.
       - name: Checkout Target Branch
