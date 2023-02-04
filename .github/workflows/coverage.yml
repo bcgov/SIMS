@@ -70,7 +70,7 @@ jobs:
       - name: Run Queue Consumers E2E tests on Docker
         working-directory: "./sources/"
         run: |
-          make e2e-queue-consumers
+          make e2e-tests-queue-consumers
       - name: Queue Consumers Code Coverage
         uses: slavcodev/coverage-monitor-action@v1
         with:
