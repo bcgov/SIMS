@@ -48,7 +48,8 @@ jobs:
         uses: slavcodev/coverage-monitor-action@v1
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          status_context: "SIMS API Code Coverage"
+          status_context: "sims-api"
+          comment_context: "E2E SIMS API Coverage Report"
           coverage_path: "sources/packages/backend/coverage/api/clover.xml"
           threshold_alert: 1
           threshold_warning: 50
@@ -86,48 +87,9 @@ jobs:
         uses: slavcodev/coverage-monitor-action@v1
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          status_context: "Workflow Workers Code Coverage 1"
-          comment_context: "Workflow Workers Code Coverage 2"
-          comment: "Workflow Workers Code Coverage 3"
+          status_context: "workers"
+          comment_context: "E2E Workflow Workers Coverage Report"
           coverage_path: "sources/packages/backend/coverage/workers/clover.xml"
-          threshold_alert: 1
-          threshold_warning: 50
-          threshold_metric: "lines"
-          comment_footer: false
-  queue-consumers-coverage:
-    name: Queue Consumers E2E tests
-    runs-on: ubuntu-latest
-    env:
-      PROJECT_NAME: aest-sims
-      BUILD_ID: ${{ github.event.number }}
-      POSTGRES_PASSWORD: bcgov!
-      BUILD_REF: ${{ github.base_ref }}
-      POSTGRES_DB: sims
-      POSTGRES_PORT: 5432
-      POSTGRES_USER: admin
-      REDIS_PORT: 6379
-      REDIS_PASSWORD: redis
-      REDIS_STANDALONE_MODE: "true"
-      QUEUE_PREFIX: "{sims-local}"
-      API_PORT: 3000
-      APP_PORT: 8080
-      QUEUE_CONSUMERS_PORT: 3001
-      DB_SCHEMA: sims
-    steps:
-      # Checkout the PR branch.
-      - name: Checkout Target Branch
-        uses: actions/checkout@v3
-      # Generate the coverage report for Workflow Workers
-      - name: Run Queue Consumers E2E tests on Docker
-        working-directory: "./sources/"
-        run: |
-          make e2e-tests-queue-consumers
-      - name: Queue Consumers E2E tests Code Coverage
-        uses: slavcodev/coverage-monitor-action@v1
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          status_context: "Queue Consumers Code Coverage"
-          coverage_path: "sources/packages/backend/coverage/queue-consumers/clover.xml"
           threshold_alert: 1
           threshold_warning: 50
           threshold_metric: "lines"
