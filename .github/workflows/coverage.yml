@@ -37,7 +37,7 @@ jobs:
       # Checkout the PR branch.
       - name: Checkout Target Branch
         uses: actions/checkout@v3
-        # Generate the coverage report
+      # Generate the coverage report for API
       - name: Run API E2E tests on Docker
         working-directory: "./sources/"
         run: |
@@ -46,7 +46,23 @@ jobs:
         uses: slavcodev/coverage-monitor-action@v1
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
+          status_context: "SIMS API Code Coverage"
           coverage_path: "sources/packages/backend/coverage/api/clover.xml"
           threshold_alert: 1
           threshold_warning: 50
           threshold_metric: "lines"
+      # Generate the coverage report for Workflow Workers
+      - name: Run Workflow Workers E2E tests on Docker
+        working-directory: "./sources/"
+        run: |
+          make e2e-tests-workers
+      - name: Workflow Workers Code Coverage
+        uses: slavcodev/coverage-monitor-action@v1
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          status_context: "Workflow Workers Code Coverage"
+          coverage_path: "sources/packages/backend/coverage/workers/clover.xml"
+          threshold_alert: 1
+          threshold_warning: 50
+          threshold_metric: "lines"
+          comment_footer: false
