@@ -93,7 +93,7 @@ jobs:
           threshold_alert: 1
           threshold_warning: 50
           threshold_metric: "lines"
-          comment_footer: false
+          comment_footer: true
   queue-consumers-coverage:
     name: Queue Consumers E2E tests
     runs-on: ubuntu-latest
