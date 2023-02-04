@@ -24,7 +24,7 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e:api": "cross-env ENVIRONMENT=test && npm run migration:run && jest --config ./apps/api/test/jest-e2e.json --forceExit",
     "test:e2e:workers": "cross-env ENVIRONMENT=test && npm run migration:run && jest --config ./apps/workers/test/jest-e2e.json --forceExit",
-    "test:e2e:queue-consumers": "cross-env ENVIRONMENT=test jest --config ./apps/queue-consumers/test/jest-e2e.json --forceExit",
+    "test:e2e:queue-consumers": "cross-env ENVIRONMENT=test && npm run migration:run && jest --config ./apps/queue-consumers/test/jest-e2e.json --forceExit",
     "migration:run": "node --abort-on-uncaught-exception --require ts-node/register apps/db-migrations/src/main.ts",
     "migration:create": "cd apps/db-migrations/src/migrations && npx typeorm-ts-node-commonjs migration:create",
     "migration:revert": "npx typeorm-ts-node-commonjs migration:revert -d apps/db-migrations/src/data-source.ts",

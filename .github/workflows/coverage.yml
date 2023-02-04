@@ -4,6 +4,7 @@ on: [pull_request]
 
 jobs:
   api-coverage:
+    name: SIMS API Code E2E tests
     runs-on: ubuntu-latest
     env:
       PROJECT_NAME: aest-sims
@@ -43,7 +44,7 @@ jobs:
         working-directory: "./sources/"
         run: |
           make e2e-tests-api
-      - name: SIMS API Code Coverage
+      - name: SIMS API Code E2E tests Coverage
         uses: slavcodev/coverage-monitor-action@v1
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
@@ -53,6 +54,7 @@ jobs:
           threshold_warning: 50
           threshold_metric: "lines"
   workers-coverage:
+    name: Workflow Workers E2E tests
     runs-on: ubuntu-latest
     env:
       PROJECT_NAME: aest-sims
@@ -90,6 +92,7 @@ jobs:
           threshold_metric: "lines"
           comment_footer: false
   queue-consumers-coverage:
+    name: Queue Consumers E2E tests
     runs-on: ubuntu-latest
     env:
       PROJECT_NAME: aest-sims
@@ -116,7 +119,7 @@ jobs:
         working-directory: "./sources/"
         run: |
           make e2e-tests-queue-consumers
-      - name: Queue Consumers Code Coverage
+      - name: Queue Consumers E2E tests Code Coverage
         uses: slavcodev/coverage-monitor-action@v1
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
