@@ -1049,12 +1049,12 @@
           "tags": [],
           "properties": {},
           "conditional": {
-            "show": null,
+            "show": "",
             "when": null,
             "eq": "",
             "json": ""
           },
-          "customConditional": "",
+          "customConditional": "show = data.offeringIntensitySelectedByStudent === 'Part Time'",
           "logic": [],
           "attributes": {},
           "overlay": {
@@ -1133,9 +1133,7 @@
           "disabled": false,
           "tableView": false,
           "modalEdit": false,
-          "defaultValue": [
-            {}
-          ],
+          "defaultValue": [],
           "persistent": true,
           "protected": false,
           "dbIndex": false,
@@ -1165,12 +1163,12 @@
           "tags": [],
           "properties": {},
           "conditional": {
-            "show": null,
+            "show": "",
             "when": null,
             "eq": "",
             "json": ""
           },
-          "customConditional": "",
+          "customConditional": "show = data.offeringIntensitySelectedByStudent === 'Part Time'",
           "logic": [],
           "attributes": {},
           "overlay": {
@@ -2019,8 +2017,7 @@
           },
           "properties": {},
           "customClass": "banner-warning",
-          "lockKey": true,
-          "isNew": false
+          "lockKey": true
         }
       ],
       "placeholder": "",
