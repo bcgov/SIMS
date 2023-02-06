@@ -128,7 +128,7 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           status_context: "queue-consumers"
           comment_context: "E2E Queue Consumers Coverage Report"
-          coverage_path: "sources/packages/backend/coverage/workers/clover.xml"
+          coverage_path: "sources/packages/backend/coverage/queue-consumers/clover.xml"
           threshold_alert: 1
           threshold_warning: 50
           threshold_metric: "lines"
