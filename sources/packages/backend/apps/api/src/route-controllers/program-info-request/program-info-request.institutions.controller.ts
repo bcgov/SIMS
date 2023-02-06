@@ -131,7 +131,7 @@ export class ProgramInfoRequestInstitutionsController extends BaseController {
     // from PIR (sims.applications table) will be used.
     result.selectedProgram =
       originalAssessmentOffering?.educationProgram.id ??
-      application.pirProgram.id;
+      application.pirProgram?.id;
     // Offering only available when PIR is completed.
     if (originalAssessmentOffering) {
       result.selectedOffering = originalAssessmentOffering.id;
