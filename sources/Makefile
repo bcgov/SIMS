@@ -223,6 +223,9 @@ connect-qa-db:
 	@oc project 0c27fb-test
 	@oc port-forward services/patroni-master 5656:5432 
 
+backend-unit-tests:
+	@cd ./packages/backend && npm i && npm run test:cov
+
 e2e-tests-api:
 	@echo "+\n++ Make: Starting containers for API E2E tests...\n+"
 	@docker-compose -f docker-compose.yml run --name api-e2e-tests --rm api npm run test:e2e:api

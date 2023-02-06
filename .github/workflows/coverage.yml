@@ -133,3 +133,30 @@ jobs:
           threshold_warning: 50
           threshold_metric: "lines"
           comment_footer: false
+  backend-unit-tests:
+    name: Backend Unit Tests
+    runs-on: ubuntu-latest
+    steps:
+      # Checkout the PR branch.
+      - name: Checkout Target Branch
+        uses: actions/checkout@v3
+      - name: Setup Nodejs
+        uses: actions/setup-node@v3
+        with:
+          node-version: "16.x"
+      # Run units tests and generate the coverage report.
+      - name: Run Unit Tests
+        working-directory: "./sources/"
+        run: |
+          make backend-unit-tests
+      - name: Backend Units Tests Coverage
+        uses: slavcodev/coverage-monitor-action@v1
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          status_context: "backend-unit-tests"
+          comment_context: "Backend Unit Tests Coverage Report"
+          coverage_path: "sources/packages/backend/coverage/unit-tests/clover.xml"
+          threshold_alert: 1
+          threshold_warning: 50
+          threshold_metric: "lines"
+          comment_footer: false
