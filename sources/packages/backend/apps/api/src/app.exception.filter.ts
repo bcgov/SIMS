@@ -6,14 +6,13 @@ import { LoggerService, InjectLogger } from "@sims/utilities/logger";
 @Catch()
 export class AppAllExceptionsFilter extends BaseExceptionFilter {
   catch(exception: unknown, host: ArgumentsHost) {
-    // TODO: Customize error response
     const ctx = host.switchToHttp();
     const request: Request = ctx.getRequest();
 
     // Logging Additional info
-    this.logger.error("Un-handle exception");
-    this.logger.error(`Request Path [${request.path}]`);
-    this.logger.error(`Exception Details: \n ***** \n\t${exception} \n *****`);
+    this.logger.error("Unhandled exception");
+    this.logger.error(`Request path [${request.path}]`);
+    this.logger.error(`${JSON.stringify(exception)}`);
 
     // Calling super
     super.catch(exception, host);

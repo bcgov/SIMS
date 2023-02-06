@@ -34,7 +34,7 @@ const createFakeApplicationInAssessment = (student: Student): Application => {
   const fakeApplication = createFakeApplication();
   fakeApplication.student = student;
   fakeApplication.relationshipStatus = RelationshipStatus.Single;
-  fakeApplication.applicationStatus = ApplicationStatus.assessment;
+  fakeApplication.applicationStatus = ApplicationStatus.Assessment;
   return fakeApplication;
 };
 
@@ -79,7 +79,7 @@ describe.skip("ApplicationService", () => {
     it("should throw an exception when application is not in the correct state", async () => {
       // Create fake application to have the MSFAA associated.
       const fakeApplication = createFakeApplication();
-      fakeApplication.applicationStatus = ApplicationStatus.submitted;
+      fakeApplication.applicationStatus = ApplicationStatus.Submitted;
       const testApplication = await applicationRepository.save(fakeApplication);
 
       try {
@@ -154,7 +154,7 @@ describe.skip("ApplicationService", () => {
       // Make the application be considered outside the valid period.
       // TODO: Create Date MSFAA In MSFAA Valid Period with increment 1.
       fakeCompletedApplication.msfaaNumber = testMSFAANumber;
-      fakeCompletedApplication.applicationStatus = ApplicationStatus.completed;
+      fakeCompletedApplication.applicationStatus = ApplicationStatus.Completed;
       const testCompletedApplication = await applicationRepository.save(
         fakeCompletedApplication,
       );
@@ -196,7 +196,7 @@ describe.skip("ApplicationService", () => {
       // Make the application be considered still in the valid MSFAA period.
       // TODO: Create Date MSFAA In MSFAA Valid Period with increment -1.
       fakeCompletedApplication.msfaaNumber = testMSFAANumber;
-      fakeCompletedApplication.applicationStatus = ApplicationStatus.completed;
+      fakeCompletedApplication.applicationStatus = ApplicationStatus.Completed;
       const testCompletedApplication = await applicationRepository.save(
         fakeCompletedApplication,
       );
@@ -239,13 +239,13 @@ describe.skip("ApplicationService", () => {
       fakeApplication.studentAssessments = [originalAssessment];
       fakeApplication.currentAssessment = originalAssessment;
       fakeApplication.msfaaNumber = testMSFAANumber;
-      fakeApplication.applicationStatus = ApplicationStatus.completed;
+      fakeApplication.applicationStatus = ApplicationStatus.Completed;
       const testApplication = await applicationRepository.save(fakeApplication);
       // Create a fake application with an offering end data older than the previous one.
       // While querying the database the testApplication must be retrieve instead of this one.
       const olderFakeApplication = createFakeApplication();
       olderFakeApplication.msfaaNumber = testMSFAANumber;
-      olderFakeApplication.applicationStatus = ApplicationStatus.completed;
+      olderFakeApplication.applicationStatus = ApplicationStatus.Completed;
       // Save older fake application.
       const olderApplication = await applicationRepository.save(
         olderFakeApplication,

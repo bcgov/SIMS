@@ -1,4 +1,7 @@
-import { Allow } from "class-validator";
+import { JsonMaxSize } from "../../../utilities/class-validation";
+import { Allow, MaxLength } from "class-validator";
+import { JSON_10KB, REPORT_NAME_MAX_LENGTH } from "../../../constants";
+
 /**
  * Filter param dynamic json.
  */
@@ -11,7 +14,9 @@ export class ReportFilterParamAPIInDTO {
  */
 export class ReportsFilterAPIInDTO {
   @Allow()
+  @MaxLength(REPORT_NAME_MAX_LENGTH)
   reportName: string;
   @Allow()
+  @JsonMaxSize(JSON_10KB)
   params: ReportFilterParamAPIInDTO;
 }

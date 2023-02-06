@@ -1,6 +1,6 @@
 <template>
   <v-card class="p-4">
-    <template v-if="applicationStatus !== ApplicationStatus.cancelled">
+    <template v-if="applicationStatus !== ApplicationStatus.Cancelled">
       <body-header title="Track your application" />
       <stepper-progress-bar
         :progressBarValue="trackerApplicationStatus"
@@ -13,25 +13,25 @@
       />
       <draft
         @editApplication="$emit('editApplication')"
-        v-if="applicationStatus === ApplicationStatus.draft"
+        v-if="applicationStatus === ApplicationStatus.Draft"
       />
       <!-- The below components are checked with applicationStatusTracker[trackerApplicationStatus], so that in future if we need to see the previous, it can be easily attained just by removing readonly param from the v-slider or by adding a simple logic. -->
       <submitted
-        v-else-if="applicationStatus === ApplicationStatus.submitted"
+        v-else-if="applicationStatus === ApplicationStatus.Submitted"
       />
       <in-progress
-        v-else-if="applicationStatus === ApplicationStatus.inProgress"
+        v-else-if="applicationStatus === ApplicationStatus.InProgress"
         :application-id="applicationId"
       />
       <assessment
-        v-else-if="applicationStatus === ApplicationStatus.assessment"
+        v-else-if="applicationStatus === ApplicationStatus.Assessment"
       />
       <enrolment
-        v-else-if="applicationStatus === ApplicationStatus.enrollment"
+        v-else-if="applicationStatus === ApplicationStatus.Enrolment"
         :applicationId="applicationId"
       />
       <completed
-        v-else-if="applicationStatus === ApplicationStatus.completed"
+        v-else-if="applicationStatus === ApplicationStatus.Completed"
         :applicationId="applicationId"
       />
     </template>
@@ -93,11 +93,11 @@ export default defineComponent({
   setup(props) {
     const hasDeclinedCard = ref(false);
     const applicationTrackerLabels = [
-      ApplicationStatus.submitted,
-      ApplicationStatus.inProgress,
-      ApplicationStatus.assessment,
-      ApplicationStatus.enrollment,
-      ApplicationStatus.completed,
+      ApplicationStatus.Submitted,
+      ApplicationStatus.InProgress,
+      ApplicationStatus.Assessment,
+      ApplicationStatus.Enrolment,
+      ApplicationStatus.Completed,
     ];
     const applicationProgressDetails = ref(
       {} as ApplicationProgressDetailsAPIOutDTO,
@@ -107,7 +107,7 @@ export default defineComponent({
       if (applicationEndStatus.value.endStatusType === "error") {
         return "error";
       }
-      if (props.applicationStatus === ApplicationStatus.completed) {
+      if (props.applicationStatus === ApplicationStatus.Completed) {
         return "success";
       }
       return "warning";
@@ -155,16 +155,16 @@ export default defineComponent({
     );
 
     const disabled = computed(
-      () => props.applicationStatus === ApplicationStatus.draft,
+      () => props.applicationStatus === ApplicationStatus.Draft,
     );
 
     const thumbColor = computed(() =>
-      props.applicationStatus === ApplicationStatus.draft ? "black" : "warning",
+      props.applicationStatus === ApplicationStatus.Draft ? "black" : "warning",
     );
 
     const thumbSize = computed(() =>
       // thumbSize is 0 for all the status except draft and submitted.
-      [ApplicationStatus.draft, ApplicationStatus.submitted].includes(
+      [ApplicationStatus.Draft, ApplicationStatus.Submitted].includes(
         props.applicationStatus,
       )
         ? INITIAL_THUMB_SIZE

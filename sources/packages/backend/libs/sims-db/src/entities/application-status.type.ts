@@ -5,34 +5,34 @@ export enum ApplicationStatus {
   /**
    * The application is in draft state and is not Submitted.
    */
-  draft = "Draft",
+  Draft = "Draft",
   /**
    * The application has been submitted by the student.
    */
-  submitted = "Submitted",
+  Submitted = "Submitted",
   /**
    * The application is submitted and Camunda Workflow has been started.
    * This is an overall state for "gathering required information required for assessment"
    * (Eg. PIR/Income Validation/Spouse Information/Parent Information)
    */
-  inProgress = "In Progress",
+  InProgress = "In Progress",
   /**
    * Camunda Workflow completed the assessment.
    * The NOA has been populated and presented to the student for confirmation.
    */
-  assessment = "Assessment",
+  Assessment = "Assessment",
   /**
    * The NOA has been accepted and the institution needs to confirm enrollment.
    */
-  enrollment = "Enrollment",
+  Enrolment = "Enrolment",
   /**
    * The application has been confirmed by the institution.
    */
-  completed = "Completed",
+  Completed = "Completed",
   /**
    * The application has been cancelled by the student.
    */
-  cancelled = "Cancelled",
+  Cancelled = "Cancelled",
   /**
    * The application was replaced by a new version due to some event like
    * an edit on Confirmation of Enrollment that forces the assessment to
@@ -42,5 +42,5 @@ export enum ApplicationStatus {
    * is Overwritten and a clone/new version is created all edits should take
    * place on new record.
    */
-  overwritten = "Overwritten",
+  Overwritten = "Overwritten",
 }

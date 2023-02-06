@@ -3,6 +3,7 @@ import {
   DesignationAgreementStatus,
   NOTE_DESCRIPTION_MAX_LENGTH,
 } from "@sims/sims-db";
+import { JsonMaxSize } from "../../../utilities/class-validation";
 import { Type } from "class-transformer";
 import {
   IsBoolean,
@@ -14,14 +15,13 @@ import {
   MaxLength,
   ValidateIf,
   ValidateNested,
-  Allow,
   IsIn,
   IsOptional,
   IsPositive,
   ArrayMinSize,
+  Allow,
 } from "class-validator";
-
-const PAGINATION_SEARCH_MAX_LENGTH = 200;
+import { JSON_20KB, PAGINATION_SEARCH_MAX_LENGTH } from "../../../constants";
 
 /**
  * Approve/Deny a designation agreement.
@@ -64,6 +64,7 @@ export class UpdateDesignationAPIInDTO {
  */
 export class SubmitDesignationAgreementAPIInDTO {
   @Allow()
+  @JsonMaxSize(JSON_20KB)
   dynamicData: unknown;
   /**
    * Locations being designated.

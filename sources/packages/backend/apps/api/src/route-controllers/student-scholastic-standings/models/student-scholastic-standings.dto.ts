@@ -1,6 +1,8 @@
 import { IntersectionType } from "@nestjs/swagger";
+import { JsonMaxSize } from "../../../utilities/class-validation";
 import { IsNotEmptyObject } from "class-validator";
 import { ActiveApplicationDataAPIOutDTO } from "../../../route-controllers/institution-locations/models/application.dto";
+import { JSON_10KB } from "../../../constants";
 
 /**
  * The API will also allow other property that are not added below.
@@ -20,6 +22,7 @@ export class ScholasticStandingDataAPIInDTO {
 // This DTO must/will be validated using the dryRun.
 export class ScholasticStandingAPIInDTO {
   @IsNotEmptyObject()
+  @JsonMaxSize(JSON_10KB)
   data: ScholasticStandingDataAPIInDTO;
 }
 

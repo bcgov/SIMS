@@ -11,12 +11,15 @@ import {
   APPLICATION_NUMBER_LENGTH,
   DisbursementScheduleStatus,
 } from "@sims/sims-db";
+import { JsonMaxSize } from "../../../utilities/class-validation";
+import { JSON_20KB } from "../../../constants";
 
 export class SaveApplicationAPIInDTO {
   /**
    * Application dynamic data.
    */
   @IsObject()
+  @JsonMaxSize(JSON_20KB)
   data: any;
   /**
    * Array of unique file names to be associated

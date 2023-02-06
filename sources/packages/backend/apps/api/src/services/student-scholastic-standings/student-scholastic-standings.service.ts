@@ -104,7 +104,7 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
       );
     }
 
-    if (application.applicationStatus !== ApplicationStatus.completed) {
+    if (application.applicationStatus !== ApplicationStatus.Completed) {
       throw new CustomNamedError(
         "Cannot report a change for application with status other than completed.",
         INVALID_OPERATION_IN_THE_CURRENT_STATUS,

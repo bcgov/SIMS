@@ -20,7 +20,7 @@ export function createFakeApplication(relations?: {
   application.programYear = relations?.programYear ?? createFakeProgramYear();
   application.student = relations?.student ?? createFakeStudent();
   application.applicationStatusUpdatedOn = new Date();
-  application.applicationStatus = ApplicationStatus.submitted;
+  application.applicationStatus = ApplicationStatus.Submitted;
   application.relationshipStatus = RelationshipStatus.Single;
   application.currentAssessment = relations?.currentStudentAssessment;
   return application;

@@ -11,16 +11,16 @@ export function useApplication() {
     status: ApplicationStatus,
   ): StatusChipTypes => {
     switch (status) {
-      case ApplicationStatus.completed:
+      case ApplicationStatus.Completed:
         return StatusChipTypes.Success;
-      case ApplicationStatus.inProgress:
-      case ApplicationStatus.assessment:
-      case ApplicationStatus.enrollment:
+      case ApplicationStatus.InProgress:
+      case ApplicationStatus.Assessment:
+      case ApplicationStatus.Enrolment:
         return StatusChipTypes.Warning;
-      case ApplicationStatus.cancelled:
+      case ApplicationStatus.Cancelled:
         return StatusChipTypes.Error;
-      case ApplicationStatus.draft:
-      case ApplicationStatus.submitted:
+      case ApplicationStatus.Draft:
+      case ApplicationStatus.Submitted:
         return StatusChipTypes.Default;
       default:
         return StatusChipTypes.Inactive;
