@@ -119,16 +119,20 @@
       "**/*.(t|j)s"
     ],
     "coveragePathIgnorePatterns": [
-      "/node_modules/",
-      "/db-migrations/",
+      "node_modules",
+      "db-migrations",
       "_tests_",
       "main.ts",
-      "module.ts",
+      ".module.ts",
       "coverage",
       "test-utils",
       "testHelpers",
-      "e2e-spec.ts",
-      "mock.ts"
+      ".e2e-spec.ts",
+      ".models.ts",
+      ".model.ts",
+      ".dto.ts",
+      ".controller.ts",
+      ".mock.ts"
     ],
     "coverageDirectory": "./coverage/unit-tests",
     "testEnvironment": "node",
