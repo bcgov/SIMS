@@ -144,6 +144,9 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: "16.x"
+      - name: Downloading packages
+        working-directory: "./sources/packages/backend"
+        run: npm ci
       # Run units tests and generate the coverage report.
       - name: Run Unit Tests
         working-directory: "./sources/"
