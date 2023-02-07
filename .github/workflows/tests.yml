@@ -1,10 +1,10 @@
-name: Coverage
+name: Tests
 
 on: [pull_request]
 
 jobs:
   api-e2e-tests:
-    name: SIMS API E2E tests
+    name: SIMS API E2E Tests
     runs-on: ubuntu-latest
     env:
       PROJECT_NAME: aest-sims
@@ -40,11 +40,11 @@ jobs:
       - name: Checkout Target Branch
         uses: actions/checkout@v3
       # Generate the coverage report for API
-      - name: Run API E2E tests on Docker
+      - name: Run Tests
         working-directory: "./sources/"
         run: |
           make e2e-tests-api
-      - name: SIMS API E2E tests Coverage
+      - name: Tests Coverage
         uses: slavcodev/coverage-monitor-action@v1
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
@@ -56,7 +56,7 @@ jobs:
           threshold_metric: "lines"
           comment_footer: false
   workers-e2e-tests:
-    name: Workflow Workers E2E tests
+    name: Workflow Workers E2E Tests
     runs-on: ubuntu-latest
     env:
       PROJECT_NAME: aest-sims
@@ -79,11 +79,11 @@ jobs:
       - name: Checkout Target Branch
         uses: actions/checkout@v3
       # Generate the coverage report for Workflow Workers
-      - name: Run Workflow Workers E2E tests on Docker
+      - name: Run Tests
         working-directory: "./sources/"
         run: |
           make e2e-tests-workers
-      - name: Workflow Workers E2E tests Coverage
+      - name: Tests Coverage
         uses: slavcodev/coverage-monitor-action@v1
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
@@ -95,7 +95,7 @@ jobs:
           threshold_metric: "lines"
           comment_footer: false
   queue-consumers-e2e-tests:
-    name: Queue Consumers E2E tests
+    name: Queue Consumers E2E Tests
     runs-on: ubuntu-latest
     env:
       PROJECT_NAME: aest-sims
@@ -118,11 +118,11 @@ jobs:
       - name: Checkout Target Branch
         uses: actions/checkout@v3
       # Generate the coverage report for Queue Consumers
-      - name: Run Queue Consumers E2E tests on Docker
+      - name: Run Tests
         working-directory: "./sources/"
         run: |
           make e2e-tests-queue-consumers
-      - name: Queue Consumers E2E tests Coverage
+      - name: Tests Coverage
         uses: slavcodev/coverage-monitor-action@v1
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
@@ -144,15 +144,12 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: "16.x"
-      - name: Downloading packages
-        working-directory: "./sources/packages/backend"
-        run: npm ci
       # Run units tests and generate the coverage report.
-      - name: Run Unit Tests
+      - name: Run Tests
         working-directory: "./sources/"
         run: |
           make backend-unit-tests
-      - name: Backend Units Tests Coverage
+      - name: Tests Coverage
         uses: slavcodev/coverage-monitor-action@v1
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
