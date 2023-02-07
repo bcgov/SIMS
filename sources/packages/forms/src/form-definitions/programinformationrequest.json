@@ -1049,9 +1049,9 @@
           "tags": [],
           "properties": {},
           "conditional": {
-            "show": null,
-            "when": null,
-            "eq": "",
+            "show": "true",
+            "when": "isSelectedOfferingPartTime",
+            "eq": "true",
             "json": ""
           },
           "customConditional": "",
@@ -1133,9 +1133,7 @@
           "disabled": false,
           "tableView": false,
           "modalEdit": false,
-          "defaultValue": [
-            {}
-          ],
+          "defaultValue": [],
           "persistent": true,
           "protected": false,
           "dbIndex": false,
@@ -1165,9 +1163,9 @@
           "tags": [],
           "properties": {},
           "conditional": {
-            "show": null,
-            "when": null,
-            "eq": "",
+            "show": "true",
+            "when": "isSelectedOfferingPartTime",
+            "eq": "true",
             "json": ""
           },
           "customConditional": "",
@@ -2019,8 +2017,7 @@
           },
           "properties": {},
           "customClass": "banner-warning",
-          "lockKey": true,
-          "isNew": false
+          "lockKey": true
         }
       ],
       "placeholder": "",
@@ -2454,6 +2451,24 @@
       "id": "ehw4bu6"
     },
     {
+      "input": true,
+      "tableView": true,
+      "key": "isSelectedOfferingPartTime",
+      "label": "isSelectedOfferingPartTime",
+      "protected": false,
+      "unique": false,
+      "persistent": true,
+      "type": "hidden",
+      "tags": [],
+      "conditional": {
+        "show": "",
+        "when": null,
+        "eq": ""
+      },
+      "properties": {},
+      "calculateValue": "value = data.offeringIntensitySelectedByStudent === 'Part Time'"
+    },
+    {
       "label": "pirStatus",
       "labelWidth": "",
       "labelMargin": "",
@@ -2524,7 +2539,8 @@
       "allowMultipleMasks": false,
       "addons": [],
       "inputType": "hidden",
-      "id": "eds5lj9"
+      "id": "eds5lj9",
+      "isNew": false
     },
     {
       "label": "applicationId",
@@ -2684,7 +2700,8 @@
         "eq": ""
       },
       "properties": {},
-      "lockKey": true
+      "lockKey": true,
+      "isNew": false
     },
     {
       "input": true,
