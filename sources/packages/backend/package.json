@@ -20,7 +20,7 @@
     "docker:start:queue-consumers": "npm run migration:run && node dist/apps/queue-consumers/main.js",
     "test": "cross-env ENVIRONMENT=test jest --forceExit",
     "test:watch": "jest --watch ",
-    "test:cov": "cross-env ENVIRONMENT=test jest --coverage",
+    "test:cov": "cross-env ENVIRONMENT=test jest --coverage --forceExit",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e:api": "npm run migration:run && cross-env ENVIRONMENT=test jest --config ./apps/api/test/jest-e2e.json --forceExit",
     "test:e2e:workers": "npm run migration:run && cross-env ENVIRONMENT=test jest --config ./apps/workers/test/jest-e2e.json --forceExit",
@@ -117,6 +117,18 @@
     },
     "collectCoverageFrom": [
       "**/*.(t|j)s"
+    ],
+    "coveragePathIgnorePatterns": [
+      "/node_modules/",
+      "/db-migrations/",
+      "_tests_",
+      "main.ts",
+      "module.ts",
+      "coverage",
+      "test-utils",
+      "testHelpers",
+      "e2e-spec.ts",
+      "mock.ts"
     ],
     "coverageDirectory": "./coverage/unit-tests",
     "testEnvironment": "node",
