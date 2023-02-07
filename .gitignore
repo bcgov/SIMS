@@ -9,6 +9,7 @@ dist/
 .vscode/*
 !.vscode/launch.json
 *.log
+**/coverage/*
 
 #cypress
 screenshots/
