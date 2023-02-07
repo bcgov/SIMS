@@ -48,7 +48,7 @@ jobs:
         uses: slavcodev/coverage-monitor-action@v1
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          status_context: "sims-api"
+          status_context: "E2E SIMS API Coverage Report"
           comment_context: "E2E SIMS API Coverage Report"
           coverage_path: "sources/packages/backend/coverage/api/clover.xml"
           threshold_alert: 1
@@ -87,7 +87,7 @@ jobs:
         uses: slavcodev/coverage-monitor-action@v1
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          status_context: "workers"
+          status_context: "E2E Workflow Workers Coverage Report"
           comment_context: "E2E Workflow Workers Coverage Report"
           coverage_path: "sources/packages/backend/coverage/workers/clover.xml"
           threshold_alert: 1
@@ -126,7 +126,7 @@ jobs:
         uses: slavcodev/coverage-monitor-action@v1
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          status_context: "queue-consumers"
+          status_context: "E2E Queue Consumers Coverage Report"
           comment_context: "E2E Queue Consumers Coverage Report"
           coverage_path: "sources/packages/backend/coverage/queue-consumers/clover.xml"
           threshold_alert: 1
@@ -153,7 +153,7 @@ jobs:
         uses: slavcodev/coverage-monitor-action@v1
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          status_context: "backend-unit-tests"
+          status_context: "Backend Unit Tests Coverage Report"
           comment_context: "Backend Unit Tests Coverage Report"
           coverage_path: "sources/packages/backend/coverage/unit-tests/clover.xml"
           threshold_alert: 1

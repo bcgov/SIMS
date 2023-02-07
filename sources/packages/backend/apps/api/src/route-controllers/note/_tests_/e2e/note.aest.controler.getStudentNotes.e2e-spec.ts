@@ -15,7 +15,7 @@ import {
 
 jest.setTimeout(60000);
 
-describe.skip("NoteAESTController(e2e)-getStudentNotes", () => {
+describe("NoteAESTController(e2e)-getStudentNotes", () => {
   let app: INestApplication;
   let studentRepo: Repository<Student>;
   let noteRepo: Repository<Note>;
