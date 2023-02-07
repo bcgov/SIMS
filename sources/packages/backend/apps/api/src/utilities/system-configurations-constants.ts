@@ -77,10 +77,3 @@ export const OFFERING_BULK_UPLOAD_MAX_UPLOAD_PARTS = 2;
  * Max upload file size for an offering bulk upload (in bytes).
  */
 export const OFFERING_BULK_UPLOAD_MAX_FILE_SIZE = 4194304;
-
-/**
- * Maximum number of days past the study period end date
- * beyond when an institution will not be able to
- * confirm enrolment for the same.
- */
-export const COE_MAX_ALLOWED_DAYS_PAST_STUDY_PERIOD = 42;

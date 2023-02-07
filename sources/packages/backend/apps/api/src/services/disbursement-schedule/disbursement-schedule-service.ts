@@ -6,7 +6,6 @@ import {
   FieldSortOrder,
   PaginatedResults,
   OrderByCondition,
-  COE_MAX_ALLOWED_DAYS_PAST_STUDY_PERIOD,
 } from "../../utilities";
 import {
   addDays,
@@ -523,22 +522,14 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
   ): COEApprovalPeriodStatus {
     // Enrolment period start date(COE_WINDOW days before disbursement date).
     const enrolmentPeriodStart = addDays(-COE_WINDOW, disbursementDate);
-    // Enrolment period end date(COE_MAX_ALLOWED_DAYS_PAST_STUDY_PERIOD days after study end date).
-    // The same validation with COE_MAX_ALLOWED_DAYS_PAST_STUDY_PERIOD exists on
-    // Student application forms and program information request form.
-    // When there is an update to COE_MAX_ALLOWED_DAYS_PAST_STUDY_PERIOD please make sure
-    // to update all the above.
-    const enrolmentPeriodEnd = addDays(
-      COE_MAX_ALLOWED_DAYS_PAST_STUDY_PERIOD,
-      studyEndDate,
-    );
     //Current date as date only string.
     const now = getISODateOnlyString(new Date());
+    // Enrolment period end date is study period end date.
     // Is the enrolment now within eligible approval period.
     if (
       isBetweenPeriod(now, {
         startDate: enrolmentPeriodStart,
-        endDate: enrolmentPeriodEnd,
+        endDate: studyEndDate,
       })
     ) {
       return COEApprovalPeriodStatus.WithinApprovalPeriod;
