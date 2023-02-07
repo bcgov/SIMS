@@ -466,7 +466,7 @@ export class StudentService extends RecordDataModelService<Student> {
         .andWhere("application.applicationStatus != :overwrittenStatus")
         .setParameters({
           appNumber: `%${searchCriteria.appNumber}%`,
-          overwrittenStatus: ApplicationStatus.overwritten,
+          overwrittenStatus: ApplicationStatus.Overwritten,
         });
     }
     return searchQuery.getMany();

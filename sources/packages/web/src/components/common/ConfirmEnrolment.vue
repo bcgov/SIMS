@@ -65,8 +65,8 @@ export default defineComponent({
       () =>
         !!(
           props.coeStatus === COEStatus.required &&
-          (props.applicationStatus === ApplicationStatus.enrollment ||
-            props.applicationStatus === ApplicationStatus.completed)
+          (props.applicationStatus === ApplicationStatus.Enrolment ||
+            props.applicationStatus === ApplicationStatus.Completed)
         ),
     );
     const submitConfirmEnrolment = async () => {

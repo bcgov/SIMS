@@ -4,11 +4,20 @@
     :firstCOEStatus="applicationCOEDetails?.firstCOE?.coeStatus"
     :secondCOEStatus="applicationCOEDetails?.secondCOE?.coeStatus"
     :coeDenialReason="multipleCOEDenialReason"
+    :firstDisbursementStatus="
+      applicationCOEDetails?.firstCOE?.disbursementScheduleStatus
+    "
+    :secondDisbursementStatus="
+      applicationCOEDetails?.secondCOE?.disbursementScheduleStatus
+    "
   />
   <disbursement-banner
     v-else
     :coeStatus="applicationCOEDetails?.firstCOE?.coeStatus"
     :coeDenialReason="applicationCOEDetails?.firstCOE?.coeDenialReason"
+    :disbursementStatus="
+      applicationCOEDetails?.firstCOE?.disbursementScheduleStatus
+    "
   />
 </template>
 <script lang="ts">

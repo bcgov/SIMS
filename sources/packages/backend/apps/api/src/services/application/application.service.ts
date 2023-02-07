@@ -161,7 +161,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
       originalAssessment.offering = offering;
     }
 
-    if (application.applicationStatus === ApplicationStatus.draft) {
+    if (application.applicationStatus === ApplicationStatus.Draft) {
       /**
        * Generate the application number with respect to the programYearPrefix.
        * This ensures that respective sequence is created in the sequence_controls table
@@ -171,7 +171,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
         application.programYear.programYearPrefix,
       );
       application.data = applicationData;
-      application.applicationStatus = ApplicationStatus.submitted;
+      application.applicationStatus = ApplicationStatus.Submitted;
       application.relationshipStatus = applicationData.relationshipStatus;
       application.studentNumber = applicationData.studentNumber;
       application.applicationStatusUpdatedOn = now;
@@ -216,7 +216,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
 
     // Updating existing Application status to override
     // and updating the ApplicationStatusUpdatedOn.
-    application.applicationStatus = ApplicationStatus.overwritten;
+    application.applicationStatus = ApplicationStatus.Overwritten;
     application.applicationStatusUpdatedOn = now;
 
     // Creating New Application with same Application Number and Program Year as
@@ -230,7 +230,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
     newApplication.studentNumber = applicationData.studentNumber;
     newApplication.programYear = application.programYear;
     newApplication.data = applicationData;
-    newApplication.applicationStatus = ApplicationStatus.submitted;
+    newApplication.applicationStatus = ApplicationStatus.Submitted;
     newApplication.applicationStatusUpdatedOn = now;
     newApplication.student = { id: application.studentId } as Student;
     newApplication.studentFiles = await this.getSyncedApplicationFiles(
@@ -316,7 +316,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
   ): Promise<Application> {
     let draftApplication = await this.getApplicationToSave(
       studentId,
-      ApplicationStatus.draft,
+      ApplicationStatus.Draft,
     );
     // If an application id is provided it means that an update is supposed to happen,
     // so an application draft is expected to be find. If not found, thrown an error.
@@ -352,7 +352,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
       draftApplication = new Application();
       draftApplication.student = { id: studentId } as Student;
       draftApplication.programYear = { id: programYearId } as ProgramYear;
-      draftApplication.applicationStatus = ApplicationStatus.draft;
+      draftApplication.applicationStatus = ApplicationStatus.Draft;
       draftApplication.applicationStatusUpdatedOn = now;
       draftApplication.creator = auditUser;
       draftApplication.createdAt = now;
@@ -492,7 +492,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
         pirStatus: ProgramInfoStatus.notRequired,
       })
       .andWhere("application.applicationStatus != :overwrittenStatus", {
-        overwrittenStatus: ApplicationStatus.overwritten,
+        overwrittenStatus: ApplicationStatus.Overwritten,
       })
       .getOne();
   }
@@ -560,7 +560,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
       },
       where: {
         id: applicationId,
-        applicationStatus: Not(ApplicationStatus.overwritten),
+        applicationStatus: Not(ApplicationStatus.Overwritten),
         student: {
           id: options?.studentId,
         },
@@ -591,7 +591,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
       .leftJoin("currentAssessment.offering", "offering")
       .where("application.student.id = :studentId", { studentId })
       .andWhere("application.applicationStatus != :overwrittenStatus", {
-        overwrittenStatus: ApplicationStatus.overwritten,
+        overwrittenStatus: ApplicationStatus.Overwritten,
       });
 
     // sorting
@@ -608,13 +608,13 @@ export class ApplicationService extends RecordDataModelService<Application> {
       applicationQuery.orderBy(
         // TODO:Further investigation needed as the CASE translation does not work in orderby queries.
         `CASE application.application_status
-              WHEN '${ApplicationStatus.draft}' THEN 1
-              WHEN '${ApplicationStatus.submitted}' THEN 2
-              WHEN '${ApplicationStatus.inProgress}' THEN 3
-              WHEN '${ApplicationStatus.assessment}' THEN 4
-              WHEN '${ApplicationStatus.enrollment}' THEN 5
-              WHEN '${ApplicationStatus.completed}' THEN 6
-              WHEN '${ApplicationStatus.cancelled}' THEN 7
+              WHEN '${ApplicationStatus.Draft}' THEN 1
+              WHEN '${ApplicationStatus.Submitted}' THEN 2
+              WHEN '${ApplicationStatus.InProgress}' THEN 3
+              WHEN '${ApplicationStatus.Assessment}' THEN 4
+              WHEN '${ApplicationStatus.Enrolment}' THEN 5
+              WHEN '${ApplicationStatus.Completed}' THEN 6
+              WHEN '${ApplicationStatus.Cancelled}' THEN 7
               ELSE 8
             END`,
         pagination.sortOrder,
@@ -672,9 +672,9 @@ export class ApplicationService extends RecordDataModelService<Application> {
     } else {
       query.andWhere("application.applicationStatus NOT IN (:...status)", {
         status: [
-          ApplicationStatus.completed,
-          ApplicationStatus.overwritten,
-          ApplicationStatus.cancelled,
+          ApplicationStatus.Completed,
+          ApplicationStatus.Overwritten,
+          ApplicationStatus.Cancelled,
         ],
       });
     }
@@ -723,7 +723,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
         .where("application.id = :applicationId", { applicationId })
         .andWhere("application.location.id = :locationId", { locationId })
         .andWhere("application.applicationStatus != :applicationStatus", {
-          applicationStatus: ApplicationStatus.overwritten,
+          applicationStatus: ApplicationStatus.Overwritten,
         })
         .andWhere("application.pirStatus = :pirStatus", {
           pirStatus: ProgramInfoStatus.required,
@@ -810,7 +810,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
       .innerJoin("student.user", "user")
       .where("application.location.id = :locationId", { locationId })
       .andWhere("application.applicationStatus = :applicationStatus", {
-        applicationStatus: ApplicationStatus.completed,
+        applicationStatus: ApplicationStatus.Completed,
       })
       .andWhere("application.isArchived = :isArchived", {
         isArchived: archived,
@@ -922,7 +922,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
           nonPirStatus: ProgramInfoStatus.notRequired,
         })
         .andWhere("application.applicationStatus != :overwrittenStatus", {
-          overwrittenStatus: ApplicationStatus.overwritten,
+          overwrittenStatus: ApplicationStatus.Overwritten,
         })
         // TODO:Further investigation needed as the CASE translation does not work in orderby queries.
         .orderBy(
@@ -971,9 +971,9 @@ export class ApplicationService extends RecordDataModelService<Application> {
         },
         applicationStatus: Not(
           In([
-            ApplicationStatus.completed,
-            ApplicationStatus.overwritten,
-            ApplicationStatus.cancelled,
+            ApplicationStatus.Completed,
+            ApplicationStatus.Overwritten,
+            ApplicationStatus.Cancelled,
           ]),
         ),
       },
@@ -986,7 +986,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
     }
     // Updates the application status to cancelled.
     const now = new Date();
-    application.applicationStatus = ApplicationStatus.cancelled;
+    application.applicationStatus = ApplicationStatus.Cancelled;
     application.applicationStatusUpdatedOn = now;
     application.modifier = { id: auditUserId } as User;
     application.updatedAt = now;
@@ -1062,7 +1062,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
         .where("application.id = :applicationId", { applicationId })
         .andWhere("application.location.id = :locationId", { locationId })
         .andWhere("application.applicationStatus != :applicationStatus", {
-          applicationStatus: ApplicationStatus.overwritten,
+          applicationStatus: ApplicationStatus.Overwritten,
         })
         .andWhere("application.pirStatus = :pirStatus", {
           pirStatus: ProgramInfoStatus.required,
@@ -1157,7 +1157,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
       .where("application.id = :applicationId", { applicationId })
       .andWhere("location.id = :locationId", { locationId })
       .andWhere("application.applicationStatus = :applicationStatus", {
-        applicationStatus: ApplicationStatus.completed,
+        applicationStatus: ApplicationStatus.Completed,
       })
       .getOne();
   }
@@ -1198,7 +1198,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
       .andWhere("lower(user.lastName) = lower(:lastName)", { lastName })
       .andWhere("student.birthDate = :birthDate", { birthDate })
       .andWhere("application.applicationStatus = :applicationStatus", {
-        applicationStatus: ApplicationStatus.inProgress,
+        applicationStatus: ApplicationStatus.InProgress,
       })
       .getOne();
   }
@@ -1232,9 +1232,9 @@ export class ApplicationService extends RecordDataModelService<Application> {
       })
       .andWhere("application.applicationStatus NOT IN (:...status)", {
         status: [
-          ApplicationStatus.draft,
-          ApplicationStatus.overwritten,
-          ApplicationStatus.cancelled,
+          ApplicationStatus.Draft,
+          ApplicationStatus.Overwritten,
+          ApplicationStatus.Cancelled,
         ],
       })
       .andWhere(
@@ -1297,7 +1297,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
       },
       where: {
         student: { user: { id: userId } },
-        applicationStatus: ApplicationStatus.completed,
+        applicationStatus: ApplicationStatus.Completed,
         applicationNumber,
         id: applicationId,
       },
@@ -1434,7 +1434,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
       },
       where: {
         id: applicationId,
-        applicationStatus: Not(ApplicationStatus.overwritten),
+        applicationStatus: Not(ApplicationStatus.Overwritten),
         student: {
           id: studentId,
         },
@@ -1475,9 +1475,9 @@ export class ApplicationService extends RecordDataModelService<Application> {
       where: {
         id: applicationId,
         applicationStatus: In([
-          ApplicationStatus.assessment,
-          ApplicationStatus.enrollment,
-          ApplicationStatus.completed,
+          ApplicationStatus.Assessment,
+          ApplicationStatus.Enrolment,
+          ApplicationStatus.Completed,
         ]),
         student: {
           id: studentId,

@@ -1,4 +1,5 @@
 <template>
+  <!-- COE Banners -->
   <application-status-tracker-banner
     v-if="coeStatus === COEStatus.required"
     label="Waiting for your confirmation of enrolment"
@@ -13,7 +14,11 @@
     icon="fa:fas fa-check-circle"
     icon-color="success"
     content="Your institution will check your enrolment closer to your study start date. Please contact the Financial Aid Officer from your institution if you require more information."
-    background-color="success-bg"
+    :background-color="
+      recentDisbursementUpdate === DisbursementUpdates.EnrolmentCompleted
+        ? 'success-bg'
+        : 'white'
+    "
   />
 
   <application-status-tracker-banner
@@ -26,15 +31,46 @@
     <template #content
       ><span class="font-bold">Reason from your institution:</span>
       {{ coeDenialReason }}. Please note any scheduled payment(s) will be
-      cancelled. Contact the Financial Aid Officer from your school if you
-      require more information.</template
+      cancelled.</template
     >
   </application-status-tracker-banner>
+
+  <!-- disbursement schedule banners-->
+
+  <application-status-tracker-banner
+    v-if="disbursementStatus === DisbursementScheduleStatus.Pending"
+    label="Waiting to send your payment to NSLSC"
+    icon="fa:fas fa-clock"
+    icon-color="secondary"
+    content="StudentAid BC will let you know when your payment is sent to the National Student Loan Service Centre. Your payment will be collected there."
+  />
+
+  <application-status-tracker-banner
+    v-if="disbursementStatus === DisbursementScheduleStatus.Sent"
+    label="Your payment has been sent to NSLSC"
+    icon="fa:fas fa-check-circle"
+    icon-color="success"
+    content="Your payment has been transferred to the National Student Loan Service Centre (NSLSC). Please collect your payment there. The payment may take time to appear on NSLSC. If you do not see the payment within 3 days, please contact NSLSC."
+    :background-color="
+      recentDisbursementUpdate === DisbursementUpdates.DisbursementSent
+        ? 'success-bg'
+        : 'white'
+    "
+  />
 </template>
 <script lang="ts">
 import ApplicationStatusTrackerBanner from "@/components/students/applicationTracker/generic/ApplicationStatusTrackerBanner.vue";
-import { COEStatus } from "@/types";
-import { defineComponent, PropType } from "vue";
+import { COEStatus, DisbursementScheduleStatus } from "@/types";
+import { defineComponent, PropType, computed } from "vue";
+
+/**
+ * Various updates that can happen to a disbursement.
+ */
+enum DisbursementUpdates {
+  EnrolmentCompleted,
+  DisbursementSent,
+  EnrolmentDeclined,
+}
 
 export default defineComponent({
   components: {
@@ -49,10 +85,27 @@ export default defineComponent({
       type: String,
       required: true,
     },
+    disbursementStatus: {
+      type: String as PropType<DisbursementScheduleStatus>,
+      required: false,
+    },
   },
-  setup() {
+  setup(props) {
+    // The most recent disbursement update.
+    const recentDisbursementUpdate = computed<DisbursementUpdates>(() => {
+      if (props.disbursementStatus === DisbursementScheduleStatus.Sent) {
+        return DisbursementUpdates.DisbursementSent;
+      }
+      if (props.coeStatus === COEStatus.completed) {
+        return DisbursementUpdates.EnrolmentCompleted;
+      }
+      return DisbursementUpdates.EnrolmentDeclined;
+    });
     return {
       COEStatus,
+      DisbursementScheduleStatus,
+      recentDisbursementUpdate,
+      DisbursementUpdates,
     };
   },
 });

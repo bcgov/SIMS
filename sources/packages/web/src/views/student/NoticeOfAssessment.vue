@@ -78,7 +78,7 @@ export default defineComponent({
       noaApprovalStatus: AssessmentStatus,
     ) => {
       viewOnly.value = !(
-        applicationStatus === ApplicationStatus.assessment &&
+        applicationStatus === ApplicationStatus.Assessment &&
         noaApprovalStatus === AssessmentStatus.required
       );
     };

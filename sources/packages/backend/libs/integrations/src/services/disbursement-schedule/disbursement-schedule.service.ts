@@ -100,8 +100,8 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
         studentAssessment: {
           application: {
             applicationStatus: In([
-              ApplicationStatus.enrollment,
-              ApplicationStatus.completed,
+              ApplicationStatus.Enrolment,
+              ApplicationStatus.Completed,
             ]),
             currentAssessment: {
               offering: {

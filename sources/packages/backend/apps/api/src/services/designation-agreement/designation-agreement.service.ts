@@ -41,7 +41,7 @@ export class DesignationAgreementService extends RecordDataModelService<Designat
    */
   async submitDesignationAgreement(
     institutionId: number,
-    submittedData: any,
+    submittedData: unknown,
     submittedByUserId: number,
     requestedLocationsIds: number[],
   ): Promise<DesignationAgreement> {

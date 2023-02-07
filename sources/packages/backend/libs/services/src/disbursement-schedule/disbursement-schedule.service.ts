@@ -217,20 +217,20 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
 
     if (
       assessment.triggerType === AssessmentTriggerType.OriginalAssessment &&
-      assessment.application.applicationStatus !== ApplicationStatus.inProgress
+      assessment.application.applicationStatus !== ApplicationStatus.InProgress
     ) {
       throw new CustomNamedError(
-        `Student Assessment and Student Application are not in the expected status. Expecting assessment status '${AssessmentTriggerType.OriginalAssessment}' when the application status is '${ApplicationStatus.inProgress}'.`,
+        `Student Assessment and Student Application are not in the expected status. Expecting assessment status '${AssessmentTriggerType.OriginalAssessment}' when the application status is '${ApplicationStatus.InProgress}'.`,
         ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE,
       );
     }
 
     if (
       assessment.triggerType !== AssessmentTriggerType.OriginalAssessment &&
-      assessment.application.applicationStatus !== ApplicationStatus.completed
+      assessment.application.applicationStatus !== ApplicationStatus.Completed
     ) {
       throw new CustomNamedError(
-        `Student Assessment and Student Application are not in the expected status. Expecting application status '${ApplicationStatus.completed}' when the assessment status is not '${AssessmentTriggerType.OriginalAssessment}'.`,
+        `Student Assessment and Student Application are not in the expected status. Expecting application status '${ApplicationStatus.Completed}' when the assessment status is not '${AssessmentTriggerType.OriginalAssessment}'.`,
         ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE,
       );
     }

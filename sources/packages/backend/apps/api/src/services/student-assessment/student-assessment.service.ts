@@ -144,20 +144,20 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
 
     if (
       assessment.triggerType === AssessmentTriggerType.OriginalAssessment &&
-      assessment.application.applicationStatus !== ApplicationStatus.submitted
+      assessment.application.applicationStatus !== ApplicationStatus.Submitted
     ) {
       throw new CustomNamedError(
-        `An assessment with a trigger type '${AssessmentTriggerType.OriginalAssessment}' can only be started with a Student Application in the status '${ApplicationStatus.submitted}'. Assessment id ${assessmentId}`,
+        `An assessment with a trigger type '${AssessmentTriggerType.OriginalAssessment}' can only be started with a Student Application in the status '${ApplicationStatus.Submitted}'. Assessment id ${assessmentId}`,
         ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE,
       );
     }
 
     if (
       assessment.triggerType !== AssessmentTriggerType.OriginalAssessment &&
-      assessment.application.applicationStatus !== ApplicationStatus.completed
+      assessment.application.applicationStatus !== ApplicationStatus.Completed
     ) {
       throw new CustomNamedError(
-        `An assessment with a trigger type other than '${AssessmentTriggerType.OriginalAssessment}' can only be started with a Student Application in the status '${ApplicationStatus.completed}'. Assessment id ${assessmentId}`,
+        `An assessment with a trigger type other than '${AssessmentTriggerType.OriginalAssessment}' can only be started with a Student Application in the status '${ApplicationStatus.Completed}'. Assessment id ${assessmentId}`,
         ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE,
       );
     }
@@ -202,17 +202,17 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
     }
 
     if (
-      assessment.application.applicationStatus !== ApplicationStatus.assessment
+      assessment.application.applicationStatus !== ApplicationStatus.Assessment
     ) {
       throw new CustomNamedError(
-        `Application status expected to be '${ApplicationStatus.assessment}' to allow the NOA confirmation.`,
+        `Application status expected to be '${ApplicationStatus.Assessment}' to allow the NOA confirmation.`,
         ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE,
       );
     }
     const auditUser = { id: auditUserId } as User;
     const now = new Date();
     assessment.noaApprovalStatus = AssessmentStatus.completed;
-    assessment.application.applicationStatus = ApplicationStatus.enrollment;
+    assessment.application.applicationStatus = ApplicationStatus.Enrolment;
     // Populate the audit fields.
     assessment.application.modifier = auditUser;
     assessment.application.updatedAt = now;

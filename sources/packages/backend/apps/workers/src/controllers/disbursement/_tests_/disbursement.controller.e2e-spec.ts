@@ -138,7 +138,7 @@ describe("Disbursement Schedule Service - Create disbursement", () => {
         fakeReassessment,
       ]);
     savedApplication.currentAssessment = fakeReassessment;
-    savedApplication.applicationStatus = ApplicationStatus.completed;
+    savedApplication.applicationStatus = ApplicationStatus.Completed;
     await applicationRepo.save(savedApplication);
 
     const fakeOverawardForSameApplication = createFakeDisbursementOveraward();
