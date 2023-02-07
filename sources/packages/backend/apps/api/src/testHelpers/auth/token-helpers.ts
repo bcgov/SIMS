@@ -107,5 +107,7 @@ export async function getAESTToken(group: AESTGroups): Promise<string> {
       };
       break;
   }
+  console.log("getCachedToken");
+  console.log(credential);
   return getCachedToken(AuthorizedParties.aest, credential, group.toString());
 }
