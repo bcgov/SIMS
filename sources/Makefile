@@ -62,12 +62,16 @@ export CRA_ENVIRONMENT_CODE := $(or $(CRA_ENVIRONMENT_CODE), )
 #Institution Integration
 export INSTITUTION_REQUEST_FOLDER := $(or $(INSTITUTION_REQUEST_FOLDER), Institution-Request)
 
+# Starts all applications: SIMS application (Web Portals, SIMS Api, Workers, Queue Consumers), 
+# and also Form.io server, and Camunda releated services.
+# Use make deploy-camunda-definitions to deploy all workflow definitions.
+# Use make deploy-form-definitions to deploy all form.io definitions.
+local-all: | print-status forms camunda local-build-run 
+
 local:	| print-status local-build-run
 local-api: | print-status local-build api-only
-local-api-detached: | print-status local-build api-detached
 db: | print-status postgres
 local-redis: | print-status redis
-test-api: | print-status local-api-test 
 
 ####################################################################
 ## Status Output
@@ -145,19 +149,10 @@ api-only:
 	@echo "+\n++ Make: Building and running API only"
 	@docker-compose -f docker-compose.yml up api
 
-api-detached:
-	@echo "+\n++ Make: Running DB and API only"
-	@docker-compose -f docker-compose.yml up -d api
-
 # Local App
 api: ## <Helper> :: Executes into the workspace container.
 	@echo "+\n++Shelling into local workspace ...++\n+"
 	@docker-compose exec api bash
-
-local-api-test: ## Run API tests
-	@echo "+\n++ Run API tests+\n++"
-	@docker-compose exec -T api npm run test
-	@docker-compose exec -T api npm run test:e2e:api
 
 local-db:
 	@echo "Make: Shelling into database workspace ..."
@@ -176,6 +171,10 @@ camunda-stop:
 	@echo "Stopping Camunda locally..."
 	@docker-compose -f camunda-docker-compose-core.yml down
 
+# Deploy Camunda defitions locally
+deploy-camunda-definitions:
+	@cd ./packages/workflow && npm i && npm run deploy
+
 # Build and deploy forms locally.
 forms:
 	@echo "Build, deploy forms and deploy form-definitions locally... \n+"
@@ -183,7 +182,7 @@ forms:
 	@echo "Default user/password as admin@example.com/CHANGEME \n+"
 	@docker-compose -f forms-docker-compose.yml up --build -d
 
-#deploy form-definitions locally
+# Deploy form-definitions locally
 deploy-form-definitions:
 	@cd ./packages/forms && npm i && npm run deploy
 
