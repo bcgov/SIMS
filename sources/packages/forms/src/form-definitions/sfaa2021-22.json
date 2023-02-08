@@ -3901,8 +3901,8 @@
                 {
                   "input": true,
                   "tableView": false,
-                  "key": "studyEndDatePastMaxAllowedDaysApplicationException",
-                  "label": "Application Exception - Maximum allowed days after study end date is past",
+                  "key": "studyEndDateIsPastApplicationException",
+                  "label": "Application Exception - Study end date is past",
                   "protected": false,
                   "unique": false,
                   "persistent": true,
@@ -3916,7 +3916,7 @@
                   "properties": {},
                   "calculateValue": "value = \"studentApplicationException\";",
                   "lockKey": true,
-                  "customConditional": "show = data.studyEndDatePastAllowedDays || data.selectedStudyEndDatePastAllowedDays;",
+                  "customConditional": "show = data.studyEndDateBeforeToday || data.selectedStudyEndDateBeforeToday;",
                   "calculateServer": true
                 }
               ],
@@ -5428,8 +5428,7 @@
             "eq": ""
           },
           "properties": {},
-          "lockKey": true,
-          "isNew": false
+          "lockKey": true
         },
         {
           "input": true,
@@ -5469,7 +5468,8 @@
           "properties": {},
           "lockKey": true,
           "calculateServer": true,
-          "calculateValue": "/**\r\n * Validates if the date provided is before today.\r\n *\r\n * The same validation exists on calculating selectedStudyEndDateBeforeToday,\r\n * other student application forms, program information request form\r\n * and also on the server side.\r\n *\r\n * When there is an update to this logic make sure to update in all the above.\r\n *\r\n */\r\n\r\nfunction isGivenDateBeforeToday(givenDate) {\r\n  return moment\r\n    .utc(givenDate)\r\n    .isBefore(moment.utc(new Date()).format(\"YYYY-MM-DD\"), \"day\");\r\n}\r\n\r\n// If program/study period not listed is selected, validate the study end date to be after given days before now.\r\nvalue = !!data.studyendDate && isGivenDateBeforeToday(data.studyendDate);\r\n"
+          "calculateValue": "/**\r\n * Validates if the date provided is before today.\r\n *\r\n * The same validation exists on calculating selectedStudyEndDateBeforeToday,\r\n * other student application forms, program information request form\r\n * and also on the server side.\r\n *\r\n * When there is an update to this logic make sure to update in all the above.\r\n *\r\n */\r\n\r\nfunction isGivenDateBeforeToday(givenDate) {\r\n  return moment\r\n    .utc(givenDate)\r\n    .isBefore(moment.utc(new Date()).format(\"YYYY-MM-DD\"), \"day\");\r\n}\r\n\r\n// If program/study period not listed is selected, validate the study end date to be after given days before now.\r\nvalue = !!data.studyendDate && isGivenDateBeforeToday(data.studyendDate);\r\n",
+          "isNew": false
         },
         {
           "input": true,

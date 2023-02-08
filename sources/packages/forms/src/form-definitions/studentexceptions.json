@@ -1862,11 +1862,11 @@
         },
         {
           "clearOnHide": false,
-          "key": "studyEndDatePastMaxAllowedDaysApplicationException",
+          "key": "studyEndDateIsPastApplicationException",
           "input": false,
           "components": [
             {
-              "key": "studyEndDatePastMaxAllowedDaysApplicationExceptionContent",
+              "key": "studyEndDatePastApplicationExceptionContent",
               "label": "Content",
               "input": false,
               "tag": "strong",
@@ -1877,7 +1877,7 @@
                 }
               ],
               "className": "",
-              "content": "Maximum allowed days after study end date is past",
+              "content": "Study end date is past",
               "type": "htmlelement",
               "hideLabel": true,
               "tags": [],
@@ -1886,7 +1886,8 @@
                 "when": null,
                 "eq": ""
               },
-              "properties": {}
+              "properties": {},
+              "lockKey": true
             }
           ],
           "tableView": false,
@@ -1900,8 +1901,7 @@
           },
           "properties": {},
           "lockKey": true,
-          "customConditional": "show = data.exceptionNames.indexOf(component.key) !== -1;",
-          "isNew": false
+          "customConditional": "show = data.exceptionNames.indexOf(component.key) !== -1;"
         }
       ],
       "placeholder": "",
