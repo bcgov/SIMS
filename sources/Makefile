@@ -62,9 +62,14 @@ export CRA_ENVIRONMENT_CODE := $(or $(CRA_ENVIRONMENT_CODE), )
 #Institution Integration
 export INSTITUTION_REQUEST_FOLDER := $(or $(INSTITUTION_REQUEST_FOLDER), Institution-Request)
 
+# Starts all applications: SIMS application (Web Portals, SIMS Api, Workers, Queue Consumers), 
+# and also Form.io server, and Camunda releated services.
+# Use make deploy-camunda-definitions to deploy all workflow definitions.
+# Use make deploy-form-definitions to deploy all form.io definitions.
+local-all: | print-status forms camunda local-build-run 
+
 local:	| print-status local-build-run
 local-api: | print-status local-build api-only
-local-all: | print-status forms camunda deploy-camunda-definitions local-build-run deploy-form-definitions
 db: | print-status postgres
 local-redis: | print-status redis
 
