@@ -1049,9 +1049,9 @@
           "tags": [],
           "properties": {},
           "conditional": {
-            "show": null,
-            "when": null,
-            "eq": "",
+            "show": "true",
+            "when": "isSelectedOfferingPartTime",
+            "eq": "true",
             "json": ""
           },
           "customConditional": "",
@@ -1133,9 +1133,7 @@
           "disabled": false,
           "tableView": false,
           "modalEdit": false,
-          "defaultValue": [
-            {}
-          ],
+          "defaultValue": [],
           "persistent": true,
           "protected": false,
           "dbIndex": false,
@@ -1165,9 +1163,9 @@
           "tags": [],
           "properties": {},
           "conditional": {
-            "show": null,
-            "when": null,
-            "eq": "",
+            "show": "true",
+            "when": "isSelectedOfferingPartTime",
+            "eq": "true",
             "json": ""
           },
           "customConditional": "",
@@ -2014,13 +2012,12 @@
           "tags": [],
           "conditional": {
             "show": "true",
-            "when": "selectedStudyEndDatePastAllowedDays",
+            "when": "selectedStudyEndDateBeforeToday",
             "eq": "true"
           },
           "properties": {},
           "customClass": "banner-warning",
-          "lockKey": true,
-          "isNew": false
+          "lockKey": true
         }
       ],
       "placeholder": "",
@@ -2454,6 +2451,24 @@
       "id": "ehw4bu6"
     },
     {
+      "input": true,
+      "tableView": true,
+      "key": "isSelectedOfferingPartTime",
+      "label": "isSelectedOfferingPartTime",
+      "protected": false,
+      "unique": false,
+      "persistent": true,
+      "type": "hidden",
+      "tags": [],
+      "conditional": {
+        "show": "",
+        "when": null,
+        "eq": ""
+      },
+      "properties": {},
+      "calculateValue": "value = data.offeringIntensitySelectedByStudent === 'Part Time'"
+    },
+    {
       "label": "pirStatus",
       "labelWidth": "",
       "labelMargin": "",
@@ -2684,13 +2699,14 @@
         "eq": ""
       },
       "properties": {},
-      "lockKey": true
+      "lockKey": true,
+      "isNew": false
     },
     {
       "input": true,
       "tableView": false,
-      "key": "maximumAllowedDaysAfterStudyEndDate",
-      "label": "Maximum allowed days after study end date",
+      "key": "selectedStudyEndDateBeforeToday",
+      "label": "Selected study end date before today",
       "protected": false,
       "unique": false,
       "persistent": true,
@@ -2702,27 +2718,7 @@
         "eq": ""
       },
       "properties": {},
-      "calculateValue": "/**\n * Maximum number of days past the study period end date\n * beyond when an application will require StudentAid BC\n * approval for funding.\n */\n \nvalue = 42;",
-      "calculateServer": true,
-      "lockKey": true
-    },
-    {
-      "input": true,
-      "tableView": false,
-      "key": "selectedStudyEndDatePastAllowedDays",
-      "label": "Selected study end date past maximum allowed days",
-      "protected": false,
-      "unique": false,
-      "persistent": true,
-      "type": "hidden",
-      "tags": [],
-      "conditional": {
-        "show": "",
-        "when": null,
-        "eq": ""
-      },
-      "properties": {},
-      "calculateValue": "/**\n * Validates if the date provided is within given days\n * before now.\n * e.g. If the current date is 10-JAN-2023 and\n * given number of days is 4, it validates if the given date\n * is on or after 06-JAN-2023.\n * \n * The same validation exists on all the student application\n * forms and also on the server side\n * based on the variable COE_MAX_ALLOWED_DAYS_PAST_STUDY_PERIOD.\n * \n * When there is an update to this logic make sure to update in all the above.\n */\n \nfunction isAfterGivenDaysBeforeNow(\n  givenDate,\n  numberOfDaysBeforeToday\n) {\n  return moment\n    .utc(givenDate)\n    .isAfter(\n      moment\n        .utc(moment.utc().format(\"YYYY-MM-DD\"))\n        .subtract(numberOfDaysBeforeToday + 1, \"days\")\n    );\n}\n\nvalue = !!data.selectedOfferingEndDate && !isAfterGivenDaysBeforeNow(data.selectedOfferingEndDate,data.maximumAllowedDaysAfterStudyEndDate);",
+      "calculateValue": "/**\r\n * Validates if the date provided is before today.\r\n *\r\n * The same validation exists on all the student application\r\n * forms and also on the server side.\r\n *\r\n * When there is an update to this logic make sure to update in all the above.\r\n */\r\n\r\nfunction isGivenDateBeforeToday(givenDate) {\r\n  return moment\r\n    .utc(givenDate)\r\n    .isBefore(moment.utc(new Date()).format(\"YYYY-MM-DD\"), \"day\");\r\n}\r\n\r\nvalue =\r\n  !!data.selectedOfferingEndDate &&\r\n  isGivenDateBeforeToday(data.selectedOfferingEndDate);\r\n",
       "calculateServer": true,
       "lockKey": true
     }

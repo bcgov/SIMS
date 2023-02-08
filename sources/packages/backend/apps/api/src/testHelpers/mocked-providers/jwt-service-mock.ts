@@ -1,12 +1,15 @@
 import { Provider } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 
-export function createMockedJwtService(): Provider {
-  const jwtService = new JwtService({
+export function createMockedJwtServiceValue(): JwtService {
+  return new JwtService({
     secretOrPrivateKey: "Secret key",
   });
+}
+
+export function createMockedJwtService(): Provider {
   return {
     provide: JwtService,
-    useValue: jwtService,
+    useValue: createMockedJwtServiceValue(),
   };
 }

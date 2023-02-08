@@ -10,6 +10,7 @@
   "transform": {
     "^.+\\.(t|j)s$": "ts-jest"
   },
+  "collectCoverage": true,
   "moduleNameMapper": {
     "@sims/sims-db/(.*)": "<rootDir>/../../libs/sims-db/src/$1",
     "@sims/sims-db": "<rootDir>/../../libs/sims-db/src",

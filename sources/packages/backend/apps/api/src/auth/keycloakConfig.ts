@@ -32,15 +32,20 @@ export class KeycloakConfig {
    * that needs to be available even before the application is created.
    */
   public static async load(): Promise<void> {
-    KeycloakConfig._openIdConfig =
-      await KeycloakService.shared.getOpenIdConfig();
-    KeycloakConfig._realmConfig = await KeycloakService.shared.getRealmConfig();
-    if (!KeycloakConfig._realmConfig?.public_key) {
-      throw new Error("Not able to retrieve the public key.");
+    if (!KeycloakConfig._openIdConfig) {
+      KeycloakConfig._openIdConfig =
+        await KeycloakService.shared.getOpenIdConfig();
     }
 
-    KeycloakConfig._PEM_PublicKey = convertStringToPEM(
-      KeycloakConfig._realmConfig.public_key,
-    );
+    if (!KeycloakConfig._realmConfig) {
+      KeycloakConfig._realmConfig =
+        await KeycloakService.shared.getRealmConfig();
+      if (!KeycloakConfig._realmConfig?.public_key) {
+        throw new Error("Not able to retrieve the public key.");
+      }
+      KeycloakConfig._PEM_PublicKey = convertStringToPEM(
+        KeycloakConfig._realmConfig.public_key,
+      );
+    }
   }
 }

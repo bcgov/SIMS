@@ -11,6 +11,7 @@ services:
       dockerfile: ./apps/api/Dockerfile.dev
     environment:
       - NODE_ENV=docker
+      - ENVIRONMENT=local
       - PORT=${API_PORT}
       - POSTGRES_HOST=postgres
       - POSTGRES_PORT=${POSTGRES_PORT}
@@ -29,7 +30,6 @@ services:
       - KEYCLOAK_CLIENT_AEST=${KEYCLOAK_CLIENT_AEST}
       - KEYCLOAK_CLIENT_SUPPORTING_USERS=${KEYCLOAK_CLIENT_SUPPORTING_USERS}
       - DB_SCHEMA=${DB_SCHEMA}
-      - ENVIRONMENT=local
       - E2E_TEST_STUDENT_USERNAME=${E2E_TEST_STUDENT_USERNAME}
       - E2E_TEST_STUDENT_PASSWORD=${E2E_TEST_STUDENT_PASSWORD}
       - E2E_TEST_BCeID_USERNAME=${E2E_TEST_BCeID_USERNAME}
@@ -41,7 +41,7 @@ services:
       - BCeID_WEB_SERVICE_AUTH_USER_PASSWORD=${BCeID_WEB_SERVICE_AUTH_USER_PASSWORD}
       - WORKFLOW_SA_USER_NAME=${WORKFLOW_SA_USER_NAME}
       - WORKFLOW_SA_PASSWORD=${WORKFLOW_SA_PASSWORD}
-      - FORMS_URL=formio:3001
+      - FORMS_URL=http://formio:3001
       - FORMS_SA_USER_NAME=${FORMS_SA_USER_NAME}
       - FORMS_SA_PASSWORD=${FORMS_SA_PASSWORD}
       - SIMS_API_CLIENT_ID=${SIMS_API_CLIENT_ID}
@@ -55,13 +55,21 @@ services:
       - ATBC_ENDPOINT=${ATBC_ENDPOINT}
       - FILE_UPLOAD_MAX_FILE_SIZE=${FILE_UPLOAD_MAX_FILE_SIZE}
       - FILE_UPLOAD_ALLOWED_EXTENSIONS=${FILE_UPLOAD_ALLOWED_EXTENSIONS}
-      - FORMS_FLOW_BPM_CLIENT_SECRET=${FORMS_FLOW_BPM_CLIENT_SECRET}
       - BYPASS_APPLICATION_SUBMIT_VALIDATIONS=${BYPASS_APPLICATION_SUBMIT_VALIDATIONS}
       - SWAGGER_ENABLED=${SWAGGER_ENABLED}
+      - E2E_TEST_AEST_BUSINESS_ADMINISTRATORS_USER=${E2E_TEST_AEST_BUSINESS_ADMINISTRATORS_USER}
+      - E2E_TEST_AEST_BUSINESS_ADMINISTRATORS_PASSWORD=${E2E_TEST_AEST_BUSINESS_ADMINISTRATORS_PASSWORD}
+      - E2E_TEST_AEST_OPERATIONS_USER=${E2E_TEST_AEST_OPERATIONS_USER}
+      - E2E_TEST_AEST_OPERATIONS_PASSWORD=${E2E_TEST_AEST_OPERATIONS_PASSWORD}
+      - E2E_TEST_AEST_OPERATIONS_ADMINISTRATORS_USER=${E2E_TEST_AEST_OPERATIONS_ADMINISTRATORS_USER}
+      - E2E_TEST_AEST_OPERATIONS_ADMINISTRATORS_PASSWORD=${E2E_TEST_AEST_OPERATIONS_ADMINISTRATORS_PASSWORD}
+      - E2E_TEST_AEST_MOF_OPERATIONS_USER=${E2E_TEST_AEST_MOF_OPERATIONS_USER}
+      - E2E_TEST_AEST_MOF_OPERATIONS_PASSWORD=${E2E_TEST_AEST_MOF_OPERATIONS_PASSWORD}
     ports:
       - ${API_PORT}:${API_PORT}
     volumes:
       - ./packages/backend/apps/api/src:/app/src
+      - ./packages/backend/coverage/api:/app/apps/api/coverage
     networks:
       - local-network
     restart: always
@@ -94,6 +102,7 @@ services:
       - REDIS_STANDALONE_MODE=${REDIS_STANDALONE_MODE}
     volumes:
       - ./packages/backend/apps/workers/src:/app/src
+      - ./packages/backend/coverage/workers:/app/apps/workers/coverage
     networks:
       - local-network
     restart: always
@@ -153,6 +162,7 @@ services:
       - ${QUEUE_CONSUMERS_PORT}:${QUEUE_CONSUMERS_PORT}
     volumes:
       - ./packages/backend/apps/queue-consumers/src:/app/src
+      - ./packages/backend/coverage/queue-consumers:/app/apps/queue-consumers/coverage
     networks:
       - local-network
     restart: always

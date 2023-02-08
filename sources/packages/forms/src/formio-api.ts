@@ -2,7 +2,7 @@ import * as dotenv from "dotenv";
 import axios, { AxiosResponse } from "axios";
 import { join } from "path";
 
-dotenv.config({ path: join(__dirname, "./../.env") });
+dotenv.config({ path: join(__dirname, "./../../../.env") });
 const formsUrl = process.env.FORMS_URL;
 const formsUserName = process.env.FORMS_SA_USER_NAME;
 const formsPassword = process.env.FORMS_SA_PASSWORD;
