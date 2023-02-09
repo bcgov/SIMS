@@ -15,19 +15,19 @@
         Ensure you have an approved designation to administer financial aid to
         students
         <tooltip-icon
-          >To request a designation, you must have the user role of a Legal
-          Signing Authority to access the request button here.</tooltip-icon
+          >You must have the role of a Legal Signing Authority to request a
+          designation.</tooltip-icon
         >
       </template>
 
       <template #actions>
         <v-btn
-          v-if="isLegalSigningAuthority"
           class="ml-2 float-right"
           color="primary"
           data-cy="requestDesignation"
           @click="goToRequestDesignation()"
           prepend-icon="fa:fa fa-bell-concierge"
+          :disabled="!isLegalSigningAuthority"
           >Request designation</v-btn
         >
       </template>
