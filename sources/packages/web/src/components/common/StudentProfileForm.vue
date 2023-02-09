@@ -19,10 +19,10 @@
 </template>
 
 <script lang="ts">
-import { ref, computed, PropType } from "vue";
+import { ref, computed, PropType, defineComponent } from "vue";
 import { StudentProfileFormModel, StudentProfileFormModes } from "@/types";
 
-export default {
+export default defineComponent({
   emits: ["submitted", "customEvent", "loaded"],
   props: {
     formModel: {
@@ -56,5 +56,5 @@ export default {
       showActionButtons,
     };
   },
-};
+});
 </script>

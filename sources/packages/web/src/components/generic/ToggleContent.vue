@@ -19,7 +19,8 @@
 </template>
 
 <script lang="ts">
-export default {
+import { defineComponent } from "vue";
+export default defineComponent({
   props: {
     toggled: {
       type: Boolean,
@@ -31,5 +32,5 @@ export default {
       default: "There's nothing here yet",
     },
   },
-};
+});
 </script>

@@ -16,8 +16,8 @@ It basically provides a "Read More/Read Less" like option on the page.
 </template>
 
 <script lang="ts">
-import { ref } from "vue";
-export default {
+import { ref, defineComponent } from "vue";
+export default defineComponent({
   props: {
     collapsedText: {
       type: String,
@@ -44,5 +44,5 @@ export default {
 
     return { isExtended, extendedLabel, toggleExtended };
   },
-};
+});
 </script>

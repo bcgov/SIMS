@@ -24,9 +24,9 @@ import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
 import { useFormioUtils, useModalDialog } from "@/composables";
 import { FormIOForm } from "@/types";
 import formio from "@/components/generic/formio.vue";
-import { SetupContext } from "vue";
+import { SetupContext, defineComponent } from "vue";
 
-export default {
+export default defineComponent({
   components: {
     formio,
     ModalDialogBase,
@@ -68,5 +68,5 @@ export default {
       cancel,
     };
   },
-};
+});
 </script>

@@ -30,7 +30,7 @@
 </template>
 
 <script lang="ts">
-import { ref, onMounted } from "vue";
+import { ref, onMounted, defineComponent } from "vue";
 import { useRouter } from "vue-router";
 import { useStore } from "vuex";
 import { UserService } from "@/services/UserService";
@@ -40,7 +40,7 @@ import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import { useFormioDropdownLoader, useSnackBar } from "@/composables";
 import { FormIOForm } from "@/types";
 
-export default {
+export default defineComponent({
   setup() {
     const processing = ref(false);
     const store = useStore();
@@ -93,5 +93,5 @@ export default {
       processing,
     };
   },
-};
+});
 </script>

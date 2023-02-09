@@ -17,7 +17,7 @@
 </template>
 
 <script lang="ts">
-import { ref } from "vue";
+import { ref, defineComponent } from "vue";
 import { useRouter } from "vue-router";
 import { ClientIdType, Role } from "@/types";
 import { AESTCreateInstitutionAPIInDTO } from "@/services/http/dto";
@@ -31,7 +31,7 @@ interface FormModel {
   mode: string;
 }
 
-export default {
+export default defineComponent({
   components: { InstitutionProfileForm },
   setup() {
     const router = useRouter();
@@ -66,5 +66,5 @@ export default {
       processing,
     };
   },
-};
+});
 </script>

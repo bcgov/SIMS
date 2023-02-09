@@ -34,7 +34,7 @@
 </template>
 
 <script lang="ts">
-import { ref, reactive } from "vue";
+import { ref, reactive, defineComponent } from "vue";
 import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
 import ErrorSummary from "@/components/generic/ErrorSummary.vue";
 import { useModalDialog, useRules } from "@/composables";
@@ -42,7 +42,7 @@ import { DeclineProgramAPIInDTO } from "@/services/http/dto";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
 import { Role, VForm } from "@/types";
 
-export default {
+export default defineComponent({
   components: {
     ModalDialogBase,
     CheckPermissionRole,
@@ -90,5 +90,5 @@ export default {
       checkNotesLengthRule,
     };
   },
-};
+});
 </script>

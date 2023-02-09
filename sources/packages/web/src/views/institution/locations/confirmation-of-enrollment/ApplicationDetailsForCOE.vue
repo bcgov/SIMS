@@ -64,7 +64,7 @@
 </template>
 <script lang="ts">
 import { useRouter } from "vue-router";
-import { onMounted, ref, watch } from "vue";
+import { onMounted, ref, watch, defineComponent } from "vue";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import { ConfirmationOfEnrollmentService } from "@/services/ConfirmationOfEnrollmentService";
 import {
@@ -89,7 +89,7 @@ import ApproveCOE from "@/components/institutions/modals/confirmationOfEnrollmen
 import DenyCOE from "@/components/institutions/modals/confirmationOfEnrollment/DenyCOE.vue";
 import ApprovalDisabledBanner from "@/components/institutions/locations/coe/COEApprovalDisabledBanner.vue";
 
-export default {
+export default defineComponent({
   components: {
     ApproveCOE,
     DenyCOE,
@@ -248,5 +248,5 @@ export default {
       BannerTypes,
     };
   },
-};
+});
 </script>

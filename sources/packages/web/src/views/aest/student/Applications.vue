@@ -10,11 +10,12 @@
 </template>
 
 <script lang="ts">
+import { defineComponent } from "vue";
 import StudentApplications from "@/components/aest/StudentApplications.vue";
 import { useRouter } from "vue-router";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 
-export default {
+export default defineComponent({
   components: { StudentApplications },
   props: {
     studentId: {
@@ -35,5 +36,5 @@ export default {
     };
     return { goToApplication };
   },
-};
+});
 </script>

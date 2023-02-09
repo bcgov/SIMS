@@ -35,7 +35,7 @@
 <script lang="ts">
 import { useRouter } from "vue-router";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
-import { onMounted, ref } from "vue";
+import { onMounted, ref, defineComponent } from "vue";
 import { DesignationAgreementService } from "@/services/DesignationAgreementService";
 import {
   DesignationAgreementDetailsAPIOutDTO,
@@ -44,7 +44,7 @@ import {
 import { useInstitutionAuth, useSnackBar } from "@/composables";
 import DesignationAgreementSummary from "@/components/partial-view/DesignationAgreement/DesignationAgreementSummary.vue";
 
-export default {
+export default defineComponent({
   components: {
     DesignationAgreementSummary,
   },
@@ -87,5 +87,5 @@ export default {
       isLegalSigningAuthority,
     };
   },
-};
+});
 </script>

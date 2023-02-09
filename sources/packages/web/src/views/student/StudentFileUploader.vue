@@ -33,7 +33,7 @@
 import { useFormioUtils, useSnackBar } from "@/composables";
 import { StudentService } from "@/services/StudentService";
 import StudentDocumentList from "@/components/students/StudentDocumentList.vue";
-import { ref } from "vue";
+import { ref, defineComponent } from "vue";
 import {
   StudentFileUploaderAPIInDTO,
   StudentFileUploaderInfoAPIInDTO,
@@ -41,7 +41,7 @@ import {
 import { ApiProcessError, FormIOForm } from "@/types";
 
 const APPLICATION_NOT_FOUND = "APPLICATION_NOT_FOUND";
-export default {
+export default defineComponent({
   components: {
     StudentDocumentList,
   },
@@ -81,5 +81,5 @@ export default {
 
     return { submitForm, reloadDocuments, processing };
   },
-};
+});
 </script>

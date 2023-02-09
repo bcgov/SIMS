@@ -57,10 +57,10 @@
 <script lang="ts">
 import { useAuth } from "@/composables";
 import { IdentityProviders, ClientIdType } from "@/types";
-import { computed } from "vue";
+import { computed, defineComponent } from "vue";
 import { BannerTypes } from "@/types/contracts/Banner";
 
-export default {
+export default defineComponent({
   props: {
     showDisabledUserMessage: {
       type: Boolean,
@@ -90,5 +90,5 @@ export default {
     });
     return { login, errorMessage, BannerTypes };
   },
-};
+});
 </script>

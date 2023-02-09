@@ -9,11 +9,11 @@
 </template>
 
 <script lang="ts">
-import { computed } from "vue";
+import { computed, defineComponent } from "vue";
 import { useStudentStore } from "@/composables";
 import { SINStatusEnum } from "@/types";
 import { BannerTypes } from "@/types/contracts/Banner";
-export default {
+export default defineComponent({
   setup() {
     const { sinValidStatus, hasStudentAccount } = useStudentStore();
 
@@ -37,5 +37,5 @@ export default {
 
     return { showBanner, sinValidStatus, bannerType };
   },
-};
+});
 </script>

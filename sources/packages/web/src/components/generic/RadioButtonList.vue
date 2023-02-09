@@ -37,8 +37,8 @@
 </template>
 
 <script lang="ts">
-import { SetupContext } from "vue";
-export default {
+import { SetupContext, defineComponent } from "vue";
+export default defineComponent({
   emits: ["click", "update:modelValue", "change"],
   props: {
     modelValue: null,
@@ -49,7 +49,7 @@ export default {
     options: {
       type: Array,
       required: true,
-      default: function() {
+      default: function () {
         return [
           { text: "Yes", value: "yes" },
           { text: "No", value: "no" },
@@ -71,7 +71,7 @@ export default {
       onClick,
     };
   },
-};
+});
 </script>
 
 <style lang="scss"></style>

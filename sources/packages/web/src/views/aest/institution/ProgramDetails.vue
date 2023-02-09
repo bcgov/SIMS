@@ -55,7 +55,7 @@
 <script lang="ts">
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import ManageProgramAndOfferingSummary from "@/components/common/ManageProgramAndOfferingSummary.vue";
-import { ref, onMounted, computed } from "vue";
+import { ref, onMounted, computed, defineComponent } from "vue";
 import { ProgramStatus, Role } from "@/types";
 import { EducationProgramService } from "@/services/EducationProgramService";
 import ApproveProgramModal from "@/components/aest/institution/modals/ApproveProgramModal.vue";
@@ -69,7 +69,7 @@ import {
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
 import ProgramOfferingDetailHeader from "@/components/common/ProgramOfferingDetailHeader.vue";
 
-export default {
+export default defineComponent({
   components: {
     ManageProgramAndOfferingSummary,
     ApproveProgramModal,
@@ -167,5 +167,5 @@ export default {
       Role,
     };
   },
-};
+});
 </script>

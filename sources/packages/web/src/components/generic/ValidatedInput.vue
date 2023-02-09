@@ -8,9 +8,10 @@
 </template>
 
 <script lang="ts">
+import { defineComponent } from "vue";
 import { useFieldError, ErrorMessage } from "vee-validate";
 
-export default {
+export default defineComponent({
   props: {
     propertyName: {
       type: String,
@@ -26,7 +27,7 @@ export default {
       isValid,
     };
   },
-};
+});
 </script>
 
 <style lang="scss">

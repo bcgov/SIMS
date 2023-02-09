@@ -2,10 +2,10 @@
   <chip-label :status="chipStatus" :label="status" />
 </template>
 <script lang="ts">
-import { computed } from "vue";
+import { computed, defineComponent } from "vue";
 import ChipLabel from "@/components/generic/ChipLabel.vue";
 import { useLocation } from "@/composables";
-export default {
+export default defineComponent({
   components: { ChipLabel },
   props: {
     status: {
@@ -18,5 +18,5 @@ export default {
     const chipStatus = computed(() => mapDesignationChipStatus(props.status));
     return { chipStatus };
   },
-};
+});
 </script>

@@ -22,17 +22,17 @@
           <div class="my-3">
             <status-info-enrolment
               :coeStatus="
-                assessmentAwardData.estimatedAward.disbursement1Status
+                assessmentAwardData.estimatedAward.disbursement1Status as COEStatus
               "
             />
             <confirm-enrolment
               v-if="allowConfirmEnrolment"
               :coeStatus="
-                assessmentAwardData.estimatedAward.disbursement1Status
+                assessmentAwardData.estimatedAward.disbursement1Status as COEStatus
               "
               :applicationStatus="assessmentAwardData.applicationStatus"
               :disbursementId="
-                assessmentAwardData.estimatedAward.disbursement1Id
+                assessmentAwardData.estimatedAward.disbursement1Id as number
               "
               @confirmEnrolment="$emit('confirmEnrolment', $event)"
             />
@@ -91,7 +91,8 @@
           <div v-else>
             {{
               getFinalAwardNotAvailableMessage(
-                assessmentAwardData.estimatedAward.disbursement1Status,
+                assessmentAwardData.estimatedAward
+                  .disbursement1Status as COEStatus,
               )
             }}
           </div>
@@ -117,17 +118,17 @@
           <div class="my-3">
             <status-info-enrolment
               :coeStatus="
-                assessmentAwardData.estimatedAward.disbursement2Status
+                assessmentAwardData.estimatedAward.disbursement2Status as COEStatus
               "
             />
             <confirm-enrolment
               v-if="allowConfirmEnrolment"
               :coeStatus="
-                assessmentAwardData.estimatedAward.disbursement2Status
+                assessmentAwardData.estimatedAward.disbursement2Status as COEStatus
               "
               :applicationStatus="assessmentAwardData.applicationStatus"
               :disbursementId="
-                assessmentAwardData.estimatedAward.disbursement2Id
+                assessmentAwardData.estimatedAward.disbursement2Id as number
               "
               @confirmEnrolment="$emit('confirmEnrolment', $event)"
             />
@@ -188,7 +189,8 @@
           <div v-else>
             {{
               getFinalAwardNotAvailableMessage(
-                assessmentAwardData.estimatedAward.disbursement2Status,
+                assessmentAwardData.estimatedAward
+                  .disbursement2Status as COEStatus,
               )
             }}
           </div>

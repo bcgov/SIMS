@@ -13,7 +13,8 @@
 </template>
 
 <script>
-export default {
+import { defineComponent } from "vue";
+export default defineComponent({
   props: {
     id: {
       type: String,
@@ -27,9 +28,9 @@ export default {
   },
 
   methods: {
-    updateValue: function(value) {
+    updateValue: function (value) {
       this.$emit("input", value);
     },
   },
-};
+});
 </script>

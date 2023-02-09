@@ -87,7 +87,7 @@
 </template>
 
 <script lang="ts">
-import { onMounted, ref } from "vue";
+import { onMounted, ref, defineComponent } from "vue";
 import { RestrictionService } from "@/services/RestrictionService";
 import ViewRestrictionModal from "@/components/common/restriction/ViewRestriction.vue";
 import AddInstitutionRestrictionModal from "@/components/common/restriction/AddRestriction.vue";
@@ -108,7 +108,7 @@ import {
   RestrictionDetailAPIOutDTO,
 } from "@/services/http/dto";
 
-export default {
+export default defineComponent({
   components: {
     StatusChipRestriction,
     ViewRestrictionModal,
@@ -213,5 +213,5 @@ export default {
       Role,
     };
   },
-};
+});
 </script>

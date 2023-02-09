@@ -8,11 +8,12 @@
   </student-page-container>
 </template>
 <script lang="ts">
+import { defineComponent } from "vue";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 import { useRouter } from "vue-router";
 import { useStudentStore } from "@/composables";
 
-export default {
+export default defineComponent({
   setup() {
     const { studentDetails } = useStudentStore();
     const router = useRouter();
@@ -29,5 +30,5 @@ export default {
       studentDetails,
     };
   },
-};
+});
 </script>

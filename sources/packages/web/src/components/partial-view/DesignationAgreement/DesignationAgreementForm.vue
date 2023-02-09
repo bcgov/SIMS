@@ -17,13 +17,13 @@
 </template>
 
 <script lang="ts">
-import { SetupContext, PropType } from "vue";
+import { SetupContext, PropType, defineComponent } from "vue";
 import { useRouter } from "vue-router";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import { RouteHelper } from "@/helpers";
 import { DesignationModel } from "@/components/partial-view/DesignationAgreement/DesignationAgreementForm.models";
 
-export default {
+export default defineComponent({
   emits: ["submitDesignation", "cancel"],
   props: {
     model: {
@@ -65,5 +65,5 @@ export default {
 
     return { formRender, submitDesignation, cancel };
   },
-};
+});
 </script>

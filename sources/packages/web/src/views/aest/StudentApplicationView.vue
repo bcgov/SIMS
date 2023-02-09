@@ -29,13 +29,13 @@
   <router-view />
 </template>
 <script lang="ts">
-import { onMounted, ref } from "vue";
+import { onMounted, ref, defineComponent } from "vue";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import { ApplicationBaseAPIOutDTO } from "@/services/http/dto";
 import { ApplicationService } from "@/services/ApplicationService";
 import StudentApplication from "@/components/common/StudentApplication.vue";
 
-export default {
+export default defineComponent({
   components: {
     StudentApplication,
   },
@@ -73,5 +73,5 @@ export default {
       AESTRoutesConst,
     };
   },
-};
+});
 </script>

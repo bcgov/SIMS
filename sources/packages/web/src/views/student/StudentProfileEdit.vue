@@ -14,7 +14,7 @@
 </template>
 
 <script lang="ts">
-import { ref, onMounted } from "vue";
+import { ref, onMounted, defineComponent } from "vue";
 import { useRouter } from "vue-router";
 import { ModalDialog, useSnackBar } from "@/composables";
 import {
@@ -29,7 +29,7 @@ import { AuthService } from "@/services/AuthService";
 import { FormIOForm } from "@/types";
 import StudentProfileForm from "@/components/common/StudentProfileForm.vue";
 
-export default {
+export default defineComponent({
   components: {
     StudentProfileForm,
     PDStatusApplicationModal,
@@ -99,5 +99,5 @@ export default {
       processing,
     };
   },
-};
+});
 </script>

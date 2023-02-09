@@ -9,8 +9,8 @@ this line breaks as HTML paragraphs.
 </template>
 
 <script lang="ts">
-import { computed } from "vue";
-export default {
+import { computed, defineComponent } from "vue";
+export default defineComponent({
   props: {
     text: String,
   },
@@ -29,5 +29,5 @@ export default {
 
     return { paragraphs };
   },
-};
+});
 </script>

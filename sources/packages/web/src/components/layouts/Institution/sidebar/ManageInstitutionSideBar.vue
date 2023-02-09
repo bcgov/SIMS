@@ -29,11 +29,11 @@
   </v-navigation-drawer>
 </template>
 <script lang="ts">
-import { ref } from "vue";
+import { ref, defineComponent } from "vue";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import { MenuItemModel } from "@/types";
 
-export default {
+export default defineComponent({
   components: {},
   setup() {
     const items = ref<MenuItemModel[]>([
@@ -80,5 +80,5 @@ export default {
       InstitutionRoutesConst,
     };
   },
-};
+});
 </script>

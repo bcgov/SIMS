@@ -69,7 +69,7 @@
 </template>
 
 <script lang="ts">
-import { ref } from "vue";
+import { ref, defineComponent } from "vue";
 import { useRouter } from "vue-router";
 import {
   OfferingStatus,
@@ -87,7 +87,7 @@ import OfferingApplicationBanner from "@/components/aest/OfferingApplicationBann
 import AssessOfferingChangeModal from "@/components/aest/institution/modals/AssessOfferingChangeModal.vue";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
 
-export default {
+export default defineComponent({
   components: {
     ProgramOfferingDetailHeader,
     OfferingChangeRequest,
@@ -164,5 +164,5 @@ export default {
       Role,
     };
   },
-};
+});
 </script>

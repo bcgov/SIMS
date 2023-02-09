@@ -36,7 +36,7 @@
 </template>
 
 <script lang="ts">
-import { ref, onMounted } from "vue";
+import { ref, onMounted, defineComponent } from "vue";
 import { useRouter } from "vue-router";
 import { UserService } from "../../services/UserService";
 import { useSnackBar } from "@/composables";
@@ -45,7 +45,7 @@ import { InstitutionUserDetailsAPIOutDTO } from "@/services/http/dto";
 import { InstitutionRoutesConst } from "../../constants/routes/RouteConstants";
 import { BannerTypes } from "@/types/contracts/Banner";
 
-export default {
+export default defineComponent({
   setup() {
     // Hooks
     const snackBar = useSnackBar();
@@ -94,5 +94,5 @@ export default {
       processing,
     };
   },
-};
+});
 </script>

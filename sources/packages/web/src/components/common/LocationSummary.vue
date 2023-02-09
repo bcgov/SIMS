@@ -103,7 +103,7 @@
 </template>
 <script lang="ts">
 import { useRouter } from "vue-router";
-import { ref, onMounted, computed } from "vue";
+import { ref, onMounted, computed, defineComponent } from "vue";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import { InstitutionService } from "@/services/InstitutionService";
 import { ClientIdType } from "@/types/contracts/ConfigContract";
@@ -114,7 +114,7 @@ import { InstitutionLocationAPIOutDTO } from "@/services/http/dto";
 import { useFormatters } from "@/composables";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
 
-export default {
+export default defineComponent({
   emits: ["editLocation"],
   components: {
     StatusChipDesignationAgreement,
@@ -175,5 +175,5 @@ export default {
       Role,
     };
   },
-};
+});
 </script>

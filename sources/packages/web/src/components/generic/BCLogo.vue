@@ -20,9 +20,10 @@
 </template>
 
 <script lang="ts">
+import { defineComponent } from "vue";
 import { useAuth } from "@/composables";
 import { SetupContext } from "vue";
-export default {
+export default defineComponent({
   props: {
     subtitle: {
       type: String,
@@ -40,5 +41,5 @@ export default {
       logoClick,
     };
   },
-};
+});
 </script>

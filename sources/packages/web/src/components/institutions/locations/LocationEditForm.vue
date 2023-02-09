@@ -16,10 +16,10 @@
 
 <script lang="ts">
 import { InstitutionLocationFormAPIOutDTO } from "@/services/http/dto";
-import { ref, SetupContext } from "vue";
+import { ref, SetupContext, defineComponent } from "vue";
 import { FormIOForm } from "@/types";
 
-export default {
+export default defineComponent({
   props: {
     locationData: {
       type: Object,
@@ -42,5 +42,5 @@ export default {
       processing,
     };
   },
-};
+});
 </script>

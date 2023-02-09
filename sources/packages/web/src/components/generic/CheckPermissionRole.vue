@@ -3,12 +3,12 @@
 </template>
 
 <script lang="ts">
-import { computed, PropType } from "vue";
+import { computed, PropType, defineComponent } from "vue";
 import { ClientIdType, Role } from "@/types";
 import { AuthService } from "@/services/AuthService";
 import { useAuth } from "@/composables";
 
-export default {
+export default defineComponent({
   props: {
     role: {
       type: String as PropType<Role>,
@@ -36,5 +36,5 @@ export default {
       isAllowed,
     };
   },
-};
+});
 </script>

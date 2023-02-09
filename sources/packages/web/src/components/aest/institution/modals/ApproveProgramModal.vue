@@ -44,7 +44,7 @@
 </template>
 
 <script lang="ts">
-import { ref, reactive } from "vue";
+import { ref, reactive, defineComponent } from "vue";
 import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
 import { useModalDialog, useRules } from "@/composables";
 import ErrorSummary from "@/components/generic/ErrorSummary.vue";
@@ -52,7 +52,7 @@ import { ApproveProgramAPIInDTO } from "@/services/http/dto";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
 import { Role, VForm } from "@/types";
 
-export default {
+export default defineComponent({
   components: {
     ModalDialogBase,
     CheckPermissionRole,
@@ -103,5 +103,5 @@ export default {
       checkStringDateFormatRule,
     };
   },
-};
+});
 </script>

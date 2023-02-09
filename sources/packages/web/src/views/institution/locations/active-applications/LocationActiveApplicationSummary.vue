@@ -52,7 +52,7 @@
 
 <script lang="ts">
 import ActiveApplicationSummaryData from "@/components/institutions/active-application/ActiveApplicationSummaryData.vue";
-import { ref, computed } from "vue";
+import { ref, computed, defineComponent } from "vue";
 import { useInstitutionState } from "@/composables";
 
 enum ActiveApplicationTab {
@@ -60,7 +60,7 @@ enum ActiveApplicationTab {
   UnavailableToReportTab = "unavailable-to-report-tab",
 }
 
-export default {
+export default defineComponent({
   components: { ActiveApplicationSummaryData },
   props: {
     locationId: {
@@ -79,5 +79,5 @@ export default {
 
     return { tab, ActiveApplicationTab, locationName };
   },
-};
+});
 </script>

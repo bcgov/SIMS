@@ -26,10 +26,11 @@
 </template>
 
 <script lang="ts">
+import { defineComponent } from "vue";
 import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
 import { useModalDialog } from "@/composables";
 
-export default {
+export default defineComponent({
   components: {
     ModalDialogBase,
   },
@@ -48,5 +49,5 @@ export default {
       showDialog,
     };
   },
-};
+});
 </script>

@@ -116,11 +116,11 @@ import {
   EducationProgramsSummary,
   PaginatedResults,
 } from "@/types";
-import { ref, watch, computed } from "vue";
+import { ref, watch, computed, defineComponent } from "vue";
 import StatusChipProgram from "@/components/generic/StatusChipProgram.vue";
 import { useInstitutionState } from "@/composables";
 
-export default {
+export default defineComponent({
   components: { StatusChipProgram },
   props: {
     locationId: {
@@ -239,5 +239,5 @@ export default {
       locationName,
     };
   },
-};
+});
 </script>

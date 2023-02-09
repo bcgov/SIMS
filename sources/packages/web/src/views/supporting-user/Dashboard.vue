@@ -8,10 +8,11 @@
 </template>
 
 <script lang="ts">
+import { defineComponent } from "vue";
 import { FormIOCustomEvent, FormIOCustomEventTypes } from "@/types";
 import { useRouter } from "vue-router";
 import { SupportingUserRoutesConst } from "@/constants/routes/RouteConstants";
-export default {
+export default defineComponent({
   setup() {
     const router = useRouter();
     const customEventCallback = async (
@@ -34,5 +35,5 @@ export default {
 
     return { customEventCallback };
   },
-};
+});
 </script>

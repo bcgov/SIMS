@@ -16,7 +16,7 @@
 
 <script lang="ts">
 import { RouteLocationRaw, useRouter } from "vue-router";
-import { computed, onMounted, ref } from "vue";
+import { computed, onMounted, ref, defineComponent } from "vue";
 import { InstitutionService } from "@/services/InstitutionService";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import LocationEditForm from "@/components/institutions/locations/LocationEditForm.vue";
@@ -25,7 +25,7 @@ import { InstitutionLocationAPIInDTO } from "@/services/http/dto";
 import { useSnackBar } from "@/composables";
 import { AuthService } from "@/services/AuthService";
 
-export default {
+export default defineComponent({
   components: { LocationEditForm },
   props: {
     locationId: {
@@ -79,5 +79,5 @@ export default {
       goBackRouteParams,
     };
   },
-};
+});
 </script>

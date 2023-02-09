@@ -48,7 +48,7 @@
 
 <script lang="ts">
 import { useRouter } from "vue-router";
-import { onMounted, ref } from "vue";
+import { onMounted, ref, defineComponent } from "vue";
 import { StudentService } from "@/services/StudentService";
 import { ApplicationService } from "@/services/ApplicationService";
 import {
@@ -72,7 +72,7 @@ import {
 } from "@/constants";
 import StudentApplication from "@/components/common/StudentApplication.vue";
 
-export default {
+export default defineComponent({
   components: {
     StudentApplication,
     ConfirmEditApplication,
@@ -282,5 +282,5 @@ export default {
       isLastPage,
     };
   },
-};
+});
 </script>

@@ -58,7 +58,7 @@
 </template>
 
 <script lang="ts">
-import { ref, watch, computed } from "vue";
+import { ref, watch, computed, defineComponent } from "vue";
 import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
 import { useFormatters, useModalDialog, useSnackBar } from "@/composables";
 import { InstitutionService } from "@/services/InstitutionService";
@@ -75,7 +75,7 @@ import InstitutionUserManagement from "@/components/institutions/modals/Institut
 import { InstitutionUserService } from "@/services/InstitutionUserService";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
 
-export default {
+export default defineComponent({
   components: {
     ModalDialogBase,
     InstitutionUserManagement,
@@ -214,7 +214,7 @@ export default {
       Role,
     };
   },
-};
+});
 </script>
 <style scoped>
 .bceid-input {
