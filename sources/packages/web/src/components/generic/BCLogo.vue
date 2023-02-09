@@ -20,9 +20,8 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
 import { useAuth } from "@/composables";
-import { SetupContext } from "vue";
+import { SetupContext, defineComponent } from "vue";
 export default defineComponent({
   props: {
     subtitle: {

@@ -19,9 +19,8 @@
   </v-alert>
 </template>
 <script lang="ts">
-import { defineComponent } from "vue";
 import { BannerTypes } from "@/types/contracts/Banner";
-import { computed } from "vue";
+import { computed, defineComponent } from "vue";
 
 export default defineComponent({
   props: {
