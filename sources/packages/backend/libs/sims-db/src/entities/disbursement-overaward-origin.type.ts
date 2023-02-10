@@ -10,7 +10,7 @@ export enum DisbursementOverawardOriginType {
   /**
    * Part of an overaward balance was used to change an award value.
    */
-  AwardValueAdjusted = "Award value adjusted",
+  AwardDeducted = "Award deducted",
   /**
    * An pending award that included an overaward was cancelled and
    * the overaward value must to be added back to the overaward balance.
@@ -20,10 +20,10 @@ export enum DisbursementOverawardOriginType {
   /**
    * Entry manually added by the Ministry user.
    */
-  ManuallyEntered = "Manually entered",
+  ManualRecord = "Manual record",
   /**
    * Imported value from SFAS added during student creation or when SFAS
    * data is imported to the system.
    */
-  Imported = "Imported",
+  LegacyOveraward = "Legacy overaward",
 }
