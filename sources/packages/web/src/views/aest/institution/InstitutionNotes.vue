@@ -41,7 +41,7 @@
 </template>
 
 <script lang="ts">
-import { onMounted, ref } from "vue";
+import { onMounted, ref, defineComponent } from "vue";
 import Notes from "@/components/common/notes/Notes.vue";
 import { NoteService } from "@/services/NoteService";
 import { useFormatters, useSnackBar } from "@/composables";
@@ -53,7 +53,7 @@ import {
 } from "@/types";
 import { NoteAPIInDTO } from "@/services/http/dto";
 
-export default {
+export default defineComponent({
   components: { Notes },
   props: {
     institutionId: {
@@ -103,5 +103,5 @@ export default {
       Role,
     };
   },
-};
+});
 </script>

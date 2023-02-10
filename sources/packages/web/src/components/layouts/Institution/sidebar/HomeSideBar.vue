@@ -13,13 +13,13 @@
 </template>
 <script lang="ts">
 import { useStore } from "vuex";
-import { ref, computed, watch } from "vue";
+import { ref, computed, watch, defineComponent } from "vue";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import { InstitutionUserAuthRolesAndLocation } from "@/types/contracts/institution/InstitutionUser";
 import { useInstitutionAuth } from "@/composables/institution/useInstitutionAuth";
 import { MenuItemModel } from "@/types";
 
-export default {
+export default defineComponent({
   setup() {
     const store = useStore();
     const { isAdmin, userAuth } = useInstitutionAuth();
@@ -126,5 +126,5 @@ export default {
       locationsMenu,
     };
   },
-};
+});
 </script>

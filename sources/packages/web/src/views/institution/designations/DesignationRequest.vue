@@ -18,7 +18,7 @@
 </template>
 
 <script lang="ts">
-import { onMounted, ref } from "vue";
+import { onMounted, ref, defineComponent } from "vue";
 import { InstitutionService } from "@/services/InstitutionService";
 import {
   useFormatters,
@@ -38,7 +38,7 @@ import { SubmitDesignationAgreementAPIInDTO } from "@/services/http/dto";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import { FormIOForm } from "@/types";
 
-export default {
+export default defineComponent({
   components: { DesignationAgreementForm },
   setup() {
     const processing = ref(false);
@@ -124,5 +124,5 @@ export default {
       processing,
     };
   },
-};
+});
 </script>

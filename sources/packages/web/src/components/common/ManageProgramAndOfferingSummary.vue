@@ -17,11 +17,12 @@
 </template>
 
 <script lang="ts">
+import { defineComponent } from "vue";
 import ProgramDetails from "@/components/common/ProgramDetails.vue";
 import OfferingSummary from "@/components/common/OfferingSummary.vue";
 import { EducationProgramAPIOutDTO } from "@/services/http/dto";
 
-export default {
+export default defineComponent({
   components: { ProgramDetails, OfferingSummary },
   props: {
     programId: {
@@ -42,5 +43,5 @@ export default {
       required: false,
     },
   },
-};
+});
 </script>

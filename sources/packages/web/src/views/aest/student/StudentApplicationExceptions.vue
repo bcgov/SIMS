@@ -73,7 +73,7 @@
 </template>
 
 <script lang="ts">
-import { ref, onMounted } from "vue";
+import { ref, onMounted, defineComponent } from "vue";
 import { useRouter } from "vue-router";
 import { ApplicationExceptionService } from "@/services/ApplicationExceptionService";
 import {
@@ -90,7 +90,7 @@ import { ApplicationExceptionSummaryAPIOutDTO } from "@/services/http/dto/Applic
 
 const DEFAULT_SORT_FIELD = "submittedDate";
 
-export default {
+export default defineComponent({
   setup() {
     const router = useRouter();
     const page = ref(DEFAULT_PAGE_NUMBER);
@@ -163,5 +163,5 @@ export default {
       PAGINATION_LIST,
     };
   },
-};
+});
 </script>

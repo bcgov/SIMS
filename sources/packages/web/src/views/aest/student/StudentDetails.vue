@@ -42,7 +42,7 @@
 </template>
 
 <script lang="ts">
-import { onMounted, ref } from "vue";
+import { onMounted, ref, defineComponent } from "vue";
 import { useRouter } from "vue-router";
 import { StudentService } from "@/services/StudentService";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
@@ -50,7 +50,7 @@ import StudentRestrictionChip from "@/components/generic/StudentRestrictionChip.
 import { StudentRestrictionStatus } from "@/types";
 import { AESTStudentProfileAPIOutDTO } from "@/services/http/dto/Student.dto";
 
-export default {
+export default defineComponent({
   components: { StudentRestrictionChip },
   props: {
     studentId: {
@@ -132,5 +132,5 @@ export default {
       StudentRestrictionStatus,
     };
   },
-};
+});
 </script>

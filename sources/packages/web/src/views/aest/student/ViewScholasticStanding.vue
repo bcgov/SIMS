@@ -12,14 +12,14 @@
 </template>
 <script lang="ts">
 import ScholasticStandingForm from "@/components/common/ScholasticStandingForm.vue";
-import { computed, onMounted, ref } from "vue";
+import { computed, onMounted, ref, defineComponent } from "vue";
 import { ScholasticStandingService } from "@/services/ScholasticStandingService";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import { RouteLocationRaw } from "vue-router";
 import { useFormatters } from "@/composables";
 import { ScholasticStandingSubmittedDetailsAPIOutDTO } from "@/services/http/dto";
 
-export default {
+export default defineComponent({
   components: {
     ScholasticStandingForm,
   },
@@ -77,5 +77,5 @@ export default {
 
     return { initialData, goBackRouteParams };
   },
-};
+});
 </script>

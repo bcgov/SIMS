@@ -88,7 +88,7 @@
 </template>
 
 <script lang="ts">
-import { PropType, ref, reactive, computed } from "vue";
+import { PropType, ref, reactive, computed, defineComponent } from "vue";
 import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
 import ErrorSummary from "@/components/generic/ErrorSummary.vue";
 import { useModalDialog, useValidators } from "@/composables";
@@ -98,7 +98,7 @@ import { RestrictionDetailAPIOutDTO } from "@/services/http/dto";
 import StatusChipRestriction from "@/components/generic/StatusChipRestriction.vue";
 import TitleValue from "@/components/generic/TitleValue.vue";
 
-export default {
+export default defineComponent({
   components: {
     ModalDialogBase,
     CheckPermissionRole,
@@ -170,5 +170,5 @@ export default {
       allowUserToEdit,
     };
   },
-};
+});
 </script>

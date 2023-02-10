@@ -76,7 +76,7 @@
 </template>
 
 <script lang="ts">
-import { ref, watch, computed } from "vue";
+import { ref, watch, computed, defineComponent } from "vue";
 import { useRouter } from "vue-router";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import { ConfirmationOfEnrollmentService } from "@/services/ConfirmationOfEnrollmentService";
@@ -97,7 +97,7 @@ import {
 
 const DEFAULT_SORT_FIELD = "coeStatus";
 
-export default {
+export default defineComponent({
   components: { StatusChipCOE },
   props: {
     locationId: {
@@ -203,5 +203,5 @@ export default {
       LayoutTemplates,
     };
   },
-};
+});
 </script>

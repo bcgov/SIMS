@@ -48,7 +48,7 @@
   </v-form>
 </template>
 <script lang="ts">
-import { PropType, ref, onMounted, reactive } from "vue";
+import { PropType, ref, onMounted, reactive, defineComponent } from "vue";
 import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
 import ErrorSummary from "@/components/generic/ErrorSummary.vue";
 import { useModalDialog, useRules } from "@/composables";
@@ -58,7 +58,7 @@ import { AssignRestrictionAPIInDTO } from "@/services/http/dto";
 import { RestrictionService } from "@/services/RestrictionService";
 
 export const CATEGORY_KEY = "category";
-export default {
+export default defineComponent({
   components: { ModalDialogBase, CheckPermissionRole, ErrorSummary },
   props: {
     entityType: {
@@ -152,5 +152,5 @@ export default {
       checkNotesLengthRule,
     };
   },
-};
+});
 </script>

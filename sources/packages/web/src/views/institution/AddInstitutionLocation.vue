@@ -29,10 +29,10 @@ import { InstitutionService } from "../../services/InstitutionService";
 import { InstitutionRoutesConst } from "../../constants/routes/RouteConstants";
 
 import { useSnackBar } from "@/composables";
-import { ref } from "vue";
+import { ref, defineComponent } from "vue";
 import { FormIOForm, ApiProcessError } from "@/types";
 
-export default {
+export default defineComponent({
   props: {
     createMode: {
       type: Boolean,
@@ -73,5 +73,5 @@ export default {
       processing,
     };
   },
-};
+});
 </script>

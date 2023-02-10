@@ -38,7 +38,7 @@
 </template>
 
 <script lang="ts">
-import { ref } from "vue";
+import { ref, defineComponent } from "vue";
 import {
   OfferingStatus,
   ProgramOfferingHeader,
@@ -48,7 +48,7 @@ import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import ProgramOfferingDetailHeader from "@/components/common/ProgramOfferingDetailHeader.vue";
 import OfferingChangeRequest from "@/components/aest/OfferingChangeRequest.vue";
 
-export default {
+export default defineComponent({
   components: {
     ProgramOfferingDetailHeader,
     OfferingChangeRequest,
@@ -82,5 +82,5 @@ export default {
       OfferingRelationType,
     };
   },
-};
+});
 </script>

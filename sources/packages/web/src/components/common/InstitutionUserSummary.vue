@@ -174,7 +174,7 @@
 </template>
 
 <script lang="ts">
-import { ref, watch } from "vue";
+import { ref, watch, defineComponent } from "vue";
 import AddInstitutionUser from "@/components/institutions/modals/AddInstitutionUserModal.vue";
 import EditInstitutionUser from "@/components/institutions/modals/EditInstitutionUserModal.vue";
 import { ModalDialog, useFormatters, useSnackBar } from "@/composables";
@@ -194,7 +194,7 @@ import { INSTITUTION_MUST_HAVE_AN_ADMIN } from "@/constants";
 import { InstitutionUserService } from "@/services/InstitutionUserService";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
 
-export default {
+export default defineComponent({
   components: {
     AddInstitutionUser,
     EditInstitutionUser,
@@ -355,5 +355,5 @@ export default {
       Role,
     };
   },
-};
+});
 </script>

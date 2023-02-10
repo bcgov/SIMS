@@ -23,11 +23,11 @@
 
 <script lang="ts">
 import { useFormioDropdownLoader } from "@/composables";
-import { PropType, SetupContext } from "vue";
+import { PropType, SetupContext, defineComponent } from "vue";
 import { FormIOForm, InstitutionProfileForm, Role } from "@/types";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
 
-export default {
+export default defineComponent({
   components: {
     CheckPermissionRole,
   },
@@ -70,5 +70,5 @@ export default {
       Role,
     };
   },
-};
+});
 </script>

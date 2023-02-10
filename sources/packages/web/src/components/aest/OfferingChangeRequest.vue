@@ -3,7 +3,7 @@
 </template>
 
 <script lang="ts">
-import { onMounted, ref, SetupContext } from "vue";
+import { onMounted, ref, SetupContext, defineComponent } from "vue";
 import { EducationProgramOfferingService } from "@/services/EducationProgramOfferingService";
 import { OfferingStatus, OfferingRelationType } from "@/types";
 import { EducationProgramOfferingAPIOutDTO } from "@/services/http/dto";
@@ -11,7 +11,7 @@ import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import { BannerTypes } from "@/types/contracts/Banner";
 import OfferingForm from "@/components/common/OfferingForm.vue";
 
-export default {
+export default defineComponent({
   components: {
     OfferingForm,
   },
@@ -68,5 +68,5 @@ export default {
       AESTRoutesConst,
     };
   },
-};
+});
 </script>

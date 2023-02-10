@@ -2,9 +2,9 @@
   <formio :formName="formName" @loaded="formLoaded"></formio>
 </template>
 <script lang="ts">
-import { SetupContext } from "vue";
+import { SetupContext, defineComponent } from "vue";
 
-export default {
+export default defineComponent({
   emits: ["appealFormLoaded"],
   props: {
     formName: {
@@ -18,5 +18,5 @@ export default {
     };
     return { formLoaded };
   },
-};
+});
 </script>

@@ -2,11 +2,11 @@
   <banner class="mb-2" :type="BannerTypes.Warning" :header="bannerText" />
 </template>
 <script lang="ts">
-import { onMounted, ref, computed } from "vue";
+import { onMounted, ref, computed, defineComponent } from "vue";
 import { PrecedingOfferingSummaryAPIOutDTO } from "@/services/http/dto";
 import { EducationProgramOfferingService } from "@/services/EducationProgramOfferingService";
 import { BannerTypes } from "@/types/contracts/Banner";
-export default {
+export default defineComponent({
   props: {
     offeringId: {
       type: Number,
@@ -36,5 +36,5 @@ export default {
       bannerText,
     };
   },
-};
+});
 </script>

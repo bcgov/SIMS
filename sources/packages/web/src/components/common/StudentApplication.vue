@@ -29,14 +29,14 @@ import {
   FormIOCustomEvent,
   FormIOForm,
 } from "@/types";
-import { ref, SetupContext, watch } from "vue";
+import { ref, SetupContext, watch, defineComponent } from "vue";
 import {
   useFormioComponentLoader,
   useFormioDropdownLoader,
   useFormioUtils,
 } from "@/composables";
 
-export default {
+export default defineComponent({
   emits: [
     "formLoadedCallback",
     "submitApplication",
@@ -318,5 +318,5 @@ export default {
       showNav,
     };
   },
-};
+});
 </script>

@@ -49,7 +49,7 @@
 </template>
 
 <script lang="ts">
-import { onMounted, ref, computed } from "vue";
+import { onMounted, ref, computed, defineComponent } from "vue";
 import {
   useFormatters,
   useDesignationAgreement,
@@ -74,7 +74,7 @@ import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
 import { Role } from "@/types";
 import ApproveDenyDesignationModal from "@/components/aest/institution/modals/ApproveDenyDesignationModal.vue";
 
-export default {
+export default defineComponent({
   components: {
     DesignationAgreementForm,
     CheckPermissionRole,
@@ -230,5 +230,5 @@ export default {
       processing,
     };
   },
-};
+});
 </script>

@@ -44,7 +44,7 @@
 </template>
 
 <script lang="ts">
-import { onMounted, ref } from "vue";
+import { onMounted, ref, defineComponent } from "vue";
 import { useRouter } from "vue-router";
 import {
   DEFAULT_PAGE_LIMIT,
@@ -56,7 +56,7 @@ import { useFormatters } from "@/composables";
 import { StudentAccountApplicationService } from "@/services/StudentAccountApplicationService";
 import { StudentAccountApplicationSummaryAPIOutDTO } from "@/services/http/dto";
 
-export default {
+export default defineComponent({
   setup() {
     const router = useRouter();
     const accountApplications = ref(
@@ -87,5 +87,5 @@ export default {
       dateOnlyLongString,
     };
   },
-};
+});
 </script>

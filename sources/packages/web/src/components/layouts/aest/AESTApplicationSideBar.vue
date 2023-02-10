@@ -30,7 +30,7 @@
 
 <script lang="ts">
 import { useRouter } from "vue-router";
-import { ref, onMounted } from "vue";
+import { ref, onMounted, defineComponent } from "vue";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import { MenuModel, SupportingUserType } from "@/types";
 import { SupportingUsersService } from "@/services/SupportingUserService";
@@ -40,7 +40,7 @@ export interface StudentApplicationMenu {
   assessments: MenuModel;
 }
 
-export default {
+export default defineComponent({
   props: {
     studentId: {
       type: Number,
@@ -122,5 +122,5 @@ export default {
       relatedParentPartners,
     };
   },
-};
+});
 </script>

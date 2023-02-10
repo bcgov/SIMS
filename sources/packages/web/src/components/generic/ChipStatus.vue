@@ -5,10 +5,10 @@
   </v-chip>
 </template>
 <script lang="ts">
-import { computed } from "vue";
+import { computed, defineComponent } from "vue";
 import { StatusChipTypes } from "@/components/generic/StatusChip.models";
 
-export default {
+export default defineComponent({
   props: {
     status: {
       type: String,
@@ -55,5 +55,5 @@ export default {
       chipColor,
     };
   },
-};
+});
 </script>

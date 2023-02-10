@@ -11,7 +11,8 @@ Used when we need to display title and the value inside a container
 </template>
 
 <script lang="ts">
-export default {
+import { defineComponent } from "vue";
+export default defineComponent({
   props: {
     propertyTitle: {
       type: String,
@@ -22,5 +23,5 @@ export default {
       required: true,
     },
   },
-};
+});
 </script>

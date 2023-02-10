@@ -87,7 +87,7 @@
 
 <script lang="ts">
 import { useRouter } from "vue-router";
-import { onMounted, ref, computed } from "vue";
+import { onMounted, ref, computed, defineComponent } from "vue";
 import {
   InstitutionRoutesConst,
   AESTRoutesConst,
@@ -107,7 +107,7 @@ import { useFormatters } from "@/composables";
 import { AuthService } from "@/services/AuthService";
 import StatusChipOffering from "@/components/generic/StatusChipOffering.vue";
 
-export default {
+export default defineComponent({
   components: {
     StatusChipOffering,
   },
@@ -253,5 +253,5 @@ export default {
       dateOnlyLongString,
     };
   },
-};
+});
 </script>

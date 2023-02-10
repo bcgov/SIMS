@@ -21,7 +21,7 @@
   <cancel-application ref="cancelApplicationModal" />
 </template>
 <script lang="ts">
-import { ref } from "vue";
+import { ref, defineComponent } from "vue";
 import StartApplication from "@/views/student/financial-aid-application/Applications.vue";
 import { ApplicationStatus } from "@/types";
 import StudentApplications from "@/components/aest/StudentApplications.vue";
@@ -32,7 +32,7 @@ import { useSnackBar, ModalDialog } from "@/composables";
 import ConfirmEditApplication from "@/components/students/modals/ConfirmEditApplication.vue";
 import CancelApplication from "@/components/students/modals/CancelApplication.vue";
 
-export default {
+export default defineComponent({
   components: {
     StartApplication,
     StudentApplications,
@@ -120,5 +120,5 @@ export default {
       cancelApplicationModal,
     };
   },
-};
+});
 </script>

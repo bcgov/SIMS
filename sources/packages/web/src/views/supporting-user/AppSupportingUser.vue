@@ -46,6 +46,7 @@
 </template>
 
 <script lang="ts">
+import { defineComponent } from "vue";
 import { useRouter } from "vue-router";
 import { ClientIdType } from "@/types";
 import { useAuth } from "@/composables";
@@ -53,7 +54,7 @@ import BCLogo from "@/components/generic/BCLogo.vue";
 import { SupportingUserRoutesConst } from "@/constants/routes/RouteConstants";
 import IdleTimeChecker from "@/components/common/IdleTimeChecker.vue";
 
-export default {
+export default defineComponent({
   components: { BCLogo, IdleTimeChecker },
   setup() {
     const router = useRouter();
@@ -81,5 +82,5 @@ export default {
       ClientIdType,
     };
   },
-};
+});
 </script>

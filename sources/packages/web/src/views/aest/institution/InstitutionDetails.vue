@@ -34,13 +34,13 @@
 </template>
 
 <script lang="ts">
-import { onMounted, ref } from "vue";
+import { onMounted, ref, defineComponent } from "vue";
 import { InstitutionService } from "@/services/InstitutionService";
 import { InstitutionBasicAPIOutDTO } from "@/services/http/dto";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import StatusChipDesignationAgreement from "@/components/generic/StatusChipDesignationAgreement.vue";
 
-export default {
+export default defineComponent({
   components: { StatusChipDesignationAgreement },
   props: {
     institutionId: {
@@ -130,5 +130,5 @@ export default {
       tab,
     };
   },
-};
+});
 </script>

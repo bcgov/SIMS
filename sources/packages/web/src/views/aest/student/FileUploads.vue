@@ -95,7 +95,7 @@
 </template>
 
 <script lang="ts">
-import { onMounted, ref } from "vue";
+import { onMounted, ref, defineComponent } from "vue";
 import {
   DEFAULT_PAGE_LIMIT,
   FormIOForm,
@@ -118,7 +118,7 @@ import {
 } from "@/services/http/dto/Student.dto";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
 
-export default {
+export default defineComponent({
   components: {
     FormioModalDialog,
     CheckPermissionRole,
@@ -183,5 +183,5 @@ export default {
       Role,
     };
   },
-};
+});
 </script>

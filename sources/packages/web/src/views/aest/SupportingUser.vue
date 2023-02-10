@@ -25,13 +25,13 @@
 </template>
 
 <script lang="ts">
-import { ref, onMounted } from "vue";
+import { ref, onMounted, defineComponent } from "vue";
 import { SupportingUsersService } from "@/services/SupportingUserService";
 import { useFormatters } from "@/composables";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import { BannerTypes } from "@/types/contracts/Banner";
 
-export default {
+export default defineComponent({
   props: {
     studentId: {
       type: Number,
@@ -81,5 +81,5 @@ export default {
     });
     return { formName, formData, AESTRoutesConst, BannerTypes };
   },
-};
+});
 </script>

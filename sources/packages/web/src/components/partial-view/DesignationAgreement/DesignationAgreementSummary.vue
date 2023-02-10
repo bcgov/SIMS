@@ -62,9 +62,9 @@ import {
 import { useFormatters, useInstitutionAuth } from "@/composables";
 import ToggleContent from "@/components/generic/ToggleContent.vue";
 import StatusChipDesignation from "@/components/generic/StatusChipDesignation.vue";
-import { SetupContext } from "vue";
+import { SetupContext, defineComponent } from "vue";
 
-export default {
+export default defineComponent({
   emits: ["viewDesignation"],
   components: {
     ToggleContent,
@@ -97,5 +97,5 @@ export default {
       PAGINATION_LIST,
     };
   },
-};
+});
 </script>

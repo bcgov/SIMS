@@ -2,10 +2,10 @@
   <chip-status :status="chipStatus" :label="status" />
 </template>
 <script lang="ts">
-import { computed } from "vue";
+import { computed, defineComponent } from "vue";
 import ChipStatus from "@/components/generic/ChipStatus.vue";
 import { usePIR } from "@/composables";
-export default {
+export default defineComponent({
   components: { ChipStatus },
   props: {
     status: {
@@ -18,5 +18,5 @@ export default {
     const chipStatus = computed(() => mapPIRChipStatus(props.status));
     return { chipStatus };
   },
-};
+});
 </script>

@@ -54,7 +54,7 @@
   </full-page-container>
 </template>
 <script lang="ts">
-import { ref, onMounted } from "vue";
+import { ref, onMounted, defineComponent } from "vue";
 import { useRouter } from "vue-router";
 import { EducationProgramOfferingService } from "@/services/EducationProgramOfferingService";
 import {
@@ -66,7 +66,7 @@ import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import { useFormatters } from "@/composables";
 import { OfferingChangeRequestAPIOutDTO } from "@/services/http/dto/EducationProgramOffering.dto";
 
-export default {
+export default defineComponent({
   setup() {
     const router = useRouter();
     const page = ref(DEFAULT_PAGE_NUMBER);
@@ -100,5 +100,5 @@ export default {
       viewOfferingChangeRequest,
     };
   },
-};
+});
 </script>

@@ -53,7 +53,7 @@
   </v-form>
 </template>
 <script lang="ts">
-import { PropType, ref, reactive } from "vue";
+import { PropType, ref, reactive, defineComponent } from "vue";
 import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
 import ErrorSummary from "@/components/generic/ErrorSummary.vue";
 import { useModalDialog, useRules } from "@/composables";
@@ -62,7 +62,7 @@ import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
 import { CreateSINValidationAPIInDTO } from "@/services/http/dto";
 import { BannerTypes } from "@/types/contracts/Banner";
 
-export default {
+export default defineComponent({
   components: { ModalDialogBase, CheckPermissionRole, ErrorSummary },
   props: {
     allowedRole: {
@@ -108,5 +108,5 @@ export default {
       checkNotesLengthRule,
     };
   },
-};
+});
 </script>

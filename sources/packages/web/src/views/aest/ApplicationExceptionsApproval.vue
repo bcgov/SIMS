@@ -32,7 +32,7 @@
   </full-page-container>
 </template>
 <script lang="ts">
-import { ref, onMounted } from "vue";
+import { ref, onMounted, defineComponent } from "vue";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import { useRouter } from "vue-router";
 import { ApplicationExceptionService } from "@/services/ApplicationExceptionService";
@@ -76,7 +76,7 @@ type ApplicationExceptionFormModel = Omit<
   exceptionNames: string[];
 };
 
-export default {
+export default defineComponent({
   components: { HeaderTitleValue, CheckPermissionRole },
   props: {
     studentId: {
@@ -169,5 +169,5 @@ export default {
       Role,
     };
   },
-};
+});
 </script>

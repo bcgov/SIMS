@@ -33,11 +33,11 @@
   </v-snackbar>
 </template>
 <script lang="ts">
-import { computed, reactive, watch } from "vue";
+import { computed, reactive, watch, defineComponent } from "vue";
 import { SnackBarOptions, SnackBarType } from "@/types";
 import { useSnackBar } from "@/composables";
 
-export default {
+export default defineComponent({
   props: {
     snackBarOptions: {
       type: Object,
@@ -100,5 +100,5 @@ export default {
       snackBarChoices,
     };
   },
-};
+});
 </script>

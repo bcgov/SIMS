@@ -89,7 +89,7 @@
 </template>
 
 <script lang="ts">
-import { onMounted, ref } from "vue";
+import { onMounted, ref, defineComponent } from "vue";
 import { useRouter } from "vue-router";
 import {
   DataTableSortOrder,
@@ -105,7 +105,7 @@ import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import StatusChipProgram from "@/components/generic/StatusChipProgram.vue";
 import { EducationProgramService } from "@/services/EducationProgramService";
 
-export default {
+export default defineComponent({
   components: { StatusChipProgram },
   props: {
     institutionId: {
@@ -198,5 +198,5 @@ export default {
       LayoutTemplates,
     };
   },
-};
+});
 </script>

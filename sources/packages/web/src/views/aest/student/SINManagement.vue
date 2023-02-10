@@ -72,7 +72,7 @@
 </template>
 
 <script lang="ts">
-import { ref, watch } from "vue";
+import { ref, watch, defineComponent } from "vue";
 import {
   DEFAULT_PAGE_LIMIT,
   PAGINATION_LIST,
@@ -90,7 +90,7 @@ import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
 import AddNewSIN from "@/components/common/sin/AddNewSIN.vue";
 import AddExpiryDate from "@/components/common/sin/AddExpiryDate.vue";
 
-export default {
+export default defineComponent({
   components: {
     CheckPermissionRole,
     AddNewSIN,
@@ -181,5 +181,5 @@ export default {
       showModal,
     };
   },
-};
+});
 </script>

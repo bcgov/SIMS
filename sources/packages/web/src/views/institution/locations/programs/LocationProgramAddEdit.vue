@@ -48,7 +48,7 @@ import {
   InstitutionRoutesConst,
   AESTRoutesConst,
 } from "@/constants/routes/RouteConstants";
-import { onMounted, ref, computed } from "vue";
+import { onMounted, ref, computed, defineComponent } from "vue";
 import { ApiProcessError, ClientIdType, FormIOForm } from "@/types";
 import { useSnackBar } from "@/composables";
 import { AuthService } from "@/services/AuthService";
@@ -58,7 +58,7 @@ import {
   EducationProgramAPIOutDTO,
 } from "@/services/http/dto";
 
-export default {
+export default defineComponent({
   props: {
     locationId: {
       type: Number,
@@ -234,5 +234,5 @@ export default {
       processing,
     };
   },
-};
+});
 </script>

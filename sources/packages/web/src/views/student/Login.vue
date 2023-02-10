@@ -135,10 +135,11 @@
 </template>
 
 <script lang="ts">
+import { defineComponent } from "vue";
 import { useAuth } from "@/composables";
 import { IdentityProviders, ClientIdType } from "@/types";
 
-export default {
+export default defineComponent({
   setup() {
     const { executeLogin } = useAuth();
     const login = async (idp: IdentityProviders) => {
@@ -146,5 +147,5 @@ export default {
     };
     return { IdentityProviders, login };
   },
-};
+});
 </script>

@@ -2,10 +2,10 @@
   <chip-status :status="chipStatus" :label="status" />
 </template>
 <script lang="ts">
-import { computed } from "vue";
+import { computed, defineComponent } from "vue";
 import ChipStatus from "@/components/generic/ChipStatus.vue";
 import { useAssessment } from "@/composables";
-export default {
+export default defineComponent({
   components: { ChipStatus },
   props: {
     status: {
@@ -20,5 +20,5 @@ export default {
     );
     return { chipStatus };
   },
-};
+});
 </script>

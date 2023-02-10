@@ -116,7 +116,7 @@
 </template>
 
 <script lang="ts">
-import { onMounted, ref } from "vue";
+import { onMounted, ref, defineComponent } from "vue";
 import { useRouter } from "vue-router";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import { InstitutionService } from "@/services/InstitutionService";
@@ -125,7 +125,7 @@ import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
 import { Role } from "@/types";
 import { useFormatters } from "@/composables";
 
-export default {
+export default defineComponent({
   components: { CheckPermissionRole },
   props: {
     institutionId: {
@@ -158,5 +158,5 @@ export default {
       emptyStringFiller,
     };
   },
-};
+});
 </script>

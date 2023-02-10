@@ -18,11 +18,11 @@
 </template>
 <script lang="ts">
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
-import { SetupContext } from "vue";
+import { SetupContext, defineComponent } from "vue";
 import { useFormioUtils } from "@/composables";
 import { StudentAppealRequest } from "@/types";
 
-export default {
+export default defineComponent({
   emits: ["submitted"],
   props: {
     studentAppealRequests: {
@@ -61,5 +61,5 @@ export default {
       submit,
     };
   },
-};
+});
 </script>

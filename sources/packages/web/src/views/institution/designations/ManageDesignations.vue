@@ -8,18 +8,26 @@
       />
     </template>
     <body-header
-      title="Designation agreements"
-      subTitle="Ensure you have an active designation to administer student financial aid."
+      title="Designation requests"
       :recordsCount="designations.length"
     >
+      <template #subtitle>
+        Ensure you have an approved designation to administer financial aid to
+        students
+        <tooltip-icon
+          >You must have the role of a Legal Signing Authority to request a
+          designation.</tooltip-icon
+        >
+      </template>
+
       <template #actions>
         <v-btn
-          v-if="isLegalSigningAuthority"
           class="ml-2 float-right"
           color="primary"
           data-cy="requestDesignation"
           @click="goToRequestDesignation()"
           prepend-icon="fa:fa fa-bell-concierge"
+          :disabled="!isLegalSigningAuthority"
           >Request designation</v-btn
         >
       </template>
@@ -35,7 +43,7 @@
 <script lang="ts">
 import { useRouter } from "vue-router";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
-import { onMounted, ref } from "vue";
+import { onMounted, ref, defineComponent } from "vue";
 import { DesignationAgreementService } from "@/services/DesignationAgreementService";
 import {
   DesignationAgreementDetailsAPIOutDTO,
@@ -44,7 +52,7 @@ import {
 import { useInstitutionAuth, useSnackBar } from "@/composables";
 import DesignationAgreementSummary from "@/components/partial-view/DesignationAgreement/DesignationAgreementSummary.vue";
 
-export default {
+export default defineComponent({
   components: {
     DesignationAgreementSummary,
   },
@@ -87,5 +95,5 @@ export default {
       isLegalSigningAuthority,
     };
   },
-};
+});
 </script>

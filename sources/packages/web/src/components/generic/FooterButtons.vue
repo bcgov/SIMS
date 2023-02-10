@@ -33,7 +33,8 @@
   </v-row>
 </template>
 <script lang="ts">
-export default {
+import { defineComponent } from "vue";
+export default defineComponent({
   emits: ["primaryClick", "secondaryClick"],
   props: {
     primaryLabel: {
@@ -72,5 +73,5 @@ export default {
       default: false,
     },
   },
-};
+});
 </script>

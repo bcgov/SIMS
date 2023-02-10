@@ -88,9 +88,9 @@ import { useAuth } from "@/composables";
 import BCLogo from "@/components/generic/BCLogo.vue";
 import "@/assets/css/institution.scss";
 import IdleTimeChecker from "@/components/common/IdleTimeChecker.vue";
-import { ref } from "vue";
+import { ref, defineComponent } from "vue";
 
-export default {
+export default defineComponent({
   components: { BCLogo, IdleTimeChecker },
   setup() {
     const toggleNav = ref();
@@ -116,5 +116,5 @@ export default {
       toggleNav,
     };
   },
-};
+});
 </script>

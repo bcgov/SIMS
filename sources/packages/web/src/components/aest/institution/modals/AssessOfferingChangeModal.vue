@@ -44,12 +44,12 @@
 <script lang="ts">
 import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
 import { useModalDialog, useRules } from "@/composables";
-import { ref, reactive } from "vue";
+import { ref, reactive, defineComponent } from "vue";
 import { OfferingStatus, VForm, Role } from "@/types";
 import { OfferingChangeAssessmentAPIInDTO } from "@/services/http/dto";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
 
-export default {
+export default defineComponent({
   components: { ModalDialogBase, CheckPermissionRole },
   setup() {
     const { checkNotesLengthRule } = useRules();
@@ -115,5 +115,5 @@ export default {
       checkNotesLengthRule,
     };
   },
-};
+});
 </script>

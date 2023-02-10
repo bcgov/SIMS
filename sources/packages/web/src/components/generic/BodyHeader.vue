@@ -16,8 +16,8 @@
 </template>
 
 <script lang="ts">
-import { computed } from "vue";
-export default {
+import { computed, defineComponent } from "vue";
+export default defineComponent({
   props: {
     title: {
       type: String,
@@ -41,5 +41,5 @@ export default {
     });
     return { fullTitleMessage };
   },
-};
+});
 </script>

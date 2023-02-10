@@ -17,9 +17,9 @@ import { useRouter } from "vue-router";
 import { useSnackBar } from "@/composables";
 import { useStore } from "vuex";
 import { SINStatusEnum } from "@/types";
-import { computed } from "vue";
+import { computed, defineComponent } from "vue";
 
-export default {
+export default defineComponent({
   setup() {
     const router = useRouter();
     const snackBar = useSnackBar();
@@ -47,5 +47,5 @@ export default {
       sinValidStatus,
     };
   },
-};
+});
 </script>

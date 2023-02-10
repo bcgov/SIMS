@@ -87,11 +87,11 @@
 </template>
 
 <script lang="ts">
-import { watch, PropType, reactive } from "vue";
+import { watch, PropType, reactive, defineComponent } from "vue";
 import { ErrorMessage, LocationUserAccess, UserManagementModel } from "@/types";
 import ErrorSummary from "@/components/generic/ErrorSummary.vue";
 
-export default {
+export default defineComponent({
   components: {
     ErrorSummary,
   },
@@ -163,5 +163,5 @@ export default {
       hasLocationAuthorizationValidationRule,
     };
   },
-};
+});
 </script>

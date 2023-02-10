@@ -8,11 +8,11 @@
 </template>
 
 <script lang="ts">
-import { onMounted, ref } from "vue";
+import { onMounted, ref, defineComponent } from "vue";
 import { StudentService } from "@/services/StudentService";
 import { useFormatters } from "@/composables";
 
-export default {
+export default defineComponent({
   props: {
     studentId: {
       type: Number,
@@ -48,5 +48,5 @@ export default {
       sinDisplayFormat,
     };
   },
-};
+});
 </script>

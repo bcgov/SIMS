@@ -56,11 +56,12 @@
 </template>
 
 <script lang="ts">
+import { defineComponent } from "vue";
 import { useAuth } from "@/composables";
 import { IdentityProviders, ClientIdType } from "@/types";
 import { BannerTypes } from "@/types/contracts/Banner";
 
-export default {
+export default defineComponent({
   props: {
     showNotAllowedUser: {
       type: Boolean,
@@ -75,5 +76,5 @@ export default {
     };
     return { login, BannerTypes };
   },
-};
+});
 </script>

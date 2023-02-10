@@ -11,11 +11,12 @@
   </application-status-tracker-banner>
 </template>
 <script lang="ts">
+import { defineComponent } from "vue";
 import ApplicationStatusTrackerBanner from "@/components/students/applicationTracker/generic/ApplicationStatusTrackerBanner.vue";
-export default {
+export default defineComponent({
   emits: ["editApplication"],
   components: {
     ApplicationStatusTrackerBanner,
   },
-};
+});
 </script>

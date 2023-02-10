@@ -2,10 +2,10 @@
   <chip-status :status="chipStatus" :label="chipLabel" />
 </template>
 <script lang="ts">
-import { computed } from "vue";
+import { computed, defineComponent } from "vue";
 import ChipStatus from "@/components/generic/ChipStatus.vue";
 import { StatusChipTypes } from "@/components/generic/StatusChip.models";
-export default {
+export default defineComponent({
   components: { ChipStatus },
   props: {
     isActive: {
@@ -21,5 +21,5 @@ export default {
     const chipLabel = computed(() => (props.isActive ? "Active" : "Inactive"));
     return { chipStatus, chipLabel };
   },
-};
+});
 </script>
