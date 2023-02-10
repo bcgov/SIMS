@@ -74,6 +74,7 @@ import {
   StudentRestrictionSharedService,
   WorkflowClientService,
   ReportService,
+  ConfirmationOfEnrollmentService,
 } from "@sims/services";
 
 @Module({
@@ -147,6 +148,7 @@ import {
     StudentRestrictionSharedService,
     UserControllerService,
     ConfirmationOfEnrollmentControllerService,
+    ConfirmationOfEnrollmentService,
     DisbursementScheduleService,
   ],
 })

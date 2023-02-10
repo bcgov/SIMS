@@ -3,8 +3,9 @@ import {
   NotFoundException,
   UnprocessableEntityException,
 } from "@nestjs/common";
-import { DisbursementSchedule, DisbursementValueType } from "@sims/sims-db";
-import { getTotalDisbursementAmount } from "@sims/utilities";
+import { ConfirmationOfEnrollmentService } from "@sims/services";
+import { MaxTuitionRemittanceTypes } from "@sims/services/confirmation-of-enrollment/models/confirmation-of-enrollment.models";
+import { DisbursementSchedule } from "@sims/sims-db";
 import {
   FIRST_COE_NOT_COMPLETE,
   INVALID_TUITION_REMITTANCE_AMOUNT,
@@ -20,6 +21,7 @@ import { ConfirmEnrollmentOptions } from "./models/confirmation-of-enrollment.mo
 export class ConfirmationOfEnrollmentControllerService extends BaseController {
   constructor(
     private readonly disbursementScheduleService: DisbursementScheduleService,
+    private readonly confirmationOfEnrollmentService: ConfirmationOfEnrollmentService,
   ) {
     super();
   }
@@ -90,7 +92,7 @@ export class ConfirmationOfEnrollmentControllerService extends BaseController {
     const tuitionRemittanceAmount = payload.tuitionRemittanceAmount ?? 0;
 
     // Validate tuition remittance amount.
-    this.validateTuitionRemittance(
+    await this.validateTuitionRemittance(
       tuitionRemittanceAmount,
       disbursementSchedule,
     );
@@ -112,29 +114,19 @@ export class ConfirmationOfEnrollmentControllerService extends BaseController {
    * @param disbursementSchedule disbursement schedule.
    * @throws UnprocessableEntityException.
    */
-  private validateTuitionRemittance(
+  private async validateTuitionRemittance(
     tuitionRemittanceAmount: number,
     disbursementSchedule: DisbursementSchedule,
-  ): void {
+  ): Promise<void> {
     // If the tuition remittance amount is set to 0, then skip validation.
     if (!tuitionRemittanceAmount) {
       return;
     }
-    const disbursementAmount = getTotalDisbursementAmount(
-      disbursementSchedule.disbursementValues,
-      [
-        DisbursementValueType.CanadaLoan,
-        DisbursementValueType.BCLoan,
-        DisbursementValueType.CanadaGrant,
-      ],
-    );
 
-    const offering =
-      disbursementSchedule.studentAssessment.application.currentAssessment
-        .offering;
-    const offeringAmount =
-      offering.actualTuitionCosts + offering.programRelatedCosts;
-    const maxTuitionAllowed = Math.min(offeringAmount, disbursementAmount);
+    const maxTuitionAllowed =
+      await this.confirmationOfEnrollmentService.getEstimatedMaxTuitionRemittance(
+        disbursementSchedule.id,
+      );
 
     if (tuitionRemittanceAmount > maxTuitionAllowed) {
       throw new UnprocessableEntityException(
