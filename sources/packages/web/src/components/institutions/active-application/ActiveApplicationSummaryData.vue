@@ -86,7 +86,7 @@
 </template>
 
 <script lang="ts">
-import { ref, watch } from "vue";
+import { ref, watch, defineComponent } from "vue";
 import { useRouter } from "vue-router";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import { InstitutionService } from "@/services/InstitutionService";
@@ -106,7 +106,7 @@ import StatusChipActiveApplication from "@/components/generic/StatusChipActiveAp
 
 const DEFAULT_SORT_FIELD = "applicationNumber";
 
-export default {
+export default defineComponent({
   components: {
     StatusChipActiveApplication,
   },
@@ -206,5 +206,5 @@ export default {
       LayoutTemplates,
     };
   },
-};
+});
 </script>

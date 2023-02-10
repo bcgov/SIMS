@@ -15,7 +15,7 @@
 </template>
 
 <script lang="ts">
-import { ref, SetupContext, watch } from "vue";
+import { ref, SetupContext, watch, defineComponent } from "vue";
 import {
   ActiveApplicationDataAPIOutDTO,
   ScholasticStandingSubmittedDetailsAPIOutDTO,
@@ -30,7 +30,7 @@ interface ScholasticStandingBeforeSubmission
   extends ActiveApplicationDataAPIOutDTO {
   readonly: boolean;
 }
-export default {
+export default defineComponent({
   emits: ["submit", "cancel"],
   props: {
     initialData: {
@@ -75,5 +75,5 @@ export default {
 
     return { data, submitted, cancel };
   },
-};
+});
 </script>

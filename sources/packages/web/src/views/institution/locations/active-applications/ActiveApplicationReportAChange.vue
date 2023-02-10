@@ -18,7 +18,7 @@
 </template>
 <script lang="ts">
 import { RouteLocationRaw, useRouter } from "vue-router";
-import { ref, onMounted, computed } from "vue";
+import { ref, onMounted, computed, defineComponent } from "vue";
 import { InstitutionService } from "@/services/InstitutionService";
 import { ApiProcessError } from "@/types";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
@@ -34,7 +34,7 @@ import { ScholasticStandingService } from "@/services/ScholasticStandingService"
 import { ActiveApplicationDataAPIOutDTO } from "@/services/http/dto";
 import ScholasticStandingForm from "@/components/common/ScholasticStandingForm.vue";
 
-export default {
+export default defineComponent({
   components: {
     ScholasticStandingForm,
   },
@@ -135,5 +135,5 @@ export default {
       goBack,
     };
   },
-};
+});
 </script>

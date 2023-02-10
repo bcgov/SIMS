@@ -17,7 +17,7 @@
   </student-page-container>
 </template>
 <script lang="ts">
-import { computed, onMounted } from "vue";
+import { computed, onMounted, defineComponent } from "vue";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 import { StudentRestriction } from "@/store/modules/student/student";
 import { useStudentStore } from "@/composables";
@@ -26,7 +26,7 @@ interface StudentAccountActivityFormModel {
   restrictions: StudentRestriction[];
 }
 
-export default {
+export default defineComponent({
   setup() {
     const { activeRestrictions, updateRestrictions } = useStudentStore();
 
@@ -43,5 +43,5 @@ export default {
       initialData,
     };
   },
-};
+});
 </script>

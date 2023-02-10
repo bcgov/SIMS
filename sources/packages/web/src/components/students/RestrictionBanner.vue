@@ -26,12 +26,12 @@
   >
 </template>
 <script lang="ts">
-import { onMounted } from "vue";
+import { onMounted, defineComponent } from "vue";
 import { useRouter } from "vue-router";
 import { useStudentStore } from "@/composables";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 import { BannerTypes } from "@/types/contracts/Banner";
-export default {
+export default defineComponent({
   setup() {
     const router = useRouter();
     const { updateRestrictions, hasRestrictionError, hasRestrictionWarning } =
@@ -52,5 +52,5 @@ export default {
       viewStudentAccountActivity,
     };
   },
-};
+});
 </script>

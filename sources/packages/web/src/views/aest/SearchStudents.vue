@@ -111,7 +111,7 @@
   </full-page-container>
 </template>
 <script lang="ts">
-import { ref, computed } from "vue";
+import { ref, computed, defineComponent } from "vue";
 import { useRouter } from "vue-router";
 import { StudentService } from "@/services/StudentService";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
@@ -122,7 +122,7 @@ import {
 import { useFormatters, useSnackBar, useValidators } from "@/composables";
 import { VForm } from "@/types";
 
-export default {
+export default defineComponent({
   setup() {
     const searchStudentsForm = ref({} as VForm);
     const snackBar = useSnackBar();
@@ -186,5 +186,5 @@ export default {
       isValidSearch,
     };
   },
-};
+});
 </script>

@@ -11,11 +11,11 @@
 </template>
 
 <script lang="ts">
-import { watch, ref } from "vue";
+import { watch, ref, defineComponent } from "vue";
 import InstitutionUserSummary from "@/components/common/InstitutionUserSummary.vue";
 import { InstitutionService } from "@/services/InstitutionService";
 
-export default {
+export default defineComponent({
   components: { InstitutionUserSummary },
   props: {
     institutionId: {
@@ -38,5 +38,5 @@ export default {
     );
     return { hasBusinessGuid };
   },
-};
+});
 </script>

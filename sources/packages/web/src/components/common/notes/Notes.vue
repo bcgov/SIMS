@@ -73,12 +73,12 @@
 import { useFormatters, ModalDialog } from "@/composables";
 import CreateNoteModal from "@/components/common/notes/CreateNoteModal.vue";
 import { LayoutTemplates, NoteItemModel, Role } from "@/types";
-import { PropType, ref } from "vue";
+import { PropType, ref, defineComponent } from "vue";
 import "@/assets/css/notes.scss";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
 import { NoteAPIInDTO } from "@/services/http/dto";
 
-export default {
+export default defineComponent({
   components: { CreateNoteModal, CheckPermissionRole },
   props: {
     notes: {
@@ -132,5 +132,5 @@ export default {
       Role,
     };
   },
-};
+});
 </script>

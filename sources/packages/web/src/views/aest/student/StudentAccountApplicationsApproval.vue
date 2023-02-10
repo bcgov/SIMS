@@ -60,7 +60,7 @@
 </template>
 
 <script lang="ts">
-import { ref, onMounted } from "vue";
+import { ref, onMounted, defineComponent } from "vue";
 import { useRouter } from "vue-router";
 import {
   StudentProfileFormModel,
@@ -75,7 +75,7 @@ import ConfirmModal from "@/components/common/modals/ConfirmModal.vue";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
 
-export default {
+export default defineComponent({
   components: {
     StudentProfileForm,
     ConfirmModal,
@@ -186,5 +186,5 @@ export default {
       Role,
     };
   },
-};
+});
 </script>

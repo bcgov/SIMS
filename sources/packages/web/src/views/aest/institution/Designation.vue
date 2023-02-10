@@ -15,7 +15,7 @@
 </template>
 
 <script lang="ts">
-import { onMounted, ref } from "vue";
+import { onMounted, ref, defineComponent } from "vue";
 import { useRouter } from "vue-router";
 import { DesignationAgreementDetailsAPIOutDTO } from "@/services/http/dto";
 import { DesignationAgreementService } from "@/services/DesignationAgreementService";
@@ -23,7 +23,7 @@ import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import DesignationAgreementSummary from "@/components/partial-view/DesignationAgreement/DesignationAgreementSummary.vue";
 import { LayoutTemplates } from "@/types";
 
-export default {
+export default defineComponent({
   components: { DesignationAgreementSummary },
   props: {
     institutionId: {
@@ -58,5 +58,5 @@ export default {
       LayoutTemplates,
     };
   },
-};
+});
 </script>

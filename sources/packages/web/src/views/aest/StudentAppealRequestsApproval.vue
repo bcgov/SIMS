@@ -49,7 +49,7 @@
   </v-container>
 </template>
 <script lang="ts">
-import { ref, onMounted, computed } from "vue";
+import { ref, onMounted, computed, defineComponent } from "vue";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import { useRouter } from "vue-router";
 import { StudentAppealService } from "@/services/StudentAppealService";
@@ -66,7 +66,7 @@ import StatusChipRequestedAssessment from "@/components/generic/StatusChipReques
 import { ASSESSMENT_ALREADY_IN_PROGRESS } from "@/services/http/dto/Assessment.dto";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
 
-export default {
+export default defineComponent({
   components: {
     AppealRequestsApprovalForm,
     StatusChipRequestedAssessment,
@@ -160,5 +160,5 @@ export default {
       Role,
     };
   },
-};
+});
 </script>

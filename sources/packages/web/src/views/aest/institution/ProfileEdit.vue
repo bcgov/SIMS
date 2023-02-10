@@ -16,7 +16,7 @@
 </template>
 
 <script lang="ts">
-import { ref, onMounted } from "vue";
+import { ref, onMounted, defineComponent } from "vue";
 import { useRouter } from "vue-router";
 import { ClientIdType, Role } from "@/types";
 import {
@@ -28,7 +28,7 @@ import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import { useSnackBar } from "@/composables";
 import InstitutionProfileForm from "@/components/institutions/profile/InstitutionProfileForm.vue";
 
-export default {
+export default defineComponent({
   components: { InstitutionProfileForm },
   props: {
     institutionId: {
@@ -72,5 +72,5 @@ export default {
       Role,
     };
   },
-};
+});
 </script>

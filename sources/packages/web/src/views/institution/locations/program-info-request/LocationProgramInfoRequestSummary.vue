@@ -58,7 +58,7 @@
 </template>
 
 <script lang="ts">
-import { onMounted, ref, watch, computed } from "vue";
+import { onMounted, ref, watch, computed, defineComponent } from "vue";
 import { useRouter } from "vue-router";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import { ProgramInfoRequestService } from "@/services/ProgramInfoRequestService";
@@ -66,7 +66,7 @@ import { useFormatters, useInstitutionState } from "@/composables";
 import StatusChipProgramInfoRequest from "@/components/generic/StatusChipProgramInfoRequest.vue";
 import { PIRSummaryAPIOutDTO } from "@/services/http/dto";
 
-export default {
+export default defineComponent({
   components: { StatusChipProgramInfoRequest },
   props: {
     locationId: {
@@ -116,5 +116,5 @@ export default {
       locationName,
     };
   },
-};
+});
 </script>

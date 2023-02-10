@@ -17,7 +17,7 @@
 </template>
 
 <script lang="ts">
-import { onMounted, ref } from "vue";
+import { onMounted, ref, defineComponent } from "vue";
 import { useFormatters, useDesignationAgreement } from "@/composables";
 import DesignationAgreementForm from "@/components/partial-view/DesignationAgreement/DesignationAgreementForm.vue";
 import {
@@ -27,7 +27,7 @@ import {
 import { DesignationAgreementService } from "@/services/DesignationAgreementService";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 
-export default {
+export default defineComponent({
   components: { DesignationAgreementForm },
   props: {
     designationAgreementId: {
@@ -71,5 +71,5 @@ export default {
 
     return { designationModel, InstitutionRoutesConst };
   },
-};
+});
 </script>

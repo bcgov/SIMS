@@ -52,7 +52,7 @@
 <script lang="ts">
 import COESummaryData from "@/views/institution/locations/confirmation-of-enrollment/COESummaryData.vue";
 import { EnrollmentPeriod } from "@/types";
-import { ref, computed } from "vue";
+import { ref, computed, defineComponent } from "vue";
 import { useInstitutionState } from "@/composables";
 
 enum COETab {
@@ -60,7 +60,7 @@ enum COETab {
   UpcomingEnrollmentTab = "upcoming-enrolment-tab",
 }
 
-export default {
+export default defineComponent({
   components: { COESummaryData },
   props: {
     locationId: {
@@ -77,5 +77,5 @@ export default {
     });
     return { EnrollmentPeriod, COETab, tab, locationName };
   },
-};
+});
 </script>

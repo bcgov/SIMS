@@ -18,7 +18,7 @@
 </template>
 
 <script lang="ts">
-import { ref, onMounted } from "vue";
+import { ref, onMounted, defineComponent } from "vue";
 import { useRouter } from "vue-router";
 import {
   useSnackBar,
@@ -42,7 +42,7 @@ import { AuthService } from "@/services/AuthService";
 import StudentProfileForm from "@/components/common/StudentProfileForm.vue";
 import { STUDENT_ACCOUNT_APPLICATION_USER_ALREADY_EXISTS } from "@/constants";
 
-export default {
+export default defineComponent({
   components: {
     StudentProfileForm,
   },
@@ -129,5 +129,5 @@ export default {
       processing,
     };
   },
-};
+});
 </script>

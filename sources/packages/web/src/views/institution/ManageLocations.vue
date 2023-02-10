@@ -12,11 +12,12 @@
 </template>
 
 <script lang="ts">
+import { defineComponent } from "vue";
 import LocationSummary from "@/components/common/LocationSummary.vue";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import router from "@/router";
 
-export default {
+export default defineComponent({
   components: {
     LocationSummary,
   },
@@ -34,5 +35,5 @@ export default {
       gotToEditLocation,
     };
   },
-};
+});
 </script>

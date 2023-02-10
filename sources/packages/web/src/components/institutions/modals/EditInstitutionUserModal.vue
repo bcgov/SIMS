@@ -44,7 +44,7 @@
 </template>
 
 <script lang="ts">
-import { ref, computed } from "vue";
+import { ref, computed, defineComponent } from "vue";
 import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
 import { useFormatters, useModalDialog, useSnackBar } from "@/composables";
 import { InstitutionService } from "@/services/InstitutionService";
@@ -76,7 +76,7 @@ const submitKnownErrors = [
   BCEID_ACCOUNT_NOT_FOUND,
 ];
 
-export default {
+export default defineComponent({
   components: {
     ModalDialogBase,
     InstitutionUserManagement,
@@ -220,7 +220,7 @@ export default {
       Role,
     };
   },
-};
+});
 </script>
 <style scoped>
 .bceid-input {

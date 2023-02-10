@@ -57,13 +57,13 @@
 </template>
 
 <script lang="ts">
-import { ref, reactive } from "vue";
+import { ref, reactive, defineComponent } from "vue";
 import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
 import { ApproveConfirmEnrollmentModel, VForm } from "@/types";
 import ErrorSummary from "@/components/generic/ErrorSummary.vue";
 import { useModalDialog } from "@/composables";
 
-export default {
+export default defineComponent({
   components: {
     ModalDialogBase,
     ErrorSummary,
@@ -103,5 +103,5 @@ export default {
       showModal,
     };
   },
-};
+});
 </script>

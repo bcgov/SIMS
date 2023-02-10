@@ -22,12 +22,13 @@
 </template>
 
 <script lang="ts">
+import { defineComponent } from "vue";
 import { ReportsFilterAPIInDTO } from "@/services/http/dto";
 import { useSnackBar, useFileUtils } from "@/composables";
 import { FormIOForm, Role } from "@/types";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
 
-export default {
+export default defineComponent({
   components: {
     CheckPermissionRole,
   },
@@ -53,5 +54,5 @@ export default {
     };
     return { exportReport, formLoaded, submitForm, Role };
   },
-};
+});
 </script>

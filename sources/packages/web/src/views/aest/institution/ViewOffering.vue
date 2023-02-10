@@ -50,7 +50,7 @@
 
 <script lang="ts">
 import { EducationProgramOfferingService } from "@/services/EducationProgramOfferingService";
-import { onMounted, ref, computed } from "vue";
+import { onMounted, ref, computed, defineComponent } from "vue";
 import { OfferingStatus, Role } from "@/types";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import { useSnackBar, ModalDialog } from "@/composables";
@@ -64,7 +64,7 @@ import OfferingForm from "@/components/common/OfferingForm.vue";
 import AssessOfferingModal from "@/components/aest/institution/modals/AssessOfferingModal.vue";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
 
-export default {
+export default defineComponent({
   components: {
     ProgramOfferingDetailHeader,
     OfferingForm,
@@ -150,5 +150,5 @@ export default {
       Role,
     };
   },
-};
+});
 </script>

@@ -31,12 +31,12 @@
 <script lang="ts">
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import ManageProgramAndOfferingSummary from "@/components/common/ManageProgramAndOfferingSummary.vue";
-import { ref, onMounted } from "vue";
+import { ref, onMounted, defineComponent } from "vue";
 import { EducationProgramService } from "@/services/EducationProgramService";
 import { EducationProgramAPIOutDTO } from "@/services/http/dto";
 import ProgramOfferingDetailHeader from "@/components/common/ProgramOfferingDetailHeader.vue";
 
-export default {
+export default defineComponent({
   components: { ManageProgramAndOfferingSummary, ProgramOfferingDetailHeader },
   props: {
     programId: {
@@ -64,5 +64,5 @@ export default {
       InstitutionRoutesConst,
     };
   },
-};
+});
 </script>

@@ -92,7 +92,7 @@
   </full-page-container>
 </template>
 <script lang="ts">
-import { ref, computed } from "vue";
+import { ref, computed, defineComponent } from "vue";
 import { useRouter } from "vue-router";
 import { InstitutionService } from "@/services/InstitutionService";
 import { SearchInstitutionAPIOutDTO } from "@/services/http/dto";
@@ -100,7 +100,7 @@ import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import { useSnackBar, useFormatters } from "@/composables";
 import { VForm } from "@/types";
 
-export default {
+export default defineComponent({
   setup() {
     const searchInstitutionsForm = ref({} as VForm);
     const snackBar = useSnackBar();
@@ -152,5 +152,5 @@ export default {
       searchInstitutionsForm,
     };
   },
-};
+});
 </script>

@@ -60,7 +60,7 @@
 </template>
 
 <script lang="ts">
-import { ref, reactive, onMounted } from "vue";
+import { ref, reactive, onMounted, defineComponent } from "vue";
 import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
 import { VForm } from "@/types";
 import ErrorSummary from "@/components/generic/ErrorSummary.vue";
@@ -71,7 +71,7 @@ import {
 } from "@/services/http/dto";
 import { ConfirmationOfEnrollmentService } from "@/services/ConfirmationOfEnrollmentService";
 
-export default {
+export default defineComponent({
   components: {
     ModalDialogBase,
     ErrorSummary,
@@ -115,5 +115,5 @@ export default {
       COEDenialReasons,
     };
   },
-};
+});
 </script>

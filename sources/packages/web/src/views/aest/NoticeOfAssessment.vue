@@ -17,10 +17,11 @@
 </template>
 
 <script lang="ts">
+import { defineComponent } from "vue";
 import NoticeOfAssessmentFormView from "@/components/common/NoticeOfAssessmentFormView.vue";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 
-export default {
+export default defineComponent({
   components: {
     NoticeOfAssessmentFormView,
   },
@@ -41,5 +42,5 @@ export default {
   setup() {
     return { AESTRoutesConst };
   },
-};
+});
 </script>

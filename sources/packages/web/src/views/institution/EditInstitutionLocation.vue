@@ -19,7 +19,7 @@
 import { RouteLocationRaw, useRouter } from "vue-router";
 import { useStore } from "vuex";
 import LocationEditForm from "@/components/institutions/locations/LocationEditForm.vue";
-import { computed, onMounted, ref } from "vue";
+import { computed, onMounted, ref, defineComponent } from "vue";
 import { InstitutionLocationPrimaryContactAPIInDTO } from "@/services/http/dto";
 import { InstitutionService } from "@/services/InstitutionService";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
@@ -27,7 +27,7 @@ import { AuthService } from "@/services/AuthService";
 import { InstitutionLocationEdit } from "@/types";
 import { useSnackBar } from "@/composables";
 
-export default {
+export default defineComponent({
   components: { LocationEditForm },
   props: {
     locationId: {
@@ -75,5 +75,5 @@ export default {
       goBackRouteParams,
     };
   },
-};
+});
 </script>

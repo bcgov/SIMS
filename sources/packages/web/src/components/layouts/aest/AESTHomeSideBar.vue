@@ -34,10 +34,10 @@
 <script lang="ts">
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import { MenuItemModel, Role } from "@/types";
-import { ref } from "vue";
+import { ref, defineComponent } from "vue";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
 
-export default {
+export default defineComponent({
   components: { CheckPermissionRole },
   setup() {
     const menuItems = ref<MenuItemModel[]>([
@@ -128,5 +128,5 @@ export default {
       Role,
     };
   },
-};
+});
 </script>

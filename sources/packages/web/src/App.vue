@@ -7,10 +7,10 @@
 <script lang="ts">
 import SnackBar from "@/components/generic/SnackBar.vue";
 import { SnackBarOptions } from "@/types";
-import { ref } from "vue";
+import { ref, defineComponent } from "vue";
 import useEmitter from "@/composables/useEmitter";
 
-export default {
+export default defineComponent({
   components: { SnackBar },
   setup() {
     const emitter = useEmitter();
@@ -20,5 +20,5 @@ export default {
     });
     return { snackBarOptions };
   },
-};
+});
 </script>

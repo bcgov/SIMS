@@ -83,7 +83,7 @@
 
 <script lang="ts">
 import { useRouter } from "vue-router";
-import { computed } from "vue";
+import { computed, defineComponent } from "vue";
 import {
   InstitutionRoutesConst,
   AESTRoutesConst,
@@ -93,7 +93,7 @@ import StatusChipProgram from "@/components/generic/StatusChipProgram.vue";
 import { AuthService } from "@/services/AuthService";
 import { EducationProgramAPIOutDTO } from "@/services/http/dto";
 
-export default {
+export default defineComponent({
   components: { StatusChipProgram },
   props: {
     programId: {
@@ -156,5 +156,5 @@ export default {
       programActionLabel,
     };
   },
-};
+});
 </script>

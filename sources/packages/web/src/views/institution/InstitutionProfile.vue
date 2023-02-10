@@ -26,7 +26,7 @@
 </template>
 
 <script lang="ts">
-import { ref, onMounted } from "vue";
+import { ref, onMounted, defineComponent } from "vue";
 import { useRouter } from "vue-router";
 import { InstitutionService } from "@/services/InstitutionService";
 import {
@@ -39,7 +39,7 @@ import { useStore } from "vuex";
 import InstitutionProfileForm from "@/components/institutions/profile/InstitutionProfileForm.vue";
 import { BannerTypes } from "@/types";
 
-export default {
+export default defineComponent({
   components: { InstitutionProfileForm },
   setup() {
     // Hooks
@@ -74,5 +74,5 @@ export default {
       BannerTypes,
     };
   },
-};
+});
 </script>

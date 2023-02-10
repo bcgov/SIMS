@@ -66,7 +66,7 @@ import {
 } from "@/types";
 import HeaderTitleValue from "@/components/generic/HeaderTitleValue.vue";
 import { useFormatters } from "@/composables";
-import { computed } from "vue";
+import { computed, defineComponent } from "vue";
 import { useRouter } from "vue-router";
 import {
   AESTRoutesConst,
@@ -74,7 +74,7 @@ import {
 } from "@/constants/routes/RouteConstants";
 import { AuthService } from "@/services/AuthService";
 
-export default {
+export default defineComponent({
   components: { HeaderTitleValue },
   props: {
     headerDetails: {
@@ -139,5 +139,5 @@ export default {
       showApprovalDetails,
     };
   },
-};
+});
 </script>

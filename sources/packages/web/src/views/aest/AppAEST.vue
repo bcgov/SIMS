@@ -72,9 +72,9 @@ import BCLogo from "@/components/generic/BCLogo.vue";
 import IdleTimeChecker from "@/components/common/IdleTimeChecker.vue";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
-import { ref } from "vue";
+import { ref, defineComponent } from "vue";
 
-export default {
+export default defineComponent({
   components: { BCLogo, IdleTimeChecker, CheckPermissionRole },
   setup() {
     const { executeLogout } = useAuth();
@@ -98,5 +98,5 @@ export default {
       toggleNav,
     };
   },
-};
+});
 </script>

@@ -64,7 +64,7 @@
 </template>
 
 <script lang="ts">
-import { onMounted, ref } from "vue";
+import { onMounted, ref, defineComponent } from "vue";
 import { useRouter } from "vue-router";
 import {
   PendingDesignationAgreementDetailsAPIOutDTO,
@@ -80,7 +80,7 @@ import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import { useFormatters } from "@/composables";
 import StatusChipDesignation from "@/components/generic/StatusChipDesignation.vue";
 import ToggleContent from "@/components/generic/ToggleContent.vue";
-export default {
+export default defineComponent({
   components: {
     StatusChipDesignation,
     ToggleContent,
@@ -127,5 +127,5 @@ export default {
       searchDesignations,
     };
   },
-};
+});
 </script>

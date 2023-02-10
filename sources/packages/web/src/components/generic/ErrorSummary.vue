@@ -10,15 +10,15 @@
 </template>
 
 <script lang="ts">
-import { PropType } from "vue";
+import { PropType, defineComponent } from "vue";
 import { ErrorMessage } from "@/types";
 
-export default {
+export default defineComponent({
   props: {
     errors: {
       type: Object as PropType<ErrorMessage[]>,
       required: false,
     },
   },
-};
+});
 </script>

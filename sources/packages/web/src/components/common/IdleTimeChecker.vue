@@ -15,7 +15,7 @@
 </template>
 
 <script lang="ts">
-import { onMounted, ref, computed, watch } from "vue";
+import { onMounted, ref, computed, watch, defineComponent } from "vue";
 import { ClientIdType } from "@/types";
 import {
   ModalDialog,
@@ -32,7 +32,7 @@ import {
 } from "@/constants/system-constants";
 import ConfirmExtendTime from "@/components/common/modals/ConfirmExtendTime.vue";
 
-export default {
+export default defineComponent({
   components: { ConfirmExtendTime },
   props: {
     clientIdType: {
@@ -177,5 +177,5 @@ export default {
       extendUserSessionTime,
     };
   },
-};
+});
 </script>

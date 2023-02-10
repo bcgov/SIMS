@@ -15,11 +15,11 @@
 </template>
 
 <script lang="ts">
-import { computed } from "vue";
+import { computed, defineComponent } from "vue";
 import InstitutionUserSummary from "@/components/common/InstitutionUserSummary.vue";
 import { useInstitutionState } from "@/composables";
 
-export default {
+export default defineComponent({
   components: {
     InstitutionUserSummary,
   },
@@ -30,5 +30,5 @@ export default {
     );
     return { hasBusinessGuid };
   },
-};
+});
 </script>

@@ -20,9 +20,9 @@
 </template>
 <script lang="ts">
 import { BannerTypes } from "@/types/contracts/Banner";
-import { computed } from "vue";
+import { computed, defineComponent } from "vue";
 
-export default {
+export default defineComponent({
   props: {
     type: {
       type: String,
@@ -52,5 +52,5 @@ export default {
     });
     return { bannerIcon };
   },
-};
+});
 </script>

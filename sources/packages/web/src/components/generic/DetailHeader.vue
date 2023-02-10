@@ -14,14 +14,14 @@
 </template>
 
 <script lang="ts">
-import { PropType } from "vue";
+import { PropType, defineComponent } from "vue";
 
-export default {
+export default defineComponent({
   props: {
     headerMap: {
       type: Object as PropType<Record<string, string>>,
       required: true,
     },
   },
-};
+});
 </script>
