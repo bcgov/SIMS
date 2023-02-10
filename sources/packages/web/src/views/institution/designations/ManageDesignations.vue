@@ -8,18 +8,26 @@
       />
     </template>
     <body-header
-      title="Designation agreements"
-      subTitle="Ensure you have an active designation to administer student financial aid."
+      title="Designation requests"
       :recordsCount="designations.length"
     >
+      <template #subtitle>
+        Ensure you have an approved designation to administer financial aid to
+        students
+        <tooltip-icon
+          >You must have the role of a Legal Signing Authority to request a
+          designation.</tooltip-icon
+        >
+      </template>
+
       <template #actions>
         <v-btn
-          v-if="isLegalSigningAuthority"
           class="ml-2 float-right"
           color="primary"
           data-cy="requestDesignation"
           @click="goToRequestDesignation()"
           prepend-icon="fa:fa fa-bell-concierge"
+          :disabled="!isLegalSigningAuthority"
           >Request designation</v-btn
         >
       </template>
