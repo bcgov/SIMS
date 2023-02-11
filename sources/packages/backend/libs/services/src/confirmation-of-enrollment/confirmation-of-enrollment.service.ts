@@ -8,6 +8,9 @@ import {
   OfferingCosts,
 } from "./models/confirmation-of-enrollment.models";
 
+/**
+ * Types of awards considered for the max tuition remittance calculation.
+ */
 const TUITION_REMITTANCE_AWARD_TYPES = [
   DisbursementValueType.CanadaLoan,
   DisbursementValueType.BCLoan,
@@ -68,6 +71,19 @@ export class ConfirmationOfEnrollmentService {
     );
   }
 
+  /**
+   * Calculate the max tuition remittance for a disbursement.
+   * @param awards awards that will be disbursed.
+   * @param offeringCosts offering costs to be considered.
+   * @param calculationType effective or estimated calculation.
+   * Before the disbursement happen, the value for the max tuition
+   * remittance can only be estimated. It is because the real values,
+   * with all possible deductions, will be known only upon e-Cert
+   * generation. Once the disbursement(e-Cert creation) happen,
+   * the effective value for every award will be persisted and the
+   * maximum tuition remittance would be known.
+   * @returns max tuition remittance for a disbursement.
+   */
   getMaxTuitionRemittance(
     awards: Award[],
     offeringCosts: OfferingCosts,
@@ -78,11 +94,13 @@ export class ConfirmationOfEnrollmentService {
       TUITION_REMITTANCE_AWARD_TYPES.includes(award.valueType),
     );
     if (calculationType === MaxTuitionRemittanceTypes.Effective) {
+      // Use the values calculated upon disbursement (e-Cert generation).
       totalAwards = tuitionAwards.reduce(
         (total, award) => total + (award.effectiveAmount ?? 0),
         0,
       );
     } else {
+      // Estimate the max tuition base in what is known before disbursement (e-Cert generation).
       totalAwards = tuitionAwards.reduce(
         (total, award) =>
           total + award.valueAmount - (award.disbursedAmountSubtracted ?? 0),
@@ -91,7 +109,6 @@ export class ConfirmationOfEnrollmentService {
     }
     const OfferingTotalCosts =
       offeringCosts.actualTuitionCosts + offeringCosts.programRelatedCosts;
-
     return Math.min(OfferingTotalCosts, totalAwards);
   }
 }
