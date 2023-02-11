@@ -4,7 +4,7 @@
       <template #content>
         <error-summary :errors="confirmCOE.errors" />
         <p class="category-header-medium">
-          Do you want to confirm this application?
+          Do you want to confirm enrolment for this application?
         </p>
         <span class="label-value"
           >Confirming enrolment verifies this applicant is attending your
@@ -15,6 +15,7 @@
             v-model="formModel.requestedTuitionRemittance"
             class="mt-2 input-unset-display-opacity"
             color="primary"
+            hide-details="auto"
             :rules="[
               (v) =>
                 !!(v === true || v === false) ||
@@ -28,21 +29,47 @@
             <v-radio label="Yes" :value="true"></v-radio>
             <v-radio label="No" :value="false"></v-radio>
           </v-radio-group>
-          <content-group
-            class="my-3"
-            v-if="!!formModel.requestedTuitionRemittance"
-          >
-            <v-text-field
-              label="Tuition remittance amount"
-              v-model="formModel.tuitionRemittanceAmount"
-              variant="outlined"
-              type="number"
-              prefix="$"
-              :rules="[
-                (v) =>
-                  v > 0 || v === 0 || 'Tuition remittance amount is required.',
-              ]" /></content-group
-        ></content-group>
+          <template v-if="!!formModel.requestedTuitionRemittance">
+            <content-group>
+              <v-text-field
+                class="my-2"
+                label="Tuition remittance amount"
+                v-model="formModel.tuitionRemittanceAmount"
+                variant="outlined"
+                type="number"
+                prefix="$"
+                hide-details="auto"
+                :rules="[
+                  (v) => truthyRule(v, 'Tuition remittance'),
+                  (v) =>
+                    numberRangeRule(
+                      v,
+                      1,
+                      maxTuitionRemittance,
+                      'Tuition remittance',
+                      formatCurrency,
+                    ),
+                ]"
+              />
+              <div>
+                <span>Maximum tuition amount: </span>
+                <span class="label-bold">{{
+                  formatCurrency(maxTuitionRemittance)
+                }}</span>
+                <tooltip-icon
+                  >This is the maximum amount you can request for this
+                  application.</tooltip-icon
+                >
+              </div>
+              <banner
+                v-if="hasOverawards"
+                class="mt-4"
+                :type="BannerTypes.Warning"
+                summary="The student has some overaward balance that can impact the tuition remittance requested at disbursement time."
+              />
+            </content-group>
+          </template>
+        </content-group>
       </template>
       <template #footer>
         <footer-buttons
@@ -61,14 +88,27 @@ import { ref, reactive, defineComponent } from "vue";
 import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
 import { ApproveConfirmEnrollmentModel, VForm } from "@/types";
 import ErrorSummary from "@/components/generic/ErrorSummary.vue";
-import { useModalDialog } from "@/composables";
+import { useFormatters, useModalDialog, useRules } from "@/composables";
+import { BannerTypes } from "@/types/contracts/Banner";
 
 export default defineComponent({
   components: {
     ModalDialogBase,
     ErrorSummary,
   },
+  props: {
+    hasOverawards: {
+      type: Boolean,
+      required: true,
+    },
+    maxTuitionRemittance: {
+      type: Number,
+      required: true,
+    },
+  },
   setup() {
+    const { formatCurrency } = useFormatters();
+    const { numberRangeRule, truthyRule } = useRules();
     const { showDialog, resolvePromise, showModal } = useModalDialog<
       ApproveConfirmEnrollmentModel | boolean
     >();
@@ -101,6 +141,10 @@ export default defineComponent({
       cancel,
       formModel,
       showModal,
+      BannerTypes,
+      formatCurrency,
+      numberRangeRule,
+      truthyRule,
     };
   },
 });

@@ -21,6 +21,11 @@ export class ConfirmationOfEnrollmentService {
     private readonly disbursementScheduleRepo: Repository<DisbursementSchedule>,
   ) {}
 
+  /**
+   * Get the maximum estimated tuition remittance for the provided disbursement.
+   * @param disbursementId disbursement id.
+   * @returns maximum estimated tuition remittance if any, otherwise
+   */
   async getEstimatedMaxTuitionRemittance(
     disbursementId: number,
   ): Promise<number | null> {
@@ -41,6 +46,12 @@ export class ConfirmationOfEnrollmentService {
               actualTuitionCosts: true,
               programRelatedCosts: true,
             },
+          },
+        },
+        relations: {
+          disbursementValues: true,
+          studentAssessment: {
+            offering: true,
           },
         },
         where: {
