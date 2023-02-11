@@ -1,7 +1,7 @@
 import { ConfirmationOfEnrollmentService } from "@sims/services/confirmation-of-enrollment/confirmation-of-enrollment.service";
 import { DisbursementSchedule, DisbursementValueType } from "@sims/sims-db";
 import { Repository } from "typeorm";
-import { MaxTuitionRemittanceTypes } from "../../confirmation-of-enrollment.models";
+import { MaxTuitionRemittanceTypes } from "../../models/confirmation-of-enrollment.models";
 
 describe("ConfirmationOfEnrollmentService-getMaxTuitionRemittance", () => {
   let service: ConfirmationOfEnrollmentService;
@@ -30,12 +30,12 @@ describe("ConfirmationOfEnrollmentService-getMaxTuitionRemittance", () => {
         disbursedAmountSubtracted: 100,
       },
       {
-        // Must be ignored from the total during calculation..
+        // Must be ignored from the total during calculation.
         valueType: DisbursementValueType.BCGrant,
         valueAmount: 500,
       },
       {
-        // Must be ignored from the total during calculation..
+        // Must be ignored from the total during calculation.
         valueType: DisbursementValueType.BCTotalGrant,
         valueAmount: 500,
       },

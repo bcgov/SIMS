@@ -17,6 +17,12 @@ export class DisbursementOverawardService {
     private readonly disbursementOverawardRepo: Repository<DisbursementOveraward>,
   ) {}
 
+  /**
+   * Checks if the student has any positive overaward balance for any award.
+   * @param studentId student to be checked.
+   * @returns true if the student has any positive overaward balance value
+   * for any award, otherwise, false.
+   */
   async hasOverawardBalance(studentId: number): Promise<boolean> {
     const overawards = await this.getOverawardBalance([studentId]);
     if (!overawards[studentId]) {
