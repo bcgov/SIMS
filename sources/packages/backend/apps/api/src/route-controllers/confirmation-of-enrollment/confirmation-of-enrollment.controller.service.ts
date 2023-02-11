@@ -4,7 +4,6 @@ import {
   UnprocessableEntityException,
 } from "@nestjs/common";
 import { ConfirmationOfEnrollmentService } from "@sims/services";
-import { MaxTuitionRemittanceTypes } from "@sims/services/confirmation-of-enrollment/models/confirmation-of-enrollment.models";
 import { DisbursementSchedule } from "@sims/sims-db";
 import {
   FIRST_COE_NOT_COMPLETE,
