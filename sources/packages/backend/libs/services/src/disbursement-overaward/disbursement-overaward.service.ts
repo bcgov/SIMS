@@ -18,18 +18,19 @@ export class DisbursementOverawardService extends RecordDataModelService<Disburs
   /**
    * Sum the total overawards per value code (e.g. CSLF, BCSL) for the student.
    * @param studentId student to get the balance.
-   * @param entityManager used to execute the queries in the same transaction.
+   * @param externalEntityManager used to execute the queries in the same transaction.
    * @returns the sum of the overawards grouped by the award type and them by
    * the student id.
    */
   async getOverawardBalance(
     studentIds: number[],
-    entityManager: EntityManager,
+    externalEntityManager?: EntityManager,
   ): Promise<StudentOverawardBalance> {
+    const repository =
+      externalEntityManager?.getRepository(DisbursementOveraward) ?? this.repo;
     // This query supports up to 65000 students.
     const distinctStudentIds = [...new Set(studentIds)];
-    const totalAwards = await entityManager
-      .getRepository(DisbursementOveraward)
+    const totalAwards = await repository
       .createQueryBuilder("disbursementOveraward")
       .select("student.id", "studentId")
       .addSelect("disbursementOveraward.disbursementValueCode", "valueCode")
@@ -49,5 +50,36 @@ export class DisbursementOverawardService extends RecordDataModelService<Disburs
       result[totalAward.studentId][totalAward.valueCode] = +totalAward.total;
     }
     return result;
+  }
+
+  /**
+   * Get all overawards which belong to a student.
+   * @param studentId student.
+   * @returns overaward details of a student.
+   */
+  async getOverawardsByStudent(
+    studentId: number,
+  ): Promise<DisbursementOveraward[]> {
+    return this.repo.find({
+      select: {
+        createdAt: true,
+        originType: true,
+        overawardValue: true,
+        disbursementValueCode: true,
+        creator: { firstName: true, lastName: true },
+        studentAssessment: {
+          id: true,
+          application: { applicationNumber: true },
+          triggerType: true,
+        },
+      },
+      where: {
+        student: { id: studentId },
+      },
+      relations: {
+        creator: true,
+        studentAssessment: { application: true },
+      },
+    });
   }
 }
