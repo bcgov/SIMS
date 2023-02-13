@@ -5,7 +5,6 @@ on: [pull_request]
 jobs:
   api-e2e-tests:
     name: SIMS API E2E Tests
-    environment: DEV
     runs-on: ubuntu-latest
     env:
       PROJECT_NAME: aest-sims
