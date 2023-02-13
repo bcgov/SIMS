@@ -38,6 +38,11 @@ export class OverawardAESTController extends BaseController {
     return { overawardBalanceValues: overawardBalance[studentId] };
   }
 
+  /**
+   * Get all overawards which belong to a student.
+   * @param studentId student.
+   * @returns overaward details of a student.
+   */
   @Get("student/:studentId")
   async getOverawardsByStudent(
     studentId: number,
