@@ -1,15 +1,32 @@
-import { Controller, Param, ParseIntPipe, Get } from "@nestjs/common";
+import {
+  Controller,
+  Param,
+  ParseIntPipe,
+  Get,
+  Post,
+  Body,
+  NotFoundException,
+} from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
-import { AllowAuthorizedParty, Groups } from "../../auth/decorators";
+import {
+  AllowAuthorizedParty,
+  Groups,
+  Roles,
+  UserToken,
+} from "../../auth/decorators";
 import { UserGroups } from "../../auth/user-groups.enum";
 import { ClientTypeBaseRoute } from "../../types";
 import BaseController from "../BaseController";
 import { DisbursementOverawardService } from "@sims/services";
+import { StudentService } from "../../services";
 import {
   OverawardBalanceAPIOutDTO,
   OverawardAPIOutDTO,
+  OverawardManualRecordAPIInDTO,
 } from "./models/overaward.dto";
+import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
+import { IUserToken, Role } from "../../auth";
 
 @AllowAuthorizedParty(AuthorizedParties.aest)
 @Groups(UserGroups.AESTUser)
@@ -18,6 +35,7 @@ import {
 export class OverawardAESTController extends BaseController {
   constructor(
     private readonly disbursementOverawardService: DisbursementOverawardService,
+    private readonly studentService: StudentService,
   ) {
     super();
   }
@@ -29,8 +47,7 @@ export class OverawardAESTController extends BaseController {
    */
   @Get("student/:studentId/balance")
   async getOverawardBalance(
-    @Param("studentId", ParseIntPipe)
-    studentId: number,
+    @Param("studentId", ParseIntPipe) studentId: number,
   ): Promise<OverawardBalanceAPIOutDTO> {
     const overawardBalance =
       await this.disbursementOverawardService.getOverawardBalance([studentId]);
@@ -45,7 +62,7 @@ export class OverawardAESTController extends BaseController {
    */
   @Get("student/:studentId")
   async getOverawardsByStudent(
-    studentId: number,
+    @Param("studentId", ParseIntPipe) studentId: number,
   ): Promise<OverawardAPIOutDTO[]> {
     const studentOverawards =
       await this.disbursementOverawardService.getOverawardsByStudent(studentId);
@@ -60,5 +77,34 @@ export class OverawardAESTController extends BaseController {
         overaward.studentAssessment?.application.applicationNumber,
       assessmentTriggerType: overaward.studentAssessment?.triggerType,
     }));
+  }
+
+  /**
+   * Add a manual overaward deduction for a student.
+   * @param studentId student for whom overaward deduction is being added.
+   * @param payload overaward deduction payload.
+   * @returns primary identifier of the resource created.
+   */
+  @Roles(Role.StudentAddOverawardManual)
+  @Post("student/:studentId")
+  async addManualOverawardDeduction(
+    @Param("studentId", ParseIntPipe) studentId: number,
+    @Body() payload: OverawardManualRecordAPIInDTO,
+    @UserToken() userToken: IUserToken,
+  ): Promise<PrimaryIdentifierAPIOutDTO> {
+    const studentExist = await this.studentService.studentExists(studentId);
+    if (!studentExist) {
+      throw new NotFoundException("Student not found.");
+    }
+    const addedOverawardDeduction =
+      await this.disbursementOverawardService.addManualOverawardDeduction(
+        payload.awardValueCode,
+        payload.overawardValue,
+        studentId,
+        userToken.userId,
+      );
+    return {
+      id: addedOverawardDeduction.id,
+    };
   }
 }

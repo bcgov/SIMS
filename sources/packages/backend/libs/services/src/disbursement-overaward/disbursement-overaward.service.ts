@@ -1,6 +1,12 @@
 import { Injectable } from "@nestjs/common";
 import { DataSource, EntityManager } from "typeorm";
-import { RecordDataModelService, DisbursementOveraward } from "@sims/sims-db";
+import {
+  RecordDataModelService,
+  DisbursementOveraward,
+  User,
+  DisbursementOverawardOriginType,
+  Student,
+} from "@sims/sims-db";
 import {
   AwardOverawardBalance,
   StudentOverawardBalance,
@@ -81,5 +87,28 @@ export class DisbursementOverawardService extends RecordDataModelService<Disburs
         studentAssessment: { application: true },
       },
     });
+  }
+
+  /**
+   * Add a manual overaward deduction.
+   * @param awardValueCode award value code.
+   * @param overawardValueDeducted overaward deducted value.
+   * @param auditUserId user who added overaward deduction
+   * @returns overaward record created.
+   */
+  async addManualOverawardDeduction(
+    awardValueCode: string,
+    overawardValueDeducted: number,
+    studentId: number,
+    auditUserId: number,
+  ): Promise<DisbursementOveraward> {
+    const overawardManualRecord = new DisbursementOveraward();
+    overawardManualRecord.creator = { id: auditUserId } as User;
+    overawardManualRecord.disbursementValueCode = awardValueCode;
+    overawardManualRecord.overawardValue = -overawardValueDeducted;
+    overawardManualRecord.originType =
+      DisbursementOverawardOriginType.ManualRecord;
+    overawardManualRecord.student = { id: studentId } as Student;
+    return this.repo.save(overawardManualRecord);
   }
 }
