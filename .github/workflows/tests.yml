@@ -1,9 +1,9 @@
-# This workflow is executed during pull requests triggered by an user or by the GitHub dependabot.
-# When created by the dependabot the access to the env variables are restricted,
-# see https://github.com/dependabot/dependabot-core/issues/3253 and
+# This workflow is executed during pull requests triggered by a user or by the GitHub dependabot.
+# When created by the dependabot the access to the env variables is restricted, please see
+# https://github.com/dependabot/dependabot-core/issues/3253 and
 # https://docs.github.com/en/code-security/dependabot/working-with-dependabot/automating-dependabot-with-github-actions
-# To allow access to the secrets on both cases, the test users passwords (or any other secret) are defined at repository
-# level and also at the dependabot secrets for now.
+# To allow access to the secrets in both cases, the test users' passwords (or any other secret) are defined at the
+# repository level and also at the `dependabot` secrets for now.
 name: Tests
 
 on: [pull_request]
