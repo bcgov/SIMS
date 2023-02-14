@@ -5,7 +5,7 @@ import {
 import {
   AWARD_VALUE_CODE_LENGTH,
   MAXIMUM_AWARD_VALUE,
-} from "apps/api/src/utilities";
+} from "../../../utilities";
 import { Length, Max, Min } from "class-validator";
 
 export class OverawardBalanceAPIOutDTO {
