@@ -1,11 +1,16 @@
 import { Injectable } from "@nestjs/common";
 import { EntityManager, Repository } from "typeorm";
-import { DisbursementOveraward } from "@sims/sims-db";
+import {
+  DisbursementOveraward,
+  DisbursementOverawardOriginType,
+  Student,
+} from "@sims/sims-db";
 import {
   AwardOverawardBalance,
   StudentOverawardBalance,
 } from "./disbursement-overaward.models";
 import { InjectRepository } from "@nestjs/typeorm";
+import { SystemUsersService } from "../system-users/system-users.service";
 
 /**
  * Service layer for Student Application disbursement schedules.
@@ -15,6 +20,7 @@ export class DisbursementOverawardService {
   constructor(
     @InjectRepository(DisbursementOveraward)
     private readonly disbursementOverawardRepo: Repository<DisbursementOveraward>,
+    private readonly systemUsersService: SystemUsersService,
   ) {}
 
   /**
@@ -69,5 +75,23 @@ export class DisbursementOverawardService {
       result[totalAward.studentId][totalAward.valueCode] = totalAward.total;
     }
     return result;
+  }
+
+  async addManualOveraward(
+    studentId: number,
+    overawardValue: number,
+    disbursementValueCode: string,
+    entityManager: EntityManager,
+  ): Promise<void> {
+    const auditUser = await this.systemUsersService.systemUser();
+    const disbursementOveraward = new DisbursementOveraward();
+    disbursementOveraward.student;
+    await entityManager.getRepository("DisbursementOveraward").insert({
+      student: { id: studentId } as Student,
+      disbursementValueCode,
+      overawardValue,
+      originType: DisbursementOverawardOriginType.ManuallyEntered,
+      creator: auditUser,
+    } as DisbursementOveraward);
   }
 }

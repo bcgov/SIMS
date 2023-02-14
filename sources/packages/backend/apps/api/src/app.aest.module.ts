@@ -75,6 +75,7 @@ import {
   WorkflowClientService,
   ReportService,
   ConfirmationOfEnrollmentService,
+  DisbursementOverawardService,
 } from "@sims/services";
 
 @Module({
@@ -150,6 +151,7 @@ import {
     ConfirmationOfEnrollmentControllerService,
     ConfirmationOfEnrollmentService,
     DisbursementScheduleService,
+    DisbursementOverawardService,
   ],
 })
 export class AppAESTModule {}

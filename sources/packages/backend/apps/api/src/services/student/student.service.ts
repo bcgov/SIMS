@@ -28,12 +28,14 @@ import {
   STUDENT_ACCOUNT_CREATION_MULTIPLES_SIN_FOUND,
   STUDENT_SIN_CONSENT_NOT_CHECKED,
 } from "../../constants";
+import { DisbursementOverawardService } from "@sims/services";
 
 @Injectable()
 export class StudentService extends RecordDataModelService<Student> {
   constructor(
     private readonly dataSource: DataSource,
     private readonly sfasIndividualService: SFASIndividualService,
+    private readonly disbursementOverawardService: DisbursementOverawardService,
   ) {
     super(dataSource.getRepository(Student));
     this.logger.log("[Created]");
@@ -180,6 +182,9 @@ export class StudentService extends RecordDataModelService<Student> {
         student.sinValidation = sinValidation;
         await entityManager.getRepository(Student).save(student);
       }
+
+      await this.updateSFASOveraward(student, studentSIN, entityManager);
+
       // Create the new entry in the student/user history/audit.
       const studentUser = new StudentUser();
       studentUser.user = user;
@@ -563,4 +568,40 @@ export class StudentService extends RecordDataModelService<Student> {
 
   @InjectLogger()
   logger: LoggerService;
+
+  /**
+   * Search for the student's SFAS data and update overaward values in
+   * disbursement overawards table if any overaward values for BCSL or CSLF exist.
+   * @param student student object.
+   * @param sinNumber student's sin number.
+   * @param entityManager entityManager to be used to perform the query.
+   */
+  async updateSFASOveraward(
+    student: Student,
+    sinNumber: string,
+    entityManager: EntityManager,
+  ) {
+    const sfasIndividual = await this.sfasIndividualService.getSFASOverawards(
+      student.user.lastName,
+      student.birthDate,
+      sinNumber,
+    );
+
+    if (sfasIndividual?.bcslOveraward > 0) {
+      this.disbursementOverawardService.addManualOveraward(
+        student.id,
+        sfasIndividual.bcslOveraward,
+        "BCSL",
+        entityManager,
+      );
+    }
+    if (sfasIndividual?.cslOveraward > 0) {
+      this.disbursementOverawardService.addManualOveraward(
+        student.id,
+        sfasIndividual.cslOveraward,
+        "CSLF",
+        entityManager,
+      );
+    }
+  }
 }
