@@ -31,25 +31,18 @@ export function useRules() {
     return "Expiry end date is required.";
   };
 
-  const checkNullOrEmptyRule = (value: string, fieldName: string) => {
-    if (value && value !== null && value.length > 0) {
-      return true;
-    }
-    return `${fieldName} is required.`;
-  };
-
   /**
-   * Check if a value is truthy.
+   * Check if a value is truthy and has some length.
    * All values are truthy except false, 0, -0, 0n,
    * "", null, undefined, and NaN.
    * @param value value to be checked.
    * @param fieldName friendly field name to be added
    * to the validation message.
-   * @returns true if the value is truthy,
+   * @returns true if the value is truthy and has some length,
    * otherwise a validation message.
    */
-  const truthyRule = (value: string, fieldName: string) => {
-    if (value) {
+  const checkNullOrEmptyRule = (value: string | number, fieldName: string) => {
+    if (value && value.toString().length > 0) {
       return true;
     }
     return `${fieldName} is required.`;
@@ -88,9 +81,7 @@ export function useRules() {
         minText = numberFormatter(minText);
         maxText = numberFormatter(maxText);
       }
-      return `${
-        fieldName ?? "Value"
-      } must be between ${minText} and ${maxText}.`;
+      return `${fieldName} must be between ${minText} and ${maxText}.`;
     }
     return true;
   };
@@ -102,6 +93,5 @@ export function useRules() {
     checkNullOrEmptyRule,
     checkOnlyDigitsRule,
     numberRangeRule,
-    truthyRule,
   };
 }

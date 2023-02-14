@@ -40,7 +40,7 @@
                 prefix="$"
                 hide-details="auto"
                 :rules="[
-                  (v) => truthyRule(v, 'Tuition remittance'),
+                  (v) => checkNullOrEmptyRule(v, 'Tuition remittance'),
                   (v) =>
                     numberRangeRule(
                       v,
@@ -108,7 +108,7 @@ export default defineComponent({
   },
   setup() {
     const { formatCurrency } = useFormatters();
-    const { numberRangeRule, truthyRule } = useRules();
+    const { numberRangeRule, checkNullOrEmptyRule } = useRules();
     const { showDialog, resolvePromise, showModal } = useModalDialog<
       ApproveConfirmEnrollmentModel | boolean
     >();
@@ -144,7 +144,7 @@ export default defineComponent({
       BannerTypes,
       formatCurrency,
       numberRangeRule,
-      truthyRule,
+      checkNullOrEmptyRule,
     };
   },
 });

@@ -27,7 +27,7 @@ export class ConfirmationOfEnrollmentService {
   /**
    * Get the maximum estimated tuition remittance for the provided disbursement.
    * @param disbursementId disbursement id.
-   * @returns maximum estimated tuition remittance if any, otherwise
+   * @returns maximum estimated tuition remittance if any, otherwise null.
    */
   async getEstimatedMaxTuitionRemittance(
     disbursementId: number,
@@ -107,8 +107,8 @@ export class ConfirmationOfEnrollmentService {
         0,
       );
     }
-    const OfferingTotalCosts =
+    const offeringTotalCosts =
       offeringCosts.actualTuitionCosts + offeringCosts.programRelatedCosts;
-    return Math.min(OfferingTotalCosts, totalAwards);
+    return Math.min(offeringTotalCosts, totalAwards);
   }
 }
