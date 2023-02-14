@@ -35,6 +35,10 @@ describe("Authentication (e2e)", () => {
       "student",
     );
 
+    console.log("E2E_TEST_STUDENT_USERNAME");
+    console.log(process.env.E2E_TEST_STUDENT_USERNAME);
+    console.log(process.env.E2E_TEST_STUDENT_PASSWORD);
+
     const aestToken = await KeycloakService.shared.getToken(
       process.env.E2E_TEST_STUDENT_USERNAME,
       process.env.E2E_TEST_STUDENT_PASSWORD,
