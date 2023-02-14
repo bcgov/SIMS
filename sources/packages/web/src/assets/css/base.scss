@@ -312,7 +312,7 @@ html * {
 
 // Modal height. 102px is the min height of header and footer of the modal.
 .modal-height {
-  max-height: calc(100vh - 102px) !important;
+  max-height: calc(100vh - 50px) !important;
 }
 
 // Min height for modal header.

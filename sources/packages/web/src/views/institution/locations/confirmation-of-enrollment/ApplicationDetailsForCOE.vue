@@ -57,7 +57,11 @@
       :formData="initialData"
     />
     <!-- Approve modal -->
-    <approve-c-o-e ref="confirmCOEModal" />
+    <approve-c-o-e
+      ref="confirmCOEModal"
+      :maxTuitionRemittance="initialData.maxTuitionRemittanceAllowed"
+      :hasOverawards="initialData.hasOverawardBalance"
+    />
     <!-- Deny modal -->
     <deny-c-o-e ref="denyCOEModal" />
   </full-page-container>
@@ -105,7 +109,7 @@ export default defineComponent({
       required: true,
     },
   },
-  setup(props: any) {
+  setup(props) {
     const { mapCOEChipStatus } = useCOE();
     const { dateOnlyLongString } = useFormatters();
     const router = useRouter();

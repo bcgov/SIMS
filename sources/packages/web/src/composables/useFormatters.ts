@@ -209,6 +209,22 @@ export function useFormatters() {
     return institutionUserRole;
   };
 
+  /**
+   * Format a currency value.
+   * @param moneyAmount value amount.
+   * @param currencyCode currency code.
+   * @returns formatted currency value.
+   */
+  const formatCurrency = (
+    moneyAmount: number | string,
+    currencyCode = "(CAD)",
+  ): string | null => {
+    if (moneyAmount === null || moneyAmount === undefined) {
+      return null;
+    }
+    return `$${parseFloat(moneyAmount.toString()).toFixed(2)} ${currencyCode}`;
+  };
+
   return {
     dateOnlyLongString,
     dateOnlyToLocalDateTimeString,
@@ -222,5 +238,6 @@ export function useFormatters() {
     getISODateOnlyString,
     institutionUserRoleToDisplay,
     emptyStringFiller,
+    formatCurrency,
   };
 }

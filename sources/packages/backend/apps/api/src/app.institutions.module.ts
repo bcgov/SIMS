@@ -45,6 +45,8 @@ import {
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
 import {
+  ConfirmationOfEnrollmentService,
+  DisbursementOverawardService,
   SequenceControlService,
   StudentRestrictionSharedService,
   WorkflowClientService,
@@ -111,6 +113,8 @@ import { UserControllerService } from "./route-controllers/user/user.controller.
     StudentRestrictionSharedService,
     UserControllerService,
     ConfirmationOfEnrollmentControllerService,
+    ConfirmationOfEnrollmentService,
+    DisbursementOverawardService,
   ],
 })
 export class AppInstitutionsModule {}
