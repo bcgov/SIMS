@@ -2,6 +2,7 @@ import HttpBaseClient from "@/services/http/common/HttpBaseClient";
 import {
   OverawardAPIOutDTO,
   OverawardBalanceAPIOutDTO,
+  OverawardManualRecordAPIInDTO,
 } from "@/services/http/dto";
 
 /**
@@ -36,5 +37,21 @@ export class OverawardApi extends HttpBaseClient {
       ? `overaward/student/${studentId}`
       : "overaward";
     return this.getCall<OverawardAPIOutDTO[]>(this.addClientRoot(overawardURL));
+  }
+
+  /**
+   * Add a manual overaward deduction for a student.
+   * @param studentId student for whom overaward deduction is being added.
+   * @param payload overaward deduction payload.
+   * @returns primary identifier of the resource created.
+   */
+  async addManualOverawardDeduction(
+    studentId: number,
+    payload: OverawardManualRecordAPIInDTO,
+  ): Promise<void> {
+    await this.postCall(
+      this.addClientRoot(`overaward/student/${studentId}`),
+      payload,
+    );
   }
 }

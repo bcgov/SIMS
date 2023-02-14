@@ -17,3 +17,8 @@ export interface OverawardAPIOutDTO {
   applicationNumber?: string;
   assessmentTriggerType?: AssessmentTriggerType;
 }
+
+export interface OverawardManualRecordAPIInDTO {
+  awardValueCode: string;
+  overawardValue: number;
+}

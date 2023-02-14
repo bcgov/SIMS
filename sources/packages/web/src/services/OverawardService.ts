@@ -2,6 +2,7 @@ import ApiClient from "@/services/http/ApiClient";
 import {
   OverawardAPIOutDTO,
   OverawardBalanceAPIOutDTO,
+  OverawardManualRecordAPIInDTO,
 } from "@/services/http/dto";
 
 /**
@@ -35,5 +36,21 @@ export class OverawardService {
     studentId?: number,
   ): Promise<OverawardAPIOutDTO[]> {
     return ApiClient.OverawardApi.getStudentOverawards(studentId);
+  }
+
+  /**
+   * Add a manual overaward deduction for a student.
+   * @param studentId student for whom overaward deduction is being added.
+   * @param payload overaward deduction payload.
+   * @returns primary identifier of the resource created.
+   */
+  async addManualOverawardDeduction(
+    studentId: number,
+    payload: OverawardManualRecordAPIInDTO,
+  ): Promise<void> {
+    await ApiClient.OverawardApi.addManualOverawardDeduction(
+      studentId,
+      payload,
+    );
   }
 }
