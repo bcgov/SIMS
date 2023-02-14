@@ -77,6 +77,13 @@ export class DisbursementOverawardService {
     return result;
   }
 
+  /**
+   * Adds a manual overaward value to disbursement overawards table.
+   * @param studentId id of the student.
+   * @param overawardValue overaward value.
+   * @param disbursementValueCode disbursement value code.
+   * @param entityManager entity manager used to perform the query.
+   */
   async addManualOveraward(
     studentId: number,
     overawardValue: number,
@@ -84,8 +91,6 @@ export class DisbursementOverawardService {
     entityManager: EntityManager,
   ): Promise<void> {
     const auditUser = await this.systemUsersService.systemUser();
-    const disbursementOveraward = new DisbursementOveraward();
-    disbursementOveraward.student;
     await entityManager.getRepository("DisbursementOveraward").insert({
       student: { id: studentId } as Student,
       disbursementValueCode,
