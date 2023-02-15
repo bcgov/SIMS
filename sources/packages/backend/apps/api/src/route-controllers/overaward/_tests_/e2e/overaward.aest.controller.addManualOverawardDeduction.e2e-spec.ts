@@ -29,7 +29,7 @@ describe("OverawardAESTController(e2e)-addManualOverawardDeduction", () => {
     studentRepo = dataSource.getRepository(Student);
   });
 
-  it("Should create manual overaward for AEST user who belong to business-administrators group", async () => {
+  it("Should create manual overaward when AEST user belong to business-administrators group", async () => {
     // Arrange
     const student = await studentRepo.save(createFakeStudent());
     const endpoint = `/aest/overaward/student/${student.id}`;
@@ -45,7 +45,7 @@ describe("OverawardAESTController(e2e)-addManualOverawardDeduction", () => {
       .expect(HttpStatus.CREATED);
   });
 
-  it("Should throw forbidden error for AEST user who does not belong to business-administrators group", async () => {
+  it("Should throw forbidden error when AEST user does not belong to business-administrators group", async () => {
     // Arrange
     const student = await studentRepo.save(createFakeStudent());
     const endpoint = `/aest/overaward/student/${student.id}`;
@@ -58,7 +58,7 @@ describe("OverawardAESTController(e2e)-addManualOverawardDeduction", () => {
       .expect(HttpStatus.FORBIDDEN);
   });
 
-  it("Should throw not found error for invalid student id", async () => {
+  it("Should throw not found error when student id is not valid", async () => {
     // Arrange
     const endpoint = `/aest/overaward/student/99999`;
 
@@ -73,7 +73,7 @@ describe("OverawardAESTController(e2e)-addManualOverawardDeduction", () => {
       .expect(HttpStatus.NOT_FOUND);
   });
 
-  it("Should throw bad request error for malformed or bad payload", async () => {
+  it("Should throw bad request error when payload is malformed or incomplete", async () => {
     // Arrange
     const student = await studentRepo.save(createFakeStudent());
     const endpoint = `/aest/overaward/student/${student.id}`;
