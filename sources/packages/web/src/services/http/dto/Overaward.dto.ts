@@ -12,8 +12,7 @@ export interface OverawardAPIOutDTO {
   overawardOrigin: DisbursementOverawardOriginType;
   awardValueCode: string;
   overawardValue: number;
-  addedByUserFirstName?: string;
-  addedByUserLastName?: string;
+  addedByUser?: string;
   applicationNumber?: string;
   assessmentTriggerType?: AssessmentTriggerType;
 }

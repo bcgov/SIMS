@@ -81,7 +81,3 @@ export const OFFERING_BULK_UPLOAD_MAX_FILE_SIZE = 4194304;
  * Expected length of the award value code.
  */
 export const AWARD_VALUE_CODE_LENGTH = 4;
-/**
- * Assumed maximum value of an individual award.
- */
-export const MAXIMUM_AWARD_VALUE = 99999;

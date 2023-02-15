@@ -4,7 +4,7 @@ import {
 } from "@sims/sims-db";
 import {
   AWARD_VALUE_CODE_LENGTH,
-  MAXIMUM_AWARD_VALUE,
+  MONEY_VALUE_FOR_UNKNOWN_MAX_VALUE,
 } from "../../../utilities";
 import { Length, Max, Min } from "class-validator";
 
@@ -17,8 +17,7 @@ export class OverawardAPIOutDTO {
   overawardOrigin: DisbursementOverawardOriginType;
   awardValueCode: string;
   overawardValue: number;
-  addedByUserFirstName?: string;
-  addedByUserLastName?: string;
+  addedByUser?: string;
   applicationNumber?: string;
   assessmentTriggerType?: AssessmentTriggerType;
 }
@@ -27,6 +26,6 @@ export class OverawardManualRecordAPIInDTO {
   @Length(AWARD_VALUE_CODE_LENGTH)
   awardValueCode: string;
   @Min(1)
-  @Max(MAXIMUM_AWARD_VALUE)
+  @Max(MONEY_VALUE_FOR_UNKNOWN_MAX_VALUE)
   overawardValue: number;
 }

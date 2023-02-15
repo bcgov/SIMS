@@ -24,6 +24,7 @@ import {
   getAESTToken,
   createTestingAppModule,
 } from "../../../../testHelpers";
+import { OverawardAPIOutDTO } from "../../models/overaward.dto";
 
 jest.setTimeout(60000);
 
@@ -99,7 +100,7 @@ describe("OverawardAESTController(e2e)-getOverawardsByStudent", () => {
     reassessmentOveraward.disbursementValueCode = "CSLF";
     reassessmentOveraward.overawardValue = 500;
     reassessmentOveraward.originType =
-      DisbursementOverawardOriginType.LegacyOveraward;
+      DisbursementOverawardOriginType.ReassessmentOveraward;
     await disbursementOverawardRepo.save(reassessmentOveraward);
     const endpoint = `/aest/overaward/student/${student.id}`;
 
@@ -113,14 +114,16 @@ describe("OverawardAESTController(e2e)-getOverawardsByStudent", () => {
       .expect(HttpStatus.OK)
       .then((response) => {
         expect(response.body).toHaveLength(1);
-        expect(response.body[0].dateAdded).toBeDefined();
-        expect(response.body[0].overawardOrigin).toBeDefined();
-        expect(response.body[0].addedByUserFirstName).toBeDefined();
-        expect(response.body[0].addedByUserLastName).toBeDefined();
-        expect(response.body[0].applicationNumber).toBeDefined();
-        expect(response.body[0].assessmentTriggerType).toBeDefined();
-        expect(response.body[0].awardValueCode).toBeDefined();
-        expect(response.body[0].overawardValue).toBeDefined();
+        const [overaward] = response.body as OverawardAPIOutDTO[];
+        expect(overaward.dateAdded).toBeDefined();
+        expect(overaward.overawardOrigin).toBe(
+          DisbursementOverawardOriginType.ReassessmentOveraward,
+        );
+        expect(overaward.addedByUser).toBeDefined();
+        expect(overaward.applicationNumber).toBeDefined();
+        expect(overaward.assessmentTriggerType).toBeDefined();
+        expect(overaward.awardValueCode).toBe("CSLF");
+        expect(overaward.overawardValue).toBe(500);
       });
   });
 

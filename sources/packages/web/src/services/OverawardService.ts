@@ -6,7 +6,7 @@ import {
 } from "@/services/http/dto";
 
 /**
- * Client service layer for Student Assessments.
+ * Client service layer for Overawards.
  */
 export class OverawardService {
   // Shared Instance

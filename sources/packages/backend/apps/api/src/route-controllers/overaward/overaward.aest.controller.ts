@@ -7,7 +7,7 @@ import {
   Body,
   NotFoundException,
 } from "@nestjs/common";
-import { ApiTags } from "@nestjs/swagger";
+import { ApiNotFoundResponse, ApiTags } from "@nestjs/swagger";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import {
   AllowAuthorizedParty,
@@ -27,6 +27,7 @@ import {
 } from "./models/overaward.dto";
 import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
 import { IUserToken, Role } from "../../auth";
+import { getUserFullName } from "../../utilities";
 
 @AllowAuthorizedParty(AuthorizedParties.aest)
 @Groups(UserGroups.AESTUser)
@@ -71,8 +72,7 @@ export class OverawardAESTController extends BaseController {
       overawardOrigin: overaward.originType,
       awardValueCode: overaward.disbursementValueCode,
       overawardValue: overaward.overawardValue,
-      addedByUserFirstName: overaward.creator.firstName,
-      addedByUserLastName: overaward.creator.lastName,
+      addedByUser: getUserFullName(overaward.creator),
       applicationNumber:
         overaward.studentAssessment?.application.applicationNumber,
       assessmentTriggerType: overaward.studentAssessment?.triggerType,
@@ -85,6 +85,9 @@ export class OverawardAESTController extends BaseController {
    * @param payload overaward deduction payload.
    * @returns primary identifier of the resource created.
    */
+  @ApiNotFoundResponse({
+    description: "Student not found.",
+  })
   @Roles(Role.StudentAddOverawardManual)
   @Post("student/:studentId")
   async addManualOverawardDeduction(

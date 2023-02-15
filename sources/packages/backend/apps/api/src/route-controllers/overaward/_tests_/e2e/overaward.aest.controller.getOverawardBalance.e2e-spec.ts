@@ -95,9 +95,7 @@ describe("OverawardAESTController(e2e)-getOverawardBalance", () => {
       )
       .expect(HttpStatus.OK)
       .then((response) => {
-        expect(response.body.overawardBalanceValues.CSLF).toStrictEqual(
-          (400).toFixed(2),
-        );
+        expect(response.body.overawardBalanceValues.CSLF).toBe("400.00");
       });
   });
 

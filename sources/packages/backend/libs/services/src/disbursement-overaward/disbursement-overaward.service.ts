@@ -97,12 +97,12 @@ export class DisbursementOverawardService {
           triggerType: true,
         },
       },
-      where: {
-        student: { id: studentId },
-      },
       relations: {
         creator: true,
         studentAssessment: { application: true },
+      },
+      where: {
+        student: { id: studentId },
       },
     });
   }
@@ -111,7 +111,8 @@ export class DisbursementOverawardService {
    * Add a manual overaward deduction.
    * @param awardValueCode award value code.
    * @param overawardValueDeducted overaward deducted value.
-   * @param auditUserId user who added overaward deduction
+   * @param studentId student for whom overaward is deducted.
+   * @param auditUserId user who added overaward deduction.
    * @returns overaward record created.
    */
   async addManualOverawardDeduction(
