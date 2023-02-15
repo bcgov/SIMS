@@ -18,7 +18,6 @@ import {
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { IUserToken } from "../../auth/userToken.interface";
 import {
-  ApplicationService,
   COEDeniedReasonService,
   DisbursementScheduleService,
 } from "../../services";
@@ -52,6 +51,10 @@ import {
   PaginatedResultsAPIOutDTO,
 } from "../models/pagination.dto";
 import { ConfirmationOfEnrollmentControllerService } from "./confirmation-of-enrollment.controller.service";
+import {
+  ConfirmationOfEnrollmentService,
+  DisbursementOverawardService,
+} from "@sims/services";
 
 @AllowAuthorizedParty(AuthorizedParties.institution)
 @Controller("location")
@@ -61,9 +64,10 @@ import { ConfirmationOfEnrollmentControllerService } from "./confirmation-of-enr
 export class ConfirmationOfEnrollmentInstitutionsController extends BaseController {
   constructor(
     private readonly disbursementScheduleService: DisbursementScheduleService,
-    private readonly applicationService: ApplicationService,
     private readonly deniedCOEReasonService: COEDeniedReasonService,
     private readonly confirmationOfEnrollmentControllerService: ConfirmationOfEnrollmentControllerService,
+    private readonly confirmationOfEnrollmentService: ConfirmationOfEnrollmentService,
+    private readonly disbursementOverawardService: DisbursementOverawardService,
   ) {
     super();
   }
@@ -151,6 +155,20 @@ export class ConfirmationOfEnrollmentInstitutionsController extends BaseControll
       );
     }
 
+    const hasOverawardBalancePromise =
+      this.disbursementOverawardService.hasOverawardBalance(
+        disbursementSchedule.studentAssessment.application.student.id,
+      );
+    const maxTuitionRemittanceAllowedPromise =
+      this.confirmationOfEnrollmentService.getEstimatedMaxTuitionRemittance(
+        disbursementScheduleId,
+      );
+    const [hasOverawardBalance, maxTuitionRemittanceAllowed] =
+      await Promise.all([
+        hasOverawardBalancePromise,
+        maxTuitionRemittanceAllowedPromise,
+      ]);
+
     const offering =
       disbursementSchedule.studentAssessment.application.currentAssessment
         .offering;
@@ -199,6 +217,8 @@ export class ConfirmationOfEnrollmentInstitutionsController extends BaseControll
         offering.educationProgram.deliveredOnline,
         offering.educationProgram.deliveredOnSite,
       ),
+      maxTuitionRemittanceAllowed,
+      hasOverawardBalance,
     };
   }
 

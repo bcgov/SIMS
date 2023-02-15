@@ -29,6 +29,8 @@ export class ApplicationDetailsForCOEAPIOutDTO {
   disbursementDate: string;
   applicationProgramCredential: string;
   applicationProgramDelivery: string;
+  maxTuitionRemittanceAllowed: number;
+  hasOverawardBalance: boolean;
 }
 
 export class COEDeniedReasonAPIOutDTO {
