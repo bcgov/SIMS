@@ -15,12 +15,12 @@ import { OverawardManualRecordAPIInDTO } from "../../models/overaward.dto";
 
 jest.setTimeout(60000);
 
-describe("OverawardAESTController(e2e)-addManualOverawardDeduction", () => {
+describe("OverawardAESTController(e2e)-addManualOveraward", () => {
   let app: INestApplication;
   let studentRepo: Repository<Student>;
   const manualOverawardPayload: OverawardManualRecordAPIInDTO = {
     awardValueCode: "CSLF",
-    overawardValue: 300,
+    overawardValue: -300,
   };
 
   beforeAll(async () => {

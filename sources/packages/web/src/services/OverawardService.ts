@@ -48,9 +48,12 @@ export class OverawardService {
     studentId: number,
     payload: OverawardManualRecordAPIInDTO,
   ): Promise<void> {
-    await ApiClient.OverawardApi.addManualOverawardDeduction(
-      studentId,
-      payload,
-    );
+    // When a manual record is added, it must be added as deduction.
+    // Hence overaward value her is negative value of the actual value provided.
+    const payloadDeducted: OverawardManualRecordAPIInDTO = {
+      awardValueCode: payload.awardValueCode,
+      overawardValue: payload.overawardValue * -1,
+    };
+    await ApiClient.OverawardApi.addManualOveraward(studentId, payloadDeducted);
   }
 }

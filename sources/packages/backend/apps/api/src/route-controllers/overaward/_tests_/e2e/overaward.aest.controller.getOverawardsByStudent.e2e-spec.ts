@@ -11,6 +11,7 @@ import {
 import { Repository } from "typeorm";
 import {
   Application,
+  AssessmentTriggerType,
   DisbursementOveraward,
   DisbursementOverawardOriginType,
   Student,
@@ -25,6 +26,7 @@ import {
   createTestingAppModule,
 } from "../../../../testHelpers";
 import { OverawardAPIOutDTO } from "../../models/overaward.dto";
+import { getUserFullName } from "../../../../utilities";
 
 jest.setTimeout(60000);
 
@@ -115,19 +117,25 @@ describe("OverawardAESTController(e2e)-getOverawardsByStudent", () => {
       .then((response) => {
         expect(response.body).toHaveLength(1);
         const [overaward] = response.body as OverawardAPIOutDTO[];
-        expect(overaward.dateAdded).toBeDefined();
+        expect(overaward.dateAdded).toBe(
+          reassessmentOveraward.createdAt.toISOString(),
+        );
         expect(overaward.overawardOrigin).toBe(
           DisbursementOverawardOriginType.ReassessmentOveraward,
         );
-        expect(overaward.addedByUser).toBeDefined();
-        expect(overaward.applicationNumber).toBeDefined();
-        expect(overaward.assessmentTriggerType).toBeDefined();
+        expect(overaward.addedByUser).toBe(
+          getUserFullName(reassessmentOveraward.creator),
+        );
+        expect(overaward.applicationNumber).toBe(application.applicationNumber);
+        expect(overaward.assessmentTriggerType).toBe(
+          AssessmentTriggerType.OriginalAssessment,
+        );
         expect(overaward.awardValueCode).toBe("CSLF");
         expect(overaward.overawardValue).toBe(500);
       });
   });
 
-  it("Should return an empty array when invalid student id is provided", async () => {
+  it("Should throw not found error when invalid student id is provided", async () => {
     // Arrange
     const endpoint = `/aest/overaward/student/999999`;
 
@@ -138,10 +146,7 @@ describe("OverawardAESTController(e2e)-getOverawardsByStudent", () => {
         await getAESTToken(AESTGroups.BusinessAdministrators),
         BEARER_AUTH_TYPE,
       )
-      .expect(HttpStatus.OK)
-      .then((response) => {
-        expect(response.body).toHaveLength(0);
-      });
+      .expect(HttpStatus.NOT_FOUND);
   });
 
   afterAll(async () => {

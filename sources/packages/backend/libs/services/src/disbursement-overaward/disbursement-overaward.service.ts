@@ -108,23 +108,23 @@ export class DisbursementOverawardService {
   }
 
   /**
-   * Add a manual overaward deduction.
+   * Add a manual overaward.
    * @param awardValueCode award value code.
-   * @param overawardValueDeducted overaward deducted value.
+   * @param overawardValue overaward deducted value.
    * @param studentId student for whom overaward is deducted.
    * @param auditUserId user who added overaward deduction.
    * @returns overaward record created.
    */
-  async addManualOverawardDeduction(
+  async addManualOveraward(
     awardValueCode: string,
-    overawardValueDeducted: number,
+    overawardValue: number,
     studentId: number,
     auditUserId: number,
   ): Promise<DisbursementOveraward> {
     const overawardManualRecord = new DisbursementOveraward();
     overawardManualRecord.creator = { id: auditUserId } as User;
     overawardManualRecord.disbursementValueCode = awardValueCode;
-    overawardManualRecord.overawardValue = -overawardValueDeducted;
+    overawardManualRecord.overawardValue = overawardValue;
     overawardManualRecord.originType =
       DisbursementOverawardOriginType.ManualRecord;
     overawardManualRecord.student = { id: studentId } as Student;

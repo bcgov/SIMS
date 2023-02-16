@@ -99,7 +99,7 @@ describe("OverawardAESTController(e2e)-getOverawardBalance", () => {
       });
   });
 
-  it("Should return an empty response when invalid student id is provided", async () => {
+  it("Should throw not found error when invalid student id is provided", async () => {
     // Arrange
     const student = await studentRepo.save(createFakeStudent());
     // Create an overaward.
@@ -118,10 +118,7 @@ describe("OverawardAESTController(e2e)-getOverawardBalance", () => {
         await getAESTToken(AESTGroups.BusinessAdministrators),
         BEARER_AUTH_TYPE,
       )
-      .expect(HttpStatus.OK)
-      .then((response) => {
-        expect(response.body.overawardBalanceValues).not.toBeDefined();
-      });
+      .expect(HttpStatus.NOT_FOUND);
   });
 
   afterAll(async () => {

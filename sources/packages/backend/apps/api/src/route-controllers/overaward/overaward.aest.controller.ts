@@ -46,10 +46,17 @@ export class OverawardAESTController extends BaseController {
    * @param studentId student.
    * @returns overaward balance for student.
    */
+  @ApiNotFoundResponse({
+    description: "Student not found.",
+  })
   @Get("student/:studentId/balance")
   async getOverawardBalance(
     @Param("studentId", ParseIntPipe) studentId: number,
   ): Promise<OverawardBalanceAPIOutDTO> {
+    const studentExist = await this.studentService.studentExists(studentId);
+    if (!studentExist) {
+      throw new NotFoundException("Student not found.");
+    }
     const overawardBalance =
       await this.disbursementOverawardService.getOverawardBalance([studentId]);
 
@@ -61,10 +68,17 @@ export class OverawardAESTController extends BaseController {
    * @param studentId student.
    * @returns overaward details of a student.
    */
+  @ApiNotFoundResponse({
+    description: "Student not found.",
+  })
   @Get("student/:studentId")
   async getOverawardsByStudent(
     @Param("studentId", ParseIntPipe) studentId: number,
   ): Promise<OverawardAPIOutDTO[]> {
+    const studentExist = await this.studentService.studentExists(studentId);
+    if (!studentExist) {
+      throw new NotFoundException("Student not found.");
+    }
     const studentOverawards =
       await this.disbursementOverawardService.getOverawardsByStudent(studentId);
     return studentOverawards.map((overaward) => ({
@@ -90,7 +104,7 @@ export class OverawardAESTController extends BaseController {
   })
   @Roles(Role.StudentAddOverawardManual)
   @Post("student/:studentId")
-  async addManualOverawardDeduction(
+  async addManualOveraward(
     @Param("studentId", ParseIntPipe) studentId: number,
     @Body() payload: OverawardManualRecordAPIInDTO,
     @UserToken() userToken: IUserToken,
@@ -100,7 +114,7 @@ export class OverawardAESTController extends BaseController {
       throw new NotFoundException("Student not found.");
     }
     const addedOverawardDeduction =
-      await this.disbursementOverawardService.addManualOverawardDeduction(
+      await this.disbursementOverawardService.addManualOveraward(
         payload.awardValueCode,
         payload.overawardValue,
         studentId,

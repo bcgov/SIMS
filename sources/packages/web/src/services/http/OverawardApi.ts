@@ -40,12 +40,12 @@ export class OverawardApi extends HttpBaseClient {
   }
 
   /**
-   * Add a manual overaward deduction for a student.
+   * Add a manual overaward for a student.
    * @param studentId student for whom overaward deduction is being added.
    * @param payload overaward deduction payload.
    * @returns primary identifier of the resource created.
    */
-  async addManualOverawardDeduction(
+  async addManualOveraward(
     studentId: number,
     payload: OverawardManualRecordAPIInDTO,
   ): Promise<void> {
