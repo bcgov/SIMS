@@ -101,14 +101,6 @@ describe("OverawardAESTController(e2e)-getOverawardBalance", () => {
 
   it("Should throw not found error when invalid student id is provided", async () => {
     // Arrange
-    const student = await studentRepo.save(createFakeStudent());
-    // Create an overaward.
-    const legacyOveraward = createFakeDisbursementOveraward({ student });
-    legacyOveraward.disbursementValueCode = "CSLF";
-    legacyOveraward.overawardValue = 500;
-    legacyOveraward.originType =
-      DisbursementOverawardOriginType.LegacyOveraward;
-    await disbursementOverawardRepo.save(legacyOveraward);
     const endpoint = `/aest/overaward/student/999999/balance`;
 
     // Act/Assert
