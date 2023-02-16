@@ -7,7 +7,7 @@ services:
     image: api-${PROJECT_NAME}:${BUILD_REF}-${BUILD_ID}
     container_name: api-${PROJECT_NAME}-${BUILD_REF}-${BUILD_ID}
     build:
-      context: ./packages/backend
+      context: ../packages/backend
       dockerfile: ./apps/api/Dockerfile.dev
     environment:
       - NODE_ENV=docker
@@ -57,13 +57,18 @@ services:
       - FILE_UPLOAD_ALLOWED_EXTENSIONS=${FILE_UPLOAD_ALLOWED_EXTENSIONS}
       - BYPASS_APPLICATION_SUBMIT_VALIDATIONS=${BYPASS_APPLICATION_SUBMIT_VALIDATIONS}
       - SWAGGER_ENABLED=${SWAGGER_ENABLED}
-    ports:
-      - ${API_PORT}:${API_PORT}
+      - E2E_TEST_AEST_BUSINESS_ADMINISTRATORS_USER=${E2E_TEST_AEST_BUSINESS_ADMINISTRATORS_USER}
+      - E2E_TEST_AEST_BUSINESS_ADMINISTRATORS_PASSWORD=${E2E_TEST_AEST_BUSINESS_ADMINISTRATORS_PASSWORD}
+      - E2E_TEST_AEST_OPERATIONS_USER=${E2E_TEST_AEST_OPERATIONS_USER}
+      - E2E_TEST_AEST_OPERATIONS_PASSWORD=${E2E_TEST_AEST_OPERATIONS_PASSWORD}
+      - E2E_TEST_AEST_OPERATIONS_ADMINISTRATORS_USER=${E2E_TEST_AEST_OPERATIONS_ADMINISTRATORS_USER}
+      - E2E_TEST_AEST_OPERATIONS_ADMINISTRATORS_PASSWORD=${E2E_TEST_AEST_OPERATIONS_ADMINISTRATORS_PASSWORD}
+      - E2E_TEST_AEST_MOF_OPERATIONS_USER=${E2E_TEST_AEST_MOF_OPERATIONS_USER}
+      - E2E_TEST_AEST_MOF_OPERATIONS_PASSWORD=${E2E_TEST_AEST_MOF_OPERATIONS_PASSWORD}
     volumes:
-      - ./packages/backend/apps/api/src:/app/src
-      - ./packages/backend/coverage/api:/app/apps/api/coverage
+      - ./coverage/api:/app/apps/api/coverage
     networks:
-      - local-network
+      - local-network-tests
     restart: always
     depends_on:
       - postgres
@@ -74,7 +79,7 @@ services:
     image: workers-${PROJECT_NAME}:${BUILD_REF}-${BUILD_ID}
     container_name: workers-${PROJECT_NAME}-${BUILD_REF}-${BUILD_ID}
     build:
-      context: ./packages/backend
+      context: ../packages/backend
       dockerfile: ./apps/workers/Dockerfile.dev
     environment:
       - NODE_ENV=docker
@@ -93,10 +98,9 @@ services:
       - REDIS_PASSWORD=${REDIS_PASSWORD}
       - REDIS_STANDALONE_MODE=${REDIS_STANDALONE_MODE}
     volumes:
-      - ./packages/backend/apps/workers/src:/app/src
-      - ./packages/backend/coverage/workers:/app/apps/workers/coverage
+      - ./coverage/workers:/app/apps/workers/coverage
     networks:
-      - local-network
+      - local-network-tests
     restart: always
     depends_on:
       - postgres
@@ -107,7 +111,7 @@ services:
     image: queue-consumers-${PROJECT_NAME}:${BUILD_REF}-${BUILD_ID}
     container_name: queue-consumers-${PROJECT_NAME}-${BUILD_REF}-${BUILD_ID}
     build:
-      context: ./packages/backend
+      context: ../packages/backend
       dockerfile: ./apps/queue-consumers/Dockerfile.dev
     environment:
       - NODE_ENV=docker
@@ -150,75 +154,47 @@ services:
       - ESDC_RESPONSE_FOLDER=${ESDC_RESPONSE_FOLDER}
       - ESDC_ENVIRONMENT_CODE=${ESDC_ENVIRONMENT_CODE}
       - APPLICATION_ARCHIVE_DAYS=${APPLICATION_ARCHIVE_DAYS}
-    ports:
-      - ${QUEUE_CONSUMERS_PORT}:${QUEUE_CONSUMERS_PORT}
     volumes:
-      - ./packages/backend/apps/queue-consumers/src:/app/src
-      - ./packages/backend/coverage/queue-consumers:/app/apps/queue-consumers/coverage
+      - ./coverage/queue-consumers:/app/apps/queue-consumers/coverage
     networks:
-      - local-network
+      - local-network-tests
     restart: always
     depends_on:
       - postgres
       - redis
   # - Queues
-  # Web
-  web:
-    image: web-${PROJECT_NAME}:${BUILD_REF}-${BUILD_ID}
-    container_name: web-${PROJECT_NAME}-${BUILD_REF}-${BUILD_ID}
-    build:
-      context: ./packages/web
-      dockerfile: Dockerfile.dev
-    environment:
-      - PORT=${APP_PORT}
-    ports:
-      - ${APP_PORT}:${APP_PORT}
-    volumes:
-      - ./packages/web/src:/app/src
-    networks:
-      - local-network
-    restart: always
-    depends_on:
-      - api
-  # - Web
   # Postgres
   postgres:
     image: postgres-${PROJECT_NAME}:${BUILD_REF}-${BUILD_ID}
     container_name: db-${PROJECT_NAME}-${BUILD_REF}-${BUILD_ID}
     build:
-      context: ./.docker/postgres
+      context: ../.docker/postgres
     environment:
       - POSTGRES_DB=${POSTGRES_DB}
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-    expose:
-      - ${POSTGRES_PORT}
-    ports:
-      - ${POSTGRES_PORT}:${POSTGRES_PORT}
     volumes:
       - postgres:/var/lib/postgresql/data
     command: -p ${POSTGRES_PORT}
     networks:
-      - local-network
+      - local-network-tests
   # - Postgres
   # Redis
   redis:
     image: redis-${PROJECT_NAME}:${BUILD_REF}-${BUILD_ID}
     container_name: local-redis-${PROJECT_NAME}-${BUILD_REF}-${BUILD_ID}
     build:
-      context: ./.docker/redis
-    ports:
-      - ${REDIS_PORT}:${REDIS_PORT}
+      context: ../.docker/redis
     command: "--port ${REDIS_PORT} --requirepass ${REDIS_PASSWORD} --appendonly yes --appendfsync no"
     volumes:
       - redis:/var/lib/redis/data
     networks:
-      - local-network
+      - local-network-tests
   # - Redis
   # - services
   # Networks
 networks:
-  local-network:
+  local-network-tests:
     driver: bridge
 # - Networks
 # Volumes
