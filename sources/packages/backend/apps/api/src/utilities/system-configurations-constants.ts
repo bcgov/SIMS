@@ -77,3 +77,7 @@ export const OFFERING_BULK_UPLOAD_MAX_UPLOAD_PARTS = 2;
  * Max upload file size for an offering bulk upload (in bytes).
  */
 export const OFFERING_BULK_UPLOAD_MAX_FILE_SIZE = 4194304;
+/**
+ * Expected length of the award value code.
+ */
+export const AWARD_VALUE_CODE_LENGTH = 4;

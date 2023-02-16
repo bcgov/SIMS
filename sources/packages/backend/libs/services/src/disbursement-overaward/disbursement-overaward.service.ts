@@ -1,6 +1,11 @@
 import { Injectable } from "@nestjs/common";
 import { EntityManager, Repository } from "typeorm";
-import { DisbursementOveraward } from "@sims/sims-db";
+import {
+  DisbursementOveraward,
+  DisbursementOverawardOriginType,
+  Student,
+  User,
+} from "@sims/sims-db";
 import {
   AwardOverawardBalance,
   StudentOverawardBalance,
@@ -69,5 +74,60 @@ export class DisbursementOverawardService {
       result[totalAward.studentId][totalAward.valueCode] = totalAward.total;
     }
     return result;
+  }
+
+  /**
+   * Get all overawards which belong to a student.
+   * @param studentId student.
+   * @returns overaward details of a student.
+   */
+  async getOverawardsByStudent(
+    studentId: number,
+  ): Promise<DisbursementOveraward[]> {
+    return this.disbursementOverawardRepo.find({
+      select: {
+        createdAt: true,
+        originType: true,
+        overawardValue: true,
+        disbursementValueCode: true,
+        creator: { firstName: true, lastName: true },
+        studentAssessment: {
+          id: true,
+          application: { applicationNumber: true },
+          triggerType: true,
+        },
+      },
+      relations: {
+        creator: true,
+        studentAssessment: { application: true },
+      },
+      where: {
+        student: { id: studentId },
+      },
+    });
+  }
+
+  /**
+   * Add a manual overaward.
+   * @param awardValueCode award value code.
+   * @param overawardValue overaward deducted value.
+   * @param studentId student for whom overaward is deducted.
+   * @param auditUserId user who added overaward deduction.
+   * @returns overaward record created.
+   */
+  async addManualOveraward(
+    awardValueCode: string,
+    overawardValue: number,
+    studentId: number,
+    auditUserId: number,
+  ): Promise<DisbursementOveraward> {
+    const overawardManualRecord = new DisbursementOveraward();
+    overawardManualRecord.creator = { id: auditUserId } as User;
+    overawardManualRecord.disbursementValueCode = awardValueCode;
+    overawardManualRecord.overawardValue = overawardValue;
+    overawardManualRecord.originType =
+      DisbursementOverawardOriginType.ManualRecord;
+    overawardManualRecord.student = { id: studentId } as Student;
+    return this.disbursementOverawardRepo.save(overawardManualRecord);
   }
 }

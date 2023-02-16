@@ -397,7 +397,7 @@ export class ECertGenerationService {
             disbursementSchedule: loan.relatedSchedule as DisbursementSchedule,
             disbursementValueCode: valueCode,
             overawardValue: loan.awardValue.overawardAmountSubtracted * -1,
-            originType: DisbursementOverawardOriginType.AwardValueAdjusted,
+            originType: DisbursementOverawardOriginType.AwardDeducted,
             creator: auditUser,
           } as DisbursementOveraward);
         }
