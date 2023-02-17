@@ -70,14 +70,14 @@ backend-unit-tests:
 	@cd ../packages/backend && npm i && npm run test:cov
 
 e2e-tests-api:
-	@echo "+\n++ Make: Starting containers for API E2E tests...\n+"
+	@echo "+\n++ Make: Starting containers for API E2E tests...ON TESTS \n+"
 	@docker-compose run --build --name api-e2e-$(BUILD_REF) --rm api npm run test:e2e:api
 	@docker-compose down --rmi all -v
 
 e2e-tests-workers:
-	@echo "+\n++ Make: Starting containers for Workers E2E tests...\n+"
-	@docker-compose run --build --name workers-e2e-$(BUILD_REF) --rm workers npm run test:e2e:workers
-	@docker-compose down --rmi all -v
+	@echo "+\n++ Make: Starting containers for Workers E2E tests...ON TESTS \n+"
+	@docker-compose -f docker-compose.yml run --build --name workers-e2e-$(BUILD_REF) --rm workers npm run test:e2e:workers
+	@docker-compose -f docker-compose.yml down --rmi all -v
 
 e2e-tests-queue-consumers:
 	@echo "+\n++ Make: Starting containers for Queue Consumers E2E tests...\n+"
