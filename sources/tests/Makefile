@@ -1,7 +1,7 @@
-
+-include ../../.env
 -include .env-e2e-tests
 
-
+export $(shell sed 's/=.*//' ../../.env)
 # Override values from the global .env file.
 export $(shell sed 's/=.*//' .env-e2e-tests)
 
