@@ -1,4 +1,3 @@
-require("../../../env_setup");
 import { Test, TestingModule } from "@nestjs/testing";
 import { INestApplication } from "@nestjs/common";
 import { QueueConsumersModule } from "../src/queue-consumers.module";

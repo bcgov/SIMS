@@ -1,4 +1,3 @@
-require("../../../../../env_setup");
 import { TransactionCodes } from "../cra-integration.models";
 import { CRAFileFooter } from "./cra-file-footer";
 import { CRAFileHeader } from "./cra-file-header";

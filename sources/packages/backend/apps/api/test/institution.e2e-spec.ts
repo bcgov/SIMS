@@ -1,4 +1,3 @@
-require("../../../env_setup");
 import { Test, TestingModule } from "@nestjs/testing";
 import { HttpStatus, INestApplication, ValidationPipe } from "@nestjs/common";
 import * as request from "supertest";
@@ -6,8 +5,6 @@ import { AppModule } from "../src/app.module";
 import { KeycloakConfig } from "../src/auth/keycloakConfig";
 import { KeycloakService } from "../src/services/auth/keycloak/keycloak.service";
 
-// Setting longer timeout because this test is connecting external system
-jest.setTimeout(15000);
 describe("Institution controller (e2e)", () => {
   const clientId = "student";
   // Nest application to be shared for all e2e tests

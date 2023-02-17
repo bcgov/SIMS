@@ -1,4 +1,3 @@
-require("../../../env_setup");
 import { Test, TestingModule } from "@nestjs/testing";
 import { HttpStatus, INestApplication } from "@nestjs/common";
 import * as request from "supertest";
@@ -11,8 +10,6 @@ import {
 import { AuthTestController } from "../src/testHelpers/controllers/auth-test/auth-test.controller";
 import { KeycloakService } from "../src/services/auth/keycloak/keycloak.service";
 import { createMockedZeebeModule } from "../src/testHelpers/mocked-providers/zeebe-client-mock";
-
-jest.setTimeout(10000);
 
 describe("Authentication (e2e)", () => {
   // Nest application to be shared for all e2e tests
