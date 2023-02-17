@@ -76,7 +76,7 @@ e2e-tests-api:
 
 e2e-tests-workers:
 	@echo "+\n++ Make: Starting containers for Workers E2E tests...ON TESTS \n+"
-	@docker-compose -f docker-compose.yml run --build --name workers-e2e --rm workers npm run test:e2e:workers
+	@docker-compose -f docker-compose.yml run --name workers-e2e --rm workers npm run test:e2e:workers
 	@docker-compose -f docker-compose.yml down --rmi all -v
 
 e2e-tests-queue-consumers:
