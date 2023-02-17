@@ -136,7 +136,7 @@
       ".controller.ts",
       ".mock.ts"
     ],
-    "coverageDirectory": "./coverage/unit-tests",
+    "coverageDirectory": "../../tests/coverage/unit-tests",
     "testEnvironment": "node",
     "roots": [
       "<rootDir>/libs/",
