@@ -7,6 +7,7 @@ import {
   Student,
   StudentAssessment,
 } from "@sims/sims-db";
+import * as faker from "faker";
 import { createFakeProgramYear } from "./program-year";
 import { createFakeStudent } from "./student";
 
@@ -23,5 +24,6 @@ export function createFakeApplication(relations?: {
   application.applicationStatus = ApplicationStatus.Submitted;
   application.relationshipStatus = RelationshipStatus.Single;
   application.currentAssessment = relations?.currentStudentAssessment;
+  application.applicationNumber = faker.random.alphaNumeric(10);
   return application;
 }

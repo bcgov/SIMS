@@ -62,6 +62,7 @@ import {
   InstitutionUserControllerService,
   ConfirmationOfEnrollmentAESTController,
   ConfirmationOfEnrollmentControllerService,
+  OverawardAESTController,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
 import {
@@ -74,6 +75,7 @@ import {
   StudentRestrictionSharedService,
   WorkflowClientService,
   ReportService,
+  DisbursementOverawardService,
   ConfirmationOfEnrollmentService,
 } from "@sims/services";
 
@@ -99,6 +101,7 @@ import {
     RestrictionAESTController,
     UserAESTController,
     ConfirmationOfEnrollmentAESTController,
+    OverawardAESTController,
   ],
   providers: [
     WorkflowClientService,
@@ -150,6 +153,7 @@ import {
     ConfirmationOfEnrollmentControllerService,
     ConfirmationOfEnrollmentService,
     DisbursementScheduleService,
+    DisbursementOverawardService,
   ],
 })
 export class AppAESTModule {}

@@ -176,7 +176,7 @@ describe("Schedulers - e-Cert full time integration - Create e-Cert file", () =>
           },
           overawardValue: -4000,
           disbursementValueCode: "CSLF",
-          originType: DisbursementOverawardOriginType.AwardValueAdjusted,
+          originType: DisbursementOverawardOriginType.AwardDeducted,
         },
       });
     expect(hasCanadaLoanOverawardDeduction).toBe(true);

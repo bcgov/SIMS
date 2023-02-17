@@ -28,7 +28,7 @@ export function createFakeDisbursementOveraward(relations?: {
     })
     .toUpperCase();
   disbursementOveraward.originType =
-    DisbursementOverawardOriginType.ManuallyEntered;
+    DisbursementOverawardOriginType.ManualRecord;
   disbursementOveraward.deletedAt = null;
   return disbursementOveraward;
 }
