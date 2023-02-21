@@ -1,4 +1,3 @@
-require("../../../../../../../env_setup");
 import { HttpStatus, INestApplication } from "@nestjs/common";
 import * as request from "supertest";
 import {
@@ -27,8 +26,6 @@ import {
 } from "../../../../testHelpers";
 import { OverawardAPIOutDTO } from "../../models/overaward.dto";
 import { getUserFullName } from "../../../../utilities";
-
-jest.setTimeout(60000);
 
 describe("OverawardAESTController(e2e)-getOverawardsByStudent", () => {
   let app: INestApplication;

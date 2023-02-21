@@ -10,6 +10,10 @@
   "transform": {
     "^.+\\.(t|j)s$": "ts-jest"
   },
+  "testTimeout": 60000,
+  "setupFiles": [
+    "<rootDir>/../../env-setup.js"
+  ],
   "collectCoverage": true,
   "moduleNameMapper": {
     "@sims/sims-db/(.*)": "<rootDir>/../../libs/sims-db/src/$1",

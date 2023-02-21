@@ -1,4 +1,3 @@
-require("../../../../../env_setup");
 import { Test, TestingModule } from "@nestjs/testing";
 import { SequenceControlService } from "@sims/services";
 import { MSFAANumberService } from "../../services/msfaa-number/msfaa-number.service";

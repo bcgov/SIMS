@@ -1,4 +1,3 @@
-require("../../../../../../../env_setup");
 import { HttpStatus, INestApplication } from "@nestjs/common";
 import { createFakeInstitution } from "@sims/test-utils";
 import { Repository } from "typeorm";
@@ -11,8 +10,6 @@ import {
 } from "../../../../testHelpers";
 import * as request from "supertest";
 import { NoteAPIInDTO } from "../../models/note.dto";
-
-jest.setTimeout(60000);
 
 describe("NoteAESTController(e2e)-addInstitutionNote", () => {
   let app: INestApplication;

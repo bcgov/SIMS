@@ -1,4 +1,3 @@
-require("../../../../../../../../env_setup");
 import { Test, TestingModule } from "@nestjs/testing";
 import { ECertFileHandler } from "@sims/integrations/esdc-integration";
 import { SshService } from "@sims/integrations/services";
@@ -35,8 +34,6 @@ import { createFakeSINValidation } from "@sims/test-utils/factories/sin-validati
 import sshServiceMock from "@sims/test-utils/mocks/ssh-service.mock";
 import { DataSource, IsNull, Not, Repository } from "typeorm";
 import { QueueConsumersModule } from "../../../../../queue-consumers.module";
-
-jest.setTimeout(60000);
 
 describe("Schedulers - e-Cert full time integration - Create e-Cert file", () => {
   let eCertFileHandler: ECertFileHandler;

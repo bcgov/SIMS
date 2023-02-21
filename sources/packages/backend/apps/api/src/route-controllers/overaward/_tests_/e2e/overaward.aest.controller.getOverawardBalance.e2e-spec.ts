@@ -1,4 +1,3 @@
-require("../../../../../../../env_setup");
 import { HttpStatus, INestApplication } from "@nestjs/common";
 import * as request from "supertest";
 import {
@@ -18,8 +17,6 @@ import {
   getAESTToken,
   createTestingAppModule,
 } from "../../../../testHelpers";
-
-jest.setTimeout(60000);
 
 describe("OverawardAESTController(e2e)-getOverawardBalance", () => {
   let app: INestApplication;

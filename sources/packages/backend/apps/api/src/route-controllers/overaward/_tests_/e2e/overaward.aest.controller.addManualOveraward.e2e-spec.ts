@@ -1,4 +1,3 @@
-require("../../../../../../../env_setup");
 import { HttpStatus, INestApplication } from "@nestjs/common";
 import * as request from "supertest";
 import { createFakeStudent } from "@sims/test-utils";
@@ -12,8 +11,6 @@ import {
   createTestingAppModule,
 } from "../../../../testHelpers";
 import { OverawardManualRecordAPIInDTO } from "../../models/overaward.dto";
-
-jest.setTimeout(60000);
 
 describe("OverawardAESTController(e2e)-addManualOveraward", () => {
   let app: INestApplication;
