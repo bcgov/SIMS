@@ -210,19 +210,26 @@ export function useFormatters() {
   };
 
   /**
-   * Format a currency value.
+   * Format a currency value including negative currency value.
    * @param moneyAmount value amount.
    * @param currencyCode currency code.
+   * @param defaultValueAmount default value to display
+   * when value is not provided or zero.
    * @returns formatted currency value.
    */
   const formatCurrency = (
     moneyAmount: number | string,
     currencyCode = "(CAD)",
-  ): string | null => {
+    defaultValueAmount = "$0.00",
+  ): string => {
     if (moneyAmount === null || moneyAmount === undefined) {
-      return null;
+      return defaultValueAmount;
     }
-    return `$${parseFloat(moneyAmount.toString()).toFixed(2)} ${currencyCode}`;
+    const currencyValue = parseFloat(moneyAmount.toString());
+    const negativeValueDisplay = currencyValue < 0 ? "-" : "";
+    return `${negativeValueDisplay}$${Math.abs(currencyValue).toFixed(
+      2,
+    )} ${currencyCode}`;
   };
 
   return {
