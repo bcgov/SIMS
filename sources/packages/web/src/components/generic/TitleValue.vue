@@ -3,7 +3,9 @@ Used when we need to display title and the value inside a container
 -->
 <template>
   <div class="mb-2">
-    <span class="label-bold">{{ propertyTitle }}</span>
+    <slot name="title">
+      <span class="label-bold">{{ propertyTitle }}</span>
+    </slot>
   </div>
   <div class="mb-2 label-value muted-content">
     {{ propertyValue }}
@@ -14,13 +16,13 @@ Used when we need to display title and the value inside a container
 import { defineComponent } from "vue";
 export default defineComponent({
   props: {
-    propertyTitle: {
-      type: String,
-      required: true,
-    },
     propertyValue: {
       type: String,
       required: true,
+    },
+    propertyTitle: {
+      type: String,
+      required: false,
     },
   },
 });
