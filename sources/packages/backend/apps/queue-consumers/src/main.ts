@@ -1,4 +1,4 @@
-require("../../../env_setup_apps");
+import "../../../env-setup";
 import { QueueService } from "@sims/services/queue";
 import { ConfigService } from "@sims/utilities/config";
 import { createBullBoard } from "@bull-board/api";

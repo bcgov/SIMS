@@ -1,4 +1,4 @@
-require("../../../env_setup_apps");
+import "../../../env-setup";
 import { NestFactory } from "@nestjs/core";
 import { LoggerService } from "@sims/utilities/logger";
 import { WorkersModule } from "./workers.module";

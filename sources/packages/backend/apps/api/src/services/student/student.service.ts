@@ -77,7 +77,7 @@ export class StudentService extends RecordDataModelService<Student> {
    * @returns true if the student was found, otherwise false.
    */
   async studentExists(studentId: number): Promise<boolean> {
-    const studentFound = this.repo.findOne({
+    const studentFound = await this.repo.findOne({
       select: { id: true },
       where: { id: studentId },
     });

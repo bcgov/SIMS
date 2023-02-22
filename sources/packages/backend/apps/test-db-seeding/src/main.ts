@@ -1,4 +1,3 @@
-require("../../../env_setup_apps");
 import { NestFactory } from "@nestjs/core";
 import { CleanDatabase } from "./clean-db/clean-db";
 import { TestDbSeedingModule } from "./test-db-seeding.module";

@@ -1,4 +1,3 @@
-require("../../../../../env_setup");
 import * as faker from "faker";
 import { DatabaseModule, SINValidation, Student, User } from "@sims/sims-db";
 import {
@@ -20,8 +19,6 @@ import {
   ATBCCreateClientResponse,
   ATBCService,
 } from "@sims/integrations/services";
-
-jest.setTimeout(15000);
 
 describe("Test ATBC Controller", () => {
   const clientId = "student";

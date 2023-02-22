@@ -1,4 +1,3 @@
-require("../../../../../../env_setup");
 import { Test, TestingModule } from "@nestjs/testing";
 import {
   Application,
@@ -33,8 +32,6 @@ import {
   FAKE_WORKER_JOB_RESULT_PROPERTY,
   MockedZeebeJobResult,
 } from "../../../../test/utils/worker-job-mock";
-
-jest.setTimeout(60000);
 
 describe("Disbursement Schedule Service - Create disbursement", () => {
   let userRepo: Repository<User>;

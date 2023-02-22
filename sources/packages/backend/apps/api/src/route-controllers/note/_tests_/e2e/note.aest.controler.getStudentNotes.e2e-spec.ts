@@ -1,4 +1,3 @@
-require("../../../../../../../env_setup");
 import { HttpStatus, INestApplication } from "@nestjs/common";
 import * as request from "supertest";
 import { createFakeStudent, createFakeUser } from "@sims/test-utils";
@@ -12,8 +11,6 @@ import {
   getAESTToken,
   createTestingAppModule,
 } from "../../../../testHelpers";
-
-jest.setTimeout(60000);
 
 describe("NoteAESTController(e2e)-getStudentNotes", () => {
   let app: INestApplication;

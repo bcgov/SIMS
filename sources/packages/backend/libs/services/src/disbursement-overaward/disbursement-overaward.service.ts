@@ -4,6 +4,7 @@ import {
   DisbursementOveraward,
   DisbursementOverawardOriginType,
   Student,
+  User,
 } from "@sims/sims-db";
 import {
   AwardOverawardBalance,
@@ -78,13 +79,13 @@ export class DisbursementOverawardService {
   }
 
   /**
-   * Adds a manual overaward value to disbursement overawards table.
+   * Adds a legacy overaward value to disbursement overawards table.
    * @param studentId id of the student.
    * @param overawardValue overaward value.
    * @param disbursementValueCode disbursement value code.
    * @param entityManager entity manager used to perform the query.
    */
-  async addManualOveraward(
+  async addLegacyOveraward(
     studentId: number,
     overawardValue: number,
     disbursementValueCode: string,
@@ -95,8 +96,63 @@ export class DisbursementOverawardService {
       student: { id: studentId } as Student,
       disbursementValueCode,
       overawardValue,
-      originType: DisbursementOverawardOriginType.ManuallyEntered,
+      originType: DisbursementOverawardOriginType.LegacyOveraward,
       creator: auditUser,
     } as DisbursementOveraward);
+  }
+
+  /**
+   * Get all overawards which belong to a student.
+   * @param studentId student.
+   * @returns overaward details of a student.
+   */
+  async getOverawardsByStudent(
+    studentId: number,
+  ): Promise<DisbursementOveraward[]> {
+    return this.disbursementOverawardRepo.find({
+      select: {
+        createdAt: true,
+        originType: true,
+        overawardValue: true,
+        disbursementValueCode: true,
+        creator: { firstName: true, lastName: true },
+        studentAssessment: {
+          id: true,
+          application: { applicationNumber: true },
+          triggerType: true,
+        },
+      },
+      relations: {
+        creator: true,
+        studentAssessment: { application: true },
+      },
+      where: {
+        student: { id: studentId },
+      },
+    });
+  }
+
+  /**
+   * Add a manual overaward.
+   * @param awardValueCode award value code.
+   * @param overawardValue overaward deducted value.
+   * @param studentId student for whom overaward is deducted.
+   * @param auditUserId user who added overaward deduction.
+   * @returns overaward record created.
+   */
+  async addManualOveraward(
+    awardValueCode: string,
+    overawardValue: number,
+    studentId: number,
+    auditUserId: number,
+  ): Promise<DisbursementOveraward> {
+    const overawardManualRecord = new DisbursementOveraward();
+    overawardManualRecord.creator = { id: auditUserId } as User;
+    overawardManualRecord.disbursementValueCode = awardValueCode;
+    overawardManualRecord.overawardValue = overawardValue;
+    overawardManualRecord.originType =
+      DisbursementOverawardOriginType.ManualRecord;
+    overawardManualRecord.student = { id: studentId } as Student;
+    return this.disbursementOverawardRepo.save(overawardManualRecord);
   }
 }

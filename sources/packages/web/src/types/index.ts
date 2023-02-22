@@ -39,3 +39,4 @@ export * from "@/types/contracts/Banner";
 export * from "@/types/contracts/aest/roles";
 export * from "@/types/contracts/StatusInfo";
 export * from "@/types/contracts/Assessment";
+export * from "@/types/contracts/Overaward";
