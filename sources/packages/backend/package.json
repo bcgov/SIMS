@@ -22,15 +22,15 @@
     "test:watch": "jest --watch ",
     "test:cov": "cross-env ENVIRONMENT=test jest --coverage --forceExit",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e:api": "npm run migration:run && cross-env ENVIRONMENT=test jest --config ./apps/api/test/jest-e2e.json --forceExit",
+    "test:e2e:api": "db:seed:test filter=CreateInstitutionsAndAuthenticationUsers && cross-env ENVIRONMENT=test jest --config ./apps/api/test/jest-e2e.json --forceExit",
     "test:e2e:workers": "npm run migration:run && cross-env ENVIRONMENT=test jest --config ./apps/workers/test/jest-e2e.json --forceExit",
     "test:e2e:queue-consumers": "npm run migration:run && cross-env ENVIRONMENT=test jest --config ./apps/queue-consumers/test/jest-e2e.json --forceExit",
     "migration:run": "node --abort-on-uncaught-exception --require ts-node/register apps/db-migrations/src/main.ts",
     "migration:create": "cd apps/db-migrations/src/migrations && npx typeorm-ts-node-commonjs migration:create",
     "migration:revert": "npx typeorm-ts-node-commonjs migration:revert -d apps/db-migrations/src/data-source.ts",
-    "db:seed:test": "npm run build test-db-seeding && npm run migration:run &&  node dist/apps/test-db-seeding/main.js",
+    "db:seed:test": "npm run build test-db-seeding && npm run migration:run && node dist/apps/test-db-seeding/main.js",
     "//db:seed:test:clean": "Drops the database and all its data. Be careful with this command on production since this command will erase all your database tables and their data.",
-    "db:seed:test:clean": "node dist/apps/test-db-seeding/main.js task=clean-db"
+    "db:seed:test:clean": "npm run build test-db-seeding&& node dist/apps/test-db-seeding/main.js task=clean-db"
   },
   "dependencies": {
     "@bull-board/api": "^4.6.2",
