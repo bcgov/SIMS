@@ -588,7 +588,7 @@ export class StudentService extends RecordDataModelService<Student> {
     );
 
     if (sfasIndividual?.bcslOveraward > 0) {
-      this.disbursementOverawardService.addManualOveraward(
+      this.disbursementOverawardService.addLegacyOveraward(
         student.id,
         sfasIndividual.bcslOveraward,
         "BCSL",
@@ -596,7 +596,7 @@ export class StudentService extends RecordDataModelService<Student> {
       );
     }
     if (sfasIndividual?.cslOveraward > 0) {
-      this.disbursementOverawardService.addManualOveraward(
+      this.disbursementOverawardService.addLegacyOveraward(
         student.id,
         sfasIndividual.cslOveraward,
         "CSLF",

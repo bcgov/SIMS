@@ -77,7 +77,6 @@ import {
   ReportService,
   DisbursementOverawardService,
   ConfirmationOfEnrollmentService,
-  DisbursementOverawardService,
 } from "@sims/services";
 
 @Module({
