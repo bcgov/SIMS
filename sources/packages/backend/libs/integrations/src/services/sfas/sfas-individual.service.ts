@@ -1,11 +1,10 @@
 import { Injectable } from "@nestjs/common";
-import { DataSource, EntityManager } from "typeorm";
+import { DataSource } from "typeorm";
 import { DataModelService, SFASIndividual } from "@sims/sims-db";
 import { SFASIndividualRecord } from "../../sfas-integration/sfas-files/sfas-individual-record";
-import { getUTC, getISODateOnlyString } from "@sims/utilities";
+import { getUTC, getISODateOnlyString, getSQLFileData } from "@sims/utilities";
 import { SFASDataImporter } from "./sfas-data-importer";
 import { SFASRecordIdentification } from "../../sfas-integration/sfas-files/sfas-record-identification";
-import { getSQLFileData } from "@sims/utilities";
 
 const SFAS_INDIVIDUALS_RAW_SQL_FOLDER = "sfas-individuals";
 const DISBURSEMENT_OVERAWARD_RAW_SQL_FOLDER = "disbursement-overawards";
