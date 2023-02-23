@@ -1,70 +1,106 @@
+import { OfferingIntensity } from "@/types";
+
 export interface AwardDetail {
-  awardType: string;
+  awardType: FullTimeAwardTypes | PartTimeAwardTypes;
   description: string;
+  offeringIntensity: OfferingIntensity;
 }
 
-export const FULL_TIME_AWARDS: AwardDetail[] = [
-  {
-    awardType: "CSLF",
-    description: "Canada Student Loan for Full-time Studies",
-  },
-  {
-    awardType: "CSGP",
-    description: "Canada Student Grant for Student with Permanent Disability",
-  },
-  {
-    awardType: "CSGD",
-    description: "Canada Student Grant for Students with Dependents",
-  },
-  {
-    awardType: "CSGF",
-    description: "Canada Student Grant for Full-time Studies",
-  },
-  {
-    awardType: "CSGT",
-    description: "Canada Student Grant for Full-time Top-up",
-  },
-  {
-    awardType: "BCSL",
-    description: "B.C. Student Loan",
-  },
-  {
-    awardType: "BCAG",
-    description: "B.C. Access Grant",
-  },
-  {
-    awardType: "BGPD",
-    description: "B.C. Permanent Disability Grant",
-  },
-  {
-    awardType: "SBSD",
-    description: "B.C. Supplemental Bursary with Disabilities",
-  },
-];
+export enum FullTimeAwardTypes {
+  CSLF = "CSLF",
+  CSGP = "CSGP",
+  CSGD = "CSGD",
+  CSGF = "CSGF",
+  CSGT = "CSGT",
+  BCSL = "BCSL",
+  BCAG = "BCAG",
+  BGPD = "BGPD",
+  SBSD = "SBSD",
+}
 
-export const PART_TIME_AWARDS: AwardDetail[] = [
+export enum PartTimeAwardTypes {
+  CSLP = "CSLP",
+  CSGP = "CSGP",
+  CSPT = "CSPT",
+  CSGD = "CSGD",
+  BCAG = "BCAG",
+  SBSD = "SBSD",
+}
+
+export const AWARDS: AwardDetail[] = [
   {
-    awardType: "CSLP",
-    description: "Canada Student Loan for Part-time Studies",
+    awardType: FullTimeAwardTypes.CSLF,
+    description: "Canada Student Loan for Full-time Studies",
+    offeringIntensity: OfferingIntensity.fullTime,
   },
   {
-    awardType: "CSGP",
+    awardType: FullTimeAwardTypes.CSGP,
     description: "Canada Student Grant for Student with Permanent Disability",
+    offeringIntensity: OfferingIntensity.fullTime,
   },
   {
-    awardType: "CSPT",
-    description: "Canada Student Grant for Part-time Studies",
-  },
-  {
-    awardType: "CSGD",
+    awardType: FullTimeAwardTypes.CSGD,
     description: "Canada Student Grant for Students with Dependents",
+    offeringIntensity: OfferingIntensity.fullTime,
   },
   {
-    awardType: "BCAG",
+    awardType: FullTimeAwardTypes.CSGF,
+    description: "Canada Student Grant for Full-time Studies",
+    offeringIntensity: OfferingIntensity.fullTime,
+  },
+  {
+    awardType: FullTimeAwardTypes.CSGT,
+    description: "Canada Student Grant for Full-time Top-up",
+    offeringIntensity: OfferingIntensity.fullTime,
+  },
+  {
+    awardType: FullTimeAwardTypes.BCSL,
+    description: "B.C. Student Loan",
+    offeringIntensity: OfferingIntensity.fullTime,
+  },
+  {
+    awardType: FullTimeAwardTypes.BCAG,
     description: "B.C. Access Grant",
+    offeringIntensity: OfferingIntensity.fullTime,
   },
   {
-    awardType: "SBSD",
+    awardType: FullTimeAwardTypes.BGPD,
+    description: "B.C. Permanent Disability Grant",
+    offeringIntensity: OfferingIntensity.fullTime,
+  },
+  {
+    awardType: FullTimeAwardTypes.SBSD,
     description: "B.C. Supplemental Bursary with Disabilities",
+    offeringIntensity: OfferingIntensity.fullTime,
+  },
+  {
+    awardType: PartTimeAwardTypes.CSLP,
+    description: "Canada Student Loan for Part-time Studies",
+    offeringIntensity: OfferingIntensity.partTime,
+  },
+  {
+    awardType: PartTimeAwardTypes.CSGP,
+    description: "Canada Student Grant for Student with Permanent Disability",
+    offeringIntensity: OfferingIntensity.partTime,
+  },
+  {
+    awardType: PartTimeAwardTypes.CSPT,
+    description: "Canada Student Grant for Part-time Studies",
+    offeringIntensity: OfferingIntensity.partTime,
+  },
+  {
+    awardType: PartTimeAwardTypes.CSGD,
+    description: "Canada Student Grant for Students with Dependents",
+    offeringIntensity: OfferingIntensity.partTime,
+  },
+  {
+    awardType: PartTimeAwardTypes.BCAG,
+    description: "B.C. Access Grant",
+    offeringIntensity: OfferingIntensity.partTime,
+  },
+  {
+    awardType: PartTimeAwardTypes.SBSD,
+    description: "B.C. Supplemental Bursary with Disabilities",
+    offeringIntensity: OfferingIntensity.partTime,
   },
 ];

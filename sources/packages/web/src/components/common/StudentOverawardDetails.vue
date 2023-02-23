@@ -9,13 +9,13 @@
         <v-col>
           <title-value
             :propertyValue="
-              formatCurrency(overawardBalance.overawardBalanceValues?.CSLF, '')
+              formatCurrency(overawardBalance.overawardBalanceValues?.CSLF)
             "
           >
             <template #title>
-              CSLF
+              {{ FullTimeAwardTypes.CSLF }}
               <tooltip-icon>{{
-                getAwardDescription("CSLF")
+                getAwardDescription(FullTimeAwardTypes.CSLF)
               }}</tooltip-icon></template
             ></title-value
           >
@@ -23,13 +23,13 @@
         <v-col>
           <title-value
             :propertyValue="
-              formatCurrency(overawardBalance.overawardBalanceValues?.CSLP, '')
+              formatCurrency(overawardBalance.overawardBalanceValues?.CSLP)
             "
           >
             <template #title>
-              CSLP
+              {{ PartTimeAwardTypes.CSLP }}
               <tooltip-icon>{{
-                getAwardDescription("CSLP")
+                getAwardDescription(PartTimeAwardTypes.CSLP)
               }}</tooltip-icon></template
             ></title-value
           >
@@ -37,13 +37,13 @@
         <v-col>
           <title-value
             :propertyValue="
-              formatCurrency(overawardBalance.overawardBalanceValues?.BCSL, '')
+              formatCurrency(overawardBalance.overawardBalanceValues?.BCSL)
             "
           >
             <template #title>
-              BCSL
+              {{ FullTimeAwardTypes.BCSL }}
               <tooltip-icon>{{
-                getAwardDescription("BCSL")
+                getAwardDescription(FullTimeAwardTypes.BCSL)
               }}</tooltip-icon></template
             >
           </title-value>
@@ -55,7 +55,7 @@
     :studentId="studentId"
     :showAddedBy="showAddedBy"
     :allowManualOverawardDeduction="allowManualOverawardDeduction"
-    @updateOverawardDetails="loadOverawardBalance"
+    @manualOverawardAdded="loadOverawardBalance"
   />
 </template>
 
@@ -64,8 +64,9 @@ import { onMounted, ref, defineComponent } from "vue";
 import { OverawardService } from "@/services/OverawardService";
 import { useFormatters } from "@/composables";
 import {
-  FULL_TIME_AWARDS,
-  PART_TIME_AWARDS,
+  AWARDS,
+  FullTimeAwardTypes,
+  PartTimeAwardTypes,
 } from "@/constants/award-constants";
 import { OverawardBalanceAPIOutDTO } from "@/services/http/dto";
 import OverawardDetails from "@/components/common/OverawardDetails.vue";
@@ -93,9 +94,7 @@ export default defineComponent({
     const overawardBalance = ref({} as OverawardBalanceAPIOutDTO);
 
     const getAwardDescription = (awardType: string): string | undefined => {
-      return [...FULL_TIME_AWARDS, ...PART_TIME_AWARDS].find(
-        (award) => award.awardType === awardType,
-      )?.description;
+      return AWARDS.find((award) => award.awardType === awardType)?.description;
     };
 
     const loadOverawardBalance = async () => {
@@ -110,6 +109,8 @@ export default defineComponent({
       formatCurrency,
       getAwardDescription,
       loadOverawardBalance,
+      FullTimeAwardTypes,
+      PartTimeAwardTypes,
     };
   },
 });

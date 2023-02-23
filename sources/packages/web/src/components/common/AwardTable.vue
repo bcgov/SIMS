@@ -22,11 +22,7 @@
 <script lang="ts">
 import { PropType, defineComponent, computed } from "vue";
 import { OfferingIntensity } from "@/types";
-import {
-  FULL_TIME_AWARDS,
-  PART_TIME_AWARDS,
-  AwardDetail,
-} from "@/constants/award-constants";
+import { AWARDS, AwardDetail } from "@/constants/award-constants";
 
 export default defineComponent({
   props: {
@@ -46,9 +42,9 @@ export default defineComponent({
   },
   setup(props) {
     const awards = computed<AwardDetail[]>(() =>
-      props.offeringIntensity === OfferingIntensity.fullTime
-        ? FULL_TIME_AWARDS
-        : PART_TIME_AWARDS,
+      AWARDS.filter(
+        (award) => award.offeringIntensity === props.offeringIntensity,
+      ),
     );
 
     const getAwardValue = (awardType: string): string | number => {

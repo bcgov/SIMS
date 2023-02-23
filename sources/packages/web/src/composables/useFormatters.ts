@@ -217,19 +217,13 @@ export function useFormatters() {
    * when value is not provided or zero.
    * @returns formatted currency value.
    */
-  const formatCurrency = (
-    moneyAmount: number | string,
-    currencyCode = "(CAD)",
-    defaultValueAmount = "$0.00",
-  ): string => {
+  const formatCurrency = (moneyAmount: number | string): string => {
     if (moneyAmount === null || moneyAmount === undefined) {
-      return defaultValueAmount;
+      moneyAmount = 0;
     }
     const currencyValue = parseFloat(moneyAmount.toString());
     const negativeValueDisplay = currencyValue < 0 ? "-" : "";
-    return `${negativeValueDisplay}$${Math.abs(currencyValue).toFixed(
-      2,
-    )} ${currencyCode}`;
+    return `${negativeValueDisplay}$${Math.abs(currencyValue).toFixed(2)}`;
   };
 
   return {

@@ -24,7 +24,7 @@
             <Column field="applicationNumber" header="Application #"
               ><template #body="slotProps">
                 <span>
-                  {{ slotProps.data.applicationNumber ?? "-" }}
+                  {{ slotProps.data.applicationNumber ?? emptyStringFiller() }}
                 </span>
               </template></Column
             >
@@ -34,7 +34,7 @@
             <Column field="overawardValue" header="Overaward amount">
               <template #body="slotProps">
                 <span>
-                  {{ formatCurrency(slotProps.data.overawardValue, "") }}
+                  {{ formatCurrency(slotProps.data.overawardValue) }}
                 </span>
               </template></Column
             >
@@ -84,7 +84,7 @@
             <Column field="applicationNumber" header="Application #">
               <template #body="slotProps">
                 <span>
-                  {{ slotProps.data.applicationNumber ?? "-" }}
+                  {{ slotProps.data.applicationNumber ?? emptyStringFiller() }}
                 </span>
               </template></Column
             >
@@ -92,7 +92,7 @@
             <Column v-if="showAddedBy" field="addedByUser" header="Added By"
               ><template #body="slotProps">
                 <span>
-                  {{ slotProps.data.addedByUser ?? "-" }}
+                  {{ slotProps.data.addedByUser ?? emptyStringFiller() }}
                 </span>
               </template></Column
             >
@@ -100,7 +100,7 @@
             <Column field="overawardValue" header="Overaward amount">
               <template #body="slotProps">
                 <span>
-                  {{ formatCurrency(slotProps.data.overawardValue, "") }}
+                  {{ formatCurrency(slotProps.data.overawardValue) }}
                 </span>
               </template></Column
             >
@@ -135,7 +135,7 @@ import AddManualOverawardDeduction from "@/components/aest/students/modals/AddMa
 export default defineComponent({
   components: { CheckPermissionRole, AddManualOverawardDeduction },
   emits: {
-    updateOverawardDetails: null,
+    manualOverawardAdded: null,
   },
   props: {
     studentId: {
@@ -156,28 +156,27 @@ export default defineComponent({
   setup(props, context) {
     const page = ref(DEFAULT_PAGE_NUMBER);
     const pageLimit = ref(DEFAULT_PAGE_LIMIT);
-    const { dateOnlyLongString, formatCurrency } = useFormatters();
+    const { dateOnlyLongString, formatCurrency, emptyStringFiller } =
+      useFormatters();
     const snackBar = useSnackBar();
     const overawardDetails = ref([] as OverawardAPIOutDTO[]);
     const addManualOverawardDeduction = ref(
       {} as ModalDialog<OverawardManualRecordAPIInDTO | boolean>,
     );
+    const overawardDeductionOriginTypes = [
+      DisbursementOverawardOriginType.AwardDeducted,
+      DisbursementOverawardOriginType.ManualRecord,
+    ];
     const overawards = computed(() =>
       overawardDetails.value.filter(
         (overaward) =>
-          ![
-            DisbursementOverawardOriginType.AwardDeducted,
-            DisbursementOverawardOriginType.ManualRecord,
-          ].includes(overaward.overawardOrigin),
+          !overawardDeductionOriginTypes.includes(overaward.overawardOrigin),
       ),
     );
 
     const overawardDeductions = computed(() =>
       overawardDetails.value.filter((overaward) =>
-        [
-          DisbursementOverawardOriginType.AwardDeducted,
-          DisbursementOverawardOriginType.ManualRecord,
-        ].includes(overaward.overawardOrigin),
+        overawardDeductionOriginTypes.includes(overaward.overawardOrigin),
       ),
     );
 
@@ -191,7 +190,7 @@ export default defineComponent({
             manualOveraward as OverawardManualRecordAPIInDTO,
           );
           snackBar.success("Overaward deduction added successfully.");
-          context.emit("updateOverawardDetails");
+          context.emit("manualOverawardAdded");
           await loadOverawardDetails();
         } catch {
           snackBar.error(
@@ -219,6 +218,7 @@ export default defineComponent({
       Role,
       addManualOverawardDeduction,
       addManualOveraward,
+      emptyStringFiller,
     };
   },
 });

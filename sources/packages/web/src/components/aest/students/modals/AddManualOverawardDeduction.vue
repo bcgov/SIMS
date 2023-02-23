@@ -31,6 +31,7 @@
                 -MONEY_VALUE_FOR_UNKNOWN_MAX_VALUE,
                 MONEY_VALUE_FOR_UNKNOWN_MAX_VALUE,
                 'Overaward deduction amount',
+                formatCurrency,
               ),
           ]"
         />
@@ -39,7 +40,7 @@
         <check-permission-role :role="allowedRole">
           <template #="{ notAllowed }">
             <footer-buttons
-              primaryLabel="Add Record now"
+              primaryLabel="Add record now"
               @secondaryClick="cancel"
               @primaryClick="submit"
               :disablePrimaryButton="notAllowed"
@@ -52,13 +53,14 @@
 </template>
 <script lang="ts">
 import { PropType, ref, reactive, defineComponent } from "vue";
-import { useModalDialog, useRules } from "@/composables";
+import { useModalDialog, useRules, useFormatters } from "@/composables";
 import { Role, VForm } from "@/types";
 import { OverawardManualRecordAPIInDTO } from "@/services/http/dto";
 import { BannerTypes } from "@/types/contracts/Banner";
 import {
-  FULL_TIME_AWARDS,
-  PART_TIME_AWARDS,
+  AWARDS,
+  FullTimeAwardTypes,
+  PartTimeAwardTypes,
 } from "@/constants/award-constants";
 import { MONEY_VALUE_FOR_UNKNOWN_MAX_VALUE } from "@/constants/system-constants";
 import ErrorSummary from "@/components/generic/ErrorSummary.vue";
@@ -75,17 +77,22 @@ export default defineComponent({
   },
   setup() {
     const { numberRangeRule, checkNullOrEmptyRule } = useRules();
+    const { formatCurrency } = useFormatters();
     const { showDialog, showModal, resolvePromise } = useModalDialog<
       OverawardManualRecordAPIInDTO | boolean
     >();
     const addManualOverawardForm = ref({} as VForm);
     const formModel = reactive({} as OverawardManualRecordAPIInDTO);
-    const awardTypeItems = [...FULL_TIME_AWARDS, ...PART_TIME_AWARDS]
-      .filter((award) => ["CSLF", "CSLP", "BCSL"].includes(award.awardType))
-      .map((award) => ({
-        title: `${award.awardType} (${award.description})`,
-        value: award.awardType,
-      }));
+    const awardTypeItems = AWARDS.filter((award) =>
+      [
+        FullTimeAwardTypes.CSLF,
+        PartTimeAwardTypes.CSLP,
+        FullTimeAwardTypes.BCSL,
+      ].includes(award.awardType),
+    ).map((award) => ({
+      title: `${award.awardType} (${award.description})`,
+      value: award.awardType,
+    }));
 
     const submit = async () => {
       const validationResult = await addManualOverawardForm.value.validate();
@@ -114,6 +121,7 @@ export default defineComponent({
       BannerTypes,
       numberRangeRule,
       checkNullOrEmptyRule,
+      formatCurrency,
       awardTypeItems,
       MONEY_VALUE_FOR_UNKNOWN_MAX_VALUE,
     };
