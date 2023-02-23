@@ -105,7 +105,7 @@ export class DisbursementOverawardService {
         student: { id: studentId },
       },
       order: {
-        createdAt: "ASC",
+        createdAt: "DESC",
       },
     });
   }
