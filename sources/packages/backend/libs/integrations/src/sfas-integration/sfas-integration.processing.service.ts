@@ -142,7 +142,7 @@ export class SFASIntegrationProcessingService {
       // Delete the file only if it was processed with success.
       if (result.success) {
         try {
-          await this.sfasIndividualService.updateSFASOveraward();
+          await this.sfasIndividualService.updateStudentId();
           await this.sfasIndividualService.updateBCSLDisbursementOveraward();
           await this.sfasIndividualService.insertBCSLDisbursementOveraward();
           await this.sfasIndividualService.updateCSLFDisbursementOveraward();

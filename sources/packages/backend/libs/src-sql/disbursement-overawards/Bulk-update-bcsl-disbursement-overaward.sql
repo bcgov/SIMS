@@ -1,5 +1,5 @@
 /*
- * 
+ * Update BCSL overawards from SFAS integration to disbursement overawards table.
  */
 UPDATE	sims.disbursement_overawards disbursement_overawards
 SET		overaward_value = sfas_individuals.bcsl_overaward, 

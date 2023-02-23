@@ -84,7 +84,7 @@ export class SFASIndividualService
     await this.repo.save(individual, { reload: false, transaction: false });
   }
 
-  async updateSFASOveraward(): Promise<void> {
+  async updateStudentId(): Promise<void> {
     await this.repo.manager.query(this.bulkUpdateStudentIdSQL);
   }
   async updateBCSLDisbursementOveraward(): Promise<void> {

@@ -1,5 +1,6 @@
 /*
- * 
+ * Insert BCSL overawards from SFAS integration to disbursement overawards table where 
+ * the overard is different than 0. 
  */
 INSERT INTO sims.disbursement_overawards(
 		student_id,
