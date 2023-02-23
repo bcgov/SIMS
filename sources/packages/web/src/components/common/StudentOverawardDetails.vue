@@ -51,7 +51,12 @@
       </v-row>
     </v-container>
   </v-card>
-  <overaward-details :studentId="studentId" :showAddedBy="showAddedBy" />
+  <overaward-details
+    :studentId="studentId"
+    :showAddedBy="showAddedBy"
+    :allowManualOverawardDeduction="allowManualOverawardDeduction"
+    @updateOverawardDetails="loadOverawardBalance"
+  />
 </template>
 
 <script lang="ts">
@@ -77,24 +82,34 @@ export default defineComponent({
       required: false,
       default: false,
     },
+    allowManualOverawardDeduction: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
   },
   setup(props) {
     const { formatCurrency } = useFormatters();
     const overawardBalance = ref({} as OverawardBalanceAPIOutDTO);
 
     const getAwardDescription = (awardType: string): string | undefined => {
-      const awards = [...FULL_TIME_AWARDS, ...PART_TIME_AWARDS];
-      return awards.find((award) => award.awardType === awardType)?.description;
+      return [...FULL_TIME_AWARDS, ...PART_TIME_AWARDS].find(
+        (award) => award.awardType === awardType,
+      )?.description;
     };
 
-    onMounted(async () => {
+    const loadOverawardBalance = async () => {
       overawardBalance.value =
         await OverawardService.shared.getOverawardBalance(props.studentId);
-    });
+    };
+
+    onMounted(loadOverawardBalance);
+
     return {
       overawardBalance,
       formatCurrency,
       getAwardDescription,
+      loadOverawardBalance,
     };
   },
 });

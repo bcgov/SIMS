@@ -49,7 +49,7 @@
         title="Overaward deductions"
         subTitle="History of money that was deducted from one or more applications to pay back what is owed"
       >
-        <template #actions>
+        <template #actions v-if="allowManualOverawardDeduction">
           <check-permission-role :role="Role.StudentAddOverawardManual">
             <template #="{ notAllowed }">
               <v-btn
@@ -57,6 +57,7 @@
                 color="primary"
                 :disabled="notAllowed"
                 prepend-icon="fa:fa fa-plus-circle"
+                @click="addManualOveraward"
               >
                 Add manual record
               </v-btn>
@@ -108,6 +109,10 @@
       </content-group>
     </v-container>
   </v-card>
+  <add-manual-overaward-deduction
+    ref="addManualOverawardDeduction"
+    :allowedRole="Role.StudentAddOverawardManual"
+  />
 </template>
 <script lang="ts">
 import { ref, onMounted, defineComponent, computed } from "vue";
@@ -119,12 +124,19 @@ import {
   DisbursementOverawardOriginType,
   Role,
 } from "@/types";
-import { useFormatters } from "@/composables";
-import { OverawardAPIOutDTO } from "@/services/http/dto";
+import { useFormatters, ModalDialog, useSnackBar } from "@/composables";
+import {
+  OverawardAPIOutDTO,
+  OverawardManualRecordAPIInDTO,
+} from "@/services/http/dto";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
+import AddManualOverawardDeduction from "@/components/aest/students/modals/AddManualOverawardDeduction.vue";
 
 export default defineComponent({
-  components: { CheckPermissionRole },
+  components: { CheckPermissionRole, AddManualOverawardDeduction },
+  emits: {
+    updateOverawardDetails: null,
+  },
   props: {
     studentId: {
       type: Number,
@@ -135,12 +147,21 @@ export default defineComponent({
       required: false,
       default: false,
     },
+    allowManualOverawardDeduction: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
   },
-  setup(props) {
+  setup(props, context) {
     const page = ref(DEFAULT_PAGE_NUMBER);
     const pageLimit = ref(DEFAULT_PAGE_LIMIT);
     const { dateOnlyLongString, formatCurrency } = useFormatters();
+    const snackBar = useSnackBar();
     const overawardDetails = ref([] as OverawardAPIOutDTO[]);
+    const addManualOverawardDeduction = ref(
+      {} as ModalDialog<OverawardManualRecordAPIInDTO | boolean>,
+    );
     const overawards = computed(() =>
       overawardDetails.value.filter(
         (overaward) =>
@@ -160,10 +181,32 @@ export default defineComponent({
       ),
     );
 
-    onMounted(async () => {
+    const addManualOveraward = async () => {
+      const manualOveraward =
+        await addManualOverawardDeduction.value.showModal();
+      if (manualOveraward) {
+        try {
+          await OverawardService.shared.addManualOverawardDeduction(
+            props.studentId,
+            manualOveraward as OverawardManualRecordAPIInDTO,
+          );
+          snackBar.success("Overaward deduction added successfully.");
+          context.emit("updateOverawardDetails");
+          await loadOverawardDetails();
+        } catch {
+          snackBar.error(
+            "An error happened while adding manual overaward deduction.",
+          );
+        }
+      }
+    };
+
+    const loadOverawardDetails = async () => {
       overawardDetails.value =
         await OverawardService.shared.getStudentOverawards(props.studentId);
-    });
+    };
+
+    onMounted(loadOverawardDetails);
 
     return {
       page,
@@ -174,6 +217,8 @@ export default defineComponent({
       overawardDeductions,
       formatCurrency,
       Role,
+      addManualOverawardDeduction,
+      addManualOveraward,
     };
   },
 });
