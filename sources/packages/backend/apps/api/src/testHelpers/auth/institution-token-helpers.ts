@@ -32,8 +32,8 @@ export enum InstitutionTokenTypes {
 
 /**
  * Get a valid authentication token for an institution.
- * @param userType
- * @returns
+ * @param userType available institution users to have the token acquired.
+ * @returns authentication token.
  */
 export async function getInstitutionToken(
   userType: InstitutionTokenTypes,

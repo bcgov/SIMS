@@ -20,6 +20,12 @@ import {
 import { DataSource, IsNull } from "typeorm";
 import { InstitutionTokenTypes } from "./institution-token-helpers";
 
+/**
+ * Get the institution and user associated with the institution user token type.
+ * @param dataSource allow access to the database.
+ * @param userType type of the institution user.
+ * @returns institution and user associated with the institution user token type.
+ */
 export async function getAuthRelatedEntities(
   dataSource: DataSource,
   userType: InstitutionTokenTypes,
@@ -51,7 +57,16 @@ export async function getAuthRelatedEntities(
   return { institution, user };
 }
 
-export async function authorizeUserForLocation(
+/**
+ * Authorize a user to have access to a location.
+ * @param dataSource manage the database access.
+ * @param institutionId related institution.
+ * @param userId user to be associated with the institution.
+ * @param locationId location to be granted access to.
+ * @param type type of authorization.
+ * @param role authorization role.
+ */
+async function authorizeUserForLocation(
   dataSource: DataSource,
   institutionId: number,
   userId: number,
@@ -84,6 +99,14 @@ export async function authorizeUserForLocation(
   await dataSource.getRepository(InstitutionUserAuth).save(authorization);
 }
 
+/**
+ * Allow user access to a location. Useful when a new location is created and
+ * the institution user to be authenticated will need access to it.
+ * @param dataSource manage database access.
+ * @param userTokenType user type that need to be associated. This will be the
+ * same userTokenType used to authenticate to the API.
+ * @param location location to have the access granted for the user.
+ */
 export async function authorizeUserTokenForLocation(
   dataSource: DataSource,
   userTokenType: InstitutionTokenTypes,

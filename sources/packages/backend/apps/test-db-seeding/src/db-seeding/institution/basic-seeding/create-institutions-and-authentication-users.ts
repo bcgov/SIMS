@@ -10,6 +10,7 @@ import {
 } from "@sims/sims-db";
 import {
   createFakeInstitution,
+  createFakeInstitutionLocation,
   createFakeInstitutionUser,
   createFakeInstitutionUserAuth,
   createFakeUser,
@@ -21,7 +22,6 @@ import {
 } from "../../../seed-executors";
 import { Repository } from "typeorm";
 import { UserTypeRoleHelperService } from "../../../services";
-import { createFakeLocation } from "apps/api/src/testHelpers/fake-entities";
 import {
   InstitutionBaseData,
   INSTITUTIONS_INITIAL_DATA,
@@ -58,7 +58,7 @@ export class CreateInstitutionsAndAuthenticationUsers {
   /**
    * Create an institution and associated users.
    * For non-admin users, a default location will be also created.
-   * @param institutionsData basic data to create a institution and its users.
+   * @param institutionsData basic data to create an institution and its users.
    */
   private async createInstitution(
     institutionsData: InstitutionBaseData,
@@ -97,15 +97,15 @@ export class CreateInstitutionsAndAuthenticationUsers {
       let location: InstitutionLocation;
       if (user.userType === InstitutionUserTypes.user) {
         // Crate a default location.
-        // Create a default location to have associated with the regular user.
+        // Create a default location to have it associated with the regular user.
         const fakeInstitutionDefaultLocation =
-          createFakeLocation(savedInstitution);
+          createFakeInstitutionLocation(savedInstitution);
         fakeInstitutionDefaultLocation.name = "Default Location";
         location = await this.institutionLocationRepo.save(
           fakeInstitutionDefaultLocation,
         );
       }
-      // Create institution user auth.
+      // Create the institution user auth.
       const fakeInstitutionUserAuth = createFakeInstitutionUserAuth(
         savedInstitutionUser,
         userTypeRole,

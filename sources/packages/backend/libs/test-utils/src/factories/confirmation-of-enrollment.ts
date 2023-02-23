@@ -20,6 +20,13 @@ import { createFakeStudent } from "./student";
 import { createFakeStudentAssessment } from "./student-assessment";
 import { createFakeUser } from "./user";
 
+/**
+ * Create and save to the database a disbursement record with all the dependencies.
+ * @param dataSource manages the repositories to save the data.
+ * @param relations dependencies.
+ * @returns the created application and its dependencies including the disbursement
+ * with the confirmation of enrollment data.
+ */
 export async function saveFakeApplicationCOE(
   dataSource: DataSource,
   relations?: {
