@@ -9,12 +9,14 @@ import {
   OfferingIntensity,
   User,
   OfferingStatus,
+  Institution,
 } from "@sims/sims-db";
 import { getISODateOnlyString } from "@sims/utilities";
 
 export function createFakeEducationProgramOffering(relations?: {
   auditUser: User;
   program?: EducationProgram;
+  institution?: Institution;
   institutionLocation?: InstitutionLocation;
 }): EducationProgramOffering {
   const offering = new EducationProgramOffering();
@@ -27,7 +29,10 @@ export function createFakeEducationProgramOffering(relations?: {
   offering.lacksStudyBreaks = true;
   offering.educationProgram =
     relations?.program ??
-    createFakeEducationProgram({ auditUser: relations.auditUser });
+    createFakeEducationProgram({
+      institution: relations?.institution,
+      auditUser: relations.auditUser,
+    });
   offering.institutionLocation =
     relations?.institutionLocation ?? createFakeInstitutionLocation();
   offering.offeringIntensity = OfferingIntensity.fullTime;
