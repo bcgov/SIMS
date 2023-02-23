@@ -1,14 +1,10 @@
-import { Institution, User } from "@sims/sims-db";
 import {
-  COLLEGE_C_BUSINESS_GUID,
-  COLLEGE_D_BUSINESS_GUID,
   SIMS2_COLLC_USER,
   SIMS2_COLLD_USER,
   SIMS_COLLC_ADMIN_LEGAL_SIGNING_USER,
   SIMS_COLLD_ADMIN_NON_LEGAL_SIGNING_USER,
 } from "@sims/test-utils/constants";
 import { UserPasswordCredential } from "@sims/utilities/config";
-import { DataSource } from "typeorm";
 import { AuthorizedParties } from "../../auth";
 import { getCachedToken } from "./token-helpers";
 
