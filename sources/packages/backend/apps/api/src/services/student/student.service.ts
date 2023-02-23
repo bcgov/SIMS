@@ -29,6 +29,10 @@ import {
   STUDENT_SIN_CONSENT_NOT_CHECKED,
 } from "../../constants";
 import { DisbursementOverawardService } from "@sims/services";
+import {
+  BC_STUDENT_LOAN_AWARD_CODE,
+  CANADA_STUDENT_LOAN_FULL_TIME_AWARD_CODE,
+} from "@sims/services/constants/disbursements.constants";
 
 @Injectable()
 export class StudentService extends RecordDataModelService<Student> {
@@ -591,7 +595,7 @@ export class StudentService extends RecordDataModelService<Student> {
       this.disbursementOverawardService.addLegacyOveraward(
         student.id,
         sfasIndividual.bcslOveraward,
-        "BCSL",
+        BC_STUDENT_LOAN_AWARD_CODE,
         entityManager,
       );
     }
@@ -599,7 +603,7 @@ export class StudentService extends RecordDataModelService<Student> {
       this.disbursementOverawardService.addLegacyOveraward(
         student.id,
         sfasIndividual.cslOveraward,
-        "CSLF",
+        CANADA_STUDENT_LOAN_FULL_TIME_AWARD_CODE,
         entityManager,
       );
     }

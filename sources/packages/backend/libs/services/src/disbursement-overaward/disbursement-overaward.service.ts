@@ -89,10 +89,13 @@ export class DisbursementOverawardService {
     studentId: number,
     overawardValue: number,
     disbursementValueCode: string,
-    entityManager: EntityManager,
+    entityManager?: EntityManager,
   ): Promise<void> {
+    const repo =
+      entityManager?.getRepository(DisbursementOveraward) ??
+      this.disbursementOverawardRepo;
     const auditUser = await this.systemUsersService.systemUser();
-    await entityManager.getRepository("DisbursementOveraward").insert({
+    await repo.insert({
       student: { id: studentId } as Student,
       disbursementValueCode,
       overawardValue,

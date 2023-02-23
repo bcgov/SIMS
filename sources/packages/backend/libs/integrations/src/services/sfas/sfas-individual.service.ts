@@ -1,10 +1,14 @@
 import { Injectable } from "@nestjs/common";
-import { DataSource } from "typeorm";
+import { DataSource, EntityManager } from "typeorm";
 import { DataModelService, SFASIndividual } from "@sims/sims-db";
 import { SFASIndividualRecord } from "../../sfas-integration/sfas-files/sfas-individual-record";
 import { getUTC, getISODateOnlyString } from "@sims/utilities";
 import { SFASDataImporter } from "./sfas-data-importer";
 import { SFASRecordIdentification } from "../../sfas-integration/sfas-files/sfas-record-identification";
+import { getSQLFileData } from "@sims/utilities";
+
+const SFAS_INDIVIDUALS_RAW_SQL_FOLDER = "sfas-individuals";
+const DISBURSEMENT_OVERAWARD_RAW_SQL_FOLDER = "disbursement-overawards";
 
 /**
  * Manages the data related to an individual/student in SFAS.
@@ -14,8 +18,33 @@ export class SFASIndividualService
   extends DataModelService<SFASIndividual>
   implements SFASDataImporter
 {
+  private readonly bulkUpdateStudentIdSQL: string;
+  private readonly bulkUpdateBCSLDisbursementOverawardSQL: string;
+  private readonly bulkUpdateCSLFDisbursementOverawardSQL: string;
+  private readonly bulkInsertBCSLDisbursementOverawardSQL: string;
+  private readonly bulkInsertCSLFDisbursementOverawardSQL: string;
   constructor(dataSource: DataSource) {
     super(dataSource.getRepository(SFASIndividual));
+    this.bulkUpdateStudentIdSQL = getSQLFileData(
+      "Bulk-update-students-foreign-key.sql",
+      SFAS_INDIVIDUALS_RAW_SQL_FOLDER,
+    );
+    this.bulkUpdateBCSLDisbursementOverawardSQL = getSQLFileData(
+      "Bulk-update-bcsl-disbursement-overaward.sql",
+      DISBURSEMENT_OVERAWARD_RAW_SQL_FOLDER,
+    );
+    this.bulkUpdateCSLFDisbursementOverawardSQL = getSQLFileData(
+      "Bulk-update-cslf-disbursement-overaward.sql",
+      DISBURSEMENT_OVERAWARD_RAW_SQL_FOLDER,
+    );
+    this.bulkInsertBCSLDisbursementOverawardSQL = getSQLFileData(
+      "Bulk-insert-bcsl-disbursement-overaward.sql",
+      DISBURSEMENT_OVERAWARD_RAW_SQL_FOLDER,
+    );
+    this.bulkInsertCSLFDisbursementOverawardSQL = getSQLFileData(
+      "Bulk-insert-cslf-disbursement-overaward.sql",
+      DISBURSEMENT_OVERAWARD_RAW_SQL_FOLDER,
+    );
   }
 
   /**
@@ -54,5 +83,21 @@ export class SFASIndividualService
     individual.unsuccessfulCompletion = sfasIndividual.unsuccessfulCompletion;
     individual.extractedAt = getUTC(extractedDate);
     await this.repo.save(individual, { reload: false, transaction: false });
+  }
+
+  async updateSFASOveraward(): Promise<void> {
+    await this.repo.manager.query(this.bulkUpdateStudentIdSQL);
+  }
+  async updateBCSLDisbursementOveraward(): Promise<void> {
+    await this.repo.manager.query(this.bulkUpdateBCSLDisbursementOverawardSQL);
+  }
+  async insertBCSLDisbursementOveraward(): Promise<void> {
+    await this.repo.manager.query(this.bulkInsertBCSLDisbursementOverawardSQL);
+  }
+  async updateCSLFDisbursementOveraward(): Promise<void> {
+    await this.repo.manager.query(this.bulkUpdateCSLFDisbursementOverawardSQL);
+  }
+  async insertCSLFDisbursementOveraward(): Promise<void> {
+    await this.repo.manager.query(this.bulkInsertCSLFDisbursementOverawardSQL);
   }
 }

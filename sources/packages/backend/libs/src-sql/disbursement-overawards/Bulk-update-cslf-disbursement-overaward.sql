@@ -8,5 +8,5 @@ SET		overaward_value = sfas_individuals.csl_overaward,
 FROM 	sims.sfas_individuals sfas_individuals
 		INNER JOIN sims.users users ON users.last_name = 'system-user'
 WHERE 	disbursement_overawards.student_id = sfas_individuals.student_id
-AND		disbursement_overawards.origin_type = 'Manually entered'
+AND		disbursement_overawards.origin_type = 'Legacy overaward'
 AND		disbursement_overawards.disbursement_value_code = 'CSLF';

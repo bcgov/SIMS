@@ -10,7 +10,7 @@ INSERT INTO sims.disbursement_overawards(
 SELECT	sfas_individuals.student_id, 
 	   	E'CSLF', 
 	   	sfas_individuals.csl_overaward, 
-		E'Manually entered',
+		E'Legacy overaward',
 		users.id
 FROM 	sims.sfas_individuals sfas_individuals
 		INNER JOIN sims.students students ON sfas_individuals.student_id = students.id
@@ -20,7 +20,7 @@ WHERE 	NOT EXISTS (
 		FROM 	sims.disbursement_overawards disbursement_overawards
 		WHERE 	disbursement_overawards.student_id = students.id
 		AND 	disbursement_overawards.disbursement_value_code = 'CSLF'
-		AND 	disbursement_overawards.origin_type = 'Manually entered'
+		AND 	disbursement_overawards.origin_type = 'Legacy overaward'
 )
 AND		sfas_individuals.csl_overaward <> 0;;
 
