@@ -24,7 +24,7 @@
             <Column field="applicationNumber" header="Application #"
               ><template #body="slotProps">
                 <span>
-                  {{ slotProps.data.applicationNumber ?? emptyStringFiller() }}
+                  {{ emptyStringFiller(slotProps.data.applicationNumber) }}
                 </span>
               </template></Column
             >
@@ -84,7 +84,7 @@
             <Column field="applicationNumber" header="Application #">
               <template #body="slotProps">
                 <span>
-                  {{ slotProps.data.applicationNumber ?? emptyStringFiller() }}
+                  {{ emptyStringFiller(slotProps.data.applicationNumber) }}
                 </span>
               </template></Column
             >
@@ -92,7 +92,7 @@
             <Column v-if="showAddedBy" field="addedByUser" header="Added By"
               ><template #body="slotProps">
                 <span>
-                  {{ slotProps.data.addedByUser ?? emptyStringFiller() }}
+                  {{ emptyStringFiller(slotProps.data.addedByUser) }}
                 </span>
               </template></Column
             >
