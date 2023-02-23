@@ -378,3 +378,8 @@ b,
 strong {
   font-weight: $font-weight-bold;
 }
+
+// Added FontAwesome as fallback.
+.mdi:before {
+  font-family: "Material Design Icons", "FontAwesome" !important;
+}

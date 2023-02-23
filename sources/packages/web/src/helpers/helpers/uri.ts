@@ -1,4 +1,5 @@
 import {
+  DataTableSortByOrder,
   DataTableSortOrder,
   FieldSortOrder,
   PaginationOptions,
@@ -6,7 +7,8 @@ import {
 } from "@/types";
 
 /**
- * helper to append pagination sort and order to the url
+ * todo: remove sortOrder: DataTableSortOrder when all primevue datatables are removed.
+ * Helper to append pagination sort and order to the url
  * @param url api url
  * @param sortField sortField
  * @param sortOrder sortOrder
@@ -15,7 +17,7 @@ import {
 export function addSortOptions(
   url: string,
   sortField?: string,
-  sortOrder?: DataTableSortOrder,
+  sortOrder?: DataTableSortOrder | DataTableSortByOrder,
 ): string {
   if (sortField && sortOrder) {
     const sortDBOrder =

@@ -37,66 +37,28 @@
         :toggled="!programAndCount.count"
         message="You don't have programs yet"
       >
-        <DataTable
-          :value="programAndCount.results"
-          :lazy="true"
-          :paginator="true"
-          :rows="DEFAULT_PAGE_LIMIT"
-          :rowsPerPageOptions="PAGINATION_LIST"
-          :totalRecords="programAndCount.count"
-          @page="paginationAndSortEvent($event)"
-          @sort="paginationAndSortEvent($event)"
+        <v-data-table-server
+          :headers="ProgramSummaryHeaders"
+          :items="programAndCount.results"
+          :items-length="programAndCount.count"
           :loading="loading"
+          :items-per-page="DEFAULT_PAGE_LIMIT"
+          @update:options="programOptions"
         >
-          <Column
-            :field="ProgramSummaryFields.CipCode"
-            header="CIP"
-            data-cy="programCIP"
-          ></Column>
-          <Column
-            :field="ProgramSummaryFields.ProgramName"
-            header="Program Name"
-            :sortable="true"
-            data-cy="programName"
-          ></Column>
-          <Column
-            :field="ProgramSummaryFields.CredentialType"
-            header="Credential"
-            :sortable="true"
-            data-cy="programCredential"
-          >
-            <template #body="slotProps">
-              <div>
-                {{ slotProps.data.credentialTypeToDisplay }}
-              </div>
-            </template></Column
-          >
-          <Column
-            :field="ProgramSummaryFields.TotalOfferings"
-            header="Study periods"
-            data-cy="programStudyPeriods"
-          ></Column>
-          <Column
-            :field="ProgramSummaryFields.ProgramStatus"
-            header="Status"
-            :sortable="true"
-            data-cy="programStatus"
-            ><template #body="slotProps">
-              <status-chip-program
-                :status="slotProps.data.programStatus"
-              ></status-chip-program></template
-          ></Column>
-          <Column header="Action">
-            <template #body="slotProps">
-              <v-btn
-                color="primary"
-                @click="goToViewProgram(slotProps.data.programId)"
-                data-cy="viewProgram"
-                >View</v-btn
-              >
-            </template>
-          </Column>
-        </DataTable>
+          <template v-slot:[`item.programStatus`]="{ item }">
+            <status-chip-program
+              :status="item.value.programStatus"
+            ></status-chip-program>
+          </template>
+          <template v-slot:[`item.programId`]="{ item }">
+            <v-btn
+              color="primary"
+              @click="goToViewProgram(item.value.programId)"
+              data-cy="viewProgram"
+              >View</v-btn
+            >
+          </template>
+        </v-data-table-server>
       </toggle-content>
     </content-group>
   </full-page-container>
@@ -112,9 +74,11 @@ import {
   DEFAULT_PAGE_NUMBER,
   PAGINATION_LIST,
   ProgramSummaryFields,
-  DataTableSortOrder,
   EducationProgramsSummary,
   PaginatedResults,
+  ProgramSummaryHeaders,
+  DataTableOptions,
+  DataTableSortByOrder,
 } from "@/types";
 import { ref, watch, computed, defineComponent } from "vue";
 import StatusChipProgram from "@/components/generic/StatusChipProgram.vue";
@@ -137,6 +101,7 @@ export default defineComponent({
     const locationDetails = ref();
     const loading = ref(false);
     const searchBox = ref("");
+
     const currentPage = ref();
     const currentPageLimit = ref();
 
@@ -145,17 +110,17 @@ export default defineComponent({
     });
 
     /**
-     * function to load program list and count for institution
-     * @param page page number, if nothing passed then DEFAULT_PAGE_NUMBER
-     * @param pageCount page limit, if nothing passed then DEFAULT_PAGE_LIMIT
-     * @param sortField sort field, if nothing passed then InstitutionProgramSummaryFields.ApprovalStatus
-     * @param sortOrder sort oder, if nothing passed then DataTableSortOrder.ASC
+     * Function to load program list and count for institution.
+     * @param page page number, if nothing passed then DEFAULT_PAGE_NUMBER.
+     * @param pageCount page limit, if nothing passed then DEFAULT_PAGE_LIMIT.
+     * @param sortField sort field, if nothing passed then api sorts with programStatus.
+     * @param sortOrder sort oder, if nothing passed then DataTableSortByOrder.ASC.
      */
     const loadSummary = async (
       page = DEFAULT_PAGE_NUMBER,
       pageCount = DEFAULT_PAGE_LIMIT,
-      sortField?: ProgramSummaryFields,
-      sortOrder?: DataTableSortOrder,
+      sortField?: string,
+      sortOrder?: DataTableSortByOrder,
     ) => {
       loading.value = true;
       programAndCount.value =
@@ -172,23 +137,13 @@ export default defineComponent({
       loading.value = false;
     };
 
-    // Pagination sort event callback.
-    const paginationAndSortEvent = async (event: any) => {
-      currentPage.value = event?.page;
-      currentPageLimit.value = event?.rows;
-      await loadSummary(
-        event.page,
-        event.rows,
-        event.sortField,
-        event.sortOrder,
-      );
-    };
     const loadProgramDetails = async () => {
       locationDetails.value =
         await InstitutionService.shared.getInstitutionLocation(
           props.locationId,
         );
     };
+
     // Search program table.
     const searchProgramTable = async () => {
       await loadSummary(
@@ -205,6 +160,7 @@ export default defineComponent({
       },
       { immediate: true },
     );
+
     const goToAddNewProgram = () => {
       router.push({
         name: InstitutionRoutesConst.ADD_LOCATION_PROGRAMS,
@@ -223,6 +179,20 @@ export default defineComponent({
         },
       });
     };
+
+    // Sort and pagination for the datatable.
+    const programOptions = async (event: DataTableOptions) => {
+      currentPage.value = event.page - 1;
+      currentPageLimit.value = event.itemsPerPage;
+      const [sortByOptions] = event.sortBy;
+      await loadSummary(
+        event.page - 1,
+        event.itemsPerPage,
+        sortByOptions?.key,
+        sortByOptions?.order,
+      );
+    };
+
     return {
       programAndCount,
       goToAddNewProgram,
@@ -231,12 +201,13 @@ export default defineComponent({
       DEFAULT_PAGE_LIMIT,
       DEFAULT_PAGE_NUMBER,
       PAGINATION_LIST,
-      paginationAndSortEvent,
       searchProgramTable,
       loading,
       searchBox,
       ProgramSummaryFields,
       locationName,
+      programOptions,
+      ProgramSummaryHeaders,
     };
   },
 });
