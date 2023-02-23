@@ -169,7 +169,7 @@ describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-getApplicationForC
       });
   });
 
-  it.only("Should return calculated maxTuitionRemittanceAllowed using award amounts when it is lesser than offering costs", async () => {
+  it("Should return calculated maxTuitionRemittanceAllowed using award amounts when it is lesser than offering costs", async () => {
     // Arrange
     const { institution } = await getAuthRelatedEntities(
       appDataSource,

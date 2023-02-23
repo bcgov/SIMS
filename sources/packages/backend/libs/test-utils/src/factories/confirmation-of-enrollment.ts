@@ -4,6 +4,7 @@ import {
   COEStatus,
   DisbursementScheduleStatus,
   DisbursementValue,
+  DisbursementValueType,
   EducationProgramOffering,
   Institution,
   InstitutionLocation,
@@ -15,6 +16,7 @@ import {
 import { DataSource } from "typeorm";
 import { createFakeApplication } from "./application";
 import { createFakeDisbursementSchedule } from "./disbursement-schedule";
+import { createFakeDisbursementValue } from "./disbursement-value";
 import { createFakeEducationProgramOffering } from "./education-program-offering";
 import { createFakeStudent } from "./student";
 import { createFakeStudentAssessment } from "./student-assessment";
@@ -55,7 +57,9 @@ export async function saveFakeApplicationCOE(
   // Original assessment - first disbursement.
   const firstSchedule = createFakeDisbursementSchedule({
     auditUser: savedUser,
-    disbursementValues: relations?.disbursementValues,
+    disbursementValues: relations?.disbursementValues ?? [
+      createFakeDisbursementValue(DisbursementValueType.CanadaLoan, "CSLF", 1),
+    ],
   });
   firstSchedule.coeStatus = COEStatus.required;
   firstSchedule.disbursementScheduleStatus = DisbursementScheduleStatus.Pending;

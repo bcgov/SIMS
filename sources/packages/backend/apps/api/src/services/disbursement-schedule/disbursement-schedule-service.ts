@@ -299,6 +299,7 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
         "currentAssessment.id",
         "offering.actualTuitionCosts",
         "offering.programRelatedCosts",
+        "offering.studyEndDate",
         "disbursementValues.valueType",
         "disbursementValues.valueCode",
         "disbursementValues.valueAmount",
@@ -520,6 +521,11 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
     disbursementDate: string | Date,
     studyEndDate: string | Date,
   ): COEApprovalPeriodStatus {
+    if (!disbursementDate || !studyEndDate) {
+      throw new Error(
+        "disbursementDate and studyEndDate are required for COE window verification.",
+      );
+    }
     // Enrolment period start date(COE_WINDOW days before disbursement date).
     const enrolmentPeriodStart = addDays(-COE_WINDOW, disbursementDate);
     //Current date as date only string.
