@@ -9,12 +9,16 @@ import {
   getInstitutionToken,
   InstitutionTokenTypes,
 } from "../../../../testHelpers";
-import { createFakeInstitutionLocation } from "@sims/test-utils";
+import {
+  createFakeDisbursementValue,
+  createFakeInstitutionLocation,
+} from "@sims/test-utils";
 import { saveFakeApplicationCOE } from "@sims/test-utils/factories/confirmation-of-enrollment";
 import {
   Application,
   ApplicationStatus,
   DisbursementSchedule,
+  DisbursementValueType,
   EducationProgramOffering,
   Institution,
   InstitutionLocation,
@@ -156,8 +160,76 @@ describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-confirmEnrollment"
       });
   });
 
-  // TODO: Should throw an exception when trying to confirm the second COE before the first one.
-  // TODO: Should throw an exception when the maxTuitionRemittance if over the limit.
+  it("Should throw an UnprocessableEntityException when trying to confirm the second COE before confirming the first one.", async () => {
+    // Arrange
+    const application = await saveFakeApplicationCOE(
+      appDataSource,
+      {
+        institution: collegeC,
+        institutionLocation: collegeCLocation,
+      },
+      { createSecondDisbursement: true },
+    );
+    const [, secondDisbursementSchedule] =
+      application.currentAssessment.disbursementSchedules;
+    // Change the second schedule to be available to be approved inside the COE window
+    // to force the validation of the "first COE confirmation before the second".
+    secondDisbursementSchedule.disbursementDate = getISODateOnlyString(
+      addDays(COE_WINDOW - 1),
+    );
+    await disbursementScheduleRepo.save(secondDisbursementSchedule);
+    const endpoint = `/institutions/location/${collegeCLocation.id}/confirmation-of-enrollment/disbursement-schedule/${secondDisbursementSchedule.id}/confirm`;
+    // Act/Assert
+    return request(app.getHttpServer())
+      .patch(endpoint)
+      .send({ tuitionRemittanceAmount: 1 })
+      .auth(
+        await getInstitutionToken(InstitutionTokenTypes.CollegeCUser),
+        BEARER_AUTH_TYPE,
+      )
+      .expect(HttpStatus.UNPROCESSABLE_ENTITY)
+      .expect({
+        message:
+          "First disbursement(COE) not complete. Please complete the first disbursement.",
+        errorType: "FIRST_COE_NOT_COMPLETE",
+      });
+  });
+
+  it("Should throw an exception when the maxTuitionRemittance if over the limit.", async () => {
+    // Arrange
+    const application = await saveFakeApplicationCOE(appDataSource, {
+      institution: collegeC,
+      institutionLocation: collegeCLocation,
+      disbursementValues: [
+        createFakeDisbursementValue(
+          DisbursementValueType.CanadaLoan,
+          "CSLF",
+          1000,
+        ),
+      ],
+    });
+    const [fistDisbursementSchedule] =
+      application.currentAssessment.disbursementSchedules;
+    // Adjust offering values for maxTuitionRemittanceAllowed.
+    application.currentAssessment.offering.actualTuitionCosts = 500;
+    application.currentAssessment.offering.programRelatedCosts = 500;
+    await offeringRepo.save(application.currentAssessment.offering);
+    const endpoint = `/institutions/location/${collegeCLocation.id}/confirmation-of-enrollment/disbursement-schedule/${fistDisbursementSchedule.id}/confirm`;
+    // Act/Assert
+    return request(app.getHttpServer())
+      .patch(endpoint)
+      .send({ tuitionRemittanceAmount: 1001 })
+      .auth(
+        await getInstitutionToken(InstitutionTokenTypes.CollegeCUser),
+        BEARER_AUTH_TYPE,
+      )
+      .expect(HttpStatus.UNPROCESSABLE_ENTITY)
+      .expect({
+        message:
+          "Tuition amount provided should be lesser than both (Actual tuition + Program related costs) and (Canada grants + Canada Loan + BC Loan).",
+        errorType: "INVALID_TUITION_REMITTANCE_AMOUNT",
+      });
+  });
 
   afterAll(async () => {
     await app?.close();

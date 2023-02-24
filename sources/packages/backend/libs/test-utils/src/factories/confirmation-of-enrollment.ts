@@ -2,6 +2,7 @@ import {
   Application,
   ApplicationStatus,
   COEStatus,
+  DisbursementSchedule,
   DisbursementScheduleStatus,
   DisbursementValue,
   DisbursementValueType,
@@ -13,6 +14,7 @@ import {
   StudentAssessment,
   User,
 } from "@sims/sims-db";
+import { addDays, getISODateOnlyString } from "@sims/utilities";
 import { DataSource } from "typeorm";
 import { createFakeApplication } from "./application";
 import { createFakeDisbursementSchedule } from "./disbursement-schedule";
@@ -36,6 +38,9 @@ export async function saveFakeApplicationCOE(
     institutionLocation?: InstitutionLocation;
     disbursementValues?: DisbursementValue[];
   },
+  options?: {
+    createSecondDisbursement: boolean;
+  },
 ): Promise<Application> {
   const userRepo = dataSource.getRepository(User);
   const studentRepo = dataSource.getRepository(Student);
@@ -54,6 +59,7 @@ export async function saveFakeApplicationCOE(
     auditUser: savedUser,
   });
   fakeOriginalAssessment.application = savedApplication;
+  const disbursementSchedules: DisbursementSchedule[] = [];
   // Original assessment - first disbursement.
   const firstSchedule = createFakeDisbursementSchedule({
     auditUser: savedUser,
@@ -63,7 +69,24 @@ export async function saveFakeApplicationCOE(
   });
   firstSchedule.coeStatus = COEStatus.required;
   firstSchedule.disbursementScheduleStatus = DisbursementScheduleStatus.Pending;
-  fakeOriginalAssessment.disbursementSchedules = [firstSchedule];
+  disbursementSchedules.push(firstSchedule);
+  if (options?.createSecondDisbursement) {
+    // Original assessment - second disbursement.
+    const secondSchedule = createFakeDisbursementSchedule({
+      auditUser: savedUser,
+      disbursementValues: relations?.disbursementValues ?? [
+        createFakeDisbursementValue(DisbursementValueType.BCLoan, "BCSL", 1),
+      ],
+    });
+    secondSchedule.coeStatus = COEStatus.required;
+    secondSchedule.disbursementScheduleStatus =
+      DisbursementScheduleStatus.Pending;
+    // First schedule is created with the current date as default.
+    // Adding 60 days to create some time between the first and second schedules.
+    secondSchedule.disbursementDate = getISODateOnlyString(addDays(60));
+    disbursementSchedules.push(secondSchedule);
+  }
+  fakeOriginalAssessment.disbursementSchedules = disbursementSchedules;
   // Offering.
   const fakeOffering = createFakeEducationProgramOffering({
     institution: relations?.institution,
