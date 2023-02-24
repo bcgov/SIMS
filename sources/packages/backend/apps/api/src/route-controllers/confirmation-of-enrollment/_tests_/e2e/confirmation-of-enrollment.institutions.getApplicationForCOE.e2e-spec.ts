@@ -65,7 +65,7 @@ describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-getApplicationForC
       });
   });
 
-  it("Should get the COE when the COE exists under the location", async () => {
+  it("Should get the COE with calculated maxTuitionRemittanceAllowed when the COE exists under the location", async () => {
     // Arrange
     const { institution } = await getAuthRelatedEntities(
       appDataSource,
@@ -80,7 +80,19 @@ describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-getApplicationForC
     const application = await saveFakeApplicationCOE(appDataSource, {
       institution,
       institutionLocation,
+      disbursementValues: [
+        createFakeDisbursementValue(
+          DisbursementValueType.CanadaLoan,
+          "CSLF",
+          1000,
+          { disbursedAmountSubtracted: 100 },
+        ),
+      ],
     });
+    // Adjust offering values for maxTuitionRemittanceAllowed.
+    application.currentAssessment.offering.actualTuitionCosts = 500;
+    application.currentAssessment.offering.programRelatedCosts = 500;
+    await offeringRepo.save(application.currentAssessment.offering);
     const [fistDisbursementSchedule] =
       application.currentAssessment.disbursementSchedules;
     const offering = application.currentAssessment.offering;
@@ -125,7 +137,7 @@ describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-getApplicationForC
           program.deliveredOnline,
           program.deliveredOnSite,
         ),
-        maxTuitionRemittanceAllowed: 1,
+        maxTuitionRemittanceAllowed: 900,
         hasOverawardBalance: false,
       });
   });
@@ -166,56 +178,6 @@ describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-getApplicationForC
       .expect(HttpStatus.OK)
       .expect((response) => {
         expect(response.body.hasOverawardBalance).toBe(true);
-      });
-  });
-
-  it("Should return calculated maxTuitionRemittanceAllowed using award amounts when it is lesser than offering costs", async () => {
-    // Arrange
-    const { institution } = await getAuthRelatedEntities(
-      appDataSource,
-      InstitutionTokenTypes.CollegeCUser,
-    );
-    const institutionLocation = createFakeInstitutionLocation();
-    await authorizeUserTokenForLocation(
-      appDataSource,
-      InstitutionTokenTypes.CollegeCUser,
-      institutionLocation,
-    );
-    const application = await saveFakeApplicationCOE(appDataSource, {
-      institution,
-      institutionLocation,
-      disbursementValues: [
-        createFakeDisbursementValue(
-          DisbursementValueType.CanadaLoan,
-          "CSLF",
-          1000,
-          { disbursedAmountSubtracted: 100 },
-        ),
-      ],
-    });
-    application.currentAssessment.offering.actualTuitionCosts = 500;
-    application.currentAssessment.offering.programRelatedCosts = 500;
-    await offeringRepo.save(application.currentAssessment.offering);
-    const [fistDisbursementSchedule] =
-      application.currentAssessment.disbursementSchedules;
-    // Add a student overaward.
-    const overaward = createFakeDisbursementOveraward({
-      student: application.student,
-      disbursementSchedule: fistDisbursementSchedule,
-      studentAssessment: application.currentAssessment,
-    });
-    await disbursementOverawardRepo.save(overaward);
-    const endpoint = `/institutions/location/${institutionLocation.id}/confirmation-of-enrollment/disbursement-schedule/${fistDisbursementSchedule.id}`;
-    // Act/Assert
-    return request(app.getHttpServer())
-      .get(endpoint)
-      .auth(
-        await getInstitutionToken(InstitutionTokenTypes.CollegeCUser),
-        BEARER_AUTH_TYPE,
-      )
-      .expect(HttpStatus.OK)
-      .expect((response) => {
-        expect(response.body.maxTuitionRemittanceAllowed).toBe(900);
       });
   });
 
