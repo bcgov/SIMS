@@ -17,6 +17,8 @@
         />
         <v-text-field
           hide-details="auto"
+          hint="You can also include a negative value to remove a data entry error (e.g. -200)"
+          persistent-hint
           density="compact"
           label="Add the dollar amount"
           v-model="formModel.overawardValue"
