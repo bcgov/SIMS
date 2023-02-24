@@ -1,6 +1,6 @@
 <template>
   <v-card class="mb-5">
-    <v-container>
+    <v-container fluid>
       <body-header
         title="Overawards"
         subTitle="Overaward amounts generated due to application reassessments"
@@ -44,7 +44,7 @@
     </v-container>
   </v-card>
   <v-card class="mb-5">
-    <v-container>
+    <v-container fluid>
       <body-header
         title="Overaward deductions"
         subTitle="History of money that was deducted from one or more applications to pay back what is owed"
@@ -66,7 +66,7 @@
         </template></body-header
       >
       <content-group>
-        <toggle-content :toggled="!overawards.length">
+        <toggle-content :toggled="!overawardDeductions.length">
           <DataTable
             :value="overawardDeductions"
             class="p-m-4"
