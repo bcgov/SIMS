@@ -189,7 +189,13 @@ export class StudentService extends RecordDataModelService<Student> {
         await entityManager.getRepository(Student).save(student);
       }
 
-      await this.importSFASOverawards(student, studentSIN, entityManager);
+      await this.importSFASOverawards(
+        student.id,
+        student.user.lastName,
+        student.birthDate,
+        studentSIN,
+        entityManager,
+      );
 
       // Create the new entry in the student/user history/audit.
       const studentUser = new StudentUser();
@@ -578,25 +584,28 @@ export class StudentService extends RecordDataModelService<Student> {
   /**
    * Search for the student's SFAS data and update overaward values in
    * disbursement overawards table if any overaward values for BCSL or CSLF exist.
-   * @param student student object.
+   * @param studentId student id for the disbursement overaward record.
+   * @param lastName last name for sfas individuals.
    * @param sinNumber student's sin number.
    * @param entityManager entityManager to be used to perform the query.
    */
   async importSFASOverawards(
-    student: Student,
+    studentId: number,
+    lastName: string,
+    birthDate: string,
     sinNumber: string,
     entityManager: EntityManager,
-  ) {
+  ): Promise<void> {
     const sfasIndividual = await this.sfasIndividualService.getSFASOverawards(
-      student.user.lastName,
-      student.birthDate,
+      lastName,
+      birthDate,
       sinNumber,
     );
     const auditUser = await this.systemUsersService.systemUser();
 
     if (sfasIndividual?.bcslOveraward > 0) {
       await this.disbursementOverawardService.addLegacyOveraward(
-        student.id,
+        studentId,
         sfasIndividual.bcslOveraward,
         BC_STUDENT_LOAN_AWARD_CODE,
         auditUser.id,
@@ -605,7 +614,7 @@ export class StudentService extends RecordDataModelService<Student> {
     }
     if (sfasIndividual?.cslOveraward > 0) {
       await this.disbursementOverawardService.addLegacyOveraward(
-        student.id,
+        studentId,
         sfasIndividual.cslOveraward,
         CANADA_STUDENT_LOAN_FULL_TIME_AWARD_CODE,
         auditUser.id,

@@ -51,7 +51,7 @@ export class SFASIndividualService extends DataModelService<SFASIndividual> {
     birthDate: string,
     sin: string,
   ): Promise<SFASIndividual> {
-    const individual = await this.repo.findOne({
+    return await this.repo.findOne({
       select: {
         id: true,
         cslOveraward: true,
@@ -65,7 +65,5 @@ export class SFASIndividualService extends DataModelService<SFASIndividual> {
         birthDate: birthDate,
       },
     });
-
-    return individual;
   }
 }

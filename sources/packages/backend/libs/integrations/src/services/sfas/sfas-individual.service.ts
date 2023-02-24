@@ -84,19 +84,60 @@ export class SFASIndividualService
     await this.repo.save(individual, { reload: false, transaction: false });
   }
 
+  /**
+   * Bulk operation to update student id in SFAS individuals table after importing data from SFAS.
+   */
   async updateStudentId(): Promise<void> {
     await this.repo.manager.query(this.bulkUpdateStudentIdSQL);
   }
+
+  /**
+   * Bulk operation to update BCSL disbursement overawards with overawards from SFAS individuals data.
+   */
   async updateBCSLDisbursementOveraward(): Promise<void> {
     await this.repo.manager.query(this.bulkUpdateBCSLDisbursementOverawardSQL);
   }
+
+  /**
+   * Bulk operation to insert BCSL disbursement overawards with overawards from SFAS individuals data.
+   */
   async insertBCSLDisbursementOveraward(): Promise<void> {
     await this.repo.manager.query(this.bulkInsertBCSLDisbursementOverawardSQL);
   }
+
+  /**
+   * Bulk operation to update CSLF disbursement overawards with overawards from SFAS individuals data.
+   */
   async updateCSLFDisbursementOveraward(): Promise<void> {
     await this.repo.manager.query(this.bulkUpdateCSLFDisbursementOverawardSQL);
   }
+
+  /**
+   * Bulk operation to insert CSLF disbursement overawards with overawards from SFAS individuals data.
+   */
   async insertCSLFDisbursementOveraward(): Promise<void> {
     await this.repo.manager.query(this.bulkInsertCSLFDisbursementOverawardSQL);
+  }
+
+  async updateDisbursementOverawards(): Promise<void> {
+    await this.updateStudentId();
+    // Update BCSL and CSL overawards in parallel
+    const updateBCSLDisbursementOverawardPromise =
+      this.updateBCSLDisbursementOveraward();
+    const updateCSLFDisbursementOverawardPromise =
+      this.updateCSLFDisbursementOveraward();
+    await Promise.all([
+      updateBCSLDisbursementOverawardPromise,
+      updateCSLFDisbursementOverawardPromise,
+    ]);
+    // Insert BCSL and CSL overawards in parallel
+    const insertBCSLDisbursementOverawardPromise =
+      this.insertBCSLDisbursementOveraward();
+    const insertCSLFDisbursementOverawardPromise =
+      this.insertCSLFDisbursementOveraward();
+    await Promise.all([
+      insertBCSLDisbursementOverawardPromise,
+      insertCSLFDisbursementOverawardPromise,
+    ]);
   }
 }
