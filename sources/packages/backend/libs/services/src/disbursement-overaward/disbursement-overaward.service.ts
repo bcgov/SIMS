@@ -11,7 +11,6 @@ import {
   StudentOverawardBalance,
 } from "./disbursement-overaward.models";
 import { InjectRepository } from "@nestjs/typeorm";
-import { SystemUsersService } from "../system-users/system-users.service";
 
 /**
  * Service layer for Student Application disbursement schedules.
@@ -21,7 +20,6 @@ export class DisbursementOverawardService {
   constructor(
     @InjectRepository(DisbursementOveraward)
     private readonly disbursementOverawardRepo: Repository<DisbursementOveraward>,
-    private readonly systemUsersService: SystemUsersService,
   ) {}
 
   /**
@@ -89,19 +87,19 @@ export class DisbursementOverawardService {
     studentId: number,
     overawardValue: number,
     disbursementValueCode: string,
+    userId: number,
     entityManager?: EntityManager,
   ): Promise<void> {
     const repo =
       entityManager?.getRepository(DisbursementOveraward) ??
       this.disbursementOverawardRepo;
-    const auditUser = await this.systemUsersService.systemUser();
     await repo.insert({
       student: { id: studentId } as Student,
       disbursementValueCode,
       overawardValue,
       originType: DisbursementOverawardOriginType.LegacyOveraward,
-      creator: auditUser,
-    } as DisbursementOveraward);
+      creator: { id: userId },
+    });
   }
 
   /**

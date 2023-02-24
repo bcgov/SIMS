@@ -32,7 +32,8 @@ import { DisbursementOverawardService } from "@sims/services";
 import {
   BC_STUDENT_LOAN_AWARD_CODE,
   CANADA_STUDENT_LOAN_FULL_TIME_AWARD_CODE,
-} from "@sims/services/constants/disbursements.constants";
+} from "@sims/services/constants";
+import { SystemUsersService } from "@sims/services/system-users";
 
 @Injectable()
 export class StudentService extends RecordDataModelService<Student> {
@@ -40,6 +41,7 @@ export class StudentService extends RecordDataModelService<Student> {
     private readonly dataSource: DataSource,
     private readonly sfasIndividualService: SFASIndividualService,
     private readonly disbursementOverawardService: DisbursementOverawardService,
+    private readonly systemUsersService: SystemUsersService,
   ) {
     super(dataSource.getRepository(Student));
     this.logger.log("[Created]");
@@ -187,7 +189,7 @@ export class StudentService extends RecordDataModelService<Student> {
         await entityManager.getRepository(Student).save(student);
       }
 
-      await this.updateSFASOveraward(student, studentSIN, entityManager);
+      await this.importSFASOverawards(student, studentSIN, entityManager);
 
       // Create the new entry in the student/user history/audit.
       const studentUser = new StudentUser();
@@ -580,7 +582,7 @@ export class StudentService extends RecordDataModelService<Student> {
    * @param sinNumber student's sin number.
    * @param entityManager entityManager to be used to perform the query.
    */
-  async updateSFASOveraward(
+  async importSFASOverawards(
     student: Student,
     sinNumber: string,
     entityManager: EntityManager,
@@ -590,20 +592,23 @@ export class StudentService extends RecordDataModelService<Student> {
       student.birthDate,
       sinNumber,
     );
+    const auditUser = await this.systemUsersService.systemUser();
 
     if (sfasIndividual?.bcslOveraward > 0) {
-      this.disbursementOverawardService.addLegacyOveraward(
+      await this.disbursementOverawardService.addLegacyOveraward(
         student.id,
         sfasIndividual.bcslOveraward,
         BC_STUDENT_LOAN_AWARD_CODE,
+        auditUser.id,
         entityManager,
       );
     }
     if (sfasIndividual?.cslOveraward > 0) {
-      this.disbursementOverawardService.addLegacyOveraward(
+      await this.disbursementOverawardService.addLegacyOveraward(
         student.id,
         sfasIndividual.cslOveraward,
         CANADA_STUDENT_LOAN_FULL_TIME_AWARD_CODE,
+        auditUser.id,
         entityManager,
       );
     }
