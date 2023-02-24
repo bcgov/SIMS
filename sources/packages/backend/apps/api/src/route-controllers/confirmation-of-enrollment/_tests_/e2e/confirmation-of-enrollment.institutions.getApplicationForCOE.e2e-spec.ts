@@ -23,6 +23,8 @@ import {
   DisbursementOveraward,
   DisbursementValueType,
   EducationProgramOffering,
+  Institution,
+  InstitutionLocation,
 } from "@sims/sims-db";
 
 describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-getApplicationForCOE", () => {
@@ -30,6 +32,8 @@ describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-getApplicationForC
   let appDataSource: DataSource;
   let disbursementOverawardRepo: Repository<DisbursementOveraward>;
   let offeringRepo: Repository<EducationProgramOffering>;
+  let collegeC: Institution;
+  let collegeCLocation: InstitutionLocation;
 
   beforeAll(async () => {
     const { nestApplication, dataSource } = await createTestingAppModule();
@@ -37,18 +41,24 @@ describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-getApplicationForC
     appDataSource = dataSource;
     disbursementOverawardRepo = dataSource.getRepository(DisbursementOveraward);
     offeringRepo = dataSource.getRepository(EducationProgramOffering);
+
+    const { institution } = await getAuthRelatedEntities(
+      appDataSource,
+      InstitutionTokenTypes.CollegeCUser,
+    );
+    collegeC = institution;
+    collegeCLocation = createFakeInstitutionLocation(collegeC);
+    await authorizeUserTokenForLocation(
+      appDataSource,
+      InstitutionTokenTypes.CollegeCUser,
+      collegeCLocation,
+    );
   });
 
   it("Should throw NotFoundException when COE was not found under the location", async () => {
     // Arrange
     const disbursementScheduleId = 9999;
-    const location = createFakeInstitutionLocation();
-    await authorizeUserTokenForLocation(
-      appDataSource,
-      InstitutionTokenTypes.CollegeCUser,
-      location,
-    );
-    const endpoint = `/institutions/location/${location.id}/confirmation-of-enrollment/disbursement-schedule/${disbursementScheduleId}`;
+    const endpoint = `/institutions/location/${collegeCLocation.id}/confirmation-of-enrollment/disbursement-schedule/${disbursementScheduleId}`;
     // Act/Assert
     return request(app.getHttpServer())
       .get(endpoint)
@@ -67,19 +77,9 @@ describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-getApplicationForC
 
   it("Should get the COE with calculated maxTuitionRemittanceAllowed when the COE exists under the location", async () => {
     // Arrange
-    const { institution } = await getAuthRelatedEntities(
-      appDataSource,
-      InstitutionTokenTypes.CollegeCUser,
-    );
-    const institutionLocation = createFakeInstitutionLocation();
-    await authorizeUserTokenForLocation(
-      appDataSource,
-      InstitutionTokenTypes.CollegeCUser,
-      institutionLocation,
-    );
     const application = await saveFakeApplicationCOE(appDataSource, {
-      institution,
-      institutionLocation,
+      institution: collegeC,
+      institutionLocation: collegeCLocation,
       disbursementValues: [
         createFakeDisbursementValue(
           DisbursementValueType.CanadaLoan,
@@ -98,7 +98,7 @@ describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-getApplicationForC
     const offering = application.currentAssessment.offering;
     const program = offering.educationProgram;
     const user = application.currentAssessment.application.student.user;
-    const endpoint = `/institutions/location/${institutionLocation.id}/confirmation-of-enrollment/disbursement-schedule/${fistDisbursementSchedule.id}`;
+    const endpoint = `/institutions/location/${collegeCLocation.id}/confirmation-of-enrollment/disbursement-schedule/${fistDisbursementSchedule.id}`;
     // Act/Assert
     return request(app.getHttpServer())
       .get(endpoint)
@@ -124,12 +124,12 @@ describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-getApplicationForC
         applicationOfferingStudyDelivered: offering.offeringDelivered,
         applicationStudentName: getUserFullName(user),
         applicationNumber: application.applicationNumber,
-        applicationLocationName: institutionLocation.name,
+        applicationLocationName: collegeCLocation.name,
         applicationStatus: application.applicationStatus,
         applicationCOEStatus: COEStatus.required,
         applicationId: application.id,
         coeApprovalPeriodStatus: COEApprovalPeriodStatus.WithinApprovalPeriod,
-        applicationLocationId: institutionLocation.id,
+        applicationLocationId: collegeCLocation.id,
         applicationPIRStatus: null,
         disbursementDate: fistDisbursementSchedule.disbursementDate,
         applicationProgramCredential: program.credentialType,
@@ -144,19 +144,9 @@ describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-getApplicationForC
 
   it("Should return hasOverawardBalance as true when there is an overaward balance on the student account", async () => {
     // Arrange
-    const { institution } = await getAuthRelatedEntities(
-      appDataSource,
-      InstitutionTokenTypes.CollegeCUser,
-    );
-    const institutionLocation = createFakeInstitutionLocation();
-    await authorizeUserTokenForLocation(
-      appDataSource,
-      InstitutionTokenTypes.CollegeCUser,
-      institutionLocation,
-    );
     const application = await saveFakeApplicationCOE(appDataSource, {
-      institution,
-      institutionLocation,
+      institution: collegeC,
+      institutionLocation: collegeCLocation,
     });
     const [fistDisbursementSchedule] =
       application.currentAssessment.disbursementSchedules;
@@ -167,7 +157,7 @@ describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-getApplicationForC
       studentAssessment: application.currentAssessment,
     });
     await disbursementOverawardRepo.save(overaward);
-    const endpoint = `/institutions/location/${institutionLocation.id}/confirmation-of-enrollment/disbursement-schedule/${fistDisbursementSchedule.id}`;
+    const endpoint = `/institutions/location/${collegeCLocation.id}/confirmation-of-enrollment/disbursement-schedule/${fistDisbursementSchedule.id}`;
     // Act/Assert
     return request(app.getHttpServer())
       .get(endpoint)
