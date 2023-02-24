@@ -43,7 +43,7 @@
           :items-length="programAndCount.count"
           :loading="loading"
           :items-per-page="DEFAULT_PAGE_LIMIT"
-          @update:options="programOptions"
+          @update:options="paginationAndSortEvent"
         >
           <template v-slot:[`item.programStatus`]="{ item }">
             <status-chip-program
@@ -137,6 +137,19 @@ export default defineComponent({
       loading.value = false;
     };
 
+    // Sort and pagination for the datatable.
+    const paginationAndSortEvent = async (event: DataTableOptions) => {
+      currentPage.value = event.page - 1;
+      currentPageLimit.value = event.itemsPerPage;
+      const [sortByOptions] = event.sortBy;
+      await loadSummary(
+        event.page - 1,
+        event.itemsPerPage,
+        sortByOptions?.key,
+        sortByOptions?.order,
+      );
+    };
+
     const loadProgramDetails = async () => {
       locationDetails.value =
         await InstitutionService.shared.getInstitutionLocation(
@@ -180,19 +193,6 @@ export default defineComponent({
       });
     };
 
-    // Sort and pagination for the datatable.
-    const programOptions = async (event: DataTableOptions) => {
-      currentPage.value = event.page - 1;
-      currentPageLimit.value = event.itemsPerPage;
-      const [sortByOptions] = event.sortBy;
-      await loadSummary(
-        event.page - 1,
-        event.itemsPerPage,
-        sortByOptions?.key,
-        sortByOptions?.order,
-      );
-    };
-
     return {
       programAndCount,
       goToAddNewProgram,
@@ -201,12 +201,12 @@ export default defineComponent({
       DEFAULT_PAGE_LIMIT,
       DEFAULT_PAGE_NUMBER,
       PAGINATION_LIST,
+      paginationAndSortEvent,
       searchProgramTable,
       loading,
       searchBox,
       ProgramSummaryFields,
       locationName,
-      programOptions,
       ProgramSummaryHeaders,
     };
   },
