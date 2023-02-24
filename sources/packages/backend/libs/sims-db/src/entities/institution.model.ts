@@ -63,10 +63,16 @@ export class Institution extends RecordDataModel {
     name: "website",
   })
   website: string;
+
   @Column({
     name: "regulating_body",
   })
   regulatingBody: string;
+
+  @Column({
+    name: "regulating_body_other",
+  })
+  regulatingBodyOther: string;
 
   @Column({
     name: "established_date",
