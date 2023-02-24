@@ -381,5 +381,5 @@ strong {
 
 // Added FontAwesome as fallback.
 .mdi:before {
-  font-family: "Material Design Icons", "FontAwesome" !important;
+  font-family: "Material Design Icons", "FontAwesome", "BCSans", sans-serif !important;
 }
