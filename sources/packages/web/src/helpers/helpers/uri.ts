@@ -51,6 +51,8 @@ export const addPaginationOptions = (
 /**
  * Builds the query string parameters for pagination.
  * @param paginationOptions pagination options.
+ * @param enableZeroPage enabling this will make the page staring from 0 instead of 1.
+ * this is a temporary solution.
  * @returns the URL query string in a format like parameter1=value1&parameter2=value2.
  */
 export const getPaginationQueryString = (
