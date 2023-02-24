@@ -47,7 +47,7 @@ export class DenyConfirmationOfEnrollmentAPIInDTO {
 }
 
 export class ConfirmationOfEnrollmentAPIInDTO {
-  @Min(1)
+  @Min(0)
   @Max(MONEY_VALUE_FOR_UNKNOWN_MAX_VALUE)
   tuitionRemittanceAmount: number;
 }

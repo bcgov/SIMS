@@ -59,6 +59,66 @@ describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-confirmEnrollment"
     );
   });
 
+  it("Should allow the COE confirmation when the application is on Enrolment status and all the conditions are fulfilled.", async () => {
+    // Arrange
+    const application = await saveFakeApplicationCOE(appDataSource, {
+      institution: collegeC,
+      institutionLocation: collegeCLocation,
+    });
+    application.applicationStatus = ApplicationStatus.Enrolment;
+    await applicationRepo.save(application);
+    const [fistDisbursementSchedule] =
+      application.currentAssessment.disbursementSchedules;
+    const endpoint = `/institutions/location/${collegeCLocation.id}/confirmation-of-enrollment/disbursement-schedule/${fistDisbursementSchedule.id}/confirm`;
+    // Act/Assert
+    await request(app.getHttpServer())
+      .patch(endpoint)
+      .send({ tuitionRemittanceAmount: 1 })
+      .auth(
+        await getInstitutionToken(InstitutionTokenTypes.CollegeCUser),
+        BEARER_AUTH_TYPE,
+      )
+      .expect(HttpStatus.OK);
+    // Check if the application was updated as expected.
+    const updatedApplication = await applicationRepo.findOne({
+      select: { applicationStatus: true },
+      where: { id: application.id },
+    });
+    expect(updatedApplication.applicationStatus).toBe(
+      ApplicationStatus.Completed,
+    );
+  });
+
+  it("Should allow the COE confirmation when the application is on Completed status and all the conditions are fulfilled.", async () => {
+    // Arrange
+    const application = await saveFakeApplicationCOE(appDataSource, {
+      institution: collegeC,
+      institutionLocation: collegeCLocation,
+    });
+    application.applicationStatus = ApplicationStatus.Completed;
+    await applicationRepo.save(application);
+    const [fistDisbursementSchedule] =
+      application.currentAssessment.disbursementSchedules;
+    const endpoint = `/institutions/location/${collegeCLocation.id}/confirmation-of-enrollment/disbursement-schedule/${fistDisbursementSchedule.id}/confirm`;
+    // Act/Assert
+    await request(app.getHttpServer())
+      .patch(endpoint)
+      .send({ tuitionRemittanceAmount: 0 })
+      .auth(
+        await getInstitutionToken(InstitutionTokenTypes.CollegeCUser),
+        BEARER_AUTH_TYPE,
+      )
+      .expect(HttpStatus.OK);
+    // Check if the application was updated as expected.
+    const updatedApplication = await applicationRepo.findOne({
+      select: { applicationStatus: true },
+      where: { id: application.id },
+    });
+    expect(updatedApplication.applicationStatus).toBe(
+      ApplicationStatus.Completed,
+    );
+  });
+
   it("Should throw NotFoundException when application status is not valid.", async () => {
     // Arrange
     const application = await saveFakeApplicationCOE(appDataSource, {
@@ -122,13 +182,13 @@ describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-confirmEnrollment"
       });
   });
 
-  it("Should throw BadRequestException when the tuitionRemittanceAmount is not a positive number.", async () => {
+  it("Should throw BadRequestException when the tuitionRemittanceAmount is negative.", async () => {
     // Arrange
     const endpoint = `/institutions/location/${collegeCLocation.id}/confirmation-of-enrollment/disbursement-schedule/9999/confirm`;
     // Act/Assert
     return request(app.getHttpServer())
       .patch(endpoint)
-      .send({ tuitionRemittanceAmount: 0 })
+      .send({ tuitionRemittanceAmount: -1 })
       .auth(
         await getInstitutionToken(InstitutionTokenTypes.CollegeCUser),
         BEARER_AUTH_TYPE,
@@ -136,7 +196,7 @@ describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-confirmEnrollment"
       .expect(HttpStatus.BAD_REQUEST)
       .expect({
         statusCode: 400,
-        message: ["tuitionRemittanceAmount must not be less than 1"],
+        message: ["tuitionRemittanceAmount must not be less than 0"],
         error: "Bad Request",
       });
   });
