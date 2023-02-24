@@ -19,7 +19,10 @@ import {
   Institution,
   InstitutionLocation,
 } from "@sims/sims-db";
-import { COE_WINDOW } from "../../../../utilities";
+import {
+  COE_WINDOW,
+  MONEY_VALUE_FOR_UNKNOWN_MAX_VALUE,
+} from "../../../../utilities";
 import { addDays, getISODateOnlyString } from "@sims/utilities";
 
 describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-confirmEnrollment", () => {
@@ -114,6 +117,47 @@ describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-confirmEnrollment"
         error: "Unprocessable Entity",
       });
   });
+
+  it("Should throw BadRequestException when the tuitionRemittanceAmount is not a positive number.", async () => {
+    // Arrange
+    const endpoint = `/institutions/location/${collegeCLocation.id}/confirmation-of-enrollment/disbursement-schedule/9999/confirm`;
+    // Act/Assert
+    return request(app.getHttpServer())
+      .patch(endpoint)
+      .send({ tuitionRemittanceAmount: 0 })
+      .auth(
+        await getInstitutionToken(InstitutionTokenTypes.CollegeCUser),
+        BEARER_AUTH_TYPE,
+      )
+      .expect(HttpStatus.BAD_REQUEST)
+      .expect({
+        statusCode: 400,
+        message: ["tuitionRemittanceAmount must not be less than 1"],
+        error: "Bad Request",
+      });
+  });
+
+  it("Should throw BadRequestException when the tuitionRemittanceAmount is over the limit.", async () => {
+    // Arrange
+    const endpoint = `/institutions/location/${collegeCLocation.id}/confirmation-of-enrollment/disbursement-schedule/9999/confirm`;
+    // Act/Assert
+    return request(app.getHttpServer())
+      .patch(endpoint)
+      .send({ tuitionRemittanceAmount: MONEY_VALUE_FOR_UNKNOWN_MAX_VALUE + 1 })
+      .auth(
+        await getInstitutionToken(InstitutionTokenTypes.CollegeCUser),
+        BEARER_AUTH_TYPE,
+      )
+      .expect(HttpStatus.BAD_REQUEST)
+      .expect({
+        statusCode: 400,
+        message: ["tuitionRemittanceAmount must not be greater than 999999"],
+        error: "Bad Request",
+      });
+  });
+
+  // TODO: Should throw an exception when trying to confirm the second COE before the first one.
+  // TODO: Should throw an exception when the maxTuitionRemittance if over the limit.
 
   afterAll(async () => {
     await app?.close();
