@@ -6,7 +6,7 @@ import {
   AWARD_VALUE_CODE_LENGTH,
   MONEY_VALUE_FOR_UNKNOWN_MAX_VALUE,
 } from "../../../utilities";
-import { Length, Max, Min } from "class-validator";
+import { Length, Max, Min, NotEquals } from "class-validator";
 
 export class OverawardBalanceAPIOutDTO {
   overawardBalanceValues: Record<string, number>;
@@ -27,5 +27,6 @@ export class OverawardManualRecordAPIInDTO {
   awardValueCode: string;
   @Min(-MONEY_VALUE_FOR_UNKNOWN_MAX_VALUE)
   @Max(MONEY_VALUE_FOR_UNKNOWN_MAX_VALUE)
+  @NotEquals(0)
   overawardValue: number;
 }

@@ -46,6 +46,7 @@ import NoticeOfAssessment from "@/views/aest/NoticeOfAssessment.vue";
 import ApplicationExceptionsApproval from "@/views/aest/ApplicationExceptionsApproval.vue";
 import ViewScholasticStanding from "@/views/aest/student/ViewScholasticStanding.vue";
 import SINManagement from "@/views/aest/student/SINManagement.vue";
+import Overawards from "@/views/aest/student/Overawards.vue";
 import StudentApplicationExceptions from "@/views/aest/student/StudentApplicationExceptions.vue";
 import OfferingChangeRequests from "@/views/aest/institution/OfferingChangeRequests.vue";
 import ViewOfferingChangeRequest from "@/views/aest/institution/ViewOfferingChangeRequest.vue";
@@ -155,6 +156,15 @@ export const aestRoutes: Array<RouteRecordRaw> = [
             name: AESTRoutesConst.SIN_MANAGEMENT,
             props: true,
             component: SINManagement,
+            meta: {
+              clientType: ClientIdType.AEST,
+            },
+          },
+          {
+            path: AppRoutes.Overawards,
+            name: AESTRoutesConst.OVERAWARDS,
+            props: true,
+            component: Overawards,
             meta: {
               clientType: ClientIdType.AEST,
             },
