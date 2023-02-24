@@ -37,6 +37,9 @@ export class CreateInstitutionAPIInDTO {
   website: string;
   @IsNotEmpty()
   regulatingBody: string;
+  @ValidateIf((e) => e.regulatingBody === "other")
+  @IsNotEmpty()
+  regulatingBodyOther: string;
   @IsDateString()
   establishedDate: string;
   @IsPositive()

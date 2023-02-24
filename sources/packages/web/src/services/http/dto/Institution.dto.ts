@@ -98,6 +98,7 @@ export interface CreateInstitutionAPIInDTO {
   primaryEmail: string;
   website: string;
   regulatingBody: string;
+  regulatingBodyOther: string;
   establishedDate: string;
   primaryContactFirstName: string;
   primaryContactLastName: string;
