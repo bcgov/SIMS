@@ -77,12 +77,10 @@ export const ProgramSummaryHeaders = [
   },
   {
     title: "Program Name",
-    sortable: true,
     key: "programName",
   },
   {
     title: "Credential",
-    sortable: true,
     key: "credentialType",
   },
   {

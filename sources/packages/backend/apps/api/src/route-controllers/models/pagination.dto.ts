@@ -24,9 +24,8 @@ abstract class PaginationOptionsAPIInDTO {
   page: number;
   /**
    * Page size or records per page.
-   * -1 means all records.
    */
-  @Min(-1)
+  @Min(0)
   @Max(100)
   pageLimit: number;
   /**

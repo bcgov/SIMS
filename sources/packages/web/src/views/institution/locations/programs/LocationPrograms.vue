@@ -45,7 +45,7 @@
           :items-per-page="DEFAULT_PAGE_LIMIT"
           @update:options="paginationAndSortEvent"
         >
-          <template v-slot:item="{ item }">
+          <template #item="{ item }">
             <tr>
               <td data-cy="programCIP">{{ item.columns.cipCode }}</td>
               <td data-cy="programName">{{ item.columns.programName }}</td>
@@ -83,7 +83,7 @@ import { InstitutionService } from "@/services/InstitutionService";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import {
   DEFAULT_PAGE_LIMIT,
-  DEFAULT_PAGE_NUMBER,
+  DEFAULT_DATATABLE_PAGE_NUMBER,
   PAGINATION_LIST,
   ProgramSummaryFields,
   EducationProgramsSummary,
@@ -122,13 +122,13 @@ export default defineComponent({
 
     /**
      * Function to load program list and count for institution.
-     * @param page page number, if nothing passed then DEFAULT_PAGE_NUMBER.
+     * @param page page number, if nothing passed then DEFAULT_DATATABLE_PAGE_NUMBER.
      * @param pageCount page limit, if nothing passed then DEFAULT_PAGE_LIMIT.
      * @param sortField sort field, if nothing passed then api sorts with programStatus.
      * @param sortOrder sort oder, if nothing passed then DataTableSortByOrder.ASC.
      */
     const loadSummary = async (
-      page = DEFAULT_PAGE_NUMBER,
+      page = DEFAULT_DATATABLE_PAGE_NUMBER,
       pageCount = DEFAULT_PAGE_LIMIT,
       sortField?: string,
       sortOrder?: DataTableSortByOrder,
@@ -150,11 +150,11 @@ export default defineComponent({
 
     // Pagination sort event callback.
     const paginationAndSortEvent = async (event: DataTableOptions) => {
-      currentPage.value = event.page - 1;
+      currentPage.value = event.page;
       currentPageLimit.value = event.itemsPerPage;
       const [sortByOptions] = event.sortBy;
       await loadSummary(
-        event.page - 1,
+        event.page,
         event.itemsPerPage,
         sortByOptions?.key,
         sortByOptions?.order,
@@ -171,7 +171,7 @@ export default defineComponent({
     // Search program table.
     const searchProgramTable = async () => {
       await loadSummary(
-        currentPage.value ?? DEFAULT_PAGE_NUMBER,
+        currentPage.value ?? DEFAULT_DATATABLE_PAGE_NUMBER,
         currentPageLimit.value ?? DEFAULT_PAGE_LIMIT,
       );
     };
@@ -210,7 +210,7 @@ export default defineComponent({
       goToViewProgram,
       locationDetails,
       DEFAULT_PAGE_LIMIT,
-      DEFAULT_PAGE_NUMBER,
+      DEFAULT_DATATABLE_PAGE_NUMBER,
       PAGINATION_LIST,
       paginationAndSortEvent,
       searchProgramTable,

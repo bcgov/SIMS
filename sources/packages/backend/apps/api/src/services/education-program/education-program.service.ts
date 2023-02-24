@@ -268,7 +268,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
     // For getting total raw count before pagination.
     const sqlQuery = paginatedProgramQuery.getSql();
 
-    if (paginationOptions.pageLimit > 0) {
+    if (paginationOptions.pageLimit) {
       paginatedProgramQuery.limit(paginationOptions.pageLimit);
     }
 

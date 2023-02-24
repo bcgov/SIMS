@@ -55,7 +55,12 @@ export const addPaginationOptions = (
  */
 export const getPaginationQueryString = (
   paginationOptions: PaginationOptions,
+  enableZeroPage = false,
 ) => {
+  if (enableZeroPage) {
+    paginationOptions.page = paginationOptions.page - 1;
+  }
+
   const parameters: string[] = [];
   // Pagination parameters.
   parameters.push(`${PaginationParams.Page}=${paginationOptions.page}`);
