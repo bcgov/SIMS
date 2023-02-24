@@ -125,7 +125,7 @@ describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-getApplicationForC
           program.deliveredOnline,
           program.deliveredOnSite,
         ),
-        maxTuitionRemittanceAllowed: 0,
+        maxTuitionRemittanceAllowed: 1,
         hasOverawardBalance: false,
       });
   });
