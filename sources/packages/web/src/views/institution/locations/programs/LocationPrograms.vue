@@ -45,18 +45,30 @@
           :items-per-page="DEFAULT_PAGE_LIMIT"
           @update:options="paginationAndSortEvent"
         >
-          <template v-slot:[`item.programStatus`]="{ item }">
-            <status-chip-program
-              :status="item.value.programStatus"
-            ></status-chip-program>
-          </template>
-          <template v-slot:[`item.programId`]="{ item }">
-            <v-btn
-              color="primary"
-              @click="goToViewProgram(item.value.programId)"
-              data-cy="viewProgram"
-              >View</v-btn
-            >
+          <template v-slot:item="{ item }">
+            <tr>
+              <td data-cy="programCIP">{{ item.columns.cipCode }}</td>
+              <td data-cy="programName">{{ item.columns.programName }}</td>
+              <td data-cy="programCredential">
+                {{ item.columns.credentialType }}
+              </td>
+              <td data-cy="programStudyPeriods">
+                {{ item.columns.totalOfferings }}
+              </td>
+              <td data-cy="programStatus">
+                <status-chip-program
+                  :status="item.columns.programStatus"
+                ></status-chip-program>
+              </td>
+              <td>
+                <v-btn
+                  color="primary"
+                  @click="goToViewProgram(item.columns.programId)"
+                  data-cy="viewProgram"
+                  >View</v-btn
+                >
+              </td>
+            </tr>
           </template>
         </v-data-table-server>
       </toggle-content>
@@ -101,7 +113,6 @@ export default defineComponent({
     const locationDetails = ref();
     const loading = ref(false);
     const searchBox = ref("");
-
     const currentPage = ref();
     const currentPageLimit = ref();
 

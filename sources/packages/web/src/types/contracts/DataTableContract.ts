@@ -39,6 +39,7 @@ export enum DataTableSortOrder {
 }
 
 export const DEFAULT_PAGE_LIMIT = 10;
+// TODO: Remove DEFAULT_PAGE_NUMBER when all primevue datatable removed.
 export const DEFAULT_PAGE_NUMBER = 0;
 export const PAGINATION_LIST = [10, 20, 50];
 
@@ -144,9 +145,16 @@ export enum DataTableSortByOrder {
   ASC = "asc",
 }
 
-// Datatable options.
+/**
+ * DataTable options.
+ */
 export interface DataTableOptions {
   itemsPerPage: number;
   page: number;
   sortBy: { key: string; order: DataTableSortByOrder }[] | [];
 }
+
+/**
+ * Default DataTable page number.
+ */
+export const DEFAULT_DATATABLE_PAGE_NUMBER = 1;

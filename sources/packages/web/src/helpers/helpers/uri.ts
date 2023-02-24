@@ -7,7 +7,7 @@ import {
 } from "@/types";
 
 /**
- * todo: remove sortOrder: DataTableSortOrder when all primevue datatables are removed.
+ * @deprecated use getPaginationQueryString
  * Helper to append pagination sort and order to the url
  * @param url api url
  * @param sortField sortField
@@ -30,6 +30,7 @@ export function addSortOptions(
 }
 
 /**
+ * @deprecated use getPaginationQueryString
  * Utility to build the pagination query parameters.
  * @param url
  * @param page
@@ -56,7 +57,7 @@ export const getPaginationQueryString = (
   paginationOptions: PaginationOptions,
 ) => {
   const parameters: string[] = [];
-  // Paginations parameters.
+  // Pagination parameters.
   parameters.push(`${PaginationParams.Page}=${paginationOptions.page}`);
   parameters.push(
     `${PaginationParams.PageLimit}=${paginationOptions.pageLimit}`,
