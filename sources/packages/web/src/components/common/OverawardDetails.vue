@@ -97,7 +97,7 @@
               </template></Column
             >
             <Column field="awardValueCode" header="Award"></Column>
-            <Column field="overawardValue" header="Overaward amount">
+            <Column field="overawardValue" header="Amount deducted">
               <template #body="slotProps">
                 <span>
                   {{ formatCurrency(slotProps.data.overawardValue) }}
