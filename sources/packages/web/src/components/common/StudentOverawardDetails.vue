@@ -1,6 +1,6 @@
 <template>
   <v-card class="mb-5">
-    <v-container>
+    <v-container fluid>
       <body-header
         title="Overaward balances"
         subTitle="A balance of overawards broken down by award type"
