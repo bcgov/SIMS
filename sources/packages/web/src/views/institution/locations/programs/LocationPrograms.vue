@@ -137,7 +137,7 @@ export default defineComponent({
       loading.value = false;
     };
 
-    // Sort and pagination for the datatable.
+    // Pagination sort event callback.
     const paginationAndSortEvent = async (event: DataTableOptions) => {
       currentPage.value = event.page - 1;
       currentPageLimit.value = event.itemsPerPage;
