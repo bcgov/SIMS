@@ -10,6 +10,7 @@ SET
 FROM
 	sims.sfas_individuals sfas_individuals
 	INNER JOIN sims.users users ON users.last_name = 'system-user'
+	AND users.first_name IS NULL
 WHERE
 	disbursement_overawards.student_id = sfas_individuals.student_id
 	AND disbursement_overawards.origin_type = 'Legacy overaward'

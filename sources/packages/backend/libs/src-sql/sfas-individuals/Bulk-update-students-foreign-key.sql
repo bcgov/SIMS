@@ -15,4 +15,4 @@ FROM
 WHERE
     students.birth_date = sims.sfas_individuals.birth_date
     AND sin_validations.sin = sims.sfas_individuals.sin
-    AND lower(users.last_name) = lower(sims.sfas_individuals.last_name)
+    AND lower(users.last_name) = lower(sims.sfas_individuals.last_name);

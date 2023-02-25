@@ -20,6 +20,7 @@ FROM
 	sims.sfas_individuals sfas_individuals
 	INNER JOIN sims.students students ON sfas_individuals.student_id = students.id
 	INNER JOIN sims.users users ON users.last_name = 'system-user'
+	AND users.first_name IS NULL
 WHERE
 	NOT EXISTS (
 		SELECT
@@ -32,5 +33,3 @@ WHERE
 			AND disbursement_overawards.origin_type = 'Legacy overaward'
 	)
 	AND sfas_individuals.csl_overaward <> 0;
-
-;
