@@ -854,6 +854,7 @@ export class InstitutionService extends RecordDataModelService<Institution> {
       institution.primaryEmail = updateInstitution.primaryEmail;
       institution.website = updateInstitution.website;
       institution.regulatingBody = updateInstitution.regulatingBody;
+      institution.otherRegulatingBody = updateInstitution.otherRegulatingBody;
       institution.establishedDate = updateInstitution.establishedDate;
       institution.institutionType = {
         id: updateInstitution.institutionType,
