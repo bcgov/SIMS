@@ -6,6 +6,7 @@ export interface UpdateInstitution {
   primaryEmail?: string;
   website?: string;
   regulatingBody?: string;
+  otherRegulatingBody?: string;
   establishedDate?: string;
   institutionType?: number;
   primaryContactEmail: string;

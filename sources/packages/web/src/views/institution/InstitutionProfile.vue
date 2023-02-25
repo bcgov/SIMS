@@ -66,6 +66,7 @@ export default defineComponent({
     onMounted(async () => {
       institutionProfileModel.value =
         await InstitutionService.shared.getDetail();
+      console.log(institutionProfileModel.value);
     });
 
     return {
