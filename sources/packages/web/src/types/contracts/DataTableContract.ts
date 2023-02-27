@@ -39,6 +39,7 @@ export enum DataTableSortOrder {
 }
 
 export const DEFAULT_PAGE_LIMIT = 10;
+// TODO: Remove DEFAULT_PAGE_NUMBER when all primevue datatable removed.
 export const DEFAULT_PAGE_NUMBER = 0;
 export const PAGINATION_LIST = [10, 20, 50];
 
@@ -68,6 +69,37 @@ export enum ProgramSummaryFields {
   IsActive = "isActive",
 }
 
+export const ProgramSummaryHeaders = [
+  {
+    title: "CIP",
+    sortable: false,
+    key: "cipCode",
+  },
+  {
+    title: "Program Name",
+    key: "programName",
+  },
+  {
+    title: "Credential",
+    key: "credentialType",
+  },
+  {
+    title: "Study periods",
+    sortable: false,
+    key: "totalOfferings",
+  },
+  {
+    title: "Status",
+    sortable: false,
+    key: "programStatus",
+  },
+  {
+    title: "Action",
+    sortable: false,
+    key: "programId",
+  },
+];
+
 /**
  * Pagination Query param constants
  */
@@ -80,12 +112,13 @@ export enum PaginationParams {
 }
 
 /**
- * Pagination Options
+ * Pagination Options.
+ * todo: remove sortOrder: DataTableSortOrder when all primevue datatables are removed.
  */
 export interface PaginationOptions {
   searchCriteria?: string;
   sortField?: string;
-  sortOrder?: DataTableSortOrder;
+  sortOrder?: DataTableSortOrder | DataTableSortByOrder;
   page: number;
   pageLimit: number;
 }
@@ -101,3 +134,25 @@ export interface PageAndSortEvent {
   sortField: string;
   sortOrder: number;
 }
+
+/**
+ * Vuetify dataTable sort order.
+ */
+export enum DataTableSortByOrder {
+  DESC = "desc",
+  ASC = "asc",
+}
+
+/**
+ * DataTable options.
+ */
+export interface DataTableOptions {
+  itemsPerPage: number;
+  page: number;
+  sortBy: { key: string; order: DataTableSortByOrder }[] | [];
+}
+
+/**
+ * Default DataTable page number.
+ */
+export const DEFAULT_DATATABLE_PAGE_NUMBER = 1;

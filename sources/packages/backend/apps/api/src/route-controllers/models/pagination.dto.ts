@@ -26,7 +26,7 @@ abstract class PaginationOptionsAPIInDTO {
    * Page size or records per page.
    */
   @Min(1)
-  @Max(50)
+  @Max(100)
   pageLimit: number;
   /**
    * Criteria to be used to filter the records.

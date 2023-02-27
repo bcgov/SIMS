@@ -378,3 +378,8 @@ b,
 strong {
   font-weight: $font-weight-bold;
 }
+
+// Added FontAwesome as fallback.
+.fas:before {
+  font-family: "FontAwesome", $font-bold !important;
+}

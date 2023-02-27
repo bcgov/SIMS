@@ -1,4 +1,5 @@
 import {
+  DataTableSortByOrder,
   DataTableSortOrder,
   FieldSortOrder,
   PaginationOptions,
@@ -6,7 +7,8 @@ import {
 } from "@/types";
 
 /**
- * helper to append pagination sort and order to the url
+ * @deprecated use getPaginationQueryString
+ * Helper to append pagination sort and order to the url
  * @param url api url
  * @param sortField sortField
  * @param sortOrder sortOrder
@@ -15,7 +17,7 @@ import {
 export function addSortOptions(
   url: string,
   sortField?: string,
-  sortOrder?: DataTableSortOrder,
+  sortOrder?: DataTableSortOrder | DataTableSortByOrder,
 ): string {
   if (sortField && sortOrder) {
     const sortDBOrder =
@@ -28,6 +30,7 @@ export function addSortOptions(
 }
 
 /**
+ * @deprecated use getPaginationQueryString
  * Utility to build the pagination query parameters.
  * @param url
  * @param page
@@ -48,13 +51,20 @@ export const addPaginationOptions = (
 /**
  * Builds the query string parameters for pagination.
  * @param paginationOptions pagination options.
+ * @param enableZeroPage enabling this will make the page staring from 0 instead of 1,
+ * enableZeroPage is a temporary solution.
  * @returns the URL query string in a format like parameter1=value1&parameter2=value2.
  */
 export const getPaginationQueryString = (
   paginationOptions: PaginationOptions,
+  enableZeroPage = false,
 ) => {
+  if (enableZeroPage) {
+    paginationOptions.page = paginationOptions.page - 1;
+  }
+
   const parameters: string[] = [];
-  // Paginations parameters.
+  // Pagination parameters.
   parameters.push(`${PaginationParams.Page}=${paginationOptions.page}`);
   parameters.push(
     `${PaginationParams.PageLimit}=${paginationOptions.pageLimit}`,

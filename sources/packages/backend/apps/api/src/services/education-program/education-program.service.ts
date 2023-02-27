@@ -271,13 +271,11 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
     if (paginationOptions.pageLimit) {
       paginatedProgramQuery.limit(paginationOptions.pageLimit);
     }
-    if (paginationOptions.page) {
-      paginatedProgramQuery.offset(
-        paginationOptions.page * paginationOptions.pageLimit,
-      );
-    } else {
-      paginatedProgramQuery.limit(0);
-    }
+
+    paginatedProgramQuery.offset(
+      paginationOptions.page * paginationOptions.pageLimit,
+    );
+
     // sort
     if (paginationOptions.sortField && paginationOptions.sortOrder) {
       paginatedProgramQuery.orderBy(
