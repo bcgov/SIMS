@@ -124,6 +124,87 @@ describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-getCOESummary", ()
       });
   });
 
+  it("Should get the COE upcoming summary when there are 2 COEs available.", async () => {
+    // Arrange
+    const collegeCLocation = createFakeInstitutionLocation(collegeC);
+    await authorizeUserTokenForLocation(
+      appDataSource,
+      InstitutionTokenTypes.CollegeCUser,
+      collegeCLocation,
+    );
+    // Application A
+    const applicationA = await saveFakeApplicationCOE(
+      appDataSource,
+      {
+        institution: collegeC,
+        institutionLocation: collegeCLocation,
+      },
+      { createSecondDisbursement: true },
+    );
+    applicationA.applicationStatus = ApplicationStatus.Enrolment;
+    applicationA.applicationNumber = "GET_COE_01";
+    const [applicationAFirstSchedule, applicationASecondSchedule] =
+      applicationA.currentAssessment.disbursementSchedules;
+    applicationAFirstSchedule.coeStatus = COEStatus.required;
+    await applicationRepo.save(applicationA);
+    await disbursementScheduleRepo.save(applicationAFirstSchedule);
+    // Application B
+    const applicationB = await saveFakeApplicationCOE(
+      appDataSource,
+      {
+        institution: collegeC,
+        institutionLocation: collegeCLocation,
+      },
+      { createSecondDisbursement: true },
+    );
+    applicationB.applicationStatus = ApplicationStatus.Enrolment;
+    // Ensure the proper order by the application number.
+    applicationB.applicationNumber = "GET_COE_02";
+    const [applicationBFirstSchedule, applicationBSecondSchedule] =
+      applicationB.currentAssessment.disbursementSchedules;
+    applicationBFirstSchedule.coeStatus = COEStatus.required;
+    await applicationRepo.save(applicationB);
+    await disbursementScheduleRepo.save(applicationBFirstSchedule);
+
+    const endpoint = `/institutions/location/${collegeCLocation.id}/confirmation-of-enrollment/enrollmentPeriod/${EnrollmentPeriod.Upcoming}?page=0&pageLimit=10&sortField=applicationNumber&sortOrder=ASC`;
+    // Act/Assert
+    await request(app.getHttpServer())
+      .get(endpoint)
+      .auth(
+        await getInstitutionToken(InstitutionTokenTypes.CollegeCUser),
+        BEARER_AUTH_TYPE,
+      )
+      .expect(HttpStatus.OK)
+      .expect((response) => {
+        const paginatedResults =
+          response.body as PaginatedResultsAPIOutDTO<COESummaryAPIOutDTO>;
+        expect(paginatedResults.count).toBe(2);
+        const [firstCOE, secondCOE] = paginatedResults.results;
+        expect(firstCOE).toStrictEqual({
+          applicationNumber: applicationA.applicationNumber,
+          applicationId: applicationA.id,
+          studyStartPeriod:
+            applicationA.currentAssessment.offering.studyStartDate,
+          studyEndPeriod: applicationA.currentAssessment.offering.studyEndDate,
+          coeStatus: COEStatus.required,
+          fullName: getUserFullName(applicationA.student.user),
+          disbursementScheduleId: applicationASecondSchedule.id,
+          disbursementDate: applicationASecondSchedule.disbursementDate,
+        });
+        expect(secondCOE).toStrictEqual({
+          applicationNumber: applicationB.applicationNumber,
+          applicationId: applicationB.id,
+          studyStartPeriod:
+            applicationB.currentAssessment.offering.studyStartDate,
+          studyEndPeriod: applicationB.currentAssessment.offering.studyEndDate,
+          coeStatus: COEStatus.required,
+          fullName: getUserFullName(applicationB.student.user),
+          disbursementScheduleId: applicationBSecondSchedule.id,
+          disbursementDate: applicationBSecondSchedule.disbursementDate,
+        });
+      });
+  });
+
   afterAll(async () => {
     await app?.close();
   });
