@@ -26,8 +26,9 @@ import {
   Institution,
   InstitutionLocation,
 } from "@sims/sims-db";
+import { ClientTypeBaseRoute } from "../../../../types";
 
-describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-getApplicationForCOE", () => {
+describe(`${ClientTypeBaseRoute.Institution}-ConfirmationOfEnrollmentInstitutionsController(e2e)-getApplicationForCOE`, () => {
   let app: INestApplication;
   let appDataSource: DataSource;
   let disbursementOverawardRepo: Repository<DisbursementOveraward>;

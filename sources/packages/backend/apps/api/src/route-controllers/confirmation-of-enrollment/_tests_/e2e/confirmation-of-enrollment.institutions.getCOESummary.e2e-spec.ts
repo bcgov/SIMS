@@ -23,8 +23,9 @@ import { addDays, getISODateOnlyString } from "@sims/utilities";
 import { PaginatedResultsAPIOutDTO } from "../../../models/pagination.dto";
 import { COESummaryAPIOutDTO } from "../../models/confirmation-of-enrollment.dto";
 import { getUserFullName } from "../../../../utilities";
+import { ClientTypeBaseRoute } from "../../../../types";
 
-describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-getCOESummary", () => {
+describe(`${ClientTypeBaseRoute.Institution}-ConfirmationOfEnrollmentInstitutionsController(e2e)-getCOESummary`, () => {
   let app: INestApplication;
   let appDataSource: DataSource;
   let applicationRepo: Repository<Application>;

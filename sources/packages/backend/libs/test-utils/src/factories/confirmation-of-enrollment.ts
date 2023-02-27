@@ -53,6 +53,7 @@ export async function saveFakeApplicationCOE(
   const savedStudent = await studentRepo.save(createFakeStudent(savedUser));
   // Create and save application.
   const fakeApplication = createFakeApplication({ student: savedStudent });
+  fakeApplication.applicationStatus = ApplicationStatus.Enrolment;
   const savedApplication = await applicationRepo.save(fakeApplication);
   // Original assessment.
   const fakeOriginalAssessment = createFakeStudentAssessment({

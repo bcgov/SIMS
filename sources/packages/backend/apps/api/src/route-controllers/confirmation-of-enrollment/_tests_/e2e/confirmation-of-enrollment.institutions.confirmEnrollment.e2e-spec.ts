@@ -28,8 +28,9 @@ import {
   MONEY_VALUE_FOR_UNKNOWN_MAX_VALUE,
 } from "../../../../utilities";
 import { addDays, getISODateOnlyString } from "@sims/utilities";
+import { ClientTypeBaseRoute } from "../../../../types";
 
-describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-confirmEnrollment", () => {
+describe(`${ClientTypeBaseRoute.Institution}-ConfirmationOfEnrollmentInstitutionsController(e2e)-confirmEnrollment`, () => {
   let app: INestApplication;
   let appDataSource: DataSource;
   let applicationRepo: Repository<Application>;
