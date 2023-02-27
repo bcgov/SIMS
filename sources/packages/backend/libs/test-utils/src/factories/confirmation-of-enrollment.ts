@@ -28,6 +28,9 @@ import { createFakeUser } from "./user";
  * Create and save to the database a disbursement record with all the dependencies.
  * @param dataSource manages the repositories to save the data.
  * @param relations dependencies.
+ * @param options additional options:
+ * - `createSecondDisbursement` if provided and true creates a second disbursement,
+ * otherwise only one disbursement will be created.
  * @returns the created application and its dependencies including the disbursement
  * with the confirmation of enrollment data.
  */

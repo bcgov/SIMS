@@ -14,6 +14,7 @@ import { saveFakeApplicationCOE } from "@sims/test-utils/factories/confirmation-
 import {
   Application,
   ApplicationStatus,
+  DisbursementSchedule,
   Institution,
   InstitutionLocation,
 } from "@sims/sims-db";
@@ -26,12 +27,14 @@ describe(`${ClientTypeBaseRoute.AEST}-ConfirmationOfEnrollmentInstitutionsContro
   let applicationRepo: Repository<Application>;
   let collegeC: Institution;
   let collegeCLocation: InstitutionLocation;
+  let disbursementScheduleRepo: Repository<DisbursementSchedule>;
 
   beforeAll(async () => {
     const { nestApplication, dataSource } = await createTestingAppModule();
     app = nestApplication;
     appDataSource = dataSource;
     applicationRepo = dataSource.getRepository(Application);
+    disbursementScheduleRepo = dataSource.getRepository(DisbursementSchedule);
     const locationRepo = dataSource.getRepository(InstitutionLocation);
     const { institution } = await getAuthRelatedEntities(
       appDataSource,
@@ -54,6 +57,7 @@ describe(`${ClientTypeBaseRoute.AEST}-ConfirmationOfEnrollmentInstitutionsContro
     fistDisbursementSchedule.disbursementDate = getISODateOnlyString(
       addDays(1, offeringEndDate),
     );
+    await disbursementScheduleRepo.save(fistDisbursementSchedule);
     const endpoint = `/aest/confirmation-of-enrollment/disbursement-schedule/${fistDisbursementSchedule.id}/confirm`;
     // Act/Assert
     await request(app.getHttpServer())

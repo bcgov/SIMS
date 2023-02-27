@@ -66,7 +66,6 @@ describe(`${ClientTypeBaseRoute.Institution}-ConfirmationOfEnrollmentInstitution
       institution: collegeC,
       institutionLocation: collegeCLocation,
     });
-    application.applicationStatus = ApplicationStatus.Enrolment;
     await applicationRepo.save(application);
     const [fistDisbursementSchedule] =
       application.currentAssessment.disbursementSchedules;

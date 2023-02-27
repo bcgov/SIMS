@@ -18,7 +18,8 @@ describe(`${ClientTypeBaseRoute.Institution}-ConfirmationOfEnrollmentInstitution
 
   it("Should get COE denial reasons static list.", async () => {
     // Arrange
-    const endpoint = `/institutions/location/confirmation-of-enrollment/denial-reasons`;
+    const endpoint =
+      "/institutions/location/confirmation-of-enrollment/denial-reasons";
     // Act/Assert
     await request(app.getHttpServer())
       .get(endpoint)
