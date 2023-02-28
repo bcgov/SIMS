@@ -22,6 +22,7 @@ import { InstitutionTokenTypes } from "./institution-token-helpers";
 
 /**
  * Get the institution and user associated with the institution user token type.
+ * This data is currently created on DB by the test-db-seeding prior to E2E tests execution.
  * @param dataSource allow access to the database.
  * @param userType type of the institution user.
  * @returns institution and user associated with the institution user token type.
