@@ -18,7 +18,6 @@ export function createFakeEducationProgram(relations?: {
   program.credentialType = "credentialType";
   program.cipCode = "cipCode";
   program.nocCode = "nocCode";
-  program.sabcCode = "sabcCode";
   program.fieldOfStudyCode = 99;
   program.regulatoryBody = "regulatoryBody";
   program.deliveredOnSite = false;

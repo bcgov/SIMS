@@ -33,13 +33,10 @@ jobs:
       E2E_TEST_STUDENT_USERNAME: student_e2e_test
       E2E_TEST_STUDENT_PASSWORD: ${{ secrets.TEST_STUDENT_PASSWORD }}
       E2E_TEST_AEST_BUSINESS_ADMINISTRATORS_USER: ministry-user-aest-business-administrators@e2e-tests
-      E2E_TEST_AEST_BUSINESS_ADMINISTRATORS_PASSWORD: ${{ secrets.E2E_TEST_PASSWORD }}
       E2E_TEST_AEST_OPERATIONS_USER: ministry-user-aest-operations@e2e-tests
-      E2E_TEST_AEST_OPERATIONS_PASSWORD: ${{ secrets.E2E_TEST_PASSWORD }}
       E2E_TEST_AEST_OPERATIONS_ADMINISTRATORS_USER: ministry-user-aest-operations-administrators@e2e-tests
-      E2E_TEST_AEST_OPERATIONS_ADMINISTRATORS_PASSWORD: ${{ secrets.E2E_TEST_PASSWORD }}
       E2E_TEST_AEST_MOF_OPERATIONS_USER: ministry-user-mof-operations@e2e-tests
-      E2E_TEST_AEST_MOF_OPERATIONS_PASSWORD: ${{ secrets.E2E_TEST_PASSWORD }}
+      E2E_TEST_PASSWORD: ${{ secrets.E2E_TEST_PASSWORD }}
     steps:
       # Checkout the PR branch.
       - name: Checkout Target Branch

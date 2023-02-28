@@ -14,7 +14,6 @@
   "setupFiles": [
     "<rootDir>/../../env-setup.js"
   ],
-  "collectCoverage": true,
   "moduleNameMapper": {
     "@sims/sims-db/(.*)": "<rootDir>/../../libs/sims-db/src/$1",
     "@sims/sims-db": "<rootDir>/../../libs/sims-db/src",

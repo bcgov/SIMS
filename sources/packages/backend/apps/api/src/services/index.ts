@@ -23,6 +23,7 @@ export * from "./supporting-user/supporting-user.service";
 export * from "./restriction/restriction.service";
 export * from "./restriction/student-restriction.service";
 export * from "./disbursement-schedule/disbursement-schedule-service";
+export * from "./disbursement-schedule/disbursement-schedule.models";
 export * from "./restriction/institution-restriction.service";
 export * from "./designation-agreement/designation-agreement.service";
 export * from "./sin-validation/sin-validation.service";
