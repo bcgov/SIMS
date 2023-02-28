@@ -35,7 +35,7 @@ export interface InstitutionFormModel {
   primaryEmail: string;
   website: string;
   regulatingBody: string;
-  otherRegulatingBody: string;
+  otherRegulatingBody?: string;
   establishedDate: string;
   primaryContactFirstName: string;
   primaryContactLastName: string;

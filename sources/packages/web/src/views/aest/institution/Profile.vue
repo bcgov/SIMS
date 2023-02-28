@@ -58,7 +58,7 @@
               :propertyValue="institutionProfileDetail.regulatingBody"
             />
             <title-value
-              v-if="institutionProfileDetail.regulatingBody === `other`"
+              v-if="institutionProfileDetail.regulatingBody === 'other'"
               propertyTitle="Other regulating body"
               :propertyValue="institutionProfileDetail.otherRegulatingBody"
             />
