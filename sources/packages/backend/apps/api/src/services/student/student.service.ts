@@ -195,6 +195,7 @@ export class StudentService extends RecordDataModelService<Student> {
         student.user.lastName,
         student.birthDate,
         studentSIN,
+        student.user.id,
         entityManager,
       );
 
@@ -588,6 +589,7 @@ export class StudentService extends RecordDataModelService<Student> {
    * @param studentId student id for the disbursement overaward record.
    * @param lastName last name for sfas individuals.
    * @param sinNumber student's sin number.
+   * @param auditUserId user that should be considered the one that is causing the changes.
    * @param entityManager entityManager to be used to perform the query.
    */
   async importSFASOverawards(
@@ -595,6 +597,7 @@ export class StudentService extends RecordDataModelService<Student> {
     lastName: string,
     birthDate: string,
     sinNumber: string,
+    auditUserId: number,
     entityManager: EntityManager,
   ): Promise<void> {
     const sfasIndividual = await this.sfasIndividualService.getSFASOverawards(
@@ -602,14 +605,13 @@ export class StudentService extends RecordDataModelService<Student> {
       birthDate,
       sinNumber,
     );
-    const auditUser = await this.systemUsersService.systemUser();
     const overawards: DisbursementOveraward[] = [];
     if (sfasIndividual?.bcslOveraward > 0) {
       overawards.push({
         student: { id: studentId } as Student,
         disbursementValueCode: BC_STUDENT_LOAN_AWARD_CODE,
         overawardValue: sfasIndividual.bcslOveraward,
-        creator: { id: auditUser.id } as User,
+        creator: { id: auditUserId } as User,
       } as DisbursementOveraward);
     }
     if (sfasIndividual?.cslOveraward > 0) {
@@ -617,7 +619,7 @@ export class StudentService extends RecordDataModelService<Student> {
         student: { id: studentId } as Student,
         disbursementValueCode: CANADA_STUDENT_LOAN_FULL_TIME_AWARD_CODE,
         overawardValue: sfasIndividual.cslOveraward,
-        creator: { id: auditUser.id },
+        creator: { id: auditUserId },
       } as DisbursementOveraward);
     }
     await this.disbursementOverawardService.addLegacyOverawards(

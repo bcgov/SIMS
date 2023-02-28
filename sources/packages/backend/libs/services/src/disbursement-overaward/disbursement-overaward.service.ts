@@ -78,10 +78,7 @@ export class DisbursementOverawardService {
 
   /**
    * Adds a legacy overaward value to disbursement overawards table.
-   * @param studentId id of the student.
-   * @param overawardValue overaward value.
-   * @param disbursementValueCode disbursement value code.
-   * @param userId user id for the user that is creating the record.
+   * @param overawards disbursement overaward array to be saved.
    * @param entityManager entity manager used to perform the query.
    */
   async addLegacyOverawards(
