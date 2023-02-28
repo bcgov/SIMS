@@ -70,7 +70,7 @@ export class Institution extends RecordDataModel {
   regulatingBody: string;
 
   /**
-   * Other regulating body
+   * Other institution regulating body.
    */
   @Column({
     name: "other_regulating_body",

@@ -110,6 +110,7 @@ export class InstitutionProfileAPIInDTO extends InstitutionContactAPIInDTO {
   regulatingBody: string;
   @ValidateIf((e) => e.regulatingBody === "other")
   @IsNotEmpty()
+  @MaxLength(OTHER_REGULATING_BODY_MAX_LENGTH)
   otherRegulatingBody: string;
   @IsDateString()
   establishedDate: string;
