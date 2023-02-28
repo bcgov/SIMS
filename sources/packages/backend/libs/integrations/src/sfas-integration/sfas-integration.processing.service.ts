@@ -143,7 +143,7 @@ export class SFASIntegrationProcessingService {
         try {
           await this.sfasIndividualService.updateDisbursementOverawards();
         } catch (error) {
-          const logMessage = `Error while updating SFAS overawards.`;
+          const logMessage = "Error while updating SFAS overawards.";
           result.summary.push(logMessage);
           result.success = false;
           this.logger.error(logMessage);
