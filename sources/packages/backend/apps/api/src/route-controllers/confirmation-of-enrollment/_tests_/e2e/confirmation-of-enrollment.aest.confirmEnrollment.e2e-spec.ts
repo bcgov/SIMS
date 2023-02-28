@@ -50,15 +50,15 @@ describe(`${ClientTypeBaseRoute.AEST}-ConfirmationOfEnrollmentInstitutionsContro
       institution: collegeC,
       institutionLocation: collegeCLocation,
     });
-    const [fistDisbursementSchedule] =
+    const [firstDisbursementSchedule] =
       application.currentAssessment.disbursementSchedules;
     const offeringEndDate = application.currentAssessment.offering.studyEndDate;
     // Adjust the COE to be outside the window.
-    fistDisbursementSchedule.disbursementDate = getISODateOnlyString(
+    firstDisbursementSchedule.disbursementDate = getISODateOnlyString(
       addDays(1, offeringEndDate),
     );
-    await disbursementScheduleRepo.save(fistDisbursementSchedule);
-    const endpoint = `/aest/confirmation-of-enrollment/disbursement-schedule/${fistDisbursementSchedule.id}/confirm`;
+    await disbursementScheduleRepo.save(firstDisbursementSchedule);
+    const endpoint = `/aest/confirmation-of-enrollment/disbursement-schedule/${firstDisbursementSchedule.id}/confirm`;
     // Act/Assert
     await request(app.getHttpServer())
       .patch(endpoint)

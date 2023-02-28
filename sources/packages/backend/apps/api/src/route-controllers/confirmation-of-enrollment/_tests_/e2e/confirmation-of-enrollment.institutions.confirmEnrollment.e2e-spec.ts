@@ -67,9 +67,9 @@ describe(`${ClientTypeBaseRoute.Institution}-ConfirmationOfEnrollmentInstitution
       institutionLocation: collegeCLocation,
     });
     await applicationRepo.save(application);
-    const [fistDisbursementSchedule] =
+    const [firstDisbursementSchedule] =
       application.currentAssessment.disbursementSchedules;
-    const endpoint = `/institutions/location/${collegeCLocation.id}/confirmation-of-enrollment/disbursement-schedule/${fistDisbursementSchedule.id}/confirm`;
+    const endpoint = `/institutions/location/${collegeCLocation.id}/confirmation-of-enrollment/disbursement-schedule/${firstDisbursementSchedule.id}/confirm`;
     // Act/Assert
     await request(app.getHttpServer())
       .patch(endpoint)
@@ -97,9 +97,9 @@ describe(`${ClientTypeBaseRoute.Institution}-ConfirmationOfEnrollmentInstitution
     });
     application.applicationStatus = ApplicationStatus.Completed;
     await applicationRepo.save(application);
-    const [fistDisbursementSchedule] =
+    const [firstDisbursementSchedule] =
       application.currentAssessment.disbursementSchedules;
-    const endpoint = `/institutions/location/${collegeCLocation.id}/confirmation-of-enrollment/disbursement-schedule/${fistDisbursementSchedule.id}/confirm`;
+    const endpoint = `/institutions/location/${collegeCLocation.id}/confirmation-of-enrollment/disbursement-schedule/${firstDisbursementSchedule.id}/confirm`;
     // Act/Assert
     await request(app.getHttpServer())
       .patch(endpoint)
@@ -127,9 +127,9 @@ describe(`${ClientTypeBaseRoute.Institution}-ConfirmationOfEnrollmentInstitution
     });
     application.applicationStatus = ApplicationStatus.Assessment;
     await applicationRepo.save(application);
-    const [fistDisbursementSchedule] =
+    const [firstDisbursementSchedule] =
       application.currentAssessment.disbursementSchedules;
-    const endpoint = `/institutions/location/${collegeCLocation.id}/confirmation-of-enrollment/disbursement-schedule/${fistDisbursementSchedule.id}/confirm`;
+    const endpoint = `/institutions/location/${collegeCLocation.id}/confirmation-of-enrollment/disbursement-schedule/${firstDisbursementSchedule.id}/confirm`;
     // Act/Assert
     return request(app.getHttpServer())
       .patch(endpoint)
@@ -153,18 +153,18 @@ describe(`${ClientTypeBaseRoute.Institution}-ConfirmationOfEnrollmentInstitution
       institution: collegeC,
       institutionLocation: collegeCLocation,
     });
-    const [fistDisbursementSchedule] =
+    const [firstDisbursementSchedule] =
       application.currentAssessment.disbursementSchedules;
     const disbursementDate = addDays(COE_WINDOW + 1);
     // Adjust disbursementDate and studyEndDate to force the COE to be out of the valid COE window.
-    fistDisbursementSchedule.disbursementDate =
+    firstDisbursementSchedule.disbursementDate =
       getISODateOnlyString(disbursementDate);
-    await disbursementScheduleRepo.save(fistDisbursementSchedule);
+    await disbursementScheduleRepo.save(firstDisbursementSchedule);
     application.currentAssessment.offering.studyEndDate = getISODateOnlyString(
       addDays(30, disbursementDate),
     );
     await offeringRepo.save(application.currentAssessment.offering);
-    const endpoint = `/institutions/location/${collegeCLocation.id}/confirmation-of-enrollment/disbursement-schedule/${fistDisbursementSchedule.id}/confirm`;
+    const endpoint = `/institutions/location/${collegeCLocation.id}/confirmation-of-enrollment/disbursement-schedule/${firstDisbursementSchedule.id}/confirm`;
     // Act/Assert
     return request(app.getHttpServer())
       .patch(endpoint)
@@ -268,13 +268,13 @@ describe(`${ClientTypeBaseRoute.Institution}-ConfirmationOfEnrollmentInstitution
         ),
       ],
     });
-    const [fistDisbursementSchedule] =
+    const [firstDisbursementSchedule] =
       application.currentAssessment.disbursementSchedules;
     // Adjust offering values for maxTuitionRemittanceAllowed.
     application.currentAssessment.offering.actualTuitionCosts = 500;
     application.currentAssessment.offering.programRelatedCosts = 500;
     await offeringRepo.save(application.currentAssessment.offering);
-    const endpoint = `/institutions/location/${collegeCLocation.id}/confirmation-of-enrollment/disbursement-schedule/${fistDisbursementSchedule.id}/confirm`;
+    const endpoint = `/institutions/location/${collegeCLocation.id}/confirmation-of-enrollment/disbursement-schedule/${firstDisbursementSchedule.id}/confirm`;
     // Act/Assert
     return request(app.getHttpServer())
       .patch(endpoint)

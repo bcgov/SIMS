@@ -94,12 +94,12 @@ describe(`${ClientTypeBaseRoute.Institution}-ConfirmationOfEnrollmentInstitution
     application.currentAssessment.offering.actualTuitionCosts = 500;
     application.currentAssessment.offering.programRelatedCosts = 500;
     await offeringRepo.save(application.currentAssessment.offering);
-    const [fistDisbursementSchedule] =
+    const [firstDisbursementSchedule] =
       application.currentAssessment.disbursementSchedules;
     const offering = application.currentAssessment.offering;
     const program = offering.educationProgram;
     const user = application.currentAssessment.application.student.user;
-    const endpoint = `/institutions/location/${collegeCLocation.id}/confirmation-of-enrollment/disbursement-schedule/${fistDisbursementSchedule.id}`;
+    const endpoint = `/institutions/location/${collegeCLocation.id}/confirmation-of-enrollment/disbursement-schedule/${firstDisbursementSchedule.id}`;
     // Act/Assert
     return request(app.getHttpServer())
       .get(endpoint)
@@ -149,16 +149,16 @@ describe(`${ClientTypeBaseRoute.Institution}-ConfirmationOfEnrollmentInstitution
       institution: collegeC,
       institutionLocation: collegeCLocation,
     });
-    const [fistDisbursementSchedule] =
+    const [firstDisbursementSchedule] =
       application.currentAssessment.disbursementSchedules;
     // Add a student overaward.
     const overaward = createFakeDisbursementOveraward({
       student: application.student,
-      disbursementSchedule: fistDisbursementSchedule,
+      disbursementSchedule: firstDisbursementSchedule,
       studentAssessment: application.currentAssessment,
     });
     await disbursementOverawardRepo.save(overaward);
-    const endpoint = `/institutions/location/${collegeCLocation.id}/confirmation-of-enrollment/disbursement-schedule/${fistDisbursementSchedule.id}`;
+    const endpoint = `/institutions/location/${collegeCLocation.id}/confirmation-of-enrollment/disbursement-schedule/${firstDisbursementSchedule.id}`;
     // Act/Assert
     return request(app.getHttpServer())
       .get(endpoint)
