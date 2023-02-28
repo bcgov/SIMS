@@ -34,6 +34,6 @@ WHERE
 		WHERE
 			disbursement_overawards.student_id = students.id
 			AND disbursement_overawards.disbursement_value_code = $1::text
-			AND disbursement_overawards.origin_type :: text = $2::text
+			AND disbursement_overawards.origin_type::text = $2::text
 	)
 	AND sfas_individuals.bcsl_overaward <> 0;
