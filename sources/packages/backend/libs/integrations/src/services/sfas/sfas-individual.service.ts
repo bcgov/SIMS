@@ -96,7 +96,7 @@ export class SFASIndividualService
   /**
    * Bulk operation to update disbursement overawards with overawards from SFAS individuals data.
    */
-  async updateDisbursementOveraward(
+  private async updateDisbursementOveraward(
     disbursementValueCode: string,
     originType: DisbursementOverawardOriginType,
     auditUserName: string,
@@ -111,7 +111,7 @@ export class SFASIndividualService
   /**
    * Bulk operation to insert disbursement overawards with overawards from SFAS individuals data.
    */
-  async insertDisbursementOveraward(
+  private async insertDisbursementOveraward(
     disbursementValueCode: string,
     originType: DisbursementOverawardOriginType,
     auditUserName: string,
@@ -123,6 +123,9 @@ export class SFASIndividualService
     ]);
   }
 
+  /**
+   * Updates and inserts new disbursement overaward balances from sfas to disbursement overawards table.
+   */
   async updateDisbursementOverawards(): Promise<void> {
     await this.updateStudentId();
     // Update BCSL and CSL overawards in parallel

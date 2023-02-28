@@ -17,7 +17,7 @@ FROM
 	AND users.first_name IS NULL
 WHERE
 	disbursement_overawards.student_id = sfas_individuals.student_id
-	AND disbursement_overawards.origin_type::text = $2::text
+	AND disbursement_overawards.origin_type = $2::sims.disbursement_overaward_origin_types
 	AND disbursement_overawards.disbursement_value_code = $3::text
 	AND disbursement_overawards.overaward_value <> CASE
 		$3::text

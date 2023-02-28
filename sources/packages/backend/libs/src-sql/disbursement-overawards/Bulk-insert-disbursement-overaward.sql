@@ -34,6 +34,10 @@ WHERE
 		WHERE
 			disbursement_overawards.student_id = students.id
 			AND disbursement_overawards.disbursement_value_code = $1::text
-			AND disbursement_overawards.origin_type::text = $2::text
+			AND disbursement_overawards.origin_type = $2::sims.disbursement_overaward_origin_types
 	)
-	AND sfas_individuals.bcsl_overaward <> 0;
+	AND CASE
+		$1::text
+		WHEN 'BCSL' THEN sfas_individuals.bcsl_overaward <> 0
+		WHEN 'CSLF' THEN sfas_individuals.csl_overaward <> 0
+	END;
