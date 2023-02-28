@@ -1,0 +1,17 @@
+"Web Portal":
+  - sources/packages/web/**/*
+
+SIMS-Api:
+  - sources/packages/backend/api/**/*
+
+"Camunda Workers":
+  - sources/packages/backend/workers/**/*
+
+"Queue Consumers":
+  - sources/packages/backend/queue-consumers/**/*
+
+DB:
+  - sources/packages/backend/db-migrations/**/*
+
+Devops:
+  - sources/devops/**/*
