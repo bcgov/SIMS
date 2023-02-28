@@ -10,6 +10,7 @@ import {
   SINValidation,
   StudentAccountApplication,
   StudentUser,
+  DisbursementOveraward,
 } from "@sims/sims-db";
 import { DataSource, EntityManager } from "typeorm";
 import { StudentUserToken } from "../../auth/userToken.interface";
@@ -602,24 +603,26 @@ export class StudentService extends RecordDataModelService<Student> {
       sinNumber,
     );
     const auditUser = await this.systemUsersService.systemUser();
-
+    const overawards: DisbursementOveraward[] = [];
     if (sfasIndividual?.bcslOveraward > 0) {
-      await this.disbursementOverawardService.addLegacyOveraward(
-        studentId,
-        sfasIndividual.bcslOveraward,
-        BC_STUDENT_LOAN_AWARD_CODE,
-        auditUser.id,
-        entityManager,
-      );
+      overawards.push({
+        student: { id: studentId } as Student,
+        disbursementValueCode: BC_STUDENT_LOAN_AWARD_CODE,
+        overawardValue: sfasIndividual.bcslOveraward,
+        creator: { id: auditUser.id } as User,
+      } as DisbursementOveraward);
     }
     if (sfasIndividual?.cslOveraward > 0) {
-      await this.disbursementOverawardService.addLegacyOveraward(
-        studentId,
-        sfasIndividual.cslOveraward,
-        CANADA_STUDENT_LOAN_FULL_TIME_AWARD_CODE,
-        auditUser.id,
-        entityManager,
-      );
+      overawards.push({
+        student: { id: studentId } as Student,
+        disbursementValueCode: CANADA_STUDENT_LOAN_FULL_TIME_AWARD_CODE,
+        overawardValue: sfasIndividual.cslOveraward,
+        creator: { id: auditUser.id },
+      } as DisbursementOveraward);
     }
+    await this.disbursementOverawardService.addLegacyOverawards(
+      overawards as DisbursementOveraward[],
+      entityManager,
+    );
   }
 }

@@ -1,10 +1,19 @@
 import { Injectable } from "@nestjs/common";
 import { DataSource } from "typeorm";
-import { DataModelService, SFASIndividual } from "@sims/sims-db";
+import {
+  DataModelService,
+  DisbursementOverawardOriginType,
+  SFASIndividual,
+} from "@sims/sims-db";
 import { SFASIndividualRecord } from "../../sfas-integration/sfas-files/sfas-individual-record";
 import { getUTC, getISODateOnlyString, getSQLFileData } from "@sims/utilities";
 import { SFASDataImporter } from "./sfas-data-importer";
 import { SFASRecordIdentification } from "../../sfas-integration/sfas-files/sfas-record-identification";
+import {
+  BC_STUDENT_LOAN_AWARD_CODE,
+  CANADA_STUDENT_LOAN_FULL_TIME_AWARD_CODE,
+} from "@sims/services/constants";
+import { SYSTEM_USER_USER_NAME } from "@sims/services/system-users/system-users.models";
 
 const SFAS_INDIVIDUALS_RAW_SQL_FOLDER = "sfas-individuals";
 const DISBURSEMENT_OVERAWARD_RAW_SQL_FOLDER = "disbursement-overawards";
@@ -18,30 +27,23 @@ export class SFASIndividualService
   implements SFASDataImporter
 {
   private readonly bulkUpdateStudentIdSQL: string;
-  private readonly bulkUpdateBCSLDisbursementOverawardSQL: string;
-  private readonly bulkUpdateCSLFDisbursementOverawardSQL: string;
-  private readonly bulkInsertBCSLDisbursementOverawardSQL: string;
-  private readonly bulkInsertCSLFDisbursementOverawardSQL: string;
+  private readonly bulkUpdateDisbursementOverawardSQL: string;
+  private readonly bulkInsertDisbursementOverawardSQL: string;
+
   constructor(dataSource: DataSource) {
     super(dataSource.getRepository(SFASIndividual));
     this.bulkUpdateStudentIdSQL = getSQLFileData(
       "Bulk-update-students-foreign-key.sql",
       SFAS_INDIVIDUALS_RAW_SQL_FOLDER,
     );
-    this.bulkUpdateBCSLDisbursementOverawardSQL = getSQLFileData(
-      "Bulk-update-bcsl-disbursement-overaward.sql",
+
+    this.bulkUpdateDisbursementOverawardSQL = getSQLFileData(
+      "Bulk-update-disbursement-overaward.sql",
       DISBURSEMENT_OVERAWARD_RAW_SQL_FOLDER,
     );
-    this.bulkUpdateCSLFDisbursementOverawardSQL = getSQLFileData(
-      "Bulk-update-cslf-disbursement-overaward.sql",
-      DISBURSEMENT_OVERAWARD_RAW_SQL_FOLDER,
-    );
-    this.bulkInsertBCSLDisbursementOverawardSQL = getSQLFileData(
-      "Bulk-insert-bcsl-disbursement-overaward.sql",
-      DISBURSEMENT_OVERAWARD_RAW_SQL_FOLDER,
-    );
-    this.bulkInsertCSLFDisbursementOverawardSQL = getSQLFileData(
-      "Bulk-insert-cslf-disbursement-overaward.sql",
+
+    this.bulkInsertDisbursementOverawardSQL = getSQLFileData(
+      "Bulk-insert-disbursement-overaward.sql",
       DISBURSEMENT_OVERAWARD_RAW_SQL_FOLDER,
     );
   }
@@ -92,49 +94,67 @@ export class SFASIndividualService
   }
 
   /**
-   * Bulk operation to update BCSL disbursement overawards with overawards from SFAS individuals data.
+   * Bulk operation to update disbursement overawards with overawards from SFAS individuals data.
    */
-  async updateBCSLDisbursementOveraward(): Promise<void> {
-    await this.repo.manager.query(this.bulkUpdateBCSLDisbursementOverawardSQL);
+  async updateDisbursementOveraward(
+    disbursementValueCode: string,
+    originType: DisbursementOverawardOriginType,
+    auditUserName: string,
+  ): Promise<void> {
+    await this.repo.manager.query(this.bulkUpdateDisbursementOverawardSQL, [
+      disbursementValueCode,
+      originType,
+      auditUserName,
+    ]);
   }
 
   /**
-   * Bulk operation to insert BCSL disbursement overawards with overawards from SFAS individuals data.
+   * Bulk operation to insert disbursement overawards with overawards from SFAS individuals data.
    */
-  async insertBCSLDisbursementOveraward(): Promise<void> {
-    await this.repo.manager.query(this.bulkInsertBCSLDisbursementOverawardSQL);
-  }
-
-  /**
-   * Bulk operation to update CSLF disbursement overawards with overawards from SFAS individuals data.
-   */
-  async updateCSLFDisbursementOveraward(): Promise<void> {
-    await this.repo.manager.query(this.bulkUpdateCSLFDisbursementOverawardSQL);
-  }
-
-  /**
-   * Bulk operation to insert CSLF disbursement overawards with overawards from SFAS individuals data.
-   */
-  async insertCSLFDisbursementOveraward(): Promise<void> {
-    await this.repo.manager.query(this.bulkInsertCSLFDisbursementOverawardSQL);
+  async insertDisbursementOveraward(
+    disbursementValueCode: string,
+    originType: DisbursementOverawardOriginType,
+    auditUserName: string,
+  ): Promise<void> {
+    await this.repo.manager.query(this.bulkInsertDisbursementOverawardSQL, [
+      disbursementValueCode,
+      originType,
+      auditUserName,
+    ]);
   }
 
   async updateDisbursementOverawards(): Promise<void> {
     await this.updateStudentId();
     // Update BCSL and CSL overawards in parallel
     const updateBCSLDisbursementOverawardPromise =
-      this.updateBCSLDisbursementOveraward();
+      this.updateDisbursementOveraward(
+        SYSTEM_USER_USER_NAME,
+        DisbursementOverawardOriginType.LegacyOveraward,
+        BC_STUDENT_LOAN_AWARD_CODE,
+      );
     const updateCSLFDisbursementOverawardPromise =
-      this.updateCSLFDisbursementOveraward();
+      this.updateDisbursementOveraward(
+        SYSTEM_USER_USER_NAME,
+        DisbursementOverawardOriginType.LegacyOveraward,
+        CANADA_STUDENT_LOAN_FULL_TIME_AWARD_CODE,
+      );
     await Promise.all([
       updateBCSLDisbursementOverawardPromise,
       updateCSLFDisbursementOverawardPromise,
     ]);
     // Insert BCSL and CSL overawards in parallel
     const insertBCSLDisbursementOverawardPromise =
-      this.insertBCSLDisbursementOveraward();
+      this.insertDisbursementOveraward(
+        BC_STUDENT_LOAN_AWARD_CODE,
+        DisbursementOverawardOriginType.LegacyOveraward,
+        SYSTEM_USER_USER_NAME,
+      );
     const insertCSLFDisbursementOverawardPromise =
-      this.insertCSLFDisbursementOveraward();
+      this.insertDisbursementOveraward(
+        CANADA_STUDENT_LOAN_FULL_TIME_AWARD_CODE,
+        DisbursementOverawardOriginType.LegacyOveraward,
+        SYSTEM_USER_USER_NAME,
+      );
     await Promise.all([
       insertBCSLDisbursementOverawardPromise,
       insertCSLFDisbursementOverawardPromise,

@@ -84,23 +84,14 @@ export class DisbursementOverawardService {
    * @param userId user id for the user that is creating the record.
    * @param entityManager entity manager used to perform the query.
    */
-  async addLegacyOveraward(
-    studentId: number,
-    overawardValue: number,
-    disbursementValueCode: string,
-    userId: number,
+  async addLegacyOverawards(
+    overawards: DisbursementOveraward[],
     entityManager?: EntityManager,
   ): Promise<void> {
     const repo =
       entityManager?.getRepository(DisbursementOveraward) ??
       this.disbursementOverawardRepo;
-    await repo.insert({
-      student: { id: studentId } as Student,
-      disbursementValueCode,
-      overawardValue,
-      originType: DisbursementOverawardOriginType.LegacyOveraward,
-      creator: { id: userId },
-    });
+    await repo.insert(overawards);
   }
 
   /**
