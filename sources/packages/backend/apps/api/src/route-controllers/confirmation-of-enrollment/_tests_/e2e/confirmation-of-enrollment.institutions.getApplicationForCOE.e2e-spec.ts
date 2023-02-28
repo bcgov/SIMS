@@ -132,7 +132,7 @@ describe(`${ClientTypeBaseRoute.Institution}-ConfirmationOfEnrollmentInstitution
         coeApprovalPeriodStatus: COEApprovalPeriodStatus.WithinApprovalPeriod,
         applicationLocationId: collegeCLocation.id,
         applicationPIRStatus: null,
-        disbursementDate: fistDisbursementSchedule.disbursementDate,
+        disbursementDate: firstDisbursementSchedule.disbursementDate,
         applicationProgramCredential: program.credentialType,
         applicationProgramDelivery: deliveryMethod(
           program.deliveredOnline,
