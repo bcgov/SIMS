@@ -621,7 +621,7 @@ export class StudentService extends RecordDataModelService<Student> {
       } as DisbursementOveraward);
     }
     await this.disbursementOverawardService.addLegacyOverawards(
-      overawards as DisbursementOveraward[],
+      overawards,
       entityManager,
     );
   }
