@@ -196,7 +196,7 @@ export class StudentService extends RecordDataModelService<Student> {
         student.user.lastName,
         student.birthDate,
         studentSIN,
-        student.user.id,
+        auditUserId,
         entityManager,
       );
 
