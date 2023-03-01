@@ -723,7 +723,7 @@
                   "tableView": true,
                   "inputType": "text",
                   "inputMask": "",
-                  "label": "Other Institution Regulating Body",
+                  "label": "Other institution regulating body",
                   "key": "otherRegulatingBody",
                   "placeholder": "",
                   "prefix": "",

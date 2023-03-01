@@ -1186,7 +1186,7 @@
                   "tableView": true,
                   "inputType": "text",
                   "inputMask": "",
-                  "label": "Other Regulating Body",
+                  "label": "Other regulating body",
                   "key": "otherRegulatingBody",
                   "placeholder": "",
                   "prefix": "",

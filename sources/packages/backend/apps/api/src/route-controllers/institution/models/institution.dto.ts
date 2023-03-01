@@ -19,8 +19,7 @@ import {
   OPERATING_NAME_MAX_LENGTH,
   LEGAL_OPERATING_NAME_MAX_LENGTH,
 } from "@sims/sims-db";
-
-const OTHER_REGULATING_BODY_MAX_LENGTH = 100;
+import { OTHER_REGULATING_BODY_MAX_LENGTH } from "../../../constants";
 
 /**
  * DTO for institution creation by the institution user during the on board process

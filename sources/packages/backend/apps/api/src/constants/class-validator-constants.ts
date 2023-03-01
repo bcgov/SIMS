@@ -9,3 +9,8 @@ export const REPORT_NAME_MAX_LENGTH = 100;
  ** largest possible search text.
  */
 export const PAGINATION_SEARCH_MAX_LENGTH = 200;
+
+/**
+ * Max length value constant for Other institution regulating body
+ */
+export const OTHER_REGULATING_BODY_MAX_LENGTH = 100;
