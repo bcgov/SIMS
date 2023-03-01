@@ -23,7 +23,7 @@ export async function saveFakeInstitutionNotes(
   auditUser?: User,
 ): Promise<Note[]> {
   if (!notes.length) {
-    return notes;
+    return [];
   }
   const userRepo = dataSource.getRepository(User);
   const noteRepo = dataSource.getRepository(Note);
@@ -32,13 +32,13 @@ export async function saveFakeInstitutionNotes(
   for (const note of notes) {
     note.creator = user;
   }
-  await noteRepo.save(notes);
+  const persistedNotes = await noteRepo.save(notes);
   await institutionRepo
     .createQueryBuilder()
     .relation(Institution, "notes")
     .of({ id: institutionId } as Institution)
-    .add(notes);
-  return notes;
+    .add(persistedNotes);
+  return persistedNotes;
 }
 
 export async function saveFakeStudentNotes(
@@ -48,7 +48,7 @@ export async function saveFakeStudentNotes(
   auditUser?: User,
 ): Promise<Note[]> {
   if (!notes.length) {
-    return notes;
+    return [];
   }
   const userRepo = dataSource.getRepository(User);
   const noteRepo = dataSource.getRepository(Note);
@@ -57,11 +57,11 @@ export async function saveFakeStudentNotes(
   for (const note of notes) {
     note.creator = user;
   }
-  await noteRepo.save(notes);
+  const persistedNotes = await noteRepo.save(notes);
   await studentRepo
     .createQueryBuilder()
     .relation(Student, "notes")
     .of({ id: studentId } as Student)
-    .add(notes);
-  return notes;
+    .add(persistedNotes);
+  return persistedNotes;
 }
