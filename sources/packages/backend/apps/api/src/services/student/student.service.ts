@@ -11,6 +11,7 @@ import {
   StudentAccountApplication,
   StudentUser,
   DisbursementOveraward,
+  DisbursementOverawardOriginType,
 } from "@sims/sims-db";
 import { DataSource, EntityManager } from "typeorm";
 import { StudentUserToken } from "../../auth/userToken.interface";
@@ -611,6 +612,7 @@ export class StudentService extends RecordDataModelService<Student> {
         student: { id: studentId } as Student,
         disbursementValueCode: BC_STUDENT_LOAN_AWARD_CODE,
         overawardValue: sfasIndividual.bcslOveraward,
+        originType: DisbursementOverawardOriginType.LegacyOveraward,
         creator: { id: auditUserId } as User,
       } as DisbursementOveraward);
     }
@@ -619,6 +621,7 @@ export class StudentService extends RecordDataModelService<Student> {
         student: { id: studentId } as Student,
         disbursementValueCode: CANADA_STUDENT_LOAN_FULL_TIME_AWARD_CODE,
         overawardValue: sfasIndividual.cslOveraward,
+        originType: DisbursementOverawardOriginType.LegacyOveraward,
         creator: { id: auditUserId },
       } as DisbursementOveraward);
     }
