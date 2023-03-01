@@ -14,8 +14,10 @@ describe("DisbursementScheduleService-getCOEApprovalPeriodStatus", () => {
   beforeAll(async () => {
     const dataSource = {} as DataSource;
     dataSource.getRepository = jest.fn();
-    let sequenceService: SequenceControlService;
-    let notificationActionsService: NotificationActionsService;
+    const sequenceService: SequenceControlService =
+      {} as SequenceControlService;
+    const notificationActionsService: NotificationActionsService =
+      {} as NotificationActionsService;
     service = new DisbursementScheduleService(
       dataSource,
       sequenceService,
@@ -27,6 +29,7 @@ describe("DisbursementScheduleService-getCOEApprovalPeriodStatus", () => {
     // Arrange
     const disbursementDate = undefined;
     const studyEndDate = new Date();
+
     // Act and Assert.
     expect(() => {
       service.getCOEApprovalPeriodStatus(disbursementDate, studyEndDate);
@@ -39,6 +42,7 @@ describe("DisbursementScheduleService-getCOEApprovalPeriodStatus", () => {
     // Arrange
     const disbursementDate = undefined;
     const studyEndDate = undefined;
+
     // Act and Assert.
     expect(() => {
       service.getCOEApprovalPeriodStatus(disbursementDate, studyEndDate);
