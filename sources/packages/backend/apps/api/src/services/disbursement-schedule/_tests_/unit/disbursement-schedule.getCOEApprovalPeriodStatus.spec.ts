@@ -14,10 +14,8 @@ describe("DisbursementScheduleService-getCOEApprovalPeriodStatus", () => {
   beforeAll(async () => {
     const dataSource = {} as DataSource;
     dataSource.getRepository = jest.fn();
-    const sequenceService: SequenceControlService =
-      {} as SequenceControlService;
-    const notificationActionsService: NotificationActionsService =
-      {} as NotificationActionsService;
+    const sequenceService = {} as SequenceControlService;
+    const notificationActionsService = {} as NotificationActionsService;
     service = new DisbursementScheduleService(
       dataSource,
       sequenceService,
@@ -25,7 +23,7 @@ describe("DisbursementScheduleService-getCOEApprovalPeriodStatus", () => {
     );
   });
 
-  it("Should throw error when disbursementDate is undefined", () => {
+  it("Should throw an error when the disbursement date is undefined.", () => {
     // Arrange
     const disbursementDate = undefined;
     const studyEndDate = new Date();
@@ -38,7 +36,7 @@ describe("DisbursementScheduleService-getCOEApprovalPeriodStatus", () => {
     );
   });
 
-  it("Should throw error when both disbursementDate and studyEndDate is undefined", () => {
+  it("Should throw an error when both disbursement date and studyEndDate are undefined.", () => {
     // Arrange
     const disbursementDate = undefined;
     const studyEndDate = undefined;
@@ -51,10 +49,27 @@ describe("DisbursementScheduleService-getCOEApprovalPeriodStatus", () => {
     );
   });
 
-  it(`Should return "${COEApprovalPeriodStatus.WithinApprovalPeriod}" when enrolment now within eligible approval period.`, () => {
+  it(`Should return "${COEApprovalPeriodStatus.WithinApprovalPeriod}" when enrolment now is the first day of (within) the allowed approval period.`, () => {
     // Arrange
-    const disbursementDate = addDays(1, new Date());
+    const disbursementDate = addDays(COE_WINDOW, new Date());
     const studyEndDate = addDays(60, new Date());
+
+    // Act
+    const coeApprovalPeriodStatus = service.getCOEApprovalPeriodStatus(
+      disbursementDate,
+      studyEndDate,
+    );
+
+    // Assert.
+    expect(coeApprovalPeriodStatus).toEqual(
+      COEApprovalPeriodStatus.WithinApprovalPeriod,
+    );
+  });
+
+  it(`Should return "${COEApprovalPeriodStatus.WithinApprovalPeriod}" when enrolment now is the last day of (within) the allowed approval period.`, () => {
+    // Arrange
+    const disbursementDate = addDays(COE_WINDOW, new Date());
+    const studyEndDate = new Date();
 
     // Act
     const coeApprovalPeriodStatus = service.getCOEApprovalPeriodStatus(
