@@ -19,6 +19,7 @@ import {
   OPERATING_NAME_MAX_LENGTH,
   LEGAL_OPERATING_NAME_MAX_LENGTH,
 } from "@sims/sims-db";
+import { OTHER_REGULATING_BODY_MAX_LENGTH } from "../../../constants";
 
 /**
  * DTO for institution creation by the institution user during the on board process
@@ -37,6 +38,10 @@ export class CreateInstitutionAPIInDTO {
   website: string;
   @IsNotEmpty()
   regulatingBody: string;
+  @ValidateIf((e) => e.regulatingBody === "other")
+  @IsNotEmpty()
+  @MaxLength(OTHER_REGULATING_BODY_MAX_LENGTH)
+  otherRegulatingBody: string;
   @IsDateString()
   establishedDate: string;
   @IsPositive()
@@ -102,6 +107,10 @@ export class InstitutionProfileAPIInDTO extends InstitutionContactAPIInDTO {
   website: string;
   @IsNotEmpty()
   regulatingBody: string;
+  @ValidateIf((e) => e.regulatingBody === "other")
+  @IsNotEmpty()
+  @MaxLength(OTHER_REGULATING_BODY_MAX_LENGTH)
+  otherRegulatingBody: string;
   @IsDateString()
   establishedDate: string;
   @IsPositive()
@@ -114,6 +123,7 @@ export class InstitutionProfileAPIOutDTO extends InstitutionContactAPIOutDTO {
   primaryEmail: string;
   website: string;
   regulatingBody: string;
+  otherRegulatingBody?: string;
   establishedDate: string;
   institutionType: number;
 }

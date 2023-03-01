@@ -43,6 +43,7 @@ export class InstitutionControllerService {
       primaryEmail: institutionDetail.primaryEmail,
       website: institutionDetail.website,
       regulatingBody: institutionDetail.regulatingBody,
+      otherRegulatingBody: institutionDetail.otherRegulatingBody,
       institutionType: institutionDetail.institutionType.id,
       institutionTypeName: institutionDetail.institutionType.name,
       establishedDate: institutionDetail.establishedDate,
