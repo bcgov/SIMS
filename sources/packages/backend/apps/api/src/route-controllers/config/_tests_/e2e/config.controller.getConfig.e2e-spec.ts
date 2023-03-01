@@ -18,6 +18,7 @@ describe("ConfigController(e2e)-getConfig", () => {
   };
 
   beforeAll(async () => {
+    jest.resetModules();
     process.env = {
       ...originalEnv,
       ...fakeEnvVariables,

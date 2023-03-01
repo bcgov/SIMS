@@ -42,6 +42,10 @@ describe("NoteAESTController(e2e)-addInstitutionNote", () => {
         aestGroup: AESTGroups.MOFOperations,
         expectedHttpStatus: HttpStatus.FORBIDDEN,
       },
+      {
+        aestGroup: undefined, // Read only user.
+        expectedHttpStatus: HttpStatus.FORBIDDEN,
+      },
     ];
     // Act/Assert
     for (const permission of expectedPermissions) {
