@@ -27,6 +27,7 @@ import {
 import { RolesGuard } from "./guards/roles.guard";
 import { ConfigModule } from "@sims/utilities/config";
 import { SFASIndividualService } from "@sims/services/sfas";
+import { DisbursementOverawardService } from "@sims/services";
 
 const jwtModule = JwtModule.register({
   publicKey: KeycloakConfig.PEM_PublicKey,
@@ -45,6 +46,7 @@ const jwtModule = JwtModule.register({
     SFASIndividualService,
     SINValidationService,
     DesignationAgreementLocationService,
+    DisbursementOverawardService,
     {
       provide: APP_GUARD,
       useClass: JwtAuthGuard,

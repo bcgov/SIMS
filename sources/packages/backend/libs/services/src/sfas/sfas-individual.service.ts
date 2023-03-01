@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { DataSource } from "typeorm";
+import { DataSource, Raw } from "typeorm";
 import { DataModelService, SFASIndividual } from "@sims/sims-db";
 
 /**
@@ -37,5 +37,33 @@ export class SFASIndividualService extends DataModelService<SFASIndividual> {
       .getOne();
 
     return individual?.pdStatus;
+  }
+
+  /**
+   * Search for a record in SFAS table using student details.
+   * @param lastName student's last name.
+   * @param birthDate student's birth date.
+   * @param sin student's sin.
+   * @returns SFAS individual details.
+   */
+  async getSFASOverawards(
+    lastName: string,
+    birthDate: string,
+    sin: string,
+  ): Promise<SFASIndividual> {
+    return await this.repo.findOne({
+      select: {
+        id: true,
+        cslOveraward: true,
+        bcslOveraward: true,
+      },
+      where: {
+        lastName: Raw((alias) => `LOWER(${alias}) = LOWER(:lastName)`, {
+          lastName,
+        }),
+        sin: sin,
+        birthDate: birthDate,
+      },
+    });
   }
 }

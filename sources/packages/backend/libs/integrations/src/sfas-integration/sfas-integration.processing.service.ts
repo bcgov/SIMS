@@ -139,8 +139,19 @@ export class SFASIntegrationProcessingService {
       await Promise.all(promises);
       this.logger.log("Records imported.");
 
-      // Delete the file only if it was processed with success.
       if (result.success) {
+        try {
+          await this.sfasIndividualService.updateDisbursementOverawards();
+        } catch (error) {
+          const logMessage =
+            "Error while updating overawards balances imported from SFAS.";
+          result.summary.push(logMessage);
+          result.success = false;
+          this.logger.error(logMessage);
+          this.logger.error(error);
+        }
+
+        // Delete the file only if it was processed with success.
         try {
           await this.sfasService.deleteFile(remoteFilePath);
         } catch (error) {

@@ -10,6 +10,8 @@ import {
   SINValidation,
   StudentAccountApplication,
   StudentUser,
+  DisbursementOveraward,
+  DisbursementOverawardOriginType,
 } from "@sims/sims-db";
 import { DataSource, EntityManager } from "typeorm";
 import { StudentUserToken } from "../../auth/userToken.interface";
@@ -28,12 +30,20 @@ import {
   STUDENT_ACCOUNT_CREATION_MULTIPLES_SIN_FOUND,
   STUDENT_SIN_CONSENT_NOT_CHECKED,
 } from "../../constants";
+import { DisbursementOverawardService } from "@sims/services";
+import {
+  BC_STUDENT_LOAN_AWARD_CODE,
+  CANADA_STUDENT_LOAN_FULL_TIME_AWARD_CODE,
+} from "@sims/services/constants";
+import { SystemUsersService } from "@sims/services/system-users";
 
 @Injectable()
 export class StudentService extends RecordDataModelService<Student> {
   constructor(
     private readonly dataSource: DataSource,
     private readonly sfasIndividualService: SFASIndividualService,
+    private readonly disbursementOverawardService: DisbursementOverawardService,
+    private readonly systemUsersService: SystemUsersService,
   ) {
     super(dataSource.getRepository(Student));
     this.logger.log("[Created]");
@@ -180,6 +190,16 @@ export class StudentService extends RecordDataModelService<Student> {
         student.sinValidation = sinValidation;
         await entityManager.getRepository(Student).save(student);
       }
+
+      await this.importSFASOverawards(
+        student.id,
+        student.user.lastName,
+        student.birthDate,
+        studentSIN,
+        auditUserId,
+        entityManager,
+      );
+
       // Create the new entry in the student/user history/audit.
       const studentUser = new StudentUser();
       studentUser.user = user;
@@ -563,4 +583,51 @@ export class StudentService extends RecordDataModelService<Student> {
 
   @InjectLogger()
   logger: LoggerService;
+
+  /**
+   * Search for the student's SFAS data and update overaward values in
+   * disbursement overawards table if any overaward values for BCSL or CSLF exist.
+   * @param studentId student id for the disbursement overaward record.
+   * @param lastName last name for sfas individuals.
+   * @param sinNumber student's sin number.
+   * @param auditUserId user that should be considered the one that is causing the changes.
+   * @param entityManager entityManager to be used to perform the query.
+   */
+  async importSFASOverawards(
+    studentId: number,
+    lastName: string,
+    birthDate: string,
+    sinNumber: string,
+    auditUserId: number,
+    entityManager: EntityManager,
+  ): Promise<void> {
+    const sfasIndividual = await this.sfasIndividualService.getSFASOverawards(
+      lastName,
+      birthDate,
+      sinNumber,
+    );
+    const overawards: DisbursementOveraward[] = [];
+    if (sfasIndividual?.bcslOveraward !== 0) {
+      overawards.push({
+        student: { id: studentId } as Student,
+        disbursementValueCode: BC_STUDENT_LOAN_AWARD_CODE,
+        overawardValue: sfasIndividual.bcslOveraward,
+        originType: DisbursementOverawardOriginType.LegacyOveraward,
+        creator: { id: auditUserId } as User,
+      } as DisbursementOveraward);
+    }
+    if (sfasIndividual?.cslOveraward !== 0) {
+      overawards.push({
+        student: { id: studentId } as Student,
+        disbursementValueCode: CANADA_STUDENT_LOAN_FULL_TIME_AWARD_CODE,
+        overawardValue: sfasIndividual.cslOveraward,
+        originType: DisbursementOverawardOriginType.LegacyOveraward,
+        creator: { id: auditUserId },
+      } as DisbursementOveraward);
+    }
+    await this.disbursementOverawardService.addLegacyOverawards(
+      overawards,
+      entityManager,
+    );
+  }
 }
