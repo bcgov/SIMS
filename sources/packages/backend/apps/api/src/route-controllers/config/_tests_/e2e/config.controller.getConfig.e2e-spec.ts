@@ -8,13 +8,13 @@ describe("ConfigController(e2e)-getConfig", () => {
   let app: INestApplication;
   const originalEnv = process.env;
   const fakeEnvVariables = {
-    KEYCLOAK_AUTH_URL: "http://keycloak-fake-url",
+    KEYCLOAK_AUTH_URL: "https://keycloak-fake-url",
     KEYCLOAK_REALM: "keycloak_fake_realm",
     KEYCLOAK_CLIENT_STUDENT: "student",
     KEYCLOAK_CLIENT_INSTITUTION: "institution",
     KEYCLOAK_CLIENT_AEST: "aest",
     KEYCLOAK_CLIENT_SUPPORTING_USERS: "supporting-users",
-    SITE_MINDER_LOGOUT_URL: "http://fake-siteminder-logout-url",
+    SITE_MINDER_LOGOUT_URL: "https://fake-siteminder-logout-url",
   };
 
   beforeAll(async () => {
