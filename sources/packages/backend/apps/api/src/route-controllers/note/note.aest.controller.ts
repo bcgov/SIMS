@@ -78,7 +78,7 @@ export class NoteAESTController extends BaseController {
    */
   @ApiNotFoundResponse({ description: "Institution not found." })
   @Get("institution/:institutionId")
-  async getInstitutionDetails(
+  async getInstitutionNotes(
     @Param("institutionId", ParseIntPipe) institutionId: number,
     @Query("noteType", new ParseEnumQueryPipe(NoteType)) noteType?: NoteType,
   ): Promise<NoteAPIOutDTO[]> {
