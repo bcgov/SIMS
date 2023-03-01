@@ -36,7 +36,7 @@ describe("DisbursementScheduleService-getCOEApprovalPeriodStatus", () => {
     );
   });
 
-  it("Should throw an error when both disbursement date and studyEndDate are undefined.", () => {
+  it("Should throw an error when both the disbursement date and study end date are undefined.", () => {
     // Arrange
     const disbursementDate = undefined;
     const studyEndDate = undefined;
