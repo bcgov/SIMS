@@ -83,7 +83,9 @@ export class NoteAESTController extends BaseController {
     @Query("noteType", new ParseEnumQueryPipe(NoteType)) noteType?: NoteType,
   ): Promise<NoteAPIOutDTO[]> {
     const institution =
-      this.institutionService.getBasicInstitutionDetailById(institutionId);
+      await this.institutionService.getBasicInstitutionDetailById(
+        institutionId,
+      );
     if (!institution) {
       throw new NotFoundException("Institution not found.");
     }
@@ -91,7 +93,7 @@ export class NoteAESTController extends BaseController {
       institutionId,
       noteType,
     );
-    return institutionNotes?.map((note) => transformToNoteDTO(note));
+    return institutionNotes?.map((note) => transformToNoteDTO(note)) ?? [];
   }
 
   /**
