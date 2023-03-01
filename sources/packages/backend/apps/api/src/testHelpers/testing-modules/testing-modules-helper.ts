@@ -1,8 +1,10 @@
-import { INestApplication } from "@nestjs/common";
+import { INestApplication, Module } from "@nestjs/common";
 import { Test, TestingModule } from "@nestjs/testing";
+import { ConfigModule } from "@sims/utilities/config";
 import { DataSource } from "typeorm";
 import { AppModule } from "../../app.module";
 import { KeycloakConfig } from "../../auth";
+import { ConfigController } from "../../route-controllers";
 import { setGlobalPipes } from "../../utilities";
 import { MockedQueueModule } from "../mocked-providers/queue-module-mock";
 import { createMockedZeebeModule } from "../mocked-providers/zeebe-client-mock";
@@ -34,4 +36,29 @@ export async function createTestingAppModule(): Promise<CreateTestingModuleResul
     module,
     dataSource,
   };
+}
+
+@Module({
+  imports: [ConfigModule],
+  controllers: [ConfigController],
+})
+class AppConfigModule {}
+
+/**
+ * API root module only with config module and config controller.
+ ** This module allows to mock any environment variable including
+ ** keycloak environment variables.
+ * @returns test config module as root application module.
+ */
+export async function createTestingConfigModule(): Promise<CreateTestingModuleResult> {
+  const module: TestingModule = await Test.createTestingModule({
+    imports: [AppConfigModule],
+  }).compile();
+  const nestApplication = module.createNestApplication();
+  setGlobalPipes(nestApplication);
+  await nestApplication.init();
+  return {
+    nestApplication,
+    module,
+  } as CreateTestingModuleResult;
 }
