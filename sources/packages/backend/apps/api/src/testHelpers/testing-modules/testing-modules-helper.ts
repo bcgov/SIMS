@@ -1,4 +1,4 @@
-import { INestApplication, Module } from "@nestjs/common";
+import { INestApplication } from "@nestjs/common";
 import { Test, TestingModule } from "@nestjs/testing";
 import { ConfigModule } from "@sims/utilities/config";
 import { DataSource } from "typeorm";
@@ -38,21 +38,17 @@ export async function createTestingAppModule(): Promise<CreateTestingModuleResul
   };
 }
 
-@Module({
-  imports: [ConfigModule],
-  controllers: [ConfigController],
-})
-class AppConfigModule {}
-
 /**
  * API root module only with config module and config controller.
  ** This module allows to mock any environment variable including
  ** keycloak environment variables.
+ ** This module is exclusively for Config e2e tests.
  * @returns test config module as root application module.
  */
 export async function createTestingConfigModule(): Promise<CreateTestingModuleResult> {
   const module: TestingModule = await Test.createTestingModule({
-    imports: [AppConfigModule],
+    imports: [ConfigModule],
+    controllers: [ConfigController],
   }).compile();
   const nestApplication = module.createNestApplication();
   setGlobalPipes(nestApplication);
