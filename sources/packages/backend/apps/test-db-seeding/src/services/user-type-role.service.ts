@@ -22,12 +22,12 @@ export class UserTypeRoleHelperService {
    */
   async getInstitutionUserTypeAndRole(
     type: InstitutionUserTypes,
-    role: InstitutionUserRoles,
+    role?: InstitutionUserRoles,
   ): Promise<InstitutionUserTypeAndRole> {
     return this.institutionUserTypeAndRoleRepo.findOne({
       where: {
-        role: role ?? IsNull(),
         type: type,
+        role: role ?? IsNull(),
         active: true,
       },
     });

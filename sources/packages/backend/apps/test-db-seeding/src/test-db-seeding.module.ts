@@ -6,8 +6,9 @@ import { DiscoveryService } from "@golevelup/nestjs-discovery";
 import { CleanDatabase } from "./clean-db/clean-db";
 import {
   DesignationAgreementService,
+  CreateInstitutionsAndAuthenticationUsers,
   InstitutionUserService,
-} from "./db-seeding/02-institution";
+} from "./db-seeding/institution";
 import {
   InstitutionHelperService,
   UserTypeRoleHelperService,
@@ -25,6 +26,7 @@ import { ConfigModule } from "@sims/utilities/config";
     InstitutionUserService,
     InstitutionHelperService,
     UserTypeRoleHelperService,
+    CreateInstitutionsAndAuthenticationUsers,
   ],
 })
 export class TestDbSeedingModule {}

@@ -1,14 +1,23 @@
+import "../../../env-setup";
 import { NestFactory } from "@nestjs/core";
 import { CleanDatabase } from "./clean-db/clean-db";
 import { TestDbSeedingModule } from "./test-db-seeding.module";
 import { SeedExecutor } from "./seed-executors/seed-executor";
 import { ConfigService } from "@sims/utilities/config";
-// Clean db command line identifier.
+
+/**
+ * Clean db command line identifier.
+ */
 const CLEAN_DB = "task=clean-db";
-// Filter classes to be seeded command line identifier.
+/**
+ * Filter classes to be seeded command line identifier.
+ */
 const FILTER_CLASSES = "filter=";
-// QA DB name. for safe DB clean.
-const QA_DB_NAME = "QASIMSDB";
+/**
+ * Checks if the database being purged contains the value defined
+ * in this const to avoid cleaning a wrong DB by mistake.
+ */
+const TEST_DB_NAME = "_TESTS";
 
 async function bootstrap() {
   const app = await NestFactory.create(TestDbSeedingModule);
@@ -17,7 +26,9 @@ async function bootstrap() {
   // Checking for CLEAN_DB parameter.
   if (process.argv.includes(CLEAN_DB)) {
     // Clean db.
-    if (configService.database.databaseName?.includes(QA_DB_NAME)) {
+    if (
+      configService.database.databaseName?.toUpperCase().includes(TEST_DB_NAME)
+    ) {
       await app.get(CleanDatabase).cleanDatabase();
       console.info("Database cleaned.");
     }

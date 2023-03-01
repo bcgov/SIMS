@@ -21,20 +21,6 @@ const jwtService = new JwtService();
 const tokenCache: Record<string, TokenCacheResponse> = {};
 
 /**
- * Known AEST groups. The API right now performs authorization for
- * Ministry users based on the roles associated to these groups.
- * These groups represents the different logins with the different
- * set of roles to be used to execute E2E tests when roles validations
- * are required.
- */
-export enum AESTGroups {
-  BusinessAdministrators = "business-administrators",
-  Operations = "operations",
-  OperationsAdministrators = "operations-administrators",
-  MOFOperations = "mof-operations",
-}
-
-/**
  * Get a token for a Keycloak client optionally using a different
  * cache key when there are variations of a token under the same client.
  * For instance, for the Ministry, a token for each group can be acquired.
@@ -46,7 +32,7 @@ export enum AESTGroups {
  * @returns a token that can be used to perform a API call. Intended to be
  * used only for E2E tests.
  */
-async function getCachedToken(
+export async function getCachedToken(
   authorizedParty: AuthorizedParties,
   credentials: UserPasswordCredential,
   uniqueTokenCache = "",
@@ -72,40 +58,4 @@ async function getCachedToken(
     } as TokenCacheResponse;
   }
   return tokenCache[tokenCacheKey].accessToken;
-}
-
-/**
- * Gets different tokens for the Ministry application.
- * @param group group to have the token acquired.
- * @returns a ministry token for the specific group.
- */
-export async function getAESTToken(group: AESTGroups): Promise<string> {
-  let credential: UserPasswordCredential;
-  switch (group) {
-    case AESTGroups.BusinessAdministrators:
-      credential = {
-        userName: process.env.E2E_TEST_AEST_BUSINESS_ADMINISTRATORS_USER,
-        password: process.env.E2E_TEST_AEST_BUSINESS_ADMINISTRATORS_PASSWORD,
-      };
-      break;
-    case AESTGroups.Operations:
-      credential = {
-        userName: process.env.E2E_TEST_AEST_OPERATIONS_USER,
-        password: process.env.E2E_TEST_AEST_OPERATIONS_PASSWORD,
-      };
-      break;
-    case AESTGroups.OperationsAdministrators:
-      credential = {
-        userName: process.env.E2E_TEST_AEST_OPERATIONS_ADMINISTRATORS_USER,
-        password: process.env.E2E_TEST_AEST_OPERATIONS_ADMINISTRATORS_PASSWORD,
-      };
-      break;
-    case AESTGroups.MOFOperations:
-      credential = {
-        userName: process.env.E2E_TEST_AEST_MOF_OPERATIONS_USER,
-        password: process.env.E2E_TEST_AEST_MOF_OPERATIONS_PASSWORD,
-      };
-      break;
-  }
-  return getCachedToken(AuthorizedParties.aest, credential, group.toString());
 }

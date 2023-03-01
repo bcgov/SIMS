@@ -1,6 +1,7 @@
-import { Min, IsOptional } from "class-validator";
+import { Min, IsOptional, Max } from "class-validator";
 import { COEStatus, ProgramInfoStatus } from "@sims/sims-db";
 import { COEApprovalPeriodStatus } from "../../../services/disbursement-schedule/disbursement-schedule.models";
+import { MONEY_VALUE_FOR_UNKNOWN_MAX_VALUE } from "../../../utilities";
 
 export class ApplicationDetailsForCOEAPIOutDTO {
   applicationProgramName: string;
@@ -47,6 +48,7 @@ export class DenyConfirmationOfEnrollmentAPIInDTO {
 
 export class ConfirmationOfEnrollmentAPIInDTO {
   @Min(0)
+  @Max(MONEY_VALUE_FOR_UNKNOWN_MAX_VALUE)
   tuitionRemittanceAmount: number;
 }
 
