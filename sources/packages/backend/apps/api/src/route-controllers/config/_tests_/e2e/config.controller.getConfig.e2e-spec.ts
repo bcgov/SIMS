@@ -34,7 +34,7 @@ describe("ConfigController(e2e)-getConfig", () => {
     app = nestApplication;
   });
 
-  it("Should return config values", async () => {
+  it("Should return config values.", async () => {
     // Arrange Act/Assert
     await request(app.getHttpServer())
       .get("/config")

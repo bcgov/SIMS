@@ -141,7 +141,7 @@ describe("NoteAESTController(e2e)-getInstitutionNotes", () => {
 
   it("Should throw bad request exception when invalid note type provided.", async () => {
     // Arrange
-    const endpoint = `/aest/note/institution/99999?noteType=invalid_node_type`;
+    const endpoint = "aest/note/institution/99999?noteType=invalid_node_type";
 
     // Act/Assert
     return request(app.getHttpServer())
