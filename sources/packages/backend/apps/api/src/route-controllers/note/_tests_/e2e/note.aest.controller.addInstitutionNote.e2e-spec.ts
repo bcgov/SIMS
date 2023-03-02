@@ -21,7 +21,7 @@ describe("NoteAESTController(e2e)-addInstitutionNote", () => {
     institutionRepo = dataSource.getRepository(Institution);
   });
 
-  it("Should allow access to the expected AEST users groups", async () => {
+  it("Should allow access to the expected AEST users groups.", async () => {
     // Arrange
     const institution = await institutionRepo.save(createFakeInstitution());
     const endpoint = `/aest/note/institution/${institution.id}`;

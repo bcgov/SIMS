@@ -1,8 +1,10 @@
 import { HttpStatus, INestApplication } from "@nestjs/common";
-
-import { createTestingConfigModule } from "../../../../testHelpers";
+import { Test, TestingModule } from "@nestjs/testing";
+import { ConfigModule } from "@sims/utilities/config";
+import { setGlobalPipes } from "../../../../utilities";
+import { CreateTestingModuleResult } from "../../../../testHelpers";
 import * as request from "supertest";
-import { ConfigAPIOutDTO } from "../../models/config.dto";
+import { ConfigController } from "../../config.controller";
 
 describe("ConfigController(e2e)-getConfig", () => {
   let app: INestApplication;
@@ -32,30 +34,43 @@ describe("ConfigController(e2e)-getConfig", () => {
     await request(app.getHttpServer())
       .get("/config")
       .expect(HttpStatus.OK)
-      .then((response) => {
-        const config = response.body as ConfigAPIOutDTO;
-        expect(config.auth.url).toBe(fakeEnvVariables.KEYCLOAK_AUTH_URL);
-        expect(config.auth.realm).toBe(fakeEnvVariables.KEYCLOAK_REALM);
-        expect(config.auth.externalSiteMinderLogoutUrl).toBe(
-          fakeEnvVariables.SITE_MINDER_LOGOUT_URL,
-        );
-        expect(config.auth.clientIds.student).toBe(
-          fakeEnvVariables.KEYCLOAK_CLIENT_STUDENT,
-        );
-        expect(config.auth.clientIds.institution).toBe(
-          fakeEnvVariables.KEYCLOAK_CLIENT_INSTITUTION,
-        );
-        expect(config.auth.clientIds.aest).toBe(
-          fakeEnvVariables.KEYCLOAK_CLIENT_AEST,
-        );
-        expect(config.auth.clientIds.supportingUsers).toBe(
-          fakeEnvVariables.KEYCLOAK_CLIENT_SUPPORTING_USERS,
-        );
+      .expect({
+        auth: {
+          url: fakeEnvVariables.KEYCLOAK_AUTH_URL,
+          realm: fakeEnvVariables.KEYCLOAK_REALM,
+          clientIds: {
+            student: fakeEnvVariables.KEYCLOAK_CLIENT_STUDENT,
+            institution: fakeEnvVariables.KEYCLOAK_CLIENT_INSTITUTION,
+            aest: fakeEnvVariables.KEYCLOAK_CLIENT_AEST,
+            supportingUsers: fakeEnvVariables.KEYCLOAK_CLIENT_SUPPORTING_USERS,
+          },
+          externalSiteMinderLogoutUrl: fakeEnvVariables.SITE_MINDER_LOGOUT_URL,
+        },
       });
   });
 
   afterAll(async () => {
-    process.env = originalEnv;
     await app?.close();
   });
 });
+
+/**
+ * API root module only with config module and config controller.
+ ** This module allows to mock any environment variable including
+ ** keycloak environment variables.
+ ** This module is exclusively for Config e2e tests.
+ * @returns test config module as root application module.
+ */
+export async function createTestingConfigModule(): Promise<CreateTestingModuleResult> {
+  const module: TestingModule = await Test.createTestingModule({
+    imports: [ConfigModule],
+    controllers: [ConfigController],
+  }).compile();
+  const nestApplication = module.createNestApplication();
+  setGlobalPipes(nestApplication);
+  await nestApplication.init();
+  return {
+    nestApplication,
+    module,
+  } as CreateTestingModuleResult;
+}

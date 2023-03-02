@@ -23,7 +23,7 @@ describe("NoteAESTController(e2e)-addStudentNotes", () => {
     noteRepo = dataSource.getRepository(Note);
   });
 
-  it("Should allow create student notes when the user belongs to expected AEST users groups", async () => {
+  it("Should allow create student notes when the user belongs to expected AEST users groups.", async () => {
     // Arrange
     const student = await studentRepo.save(createFakeStudent());
     const endpoint = `/aest/note/student/${student.id}`;
@@ -53,10 +53,9 @@ describe("NoteAESTController(e2e)-addStudentNotes", () => {
     expect(createdNote.description).toBe(note.description);
   });
 
-  it("Should throw forbidden error when the user does not belong to expected AEST users groups", async () => {
+  it("Should throw forbidden error when the user does not belong to expected AEST users groups.", async () => {
     // Arrange
-    const student = await studentRepo.save(createFakeStudent());
-    const endpoint = `/aest/note/student/${student.id}`;
+    const endpoint = `/aest/note/student/99999`;
     const note = {
       noteType: NoteType.General,
       description: "Test note.",
@@ -70,7 +69,7 @@ describe("NoteAESTController(e2e)-addStudentNotes", () => {
       .expect(HttpStatus.FORBIDDEN);
   });
 
-  it("Should throw not found error when student id is not valid", async () => {
+  it("Should throw not found error when student id is not valid.", async () => {
     // Arrange
     const endpoint = `/aest/note/student/99999`;
     const note = {
@@ -94,14 +93,10 @@ describe("NoteAESTController(e2e)-addStudentNotes", () => {
       });
   });
 
-  it("Should throw bad request error when note type is not valid", async () => {
-    // Arrange
-    const student = await studentRepo.save(createFakeStudent());
-    const endpoint = `/aest/note/student/${student.id}`;
-
-    // Act/Assert
+  it("Should throw bad request error when note type is not valid.", async () => {
+    // Arrange Act/Assert
     await request(app.getHttpServer())
-      .post(endpoint)
+      .post("/aest/note/student/9999")
       .send({ noteType: "invalid note type", description: "test note." })
       .auth(
         await getAESTToken(AESTGroups.BusinessAdministrators),

@@ -29,7 +29,7 @@ describe("NoteAESTController(e2e)-getStudentNotes", () => {
     userRepo = dataSource.getRepository(User);
   });
 
-  it("Should allow access to the expected AEST users groups", async () => {
+  it("Should allow access to the expected AEST users groups.", async () => {
     // Arrange
     const student = await studentRepo.save(createFakeStudent());
     const endpoint = `/aest/note/student/${student.id}`;
@@ -64,7 +64,7 @@ describe("NoteAESTController(e2e)-getStudentNotes", () => {
     }
   });
 
-  it("Should throw NotFoundException when student was not found", async () => {
+  it("Should throw NotFoundException when student was not found.", async () => {
     // Arrange/Act/Assert
     return request(app.getHttpServer())
       .get("/aest/note/student/999999")
@@ -80,7 +80,7 @@ describe("NoteAESTController(e2e)-getStudentNotes", () => {
       });
   });
 
-  it("Should cause a bad request when a wrong note type is provided as a filter", async () => {
+  it("Should cause a bad request when a wrong note type is provided as a filter.", async () => {
     // Arrange/Act/Assert
     return request(app.getHttpServer())
       .get("/aest/note/student/999999?noteType=invalid_node_type")
@@ -96,7 +96,7 @@ describe("NoteAESTController(e2e)-getStudentNotes", () => {
       });
   });
 
-  it("Should get an empty student notes result when student has no notes", async () => {
+  it("Should get an empty student notes result when student has no notes.", async () => {
     // Arrange
     const student = await studentRepo.save(createFakeStudent());
     // Act/Assert
@@ -112,7 +112,7 @@ describe("NoteAESTController(e2e)-getStudentNotes", () => {
       });
   });
 
-  it("Should get all student notes types when student has notes and no note type filter was provided", async () => {
+  it("Should get all student notes types when student has notes and no note type filter was provided.", async () => {
     // Arrange
     const student = await studentRepo.save(createFakeStudent());
     await saveFakeStudentNotes(
@@ -134,7 +134,7 @@ describe("NoteAESTController(e2e)-getStudentNotes", () => {
       });
   });
 
-  it("Should get specific student notes types when student has notes and a note type filter was provided", async () => {
+  it("Should get specific student notes types when student has notes and a note type filter was provided.", async () => {
     // Arrange
     const user = await userRepo.save(createFakeUser());
     const student = await studentRepo.save(createFakeStudent(user));

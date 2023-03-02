@@ -16,6 +16,15 @@ export function createFakeNote(
   return note;
 }
 
+/**
+ * Create fake institution notes for the given institution.
+ * @param dataSource persistance data source.
+ * @param notes notes.
+ * @param institutionId institution.
+ * @param auditUser user who is creating institution notes.
+ * When the value is not provided a user is created to save notes.
+ * @returns institution notes.
+ */
 export async function saveFakeInstitutionNotes(
   dataSource: DataSource,
   notes: Note[],
@@ -41,6 +50,15 @@ export async function saveFakeInstitutionNotes(
   return persistedNotes;
 }
 
+/**
+ * Create fake student notes for the given student.
+ * @param dataSource persistance data source.
+ * @param notes notes.
+ * @param studentId student.
+ * @param auditUser user who is creating student notes.
+ * When the value is not provided a user is created to save notes.
+ * @returns student notes.
+ */
 export async function saveFakeStudentNotes(
   dataSource: DataSource,
   notes: Note[],
