@@ -2,7 +2,6 @@ import { HttpStatus, INestApplication } from "@nestjs/common";
 import { Test, TestingModule } from "@nestjs/testing";
 import { ConfigModule } from "@sims/utilities/config";
 import { setGlobalPipes } from "../../../../utilities";
-import { CreateTestingModuleResult } from "../../../../testHelpers";
 import * as request from "supertest";
 import { ConfigController } from "../../config.controller";
 
@@ -25,7 +24,13 @@ describe("ConfigController(e2e)-getConfig", () => {
       ...originalEnv,
       ...fakeEnvVariables,
     };
-    const { nestApplication } = await createTestingConfigModule();
+    const module: TestingModule = await Test.createTestingModule({
+      imports: [ConfigModule],
+      controllers: [ConfigController],
+    }).compile();
+    const nestApplication = module.createNestApplication();
+    setGlobalPipes(nestApplication);
+    await nestApplication.init();
     app = nestApplication;
   });
 
@@ -53,24 +58,3 @@ describe("ConfigController(e2e)-getConfig", () => {
     await app?.close();
   });
 });
-
-/**
- * API root module only with config module and config controller.
- ** This module allows to mock any environment variable including
- ** keycloak environment variables.
- ** This module is exclusively for Config e2e tests.
- * @returns test config module as root application module.
- */
-async function createTestingConfigModule(): Promise<CreateTestingModuleResult> {
-  const module: TestingModule = await Test.createTestingModule({
-    imports: [ConfigModule],
-    controllers: [ConfigController],
-  }).compile();
-  const nestApplication = module.createNestApplication();
-  setGlobalPipes(nestApplication);
-  await nestApplication.init();
-  return {
-    nestApplication,
-    module,
-  } as CreateTestingModuleResult;
-}
