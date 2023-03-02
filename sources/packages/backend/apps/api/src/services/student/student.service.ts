@@ -606,8 +606,11 @@ export class StudentService extends RecordDataModelService<Student> {
       birthDate,
       sinNumber,
     );
+    if (!sfasIndividual) {
+      return;
+    }
     const overawards: DisbursementOveraward[] = [];
-    if (sfasIndividual?.bcslOveraward !== 0) {
+    if (sfasIndividual.bcslOveraward !== 0) {
       overawards.push({
         student: { id: studentId } as Student,
         disbursementValueCode: BC_STUDENT_LOAN_AWARD_CODE,
@@ -616,7 +619,7 @@ export class StudentService extends RecordDataModelService<Student> {
         creator: { id: auditUserId } as User,
       } as DisbursementOveraward);
     }
-    if (sfasIndividual?.cslOveraward !== 0) {
+    if (sfasIndividual.cslOveraward !== 0) {
       overawards.push({
         student: { id: studentId } as Student,
         disbursementValueCode: CANADA_STUDENT_LOAN_FULL_TIME_AWARD_CODE,
