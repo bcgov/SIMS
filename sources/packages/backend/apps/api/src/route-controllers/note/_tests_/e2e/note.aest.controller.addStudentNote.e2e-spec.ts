@@ -70,7 +70,6 @@ describe("NoteAESTController(e2e)-addStudentNotes", () => {
 
   it("Should throw not found error when student id is not valid.", async () => {
     // Arrange
-    const endpoint = `/aest/note/student/99999`;
     const note = {
       noteType: NoteType.General,
       description: "Test note.",
@@ -78,7 +77,7 @@ describe("NoteAESTController(e2e)-addStudentNotes", () => {
 
     // Act/Assert
     await request(app.getHttpServer())
-      .post(endpoint)
+      .post("/aest/note/student/99999")
       .send(note)
       .auth(
         await getAESTToken(AESTGroups.BusinessAdministrators),
