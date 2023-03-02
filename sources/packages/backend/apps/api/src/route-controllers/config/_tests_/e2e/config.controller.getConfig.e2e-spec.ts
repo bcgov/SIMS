@@ -61,7 +61,7 @@ describe("ConfigController(e2e)-getConfig", () => {
  ** This module is exclusively for Config e2e tests.
  * @returns test config module as root application module.
  */
-export async function createTestingConfigModule(): Promise<CreateTestingModuleResult> {
+async function createTestingConfigModule(): Promise<CreateTestingModuleResult> {
   const module: TestingModule = await Test.createTestingModule({
     imports: [ConfigModule],
     controllers: [ConfigController],

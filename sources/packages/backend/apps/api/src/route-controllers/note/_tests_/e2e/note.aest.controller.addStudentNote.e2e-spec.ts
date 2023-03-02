@@ -94,7 +94,7 @@ describe("NoteAESTController(e2e)-addStudentNotes", () => {
   });
 
   it("Should throw bad request error when note type is not valid.", async () => {
-    // Arrange Act/Assert
+    // Arrange/Act/Assert
     await request(app.getHttpServer())
       .post("/aest/note/student/9999")
       .send({ noteType: "invalid note type", description: "test note." })
