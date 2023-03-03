@@ -1,4 +1,4 @@
---Removing the value Application from sims.note_types for the rollback.
+--Removing the value Overaward from sims.note_types for the rollback.
 --As postgres does not support removal of an Enum Value, We create a temporary enum and rename it.
 CREATE TYPE sims.note_types_to_rollback AS ENUM (
 	'General',

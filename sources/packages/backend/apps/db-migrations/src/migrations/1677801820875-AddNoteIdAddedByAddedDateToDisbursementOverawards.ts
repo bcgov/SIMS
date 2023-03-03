@@ -1,7 +1,7 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 import { getSQLFileData } from "../utilities/sqlLoader";
 
-export class AddManualOverawardNoteIdToDisbursementOverawards1677801820875
+export class AddNoteIdAddedByAddedDateToDisbursementOverawards1677801820875
   implements MigrationInterface
 {
   public async up(queryRunner: QueryRunner): Promise<void> {
