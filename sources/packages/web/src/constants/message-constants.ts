@@ -9,3 +9,13 @@ export const PENDING_SIN_MESSAGE =
  */
 export const INVALID_SIN_MESSAGE =
   "StudentAid BC has found an issue with your account information. Please ensure your account information matches CRA and log back in. If you have further issues please contact us.";
+
+/**
+ * Ministry Name
+ */
+export const MINISTRY_SHORTNAME = "PSFS";
+
+/**
+ * Ministry Fullname
+ */
+export const MINISTRY_NAME = "Ministry of Post Secondary and Future Skills";
