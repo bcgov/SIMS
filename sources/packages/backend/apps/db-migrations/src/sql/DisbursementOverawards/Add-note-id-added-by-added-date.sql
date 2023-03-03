@@ -18,6 +18,6 @@ COMMENT ON COLUMN sims.disbursement_overawards.added_by IS 'User id of the user 
 ALTER TABLE
     sims.disbursement_overawards
 ADD
-    COLUMN IF NOT EXISTS added_date TIMESTAMP WITHOUT TIME ZONE;
+    COLUMN IF NOT EXISTS added_date TIMESTAMP WITH TIME ZONE;
 
 COMMENT ON COLUMN sims.disbursement_overawards.added_date IS 'Date that the manual record was added.';
