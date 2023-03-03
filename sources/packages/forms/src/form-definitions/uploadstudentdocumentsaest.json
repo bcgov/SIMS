@@ -223,7 +223,7 @@
               "value": ""
             }
           ],
-          "content": "Rename the file with <span class=\"font-weight-bold\">“PSFS_[DocumentName]”</span>. This will help students identify in their account which documents were uploaded from the ministry.\n",
+          "content": "Rename the file with <span class=\"font-weight-bold\">“[DocumentName]”</span>. This will help students identify in their account which documents were uploaded from the ministry.\n",
           "refreshOnChange": false,
           "customClass": "align-bullets",
           "hidden": false,
