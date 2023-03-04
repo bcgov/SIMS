@@ -223,7 +223,7 @@
               "value": ""
             }
           ],
-          "content": "Rename the file with <span class=\"font-weight-bold\">“[DocumentName]”</span>. This will help students identify in their account which documents were uploaded from the ministry.\n",
+          "content": "Ensure the file name matches the contents in the document, as the file name will display to students (e.g. BCeID_Identification.pdf).\n",
           "refreshOnChange": false,
           "customClass": "align-bullets",
           "hidden": false,
