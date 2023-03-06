@@ -1,0 +1,59 @@
+bcgov_pubcode_version: 1
+data_management_roles:
+  data_custodian: Burke Van Drimmelen
+  data_steward: Jason Tang
+  product_owner: Jason Tang
+product_external_dependencies:
+  identity_authorization:
+    - BCGov-SSO-Keycloak
+  notification_standard:
+    - GCNotify
+  other_dependencies: Camunda 8 Cloud
+product_information:
+  api_specifications:
+    - https://dev-aest-sims.apps.silver.devops.gov.bc.ca/swagger
+    - https://test-aest-sims.apps.silver.devops.gov.bc.ca/swagger
+  ministry:
+    - Post-Secondary Education and Future Skills
+  product_acronym: SIMS
+  product_description: >-
+    The Student Information Management System (SIMS) is a Post-Secondary Student
+    Financial Aid System for BC designed to collect information from applicants
+    and associated parties, assess funding assistance needs according to
+    Ministry policies, and work with partners to disburse those funds to
+    facilitate the student's ability to attend post secondary institutions.
+  product_name: Student Information Management System
+  product_status: maturing
+  product_urls:
+    - https://test-aest-sims.apps.silver.devops.gov.bc.ca/aest/login
+    - https://test-aest-sims.apps.silver.devops.gov.bc.ca/institution/login
+    - https://test-aest-sims.apps.silver.devops.gov.bc.ca/student/login
+    - https://test-aest-sims.apps.silver.devops.gov.bc.ca/supporting-users/login
+    - https://dev-aest-sims.apps.silver.devops.gov.bc.ca/aest/login
+    - https://dev-aest-sims.apps.silver.devops.gov.bc.ca/institution/login
+    - https://dev-aest-sims.apps.silver.devops.gov.bc.ca/student/login
+    - https://dev-aest-sims.apps.silver.devops.gov.bc.ca/supporting-users/login
+  program_area: Student Aid BC
+product_technology_information:
+  backend_frameworks:
+    - name: NestJS
+      version: 9.0.3
+    - name: Node.js
+      version: '16'
+  backend_languages_version:
+    - name: TypeScript
+      version: 4.5.5
+  ci_cd_tools:
+    - GitHub-Actions
+  data_storage_platforms:
+    - Postgresql
+  frontend_frameworks:
+    - name: Vue
+      version: 3.2.31
+    - name: Other
+      version: Vuetify 3.1.5
+  frontend_languages:
+    - name: TypeScript
+      version: 4.5.5
+  hosting_platforms:
+    - Private-Cloud-Openshift
