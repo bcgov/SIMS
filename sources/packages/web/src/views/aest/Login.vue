@@ -6,7 +6,7 @@
           ><v-card-header>
             <v-col cols="12">
               <h1 class="category-header-large primary-color">
-                Welcome to AEST
+                Welcome to {{ MINISTRY_SHORTNAME }}
               </h1>
               <p class="mb-5">
                 In order to successfully login—you must be previously authorized
@@ -21,7 +21,7 @@
             </h3>
             <p class="sign-in-description">
               With authorization from the system administrator, login here using
-              your IDIR to access the AEST portal.
+              your IDIR to access the {{ MINISTRY_SHORTNAME }} portal.
             </p>
             <p class="sign-in-description">
               <banner
@@ -60,6 +60,7 @@ import { defineComponent } from "vue";
 import { useAuth } from "@/composables";
 import { IdentityProviders, ClientIdType } from "@/types";
 import { BannerTypes } from "@/types/contracts/Banner";
+import { MINISTRY_SHORTNAME } from "@/constants/message-constants";
 
 export default defineComponent({
   props: {
@@ -74,7 +75,7 @@ export default defineComponent({
     const login = async () => {
       await executeLogin(ClientIdType.AEST, IdentityProviders.IDIR);
     };
-    return { login, BannerTypes };
+    return { login, BannerTypes, MINISTRY_SHORTNAME };
   },
 });
 </script>
