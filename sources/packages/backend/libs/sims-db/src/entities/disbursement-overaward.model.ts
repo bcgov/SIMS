@@ -5,6 +5,7 @@ import {
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
+  OneToOne,
 } from "typeorm";
 import {
   DisbursementOverawardOriginType,
@@ -12,6 +13,8 @@ import {
   RecordDataModel,
   Student,
   StudentAssessment,
+  Note,
+  User,
 } from ".";
 import { ColumnNames, TableNames } from "../constant";
 import { numericTransformer } from "../transformers/numeric.transformer";
@@ -97,4 +100,31 @@ export class DisbursementOveraward extends RecordDataModel {
     nullable: true,
   })
   deletedAt?: Date;
+  /**
+   * Note entered during manual overaward record added.
+   */
+  @OneToOne(() => Note, { eager: false, cascade: true })
+  @JoinColumn({
+    name: "note_id",
+    referencedColumnName: ColumnNames.ID,
+  })
+  overawardNotes: Note;
+
+  /**
+   * User who added overaward manual record.
+   */
+  @OneToOne(() => User, { eager: true, cascade: true })
+  @JoinColumn({
+    name: "added_by",
+    referencedColumnName: "id",
+  })
+  addedBy: User;
+
+  /**
+   * Date when the manual record was added.
+   */
+  @Column({
+    name: "added_date",
+  })
+  addedDate?: Date;
 }

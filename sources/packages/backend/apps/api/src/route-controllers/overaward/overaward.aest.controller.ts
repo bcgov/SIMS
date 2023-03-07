@@ -82,11 +82,11 @@ export class OverawardAESTController extends BaseController {
     const studentOverawards =
       await this.disbursementOverawardService.getOverawardsByStudent(studentId);
     return studentOverawards.map((overaward) => ({
-      dateAdded: overaward.createdAt,
+      dateAdded: overaward.addedDate,
       overawardOrigin: overaward.originType,
       awardValueCode: overaward.disbursementValueCode,
       overawardValue: overaward.overawardValue,
-      addedByUser: getUserFullName(overaward.creator),
+      addedByUser: getUserFullName(overaward.addedBy),
       applicationNumber:
         overaward.studentAssessment?.application.applicationNumber,
       assessmentTriggerType: overaward.studentAssessment?.triggerType,
@@ -117,6 +117,7 @@ export class OverawardAESTController extends BaseController {
       await this.disbursementOverawardService.addManualOveraward(
         payload.awardValueCode,
         payload.overawardValue,
+        payload.overawardNotes,
         studentId,
         userToken.userId,
       );

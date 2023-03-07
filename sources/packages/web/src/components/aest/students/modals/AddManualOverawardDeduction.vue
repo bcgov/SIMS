@@ -37,6 +37,14 @@
               ),
           ]"
         />
+        <v-textarea
+          v-model="formModel.overawardNotes"
+          variant="outlined"
+          label="Notes"
+          :rules="[checkNotesLengthRule]"
+          required
+          class="mt-4 mb-n4"
+        ></v-textarea>
       </template>
       <template #footer>
         <check-permission-role :role="allowedRole">
@@ -78,7 +86,8 @@ export default defineComponent({
     },
   },
   setup() {
-    const { numberRangeRule, checkNullOrEmptyRule } = useRules();
+    const { numberRangeRule, checkNullOrEmptyRule, checkNotesLengthRule } =
+      useRules();
     const { formatCurrency } = useFormatters();
     const { showDialog, showModal, resolvePromise } = useModalDialog<
       OverawardManualRecordAPIInDTO | boolean
@@ -123,6 +132,7 @@ export default defineComponent({
       BannerTypes,
       numberRangeRule,
       checkNullOrEmptyRule,
+      checkNotesLengthRule,
       formatCurrency,
       awardTypeItems,
       MONEY_VALUE_FOR_UNKNOWN_MAX_VALUE,
