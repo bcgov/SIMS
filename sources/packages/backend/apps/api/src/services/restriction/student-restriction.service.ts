@@ -14,9 +14,11 @@ import {
 import { DataSource, EntityManager } from "typeorm";
 import { CustomNamedError } from "@sims/utilities";
 import { RestrictionService } from "./restriction.service";
-import { StudentService } from "../student/student.service";
 import { RestrictionCode } from "./models/restriction.model";
-import { StudentRestrictionSharedService } from "@sims/services";
+import {
+  NoteSharedService,
+  StudentRestrictionSharedService,
+} from "@sims/services";
 export const RESTRICTION_NOT_ACTIVE = "RESTRICTION_NOT_ACTIVE";
 export const RESTRICTION_NOT_PROVINCIAL = "RESTRICTION_NOT_PROVINCIAL";
 
@@ -28,7 +30,7 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
   constructor(
     readonly dataSource: DataSource,
     private readonly restrictionService: RestrictionService,
-    private readonly studentService: StudentService,
+    private readonly noteSharedService: NoteSharedService,
     private readonly studentRestrictionsService: StudentRestrictionSharedService,
   ) {
     super(dataSource.getRepository(StudentRestriction));
@@ -126,7 +128,7 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
     noteDescription: string,
   ): Promise<StudentRestriction> {
     return this.dataSource.transaction(async (transactionalEntityManager) => {
-      const note = await this.studentService.createStudentNote(
+      const note = await this.noteSharedService.createStudentNote(
         studentId,
         NoteType.Restriction,
         noteDescription,
@@ -192,7 +194,7 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
       );
     }
     return this.dataSource.transaction(async (transactionalEntityManager) => {
-      const note = await this.studentService.createStudentNote(
+      const note = await this.noteSharedService.createStudentNote(
         studentId,
         NoteType.Restriction,
         noteDescription,

@@ -30,12 +30,14 @@ import {
   STUDENT_ACCOUNT_CREATION_MULTIPLES_SIN_FOUND,
   STUDENT_SIN_CONSENT_NOT_CHECKED,
 } from "../../constants";
-import { DisbursementOverawardService } from "@sims/services";
+import {
+  DisbursementOverawardService,
+  NoteSharedService,
+} from "@sims/services";
 import {
   BC_STUDENT_LOAN_AWARD_CODE,
   CANADA_STUDENT_LOAN_FULL_TIME_AWARD_CODE,
 } from "@sims/services/constants";
-import { SystemUsersService } from "@sims/services/system-users";
 
 @Injectable()
 export class StudentService extends RecordDataModelService<Student> {
@@ -43,7 +45,7 @@ export class StudentService extends RecordDataModelService<Student> {
     private readonly dataSource: DataSource,
     private readonly sfasIndividualService: SFASIndividualService,
     private readonly disbursementOverawardService: DisbursementOverawardService,
-    private readonly systemUsersService: SystemUsersService,
+    private readonly noteSharedService: NoteSharedService,
   ) {
     super(dataSource.getRepository(Student));
     this.logger.log("[Created]");
@@ -537,7 +539,7 @@ export class StudentService extends RecordDataModelService<Student> {
     auditUserId: number,
   ): Promise<Note> {
     return this.dataSource.transaction(async (transactionalEntityManager) => {
-      return this.createStudentNote(
+      return this.noteSharedService.createStudentNote(
         studentId,
         noteType,
         noteDescription,
@@ -545,40 +547,6 @@ export class StudentService extends RecordDataModelService<Student> {
         transactionalEntityManager,
       );
     });
-  }
-
-  /**
-   * Creates a new note and associate it with the student.
-   * This method is most likely to be used alongside with some other
-   * DB data changes and must be executed in a DB transaction.
-   * @param studentId student to have the note associated.
-   * @param noteType note type.
-   * @param noteDescription note description.
-   * @param auditUserId user that should be considered the one that is causing the changes.
-   * @param entityManager transactional entity manager.
-   */
-  async createStudentNote(
-    studentId: number,
-    noteType: NoteType,
-    noteDescription: string,
-    auditUserId: number,
-    entityManager: EntityManager,
-  ): Promise<Note> {
-    const auditUser = { id: auditUserId } as User;
-    // Create the note to be associated with the student.
-    const newNote = new Note();
-    newNote.description = noteDescription;
-    newNote.noteType = noteType;
-    newNote.creator = auditUser;
-    const savedNote = await entityManager.getRepository(Note).save(newNote);
-    // Associate the created note with the student.
-    await entityManager
-      .getRepository(Student)
-      .createQueryBuilder()
-      .relation(Student, "notes")
-      .of({ id: studentId } as Student)
-      .add(savedNote);
-    return newNote;
   }
 
   @InjectLogger()
