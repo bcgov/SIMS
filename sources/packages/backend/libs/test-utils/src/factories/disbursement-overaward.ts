@@ -33,7 +33,7 @@ export function createFakeDisbursementOveraward(relations?: {
   disbursementOveraward.originType =
     DisbursementOverawardOriginType.ManualRecord;
   disbursementOveraward.deletedAt = null;
-  disbursementOveraward.addedBy = relations.addedBy;
-  disbursementOveraward.addedDate = relations.addedDate;
+  disbursementOveraward.addedBy = relations?.addedBy;
+  disbursementOveraward.addedDate = relations?.addedDate;
   return disbursementOveraward;
 }
