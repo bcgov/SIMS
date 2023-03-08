@@ -117,7 +117,6 @@ export class DisbursementOverawardService {
         addedDate: true,
       },
       relations: {
-        creator: true,
         studentAssessment: { application: true },
         addedBy: true,
       },
