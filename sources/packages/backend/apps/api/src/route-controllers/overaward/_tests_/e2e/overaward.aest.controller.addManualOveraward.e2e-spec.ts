@@ -18,6 +18,7 @@ describe("OverawardAESTController(e2e)-addManualOveraward", () => {
   const manualOverawardPayload: OverawardManualRecordAPIInDTO = {
     awardValueCode: "CSLF",
     overawardValue: -300,
+    overawardNotes: "Overaward notes...",
   };
 
   beforeAll(async () => {

@@ -115,10 +115,13 @@ export class DisbursementOverawardService {
           application: { applicationNumber: true },
           triggerType: true,
         },
+        addedBy: { firstName: true, lastName: true },
+        addedDate: true,
       },
       relations: {
         creator: true,
         studentAssessment: { application: true },
+        addedBy: true,
       },
       where: {
         student: { id: studentId },
