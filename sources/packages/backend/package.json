@@ -40,7 +40,7 @@
     "@golevelup/nestjs-discovery": "^3.0.0",
     "@nestjs/bull": "^0.6.1",
     "@nestjs/common": "^9.0.3",
-    "@nestjs/core": "^9.0.3",
+    "@nestjs/core": "^9.0.5",
     "@nestjs/jwt": "^10.0.1",
     "@nestjs/mapped-types": "^1.1.0",
     "@nestjs/microservices": "^9.1.2",
