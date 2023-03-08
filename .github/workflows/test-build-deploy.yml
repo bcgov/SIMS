@@ -14,7 +14,7 @@ jobs:
     name: Check Env variables
     # environment: DEV
     runs-on: ubuntu-latest
-    if: ${{ github.event.pull_request.merged == true}}
+    # if: ${{ github.event.pull_request.merged == true}}
     steps:
       - name: Print Env Vars
         run: |
@@ -28,7 +28,7 @@ jobs:
     name: Building all packages
     # environment: DEV
     runs-on: ubuntu-latest
-    if: ${{ github.event.pull_request.merged == true}}
+    # if: ${{ github.event.pull_request.merged == true}}
     env:
       BUILD_ID: ${{ github.event.number }}
       BUILD_NAMESPACE: 0c27fb-tools
