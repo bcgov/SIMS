@@ -2,7 +2,7 @@ import { HttpStatus, INestApplication } from "@nestjs/common";
 import * as request from "supertest";
 import { createFakeStudent } from "@sims/test-utils";
 import { Repository } from "typeorm";
-import { Student } from "@sims/sims-db";
+import { NoteType, Student } from "@sims/sims-db";
 
 import {
   AESTGroups,
@@ -41,6 +41,15 @@ describe("OverawardAESTController(e2e)-addManualOveraward", () => {
         BEARER_AUTH_TYPE,
       )
       .expect(HttpStatus.CREATED);
+
+    const updatedStudent = await studentRepo.findOne({
+      select: { notes: true },
+      where: { id: student.id },
+      relations: { notes: true },
+    });
+    const createdNote = updatedStudent.notes[0];
+    expect(createdNote.noteType).toBe(NoteType.Overaward);
+    expect(createdNote.description).toBe(manualOverawardPayload.overawardNotes);
   });
 
   it("Should throw forbidden error when AEST user does not belong to business-administrators group", async () => {

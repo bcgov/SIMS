@@ -16,6 +16,7 @@ export class NoteSharedService {
    * @param noteDescription note description.
    * @param auditUserId user that should be considered the one that is causing the changes.
    * @param entityManager transactional entity manager.
+   * @returns note created for the student.
    */
   async createStudentNote(
     studentId: number,
@@ -38,6 +39,6 @@ export class NoteSharedService {
       .relation(Student, "notes")
       .of({ id: studentId } as Student)
       .add(savedNote);
-    return newNote;
+    return savedNote;
   }
 }
