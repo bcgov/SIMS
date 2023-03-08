@@ -12,7 +12,7 @@ jobs:
   # Print variables for logging and debugging purposes
   checkEnv:
     name: Check Env variables
-    environment: DEV
+    # environment: DEV
     runs-on: ubuntu-latest
     if: ${{ github.event.pull_request.merged == true}}
     steps:
@@ -26,7 +26,7 @@ jobs:
   # Building all packages
   build:
     name: Building all packages
-    environment: DEV
+    # environment: DEV
     runs-on: ubuntu-latest
     if: ${{ github.event.pull_request.merged == true}}
     env:
@@ -71,7 +71,7 @@ jobs:
   deployDev:
     name: Deploying all packages
     runs-on: ubuntu-latest
-    environment: DEV
+    # environment: DEV
     needs:
       - build
     env:
