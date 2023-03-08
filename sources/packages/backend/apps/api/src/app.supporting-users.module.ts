@@ -12,6 +12,7 @@ import {
   EducationProgramOfferingValidationService,
 } from "./services";
 import {
+  DisbursementOverawardService,
   SequenceControlService,
   StudentRestrictionSharedService,
   WorkflowClientService,
@@ -44,6 +45,7 @@ import { AuthModule } from "./auth/auth.module";
     EducationProgramOfferingValidationService,
     WorkflowClientService,
     StudentRestrictionSharedService,
+    DisbursementOverawardService,
   ],
 })
 export class AppSupportingUsersModule {}

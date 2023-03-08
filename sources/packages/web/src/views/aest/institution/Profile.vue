@@ -57,6 +57,11 @@
               propertyTitle="Regulating body"
               :propertyValue="institutionProfileDetail.regulatingBody"
             />
+            <title-value
+              v-if="institutionProfileDetail.regulatingBody === 'other'"
+              propertyTitle="Other regulating body"
+              :propertyValue="institutionProfileDetail.otherRegulatingBody"
+            />
           </v-col>
         </v-row>
       </content-group>

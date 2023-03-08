@@ -1,9 +1,7 @@
 <template>
   <IdleTimeChecker :clientIdType="ClientIdType.AEST">
     <v-app-bar color="white">
-      <b-c-logo
-        subtitle="Ministry of Advanced Education and Skills Training"
-      ></b-c-logo>
+      <b-c-logo :subtitle="MINISTRY_NAME"></b-c-logo>
       <v-btn-toggle
         selected-class="active-btn label-bold"
         v-model="toggleNav"
@@ -73,6 +71,7 @@ import IdleTimeChecker from "@/components/common/IdleTimeChecker.vue";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
 import { ref, defineComponent } from "vue";
+import { MINISTRY_NAME } from "@/constants/message-constants";
 
 export default defineComponent({
   components: { BCLogo, IdleTimeChecker, CheckPermissionRole },
@@ -96,6 +95,7 @@ export default defineComponent({
       AESTRoutesConst,
       Role,
       toggleNav,
+      MINISTRY_NAME,
     };
   },
 });

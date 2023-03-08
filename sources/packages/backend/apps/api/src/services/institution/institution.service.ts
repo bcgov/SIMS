@@ -256,6 +256,7 @@ export class InstitutionService extends RecordDataModelService<Institution> {
     institution.primaryEmail = institutionModel.primaryEmail;
     institution.website = institutionModel.website;
     institution.regulatingBody = institutionModel.regulatingBody;
+    institution.otherRegulatingBody = institutionModel.otherRegulatingBody;
     institution.establishedDate = institutionModel.establishedDate;
     institution.institutionType = {
       id: institutionModel.institutionType,
@@ -853,6 +854,7 @@ export class InstitutionService extends RecordDataModelService<Institution> {
       institution.primaryEmail = updateInstitution.primaryEmail;
       institution.website = updateInstitution.website;
       institution.regulatingBody = updateInstitution.regulatingBody;
+      institution.otherRegulatingBody = updateInstitution.otherRegulatingBody;
       institution.establishedDate = updateInstitution.establishedDate;
       institution.institutionType = {
         id: updateInstitution.institutionType,

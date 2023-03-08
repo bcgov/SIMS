@@ -77,6 +77,21 @@ export class DisbursementOverawardService {
   }
 
   /**
+   * Adds a legacy overaward value to disbursement overawards table.
+   * @param overawards disbursement overaward array to be saved.
+   * @param entityManager entity manager used to perform the query.
+   */
+  async addLegacyOverawards(
+    overawards: DisbursementOveraward[],
+    entityManager?: EntityManager,
+  ): Promise<void> {
+    const repo =
+      entityManager?.getRepository(DisbursementOveraward) ??
+      this.disbursementOverawardRepo;
+    await repo.insert(overawards);
+  }
+
+  /**
    * Get all overawards which belong to a student.
    * @param studentId student.
    * @returns overaward details of a student.

@@ -46,7 +46,7 @@ export enum AppRoutes {
   ActiveApplicationScholasticStandingView = "active-application/location/:locationId/scholastic-standing/:scholasticStandingId",
   OfferingsUpload = "offerings-upload",
   // AEST
-  AESTRoot = "/aest",
+  AESTRoot = "/ministry",
   AESTDashboard = "dashboard",
   SearchStudents = "search-students",
   StudentDetail = "student-detail/:studentId",
