@@ -11,14 +11,14 @@ export function useRules() {
     return "SIN is required.";
   };
 
-  const checkNotesLengthRule = (notes: string) => {
+  const checkNotesLengthRule = (notes: string, noteTitle?: string) => {
     if (notes) {
       return (
         checkMaxCharacters(notes, NOTES_MAX_CHARACTERS) ||
         `Max ${NOTES_MAX_CHARACTERS} characters.`
       );
     }
-    return "Note body is required.";
+    return `${noteTitle ? noteTitle : "Note body"} is required.`;
   };
 
   const checkStringDateFormatRule = (dateString: string) => {

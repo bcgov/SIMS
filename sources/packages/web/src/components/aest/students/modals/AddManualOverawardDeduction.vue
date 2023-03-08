@@ -41,7 +41,7 @@
           v-model="formModel.overawardNotes"
           variant="outlined"
           label="Notes"
-          :rules="[checkNotesLengthRule]"
+          :rules="[(v) => checkNotesLengthRule(v, 'Notes')]"
           required
           class="mt-4 mb-n4"
         ></v-textarea>
