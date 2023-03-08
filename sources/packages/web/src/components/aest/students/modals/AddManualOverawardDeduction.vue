@@ -43,7 +43,8 @@
           label="Notes"
           :rules="[(v) => checkNotesLengthRule(v, 'Notes')]"
           required
-          class="mt-4 mb-n4"
+          class="mt-4"
+          hide-details="auto"
         ></v-textarea>
       </template>
       <template #footer>

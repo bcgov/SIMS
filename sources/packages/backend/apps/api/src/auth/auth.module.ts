@@ -27,8 +27,10 @@ import {
 import { RolesGuard } from "./guards/roles.guard";
 import { ConfigModule } from "@sims/utilities/config";
 import { SFASIndividualService } from "@sims/services/sfas";
-import { DisbursementOverawardService } from "@sims/services";
-import { NoteSharedService } from "@sims/services/note/note.shared.service";
+import {
+  DisbursementOverawardService,
+  NoteSharedService,
+} from "@sims/services";
 
 const jwtModule = JwtModule.register({
   publicKey: KeycloakConfig.PEM_PublicKey,

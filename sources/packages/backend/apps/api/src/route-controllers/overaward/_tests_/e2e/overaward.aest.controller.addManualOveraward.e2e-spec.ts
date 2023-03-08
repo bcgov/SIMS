@@ -44,10 +44,10 @@ describe("OverawardAESTController(e2e)-addManualOveraward", () => {
 
     const updatedStudent = await studentRepo.findOne({
       select: { notes: true },
-      where: { id: student.id },
       relations: { notes: true },
+      where: { id: student.id },
     });
-    const createdNote = updatedStudent.notes[0];
+    const [createdNote] = updatedStudent.notes;
     expect(createdNote.noteType).toBe(NoteType.Overaward);
     expect(createdNote.description).toBe(manualOverawardPayload.overawardNotes);
   });

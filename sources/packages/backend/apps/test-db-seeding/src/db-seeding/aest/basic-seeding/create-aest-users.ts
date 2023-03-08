@@ -22,16 +22,29 @@ export class CreateAESTUsers {
    * Create AEST users used for tests.
    */
   @DataSeedMethod()
-  private async createAESTUsers(): Promise<void> {
-    await this.createAESTUser(
+  async createAESTUsers(): Promise<void> {
+    const businessAdministratorsUserPromise = this.createAESTUser(
       process.env.E2E_TEST_AEST_BUSINESS_ADMINISTRATORS_USER,
     );
-    await this.createAESTUser(process.env.E2E_TEST_AEST_OPERATIONS_USER);
-    await this.createAESTUser(
+    const operationsUserPromise = this.createAESTUser(
+      process.env.E2E_TEST_AEST_OPERATIONS_USER,
+    );
+    const operationsAdministratorsUserPromise = this.createAESTUser(
       process.env.E2E_TEST_AEST_OPERATIONS_ADMINISTRATORS_USER,
     );
-    await this.createAESTUser(process.env.E2E_TEST_AEST_MOF_OPERATIONS_USER);
-    await this.createAESTUser(process.env.E2E_TEST_AEST_READ_ONLY_USER);
+    const mofOperationsUserPromise = this.createAESTUser(
+      process.env.E2E_TEST_AEST_MOF_OPERATIONS_USER,
+    );
+    const readOnlyUserPromise = this.createAESTUser(
+      process.env.E2E_TEST_AEST_READ_ONLY_USER,
+    );
+    await Promise.all([
+      businessAdministratorsUserPromise,
+      operationsUserPromise,
+      operationsAdministratorsUserPromise,
+      mofOperationsUserPromise,
+      readOnlyUserPromise,
+    ]);
   }
 
   /**
@@ -41,9 +54,7 @@ export class CreateAESTUsers {
   private async createAESTUser(userName: string): Promise<void> {
     // Create fake user.
     const fakeUser = createFakeUser(userName);
-    fakeUser.firstName = faker.name.firstName();
-    fakeUser.lastName = faker.name.firstName();
     // Save user to DB.
-    await this.userRepo.save(fakeUser);
+    this.userRepo.save(fakeUser);
   }
 }

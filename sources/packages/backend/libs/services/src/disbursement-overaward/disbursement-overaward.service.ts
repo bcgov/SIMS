@@ -147,32 +147,32 @@ export class DisbursementOverawardService {
     studentId: number,
     auditUserId: number,
   ): Promise<DisbursementOveraward> {
-    let persistedOverawardManualRecord = null;
-    await this.dataSource.transaction(async (transactionalEntityManager) => {
-      // Create the note for the overaward and associate the note with the student.
-      const noteEntity = await this.noteSharedService.createStudentNote(
-        studentId,
-        NoteType.Overaward,
-        overawardNotes,
-        auditUserId,
-        transactionalEntityManager,
-      );
+    return await this.dataSource.transaction(
+      async (transactionalEntityManager) => {
+        // Create the note for the overaward and associate the note with the student.
+        const noteEntity = await this.noteSharedService.createStudentNote(
+          studentId,
+          NoteType.Overaward,
+          overawardNotes,
+          auditUserId,
+          transactionalEntityManager,
+        );
 
-      // Save disbursement overaward record.
-      const overawardManualRecord = new DisbursementOveraward();
-      overawardManualRecord.creator = { id: auditUserId } as User;
-      overawardManualRecord.disbursementValueCode = awardValueCode;
-      overawardManualRecord.overawardValue = overawardValue;
-      overawardManualRecord.originType =
-        DisbursementOverawardOriginType.ManualRecord;
-      overawardManualRecord.student = { id: studentId } as Student;
-      overawardManualRecord.overawardNotes = noteEntity;
-      overawardManualRecord.addedBy = { id: auditUserId } as User;
-      overawardManualRecord.addedDate = new Date();
-      persistedOverawardManualRecord = await transactionalEntityManager
-        .getRepository(DisbursementOveraward)
-        .save(overawardManualRecord);
-    });
-    return persistedOverawardManualRecord;
+        // Save disbursement overaward record.
+        const overawardManualRecord = new DisbursementOveraward();
+        overawardManualRecord.creator = { id: auditUserId } as User;
+        overawardManualRecord.disbursementValueCode = awardValueCode;
+        overawardManualRecord.overawardValue = overawardValue;
+        overawardManualRecord.originType =
+          DisbursementOverawardOriginType.ManualRecord;
+        overawardManualRecord.student = { id: studentId } as Student;
+        overawardManualRecord.overawardNotes = noteEntity;
+        overawardManualRecord.addedBy = { id: auditUserId } as User;
+        overawardManualRecord.addedDate = new Date();
+        return await transactionalEntityManager
+          .getRepository(DisbursementOveraward)
+          .save(overawardManualRecord);
+      },
+    );
   }
 }

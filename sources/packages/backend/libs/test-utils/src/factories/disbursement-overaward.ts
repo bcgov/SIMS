@@ -15,7 +15,6 @@ export function createFakeDisbursementOveraward(relations?: {
   studentAssessment?: StudentAssessment;
   disbursementSchedule?: DisbursementSchedule;
   addedBy?: User;
-  addedDate?: Date;
 }): DisbursementOveraward {
   const disbursementOveraward = new DisbursementOveraward();
   disbursementOveraward.student = relations?.student;
@@ -34,6 +33,6 @@ export function createFakeDisbursementOveraward(relations?: {
     DisbursementOverawardOriginType.ManualRecord;
   disbursementOveraward.deletedAt = null;
   disbursementOveraward.addedBy = relations?.addedBy;
-  disbursementOveraward.addedDate = relations?.addedDate;
+  disbursementOveraward.addedDate = null;
   return disbursementOveraward;
 }

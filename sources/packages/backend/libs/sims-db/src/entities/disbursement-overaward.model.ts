@@ -103,28 +103,28 @@ export class DisbursementOveraward extends RecordDataModel {
   /**
    * Note entered during manual overaward record added.
    */
-  @OneToOne(() => Note, { eager: false, cascade: true })
+  @OneToOne(() => Note, { eager: false, cascade: true, nullable: true })
   @JoinColumn({
     name: "note_id",
     referencedColumnName: ColumnNames.ID,
   })
-  overawardNotes: Note;
-
+  overawardNotes?: Note;
   /**
    * User who added overaward manual record.
    */
-  @OneToOne(() => User, { eager: true, cascade: true })
+  @ManyToOne(() => User, { eager: false, cascade: false, nullable: true })
   @JoinColumn({
     name: "added_by",
-    referencedColumnName: "id",
+    referencedColumnName: ColumnNames.ID,
   })
-  addedBy: User;
-
+  addedBy?: User;
   /**
    * Date when the manual record was added.
    */
   @Column({
     name: "added_date",
+    type: "timestamptz",
+    nullable: true,
   })
   addedDate?: Date;
 }
