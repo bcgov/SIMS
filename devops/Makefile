@@ -60,7 +60,7 @@ define QA_DB_NAME
 endef
 
 define BUILD_TAG
-"$(subst /,-,$(BUILD_REF))-$(BUILD_ID)"
+"$(BUILD_REF)"
 endef
 
 define BUILD_TEMPLATE_PATH
