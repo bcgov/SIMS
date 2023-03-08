@@ -105,11 +105,9 @@ export class DisbursementOverawardService {
   ): Promise<DisbursementOveraward[]> {
     return this.disbursementOverawardRepo.find({
       select: {
-        createdAt: true,
         originType: true,
         overawardValue: true,
         disbursementValueCode: true,
-        creator: { firstName: true, lastName: true },
         studentAssessment: {
           id: true,
           application: { applicationNumber: true },

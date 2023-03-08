@@ -8,7 +8,6 @@ import {
   SeedPriorityOrder,
 } from "../../../seed-executors";
 import { Repository } from "typeorm";
-import * as faker from "faker";
 
 @Injectable()
 @DataSeed({ order: SeedPriorityOrder.Priority1 })
