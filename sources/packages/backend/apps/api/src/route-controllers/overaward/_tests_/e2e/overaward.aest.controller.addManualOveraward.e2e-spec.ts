@@ -2,7 +2,7 @@ import { HttpStatus, INestApplication } from "@nestjs/common";
 import * as request from "supertest";
 import { createFakeStudent } from "@sims/test-utils";
 import { Repository } from "typeorm";
-import { NoteType, Student } from "@sims/sims-db";
+import { DisbursementOveraward, NoteType, Student } from "@sims/sims-db";
 
 import {
   AESTGroups,
@@ -15,6 +15,8 @@ import { OverawardManualRecordAPIInDTO } from "../../models/overaward.dto";
 describe("OverawardAESTController(e2e)-addManualOveraward", () => {
   let app: INestApplication;
   let studentRepo: Repository<Student>;
+  let disbursementOverawardRepo: Repository<DisbursementOveraward>;
+
   const manualOverawardPayload: OverawardManualRecordAPIInDTO = {
     awardValueCode: "CSLF",
     overawardValue: -300,
@@ -25,6 +27,7 @@ describe("OverawardAESTController(e2e)-addManualOveraward", () => {
     const { nestApplication, dataSource } = await createTestingAppModule();
     app = nestApplication;
     studentRepo = dataSource.getRepository(Student);
+    disbursementOverawardRepo = dataSource.getRepository(DisbursementOveraward);
   });
 
   it("Should create manual overaward when AEST user belong to business-administrators group", async () => {
@@ -33,7 +36,7 @@ describe("OverawardAESTController(e2e)-addManualOveraward", () => {
     const endpoint = `/aest/overaward/student/${student.id}`;
 
     // Act/Assert
-    await request(app.getHttpServer())
+    const overawardResponse = await request(app.getHttpServer())
       .post(endpoint)
       .send(manualOverawardPayload)
       .auth(
@@ -42,14 +45,19 @@ describe("OverawardAESTController(e2e)-addManualOveraward", () => {
       )
       .expect(HttpStatus.CREATED);
 
-    const updatedStudent = await studentRepo.findOne({
-      select: { notes: true },
-      relations: { notes: true },
-      where: { id: student.id },
+    const overawardCreated = await disbursementOverawardRepo.findOne({
+      select: {
+        id: true,
+        overawardNotes: { noteType: true, description: true },
+      },
+      relations: { overawardNotes: true },
+      where: { id: overawardResponse.body.id },
     });
-    const [createdNote] = updatedStudent.notes;
-    expect(createdNote.noteType).toBe(NoteType.Overaward);
-    expect(createdNote.description).toBe(manualOverawardPayload.overawardNotes);
+
+    expect(overawardCreated.overawardNotes.noteType).toBe(NoteType.Overaward);
+    expect(overawardCreated.overawardNotes.description).toBe(
+      manualOverawardPayload.overawardNotes,
+    );
   });
 
   it("Should throw forbidden error when AEST user does not belong to business-administrators group", async () => {

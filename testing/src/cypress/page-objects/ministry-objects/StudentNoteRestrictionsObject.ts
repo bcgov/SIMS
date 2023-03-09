@@ -124,7 +124,7 @@ export default class StudentNoteRestrictionsObject {
   }
 
   noteBodyErrorMessage() {
-    return cy.contains("Note Body is required");
+    return cy.contains("Note is required");
   }
 
   noteAddedSuccessfully() {

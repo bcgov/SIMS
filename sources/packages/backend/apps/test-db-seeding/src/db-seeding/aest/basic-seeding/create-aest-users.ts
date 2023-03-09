@@ -50,10 +50,10 @@ export class CreateAESTUsers {
    * Create a fake AEST user persisted in the DB.
    * @param userName username of the AEST user to be created.
    */
-  private async createAESTUser(userName: string): Promise<void> {
+  private async createAESTUser(userName: string): Promise<User> {
     // Create fake user.
     const fakeUser = createFakeUser(userName);
     // Save user to DB.
-    this.userRepo.save(fakeUser);
+    return this.userRepo.save(fakeUser);
   }
 }

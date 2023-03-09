@@ -40,8 +40,8 @@
         <v-textarea
           v-model="formModel.overawardNotes"
           variant="outlined"
-          label="Notes"
-          :rules="[(v) => checkNotesLengthRule(v, 'Notes')]"
+          label="Note"
+          :rules="[checkNotesLengthRule]"
           required
           class="mt-4"
           hide-details="auto"
