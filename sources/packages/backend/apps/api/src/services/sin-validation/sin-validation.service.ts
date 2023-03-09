@@ -9,12 +9,12 @@ import {
 } from "@sims/sims-db";
 import { LoggerService, InjectLogger } from "@sims/utilities/logger";
 import { CustomNamedError } from "@sims/utilities";
-import { StudentService } from "../student/student.service";
 import { removeWhiteSpaces } from "../../utilities";
 import {
   SIN_VALIDATION_RECORD_INVALID_OPERATION,
   SIN_VALIDATION_RECORD_NOT_FOUND,
 } from "../../constants";
+import { NoteSharedService } from "@sims/services";
 
 /**
  * Service layer for SIN Validations.
@@ -23,7 +23,7 @@ import {
 export class SINValidationService extends RecordDataModelService<SINValidation> {
   constructor(
     private readonly dataSource: DataSource,
-    private readonly studentService: StudentService,
+    private readonly noteSharedService: NoteSharedService,
   ) {
     super(dataSource.getRepository(SINValidation));
   }
@@ -77,7 +77,7 @@ export class SINValidationService extends RecordDataModelService<SINValidation> 
   ): Promise<SINValidation> {
     return this.dataSource.transaction(async (transactionalEntityManager) => {
       const auditUser = { id: auditUserId } as User;
-      const savedNote = await this.studentService.createStudentNote(
+      const savedNote = await this.noteSharedService.createStudentNote(
         studentId,
         NoteType.General,
         noteDescription,
@@ -164,7 +164,7 @@ export class SINValidationService extends RecordDataModelService<SINValidation> 
 
       const auditUser = { id: auditUserId } as User;
       const now = new Date();
-      const savedNote = await this.studentService.createStudentNote(
+      const savedNote = await this.noteSharedService.createStudentNote(
         studentId,
         NoteType.General,
         noteDescription,

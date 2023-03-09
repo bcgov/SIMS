@@ -104,7 +104,7 @@ describe("NoteAESTController(e2e)-addStudentNotes", () => {
       .expect({
         statusCode: HttpStatus.BAD_REQUEST,
         message: [
-          "noteType must be one of the following values: General, Application, Program, Restriction, Designation, System Actions",
+          "noteType must be one of the following values: General, Application, Program, Restriction, Designation, Overaward, System Actions",
         ],
         error: "Bad Request",
       });

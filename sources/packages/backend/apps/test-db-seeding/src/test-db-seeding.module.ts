@@ -14,6 +14,7 @@ import {
   UserTypeRoleHelperService,
 } from "./services";
 import { ConfigModule } from "@sims/utilities/config";
+import { CreateAESTUsers } from "./db-seeding/aest";
 
 @Module({
   imports: [DatabaseModule, ConfigModule],
@@ -27,6 +28,7 @@ import { ConfigModule } from "@sims/utilities/config";
     InstitutionHelperService,
     UserTypeRoleHelperService,
     CreateInstitutionsAndAuthenticationUsers,
+    CreateAESTUsers,
   ],
 })
 export class TestDbSeedingModule {}

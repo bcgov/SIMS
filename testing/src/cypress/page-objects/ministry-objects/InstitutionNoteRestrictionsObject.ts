@@ -96,7 +96,7 @@ export default class InstitutionNoteRestrictionsObject {
   }
 
   noteBodyErrorMessage() {
-    return cy.contains("Note Body is required");
+    return cy.contains("Note is required");
   }
 
   noteTypeErrorMessage() {
