@@ -23,6 +23,10 @@ export enum NoteType {
    */
   Designation = "Designation",
   /**
+   * Note type Overaward.
+   */
+  Overaward = "Overaward",
+  /**
    * Note type System.
    */
   System = "System Actions",

@@ -53,6 +53,10 @@ export enum StudentNoteType {
    */
   Restriction = "Restriction",
   /**
+   * Note type Overaward.
+   */
+  Overaward = "Overaward",
+  /**
    * Note type System.
    */
   System = "System Actions",

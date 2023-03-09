@@ -5,6 +5,7 @@ import {
   ProgramYear,
   Student,
   StudentAssessment,
+  User,
 } from "@sims/sims-db";
 import * as faker from "faker";
 
@@ -13,6 +14,7 @@ export function createFakeDisbursementOveraward(relations?: {
   programYear?: ProgramYear;
   studentAssessment?: StudentAssessment;
   disbursementSchedule?: DisbursementSchedule;
+  addedBy?: User;
 }): DisbursementOveraward {
   const disbursementOveraward = new DisbursementOveraward();
   disbursementOveraward.student = relations?.student;
@@ -30,5 +32,7 @@ export function createFakeDisbursementOveraward(relations?: {
   disbursementOveraward.originType =
     DisbursementOverawardOriginType.ManualRecord;
   disbursementOveraward.deletedAt = null;
+  disbursementOveraward.addedBy = relations?.addedBy;
+  disbursementOveraward.addedDate = null;
   return disbursementOveraward;
 }

@@ -100,6 +100,8 @@ describe("OverawardAESTController(e2e)-getOverawardsByStudent", () => {
     reassessmentOveraward.overawardValue = 500;
     reassessmentOveraward.originType =
       DisbursementOverawardOriginType.ReassessmentOveraward;
+    reassessmentOveraward.addedBy = user;
+    reassessmentOveraward.addedDate = new Date();
     await disbursementOverawardRepo.save(reassessmentOveraward);
     const endpoint = `/aest/overaward/student/${student.id}`;
 
@@ -115,13 +117,13 @@ describe("OverawardAESTController(e2e)-getOverawardsByStudent", () => {
         expect(response.body).toHaveLength(1);
         const [overaward] = response.body as OverawardAPIOutDTO[];
         expect(overaward.dateAdded).toBe(
-          reassessmentOveraward.createdAt.toISOString(),
+          reassessmentOveraward.addedDate.toISOString(),
         );
         expect(overaward.overawardOrigin).toBe(
           DisbursementOverawardOriginType.ReassessmentOveraward,
         );
         expect(overaward.addedByUser).toBe(
-          getUserFullName(reassessmentOveraward.creator),
+          getUserFullName(reassessmentOveraward.addedBy),
         );
         expect(overaward.applicationNumber).toBe(application.applicationNumber);
         expect(overaward.assessmentTriggerType).toBe(
