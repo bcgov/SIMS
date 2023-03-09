@@ -123,7 +123,10 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
    */
   async getPendingAndDeniedAppeals(
     applicationId: number,
-    studentId?: number,
+    options?: {
+      studentId?: number;
+      limit?: number;
+    },
   ): Promise<PendingAndDeniedAppeals[]> {
     const query = this.repo
       .createQueryBuilder("studentAppeal")
@@ -152,10 +155,13 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
           );
         }),
       );
-    if (studentId) {
+    if (options?.studentId) {
       query.andWhere("application.student.id = :studentId", {
-        studentId,
+        studentId: options?.studentId,
       });
+    }
+    if (options?.limit) {
+      query.limit(options?.limit);
     }
     const queryResult = await query
       .orderBy(
@@ -217,6 +223,31 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
       "status",
     );
     return appealWithStatus;
+  }
+
+  async getAppealsForApplication(
+    applicationId: number,
+    studentId: number,
+    options?: {
+      limit?: number;
+    },
+  ): Promise<StudentAppealWithStatus[]> {
+    const query = this.repo
+      .createQueryBuilder("studentAppeal")
+      .select(["studentAppeal.id"])
+      .addSelect(this.buildStatusSelect(), "status")
+      .innerJoin("studentAppeal.application", "application")
+      .where("application.id = :applicationId", { applicationId })
+      .andWhere("application.student.id = :studentId", { studentId })
+      .orderBy("studentAppeal.submittedDate", "DESC");
+    if (options?.limit) {
+      query.limit(options.limit);
+    }
+    const queryResult = await query.getRawAndEntities();
+    return mapFromRawAndEntities<StudentAppealWithStatus>(
+      queryResult,
+      "status",
+    );
   }
 
   /**

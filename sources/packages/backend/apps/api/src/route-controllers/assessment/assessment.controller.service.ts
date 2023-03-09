@@ -222,7 +222,7 @@ export class AssessmentControllerService {
     const studentAppeal =
       await this.studentAppealService.getPendingAndDeniedAppeals(
         applicationId,
-        studentId,
+        { studentId },
       );
     const studentAppealArray: RequestAssessmentSummaryAPIOutDTO[] =
       studentAppeal.map((appeals) => ({

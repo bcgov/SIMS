@@ -19,7 +19,8 @@ import {
   InProgressApplicationDetailsAPIOutDTO,
   PrimaryIdentifierAPIOutDTO,
   ApplicationProgressDetailsAPIOutDTO,
-  ApplicationCOEDetailsAPIOutDTO,
+  EnrolmentApplicationDetailsAPIOutDTO,
+  CompletedApplicationDetailsAPIOutDTO,
 } from "@/services/http/dto";
 
 export class ApplicationApi extends HttpBaseClient {
@@ -155,15 +156,28 @@ export class ApplicationApi extends HttpBaseClient {
   }
 
   /**
-   * Get status of all enrollments of a student application.
-   * @param applicationId Student application.
-   * @returns application progress details.
+   * Get details for the application enrolment status of a student application.
+   * @param applicationId student application id.
+   * @returns details for the application enrolment status.
    */
-  async getApplicationEnrolmentDetails(
+  async getEnrolmentApplicationDetails(
     applicationId: number,
-  ): Promise<ApplicationCOEDetailsAPIOutDTO> {
-    return this.getCall<ApplicationCOEDetailsAPIOutDTO>(
+  ): Promise<EnrolmentApplicationDetailsAPIOutDTO> {
+    return this.getCall<EnrolmentApplicationDetailsAPIOutDTO>(
       this.addClientRoot(`application/${applicationId}/enrolment-details`),
+    );
+  }
+
+  /**
+   * Get details for an application on at completed status.
+   * @param applicationId application id.
+   * @returns details for an application on at completed status.
+   */
+  async getCompletedApplicationDetails(
+    applicationId: number,
+  ): Promise<CompletedApplicationDetailsAPIOutDTO> {
+    return this.getCall<CompletedApplicationDetailsAPIOutDTO>(
+      this.addClientRoot(`application/${applicationId}/completed-details`),
     );
   }
 }

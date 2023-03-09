@@ -1443,22 +1443,29 @@ export class ApplicationService extends RecordDataModelService<Application> {
   }
 
   /**
-   * Get enrolment details of an application.
-   * While fetching the enrolment details, the application
-   * expected to be in status Assessment or Enrolment or Completed.
+   * Get assessment details of an application.
    * @param applicationId application.
    * @param studentId applicant student.
    * @returns application details
    */
-  async getApplicationEnrolmentDetails(
+  async getApplicationAssessmentDetails(
     applicationId: number,
-    studentId?: number,
+    options: {
+      studentId?: number;
+      applicationStatus?: ApplicationStatus[];
+    },
   ): Promise<Application> {
+    const applicationStatuses = options?.applicationStatus ?? [
+      ApplicationStatus.Assessment,
+      ApplicationStatus.Enrolment,
+      ApplicationStatus.Completed,
+    ];
     return this.repo.findOne({
       select: {
         id: true,
         currentAssessment: {
           id: true,
+          triggerType: true,
           disbursementSchedules: {
             id: true,
             coeStatus: true,
@@ -1474,13 +1481,9 @@ export class ApplicationService extends RecordDataModelService<Application> {
       },
       where: {
         id: applicationId,
-        applicationStatus: In([
-          ApplicationStatus.Assessment,
-          ApplicationStatus.Enrolment,
-          ApplicationStatus.Completed,
-        ]),
+        applicationStatus: In(applicationStatuses),
         student: {
-          id: studentId,
+          id: options?.studentId,
         },
       },
       order: {
