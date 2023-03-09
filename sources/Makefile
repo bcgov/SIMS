@@ -173,7 +173,7 @@ camunda-stop:
 
 # Deploy Camunda defitions locally
 deploy-camunda-definitions:
-	@cd ./packages/workflow && npm i && npm run deploy
+	@cd ./packages/backend/workflow && npm i && npm run deploy
 
 # Build and deploy forms locally.
 forms:
