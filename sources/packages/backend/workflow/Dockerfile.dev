@@ -8,11 +8,13 @@ ENV PATH $PATH:/app/node_modules/.bin
 
 WORKDIR /app
 
-# Copying package.json and package-lock.json
-COPY ./package*.json ./
+# Copying sources
+COPY apps ./apps
+COPY libs ./libs
+COPY workflow ./workflow
+COPY ./*.json ./
+COPY ./*.js ./
 
 # Installing dependencies
 RUN npm ci
 
-# Copying sources
-COPY . .
