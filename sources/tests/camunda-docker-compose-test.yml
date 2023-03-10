@@ -92,8 +92,6 @@ services:
     environment:
       - NODE_ENV=docker
       - ZEEBE_ADDRESS=zeebe-test:26500
-    volumes:
-      - ./coverage/workflow:/app/workflow/coverage
     networks:
       - local-network-tests
     restart: always

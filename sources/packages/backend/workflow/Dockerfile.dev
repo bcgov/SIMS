@@ -18,4 +18,10 @@ COPY ./*.js ./
 # Installing dependencies
 RUN npm ci
 
+# Adding a nonroot user
+RUN addgroup -S nonroot \
+    && adduser -S nonroot -G nonroot
+
+USER nonroot
+
 
