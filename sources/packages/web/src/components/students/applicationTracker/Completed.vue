@@ -1,15 +1,4 @@
 <template>
-  <!-- Student appeal - approved -->
-  <application-status-tracker-banner
-    label="Your requested change was approved! Please review your new assessment."
-    icon="fa:fas fa-check-circle"
-    icon-color="success"
-    content="StudentAid BC has determined an outcome with 1 or more of your requested change. Please review your new assessment in the table below."
-    v-if="
-      assessmentDetails.assessmentTriggerType ===
-      AssessmentTriggerType.StudentAppeal
-    "
-  />
   <!-- Student appeal - waiting approval -->
   <application-status-tracker-banner
     label="Your requested change is in progress"
@@ -27,6 +16,18 @@
     icon-color="danger"
     background-color="error-bg"
     content="StudentAid BC has determined an outcome with 1 or more of your requested changes. You can review the outcomes of your requested changes in the table below by clicking “View request”. Please note your application will proceed without your requested changes, based on your last assessment."
+  />
+  <!-- Student appeal - approved -->
+  <application-status-tracker-banner
+    label="Your requested change was approved! Please review your new assessment."
+    icon="fa:fas fa-check-circle"
+    icon-color="success"
+    :background-color="hasDisbursementEvent ? undefined : 'success-bg'"
+    content="StudentAid BC has determined an outcome with 1 or more of your requested change. Please review your new assessment in the table below."
+    v-if="
+      assessmentDetails.assessmentTriggerType ===
+      AssessmentTriggerType.StudentAppeal
+    "
   />
   <!-- Scholastic standing changed -->
   <application-status-tracker-banner
@@ -50,6 +51,7 @@
       AssessmentTriggerType.OfferingChange
     "
   />
+  <!-- Disbursement/COE banners -->
   <multiple-disbursement-banner
     v-if="assessmentDetails?.secondDisbursement"
     :firstCOEStatus="assessmentDetails?.firstDisbursement?.coeStatus"
@@ -73,7 +75,7 @@
 </template>
 <script lang="ts">
 import { AssessmentTriggerType, COEStatus, StudentAppealStatus } from "@/types";
-import { onMounted, ref, defineComponent } from "vue";
+import { onMounted, ref, defineComponent, computed } from "vue";
 import { ApplicationService } from "@/services/ApplicationService";
 import { CompletedApplicationDetailsAPIOutDTO } from "@/services/http/dto/Application.dto";
 import ApplicationStatusTrackerBanner from "@/components/students/applicationTracker/generic/ApplicationStatusTrackerBanner.vue";
@@ -110,12 +112,20 @@ export default defineComponent({
         assessmentDetails.value.secondDisbursement?.coeDenialReason;
     });
 
+    const hasDisbursementEvent = computed(() => {
+      return (
+        assessmentDetails.value.firstDisbursement.coeStatus !==
+        COEStatus.required
+      );
+    });
+
     return {
       assessmentDetails,
       multipleCOEDenialReason,
       COEStatus,
       AssessmentTriggerType,
       StudentAppealStatus,
+      hasDisbursementEvent,
     };
   },
 });
