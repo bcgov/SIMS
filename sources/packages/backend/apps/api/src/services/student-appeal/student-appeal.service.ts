@@ -117,16 +117,13 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
    * * condition, we get Declined.
    * * andWhere: will only take Pending and
    * * Declined status.
-   * @param applicationId application id .
+   * @param applicationId application id.
    * @param studentId applicant student.
    * @returns StudentAppeal list.
    */
   async getPendingAndDeniedAppeals(
     applicationId: number,
-    options?: {
-      studentId?: number;
-      limit?: number;
-    },
+    studentId?: number,
   ): Promise<PendingAndDeniedAppeals[]> {
     const query = this.repo
       .createQueryBuilder("studentAppeal")
@@ -155,13 +152,10 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
           );
         }),
       );
-    if (options?.studentId) {
+    if (studentId) {
       query.andWhere("application.student.id = :studentId", {
-        studentId: options.studentId,
+        studentId,
       });
-    }
-    if (options?.limit) {
-      query.limit(options?.limit);
     }
     const queryResult = await query
       .orderBy(

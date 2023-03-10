@@ -1447,7 +1447,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
    * @param applicationId application.
    * @param options query options
    * - `studentId` student id used for authorization.
-   * - `applicationStatus` application status to be considered.
+   * - `applicationStatus` application status/statuses to be considered.
    * @returns application details
    */
   async getApplicationAssessmentDetails(
