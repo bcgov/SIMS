@@ -1,12 +1,14 @@
 {
+  "_id": "639baa9cc303847c56c151c4",
   "title": "Designation Agreement Details",
-  "display": "form",
-  "type": "form",
   "name": "designationagreementdetails",
   "path": "designationagreementdetails",
+  "type": "form",
+  "display": "form",
   "tags": [
     "common"
   ],
+  "owner": "639baa52c303847c56c15142",
   "components": [
     {
       "label": "HTML",
@@ -168,7 +170,8 @@
               "properties": {},
               "allowMultipleMasks": false,
               "id": "e61mde6i",
-              "addons": []
+              "addons": [],
+              "className": ""
             },
             {
               "label": "HTML",
@@ -243,7 +246,8 @@
               "properties": {},
               "allowMultipleMasks": false,
               "id": "e93cgyi",
-              "addons": []
+              "addons": [],
+              "className": ""
             }
           ],
           "width": 4,
@@ -328,7 +332,8 @@
               "properties": {},
               "allowMultipleMasks": false,
               "id": "e0sfch9",
-              "addons": []
+              "addons": [],
+              "className": ""
             },
             {
               "label": "HTML",
@@ -403,7 +408,8 @@
               "properties": {},
               "allowMultipleMasks": false,
               "id": "e2gn59g",
-              "addons": []
+              "addons": [],
+              "className": ""
             }
           ],
           "width": 4,
@@ -1052,7 +1058,9 @@
           "showWordCount": false,
           "properties": {},
           "allowMultipleMasks": false,
-          "addons": []
+          "addons": [],
+          "inDataGrid": true,
+          "className": ""
         },
         {
           "label": "Address",
@@ -1126,7 +1134,9 @@
           "showWordCount": false,
           "properties": {},
           "allowMultipleMasks": false,
-          "addons": []
+          "addons": [],
+          "inDataGrid": true,
+          "className": ""
         },
         {
           "label": "Request for designation",
@@ -1207,7 +1217,8 @@
           "showWordCount": false,
           "allowMultipleMasks": false,
           "addons": [],
-          "id": "ewfth7s0000000"
+          "id": "ewfth7s0000000",
+          "inDataGrid": true
         },
         {
           "label": "Approved for designation",
@@ -1283,7 +1294,8 @@
           "showWordCount": false,
           "allowMultipleMasks": false,
           "id": "eu6wa6q0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
-          "addons": []
+          "addons": [],
+          "inDataGrid": true
         }
       ],
       "placeholder": "",
@@ -1521,6 +1533,81 @@
           "id": "efc6pfc"
         },
         {
+          "label": "HTML",
+          "attrs": [
+            {
+              "attr": "",
+              "value": ""
+            }
+          ],
+          "content": "Add your signing and enrolment officers below. <strong>Your eligibility and enrolment officer need to be different people.</strong>",
+          "refreshOnChange": false,
+          "key": "html10",
+          "type": "htmlelement",
+          "input": false,
+          "tableView": false,
+          "placeholder": "",
+          "prefix": "",
+          "customClass": "",
+          "suffix": "",
+          "multiple": false,
+          "defaultValue": null,
+          "protected": false,
+          "unique": false,
+          "persistent": false,
+          "hidden": false,
+          "clearOnHide": true,
+          "refreshOn": "",
+          "redrawOn": "",
+          "modalEdit": false,
+          "dataGridLabel": false,
+          "labelPosition": "top",
+          "description": "",
+          "errorLabel": "",
+          "tooltip": "",
+          "tabindex": "",
+          "disabled": false,
+          "autofocus": false,
+          "dbIndex": false,
+          "customDefaultValue": "",
+          "calculateValue": "",
+          "calculateServer": false,
+          "widget": null,
+          "attributes": {},
+          "validateOn": "change",
+          "validate": {
+            "required": false,
+            "custom": "",
+            "customPrivate": false,
+            "strictDateValidation": false,
+            "multiple": false,
+            "unique": false
+          },
+          "conditional": {
+            "show": null,
+            "when": null,
+            "eq": ""
+          },
+          "overlay": {
+            "style": "",
+            "left": "",
+            "top": "",
+            "width": "",
+            "height": ""
+          },
+          "allowCalculateOverride": false,
+          "encrypted": false,
+          "showCharCount": false,
+          "showWordCount": false,
+          "properties": {},
+          "allowMultipleMasks": false,
+          "tag": "p",
+          "id": "ep1sfx",
+          "addons": [],
+          "className": "",
+          "hideLabel": true
+        },
+        {
           "title": "Eligibility officers",
           "labelWidth": "",
           "labelMargin": "",
@@ -1631,10 +1718,11 @@
               "allowMultipleMasks": false,
               "addons": [],
               "tag": "p",
-              "id": "epofo98"
+              "id": "epofo98",
+              "className": ""
             },
             {
-              "html": "<ul><li>confirming student enrolment and attendance</li><li>student loan agreements</li><li>confirmation of enrolment forms</li><li>accepting or documenting tuition payments to institutions</li></ul>",
+              "html": "<ul><li>Completing the Confirmation of Enrolment process to confirm the student&rsquo;s enrolment and attendance status</li><li>Documenting the student&rsquo;s tuition payments to your institution</li><li>Reporting changes to the student&rsquo;s scholastic standing (withdrawals, unsuccessful completion, or early completion)</li><li>Reporting changes to course load</li></ul>",
               "label": "Content",
               "customClass": "align-bullets",
               "refreshOnChange": false,
@@ -1698,7 +1786,9 @@
               "properties": {},
               "allowMultipleMasks": false,
               "addons": [],
-              "id": "evdulyh"
+              "id": "evdulyh",
+              "isNew": false,
+              "tags": []
             },
             {
               "label": "Eligibility Officers Data Grid",
@@ -1858,7 +1948,8 @@
                   "inputMask": "",
                   "displayMask": "",
                   "spellcheck": true,
-                  "truncateMultipleSpaces": false
+                  "truncateMultipleSpaces": false,
+                  "inDataGrid": true
                 },
                 {
                   "label": "Position (title)",
@@ -1937,7 +2028,8 @@
                   "inputMask": "",
                   "displayMask": "",
                   "spellcheck": true,
-                  "truncateMultipleSpaces": false
+                  "truncateMultipleSpaces": false,
+                  "inDataGrid": true
                 },
                 {
                   "label": "Email",
@@ -2016,7 +2108,8 @@
                   "inputMask": "",
                   "displayMask": "",
                   "spellcheck": true,
-                  "truncateMultipleSpaces": false
+                  "truncateMultipleSpaces": false,
+                  "inDataGrid": true
                 },
                 {
                   "label": "Phone",
@@ -2095,7 +2188,8 @@
                   "inputMask": "",
                   "displayMask": "",
                   "spellcheck": true,
-                  "truncateMultipleSpaces": false
+                  "truncateMultipleSpaces": false,
+                  "inDataGrid": true
                 }
               ],
               "placeholder": "",
@@ -2153,81 +2247,8 @@
           "addons": [],
           "tree": false,
           "lazyLoad": false,
-          "id": "e56ajbk"
-        },
-        {
-          "label": "HTML",
-          "attrs": [
-            {
-              "attr": "",
-              "value": ""
-            }
-          ],
-          "content": "Add your signing and enrolment officers below. <strong>Your eligibility and enrolment officer need to be different people.</strong>",
-          "refreshOnChange": false,
-          "key": "html10",
-          "type": "htmlelement",
-          "input": false,
-          "tableView": false,
-          "placeholder": "",
-          "prefix": "",
-          "customClass": "",
-          "suffix": "",
-          "multiple": false,
-          "defaultValue": null,
-          "protected": false,
-          "unique": false,
-          "persistent": false,
-          "hidden": false,
-          "clearOnHide": true,
-          "refreshOn": "",
-          "redrawOn": "",
-          "modalEdit": false,
-          "dataGridLabel": false,
-          "labelPosition": "top",
-          "description": "",
-          "errorLabel": "",
-          "tooltip": "",
-          "hideLabel": false,
-          "tabindex": "",
-          "disabled": false,
-          "autofocus": false,
-          "dbIndex": false,
-          "customDefaultValue": "",
-          "calculateValue": "",
-          "calculateServer": false,
-          "widget": null,
-          "attributes": {},
-          "validateOn": "change",
-          "validate": {
-            "required": false,
-            "custom": "",
-            "customPrivate": false,
-            "strictDateValidation": false,
-            "multiple": false,
-            "unique": false
-          },
-          "conditional": {
-            "show": null,
-            "when": null,
-            "eq": ""
-          },
-          "overlay": {
-            "style": "",
-            "left": "",
-            "top": "",
-            "width": "",
-            "height": ""
-          },
-          "allowCalculateOverride": false,
-          "encrypted": false,
-          "showCharCount": false,
-          "showWordCount": false,
-          "properties": {},
-          "allowMultipleMasks": false,
-          "tag": "p",
-          "id": "ep1sfx",
-          "addons": []
+          "id": "e56ajbk",
+          "isNew": false
         },
         {
           "title": "Enrolment officers",
@@ -2311,10 +2332,11 @@
               "allowMultipleMasks": false,
               "tag": "p",
               "id": "eplkeh",
-              "addons": []
+              "addons": [],
+              "className": ""
             },
             {
-              "html": "<ul><li>registering the student</li><li>completing the enrolment contract</li></ul>",
+              "html": "<ul><li>Completing the Program Information Requests (to help students confirm and/or locate program and study period offering information)</li></ul>",
               "label": "Content",
               "customClass": "align-bullets",
               "refreshOnChange": false,
@@ -2552,7 +2574,8 @@
                   "addons": [],
                   "inputType": "text",
                   "id": "esdj1y0000",
-                  "defaultValue": ""
+                  "defaultValue": "",
+                  "inDataGrid": true
                 },
                 {
                   "label": "Position (title)",
@@ -2645,7 +2668,8 @@
                   "addons": [],
                   "inputType": "text",
                   "id": "ehrkba8000",
-                  "defaultValue": ""
+                  "defaultValue": "",
+                  "inDataGrid": true
                 },
                 {
                   "label": "Email",
@@ -2738,7 +2762,8 @@
                   "addons": [],
                   "inputType": "text",
                   "id": "ewwf9da00",
-                  "defaultValue": ""
+                  "defaultValue": "",
+                  "inDataGrid": true
                 },
                 {
                   "label": "Phone",
@@ -2831,7 +2856,8 @@
                   "addons": [],
                   "inputType": "text",
                   "id": "eqbosbc0",
-                  "defaultValue": ""
+                  "defaultValue": "",
+                  "inDataGrid": true
                 }
               ],
               "placeholder": "",
@@ -2985,7 +3011,8 @@
           "allowMultipleMasks": false,
           "content": "",
           "id": "erv1oh",
-          "addons": []
+          "addons": [],
+          "className": ""
         },
         {
           "label": "HTML",
@@ -3141,7 +3168,8 @@
           "allowMultipleMasks": false,
           "tag": "p",
           "id": "e2jbjkp",
-          "addons": []
+          "addons": [],
+          "className": ""
         },
         {
           "label": "Columns",
@@ -3836,7 +3864,8 @@
           "allowMultipleMasks": false,
           "content": "",
           "id": "ee7lfk",
-          "addons": []
+          "addons": [],
+          "className": ""
         },
         {
           "label": "HTML",
@@ -3992,7 +4021,8 @@
           "allowMultipleMasks": false,
           "tag": "p",
           "id": "edhyjxn",
-          "addons": []
+          "addons": [],
+          "className": ""
         },
         {
           "title": "Legal authorized authority",
@@ -4076,7 +4106,8 @@
               "allowMultipleMasks": false,
               "tag": "p",
               "id": "ecjqmrm",
-              "addons": []
+              "addons": [],
+              "className": ""
             },
             {
               "label": "Columns",
