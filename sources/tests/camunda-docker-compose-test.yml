@@ -21,7 +21,7 @@ services:
       # allow running with low disk space
       - ZEEBE_BROKER_DATA_DISKUSAGECOMMANDWATERMARK=0.998
       - ZEEBE_BROKER_DATA_DISKUSAGEREPLICATIONWATERMARK=0.999
-      - "JAVA_TOOL_OPTIONS=-Xms512m -Xmx512m"
+      - "JAVA_TOOL_OPTIONS=-Xms256m -Xmx256m"
     restart: always
     networks:
       - local-network-tests

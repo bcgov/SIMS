@@ -8,6 +8,13 @@ ENV PATH $PATH:/app/node_modules/.bin
 
 WORKDIR /app
 
+RUN chmod -R 777 .
+
+RUN addgroup -S nonroot \
+    && adduser -S nonroot -G nonroot
+
+USER nonroot
+
 # Copying sources
 COPY apps ./apps
 COPY libs ./libs
