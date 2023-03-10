@@ -94,6 +94,34 @@ jobs:
           threshold_warning: 50
           threshold_metric: "lines"
           comment_footer: false
+  workflow-e2e-tests:
+    name: Workflow E2E Tests
+    runs-on: ubuntu-latest
+    env:
+      PROJECT_NAME: aest-sims
+      BUILD_ID: ${{ github.event.number }}
+      BUILD_REF: ${{ github.base_ref }}
+      ZEEBE_ADDRESS: zeebe-test:26500
+    steps:
+      # Checkout the PR branch.
+      - name: Checkout Target Branch
+        uses: actions/checkout@v3
+      # Generate the coverage report for Workflow Workers
+      - name: Run Tests
+        working-directory: "./sources/tests/"
+        run: |
+          make e2e-tests-workflow
+      - name: Tests Coverage
+        uses: slavcodev/coverage-monitor-action@v1
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          status_context: "E2E Workflow Coverage Report"
+          comment_context: "E2E Workflow Coverage Report"
+          coverage_path: "sources/tests/coverage/workflow/clover.xml"
+          threshold_alert: 1
+          threshold_warning: 50
+          threshold_metric: "lines"
+          comment_footer: false
   queue-consumers-e2e-tests:
     name: Queue Consumers E2E Tests
     runs-on: ubuntu-latest

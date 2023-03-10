@@ -34,8 +34,8 @@ jobs:
         with:
           node-version: "16.x"
       - name: Downloading packages
-        working-directory: "./sources/packages/workflow"
+        working-directory: "./sources/packages/backend"
         run: npm ci
       - name: Executing deployment
-        working-directory: "./sources/packages/workflow"
-        run: npm run deploy
+        working-directory: "./sources/packages/backend"
+        run: npm run deploy:camunda:definitions

@@ -1,0 +1,125 @@
+# While the Docker images themselves are supported for production usage,
+# this docker-compose.yaml is designed to be used by developers to run
+# an environment locally. It is not designed to be used in production.
+# We recommend to use Kubernetes in production with our Helm Charts:
+# https://docs.camunda.io/docs/self-managed/platform-deployment/kubernetes-helm/
+# For local development, we recommend using KIND instead of `docker-compose`:
+# https://docs.camunda.io/docs/self-managed/platform-deployment/kubernetes-helm/#installing-the-camunda-helm-chart-locally-using-kind
+
+# This is a lightweight configuration with Zeebe, Operate, Tasklist, and Elasticsearch
+# See docker-compose.yml for a configuration that also includes Optimize, Identity, and Keycloak.
+
+services:
+
+  zeebe-test: # https://docs.camunda.io/docs/self-managed/platform-deployment/docker/#zeebe
+    image: camunda/zeebe:${CAMUNDA_PLATFORM_VERSION:-8.1.1}
+    container_name: zeebe-test
+    environment: # https://docs.camunda.io/docs/self-managed/zeebe-deployment/configuration/environment-variables/
+      - ZEEBE_BROKER_EXPORTERS_ELASTICSEARCH_CLASSNAME=io.camunda.zeebe.exporter.ElasticsearchExporter
+      - ZEEBE_BROKER_EXPORTERS_ELASTICSEARCH_ARGS_URL=http://elasticsearch-test:9200
+      - ZEEBE_BROKER_EXPORTERS_ELASTICSEARCH_ARGS_BULK_SIZE=1
+      # allow running with low disk space
+      - ZEEBE_BROKER_DATA_DISKUSAGECOMMANDWATERMARK=0.998
+      - ZEEBE_BROKER_DATA_DISKUSAGEREPLICATIONWATERMARK=0.999
+      - "JAVA_TOOL_OPTIONS=-Xms512m -Xmx512m"
+    restart: always
+    networks:
+      - local-network-tests
+    depends_on:
+      - elasticsearch-test
+
+  operate-test: # https://docs.camunda.io/docs/self-managed/platform-deployment/docker/#operate
+    image: camunda/operate:${CAMUNDA_PLATFORM_VERSION:-8.1.1}
+    container_name: operate-test
+    environment: # https://docs.camunda.io/docs/self-managed/operate-deployment/configuration/
+      - CAMUNDA_OPERATE_ZEEBE_GATEWAYADDRESS=zeebe-test:26500
+      - CAMUNDA_OPERATE_ELASTICSEARCH_URL=http://elasticsearch-test:9200
+      - CAMUNDA_OPERATE_ZEEBEELASTICSEARCH_URL=http://elasticsearch-test:9200
+    networks:
+      - local-network-tests
+    depends_on:
+      - zeebe-test
+      - elasticsearch-test
+
+  tasklist-test: # https://docs.camunda.io/docs/self-managed/platform-deployment/docker/#tasklist
+    image: camunda/tasklist:${CAMUNDA_PLATFORM_VERSION:-8.1.1}
+    container_name: tasklist-test
+    environment: # https://docs.camunda.io/docs/self-managed/tasklist-deployment/configuration/
+      - CAMUNDA_TASKLIST_ZEEBE_GATEWAYADDRESS=zeebe-test:26500
+      - CAMUNDA_TASKLIST_ELASTICSEARCH_URL=http://elasticsearch-test:9200
+      - CAMUNDA_TASKLIST_ZEEBEELASTICSEARCH_URL=http://elasticsearch-test:9200
+    networks:
+      - local-network-tests
+    depends_on:
+      - zeebe-test
+      - elasticsearch-test
+
+  connectors-test: # https://docs.camunda.io/docs/components/integration-framework/connectors/out-of-the-box-connectors/available-connectors-overview/
+    image: camunda/connectors-bundle:${CAMUNDA_CONNECTORS_VERSION:-0.1.2}
+    container_name: connectors-test
+    environment:
+      - ZEEBE_ADDRESS=zeebe-test:26500
+      - ZEEBE_INSECURE=true
+    networks:
+      - local-network-tests
+    depends_on:
+      - zeebe-test
+
+  elasticsearch-test: # https://hub.docker.com/_/elasticsearch
+    image: docker.elastic.co/elasticsearch/elasticsearch:${ELASTIC_VERSION:-7.17.5}
+    container_name: elasticsearch-test
+    environment:
+      - bootstrap.memory_lock=true
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      # allow running with low disk space
+      - cluster.routing.allocation.disk.threshold_enabled=false
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    restart: always
+    healthcheck:
+      test: [ "CMD-SHELL", "curl -f http://localhost:9200/_cat/health | grep -q green" ]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    networks:
+      - local-network-tests
+  
+  workflow:
+    image: workflow-${PROJECT_NAME}:${BUILD_REF}-${BUILD_ID}
+    container_name: workers-${PROJECT_NAME}-${BUILD_REF}-${BUILD_ID}
+    build:
+      context: ../packages/backend
+      dockerfile: ./workflow/Dockerfile.dev
+    environment:
+      - NODE_ENV=docker
+      - ZEEBE_ADDRESS=zeebe-test:26500
+      - ZEEBE_CLIENT_ID=${ZEEBE_CLIENT_ID}
+      - ZEEBE_CLIENT_SECRET=${ZEEBE_CLIENT_SECRET}
+      - ZEEBE_AUTHORIZATION_SERVER_URL=${ZEEBE_AUTHORIZATION_SERVER_URL}
+    volumes:
+      - ./coverage/workflow:/app/workflow/coverage
+    networks:
+      - local-network-tests
+    restart: always
+    depends_on:
+      - zeebe-test
+      - operate-test
+
+  kibana-test:
+    image: docker.elastic.co/kibana/kibana:${ELASTIC_VERSION:-7.17.0}
+    container_name: kibana-test
+    networks:
+      - local-network-tests
+    depends_on:
+      - elasticsearch-test
+    profiles:
+      - dev
+
+
+networks:
+  local-network-tests:
+    driver: bridge

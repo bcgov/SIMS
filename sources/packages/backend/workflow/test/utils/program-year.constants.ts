@@ -1,3 +1,0 @@
-export const CURRENT_PROGRAM_YEAR = "2022-2023";
-export const PREVIOUS_PROGRAM_YEAR = "2021-2022";
-export const UPCOMING_PROGRAM_YEAR = "2023-2024";

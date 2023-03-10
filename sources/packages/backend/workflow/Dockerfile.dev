@@ -1,0 +1,18 @@
+# Base Image
+FROM node:16.17.0-alpine3.16
+
+LABEL maintainer="BC GOV"
+
+# Updating container path variable with node bin
+ENV PATH $PATH:/app/node_modules/.bin
+
+WORKDIR /app
+
+# Copying package.json and package-lock.json
+COPY ./package*.json ./
+
+# Installing dependencies
+RUN npm ci
+
+# Copying sources
+COPY . .
