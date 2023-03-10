@@ -53,11 +53,7 @@ import {
 } from "../../auth/decorators";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { ApiProcessError, ClientTypeBaseRoute } from "../../types";
-import {
-  getPIRDeniedReason,
-  PIR_OR_DATE_OVERLAP_ERROR,
-  getCOEDeniedReason,
-} from "../../utilities";
+import { getPIRDeniedReason, PIR_OR_DATE_OVERLAP_ERROR } from "../../utilities";
 import {
   INVALID_APPLICATION_NUMBER,
   OFFERING_NOT_VALID,
