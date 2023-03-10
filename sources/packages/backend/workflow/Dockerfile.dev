@@ -8,9 +8,6 @@ ENV PATH $PATH:/app/node_modules/.bin
 
 WORKDIR /app
 
-# Avoid running with root as default user
-USER nonroot
-
 # Copying sources
 COPY apps ./apps
 COPY libs ./libs
@@ -20,4 +17,5 @@ COPY ./*.js ./
 
 # Installing dependencies
 RUN npm ci
+
 

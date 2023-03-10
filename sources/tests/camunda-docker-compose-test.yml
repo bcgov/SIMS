@@ -74,17 +74,12 @@ services:
       - xpack.security.enabled=false
       # allow running with low disk space
       - cluster.routing.allocation.disk.threshold_enabled=false
-      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - "ES_JAVA_OPTS=-Xms256m -Xmx256m"
     ulimits:
       memlock:
         soft: -1
         hard: -1
     restart: always
-    healthcheck:
-      test: [ "CMD-SHELL", "curl -f http://localhost:9200/_cat/health | grep -q green" ]
-      interval: 30s
-      timeout: 5s
-      retries: 3
     networks:
       - local-network-tests
   
@@ -97,9 +92,6 @@ services:
     environment:
       - NODE_ENV=docker
       - ZEEBE_ADDRESS=zeebe-test:26500
-      - ZEEBE_CLIENT_ID=${ZEEBE_CLIENT_ID}
-      - ZEEBE_CLIENT_SECRET=${ZEEBE_CLIENT_SECRET}
-      - ZEEBE_AUTHORIZATION_SERVER_URL=${ZEEBE_AUTHORIZATION_SERVER_URL}
     volumes:
       - ./coverage/workflow:/app/workflow/coverage
     networks:
@@ -109,15 +101,6 @@ services:
       - zeebe-test
       - operate-test
 
-  kibana-test:
-    image: docker.elastic.co/kibana/kibana:${ELASTIC_VERSION:-7.17.0}
-    container_name: kibana-test
-    networks:
-      - local-network-tests
-    depends_on:
-      - elasticsearch-test
-    profiles:
-      - dev
 
 
 networks:
