@@ -41,7 +41,7 @@ dotenv.config({ path: path.join(__dirname, "../../../../../.env") });
 
   // Max retries ensures that if the grpc connection cannot be established within maximum
   // number of retry then the process with terminate.
-  const zeebeClient = new ZBClient({ maxRetries: 20 });
+  const zeebeClient = new ZBClient();
   try {
     // Deploy all decision files (BPMNs).
     const decisionDeploymentResults: DecisionDeploymentResult[] = [];

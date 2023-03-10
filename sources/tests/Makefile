@@ -4,6 +4,7 @@
 export $(shell sed 's/=.*//' ../../.env)
 # Override values from the global .env file.
 export $(shell sed 's/=.*//' .env-e2e-tests)
+export ZEEBE_CLIENT_MAX_RETRIES := $(or $(ZEEBE_CLIENT_MAX_RETRIES), 20)
 
 backend-unit-tests:
 	@cd ../packages/backend && npm i && npm run test:cov
@@ -25,5 +26,5 @@ e2e-tests-queue-consumers:
 
 e2e-tests-workflow:
 	@echo "+\n++ Make: Starting containers for camunda workflow E2E tests...ON TESTS \n+"
-	@docker-compose -f camunda-docker-compose-test.yml run --name workflow-e2e --rm workflow npm run docker:test:e2e:workflow
-	@docker-compose -f camunda-docker-compose-test.yml down
+	@docker-compose -f workflow-docker-compose.yml run --name workflow-e2e --rm workflow npm run docker:test:e2e:workflow
+	@docker-compose -f workflow-docker-compose.yml down
