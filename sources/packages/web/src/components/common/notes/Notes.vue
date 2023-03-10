@@ -24,7 +24,12 @@
           >No notes found. Please click on create new note to add one.</v-col
         ></v-row
       >
-      <v-timeline side="end" class="justify-content-start" truncate-line="both">
+      <v-timeline
+        side="end"
+        align="start"
+        class="justify-content-start"
+        truncate-line="both"
+      >
         <v-timeline-item
           v-for="note in notes"
           :key="note"
