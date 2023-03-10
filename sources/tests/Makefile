@@ -25,6 +25,5 @@ e2e-tests-queue-consumers:
 
 e2e-tests-workflow:
 	@echo "+\n++ Make: Starting containers for camunda workflow E2E tests...ON TESTS \n+"
-	@docker-compose -f camunda-docker-compose-test.yml build workflow
 	@docker-compose -f camunda-docker-compose-test.yml run --name workflow-e2e --rm workflow npm run docker:test:e2e:workflow
 	@docker-compose -f camunda-docker-compose-test.yml down
