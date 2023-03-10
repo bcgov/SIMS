@@ -4,9 +4,7 @@ import {
   RecordDataModelService,
   Application,
   AssessmentTriggerType,
-  Note,
   NoteType,
-  Student,
   StudentAppeal,
   StudentAppealRequest,
   StudentAppealStatus,
@@ -159,7 +157,7 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
       );
     if (options?.studentId) {
       query.andWhere("application.student.id = :studentId", {
-        studentId: options?.studentId,
+        studentId: options.studentId,
       });
     }
     if (options?.limit) {
@@ -227,6 +225,14 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
     return appealWithStatus;
   }
 
+  /**
+   * Get student appeals and their status.
+   * @param applicationId application id.
+   * @param studentId student id.
+   * @param options query options
+   * - `limit` limit of records to be retrieved.
+   * @returns student appeals and their status.
+   */
   async getAppealsForApplication(
     applicationId: number,
     studentId: number,

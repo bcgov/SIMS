@@ -103,7 +103,6 @@ export default defineComponent({
         await ApplicationService.shared.getCompletedApplicationDetails(
           props.applicationId,
         );
-      console.log(assessmentDetails);
       // Even though if an application has multiple COEs
       // COE can be declined only once, either first COE is declined
       // or the second COE.
