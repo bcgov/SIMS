@@ -109,7 +109,8 @@ export interface EnrolmentApplicationDetailsAPIOutDTO {
   secondDisbursement?: DisbursementDetailsAPIOutDTO;
 }
 
-export interface CompletedApplicationDetailsAPIOutDTO {
+export interface CompletedApplicationDetailsAPIOutDTO
+  extends EnrolmentApplicationDetailsAPIOutDTO {
   assessmentTriggerType: AssessmentTriggerType;
   firstDisbursement: DisbursementDetailsAPIOutDTO;
   secondDisbursement?: DisbursementDetailsAPIOutDTO;

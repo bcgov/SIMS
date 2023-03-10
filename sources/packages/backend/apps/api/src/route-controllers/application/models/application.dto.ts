@@ -166,9 +166,7 @@ export class EnrolmentApplicationDetailsAPIOutDTO {
   secondDisbursement?: DisbursementDetailsAPIOutDTO;
 }
 
-export class CompletedApplicationDetailsAPIOutDTO {
+export class CompletedApplicationDetailsAPIOutDTO extends EnrolmentApplicationDetailsAPIOutDTO {
   assessmentTriggerType: AssessmentTriggerType;
-  firstDisbursement: DisbursementDetailsAPIOutDTO;
-  secondDisbursement?: DisbursementDetailsAPIOutDTO;
   appealStatus?: StudentAppealStatus;
 }

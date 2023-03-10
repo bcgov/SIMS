@@ -581,27 +581,9 @@ export class ApplicationStudentsController extends BaseController {
         `Application id ${applicationId} not found or not in relevant status to get enrolment details.`,
       );
     }
-    const [firstDisbursement, secondDisbursement] =
-      application.currentAssessment.disbursementSchedules;
-
-    const details: EnrolmentApplicationDetailsAPIOutDTO = {
-      firstDisbursement: {
-        coeStatus: firstDisbursement.coeStatus,
-        disbursementScheduleStatus:
-          firstDisbursement.disbursementScheduleStatus,
-        coeDenialReason: getCOEDeniedReason(firstDisbursement),
-      },
-    };
-
-    if (secondDisbursement) {
-      details.secondDisbursement = {
-        coeStatus: secondDisbursement.coeStatus,
-        disbursementScheduleStatus:
-          secondDisbursement.disbursementScheduleStatus,
-        coeDenialReason: getCOEDeniedReason(secondDisbursement),
-      };
-    }
-    return details;
+    return this.applicationControllerService.transformToEnrolmentApplicationDetailsAPIOutDTO(
+      application.currentAssessment.disbursementSchedules,
+    );
   }
 
   /**
@@ -632,35 +614,20 @@ export class ApplicationStudentsController extends BaseController {
       getApplicationPromise,
       mostRecentAppealsPromises,
     ]);
-
     if (!application) {
       throw new NotFoundException(
         `Application not found or not on ${ApplicationStatus.Completed} status.`,
       );
     }
-
-    const [firstDisbursement, secondDisbursement] =
-      application.currentAssessment.disbursementSchedules;
-
-    const details: CompletedApplicationDetailsAPIOutDTO = {
+    const enrolmentDetails =
+      this.applicationControllerService.transformToEnrolmentApplicationDetailsAPIOutDTO(
+        application.currentAssessment.disbursementSchedules,
+      );
+    return {
+      firstDisbursement: enrolmentDetails.firstDisbursement,
+      secondDisbursement: enrolmentDetails.secondDisbursement,
       assessmentTriggerType: application.currentAssessment.triggerType,
       appealStatus: mostRecentAppeal?.status,
-      firstDisbursement: {
-        coeStatus: firstDisbursement.coeStatus,
-        disbursementScheduleStatus:
-          firstDisbursement.disbursementScheduleStatus,
-        coeDenialReason: getCOEDeniedReason(firstDisbursement),
-      },
     };
-
-    if (secondDisbursement) {
-      details.secondDisbursement = {
-        coeStatus: secondDisbursement.coeStatus,
-        disbursementScheduleStatus:
-          secondDisbursement.disbursementScheduleStatus,
-        coeDenialReason: getCOEDeniedReason(secondDisbursement),
-      };
-    }
-    return details;
   }
 }
