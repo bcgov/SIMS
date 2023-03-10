@@ -34,6 +34,7 @@
     label="You have a new assessment due to your scholastic standing"
     icon="fa:fas fa-check-circle"
     icon-color="success"
+    :background-color="hasDisbursementEvent ? undefined : 'success-bg'"
     content="Your institution informed us of your scholastic standing, which changed your assessment evaluation. Please review your new assessment in the table below. You can also click “View request” to see the details from your institution. Please contact the Financial Aid Officer from your institution, if you have questions about your scholastic standing."
     v-if="
       assessmentDetails.assessmentTriggerType ===
@@ -45,6 +46,7 @@
     label="You have a new assessment due to an update with your study period"
     icon="fa:fas fa-check-circle"
     icon-color="success"
+    :background-color="hasDisbursementEvent ? undefined : 'success-bg'"
     content="Your institution updated the study period that was submitted with your application, which changed your assessment evaluation. Please review your new assessment in the table below. If you have concerns or require more information, please contact the Financial Aid Officer from your institution."
     v-if="
       assessmentDetails?.assessmentTriggerType ===
