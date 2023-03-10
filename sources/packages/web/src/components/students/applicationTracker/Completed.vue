@@ -1,12 +1,12 @@
 <template>
   <!-- Student appeal - waiting approval -->
   <application-status-tracker-banner
+    v-if="assessmentDetails.appealStatus === StudentAppealStatus.Pending"
     label="Your requested change is in progress"
     icon="fa:fas fa-exclamation-triangle"
     icon-color="warning"
     background-color="warning-bg"
     content="StudentAid BC is reviewing your requested change. If your requested change is approved, your application will be re-evaluated with a new assessment below."
-    v-if="assessmentDetails.appealStatus === StudentAppealStatus.Pending"
   />
   <!-- Student appeal - declined -->
   <application-status-tracker-banner
@@ -19,39 +19,39 @@
   />
   <!-- Student appeal - approved -->
   <application-status-tracker-banner
+    v-if="
+      assessmentDetails.assessmentTriggerType ===
+      AssessmentTriggerType.StudentAppeal
+    "
     label="Your requested change was approved! Please review your new assessment."
     icon="fa:fas fa-check-circle"
     icon-color="success"
     :background-color="hasDisbursementEvent ? undefined : 'success-bg'"
     content="StudentAid BC has determined an outcome with 1 or more of your requested change. Please review your new assessment in the table below."
-    v-if="
-      assessmentDetails.assessmentTriggerType ===
-      AssessmentTriggerType.StudentAppeal
-    "
   />
   <!-- Scholastic standing changed -->
   <application-status-tracker-banner
+    v-if="
+      assessmentDetails.assessmentTriggerType ===
+      AssessmentTriggerType.ScholasticStandingChange
+    "
     label="You have a new assessment due to your scholastic standing"
     icon="fa:fas fa-check-circle"
     icon-color="success"
     :background-color="hasDisbursementEvent ? undefined : 'success-bg'"
     content="Your institution informed us of your scholastic standing, which changed your assessment evaluation. Please review your new assessment in the table below. You can also click “View request” to see the details from your institution. Please contact the Financial Aid Officer from your institution, if you have questions about your scholastic standing."
-    v-if="
-      assessmentDetails.assessmentTriggerType ===
-      AssessmentTriggerType.ScholasticStandingChange
-    "
   />
   <!-- Offering changed -->
   <application-status-tracker-banner
+    v-if="
+      assessmentDetails?.assessmentTriggerType ===
+      AssessmentTriggerType.OfferingChange
+    "
     label="You have a new assessment due to an update with your study period"
     icon="fa:fas fa-check-circle"
     icon-color="success"
     :background-color="hasDisbursementEvent ? undefined : 'success-bg'"
     content="Your institution updated the study period that was submitted with your application, which changed your assessment evaluation. Please review your new assessment in the table below. If you have concerns or require more information, please contact the Financial Aid Officer from your institution."
-    v-if="
-      assessmentDetails?.assessmentTriggerType ===
-      AssessmentTriggerType.OfferingChange
-    "
   />
   <!-- Disbursement/COE banners -->
   <multiple-disbursement-banner
