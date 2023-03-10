@@ -102,6 +102,7 @@ jobs:
       BUILD_ID: ${{ github.event.number }}
       BUILD_REF: ${{ github.base_ref }}
       ZEEBE_ADDRESS: zeebe-test:26500
+      ZEEBE_CLIENT_MAX_RETRIES: 20
     steps:
       # Checkout the PR branch.
       - name: Checkout Target Branch
