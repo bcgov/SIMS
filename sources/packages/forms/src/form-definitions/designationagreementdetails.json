@@ -1,5 +1,4 @@
 {
-  "_id": "639baa9cc303847c56c151c4",
   "title": "Designation Agreement Details",
   "name": "designationagreementdetails",
   "path": "designationagreementdetails",
@@ -8,7 +7,6 @@
   "tags": [
     "common"
   ],
-  "owner": "639baa52c303847c56c15142",
   "components": [
     {
       "label": "HTML",
