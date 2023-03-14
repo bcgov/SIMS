@@ -4,9 +4,7 @@ import {
   RecordDataModelService,
   Application,
   AssessmentTriggerType,
-  Note,
   NoteType,
-  Student,
   StudentAppeal,
   StudentAppealRequest,
   StudentAppealStatus,
@@ -35,6 +33,7 @@ import {
 } from "./constants";
 import { StudentAssessmentService } from "../student-assessment/student-assessment.service";
 import { NotificationActionsService } from "@sims/services/notifications";
+import { NoteSharedService } from "@sims/services";
 
 /**
  * Service layer for Student appeals.
@@ -46,6 +45,7 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
     private readonly studentAppealRequestsService: StudentAppealRequestsService,
     private readonly studentAssessmentService: StudentAssessmentService,
     private readonly notificationActionsService: NotificationActionsService,
+    private readonly noteSharedService: NoteSharedService,
   ) {
     super(dataSource.getRepository(StudentAppeal));
   }
@@ -117,7 +117,7 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
    * * condition, we get Declined.
    * * andWhere: will only take Pending and
    * * Declined status.
-   * @param applicationId application id .
+   * @param applicationId application id.
    * @param studentId applicant student.
    * @returns StudentAppeal list.
    */
@@ -217,6 +217,39 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
       "status",
     );
     return appealWithStatus;
+  }
+
+  /**
+   * Get student appeals and their status.
+   * @param applicationId application id.
+   * @param studentId student id.
+   * @param options query options
+   * - `limit` limit of records to be retrieved.
+   * @returns student appeals and their status.
+   */
+  async getAppealsForApplication(
+    applicationId: number,
+    studentId: number,
+    options?: {
+      limit?: number;
+    },
+  ): Promise<StudentAppealWithStatus[]> {
+    const query = this.repo
+      .createQueryBuilder("studentAppeal")
+      .select(["studentAppeal.id"])
+      .addSelect(this.buildStatusSelect(), "status")
+      .innerJoin("studentAppeal.application", "application")
+      .where("application.id = :applicationId", { applicationId })
+      .andWhere("application.student.id = :studentId", { studentId })
+      .orderBy("studentAppeal.submittedDate", "DESC");
+    if (options?.limit) {
+      query.limit(options.limit);
+    }
+    const queryResult = await query.getRawAndEntities();
+    return mapFromRawAndEntities<StudentAppealWithStatus>(
+      queryResult,
+      "status",
+    );
   }
 
   /**
@@ -320,18 +353,13 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
       appealToUpdate.appealRequests = [];
       for (const approval of approvals) {
         // Create the new note.
-        const note = await transactionalEntityManager.getRepository(Note).save({
-          noteType: NoteType.Application,
-          description: approval.noteDescription,
-          creator: auditUser,
-        } as Note);
-        // Associate the new note with the student.
-        await transactionalEntityManager
-          .getRepository(Student)
-          .createQueryBuilder()
-          .relation(Student, "notes")
-          .of({ id: appealToUpdate.application.student.id } as Student)
-          .add(note);
+        const note = await this.noteSharedService.createStudentNote(
+          appealToUpdate.application.student.id,
+          NoteType.Application,
+          approval.noteDescription,
+          auditUserId,
+          transactionalEntityManager,
+        );
         // Update the appeal with the associated student note.
         appealToUpdate.appealRequests.push({
           id: approval.id,
@@ -351,7 +379,7 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
         )
       ) {
         // Create the new assessment to be processed.
-        appealToUpdate.studentAssessment = {
+        const newAssessment = {
           application: { id: appealToUpdate.application.id } as Application,
           offering: {
             id: appealToUpdate.application.currentAssessment.offeringId,
@@ -362,8 +390,13 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
           submittedBy: auditUser,
           submittedDate: auditDate,
         } as StudentAssessment;
+        // Creates the new assessment.
+        appealToUpdate.studentAssessment = newAssessment;
+        // Sets the new assessment as the current one.
+        appealToUpdate.application.currentAssessment = newAssessment;
       }
 
+      // Save appeals, new assessment, and application current assessment.
       const updatedStudentAppeal = await transactionalEntityManager
         .getRepository(StudentAppeal)
         .save(appealToUpdate);
