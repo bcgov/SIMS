@@ -2,46 +2,58 @@ import { OfferingIntensity } from "@sims/sims-db";
 import {
   AssessmentConsolidatedData,
   OfferingDeliveryOptions,
+  Provinces,
   YesNoOptions,
-} from "../models/assessment-consolidated-data.model";
+} from "../models/assessment.model";
 
 export function getFakeAssessmentConsolidatedData(
   offeringIntensity: OfferingIntensity,
   programYear: string,
+  offeringStudyStartDate: string,
+  offeringStudyEndDate: string,
 ): AssessmentConsolidatedData {
+  const [programStartYear] = programYear.split("-");
   return {
+    ...setDefaultAssessmentConsolidatedData(),
     studentDataDependantstatus: "independant",
     programYear,
-    programYearStartDate: "2022-08-01",
+    programYearStartDate: `${programStartYear}-08-01`,
     studentDataRelationshipStatus: "single",
-    studentDataTaxReturnIncome: 35000,
-    studentDataWhenDidYouGraduateOrLeaveHighSchool: "2018-02-02",
+    studentDataTaxReturnIncome: 40000,
+    studentDataWhenDidYouGraduateOrLeaveHighSchool: "2017-03-01",
     studentDataIndigenousStatus: YesNoOptions.No,
     studentDataHasDependents: YesNoOptions.No,
     studentDataLivingWithParents: YesNoOptions.No,
     studentDataYouthInCare: YesNoOptions.No,
     studentPDStatus: false,
-    studentTaxYear: 2021,
-    programLocation: "BC",
-    institutionLocationProvince: "BC",
+    studentTaxYear: +programStartYear - 1,
+    programLocation: Provinces.BritishColumbia,
+    institutionLocationProvince: Provinces.BritishColumbia,
     institutionType: "BC Public",
     programLength: "1YearToLessThan2Years",
     programCredentialType: "undergraduateDegree",
     offeringIntensity,
     offeringDelivered: OfferingDeliveryOptions.Onsite,
-    offeringStudyEndDate: "2023-02-28",
-    offeringStudyStartDate: "2022-11-01",
-    offeringProgramRelatedCosts: 3333,
-    offeringActualTuitionCosts: 333333,
-    offeringMandatoryFees: 33,
-    offeringExceptionalExpenses: 33,
-    offeringWeeks: 17,
-    applicationId: null,
+    offeringStudyEndDate,
+    offeringStudyStartDate,
+    offeringProgramRelatedCosts: 5000,
+    offeringActualTuitionCosts: 20000,
+    offeringMandatoryFees: 500,
+    offeringExceptionalExpenses: 500,
+    offeringWeeks: 16,
+  };
+}
+
+/**
+ * Camunda workflow engine expects the variables which are not assigned with values
+ * to be set as null.
+ *
+ * @returns assessment consolidated default values.
+ */
+function setDefaultAssessmentConsolidatedData(): AssessmentConsolidatedData {
+  return {
     appealsStudentIncomeAppealData: null,
     appealsPartnerIncomeAppealData: null,
-    studentDataSelectedLocation: null,
-    studentDataSelectedProgram: null,
-    studentDataSelectedOffering: null,
     studentDataIsYourSpouseACanadianCitizen: null,
     studentDataParentValidSinNumber: null,
     studentDataNumberOfParents: null,
@@ -67,8 +79,7 @@ export function getFakeAssessmentConsolidatedData(
     studentDataDaycareCosts12YearsOrOver: null,
     studentDataLivingathomeRent: null,
     studentDataTransportationCost: null,
-    offeringCourseLoad: null, // asessment to-do:probably number from 20-59.
-    parent1SupportingUserId: null,
+    offeringCourseLoad: null,
     parent1Contributions: null,
     parent1Ei: null,
     parent1NetAssests: null,
@@ -78,7 +89,6 @@ export function getFakeAssessmentConsolidatedData(
     parent1CRAReportedIncome: null,
     parent1CppEmployment: null,
     parent1CppSelfemploymentOther: null,
-    parent2SupportingUserId: null,
     parent2Contributions: null,
     parent2CppSelfemploymentOther: null,
     parent2DependentTable: [],
@@ -88,13 +98,12 @@ export function getFakeAssessmentConsolidatedData(
     parent2TotalIncome: null,
     parent2CRAReportedIncome: null,
     parent2CppEmployment: null,
-    partner1SupportingUserId: null,
     partner1SocialAssistance: null,
     partner1EmploymentInsuranceBenefits: null,
     partner1TotalStudentLoan: null,
     partner1PermanentDisabilityBenefits: null,
     partner1StudentStudyWeeks: null,
-    partner1CRAReportedIncome: null,
     partner1TotalIncome: null,
-  };
+    partner1CRAReportedIncome: null,
+  } as AssessmentConsolidatedData;
 }

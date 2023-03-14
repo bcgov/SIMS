@@ -21,12 +21,31 @@ export enum OfferingDeliveryOptions {
 }
 
 /**
- * Data required to calculate the assessment of an application.
+ * Canadian provinces.
+ */
+export enum Provinces {
+  Alberta = "AB",
+  BritishColumbia = "BC",
+  Manitoba = "MB",
+  NewBrunswick = "NB",
+  NewFoundlandAndLabrador = "NL",
+  NovaScotia = "NS",
+  Ontario = "ON",
+  PrinceEdwardIsland = "PE",
+  Quebec = "QC",
+  Saskatchewan = "SK",
+  Yukon = "YT",
+  NorthernTerritories = "NT",
+  Nunavut = "NU",
+}
+
+/**
+ * Data required to calculate the assessment data of an application.
  */
 export interface AssessmentConsolidatedData {
   studentDataDependantstatus: "dependant" | "independant";
   programYear: string;
-  programYearStartDate: string; //asessment to-do: date string type if possible
+  programYearStartDate: string;
   studentDataRelationshipStatus: "single" | "dependent" | "married";
   studentDataTaxReturnIncome: number;
   studentDataWhenDidYouGraduateOrLeaveHighSchool: string;
@@ -36,8 +55,8 @@ export interface AssessmentConsolidatedData {
   studentDataYouthInCare: YesNoOptions;
   studentPDStatus: boolean;
   studentTaxYear: number;
-  programLocation: string; //asessment to-do:probably province enum
-  institutionLocationProvince: string; //asessment to-do:probably province enum
+  programLocation: Provinces;
+  institutionLocationProvince: Provinces;
   institutionType: string;
   programLength: string;
   programCredentialType: string;
@@ -51,12 +70,8 @@ export interface AssessmentConsolidatedData {
   offeringExceptionalExpenses: number;
   offeringWeeks: number;
   assessmentTriggerType?: AssessmentTriggerType;
-  applicationId?: number;
   appealsStudentIncomeAppealData?: unknown;
   appealsPartnerIncomeAppealData?: unknown;
-  studentDataSelectedLocation?: number;
-  studentDataSelectedProgram?: number;
-  studentDataSelectedOffering?: number;
   studentDataIsYourSpouseACanadianCitizen?: YesNoOptions;
   studentDataParentValidSinNumber?: YesNoOptions;
   studentDataNumberOfParents?: 1 | 2;
@@ -82,8 +97,7 @@ export interface AssessmentConsolidatedData {
   studentDataDaycareCosts12YearsOrOver?: number;
   studentDataLivingathomeRent?: number;
   studentDataTransportationCost?: number;
-  offeringCourseLoad?: number; // asessment to-do:probably number from 20-59.
-  parent1SupportingUserId?: number;
+  offeringCourseLoad?: number;
   parent1Contributions?: number;
   parent1Ei?: number;
   parent1NetAssests?: number;
@@ -93,7 +107,6 @@ export interface AssessmentConsolidatedData {
   parent1CRAReportedIncome?: number;
   parent1CppEmployment?: number;
   parent1CppSelfemploymentOther?: number;
-  parent2SupportingUserId?: number;
   parent2Contributions?: number;
   parent2CppSelfemploymentOther?: number;
   parent2DependentTable?: [];
@@ -103,7 +116,6 @@ export interface AssessmentConsolidatedData {
   parent2TotalIncome?: number;
   parent2CRAReportedIncome?: number;
   parent2CppEmployment?: number;
-  partner1SupportingUserId?: number;
   partner1SocialAssistance?: number;
   partner1EmploymentInsuranceBenefits?: number;
   partner1TotalStudentLoan?: number;
@@ -111,4 +123,55 @@ export interface AssessmentConsolidatedData {
   partner1StudentStudyWeeks?: number;
   partner1CRAReportedIncome?: number;
   partner1TotalIncome?: number;
+}
+
+export interface AssessmentModel {
+  weeks: number;
+  tuitionCost: number;
+  childcareCost: number;
+  livingAllowance: number;
+  totalAssessedCost: number;
+  totalFamilyIncome: number;
+  totalFederalAward: number;
+  otherAllowableCost: number;
+  transportationCost: number;
+  secondResidenceCost: number;
+  totalAssessmentNeed: number;
+  booksAndSuppliesCost: number;
+  totalProvincialAward: number;
+  alimonyOrChildSupport: number;
+  federalAssessmentNeed: number;
+  exceptionalEducationCost: number;
+  provincialAssessmentNeed: number;
+  totalFederalContribution: number;
+  parentAssessedContribution: number;
+  partnerAssessedContribution: number;
+  totalProvincialContribution: number;
+  studentTotalFederalContribution: number;
+  studentTotalProvincialContribution: number;
+}
+
+export interface CalculatedAssessmentModel {
+  offeringWeeks: number;
+  calculatedDataTotalTutionCost: number;
+  calculatedDataChildCareCost: number;
+  calculatedDataTotalMSOLAllowance: number;
+  calculatedDataTotalCosts: number;
+  calculatedDataTotalFamilyIncome: number;
+  awardNetFederalTotalAward: number;
+  calculatedDataTotalTransportationCost: number;
+  calculatedDataTotalSecondResidence: number;
+  caclulatedDataTotalAssessedNeed: number;
+  calculatedDataTotalBookCost: number;
+  awardNetProvincialTotalAward: number;
+  calculatedDataTotalChildSpousalSupport: number;
+  calculatedDataFederalAssessedNeed: number;
+  offeringExceptionalExpenses: number;
+  calculatedDataProvincialAssessedNeed: number;
+  calculatedDataTotalParentalContribution: number;
+  calculatedDataTotalSpouseContribution: number;
+  calculatedDataTotalFederalFSC: number;
+  calculatedDataTotalProvincialFSC: number;
+  totalFederalContribution: number;
+  totalProvincialContribution: number;
 }

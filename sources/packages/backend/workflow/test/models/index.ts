@@ -1,1 +1,1 @@
-export * from "./assessment-consolidated-data.model";
+export * from "./assessment.model";
