@@ -44,7 +44,7 @@
   <!-- Offering changed -->
   <application-status-tracker-banner
     v-if="
-      assessmentDetails?.assessmentTriggerType ===
+      assessmentDetails.assessmentTriggerType ===
       AssessmentTriggerType.OfferingChange
     "
     label="You have a new assessment due to an update with your study period"
@@ -55,23 +55,23 @@
   />
   <!-- Disbursement/COE banners -->
   <multiple-disbursement-banner
-    v-if="assessmentDetails?.secondDisbursement"
-    :firstCOEStatus="assessmentDetails?.firstDisbursement?.coeStatus"
-    :secondCOEStatus="assessmentDetails?.secondDisbursement?.coeStatus"
+    v-if="assessmentDetails.secondDisbursement"
+    :firstCOEStatus="assessmentDetails.firstDisbursement?.coeStatus"
+    :secondCOEStatus="assessmentDetails.secondDisbursement?.coeStatus"
     :coeDenialReason="multipleCOEDenialReason"
     :firstDisbursementStatus="
-      assessmentDetails?.firstDisbursement?.disbursementScheduleStatus
+      assessmentDetails.firstDisbursement?.disbursementScheduleStatus
     "
     :secondDisbursementStatus="
-      assessmentDetails?.secondDisbursement?.disbursementScheduleStatus
+      assessmentDetails.secondDisbursement?.disbursementScheduleStatus
     "
   />
   <disbursement-banner
     v-else
-    :coeStatus="assessmentDetails?.firstDisbursement?.coeStatus"
-    :coeDenialReason="assessmentDetails?.firstDisbursement?.coeDenialReason"
+    :coeStatus="assessmentDetails.firstDisbursement?.coeStatus"
+    :coeDenialReason="assessmentDetails.firstDisbursement?.coeDenialReason"
     :disbursementStatus="
-      assessmentDetails?.firstDisbursement?.disbursementScheduleStatus
+      assessmentDetails.firstDisbursement?.disbursementScheduleStatus
     "
   />
 </template>
