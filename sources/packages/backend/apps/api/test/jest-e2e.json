@@ -25,5 +25,21 @@
     "@sims/test-utils": "<rootDir>/../../libs/test-utils/src",
     "@sims/integrations/(.*)": "<rootDir>/../../libs/integrations/src/$1",
     "@sims/integrations": "<rootDir>/../../libs/integrations/src"
-  }
+  },
+  "coveragePathIgnorePatterns": [
+    "node_modules",
+    "db-migrations",
+    "_tests_",
+    "main.ts",
+    ".module.ts",
+    "coverage",
+    "test-utils",
+    "testHelpers",
+    ".e2e-spec.ts",
+    ".models.ts",
+    ".model.ts",
+    ".dto.ts",
+    ".mock.ts",
+    "index.ts"
+  ]
 }
