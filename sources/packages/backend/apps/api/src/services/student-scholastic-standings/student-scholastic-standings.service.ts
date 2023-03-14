@@ -167,6 +167,8 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
 
       // Create StudentScholasticStanding.
       const scholasticStanding = new StudentScholasticStanding();
+      scholasticStanding.changeType =
+        scholasticStandingData.scholasticStandingChangeType;
       scholasticStanding.application = { id: application.id } as Application;
       scholasticStanding.submittedData = scholasticStandingData;
       scholasticStanding.submittedDate = now;
