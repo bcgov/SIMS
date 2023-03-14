@@ -118,11 +118,12 @@ jobs:
     name: Building all packages
     environment: DEV
     runs-on: ubuntu-latest
+    needs: createTag
     if: github.event.pull_request.merged == true || github.event_name == 'workflow_dispatch' 
     env:
       BUILD_ID: ${{ github.event.number }}
       BUILD_NAMESPACE: 0c27fb-tools
-      BUILD_REF: ${{ inputs.releaseTag }}
+      BUILD_REF: ${{ needs.createTag.outputs.newTag }}
       HOST_PREFIX: ${{ secrets.HOST_PREFIX }}
     steps:
       # Checkout the PR branch
@@ -164,10 +165,11 @@ jobs:
     environment: DEV
     needs:
       - build
+      - createTag
     env:
       BUILD_ID: ""
       NAMESPACE: ${{ secrets.OPENSHIFT_ENV_NAMESPACE }}
-      BUILD_REF: ${{ inputs.releaseTag }}
+      BUILD_REF: ${{ needs.createTag.outputs.newTag }}
       HOST_PREFIX: ${{ secrets.HOST_PREFIX }}
       BUILD_NAMESPACE: 0c27fb-tools
       KEYCLOAK_REALM: "aestsims"
