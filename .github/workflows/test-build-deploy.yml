@@ -1,12 +1,43 @@
 name: Test Build and Deploy
 on:
+  pull_request:
+    types: [opened, reopened, synchronize, closed]
+    branches:
+      - main
   workflow_dispatch:
     inputs:
-      releaseTag:
-        description: "Release Tag"
-        required: true
-        default: "null"
-        type: string
+      bumb:
+        description: "The type of semantic version increment to make. One of major, premajor, minor, preminor, patch, prepatch, or prerelease. By default it is 'prerelease'"
+        required: false
+        default: "prerelease"
+        type: choice
+        options:
+          - major
+          - premajor
+          - minor
+          - preminor
+          - patch
+          - prepatch
+          - prerelease
+      preId:
+        description: "Identifier to be used to prefix premajor, preminor, prepatch or prerelease version increments. By default it is 'prerelease' for pull request event and workflow dispatch will follow the release tag prefix, if any"
+        required: false
+        type: choice
+        options:
+          -
+          - premajor
+          - preminor
+          - prepatch
+          - prerelease
+      releaseType:
+        description: "Select the release type. By default only tag will be created. if you want to create a release with the tag select the type."
+        type: choice
+        required: false
+        options:
+          -
+          - draft
+          - publish
+
 
 jobs:
   # Print variables for logging and debugging purposes
@@ -14,7 +45,7 @@ jobs:
     name: Check Env variables
     environment: DEV
     runs-on: ubuntu-latest
-    # if: ${{ github.event.pull_request.merged == true}}
+    if: github.event.pull_request.merged == true || github.event_name == 'workflow_dispatch'
     steps:
       - name: Print Env Vars
         run: |
@@ -22,35 +53,72 @@ jobs:
           echo Git Build ID: ${{ github.event.number }}
           echo Git Pull Request Ref: ${{ github.event.pull_request.head.sha }}
           echo OC CLI Version: $(oc version)
-  
-  # Create release
-  release:
-    name: Create Release
+
+  # todo: check the naming format of variable
+  # Create new tag.
+  createTag:
+    name: "Create tag"
+    if:  github.event.pull_request.merged == true || github.event_name == 'workflow_dispatch' 
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-      - name: Create Release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
+      - name: Get bumb value
+        uses: haya14busa/action-cond@v1
+        id: getBumb
         with:
-          tag_name: ${{ inputs.releaseTag }}
-          release_name: Release ${{ inputs.releaseTag }}
-          body: |
-            Changes in this Release
-            - First Change
-            - Second Change
-          draft: false
-          prerelease: false
+          cond: ${{ github.event_name == 'workflow_dispatch'}}
+          if_true: ${{ inputs.bumb }}
+          if_false: 'prerelease'
+
+      - name: Get bumb value, if provided
+        uses: haya14busa/action-cond@v1
+        id: getPreId
+        with:
+          cond: ${{ github.event_name == 'workflow_dispatch'}}
+          if_true: ${{ inputs.preId }}
+          if_false: 'prerelease'
+      - run: |
+          echo "bumb: ${{ steps.getBumb.outputs.value }}"
+          echo "prefix: ${{ steps.getPreId.outputs.value }}"
+  
+      - id: createNextTag
+        name: "Create tag"
+        uses: zwaldowski/semver-release-action@v3
+        with: 
+          prefix: "v"
+          preid: ${{ steps.getPreId.outputs.value }}       
+          bump:  ${{ steps.getBumb.outputs.value }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+      - run: echo "Tag ${{ steps.createNextTag.outputs.version_tag }} created!"
+    outputs:
+      newTag: ${{ steps.createNextTag.outputs.version_tag }}
+
+
+  # Create new release.
+  createRelease:
+    name: "Create release"
+    if: github.event_name == 'workflow_dispatch' && (inputs.releaseType == 'publish' || inputs.releaseType == 'draft')
+    runs-on: ubuntu-latest
+    needs: createTag
+    steps:
+      - name: Create release
+        id: createNewRelease
+        uses: Roang-zero1/github-create-release-action@v3
+        with:
+          created_tag: ${{ needs.createTag.outputs.newTag }}
+          create_draft: ${{ inputs.releaseType == 'draft' }}
+          release_title:  Release ${{ needs.createTag.outputs.newTag }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - run: echo "created release ${{ needs.createTag.outputs.newTag }} ${{ steps.createNewRelease.outputs.html_url }}!"
+
+
 
   # Building all packages
   build:
     name: Building all packages
     environment: DEV
     runs-on: ubuntu-latest
-    # if: ${{ github.event.pull_request.merged == true}}
+    if: github.event.pull_request.merged == true || github.event_name == 'workflow_dispatch' 
     env:
       BUILD_ID: ${{ github.event.number }}
       BUILD_NAMESPACE: 0c27fb-tools
