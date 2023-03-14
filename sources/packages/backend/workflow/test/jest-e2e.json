@@ -23,5 +23,9 @@
     "@sims/utilities": "<rootDir>/../libs/utilities/src",
     "@sims/test-utils/(.*)": "<rootDir>/../libs/test-utils/src/$1",
     "@sims/test-utils": "<rootDir>/../libs/test-utils/src"
-  }
+  },
+  "coveragePathIgnorePatterns": [
+    "node_modules",
+    "test"
+  ]
 }
