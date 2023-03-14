@@ -28,18 +28,17 @@
   },
   "coveragePathIgnorePatterns": [
     "node_modules",
-    "db-migrations",
     "_tests_",
+    "test",
     "main.ts",
     ".module.ts",
     "coverage",
-    "test-utils",
     "testHelpers",
     ".e2e-spec.ts",
     ".models.ts",
     ".model.ts",
     ".dto.ts",
-    ".mock.ts",
+    "mock.ts",
     "index.ts"
   ]
 }

@@ -14,7 +14,8 @@ describe(`E2E Test Workflow  fulltime-assessment-${PROGRAM_YEAR}`, () => {
     zeebeClientProvider = new ZBClient();
   });
 
-  it("Should generate expected fulltime assessment values for a single and independent student.", async () => {
+  it("Should generate expected fulltime assessment values when the student is single and independent.", async () => {
+    // Arrange
     const assessmentConsolidatedData = getFakeAssessmentConsolidatedData(
       OfferingIntensity.fullTime,
       PROGRAM_YEAR,
@@ -49,6 +50,7 @@ describe(`E2E Test Workflow  fulltime-assessment-${PROGRAM_YEAR}`, () => {
       studentTotalProvincialContribution: 78.45576923076923,
     } as AssessmentModel;
 
+    // Act/Assert
     const calculatedAssessment =
       await zeebeClientProvider.createProcessInstanceWithResult<
         AssessmentConsolidatedData,
