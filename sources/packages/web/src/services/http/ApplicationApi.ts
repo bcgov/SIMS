@@ -164,7 +164,7 @@ export class ApplicationApi extends HttpBaseClient {
     applicationId: number,
   ): Promise<EnrolmentApplicationDetailsAPIOutDTO> {
     return this.getCall<EnrolmentApplicationDetailsAPIOutDTO>(
-      this.addClientRoot(`application/${applicationId}/enrolment-details`),
+      this.addClientRoot(`application/${applicationId}/enrolment`),
     );
   }
 
@@ -177,7 +177,7 @@ export class ApplicationApi extends HttpBaseClient {
     applicationId: number,
   ): Promise<CompletedApplicationDetailsAPIOutDTO> {
     return this.getCall<CompletedApplicationDetailsAPIOutDTO>(
-      this.addClientRoot(`application/${applicationId}/completed-details`),
+      this.addClientRoot(`application/${applicationId}/completed`),
     );
   }
 }

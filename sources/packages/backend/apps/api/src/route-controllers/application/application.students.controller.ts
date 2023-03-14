@@ -562,7 +562,7 @@ export class ApplicationStudentsController extends BaseController {
     description:
       "Application not found or not in relevant status to get enrolment details.",
   })
-  @Get(":applicationId/enrolment-details")
+  @Get(":applicationId/enrolment")
   async getEnrolmentApplicationDetails(
     @Param("applicationId", ParseIntPipe) applicationId: number,
     @UserToken() userToken: StudentUserToken,
@@ -590,7 +590,7 @@ export class ApplicationStudentsController extends BaseController {
   @ApiNotFoundResponse({
     description: `Application not found or not on ${ApplicationStatus.Completed} status.`,
   })
-  @Get(":applicationId/completed-details")
+  @Get(":applicationId/completed")
   async getCompletedApplicationDetails(
     @Param("applicationId", ParseIntPipe) applicationId: number,
     @UserToken() userToken: StudentUserToken,
