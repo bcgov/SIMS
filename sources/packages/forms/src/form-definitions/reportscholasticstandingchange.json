@@ -3294,22 +3294,22 @@
           "values": [
             {
               "label": "Student went from full-time to part-time studies (vice-versa) or started a different program",
-              "value": "changeInIntensity",
+              "value": "Change in intensity",
               "shortcut": ""
             },
             {
               "label": "Student completed program early",
-              "value": "studentCompletedProgramEarly",
+              "value": "Student completed program early",
               "shortcut": ""
             },
             {
               "label": "Student did not complete program",
-              "value": "studentDidNotCompleteProgram",
+              "value": "Student did not complete program",
               "shortcut": ""
             },
             {
               "label": "Student withdrew from program",
-              "value": "studentWithdrewFromProgram",
+              "value": "Student withdrew from program",
               "shortcut": ""
             }
           ],
@@ -3322,7 +3322,7 @@
             "multiple": false,
             "unique": false
           },
-          "key": "scholasticStanding",
+          "key": "scholasticStandingChangeType",
           "type": "radio",
           "input": true,
           "placeholder": "",

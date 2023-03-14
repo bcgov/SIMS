@@ -1,0 +1,1 @@
+DROP TYPE IF EXISTS sims.student_scholastic_standing_change_types;
