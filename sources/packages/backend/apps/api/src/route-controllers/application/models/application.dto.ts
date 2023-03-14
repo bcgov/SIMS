@@ -10,6 +10,8 @@ import {
   OfferingIntensity,
   APPLICATION_NUMBER_LENGTH,
   DisbursementScheduleStatus,
+  StudentAppealStatus,
+  AssessmentTriggerType,
 } from "@sims/sims-db";
 import { JsonMaxSize } from "../../../utilities/class-validation";
 import { JSON_20KB } from "../../../constants";
@@ -150,15 +152,21 @@ export class ApplicationProgressDetailsAPIOutDTO {
   firstCOEStatus?: COEStatus;
   secondCOEStatus?: COEStatus;
   exceptionStatus?: ApplicationExceptionStatus;
+  appealStatus?: StudentAppealStatus;
 }
 
-export class COEDetailsAPIOutDTO {
+export class DisbursementDetailsAPIOutDTO {
   coeStatus: COEStatus;
   disbursementScheduleStatus: DisbursementScheduleStatus;
   coeDenialReason: string;
 }
 
-export class ApplicationCOEDetailsAPIOutDTO {
-  firstCOE: COEDetailsAPIOutDTO;
-  secondCOE?: COEDetailsAPIOutDTO;
+export class EnrolmentApplicationDetailsAPIOutDTO {
+  firstDisbursement: DisbursementDetailsAPIOutDTO;
+  secondDisbursement?: DisbursementDetailsAPIOutDTO;
+}
+
+export class CompletedApplicationDetailsAPIOutDTO extends EnrolmentApplicationDetailsAPIOutDTO {
+  assessmentTriggerType: AssessmentTriggerType;
+  appealStatus?: StudentAppealStatus;
 }
