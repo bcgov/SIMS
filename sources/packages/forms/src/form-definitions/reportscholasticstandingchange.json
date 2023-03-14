@@ -3386,7 +3386,7 @@
           "conditional": {
             "show": true,
             "when": "scholasticStanding",
-            "eq": "changeInIntensity"
+            "eq": "Change in intensity"
           },
           "type": "panel",
           "label": "Panel",
@@ -3655,7 +3655,7 @@
           "conditional": {
             "show": true,
             "when": "scholasticStanding",
-            "eq": "studentCompletedProgramEarly"
+            "eq": "Student completed program early"
           },
           "type": "panel",
           "label": "Panel",
@@ -4640,7 +4640,7 @@
           "conditional": {
             "show": true,
             "when": "scholasticStanding",
-            "eq": "studentDidNotCompleteProgram"
+            "eq": "Student did not complete program"
           },
           "type": "panel",
           "label": "Panel",
@@ -5055,7 +5055,7 @@
           "conditional": {
             "show": true,
             "when": "scholasticStanding",
-            "eq": "studentWithdrewFromProgram"
+            "eq": "Student withdrew from program"
           },
           "type": "panel",
           "label": "Panel",
