@@ -74,7 +74,7 @@ export class CreateStudentUsers {
     const fakeUser = createFakeUser(username);
     await this.userRepo.save(fakeUser);
     // Create the student.
-    const fakeStudent = await createFakeStudent(fakeUser);
+    const fakeStudent = createFakeStudent(fakeUser);
     fakeStudent.sinConsent = options.sinConsent ?? false;
     fakeStudent.contactInfo = {
       address: {

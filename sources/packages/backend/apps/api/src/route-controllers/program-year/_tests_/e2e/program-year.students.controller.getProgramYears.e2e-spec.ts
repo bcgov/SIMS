@@ -6,8 +6,6 @@ import { DataSource } from "typeorm";
 import {
   BEARER_AUTH_TYPE,
   createTestingAppModule,
-} from "../../../../testHelpers";
-import {
   getStudentToken,
   FakeStudentUsersTypes,
 } from "../../../../testHelpers";
@@ -98,7 +96,7 @@ describe("ProgramYearStudentsController(e2e)-getProgramYears", () => {
     await programYearRepo.save(programYear);
   });
 
-  it("Should get the an active program year by id.", async () => {
+  it("Should get an active program year by id.", async () => {
     // Arrange
     const endpoint = "/students/program-year/1/active";
     const studentToken = await getStudentToken(
@@ -122,7 +120,7 @@ describe("ProgramYearStudentsController(e2e)-getProgramYears", () => {
       });
   });
 
-  it("Should return 'not found' status code for an inexistent program year.", async () => {
+  it("Should return 'not found' status for an inexistent program year.", async () => {
     // Arrange
     const endpoint = "/students/program-year/4/active";
     const studentToken = await getStudentToken(
@@ -135,7 +133,7 @@ describe("ProgramYearStudentsController(e2e)-getProgramYears", () => {
       .auth(studentToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.NOT_FOUND);
   });
-  it("Should return 'not found' status code for an inactive program year.", async () => {
+  it("Should return 'not found' status for an inactive program year.", async () => {
     // Arrange
     const programYearRepo = appDataSource.getRepository(ProgramYear);
     const programYear = await programYearRepo.findOneBy({ id: 3 });

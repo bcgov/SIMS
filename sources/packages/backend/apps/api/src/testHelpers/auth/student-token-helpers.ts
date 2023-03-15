@@ -14,7 +14,7 @@ export enum FakeStudentUsersTypes {
 }
 
 /**
- * Get the token for a student user. There are predefined users persisted by test DB seeding.
+ * Get the token for a student user persisted by the test DB seeding.
  * @param fakeStudentTestUser a fake student test user persisted in the test DB.
  * @returns a student user token to be used in the tests.
  */
@@ -22,14 +22,12 @@ export async function getStudentToken(
   fakeStudentTestUser: FakeStudentUsersTypes,
 ): Promise<string> {
   let studentToken: TokenResponse;
-  switch (fakeStudentTestUser) {
-    case FakeStudentUsersTypes.FakeStudentUserType1:
-      studentToken = await KeycloakService.shared.getToken(
-        process.env.E2E_TEST_STUDENT_USERNAME,
-        process.env.E2E_TEST_STUDENT_PASSWORD,
-        studentClientId,
-      );
-      break;
+  if (fakeStudentTestUser === FakeStudentUsersTypes.FakeStudentUserType1) {
+    studentToken = await KeycloakService.shared.getToken(
+      process.env.E2E_TEST_STUDENT_USERNAME,
+      process.env.E2E_TEST_STUDENT_PASSWORD,
+      studentClientId,
+    );
   }
   return studentToken.access_token;
 }
@@ -44,12 +42,11 @@ export async function getStudentByFakeStudentUserType(
   fakeStudentUserType: FakeStudentUsersTypes,
   dataSource: DataSource,
 ): Promise<Student> {
-  switch (fakeStudentUserType) {
-    case FakeStudentUsersTypes.FakeStudentUserType1:
-      return getStudentByUsername(
-        process.env.E2E_TEST_STUDENT_USERNAME,
-        dataSource,
-      );
+  if (fakeStudentUserType === FakeStudentUsersTypes.FakeStudentUserType1) {
+    return getStudentByUsername(
+      process.env.E2E_TEST_STUDENT_USERNAME,
+      dataSource,
+    );
   }
 }
 
