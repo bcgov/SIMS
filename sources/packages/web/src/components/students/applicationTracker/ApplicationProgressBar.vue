@@ -129,7 +129,7 @@ export default defineComponent({
         applicationProgressDetails.value.scholasticStandingChangeType ===
         StudentScholasticStandingChangeType.StudentDidNotCompleteProgram
       ) {
-        // Application is complete but has warnings.
+        // Application is complete has an error.
         applicationEndStatus.value = {
           endStatusType: "error",
           endStatusIcon: "fa:fas fa-exclamation-circle",
