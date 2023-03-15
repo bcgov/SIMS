@@ -7,10 +7,6 @@ on:
         description: "Build Ref"
         required: true
         default: "main"
-      buildId:
-        description: "Build Id"
-        required: true
-        default: "NULL"
       environment:
         required: true
         type: environment
@@ -25,9 +21,6 @@ on:
   workflow_call:
     inputs:
       buildRef:
-        required: true
-        type: string
-      buildId:
         required: true
         type: string
       environment:
@@ -46,7 +39,6 @@ jobs:
     runs-on: ubuntu-latest
     environment: ${{ github.event.inputs.environment }}
     env:
-      BUILD_ID: ${{ github.event.inputs.buildId }}
       NAMESPACE: ${{ secrets.OPENSHIFT_ENV_NAMESPACE }}
       BUILD_REF: ${{ github.event.inputs.buildRef }}
       HOST_PREFIX: ${{ secrets.HOST_PREFIX }}
@@ -72,7 +64,6 @@ jobs:
     steps:
       - name: Print env
         run: |
-          echo BUILD ID: $BUILD_ID
           echo BUILD NAMESPACE: $BUILD_NAMESPACE
           echo NAMESPACE: $NAMESPACE
           echo BRANCH: $BUILD_REF
@@ -114,6 +105,7 @@ jobs:
     uses: ./.github/workflows/deploy-camunda-definitions.yml
     with:
       environment: ${{ github.event.inputs.environment }}
+      gitRef: ${{ github.event.inputs.buildRef }}
     secrets: inherit
   deployFormioDefinitions:
     if: ${{ github.event.inputs.deployFormioDefinitions == 'true' }}
@@ -123,4 +115,5 @@ jobs:
     uses: ./.github/workflows/deploy-formio-definitions.yml
     with:
       environment: ${{ github.event.inputs.environment }}
+      gitRef: ${{ github.event.inputs.buildRef }}
     secrets: inherit

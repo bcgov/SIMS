@@ -5,7 +5,6 @@ export $(shell sed 's/=.*//' ../.env)
 export GIT_LOCAL_BRANCH?=$(shell git rev-parse --abbrev-ref HEAD)
 export NAMESPACE := $(or $(NAMESPACE), $$NS)
 export APP_NAME := $(or $(PROJECT_NAME), sims)
-export BUILD_ID := $(or $(BUILD_ID), 1)
 export TEMPLATE_FILE_NAME := $(or $(TEMPLATE_FILE_NAME), $$FILE)
 export BUILD_REF := $(or $(BUILD_REF), $(GIT_LOCAL_BRANCH))
 export BUILD_NAMESPACE := $(or $(BUILD_NAMESPACE), 0c27fb-tools)
@@ -156,7 +155,6 @@ print-status:
 	@echo " | NAMESPACE:    			$(NAMESPACE)"
 	@echo " | BUILD_NAMESPACE:    $(BUILD_NAMESPACE)"
 	@echo " +---------------------------------------------------------+ "
-	@echo " | BUILD_ID: 	$(BUILD_ID) "
 	@echo " | BUILD_TAG: 	$(BUILD_TAG) "
 	@echo " | HOST NAME: 	$(HOST) "
 	@echo " +---------------------------------------------------------+ "
