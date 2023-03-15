@@ -21,3 +21,12 @@ export enum YesNoOptions {
   Yes = "yes",
   No = "no",
 }
+
+/**
+ * Offering delivery options.
+ */
+export enum OfferingDeliveryOptions {
+  Onsite = "onsite",
+  Online = "online",
+  Blended = "blended",
+}

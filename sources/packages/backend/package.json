@@ -127,7 +127,7 @@
     "coveragePathIgnorePatterns": [
       "node_modules",
       "db-migrations",
-      "workflow",
+      "backend/workflow",
       "_tests_",
       "main.ts",
       ".module.ts",

@@ -1,19 +1,14 @@
 import { AssessmentTriggerType, OfferingIntensity } from "@sims/sims-db";
-import { Provinces, YesNoOptions } from "@sims/test-utils";
+import {
+  Provinces,
+  YesNoOptions,
+  OfferingDeliveryOptions,
+} from "@sims/test-utils";
 
 export interface StudentDependentTable {
   dateOfBirth: string;
   attendingPostSecondarySchool: YesNoOptions;
   declaredOnTaxes: YesNoOptions;
-}
-
-/**
- * Offering delivery options.
- */
-export enum OfferingDeliveryOptions {
-  Onsite = "onsite",
-  Online = "online",
-  Blended = "blended",
 }
 
 /**
