@@ -40,3 +40,4 @@ export * from "@/types/contracts/aest/roles";
 export * from "@/types/contracts/StatusInfo";
 export * from "@/types/contracts/Assessment";
 export * from "@/types/contracts/Overaward";
+export * from "@/types/contracts/StudentScholasticStanding";

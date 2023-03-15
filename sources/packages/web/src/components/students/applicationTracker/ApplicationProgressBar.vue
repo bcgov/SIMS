@@ -49,6 +49,7 @@ import {
   ApplicationExceptionStatus,
   COEStatus,
   StudentAppealStatus,
+  StudentScholasticStandingChangeType,
 } from "@/types";
 import { PropType, ref, defineComponent, computed, onMounted } from "vue";
 import { ApplicationProgressDetailsAPIOutDTO } from "@/services/http/dto/Application.dto";
@@ -125,6 +126,15 @@ export default defineComponent({
         );
 
       if (
+        applicationProgressDetails.value.scholasticStandingChangeType ===
+        StudentScholasticStandingChangeType.StudentDidNotCompleteProgram
+      ) {
+        // Application is complete but has warnings.
+        applicationEndStatus.value = {
+          endStatusType: "error",
+          endStatusIcon: "fa:fas fa-exclamation-circle",
+        };
+      } else if (
         applicationProgressDetails.value.appealStatus ===
         StudentAppealStatus.Pending
       ) {

@@ -24,7 +24,7 @@ import { StudentAssessmentService } from "../student-assessment/student-assessme
 import { StudentRestrictionService } from "../restriction/student-restriction.service";
 import { APPLICATION_CHANGE_NOT_ELIGIBLE } from "../../constants";
 import { RestrictionCode } from "../restriction/models/restriction.model";
-import { MINIMUM_UNSUCCESSFUL_WEEKS } from "./constants";
+import { MINIMUM_UNSUCCESSFUL_WEEKS } from "../../utilities";
 import {
   NotificationActionsService,
   StudentRestrictionSharedService,

@@ -6,8 +6,8 @@
 export enum StudentScholasticStandingChangeType {
   /**
    * Student went from full-time to part-time studies (vice-versa) or started a different program.
-   * This scholastic standing change type is only used to finish the current application. changing
-   * from full-time to part-time studies (vice-versa) is not part of the scholastic standing change.
+   * This scholastic standing change type is only used to finish the current application. The actual
+   * changing from full-time to part-time studies (vice-versa) is not part of the scholastic standing change.
    */
   ChangeInIntensity = "Change in intensity",
   /**
@@ -16,7 +16,7 @@ export enum StudentScholasticStandingChangeType {
   StudentCompletedProgramEarly = "Student completed program early",
   /**
    * Student was not able to complete the program (fail to complete).
-   *!This scholastic standing type does not cause a reassessment.
+   *!This scholastic standing type does not causes an reassessment.
    */
   StudentDidNotCompleteProgram = "Student did not complete program",
   /**
