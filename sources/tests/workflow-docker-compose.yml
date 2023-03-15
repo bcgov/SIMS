@@ -8,8 +8,6 @@ services:
       - ZEEBE_BROKER_DATA_DISKUSAGEREPLICATIONWATERMARK=0.999
       - "JAVA_TOOL_OPTIONS=-Xms256m -Xmx256m"
     restart: always
-    networks:
-      - local-network-tests
   workflow:
     image: workflow-${PROJECT_NAME}:${BUILD_REF}-${BUILD_ID}
     container_name: workers-${PROJECT_NAME}-${BUILD_REF}-${BUILD_ID}
@@ -20,11 +18,7 @@ services:
       - NODE_ENV=docker
       - ZEEBE_ADDRESS=zeebe-test:26500
       - ZEEBE_CLIENT_MAX_RETRIES=20
-    networks:
-      - local-network-tests
     restart: always
     depends_on:
       - zeebe-test
-networks:
-  local-network-tests:
-    driver: bridge
+
