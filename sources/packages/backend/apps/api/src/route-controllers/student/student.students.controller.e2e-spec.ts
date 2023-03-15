@@ -36,7 +36,7 @@ describe("Test ATBC Controller", () => {
     appDataSource = dataSource;
   });
 
-  it("should return an HTTP 200 status when applying for PD and student is valid", async () => {
+  it("Should return an HTTP 200 status when applying for PD and student is valid", async () => {
     // Arrange
     // Creating mockup for ATBCCreateClient.
     // This function actually calls the ATBC server to create the student profile.
