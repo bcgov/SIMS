@@ -101,13 +101,11 @@ jobs:
       PROJECT_NAME: aest-sims
       BUILD_ID: ${{ github.event.number }}
       BUILD_REF: ${{ github.base_ref }}
-      ZEEBE_ADDRESS: zeebe-test:26500
-      ZEEBE_CLIENT_MAX_RETRIES: 20
     steps:
       # Checkout the PR branch.
       - name: Checkout Target Branch
         uses: actions/checkout@v3
-      # Generate the coverage report for Workflow Workers
+      # Run e2e tests for workflow.
       - name: Run Tests
         working-directory: "./sources/tests/"
         run: |

@@ -22,5 +22,3 @@ RUN addgroup -S nonroot \
     && adduser -S nonroot -G nonroot
 
 USER nonroot
-
-

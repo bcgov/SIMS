@@ -1,3 +1,4 @@
+import "../../env-setup";
 import * as fs from "fs";
 import * as path from "path";
 import {
@@ -6,7 +7,6 @@ import {
   Deployment,
   ZBClient,
 } from "zeebe-node";
-import * as dotenv from "dotenv";
 import {
   DecisionDeploymentResult,
   DECISIONS_EXTENSION,
@@ -15,8 +15,6 @@ import {
   ProcessDeploymentResult,
   PROCESSES_EXTENSION,
 } from "./deploy.models";
-
-dotenv.config({ path: path.join(__dirname, "../../../../../.env") });
 
 /**
  * Script main execution method.
@@ -39,8 +37,6 @@ dotenv.config({ path: path.join(__dirname, "../../../../../.env") });
   console.info(`\nFiles found:`);
   console.table(fileNames);
 
-  // Max retries ensures that if the grpc connection cannot be established within maximum
-  // number of retry then the process with terminate.
   const zeebeClient = new ZBClient();
   try {
     // Deploy all decision files (BPMNs).

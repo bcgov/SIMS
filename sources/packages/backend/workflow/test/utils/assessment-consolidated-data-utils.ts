@@ -47,7 +47,6 @@ export function getFakeAssessmentConsolidatedData(
 /**
  * Camunda workflow engine expects the variables which are not assigned with values
  * to be set as null.
- *
  * @returns assessment consolidated default values.
  */
 function setDefaultAssessmentConsolidatedData(): AssessmentConsolidatedData {

@@ -131,5 +131,7 @@ QUEUE_DASHBOARD_PASSWORD=
 QUEUE_DASHBOARD_USER=
 QUEUE_PREFIX={sims-local}
 
-#Camunda e2e tests
+# Camunda e2e tests
+# Max retries ensures that if the grpc connection cannot be established within maximum
+# number of retry then the process with terminate.
 ZEEBE_CLIENT_MAX_RETRIES=20
