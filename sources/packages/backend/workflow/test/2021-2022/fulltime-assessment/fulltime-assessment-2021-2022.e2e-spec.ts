@@ -8,7 +8,7 @@ import { ZBClient } from "zeebe-node";
 import { getFakeAssessmentConsolidatedData } from "../../utils";
 import { PROGRAM_YEAR } from "../constants/program-year.constants";
 
-describe(`E2E Test Workflow  fulltime-assessment-${PROGRAM_YEAR}`, () => {
+describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}`, () => {
   let zeebeClientProvider: ZBClient;
   beforeAll(async () => {
     zeebeClientProvider = new ZBClient();
@@ -48,7 +48,7 @@ describe(`E2E Test Workflow  fulltime-assessment-${PROGRAM_YEAR}`, () => {
       partnerAssessedContribution: null,
       studentTotalFederalContribution: 216.34615384615384,
       studentTotalProvincialContribution: 78.45576923076923,
-    } as AssessmentModel;
+    };
 
     // Act/Assert
     const calculatedAssessment =

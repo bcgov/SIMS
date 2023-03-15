@@ -143,10 +143,8 @@ export interface AssessmentModel {
   federalAssessmentNeed: number;
   exceptionalEducationCost: number;
   provincialAssessmentNeed: number;
-  totalFederalContribution: number;
   parentAssessedContribution: number;
   partnerAssessedContribution: number;
-  totalProvincialContribution: number;
   studentTotalFederalContribution: number;
   studentTotalProvincialContribution: number;
 }
