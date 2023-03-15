@@ -60,15 +60,15 @@ export interface AssessmentConsolidatedData {
   institutionType: string;
   programLength: string;
   programCredentialType: string;
-  offeringIntensity: OfferingIntensity;
   offeringDelivered: OfferingDeliveryOptions;
-  offeringStudyEndDate: string;
-  offeringStudyStartDate: string;
   offeringProgramRelatedCosts: number;
   offeringActualTuitionCosts: number;
   offeringMandatoryFees: number;
   offeringExceptionalExpenses: number;
   offeringWeeks: number;
+  offeringIntensity?: OfferingIntensity;
+  offeringStudyEndDate?: string;
+  offeringStudyStartDate?: string;
   assessmentTriggerType?: AssessmentTriggerType;
   appealsStudentIncomeAppealData?: unknown;
   appealsPartnerIncomeAppealData?: unknown;

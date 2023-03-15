@@ -5,7 +5,7 @@ import {
   CalculatedAssessmentModel,
 } from "../../models";
 import { ZBClient } from "zeebe-node";
-import { getFakeAssessmentConsolidatedData } from "../../utils";
+import { createFakeAssessmentConsolidatedData } from "../../test-utils";
 import { PROGRAM_YEAR } from "../constants/program-year.constants";
 
 describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}`, () => {
@@ -16,12 +16,11 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}`, () => {
 
   it("Should generate expected fulltime assessment values when the student is single and independent.", async () => {
     // Arrange
-    const assessmentConsolidatedData = getFakeAssessmentConsolidatedData(
-      OfferingIntensity.fullTime,
-      PROGRAM_YEAR,
-      "2024-02-01",
-      "2024-05-24",
-    );
+    const assessmentConsolidatedData =
+      createFakeAssessmentConsolidatedData(PROGRAM_YEAR);
+    assessmentConsolidatedData.offeringIntensity = OfferingIntensity.fullTime;
+    assessmentConsolidatedData.offeringStudyStartDate = "2024-02-01";
+    assessmentConsolidatedData.offeringStudyEndDate = "2024-05-24";
 
     await zeebeClientProvider.createProcessInstanceWithResult(
       `fulltime-assessment-${PROGRAM_YEAR}`,

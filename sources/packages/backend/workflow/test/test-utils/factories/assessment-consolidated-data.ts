@@ -1,16 +1,12 @@
-import { OfferingIntensity } from "@sims/sims-db";
 import {
   AssessmentConsolidatedData,
   OfferingDeliveryOptions,
   Provinces,
   YesNoOptions,
-} from "../models/assessment.model";
+} from "../../models/assessment.model";
 
-export function getFakeAssessmentConsolidatedData(
-  offeringIntensity: OfferingIntensity,
+export function createFakeAssessmentConsolidatedData(
   programYear: string,
-  offeringStudyStartDate: string,
-  offeringStudyEndDate: string,
 ): AssessmentConsolidatedData {
   const [programStartYear] = programYear.split("-");
   return {
@@ -32,10 +28,7 @@ export function getFakeAssessmentConsolidatedData(
     institutionType: "BC Public",
     programLength: "1YearToLessThan2Years",
     programCredentialType: "undergraduateDegree",
-    offeringIntensity,
     offeringDelivered: OfferingDeliveryOptions.Onsite,
-    offeringStudyEndDate,
-    offeringStudyStartDate,
     offeringProgramRelatedCosts: 5000,
     offeringActualTuitionCosts: 20000,
     offeringMandatoryFees: 500,
