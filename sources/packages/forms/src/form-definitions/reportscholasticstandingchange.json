@@ -3385,7 +3385,7 @@
           "key": "differentIntensityProgramPanel",
           "conditional": {
             "show": true,
-            "when": "scholasticStanding",
+            "when": "scholasticStandingChangeType",
             "eq": "Change in intensity"
           },
           "type": "panel",
@@ -3654,7 +3654,7 @@
           "key": "studentCompletedProgramEarlyPanel",
           "conditional": {
             "show": true,
-            "when": "scholasticStanding",
+            "when": "scholasticStandingChangeType",
             "eq": "Student completed program early"
           },
           "type": "panel",
@@ -4639,7 +4639,7 @@
           "key": "studentDidNotCompleteProgramPanel",
           "conditional": {
             "show": true,
-            "when": "scholasticStanding",
+            "when": "scholasticStandingChangeType",
             "eq": "Student did not complete program"
           },
           "type": "panel",
@@ -5054,7 +5054,7 @@
           "key": "studentWithdrewFromProgramPanel",
           "conditional": {
             "show": true,
-            "when": "scholasticStanding",
+            "when": "scholasticStandingChangeType",
             "eq": "Student withdrew from program"
           },
           "type": "panel",
