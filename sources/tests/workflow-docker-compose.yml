@@ -1,0 +1,23 @@
+services:
+  zeebe:
+    image: camunda/zeebe:${CAMUNDA_PLATFORM_VERSION:-8.1.1}
+    container_name: zeebe-test
+    environment:
+      - ZEEBE_BROKER_DATA_DISKUSAGECOMMANDWATERMARK=0.998
+      - ZEEBE_BROKER_DATA_DISKUSAGEREPLICATIONWATERMARK=0.999
+      - "JAVA_TOOL_OPTIONS=-Xms256m -Xmx256m"
+    restart: always
+  workflow:
+    image: workflow-${PROJECT_NAME}:${BUILD_REF}-${BUILD_ID}
+    container_name: workers-${PROJECT_NAME}-${BUILD_REF}-${BUILD_ID}
+    build:
+      context: ../packages/backend
+      dockerfile: ./workflow/Dockerfile.dev
+    environment:
+      - NODE_ENV=docker
+      - ZEEBE_ADDRESS=zeebe:26500
+      - ZEEBE_CLIENT_MAX_RETRIES=20
+    restart: always
+    depends_on:
+      - zeebe
+
