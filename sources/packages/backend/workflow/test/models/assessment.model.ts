@@ -1,10 +1,5 @@
 import { AssessmentTriggerType, OfferingIntensity } from "@sims/sims-db";
-import { Provinces } from "@sims/test-utils";
-
-export enum YesNoOptions {
-  Yes = "yes",
-  No = "no",
-}
+import { Provinces, YesNoOptions } from "@sims/test-utils";
 
 export interface StudentDependentTable {
   dateOfBirth: string;

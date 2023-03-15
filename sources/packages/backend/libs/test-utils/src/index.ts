@@ -13,4 +13,4 @@ export * from "./factories/disbursement-schedule";
 export * from "./factories/disbursement-overaward";
 export * from "./factories/disbursement-value";
 export * from "./factories/msfaa-number";
-export * from "./models/province.model";
+export * from "./models/common.model";

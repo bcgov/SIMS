@@ -16,3 +16,8 @@ export enum Provinces {
   NorthernTerritories = "NT",
   Nunavut = "NU",
 }
+
+export enum YesNoOptions {
+  Yes = "yes",
+  No = "no",
+}

@@ -1,9 +1,8 @@
 import {
   AssessmentConsolidatedData,
   OfferingDeliveryOptions,
-  YesNoOptions,
 } from "../../models/assessment.model";
-import { Provinces } from "@sims/test-utils";
+import { Provinces, YesNoOptions } from "@sims/test-utils";
 
 export function createFakeAssessmentConsolidatedData(
   programYear: string,

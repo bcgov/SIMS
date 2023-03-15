@@ -1,4 +1,3 @@
-
 services:
   zeebe:
     image: camunda/zeebe:${CAMUNDA_PLATFORM_VERSION:-8.1.1}
