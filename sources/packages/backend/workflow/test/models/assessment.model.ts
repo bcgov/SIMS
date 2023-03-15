@@ -1,4 +1,5 @@
 import { AssessmentTriggerType, OfferingIntensity } from "@sims/sims-db";
+import { Provinces } from "@sims/test-utils";
 
 export enum YesNoOptions {
   Yes = "yes",
@@ -18,25 +19,6 @@ export enum OfferingDeliveryOptions {
   Onsite = "onsite",
   Online = "online",
   Blended = "blended",
-}
-
-/**
- * Canadian provinces.
- */
-export enum Provinces {
-  Alberta = "AB",
-  BritishColumbia = "BC",
-  Manitoba = "MB",
-  NewBrunswick = "NB",
-  NewFoundlandAndLabrador = "NL",
-  NovaScotia = "NS",
-  Ontario = "ON",
-  PrinceEdwardIsland = "PE",
-  Quebec = "QC",
-  Saskatchewan = "SK",
-  Yukon = "YT",
-  NorthernTerritories = "NT",
-  Nunavut = "NU",
 }
 
 /**
