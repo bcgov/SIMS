@@ -18,7 +18,7 @@ export function useRules() {
         `Max ${NOTES_MAX_CHARACTERS} characters.`
       );
     }
-    return "Note body is required.";
+    return "Note is required.";
   };
 
   const checkStringDateFormatRule = (dateString: string) => {

@@ -53,6 +53,7 @@ export class OverawardService {
     const payloadDeducted: OverawardManualRecordAPIInDTO = {
       awardValueCode: payload.awardValueCode,
       overawardValue: payload.overawardValue * -1,
+      overawardNotes: payload.overawardNotes,
     };
     await ApiClient.OverawardApi.addManualOveraward(studentId, payloadDeducted);
   }

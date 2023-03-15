@@ -18,3 +18,4 @@ export * from "./report/report.models";
 export * from "./report/report.service";
 export * from "./sin-validation/models/sin-validation-models";
 export * from "./confirmation-of-enrollment/confirmation-of-enrollment.service";
+export * from "./note/note.shared.service";

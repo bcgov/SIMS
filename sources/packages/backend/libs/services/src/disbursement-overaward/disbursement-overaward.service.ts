@@ -1,8 +1,9 @@
 import { Injectable } from "@nestjs/common";
-import { EntityManager, Repository } from "typeorm";
+import { EntityManager, Repository, DataSource } from "typeorm";
 import {
   DisbursementOveraward,
   DisbursementOverawardOriginType,
+  NoteType,
   Student,
   User,
 } from "@sims/sims-db";
@@ -11,6 +12,7 @@ import {
   StudentOverawardBalance,
 } from "./disbursement-overaward.models";
 import { InjectRepository } from "@nestjs/typeorm";
+import { NoteSharedService } from "../note/note.shared.service";
 
 /**
  * Service layer for Student Application disbursement schedules.
@@ -18,6 +20,8 @@ import { InjectRepository } from "@nestjs/typeorm";
 @Injectable()
 export class DisbursementOverawardService {
   constructor(
+    private readonly dataSource: DataSource,
+    private readonly noteSharedService: NoteSharedService,
     @InjectRepository(DisbursementOveraward)
     private readonly disbursementOverawardRepo: Repository<DisbursementOveraward>,
   ) {}
@@ -101,20 +105,20 @@ export class DisbursementOverawardService {
   ): Promise<DisbursementOveraward[]> {
     return this.disbursementOverawardRepo.find({
       select: {
-        createdAt: true,
         originType: true,
         overawardValue: true,
         disbursementValueCode: true,
-        creator: { firstName: true, lastName: true },
         studentAssessment: {
           id: true,
           application: { applicationNumber: true },
           triggerType: true,
         },
+        addedBy: { firstName: true, lastName: true },
+        addedDate: true,
       },
       relations: {
-        creator: true,
         studentAssessment: { application: true },
+        addedBy: true,
       },
       where: {
         student: { id: studentId },
@@ -130,22 +134,42 @@ export class DisbursementOverawardService {
    * @param awardValueCode award value code.
    * @param overawardValue overaward deducted value.
    * @param studentId student for whom overaward is deducted.
+   * @param overawardNotes notes for the manual overaward.
    * @param auditUserId user who added overaward deduction.
    * @returns overaward record created.
    */
   async addManualOveraward(
     awardValueCode: string,
     overawardValue: number,
+    overawardNotes: string,
     studentId: number,
     auditUserId: number,
   ): Promise<DisbursementOveraward> {
-    const overawardManualRecord = new DisbursementOveraward();
-    overawardManualRecord.creator = { id: auditUserId } as User;
-    overawardManualRecord.disbursementValueCode = awardValueCode;
-    overawardManualRecord.overawardValue = overawardValue;
-    overawardManualRecord.originType =
-      DisbursementOverawardOriginType.ManualRecord;
-    overawardManualRecord.student = { id: studentId } as Student;
-    return this.disbursementOverawardRepo.save(overawardManualRecord);
+    return this.dataSource.transaction(async (transactionalEntityManager) => {
+      // Create the note for the overaward and associate the note with the student.
+      const noteEntity = await this.noteSharedService.createStudentNote(
+        studentId,
+        NoteType.Overaward,
+        overawardNotes,
+        auditUserId,
+        transactionalEntityManager,
+      );
+
+      const auditUser = { id: auditUserId } as User;
+      // Save disbursement overaward record.
+      const overawardManualRecord = new DisbursementOveraward();
+      overawardManualRecord.creator = auditUser;
+      overawardManualRecord.disbursementValueCode = awardValueCode;
+      overawardManualRecord.overawardValue = overawardValue;
+      overawardManualRecord.originType =
+        DisbursementOverawardOriginType.ManualRecord;
+      overawardManualRecord.student = { id: studentId } as Student;
+      overawardManualRecord.overawardNotes = noteEntity;
+      overawardManualRecord.addedBy = auditUser;
+      overawardManualRecord.addedDate = new Date();
+      return transactionalEntityManager
+        .getRepository(DisbursementOveraward)
+        .save(overawardManualRecord);
+    });
   }
 }

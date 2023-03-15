@@ -18,7 +18,7 @@
           variant="outlined"
           :rules="[(v) => checkNullOrEmptyRule(v, 'Note type')]" />
         <v-textarea
-          label="Note body"
+          label="Note"
           placeholder="Long text..."
           v-model="formModel.description"
           variant="outlined"

@@ -20,4 +20,5 @@ export interface OverawardAPIOutDTO {
 export interface OverawardManualRecordAPIInDTO {
   awardValueCode: string;
   overawardValue: number;
+  overawardNotes: string;
 }

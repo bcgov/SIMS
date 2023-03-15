@@ -50,6 +50,7 @@ import {
   SequenceControlService,
   StudentRestrictionSharedService,
   WorkflowClientService,
+  NoteSharedService,
 } from "@sims/services";
 import {
   SFASIndividualService,
@@ -115,6 +116,7 @@ import { UserControllerService } from "./route-controllers/user/user.controller.
     ConfirmationOfEnrollmentControllerService,
     ConfirmationOfEnrollmentService,
     DisbursementOverawardService,
+    NoteSharedService,
   ],
 })
 export class AppInstitutionsModule {}

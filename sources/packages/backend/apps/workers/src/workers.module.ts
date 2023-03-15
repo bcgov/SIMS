@@ -24,6 +24,7 @@ import {
   ZeebeModule,
   DisbursementOverawardService,
   NotificationsModule,
+  NoteSharedService,
 } from "@sims/services";
 import { LoggerModule } from "@sims/utilities/logger";
 import { ConfigModule } from "@sims/utilities/config";
@@ -58,6 +59,7 @@ import { SystemUserModule } from "@sims/services/system-users";
     SequenceControlService,
     MSFAANumberService,
     DisbursementOverawardService,
+    NoteSharedService,
   ],
 })
 export class WorkersModule {}
