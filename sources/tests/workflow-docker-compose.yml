@@ -1,6 +1,6 @@
 
 services:
-  zeebe-test:
+  zeebe:
     image: camunda/zeebe:${CAMUNDA_PLATFORM_VERSION:-8.1.1}
     container_name: zeebe-test
     environment:
@@ -16,9 +16,9 @@ services:
       dockerfile: ./workflow/Dockerfile.dev
     environment:
       - NODE_ENV=docker
-      - ZEEBE_ADDRESS=zeebe-test:26500
+      - ZEEBE_ADDRESS=zeebe:26500
       - ZEEBE_CLIENT_MAX_RETRIES=20
     restart: always
     depends_on:
-      - zeebe-test
+      - zeebe
 
