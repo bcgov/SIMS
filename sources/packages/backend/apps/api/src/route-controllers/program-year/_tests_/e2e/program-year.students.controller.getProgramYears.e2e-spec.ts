@@ -13,13 +13,62 @@ import {
 describe("ProgramYearStudentsController(e2e)-getProgramYears", () => {
   let app: INestApplication;
   let appDataSource: DataSource;
+  let programYear2000: ProgramYear;
+  let programYear2024: ProgramYear;
+  let programYear2025: ProgramYear;
   beforeAll(async () => {
     const { nestApplication, dataSource } = await createTestingAppModule();
     appDataSource = dataSource;
+
+    const programYearRepo = appDataSource.getRepository(ProgramYear);
+
+    programYear2000 = {
+      programYear: "2000-2001",
+      programYearDesc:
+        "Study starting between August 01, 2000 and July 31, 2001",
+      formName: "SFAA2000-01",
+      active: false,
+      parentFormName: "SFAA2000-01-parent",
+      partnerFormName: "SFAA2000-01-partner",
+      programYearPrefix: "2000",
+    } as ProgramYear;
+
+    programYear2024 = {
+      programYear: "2024-2025",
+      programYearDesc:
+        "Study starting between August 01, 2024 and July 31, 2025",
+      formName: "SFAA2024-25",
+      active: true,
+      parentFormName: "SFAA2024-01-parent",
+      partnerFormName: "SFAA2024-01-partner",
+      programYearPrefix: "2024",
+    } as ProgramYear;
+
+    programYear2025 = {
+      programYear: "2025-2026",
+      programYearDesc:
+        "Study starting between August 01, 2025 and July 31, 2026",
+      formName: "SFAA2025-26",
+      active: true,
+      parentFormName: "SFAA2025-01-parent",
+      partnerFormName: "SFAA2025-01-partner",
+      programYearPrefix: "2025",
+    } as ProgramYear;
+
+    const programYear2000Promise = programYearRepo.save(programYear2000);
+    const programYear2024Promise = programYearRepo.save(programYear2024);
+    const programYear2025Promise = programYearRepo.save(programYear2025);
+
+    [programYear2000, programYear2024, programYear2025] = await Promise.all([
+      programYear2000Promise,
+      programYear2024Promise,
+      programYear2025Promise,
+    ]);
+
     app = nestApplication;
   });
 
-  it("Should get the list of the available program years.", async () => {
+  it("Should get the list of the available program years when available.", async () => {
     // Arrange
     const endpoint = "/students/program-year/options-list";
     const studentToken = await getStudentToken(
@@ -33,36 +82,33 @@ describe("ProgramYearStudentsController(e2e)-getProgramYears", () => {
       .expect(HttpStatus.OK)
       .then((response) => {
         const programYearList = response.body;
-        expect(programYearList).toHaveLength(3);
         expect(programYearList).toEqual(
           expect.arrayContaining([
             expect.objectContaining({
-              id: 1,
+              id: programYear2024.id,
               description:
-                "(2021-2022) - Study starting between August 01, 2021 and July 31, 2022",
+                "(2024-2025) - Study starting between August 01, 2024 and July 31, 2025",
             }),
             expect.objectContaining({
-              id: 2,
+              id: programYear2025.id,
               description:
-                "(2022-2023) - Study starting between August 01, 2022 and July 31, 2023",
-            }),
-            expect.objectContaining({
-              id: 3,
-              description:
-                "(2023-2024) - Study starting between August 01, 2023 and July 31, 2024",
+                "(2025-2026) - Study starting between August 01, 2025 and July 31, 2026",
             }),
           ]),
+        );
+        expect(programYearList).not.toContainEqual(
+          expect.objectContaining({
+            id: programYear2000.id,
+            description:
+              "(2000-2001) - Study starting between August 01, 2000 and July 31, 2001",
+          }),
         );
       });
   });
 
-  it("Should not include inactive program years in the list.", async () => {
+  it("Should get an active program year by id when available.", async () => {
     // Arrange
-    const programYearRepo = appDataSource.getRepository(ProgramYear);
-    const programYear = await programYearRepo.findOneBy({ id: 2 });
-    programYear.active = false;
-    await programYearRepo.save(programYear);
-    const endpoint = "/students/program-year/options-list";
+    const endpoint = `/students/program-year/${programYear2025.id}/active`;
     const studentToken = await getStudentToken(
       FakeStudentUsersTypes.FakeStudentUserType1,
     );
@@ -72,33 +118,17 @@ describe("ProgramYearStudentsController(e2e)-getProgramYears", () => {
       .get(endpoint)
       .auth(studentToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
-      .then((response) => {
-        const programYearList = response.body;
-        expect(programYearList).toHaveLength(2);
-        expect(programYearList).toEqual(
-          expect.arrayContaining([
-            expect.objectContaining({
-              id: 1,
-              description:
-                "(2021-2022) - Study starting between August 01, 2021 and July 31, 2022",
-            }),
-            expect.objectContaining({
-              id: 3,
-              description:
-                "(2023-2024) - Study starting between August 01, 2023 and July 31, 2024",
-            }),
-          ]),
-        );
+      .expect({
+        id: programYear2025.id,
+        formName: programYear2025.formName,
+        programYear: programYear2025.programYear,
+        programYearDesc: programYear2025.programYearDesc,
       });
-
-    // Revert
-    programYear.active = true;
-    await programYearRepo.save(programYear);
   });
 
-  it("Should get an active program year by id.", async () => {
+  it("Should return 'not found' status when a program year does not exist.", async () => {
     // Arrange
-    const endpoint = "/students/program-year/1/active";
+    const endpoint = "/students/program-year/9999/active";
     const studentToken = await getStudentToken(
       FakeStudentUsersTypes.FakeStudentUserType1,
     );
@@ -107,22 +137,18 @@ describe("ProgramYearStudentsController(e2e)-getProgramYears", () => {
     await request(app.getHttpServer())
       .get(endpoint)
       .auth(studentToken, BEARER_AUTH_TYPE)
-      .expect(HttpStatus.OK)
-      .then((response) => {
-        const programYear = response.body;
-        expect(programYear).toEqual({
-          id: 1,
-          formName: "SFAA2021-22",
-          programYear: "2021-2022",
-          programYearDesc:
-            "Study starting between August 01, 2021 and July 31, 2022",
-        });
+      .expect(HttpStatus.NOT_FOUND)
+      .expect({
+        statusCode: 404,
+        message: "Program Year Id 9999 was not found.",
+        error: "Not Found",
       });
   });
 
-  it("Should return 'not found' status for an inexistent program year.", async () => {
+  it("Should return 'not found' status when a program year is inactive.", async () => {
     // Arrange
-    const endpoint = "/students/program-year/4/active";
+
+    const endpoint = `/students/program-year/${programYear2000.id}/active`;
     const studentToken = await getStudentToken(
       FakeStudentUsersTypes.FakeStudentUserType1,
     );
@@ -131,27 +157,19 @@ describe("ProgramYearStudentsController(e2e)-getProgramYears", () => {
     await request(app.getHttpServer())
       .get(endpoint)
       .auth(studentToken, BEARER_AUTH_TYPE)
-      .expect(HttpStatus.NOT_FOUND);
+      .expect(HttpStatus.NOT_FOUND)
+      .expect({
+        statusCode: 404,
+        message: `Program Year Id ${programYear2000.id} was not found.`,
+        error: "Not Found",
+      });
   });
-  it("Should return 'not found' status for an inactive program year.", async () => {
-    // Arrange
+
+  afterAll(async () => {
     const programYearRepo = appDataSource.getRepository(ProgramYear);
-    const programYear = await programYearRepo.findOneBy({ id: 3 });
-    programYear.active = false;
-    await programYearRepo.save(programYear);
-    const endpoint = "/students/program-year/3/active";
-    const studentToken = await getStudentToken(
-      FakeStudentUsersTypes.FakeStudentUserType1,
-    );
-
-    // Act/Assert
-    await request(app.getHttpServer())
-      .get(endpoint)
-      .auth(studentToken, BEARER_AUTH_TYPE)
-      .expect(HttpStatus.NOT_FOUND);
-
-    // Revert
-    programYear.active = true;
-    await programYearRepo.save(programYear);
+    await programYearRepo.remove(programYear2000);
+    await programYearRepo.remove(programYear2024);
+    await programYearRepo.remove(programYear2025);
+    app?.close();
   });
 });

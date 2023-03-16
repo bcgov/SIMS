@@ -9,19 +9,10 @@ import {
 } from "../../../seed-executors";
 import { Repository } from "typeorm";
 import * as faker from "faker";
-
-const fakeStudents = [
-  {
-    username: process.env.E2E_TEST_STUDENT_USERNAME,
-    options: {
-      sin: "706941291",
-      isValidSIN: true,
-      sinConsent: true,
-      birthDate: faker.date.past(18).toISOString(),
-      gender: "F",
-    },
-  },
-];
+import {
+  FakeStudent,
+  STUDENTS_INITIAL_DATA,
+} from "./create-student-users.model";
 
 @Injectable()
 @DataSeed({ order: SeedPriorityOrder.Priority1 })
@@ -38,16 +29,7 @@ export class CreateStudentUsers {
    */
   @DataSeedMethod()
   async createStudentUsers(): Promise<void> {
-    const studentUserDetails: {
-      username: string;
-      options?: {
-        sin?: string;
-        isValidSIN?: boolean;
-        sinConsent?: boolean;
-        birthDate?: string;
-        gender?: string;
-      };
-    }[] = fakeStudents;
+    const studentUserDetails: FakeStudent[] = STUDENTS_INITIAL_DATA;
     const userCreationPromises = studentUserDetails.map((user) =>
       this.createStudentUser(user.username, user.options),
     );
@@ -69,7 +51,7 @@ export class CreateStudentUsers {
       birthDate?: string;
       gender?: string;
     },
-  ): Promise<User> {
+  ): Promise<void> {
     // Create the user for the student.
     const fakeUser = createFakeUser(username);
     await this.userRepo.save(fakeUser);
@@ -98,6 +80,5 @@ export class CreateStudentUsers {
     }
 
     await this.studentRepo.save(fakeStudent);
-    return fakeUser;
   }
 }

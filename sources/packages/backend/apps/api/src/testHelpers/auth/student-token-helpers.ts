@@ -1,9 +1,8 @@
-import { KeycloakService } from "../../services";
-import { TokenResponse } from "../../services/auth/keycloak/token-response.model";
-import { Student, User } from "@sims/sims-db";
+import { Student } from "@sims/sims-db";
 import { DataSource } from "typeorm";
-
-const studentClientId = "student";
+import { getCachedToken } from "./token-helpers";
+import { UserPasswordCredential } from "@sims/utilities/config";
+import { AuthorizedParties } from "../../auth";
 
 export enum FakeStudentUsersTypes {
   /**
@@ -21,15 +20,18 @@ export enum FakeStudentUsersTypes {
 export async function getStudentToken(
   fakeStudentTestUser: FakeStudentUsersTypes,
 ): Promise<string> {
-  let studentToken: TokenResponse;
+  let credential: UserPasswordCredential;
   if (fakeStudentTestUser === FakeStudentUsersTypes.FakeStudentUserType1) {
-    studentToken = await KeycloakService.shared.getToken(
-      process.env.E2E_TEST_STUDENT_USERNAME,
-      process.env.E2E_TEST_STUDENT_PASSWORD,
-      studentClientId,
-    );
+    credential = {
+      userName: process.env.E2E_TEST_STUDENT_USERNAME,
+      password: process.env.E2E_TEST_STUDENT_PASSWORD,
+    };
   }
-  return studentToken.access_token;
+  return getCachedToken(
+    AuthorizedParties.student,
+    credential,
+    fakeStudentTestUser.toString(),
+  );
 }
 
 /**
@@ -60,8 +62,8 @@ async function getStudentByUsername(
   userName: string,
   dataSource: DataSource,
 ): Promise<Student> {
-  const userRepo = dataSource.getRepository(User);
-  const user = await userRepo.findOneBy({ userName });
   const studentRepo = dataSource.getRepository(Student);
-  return await studentRepo.findOneBy({ user: { id: user.id } });
+  return studentRepo.findOne({
+    where: { user: { userName } },
+  });
 }

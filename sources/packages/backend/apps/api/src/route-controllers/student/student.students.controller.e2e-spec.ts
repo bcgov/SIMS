@@ -29,14 +29,13 @@ describe("Test ATBC Controller", () => {
     );
     const { nestApplication, module, dataSource } =
       await createTestingAppModule();
-    const moduleFixture = module;
-    atbcService = await moduleFixture.get(ATBCService);
-    studentService = await moduleFixture.get(StudentService);
+    atbcService = await module.get(ATBCService);
+    studentService = await module.get(StudentService);
     app = nestApplication;
     appDataSource = dataSource;
   });
 
-  it("Should return an HTTP 200 status when applying for PD and student is valid", async () => {
+  it("Should return an HTTP 200 status when applying for PD and student is valid.", async () => {
     // Arrange
     // Creating mockup for ATBCCreateClient.
     // This function actually calls the ATBC server to create the student profile.
@@ -50,6 +49,7 @@ describe("Test ATBC Controller", () => {
       .auth(accessToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK);
   });
+
   afterAll(async () => {
     // Putting the student in the same state as before the test.
     const fakeStudent = await getStudentByFakeStudentUserType(
