@@ -1,10 +1,12 @@
 <template>
-  <v-card class="mt-4">
-    <div class="mx-5 py-4">
-      <p class="category-header-large color-blue">Profile</p>
-      <formio formName="studentProfileSummary" :data="initialData"></formio>
-    </div>
-  </v-card>
+  <tab-container>
+    <body-header-container>
+      <template #header>
+        <body-header title="Profile" />
+      </template>
+    </body-header-container>
+    <formio formName="studentProfileSummary" :data="initialData"></formio>
+  </tab-container>
 </template>
 
 <script lang="ts">

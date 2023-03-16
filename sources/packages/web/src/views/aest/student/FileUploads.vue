@@ -1,25 +1,29 @@
 <template>
-  <full-page-container :full-width="true">
-    <body-header
-      title="File Uploads"
-      :recordsCount="studentFileUploads?.length"
-    >
-      <template #actions>
-        <check-permission-role :role="Role.StudentUploadFile">
-          <template #="{ notAllowed }">
-            <v-btn
-              color="primary"
-              data-cy="uploadFileButton"
-              @click="uploadFile"
-              prepend-icon="fa:fa fa-plus-circle"
-              class="float-right"
-              :disabled="notAllowed"
-              >Upload file</v-btn
-            >
+  <tab-container>
+    <body-header-container>
+      <template #header>
+        <body-header
+          title="File Uploads"
+          :recordsCount="studentFileUploads?.length"
+        >
+          <template #actions>
+            <check-permission-role :role="Role.StudentUploadFile">
+              <template #="{ notAllowed }">
+                <v-btn
+                  color="primary"
+                  data-cy="uploadFileButton"
+                  @click="uploadFile"
+                  prepend-icon="fa:fa fa-plus-circle"
+                  class="float-right"
+                  :disabled="notAllowed"
+                  >Upload file</v-btn
+                >
+              </template>
+            </check-permission-role>
           </template>
-        </check-permission-role>
+        </body-header>
       </template>
-    </body-header>
+    </body-header-container>
     <content-group>
       <toggle-content :toggled="!studentFileUploads.length">
         <DataTable
@@ -87,11 +91,11 @@
                 >Upload now</v-btn
               >
             </template>
-          </check-permission-role></v-row
-        >
+          </check-permission-role>
+        </v-row>
       </template>
     </formio-modal-dialog>
-  </full-page-container>
+  </tab-container>
 </template>
 
 <script lang="ts">

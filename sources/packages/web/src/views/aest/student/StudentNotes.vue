@@ -1,35 +1,39 @@
 <template>
-  <div class="mt-9">
-    <body-header title="Notes">
-      <template #actions>
-        <v-btn-toggle
-          v-model="toggleNotes"
-          mandatory
-          class="float-right btn-toggle"
-          selected-class="selected-btn-toggle"
-        >
-          <v-btn
-            rounded="xl"
-            color="primary"
-            data-cy="allNotesButton"
-            @click="filterNotes()"
-            value="allNotes"
-            >All Notes</v-btn
-          >
-          <v-btn
-            rounded="xl"
-            v-for="item in StudentNoteType"
-            :key="item"
-            color="primary"
-            :value="item"
-            :data-cy="item"
-            class="ml-2"
-            @click="filterNotes(item)"
-            >{{ item }}</v-btn
-          >
-        </v-btn-toggle>
-      </template></body-header
-    >
+  <tab-container>
+    <body-header-container>
+      <template #header>
+        <body-header title="Notes">
+          <template #actions>
+            <v-btn-toggle
+              v-model="toggleNotes"
+              mandatory
+              class="float-right btn-toggle"
+              selected-class="selected-btn-toggle"
+            >
+              <v-btn
+                rounded="xl"
+                color="primary"
+                data-cy="allNotesButton"
+                @click="filterNotes()"
+                value="allNotes"
+                >All Notes</v-btn
+              >
+              <v-btn
+                rounded="xl"
+                v-for="item in StudentNoteType"
+                :key="item"
+                color="primary"
+                :value="item"
+                :data-cy="item"
+                class="ml-2"
+                @click="filterNotes(item)"
+                >{{ item }}</v-btn
+              >
+            </v-btn-toggle>
+          </template>
+        </body-header>
+      </template>
+    </body-header-container>
     <notes
       title="Past Notes"
       :entityType="NoteEntityType.Student"
@@ -37,7 +41,7 @@
       @submitData="addNote"
       :allowedRole="Role.StudentCreateNote"
     ></notes>
-  </div>
+  </tab-container>
 </template>
 
 <script lang="ts">

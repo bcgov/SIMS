@@ -21,6 +21,8 @@ import ContentGroup from "@/components/generic/ContentGroup.vue";
 import ContentGroupInfo from "@/components/generic/ContentGroupInfo.vue";
 import TooltipIcon from "@/components/generic/TooltipIcon.vue";
 import FullPageContainer from "@/components/layouts/FullPageContainer.vue";
+import TabContainer from "@/components/layouts/TabContainer.vue";
+import BodyHeaderContainer from "@/components/layouts/BodyHeaderContainer.vue";
 import StudentPageContainer from "@/components/layouts/student/StudentPageContainer.vue";
 import HeaderNavigator from "@/components/generic/HeaderNavigator.vue";
 import Banner from "@/components/generic/Banner.vue";
@@ -45,6 +47,8 @@ AppConfigService.shared.init().then(() => {
     .component("TooltipIcon", TooltipIcon)
     .component("StatusInfoLabel", StatusInfoLabel)
     .component("FullPageContainer", FullPageContainer)
+    .component("TabContainer", TabContainer)
+    .component("BodyHeaderContainer", BodyHeaderContainer)
     .component("StudentPageContainer", StudentPageContainer)
     .component("HeaderNavigator", HeaderNavigator)
     .component("Banner", Banner)

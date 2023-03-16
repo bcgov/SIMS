@@ -1,22 +1,26 @@
 <template>
-  <full-page-container :full-width="true">
-    <body-header title="All restrictions" class="m-1">
-      <template #actions>
-        <check-permission-role :role="Role.StudentAddRestriction">
-          <template #="{ notAllowed }">
-            <v-btn
-              @click="addStudentRestriction"
-              class="float-right"
-              color="primary"
-              data-cy="addRestrictionButton"
-              prepend-icon="fa:fa fa-plus-circle"
-              :disabled="notAllowed"
-              >Add restriction</v-btn
-            >
+  <tab-container>
+    <body-header-container>
+      <template #header>
+        <body-header title="All restrictions">
+          <template #actions>
+            <check-permission-role :role="Role.StudentAddRestriction">
+              <template #="{ notAllowed }">
+                <v-btn
+                  @click="addStudentRestriction"
+                  class="float-right"
+                  color="primary"
+                  data-cy="addRestrictionButton"
+                  prepend-icon="fa:fa fa-plus-circle"
+                  :disabled="notAllowed"
+                  >Add restriction</v-btn
+                >
+              </template>
+            </check-permission-role>
           </template>
-        </check-permission-role>
+        </body-header>
       </template>
-    </body-header>
+    </body-header-container>
     <content-group>
       <DataTable
         :value="studentRestrictions"
@@ -72,7 +76,7 @@
         >
       </DataTable>
     </content-group>
-  </full-page-container>
+  </tab-container>
   <view-restriction-modal
     ref="viewRestriction"
     :restrictionData="studentRestriction"

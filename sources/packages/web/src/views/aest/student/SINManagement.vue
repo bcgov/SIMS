@@ -1,27 +1,30 @@
 <template>
-  <full-page-container :full-width="true">
-    <body-header
-      title="Social Insurance Number"
-      subTitle="The first row will always be the student's current active SIN."
-      :recordsCount="studentSINValidations?.length"
-      class="m-1"
-    >
-      <template #actions>
-        <check-permission-role :role="Role.StudentAddNewSIN">
-          <template #="{ notAllowed }">
-            <v-btn
-              class="float-right"
-              color="primary"
-              data-cy="addNewSINButton"
-              :disabled="processingNewSIN || notAllowed"
-              @click="addNewSIN"
-              prepend-icon="fa:fa fa-plus-circle"
-              >Add new SIN</v-btn
-            >
+  <tab-container>
+    <body-header-container>
+      <template #header>
+        <body-header
+          title="Social Insurance Number"
+          subTitle="The first row will always be the student's current active SIN."
+          :recordsCount="studentSINValidations?.length"
+        >
+          <template #actions>
+            <check-permission-role :role="Role.StudentAddNewSIN">
+              <template #="{ notAllowed }">
+                <v-btn
+                  class="float-right"
+                  color="primary"
+                  data-cy="addNewSINButton"
+                  :disabled="processingNewSIN || notAllowed"
+                  @click="addNewSIN"
+                  prepend-icon="fa:fa fa-plus-circle"
+                  >Add new SIN</v-btn
+                >
+              </template>
+            </check-permission-role>
           </template>
-        </check-permission-role>
+        </body-header>
       </template>
-    </body-header>
+    </body-header-container>
     <content-group>
       <toggle-content :toggled="!studentSINValidations?.length">
         <DataTable
@@ -63,7 +66,7 @@
         </DataTable>
       </toggle-content>
     </content-group>
-  </full-page-container>
+  </tab-container>
   <add-new-s-i-n ref="addNewSINModal" :allowedRole="Role.StudentAddNewSIN" />
   <add-expiry-date
     ref="addExpiryDateModal"

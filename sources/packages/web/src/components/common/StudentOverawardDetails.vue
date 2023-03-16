@@ -1,10 +1,14 @@
 <template>
   <v-card class="mb-5">
     <v-container fluid>
-      <body-header
-        title="Overaward balances"
-        subTitle="A balance of overawards broken down by award type"
-      />
+      <body-header-container>
+        <template #header>
+          <body-header
+            title="Overaward balances"
+            subTitle="A balance of overawards broken down by award type"
+          />
+        </template>
+      </body-header-container>
       <v-row>
         <v-col>
           <title-value

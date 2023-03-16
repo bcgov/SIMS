@@ -1,10 +1,13 @@
 <template>
   <!-- This component is shared between ministry and student users -->
-  <body-header
-    title="Applications"
-    class="m-1"
-    :recordsCount="applicationsAndCount.count"
-  ></body-header>
+  <body-header-container>
+    <template #header>
+      <body-header
+        title="Applications"
+        :recordsCount="applicationsAndCount.count"
+      ></body-header>
+    </template>
+  </body-header-container>
   <content-group>
     <DataTable
       :value="applicationsAndCount.results"

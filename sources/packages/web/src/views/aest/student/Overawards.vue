@@ -1,12 +1,11 @@
 <template>
-  <div class="mt-9">
-    <p class="header-sub-title">Overawards</p>
+  <tab-container :card="false">
     <student-overaward-details
       :studentId="studentId"
       :showAddedBy="true"
       :allowManualOverawardDeduction="true"
     />
-  </div>
+  </tab-container>
 </template>
 
 <script lang="ts">

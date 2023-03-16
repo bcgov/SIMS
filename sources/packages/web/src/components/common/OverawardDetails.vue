@@ -1,10 +1,14 @@
 <template>
   <v-card class="mb-5">
     <v-container fluid>
-      <body-header
-        title="Overawards"
-        subTitle="Overaward amounts generated due to application reassessments"
-      />
+      <body-header-container>
+        <template #header>
+          <body-header
+            title="Overawards"
+            subTitle="Overaward amounts generated due to application reassessments"
+          />
+        </template>
+      </body-header-container>
       <content-group>
         <toggle-content :toggled="!overawards.length">
           <DataTable
@@ -45,26 +49,30 @@
   </v-card>
   <v-card class="mb-5">
     <v-container fluid>
-      <body-header
-        title="Overaward deductions"
-        subTitle="History of money that was deducted from one or more applications to pay back what is owed"
-      >
-        <template #actions v-if="allowManualOverawardDeduction">
-          <check-permission-role :role="Role.StudentAddOverawardManual">
-            <template #="{ notAllowed }">
-              <v-btn
-                class="ml-2 float-right"
-                color="primary"
-                :disabled="notAllowed"
-                prepend-icon="fa:fa fa-plus-circle"
-                @click="addManualOveraward"
-              >
-                Add manual record
-              </v-btn>
-            </template>
-          </check-permission-role>
-        </template></body-header
-      >
+      <body-header-container>
+        <template #header>
+          <body-header
+            title="Overaward deductions"
+            subTitle="History of money that was deducted from one or more applications to pay back what is owed"
+          >
+            <template #actions v-if="allowManualOverawardDeduction">
+              <check-permission-role :role="Role.StudentAddOverawardManual">
+                <template #="{ notAllowed }">
+                  <v-btn
+                    class="ml-2 float-right"
+                    color="primary"
+                    :disabled="notAllowed"
+                    prepend-icon="fa:fa fa-plus-circle"
+                    @click="addManualOveraward"
+                  >
+                    Add manual record
+                  </v-btn>
+                </template>
+              </check-permission-role>
+            </template></body-header
+          >
+        </template>
+      </body-header-container>
       <content-group>
         <toggle-content :toggled="!overawardDeductions.length">
           <DataTable
