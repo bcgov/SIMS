@@ -5,8 +5,8 @@
     <div v-else><slot name="header"></slot></div>
 
     <!-- Default slot (with and without v-card) -->
-    <v-card v-if="card"><slot></slot></v-card>
-    <div v-else><slot></slot></div>
+    <v-card v-if="card" class="mt-n1"><slot></slot></v-card>
+    <div v-else class="mt-n1"><slot></slot></div>
   </div>
 </template>
 

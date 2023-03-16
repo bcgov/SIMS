@@ -1,5 +1,5 @@
 <template>
-  <v-row no-gutters>
+  <v-row no-gutters class="mb-n6">
     <v-col>
       <h2 class="category-header-large color-blue">{{ fullTitleMessage }}</h2>
       <slot name="status-chip"></slot>

@@ -1,5 +1,5 @@
 <template>
-  <div class="mt-4">
+  <div class="mt-8">
     <!-- Default slot (with and without v-card) -->
     <v-card v-if="card" class="p-4"><slot></slot></v-card>
     <slot v-else></slot>
