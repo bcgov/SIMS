@@ -1,4 +1,6 @@
-name: Test Build and Deploy
+name: Build and Deploy to OpenShift/Camunda - DEV
+# todo: ann check the diff files using `BUILD_REF: ${{ github.base_ref }}` it should use the tag
+
 on:
   pull_request:
     types: [opened, reopened, synchronize, closed]
@@ -50,7 +52,6 @@ jobs:
       - name: Print Env Vars
         run: |
           echo Git Base Ref: ${{ github.base_ref }}
-          echo Git Build ID: ${{ github.event.number }}
           echo Git Pull Request Ref: ${{ github.event.pull_request.head.sha }}
           echo OC CLI Version: $(oc version)
 
