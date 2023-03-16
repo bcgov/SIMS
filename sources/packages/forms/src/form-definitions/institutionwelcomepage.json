@@ -61,7 +61,7 @@
                       "value": ""
                     }
                   ],
-                  "content": "<h1 class=\"category-header-x-large primary-color\">Welcome testing!</h1>\n<p class=\"mt-4\"><strong>Here you will find features to:</strong></p>\n<ul class=\"ml-6 mt-4\">\n  <li>Add programs and study period offerings</li>\n  <li>Complete program info requests</li>\n  <li>Confirm enrolments and view upcoming enrolments</li>\n  <li>Report a change for scholastic standing</li>\n  <li>Manage your institution profile, locations, users, and designations (admins only)</li>\n</ul>",
+                  "content": "<h1 class=\"category-header-x-large primary-color\">Welcome!</h1>\n<p class=\"mt-4\"><strong>Here you will find features to:</strong></p>\n<ul class=\"ml-6 mt-4\">\n  <li>Add programs and study period offerings</li>\n  <li>Complete program info requests</li>\n  <li>Confirm enrolments and view upcoming enrolments</li>\n  <li>Report a change for scholastic standing</li>\n  <li>Manage your institution profile, locations, users, and designations (admins only)</li>\n</ul>",
                   "refreshOnChange": false,
                   "key": "html1",
                   "type": "htmlelement",
@@ -993,7 +993,7 @@
                       "value": ""
                     }
                   ],
-                  "content": "For legal signing authority\n <span\n class=\"formio-custom-tooltip\">\n   <span class=\"tooltip-text\">\n     Only a legal authority can sign off on the designation agreement.\n     </span>\n  </span>",
+                  "content": "For legal signing authority\n <span\n class=\"formio-custom-tooltip\">\n   <span class=\"tooltip-text\">\n     Only a legal authority can sign off on the designation agreement. \n     </span>\n  </span>",
                   "refreshOnChange": false,
                   "customClass": "secondary-color-light category-header-small mb-4",
                   "hidden": false,
