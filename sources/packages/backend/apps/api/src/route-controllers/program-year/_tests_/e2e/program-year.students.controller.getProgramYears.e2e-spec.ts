@@ -2,7 +2,6 @@ import { HttpStatus, INestApplication } from "@nestjs/common";
 import { ProgramYear } from "@sims/sims-db";
 import * as request from "supertest";
 import { DataSource } from "typeorm";
-
 import {
   BEARER_AUTH_TYPE,
   createTestingAppModule,
@@ -19,7 +18,6 @@ describe("ProgramYearStudentsController(e2e)-getProgramYears", () => {
   beforeAll(async () => {
     const { nestApplication, dataSource } = await createTestingAppModule();
     appDataSource = dataSource;
-
     const programYearRepo = appDataSource.getRepository(ProgramYear);
 
     programYear2000 = {
@@ -103,65 +101,6 @@ describe("ProgramYearStudentsController(e2e)-getProgramYears", () => {
               "(2000-2001) - Study starting between August 01, 2000 and July 31, 2001",
           }),
         );
-      });
-  });
-
-  it("Should get an active program year by id when available.", async () => {
-    // Arrange
-    const endpoint = `/students/program-year/${programYear2025.id}/active`;
-    const studentToken = await getStudentToken(
-      FakeStudentUsersTypes.FakeStudentUserType1,
-    );
-
-    // Act/Assert
-    await request(app.getHttpServer())
-      .get(endpoint)
-      .auth(studentToken, BEARER_AUTH_TYPE)
-      .expect(HttpStatus.OK)
-      .expect({
-        id: programYear2025.id,
-        formName: programYear2025.formName,
-        programYear: programYear2025.programYear,
-        programYearDesc: programYear2025.programYearDesc,
-      });
-  });
-
-  it("Should return 'not found' status when a program year does not exist.", async () => {
-    // Arrange
-    const endpoint = "/students/program-year/9999/active";
-    const studentToken = await getStudentToken(
-      FakeStudentUsersTypes.FakeStudentUserType1,
-    );
-
-    // Act/Assert
-    await request(app.getHttpServer())
-      .get(endpoint)
-      .auth(studentToken, BEARER_AUTH_TYPE)
-      .expect(HttpStatus.NOT_FOUND)
-      .expect({
-        statusCode: 404,
-        message: "Program Year Id 9999 was not found.",
-        error: "Not Found",
-      });
-  });
-
-  it("Should return 'not found' status when a program year is inactive.", async () => {
-    // Arrange
-
-    const endpoint = `/students/program-year/${programYear2000.id}/active`;
-    const studentToken = await getStudentToken(
-      FakeStudentUsersTypes.FakeStudentUserType1,
-    );
-
-    // Act/Assert
-    await request(app.getHttpServer())
-      .get(endpoint)
-      .auth(studentToken, BEARER_AUTH_TYPE)
-      .expect(HttpStatus.NOT_FOUND)
-      .expect({
-        statusCode: 404,
-        message: `Program Year Id ${programYear2000.id} was not found.`,
-        error: "Not Found",
       });
   });
 
