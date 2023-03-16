@@ -1,14 +1,9 @@
 <template>
-  <template v-if="card">
-    <div class="mt-4 p-4">
-      <v-card class="mt-4 p-4"><slot></slot></v-card>
-    </div>
-  </template>
-  <template v-else>
-    <div class="mt-4 p-4">
-      <slot></slot>
-    </div>
-  </template>
+  <div class="mt-4">
+    <!-- Default slot (with and without v-card) -->
+    <v-card v-if="card" class="p-4"><slot></slot></v-card>
+    <slot v-else></slot>
+  </div>
 </template>
 
 <script lang="ts">
@@ -27,7 +22,7 @@ export default defineComponent({
       default: false,
     },
   },
-  setup(props) {
+  setup() {
     return {};
   },
 });

@@ -24,54 +24,60 @@
           </template>
         </body-header>
       </template>
-    </body-header-container>
-    <content-group>
-      <toggle-content :toggled="!studentSINValidations?.length">
-        <DataTable
-          :value="studentSINValidations"
-          :paginator="true"
-          :rows="DEFAULT_PAGE_LIMIT"
-          :rowsPerPageOptions="PAGINATION_LIST"
-          breakpoint="1380px"
-        >
-          <Column field="createdAtFormatted" header="Date created" />
-          <Column field="sinFormatted" header="SIN" bodyClass="text-nowrap" />
-          <Column field="isValidSINFormatted" header="SIN validated" />
-          <Column field="sinStatus" header="Response code"></Column>
-          <Column field="validSINCheckFormatted" header="SIN accepted" />
-          <Column field="validFirstNameCheckFormatted" header="First name" />
-          <Column field="validLastNameCheckFormatted" header="Last name" />
-          <Column field="validBirthdateCheckFormatted" header="Date of birth" />
-          <Column field="validGenderCheckFormatted" header="Gender" />
-          <Column field="sinExpiryDateFormatted" header="Expiry date" />
-          <Column header="Action">
-            <template #body="slotProps">
-              <check-permission-role :role="Role.StudentAddSINExpiry">
-                <template #="{ notAllowed }">
-                  <v-btn
-                    color="primary"
-                    :disabled="
-                      !slotProps.data.temporarySIN ||
-                      !!slotProps.data.sinExpiryDate ||
-                      processingEditExpiryDate ||
-                      notAllowed
-                    "
-                    @click="addExpiryDate(slotProps.data.id)"
-                    >Add expiry date</v-btn
-                  >
-                </template>
-              </check-permission-role>
-            </template></Column
+      <content-group>
+        <toggle-content :toggled="!studentSINValidations?.length">
+          <DataTable
+            :value="studentSINValidations"
+            :paginator="true"
+            :rows="DEFAULT_PAGE_LIMIT"
+            :rowsPerPageOptions="PAGINATION_LIST"
+            breakpoint="1380px"
           >
-        </DataTable>
-      </toggle-content>
-    </content-group>
+            <Column field="createdAtFormatted" header="Date created" />
+            <Column field="sinFormatted" header="SIN" bodyClass="text-nowrap" />
+            <Column field="isValidSINFormatted" header="SIN validated" />
+            <Column field="sinStatus" header="Response code"></Column>
+            <Column field="validSINCheckFormatted" header="SIN accepted" />
+            <Column field="validFirstNameCheckFormatted" header="First name" />
+            <Column field="validLastNameCheckFormatted" header="Last name" />
+            <Column
+              field="validBirthdateCheckFormatted"
+              header="Date of birth"
+            />
+            <Column field="validGenderCheckFormatted" header="Gender" />
+            <Column field="sinExpiryDateFormatted" header="Expiry date" />
+            <Column header="Action">
+              <template #body="slotProps">
+                <check-permission-role :role="Role.StudentAddSINExpiry">
+                  <template #="{ notAllowed }">
+                    <v-btn
+                      color="primary"
+                      :disabled="
+                        !slotProps.data.temporarySIN ||
+                        !!slotProps.data.sinExpiryDate ||
+                        processingEditExpiryDate ||
+                        notAllowed
+                      "
+                      @click="addExpiryDate(slotProps.data.id)"
+                      >Add expiry date</v-btn
+                    >
+                  </template>
+                </check-permission-role>
+              </template></Column
+            >
+          </DataTable>
+        </toggle-content>
+      </content-group>
+      <add-new-s-i-n
+        ref="addNewSINModal"
+        :allowedRole="Role.StudentAddNewSIN"
+      />
+      <add-expiry-date
+        ref="addExpiryDateModal"
+        :allowedRole="Role.StudentAddSINExpiry"
+      />
+    </body-header-container>
   </tab-container>
-  <add-new-s-i-n ref="addNewSINModal" :allowedRole="Role.StudentAddNewSIN" />
-  <add-expiry-date
-    ref="addExpiryDateModal"
-    :allowedRole="Role.StudentAddSINExpiry"
-  />
 </template>
 
 <script lang="ts">

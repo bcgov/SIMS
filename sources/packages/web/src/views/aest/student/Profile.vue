@@ -4,8 +4,8 @@
       <template #header>
         <body-header title="Profile" />
       </template>
+      <formio formName="studentProfileSummary" :data="initialData"></formio>
     </body-header-container>
-    <formio formName="studentProfileSummary" :data="initialData"></formio>
   </tab-container>
 </template>
 

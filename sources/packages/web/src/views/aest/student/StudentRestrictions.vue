@@ -20,73 +20,73 @@
           </template>
         </body-header>
       </template>
-    </body-header-container>
-    <content-group>
-      <DataTable
-        :value="studentRestrictions"
-        :paginator="true"
-        :rows="DEFAULT_PAGE_LIMIT"
-        :rowsPerPageOptions="PAGINATION_LIST"
-      >
-        <template #empty>
-          <p class="text-center font-weight-bold">No records found.</p>
-        </template>
-        <Column
-          field="restrictionCategory"
-          header="Category"
-          :sortable="true"
-        ></Column>
-        <Column field="description" header="Reason">
-          <template #body="slotProps">{{
-            `${slotProps.data.restrictionCode} - ${slotProps.data.description}`
-          }}</template></Column
+      <content-group>
+        <DataTable
+          :value="studentRestrictions"
+          :paginator="true"
+          :rows="DEFAULT_PAGE_LIMIT"
+          :rowsPerPageOptions="PAGINATION_LIST"
         >
-        <Column field="createdAt" header="Added"
-          ><template #body="slotProps">{{
-            dateOnlyLongString(slotProps.data.createdAt)
-          }}</template></Column
-        >
-        <Column field="updatedAt" header="Resolved">
-          <template #body="slotProps">{{
-            slotProps.data.isActive
-              ? "-"
-              : dateOnlyLongString(slotProps.data.updatedAt)
-          }}</template></Column
-        >
-        <Column field="isActive" header="Status">
-          <template #body="slotProps">
-            <status-chip-restriction
-              :status="
-                slotProps.data.isActive
-                  ? RestrictionStatus.Active
-                  : RestrictionStatus.Resolved
-              "
-            />
+          <template #empty>
+            <p class="text-center font-weight-bold">No records found.</p>
           </template>
-        </Column>
-        <Column field="restrictionId" header="">
-          <template #body="slotProps">
-            <v-btn
-              color="primary"
-              variant="outlined"
-              @click="viewStudentRestriction(slotProps.data.restrictionId)"
-              >View</v-btn
-            >
-          </template></Column
-        >
-      </DataTable>
-    </content-group>
+          <Column
+            field="restrictionCategory"
+            header="Category"
+            :sortable="true"
+          ></Column>
+          <Column field="description" header="Reason">
+            <template #body="slotProps">{{
+              `${slotProps.data.restrictionCode} - ${slotProps.data.description}`
+            }}</template></Column
+          >
+          <Column field="createdAt" header="Added"
+            ><template #body="slotProps">{{
+              dateOnlyLongString(slotProps.data.createdAt)
+            }}</template></Column
+          >
+          <Column field="updatedAt" header="Resolved">
+            <template #body="slotProps">{{
+              slotProps.data.isActive
+                ? "-"
+                : dateOnlyLongString(slotProps.data.updatedAt)
+            }}</template></Column
+          >
+          <Column field="isActive" header="Status">
+            <template #body="slotProps">
+              <status-chip-restriction
+                :status="
+                  slotProps.data.isActive
+                    ? RestrictionStatus.Active
+                    : RestrictionStatus.Resolved
+                "
+              />
+            </template>
+          </Column>
+          <Column field="restrictionId" header="">
+            <template #body="slotProps">
+              <v-btn
+                color="primary"
+                variant="outlined"
+                @click="viewStudentRestriction(slotProps.data.restrictionId)"
+                >View</v-btn
+              >
+            </template></Column
+          >
+        </DataTable>
+      </content-group>
+      <view-restriction-modal
+        ref="viewRestriction"
+        :restrictionData="studentRestriction"
+        :allowedRole="Role.StudentResolveRestriction"
+      />
+      <add-student-restriction-modal
+        ref="addRestriction"
+        :entityType="RestrictionEntityType.Student"
+        :allowedRole="Role.StudentAddRestriction"
+      />
+    </body-header-container>
   </tab-container>
-  <view-restriction-modal
-    ref="viewRestriction"
-    :restrictionData="studentRestriction"
-    :allowedRole="Role.StudentResolveRestriction"
-  />
-  <add-student-restriction-modal
-    ref="addRestriction"
-    :entityType="RestrictionEntityType.Student"
-    :allowedRole="Role.StudentAddRestriction"
-  />
 </template>
 
 <script lang="ts">

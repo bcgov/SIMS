@@ -8,51 +8,51 @@
             subTitle="A balance of overawards broken down by award type"
           />
         </template>
-      </body-header-container>
-      <v-row>
-        <v-col>
-          <title-value
-            :propertyValue="
-              formatCurrency(overawardBalance.overawardBalanceValues?.CSLF)
-            "
-          >
-            <template #title>
-              {{ FullTimeAwardTypes.CSLF }}
-              <tooltip-icon>{{
-                getAwardDescription(FullTimeAwardTypes.CSLF)
-              }}</tooltip-icon></template
-            ></title-value
-          >
-        </v-col>
-        <v-col>
-          <title-value
-            :propertyValue="
-              formatCurrency(overawardBalance.overawardBalanceValues?.CSLP)
-            "
-          >
-            <template #title>
-              {{ PartTimeAwardTypes.CSLP }}
-              <tooltip-icon>{{
-                getAwardDescription(PartTimeAwardTypes.CSLP)
-              }}</tooltip-icon></template
-            ></title-value
-          >
-        </v-col>
-        <v-col>
-          <title-value
-            :propertyValue="
-              formatCurrency(overawardBalance.overawardBalanceValues?.BCSL)
-            "
-          >
-            <template #title>
-              {{ FullTimeAwardTypes.BCSL }}
-              <tooltip-icon>{{
-                getAwardDescription(FullTimeAwardTypes.BCSL)
-              }}</tooltip-icon></template
+        <v-row>
+          <v-col>
+            <title-value
+              :propertyValue="
+                formatCurrency(overawardBalance.overawardBalanceValues?.CSLF)
+              "
             >
-          </title-value>
-        </v-col>
-      </v-row>
+              <template #title>
+                {{ FullTimeAwardTypes.CSLF }}
+                <tooltip-icon>{{
+                  getAwardDescription(FullTimeAwardTypes.CSLF)
+                }}</tooltip-icon></template
+              ></title-value
+            >
+          </v-col>
+          <v-col>
+            <title-value
+              :propertyValue="
+                formatCurrency(overawardBalance.overawardBalanceValues?.CSLP)
+              "
+            >
+              <template #title>
+                {{ PartTimeAwardTypes.CSLP }}
+                <tooltip-icon>{{
+                  getAwardDescription(PartTimeAwardTypes.CSLP)
+                }}</tooltip-icon></template
+              ></title-value
+            >
+          </v-col>
+          <v-col>
+            <title-value
+              :propertyValue="
+                formatCurrency(overawardBalance.overawardBalanceValues?.BCSL)
+              "
+            >
+              <template #title>
+                {{ FullTimeAwardTypes.BCSL }}
+                <tooltip-icon>{{
+                  getAwardDescription(FullTimeAwardTypes.BCSL)
+                }}</tooltip-icon></template
+              >
+            </title-value>
+          </v-col>
+        </v-row>
+      </body-header-container>
     </v-container>
   </v-card>
   <overaward-details

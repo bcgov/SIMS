@@ -33,14 +33,14 @@
           </template>
         </body-header>
       </template>
+      <notes
+        title="Past Notes"
+        :entityType="NoteEntityType.Student"
+        :notes="notes"
+        @submitData="addNote"
+        :allowedRole="Role.StudentCreateNote"
+      ></notes>
     </body-header-container>
-    <notes
-      title="Past Notes"
-      :entityType="NoteEntityType.Student"
-      :notes="notes"
-      @submitData="addNote"
-      :allowedRole="Role.StudentCreateNote"
-    ></notes>
   </tab-container>
 </template>
 
