@@ -85,7 +85,7 @@
           "value": ""
         }
       ],
-      "content": "Welcome to StudentAid BC",
+      "content": "Welcome to StudentAid BC. testing",
       "refreshOnChange": false,
       "customClass": "category-header-large primary-color mt-5 mb-5",
       "hidden": false,

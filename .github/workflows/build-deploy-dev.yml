@@ -1,5 +1,4 @@
 name: Build and Deploy to OpenShift/Camunda - DEV
-# todo: ann check the diff files using `BUILD_REF: ${{ github.base_ref }}` it should use the tag
 
 on:
   pull_request:
