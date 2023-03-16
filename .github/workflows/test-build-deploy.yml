@@ -131,7 +131,7 @@ jobs:
       - name: Checkout Target Branch
         uses: actions/checkout@v3
         with:
-          ref: $BUILD_REF
+          ref: ${{ needs.createTag.outputs.newTag }}
       # Log in to OpenShift.
       # Note: The secrets needed to log in are NOT available if the PR comes from a FORK.
       # PR's must originate from a branch off the original repo or else all openshift `oc` commands will fail.

@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
     inputs:
       bumb:
-        description: "The type of semantic version increment to make. By default it is 'prerelease'"
+        description: "The type of semantic version increment to make. By default it is 'prerelease'."
         required: false
         default: "prerelease"
         type: choice
@@ -21,7 +21,7 @@ on:
           - prepatch
           - prerelease
       preId:
-        description: "Identifier to be used to prefix version increments. By default it is 'prerelease' for pull request event and workflow dispatch will follow the last release tag prefix, if any"
+        description: "Identifier to be used to prefix version increments. By default it is 'prerelease' for pull request event and workflow dispatch will follow the last release tag prefix, if any."
         required: false
         type: choice
         options:
