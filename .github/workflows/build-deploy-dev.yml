@@ -8,37 +8,26 @@ on:
   workflow_dispatch:
     inputs:
       bumb:
-        description: "The type of semantic version increment to make. By default it is 'prerelease'."
+        description: "Select the version."
         required: false
         default: "prerelease"
         type: choice
         options:
+          - prerelease
           - major
           - premajor
           - minor
           - preminor
           - patch
           - prepatch
-          - prerelease
-      preId:
-        description: "Identifier to be used to prefix version increments. By default it is 'prerelease' for pull request event and workflow dispatch will follow the last release tag prefix, if any."
-        required: false
-        type: choice
-        options:
-          -
-          - premajor
-          - preminor
-          - prepatch
-          - prerelease
       releaseType:
-        description: "Select the release type. By default only tag will be created. if you want to create a release with the tag select the type."
+        description: "Select the release type. By default, only a tag will be created. If you want to create a release with the tag select the type."
         type: choice
         required: false
         options:
           -
           - draft
           - publish
-
 
 jobs:
   # Print variables for logging and debugging purposes
@@ -68,16 +57,16 @@ jobs:
           if_true: ${{ inputs.bumb }}
           if_false: 'prerelease'
 
-      - name: Get bumb value, if provided
+      - name: Get preId value, if provided
         uses: haya14busa/action-cond@v1
         id: getPreId
         with:
-          cond: ${{ github.event_name == 'workflow_dispatch'}}
-          if_true: ${{ inputs.preId }}
+          cond: ${{ github.event_name == 'workflow_dispatch' && (inputs.bumb == 'premajor' || inputs.bumb == 'preminor' || inputs.bumb == 'prepatch' || inputs.bumb == 'prerelease') }}
+          if_true: ${{ inputs.bumb }}
           if_false: 'prerelease'
       - run: |
           echo "bumb: ${{ steps.getBumb.outputs.value }}"
-          echo "prefix: ${{ steps.getPreId.outputs.value }}"
+          echo "preId: ${{ steps.getPreId.outputs.value }}"
   
       - id: createNextTag
         name: "Create tag"
@@ -90,7 +79,6 @@ jobs:
       - run: echo "Tag ${{ steps.createNextTag.outputs.version_tag }} created!"
     outputs:
       newTag: ${{ steps.createNextTag.outputs.version_tag }}
-
 
   # Create new release.
   createRelease:
