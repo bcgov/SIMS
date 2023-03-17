@@ -9,10 +9,7 @@ import {
 } from "../../../seed-executors";
 import { Repository } from "typeorm";
 import * as faker from "faker";
-import {
-  FakeStudent,
-  STUDENTS_INITIAL_DATA,
-} from "./create-student-users.model";
+import { STUDENTS_INITIAL_DATA } from "./create-student-users.model";
 
 @Injectable()
 @DataSeed({ order: SeedPriorityOrder.Priority1 })

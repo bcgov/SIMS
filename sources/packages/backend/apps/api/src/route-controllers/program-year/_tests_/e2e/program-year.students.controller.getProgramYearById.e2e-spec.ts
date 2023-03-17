@@ -28,7 +28,6 @@ describe("ProgramYearStudentsController(e2e)-getProgramYearById", () => {
       programYear2001Promise,
       programYear2002Promise,
     ]);
-
     app = nestApplication;
   });
 
