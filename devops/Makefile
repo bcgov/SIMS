@@ -5,7 +5,6 @@ export $(shell sed 's/=.*//' ../.env)
 export GIT_LOCAL_BRANCH?=$(shell git rev-parse --abbrev-ref HEAD)
 export NAMESPACE := $(or $(NAMESPACE), $$NS)
 export APP_NAME := $(or $(PROJECT_NAME), sims)
-export BUILD_ID := $(or $(BUILD_ID), 1)
 export TEMPLATE_FILE_NAME := $(or $(TEMPLATE_FILE_NAME), $$FILE)
 export BUILD_REF := $(or $(BUILD_REF), $(GIT_LOCAL_BRANCH))
 export BUILD_NAMESPACE := $(or $(BUILD_NAMESPACE), 0c27fb-tools)
@@ -57,10 +56,6 @@ endef
 
 define QA_DB_NAME
 "QASIMSDB"
-endef
-
-define BUILD_TAG
-"$(subst /,-,$(BUILD_REF))-$(BUILD_ID)"
 endef
 
 define BUILD_TEMPLATE_PATH
@@ -156,8 +151,7 @@ print-status:
 	@echo " | NAMESPACE:    			$(NAMESPACE)"
 	@echo " | BUILD_NAMESPACE:    $(BUILD_NAMESPACE)"
 	@echo " +---------------------------------------------------------+ "
-	@echo " | BUILD_ID: 	$(BUILD_ID) "
-	@echo " | BUILD_TAG: 	$(BUILD_TAG) "
+	@echo " | BUILD_REF: 	$(BUILD_REF) "
 	@echo " | HOST NAME: 	$(HOST) "
 	@echo " +---------------------------------------------------------+ "
 
@@ -230,37 +224,33 @@ init-artifactory-secret-credential:
 build-api:
 	test -n "$(BUILD_NAMESPACE)"
 	test -n "$(BUILD_REF)"
-	test -n "$(BUILD_TAG)"
 	test -n "$(API_BUILD_REF)"
-	@echo "+\n++ BUILDING API with tag: $(BUILD_TAG)\n+"
-	@oc -n $(BUILD_NAMESPACE) process -f $(BUILD_TEMPLATE_PATH) -p TAG=$(BUILD_TAG) -p SOURCE_REPOSITORY_REF=$(BUILD_REF) -p BASE_IMAGE_NAME="nodejs-16" -p BASE_IMAGE_TAG="1" -p BASE_IMAGE_REPO="artifacts.developer.gov.bc.ca/redhat-docker-remote/ubi8/" -p SOURCE_CONTEXT_DIR=$(SOURCE_CONTEXT_DIR)backend -p DOCKER_FILE_PATH=apps/api/Dockerfile -p NAME=$(API_BUILD_REF) | oc -n $(BUILD_NAMESPACE) apply -f -
+	@echo "+\n++ BUILDING API with tag: $(BUILD_REF)\n+"
+	@oc -n $(BUILD_NAMESPACE) process -f $(BUILD_TEMPLATE_PATH) -p TAG=$(BUILD_REF) -p SOURCE_REPOSITORY_REF=$(BUILD_REF) -p BASE_IMAGE_NAME="nodejs-16" -p BASE_IMAGE_TAG="1" -p BASE_IMAGE_REPO="artifacts.developer.gov.bc.ca/redhat-docker-remote/ubi8/" -p SOURCE_CONTEXT_DIR=$(SOURCE_CONTEXT_DIR)backend -p DOCKER_FILE_PATH=apps/api/Dockerfile -p NAME=$(API_BUILD_REF) | oc -n $(BUILD_NAMESPACE) apply -f -
 	@oc -n $(BUILD_NAMESPACE) start-build bc/$(API_BUILD_REF) --wait
 
 build-workers:
 	test -n "$(BUILD_NAMESPACE)"
 	test -n "$(BUILD_REF)"
-	test -n "$(BUILD_TAG)"
 	test -n "$(WORKERS_BUILD_REF)"
-	@echo "+\n++ BUILDING WORKERS with tag: $(BUILD_TAG)\n+"
-	@oc -n $(BUILD_NAMESPACE) process -f $(BUILD_TEMPLATE_PATH) -p TAG=$(BUILD_TAG) -p SOURCE_REPOSITORY_REF=$(BUILD_REF) -p BASE_IMAGE_NAME="nodejs-16" -p BASE_IMAGE_TAG="1" -p BASE_IMAGE_REPO="artifacts.developer.gov.bc.ca/redhat-docker-remote/ubi8/" -p SOURCE_CONTEXT_DIR=$(SOURCE_CONTEXT_DIR)backend -p DOCKER_FILE_PATH=apps/workers/Dockerfile -p NAME=$(WORKERS_BUILD_REF) | oc -n $(BUILD_NAMESPACE) apply -f -
+	@echo "+\n++ BUILDING WORKERS with tag: $(BUILD_REF)\n+"
+	@oc -n $(BUILD_NAMESPACE) process -f $(BUILD_TEMPLATE_PATH) -p TAG=$(BUILD_REF) -p SOURCE_REPOSITORY_REF=$(BUILD_REF) -p BASE_IMAGE_NAME="nodejs-16" -p BASE_IMAGE_TAG="1" -p BASE_IMAGE_REPO="artifacts.developer.gov.bc.ca/redhat-docker-remote/ubi8/" -p SOURCE_CONTEXT_DIR=$(SOURCE_CONTEXT_DIR)backend -p DOCKER_FILE_PATH=apps/workers/Dockerfile -p NAME=$(WORKERS_BUILD_REF) | oc -n $(BUILD_NAMESPACE) apply -f -
 	@oc -n $(BUILD_NAMESPACE) start-build bc/$(WORKERS_BUILD_REF) --wait
 
 build-queue-consumers:
 	test -n "$(BUILD_NAMESPACE)"
 	test -n "$(BUILD_REF)"
-	test -n "$(BUILD_TAG)"
 	test -n "$(QUEUE_CONSUMERS_BUILD_REF)"
-	@echo "+\n++ BUILDING QUEUE_CONSUMERS with tag: $(BUILD_TAG)\n+"
-	@oc -n $(BUILD_NAMESPACE) process -f $(BUILD_TEMPLATE_PATH) -p TAG=$(BUILD_TAG) -p SOURCE_REPOSITORY_REF=$(BUILD_REF) -p BASE_IMAGE_NAME="nodejs-16" -p BASE_IMAGE_TAG="1" -p BASE_IMAGE_REPO="artifacts.developer.gov.bc.ca/redhat-docker-remote/ubi8/" -p SOURCE_CONTEXT_DIR=$(SOURCE_CONTEXT_DIR)backend -p DOCKER_FILE_PATH=apps/queue-consumers/Dockerfile -p NAME=$(QUEUE_CONSUMERS_BUILD_REF) | oc -n $(BUILD_NAMESPACE) apply -f -
+	@echo "+\n++ BUILDING QUEUE_CONSUMERS with tag: $(BUILD_REF)\n+"
+	@oc -n $(BUILD_NAMESPACE) process -f $(BUILD_TEMPLATE_PATH) -p TAG=$(BUILD_REF) -p SOURCE_REPOSITORY_REF=$(BUILD_REF) -p BASE_IMAGE_NAME="nodejs-16" -p BASE_IMAGE_TAG="1" -p BASE_IMAGE_REPO="artifacts.developer.gov.bc.ca/redhat-docker-remote/ubi8/" -p SOURCE_CONTEXT_DIR=$(SOURCE_CONTEXT_DIR)backend -p DOCKER_FILE_PATH=apps/queue-consumers/Dockerfile -p NAME=$(QUEUE_CONSUMERS_BUILD_REF) | oc -n $(BUILD_NAMESPACE) apply -f -
 	@oc -n $(BUILD_NAMESPACE) start-build bc/$(QUEUE_CONSUMERS_BUILD_REF) --wait
 
 build-web:
 	test -n "$(BUILD_NAMESPACE)"
 	test -n "$(BUILD_REF)"
-	test -n "$(BUILD_TAG)"
 	test -n "$(WEB_BUILD_REF)"
-	@echo "+\n++ BUILDING WEB with tag: $(BUILD_TAG)\n+"
-	@oc -n $(BUILD_NAMESPACE) process -f $(BUILD_TEMPLATE_PATH) -p TAG=$(BUILD_TAG) -p SOURCE_REPOSITORY_REF=$(BUILD_REF) -p BASE_IMAGE_NAME="nodejs-16" -p BASE_IMAGE_TAG="1" -p BASE_IMAGE_REPO="artifacts.developer.gov.bc.ca/redhat-docker-remote/ubi8/" -p SOURCE_CONTEXT_DIR=$(SOURCE_CONTEXT_DIR)web -p NAME=$(WEB_BUILD_REF) | oc -n $(BUILD_NAMESPACE) apply -f -
+	@echo "+\n++ BUILDING WEB with tag: $(BUILD_REF)\n+"
+	@oc -n $(BUILD_NAMESPACE) process -f $(BUILD_TEMPLATE_PATH) -p TAG=$(BUILD_REF) -p SOURCE_REPOSITORY_REF=$(BUILD_REF) -p BASE_IMAGE_NAME="nodejs-16" -p BASE_IMAGE_TAG="1" -p BASE_IMAGE_REPO="artifacts.developer.gov.bc.ca/redhat-docker-remote/ubi8/" -p SOURCE_CONTEXT_DIR=$(SOURCE_CONTEXT_DIR)web -p NAME=$(WEB_BUILD_REF) | oc -n $(BUILD_NAMESPACE) apply -f -
 	@oc -n $(BUILD_NAMESPACE) start-build bc/$(WEB_BUILD_REF) --wait
 
 init-patroni:
@@ -311,7 +301,7 @@ deploy-api:
 	test -n "$(SWAGGER_NAME)"
 	test -n "$(QUEUE_PREFIX)"
 	test -n "$(API_PORT)"
-	@echo "+\n++ Deploying API with tag: $(BUILD_TAG)\n+"
+	@echo "+\n++ Deploying API with tag: $(BUILD_REF)\n+"
 	@oc -n $(NAMESPACE) process -f openshift/api-deploy.yml \
 		-p NAME=$(API) \
 		-p API_SECRET_NAME=$(API_SECRET_NAME) \
@@ -319,12 +309,12 @@ deploy-api:
 		-p PORT=$(API_PORT) \
 		-p DB_SERVICE=$(DB_SERVICE_NAME) \
 		-p BUILD_NAMESPACE=$(BUILD_NAMESPACE) \
-		-p IMAGE_STREAM_TAG="$(API_BUILD_REF):$(BUILD_TAG)" \
+		-p IMAGE_STREAM_TAG="$(API_BUILD_REF):$(BUILD_REF)" \
 		-p KEYCLOAK_REALM=$(KEYCLOAK_REALM) \
 		-p KEYCLOAK_AUTH_URL=$(KEYCLOAK_AUTH_URL) \
 		-p BCeID_WEB_SERVICE_WSDL=$(BCeID_WEB_SERVICE_WSDL) \
 		-p FORMS_SECRET_NAME=$(FORMS_SECRET_NAME) \
-		-p BUILD_TAG=$(BUILD_TAG) \
+		-p BUILD_TAG=$(BUILD_REF) \
 		-p DATABASE_NAME_KEY=$(DATABASE_NAME_KEY) \
 		-p SITE_MINDER_LOGOUT_URL=$(SITE_MINDER_LOGOUT_URL) \
 		-p ATBC_LOGIN_ENDPOINT=$(ATBC_LOGIN_ENDPOINT) \
@@ -339,21 +329,21 @@ deploy-api:
 deploy-workers:
 	test -n "$(NAMESPACE)"
 	test -n "$(BUILD_NAMESPACE)"
-	test -n "$(BUILD_TAG)"
+	test -n "$(BUILD_REF)"
 	test -n "$(WORKERS_BUILD_REF)"
 	test -n "$(DB_SERVICE_NAME)"
 	test -n "$(DATABASE_NAME_KEY)"
 	test -n "$(WORKERS_SECRET_NAME)"
 	test -n "$(WORKERS)"
 	test -n "$(BYPASS_CRA_INCOME_VERIFICATION)"
-	@echo "+\n++ Deploying Workers with tag: $(BUILD_TAG)\n+"
+	@echo "+\n++ Deploying Workers with tag: $(BUILD_REF)\n+"
 	@oc -n $(NAMESPACE) process -f openshift/workers-deploy.yml \
 		-p NAME=$(WORKERS) \
 		-p WORKERS_SECRET_NAME=$(WORKERS_SECRET_NAME) \
 		-p BUILD_NAMESPACE=$(BUILD_NAMESPACE) \
 		-p DB_SERVICE=$(DB_SERVICE_NAME) \
-		-p IMAGE_STREAM_TAG="$(WORKERS_BUILD_REF):$(BUILD_TAG)" \
-		-p BUILD_TAG=$(BUILD_TAG) \
+		-p IMAGE_STREAM_TAG="$(WORKERS_BUILD_REF):$(BUILD_REF)" \
+		-p BUILD_TAG=$(BUILD_REF) \
 		-p DATABASE_NAME_KEY=$(DATABASE_NAME_KEY) \
 		-p BYPASS_CRA_INCOME_VERIFICATION=$(BYPASS_CRA_INCOME_VERIFICATION) \
 		| oc -n $(NAMESPACE) apply -f -
@@ -362,7 +352,7 @@ deploy-workers:
 deploy-queue-consumers:
 	test -n "$(NAMESPACE)"
 	test -n "$(BUILD_NAMESPACE)"
-	test -n "$(BUILD_TAG)"
+	test -n "$(BUILD_REF)"
 	test -n "$(QUEUE_CONSUMERS_BUILD_REF)"
 	test -n "$(DB_SERVICE_NAME)"
 	test -n "$(DATABASE_NAME_KEY)"
@@ -373,14 +363,14 @@ deploy-queue-consumers:
 	test -n "$(ATBC_LOGIN_ENDPOINT)"
 	test -n "$(ATBC_ENDPOINT)"
 	test -n "$(APPLICATION_ARCHIVE_DAYS)"
-	@echo "+\n++ Deploying Queues with tag: $(BUILD_TAG)\n+"
+	@echo "+\n++ Deploying Queues with tag: $(BUILD_REF)\n+"
 	@oc -n $(NAMESPACE) process -f openshift/queue-consumers-deploy.yml \
 		-p NAME=$(QUEUE_CONSUMERS) \
 		-p QUEUE_CONSUMERS_SECRET_NAME=$(QUEUE_CONSUMERS_SECRET_NAME) \
 		-p BUILD_NAMESPACE=$(BUILD_NAMESPACE) \
 		-p DB_SERVICE=$(DB_SERVICE_NAME) \
-		-p IMAGE_STREAM_TAG="$(QUEUE_CONSUMERS_BUILD_REF):$(BUILD_TAG)" \
-		-p BUILD_TAG=$(BUILD_TAG) \
+		-p IMAGE_STREAM_TAG="$(QUEUE_CONSUMERS_BUILD_REF):$(BUILD_REF)" \
+		-p BUILD_TAG=$(BUILD_REF) \
 		-p DATABASE_NAME_KEY=$(DATABASE_NAME_KEY) \
 		-p PORT=$(QUEUE_CONSUMERS_PORT) \
 		-p HOST_NAME=$(HOST) \
@@ -396,15 +386,15 @@ deploy-web:
 	test -n "$(BUILD_NAMESPACE)"
 	test -n "$(WEB)"
 	test -n "$(WEB_BUILD_REF)"
-	test -n "$(BUILD_TAG)"
+	test -n "$(BUILD_REF)"
 	test -n "$(WEB_PORT)"
-	@echo "+\n++ Deploying WEB with tag: $(BUILD_TAG)\n+"
+	@echo "+\n++ Deploying WEB with tag: $(BUILD_REF)\n+"
 	@oc -n $(NAMESPACE) process -f openshift/web-deploy.yml \
 	-p NAME=$(WEB) \
 	-p PORT=$(WEB_PORT) \
 	-p HOST_NAME=$(HOST) \
 	-p BUILD_NAMESPACE=$(BUILD_NAMESPACE) \
-	-p IMAGE_STREAM_TAG="$(WEB_BUILD_REF):$(BUILD_TAG)"  \
+	-p IMAGE_STREAM_TAG="$(WEB_BUILD_REF):$(BUILD_REF)"  \
 	| oc -n $(NAMESPACE) apply -f -
 	$(call rollout_and_wait,dc/$(WEB))
 
@@ -420,14 +410,14 @@ deploy-ha-mongo:
 
 build-forms:
 	test -n "$(BUILD_NAMESPACE)"
-	test -n "$(BUILD_TAG)"
+	test -n "$(BUILD_REF)"
 	test -n "$(SOURCE_CONTEXT_DIR)"
 	test -n "$(SOURCE_REPOSITORY_URL)"
 	test -n "$(SOURCE_REPOSITORY_REF)"
 	test -n "$(FORMIO_SOURCE_REPO_URL)"
 	test -n "$(FORMIO_SOURCE_REPO_TAG)"
-	@echo "+\n++ BUILDING $(FORMS_BUILD_REF) DIR: $(SOURCE_CONTEXT_DIR)forms BUILD_TAG:$(BUILD_TAG)\n+"
-	@oc -n $(BUILD_NAMESPACE) process -f openshift/forms-build.yml -p NAME=$(FORMS_BUILD_REF) -p TAG=$(BUILD_TAG) -p FORMIO_SOURCE_REPO_URL=$(FORMIO_SOURCE_REPO_URL) -p FORMIO_SOURCE_REPO_TAG=$(FORMIO_SOURCE_REPO_TAG) -p SOURCE_REPOSITORY_URL=$(SOURCE_REPOSITORY_URL) -p SOURCE_REPOSITORY_REF=$(SOURCE_REPOSITORY_REF) -p SOURCE_CONTEXT_DIR=$(SOURCE_CONTEXT_DIR)forms| oc -n $(BUILD_NAMESPACE) apply -f -
+	@echo "+\n++ BUILDING $(FORMS_BUILD_REF) DIR: $(SOURCE_CONTEXT_DIR)forms BUILD_TAG:$(BUILD_REF)\n+"
+	@oc -n $(BUILD_NAMESPACE) process -f openshift/forms-build.yml -p NAME=$(FORMS_BUILD_REF) -p TAG=$(BUILD_REF) -p FORMIO_SOURCE_REPO_URL=$(FORMIO_SOURCE_REPO_URL) -p FORMIO_SOURCE_REPO_TAG=$(FORMIO_SOURCE_REPO_TAG) -p SOURCE_REPOSITORY_URL=$(SOURCE_REPOSITORY_URL) -p SOURCE_REPOSITORY_REF=$(SOURCE_REPOSITORY_REF) -p SOURCE_CONTEXT_DIR=$(SOURCE_CONTEXT_DIR)forms| oc -n $(BUILD_NAMESPACE) apply -f -
 	@oc -n $(BUILD_NAMESPACE) start-build bc/$(FORMS_BUILD_REF) --wait
 
 deploy-forms:
@@ -435,16 +425,16 @@ deploy-forms:
 	test -n "$(FORMS_NAME)"
 	test -n "$(FORMS_URL)"
 	test -n "$(BUILD_NAMESPACE)"
-	test -n "$(BUILD_TAG)"
+	test -n "$(BUILD_REF)"
 	test -n "$(HOST_PREFIX)"
 	test -n "$(FORMIO_ROOT_EMAIL)"
 	test -n "$(MONGODB_URI)"
-	@echo "+\n++ Deploying forms with tag: $(BUILD_TAG)\n+"
+	@echo "+\n++ Deploying forms with tag: $(BUILD_REF)\n+"
 	@oc -n $(NAMESPACE) process -f openshift/forms-deploy.yml \
 	-p NAME=$(FORMS_NAME) \
 	-p FORMS_URL=$(FORMS_URL) \
 	-p TOOLS_NAMESPACE=$(BUILD_NAMESPACE) \
-	-p IMAGE_STREAM_TAG="$(FORMS_BUILD_REF):$(BUILD_TAG)" \
+	-p IMAGE_STREAM_TAG="$(FORMS_BUILD_REF):$(BUILD_REF)" \
 	-p HOST_PREFIX=$(HOST_PREFIX) \
 	-p FORMIO_ROOT_EMAIL=$(FORMIO_ROOT_EMAIL) \
 	-p MONGODB_URI=$(MONGODB_URI) \
