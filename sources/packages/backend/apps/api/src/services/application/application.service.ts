@@ -16,6 +16,7 @@ import {
   AssessmentTriggerType,
   User,
   ApplicationData,
+  StudentScholasticStandingChangeType,
 } from "@sims/sims-db";
 import { StudentFileService } from "../student-file/student-file.service";
 import {
@@ -1425,18 +1426,27 @@ export class ApplicationService extends RecordDataModelService<Application> {
           studystartDate: true,
           howWillYouBeAttendingTheProgram: true,
         },
+        studentScholasticStandings: {
+          id: true,
+          changeType: true,
+        },
       },
       relations: {
         pirDeniedReasonId: true,
         currentAssessment: { offering: true, disbursementSchedules: true },
         applicationException: true,
         location: true,
+        studentScholasticStandings: true,
       },
       where: {
         id: applicationId,
         applicationStatus: Not(ApplicationStatus.Overwritten),
         student: {
           id: studentId,
+        },
+        studentScholasticStandings: {
+          changeType:
+            StudentScholasticStandingChangeType.StudentDidNotCompleteProgram,
         },
       },
     });
@@ -1477,15 +1487,26 @@ export class ApplicationService extends RecordDataModelService<Application> {
             coeDeniedOtherDesc: true,
           },
         },
+        studentScholasticStandings: {
+          id: true,
+          changeType: true,
+        },
       },
       relations: {
-        currentAssessment: { disbursementSchedules: { coeDeniedReason: true } },
+        currentAssessment: {
+          disbursementSchedules: { coeDeniedReason: true },
+        },
+        studentScholasticStandings: true,
       },
       where: {
         id: applicationId,
         applicationStatus: In(applicationStatuses),
         student: {
           id: options?.studentId,
+        },
+        studentScholasticStandings: {
+          changeType:
+            StudentScholasticStandingChangeType.StudentDidNotCompleteProgram,
         },
       },
       order: {

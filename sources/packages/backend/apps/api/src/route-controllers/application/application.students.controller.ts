@@ -533,7 +533,7 @@ export class ApplicationStudentsController extends BaseController {
           userToken.studentId,
           { limit: 1 },
         );
-      appealStatus = mostRecentAppeal.status;
+      appealStatus = mostRecentAppeal?.status;
     }
 
     const disbursements =
@@ -543,6 +543,7 @@ export class ApplicationStudentsController extends BaseController {
       a.disbursementDate < b.disbursementDate ? -1 : 1,
     );
     const [firstDisbursement, secondDisbursement] = disbursements;
+    const [scholasticStandingChange] = application.studentScholasticStandings;
     return {
       applicationStatusUpdatedOn: application.applicationStatusUpdatedOn,
       pirStatus: application.pirStatus,
@@ -550,6 +551,7 @@ export class ApplicationStudentsController extends BaseController {
       secondCOEStatus: secondDisbursement?.coeStatus,
       exceptionStatus: application.applicationException?.exceptionStatus,
       appealStatus,
+      scholasticStandingChangeType: scholasticStandingChange?.changeType,
     };
   }
 
@@ -619,11 +621,13 @@ export class ApplicationStudentsController extends BaseController {
       this.applicationControllerService.transformToEnrolmentApplicationDetailsAPIOutDTO(
         application.currentAssessment.disbursementSchedules,
       );
+    const [scholasticStandingChange] = application.studentScholasticStandings;
     return {
       firstDisbursement: enrolmentDetails.firstDisbursement,
       secondDisbursement: enrolmentDetails.secondDisbursement,
       assessmentTriggerType: application.currentAssessment.triggerType,
       appealStatus: mostRecentAppeal?.status,
+      scholasticStandingChangeType: scholasticStandingChange?.changeType,
     };
   }
 }

@@ -12,6 +12,7 @@ import {
   StudentAssessment,
   StudentRestriction,
   User,
+  StudentScholasticStandingChangeType,
 } from "@sims/sims-db";
 import { CustomNamedError } from "@sims/utilities";
 import {
@@ -23,11 +24,7 @@ import { StudentAssessmentService } from "../student-assessment/student-assessme
 import { StudentRestrictionService } from "../restriction/student-restriction.service";
 import { APPLICATION_CHANGE_NOT_ELIGIBLE } from "../../constants";
 import { RestrictionCode } from "../restriction/models/restriction.model";
-import {
-  MINIMUM_UNSUCCESSFUL_WEEKS,
-  SCHOLASTIC_STANDING_STUDENT_DID_NOT_COMPLETE_PROGRAM,
-  SCHOLASTIC_STANDING_STUDENT_WITHDREW_FROM_PROGRAM,
-} from "./constants";
+import { SCHOLASTIC_STANDING_MINIMUM_UNSUCCESSFUL_WEEKS } from "../../utilities";
 import {
   NotificationActionsService,
   StudentRestrictionSharedService,
@@ -170,6 +167,8 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
 
       // Create StudentScholasticStanding.
       const scholasticStanding = new StudentScholasticStanding();
+      scholasticStanding.changeType =
+        scholasticStandingData.scholasticStandingChangeType;
       scholasticStanding.application = { id: application.id } as Application;
       scholasticStanding.submittedData = scholasticStandingData;
       scholasticStanding.submittedDate = now;
@@ -180,13 +179,11 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
       // Reference offering id.
       scholasticStanding.referenceOffering = existingOffering;
 
-      // If not unsuccessful weeks, then clone new offering and create re-assessment.
-      const notUnsuccessfulWeeksScholasticStanding =
-        scholasticStandingData.scholasticStanding !==
-        SCHOLASTIC_STANDING_STUDENT_DID_NOT_COMPLETE_PROGRAM;
-
-      if (notUnsuccessfulWeeksScholasticStanding) {
-        // Cloning existing offering.
+      if (
+        scholasticStandingData.scholasticStandingChangeType !==
+        StudentScholasticStandingChangeType.StudentDidNotCompleteProgram
+      ) {
+        // If not unsuccessful weeks, then clone new offering and create re-assessment.
         const offering: EducationProgramOffering = { ...existingOffering };
 
         // Assigning id and audit fields as undefined, so that when its saved its considered as a new EducationProgramOffering object.
@@ -250,7 +247,7 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
         } as StudentAssessment;
       }
 
-      // Set archive to true
+      // Set archive to true.
       application.isArchived = true;
 
       // Save current application.
@@ -351,8 +348,8 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
     applicationId: number,
   ): Promise<StudentRestriction | undefined> {
     if (
-      scholasticStandingData.scholasticStanding ===
-      SCHOLASTIC_STANDING_STUDENT_DID_NOT_COMPLETE_PROGRAM
+      scholasticStandingData.scholasticStandingChangeType ===
+      StudentScholasticStandingChangeType.StudentDidNotCompleteProgram
     ) {
       if (!scholasticStandingData.numberOfUnsuccessfulWeeks) {
         throw new Error("Number of unsuccessful weeks is empty.");
@@ -364,7 +361,7 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
       if (
         totalExistingUnsuccessfulWeeks +
           scholasticStandingData.numberOfUnsuccessfulWeeks >=
-        MINIMUM_UNSUCCESSFUL_WEEKS
+        SCHOLASTIC_STANDING_MINIMUM_UNSUCCESSFUL_WEEKS
       ) {
         return this.studentRestrictionService.createRestrictionToSave(
           studentId,
@@ -375,8 +372,8 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
       }
     }
     if (
-      scholasticStandingData.scholasticStanding ===
-      SCHOLASTIC_STANDING_STUDENT_WITHDREW_FROM_PROGRAM
+      scholasticStandingData.scholasticStandingChangeType ===
+      StudentScholasticStandingChangeType.StudentWithdrewFromProgram
     ) {
       // Check if "WTHD" restriction is already present for the student,
       // if not add "WTHD" restriction else add "SSR" restriction.
@@ -421,10 +418,10 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
     applicationId: number,
   ): Promise<StudentRestriction | undefined> {
     if (
-      scholasticStandingData.scholasticStanding ===
-        SCHOLASTIC_STANDING_STUDENT_DID_NOT_COMPLETE_PROGRAM ||
-      scholasticStandingData.scholasticStanding ===
-        SCHOLASTIC_STANDING_STUDENT_WITHDREW_FROM_PROGRAM
+      [
+        StudentScholasticStandingChangeType.StudentDidNotCompleteProgram,
+        StudentScholasticStandingChangeType.StudentWithdrewFromProgram,
+      ].includes(scholasticStandingData.scholasticStandingChangeType)
     ) {
       return this.studentRestrictionService.createRestrictionToSave(
         studentId,

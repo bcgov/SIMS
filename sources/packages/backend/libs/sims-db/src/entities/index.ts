@@ -66,6 +66,7 @@ export * from "./application-exceptions.model";
 export * from "./disbursement-receipts.model";
 export * from "./disbursement-receipt-values.model";
 export * from "./student-account-application.model";
+export * from "./student-scholastic-standing.type";
 export * from "./student-scholastic-standing.model";
 export * from "./student-user.model";
 export * from "./identity-providers.type";

@@ -1,4 +1,28 @@
 <template>
+  <!-- Scholastic standing changed -->
+  <application-status-tracker-banner
+    v-if="
+      assessmentDetails.assessmentTriggerType ===
+      AssessmentTriggerType.ScholasticStandingChange
+    "
+    label="You have a new assessment due to your scholastic standing"
+    icon="fa:fas fa-check-circle"
+    icon-color="success"
+    :background-color="hasDisbursementEvent ? undefined : 'success-bg'"
+    content="Your institution informed us of your scholastic standing, which changed your assessment evaluation. Please review your new assessment in the table below. You can also click “View request” to see the details from your institution. Please contact the Financial Aid Officer from your institution, if you have questions about your scholastic standing."
+  />
+  <!-- Scholastic standing changed - student did not complete the program -->
+  <application-status-tracker-banner
+    v-if="
+      assessmentDetails.scholasticStandingChangeType ===
+      StudentScholasticStandingChangeType.StudentDidNotCompleteProgram
+    "
+    label="Your institution reported that you did not complete your studies"
+    icon="fa:fas fa-exclamation-circle"
+    icon-color="danger"
+    background-color="error-bg"
+    content="You no longer meet StudentAid BC's requirements to receive funding for financial aid. Any scheduled payments will be cancelled. Please contact the Financial Aid Officer from your institution if you require more information."
+  />
   <!-- Student appeal - waiting approval -->
   <application-status-tracker-banner
     v-if="assessmentDetails.appealStatus === StudentAppealStatus.Pending"
@@ -28,18 +52,6 @@
     icon-color="success"
     :background-color="hasDisbursementEvent ? undefined : 'success-bg'"
     content="StudentAid BC has determined an outcome with 1 or more of your requested change. Please review your new assessment in the table below."
-  />
-  <!-- Scholastic standing changed -->
-  <application-status-tracker-banner
-    v-if="
-      assessmentDetails.assessmentTriggerType ===
-      AssessmentTriggerType.ScholasticStandingChange
-    "
-    label="You have a new assessment due to your scholastic standing"
-    icon="fa:fas fa-check-circle"
-    icon-color="success"
-    :background-color="hasDisbursementEvent ? undefined : 'success-bg'"
-    content="Your institution informed us of your scholastic standing, which changed your assessment evaluation. Please review your new assessment in the table below. You can also click “View request” to see the details from your institution. Please contact the Financial Aid Officer from your institution, if you have questions about your scholastic standing."
   />
   <!-- Offering changed -->
   <application-status-tracker-banner
@@ -76,7 +88,12 @@
   />
 </template>
 <script lang="ts">
-import { AssessmentTriggerType, COEStatus, StudentAppealStatus } from "@/types";
+import {
+  AssessmentTriggerType,
+  COEStatus,
+  StudentAppealStatus,
+  StudentScholasticStandingChangeType,
+} from "@/types";
 import { onMounted, ref, defineComponent, computed } from "vue";
 import { ApplicationService } from "@/services/ApplicationService";
 import { CompletedApplicationDetailsAPIOutDTO } from "@/services/http/dto/Application.dto";
@@ -127,6 +144,7 @@ export default defineComponent({
       AssessmentTriggerType,
       StudentAppealStatus,
       hasDisbursementEvent,
+      StudentScholasticStandingChangeType,
     };
   },
 });
