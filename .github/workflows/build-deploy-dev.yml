@@ -108,7 +108,7 @@ jobs:
     if: github.event.pull_request.merged == true || github.event_name == 'workflow_dispatch' 
     env:
       BUILD_NAMESPACE: 0c27fb-tools
-      BUILD_REF: ${{ needs.createTag.outputs.newTag }}
+      BUILD_REF: ${{ createTag.outputs.newTag }}
       HOST_PREFIX: ${{ secrets.HOST_PREFIX }}
     steps:
       # Checkout the PR branch
