@@ -7,62 +7,31 @@ import {
   createTestingAppModule,
   getStudentToken,
   FakeStudentUsersTypes,
+  createFakeProgramYear,
 } from "../../../../testHelpers";
 
 describe("ProgramYearStudentsController(e2e)-getProgramYears", () => {
   let app: INestApplication;
   let appDataSource: DataSource;
-  let programYear2000: ProgramYear;
-  let programYear2024: ProgramYear;
-  let programYear2025: ProgramYear;
+  let programYear2003: ProgramYear;
+  let programYear2004: ProgramYear;
+  let programYear2005: ProgramYear;
+
   beforeAll(async () => {
     const { nestApplication, dataSource } = await createTestingAppModule();
     appDataSource = dataSource;
     const programYearRepo = appDataSource.getRepository(ProgramYear);
-
-    programYear2000 = {
-      programYear: "2000-2001",
-      programYearDesc:
-        "Study starting between August 01, 2000 and July 31, 2001",
-      formName: "SFAA2000-01",
-      active: false,
-      parentFormName: "SFAA2000-01-parent",
-      partnerFormName: "SFAA2000-01-partner",
-      programYearPrefix: "2000",
-    } as ProgramYear;
-
-    programYear2024 = {
-      programYear: "2024-2025",
-      programYearDesc:
-        "Study starting between August 01, 2024 and July 31, 2025",
-      formName: "SFAA2024-25",
-      active: true,
-      parentFormName: "SFAA2024-01-parent",
-      partnerFormName: "SFAA2024-01-partner",
-      programYearPrefix: "2024",
-    } as ProgramYear;
-
-    programYear2025 = {
-      programYear: "2025-2026",
-      programYearDesc:
-        "Study starting between August 01, 2025 and July 31, 2026",
-      formName: "SFAA2025-26",
-      active: true,
-      parentFormName: "SFAA2025-01-parent",
-      partnerFormName: "SFAA2025-01-partner",
-      programYearPrefix: "2025",
-    } as ProgramYear;
-
-    const programYear2000Promise = programYearRepo.save(programYear2000);
-    const programYear2024Promise = programYearRepo.save(programYear2024);
-    const programYear2025Promise = programYearRepo.save(programYear2025);
-
-    [programYear2000, programYear2024, programYear2025] = await Promise.all([
-      programYear2000Promise,
-      programYear2024Promise,
-      programYear2025Promise,
+    programYear2003 = createFakeProgramYear(2003, false);
+    programYear2004 = createFakeProgramYear(2004);
+    programYear2005 = createFakeProgramYear(2005);
+    const programYear2003Promise = programYearRepo.save(programYear2003);
+    const programYear2004Promise = programYearRepo.save(programYear2004);
+    const programYear2005Promise = programYearRepo.save(programYear2005);
+    [programYear2003, programYear2004, programYear2005] = await Promise.all([
+      programYear2003Promise,
+      programYear2004Promise,
+      programYear2005Promise,
     ]);
-
     app = nestApplication;
   });
 
@@ -83,32 +52,28 @@ describe("ProgramYearStudentsController(e2e)-getProgramYears", () => {
         expect(programYearList).toEqual(
           expect.arrayContaining([
             expect.objectContaining({
-              id: programYear2024.id,
+              id: programYear2004.id,
               description:
-                "(2024-2025) - Study starting between August 01, 2024 and July 31, 2025",
+                "(2004-2005) - Study starting between August 01, 2004 and July 31, 2005",
             }),
             expect.objectContaining({
-              id: programYear2025.id,
+              id: programYear2005.id,
               description:
-                "(2025-2026) - Study starting between August 01, 2025 and July 31, 2026",
+                "(2005-2006) - Study starting between August 01, 2005 and July 31, 2006",
             }),
           ]),
         );
         expect(programYearList).not.toContainEqual(
           expect.objectContaining({
-            id: programYear2000.id,
+            id: programYear2003.id,
             description:
-              "(2000-2001) - Study starting between August 01, 2000 and July 31, 2001",
+              "(2003-2004) - Study starting between August 01, 2003 and July 31, 2004",
           }),
         );
       });
   });
 
   afterAll(async () => {
-    const programYearRepo = appDataSource.getRepository(ProgramYear);
-    await programYearRepo.remove(programYear2000);
-    await programYearRepo.remove(programYear2024);
-    await programYearRepo.remove(programYear2025);
     app?.close();
   });
 });

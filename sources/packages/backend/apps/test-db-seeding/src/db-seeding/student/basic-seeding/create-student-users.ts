@@ -29,8 +29,7 @@ export class CreateStudentUsers {
    */
   @DataSeedMethod()
   async createStudentUsers(): Promise<void> {
-    const studentUserDetails: FakeStudent[] = STUDENTS_INITIAL_DATA;
-    const userCreationPromises = studentUserDetails.map((user) =>
+    const userCreationPromises = STUDENTS_INITIAL_DATA.map((user) =>
       this.createStudentUser(user.username, user.options),
     );
     await Promise.all(userCreationPromises);

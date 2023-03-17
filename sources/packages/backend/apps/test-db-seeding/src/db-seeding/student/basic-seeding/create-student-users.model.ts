@@ -10,6 +10,7 @@ export interface FakeStudent {
     gender?: string;
   };
 }
+
 export const STUDENTS_INITIAL_DATA = [
   {
     username: process.env.E2E_TEST_STUDENT_USERNAME,

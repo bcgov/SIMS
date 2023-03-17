@@ -1,4 +1,3 @@
-import { StudentService } from "../../services";
 import { KeycloakConfig } from "../../auth/keycloakConfig";
 import { HttpStatus, INestApplication } from "@nestjs/common";
 import * as request from "supertest";
@@ -8,31 +7,24 @@ import {
 } from "@sims/integrations/services";
 import {
   FakeStudentUsersTypes,
-  getStudentByFakeStudentUserType,
   getStudentToken,
   createTestingAppModule,
   BEARER_AUTH_TYPE,
 } from "../../testHelpers";
-import { DataSource } from "typeorm";
 
 describe("Test ATBC Controller", () => {
   let accessToken: string;
   let app: INestApplication;
-  let studentService: StudentService;
   let atbcService: ATBCService;
-  let appDataSource: DataSource;
 
   beforeAll(async () => {
     await KeycloakConfig.load();
     accessToken = await getStudentToken(
       FakeStudentUsersTypes.FakeStudentUserType1,
     );
-    const { nestApplication, module, dataSource } =
-      await createTestingAppModule();
+    const { nestApplication, module } = await createTestingAppModule();
     atbcService = await module.get(ATBCService);
-    studentService = await module.get(StudentService);
     app = nestApplication;
-    appDataSource = dataSource;
   });
 
   it("Should return an HTTP 200 status when applying for PD and student is valid.", async () => {
@@ -51,13 +43,6 @@ describe("Test ATBC Controller", () => {
   });
 
   afterAll(async () => {
-    // Putting the student in the same state as before the test.
-    const fakeStudent = await getStudentByFakeStudentUserType(
-      FakeStudentUsersTypes.FakeStudentUserType1,
-      appDataSource,
-    );
-    fakeStudent.studentPDSentAt = null;
-    await studentService.save(fakeStudent);
     await app?.close();
   });
 });

@@ -1,12 +1,21 @@
 import { ProgramYear } from "@sims/sims-db";
 
-export function createFakeProgramYear(): ProgramYear {
+export function createFakeProgramYear(
+  programYearPrefix?: number,
+  active?: boolean,
+): ProgramYear {
+  if (programYearPrefix === undefined) {
+    programYearPrefix = 2022;
+  }
+  const startingYear = programYearPrefix;
+  const endingYear = programYearPrefix + 1;
   const programYear = new ProgramYear();
-  programYear.id = 2;
-  programYear.formName = "SFAA2022-23";
-  programYear.programYear = "2022-2023";
-  programYear.programYearDesc =
-    "Study starting between August 01, 2022 and July 31, 2023";
-  programYear.active = true;
+  programYear.formName = `SFAA${startingYear}-${endingYear}`;
+  programYear.programYear = `${startingYear}-${endingYear}`;
+  programYear.programYearDesc = `Study starting between August 01, ${startingYear} and July 31, ${endingYear}`;
+  programYear.active = active ?? true;
+  programYear.parentFormName = `${programYear.formName}-parent`;
+  programYear.partnerFormName = `${programYear.formName}-partner`;
+  programYear.programYearPrefix = programYearPrefix.toString();
   return programYear;
 }
