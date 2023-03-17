@@ -24,7 +24,7 @@ import { StudentAssessmentService } from "../student-assessment/student-assessme
 import { StudentRestrictionService } from "../restriction/student-restriction.service";
 import { APPLICATION_CHANGE_NOT_ELIGIBLE } from "../../constants";
 import { RestrictionCode } from "../restriction/models/restriction.model";
-import { MINIMUM_UNSUCCESSFUL_WEEKS } from "../../utilities";
+import { SCHOLASTIC_STANDING_MINIMUM_UNSUCCESSFUL_WEEKS } from "../../utilities";
 import {
   NotificationActionsService,
   StudentRestrictionSharedService,
@@ -361,7 +361,7 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
       if (
         totalExistingUnsuccessfulWeeks +
           scholasticStandingData.numberOfUnsuccessfulWeeks >=
-        MINIMUM_UNSUCCESSFUL_WEEKS
+        SCHOLASTIC_STANDING_MINIMUM_UNSUCCESSFUL_WEEKS
       ) {
         return this.studentRestrictionService.createRestrictionToSave(
           studentId,
