@@ -98,7 +98,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - run: echo "created release ${{ needs.createTag.outputs.newTag }} ${{ steps.createNewRelease.outputs.html_url }}!"
 
-
   # Building all packages
   build:
     name: Building all packages
