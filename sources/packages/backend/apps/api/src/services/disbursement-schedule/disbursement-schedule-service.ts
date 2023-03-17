@@ -159,7 +159,8 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
       .innerJoin("offering.institutionLocation", "location")
       .innerJoin("application.student", "student")
       .innerJoin("student.user", "user")
-      .where("location.id = :locationId", { locationId })
+      .where("studentAssessment.id = currentAssessment.id")
+      .andWhere("location.id = :locationId", { locationId })
       .andWhere("application.applicationStatus IN (:...status)", {
         status: [ApplicationStatus.Enrolment, ApplicationStatus.Completed],
       });
@@ -413,7 +414,8 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
       .innerJoin("studentAssessment.application", "application")
       .innerJoin("application.currentAssessment", "currentAssessment")
       .leftJoin("disbursementSchedule.coeDeniedReason", "coeDeniedReason")
-      .where("application.applicationStatus IN (:...status)", {
+      .where("studentAssessment.id = currentAssessment.id")
+      .andWhere("application.applicationStatus IN (:...status)", {
         status: [ApplicationStatus.Enrolment, ApplicationStatus.Completed],
       })
       .andWhere("application.id = :applicationId", {

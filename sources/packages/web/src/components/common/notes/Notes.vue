@@ -23,42 +23,47 @@
         >No notes found. Please click on create new note to add one.</v-col
       ></v-row
     >
-    <v-timeline side="end" class="justify-content-start" truncate-line="both">
-      <v-timeline-item
-        v-for="note in notes"
-        :key="note"
-        dot-color="primary"
-        size="x-small"
-        fill-dot
+      <v-timeline
+        side="end"
+        align="start"
+        class="justify-content-start"
+        truncate-line="both"
       >
-        <div class="d-flex">
-          <span class="primary-color label-bold">{{
-            dateOnlyLongString(note.createdAt)
-          }}</span>
-          <div class="mx-8">
-            <div class="content-header">{{ note.noteType }}</div>
-            <div v-if="showMoreNotes(notes)" class="header mt-2">
-              {{ note.description.substring(0, 150) }}
-              <a @click="toggleNotes(notes)" class="primary-color"
-                >Show more...</a
-              >
-            </div>
-            <div v-else class="header mt-2">
-              {{ note.description }}
-              <a
-                v-if="note.showMore"
-                @click="toggleNotes(notes)"
-                class="primary-color"
-                >Show less...</a
-              >
-            </div>
-            <div class="content-footer mt-2 mb-8 secondary-color-light">
-              <span>{{ timeOnlyInHoursAndMinutes(note.createdAt) }}</span
-              ><span class="mx-2">|</span>
-              <span>{{ `${note.lastName}, ${note.firstName}` }}</span>
+        <v-timeline-item
+          v-for="note in notes"
+          :key="note"
+          dot-color="primary"
+          size="x-small"
+          fill-dot
+        >
+          <div class="d-flex">
+            <span class="primary-color label-bold">{{
+              dateOnlyLongString(note.createdAt)
+            }}</span>
+            <div class="mx-8">
+              <div class="content-header">{{ note.noteType }}</div>
+              <div v-if="showMoreNotes(notes)" class="header mt-2">
+                {{ note.description.substring(0, 150) }}
+                <a @click="toggleNotes(notes)" class="primary-color"
+                  >Show more...</a
+                >
+              </div>
+              <div v-else class="header mt-2">
+                {{ note.description }}
+                <a
+                  v-if="note.showMore"
+                  @click="toggleNotes(notes)"
+                  class="primary-color"
+                  >Show less...</a
+                >
+              </div>
+              <div class="content-footer mt-2 mb-8 secondary-color-light">
+                <span>{{ timeOnlyInHoursAndMinutes(note.createdAt) }}</span
+                ><span class="mx-2">|</span>
+                <span>{{ `${note.lastName}, ${note.firstName}` }}</span>
+              </div>
             </div>
           </div>
-        </div>
       </v-timeline-item>
     </v-timeline>
     <create-note-modal

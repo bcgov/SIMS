@@ -49,6 +49,10 @@ export enum StudentNoteType {
    */
   General = "General",
   /**
+   * Note type Application.
+   */
+  Application = "Application",
+  /**
    * Note type Restriction.
    */
   Restriction = "Restriction",

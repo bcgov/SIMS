@@ -1,0 +1,24 @@
+# Base Image
+FROM node:16.17.0-alpine3.16
+
+LABEL maintainer="BC GOV"
+
+# Updating container path variable with node bin
+ENV PATH $PATH:/app/node_modules/.bin
+
+WORKDIR /app
+
+# Copying sources
+COPY libs ./libs
+COPY workflow ./workflow
+COPY ./*.json ./
+COPY ./*.js ./
+
+# Installing dependencies
+RUN npm ci
+
+# Adding a nonroot user
+RUN addgroup -S nonroot \
+    && adduser -S nonroot -G nonroot
+
+USER nonroot
