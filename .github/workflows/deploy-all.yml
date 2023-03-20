@@ -4,9 +4,9 @@ on:
   workflow_dispatch:
     inputs:
       gitRef:
-        description: "Git Ref"
+        description: "Git Ref (e.g. v1.0.0 or v1.0.0-prerelease.1)"
         required: true
-        default: "main"
+        default: ""
       environment:
         required: true
         type: environment
