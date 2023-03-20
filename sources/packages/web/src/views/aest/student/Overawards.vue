@@ -1,5 +1,5 @@
 <template>
-  <tab-container :card="false">
+  <tab-container :enableCardView="false">
     <student-overaward-details
       :studentId="studentId"
       :showAddedBy="true"

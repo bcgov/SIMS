@@ -1,7 +1,9 @@
 <template>
   <div class="mt-8">
     <!-- Default slot (with and without v-card) -->
-    <v-card v-if="card" class="p-4"><slot></slot></v-card>
+    <v-card v-if="enableCardView">
+      <v-container><slot></slot></v-container>
+    </v-card>
     <slot v-else></slot>
   </div>
 </template>
@@ -11,19 +13,11 @@ import { defineComponent } from "vue";
 
 export default defineComponent({
   props: {
-    card: {
+    enableCardView: {
       type: Boolean,
       required: false,
       default: true,
     },
-    fullWidth: {
-      type: Boolean,
-      required: false,
-      default: false,
-    },
-  },
-  setup() {
-    return {};
   },
 });
 </script>

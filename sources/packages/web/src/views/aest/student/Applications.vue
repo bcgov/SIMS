@@ -1,6 +1,6 @@
 <template>
   <tab-container>
-    <StudentApplications
+    <student-applications
       :studentId="studentId"
       @goToApplication="goToApplication"
     />
