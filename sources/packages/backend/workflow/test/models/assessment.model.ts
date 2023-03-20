@@ -95,6 +95,7 @@ export interface AssessmentConsolidatedData {
   partner1StudentStudyWeeks?: number;
   partner1CRAReportedIncome?: number;
   partner1TotalIncome?: number;
+  assessmentId?: number;
 }
 
 export interface AssessmentModel {

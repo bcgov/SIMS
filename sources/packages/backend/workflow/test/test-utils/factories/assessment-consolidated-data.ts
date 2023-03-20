@@ -97,5 +97,6 @@ function setDefaultAssessmentConsolidatedData(): AssessmentConsolidatedData {
     partner1StudentStudyWeeks: null,
     partner1TotalIncome: null,
     partner1CRAReportedIncome: null,
+    assessmentId: null,
   } as AssessmentConsolidatedData;
 }
