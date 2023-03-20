@@ -7,6 +7,9 @@ import {
   AssessmentStatus,
   OfferingIntensity,
   DisbursementScheduleStatus,
+  AssessmentTriggerType,
+  StudentAppealStatus,
+  StudentScholasticStandingChangeType,
 } from "@/types";
 
 export interface InProgressApplicationDetailsAPIOutDTO {
@@ -93,15 +96,26 @@ export interface ApplicationProgressDetailsAPIOutDTO {
   firstCOEStatus?: COEStatus;
   secondCOEStatus?: COEStatus;
   exceptionStatus?: ApplicationExceptionStatus;
+  appealStatus?: StudentAppealStatus;
+  scholasticStandingChangeType?: StudentScholasticStandingChangeType;
 }
 
-export interface COEDetailsAPIOutDTO {
+export interface DisbursementDetailsAPIOutDTO {
   coeStatus: COEStatus;
   disbursementScheduleStatus: DisbursementScheduleStatus;
   coeDenialReason: string;
 }
 
-export interface ApplicationCOEDetailsAPIOutDTO {
-  firstCOE: COEDetailsAPIOutDTO;
-  secondCOE?: COEDetailsAPIOutDTO;
+export interface EnrolmentApplicationDetailsAPIOutDTO {
+  firstDisbursement: DisbursementDetailsAPIOutDTO;
+  secondDisbursement?: DisbursementDetailsAPIOutDTO;
+}
+
+export interface CompletedApplicationDetailsAPIOutDTO
+  extends EnrolmentApplicationDetailsAPIOutDTO {
+  assessmentTriggerType: AssessmentTriggerType;
+  firstDisbursement: DisbursementDetailsAPIOutDTO;
+  secondDisbursement?: DisbursementDetailsAPIOutDTO;
+  appealStatus?: StudentAppealStatus;
+  scholasticStandingChangeType?: StudentScholasticStandingChangeType;
 }

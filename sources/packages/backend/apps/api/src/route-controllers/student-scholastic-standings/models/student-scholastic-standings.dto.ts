@@ -3,11 +3,12 @@ import { JsonMaxSize } from "../../../utilities/class-validation";
 import { IsNotEmptyObject } from "class-validator";
 import { ActiveApplicationDataAPIOutDTO } from "../../../route-controllers/institution-locations/models/application.dto";
 import { JSON_10KB } from "../../../constants";
+import { StudentScholasticStandingChangeType } from "@sims/sims-db";
 
 /**
- * The API will also allow other property that are not added below.
+ * The API will also allow other properties that are not added below.
  */
-export class ScholasticStandingDataAPIInDTO {
+export class ScholasticStandingData {
   dateOfChange?: string;
   booksAndSupplies?: number;
   dateOfCompletion?: string;
@@ -16,17 +17,21 @@ export class ScholasticStandingDataAPIInDTO {
   tuition?: number;
   numberOfUnsuccessfulWeeks?: number;
   dateOfWithdrawal?: string;
-  scholasticStanding: string;
+  scholasticStandingChangeType: StudentScholasticStandingChangeType;
 }
 
-// This DTO must/will be validated using the dryRun.
+/**
+ * Dynamic data received for a scholastic standing change. The data is only partially
+ * dynamic, few fields are saved to specific columns and the payload is also
+ * entirely persisted, which means that the form can be expanded.
+ */
 export class ScholasticStandingAPIInDTO {
   @IsNotEmptyObject()
   @JsonMaxSize(JSON_10KB)
-  data: ScholasticStandingDataAPIInDTO;
+  data: ScholasticStandingData;
 }
 
 export class ScholasticStandingSubmittedDetailsAPIOutDTO extends IntersectionType(
-  ScholasticStandingDataAPIInDTO,
+  ScholasticStandingData,
   ActiveApplicationDataAPIOutDTO,
 ) {}

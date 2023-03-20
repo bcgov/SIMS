@@ -48,6 +48,8 @@ import {
   ProgramInfoStatus,
   ApplicationExceptionStatus,
   COEStatus,
+  StudentAppealStatus,
+  StudentScholasticStandingChangeType,
 } from "@/types";
 import { PropType, ref, defineComponent, computed, onMounted } from "vue";
 import { ApplicationProgressDetailsAPIOutDTO } from "@/services/http/dto/Application.dto";
@@ -62,7 +64,7 @@ import Enrolment from "@/components/students/applicationTracker/Enrolment.vue";
 import Completed from "@/components/students/applicationTracker/Completed.vue";
 
 interface ApplicationEndStatusIconDetails {
-  endStatusType?: "success" | "error";
+  endStatusType?: "success" | "warning" | "error";
   endStatusIcon?: string;
 }
 const INITIAL_THUMB_SIZE = 14;
@@ -107,7 +109,11 @@ export default defineComponent({
       if (applicationEndStatus.value.endStatusType === "error") {
         return "error";
       }
-      if (props.applicationStatus === ApplicationStatus.Completed) {
+      if (
+        props.applicationStatus === ApplicationStatus.Completed &&
+        applicationProgressDetails.value.appealStatus !==
+          StudentAppealStatus.Pending
+      ) {
         return "success";
       }
       return "warning";
@@ -118,8 +124,27 @@ export default defineComponent({
         await ApplicationService.shared.getApplicationProgressDetails(
           props.applicationId,
         );
-      // Application is complete.
+
       if (
+        applicationProgressDetails.value.scholasticStandingChangeType ===
+        StudentScholasticStandingChangeType.StudentDidNotCompleteProgram
+      ) {
+        // Application is complete has an error.
+        applicationEndStatus.value = {
+          endStatusType: "error",
+          endStatusIcon: "fa:fas fa-exclamation-circle",
+        };
+      } else if (
+        applicationProgressDetails.value.appealStatus ===
+        StudentAppealStatus.Pending
+      ) {
+        // Application is complete but has warnings.
+        applicationEndStatus.value = {
+          endStatusType: "warning",
+          endStatusIcon: "fa:fas fa-exclamation-triangle",
+        };
+      } else if (
+        // Application is complete.
         applicationProgressDetails.value.firstCOEStatus ===
           COEStatus.completed &&
         (!applicationProgressDetails.value.secondCOEStatus ||
@@ -130,9 +155,8 @@ export default defineComponent({
           endStatusType: "success",
           endStatusIcon: "fa:fas fa-check-circle",
         };
-      }
-      // One of the requests or confirmation is declined.
-      else if (
+      } else if (
+        // One of the requests or confirmations is declined.
         applicationProgressDetails.value.pirStatus ===
           ProgramInfoStatus.declined ||
         applicationProgressDetails.value.exceptionStatus ===

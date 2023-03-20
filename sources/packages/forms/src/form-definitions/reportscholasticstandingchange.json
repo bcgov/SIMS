@@ -3294,22 +3294,22 @@
           "values": [
             {
               "label": "Student went from full-time to part-time studies (vice-versa) or started a different program",
-              "value": "changeInIntensity",
+              "value": "Change in intensity",
               "shortcut": ""
             },
             {
               "label": "Student completed program early",
-              "value": "studentCompletedProgramEarly",
+              "value": "Student completed program early",
               "shortcut": ""
             },
             {
               "label": "Student did not complete program",
-              "value": "studentDidNotCompleteProgram",
+              "value": "Student did not complete program",
               "shortcut": ""
             },
             {
               "label": "Student withdrew from program",
-              "value": "studentWithdrewFromProgram",
+              "value": "Student withdrew from program",
               "shortcut": ""
             }
           ],
@@ -3322,7 +3322,7 @@
             "multiple": false,
             "unique": false
           },
-          "key": "scholasticStanding",
+          "key": "scholasticStandingChangeType",
           "type": "radio",
           "input": true,
           "placeholder": "",
@@ -3385,8 +3385,8 @@
           "key": "differentIntensityProgramPanel",
           "conditional": {
             "show": true,
-            "when": "scholasticStanding",
-            "eq": "changeInIntensity"
+            "when": "scholasticStandingChangeType",
+            "eq": "Change in intensity"
           },
           "type": "panel",
           "label": "Panel",
@@ -3654,8 +3654,8 @@
           "key": "studentCompletedProgramEarlyPanel",
           "conditional": {
             "show": true,
-            "when": "scholasticStanding",
-            "eq": "studentCompletedProgramEarly"
+            "when": "scholasticStandingChangeType",
+            "eq": "Student completed program early"
           },
           "type": "panel",
           "label": "Panel",
@@ -4639,8 +4639,8 @@
           "key": "studentDidNotCompleteProgramPanel",
           "conditional": {
             "show": true,
-            "when": "scholasticStanding",
-            "eq": "studentDidNotCompleteProgram"
+            "when": "scholasticStandingChangeType",
+            "eq": "Student did not complete program"
           },
           "type": "panel",
           "label": "Panel",
@@ -5054,8 +5054,8 @@
           "key": "studentWithdrewFromProgramPanel",
           "conditional": {
             "show": true,
-            "when": "scholasticStanding",
-            "eq": "studentWithdrewFromProgram"
+            "when": "scholasticStandingChangeType",
+            "eq": "Student withdrew from program"
           },
           "type": "panel",
           "label": "Panel",

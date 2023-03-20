@@ -16,6 +16,7 @@ import {
 } from ".";
 import { ColumnNames, TableNames } from "../constant";
 import { RecordDataModel } from "./record.model";
+import { StudentScholasticStandingChangeType } from "./student-scholastic-standing.type";
 
 /**
  * Represents a scholastic standing change requested by the Institution due to some
@@ -128,4 +129,15 @@ export class StudentScholasticStanding extends RecordDataModel {
     nullable: true,
   })
   unsuccessfulWeeks?: number;
+  /**
+   * Type of the change in the scholastic standing.
+   */
+  @Column({
+    name: "change_type",
+    type: "enum",
+    enum: StudentScholasticStandingChangeType,
+    enumName: "StudentScholasticStandingChangeType",
+    nullable: false,
+  })
+  changeType: StudentScholasticStandingChangeType;
 }

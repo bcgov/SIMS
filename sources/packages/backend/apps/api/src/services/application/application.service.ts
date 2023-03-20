@@ -16,6 +16,7 @@ import {
   AssessmentTriggerType,
   User,
   ApplicationData,
+  StudentScholasticStandingChangeType,
 } from "@sims/sims-db";
 import { StudentFileService } from "../student-file/student-file.service";
 import {
@@ -1425,12 +1426,17 @@ export class ApplicationService extends RecordDataModelService<Application> {
           studystartDate: true,
           howWillYouBeAttendingTheProgram: true,
         },
+        studentScholasticStandings: {
+          id: true,
+          changeType: true,
+        },
       },
       relations: {
         pirDeniedReasonId: true,
         currentAssessment: { offering: true, disbursementSchedules: true },
         applicationException: true,
         location: true,
+        studentScholasticStandings: true,
       },
       where: {
         id: applicationId,
@@ -1438,27 +1444,40 @@ export class ApplicationService extends RecordDataModelService<Application> {
         student: {
           id: studentId,
         },
+        studentScholasticStandings: {
+          changeType:
+            StudentScholasticStandingChangeType.StudentDidNotCompleteProgram,
+        },
       },
     });
   }
 
   /**
-   * Get enrolment details of an application.
-   * While fetching the enrolment details, the application
-   * expected to be in status Assessment or Enrolment or Completed.
+   * Get assessment details of an application.
    * @param applicationId application.
-   * @param studentId applicant student.
+   * @param options query options
+   * - `studentId` student id used for authorization.
+   * - `applicationStatus` application status/statuses to be considered.
    * @returns application details
    */
-  async getApplicationEnrolmentDetails(
+  async getApplicationAssessmentDetails(
     applicationId: number,
-    studentId?: number,
+    options: {
+      studentId?: number;
+      applicationStatus?: ApplicationStatus[];
+    },
   ): Promise<Application> {
+    const applicationStatuses = options?.applicationStatus ?? [
+      ApplicationStatus.Assessment,
+      ApplicationStatus.Enrolment,
+      ApplicationStatus.Completed,
+    ];
     return this.repo.findOne({
       select: {
         id: true,
         currentAssessment: {
           id: true,
+          triggerType: true,
           disbursementSchedules: {
             id: true,
             coeStatus: true,
@@ -1468,19 +1487,26 @@ export class ApplicationService extends RecordDataModelService<Application> {
             coeDeniedOtherDesc: true,
           },
         },
+        studentScholasticStandings: {
+          id: true,
+          changeType: true,
+        },
       },
       relations: {
-        currentAssessment: { disbursementSchedules: { coeDeniedReason: true } },
+        currentAssessment: {
+          disbursementSchedules: { coeDeniedReason: true },
+        },
+        studentScholasticStandings: true,
       },
       where: {
         id: applicationId,
-        applicationStatus: In([
-          ApplicationStatus.Assessment,
-          ApplicationStatus.Enrolment,
-          ApplicationStatus.Completed,
-        ]),
+        applicationStatus: In(applicationStatuses),
         student: {
-          id: studentId,
+          id: options?.studentId,
+        },
+        studentScholasticStandings: {
+          changeType:
+            StudentScholasticStandingChangeType.StudentDidNotCompleteProgram,
         },
       },
       order: {

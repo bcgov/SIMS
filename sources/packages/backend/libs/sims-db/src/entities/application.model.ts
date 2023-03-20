@@ -16,6 +16,7 @@ import {
   OfferingIntensity,
   PIRDeniedReason,
   RelationshipStatus,
+  StudentScholasticStanding,
   SupportingUser,
 } from ".";
 import { ColumnNames, TableNames } from "../constant";
@@ -333,6 +334,19 @@ export class Application extends RecordDataModel {
     nullable: true,
   })
   submittedDate?: Date;
+  /**
+   * Scholastic standings changes associated with this application.
+   */
+  @OneToMany(
+    () => StudentScholasticStanding,
+    (studentScholasticStanding) => studentScholasticStanding.application,
+    {
+      eager: false,
+      cascade: false,
+      nullable: true,
+    },
+  )
+  studentScholasticStandings?: StudentScholasticStanding[];
 }
 
 /**

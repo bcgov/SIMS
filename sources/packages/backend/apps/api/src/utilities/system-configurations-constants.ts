@@ -81,3 +81,10 @@ export const OFFERING_BULK_UPLOAD_MAX_FILE_SIZE = 4194304;
  * Expected length of the award value code.
  */
 export const AWARD_VALUE_CODE_LENGTH = 4;
+
+/**
+ * For a scholastic standing of type "Student did not complete program" the number
+ * of unsuccessful weeks must also be reported, along the time if the amount of
+ * weeks reaches the value in the const, a restriction will be generated.
+ */
+export const SCHOLASTIC_STANDING_MINIMUM_UNSUCCESSFUL_WEEKS = 68;

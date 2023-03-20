@@ -12,6 +12,7 @@ import {
   SuccessWaitingStatus,
   ApplicationIncomeVerification,
   ApplicationSupportingUserDetails,
+  EnrolmentApplicationDetailsAPIOutDTO,
 } from "./models/application.dto";
 import {
   credentialTypeToDisplay,
@@ -137,6 +138,35 @@ export class ApplicationControllerService {
       applicationFormName: application.programYear.formName,
       applicationProgramYearID: application.programYear.id,
     };
+  }
+
+  /**
+   * Convert disbursements into the enrolment DTO with information
+   * about first and second disbursements.
+   * @param disbursementSchedules disbursements to be converted to the DTO.
+   * @returns enrolment DTO.
+   */
+  transformToEnrolmentApplicationDetailsAPIOutDTO(
+    disbursementSchedules: DisbursementSchedule[],
+  ): EnrolmentApplicationDetailsAPIOutDTO {
+    const [firstDisbursement, secondDisbursement] = disbursementSchedules;
+    const details: EnrolmentApplicationDetailsAPIOutDTO = {
+      firstDisbursement: {
+        coeStatus: firstDisbursement.coeStatus,
+        disbursementScheduleStatus:
+          firstDisbursement.disbursementScheduleStatus,
+        coeDenialReason: getCOEDeniedReason(firstDisbursement),
+      },
+    };
+    if (secondDisbursement) {
+      details.secondDisbursement = {
+        coeStatus: secondDisbursement.coeStatus,
+        disbursementScheduleStatus:
+          secondDisbursement.disbursementScheduleStatus,
+        coeDenialReason: getCOEDeniedReason(secondDisbursement),
+      };
+    }
+    return details;
   }
 
   /**

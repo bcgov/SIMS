@@ -30,6 +30,7 @@ import {
   ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE,
   CRAIncomeVerificationService,
   SupportingUserService,
+  StudentAppealService,
 } from "../../services";
 import { IUserToken, StudentUserToken } from "../../auth/userToken.interface";
 import BaseController from "../BaseController";
@@ -41,7 +42,8 @@ import {
   ApplicationNumberParamAPIInDTO,
   InProgressApplicationDetailsAPIOutDTO,
   ApplicationProgressDetailsAPIOutDTO,
-  ApplicationCOEDetailsAPIOutDTO,
+  EnrolmentApplicationDetailsAPIOutDTO,
+  CompletedApplicationDetailsAPIOutDTO,
 } from "./models/application.dto";
 import {
   AllowAuthorizedParty,
@@ -51,11 +53,7 @@ import {
 } from "../../auth/decorators";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { ApiProcessError, ClientTypeBaseRoute } from "../../types";
-import {
-  getPIRDeniedReason,
-  PIR_OR_DATE_OVERLAP_ERROR,
-  getCOEDeniedReason,
-} from "../../utilities";
+import { getPIRDeniedReason, PIR_OR_DATE_OVERLAP_ERROR } from "../../utilities";
 import {
   INVALID_APPLICATION_NUMBER,
   OFFERING_NOT_VALID,
@@ -71,6 +69,7 @@ import { ApplicationControllerService } from "./application.controller.service";
 import { CustomNamedError } from "@sims/utilities";
 import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
 import { ApplicationData } from "@sims/sims-db/entities/application.model";
+import { ApplicationStatus, StudentAppealStatus } from "@sims/sims-db";
 
 @AllowAuthorizedParty(AuthorizedParties.student)
 @RequiresStudentAccount()
@@ -88,6 +87,7 @@ export class ApplicationStudentsController extends BaseController {
     private readonly applicationControllerService: ApplicationControllerService,
     private readonly craIncomeVerificationService: CRAIncomeVerificationService,
     private readonly supportingUserService: SupportingUserService,
+    private readonly studentAppealService: StudentAppealService,
   ) {
     super();
   }
@@ -524,6 +524,18 @@ export class ApplicationStudentsController extends BaseController {
         `Application id ${applicationId} was not found.`,
       );
     }
+
+    let appealStatus: StudentAppealStatus;
+    if (application.applicationStatus === ApplicationStatus.Completed) {
+      const [mostRecentAppeal] =
+        await this.studentAppealService.getAppealsForApplication(
+          applicationId,
+          userToken.studentId,
+          { limit: 1 },
+        );
+      appealStatus = mostRecentAppeal?.status;
+    }
+
     const disbursements =
       application.currentAssessment?.disbursementSchedules ?? [];
 
@@ -531,59 +543,91 @@ export class ApplicationStudentsController extends BaseController {
       a.disbursementDate < b.disbursementDate ? -1 : 1,
     );
     const [firstDisbursement, secondDisbursement] = disbursements;
+    const [scholasticStandingChange] = application.studentScholasticStandings;
     return {
       applicationStatusUpdatedOn: application.applicationStatusUpdatedOn,
       pirStatus: application.pirStatus,
       firstCOEStatus: firstDisbursement?.coeStatus,
       secondCOEStatus: secondDisbursement?.coeStatus,
       exceptionStatus: application.applicationException?.exceptionStatus,
+      appealStatus,
+      scholasticStandingChangeType: scholasticStandingChange?.changeType,
     };
   }
 
   /**
-   * Get status of all enrollments of a student application.
-   * @param applicationId Student application.
-   * @returns application progress details.
+   * Get details for the application enrolment status of a student application.
+   * @param applicationId student application id.
+   * @returns details for the application enrolment status.
    */
   @ApiNotFoundResponse({
     description:
       "Application not found or not in relevant status to get enrolment details.",
   })
-  @Get(":applicationId/enrolment-details")
-  async getApplicationEnrolmentDetails(
+  @Get(":applicationId/enrolment")
+  async getEnrolmentApplicationDetails(
     @Param("applicationId", ParseIntPipe) applicationId: number,
     @UserToken() userToken: StudentUserToken,
-  ): Promise<ApplicationCOEDetailsAPIOutDTO> {
+  ): Promise<EnrolmentApplicationDetailsAPIOutDTO> {
     const application =
-      await this.applicationService.getApplicationEnrolmentDetails(
+      await this.applicationService.getApplicationAssessmentDetails(
         applicationId,
-        userToken.studentId,
+        { studentId: userToken.studentId },
       );
     if (!application) {
       throw new NotFoundException(
         `Application id ${applicationId} not found or not in relevant status to get enrolment details.`,
       );
     }
-    const [firstDisbursement, secondDisbursement] =
-      application.currentAssessment.disbursementSchedules;
+    return this.applicationControllerService.transformToEnrolmentApplicationDetailsAPIOutDTO(
+      application.currentAssessment.disbursementSchedules,
+    );
+  }
 
-    const applicationCOEDetails: ApplicationCOEDetailsAPIOutDTO = {
-      firstCOE: {
-        coeStatus: firstDisbursement.coeStatus,
-        disbursementScheduleStatus:
-          firstDisbursement.disbursementScheduleStatus,
-        coeDenialReason: getCOEDeniedReason(firstDisbursement),
-      },
-    };
-
-    if (secondDisbursement) {
-      applicationCOEDetails.secondCOE = {
-        coeStatus: secondDisbursement.coeStatus,
-        disbursementScheduleStatus:
-          secondDisbursement.disbursementScheduleStatus,
-        coeDenialReason: getCOEDeniedReason(secondDisbursement),
-      };
+  /**
+   * Get details for an application at completed status.
+   * @param applicationId application id.
+   * @returns details for an application on at completed status.
+   */
+  @ApiNotFoundResponse({
+    description: `Application not found or not on ${ApplicationStatus.Completed} status.`,
+  })
+  @Get(":applicationId/completed")
+  async getCompletedApplicationDetails(
+    @Param("applicationId", ParseIntPipe) applicationId: number,
+    @UserToken() userToken: StudentUserToken,
+  ): Promise<CompletedApplicationDetailsAPIOutDTO> {
+    const getApplicationPromise =
+      this.applicationService.getApplicationAssessmentDetails(applicationId, {
+        studentId: userToken.studentId,
+        applicationStatus: [ApplicationStatus.Completed],
+      });
+    const mostRecentAppealsPromises =
+      this.studentAppealService.getAppealsForApplication(
+        applicationId,
+        userToken.studentId,
+        { limit: 1 },
+      );
+    const [application, [mostRecentAppeal]] = await Promise.all([
+      getApplicationPromise,
+      mostRecentAppealsPromises,
+    ]);
+    if (!application) {
+      throw new NotFoundException(
+        `Application not found or not on ${ApplicationStatus.Completed} status.`,
+      );
     }
-    return applicationCOEDetails;
+    const enrolmentDetails =
+      this.applicationControllerService.transformToEnrolmentApplicationDetailsAPIOutDTO(
+        application.currentAssessment.disbursementSchedules,
+      );
+    const [scholasticStandingChange] = application.studentScholasticStandings;
+    return {
+      firstDisbursement: enrolmentDetails.firstDisbursement,
+      secondDisbursement: enrolmentDetails.secondDisbursement,
+      assessmentTriggerType: application.currentAssessment.triggerType,
+      appealStatus: mostRecentAppeal?.status,
+      scholasticStandingChangeType: scholasticStandingChange?.changeType,
+    };
   }
 }

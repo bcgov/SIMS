@@ -6,9 +6,15 @@ on:
       environment:
         required: true
         type: environment
+      gitRef:
+        required: true
+        type: string
   workflow_call:
     inputs:
       environment:
+        required: true
+        type: string
+      gitRef:
         required: true
         type: string
 
@@ -29,13 +35,15 @@ jobs:
           echo RESOURCES_FOLDER: $RESOURCES_FOLDER
       - name: Checkout Target Branch
         uses: actions/checkout@v3
+        with:
+          ref:  ${{ github.event.inputs.gitRef }}
       - name: Setup Nodejs
         uses: actions/setup-node@v3
         with:
           node-version: "16.x"
       - name: Downloading packages
-        working-directory: "./sources/packages/workflow"
+        working-directory: "./sources/packages/backend"
         run: npm ci
       - name: Executing deployment
-        working-directory: "./sources/packages/workflow"
-        run: npm run deploy
+        working-directory: "./sources/packages/backend"
+        run: npm run deploy:camunda:definitions

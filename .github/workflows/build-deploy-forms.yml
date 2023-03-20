@@ -21,7 +21,6 @@ jobs:
     env:
       FORMIO_SOURCE_REPO_TAG: ${{ github.event.inputs.formioTag }}
       FORMS_NAME: forms
-      BUILD_ID: ${{ github.event.inputs.buildId }}
       NAMESPACE: ${{ secrets.OPENSHIFT_ENV_NAMESPACE }}
       BUILD_REF: ${{ github.event.inputs.buildRef }}
       HOST_PREFIX: ${{ secrets.HOST_PREFIX }}
@@ -30,7 +29,6 @@ jobs:
     steps:
       - name: Print env
         run: |
-          echo BUILD ID: $BUILD_ID
           echo BUILD NAMESPACE: $BUILD_NAMESPACE
           echo NAMESPACE: $NAMESPACE
           echo BRANCH: $BUILD_REF

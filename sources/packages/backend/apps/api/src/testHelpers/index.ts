@@ -7,3 +7,4 @@ export * from "./mocked-providers/queue-module-mock";
 export * from "./mocked-providers/zeebe-client-mock";
 export * from "./testing-modules/testing-modules-helper";
 export * from "./auth";
+export * from "./fake-entities";
