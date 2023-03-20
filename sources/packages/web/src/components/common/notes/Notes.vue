@@ -1,5 +1,5 @@
 <template>
-  <v-container :fluid="true">
+  <body-header-container>
     <v-row class="m-2">
       <v-col class="category-header-large color-blue">{{ title }}</v-col>
       <v-col>
@@ -70,7 +70,8 @@
       ref="createNotesModal"
       :entityType="entityType"
       :allowedRole="allowedRole"
-  /></v-container>
+    />
+  </body-header-container>
 </template>
 
 <script lang="ts">
