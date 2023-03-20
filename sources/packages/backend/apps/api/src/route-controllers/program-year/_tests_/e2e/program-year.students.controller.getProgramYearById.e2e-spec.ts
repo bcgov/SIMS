@@ -1,5 +1,6 @@
 import { HttpStatus, INestApplication } from "@nestjs/common";
 import { ProgramYear } from "@sims/sims-db";
+import { createFakeProgramYear } from "@sims/test-utils";
 import * as request from "supertest";
 import { DataSource } from "typeorm";
 import {
@@ -7,7 +8,6 @@ import {
   createTestingAppModule,
   getStudentToken,
   FakeStudentUsersTypes,
-  createFakeProgramYear,
 } from "../../../../testHelpers";
 
 describe("ProgramYearStudentsController(e2e)-getProgramYearById", () => {
@@ -20,7 +20,8 @@ describe("ProgramYearStudentsController(e2e)-getProgramYearById", () => {
     const { nestApplication, dataSource } = await createTestingAppModule();
     appDataSource = dataSource;
     const programYearRepo = appDataSource.getRepository(ProgramYear);
-    programYear2001 = createFakeProgramYear(2001, false);
+    programYear2001 = createFakeProgramYear(2001);
+    programYear2001.active = false;
     programYear2002 = createFakeProgramYear(2002);
     const programYear2001Promise = programYearRepo.save(programYear2001);
     const programYear2002Promise = programYearRepo.save(programYear2002);
