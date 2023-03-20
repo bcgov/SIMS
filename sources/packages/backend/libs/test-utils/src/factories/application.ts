@@ -19,6 +19,7 @@ export function createFakeApplication(relations?: {
   const application = new Application();
   application.data = {} as ApplicationData;
   application.programYear = relations?.programYear ?? createFakeProgramYear();
+  application.programYear.id = 2;
   application.student = relations?.student ?? createFakeStudent();
   application.applicationStatusUpdatedOn = new Date();
   application.applicationStatus = ApplicationStatus.Submitted;
