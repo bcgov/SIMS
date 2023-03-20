@@ -1,5 +1,5 @@
 <template>
-  <v-row no-gutters class="mb-n6">
+  <v-row no-gutters>
     <v-col>
       <h2 class="category-header-large color-blue">{{ fullTitleMessage }}</h2>
       <slot name="status-chip"></slot>
@@ -8,7 +8,7 @@
       <slot name="actions"></slot>
     </v-col>
   </v-row>
-  <v-row class="mb-2">
+  <v-row no-gutters class="mb-2">
     <v-col>
       <slot name="subtitle">{{ subTitle }}</slot>
     </v-col>
