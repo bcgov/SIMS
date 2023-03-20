@@ -12,6 +12,10 @@ on:
         type: string
         required: true
         default: "v2.5.3"
+      gitRef:
+        description: "Git Ref"
+        required: true
+        default: ""
 
 jobs:
   build_deploy:
@@ -22,7 +26,7 @@ jobs:
       FORMIO_SOURCE_REPO_TAG: ${{ github.event.inputs.formioTag }}
       FORMS_NAME: forms
       NAMESPACE: ${{ secrets.OPENSHIFT_ENV_NAMESPACE }}
-      BUILD_REF: ${{ github.event.inputs.buildRef }}
+      BUILD_REF: ${{ github.event.inputs.formioTag }}
       HOST_PREFIX: ${{ secrets.HOST_PREFIX }}
       MONGODB_URI: ${{ secrets.MONGODB_URI }}
       BUILD_NAMESPACE: 0c27fb-tools
@@ -35,7 +39,9 @@ jobs:
           echo HOST_PREFIX: $HOST_PREFIX
       # Checkout the PR branch
       - name: Checkout Target Branch
-        uses: actions/checkout@v1
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.inputs.gitRef }}
       # Log in to OpenShift.
       # Note: The secrets needed to log in are NOT available if the PR comes from a FORK.
       # PR's must originate from a branch off the original repo or else all openshift `oc` commands will fail.

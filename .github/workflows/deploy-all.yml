@@ -3,10 +3,10 @@ name: Deploy to OpenShift/Camunda
 on:
   workflow_dispatch:
     inputs:
-      buildRef:
-        description: "Build Ref"
+      gitRef:
+        description: "Git Ref (e.g. v1.0.0 or v1.0.0-prerelease.1)"
         required: true
-        default: "main"
+        default: ""
       environment:
         required: true
         type: environment
@@ -20,7 +20,7 @@ on:
         default: true
   workflow_call:
     inputs:
-      buildRef:
+      gitRef:
         required: true
         type: string
       environment:
@@ -40,7 +40,7 @@ jobs:
     environment: ${{ github.event.inputs.environment }}
     env:
       NAMESPACE: ${{ secrets.OPENSHIFT_ENV_NAMESPACE }}
-      BUILD_REF: ${{ github.event.inputs.buildRef }}
+      BUILD_REF: ${{ github.event.inputs.gitRef }}
       HOST_PREFIX: ${{ secrets.HOST_PREFIX }}
       BUILD_NAMESPACE: 0c27fb-tools
       KEYCLOAK_REALM: "aestsims"
@@ -70,7 +70,9 @@ jobs:
           echo HOST_PREFIX: $HOST_PREFIX
       # Checkout the PR branch
       - name: Checkout Target Branch
-        uses: actions/checkout@v1
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.inputs.gitRef }}
       # Log in to OpenShift.
       # Note: The secrets needed to log in are NOT available if the PR comes from a FORK.
       # PR's must originate from a branch off the original repo or else all openshift `oc` commands will fail.
@@ -105,7 +107,7 @@ jobs:
     uses: ./.github/workflows/deploy-camunda-definitions.yml
     with:
       environment: ${{ github.event.inputs.environment }}
-      gitRef: ${{ github.event.inputs.buildRef }}
+      gitRef: ${{ github.event.inputs.gitRef }}
     secrets: inherit
   deployFormioDefinitions:
     if: ${{ github.event.inputs.deployFormioDefinitions == 'true' }}
@@ -115,5 +117,5 @@ jobs:
     uses: ./.github/workflows/deploy-formio-definitions.yml
     with:
       environment: ${{ github.event.inputs.environment }}
-      gitRef: ${{ github.event.inputs.buildRef }}
+      gitRef: ${{ github.event.inputs.gitRef }}
     secrets: inherit
