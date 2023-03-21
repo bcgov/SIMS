@@ -25,7 +25,7 @@
       </template>
       <template v-else-if="layoutTemplate === LayoutTemplates.CenteredTab">
         <v-row justify="center">
-          <div class="mt-4 p-4 w-100" :class="widthClass">
+          <div class="w-100" :class="widthClass">
             <slot name="tab-header"></slot><slot></slot>
           </div> </v-row
       ></template>

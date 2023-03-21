@@ -23,7 +23,7 @@
       </header-navigator>
     </template>
     <template #tab-header>
-      <v-tabs :model="tab" stacked color="primary" class="mt-n14"
+      <v-tabs :model="tab" stacked color="primary"
         ><v-tab
           v-for="item in items"
           :key="item"
