@@ -1,9 +1,15 @@
 <template>
   <div class="mb-5">
     <v-card v-if="enableCardView">
-      <v-container><slot name="header"></slot><slot></slot></v-container>
+      <v-container>
+        <slot name="header"></slot>
+        <slot></slot>
+      </v-container>
     </v-card>
-    <div v-else><slot name="header"></slot><slot></slot></div>
+    <div v-else>
+      <slot name="header"></slot>
+      <slot></slot>
+    </div>
   </div>
 </template>
 
