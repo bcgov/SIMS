@@ -1,89 +1,93 @@
 <template>
-  <full-page-container :full-width="true">
-    <body-header title="All Restrictions" class="m-1">
-      <template #actions>
-        <check-permission-role :role="Role.InstitutionAddRestriction">
-          <template #="{ notAllowed }">
-            <v-btn
-              @click="addInstitutionRestriction"
-              class="float-right"
-              color="primary"
-              prepend-icon="fa:fa fa-plus-circle"
-              :disabled="notAllowed"
-              >Add restriction</v-btn
-            ></template
-          >
-        </check-permission-role>
-      </template>
-    </body-header>
-    <content-group>
-      <DataTable
-        :value="institutionRestrictions"
-        :paginator="true"
-        :rows="DEFAULT_PAGE_LIMIT"
-        :rowsPerPageOptions="PAGINATION_LIST"
-      >
-        <template #empty>
-          <p class="text-center font-weight-bold">No records found.</p>
-        </template>
-        <Column
-          field="restrictionCategory"
-          header="Category"
-          :sortable="true"
-        ></Column>
-        <Column field="description" header="Reason">
-          <template #body="slotProps">{{
-            `${slotProps.data.restrictionCode} - ${slotProps.data.description}`
-          }}</template></Column
-        >
-        <Column field="createdAt" header="Added"
-          ><template #body="slotProps">{{
-            dateOnlyLongString(slotProps.data.createdAt)
-          }}</template></Column
-        >
-        <Column field="updatedAt" header="Resolved">
-          <template #body="slotProps">{{
-            slotProps.data.isActive
-              ? "-"
-              : dateOnlyLongString(slotProps.data.updatedAt)
-          }}</template></Column
-        >
-        <Column field="isActive" header="Status">
-          <template #body="slotProps">
-            <status-chip-restriction
-              :status="
-                slotProps.data.isActive
-                  ? RestrictionStatus.Active
-                  : RestrictionStatus.Resolved
-              "
-            />
-          </template>
-        </Column>
-        <Column field="restrictionId" header="">
-          <template #body="slotProps">
-            <v-btn
-              color="primary"
-              variant="outlined"
-              @click="viewIInstitutionRestriction(slotProps.data.restrictionId)"
-              >View</v-btn
+  <tab-container>
+    <body-header-container>
+      <body-header title="All Restrictions">
+        <template #actions>
+          <check-permission-role :role="Role.InstitutionAddRestriction">
+            <template #="{ notAllowed }">
+              <v-btn
+                @click="addInstitutionRestriction"
+                class="float-right"
+                color="primary"
+                prepend-icon="fa:fa fa-plus-circle"
+                :disabled="notAllowed"
+                >Add restriction</v-btn
+              ></template
             >
-          </template></Column
+          </check-permission-role>
+        </template>
+      </body-header>
+      <content-group>
+        <DataTable
+          :value="institutionRestrictions"
+          :paginator="true"
+          :rows="DEFAULT_PAGE_LIMIT"
+          :rowsPerPageOptions="PAGINATION_LIST"
         >
-      </DataTable>
-    </content-group>
-  </full-page-container>
-  <ViewRestrictionModal
-    ref="viewRestriction"
-    :restrictionData="institutionRestriction"
-    @submitResolutionData="resolveRestriction"
-    :allowedRole="Role.InstitutionResolveRestriction"
-  />
-  <AddInstitutionRestrictionModal
-    ref="addRestriction"
-    :entityType="RestrictionEntityType.Institution"
-    @submitRestrictionData="createNewRestriction"
-    :allowedRole="Role.InstitutionAddRestriction"
-  />
+          <template #empty>
+            <p class="text-center font-weight-bold">No records found.</p>
+          </template>
+          <Column
+            field="restrictionCategory"
+            header="Category"
+            :sortable="true"
+          ></Column>
+          <Column field="description" header="Reason">
+            <template #body="slotProps">{{
+              `${slotProps.data.restrictionCode} - ${slotProps.data.description}`
+            }}</template></Column
+          >
+          <Column field="createdAt" header="Added"
+            ><template #body="slotProps">{{
+              dateOnlyLongString(slotProps.data.createdAt)
+            }}</template></Column
+          >
+          <Column field="updatedAt" header="Resolved">
+            <template #body="slotProps">{{
+              slotProps.data.isActive
+                ? "-"
+                : dateOnlyLongString(slotProps.data.updatedAt)
+            }}</template></Column
+          >
+          <Column field="isActive" header="Status">
+            <template #body="slotProps">
+              <status-chip-restriction
+                :status="
+                  slotProps.data.isActive
+                    ? RestrictionStatus.Active
+                    : RestrictionStatus.Resolved
+                "
+              />
+            </template>
+          </Column>
+          <Column field="restrictionId" header="">
+            <template #body="slotProps">
+              <v-btn
+                color="primary"
+                variant="outlined"
+                @click="
+                  viewIInstitutionRestriction(slotProps.data.restrictionId)
+                "
+                >View</v-btn
+              >
+            </template></Column
+          >
+        </DataTable>
+      </content-group>
+      <ViewRestrictionModal
+        ref="viewRestriction"
+        :restrictionData="institutionRestriction"
+        @submitResolutionData="resolveRestriction"
+        :allowedRole="Role.InstitutionResolveRestriction"
+      />
+      <AddInstitutionRestrictionModal
+        ref="addRestriction"
+        :entityType="RestrictionEntityType.Institution"
+        @submitRestrictionData="createNewRestriction"
+        :allowedRole="Role.InstitutionAddRestriction"
+      />
+    </body-header-container>
+  </tab-container>
 </template>
 
 <script lang="ts">

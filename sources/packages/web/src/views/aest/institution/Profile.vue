@@ -1,6 +1,6 @@
 <template>
-  <v-card class="mt-4">
-    <div class="mx-5 py-4">
+  <tab-container>
+    <body-header-container>
       <body-header title="Profile">
         <template #actions>
           <check-permission-role :role="Role.InstitutionEditProfile">
@@ -116,8 +116,8 @@
           :propertyValue="institutionProfileDetail.mailingAddress?.country"
         />
       </content-group>
-    </div>
-  </v-card>
+    </body-header-container>
+  </tab-container>
 </template>
 
 <script lang="ts">

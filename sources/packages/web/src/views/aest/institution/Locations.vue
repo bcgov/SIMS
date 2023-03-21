@@ -1,12 +1,12 @@
 <template>
-  <v-card class="mt-4">
-    <div class="mx-5 py-4">
-      <LocationSummary
+  <tab-container>
+    <body-header-container>
+      <location-summary
         :institutionId="institutionId"
         @editLocation="gotToEditLocation"
       />
-    </div>
-  </v-card>
+    </body-header-container>
+  </tab-container>
 </template>
 
 <script lang="ts">

@@ -1,43 +1,45 @@
 <template>
-  <div class="mt-9">
-    <body-header title="Notes">
-      <template #actions>
-        <v-btn-toggle
-          v-model="toggleNotes"
-          mandatory
-          class="float-right btn-toggle"
-          selected-class="selected-btn-toggle"
+  <tab-container>
+    <body-header-container>
+      <body-header title="Notes">
+        <template #actions>
+          <v-btn-toggle
+            v-model="toggleNotes"
+            mandatory
+            class="float-right btn-toggle"
+            selected-class="selected-btn-toggle"
+          >
+            <v-btn
+              rounded="xl"
+              color="primary"
+              data-cy="allNotesButton"
+              @click="filterNotes()"
+              value="allNotes"
+              >All Notes</v-btn
+            >
+            <v-btn
+              rounded="xl"
+              v-for="item in InstitutionNoteType"
+              :key="item"
+              color="primary"
+              :value="item"
+              :data-cy="item"
+              class="ml-2"
+              @click="filterNotes(item)"
+              >{{ item }}</v-btn
+            >
+          </v-btn-toggle></template
         >
-          <v-btn
-            rounded="xl"
-            color="primary"
-            data-cy="allNotesButton"
-            @click="filterNotes()"
-            value="allNotes"
-            >All Notes</v-btn
-          >
-          <v-btn
-            rounded="xl"
-            v-for="item in InstitutionNoteType"
-            :key="item"
-            color="primary"
-            :value="item"
-            :data-cy="item"
-            class="ml-2"
-            @click="filterNotes(item)"
-            >{{ item }}</v-btn
-          >
-        </v-btn-toggle></template
-      >
-    </body-header>
-    <notes
-      title="Past Notes"
-      :entityType="NoteEntityType.Institution"
-      :notes="notes"
-      @submitData="addNote"
-      :allowedRole="Role.InstitutionCreateNote"
-    ></notes>
-  </div>
+      </body-header>
+      <notes
+        title="Past Notes"
+        :entityType="NoteEntityType.Institution"
+        :notes="notes"
+        @submitData="addNote"
+        :allowedRole="Role.InstitutionCreateNote"
+      ></notes>
+    </body-header-container>
+  </tab-container>
 </template>
 
 <script lang="ts">

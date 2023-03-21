@@ -2,7 +2,6 @@
   <!-- This component is shared between ministry and student users -->
   <body-header
     title="All locations"
-    class="m-1"
     :recordsCount="institutionLocationList.length"
     ><template #actions>
       <!-- Todo: We to eventually eliminate the logic which is based
@@ -22,7 +21,6 @@
   <content-group
     v-for="item in institutionLocationList"
     :key="item"
-    class="ma-2"
     data-cy="institutionLocation"
   >
     <v-row>
