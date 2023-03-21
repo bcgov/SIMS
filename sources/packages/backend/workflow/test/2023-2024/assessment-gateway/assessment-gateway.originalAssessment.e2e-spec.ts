@@ -12,6 +12,7 @@ import {
   E2E_APPLICATION_EXCEPTION_STATUS,
   E2E_PIR_STATUS,
   PROCESS_INSTANCE_CREATE_TIMEOUT,
+  Workers,
 } from "../../test-utils";
 import { PROGRAM_YEAR } from "../constants/program-year.constants";
 
@@ -35,33 +36,43 @@ describe(`E2E Test Workflow assessment gateway on original assessment for ${PROG
         variables: {
           ...assessmentConsolidatedData,
           [ASSESSMENT_ID]: 1,
+          // Based on this variable, load consolidated data worker will
+          // provide mock value for student dependent status and relationship status.
           [E2E_STUDENT_STATUS]: "independentSingleStudent",
+          // Based on this variable load consolidated data worker will
+          // return the application exception status.
           [E2E_APPLICATION_EXCEPTION_STATUS]:
             ApplicationExceptionStatus.Approved,
+          // Based on this variable load consolidated data worker will
+          // return the application PIR status.
           [E2E_PIR_STATUS]: ProgramInfoStatus.notRequired,
         },
         requestTimeout: PROCESS_INSTANCE_CREATE_TIMEOUT,
       });
     // Workflow instance expected to pass through associate workflow instance worker.
     expect(
-      assessmentGatewayResponse.variables["associate-workflow-instance"],
+      assessmentGatewayResponse.variables[Workers.AssociateWorkflowInstance],
     ).toBe(true);
     // Workflow instance expected to pass through verify application exceptions worker.
     expect(
-      assessmentGatewayResponse.variables["verify-application-exceptions"],
+      assessmentGatewayResponse.variables[Workers.VerifyApplicationExceptions],
     ).toBe(true);
     // Workflow instance expected to pass through program info request worker.
-    expect(assessmentGatewayResponse.variables["program-info-request"]).toBe(
-      true,
-    );
+    expect(
+      assessmentGatewayResponse.variables[Workers.ProgramInfoRequest],
+    ).toBe(true);
     // Workflow instance expected to pass through save disbursement schedules worker.
     expect(
-      assessmentGatewayResponse.variables["save-disbursement-schedules"],
+      assessmentGatewayResponse.variables[Workers.SaveDisbursementSchedules],
     ).toBe(true);
     // Workflow instance expected to pass through save associate msfaa worker
     // as this is original assessment.
-    expect(assessmentGatewayResponse.variables["associate-msfaa"]).toBe(true);
+    expect(assessmentGatewayResponse.variables[Workers.AssociateMSFAA]).toBe(
+      true,
+    );
     // Workflow instance expected to pass through save update noa status.
-    expect(assessmentGatewayResponse.variables["update-noa-status"]).toBe(true);
+    expect(assessmentGatewayResponse.variables[Workers.UpdateNOAStatus]).toBe(
+      true,
+    );
   });
 });

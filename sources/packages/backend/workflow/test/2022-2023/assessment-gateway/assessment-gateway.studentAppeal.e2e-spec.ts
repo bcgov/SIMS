@@ -6,6 +6,7 @@ import {
   ZeebeMockedClient,
   E2E_STUDENT_STATUS,
   PROCESS_INSTANCE_CREATE_TIMEOUT,
+  Workers,
 } from "../../test-utils";
 import { PROGRAM_YEAR } from "../constants/program-year.constants";
 
@@ -35,18 +36,20 @@ describe(`E2E Test Workflow assessment gateway on student appeal for ${PROGRAM_Y
       });
     // Workflow instance expected to pass through associate workflow instance worker.
     expect(
-      assessmentGatewayResponse.variables["associate-workflow-instance"],
+      assessmentGatewayResponse.variables[Workers.AssociateWorkflowInstance],
     ).toBe(true);
     // Workflow instance expected to pass through save disbursement schedules worker.
     expect(
-      assessmentGatewayResponse.variables["save-disbursement-schedules"],
+      assessmentGatewayResponse.variables[Workers.SaveDisbursementSchedules],
     ).toBe(true);
     // Workflow instance expected to pass through update noa status worker.
-    expect(assessmentGatewayResponse.variables["update-noa-status"]).toBe(true);
+    expect(assessmentGatewayResponse.variables[Workers.UpdateNOAStatus]).toBe(
+      true,
+    );
     // Workflow instance expected to not pass through update application status worker
     // as this is a reassessment.
     expect(
-      assessmentGatewayResponse.variables["update-application-status"],
+      assessmentGatewayResponse.variables[Workers.UpdateApplicationStatus],
     ).toBeUndefined();
   });
 });

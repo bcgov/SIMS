@@ -1,6 +1,7 @@
 import { AssessmentConsolidatedData } from "../../models";
 import { Duration, ZBClient, ZBWorkerConfig } from "zeebe-node";
 import { ApplicationExceptionStatus, ProgramInfoStatus } from "@sims/sims-db";
+import { Workers } from "../constants/worker-constants";
 
 /**
  * Variables provided for the purpose of e2e tests
@@ -15,44 +16,46 @@ interface FakeAssessmentVariables {
 const fakeWorkers: ZBWorkerConfig<FakeAssessmentVariables, unknown, unknown>[] =
   [
     {
-      taskType: "associate-workflow-instance",
+      taskType: Workers.AssociateWorkflowInstance,
       taskHandler: (job) =>
-        job.complete({ ["associate-workflow-instance"]: true }),
+        job.complete({ [Workers.AssociateWorkflowInstance]: true }),
     },
     {
-      taskType: "save-disbursement-schedules",
+      taskType: Workers.SaveDisbursementSchedules,
       taskHandler: (job) =>
-        job.complete({ ["save-disbursement-schedules"]: true }),
+        job.complete({ [Workers.SaveDisbursementSchedules]: true }),
     },
     {
-      taskType: "save-assessment-data",
-      taskHandler: (job) => job.complete({ ["save-assessment-data"]: true }),
+      taskType: Workers.SaveAssessmentData,
+      taskHandler: (job) =>
+        job.complete({ [Workers.SaveAssessmentData]: true }),
     },
     {
-      taskType: "update-noa-status",
-      taskHandler: (job) => job.complete({ ["update-noa-status"]: true }),
+      taskType: Workers.UpdateNOAStatus,
+      taskHandler: (job) => job.complete({ [Workers.UpdateNOAStatus]: true }),
     },
     {
-      taskType: "load-assessment-consolidated-data",
+      taskType: Workers.LoadAssessmentConsolidatedData,
       taskHandler: (job) =>
         job.complete(getMockConsolidatedData(job.variables)),
     },
     {
-      taskType: "update-application-status",
+      taskType: Workers.UpdateApplicationStatus,
       taskHandler: (job) =>
-        job.complete({ ["update-application-status"]: true }),
+        job.complete({ [Workers.UpdateApplicationStatus]: true }),
     },
     {
-      taskType: "verify-application-exceptions",
+      taskType: Workers.VerifyApplicationExceptions,
       taskHandler: (job) =>
-        job.complete({ ["verify-application-exceptions"]: true }),
+        job.complete({ [Workers.VerifyApplicationExceptions]: true }),
     },
     {
-      taskType: "program-info-request",
-      taskHandler: (job) => job.complete({ ["program-info-request"]: true }),
+      taskType: Workers.ProgramInfoRequest,
+      taskHandler: (job) =>
+        job.complete({ [Workers.ProgramInfoRequest]: true }),
     },
     {
-      taskType: "create-income-request",
+      taskType: Workers.CreateIncomeRequest,
       taskHandler: (job) => {
         new ZBClient().publishMessage({
           name: "income-verified",
@@ -63,17 +66,18 @@ const fakeWorkers: ZBWorkerConfig<FakeAssessmentVariables, unknown, unknown>[] =
         return job.complete({
           incomeVerificationCompleted: true,
           incomeVerificationId: 1,
-          ["create-income-request"]: true,
+          [Workers.CreateIncomeRequest]: true,
         });
       },
     },
     {
-      taskType: "check-income-request",
-      taskHandler: (job) => job.complete({ ["check-income-request"]: true }),
+      taskType: Workers.CheckIncomeRequest,
+      taskHandler: (job) =>
+        job.complete({ [Workers.CheckIncomeRequest]: true }),
     },
     {
-      taskType: "associate-msfaa",
-      taskHandler: (job) => job.complete({ ["associate-msfaa"]: true }),
+      taskType: Workers.AssociateMSFAA,
+      taskHandler: (job) => job.complete({ [Workers.AssociateMSFAA]: true }),
     },
   ];
 
