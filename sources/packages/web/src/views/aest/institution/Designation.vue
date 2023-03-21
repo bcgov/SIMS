@@ -1,11 +1,13 @@
 <template>
   <tab-container>
     <body-header-container>
-      <body-header
-        title="Designation agreements"
-        :recordsCount="designations?.length"
-      >
-      </body-header>
+      <template #header>
+        <body-header
+          title="Designation agreements"
+          :recordsCount="designations?.length"
+        >
+        </body-header>
+      </template>
       <designation-agreement-summary
         :designations="designations"
         toggleMessage="No designation agreements found"

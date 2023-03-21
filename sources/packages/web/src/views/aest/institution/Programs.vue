@@ -1,23 +1,25 @@
 <template>
   <tab-container>
     <body-header-container>
-      <body-header
-        title="All Programs"
-        :recordsCount="institutionProgramsSummary.count"
-      >
-        <template #actions>
-          <v-text-field
-            density="compact"
-            v-model="searchProgramName"
-            label="Search Program Name"
-            data-cy="searchProgramName"
-            variant="outlined"
-            @keyup.enter="goToSearchProgramName()"
-            prepend-inner-icon="mdi-magnify"
-            hide-details="auto"
-          />
-        </template>
-      </body-header>
+      <template #header>
+        <body-header
+          title="All Programs"
+          :recordsCount="institutionProgramsSummary.count"
+        >
+          <template #actions>
+            <v-text-field
+              density="compact"
+              v-model="searchProgramName"
+              label="Search Program Name"
+              data-cy="searchProgramName"
+              variant="outlined"
+              @keyup.enter="goToSearchProgramName()"
+              prepend-inner-icon="mdi-magnify"
+              hide-details="auto"
+            />
+          </template>
+        </body-header>
+      </template>
       <content-group>
         <DataTable
           :value="institutionProgramsSummary.results"

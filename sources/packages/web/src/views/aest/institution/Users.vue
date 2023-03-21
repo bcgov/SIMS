@@ -1,12 +1,10 @@
 <template>
   <tab-container>
-    <body-header-container>
-      <institution-user-summary
-        :institutionId="institutionId"
-        :hasBusinessGuid="hasBusinessGuid"
-        :allowBasicBCeIDCreation="true"
-      />
-    </body-header-container>
+    <institution-user-summary
+      :institutionId="institutionId"
+      :hasBusinessGuid="hasBusinessGuid"
+      :allowBasicBCeIDCreation="true"
+    />
   </tab-container>
 </template>
 

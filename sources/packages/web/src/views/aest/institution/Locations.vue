@@ -1,11 +1,9 @@
 <template>
   <tab-container>
-    <body-header-container>
-      <location-summary
-        :institutionId="institutionId"
-        @editLocation="gotToEditLocation"
-      />
-    </body-header-container>
+    <location-summary
+      :institutionId="institutionId"
+      @editLocation="gotToEditLocation"
+    />
   </tab-container>
 </template>
 

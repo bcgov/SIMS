@@ -1,23 +1,25 @@
 <template>
   <tab-container>
     <body-header-container>
-      <body-header title="Profile">
-        <template #actions>
-          <check-permission-role :role="Role.InstitutionEditProfile">
-            <template #="{ notAllowed }">
-              <v-btn
-                class="float-right"
-                @click="editProfile"
-                variant="text"
-                color="primary"
-                prepend-icon="fa:fa fa-gear"
-                :disabled="notAllowed"
-                >Edit
-              </v-btn>
-            </template>
-          </check-permission-role>
-        </template>
-      </body-header>
+      <template #header>
+        <body-header title="Profile">
+          <template #actions>
+            <check-permission-role :role="Role.InstitutionEditProfile">
+              <template #="{ notAllowed }">
+                <v-btn
+                  class="float-right"
+                  @click="editProfile"
+                  variant="text"
+                  color="primary"
+                  prepend-icon="fa:fa fa-gear"
+                  :disabled="notAllowed"
+                  >Edit
+                </v-btn>
+              </template>
+            </check-permission-role>
+          </template>
+        </body-header>
+      </template>
       <p class="category-header-medium">Institution profile</p>
       <content-group>
         <v-row>

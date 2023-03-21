@@ -1,22 +1,24 @@
 <template>
   <tab-container>
     <body-header-container>
-      <body-header title="All Restrictions">
-        <template #actions>
-          <check-permission-role :role="Role.InstitutionAddRestriction">
-            <template #="{ notAllowed }">
-              <v-btn
-                @click="addInstitutionRestriction"
-                class="float-right"
-                color="primary"
-                prepend-icon="fa:fa fa-plus-circle"
-                :disabled="notAllowed"
-                >Add restriction</v-btn
-              ></template
-            >
-          </check-permission-role>
-        </template>
-      </body-header>
+      <template #header>
+        <body-header title="All Restrictions">
+          <template #actions>
+            <check-permission-role :role="Role.InstitutionAddRestriction">
+              <template #="{ notAllowed }">
+                <v-btn
+                  @click="addInstitutionRestriction"
+                  class="float-right"
+                  color="primary"
+                  prepend-icon="fa:fa fa-plus-circle"
+                  :disabled="notAllowed"
+                  >Add restriction</v-btn
+                ></template
+              >
+            </check-permission-role>
+          </template>
+        </body-header>
+      </template>
       <content-group>
         <DataTable
           :value="institutionRestrictions"
