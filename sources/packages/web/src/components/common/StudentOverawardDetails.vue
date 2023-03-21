@@ -1,56 +1,57 @@
 <template>
-  <v-card class="mb-5">
-    <v-container fluid>
+  <body-header-container :enableCardView="true">
+    <template #header>
       <body-header
         title="Overaward balances"
         subTitle="A balance of overawards broken down by award type"
       />
-      <v-row>
-        <v-col>
-          <title-value
-            :propertyValue="
-              formatCurrency(overawardBalance.overawardBalanceValues?.CSLF)
-            "
+    </template>
+    <v-row>
+      <v-col>
+        <title-value
+          :propertyValue="
+            formatCurrency(overawardBalance.overawardBalanceValues?.CSLF)
+          "
+        >
+          <template #title>
+            {{ FullTimeAwardTypes.CSLF }}
+            <tooltip-icon>{{
+              getAwardDescription(FullTimeAwardTypes.CSLF)
+            }}</tooltip-icon></template
+          ></title-value
+        >
+      </v-col>
+      <v-col>
+        <title-value
+          :propertyValue="
+            formatCurrency(overawardBalance.overawardBalanceValues?.CSLP)
+          "
+        >
+          <template #title>
+            {{ PartTimeAwardTypes.CSLP }}
+            <tooltip-icon>{{
+              getAwardDescription(PartTimeAwardTypes.CSLP)
+            }}</tooltip-icon></template
+          ></title-value
+        >
+      </v-col>
+      <v-col>
+        <title-value
+          :propertyValue="
+            formatCurrency(overawardBalance.overawardBalanceValues?.BCSL)
+          "
+        >
+          <template #title>
+            {{ FullTimeAwardTypes.BCSL }}
+            <tooltip-icon>{{
+              getAwardDescription(FullTimeAwardTypes.BCSL)
+            }}</tooltip-icon></template
           >
-            <template #title>
-              {{ FullTimeAwardTypes.CSLF }}
-              <tooltip-icon>{{
-                getAwardDescription(FullTimeAwardTypes.CSLF)
-              }}</tooltip-icon></template
-            ></title-value
-          >
-        </v-col>
-        <v-col>
-          <title-value
-            :propertyValue="
-              formatCurrency(overawardBalance.overawardBalanceValues?.CSLP)
-            "
-          >
-            <template #title>
-              {{ PartTimeAwardTypes.CSLP }}
-              <tooltip-icon>{{
-                getAwardDescription(PartTimeAwardTypes.CSLP)
-              }}</tooltip-icon></template
-            ></title-value
-          >
-        </v-col>
-        <v-col>
-          <title-value
-            :propertyValue="
-              formatCurrency(overawardBalance.overawardBalanceValues?.BCSL)
-            "
-          >
-            <template #title>
-              {{ FullTimeAwardTypes.BCSL }}
-              <tooltip-icon>{{
-                getAwardDescription(FullTimeAwardTypes.BCSL)
-              }}</tooltip-icon></template
-            >
-          </title-value>
-        </v-col>
-      </v-row>
-    </v-container>
-  </v-card>
+        </title-value>
+      </v-col>
+    </v-row>
+  </body-header-container>
+
   <overaward-details
     :studentId="studentId"
     :showAddedBy="showAddedBy"

@@ -1,12 +1,10 @@
 <template>
-  <v-card class="mt-4">
-    <div class="mx-5 py-4">
-      <StudentApplications
-        :studentId="studentId"
-        @goToApplication="goToApplication"
-      />
-    </div>
-  </v-card>
+  <tab-container>
+    <student-applications
+      :studentId="studentId"
+      @goToApplication="goToApplication"
+    />
+  </tab-container>
 </template>
 
 <script lang="ts">
