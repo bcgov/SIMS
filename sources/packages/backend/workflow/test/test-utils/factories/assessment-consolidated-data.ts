@@ -4,6 +4,7 @@ import {
   YesNoOptions,
   OfferingDeliveryOptions,
 } from "@sims/test-utils";
+import { OfferingIntensity } from "@sims/sims-db";
 
 export function createFakeAssessmentConsolidatedData(
   programYear: string,
@@ -71,6 +72,7 @@ function setDefaultAssessmentConsolidatedData(): AssessmentConsolidatedData {
     studentDataDaycareCosts12YearsOrOver: null,
     studentDataLivingathomeRent: null,
     studentDataTransportationCost: null,
+    studentDataSelectedOffering: null,
     offeringCourseLoad: null,
     parent1Contributions: null,
     parent1Ei: null,
@@ -98,5 +100,18 @@ function setDefaultAssessmentConsolidatedData(): AssessmentConsolidatedData {
     partner1TotalIncome: null,
     partner1CRAReportedIncome: null,
     assessmentId: null,
+    applicationExceptionStatus: null,
   } as AssessmentConsolidatedData;
+}
+
+export function createFakeConsolidatedFulltimeData(
+  programYear: string,
+): AssessmentConsolidatedData {
+  const [, programEndYear] = programYear.split("-");
+  const assessmentConsolidatedData =
+    createFakeAssessmentConsolidatedData(programYear);
+  assessmentConsolidatedData.offeringIntensity = OfferingIntensity.fullTime;
+  assessmentConsolidatedData.offeringStudyStartDate = `${programEndYear}-02-01`;
+  assessmentConsolidatedData.offeringStudyEndDate = `${programEndYear}-05-24`;
+  return assessmentConsolidatedData;
 }

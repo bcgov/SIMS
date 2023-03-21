@@ -1,4 +1,8 @@
-import { AssessmentTriggerType, OfferingIntensity } from "@sims/sims-db";
+import {
+  ApplicationExceptionStatus,
+  AssessmentTriggerType,
+  OfferingIntensity,
+} from "@sims/sims-db";
 import {
   Provinces,
   YesNoOptions,
@@ -96,6 +100,8 @@ export interface AssessmentConsolidatedData {
   partner1CRAReportedIncome?: number;
   partner1TotalIncome?: number;
   assessmentId?: number;
+  applicationExceptionStatus?: ApplicationExceptionStatus;
+  studentDataSelectedOffering: number;
 }
 
 export interface AssessmentModel {
