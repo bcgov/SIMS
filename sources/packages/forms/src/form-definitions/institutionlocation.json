@@ -1,9 +1,9 @@
 {
   "title": "Institution Location",
-  "display": "form",
-  "type": "form",
   "name": "institutionlocation",
   "path": "institutionlocation",
+  "type": "form",
+  "display": "form",
   "tags": [
     "common"
   ],
@@ -229,7 +229,7 @@
           "id": "erhw235"
         },
         {
-          "label": "Institution code",
+          "label": "Institution location code",
           "tooltip": "Unique 4 digit alpha code that is assigned the first time this location is designated in Canada.",
           "tableView": true,
           "case": "uppercase",
@@ -281,7 +281,7 @@
           },
           "validateOn": "change",
           "conditional": {
-            "show": null,
+            "show": "",
             "when": null,
             "eq": ""
           },
@@ -306,7 +306,8 @@
           "displayMask": "",
           "spellcheck": true,
           "truncateMultipleSpaces": false,
-          "id": "esf31x"
+          "id": "esf31x",
+          "tags": []
         },
         {
           "label": "Address 1",
@@ -1432,7 +1433,7 @@
           "value": ""
         }
       ],
-      "content": "Primary contact",
+      "content": "Location primary contact",
       "refreshOnChange": false,
       "customClass": "",
       "hidden": false,
@@ -1441,7 +1442,7 @@
       "tags": [],
       "properties": {},
       "conditional": {
-        "show": null,
+        "show": "",
         "when": null,
         "eq": "",
         "json": ""
@@ -1514,7 +1515,7 @@
           "value": ""
         }
       ],
-      "content": "Name someone who can be your main contact for your location. This may be yourself or someone similar.",
+      "content": "Name someone that StudentAid BC can reach out to. It can be the same person as the primary contact listed in your institution profile.",
       "refreshOnChange": false,
       "customClass": "",
       "hidden": false,
@@ -1523,7 +1524,7 @@
       "tags": [],
       "properties": {},
       "conditional": {
-        "show": null,
+        "show": "",
         "when": null,
         "eq": "",
         "json": ""

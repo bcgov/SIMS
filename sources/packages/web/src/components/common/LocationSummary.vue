@@ -78,7 +78,7 @@
 
       <!-- Primary contact -->
       <v-col>
-        <title-value propertyTitle=" Primary contact" />
+        <title-value propertyTitle="Primary contact" />
         <span
           class="label-value muted-content clearfix"
           v-for="contactLine in primaryContactList(item)"
@@ -90,7 +90,7 @@
       </v-col>
       <!-- Institution code -->
       <v-col>
-        <title-value propertyTitle="Institution code" />
+        <title-value propertyTitle="Institution location code" />
         <span
           data-cy="institutionCode"
           class="label-value muted-content clearfix"
