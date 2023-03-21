@@ -9,13 +9,13 @@ import {
 } from "../../test-utils";
 import { PROGRAM_YEAR } from "../constants/program-year.constants";
 
-describe("E2E Test Workflow assessment gateway", () => {
+describe(`E2E Test Workflow assessment gateway on student appeal for ${PROGRAM_YEAR}`, () => {
   let zeebeClientProvider: ZBClient;
   beforeAll(async () => {
     zeebeClientProvider = ZeebeMockedClient.getMockedZeebeInstance();
   });
 
-  it("Should generate expected fulltime assessment values for a single and independent student.", async () => {
+  it("Should follow the expected workflow path when student single and independent.", async () => {
     // Arrange
     const assessmentConsolidatedData =
       createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
@@ -23,14 +23,25 @@ describe("E2E Test Workflow assessment gateway", () => {
       AssessmentTriggerType.StudentAppeal;
 
     // Act/Assert
-    await zeebeClientProvider.createProcessInstanceWithResult({
-      bpmnProcessId: "assessment-gateway",
-      variables: {
-        ...assessmentConsolidatedData,
-        [ASSESSMENT_ID]: 1,
-        [E2E_STUDENT_STATUS]: "independentSingleStudent",
-      },
-      requestTimeout: PROCESS_INSTANCE_CREATE_TIMEOUT,
-    });
+    const assessmentGatewayResponse =
+      await zeebeClientProvider.createProcessInstanceWithResult({
+        bpmnProcessId: "assessment-gateway",
+        variables: {
+          ...assessmentConsolidatedData,
+          [ASSESSMENT_ID]: 1,
+          [E2E_STUDENT_STATUS]: "independentSingleStudent",
+        },
+        requestTimeout: PROCESS_INSTANCE_CREATE_TIMEOUT,
+      });
+    expect(
+      assessmentGatewayResponse.variables["associate-workflow-instance"],
+    ).toBe(true);
+    expect(
+      assessmentGatewayResponse.variables["save-disbursement-schedules"],
+    ).toBe(true);
+    expect(assessmentGatewayResponse.variables["update-noa-status"]).toBe(true);
+    expect(
+      assessmentGatewayResponse.variables["update-application-status"],
+    ).toBeUndefined();
   });
 });

@@ -12,14 +12,22 @@ const fakeWorkers: ZBWorkerConfig<FakeAssessmentVariables, unknown, unknown>[] =
   [
     {
       taskType: "associate-workflow-instance",
-      taskHandler: (job) => job.complete(),
+      taskHandler: (job) =>
+        job.complete({ ["associate-workflow-instance"]: true }),
     },
     {
       taskType: "save-disbursement-schedules",
-      taskHandler: (job) => job.complete(),
+      taskHandler: (job) =>
+        job.complete({ ["save-disbursement-schedules"]: true }),
     },
-    { taskType: "save-assessment-data", taskHandler: (job) => job.complete() },
-    { taskType: "update-noa-status", taskHandler: (job) => job.complete() },
+    {
+      taskType: "save-assessment-data",
+      taskHandler: (job) => job.complete({ ["save-assessment-data"]: true }),
+    },
+    {
+      taskType: "update-noa-status",
+      taskHandler: (job) => job.complete({ ["update-noa-status"]: true }),
+    },
     {
       taskType: "load-assessment-consolidated-data",
       taskHandler: (job) =>
@@ -27,15 +35,17 @@ const fakeWorkers: ZBWorkerConfig<FakeAssessmentVariables, unknown, unknown>[] =
     },
     {
       taskType: "update-application-status",
-      taskHandler: (job) => job.complete(),
+      taskHandler: (job) =>
+        job.complete({ ["update-application-status"]: true }),
     },
     {
       taskType: "verify-application-exceptions",
-      taskHandler: (job) => job.complete(),
+      taskHandler: (job) =>
+        job.complete({ ["verify-application-exceptions"]: true }),
     },
     {
       taskType: "program-info-request",
-      taskHandler: (job) => job.complete(),
+      taskHandler: (job) => job.complete({ ["program-info-request"]: true }),
     },
     {
       taskType: "create-income-request",
@@ -49,16 +59,17 @@ const fakeWorkers: ZBWorkerConfig<FakeAssessmentVariables, unknown, unknown>[] =
         return job.complete({
           incomeVerificationCompleted: true,
           incomeVerificationId: 1,
+          ["create-income-request"]: true,
         });
       },
     },
     {
       taskType: "check-income-request",
-      taskHandler: (job) => job.complete(),
+      taskHandler: (job) => job.complete({ ["check-income-request"]: true }),
     },
     {
       taskType: "associate-msfaa",
-      taskHandler: (job) => job.complete(),
+      taskHandler: (job) => job.complete({ ["associate-msfaa"]: true }),
     },
   ];
 
