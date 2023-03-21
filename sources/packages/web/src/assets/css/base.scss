@@ -383,3 +383,13 @@ strong {
 .fas:before {
   font-family: "FontAwesome", $font-bold !important;
 }
+
+// Tooltip main style
+.tooltip-style {
+  padding: 0.75em 1em;
+  border-radius: 8px;
+  font-size: $font-size-xsmall;
+  font-weight: $font-weight-normal;
+  color: #fff;
+  background-color: rgba(51, 51, 51, 0.95);
+}

@@ -36,9 +36,8 @@
   font-style: $font-style-normal;
   font-family: $font-bold;
   font-weight: $font-weight-bold; // Fallback
-  font-size: 12px;
+  font-size: $font-size-xsmall;
   line-height: 18px;
-  letter-spacing: 0.5px;
 }
 
 .category-header-small-no-transform {
@@ -575,6 +574,21 @@
   max-width: 70px;
 }
 
+// Formio tooltip style
+.tippy-box {
+  @extend .tooltip-style;
+  visibility: visible;
+  opacity: 1;
+
+  .tippy-content {
+    padding: 0;
+  }
+
+  .tippy-arrow {
+    color: rgba(51, 51, 51, 0.9);
+  }
+}
+
 // Custom tooltip for html component(or components without tooltip feature) in formio.
 .formio-custom-tooltip {
   position: absolute;
@@ -587,18 +601,13 @@
   font-family: "BCSans", "Noto Sans", Verdana, Arial, sans-serif, "FontAwesome";
   color: $brand-grey;
   font-size: 16px;
-  padding: 0 10px;
+  padding: 0 5px;
 }
 
 .formio-custom-tooltip .tooltip-text {
+  @extend .tooltip-style;
   visibility: hidden;
-  background-color: rgba(#424242, 0.85);
-  color: #eeeeee;
-  padding: 0.5em;
-  border-radius: 4px;
   opacity: 1;
-  font-size: 0.875rem;
-  line-height: 1.6;
 }
 
 .formio-custom-tooltip:hover .tooltip-text {
