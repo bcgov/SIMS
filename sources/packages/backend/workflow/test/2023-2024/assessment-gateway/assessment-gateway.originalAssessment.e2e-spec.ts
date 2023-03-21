@@ -28,6 +28,7 @@ describe(`E2E Test Workflow assessment gateway on original assessment for ${PROG
     assessmentConsolidatedData.assessmentTriggerType =
       AssessmentTriggerType.OriginalAssessment;
 
+    // Act/Assert
     const assessmentGatewayResponse =
       await zeebeClientProvider.createProcessInstanceWithResult({
         bpmnProcessId: "assessment-gateway",
@@ -41,19 +42,26 @@ describe(`E2E Test Workflow assessment gateway on original assessment for ${PROG
         },
         requestTimeout: PROCESS_INSTANCE_CREATE_TIMEOUT,
       });
+    // Workflow instance expected to pass through associate workflow instance worker.
     expect(
       assessmentGatewayResponse.variables["associate-workflow-instance"],
     ).toBe(true);
+    // Workflow instance expected to pass through verify application exceptions worker.
     expect(
       assessmentGatewayResponse.variables["verify-application-exceptions"],
     ).toBe(true);
+    // Workflow instance expected to pass through program info request worker.
     expect(assessmentGatewayResponse.variables["program-info-request"]).toBe(
       true,
     );
+    // Workflow instance expected to pass through save disbursement schedules worker.
     expect(
       assessmentGatewayResponse.variables["save-disbursement-schedules"],
     ).toBe(true);
+    // Workflow instance expected to pass through save associate msfaa worker
+    // as this is original assessment.
     expect(assessmentGatewayResponse.variables["associate-msfaa"]).toBe(true);
+    // Workflow instance expected to pass through save update noa status.
     expect(assessmentGatewayResponse.variables["update-noa-status"]).toBe(true);
   });
 });

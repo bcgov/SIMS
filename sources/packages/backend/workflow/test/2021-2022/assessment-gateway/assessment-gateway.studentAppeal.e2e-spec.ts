@@ -33,13 +33,18 @@ describe(`E2E Test Workflow assessment gateway on student appeal for ${PROGRAM_Y
         },
         requestTimeout: PROCESS_INSTANCE_CREATE_TIMEOUT,
       });
+    // Workflow instance expected to pass through associate workflow instance worker.
     expect(
       assessmentGatewayResponse.variables["associate-workflow-instance"],
     ).toBe(true);
+    // Workflow instance expected to pass through save disbursement schedules worker.
     expect(
       assessmentGatewayResponse.variables["save-disbursement-schedules"],
     ).toBe(true);
+    // Workflow instance expected to pass through update noa status worker.
     expect(assessmentGatewayResponse.variables["update-noa-status"]).toBe(true);
+    // Workflow instance expected to not pass through update application status worker
+    // as this is a reassessment.
     expect(
       assessmentGatewayResponse.variables["update-application-status"],
     ).toBeUndefined();

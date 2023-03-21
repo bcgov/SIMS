@@ -2,6 +2,10 @@ import { AssessmentConsolidatedData } from "../../models";
 import { Duration, ZBClient, ZBWorkerConfig } from "zeebe-node";
 import { ApplicationExceptionStatus, ProgramInfoStatus } from "@sims/sims-db";
 
+/**
+ * Variables provided for the purpose of e2e tests
+ * when creating an instance of assessment gateway workflow.
+ */
 interface FakeAssessmentVariables {
   e2eTestStudentStatus: string;
   e2eTestApplicationExceptionStatus: ApplicationExceptionStatus;
@@ -73,6 +77,13 @@ const fakeWorkers: ZBWorkerConfig<FakeAssessmentVariables, unknown, unknown>[] =
     },
   ];
 
+/**
+ * Mock consolidated data according to the
+ * e2e test assessment variables provided
+ * in the workflow instance.
+ * @param jobVariables
+ * @returns assessment consolidated data.
+ */
 export function getMockConsolidatedData(
   jobVariables?: FakeAssessmentVariables,
 ): Partial<AssessmentConsolidatedData> {
@@ -80,12 +91,15 @@ export function getMockConsolidatedData(
     return;
   }
   const consolidatedData = {} as AssessmentConsolidatedData;
+  // Single and independent student does not follow either parent
+  // or the partner path in the workflow.
   if (jobVariables.e2eTestStudentStatus === "independentSingleStudent") {
     consolidatedData.studentDataDependantstatus = "independant";
     consolidatedData.studentDataRelationshipStatus = "single";
     consolidatedData.studentDataTaxReturnIncome = 40000;
   }
-
+  // When the exception status is approved workflow is not
+  // expected to wait for the application exception verification message.
   if (
     jobVariables.e2eTestApplicationExceptionStatus ===
     ApplicationExceptionStatus.Approved
@@ -94,13 +108,17 @@ export function getMockConsolidatedData(
       ApplicationExceptionStatus.Approved;
   }
 
+  // When the PIR status is not required, workflow is not
+  // expected to wait for the program info request completed message.
   if (jobVariables.e2ePIRStatus === ProgramInfoStatus.notRequired) {
     consolidatedData.studentDataSelectedOffering = 1;
   }
 
   return consolidatedData;
 }
-
+/**
+ * Zeebe client with mocked worker implementations.
+ */
 export class ZeebeMockedClient {
   private static mockedZeebeClient: ZBClient;
 
