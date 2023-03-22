@@ -5,13 +5,17 @@ import {
   CalculatedAssessmentModel,
 } from "../../models";
 import { ZBClient } from "zeebe-node";
-import { createFakeAssessmentConsolidatedData } from "../../test-utils";
+import {
+  createFakeAssessmentConsolidatedData,
+  PROCESS_INSTANCE_CREATE_TIMEOUT,
+  ZeebeMockedClient,
+} from "../../test-utils";
 import { PROGRAM_YEAR } from "../constants/program-year.constants";
 
 describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}`, () => {
   let zeebeClientProvider: ZBClient;
   beforeAll(async () => {
-    zeebeClientProvider = new ZBClient();
+    zeebeClientProvider = ZeebeMockedClient.getMockedZeebeInstance();
   });
 
   it("Should generate expected fulltime assessment values when the student is single and independent.", async () => {
@@ -54,7 +58,13 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}`, () => {
       await zeebeClientProvider.createProcessInstanceWithResult<
         AssessmentConsolidatedData,
         CalculatedAssessmentModel
-      >(`fulltime-assessment-${PROGRAM_YEAR}`, assessmentConsolidatedData);
+      >({
+        bpmnProcessId: `fulltime-assessment-${PROGRAM_YEAR}`,
+        variables: {
+          ...assessmentConsolidatedData,
+        },
+        requestTimeout: PROCESS_INSTANCE_CREATE_TIMEOUT,
+      });
     // TODO: totalFederalContribution and totalProvincialContribution needs to be validated
     // once it is fixed in bpmn.
     expect(calculatedAssessment.variables.offeringWeeks).toBe(
