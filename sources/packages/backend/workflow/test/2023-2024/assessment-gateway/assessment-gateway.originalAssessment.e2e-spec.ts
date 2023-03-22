@@ -27,8 +27,6 @@ describe(`E2E Test Workflow assessment gateway on original assessment for ${PROG
       ...createFakeConsolidatedFulltimeData(PROGRAM_YEAR),
       assessmentTriggerType: AssessmentTriggerType.OriginalAssessment,
       ...createFakeSingleIndependentStudentData(),
-      // Application with no exception.
-      applicationExceptionStatus: ApplicationExceptionStatus.Approved,
       // Application with PIR not required.
       studentDataSelectedOffering: 1,
     };
@@ -42,6 +40,10 @@ describe(`E2E Test Workflow assessment gateway on original assessment for ${PROG
           // Data that will be returned by the worker that subscribe to load assessment consolidated data service task.
           [`${WorkflowServiceTasks.LoadAssessmentConsolidatedData}-result`]:
             assessmentConsolidatedData,
+          [`${WorkflowServiceTasks.VerifyApplicationExceptions}-result`]: {
+            // Application with no exception.
+            applicationExceptionStatus: ApplicationExceptionStatus.Approved,
+          },
         },
         requestTimeout: PROCESS_INSTANCE_CREATE_TIMEOUT,
       });

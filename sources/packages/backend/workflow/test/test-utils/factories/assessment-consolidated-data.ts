@@ -106,7 +106,6 @@ function setDefaultAssessmentConsolidatedData(): AssessmentConsolidatedData {
     partner1TotalIncome: null,
     partner1CRAReportedIncome: null,
     assessmentId: null,
-    applicationExceptionStatus: null,
   } as AssessmentConsolidatedData;
 }
 
