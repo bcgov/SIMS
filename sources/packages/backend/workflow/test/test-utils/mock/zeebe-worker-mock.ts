@@ -1,7 +1,7 @@
 import { AssessmentConsolidatedData } from "../../models";
 import { Duration, ZBClient, ZBWorkerConfig } from "zeebe-node";
 import { ApplicationExceptionStatus, ProgramInfoStatus } from "@sims/sims-db";
-import { Workers } from "../constants/worker-constants";
+import { Workers } from "@sims/services/constants";
 
 /**
  * Variables provided for the purpose of e2e tests
@@ -12,6 +12,11 @@ interface FakeAssessmentVariables {
   e2eTestApplicationExceptionStatus: ApplicationExceptionStatus;
   e2ePIRStatus: ProgramInfoStatus;
 }
+/**
+ * Zeebe client to be used in mock implementation
+ * of the workers.
+ */
+const zeebeWorkerClient = new ZBClient();
 
 const fakeWorkers: ZBWorkerConfig<FakeAssessmentVariables, unknown, unknown>[] =
   [
@@ -57,7 +62,7 @@ const fakeWorkers: ZBWorkerConfig<FakeAssessmentVariables, unknown, unknown>[] =
     {
       taskType: Workers.CreateIncomeRequest,
       taskHandler: (job) => {
-        new ZBClient().publishMessage({
+        zeebeWorkerClient.publishMessage({
           name: "income-verified",
           correlationKey: "1",
           variables: {},

@@ -1,3 +1,4 @@
+import { Workers } from "@sims/services/constants";
 import { ASSESSMENT_ID } from "@sims/services/workflow/variables/assessment-gateway";
 import { AssessmentTriggerType } from "@sims/sims-db";
 import { ZBClient } from "zeebe-node";
@@ -6,7 +7,6 @@ import {
   ZeebeMockedClient,
   E2E_STUDENT_STATUS,
   PROCESS_INSTANCE_CREATE_TIMEOUT,
-  Workers,
 } from "../../test-utils";
 import { PROGRAM_YEAR } from "../constants/program-year.constants";
 

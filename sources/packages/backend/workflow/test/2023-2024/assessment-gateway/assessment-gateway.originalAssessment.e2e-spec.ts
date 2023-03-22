@@ -1,3 +1,4 @@
+import { Workers } from "@sims/services/constants";
 import { ASSESSMENT_ID } from "@sims/services/workflow/variables/assessment-gateway";
 import {
   ApplicationExceptionStatus,
@@ -12,7 +13,6 @@ import {
   E2E_APPLICATION_EXCEPTION_STATUS,
   E2E_PIR_STATUS,
   PROCESS_INSTANCE_CREATE_TIMEOUT,
-  Workers,
 } from "../../test-utils";
 import { PROGRAM_YEAR } from "../constants/program-year.constants";
 
@@ -22,7 +22,7 @@ describe(`E2E Test Workflow assessment gateway on original assessment for ${PROG
     zeebeClientProvider = ZeebeMockedClient.getMockedZeebeInstance();
   });
 
-  it("Should follow the expected workflow path when student single and independent without application exception and PIR.", async () => {
+  it("Should follow the expected workflow path when student is single and independent without application exception and PIR.", async () => {
     // Arrange
     const assessmentConsolidatedData =
       createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
