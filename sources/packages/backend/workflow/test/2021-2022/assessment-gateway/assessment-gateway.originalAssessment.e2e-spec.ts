@@ -10,6 +10,7 @@ import {
   ZeebeMockedClient,
   PROCESS_INSTANCE_CREATE_TIMEOUT,
   WorkflowServiceTasks,
+  createFakeSingleIndependentStudentData,
 } from "../../test-utils";
 import { PROGRAM_YEAR } from "../constants/program-year.constants";
 
@@ -26,17 +27,13 @@ describe(`E2E Test Workflow assessment gateway on original assessment for ${PROG
     assessmentConsolidatedData.assessmentTriggerType =
       AssessmentTriggerType.OriginalAssessment;
 
-    const loadAssessmentConsolidatedDataResult: Partial<AssessmentConsolidatedData> =
-      {
-        // Single independent student.
-        studentDataDependantstatus: "independant",
-        studentDataRelationshipStatus: "single",
-        studentDataTaxReturnIncome: 40000,
-        // Application with no exception.
-        applicationExceptionStatus: ApplicationExceptionStatus.Approved,
-        // Application with PIR not required.
-        studentDataSelectedOffering: 1,
-      };
+    const loadConsolidatedDataResult: Partial<AssessmentConsolidatedData> =
+      createFakeSingleIndependentStudentData();
+    // Application with no exception.
+    loadConsolidatedDataResult.applicationExceptionStatus =
+      ApplicationExceptionStatus.Approved;
+    // Application with PIR not required.
+    loadConsolidatedDataResult.studentDataSelectedOffering = 1;
 
     // Act/Assert
     const assessmentGatewayResponse =
@@ -47,7 +44,7 @@ describe(`E2E Test Workflow assessment gateway on original assessment for ${PROG
           [ASSESSMENT_ID]: 1,
           // Data that will be returned by the worker that subscribe to load assessment data service task.
           [`${WorkflowServiceTasks.LoadAssessmentConsolidatedData}-result`]:
-            loadAssessmentConsolidatedDataResult,
+            loadConsolidatedDataResult,
         },
         requestTimeout: PROCESS_INSTANCE_CREATE_TIMEOUT,
       });

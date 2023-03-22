@@ -115,3 +115,12 @@ export function createFakeConsolidatedFulltimeData(
   assessmentConsolidatedData.offeringStudyEndDate = `${programEndYear}-05-24`;
   return assessmentConsolidatedData;
 }
+
+export function createFakeSingleIndependentStudentData(): Partial<AssessmentConsolidatedData> {
+  return {
+    // Single independent student.
+    studentDataDependantstatus: "independant",
+    studentDataRelationshipStatus: "single",
+    studentDataTaxReturnIncome: 40000,
+  };
+}
