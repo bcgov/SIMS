@@ -22,22 +22,19 @@ const fakeWorkers: ZBWorkerConfig<FakeAssessmentVariables, unknown, unknown>[] =
   [
     {
       taskType: Workers.AssociateWorkflowInstance,
-      taskHandler: (job) =>
-        job.complete({ [Workers.AssociateWorkflowInstance]: true }),
+      taskHandler: (job) => job.complete({ [job.elementId]: true }),
     },
     {
       taskType: Workers.SaveDisbursementSchedules,
-      taskHandler: (job) =>
-        job.complete({ [Workers.SaveDisbursementSchedules]: true }),
+      taskHandler: (job) => job.complete({ [job.elementId]: true }),
     },
     {
       taskType: Workers.SaveAssessmentData,
-      taskHandler: (job) =>
-        job.complete({ [Workers.SaveAssessmentData]: true }),
+      taskHandler: (job) => job.complete({ [job.elementId]: true }),
     },
     {
       taskType: Workers.UpdateNOAStatus,
-      taskHandler: (job) => job.complete({ [Workers.UpdateNOAStatus]: true }),
+      taskHandler: (job) => job.complete({ [job.elementId]: true }),
     },
     {
       taskType: Workers.LoadAssessmentConsolidatedData,
@@ -46,18 +43,15 @@ const fakeWorkers: ZBWorkerConfig<FakeAssessmentVariables, unknown, unknown>[] =
     },
     {
       taskType: Workers.UpdateApplicationStatus,
-      taskHandler: (job) =>
-        job.complete({ [Workers.UpdateApplicationStatus]: true }),
+      taskHandler: (job) => job.complete({ [job.elementId]: true }),
     },
     {
       taskType: Workers.VerifyApplicationExceptions,
-      taskHandler: (job) =>
-        job.complete({ [Workers.VerifyApplicationExceptions]: true }),
+      taskHandler: (job) => job.complete({ [job.elementId]: true }),
     },
     {
       taskType: Workers.ProgramInfoRequest,
-      taskHandler: (job) =>
-        job.complete({ [Workers.ProgramInfoRequest]: true }),
+      taskHandler: (job) => job.complete({ [job.elementId]: true }),
     },
     {
       taskType: Workers.CreateIncomeRequest,
@@ -71,18 +65,17 @@ const fakeWorkers: ZBWorkerConfig<FakeAssessmentVariables, unknown, unknown>[] =
         return job.complete({
           incomeVerificationCompleted: true,
           incomeVerificationId: 1,
-          [Workers.CreateIncomeRequest]: true,
+          [job.elementId]: true,
         });
       },
     },
     {
       taskType: Workers.CheckIncomeRequest,
-      taskHandler: (job) =>
-        job.complete({ [Workers.CheckIncomeRequest]: true }),
+      taskHandler: (job) => job.complete({ [job.elementId]: true }),
     },
     {
       taskType: Workers.AssociateMSFAA,
-      taskHandler: (job) => job.complete({ [Workers.AssociateMSFAA]: true }),
+      taskHandler: (job) => job.complete({ [job.elementId]: true }),
     },
   ];
 

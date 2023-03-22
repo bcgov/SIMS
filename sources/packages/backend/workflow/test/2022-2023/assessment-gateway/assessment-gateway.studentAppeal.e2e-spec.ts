@@ -1,4 +1,3 @@
-import { Workers } from "@sims/services/constants";
 import { ASSESSMENT_ID } from "@sims/services/workflow/variables/assessment-gateway";
 import { AssessmentTriggerType } from "@sims/sims-db";
 import { ZBClient } from "zeebe-node";
@@ -7,6 +6,7 @@ import {
   ZeebeMockedClient,
   E2E_STUDENT_STATUS,
   PROCESS_INSTANCE_CREATE_TIMEOUT,
+  WorkflowServiceTasks,
 } from "../../test-utils";
 import { PROGRAM_YEAR } from "../constants/program-year.constants";
 
@@ -34,22 +34,37 @@ describe(`E2E Test Workflow assessment gateway on student appeal for ${PROGRAM_Y
         },
         requestTimeout: PROCESS_INSTANCE_CREATE_TIMEOUT,
       });
-    // Workflow instance expected to pass through associate workflow instance worker.
+    // Workflow instance expected to pass through associate workflow instance service task.
     expect(
-      assessmentGatewayResponse.variables[Workers.AssociateWorkflowInstance],
+      assessmentGatewayResponse.variables[
+        WorkflowServiceTasks.AssociateWorkflowInstance
+      ],
     ).toBe(true);
-    // Workflow instance expected to pass through save disbursement schedules worker.
+    // Workflow instance expected to pass through save disbursement schedules service task.
     expect(
-      assessmentGatewayResponse.variables[Workers.SaveDisbursementSchedules],
+      assessmentGatewayResponse.variables[
+        WorkflowServiceTasks.SaveDisbursementSchedules
+      ],
     ).toBe(true);
-    // Workflow instance expected to pass through update noa status worker.
-    expect(assessmentGatewayResponse.variables[Workers.UpdateNOAStatus]).toBe(
-      true,
-    );
-    // Workflow instance expected to not pass through update application status worker
+    // Workflow instance expected to pass through update noa status to not required service task.
+    expect(
+      assessmentGatewayResponse.variables[
+        WorkflowServiceTasks.UpdateNOAStatusToNotRequired
+      ],
+    ).toBe(true);
+    // Workflow instance expected to not pass through update application status to in progress service task
     // as this is a reassessment.
     expect(
-      assessmentGatewayResponse.variables[Workers.UpdateApplicationStatus],
+      assessmentGatewayResponse.variables[
+        WorkflowServiceTasks.UpdateApplicationStatusToInProgress
+      ],
+    ).toBeUndefined();
+    // Workflow instance expected to not pass through update application status to assessment service task
+    // as this is a reassessment.
+    expect(
+      assessmentGatewayResponse.variables[
+        WorkflowServiceTasks.UpdateApplicationStatusToAssessment
+      ],
     ).toBeUndefined();
   });
 });
