@@ -1,5 +1,4 @@
-import { AssessmentConsolidatedData } from "../../models";
-import { Duration, ZBClient, ZBWorkerConfig } from "zeebe-node";
+import { Duration, ZBClient, ZBWorkerConfig, ZeebeJob } from "zeebe-node";
 import { ApplicationExceptionStatus, ProgramInfoStatus } from "@sims/sims-db";
 import { Workers } from "@sims/services/constants";
 
@@ -22,36 +21,35 @@ const fakeWorkers: ZBWorkerConfig<FakeAssessmentVariables, unknown, unknown>[] =
   [
     {
       taskType: Workers.AssociateWorkflowInstance,
-      taskHandler: (job) => job.complete({ [job.elementId]: true }),
+      taskHandler: mockTaskHandler,
     },
     {
       taskType: Workers.SaveDisbursementSchedules,
-      taskHandler: (job) => job.complete({ [job.elementId]: true }),
+      taskHandler: mockTaskHandler,
     },
     {
       taskType: Workers.SaveAssessmentData,
-      taskHandler: (job) => job.complete({ [job.elementId]: true }),
+      taskHandler: mockTaskHandler,
     },
     {
       taskType: Workers.UpdateNOAStatus,
-      taskHandler: (job) => job.complete({ [job.elementId]: true }),
+      taskHandler: mockTaskHandler,
     },
     {
       taskType: Workers.LoadAssessmentConsolidatedData,
-      taskHandler: (job) =>
-        job.complete(getMockConsolidatedData(job.variables)),
+      taskHandler: mockTaskHandler,
     },
     {
       taskType: Workers.UpdateApplicationStatus,
-      taskHandler: (job) => job.complete({ [job.elementId]: true }),
+      taskHandler: mockTaskHandler,
     },
     {
       taskType: Workers.VerifyApplicationExceptions,
-      taskHandler: (job) => job.complete({ [job.elementId]: true }),
+      taskHandler: mockTaskHandler,
     },
     {
       taskType: Workers.ProgramInfoRequest,
-      taskHandler: (job) => job.complete({ [job.elementId]: true }),
+      taskHandler: mockTaskHandler,
     },
     {
       taskType: Workers.CreateIncomeRequest,
@@ -71,53 +69,28 @@ const fakeWorkers: ZBWorkerConfig<FakeAssessmentVariables, unknown, unknown>[] =
     },
     {
       taskType: Workers.CheckIncomeRequest,
-      taskHandler: (job) => job.complete({ [job.elementId]: true }),
+      taskHandler: mockTaskHandler,
     },
     {
       taskType: Workers.AssociateMSFAA,
-      taskHandler: (job) => job.complete({ [job.elementId]: true }),
+      taskHandler: mockTaskHandler,
     },
   ];
 
 /**
- * Mock consolidated data according to the
- * e2e test assessment variables provided
- * in the workflow instance.
- * @param jobVariables
- * @returns assessment consolidated data.
+ * Mock task handler which returns job complete
+ * with the mock data set at create process instance level
+ * for that particular worker.
+ * @param job worker job.
+ * @returns mock task handler response.
  */
-export function getMockConsolidatedData(
-  jobVariables?: FakeAssessmentVariables,
-): Partial<AssessmentConsolidatedData> {
-  if (!jobVariables) {
-    return;
-  }
-  const consolidatedData = {} as AssessmentConsolidatedData;
-  // Single and independent student does not follow either parent
-  // or the partner path in the workflow.
-  if (jobVariables.e2eTestStudentStatus === "independentSingleStudent") {
-    consolidatedData.studentDataDependantstatus = "independant";
-    consolidatedData.studentDataRelationshipStatus = "single";
-    consolidatedData.studentDataTaxReturnIncome = 40000;
-  }
-  // When the exception status is approved workflow is not
-  // expected to wait for the application exception verification message.
-  if (
-    jobVariables.e2eTestApplicationExceptionStatus ===
-    ApplicationExceptionStatus.Approved
-  ) {
-    consolidatedData.applicationExceptionStatus =
-      ApplicationExceptionStatus.Approved;
-  }
-
-  // When the PIR status is not required, workflow is not
-  // expected to wait for the program info request completed message.
-  if (jobVariables.e2ePIRStatus === ProgramInfoStatus.notRequired) {
-    consolidatedData.studentDataSelectedOffering = 1;
-  }
-
-  return consolidatedData;
+export function mockTaskHandler(job: ZeebeJob<unknown>) {
+  return job.complete({
+    [job.elementId]: true,
+    ...job.variables[`${job.elementId}-result`],
+  });
 }
+
 /**
  * Zeebe client with mocked worker implementations.
  */

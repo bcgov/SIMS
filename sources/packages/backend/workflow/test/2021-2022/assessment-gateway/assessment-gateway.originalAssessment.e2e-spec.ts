@@ -2,15 +2,12 @@ import { ASSESSMENT_ID } from "@sims/services/workflow/variables/assessment-gate
 import {
   ApplicationExceptionStatus,
   AssessmentTriggerType,
-  ProgramInfoStatus,
 } from "@sims/sims-db";
+import { AssessmentConsolidatedData } from "../../models";
 import { ZBClient } from "zeebe-node";
 import {
   createFakeConsolidatedFulltimeData,
   ZeebeMockedClient,
-  E2E_STUDENT_STATUS,
-  E2E_APPLICATION_EXCEPTION_STATUS,
-  E2E_PIR_STATUS,
   PROCESS_INSTANCE_CREATE_TIMEOUT,
   WorkflowServiceTasks,
 } from "../../test-utils";
@@ -29,6 +26,18 @@ describe(`E2E Test Workflow assessment gateway on original assessment for ${PROG
     assessmentConsolidatedData.assessmentTriggerType =
       AssessmentTriggerType.OriginalAssessment;
 
+    const loadAssessmentConsolidatedDataResult: Partial<AssessmentConsolidatedData> =
+      {
+        // Single independent student.
+        studentDataDependantstatus: "independant",
+        studentDataRelationshipStatus: "single",
+        studentDataTaxReturnIncome: 40000,
+        // Application with no exception.
+        applicationExceptionStatus: ApplicationExceptionStatus.Approved,
+        // Application with PIR not required.
+        studentDataSelectedOffering: 1,
+      };
+
     // Act/Assert
     const assessmentGatewayResponse =
       await zeebeClientProvider.createProcessInstanceWithResult({
@@ -36,16 +45,9 @@ describe(`E2E Test Workflow assessment gateway on original assessment for ${PROG
         variables: {
           ...assessmentConsolidatedData,
           [ASSESSMENT_ID]: 1,
-          // Based on this variable, load consolidated data worker will
-          // provide mock value for student dependent status and relationship status.
-          [E2E_STUDENT_STATUS]: "independentSingleStudent",
-          // Based on this variable load consolidated data worker will
-          // return the application exception status.
-          [E2E_APPLICATION_EXCEPTION_STATUS]:
-            ApplicationExceptionStatus.Approved,
-          // Based on this variable load consolidated data worker will
-          // return the application PIR status.
-          [E2E_PIR_STATUS]: ProgramInfoStatus.notRequired,
+          // Data that will be returned by the worker that subscribe to load assessment data service task.
+          [`${WorkflowServiceTasks.LoadAssessmentConsolidatedData}-result`]:
+            loadAssessmentConsolidatedDataResult,
         },
         requestTimeout: PROCESS_INSTANCE_CREATE_TIMEOUT,
       });

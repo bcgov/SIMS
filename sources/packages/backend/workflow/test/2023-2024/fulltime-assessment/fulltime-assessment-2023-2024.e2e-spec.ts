@@ -26,11 +26,6 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}`, () => {
     assessmentConsolidatedData.offeringStudyStartDate = "2024-02-01";
     assessmentConsolidatedData.offeringStudyEndDate = "2024-05-24";
 
-    await zeebeClientProvider.createProcessInstanceWithResult(
-      `fulltime-assessment-${PROGRAM_YEAR}`,
-      assessmentConsolidatedData,
-    );
-
     const expectedAssessmentData: AssessmentModel = {
       weeks: assessmentConsolidatedData.offeringWeeks,
       tuitionCost:

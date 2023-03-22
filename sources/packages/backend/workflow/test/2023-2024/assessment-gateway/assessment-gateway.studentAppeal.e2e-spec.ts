@@ -1,10 +1,10 @@
 import { ASSESSMENT_ID } from "@sims/services/workflow/variables/assessment-gateway";
 import { AssessmentTriggerType } from "@sims/sims-db";
 import { ZBClient } from "zeebe-node";
+import { AssessmentConsolidatedData } from "../../models";
 import {
   createFakeConsolidatedFulltimeData,
   ZeebeMockedClient,
-  E2E_STUDENT_STATUS,
   PROCESS_INSTANCE_CREATE_TIMEOUT,
   WorkflowServiceTasks,
 } from "../../test-utils";
@@ -23,6 +23,14 @@ describe(`E2E Test Workflow assessment gateway on student appeal for ${PROGRAM_Y
     assessmentConsolidatedData.assessmentTriggerType =
       AssessmentTriggerType.StudentAppeal;
 
+    const loadAssessmentConsolidatedDataResult: Partial<AssessmentConsolidatedData> =
+      {
+        // Single independent student.
+        studentDataDependantstatus: "independant",
+        studentDataRelationshipStatus: "single",
+        studentDataTaxReturnIncome: 40000,
+      };
+
     // Act/Assert
     const assessmentGatewayResponse =
       await zeebeClientProvider.createProcessInstanceWithResult({
@@ -30,7 +38,9 @@ describe(`E2E Test Workflow assessment gateway on student appeal for ${PROGRAM_Y
         variables: {
           ...assessmentConsolidatedData,
           [ASSESSMENT_ID]: 1,
-          [E2E_STUDENT_STATUS]: "independentSingleStudent",
+          // Data that will be returned by the worker that subscribe to load assessment data service task.
+          [`${WorkflowServiceTasks.LoadAssessmentConsolidatedData}-result`]:
+            loadAssessmentConsolidatedDataResult,
         },
         requestTimeout: PROCESS_INSTANCE_CREATE_TIMEOUT,
       });
