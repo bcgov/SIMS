@@ -14,6 +14,7 @@ import {
   STUDENT_DATA_SELECTED_PROGRAM,
 } from "@sims/services/workflow/variables/assessment-gateway";
 import { MaxJobsToActivate } from "../../types";
+import { Workers } from "@sims/services/constants";
 
 @Controller()
 export class ProgramInfoRequestController {
@@ -24,7 +25,7 @@ export class ProgramInfoRequestController {
    * application returning the its most updated status.
    * @returns most updated status of the PIR.
    */
-  @ZeebeWorker("program-info-request", {
+  @ZeebeWorker(Workers.ProgramInfoRequest, {
     fetchVariable: [
       APPLICATION_ID,
       STUDENT_DATA_SELECTED_LOCATION,

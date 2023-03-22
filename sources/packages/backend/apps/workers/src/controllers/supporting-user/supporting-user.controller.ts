@@ -20,12 +20,13 @@ import {
   SUPPORTING_USER_ID,
 } from "@sims/services/workflow/variables/supporting-user-information-request";
 import { MaxJobsToActivate } from "../../types";
+import { Workers } from "@sims/services/constants";
 
 @Controller()
 export class SupportingUserController {
   constructor(private readonly supportingUserService: SupportingUserService) {}
 
-  @ZeebeWorker("create-supporting-users", {
+  @ZeebeWorker(Workers.CreateSupportingUsers, {
     fetchVariable: [APPLICATION_ID, SUPPORTING_USERS_TYPES],
     maxJobsToActivate: MaxJobsToActivate.Normal,
   })
