@@ -11,7 +11,7 @@ import {
   PROCESS_INSTANCE_CREATE_TIMEOUT,
   WorkflowServiceTasks,
   createFakeSingleIndependentStudentData,
-  expectToPassthroughServiceTasks,
+  expectToPassThroughServiceTasks,
 } from "../../test-utils";
 import { PROGRAM_YEAR } from "../constants/program-year.constants";
 
@@ -45,7 +45,7 @@ describe(`E2E Test Workflow assessment gateway on original assessment for ${PROG
         },
         requestTimeout: PROCESS_INSTANCE_CREATE_TIMEOUT,
       });
-    expectToPassthroughServiceTasks(
+    expectToPassThroughServiceTasks(
       assessmentGatewayResponse.variables,
       WorkflowServiceTasks.AssociateWorkflowInstance,
       WorkflowServiceTasks.VerifyApplicationExceptions,

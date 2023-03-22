@@ -6,7 +6,7 @@ import { WorkflowServiceTasks } from "../constants/workflow-variables-constants"
  * @param workflowResultVariables workflow result variables
  * @param serviceTasks service tasks to verify.
  */
-export function expectToPassthroughServiceTasks(
+export function expectToPassThroughServiceTasks(
   workflowResultVariables: unknown,
   ...serviceTasks: WorkflowServiceTasks[]
 ) {
@@ -21,7 +21,7 @@ export function expectToPassthroughServiceTasks(
  * @param workflowResultVariables workflow result variables
  * @param serviceTasks service tasks to verify.
  */
-export function expectNotToPassthroughServiceTasks(
+export function expectNotToPassThroughServiceTasks(
   workflowResultVariables: unknown,
   ...serviceTasks: WorkflowServiceTasks[]
 ) {
