@@ -121,6 +121,5 @@ export function createFakeSingleIndependentStudentData(): Partial<AssessmentCons
     // Single independent student.
     studentDataDependantstatus: "independant",
     studentDataRelationshipStatus: "single",
-    studentDataTaxReturnIncome: 40000,
   };
 }
