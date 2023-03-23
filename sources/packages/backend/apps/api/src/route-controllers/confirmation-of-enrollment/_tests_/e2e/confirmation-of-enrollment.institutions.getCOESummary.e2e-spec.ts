@@ -9,8 +9,10 @@ import {
   getInstitutionToken,
   InstitutionTokenTypes,
 } from "../../../../testHelpers";
-import { createFakeInstitutionLocation } from "@sims/test-utils";
-import { saveFakeApplicationCOE } from "@sims/test-utils/factories/confirmation-of-enrollment";
+import {
+  createFakeInstitutionLocation,
+  saveFakeApplicationDisbursements,
+} from "@sims/test-utils";
 import {
   Application,
   ApplicationStatus,
@@ -23,9 +25,8 @@ import { addDays, getISODateOnlyString } from "@sims/utilities";
 import { PaginatedResultsAPIOutDTO } from "../../../models/pagination.dto";
 import { COESummaryAPIOutDTO } from "../../models/confirmation-of-enrollment.dto";
 import { getUserFullName } from "../../../../utilities";
-import { ClientTypeBaseRoute } from "../../../../types";
 
-describe(`${ClientTypeBaseRoute.Institution}-ConfirmationOfEnrollmentInstitutionsController(e2e)-getCOESummary`, () => {
+describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-getCOESummary", () => {
   let app: INestApplication;
   let appDataSource: DataSource;
   let applicationRepo: Repository<Application>;
@@ -55,7 +56,7 @@ describe(`${ClientTypeBaseRoute.Institution}-ConfirmationOfEnrollmentInstitution
       collegeCLocation,
     );
     // Application A
-    const applicationA = await saveFakeApplicationCOE(
+    const applicationA = await saveFakeApplicationDisbursements(
       appDataSource,
       {
         institution: collegeC,
@@ -68,7 +69,7 @@ describe(`${ClientTypeBaseRoute.Institution}-ConfirmationOfEnrollmentInstitution
     const [applicationAFirstSchedule] =
       applicationA.currentAssessment.disbursementSchedules;
     // Application B
-    const applicationB = await saveFakeApplicationCOE(
+    const applicationB = await saveFakeApplicationDisbursements(
       appDataSource,
       {
         institution: collegeC,
@@ -134,7 +135,7 @@ describe(`${ClientTypeBaseRoute.Institution}-ConfirmationOfEnrollmentInstitution
       collegeCLocation,
     );
     // Application A
-    const applicationA = await saveFakeApplicationCOE(
+    const applicationA = await saveFakeApplicationDisbursements(
       appDataSource,
       {
         institution: collegeC,
@@ -150,7 +151,7 @@ describe(`${ClientTypeBaseRoute.Institution}-ConfirmationOfEnrollmentInstitution
     await applicationRepo.save(applicationA);
     await disbursementScheduleRepo.save(applicationAFirstSchedule);
     // Application B
-    const applicationB = await saveFakeApplicationCOE(
+    const applicationB = await saveFakeApplicationDisbursements(
       appDataSource,
       {
         institution: collegeC,
