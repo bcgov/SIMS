@@ -1049,6 +1049,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
         .createQueryBuilder("application")
         .select([
           "application.id",
+          "currentAssessment.id",
           "currentAssessment.assessmentWorkflowId",
           "student.id",
           "user.id",
