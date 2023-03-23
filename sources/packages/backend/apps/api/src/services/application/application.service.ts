@@ -16,7 +16,6 @@ import {
   AssessmentTriggerType,
   User,
   ApplicationData,
-  StudentScholasticStandingChangeType,
 } from "@sims/sims-db";
 import { StudentFileService } from "../student-file/student-file.service";
 import {

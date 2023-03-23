@@ -1,7 +1,13 @@
 import { HttpStatus, INestApplication } from "@nestjs/common";
 import * as request from "supertest";
 import { DataSource, Repository } from "typeorm";
-import { BEARER_AUTH_TYPE, createTestingAppModule } from "../../../testHelpers";
+import {
+  BEARER_AUTH_TYPE,
+  createTestingAppModule,
+  FakeStudentUsersTypes,
+  getStudentToken,
+  getStudentByFakeStudentUserType,
+} from "../../../testHelpers";
 import {
   createFakeStudentAppeal,
   createFakeStudentAppealRequest,
@@ -20,14 +26,9 @@ import {
   StudentScholasticStandingChangeType,
   User,
 } from "@sims/sims-db";
-import {
-  FakeStudentUsersTypes,
-  getStudentToken,
-  getStudentByFakeStudentUserType,
-} from "../../../testHelpers";
 import { addDays } from "@sims/utilities";
 
-describe(`ApplicationStudentsController(e2e)-getCompletedApplicationDetails`, () => {
+describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", () => {
   let app: INestApplication;
   let appDataSource: DataSource;
   let applicationRepo: Repository<Application>;
