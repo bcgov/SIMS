@@ -1,23 +1,25 @@
 <template>
-  <v-card class="mt-4">
-    <div class="mx-5 py-4">
-      <body-header title="Profile">
-        <template #actions>
-          <check-permission-role :role="Role.InstitutionEditProfile">
-            <template #="{ notAllowed }">
-              <v-btn
-                class="float-right"
-                @click="editProfile"
-                variant="text"
-                color="primary"
-                prepend-icon="fa:fa fa-gear"
-                :disabled="notAllowed"
-                >Edit
-              </v-btn>
-            </template>
-          </check-permission-role>
-        </template>
-      </body-header>
+  <tab-container>
+    <body-header-container>
+      <template #header>
+        <body-header title="Profile">
+          <template #actions>
+            <check-permission-role :role="Role.InstitutionEditProfile">
+              <template #="{ notAllowed }">
+                <v-btn
+                  class="float-right"
+                  @click="editProfile"
+                  variant="text"
+                  color="primary"
+                  prepend-icon="fa:fa fa-gear"
+                  :disabled="notAllowed"
+                  >Edit
+                </v-btn>
+              </template>
+            </check-permission-role>
+          </template>
+        </body-header>
+      </template>
       <p class="category-header-medium">Institution profile</p>
       <content-group>
         <v-row>
@@ -116,8 +118,8 @@
           :propertyValue="institutionProfileDetail.mailingAddress?.country"
         />
       </content-group>
-    </div>
-  </v-card>
+    </body-header-container>
+  </tab-container>
 </template>
 
 <script lang="ts">

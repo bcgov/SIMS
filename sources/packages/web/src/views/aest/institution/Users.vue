@@ -1,13 +1,11 @@
 <template>
-  <v-card class="mt-4">
-    <div class="mx-5 py-4">
-      <institution-user-summary
-        :institutionId="institutionId"
-        :hasBusinessGuid="hasBusinessGuid"
-        :allowBasicBCeIDCreation="true"
-      />
-    </div>
-  </v-card>
+  <tab-container>
+    <institution-user-summary
+      :institutionId="institutionId"
+      :hasBusinessGuid="hasBusinessGuid"
+      :allowBasicBCeIDCreation="true"
+    />
+  </tab-container>
 </template>
 
 <script lang="ts">

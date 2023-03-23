@@ -1,17 +1,20 @@
 <template>
-  <full-page-container :full-width="true">
-    <body-header
-      title="Designation agreements"
-      :recordsCount="designations?.length"
-      class="m-1"
-    >
-    </body-header>
-    <designation-agreement-summary
-      :designations="designations"
-      toggleMessage="No designation agreements found"
-      @viewDesignation="goToViewDesignation"
-    />
-  </full-page-container>
+  <tab-container>
+    <body-header-container>
+      <template #header>
+        <body-header
+          title="Designation agreements"
+          :recordsCount="designations?.length"
+        >
+        </body-header>
+      </template>
+      <designation-agreement-summary
+        :designations="designations"
+        toggleMessage="No designation agreements found"
+        @viewDesignation="goToViewDesignation"
+      />
+    </body-header-container>
+  </tab-container>
 </template>
 
 <script lang="ts">
