@@ -29,6 +29,7 @@ import {
   ASSESSMENT_ALREADY_ASSOCIATED_TO_WORKFLOW,
   ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE,
   ASSESSMENT_NOT_FOUND,
+  Workers,
 } from "@sims/services/constants";
 import {
   ASSESSMENT_DATA,
@@ -46,7 +47,7 @@ export class AssessmentController {
   /**
    * Associates the workflow instance if the assessment is not associated already.
    */
-  @ZeebeWorker("associate-workflow-instance", {
+  @ZeebeWorker(Workers.AssociateWorkflowInstance, {
     fetchVariable: [ASSESSMENT_ID],
     maxJobsToActivate: MaxJobsToActivate.Normal,
   })
@@ -91,7 +92,7 @@ export class AssessmentController {
    * received through the job custom headers.
    * @returns filtered consolidated information.
    */
-  @ZeebeWorker("load-assessment-consolidated-data", {
+  @ZeebeWorker(Workers.LoadAssessmentConsolidatedData, {
     fetchVariable: [ASSESSMENT_ID],
     maxJobsToActivate: MaxJobsToActivate.Normal,
   })
@@ -117,7 +118,7 @@ export class AssessmentController {
   /**
    * Updates the assessment dynamic data if it was not updated already.
    */
-  @ZeebeWorker("save-assessment-data", {
+  @ZeebeWorker(Workers.SaveAssessmentData, {
     fetchVariable: [ASSESSMENT_ID, ASSESSMENT_DATA],
     maxJobsToActivate: MaxJobsToActivate.Normal,
   })
@@ -136,7 +137,7 @@ export class AssessmentController {
   /**
    * Updates the NOA (Notice of Assessment) status if not updated yet.
    */
-  @ZeebeWorker("update-noa-status", {
+  @ZeebeWorker(Workers.UpdateNOAStatus, {
     fetchVariable: [ASSESSMENT_ID],
     maxJobsToActivate: MaxJobsToActivate.Maximum,
   })
