@@ -57,7 +57,7 @@ export class SupportingUserController {
     return job.complete({ createdSupportingUsersIds });
   }
 
-  @ZeebeWorker("load-supporting-user-data", {
+  @ZeebeWorker(Workers.LoadSupportingUserData, {
     fetchVariable: [APPLICATION_ID, SUPPORTING_USER_ID],
     maxJobsToActivate: MaxJobsToActivate.High,
   })

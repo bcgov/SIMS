@@ -11,4 +11,5 @@ export enum Workers {
   SaveDisbursementSchedules = "save-disbursement-schedules",
   AssociateMSFAA = "associate-msfaa",
   CreateSupportingUsers = "create-supporting-users",
+  LoadSupportingUserData = "load-supporting-user-data",
 }
