@@ -310,7 +310,7 @@
           "tags": []
         },
         {
-          "label": "Address 1",
+          "label": "Address line 1",
           "tableView": false,
           "validate": {
             "required": true,
@@ -361,7 +361,7 @@
           },
           "validateOn": "change",
           "conditional": {
-            "show": null,
+            "show": "",
             "when": null,
             "eq": ""
           },
@@ -386,10 +386,11 @@
           "displayMask": "",
           "spellcheck": true,
           "truncateMultipleSpaces": false,
-          "id": "euyu6j"
+          "id": "euyu6j",
+          "tags": []
         },
         {
-          "label": "Address 2",
+          "label": "Address line 2",
           "tableView": false,
           "validate": {
             "maxLength": 100,
@@ -440,7 +441,7 @@
           },
           "validateOn": "change",
           "conditional": {
-            "show": null,
+            "show": "",
             "when": null,
             "eq": ""
           },
@@ -465,7 +466,8 @@
           "displayMask": "",
           "spellcheck": true,
           "truncateMultipleSpaces": false,
-          "id": "e71n81b"
+          "id": "e71n81b",
+          "tags": []
         },
         {
           "label": "Columns",
