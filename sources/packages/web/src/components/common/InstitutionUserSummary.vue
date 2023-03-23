@@ -1,176 +1,180 @@
 <!-- This component is shared between ministry and student users -->
 <template>
-  <body-header title="All users" :recordsCount="usersListAndCount.count">
-    <template #subtitle>
-      <ul>
-        <li>
-          Admin roles can access <strong>all features</strong
-          ><tooltip-icon
-            >Admin's can setup and manage your users, institution profile,
-            locations, designation, and offering uploads including performing
-            user role duties.</tooltip-icon
-          >
-        </li>
-        <li>
-          User roles can access <strong>some features</strong
-          ><tooltip-icon
-            >Users can only manage programs and offerings within their
-            locations, program information requests, confirming enrolment, and
-            reporting on scholastic standings.</tooltip-icon
-          >
-        </li>
-        <li>
-          Legal Signing Authority role is an admin with
-          <strong>an additional feature</strong
-          ><tooltip-icon
-            >This role is only to request a designation for your institution.
-            The user must be an admin first to get assigned this
-            role.</tooltip-icon
-          >
-        </li>
-      </ul>
-    </template>
+  <body-header-container>
+    <template #header>
+      <body-header title="All users" :recordsCount="usersListAndCount.count">
+        <template #subtitle>
+          <ul>
+            <li>
+              Admin roles can access <strong>all features</strong
+              ><tooltip-icon
+                >Admin's can setup and manage your users, institution profile,
+                locations, designation, and offering uploads including
+                performing user role duties.</tooltip-icon
+              >
+            </li>
+            <li>
+              User roles can access <strong>some features</strong
+              ><tooltip-icon
+                >Users can only manage programs and offerings within their
+                locations, program information requests, confirming enrolment,
+                and reporting on scholastic standings.</tooltip-icon
+              >
+            </li>
+            <li>
+              Legal Signing Authority role is an admin with
+              <strong>an additional feature</strong
+              ><tooltip-icon
+                >This role is only to request a designation for your
+                institution. The user must be an admin first to get assigned
+                this role.</tooltip-icon
+              >
+            </li>
+          </ul>
+        </template>
 
-    <template #actions>
-      <v-row class="m-0 p-0">
-        <v-text-field
-          density="compact"
-          label="Search name"
-          variant="outlined"
-          v-model="searchBox"
-          data-cy="searchBox"
-          @keyup.enter="searchUserTable"
-          prepend-inner-icon="mdi-magnify"
-          hide-details="auto"
-        >
-        </v-text-field>
-        <check-permission-role :role="Role.InstitutionAddNewUser">
-          <template #="{ notAllowed }">
-            <v-btn
-              v-if="hasBusinessGuid || allowBasicBCeIDCreation"
-              class="ml-2"
-              color="primary"
-              :disabled="notAllowed"
-              data-cy="addNewUser"
-              @click="openNewUserModal"
-              prepend-icon="fa:fa fa-plus-circle"
+        <template #actions>
+          <v-row class="m-0 p-0">
+            <v-text-field
+              density="compact"
+              label="Search name"
+              variant="outlined"
+              v-model="searchBox"
+              data-cy="searchBox"
+              @keyup.enter="searchUserTable"
+              prepend-inner-icon="mdi-magnify"
+              hide-details="auto"
             >
-              Add new user
-            </v-btn>
-          </template>
-        </check-permission-role>
-      </v-row>
+            </v-text-field>
+            <check-permission-role :role="Role.InstitutionAddNewUser">
+              <template #="{ notAllowed }">
+                <v-btn
+                  v-if="hasBusinessGuid || allowBasicBCeIDCreation"
+                  class="ml-2"
+                  color="primary"
+                  :disabled="notAllowed"
+                  data-cy="addNewUser"
+                  @click="openNewUserModal"
+                  prepend-icon="fa:fa fa-plus-circle"
+                >
+                  Add new user
+                </v-btn>
+              </template>
+            </check-permission-role>
+          </v-row>
+        </template>
+      </body-header>
     </template>
-  </body-header>
-  <content-group>
-    <DataTable
-      :value="usersListAndCount.results"
-      :lazy="true"
-      :paginator="true"
-      :rows="DEFAULT_PAGE_LIMIT"
-      :rowsPerPageOptions="PAGINATION_LIST"
-      :totalRecords="usersListAndCount.count"
-      @page="paginationAndSortEvent($event)"
-      @sort="paginationAndSortEvent($event)"
-      :loading="loading"
-      breakpoint="1250px"
-      data-cy="usersList"
-    >
-      <template #empty>
-        <p class="text-center font-weight-bold">No records found.</p>
-      </template>
-      <Column
-        :field="UserFields.DisplayName"
-        header="Name"
-        :sortable="true"
-      ></Column>
-      <Column
-        :field="UserFields.Email"
-        header="Email"
-        :sortable="true"
-        data-cy="userEmail"
-      ></Column>
-      <Column :field="UserFields.UserType" header="User Type">
-        <template #body="slotProps">
-          <span data-cy="userType" class="text-capitalize">{{
-            slotProps.data.userType
-          }}</span>
-        </template></Column
+    <content-group>
+      <DataTable
+        :value="usersListAndCount.results"
+        :lazy="true"
+        :paginator="true"
+        :rows="DEFAULT_PAGE_LIMIT"
+        :rowsPerPageOptions="PAGINATION_LIST"
+        :totalRecords="usersListAndCount.count"
+        @page="paginationAndSortEvent($event)"
+        @sort="paginationAndSortEvent($event)"
+        :loading="loading"
+        breakpoint="1250px"
+        data-cy="usersList"
       >
-      <Column :field="UserFields.Roles" header="Role">
-        <template #body="slotProps">
-          <span class="text-capitalize"
-            >{{ institutionUserRoleToDisplay(slotProps.data.roles[0]) }}
-          </span>
+        <template #empty>
+          <p class="text-center font-weight-bold">No records found.</p>
         </template>
-      </Column>
-      <Column :field="UserFields.Locations" header="Locations"
-        ><template #body="slotProps">
-          <ul v-for="location in slotProps.data.locations" :key="location">
-            <li>{{ location }}</li>
-          </ul></template
-        ></Column
-      >
-      <Column :field="UserFields.IsActive" header="Status"
-        ><template #body="slotProps">
-          <status-chip-active-user
-            :is-active="slotProps.data.isActive"
-            data-cy="userStatus"
-          /> </template
-      ></Column>
-      <Column header="Action"
-        ><template #body="slotProps">
-          <check-permission-role :role="Role.InstitutionEditUser">
-            <template #="{ notAllowed }">
-              <v-btn
-                :disabled="!slotProps.data.isActive || notAllowed"
-                @click="openEditUserModal(slotProps.data)"
-                variant="text"
-                color="primary"
-                append-icon="mdi-pencil-outline"
-                data-cy="editUser"
-              >
-                <span class="text-decoration-underline"
-                  ><strong>Edit</strong></span
+        <Column
+          :field="UserFields.DisplayName"
+          header="Name"
+          :sortable="true"
+        ></Column>
+        <Column
+          :field="UserFields.Email"
+          header="Email"
+          :sortable="true"
+          data-cy="userEmail"
+        ></Column>
+        <Column :field="UserFields.UserType" header="User Type">
+          <template #body="slotProps">
+            <span data-cy="userType" class="text-capitalize">{{
+              slotProps.data.userType
+            }}</span>
+          </template></Column
+        >
+        <Column :field="UserFields.Roles" header="Role">
+          <template #body="slotProps">
+            <span class="text-capitalize"
+              >{{ institutionUserRoleToDisplay(slotProps.data.roles[0]) }}
+            </span>
+          </template>
+        </Column>
+        <Column :field="UserFields.Locations" header="Locations"
+          ><template #body="slotProps">
+            <ul v-for="location in slotProps.data.locations" :key="location">
+              <li>{{ location }}</li>
+            </ul></template
+          ></Column
+        >
+        <Column :field="UserFields.IsActive" header="Status"
+          ><template #body="slotProps">
+            <status-chip-active-user
+              :is-active="slotProps.data.isActive"
+              data-cy="userStatus"
+            /> </template
+        ></Column>
+        <Column header="Action"
+          ><template #body="slotProps">
+            <check-permission-role :role="Role.InstitutionEditUser">
+              <template #="{ notAllowed }">
+                <v-btn
+                  :disabled="!slotProps.data.isActive || notAllowed"
+                  @click="openEditUserModal(slotProps.data)"
+                  variant="text"
+                  color="primary"
+                  append-icon="mdi-pencil-outline"
+                  data-cy="editUser"
                 >
-              </v-btn>
-            </template>
-          </check-permission-role>
-          <check-permission-role :role="Role.InstitutionEnableDisableUser">
-            <template #="{ notAllowed }">
-              <v-btn
-                :disabled="slotProps.data.disableRemove || notAllowed"
-                @click="updateUserStatus(slotProps.data)"
-                variant="text"
-                color="primary"
-                append-icon="fa:far fa-user"
-                data-cy="disableUser"
-              >
-                <span class="text-decoration-underline"
-                  ><strong>{{
-                    slotProps.data.isActive ? "Disable" : "Enable"
-                  }}</strong></span
+                  <span class="text-decoration-underline"
+                    ><strong>Edit</strong></span
+                  >
+                </v-btn>
+              </template>
+            </check-permission-role>
+            <check-permission-role :role="Role.InstitutionEnableDisableUser">
+              <template #="{ notAllowed }">
+                <v-btn
+                  :disabled="slotProps.data.disableRemove || notAllowed"
+                  @click="updateUserStatus(slotProps.data)"
+                  variant="text"
+                  color="primary"
+                  append-icon="fa:far fa-user"
+                  data-cy="disableUser"
                 >
-              </v-btn>
-            </template>
-          </check-permission-role>
-        </template>
-      </Column>
-    </DataTable>
-  </content-group>
-  <!-- Add user. -->
-  <add-institution-user
-    ref="addInstitutionUserModal"
-    :institutionId="institutionId"
-    :hasBusinessGuid="hasBusinessGuid"
-    :canSearchBCeIDUsers="canSearchBCeIDUsers"
-  />
-  <!-- Edit user. -->
-  <edit-institution-user
-    ref="editInstitutionUserModal"
-    :institutionId="institutionId"
-    :hasBusinessGuid="hasBusinessGuid"
-  />
+                  <span class="text-decoration-underline"
+                    ><strong>{{
+                      slotProps.data.isActive ? "Disable" : "Enable"
+                    }}</strong></span
+                  >
+                </v-btn>
+              </template>
+            </check-permission-role>
+          </template>
+        </Column>
+      </DataTable>
+    </content-group>
+    <!-- Add user. -->
+    <add-institution-user
+      ref="addInstitutionUserModal"
+      :institutionId="institutionId"
+      :hasBusinessGuid="hasBusinessGuid"
+      :canSearchBCeIDUsers="canSearchBCeIDUsers"
+    />
+    <!-- Edit user. -->
+    <edit-institution-user
+      ref="editInstitutionUserModal"
+      :institutionId="institutionId"
+      :hasBusinessGuid="hasBusinessGuid"
+    />
+  </body-header-container>
 </template>
 
 <script lang="ts">
