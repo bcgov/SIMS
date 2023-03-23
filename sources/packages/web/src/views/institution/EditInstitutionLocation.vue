@@ -8,6 +8,17 @@
         data-cy="editLocationHeader"
       />
     </template>
+    <template #alerts>
+      <banner
+        :type="BannerTypes.Info"
+        header="How to update information"
+        summary="Please email a request to update the location details. For the primary contact, you can update it without a request."
+      >
+        <template #actions>
+          <v-btn color="info">Email designat@gov.bc.ca</v-btn>
+        </template>
+      </banner>
+    </template>
     <location-edit-form
       :locationData="initialData"
       @updateInstitutionLocation="updateInstitutionLocation"
@@ -24,7 +35,7 @@ import { InstitutionLocationPrimaryContactAPIInDTO } from "@/services/http/dto";
 import { InstitutionService } from "@/services/InstitutionService";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import { AuthService } from "@/services/AuthService";
-import { InstitutionLocationEdit } from "@/types";
+import { InstitutionLocationEdit, BannerTypes } from "@/types";
 import { useSnackBar } from "@/composables";
 
 export default defineComponent({
@@ -73,6 +84,7 @@ export default defineComponent({
       initialData,
       updateInstitutionLocation,
       goBackRouteParams,
+      BannerTypes,
     };
   },
 });
