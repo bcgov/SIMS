@@ -7,6 +7,15 @@ import {
   User,
 } from "@sims/sims-db";
 
+/**
+ * Creates a student appeal request record ready to be saved to the database.
+ * @param relations dependencies.
+ * - `studentAppeal` related student appeal.
+ * - `assessedBy` related Ministry user assessing the appeal request.
+ * - `application` related student application.
+ * - `studentAssessment` related assessment.
+ * @returns a student appeal request record ready to be saved to the database.
+ */
 export function createFakeStudentAppealRequest(relations?: {
   studentAppeal?: StudentAppeal;
   assessedBy?: User;

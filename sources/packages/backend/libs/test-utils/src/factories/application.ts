@@ -50,9 +50,13 @@ export function createFakeApplication(relations?: {
 }
 
 /**
- * Create and save to the database a disbursement record with all the dependencies.
+ * Create and save to the database an application with disbursement record(s) with all the dependencies.
  * @param dataSource manages the repositories to save the data.
  * @param relations dependencies.
+ * - `institution` related institution.
+ * - `institutionLocation` related location.
+ * - `disbursementValues` related disbursement schedules.
+ * - `student` related student.
  * @param options additional options:
  * - `createSecondDisbursement` if provided and true creates a second disbursement,
  * otherwise only one disbursement will be created.

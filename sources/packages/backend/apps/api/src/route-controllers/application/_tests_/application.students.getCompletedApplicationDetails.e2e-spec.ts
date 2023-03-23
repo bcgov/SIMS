@@ -20,6 +20,7 @@ import {
   ApplicationStatus,
   COEStatus,
   DisbursementSchedule,
+  Student,
   StudentAppeal,
   StudentAppealStatus,
   StudentScholasticStanding,
@@ -36,6 +37,7 @@ describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", ()
   let studentScholasticStandingRepo: Repository<StudentScholasticStanding>;
   let studentAppealRepo: Repository<StudentAppeal>;
   let submittedByInstitutionUser: User;
+  let student: Student;
 
   beforeAll(async () => {
     const { nestApplication, dataSource } = await createTestingAppModule();
@@ -49,6 +51,10 @@ describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", ()
     );
     studentAppealRepo = dataSource.getRepository(StudentAppeal);
     submittedByInstitutionUser = await userRepo.save(createFakeUser());
+    student = await getStudentByFakeStudentUserType(
+      FakeStudentUsersTypes.FakeStudentUserType1,
+      dataSource,
+    );
   });
 
   it("Should throw NotFoundException when the application is not associated with the authenticated student.", async () => {
@@ -73,10 +79,6 @@ describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", ()
 
   it("Should throw NotFoundException when the application is not in 'Completed' status.", async () => {
     // Arrange
-    const student = await getStudentByFakeStudentUserType(
-      FakeStudentUsersTypes.FakeStudentUserType1,
-      appDataSource,
-    );
     const application = await saveFakeApplicationDisbursements(
       appDataSource,
       { student },
@@ -100,10 +102,6 @@ describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", ()
 
   it("Should get application details when application is in 'Completed' status.", async () => {
     // Arrange
-    const student = await getStudentByFakeStudentUserType(
-      FakeStudentUsersTypes.FakeStudentUserType1,
-      appDataSource,
-    );
     const application = await saveFakeApplicationDisbursements(
       appDataSource,
       { student },
@@ -141,10 +139,6 @@ describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", ()
 
   it(`Should get application details with scholastic standing change type when application has a scholastic standing '${StudentScholasticStandingChangeType.StudentDidNotCompleteProgram} associated with.`, async () => {
     // Arrange
-    const student = await getStudentByFakeStudentUserType(
-      FakeStudentUsersTypes.FakeStudentUserType1,
-      appDataSource,
-    );
     const application = await saveFakeApplicationDisbursements(appDataSource, {
       student,
     });
@@ -187,10 +181,6 @@ describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", ()
 
   it(`Should get application details with the most updated appeal status when the application has more than one student appeals associated with.`, async () => {
     // Arrange
-    const student = await getStudentByFakeStudentUserType(
-      FakeStudentUsersTypes.FakeStudentUserType1,
-      appDataSource,
-    );
     const application = await saveFakeApplicationDisbursements(appDataSource, {
       student,
     });

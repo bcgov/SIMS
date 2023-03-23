@@ -6,6 +6,15 @@ import {
   User,
 } from "@sims/sims-db";
 
+/**
+ * Creates a scholastic standing record ready to be saved to the database.
+ * @param relations dependencies.
+ * - `submittedBy` institution user submitting the scholastic standing change.
+ * - `application` related student application.
+ * - `studentAssessment` related assessment.
+ * - `student` related student.
+ * @returns scholastic standing record ready to be saved to the database.
+ */
 export function createFakeStudentScholasticStanding(relations?: {
   submittedBy: User;
   application?: Application;
