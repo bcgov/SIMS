@@ -31,7 +31,6 @@ describe(`${ClientTypeBaseRoute.AEST}-ApplicationExceptionAESTController(e2e)-ap
 
   it("Should be able to approve application exception when available.", async () => {
     // Arrange
-    //zbClient.publishMessage = jest.fn();
     const application = await createFakeApplicationWithApplicationException(
       ApplicationExceptionStatus.Pending,
       appDataSource,
@@ -67,7 +66,6 @@ describe(`${ClientTypeBaseRoute.AEST}-ApplicationExceptionAESTController(e2e)-ap
 
   it("Should be able to decline application exception when available.", async () => {
     // Arrange
-    //zbClient.publishMessage = jest.fn();
     const application = await createFakeApplicationWithApplicationException(
       ApplicationExceptionStatus.Pending,
       appDataSource,
