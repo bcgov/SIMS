@@ -64,7 +64,7 @@ import Enrolment from "@/components/students/applicationTracker/Enrolment.vue";
 import Completed from "@/components/students/applicationTracker/Completed.vue";
 
 class StatusIconDetails {
-  constructor(public statusType: "success" | "warning" | "error") {}
+  constructor(public statusType?: "success" | "warning" | "error") {}
   get statusIcon(): string | undefined {
     console.log("StatusIconDetails: ", this.statusType);
     switch (this.statusType) {
