@@ -13,7 +13,7 @@ import { getUserFullName } from "../../../../utilities";
 import { TestingModule } from "@nestjs/testing";
 import { createFakeApplicationWithApplicationException } from "../application-exception-helper";
 
-describe(`${ClientTypeBaseRoute.AEST}-ApplicationExceptionAESTController(e2e)-getExceptionById`, () => {
+describe(`${ClientTypeBaseRoute.AEST}-ApplicationExceptionAESTController(e2e)-getPendingApplicationExceptions`, () => {
   let app: INestApplication;
   let appDataSource: DataSource;
   let appModule: TestingModule;

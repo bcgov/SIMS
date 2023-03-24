@@ -13,7 +13,7 @@ import * as faker from "faker";
 import { createFakeApplicationWithApplicationException } from "../application-exception-helper";
 import { TestingModule } from "@nestjs/testing";
 
-describe(`${ClientTypeBaseRoute.AEST}-ApplicationExceptionAESTController(e2e)-getExceptionById`, () => {
+describe(`${ClientTypeBaseRoute.AEST}-ApplicationExceptionAESTController(e2e)-approveException`, () => {
   let app: INestApplication;
   let appDataSource: DataSource;
   let appModule: TestingModule;
