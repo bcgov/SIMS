@@ -12,11 +12,13 @@ import { ClientTypeBaseRoute } from "../../../../types";
 import * as faker from "faker";
 import { createFakeApplicationWithApplicationException } from "../application-exception-helper";
 import { TestingModule } from "@nestjs/testing";
+import { ZBClient } from "zeebe-node";
 
 describe(`${ClientTypeBaseRoute.AEST}-ApplicationExceptionAESTController(e2e)-approveException`, () => {
   let app: INestApplication;
   let appDataSource: DataSource;
   let appModule: TestingModule;
+  let zbClient: ZBClient;
 
   beforeAll(async () => {
     const { nestApplication, dataSource, module } =
@@ -24,10 +26,12 @@ describe(`${ClientTypeBaseRoute.AEST}-ApplicationExceptionAESTController(e2e)-ap
     app = nestApplication;
     appDataSource = dataSource;
     appModule = module;
+    zbClient = app.get(ZBClient);
   });
 
   it("Should be able to approve application exception when available.", async () => {
     // Arrange
+    //zbClient.publishMessage = jest.fn();
     const application = await createFakeApplicationWithApplicationException(
       ApplicationExceptionStatus.Pending,
       appDataSource,
@@ -49,10 +53,21 @@ describe(`${ClientTypeBaseRoute.AEST}-ApplicationExceptionAESTController(e2e)-ap
         BEARER_AUTH_TYPE,
       )
       .expect(HttpStatus.OK);
+
+    expect(zbClient.publishMessage).toHaveBeenCalledWith(
+      expect.objectContaining({
+        correlationKey: application.applicationException.id.toString(),
+        name: "application-exception-verified",
+        variables: {
+          applicationExceptionStatus: "Approved",
+        },
+      }),
+    );
   });
 
   it("Should be able to decline application exception when available.", async () => {
     // Arrange
+    //zbClient.publishMessage = jest.fn();
     const application = await createFakeApplicationWithApplicationException(
       ApplicationExceptionStatus.Pending,
       appDataSource,
@@ -74,6 +89,16 @@ describe(`${ClientTypeBaseRoute.AEST}-ApplicationExceptionAESTController(e2e)-ap
         BEARER_AUTH_TYPE,
       )
       .expect(HttpStatus.OK);
+
+    expect(zbClient.publishMessage).toHaveBeenCalledWith(
+      expect.objectContaining({
+        correlationKey: application.applicationException.id.toString(),
+        name: "application-exception-verified",
+        variables: {
+          applicationExceptionStatus: "Declined",
+        },
+      }),
+    );
   });
 
   it("Should get 'not found' status and message when the application exception is not available.", async () => {
@@ -130,7 +155,7 @@ describe(`${ClientTypeBaseRoute.AEST}-ApplicationExceptionAESTController(e2e)-ap
       });
   });
 
-  it("Should not be able to approve application exception when status passed is not `Approved` or `Declined`.", async () => {
+  it("Should not be able to approve application exception when status passed is not a valid application exception status.", async () => {
     // Arrange
     const application = await createFakeApplicationWithApplicationException(
       ApplicationExceptionStatus.Declined,
@@ -138,7 +163,7 @@ describe(`${ClientTypeBaseRoute.AEST}-ApplicationExceptionAESTController(e2e)-ap
       appModule,
     );
     const updateApplicationException = {
-      exceptionStatus: "Anything",
+      exceptionStatus: ApplicationExceptionStatus.Pending,
       noteDescription: faker.lorem.text(10),
     };
 

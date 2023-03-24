@@ -17,6 +17,8 @@ import { DataSource, Repository } from "typeorm";
 /**
  * Create a fake application with an application exception associated.
  * @param applicationExceptionStatus application exception status.
+ * @param dataSource application dataSource.
+ * @param module application module.
  * @returns application with an application exception associated.
  */
 export async function createFakeApplicationWithApplicationException(
