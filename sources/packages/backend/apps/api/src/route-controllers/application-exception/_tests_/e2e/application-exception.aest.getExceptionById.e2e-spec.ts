@@ -46,7 +46,7 @@ describe(`${ClientTypeBaseRoute.AEST}-ApplicationExceptionAESTController(e2e)-ge
     const assessedBy = await userRepo.findOneBy({
       userName: process.env.E2E_TEST_AEST_BUSINESS_ADMINISTRATORS_USER,
     });
-    let applicationException = await createFakeApplicationException(
+    let applicationException = createFakeApplicationException(
       ApplicationExceptionStatus.Approved,
       { creator, assessedBy },
     );
@@ -55,7 +55,7 @@ describe(`${ClientTypeBaseRoute.AEST}-ApplicationExceptionAESTController(e2e)-ge
     );
     const applicationExceptionRequest =
       await applicationExceptionRequestRepo.save(
-        await createFakeApplicationExceptionRequest(applicationException, {
+        createFakeApplicationExceptionRequest(applicationException, {
           creator,
         }),
       );

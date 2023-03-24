@@ -1,71 +1,53 @@
 import { HttpStatus, INestApplication } from "@nestjs/common";
 import * as request from "supertest";
-import { Repository } from "typeorm";
+import { DataSource } from "typeorm";
 import {
   AESTGroups,
   BEARER_AUTH_TYPE,
   createTestingAppModule,
   getAESTToken,
 } from "../../../../testHelpers";
-import {
-  createFakeApplication,
-  createFakeApplicationException,
-  createFakeStudent,
-} from "@sims/test-utils";
-import {
-  Application,
-  ApplicationException,
-  ApplicationExceptionStatus,
-  Student,
-  User,
-} from "@sims/sims-db";
+import { ApplicationExceptionStatus } from "@sims/sims-db";
 import { ClientTypeBaseRoute } from "../../../../types";
-import { SystemUsersService } from "@sims/services";
 import { getUserFullName } from "../../../../utilities";
+import { TestingModule } from "@nestjs/testing";
+import { createFakeApplicationWithApplicationException } from "../application-exception-helper";
 
 describe(`${ClientTypeBaseRoute.AEST}-ApplicationExceptionAESTController(e2e)-getExceptionById`, () => {
   let app: INestApplication;
-  let applicationExceptionRepo: Repository<ApplicationException>;
-  let systemUsersService: SystemUsersService;
-  let userRepo: Repository<User>;
-  let applicationRepo: Repository<Application>;
-  let studentRepo: Repository<Student>;
-  let creator: User;
-  let assessedBy: User;
+  let appDataSource: DataSource;
+  let appModule: TestingModule;
 
   beforeAll(async () => {
     const { nestApplication, dataSource, module } =
       await createTestingAppModule();
     app = nestApplication;
-    applicationExceptionRepo = dataSource.getRepository(ApplicationException);
-    systemUsersService = await module.get(SystemUsersService);
-    userRepo = dataSource.getRepository(User);
-    applicationRepo = dataSource.getRepository(Application);
-    studentRepo = dataSource.getRepository(Student);
+    appDataSource = dataSource;
+    appModule = module;
   });
 
   it("Should get pending application exceptions when available.", async () => {
     // Arrange
-    creator = await systemUsersService.systemUser();
-    assessedBy = await userRepo.findOneBy({
-      userName: process.env.E2E_TEST_AEST_BUSINESS_ADMINISTRATORS_USER,
-    });
-    const application1Promise =
-      await createFakeApplicationWithApplicationException(
-        ApplicationExceptionStatus.Pending,
-      );
-    const application2Promise =
-      await createFakeApplicationWithApplicationException(
-        ApplicationExceptionStatus.Pending,
-      );
-    const application3Promise =
-      await createFakeApplicationWithApplicationException(
-        ApplicationExceptionStatus.Approved,
-      );
-    const application4Promise =
-      await createFakeApplicationWithApplicationException(
-        ApplicationExceptionStatus.Declined,
-      );
+    const application1Promise = createFakeApplicationWithApplicationException(
+      ApplicationExceptionStatus.Pending,
+      appDataSource,
+      appModule,
+    );
+    const application2Promise = createFakeApplicationWithApplicationException(
+      ApplicationExceptionStatus.Pending,
+      appDataSource,
+      appModule,
+    );
+    const application3Promise = createFakeApplicationWithApplicationException(
+      ApplicationExceptionStatus.Approved,
+      appDataSource,
+      appModule,
+    );
+    const application4Promise = createFakeApplicationWithApplicationException(
+      ApplicationExceptionStatus.Declined,
+      appDataSource,
+      appModule,
+    );
     const [application1, application2, application3, application4] =
       await Promise.all([
         application1Promise,
@@ -132,32 +114,4 @@ describe(`${ClientTypeBaseRoute.AEST}-ApplicationExceptionAESTController(e2e)-ge
   afterAll(async () => {
     await app?.close();
   });
-
-  /**
-   * Create a fake application with an application exception associated.
-   * @param applicationExceptionStatus application exception status.
-   * @returns application with an application exception associated.
-   */
-  async function createFakeApplicationWithApplicationException(
-    applicationExceptionStatus: ApplicationExceptionStatus,
-  ): Promise<Application> {
-    // Create fake application exception.
-    let applicationException = await createFakeApplicationException(
-      applicationExceptionStatus,
-      { creator, assessedBy },
-    );
-    applicationException = await applicationExceptionRepo.save(
-      applicationException,
-    );
-
-    // Create fake student.
-    let student = createFakeStudent();
-    student = await studentRepo.save(student);
-
-    // Create fake application.
-    const application = createFakeApplication();
-    application.student = student;
-    application.applicationException = applicationException;
-    return applicationRepo.save(application);
-  }
 });
