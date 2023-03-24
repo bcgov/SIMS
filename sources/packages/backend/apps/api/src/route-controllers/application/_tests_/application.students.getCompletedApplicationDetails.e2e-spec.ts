@@ -190,7 +190,7 @@ describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", ()
       application.currentAssessment.disbursementSchedules;
     firstDisbursement.coeStatus = COEStatus.completed;
     await disbursementScheduleRepo.save(firstDisbursement);
-    // Create approved student appeal.
+    // Create approved student appeal submitted yesterday.
     const approvedAppealRequest = createFakeStudentAppealRequest();
     approvedAppealRequest.appealStatus = StudentAppealStatus.Approved;
     const approvedAppeal = createFakeStudentAppeal({
@@ -198,7 +198,7 @@ describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", ()
       appealRequests: [approvedAppealRequest],
     });
     approvedAppeal.submittedDate = addDays(-1);
-    // Create declined student appeal from yesterday
+    // Create pending student appeal submitted today.
     const pendingAppealRequest = createFakeStudentAppealRequest();
     pendingAppealRequest.appealStatus = StudentAppealStatus.Pending;
     const pendingAppeal = createFakeStudentAppeal({
