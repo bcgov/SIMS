@@ -140,6 +140,5 @@ export async function saveFakeApplicationDisbursements(
     fakeOriginalAssessment,
   );
   savedApplication.currentAssessment = savedOriginalAssessment;
-  savedApplication.applicationStatus = ApplicationStatus.Enrolment;
   return applicationRepo.save(savedApplication);
 }

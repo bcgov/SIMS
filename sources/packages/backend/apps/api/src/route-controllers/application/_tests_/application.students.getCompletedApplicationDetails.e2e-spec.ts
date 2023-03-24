@@ -149,13 +149,13 @@ describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", ()
     firstDisbursement.coeStatus = COEStatus.completed;
     await disbursementScheduleRepo.save(firstDisbursement);
     // Create a scholastic standing and have it associated with the completed application.
-    const scholasticStanding = createFakeStudentScholasticStanding({
-      submittedBy: submittedByInstitutionUser,
-    });
-    // 'Student did not complete program' is the only'scholastic standing that does not generate an assessment.
+    // 'Student did not complete program' is the only 'scholastic standing that does not generate an assessment.
     // The below record has only a relationship with the application which must be enough to
     // have the scholasticStandingChangeType returned.
-    scholasticStanding.application = application;
+    const scholasticStanding = createFakeStudentScholasticStanding({
+      submittedBy: submittedByInstitutionUser,
+      application,
+    });
     await studentScholasticStandingRepo.save(scholasticStanding);
 
     const endpoint = `/students/application/${application.id}/completed`;
