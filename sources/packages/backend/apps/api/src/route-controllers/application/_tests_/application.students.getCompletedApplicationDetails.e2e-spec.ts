@@ -190,7 +190,7 @@ describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", ()
       application.currentAssessment.disbursementSchedules;
     firstDisbursement.coeStatus = COEStatus.completed;
     await disbursementScheduleRepo.save(firstDisbursement);
-    // Create approved student appeal
+    // Create approved student appeal.
     const approvedAppealRequest = createFakeStudentAppealRequest();
     approvedAppealRequest.appealStatus = StudentAppealStatus.Approved;
     const approvedAppeal = createFakeStudentAppeal({

@@ -66,7 +66,6 @@ import Completed from "@/components/students/applicationTracker/Completed.vue";
 class StatusIconDetails {
   constructor(public statusType?: "success" | "warning" | "error") {}
   get statusIcon(): string | undefined {
-    console.log("StatusIconDetails: ", this.statusType);
     switch (this.statusType) {
       case "success":
         return "fa:fas fa-check-circle";
