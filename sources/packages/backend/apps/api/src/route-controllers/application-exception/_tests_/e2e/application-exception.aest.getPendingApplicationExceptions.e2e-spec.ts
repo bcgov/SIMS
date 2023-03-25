@@ -8,12 +8,11 @@ import {
   getAESTToken,
 } from "../../../../testHelpers";
 import { ApplicationExceptionStatus } from "@sims/sims-db";
-import { ClientTypeBaseRoute } from "../../../../types";
 import { getUserFullName } from "../../../../utilities";
 import { TestingModule } from "@nestjs/testing";
-import { createFakeApplicationWithApplicationException } from "../application-exception-helper";
+import { saveFakeApplicationWithApplicationException } from "../application-exception-helper";
 
-describe(`${ClientTypeBaseRoute.AEST}-ApplicationExceptionAESTController(e2e)-getPendingApplicationExceptions`, () => {
+describe(`ApplicationExceptionAESTController(e2e)-getPendingApplicationExceptions`, () => {
   let app: INestApplication;
   let appDataSource: DataSource;
   let appModule: TestingModule;
@@ -28,22 +27,22 @@ describe(`${ClientTypeBaseRoute.AEST}-ApplicationExceptionAESTController(e2e)-ge
 
   it("Should get pending application exceptions when available.", async () => {
     // Arrange
-    const application1Promise = createFakeApplicationWithApplicationException(
+    const application1Promise = saveFakeApplicationWithApplicationException(
       ApplicationExceptionStatus.Pending,
       appDataSource,
       appModule,
     );
-    const application2Promise = createFakeApplicationWithApplicationException(
+    const application2Promise = saveFakeApplicationWithApplicationException(
       ApplicationExceptionStatus.Pending,
       appDataSource,
       appModule,
     );
-    const application3Promise = createFakeApplicationWithApplicationException(
+    const application3Promise = saveFakeApplicationWithApplicationException(
       ApplicationExceptionStatus.Approved,
       appDataSource,
       appModule,
     );
-    const application4Promise = createFakeApplicationWithApplicationException(
+    const application4Promise = saveFakeApplicationWithApplicationException(
       ApplicationExceptionStatus.Declined,
       appDataSource,
       appModule,
@@ -55,16 +54,14 @@ describe(`${ClientTypeBaseRoute.AEST}-ApplicationExceptionAESTController(e2e)-ge
         application3Promise,
         application4Promise,
       ]);
+    const endpoint =
+      "/aest/application-exception?page=0&pageLimit=100&sortField=submittedDate&sortOrder=ASC";
+    const token = await getAESTToken(AESTGroups.BusinessAdministrators);
 
     // Act/Assert
     await request(app.getHttpServer())
-      .get(
-        `/aest/application-exception?page=0&pageLimit=100&sortField=submittedDate&sortOrder=ASC`,
-      )
-      .auth(
-        await getAESTToken(AESTGroups.BusinessAdministrators),
-        BEARER_AUTH_TYPE,
-      )
+      .get(endpoint)
+      .auth(token, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
       .then((response) => {
         const applicationExceptionList = response.body.results;

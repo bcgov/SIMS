@@ -5,13 +5,13 @@ import {
   ApplicationException,
   ApplicationExceptionStatus,
   Student,
-  User,
 } from "@sims/sims-db";
 import {
   createFakeApplication,
   createFakeApplicationException,
   createFakeStudent,
 } from "@sims/test-utils";
+import { AESTGroups, getAESTUser } from "../../../testHelpers";
 import { DataSource, Repository } from "typeorm";
 
 /**
@@ -21,7 +21,7 @@ import { DataSource, Repository } from "typeorm";
  * @param module application module.
  * @returns application with an application exception associated.
  */
-export async function createFakeApplicationWithApplicationException(
+export async function saveFakeApplicationWithApplicationException(
   applicationExceptionStatus: ApplicationExceptionStatus,
   dataSource: DataSource,
   module: TestingModule,
@@ -32,13 +32,12 @@ export async function createFakeApplicationWithApplicationException(
   const applicationExceptionRepo =
     dataSource.getRepository(ApplicationException);
   const studentRepo: Repository<Student> = dataSource.getRepository(Student);
-  const userRepo: Repository<User> = dataSource.getRepository(User);
   const creator = await systemUsersService.systemUser();
-  const assessedBy = await userRepo.findOneBy({
-    userName: process.env.E2E_TEST_AEST_BUSINESS_ADMINISTRATORS_USER,
-  });
+  const assessedBy = await getAESTUser(
+    dataSource,
+    AESTGroups.BusinessAdministrators,
+  );
 
-  // Create fake application exception.
   let applicationException = createFakeApplicationException(
     applicationExceptionStatus,
     { creator, assessedBy },
@@ -47,13 +46,9 @@ export async function createFakeApplicationWithApplicationException(
     applicationException,
   );
 
-  // Create fake student.
-  let student = createFakeStudent();
-  student = await studentRepo.save(student);
+  const student = await studentRepo.save(createFakeStudent());
 
-  // Create fake application.
-  const application = createFakeApplication();
-  application.student = student;
-  application.applicationException = applicationException;
-  return applicationRepo.save(application);
+  return applicationRepo.save(
+    createFakeApplication({ student, applicationException }),
+  );
 }

@@ -1,6 +1,7 @@
 import {
   Application,
   ApplicationData,
+  ApplicationException,
   ApplicationStatus,
   ProgramYear,
   RelationshipStatus,
@@ -15,6 +16,7 @@ export function createFakeApplication(relations?: {
   student?: Student;
   programYear?: ProgramYear;
   currentStudentAssessment?: StudentAssessment;
+  applicationException?: ApplicationException;
 }): Application {
   const application = new Application();
   application.data = {} as ApplicationData;
@@ -27,5 +29,6 @@ export function createFakeApplication(relations?: {
   application.relationshipStatus = RelationshipStatus.Single;
   application.currentAssessment = relations?.currentStudentAssessment;
   application.applicationNumber = faker.random.alphaNumeric(10);
+  application.applicationException = relations?.applicationException;
   return application;
 }
