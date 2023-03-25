@@ -60,7 +60,11 @@ describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", ()
   it("Should throw NotFoundException when the application is not associated with the authenticated student.", async () => {
     // Arrange
     // The application will be generated with a fake user.
-    const application = await saveFakeApplicationDisbursements(appDataSource);
+    const application = await saveFakeApplicationDisbursements(
+      appDataSource,
+      undefined,
+      { applicationStatus: ApplicationStatus.Completed },
+    );
     const endpoint = `/students/application/${application.id}/completed`;
     const token = await getStudentToken(
       FakeStudentUsersTypes.FakeStudentUserType1,
@@ -139,14 +143,15 @@ describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", ()
 
   it(`Should get application details with scholastic standing change type when application has a scholastic standing '${StudentScholasticStandingChangeType.StudentDidNotCompleteProgram} associated with.`, async () => {
     // Arrange
-    const application = await saveFakeApplicationDisbursements(appDataSource, {
-      student,
-    });
-    application.applicationStatus = ApplicationStatus.Completed;
-    await applicationRepo.save(application);
+    const application = await saveFakeApplicationDisbursements(
+      appDataSource,
+      {
+        student,
+      },
+      { applicationStatus: ApplicationStatus.Completed },
+    );
     const [firstDisbursement] =
       application.currentAssessment.disbursementSchedules;
-    firstDisbursement.coeStatus = COEStatus.completed;
     await disbursementScheduleRepo.save(firstDisbursement);
     // Create a scholastic standing and have it associated with the completed application.
     // 'Student did not complete program' is the only 'scholastic standing that does not generate an assessment.
@@ -181,15 +186,13 @@ describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", ()
 
   it(`Should get application details with the most updated appeal status when the application has more than one student appeals associated with.`, async () => {
     // Arrange
-    const application = await saveFakeApplicationDisbursements(appDataSource, {
-      student,
-    });
-    application.applicationStatus = ApplicationStatus.Completed;
-    await applicationRepo.save(application);
+    const application = await saveFakeApplicationDisbursements(
+      appDataSource,
+      { student },
+      { applicationStatus: ApplicationStatus.Completed },
+    );
     const [firstDisbursement] =
       application.currentAssessment.disbursementSchedules;
-    firstDisbursement.coeStatus = COEStatus.completed;
-    await disbursementScheduleRepo.save(firstDisbursement);
     // Create approved student appeal submitted yesterday.
     const approvedAppealRequest = createFakeStudentAppealRequest();
     approvedAppealRequest.appealStatus = StudentAppealStatus.Approved;

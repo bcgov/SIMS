@@ -61,11 +61,14 @@ describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-confirmEnrollment"
 
   it("Should allow the COE confirmation when the application is on Enrolment status and all the conditions are fulfilled.", async () => {
     // Arrange
-    const application = await saveFakeApplicationDisbursements(appDataSource, {
-      institution: collegeC,
-      institutionLocation: collegeCLocation,
-    });
-    await applicationRepo.save(application);
+    const application = await saveFakeApplicationDisbursements(
+      appDataSource,
+      {
+        institution: collegeC,
+        institutionLocation: collegeCLocation,
+      },
+      { applicationStatus: ApplicationStatus.Enrolment },
+    );
     const [firstDisbursementSchedule] =
       application.currentAssessment.disbursementSchedules;
     const endpoint = `/institutions/location/${collegeCLocation.id}/confirmation-of-enrollment/disbursement-schedule/${firstDisbursementSchedule.id}/confirm`;
@@ -90,12 +93,17 @@ describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-confirmEnrollment"
 
   it("Should allow the COE confirmation when the application is on Completed status and all the conditions are fulfilled.", async () => {
     // Arrange
-    const application = await saveFakeApplicationDisbursements(appDataSource, {
-      institution: collegeC,
-      institutionLocation: collegeCLocation,
-    });
-    application.applicationStatus = ApplicationStatus.Completed;
-    await applicationRepo.save(application);
+    const application = await saveFakeApplicationDisbursements(
+      appDataSource,
+      {
+        institution: collegeC,
+        institutionLocation: collegeCLocation,
+      },
+      {
+        applicationStatus: ApplicationStatus.Completed,
+        isReassessment: true,
+      },
+    );
     const [firstDisbursementSchedule] =
       application.currentAssessment.disbursementSchedules;
     const endpoint = `/institutions/location/${collegeCLocation.id}/confirmation-of-enrollment/disbursement-schedule/${firstDisbursementSchedule.id}/confirm`;
@@ -120,12 +128,14 @@ describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-confirmEnrollment"
 
   it("Should throw NotFoundException when application status is not valid.", async () => {
     // Arrange
-    const application = await saveFakeApplicationDisbursements(appDataSource, {
-      institution: collegeC,
-      institutionLocation: collegeCLocation,
-    });
-    application.applicationStatus = ApplicationStatus.Assessment;
-    await applicationRepo.save(application);
+    const application = await saveFakeApplicationDisbursements(
+      appDataSource,
+      {
+        institution: collegeC,
+        institutionLocation: collegeCLocation,
+      },
+      { applicationStatus: ApplicationStatus.Assessment },
+    );
     const [firstDisbursementSchedule] =
       application.currentAssessment.disbursementSchedules;
     const endpoint = `/institutions/location/${collegeCLocation.id}/confirmation-of-enrollment/disbursement-schedule/${firstDisbursementSchedule.id}/confirm`;
@@ -148,10 +158,14 @@ describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-confirmEnrollment"
 
   it("Should throw UnprocessableEntityException when COE is not within approval window.", async () => {
     // Arrange
-    const application = await saveFakeApplicationDisbursements(appDataSource, {
-      institution: collegeC,
-      institutionLocation: collegeCLocation,
-    });
+    const application = await saveFakeApplicationDisbursements(
+      appDataSource,
+      {
+        institution: collegeC,
+        institutionLocation: collegeCLocation,
+      },
+      { applicationStatus: ApplicationStatus.Enrolment },
+    );
     const [firstDisbursementSchedule] =
       application.currentAssessment.disbursementSchedules;
     const disbursementDate = addDays(COE_WINDOW + 1);
@@ -227,7 +241,10 @@ describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-confirmEnrollment"
         institution: collegeC,
         institutionLocation: collegeCLocation,
       },
-      { createSecondDisbursement: true },
+      {
+        applicationStatus: ApplicationStatus.Enrolment,
+        createSecondDisbursement: true,
+      },
     );
     const [, secondDisbursementSchedule] =
       application.currentAssessment.disbursementSchedules;
@@ -256,17 +273,21 @@ describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-confirmEnrollment"
 
   it("Should throw an exception when the maxTuitionRemittance if over the limit.", async () => {
     // Arrange
-    const application = await saveFakeApplicationDisbursements(appDataSource, {
-      institution: collegeC,
-      institutionLocation: collegeCLocation,
-      disbursementValues: [
-        createFakeDisbursementValue(
-          DisbursementValueType.CanadaLoan,
-          "CSLF",
-          1000,
-        ),
-      ],
-    });
+    const application = await saveFakeApplicationDisbursements(
+      appDataSource,
+      {
+        institution: collegeC,
+        institutionLocation: collegeCLocation,
+        disbursementValues: [
+          createFakeDisbursementValue(
+            DisbursementValueType.CanadaLoan,
+            "CSLF",
+            1000,
+          ),
+        ],
+      },
+      { applicationStatus: ApplicationStatus.Enrolment },
+    );
     const [firstDisbursementSchedule] =
       application.currentAssessment.disbursementSchedules;
     // Adjust offering values for maxTuitionRemittanceAllowed.

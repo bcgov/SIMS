@@ -47,10 +47,14 @@ describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-confirmEnrollment"
 
   it("Should allow the COE confirmation when COE is outside the valid COE window.", async () => {
     // Arrange
-    const application = await saveFakeApplicationDisbursements(appDataSource, {
-      institution: collegeC,
-      institutionLocation: collegeCLocation,
-    });
+    const application = await saveFakeApplicationDisbursements(
+      appDataSource,
+      {
+        institution: collegeC,
+        institutionLocation: collegeCLocation,
+      },
+      { applicationStatus: ApplicationStatus.Enrolment },
+    );
     const [firstDisbursementSchedule] =
       application.currentAssessment.disbursementSchedules;
     const offeringEndDate = application.currentAssessment.offering.studyEndDate;

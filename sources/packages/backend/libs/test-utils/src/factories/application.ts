@@ -72,7 +72,9 @@ export async function saveFakeApplicationDisbursements(
     student?: Student;
   },
   options?: {
-    createSecondDisbursement: boolean;
+    applicationStatus?: ApplicationStatus;
+    createSecondDisbursement?: boolean;
+    isReassessment?: boolean;
   },
 ): Promise<Application> {
   const userRepo = dataSource.getRepository(User);
@@ -80,6 +82,10 @@ export async function saveFakeApplicationDisbursements(
   const applicationRepo = dataSource.getRepository(Application);
   const studentAssessmentRepo = dataSource.getRepository(StudentAssessment);
   const offeringRepo = dataSource.getRepository(EducationProgramOffering);
+  // Using Assessment as a default status since it the first status when
+  // the application has the disbursement already generated.
+  const applicationStatus =
+    options?.applicationStatus ?? ApplicationStatus.Assessment;
   // Ensure student/user creation.
   let savedUser: User;
   let savedStudent: Student;
@@ -92,7 +98,7 @@ export async function saveFakeApplicationDisbursements(
   }
   // Create and save application.
   const fakeApplication = createFakeApplication({ student: savedStudent });
-  fakeApplication.applicationStatus = ApplicationStatus.Enrolment;
+  fakeApplication.applicationStatus = applicationStatus;
   const savedApplication = await applicationRepo.save(fakeApplication);
   // Original assessment.
   const fakeOriginalAssessment = createFakeStudentAssessment({
@@ -107,7 +113,13 @@ export async function saveFakeApplicationDisbursements(
       createFakeDisbursementValue(DisbursementValueType.CanadaLoan, "CSLF", 1),
     ],
   });
-  firstSchedule.coeStatus = COEStatus.required;
+  // COE status is 'Completed' for a completed application with original assessment
+  // otherwise it will be 'Required'.
+  firstSchedule.coeStatus =
+    applicationStatus === ApplicationStatus.Completed &&
+    !options?.isReassessment
+      ? COEStatus.completed
+      : COEStatus.required;
   firstSchedule.disbursementScheduleStatus = DisbursementScheduleStatus.Pending;
   disbursementSchedules.push(firstSchedule);
   if (options?.createSecondDisbursement) {

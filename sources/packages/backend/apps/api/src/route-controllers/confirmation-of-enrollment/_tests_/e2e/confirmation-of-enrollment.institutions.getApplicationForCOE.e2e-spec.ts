@@ -19,6 +19,7 @@ import { getDateOnlyFormat } from "@sims/utilities";
 import { deliveryMethod, getUserFullName } from "../../../../utilities";
 import { COEApprovalPeriodStatus } from "../../../../services";
 import {
+  ApplicationStatus,
   COEStatus,
   DisbursementOveraward,
   DisbursementValueType,
@@ -77,18 +78,22 @@ describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-getApplicationForC
 
   it("Should get the COE with calculated maxTuitionRemittanceAllowed when the COE exists under the location", async () => {
     // Arrange
-    const application = await saveFakeApplicationDisbursements(appDataSource, {
-      institution: collegeC,
-      institutionLocation: collegeCLocation,
-      disbursementValues: [
-        createFakeDisbursementValue(
-          DisbursementValueType.CanadaLoan,
-          "CSLF",
-          1000,
-          { disbursedAmountSubtracted: 100 },
-        ),
-      ],
-    });
+    const application = await saveFakeApplicationDisbursements(
+      appDataSource,
+      {
+        institution: collegeC,
+        institutionLocation: collegeCLocation,
+        disbursementValues: [
+          createFakeDisbursementValue(
+            DisbursementValueType.CanadaLoan,
+            "CSLF",
+            1000,
+            { disbursedAmountSubtracted: 100 },
+          ),
+        ],
+      },
+      { applicationStatus: ApplicationStatus.Enrolment },
+    );
     // Adjust offering values for maxTuitionRemittanceAllowed.
     application.currentAssessment.offering.actualTuitionCosts = 500;
     application.currentAssessment.offering.programRelatedCosts = 500;
@@ -144,10 +149,14 @@ describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-getApplicationForC
 
   it("Should return hasOverawardBalance as true when there is an overaward balance on the student account", async () => {
     // Arrange
-    const application = await saveFakeApplicationDisbursements(appDataSource, {
-      institution: collegeC,
-      institutionLocation: collegeCLocation,
-    });
+    const application = await saveFakeApplicationDisbursements(
+      appDataSource,
+      {
+        institution: collegeC,
+        institutionLocation: collegeCLocation,
+      },
+      { applicationStatus: ApplicationStatus.Enrolment },
+    );
     const [firstDisbursementSchedule] =
       application.currentAssessment.disbursementSchedules;
     // Add a student overaward.

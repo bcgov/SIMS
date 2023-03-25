@@ -62,10 +62,11 @@ describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-getCOESummary", ()
         institution: collegeC,
         institutionLocation: collegeCLocation,
       },
-      { createSecondDisbursement: true },
+      {
+        applicationStatus: ApplicationStatus.Enrolment,
+        createSecondDisbursement: true,
+      },
     );
-    applicationA.applicationStatus = ApplicationStatus.Enrolment;
-    await applicationRepo.save(applicationA);
     const [applicationAFirstSchedule] =
       applicationA.currentAssessment.disbursementSchedules;
     // Application B
@@ -75,10 +76,11 @@ describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-getCOESummary", ()
         institution: collegeC,
         institutionLocation: collegeCLocation,
       },
-      { createSecondDisbursement: true },
+      {
+        applicationStatus: ApplicationStatus.Enrolment,
+        createSecondDisbursement: true,
+      },
     );
-    applicationB.applicationStatus = ApplicationStatus.Enrolment;
-    await applicationRepo.save(applicationB);
     const [applicationBFirstSchedule] =
       applicationB.currentAssessment.disbursementSchedules;
     // Adjust the date to ensure the proper order on the return.
@@ -141,13 +143,14 @@ describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-getCOESummary", ()
         institution: collegeC,
         institutionLocation: collegeCLocation,
       },
-      { createSecondDisbursement: true },
+      {
+        applicationStatus: ApplicationStatus.Enrolment,
+        createSecondDisbursement: true,
+      },
     );
-    applicationA.applicationStatus = ApplicationStatus.Enrolment;
     applicationA.applicationNumber = "GET_COE_01";
     const [applicationAFirstSchedule, applicationASecondSchedule] =
       applicationA.currentAssessment.disbursementSchedules;
-    applicationAFirstSchedule.coeStatus = COEStatus.required;
     await applicationRepo.save(applicationA);
     await disbursementScheduleRepo.save(applicationAFirstSchedule);
     // Application B
@@ -157,14 +160,15 @@ describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-getCOESummary", ()
         institution: collegeC,
         institutionLocation: collegeCLocation,
       },
-      { createSecondDisbursement: true },
+      {
+        applicationStatus: ApplicationStatus.Enrolment,
+        createSecondDisbursement: true,
+      },
     );
-    applicationB.applicationStatus = ApplicationStatus.Enrolment;
     // Ensure the proper order by the application number.
     applicationB.applicationNumber = "GET_COE_02";
     const [applicationBFirstSchedule, applicationBSecondSchedule] =
       applicationB.currentAssessment.disbursementSchedules;
-    applicationBFirstSchedule.coeStatus = COEStatus.required;
     await applicationRepo.save(applicationB);
     await disbursementScheduleRepo.save(applicationBFirstSchedule);
 
