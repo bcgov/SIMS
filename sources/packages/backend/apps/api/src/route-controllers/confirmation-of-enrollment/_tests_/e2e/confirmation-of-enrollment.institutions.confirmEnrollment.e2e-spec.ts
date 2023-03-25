@@ -17,6 +17,7 @@ import {
 import {
   Application,
   ApplicationStatus,
+  COEStatus,
   DisbursementSchedule,
   DisbursementValueType,
   EducationProgramOffering,
@@ -91,7 +92,7 @@ describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-confirmEnrollment"
     );
   });
 
-  it("Should allow the COE confirmation when the application is on Completed status and all the conditions are fulfilled.", async () => {
+  it("Should allow the second COE confirmation when the application is on Completed status and all the conditions are fulfilled.", async () => {
     // Arrange
     const application = await saveFakeApplicationDisbursements(
       appDataSource,
@@ -101,12 +102,18 @@ describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-confirmEnrollment"
       },
       {
         applicationStatus: ApplicationStatus.Completed,
-        isReassessment: true,
+        createSecondDisbursement: true,
       },
     );
-    const [firstDisbursementSchedule] =
+    const [, secondDisbursementSchedule] =
       application.currentAssessment.disbursementSchedules;
-    const endpoint = `/institutions/location/${collegeCLocation.id}/confirmation-of-enrollment/disbursement-schedule/${firstDisbursementSchedule.id}/confirm`;
+    // Adjust the second disbursement to be in a valid COE window to be confirmed.
+    secondDisbursementSchedule.disbursementDate = getISODateOnlyString(
+      new Date(),
+    );
+    await disbursementScheduleRepo.save(secondDisbursementSchedule);
+    const endpoint = `/institutions/location/${collegeCLocation.id}/confirmation-of-enrollment/disbursement-schedule/${secondDisbursementSchedule.id}/confirm`;
+
     // Act/Assert
     await request(app.getHttpServer())
       .patch(endpoint)
@@ -116,14 +123,12 @@ describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-confirmEnrollment"
         BEARER_AUTH_TYPE,
       )
       .expect(HttpStatus.OK);
-    // Check if the application was updated as expected.
-    const updatedApplication = await applicationRepo.findOne({
-      select: { applicationStatus: true },
-      where: { id: application.id },
+    // Check if the disbursement was updated as expected.
+    const updatedDisbursementSchedule = await disbursementScheduleRepo.findOne({
+      select: { coeStatus: true },
+      where: { id: secondDisbursementSchedule.id },
     });
-    expect(updatedApplication.applicationStatus).toBe(
-      ApplicationStatus.Completed,
-    );
+    expect(updatedDisbursementSchedule.coeStatus).toBe(COEStatus.completed);
   });
 
   it("Should throw NotFoundException when application status is not valid.", async () => {

@@ -74,7 +74,6 @@ export async function saveFakeApplicationDisbursements(
   options?: {
     applicationStatus?: ApplicationStatus;
     createSecondDisbursement?: boolean;
-    isReassessment?: boolean;
   },
 ): Promise<Application> {
   const userRepo = dataSource.getRepository(User);
@@ -113,11 +112,9 @@ export async function saveFakeApplicationDisbursements(
       createFakeDisbursementValue(DisbursementValueType.CanadaLoan, "CSLF", 1),
     ],
   });
-  // COE status is 'Completed' for a completed application with original assessment
-  // otherwise it will be 'Required'.
+
   firstSchedule.coeStatus =
-    applicationStatus === ApplicationStatus.Completed &&
-    !options?.isReassessment
+    applicationStatus === ApplicationStatus.Completed
       ? COEStatus.completed
       : COEStatus.required;
   firstSchedule.disbursementScheduleStatus = DisbursementScheduleStatus.Pending;
