@@ -27,11 +27,10 @@ export async function saveFakeApplicationWithApplicationException(
   module: TestingModule,
 ): Promise<Application> {
   const systemUsersService = await module.get(SystemUsersService);
-  const applicationRepo: Repository<Application> =
-    dataSource.getRepository(Application);
+  const applicationRepo = dataSource.getRepository(Application);
   const applicationExceptionRepo =
     dataSource.getRepository(ApplicationException);
-  const studentRepo: Repository<Student> = dataSource.getRepository(Student);
+  const studentRepo = dataSource.getRepository(Student);
   const creator = await systemUsersService.systemUser();
   const assessedBy = await getAESTUser(
     dataSource,
