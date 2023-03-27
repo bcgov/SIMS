@@ -20,14 +20,17 @@ export class OverawardBalanceAPIOutDTO {
   overawardBalanceValues: Record<string, number>;
 }
 
-export class OverawardAPIOutDTO {
+export class StudentOverawardAPIOutDTO {
   dateAdded: Date;
   overawardOrigin: DisbursementOverawardOriginType;
   awardValueCode: string;
   overawardValue: number;
-  addedByUser?: string;
   applicationNumber?: string;
   assessmentTriggerType?: AssessmentTriggerType;
+}
+
+export class OverawardAPIOutDTO extends StudentOverawardAPIOutDTO {
+  addedByUser?: string;
 }
 
 export class OverawardManualRecordAPIInDTO {

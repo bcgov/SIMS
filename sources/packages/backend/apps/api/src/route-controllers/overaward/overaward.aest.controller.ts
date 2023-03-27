@@ -28,6 +28,7 @@ import {
 import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
 import { IUserToken, Role } from "../../auth";
 import { getUserFullName } from "../../utilities";
+import { OverAwardControllerService } from "./overaward.controller";
 
 @AllowAuthorizedParty(AuthorizedParties.aest)
 @Groups(UserGroups.AESTUser)
@@ -37,6 +38,7 @@ export class OverawardAESTController extends BaseController {
   constructor(
     private readonly disbursementOverawardService: DisbursementOverawardService,
     private readonly studentService: StudentService,
+    private readonly overawardControllerService: OverAwardControllerService,
   ) {
     super();
   }
@@ -57,10 +59,7 @@ export class OverawardAESTController extends BaseController {
     if (!studentExist) {
       throw new NotFoundException("Student not found.");
     }
-    const overawardBalance =
-      await this.disbursementOverawardService.getOverawardBalance([studentId]);
-
-    return { overawardBalanceValues: overawardBalance[studentId] };
+    return await this.overawardControllerService.getOverawardBalance(studentId);
   }
 
   /**
@@ -80,7 +79,7 @@ export class OverawardAESTController extends BaseController {
       throw new NotFoundException("Student not found.");
     }
     const studentOverawards =
-      await this.disbursementOverawardService.getOverawardsByStudent(studentId);
+      await this.overawardControllerService.getOverawardsByStudent(studentId);
     return studentOverawards.map((overaward) => ({
       dateAdded: overaward.addedDate,
       overawardOrigin: overaward.originType,
