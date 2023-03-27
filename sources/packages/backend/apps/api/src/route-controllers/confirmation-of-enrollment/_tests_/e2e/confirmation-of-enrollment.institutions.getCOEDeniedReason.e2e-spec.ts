@@ -6,9 +6,8 @@ import {
   getInstitutionToken,
   InstitutionTokenTypes,
 } from "../../../../testHelpers";
-import { ClientTypeBaseRoute } from "../../../../types";
 
-describe(`${ClientTypeBaseRoute.Institution}-ConfirmationOfEnrollmentInstitutionsController(e2e)-getCOEDeniedReason`, () => {
+describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-getCOEDeniedReason", () => {
   let app: INestApplication;
 
   beforeAll(async () => {
