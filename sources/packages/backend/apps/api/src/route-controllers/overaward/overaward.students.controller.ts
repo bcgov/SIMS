@@ -34,7 +34,7 @@ export class OverawardStudentsController extends BaseController {
   @ApiNotFoundResponse({
     description: "Student not found.",
   })
-  @Get("student/balance")
+  @Get("balance")
   async getOverawardBalance(
     @UserToken() userToken: StudentUserToken,
   ): Promise<OverawardBalanceAPIOutDTO> {
@@ -51,7 +51,7 @@ export class OverawardStudentsController extends BaseController {
   @ApiNotFoundResponse({
     description: "Student not found.",
   })
-  @Get("student")
+  @Get()
   async getOverawardsByStudent(
     @UserToken() userToken: StudentUserToken,
   ): Promise<StudentOverawardAPIOutDTO[]> {
