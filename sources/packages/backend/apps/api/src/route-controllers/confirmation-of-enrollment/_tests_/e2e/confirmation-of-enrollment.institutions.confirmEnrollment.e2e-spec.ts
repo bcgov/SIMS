@@ -12,11 +12,12 @@ import {
 import {
   createFakeDisbursementValue,
   createFakeInstitutionLocation,
+  saveFakeApplicationDisbursements,
 } from "@sims/test-utils";
-import { saveFakeApplicationCOE } from "@sims/test-utils/factories/confirmation-of-enrollment";
 import {
   Application,
   ApplicationStatus,
+  COEStatus,
   DisbursementSchedule,
   DisbursementValueType,
   EducationProgramOffering,
@@ -28,9 +29,8 @@ import {
   MONEY_VALUE_FOR_UNKNOWN_MAX_VALUE,
 } from "../../../../utilities";
 import { addDays, getISODateOnlyString } from "@sims/utilities";
-import { ClientTypeBaseRoute } from "../../../../types";
 
-describe(`${ClientTypeBaseRoute.Institution}-ConfirmationOfEnrollmentInstitutionsController(e2e)-confirmEnrollment`, () => {
+describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-confirmEnrollment", () => {
   let app: INestApplication;
   let appDataSource: DataSource;
   let applicationRepo: Repository<Application>;
@@ -62,11 +62,14 @@ describe(`${ClientTypeBaseRoute.Institution}-ConfirmationOfEnrollmentInstitution
 
   it("Should allow the COE confirmation when the application is on Enrolment status and all the conditions are fulfilled.", async () => {
     // Arrange
-    const application = await saveFakeApplicationCOE(appDataSource, {
-      institution: collegeC,
-      institutionLocation: collegeCLocation,
-    });
-    await applicationRepo.save(application);
+    const application = await saveFakeApplicationDisbursements(
+      appDataSource,
+      {
+        institution: collegeC,
+        institutionLocation: collegeCLocation,
+      },
+      { applicationStatus: ApplicationStatus.Enrolment },
+    );
     const [firstDisbursementSchedule] =
       application.currentAssessment.disbursementSchedules;
     const endpoint = `/institutions/location/${collegeCLocation.id}/confirmation-of-enrollment/disbursement-schedule/${firstDisbursementSchedule.id}/confirm`;
@@ -89,17 +92,28 @@ describe(`${ClientTypeBaseRoute.Institution}-ConfirmationOfEnrollmentInstitution
     );
   });
 
-  it("Should allow the COE confirmation when the application is on Completed status and all the conditions are fulfilled.", async () => {
+  it("Should allow the second COE confirmation when the application is on Completed status and all the conditions are fulfilled.", async () => {
     // Arrange
-    const application = await saveFakeApplicationCOE(appDataSource, {
-      institution: collegeC,
-      institutionLocation: collegeCLocation,
-    });
-    application.applicationStatus = ApplicationStatus.Completed;
-    await applicationRepo.save(application);
-    const [firstDisbursementSchedule] =
+    const application = await saveFakeApplicationDisbursements(
+      appDataSource,
+      {
+        institution: collegeC,
+        institutionLocation: collegeCLocation,
+      },
+      {
+        applicationStatus: ApplicationStatus.Completed,
+        createSecondDisbursement: true,
+      },
+    );
+    const [, secondDisbursementSchedule] =
       application.currentAssessment.disbursementSchedules;
-    const endpoint = `/institutions/location/${collegeCLocation.id}/confirmation-of-enrollment/disbursement-schedule/${firstDisbursementSchedule.id}/confirm`;
+    // Adjust the second disbursement to be in a valid COE window to be confirmed.
+    secondDisbursementSchedule.disbursementDate = getISODateOnlyString(
+      new Date(),
+    );
+    await disbursementScheduleRepo.save(secondDisbursementSchedule);
+    const endpoint = `/institutions/location/${collegeCLocation.id}/confirmation-of-enrollment/disbursement-schedule/${secondDisbursementSchedule.id}/confirm`;
+
     // Act/Assert
     await request(app.getHttpServer())
       .patch(endpoint)
@@ -109,24 +123,24 @@ describe(`${ClientTypeBaseRoute.Institution}-ConfirmationOfEnrollmentInstitution
         BEARER_AUTH_TYPE,
       )
       .expect(HttpStatus.OK);
-    // Check if the application was updated as expected.
-    const updatedApplication = await applicationRepo.findOne({
-      select: { applicationStatus: true },
-      where: { id: application.id },
+    // Check if the disbursement was updated as expected.
+    const updatedDisbursementSchedule = await disbursementScheduleRepo.findOne({
+      select: { coeStatus: true },
+      where: { id: secondDisbursementSchedule.id },
     });
-    expect(updatedApplication.applicationStatus).toBe(
-      ApplicationStatus.Completed,
-    );
+    expect(updatedDisbursementSchedule.coeStatus).toBe(COEStatus.completed);
   });
 
   it("Should throw NotFoundException when application status is not valid.", async () => {
     // Arrange
-    const application = await saveFakeApplicationCOE(appDataSource, {
-      institution: collegeC,
-      institutionLocation: collegeCLocation,
-    });
-    application.applicationStatus = ApplicationStatus.Assessment;
-    await applicationRepo.save(application);
+    const application = await saveFakeApplicationDisbursements(
+      appDataSource,
+      {
+        institution: collegeC,
+        institutionLocation: collegeCLocation,
+      },
+      { applicationStatus: ApplicationStatus.Assessment },
+    );
     const [firstDisbursementSchedule] =
       application.currentAssessment.disbursementSchedules;
     const endpoint = `/institutions/location/${collegeCLocation.id}/confirmation-of-enrollment/disbursement-schedule/${firstDisbursementSchedule.id}/confirm`;
@@ -149,10 +163,14 @@ describe(`${ClientTypeBaseRoute.Institution}-ConfirmationOfEnrollmentInstitution
 
   it("Should throw UnprocessableEntityException when COE is not within approval window.", async () => {
     // Arrange
-    const application = await saveFakeApplicationCOE(appDataSource, {
-      institution: collegeC,
-      institutionLocation: collegeCLocation,
-    });
+    const application = await saveFakeApplicationDisbursements(
+      appDataSource,
+      {
+        institution: collegeC,
+        institutionLocation: collegeCLocation,
+      },
+      { applicationStatus: ApplicationStatus.Enrolment },
+    );
     const [firstDisbursementSchedule] =
       application.currentAssessment.disbursementSchedules;
     const disbursementDate = addDays(COE_WINDOW + 1);
@@ -222,13 +240,16 @@ describe(`${ClientTypeBaseRoute.Institution}-ConfirmationOfEnrollmentInstitution
 
   it("Should throw an UnprocessableEntityException when trying to confirm the second COE before confirming the first one.", async () => {
     // Arrange
-    const application = await saveFakeApplicationCOE(
+    const application = await saveFakeApplicationDisbursements(
       appDataSource,
       {
         institution: collegeC,
         institutionLocation: collegeCLocation,
       },
-      { createSecondDisbursement: true },
+      {
+        applicationStatus: ApplicationStatus.Enrolment,
+        createSecondDisbursement: true,
+      },
     );
     const [, secondDisbursementSchedule] =
       application.currentAssessment.disbursementSchedules;
@@ -257,17 +278,21 @@ describe(`${ClientTypeBaseRoute.Institution}-ConfirmationOfEnrollmentInstitution
 
   it("Should throw an exception when the maxTuitionRemittance if over the limit.", async () => {
     // Arrange
-    const application = await saveFakeApplicationCOE(appDataSource, {
-      institution: collegeC,
-      institutionLocation: collegeCLocation,
-      disbursementValues: [
-        createFakeDisbursementValue(
-          DisbursementValueType.CanadaLoan,
-          "CSLF",
-          1000,
-        ),
-      ],
-    });
+    const application = await saveFakeApplicationDisbursements(
+      appDataSource,
+      {
+        institution: collegeC,
+        institutionLocation: collegeCLocation,
+        disbursementValues: [
+          createFakeDisbursementValue(
+            DisbursementValueType.CanadaLoan,
+            "CSLF",
+            1000,
+          ),
+        ],
+      },
+      { applicationStatus: ApplicationStatus.Enrolment },
+    );
     const [firstDisbursementSchedule] =
       application.currentAssessment.disbursementSchedules;
     // Adjust offering values for maxTuitionRemittanceAllowed.

@@ -13,4 +13,7 @@ export * from "./factories/disbursement-schedule";
 export * from "./factories/disbursement-overaward";
 export * from "./factories/disbursement-value";
 export * from "./factories/msfaa-number";
+export * from "./factories/student-scholastic-standing";
+export * from "./factories/student-appeal";
+export * from "./factories/student-appeal-request";
 export * from "./models/common.model";

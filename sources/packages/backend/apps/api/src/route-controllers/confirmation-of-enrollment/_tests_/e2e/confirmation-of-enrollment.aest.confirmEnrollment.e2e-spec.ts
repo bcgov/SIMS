@@ -9,8 +9,10 @@ import {
   getAuthRelatedEntities,
   InstitutionTokenTypes,
 } from "../../../../testHelpers";
-import { createFakeInstitutionLocation } from "@sims/test-utils";
-import { saveFakeApplicationCOE } from "@sims/test-utils/factories/confirmation-of-enrollment";
+import {
+  createFakeInstitutionLocation,
+  saveFakeApplicationDisbursements,
+} from "@sims/test-utils";
 import {
   Application,
   ApplicationStatus,
@@ -19,9 +21,8 @@ import {
   InstitutionLocation,
 } from "@sims/sims-db";
 import { addDays, getISODateOnlyString } from "@sims/utilities";
-import { ClientTypeBaseRoute } from "../../../../types";
 
-describe(`${ClientTypeBaseRoute.AEST}-ConfirmationOfEnrollmentInstitutionsController(e2e)-confirmEnrollment`, () => {
+describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-confirmEnrollment", () => {
   let app: INestApplication;
   let appDataSource: DataSource;
   let applicationRepo: Repository<Application>;
@@ -46,10 +47,14 @@ describe(`${ClientTypeBaseRoute.AEST}-ConfirmationOfEnrollmentInstitutionsContro
 
   it("Should allow the COE confirmation when COE is outside the valid COE window.", async () => {
     // Arrange
-    const application = await saveFakeApplicationCOE(appDataSource, {
-      institution: collegeC,
-      institutionLocation: collegeCLocation,
-    });
+    const application = await saveFakeApplicationDisbursements(
+      appDataSource,
+      {
+        institution: collegeC,
+        institutionLocation: collegeCLocation,
+      },
+      { applicationStatus: ApplicationStatus.Enrolment },
+    );
     const [firstDisbursementSchedule] =
       application.currentAssessment.disbursementSchedules;
     const offeringEndDate = application.currentAssessment.offering.studyEndDate;
