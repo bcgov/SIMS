@@ -22,7 +22,7 @@
         ><v-img
           height="240"
           class="ml-2"
-          alt="An illustration of a women checking her phone. Illustration by Storyset."
+          alt="An illustration of a women checking her phone."
           src="@/assets/images/person-chair-mobile.svg"
       /></v-col>
     </v-row>

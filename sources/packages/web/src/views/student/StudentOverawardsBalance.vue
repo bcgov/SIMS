@@ -10,27 +10,34 @@
     <body-header-container :enableCardView="true">
       <v-row
         ><v-col
-          ><body-header
-            title="Understanding your overawards"
-            subTitle="It’s important to understand how overawards can impact your awards. Learn more about overawards."
-          />
-          <div class="pb-2">
-            <span class="label-bold"> If you have an overaward</span>
-            <span class="label-value">
-              Pay back your overawards in your National Student Loan Service
-              Centre (NSLSC) account Contact StudentAid BC after you pay your
-              debts, so we know to deduct it from your overaward balances If you
-              still have remaining overaward balances or a new overaward
-              occurred during a reassessment, your future awards will
-              automatically be deducted in one or more of your applications to
-              reduce your overaward balance.</span
-            >
-          </div></v-col
-        >
+          ><h2 class="category-header-large primary-color">
+            Understanding your overawards
+          </h2>
+          <p>
+            It's important to understand how overawards can impact your awards.
+            Learn more about overawards.
+          </p>
+          <span class="label-bold"> If you have an overaward</span>
+          <div class="align-bullets pt-2 pl-2">
+            <ol>
+              <li>
+                Pay back your overawards in your National Student Loan Service
+                Centre (NSLSC) account
+              </li>
+              <li>
+                Contact StudentAid BC after you pay your debts, so we know to
+                deduct it from your overaward balances
+              </li>
+            </ol>
+          </div>
+          If you still have remaining overaward balances or a new overaward
+          occurred during a reassessment, your future awards will automatically
+          be deducted in one or more of your applications to reduce your
+          overaward balance.
+        </v-col>
         <v-col md="3">
           <v-img
-            height="260"
-            class="ml-2"
+            height="204"
             alt="An illustration of a women putting a coin in a glass jar."
             src="@/assets/images/student-glass-jar.svg" /></v-col
       ></v-row>
