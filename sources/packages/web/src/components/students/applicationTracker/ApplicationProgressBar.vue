@@ -63,21 +63,26 @@ import Assessment from "@/components/students/applicationTracker/Assessment.vue"
 import Enrolment from "@/components/students/applicationTracker/Enrolment.vue";
 import Completed from "@/components/students/applicationTracker/Completed.vue";
 
-class StatusIconDetails {
-  constructor(public statusType?: "success" | "warning" | "error") {}
-  get statusIcon(): string | undefined {
-    switch (this.statusType) {
-      case "success":
-        return "fa:fas fa-check-circle";
-      case "warning":
-        return "fa:fas fa-exclamation-triangle";
-      case "error":
-        return "fa:fas fa-exclamation-circle";
-      default:
-        return undefined;
-    }
-  }
+interface StatusIconDetails {
+  statusType: "success" | "warning" | "error";
+  statusIcon: string;
 }
+
+const STATUS_ICON_SUCCESS: StatusIconDetails = {
+  statusType: "success",
+  statusIcon: "fa:fas fa-check-circle",
+};
+
+const STATUS_ICON_WARNING: StatusIconDetails = {
+  statusType: "warning",
+  statusIcon: "fa:fas fa-exclamation-triangle",
+};
+
+const STATUS_ICON_ERROR: StatusIconDetails = {
+  statusType: "error",
+  statusIcon: "fa:fas fa-exclamation-circle",
+};
+
 const INITIAL_THUMB_SIZE = 14;
 const DEFAULT_THUMB_SIZE = 0;
 
@@ -147,18 +152,18 @@ export default defineComponent({
         applicationProgressDetails.value.secondCOEStatus === COEStatus.declined
       ) {
         // One of the requests or confirmations is declined.
-        statusIconDetails.value = new StatusIconDetails("error");
+        statusIconDetails.value = STATUS_ICON_ERROR;
       } else if (
         applicationProgressDetails.value.appealStatus ===
         StudentAppealStatus.Pending
       ) {
         // Application is complete but has warnings.
-        statusIconDetails.value = new StatusIconDetails("warning");
+        statusIconDetails.value = STATUS_ICON_WARNING;
       } else if (
         // Application is complete.
         applicationProgressDetails.value.firstCOEStatus === COEStatus.completed
       ) {
-        statusIconDetails.value = new StatusIconDetails("success");
+        statusIconDetails.value = STATUS_ICON_SUCCESS;
       }
     });
 
