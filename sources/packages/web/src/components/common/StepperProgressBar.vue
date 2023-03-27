@@ -23,7 +23,6 @@
           :icon="progressLabelIcon"
           :size="20"
           :color="progressLabelIconColor"
-          class="pl-4"
       /></span>
       <span class="label-value black-color" v-else>{{ tick.label }} </span>
     </template>

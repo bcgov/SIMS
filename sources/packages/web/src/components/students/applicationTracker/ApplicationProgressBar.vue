@@ -8,8 +8,8 @@
         :progressBarColor="trackFillColor"
         :initialStepSize="thumbSize"
         :disabled="disabled"
-        :progressLabelIcon="applicationEndStatus.endStatusIcon"
-        :progressLabelIconColor="applicationEndStatus.endStatusType"
+        :progressLabelIcon="statusIconDetails.statusIcon"
+        :progressLabelIconColor="statusIconDetails.statusType"
       />
       <draft
         @editApplication="$emit('editApplication')"
@@ -63,10 +63,26 @@ import Assessment from "@/components/students/applicationTracker/Assessment.vue"
 import Enrolment from "@/components/students/applicationTracker/Enrolment.vue";
 import Completed from "@/components/students/applicationTracker/Completed.vue";
 
-interface ApplicationEndStatusIconDetails {
-  endStatusType?: "success" | "warning" | "error";
-  endStatusIcon?: string;
+interface StatusIconDetails {
+  statusType: "success" | "warning" | "error";
+  statusIcon: string;
 }
+
+const STATUS_ICON_SUCCESS: StatusIconDetails = {
+  statusType: "success",
+  statusIcon: "fa:fas fa-check-circle",
+};
+
+const STATUS_ICON_WARNING: StatusIconDetails = {
+  statusType: "warning",
+  statusIcon: "fa:fas fa-exclamation-triangle",
+};
+
+const STATUS_ICON_ERROR: StatusIconDetails = {
+  statusType: "error",
+  statusIcon: "fa:fas fa-exclamation-circle",
+};
+
 const INITIAL_THUMB_SIZE = 14;
 const DEFAULT_THUMB_SIZE = 0;
 
@@ -93,7 +109,6 @@ export default defineComponent({
     },
   },
   setup(props) {
-    const hasDeclinedCard = ref(false);
     const applicationTrackerLabels = [
       ApplicationStatus.Submitted,
       ApplicationStatus.InProgress,
@@ -104,9 +119,9 @@ export default defineComponent({
     const applicationProgressDetails = ref(
       {} as ApplicationProgressDetailsAPIOutDTO,
     );
-    const applicationEndStatus = ref({} as ApplicationEndStatusIconDetails);
-    const trackFillColor = computed(() => {
-      if (applicationEndStatus.value.endStatusType === "error") {
+    const statusIconDetails = ref({} as StatusIconDetails);
+    const trackFillColor = computed<string>(() => {
+      if (statusIconDetails.value.statusType === "error") {
         return "error";
       }
       if (
@@ -127,36 +142,7 @@ export default defineComponent({
 
       if (
         applicationProgressDetails.value.scholasticStandingChangeType ===
-        StudentScholasticStandingChangeType.StudentDidNotCompleteProgram
-      ) {
-        // Application is complete has an error.
-        applicationEndStatus.value = {
-          endStatusType: "error",
-          endStatusIcon: "fa:fas fa-exclamation-circle",
-        };
-      } else if (
-        applicationProgressDetails.value.appealStatus ===
-        StudentAppealStatus.Pending
-      ) {
-        // Application is complete but has warnings.
-        applicationEndStatus.value = {
-          endStatusType: "warning",
-          endStatusIcon: "fa:fas fa-exclamation-triangle",
-        };
-      } else if (
-        // Application is complete.
-        applicationProgressDetails.value.firstCOEStatus ===
-          COEStatus.completed &&
-        (!applicationProgressDetails.value.secondCOEStatus ||
-          applicationProgressDetails.value.secondCOEStatus ===
-            COEStatus.completed)
-      ) {
-        applicationEndStatus.value = {
-          endStatusType: "success",
-          endStatusIcon: "fa:fas fa-check-circle",
-        };
-      } else if (
-        // One of the requests or confirmations is declined.
+          StudentScholasticStandingChangeType.StudentDidNotCompleteProgram ||
         applicationProgressDetails.value.pirStatus ===
           ProgramInfoStatus.declined ||
         applicationProgressDetails.value.exceptionStatus ===
@@ -165,10 +151,19 @@ export default defineComponent({
           COEStatus.declined ||
         applicationProgressDetails.value.secondCOEStatus === COEStatus.declined
       ) {
-        applicationEndStatus.value = {
-          endStatusType: "error",
-          endStatusIcon: "fa:fas fa-exclamation-circle",
-        };
+        // One of the requests or confirmations is declined.
+        statusIconDetails.value = STATUS_ICON_ERROR;
+      } else if (
+        applicationProgressDetails.value.appealStatus ===
+        StudentAppealStatus.Pending
+      ) {
+        // Application is complete but has warnings.
+        statusIconDetails.value = STATUS_ICON_WARNING;
+      } else if (
+        // Application is complete.
+        applicationProgressDetails.value.firstCOEStatus === COEStatus.completed
+      ) {
+        statusIconDetails.value = STATUS_ICON_SUCCESS;
       }
     });
 
@@ -180,10 +175,6 @@ export default defineComponent({
 
     const disabled = computed(
       () => props.applicationStatus === ApplicationStatus.Draft,
-    );
-
-    const thumbColor = computed(() =>
-      props.applicationStatus === ApplicationStatus.Draft ? "black" : "warning",
     );
 
     const thumbSize = computed(() =>
@@ -200,11 +191,9 @@ export default defineComponent({
       trackerApplicationStatus,
       disabled,
       trackFillColor,
-      thumbColor,
       thumbSize,
       ApplicationStatus,
-      hasDeclinedCard,
-      applicationEndStatus,
+      statusIconDetails,
       applicationProgressDetails,
     };
   },

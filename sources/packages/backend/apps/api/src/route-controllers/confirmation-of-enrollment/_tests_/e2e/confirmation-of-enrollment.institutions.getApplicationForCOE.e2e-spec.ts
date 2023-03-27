@@ -13,12 +13,13 @@ import {
   createFakeDisbursementOveraward,
   createFakeDisbursementValue,
   createFakeInstitutionLocation,
+  saveFakeApplicationDisbursements,
 } from "@sims/test-utils";
-import { saveFakeApplicationCOE } from "@sims/test-utils/factories/confirmation-of-enrollment";
 import { getDateOnlyFormat } from "@sims/utilities";
 import { deliveryMethod, getUserFullName } from "../../../../utilities";
 import { COEApprovalPeriodStatus } from "../../../../services";
 import {
+  ApplicationStatus,
   COEStatus,
   DisbursementOveraward,
   DisbursementValueType,
@@ -26,9 +27,8 @@ import {
   Institution,
   InstitutionLocation,
 } from "@sims/sims-db";
-import { ClientTypeBaseRoute } from "../../../../types";
 
-describe(`${ClientTypeBaseRoute.Institution}-ConfirmationOfEnrollmentInstitutionsController(e2e)-getApplicationForCOE`, () => {
+describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-getApplicationForCOE", () => {
   let app: INestApplication;
   let appDataSource: DataSource;
   let disbursementOverawardRepo: Repository<DisbursementOveraward>;
@@ -78,18 +78,22 @@ describe(`${ClientTypeBaseRoute.Institution}-ConfirmationOfEnrollmentInstitution
 
   it("Should get the COE with calculated maxTuitionRemittanceAllowed when the COE exists under the location", async () => {
     // Arrange
-    const application = await saveFakeApplicationCOE(appDataSource, {
-      institution: collegeC,
-      institutionLocation: collegeCLocation,
-      disbursementValues: [
-        createFakeDisbursementValue(
-          DisbursementValueType.CanadaLoan,
-          "CSLF",
-          1000,
-          { disbursedAmountSubtracted: 100 },
-        ),
-      ],
-    });
+    const application = await saveFakeApplicationDisbursements(
+      appDataSource,
+      {
+        institution: collegeC,
+        institutionLocation: collegeCLocation,
+        disbursementValues: [
+          createFakeDisbursementValue(
+            DisbursementValueType.CanadaLoan,
+            "CSLF",
+            1000,
+            { disbursedAmountSubtracted: 100 },
+          ),
+        ],
+      },
+      { applicationStatus: ApplicationStatus.Enrolment },
+    );
     // Adjust offering values for maxTuitionRemittanceAllowed.
     application.currentAssessment.offering.actualTuitionCosts = 500;
     application.currentAssessment.offering.programRelatedCosts = 500;
@@ -145,10 +149,14 @@ describe(`${ClientTypeBaseRoute.Institution}-ConfirmationOfEnrollmentInstitution
 
   it("Should return hasOverawardBalance as true when there is an overaward balance on the student account", async () => {
     // Arrange
-    const application = await saveFakeApplicationCOE(appDataSource, {
-      institution: collegeC,
-      institutionLocation: collegeCLocation,
-    });
+    const application = await saveFakeApplicationDisbursements(
+      appDataSource,
+      {
+        institution: collegeC,
+        institutionLocation: collegeCLocation,
+      },
+      { applicationStatus: ApplicationStatus.Enrolment },
+    );
     const [firstDisbursementSchedule] =
       application.currentAssessment.disbursementSchedules;
     // Add a student overaward.
