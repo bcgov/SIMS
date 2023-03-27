@@ -9,8 +9,10 @@ import {
   getInstitutionToken,
   InstitutionTokenTypes,
 } from "../../../../testHelpers";
-import { createFakeInstitutionLocation } from "@sims/test-utils";
-import { saveFakeApplicationCOE } from "@sims/test-utils/factories/confirmation-of-enrollment";
+import {
+  createFakeInstitutionLocation,
+  saveFakeApplicationDisbursements,
+} from "@sims/test-utils";
 import {
   Application,
   ApplicationStatus,
@@ -23,9 +25,8 @@ import { addDays, getISODateOnlyString } from "@sims/utilities";
 import { PaginatedResultsAPIOutDTO } from "../../../models/pagination.dto";
 import { COESummaryAPIOutDTO } from "../../models/confirmation-of-enrollment.dto";
 import { getUserFullName } from "../../../../utilities";
-import { ClientTypeBaseRoute } from "../../../../types";
 
-describe(`${ClientTypeBaseRoute.Institution}-ConfirmationOfEnrollmentInstitutionsController(e2e)-getCOESummary`, () => {
+describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-getCOESummary", () => {
   let app: INestApplication;
   let appDataSource: DataSource;
   let applicationRepo: Repository<Application>;
@@ -55,29 +56,31 @@ describe(`${ClientTypeBaseRoute.Institution}-ConfirmationOfEnrollmentInstitution
       collegeCLocation,
     );
     // Application A
-    const applicationA = await saveFakeApplicationCOE(
+    const applicationA = await saveFakeApplicationDisbursements(
       appDataSource,
       {
         institution: collegeC,
         institutionLocation: collegeCLocation,
       },
-      { createSecondDisbursement: true },
+      {
+        applicationStatus: ApplicationStatus.Enrolment,
+        createSecondDisbursement: true,
+      },
     );
-    applicationA.applicationStatus = ApplicationStatus.Enrolment;
-    await applicationRepo.save(applicationA);
     const [applicationAFirstSchedule] =
       applicationA.currentAssessment.disbursementSchedules;
     // Application B
-    const applicationB = await saveFakeApplicationCOE(
+    const applicationB = await saveFakeApplicationDisbursements(
       appDataSource,
       {
         institution: collegeC,
         institutionLocation: collegeCLocation,
       },
-      { createSecondDisbursement: true },
+      {
+        applicationStatus: ApplicationStatus.Enrolment,
+        createSecondDisbursement: true,
+      },
     );
-    applicationB.applicationStatus = ApplicationStatus.Enrolment;
-    await applicationRepo.save(applicationB);
     const [applicationBFirstSchedule] =
       applicationB.currentAssessment.disbursementSchedules;
     // Adjust the date to ensure the proper order on the return.
@@ -134,36 +137,38 @@ describe(`${ClientTypeBaseRoute.Institution}-ConfirmationOfEnrollmentInstitution
       collegeCLocation,
     );
     // Application A
-    const applicationA = await saveFakeApplicationCOE(
+    const applicationA = await saveFakeApplicationDisbursements(
       appDataSource,
       {
         institution: collegeC,
         institutionLocation: collegeCLocation,
       },
-      { createSecondDisbursement: true },
+      {
+        applicationStatus: ApplicationStatus.Enrolment,
+        createSecondDisbursement: true,
+      },
     );
-    applicationA.applicationStatus = ApplicationStatus.Enrolment;
     applicationA.applicationNumber = "GET_COE_01";
     const [applicationAFirstSchedule, applicationASecondSchedule] =
       applicationA.currentAssessment.disbursementSchedules;
-    applicationAFirstSchedule.coeStatus = COEStatus.required;
     await applicationRepo.save(applicationA);
     await disbursementScheduleRepo.save(applicationAFirstSchedule);
     // Application B
-    const applicationB = await saveFakeApplicationCOE(
+    const applicationB = await saveFakeApplicationDisbursements(
       appDataSource,
       {
         institution: collegeC,
         institutionLocation: collegeCLocation,
       },
-      { createSecondDisbursement: true },
+      {
+        applicationStatus: ApplicationStatus.Enrolment,
+        createSecondDisbursement: true,
+      },
     );
-    applicationB.applicationStatus = ApplicationStatus.Enrolment;
     // Ensure the proper order by the application number.
     applicationB.applicationNumber = "GET_COE_02";
     const [applicationBFirstSchedule, applicationBSecondSchedule] =
       applicationB.currentAssessment.disbursementSchedules;
-    applicationBFirstSchedule.coeStatus = COEStatus.required;
     await applicationRepo.save(applicationB);
     await disbursementScheduleRepo.save(applicationBFirstSchedule);
 

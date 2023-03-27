@@ -1,74 +1,83 @@
 <template>
-  <full-page-container :full-width="true">
-    <body-header
-      title="Social Insurance Number"
-      subTitle="The first row will always be the student's current active SIN."
-      :recordsCount="studentSINValidations?.length"
-      class="m-1"
-    >
-      <template #actions>
-        <check-permission-role :role="Role.StudentAddNewSIN">
-          <template #="{ notAllowed }">
-            <v-btn
-              class="float-right"
-              color="primary"
-              data-cy="addNewSINButton"
-              :disabled="processingNewSIN || notAllowed"
-              @click="addNewSIN"
-              prepend-icon="fa:fa fa-plus-circle"
-              >Add new SIN</v-btn
-            >
-          </template>
-        </check-permission-role>
-      </template>
-    </body-header>
-    <content-group>
-      <toggle-content :toggled="!studentSINValidations?.length">
-        <DataTable
-          :value="studentSINValidations"
-          :paginator="true"
-          :rows="DEFAULT_PAGE_LIMIT"
-          :rowsPerPageOptions="PAGINATION_LIST"
-          breakpoint="1380px"
+  <tab-container>
+    <body-header-container>
+      <template #header>
+        <body-header
+          title="Social Insurance Number"
+          subTitle="The first row will always be the student's current active SIN."
+          :recordsCount="studentSINValidations?.length"
         >
-          <Column field="createdAtFormatted" header="Date created" />
-          <Column field="sinFormatted" header="SIN" bodyClass="text-nowrap" />
-          <Column field="isValidSINFormatted" header="SIN validated" />
-          <Column field="sinStatus" header="Response code"></Column>
-          <Column field="validSINCheckFormatted" header="SIN accepted" />
-          <Column field="validFirstNameCheckFormatted" header="First name" />
-          <Column field="validLastNameCheckFormatted" header="Last name" />
-          <Column field="validBirthdateCheckFormatted" header="Date of birth" />
-          <Column field="validGenderCheckFormatted" header="Gender" />
-          <Column field="sinExpiryDateFormatted" header="Expiry date" />
-          <Column header="Action">
-            <template #body="slotProps">
-              <check-permission-role :role="Role.StudentAddSINExpiry">
-                <template #="{ notAllowed }">
-                  <v-btn
-                    color="primary"
-                    :disabled="
-                      !slotProps.data.temporarySIN ||
-                      !!slotProps.data.sinExpiryDate ||
-                      processingEditExpiryDate ||
-                      notAllowed
-                    "
-                    @click="addExpiryDate(slotProps.data.id)"
-                    >Add expiry date</v-btn
-                  >
-                </template>
-              </check-permission-role>
-            </template></Column
+          <template #actions>
+            <check-permission-role :role="Role.StudentAddNewSIN">
+              <template #="{ notAllowed }">
+                <v-btn
+                  class="float-right"
+                  color="primary"
+                  data-cy="addNewSINButton"
+                  :disabled="processingNewSIN || notAllowed"
+                  @click="addNewSIN"
+                  prepend-icon="fa:fa fa-plus-circle"
+                  >Add new SIN</v-btn
+                >
+              </template>
+            </check-permission-role>
+          </template>
+        </body-header>
+      </template>
+      <content-group>
+        <toggle-content :toggled="!studentSINValidations?.length">
+          <DataTable
+            :value="studentSINValidations"
+            :paginator="true"
+            :rows="DEFAULT_PAGE_LIMIT"
+            :rowsPerPageOptions="PAGINATION_LIST"
+            breakpoint="1380px"
           >
-        </DataTable>
-      </toggle-content>
-    </content-group>
-  </full-page-container>
-  <add-new-s-i-n ref="addNewSINModal" :allowedRole="Role.StudentAddNewSIN" />
-  <add-expiry-date
-    ref="addExpiryDateModal"
-    :allowedRole="Role.StudentAddSINExpiry"
-  />
+            <Column field="createdAtFormatted" header="Date created" />
+            <Column field="sinFormatted" header="SIN" bodyClass="text-nowrap" />
+            <Column field="isValidSINFormatted" header="SIN validated" />
+            <Column field="sinStatus" header="Response code"></Column>
+            <Column field="validSINCheckFormatted" header="SIN accepted" />
+            <Column field="validFirstNameCheckFormatted" header="First name" />
+            <Column field="validLastNameCheckFormatted" header="Last name" />
+            <Column
+              field="validBirthdateCheckFormatted"
+              header="Date of birth"
+            />
+            <Column field="validGenderCheckFormatted" header="Gender" />
+            <Column field="sinExpiryDateFormatted" header="Expiry date" />
+            <Column header="Action">
+              <template #body="slotProps">
+                <check-permission-role :role="Role.StudentAddSINExpiry">
+                  <template #="{ notAllowed }">
+                    <v-btn
+                      color="primary"
+                      :disabled="
+                        !slotProps.data.temporarySIN ||
+                        !!slotProps.data.sinExpiryDate ||
+                        processingEditExpiryDate ||
+                        notAllowed
+                      "
+                      @click="addExpiryDate(slotProps.data.id)"
+                      >Add expiry date</v-btn
+                    >
+                  </template>
+                </check-permission-role>
+              </template></Column
+            >
+          </DataTable>
+        </toggle-content>
+      </content-group>
+      <add-new-s-i-n
+        ref="addNewSINModal"
+        :allowedRole="Role.StudentAddNewSIN"
+      />
+      <add-expiry-date
+        ref="addExpiryDateModal"
+        :allowedRole="Role.StudentAddSINExpiry"
+      />
+    </body-header-container>
+  </tab-container>
 </template>
 
 <script lang="ts">

@@ -1,127 +1,130 @@
 <template>
   <!-- This component is shared between ministry and student users -->
-  <body-header
-    title="Applications"
-    class="m-1"
-    :recordsCount="applicationsAndCount.count"
-  ></body-header>
-  <content-group>
-    <DataTable
-      :value="applicationsAndCount.results"
-      :lazy="true"
-      :paginator="true"
-      :rows="DEFAULT_PAGE_LIMIT"
-      :rowsPerPageOptions="PAGINATION_LIST"
-      :totalRecords="applicationsAndCount.count"
-      @page="paginationAndSortEvent($event)"
-      @sort="paginationAndSortEvent($event)"
-      :loading="loading"
-    >
-      <template #empty>
-        <p class="text-center font-weight-bold">No records found.</p>
-      </template>
-      <Column
-        :field="StudentApplicationFields.ApplicationNumber"
-        :sortable="true"
-        header="Application #"
+  <body-header-container>
+    <template #header>
+      <body-header
+        title="Applications"
+        :recordsCount="applicationsAndCount.count"
+      ></body-header>
+    </template>
+    <content-group>
+      <DataTable
+        :value="applicationsAndCount.results"
+        :lazy="true"
+        :paginator="true"
+        :rows="DEFAULT_PAGE_LIMIT"
+        :rowsPerPageOptions="PAGINATION_LIST"
+        :totalRecords="applicationsAndCount.count"
+        @page="paginationAndSortEvent($event)"
+        @sort="paginationAndSortEvent($event)"
+        :loading="loading"
       >
-      </Column>
-      <Column :field="StudentApplicationFields.ApplicationName" header="Name">
-        <template #body="slotProps">
-          <v-btn
-            v-if="clientType === ClientIdType.Student"
-            variant="plain"
-            @click="$emit('goToApplication', slotProps.data.id)"
-            color="primary"
-            >{{ slotProps.data.applicationName }}
-            <v-tooltip activator="parent" location="start"
-              >Click To View this Application</v-tooltip
-            >
-          </v-btn>
+        <template #empty>
+          <p class="text-center font-weight-bold">No records found.</p>
+        </template>
+        <Column
+          :field="StudentApplicationFields.ApplicationNumber"
+          :sortable="true"
+          header="Application #"
+        >
+        </Column>
+        <Column :field="StudentApplicationFields.ApplicationName" header="Name">
+          <template #body="slotProps">
+            <v-btn
+              v-if="clientType === ClientIdType.Student"
+              variant="plain"
+              @click="$emit('goToApplication', slotProps.data.id)"
+              color="primary"
+              >{{ slotProps.data.applicationName }}
+              <v-tooltip activator="parent" location="start"
+                >Click To View this Application</v-tooltip
+              >
+            </v-btn>
 
-          <span v-if="clientType === ClientIdType.AEST"
-            >{{ slotProps.data.applicationName }}
-          </span>
-        </template>
-      </Column>
-      <Column
-        :field="StudentApplicationFields.Submitted"
-        header="Submitted"
-      ></Column>
-      <Column
-        :field="StudentApplicationFields.StudyPeriod"
-        header="Study Period"
-      >
-        <template #body="slotProps">
-          <span>
-            {{ dateOnlyLongString(slotProps.data.studyStartPeriod) }} -
-            {{ dateOnlyLongString(slotProps.data.studyEndPeriod) }}
-          </span>
-        </template></Column
-      >
-      <Column
-        :field="StudentApplicationFields.Status"
-        header="Status"
-        :sortable="true"
-      >
-        <template #body="slotProps">
-          <status-chip-application :status="slotProps.data.status" />
-        </template>
-      </Column>
-      <Column :field="StudentApplicationFields.Actions" header="Actions">
-        <template #body="slotProps">
-          <span v-if="clientType === ClientIdType.Student">
-            <span
-              v-if="
-                !(
-                  slotProps.data.status === ApplicationStatus.Cancelled ||
-                  slotProps.data.status === ApplicationStatus.Completed
-                )
-              "
-            >
-              <v-btn
-                :disabled="sinValidStatus !== SINStatusEnum.VALID"
-                variant="plain"
-                color="primary"
-                class="label-bold"
-                @click="
-                  $emit(
-                    'editApplicationAction',
-                    slotProps.data.status,
-                    slotProps.data.id,
+            <span v-if="clientType === ClientIdType.AEST"
+              >{{ slotProps.data.applicationName }}
+            </span>
+          </template>
+        </Column>
+        <Column
+          :field="StudentApplicationFields.Submitted"
+          header="Submitted"
+        ></Column>
+        <Column
+          :field="StudentApplicationFields.StudyPeriod"
+          header="Study Period"
+        >
+          <template #body="slotProps">
+            <span>
+              {{ dateOnlyLongString(slotProps.data.studyStartPeriod) }} -
+              {{ dateOnlyLongString(slotProps.data.studyEndPeriod) }}
+            </span>
+          </template></Column
+        >
+        <Column
+          :field="StudentApplicationFields.Status"
+          header="Status"
+          :sortable="true"
+        >
+          <template #body="slotProps">
+            <status-chip-application :status="slotProps.data.status" />
+          </template>
+        </Column>
+        <Column :field="StudentApplicationFields.Actions" header="Actions">
+          <template #body="slotProps">
+            <span v-if="clientType === ClientIdType.Student">
+              <span
+                v-if="
+                  !(
+                    slotProps.data.status === ApplicationStatus.Cancelled ||
+                    slotProps.data.status === ApplicationStatus.Completed
                   )
                 "
-                append-icon="mdi-pencil-outline"
-                ><span class="label-bold">Edit</span>
-                <v-tooltip activator="parent" location="start"
-                  >Click To Edit this Application</v-tooltip
-                >
-              </v-btn>
+              >
+                <v-btn
+                  :disabled="sinValidStatus !== SINStatusEnum.VALID"
+                  variant="plain"
+                  color="primary"
+                  class="label-bold"
+                  @click="
+                    $emit(
+                      'editApplicationAction',
+                      slotProps.data.status,
+                      slotProps.data.id,
+                    )
+                  "
+                  append-icon="mdi-pencil-outline"
+                  ><span class="label-bold">Edit</span>
+                  <v-tooltip activator="parent" location="start"
+                    >Click To Edit this Application</v-tooltip
+                  >
+                </v-btn>
 
-              <v-btn
-                :disabled="sinValidStatus !== SINStatusEnum.VALID"
-                variant="plain"
-                color="primary"
-                class="label-bold"
-                @click="emitCancel(slotProps.data.id)"
-                ><span class="label-bold">Cancel</span>
-                <v-tooltip activator="parent" location="start"
-                  >Click To Cancel this Application</v-tooltip
-                >
-              </v-btn>
+                <v-btn
+                  :disabled="sinValidStatus !== SINStatusEnum.VALID"
+                  variant="plain"
+                  color="primary"
+                  class="label-bold"
+                  @click="emitCancel(slotProps.data.id)"
+                  ><span class="label-bold">Cancel</span>
+                  <v-tooltip activator="parent" location="start"
+                    >Click To Cancel this Application</v-tooltip
+                  >
+                </v-btn>
+              </span>
             </span>
-          </span>
-          <span v-if="clientType === ClientIdType.AEST">
-            <v-btn
-              variant="outlined"
-              @click="$emit('goToApplication', slotProps.data.id)"
-              >View</v-btn
-            >
-          </span>
-        </template>
-      </Column>
-    </DataTable>
-  </content-group>
+            <span v-if="clientType === ClientIdType.AEST">
+              <v-btn
+                variant="outlined"
+                @click="$emit('goToApplication', slotProps.data.id)"
+                >View</v-btn
+              >
+            </span>
+          </template>
+        </Column>
+      </DataTable>
+    </content-group>
+  </body-header-container>
 </template>
 
 <script lang="ts">

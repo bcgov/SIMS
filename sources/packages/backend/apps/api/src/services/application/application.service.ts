@@ -16,7 +16,6 @@ import {
   AssessmentTriggerType,
   User,
   ApplicationData,
-  StudentScholasticStandingChangeType,
 } from "@sims/sims-db";
 import { StudentFileService } from "../student-file/student-file.service";
 import {
@@ -1050,6 +1049,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
         .createQueryBuilder("application")
         .select([
           "application.id",
+          "currentAssessment.id",
           "currentAssessment.assessmentWorkflowId",
           "student.id",
           "user.id",
@@ -1444,10 +1444,6 @@ export class ApplicationService extends RecordDataModelService<Application> {
         student: {
           id: studentId,
         },
-        studentScholasticStandings: {
-          changeType:
-            StudentScholasticStandingChangeType.StudentDidNotCompleteProgram,
-        },
       },
     });
   }
@@ -1503,10 +1499,6 @@ export class ApplicationService extends RecordDataModelService<Application> {
         applicationStatus: In(applicationStatuses),
         student: {
           id: options?.studentId,
-        },
-        studentScholasticStandings: {
-          changeType:
-            StudentScholasticStandingChangeType.StudentDidNotCompleteProgram,
         },
       },
       order: {

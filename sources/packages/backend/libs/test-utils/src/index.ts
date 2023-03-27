@@ -15,4 +15,7 @@ export * from "./factories/disbursement-value";
 export * from "./factories/msfaa-number";
 export * from "./factories/application-exception";
 export * from "./factories/application-exception-request";
+export * from "./factories/student-scholastic-standing";
+export * from "./factories/student-appeal";
+export * from "./factories/student-appeal-request";
 export * from "./models/common.model";

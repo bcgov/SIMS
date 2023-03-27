@@ -1,50 +1,50 @@
 <template>
-  <v-card class="mb-5">
-    <v-container fluid>
+  <body-header-container :enableCardView="true">
+    <template #header>
       <body-header
         title="Overawards"
         subTitle="Overaward amounts generated due to application reassessments"
       />
-      <content-group>
-        <toggle-content :toggled="!overawards.length">
-          <DataTable
-            :value="overawards"
-            class="p-m-4"
-            :paginator="true"
-            :rows="pageLimit"
-            :rowsPerPageOptions="PAGINATION_LIST"
+    </template>
+    <content-group>
+      <toggle-content :toggled="!overawards.length">
+        <DataTable
+          :value="overawards"
+          class="p-m-4"
+          :paginator="true"
+          :rows="pageLimit"
+          :rowsPerPageOptions="PAGINATION_LIST"
+        >
+          <Column field="dateAdded" header="Date added">
+            <template #body="slotProps">
+              <span>
+                {{ dateOnlyLongString(slotProps.data.dateAdded) }}
+              </span>
+            </template>
+          </Column>
+          <Column field="applicationNumber" header="Application #"
+            ><template #body="slotProps">
+              <span>
+                {{ emptyStringFiller(slotProps.data.applicationNumber) }}
+              </span>
+            </template></Column
           >
-            <Column field="dateAdded" header="Date added">
-              <template #body="slotProps">
-                <span>
-                  {{ dateOnlyLongString(slotProps.data.dateAdded) }}
-                </span>
-              </template>
-            </Column>
-            <Column field="applicationNumber" header="Application #"
-              ><template #body="slotProps">
-                <span>
-                  {{ emptyStringFiller(slotProps.data.applicationNumber) }}
-                </span>
-              </template></Column
-            >
-            <Column field="overawardOrigin" header="Origin"></Column>
-            <Column field="assessmentTriggerType" header="Type"></Column>
-            <Column field="awardValueCode" header="Award"></Column>
-            <Column field="overawardValue" header="Overaward amount">
-              <template #body="slotProps">
-                <span>
-                  {{ formatCurrency(slotProps.data.overawardValue) }}
-                </span>
-              </template></Column
-            >
-          </DataTable>
-        </toggle-content>
-      </content-group>
-    </v-container>
-  </v-card>
-  <v-card class="mb-5">
-    <v-container fluid>
+          <Column field="overawardOrigin" header="Origin"></Column>
+          <Column field="assessmentTriggerType" header="Type"></Column>
+          <Column field="awardValueCode" header="Award"></Column>
+          <Column field="overawardValue" header="Overaward amount">
+            <template #body="slotProps">
+              <span>
+                {{ formatCurrency(slotProps.data.overawardValue) }}
+              </span>
+            </template></Column
+          >
+        </DataTable>
+      </toggle-content>
+    </content-group>
+  </body-header-container>
+  <body-header-container :enableCardView="true">
+    <template #header>
       <body-header
         title="Overaward deductions"
         subTitle="History of money that was deducted from one or more applications to pay back what is owed"
@@ -65,54 +65,55 @@
           </check-permission-role>
         </template></body-header
       >
-      <content-group>
-        <toggle-content :toggled="!overawardDeductions.length">
-          <DataTable
-            :value="overawardDeductions"
-            class="p-m-4"
-            :paginator="true"
-            :rows="pageLimit"
-            :rowsPerPageOptions="PAGINATION_LIST"
+    </template>
+    <content-group>
+      <toggle-content :toggled="!overawardDeductions.length">
+        <DataTable
+          :value="overawardDeductions"
+          class="p-m-4"
+          :paginator="true"
+          :rows="pageLimit"
+          :rowsPerPageOptions="PAGINATION_LIST"
+        >
+          <Column field="dateAdded" header="Date added">
+            <template #body="slotProps">
+              <span>
+                {{ dateOnlyLongString(slotProps.data.dateAdded) }}
+              </span>
+            </template>
+          </Column>
+          <Column field="applicationNumber" header="Application #">
+            <template #body="slotProps">
+              <span>
+                {{ emptyStringFiller(slotProps.data.applicationNumber) }}
+              </span>
+            </template></Column
           >
-            <Column field="dateAdded" header="Date added">
-              <template #body="slotProps">
-                <span>
-                  {{ dateOnlyLongString(slotProps.data.dateAdded) }}
-                </span>
-              </template>
-            </Column>
-            <Column field="applicationNumber" header="Application #">
-              <template #body="slotProps">
-                <span>
-                  {{ emptyStringFiller(slotProps.data.applicationNumber) }}
-                </span>
-              </template></Column
-            >
-            <Column field="overawardOrigin" header="Origin"></Column>
-            <Column v-if="showAddedBy" field="addedByUser" header="Added By"
-              ><template #body="slotProps">
-                <span>
-                  {{ emptyStringFiller(slotProps.data.addedByUser) }}
-                </span>
-              </template></Column
-            >
-            <Column field="awardValueCode" header="Award"></Column>
-            <Column field="overawardValue" header="Amount deducted">
-              <template #body="slotProps">
-                <span>
-                  {{ formatCurrency(slotProps.data.overawardValue) }}
-                </span>
-              </template></Column
-            >
-          </DataTable>
-        </toggle-content>
-      </content-group>
-    </v-container>
-  </v-card>
-  <add-manual-overaward-deduction
-    ref="addManualOverawardDeduction"
-    :allowedRole="Role.StudentAddOverawardManual"
-  />
+          <Column field="overawardOrigin" header="Origin"></Column>
+          <Column v-if="showAddedBy" field="addedByUser" header="Added By"
+            ><template #body="slotProps">
+              <span>
+                {{ emptyStringFiller(slotProps.data.addedByUser) }}
+              </span>
+            </template></Column
+          >
+          <Column field="awardValueCode" header="Award"></Column>
+          <Column field="overawardValue" header="Amount deducted">
+            <template #body="slotProps">
+              <span>
+                {{ formatCurrency(slotProps.data.overawardValue) }}
+              </span>
+            </template></Column
+          >
+        </DataTable>
+      </toggle-content>
+    </content-group>
+
+    <add-manual-overaward-deduction
+      ref="addManualOverawardDeduction"
+      :allowedRole="Role.StudentAddOverawardManual"
+    />
+  </body-header-container>
 </template>
 <script lang="ts">
 import { ref, onMounted, defineComponent, computed } from "vue";
