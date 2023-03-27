@@ -1,66 +1,33 @@
 import { HttpStatus, INestApplication } from "@nestjs/common";
 import * as request from "supertest";
-import { DataSource, Repository } from "typeorm";
+import { DataSource } from "typeorm";
 import {
   AESTGroups,
   BEARER_AUTH_TYPE,
   createTestingAppModule,
   getAESTToken,
-  getAESTUser,
 } from "../../../../testHelpers";
-import {
-  createFakeApplicationException,
-  createFakeApplicationExceptionRequest,
-} from "@sims/test-utils";
-import {
-  ApplicationException,
-  ApplicationExceptionRequest,
-  ApplicationExceptionStatus,
-} from "@sims/sims-db";
-import { SystemUsersService } from "@sims/services";
+import { ApplicationExceptionStatus } from "@sims/sims-db";
 import { getUserFullName } from "../../../../utilities";
+import { saveFakeApplicationWithApplicationException } from "../application-exception-helper";
 
 describe(`ApplicationExceptionAESTController(e2e)-getExceptionById`, () => {
   let app: INestApplication;
-  let applicationExceptionRepo: Repository<ApplicationException>;
-  let applicationExceptionRequestRepo: Repository<ApplicationExceptionRequest>;
-  let systemUsersService: SystemUsersService;
   let appDataSource: DataSource;
 
   beforeAll(async () => {
-    const { nestApplication, dataSource, module } =
-      await createTestingAppModule();
+    const { nestApplication, dataSource } = await createTestingAppModule();
     app = nestApplication;
-    applicationExceptionRepo = dataSource.getRepository(ApplicationException);
-    applicationExceptionRequestRepo = dataSource.getRepository(
-      ApplicationExceptionRequest,
-    );
-    systemUsersService = await module.get(SystemUsersService);
     appDataSource = dataSource;
   });
 
   it("Should get an application exception by id when available.", async () => {
     // Arrange
-    const creator = await systemUsersService.systemUser();
-    const assessedBy = await getAESTUser(
+    const application = await saveFakeApplicationWithApplicationException(
       appDataSource,
-      AESTGroups.BusinessAdministrators,
-    );
-
-    let applicationException = createFakeApplicationException(
       ApplicationExceptionStatus.Approved,
-      { creator, assessedBy },
     );
-    applicationException = await applicationExceptionRepo.save(
-      applicationException,
-    );
-    const applicationExceptionRequest =
-      await applicationExceptionRequestRepo.save(
-        createFakeApplicationExceptionRequest(applicationException, {
-          creator,
-        }),
-      );
-    const endpoint = `/aest/application-exception/${applicationException.id}`;
+    const endpoint = `/aest/application-exception/${application.applicationException.id}`;
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
 
     // Act/Assert
@@ -69,13 +36,21 @@ describe(`ApplicationExceptionAESTController(e2e)-getExceptionById`, () => {
       .auth(token, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
       .expect({
-        exceptionStatus: applicationException.exceptionStatus,
-        submittedDate: applicationException.createdAt.toISOString(),
-        noteDescription: applicationException.exceptionNote.description,
-        assessedByUserName: getUserFullName(applicationException.assessedBy),
-        assessedDate: applicationException.assessedDate.toISOString(),
+        exceptionStatus: application.applicationException.exceptionStatus,
+        submittedDate: application.applicationException.createdAt.toISOString(),
+        noteDescription:
+          application.applicationException.exceptionNote.description,
+        assessedByUserName: getUserFullName(
+          application.applicationException.assessedBy,
+        ),
+        assessedDate:
+          application.applicationException.assessedDate.toISOString(),
         exceptionRequests: [
-          { exceptionName: applicationExceptionRequest.exceptionName },
+          {
+            exceptionName:
+              application.applicationException.exceptionRequests[0]
+                .exceptionName,
+          },
         ],
       });
   });

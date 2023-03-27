@@ -1,39 +1,39 @@
 import { HttpStatus, INestApplication } from "@nestjs/common";
 import * as request from "supertest";
-import { DataSource } from "typeorm";
+import { DataSource, Repository } from "typeorm";
 import {
   AESTGroups,
   BEARER_AUTH_TYPE,
   createTestingAppModule,
   getAESTToken,
 } from "../../../../testHelpers";
-import { ApplicationExceptionStatus } from "@sims/sims-db";
+import {
+  ApplicationException,
+  ApplicationExceptionStatus,
+} from "@sims/sims-db";
 import * as faker from "faker";
 import { saveFakeApplicationWithApplicationException } from "../application-exception-helper";
-import { TestingModule } from "@nestjs/testing";
 import { ZBClient } from "zeebe-node";
 
 describe(`ApplicationExceptionAESTController(e2e)-approveException`, () => {
   let app: INestApplication;
   let appDataSource: DataSource;
-  let appModule: TestingModule;
   let zbClient: ZBClient;
+  let applicationExceptionRepo: Repository<ApplicationException>;
 
   beforeAll(async () => {
-    const { nestApplication, dataSource, module } =
-      await createTestingAppModule();
+    const { nestApplication, dataSource } = await createTestingAppModule();
     app = nestApplication;
     appDataSource = dataSource;
-    appModule = module;
     zbClient = app.get(ZBClient);
+    applicationExceptionRepo = dataSource.getRepository(ApplicationException);
   });
 
   it("Should be able to approve application exception when its status is pending.", async () => {
     // Arrange
     const application = await saveFakeApplicationWithApplicationException(
-      ApplicationExceptionStatus.Pending,
       appDataSource,
-      appModule,
+      ApplicationExceptionStatus.Pending,
     );
     const updateApplicationException = {
       exceptionStatus: ApplicationExceptionStatus.Approved,
@@ -58,14 +58,20 @@ describe(`ApplicationExceptionAESTController(e2e)-approveException`, () => {
         },
       }),
     );
+
+    const applicationException = await applicationExceptionRepo.findOneBy({
+      id: application.applicationException.id,
+    });
+    expect(applicationException.exceptionStatus).toBe(
+      ApplicationExceptionStatus.Approved,
+    );
   });
 
   it("Should be able to decline application exception when available.", async () => {
     // Arrange
     const application = await saveFakeApplicationWithApplicationException(
-      ApplicationExceptionStatus.Pending,
       appDataSource,
-      appModule,
+      ApplicationExceptionStatus.Pending,
     );
     const updateApplicationException = {
       exceptionStatus: ApplicationExceptionStatus.Declined,
@@ -89,6 +95,13 @@ describe(`ApplicationExceptionAESTController(e2e)-approveException`, () => {
           applicationExceptionStatus: "Declined",
         },
       }),
+    );
+
+    const applicationException = await applicationExceptionRepo.findOneBy({
+      id: application.applicationException.id,
+    });
+    expect(applicationException.exceptionStatus).toBe(
+      ApplicationExceptionStatus.Declined,
     );
   });
 
@@ -117,9 +130,8 @@ describe(`ApplicationExceptionAESTController(e2e)-approveException`, () => {
   it("Should not be able to approve application exception when it is not in pending status.", async () => {
     // Arrange
     const application = await saveFakeApplicationWithApplicationException(
-      ApplicationExceptionStatus.Declined,
       appDataSource,
-      appModule,
+      ApplicationExceptionStatus.Declined,
     );
     const updateApplicationException = {
       exceptionStatus: ApplicationExceptionStatus.Approved,

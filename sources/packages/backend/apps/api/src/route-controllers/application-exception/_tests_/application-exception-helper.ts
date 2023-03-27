@@ -1,14 +1,14 @@
-import { TestingModule } from "@nestjs/testing";
-import { SystemUsersService } from "@sims/services";
 import {
   Application,
   ApplicationException,
+  ApplicationExceptionRequest,
   ApplicationExceptionStatus,
   Student,
 } from "@sims/sims-db";
 import {
   createFakeApplication,
   createFakeApplicationException,
+  createFakeApplicationExceptionRequest,
   createFakeStudent,
 } from "@sims/test-utils";
 import { AESTGroups, getAESTUser } from "../../../testHelpers";
@@ -16,38 +16,59 @@ import { DataSource } from "typeorm";
 
 /**
  * Create a fake application with an application exception associated.
- * @param applicationExceptionStatus application exception status.
  * @param dataSource application dataSource.
- * @param module application module.
+ * @param applicationExceptionStatus application exception status.
+ * @param creator user that will be assigned to application exception.
  * @returns application with an application exception associated.
  */
 export async function saveFakeApplicationWithApplicationException(
-  applicationExceptionStatus: ApplicationExceptionStatus,
   dataSource: DataSource,
-  module: TestingModule,
+  applicationExceptionStatus: ApplicationExceptionStatus,
 ): Promise<Application> {
-  const systemUsersService = await module.get(SystemUsersService);
   const applicationRepo = dataSource.getRepository(Application);
   const applicationExceptionRepo =
     dataSource.getRepository(ApplicationException);
+  const applicationExceptionRequestRepo = dataSource.getRepository(
+    ApplicationExceptionRequest,
+  );
   const studentRepo = dataSource.getRepository(Student);
-  const creator = await systemUsersService.systemUser();
   const assessedBy = await getAESTUser(
     dataSource,
     AESTGroups.BusinessAdministrators,
   );
 
-  let applicationException = createFakeApplicationException(
+  const student = await studentRepo.save(createFakeStudent());
+  let applicationException = createFakeApplicationException({
     applicationExceptionStatus,
-    { creator, assessedBy },
-  );
+    creator: student.user,
+    assessedBy,
+  });
   applicationException = await applicationExceptionRepo.save(
     applicationException,
   );
 
-  const student = await studentRepo.save(createFakeStudent());
-
-  return applicationRepo.save(
+  const application = await applicationRepo.save(
     createFakeApplication({ student, applicationException }),
   );
+
+  await applicationExceptionRequestRepo.save(
+    createFakeApplicationExceptionRequest({
+      applicationException,
+      creator: student.user,
+    }),
+  );
+
+  return await applicationRepo.findOne({
+    relations: {
+      applicationException: {
+        exceptionNote: true,
+        exceptionRequests: true,
+        assessedBy: true,
+      },
+      student: true,
+    },
+    where: {
+      id: application.id,
+    },
+  });
 }

@@ -9,43 +9,35 @@ import {
 } from "../../../../testHelpers";
 import { ApplicationExceptionStatus } from "@sims/sims-db";
 import { getUserFullName } from "../../../../utilities";
-import { TestingModule } from "@nestjs/testing";
 import { saveFakeApplicationWithApplicationException } from "../application-exception-helper";
 
 describe(`ApplicationExceptionAESTController(e2e)-getPendingApplicationExceptions`, () => {
   let app: INestApplication;
   let appDataSource: DataSource;
-  let appModule: TestingModule;
 
   beforeAll(async () => {
-    const { nestApplication, dataSource, module } =
-      await createTestingAppModule();
+    const { nestApplication, dataSource } = await createTestingAppModule();
     app = nestApplication;
     appDataSource = dataSource;
-    appModule = module;
   });
 
   it("Should get pending application exceptions when available.", async () => {
     // Arrange
     const application1Promise = saveFakeApplicationWithApplicationException(
-      ApplicationExceptionStatus.Pending,
       appDataSource,
-      appModule,
+      ApplicationExceptionStatus.Pending,
     );
     const application2Promise = saveFakeApplicationWithApplicationException(
-      ApplicationExceptionStatus.Pending,
       appDataSource,
-      appModule,
+      ApplicationExceptionStatus.Pending,
     );
     const application3Promise = saveFakeApplicationWithApplicationException(
-      ApplicationExceptionStatus.Approved,
       appDataSource,
-      appModule,
+      ApplicationExceptionStatus.Approved,
     );
     const application4Promise = saveFakeApplicationWithApplicationException(
-      ApplicationExceptionStatus.Declined,
       appDataSource,
-      appModule,
+      ApplicationExceptionStatus.Declined,
     );
     const [application1, application2, application3, application4] =
       await Promise.all([
@@ -55,7 +47,7 @@ describe(`ApplicationExceptionAESTController(e2e)-getPendingApplicationException
         application4Promise,
       ]);
     const endpoint =
-      "/aest/application-exception?page=0&pageLimit=100&sortField=submittedDate&sortOrder=ASC";
+      "/aest/application-exception?page=0&pageLimit=100&sortField=submittedDate&sortOrder=DESC";
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
 
     // Act/Assert
