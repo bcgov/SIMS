@@ -19,7 +19,7 @@ import { StudentUserToken } from "../../auth";
 @RequiresStudentAccount()
 @Controller("overaward")
 @ApiTags(`${ClientTypeBaseRoute.Student}-overaward`)
-export class OverawardAESTController extends BaseController {
+export class OverawardStudentsController extends BaseController {
   constructor(
     private readonly overawardControllerService: OverAwardControllerService,
   ) {
