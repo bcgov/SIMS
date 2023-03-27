@@ -9,8 +9,8 @@ import {
 import { ClientTypeBaseRoute } from "../../types";
 import BaseController from "../BaseController";
 import {
+  OverawardAPIOutDTO,
   OverawardBalanceAPIOutDTO,
-  StudentOverawardAPIOutDTO,
 } from "./models/overaward.dto";
 import { OverAwardControllerService } from "./overaward.controller.service";
 import { StudentUserToken } from "../../auth";
@@ -54,19 +54,9 @@ export class OverawardStudentsController extends BaseController {
   @Get()
   async getOverawardsByStudent(
     @UserToken() userToken: StudentUserToken,
-  ): Promise<StudentOverawardAPIOutDTO[]> {
-    const studentOverawards =
-      await this.overawardControllerService.getOverawardsByStudent(
-        userToken.studentId,
-      );
-    return studentOverawards.map((overaward) => ({
-      dateAdded: overaward.addedDate,
-      overawardOrigin: overaward.originType,
-      awardValueCode: overaward.disbursementValueCode,
-      overawardValue: overaward.overawardValue,
-      applicationNumber:
-        overaward.studentAssessment?.application.applicationNumber,
-      assessmentTriggerType: overaward.studentAssessment?.triggerType,
-    }));
+  ): Promise<OverawardAPIOutDTO[]> {
+    return await this.overawardControllerService.getOverawardsByStudent(
+      userToken.studentId,
+    );
   }
 }

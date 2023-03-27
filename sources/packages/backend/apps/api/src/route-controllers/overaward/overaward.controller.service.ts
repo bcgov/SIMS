@@ -1,7 +1,11 @@
 import { Injectable } from "@nestjs/common";
 import { DisbursementOverawardService } from "@sims/services";
 import { DisbursementOveraward } from "@sims/sims-db";
-import { OverawardBalanceAPIOutDTO } from "./models/overaward.dto";
+import { getUserFullName } from "../../utilities";
+import {
+  OverawardAPIOutDTO,
+  OverawardBalanceAPIOutDTO,
+} from "./models/overaward.dto";
 
 /**
  * Overaward controller service.
@@ -29,11 +33,41 @@ export class OverAwardControllerService {
   /**
    * Get all overawards which belong to a student.
    * @param studentId student.
+   * @param includeAddedBy include added by.
    * @returns overaward details of a student.
    */
   async getOverawardsByStudent(
     studentId?: number,
-  ): Promise<DisbursementOveraward[]> {
-    return this.disbursementOverawardService.getOverawardsByStudent(studentId);
+    includeAddedBy = false,
+  ): Promise<OverawardAPIOutDTO[]> {
+    const overAwards =
+      await this.disbursementOverawardService.getOverawardsByStudent(studentId);
+    return overAwards.map((overaward) =>
+      this.transformOverawards(overaward, includeAddedBy),
+    );
+  }
+
+  /**
+   * Transform overawards for a student.
+   * @param overaward overaward.
+   * @param includeAddedBy include added by.
+   * @returns transformed overawards.
+   */
+  private transformOverawards(
+    overaward: DisbursementOveraward,
+    includeAddedBy: boolean,
+  ): OverawardAPIOutDTO {
+    return {
+      dateAdded: overaward.addedDate,
+      overawardOrigin: overaward.originType,
+      awardValueCode: overaward.disbursementValueCode,
+      overawardValue: overaward.overawardValue,
+      addedByUser: includeAddedBy
+        ? getUserFullName(overaward.addedBy)
+        : undefined,
+      applicationNumber:
+        overaward.studentAssessment?.application.applicationNumber,
+      assessmentTriggerType: overaward.studentAssessment?.triggerType,
+    };
   }
 }

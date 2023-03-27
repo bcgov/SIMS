@@ -78,18 +78,10 @@ export class OverawardAESTController extends BaseController {
     if (!studentExist) {
       throw new NotFoundException("Student not found.");
     }
-    const studentOverawards =
-      await this.overawardControllerService.getOverawardsByStudent(studentId);
-    return studentOverawards.map((overaward) => ({
-      dateAdded: overaward.addedDate,
-      overawardOrigin: overaward.originType,
-      awardValueCode: overaward.disbursementValueCode,
-      overawardValue: overaward.overawardValue,
-      addedByUser: getUserFullName(overaward.addedBy),
-      applicationNumber:
-        overaward.studentAssessment?.application.applicationNumber,
-      assessmentTriggerType: overaward.studentAssessment?.triggerType,
-    }));
+    return await this.overawardControllerService.getOverawardsByStudent(
+      studentId,
+      true,
+    );
   }
 
   /**
