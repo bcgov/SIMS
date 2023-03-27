@@ -45,6 +45,7 @@ export interface ECertRecord {
   awards: Award[];
   stopFullTimeBCFunding: boolean;
   courseLoad?: number;
+  tuitionRemittanceEffectiveAmount: number;
 }
 
 export type Award = Pick<

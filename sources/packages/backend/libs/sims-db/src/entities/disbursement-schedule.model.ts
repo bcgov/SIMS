@@ -159,4 +159,12 @@ export class DisbursementSchedule extends RecordDataModel {
     nullable: false,
   })
   disbursementScheduleStatus: DisbursementScheduleStatus;
+  /**
+   * Tuition remittance effective amount of a disbursement.
+   */
+  @Column({
+    name: "tuition_remittance_effective_amount",
+    nullable: false,
+  })
+  tuitionRemittanceEffectiveAmount: number;
 }

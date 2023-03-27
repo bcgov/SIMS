@@ -161,7 +161,6 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
         ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE,
       );
     }
-
     await this.startAssessmentQueue.add({
       workflowName: assessment.application.data.workflowName,
       assessmentId: assessment.id,

@@ -281,6 +281,8 @@ export class ECertFileHandler extends ESDCFileHandler {
       gender: application.student.gender,
       maritalStatus: application.relationshipStatus,
       studentNumber: application.studentNumber,
+      tuitionRemittanceEffectiveAmount:
+        disbursement.tuitionRemittanceEffectiveAmount,
       awards,
     } as ECertRecord;
   }
