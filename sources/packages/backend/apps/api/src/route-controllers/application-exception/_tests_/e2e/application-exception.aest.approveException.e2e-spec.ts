@@ -15,7 +15,7 @@ import * as faker from "faker";
 import { saveFakeApplicationWithApplicationException } from "../application-exception-helper";
 import { ZBClient } from "zeebe-node";
 
-describe(`ApplicationExceptionAESTController(e2e)-approveException`, () => {
+describe("ApplicationExceptionAESTController(e2e)-approveException", () => {
   let app: INestApplication;
   let appDataSource: DataSource;
   let zbClient: ZBClient;

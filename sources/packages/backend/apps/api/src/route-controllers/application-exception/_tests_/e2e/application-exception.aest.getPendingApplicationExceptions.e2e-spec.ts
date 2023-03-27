@@ -11,7 +11,7 @@ import { ApplicationExceptionStatus } from "@sims/sims-db";
 import { getUserFullName } from "../../../../utilities";
 import { saveFakeApplicationWithApplicationException } from "../application-exception-helper";
 
-describe(`ApplicationExceptionAESTController(e2e)-getPendingApplicationExceptions`, () => {
+describe("ApplicationExceptionAESTController(e2e)-getPendingApplicationExceptions", () => {
   let app: INestApplication;
   let appDataSource: DataSource;
 
