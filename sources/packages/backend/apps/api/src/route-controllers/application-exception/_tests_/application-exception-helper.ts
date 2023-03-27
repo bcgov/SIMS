@@ -12,7 +12,7 @@ import {
   createFakeStudent,
 } from "@sims/test-utils";
 import { AESTGroups, getAESTUser } from "../../../testHelpers";
-import { DataSource, Repository } from "typeorm";
+import { DataSource } from "typeorm";
 
 /**
  * Create a fake application with an application exception associated.
