@@ -12,7 +12,7 @@ import {
   OverawardBalanceAPIOutDTO,
   StudentOverawardAPIOutDTO,
 } from "./models/overaward.dto";
-import { OverAwardControllerService } from "./overaward.controller";
+import { OverAwardControllerService } from "./overaward.controller.service";
 import { StudentUserToken } from "../../auth";
 
 @AllowAuthorizedParty(AuthorizedParties.student)
@@ -34,7 +34,7 @@ export class OverawardAESTController extends BaseController {
   @ApiNotFoundResponse({
     description: "Student not found.",
   })
-  @Get("student/:studentId/balance")
+  @Get("student/balance")
   async getOverawardBalance(
     @UserToken() userToken: StudentUserToken,
   ): Promise<OverawardBalanceAPIOutDTO> {
@@ -51,7 +51,7 @@ export class OverawardAESTController extends BaseController {
   @ApiNotFoundResponse({
     description: "Student not found.",
   })
-  @Get("student/:studentId")
+  @Get("student")
   async getOverawardsByStudent(
     @UserToken() userToken: StudentUserToken,
   ): Promise<StudentOverawardAPIOutDTO[]> {
