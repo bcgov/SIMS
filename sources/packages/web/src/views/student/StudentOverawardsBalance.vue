@@ -49,7 +49,7 @@
         <v-col md="3">
           <v-img
             height="204"
-            alt="An illustration of a women putting a coin in a glass jar."
+            alt="An illustration of a women putting a coin in a glass jar. Illustration by Storyset."
             src="@/assets/images/student-glass-jar.svg" /></v-col
       ></v-row>
     </body-header-container>
