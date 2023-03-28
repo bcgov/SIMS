@@ -39,10 +39,10 @@ export async function saveFakeApplicationWithApplicationException(
 
   const student = await studentRepo.save(createFakeStudent());
   let applicationException = createFakeApplicationException({
-    applicationExceptionStatus,
     creator: student.user,
     assessedBy,
   });
+  applicationException.exceptionStatus = applicationExceptionStatus;
   applicationException = await applicationExceptionRepo.save(
     applicationException,
   );

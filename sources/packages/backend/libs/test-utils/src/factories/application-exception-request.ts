@@ -4,6 +4,7 @@ import {
   ApplicationExceptionStatus,
   User,
 } from "@sims/sims-db";
+import * as faker from "faker";
 import { createFakeApplicationException } from "./application-exception";
 
 /**
@@ -15,16 +16,23 @@ import { createFakeApplicationException } from "./application-exception";
  */
 export function createFakeApplicationExceptionRequest(relations: {
   applicationException?: ApplicationException;
-  creator: User;
+  creator?: User;
 }): ApplicationExceptionRequest {
   const applicationExceptionRequest = new ApplicationExceptionRequest();
-  applicationExceptionRequest.applicationException =
-    relations.applicationException ??
-    createFakeApplicationException({
-      applicationExceptionStatus: ApplicationExceptionStatus.Pending,
-      creator: relations.creator,
-    });
-  applicationExceptionRequest.exceptionName = relations.creator.firstName;
+
+  if (relations.applicationException) {
+    applicationExceptionRequest.applicationException =
+      relations.applicationException;
+  } else {
+    applicationExceptionRequest.applicationException =
+      createFakeApplicationException({
+        creator: relations.creator,
+      });
+    applicationExceptionRequest.applicationException.exceptionStatus =
+      ApplicationExceptionStatus.Pending;
+  }
+
+  applicationExceptionRequest.exceptionName = faker.name.firstName();
   applicationExceptionRequest.creator = relations.creator;
   return applicationExceptionRequest;
 }

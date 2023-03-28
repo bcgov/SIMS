@@ -15,12 +15,11 @@ import { createFakeNote } from "./note";
  * @returns a fake application exception.
  */
 export function createFakeApplicationException(relations: {
-  applicationExceptionStatus: ApplicationExceptionStatus;
-  creator: User;
+  creator?: User;
   assessedBy?: User;
 }): ApplicationException {
   const applicationException = new ApplicationException();
-  applicationException.exceptionStatus = relations.applicationExceptionStatus;
+  applicationException.exceptionStatus = ApplicationExceptionStatus.Pending;
   applicationException.assessedDate = new Date();
   applicationException.assessedBy = relations.assessedBy;
   applicationException.creator = relations.creator;
