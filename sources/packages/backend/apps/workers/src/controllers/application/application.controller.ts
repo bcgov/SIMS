@@ -27,6 +27,7 @@ import {
 import { CustomNamedError } from "@sims/utilities";
 import { APPLICATION_ID } from "@sims/services/workflow/variables/assessment-gateway";
 import { MaxJobsToActivate } from "../../types";
+import { Workers } from "@sims/services/constants";
 
 @Controller()
 export class ApplicationController {
@@ -42,7 +43,7 @@ export class ApplicationController {
    * @returns reports only that the job was completed without returning any
    * output variables.
    */
-  @ZeebeWorker("update-application-status", {
+  @ZeebeWorker(Workers.UpdateApplicationStatus, {
     fetchVariable: [APPLICATION_ID],
     maxJobsToActivate: MaxJobsToActivate.Maximum,
   })
@@ -74,7 +75,7 @@ export class ApplicationController {
    * whatever is needed to create a new MSFAA or use an
    * existing one instead.
    */
-  @ZeebeWorker("associate-msfaa", {
+  @ZeebeWorker(Workers.AssociateMSFAA, {
     fetchVariable: [APPLICATION_ID],
     maxJobsToActivate: MaxJobsToActivate.Low,
   })
@@ -110,7 +111,7 @@ export class ApplicationController {
    * which identifies an application exception to be reviewed by the Ministry.
    * @returns application exceptions status.
    */
-  @ZeebeWorker("verify-application-exceptions", {
+  @ZeebeWorker(Workers.VerifyApplicationExceptions, {
     fetchVariable: [APPLICATION_ID],
     maxJobsToActivate: MaxJobsToActivate.Normal,
   })

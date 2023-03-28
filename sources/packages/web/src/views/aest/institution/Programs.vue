@@ -1,91 +1,97 @@
 <template>
-  <full-page-container :full-width="true">
-    <body-header
-      title="All Programs"
-      :recordsCount="institutionProgramsSummary.count"
-      class="m-1"
-    >
-      <template #actions>
-        <v-text-field
-          density="compact"
-          v-model="searchProgramName"
-          label="Search Program Name"
-          data-cy="searchProgramName"
-          variant="outlined"
-          @keyup.enter="goToSearchProgramName()"
-          prepend-inner-icon="mdi-magnify"
-          hide-details="auto"
-        />
-      </template>
-    </body-header>
-    <content-group>
-      <DataTable
-        :value="institutionProgramsSummary.results"
-        :lazy="true"
-        :paginator="true"
-        :rows="DEFAULT_PAGE_LIMIT"
-        :rowsPerPageOptions="PAGINATION_LIST"
-        :totalRecords="institutionProgramsSummary.count"
-        @page="pageSortEvent($event)"
-        @sort="pageSortEvent($event)"
-        :loading="loading"
-      >
-        <template #empty>
-          <p class="text-center font-weight-bold">No records found.</p>
-        </template>
-        <Column
-          :field="ProgramSummaryFields.SubmittedDate"
-          header="Date Submitted"
-          :sortable="true"
+  <tab-container>
+    <body-header-container>
+      <template #header>
+        <body-header
+          title="All Programs"
+          :recordsCount="institutionProgramsSummary.count"
         >
-          <template #body="slotProps">
-            <div class="p-text-capitalize">
-              {{ slotProps.data.submittedDateFormatted }}
-            </div>
-          </template>
-        </Column>
-        <Column :field="ProgramSummaryFields.ProgramName" header="Program Name">
-          <template #body="slotProps">
-            <div class="p-text-capitalize">
-              {{ slotProps.data.programName }}
-            </div>
-          </template>
-        </Column>
-        <Column :field="ProgramSummaryFields.LocationName" header="Location">
-          <template #body="slotProps">
-            <div class="p-text-capitalize">
-              {{ slotProps.data.locationName }}
-            </div>
-          </template>
-        </Column>
-        <Column
-          :field="ProgramSummaryFields.TotalOfferings"
-          header="Study periods"
-        >
-        </Column>
-        <Column :field="ProgramSummaryFields.ProgramStatus" header="Status"
-          ><template #body="slotProps">
-            <status-chip-program
-              :status="slotProps.data.programStatus"
-            ></status-chip-program> </template
-        ></Column>
-        <Column header="Action">
-          <template #body="slotProps">
-            <v-btn
+          <template #actions>
+            <v-text-field
+              density="compact"
+              v-model="searchProgramName"
+              label="Search Program Name"
+              data-cy="searchProgramName"
               variant="outlined"
-              @click="
-                goToViewProgramDetail(
-                  slotProps.data.programId,
-                  slotProps.data.locationId,
-                )
-              "
-              >View</v-btn
-            >
+              @keyup.enter="goToSearchProgramName()"
+              prepend-inner-icon="mdi-magnify"
+              hide-details="auto"
+            />
           </template>
-        </Column>
-      </DataTable>
-    </content-group>
-  </full-page-container>
+        </body-header>
+      </template>
+      <content-group>
+        <DataTable
+          :value="institutionProgramsSummary.results"
+          :lazy="true"
+          :paginator="true"
+          :rows="DEFAULT_PAGE_LIMIT"
+          :rowsPerPageOptions="PAGINATION_LIST"
+          :totalRecords="institutionProgramsSummary.count"
+          @page="pageSortEvent($event)"
+          @sort="pageSortEvent($event)"
+          :loading="loading"
+        >
+          <template #empty>
+            <p class="text-center font-weight-bold">No records found.</p>
+          </template>
+          <Column
+            :field="ProgramSummaryFields.SubmittedDate"
+            header="Date Submitted"
+            :sortable="true"
+          >
+            <template #body="slotProps">
+              <div class="p-text-capitalize">
+                {{ slotProps.data.submittedDateFormatted }}
+              </div>
+            </template>
+          </Column>
+          <Column
+            :field="ProgramSummaryFields.ProgramName"
+            header="Program Name"
+          >
+            <template #body="slotProps">
+              <div class="p-text-capitalize">
+                {{ slotProps.data.programName }}
+              </div>
+            </template>
+          </Column>
+          <Column :field="ProgramSummaryFields.LocationName" header="Location">
+            <template #body="slotProps">
+              <div class="p-text-capitalize">
+                {{ slotProps.data.locationName }}
+              </div>
+            </template>
+          </Column>
+          <Column
+            :field="ProgramSummaryFields.TotalOfferings"
+            header="Study periods"
+          >
+          </Column>
+          <Column :field="ProgramSummaryFields.ProgramStatus" header="Status"
+            ><template #body="slotProps">
+              <status-chip-program
+                :status="slotProps.data.programStatus"
+              ></status-chip-program> </template
+          ></Column>
+          <Column header="Action">
+            <template #body="slotProps">
+              <v-btn
+                variant="outlined"
+                @click="
+                  goToViewProgramDetail(
+                    slotProps.data.programId,
+                    slotProps.data.locationId,
+                  )
+                "
+                >View</v-btn
+              >
+            </template>
+          </Column>
+        </DataTable>
+      </content-group>
+    </body-header-container>
+  </tab-container>
 </template>
 
 <script lang="ts">

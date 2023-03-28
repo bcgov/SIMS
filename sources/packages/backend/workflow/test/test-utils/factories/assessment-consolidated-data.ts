@@ -4,7 +4,14 @@ import {
   YesNoOptions,
   OfferingDeliveryOptions,
 } from "@sims/test-utils";
+import { OfferingIntensity } from "@sims/sims-db";
 
+/**
+ * Create fake consolidated data
+ * based on program year.
+ * @param programYear program year.
+ * @returns assessment consolidated data.
+ */
 export function createFakeAssessmentConsolidatedData(
   programYear: string,
 ): AssessmentConsolidatedData {
@@ -71,6 +78,7 @@ function setDefaultAssessmentConsolidatedData(): AssessmentConsolidatedData {
     studentDataDaycareCosts12YearsOrOver: null,
     studentDataLivingathomeRent: null,
     studentDataTransportationCost: null,
+    studentDataSelectedOffering: null,
     offeringCourseLoad: null,
     parent1Contributions: null,
     parent1Ei: null,
@@ -97,5 +105,36 @@ function setDefaultAssessmentConsolidatedData(): AssessmentConsolidatedData {
     partner1StudentStudyWeeks: null,
     partner1TotalIncome: null,
     partner1CRAReportedIncome: null,
+    assessmentId: null,
   } as AssessmentConsolidatedData;
+}
+
+/**
+ * Create fake full time consolidated data
+ * based on program year.
+ * @param programYear program year.
+ * @returns assessment consolidated data for full time application.
+ */
+export function createFakeConsolidatedFulltimeData(
+  programYear: string,
+): AssessmentConsolidatedData {
+  const [, programEndYear] = programYear.split("-");
+  const assessmentConsolidatedData =
+    createFakeAssessmentConsolidatedData(programYear);
+  assessmentConsolidatedData.offeringIntensity = OfferingIntensity.fullTime;
+  assessmentConsolidatedData.offeringStudyStartDate = `${programEndYear}-02-01`;
+  assessmentConsolidatedData.offeringStudyEndDate = `${programEndYear}-05-24`;
+  return assessmentConsolidatedData;
+}
+
+/**
+ * Create fake single independent student data.
+ * @returns consolidated data for single independent student.
+ */
+export function createFakeSingleIndependentStudentData(): Partial<AssessmentConsolidatedData> {
+  return {
+    // Single independent student.
+    studentDataDependantstatus: "independant",
+    studentDataRelationshipStatus: "single",
+  };
 }

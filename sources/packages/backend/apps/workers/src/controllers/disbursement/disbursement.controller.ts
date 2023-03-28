@@ -13,6 +13,7 @@ import {
   ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE,
   ASSESSMENT_NOT_FOUND,
   DISBURSEMENT_SCHEDULES_ALREADY_CREATED,
+  Workers,
 } from "@sims/services/constants";
 import {
   ASSESSMENT_ID,
@@ -29,7 +30,7 @@ export class DisbursementController {
   /**
    * Saves the disbursements schedules (1 or 2) and its values for grants and loans.
    */
-  @ZeebeWorker("save-disbursement-schedules", {
+  @ZeebeWorker(Workers.SaveDisbursementSchedules, {
     fetchVariable: [ASSESSMENT_ID, DISBURSEMENT_SCHEDULES],
     maxJobsToActivate: MaxJobsToActivate.Normal,
   })

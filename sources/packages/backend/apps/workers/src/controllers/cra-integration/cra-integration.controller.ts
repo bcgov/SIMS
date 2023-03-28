@@ -21,6 +21,7 @@ import {
   TAX_YEAR,
 } from "@sims/services/workflow/variables/cra-integration-income-verification";
 import { MaxJobsToActivate } from "../../types";
+import { Workers } from "@sims/services/constants";
 
 @Controller()
 export class CRAIntegrationController {
@@ -32,7 +33,7 @@ export class CRAIntegrationController {
    * Create the record to be sent to CRA for income verification.
    * @returns created income verification id.
    */
-  @ZeebeWorker("create-income-request", {
+  @ZeebeWorker(Workers.CreateIncomeRequest, {
     fetchVariable: [
       APPLICATION_ID,
       SUPPORTING_USER_ID,
@@ -71,7 +72,7 @@ export class CRAIntegrationController {
    * @returns true if income verification was completed,
    * otherwise, false.
    */
-  @ZeebeWorker("check-income-request", {
+  @ZeebeWorker(Workers.CheckIncomeRequest, {
     fetchVariable: [INCOME_VERIFICATION_ID],
     maxJobsToActivate: MaxJobsToActivate.Maximum,
   })
