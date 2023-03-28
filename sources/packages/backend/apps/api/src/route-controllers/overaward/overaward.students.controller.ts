@@ -12,7 +12,7 @@ import {
   OverawardAPIOutDTO,
   OverawardBalanceAPIOutDTO,
 } from "./models/overaward.dto";
-import { OverawardControllerService } from "./overaward.controller.service";
+import { OverawardControllerService } from "..";
 import { StudentUserToken } from "../../auth";
 
 @AllowAuthorizedParty(AuthorizedParties.student)
@@ -28,7 +28,6 @@ export class OverawardStudentsController extends BaseController {
 
   /**
    * Get the overaward balance of a student.
-   * @param studentId student.
    * @returns overaward balance for student.
    */
   @ApiNotFoundResponse({
@@ -45,7 +44,6 @@ export class OverawardStudentsController extends BaseController {
 
   /**
    * Get all overawards which belong to a student.
-   * @param studentId student.
    * @returns overaward details of a student.
    */
   @ApiNotFoundResponse({

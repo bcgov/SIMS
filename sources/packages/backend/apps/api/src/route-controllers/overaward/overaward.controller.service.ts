@@ -22,7 +22,7 @@ export class OverawardControllerService {
    * @returns overaward balance for student.
    */
   async getOverawardBalance(
-    studentId?: number,
+    studentId: number,
   ): Promise<OverawardBalanceAPIOutDTO> {
     const overawardBalance =
       await this.disbursementOverawardService.getOverawardBalance([studentId]);
@@ -37,7 +37,7 @@ export class OverawardControllerService {
    * @returns overaward details of a student.
    */
   async getOverawardsByStudent(
-    studentId?: number,
+    studentId: number,
     includeAddedBy = false,
   ): Promise<OverawardAPIOutDTO[]> {
     const overawards =

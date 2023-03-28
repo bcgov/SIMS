@@ -27,7 +27,7 @@ import {
 } from "./models/overaward.dto";
 import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
 import { IUserToken, Role } from "../../auth";
-import { OverawardControllerService } from "./overaward.controller.service";
+import { OverawardControllerService } from "..";
 
 @AllowAuthorizedParty(AuthorizedParties.aest)
 @Groups(UserGroups.AESTUser)
@@ -58,7 +58,7 @@ export class OverawardAESTController extends BaseController {
     if (!studentExist) {
       throw new NotFoundException("Student not found.");
     }
-    return await this.overawardControllerService.getOverawardBalance(studentId);
+    return this.overawardControllerService.getOverawardBalance(studentId);
   }
 
   /**
@@ -77,7 +77,7 @@ export class OverawardAESTController extends BaseController {
     if (!studentExist) {
       throw new NotFoundException("Student not found.");
     }
-    return await this.overawardControllerService.getOverawardsByStudent(
+    return this.overawardControllerService.getOverawardsByStudent(
       studentId,
       true,
     );
