@@ -1,6 +1,7 @@
 import {
   APPLICATION_EXCEPTION_STATUS,
   APPLICATION_ID,
+  ASSESSMENT_ID,
 } from "@sims/services/workflow/variables/assessment-gateway";
 import { ApplicationExceptionStatus, ApplicationStatus } from "@sims/sims-db";
 
@@ -22,5 +23,5 @@ export interface ApplicationExceptionsJobOutDTO {
 }
 
 export interface AssignMSFAAJobInDTO {
-  [APPLICATION_ID]: number;
+  [ASSESSMENT_ID]: number;
 }

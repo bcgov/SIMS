@@ -6,7 +6,8 @@ import {
   MustReturnJobActionAcknowledgement,
   IOutputVariables,
 } from "zeebe-node";
-import { DisbursementScheduleService } from "@sims/services";
+import { DisbursementScheduleService as DisbursementScheduleSharedService } from "@sims/services";
+import { DisbursementScheduleService } from "../../services";
 import { SaveDisbursementSchedulesJobInDTO } from "./disbursement.dto";
 import { CustomNamedError } from "@sims/utilities";
 import {
@@ -20,10 +21,16 @@ import {
   DISBURSEMENT_SCHEDULES,
 } from "@sims/services/workflow/variables/assessment-gateway";
 import { MaxJobsToActivate } from "../../types";
+import { AssignMSFAAJobInDTO } from "../application/application.dto";
+import {
+  APPLICATION_MSFAA_ALREADY_ASSOCIATED,
+  DISBURSEMENT_NOT_FOUND,
+} from "../../constants";
 
 @Controller()
 export class DisbursementController {
   constructor(
+    private readonly disbursementScheduleSharedService: DisbursementScheduleSharedService,
     private readonly disbursementScheduleService: DisbursementScheduleService,
   ) {}
 
@@ -44,7 +51,7 @@ export class DisbursementController {
     >,
   ): Promise<MustReturnJobActionAcknowledgement> {
     try {
-      await this.disbursementScheduleService.createDisbursementSchedules(
+      await this.disbursementScheduleSharedService.createDisbursementSchedules(
         job.variables.assessmentId,
         job.variables.disbursementSchedules,
       );
@@ -61,6 +68,40 @@ export class DisbursementController {
       }
       return job.fail(
         `Unexpected error while creating disbursement schedules. ${error}`,
+      );
+    }
+  }
+
+  /**
+   * Associates an MSFAA number to the application checking
+   * whatever is needed to create a new MSFAA or use an
+   * existing one instead.
+   */
+  @ZeebeWorker(Workers.AssociateMSFAA, {
+    fetchVariable: [ASSESSMENT_ID],
+    maxJobsToActivate: MaxJobsToActivate.Low,
+  })
+  async associateMSFAA(
+    job: Readonly<
+      ZeebeJob<AssignMSFAAJobInDTO, ICustomHeaders, IOutputVariables>
+    >,
+  ): Promise<MustReturnJobActionAcknowledgement> {
+    try {
+      await this.disbursementScheduleService.associateMSFAANumber(
+        job.variables.assessmentId,
+      );
+      return job.complete();
+    } catch (error: unknown) {
+      if (error instanceof CustomNamedError) {
+        switch (error.name) {
+          case DISBURSEMENT_NOT_FOUND:
+            return job.error(error.name, error.message);
+          case APPLICATION_MSFAA_ALREADY_ASSOCIATED:
+            return job.complete();
+        }
+      }
+      return job.fail(
+        `Unexpected error while associating the MSFAA number to the disbursements. ${error}`,
       );
     }
   }
