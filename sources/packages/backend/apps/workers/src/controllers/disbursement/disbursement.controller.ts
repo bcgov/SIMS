@@ -73,7 +73,7 @@ export class DisbursementController {
   }
 
   /**
-   * Associates an MSFAA number to the application checking
+   * Associates an MSFAA number to the disbursement(s) checking
    * whatever is needed to create a new MSFAA or use an
    * existing one instead.
    */

@@ -25,10 +25,10 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
   }
 
   /**
-   * Associates an MSFAA number to the application checking
+   * Associates an MSFAA number to the disbursement(s) checking
    * whatever is needed to create a new MSFAA or use an
    * existing one instead.
-   * @param assessmentId application id to receive an MSFAA.
+   * @param assessmentId assessment id of the workflow instance.
    * @returns application saved with the MSFAA associated.
    */
   async associateMSFAANumber(assessmentId: number): Promise<void> {
