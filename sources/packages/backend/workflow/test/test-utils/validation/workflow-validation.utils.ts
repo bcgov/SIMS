@@ -1,4 +1,5 @@
 import { WorkflowServiceTasks } from "../constants/workflow-variables-constants";
+import { WorkflowScopedServiceTask } from "./workflow-validation.models";
 
 /**
  * Expects a workflow based on the workflow result
@@ -8,10 +9,10 @@ import { WorkflowServiceTasks } from "../constants/workflow-variables-constants"
  */
 export function expectToPassThroughServiceTasks(
   workflowResultVariables: unknown,
-  ...serviceTasks: WorkflowServiceTasks[]
+  ...serviceTasks: WorkflowScopedServiceTask[]
 ) {
   serviceTasks.forEach((serviceTask) => {
-    expect(workflowResultVariables[serviceTask]).toBe(true);
+    expect(workflowResultVariables[serviceTask.scopedServiceTaskId]).toBe(true);
   });
 }
 
@@ -26,6 +27,6 @@ export function expectNotToPassThroughServiceTasks(
   ...serviceTasks: WorkflowServiceTasks[]
 ) {
   serviceTasks.forEach((serviceTask) => {
-    expect(workflowResultVariables[serviceTask]).toBeUndefined;
+    expect(workflowResultVariables[serviceTask]).toBeUndefined();
   });
 }

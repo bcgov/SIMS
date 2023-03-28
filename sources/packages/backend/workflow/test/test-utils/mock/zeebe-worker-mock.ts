@@ -1,70 +1,15 @@
-import { Duration, ZBClient, ZBWorkerConfig, ZeebeJob } from "zeebe-node";
+import { PublishMessageRequest, ZBClient, ZeebeJob } from "zeebe-node";
 import { Workers } from "@sims/services/constants";
+import {
+  WorkflowParentScopes,
+  WorkflowServiceTasks,
+} from "../constants/workflow-variables-constants";
 
 /**
  * Zeebe client to be used in mock implementation
  * of the workers.
  */
 const zeebeWorkerClient = new ZBClient();
-
-const fakeWorkers: ZBWorkerConfig<unknown, unknown, unknown>[] = [
-  {
-    taskType: Workers.AssociateWorkflowInstance,
-    taskHandler: mockTaskHandler,
-  },
-  {
-    taskType: Workers.SaveDisbursementSchedules,
-    taskHandler: mockTaskHandler,
-  },
-  {
-    taskType: Workers.SaveAssessmentData,
-    taskHandler: mockTaskHandler,
-  },
-  {
-    taskType: Workers.UpdateNOAStatus,
-    taskHandler: mockTaskHandler,
-  },
-  {
-    taskType: Workers.LoadAssessmentConsolidatedData,
-    taskHandler: mockTaskHandler,
-  },
-  {
-    taskType: Workers.UpdateApplicationStatus,
-    taskHandler: mockTaskHandler,
-  },
-  {
-    taskType: Workers.VerifyApplicationExceptions,
-    taskHandler: mockTaskHandler,
-  },
-  {
-    taskType: Workers.ProgramInfoRequest,
-    taskHandler: mockTaskHandler,
-  },
-  {
-    taskType: Workers.CreateIncomeRequest,
-    taskHandler: (job) => {
-      zeebeWorkerClient.publishMessage({
-        name: "income-verified",
-        correlationKey: "1",
-        variables: {},
-        timeToLive: Duration.seconds.of(60),
-      });
-      return job.complete({
-        incomeVerificationCompleted: true,
-        incomeVerificationId: 1,
-        [job.elementId]: true,
-      });
-    },
-  },
-  {
-    taskType: Workers.CheckIncomeRequest,
-    taskHandler: mockTaskHandler,
-  },
-  {
-    taskType: Workers.AssociateMSFAA,
-    taskHandler: mockTaskHandler,
-  },
-];
 
 /**
  * Mock task handler which returns job complete
@@ -73,11 +18,79 @@ const fakeWorkers: ZBWorkerConfig<unknown, unknown, unknown>[] = [
  * @param job worker job.
  * @returns mock task handler response.
  */
-export function mockTaskHandler(job: ZeebeJob<unknown>) {
+export async function mockTaskHandler(job: ZeebeJob<unknown>) {
+  // Check if there is a message to be published.
+  const messagePayloads = getMessagePayload(job);
+  if (messagePayloads?.length) {
+    for (const messagePayload of messagePayloads) {
+      console.log("messagePayload: ", messagePayload);
+      await zeebeWorkerClient.publishMessage(messagePayload);
+    }
+  }
+  // Get the expected object to be returned. If no object is
+  // present, a 'complete' result will be returned.
+  const serviceTaskId = getScopedServiceTaskId(job);
   return job.complete({
-    [job.elementId]: true,
-    ...job.variables[`${job.elementId}-result`],
+    [serviceTaskId]: true,
+    ...job.variables[`${serviceTaskId}-result`],
   });
+}
+
+/**
+ * The service task id (a.k.a. elementId) is unique in the workflow where it is present but
+ * can exist in multiple sub-processes (e.g. 'create-income-request'). In this case a special
+ * variable, named as 'parentScopes', is used to create a unique service task id.
+ * The 'parentScopes' variable is a list that can be appended with multiple scopes allowing
+ * uniquely identifying the service ids at any level, for instance, a sub-process calling
+ * a sub-process.
+ * @param job worker job.
+ * @returns unique service task id.
+ */
+function getScopedServiceTaskId(job: ZeebeJob<unknown>): string {
+  // Check if the service task id is in a sub-process.
+  const parentScopes: string[] | undefined = job.variables["parentScopes"];
+  if (parentScopes?.length) {
+    const scopedElementId = [...parentScopes, job.elementId];
+    return scopedElementId.join("-");
+  }
+  // If the element is not in a sub-process just return the element id.
+  return job.elementId;
+}
+
+/**
+ * When the workflow also expects a message to proceed, the worker can send the
+ * message if its expected mock result is present in the job variables.
+ * @param job worker job.
+ * @returns message payload to be sent by the worker to the workflow.
+ */
+function getMessagePayload(
+  job: ZeebeJob<unknown> | undefined,
+): PublishMessageRequest<unknown>[] {
+  const serviceTaskId = getScopedServiceTaskId(job);
+  const messagePayload = job.variables[`${serviceTaskId}-message-result`];
+  if (messagePayload) {
+    return messagePayload;
+  }
+  return undefined;
+}
+
+export function createMockedWorkerResult(
+  serviceTaskId: WorkflowServiceTasks,
+  options: {
+    jobCompleteMock?: unknown;
+    jobMessageMocks?: PublishMessageRequest<unknown>[];
+    scopes?: WorkflowParentScopes[];
+  },
+) {
+  let scopedServiceTaskId = serviceTaskId.toString();
+  if (options?.scopes) {
+    scopedServiceTaskId = [...options.scopes, scopedServiceTaskId].join("-");
+  }
+  const mockedWorkerResult: Record<string, unknown> = {};
+  mockedWorkerResult[`${scopedServiceTaskId}-result`] = options.jobCompleteMock;
+  mockedWorkerResult[`${scopedServiceTaskId}-message-result`] =
+    options.jobMessageMocks;
+  return mockedWorkerResult;
 }
 
 /**
@@ -88,6 +101,10 @@ export class ZeebeMockedClient {
 
   static getMockedZeebeInstance() {
     if (!ZeebeMockedClient.mockedZeebeClient) {
+      const fakeWorkers = Object.values(Workers).map((taskType) => ({
+        taskType,
+        taskHandler: mockTaskHandler,
+      }));
       ZeebeMockedClient.mockedZeebeClient = new ZBClient();
       fakeWorkers.forEach((fakeWorker) =>
         ZeebeMockedClient.mockedZeebeClient.createWorker(fakeWorker),

@@ -12,6 +12,7 @@ import {
   WorkflowServiceTasks,
   createFakeSingleIndependentStudentData,
   expectToPassThroughServiceTasks,
+  ExpectedServiceTasks,
 } from "../../test-utils";
 import { PROGRAM_YEAR } from "../constants/program-year.constants";
 
@@ -49,12 +50,16 @@ describe(`E2E Test Workflow assessment gateway on original assessment for ${PROG
       });
     expectToPassThroughServiceTasks(
       assessmentGatewayResponse.variables,
-      WorkflowServiceTasks.AssociateWorkflowInstance,
-      WorkflowServiceTasks.VerifyApplicationExceptions,
-      WorkflowServiceTasks.ProgramInfoNotRequired,
-      WorkflowServiceTasks.SaveDisbursementSchedules,
-      WorkflowServiceTasks.AssociateMSFAA,
-      WorkflowServiceTasks.UpdateNOAStatusToRequired,
+      ExpectedServiceTasks.associateWorkflowInstance,
+      ExpectedServiceTasks.verifyApplicationExceptions,
+      ExpectedServiceTasks.programInfoNotRequired,
+      ExpectedServiceTasks.saveDisbursementSchedules,
+      ExpectedServiceTasks.associateMSFAA,
+      ExpectedServiceTasks.updateNOAStatusToRequired,
     );
+  });
+
+  afterAll(async () => {
+    await zeebeClientProvider?.close();
   });
 });

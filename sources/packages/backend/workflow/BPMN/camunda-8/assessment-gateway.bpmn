@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:modeler="http://camunda.org/schema/modeler/1.0" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.7.0" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.1.0" camunda:diagramRelationId="f874f098-96b6-491d-81ec-ecf7a0d8c67a">
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:modeler="http://camunda.org/schema/modeler/1.0" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.5.1" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.1.0" camunda:diagramRelationId="f874f098-96b6-491d-81ec-ecf7a0d8c67a">
   <bpmn:collaboration id="Collaboration_0z9wj8q">
     <bpmn:participant id="application-in-progress" name="Assessment" processRef="assessment-gateway" />
     <bpmn:group id="Group_1k2osho" categoryValueRef="CategoryValue_1yy7g02" />
@@ -16,8 +16,6 @@
         <bpmn:flowNodeRef>Gateway_04wt04t</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>verify-application-exceptions-status-gateway</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>verify-application-exceptions-pending-gateway</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>application-exception-verified-message</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>verify-application-exceptions-retry-timer</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>in-progress-main-parallel-info-gathering-gateway</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>application-exception-end-event</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Gateway_1jdrla2</bpmn:flowNodeRef>
@@ -55,6 +53,8 @@
         <bpmn:flowNodeRef>load-assessment-data-task</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>assessment-start-event</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>associate-workflow-instance-task</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>verify-application-exceptions-retry-timer</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>application-exception-verified-message</bpmn:flowNodeRef>
       </bpmn:lane>
       <bpmn:lane id="Lane_1bfd2e9" name="Assessment/reassessment calculation">
         <bpmn:flowNodeRef>Gateway_11qgy63</bpmn:flowNodeRef>
@@ -116,18 +116,6 @@
       <bpmn:outgoing>Flow_1v0ju0g</bpmn:outgoing>
       <bpmn:outgoing>Flow_10lg2ud</bpmn:outgoing>
     </bpmn:eventBasedGateway>
-    <bpmn:intermediateCatchEvent id="application-exception-verified-message">
-      <bpmn:incoming>Flow_1v0ju0g</bpmn:incoming>
-      <bpmn:outgoing>Flow_0ws0afg</bpmn:outgoing>
-      <bpmn:messageEventDefinition id="MessageEventDefinition_1t800lv" messageRef="Message_2t9i9o7" />
-    </bpmn:intermediateCatchEvent>
-    <bpmn:intermediateCatchEvent id="verify-application-exceptions-retry-timer">
-      <bpmn:incoming>Flow_10lg2ud</bpmn:incoming>
-      <bpmn:outgoing>verify-application-exceptions-retry-timer-flow</bpmn:outgoing>
-      <bpmn:timerEventDefinition id="TimerEventDefinition_0ygi81c">
-        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT30S</bpmn:timeDuration>
-      </bpmn:timerEventDefinition>
-    </bpmn:intermediateCatchEvent>
     <bpmn:parallelGateway id="in-progress-main-parallel-info-gathering-gateway">
       <bpmn:incoming>verify-application-exceptions-status-approved-flow</bpmn:incoming>
       <bpmn:outgoing>Flow_1a980l7</bpmn:outgoing>
@@ -179,6 +167,7 @@
         <zeebe:calledElement processId="supporting-user-information-request" propagateAllChildVariables="false" />
         <zeebe:ioMapping>
           <zeebe:input source="=createdSupportingUsersIds[1]" target="supportingUserId" />
+          <zeebe:input source="=retrieve-supporting-info-parent1" target="parentScopes" />
           <zeebe:output source="=supportingUserId" target="parent1SupportingUserId" />
           <zeebe:output source="=totalIncome" target="supportingUserParent1TotalIncome" />
         </zeebe:ioMapping>
@@ -191,6 +180,7 @@
         <zeebe:calledElement processId="supporting-user-information-request" propagateAllChildVariables="false" />
         <zeebe:ioMapping>
           <zeebe:input source="=createdSupportingUsersIds[2]" target="supportingUserId" />
+          <zeebe:input source="=retrieve-supporting-info-parent2" target="parentScopes" />
           <zeebe:output source="=supportingUserId" target="parent2SupportingUserId" />
           <zeebe:output source="=totalIncome" target="parent2TotalIncome" />
         </zeebe:ioMapping>
@@ -204,6 +194,7 @@
         <zeebe:ioMapping>
           <zeebe:input source="=parent2TotalIncome" target="reportedIncome" />
           <zeebe:input source="=parent2SupportingUserId" target="supportingUserId" />
+          <zeebe:input source="=append(parentScopes, &#34;income-verification-parent2&#34;)" target="parentScopes" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_0l30wbo</bpmn:incoming>
@@ -215,6 +206,7 @@
         <zeebe:ioMapping>
           <zeebe:input source="=supportingUserParent1TotalIncome" target="reportedIncome" />
           <zeebe:input source="=parent1SupportingUserId" target="supportingUserId" />
+          <zeebe:input source="=append(parentScopes, &#34;income-verification-parent1&#34;)" target="parentScopes" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1g59sq3</bpmn:incoming>
@@ -261,6 +253,7 @@
         <zeebe:calledElement processId="supporting-user-information-request" propagateAllChildVariables="false" />
         <zeebe:ioMapping>
           <zeebe:input source="=createdSupportingUsersIds[1]" target="supportingUserId" />
+          <zeebe:input source="=retrieve-supporting-info-partner" target="parentScopes" />
           <zeebe:output source="=totalIncome" target="partner1TotalIncome" />
           <zeebe:output source="=supportingUserId" target="partnerSupportingUserId" />
         </zeebe:ioMapping>
@@ -274,6 +267,7 @@
         <zeebe:ioMapping>
           <zeebe:input source="=partner1TotalIncome" target="reportedIncome" />
           <zeebe:input source="=partnerSupportingUserId" target="supportingUserId" />
+          <zeebe:input source="=append(parentScopes, &#34;income-verification-partner&#34;)" target="parentScopes" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1wde0bi</bpmn:incoming>
@@ -285,6 +279,7 @@
         <zeebe:ioMapping>
           <zeebe:input source="=studentDataTaxReturnIncome" target="reportedIncome" />
           <zeebe:input source="=null" target="supportingUserId" />
+          <zeebe:input source="=append(parentScopes, &#34;income-verification-student&#34;)" target="parentScopes" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_18qbsu1</bpmn:incoming>
@@ -393,6 +388,7 @@
           <zeebe:output source="=null" target="parent2TotalIncome" />
           <zeebe:output source="=null" target="partner1TotalIncome" />
           <zeebe:output source="=null" target="studentDataTaxReturnIncome" />
+          <zeebe:output source="=[]" target="parentScopes" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:outgoing>Flow_1ef3map</bpmn:outgoing>
@@ -673,6 +669,18 @@
       <bpmn:incoming>Flow_17yc7mz</bpmn:incoming>
       <bpmn:outgoing>Flow_1y2j9iz</bpmn:outgoing>
     </bpmn:serviceTask>
+    <bpmn:intermediateCatchEvent id="verify-application-exceptions-retry-timer">
+      <bpmn:incoming>Flow_10lg2ud</bpmn:incoming>
+      <bpmn:outgoing>verify-application-exceptions-retry-timer-flow</bpmn:outgoing>
+      <bpmn:timerEventDefinition id="TimerEventDefinition_0ygi81c">
+        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT30S</bpmn:timeDuration>
+      </bpmn:timerEventDefinition>
+    </bpmn:intermediateCatchEvent>
+    <bpmn:intermediateCatchEvent id="application-exception-verified-message">
+      <bpmn:incoming>Flow_1v0ju0g</bpmn:incoming>
+      <bpmn:outgoing>Flow_0ws0afg</bpmn:outgoing>
+      <bpmn:messageEventDefinition id="MessageEventDefinition_1t800lv" messageRef="Message_2t9i9o7" />
+    </bpmn:intermediateCatchEvent>
   </bpmn:process>
   <bpmn:message id="Message_1clo0eh" name="program-info-request-completed">
     <bpmn:extensionElements>
@@ -736,12 +744,6 @@
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Gateway_13zjxus_di" bpmnElement="verify-application-exceptions-pending-gateway">
         <dc:Bounds x="1111" y="576" width="50" height="50" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_15lqlgc_di" bpmnElement="application-exception-verified-message">
-        <dc:Bounds x="1184" y="583" width="36" height="36" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_0f2fffe_di" bpmnElement="verify-application-exceptions-retry-timer">
-        <dc:Bounds x="1118" y="661" width="36" height="36" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Gateway_1472xxr_di" bpmnElement="in-progress-main-parallel-info-gathering-gateway">
         <dc:Bounds x="1365" y="576" width="50" height="50" />
@@ -935,6 +937,12 @@
         <dc:Bounds x="2930" y="1680" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0f2fffe_di" bpmnElement="verify-application-exceptions-retry-timer">
+        <dc:Bounds x="1162" y="661" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_15lqlgc_di" bpmnElement="application-exception-verified-message">
+        <dc:Bounds x="1172" y="502" width="36" height="36" />
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_1btetiq_di" bpmnElement="Flow_1btetiq">
         <di:waypoint x="2480" y="1130" />
         <di:waypoint x="2480" y="1595" />
@@ -1127,11 +1135,13 @@
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_10lg2ud_di" bpmnElement="Flow_10lg2ud">
         <di:waypoint x="1136" y="626" />
-        <di:waypoint x="1136" y="661" />
+        <di:waypoint x="1136" y="679" />
+        <di:waypoint x="1162" y="679" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1v0ju0g_di" bpmnElement="Flow_1v0ju0g">
-        <di:waypoint x="1161" y="601" />
-        <di:waypoint x="1184" y="601" />
+        <di:waypoint x="1136" y="576" />
+        <di:waypoint x="1136" y="520" />
+        <di:waypoint x="1172" y="520" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1pm5g4l_di" bpmnElement="verify-application-exceptions-status-approved-flow">
         <di:waypoint x="1292" y="601" />
@@ -1148,16 +1158,17 @@
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0ws0afg_di" bpmnElement="Flow_0ws0afg">
-        <di:waypoint x="1220" y="601" />
-        <di:waypoint x="1242" y="601" />
+        <di:waypoint x="1208" y="520" />
+        <di:waypoint x="1267" y="520" />
+        <di:waypoint x="1267" y="576" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1a8bc8b_di" bpmnElement="verify-application-exceptions-not-pending-flow">
         <di:waypoint x="1030" y="576" />
-        <di:waypoint x="1030" y="540" />
-        <di:waypoint x="1267" y="540" />
+        <di:waypoint x="1030" y="380" />
+        <di:waypoint x="1267" y="380" />
         <di:waypoint x="1267" y="576" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="1100" y="522" width="60" height="14" />
+          <dc:Bounds x="1100" y="362" width="60" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_031ttjr_di" bpmnElement="verify-application-exceptions-pending-flow">
@@ -1172,7 +1183,7 @@
         <di:waypoint x="1005" y="601" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0mjvscf_di" bpmnElement="verify-application-exceptions-retry-timer-flow">
-        <di:waypoint x="1118" y="679" />
+        <di:waypoint x="1162" y="679" />
         <di:waypoint x="920" y="679" />
         <di:waypoint x="920" y="641" />
       </bpmndi:BPMNEdge>
