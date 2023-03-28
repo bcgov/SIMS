@@ -27,7 +27,6 @@ import {
 } from "./models/overaward.dto";
 import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
 import { IUserToken, Role } from "../../auth";
-import { getUserFullName } from "../../utilities";
 import { OverAwardControllerService } from "./overaward.controller.service";
 
 @AllowAuthorizedParty(AuthorizedParties.aest)
