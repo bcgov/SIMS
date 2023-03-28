@@ -53,12 +53,6 @@ import BodyHeaderContainer from "@/components/layouts/BodyHeaderContainer.vue";
 
 export default defineComponent({
   components: { StudentOverawardDetails, BodyHeaderContainer },
-  props: {
-    studentId: {
-      type: Number,
-      required: true,
-    },
-  },
   setup() {
     return {
       StudentRoutesConst,
