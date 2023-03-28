@@ -31,7 +31,7 @@ export default defineComponent({
       required: true,
     },
     cancelledDate: {
-      type: String,
+      type: Date,
       required: true,
     },
   },
