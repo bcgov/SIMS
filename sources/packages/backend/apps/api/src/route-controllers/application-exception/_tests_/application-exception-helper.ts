@@ -57,7 +57,7 @@ export async function saveFakeApplicationWithApplicationException(
     }),
   );
 
-  return await applicationRepo.findOne({
+  return applicationRepo.findOne({
     relations: {
       applicationException: {
         exceptionNote: true,
