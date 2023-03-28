@@ -1,6 +1,5 @@
 import { Injectable } from "@nestjs/common";
 import { DisbursementOverawardService } from "@sims/services";
-import { DisbursementOveraward } from "@sims/sims-db";
 import { getUserFullName } from "../../utilities";
 import {
   OverawardAPIOutDTO,
@@ -42,22 +41,7 @@ export class OverawardControllerService {
   ): Promise<OverawardAPIOutDTO[]> {
     const overawards =
       await this.disbursementOverawardService.getOverawardsByStudent(studentId);
-    return overawards.map((overaward) =>
-      this.transformOverawards(overaward, includeAddedBy),
-    );
-  }
-
-  /**
-   * Transform overawards for a student.
-   * @param overaward overaward.
-   * @param includeAddedBy include added by.
-   * @returns transformed overawards.
-   */
-  private transformOverawards(
-    overaward: DisbursementOveraward,
-    includeAddedBy: boolean,
-  ): OverawardAPIOutDTO {
-    return {
+    return overawards.map((overaward) => ({
       dateAdded: overaward.addedDate,
       overawardOrigin: overaward.originType,
       awardValueCode: overaward.disbursementValueCode,
@@ -68,6 +52,6 @@ export class OverawardControllerService {
       applicationNumber:
         overaward.studentAssessment?.application.applicationNumber,
       assessmentTriggerType: overaward.studentAssessment?.triggerType,
-    };
+    }));
   }
 }

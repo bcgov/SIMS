@@ -37,7 +37,7 @@ export class OverawardStudentsController extends BaseController {
   async getOverawardBalance(
     @UserToken() userToken: StudentUserToken,
   ): Promise<OverawardBalanceAPIOutDTO> {
-    return await this.overawardControllerService.getOverawardBalance(
+    return this.overawardControllerService.getOverawardBalance(
       userToken.studentId,
     );
   }
@@ -53,7 +53,7 @@ export class OverawardStudentsController extends BaseController {
   async getOverawardsByStudent(
     @UserToken() userToken: StudentUserToken,
   ): Promise<OverawardAPIOutDTO[]> {
-    return await this.overawardControllerService.getOverawardsByStudent(
+    return this.overawardControllerService.getOverawardsByStudent(
       userToken.studentId,
     );
   }
