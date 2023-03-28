@@ -9,7 +9,6 @@ import { createFakeNote } from "./note";
 /**
  * Creates a fake application exception with the passed status.
  * @param relations dependencies:
- * - `applicationExceptionStatus` application exception status.
  * - `creator` student user that created the application,
  * - `assessedBy` ministry user that approved or denied the application exception.
  * @returns a fake application exception.
