@@ -1,7 +1,6 @@
 import {
   ApplicationException,
   ApplicationExceptionRequest,
-  ApplicationExceptionStatus,
   User,
 } from "@sims/sims-db";
 import * as faker from "faker";
