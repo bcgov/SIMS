@@ -12,7 +12,7 @@ import {
   OverawardAPIOutDTO,
   OverawardBalanceAPIOutDTO,
 } from "./models/overaward.dto";
-import { OverAwardControllerService } from "./overaward.controller.service";
+import { OverawardControllerService } from "./overaward.controller.service";
 import { StudentUserToken } from "../../auth";
 
 @AllowAuthorizedParty(AuthorizedParties.student)
@@ -21,7 +21,7 @@ import { StudentUserToken } from "../../auth";
 @ApiTags(`${ClientTypeBaseRoute.Student}-overaward`)
 export class OverawardStudentsController extends BaseController {
   constructor(
-    private readonly overawardControllerService: OverAwardControllerService,
+    private readonly overawardControllerService: OverawardControllerService,
   ) {
     super();
   }

@@ -39,7 +39,7 @@ import {
   ProgramYearStudentsController,
   ApplicationControllerService,
   OverawardStudentsController,
-  OverAwardControllerService,
+  OverawardControllerService,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
 import { ConfigModule } from "@sims/utilities/config";
@@ -109,7 +109,7 @@ import { ATBCIntegrationModule } from "@sims/integrations/atbc-integration";
     StudentRestrictionSharedService,
     DisbursementOverawardService,
     NoteSharedService,
-    OverAwardControllerService,
+    OverawardControllerService,
   ],
 })
 export class AppStudentsModule {}

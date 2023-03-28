@@ -27,7 +27,7 @@ import {
 } from "./models/overaward.dto";
 import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
 import { IUserToken, Role } from "../../auth";
-import { OverAwardControllerService } from "./overaward.controller.service";
+import { OverawardControllerService } from "./overaward.controller.service";
 
 @AllowAuthorizedParty(AuthorizedParties.aest)
 @Groups(UserGroups.AESTUser)
@@ -37,7 +37,7 @@ export class OverawardAESTController extends BaseController {
   constructor(
     private readonly disbursementOverawardService: DisbursementOverawardService,
     private readonly studentService: StudentService,
-    private readonly overawardControllerService: OverAwardControllerService,
+    private readonly overawardControllerService: OverawardControllerService,
   ) {
     super();
   }

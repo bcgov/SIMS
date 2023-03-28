@@ -63,7 +63,7 @@ import {
   ConfirmationOfEnrollmentAESTController,
   ConfirmationOfEnrollmentControllerService,
   OverawardAESTController,
-  OverAwardControllerService,
+  OverawardControllerService,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
 import {
@@ -157,7 +157,7 @@ import {
     DisbursementScheduleService,
     DisbursementOverawardService,
     NoteSharedService,
-    OverAwardControllerService,
+    OverawardControllerService,
   ],
 })
 export class AppAESTModule {}

@@ -11,7 +11,7 @@ import {
  * Overaward controller service.
  */
 @Injectable()
-export class OverAwardControllerService {
+export class OverawardControllerService {
   constructor(
     private readonly disbursementOverawardService: DisbursementOverawardService,
   ) {}
@@ -40,9 +40,9 @@ export class OverAwardControllerService {
     studentId?: number,
     includeAddedBy = false,
   ): Promise<OverawardAPIOutDTO[]> {
-    const overAwards =
+    const overawards =
       await this.disbursementOverawardService.getOverawardsByStudent(studentId);
-    return overAwards.map((overaward) =>
+    return overawards.map((overaward) =>
       this.transformOverawards(overaward, includeAddedBy),
     );
   }
