@@ -15,14 +15,25 @@
           </h2>
           <p>
             It's important to understand how overawards can impact your awards.
-            Learn more about overawards.
+            <a
+              rel="noopener"
+              target="_blank"
+              href="https://studentaidbc.ca/apply/overaward"
+              >Learn more about overawards.</a
+            >
           </p>
           <span class="label-bold"> If you have an overaward</span>
           <div class="align-bullets pt-2 pl-2">
             <ol>
               <li>
-                Pay back your overawards in your National Student Loan Service
-                Centre (NSLSC) account
+                Pay back your overawards in your
+                <a
+                  rel="noopener"
+                  target="_blank"
+                  href="https://www.csnpe-nslsc.canada.ca/en/home"
+                  >National Student Loan Service Centre (NSLSC)</a
+                >
+                account
               </li>
               <li>
                 Contact StudentAid BC after you pay your debts, so we know to
