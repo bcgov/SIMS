@@ -63,7 +63,7 @@
         <bpmn:flowNodeRef>Gateway_1m2js1c</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>update-noa-status-to-required-task</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>update-noa-status-to-not-required-task</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Activity_0uvwvvk</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>associate-msfaa-task</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Gateway_1hwknxt</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>save-assessment-data-task</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>save-assessment-data-part-time-task</bpmn:flowNodeRef>
@@ -522,7 +522,7 @@
     <bpmn:sequenceFlow id="Flow_17yc7mz" sourceRef="Activity_0w3u365" targetRef="save-disbursement-part-time-task" />
     <bpmn:sequenceFlow id="Flow_1y2j9iz" sourceRef="save-disbursement-part-time-task" targetRef="save-assessment-data-part-time-task" />
     <bpmn:sequenceFlow id="Flow_1f8ymzi" sourceRef="save-assessment-data-part-time-task" targetRef="Gateway_1hwknxt" />
-    <bpmn:sequenceFlow id="Flow_1mpwyku" sourceRef="Gateway_1hwknxt" targetRef="Activity_0uvwvvk" />
+    <bpmn:sequenceFlow id="Flow_1mpwyku" sourceRef="Gateway_1hwknxt" targetRef="associate-msfaa-task" />
     <bpmn:serviceTask id="update-application-status-to-assessment-task" name="Update Application Status to &#39;Assessment&#39;">
       <bpmn:extensionElements>
         <zeebe:taskDefinition type="update-application-status" />
@@ -557,7 +557,7 @@
       <bpmn:outgoing>Flow_1a4wzic</bpmn:outgoing>
       <bpmn:outgoing>Flow_01iq5cw</bpmn:outgoing>
     </bpmn:exclusiveGateway>
-    <bpmn:sequenceFlow id="Flow_1atzf7v" sourceRef="Activity_0uvwvvk" targetRef="Gateway_1m2js1c" />
+    <bpmn:sequenceFlow id="Flow_1atzf7v" sourceRef="associate-msfaa-task" targetRef="Gateway_1m2js1c" />
     <bpmn:serviceTask id="update-noa-status-to-required-task" name="Update NOA status to &#39;Required&#39;">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
@@ -584,7 +584,7 @@
       <bpmn:incoming>Flow_01iq5cw</bpmn:incoming>
       <bpmn:outgoing>Flow_0hmh3m7</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:serviceTask id="Activity_0uvwvvk" name="Aassociate MSFAA">
+    <bpmn:serviceTask id="associate-msfaa-task" name="Aassociate MSFAA">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
           <zeebe:input source="={&#10;  weeks: offeringWeeks,&#10;  tuitionCost: 5009,&#10;  childcareCost: 0,&#10;  livingAllowance: 13609.3,&#10;  totalAssessedCost: 21840.3,&#10;  totalFamilyIncome: 0,&#10;  totalFederalAward: 5533.4,&#10;  otherAllowableCost: 0,&#10;  transportationCost: null,&#10;  secondResidenceCost: 0,&#10;  totalAssessmentNeed: 18444.68,&#10;  booksAndSuppliesCost: 3000,&#10;  totalProvincialAward: 3688.94,&#10;  alimonyOrChildSupport: 0,&#10;  federalAssessmentNeed: 9222.34,&#10;  partnerStudentLoanCost: null,&#10;  exceptionalEducationCost: 222,&#10;  provincialAssessmentNeed: 9222.34,&#10;  totalFederalContribution: 12617.96,&#10;  parentAssessedContribution: 10817.96,&#10;  partnerAssessedContribution: 0,&#10;  totalProvincialContribution: 12617.96,&#10;  studentTotalFederalContribution: 1800,&#10;  studentTotalProvincialContribution: 1800&#10;}" target="assessmentData" />
@@ -874,9 +874,6 @@
       <bpmndi:BPMNShape id="Activity_11aa2j4_di" bpmnElement="associate-workflow-instance-task">
         <dc:Bounds x="320" y="562" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Gateway_1m2js1c_di" bpmnElement="Gateway_1m2js1c" isMarkerVisible="true">
-        <dc:Bounds x="3345" y="1595" width="50" height="50" />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_1usikde" bpmnElement="update-application-status-to-assessment-task">
         <dc:Bounds x="3460" y="1520" width="100" height="80" />
         <bpmndi:BPMNLabel />
@@ -887,6 +884,9 @@
       <bpmndi:BPMNShape id="BPMNShape_054vajm" bpmnElement="Gateway_04wql0w" isMarkerVisible="true">
         <dc:Bounds x="3895" y="1585" width="50" height="50" />
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1m2js1c_di" bpmnElement="Gateway_1m2js1c" isMarkerVisible="true">
+        <dc:Bounds x="3345" y="1595" width="50" height="50" />
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_012hpqk" bpmnElement="update-noa-status-to-required-task">
         <dc:Bounds x="3690" y="1520" width="100" height="80" />
         <bpmndi:BPMNLabel />
@@ -895,7 +895,7 @@
         <dc:Bounds x="3690" y="1640" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_19j2z1x" bpmnElement="Activity_0uvwvvk">
+      <bpmndi:BPMNShape id="BPMNShape_19j2z1x" bpmnElement="associate-msfaa-task">
         <dc:Bounds x="3210" y="1580" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>

@@ -29,7 +29,6 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
    * whatever is needed to create a new MSFAA or use an
    * existing one instead.
    * @param assessmentId assessment id of the workflow instance.
-   * @returns application saved with the MSFAA associated.
    */
   async associateMSFAANumber(assessmentId: number): Promise<void> {
     const [firstDisbursement, secondDisbursement] = await this.repo.find({
@@ -85,7 +84,7 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
       // Reuse the MSFAA that is still valid and avoid creating a new one.
       msfaaNumberId = existingValidMSFAANumber.id;
     } else {
-      // Get previously completed and signed application for the student
+      // Get previously completed and signed disbursement of an application for the student
       // to determine if an existing MSFAA is still valid.
       const previousSignedDisbursement =
         await this.getPreviouslySignedDisbursement(
@@ -96,6 +95,8 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
       let hasValidMSFAANumber = false;
       if (previousSignedDisbursement) {
         // checks if the MSFAA number is still valid.
+        // If the study period end date of the previously signed MSFAA is less than 2 years
+        // when compared to current study period start date, then MSFAA is considered to be valid.
         hasValidMSFAANumber = this.msfaaNumberService.isMSFAANumberValid(
           // Previously signed and completed application offering end date in considered the start date.
           new Date(
@@ -110,7 +111,7 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
         // Reuse the MSFAA number.
         msfaaNumberId = previousSignedDisbursement.msfaaNumber.id;
       } else {
-        // Create a new MSFAA number case the previous one is no longer valid.
+        // Create a new MSFAA number in case the previous one is no longer valid.
         const newMSFAANumber = await this.msfaaNumberService.createMSFAANumber(
           studentId,
           applicationId,

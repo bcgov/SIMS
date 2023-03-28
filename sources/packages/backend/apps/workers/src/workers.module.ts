@@ -15,10 +15,11 @@ import {
   SupportingUserService,
   CRAIncomeVerificationService,
   MSFAANumberService,
+  DisbursementScheduleService,
 } from "./services";
 import { ZeebeTransportStrategy } from "./zeebe";
 import {
-  DisbursementScheduleService,
+  DisbursementScheduleService as DisbursementScheduleSharedService,
   SequenceControlService,
   WorkflowClientService,
   ZeebeModule,
@@ -55,6 +56,7 @@ import { SystemUserModule } from "@sims/services/system-users";
     ApplicationExceptionService,
     SupportingUserService,
     CRAIncomeVerificationService,
+    DisbursementScheduleSharedService,
     DisbursementScheduleService,
     SequenceControlService,
     MSFAANumberService,

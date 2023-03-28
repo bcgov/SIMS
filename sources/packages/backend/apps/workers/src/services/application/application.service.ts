@@ -2,27 +2,14 @@ import { Injectable } from "@nestjs/common";
 import {
   Application,
   ApplicationStatus,
-  AssessmentTriggerType,
-  MSFAANumber,
-  OfferingIntensity,
   ProgramInfoStatus,
   RecordDataModelService,
 } from "@sims/sims-db";
-import { CustomNamedError } from "@sims/utilities";
 import { DataSource, In, UpdateResult } from "typeorm";
-import { MSFAANumberService } from "..";
-import {
-  APPLICATION_MSFAA_ALREADY_ASSOCIATED,
-  APPLICATION_NOT_FOUND,
-  INVALID_OPERATION_IN_THE_CURRENT_STATUS,
-} from "../../constants";
 
 @Injectable()
 export class ApplicationService extends RecordDataModelService<Application> {
-  constructor(
-    dataSource: DataSource,
-    private readonly msfaaNumberService: MSFAANumberService,
-  ) {
+  constructor(dataSource: DataSource) {
     super(dataSource.getRepository(Application));
   }
 
@@ -108,150 +95,5 @@ export class ApplicationService extends RecordDataModelService<Application> {
         id: applicationId,
       },
     });
-  }
-
-  /**
-   * Associates an MSFAA number to the application checking
-   * whatever is needed to create a new MSFAA or use an
-   * existing one instead.
-   * @param applicationId application id to receive an MSFAA.
-   * @returns application saved with the MSFAA associated.
-   */
-  async associateMSFAANumber(applicationId: number): Promise<Application> {
-    const application = await this.repo.findOne({
-      select: {
-        id: true,
-        applicationStatus: true,
-        student: {
-          id: true,
-        },
-        currentAssessment: {
-          id: true,
-          offering: {
-            id: true,
-            offeringIntensity: true,
-          },
-        },
-        msfaaNumber: {
-          id: true,
-        },
-      },
-      relations: {
-        student: true,
-        currentAssessment: {
-          offering: true,
-        },
-      },
-      where: {
-        id: applicationId,
-      },
-    });
-
-    if (!application) {
-      throw new CustomNamedError(
-        "Student Application not found or one of its associations is missing.",
-        APPLICATION_NOT_FOUND,
-      );
-    }
-
-    if (application.msfaaNumber?.id) {
-      throw new CustomNamedError(
-        "MSFAA number is already associated.",
-        APPLICATION_MSFAA_ALREADY_ASSOCIATED,
-      );
-    }
-
-    if (application.applicationStatus !== ApplicationStatus.Assessment) {
-      throw new CustomNamedError(
-        `Student Application is not in the expected status. The application must be in application status '${ApplicationStatus.Assessment}' for an MSFAA number be assigned.`,
-        INVALID_OPERATION_IN_THE_CURRENT_STATUS,
-      );
-    }
-
-    let msfaaNumberId: number;
-
-    // Checks if there is an MSFAA that could be considered valid.
-    const existingValidMSFAANumber =
-      await this.msfaaNumberService.getCurrentValidMSFAANumber(
-        application.student.id,
-        application.currentAssessment.offering.offeringIntensity,
-      );
-    if (existingValidMSFAANumber) {
-      // Reuse the MSFAA that is still valid and avoid creating a new one.
-      msfaaNumberId = existingValidMSFAANumber.id;
-    } else {
-      // Get previously completed and signed application for the student
-      // to determine if an existing MSFAA is still valid.
-      const previousSignedApplication =
-        await this.getPreviouslySignedApplication(
-          application.student.id,
-          application.currentAssessment.offering.offeringIntensity,
-        );
-
-      let hasValidMSFAANumber = false;
-      if (previousSignedApplication) {
-        const [originalAssessment] =
-          previousSignedApplication.studentAssessments;
-        // checks if the MSFAA number is still valid.
-        hasValidMSFAANumber = this.msfaaNumberService.isMSFAANumberValid(
-          // Previously signed and completed application offering end date in considered the start date.
-          new Date(originalAssessment.offering.studyEndDate),
-          // Start date of the offering of the current application is considered the end date.
-          new Date(originalAssessment.offering.studyStartDate),
-        );
-      }
-
-      if (hasValidMSFAANumber) {
-        // Reuse the MSFAA number.
-        msfaaNumberId = previousSignedApplication.msfaaNumber.id;
-      } else {
-        // Create a new MSFAA number case the previous one is no longer valid.
-        const newMSFAANumber = await this.msfaaNumberService.createMSFAANumber(
-          application.student.id,
-          applicationId,
-          application.currentAssessment.offering.offeringIntensity,
-        );
-        msfaaNumberId = newMSFAANumber.id;
-      }
-    }
-
-    // Associate the MSFAA number with the application.
-    application.msfaaNumber = { id: msfaaNumberId } as MSFAANumber;
-
-    return this.repo.save(application);
-  }
-
-  /**
-   * Gets the application that has an MSFAA signed date.
-   * @param studentId student id to filter the applications.
-   * @param offeringIntensity MSFAA are generated individually for full-time/part-time
-   * applications. The offering intensity is used to differentiate between them.
-   * @returns previous signed application if exists, otherwise null.
-   */
-  async getPreviouslySignedApplication(
-    studentId: number,
-    offeringIntensity: OfferingIntensity,
-  ): Promise<Application> {
-    return this.repo
-      .createQueryBuilder("applications")
-      .select(["applications.id", "msfaaNumbers.id", "offerings.studyEndDate"])
-      .innerJoin("applications.studentAssessments", "assessment")
-      .innerJoin("assessment.offering", "offerings")
-      .innerJoin("applications.msfaaNumber", "msfaaNumbers")
-      .innerJoin("applications.student", "students")
-      .where("applications.applicationStatus = :completedStatus", {
-        completedStatus: ApplicationStatus.Completed,
-      })
-      .andWhere("assessment.triggerType = :triggerType", {
-        triggerType: AssessmentTriggerType.OriginalAssessment,
-      })
-      .andWhere("students.id = :studentId", { studentId })
-      .andWhere("msfaaNumbers.dateSigned is not null")
-      .andWhere("msfaaNumbers.offeringIntensity = :offeringIntensity", {
-        offeringIntensity,
-      })
-      .orderBy("offerings.studyEndDate", "DESC")
-      .limit(1)
-      .getOne();
   }
 }
