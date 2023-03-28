@@ -42,7 +42,7 @@
             src="@/assets/images/student-glass-jar.svg" /></v-col
       ></v-row>
     </body-header-container>
-    <student-overaward-details :studentId="studentId" />
+    <student-overaward-details />
   </student-page-container>
 </template>
 <script lang="ts">

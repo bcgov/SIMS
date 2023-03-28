@@ -141,7 +141,7 @@ export default defineComponent({
   props: {
     studentId: {
       type: Number,
-      required: true,
+      required: false,
     },
     showAddedBy: {
       type: Boolean,
@@ -187,7 +187,7 @@ export default defineComponent({
       if (manualOveraward) {
         try {
           await OverawardService.shared.addManualOverawardDeduction(
-            props.studentId,
+            props.studentId as number,
             manualOveraward as OverawardManualRecordAPIInDTO,
           );
           snackBar.success("Overaward deduction added successfully.");
