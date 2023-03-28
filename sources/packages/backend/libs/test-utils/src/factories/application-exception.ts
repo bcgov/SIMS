@@ -14,17 +14,17 @@ import { createFakeNote } from "./note";
  * - `assessedBy` ministry user that approved or denied the application exception.
  * @returns a fake application exception.
  */
-export function createFakeApplicationException(relations: {
+export function createFakeApplicationException(relations?: {
   creator?: User;
   assessedBy?: User;
 }): ApplicationException {
   const applicationException = new ApplicationException();
   applicationException.exceptionStatus = ApplicationExceptionStatus.Pending;
   applicationException.assessedDate = new Date();
-  applicationException.assessedBy = relations.assessedBy;
-  applicationException.creator = relations.creator;
+  applicationException.assessedBy = relations?.assessedBy;
+  applicationException.creator = relations?.creator;
   const applicationExceptionNote = createFakeNote(NoteType.Application, {
-    creator: relations.creator,
+    creator: relations?.creator,
   });
   applicationException.exceptionNote = applicationExceptionNote;
   return applicationException;

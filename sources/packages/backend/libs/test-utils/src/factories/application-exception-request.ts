@@ -14,25 +14,23 @@ import { createFakeApplicationException } from "./application-exception";
  *  - `creator`: student user that created the request.
  * @returns a fake application exception request.
  */
-export function createFakeApplicationExceptionRequest(relations: {
+export function createFakeApplicationExceptionRequest(relations?: {
   applicationException?: ApplicationException;
   creator?: User;
 }): ApplicationExceptionRequest {
   const applicationExceptionRequest = new ApplicationExceptionRequest();
 
-  if (relations.applicationException) {
+  if (relations?.applicationException) {
     applicationExceptionRequest.applicationException =
-      relations.applicationException;
+      relations?.applicationException;
   } else {
     applicationExceptionRequest.applicationException =
       createFakeApplicationException({
-        creator: relations.creator,
+        creator: relations?.creator,
       });
-    applicationExceptionRequest.applicationException.exceptionStatus =
-      ApplicationExceptionStatus.Pending;
   }
 
   applicationExceptionRequest.exceptionName = faker.name.firstName();
-  applicationExceptionRequest.creator = relations.creator;
+  applicationExceptionRequest.creator = relations?.creator;
   return applicationExceptionRequest;
 }
