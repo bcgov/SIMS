@@ -18,7 +18,6 @@ import { DataSource } from "typeorm";
  * Create a fake application with an application exception associated.
  * @param dataSource application dataSource.
  * @param applicationExceptionStatus application exception status.
- * @param creator user that will be assigned to application exception.
  * @returns application with an application exception associated.
  */
 export async function saveFakeApplicationWithApplicationException(
