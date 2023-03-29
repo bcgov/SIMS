@@ -80,15 +80,4 @@ export class InstitutionControllerService {
       description: institutionType.name,
     }));
   }
-
-  /**
-   * Check if institution is private or public.
-   * @param institutionId is the institution id.
-   * @returns boolean true if institution is private, else false.
-   */
-  async checkIfInstitutionIsPrivate(institutionId: number): Promise<boolean> {
-    const institutionType =
-      await this.institutionService.getInstitutionTypeById(institutionId);
-    return INSTITUTION_TYPE_BC_PRIVATE === institutionType.institutionType.id;
-  }
 }
