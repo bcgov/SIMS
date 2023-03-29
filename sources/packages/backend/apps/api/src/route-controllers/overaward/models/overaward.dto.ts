@@ -22,7 +22,7 @@ export class OverawardBalanceAPIOutDTO {
 
 export class StudentsOverawardAPIOutDTO {
   dateAdded?: Date;
-  createdAt?: Date;
+  createdAt: Date;
   overawardOrigin: DisbursementOverawardOriginType;
   awardValueCode: string;
   overawardValue: number;

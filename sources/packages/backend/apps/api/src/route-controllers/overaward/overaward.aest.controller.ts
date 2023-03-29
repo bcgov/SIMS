@@ -77,10 +77,9 @@ export class OverawardAESTController extends BaseController {
     if (!studentExist) {
       throw new NotFoundException("Student not found.");
     }
-    return this.overawardControllerService.getOverawardsByStudent(
-      studentId,
-      true,
-    );
+    return this.overawardControllerService.getOverawardsByStudent(studentId, {
+      audit: true,
+    });
   }
 
   /**

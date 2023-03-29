@@ -37,7 +37,7 @@ export class OverawardControllerService {
    */
   async getOverawardsByStudent(
     studentId: number,
-    includeAddedBy = false,
+    options?: { audit: boolean },
   ): Promise<AESTOverawardAPIOutDTO[] | StudentsOverawardAPIOutDTO[]> {
     const overawards =
       await this.disbursementOverawardService.getOverawardsByStudent(studentId);
@@ -47,7 +47,7 @@ export class OverawardControllerService {
       overawardOrigin: overaward.originType,
       awardValueCode: overaward.disbursementValueCode,
       overawardValue: overaward.overawardValue,
-      addedByUser: includeAddedBy
+      addedByUser: options?.audit
         ? getUserFullName(overaward.addedBy)
         : undefined,
       applicationNumber:
