@@ -14,6 +14,7 @@ import StudentApplicationSummary from "@/views/student/StudentApplicationSummary
 import StudentApplicationDetails from "@/views/student/StudentApplicationDetails.vue";
 import StudentAppealRequest from "@/views/student/StudentAppealRequest.vue";
 import StudentAccountActivity from "@/views/student/StudentAccountActivity.vue";
+import StudentOverawardsBalance from "@/views/student/StudentOverawardsBalance.vue";
 import StudentAccountApplicationInProgress from "@/views/student/StudentAccountApplicationInProgress.vue";
 import StudentAssessmentAward from "@/views/student/StudentAssessmentAward.vue";
 import StudentAppealRequests from "@/views/student/StudentAppealRequests.vue";
@@ -171,6 +172,14 @@ export const studentRoutes: Array<RouteRecordRaw> = [
         path: AppRoutes.StudentAccountActivity,
         name: StudentRoutesConst.STUDENT_ACCOUNT_ACTIVITY,
         component: StudentAccountActivity,
+        meta: {
+          clientType: ClientIdType.Student,
+        },
+      },
+      {
+        path: AppRoutes.StudentOverawardsBalance,
+        name: StudentRoutesConst.STUDENT_OVERAWARDS_BALANCE,
+        component: StudentOverawardsBalance,
         meta: {
           clientType: ClientIdType.Student,
         },
