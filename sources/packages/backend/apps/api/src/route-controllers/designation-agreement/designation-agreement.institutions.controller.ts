@@ -87,7 +87,7 @@ export class DesignationAgreementInstitutionsController extends BaseController {
       );
     }
 
-    // Check if institution is private or public and append it to the payload
+    // Check if institution is private and append it to the payload
     payload.isBCPrivate =
       await this.institutionService.checkIfInstitutionIsPrivate(
         userToken.authorizations.institutionId,
