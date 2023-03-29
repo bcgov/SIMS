@@ -193,8 +193,8 @@ export default defineComponent({
       if (manualOveraward) {
         try {
           await OverawardService.shared.addManualOverawardDeduction(
-            props.studentId as number,
             manualOveraward as OverawardManualRecordAPIInDTO,
+            props.studentId as number,
           );
           snackBar.success("Overaward deduction added successfully.");
           context.emit("manualOverawardAdded");
