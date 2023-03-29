@@ -46,8 +46,8 @@ export class OverawardApi extends HttpBaseClient {
    * @returns primary identifier of the resource created.
    */
   async addManualOveraward(
+    studentId: number,
     payload: OverawardManualRecordAPIInDTO,
-    studentId?: number,
   ): Promise<void> {
     await this.postCall(
       this.addClientRoot(`overaward/student/${studentId}`),
