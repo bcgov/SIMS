@@ -9,8 +9,8 @@ import {
 import { ClientTypeBaseRoute } from "../../types";
 import BaseController from "../BaseController";
 import {
-  OverawardAPIOutDTO,
   OverawardBalanceAPIOutDTO,
+  StudentsOverawardAPIOutDTO,
 } from "./models/overaward.dto";
 import { OverawardControllerService } from "..";
 import { StudentUserToken } from "../../auth";
@@ -52,7 +52,7 @@ export class OverawardStudentsController extends BaseController {
   @Get()
   async getOverawardsByStudent(
     @UserToken() userToken: StudentUserToken,
-  ): Promise<OverawardAPIOutDTO[]> {
+  ): Promise<StudentsOverawardAPIOutDTO[]> {
     return this.overawardControllerService.getOverawardsByStudent(
       userToken.studentId,
     );

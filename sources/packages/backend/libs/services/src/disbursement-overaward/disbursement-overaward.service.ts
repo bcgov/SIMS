@@ -114,6 +114,7 @@ export class DisbursementOverawardService {
           triggerType: true,
         },
         addedBy: { firstName: true, lastName: true },
+        createdAt: true,
         addedDate: true,
       },
       relations: {

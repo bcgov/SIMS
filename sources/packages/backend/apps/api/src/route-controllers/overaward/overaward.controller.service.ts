@@ -4,6 +4,7 @@ import { getUserFullName } from "../../utilities";
 import {
   OverawardAPIOutDTO,
   OverawardBalanceAPIOutDTO,
+  StudentsOverawardAPIOutDTO,
 } from "./models/overaward.dto";
 
 /**
@@ -25,7 +26,6 @@ export class OverawardControllerService {
   ): Promise<OverawardBalanceAPIOutDTO> {
     const overawardBalance =
       await this.disbursementOverawardService.getOverawardBalance([studentId]);
-
     return { overawardBalanceValues: overawardBalance[studentId] };
   }
 
@@ -38,11 +38,12 @@ export class OverawardControllerService {
   async getOverawardsByStudent(
     studentId: number,
     includeAddedBy = false,
-  ): Promise<OverawardAPIOutDTO[]> {
+  ): Promise<OverawardAPIOutDTO[] | StudentsOverawardAPIOutDTO[]> {
     const overawards =
       await this.disbursementOverawardService.getOverawardsByStudent(studentId);
     return overawards.map((overaward) => ({
       dateAdded: overaward.addedDate,
+      createdAt: overaward.createdAt,
       overawardOrigin: overaward.originType,
       awardValueCode: overaward.disbursementValueCode,
       overawardValue: overaward.overawardValue,

@@ -18,7 +18,11 @@
           <Column field="dateAdded" header="Date added">
             <template #body="slotProps">
               <span>
-                {{ dateOnlyLongString(slotProps.data.dateAdded) }}
+                {{
+                  slotProps.data.dateAdded
+                    ? dateOnlyLongString(slotProps.data.dateAdded)
+                    : dateOnlyLongString(slotProps.data.createdAt)
+                }}
               </span>
             </template>
           </Column>
@@ -84,7 +88,11 @@
           <Column field="dateAdded" header="Date added">
             <template #body="slotProps">
               <span>
-                {{ dateOnlyLongString(slotProps.data.dateAdded) }}
+                {{
+                  slotProps.data.dateAdded
+                    ? dateOnlyLongString(slotProps.data.dateAdded)
+                    : dateOnlyLongString(slotProps.data.createdAt)
+                }}
               </span>
             </template>
           </Column>
