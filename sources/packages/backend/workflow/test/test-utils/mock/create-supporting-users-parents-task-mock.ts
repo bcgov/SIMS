@@ -1,13 +1,8 @@
 import { Duration } from "zeebe-node";
-import {
-  createMockedWorkerResult,
-  WorkflowParentScopes,
-  WorkflowServiceTasks,
-} from "..";
+import { createMockedWorkerResult, WorkflowServiceTasks } from "..";
 
 export function createCreateSupportingUsersParentsTaskMock(options: {
   supportingUserIds: number[];
-  scope?: WorkflowParentScopes;
 }): Record<string, unknown> {
   // Create messages to be published for each supporting user id provided.
   // For instance, for parent 1 and parent 2 it will be needed one message
@@ -25,7 +20,6 @@ export function createCreateSupportingUsersParentsTaskMock(options: {
         createdSupportingUsersIds: options.supportingUserIds,
       },
       jobMessageMocks,
-      scopes: [options?.scope],
     },
   );
 }

@@ -7,23 +7,15 @@ import {
 
 export function createCheckSupportingUserResponseTaskMock(options: {
   supportingUserId: number;
+  totalIncome: number;
   scope?: WorkflowParentScopes;
 }): Record<string, unknown> {
   return createMockedWorkerResult(
     WorkflowServiceTasks.CheckSupportingUserResponseTask,
     {
       jobCompleteMock: {
-        incomeVerificationCompleted: true,
-        supportingUserId: options.supportingUserId,
+        totalIncome: options.totalIncome,
       },
-      jobMessageMocks: [
-        {
-          name: "supporting-user-info-received",
-          correlationKey: options.supportingUserId.toString(),
-          variables: {},
-          timeToLive: Duration.seconds.of(5),
-        },
-      ],
       scopes: [options?.scope],
     },
   );

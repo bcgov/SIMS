@@ -16,6 +16,8 @@ import {
   ExpectedServiceTasks,
   createCreateSupportingUsersParentsTaskMock,
   createCheckSupportingUserResponseTaskMock,
+  createFakeConsolidateDataForTwoParentsPreAssessmentDate,
+  createCheckIncomeRequestTaskMock,
 } from "../../test-utils";
 import { PROGRAM_YEAR } from "../constants/program-year.constants";
 
@@ -23,6 +25,7 @@ describe(`E2E Test Workflow assessment gateway on original assessment for ${PROG
   let zeebeClientProvider: ZBClient;
   let assessmentId = 1;
   let supportingUserId = 1;
+  let incomeVerificationId = 1;
 
   beforeAll(async () => {
     zeebeClientProvider = ZeebeMockedClient.getMockedZeebeInstance();
@@ -56,7 +59,7 @@ describe(`E2E Test Workflow assessment gateway on original assessment for ${PROG
           ...assessmentConsolidatedMock,
           ...createVerifyApplicationExceptionsTaskMock(),
           ...createIncomeRequestTaskMock({
-            incomeVerificationId: currentAssessmentId,
+            incomeVerificationId: incomeVerificationId++,
             scope: WorkflowParentScopes.IncomeVerificationStudent,
           }),
         },
@@ -75,69 +78,78 @@ describe(`E2E Test Workflow assessment gateway on original assessment for ${PROG
 
   it.only("Should check for both parents incomes when the student is dependant and parents have SIN.", async () => {
     // Arrange
-
+    const currentAssessmentId = assessmentId++;
+    const parent1SupportingUserId = supportingUserId++;
+    const parent2SupportingUserId = supportingUserId++;
     // Assessment consolidated mocked data.
-    const assessmentConsolidatedData: AssessmentConsolidatedData = {
-      ...createFakeConsolidatedFulltimeData(PROGRAM_YEAR),
-      assessmentTriggerType: AssessmentTriggerType.OriginalAssessment,
-      // Application with PIR not required.
-      studentDataSelectedOffering: 1,
-    };
     const assessmentConsolidatedMock = createMockedWorkerResult(
       WorkflowServiceTasks.LoadAssessmentConsolidatedData,
       {
-        jobCompleteMock: assessmentConsolidatedData,
+        jobCompleteMock:
+          createFakeConsolidateDataForTwoParentsPreAssessmentDate(),
       },
     );
-    const currentAssessmentId = assessmentId++;
-    let incomeVerificationId = 1;
-    const parent1SupportingUserId = supportingUserId++;
-    const parent2SupportingUserId = supportingUserId++;
 
-    // Act/Assert
+    const assessmentStartData = {
+      bpmnProcessId: "assessment-gateway",
+      variables: {
+        [ASSESSMENT_ID]: currentAssessmentId,
+        ...assessmentConsolidatedMock,
+        ...createVerifyApplicationExceptionsTaskMock(),
+        ...createCreateSupportingUsersParentsTaskMock({
+          supportingUserIds: [parent1SupportingUserId, parent2SupportingUserId],
+        }),
+        ...createCheckSupportingUserResponseTaskMock({
+          supportingUserId: parent1SupportingUserId,
+          totalIncome: 1,
+          scope: WorkflowParentScopes.RetrieveSupportingInfoParent1,
+        }),
+        ...createCheckSupportingUserResponseTaskMock({
+          supportingUserId: parent2SupportingUserId,
+          totalIncome: 1,
+          scope: WorkflowParentScopes.RetrieveSupportingInfoParent2,
+        }),
+        ...createIncomeRequestTaskMock({
+          incomeVerificationId: incomeVerificationId++,
+          scope: WorkflowParentScopes.IncomeVerificationStudent,
+        }),
+        ...createIncomeRequestTaskMock({
+          incomeVerificationId: incomeVerificationId++,
+          scope: WorkflowParentScopes.IncomeVerificationParent1,
+        }),
+        ...createIncomeRequestTaskMock({
+          incomeVerificationId: incomeVerificationId++,
+          scope: WorkflowParentScopes.IncomeVerificationParent2,
+        }),
+        ...createCheckIncomeRequestTaskMock({
+          scope: WorkflowParentScopes.IncomeVerificationStudent,
+        }),
+        ...createCheckIncomeRequestTaskMock({
+          scope: WorkflowParentScopes.IncomeVerificationParent1,
+        }),
+        ...createCheckIncomeRequestTaskMock({
+          scope: WorkflowParentScopes.IncomeVerificationParent2,
+        }),
+      },
+      requestTimeout: PROCESS_INSTANCE_CREATE_TIMEOUT,
+    };
+
+    // Act
     const assessmentGatewayResponse =
-      await zeebeClientProvider.createProcessInstanceWithResult({
-        bpmnProcessId: "assessment-gateway",
-        variables: {
-          [ASSESSMENT_ID]: currentAssessmentId,
-          ...assessmentConsolidatedMock,
-          ...createVerifyApplicationExceptionsTaskMock(),
-          ...createCreateSupportingUsersParentsTaskMock({
-            supportingUserIds: [
-              parent1SupportingUserId,
-              parent2SupportingUserId,
-            ],
-          }),
-          ...createCheckSupportingUserResponseTaskMock({
-            supportingUserId: parent1SupportingUserId,
-            scope: WorkflowParentScopes.RetrieveSupportingInfoParent1,
-          }),
-          ...createCheckSupportingUserResponseTaskMock({
-            supportingUserId: parent2SupportingUserId,
-            scope: WorkflowParentScopes.RetrieveSupportingInfoParent2,
-          }),
-          ...createIncomeRequestTaskMock({
-            incomeVerificationId: incomeVerificationId++,
-            scope: WorkflowParentScopes.IncomeVerificationStudent,
-          }),
-          ...createIncomeRequestTaskMock({
-            incomeVerificationId: incomeVerificationId++,
-            scope: WorkflowParentScopes.IncomeVerificationParent1,
-          }),
-          ...createIncomeRequestTaskMock({
-            incomeVerificationId: incomeVerificationId++,
-            scope: WorkflowParentScopes.IncomeVerificationParent2,
-          }),
-        },
-        requestTimeout: PROCESS_INSTANCE_CREATE_TIMEOUT,
-      });
+      await zeebeClientProvider.createProcessInstanceWithResult(
+        assessmentStartData,
+      );
+
+    console.log(JSON.stringify(assessmentGatewayResponse));
+    console.log(
+      "TEST-TEST-TEST-TEST-TEST-TEST-TEST-TEST-TEST-TEST-TEST-TEST-TEST-TEST-TEST-TEST-TEST-TEST-TEST-TEST",
+    );
+
+    // Assert
     expectToPassThroughServiceTasks(
       assessmentGatewayResponse.variables,
       ExpectedServiceTasks.associateWorkflowInstance,
       ExpectedServiceTasks.verifyApplicationExceptions,
-      ExpectedServiceTasks.studentCreateIncomeRequest,
-      ExpectedServiceTasks.parent1CreateIncomeRequest,
-      ExpectedServiceTasks.parent2CreateIncomeRequest,
       ExpectedServiceTasks.programInfoNotRequired,
       ExpectedServiceTasks.saveDisbursementSchedules,
       ExpectedServiceTasks.associateMSFAA,

@@ -27,7 +27,7 @@
     <bpmn:sequenceFlow id="Flow_19jr8ct" sourceRef="calculate-tax-year-event" targetRef="create-income-request-task" />
     <bpmn:serviceTask id="create-income-request-task" name="Create Income request">
       <bpmn:extensionElements>
-        <zeebe:taskDefinition type="create-income-request-task" />
+        <zeebe:taskDefinition type="create-income-request" />
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_19jr8ct</bpmn:incoming>
       <bpmn:outgoing>Flow_0am193t</bpmn:outgoing>

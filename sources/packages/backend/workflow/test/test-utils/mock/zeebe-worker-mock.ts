@@ -19,17 +19,19 @@ const zeebeWorkerClient = new ZBClient();
  * @returns mock task handler response.
  */
 export async function mockTaskHandler(job: ZeebeJob<unknown>) {
-  // Check if there is a message to be published.
-  const messagePayloads = getMessagePayload(job);
-  if (messagePayloads?.length) {
-    for (const messagePayload of messagePayloads) {
-      console.log("messagePayload: ", messagePayload);
-      await zeebeWorkerClient.publishMessage(messagePayload);
+  setTimeout(() => {
+    // Check if there is a message to be published.
+    const messagePayloads = getMessagePayload(job);
+    if (messagePayloads?.length) {
+      for (const messagePayload of messagePayloads) {
+        zeebeWorkerClient.publishMessage(messagePayload);
+      }
     }
-  }
+  }, 1000);
   // Get the expected object to be returned. If no object is
   // present, a 'complete' result will be returned.
   const serviceTaskId = getScopedServiceTaskId(job);
+
   return job.complete({
     [serviceTaskId]: true,
     ...job.variables[`${serviceTaskId}-result`],
@@ -81,15 +83,19 @@ export function createMockedWorkerResult(
     jobMessageMocks?: PublishMessageRequest<unknown>[];
     scopes?: WorkflowParentScopes[];
   },
-) {
-  let scopedServiceTaskId = serviceTaskId.toString();
-  if (options?.scopes) {
-    scopedServiceTaskId = [...options.scopes, scopedServiceTaskId].join("-");
+): Record<string, unknown> {
+  let fullServiceTaskId = serviceTaskId.toString();
+  if (options?.scopes?.length) {
+    fullServiceTaskId = [...options.scopes, fullServiceTaskId].join("-");
   }
   const mockedWorkerResult: Record<string, unknown> = {};
-  mockedWorkerResult[`${scopedServiceTaskId}-result`] = options.jobCompleteMock;
-  mockedWorkerResult[`${scopedServiceTaskId}-message-result`] =
-    options.jobMessageMocks;
+  if (options.jobCompleteMock) {
+    mockedWorkerResult[`${fullServiceTaskId}-result`] = options.jobCompleteMock;
+  }
+  if (options.jobMessageMocks?.length) {
+    mockedWorkerResult[`${fullServiceTaskId}-message-result`] =
+      options.jobMessageMocks;
+  }
   return mockedWorkerResult;
 }
 
