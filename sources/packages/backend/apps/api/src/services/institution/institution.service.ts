@@ -695,6 +695,27 @@ export class InstitutionService extends RecordDataModelService<Institution> {
   }
 
   /**
+   * Get the institutionType by institution id.
+   * @param institutionId Institution id.
+   * @returns Institution retrieved, if found, otherwise returns null.
+   */
+  async getInstitutionTypeById(institutionId: number): Promise<Institution> {
+    return this.repo.findOne({
+      select: {
+        institutionType: {
+          id: true,
+        },
+      },
+      where: {
+        id: institutionId,
+      },
+      relations: {
+        institutionType: true,
+      },
+    });
+  }
+
+  /**
    * Get the basic info of the institution by ID.
    * @param institutionId Institution id.
    * @returns Institution retrieved, if found, otherwise returns null.

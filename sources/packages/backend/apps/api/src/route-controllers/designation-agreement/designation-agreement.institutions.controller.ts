@@ -25,6 +25,7 @@ import {
 import { InstitutionUserRoles } from "../../auth/user-types.enum";
 import { FormNames } from "../../services/form/constants";
 import { DesignationAgreementControllerService } from "./designation-agreement.controller.service";
+import { InstitutionControllerService } from "../institution/institution.controller.service";
 import {
   ApiBadRequestResponse,
   ApiForbiddenResponse,
@@ -46,6 +47,7 @@ export class DesignationAgreementInstitutionsController extends BaseController {
     private readonly designationAgreementService: DesignationAgreementService,
     private readonly formService: FormService,
     private readonly designationAgreementControllerService: DesignationAgreementControllerService,
+    private readonly institutionControllerService: InstitutionControllerService,
   ) {
     super();
   }
@@ -81,6 +83,15 @@ export class DesignationAgreementInstitutionsController extends BaseController {
         "User does not have the rights to create a designation agreement.",
       );
     }
+
+    // Check if institution is private or public and append it to the payload
+    const isInstitutionPrivate =
+      await this.institutionControllerService.checkIfInstitutionIsPrivate(
+        userToken.authorizations.institutionId,
+      );
+
+    payload.isBCPrivate = isInstitutionPrivate;
+
     // Validate the dynamic data submission.
     const submissionResult = await this.formService.dryRunSubmission(
       FormNames.DesignationAgreementDetails,
@@ -106,7 +117,9 @@ export class DesignationAgreementInstitutionsController extends BaseController {
     const createdDesignation =
       await this.designationAgreementService.submitDesignationAgreement(
         userToken.authorizations.institutionId,
-        submissionResult.data.data.dynamicData,
+        submissionResult.data.data.dynamicData
+          ? submissionResult.data.data.dynamicData
+          : {},
         userToken.userId,
         payload.locations
           .filter((location) => location.requestForDesignation)

@@ -75,6 +75,11 @@ export class SubmitDesignationAgreementAPIInDTO {
   @ValidateNested({ each: true })
   @Type(() => SubmittedLocationsAPIInDTO)
   locations: SubmittedLocationsAPIInDTO[];
+
+  /**
+   * Indicates if Institution is private or public
+   */
+  isBCPrivate: boolean;
 }
 
 /**
