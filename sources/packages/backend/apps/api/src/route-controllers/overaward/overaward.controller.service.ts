@@ -2,7 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { DisbursementOverawardService } from "@sims/services";
 import { getUserFullName } from "../../utilities";
 import {
-  OverawardAPIOutDTO,
+  AESTOverawardAPIOutDTO,
   OverawardBalanceAPIOutDTO,
   StudentsOverawardAPIOutDTO,
 } from "./models/overaward.dto";
@@ -38,7 +38,7 @@ export class OverawardControllerService {
   async getOverawardsByStudent(
     studentId: number,
     includeAddedBy = false,
-  ): Promise<OverawardAPIOutDTO[] | StudentsOverawardAPIOutDTO[]> {
+  ): Promise<AESTOverawardAPIOutDTO[] | StudentsOverawardAPIOutDTO[]> {
     const overawards =
       await this.disbursementOverawardService.getOverawardsByStudent(studentId);
     return overawards.map((overaward) => ({
