@@ -30,9 +30,6 @@ export class OverawardStudentsController extends BaseController {
    * Get the overaward balance of a student.
    * @returns overaward balance for student.
    */
-  @ApiNotFoundResponse({
-    description: "Student not found.",
-  })
   @Get("balance")
   async getOverawardBalance(
     @UserToken() userToken: StudentUserToken,
@@ -46,9 +43,6 @@ export class OverawardStudentsController extends BaseController {
    * Get all overawards which belong to a student.
    * @returns overaward details of a student.
    */
-  @ApiNotFoundResponse({
-    description: "Student not found.",
-  })
   @Get()
   async getOverawardsByStudent(
     @UserToken() userToken: StudentUserToken,
