@@ -87,7 +87,7 @@ describe("OverawardStudentsController(e2e)-getOverawardsByStudent", () => {
         expect(overaward.assessmentTriggerType).toBe(
           AssessmentTriggerType.OriginalAssessment,
         );
-        expect(overaward.awardValueCode).toBe("CSLF");
+        expect(overaward.awardValueCode).toBe("CSLP");
         expect(overaward.overawardValue).toBe(500);
       });
   });
