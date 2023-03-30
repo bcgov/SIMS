@@ -164,7 +164,7 @@ export class DisbursementSchedule extends RecordDataModel {
    */
   @Column({
     name: "tuition_remittance_effective_amount",
-    nullable: false,
+    nullable: true,
   })
-  tuitionRemittanceEffectiveAmount: number;
+  tuitionRemittanceEffectiveAmount?: number;
 }

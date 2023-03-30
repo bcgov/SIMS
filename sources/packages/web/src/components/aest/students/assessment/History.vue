@@ -24,9 +24,9 @@
               field="submittedDate"
               header="Submitted date"
               sortable="true"
-              ><template #body="slotProps">{{
-                dateOnlyLongString(slotProps.data.submittedDate)
-              }}</template></Column
+              ><template #body="slotProps"
+                >{{ dateOnlyLongString(slotProps.data.submittedDate) }}
+              </template></Column
             ><Column field="triggerType" header="Type" sortable="true"></Column
             ><Column header="Request form">
               <template #body="{ data }">

@@ -517,28 +517,11 @@ export class ECertGenerationService {
     disbursements: ECertDisbursementSchedule[],
   ) {
     for (const disbursement of disbursements) {
-      const award: Award[] = disbursement.disbursementValues?.map(
-        (eachDisbursementValue: DisbursementValue) => ({
-          valueType: eachDisbursementValue.valueType,
-          disbursedAmountSubtracted:
-            eachDisbursementValue.disbursedAmountSubtracted,
-          valueAmount: eachDisbursementValue.valueAmount,
-          effectiveAmount: eachDisbursementValue.effectiveAmount,
-        }),
-      );
-      const offering =
-        disbursement.studentAssessment.application.currentAssessment.offering;
-      const offeringCosts: OfferingCosts = {
-        actualTuitionCosts: offering.actualTuitionCosts,
-        programRelatedCosts: offering.programRelatedCosts,
-      };
-      const calculationType = MaxTuitionRemittanceTypes.Effective;
-
       disbursement.tuitionRemittanceEffectiveAmount =
         this.confirmationOfEnrollmentService.getMaxTuitionRemittance(
-          award,
-          offeringCosts,
-          calculationType,
+          disbursement.disbursementValues,
+          disbursement.studentAssessment.application.currentAssessment.offering,
+          MaxTuitionRemittanceTypes.Effective,
         );
     }
   }

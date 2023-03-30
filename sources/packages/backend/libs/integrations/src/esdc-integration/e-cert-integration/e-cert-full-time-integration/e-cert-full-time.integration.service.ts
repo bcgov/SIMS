@@ -71,8 +71,8 @@ export class ECertFullTimeIntegrationService extends ECertIntegrationService {
       // ! All awards effective values are rounded to the nearest integer (0.5 rounds up).
       // ! studentAmount and schoolAmount have the decimal part combined into the integer part because
       // ! the schoolAmount contains decimals and schoolAmount is used to determine the studentAmount.
-      const studentAmount =
-        disbursementAmount - ecertRecord.tuitionRemittanceEffectiveAmount;
+      const studentAmount = disbursementAmount - ecertRecord.schoolAmount;
+
       const cslAwardAmount = getTotalDisbursementEffectiveAmount(
         ecertRecord.awards,
         [DisbursementValueType.CanadaLoan],
