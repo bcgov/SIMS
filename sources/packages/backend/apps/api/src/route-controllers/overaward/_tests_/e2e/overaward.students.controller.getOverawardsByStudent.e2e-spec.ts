@@ -58,7 +58,7 @@ describe("OverawardStudentsController(e2e)-getOverawardsByStudent", () => {
     // Create an overaward.
     const reassessmentOveraward = createFakeDisbursementOveraward({ student });
     reassessmentOveraward.studentAssessment = studentAssessment;
-    reassessmentOveraward.disbursementValueCode = "CSLF";
+    reassessmentOveraward.disbursementValueCode = "CSLP";
     reassessmentOveraward.overawardValue = 500;
     reassessmentOveraward.originType =
       DisbursementOverawardOriginType.ReassessmentOveraward;
