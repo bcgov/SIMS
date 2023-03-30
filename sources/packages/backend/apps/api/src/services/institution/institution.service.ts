@@ -696,11 +696,11 @@ export class InstitutionService extends RecordDataModelService<Institution> {
   }
 
   /**
-   * Check if institution is private
+   * Check if institution is private.
    * @param institutionId is the institution id.
    * @returns boolean true if institution is private, else false.
    */
-  async checkIfInstitutionIsPrivate(institutionId: number): Promise<boolean> {
+  async isPrivateInstitution(institutionId: number): Promise<boolean> {
     const institutionType = await this.getInstitutionTypeById(institutionId);
     return INSTITUTION_TYPE_BC_PRIVATE === institutionType.institutionType.id;
   }

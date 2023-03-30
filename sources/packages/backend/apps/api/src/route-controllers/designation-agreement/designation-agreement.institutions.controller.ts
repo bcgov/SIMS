@@ -87,11 +87,10 @@ export class DesignationAgreementInstitutionsController extends BaseController {
       );
     }
 
-    // Check if institution is private and append it to the payload
-    payload.isBCPrivate =
-      await this.institutionService.checkIfInstitutionIsPrivate(
-        userToken.authorizations.institutionId,
-      );
+    // Check if institution is private and append it to the payload.
+    payload.isBCPrivate = await this.institutionService.isPrivateInstitution(
+      userToken.authorizations.institutionId,
+    );
 
     // Validate the dynamic data submission.
     const submissionResult = await this.formService.dryRunSubmission(
