@@ -30,11 +30,7 @@ import {
   LOAN_TYPES,
 } from "@sims/services/constants";
 import { SystemUsersService } from "@sims/services/system-users";
-import {
-  Award,
-  MaxTuitionRemittanceTypes,
-  OfferingCosts,
-} from "@sims/services/confirmation-of-enrollment/models/confirmation-of-enrollment.models";
+import { MaxTuitionRemittanceTypes } from "@sims/services/confirmation-of-enrollment/models/confirmation-of-enrollment.models";
 
 /**
  * While performing a possible huge amount of updates,

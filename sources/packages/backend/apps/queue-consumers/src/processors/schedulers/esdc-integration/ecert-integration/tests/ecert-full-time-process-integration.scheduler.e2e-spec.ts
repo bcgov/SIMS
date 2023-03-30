@@ -35,7 +35,6 @@ import sshServiceMock from "@sims/test-utils/mocks/ssh-service.mock";
 import { DataSource, IsNull, Not, Repository } from "typeorm";
 import { QueueConsumersModule } from "../../../../../queue-consumers.module";
 
-jest.setTimeout(900000);
 describe("Schedulers - e-Cert full time integration - Create e-Cert file", () => {
   let eCertFileHandler: ECertFileHandler;
   let userRepo: Repository<User>;
