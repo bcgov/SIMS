@@ -16,7 +16,11 @@ import {
   IsInstitutionAdmin,
   UserToken,
 } from "../../auth/decorators";
-import { DesignationAgreementService, FormService } from "../../services";
+import {
+  DesignationAgreementService,
+  FormService,
+  InstitutionService,
+} from "../../services";
 import {
   DesignationAgreementAPIOutDTO,
   DesignationAgreementDetailsAPIOutDTO,
@@ -45,6 +49,7 @@ export class DesignationAgreementInstitutionsController extends BaseController {
   constructor(
     private readonly designationAgreementService: DesignationAgreementService,
     private readonly formService: FormService,
+    private readonly institutionService: InstitutionService,
     private readonly designationAgreementControllerService: DesignationAgreementControllerService,
   ) {
     super();
@@ -81,6 +86,12 @@ export class DesignationAgreementInstitutionsController extends BaseController {
         "User does not have the rights to create a designation agreement.",
       );
     }
+
+    // Check if institution is private and append it to the payload.
+    payload.isBCPrivate = await this.institutionService.isPrivateInstitution(
+      userToken.authorizations.institutionId,
+    );
+
     // Validate the dynamic data submission.
     const submissionResult = await this.formService.dryRunSubmission(
       FormNames.DesignationAgreementDetails,
