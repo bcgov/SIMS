@@ -1,14 +1,13 @@
-import { Duration } from "zeebe-node";
 import {
   createMockedWorkerResult,
-  WorkflowParentScopes,
+  WorkflowSubprocesses,
   WorkflowServiceTasks,
 } from "..";
 
 export function createCheckSupportingUserResponseTaskMock(options: {
   supportingUserId: number;
   totalIncome: number;
-  scope?: WorkflowParentScopes;
+  subprocesses?: WorkflowSubprocesses;
 }): Record<string, unknown> {
   return createMockedWorkerResult(
     WorkflowServiceTasks.CheckSupportingUserResponseTask,
@@ -16,7 +15,7 @@ export function createCheckSupportingUserResponseTaskMock(options: {
       jobCompleteMock: {
         totalIncome: options.totalIncome,
       },
-      scopes: [options?.scope],
+      subprocesses: [options?.subprocesses],
     },
   );
 }

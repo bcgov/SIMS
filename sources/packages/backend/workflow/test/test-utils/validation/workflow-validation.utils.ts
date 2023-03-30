@@ -1,5 +1,9 @@
-import { WorkflowServiceTasks } from "../constants/workflow-variables-constants";
-import { WorkflowScopedServiceTask } from "./workflow-validation.models";
+import {
+  WorkflowServiceTasks,
+  WorkflowSubprocesses,
+} from "../constants/workflow-variables-constants";
+
+export type WorkflowExpectedTask = WorkflowServiceTasks | WorkflowSubprocesses;
 
 /**
  * Expects a workflow based on the workflow result
@@ -9,10 +13,10 @@ import { WorkflowScopedServiceTask } from "./workflow-validation.models";
  */
 export function expectToPassThroughServiceTasks(
   workflowResultVariables: unknown,
-  ...serviceTasks: WorkflowScopedServiceTask[]
+  ...expectedTasks: WorkflowExpectedTask[]
 ) {
-  serviceTasks.forEach((serviceTask) => {
-    expect(workflowResultVariables[serviceTask.scopedServiceTaskId]).toBe(true);
+  expectedTasks.forEach((expectedTask) => {
+    expect(workflowResultVariables[expectedTask]).toBe(expectedTask);
   });
 }
 
@@ -24,9 +28,9 @@ export function expectToPassThroughServiceTasks(
  */
 export function expectNotToPassThroughServiceTasks(
   workflowResultVariables: unknown,
-  ...serviceTasks: WorkflowServiceTasks[]
+  ...expectedTasks: WorkflowExpectedTask[]
 ) {
-  serviceTasks.forEach((serviceTask) => {
-    expect(workflowResultVariables[serviceTask]).toBeUndefined();
+  expectedTasks.forEach((expectedTask) => {
+    expect(workflowResultVariables[expectedTask]).toBeUndefined();
   });
 }

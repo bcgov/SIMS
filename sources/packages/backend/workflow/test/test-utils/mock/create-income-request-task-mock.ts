@@ -1,13 +1,13 @@
 import { Duration } from "zeebe-node";
 import {
   createMockedWorkerResult,
-  WorkflowParentScopes,
   WorkflowServiceTasks,
+  WorkflowSubprocesses,
 } from "..";
 
 export function createIncomeRequestTaskMock(options?: {
   incomeVerificationId: number;
-  scope?: WorkflowParentScopes;
+  subprocesses?: WorkflowSubprocesses;
 }): Record<string, unknown> {
   const incomeVerificationId = options?.incomeVerificationId ?? 1;
   return createMockedWorkerResult(WorkflowServiceTasks.CreateIncomeRequest, {
@@ -23,6 +23,6 @@ export function createIncomeRequestTaskMock(options?: {
         timeToLive: Duration.seconds.of(5),
       },
     ],
-    scopes: [options?.scope],
+    subprocesses: [options?.subprocesses],
   });
 }

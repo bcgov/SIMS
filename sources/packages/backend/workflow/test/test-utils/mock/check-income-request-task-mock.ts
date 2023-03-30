@@ -1,16 +1,16 @@
 import {
   createMockedWorkerResult,
-  WorkflowParentScopes,
   WorkflowServiceTasks,
+  WorkflowSubprocesses,
 } from "..";
 
 export function createCheckIncomeRequestTaskMock(options?: {
-  scope?: WorkflowParentScopes;
+  subprocesses?: WorkflowSubprocesses;
 }): Record<string, unknown> {
   return createMockedWorkerResult(WorkflowServiceTasks.CheckIncomeRequest, {
     jobCompleteMock: {
       incomeVerificationCompleted: true,
     },
-    scopes: [options?.scope],
+    subprocesses: [options?.subprocesses],
   });
 }

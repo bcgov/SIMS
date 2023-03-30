@@ -1,7 +1,7 @@
 import { PublishMessageRequest, ZBClient, ZeebeJob } from "zeebe-node";
 import { Workers } from "@sims/services/constants";
 import {
-  WorkflowParentScopes,
+  WorkflowSubprocesses,
   WorkflowServiceTasks,
 } from "../constants/workflow-variables-constants";
 
@@ -19,21 +19,18 @@ const zeebeWorkerClient = new ZBClient();
  * @returns mock task handler response.
  */
 export async function mockTaskHandler(job: ZeebeJob<unknown>) {
-  setTimeout(() => {
-    // Check if there is a message to be published.
-    const messagePayloads = getMessagePayload(job);
-    if (messagePayloads?.length) {
-      for (const messagePayload of messagePayloads) {
-        zeebeWorkerClient.publishMessage(messagePayload);
-      }
+  // Check if there is a message to be published.
+  const messagePayloads = getMessagePayload(job);
+  if (messagePayloads?.length) {
+    for (const messagePayload of messagePayloads) {
+      zeebeWorkerClient.publishMessage(messagePayload);
     }
-  }, 1000);
+  }
   // Get the expected object to be returned. If no object is
   // present, a 'complete' result will be returned.
   const serviceTaskId = getScopedServiceTaskId(job);
-
   return job.complete({
-    [serviceTaskId]: true,
+    [serviceTaskId]: serviceTaskId,
     ...job.variables[`${serviceTaskId}-result`],
   });
 }
@@ -41,8 +38,8 @@ export async function mockTaskHandler(job: ZeebeJob<unknown>) {
 /**
  * The service task id (a.k.a. elementId) is unique in the workflow where it is present but
  * can exist in multiple sub-processes (e.g. 'create-income-request'). In this case a special
- * variable, named as 'parentScopes', is used to create a unique service task id.
- * The 'parentScopes' variable is a list that can be appended with multiple scopes allowing
+ * variable, named as 'parentSubprocesses', is used to create a unique service task id.
+ * The 'parentSubprocesses' variable is a list that can be appended with multiple scopes allowing
  * uniquely identifying the service ids at any level, for instance, a sub-process calling
  * a sub-process.
  * @param job worker job.
@@ -50,9 +47,10 @@ export async function mockTaskHandler(job: ZeebeJob<unknown>) {
  */
 function getScopedServiceTaskId(job: ZeebeJob<unknown>): string {
   // Check if the service task id is in a sub-process.
-  const parentScopes: string[] | undefined = job.variables["parentScopes"];
-  if (parentScopes?.length) {
-    const scopedElementId = [...parentScopes, job.elementId];
+  const parentSubprocesses: string[] | undefined =
+    job.variables["parentSubprocesses"];
+  if (parentSubprocesses?.length) {
+    const scopedElementId = [...parentSubprocesses, job.elementId];
     return scopedElementId.join("-");
   }
   // If the element is not in a sub-process just return the element id.
@@ -81,12 +79,12 @@ export function createMockedWorkerResult(
   options: {
     jobCompleteMock?: unknown;
     jobMessageMocks?: PublishMessageRequest<unknown>[];
-    scopes?: WorkflowParentScopes[];
+    subprocesses?: WorkflowSubprocesses[];
   },
 ): Record<string, unknown> {
   let fullServiceTaskId = serviceTaskId.toString();
-  if (options?.scopes?.length) {
-    fullServiceTaskId = [...options.scopes, fullServiceTaskId].join("-");
+  if (options?.subprocesses?.length) {
+    fullServiceTaskId = [...options.subprocesses, fullServiceTaskId].join("-");
   }
   const mockedWorkerResult: Record<string, unknown> = {};
   if (options.jobCompleteMock) {

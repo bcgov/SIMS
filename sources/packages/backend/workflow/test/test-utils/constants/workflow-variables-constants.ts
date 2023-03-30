@@ -23,12 +23,12 @@ export enum WorkflowServiceTasks {
   CheckSupportingUserResponseTask = "check-supporting-user-response-task",
 }
 
-export enum WorkflowParentScopes {
-  IncomeVerificationStudent = "income-verification-student",
-  IncomeVerificationPartner = "income-verification-partner",
-  IncomeVerificationParent1 = "income-verification-parent1",
-  IncomeVerificationParent2 = "income-verification-parent2",
-  RetrieveSupportingInfoPartner = "retrieve-supporting-info-partner",
-  RetrieveSupportingInfoParent1 = "retrieve-supporting-info-parent1",
-  RetrieveSupportingInfoParent2 = "retrieve-supporting-info-parent2",
+export enum WorkflowSubprocesses {
+  StudentIncomeVerification = "studentIncomeVerificationSubprocess",
+  RetrieveSupportingInfoPartner = "retrieveSupportingInfoPartnerSubprocess",
+  RetrieveSupportingInfoParent1 = "retrieveSupportingInfoParent1Subprocess",
+  RetrieveSupportingInfoParent2 = "retrieveSupportingInfoParent2Subprocess",
+  PartnerIncomeVerification = "partnerIncomeVerificationSubprocess",
+  Parent1IncomeVerification = "parent1IncomeVerificationSubprocess",
+  Parent2IncomeVerification = "parent2IncomeVerificationSubprocess",
 }

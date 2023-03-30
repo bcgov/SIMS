@@ -12,12 +12,11 @@ import {
   createMockedWorkerResult,
   createVerifyApplicationExceptionsTaskMock,
   createIncomeRequestTaskMock,
-  WorkflowParentScopes,
-  ExpectedServiceTasks,
   createCreateSupportingUsersParentsTaskMock,
   createCheckSupportingUserResponseTaskMock,
   createFakeConsolidateDataForTwoParentsPreAssessmentDate,
   createCheckIncomeRequestTaskMock,
+  WorkflowSubprocesses,
 } from "../../test-utils";
 import { PROGRAM_YEAR } from "../constants/program-year.constants";
 
@@ -60,23 +59,23 @@ describe(`E2E Test Workflow assessment gateway on original assessment for ${PROG
           ...createVerifyApplicationExceptionsTaskMock(),
           ...createIncomeRequestTaskMock({
             incomeVerificationId: incomeVerificationId++,
-            scope: WorkflowParentScopes.IncomeVerificationStudent,
+            subprocesses: WorkflowSubprocesses.StudentIncomeVerification,
           }),
         },
         requestTimeout: PROCESS_INSTANCE_CREATE_TIMEOUT,
       });
     expectToPassThroughServiceTasks(
       assessmentGatewayResponse.variables,
-      ExpectedServiceTasks.associateWorkflowInstance,
-      ExpectedServiceTasks.verifyApplicationExceptions,
-      ExpectedServiceTasks.programInfoNotRequired,
-      ExpectedServiceTasks.saveDisbursementSchedules,
-      ExpectedServiceTasks.associateMSFAA,
-      ExpectedServiceTasks.updateNOAStatusToRequired,
+      WorkflowServiceTasks.AssociateWorkflowInstance,
+      WorkflowServiceTasks.VerifyApplicationExceptions,
+      WorkflowServiceTasks.ProgramInfoNotRequired,
+      WorkflowServiceTasks.SaveDisbursementSchedules,
+      WorkflowServiceTasks.AssociateMSFAA,
+      WorkflowServiceTasks.UpdateNOAStatusToRequired,
     );
   });
 
-  it.only("Should check for both parents incomes when the student is dependant and parents have SIN.", async () => {
+  it("Should check for both parents incomes when the student is dependant and parents have SIN.", async () => {
     // Arrange
     const currentAssessmentId = assessmentId++;
     const parent1SupportingUserId = supportingUserId++;
@@ -102,33 +101,33 @@ describe(`E2E Test Workflow assessment gateway on original assessment for ${PROG
         ...createCheckSupportingUserResponseTaskMock({
           supportingUserId: parent1SupportingUserId,
           totalIncome: 1,
-          scope: WorkflowParentScopes.RetrieveSupportingInfoParent1,
+          subprocesses: WorkflowSubprocesses.RetrieveSupportingInfoParent1,
         }),
         ...createCheckSupportingUserResponseTaskMock({
           supportingUserId: parent2SupportingUserId,
           totalIncome: 1,
-          scope: WorkflowParentScopes.RetrieveSupportingInfoParent2,
+          subprocesses: WorkflowSubprocesses.RetrieveSupportingInfoParent2,
         }),
         ...createIncomeRequestTaskMock({
           incomeVerificationId: incomeVerificationId++,
-          scope: WorkflowParentScopes.IncomeVerificationStudent,
+          subprocesses: WorkflowSubprocesses.StudentIncomeVerification,
         }),
         ...createIncomeRequestTaskMock({
           incomeVerificationId: incomeVerificationId++,
-          scope: WorkflowParentScopes.IncomeVerificationParent1,
+          subprocesses: WorkflowSubprocesses.Parent1IncomeVerification,
         }),
         ...createIncomeRequestTaskMock({
           incomeVerificationId: incomeVerificationId++,
-          scope: WorkflowParentScopes.IncomeVerificationParent2,
+          subprocesses: WorkflowSubprocesses.Parent2IncomeVerification,
         }),
         ...createCheckIncomeRequestTaskMock({
-          scope: WorkflowParentScopes.IncomeVerificationStudent,
+          subprocesses: WorkflowSubprocesses.StudentIncomeVerification,
         }),
         ...createCheckIncomeRequestTaskMock({
-          scope: WorkflowParentScopes.IncomeVerificationParent1,
+          subprocesses: WorkflowSubprocesses.Parent1IncomeVerification,
         }),
         ...createCheckIncomeRequestTaskMock({
-          scope: WorkflowParentScopes.IncomeVerificationParent2,
+          subprocesses: WorkflowSubprocesses.Parent2IncomeVerification,
         }),
       },
       requestTimeout: PROCESS_INSTANCE_CREATE_TIMEOUT,
@@ -140,20 +139,20 @@ describe(`E2E Test Workflow assessment gateway on original assessment for ${PROG
         assessmentStartData,
       );
 
-    console.log(JSON.stringify(assessmentGatewayResponse));
-    console.log(
-      "TEST-TEST-TEST-TEST-TEST-TEST-TEST-TEST-TEST-TEST-TEST-TEST-TEST-TEST-TEST-TEST-TEST-TEST-TEST-TEST",
-    );
-
     // Assert
     expectToPassThroughServiceTasks(
       assessmentGatewayResponse.variables,
-      ExpectedServiceTasks.associateWorkflowInstance,
-      ExpectedServiceTasks.verifyApplicationExceptions,
-      ExpectedServiceTasks.programInfoNotRequired,
-      ExpectedServiceTasks.saveDisbursementSchedules,
-      ExpectedServiceTasks.associateMSFAA,
-      ExpectedServiceTasks.updateNOAStatusToRequired,
+      WorkflowServiceTasks.AssociateWorkflowInstance,
+      WorkflowServiceTasks.VerifyApplicationExceptions,
+      WorkflowServiceTasks.ProgramInfoNotRequired,
+      WorkflowSubprocesses.StudentIncomeVerification,
+      WorkflowSubprocesses.RetrieveSupportingInfoParent1,
+      WorkflowSubprocesses.RetrieveSupportingInfoParent2,
+      WorkflowSubprocesses.Parent1IncomeVerification,
+      WorkflowSubprocesses.Parent2IncomeVerification,
+      WorkflowServiceTasks.SaveDisbursementSchedules,
+      WorkflowServiceTasks.AssociateMSFAA,
+      WorkflowServiceTasks.UpdateNOAStatusToRequired,
     );
   });
 
