@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import {
-  ApplicationStatus,
   DisbursementSchedule,
+  DisbursementScheduleStatus,
   MSFAANumber,
   OfferingIntensity,
   RecordDataModelService,
@@ -157,11 +157,13 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
         msfaaNumber: true,
       },
       where: {
+        // Consider only the disbursements which are sent, to identify a previously
+        // signed disbursement as pending ones are subject to cancellation any time.
+        disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
         studentAssessment: {
           offering: { offeringIntensity },
           application: {
             student: { id: studentId },
-            applicationStatus: ApplicationStatus.Completed,
           },
         },
         msfaaNumber: {
