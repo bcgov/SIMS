@@ -24,7 +24,7 @@ import {
 } from "../../../../testHelpers";
 import { StudentsOverawardAPIOutDTO } from "../../models/overaward.dto";
 
-describe.skip("OverawardStudentsController(e2e)-getOverawardsByStudent", () => {
+describe("OverawardStudentsController(e2e)-getOverawardsByStudent", () => {
   let app: INestApplication;
   let assessmentRepo: Repository<StudentAssessment>;
   let applicationRepo: Repository<Application>;
