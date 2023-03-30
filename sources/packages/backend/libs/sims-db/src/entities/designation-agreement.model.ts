@@ -48,9 +48,9 @@ export class DesignationAgreement extends RecordDataModel {
   @Column({
     name: "submitted_data",
     type: "jsonb",
-    nullable: false,
+    nullable: true,
   })
-  submittedData: any;
+  submittedData: unknown;
   /**
    * Current status of the designation agreement.
    */
