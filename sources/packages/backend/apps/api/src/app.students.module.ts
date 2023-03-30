@@ -38,6 +38,8 @@ import {
   RestrictionStudentsController,
   ProgramYearStudentsController,
   ApplicationControllerService,
+  OverawardStudentsController,
+  OverawardControllerService,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
 import { ConfigModule } from "@sims/utilities/config";
@@ -70,6 +72,7 @@ import { ATBCIntegrationModule } from "@sims/integrations/atbc-integration";
     RestrictionStudentsController,
     ATBCStudentController,
     ProgramYearStudentsController,
+    OverawardStudentsController,
   ],
   providers: [
     WorkflowClientService,
@@ -106,6 +109,7 @@ import { ATBCIntegrationModule } from "@sims/integrations/atbc-integration";
     StudentRestrictionSharedService,
     DisbursementOverawardService,
     NoteSharedService,
+    OverawardControllerService,
   ],
 })
 export class AppStudentsModule {}

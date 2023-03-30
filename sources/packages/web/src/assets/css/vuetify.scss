@@ -165,3 +165,7 @@
 .v-table {
   color: $app-content-color !important;
 }
+
+.v-overlay-container .v-tooltip .v-overlay__content {
+  @extend .tooltip-style;
+}
