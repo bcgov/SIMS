@@ -4,6 +4,7 @@ import {
   SequenceControlService,
   StudentRestrictionSharedService,
   NoteSharedService,
+  ConfirmationOfEnrollmentService,
 } from "@sims/services";
 import { ECertFileHandler } from "./e-cert-file-handler";
 import { ECertFullTimeFileFooter } from "./e-cert-full-time-integration/e-cert-files/e-cert-file-footer";
@@ -42,6 +43,7 @@ import { SystemUsersService } from "@sims/services/system-users";
     ECertGenerationService,
     DisbursementOverawardService,
     NoteSharedService,
+    ConfirmationOfEnrollmentService,
   ],
   exports: [ECertFileHandler],
 })

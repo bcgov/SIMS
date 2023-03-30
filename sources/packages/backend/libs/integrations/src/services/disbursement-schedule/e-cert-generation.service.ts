@@ -4,6 +4,7 @@ import { addDays, round } from "@sims/utilities";
 import { EntityManager } from "typeorm";
 import {
   AwardValueWithRelatedSchedule,
+  ConfirmationOfEnrollmentService,
   DisbursementOverawardService,
   StudentRestrictionSharedService,
 } from "@sims/services";
@@ -29,6 +30,7 @@ import {
   LOAN_TYPES,
 } from "@sims/services/constants";
 import { SystemUsersService } from "@sims/services/system-users";
+import { MaxTuitionRemittanceTypes } from "@sims/services/confirmation-of-enrollment/models/confirmation-of-enrollment.models";
 
 /**
  * While performing a possible huge amount of updates,
@@ -48,6 +50,7 @@ export class ECertGenerationService {
     private readonly studentRestrictionService: StudentRestrictionSharedService,
     private readonly disbursementOverawardService: DisbursementOverawardService,
     private readonly systemUsersService: SystemUsersService,
+    private readonly confirmationOfEnrollmentService: ConfirmationOfEnrollmentService,
   ) {}
 
   /**
@@ -77,10 +80,12 @@ export class ECertGenerationService {
     await this.applyOverawardsDeductions(disbursements, entityManager);
     // Step 2 - Execute the calculation to define the final value to be used for the e-Cert.
     this.calculateEffectiveValue(disbursements);
-    // Step 3 - Calculate BC total grants after all others calculations are done.
+    // Step 3 - Calculate tuition remittance effective amount.
+    this.calculateTuitionRemittanceEffectiveAmount(disbursements);
+    // Step 4 - Calculate BC total grants after all others calculations are done.
     //!This step relies on the effective value calculation (step 2).
     await this.createBCTotalGrants(disbursements);
-    // Step 4 - Mark all disbursements as 'sent'.
+    // Step 5 - Mark all disbursements as 'sent'.
     const now = new Date();
     disbursements.forEach((disbursement) => {
       disbursement.disbursementScheduleStatus = DisbursementScheduleStatus.Sent;
@@ -151,6 +156,8 @@ export class ECertGenerationService {
         "offering.studyEndDate",
         "offering.yearOfStudy",
         "offering.offeringIntensity",
+        "offering.actualTuitionCosts",
+        "offering.programRelatedCosts",
         "educationProgram.id",
         "educationProgram.fieldOfStudyCode",
         "educationProgram.completionYears",
@@ -495,6 +502,23 @@ export class ECertGenerationService {
         currentBalance -= availableAwardValueAmount;
         award.overawardAmountSubtracted = availableAwardValueAmount;
       }
+    }
+  }
+
+  /**
+   * Calculate tuition remittance effective amount.
+   * @param disbursements all disbursements that are part of one e-Cert.
+   */
+  private calculateTuitionRemittanceEffectiveAmount(
+    disbursements: ECertDisbursementSchedule[],
+  ) {
+    for (const disbursement of disbursements) {
+      disbursement.tuitionRemittanceEffectiveAmount =
+        this.confirmationOfEnrollmentService.getMaxTuitionRemittance(
+          disbursement.disbursementValues,
+          disbursement.studentAssessment.application.currentAssessment.offering,
+          MaxTuitionRemittanceTypes.Effective,
+        );
     }
   }
 }
