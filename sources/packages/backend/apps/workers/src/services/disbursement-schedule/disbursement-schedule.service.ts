@@ -7,11 +7,10 @@ import {
   RecordDataModelService,
 } from "@sims/sims-db";
 import { CustomNamedError } from "@sims/utilities";
-
 import { DataSource, IsNull, Not } from "typeorm";
 import { MSFAANumberService } from "..";
 import {
-  APPLICATION_MSFAA_ALREADY_ASSOCIATED,
+  DISBURSEMENT_MSFAA_ALREADY_ASSOCIATED,
   DISBURSEMENT_NOT_FOUND,
 } from "../../constants";
 
@@ -31,7 +30,7 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
    * @param assessmentId assessment id of the workflow instance.
    */
   async associateMSFAANumber(assessmentId: number): Promise<void> {
-    const [firstDisbursement, secondDisbursement] = await this.repo.find({
+    const disbursements = await this.repo.find({
       select: {
         id: true,
         studentAssessment: {
@@ -52,9 +51,11 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
       },
     });
 
+    const [firstDisbursement] = disbursements;
+
     if (!firstDisbursement) {
       throw new CustomNamedError(
-        "Disbursement not found or one of its associations is missing.",
+        "Disbursement not found.",
         DISBURSEMENT_NOT_FOUND,
       );
     }
@@ -62,7 +63,7 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
     if (firstDisbursement.msfaaNumber?.id) {
       throw new CustomNamedError(
         "MSFAA number is already associated.",
-        APPLICATION_MSFAA_ALREADY_ASSOCIATED,
+        DISBURSEMENT_MSFAA_ALREADY_ASSOCIATED,
       );
     }
 
@@ -94,7 +95,7 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
 
       let hasValidMSFAANumber = false;
       if (previousSignedDisbursement) {
-        // checks if the MSFAA number is still valid.
+        // Checks if the MSFAA number is still valid.
         // If the study period end date of the previously signed MSFAA is less than 2 years
         // when compared to current study period start date, then MSFAA is considered to be valid.
         hasValidMSFAANumber = this.msfaaNumberService.isMSFAANumberValid(
@@ -121,17 +122,12 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
       }
     }
     const msfaaNumber = { id: msfaaNumberId } as MSFAANumber;
-    firstDisbursement.msfaaNumber = msfaaNumber;
-    const disbursementsToUpdate = [firstDisbursement];
 
-    // If the assessment has second disbursement, associate MSFAA number
-    // and add to the disbursements to be updated.
-    if (secondDisbursement) {
-      secondDisbursement.msfaaNumber = msfaaNumber;
-      disbursementsToUpdate.push(secondDisbursement);
-    }
-
-    this.repo.save(disbursementsToUpdate);
+    // Associate all the disbursements of the given assessment with MSFAA.
+    disbursements.forEach(
+      (disbursement) => (disbursement.msfaaNumber = msfaaNumber),
+    );
+    await this.repo.save(disbursements);
   }
 
   /**
@@ -141,7 +137,7 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
    ** offerings.
    * @param studentId student.
    * @param offeringIntensity  offering intensity.
-   * @returns previous signed MSFAA if exist.
+   * @returns most recent previous disbursement from a completed application with a valid signed MSFAA.
    */
   async getPreviouslySignedDisbursement(
     studentId: number,

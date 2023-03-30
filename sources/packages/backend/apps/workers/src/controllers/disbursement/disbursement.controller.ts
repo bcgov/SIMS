@@ -10,7 +10,10 @@ import {
 // or MSFAA related methods will move to shared library.
 import { DisbursementScheduleService as DisbursementScheduleSharedService } from "@sims/services";
 import { DisbursementScheduleService } from "../../services";
-import { SaveDisbursementSchedulesJobInDTO } from "./disbursement.dto";
+import {
+  SaveDisbursementSchedulesJobInDTO,
+  AssignMSFAAJobInDTO,
+} from "./disbursement.dto";
 import { CustomNamedError } from "@sims/utilities";
 import {
   ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE,
@@ -23,9 +26,8 @@ import {
   DISBURSEMENT_SCHEDULES,
 } from "@sims/services/workflow/variables/assessment-gateway";
 import { MaxJobsToActivate } from "../../types";
-import { AssignMSFAAJobInDTO } from "../application/application.dto";
 import {
-  APPLICATION_MSFAA_ALREADY_ASSOCIATED,
+  DISBURSEMENT_MSFAA_ALREADY_ASSOCIATED,
   DISBURSEMENT_NOT_FOUND,
 } from "../../constants";
 
@@ -98,7 +100,7 @@ export class DisbursementController {
         switch (error.name) {
           case DISBURSEMENT_NOT_FOUND:
             return job.error(error.name, error.message);
-          case APPLICATION_MSFAA_ALREADY_ASSOCIATED:
+          case DISBURSEMENT_MSFAA_ALREADY_ASSOCIATED:
             return job.complete();
         }
       }
