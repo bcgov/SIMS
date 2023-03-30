@@ -76,7 +76,7 @@ export class MSFAANumberService extends RecordDataModelService<MSFAANumber> {
    * ESDC it will not expire and can be reused.
    * @param studentId student id to filter.
    * @param offeringIntensity MSFAA are generated individually for full-time/part-time
-   * applications. The offering intensity is used to differentiate between them.
+   * disbursements. The offering intensity is used to differentiate between them.
    * @returns current valid MSFAA record.
    */
   async getCurrentValidMSFAANumber(
@@ -108,7 +108,7 @@ export class MSFAANumberService extends RecordDataModelService<MSFAANumber> {
 
   /**
    * Determines whether MSFAA number is still valid.
-   * @param [startDate] start date. The start date would be the
+   * @param startDate start date. The start date would be the
    * offering end date of a previously completed Student Application that,
    * in many scenarios, could not exist. Is this case, if the start date is
    * missing we will assume that there in no current valid MSFAA.
