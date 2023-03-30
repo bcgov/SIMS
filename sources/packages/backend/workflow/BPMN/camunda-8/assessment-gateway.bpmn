@@ -57,23 +57,23 @@
         <bpmn:flowNodeRef>associate-workflow-instance-task</bpmn:flowNodeRef>
       </bpmn:lane>
       <bpmn:lane id="Lane_1bfd2e9" name="Assessment/reassessment calculation">
-        <bpmn:flowNodeRef>Gateway_11qgy63</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Activity_0t108ac</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Activity_0cqcjwg</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>save-assessment-data-task</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Activity_09v8xl0</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Activity_0w3u365</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>save-assessment-data-part-time-task</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Gateway_1hwknxt</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Gateway_1m2js1c</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>update-application-status-to-assessment-task</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>associate-msfaa-task</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Event_0mtgfbi</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Gateway_04wql0w</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Gateway_1m2js1c</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>update-noa-status-to-required-task</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>update-noa-status-to-not-required-task</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>associate-msfaa-task</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Gateway_1hwknxt</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>save-assessment-data-task</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>save-assessment-data-part-time-task</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>save-disbursement-task</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>save-disbursement-part-time-task</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Activity_0cqcjwg</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Activity_0w3u365</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Activity_09v8xl0</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Activity_0t108ac</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Gateway_11qgy63</bpmn:flowNodeRef>
       </bpmn:lane>
     </bpmn:laneSet>
     <bpmn:exclusiveGateway id="first-assessment-gateway" name="First Assessment?">
@@ -508,66 +508,12 @@
       <bpmn:incoming>Flow_1ef3map</bpmn:incoming>
       <bpmn:outgoing>Flow_1wrj7fh</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:exclusiveGateway id="Gateway_11qgy63">
-      <bpmn:incoming>Flow_1btetiq</bpmn:incoming>
-      <bpmn:incoming>Flow_0ozt4pg</bpmn:incoming>
-      <bpmn:outgoing>Flow_0hfjqs0</bpmn:outgoing>
-      <bpmn:outgoing>Flow_0e3pl88</bpmn:outgoing>
-    </bpmn:exclusiveGateway>
     <bpmn:sequenceFlow id="Flow_0hfjqs0" name="Full Time" sourceRef="Gateway_11qgy63" targetRef="Activity_0t108ac">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=offeringIntensity = "Full Time"</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="Flow_0e3pl88" name="Part Time" sourceRef="Gateway_11qgy63" targetRef="Activity_09v8xl0">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=offeringIntensity = "Part Time"</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
-    <bpmn:callActivity id="Activity_0t108ac" name="Assessment">
-      <bpmn:extensionElements>
-        <zeebe:calledElement processId="=&#34;fulltime-assessment-&#34; + programYear" propagateAllChildVariables="true" />
-      </bpmn:extensionElements>
-      <bpmn:incoming>Flow_0hfjqs0</bpmn:incoming>
-      <bpmn:outgoing>Flow_1j6gqvf</bpmn:outgoing>
-    </bpmn:callActivity>
-    <bpmn:callActivity id="Activity_0cqcjwg" name="Disbursement Schedule">
-      <bpmn:extensionElements>
-        <zeebe:calledElement processId="fulltime-configure-disbursement" propagateAllChildVariables="true" />
-      </bpmn:extensionElements>
-      <bpmn:incoming>Flow_1j6gqvf</bpmn:incoming>
-      <bpmn:outgoing>Flow_0qmdwld</bpmn:outgoing>
-    </bpmn:callActivity>
-    <bpmn:serviceTask id="save-assessment-data-task" name="Save assessment output">
-      <bpmn:extensionElements>
-        <zeebe:ioMapping>
-          <zeebe:input source="={&#10;  weeks: offeringWeeks,&#10;  tuitionCost: calculatedDataTotalTutionCost,&#10;  childcareCost: calculatedDataChildCareCost,&#10;  livingAllowance: calculatedDataTotalMSOLAllowance,&#10;  totalAssessedCost: calculatedDataTotalCosts,&#10;  totalFamilyIncome: calculatedDataTotalFamilyIncome,&#10;  totalFederalAward: awardNetFederalTotalAward,&#10;  otherAllowableCost: calculatedDataChildCareCost,&#10;  transportationCost: calculatedDataTotalTransportationCost,&#10;  secondResidenceCost: calculatedDataTotalSecondResidence,&#10;  totalAssessmentNeed: caclulatedDataTotalAssessedNeed,&#10;  booksAndSuppliesCost: calculatedDataTotalBookCost,&#10;  totalProvincialAward: awardNetProvincialTotalAward,&#10;  alimonyOrChildSupport: calculatedDataTotalChildSpousalSupport,&#10;  federalAssessmentNeed: calculatedDataFederalAssessedNeed,&#10;  exceptionalEducationCost: offeringExceptionalExpenses,&#10;  provincialAssessmentNeed: calculatedDataProvincialAssessedNeed,&#10;  totalFederalContribution:  calculatedDataTotalFederalFSC + calculatedDataTotalSpouseContribution + calculatedDataTotalParentalContribution,&#10;  parentAssessedContribution: calculatedDataTotalParentalContribution,&#10;  partnerAssessedContribution: calculatedDataTotalSpouseContribution,&#10;  totalProvincialContribution: calculatedDataTotalProvincialFSC + calculatedDataTotalSpouseContribution + calculatedDataTotalParentalContribution,&#10;  studentTotalFederalContribution: calculatedDataTotalFederalFSC,&#10;  studentTotalProvincialContribution: calculatedDataTotalProvincialFSC&#10;}" target="assessmentData" />
-        </zeebe:ioMapping>
-        <zeebe:taskDefinition type="save-assessment-data" />
-      </bpmn:extensionElements>
-      <bpmn:incoming>Flow_0wed99j</bpmn:incoming>
-      <bpmn:outgoing>Flow_1izp0bk</bpmn:outgoing>
-    </bpmn:serviceTask>
-    <bpmn:callActivity id="Activity_09v8xl0" name="Assessment">
-      <bpmn:extensionElements>
-        <zeebe:calledElement processId="=&#34;parttime-assessment-&#34; + programYear" propagateAllChildVariables="true" />
-      </bpmn:extensionElements>
-      <bpmn:incoming>Flow_0e3pl88</bpmn:incoming>
-      <bpmn:outgoing>Flow_1k200x2</bpmn:outgoing>
-    </bpmn:callActivity>
-    <bpmn:callActivity id="Activity_0w3u365" name="Disbursement Schedule">
-      <bpmn:extensionElements>
-        <zeebe:calledElement processId="parttime-configure-disbursement" propagateAllChildVariables="true" />
-      </bpmn:extensionElements>
-      <bpmn:incoming>Flow_1k200x2</bpmn:incoming>
-      <bpmn:outgoing>Flow_17yc7mz</bpmn:outgoing>
-    </bpmn:callActivity>
-    <bpmn:serviceTask id="save-assessment-data-part-time-task" name="Save assessment output">
-      <bpmn:extensionElements>
-        <zeebe:ioMapping>
-          <zeebe:input source="={&#10;  weeks: offeringWeeks,&#10;  tuitionCost: offeringActualTuitionCosts,&#10;  childcareCost: calculatedDataChildCareCost,&#10;  totalFamilyIncome: calculatedDataTotalFamilyIncome,&#10;  transportationCost: calculatedDataTransportationAllownace,&#10;  booksAndSuppliesCost: offeringProgramRelatedCosts,&#10;  miscellaneousAllowance: calculatedDataMiscellaneousAllowance,&#10;  exceptionalEducationCost: offeringExceptionalExpenses,&#10;  assessedNeed: calculatedDataTotalAssessedNeed&#10;}" target="assessmentData" />
-        </zeebe:ioMapping>
-        <zeebe:taskDefinition type="save-assessment-data" />
-      </bpmn:extensionElements>
-      <bpmn:incoming>Flow_1y2j9iz</bpmn:incoming>
-      <bpmn:outgoing>Flow_1f8ymzi</bpmn:outgoing>
-    </bpmn:serviceTask>
     <bpmn:sequenceFlow id="Flow_1j6gqvf" sourceRef="Activity_0t108ac" targetRef="Activity_0cqcjwg" />
     <bpmn:sequenceFlow id="Flow_0qmdwld" sourceRef="Activity_0cqcjwg" targetRef="save-disbursement-task" />
     <bpmn:sequenceFlow id="Flow_0wed99j" sourceRef="save-disbursement-task" targetRef="save-assessment-data-task" />
@@ -576,17 +522,7 @@
     <bpmn:sequenceFlow id="Flow_17yc7mz" sourceRef="Activity_0w3u365" targetRef="save-disbursement-part-time-task" />
     <bpmn:sequenceFlow id="Flow_1y2j9iz" sourceRef="save-disbursement-part-time-task" targetRef="save-assessment-data-part-time-task" />
     <bpmn:sequenceFlow id="Flow_1f8ymzi" sourceRef="save-assessment-data-part-time-task" targetRef="Gateway_1hwknxt" />
-    <bpmn:exclusiveGateway id="Gateway_1hwknxt">
-      <bpmn:incoming>Flow_1izp0bk</bpmn:incoming>
-      <bpmn:incoming>Flow_1f8ymzi</bpmn:incoming>
-      <bpmn:outgoing>Flow_1mpwyku</bpmn:outgoing>
-    </bpmn:exclusiveGateway>
-    <bpmn:sequenceFlow id="Flow_1mpwyku" sourceRef="Gateway_1hwknxt" targetRef="Gateway_1m2js1c" />
-    <bpmn:exclusiveGateway id="Gateway_1m2js1c">
-      <bpmn:incoming>Flow_1mpwyku</bpmn:incoming>
-      <bpmn:outgoing>Flow_1a4wzic</bpmn:outgoing>
-      <bpmn:outgoing>Flow_01iq5cw</bpmn:outgoing>
-    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_1mpwyku" sourceRef="Gateway_1hwknxt" targetRef="associate-msfaa-task" />
     <bpmn:serviceTask id="update-application-status-to-assessment-task" name="Update Application Status to &#39;Assessment&#39;">
       <bpmn:extensionElements>
         <zeebe:taskDefinition type="update-application-status" />
@@ -598,16 +534,6 @@
       <bpmn:incoming>Flow_1a4wzic</bpmn:incoming>
       <bpmn:outgoing>Flow_0mayggl</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:serviceTask id="associate-msfaa-task" name="Aassociate MSFAA">
-      <bpmn:extensionElements>
-        <zeebe:ioMapping>
-          <zeebe:input source="={&#10;  weeks: offeringWeeks,&#10;  tuitionCost: 5009,&#10;  childcareCost: 0,&#10;  livingAllowance: 13609.3,&#10;  totalAssessedCost: 21840.3,&#10;  totalFamilyIncome: 0,&#10;  totalFederalAward: 5533.4,&#10;  otherAllowableCost: 0,&#10;  transportationCost: null,&#10;  secondResidenceCost: 0,&#10;  totalAssessmentNeed: 18444.68,&#10;  booksAndSuppliesCost: 3000,&#10;  totalProvincialAward: 3688.94,&#10;  alimonyOrChildSupport: 0,&#10;  federalAssessmentNeed: 9222.34,&#10;  partnerStudentLoanCost: null,&#10;  exceptionalEducationCost: 222,&#10;  provincialAssessmentNeed: 9222.34,&#10;  totalFederalContribution: 12617.96,&#10;  parentAssessedContribution: 10817.96,&#10;  partnerAssessedContribution: 0,&#10;  totalProvincialContribution: 12617.96,&#10;  studentTotalFederalContribution: 1800,&#10;  studentTotalProvincialContribution: 1800&#10;}" target="assessmentData" />
-        </zeebe:ioMapping>
-        <zeebe:taskDefinition type="associate-msfaa" />
-      </bpmn:extensionElements>
-      <bpmn:incoming>Flow_0mayggl</bpmn:incoming>
-      <bpmn:outgoing>Flow_1v9csm7</bpmn:outgoing>
-    </bpmn:serviceTask>
     <bpmn:endEvent id="Event_0mtgfbi">
       <bpmn:incoming>Flow_0z518wc</bpmn:incoming>
     </bpmn:endEvent>
@@ -616,6 +542,22 @@
       <bpmn:incoming>Flow_0hmh3m7</bpmn:incoming>
       <bpmn:outgoing>Flow_0z518wc</bpmn:outgoing>
     </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_01iq5cw" name="Reassessment" sourceRef="Gateway_1m2js1c" targetRef="update-noa-status-to-not-required-task">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=assessmentTriggerType != "Original assessment"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_1a4wzic" name="Assessment" sourceRef="Gateway_1m2js1c" targetRef="update-application-status-to-assessment-task">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=assessmentTriggerType = "Original assessment"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_0mayggl" sourceRef="update-application-status-to-assessment-task" targetRef="update-noa-status-to-required-task" />
+    <bpmn:sequenceFlow id="Flow_0z518wc" sourceRef="Gateway_04wql0w" targetRef="Event_0mtgfbi" />
+    <bpmn:sequenceFlow id="Flow_0hmh3m7" sourceRef="update-noa-status-to-not-required-task" targetRef="Gateway_04wql0w" />
+    <bpmn:sequenceFlow id="Flow_0p1lgm7" sourceRef="update-noa-status-to-required-task" targetRef="Gateway_04wql0w" />
+    <bpmn:exclusiveGateway id="Gateway_1m2js1c">
+      <bpmn:incoming>Flow_1atzf7v</bpmn:incoming>
+      <bpmn:outgoing>Flow_1a4wzic</bpmn:outgoing>
+      <bpmn:outgoing>Flow_01iq5cw</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_1atzf7v" sourceRef="associate-msfaa-task" targetRef="Gateway_1m2js1c" />
     <bpmn:serviceTask id="update-noa-status-to-required-task" name="Update NOA status to &#39;Required&#39;">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
@@ -626,7 +568,7 @@
           <zeebe:header key="status" value="Required" />
         </zeebe:taskHeaders>
       </bpmn:extensionElements>
-      <bpmn:incoming>Flow_1v9csm7</bpmn:incoming>
+      <bpmn:incoming>Flow_0mayggl</bpmn:incoming>
       <bpmn:outgoing>Flow_0p1lgm7</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:serviceTask id="update-noa-status-to-not-required-task" name="Update NOA status to &#39;Not Required&#39;">
@@ -642,17 +584,41 @@
       <bpmn:incoming>Flow_01iq5cw</bpmn:incoming>
       <bpmn:outgoing>Flow_0hmh3m7</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:sequenceFlow id="Flow_01iq5cw" name="Reassessment" sourceRef="Gateway_1m2js1c" targetRef="update-noa-status-to-not-required-task">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=assessmentTriggerType != "Original assessment"</bpmn:conditionExpression>
-    </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="Flow_1a4wzic" name="Assessment" sourceRef="Gateway_1m2js1c" targetRef="update-application-status-to-assessment-task">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=assessmentTriggerType = "Original assessment"</bpmn:conditionExpression>
-    </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="Flow_0mayggl" sourceRef="update-application-status-to-assessment-task" targetRef="associate-msfaa-task" />
-    <bpmn:sequenceFlow id="Flow_1v9csm7" sourceRef="associate-msfaa-task" targetRef="update-noa-status-to-required-task" />
-    <bpmn:sequenceFlow id="Flow_0z518wc" sourceRef="Gateway_04wql0w" targetRef="Event_0mtgfbi" />
-    <bpmn:sequenceFlow id="Flow_0hmh3m7" sourceRef="update-noa-status-to-not-required-task" targetRef="Gateway_04wql0w" />
-    <bpmn:sequenceFlow id="Flow_0p1lgm7" sourceRef="update-noa-status-to-required-task" targetRef="Gateway_04wql0w" />
+    <bpmn:serviceTask id="associate-msfaa-task" name="Aassociate MSFAA">
+      <bpmn:extensionElements>
+        <zeebe:ioMapping>
+          <zeebe:input source="={&#10;  weeks: offeringWeeks,&#10;  tuitionCost: 5009,&#10;  childcareCost: 0,&#10;  livingAllowance: 13609.3,&#10;  totalAssessedCost: 21840.3,&#10;  totalFamilyIncome: 0,&#10;  totalFederalAward: 5533.4,&#10;  otherAllowableCost: 0,&#10;  transportationCost: null,&#10;  secondResidenceCost: 0,&#10;  totalAssessmentNeed: 18444.68,&#10;  booksAndSuppliesCost: 3000,&#10;  totalProvincialAward: 3688.94,&#10;  alimonyOrChildSupport: 0,&#10;  federalAssessmentNeed: 9222.34,&#10;  partnerStudentLoanCost: null,&#10;  exceptionalEducationCost: 222,&#10;  provincialAssessmentNeed: 9222.34,&#10;  totalFederalContribution: 12617.96,&#10;  parentAssessedContribution: 10817.96,&#10;  partnerAssessedContribution: 0,&#10;  totalProvincialContribution: 12617.96,&#10;  studentTotalFederalContribution: 1800,&#10;  studentTotalProvincialContribution: 1800&#10;}" target="assessmentData" />
+        </zeebe:ioMapping>
+        <zeebe:taskDefinition type="associate-msfaa" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1mpwyku</bpmn:incoming>
+      <bpmn:outgoing>Flow_1atzf7v</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:exclusiveGateway id="Gateway_1hwknxt">
+      <bpmn:incoming>Flow_1izp0bk</bpmn:incoming>
+      <bpmn:incoming>Flow_1f8ymzi</bpmn:incoming>
+      <bpmn:outgoing>Flow_1mpwyku</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:serviceTask id="save-assessment-data-task" name="Save assessment output">
+      <bpmn:extensionElements>
+        <zeebe:ioMapping>
+          <zeebe:input source="={&#10;  weeks: offeringWeeks,&#10;  tuitionCost: calculatedDataTotalTutionCost,&#10;  childcareCost: calculatedDataChildCareCost,&#10;  livingAllowance: calculatedDataTotalMSOLAllowance,&#10;  totalAssessedCost: calculatedDataTotalCosts,&#10;  totalFamilyIncome: calculatedDataTotalFamilyIncome,&#10;  totalFederalAward: awardNetFederalTotalAward,&#10;  otherAllowableCost: calculatedDataChildCareCost,&#10;  transportationCost: calculatedDataTotalTransportationCost,&#10;  secondResidenceCost: calculatedDataTotalSecondResidence,&#10;  totalAssessmentNeed: caclulatedDataTotalAssessedNeed,&#10;  booksAndSuppliesCost: calculatedDataTotalBookCost,&#10;  totalProvincialAward: awardNetProvincialTotalAward,&#10;  alimonyOrChildSupport: calculatedDataTotalChildSpousalSupport,&#10;  federalAssessmentNeed: calculatedDataFederalAssessedNeed,&#10;  exceptionalEducationCost: offeringExceptionalExpenses,&#10;  provincialAssessmentNeed: calculatedDataProvincialAssessedNeed,&#10;  totalFederalContribution:  calculatedDataTotalFederalFSC + calculatedDataTotalSpouseContribution + calculatedDataTotalParentalContribution,&#10;  parentAssessedContribution: calculatedDataTotalParentalContribution,&#10;  partnerAssessedContribution: calculatedDataTotalSpouseContribution,&#10;  totalProvincialContribution: calculatedDataTotalProvincialFSC + calculatedDataTotalSpouseContribution + calculatedDataTotalParentalContribution,&#10;  studentTotalFederalContribution: calculatedDataTotalFederalFSC,&#10;  studentTotalProvincialContribution: calculatedDataTotalProvincialFSC&#10;}" target="assessmentData" />
+        </zeebe:ioMapping>
+        <zeebe:taskDefinition type="save-assessment-data" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0wed99j</bpmn:incoming>
+      <bpmn:outgoing>Flow_1izp0bk</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="save-assessment-data-part-time-task" name="Save assessment output">
+      <bpmn:extensionElements>
+        <zeebe:ioMapping>
+          <zeebe:input source="={&#10;  weeks: offeringWeeks,&#10;  tuitionCost: offeringActualTuitionCosts,&#10;  childcareCost: calculatedDataChildCareCost,&#10;  totalFamilyIncome: calculatedDataTotalFamilyIncome,&#10;  transportationCost: calculatedDataTransportationAllownace,&#10;  booksAndSuppliesCost: offeringProgramRelatedCosts,&#10;  miscellaneousAllowance: calculatedDataMiscellaneousAllowance,&#10;  exceptionalEducationCost: offeringExceptionalExpenses,&#10;  assessedNeed: calculatedDataTotalAssessedNeed&#10;}" target="assessmentData" />
+        </zeebe:ioMapping>
+        <zeebe:taskDefinition type="save-assessment-data" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1y2j9iz</bpmn:incoming>
+      <bpmn:outgoing>Flow_1f8ymzi</bpmn:outgoing>
+    </bpmn:serviceTask>
     <bpmn:serviceTask id="save-disbursement-task" name="Save disbursement">
       <bpmn:extensionElements>
         <zeebe:taskDefinition type="save-disbursement-schedules" />
@@ -673,6 +639,40 @@
       <bpmn:incoming>Flow_17yc7mz</bpmn:incoming>
       <bpmn:outgoing>Flow_1y2j9iz</bpmn:outgoing>
     </bpmn:serviceTask>
+    <bpmn:callActivity id="Activity_0cqcjwg" name="Disbursement Schedule">
+      <bpmn:extensionElements>
+        <zeebe:calledElement processId="fulltime-configure-disbursement" propagateAllChildVariables="true" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1j6gqvf</bpmn:incoming>
+      <bpmn:outgoing>Flow_0qmdwld</bpmn:outgoing>
+    </bpmn:callActivity>
+    <bpmn:callActivity id="Activity_0w3u365" name="Disbursement Schedule">
+      <bpmn:extensionElements>
+        <zeebe:calledElement processId="parttime-configure-disbursement" propagateAllChildVariables="true" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1k200x2</bpmn:incoming>
+      <bpmn:outgoing>Flow_17yc7mz</bpmn:outgoing>
+    </bpmn:callActivity>
+    <bpmn:callActivity id="Activity_09v8xl0" name="Assessment">
+      <bpmn:extensionElements>
+        <zeebe:calledElement processId="=&#34;parttime-assessment-&#34; + programYear" propagateAllChildVariables="true" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0e3pl88</bpmn:incoming>
+      <bpmn:outgoing>Flow_1k200x2</bpmn:outgoing>
+    </bpmn:callActivity>
+    <bpmn:callActivity id="Activity_0t108ac" name="Assessment">
+      <bpmn:extensionElements>
+        <zeebe:calledElement processId="=&#34;fulltime-assessment-&#34; + programYear" propagateAllChildVariables="true" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0hfjqs0</bpmn:incoming>
+      <bpmn:outgoing>Flow_1j6gqvf</bpmn:outgoing>
+    </bpmn:callActivity>
+    <bpmn:exclusiveGateway id="Gateway_11qgy63">
+      <bpmn:incoming>Flow_1btetiq</bpmn:incoming>
+      <bpmn:incoming>Flow_0ozt4pg</bpmn:incoming>
+      <bpmn:outgoing>Flow_0hfjqs0</bpmn:outgoing>
+      <bpmn:outgoing>Flow_0e3pl88</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
   </bpmn:process>
   <bpmn:message id="Message_1clo0eh" name="program-info-request-completed">
     <bpmn:extensionElements>
@@ -874,43 +874,8 @@
       <bpmndi:BPMNShape id="Activity_11aa2j4_di" bpmnElement="associate-workflow-instance-task">
         <dc:Bounds x="320" y="562" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Gateway_11qgy63_di" bpmnElement="Gateway_11qgy63" isMarkerVisible="true">
-        <dc:Bounds x="2455" y="1595" width="50" height="50" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_1kvpx37_di" bpmnElement="Activity_0t108ac">
-        <dc:Bounds x="2610" y="1580" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_1n7bhaz_di" bpmnElement="Activity_0cqcjwg">
-        <dc:Bounds x="2760" y="1580" width="100" height="80" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_0kunf9f_di" bpmnElement="save-assessment-data-task">
-        <dc:Bounds x="3080" y="1580" width="100" height="80" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_0j2xd1b" bpmnElement="Activity_09v8xl0">
-        <dc:Bounds x="2610" y="1680" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_0tm8tcs" bpmnElement="Activity_0w3u365">
-        <dc:Bounds x="2760" y="1680" width="100" height="80" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_10gkyni" bpmnElement="save-assessment-data-part-time-task">
-        <dc:Bounds x="3080" y="1680" width="100" height="80" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Gateway_1hwknxt_di" bpmnElement="Gateway_1hwknxt" isMarkerVisible="true">
-        <dc:Bounds x="3235" y="1595" width="50" height="50" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Gateway_1m2js1c_di" bpmnElement="Gateway_1m2js1c" isMarkerVisible="true">
-        <dc:Bounds x="3345" y="1595" width="50" height="50" />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_1usikde" bpmnElement="update-application-status-to-assessment-task">
         <dc:Bounds x="3460" y="1520" width="100" height="80" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_1vg4guh" bpmnElement="associate-msfaa-task">
-        <dc:Bounds x="3600" y="1520" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_0mtgfbi_di" bpmnElement="Event_0mtgfbi">
@@ -919,21 +884,56 @@
       <bpmndi:BPMNShape id="BPMNShape_054vajm" bpmnElement="Gateway_04wql0w" isMarkerVisible="true">
         <dc:Bounds x="3895" y="1585" width="50" height="50" />
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1m2js1c_di" bpmnElement="Gateway_1m2js1c" isMarkerVisible="true">
+        <dc:Bounds x="3345" y="1595" width="50" height="50" />
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_012hpqk" bpmnElement="update-noa-status-to-required-task">
-        <dc:Bounds x="3760" y="1520" width="100" height="80" />
+        <dc:Bounds x="3690" y="1520" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_05dcqr1" bpmnElement="update-noa-status-to-not-required-task">
-        <dc:Bounds x="3760" y="1640" width="100" height="80" />
+        <dc:Bounds x="3690" y="1640" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_19j2z1x" bpmnElement="associate-msfaa-task">
+        <dc:Bounds x="3210" y="1580" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1hwknxt_di" bpmnElement="Gateway_1hwknxt" isMarkerVisible="true">
+        <dc:Bounds x="3125" y="1595" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0kunf9f_di" bpmnElement="save-assessment-data-task">
+        <dc:Bounds x="2990" y="1580" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_10gkyni" bpmnElement="save-assessment-data-part-time-task">
+        <dc:Bounds x="2990" y="1680" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_1rrwclw" bpmnElement="save-disbursement-task">
-        <dc:Bounds x="2930" y="1580" width="100" height="80" />
+        <dc:Bounds x="2860" y="1580" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_0hgpw0i" bpmnElement="save-disbursement-part-time-task">
-        <dc:Bounds x="2930" y="1680" width="100" height="80" />
+        <dc:Bounds x="2860" y="1680" width="100" height="80" />
         <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1n7bhaz_di" bpmnElement="Activity_0cqcjwg">
+        <dc:Bounds x="2720" y="1580" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0tm8tcs" bpmnElement="Activity_0w3u365">
+        <dc:Bounds x="2720" y="1680" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0j2xd1b" bpmnElement="Activity_09v8xl0">
+        <dc:Bounds x="2580" y="1680" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1kvpx37_di" bpmnElement="Activity_0t108ac">
+        <dc:Bounds x="2580" y="1580" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_11qgy63_di" bpmnElement="Gateway_11qgy63" isMarkerVisible="true">
+        <dc:Bounds x="2455" y="1595" width="50" height="50" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_1btetiq_di" bpmnElement="Flow_1btetiq">
         <di:waypoint x="2480" y="1130" />
@@ -1288,62 +1288,62 @@
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0hfjqs0_di" bpmnElement="Flow_0hfjqs0">
         <di:waypoint x="2505" y="1620" />
-        <di:waypoint x="2610" y="1620" />
+        <di:waypoint x="2580" y="1620" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="2535" y="1602" width="45" height="14" />
+          <dc:Bounds x="2520" y="1602" width="45" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0e3pl88_di" bpmnElement="Flow_0e3pl88">
         <di:waypoint x="2480" y="1645" />
         <di:waypoint x="2480" y="1720" />
-        <di:waypoint x="2610" y="1720" />
+        <di:waypoint x="2580" y="1720" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="2536" y="1703" width="48" height="14" />
+          <dc:Bounds x="2518" y="1703" width="48" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1j6gqvf_di" bpmnElement="Flow_1j6gqvf">
-        <di:waypoint x="2710" y="1620" />
-        <di:waypoint x="2760" y="1620" />
+        <di:waypoint x="2680" y="1620" />
+        <di:waypoint x="2720" y="1620" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0qmdwld_di" bpmnElement="Flow_0qmdwld">
+        <di:waypoint x="2820" y="1620" />
         <di:waypoint x="2860" y="1620" />
-        <di:waypoint x="2930" y="1620" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0wed99j_di" bpmnElement="Flow_0wed99j">
-        <di:waypoint x="3030" y="1620" />
-        <di:waypoint x="3080" y="1620" />
+        <di:waypoint x="2960" y="1620" />
+        <di:waypoint x="2990" y="1620" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1izp0bk_di" bpmnElement="Flow_1izp0bk">
-        <di:waypoint x="3180" y="1620" />
-        <di:waypoint x="3235" y="1620" />
+        <di:waypoint x="3090" y="1620" />
+        <di:waypoint x="3125" y="1620" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1k200x2_di" bpmnElement="Flow_1k200x2">
-        <di:waypoint x="2710" y="1720" />
-        <di:waypoint x="2760" y="1720" />
+        <di:waypoint x="2680" y="1720" />
+        <di:waypoint x="2720" y="1720" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_17yc7mz_di" bpmnElement="Flow_17yc7mz">
+        <di:waypoint x="2820" y="1720" />
         <di:waypoint x="2860" y="1720" />
-        <di:waypoint x="2930" y="1720" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="BPMNEdge_0jquq8b" bpmnElement="Flow_1y2j9iz">
-        <di:waypoint x="3030" y="1720" />
-        <di:waypoint x="3080" y="1720" />
+        <di:waypoint x="2960" y="1720" />
+        <di:waypoint x="2990" y="1720" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1f8ymzi_di" bpmnElement="Flow_1f8ymzi">
-        <di:waypoint x="3180" y="1720" />
-        <di:waypoint x="3260" y="1720" />
-        <di:waypoint x="3260" y="1645" />
+        <di:waypoint x="3090" y="1720" />
+        <di:waypoint x="3150" y="1720" />
+        <di:waypoint x="3150" y="1645" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1mpwyku_di" bpmnElement="Flow_1mpwyku">
-        <di:waypoint x="3285" y="1620" />
-        <di:waypoint x="3345" y="1620" />
+        <di:waypoint x="3175" y="1620" />
+        <di:waypoint x="3210" y="1620" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_01iq5cw_di" bpmnElement="Flow_01iq5cw">
         <di:waypoint x="3370" y="1645" />
         <di:waypoint x="3370" y="1680" />
-        <di:waypoint x="3760" y="1680" />
+        <di:waypoint x="3690" y="1680" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="3376" y="1663" width="74" height="14" />
+          <dc:Bounds x="3383" y="1663" width="74" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1a4wzic_di" bpmnElement="Flow_1a4wzic">
@@ -1356,25 +1356,25 @@
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0mayggl_di" bpmnElement="Flow_0mayggl">
         <di:waypoint x="3560" y="1560" />
-        <di:waypoint x="3600" y="1560" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1v9csm7_di" bpmnElement="Flow_1v9csm7">
-        <di:waypoint x="3700" y="1560" />
-        <di:waypoint x="3760" y="1560" />
+        <di:waypoint x="3690" y="1560" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0z518wc_di" bpmnElement="Flow_0z518wc">
         <di:waypoint x="3945" y="1610" />
         <di:waypoint x="4002" y="1610" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0hmh3m7_di" bpmnElement="Flow_0hmh3m7">
-        <di:waypoint x="3860" y="1680" />
+        <di:waypoint x="3790" y="1680" />
         <di:waypoint x="3920" y="1680" />
         <di:waypoint x="3920" y="1635" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0p1lgm7_di" bpmnElement="Flow_0p1lgm7">
-        <di:waypoint x="3860" y="1560" />
+        <di:waypoint x="3790" y="1560" />
         <di:waypoint x="3920" y="1560" />
         <di:waypoint x="3920" y="1585" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1atzf7v_di" bpmnElement="Flow_1atzf7v">
+        <di:waypoint x="3310" y="1620" />
+        <di:waypoint x="3345" y="1620" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="Group_1k2osho_di" bpmnElement="Group_1k2osho">
         <dc:Bounds x="1430" y="150" width="750" height="340" />

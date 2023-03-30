@@ -5,12 +5,14 @@ import {
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
+  RelationId,
 } from "typeorm";
 import {
   User,
   COEStatus,
   COEDeniedReason,
   DisbursementScheduleStatus,
+  MSFAANumber,
 } from ".";
 import { ColumnNames, TableNames } from "../constant";
 import { dateOnlyTransformer } from "../transformers/date-only.transformer";
@@ -167,4 +169,28 @@ export class DisbursementSchedule extends RecordDataModel {
     nullable: true,
   })
   tuitionRemittanceEffectiveAmount?: number;
+
+  /**
+   * Id of the MSFAA (Master Student Financial Aid Agreement)
+   * number generated for a student.
+   */
+  @RelationId(
+    (disbursementSchedule: DisbursementSchedule) =>
+      disbursementSchedule.msfaaNumber,
+  )
+  msfaaNumberId?: number;
+  /**
+   * MSFAA (Master Student Financial Aid Agreement)
+   * number generated for a student.
+   */
+  @ManyToOne(() => MSFAANumber, {
+    eager: false,
+    cascade: ["update"],
+    nullable: true,
+  })
+  @JoinColumn({
+    name: "msfaa_number_id",
+    referencedColumnName: ColumnNames.ID,
+  })
+  msfaaNumber?: MSFAANumber;
 }

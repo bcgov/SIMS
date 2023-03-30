@@ -73,7 +73,6 @@ export class AssessmentControllerService {
         assessment.offering.studyStartDate,
       ),
       offeringStudyEndDate: getDateOnlyFormat(assessment.offering.studyEndDate),
-      msfaaNumber: assessment.application.msfaaNumber.msfaaNumber,
       disbursement: this.populateDisbursementAwardValues(
         assessment.disbursementSchedules,
       ),
@@ -99,6 +98,8 @@ export class AssessmentControllerService {
       );
       disbursementDetails[`${disbursementIdentifier}Status`] =
         schedule.coeStatus;
+      disbursementDetails[`${disbursementIdentifier}MSFAANumber`] =
+        schedule.msfaaNumber.msfaaNumber;
       disbursementDetails[`${disbursementIdentifier}TuitionRemittance`] =
         schedule.tuitionRemittanceRequestedAmount;
       disbursementDetails[`${disbursementIdentifier}Id`] = schedule.id;

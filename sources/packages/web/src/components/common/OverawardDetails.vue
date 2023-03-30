@@ -18,7 +18,11 @@
           <Column field="dateAdded" header="Date added">
             <template #body="slotProps">
               <span>
-                {{ dateOnlyLongString(slotProps.data.dateAdded) }}
+                {{
+                  slotProps.data.dateAdded
+                    ? dateOnlyLongString(slotProps.data.dateAdded)
+                    : dateOnlyLongString(slotProps.data.createdAt)
+                }}
               </span>
             </template>
           </Column>
@@ -30,7 +34,13 @@
             </template></Column
           >
           <Column field="overawardOrigin" header="Origin"></Column>
-          <Column field="assessmentTriggerType" header="Type"></Column>
+          <Column field="assessmentTriggerType" header="Type"
+            ><template #body="slotProps">
+              <span>
+                {{ emptyStringFiller(slotProps.data.assessmentTriggerType) }}
+              </span>
+            </template></Column
+          >
           <Column field="awardValueCode" header="Award"></Column>
           <Column field="overawardValue" header="Overaward amount">
             <template #body="slotProps">
@@ -78,7 +88,11 @@
           <Column field="dateAdded" header="Date added">
             <template #body="slotProps">
               <span>
-                {{ dateOnlyLongString(slotProps.data.dateAdded) }}
+                {{
+                  slotProps.data.dateAdded
+                    ? dateOnlyLongString(slotProps.data.dateAdded)
+                    : dateOnlyLongString(slotProps.data.createdAt)
+                }}
               </span>
             </template>
           </Column>
@@ -141,7 +155,7 @@ export default defineComponent({
   props: {
     studentId: {
       type: Number,
-      required: true,
+      required: false,
     },
     showAddedBy: {
       type: Boolean,
@@ -187,7 +201,7 @@ export default defineComponent({
       if (manualOveraward) {
         try {
           await OverawardService.shared.addManualOverawardDeduction(
-            props.studentId,
+            props.studentId as number,
             manualOveraward as OverawardManualRecordAPIInDTO,
           );
           snackBar.success("Overaward deduction added successfully.");

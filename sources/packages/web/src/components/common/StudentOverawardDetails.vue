@@ -77,7 +77,7 @@ export default defineComponent({
   props: {
     studentId: {
       type: Number,
-      required: true,
+      required: false,
     },
     showAddedBy: {
       type: Boolean,

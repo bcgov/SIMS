@@ -20,7 +20,3 @@ export interface ApplicationExceptionsJobInDTO {
 export interface ApplicationExceptionsJobOutDTO {
   [APPLICATION_EXCEPTION_STATUS]: ApplicationExceptionStatus;
 }
-
-export interface AssignMSFAAJobInDTO {
-  [APPLICATION_ID]: number;
-}

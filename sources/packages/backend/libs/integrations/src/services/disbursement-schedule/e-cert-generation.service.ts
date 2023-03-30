@@ -193,6 +193,7 @@ export class ECertGenerationService {
         "stopFullTimeBCFunding",
       )
       .innerJoin("disbursement.studentAssessment", "studentAssessment")
+      .innerJoin("disbursement.msfaaNumber", "msfaaNumber")
       .innerJoin("studentAssessment.application", "application")
       .innerJoin("application.currentAssessment", "currentAssessment") // * This is to fetch the current assessment of the application, even though we have multiple reassessments
       .innerJoin("currentAssessment.offering", "offering")
@@ -201,7 +202,6 @@ export class ECertGenerationService {
       .innerJoin("application.student", "student") // ! The student alias here is also used in sub query 'getExistsBlockRestrictionQuery'.
       .innerJoin("student.user", "user")
       .innerJoin("student.sinValidation", "sinValidation")
-      .innerJoin("application.msfaaNumber", "msfaaNumber")
       .innerJoin("disbursement.disbursementValues", "disbursementValue")
       .where("disbursement.dateSent is null")
       .andWhere("disbursement.disbursementDate <= :disbursementMinDate", {

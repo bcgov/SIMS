@@ -12,7 +12,6 @@ import {
   CRAIncomeVerification,
   EducationProgram,
   InstitutionLocation,
-  MSFAANumber,
   OfferingIntensity,
   PIRDeniedReason,
   RelationshipStatus,
@@ -222,25 +221,6 @@ export class Application extends RecordDataModel {
     nullable: true,
   })
   studentNumber?: string;
-  /**
-   * Id of the MSFAA (Master Student Financial Aid Agreement)
-   * numbers generated for a student.
-   */
-  @RelationId((application: Application) => application.msfaaNumber)
-  msfaaNumberId?: number;
-  /**
-   * MSFAA (Master Student Financial Aid Agreement)
-   * numbers generated for a student.
-   */
-  @ManyToOne(() => MSFAANumber, {
-    eager: false,
-    cascade: true,
-  })
-  @JoinColumn({
-    name: "msfaa_number_id",
-    referencedColumnName: ColumnNames.ID,
-  })
-  msfaaNumber?: MSFAANumber;
   /**
    * All assessments related to this application.
    * The first assessment will be created upon submission, so
