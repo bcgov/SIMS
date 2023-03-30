@@ -1,3 +1,4 @@
+import { ASSESSMENT_ID } from "@sims/services/workflow/variables/assessment-gateway";
 import { DisbursementValueType } from "@sims/sims-db";
 
 export interface DisbursementValue {
@@ -15,4 +16,8 @@ export interface DisbursementSchedule {
 export interface SaveDisbursementSchedulesJobInDTO {
   assessmentId: number;
   disbursementSchedules: DisbursementSchedule[];
+}
+
+export interface AssignMSFAAJobInDTO {
+  [ASSESSMENT_ID]: number;
 }

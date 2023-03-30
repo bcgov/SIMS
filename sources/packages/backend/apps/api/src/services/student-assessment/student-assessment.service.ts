@@ -65,25 +65,25 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
         "offering.studyStartDate",
         "offering.studyEndDate",
         "offering.offeringIntensity",
-        "msfaaNumber.msfaaNumber",
         "disbursementSchedule.id",
         "disbursementSchedule.documentNumber",
         "disbursementSchedule.disbursementDate",
         "disbursementSchedule.coeStatus",
         "disbursementSchedule.tuitionRemittanceRequestedAmount",
+        "msfaaNumber.msfaaNumber",
         "disbursementValue.valueType",
         "disbursementValue.valueCode",
         "disbursementValue.valueAmount",
       ])
       .innerJoin("assessment.application", "application")
       .innerJoin("application.student", "student")
-      .innerJoin("application.msfaaNumber", "msfaaNumber")
       .innerJoin("student.user", "user")
       .innerJoin("assessment.offering", "offering")
       .innerJoin("offering.educationProgram", "educationProgram")
       .innerJoin("educationProgram.institution", "institution")
       .innerJoin("offering.institutionLocation", "location")
       .innerJoin("assessment.disbursementSchedules", "disbursementSchedule")
+      .innerJoin("disbursementSchedule.msfaaNumber", "msfaaNumber")
       .innerJoin("disbursementSchedule.disbursementValues", "disbursementValue")
       .where("assessment.id = :assessmentId", { assessmentId })
       .orderBy("disbursementSchedule.disbursementDate");

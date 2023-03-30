@@ -91,7 +91,6 @@ describe("Schedulers - e-Cert full time integration - Create e-Cert file", () =>
     // Create and save application.
     const fakeApplication = createFakeApplication({ student: savedStudent });
     fakeApplication.applicationNumber = "ECERT_TEST";
-    fakeApplication.msfaaNumber = savedMSFAANumber;
     const savedApplication = await applicationRepo.save(fakeApplication);
     // Original assessment.
     const fakeOriginalAssessment = createFakeStudentAssessment({
@@ -137,6 +136,7 @@ describe("Schedulers - e-Cert full time integration - Create e-Cert file", () =>
     firstSchedule.coeStatus = COEStatus.completed;
     firstSchedule.disbursementScheduleStatus =
       DisbursementScheduleStatus.Pending;
+    firstSchedule.msfaaNumber = savedMSFAANumber;
     fakeOriginalAssessment.disbursementSchedules = [firstSchedule];
     // Offering.
     const fakeOffering = createFakeEducationProgramOffering({
