@@ -7,7 +7,7 @@ export class DesignationAgreementsTableAlterSubmittedData1680120153698
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
       getSQLFileData(
-        "Update-col-submitted_data-drop-not-null.sql",
+        "Update-col-submitted-data-drop-not-null.sql",
         "DesignationAgreements",
       ),
     );
@@ -16,7 +16,7 @@ export class DesignationAgreementsTableAlterSubmittedData1680120153698
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
       getSQLFileData(
-        "Update-col-submitted_data-add-not-null.sql",
+        "Update-col-submitted-data-add-not-null.sql",
         "DesignationAgreements",
       ),
     );
