@@ -7,7 +7,6 @@ import {
   DisbursementOverawardOriginType,
   Student,
 } from "@sims/sims-db";
-
 import {
   BEARER_AUTH_TYPE,
   createTestingAppModule,
@@ -31,7 +30,8 @@ describe("OverawardStudentsController(e2e)-getOverawardBalance", () => {
     disbursementOverawardRepo = dataSource.getRepository(DisbursementOveraward);
   });
 
-  it("Should return correct value for overaward balance", async () => {
+  it("Should return correct value for overaward balance when available.", async () => {
+    // Arrange
     // Create an overaward.
     const legacyOveraward = createFakeDisbursementOveraward({ student });
     legacyOveraward.disbursementValueCode = "CSLF";
@@ -45,7 +45,7 @@ describe("OverawardStudentsController(e2e)-getOverawardBalance", () => {
     manualOveraward.originType = DisbursementOverawardOriginType.ManualRecord;
     // Persist the overawards.
     await disbursementOverawardRepo.save([legacyOveraward, manualOveraward]);
-    const endpoint = `/students/overaward/balance`;
+    const endpoint = "/students/overaward/balance";
 
     // Act/Assert
     await request(app.getHttpServer())
@@ -55,9 +55,7 @@ describe("OverawardStudentsController(e2e)-getOverawardBalance", () => {
         BEARER_AUTH_TYPE,
       )
       .expect(HttpStatus.OK)
-      .then((response) => {
-        expect(response.body.overawardBalanceValues.CSLF).toBe("400.00");
-      });
+      .expect({ CSLF: "400.00" });
   });
 
   afterAll(async () => {

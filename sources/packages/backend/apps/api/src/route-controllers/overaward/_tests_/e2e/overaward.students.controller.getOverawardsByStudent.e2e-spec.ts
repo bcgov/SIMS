@@ -14,7 +14,6 @@ import {
   Student,
   StudentAssessment,
 } from "@sims/sims-db";
-
 import {
   BEARER_AUTH_TYPE,
   createTestingAppModule,
@@ -43,7 +42,8 @@ describe("OverawardStudentsController(e2e)-getOverawardsByStudent", () => {
     );
   });
 
-  it("Should return student overawards", async () => {
+  it("Should return student overawards when available.", async () => {
+    // Arrange
     // Prepare the student assessment to create overaward.
     const application = await applicationRepo.save(
       createFakeApplication({
@@ -64,7 +64,7 @@ describe("OverawardStudentsController(e2e)-getOverawardsByStudent", () => {
       DisbursementOverawardOriginType.ReassessmentOveraward;
     reassessmentOveraward.addedDate = new Date();
     await disbursementOverawardRepo.save(reassessmentOveraward);
-    const endpoint = `/students/overaward`;
+    const endpoint = "/students/overaward";
 
     // Act/Assert
     await request(app.getHttpServer())
