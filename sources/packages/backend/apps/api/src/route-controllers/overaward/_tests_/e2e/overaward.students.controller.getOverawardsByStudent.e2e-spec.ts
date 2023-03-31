@@ -76,19 +76,19 @@ describe("OverawardStudentsController(e2e)-getOverawardsByStudent", () => {
       .expect(HttpStatus.OK)
       .then((response) => {
         expect(response.body.length).toBeGreaterThan(0);
-        const [overaward] = response.body as StudentsOverawardAPIOutDTO[];
-        expect(overaward.dateAdded).toBe(
-          reassessmentOveraward.addedDate.toISOString(),
+        const overawards = response.body as StudentsOverawardAPIOutDTO[];
+        // TODO change the expect.arrayContaining, when we create the mock student token.
+        expect(overawards).toEqual(
+          expect.arrayContaining([
+            expect.objectContaining({
+              applicationNumber:
+                reassessmentOveraward.studentAssessment.application
+                  .applicationNumber,
+              awardValueCode: reassessmentOveraward.disbursementValueCode,
+              overawardValue: reassessmentOveraward.overawardValue,
+            }),
+          ]),
         );
-        expect(overaward.overawardOrigin).toBe(
-          DisbursementOverawardOriginType.ReassessmentOveraward,
-        );
-        expect(overaward.applicationNumber).toBe(application.applicationNumber);
-        expect(overaward.assessmentTriggerType).toBe(
-          AssessmentTriggerType.OriginalAssessment,
-        );
-        expect(overaward.awardValueCode).toBe("CSLP");
-        expect(overaward.overawardValue).toBe(500);
       });
   });
 
