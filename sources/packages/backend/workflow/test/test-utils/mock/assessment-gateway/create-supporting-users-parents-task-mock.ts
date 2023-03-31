@@ -3,7 +3,7 @@ import { WorkflowServiceTasks } from "../..";
 import { createMockedWorkerResult } from "..";
 
 /**
- * Create the mock for 'Create supporting users for parent/parents' completed task
+ * Creates the mock for 'Create supporting users for parent/parents' completed task
  * and publish the necessary messages to unblock the workflow.
  * @param supportingUserIds ids (1 or 2) of the mocked support users that will
  * also be created using mocks.

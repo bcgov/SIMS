@@ -19,7 +19,7 @@ import {
   createCreateSupportingUsersParentsTaskMock,
   createCheckSupportingUserResponseTaskMock,
   createCheckIncomeRequestTaskMock,
-  createMockedWorkerResult,
+  createLoadAssessmentConsolidatedDataMock,
 } from "../../test-utils/mock";
 import { PROGRAM_YEAR } from "../constants/program-year.constants";
 import { YesNoOptions } from "@sims/test-utils";
@@ -45,12 +45,7 @@ describe(`E2E Test Workflow assessment gateway on original assessment for ${PROG
       // Application with PIR not required.
       studentDataSelectedOffering: 1,
     };
-    const assessmentConsolidatedMock = createMockedWorkerResult(
-      WorkflowServiceTasks.LoadAssessmentConsolidatedData,
-      {
-        jobCompleteMock: assessmentConsolidatedData,
-      },
-    );
+
     const currentAssessmentId = assessmentId++;
 
     // Act/Assert
@@ -59,7 +54,9 @@ describe(`E2E Test Workflow assessment gateway on original assessment for ${PROG
         bpmnProcessId: "assessment-gateway",
         variables: {
           [ASSESSMENT_ID]: currentAssessmentId,
-          ...assessmentConsolidatedMock,
+          ...createLoadAssessmentConsolidatedDataMock({
+            assessmentConsolidatedData,
+          }),
           ...createVerifyApplicationExceptionsTaskMock(),
           ...createIncomeRequestTaskMock({
             incomeVerificationId: incomeVerificationId++,
@@ -92,16 +89,14 @@ describe(`E2E Test Workflow assessment gateway on original assessment for ${PROG
       // Application with PIR not required.
       studentDataSelectedOffering: 1,
     };
-    const assessmentConsolidatedMock = createMockedWorkerResult(
-      WorkflowServiceTasks.LoadAssessmentConsolidatedData,
-      { jobCompleteMock: assessmentConsolidatedData },
-    );
 
     const assessmentStartData = {
       bpmnProcessId: "assessment-gateway",
       variables: {
         [ASSESSMENT_ID]: currentAssessmentId,
-        ...assessmentConsolidatedMock,
+        ...createLoadAssessmentConsolidatedDataMock({
+          assessmentConsolidatedData,
+        }),
         ...createVerifyApplicationExceptionsTaskMock(),
         ...createCreateSupportingUsersParentsTaskMock({
           supportingUserIds: [parent1SupportingUserId, parent2SupportingUserId],
@@ -180,16 +175,14 @@ describe(`E2E Test Workflow assessment gateway on original assessment for ${PROG
       // Application with PIR not required.
       studentDataSelectedOffering: 1,
     };
-    const assessmentConsolidatedMock = createMockedWorkerResult(
-      WorkflowServiceTasks.LoadAssessmentConsolidatedData,
-      { jobCompleteMock: assessmentConsolidatedData },
-    );
 
     const assessmentStartData = {
       bpmnProcessId: "assessment-gateway",
       variables: {
         [ASSESSMENT_ID]: currentAssessmentId,
-        ...assessmentConsolidatedMock,
+        ...createLoadAssessmentConsolidatedDataMock({
+          assessmentConsolidatedData,
+        }),
         ...createVerifyApplicationExceptionsTaskMock(),
         ...createCreateSupportingUsersParentsTaskMock({
           supportingUserIds: [parent1SupportingUserId],
@@ -255,16 +248,14 @@ describe(`E2E Test Workflow assessment gateway on original assessment for ${PROG
       // Application with PIR not required.
       studentDataSelectedOffering: 1,
     };
-    const assessmentConsolidatedMock = createMockedWorkerResult(
-      WorkflowServiceTasks.LoadAssessmentConsolidatedData,
-      { jobCompleteMock: assessmentConsolidatedData },
-    );
 
     const assessmentStartData = {
       bpmnProcessId: "assessment-gateway",
       variables: {
         [ASSESSMENT_ID]: currentAssessmentId,
-        ...assessmentConsolidatedMock,
+        ...createLoadAssessmentConsolidatedDataMock({
+          assessmentConsolidatedData,
+        }),
         ...createVerifyApplicationExceptionsTaskMock(),
         ...createIncomeRequestTaskMock({
           incomeVerificationId: incomeVerificationId++,

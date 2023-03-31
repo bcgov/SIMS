@@ -3,7 +3,7 @@ import { WorkflowServiceTasks } from "../..";
 import { createMockedWorkerResult } from "..";
 
 /**
- * Create the mock for 'Verify Application Exceptions' completed task.
+ * Creates the mock for 'Verify Application Exceptions' completed task.
  * @param options mock options.
  * - `subprocesses` subprocess reference when the workflow was invoked
  * using a call activity. It can be define as one or multiple ones case

@@ -2,7 +2,7 @@ import { WorkflowSubprocesses, WorkflowServiceTasks } from "../..";
 import { createMockedWorkerResult } from "../mock.utils";
 
 /**
- * Create the mock for 'Check Supporting User Response' completed task.
+ * Creates the mock for 'Check Supporting User Response' completed task.
  * @param options mock options.
  * - `supportingUserId` supporting user id to returned the successful check
  * where the totalIncome is used to unblock the workflow.

@@ -3,7 +3,7 @@ import { WorkflowServiceTasks, WorkflowSubprocesses } from "../..";
 import { createMockedWorkerResult } from "../mock.utils";
 
 /**
- * Create the mock for 'Create Income request' completed task
+ * Creates the mock for 'Create Income request' completed task
  * and also publish the message to unblock the workflow.
  * @param options mock options.
  * - `incomeVerificationId` income verification that will be waiting for

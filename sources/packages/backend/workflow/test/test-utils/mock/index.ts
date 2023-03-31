@@ -1,3 +1,4 @@
+export * from "./assessment-gateway/load-assessment-consolidated-data-mock";
 export * from "./assessment-gateway/create-supporting-users-parents-task-mock";
 export * from "./assessment-gateway/verify-application-exceptions-task-mock";
 export * from "./cra-integration-income-verification/check-income-request-task-mock";
