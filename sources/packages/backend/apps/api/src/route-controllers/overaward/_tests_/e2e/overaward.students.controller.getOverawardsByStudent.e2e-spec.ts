@@ -8,7 +8,6 @@ import {
 import { Repository } from "typeorm";
 import {
   Application,
-  AssessmentTriggerType,
   DisbursementOveraward,
   DisbursementOverawardOriginType,
   Student,
