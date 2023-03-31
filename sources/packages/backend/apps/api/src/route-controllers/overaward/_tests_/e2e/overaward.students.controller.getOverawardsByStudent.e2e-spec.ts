@@ -65,14 +65,14 @@ describe("OverawardStudentsController(e2e)-getOverawardsByStudent", () => {
     reassessmentOveraward.addedDate = new Date();
     await disbursementOverawardRepo.save(reassessmentOveraward);
     const endpoint = "/students/overaward";
+    const studentToken = await getStudentToken(
+      FakeStudentUsersTypes.FakeStudentUserType1,
+    );
 
     // Act/Assert
     await request(app.getHttpServer())
       .get(endpoint)
-      .auth(
-        await getStudentToken(FakeStudentUsersTypes.FakeStudentUserType1),
-        BEARER_AUTH_TYPE,
-      )
+      .auth(studentToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
       .then((response) => {
         expect(response.body.length).toBeGreaterThan(0);

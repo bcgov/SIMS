@@ -46,16 +46,18 @@ describe("OverawardStudentsController(e2e)-getOverawardBalance", () => {
     // Persist the overawards.
     await disbursementOverawardRepo.save([legacyOveraward, manualOveraward]);
     const endpoint = "/students/overaward/balance";
+    const studentToken = await getStudentToken(
+      FakeStudentUsersTypes.FakeStudentUserType1,
+    );
 
     // Act/Assert
     await request(app.getHttpServer())
       .get(endpoint)
-      .auth(
-        await getStudentToken(FakeStudentUsersTypes.FakeStudentUserType1),
-        BEARER_AUTH_TYPE,
-      )
+      .auth(studentToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
-      .expect({ CSLF: "400.00" });
+      .then((response) => {
+        expect(response.body.overawardBalanceValues.CSLF).toBe("400.00");
+      });
   });
 
   afterAll(async () => {
