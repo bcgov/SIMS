@@ -14,17 +14,19 @@ import {
   createIncomeRequestTaskMock,
   createCreateSupportingUsersParentsTaskMock,
   createCheckSupportingUserResponseTaskMock,
-  createFakeConsolidateDataForTwoParentsPreAssessmentDate,
   createCheckIncomeRequestTaskMock,
   WorkflowSubprocesses,
+  createParentsData,
+  expectNotToPassThroughServiceTasks,
 } from "../../test-utils";
 import { PROGRAM_YEAR } from "../constants/program-year.constants";
+import { YesNoOptions } from "@sims/test-utils";
 
 describe(`E2E Test Workflow assessment gateway on original assessment for ${PROGRAM_YEAR}`, () => {
   let zeebeClientProvider: ZBClient;
-  let assessmentId = 1;
-  let supportingUserId = 1;
-  let incomeVerificationId = 1;
+  let assessmentId = 2000;
+  let supportingUserId = 2000;
+  let incomeVerificationId = 2000;
 
   beforeAll(async () => {
     zeebeClientProvider = ZeebeMockedClient.getMockedZeebeInstance();
@@ -81,12 +83,16 @@ describe(`E2E Test Workflow assessment gateway on original assessment for ${PROG
     const parent1SupportingUserId = supportingUserId++;
     const parent2SupportingUserId = supportingUserId++;
     // Assessment consolidated mocked data.
+    const assessmentConsolidatedData: AssessmentConsolidatedData = {
+      assessmentTriggerType: AssessmentTriggerType.OriginalAssessment,
+      ...createFakeConsolidatedFulltimeData(PROGRAM_YEAR),
+      ...createParentsData({ numberOfParents: 2 }),
+      // Application with PIR not required.
+      studentDataSelectedOffering: 1,
+    };
     const assessmentConsolidatedMock = createMockedWorkerResult(
       WorkflowServiceTasks.LoadAssessmentConsolidatedData,
-      {
-        jobCompleteMock:
-          createFakeConsolidateDataForTwoParentsPreAssessmentDate(),
-      },
+      { jobCompleteMock: assessmentConsolidatedData },
     );
 
     const assessmentStartData = {
@@ -153,6 +159,146 @@ describe(`E2E Test Workflow assessment gateway on original assessment for ${PROG
       WorkflowServiceTasks.SaveDisbursementSchedules,
       WorkflowServiceTasks.AssociateMSFAA,
       WorkflowServiceTasks.UpdateNOAStatusToRequired,
+    );
+    expectNotToPassThroughServiceTasks(
+      assessmentGatewayResponse.variables,
+      WorkflowSubprocesses.PartnerIncomeVerification,
+    );
+  });
+
+  it("Should check for parent 1 income when the student is dependant and informed that he has only one parent with SIN.", async () => {
+    // Arrange
+    const currentAssessmentId = assessmentId++;
+    const parent1SupportingUserId = supportingUserId++;
+    // Assessment consolidated mocked data.
+    const assessmentConsolidatedData: AssessmentConsolidatedData = {
+      assessmentTriggerType: AssessmentTriggerType.OriginalAssessment,
+      ...createFakeConsolidatedFulltimeData(PROGRAM_YEAR),
+      ...createParentsData({ numberOfParents: 1 }),
+      // Application with PIR not required.
+      studentDataSelectedOffering: 1,
+    };
+    const assessmentConsolidatedMock = createMockedWorkerResult(
+      WorkflowServiceTasks.LoadAssessmentConsolidatedData,
+      { jobCompleteMock: assessmentConsolidatedData },
+    );
+
+    const assessmentStartData = {
+      bpmnProcessId: "assessment-gateway",
+      variables: {
+        [ASSESSMENT_ID]: currentAssessmentId,
+        ...assessmentConsolidatedMock,
+        ...createVerifyApplicationExceptionsTaskMock(),
+        ...createCreateSupportingUsersParentsTaskMock({
+          supportingUserIds: [parent1SupportingUserId],
+        }),
+        ...createCheckSupportingUserResponseTaskMock({
+          supportingUserId: parent1SupportingUserId,
+          totalIncome: 1,
+          subprocesses: WorkflowSubprocesses.RetrieveSupportingInfoParent1,
+        }),
+        ...createIncomeRequestTaskMock({
+          incomeVerificationId: incomeVerificationId++,
+          subprocesses: WorkflowSubprocesses.StudentIncomeVerification,
+        }),
+        ...createIncomeRequestTaskMock({
+          incomeVerificationId: incomeVerificationId++,
+          subprocesses: WorkflowSubprocesses.Parent1IncomeVerification,
+        }),
+        ...createCheckIncomeRequestTaskMock({
+          subprocesses: WorkflowSubprocesses.StudentIncomeVerification,
+        }),
+        ...createCheckIncomeRequestTaskMock({
+          subprocesses: WorkflowSubprocesses.Parent1IncomeVerification,
+        }),
+      },
+      requestTimeout: PROCESS_INSTANCE_CREATE_TIMEOUT,
+    };
+
+    // Act
+    const assessmentGatewayResponse =
+      await zeebeClientProvider.createProcessInstanceWithResult(
+        assessmentStartData,
+      );
+
+    // Assert
+    expectToPassThroughServiceTasks(
+      assessmentGatewayResponse.variables,
+      WorkflowServiceTasks.AssociateWorkflowInstance,
+      WorkflowServiceTasks.VerifyApplicationExceptions,
+      WorkflowServiceTasks.ProgramInfoNotRequired,
+      WorkflowSubprocesses.StudentIncomeVerification,
+      WorkflowSubprocesses.RetrieveSupportingInfoParent1,
+      WorkflowSubprocesses.Parent1IncomeVerification,
+      WorkflowServiceTasks.SaveDisbursementSchedules,
+      WorkflowServiceTasks.AssociateMSFAA,
+      WorkflowServiceTasks.UpdateNOAStatusToRequired,
+    );
+    expectNotToPassThroughServiceTasks(
+      assessmentGatewayResponse.variables,
+      WorkflowSubprocesses.PartnerIncomeVerification,
+      WorkflowSubprocesses.RetrieveSupportingInfoParent2,
+      WorkflowSubprocesses.Parent2IncomeVerification,
+    );
+  });
+
+  it("Should skip parent income verification when the student is dependant and informed that parents do not have SIN.", async () => {
+    // Arrange
+    const currentAssessmentId = assessmentId++;
+    // Assessment consolidated mocked data.
+    const assessmentConsolidatedData: AssessmentConsolidatedData = {
+      assessmentTriggerType: AssessmentTriggerType.OriginalAssessment,
+      ...createFakeConsolidatedFulltimeData(PROGRAM_YEAR),
+      ...createParentsData({ validSinNumber: YesNoOptions.No }),
+      // Application with PIR not required.
+      studentDataSelectedOffering: 1,
+    };
+    const assessmentConsolidatedMock = createMockedWorkerResult(
+      WorkflowServiceTasks.LoadAssessmentConsolidatedData,
+      { jobCompleteMock: assessmentConsolidatedData },
+    );
+
+    const assessmentStartData = {
+      bpmnProcessId: "assessment-gateway",
+      variables: {
+        [ASSESSMENT_ID]: currentAssessmentId,
+        ...assessmentConsolidatedMock,
+        ...createVerifyApplicationExceptionsTaskMock(),
+        ...createIncomeRequestTaskMock({
+          incomeVerificationId: incomeVerificationId++,
+          subprocesses: WorkflowSubprocesses.StudentIncomeVerification,
+        }),
+        ...createCheckIncomeRequestTaskMock({
+          subprocesses: WorkflowSubprocesses.StudentIncomeVerification,
+        }),
+      },
+      requestTimeout: PROCESS_INSTANCE_CREATE_TIMEOUT,
+    };
+
+    // Act
+    const assessmentGatewayResponse =
+      await zeebeClientProvider.createProcessInstanceWithResult(
+        assessmentStartData,
+      );
+
+    // Assert
+    expectToPassThroughServiceTasks(
+      assessmentGatewayResponse.variables,
+      WorkflowServiceTasks.AssociateWorkflowInstance,
+      WorkflowServiceTasks.VerifyApplicationExceptions,
+      WorkflowServiceTasks.ProgramInfoNotRequired,
+      WorkflowSubprocesses.StudentIncomeVerification,
+      WorkflowServiceTasks.SaveDisbursementSchedules,
+      WorkflowServiceTasks.AssociateMSFAA,
+      WorkflowServiceTasks.UpdateNOAStatusToRequired,
+    );
+    expectNotToPassThroughServiceTasks(
+      assessmentGatewayResponse.variables,
+      WorkflowSubprocesses.PartnerIncomeVerification,
+      WorkflowSubprocesses.RetrieveSupportingInfoParent1,
+      WorkflowSubprocesses.Parent1IncomeVerification,
+      WorkflowSubprocesses.RetrieveSupportingInfoParent2,
+      WorkflowSubprocesses.Parent2IncomeVerification,
     );
   });
 

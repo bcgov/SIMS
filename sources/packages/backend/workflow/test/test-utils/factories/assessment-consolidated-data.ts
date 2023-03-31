@@ -5,6 +5,7 @@ import {
   OfferingDeliveryOptions,
 } from "@sims/test-utils";
 import { OfferingIntensity } from "@sims/sims-db";
+import * as faker from "faker";
 
 /**
  * Create fake consolidated data
@@ -17,7 +18,7 @@ export function createFakeAssessmentConsolidatedData(
 ): AssessmentConsolidatedData {
   const [programStartYear] = programYear.split("-");
   return {
-    ...setDefaultAssessmentConsolidatedData(),
+    ...getDefaultAssessmentConsolidatedData(),
     studentDataDependantstatus: "independant",
     programYear,
     programYearStartDate: `${programStartYear}-08-01`,
@@ -49,7 +50,7 @@ export function createFakeAssessmentConsolidatedData(
  * to be set as null.
  * @returns assessment consolidated default values.
  */
-function setDefaultAssessmentConsolidatedData(): AssessmentConsolidatedData {
+function getDefaultAssessmentConsolidatedData(): AssessmentConsolidatedData {
   return {
     appealsStudentIncomeAppealData: null,
     appealsPartnerIncomeAppealData: null,
@@ -139,192 +140,43 @@ export function createFakeSingleIndependentStudentData(): Partial<AssessmentCons
   };
 }
 
-export function createFakeConsolidateDataForTwoParentsInitialLoadData() {
-  return {
-    parent2DependentTable: null,
-    studentDataLivingWithPartner: null,
-    parent1SupportingUserId: null,
-    programYearStartDate: "2022-08-01",
-    parent2CppSelfemploymentOther: null,
-    studentDataSelectedProgram: 11,
-    parent1NetAssests: null,
-    studentDataRelationshipStatus: "single",
-    institutionType: "BC Private",
-    studentTaxYear: null,
-    parent2CRAReportedIncome: null,
-    parent1CRAReportedIncome: null,
-    studentDataParentValidSinNumber: "yes",
-    partner1TotalStudentLoan: null,
-    studentDataNongovernmentFundingCosts: null,
-    parent2Tax: null,
-    appealsStudentIncomeAppealData: null,
-    studentPDStatus: null,
-    partner1SocialAssistance: null,
-    studentDataLivingathomeRent: null,
-    parent2TotalIncome: null,
-    offeringIntensity: "Full Time",
-    offeringDelivered: "onsite",
-    offeringBreakStartDate: null,
-    parent1CppEmployment: null,
-    studentDataVoluntaryContributions: null,
-    parent2Contributions: null,
-    parent1Contributions: null,
-    studentDataTaxReturnIncome: 100000,
-    studentDataSelectedLocation: 12,
-    parent1DependentTable: null,
-    parent2SupportingUserId: null,
-    parent2CppEmployment: null,
-    offeringExceptionalExpenses: 850,
-    studentDataPartnerTotalIncomeAssistance: null,
-    parent1Ei: null,
-    studentDataEstimatedSpouseIncome: null,
-    studentDataChildSupportAndOrSpousalSupport: null,
-    studentDataGovernmentFundingCosts: null,
-    partner1TotalIncome: null,
-    offeringStudyStartDate: "2023-03-08",
-    offeringWeeks: 39,
-    studentDataPartnerStudyWeeks: null,
-    studentDataWhenDidYouGraduateOrLeaveHighSchool: "2023-03-01",
-    studentDataYouthInCare: "no",
-    applicationId: 44,
-    studentDataHasDependents: "no",
-    studentDataPartnerFedralProvincialPDReceiptCost: null,
-    parent1Tax: null,
-    studentDataNumberOfParents: 2,
-    studentDataDependants: null,
-    offeringStudyEndDate: "2023-11-30",
-    studentDataSelectedOffering: 13,
-    studentDataDaycareCosts11YearsOrUnder: null,
-    offeringMandatoryFees: 500,
-    partner1SupportingUserId: null,
-    studentDataStudentParentNetAssests: null,
-    partner1StudentStudyWeeks: null,
-    partner1PermanentDisabilityBenefits: null,
-    parent1TotalIncome: null,
-    studentDataDependantstatus: "dependant",
-    assessmentTriggerType: "Original assessment",
-    studentDataIsYourSpouseACanadianCitizen: null,
-    studentDataLivingWithParents: "no",
-    parent2NetAssests: null,
-    programLocation: null,
-    studentDataCRAReportedIncome: null,
-    programYear: "2022-2023",
-    institutionLocationProvince: "BC",
-    programLength: "5YearsOrMore",
-    studentDataDaycareCosts12YearsOrOver: null,
-    studentDataPleaseProvideAnEstimationOfYourParentsIncome: null,
-    offeringBreakEndDate: null,
-    parent2Ei: null,
-    partner1EmploymentInsuranceBenefits: null,
-    studentDataScholarshipAmount: null,
-    partner1ChildSpousalSupportCost: null,
-    offeringActualTuitionCosts: 10000,
-    parent1CppSelfemploymentOther: null,
-    studentDataParentDependentTable: null,
-    studentDataPartnerEmploymentInsurance: null,
-    partner1CRAReportedIncome: null,
-    studentDataStudentParentNetContribution: null,
-    offeringCourseLoad: null,
-    studentDataTransportationCost: null,
-    studentDataIndigenousStatus: "no",
-    programCredentialType: "undergraduateDiploma",
-    appealsPartnerIncomeAppealData: null,
-    offeringProgramRelatedCosts: 1000,
-    studentDataParentVoluntaryContributionsCosts: null,
-  };
-}
-
-export function createFakeConsolidateDataForTwoParentsPreAssessmentDate() {
-  return {
-    parent2DependentTable: null,
-    studentDataLivingWithPartner: null,
-    parent1SupportingUserId: 7,
-    programYearStartDate: "2022-08-01",
-    parent2CppSelfemploymentOther: 1000,
-    studentDataSelectedProgram: 11,
-    parent1NetAssests: 300000,
-    studentDataRelationshipStatus: "single",
-    institutionType: "BC Private",
-    studentTaxYear: 2021,
-    parent2CRAReportedIncome: null,
-    parent1CRAReportedIncome: null,
-    studentDataParentValidSinNumber: "yes",
-    partner1TotalStudentLoan: null,
-    studentDataNongovernmentFundingCosts: null,
-    parent2Tax: 0,
-    appealsStudentIncomeAppealData: null,
-    studentPDStatus: null,
-    partner1SocialAssistance: null,
-    studentDataLivingathomeRent: null,
-    parent2TotalIncome: 65000,
-    offeringIntensity: "Full Time",
-    offeringDelivered: "onsite",
-    offeringBreakStartDate: null,
-    parent1CppEmployment: 5000,
-    studentDataVoluntaryContributions: null,
-    parent2Contributions: 10000,
-    parent1Contributions: 10000,
-    studentDataTaxReturnIncome: 100000,
-    studentDataSelectedLocation: 12,
-    parent1DependentTable: null,
-    parent2SupportingUserId: 8,
-    parent2CppEmployment: 3000,
-    offeringExceptionalExpenses: 850,
-    studentDataPartnerTotalIncomeAssistance: null,
-    parent1Ei: 0,
-    studentDataEstimatedSpouseIncome: null,
-    studentDataChildSupportAndOrSpousalSupport: null,
-    studentDataGovernmentFundingCosts: null,
-    partner1TotalIncome: null,
-    offeringStudyStartDate: "2023-03-08",
-    offeringWeeks: 39,
-    studentDataPartnerStudyWeeks: null,
-    studentDataWhenDidYouGraduateOrLeaveHighSchool: "2023-03-01",
-    studentDataYouthInCare: "no",
-    applicationId: 47,
-    studentDataHasDependents: "no",
-    studentDataPartnerFedralProvincialPDReceiptCost: null,
-    parent1Tax: 0,
-    studentDataNumberOfParents: 2,
-    studentDataDependants: null,
-    offeringStudyEndDate: "2023-11-30",
-    studentDataSelectedOffering: 13,
-    studentDataDaycareCosts11YearsOrUnder: null,
-    offeringMandatoryFees: 500,
-    partner1SupportingUserId: null,
-    studentDataStudentParentNetAssests: null,
-    partner1StudentStudyWeeks: null,
-    partner1PermanentDisabilityBenefits: null,
-    parent1TotalIncome: 75000,
-    studentDataDependantstatus: "dependant",
-    assessmentTriggerType: "Original assessment",
-    studentDataIsYourSpouseACanadianCitizen: null,
-    studentDataLivingWithParents: "no",
-    parent2NetAssests: 300000,
-    programLocation: null,
-    studentDataCRAReportedIncome: null,
-    programYear: "2022-2023",
-    institutionLocationProvince: "BC",
-    programLength: "5YearsOrMore",
-    studentDataDaycareCosts12YearsOrOver: null,
-    studentDataPleaseProvideAnEstimationOfYourParentsIncome: null,
-    offeringBreakEndDate: null,
-    parent2Ei: 0,
-    partner1EmploymentInsuranceBenefits: null,
-    studentDataScholarshipAmount: null,
-    partner1ChildSpousalSupportCost: null,
-    offeringActualTuitionCosts: 10000,
-    parent1CppSelfemploymentOther: 200,
-    studentDataParentDependentTable: null,
-    studentDataPartnerEmploymentInsurance: null,
-    partner1CRAReportedIncome: null,
-    studentDataStudentParentNetContribution: null,
-    offeringCourseLoad: null,
-    studentDataTransportationCost: null,
-    studentDataIndigenousStatus: "no",
-    programCredentialType: "undergraduateDiploma",
-    appealsPartnerIncomeAppealData: null,
-    offeringProgramRelatedCosts: 1000,
-    studentDataParentVoluntaryContributionsCosts: null,
-  };
+/**
+ * Provides the necessary data to the assessment workflow define if the parents
+ * are present in the application, if they need income verification or if they are not able
+ * to use a BCSC to provide data using the supporting users portal.
+ * @param options creation options.
+ * - `numberOfParents` generate information para one or two parents.
+ * - `validSinNumber` determine if parents can have a BCSC and access the supporting users portal.
+ * @returns parents data to be used.
+ */
+export function createParentsData(options?: {
+  numberOfParents?: 1 | 2;
+  validSinNumber?: YesNoOptions;
+}): Partial<AssessmentConsolidatedData> {
+  // Default values for options when not provided.
+  const numberOfParents = options?.numberOfParents ?? 1;
+  const validSinNumber = options?.validSinNumber ?? YesNoOptions.Yes;
+  // Make the student a dependant.
+  const parentsData = {} as Partial<AssessmentConsolidatedData>;
+  parentsData.studentDataNumberOfParents = numberOfParents;
+  parentsData.studentDataDependantstatus = "dependant";
+  // Set additional information when parents are not able to provide
+  // their income using the supporting users portal.
+  if (validSinNumber === YesNoOptions.No) {
+    parentsData.studentDataPleaseProvideAnEstimationOfYourParentsIncome = 150000;
+  }
+  parentsData.studentDataParentValidSinNumber = validSinNumber;
+  // Create specific parent data for 1 or 2 parents.
+  for (let i = 1; i <= numberOfParents; i++) {
+    parentsData[`parent${i}NetAssests`] = 300000;
+    parentsData[`parent${i}TotalIncome`] = 75000;
+    parentsData[`parent${i}CRAReportedIncome`] = null;
+    parentsData[`parent${i}CppEmployment`] = 5000;
+    parentsData[`parent${i}Contributions`] = 10000;
+    parentsData[`parent${i}DependentTable`] = null;
+    parentsData[`parent${i}Ei`] = 0;
+    parentsData[`parent${i}Tax`] = 0;
+    parentsData[`parent${i}CppSelfemploymentOther`] = 200;
+  }
+  return parentsData;
 }
