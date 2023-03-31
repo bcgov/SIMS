@@ -5,7 +5,6 @@ import {
   OfferingDeliveryOptions,
 } from "@sims/test-utils";
 import { OfferingIntensity } from "@sims/sims-db";
-import * as faker from "faker";
 
 /**
  * Create fake consolidated data

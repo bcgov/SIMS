@@ -10,15 +10,17 @@ import {
   createFakeSingleIndependentStudentData,
   expectToPassThroughServiceTasks,
   createMockedWorkerResult,
+  WorkflowSubprocesses,
+  createParentsData,
+  expectNotToPassThroughServiceTasks,
+} from "../../test-utils";
+import {
   createVerifyApplicationExceptionsTaskMock,
   createIncomeRequestTaskMock,
   createCreateSupportingUsersParentsTaskMock,
   createCheckSupportingUserResponseTaskMock,
   createCheckIncomeRequestTaskMock,
-  WorkflowSubprocesses,
-  createParentsData,
-  expectNotToPassThroughServiceTasks,
-} from "../../test-utils";
+} from "../../test-utils/mock";
 import { PROGRAM_YEAR } from "../constants/program-year.constants";
 import { YesNoOptions } from "@sims/test-utils";
 

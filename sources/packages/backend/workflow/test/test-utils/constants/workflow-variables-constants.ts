@@ -1,3 +1,6 @@
+/**
+ * Service tasks ids from present on the workflows.
+ */
 export enum WorkflowServiceTasks {
   // Workflow - Assessment Gateway
   AssociateWorkflowInstance = "associate-workflow-instance-task",
@@ -23,6 +26,12 @@ export enum WorkflowServiceTasks {
   CheckSupportingUserResponseTask = "check-supporting-user-response-task",
 }
 
+/**
+ * Workflow activities invoked as subprocesses using a 'Call Activity' task.
+ * The values of the enums are also included as output variables in the
+ * workflow 'Call Activity' to help the E2E tests to correctly determine if
+ * the workflow execution passed through those tasks.
+ */
 export enum WorkflowSubprocesses {
   StudentIncomeVerification = "studentIncomeVerificationSubprocess",
   RetrieveSupportingInfoPartner = "retrieveSupportingInfoPartnerSubprocess",
