@@ -1,8 +1,5 @@
-import {
-  createMockedWorkerResult,
-  WorkflowServiceTasks,
-  WorkflowSubprocesses,
-} from "../..";
+import { WorkflowServiceTasks, WorkflowSubprocesses } from "../..";
+import { createMockedWorkerResult } from "../mock.utils";
 
 /**
  * Create the mock for 'Check income request' task.

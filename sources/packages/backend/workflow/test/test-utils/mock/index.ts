@@ -4,3 +4,4 @@ export * from "./cra-integration-income-verification/check-income-request-task-m
 export * from "./cra-integration-income-verification/create-income-request-task-mock";
 export * from "./supporting-user-information-request/check-supporting-user-response-task-mock";
 export * from "./zeebe-worker-mock";
+export * from "./mock.utils";

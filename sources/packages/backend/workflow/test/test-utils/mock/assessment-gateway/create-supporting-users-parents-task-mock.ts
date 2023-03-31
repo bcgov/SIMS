@@ -1,5 +1,6 @@
 import { Duration } from "zeebe-node";
-import { createMockedWorkerResult, WorkflowServiceTasks } from "../..";
+import { WorkflowServiceTasks } from "../..";
+import { createMockedWorkerResult } from "..";
 
 /**
  * Create the mock for 'Create supporting users for parent/parents' completed task

@@ -1,9 +1,6 @@
 import { Duration } from "zeebe-node";
-import {
-  createMockedWorkerResult,
-  WorkflowServiceTasks,
-  WorkflowSubprocesses,
-} from "../..";
+import { WorkflowServiceTasks, WorkflowSubprocesses } from "../..";
+import { createMockedWorkerResult } from "../mock.utils";
 
 /**
  * Create the mock for 'Create Income request' completed task

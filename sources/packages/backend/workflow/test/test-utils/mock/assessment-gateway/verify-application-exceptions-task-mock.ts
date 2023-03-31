@@ -1,5 +1,6 @@
 import { ApplicationExceptionStatus } from "@sims/sims-db";
-import { createMockedWorkerResult, WorkflowServiceTasks } from "../..";
+import { WorkflowServiceTasks } from "../..";
+import { createMockedWorkerResult } from "..";
 
 /**
  * Create the mock for 'Verify Application Exceptions' completed task.

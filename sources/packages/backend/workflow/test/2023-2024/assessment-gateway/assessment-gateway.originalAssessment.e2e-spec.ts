@@ -9,7 +9,6 @@ import {
   WorkflowServiceTasks,
   createFakeSingleIndependentStudentData,
   expectToPassThroughServiceTasks,
-  createMockedWorkerResult,
   WorkflowSubprocesses,
   createParentsData,
   expectNotToPassThroughServiceTasks,
@@ -20,6 +19,7 @@ import {
   createCreateSupportingUsersParentsTaskMock,
   createCheckSupportingUserResponseTaskMock,
   createCheckIncomeRequestTaskMock,
+  createMockedWorkerResult,
 } from "../../test-utils/mock";
 import { PROGRAM_YEAR } from "../constants/program-year.constants";
 import { YesNoOptions } from "@sims/test-utils";
