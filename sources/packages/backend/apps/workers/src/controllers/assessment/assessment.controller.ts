@@ -112,7 +112,6 @@ export class AssessmentController {
       assessmentDTO,
       job.customHeaders,
     );
-    console.log(outputVariables);
     return job.complete(outputVariables);
   }
 
