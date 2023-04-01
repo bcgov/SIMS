@@ -58,4 +58,5 @@ export const TableNames = {
   QueueConfigurations: "queue_configurations",
 };
 
+export const INSTITUTION_TYPE_BC_PUBLIC = 1;
 export const INSTITUTION_TYPE_BC_PRIVATE = 2;

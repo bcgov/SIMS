@@ -18,11 +18,13 @@ import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import { InstitutionUserAuthRolesAndLocation } from "@/types/contracts/institution/InstitutionUser";
 import { useInstitutionAuth } from "@/composables/institution/useInstitutionAuth";
 import { MenuItemModel } from "@/types";
+import { useInstitutionState } from "@/composables";
 
 export default defineComponent({
   setup() {
     const store = useStore();
     const { isAdmin, userAuth } = useInstitutionAuth();
+    const { institutionState } = useInstitutionState();
     const userLocationList = computed(
       () => store.state.institution.locationState,
     );
@@ -38,6 +40,18 @@ export default defineComponent({
         },
       },
     ]);
+
+    if (institutionState.value.institutionType === "BC Public") {
+      items.value.push({
+        title: "Search Student",
+        props: {
+          prependIcon: "mdi-magnify",
+          to: {
+            name: InstitutionRoutesConst.INSTITUTION_STUDENT_SEARCH,
+          },
+        },
+      });
+    }
     const locationsMenu = ref<any[]>([]);
 
     const getUserLocationList = () => {

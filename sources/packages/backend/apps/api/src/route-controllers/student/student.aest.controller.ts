@@ -40,7 +40,7 @@ import {
   AESTFileUploadToStudentAPIInDTO,
   AESTStudentFileAPIOutDTO,
   AESTStudentProfileAPIOutDTO,
-  AESTStudentSearchAPIInDTO,
+  StudentSearchAPIInDTO,
   ApplicationSummaryAPIOutDTO,
   CreateSINValidationAPIInDTO,
   SearchStudentAPIOutDTO,
@@ -228,7 +228,7 @@ export class StudentAESTController extends BaseController {
    */
   @Post("search")
   async searchStudents(
-    @Body() searchCriteria: AESTStudentSearchAPIInDTO,
+    @Body() searchCriteria: StudentSearchAPIInDTO,
   ): Promise<SearchStudentAPIOutDTO[]> {
     const searchStudentApplications =
       await this.studentService.searchStudentApplication(searchCriteria);

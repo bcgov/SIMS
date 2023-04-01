@@ -12,6 +12,7 @@ import {
   StudentUser,
   DisbursementOveraward,
   DisbursementOverawardOriginType,
+  StudentAssessment,
 } from "@sims/sims-db";
 import { DataSource, EntityManager } from "typeorm";
 import { StudentUserToken } from "../../auth/userToken.interface";
@@ -490,6 +491,78 @@ export class StudentService extends RecordDataModelService<Student> {
           appNumber: `%${searchCriteria.appNumber}%`,
           overwrittenStatus: ApplicationStatus.Overwritten,
         });
+    }
+    return searchQuery.getMany();
+  }
+
+  /**
+   * Search students based on the search criteria.
+   * @param searchCriteria options to search by firstName,
+   * lastName, appNumber or sin.
+   * @returns list of students.
+   */
+  async searchStudentApplicationForInstitution(
+    institutionId: number,
+    searchCriteria: {
+      firstName?: string;
+      lastName?: string;
+      appNumber?: string;
+      sin?: string;
+    },
+  ): Promise<Student[]> {
+    const searchQuery = this.repo
+      .createQueryBuilder("student")
+      .select([
+        "student.id",
+        "student.birthDate",
+        "user.firstName",
+        "user.lastName",
+        "sinValidation.sin",
+      ])
+      .innerJoin(
+        Application,
+        "application",
+        "application.student.id = student.id",
+      )
+
+      .innerJoin("application.location", "pirLocation")
+      .innerJoin("pirLocation.institution", "pirInstitution")
+
+      .leftJoin("application.currentAssessment", "studentAssessment")
+      .leftJoin("studentAssessment.offering", "offering")
+      .leftJoin("offering.institutionLocation", "offeringLocation")
+      .leftJoin("offeringLocation.institution", "offeringInstitution")
+
+      .innerJoin("student.user", "user")
+      .innerJoin("student.sinValidation", "sinValidation")
+      .where("user.isActive = true")
+      .andWhere(
+        "(offeringInstitution.id = :institutionId or pirInstitution.id = :institutionId)",
+        { institutionId },
+      )
+      .andWhere("application.applicationStatus != :overwrittenStatus", {
+        overwrittenStatus: ApplicationStatus.Overwritten,
+      });
+
+    if (searchCriteria.sin) {
+      searchQuery.andWhere("sinValidation.sin = :sin", {
+        sin: removeWhiteSpaces(searchCriteria.sin),
+      });
+    }
+    if (searchCriteria.firstName) {
+      searchQuery.andWhere("user.firstName Ilike :firstName", {
+        firstName: `%${searchCriteria.firstName}%`,
+      });
+    }
+    if (searchCriteria.lastName) {
+      searchQuery.andWhere("user.lastName Ilike :lastName", {
+        lastName: `%${searchCriteria.lastName}%`,
+      });
+    }
+    if (searchCriteria.appNumber) {
+      searchQuery.andWhere("application.applicationNumber Ilike :appNumber", {
+        appNumber: `%${searchCriteria.appNumber}%`,
+      });
     }
     return searchQuery.getMany();
   }

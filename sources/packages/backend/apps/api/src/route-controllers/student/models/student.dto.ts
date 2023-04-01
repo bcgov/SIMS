@@ -93,27 +93,27 @@ export class UpdateStudentAPIInDTO
 /**
  * Student AEST search parameters.
  */
-export class AESTStudentSearchAPIInDTO {
+export class StudentSearchAPIInDTO {
   @ValidateIf(
-    (input: AESTStudentSearchAPIInDTO) =>
+    (input: StudentSearchAPIInDTO) =>
       !input.lastName && !input.appNumber && !input.sin,
   )
   @IsNotEmpty()
   firstName: string;
   @ValidateIf(
-    (input: AESTStudentSearchAPIInDTO) =>
+    (input: StudentSearchAPIInDTO) =>
       !input.firstName && !input.appNumber && !input.sin,
   )
   @IsNotEmpty()
   lastName: string;
   @ValidateIf(
-    (input: AESTStudentSearchAPIInDTO) =>
+    (input: StudentSearchAPIInDTO) =>
       !input.firstName && !input.lastName && !input.sin,
   )
   @IsNotEmpty()
   appNumber: string;
   @ValidateIf(
-    (input: AESTStudentSearchAPIInDTO) =>
+    (input: StudentSearchAPIInDTO) =>
       !input.firstName && !input.lastName && !input.appNumber,
   )
   @IsNotEmpty()

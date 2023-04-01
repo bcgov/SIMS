@@ -37,7 +37,10 @@ import {
   INSTITUTION_USER_ALREADY_EXISTS,
   LEGAL_SIGNING_AUTHORITY_EXIST,
 } from "../../constants";
-import { INSTITUTION_TYPE_BC_PRIVATE } from "@sims/sims-db/constant";
+import {
+  INSTITUTION_TYPE_BC_PRIVATE,
+  INSTITUTION_TYPE_BC_PUBLIC,
+} from "@sims/sims-db/constant";
 import { InstitutionUserAuthService } from "../institution-user-auth/institution-user-auth.service";
 import { UserService } from "../user/user.service";
 
@@ -703,6 +706,16 @@ export class InstitutionService extends RecordDataModelService<Institution> {
   async isPrivateInstitution(institutionId: number): Promise<boolean> {
     const institutionType = await this.getInstitutionTypeById(institutionId);
     return INSTITUTION_TYPE_BC_PRIVATE === institutionType.institutionType.id;
+  }
+
+  /**
+   * Check if institution type is BC public.
+   * @param institutionId institution id.
+   * @returns whether the institution type is public.
+   */
+  async isBCPublicInstitution(institutionId: number): Promise<boolean> {
+    const institutionType = await this.getInstitutionTypeById(institutionId);
+    return INSTITUTION_TYPE_BC_PUBLIC === institutionType.institutionType.id;
   }
 
   /**
