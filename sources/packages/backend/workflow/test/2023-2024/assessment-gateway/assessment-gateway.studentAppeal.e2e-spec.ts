@@ -12,10 +12,7 @@ import {
   expectNotToPassThroughServiceTasks,
 } from "../../test-utils";
 import { PROGRAM_YEAR } from "../constants/program-year.constants";
-import {
-  createLoadAssessmentConsolidatedDataMock,
-  createMockedWorkerResult,
-} from "../../test-utils/mock";
+import { createLoadAssessmentConsolidatedDataMock } from "../../test-utils/mock";
 
 describe(`E2E Test Workflow assessment gateway on student appeal for ${PROGRAM_YEAR}`, () => {
   let zeebeClientProvider: ZBClient;

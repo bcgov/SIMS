@@ -12,6 +12,14 @@ import {
 } from "../constants/workflow-variables-constants";
 
 /**
+ * Regex for replace all.
+ */
+const SERVICE_TASK_ID_SEPARATOR_REGEX = new RegExp(
+  SERVICE_TASK_ID_SEPARATOR,
+  "g",
+);
+
+/**
  * Get the mock identifier for a completed job to be sent to the workflow.
  * @param serviceTaskId service task id that will have the job completed returned.
  * @returns mock identifier for a completed job to be sent to the workflow.
@@ -38,7 +46,7 @@ export function getPublishMessageResultMockId(serviceTaskId: string) {
  * Camunda variable name like service_task_id.
  * The usual variables along the workflow are following the camelCase pattern, but service
  * task ids are actually following the kebab-case pattern, which is not a problem in general.
- * With that in mind, while trying to use the service task ids as variables names we can
+ * Based on the above, while trying to use the service task ids as variables names we can
  * respect the Camunda recommendations (link below) and just convert the kebab-case to
  * snake_case pattern.
  * @see https://docs.camunda.io/docs/components/concepts/variables/#variable-names
@@ -46,7 +54,10 @@ export function getPublishMessageResultMockId(serviceTaskId: string) {
  * @returns
  */
 function getNormalizedServiceTaskId(serviceTaskId: string) {
-  return serviceTaskId.replace(SERVICE_TASK_ID_SEPARATOR, MOCKS_SEPARATOR);
+  return serviceTaskId.replace(
+    SERVICE_TASK_ID_SEPARATOR_REGEX,
+    MOCKS_SEPARATOR,
+  );
 }
 
 /**
