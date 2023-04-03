@@ -1,5 +1,5 @@
 /**
- * Service tasks ids from present on the workflows.
+ * Service tasks ids present on the workflows.
  */
 export enum WorkflowServiceTasks {
   // Workflow - Assessment Gateway

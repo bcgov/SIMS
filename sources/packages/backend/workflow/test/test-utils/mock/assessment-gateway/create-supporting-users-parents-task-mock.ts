@@ -1,5 +1,7 @@
-import { Duration } from "zeebe-node";
-import { WorkflowServiceTasks } from "../..";
+import {
+  PUBLISH_MESSAGE_TIME_TO_LEAVE_SECONDS,
+  WorkflowServiceTasks,
+} from "../..";
 import { createMockedWorkerResult } from "..";
 
 /**
@@ -20,7 +22,7 @@ export function createCreateSupportingUsersParentsTaskMock(options: {
     name: "supporting-user-info-received",
     correlationKey: supportingUserId.toString(),
     variables: {},
-    timeToLive: Duration.seconds.of(5),
+    timeToLive: PUBLISH_MESSAGE_TIME_TO_LEAVE_SECONDS,
   }));
   return createMockedWorkerResult(
     WorkflowServiceTasks.CreateSupportingUsersParentsTask,
