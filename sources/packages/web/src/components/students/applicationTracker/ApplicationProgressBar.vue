@@ -157,11 +157,12 @@ export default defineComponent({
         applicationProgressDetails.value.appealStatus ===
         StudentAppealStatus.Pending
       ) {
-        // Application is complete but has warnings.
+        // Application is completed but has warnings.
         statusIconDetails.value = STATUS_ICON_WARNING;
       } else if (
-        // Application is complete.
-        applicationProgressDetails.value.firstCOEStatus === COEStatus.completed
+        // Application is completed.
+        applicationProgressDetails.value.applicationStatus ===
+        ApplicationStatus.Completed
       ) {
         statusIconDetails.value = STATUS_ICON_SUCCESS;
       }
