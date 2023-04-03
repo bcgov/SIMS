@@ -57,8 +57,9 @@ export function getPublishMessageResultMockId(serviceTaskId: string) {
  * respect the Camunda recommendations (link below) and just convert the kebab-case to
  * snake_case pattern.
  * @see https://docs.camunda.io/docs/components/concepts/variables/#variable-names
- * @param serviceTaskId
- * @returns
+ * @param serviceTaskId workflow service task id.
+ * @returns service task id, usually declared as 'service-task-id' to the expected
+ * Camunda variable name like service_task_id.
  */
 function getNormalizedServiceTaskId(serviceTaskId: string) {
   return serviceTaskId.replace(

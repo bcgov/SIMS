@@ -4,6 +4,7 @@ import { AssessmentConsolidatedData } from "../../../models";
 
 /**
  * Creates the mock for the 'Load consolidated data' completed subprocess.
+ * @param assessmentConsolidatedData assessment consolidated data.
  * @returns mock for the 'Load consolidated data' completed subprocess.
  */
 export function createLoadAssessmentConsolidatedDataMock(options: {

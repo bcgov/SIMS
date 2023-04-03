@@ -105,12 +105,10 @@ describe(`E2E Test Workflow assessment gateway on original assessment for ${PROG
           supportingUserIds: [parent1SupportingUserId, parent2SupportingUserId],
         }),
         ...createCheckSupportingUserResponseTaskMock({
-          supportingUserId: parent1SupportingUserId,
           totalIncome: 1,
           subprocesses: WorkflowSubprocesses.RetrieveSupportingInfoParent1,
         }),
         ...createCheckSupportingUserResponseTaskMock({
-          supportingUserId: parent2SupportingUserId,
           totalIncome: 1,
           subprocesses: WorkflowSubprocesses.RetrieveSupportingInfoParent2,
         }),
@@ -191,7 +189,6 @@ describe(`E2E Test Workflow assessment gateway on original assessment for ${PROG
           supportingUserIds: [parent1SupportingUserId],
         }),
         ...createCheckSupportingUserResponseTaskMock({
-          supportingUserId: parent1SupportingUserId,
           totalIncome: 1,
           subprocesses: WorkflowSubprocesses.RetrieveSupportingInfoParent1,
         }),
