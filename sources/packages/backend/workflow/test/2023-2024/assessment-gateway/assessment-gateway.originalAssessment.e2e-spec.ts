@@ -21,14 +21,17 @@ import {
   createCheckIncomeRequestTaskMock,
   createLoadAssessmentConsolidatedDataMock,
 } from "../../test-utils/mock";
-import { PROGRAM_YEAR } from "../constants/program-year.constants";
+import {
+  PROGRAM_YEAR,
+  PROGRAM_YEAR_BASE_ID,
+} from "../constants/program-year.constants";
 import { YesNoOptions } from "@sims/test-utils";
 
 describe(`E2E Test Workflow assessment gateway on original assessment for ${PROGRAM_YEAR}`, () => {
   let zeebeClientProvider: ZBClient;
-  let assessmentId = 2000;
-  let supportingUserId = 2000;
-  let incomeVerificationId = 2000;
+  let assessmentId = PROGRAM_YEAR_BASE_ID;
+  let supportingUserId = PROGRAM_YEAR_BASE_ID;
+  let incomeVerificationId = PROGRAM_YEAR_BASE_ID;
 
   beforeAll(async () => {
     zeebeClientProvider = ZeebeMockedClient.getMockedZeebeInstance();
