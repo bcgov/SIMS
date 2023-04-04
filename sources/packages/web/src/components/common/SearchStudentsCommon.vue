@@ -111,26 +111,30 @@
   </full-page-container>
 </template>
 <script lang="ts">
-import { ref, computed, defineComponent } from "vue";
+import { ref, computed, defineComponent, PropType } from "vue";
 import { useRouter } from "vue-router";
 import { StudentService } from "@/services/StudentService";
-import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
+import {
+  AESTRoutesConst,
+  InstitutionRoutesConst,
+} from "@/constants/routes/RouteConstants";
 import {
   SearchStudentAPIInDTO,
   SearchStudentAPIOutDTO,
 } from "@/services/http/dto";
 import { useFormatters, useSnackBar, useValidators } from "@/composables";
 import { VForm } from "@/types";
+import { SearchTypes } from "@/constants/search-types";
 
 export default defineComponent({
   emits: [],
   props: {
     searchType: {
-      type: String,
+      type: String as PropType<SearchTypes>,
       required: true,
     },
   },
-  setup() {
+  setup(props) {
     const searchStudentsForm = ref({} as VForm);
     const snackBar = useSnackBar();
     const { dateOnlyLongString } = useFormatters();
@@ -142,10 +146,17 @@ export default defineComponent({
     const students = ref([] as SearchStudentAPIOutDTO[]);
     const sin = ref("");
     const goToViewStudent = (studentId: number) => {
-      router.push({
-        name: AESTRoutesConst.STUDENT_PROFILE,
-        params: { studentId: studentId },
-      });
+      if (props.searchType === SearchTypes.Ministry) {
+        router.push({
+          name: AESTRoutesConst.STUDENT_PROFILE,
+          params: { studentId: studentId },
+        });
+      } else if (props.searchType === SearchTypes.Institution) {
+        router.push({
+          name: InstitutionRoutesConst.STUDENT_PROFILE,
+          params: { studentId: studentId },
+        });
+      }
     };
     const isValidSearch = () => {
       const hasNoInput =

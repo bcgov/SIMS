@@ -69,6 +69,7 @@ export const InstitutionRoutesConst = {
   OFFERING_REQUEST_CHANGE: Symbol(),
   OFFERINGS_UPLOAD: Symbol(),
   INSTITUTION_STUDENT_SEARCH: Symbol(),
+  STUDENT_PROFILE: Symbol(),
 };
 
 /**
