@@ -12,7 +12,6 @@ import {
   StudentUser,
   DisbursementOveraward,
   DisbursementOverawardOriginType,
-  StudentAssessment,
 } from "@sims/sims-db";
 import { DataSource, EntityManager } from "typeorm";
 import { StudentUserToken } from "../../auth/userToken.interface";
