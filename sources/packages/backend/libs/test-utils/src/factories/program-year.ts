@@ -1,4 +1,3 @@
-import * as faker from "faker";
 import { ProgramYear } from "@sims/sims-db";
 
 export function createFakeProgramYear(programYearPrefix?: number): ProgramYear {
