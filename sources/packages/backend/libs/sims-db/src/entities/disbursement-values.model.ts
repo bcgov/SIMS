@@ -113,7 +113,7 @@ export class DisbursementValue extends RecordDataModel {
   restrictionAmountSubtracted?: number;
   /**
    * References the restriction related to the disbursement
-   * due to which the amount for subtracted.
+   * due to which the amount was subtracted.
    */
   @RelationId(
     (disbursementValue: DisbursementValue) =>
@@ -121,7 +121,7 @@ export class DisbursementValue extends RecordDataModel {
   )
   restrictionIdSubtracted?: number;
   /**
-   * Restriction id that was placed for the student due to which the award amount was reduced.
+   *Restriction id due to which the award amount was reduced.
    */
   @ManyToOne(() => Restriction, {
     eager: false,

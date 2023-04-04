@@ -10,4 +10,4 @@ ALTER TABLE
 ADD
   COLUMN restriction_id_subtracted INT REFERENCES sims.restrictions(id);
 
-COMMENT ON COLUMN sims.disbursement_values.restriction_id_subtracted IS 'Restriction id that was placed for the student due to which the award amount was reduced.';
+COMMENT ON COLUMN sims.disbursement_values.restriction_id_subtracted IS 'Restriction id due to which the award amount was reduced.';
