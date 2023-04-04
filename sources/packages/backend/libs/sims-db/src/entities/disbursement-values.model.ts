@@ -11,6 +11,7 @@ import { numericTransformer } from "../transformers/numeric.transformer";
 import { DisbursementSchedule } from "./disbursement-schedule.model";
 import { DisbursementValueType } from "./disbursement-value-type";
 import { RecordDataModel } from "./record.model";
+import { Restriction } from "./restriction.model";
 
 /**
  * Disbursements values for each schedule on a Student Application.
@@ -100,4 +101,35 @@ export class DisbursementValue extends RecordDataModel {
     referencedColumnName: ColumnNames.ID,
   })
   disbursementSchedule: DisbursementSchedule;
+  /**
+   * Amount that is subtracted because of a restriction.
+   */
+  @Column({
+    name: "restriction_amount_subtracted",
+    type: "numeric",
+    nullable: true,
+    transformer: numericTransformer,
+  })
+  restrictionAmountSubtracted?: number;
+  /**
+   * References the restriction related to the disbursement
+   * due to which the amount for subtracted.
+   */
+  @RelationId(
+    (disbursementValue: DisbursementValue) =>
+      disbursementValue.restrictionSubtracted,
+  )
+  restrictionIdSubtracted?: number;
+  /**
+   * Restriction id that was placed for the student due to which the award amount was reduced.
+   */
+  @ManyToOne(() => Restriction, {
+    eager: false,
+    cascade: false,
+  })
+  @JoinColumn({
+    name: "restriction_id_subtracted",
+    referencedColumnName: ColumnNames.ID,
+  })
+  restrictionSubtracted?: Restriction;
 }

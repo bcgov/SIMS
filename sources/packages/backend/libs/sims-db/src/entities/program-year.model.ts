@@ -1,6 +1,7 @@
 import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 import { TableNames } from "../constant";
 import { RecordDataModel } from "./record.model";
+import { numericTransformer } from "../transformers/numeric.transformer";
 
 @Entity({ name: TableNames.ProgramYear })
 export class ProgramYear extends RecordDataModel {
@@ -87,4 +88,14 @@ export class ProgramYear extends RecordDataModel {
     type: "date",
   })
   endDate: string;
+  /**
+   * Maximum lifetime amount for BCSL for the program year.
+   */
+  @Column({
+    name: "max_lifetime_bc_loan_amount",
+    type: "numeric",
+    nullable: false,
+    transformer: numericTransformer,
+  })
+  maxLifetimeBCLoanAmount: number;
 }

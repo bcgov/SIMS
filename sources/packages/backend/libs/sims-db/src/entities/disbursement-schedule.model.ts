@@ -19,6 +19,7 @@ import { dateOnlyTransformer } from "../transformers/date-only.transformer";
 import { DisbursementValue } from "./disbursement-values.model";
 import { RecordDataModel } from "./record.model";
 import { StudentAssessment } from "./student-assessment.model";
+import { numericTransformer } from "../transformers/numeric.transformer";
 
 /**
  * Dates when each disbursement will happen. Usually the disbursements
@@ -166,7 +167,9 @@ export class DisbursementSchedule extends RecordDataModel {
    */
   @Column({
     name: "tuition_remittance_effective_amount",
+    type: "numeric",
     nullable: true,
+    transformer: numericTransformer,
   })
   tuitionRemittanceEffectiveAmount?: number;
 
