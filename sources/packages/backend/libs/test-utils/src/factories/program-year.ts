@@ -1,3 +1,4 @@
+import * as faker from "faker";
 import { ProgramYear } from "@sims/sims-db";
 
 export function createFakeProgramYear(programYearPrefix?: number): ProgramYear {
@@ -14,5 +15,6 @@ export function createFakeProgramYear(programYearPrefix?: number): ProgramYear {
   programYear.parentFormName = `${programYear.formName}-parent`;
   programYear.partnerFormName = `${programYear.formName}-partner`;
   programYear.programYearPrefix = programYearPrefix.toString();
+  programYear.maxLifetimeBCLoanAmount = faker.random.number(100000);
   return programYear;
 }
