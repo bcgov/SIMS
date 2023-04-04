@@ -6,4 +6,8 @@ SET
 WHERE
   restriction_code IN ('AV', '5', '7', '9');
 
---todo: remove the new restriction code.
+--Remove the restriction for BCSL lifetime maximum.
+DELETE FROM
+  sims.restrictions
+WHERE
+  restriction_code = 'BCLM';
