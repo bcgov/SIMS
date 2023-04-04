@@ -156,7 +156,7 @@ export default defineComponent({
     },
     coeDenialReason: {
       type: String,
-      required: true,
+      required: false,
     },
     firstDisbursementStatus: {
       type: String as PropType<DisbursementScheduleStatus>,

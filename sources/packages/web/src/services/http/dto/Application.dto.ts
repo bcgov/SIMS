@@ -91,6 +91,7 @@ export interface ApplicationSummaryDTO extends ApplicationIdentifiersAPIOutDTO {
 }
 
 export interface ApplicationProgressDetailsAPIOutDTO {
+  applicationStatus: ApplicationStatus;
   applicationStatusUpdatedOn: Date;
   pirStatus?: ProgramInfoStatus;
   firstCOEStatus?: COEStatus;

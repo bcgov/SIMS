@@ -148,6 +148,7 @@ export class InProgressApplicationDetailsAPIOutDTO extends IntersectionType(
 }
 
 export class ApplicationProgressDetailsAPIOutDTO {
+  applicationStatus: ApplicationStatus;
   applicationStatusUpdatedOn: Date;
   pirStatus?: ProgramInfoStatus;
   firstCOEStatus?: COEStatus;

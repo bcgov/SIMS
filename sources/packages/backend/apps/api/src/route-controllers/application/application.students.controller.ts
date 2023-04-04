@@ -545,6 +545,7 @@ export class ApplicationStudentsController extends BaseController {
     const [firstDisbursement, secondDisbursement] = disbursements;
     const [scholasticStandingChange] = application.studentScholasticStandings;
     return {
+      applicationStatus: application.applicationStatus,
       applicationStatusUpdatedOn: application.applicationStatusUpdatedOn,
       pirStatus: application.pirStatus,
       firstCOEStatus: firstDisbursement?.coeStatus,
