@@ -333,7 +333,7 @@ export class InstitutionService extends RecordDataModelService<Institution> {
     // search by user's name
     if (paginationOptions.searchCriteria) {
       institutionUsers.andWhere(
-        "CONCAT(user.firstName,  ' ', user.lastName ) ILIKE :searchUser",
+        "(user.firstName || ' ' || user.lastName ) ILIKE :searchUser",
         {
           searchUser: `%${paginationOptions.searchCriteria.trim()}%`,
         },
