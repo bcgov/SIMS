@@ -821,7 +821,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
         .andWhere(
           new Brackets((qb) => {
             qb.where(
-              "CONCAT(user.firstName,' ', user.lastName) Ilike :searchCriteria",
+              "(user.firstName || ' ' || user.lastName) Ilike :searchCriteria",
             ).orWhere("application.applicationNumber Ilike :searchCriteria");
           }),
         )

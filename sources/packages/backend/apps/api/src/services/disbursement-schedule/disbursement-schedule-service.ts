@@ -187,7 +187,7 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
         .andWhere(
           new Brackets((qb) => {
             qb.where(
-              "CONCAT(user.firstName,' ', user.lastName) Ilike :searchCriteria",
+              "(user.firstName || ' ' || user.lastName) Ilike :searchCriteria",
             ).orWhere("application.applicationNumber Ilike :searchCriteria");
           }),
         )
