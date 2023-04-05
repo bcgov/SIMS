@@ -2,7 +2,6 @@ import {
   Body,
   Controller,
   Get,
-  Injectable,
   NotFoundException,
   Param,
   ParseIntPipe,
