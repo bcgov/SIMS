@@ -17,7 +17,7 @@ export function createFakeAssessmentConsolidatedData(
 ): AssessmentConsolidatedData {
   const [programStartYear] = programYear.split("-");
   return {
-    ...setDefaultAssessmentConsolidatedData(),
+    ...getDefaultAssessmentConsolidatedData(),
     studentDataDependantstatus: "independant",
     programYear,
     programYearStartDate: `${programStartYear}-08-01`,
@@ -49,7 +49,7 @@ export function createFakeAssessmentConsolidatedData(
  * to be set as null.
  * @returns assessment consolidated default values.
  */
-function setDefaultAssessmentConsolidatedData(): AssessmentConsolidatedData {
+function getDefaultAssessmentConsolidatedData(): AssessmentConsolidatedData {
   return {
     appealsStudentIncomeAppealData: null,
     appealsPartnerIncomeAppealData: null,
@@ -137,4 +137,45 @@ export function createFakeSingleIndependentStudentData(): Partial<AssessmentCons
     studentDataDependantstatus: "independant",
     studentDataRelationshipStatus: "single",
   };
+}
+
+/**
+ * Provides the necessary data to the assessment workflow, defines how the parents
+ * are present in the application, if they need income verification or if they are not able
+ * to use a BCSC to provide data using the supporting users portal.
+ * @param options creation options.
+ * - `numberOfParents` generate information for one or two parents.
+ * - `validSinNumber` determine if parents can have a BCSC and access the supporting users portal.
+ * @returns parents data to be used.
+ */
+export function createParentsData(options?: {
+  numberOfParents?: 1 | 2;
+  validSinNumber?: YesNoOptions;
+}): Partial<AssessmentConsolidatedData> {
+  // Default values for options when not provided.
+  const numberOfParents = options?.numberOfParents ?? 1;
+  const validSinNumber = options?.validSinNumber ?? YesNoOptions.Yes;
+  // Make the student a dependant.
+  const parentsData = {} as Partial<AssessmentConsolidatedData>;
+  parentsData.studentDataNumberOfParents = numberOfParents;
+  parentsData.studentDataDependantstatus = "dependant";
+  // Set additional information when parents are not able to provide
+  // their income using the supporting users portal.
+  if (validSinNumber === YesNoOptions.No) {
+    parentsData.studentDataPleaseProvideAnEstimationOfYourParentsIncome = 150000;
+  }
+  parentsData.studentDataParentValidSinNumber = validSinNumber;
+  // Create specific parent data for 1 or 2 parents.
+  for (let i = 1; i <= numberOfParents; i++) {
+    parentsData[`parent${i}NetAssests`] = 300000;
+    parentsData[`parent${i}TotalIncome`] = 75000;
+    parentsData[`parent${i}CRAReportedIncome`] = null;
+    parentsData[`parent${i}CppEmployment`] = 5000;
+    parentsData[`parent${i}Contributions`] = 10000;
+    parentsData[`parent${i}DependentTable`] = null;
+    parentsData[`parent${i}Ei`] = 0;
+    parentsData[`parent${i}Tax`] = 0;
+    parentsData[`parent${i}CppSelfemploymentOther`] = 200;
+  }
+  return parentsData;
 }
