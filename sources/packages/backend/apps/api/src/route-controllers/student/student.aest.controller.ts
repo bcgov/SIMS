@@ -57,10 +57,10 @@ import {
   MINISTRY_FILE_UPLOAD_GROUP_NAME,
   uploadLimits,
 } from "../../utilities";
-import { CustomNamedError, getISODateOnlyString } from "@sims/utilities";
+import { CustomNamedError } from "@sims/utilities";
 import { IUserToken } from "../../auth/userToken.interface";
 import { StudentControllerService } from "..";
-import { FileOriginType, Student } from "@sims/sims-db";
+import { FileOriginType } from "@sims/sims-db";
 import { FileCreateAPIOutDTO } from "../models/common.dto";
 import {
   ApplicationPaginationOptionsAPIInDTO,
@@ -81,7 +81,6 @@ import { EntityManager } from "typeorm";
 @Groups(UserGroups.AESTUser)
 @Controller("student")
 @ApiTags(`${ClientTypeBaseRoute.AEST}-student`)
-@Injectable()
 export class StudentAESTController extends BaseController {
   constructor(
     private readonly fileService: StudentFileService,
