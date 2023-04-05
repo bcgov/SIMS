@@ -1,10 +1,11 @@
-import { PublishMessageRequest, ZBClient, ZeebeJob } from "zeebe-node";
+import { ZBClient, ZeebeJob } from "zeebe-node";
 import { Workers } from "@sims/services/constants";
+import { getScopedServiceTaskId } from ".";
 import {
-  getPublishMessageResultMockId,
-  getScopedServiceTaskId,
-  getServiceTaskResultMockId,
-} from ".";
+  JOB_COMPLETED_RESULT_SUFFIX,
+  JOB_MESSAGE_RESULT_SUFFIX,
+  PARENT_SUBPROCESSES_VARIABLE,
+} from "../constants/mock-constants";
 
 /**
  * Zeebe client to be used in mock implementation
@@ -20,8 +21,20 @@ const zeebeWorkerClient = new ZBClient();
  * @returns mock task handler response.
  */
 async function mockTaskHandler(job: ZeebeJob<unknown>) {
+  const serviceTaskMock = job.variables[job.elementId] ?? {};
+  // Check if the service task id is in a sub-process.
+  const subprocesses: string[] =
+    job.variables[PARENT_SUBPROCESSES_VARIABLE] ?? [];
+  let mockedData = serviceTaskMock;
+  for (const subprocessMock of subprocesses) {
+    if (mockedData[subprocessMock]) {
+      mockedData = mockedData[subprocessMock];
+    } else {
+      break;
+    }
+  }
   // Check if there is a message to be published.
-  const messagePayloads = getMessagePayload(job);
+  const messagePayloads = mockedData[JOB_MESSAGE_RESULT_SUFFIX];
   if (messagePayloads?.length) {
     for (const messagePayload of messagePayloads) {
       zeebeWorkerClient.publishMessage(messagePayload);
@@ -32,26 +45,8 @@ async function mockTaskHandler(job: ZeebeJob<unknown>) {
   const serviceTaskId = getScopedServiceTaskId(job);
   return job.complete({
     [serviceTaskId]: serviceTaskId,
-    ...job.variables[getServiceTaskResultMockId(serviceTaskId)],
+    ...mockedData[JOB_COMPLETED_RESULT_SUFFIX],
   });
-}
-
-/**
- * When the workflow also expects a message to proceed, the worker can send the
- * message if its expected mock result is present in the job variables.
- * @param job worker job.
- * @returns message payload to be sent by the worker to the workflow.
- */
-function getMessagePayload(
-  job: ZeebeJob<unknown> | undefined,
-): PublishMessageRequest<unknown>[] {
-  const serviceTaskId = getScopedServiceTaskId(job);
-  const messagePayload =
-    job.variables[getPublishMessageResultMockId(serviceTaskId)];
-  if (messagePayload) {
-    return messagePayload;
-  }
-  return undefined;
 }
 
 /**

@@ -20,6 +20,7 @@ import {
   createCheckSupportingUserResponseTaskMock,
   createCheckIncomeRequestTaskMock,
   createLoadAssessmentConsolidatedDataMock,
+  createWorkersMockedData,
 } from "../../test-utils/mock";
 import {
   PROGRAM_YEAR,
@@ -79,7 +80,7 @@ describe(`E2E Test Workflow assessment gateway on original assessment for ${PROG
     );
   });
 
-  it("Should check for both parents incomes when the student is dependant and parents have SIN.", async () => {
+  it.only("Should check for both parents incomes when the student is dependant and parents have SIN.", async () => {
     // Arrange
     const currentAssessmentId = assessmentId++;
     const parent1SupportingUserId = supportingUserId++;
@@ -93,55 +94,57 @@ describe(`E2E Test Workflow assessment gateway on original assessment for ${PROG
       studentDataSelectedOffering: 1,
     };
 
-    const assessmentStartData = {
-      bpmnProcessId: "assessment-gateway",
-      variables: {
-        [ASSESSMENT_ID]: currentAssessmentId,
-        ...createLoadAssessmentConsolidatedDataMock({
-          assessmentConsolidatedData,
-        }),
-        ...createVerifyApplicationExceptionsTaskMock(),
-        ...createCreateSupportingUsersParentsTaskMock({
-          supportingUserIds: [parent1SupportingUserId, parent2SupportingUserId],
-        }),
-        ...createCheckSupportingUserResponseTaskMock({
-          totalIncome: 1,
-          subprocesses: WorkflowSubprocesses.RetrieveSupportingInfoParent1,
-        }),
-        ...createCheckSupportingUserResponseTaskMock({
-          totalIncome: 1,
-          subprocesses: WorkflowSubprocesses.RetrieveSupportingInfoParent2,
-        }),
-        ...createIncomeRequestTaskMock({
-          incomeVerificationId: incomeVerificationId++,
-          subprocesses: WorkflowSubprocesses.StudentIncomeVerification,
-        }),
-        ...createIncomeRequestTaskMock({
-          incomeVerificationId: incomeVerificationId++,
-          subprocesses: WorkflowSubprocesses.Parent1IncomeVerification,
-        }),
-        ...createIncomeRequestTaskMock({
-          incomeVerificationId: incomeVerificationId++,
-          subprocesses: WorkflowSubprocesses.Parent2IncomeVerification,
-        }),
-        ...createCheckIncomeRequestTaskMock({
-          subprocesses: WorkflowSubprocesses.StudentIncomeVerification,
-        }),
-        ...createCheckIncomeRequestTaskMock({
-          subprocesses: WorkflowSubprocesses.Parent1IncomeVerification,
-        }),
-        ...createCheckIncomeRequestTaskMock({
-          subprocesses: WorkflowSubprocesses.Parent2IncomeVerification,
-        }),
-      },
-      requestTimeout: PROCESS_INSTANCE_CREATE_TIMEOUT,
-    };
+    const workersMockedData = createWorkersMockedData([
+      createLoadAssessmentConsolidatedDataMock({
+        assessmentConsolidatedData,
+      }),
+      createVerifyApplicationExceptionsTaskMock(),
+      createCreateSupportingUsersParentsTaskMock({
+        supportingUserIds: [parent1SupportingUserId, parent2SupportingUserId],
+      }),
+      createCheckSupportingUserResponseTaskMock({
+        totalIncome: 1,
+        subprocesses: WorkflowSubprocesses.RetrieveSupportingInfoParent1,
+      }),
+      createCheckSupportingUserResponseTaskMock({
+        totalIncome: 1,
+        subprocesses: WorkflowSubprocesses.RetrieveSupportingInfoParent2,
+      }),
+      createIncomeRequestTaskMock({
+        incomeVerificationId: incomeVerificationId++,
+        subprocesses: WorkflowSubprocesses.StudentIncomeVerification,
+      }),
+      createIncomeRequestTaskMock({
+        incomeVerificationId: incomeVerificationId++,
+        subprocesses: WorkflowSubprocesses.Parent1IncomeVerification,
+      }),
+      createIncomeRequestTaskMock({
+        incomeVerificationId: incomeVerificationId++,
+        subprocesses: WorkflowSubprocesses.Parent2IncomeVerification,
+      }),
+      createCheckIncomeRequestTaskMock({
+        subprocesses: WorkflowSubprocesses.StudentIncomeVerification,
+      }),
+      createCheckIncomeRequestTaskMock({
+        subprocesses: WorkflowSubprocesses.Parent1IncomeVerification,
+      }),
+      createCheckIncomeRequestTaskMock({
+        subprocesses: WorkflowSubprocesses.Parent2IncomeVerification,
+      }),
+    ]);
+
+    //console.log(JSON.stringify(startEventMockedData, null, 2));
 
     // Act
     const assessmentGatewayResponse =
-      await zeebeClientProvider.createProcessInstanceWithResult(
-        assessmentStartData,
-      );
+      await zeebeClientProvider.createProcessInstanceWithResult({
+        bpmnProcessId: "assessment-gateway",
+        variables: {
+          [ASSESSMENT_ID]: currentAssessmentId,
+          ...workersMockedData,
+        },
+        requestTimeout: PROCESS_INSTANCE_CREATE_TIMEOUT,
+      });
 
     // Assert
     expectToPassThroughServiceTasks(

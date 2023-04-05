@@ -3,7 +3,7 @@ import {
   WorkflowServiceTasks,
   WorkflowSubprocesses,
 } from "../..";
-import { createMockedWorkerResult } from "../mock.utils";
+import { WorkerMockedData } from "../mock.utils";
 
 /**
  * Creates the mock for 'Create Income request' completed task
@@ -20,21 +20,24 @@ import { createMockedWorkerResult } from "../mock.utils";
 export function createIncomeRequestTaskMock(options?: {
   incomeVerificationId: number;
   subprocesses?: WorkflowSubprocesses;
-}): Record<string, unknown> {
+}): WorkerMockedData {
   const incomeVerificationId = options?.incomeVerificationId ?? 1;
-  return createMockedWorkerResult(WorkflowServiceTasks.CreateIncomeRequest, {
-    jobCompleteMock: {
-      incomeVerificationCompleted: true,
-      incomeVerificationId,
-    },
-    jobMessageMocks: [
-      {
-        name: "income-verified",
-        correlationKey: incomeVerificationId.toString(),
-        variables: {},
-        timeToLive: PUBLISH_MESSAGE_TIME_TO_LEAVE_SECONDS,
+  return {
+    serviceTaskId: WorkflowServiceTasks.CreateIncomeRequest,
+    options: {
+      jobCompleteMock: {
+        incomeVerificationCompleted: true,
+        incomeVerificationId,
       },
-    ],
-    subprocesses: [options?.subprocesses],
-  });
+      jobMessageMocks: [
+        {
+          name: "income-verified",
+          correlationKey: incomeVerificationId.toString(),
+          variables: {},
+          timeToLive: PUBLISH_MESSAGE_TIME_TO_LEAVE_SECONDS,
+        },
+      ],
+      subprocesses: [options?.subprocesses],
+    },
+  };
 }

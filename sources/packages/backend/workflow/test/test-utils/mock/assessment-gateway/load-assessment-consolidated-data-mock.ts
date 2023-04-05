@@ -1,5 +1,5 @@
 import { WorkflowServiceTasks } from "../..";
-import { createMockedWorkerResult } from "..";
+import { WorkerMockedData } from "..";
 import { AssessmentConsolidatedData } from "../../../models";
 
 /**
@@ -9,11 +9,11 @@ import { AssessmentConsolidatedData } from "../../../models";
  */
 export function createLoadAssessmentConsolidatedDataMock(options: {
   assessmentConsolidatedData: AssessmentConsolidatedData;
-}): Record<string, unknown> {
-  return createMockedWorkerResult(
-    WorkflowServiceTasks.LoadAssessmentConsolidatedData,
-    {
+}): WorkerMockedData {
+  return {
+    serviceTaskId: WorkflowServiceTasks.LoadAssessmentConsolidatedData,
+    options: {
       jobCompleteMock: options.assessmentConsolidatedData,
     },
-  );
+  };
 }

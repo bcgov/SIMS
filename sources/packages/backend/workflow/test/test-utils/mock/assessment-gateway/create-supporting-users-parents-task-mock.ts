@@ -2,7 +2,7 @@ import {
   PUBLISH_MESSAGE_TIME_TO_LEAVE_SECONDS,
   WorkflowServiceTasks,
 } from "../..";
-import { createMockedWorkerResult } from "..";
+import { WorkerMockedData } from "..";
 
 /**
  * Creates the mock for 'Create supporting users for parent/parents' completed task
@@ -15,7 +15,7 @@ import { createMockedWorkerResult } from "..";
  */
 export function createCreateSupportingUsersParentsTaskMock(options: {
   supportingUserIds: number[];
-}): Record<string, unknown> {
+}): WorkerMockedData {
   // Create messages to be published for each supporting user id provided.
   // For instance, for parent 1 and parent 2 it will be needed one message
   // for each parent to unblock the workflow.
@@ -25,13 +25,13 @@ export function createCreateSupportingUsersParentsTaskMock(options: {
     variables: {},
     timeToLive: PUBLISH_MESSAGE_TIME_TO_LEAVE_SECONDS,
   }));
-  return createMockedWorkerResult(
-    WorkflowServiceTasks.CreateSupportingUsersParentsTask,
-    {
+  return {
+    serviceTaskId: WorkflowServiceTasks.CreateSupportingUsersParentsTask,
+    options: {
       jobCompleteMock: {
         createdSupportingUsersIds: options.supportingUserIds,
       },
       jobMessageMocks,
     },
-  );
+  };
 }

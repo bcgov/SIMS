@@ -91,8 +91,8 @@ export function getScopedServiceTaskId(job: ZeebeJob<unknown>): string {
 }
 
 /**
- * Create the mocked objects to be used as the job completed object and/or to publish
- * messages to unblock the workflow.
+ * Information to create a mocked worker including the job completed object and/or the
+ * messages to be published to unblock the workflow.
  * @param serviceTaskId workflow service task id.
  * @param options mock creation options.
  * - `jobCompleteMock` the object to be returned when the job is completed.
@@ -113,61 +113,94 @@ export function getScopedServiceTaskId(job: ZeebeJob<unknown>): string {
  * the assessment-gateway workflow:
  * - for student income verification it would be studentIncomeVerificationSubprocess_create_income_request_task
  * - for partner income verification it would be partnerIncomeVerificationSubprocess_create_income_request_task
- * @returns mocked objects to be used by the worker.
- * @example
- * "create_supporting_users_for_parents_task_result": {
-            "createdSupportingUsersIds": [
-                2000,
-                2001
-            ]
-        },
-    "create_supporting_users_for_parents_task_messageResult": [
-        {
-            "name": "supporting-user-info-received",
-            "correlationKey": "2000",
-            "variables": {},
-            "timeToLive": {
-                "type": "SECONDS",
-                "value": 5,
-                "valueType": "TYPED_DURATION",
-                "unit": "s"
-            }
-        },
-        {
-            "name": "supporting-user-info-received",
-            "correlationKey": "2001",
-            "variables": {},
-            "timeToLive": {
-                "type": "SECONDS",
-                "value": 5,
-                "valueType": "TYPED_DURATION",
-                "unit": "s"
-            }
-        }
-    ],
+ * @returns mocked object to be used by a worker.
  */
-export function createMockedWorkerResult(
-  serviceTaskId: WorkflowServiceTasks,
+export interface WorkerMockedData {
+  serviceTaskId: WorkflowServiceTasks;
   options: {
     jobCompleteMock?: unknown;
     jobMessageMocks?: PublishMessageRequest<unknown>[];
     subprocesses?: WorkflowSubprocesses[];
+  };
+}
+
+/**
+ * Create the mocked objects to be used as the job completed object and/or to publish
+ * messages to unblock the workflow.
+ * @param mockedWorkers all mocked data expected to test the workflow scenario.
+ * @returns mocked objects, see example below for one single mocked worker for 2
+ * subprocesses that also need to have messages published.
+ * @example
+   "create-income-request-task": {
+    "studentIncomeVerificationSubprocess": {
+      "result": {
+        "incomeVerificationCompleted": true,
+        "incomeVerificationId": 1000
+      },
+      "messageResult": [
+        {
+          "name": "income-verified",
+          "correlationKey": "1000",
+          "variables": {},
+          "timeToLive": {
+            "type": "SECONDS",
+            "value": 10,
+            "valueType": "TYPED_DURATION",
+            "unit": "s"
+          }
+        }
+      ]
+    },
+    "parent1IncomeVerificationSubprocess": {
+      "result": {
+        "incomeVerificationCompleted": true,
+        "incomeVerificationId": 1001
+      },
+      "messageResult": [
+        {
+          "name": "income-verified",
+          "correlationKey": "1001",
+          "variables": {},
+          "timeToLive": {
+            "type": "SECONDS",
+            "value": 10,
+            "valueType": "TYPED_DURATION",
+            "unit": "s"
+          }
+        }
+      ]
+    },
   },
+ */
+export function createWorkersMockedData(
+  mockedWorkers: WorkerMockedData[],
 ): Record<string, unknown> {
-  let fullServiceTaskId = serviceTaskId.toString();
-  if (options?.subprocesses?.length) {
-    fullServiceTaskId = [...options.subprocesses, fullServiceTaskId].join(
-      MOCKS_SEPARATOR,
-    );
+  // Keep the consolidation of all mocked workers.
+  const rootMockedData: Record<string, unknown> = {};
+  for (const mockedWorker of mockedWorkers) {
+    if (!rootMockedData[mockedWorker.serviceTaskId]) {
+      rootMockedData[mockedWorker.serviceTaskId] = {};
+    }
+    // Creates a subprocess hierarchy to store the worker mock assuming
+    // that the hierarchy could be partially created already due to another
+    // subprocess for the same service task id.
+    let mockedData = rootMockedData[mockedWorker.serviceTaskId];
+    mockedWorker.options.subprocesses?.forEach((subprocess) => {
+      if (!mockedData[subprocess]) {
+        mockedData[subprocess] = {};
+      }
+      mockedData = mockedData[subprocess];
+    });
+    // Create result mocked object.
+    if (mockedWorker.options.jobCompleteMock) {
+      mockedData[JOB_COMPLETED_RESULT_SUFFIX] =
+        mockedWorker.options.jobCompleteMock;
+    }
+    // Create message result mocked object.
+    if (mockedWorker.options.jobMessageMocks?.length) {
+      mockedData[JOB_MESSAGE_RESULT_SUFFIX] =
+        mockedWorker.options.jobMessageMocks;
+    }
   }
-  const mockedWorkerResult: Record<string, unknown> = {};
-  if (options.jobCompleteMock) {
-    mockedWorkerResult[getServiceTaskResultMockId(fullServiceTaskId)] =
-      options.jobCompleteMock;
-  }
-  if (options.jobMessageMocks?.length) {
-    mockedWorkerResult[getPublishMessageResultMockId(fullServiceTaskId)] =
-      options.jobMessageMocks;
-  }
-  return mockedWorkerResult;
+  return rootMockedData;
 }
