@@ -53,6 +53,7 @@ export interface InstitutionDetailAPIOutDTO
   formattedEstablishedDate?: string;
   institutionTypeName?: string;
   isBCPrivate?: boolean;
+  isBCPublic?: boolean;
   clientType?: ClientIdType;
   /**
    * Indicates if the institution has a BCeID business guid

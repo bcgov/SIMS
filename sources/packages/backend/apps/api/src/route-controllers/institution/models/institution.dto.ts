@@ -132,6 +132,7 @@ export class InstitutionDetailAPIOutDTO extends InstitutionProfileAPIOutDTO {
   legalOperatingName: string;
   institutionTypeName?: string;
   isBCPrivate?: boolean;
+  isBCPublic?: boolean;
   /**
    * Indicates if the institution has a BCeID business guid
    * associated with, if not it is a basic BCeID institution.

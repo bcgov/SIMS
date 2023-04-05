@@ -230,15 +230,7 @@ export class StudentAESTController extends BaseController {
   async searchStudents(
     @Body() searchCriteria: StudentSearchAPIInDTO,
   ): Promise<SearchStudentAPIOutDTO[]> {
-    const searchStudentApplications =
-      await this.studentService.searchStudentApplication(searchCriteria);
-    return searchStudentApplications.map((eachStudent: Student) => ({
-      id: eachStudent.id,
-      firstName: eachStudent.user.firstName,
-      lastName: eachStudent.user.lastName,
-      birthDate: getISODateOnlyString(eachStudent.birthDate),
-      sin: eachStudent.sinValidation.sin,
-    }));
+    return await this.studentService.searchStudentApplication(searchCriteria);
   }
 
   /**

@@ -1,17 +1,37 @@
 <template>
-  <search-students-common :search-type="SearchTypes.Institution" />
+  <full-page-container>
+    <body-header-container>
+      <template #header>
+        <body-header title="Search Students">
+          <template #subtitle
+            >Lookup students by entering their information below.</template
+          >
+        </body-header>
+      </template>
+    </body-header-container>
+    <search-students @go-to-student-view="goToStudentView" />
+  </full-page-container>
 </template>
 <script lang="ts">
 import { defineComponent } from "vue";
-import SearchStudentsCommon from "@/components/common/SearchStudentsCommon.vue";
-import { SearchTypes } from "@/constants/search-types";
+import SearchStudents from "@/components/common/SearchStudents.vue";
+import router from "@/router";
+import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
+import BodyHeaderContainer from "@/components/layouts/BodyHeaderContainer.vue";
 export default defineComponent({
   components: {
-    SearchStudentsCommon,
+    SearchStudents,
+    BodyHeaderContainer,
   },
   setup() {
+    const goToStudentView = (studentId: number) => {
+      router.push({
+        name: InstitutionRoutesConst.STUDENT_PROFILE,
+        params: { studentId: studentId },
+      });
+    };
     return {
-      SearchTypes,
+      goToStudentView,
     };
   },
 });

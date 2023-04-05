@@ -13,11 +13,11 @@ import {
   DisbursementOveraward,
   DisbursementOverawardOriginType,
 } from "@sims/sims-db";
-import { DataSource, EntityManager } from "typeorm";
+import { Brackets, DataSource, EntityManager } from "typeorm";
 import { StudentUserToken } from "../../auth/userToken.interface";
 import { LoggerService, InjectLogger } from "@sims/utilities/logger";
 import { removeWhiteSpaces, transformAddressDetails } from "../../utilities";
-import { CustomNamedError } from "@sims/utilities";
+import { CustomNamedError, getISODateOnlyString } from "@sims/utilities";
 import {
   CreateStudentUserInfo,
   StudentInfo,
@@ -38,6 +38,7 @@ import {
   BC_STUDENT_LOAN_AWARD_CODE,
   CANADA_STUDENT_LOAN_FULL_TIME_AWARD_CODE,
 } from "@sims/services/constants";
+import { SearchStudentAPIOutDTO } from "../../route-controllers/student/models/student.dto";
 
 @Injectable()
 export class StudentService extends RecordDataModelService<Student> {
@@ -448,7 +449,7 @@ export class StudentService extends RecordDataModelService<Student> {
     lastName?: string;
     appNumber?: string;
     sin?: string;
-  }): Promise<Student[]> {
+  }): Promise<SearchStudentAPIOutDTO[]> {
     const searchQuery = this.repo
       .createQueryBuilder("student")
       .select([
@@ -491,7 +492,9 @@ export class StudentService extends RecordDataModelService<Student> {
           overwrittenStatus: ApplicationStatus.Overwritten,
         });
     }
-    return searchQuery.getMany();
+    return this.transformStudentsToSearchStudentDetails(
+      await searchQuery.getMany(),
+    );
   }
 
   /**
@@ -508,7 +511,7 @@ export class StudentService extends RecordDataModelService<Student> {
       appNumber?: string;
       sin?: string;
     },
-  ): Promise<Student[]> {
+  ): Promise<SearchStudentAPIOutDTO[]> {
     const searchQuery = this.repo
       .createQueryBuilder("student")
       .select([
@@ -523,21 +526,21 @@ export class StudentService extends RecordDataModelService<Student> {
         "application",
         "application.student.id = student.id",
       )
-
-      .innerJoin("application.location", "pirLocation")
-      .innerJoin("pirLocation.institution", "pirInstitution")
-
+      .leftJoin("application.location", "pirLocation")
+      .leftJoin("pirLocation.institution", "pirInstitution")
       .leftJoin("application.currentAssessment", "studentAssessment")
       .leftJoin("studentAssessment.offering", "offering")
       .leftJoin("offering.institutionLocation", "offeringLocation")
       .leftJoin("offeringLocation.institution", "offeringInstitution")
-
       .innerJoin("student.user", "user")
       .innerJoin("student.sinValidation", "sinValidation")
       .where("user.isActive = true")
       .andWhere(
-        "(offeringInstitution.id = :institutionId or pirInstitution.id = :institutionId)",
-        { institutionId },
+        new Brackets((qb) => {
+          qb.where("offeringInstitution.id = :institutionId", {
+            institutionId,
+          }).orWhere("pirInstitution.id = :institutionId", { institutionId });
+        }),
       )
       .andWhere("application.applicationStatus != :overwrittenStatus", {
         overwrittenStatus: ApplicationStatus.Overwritten,
@@ -563,7 +566,26 @@ export class StudentService extends RecordDataModelService<Student> {
         appNumber: `%${searchCriteria.appNumber}%`,
       });
     }
-    return searchQuery.getMany();
+    return this.transformStudentsToSearchStudentDetails(
+      await searchQuery.getMany(),
+    );
+  }
+
+  /**
+   * Transforms a list of students into a list of student search details.
+   * @param students list of students.
+   * @returns a list of student search details.
+   */
+  private async transformStudentsToSearchStudentDetails(
+    students: Student[],
+  ): Promise<SearchStudentAPIOutDTO[]> {
+    return students.map((eachStudent: Student) => ({
+      id: eachStudent.id,
+      firstName: eachStudent.user.firstName,
+      lastName: eachStudent.user.lastName,
+      birthDate: getISODateOnlyString(eachStudent.birthDate),
+      sin: eachStudent.sinValidation.sin,
+    }));
   }
 
   /**

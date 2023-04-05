@@ -41,7 +41,7 @@ export default defineComponent({
       },
     ]);
 
-    if (institutionState.value.institutionType === "BC Public") {
+    if (institutionState.value.isBCPublic) {
       items.value.push({
         title: "Search Student",
         props: {

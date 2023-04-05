@@ -91,7 +91,7 @@ export class UpdateStudentAPIInDTO
 }
 
 /**
- * Student AEST search parameters.
+ * Student search parameters.
  */
 export class StudentSearchAPIInDTO {
   @ValidateIf(

@@ -1,4 +1,4 @@
-import { Body, Controller, Injectable, Post } from "@nestjs/common";
+import { Body, Controller, Post } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
 import { InstitutionService, StudentService } from "../../services";
 import { ClientTypeBaseRoute } from "../../types";
@@ -9,9 +9,6 @@ import {
   StudentSearchAPIInDTO,
   SearchStudentAPIOutDTO,
 } from "./models/student.dto";
-
-import { getISODateOnlyString } from "@sims/utilities";
-import { Student } from "@sims/sims-db";
 import { IInstitutionUserToken } from "../../auth";
 
 /**
@@ -20,8 +17,7 @@ import { IInstitutionUserToken } from "../../auth";
 @AllowAuthorizedParty(AuthorizedParties.institution)
 @Controller("student")
 @ApiTags(`${ClientTypeBaseRoute.Institution}-student`)
-@Injectable()
-export class StudentInstitutionController extends BaseController {
+export class StudentInstitutionsController extends BaseController {
   constructor(
     private readonly studentService: StudentService,
     private readonly institutionService: InstitutionService,
@@ -42,17 +38,9 @@ export class StudentInstitutionController extends BaseController {
     if (!this.institutionService.isBCPublicInstitution) {
       return [];
     }
-    const searchStudentApplications =
-      await this.studentService.searchStudentApplicationForInstitution(
-        userToken.authorizations.institutionId,
-        searchCriteria,
-      );
-    return searchStudentApplications.map((eachStudent: Student) => ({
-      id: eachStudent.id,
-      firstName: eachStudent.user.firstName,
-      lastName: eachStudent.user.lastName,
-      birthDate: getISODateOnlyString(eachStudent.birthDate),
-      sin: eachStudent.sinValidation.sin,
-    }));
+    return await this.studentService.searchStudentApplicationForInstitution(
+      userToken.authorizations.institutionId,
+      searchCriteria,
+    );
   }
 }

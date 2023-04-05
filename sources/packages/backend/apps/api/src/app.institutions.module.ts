@@ -42,7 +42,7 @@ import {
   EducationProgramOfferingInstitutionsController,
   EducationProgramOfferingControllerService,
   ConfirmationOfEnrollmentControllerService,
-  StudentInstitutionController,
+  StudentInstitutionsController,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
 import {
@@ -74,7 +74,7 @@ import { UserControllerService } from "./route-controllers/user/user.controller.
     ProgramInfoRequestInstitutionsController,
     EducationProgramOfferingInstitutionsController,
     UserInstitutionsController,
-    StudentInstitutionController,
+    StudentInstitutionsController,
   ],
   providers: [
     WorkflowClientService,
