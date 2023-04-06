@@ -443,7 +443,7 @@ export class StudentService extends RecordDataModelService<Student> {
    * @param searchCriteria options to search by firstName,
    * lastName, appNumber or sin.
    * @param institutionId id of the institution that the student applied to.
-   * @returns list of students.
+   * @returns list of student details.
    */
   async searchStudentApplication(
     searchCriteria: {
