@@ -22,6 +22,7 @@ import {
   COEStatus,
   DisbursementSchedule,
   User,
+  getUserFullNameLikeSearch,
 } from "@sims/sims-db";
 import { NotificationActionsService } from "@sims/services/notifications";
 import {
@@ -186,9 +187,9 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
       coeQuery
         .andWhere(
           new Brackets((qb) => {
-            qb.where(
-              "CONCAT(user.firstName,' ', user.lastName) Ilike :searchCriteria",
-            ).orWhere("application.applicationNumber Ilike :searchCriteria");
+            qb.where(getUserFullNameLikeSearch()).orWhere(
+              "application.applicationNumber Ilike :searchCriteria",
+            );
           }),
         )
         .setParameter(

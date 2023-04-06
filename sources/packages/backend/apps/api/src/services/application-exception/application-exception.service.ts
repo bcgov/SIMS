@@ -8,6 +8,7 @@ import {
   NoteType,
   Student,
   User,
+  getUserFullNameLikeSearch,
 } from "@sims/sims-db";
 import {
   FieldSortOrder,
@@ -213,9 +214,9 @@ export class ApplicationExceptionService extends RecordDataModelService<Applicat
       applicationExceptionsQuery
         .andWhere(
           new Brackets((qb) => {
-            qb.where(
-              "CONCAT(user.firstName,' ', user.lastName) Ilike :searchCriteria",
-            ).orWhere("application.applicationNumber Ilike :searchCriteria");
+            qb.where(getUserFullNameLikeSearch()).orWhere(
+              "application.applicationNumber Ilike :searchCriteria",
+            );
           }),
         )
         .setParameter(

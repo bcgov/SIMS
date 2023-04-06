@@ -11,6 +11,7 @@ import {
   StudentAssessment,
   User,
   mapFromRawAndEntities,
+  getUserFullNameLikeSearch,
 } from "@sims/sims-db";
 import {
   PendingAndDeniedAppeals,
@@ -451,9 +452,9 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
       studentAppealsQuery
         .andWhere(
           new Brackets((qb) => {
-            qb.where(
-              "CONCAT(user.firstName, ' ', user.lastName) Ilike :searchCriteria",
-            ).orWhere("application.applicationNumber Ilike :searchCriteria");
+            qb.where(getUserFullNameLikeSearch()).orWhere(
+              "application.applicationNumber Ilike :searchCriteria",
+            );
           }),
         )
         .setParameter(
