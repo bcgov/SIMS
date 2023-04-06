@@ -18,10 +18,7 @@ import { IInstitutionUserToken } from "../../auth";
 @Controller("student")
 @ApiTags(`${ClientTypeBaseRoute.Institution}-student`)
 export class StudentInstitutionsController extends BaseController {
-  constructor(
-    private readonly studentService: StudentService,
-    private readonly institutionService: InstitutionService,
-  ) {
+  constructor(private readonly studentService: StudentService) {
     super();
   }
 
@@ -36,7 +33,7 @@ export class StudentInstitutionsController extends BaseController {
     @UserToken() userToken: IInstitutionUserToken,
     @Body() searchCriteria: StudentSearchAPIInDTO,
   ): Promise<SearchStudentAPIOutDTO[]> {
-    return await this.studentService.searchStudentApplication(
+    return this.studentService.searchStudentApplication(
       searchCriteria,
       userToken.authorizations.institutionId,
     );
