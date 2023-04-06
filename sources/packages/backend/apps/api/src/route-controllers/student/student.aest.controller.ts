@@ -228,7 +228,7 @@ export class StudentAESTController extends BaseController {
   async searchStudents(
     @Body() searchCriteria: StudentSearchAPIInDTO,
   ): Promise<SearchStudentAPIOutDTO[]> {
-    return await this.studentService.searchStudentApplication(searchCriteria);
+    return this.studentService.searchStudentApplication(searchCriteria);
   }
 
   /**
