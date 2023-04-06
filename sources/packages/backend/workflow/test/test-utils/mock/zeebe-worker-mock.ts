@@ -1,6 +1,5 @@
-import { ZBClient, ZeebeJob } from "zeebe-node";
+import { ZBClient, ZBWorker, ZeebeJob } from "zeebe-node";
 import { Workers } from "@sims/services/constants";
-import { getScopedServiceTaskId } from ".";
 import {
   JOB_COMPLETED_RESULT_SUFFIX,
   JOB_MESSAGE_RESULT_SUFFIX,
@@ -33,6 +32,11 @@ async function mockTaskHandler(job: ZeebeJob<unknown>) {
       break;
     }
   }
+
+  console.log(job.elementId);
+  console.log(subprocesses);
+  console.log(mockedData[JOB_COMPLETED_RESULT_SUFFIX]);
+
   // Check if there is a message to be published.
   const messagePayloads = mockedData[JOB_MESSAGE_RESULT_SUFFIX];
   if (messagePayloads?.length) {
@@ -40,11 +44,8 @@ async function mockTaskHandler(job: ZeebeJob<unknown>) {
       zeebeWorkerClient.publishMessage(messagePayload);
     }
   }
-  // Get the expected object to be returned. If no object is
-  // present, a 'complete' result will be returned.
-  const serviceTaskId = getScopedServiceTaskId(job);
   return job.complete({
-    [serviceTaskId]: serviceTaskId,
+    [job.elementId]: job.elementId,
     ...mockedData[JOB_COMPLETED_RESULT_SUFFIX],
   });
 }
@@ -60,6 +61,7 @@ export class ZeebeMockedClient {
       const fakeWorkers = Object.values(Workers).map((taskType) => ({
         taskType,
         taskHandler: mockTaskHandler,
+        logLevel: "ERROR",
       }));
       ZeebeMockedClient.mockedZeebeClient = new ZBClient();
       fakeWorkers.forEach((fakeWorker) =>

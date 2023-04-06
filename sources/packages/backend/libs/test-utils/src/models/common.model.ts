@@ -30,3 +30,8 @@ export enum OfferingDeliveryOptions {
   Online = "online",
   Blended = "blended",
 }
+
+export enum AssessmentDataType {
+  Submit,
+  PreAssessment,
+}

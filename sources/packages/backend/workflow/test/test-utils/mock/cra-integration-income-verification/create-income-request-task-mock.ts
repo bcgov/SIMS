@@ -17,22 +17,21 @@ import { WorkerMockedData } from "../mock.utils";
  * @returns mock for 'Create Income request' completed task and also publish
  * the message to unblock the workflow.
  */
-export function createIncomeRequestTaskMock(options?: {
+export function createIncomeRequestTaskMock(options: {
   incomeVerificationId: number;
   subprocesses?: WorkflowSubprocesses;
 }): WorkerMockedData {
-  const incomeVerificationId = options?.incomeVerificationId ?? 1;
   return {
     serviceTaskId: WorkflowServiceTasks.CreateIncomeRequest,
     options: {
       jobCompleteMock: {
         incomeVerificationCompleted: true,
-        incomeVerificationId,
+        incomeVerificationId: options.incomeVerificationId,
       },
       jobMessageMocks: [
         {
           name: "income-verified",
-          correlationKey: incomeVerificationId.toString(),
+          correlationKey: options.incomeVerificationId.toString(),
           variables: {},
           timeToLive: PUBLISH_MESSAGE_TIME_TO_LEAVE_SECONDS,
         },

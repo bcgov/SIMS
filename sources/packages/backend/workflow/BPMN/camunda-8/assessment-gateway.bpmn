@@ -378,16 +378,24 @@
       <bpmn:incoming>Flow_1s8wnxz</bpmn:incoming>
       <bpmn:outgoing>Flow_16d5gro</bpmn:outgoing>
     </bpmn:parallelGateway>
-    <bpmn:callActivity id="Activity_1nsp43k" name="Load consolidated data">
+    <bpmn:callActivity id="Activity_1nsp43k" name="Load consolidated data (Pre-assessment)">
       <bpmn:extensionElements>
         <zeebe:calledElement processId="load-assessment-consolidated-data" propagateAllChildVariables="true" />
+        <zeebe:ioMapping>
+          <zeebe:input source="=append(parentSubprocesses, &#34;loadConsolidatedDataPreAssessmentSubprocess&#34;)" target="parentSubprocesses" />
+          <zeebe:input source="=&#34;loadConsolidatedDataPreAssessmentSubprocess&#34;" target="loadConsolidatedDataPreAssessmentSubprocess" />
+        </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_16d5gro</bpmn:incoming>
       <bpmn:outgoing>Flow_1btetiq</bpmn:outgoing>
     </bpmn:callActivity>
-    <bpmn:callActivity id="load-assessment-data-task" name="Load consolidated data">
+    <bpmn:callActivity id="load-assessment-data-task" name="Load consolidated data (Submit or Reassessment)">
       <bpmn:extensionElements>
         <zeebe:calledElement processId="load-assessment-consolidated-data" propagateAllChildVariables="true" />
+        <zeebe:ioMapping>
+          <zeebe:input source="=append(parentSubprocesses, &#34;loadConsolidatedDataOnSubmitOrReassessmentSubprocess&#34;)" target="parentSubprocesses" />
+          <zeebe:input source="=&#34;loadConsolidatedDataOnSubmitOrReassessmentSubprocess&#34;" target="loadConsolidatedDataOnSubmitOrReassessmentSubprocess" />
+        </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1wrj7fh</bpmn:incoming>
       <bpmn:outgoing>Flow_0rxxozm</bpmn:outgoing>
@@ -880,9 +888,11 @@
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_15mfyg8_di" bpmnElement="Activity_1nsp43k">
         <dc:Bounds x="2430" y="1050" width="100" height="80" />
+        <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_0yu5184_di" bpmnElement="load-assessment-data-task">
         <dc:Bounds x="461" y="561" width="100" height="80" />
+        <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="assessment-start-event">
         <dc:Bounds x="242" y="584" width="36" height="36" />

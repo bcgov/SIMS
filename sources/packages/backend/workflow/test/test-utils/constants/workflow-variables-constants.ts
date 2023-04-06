@@ -33,6 +33,8 @@ export enum WorkflowServiceTasks {
  * the workflow execution passed through those tasks.
  */
 export enum WorkflowSubprocesses {
+  LoadConsolidatedDataSubmitOrReassessment = "loadConsolidatedDataOnSubmitOrReassessmentSubprocess",
+  LoadConsolidatedDataPreAssessment = "loadConsolidatedDataPreAssessmentSubprocess",
   StudentIncomeVerification = "studentIncomeVerificationSubprocess",
   RetrieveSupportingInfoPartner = "retrieveSupportingInfoPartnerSubprocess",
   RetrieveSupportingInfoParent1 = "retrieveSupportingInfoParent1Subprocess",
