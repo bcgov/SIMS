@@ -6,6 +6,7 @@ import {
   FieldSortOrder,
   PaginatedResults,
   OrderByCondition,
+  getUserFullNameLikeSearch,
 } from "../../utilities";
 import {
   addDays,
@@ -186,9 +187,9 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
       coeQuery
         .andWhere(
           new Brackets((qb) => {
-            qb.where(
-              "(user.firstName || ' ' || user.lastName) Ilike :searchCriteria",
-            ).orWhere("application.applicationNumber Ilike :searchCriteria");
+            qb.where(getUserFullNameLikeSearch()).orWhere(
+              "application.applicationNumber Ilike :searchCriteria",
+            );
           }),
         )
         .setParameter(

@@ -14,6 +14,7 @@ import {
   OrderByCondition,
   PaginatedResults,
   PaginationOptions,
+  getUserFullNameLikeSearch,
 } from "../../utilities";
 import { CustomNamedError } from "@sims/utilities";
 import {
@@ -213,9 +214,9 @@ export class ApplicationExceptionService extends RecordDataModelService<Applicat
       applicationExceptionsQuery
         .andWhere(
           new Brackets((qb) => {
-            qb.where(
-              "(user.firstName || ' ' || user.lastName) Ilike :searchCriteria",
-            ).orWhere("application.applicationNumber Ilike :searchCriteria");
+            qb.where(getUserFullNameLikeSearch()).orWhere(
+              "application.applicationNumber Ilike :searchCriteria",
+            );
           }),
         )
         .setParameter(

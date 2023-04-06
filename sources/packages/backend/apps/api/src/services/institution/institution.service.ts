@@ -20,6 +20,7 @@ import {
   sortUsersColumnMap,
   PaginationOptions,
   transformAddressDetails,
+  getUserFullNameLikeSearch,
 } from "../../utilities";
 import { CustomNamedError } from "@sims/utilities";
 import {
@@ -333,7 +334,7 @@ export class InstitutionService extends RecordDataModelService<Institution> {
     // search by user's name
     if (paginationOptions.searchCriteria) {
       institutionUsers.andWhere(
-        "(user.firstName || ' ' || user.lastName ) ILIKE :searchUser",
+        getUserFullNameLikeSearch("user", "searchUser"),
         {
           searchUser: `%${paginationOptions.searchCriteria.trim()}%`,
         },

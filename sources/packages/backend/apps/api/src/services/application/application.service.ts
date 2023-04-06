@@ -31,6 +31,7 @@ import {
   PaginatedResults,
   FieldSortOrder,
   OrderByCondition,
+  getUserFullNameLikeSearch,
 } from "../../utilities";
 import { CustomNamedError, QueueNames } from "@sims/utilities";
 import {
@@ -820,9 +821,9 @@ export class ApplicationService extends RecordDataModelService<Application> {
       activeApplicationQuery
         .andWhere(
           new Brackets((qb) => {
-            qb.where(
-              "(user.firstName || ' ' || user.lastName) Ilike :searchCriteria",
-            ).orWhere("application.applicationNumber Ilike :searchCriteria");
+            qb.where(getUserFullNameLikeSearch()).orWhere(
+              "application.applicationNumber Ilike :searchCriteria",
+            );
           }),
         )
         .setParameter(
