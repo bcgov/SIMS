@@ -186,9 +186,9 @@ export class StudentControllerService {
    * @param students list of students.
    * @returns a list of student search details.
    */
-  async transformStudentsToSearchStudentDetails(
+  transformStudentsToSearchStudentDetails(
     students: Student[],
-  ): Promise<SearchStudentAPIOutDTO[]> {
+  ): SearchStudentAPIOutDTO[] {
     return students.map((eachStudent: Student) => ({
       id: eachStudent.id,
       firstName: eachStudent.user.firstName,
