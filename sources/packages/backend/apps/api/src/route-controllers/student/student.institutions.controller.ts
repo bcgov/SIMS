@@ -28,6 +28,7 @@ export class StudentInstitutionsController extends BaseController {
 
   /**
    * Search students based on the search criteria.
+   * TODO add decorator to restrict to BC Public institutions.
    * @param searchCriteria criteria to be used in the search.
    * @returns searched student details.
    */
@@ -36,13 +37,6 @@ export class StudentInstitutionsController extends BaseController {
     @UserToken() userToken: IInstitutionUserToken,
     @Body() searchCriteria: StudentSearchAPIInDTO,
   ): Promise<SearchStudentAPIOutDTO[]> {
-    const institutionType =
-      await this.institutionService.getInstitutionTypeById(
-        userToken.authorizations.institutionId,
-      );
-    if (institutionType.id !== INSTITUTION_TYPE_BC_PUBLIC) {
-      return [];
-    }
     return await this.studentService.searchStudentApplication(
       searchCriteria,
       userToken.authorizations.institutionId,
