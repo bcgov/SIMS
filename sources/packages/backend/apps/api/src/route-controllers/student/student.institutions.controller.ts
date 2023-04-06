@@ -10,7 +10,6 @@ import {
   SearchStudentAPIOutDTO,
 } from "./models/student.dto";
 import { IInstitutionUserToken } from "../../auth";
-import { INSTITUTION_TYPE_BC_PUBLIC } from "@sims/sims-db/constant";
 
 /**
  * Student controller for institutions.
