@@ -37,10 +37,7 @@ import {
   INSTITUTION_USER_ALREADY_EXISTS,
   LEGAL_SIGNING_AUTHORITY_EXIST,
 } from "../../constants";
-import {
-  INSTITUTION_TYPE_BC_PRIVATE,
-  INSTITUTION_TYPE_BC_PUBLIC,
-} from "@sims/sims-db/constant";
+import { INSTITUTION_TYPE_BC_PRIVATE } from "@sims/sims-db/constant";
 import { InstitutionUserAuthService } from "../institution-user-auth/institution-user-auth.service";
 import { UserService } from "../user/user.service";
 
