@@ -438,65 +438,6 @@ export class StudentService extends RecordDataModelService<Student> {
     return student?.sinValidation.isValidSIN;
   }
 
-  // /**
-  //  * Search students based on the search criteria.
-  //  * @param searchCriteria options to search by firstName,
-  //  * lastName, appNumber or sin.
-  //  * @returns list of students.
-  //  */
-  // async searchStudentApplication(searchCriteria: {
-  //   firstName?: string;
-  //   lastName?: string;
-  //   appNumber?: string;
-  //   sin?: string;
-  // }): Promise<SearchStudentAPIOutDTO[]> {
-  //   const searchQuery = this.repo
-  //     .createQueryBuilder("student")
-  //     .select([
-  //       "student.id",
-  //       "student.birthDate",
-  //       "user.firstName",
-  //       "user.lastName",
-  //       "sinValidation.sin",
-  //     ])
-  //     .leftJoin(
-  //       Application,
-  //       "application",
-  //       "application.student.id = student.id",
-  //     )
-  //     .innerJoin("student.user", "user")
-  //     .innerJoin("student.sinValidation", "sinValidation")
-  //     .where("user.isActive = true");
-
-  //   if (searchCriteria.sin) {
-  //     searchQuery.andWhere("sinValidation.sin = :sin", {
-  //       sin: removeWhiteSpaces(searchCriteria.sin),
-  //     });
-  //   }
-  //   if (searchCriteria.firstName) {
-  //     searchQuery.andWhere("user.firstName Ilike :firstName", {
-  //       firstName: `%${searchCriteria.firstName}%`,
-  //     });
-  //   }
-  //   if (searchCriteria.lastName) {
-  //     searchQuery.andWhere("user.lastName Ilike :lastName", {
-  //       lastName: `%${searchCriteria.lastName}%`,
-  //     });
-  //   }
-  //   if (searchCriteria.appNumber) {
-  //     searchQuery
-  //       .andWhere("application.applicationNumber Ilike :appNumber")
-  //       .andWhere("application.applicationStatus != :overwrittenStatus")
-  //       .setParameters({
-  //         appNumber: `%${searchCriteria.appNumber}%`,
-  //         overwrittenStatus: ApplicationStatus.Overwritten,
-  //       });
-  //   }
-  //   return this.transformStudentsToSearchStudentDetails(
-  //     await searchQuery.getMany(),
-  //   );
-  // }
-
   /**
    * Search students based on the search criteria and institution id if provided.
    * @param searchCriteria options to search by firstName,
