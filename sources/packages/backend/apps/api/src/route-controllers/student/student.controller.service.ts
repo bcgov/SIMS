@@ -13,9 +13,10 @@ import {
 } from "../models/pagination.dto";
 import { determinePDStatus, getUserFullName } from "../../utilities";
 import { getISODateOnlyString } from "@sims/utilities";
-import { AddressInfo, Application } from "@sims/sims-db";
+import { AddressInfo, Application, Student } from "@sims/sims-db";
 import {
   ApplicationSummaryAPIOutDTO,
+  SearchStudentAPIOutDTO,
   StudentProfileAPIOutDTO,
 } from "./models/student.dto";
 import { transformAddressDetailsForAddressBlockForm } from "../utils/address-utils";
@@ -179,4 +180,21 @@ export class StudentControllerService {
       status: application.applicationStatus,
     };
   };
+
+  /**
+   * Transforms a list of students into a list of student search details.
+   * @param students list of students.
+   * @returns a list of student search details.
+   */
+  async transformStudentsToSearchStudentDetails(
+    students: Student[],
+  ): Promise<SearchStudentAPIOutDTO[]> {
+    return students.map((eachStudent: Student) => ({
+      id: eachStudent.id,
+      firstName: eachStudent.user.firstName,
+      lastName: eachStudent.user.lastName,
+      birthDate: getISODateOnlyString(eachStudent.birthDate),
+      sin: eachStudent.sinValidation.sin,
+    }));
+  }
 }

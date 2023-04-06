@@ -17,7 +17,7 @@ import { Brackets, DataSource, EntityManager } from "typeorm";
 import { StudentUserToken } from "../../auth/userToken.interface";
 import { LoggerService, InjectLogger } from "@sims/utilities/logger";
 import { removeWhiteSpaces, transformAddressDetails } from "../../utilities";
-import { CustomNamedError, getISODateOnlyString } from "@sims/utilities";
+import { CustomNamedError } from "@sims/utilities";
 import {
   CreateStudentUserInfo,
   StudentInfo,
@@ -38,7 +38,6 @@ import {
   BC_STUDENT_LOAN_AWARD_CODE,
   CANADA_STUDENT_LOAN_FULL_TIME_AWARD_CODE,
 } from "@sims/services/constants";
-import { SearchStudentAPIOutDTO } from "../../route-controllers/student/models/student.dto";
 
 @Injectable()
 export class StudentService extends RecordDataModelService<Student> {
@@ -445,7 +444,7 @@ export class StudentService extends RecordDataModelService<Student> {
    * @param institutionId id of the institution that the student applied to.
    * @returns list of student details.
    */
-  async searchStudentApplication(
+  async searchStudent(
     searchCriteria: {
       firstName?: string;
       lastName?: string;
@@ -453,7 +452,7 @@ export class StudentService extends RecordDataModelService<Student> {
       sin?: string;
     },
     institutionId?: number,
-  ): Promise<SearchStudentAPIOutDTO[]> {
+  ): Promise<Student[]> {
     const searchQuery = this.repo
       .createQueryBuilder("student")
       .select([
@@ -524,26 +523,7 @@ export class StudentService extends RecordDataModelService<Student> {
         appNumber: `%${searchCriteria.appNumber}%`,
       });
     }
-    return this.transformStudentsToSearchStudentDetails(
-      await searchQuery.getMany(),
-    );
-  }
-
-  /**
-   * Transforms a list of students into a list of student search details.
-   * @param students list of students.
-   * @returns a list of student search details.
-   */
-  private async transformStudentsToSearchStudentDetails(
-    students: Student[],
-  ): Promise<SearchStudentAPIOutDTO[]> {
-    return students.map((eachStudent: Student) => ({
-      id: eachStudent.id,
-      firstName: eachStudent.user.firstName,
-      lastName: eachStudent.user.lastName,
-      birthDate: getISODateOnlyString(eachStudent.birthDate),
-      sin: eachStudent.sinValidation.sin,
-    }));
+    return searchQuery.getMany();
   }
 
   /**

@@ -10,6 +10,7 @@ import {
   SearchStudentAPIOutDTO,
 } from "./models/student.dto";
 import { IInstitutionUserToken } from "../../auth";
+import { StudentControllerService } from "./student.controller.service";
 
 /**
  * Student controller for institutions.
@@ -18,7 +19,10 @@ import { IInstitutionUserToken } from "../../auth";
 @Controller("student")
 @ApiTags(`${ClientTypeBaseRoute.Institution}-student`)
 export class StudentInstitutionsController extends BaseController {
-  constructor(private readonly studentService: StudentService) {
+  constructor(
+    private readonly studentService: StudentService,
+    private readonly studentControllerService: StudentControllerService,
+  ) {
     super();
   }
 
@@ -33,9 +37,12 @@ export class StudentInstitutionsController extends BaseController {
     @UserToken() userToken: IInstitutionUserToken,
     @Body() searchCriteria: StudentSearchAPIInDTO,
   ): Promise<SearchStudentAPIOutDTO[]> {
-    return this.studentService.searchStudentApplication(
+    const students = await this.studentService.searchStudent(
       searchCriteria,
       userToken.authorizations.institutionId,
+    );
+    return this.studentControllerService.transformStudentsToSearchStudentDetails(
+      students,
     );
   }
 }
