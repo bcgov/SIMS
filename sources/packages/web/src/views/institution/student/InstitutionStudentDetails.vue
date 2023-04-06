@@ -5,21 +5,6 @@
         title="Student Details"
         :subTitle="studentDetails.fullName"
       >
-        <template #sub-title-details>
-          <student-restriction-chip
-            class="ml-4 mt-1"
-            :status="
-              studentDetails.hasRestriction
-                ? StudentRestrictionStatus.Restriction
-                : StudentRestrictionStatus.NoRestriction
-            "
-            :label="
-              studentDetails.hasRestriction
-                ? StudentRestrictionStatus.Restriction
-                : null
-            "
-          />
-        </template>
       </header-navigator>
     </template>
     <template #tab-header>
@@ -44,12 +29,10 @@
 import { onMounted, ref, defineComponent } from "vue";
 import { useRouter } from "vue-router";
 import { StudentService } from "@/services/StudentService";
-import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
-import StudentRestrictionChip from "@/components/generic/StudentRestrictionChip.vue";
+import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import { StudentRestrictionStatus, StudentProfile } from "@/types";
 
 export default defineComponent({
-  components: { StudentRestrictionChip },
   props: {
     studentId: {
       type: Number,
@@ -65,7 +48,7 @@ export default defineComponent({
         label: "Profile",
         icon: "fa:far fa-address-book",
         command: () => ({
-          name: AESTRoutesConst.STUDENT_PROFILE,
+          name: InstitutionRoutesConst.STUDENT_PROFILE,
           params: { studentId: props.studentId },
         }),
       },
@@ -73,7 +56,7 @@ export default defineComponent({
         label: "Applications",
         icon: "fa:far fa-folder-open",
         command: () => ({
-          name: AESTRoutesConst.STUDENT_APPLICATIONS,
+          name: InstitutionRoutesConst.STUDENT_APPLICATIONS,
           params: { studentId: props.studentId },
         }),
       },
@@ -81,7 +64,7 @@ export default defineComponent({
         label: "Restrictions",
         icon: "fa:far fa-times-circle",
         command: () => ({
-          name: AESTRoutesConst.STUDENT_RESTRICTION,
+          name: InstitutionRoutesConst.STUDENT_RESTRICTIONS,
           params: { studentId: props.studentId },
         }),
       },
@@ -89,23 +72,7 @@ export default defineComponent({
         label: "File Uploads",
         icon: "fa:far fa-file-alt",
         command: () => ({
-          name: AESTRoutesConst.STUDENT_FILE_UPLOADS,
-          params: { studentId: props.studentId },
-        }),
-      },
-      {
-        label: "Social insurance number",
-        icon: "fa:far fa-check-square",
-        command: () => ({
-          name: AESTRoutesConst.SIN_MANAGEMENT,
-          params: { studentId: props.studentId },
-        }),
-      },
-      {
-        label: "Overawards",
-        icon: "fa:fa fa-circle-dollar-to-slot",
-        command: () => ({
-          name: AESTRoutesConst.OVERAWARDS,
+          name: InstitutionRoutesConst.STUDENT_FILE_UPLOADS,
           params: { studentId: props.studentId },
         }),
       },
@@ -113,7 +80,7 @@ export default defineComponent({
         label: "Notes",
         icon: "fa:fa fa-sticky-note",
         command: () => ({
-          name: AESTRoutesConst.STUDENT_NOTES,
+          name: InstitutionRoutesConst.STUDENT_NOTES,
           params: { studentId: props.studentId },
         }),
       },
@@ -121,7 +88,7 @@ export default defineComponent({
 
     const goBack = () => {
       router.push({
-        name: AESTRoutesConst.SEARCH_STUDENTS,
+        name: InstitutionRoutesConst.SEARCH_STUDENTS,
       });
     };
 
