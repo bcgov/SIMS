@@ -179,10 +179,10 @@
         <zeebe:calledElement processId="supporting-user-information-request" propagateAllChildVariables="false" />
         <zeebe:ioMapping>
           <zeebe:input source="=createdSupportingUsersIds[1]" target="supportingUserId" />
-          <zeebe:input source="=append(parentSubprocesses, &#34;retrieveSupportingInfoParent1Subprocess&#34;)" target="parentSubprocesses" />
+          <zeebe:input source="=[&#34;retrieveSupportingInfoParent1Subprocess&#34;]" target="parentSubprocesses" />
           <zeebe:output source="=supportingUserId" target="parent1SupportingUserId" />
           <zeebe:output source="=totalIncome" target="supportingUserParent1TotalIncome" />
-          <zeebe:output source="=&#34;retrieveSupportingInfoParent1Subprocess&#34;" target="retrieveSupportingInfoParent1Subprocess" />
+          <zeebe:output source="=&#34;retrieveSupportingInfoParent1Subprocess&#34;" target="retrieveSupportingInfoParent1Subprocess_passthrough" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1u5ion6</bpmn:incoming>
@@ -193,10 +193,10 @@
         <zeebe:calledElement processId="supporting-user-information-request" propagateAllChildVariables="false" />
         <zeebe:ioMapping>
           <zeebe:input source="=createdSupportingUsersIds[2]" target="supportingUserId" />
-          <zeebe:input source="=append(parentSubprocesses, &#34;retrieveSupportingInfoParent2Subprocess&#34;)" target="parentSubprocesses" />
+          <zeebe:input source="=[&#34;retrieveSupportingInfoParent2Subprocess&#34;]" target="parentSubprocesses" />
           <zeebe:output source="=supportingUserId" target="parent2SupportingUserId" />
           <zeebe:output source="=totalIncome" target="parent2TotalIncome" />
-          <zeebe:output source="=&#34;retrieveSupportingInfoParent2Subprocess&#34;" target="retrieveSupportingInfoParent2Subprocess" />
+          <zeebe:output source="=&#34;retrieveSupportingInfoParent2Subprocess&#34;" target="retrieveSupportingInfoParent2Subprocess_passthrough" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1lbai2h</bpmn:incoming>
@@ -208,8 +208,8 @@
         <zeebe:ioMapping>
           <zeebe:input source="=parent2TotalIncome" target="reportedIncome" />
           <zeebe:input source="=parent2SupportingUserId" target="supportingUserId" />
-          <zeebe:input source="=append(parentSubprocesses, &#34;parent2IncomeVerificationSubprocess&#34;)" target="parentSubprocesses" />
-          <zeebe:output source="=&#34;parent2IncomeVerificationSubprocess&#34;" target="parent2IncomeVerificationSubprocess" />
+          <zeebe:input source="=[&#34;parent2IncomeVerificationSubprocess&#34;]" target="parentSubprocesses" />
+          <zeebe:output source="=&#34;parent2IncomeVerificationSubprocess&#34;" target="parent2IncomeVerificationSubprocess_passthrough" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_0l30wbo</bpmn:incoming>
@@ -221,8 +221,8 @@
         <zeebe:ioMapping>
           <zeebe:input source="=supportingUserParent1TotalIncome" target="reportedIncome" />
           <zeebe:input source="=parent1SupportingUserId" target="supportingUserId" />
-          <zeebe:input source="=append(parentSubprocesses, &#34;parent1IncomeVerificationSubprocess&#34;)" target="parentSubprocesses" />
-          <zeebe:output source="=&#34;parent1IncomeVerificationSubprocess&#34;" target="parent1IncomeVerificationSubprocess" />
+          <zeebe:input source="=[&#34;parent1IncomeVerificationSubprocess&#34;]" target="parentSubprocesses" />
+          <zeebe:output source="=&#34;parent1IncomeVerificationSubprocess&#34;" target="parent1IncomeVerificationSubprocess_passthrough" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1g59sq3</bpmn:incoming>
@@ -269,10 +269,10 @@
         <zeebe:calledElement processId="supporting-user-information-request" propagateAllChildVariables="false" />
         <zeebe:ioMapping>
           <zeebe:input source="=createdSupportingUsersIds[1]" target="supportingUserId" />
-          <zeebe:input source="=append(parentSubprocesses, &#34;retrieveSupportingInfoPartnerSubprocess&#34;)" target="parentSubprocesses" />
+          <zeebe:input source="=[&#34;retrieveSupportingInfoPartnerSubprocess&#34;]" target="parentSubprocesses" />
           <zeebe:output source="=totalIncome" target="partner1TotalIncome" />
           <zeebe:output source="=supportingUserId" target="partnerSupportingUserId" />
-          <zeebe:output source="=&#34;retrieveSupportingInfoPartnerSubprocess&#34;" target="retrieveSupportingInfoPartnerSubprocess" />
+          <zeebe:output source="=&#34;retrieveSupportingInfoPartnerSubprocess&#34;" target="retrieveSupportingInfoPartnerSubprocess_passthrough" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_03zfrkx</bpmn:incoming>
@@ -284,9 +284,9 @@
         <zeebe:ioMapping>
           <zeebe:input source="=partner1TotalIncome" target="reportedIncome" />
           <zeebe:input source="=partnerSupportingUserId" target="supportingUserId" />
-          <zeebe:input source="=append(parentSubprocesses, &#34;partnerIncomeVerificationSubprocess&#34;)" target="parentSubprocesses" />
+          <zeebe:input source="=[&#34;partnerIncomeVerificationSubprocess&#34;]" target="parentSubprocesses" />
           <zeebe:output source="=true" target="partnerIncomeVerification" />
-          <zeebe:output source="=&#34;partnerIncomeVerificationSubprocess&#34;" target="partnerIncomeVerificationSubprocess" />
+          <zeebe:output source="=&#34;partnerIncomeVerificationSubprocess&#34;" target="partnerIncomeVerificationSubprocess_passthrough" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1wde0bi</bpmn:incoming>
@@ -298,8 +298,8 @@
         <zeebe:ioMapping>
           <zeebe:input source="=studentDataTaxReturnIncome" target="reportedIncome" />
           <zeebe:input source="=null" target="supportingUserId" />
-          <zeebe:input source="=append(parentSubprocesses, &#34;studentIncomeVerificationSubprocess&#34;)" target="parentSubprocesses" />
-          <zeebe:output source="=&#34;studentIncomeVerificationSubprocess&#34;" target="studentIncomeVerificationSubprocess" />
+          <zeebe:input source="=[&#34;studentIncomeVerificationSubprocess&#34;]" target="parentSubprocesses" />
+          <zeebe:output source="=&#34;studentIncomeVerificationSubprocess&#34;" target="studentIncomeVerificationSubprocess_passthrough" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_18qbsu1</bpmn:incoming>
@@ -382,8 +382,8 @@
       <bpmn:extensionElements>
         <zeebe:calledElement processId="load-assessment-consolidated-data" propagateAllChildVariables="true" />
         <zeebe:ioMapping>
-          <zeebe:input source="=append(parentSubprocesses, &#34;loadConsolidatedDataPreAssessmentSubprocess&#34;)" target="parentSubprocesses" />
-          <zeebe:input source="=&#34;loadConsolidatedDataPreAssessmentSubprocess&#34;" target="loadConsolidatedDataPreAssessmentSubprocess" />
+          <zeebe:input source="=[&#34;loadConsolidatedDataPreAssessmentSubprocess&#34;]" target="parentSubprocesses" />
+          <zeebe:input source="=&#34;loadConsolidatedDataPreAssessmentSubprocess&#34;" target="loadConsolidatedDataPreAssessmentSubprocess_passthrough" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_16d5gro</bpmn:incoming>
@@ -393,8 +393,8 @@
       <bpmn:extensionElements>
         <zeebe:calledElement processId="load-assessment-consolidated-data" propagateAllChildVariables="true" />
         <zeebe:ioMapping>
-          <zeebe:input source="=append(parentSubprocesses, &#34;loadConsolidatedDataOnSubmitOrReassessmentSubprocess&#34;)" target="parentSubprocesses" />
-          <zeebe:input source="=&#34;loadConsolidatedDataOnSubmitOrReassessmentSubprocess&#34;" target="loadConsolidatedDataOnSubmitOrReassessmentSubprocess" />
+          <zeebe:input source="=[&#34;loadConsolidatedDataOnSubmitOrReassessmentSubprocess&#34;]" target="parentSubprocesses" />
+          <zeebe:input source="=&#34;loadConsolidatedDataOnSubmitOrReassessmentSubprocess&#34;" target="loadConsolidatedDataOnSubmitOrReassessmentSubprocess_passthrough" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1wrj7fh</bpmn:incoming>

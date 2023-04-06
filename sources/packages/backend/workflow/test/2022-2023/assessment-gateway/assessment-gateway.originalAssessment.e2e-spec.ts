@@ -50,6 +50,23 @@ describe(`E2E Test Workflow assessment gateway on original assessment for ${PROG
       studentDataSelectedOffering: 1,
     };
 
+    const workersMockedData = createWorkersMockedData([
+      createLoadAssessmentDataTaskMock({
+        assessmentConsolidatedData: assessmentDataOnSubmit,
+        subprocess:
+          WorkflowSubprocesses.LoadConsolidatedDataSubmitOrReassessment,
+      }),
+      createLoadAssessmentDataTaskMock({
+        assessmentConsolidatedData: assessmentDataOnSubmit,
+        subprocess: WorkflowSubprocesses.LoadConsolidatedDataPreAssessment,
+      }),
+      createVerifyApplicationExceptionsTaskMock(),
+      createIncomeRequestTaskMock({
+        incomeVerificationId: incomeVerificationId++,
+        subprocesses: WorkflowSubprocesses.StudentIncomeVerification,
+      }),
+    ]);
+
     const currentAssessmentId = assessmentId++;
 
     // Act/Assert
@@ -58,20 +75,7 @@ describe(`E2E Test Workflow assessment gateway on original assessment for ${PROG
         bpmnProcessId: "assessment-gateway",
         variables: {
           [ASSESSMENT_ID]: currentAssessmentId,
-          ...createLoadAssessmentDataTaskMock({
-            assessmentConsolidatedData: assessmentDataOnSubmit,
-            subprocess:
-              WorkflowSubprocesses.LoadConsolidatedDataSubmitOrReassessment,
-          }),
-          ...createLoadAssessmentDataTaskMock({
-            assessmentConsolidatedData: assessmentDataOnSubmit,
-            subprocess: WorkflowSubprocesses.LoadConsolidatedDataPreAssessment,
-          }),
-          ...createVerifyApplicationExceptionsTaskMock(),
-          ...createIncomeRequestTaskMock({
-            incomeVerificationId: incomeVerificationId++,
-            subprocesses: WorkflowSubprocesses.StudentIncomeVerification,
-          }),
+          ...workersMockedData,
         },
         requestTimeout: PROCESS_INSTANCE_CREATE_TIMEOUT,
       });
@@ -88,7 +92,7 @@ describe(`E2E Test Workflow assessment gateway on original assessment for ${PROG
     );
   });
 
-  it.only("Should check for both parents incomes when the student is dependant and parents have SIN.", async () => {
+  it("Should check for both parents incomes when the student is dependant and parents have SIN.", async () => {
     // Arrange
     const currentAssessmentId = assessmentId++;
     const parent1SupportingUserId = supportingUserId++;
@@ -154,8 +158,6 @@ describe(`E2E Test Workflow assessment gateway on original assessment for ${PROG
         subprocesses: WorkflowSubprocesses.Parent2IncomeVerification,
       }),
     ]);
-
-    console.log(JSON.stringify(workersMockedData, null, 2));
 
     // Act
     const assessmentGatewayResponse =
@@ -280,7 +282,7 @@ describe(`E2E Test Workflow assessment gateway on original assessment for ${PROG
     );
   });
 
-  it.only("Should skip parent income verification when the student is dependant and informed that parents do not have SIN.", async () => {
+  it("Should skip parent income verification when the student is dependant and informed that parents do not have SIN.", async () => {
     // Arrange
     const currentAssessmentId = assessmentId++;
     // Assessment consolidated mocked data.
@@ -319,8 +321,6 @@ describe(`E2E Test Workflow assessment gateway on original assessment for ${PROG
         subprocesses: WorkflowSubprocesses.StudentIncomeVerification,
       }),
     ]);
-
-    console.log(JSON.stringify(workersMockedData, null, 2));
 
     // Act
     const assessmentGatewayResponse =
