@@ -8,13 +8,13 @@ import {
   NoteType,
   Student,
   User,
+  getUserFullNameLikeSearch,
 } from "@sims/sims-db";
 import {
   FieldSortOrder,
   OrderByCondition,
   PaginatedResults,
   PaginationOptions,
-  getUserFullNameLikeSearch,
 } from "../../utilities";
 import { CustomNamedError } from "@sims/utilities";
 import {

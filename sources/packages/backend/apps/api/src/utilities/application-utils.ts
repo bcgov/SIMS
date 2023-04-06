@@ -26,16 +26,3 @@ export function getCOEDeniedReason(
     ? disbursementSchedule.coeDeniedOtherDesc
     : disbursementSchedule.coeDeniedReason?.reason;
 }
-
-/**
- * Util to return the concatenated firstname and lastname ILIKE operator search criteria.
- * @param userTableAlias refers to the user table name.
- * @param searchCriteriaParameterName refers to the name of the searchCriteria.
- * @returns concatenated firstname and lastname ILIKE operator search criteria.
- */
-export function getUserFullNameLikeSearch(
-  userTableAlias = "user",
-  searchCriteriaParameterName = "searchCriteria",
-) {
-  return `(${userTableAlias}.firstName || ' ' || ${userTableAlias}.lastName) ILIKE :${searchCriteriaParameterName}`;
-}

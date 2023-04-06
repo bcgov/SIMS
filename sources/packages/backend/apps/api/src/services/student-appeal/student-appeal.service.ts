@@ -11,6 +11,7 @@ import {
   StudentAssessment,
   User,
   mapFromRawAndEntities,
+  getUserFullNameLikeSearch,
 } from "@sims/sims-db";
 import {
   PendingAndDeniedAppeals,
@@ -25,7 +26,6 @@ import {
   PaginationOptions,
   SortPriority,
   OrderByCondition,
-  getUserFullNameLikeSearch,
 } from "../../utilities";
 import { CustomNamedError } from "@sims/utilities";
 import {

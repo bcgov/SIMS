@@ -6,7 +6,6 @@ import {
   FieldSortOrder,
   PaginatedResults,
   OrderByCondition,
-  getUserFullNameLikeSearch,
 } from "../../utilities";
 import {
   addDays,
@@ -23,6 +22,7 @@ import {
   COEStatus,
   DisbursementSchedule,
   User,
+  getUserFullNameLikeSearch,
 } from "@sims/sims-db";
 import { NotificationActionsService } from "@sims/services/notifications";
 import {

@@ -11,6 +11,7 @@ import {
   Note,
   NoteType,
   IdentityProviders,
+  getUserFullNameLikeSearch,
 } from "@sims/sims-db";
 import { DataSource, EntityManager, IsNull, Repository } from "typeorm";
 import { InstitutionUserType, UserInfo } from "../../types";
@@ -20,7 +21,6 @@ import {
   sortUsersColumnMap,
   PaginationOptions,
   transformAddressDetails,
-  getUserFullNameLikeSearch,
 } from "../../utilities";
 import { CustomNamedError } from "@sims/utilities";
 import {

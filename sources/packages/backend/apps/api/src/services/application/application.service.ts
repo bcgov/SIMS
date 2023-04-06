@@ -16,6 +16,7 @@ import {
   AssessmentTriggerType,
   User,
   ApplicationData,
+  getUserFullNameLikeSearch,
 } from "@sims/sims-db";
 import { StudentFileService } from "../student-file/student-file.service";
 import {
@@ -31,7 +32,6 @@ import {
   PaginatedResults,
   FieldSortOrder,
   OrderByCondition,
-  getUserFullNameLikeSearch,
 } from "../../utilities";
 import { CustomNamedError, QueueNames } from "@sims/utilities";
 import {
