@@ -13,17 +13,12 @@
                 ? StudentRestrictionStatus.Restriction
                 : StudentRestrictionStatus.NoRestriction
             "
-            :label="
-              studentDetails.hasRestriction
-                ? StudentRestrictionStatus.Restriction
-                : null
-            "
           />
         </template>
       </header-navigator>
     </template>
     <template #tab-header>
-      <v-tabs :model="tab" stacked color="primary"
+      <v-tabs stacked color="primary"
         ><v-tab
           v-for="item in items"
           :key="item.label"
@@ -42,7 +37,6 @@
 
 <script lang="ts">
 import { onMounted, ref, defineComponent } from "vue";
-import { useRouter } from "vue-router";
 import { StudentService } from "@/services/StudentService";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import StudentRestrictionChip from "@/components/generic/StudentRestrictionChip.vue";
@@ -56,9 +50,7 @@ export default defineComponent({
       required: true,
     },
   },
-  setup(props: any) {
-    const router = useRouter();
-    const tab = ref();
+  setup(props) {
     const studentDetails = ref({} as StudentProfile);
     const items = ref([
       {
@@ -119,12 +111,6 @@ export default defineComponent({
       },
     ]);
 
-    const goBack = () => {
-      router.push({
-        name: AESTRoutesConst.SEARCH_STUDENTS,
-      });
-    };
-
     onMounted(async () => {
       studentDetails.value = await StudentService.shared.getStudentProfile(
         props.studentId,
@@ -132,11 +118,9 @@ export default defineComponent({
     });
 
     return {
-      goBack,
       items,
       studentDetails,
       StudentRestrictionStatus,
-      tab,
     };
   },
 });

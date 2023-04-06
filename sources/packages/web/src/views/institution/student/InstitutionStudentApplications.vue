@@ -1,3 +1,3 @@
 <template>
-  <tab-container><div>Component to be built.</div></tab-container>
+  <tab-container><div>Applications component to be built.</div></tab-container>
 </template>

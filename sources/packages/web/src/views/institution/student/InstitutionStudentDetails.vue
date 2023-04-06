@@ -4,8 +4,7 @@
       <header-navigator
         title="Student Details"
         :subTitle="studentDetails.fullName"
-      >
-      </header-navigator>
+      />
     </template>
     <template #tab-header>
       <v-tabs :model="tab" stacked color="primary"
@@ -27,7 +26,6 @@
 
 <script lang="ts">
 import { onMounted, ref, defineComponent } from "vue";
-import { useRouter } from "vue-router";
 import { StudentService } from "@/services/StudentService";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import { StudentRestrictionStatus, StudentProfile } from "@/types";
@@ -39,8 +37,7 @@ export default defineComponent({
       required: true,
     },
   },
-  setup(props: any) {
-    const router = useRouter();
+  setup(props) {
     const tab = ref();
     const studentDetails = ref({} as StudentProfile);
     const items = ref([
@@ -86,12 +83,6 @@ export default defineComponent({
       },
     ]);
 
-    const goBack = () => {
-      router.push({
-        name: InstitutionRoutesConst.INSTITUTION_STUDENT_SEARCH,
-      });
-    };
-
     onMounted(async () => {
       studentDetails.value = await StudentService.shared.getStudentProfile(
         props.studentId,
@@ -99,7 +90,6 @@ export default defineComponent({
     });
 
     return {
-      goBack,
       items,
       studentDetails,
       StudentRestrictionStatus,

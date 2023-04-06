@@ -114,7 +114,7 @@ export class StudentControllerService {
   async getStudentProfile(studentId: number): Promise<StudentProfileAPIOutDTO> {
     const student = await this.studentService.getStudentById(studentId);
     if (!student) {
-      return;
+      throw new NotFoundException("Student not found.");
     }
 
     const address = student.contactInfo.address ?? ({} as AddressInfo);

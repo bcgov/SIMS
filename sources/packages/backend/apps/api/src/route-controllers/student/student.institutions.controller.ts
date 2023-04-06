@@ -1,4 +1,11 @@
-import { Body, Controller, Post } from "@nestjs/common";
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  ParseIntPipe,
+  Post,
+} from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
 import { StudentService } from "../../services";
 import { ClientTypeBaseRoute } from "../../types";
@@ -8,6 +15,7 @@ import BaseController from "../BaseController";
 import {
   StudentSearchAPIInDTO,
   SearchStudentAPIOutDTO,
+  StudentProfileAPIOutDTO,
 } from "./models/student.dto";
 import { IInstitutionUserToken } from "../../auth";
 import { StudentControllerService } from "./student.controller.service";
@@ -44,5 +52,17 @@ export class StudentInstitutionsController extends BaseController {
     return this.studentControllerService.transformStudentsToSearchStudentDetails(
       students,
     );
+  }
+
+  /**
+   * Get student profile with the active restriction status.
+   * @param studentId student.
+   * @returns student profile details with restriction status.
+   */
+  @Get(":studentId")
+  async getStudentProfile(
+    @Param("studentId", ParseIntPipe) studentId: number,
+  ): Promise<StudentProfileAPIOutDTO> {
+    return this.studentControllerService.getStudentProfile(studentId);
   }
 }

@@ -240,7 +240,7 @@ export class StudentAESTController extends BaseController {
    * @returns student profile details.
    */
   @Get(":studentId")
-  @ApiNotFoundResponse({ description: "Not able to find the student." })
+  @ApiNotFoundResponse({ description: "Student not found." })
   async getStudentProfile(
     @Param("studentId", ParseIntPipe) studentId: number,
   ): Promise<AESTStudentProfileAPIOutDTO> {
@@ -252,9 +252,6 @@ export class StudentAESTController extends BaseController {
       ),
     ]);
 
-    if (!student) {
-      throw new NotFoundException("Not able to find the student.");
-    }
     return { ...student, hasRestriction: !!studentRestrictions.length };
   }
 

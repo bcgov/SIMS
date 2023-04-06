@@ -422,7 +422,7 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
         props: true,
         components: {
           default: InstitutionStudentDetails,
-          sidebar: ManageInstitutionSideBar,
+          sidebar: InstitutionHomeSideBar,
         },
         meta: {
           clientType: ClientIdType.Institution,

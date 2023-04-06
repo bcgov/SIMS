@@ -54,7 +54,7 @@ export class StudentService {
     const studentProfile = await ApiClient.Students.getStudentProfile(
       studentId,
     );
-    const studentInfoAll = {
+    const studentInfoAll: StudentProfile = {
       ...studentProfile,
       birthDateFormatted: dateOnlyLongString(studentProfile.dateOfBirth),
     };
