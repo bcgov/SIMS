@@ -406,6 +406,7 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
       {
         path: AppRoutes.InstitutionStudentDetail,
         name: InstitutionRoutesConst.STUDENT_DETAILS,
+        props: true,
         components: {
           default: InstitutionStudentDetails,
           sidebar: ManageInstitutionSideBar,
