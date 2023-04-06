@@ -709,16 +709,6 @@ export class InstitutionService extends RecordDataModelService<Institution> {
   }
 
   /**
-   * Check if institution type is BC public.
-   * @param institutionId institution id.
-   * @returns whether the institution type is public.
-   */
-  async isBCPublicInstitution(institutionId: number): Promise<boolean> {
-    const institutionType = await this.getInstitutionTypeById(institutionId);
-    return INSTITUTION_TYPE_BC_PUBLIC === institutionType.institutionType.id;
-  }
-
-  /**
    * Get the institutionType by institution id.
    * @param institutionId Institution id.
    * @returns Institution retrieved, if found, otherwise returns null.
