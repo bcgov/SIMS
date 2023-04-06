@@ -145,6 +145,7 @@ export function createFakeSingleIndependentStudentData(): Partial<AssessmentCons
  * are present in the application, if they need income verification or if they are not able
  * to use a BCSC to provide data using the supporting users portal.
  * @param options creation options.
+ * - `dataType` indicates which moment the assessment data should represents.
  * - `numberOfParents` generate information for one or two parents.
  * - `validSinNumber` determine if parents can have a BCSC and access the supporting users portal.
  * @returns parents data to be used.
