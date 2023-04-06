@@ -438,79 +438,80 @@ export class StudentService extends RecordDataModelService<Student> {
     return student?.sinValidation.isValidSIN;
   }
 
+  // /**
+  //  * Search students based on the search criteria.
+  //  * @param searchCriteria options to search by firstName,
+  //  * lastName, appNumber or sin.
+  //  * @returns list of students.
+  //  */
+  // async searchStudentApplication(searchCriteria: {
+  //   firstName?: string;
+  //   lastName?: string;
+  //   appNumber?: string;
+  //   sin?: string;
+  // }): Promise<SearchStudentAPIOutDTO[]> {
+  //   const searchQuery = this.repo
+  //     .createQueryBuilder("student")
+  //     .select([
+  //       "student.id",
+  //       "student.birthDate",
+  //       "user.firstName",
+  //       "user.lastName",
+  //       "sinValidation.sin",
+  //     ])
+  //     .leftJoin(
+  //       Application,
+  //       "application",
+  //       "application.student.id = student.id",
+  //     )
+  //     .innerJoin("student.user", "user")
+  //     .innerJoin("student.sinValidation", "sinValidation")
+  //     .where("user.isActive = true");
+
+  //   if (searchCriteria.sin) {
+  //     searchQuery.andWhere("sinValidation.sin = :sin", {
+  //       sin: removeWhiteSpaces(searchCriteria.sin),
+  //     });
+  //   }
+  //   if (searchCriteria.firstName) {
+  //     searchQuery.andWhere("user.firstName Ilike :firstName", {
+  //       firstName: `%${searchCriteria.firstName}%`,
+  //     });
+  //   }
+  //   if (searchCriteria.lastName) {
+  //     searchQuery.andWhere("user.lastName Ilike :lastName", {
+  //       lastName: `%${searchCriteria.lastName}%`,
+  //     });
+  //   }
+  //   if (searchCriteria.appNumber) {
+  //     searchQuery
+  //       .andWhere("application.applicationNumber Ilike :appNumber")
+  //       .andWhere("application.applicationStatus != :overwrittenStatus")
+  //       .setParameters({
+  //         appNumber: `%${searchCriteria.appNumber}%`,
+  //         overwrittenStatus: ApplicationStatus.Overwritten,
+  //       });
+  //   }
+  //   return this.transformStudentsToSearchStudentDetails(
+  //     await searchQuery.getMany(),
+  //   );
+  // }
+
   /**
-   * Search students based on the search criteria.
+   * Search students based on the search criteria and institution id if provided.
    * @param searchCriteria options to search by firstName,
    * lastName, appNumber or sin.
+   * @param institutionId id of the institution that the student applied to.
    * @returns list of students.
    */
-  async searchStudentApplication(searchCriteria: {
-    firstName?: string;
-    lastName?: string;
-    appNumber?: string;
-    sin?: string;
-  }): Promise<SearchStudentAPIOutDTO[]> {
-    const searchQuery = this.repo
-      .createQueryBuilder("student")
-      .select([
-        "student.id",
-        "student.birthDate",
-        "user.firstName",
-        "user.lastName",
-        "sinValidation.sin",
-      ])
-      .leftJoin(
-        Application,
-        "application",
-        "application.student.id = student.id",
-      )
-      .innerJoin("student.user", "user")
-      .innerJoin("student.sinValidation", "sinValidation")
-      .where("user.isActive = true");
-
-    if (searchCriteria.sin) {
-      searchQuery.andWhere("sinValidation.sin = :sin", {
-        sin: removeWhiteSpaces(searchCriteria.sin),
-      });
-    }
-    if (searchCriteria.firstName) {
-      searchQuery.andWhere("user.firstName Ilike :firstName", {
-        firstName: `%${searchCriteria.firstName}%`,
-      });
-    }
-    if (searchCriteria.lastName) {
-      searchQuery.andWhere("user.lastName Ilike :lastName", {
-        lastName: `%${searchCriteria.lastName}%`,
-      });
-    }
-    if (searchCriteria.appNumber) {
-      searchQuery
-        .andWhere("application.applicationNumber Ilike :appNumber")
-        .andWhere("application.applicationStatus != :overwrittenStatus")
-        .setParameters({
-          appNumber: `%${searchCriteria.appNumber}%`,
-          overwrittenStatus: ApplicationStatus.Overwritten,
-        });
-    }
-    return this.transformStudentsToSearchStudentDetails(
-      await searchQuery.getMany(),
-    );
-  }
-
-  /**
-   * Search students based on the search criteria.
-   * @param searchCriteria options to search by firstName,
-   * lastName, appNumber or sin.
-   * @returns list of students.
-   */
-  async searchStudentApplicationForInstitution(
-    institutionId: number,
+  async searchStudentApplication(
     searchCriteria: {
       firstName?: string;
       lastName?: string;
       appNumber?: string;
       sin?: string;
     },
+    institutionId?: number,
   ): Promise<SearchStudentAPIOutDTO[]> {
     const searchQuery = this.repo
       .createQueryBuilder("student")
@@ -520,32 +521,48 @@ export class StudentService extends RecordDataModelService<Student> {
         "user.firstName",
         "user.lastName",
         "sinValidation.sin",
-      ])
-      .innerJoin(
+      ]);
+    if (institutionId) {
+      searchQuery
+        .innerJoin(
+          Application,
+          "application",
+          "application.student.id = student.id",
+        )
+        .leftJoin("application.location", "pirLocation")
+        .leftJoin("pirLocation.institution", "pirInstitution")
+        .leftJoin("application.currentAssessment", "studentAssessment")
+        .leftJoin("studentAssessment.offering", "offering")
+        .leftJoin("offering.institutionLocation", "offeringLocation")
+        .leftJoin("offeringLocation.institution", "offeringInstitution");
+    } else {
+      searchQuery.leftJoin(
         Application,
         "application",
         "application.student.id = student.id",
-      )
-      .leftJoin("application.location", "pirLocation")
-      .leftJoin("pirLocation.institution", "pirInstitution")
-      .leftJoin("application.currentAssessment", "studentAssessment")
-      .leftJoin("studentAssessment.offering", "offering")
-      .leftJoin("offering.institutionLocation", "offeringLocation")
-      .leftJoin("offeringLocation.institution", "offeringInstitution")
+      );
+    }
+    searchQuery
       .innerJoin("student.user", "user")
       .innerJoin("student.sinValidation", "sinValidation")
-      .where("user.isActive = true")
-      .andWhere(
+      .where("user.isActive = true");
+    if (institutionId) {
+      searchQuery.andWhere(
         new Brackets((qb) => {
           qb.where("offeringInstitution.id = :institutionId", {
             institutionId,
           }).orWhere("pirInstitution.id = :institutionId", { institutionId });
         }),
-      )
-      .andWhere("application.applicationStatus != :overwrittenStatus", {
-        overwrittenStatus: ApplicationStatus.Overwritten,
-      });
-
+      );
+    }
+    if (institutionId || searchCriteria.appNumber) {
+      searchQuery.andWhere(
+        "application.applicationStatus != :overwrittenStatus",
+        {
+          overwrittenStatus: ApplicationStatus.Overwritten,
+        },
+      );
+    }
     if (searchCriteria.sin) {
       searchQuery.andWhere("sinValidation.sin = :sin", {
         sin: removeWhiteSpaces(searchCriteria.sin),

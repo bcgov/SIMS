@@ -10,6 +10,7 @@ import {
   SearchStudentAPIOutDTO,
 } from "./models/student.dto";
 import { IInstitutionUserToken } from "../../auth";
+import { INSTITUTION_TYPE_BC_PUBLIC } from "@sims/sims-db/constant";
 
 /**
  * Student controller for institutions.
@@ -35,12 +36,16 @@ export class StudentInstitutionsController extends BaseController {
     @UserToken() userToken: IInstitutionUserToken,
     @Body() searchCriteria: StudentSearchAPIInDTO,
   ): Promise<SearchStudentAPIOutDTO[]> {
-    if (!this.institutionService.isBCPublicInstitution) {
+    const institutionType =
+      await this.institutionService.getInstitutionTypeById(
+        userToken.authorizations.institutionId,
+      );
+    if (institutionType.id !== INSTITUTION_TYPE_BC_PUBLIC) {
       return [];
     }
-    return await this.studentService.searchStudentApplicationForInstitution(
-      userToken.authorizations.institutionId,
+    return await this.studentService.searchStudentApplication(
       searchCriteria,
+      userToken.authorizations.institutionId,
     );
   }
 }
