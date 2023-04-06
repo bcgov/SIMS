@@ -11,6 +11,7 @@ import {
   Note,
   NoteType,
   IdentityProviders,
+  getUserFullNameLikeSearch,
 } from "@sims/sims-db";
 import { DataSource, EntityManager, IsNull, Repository } from "typeorm";
 import { InstitutionUserType, UserInfo } from "../../types";
@@ -333,7 +334,7 @@ export class InstitutionService extends RecordDataModelService<Institution> {
     // search by user's name
     if (paginationOptions.searchCriteria) {
       institutionUsers.andWhere(
-        "CONCAT(user.firstName,  ' ', user.lastName ) ILIKE :searchUser",
+        getUserFullNameLikeSearch("user", "searchUser"),
         {
           searchUser: `%${paginationOptions.searchCriteria.trim()}%`,
         },

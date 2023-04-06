@@ -32,6 +32,7 @@ export const actions: ActionTree<InstitutionLocationState, RootState> = {
       operatingName: response.operatingName,
       institutionType: response.institutionTypeName,
       isBCPrivate: response.isBCPrivate,
+      isBCPublic: response.isBCPublic,
       hasBusinessGuid: response.hasBusinessGuid,
     } as InstitutionStateForStore);
   },

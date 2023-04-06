@@ -13,7 +13,7 @@ import {
   DisbursementOveraward,
   DisbursementOverawardOriginType,
 } from "@sims/sims-db";
-import { DataSource, EntityManager } from "typeorm";
+import { Brackets, DataSource, EntityManager } from "typeorm";
 import { StudentUserToken } from "../../auth/userToken.interface";
 import { LoggerService, InjectLogger } from "@sims/utilities/logger";
 import { removeWhiteSpaces, transformAddressDetails } from "../../utilities";
@@ -438,17 +438,21 @@ export class StudentService extends RecordDataModelService<Student> {
   }
 
   /**
-   * Search students based on the search criteria.
+   * Search students based on the search criteria and institution id if provided.
    * @param searchCriteria options to search by firstName,
    * lastName, appNumber or sin.
-   * @returns list of students.
+   * @param institutionId id of the institution that the student applied to.
+   * @returns list of student details.
    */
-  async searchStudentApplication(searchCriteria: {
-    firstName?: string;
-    lastName?: string;
-    appNumber?: string;
-    sin?: string;
-  }): Promise<Student[]> {
+  async searchStudent(
+    searchCriteria: {
+      firstName?: string;
+      lastName?: string;
+      appNumber?: string;
+      sin?: string;
+    },
+    institutionId?: number,
+  ): Promise<Student[]> {
     const searchQuery = this.repo
       .createQueryBuilder("student")
       .select([
@@ -457,16 +461,48 @@ export class StudentService extends RecordDataModelService<Student> {
         "user.firstName",
         "user.lastName",
         "sinValidation.sin",
-      ])
-      .leftJoin(
+      ]);
+    if (institutionId) {
+      searchQuery
+        .innerJoin(
+          Application,
+          "application",
+          "application.student.id = student.id",
+        )
+        .leftJoin("application.location", "pirLocation")
+        .leftJoin("pirLocation.institution", "pirInstitution")
+        .leftJoin("application.currentAssessment", "studentAssessment")
+        .leftJoin("studentAssessment.offering", "offering")
+        .leftJoin("offering.institutionLocation", "offeringLocation")
+        .leftJoin("offeringLocation.institution", "offeringInstitution");
+    } else {
+      searchQuery.leftJoin(
         Application,
         "application",
         "application.student.id = student.id",
-      )
+      );
+    }
+    searchQuery
       .innerJoin("student.user", "user")
       .innerJoin("student.sinValidation", "sinValidation")
       .where("user.isActive = true");
-
+    if (institutionId) {
+      searchQuery.andWhere(
+        new Brackets((qb) => {
+          qb.where("offeringInstitution.id = :institutionId", {
+            institutionId,
+          }).orWhere("pirInstitution.id = :institutionId", { institutionId });
+        }),
+      );
+    }
+    if (institutionId || searchCriteria.appNumber) {
+      searchQuery.andWhere(
+        "application.applicationStatus != :overwrittenStatus",
+        {
+          overwrittenStatus: ApplicationStatus.Overwritten,
+        },
+      );
+    }
     if (searchCriteria.sin) {
       searchQuery.andWhere("sinValidation.sin = :sin", {
         sin: removeWhiteSpaces(searchCriteria.sin),
@@ -483,13 +519,9 @@ export class StudentService extends RecordDataModelService<Student> {
       });
     }
     if (searchCriteria.appNumber) {
-      searchQuery
-        .andWhere("application.applicationNumber Ilike :appNumber")
-        .andWhere("application.applicationStatus != :overwrittenStatus")
-        .setParameters({
-          appNumber: `%${searchCriteria.appNumber}%`,
-          overwrittenStatus: ApplicationStatus.Overwritten,
-        });
+      searchQuery.andWhere("application.applicationNumber Ilike :appNumber", {
+        appNumber: `%${searchCriteria.appNumber}%`,
+      });
     }
     return searchQuery.getMany();
   }

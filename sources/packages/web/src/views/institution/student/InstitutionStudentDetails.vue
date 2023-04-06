@@ -88,7 +88,7 @@ export default defineComponent({
 
     const goBack = () => {
       router.push({
-        name: InstitutionRoutesConst.SEARCH_STUDENTS,
+        name: InstitutionRoutesConst.INSTITUTION_STUDENT_SEARCH,
       });
     };
 

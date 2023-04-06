@@ -3,7 +3,10 @@ import { InstitutionService, InstitutionTypeService } from "../../services";
 import { AddressInfo } from "@sims/sims-db";
 import { InstitutionDetailAPIOutDTO } from "./models/institution.dto";
 import { OptionItemAPIOutDTO } from "../models/common.dto";
-import { INSTITUTION_TYPE_BC_PRIVATE } from "@sims/sims-db/constant";
+import {
+  INSTITUTION_TYPE_BC_PRIVATE,
+  INSTITUTION_TYPE_BC_PUBLIC,
+} from "@sims/sims-db/constant";
 
 /**
  * Service/Provider for Institutions controller to wrap the common methods.
@@ -31,6 +34,8 @@ export class InstitutionControllerService {
     }
     const isBCPrivate =
       INSTITUTION_TYPE_BC_PRIVATE === institutionDetail.institutionType.id;
+    const isBCPublic =
+      INSTITUTION_TYPE_BC_PUBLIC === institutionDetail.institutionType.id;
 
     // {} as AddressInfo is added to prevent old data to break.
     const mailingAddress =
@@ -62,7 +67,8 @@ export class InstitutionControllerService {
         postalCode: mailingAddress.postalCode,
         selectedCountry: mailingAddress.selectedCountry,
       },
-      isBCPrivate: isBCPrivate,
+      isBCPrivate,
+      isBCPublic,
       hasBusinessGuid: !!institutionDetail.businessGuid,
     };
   }

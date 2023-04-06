@@ -16,6 +16,7 @@ import {
   AssessmentTriggerType,
   User,
   ApplicationData,
+  getUserFullNameLikeSearch,
 } from "@sims/sims-db";
 import { StudentFileService } from "../student-file/student-file.service";
 import {
@@ -820,9 +821,9 @@ export class ApplicationService extends RecordDataModelService<Application> {
       activeApplicationQuery
         .andWhere(
           new Brackets((qb) => {
-            qb.where(
-              "CONCAT(user.firstName,' ', user.lastName) Ilike :searchCriteria",
-            ).orWhere("application.applicationNumber Ilike :searchCriteria");
+            qb.where(getUserFullNameLikeSearch()).orWhere(
+              "application.applicationNumber Ilike :searchCriteria",
+            );
           }),
         )
         .setParameter(
