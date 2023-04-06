@@ -68,6 +68,8 @@ export const InstitutionRoutesConst = {
   SCHOLASTIC_STANDING_VIEW: Symbol(),
   OFFERING_REQUEST_CHANGE: Symbol(),
   OFFERINGS_UPLOAD: Symbol(),
+  INSTITUTION_STUDENT_SEARCH: Symbol(),
+  STUDENT_PROFILE: Symbol(),
 };
 
 /**

@@ -2,7 +2,6 @@ import {
   Body,
   Controller,
   Get,
-  Injectable,
   NotFoundException,
   Param,
   ParseIntPipe,
@@ -40,7 +39,7 @@ import {
   AESTFileUploadToStudentAPIInDTO,
   AESTStudentFileAPIOutDTO,
   AESTStudentProfileAPIOutDTO,
-  AESTStudentSearchAPIInDTO,
+  StudentSearchAPIInDTO,
   ApplicationSummaryAPIOutDTO,
   CreateSINValidationAPIInDTO,
   SearchStudentAPIOutDTO,
@@ -57,10 +56,10 @@ import {
   MINISTRY_FILE_UPLOAD_GROUP_NAME,
   uploadLimits,
 } from "../../utilities";
-import { CustomNamedError, getISODateOnlyString } from "@sims/utilities";
+import { CustomNamedError } from "@sims/utilities";
 import { IUserToken } from "../../auth/userToken.interface";
 import { StudentControllerService } from "..";
-import { FileOriginType, Student } from "@sims/sims-db";
+import { FileOriginType } from "@sims/sims-db";
 import { FileCreateAPIOutDTO } from "../models/common.dto";
 import {
   ApplicationPaginationOptionsAPIInDTO,
@@ -81,7 +80,6 @@ import { EntityManager } from "typeorm";
 @Groups(UserGroups.AESTUser)
 @Controller("student")
 @ApiTags(`${ClientTypeBaseRoute.AEST}-student`)
-@Injectable()
 export class StudentAESTController extends BaseController {
   constructor(
     private readonly fileService: StudentFileService,
@@ -228,17 +226,12 @@ export class StudentAESTController extends BaseController {
    */
   @Post("search")
   async searchStudents(
-    @Body() searchCriteria: AESTStudentSearchAPIInDTO,
+    @Body() searchCriteria: StudentSearchAPIInDTO,
   ): Promise<SearchStudentAPIOutDTO[]> {
-    const searchStudentApplications =
-      await this.studentService.searchStudentApplication(searchCriteria);
-    return searchStudentApplications.map((eachStudent: Student) => ({
-      id: eachStudent.id,
-      firstName: eachStudent.user.firstName,
-      lastName: eachStudent.user.lastName,
-      birthDate: getISODateOnlyString(eachStudent.birthDate),
-      sin: eachStudent.sinValidation.sin,
-    }));
+    const students = await this.studentService.searchStudent(searchCriteria);
+    return this.studentControllerService.transformStudentsToSearchStudentDetails(
+      students,
+    );
   }
 
   /**

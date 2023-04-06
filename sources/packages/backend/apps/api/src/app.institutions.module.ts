@@ -42,6 +42,8 @@ import {
   EducationProgramOfferingInstitutionsController,
   EducationProgramOfferingControllerService,
   ConfirmationOfEnrollmentControllerService,
+  StudentInstitutionsController,
+  StudentControllerService,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
 import {
@@ -73,6 +75,7 @@ import { UserControllerService } from "./route-controllers/user/user.controller.
     ProgramInfoRequestInstitutionsController,
     EducationProgramOfferingInstitutionsController,
     UserInstitutionsController,
+    StudentInstitutionsController,
   ],
   providers: [
     WorkflowClientService,
@@ -117,6 +120,7 @@ import { UserControllerService } from "./route-controllers/user/user.controller.
     ConfirmationOfEnrollmentService,
     DisbursementOverawardService,
     NoteSharedService,
+    StudentControllerService,
   ],
 })
 export class AppInstitutionsModule {}
