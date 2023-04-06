@@ -33,13 +33,13 @@ export enum WorkflowServiceTasks {
  * the workflow execution passed through those tasks.
  */
 export enum WorkflowSubprocesses {
-  LoadConsolidatedDataSubmitOrReassessment = "loadConsolidatedDataOnSubmitOrReassessmentSubprocess",
-  LoadConsolidatedDataPreAssessment = "loadConsolidatedDataPreAssessmentSubprocess",
-  StudentIncomeVerification = "studentIncomeVerificationSubprocess",
-  RetrieveSupportingInfoPartner = "retrieveSupportingInfoPartnerSubprocess",
-  RetrieveSupportingInfoParent1 = "retrieveSupportingInfoParent1Subprocess",
-  RetrieveSupportingInfoParent2 = "retrieveSupportingInfoParent2Subprocess",
-  PartnerIncomeVerification = "partnerIncomeVerificationSubprocess",
-  Parent1IncomeVerification = "parent1IncomeVerificationSubprocess",
-  Parent2IncomeVerification = "parent2IncomeVerificationSubprocess",
+  LoadConsolidatedDataSubmitOrReassessment = "load-assessment-data-submit-or-reassessment-subprocess",
+  LoadConsolidatedDataPreAssessment = "load-assessment-data-pre-assessment-subprocess",
+  StudentIncomeVerification = "student-income-verification-subprocess",
+  RetrieveSupportingInfoPartner = "retrieve-supporting-info-for-partner-subprocess",
+  RetrieveSupportingInfoParent1 = "retrieve-supporting-info-for-parent-1-subprocess",
+  RetrieveSupportingInfoParent2 = "retrieve-supporting-info-for-parent-2-subprocess",
+  PartnerIncomeVerification = "partner-income-verification-subprocess",
+  Parent1IncomeVerification = "parent-1-income-verification-subprocess",
+  Parent2IncomeVerification = "parent-2-income-verification-subprocess",
 }

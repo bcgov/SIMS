@@ -31,7 +31,25 @@ export enum OfferingDeliveryOptions {
   Blended = "blended",
 }
 
+/**
+ * The load consolidated assessment data can be happen for three different scenarios:
+ * 1. When the application is submitted for the first time ever;
+ * 2. After the data collection happens (PIR, parents, partner, income);
+ * 3. During a reassessment.
+ * For the scenario 1, the load assessment will return less data, since the collection phase
+ * did not happen yet.
+ * For the scenarios 2 and 3, the data is fully acquired and the assessment calculation can happen.
+ * This enum defines the 2 different moments for the 3 different scenarios where there is a
+ * difference between the data returned.
+ */
 export enum AssessmentDataType {
+  /**
+   * PIR, parents, partner, income, etc. did not happen yet and the assessment consolidated
+   * data is pretty much the data reported by the student on the application form.
+   */
   Submit,
+  /**
+   * All data needed was acquired and the assessment is ready to be calculated.
+   */
   PreAssessment,
 }

@@ -46,7 +46,7 @@ export function getPassthroughTaskId(serviceTaskId: string) {
  * @returns service task id, usually declared as 'service-task-id' to the expected
  * Camunda variable name like service_task_id.
  */
-function getNormalizedServiceTaskId(serviceTaskId: string) {
+export function getNormalizedServiceTaskId(serviceTaskId: string) {
   return serviceTaskId.replace(
     SERVICE_TASK_ID_SEPARATOR_REGEX,
     MOCKS_SEPARATOR,
@@ -94,8 +94,8 @@ export interface WorkerMockedData {
  * @returns mocked objects, see example below for one single mocked worker for 2
  * subprocesses that also need to have messages published.
  * @example
-   "create-income-request-task": {
-    "studentIncomeVerificationSubprocess": {
+   "create_income_request_task": {
+    "student_income_verification_subprocess": {
       "result": {
         "incomeVerificationCompleted": true,
         "incomeVerificationId": 1000
@@ -114,7 +114,7 @@ export interface WorkerMockedData {
         }
       ]
     },
-    "parent1IncomeVerificationSubprocess": {
+    "parent1_income_verification_subprocess": {
       "result": {
         "incomeVerificationCompleted": true,
         "incomeVerificationId": 1001
@@ -141,18 +141,22 @@ export function createWorkersMockedData(
   // Keep the consolidation of all mocked workers.
   const rootMockedData: Record<string, unknown> = {};
   for (const mockedWorker of mockedWorkers) {
-    if (!rootMockedData[mockedWorker.serviceTaskId]) {
-      rootMockedData[mockedWorker.serviceTaskId] = {};
+    const serviceTaskId = getNormalizedServiceTaskId(
+      mockedWorker.serviceTaskId,
+    );
+    if (!rootMockedData[serviceTaskId]) {
+      rootMockedData[serviceTaskId] = {};
     }
     // Creates a subprocess hierarchy to store the worker mock assuming
     // that the hierarchy could be partially created already due to another
     // subprocess for the same service task id.
-    let mockedData = rootMockedData[mockedWorker.serviceTaskId];
+    let mockedData = rootMockedData[serviceTaskId];
     mockedWorker.options.subprocesses?.forEach((subprocess) => {
-      if (!mockedData[subprocess]) {
-        mockedData[subprocess] = {};
+      const subprocessId = getNormalizedServiceTaskId(subprocess);
+      if (!mockedData[subprocessId]) {
+        mockedData[subprocessId] = {};
       }
-      mockedData = mockedData[subprocess];
+      mockedData = mockedData[subprocessId];
     });
     // Create result mocked object.
     if (mockedWorker.options.jobCompleteMock) {

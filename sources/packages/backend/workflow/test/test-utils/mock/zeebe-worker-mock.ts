@@ -5,7 +5,7 @@ import {
   JOB_MESSAGE_RESULT_SUFFIX,
   PARENT_SUBPROCESSES_VARIABLE,
 } from "../constants/mock-constants";
-import { getPassthroughTaskId } from "./mock.utils";
+import { getNormalizedServiceTaskId, getPassthroughTaskId } from "./mock.utils";
 
 /**
  * Mock task handler which returns job complete
@@ -15,14 +15,16 @@ import { getPassthroughTaskId } from "./mock.utils";
  * @returns mock task handler response.
  */
 async function mockTaskHandler(job: ZeebeJob<unknown>) {
-  const serviceTaskMock = job.variables[job.elementId] ?? {};
+  const serviceTaskId = getNormalizedServiceTaskId(job.elementId);
+  const serviceTaskMock = job.variables[serviceTaskId] ?? {};
   // Check if the service task id is in a sub-process.
   const subprocesses: string[] =
     job.variables[PARENT_SUBPROCESSES_VARIABLE] ?? [];
   let mockedData = serviceTaskMock;
   for (const subprocessMock of subprocesses) {
-    if (mockedData[subprocessMock]) {
-      mockedData = mockedData[subprocessMock];
+    const subprocessMockId = getNormalizedServiceTaskId(subprocessMock);
+    if (mockedData[subprocessMockId]) {
+      mockedData = mockedData[subprocessMockId];
     } else {
       break;
     }
@@ -54,7 +56,9 @@ export class ZeebeMockedClient {
         taskType,
         taskHandler: mockTaskHandler,
       }));
-      ZeebeMockedClient.mockedZeebeClient = new ZBClient({ loglevel: "ERROR" });
+      // Zeebe client logs disabled for a better test summary display.
+      // It can be enable as needed for troubleshooting.
+      ZeebeMockedClient.mockedZeebeClient = new ZBClient({ loglevel: "NONE" });
       fakeWorkers.forEach((fakeWorker) =>
         ZeebeMockedClient.mockedZeebeClient.createWorker(fakeWorker),
       );
