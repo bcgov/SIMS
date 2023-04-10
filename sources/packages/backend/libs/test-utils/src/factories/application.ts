@@ -36,6 +36,7 @@ export function createFakeApplication(relations?: {
   programYear?: ProgramYear;
   currentStudentAssessment?: StudentAssessment;
   applicationException?: ApplicationException;
+  location?: InstitutionLocation;
 }): Application {
   const application = new Application();
   application.data = {} as ApplicationData;
@@ -49,6 +50,7 @@ export function createFakeApplication(relations?: {
   application.currentAssessment = relations?.currentStudentAssessment;
   application.applicationNumber = faker.random.alphaNumeric(10);
   application.applicationException = relations?.applicationException;
+  application.location = relations?.location;
   return application;
 }
 
@@ -153,4 +155,26 @@ export async function saveFakeApplicationDisbursements(
   );
   savedApplication.currentAssessment = savedOriginalAssessment;
   return applicationRepo.save(savedApplication);
+}
+
+/**
+ * Create and save a fake application.
+ * @param dataSource data source to persist application.
+ * @param relations application entity relations.
+ * @returns persisted application with relations provided.
+ */
+export async function saveFakeApplication(
+  dataSource: DataSource,
+  relations?: {
+    student?: Student;
+    programYear?: ProgramYear;
+    currentStudentAssessment?: StudentAssessment;
+    applicationException?: ApplicationException;
+    institutionLocation?: InstitutionLocation;
+  },
+): Promise<Application> {
+  const applicationRepo = dataSource.getRepository(Application);
+
+  const application = createFakeApplication(relations);
+  return applicationRepo.save(application);
 }
