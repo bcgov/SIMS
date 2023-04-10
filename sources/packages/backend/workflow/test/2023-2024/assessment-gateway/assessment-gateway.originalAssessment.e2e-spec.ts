@@ -42,7 +42,7 @@ describe(`E2E Test Workflow assessment gateway on original assessment for ${PROG
     // Arrange
 
     // Assessment consolidated mocked data.
-    const assessmentDataOnSubmit: AssessmentConsolidatedData = {
+    const assessmentConsolidatedData: AssessmentConsolidatedData = {
       assessmentTriggerType: AssessmentTriggerType.OriginalAssessment,
       ...createFakeConsolidatedFulltimeData(PROGRAM_YEAR),
       ...createFakeSingleIndependentStudentData(),
@@ -51,15 +51,7 @@ describe(`E2E Test Workflow assessment gateway on original assessment for ${PROG
     };
 
     const workersMockedData = createWorkersMockedData([
-      createLoadAssessmentDataTaskMock({
-        assessmentConsolidatedData: assessmentDataOnSubmit,
-        subprocess:
-          WorkflowSubprocesses.LoadConsolidatedDataSubmitOrReassessment,
-      }),
-      createLoadAssessmentDataTaskMock({
-        assessmentConsolidatedData: assessmentDataOnSubmit,
-        subprocess: WorkflowSubprocesses.LoadConsolidatedDataPreAssessment,
-      }),
+      createLoadAssessmentDataTaskMock({ assessmentConsolidatedData }),
       createVerifyApplicationExceptionsTaskMock(),
       createIncomeRequestTaskMock({
         incomeVerificationId: incomeVerificationId++,
