@@ -73,7 +73,7 @@
     "soap": "^0.36.0",
     "ssh2-sftp-client": "^7.1.0",
     "swagger-ui-express": "^4.3.0",
-    "typeorm": "^0.3.11",
+    "typeorm": "^0.3.14",
     "zeebe-node": "^8.1.2"
   },
   "devDependencies": {
