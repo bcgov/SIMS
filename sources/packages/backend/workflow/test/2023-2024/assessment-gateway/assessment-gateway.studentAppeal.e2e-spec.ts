@@ -10,7 +10,6 @@ import {
   createFakeSingleIndependentStudentData,
   expectToPassThroughServiceTasks,
   expectNotToPassThroughServiceTasks,
-  WorkflowSubprocesses,
 } from "../../test-utils";
 import { PROGRAM_YEAR } from "../constants/program-year.constants";
 import {
@@ -35,12 +34,6 @@ describe(`E2E Test Workflow assessment gateway on student appeal for ${PROGRAM_Y
     const workersMockedData = createWorkersMockedData([
       createLoadAssessmentDataTaskMock({
         assessmentConsolidatedData: assessmentConsolidatedData,
-        subprocess:
-          WorkflowSubprocesses.LoadConsolidatedDataSubmitOrReassessment,
-      }),
-      createLoadAssessmentDataTaskMock({
-        assessmentConsolidatedData: assessmentConsolidatedData,
-        subprocess: WorkflowSubprocesses.LoadConsolidatedDataPreAssessment,
       }),
     ]);
 
