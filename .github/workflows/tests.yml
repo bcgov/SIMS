@@ -48,6 +48,7 @@ jobs:
         run: |
           make e2e-tests-api
       - name: Tests Coverage
+        if: ${{ github.actor != 'dependabot[bot]' }}
         uses: slavcodev/coverage-monitor-action@v1
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
@@ -84,6 +85,7 @@ jobs:
         run: |
           make e2e-tests-workers
       - name: Tests Coverage
+        if: ${{ github.actor != 'dependabot[bot]' }}
         uses: slavcodev/coverage-monitor-action@v1
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
@@ -137,6 +139,7 @@ jobs:
         run: |
           make e2e-tests-queue-consumers
       - name: Tests Coverage
+        if: ${{ github.actor != 'dependabot[bot]' }}
         uses: slavcodev/coverage-monitor-action@v1
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
@@ -164,6 +167,7 @@ jobs:
         run: |
           make backend-unit-tests
       - name: Tests Coverage
+        if: ${{ github.actor != 'dependabot[bot]' }}
         uses: slavcodev/coverage-monitor-action@v1
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
