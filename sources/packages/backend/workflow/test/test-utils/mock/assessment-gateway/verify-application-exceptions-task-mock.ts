@@ -1,6 +1,6 @@
 import { ApplicationExceptionStatus } from "@sims/sims-db";
 import { WorkflowServiceTasks } from "../..";
-import { createMockedWorkerResult } from "..";
+import { WorkerMockedData } from "..";
 
 /**
  * Creates the mock for 'Verify Application Exceptions' completed task.
@@ -11,13 +11,13 @@ import { createMockedWorkerResult } from "..";
  */
 export function createVerifyApplicationExceptionsTaskMock(options?: {
   status: ApplicationExceptionStatus;
-}) {
+}): WorkerMockedData {
   const applicationExceptionStatus =
     options?.status ?? ApplicationExceptionStatus.Approved;
-  return createMockedWorkerResult(
-    WorkflowServiceTasks.VerifyApplicationExceptions,
-    {
+  return {
+    serviceTaskId: WorkflowServiceTasks.VerifyApplicationExceptions,
+    options: {
       jobCompleteMock: { applicationExceptionStatus },
     },
-  );
+  };
 }

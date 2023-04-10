@@ -1,9 +1,9 @@
-import { PublishMessageRequest, ZeebeJob } from "zeebe-node";
+import { PublishMessageRequest } from "zeebe-node";
 import {
   JOB_COMPLETED_RESULT_SUFFIX,
   JOB_MESSAGE_RESULT_SUFFIX,
+  JOB_PASSTHROUGH_SUFFIX,
   MOCKS_SEPARATOR,
-  PARENT_SUBPROCESSES_VARIABLE,
   SERVICE_TASK_ID_SEPARATOR,
 } from "../constants/mock-constants";
 import {
@@ -20,32 +20,17 @@ const SERVICE_TASK_ID_SEPARATOR_REGEX = new RegExp(
 );
 
 /**
- * Get the mock identifier for a completed job to be sent to the workflow,
- * for instance, create_supporting_users_for_parents_task_result, where:
+ * Get the passthrough mock identifier for a completed job,
+ * for instance, create_supporting_users_for_parents_task_passthrough, where:
  * - `create_supporting_users_for_parents_task`: service task id;
- * - `result`: suffix that identifies the job completed object.
- * @param serviceTaskId service task id that will have the job completed returned.
- * @returns mock identifier for a completed job to be sent to the workflow.
+ * - `passthrough`: suffix that identifies the job passthrough identifier.
+ * @param serviceTaskId service task id that will have the job passthrough defined.
+ * @returns passthrough mock identifier for a completed job.
  */
-export function getServiceTaskResultMockId(serviceTaskId: string) {
+export function getPassthroughTaskId(serviceTaskId: string) {
   return `${getNormalizedServiceTaskId(
     serviceTaskId,
-  )}${MOCKS_SEPARATOR}${JOB_COMPLETED_RESULT_SUFFIX}`;
-}
-
-/**
- * Get the mock identifier for a message to be sent to the workflow,
- * for instance, create_supporting_users_for_parents_task_messageResult, where:
- * - `create_supporting_users_for_parents_task`: service task id;
- * - `messageResult`: suffix that identifies a message payload to be sent to the
- * workflow.
- * @param serviceTaskId service task id that will need to publish the message.
- * @returns mock identifier for a message to be sent to the workflow.
- */
-export function getPublishMessageResultMockId(serviceTaskId: string) {
-  return `${getNormalizedServiceTaskId(
-    serviceTaskId,
-  )}${MOCKS_SEPARATOR}${JOB_MESSAGE_RESULT_SUFFIX}`;
+  )}${MOCKS_SEPARATOR}${JOB_PASSTHROUGH_SUFFIX}`;
 }
 
 /**
@@ -61,7 +46,7 @@ export function getPublishMessageResultMockId(serviceTaskId: string) {
  * @returns service task id, usually declared as 'service-task-id' to the expected
  * Camunda variable name like service_task_id.
  */
-function getNormalizedServiceTaskId(serviceTaskId: string) {
+export function getNormalizedServiceTaskId(serviceTaskId: string) {
   return serviceTaskId.replace(
     SERVICE_TASK_ID_SEPARATOR_REGEX,
     MOCKS_SEPARATOR,
@@ -69,30 +54,8 @@ function getNormalizedServiceTaskId(serviceTaskId: string) {
 }
 
 /**
- * The service task id (a.k.a. elementId) is unique in the workflow where it is present but
- * can exist in multiple sub-processes (e.g. 'create-income-request'). In this case a special
- * variable, named as 'parentSubprocesses', is used to create a unique service task id.
- * The 'parentSubprocesses' variable is a list that can be appended with multiple scopes allowing
- * uniquely identifying the service ids at any level, for instance, a sub-process calling
- * a sub-process.
- * @param job worker job.
- * @returns unique service task id.
- */
-export function getScopedServiceTaskId(job: ZeebeJob<unknown>): string {
-  // Check if the service task id is in a sub-process.
-  const parentSubprocesses: string[] | undefined =
-    job.variables[PARENT_SUBPROCESSES_VARIABLE];
-  if (parentSubprocesses?.length) {
-    const scopedElementId = [...parentSubprocesses, job.elementId];
-    return scopedElementId.join(MOCKS_SEPARATOR);
-  }
-  // If the element is not in a sub-process just return the element id.
-  return job.elementId;
-}
-
-/**
- * Create the mocked objects to be used as the job completed object and/or to publish
- * messages to unblock the workflow.
+ * Information to create a mocked worker including the job completed object and/or the
+ * messages to be published to unblock the workflow.
  * @param serviceTaskId workflow service task id.
  * @param options mock creation options.
  * - `jobCompleteMock` the object to be returned when the job is completed.
@@ -113,61 +76,98 @@ export function getScopedServiceTaskId(job: ZeebeJob<unknown>): string {
  * the assessment-gateway workflow:
  * - for student income verification it would be studentIncomeVerificationSubprocess_create_income_request_task
  * - for partner income verification it would be partnerIncomeVerificationSubprocess_create_income_request_task
- * @returns mocked objects to be used by the worker.
- * @example
- * "create_supporting_users_for_parents_task_result": {
-            "createdSupportingUsersIds": [
-                2000,
-                2001
-            ]
-        },
-    "create_supporting_users_for_parents_task_messageResult": [
-        {
-            "name": "supporting-user-info-received",
-            "correlationKey": "2000",
-            "variables": {},
-            "timeToLive": {
-                "type": "SECONDS",
-                "value": 5,
-                "valueType": "TYPED_DURATION",
-                "unit": "s"
-            }
-        },
-        {
-            "name": "supporting-user-info-received",
-            "correlationKey": "2001",
-            "variables": {},
-            "timeToLive": {
-                "type": "SECONDS",
-                "value": 5,
-                "valueType": "TYPED_DURATION",
-                "unit": "s"
-            }
-        }
-    ],
+ * @returns mocked object to be used by a worker.
  */
-export function createMockedWorkerResult(
-  serviceTaskId: WorkflowServiceTasks,
+export interface WorkerMockedData {
+  serviceTaskId: WorkflowServiceTasks;
   options: {
     jobCompleteMock?: unknown;
     jobMessageMocks?: PublishMessageRequest<unknown>[];
     subprocesses?: WorkflowSubprocesses[];
+  };
+}
+
+/**
+ * Create the mocked objects to be used as the job completed object and/or to publish
+ * messages to unblock the workflow.
+ * @param mockedWorkers all mocked data expected to test the workflow scenario.
+ * @returns mocked objects, see example below for one single mocked worker for 2
+ * subprocesses that also need to have messages published.
+ * @example
+   "create_income_request_task": {
+    "student_income_verification_subprocess": {
+      "result": {
+        "incomeVerificationCompleted": true,
+        "incomeVerificationId": 1000
+      },
+      "messageResult": [
+        {
+          "name": "income-verified",
+          "correlationKey": "1000",
+          "variables": {},
+          "timeToLive": {
+            "type": "SECONDS",
+            "value": 10,
+            "valueType": "TYPED_DURATION",
+            "unit": "s"
+          }
+        }
+      ]
+    },
+    "parent1_income_verification_subprocess": {
+      "result": {
+        "incomeVerificationCompleted": true,
+        "incomeVerificationId": 1001
+      },
+      "messageResult": [
+        {
+          "name": "income-verified",
+          "correlationKey": "1001",
+          "variables": {},
+          "timeToLive": {
+            "type": "SECONDS",
+            "value": 10,
+            "valueType": "TYPED_DURATION",
+            "unit": "s"
+          }
+        }
+      ]
+    },
   },
+ */
+export function createWorkersMockedData(
+  mockedWorkers: WorkerMockedData[],
 ): Record<string, unknown> {
-  let fullServiceTaskId = serviceTaskId.toString();
-  if (options?.subprocesses?.length) {
-    fullServiceTaskId = [...options.subprocesses, fullServiceTaskId].join(
-      MOCKS_SEPARATOR,
+  // Keep the consolidation of all mocked workers.
+  const rootMockedData: Record<string, unknown> = {};
+  for (const mockedWorker of mockedWorkers) {
+    const serviceTaskId = getNormalizedServiceTaskId(
+      mockedWorker.serviceTaskId,
     );
+    if (!rootMockedData[serviceTaskId]) {
+      rootMockedData[serviceTaskId] = {};
+    }
+    // Creates a subprocess hierarchy to store the worker mock assuming
+    // that the hierarchy could be partially created already due to another
+    // subprocess for the same service task id.
+    let mockedData = rootMockedData[serviceTaskId];
+    mockedWorker.options.subprocesses?.forEach((subprocess) => {
+      const subprocessId = getNormalizedServiceTaskId(subprocess);
+      if (!mockedData[subprocessId]) {
+        mockedData[subprocessId] = {};
+      }
+      mockedData = mockedData[subprocessId];
+    });
+    // Create result mocked object.
+    if (mockedWorker.options.jobCompleteMock) {
+      mockedData[JOB_COMPLETED_RESULT_SUFFIX] =
+        mockedWorker.options.jobCompleteMock;
+    }
+    // Create message result mocked object.
+    if (mockedWorker.options.jobMessageMocks?.length) {
+      mockedData[JOB_MESSAGE_RESULT_SUFFIX] =
+        mockedWorker.options.jobMessageMocks;
+    }
   }
-  const mockedWorkerResult: Record<string, unknown> = {};
-  if (options.jobCompleteMock) {
-    mockedWorkerResult[getServiceTaskResultMockId(fullServiceTaskId)] =
-      options.jobCompleteMock;
-  }
-  if (options.jobMessageMocks?.length) {
-    mockedWorkerResult[getPublishMessageResultMockId(fullServiceTaskId)] =
-      options.jobMessageMocks;
-  }
-  return mockedWorkerResult;
+  return rootMockedData;
 }

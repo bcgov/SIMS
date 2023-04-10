@@ -1,5 +1,5 @@
 import { WorkflowSubprocesses, WorkflowServiceTasks } from "../..";
-import { createMockedWorkerResult } from "../mock.utils";
+import { WorkerMockedData } from "../mock.utils";
 
 /**
  * Creates the mock for 'Check Supporting User Response' completed task.
@@ -14,14 +14,14 @@ import { createMockedWorkerResult } from "../mock.utils";
 export function createCheckSupportingUserResponseTaskMock(options: {
   totalIncome: number;
   subprocesses?: WorkflowSubprocesses;
-}): Record<string, unknown> {
-  return createMockedWorkerResult(
-    WorkflowServiceTasks.CheckSupportingUserResponseTask,
-    {
+}): WorkerMockedData {
+  return {
+    serviceTaskId: WorkflowServiceTasks.CheckSupportingUserResponseTask,
+    options: {
       jobCompleteMock: {
         totalIncome: options.totalIncome,
       },
       subprocesses: [options?.subprocesses],
     },
-  );
+  };
 }

@@ -1,16 +1,11 @@
-import { PublishMessageRequest, ZBClient, ZeebeJob } from "zeebe-node";
+import { ZBClient, ZeebeJob } from "zeebe-node";
 import { Workers } from "@sims/services/constants";
 import {
-  getPublishMessageResultMockId,
-  getScopedServiceTaskId,
-  getServiceTaskResultMockId,
-} from ".";
-
-/**
- * Zeebe client to be used in mock implementation
- * of the workers.
- */
-const zeebeWorkerClient = new ZBClient();
+  JOB_COMPLETED_RESULT_SUFFIX,
+  JOB_MESSAGE_RESULT_SUFFIX,
+  PARENT_SUBPROCESSES_VARIABLE,
+} from "../constants/mock-constants";
+import { getNormalizedServiceTaskId, getPassthroughTaskId } from "./mock.utils";
 
 /**
  * Mock task handler which returns job complete
@@ -20,38 +15,33 @@ const zeebeWorkerClient = new ZBClient();
  * @returns mock task handler response.
  */
 async function mockTaskHandler(job: ZeebeJob<unknown>) {
-  // Check if there is a message to be published.
-  const messagePayloads = getMessagePayload(job);
-  if (messagePayloads?.length) {
-    for (const messagePayload of messagePayloads) {
-      zeebeWorkerClient.publishMessage(messagePayload);
+  const serviceTaskId = getNormalizedServiceTaskId(job.elementId);
+  const serviceTaskMock = job.variables[serviceTaskId] ?? {};
+  // Check if the service task id is in a sub-process.
+  const subprocesses: string[] =
+    job.variables[PARENT_SUBPROCESSES_VARIABLE] ?? [];
+  let mockedData = serviceTaskMock;
+  for (const subprocessMock of subprocesses) {
+    const subprocessMockId = getNormalizedServiceTaskId(subprocessMock);
+    if (mockedData[subprocessMockId]) {
+      mockedData = mockedData[subprocessMockId];
+    } else {
+      break;
     }
   }
-  // Get the expected object to be returned. If no object is
-  // present, a 'complete' result will be returned.
-  const serviceTaskId = getScopedServiceTaskId(job);
-  return job.complete({
-    [serviceTaskId]: serviceTaskId,
-    ...job.variables[getServiceTaskResultMockId(serviceTaskId)],
-  });
-}
 
-/**
- * When the workflow also expects a message to proceed, the worker can send the
- * message if its expected mock result is present in the job variables.
- * @param job worker job.
- * @returns message payload to be sent by the worker to the workflow.
- */
-function getMessagePayload(
-  job: ZeebeJob<unknown> | undefined,
-): PublishMessageRequest<unknown>[] {
-  const serviceTaskId = getScopedServiceTaskId(job);
-  const messagePayload =
-    job.variables[getPublishMessageResultMockId(serviceTaskId)];
-  if (messagePayload) {
-    return messagePayload;
+  // Check if there is a message to be published.
+  const messagePayloads = mockedData[JOB_MESSAGE_RESULT_SUFFIX];
+  if (messagePayloads?.length) {
+    const zeebeClient = ZeebeMockedClient.getMockedZeebeInstance();
+    for (const messagePayload of messagePayloads) {
+      await zeebeClient.publishMessage(messagePayload);
+    }
   }
-  return undefined;
+  return job.complete({
+    [getPassthroughTaskId(job.elementId)]: job.elementId,
+    ...mockedData[JOB_COMPLETED_RESULT_SUFFIX],
+  });
 }
 
 /**
@@ -66,7 +56,9 @@ export class ZeebeMockedClient {
         taskType,
         taskHandler: mockTaskHandler,
       }));
-      ZeebeMockedClient.mockedZeebeClient = new ZBClient();
+      // Zeebe client logs disabled for a better test summary display.
+      // It can be enable as needed for troubleshooting.
+      ZeebeMockedClient.mockedZeebeClient = new ZBClient({ loglevel: "NONE" });
       fakeWorkers.forEach((fakeWorker) =>
         ZeebeMockedClient.mockedZeebeClient.createWorker(fakeWorker),
       );

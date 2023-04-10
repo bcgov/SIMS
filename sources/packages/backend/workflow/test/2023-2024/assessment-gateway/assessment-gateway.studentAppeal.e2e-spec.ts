@@ -12,7 +12,10 @@ import {
   expectNotToPassThroughServiceTasks,
 } from "../../test-utils";
 import { PROGRAM_YEAR } from "../constants/program-year.constants";
-import { createLoadAssessmentConsolidatedDataMock } from "../../test-utils/mock";
+import {
+  createWorkersMockedData,
+  createLoadAssessmentDataTaskMock,
+} from "../../test-utils/mock";
 
 describe(`E2E Test Workflow assessment gateway on student appeal for ${PROGRAM_YEAR}`, () => {
   let zeebeClientProvider: ZBClient;
@@ -28,15 +31,19 @@ describe(`E2E Test Workflow assessment gateway on student appeal for ${PROGRAM_Y
       ...createFakeSingleIndependentStudentData(),
     };
 
+    const workersMockedData = createWorkersMockedData([
+      createLoadAssessmentDataTaskMock({
+        assessmentConsolidatedData: assessmentConsolidatedData,
+      }),
+    ]);
+
     // Act/Assert
     const assessmentGatewayResponse =
       await zeebeClientProvider.createProcessInstanceWithResult({
         bpmnProcessId: "assessment-gateway",
         variables: {
           [ASSESSMENT_ID]: 1,
-          ...createLoadAssessmentConsolidatedDataMock({
-            assessmentConsolidatedData,
-          }),
+          ...workersMockedData,
         },
         requestTimeout: PROCESS_INSTANCE_CREATE_TIMEOUT,
       });

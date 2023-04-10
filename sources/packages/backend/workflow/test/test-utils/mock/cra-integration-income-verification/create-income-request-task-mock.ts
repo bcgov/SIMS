@@ -3,7 +3,7 @@ import {
   WorkflowServiceTasks,
   WorkflowSubprocesses,
 } from "../..";
-import { createMockedWorkerResult } from "../mock.utils";
+import { WorkerMockedData } from "../mock.utils";
 
 /**
  * Creates the mock for 'Create Income request' completed task
@@ -17,24 +17,26 @@ import { createMockedWorkerResult } from "../mock.utils";
  * @returns mock for 'Create Income request' completed task and also publish
  * the message to unblock the workflow.
  */
-export function createIncomeRequestTaskMock(options?: {
+export function createIncomeRequestTaskMock(options: {
   incomeVerificationId: number;
   subprocesses?: WorkflowSubprocesses;
-}): Record<string, unknown> {
-  const incomeVerificationId = options?.incomeVerificationId ?? 1;
-  return createMockedWorkerResult(WorkflowServiceTasks.CreateIncomeRequest, {
-    jobCompleteMock: {
-      incomeVerificationCompleted: true,
-      incomeVerificationId,
-    },
-    jobMessageMocks: [
-      {
-        name: "income-verified",
-        correlationKey: incomeVerificationId.toString(),
-        variables: {},
-        timeToLive: PUBLISH_MESSAGE_TIME_TO_LEAVE_SECONDS,
+}): WorkerMockedData {
+  return {
+    serviceTaskId: WorkflowServiceTasks.CreateIncomeRequest,
+    options: {
+      jobCompleteMock: {
+        incomeVerificationCompleted: true,
+        incomeVerificationId: options.incomeVerificationId,
       },
-    ],
-    subprocesses: [options?.subprocesses],
-  });
+      jobMessageMocks: [
+        {
+          name: "income-verified",
+          correlationKey: options.incomeVerificationId.toString(),
+          variables: {},
+          timeToLive: PUBLISH_MESSAGE_TIME_TO_LEAVE_SECONDS,
+        },
+      ],
+      subprocesses: [options?.subprocesses],
+    },
+  };
 }

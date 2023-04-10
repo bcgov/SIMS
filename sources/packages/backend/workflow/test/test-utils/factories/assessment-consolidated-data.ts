@@ -3,6 +3,7 @@ import {
   Provinces,
   YesNoOptions,
   OfferingDeliveryOptions,
+  AssessmentDataType,
 } from "@sims/test-utils";
 import { OfferingIntensity } from "@sims/sims-db";
 
@@ -144,15 +145,18 @@ export function createFakeSingleIndependentStudentData(): Partial<AssessmentCons
  * are present in the application, if they need income verification or if they are not able
  * to use a BCSC to provide data using the supporting users portal.
  * @param options creation options.
+ * - `dataType` indicates which moment the assessment data should represents.
  * - `numberOfParents` generate information for one or two parents.
  * - `validSinNumber` determine if parents can have a BCSC and access the supporting users portal.
  * @returns parents data to be used.
  */
 export function createParentsData(options?: {
+  dataType?: AssessmentDataType;
   numberOfParents?: 1 | 2;
   validSinNumber?: YesNoOptions;
 }): Partial<AssessmentConsolidatedData> {
   // Default values for options when not provided.
+  const dataType = options.dataType ?? AssessmentDataType.Submit;
   const numberOfParents = options?.numberOfParents ?? 1;
   const validSinNumber = options?.validSinNumber ?? YesNoOptions.Yes;
   // Make the student a dependant.
@@ -165,6 +169,9 @@ export function createParentsData(options?: {
     parentsData.studentDataPleaseProvideAnEstimationOfYourParentsIncome = 150000;
   }
   parentsData.studentDataParentValidSinNumber = validSinNumber;
+  if (dataType === AssessmentDataType.Submit) {
+    return parentsData;
+  }
   // Create specific parent data for 1 or 2 parents.
   for (let i = 1; i <= numberOfParents; i++) {
     parentsData[`parent${i}NetAssests`] = 300000;

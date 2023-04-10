@@ -2,6 +2,7 @@ import {
   WorkflowServiceTasks,
   WorkflowSubprocesses,
 } from "../constants/workflow-variables-constants";
+import { getPassthroughTaskId } from "../mock";
 
 export type WorkflowExpectedTask = WorkflowServiceTasks | WorkflowSubprocesses;
 
@@ -16,7 +17,9 @@ export function expectToPassThroughServiceTasks(
   ...expectedTasks: WorkflowExpectedTask[]
 ) {
   expectedTasks.forEach((expectedTask) => {
-    expect(workflowResultVariables[expectedTask]).toBe(expectedTask);
+    expect(workflowResultVariables[getPassthroughTaskId(expectedTask)]).toBe(
+      expectedTask,
+    );
   });
 }
 
@@ -31,6 +34,8 @@ export function expectNotToPassThroughServiceTasks(
   ...expectedTasks: WorkflowExpectedTask[]
 ) {
   expectedTasks.forEach((expectedTask) => {
-    expect(workflowResultVariables[expectedTask]).toBeUndefined();
+    expect(
+      workflowResultVariables[getPassthroughTaskId(expectedTask)],
+    ).toBeUndefined();
   });
 }

@@ -22,3 +22,7 @@ export const JOB_MESSAGE_RESULT_SUFFIX = "messageResult";
  * Identifier of subprocesses in the workflow.
  */
 export const PARENT_SUBPROCESSES_VARIABLE = "parentSubprocesses";
+/**
+ * Suffix that indicates if a task or subprocess was invoked by the workflow.
+ */
+export const JOB_PASSTHROUGH_SUFFIX = "passthrough";
