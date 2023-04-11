@@ -29,6 +29,8 @@ export function createFakeStudent(user?: User): Student {
  * Create and save fake student.
  * @param dataSource data source to persist student.
  * @param relations student entity relations.
+ * - `user` related user.
+ * - `sinValidation` related SIN validation.
  * @returns persisted student with relations provided.
  */
 export async function saveFakeStudent(
