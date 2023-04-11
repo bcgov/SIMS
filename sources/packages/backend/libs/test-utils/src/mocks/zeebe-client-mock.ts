@@ -2,6 +2,12 @@ import { DynamicModule, Provider } from "@nestjs/common";
 import { ZeebeModule } from "@sims/services";
 import { ZBClient } from "zeebe-node";
 
+/**
+ * Creates a mocked {@link ZeebeModule} that proves a mocked {@link ZBClient}
+ * and allow the assertions on method like createProcessInstance,
+ * publishMessage, and cancelProcessInstance.
+ * @returns mocked {@link ZeebeModule}.
+ */
 export function createMockedZeebeModule(): DynamicModule {
   const mockedZBClient = {} as ZBClient;
   mockedZBClient.createProcessInstance = jest.fn();
@@ -17,25 +23,4 @@ export function createMockedZeebeModule(): DynamicModule {
     providers: [zeebeClientProvider],
     exports: [zeebeClientProvider],
   };
-}
-
-export function getMockedZeebeMethods(mockedZBClient: ZBClient): {
-  createProcessInstance: jest.Mock;
-  publishMessage: jest.Mock;
-  cancelProcessInstance: jest.Mock;
-} {
-  const createProcessInstance =
-    mockedZBClient.createProcessInstance as jest.Mock;
-  const publishMessage = mockedZBClient.publishMessage as jest.Mock;
-  const cancelProcessInstance =
-    mockedZBClient.cancelProcessInstance as jest.Mock;
-  return { createProcessInstance, publishMessage, cancelProcessInstance };
-}
-
-export function resetMockedZeebeModule(mockedZBClient: ZBClient): void {
-  const { createProcessInstance, publishMessage, cancelProcessInstance } =
-    getMockedZeebeMethods(mockedZBClient);
-  createProcessInstance.mockReset();
-  publishMessage.mockReset();
-  cancelProcessInstance.mockReset();
 }

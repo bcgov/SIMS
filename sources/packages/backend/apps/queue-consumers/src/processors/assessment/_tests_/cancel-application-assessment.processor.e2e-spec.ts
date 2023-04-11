@@ -3,7 +3,6 @@ import { Job } from "bull";
 import { createMock } from "@golevelup/ts-jest";
 import { INestApplication } from "@nestjs/common";
 import { CancelAssessmentQueueInDTO } from "@sims/services/queue";
-import { resetMockedZeebeModule } from "@sims/test-utils/mocks/zeebe-client-mock";
 import { QueueNames } from "@sims/utilities";
 import {
   createTestingAppModule,
@@ -50,7 +49,7 @@ describe(
     });
 
     beforeEach(() => {
-      resetMockedZeebeModule(zbClientMock);
+      jest.resetAllMocks();
     });
 
     it("Should cancel pending disbursements and rollback overawards when the cancelled application has overawards and also one sent and one pending disbursements.", async () => {

@@ -4,7 +4,6 @@ import { createMock } from "@golevelup/ts-jest";
 import { INestApplication } from "@nestjs/common";
 import { StartApplicationAssessmentProcessor } from "../start-application-assessment.processor";
 import { StartAssessmentQueueInDTO } from "@sims/services/queue";
-import { resetMockedZeebeModule } from "@sims/test-utils/mocks/zeebe-client-mock";
 import { QueueNames } from "@sims/utilities";
 import {
   createTestingAppModule,
@@ -27,10 +26,10 @@ describe(
     });
 
     beforeEach(() => {
-      resetMockedZeebeModule(zbClientMock);
+      jest.resetAllMocks();
     });
 
-    it("Should thrown an error when the workflow createProcessInstance method throws an error.", async () => {
+    it("Should throw an error when the workflow createProcessInstance method throws an error.", async () => {
       // Arrange
       const dummyException = new Error("Dummy error");
       const job = createMock<Job<StartAssessmentQueueInDTO>>();
