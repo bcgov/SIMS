@@ -1,28 +1,18 @@
 import * as Client from "ssh2-sftp-client";
 import { SshService } from "@sims/integrations/services";
 
-const sshServiceMock = new SshService();
-const sshClientMock = new Client();
-
-jest.spyOn(sshServiceMock, "createClient").mockImplementation(() => {
-  return Promise.resolve(sshClientMock);
-});
-
-jest
-  .spyOn(sshClientMock, "put")
-  .mockImplementation(
-    (
-      _input: string | Buffer | NodeJS.ReadableStream,
-      remoteFilePath: string,
-    ) => {
-      return Promise.resolve(
-        `SSH 'put' method executed from mocked SSH service, remoteFilePath: ${remoteFilePath}`,
-      );
-    },
-  );
-
-jest.spyOn(SshService, "closeQuietly").mockImplementation(() => {
-  return Promise.resolve();
-});
-
-export default sshServiceMock;
+/**
+ * Creates a mocked {@link SshService} with a mocked SSH {@link Client}
+ * to allow skip the SFTP interactions.
+ * @returns mocked {@link SshService}.
+ */
+export function createSSHServiceMock(): SshService {
+  const sshClientMock = new Client();
+  sshClientMock.list = jest.fn();
+  sshClientMock.put = jest.fn();
+  sshClientMock.get = jest.fn();
+  const sshServiceMock = new SshService();
+  sshServiceMock.createClient = jest.fn().mockResolvedValue(sshClientMock);
+  SshService.closeQuietly = jest.fn();
+  return sshServiceMock;
+}

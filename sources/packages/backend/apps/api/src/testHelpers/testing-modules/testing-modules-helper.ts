@@ -5,7 +5,7 @@ import { AppModule } from "../../app.module";
 import { KeycloakConfig } from "../../auth";
 import { setGlobalPipes } from "../../utilities";
 import { MockedQueueModule } from "../mocked-providers/queue-module-mock";
-import { createMockedZeebeModule } from "@sims/test-utils";
+import { createZeebeModuleMock } from "@sims/test-utils";
 
 /**
  * Result from a createTestingModule to support E2E tests creation.
@@ -23,7 +23,7 @@ export class CreateTestingModuleResult {
 export async function createTestingAppModule(): Promise<CreateTestingModuleResult> {
   await KeycloakConfig.load();
   const module: TestingModule = await Test.createTestingModule({
-    imports: [AppModule, createMockedZeebeModule(), MockedQueueModule],
+    imports: [AppModule, createZeebeModuleMock(), MockedQueueModule],
   }).compile();
   const nestApplication = module.createNestApplication();
   setGlobalPipes(nestApplication);

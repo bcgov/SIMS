@@ -8,7 +8,7 @@ import { ZBClient } from "zeebe-node";
  * publishMessage, and cancelProcessInstance.
  * @returns mocked {@link ZeebeModule}.
  */
-export function createMockedZeebeModule(): DynamicModule {
+export function createZeebeModuleMock(): DynamicModule {
   const mockedZBClient = {} as ZBClient;
   mockedZBClient.createProcessInstance = jest.fn();
   mockedZBClient.publishMessage = jest.fn();

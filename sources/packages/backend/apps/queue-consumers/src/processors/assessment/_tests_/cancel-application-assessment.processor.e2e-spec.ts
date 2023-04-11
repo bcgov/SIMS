@@ -80,7 +80,7 @@ describe(
         studentAssessment,
       });
       await disbursementOverawardRepo.save(overaward);
-
+      // Queued job.
       const job = createMock<Job<CancelAssessmentQueueInDTO>>({
         data: { assessmentId: studentAssessment.id },
       });
@@ -128,6 +128,7 @@ describe(
         { applicationStatus: ApplicationStatus.Overwritten },
       );
       const studentAssessment = application.currentAssessment;
+      // Queued job.
       const job = createMock<Job<CancelAssessmentQueueInDTO>>({
         data: { assessmentId: studentAssessment.id },
       });
@@ -153,6 +154,7 @@ describe(
         { applicationStatus: ApplicationStatus.Completed },
       );
       const studentAssessment = application.currentAssessment;
+      // Queued job.
       const job = createMock<Job<CancelAssessmentQueueInDTO>>({
         data: { assessmentId: studentAssessment.id },
       });
@@ -169,6 +171,7 @@ describe(
       const assessmentId = 9999;
       const errorMessage = `Assessment id ${assessmentId} was not found.`;
       const error = new Error(errorMessage);
+      // Queued job.
       const job = createMock<Job<CancelAssessmentQueueInDTO>>({
         data: { assessmentId },
       });

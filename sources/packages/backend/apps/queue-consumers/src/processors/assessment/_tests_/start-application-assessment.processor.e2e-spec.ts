@@ -46,6 +46,7 @@ describe(
       const workflowName = "dummy workflow name";
       const assessmentId = 999;
       const variables = { assessmentId };
+      // Queued job.
       const job = createMock<Job<StartAssessmentQueueInDTO>>({
         data: {
           workflowName,
