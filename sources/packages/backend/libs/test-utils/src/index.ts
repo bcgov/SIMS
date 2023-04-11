@@ -19,5 +19,5 @@ export * from "./factories/student-scholastic-standing";
 export * from "./factories/student-appeal";
 export * from "./factories/student-appeal-request";
 export * from "./models/common.model";
-export * from "./mocks/zeebe-client-mock";
+export * from "./mocks/zeebe-client.mock";
 export * from "./mocks/ssh-service.mock";
