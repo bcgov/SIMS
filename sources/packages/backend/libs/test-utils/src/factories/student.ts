@@ -3,7 +3,8 @@ import { SINValidation, Student, User } from "@sims/sims-db";
 import { createFakeUser } from "@sims/test-utils";
 import { DataSource } from "typeorm";
 import { createFakeSINValidation } from "./sin-validation";
-
+// TODO: the parameter user must be moved to relations and all the references must be
+// updated.
 export function createFakeStudent(user?: User): Student {
   const student = new Student();
   student.user = user ?? createFakeUser();
@@ -36,7 +37,7 @@ export async function saveFakeStudent(
 ): Promise<Student> {
   const studentRepo = dataSource.getRepository(Student);
   const student = await studentRepo.save(createFakeStudent(relations?.user));
-  // Saving SIN validation after user is saved due to cyclic dependency error.
+  // Saving SIN validation after student is saved due to cyclic dependency error.
   student.sinValidation =
     relations?.sinValidation ?? createFakeSINValidation({ student });
   return studentRepo.save(student);

@@ -85,7 +85,9 @@ describe("StudentInstitutionsController(e2e)-getStudentProfile", () => {
         sin: student.sinValidation.sin,
       });
   });
-
+  // TODO: When the authorization is implemented for institution student search,
+  // validate the scenario when a student exist but does not have any submitted applications
+  // for the institution.
   it("Should get not found error when student is not found.", async () => {
     // Arrange
     const endpoint = "/institutions/student/999999";

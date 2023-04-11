@@ -109,7 +109,7 @@ export class StudentControllerService {
   /**
    * Get the student information that represents the profile.
    * @param studentId student id to retrieve the data.
-   * @returns student profile information or null case not found.
+   * @returns student profile details.
    */
   async getStudentProfile(studentId: number): Promise<StudentProfileAPIOutDTO> {
     const student = await this.studentService.getStudentById(studentId);

@@ -55,9 +55,11 @@ export class StudentInstitutionsController extends BaseController {
   }
 
   /**
-   * Get student profile with the active restriction status.
+   * Get the student information that represents the profile.
+   * TODO: Authorization must be enabled to validate if the student has submitted
+   * at least one application for the institution of the user.
    * @param studentId student.
-   * @returns student profile details with restriction status.
+   * @returns student profile details.
    */
   @Get(":studentId")
   async getStudentProfile(
