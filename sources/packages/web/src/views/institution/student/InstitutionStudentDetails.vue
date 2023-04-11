@@ -28,7 +28,7 @@
 import { onMounted, ref, defineComponent } from "vue";
 import { StudentService } from "@/services/StudentService";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
-import { StudentRestrictionStatus, StudentProfile } from "@/types";
+import { StudentProfile } from "@/types";
 
 export default defineComponent({
   props: {
@@ -91,7 +91,6 @@ export default defineComponent({
     return {
       items,
       studentDetails,
-      StudentRestrictionStatus,
     };
   },
 });
