@@ -7,7 +7,7 @@ import { SshService } from "@sims/integrations/services";
  * @returns mocked {@link SshService}.
  */
 export function createSSHServiceMock(): SshService {
-  const sshClientMock = new Client();
+  const sshClientMock = {} as Client;
   sshClientMock.list = jest.fn();
   sshClientMock.put = jest.fn();
   sshClientMock.get = jest.fn();

@@ -2,7 +2,7 @@ import { INestApplication } from "@nestjs/common";
 import { Test, TestingModule } from "@nestjs/testing";
 import { DataSource } from "typeorm";
 import { QueueConsumersModule } from "../../../src/queue-consumers.module";
-import { createZeebeModuleMock } from "@sims/test-utils/mocks/zeebe-client-mock";
+import { createZeebeModuleMock } from "@sims/test-utils/mocks/zeebe-client.mock";
 import { ZBClient } from "zeebe-node";
 import { SshService } from "@sims/integrations/services";
 import { createSSHServiceMock } from "@sims/test-utils";
