@@ -1,6 +1,6 @@
 import { HttpStatus, INestApplication } from "@nestjs/common";
 import * as request from "supertest";
-import { DataSource } from "typeorm";
+import { DataSource, Repository } from "typeorm";
 import {
   authorizeUserTokenForLocation,
   BEARER_AUTH_TYPE,
@@ -11,10 +11,10 @@ import {
 } from "../../../../testHelpers";
 import {
   createFakeInstitutionLocation,
-  saveFakeApplication,
+  createFakeApplication,
   saveFakeStudent,
 } from "@sims/test-utils";
-import { Institution, InstitutionLocation } from "@sims/sims-db";
+import { Application, Institution, InstitutionLocation } from "@sims/sims-db";
 import { determinePDStatus, getUserFullName } from "../../../../utilities";
 import { getISODateOnlyString } from "@sims/utilities";
 
@@ -23,6 +23,7 @@ describe("StudentInstitutionsController(e2e)-getStudentProfile", () => {
   let appDataSource: DataSource;
   let collegeC: Institution;
   let collegeCLocation: InstitutionLocation;
+  let applicationRepo: Repository<Application>;
 
   beforeAll(async () => {
     const { nestApplication, dataSource } = await createTestingAppModule();
@@ -40,6 +41,7 @@ describe("StudentInstitutionsController(e2e)-getStudentProfile", () => {
       InstitutionTokenTypes.CollegeCUser,
       collegeCLocation,
     );
+    applicationRepo = appDataSource.getRepository(Application);
   });
 
   it("Should get the student profile when student has at least one application submitted for the institution.", async () => {
@@ -47,10 +49,11 @@ describe("StudentInstitutionsController(e2e)-getStudentProfile", () => {
 
     // Student who has application submitted to institution.
     const student = await saveFakeStudent(appDataSource);
-    await saveFakeApplication(appDataSource, {
-      institutionLocation: collegeCLocation,
+    const application = createFakeApplication({
+      location: collegeCLocation,
       student,
     });
+    await applicationRepo.save(application);
     const endpoint = `/institutions/student/${student.id}`;
     const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeCUser,

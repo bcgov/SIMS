@@ -156,29 +156,3 @@ export async function saveFakeApplicationDisbursements(
   savedApplication.currentAssessment = savedOriginalAssessment;
   return applicationRepo.save(savedApplication);
 }
-
-/**
- * Create and save a fake application.
- * @param dataSource data source to persist application.
- * @param relations application entity relations.
- * - `student` related student.
- * - `programYear` related program year.
- * - `currentStudentAssessment` related current assessment.
- * - `applicationException` related application exception.
- * - `institutionLocation` related institution location.
- * @returns persisted application with relations provided.
- */
-export async function saveFakeApplication(
-  dataSource: DataSource,
-  relations?: {
-    student?: Student;
-    programYear?: ProgramYear;
-    currentStudentAssessment?: StudentAssessment;
-    applicationException?: ApplicationException;
-    institutionLocation?: InstitutionLocation;
-  },
-): Promise<Application> {
-  const applicationRepo = dataSource.getRepository(Application);
-  const application = createFakeApplication(relations);
-  return applicationRepo.save(application);
-}
