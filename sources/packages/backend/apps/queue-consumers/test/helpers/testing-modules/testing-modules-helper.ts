@@ -6,6 +6,8 @@ import { createZeebeModuleMock } from "@sims/test-utils/mocks/zeebe-client.mock"
 import { ZBClient } from "zeebe-node";
 import { SshService } from "@sims/integrations/services";
 import { createSSHServiceMock } from "@sims/test-utils";
+import * as Client from "ssh2-sftp-client";
+import { createMock } from "@golevelup/ts-jest";
 
 /**
  * Result from a createTestingModule to support E2E tests creation.
@@ -15,7 +17,7 @@ export class CreateTestingModuleResult {
   module: TestingModule;
   dataSource: DataSource;
   zbClient: ZBClient;
-  sshService: SshService;
+  sshClientMock: Client;
 }
 
 /**
@@ -23,22 +25,22 @@ export class CreateTestingModuleResult {
  * @returns creation results with objects to support E2E tests.
  */
 export async function createTestingAppModule(): Promise<CreateTestingModuleResult> {
+  const sshClientMock = createMock<Client>();
   const module: TestingModule = await Test.createTestingModule({
     imports: [QueueConsumersModule, createZeebeModuleMock()],
   })
     .overrideProvider(SshService)
-    .useValue(createSSHServiceMock())
+    .useValue(createSSHServiceMock(sshClientMock))
     .compile();
   const nestApplication = module.createNestApplication();
   await nestApplication.init();
   const dataSource = module.get(DataSource);
   const zbClient = nestApplication.get(ZBClient);
-  const sshService = nestApplication.get(SshService);
   return {
     nestApplication,
     module,
     dataSource,
     zbClient,
-    sshService,
+    sshClientMock,
   };
 }
