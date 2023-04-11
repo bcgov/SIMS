@@ -1,4 +1,3 @@
-import { ECertFileHandler } from "@sims/integrations/esdc-integration";
 import {
   Application,
   ApplicationStatus,
