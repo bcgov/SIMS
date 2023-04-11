@@ -27,7 +27,7 @@ export function createFakeSINValidation(relations?: {
   sinValidation.validLastNameCheck = "Y";
   sinValidation.validGenderCheck = "Y";
   sinValidation.sinExpiryDate = null;
-  sinValidation.student = relations.student;
+  sinValidation.student = relations?.student;
   sinValidation.sinEditedBy = null;
   sinValidation.sinEditedDate = null;
   sinValidation.sinEditedNote = null;
