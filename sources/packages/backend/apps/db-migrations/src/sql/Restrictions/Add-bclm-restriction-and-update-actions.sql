@@ -21,7 +21,7 @@ VALUES
     'Provincial',
     'BCLM',
     'BC lifetime maximum reached.',
-    'BCSL Delinquency',
+    'Other',
     ARRAY ['Stop full time BC funding'] :: sims.restriction_action_types [],
     'Error'
   );
