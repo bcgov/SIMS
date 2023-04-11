@@ -39,7 +39,7 @@ describe(
       });
 
       // Act and Assert.
-      expect(processor.startAssessment(job)).rejects.toBe(dummyException);
+      await expect(processor.startAssessment(job)).rejects.toBe(dummyException);
     });
 
     it("Should invoke the workflow create instance method with the received job parameters.", async () => {

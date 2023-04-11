@@ -44,6 +44,7 @@ export class CancelApplicationAssessmentProcessor {
     summary.info(
       `Cancelling application assessment id ${job.data.assessmentId}`,
     );
+
     const assessment = await this.studentAssessmentService.getAssessmentById(
       job.data.assessmentId,
     );
