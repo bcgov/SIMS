@@ -52,7 +52,7 @@ describe(
       jest.resetAllMocks();
     });
 
-    it("Should cancel pending disbursements and rollback overawards when the cancelled application has overawards and also one sent and one pending disbursements.", async () => {
+    it("Should cancel the assessment pending disbursements and rollback overawards when the cancelled application has overawards and also one sent and one pending disbursements.", async () => {
       // Arrange
       const workflowInstanceId = "2251799814028835";
       // Application and disbursements.
@@ -120,7 +120,7 @@ describe(
       );
     });
 
-    it("Should cancel workflow and log a warning when the workflowInstanceId is not present.", async () => {
+    it("Should cancel the assessment and log a warning when the workflowInstanceId is not present.", async () => {
       // Arrange
       const application = await saveFakeApplicationDisbursements(
         appDataSource,

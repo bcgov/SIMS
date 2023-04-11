@@ -3,7 +3,7 @@ import { ZeebeModule } from "@sims/services";
 import { ZBClient } from "zeebe-node";
 
 /**
- * Creates a mocked {@link ZeebeModule} that proves a mocked {@link ZBClient}
+ * Creates a mocked {@link ZeebeModule} that uses a mocked {@link ZBClient}
  * and allow the assertions on method like createProcessInstance,
  * publishMessage, and cancelProcessInstance.
  * @returns mocked {@link ZeebeModule}.
