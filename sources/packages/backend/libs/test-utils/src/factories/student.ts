@@ -26,7 +26,7 @@ export function createFakeStudent(user?: User): Student {
 }
 
 /**
- * Create and save fake student
+ * Create and save fake student.
  * @param dataSource data source to persist student.
  * @param relations student entity relations.
  * @returns persisted student with relations provided.

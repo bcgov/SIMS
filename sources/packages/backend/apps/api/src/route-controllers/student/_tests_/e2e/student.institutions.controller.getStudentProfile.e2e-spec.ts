@@ -52,14 +52,14 @@ describe("StudentInstitutionsController(e2e)-getStudentProfile", () => {
       student,
     });
     const endpoint = `/institutions/student/${student.id}`;
+    const institutionUserToken = await getInstitutionToken(
+      InstitutionTokenTypes.CollegeCUser,
+    );
 
     // Act/Assert
     await request(app.getHttpServer())
       .get(endpoint)
-      .auth(
-        await getInstitutionToken(InstitutionTokenTypes.CollegeCUser),
-        BEARER_AUTH_TYPE,
-      )
+      .auth(institutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
       .expect({
         firstName: student.user.firstName,
@@ -91,14 +91,14 @@ describe("StudentInstitutionsController(e2e)-getStudentProfile", () => {
   it("Should get not found error when student is not found.", async () => {
     // Arrange
     const endpoint = "/institutions/student/999999";
+    const institutionUserToken = await getInstitutionToken(
+      InstitutionTokenTypes.CollegeCUser,
+    );
 
     // Act/Assert
     await request(app.getHttpServer())
       .get(endpoint)
-      .auth(
-        await getInstitutionToken(InstitutionTokenTypes.CollegeCUser),
-        BEARER_AUTH_TYPE,
-      )
+      .auth(institutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.NOT_FOUND)
       .expect({
         statusCode: 404,

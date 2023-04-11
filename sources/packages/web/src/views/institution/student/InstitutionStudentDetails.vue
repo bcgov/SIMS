@@ -7,7 +7,7 @@
       />
     </template>
     <template #tab-header>
-      <v-tabs :model="tab" stacked color="primary"
+      <v-tabs stacked color="primary"
         ><v-tab
           v-for="item in items"
           :key="item.label"
@@ -38,7 +38,6 @@ export default defineComponent({
     },
   },
   setup(props) {
-    const tab = ref();
     const studentDetails = ref({} as StudentProfile);
     const items = ref([
       {
@@ -93,7 +92,6 @@ export default defineComponent({
       items,
       studentDetails,
       StudentRestrictionStatus,
-      tab,
     };
   },
 });

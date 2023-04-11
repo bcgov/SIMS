@@ -6,7 +6,7 @@ import {
   ParseIntPipe,
   Post,
 } from "@nestjs/common";
-import { ApiTags } from "@nestjs/swagger";
+import { ApiNotFoundResponse, ApiTags } from "@nestjs/swagger";
 import { StudentService } from "../../services";
 import { ClientTypeBaseRoute } from "../../types";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
@@ -62,6 +62,7 @@ export class StudentInstitutionsController extends BaseController {
    * @returns student profile details.
    */
   @Get(":studentId")
+  @ApiNotFoundResponse({ description: "Student not found." })
   async getStudentProfile(
     @Param("studentId", ParseIntPipe) studentId: number,
   ): Promise<StudentProfileAPIOutDTO> {

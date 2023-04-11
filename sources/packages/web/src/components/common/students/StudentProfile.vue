@@ -3,7 +3,7 @@
     <template #header>
       <body-header title="Profile" />
     </template>
-    <p class="category-header-medium">Student profile</p>
+    <h3 class="category-header-medium">Student profile</h3>
     <content-group>
       <v-row>
         <v-col
@@ -52,7 +52,7 @@
         </v-col>
       </v-row>
     </content-group>
-    <p class="category-header-medium mt-4">Contact information</p>
+    <h3 class="category-header-medium mt-4">Contact information</h3>
     <content-group
       ><v-row>
         <v-col
@@ -108,7 +108,7 @@ export default defineComponent({
       required: true,
     },
   },
-  setup(props: any) {
+  setup(props) {
     const studentDetail = ref({} as StudentProfile);
     const address = ref({} as AddressAPIOutDTO);
     const { sinDisplayFormat, emptyStringFiller } = useFormatters();
