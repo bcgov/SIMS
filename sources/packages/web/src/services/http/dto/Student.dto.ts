@@ -34,10 +34,7 @@ export interface StudentProfileAPIOutDTO {
   pdStatus: StudentPDStatus;
   sin: string;
   sinConsent: boolean;
-}
-
-export interface AESTStudentProfileAPIOutDTO extends StudentProfileAPIOutDTO {
-  hasRestriction: boolean;
+  hasRestriction?: boolean;
 }
 
 /**

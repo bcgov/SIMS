@@ -1,5 +1,12 @@
-import { Body, Controller, Post } from "@nestjs/common";
-import { ApiTags } from "@nestjs/swagger";
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  ParseIntPipe,
+  Post,
+} from "@nestjs/common";
+import { ApiNotFoundResponse, ApiTags } from "@nestjs/swagger";
 import { StudentService } from "../../services";
 import { ClientTypeBaseRoute } from "../../types";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
@@ -8,6 +15,7 @@ import BaseController from "../BaseController";
 import {
   StudentSearchAPIInDTO,
   SearchStudentAPIOutDTO,
+  StudentProfileAPIOutDTO,
 } from "./models/student.dto";
 import { IInstitutionUserToken } from "../../auth";
 import { StudentControllerService } from "./student.controller.service";
@@ -44,5 +52,20 @@ export class StudentInstitutionsController extends BaseController {
     return this.studentControllerService.transformStudentsToSearchStudentDetails(
       students,
     );
+  }
+
+  /**
+   * Get the student information that represents the profile.
+   * TODO: Authorization must be enabled to validate if the student has submitted
+   * at least one application for the institution of the user.
+   * @param studentId student.
+   * @returns student profile details.
+   */
+  @Get(":studentId")
+  @ApiNotFoundResponse({ description: "Student not found." })
+  async getStudentProfile(
+    @Param("studentId", ParseIntPipe) studentId: number,
+  ): Promise<StudentProfileAPIOutDTO> {
+    return this.studentControllerService.getStudentProfile(studentId);
   }
 }

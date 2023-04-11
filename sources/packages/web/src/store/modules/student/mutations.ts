@@ -1,10 +1,10 @@
 import { MutationTree } from "vuex";
-import { StudentFormInfo } from "@/types";
+import { StudentProfile } from "@/types";
 import { StudentState, StudentRestriction } from "./student";
 import { useFormatters } from "@/composables";
 
 export const mutations: MutationTree<StudentState> = {
-  updateProfileData(state: StudentState, student: StudentFormInfo) {
+  updateProfileData(state: StudentState, student: StudentProfile) {
     const formatters = useFormatters();
     state.sinValidStatus = formatters.parseSINValidStatus(student.validSin);
     state.firstName = student.firstName;
