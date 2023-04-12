@@ -64,11 +64,11 @@ describe(
           createSecondDisbursement: true,
         },
       );
-      // Adjust assessment
+      // Adjust assessment.
       const studentAssessment = application.currentAssessment;
       studentAssessment.assessmentWorkflowId = workflowInstanceId;
       await studentAssessmentRepo.save(application.currentAssessment);
-      // Adjust disbursements
+      // Adjust disbursements.
       const [firstDisbursement, secondDisbursement] =
         studentAssessment.disbursementSchedules;
       firstDisbursement.disbursementScheduleStatus =
