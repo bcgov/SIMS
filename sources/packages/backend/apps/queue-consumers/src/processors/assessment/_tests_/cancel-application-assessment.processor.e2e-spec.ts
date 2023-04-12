@@ -21,6 +21,7 @@ import {
   DisbursementScheduleStatus,
   StudentAssessment,
 } from "@sims/sims-db";
+import * as faker from "faker";
 
 describe(
   describeProcessorRootTest(QueueNames.CancelApplicationAssessment),
@@ -54,19 +55,23 @@ describe(
 
     it("Should cancel the assessment pending disbursements and rollback overawards when the cancelled application has overawards and also one sent and one pending disbursements.", async () => {
       // Arrange
-      const workflowInstanceId = "2251799814028835";
+      const workflowInstanceId = faker.random.number({
+        min: 1000000000,
+        max: 9999999999,
+      });
       // Application and disbursements.
       const application = await saveFakeApplicationDisbursements(
         appDataSource,
         null,
         {
-          applicationStatus: ApplicationStatus.Cancelled,
+          applicationStatus: ApplicationStatus.Completed,
           createSecondDisbursement: true,
         },
       );
       // Adjust assessment.
+      application.applicationStatus = ApplicationStatus.Cancelled;
       const studentAssessment = application.currentAssessment;
-      studentAssessment.assessmentWorkflowId = workflowInstanceId;
+      studentAssessment.assessmentWorkflowId = workflowInstanceId.toString();
       await studentAssessmentRepo.save(application.currentAssessment);
       // Adjust disbursements.
       const [firstDisbursement, secondDisbursement] =
@@ -90,7 +95,7 @@ describe(
 
       // Assert
       expect(zbClientMock.cancelProcessInstance).toBeCalledWith(
-        workflowInstanceId,
+        workflowInstanceId.toString(),
       );
       expect(result.summary).toContain(
         "Workflow instance successfully cancelled.",
