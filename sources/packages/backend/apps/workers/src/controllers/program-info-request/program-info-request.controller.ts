@@ -61,7 +61,6 @@ export class ProgramInfoRequestController {
     await this.applicationService.updateProgramInfoStatus(
       job.variables.applicationId,
       job.customHeaders.programInfoStatus,
-      job.variables.studentDataSelectedLocation,
       job.variables.studentDataSelectedProgram,
     );
     return job.complete({

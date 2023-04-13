@@ -25,3 +25,16 @@ export const SIMS2_COLLD_USER = "2260473f105e4a54bad8c7e348cd9b82@bceidboth";
  * College D business guid.
  */
 export const COLLEGE_D_BUSINESS_GUID = "B0BF341C26164156AD486F274108539A";
+/**
+ * SIMS_COLLF user configured as an admin and also as a legal signing officer.
+ */
+export const SIMS_COLLF_ADMIN_LEGAL_SIGNING_USER =
+  "fa06d4f6be904e10882085db1b7ac564@bceidboth";
+/**
+ * SIMS2_COLLF user configured as a regular user.
+ */
+export const SIMS2_COLLF_USER = "b7aa48239e1449279aee013dc6e4df23@bceidboth";
+/**
+ * College F business guid.
+ */
+export const COLLEGE_F_BUSINESS_GUID = "64118F10542349AC8574AE7184B0FCF3";

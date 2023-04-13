@@ -17,6 +17,7 @@ import {
   User,
   ApplicationData,
   getUserFullNameLikeSearch,
+  InstitutionLocation,
 } from "@sims/sims-db";
 import { StudentFileService } from "../student-file/student-file.service";
 import {
@@ -186,6 +187,9 @@ export class ApplicationService extends RecordDataModelService<Application> {
       application.studentAssessments = [originalAssessment];
       application.currentAssessment = originalAssessment;
       application.submittedDate = now;
+      application.location = {
+        id: applicationData.selectedLocation,
+      } as InstitutionLocation;
 
       // When application and assessment are saved, assess for SIN restriction.
       await this.dataSource.transaction(async (transactionalEntityManager) => {
@@ -239,6 +243,9 @@ export class ApplicationService extends RecordDataModelService<Application> {
       [],
       associatedFiles,
     );
+    newApplication.location = {
+      id: applicationData.selectedLocation,
+    } as InstitutionLocation;
     // While editing an application, a new application record is created and a new
     // assessment record is also created to be the used as a "current Assessment" record.
     // The application and the assessment records have a DB relationship and the

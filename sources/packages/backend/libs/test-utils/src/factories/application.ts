@@ -101,7 +101,10 @@ export async function saveFakeApplicationDisbursements(
     savedStudent = await studentRepo.save(createFakeStudent(savedUser));
   }
   // Create and save application.
-  const fakeApplication = createFakeApplication({ student: savedStudent });
+  const fakeApplication = createFakeApplication({
+    student: savedStudent,
+    location: relations.institutionLocation,
+  });
   fakeApplication.applicationStatus = applicationStatus;
   const savedApplication = await applicationRepo.save(fakeApplication);
   // Original assessment.

@@ -469,12 +469,9 @@ export class StudentService extends RecordDataModelService<Student> {
           "application",
           "application.student.id = student.id",
         )
-        .leftJoin("application.location", "pirLocation")
-        .leftJoin("pirLocation.institution", "pirInstitution")
-        .leftJoin("application.currentAssessment", "studentAssessment")
-        .leftJoin("studentAssessment.offering", "offering")
-        .leftJoin("offering.institutionLocation", "offeringLocation")
-        .leftJoin("offeringLocation.institution", "offeringInstitution");
+        .leftJoin("application.location", "institutionLocation")
+        .leftJoin("institutionLocation.institution", "institution")
+        .leftJoin("application.currentAssessment", "studentAssessment");
     } else {
       searchQuery.leftJoin(
         Application,
@@ -487,15 +484,36 @@ export class StudentService extends RecordDataModelService<Student> {
       .innerJoin("student.sinValidation", "sinValidation")
       .where("user.isActive = true");
     if (institutionId) {
-      searchQuery.andWhere(
-        new Brackets((qb) => {
-          qb.where("offeringInstitution.id = :institutionId", {
-            institutionId,
-          }).orWhere("pirInstitution.id = :institutionId", { institutionId });
-        }),
-      );
+      searchQuery
+        .andWhere("institution.id = :institutionId", { institutionId })
+        .andWhere(
+          new Brackets((qb) => {
+            qb.where(
+              new Brackets((qb2) => {
+                qb2
+                  .where("application.applicationStatus = :cancelledStatus", {
+                    cancelledStatus: ApplicationStatus.Cancelled,
+                  })
+                  .andWhere("studentAssessment.assessmentData is not null");
+              }),
+            ).orWhere(
+              new Brackets((qb2) => {
+                qb2
+                  .where("application.applicationStatus != :cancelledStatus", {
+                    cancelledStatus: ApplicationStatus.Cancelled,
+                  })
+                  .andWhere(
+                    "application.applicationStatus != :overwrittenStatus",
+                    {
+                      overwrittenStatus: ApplicationStatus.Overwritten,
+                    },
+                  );
+              }),
+            );
+          }),
+        );
     }
-    if (institutionId || searchCriteria.appNumber) {
+    if (!institutionId && searchCriteria.appNumber) {
       searchQuery.andWhere(
         "application.applicationStatus != :overwrittenStatus",
         {
