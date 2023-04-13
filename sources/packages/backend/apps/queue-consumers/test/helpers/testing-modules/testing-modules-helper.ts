@@ -42,7 +42,6 @@ export async function createTestingAppModule(): Promise<CreateTestingModuleResul
       by: createZeebeModuleMock(),
     },
   );
-
   const sshClientMock = createMock<Client>();
   const module: TestingModule = await Test.createTestingModule({
     imports: [QueueConsumersModule],
