@@ -92,7 +92,6 @@ describe(
       );
       // Create and save application.
       const fakeApplication = createFakeApplication({ student: savedStudent });
-      fakeApplication.applicationNumber = "ECERT_TEST";
       const savedApplication = await applicationRepo.save(fakeApplication);
       // Original assessment.
       const fakeOriginalAssessment = createFakeStudentAssessment({
