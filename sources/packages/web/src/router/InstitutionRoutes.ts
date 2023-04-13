@@ -36,7 +36,13 @@ import { AuthService } from "@/services/AuthService";
 import ViewSubmittedApplicationScholasticStanding from "@/views/institution/locations/active-applications/ViewSubmittedApplicationScholasticStanding.vue";
 import OfferingRequestChange from "@/views/institution/locations/offerings/OfferingRequestChange.vue";
 import OfferingsUpload from "@/views/institution/OfferingsUpload.vue";
-import SearchStudent from "@/views/institution/SearchStudents.vue";
+import InstitutionSearchStudents from "@/views/institution/student/InstitutionSearchStudents.vue";
+import InstitutionStudentDetails from "@/views/institution/student/InstitutionStudentDetails.vue";
+import InstitutionStudentProfile from "@/views/institution/student/InstitutionStudentProfile.vue";
+import InstitutionStudentApplications from "@/views/institution/student/InstitutionStudentApplications.vue";
+import InstitutionStudentRestrictions from "@/views/institution/student/InstitutionStudentRestrictions.vue";
+import InstitutionStudentFileUploads from "@/views/institution/student/InstitutionStudentFileUploads.vue";
+import InstitutionStudentNotes from "@/views/institution/student/InstitutionStudentNotes.vue";
 
 export const institutionRoutes: Array<RouteRecordRaw> = [
   {
@@ -94,7 +100,7 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
         path: AppRoutes.InstitutionStudentSearch,
         name: InstitutionRoutesConst.INSTITUTION_STUDENT_SEARCH,
         components: {
-          default: SearchStudent,
+          default: InstitutionSearchStudents,
           sidebar: InstitutionHomeSideBar,
         },
         meta: {
@@ -409,6 +415,86 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
           clientType: ClientIdType.Institution,
           userTypes: [InstitutionUserTypes.admin],
         },
+      },
+      {
+        path: AppRoutes.InstitutionStudentDetail,
+        name: InstitutionRoutesConst.STUDENT_DETAILS,
+        props: true,
+        components: {
+          default: InstitutionStudentDetails,
+          sidebar: InstitutionHomeSideBar,
+        },
+        meta: {
+          clientType: ClientIdType.Institution,
+          userTypes: [InstitutionUserTypes.admin, InstitutionUserTypes.user],
+        },
+        children: [
+          {
+            path: AppRoutes.InstitutionStudentProfile,
+            name: InstitutionRoutesConst.STUDENT_PROFILE,
+            props: true,
+            component: InstitutionStudentProfile,
+            meta: {
+              clientType: ClientIdType.Institution,
+              userTypes: [
+                InstitutionUserTypes.admin,
+                InstitutionUserTypes.user,
+              ],
+            },
+          },
+          {
+            path: AppRoutes.Applications,
+            name: InstitutionRoutesConst.STUDENT_APPLICATIONS,
+            props: true,
+            component: InstitutionStudentApplications,
+            meta: {
+              clientType: ClientIdType.Institution,
+              userTypes: [
+                InstitutionUserTypes.admin,
+                InstitutionUserTypes.user,
+              ],
+            },
+          },
+          {
+            path: AppRoutes.Restrictions,
+            name: InstitutionRoutesConst.STUDENT_RESTRICTIONS,
+            props: true,
+            component: InstitutionStudentRestrictions,
+            meta: {
+              clientType: ClientIdType.Institution,
+              userTypes: [
+                InstitutionUserTypes.admin,
+                InstitutionUserTypes.user,
+              ],
+            },
+          },
+          {
+            path: AppRoutes.FileUploads,
+            name: InstitutionRoutesConst.STUDENT_FILE_UPLOADS,
+            props: true,
+            component: InstitutionStudentFileUploads,
+            meta: {
+              clientType: ClientIdType.Institution,
+              userTypes: [
+                InstitutionUserTypes.admin,
+                InstitutionUserTypes.user,
+              ],
+            },
+          },
+          {
+            path: AppRoutes.Notes,
+            name: InstitutionRoutesConst.STUDENT_NOTES,
+            props: true,
+            component: InstitutionStudentNotes,
+            meta: {
+              clientType: ClientIdType.Institution,
+              userTypes: [
+                InstitutionUserTypes.admin,
+                InstitutionUserTypes.user,
+              ],
+            },
+          },
+        ],
       },
     ],
     beforeEnter: (to, _from, next) => {

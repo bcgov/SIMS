@@ -1,8 +1,8 @@
 import { SINValidation, Student } from "@sims/sims-db";
 import * as faker from "faker";
 
-export function createFakeSINValidation(relations: {
-  student: Student;
+export function createFakeSINValidation(relations?: {
+  student?: Student;
 }): SINValidation {
   const now = new Date();
   const sinValidation = new SINValidation();
@@ -27,7 +27,7 @@ export function createFakeSINValidation(relations: {
   sinValidation.validLastNameCheck = "Y";
   sinValidation.validGenderCheck = "Y";
   sinValidation.sinExpiryDate = null;
-  sinValidation.student = relations.student;
+  sinValidation.student = relations?.student;
   sinValidation.sinEditedBy = null;
   sinValidation.sinEditedDate = null;
   sinValidation.sinEditedNote = null;

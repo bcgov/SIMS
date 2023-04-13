@@ -1,0 +1,129 @@
+<template>
+  <body-header-container>
+    <template #header>
+      <body-header title="Profile" />
+    </template>
+    <h3 class="category-header-medium">Student profile</h3>
+    <content-group>
+      <v-row>
+        <v-col
+          ><title-value
+            propertyTitle="Given names"
+            :propertyValue="studentDetail.firstName"
+          />
+        </v-col>
+        <v-col
+          ><title-value
+            propertyTitle="Last name"
+            :propertyValue="studentDetail.lastName"
+          />
+        </v-col>
+        <v-col>
+          <title-value
+            propertyTitle="Date of birth"
+            :propertyValue="studentDetail.birthDateFormatted"
+        /></v-col>
+      </v-row>
+      <v-row>
+        <v-col
+          ><title-value
+            propertyTitle="Gender"
+            :propertyValue="studentDetail.gender"
+          />
+        </v-col>
+        <v-col
+          ><title-value
+            propertyTitle="Email"
+            :propertyValue="studentDetail.email"
+          />
+        </v-col>
+        <v-col>
+          <title-value
+            propertyTitle="Permanent disability status"
+            :propertyValue="studentDetail.pdStatus"
+        /></v-col>
+      </v-row>
+      <v-row>
+        <v-col
+          ><title-value
+            propertyTitle="SIN"
+            :propertyValue="sinDisplayFormat(studentDetail.sin)"
+          />
+        </v-col>
+      </v-row>
+    </content-group>
+    <h3 class="category-header-medium mt-4">Contact information</h3>
+    <content-group
+      ><v-row>
+        <v-col
+          ><title-value
+            propertyTitle="Address line 1"
+            :propertyValue="address.addressLine1"
+          />
+        </v-col>
+        <v-col
+          ><title-value
+            propertyTitle="Address line 2"
+            :propertyValue="emptyStringFiller(address.addressLine2)"
+          />
+        </v-col>
+        <v-col>
+          <title-value propertyTitle="City" :propertyValue="address.city"
+        /></v-col>
+      </v-row>
+      <v-row>
+        <v-col
+          ><title-value
+            propertyTitle="Province"
+            :propertyValue="address.provinceState"
+          />
+        </v-col>
+        <v-col
+          ><title-value
+            propertyTitle="Postal/Zip Code"
+            :propertyValue="address.postalCode"
+          />
+        </v-col>
+        <v-col>
+          <title-value
+            propertyTitle="Phone number"
+            :propertyValue="studentDetail.contact?.phone"
+        /></v-col>
+      </v-row>
+    </content-group>
+  </body-header-container>
+</template>
+
+<script lang="ts">
+import { onMounted, ref, defineComponent } from "vue";
+import { StudentService } from "@/services/StudentService";
+import { useFormatters } from "@/composables";
+import { StudentProfile } from "@/types";
+import { AddressAPIOutDTO } from "@/services/http/dto";
+
+export default defineComponent({
+  props: {
+    studentId: {
+      type: Number,
+      required: true,
+    },
+  },
+  setup(props) {
+    const studentDetail = ref({} as StudentProfile);
+    const address = ref({} as AddressAPIOutDTO);
+    const { sinDisplayFormat, emptyStringFiller } = useFormatters();
+    onMounted(async () => {
+      studentDetail.value = await StudentService.shared.getStudentProfile(
+        props.studentId,
+      );
+      address.value = studentDetail.value.contact.address;
+    });
+    return {
+      studentDetail,
+      address,
+      sinDisplayFormat,
+      emptyStringFiller,
+    };
+  },
+});
+</script>

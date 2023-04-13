@@ -5,12 +5,8 @@ import {
 } from "@/services/http/dto";
 import { IdentityProviders } from "@/types";
 
-export interface StudentFormInfo extends StudentProfileAPIOutDTO {
+export interface StudentProfile extends StudentProfileAPIOutDTO {
   birthDateFormatted: string;
-}
-
-export interface AESTStudentForm extends StudentFormInfo {
-  hasRestriction: boolean;
 }
 
 /**

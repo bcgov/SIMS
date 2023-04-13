@@ -36,6 +36,7 @@ export function createFakeApplication(relations?: {
   programYear?: ProgramYear;
   currentStudentAssessment?: StudentAssessment;
   applicationException?: ApplicationException;
+  location?: InstitutionLocation;
 }): Application {
   const application = new Application();
   application.data = {} as ApplicationData;
@@ -49,6 +50,7 @@ export function createFakeApplication(relations?: {
   application.currentAssessment = relations?.currentStudentAssessment;
   application.applicationNumber = faker.random.alphaNumeric(10);
   application.applicationException = relations?.applicationException;
+  application.location = relations?.location;
   return application;
 }
 

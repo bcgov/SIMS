@@ -70,6 +70,11 @@ export const InstitutionRoutesConst = {
   OFFERINGS_UPLOAD: Symbol(),
   INSTITUTION_STUDENT_SEARCH: Symbol(),
   STUDENT_PROFILE: Symbol(),
+  STUDENT_DETAILS: Symbol(),
+  STUDENT_APPLICATIONS: Symbol(),
+  STUDENT_RESTRICTIONS: Symbol(),
+  STUDENT_FILE_UPLOADS: Symbol(),
+  STUDENT_NOTES: Symbol(),
 };
 
 /**
