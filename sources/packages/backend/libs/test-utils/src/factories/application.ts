@@ -103,7 +103,7 @@ export async function saveFakeApplicationDisbursements(
   // Create and save application.
   const fakeApplication = createFakeApplication({
     student: savedStudent,
-    location: relations.institutionLocation,
+    location: relations?.institutionLocation,
   });
   fakeApplication.applicationStatus = applicationStatus;
   const savedApplication = await applicationRepo.save(fakeApplication);
