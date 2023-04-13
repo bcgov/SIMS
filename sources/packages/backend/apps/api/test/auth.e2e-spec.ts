@@ -9,7 +9,7 @@ import {
 } from "../src/utilities/certificate-utils";
 import { AuthTestController } from "../src/testHelpers/controllers/auth-test/auth-test.controller";
 import { KeycloakService } from "../src/services/auth/keycloak/keycloak.service";
-import { createMockedZeebeModule } from "../src/testHelpers/mocked-providers/zeebe-client-mock";
+import { createZeebeModuleMock } from "@sims/test-utils";
 
 describe("Authentication (e2e)", () => {
   // Nest application to be shared for all e2e tests
@@ -41,7 +41,7 @@ describe("Authentication (e2e)", () => {
     aestAccessToken = aestToken.access_token;
 
     const moduleFixture: TestingModule = await Test.createTestingModule({
-      imports: [AppModule, createMockedZeebeModule()],
+      imports: [AppModule, createZeebeModuleMock()],
       // AuthTestController is used only for e2e tests and could be
       // changed as needed to implement more test scenarios.
       controllers: [AuthTestController],

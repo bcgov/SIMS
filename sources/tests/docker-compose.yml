@@ -70,7 +70,6 @@ services:
     restart: always
     depends_on:
       - postgres
-      - redis
   # - API
   # Workers
   workers:
@@ -102,7 +101,6 @@ services:
     restart: always
     depends_on:
       - postgres
-      - redis
   # - Workers
   # Queue consumers
   queue-consumers:
@@ -160,7 +158,6 @@ services:
     restart: always
     depends_on:
       - postgres
-      - redis
   # - Queues
   # Postgres
   postgres:
@@ -176,17 +173,7 @@ services:
     networks:
       - local-network-tests
   # - Postgres
-  # Redis
-  redis:
-    image: redis-${PROJECT_NAME}:${BUILD_REF}-${BUILD_ID}
-    container_name: local-redis-${PROJECT_NAME}-${BUILD_REF}-${BUILD_ID}
-    build:
-      context: ../.docker/redis
-    command: "--port ${REDIS_PORT} --requirepass ${REDIS_PASSWORD} --appendonly yes --appendfsync no"
-    networks:
-      - local-network-tests
-  # - Redis
-  # - services
+   # - services
   # Networks
 networks:
   local-network-tests:
