@@ -301,8 +301,7 @@ export class ECertGenerationService {
       for (const disbursementValue of disbursement.disbursementValues) {
         if (this.shouldStopFullTimeBCFunding(disbursement, disbursementValue)) {
           disbursementValue.effectiveAmount = 0;
-          // todo: ann Update all BC-related funding awards (BCSL and grants) to have the restriction_amount_subtracted to make the effective value of the award to be defined as 0 (zero). For instance, current award effective value calculation is at $500, make the restriction_amount_subtracted as -$500 to make the effective value as 0.
-
+          // todo: ann Update all BC-related funding awards (BCSL and grants) to have the restriction_amount_subtracted to make the effective value of the award to be defined as 0 (zero).
           // todo: ann Update the restriction_id_subtracted with the restriction id that has the Stop full time BC funding associated with it. Any restriction can have the action Stop full time BC funding associated with it, not only the one related to BCSL.
         } else {
           const effectiveValue =
@@ -310,7 +309,7 @@ export class ECertGenerationService {
             (disbursementValue.disbursedAmountSubtracted ?? 0) -
             (disbursementValue.overawardAmountSubtracted ?? 0);
           disbursementValue.effectiveAmount = round(effectiveValue);
-          // TODO: ANN LIFE TIME CALCULATION
+
           const application = disbursement.studentAssessment.application;
           await this.checkLifeTimeMaximumAndGetStudentRestriction(
             disbursementValue,
@@ -327,7 +326,7 @@ export class ECertGenerationService {
    * If it hits the life time maximum, then the award is reduced so the
    * student hits the maximum value exactly.
    * @param disbursementValue disbursement value.
-   * @param application application realted to the disbursement.
+   * @param application application related to the disbursement.
    * @param entityManager used to execute the commands in the same transaction.
    */
   private async checkLifeTimeMaximumAndGetStudentRestriction(
@@ -335,11 +334,11 @@ export class ECertGenerationService {
     application: Application,
     entityManager: EntityManager,
   ): Promise<void> {
-    // todo: commet calculation only when there is a bcsl (eg, 2nd disbusment in 2 disbusrment)
+    // todo: comment calculation only when there is a bcsl (eg, 2nd disbusment in 2 disbusrment)
     if (disbursementValue.valueType === DisbursementValueType.BCLoan) {
       const student = application.student;
       const totalLifeTimeAmount =
-        //todo: ann remove
+        //todo: ann remove test
         49000 +
         (await this.sfasApplicationService.totalLegacyBCSLAmount(
           student.sinValidation.sin,
@@ -353,19 +352,19 @@ export class ECertGenerationService {
       console.log(totalLifeTimeAmount, "_lifeTimeMaximum");
       const maxLifetimeBCLoanAmount =
         application.programYear.maxLifetimeBCLoanAmount;
-      if (totalLifeTimeAmount > maxLifetimeBCLoanAmount) {
+      if (totalLifeTimeAmount >= maxLifetimeBCLoanAmount) {
         // Amount subtracted when lifetime maximum is reached.
         const amountSubtracted = totalLifeTimeAmount - maxLifetimeBCLoanAmount;
-        // Ideally disbursementValue.effectiveAmount should be greater or equal to amountSubtracted,
-        // but if the ministry ignore the restriction for the previous disbursement/application and
-        // money went to the student, even though they reach the maximum, then disbursementValue.effectiveAmount
-        // can be smaller than amountSubtracted.
+        // Ideally disbursementValue.effectiveAmount should be greater or equal to amountSubtracted.
+        // The flow will not reach here if the ministry ignore the restriction for the previous
+        // disbursement/application and money went out to the student, even though they reach the maximum.
         const newEffectiveAmount =
-          disbursementValue.effectiveAmount - amountSubtracted < 0
-            ? 0
-            : disbursementValue.effectiveAmount - amountSubtracted;
-        // todo: ann save everything i tracstion, even restriction
-        // TODO: ANN IF newEffectiveAmount IS 0, THEN GRANTS SHOULD ALOS BE 0 qn to jason?? also should i add the restrtion at taht point or during the next e-cert
+          disbursementValue.effectiveAmount - amountSubtracted;
+        // todo: ann save everything in transaction,  restriction
+        // TODO: ANN IF newEffectiveAmount IS 0, THEN GRANTS SHOULD ALSO BE 0 . also should add the restriction at that point or during the next e-cert
+        // case 1 : happy path -> reached LTM normally
+        // case 2: after calculation LTM hits are effective is now 0, MAKE ALL GRANTS 0?
+        // case 3: after calculation bcsl is just equal to LTM, SHOULD WE ADD RESTRICTION NOW
         // Creating restriction to the student.
         const auditUser = await this.systemUsersService.systemUser();
         const bclmRestriction =
@@ -383,8 +382,10 @@ export class ECertGenerationService {
         }
         console.log(bclmRestriction.restriction.id);
         disbursementValue.effectiveAmount = round(newEffectiveAmount);
-        disbursementValue.restrictionAmountSubtracted = amountSubtracted;
-        disbursementValue.restrictionSubtracted = bclmRestriction.restriction;
+        if (newEffectiveAmount > 0) {
+          disbursementValue.restrictionAmountSubtracted = amountSubtracted;
+          disbursementValue.restrictionSubtracted = bclmRestriction.restriction;
+        }
       }
     }
   }
