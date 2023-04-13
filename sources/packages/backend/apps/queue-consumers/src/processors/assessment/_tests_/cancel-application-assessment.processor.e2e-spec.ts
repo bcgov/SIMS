@@ -55,23 +55,24 @@ describe(
 
     it("Should cancel the assessment pending disbursements and rollback overawards when the cancelled application has overawards and also one sent and one pending disbursements.", async () => {
       // Arrange
-      const workflowInstanceId = faker.random.number({
-        min: 1000000000,
-        max: 9999999999,
-      });
+      const workflowInstanceId = faker.random
+        .number({
+          min: 1000000000,
+          max: 9999999999,
+        })
+        .toString();
       // Application and disbursements.
       const application = await saveFakeApplicationDisbursements(
         appDataSource,
         null,
         {
-          applicationStatus: ApplicationStatus.Completed,
+          applicationStatus: ApplicationStatus.Cancelled,
           createSecondDisbursement: true,
         },
       );
       // Adjust assessment.
-      application.applicationStatus = ApplicationStatus.Cancelled;
       const studentAssessment = application.currentAssessment;
-      studentAssessment.assessmentWorkflowId = workflowInstanceId.toString();
+      studentAssessment.assessmentWorkflowId = workflowInstanceId;
       await studentAssessmentRepo.save(application.currentAssessment);
       // Adjust disbursements.
       const [firstDisbursement, secondDisbursement] =
@@ -95,7 +96,7 @@ describe(
 
       // Assert
       expect(zbClientMock.cancelProcessInstance).toBeCalledWith(
-        workflowInstanceId.toString(),
+        workflowInstanceId,
       );
       expect(result.summary).toContain(
         "Workflow instance successfully cancelled.",
