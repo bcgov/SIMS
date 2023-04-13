@@ -162,7 +162,11 @@ describe(
       fakeCanadaLoanOverawardBalance.overawardValue = 4500;
       await disbursementOverawardRepo.save(fakeCanadaLoanOverawardBalance);
       // Queued job.
-      const job = createMock<Job<void>>();
+      // id and name defined to make the console log looks better only.
+      const job = createMock<Job<void>>({
+        id: "FakeJobId",
+        name: "FakeJobName",
+      });
 
       // Act
       const result = await processor.processFullTimeECert(job);

@@ -98,10 +98,13 @@ describe(
       expect(zbClientMock.cancelProcessInstance).toBeCalledWith(
         workflowInstanceId,
       );
-      expect(result.summary).toContain(
+      expect(result.summary).toStrictEqual([
+        `Cancelling application assessment id ${studentAssessment.id}`,
+        `Found workflow id ${workflowInstanceId}.`,
         "Workflow instance successfully cancelled.",
-      );
-      expect(result.summary).toContain("Assessment cancelled with success.");
+        "Rolling back overawards, if any.",
+        "Assessment cancelled with success.",
+      ]);
 
       // Assert that overawards were soft deleted.
       const updatedOveraward = await disbursementOverawardRepo.findOne({
