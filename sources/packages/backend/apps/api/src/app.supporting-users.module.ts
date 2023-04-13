@@ -17,6 +17,7 @@ import {
   StudentRestrictionSharedService,
   WorkflowClientService,
   NoteSharedService,
+  RestrictionSharedService,
 } from "@sims/services";
 import {
   SFASIndividualService,
@@ -46,6 +47,7 @@ import { AuthModule } from "./auth/auth.module";
     EducationProgramOfferingValidationService,
     WorkflowClientService,
     StudentRestrictionSharedService,
+    RestrictionSharedService,
     DisbursementOverawardService,
     NoteSharedService,
   ],

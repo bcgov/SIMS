@@ -25,7 +25,8 @@ import {
   ProcessArchiveApplicationsScheduler,
 } from "./processors";
 import {
-  DisbursementScheduleService,
+  DisbursementScheduleSharedService,
+  RestrictionSharedService,
   SequenceControlService,
   StudentRestrictionSharedService,
   WorkflowClientService,
@@ -93,8 +94,9 @@ import { ECEProcessIntegrationScheduler } from "./processors/schedulers/institut
     MSFAANumberService,
     PartTimeMSFAAProcessIntegrationScheduler,
     PartTimeECertProcessIntegrationScheduler,
-    DisbursementScheduleService,
+    DisbursementScheduleSharedService,
     StudentRestrictionSharedService,
+    RestrictionSharedService,
     FullTimeECertProcessIntegrationScheduler,
     FullTimeECertFeedbackIntegrationScheduler,
     PartTimeECertFeedbackIntegrationScheduler,

@@ -5,7 +5,6 @@ import {
   RestrictionType,
 } from "@sims/sims-db";
 import { DataSource } from "typeorm";
-import { RestrictionCode } from "./models/restriction.model";
 
 /**
  * Service layer for restrictions.
@@ -73,22 +72,5 @@ export class RestrictionService extends RecordDataModelService<Restriction> {
       );
     }
     return restrictionQuery.getOne();
-  }
-
-  /**
-   * Fetch the restriction with requested restriction code.
-   * @param restrictionCode restriction code.
-   * @returns restriction.
-   */
-  async getRestrictionByCode(
-    restrictionCode: RestrictionCode,
-  ): Promise<Restriction> {
-    return this.repo
-      .createQueryBuilder("restriction")
-      .select("restriction.id")
-      .where("restriction.restrictionCode = :restrictionCode", {
-        restrictionCode,
-      })
-      .getOne();
   }
 }

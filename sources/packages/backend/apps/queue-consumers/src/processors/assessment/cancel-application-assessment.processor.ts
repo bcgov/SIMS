@@ -2,7 +2,7 @@ import { Process, Processor } from "@nestjs/bull";
 import { Job } from "bull";
 import { CancelAssessmentQueueInDTO } from "@sims/services/queue";
 import {
-  DisbursementScheduleService,
+  DisbursementScheduleSharedService,
   WorkflowClientService,
 } from "@sims/services";
 import { QueueNames } from "@sims/utilities";
@@ -25,7 +25,7 @@ export class CancelApplicationAssessmentProcessor {
     private readonly dataSource: DataSource,
     private readonly workflowClientService: WorkflowClientService,
     private readonly studentAssessmentService: StudentAssessmentService,
-    private readonly disbursementScheduleService: DisbursementScheduleService,
+    private readonly disbursementScheduleSharedService: DisbursementScheduleSharedService,
   ) {}
 
   /**
@@ -106,7 +106,7 @@ export class CancelApplicationAssessmentProcessor {
       // It must be called after the workflow is cancelled to avoiding further updates on the disbursements after
       // the rollback is performed.
       await summary.info("Rolling back overawards, if any.");
-      await this.disbursementScheduleService.rollbackOverawards(
+      await this.disbursementScheduleSharedService.rollbackOverawards(
         assessment.id,
         transactionEntityManager,
       );

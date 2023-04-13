@@ -5,6 +5,8 @@ import {
   StudentRestrictionSharedService,
   NoteSharedService,
   ConfirmationOfEnrollmentService,
+  DisbursementScheduleSharedService,
+  RestrictionSharedService,
 } from "@sims/services";
 import { ECertFileHandler } from "./e-cert-file-handler";
 import { ECertFullTimeFileFooter } from "./e-cert-full-time-integration/e-cert-files/e-cert-file-footer";
@@ -22,6 +24,7 @@ import {
   SshService,
 } from "../../services";
 import { SystemUsersService } from "@sims/services/system-users";
+import { SFASApplicationService } from "@sims/services/sfas";
 
 @Module({
   imports: [ConfigModule],
@@ -39,11 +42,14 @@ import { SystemUsersService } from "@sims/services/system-users";
     DisbursementScheduleErrorsService,
     RestrictionService,
     SystemUsersService,
+    RestrictionSharedService,
     StudentRestrictionSharedService,
     ECertGenerationService,
     DisbursementOverawardService,
     NoteSharedService,
     ConfirmationOfEnrollmentService,
+    SFASApplicationService,
+    DisbursementScheduleSharedService,
   ],
   exports: [ECertFileHandler],
 })

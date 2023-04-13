@@ -40,3 +40,8 @@ export * from "./student-account-applications/student-account-applications.model
 export * from "./education-program-offering/education-program-offering-import-csv.service";
 export * from "./education-program-offering/education-program-offering-validation.models";
 export * from "./education-program-offering/education-program-offering-validation.service";
+export * from "./restriction/constants";
+export * from "./restriction/institution-restriction.service";
+export * from "./restriction/restriction.service";
+export * from "./restriction/student-restriction.service";
+export * from "./restriction/models/student-restriction.model";

@@ -6,7 +6,12 @@ import {
   AwardValueWithRelatedSchedule,
   ConfirmationOfEnrollmentService,
   DisbursementOverawardService,
+  DisbursementScheduleSharedService,
+  MaxTuitionRemittanceTypes,
+  RestrictionCode,
+  SFASApplicationService,
   StudentRestrictionSharedService,
+  SystemUsersService,
 } from "@sims/services";
 import {
   ApplicationStatus,
@@ -21,6 +26,8 @@ import {
   DisbursementValueType,
   Student,
   DisbursementOverawardOriginType,
+  Application,
+  StudentRestriction,
 } from "@sims/sims-db";
 import { ECertDisbursementSchedule } from "./e-cert-generation.models";
 import { AwardOverawardBalance } from "@sims/services/disbursement-overaward/disbursement-overaward.models";
@@ -29,9 +36,8 @@ import {
   BC_TOTAL_GRANT_AWARD_CODE,
   LOAN_TYPES,
 } from "@sims/services/constants";
-import { SystemUsersService } from "@sims/services/system-users";
-import { MaxTuitionRemittanceTypes } from "@sims/services/confirmation-of-enrollment/models/confirmation-of-enrollment.models";
-
+// todo: ann double check all import in the modules
+// todo: ann run queue and workers locallty to test everything
 /**
  * While performing a possible huge amount of updates,
  * breaks the execution in chunks.
@@ -47,10 +53,12 @@ const DISBURSEMENT_SCHEDULES_UPDATE_CHUNK_SIZE = 1000;
 @Injectable()
 export class ECertGenerationService {
   constructor(
-    private readonly studentRestrictionService: StudentRestrictionSharedService,
+    private readonly studentRestrictionSharedService: StudentRestrictionSharedService,
     private readonly disbursementOverawardService: DisbursementOverawardService,
     private readonly systemUsersService: SystemUsersService,
     private readonly confirmationOfEnrollmentService: ConfirmationOfEnrollmentService,
+    private readonly sfasApplicationService: SFASApplicationService,
+    private readonly disbursementScheduleSharedService: DisbursementScheduleSharedService,
   ) {}
 
   /**
@@ -79,7 +87,7 @@ export class ECertGenerationService {
     // Step 1 - Check student balance and execute the possible deductions from the awards.
     await this.applyOverawardsDeductions(disbursements, entityManager);
     // Step 2 - Execute the calculation to define the final value to be used for the e-Cert.
-    this.calculateEffectiveValue(disbursements);
+    await this.calculateEffectiveValue(disbursements, entityManager);
     // Step 3 - Calculate tuition remittance effective amount.
     this.calculateTuitionRemittanceEffectiveAmount(disbursements);
     // Step 4 - Calculate BC total grants after all others calculations are done.
@@ -178,10 +186,11 @@ export class ECertGenerationService {
         "disbursementValue.valueAmount",
         "disbursementValue.disbursedAmountSubtracted",
         "studentAssessment.id",
+        "programYear.maxLifetimeBCLoanAmount",
       ])
       .addSelect(
         `CASE
-            WHEN EXISTS(${this.studentRestrictionService
+            WHEN EXISTS(${this.studentRestrictionSharedService
               .getExistsBlockRestrictionQuery(
                 false,
                 false,
@@ -195,6 +204,7 @@ export class ECertGenerationService {
       .innerJoin("disbursement.studentAssessment", "studentAssessment")
       .innerJoin("disbursement.msfaaNumber", "msfaaNumber")
       .innerJoin("studentAssessment.application", "application")
+      .innerJoin("application.programYear", "programYear")
       .innerJoin("application.currentAssessment", "currentAssessment") // * This is to fetch the current assessment of the application, even though we have multiple reassessments
       .innerJoin("currentAssessment.offering", "offering")
       .innerJoin("offering.institutionLocation", "institutionLocation")
@@ -217,7 +227,7 @@ export class ECertGenerationService {
         offeringIntensity,
       })
       .andWhere(
-        `NOT EXISTS(${this.studentRestrictionService
+        `NOT EXISTS(${this.studentRestrictionSharedService
           .getExistsBlockRestrictionQuery()
           .getSql()})`,
       )
@@ -281,19 +291,100 @@ export class ECertGenerationService {
    * Calculate the effective value for every award. The result of this calculation
    * will be the value used to generate the e-Cert.
    * @param disbursements all disbursements that are part of one e-Cert.
+   * @param entityManager used to execute the commands in the same transaction.
    */
-  private calculateEffectiveValue(disbursements: ECertDisbursementSchedule[]) {
+  private async calculateEffectiveValue(
+    disbursements: ECertDisbursementSchedule[],
+    entityManager: EntityManager,
+  ) {
     for (const disbursement of disbursements) {
       for (const disbursementValue of disbursement.disbursementValues) {
-        if (this.shouldStopFunding(disbursement, disbursementValue)) {
+        if (this.shouldStopFullTimeBCFunding(disbursement, disbursementValue)) {
           disbursementValue.effectiveAmount = 0;
+          // todo: ann Update all BC-related funding awards (BCSL and grants) to have the restriction_amount_subtracted to make the effective value of the award to be defined as 0 (zero). For instance, current award effective value calculation is at $500, make the restriction_amount_subtracted as -$500 to make the effective value as 0.
+
+          // todo: ann Update the restriction_id_subtracted with the restriction id that has the Stop full time BC funding associated with it. Any restriction can have the action Stop full time BC funding associated with it, not only the one related to BCSL.
         } else {
           const effectiveValue =
             disbursementValue.valueAmount -
             (disbursementValue.disbursedAmountSubtracted ?? 0) -
             (disbursementValue.overawardAmountSubtracted ?? 0);
           disbursementValue.effectiveAmount = round(effectiveValue);
+          // TODO: ANN LIFE TIME CALCULATION
+          const application = disbursement.studentAssessment.application;
+          await this.checkLifeTimeMaximumAndGetStudentRestriction(
+            disbursementValue,
+            application,
+            entityManager,
+          );
         }
+      }
+    }
+  }
+
+  /**
+   * Check if the student hits the life time maximum for the BCSL Award.
+   * If it hits the life time maximum, then the award is reduced so the
+   * student hits the maximum value exactly.
+   * @param disbursementValue disbursement value.
+   * @param application application realted to the disbursement.
+   * @param entityManager used to execute the commands in the same transaction.
+   */
+  private async checkLifeTimeMaximumAndGetStudentRestriction(
+    disbursementValue: DisbursementValue,
+    application: Application,
+    entityManager: EntityManager,
+  ): Promise<void> {
+    // todo: commet calculation only when there is a bcsl (eg, 2nd disbusment in 2 disbusrment)
+    if (disbursementValue.valueType === DisbursementValueType.BCLoan) {
+      const student = application.student;
+      const totalLifeTimeAmount =
+        //todo: ann remove
+        49000 +
+        (await this.sfasApplicationService.totalLegacyBCSLAmount(
+          student.sinValidation.sin,
+          student.birthDate,
+          student.user.lastName,
+        )) +
+        (await this.disbursementScheduleSharedService.totalDisbursedBCSLAmount(
+          student.id,
+        )) +
+        disbursementValue.effectiveAmount;
+      console.log(totalLifeTimeAmount, "_lifeTimeMaximum");
+      const maxLifetimeBCLoanAmount =
+        application.programYear.maxLifetimeBCLoanAmount;
+      if (totalLifeTimeAmount > maxLifetimeBCLoanAmount) {
+        // Amount subtracted when lifetime maximum is reached.
+        const amountSubtracted = totalLifeTimeAmount - maxLifetimeBCLoanAmount;
+        // Ideally disbursementValue.effectiveAmount should be greater or equal to amountSubtracted,
+        // but if the ministry ignore the restriction for the previous disbursement/application and
+        // money went to the student, even though they reach the maximum, then disbursementValue.effectiveAmount
+        // can be smaller than amountSubtracted.
+        const newEffectiveAmount =
+          disbursementValue.effectiveAmount - amountSubtracted < 0
+            ? 0
+            : disbursementValue.effectiveAmount - amountSubtracted;
+        // todo: ann save everything i tracstion, even restriction
+        // TODO: ANN IF newEffectiveAmount IS 0, THEN GRANTS SHOULD ALOS BE 0 qn to jason?? also should i add the restrtion at taht point or during the next e-cert
+        // Creating restriction to the student.
+        const auditUser = await this.systemUsersService.systemUser();
+        const bclmRestriction =
+          await this.studentRestrictionSharedService.createRestrictionToSave(
+            student.id,
+            RestrictionCode.BCLM,
+            auditUser.id,
+            application.id,
+          );
+
+        if (bclmRestriction) {
+          await entityManager
+            .getRepository(StudentRestriction)
+            .save(bclmRestriction);
+        }
+        console.log(bclmRestriction.restriction.id);
+        disbursementValue.effectiveAmount = round(newEffectiveAmount);
+        disbursementValue.restrictionAmountSubtracted = amountSubtracted;
+        disbursementValue.restrictionSubtracted = bclmRestriction.restriction;
       }
     }
   }
@@ -362,7 +453,7 @@ export class ECertGenerationService {
       LOAN_TYPES,
     ).filter(
       (loanAward) =>
-        !this.shouldStopFunding(
+        !this.shouldStopFullTimeBCFunding(
           loanAward.relatedSchedule,
           loanAward.awardValue,
         ),
@@ -419,7 +510,7 @@ export class ECertGenerationService {
    * @param disbursementValue award to be checked.
    * @returns true if the funding should not be disbursed, otherwise, false.
    */
-  private shouldStopFunding(
+  private shouldStopFullTimeBCFunding(
     schedule: ECertDisbursementSchedule,
     disbursementValue: DisbursementValue,
   ): boolean {

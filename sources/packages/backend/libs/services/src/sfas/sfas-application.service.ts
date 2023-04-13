@@ -58,6 +58,31 @@ export class SFASApplicationService extends DataModelService<SFASApplication> {
       .getOne();
   }
 
+  /**
+   * Total BCSL amount that the student received from the legacy(SFAS) system.
+   * * Note: IF the student has a temporary SIN in SFAS and a permanent SIN
+   * * in SIMS, We are expecting to miss those details.
+   * @param sin sin number of the student, that used to match with the sfas system.
+   * @param birthDate birthdate of the student.
+   * @param lastName last name of the student.
+   * @returns total BCSL amount that the student received from the legacy(sfas) system.
+   */
+  async totalLegacyBCSLAmount(
+    sin: string,
+    birthDate: string,
+    lastName: string,
+  ): Promise<number> {
+    const totalQuery = await this.repo
+      .createQueryBuilder("sfasApplication")
+      .select("SUM(sfasApplication.bslAward)")
+      .innerJoin("sfasApplication.individual", "sfasFTstudent")
+      .where("lower(sfasFTstudent.lastName) = lower(:lastName)", { lastName })
+      .andWhere("sfasFTstudent.sin = :sin", { sin })
+      .andWhere("sfasFTstudent.birthDate = :birthDate", { birthDate })
+      .getRawOne();
+    return +(totalQuery?.sum ?? 0);
+  }
+
   @InjectLogger()
   logger: LoggerService;
 }

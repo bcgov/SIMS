@@ -50,6 +50,7 @@ import {
   StudentRestrictionSharedService,
   WorkflowClientService,
   NoteSharedService,
+  RestrictionSharedService,
 } from "@sims/services";
 import {
   SFASIndividualService,
@@ -107,6 +108,7 @@ import { ATBCIntegrationModule } from "@sims/integrations/atbc-integration";
     CRAIncomeVerificationService,
     SupportingUserService,
     StudentRestrictionSharedService,
+    RestrictionSharedService,
     DisbursementOverawardService,
     NoteSharedService,
     OverawardControllerService,

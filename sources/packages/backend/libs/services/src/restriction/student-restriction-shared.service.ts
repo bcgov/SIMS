@@ -1,9 +1,13 @@
 import { Injectable } from "@nestjs/common";
 import { NotificationActionsService } from "@sims/services/notifications";
 import {
+  Application,
   RecordDataModelService,
+  Restriction,
   RestrictionActionType,
+  Student,
   StudentRestriction,
+  User,
 } from "@sims/sims-db";
 import {
   ArrayContains,
@@ -13,6 +17,8 @@ import {
   Not,
   SelectQueryBuilder,
 } from "typeorm";
+import { RestrictionCode } from "./model/restriction.model";
+import { RestrictionSharedService } from "./restriction-shared.service";
 export const RESTRICTION_NOT_ACTIVE = "RESTRICTION_NOT_ACTIVE";
 export const RESTRICTION_NOT_PROVINCIAL = "RESTRICTION_NOT_PROVINCIAL";
 /**
@@ -29,6 +35,7 @@ export class StudentRestrictionSharedService extends RecordDataModelService<Stud
   constructor(
     private readonly dataSource: DataSource,
     private readonly notificationActionsService: NotificationActionsService,
+    private readonly restrictionSharedService: RestrictionSharedService,
   ) {
     super(dataSource.getRepository(StudentRestriction));
   }
@@ -168,5 +175,36 @@ export class StudentRestrictionSharedService extends RecordDataModelService<Stud
       auditUserId,
       entityManager,
     );
+  }
+
+  /**
+   * Create a new student restriction object.
+   * @param studentId student id.
+   * @param restrictionCode restriction code.
+   * @param auditUserId audit user id
+   * @param applicationId application id.
+   * @returns a new student restriction object.
+   */
+  async createRestrictionToSave(
+    studentId: number,
+    restrictionCode: RestrictionCode,
+    auditUserId: number,
+    applicationId: number,
+  ): Promise<StudentRestriction> {
+    const restriction =
+      await this.restrictionSharedService.getRestrictionByCode(restrictionCode);
+    if (!restriction) {
+      throw new Error(
+        `Requested restriction code ${restrictionCode} not found.`,
+      );
+    }
+    const studentRestriction = new StudentRestriction();
+    studentRestriction.restriction = {
+      id: restriction.id,
+    } as Restriction;
+    studentRestriction.student = { id: studentId } as Student;
+    studentRestriction.application = { id: applicationId } as Application;
+    studentRestriction.creator = { id: auditUserId } as User;
+    return studentRestriction;
   }
 }

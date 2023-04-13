@@ -1,5 +1,6 @@
 import { Global, Module } from "@nestjs/common";
 import {
+  RestrictionSharedService,
   StudentRestrictionSharedService,
   WorkflowClientService,
 } from "@sims/services";
@@ -21,6 +22,7 @@ import { ECEIntegrationService } from "./ece.integration.service";
     WorkflowClientService,
     ECEIntegrationService,
     StudentRestrictionSharedService,
+    RestrictionSharedService,
   ],
   exports: [ECEProcessingService],
 })

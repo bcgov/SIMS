@@ -13,10 +13,9 @@ import {
 } from "@sims/sims-db";
 import { DataSource, EntityManager } from "typeorm";
 import { CustomNamedError } from "@sims/utilities";
-import { RestrictionService } from "./restriction.service";
-import { RestrictionCode } from "./models/restriction.model";
 import {
   NoteSharedService,
+  RestrictionCode,
   StudentRestrictionSharedService,
 } from "@sims/services";
 export const RESTRICTION_NOT_ACTIVE = "RESTRICTION_NOT_ACTIVE";
@@ -29,9 +28,8 @@ export const RESTRICTION_NOT_PROVINCIAL = "RESTRICTION_NOT_PROVINCIAL";
 export class StudentRestrictionService extends RecordDataModelService<StudentRestriction> {
   constructor(
     readonly dataSource: DataSource,
-    private readonly restrictionService: RestrictionService,
     private readonly noteSharedService: NoteSharedService,
-    private readonly studentRestrictionsService: StudentRestrictionSharedService,
+    private readonly studentRestrictionSharedService: StudentRestrictionSharedService,
   ) {
     super(dataSource.getRepository(StudentRestriction));
   }
@@ -145,7 +143,7 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
       const newRestriction = await transactionalEntityManager
         .getRepository(StudentRestriction)
         .save(studentRestriction);
-      await this.studentRestrictionsService.createNotifications(
+      await this.studentRestrictionSharedService.createNotifications(
         [newRestriction.id],
         auditUserId,
         transactionalEntityManager,
@@ -228,7 +226,7 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
     restrictionActions: RestrictionActionType[],
     checkAll = false,
   ): Promise<boolean> {
-    const query = this.studentRestrictionsService
+    const query = this.studentRestrictionSharedService
       .getExistsBlockRestrictionQuery(checkAll, true)
       .setParameters({
         studentId,
@@ -260,38 +258,6 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
       })
       .limit(1)
       .getOne());
-  }
-
-  /**
-   * Create a new student restriction object.
-   * @param studentId student id.
-   * @param restrictionCode restriction code.
-   * @param auditUserId audit user id
-   * @param applicationId application id.
-   * @returns a new student restriction object.
-   */
-  async createRestrictionToSave(
-    studentId: number,
-    restrictionCode: RestrictionCode,
-    auditUserId: number,
-    applicationId: number,
-  ): Promise<StudentRestriction> {
-    const restriction = await this.restrictionService.getRestrictionByCode(
-      restrictionCode,
-    );
-    if (!restriction) {
-      throw new Error(
-        `Requested restriction code ${restrictionCode} not found.`,
-      );
-    }
-    const studentRestriction = new StudentRestriction();
-    studentRestriction.restriction = {
-      id: restriction.id,
-    } as Restriction;
-    studentRestriction.student = { id: studentId } as Student;
-    studentRestriction.application = { id: applicationId } as Application;
-    studentRestriction.creator = { id: auditUserId } as User;
-    return studentRestriction;
   }
 
   /**
@@ -358,16 +324,17 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
     }
 
     if (mustCreateSINException) {
-      const restriction = await this.createRestrictionToSave(
-        studentId,
-        RestrictionCode.SINF,
-        auditUserId,
-        applicationId,
-      );
+      const restriction =
+        await this.studentRestrictionSharedService.createRestrictionToSave(
+          studentId,
+          RestrictionCode.SINF,
+          auditUserId,
+          applicationId,
+        );
       const newRestriction = await entityManager
         .getRepository(StudentRestriction)
         .save(restriction);
-      await this.studentRestrictionsService.createNotifications(
+      await this.studentRestrictionSharedService.createNotifications(
         [newRestriction.id],
         auditUserId,
         entityManager,
