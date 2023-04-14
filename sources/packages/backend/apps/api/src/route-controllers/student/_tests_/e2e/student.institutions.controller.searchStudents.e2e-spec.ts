@@ -381,7 +381,7 @@ describe("StudentInstitutionsController(e2e)-searchStudents", () => {
       .expect([]);
   });
 
-  it.only("Should not find the student when institution is different.", async () => {
+  it("Should not find the student when institution is different.", async () => {
     // Arrange
     // Student who has application submitted to institution.
     const student = await saveFakeStudent(appDataSource);
@@ -411,6 +411,42 @@ describe("StudentInstitutionsController(e2e)-searchStudents", () => {
     const endpoint = "/institutions/student/search";
     const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeCUser,
+    );
+    const searchPayload = {
+      appNumber: application.applicationNumber,
+      firstName: "",
+      lastName: "",
+      sin: "",
+    };
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .post(endpoint)
+      .send(searchPayload)
+      .auth(institutionUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.CREATED)
+      .expect([]);
+  });
+
+  it("Should not find the student when student has only a draft application.", async () => {
+    // Arrange
+    // Student who has application submitted to institution.
+    const student = await saveFakeStudent(appDataSource);
+
+    const application = await saveFakeApplicationDisbursements(
+      appDataSource,
+      {
+        institution: collegeF,
+        institutionLocation: collegeFLocation,
+        student,
+      },
+      {
+        applicationStatus: ApplicationStatus.Draft,
+      },
+    );
+    const endpoint = "/institutions/student/search";
+    const institutionUserToken = await getInstitutionToken(
+      InstitutionTokenTypes.CollegeFUser,
     );
     const searchPayload = {
       appNumber: application.applicationNumber,

@@ -496,20 +496,13 @@ export class StudentService extends RecordDataModelService<Student> {
                   })
                   .andWhere("studentAssessment.assessmentData is not null");
               }),
-            ).orWhere(
-              new Brackets((qb2) => {
-                qb2
-                  .where("application.applicationStatus != :cancelledStatus", {
-                    cancelledStatus: ApplicationStatus.Cancelled,
-                  })
-                  .andWhere(
-                    "application.applicationStatus != :overwrittenStatus",
-                    {
-                      overwrittenStatus: ApplicationStatus.Overwritten,
-                    },
-                  );
-              }),
-            );
+            ).orWhere("application.applicationStatus not in (:...statuses)", {
+              statuses: [
+                ApplicationStatus.Cancelled,
+                ApplicationStatus.Overwritten,
+                ApplicationStatus.Draft,
+              ],
+            });
           }),
         );
     }
