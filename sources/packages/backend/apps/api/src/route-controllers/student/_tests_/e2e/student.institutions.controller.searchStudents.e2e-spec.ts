@@ -11,6 +11,7 @@ import {
 } from "../../../../testHelpers";
 import {
   createFakeInstitutionLocation,
+  saveFakeApplication,
   saveFakeApplicationDisbursements,
   saveFakeStudent,
 } from "@sims/test-utils";
@@ -52,14 +53,9 @@ describe("StudentInstitutionsController(e2e)-searchStudents", () => {
   it("Should find the student by application number when student has at least one application submitted for the institution.", async () => {
     // Arrange
     // Student who has application submitted to institution.
-    let student = await saveFakeStudent(appDataSource);
-    // Refresh student object to get a birthDate with date only
-    student = await studentRepo.findOne({
-      where: { id: student.id },
-      relations: { sinValidation: true },
-    });
+    const student = await saveFakeStudent(appDataSource);
 
-    const application = await saveFakeApplicationDisbursements(
+    const application = await saveFakeApplication(
       appDataSource,
       {
         institution: collegeF,
@@ -86,7 +82,7 @@ describe("StudentInstitutionsController(e2e)-searchStudents", () => {
       .post(endpoint)
       .send(searchPayload)
       .auth(institutionUserToken, BEARER_AUTH_TYPE)
-      .expect(HttpStatus.CREATED)
+      .expect(HttpStatus.OK)
       .expect([
         {
           id: student.id,
@@ -101,14 +97,9 @@ describe("StudentInstitutionsController(e2e)-searchStudents", () => {
   it("Should find the student by last name when student has at least one application submitted for the institution.", async () => {
     // Arrange
     // Student who has application submitted to institution.
-    let student = await saveFakeStudent(appDataSource);
-    // Refresh student object to get a birthDate with date only
-    student = await studentRepo.findOne({
-      where: { id: student.id },
-      relations: { sinValidation: true },
-    });
+    const student = await saveFakeStudent(appDataSource);
 
-    await saveFakeApplicationDisbursements(
+    await saveFakeApplication(
       appDataSource,
       {
         institution: collegeF,
@@ -135,7 +126,7 @@ describe("StudentInstitutionsController(e2e)-searchStudents", () => {
       .post(endpoint)
       .send(searchPayload)
       .auth(institutionUserToken, BEARER_AUTH_TYPE)
-      .expect(HttpStatus.CREATED)
+      .expect(HttpStatus.OK)
       .then((response) => {
         expect(response.body).toEqual(
           expect.arrayContaining([
@@ -154,14 +145,9 @@ describe("StudentInstitutionsController(e2e)-searchStudents", () => {
   it("Should find the student by first name when student has at least one application submitted for the institution.", async () => {
     // Arrange
     // Student who has application submitted to institution.
-    let student = await saveFakeStudent(appDataSource);
-    // Refresh student object to get a birthDate with date only
-    student = await studentRepo.findOne({
-      where: { id: student.id },
-      relations: { sinValidation: true },
-    });
+    const student = await saveFakeStudent(appDataSource);
 
-    await saveFakeApplicationDisbursements(
+    await saveFakeApplication(
       appDataSource,
       {
         institution: collegeF,
@@ -188,7 +174,7 @@ describe("StudentInstitutionsController(e2e)-searchStudents", () => {
       .post(endpoint)
       .send(searchPayload)
       .auth(institutionUserToken, BEARER_AUTH_TYPE)
-      .expect(HttpStatus.CREATED)
+      .expect(HttpStatus.OK)
       .then((response) => {
         expect(response.body).toEqual(
           expect.arrayContaining([
@@ -207,14 +193,9 @@ describe("StudentInstitutionsController(e2e)-searchStudents", () => {
   it("Should find the student by sin when student has at least one application submitted for the institution.", async () => {
     // Arrange
     // Student who has application submitted to institution.
-    let student = await saveFakeStudent(appDataSource);
-    // Refresh student object to get a birthDate with date only
-    student = await studentRepo.findOne({
-      where: { id: student.id },
-      relations: { sinValidation: true },
-    });
+    const student = await saveFakeStudent(appDataSource);
 
-    await saveFakeApplicationDisbursements(
+    await saveFakeApplication(
       appDataSource,
       {
         institution: collegeF,
@@ -241,7 +222,7 @@ describe("StudentInstitutionsController(e2e)-searchStudents", () => {
       .post(endpoint)
       .send(searchPayload)
       .auth(institutionUserToken, BEARER_AUTH_TYPE)
-      .expect(HttpStatus.CREATED)
+      .expect(HttpStatus.OK)
       .expect([
         {
           id: student.id,
@@ -258,7 +239,7 @@ describe("StudentInstitutionsController(e2e)-searchStudents", () => {
     // Student who has application submitted to institution.
     const student = await saveFakeStudent(appDataSource);
 
-    const application = await saveFakeApplicationDisbursements(
+    const application = await saveFakeApplication(
       appDataSource,
       {
         institution: collegeF,
@@ -289,21 +270,16 @@ describe("StudentInstitutionsController(e2e)-searchStudents", () => {
       .post(endpoint)
       .send(searchPayload)
       .auth(institutionUserToken, BEARER_AUTH_TYPE)
-      .expect(HttpStatus.CREATED)
+      .expect(HttpStatus.OK)
       .expect([]);
   });
 
   it("Should find the student when application submitted and cancelled after the assessment.", async () => {
     // Arrange
     // Student who has application submitted to institution.
-    let student = await saveFakeStudent(appDataSource);
-    // Refresh student object to get a birthDate with date only
-    student = await studentRepo.findOne({
-      where: { id: student.id },
-      relations: { sinValidation: true },
-    });
+    const student = await saveFakeStudent(appDataSource);
 
-    const application = await saveFakeApplicationDisbursements(
+    const application = await saveFakeApplication(
       appDataSource,
       {
         institution: collegeF,
@@ -331,7 +307,7 @@ describe("StudentInstitutionsController(e2e)-searchStudents", () => {
       .post(endpoint)
       .send(searchPayload)
       .auth(institutionUserToken, BEARER_AUTH_TYPE)
-      .expect(HttpStatus.CREATED)
+      .expect(HttpStatus.OK)
       .expect([
         {
           id: student.id,
@@ -377,7 +353,7 @@ describe("StudentInstitutionsController(e2e)-searchStudents", () => {
       .post(endpoint)
       .send(searchPayload)
       .auth(institutionUserToken, BEARER_AUTH_TYPE)
-      .expect(HttpStatus.CREATED)
+      .expect(HttpStatus.OK)
       .expect([]);
   });
 
@@ -397,7 +373,7 @@ describe("StudentInstitutionsController(e2e)-searchStudents", () => {
       InstitutionTokenTypes.CollegeCUser,
       collegeCLocation,
     );
-    const application = await saveFakeApplicationDisbursements(
+    const application = await saveFakeApplication(
       appDataSource,
       {
         institution: collegeF,
@@ -424,7 +400,7 @@ describe("StudentInstitutionsController(e2e)-searchStudents", () => {
       .post(endpoint)
       .send(searchPayload)
       .auth(institutionUserToken, BEARER_AUTH_TYPE)
-      .expect(HttpStatus.CREATED)
+      .expect(HttpStatus.OK)
       .expect([]);
   });
 
@@ -433,7 +409,7 @@ describe("StudentInstitutionsController(e2e)-searchStudents", () => {
     // Student who has application submitted to institution.
     const student = await saveFakeStudent(appDataSource);
 
-    const application = await saveFakeApplicationDisbursements(
+    const application = await saveFakeApplication(
       appDataSource,
       {
         institution: collegeF,
@@ -460,7 +436,7 @@ describe("StudentInstitutionsController(e2e)-searchStudents", () => {
       .post(endpoint)
       .send(searchPayload)
       .auth(institutionUserToken, BEARER_AUTH_TYPE)
-      .expect(HttpStatus.CREATED)
+      .expect(HttpStatus.OK)
       .expect([]);
   });
 

@@ -1,1 +1,1 @@
-COMMENT ON COLUMN sims.applications.location_id IS 'References the location related to the application at the submission. From the location it is possible to get the institution for example.';
+COMMENT ON COLUMN sims.applications.location_id IS 'References the institution location of the application.';

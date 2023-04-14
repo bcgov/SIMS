@@ -159,3 +159,70 @@ export async function saveFakeApplicationDisbursements(
   savedApplication.currentAssessment = savedOriginalAssessment;
   return applicationRepo.save(savedApplication);
 }
+
+/**
+ * Create and save to the database an application with all the dependencies.
+ * @param dataSource manages the repositories to save the data.
+ * @param relations dependencies.
+ * - `institution` related institution.
+ * - `institutionLocation` related location.
+ * - `student` related student.
+ * @param options additional options:
+ * - `applicationStatus` application status for the application.
+ * @returns the created application.
+ */
+export async function saveFakeApplication(
+  dataSource: DataSource,
+  relations?: {
+    institution?: Institution;
+    institutionLocation?: InstitutionLocation;
+    student?: Student;
+  },
+  options?: {
+    applicationStatus?: ApplicationStatus;
+  },
+): Promise<Application> {
+  const userRepo = dataSource.getRepository(User);
+  const studentRepo = dataSource.getRepository(Student);
+  const applicationRepo = dataSource.getRepository(Application);
+  const studentAssessmentRepo = dataSource.getRepository(StudentAssessment);
+  const offeringRepo = dataSource.getRepository(EducationProgramOffering);
+  const applicationStatus =
+    options?.applicationStatus ?? ApplicationStatus.Assessment;
+  // Ensure student/user creation.
+  let savedUser: User;
+  let savedStudent: Student;
+  if (relations?.student) {
+    savedUser = relations.student.user;
+    savedStudent = relations.student;
+  } else {
+    savedUser = await userRepo.save(createFakeUser());
+    savedStudent = await studentRepo.save(createFakeStudent(savedUser));
+  }
+  // Create and save application.
+  const fakeApplication = createFakeApplication({
+    student: savedStudent,
+    location: relations?.institutionLocation,
+  });
+  fakeApplication.applicationStatus = applicationStatus;
+  const savedApplication = await applicationRepo.save(fakeApplication);
+  // Original assessment.
+  const fakeOriginalAssessment = createFakeStudentAssessment({
+    auditUser: savedUser,
+  });
+  fakeOriginalAssessment.application = savedApplication;
+  // Offering.
+  const fakeOffering = createFakeEducationProgramOffering({
+    institution: relations?.institution,
+    institutionLocation: relations?.institutionLocation,
+    auditUser: savedUser,
+  });
+  fakeOffering.offeringIntensity = OfferingIntensity.fullTime;
+  const savedOffering = await offeringRepo.save(fakeOffering);
+  fakeOriginalAssessment.offering = savedOffering;
+  const savedOriginalAssessment = await studentAssessmentRepo.save(
+    fakeOriginalAssessment,
+  );
+  savedApplication.currentAssessment = savedOriginalAssessment;
+  return applicationRepo.save(savedApplication);
+}

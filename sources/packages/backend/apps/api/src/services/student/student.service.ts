@@ -469,9 +469,9 @@ export class StudentService extends RecordDataModelService<Student> {
           "application",
           "application.student.id = student.id",
         )
-        .leftJoin("application.location", "institutionLocation")
-        .leftJoin("institutionLocation.institution", "institution")
-        .leftJoin("application.currentAssessment", "studentAssessment");
+        .innerJoin("application.location", "institutionLocation")
+        .innerJoin("institutionLocation.institution", "institution")
+        .innerJoin("application.currentAssessment", "studentAssessment");
     } else {
       searchQuery.leftJoin(
         Application,

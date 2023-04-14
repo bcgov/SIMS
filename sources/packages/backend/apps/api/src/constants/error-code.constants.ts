@@ -121,3 +121,7 @@ export const DUPLICATE_INSTITUTION_LOCATION_CODE =
  * Duplicate SABC code for the institution.
  */
 export const DUPLICATE_SABC_CODE = "DUPLICATE_SABC_CODE";
+/**
+ * Institution location not valid.
+ */
+export const INSTITUTION_LOCATION_NOT_VALID = "INSTITUTION_LOCATION_NOT_VALID";
