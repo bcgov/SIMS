@@ -28,6 +28,7 @@ import {
   DisbursementOverawardOriginType,
   Application,
   StudentRestriction,
+  Restriction,
 } from "@sims/sims-db";
 import { ECertDisbursementSchedule } from "./e-cert-generation.models";
 import { AwardOverawardBalance } from "@sims/services/disbursement-overaward/disbursement-overaward.models";
@@ -37,7 +38,7 @@ import {
   LOAN_TYPES,
 } from "@sims/services/constants";
 // todo: ann double check all import in the modules
-// todo: ann run queue and workers locallty to test everything
+// todo: ann run queue and workers locally to test everything
 /**
  * While performing a possible huge amount of updates,
  * breaks the execution in chunks.
@@ -79,7 +80,6 @@ export class ECertGenerationService {
     if (!disbursements?.length) {
       return [];
     }
-
     // The below steps must be execute in order and they will be causing
     // changes on the disbursements objects and its children (awards) till
     // all changes are finally saved at once in the end of the processing.
@@ -99,7 +99,7 @@ export class ECertGenerationService {
       disbursement.disbursementScheduleStatus = DisbursementScheduleStatus.Sent;
       disbursement.dateSent = now;
     });
-    // Step 5 - Save all changes for the disbursements schedules and awards.
+    // Step 6 - Save all changes for the disbursements schedules and awards.
     await entityManager
       .getRepository(DisbursementSchedule)
       .save(disbursements, {
@@ -201,6 +201,21 @@ export class ECertGenerationService {
         END`,
         "stopFullTimeBCFunding",
       )
+      .addSelect(
+        (subQuery) =>
+          subQuery
+            .select("restriction.id")
+            .from(StudentRestriction, "studentRestrictions")
+            .innerJoin("studentRestrictions.restriction", "restriction")
+            .innerJoin("studentRestrictions.student", "restrictionStudent")
+            .where("studentRestrictions.isActive = true")
+            .andWhere("restrictionStudent.id = student.id")
+            .andWhere("restriction.actionType && :restrictionActionType")
+            .orderBy("studentRestrictions.id", "DESC")
+            .limit(1),
+
+        "restrictionId",
+      )
       .innerJoin("disbursement.studentAssessment", "studentAssessment")
       .innerJoin("disbursement.msfaaNumber", "msfaaNumber")
       .innerJoin("studentAssessment.application", "application")
@@ -249,6 +264,7 @@ export class ECertGenerationService {
     return mapFromRawAndEntities<ECertDisbursementSchedule>(
       queryResult,
       "stopFullTimeBCFunding",
+      "restrictionId",
     );
   }
 
@@ -296,13 +312,18 @@ export class ECertGenerationService {
   private async calculateEffectiveValue(
     disbursements: ECertDisbursementSchedule[],
     entityManager: EntityManager,
-  ) {
+  ): Promise<void> {
     for (const disbursement of disbursements) {
       for (const disbursementValue of disbursement.disbursementValues) {
         if (this.shouldStopFullTimeBCFunding(disbursement, disbursementValue)) {
+          disbursementValue.restrictionAmountSubtracted =
+            disbursementValue.valueAmount -
+            (disbursementValue.disbursedAmountSubtracted ?? 0) -
+            (disbursementValue.overawardAmountSubtracted ?? 0);
           disbursementValue.effectiveAmount = 0;
-          // todo: ann Update all BC-related funding awards (BCSL and grants) to have the restriction_amount_subtracted to make the effective value of the award to be defined as 0 (zero).
-          // todo: ann Update the restriction_id_subtracted with the restriction id that has the Stop full time BC funding associated with it. Any restriction can have the action Stop full time BC funding associated with it, not only the one related to BCSL.
+          disbursementValue.restrictionSubtracted = {
+            id: disbursement.restrictionId,
+          } as Restriction;
         } else {
           const effectiveValue =
             disbursementValue.valueAmount -
@@ -334,12 +355,13 @@ export class ECertGenerationService {
     application: Application,
     entityManager: EntityManager,
   ): Promise<void> {
-    // todo: comment calculation only when there is a bcsl (eg, 2nd disbusment in 2 disbusrment)
     if (disbursementValue.valueType === DisbursementValueType.BCLoan) {
       const student = application.student;
+      const maxLifetimeBCLoanAmount =
+        application.programYear.maxLifetimeBCLoanAmount;
+      const auditUser = await this.systemUsersService.systemUser();
+
       const totalLifeTimeAmount =
-        //todo: ann remove test
-        49000 +
         (await this.sfasApplicationService.totalLegacyBCSLAmount(
           student.sinValidation.sin,
           student.birthDate,
@@ -349,9 +371,7 @@ export class ECertGenerationService {
           student.id,
         )) +
         disbursementValue.effectiveAmount;
-      console.log(totalLifeTimeAmount, "_lifeTimeMaximum");
-      const maxLifetimeBCLoanAmount =
-        application.programYear.maxLifetimeBCLoanAmount;
+
       if (totalLifeTimeAmount >= maxLifetimeBCLoanAmount) {
         // Amount subtracted when lifetime maximum is reached.
         const amountSubtracted = totalLifeTimeAmount - maxLifetimeBCLoanAmount;
@@ -360,13 +380,7 @@ export class ECertGenerationService {
         // disbursement/application and money went out to the student, even though they reach the maximum.
         const newEffectiveAmount =
           disbursementValue.effectiveAmount - amountSubtracted;
-        // todo: ann save everything in transaction,  restriction
-        // TODO: ANN IF newEffectiveAmount IS 0, THEN GRANTS SHOULD ALSO BE 0 . also should add the restriction at that point or during the next e-cert
-        // case 1 : happy path -> reached LTM normally
-        // case 2: after calculation LTM hits are effective is now 0, MAKE ALL GRANTS 0?
-        // case 3: after calculation bcsl is just equal to LTM, SHOULD WE ADD RESTRICTION NOW
-        // Creating restriction to the student.
-        const auditUser = await this.systemUsersService.systemUser();
+        // Create BCLM restriction when lifetime maximum is hit.
         const bclmRestriction =
           await this.studentRestrictionSharedService.createRestrictionToSave(
             student.id,
@@ -380,12 +394,10 @@ export class ECertGenerationService {
             .getRepository(StudentRestriction)
             .save(bclmRestriction);
         }
-        console.log(bclmRestriction.restriction.id);
+
         disbursementValue.effectiveAmount = round(newEffectiveAmount);
-        if (newEffectiveAmount > 0) {
-          disbursementValue.restrictionAmountSubtracted = amountSubtracted;
-          disbursementValue.restrictionSubtracted = bclmRestriction.restriction;
-        }
+        disbursementValue.restrictionAmountSubtracted = amountSubtracted;
+        disbursementValue.restrictionSubtracted = bclmRestriction.restriction;
       }
     }
   }
@@ -393,7 +405,8 @@ export class ECertGenerationService {
   /**
    * Calculate the total BC grants for each disbursement since they
    * can be affected by the calculations for the values already paid for the student
-   * or by overaward deductions.
+   * or by overaward deductions and calculate and record BC total grants that was used to
+   * subtracted due to a {@link RestrictionActionType.StopFullTimeBCFunding} restriction.
    * @param disbursementSchedules disbursements to have the BC grants calculated.
    */
   private async createBCTotalGrants(
@@ -424,8 +437,23 @@ export class ECertGenerationService {
         .reduce((previousValue, currentValue) => {
           return previousValue + currentValue.effectiveAmount;
         }, 0);
+      // Calculate total BC grants subtracted due to restriction.
+      const bcTotalGrantAmountSubtracted =
+        disbursementSchedule.disbursementValues
+          // Filter all BC grants.
+          .filter(
+            (disbursementValue) =>
+              disbursementValue.valueType === DisbursementValueType.BCGrant &&
+              disbursementValue.restrictionAmountSubtracted !== null,
+          )
+          // Sum all BC grants subtracted due to restriction.
+          .reduce((previousValue, currentValue) => {
+            return previousValue + currentValue.restrictionAmountSubtracted;
+          }, 0);
       bcTotalGrant.valueAmount = bcTotalGrantValueAmount;
       bcTotalGrant.effectiveAmount = bcTotalGrantValueAmount;
+      bcTotalGrant.restrictionAmountSubtracted =
+        bcTotalGrantAmountSubtracted ?? null;
     }
   }
 
