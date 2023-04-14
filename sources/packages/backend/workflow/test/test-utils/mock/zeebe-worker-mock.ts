@@ -56,9 +56,7 @@ export class ZeebeMockedClient {
         taskType,
         taskHandler: mockTaskHandler,
       }));
-      // Zeebe client logs disabled for a better test summary display.
-      // It can be enable as needed for troubleshooting.
-      ZeebeMockedClient.mockedZeebeClient = new ZBClient({ loglevel: "NONE" });
+      ZeebeMockedClient.mockedZeebeClient = new ZBClient({ loglevel: "ERROR" });
       fakeWorkers.forEach((fakeWorker) =>
         ZeebeMockedClient.mockedZeebeClient.createWorker(fakeWorker),
       );
