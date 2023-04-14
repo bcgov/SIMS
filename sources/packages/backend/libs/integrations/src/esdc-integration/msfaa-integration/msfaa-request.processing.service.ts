@@ -27,10 +27,8 @@ export class MSFAARequestProcessingService extends ESDCFileHandler {
   /**
    * 1. Fetches the MSFAA records which are not sent for request.
    * 2. Create Unique sequence for the request sent file.
-   * 3. Create the Request content for the MSFAA file by populating the
-   *      header, footer and trailer content.
-   * 4. Create the request filename with the file path for the MSFAA Request
-   *      sent File.
+   * 3. Create the Request content for the MSFAA file by populating the header, footer and trailer content.
+   * 4. Create the request filename with the file path for the MSFAA Request sent File.
    * 5. Upload the content to the zoneB SFTP server.
    * 6. Update the MSFAA records, that are sent in the request sent file.
    * @param fileCode File code applicable for Part-Time or Full-Time.
