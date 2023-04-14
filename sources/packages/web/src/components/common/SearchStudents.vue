@@ -1,60 +1,66 @@
 <template>
   <v-form ref="searchStudentsForm">
     <content-group class="mb-8">
-      <v-row
-        ><v-col>
-          <v-text-field
-            label="Application number"
-            density="compact"
-            data-cy="appNumber"
-            variant="outlined"
-            v-model="appNumber"
-            @keyup.enter="searchStudents"
-            hide-details
-          />
+      <v-row>
+        <v-col cols="11" lg="11" md="10" sm="12">
+          <v-row
+            ><v-col cols="12" lg="3" md="6">
+              <v-text-field
+                label="Application number"
+                density="compact"
+                data-cy="appNumber"
+                variant="outlined"
+                v-model="appNumber"
+                @keyup.enter="searchStudents"
+                hide-details
+              />
+            </v-col>
+            <v-col cols="12" lg="3" md="6">
+              <v-text-field
+                label="SIN"
+                density="compact"
+                data-cy="sin"
+                variant="outlined"
+                v-model="sin"
+                @keyup.enter="searchStudents"
+                hide-details
+              />
+            </v-col>
+            <v-col cols="12" lg="3" md="6">
+              <v-text-field
+                label="Given names"
+                density="compact"
+                data-cy="firstName"
+                variant="outlined"
+                v-model="firstName"
+                @keyup.enter="searchStudents"
+                hide-details
+              /> </v-col
+            ><v-col cols="12" lg="3" md="6">
+              <v-text-field
+                label="Last name"
+                density="compact"
+                data-cy="lastName"
+                variant="outlined"
+                v-model="lastName"
+                @keyup.enter="searchStudents"
+                hide-details
+              />
+            </v-col>
+          </v-row>
         </v-col>
-        <v-col>
-          <v-text-field
-            label="SIN"
-            density="compact"
-            data-cy="sin"
-            variant="outlined"
-            v-model="sin"
-            @keyup.enter="searchStudents"
-            hide-details
-          />
-        </v-col>
-        <v-col>
-          <v-text-field
-            label="Given names"
-            density="compact"
-            data-cy="firstName"
-            variant="outlined"
-            v-model="firstName"
-            @keyup.enter="searchStudents"
-            hide-details
-          /> </v-col
-        ><v-col>
-          <v-text-field
-            label="Last name"
-            density="compact"
-            data-cy="lastName"
-            variant="outlined"
-            v-model="lastName"
-            @keyup.enter="searchStudents"
-            hide-details
-          /> </v-col
-        ><v-col
-          ><v-btn
+        <v-col cols="1">
+          <v-btn
             color="primary"
             class="p-button-raised"
             data-cy="searchStudents"
             @click="searchStudents()"
           >
             Search
-          </v-btn></v-col
-        >
+          </v-btn>
+        </v-col>
       </v-row>
+
       <v-input
         :rules="[isValidSearch()]"
         hide-details="auto"
