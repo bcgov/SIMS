@@ -93,7 +93,10 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
         },
         meta: {
           clientType: ClientIdType.Institution,
-          userTypes: [InstitutionUserTypes.admin, InstitutionUserTypes.user],
+          institutionUserTypes: [
+            InstitutionUserTypes.admin,
+            InstitutionUserTypes.user,
+          ],
         },
       },
       {
@@ -105,7 +108,10 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
         },
         meta: {
           clientType: ClientIdType.Institution,
-          userTypes: [InstitutionUserTypes.admin, InstitutionUserTypes.user],
+          institutionUserTypes: [
+            InstitutionUserTypes.admin,
+            InstitutionUserTypes.user,
+          ],
         },
       },
       {
@@ -118,9 +124,10 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
         props: true,
         meta: {
           clientType: ClientIdType.Institution,
-          checkAllowedLocation: {
-            userTypes: [InstitutionUserTypes.admin, InstitutionUserTypes.user],
-          },
+          institutionUserTypes: [
+            InstitutionUserTypes.admin,
+            InstitutionUserTypes.user,
+          ],
         },
       },
       {
@@ -133,9 +140,10 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
         props: true,
         meta: {
           clientType: ClientIdType.Institution,
-          checkAllowedLocation: {
-            userTypes: [InstitutionUserTypes.admin, InstitutionUserTypes.user],
-          },
+          institutionUserTypes: [
+            InstitutionUserTypes.admin,
+            InstitutionUserTypes.user,
+          ],
         },
       },
       {
@@ -145,9 +153,10 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
         props: true,
         meta: {
           clientType: ClientIdType.Institution,
-          checkAllowedLocation: {
-            userTypes: [InstitutionUserTypes.admin, InstitutionUserTypes.user],
-          },
+          institutionUserTypes: [
+            InstitutionUserTypes.admin,
+            InstitutionUserTypes.user,
+          ],
         },
       },
       {
@@ -160,9 +169,10 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
         props: true,
         meta: {
           clientType: ClientIdType.Institution,
-          checkAllowedLocation: {
-            userTypes: [InstitutionUserTypes.admin, InstitutionUserTypes.user],
-          },
+          institutionUserTypes: [
+            InstitutionUserTypes.admin,
+            InstitutionUserTypes.user,
+          ],
         },
       },
       {
@@ -175,9 +185,10 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
         props: true,
         meta: {
           clientType: ClientIdType.Institution,
-          checkAllowedLocation: {
-            userTypes: [InstitutionUserTypes.admin, InstitutionUserTypes.user],
-          },
+          institutionUserTypes: [
+            InstitutionUserTypes.admin,
+            InstitutionUserTypes.user,
+          ],
         },
       },
       {
@@ -187,9 +198,10 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
         props: true,
         meta: {
           clientType: ClientIdType.Institution,
-          checkAllowedLocation: {
-            userTypes: [InstitutionUserTypes.admin, InstitutionUserTypes.user],
-          },
+          institutionUserTypes: [
+            InstitutionUserTypes.admin,
+            InstitutionUserTypes.user,
+          ],
         },
       },
       {
@@ -199,9 +211,10 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
         props: true,
         meta: {
           clientType: ClientIdType.Institution,
-          checkAllowedLocation: {
-            userTypes: [InstitutionUserTypes.admin, InstitutionUserTypes.user],
-          },
+          institutionUserTypes: [
+            InstitutionUserTypes.admin,
+            InstitutionUserTypes.user,
+          ],
         },
       },
       {
@@ -213,7 +226,7 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
         },
         meta: {
           clientType: ClientIdType.Institution,
-          userTypes: [InstitutionUserTypes.admin],
+          institutionUserTypes: [InstitutionUserTypes.admin],
         },
       },
       {
@@ -225,7 +238,7 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
         },
         meta: {
           clientType: ClientIdType.Institution,
-          userTypes: [InstitutionUserTypes.admin],
+          institutionUserTypes: [InstitutionUserTypes.admin],
         },
       },
       {
@@ -234,7 +247,7 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
         component: DesignationRequest,
         meta: {
           clientType: ClientIdType.Institution,
-          userTypes: [InstitutionUserTypes.admin],
+          institutionUserTypes: [InstitutionUserTypes.admin],
         },
       },
       {
@@ -243,7 +256,7 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
         component: DesignationView,
         meta: {
           clientType: ClientIdType.Institution,
-          userTypes: [InstitutionUserTypes.admin],
+          institutionUserTypes: [InstitutionUserTypes.admin],
         },
         props: true,
       },
@@ -256,7 +269,7 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
         },
         meta: {
           clientType: ClientIdType.Institution,
-          userTypes: [InstitutionUserTypes.admin],
+          institutionUserTypes: [InstitutionUserTypes.admin],
         },
       },
       {
@@ -268,7 +281,10 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
         },
         meta: {
           clientType: ClientIdType.Institution,
-          userTypes: [InstitutionUserTypes.admin, InstitutionUserTypes.user],
+          institutionUserTypes: [
+            InstitutionUserTypes.admin,
+            InstitutionUserTypes.user,
+          ],
         },
       },
       {
@@ -280,7 +296,7 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
         },
         meta: {
           clientType: ClientIdType.Institution,
-          userTypes: [InstitutionUserTypes.admin],
+          institutionUserTypes: [InstitutionUserTypes.admin],
         },
       },
       {
@@ -289,7 +305,7 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
         component: AddInstitutionLocation,
         meta: {
           clientType: ClientIdType.Institution,
-          userTypes: [InstitutionUserTypes.admin],
+          institutionUserTypes: [InstitutionUserTypes.admin],
         },
       },
       {
@@ -299,9 +315,10 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
         props: true,
         meta: {
           clientType: ClientIdType.Institution,
-          checkAllowedLocation: {
-            userTypes: [InstitutionUserTypes.admin],
-          },
+          institutionUserTypes: [
+            InstitutionUserTypes.admin,
+            InstitutionUserTypes.user,
+          ],
         },
       },
       {
@@ -310,6 +327,10 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
         component: InstitutionProfile,
         meta: {
           clientType: ClientIdType.Institution,
+          institutionUserTypes: [
+            InstitutionUserTypes.admin,
+            InstitutionUserTypes.user,
+          ],
         },
       },
       {
@@ -327,9 +348,10 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
         props: true,
         meta: {
           clientType: ClientIdType.Institution,
-          checkAllowedLocation: {
-            userTypes: [InstitutionUserTypes.admin, InstitutionUserTypes.user],
-          },
+          institutionUserTypes: [
+            InstitutionUserTypes.admin,
+            InstitutionUserTypes.user,
+          ],
         },
       },
       {
@@ -339,9 +361,10 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
         props: true,
         meta: {
           clientType: ClientIdType.Institution,
-          checkAllowedLocation: {
-            userTypes: [InstitutionUserTypes.admin, InstitutionUserTypes.user],
-          },
+          institutionUserTypes: [
+            InstitutionUserTypes.admin,
+            InstitutionUserTypes.user,
+          ],
         },
       },
       {
@@ -351,9 +374,10 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
         props: true,
         meta: {
           clientType: ClientIdType.Institution,
-          checkAllowedLocation: {
-            userTypes: [InstitutionUserTypes.admin, InstitutionUserTypes.user],
-          },
+          institutionUserTypes: [
+            InstitutionUserTypes.admin,
+            InstitutionUserTypes.user,
+          ],
         },
       },
       {
@@ -363,9 +387,10 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
         props: true,
         meta: {
           clientType: ClientIdType.Institution,
-          checkAllowedLocation: {
-            userTypes: [InstitutionUserTypes.admin, InstitutionUserTypes.user],
-          },
+          institutionUserTypes: [
+            InstitutionUserTypes.admin,
+            InstitutionUserTypes.user,
+          ],
         },
       },
       {
@@ -375,9 +400,10 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
         props: true,
         meta: {
           clientType: ClientIdType.Institution,
-          checkAllowedLocation: {
-            userTypes: [InstitutionUserTypes.admin, InstitutionUserTypes.user],
-          },
+          institutionUserTypes: [
+            InstitutionUserTypes.admin,
+            InstitutionUserTypes.user,
+          ],
         },
       },
       {
@@ -387,9 +413,10 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
         props: true,
         meta: {
           clientType: ClientIdType.Institution,
-          checkAllowedLocation: {
-            userTypes: [InstitutionUserTypes.admin, InstitutionUserTypes.user],
-          },
+          institutionUserTypes: [
+            InstitutionUserTypes.admin,
+            InstitutionUserTypes.user,
+          ],
         },
       },
       {
@@ -399,9 +426,10 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
         props: true,
         meta: {
           clientType: ClientIdType.Institution,
-          checkAllowedLocation: {
-            userTypes: [InstitutionUserTypes.admin, InstitutionUserTypes.user],
-          },
+          institutionUserTypes: [
+            InstitutionUserTypes.admin,
+            InstitutionUserTypes.user,
+          ],
         },
       },
       {
@@ -413,7 +441,7 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
         },
         meta: {
           clientType: ClientIdType.Institution,
-          userTypes: [InstitutionUserTypes.admin],
+          institutionUserTypes: [InstitutionUserTypes.admin],
         },
       },
       {
@@ -426,7 +454,10 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
         },
         meta: {
           clientType: ClientIdType.Institution,
-          userTypes: [InstitutionUserTypes.admin, InstitutionUserTypes.user],
+          institutionUserTypes: [
+            InstitutionUserTypes.admin,
+            InstitutionUserTypes.user,
+          ],
         },
         children: [
           {
@@ -436,7 +467,7 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
             component: InstitutionStudentProfile,
             meta: {
               clientType: ClientIdType.Institution,
-              userTypes: [
+              institutionUserTypes: [
                 InstitutionUserTypes.admin,
                 InstitutionUserTypes.user,
               ],
@@ -449,7 +480,7 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
             component: InstitutionStudentApplications,
             meta: {
               clientType: ClientIdType.Institution,
-              userTypes: [
+              institutionUserTypes: [
                 InstitutionUserTypes.admin,
                 InstitutionUserTypes.user,
               ],
@@ -462,7 +493,7 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
             component: InstitutionStudentRestrictions,
             meta: {
               clientType: ClientIdType.Institution,
-              userTypes: [
+              institutionUserTypes: [
                 InstitutionUserTypes.admin,
                 InstitutionUserTypes.user,
               ],
@@ -475,7 +506,7 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
             component: InstitutionStudentFileUploads,
             meta: {
               clientType: ClientIdType.Institution,
-              userTypes: [
+              institutionUserTypes: [
                 InstitutionUserTypes.admin,
                 InstitutionUserTypes.user,
               ],
@@ -488,7 +519,7 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
             component: InstitutionStudentNotes,
             meta: {
               clientType: ClientIdType.Institution,
-              userTypes: [
+              institutionUserTypes: [
                 InstitutionUserTypes.admin,
                 InstitutionUserTypes.user,
               ],
