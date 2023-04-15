@@ -343,9 +343,9 @@ export class ECertGenerationService {
   }
 
   /**
-   * Check if the student hits the life time maximum for the BCSL Award.
-   * If it hits the life time maximum, then the award is reduced so the
-   * student hits the maximum value exactly.
+   * Check if the student hits/exceeds the life time maximum for the BCSL Award.
+   * If they hits/exceeds the life time maximum, then the award is reduced so the
+   * student hits the exact maximum value.
    * @param disbursementValue disbursement value.
    * @param application application related to the disbursement.
    * @param entityManager used to execute the commands in the same transaction.
@@ -380,7 +380,9 @@ export class ECertGenerationService {
         // disbursement/application and money went out to the student, even though they reach the maximum.
         const newEffectiveAmount =
           disbursementValue.effectiveAmount - amountSubtracted;
-        // Create BCLM restriction when lifetime maximum is hit.
+        /**
+         * Create {@link RestrictionCode.BCLM} restriction when lifetime maximum is reached/exceeded.
+         */
         const bclmRestriction =
           await this.studentRestrictionSharedService.createRestrictionToSave(
             student.id,
@@ -405,7 +407,7 @@ export class ECertGenerationService {
   /**
    * Calculate the total BC grants for each disbursement since they
    * can be affected by the calculations for the values already paid for the student
-   * or by overaward deductions and calculate and record BC total grants that was used to
+   * or by overaward deductions.And calculate and record BC total grants that was used to
    * subtracted due to a {@link RestrictionActionType.StopFullTimeBCFunding} restriction.
    * @param disbursementSchedules disbursements to have the BC grants calculated.
    */
@@ -440,7 +442,7 @@ export class ECertGenerationService {
       // Calculate total BC grants subtracted due to restriction.
       const bcTotalGrantAmountSubtracted =
         disbursementSchedule.disbursementValues
-          // Filter all BC grants.
+          // Filter all BC grants and filter out the null BC grants subtracted.
           .filter(
             (disbursementValue) =>
               disbursementValue.valueType === DisbursementValueType.BCGrant &&
