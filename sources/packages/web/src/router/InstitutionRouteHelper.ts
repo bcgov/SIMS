@@ -28,12 +28,12 @@ export function validateInstitutionUserAccess(
     if (AuthService.shared.keycloak?.authenticated) {
       if (isInstitutionUserAllowed(to)) {
         next();
-      } else {
-        // Institution user is not allowed to access this route.
-        next({
-          name: SharedRouteConst.FORBIDDEN_USER,
-        });
+        return;
       }
+      // Institution user is not allowed to access this route.
+      next({
+        name: SharedRouteConst.FORBIDDEN_USER,
+      });
     } else {
       next({
         name: InstitutionRoutesConst.LOGIN,
