@@ -20,7 +20,6 @@ import {
   DisbursementScheduleErrorsService,
   DisbursementScheduleService,
   ECertGenerationService,
-  RestrictionService,
   SshService,
 } from "../../services";
 import { SystemUsersService } from "@sims/services/system-users";
@@ -40,7 +39,6 @@ import { SFASApplicationService } from "@sims/services/sfas";
     ECertFullTimeFileHeader,
     ECertFullTimeFileFooter,
     DisbursementScheduleErrorsService,
-    // RestrictionService,
     SystemUsersService,
     RestrictionSharedService,
     StudentRestrictionSharedService,

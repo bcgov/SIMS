@@ -7,7 +7,6 @@ import {
   User,
   Restriction,
   Student,
-  Application,
   EducationProgramOffering,
   RestrictionActionType,
 } from "@sims/sims-db";
