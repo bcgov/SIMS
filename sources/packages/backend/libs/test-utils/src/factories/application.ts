@@ -81,48 +81,24 @@ export async function saveFakeApplicationDisbursements(
     createSecondDisbursement?: boolean;
   },
 ): Promise<Application> {
-  const userRepo = dataSource.getRepository(User);
-  const studentRepo = dataSource.getRepository(Student);
   const applicationRepo = dataSource.getRepository(Application);
   const studentAssessmentRepo = dataSource.getRepository(StudentAssessment);
-  const offeringRepo = dataSource.getRepository(EducationProgramOffering);
-  // Using Assessment as a default status since it the first status when
-  // the application has the disbursement already generated.
-  const applicationStatus =
-    options?.applicationStatus ?? ApplicationStatus.Assessment;
-  // Ensure student/user creation.
-  let savedUser: User;
-  let savedStudent: Student;
-  if (relations?.student) {
-    savedUser = relations.student.user;
-    savedStudent = relations.student;
-  } else {
-    savedUser = await userRepo.save(createFakeUser());
-    savedStudent = await studentRepo.save(createFakeStudent(savedUser));
-  }
-  // Create and save application.
-  const fakeApplication = createFakeApplication({
-    student: savedStudent,
-    location: relations?.institutionLocation,
-  });
-  fakeApplication.applicationStatus = applicationStatus;
-  const savedApplication = await applicationRepo.save(fakeApplication);
-  // Original assessment.
-  const fakeOriginalAssessment = createFakeStudentAssessment({
-    auditUser: savedUser,
-  });
-  fakeOriginalAssessment.application = savedApplication;
+  const savedApplication = await saveFakeApplication(
+    dataSource,
+    relations,
+    options,
+  );
   const disbursementSchedules: DisbursementSchedule[] = [];
   // Original assessment - first disbursement.
   const firstSchedule = createFakeDisbursementSchedule({
-    auditUser: savedUser,
+    auditUser: savedApplication.student.user,
     disbursementValues: relations?.disbursementValues ?? [
       createFakeDisbursementValue(DisbursementValueType.CanadaLoan, "CSLF", 1),
     ],
   });
 
   firstSchedule.coeStatus =
-    applicationStatus === ApplicationStatus.Completed
+    savedApplication.applicationStatus === ApplicationStatus.Completed
       ? COEStatus.completed
       : COEStatus.required;
   firstSchedule.disbursementScheduleStatus = DisbursementScheduleStatus.Pending;
@@ -130,7 +106,7 @@ export async function saveFakeApplicationDisbursements(
   if (options?.createSecondDisbursement) {
     // Original assessment - second disbursement.
     const secondSchedule = createFakeDisbursementSchedule({
-      auditUser: savedUser,
+      auditUser: savedApplication.student.user,
       disbursementValues: relations?.disbursementValues ?? [
         createFakeDisbursementValue(DisbursementValueType.BCLoan, "BCSL", 1),
       ],
@@ -143,20 +119,12 @@ export async function saveFakeApplicationDisbursements(
     secondSchedule.disbursementDate = getISODateOnlyString(addDays(60));
     disbursementSchedules.push(secondSchedule);
   }
-  fakeOriginalAssessment.disbursementSchedules = disbursementSchedules;
-  // Offering.
-  const fakeOffering = createFakeEducationProgramOffering({
-    institution: relations?.institution,
-    institutionLocation: relations?.institutionLocation,
-    auditUser: savedUser,
-  });
-  fakeOffering.offeringIntensity = OfferingIntensity.fullTime;
-  const savedOffering = await offeringRepo.save(fakeOffering);
-  fakeOriginalAssessment.offering = savedOffering;
-  const savedOriginalAssessment = await studentAssessmentRepo.save(
-    fakeOriginalAssessment,
+  savedApplication.currentAssessment.disbursementSchedules =
+    disbursementSchedules;
+
+  savedApplication.currentAssessment = await studentAssessmentRepo.save(
+    savedApplication.currentAssessment,
   );
-  savedApplication.currentAssessment = savedOriginalAssessment;
   return applicationRepo.save(savedApplication);
 }
 
