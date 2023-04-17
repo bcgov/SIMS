@@ -1,6 +1,8 @@
 import { DisbursementValue, RelationshipStatus } from "@sims/sims-db";
 
 export const ECERT_SENT_TITLE = "NEW ENTITLEMENT";
+export const ECERT_PT_SENT_TITLE = "NEW PT ENTITLEMENT";
+
 /**
  * Amount of Grant for Part-time Studies (CSGP-PT) at the study start.
  */
