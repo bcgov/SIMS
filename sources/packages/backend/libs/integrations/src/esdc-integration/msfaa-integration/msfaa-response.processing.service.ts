@@ -129,7 +129,7 @@ export class MSFAAResponseProcessingService {
    * Process the cancelled record of the MSFAA response file
    * by updating the columns of MSFAA Numbers table
    * @param cancelledRecord MSFAA received record with
-   * cancelledDate and newIssusingProvince.
+   * cancelledDate and newIssuingProvince.
    */
   private async processCancelledRecord(
     cancelledRecord: MSFAAResponseCancelledRecord,
@@ -141,7 +141,7 @@ export class MSFAAResponseProcessingService {
       await this.msfaaNumberService.updateCancelledReceivedFile(
         cancelledRecord.msfaaNumber,
         cancelledRecord.cancelledDate,
-        cancelledRecord.newIssusingProvince,
+        cancelledRecord.newIssuingProvince,
       );
 
     // Expected to update 1 and only 1 record.

@@ -34,8 +34,8 @@ export class MSFAAFileFooter implements MSFAARequestFileLine {
   public static createFromLine(line: string): MSFAAFileFooter {
     const footer = new MSFAAFileFooter();
     footer.transactionCode = line.substring(0, 3) as RecordTypeCodes;
-    footer.recordCount = parseInt(line.substring(43, 51));
-    footer.totalSINHash = parseInt(line.substring(52, 66));
+    footer.recordCount = parseInt(line.substring(43, 52));
+    footer.totalSINHash = parseInt(line.substring(52, 67));
     return footer;
   }
 }

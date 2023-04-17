@@ -5,10 +5,10 @@ import {
 
 export class MSFAAResponseRecordIdentification {
   constructor(line: string, lineNumber: number) {
-    this.transactionCode = line.substr(0, 3) as RecordTypeCodes;
-    this.msfaaNumber = line.substr(3, 10);
-    this.sin = line.substr(13, 9);
-    this.statusCode = line.substr(22, 1) as ReceivedStatusCode;
+    this.transactionCode = line.substring(0, 3) as RecordTypeCodes;
+    this.msfaaNumber = line.substring(3, 13);
+    this.sin = line.substring(13, 22);
+    this.statusCode = line.substring(22, 23) as ReceivedStatusCode;
     this.line = line;
     this.lineNumber = lineNumber;
   }

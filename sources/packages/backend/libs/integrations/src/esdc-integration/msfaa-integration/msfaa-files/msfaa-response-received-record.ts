@@ -23,14 +23,14 @@ export class MSFAAResponseReceivedRecord extends MSFAAResponseRecordIdentificati
   /**
    * Date that the borrower indicated that the MSFAA was Signed
    */
-  public get borrowerSignedDate(): Date {
-    return getDateOnlyFromFormat(this.line.substr(23, 8), DATE_FORMAT);
+  get borrowerSignedDate(): Date {
+    return getDateOnlyFromFormat(this.line.substring(23, 31), DATE_FORMAT);
   }
 
   /**
    * Date MSFAA was received by/resolved from Canada Post/Kiosk
    */
-  public get serviceProviderReceivedDate(): Date {
-    return getDateOnlyFromFormat(this.line.substr(31, 8), DATE_FORMAT);
+  get serviceProviderReceivedDate(): Date {
+    return getDateOnlyFromFormat(this.line.substring(31, 39), DATE_FORMAT);
   }
 }

@@ -37,7 +37,7 @@ export class MSFAAFileHeader implements MSFAARequestFileLine {
     const header = new MSFAAFileHeader();
     header.transactionCode = line.substring(0, 3) as RecordTypeCodes;
     header.processDate = getDateOnlyFromFormat(
-      line.substring(47, 54),
+      line.substring(47, 55),
       DATE_FORMAT,
     );
     return header;
