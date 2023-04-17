@@ -40,7 +40,7 @@ import { SFASApplicationService } from "@sims/services/sfas";
     ECertFullTimeFileHeader,
     ECertFullTimeFileFooter,
     DisbursementScheduleErrorsService,
-    RestrictionService,
+    // RestrictionService,
     SystemUsersService,
     RestrictionSharedService,
     StudentRestrictionSharedService,

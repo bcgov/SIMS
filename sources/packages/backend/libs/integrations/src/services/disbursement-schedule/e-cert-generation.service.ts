@@ -37,8 +37,6 @@ import {
   BC_TOTAL_GRANT_AWARD_CODE,
   LOAN_TYPES,
 } from "@sims/services/constants";
-// todo: ann double check all import in the modules
-// todo: ann run queue and workers locally to test everything
 /**
  * While performing a possible huge amount of updates,
  * breaks the execution in chunks.
@@ -80,6 +78,7 @@ export class ECertGenerationService {
     if (!disbursements?.length) {
       return [];
     }
+
     // The below steps must be execute in order and they will be causing
     // changes on the disbursements objects and its children (awards) till
     // all changes are finally saved at once in the end of the processing.
@@ -224,7 +223,7 @@ export class ECertGenerationService {
       .innerJoin("currentAssessment.offering", "offering")
       .innerJoin("offering.institutionLocation", "institutionLocation")
       .innerJoin("offering.educationProgram", "educationProgram")
-      .innerJoin("application.student", "student") // ! The student alias here is also used in sub query 'getExistsBlockRestrictionQuery'.
+      .innerJoin("application.student", "student") // ! The student alias here is also used in sub query 'getExistsBlockRestrictionQuery' and subquery.
       .innerJoin("student.user", "user")
       .innerJoin("student.sinValidation", "sinValidation")
       .innerJoin("disbursement.disbursementValues", "disbursementValue")
@@ -332,7 +331,7 @@ export class ECertGenerationService {
           disbursementValue.effectiveAmount = round(effectiveValue);
 
           const application = disbursement.studentAssessment.application;
-          await this.checkLifeTimeMaximumAndGetStudentRestriction(
+          await this.checkLifeTimeMaximumAndAddStudentRestriction(
             disbursementValue,
             application,
             entityManager,
@@ -345,12 +344,13 @@ export class ECertGenerationService {
   /**
    * Check if the student hits/exceeds the life time maximum for the BCSL Award.
    * If they hits/exceeds the life time maximum, then the award is reduced so the
-   * student hits the exact maximum value.
+   * student hits the exact maximum value and the student restriction
+   * {@link  RestrictionCode.BCLM} is placed for the student.
    * @param disbursementValue disbursement value.
    * @param application application related to the disbursement.
    * @param entityManager used to execute the commands in the same transaction.
    */
-  private async checkLifeTimeMaximumAndGetStudentRestriction(
+  private async checkLifeTimeMaximumAndAddStudentRestriction(
     disbursementValue: DisbursementValue,
     application: Application,
     entityManager: EntityManager,
@@ -407,7 +407,7 @@ export class ECertGenerationService {
   /**
    * Calculate the total BC grants for each disbursement since they
    * can be affected by the calculations for the values already paid for the student
-   * or by overaward deductions.And calculate and record BC total grants that was used to
+   * or by overaward deductions. And calculate and record BC total grants that was used to
    * subtracted due to a {@link RestrictionActionType.StopFullTimeBCFunding} restriction.
    * @param disbursementSchedules disbursements to have the BC grants calculated.
    */
@@ -440,22 +440,34 @@ export class ECertGenerationService {
           return previousValue + currentValue.effectiveAmount;
         }, 0);
       // Calculate total BC grants subtracted due to restriction.
+      let bcAmountSubtractedRestrictionId = NaN;
       const bcTotalGrantAmountSubtracted =
         disbursementSchedule.disbursementValues
           // Filter all BC grants and filter out the null BC grants subtracted.
-          .filter(
-            (disbursementValue) =>
+          .filter((disbursementValue) => {
+            if (
               disbursementValue.valueType === DisbursementValueType.BCGrant &&
-              disbursementValue.restrictionAmountSubtracted !== null,
-          )
+              disbursementValue.restrictionAmountSubtracted !== null
+            ) {
+              bcAmountSubtractedRestrictionId =
+                disbursementValue.restrictionSubtracted?.id;
+              return disbursementValue;
+            }
+          })
           // Sum all BC grants subtracted due to restriction.
           .reduce((previousValue, currentValue) => {
             return previousValue + currentValue.restrictionAmountSubtracted;
           }, 0);
+
       bcTotalGrant.valueAmount = bcTotalGrantValueAmount;
       bcTotalGrant.effectiveAmount = bcTotalGrantValueAmount;
-      bcTotalGrant.restrictionAmountSubtracted =
-        bcTotalGrantAmountSubtracted ?? null;
+
+      if (bcTotalGrantAmountSubtracted) {
+        bcTotalGrant.restrictionAmountSubtracted = bcTotalGrantAmountSubtracted;
+        bcTotalGrant.restrictionSubtracted = {
+          id: bcAmountSubtractedRestrictionId,
+        } as Restriction;
+      }
     }
   }
 

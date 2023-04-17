@@ -61,7 +61,7 @@ export class SFASApplicationService extends DataModelService<SFASApplication> {
   /**
    * Total BCSL amount that the student received from the legacy(SFAS) system.
    * * Note: IF the student has a temporary SIN in SFAS and a permanent SIN
-   * * in SIMS, We are expecting to miss those details.
+   * * in SIMS, We are expecting to miss the details from SFAS.
    * @param sin sin number of the student, that used to match with the sfas system.
    * @param birthDate birthdate of the student.
    * @param lastName last name of the student.
