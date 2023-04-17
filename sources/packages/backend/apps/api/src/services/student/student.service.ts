@@ -470,8 +470,7 @@ export class StudentService extends RecordDataModelService<Student> {
           "application.student.id = student.id",
         )
         .innerJoin("application.location", "institutionLocation")
-        .innerJoin("institutionLocation.institution", "institution")
-        .innerJoin("application.currentAssessment", "studentAssessment");
+        .innerJoin("institutionLocation.institution", "institution");
     } else {
       searchQuery.leftJoin(
         Application,
@@ -484,29 +483,11 @@ export class StudentService extends RecordDataModelService<Student> {
       .innerJoin("student.sinValidation", "sinValidation")
       .where("user.isActive = true");
     if (institutionId) {
-      searchQuery
-        .andWhere("institution.id = :institutionId", { institutionId })
-        .andWhere(
-          new Brackets((qb) => {
-            qb.where(
-              new Brackets((qb2) => {
-                qb2
-                  .where("application.applicationStatus = :cancelledStatus", {
-                    cancelledStatus: ApplicationStatus.Cancelled,
-                  })
-                  .andWhere("studentAssessment.assessmentData is not null");
-              }),
-            ).orWhere("application.applicationStatus not in (:...statuses)", {
-              statuses: [
-                ApplicationStatus.Cancelled,
-                ApplicationStatus.Overwritten,
-                ApplicationStatus.Draft,
-              ],
-            });
-          }),
-        );
+      searchQuery.andWhere("institution.id = :institutionId", {
+        institutionId,
+      });
     }
-    if (!institutionId && searchCriteria.appNumber) {
+    if (institutionId || searchCriteria.appNumber) {
       searchQuery.andWhere(
         "application.applicationStatus != :overwrittenStatus",
         {

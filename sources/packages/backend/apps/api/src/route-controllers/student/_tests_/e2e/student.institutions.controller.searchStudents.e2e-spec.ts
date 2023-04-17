@@ -12,7 +12,6 @@ import {
 import {
   createFakeInstitutionLocation,
   saveFakeApplication,
-  saveFakeApplicationDisbursements,
   saveFakeStudent,
 } from "@sims/test-utils";
 import {
@@ -30,6 +29,8 @@ describe("StudentInstitutionsController(e2e)-searchStudents", () => {
   let collegeFLocation: InstitutionLocation;
   let studentRepo: Repository<Student>;
   let applicationRepo: Repository<Application>;
+  let collegeFInstitutionUserToken;
+  const endpoint = "/institutions/student/search";
 
   beforeAll(async () => {
     const { nestApplication, dataSource } = await createTestingAppModule();
@@ -48,28 +49,15 @@ describe("StudentInstitutionsController(e2e)-searchStudents", () => {
       InstitutionTokenTypes.CollegeFUser,
       collegeFLocation,
     );
+    collegeFInstitutionUserToken = await getInstitutionToken(
+      InstitutionTokenTypes.CollegeFUser,
+    );
   });
 
   it("Should find the student by application number when student has at least one application submitted for the institution.", async () => {
     // Arrange
-    // Student who has application submitted to institution.
-    const student = await saveFakeStudent(appDataSource);
-
-    const application = await saveFakeApplication(
-      appDataSource,
-      {
-        institution: collegeF,
-        institutionLocation: collegeFLocation,
-        student,
-      },
-      {
-        applicationStatus: ApplicationStatus.Submitted,
-      },
-    );
-    const endpoint = "/institutions/student/search";
-    const institutionUserToken = await getInstitutionToken(
-      InstitutionTokenTypes.CollegeFUser,
-    );
+    const { student, application } =
+      await saveStudentWithApplicationForCollegeF(ApplicationStatus.Submitted);
     const searchPayload = {
       appNumber: application.applicationNumber,
       firstName: "",
@@ -81,7 +69,7 @@ describe("StudentInstitutionsController(e2e)-searchStudents", () => {
     await request(app.getHttpServer())
       .post(endpoint)
       .send(searchPayload)
-      .auth(institutionUserToken, BEARER_AUTH_TYPE)
+      .auth(collegeFInstitutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
       .expect([
         {
@@ -96,23 +84,8 @@ describe("StudentInstitutionsController(e2e)-searchStudents", () => {
 
   it("Should find the student by last name when student has at least one application submitted for the institution.", async () => {
     // Arrange
-    // Student who has application submitted to institution.
-    const student = await saveFakeStudent(appDataSource);
-
-    await saveFakeApplication(
-      appDataSource,
-      {
-        institution: collegeF,
-        institutionLocation: collegeFLocation,
-        student,
-      },
-      {
-        applicationStatus: ApplicationStatus.Submitted,
-      },
-    );
-    const endpoint = "/institutions/student/search";
-    const institutionUserToken = await getInstitutionToken(
-      InstitutionTokenTypes.CollegeFUser,
+    const { student } = await saveStudentWithApplicationForCollegeF(
+      ApplicationStatus.Submitted,
     );
     const searchPayload = {
       appNumber: "",
@@ -125,7 +98,7 @@ describe("StudentInstitutionsController(e2e)-searchStudents", () => {
     await request(app.getHttpServer())
       .post(endpoint)
       .send(searchPayload)
-      .auth(institutionUserToken, BEARER_AUTH_TYPE)
+      .auth(collegeFInstitutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
       .then((response) => {
         expect(response.body).toEqual(
@@ -142,30 +115,19 @@ describe("StudentInstitutionsController(e2e)-searchStudents", () => {
       });
   });
 
-  it("Should find the student by first name when student has at least one application submitted for the institution.", async () => {
+  it("Should find the student by part of last name when student has at least one application submitted for the institution.", async () => {
     // Arrange
-    // Student who has application submitted to institution.
-    const student = await saveFakeStudent(appDataSource);
+    const { student } = await saveStudentWithApplicationForCollegeF(
+      ApplicationStatus.Submitted,
+    );
+    student.user.lastName =
+      "last name ef1c3bd5-4e8d-4ac4-adcb-3507a1cc7d43 ilike test";
+    await studentRepo.save(student);
 
-    await saveFakeApplication(
-      appDataSource,
-      {
-        institution: collegeF,
-        institutionLocation: collegeFLocation,
-        student,
-      },
-      {
-        applicationStatus: ApplicationStatus.Submitted,
-      },
-    );
-    const endpoint = "/institutions/student/search";
-    const institutionUserToken = await getInstitutionToken(
-      InstitutionTokenTypes.CollegeFUser,
-    );
     const searchPayload = {
       appNumber: "",
-      firstName: student.user.firstName,
-      lastName: "",
+      firstName: "",
+      lastName: "EF1C3BD5-4E8D-4AC4-ADCB-3507A1CC7D43",
       sin: "",
     };
 
@@ -173,55 +135,7 @@ describe("StudentInstitutionsController(e2e)-searchStudents", () => {
     await request(app.getHttpServer())
       .post(endpoint)
       .send(searchPayload)
-      .auth(institutionUserToken, BEARER_AUTH_TYPE)
-      .expect(HttpStatus.OK)
-      .then((response) => {
-        expect(response.body).toEqual(
-          expect.arrayContaining([
-            {
-              id: student.id,
-              firstName: student.user.firstName,
-              lastName: student.user.lastName,
-              birthDate: student.birthDate,
-              sin: student.sinValidation.sin,
-            },
-          ]),
-        );
-      });
-  });
-
-  it("Should find the student by sin when student has at least one application submitted for the institution.", async () => {
-    // Arrange
-    // Student who has application submitted to institution.
-    const student = await saveFakeStudent(appDataSource);
-
-    await saveFakeApplication(
-      appDataSource,
-      {
-        institution: collegeF,
-        institutionLocation: collegeFLocation,
-        student,
-      },
-      {
-        applicationStatus: ApplicationStatus.Submitted,
-      },
-    );
-    const endpoint = "/institutions/student/search";
-    const institutionUserToken = await getInstitutionToken(
-      InstitutionTokenTypes.CollegeFUser,
-    );
-    const searchPayload = {
-      appNumber: "",
-      firstName: "",
-      lastName: "",
-      sin: student.sinValidation.sin,
-    };
-
-    // Act/Assert
-    await request(app.getHttpServer())
-      .post(endpoint)
-      .send(searchPayload)
-      .auth(institutionUserToken, BEARER_AUTH_TYPE)
+      .auth(collegeFInstitutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
       .expect([
         {
@@ -234,30 +148,109 @@ describe("StudentInstitutionsController(e2e)-searchStudents", () => {
       ]);
   });
 
-  it("Should not find the student when application submitted and cancelled before the assessment.", async () => {
+  it("Should find the student by first name when student has at least one application submitted for the institution.", async () => {
     // Arrange
-    // Student who has application submitted to institution.
-    const student = await saveFakeStudent(appDataSource);
-
-    const application = await saveFakeApplication(
-      appDataSource,
-      {
-        institution: collegeF,
-        institutionLocation: collegeFLocation,
-        student,
-      },
-      {
-        applicationStatus: ApplicationStatus.Cancelled,
-      },
+    const { student } = await saveStudentWithApplicationForCollegeF(
+      ApplicationStatus.Submitted,
     );
-    // Adjust the application to not have an assessment
-    application.currentAssessment.assessmentData = null;
+    const searchPayload = {
+      appNumber: "",
+      firstName: student.user.firstName,
+      lastName: "",
+      sin: "",
+    };
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .post(endpoint)
+      .send(searchPayload)
+      .auth(collegeFInstitutionUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK)
+      .then((response) => {
+        expect(response.body).toEqual(
+          expect.arrayContaining([
+            {
+              id: student.id,
+              firstName: student.user.firstName,
+              lastName: student.user.lastName,
+              birthDate: student.birthDate,
+              sin: student.sinValidation.sin,
+            },
+          ]),
+        );
+      });
+  });
+
+  it("Should find the student by part of first name when student has at least one application submitted for the institution.", async () => {
+    // Arrange
+    const { student } = await saveStudentWithApplicationForCollegeF(
+      ApplicationStatus.Submitted,
+    );
+    student.user.firstName =
+      "first name 77b83122-35a9-4492-8a27-c1e5cf4514cf ilike test";
+    await studentRepo.save(student);
+    const searchPayload = {
+      appNumber: "",
+      firstName: "77B83122-35A9-4492-8A27-C1E5CF4514CF",
+      lastName: "",
+      sin: "",
+    };
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .post(endpoint)
+      .send(searchPayload)
+      .auth(collegeFInstitutionUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK)
+      .expect([
+        {
+          id: student.id,
+          firstName: student.user.firstName,
+          lastName: student.user.lastName,
+          birthDate: student.birthDate,
+          sin: student.sinValidation.sin,
+        },
+      ]);
+  });
+
+  it("Should find the student by sin when student has at least one application submitted for the institution.", async () => {
+    // Arrange
+    const { student } = await saveStudentWithApplicationForCollegeF(
+      ApplicationStatus.Submitted,
+    );
+    const searchPayload = {
+      appNumber: "",
+      firstName: "",
+      lastName: "",
+      sin: student.sinValidation.sin,
+    };
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .post(endpoint)
+      .send(searchPayload)
+      .auth(collegeFInstitutionUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK)
+      .expect([
+        {
+          id: student.id,
+          firstName: student.user.firstName,
+          lastName: student.user.lastName,
+          birthDate: student.birthDate,
+          sin: student.sinValidation.sin,
+        },
+      ]);
+  });
+
+  it("Should not find the student when application cancelled as draft.", async () => {
+    // Arrange
+    const { application } = await saveStudentWithApplicationForCollegeF(
+      ApplicationStatus.Cancelled,
+    );
+    // Adjust the application to not have a location.
+    application.location = null;
     await applicationRepo.save(application);
 
-    const endpoint = "/institutions/student/search";
-    const institutionUserToken = await getInstitutionToken(
-      InstitutionTokenTypes.CollegeFUser,
-    );
     const searchPayload = {
       appNumber: application.applicationNumber,
       firstName: "",
@@ -269,32 +262,15 @@ describe("StudentInstitutionsController(e2e)-searchStudents", () => {
     await request(app.getHttpServer())
       .post(endpoint)
       .send(searchPayload)
-      .auth(institutionUserToken, BEARER_AUTH_TYPE)
+      .auth(collegeFInstitutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
       .expect([]);
   });
 
-  it("Should find the student when application submitted and cancelled after the assessment.", async () => {
+  it("Should find the student when application is cancelled after submission.", async () => {
     // Arrange
-    // Student who has application submitted to institution.
-    const student = await saveFakeStudent(appDataSource);
-
-    const application = await saveFakeApplication(
-      appDataSource,
-      {
-        institution: collegeF,
-        institutionLocation: collegeFLocation,
-        student,
-      },
-      {
-        applicationStatus: ApplicationStatus.Cancelled,
-      },
-    );
-
-    const endpoint = "/institutions/student/search";
-    const institutionUserToken = await getInstitutionToken(
-      InstitutionTokenTypes.CollegeFUser,
-    );
+    const { student, application } =
+      await saveStudentWithApplicationForCollegeF(ApplicationStatus.Cancelled);
     const searchPayload = {
       appNumber: application.applicationNumber,
       firstName: "",
@@ -306,7 +282,7 @@ describe("StudentInstitutionsController(e2e)-searchStudents", () => {
     await request(app.getHttpServer())
       .post(endpoint)
       .send(searchPayload)
-      .auth(institutionUserToken, BEARER_AUTH_TYPE)
+      .auth(collegeFInstitutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
       .expect([
         {
@@ -321,26 +297,11 @@ describe("StudentInstitutionsController(e2e)-searchStudents", () => {
 
   it("Should not find the student when user is not active.", async () => {
     // Arrange
-    // Student who has application submitted to institution.
-    const student = await saveFakeStudent(appDataSource);
+    const { student, application } =
+      await saveStudentWithApplicationForCollegeF(ApplicationStatus.Submitted);
     student.user.isActive = false;
     await studentRepo.save(student);
 
-    const application = await saveFakeApplicationDisbursements(
-      appDataSource,
-      {
-        institution: collegeF,
-        institutionLocation: collegeFLocation,
-        student,
-      },
-      {
-        applicationStatus: ApplicationStatus.Submitted,
-      },
-    );
-    const endpoint = "/institutions/student/search";
-    const institutionUserToken = await getInstitutionToken(
-      InstitutionTokenTypes.CollegeFUser,
-    );
     const searchPayload = {
       appNumber: application.applicationNumber,
       firstName: "",
@@ -352,40 +313,28 @@ describe("StudentInstitutionsController(e2e)-searchStudents", () => {
     await request(app.getHttpServer())
       .post(endpoint)
       .send(searchPayload)
-      .auth(institutionUserToken, BEARER_AUTH_TYPE)
+      .auth(collegeFInstitutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
       .expect([]);
   });
 
-  it("Should not find the student when institution is different.", async () => {
+  it("Should not find the student when student does not have an application for that institution.", async () => {
     // Arrange
-    // Student who has application submitted to institution.
-    const student = await saveFakeStudent(appDataSource);
+    const { application } = await saveStudentWithApplicationForCollegeF(
+      ApplicationStatus.Submitted,
+    );
 
     const { institution: collegeC } = await getAuthRelatedEntities(
       appDataSource,
       InstitutionTokenTypes.CollegeCUser,
     );
     const collegeCLocation = createFakeInstitutionLocation(collegeC);
-
     await authorizeUserTokenForLocation(
       appDataSource,
       InstitutionTokenTypes.CollegeCUser,
       collegeCLocation,
     );
-    const application = await saveFakeApplication(
-      appDataSource,
-      {
-        institution: collegeF,
-        institutionLocation: collegeFLocation,
-        student,
-      },
-      {
-        applicationStatus: ApplicationStatus.Submitted,
-      },
-    );
-    const endpoint = "/institutions/student/search";
-    const institutionUserToken = await getInstitutionToken(
+    const collegeCInstitutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeCUser,
     );
     const searchPayload = {
@@ -399,30 +348,15 @@ describe("StudentInstitutionsController(e2e)-searchStudents", () => {
     await request(app.getHttpServer())
       .post(endpoint)
       .send(searchPayload)
-      .auth(institutionUserToken, BEARER_AUTH_TYPE)
+      .auth(collegeCInstitutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
       .expect([]);
   });
 
   it("Should not find the student when student has only a draft application.", async () => {
     // Arrange
-    // Student who has application submitted to institution.
-    const student = await saveFakeStudent(appDataSource);
-
-    const application = await saveFakeApplication(
-      appDataSource,
-      {
-        institution: collegeF,
-        institutionLocation: collegeFLocation,
-        student,
-      },
-      {
-        applicationStatus: ApplicationStatus.Draft,
-      },
-    );
-    const endpoint = "/institutions/student/search";
-    const institutionUserToken = await getInstitutionToken(
-      InstitutionTokenTypes.CollegeFUser,
+    const { application } = await saveStudentWithApplicationForCollegeF(
+      ApplicationStatus.Draft,
     );
     const searchPayload = {
       appNumber: application.applicationNumber,
@@ -435,10 +369,32 @@ describe("StudentInstitutionsController(e2e)-searchStudents", () => {
     await request(app.getHttpServer())
       .post(endpoint)
       .send(searchPayload)
-      .auth(institutionUserToken, BEARER_AUTH_TYPE)
+      .auth(collegeFInstitutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
       .expect([]);
   });
+
+  const saveStudentWithApplicationForCollegeF = async (
+    applicationStatus: ApplicationStatus,
+  ) => {
+    const student = await saveFakeStudent(appDataSource);
+    const application = await saveFakeApplication(
+      appDataSource,
+      {
+        institution: collegeF,
+        institutionLocation: collegeFLocation,
+        student,
+      },
+      {
+        applicationStatus,
+      },
+    );
+
+    return {
+      student,
+      application,
+    };
+  };
 
   afterAll(async () => {
     await app?.close();

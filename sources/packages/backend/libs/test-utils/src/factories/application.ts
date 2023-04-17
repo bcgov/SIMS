@@ -224,5 +224,8 @@ export async function saveFakeApplication(
     fakeOriginalAssessment,
   );
   savedApplication.currentAssessment = savedOriginalAssessment;
+  if (options?.applicationStatus === ApplicationStatus.Draft) {
+    savedApplication.location = null;
+  }
   return applicationRepo.save(savedApplication);
 }
