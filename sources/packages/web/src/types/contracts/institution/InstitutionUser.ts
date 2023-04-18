@@ -52,13 +52,12 @@ export interface InstitutionUserAuthRolesAndLocation {
   userType: string;
 }
 export interface UserStateForStore {
-  user: {
-    email: string;
-    firstName: string;
-    lastName: string;
-    isActive: boolean;
-    isAdmin: boolean;
-  };
+  email: string;
+  firstName: string;
+  lastName: string;
+  isActive: boolean;
+  isAdmin: boolean;
+  isInstitutionSetupUser?: boolean;
 }
 export interface AuthorizationsForStore {
   institutionId: number;

@@ -8,6 +8,7 @@ import {
   ClientIdType,
   InstitutionUserAuthRolesAndLocation,
   InstitutionUserTypes,
+  UserStateForStore,
 } from "@/types";
 import { RouteLocationNormalized, NavigationGuardNext } from "vue-router";
 
@@ -43,6 +44,17 @@ export function validateInstitutionUserAccess(
 }
 
 function isInstitutionUserAllowed(to: RouteLocationNormalized): boolean {
+  const institutionUserDetails = store.getters[
+    "institution/myDetails"
+  ] as UserStateForStore;
+
+  // If the user is identified to be a business bceid user
+  // who's institution and the user themselves not exist in sims
+  // then it is assumed that user has logged in to setup the institution
+  // and the route is valid.
+  if (institutionUserDetails.isInstitutionSetupUser) {
+    return true;
+  }
   // If user types are not specified in the route, it is not valid.
   if (!to.meta.institutionUserTypes?.length) {
     return false;
@@ -51,8 +63,7 @@ function isInstitutionUserAllowed(to: RouteLocationNormalized): boolean {
   // TODO: Validate the route for BCPublic institutions must be done here.
 
   // If the user is institution admin, then they have access to all routes.
-  const isInstitutionAdmin: boolean =
-    store.getters["institution/myDetails"]?.isAdmin ?? false;
+  const isInstitutionAdmin: boolean = institutionUserDetails?.isAdmin;
 
   if (isInstitutionAdmin) {
     return true;
@@ -75,8 +86,8 @@ function isInstitutionUserAllowed(to: RouteLocationNormalized): boolean {
   }
 
   // when the location is present in route params, check if the user has access.
-  const authorizations: InstitutionUserAuthRolesAndLocation[] =
-    store.getters["institution/myAuthorizationDetails"].authorizations;
+  const authorizations = store.getters["institution/myAuthorizationDetails"]
+    .authorizations as InstitutionUserAuthRolesAndLocation[];
 
   return authorizations.some(
     (authorization) => authorization.locationId === +locationId,

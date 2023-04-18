@@ -201,6 +201,9 @@ export class AuthService {
       this.priorityRedirect = {
         name: InstitutionRoutesConst.INSTITUTION_CREATE,
       };
+      // Set the institution user details which is required during the institution setup
+      // to institution store.
+      await store.dispatch("institution/setInstitutionUserDetailsOnSetup");
       return;
     }
 
