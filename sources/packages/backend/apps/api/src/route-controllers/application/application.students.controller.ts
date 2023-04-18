@@ -247,11 +247,7 @@ export class ApplicationStudentsController extends BaseController {
         case APPLICATION_NOT_VALID:
         case INVALID_OPERATION_IN_THE_CURRENT_STATUS:
         case PIR_OR_DATE_OVERLAP_ERROR:
-        case INSTITUTION_LOCATION_NOT_VALID:
-          throw new UnprocessableEntityException(
-            new ApiProcessError(error.message, error.name),
-          );
-        case OFFERING_NOT_VALID:
+        case INSTITUTION_LOCATION_NOT_VALID || OFFERING_NOT_VALID:
           throw new UnprocessableEntityException(
             new ApiProcessError(error.message, error.name),
           );
