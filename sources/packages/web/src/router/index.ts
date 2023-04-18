@@ -37,9 +37,9 @@ router.onError((error: unknown) => {
   throw error;
 });
 
-router.beforeEach((to, from, next) => {
+router.beforeEach((to, _from, next) => {
   if (to.meta?.clientType === ClientIdType.Institution) {
-    validateInstitutionUserAccess(to, from, next);
+    validateInstitutionUserAccess(to, _from, next);
   } else {
     next();
   }

@@ -54,8 +54,6 @@ function isInstitutionUserAllowed(to: RouteLocationNormalized): boolean {
   const isInstitutionAdmin: boolean =
     store.getters["institution/myDetails"]?.isAdmin ?? false;
 
-  console.log("isInstitutionAdmin", isInstitutionAdmin);
-
   if (isInstitutionAdmin) {
     return true;
   }
@@ -80,7 +78,6 @@ function isInstitutionUserAllowed(to: RouteLocationNormalized): boolean {
   const authorizations: InstitutionUserAuthRolesAndLocation[] =
     store.getters["institution/myAuthorizationDetails"].authorizations;
 
-  console.log("authorizations", authorizations);
   return authorizations.some(
     (authorization) => authorization.locationId === +locationId,
   );
