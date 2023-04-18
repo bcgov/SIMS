@@ -2,6 +2,7 @@ import {
   DATE_FORMAT,
   MSFAARequestFileLine,
   MSFAA_SENT_STATUS_CODE,
+  NUMBER_FILLER,
   RecordTypeCodes,
   SPACE_FILLER,
 } from "../models/msfaa-integration.model";
@@ -36,15 +37,15 @@ export class MSFAAFileDetail implements MSFAARequestFileLine {
   public getFixedFormat(): string {
     const record = new StringBuilder();
     record.append(this.transactionCode);
-    record.appendWithStartFiller(this.msfaaNumber, 10, "0");
+    record.appendWithStartFiller(this.msfaaNumber, 10, NUMBER_FILLER);
     record.append(this.sin, 9);
     record.append(MSFAA_SENT_STATUS_CODE);
     record.append(this.institutionCode);
     record.appendDate(this.birthDate, DATE_FORMAT);
     record.appendDate(this.processDate, DATE_FORMAT);
     record.appendWithEndFiller(this.surname, 25, SPACE_FILLER);
-    record.appendWithEndFiller(this.givenName ?? "", 15, SPACE_FILLER);
-    record.repeatAppend(SPACE_FILLER, 3); // Initials
+    record.appendWithEndFiller(this.givenName ?? "", 15, SPACE_FILLER); // Potentially null for mononymous names.
+    record.repeatAppend(SPACE_FILLER, 3); // Initials.
     record.append(this.genderCode);
     record.append(this.maritalStatusCode);
     record.appendWithEndFiller(this.addressLine1, 40, SPACE_FILLER);
@@ -55,15 +56,15 @@ export class MSFAAFileDetail implements MSFAARequestFileLine {
     record.appendWithEndFiller(this.country, 20, SPACE_FILLER);
     record.appendWithEndFiller(this.phone, 20, SPACE_FILLER);
     record.appendWithEndFiller(this.email, 70, SPACE_FILLER);
-    record.repeatAppend(SPACE_FILLER, 40); //Alternate Address line 1
-    record.repeatAppend(SPACE_FILLER, 40); //Alternate Address line 2
-    record.repeatAppend(SPACE_FILLER, 25); //Alternate City
-    record.repeatAppend(SPACE_FILLER, 4); //Alternate Province
-    record.repeatAppend(SPACE_FILLER, 16); //Alternate Postal Code
-    record.repeatAppend(SPACE_FILLER, 20); //Alternate Country
-    record.repeatAppend(SPACE_FILLER, 20); //Alternate Phone
+    record.repeatAppend(SPACE_FILLER, 40); // Alternate Address line 1.
+    record.repeatAppend(SPACE_FILLER, 40); // Alternate Address line 2.
+    record.repeatAppend(SPACE_FILLER, 25); // Alternate City.
+    record.repeatAppend(SPACE_FILLER, 4); // Alternate Province.
+    record.repeatAppend(SPACE_FILLER, 16); // Alternate Postal Code.
+    record.repeatAppend(SPACE_FILLER, 20); // Alternate Country.
+    record.repeatAppend(SPACE_FILLER, 20); // Alternate Phone.
     record.append(this.offeringIntensityCode);
-    record.repeatAppend(SPACE_FILLER, 110); // Trailing space
+    record.repeatAppend(SPACE_FILLER, 110); // Trailing space.
     return record.toString();
   }
 }

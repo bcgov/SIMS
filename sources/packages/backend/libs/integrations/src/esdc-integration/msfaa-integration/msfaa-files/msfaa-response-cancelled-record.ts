@@ -22,14 +22,14 @@ export class MSFAAResponseCancelledRecord extends MSFAAResponseRecordIdentificat
   /**
    * New Province code that issued the MSFAA
    */
-  public get newIssusingProvince(): string {
-    return this.line.substr(48, 2);
+  public get newIssuingProvince(): string {
+    return this.line.substring(48, 50);
   }
 
   /**
    * Date when the MSFAA was cancelled
    */
   public get cancelledDate(): Date {
-    return getDateOnlyFromFormat(this.line.substr(50, 8), DATE_FORMAT);
+    return getDateOnlyFromFormat(this.line.substring(50, 58), DATE_FORMAT);
   }
 }
