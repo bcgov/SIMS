@@ -55,6 +55,7 @@ import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { ApiProcessError, ClientTypeBaseRoute } from "../../types";
 import { getPIRDeniedReason, PIR_OR_DATE_OVERLAP_ERROR } from "../../utilities";
 import {
+  INSTITUTION_LOCATION_NOT_VALID,
   INVALID_APPLICATION_NUMBER,
   OFFERING_NOT_VALID,
 } from "../../constants";
@@ -154,7 +155,7 @@ export class ApplicationStudentsController extends BaseController {
       "Selected offering id is invalid or " +
       "invalid study dates or selected study start date is not within the program year" +
       "or APPLICATION_NOT_VALID or INVALID_OPERATION_IN_THE_CURRENT_STATUS or ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE " +
-      "or OFFERING_NOT_VALID.",
+      "or INSTITUTION_LOCATION_NOT_VALID or OFFERING_NOT_VALID.",
   })
   @ApiBadRequestResponse({ description: "Form validation failed." })
   @ApiNotFoundResponse({ description: "Application not found." })
@@ -246,6 +247,10 @@ export class ApplicationStudentsController extends BaseController {
         case APPLICATION_NOT_VALID:
         case INVALID_OPERATION_IN_THE_CURRENT_STATUS:
         case PIR_OR_DATE_OVERLAP_ERROR:
+        case INSTITUTION_LOCATION_NOT_VALID:
+          throw new UnprocessableEntityException(
+            new ApiProcessError(error.message, error.name),
+          );
         case OFFERING_NOT_VALID:
           throw new UnprocessableEntityException(
             new ApiProcessError(error.message, error.name),

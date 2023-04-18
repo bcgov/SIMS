@@ -29,7 +29,7 @@ describe("StudentInstitutionsController(e2e)-searchStudents", () => {
   let collegeFLocation: InstitutionLocation;
   let studentRepo: Repository<Student>;
   let applicationRepo: Repository<Application>;
-  let collegeFInstitutionUserToken;
+  let collegeFInstitutionUserToken: string;
   const endpoint = "/institutions/student/search";
 
   beforeAll(async () => {
@@ -374,6 +374,11 @@ describe("StudentInstitutionsController(e2e)-searchStudents", () => {
       .expect([]);
   });
 
+  /**
+   * Saves a student and an application for the student for College F.
+   * @param applicationStatus application status.
+   * @returns an object with student and application persisted in the database.
+   */
   const saveStudentWithApplicationForCollegeF = async (
     applicationStatus: ApplicationStatus,
   ) => {

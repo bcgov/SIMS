@@ -38,7 +38,7 @@ export class StudentInstitutionsController extends BaseController {
 
   /**
    * Search students based on the search criteria.
-   * Return a 200 HTTP status instead of 201 to indicate that the operation
+   * Returns a 200 HTTP status instead of 201 to indicate that the operation
    * was completed with success but no resource was created.
    * TODO add decorator to restrict to BC Public institutions.
    * @param searchCriteria criteria to be used in the search.
