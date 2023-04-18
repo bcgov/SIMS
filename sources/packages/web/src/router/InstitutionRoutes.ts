@@ -248,6 +248,7 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
         meta: {
           clientType: ClientIdType.Institution,
           institutionUserTypes: [InstitutionUserTypes.admin],
+          allowOnlyLegalSigningAuthority: true,
         },
       },
       {

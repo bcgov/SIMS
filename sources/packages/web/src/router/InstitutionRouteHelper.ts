@@ -7,6 +7,7 @@ import store from "@/store";
 import {
   ClientIdType,
   InstitutionUserAuthRolesAndLocation,
+  InstitutionUserRoles,
   InstitutionUserTypes,
   UserStateForStore,
 } from "@/types";
@@ -52,9 +53,19 @@ function isInstitutionUserAllowed(to: RouteLocationNormalized): boolean {
   // who's institution and the user themselves not exist in sims
   // then it is assumed that user has logged in to setup the institution
   // and the route is valid.
-  if (institutionUserDetails.isInstitutionSetupUser) {
+  // At this moment user is not an active sims user.
+  if (
+    institutionUserDetails.isInstitutionSetupUser &&
+    to.name === InstitutionRoutesConst.INSTITUTION_CREATE
+  ) {
     return true;
   }
+
+  // Beyond this, the user must be an active SIMS user.
+  if (!institutionUserDetails.isActive) {
+    return false;
+  }
+
   // If user types are not specified in the route, it is not valid.
   if (!to.meta.institutionUserTypes?.length) {
     return false;
@@ -65,7 +76,17 @@ function isInstitutionUserAllowed(to: RouteLocationNormalized): boolean {
   // If the user is institution admin, then they have access to all routes.
   const isInstitutionAdmin: boolean = institutionUserDetails?.isAdmin;
 
+  const authorizations = store.getters["institution/myAuthorizationDetails"]
+    .authorizations as InstitutionUserAuthRolesAndLocation[];
+
   if (isInstitutionAdmin) {
+    // If the route is permitted for only institution admin who is legal signing authority
+    // then validate the user role.
+    if (to.meta?.allowOnlyLegalSigningAuthority) {
+      return authorizations.some(
+        (auth) => auth.userRole === InstitutionUserRoles.legalSigningAuthority,
+      );
+    }
     return true;
   }
 
@@ -86,9 +107,6 @@ function isInstitutionUserAllowed(to: RouteLocationNormalized): boolean {
   }
 
   // when the location is present in route params, check if the user has access.
-  const authorizations = store.getters["institution/myAuthorizationDetails"]
-    .authorizations as InstitutionUserAuthRolesAndLocation[];
-
   return authorizations.some(
     (authorization) => authorization.locationId === +locationId,
   );
