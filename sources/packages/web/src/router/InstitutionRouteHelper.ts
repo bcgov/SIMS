@@ -17,37 +17,40 @@ interface InstitutionRouteParams {
   locationId?: string;
 }
 
-export function validateInstitutionUserAccess(
+export async function validateInstitutionUserAccess(
   to: RouteLocationNormalized,
   _from: RouteLocationNormalized,
   next: NavigationGuardNext,
-): void {
+): Promise<void> {
   if (to.meta.requiresAuth === false) {
     next();
     return;
   }
-  AuthService.shared.initialize(ClientIdType.Institution).then(() => {
-    if (AuthService.shared.keycloak?.authenticated) {
-      if (isInstitutionUserAllowed(to)) {
-        next();
-        return;
-      }
-      // Institution user is not allowed to access this route.
-      next({
-        name: SharedRouteConst.FORBIDDEN_USER,
-      });
-    } else {
-      next({
-        name: InstitutionRoutesConst.LOGIN,
-      });
+
+  await AuthService.shared.initialize(ClientIdType.Institution);
+
+  if (AuthService.shared.keycloak?.authenticated) {
+    if (isInstitutionUserAllowed(to)) {
+      next();
+      return;
     }
-  });
+    // Institution user is not allowed to access this route.
+    next({
+      name: SharedRouteConst.FORBIDDEN_USER,
+    });
+  } else {
+    next({
+      name: InstitutionRoutesConst.LOGIN,
+    });
+  }
 }
 
 function isInstitutionUserAllowed(to: RouteLocationNormalized): boolean {
   const institutionUserDetails = store.getters[
     "institution/myDetails"
   ] as UserStateForStore;
+
+  console.log(institutionUserDetails);
 
   // If the user is identified to be a business bceid user
   // who's institution and the user themselves not exist in sims
@@ -78,6 +81,8 @@ function isInstitutionUserAllowed(to: RouteLocationNormalized): boolean {
 
   const authorizations = store.getters["institution/myAuthorizationDetails"]
     .authorizations as InstitutionUserAuthRolesAndLocation[];
+
+  console.log(authorizations);
 
   if (isInstitutionAdmin) {
     // If the route is permitted for only institution admin who is legal signing authority

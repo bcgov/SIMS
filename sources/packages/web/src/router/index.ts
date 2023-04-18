@@ -37,7 +37,7 @@ router.onError((error: unknown) => {
   throw error;
 });
 
-router.beforeResolve((to, _from, next) => {
+router.beforeResolve(async (to, _from, next) => {
   if (to.meta?.clientType === ClientIdType.Institution) {
     validateInstitutionUserAccess(to, _from, next);
   } else {
