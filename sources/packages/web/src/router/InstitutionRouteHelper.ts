@@ -7,7 +7,9 @@ import store from "@/store";
 import { ClientIdType } from "@/types";
 import { useInstitutionAuth } from "@/composables";
 import { RouteLocationNormalized, NavigationGuardNext } from "vue-router";
-
+/**
+ * Institution route params.
+ */
 interface InstitutionRouteParams {
   locationId?: string;
 }
