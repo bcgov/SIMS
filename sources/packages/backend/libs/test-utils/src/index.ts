@@ -18,4 +18,5 @@ export * from "./factories/application-exception-request";
 export * from "./factories/student-scholastic-standing";
 export * from "./factories/student-appeal";
 export * from "./factories/student-appeal-request";
+export * from "./factories/student-file-uploads";
 export * from "./models/common.model";

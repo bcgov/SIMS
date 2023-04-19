@@ -167,6 +167,12 @@ export class AESTStudentFileAPIOutDTO extends StudentUploadFileAPIOutDTO {
   updatedAt: Date;
 }
 
+export class InstitutionStudentFileAPIOutDTO extends StudentUploadFileAPIOutDTO {
+  metadata: StudentFileMetadataAPIOutDTO;
+  groupName: string;
+  updatedAt: Date;
+}
+
 export class StudentFileMetadataAPIOutDTO {
   applicationNumber?: string;
 }
