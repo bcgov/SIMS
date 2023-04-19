@@ -4,6 +4,7 @@ import { useFormatters } from "@/composables";
 import {
   AESTFileUploadToStudentAPIInDTO,
   AESTStudentFileAPIOutDTO,
+  InstitutionStudentFileAPIOutDTO,
   CreateStudentAPIInDTO,
   SearchStudentAPIOutDTO,
   StudentFileUploaderAPIInDTO,
@@ -130,6 +131,16 @@ export class StudentService {
     studentId: number,
   ): Promise<AESTStudentFileAPIOutDTO[]> {
     return ApiClient.Students.getAESTStudentFiles(studentId);
+  }
+
+  /**
+   * Get all student documents for Institution user.
+   * @return list of student documents.
+   */
+  async getInstitutionStudentFiles(
+    studentId: number,
+  ): Promise<InstitutionStudentFileAPIOutDTO[]> {
+    return ApiClient.Students.getInstitutionStudentFiles(studentId);
   }
 
   /**
