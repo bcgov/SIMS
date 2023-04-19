@@ -58,6 +58,11 @@ export interface UserStateForStore {
   userFullName: string;
   isActive: boolean;
   isAdmin: boolean;
+  /**
+   * If the bceid authenticated user is not an existing sims user
+   * then it is assumed that the user has logged in to setup institution
+   * and they are identified as institution set up user in route context.
+   */
   isInstitutionSetupUser?: boolean;
 }
 export interface AuthorizationsForStore {
