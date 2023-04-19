@@ -17,48 +17,48 @@ export class ECertPartTimeResponseRecord extends ECertResponseRecord {
    * Financial document number associated with this disbursement.
    */
   get documentNumber(): number {
-    return parseInt(this.line.substring(467, 474));
+    return parseInt(this.line.substring(466, 473));
   }
 
   /**
    * Error code-1 associated with the document number.
    */
   get errorCode1(): string {
-    return this.line.substring(732, 742).trim();
+    return this.line.substring(756, 766).trim();
   }
 
   /**
    * Error code-2 associated with the document number.
    */
   get errorCode2(): string {
-    return this.line.substring(742, 752).trim();
+    return this.line.substring(766, 776).trim();
   }
 
   /**
    * Error code-3 associated with the document number.
    */
   get errorCode3(): string {
-    return this.line.substring(752, 762).trim();
+    return this.line.substring(776, 786).trim();
   }
 
   /**
    * Error code-4 associated with the document number.
    */
   get errorCode4(): string {
-    return this.line.substring(762, 772).trim();
+    return this.line.substring(786, 796).trim();
   }
 
   /**
    * Error code-5 associated with the document number.
    */
   get errorCode5(): string {
-    return this.line.substring(772, 782).trim();
+    return this.line.substring(796, 806).trim();
   }
 
   /**
    * SIN associated with the document number.
    */
   get sin(): number {
-    return parseInt(this.line.substring(46, 55));
+    return parseInt(this.line.substring(45, 54));
   }
 }
