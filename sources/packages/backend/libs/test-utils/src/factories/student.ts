@@ -3,12 +3,13 @@ import { SINValidation, Student, User } from "@sims/sims-db";
 import { createFakeUser } from "@sims/test-utils";
 import { DataSource } from "typeorm";
 import { createFakeSINValidation } from "./sin-validation";
+import { getISODateOnlyString } from "@sims/utilities";
 // TODO: the parameter user must be moved to relations and all the references must be
 // updated.
 export function createFakeStudent(user?: User): Student {
   const student = new Student();
   student.user = user ?? createFakeUser();
-  student.birthDate = faker.date.past(18).toISOString();
+  student.birthDate = getISODateOnlyString(faker.date.past(18));
   student.gender = "X";
   student.contactInfo = {
     address: {

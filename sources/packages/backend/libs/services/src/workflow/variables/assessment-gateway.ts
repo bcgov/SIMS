@@ -12,11 +12,6 @@ export const ASSESSMENT_DATA = "assessmentData";
  */
 export const APPLICATION_ID = "applicationId";
 /**
- * Institution location id selected by the student for
- * the application.
- */
-export const STUDENT_DATA_SELECTED_LOCATION = "studentDataSelectedLocation";
-/**
  * Institution offering program id if selected by the student.
  * If not selected a PIR will be needed.
  */

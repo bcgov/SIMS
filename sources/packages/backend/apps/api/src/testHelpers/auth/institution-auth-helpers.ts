@@ -12,10 +12,13 @@ import { createFakeInstitutionUser } from "@sims/test-utils";
 import {
   COLLEGE_C_BUSINESS_GUID,
   COLLEGE_D_BUSINESS_GUID,
+  COLLEGE_F_BUSINESS_GUID,
   SIMS2_COLLC_USER,
   SIMS2_COLLD_USER,
+  SIMS2_COLLF_USER,
   SIMS_COLLC_ADMIN_LEGAL_SIGNING_USER,
   SIMS_COLLD_ADMIN_NON_LEGAL_SIGNING_USER,
+  SIMS_COLLF_ADMIN_LEGAL_SIGNING_USER,
 } from "@sims/test-utils/constants";
 import { DataSource, IsNull } from "typeorm";
 import { InstitutionTokenTypes } from "./institution-token-helpers";
@@ -49,6 +52,14 @@ export async function getAuthRelatedEntities(
     case InstitutionTokenTypes.CollegeDUser:
       businessGuid = COLLEGE_D_BUSINESS_GUID;
       userName = SIMS2_COLLD_USER;
+      break;
+    case InstitutionTokenTypes.CollegeFAdminLegalSigningUser:
+      businessGuid = COLLEGE_F_BUSINESS_GUID;
+      userName = SIMS_COLLF_ADMIN_LEGAL_SIGNING_USER;
+      break;
+    case InstitutionTokenTypes.CollegeFUser:
+      businessGuid = COLLEGE_F_BUSINESS_GUID;
+      userName = SIMS2_COLLF_USER;
       break;
   }
   const institutionRepo = dataSource.getRepository(Institution);

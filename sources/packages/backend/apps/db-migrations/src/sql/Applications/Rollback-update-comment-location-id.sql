@@ -1,0 +1,1 @@
+COMMENT ON COLUMN sims.applications.location_id IS 'References the program related to the application. For applications that do not have an offering defined yet (need a PIR) this is the way to figure out the related program.';

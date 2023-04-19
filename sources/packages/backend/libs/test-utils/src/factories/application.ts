@@ -81,45 +81,28 @@ export async function saveFakeApplicationDisbursements(
     createSecondDisbursement?: boolean;
   },
 ): Promise<Application> {
-  const userRepo = dataSource.getRepository(User);
-  const studentRepo = dataSource.getRepository(Student);
   const applicationRepo = dataSource.getRepository(Application);
   const studentAssessmentRepo = dataSource.getRepository(StudentAssessment);
-  const offeringRepo = dataSource.getRepository(EducationProgramOffering);
+  const savedApplication = await saveFakeApplication(
+    dataSource,
+    relations,
+    options,
+  );
   // Using Assessment as a default status since it the first status when
   // the application has the disbursement already generated.
-  const applicationStatus =
+  savedApplication.applicationStatus =
     options?.applicationStatus ?? ApplicationStatus.Assessment;
-  // Ensure student/user creation.
-  let savedUser: User;
-  let savedStudent: Student;
-  if (relations?.student) {
-    savedUser = relations.student.user;
-    savedStudent = relations.student;
-  } else {
-    savedUser = await userRepo.save(createFakeUser());
-    savedStudent = await studentRepo.save(createFakeStudent(savedUser));
-  }
-  // Create and save application.
-  const fakeApplication = createFakeApplication({ student: savedStudent });
-  fakeApplication.applicationStatus = applicationStatus;
-  const savedApplication = await applicationRepo.save(fakeApplication);
-  // Original assessment.
-  const fakeOriginalAssessment = createFakeStudentAssessment({
-    auditUser: savedUser,
-  });
-  fakeOriginalAssessment.application = savedApplication;
+  await applicationRepo.save(savedApplication);
   const disbursementSchedules: DisbursementSchedule[] = [];
   // Original assessment - first disbursement.
   const firstSchedule = createFakeDisbursementSchedule({
-    auditUser: savedUser,
+    auditUser: savedApplication.student.user,
     disbursementValues: relations?.disbursementValues ?? [
       createFakeDisbursementValue(DisbursementValueType.CanadaLoan, "CSLF", 1),
     ],
   });
-
   firstSchedule.coeStatus =
-    applicationStatus === ApplicationStatus.Completed
+    savedApplication.applicationStatus === ApplicationStatus.Completed
       ? COEStatus.completed
       : COEStatus.required;
   firstSchedule.disbursementScheduleStatus = DisbursementScheduleStatus.Pending;
@@ -127,7 +110,7 @@ export async function saveFakeApplicationDisbursements(
   if (options?.createSecondDisbursement) {
     // Original assessment - second disbursement.
     const secondSchedule = createFakeDisbursementSchedule({
-      auditUser: savedUser,
+      auditUser: savedApplication.student.user,
       disbursementValues: relations?.disbursementValues ?? [
         createFakeDisbursementValue(DisbursementValueType.BCLoan, "BCSL", 1),
       ],
@@ -140,7 +123,61 @@ export async function saveFakeApplicationDisbursements(
     secondSchedule.disbursementDate = getISODateOnlyString(addDays(60));
     disbursementSchedules.push(secondSchedule);
   }
-  fakeOriginalAssessment.disbursementSchedules = disbursementSchedules;
+  savedApplication.currentAssessment.disbursementSchedules =
+    disbursementSchedules;
+
+  savedApplication.currentAssessment = await studentAssessmentRepo.save(
+    savedApplication.currentAssessment,
+  );
+  return applicationRepo.save(savedApplication);
+}
+
+/**
+ * Create and save to the database an application with all the dependencies.
+ * @param dataSource manages the repositories to save the data.
+ * @param relations dependencies.
+ * - `institution` related institution.
+ * - `institutionLocation` related location.
+ * - `student` related student.
+ * @param options additional options:
+ * - `applicationStatus` application status for the application.
+ * @returns the created application.
+ */
+export async function saveFakeApplication(
+  dataSource: DataSource,
+  relations?: {
+    institution?: Institution;
+    institutionLocation?: InstitutionLocation;
+    student?: Student;
+  },
+  options?: {
+    applicationStatus?: ApplicationStatus;
+  },
+): Promise<Application> {
+  const userRepo = dataSource.getRepository(User);
+  const studentRepo = dataSource.getRepository(Student);
+  const applicationRepo = dataSource.getRepository(Application);
+  const studentAssessmentRepo = dataSource.getRepository(StudentAssessment);
+  const offeringRepo = dataSource.getRepository(EducationProgramOffering);
+  const applicationStatus =
+    options?.applicationStatus ?? ApplicationStatus.Submitted;
+  // Ensure student/user creation.
+  let savedUser: User;
+  let savedStudent: Student;
+  if (relations?.student) {
+    savedUser = relations.student.user;
+    savedStudent = relations.student;
+  } else {
+    savedUser = await userRepo.save(createFakeUser());
+    savedStudent = await studentRepo.save(createFakeStudent(savedUser));
+  }
+  // Create and save application.
+  const fakeApplication = createFakeApplication({
+    student: savedStudent,
+    location: relations?.institutionLocation,
+  });
+  fakeApplication.applicationStatus = applicationStatus;
+  const savedApplication = await applicationRepo.save(fakeApplication);
   // Offering.
   const fakeOffering = createFakeEducationProgramOffering({
     institution: relations?.institution,
@@ -149,10 +186,21 @@ export async function saveFakeApplicationDisbursements(
   });
   fakeOffering.offeringIntensity = OfferingIntensity.fullTime;
   const savedOffering = await offeringRepo.save(fakeOffering);
-  fakeOriginalAssessment.offering = savedOffering;
-  const savedOriginalAssessment = await studentAssessmentRepo.save(
-    fakeOriginalAssessment,
-  );
-  savedApplication.currentAssessment = savedOriginalAssessment;
+
+  if (savedApplication.applicationStatus !== ApplicationStatus.Draft) {
+    // Original assessment.
+    const fakeOriginalAssessment = createFakeStudentAssessment({
+      auditUser: savedUser,
+    });
+    fakeOriginalAssessment.application = savedApplication;
+    fakeOriginalAssessment.offering = savedOffering;
+    const savedOriginalAssessment = await studentAssessmentRepo.save(
+      fakeOriginalAssessment,
+    );
+    savedApplication.currentAssessment = savedOriginalAssessment;
+  } else {
+    savedApplication.location = null;
+  }
+
   return applicationRepo.save(savedApplication);
 }

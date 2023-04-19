@@ -13,7 +13,7 @@ import {
   DisbursementOveraward,
   DisbursementOverawardOriginType,
 } from "@sims/sims-db";
-import { Brackets, DataSource, EntityManager } from "typeorm";
+import { DataSource, EntityManager } from "typeorm";
 import { StudentUserToken } from "../../auth/userToken.interface";
 import { LoggerService, InjectLogger } from "@sims/utilities/logger";
 import { removeWhiteSpaces, transformAddressDetails } from "../../utilities";
@@ -469,12 +469,8 @@ export class StudentService extends RecordDataModelService<Student> {
           "application",
           "application.student.id = student.id",
         )
-        .leftJoin("application.location", "pirLocation")
-        .leftJoin("pirLocation.institution", "pirInstitution")
-        .leftJoin("application.currentAssessment", "studentAssessment")
-        .leftJoin("studentAssessment.offering", "offering")
-        .leftJoin("offering.institutionLocation", "offeringLocation")
-        .leftJoin("offeringLocation.institution", "offeringInstitution");
+        .innerJoin("application.location", "institutionLocation")
+        .innerJoin("institutionLocation.institution", "institution");
     } else {
       searchQuery.leftJoin(
         Application,
@@ -487,13 +483,9 @@ export class StudentService extends RecordDataModelService<Student> {
       .innerJoin("student.sinValidation", "sinValidation")
       .where("user.isActive = true");
     if (institutionId) {
-      searchQuery.andWhere(
-        new Brackets((qb) => {
-          qb.where("offeringInstitution.id = :institutionId", {
-            institutionId,
-          }).orWhere("pirInstitution.id = :institutionId", { institutionId });
-        }),
-      );
+      searchQuery.andWhere("institution.id = :institutionId", {
+        institutionId,
+      });
     }
     if (institutionId || searchCriteria.appNumber) {
       searchQuery.andWhere(
