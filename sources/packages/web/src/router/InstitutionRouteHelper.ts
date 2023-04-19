@@ -12,6 +12,12 @@ interface InstitutionRouteParams {
   locationId?: string;
 }
 
+/**
+ * Validate the access of user to the given route.
+ * @param to the route where user is navigated to.
+ * @param _from the route where user is navigated from.
+ * @param next navigation guard.
+ */
 export async function validateInstitutionUserAccess(
   to: RouteLocationNormalized,
   _from: RouteLocationNormalized,
@@ -40,6 +46,11 @@ export async function validateInstitutionUserAccess(
   }
 }
 
+/**
+ * Validate the access of authenticated user to the given route.
+ * @param to the route where user is navigated to.
+ * @returns if the user has access to the route.
+ */
 function isInstitutionUserAllowed(to: RouteLocationNormalized): boolean {
   const {
     isInstitutionSetupUser,
@@ -68,10 +79,10 @@ function isInstitutionUserAllowed(to: RouteLocationNormalized): boolean {
 
   // TODO: Validate the route for BCPublic institutions must be done here.
 
-  // If the user is institution admin, then they have access to all routes.
+  // If the user is institution admin, then they have access to all routes
+  // except the routes which are accessible only for legal signing authority.
   if (isAdmin.value) {
-    // If the route is permitted for only institution admin who is legal signing authority
-    // then validate the user role.
+    // Validate the legal signing authority user role.
     if (to.meta?.allowOnlyLegalSigningAuthority) {
       return isLegalSigningAuthority.value;
     }

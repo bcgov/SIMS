@@ -9,6 +9,9 @@ import { validateInstitutionUserAccess } from "./InstitutionRouteHelper";
 import { InstitutionUserTypes } from "@/types";
 
 declare module "vue-router" {
+  /**
+   * Route meta properties.
+   */
   interface RouteMeta {
     clientType: ClientIdType;
     requiresAuth?: boolean;
@@ -37,6 +40,9 @@ router.onError((error: unknown) => {
   throw error;
 });
 
+// TODO: As per vue documentation, usage of next is discouraged.
+// when vue-router version is upgraded, usage of next must be replaced
+// with returning either true or route location.
 router.beforeResolve(async (to, _from, next) => {
   if (to.meta?.clientType === ClientIdType.Institution) {
     validateInstitutionUserAccess(to, _from, next);

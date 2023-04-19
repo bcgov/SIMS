@@ -31,6 +31,9 @@ export function useInstitutionAuth(rootStore?: Store<any>) {
       (auth) => auth.userRole === InstitutionUserRoles.legalSigningAuthority,
     ),
   );
+  // If the bceid authenticated user is not an existing sims user
+  // then it is assumed that the user has logged in to setup institution
+  // and they are identified as institution set up user in route context.
   const isInstitutionSetupUser = computed(
     () => institutionUserDetails.isInstitutionSetupUser,
   );
@@ -39,6 +42,7 @@ export function useInstitutionAuth(rootStore?: Store<any>) {
       (authorization) => authorization.locationId === locationId,
     );
   const [userAuthorization] = authorizations;
+  // User type Admin | User.
   const userType = computed(() => userAuthorization?.userType);
 
   return {
