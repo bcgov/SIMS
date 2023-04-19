@@ -62,7 +62,7 @@ export const actions: ActionTree<InstitutionLocationState, RootState> = {
   /**
    * Set the institution user details
    * during the institution setup.
-   * @param context
+   * @param context action context.
    */
   setInstitutionUserDetailsOnSetup(
     context: ActionContext<InstitutionLocationState, RootState>,
