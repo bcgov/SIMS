@@ -34,12 +34,6 @@ const router = createRouter({
   routes,
 });
 
-// Define error handling on router error.
-router.onError((error: unknown) => {
-  console.error(error);
-  throw error;
-});
-
 // TODO: As per vue documentation, usage of next is discouraged.
 // when vue-router version is upgraded, usage of next must be replaced
 // with returning either true or route location.
