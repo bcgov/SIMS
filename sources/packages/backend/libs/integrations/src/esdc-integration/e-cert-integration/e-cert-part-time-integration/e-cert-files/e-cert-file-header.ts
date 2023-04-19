@@ -2,6 +2,7 @@ import { getDateOnlyFromFormat, StringBuilder } from "@sims/utilities";
 import {
   DATE_FORMAT,
   ECERT_PT_SENT_TITLE,
+  NUMBER_FILLER,
   RecordTypeCodes,
   SPACE_FILLER,
 } from "../../models/e-cert-integration-model";
@@ -23,6 +24,7 @@ export class ECertPartTimeFileHeader extends ECertFileHeader {
     header.appendWithEndFiller(ECERT_PT_SENT_TITLE, 40, SPACE_FILLER);
     header.appendDate(this.processDate, DATE_FORMAT);
     header.appendDate(this.processDate, TIME_FORMAT);
+    header.appendWithStartFiller(this.sequence, 6, NUMBER_FILLER);
     header.repeatAppend(SPACE_FILLER, 698); // Trailing space.
     return header.toString();
   }

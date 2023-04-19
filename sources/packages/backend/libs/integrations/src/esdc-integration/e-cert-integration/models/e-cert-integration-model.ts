@@ -47,6 +47,10 @@ export interface ECertRecord {
   awards: Award[];
   stopFullTimeBCFunding: boolean;
   courseLoad?: number;
+  /**
+   * Persistent or prolonged disability flag.
+   */
+  ppdFlag?: boolean;
 }
 
 export type Award = Pick<

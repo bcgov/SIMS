@@ -37,11 +37,10 @@ export class ECertFullTimeIntegrationService extends ECertIntegrationService {
   }
 
   /**
-   * Create the ECert file content, by populating the
-   * header, detail and trailer records.
-   * @param ecertRecords student, User and application data.
-   * @param fileSequence unique file sequence.
-   * @returns complete ECert content to be sent.
+   * Create the e-Cert file content, by populating the header, detail and trailer records.
+   * @param ecertRecords data needed to generate the e-Cert file.
+   * @param fileSequence file sequence.
+   * @returns complete e-Cert content to be sent.
    */
   createRequestContent(
     ecertRecords: ECertRecord[],
