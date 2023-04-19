@@ -10,12 +10,11 @@ import { useAuth } from "..";
 export function useInstitutionAuth(rootStore?: Store<any>) {
   const store = rootStore ?? useStore();
 
-  // Use store getters to get user details and authorizations.
-  const institutionUserDetails = store.getters[
-    "institution/myDetails"
-  ] as UserStateForStore;
+  // From store get user details and authorizations.
+  const institutionUserDetails = store.state.institution
+    .userState as UserStateForStore;
   const authorizations =
-    (store.getters["institution/myAuthorizationDetails"]
+    (store.state.institution.authorizationsState
       .authorizations as InstitutionUserAuthRolesAndLocation[]) ?? [];
 
   const { isAuthenticated } = useAuth();

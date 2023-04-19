@@ -74,8 +74,10 @@ function isInstitutionUserAllowed(to: RouteLocationNormalized): boolean {
     return true;
   }
 
+  const userTypes = to.meta.institutionUserTypes;
+
   // If user types are not specified in the route, it is not valid.
-  if (!to.meta.institutionUserTypes?.length) {
+  if (!userTypes?.length) {
     return false;
   }
 
@@ -90,8 +92,7 @@ function isInstitutionUserAllowed(to: RouteLocationNormalized): boolean {
     }
     return true;
   }
-  // If the user is not an admin, check if the route is allowed for non admin user.
-  const userTypes = to.meta.institutionUserTypes;
+  // If the user is not an admin, check if user type is among the allowed route user types.
   if (!userTypes.includes(userType.value)) {
     return false;
   }

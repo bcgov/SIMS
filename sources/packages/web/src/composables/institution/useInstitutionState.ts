@@ -18,14 +18,14 @@ export function useInstitutionState(rootStore?: Store<any>) {
     await store.dispatch("institution/initialize");
   };
 
-  const setInstitutionUserDetailsOnSetup = async () => {
+  const setInstitutionSetupUser = async () => {
     await store.dispatch("institution/setInstitutionUserDetailsOnSetup");
   };
 
   return {
     institutionState,
     getLocationName,
-    setInstitutionUserDetailsOnSetup,
+    setInstitutionSetupUser,
     initialize,
   };
 }

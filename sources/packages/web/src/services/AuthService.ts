@@ -204,7 +204,7 @@ export class AuthService {
       };
       // Set the institution user details which is required during the institution setup
       // to institution store.
-      await institutionStore.setInstitutionUserDetailsOnSetup();
+      await institutionStore.setInstitutionSetupUser();
       return;
     }
 
