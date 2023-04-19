@@ -49,12 +49,13 @@ export interface InstitutionUserAuthDetails {
 export interface InstitutionUserAuthRolesAndLocation {
   locationId?: number;
   userRole?: string;
-  userType: string;
+  userType: InstitutionUserTypes;
 }
 export interface UserStateForStore {
   email: string;
   firstName: string;
   lastName: string;
+  userFullName: string;
   isActive: boolean;
   isAdmin: boolean;
   isInstitutionSetupUser?: boolean;

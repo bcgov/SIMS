@@ -4,13 +4,8 @@ import {
 } from "@/constants/routes/RouteConstants";
 import { AuthService } from "@/services/AuthService";
 import store from "@/store";
-import {
-  ClientIdType,
-  InstitutionUserAuthRolesAndLocation,
-  InstitutionUserRoles,
-  InstitutionUserTypes,
-  UserStateForStore,
-} from "@/types";
+import { ClientIdType } from "@/types";
+import { useInstitutionAuth } from "@/composables";
 import { RouteLocationNormalized, NavigationGuardNext } from "vue-router";
 
 interface InstitutionRouteParams {
@@ -46,11 +41,13 @@ export async function validateInstitutionUserAccess(
 }
 
 function isInstitutionUserAllowed(to: RouteLocationNormalized): boolean {
-  const institutionUserDetails = store.getters[
-    "institution/myDetails"
-  ] as UserStateForStore;
-
-  console.log(institutionUserDetails);
+  const {
+    isInstitutionSetupUser,
+    isAdmin,
+    isLegalSigningAuthority,
+    userType,
+    hasLocationAccess,
+  } = useInstitutionAuth(store);
 
   // If the user is identified to be a business bceid user
   // who's institution and the user themselves not exist in sims
@@ -58,15 +55,10 @@ function isInstitutionUserAllowed(to: RouteLocationNormalized): boolean {
   // and the route is valid.
   // At this moment user is not an active sims user.
   if (
-    institutionUserDetails.isInstitutionSetupUser &&
+    isInstitutionSetupUser.value &&
     to.name === InstitutionRoutesConst.INSTITUTION_CREATE
   ) {
     return true;
-  }
-
-  // Beyond this, the user must be an active SIMS user.
-  if (!institutionUserDetails.isActive) {
-    return false;
   }
 
   // If user types are not specified in the route, it is not valid.
@@ -77,27 +69,17 @@ function isInstitutionUserAllowed(to: RouteLocationNormalized): boolean {
   // TODO: Validate the route for BCPublic institutions must be done here.
 
   // If the user is institution admin, then they have access to all routes.
-  const isInstitutionAdmin: boolean = institutionUserDetails?.isAdmin;
-
-  const authorizations = store.getters["institution/myAuthorizationDetails"]
-    .authorizations as InstitutionUserAuthRolesAndLocation[];
-
-  console.log(authorizations);
-
-  if (isInstitutionAdmin) {
+  if (isAdmin.value) {
     // If the route is permitted for only institution admin who is legal signing authority
     // then validate the user role.
     if (to.meta?.allowOnlyLegalSigningAuthority) {
-      return authorizations.some(
-        (auth) => auth.userRole === InstitutionUserRoles.legalSigningAuthority,
-      );
+      return isLegalSigningAuthority.value;
     }
     return true;
   }
-
   // If the user is not an admin, check if the route is allowed for non admin user.
   const userTypes = to.meta.institutionUserTypes;
-  if (!userTypes.includes(InstitutionUserTypes.user)) {
+  if (!userTypes.includes(userType.value)) {
     return false;
   }
 
@@ -112,7 +94,5 @@ function isInstitutionUserAllowed(to: RouteLocationNormalized): boolean {
   }
 
   // when the location is present in route params, check if the user has access.
-  return authorizations.some(
-    (authorization) => authorization.locationId === +locationId,
-  );
+  return hasLocationAccess(+locationId);
 }
