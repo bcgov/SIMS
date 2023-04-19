@@ -215,7 +215,7 @@ export class ECertPartTimeFileRecord extends ECertFileRecord {
       record.appendWithStartFiller(this.schoolAmount, 7, NUMBER_FILLER);
       record.appendWithStartFiller(this.courseLoad, 2, NUMBER_FILLER);
       record.append(this.ppdFlag, 1);
-      record.repeatAppend(SPACE_FILLER, 25); // Space Filler.
+      record.repeatAppend(SPACE_FILLER, 25); // Space filler.
       return record.toString();
     } catch (error: unknown) {
       throw new Error(
