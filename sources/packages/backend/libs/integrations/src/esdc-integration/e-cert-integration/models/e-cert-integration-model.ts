@@ -59,8 +59,8 @@ export type Award = Pick<
 >;
 
 /**
- * Codes used to start all the lines of the e-Cert
- * files sent to ESDC.
+ * Codes used to start all the lines of the e-Cert files sent to ESDC
+ * and feedback files received with possible e-Cert errors.
  */
 export enum RecordTypeCodes {
   ECertFullTimeHeader = "100",
