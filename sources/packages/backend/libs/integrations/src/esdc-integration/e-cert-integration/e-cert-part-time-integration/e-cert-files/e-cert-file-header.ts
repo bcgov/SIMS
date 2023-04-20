@@ -40,6 +40,6 @@ export class ECertPartTimeFileHeader extends ECertFileHeader {
   }
 
   getFeedbackHeaderRecordType(): RecordTypeCodes {
-    return RecordTypeCodes.ECertPartTimeFeedbackHeader;
+    return RecordTypeCodes.ECertPartTimeHeader;
   }
 }

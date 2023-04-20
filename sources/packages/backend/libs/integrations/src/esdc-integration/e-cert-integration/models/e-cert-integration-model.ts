@@ -69,9 +69,6 @@ export enum RecordTypeCodes {
   ECertPartTimeHeader = "01",
   ECertPartTimeRecord = "02",
   ECertPartTimeFooter = "99",
-  ECertPartTimeFeedbackHeader = "01",
-  ECertPartTimeFeedbackRecord = "02",
-  ECertPartTimeFeedbackFooter = "99",
 }
 
 /**

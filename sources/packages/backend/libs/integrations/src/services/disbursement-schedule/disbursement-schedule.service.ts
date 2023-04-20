@@ -18,14 +18,17 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
   }
 
   /**
-   * Get DisbursementSchedule by documentNumber
-   * @param documentNumber document Number
-   * @returns DisbursementSchedule respective to passed documentNumber.
+   * Get the disbursement schedule by its document number.
+   * @param documentNumber document number.
+   * @returns disbursement schedule respective to passed documentNumber.
    */
   async getDisbursementScheduleByDocumentNumber(
     documentNumber: number,
   ): Promise<DisbursementSchedule> {
-    return this.repo.findOne({ where: { documentNumber } });
+    return this.repo.findOne({
+      select: { id: true },
+      where: { documentNumber },
+    });
   }
 
   /**

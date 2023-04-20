@@ -33,6 +33,6 @@ export class ECertPartTimeFileFooter extends ECertFileFooter {
   }
 
   getFeedbackFooterRecordType(): RecordTypeCodes {
-    return RecordTypeCodes.ECertPartTimeFeedbackFooter;
+    return RecordTypeCodes.ECertPartTimeFooter;
   }
 }

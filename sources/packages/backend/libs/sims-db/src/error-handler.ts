@@ -11,11 +11,6 @@ export enum DatabaseConstraintNames {
    * Applied on table sims.education_programs_offerings.
    */
   LocationIDProgramIDOfferingNameStudyDatesIndex = "location_id_program_id_offering_name_study_dates_index",
-  /**
-   * Ensures error code is unique for a disbursement receipt.
-   * Applied on table disbursement_feedback_errors.
-   */
-  DisbursementScheduleIDErrorCodeUnique = "disbursement_schedule_id_error_code_unique",
 }
 
 /**

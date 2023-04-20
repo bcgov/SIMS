@@ -17,7 +17,9 @@ export function createFakeDisbursementSchedule(relations?: {
   const now = new Date();
   const nowString = getISODateOnlyString(now);
   const schedule = new DisbursementSchedule();
-  schedule.documentNumber = faker.random.number(2147483647);
+  // Fake number generated based on the max value that a document number can have as
+  // per e-Cert documentation. Numbers under 1000000 can still be used for E2E tests.
+  schedule.documentNumber = faker.random.number({ min: 1000000, max: 9999999 });
   schedule.disbursementDate = nowString;
   schedule.negotiatedExpiryDate = nowString;
   schedule.dateSent = null;
