@@ -1,8 +1,4 @@
-import {
-  InstitutionLocationState,
-  InstitutionUserAuthRolesAndLocation,
-  InstitutionUserRoles,
-} from "@/types";
+import { InstitutionLocationState, InstitutionUserRoles } from "@/types";
 import { computed } from "vue";
 import { Store, useStore } from "vuex";
 import { useAuth } from "..";
@@ -17,8 +13,7 @@ export function useInstitutionAuth(rootStore?: Store<any>) {
   // From institution details in store, get institution user details and authorizations.
   const institutionUserDetails = institutionDetails.userState;
   const authorizations =
-    (institutionDetails.authorizationsState
-      .authorizations as InstitutionUserAuthRolesAndLocation[]) ?? [];
+    institutionDetails.authorizationsState.authorizations ?? [];
 
   const { isAuthenticated } = useAuth();
   const isAuthenticatedInstitutionUser = computed(
