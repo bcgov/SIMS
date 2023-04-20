@@ -1,9 +1,9 @@
 {
   "title": "Student Account Activity",
-  "display": "form",
-  "type": "form",
   "name": "studentAccountActivity",
   "path": "studentaccountactivity",
+  "type": "form",
+  "display": "form",
   "tags": [
     "common"
   ],
@@ -357,7 +357,9 @@
                       "properties": {},
                       "allowMultipleMasks": false,
                       "addons": [],
-                      "tag": "p"
+                      "tag": "p",
+                      "inDataGrid": true,
+                      "className": ""
                     }
                   ],
                   "placeholder": "",
@@ -603,7 +605,8 @@
                   "allowMultipleMasks": false,
                   "addons": [],
                   "tag": "p",
-                  "id": "ejatcyg"
+                  "id": "ejatcyg",
+                  "className": ""
                 }
               ],
               "placeholder": "",
@@ -1485,7 +1488,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>Your application has been denied due to poor scholastic standing. You are no longer eligible to receive student financial assistance. If you need more information or have concerns, please contact StudentAid BC.</p>",
+                      "html": "<p>Your application has been denied due to poor scholastic standing. You are no longer eligible to receive student financial assistance. If you need more information or have concerns, please contact StudentAid BC.</p>\n",
                       "label": "Content",
                       "refreshOnChange": false,
                       "key": "content3",
@@ -1633,7 +1636,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>Please note your loan is in default and you are not eligible for additional funding. If you need more information or have concerns, please contact StudentAid BC.</p>",
+                      "html": "<p>Please note your loan is in default and you are not eligible for additional funding. If you need more information or have concerns, please contact StudentAid BC.</p>\n",
                       "label": "Content",
                       "refreshOnChange": false,
                       "key": "content46",
@@ -1781,7 +1784,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>Please note that your account is still under a hold due to bankruptcy. We have been notified that the hold with <strong>Canada Student Financial Assistance Program (CSFA)</strong> has been removed. Please complete a \"B.C. Student Loan Rehabilitation Due to Bankruptcy\" appeal. If you need more information or have concerns, please contact StudentAid BC.</p>",
+                      "html": "<p>Please note that your account is still under a hold due to bankruptcy. We have been notified that the hold with <strong>Canada Student Financial Assistance Program (CSFA)</strong> has been removed. Please complete a &quot;B.C. Student Loan Rehabilitation Due to Bankruptcy&quot; appeal. If you need more information or have concerns, please contact StudentAid BC.</p>\n",
                       "label": "Content",
                       "refreshOnChange": false,
                       "key": "content47",
@@ -1929,7 +1932,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>Please note that your institution has reported that you completed your studies early. If you need more information or have concerns, please contact StudentAid BC.</p>",
+                      "html": "<p>Please note that your institution has reported that you completed your studies early. If you need more information or have concerns, please contact StudentAid BC.</p>\n",
                       "label": "Content",
                       "refreshOnChange": false,
                       "key": "content48",
@@ -2077,7 +2080,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>Your account is restricted from future funding due to poor scholastic standing. You are no longer eligible to receive student financial assistance. If you need more information or have concerns, please contact StudentAid BC.</p>",
+                      "html": "<p>Your account is restricted from future funding due to poor scholastic standing. You are no longer eligible to receive student financial assistance. If you need more information or have concerns, please contact StudentAid BC.</p>\n",
                       "label": "Content",
                       "refreshOnChange": false,
                       "key": "content49",
@@ -2225,7 +2228,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>Please note a transfer has been received and is pending ministry review. No funding can be disbursed until this process is completed. If you need more information, please contact StudentAid BC or your financial aid officer.</p>",
+                      "html": "<p>Please note a transfer has been received and is pending ministry review. No funding can be disbursed until this process is completed. If you need more information, please contact StudentAid BC or your financial aid officer.</p>\n",
                       "label": "Content",
                       "refreshOnChange": false,
                       "key": "content50",
@@ -2373,7 +2376,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>Your future application is not eligible for funding as you are no longer eligible due to reaching your lifetime maximum of unclassified funding. If you need more information or have concerns, please contact StudentAid BC.</p>",
+                      "html": "<p>Your future application is not eligible for funding as you are no longer eligible due to reaching your lifetime maximum of unclassified funding. If you need more information or have concerns, please contact StudentAid BC.</p>\n",
                       "label": "Content",
                       "refreshOnChange": false,
                       "key": "content51",
@@ -2521,7 +2524,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>You are denied funding as you are no longer eligible due to reaching your lifetime maximum of unclassified funding. If you need more information or have concerns, please contact StudentAid BC.</p>",
+                      "html": "<p>You are denied funding as you are no longer eligible due to reaching your lifetime maximum of unclassified funding. If you need more information or have concerns, please contact StudentAid BC.</p>\n",
                       "label": "Content",
                       "refreshOnChange": false,
                       "key": "content52",
@@ -2669,7 +2672,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>A hold has been placed on your account. If you need more information or have concerns, please contact StudentAid BC.</p>",
+                      "html": "<p>A hold has been placed on your account. If you need more information or have concerns, please contact StudentAid BC.</p>\n",
                       "label": "Content",
                       "refreshOnChange": false,
                       "key": "content53",
@@ -2817,7 +2820,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>Please note that your loan is delinquent and you are not eligible for additional funding. If you need more information or have concerns, please contact StudentAid BC.</p>",
+                      "html": "<p>Please note that your loan is delinquent and you are not eligible for additional funding. If you need more information or have concerns, please contact StudentAid BC.</p>\n",
                       "label": "Content",
                       "refreshOnChange": false,
                       "key": "content54",
@@ -2965,7 +2968,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>Please note that your loan is delinquent and you are not eligible for additional funding. If you need more information or have concerns, please contact StudentAid BC.</p>",
+                      "html": "<p>Please note that your loan is delinquent and you are not eligible for additional funding. If you need more information or have concerns, please contact StudentAid BC.</p>\n",
                       "label": "Content",
                       "refreshOnChange": false,
                       "key": "content55",
@@ -3113,7 +3116,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>Your SIN number is currently expired for your application or we are missing the expiry date of your SIN number. Your application will not be disbursed until this is resolved. You may upload the appropriate documentation using the \"file uploader\" located in the top right of your account and we will work to resolve your issue. For more information please contact StudentAid BC.</p>",
+                      "html": "<p>Your SIN number is currently expired for your application or we are missing the expiry date of your SIN number. Your application will not be disbursed until this is resolved. You may upload the appropriate documentation using the &quot;file uploader&quot; located in the top right of your account and we will work to resolve your issue. For more information please contact StudentAid BC.</p>\n",
                       "label": "Content",
                       "refreshOnChange": false,
                       "key": "content56",
@@ -3343,7 +3346,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>You are approaching your Canada-B.C integrated student loan maximum lifetime number of weeks allowable for your current level of study. This is information only and no action is required. If you need more information, please contact the National Student Loan Service Centre.</p>",
+                      "html": "<p>You are approaching your Canada-B.C integrated student loan maximum lifetime number of weeks allowable for your current level of study. This is information only and no action is required. If you need more information, please contact the National Student Loan Service Centre.</p>\n",
                       "label": "Content",
                       "labelWidth": "",
                       "labelMargin": "",
@@ -3498,7 +3501,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>You have reached your Canada-B.C intergrated student loan maximim lifetime number of weeks allowable for your current level of study. If you need more information, please contact the National Student Loan Service Centre.</p>",
+                      "html": "<p>You have reached your Canada-B.C intergrated student loan maximim lifetime number of weeks allowable for your current level of study. If you need more information, please contact the National Student Loan Service Centre.</p>\n",
                       "label": "Content",
                       "refreshOnChange": false,
                       "key": "content2",
@@ -3646,7 +3649,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>You are approaching your Canada-B.C intergrated student loan maximim lifetime number of weeks allowable for your current level of study. This is information only and no action is required. If you need more information, please contact the National Student Loan Service Centre.</p>",
+                      "html": "<p>You are approaching your Canada-B.C intergrated student loan maximim lifetime number of weeks allowable for your current level of study. This is information only and no action is required. If you need more information, please contact the National Student Loan Service Centre.</p>\n",
                       "label": "Content",
                       "refreshOnChange": false,
                       "key": "content4",
@@ -3794,7 +3797,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>You have reached your Canada-B.C intergrated student loan maximim lifetime number of weeks allowable for your current level of study. If you need more information, please contact the National Student Loan Service Centre.</p>",
+                      "html": "<p>You have reached your Canada-B.C intergrated student loan maximim lifetime number of weeks allowable for your current level of study. If you need more information, please contact the National Student Loan Service Centre.</p>\n",
                       "label": "Content",
                       "refreshOnChange": false,
                       "key": "content5",
@@ -3942,7 +3945,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>You are approaching your Canada-B.C integrated student loan maximum lifetime number of weeks allowable for your current level of study. This is information only and no action is required. If you need more information, please contact the National Student Loan Service Centre.</p>",
+                      "html": "<p>You are approaching your Canada-B.C integrated student loan maximum lifetime number of weeks allowable for your current level of study. This is information only and no action is required. If you need more information, please contact the National Student Loan Service Centre.</p>\n",
                       "label": "Content",
                       "refreshOnChange": false,
                       "key": "content6",
@@ -4090,7 +4093,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>You have reached your Canada-B.C integrated student loan maximum lifetime number of weeks allowable for your current level of study. For more information, contact the National Student Loan Service Centre.</p>",
+                      "html": "<p>You have reached your Canada-B.C integrated student loan maximum lifetime number of weeks allowable for your current level of study. For more information, contact the National Student Loan Service Centre.</p>\n",
                       "label": "Content",
                       "labelWidth": "",
                       "labelMargin": "",
@@ -4245,7 +4248,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>Please note you have reached the 17 week maximum for an aviation program. If you need more information or have concerns, please contact StudentAid BC.</p>",
+                      "html": "<p>Please note you have reached the 17 week maximum for an aviation program. If you need more information or have concerns, please contact StudentAid BC.</p>\n",
                       "label": "Content",
                       "refreshOnChange": false,
                       "key": "content8",
@@ -4393,7 +4396,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>Please note that your account is under a hold due to bankruptcy where student financial assistance was included. Your first step will be to remove the hold with <strong>Canada Student Financial Assistance Program </strong>(CSFA Program) and then complete an appeal with StudentAid BC. If you need more information, please contact the National Student Loan Service Centre.</p>",
+                      "html": "<p>Please note that your account is under a hold due to bankruptcy where student financial assistance was included. Your first step will be to remove the hold with <strong>Canada Student Financial Assistance Program </strong>(CSFA Program) and then complete an appeal with StudentAid BC. If you need more information, please contact the National Student Loan Service Centre.</p>\n",
                       "label": "Content",
                       "refreshOnChange": false,
                       "key": "content9",
@@ -4541,7 +4544,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>Please note that your account is under a hold due to risk guaranteed portfolio being frozen. If you need more information, please contact the National Student Loan Service Centre.</p>",
+                      "html": "<p>Please note that your account is under a hold due to risk guaranteed portfolio being frozen. If you need more information, please contact the National Student Loan Service Centre.</p>\n",
                       "label": "Content",
                       "labelWidth": "",
                       "labelMargin": "",
@@ -4696,7 +4699,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>Please note the Canada Student Financial Assistance Program (CSFA Program) has placed a restriction on your file. If you need more information, please contact the National Student Loan Service Centre.</p>",
+                      "html": "<p>Please note the Canada Student Financial Assistance Program (CSFA Program) has placed a restriction on your file. If you need more information, please contact the National Student Loan Service Centre.</p>\n",
                       "label": "Content",
                       "labelWidth": "",
                       "labelMargin": "",
@@ -4851,7 +4854,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>Please note the Canada Student Finanacial Assistance Program (CSFA Program) has placed a restriction on your file. If you need more information, please contact the National Student Loan Service Centre.</p>",
+                      "html": "<p>Please note the Canada Student Finanacial Assistance Program (CSFA Program) has placed a restriction on your file. If you need more information, please contact the National Student Loan Service Centre.</p>\n",
                       "label": "Content",
                       "refreshOnChange": false,
                       "key": "content12",
@@ -4999,7 +5002,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>Please note that your application indicated that you have reported bankruptcy in the past. If you need more information or have concerns, please contact StudentAid BC.</p>",
+                      "html": "<p>Please note that your application indicated that you have reported bankruptcy in the past. If you need more information or have concerns, please contact StudentAid BC.</p>\n",
                       "label": "Content",
                       "refreshOnChange": false,
                       "key": "content13",
@@ -5147,7 +5150,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>Please note that there has been a failed credit check that has impacted your account. If you need more information or have concerns, please contact StudentAid BC.</p>",
+                      "html": "<p>Please note that there has been a failed credit check that has impacted your account. If you need more information or have concerns, please contact StudentAid BC.</p>\n",
                       "label": "Content",
                       "refreshOnChange": false,
                       "key": "content14",
@@ -5295,7 +5298,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>Please note that there are overawards attached to your account. If you need more information or have concerns, please contact StudentAid BC.</p>",
+                      "html": "<p>Please note that there are overawards attached to your account. If you need more information or have concerns, please contact StudentAid BC.</p>\n",
                       "label": "Content",
                       "refreshOnChange": false,
                       "key": "content15",
@@ -5443,7 +5446,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>Please note that a hold has been placed on your account based on an reported issue from the Canada Student Financial Assistance Program (CSFA Program). If you need more information, please contact the National Student Loan Service Centre.</p>",
+                      "html": "<p>Please note that a hold has been placed on your account based on an reported issue from the Canada Student Financial Assistance Program (CSFA Program). If you need more information, please contact the National Student Loan Service Centre.</p>\n",
                       "label": "Content",
                       "labelWidth": "",
                       "labelMargin": "",
@@ -5598,7 +5601,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>Please note that a hold has been placed on your account based on an reported issue from the Canada Student Financial Assistance Program (CSFA Program). If you need more information, please contact the National Student Loan Service Centre.</p>",
+                      "html": "<p>Please note that a hold has been placed on your account based on an reported issue from the Canada Student Financial Assistance Program (CSFA Program). If you need more information, please contact the National Student Loan Service Centre.</p>\n",
                       "label": "Content",
                       "labelWidth": "",
                       "labelMargin": "",
@@ -5753,7 +5756,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>Please note that it has been reported to us that you account is on hold due to bankruptcy. If you need more information, please contact the National Student Loan Service Centre.</p>",
+                      "html": "<p>Please note that it has been reported to us that you account is on hold due to bankruptcy. If you need more information, please contact the National Student Loan Service Centre.</p>\n",
                       "label": "Content",
                       "refreshOnChange": false,
                       "key": "content18",
@@ -5901,7 +5904,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>A judgement has been registered on your account by the Canada Student Financial Assistance Program (CSFA Program) and there is a hold on any further funding. If you need more information, please contact the National Student Loan Service Centre.</p>",
+                      "html": "<p>A judgement has been registered on your account by the Canada Student Financial Assistance Program (CSFA Program) and there is a hold on any further funding. If you need more information, please contact the National Student Loan Service Centre.</p>\n",
                       "label": "Content",
                       "labelWidth": "",
                       "labelMargin": "",
@@ -6056,7 +6059,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>Please note that a hold has been placed on your account based on an reported issue from the Canada Student Financial Assistance Program (CSFA Program). If you need more information or have concerns, please contact StudentAid BC.</p>",
+                      "html": "<p>Please note that a hold has been placed on your account based on an reported issue from the Canada Student Financial Assistance Program (CSFA Program). If you need more information or have concerns, please contact StudentAid BC.</p>\n",
                       "label": "Content",
                       "refreshOnChange": false,
                       "key": "content21",
@@ -6204,7 +6207,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>A judgement has been registered on your account by the Canada Student Financial Assistance Program (CSFA Program) and there is a hold on any further funding. If you need more information or have concerns, please contact StudentAid BC.</p>",
+                      "html": "<p>A judgement has been registered on your account by the Canada Student Financial Assistance Program (CSFA Program) and there is a hold on any further funding. If you need more information or have concerns, please contact StudentAid BC.</p>\n",
                       "label": "Content",
                       "refreshOnChange": false,
                       "key": "content20",
@@ -6352,7 +6355,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>The Canada Student Financial Assistance Program (CSFA Program) has reported that they have received a claim for loss request but it has not yet been or is in the process of being audited/assessed. If you need more information, please contact the National Student Loan Service Centre.</p>",
+                      "html": "<p>The Canada Student Financial Assistance Program (CSFA Program) has reported that they have received a claim for loss request but it has not yet been or is in the process of being audited/assessed. If you need more information, please contact the National Student Loan Service Centre.</p>\n",
                       "label": "Content",
                       "labelWidth": "",
                       "labelMargin": "",
@@ -6507,7 +6510,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>The Canada Student Financial Assistance Program (CSFA Program) has reported an issue with your repayment assistance program. If you need more information, please contact the National Student Loan Service Centre.</p>",
+                      "html": "<p>The Canada Student Financial Assistance Program (CSFA Program) has reported an issue with your repayment assistance program. If you need more information, please contact the National Student Loan Service Centre.</p>\n",
                       "label": "Content",
                       "labelWidth": "",
                       "labelMargin": "",
@@ -6662,7 +6665,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>Please note due to your risk shared or direct loan being in arrears for more then 90 days you are no eligible for additional financial aid. If you need more information, please contact the National Student Loan Service Centre for next steps and repayment.</p>",
+                      "html": "<p>Please note due to your risk shared or direct loan being in arrears for more then 90 days you are no eligible for additional financial aid. If you need more information, please contact the National Student Loan Service Centre for next steps and repayment.</p>\n",
                       "label": "Content",
                       "refreshOnChange": false,
                       "key": "content23",
@@ -6810,7 +6813,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>The Canada Student Financial Assistance Program (CSFA Program) has reported an issue with your repayment assistance program. If you need more information, please contact the National Student Loan Service Centre.</p>",
+                      "html": "<p>The Canada Student Financial Assistance Program (CSFA Program) has reported an issue with your repayment assistance program. If you need more information, please contact the National Student Loan Service Centre.</p>\n",
                       "label": "Content",
                       "labelWidth": "",
                       "labelMargin": "",
@@ -6965,7 +6968,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>The Canada Student Financial Assistance Program (CSFA Program) has reported an issue with your repayment assistance program. If you need more information, please contact the National Student Loan Service Centre.</p>",
+                      "html": "<p>The Canada Student Financial Assistance Program (CSFA Program) has reported an issue with your repayment assistance program. If you need more information, please contact the National Student Loan Service Centre.</p>\n",
                       "label": "Content",
                       "labelWidth": "",
                       "labelMargin": "",
@@ -7120,7 +7123,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>StudentAid BC funding limit is 520 weeks. You have received 520 weeks of funding and are at the limit. If you need more information or have concerns, please contact StudentAid BC.</p>",
+                      "html": "<p>StudentAid BC funding limit is 520 weeks. You have received 520 weeks of funding and are at the limit. If you need more information or have concerns, please contact StudentAid BC.</p>\n",
                       "label": "Content",
                       "refreshOnChange": false,
                       "key": "content27",
@@ -7268,7 +7271,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>You are approaching your Canada-B.C. integrated student loan maximum lifetime number of weeks allowable for your current level of study. This is information only and no action is required. If you need more information, please contact the National Student Loan Service Centre.</p>",
+                      "html": "<p>You are approaching your Canada-B.C. integrated student loan maximum lifetime number of weeks allowable for your current level of study. This is information only and no action is required. If you need more information, please contact the National Student Loan Service Centre.</p>\n",
                       "label": "Content",
                       "refreshOnChange": false,
                       "key": "content28",
@@ -7416,7 +7419,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>A judgement has been registered on your account by the Canada Student Financial Assistance Program (CSFA Program) and there is a hold on any further funding. If you need more information, please contact the National Student Loan Service Centre.</p>",
+                      "html": "<p>A judgement has been registered on your account by the Canada Student Financial Assistance Program (CSFA Program) and there is a hold on any further funding. If you need more information, please contact the National Student Loan Service Centre.</p>\n",
                       "label": "Content",
                       "labelWidth": "",
                       "labelMargin": "",
@@ -7571,7 +7574,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>A restriction has been registered on your account by the Canada Student Financial Assistance Program (CSFA Program) and there is a hold on any further funding. If you need more information, please contact the National Student Loan Service Centre.</p>",
+                      "html": "<p>A restriction has been registered on your account by the Canada Student Financial Assistance Program (CSFA Program) and there is a hold on any further funding. If you need more information, please contact the National Student Loan Service Centre.</p>\n",
                       "label": "Content",
                       "labelWidth": "",
                       "labelMargin": "",
@@ -7726,7 +7729,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>A restriction has been registered on your account by the Canada Student Financial Assistance Program (CSFA Program) and there is a hold on any further funding. If you need more information, please contact the National Student Loan Service Centre.</p>",
+                      "html": "<p>A restriction has been registered on your account by the Canada Student Financial Assistance Program (CSFA Program) and there is a hold on any further funding. If you need more information, please contact the National Student Loan Service Centre.</p>\n",
                       "label": "Content",
                       "labelWidth": "",
                       "labelMargin": "",
@@ -7881,7 +7884,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>A restriction has been registered on your account by the Canada Student Financial Assistance Program (CSFA Program) and there is a hold on any further funding. If you need more information, please contact the National Student Loan Service Centre.</p>",
+                      "html": "<p>A restriction has been registered on your account by the Canada Student Financial Assistance Program (CSFA Program) and there is a hold on any further funding. If you need more information, please contact the National Student Loan Service Centre.</p>\n",
                       "label": "Content",
                       "labelWidth": "",
                       "labelMargin": "",
@@ -8036,7 +8039,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>A restriction has been registered on your account by the Canada Student Financial Assistance Program (CSFA Program) and there is a hold on any further funding. If you need more information, please contact the National Student Loan Service Centre.&nbsp;</p>",
+                      "html": "<p>A restriction has been registered on your account by the Canada Student Financial Assistance Program (CSFA Program) and there is a hold on any further funding. If you need more information, please contact the National Student Loan Service Centre.&nbsp;</p>\n",
                       "label": "Content",
                       "labelWidth": "",
                       "labelMargin": "",
@@ -8191,7 +8194,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>A restriction has been registered on your account by the Canada Student Financial Assistance Program (CSFA Program) and there is a hold on any further funding. If you need more information, please contact the National Student Loan Service Centre.</p>",
+                      "html": "<p>A restriction has been registered on your account by the Canada Student Financial Assistance Program (CSFA Program) and there is a hold on any further funding. If you need more information, please contact the National Student Loan Service Centre.</p>\n",
                       "label": "Content",
                       "labelWidth": "",
                       "labelMargin": "",
@@ -8346,7 +8349,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>A restriction has been registered on your account by the Canada Student Financial Assistance Program (CSFA Program) and there is a hold on any further funding. If you need more information, please contact the National Student Loan Service Centre.</p>",
+                      "html": "<p>A restriction has been registered on your account by the Canada Student Financial Assistance Program (CSFA Program) and there is a hold on any further funding. If you need more information, please contact the National Student Loan Service Centre.</p>\n",
                       "label": "Content",
                       "labelWidth": "",
                       "labelMargin": "",
@@ -8501,7 +8504,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>A restriction has been registered on your account by the Canada Student Financial Assistance Program (CSFA Program) and there is a hold on any further funding. If you need more information, please contact the National Student Loan Service Centre.</p>",
+                      "html": "<p>A restriction has been registered on your account by the Canada Student Financial Assistance Program (CSFA Program) and there is a hold on any further funding. If you need more information, please contact the National Student Loan Service Centre.</p>\n",
                       "label": "Content",
                       "labelWidth": "",
                       "labelMargin": "",
@@ -8656,7 +8659,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>A restriction has been registered on your account by the Canada Student Financial Assistance Program (CSFA Program) and there is a hold on any further funding. If you need more information, please contact the National Student Loan Service Centre.</p>",
+                      "html": "<p>A restriction has been registered on your account by the Canada Student Financial Assistance Program (CSFA Program) and there is a hold on any further funding. If you need more information, please contact the National Student Loan Service Centre.</p>\n",
                       "label": "Content",
                       "labelWidth": "",
                       "labelMargin": "",
@@ -8811,7 +8814,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>A restriction has been registered on your account by the Canada Student Financial Assistance Program (CSFA Program) and there is a hold on any further funding. If you need more information, please contact the National Student Loan Service Centre.</p>",
+                      "html": "<p>A restriction has been registered on your account by the Canada Student Financial Assistance Program (CSFA Program) and there is a hold on any further funding. If you need more information, please contact the National Student Loan Service Centre.</p>\n",
                       "label": "Content",
                       "labelWidth": "",
                       "labelMargin": "",
@@ -8966,7 +8969,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>A restriction has been registered on your account by the Canada Student Financial Assistance Program (CSFA Program) and there is a hold on any further funding. If you need more information, please contact the National Student Loan Service Centre.</p>",
+                      "html": "<p>A restriction has been registered on your account by the Canada Student Financial Assistance Program (CSFA Program) and there is a hold on any further funding. If you need more information, please contact the National Student Loan Service Centre.</p>\n",
                       "label": "Content",
                       "labelWidth": "",
                       "labelMargin": "",
@@ -9121,7 +9124,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>A restriction has been registered on your account by the Canada Student Financial Assistance Program (CSFA Program) and there is a hold on any further funding. If you need more information, please contact the National Student Loan Service Centre.</p>",
+                      "html": "<p>A restriction has been registered on your account by the Canada Student Financial Assistance Program (CSFA Program) and there is a hold on any further funding. If you need more information, please contact the National Student Loan Service Centre.</p>\n",
                       "label": "Content",
                       "labelWidth": "",
                       "labelMargin": "",
@@ -9276,7 +9279,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>A restriction has been registered on your account by the Canada Student Financial Assistance Program (CSFA Program) and there is a hold on any further funding. If you need more information, please contact the National Student Loan Service Centre.</p>",
+                      "html": "<p>A restriction has been registered on your account by the Canada Student Financial Assistance Program (CSFA Program) and there is a hold on any further funding. If you need more information, please contact the National Student Loan Service Centre.</p>\n",
                       "label": "Content",
                       "labelWidth": "",
                       "labelMargin": "",
@@ -9431,7 +9434,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>A restriction has been registered on your account by the Canada Student Financial Assistance Program (CSFA Program) and there is a hold on any further funding. If you need more information, please contact the National Student Loan Service Centre.</p>",
+                      "html": "<p>A restriction has been registered on your account by the Canada Student Financial Assistance Program (CSFA Program) and there is a hold on any further funding. If you need more information, please contact the National Student Loan Service Centre.</p>\n",
                       "label": "Content",
                       "labelWidth": "",
                       "labelMargin": "",
@@ -9586,7 +9589,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>A restriction has been registered on your account by the Canada Student Financial Assistance Program (CSFA Program) and there is a hold on any further funding. If you need more information, please contact the National Student Loan Service Centre.</p>",
+                      "html": "<p>A restriction has been registered on your account by the Canada Student Financial Assistance Program (CSFA Program) and there is a hold on any further funding. If you need more information, please contact the National Student Loan Service Centre.</p>\n",
                       "label": "Content",
                       "labelWidth": "",
                       "labelMargin": "",
@@ -9741,7 +9744,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>A restriction has been registered on your account by the Canada Student Financial Assistance Program (CSFA Program) and there is a hold on any further funding. If you need more information, please contact the National Student Loan Service Centre.</p>",
+                      "html": "<p>A restriction has been registered on your account by the Canada Student Financial Assistance Program (CSFA Program) and there is a hold on any further funding. If you need more information, please contact the National Student Loan Service Centre.</p>\n",
                       "label": "Content",
                       "labelWidth": "",
                       "labelMargin": "",
@@ -9896,7 +9899,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>A restriction has been registered on your account by the Canada Student Financial Assistance Program (CSFA Program) and there is a hold on any further funding. If you need more information, please contact the National Student Loan Service Centre.</p>",
+                      "html": "<p>A restriction has been registered on your account by the Canada Student Financial Assistance Program (CSFA Program) and there is a hold on any further funding. If you need more information, please contact the National Student Loan Service Centre.</p>\n",
                       "label": "Content",
                       "labelWidth": "",
                       "labelMargin": "",
@@ -9968,6 +9971,161 @@
                       "allowMultipleMasks": false,
                       "addons": [],
                       "id": "eqqh4i"
+                    },
+                    {
+                      "title": "Code BCLM - BC Lifetime Maximum Reached",
+                      "labelWidth": "",
+                      "labelMargin": "",
+                      "theme": "default",
+                      "tooltip": "",
+                      "customClass": "collapsible",
+                      "collapsible": true,
+                      "hidden": false,
+                      "disabled": false,
+                      "modalEdit": false,
+                      "key": "codeZ2CanadaStudentFinancialAidRestriction2",
+                      "tags": [],
+                      "properties": {},
+                      "customConditional": "",
+                      "conditional": {
+                        "json": "",
+                        "show": "",
+                        "when": null,
+                        "eq": ""
+                      },
+                      "logic": [],
+                      "attributes": {},
+                      "overlay": {
+                        "style": "",
+                        "page": "",
+                        "left": "",
+                        "top": "",
+                        "width": "",
+                        "height": ""
+                      },
+                      "type": "panel",
+                      "label": "Panel",
+                      "breadcrumb": "default",
+                      "tabindex": "",
+                      "input": false,
+                      "tableView": false,
+                      "components": [
+                        {
+                          "html": "<p>This restriction is added to you when you reach the BC lifetime maximum reached. BC lifetime maximum is&nbsp;your cumulative full-time BCSL awards received over&nbsp;a lifetime.</p>\n",
+                          "label": "Content",
+                          "labelWidth": "",
+                          "labelMargin": "",
+                          "customClass": "",
+                          "refreshOnChange": false,
+                          "hidden": false,
+                          "modalEdit": false,
+                          "key": "content57",
+                          "tags": [],
+                          "properties": {},
+                          "conditional": {
+                            "show": null,
+                            "when": null,
+                            "eq": "",
+                            "json": ""
+                          },
+                          "customConditional": "",
+                          "logic": [],
+                          "attributes": {},
+                          "overlay": {
+                            "style": "",
+                            "page": "",
+                            "left": "",
+                            "top": "",
+                            "width": "",
+                            "height": ""
+                          },
+                          "type": "content",
+                          "input": false,
+                          "tableView": false,
+                          "placeholder": "",
+                          "prefix": "",
+                          "suffix": "",
+                          "multiple": false,
+                          "defaultValue": null,
+                          "protected": false,
+                          "unique": false,
+                          "persistent": true,
+                          "clearOnHide": true,
+                          "refreshOn": "",
+                          "redrawOn": "",
+                          "dataGridLabel": false,
+                          "labelPosition": "top",
+                          "description": "",
+                          "errorLabel": "",
+                          "tooltip": "",
+                          "hideLabel": false,
+                          "tabindex": "",
+                          "disabled": false,
+                          "autofocus": false,
+                          "dbIndex": false,
+                          "customDefaultValue": "",
+                          "calculateValue": "",
+                          "calculateServer": false,
+                          "widget": null,
+                          "validateOn": "change",
+                          "validate": {
+                            "required": false,
+                            "custom": "",
+                            "customPrivate": false,
+                            "strictDateValidation": false,
+                            "multiple": false,
+                            "unique": false
+                          },
+                          "allowCalculateOverride": false,
+                          "encrypted": false,
+                          "showCharCount": false,
+                          "showWordCount": false,
+                          "allowMultipleMasks": false,
+                          "addons": [],
+                          "id": "eqqh4i"
+                        }
+                      ],
+                      "collapsed": true,
+                      "placeholder": "",
+                      "prefix": "",
+                      "suffix": "",
+                      "multiple": false,
+                      "defaultValue": null,
+                      "protected": false,
+                      "unique": false,
+                      "persistent": false,
+                      "clearOnHide": false,
+                      "refreshOn": "",
+                      "redrawOn": "",
+                      "dataGridLabel": false,
+                      "labelPosition": "top",
+                      "description": "",
+                      "errorLabel": "",
+                      "autofocus": false,
+                      "dbIndex": false,
+                      "customDefaultValue": "",
+                      "calculateValue": "",
+                      "calculateServer": false,
+                      "widget": null,
+                      "validateOn": "change",
+                      "validate": {
+                        "required": false,
+                        "custom": "",
+                        "customPrivate": false,
+                        "strictDateValidation": false,
+                        "multiple": false,
+                        "unique": false
+                      },
+                      "allowCalculateOverride": false,
+                      "encrypted": false,
+                      "showCharCount": false,
+                      "showWordCount": false,
+                      "allowMultipleMasks": false,
+                      "addons": [],
+                      "tree": false,
+                      "lazyLoad": false,
+                      "id": "e49h62j",
+                      "hideLabel": false
                     }
                   ],
                   "collapsed": true,
@@ -10236,5 +10394,8 @@
       "id": "e6z1qd9",
       "addons": []
     }
-  ]
+  ],
+  "created": "2023-01-11T21:27:07.204Z",
+  "modified": "2023-04-20T20:43:08.880Z",
+  "machineName": "studentAccountActivity"
 }
