@@ -280,6 +280,8 @@ export class ECertFileHandler extends ESDCFileHandler {
       postalCode: addressInfo.postalCode,
       email: student.user.email,
       gender: student.gender,
+      // TODO: getting the information directly from the student profile since there is no
+      // direction from the business at this moment from where it should actually come.
       ppdFlag: student.studentPDVerified,
       maritalStatus: application.relationshipStatus,
       studentNumber: application.studentNumber,

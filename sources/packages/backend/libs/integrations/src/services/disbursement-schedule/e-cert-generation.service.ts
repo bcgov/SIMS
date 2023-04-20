@@ -170,6 +170,7 @@ export class ECertGenerationService {
         "student.birthDate",
         "student.gender",
         "student.contactInfo",
+        "student.studentPDVerified",
         "institutionLocation.id",
         "institutionLocation.institutionCode",
         "disbursementValue.id",

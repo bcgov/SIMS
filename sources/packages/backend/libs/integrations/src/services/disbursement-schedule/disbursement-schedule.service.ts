@@ -20,7 +20,7 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
   /**
    * Get the disbursement schedule by its document number.
    * @param documentNumber document number.
-   * @returns disbursement schedule respective to passed documentNumber.
+   * @returns disbursement schedule respective to the provided document number.
    */
   async getDisbursementScheduleByDocumentNumber(
     documentNumber: number,
