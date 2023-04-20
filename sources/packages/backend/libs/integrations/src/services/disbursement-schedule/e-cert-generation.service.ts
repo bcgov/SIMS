@@ -314,7 +314,10 @@ export class ECertGenerationService {
   ): Promise<void> {
     for (const disbursement of disbursements) {
       for (const disbursementValue of disbursement.disbursementValues) {
-        if (this.shouldStopFullTimeBCFunding(disbursement, disbursementValue)) {
+        if (this.shouldStopFunding(disbursement, disbursementValue)) {
+          // Todo: At this point the shouldStopFunding is only checking stop full time BC funding,
+          // in future it will accommodate the stop part time BC funding check. And the below
+          // restriction code is that of `StopFullTimeBCFunding`
           disbursementValue.restrictionAmountSubtracted =
             disbursementValue.valueAmount -
             (disbursementValue.disbursedAmountSubtracted ?? 0) -
@@ -362,11 +365,7 @@ export class ECertGenerationService {
       const auditUser = await this.systemUsersService.systemUser();
 
       const totalLifeTimeAmount =
-        (await this.sfasApplicationService.totalLegacyBCSLAmount(
-          student.sinValidation.sin,
-          student.birthDate,
-          student.user.lastName,
-        )) +
+        (await this.sfasApplicationService.totalLegacyBCSLAmount(student.id)) +
         (await this.disbursementScheduleSharedService.totalDisbursedBCSLAmount(
           student.id,
         )) +
@@ -380,9 +379,8 @@ export class ECertGenerationService {
         // disbursement/application and money went out to the student, even though they reach the maximum.
         const newEffectiveAmount =
           disbursementValue.effectiveAmount - amountSubtracted;
-        /**
-         * Create {@link RestrictionCode.BCLM} restriction when lifetime maximum is reached/exceeded.
-         */
+
+        // Create RestrictionCode.BCLM restriction when lifetime maximum is reached/exceeded.
         const bclmRestriction =
           await this.studentRestrictionSharedService.createRestrictionToSave(
             student.id,
@@ -439,35 +437,9 @@ export class ECertGenerationService {
         .reduce((previousValue, currentValue) => {
           return previousValue + currentValue.effectiveAmount;
         }, 0);
-      // Calculate total BC grants subtracted due to restriction.
-      let bcAmountSubtractedRestrictionId = NaN;
-      const bcTotalGrantAmountSubtracted =
-        disbursementSchedule.disbursementValues
-          // Filter all BC grants and filter out the null BC grants subtracted.
-          .filter((disbursementValue) => {
-            if (
-              disbursementValue.valueType === DisbursementValueType.BCGrant &&
-              disbursementValue.restrictionAmountSubtracted !== null
-            ) {
-              bcAmountSubtractedRestrictionId =
-                disbursementValue.restrictionSubtracted?.id;
-              return disbursementValue;
-            }
-          })
-          // Sum all BC grants subtracted due to restriction.
-          .reduce((previousValue, currentValue) => {
-            return previousValue + currentValue.restrictionAmountSubtracted;
-          }, 0);
 
       bcTotalGrant.valueAmount = bcTotalGrantValueAmount;
       bcTotalGrant.effectiveAmount = bcTotalGrantValueAmount;
-
-      if (bcTotalGrantAmountSubtracted) {
-        bcTotalGrant.restrictionAmountSubtracted = bcTotalGrantAmountSubtracted;
-        bcTotalGrant.restrictionSubtracted = {
-          id: bcAmountSubtractedRestrictionId,
-        } as Restriction;
-      }
     }
   }
 
@@ -496,7 +468,7 @@ export class ECertGenerationService {
       LOAN_TYPES,
     ).filter(
       (loanAward) =>
-        !this.shouldStopFullTimeBCFunding(
+        !this.shouldStopFunding(
           loanAward.relatedSchedule,
           loanAward.awardValue,
         ),
@@ -547,13 +519,14 @@ export class ECertGenerationService {
   }
 
   /**
-   * Determine when a BC Full-time funding should not be disbursed.
+   * Determine when a BC Full-time/Part-time funding should not be disbursed.
+   * Todo: Part-time implementation is yet to be done.
    * In this case the e-Cert can still be generated with th federal funding.
    * @param schedule disbursement to be checked.
    * @param disbursementValue award to be checked.
    * @returns true if the funding should not be disbursed, otherwise, false.
    */
-  private shouldStopFullTimeBCFunding(
+  private shouldStopFunding(
     schedule: ECertDisbursementSchedule,
     disbursementValue: DisbursementValue,
   ): boolean {

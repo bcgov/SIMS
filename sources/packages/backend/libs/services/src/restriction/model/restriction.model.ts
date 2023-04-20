@@ -30,7 +30,7 @@ export enum RestrictionCode {
   SINF = "SINF",
   /**
    * BCSL Lifetime Maximum is the student's cumulative full-time BCSL awards received over
-   * a lifetime. Thus restriction is added to a student when they reach BC lifetime maximum
+   * a lifetime. This restriction is added to a student when they reach BC lifetime maximum
    * reached. It is calculated during E-cert.
    */
   BCLM = "BCLM",

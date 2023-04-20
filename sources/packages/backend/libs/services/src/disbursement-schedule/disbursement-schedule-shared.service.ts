@@ -678,7 +678,7 @@ export class DisbursementScheduleSharedService extends RecordDataModelService<Di
    * @returns total BCSL amount that the student received from the SIMS.
    */
   async totalDisbursedBCSLAmount(studentId: number): Promise<number> {
-    const totalQuery = await this.repo
+    const total = await this.repo
       .createQueryBuilder("disbursement")
       .select("SUM(disbursementValue.valueAmount)")
       .innerJoin("disbursement.disbursementValues", "disbursementValue")
@@ -695,7 +695,7 @@ export class DisbursementScheduleSharedService extends RecordDataModelService<Di
       .andWhere("disbursementValue.valueType = :disbursementValueType", {
         disbursementValueType: DisbursementValueType.BCLoan,
       })
-      .getRawOne();
-    return +(totalQuery?.sum ?? 0);
+      .getRawOne<{ sum?: number }>();
+    return +(total?.sum ?? 0);
   }
 }
