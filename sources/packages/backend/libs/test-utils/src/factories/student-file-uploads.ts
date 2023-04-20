@@ -8,10 +8,15 @@ import { createFakeStudent } from "./student";
  * @param student entity.
  * @returns created studentFile object.
  */
-export function createFakeStudentFileUpload(relations?: {
-  student?: Student;
-  creator?: User;
-}): StudentFile {
+export function createFakeStudentFileUpload(
+  relations?: {
+    student?: Student;
+    creator?: User;
+  },
+  options?: {
+    fileOrigin?: FileOriginType;
+  },
+): StudentFile {
   const studentFile = new StudentFile();
   studentFile.fileName = faker.system.fileName();
   studentFile.uniqueFileName =
@@ -21,7 +26,7 @@ export function createFakeStudentFileUpload(relations?: {
   studentFile.fileContent = Buffer.from(faker.random.words(50), "utf-8");
   studentFile.student = relations?.student ?? createFakeStudent();
   studentFile.creator = { id: relations?.creator?.id } as User;
-  studentFile.fileOrigin = FileOriginType.Ministry;
+  studentFile.fileOrigin = options?.fileOrigin ?? FileOriginType.Ministry;
   return studentFile;
 }
 
@@ -35,8 +40,9 @@ export function createFakeStudentFileUpload(relations?: {
 export async function saveFakeStudentFileUpload(
   dataSource: DataSource,
   relations?: { student?: Student; creator?: User },
+  options?: { fileOrigin: FileOriginType },
 ): Promise<StudentFile> {
-  const studentFile = createFakeStudentFileUpload(relations);
+  const studentFile = createFakeStudentFileUpload(relations, options);
   const studentFileRepo = dataSource.getRepository(StudentFile);
   return studentFileRepo.save(studentFile);
 }

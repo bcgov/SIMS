@@ -16,13 +16,18 @@ import {
   saveFakeStudent,
   saveFakeStudentFileUpload,
 } from "@sims/test-utils";
-import { Application, Institution, InstitutionLocation } from "@sims/sims-db";
+import {
+  Application,
+  FileOriginType,
+  Institution,
+  InstitutionLocation,
+} from "@sims/sims-db";
 
 describe("StudentInstitutionsController(e2e)-getStudentFileUploads", () => {
   let app: INestApplication;
   let appDataSource: DataSource;
-  let collegeC: Institution;
-  let collegeCLocation: InstitutionLocation;
+  let collegeF: Institution;
+  let collegeFLocation: InstitutionLocation;
   let applicationRepo: Repository<Application>;
 
   beforeAll(async () => {
@@ -32,14 +37,14 @@ describe("StudentInstitutionsController(e2e)-getStudentFileUploads", () => {
 
     const { institution } = await getAuthRelatedEntities(
       appDataSource,
-      InstitutionTokenTypes.CollegeCUser,
+      InstitutionTokenTypes.CollegeFUser,
     );
-    collegeC = institution;
-    collegeCLocation = createFakeInstitutionLocation(collegeC);
+    collegeF = institution;
+    collegeFLocation = createFakeInstitutionLocation(collegeF);
     await authorizeUserTokenForLocation(
       appDataSource,
-      InstitutionTokenTypes.CollegeCUser,
-      collegeCLocation,
+      InstitutionTokenTypes.CollegeFUser,
+      collegeFLocation,
     );
     applicationRepo = appDataSource.getRepository(Application);
   });
@@ -49,13 +54,13 @@ describe("StudentInstitutionsController(e2e)-getStudentFileUploads", () => {
     // Arrange.
     const student = await saveFakeStudent(appDataSource);
     const application = createFakeApplication({
-      location: collegeCLocation,
+      location: collegeFLocation,
       student,
     });
     await applicationRepo.save(application);
 
     const institutionUserToken = await getInstitutionToken(
-      InstitutionTokenTypes.CollegeCUser,
+      InstitutionTokenTypes.CollegeFUser,
     );
 
     // Save fake file upload for the student.
@@ -82,6 +87,41 @@ describe("StudentInstitutionsController(e2e)-getStudentFileUploads", () => {
           fileOrigin: studentUploadedFile.fileOrigin,
         },
       ]);
+  });
+
+  it("Should not get the student file uploads when student has at least one application submitted for the institution but the fileOrigin is set to Temporary", async () => {
+    // Student who has application submitted to institution.
+    // Arrange.
+    const student = await saveFakeStudent(appDataSource);
+    const application = createFakeApplication({
+      location: collegeFLocation,
+      student,
+    });
+    await applicationRepo.save(application);
+
+    const institutionUserToken = await getInstitutionToken(
+      InstitutionTokenTypes.CollegeFUser,
+    );
+
+    // Save fake file upload for the student.
+    await saveFakeStudentFileUpload(
+      appDataSource,
+      {
+        student,
+        creator: student.user,
+      },
+      { fileOrigin: FileOriginType.Temporary },
+    );
+
+    // Endpoint to test.
+    const endpoint = `/institutions/student/${student.id}/documents`;
+
+    // Act/Assert.
+    await request(app.getHttpServer())
+      .get(endpoint)
+      .auth(institutionUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK)
+      .expect([]);
   });
 
   afterAll(async () => {
