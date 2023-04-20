@@ -19,7 +19,7 @@ export function useInstitutionState(rootStore?: Store<any>) {
   };
 
   const setInstitutionSetupUser = async () => {
-    await store.dispatch("institution/setInstitutionUserDetailsOnSetup");
+    await store.dispatch("institution/setInstitutionSetupUser");
   };
 
   return {

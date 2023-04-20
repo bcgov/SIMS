@@ -36,4 +36,17 @@ export const mutations: MutationTree<InstitutionLocationState> = {
   ) {
     state.locationState = locationState;
   },
+
+  /**
+   * Set the institution setup user property to institution user state.
+   * @param state Institution state.
+   * @param isInstitutionSetupUser value which specifies if the user is
+   * institution setup user.
+   */
+  setInstitutionSetupUser(
+    state: InstitutionLocationState,
+    isInstitutionSetupUser: boolean,
+  ) {
+    state.userState.isInstitutionSetupUser = isInstitutionSetupUser;
+  },
 };

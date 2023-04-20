@@ -4,7 +4,6 @@ import {
   InstitutionLocationState,
   InstitutionStateForStore,
   RootState,
-  UserStateForStore,
 } from "@/types";
 import { InstitutionUserService } from "@/services/InstitutionUserService";
 
@@ -60,14 +59,12 @@ export const actions: ActionTree<InstitutionLocationState, RootState> = {
   },
 
   /**
-   * Set the institution user details
-   * during the institution setup.
+   * Set the institution setup user property to institution user state.
    * @param context action context.
    */
-  setInstitutionUserDetailsOnSetup(
+  setInstitutionSetupUser(
     context: ActionContext<InstitutionLocationState, RootState>,
   ): void {
-    const userState = { isInstitutionSetupUser: true } as UserStateForStore;
-    context.commit("setMyDetailsState", userState);
+    context.commit("setInstitutionSetupUser", true);
   },
 };
