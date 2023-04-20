@@ -1,9 +1,9 @@
 import { InstitutionStateForStore, LocationStateForStore } from "@/types";
 import { computed } from "vue";
-import { useStore } from "vuex";
+import { Store, useStore } from "vuex";
 
-export function useInstitutionState() {
-  const store = useStore();
+export function useInstitutionState(rootStore?: Store<any>) {
+  const store = rootStore ?? useStore();
   const institutionState = computed(
     () => store.state.institution.institutionState as InstitutionStateForStore,
   );
@@ -14,8 +14,18 @@ export function useInstitutionState() {
     ).name;
   };
 
+  const initialize = async () => {
+    await store.dispatch("institution/initialize");
+  };
+
+  const setInstitutionSetupUser = async () => {
+    await store.dispatch("institution/setInstitutionSetupUser");
+  };
+
   return {
     institutionState,
     getLocationName,
+    setInstitutionSetupUser,
+    initialize,
   };
 }
