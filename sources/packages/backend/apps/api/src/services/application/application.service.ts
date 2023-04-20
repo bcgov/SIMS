@@ -1270,7 +1270,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
     return !!(await this.repo.findOne({
       where: {
         applicationNumber: applicationNumber,
-        student: { id: studentId } as Student,
+        student: { id: studentId },
       },
       select: { id: true },
     }));

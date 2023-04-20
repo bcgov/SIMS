@@ -88,7 +88,7 @@ export class Student extends RecordDataModel {
    * List of all student restriction ids.
    */
   @RelationId((student: Student) => student.studentRestrictions)
-  studentRestrictionsIds: number[];
+  studentRestrictionsIds?: number[];
   /**
    * List of all student restrictions.
    */
@@ -97,8 +97,8 @@ export class Student extends RecordDataModel {
     (studentRestriction) => studentRestriction.student,
     {
       eager: false,
-      cascade: true,
+      cascade: false,
     },
   )
-  studentRestrictions: StudentRestriction[];
+  studentRestrictions?: StudentRestriction[];
 }

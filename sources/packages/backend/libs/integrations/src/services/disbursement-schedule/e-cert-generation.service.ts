@@ -62,6 +62,7 @@ export class ECertGenerationService {
 
   /**
    * Get the information needed for the e-Cert generation, execute all
+   * Todo: E-cert implementation
    * calculations needed and return the records ready to generate the e-Cert file.
    * @param offeringIntensity disbursement offering intensity.
    * @param entityManager used to execute the commands in the same transaction.
@@ -437,7 +438,6 @@ export class ECertGenerationService {
         .reduce((previousValue, currentValue) => {
           return previousValue + currentValue.effectiveAmount;
         }, 0);
-
       bcTotalGrant.valueAmount = bcTotalGrantValueAmount;
       bcTotalGrant.effectiveAmount = bcTotalGrantValueAmount;
     }

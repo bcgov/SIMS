@@ -168,7 +168,7 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
     const studentRestrictionEntity = await this.repo.findOne({
       where: {
         id: studentRestrictionId,
-        student: { id: studentId } as Student,
+        student: { id: studentId },
         isActive: true,
       },
       relations: { restriction: true },
