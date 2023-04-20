@@ -70,32 +70,7 @@
           </DataTable>
         </toggle-content>
       </content-group>
-      <formio-modal-dialog
-        ref="fileUploadModal"
-        title="Upload file"
-        :formData="initialData"
-        formName="uploadStudentDocumentsAEST"
-      >
-        <template #actions="{ cancel, submit }">
-          <v-row class="m-0 p-0">
-            <v-btn color="primary" variant="outlined" @click="cancel"
-              >Cancel</v-btn
-            >
-            <check-permission-role :role="Role.StudentUploadFile">
-              <template #="{ notAllowed }">
-                <v-btn
-                  class="float-right"
-                  @click="submit"
-                  color="primary"
-                  variant="elevated"
-                  :disabled="notAllowed"
-                  >Upload now</v-btn
-                >
-              </template>
-            </check-permission-role>
-          </v-row>
-        </template>
-      </formio-modal-dialog>
+      <slot></slot>
     </body-header-container>
   </tab-container>
 </template>
@@ -110,21 +85,12 @@ import {
   Role,
 } from "@/types";
 import { StudentService } from "@/services/StudentService";
-import {
-  useFormatters,
-  useFileUtils,
-  ModalDialog,
-  useFormioUtils,
-  useSnackBar,
-} from "@/composables";
-import FormioModalDialog from "@/components/generic/FormioModalDialog.vue";
-import { AESTFileUploadToStudentAPIInDTO } from "@/services/http/dto/Student.dto";
+import { useFormatters, useFileUtils, ModalDialog } from "@/composables";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
 import { StudentUploadFileAPIOutDTO } from "@/services/http/dto/Student.dto";
 
 export default defineComponent({
   components: {
-    FormioModalDialog,
     CheckPermissionRole,
   },
   props: {
@@ -143,45 +109,23 @@ export default defineComponent({
       default: false,
     },
   },
-  setup(props) {
+  emits: ["uploadFile"],
+  setup(props, context) {
     const studentFileUploads = ref([] as StudentUploadFileAPIOutDTO[]);
     const fileUploadModal = ref({} as ModalDialog<FormIOForm | boolean>);
     const { dateOnlyLongString, emptyStringFiller } = useFormatters();
-    const snackBar = useSnackBar();
     const fileUtils = useFileUtils();
-    const formioUtils = useFormioUtils();
-    const initialData = ref({ studentId: props.studentId });
 
     const loadStudentFileUploads = async () => {
       studentFileUploads.value =
         await StudentService.shared.getStudentFileDetails(props.studentId);
     };
 
-    onMounted(loadStudentFileUploads);
-
-    const uploadFile = async () => {
-      const modalResult = await fileUploadModal.value.showModal();
-      if (!modalResult) {
-        return;
-      }
-
-      try {
-        const associatedFiles = formioUtils.getAssociatedFiles(modalResult);
-        const payload: AESTFileUploadToStudentAPIInDTO = {
-          associatedFiles,
-        };
-        await StudentService.shared.saveAESTUploadedFilesToStudent(
-          props.studentId,
-          payload,
-        );
-        snackBar.success(
-          "The documents were submitted and a notification was sent to the student.",
-        );
-        await loadStudentFileUploads();
-      } catch {
-        snackBar.error("An unexpected error happened.");
-      }
+    const uploadFile = () => {
+      context.emit("uploadFile", () => loadStudentFileUploads());
     };
+
+    onMounted(loadStudentFileUploads);
 
     return {
       fileUtils,
@@ -190,8 +134,6 @@ export default defineComponent({
       dateOnlyLongString,
       emptyStringFiller,
       uploadFile,
-      fileUploadModal,
-      initialData,
       LayoutTemplates,
       Role,
       studentFileUploads,
