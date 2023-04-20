@@ -37,6 +37,8 @@ const router = createRouter({
 // TODO: As per vue documentation, usage of next is discouraged.
 // when vue-router version is upgraded, usage of next must be replaced
 // with returning either true or route location.
+// When tried to return true or route location instead of next with current version of vue-router
+// results in router not working as expected on page refresh.
 router.beforeResolve(async (to, _from, next) => {
   if (to.meta?.clientType === ClientIdType.Institution) {
     validateInstitutionUserAccess(to, _from, next);
