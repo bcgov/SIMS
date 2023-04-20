@@ -28,12 +28,10 @@
           <DataTable
             :value="studentFileUploads"
             :paginator="true"
+            :totalRecords="studentFileUploads?.length"
             :rows="DEFAULT_PAGE_LIMIT"
             :rowsPerPageOptions="PAGINATION_LIST"
           >
-            <template #empty>
-              <p class="text-center font-weight-bold">No records found.</p>
-            </template>
             <Column
               field="groupName"
               header="Document Purpose"
@@ -41,9 +39,7 @@
             ></Column>
             <Column field="metadata" header="Application #">
               <template #body="slotProps">{{
-                slotProps.data.metadata?.applicationNumber
-                  ? slotProps.data.metadata.applicationNumber
-                  : "-"
+                emptyStringFiller(slotProps.data.metadata?.applicationNumber)
               }}</template></Column
             >
             <Column field="updatedAt" header="Date Submitted"
@@ -75,7 +71,6 @@
         </toggle-content>
       </content-group>
       <formio-modal-dialog
-        :max-width="730"
         ref="fileUploadModal"
         title="Upload file"
         :formData="initialData"
@@ -125,13 +120,13 @@ import {
 import FormioModalDialog from "@/components/generic/FormioModalDialog.vue";
 import { AESTFileUploadToStudentAPIInDTO } from "@/services/http/dto/Student.dto";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
+import { StudentUploadFileAPIOutDTO } from "@/services/http/dto/Student.dto";
 
 export default defineComponent({
   components: {
     FormioModalDialog,
     CheckPermissionRole,
   },
-  emits: ["loaded"],
   props: {
     studentId: {
       type: Number,
@@ -139,32 +134,30 @@ export default defineComponent({
     },
     canUploadFiles: {
       type: Boolean,
-      required: true,
+      required: false,
+      default: false,
     },
     canDownloadFiles: {
       type: Boolean,
-      required: true,
-    },
-    studentFileUploads: {
-      type: Array,
-      required: true,
+      required: false,
+      default: false,
     },
   },
-  setup(props: any, context) {
+  setup(props) {
+    const studentFileUploads = ref([] as StudentUploadFileAPIOutDTO[]);
     const fileUploadModal = ref({} as ModalDialog<FormIOForm | boolean>);
-    const { dateOnlyLongString } = useFormatters();
+    const { dateOnlyLongString, emptyStringFiller } = useFormatters();
     const snackBar = useSnackBar();
     const fileUtils = useFileUtils();
     const formioUtils = useFormioUtils();
     const initialData = ref({ studentId: props.studentId });
 
     const loadStudentFileUploads = async () => {
-      context.emit("loaded", props.studentId);
+      studentFileUploads.value =
+        await StudentService.shared.getStudentFileDetails(props.studentId);
     };
 
-    onMounted(async () => {
-      await loadStudentFileUploads();
-    });
+    onMounted(loadStudentFileUploads);
 
     const uploadFile = async () => {
       const modalResult = await fileUploadModal.value.showModal();
@@ -195,11 +188,13 @@ export default defineComponent({
       DEFAULT_PAGE_LIMIT,
       PAGINATION_LIST,
       dateOnlyLongString,
+      emptyStringFiller,
       uploadFile,
       fileUploadModal,
       initialData,
       LayoutTemplates,
       Role,
+      studentFileUploads,
     };
   },
 });

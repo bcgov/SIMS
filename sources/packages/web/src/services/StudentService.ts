@@ -3,8 +3,7 @@ import { StudentProfile, SINValidations } from "@/types";
 import { useFormatters } from "@/composables";
 import {
   AESTFileUploadToStudentAPIInDTO,
-  AESTStudentFileAPIOutDTO,
-  InstitutionStudentFileAPIOutDTO,
+  StudentFileDetailsAPIOutDTO,
   CreateStudentAPIInDTO,
   SearchStudentAPIOutDTO,
   StudentFileUploaderAPIInDTO,
@@ -124,23 +123,13 @@ export class StudentService {
   }
 
   /**
-   * Get all student documents for AEST user.
+   * Get all student documents for AEST / Institution user.
    * @return list of student documents.
    */
-  async getAESTStudentFiles(
+  async getStudentFileDetails(
     studentId: number,
-  ): Promise<AESTStudentFileAPIOutDTO[]> {
-    return ApiClient.Students.getAESTStudentFiles(studentId);
-  }
-
-  /**
-   * Get all student documents for Institution user.
-   * @return list of student documents.
-   */
-  async getInstitutionStudentFiles(
-    studentId: number,
-  ): Promise<InstitutionStudentFileAPIOutDTO[]> {
-    return ApiClient.Students.getInstitutionStudentFiles(studentId);
+  ): Promise<StudentFileDetailsAPIOutDTO[]> {
+    return ApiClient.Students.getStudentFileDetails(studentId);
   }
 
   /**

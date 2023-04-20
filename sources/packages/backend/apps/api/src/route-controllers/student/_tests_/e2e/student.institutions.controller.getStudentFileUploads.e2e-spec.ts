@@ -46,6 +46,7 @@ describe("StudentInstitutionsController(e2e)-getStudentFileUploads", () => {
 
   it("Should get the student file uploads when student has at least one application submitted for the institution.", async () => {
     // Student who has application submitted to institution.
+    // Arrange.
     const student = await saveFakeStudent(appDataSource);
     const application = createFakeApplication({
       location: collegeCLocation,
@@ -60,22 +61,27 @@ describe("StudentInstitutionsController(e2e)-getStudentFileUploads", () => {
     // Save fake file upload for the student.
     const studentUploadedFile = await saveFakeStudentFileUpload(appDataSource, {
       student,
+      creator: student.user,
     });
 
     // Endpoint to test.
     const endpoint = `/institutions/student/${student.id}/documents`;
 
-    // Assert.
+    // Act/Assert.
     await request(app.getHttpServer())
       .get(endpoint)
       .auth(institutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
-      .then((res) => {
-        assert(res.body[0].fileName, studentUploadedFile.fileName);
-        assert(res.body[0].uniqueFileName, studentUploadedFile.uniqueFileName);
-        assert(res.body[0].groupName, "Ministry communications");
-        assert(res.body[0].fileOrigin, "Ministry");
-      });
+      .expect([
+        {
+          fileName: studentUploadedFile.fileName,
+          uniqueFileName: studentUploadedFile.uniqueFileName,
+          metadata: studentUploadedFile.metadata,
+          groupName: "Ministry communications",
+          updatedAt: studentUploadedFile.updatedAt.toISOString(),
+          fileOrigin: studentUploadedFile.fileOrigin,
+        },
+      ]);
   });
 
   afterAll(async () => {

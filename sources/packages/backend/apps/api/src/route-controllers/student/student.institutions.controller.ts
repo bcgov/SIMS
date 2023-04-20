@@ -18,7 +18,7 @@ import {
   StudentSearchAPIInDTO,
   SearchStudentAPIOutDTO,
   StudentProfileAPIOutDTO,
-  InstitutionStudentFileAPIOutDTO,
+  StudentFileDetailsAPIOutDTO,
 } from "./models/student.dto";
 import { IInstitutionUserToken } from "../../auth";
 import { StudentControllerService } from "./student.controller.service";
@@ -77,24 +77,14 @@ export class StudentInstitutionsController extends BaseController {
   }
 
   /**
-   * This controller returns all student documents uploaded by student uploader.
+   * Get all the documents uploaded by student.
    * @param studentId student id.
    * @returns list of student documents.
    */
   @Get(":studentId/documents")
   async getInstitutionStudentFiles(
     @Param("studentId", ParseIntPipe) studentId: number,
-  ): Promise<InstitutionStudentFileAPIOutDTO[]> {
-    const studentDocuments = await this.fileService.getStudentUploadedFiles(
-      studentId,
-    );
-    return studentDocuments.map((studentDocument) => ({
-      fileName: studentDocument.fileName,
-      uniqueFileName: studentDocument.uniqueFileName,
-      metadata: studentDocument.metadata,
-      groupName: studentDocument.groupName,
-      updatedAt: studentDocument.updatedAt,
-      fileOrigin: studentDocument.fileOrigin,
-    }));
+  ): Promise<StudentFileDetailsAPIOutDTO[]> {
+    return this.studentControllerService.getStudentUploadedFiles(studentId);
   }
 }
