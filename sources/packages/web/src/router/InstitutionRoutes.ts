@@ -108,6 +108,7 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
         },
         meta: {
           clientType: ClientIdType.Institution,
+          allowOnlyBCPublic: true,
           institutionUserTypes: [
             InstitutionUserTypes.admin,
             InstitutionUserTypes.user,
@@ -468,6 +469,7 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
             component: InstitutionStudentProfile,
             meta: {
               clientType: ClientIdType.Institution,
+              allowOnlyBCPublic: true,
               institutionUserTypes: [
                 InstitutionUserTypes.admin,
                 InstitutionUserTypes.user,
@@ -481,6 +483,7 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
             component: InstitutionStudentApplications,
             meta: {
               clientType: ClientIdType.Institution,
+              allowOnlyBCPublic: true,
               institutionUserTypes: [
                 InstitutionUserTypes.admin,
                 InstitutionUserTypes.user,
@@ -494,6 +497,7 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
             component: InstitutionStudentRestrictions,
             meta: {
               clientType: ClientIdType.Institution,
+              allowOnlyBCPublic: true,
               institutionUserTypes: [
                 InstitutionUserTypes.admin,
                 InstitutionUserTypes.user,
@@ -507,6 +511,7 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
             component: InstitutionStudentFileUploads,
             meta: {
               clientType: ClientIdType.Institution,
+              allowOnlyBCPublic: true,
               institutionUserTypes: [
                 InstitutionUserTypes.admin,
                 InstitutionUserTypes.user,
@@ -520,6 +525,7 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
             component: InstitutionStudentNotes,
             meta: {
               clientType: ClientIdType.Institution,
+              allowOnlyBCPublic: true,
               institutionUserTypes: [
                 InstitutionUserTypes.admin,
                 InstitutionUserTypes.user,

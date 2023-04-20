@@ -1,7 +1,7 @@
 import {
+  InstitutionLocationState,
   InstitutionUserAuthRolesAndLocation,
   InstitutionUserRoles,
-  UserStateForStore,
 } from "@/types";
 import { computed } from "vue";
 import { Store, useStore } from "vuex";
@@ -10,11 +10,14 @@ import { useAuth } from "..";
 export function useInstitutionAuth(rootStore?: Store<any>) {
   const store = rootStore ?? useStore();
 
-  // From store get user details and authorizations.
-  const institutionUserDetails = store.state.institution
-    .userState as UserStateForStore;
+  // From store get institution details.
+  const institutionDetails = store.state
+    .institution as InstitutionLocationState;
+
+  // From institution details in store, get institution user details and authorizations.
+  const institutionUserDetails = institutionDetails.userState;
   const authorizations =
-    (store.state.institution.authorizationsState
+    (institutionDetails.authorizationsState
       .authorizations as InstitutionUserAuthRolesAndLocation[]) ?? [];
 
   const { isAuthenticated } = useAuth();
@@ -44,6 +47,10 @@ export function useInstitutionAuth(rootStore?: Store<any>) {
   // User type Admin | User.
   const userType = computed(() => userAuthorization?.userType);
 
+  const isBCPublic = computed(
+    () => institutionDetails.institutionState?.isBCPublic,
+  );
+
   return {
     isAdmin,
     isAuthenticated,
@@ -55,5 +62,6 @@ export function useInstitutionAuth(rootStore?: Store<any>) {
     isInstitutionSetupUser,
     hasLocationAccess,
     userType,
+    isBCPublic,
   };
 }

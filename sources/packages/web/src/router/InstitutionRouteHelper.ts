@@ -59,6 +59,7 @@ function isInstitutionUserAllowed(to: RouteLocationNormalized): boolean {
     isAdmin,
     isLegalSigningAuthority,
     userType,
+    isBCPublic,
     hasLocationAccess,
   } = useInstitutionAuth(store);
 
@@ -81,7 +82,11 @@ function isInstitutionUserAllowed(to: RouteLocationNormalized): boolean {
     return false;
   }
 
-  // TODO: Validate the route for BCPublic institutions must be done here.
+  // If the route is suppose to be accessible only for BC Public institutions
+  // reject the access for other institution types.
+  if (to.meta.allowOnlyBCPublic && !isBCPublic.value) {
+    return false;
+  }
 
   // If the user is institution admin, then they have access to all routes
   // except the routes which are accessible only for legal signing authority.
