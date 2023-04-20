@@ -97,14 +97,18 @@ export function combineDecimalPlaces(
  * !and the overaward deductions or possible restrictions are applied.
  * @param awards list of awards (disbursement values).
  * @param valueCode valueCode to be extracted.
- * @returns award amount of the specified types.
+ * @returns award amount of the specified types. If the code is not present
+ * it will return 0 (zero).
  */
 export function getDisbursementEffectiveAmountByValueCode(
   awards: Award[],
   valueCode: string,
 ): number {
-  return +awards.find((award) => award.valueCode.includes(valueCode))
-    .effectiveAmount;
+  const award = awards.find((award) => award.valueCode === valueCode);
+  if (award?.effectiveAmount) {
+    return +award.effectiveAmount;
+  }
+  return 0;
 }
 
 /**

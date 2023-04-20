@@ -169,7 +169,7 @@ export class ECertPartTimeFileRecord extends ECertFileRecord {
       record.appendWithEndFiller(this.city, 25, SPACE_FILLER);
       record.appendWithEndFiller(this.provinceState ?? "", 4, SPACE_FILLER);
       record.appendWithEndFiller(this.country, 4, SPACE_FILLER);
-      record.repeatAppend(this.postalCode ?? "", 16);
+      record.appendWithEndFiller(this.postalCode ?? "", 16, SPACE_FILLER);
       record.repeatAppend(SPACE_FILLER, 16); // Telephone, optional, not provided.
       record.repeatAppend(SPACE_FILLER, 40); // Alternate Address 1, optional, not provided.
       record.repeatAppend(SPACE_FILLER, 40); // Alternate Address 2, optional, not provided.

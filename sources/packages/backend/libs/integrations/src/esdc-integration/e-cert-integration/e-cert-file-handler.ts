@@ -197,7 +197,7 @@ export class ECertFileHandler extends ESDCFileHandler {
         this.createECertRecord(disbursement),
       );
 
-      this.logger.log(`Creating  ${offeringIntensity} e-Cert file content...`);
+      this.logger.log(`Creating ${offeringIntensity} e-Cert file content...`);
       const fileContent = eCertIntegrationService.createRequestContent(
         disbursementRecords,
         sequenceNumber,
