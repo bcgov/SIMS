@@ -3,6 +3,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import {
   Institution,
   InstitutionLocation,
+  InstitutionType,
   InstitutionUser,
   InstitutionUserAuth,
   InstitutionUserTypes,
@@ -68,6 +69,9 @@ export class CreateInstitutionsAndAuthenticationUsers {
     fakeInstitution.legalOperatingName = institutionsData.legalOperatingName;
     fakeInstitution.operatingName = institutionsData.operatingName;
     fakeInstitution.businessGuid = institutionsData.businessGuid;
+    fakeInstitution.institutionType = {
+      id: institutionsData.institutionTypeId,
+    } as InstitutionType;
     const savedInstitution = await this.institutionRepo.save(fakeInstitution);
     // Create the users associated with the institution.
     for (const user of institutionsData.users) {

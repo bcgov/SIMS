@@ -1,5 +1,5 @@
 import Keycloak from "keycloak-js";
-import store from "../store/index";
+import store from "@/store";
 import { ClientIdType } from "../types/contracts/ConfigContract";
 import { AppConfigService } from "./AppConfigService";
 import HttpBaseClient from "./http/common/HttpBaseClient";
@@ -13,7 +13,7 @@ import {
 } from "@/constants/routes/RouteConstants";
 import { RENEW_AUTH_TOKEN_TIMER } from "@/constants/system-constants";
 import { StudentService } from "@/services/StudentService";
-import { useStudentStore } from "@/composables";
+import { useStudentStore, useInstitutionState } from "@/composables";
 import { InstitutionUserService } from "@/services/InstitutionUserService";
 import { MISSING_STUDENT_ACCOUNT } from "@/constants";
 import { StudentAccountApplicationService } from "./StudentAccountApplicationService";
@@ -168,6 +168,7 @@ export class AuthService {
    * to determine if the user can proceed or must be redirect somewhere.
    */
   private async processInstitutionLogin(): Promise<void> {
+    const institutionStore = useInstitutionState(store);
     const userStatus =
       await InstitutionUserService.shared.getInstitutionUserStatus();
     if (userStatus.isActiveUser === true) {
@@ -178,7 +179,7 @@ export class AuthService {
       // User is active so just proceed.
       // The BCeID sync must happen prior to this method to ensure that the most
       // updated information will be loaded into the store.
-      await store.dispatch("institution/initialize");
+      await institutionStore.initialize();
       return;
     }
 
@@ -201,6 +202,9 @@ export class AuthService {
       this.priorityRedirect = {
         name: InstitutionRoutesConst.INSTITUTION_CREATE,
       };
+      // Set the institution user details which is required during the institution setup
+      // to institution store.
+      await institutionStore.setInstitutionSetupUser();
       return;
     }
 

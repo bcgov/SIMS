@@ -1,6 +1,6 @@
 services:
   zeebe:
-    image: camunda/zeebe:${CAMUNDA_PLATFORM_VERSION:-8.1.1}
+    image: camunda/zeebe:${CAMUNDA_PLATFORM_VERSION:-8.2.1}
     container_name: zeebe-test
     environment:
       - ZEEBE_BROKER_DATA_DISKUSAGECOMMANDWATERMARK=0.998

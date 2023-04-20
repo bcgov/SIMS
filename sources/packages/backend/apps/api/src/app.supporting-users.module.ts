@@ -10,6 +10,8 @@ import {
   EducationProgramOfferingService,
   StudentService,
   EducationProgramOfferingValidationService,
+  InstitutionLocationService,
+  DesignationAgreementLocationService,
 } from "./services";
 import {
   DisbursementOverawardService,
@@ -50,6 +52,8 @@ import { AuthModule } from "./auth/auth.module";
     RestrictionSharedService,
     DisbursementOverawardService,
     NoteSharedService,
+    InstitutionLocationService,
+    DesignationAgreementLocationService,
   ],
 })
 export class AppSupportingUsersModule {}

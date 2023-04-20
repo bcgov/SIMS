@@ -3,14 +3,23 @@ import { studentRoutes } from "./StudentRoutes";
 import { institutionRoutes } from "./InstitutionRoutes";
 import { aestRoutes } from "./AESTRoutes";
 import { sharedRoutes } from "./SharedRoutes";
-import {
-  InstitutionRoutesConst,
-  SharedRouteConst,
-} from "../constants/routes/RouteConstants";
-import { UserAuthorizationService } from "@/services/UserAuthorizationService";
-import { AuthService } from "@/services/AuthService";
 import { ClientIdType } from "../types/contracts/ConfigContract";
 import { supportingUsersRoutes } from "./SupportingUserRoutes";
+import { validateInstitutionUserAccess } from "./InstitutionRouteHelper";
+import { InstitutionUserTypes } from "@/types";
+
+declare module "vue-router" {
+  /**
+   * Route meta properties.
+   */
+  interface RouteMeta {
+    clientType: ClientIdType;
+    requiresAuth?: boolean;
+    institutionUserTypes?: InstitutionUserTypes[];
+    allowOnlyLegalSigningAuthority?: boolean;
+    allowOnlyBCPublic?: boolean;
+  }
+}
 
 const routes: Array<RouteRecordRaw> = [
   ...studentRoutes,
@@ -25,55 +34,17 @@ const router = createRouter({
   routes,
 });
 
-function forEachInstitutionRoutes(
-  to: any,
-  _from: any,
-  next: any,
-  clientType: ClientIdType,
-) {
-  // MANAGE INSTITUTION ROUTES
-  AuthService.shared
-    .initialize(clientType)
-    .then(() => {
-      if (to.meta.requiresAuth !== false) {
-        if (AuthService.shared.keycloak?.authenticated) {
-          if (to.meta?.userTypes || to.meta?.checkAllowedLocation) {
-            if (
-              UserAuthorizationService.shared.isUserTypeAllowed(
-                to.meta.userTypes,
-                to.params,
-                to.meta.checkAllowedLocation,
-              )
-            ) {
-              next();
-            } else {
-              // UNAUTHORIZED USER
-              next({
-                name: SharedRouteConst.FORBIDDEN_USER,
-              });
-            }
-          } else {
-            next();
-          }
-        } else {
-          next({
-            name: InstitutionRoutesConst.LOGIN,
-          });
-        }
-      } else {
-        next();
-      }
-    })
-    .catch((error: unknown) => {
-      console.error(error);
-      throw error;
-    });
-}
-
-router.beforeEach((to, from, next) => {
-  if (to.meta?.clientType === ClientIdType.Institution)
-    forEachInstitutionRoutes(to, from, next, ClientIdType.Institution);
-  else next();
+// TODO: As per vue documentation, usage of next is discouraged.
+// when vue-router version is upgraded, usage of next must be replaced
+// with returning either true or route location.
+// When tried to return true or route location instead of next with current version of vue-router
+// results in router not working as expected on page refresh.
+router.beforeResolve(async (to, _from, next) => {
+  if (to.meta?.clientType === ClientIdType.Institution) {
+    validateInstitutionUserAccess(to, _from, next);
+  } else {
+    next();
+  }
 });
 
 export default router;

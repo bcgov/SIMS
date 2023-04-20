@@ -1,4 +1,4 @@
-import { ActionTree } from "vuex";
+import { ActionContext, ActionTree } from "vuex";
 import { InstitutionService } from "@/services/InstitutionService";
 import {
   InstitutionLocationState,
@@ -56,5 +56,15 @@ export const actions: ActionTree<InstitutionLocationState, RootState> = {
     const resultComment =
       await InstitutionService.shared.getMyInstitutionLocationsDetails();
     context.commit("setMyInstitutionLocationsDetailsState", resultComment);
+  },
+
+  /**
+   * Set the institution setup user property to institution user state.
+   * @param context action context.
+   */
+  setInstitutionSetupUser(
+    context: ActionContext<InstitutionLocationState, RootState>,
+  ): void {
+    context.commit("setInstitutionSetupUser", true);
   },
 };

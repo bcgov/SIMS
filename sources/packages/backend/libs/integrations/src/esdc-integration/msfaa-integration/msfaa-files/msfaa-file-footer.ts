@@ -1,6 +1,7 @@
 import {
   MSFAARequestFileLine,
   MSFAA_SENT_TITLE,
+  NUMBER_FILLER,
   RecordTypeCodes,
   SPACE_FILLER,
 } from "../models/msfaa-integration.model";
@@ -20,17 +21,21 @@ export class MSFAAFileFooter implements MSFAARequestFileLine {
     const footer = new StringBuilder();
     footer.append(this.transactionCode);
     footer.appendWithEndFiller(MSFAA_SENT_TITLE, 40, SPACE_FILLER);
-    footer.appendWithStartFiller(this.recordCount.toString(), 9, "0");
-    footer.appendWithStartFiller(this.totalSINHash.toString(), 15, "0");
-    footer.repeatAppend(SPACE_FILLER, 533); //Trailing spaces
+    footer.appendWithStartFiller(this.recordCount.toString(), 9, NUMBER_FILLER);
+    footer.appendWithStartFiller(
+      this.totalSINHash.toString(),
+      15,
+      NUMBER_FILLER,
+    );
+    footer.repeatAppend(SPACE_FILLER, 533); // Filler.
     return footer.toString();
   }
 
   public static createFromLine(line: string): MSFAAFileFooter {
     const footer = new MSFAAFileFooter();
-    footer.transactionCode = line.substr(0, 3) as RecordTypeCodes;
-    footer.recordCount = parseInt(line.substr(43, 9));
-    footer.totalSINHash = parseInt(line.substr(52, 15));
+    footer.transactionCode = line.substring(0, 3) as RecordTypeCodes;
+    footer.recordCount = parseInt(line.substring(43, 52));
+    footer.totalSINHash = parseInt(line.substring(52, 67));
     return footer;
   }
 }

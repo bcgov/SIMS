@@ -54,6 +54,7 @@ export class MSFAANumberService extends RecordDataModelService<MSFAANumber> {
       .innerJoin("currentAssessment.offering", "offering")
       .innerJoin("offering.institutionLocation", "institutionLocation")
       .where("msfaaNumber.dateRequested is null")
+      .andWhere("msfaaNumber.cancelledDate is null")
       .andWhere("offering.offeringIntensity = :offeringIntensity", {
         offeringIntensity,
       })

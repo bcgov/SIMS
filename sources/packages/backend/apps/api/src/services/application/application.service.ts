@@ -44,13 +44,15 @@ import {
   PIR_DENIED_REASON_NOT_FOUND_ERROR,
   PIR_REQUEST_NOT_FOUND_ERROR,
   OFFERING_NOT_VALID,
+  INSTITUTION_LOCATION_NOT_VALID,
 } from "../../constants";
-import { SequenceControlService, WorkflowClientService } from "@sims/services";
+import { SequenceControlService } from "@sims/services";
 import { ConfigService } from "@sims/utilities/config";
 import { NotificationActionsService } from "@sims/services/notifications";
 import { InjectQueue } from "@nestjs/bull";
 import { Queue } from "bull";
 import { CancelAssessmentQueueInDTO } from "@sims/services/queue";
+import { InstitutionLocationService } from "../institution-location/institution-location.service";
 
 export const APPLICATION_DRAFT_NOT_FOUND = "APPLICATION_DRAFT_NOT_FOUND";
 export const MORE_THAN_ONE_APPLICATION_DRAFT_ERROR =
@@ -73,10 +75,10 @@ export class ApplicationService extends RecordDataModelService<Application> {
     private readonly sfasPartTimeApplicationsService: SFASPartTimeApplicationsService,
     private readonly sequenceService: SequenceControlService,
     private readonly fileService: StudentFileService,
-    private readonly workflowClientService: WorkflowClientService,
     private readonly studentRestrictionService: StudentRestrictionService,
     private readonly offeringService: EducationProgramOfferingService,
     private readonly notificationActionsService: NotificationActionsService,
+    private readonly institutionLocationService: InstitutionLocationService,
     @InjectQueue(QueueNames.CancelApplicationAssessment)
     private readonly cancelAssessmentQueue: Queue<CancelAssessmentQueueInDTO>,
   ) {
@@ -145,6 +147,16 @@ export class ApplicationService extends RecordDataModelService<Application> {
     originalAssessment.submittedBy = auditUser;
     originalAssessment.submittedDate = now;
     originalAssessment.creator = auditUser;
+    const institutionLocation =
+      await this.institutionLocationService.getInstitutionLocation(
+        applicationData.selectedLocation,
+      );
+    if (!institutionLocation) {
+      throw new CustomNamedError(
+        "Not able to find the institution location.",
+        INSTITUTION_LOCATION_NOT_VALID,
+      );
+    }
     // Offering is assigned to the original assessment if the application is not
     // required for PIR.
     if (applicationData.selectedProgram && applicationData.selectedOffering) {
@@ -186,6 +198,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
       application.studentAssessments = [originalAssessment];
       application.currentAssessment = originalAssessment;
       application.submittedDate = now;
+      application.location = institutionLocation;
 
       // When application and assessment are saved, assess for SIN restriction.
       await this.dataSource.transaction(async (transactionalEntityManager) => {
@@ -239,6 +252,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
       [],
       associatedFiles,
     );
+    newApplication.location = institutionLocation;
     // While editing an application, a new application record is created and a new
     // assessment record is also created to be the used as a "current Assessment" record.
     // The application and the assessment records have a DB relationship and the

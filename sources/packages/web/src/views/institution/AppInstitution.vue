@@ -8,7 +8,7 @@
         class="navigation-btn float-left"
       >
         <v-btn
-          v-if="isAuthenticated"
+          v-if="isAuthenticatedInstitutionUser"
           class="nav-item-label"
           variant="text"
           data-cy="institutionHome"
@@ -19,7 +19,7 @@
         >
         <v-btn
           class="nav-item-label"
-          v-if="isAuthenticated && isAdmin"
+          v-if="isAuthenticatedInstitutionUser && isAdmin"
           variant="text"
           data-cy="manageInstitutions"
           :to="{
@@ -30,7 +30,7 @@
 
         <v-btn
           class="nav-item-label"
-          v-if="isAuthenticated"
+          v-if="isAuthenticatedInstitutionUser"
           variant="text"
           data-cy="myProfile"
           :to="{
@@ -95,7 +95,8 @@ export default defineComponent({
   setup() {
     const toggleNav = ref();
     const { executeLogout } = useAuth();
-    const { isAdmin, isAuthenticated } = useInstitutionAuth();
+    const { isAdmin, isAuthenticated, isAuthenticatedInstitutionUser } =
+      useInstitutionAuth();
     const logoff = async () => {
       await executeLogout(ClientIdType.Institution);
     };
@@ -110,6 +111,7 @@ export default defineComponent({
       menuItems,
       isAdmin,
       isAuthenticated,
+      isAuthenticatedInstitutionUser,
       logoff,
       InstitutionRoutesConst,
       ClientIdType,
