@@ -23,10 +23,10 @@ import { ScholasticStanding } from "./student-scholastic-standings.model";
 import { StudentAssessmentService } from "../student-assessment/student-assessment.service";
 import { StudentRestrictionService } from "../restriction/student-restriction.service";
 import { APPLICATION_CHANGE_NOT_ELIGIBLE } from "../../constants";
-import { RestrictionCode } from "../restriction/models/restriction.model";
 import { SCHOLASTIC_STANDING_MINIMUM_UNSUCCESSFUL_WEEKS } from "../../utilities";
 import {
   NotificationActionsService,
+  RestrictionCode,
   StudentRestrictionSharedService,
 } from "@sims/services";
 
@@ -363,7 +363,7 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
           scholasticStandingData.numberOfUnsuccessfulWeeks >=
         SCHOLASTIC_STANDING_MINIMUM_UNSUCCESSFUL_WEEKS
       ) {
-        return this.studentRestrictionService.createRestrictionToSave(
+        return this.studentRestrictionSharedService.createRestrictionToSave(
           studentId,
           RestrictionCode.SSR,
           auditUserId,
@@ -387,7 +387,7 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
         ? RestrictionCode.SSR
         : RestrictionCode.WTHD;
 
-      return this.studentRestrictionService.createRestrictionToSave(
+      return this.studentRestrictionSharedService.createRestrictionToSave(
         studentId,
         restrictionCode,
         auditUserId,
@@ -423,7 +423,7 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
         StudentScholasticStandingChangeType.StudentWithdrewFromProgram,
       ].includes(scholasticStandingData.scholasticStandingChangeType)
     ) {
-      return this.studentRestrictionService.createRestrictionToSave(
+      return this.studentRestrictionSharedService.createRestrictionToSave(
         studentId,
         RestrictionCode.PTSSR,
         auditUserId,

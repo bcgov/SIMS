@@ -79,6 +79,7 @@ import {
   DisbursementOverawardService,
   ConfirmationOfEnrollmentService,
   NoteSharedService,
+  RestrictionSharedService,
 } from "@sims/services";
 
 @Module({
@@ -158,6 +159,7 @@ import {
     DisbursementOverawardService,
     NoteSharedService,
     OverawardControllerService,
+    RestrictionSharedService,
   ],
 })
 export class AppAESTModule {}

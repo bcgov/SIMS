@@ -58,6 +58,21 @@ export class SFASApplicationService extends DataModelService<SFASApplication> {
       .getOne();
   }
 
+  /**
+   * Total BCSL amount that the student received from the legacy(SFAS) system.
+   * @param studentId student id.
+   * @returns total BCSL amount that the student received from the legacy(sfas) system.
+   */
+  async totalLegacyBCSLAmount(studentId: number): Promise<number> {
+    const total = await this.repo
+      .createQueryBuilder("sfasApplication")
+      .select("SUM(sfasApplication.bslAward)")
+      .innerJoin("sfasApplication.individual", "sfasFTstudent")
+      .where("sfasFTstudent.id = :studentId", { studentId })
+      .getRawOne<{ sum?: number }>();
+    return +(total?.sum ?? 0);
+  }
+
   @InjectLogger()
   logger: LoggerService;
 }

@@ -6,11 +6,13 @@ import {
   PrimaryGeneratedColumn,
   ManyToMany,
   JoinTable,
+  OneToMany,
+  RelationId,
 } from "typeorm";
 import { ColumnNames, TableNames } from "../constant";
 import { RecordDataModel } from "./record.model";
 import { User } from "./user.model";
-import { ContactInfo, Note } from ".";
+import { ContactInfo, Note, StudentRestriction } from ".";
 import { SINValidation } from "./sin-validation.model";
 
 @Entity({ name: TableNames.Student })
@@ -82,4 +84,21 @@ export class Student extends RecordDataModel {
     name: "sin_consent",
   })
   sinConsent: boolean;
+  /**
+   * List of all student restriction ids.
+   */
+  @RelationId((student: Student) => student.studentRestrictions)
+  studentRestrictionsIds?: number[];
+  /**
+   * List of all student restrictions.
+   */
+  @OneToMany(
+    () => StudentRestriction,
+    (studentRestriction) => studentRestriction.student,
+    {
+      eager: false,
+      cascade: false,
+    },
+  )
+  studentRestrictions?: StudentRestriction[];
 }

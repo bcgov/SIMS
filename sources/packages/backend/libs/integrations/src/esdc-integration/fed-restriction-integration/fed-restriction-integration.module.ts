@@ -4,7 +4,10 @@ import {
   RestrictionService,
   SshService,
 } from "@sims/integrations/services";
-import { StudentRestrictionSharedService } from "@sims/services";
+import {
+  RestrictionSharedService,
+  StudentRestrictionSharedService,
+} from "@sims/services";
 import { FedRestrictionIntegrationService } from "./fed-restriction.integration.service";
 import { FedRestrictionProcessingService } from "./fed-restriction.processing.service";
 
@@ -14,6 +17,7 @@ import { FedRestrictionProcessingService } from "./fed-restriction.processing.se
     FedRestrictionIntegrationService,
     FedRestrictionProcessingService,
     RestrictionService,
+    RestrictionSharedService,
     StudentRestrictionSharedService,
     FederalRestrictionService,
   ],

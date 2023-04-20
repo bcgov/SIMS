@@ -1,6 +1,7 @@
 import { Module } from "@nestjs/common";
 import {
   ReportService,
+  RestrictionSharedService,
   SequenceControlService,
   StudentRestrictionSharedService,
 } from "@sims/services";
@@ -27,6 +28,7 @@ import {
     SequenceControlService,
     ReportService,
     StudentRestrictionSharedService,
+    RestrictionSharedService,
   ],
   exports: [
     DisbursementReceiptProcessingService,

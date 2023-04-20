@@ -19,7 +19,7 @@ import {
 } from "./services";
 import { ZeebeTransportStrategy } from "./zeebe";
 import {
-  DisbursementScheduleService as DisbursementScheduleSharedService,
+  DisbursementScheduleSharedService,
   SequenceControlService,
   WorkflowClientService,
   ZeebeModule,

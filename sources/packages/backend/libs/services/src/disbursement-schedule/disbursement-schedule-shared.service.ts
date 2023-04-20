@@ -65,7 +65,7 @@ const TRANSACTION_IDLE_TIMEOUT_SECONDS = 60;
  * - Any deviation from the above statements is considered an edge case and must be adjusted manually by the Ministry.
  */
 @Injectable()
-export class DisbursementScheduleService extends RecordDataModelService<DisbursementSchedule> {
+export class DisbursementScheduleSharedService extends RecordDataModelService<DisbursementSchedule> {
   constructor(
     private readonly dataSource: DataSource,
     private readonly systemUsersService: SystemUsersService,
@@ -670,5 +670,32 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
    */
   private getDistinctValueCodes(awards: DisbursementValue[]): string[] {
     return [...new Set(awards.map((award) => award.valueCode))];
+  }
+
+  /**
+   * Total BCSL amount that the student received from the SIMS.
+   * @param studentId student id.
+   * @returns total BCSL amount that the student received from the SIMS.
+   */
+  async totalDisbursedBCSLAmount(studentId: number): Promise<number> {
+    const total = await this.repo
+      .createQueryBuilder("disbursement")
+      .select("SUM(disbursementValue.valueAmount)")
+      .innerJoin("disbursement.disbursementValues", "disbursementValue")
+      .innerJoin("disbursement.studentAssessment", "studentAssessment")
+      .innerJoin("studentAssessment.application", "application")
+      .innerJoin("application.student", "student")
+      .where(
+        "disbursement.disbursementScheduleStatus = :disbursementScheduleStatus",
+        {
+          disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
+        },
+      )
+      .andWhere("student.id = :studentId", { studentId: studentId })
+      .andWhere("disbursementValue.valueType = :disbursementValueType", {
+        disbursementValueType: DisbursementValueType.BCLoan,
+      })
+      .getRawOne<{ sum?: number }>();
+    return +(total?.sum ?? 0);
   }
 }
