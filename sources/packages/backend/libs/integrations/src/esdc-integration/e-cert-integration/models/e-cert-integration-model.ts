@@ -1,6 +1,8 @@
 import { DisbursementValue, RelationshipStatus } from "@sims/sims-db";
 
 export const ECERT_SENT_TITLE = "NEW ENTITLEMENT";
+export const ECERT_PT_SENT_TITLE = "NEW PT ENTITLEMENT";
+
 /**
  * Amount of Grant for Part-time Studies (CSGP-PT) at the study start.
  */
@@ -45,6 +47,10 @@ export interface ECertRecord {
   awards: Award[];
   stopFullTimeBCFunding: boolean;
   courseLoad?: number;
+  /**
+   * Persistent or prolonged disability flag.
+   */
+  ppdFlag?: boolean;
 }
 
 export type Award = Pick<
@@ -53,8 +59,8 @@ export type Award = Pick<
 >;
 
 /**
- * Codes used to start all the lines of the e-Cert
- * files sent to ESDC.
+ * Codes used to start all the lines of the e-Cert files sent to ESDC
+ * and feedback files received with possible e-Cert errors.
  */
 export enum RecordTypeCodes {
   ECertFullTimeHeader = "100",
@@ -63,9 +69,6 @@ export enum RecordTypeCodes {
   ECertPartTimeHeader = "01",
   ECertPartTimeRecord = "02",
   ECertPartTimeFooter = "99",
-  ECertPartTimeFeedbackHeader = "001",
-  ECertPartTimeFeedbackRecord = "002",
-  ECertPartTimeFeedbackFooter = "999",
 }
 
 /**

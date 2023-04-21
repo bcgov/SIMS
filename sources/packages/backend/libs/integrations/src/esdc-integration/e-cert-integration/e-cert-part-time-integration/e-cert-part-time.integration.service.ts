@@ -19,6 +19,7 @@ import {
   combineDecimalPlaces,
   getDisbursementEffectiveAmountByValueCode,
   getGenderCode,
+  getPPDFlag,
   getPartTimeMaritalStatusCode,
   getTotalDisbursementEffectiveAmount,
 } from "@sims/utilities";
@@ -39,17 +40,21 @@ export class ECertPartTimeIntegrationService extends ECertIntegrationService {
   }
 
   /**
-   * Create the ECert file content, by populating the
-   * header, detail and trailer records.
-   * @param ecertRecords student, User and application data.
-   * @returns complete ECert content to be sent.
+   * Create the e-Cert file content, by populating the header, detail and trailer records.
+   * @param ecertRecords data needed to generate the e-Cert file.
+   * @param fileSequence file sequence.
+   * @returns complete e-Cert content to be sent.
    */
-  createRequestContent(ecertRecords: ECertRecord[]): FixedFormatFileLine[] {
+  createRequestContent(
+    ecertRecords: ECertRecord[],
+    fileSequence: number,
+  ): FixedFormatFileLine[] {
     const fileLines: FixedFormatFileLine[] = [];
     // Header record
     const header = new ECertPartTimeFileHeader();
     header.recordTypeCode = RecordTypeCodes.ECertPartTimeHeader;
     header.processDate = new Date();
+    header.sequence = fileSequence;
     fileLines.push(header);
 
     // Detail records
@@ -104,12 +109,16 @@ export class ECertPartTimeIntegrationService extends ECertIntegrationService {
       record.addressLine1 = ecertRecord.addressLine1;
       record.addressLine2 = ecertRecord.addressLine2;
       record.city = ecertRecord.city;
+      record.country = ecertRecord.country;
+      record.provinceState = ecertRecord.provinceState;
+      record.postalCode = ecertRecord.postalCode;
       record.emailAddress = ecertRecord.email;
       record.gender = getGenderCode(ecertRecord.gender);
       record.maritalStatus = getPartTimeMaritalStatusCode(
         ecertRecord.maritalStatus,
       );
       record.studentNumber = ecertRecord.studentNumber;
+      record.ppdFlag = getPPDFlag(ecertRecord.ppdFlag);
       record.totalGrantAmount = totalGrantAmount;
       record.totalBCSGAmount = totalBCSGAmount;
       record.totalCSGPPTAmount = totalCSGPPTAmount;

@@ -1,7 +1,8 @@
 import { getDateOnlyFromFormat, StringBuilder } from "@sims/utilities";
 import {
   DATE_FORMAT,
-  ECERT_SENT_TITLE,
+  ECERT_PT_SENT_TITLE,
+  NUMBER_FILLER,
   RecordTypeCodes,
   SPACE_FILLER,
 } from "../../models/e-cert-integration-model";
@@ -20,16 +21,17 @@ export class ECertPartTimeFileHeader extends ECertFileHeader {
     const header = new StringBuilder();
     header.append(this.recordTypeCode);
     header.appendWithEndFiller(ORIGINATOR_CODE, 4, SPACE_FILLER);
-    header.appendWithEndFiller(ECERT_SENT_TITLE, 40, SPACE_FILLER);
+    header.appendWithEndFiller(ECERT_PT_SENT_TITLE, 40, SPACE_FILLER);
     header.appendDate(this.processDate, DATE_FORMAT);
     header.appendDate(this.processDate, TIME_FORMAT);
+    header.appendWithStartFiller(this.sequence, 6, NUMBER_FILLER);
     header.repeatAppend(SPACE_FILLER, 698); // Trailing space.
     return header.toString();
   }
 
   createFromLine(line: string): ECertPartTimeFileHeader {
     const header = new ECertPartTimeFileHeader();
-    header.recordTypeCode = line.substring(0, 3) as RecordTypeCodes;
+    header.recordTypeCode = line.substring(0, 2) as RecordTypeCodes;
     header.processDate = getDateOnlyFromFormat(
       line.substring(56, 64),
       DATE_FORMAT,
@@ -38,6 +40,6 @@ export class ECertPartTimeFileHeader extends ECertFileHeader {
   }
 
   getFeedbackHeaderRecordType(): RecordTypeCodes {
-    return RecordTypeCodes.ECertPartTimeFeedbackHeader;
+    return RecordTypeCodes.ECertPartTimeHeader;
   }
 }

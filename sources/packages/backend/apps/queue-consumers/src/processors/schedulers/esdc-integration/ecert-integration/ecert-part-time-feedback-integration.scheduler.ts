@@ -30,13 +30,13 @@ export class PartTimeECertFeedbackIntegrationScheduler extends BaseScheduler<voi
       jobLogger: job,
     });
     await summary.info(
-      `Processing E-Cert Part-time integration job ${job.id} of type ${job.name}.`,
+      `Processing e-Cert part-time feedback integration job ${job.id} of type ${job.name}.`,
     );
     const partTimeResults =
       await this.eCertFileHandler.processPartTimeResponses();
     await this.cleanSchedulerQueueHistory();
     await summary.info(
-      `Completed E-Cert Part-time integration job ${job.id} of type ${job.name}.`,
+      `Completed e-Cert part-time feedback integration job ${job.id} of type ${job.name}.`,
     );
     return partTimeResults.map((partTimeResult) => ({
       processSummary: partTimeResult.processSummary,

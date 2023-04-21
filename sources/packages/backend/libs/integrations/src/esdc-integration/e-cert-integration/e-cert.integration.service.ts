@@ -16,13 +16,14 @@ export abstract class ECertIntegrationService extends SFTPIntegrationBase<
   ECertResponseRecord[]
 > {
   /**
-   * This method will be implemented in the extended class and is used to create the ECert request content.
-   * @param ecertRecords
-   * @param fileSequence
+   * This method will be implemented in the extended class and is used to create the e-Cert request content.
+   * @param ecertRecords data needed to generate the e-Cert file.
+   * @param fileSequence file sequence.
+   * @returns when overridden in a derived class, returns the complete e-Cert content to be sent.
    */
   abstract createRequestContent(
     ecertRecords: ECertRecord[],
-    fileSequence?: number,
+    fileSequence: number,
   ): FixedFormatFileLine[];
 
   /**

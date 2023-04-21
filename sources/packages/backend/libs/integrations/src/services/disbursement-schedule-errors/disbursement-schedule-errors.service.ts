@@ -4,8 +4,8 @@ import {
   RecordDataModelService,
   DisbursementFeedbackErrors,
   DisbursementSchedule,
-  DatabaseConstraintNames,
 } from "@sims/sims-db";
+import { SystemUsersService } from "@sims/services";
 
 /**
  * Service layer for Disbursement Schedule Errors
@@ -13,7 +13,10 @@ import {
  */
 @Injectable()
 export class DisbursementScheduleErrorsService extends RecordDataModelService<DisbursementFeedbackErrors> {
-  constructor(dataSource: DataSource) {
+  constructor(
+    private readonly systemUsersService: SystemUsersService,
+    dataSource: DataSource,
+  ) {
     super(dataSource.getRepository(DisbursementFeedbackErrors));
   }
 
@@ -29,12 +32,14 @@ export class DisbursementScheduleErrorsService extends RecordDataModelService<Di
     errorCodes: string[],
     dateReceived: Date,
   ): Promise<InsertResult> {
+    const auditUser = await this.systemUsersService.systemUser();
     const errorCodesObject = errorCodes.map((errorCode) => {
       const newDisbursementsFeedbackErrors = new DisbursementFeedbackErrors();
       newDisbursementsFeedbackErrors.disbursementSchedule =
         disbursementSchedule;
       newDisbursementsFeedbackErrors.errorCode = errorCode;
       newDisbursementsFeedbackErrors.dateReceived = dateReceived;
+      newDisbursementsFeedbackErrors.creator = auditUser;
       return newDisbursementsFeedbackErrors;
     });
     return this.repo
@@ -42,9 +47,7 @@ export class DisbursementScheduleErrorsService extends RecordDataModelService<Di
       .insert()
       .into(DisbursementFeedbackErrors)
       .values(errorCodesObject)
-      .onConflict(
-        `ON CONSTRAINT ${DatabaseConstraintNames.DisbursementScheduleIDErrorCodeUnique} DO NOTHING`,
-      )
+      .orIgnore()
       .execute();
   }
 }

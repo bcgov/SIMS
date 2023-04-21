@@ -25,15 +25,14 @@ export class ECertPartTimeFileFooter extends ECertFileFooter {
 
   createFromLine(line: string): ECertPartTimeFileFooter {
     const footer = new ECertPartTimeFileFooter();
-    footer.recordTypeCode = line.substring(0, 3) as RecordTypeCodes;
-    // Here total record count is the total records.
-    footer.recordCount =
-      parseInt(line.substring(43, 52)) + parseInt(line.substring(52, 61));
-    footer.totalSINHash = parseInt(line.substring(61, 76));
+    footer.recordTypeCode = line.substring(0, 2) as RecordTypeCodes;
+    // Total number of records not including header and footer.
+    footer.recordCount = +line.substring(51, 60);
+    footer.totalSINHash = parseInt(line.substring(60, 75));
     return footer;
   }
 
   getFeedbackFooterRecordType(): RecordTypeCodes {
-    return RecordTypeCodes.ECertPartTimeFeedbackFooter;
+    return RecordTypeCodes.ECertPartTimeFooter;
   }
 }

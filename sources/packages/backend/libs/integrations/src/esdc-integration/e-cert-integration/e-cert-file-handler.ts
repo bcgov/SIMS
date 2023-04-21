@@ -197,7 +197,7 @@ export class ECertFileHandler extends ESDCFileHandler {
         this.createECertRecord(disbursement),
       );
 
-      this.logger.log(`Creating  ${offeringIntensity} e-Cert file content...`);
+      this.logger.log(`Creating ${offeringIntensity} e-Cert file content...`);
       const fileContent = eCertIntegrationService.createRequestContent(
         disbursementRecords,
         sequenceNumber,
@@ -237,6 +237,7 @@ export class ECertFileHandler extends ESDCFileHandler {
   createECertRecord(disbursement: ECertDisbursementSchedule): ECertRecord {
     const now = new Date();
     const application = disbursement.studentAssessment.application;
+    const student = application.student;
     const addressInfo = application.student.contactInfo.address;
     const offering = application.currentAssessment.offering;
 
@@ -251,7 +252,7 @@ export class ECertFileHandler extends ESDCFileHandler {
     );
 
     return {
-      sin: application.student.sinValidation.sin,
+      sin: student.sinValidation.sin,
       stopFullTimeBCFunding: disbursement.stopFullTimeBCFunding,
       courseLoad: offering.courseLoad,
       applicationNumber: application.applicationNumber,
@@ -268,17 +269,20 @@ export class ECertFileHandler extends ESDCFileHandler {
       yearOfStudy: offering.yearOfStudy,
       completionYears: offering.educationProgram.completionYears,
       enrollmentConfirmationDate: disbursement.coeUpdatedAt,
-      dateOfBirth: new Date(application.student.birthDate),
-      lastName: application.student.user.lastName,
-      firstName: application.student.user.firstName,
+      dateOfBirth: new Date(student.birthDate),
+      lastName: student.user.lastName,
+      firstName: student.user.firstName,
       addressLine1: addressInfo.addressLine1,
       addressLine2: addressInfo.addressLine2,
       city: addressInfo.city,
       country: addressInfo.country,
       provinceState: addressInfo.provinceState,
       postalCode: addressInfo.postalCode,
-      email: application.student.user.email,
-      gender: application.student.gender,
+      email: student.user.email,
+      gender: student.gender,
+      // TODO: getting the information directly from the student profile since there is no
+      // direction from the business at this moment from where it should actually come.
+      ppdFlag: student.studentPDVerified,
       maritalStatus: application.relationshipStatus,
       studentNumber: application.studentNumber,
       awards,
