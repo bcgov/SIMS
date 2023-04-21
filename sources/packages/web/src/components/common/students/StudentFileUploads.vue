@@ -6,20 +6,8 @@
           title="File Uploads"
           :recordsCount="studentFileUploads?.length"
         >
-          <template #actions v-if="canUploadFiles">
-            <check-permission-role :role="Role.StudentUploadFile">
-              <template #="{ notAllowed }">
-                <v-btn
-                  color="primary"
-                  data-cy="uploadFileButton"
-                  @click="uploadFile"
-                  prepend-icon="fa:fa fa-plus-circle"
-                  class="float-right"
-                  :disabled="notAllowed"
-                  >Upload file</v-btn
-                >
-              </template>
-            </check-permission-role>
+          <template #actions>
+            <slot name="uploadBtn"></slot>
           </template>
         </body-header>
       </template>
@@ -79,29 +67,19 @@
 import { onMounted, ref, defineComponent } from "vue";
 import {
   DEFAULT_PAGE_LIMIT,
-  FormIOForm,
   PAGINATION_LIST,
   LayoutTemplates,
   Role,
 } from "@/types";
 import { StudentService } from "@/services/StudentService";
-import { useFormatters, useFileUtils, ModalDialog } from "@/composables";
-import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
+import { useFormatters, useFileUtils } from "@/composables";
 import { StudentUploadFileAPIOutDTO } from "@/services/http/dto/Student.dto";
 
 export default defineComponent({
-  components: {
-    CheckPermissionRole,
-  },
   props: {
     studentId: {
       type: Number,
       required: true,
-    },
-    canUploadFiles: {
-      type: Boolean,
-      required: false,
-      default: false,
     },
     canDownloadFiles: {
       type: Boolean,
@@ -109,20 +87,14 @@ export default defineComponent({
       default: false,
     },
   },
-  emits: ["uploadFile"],
-  setup(props, context) {
+  setup(props) {
     const studentFileUploads = ref([] as StudentUploadFileAPIOutDTO[]);
-    const fileUploadModal = ref({} as ModalDialog<FormIOForm | boolean>);
     const { dateOnlyLongString, emptyStringFiller } = useFormatters();
     const fileUtils = useFileUtils();
 
     const loadStudentFileUploads = async () => {
       studentFileUploads.value =
         await StudentService.shared.getStudentFileDetails(props.studentId);
-    };
-
-    const uploadFile = () => {
-      context.emit("uploadFile", () => loadStudentFileUploads());
     };
 
     onMounted(loadStudentFileUploads);
@@ -133,10 +105,10 @@ export default defineComponent({
       PAGINATION_LIST,
       dateOnlyLongString,
       emptyStringFiller,
-      uploadFile,
       LayoutTemplates,
       Role,
       studentFileUploads,
+      loadStudentFileUploads,
     };
   },
 });

@@ -1,11 +1,25 @@
 <template>
   <tab-container>
     <student-file-uploads
+      ref="studentFileUploads"
       :studentId="studentId"
-      :canUploadFiles="true"
       :canDownloadFiles="true"
-      @uploadFile="uploadFile"
     >
+      <template #uploadBtn>
+        <check-permission-role :role="Role.StudentUploadFile">
+          <template #="{ notAllowed }">
+            <v-btn
+              color="primary"
+              data-cy="uploadFileButton"
+              @click="uploadFile"
+              prepend-icon="fa:fa fa-plus-circle"
+              class="float-right"
+              :disabled="notAllowed"
+              >Upload file</v-btn
+            >
+          </template>
+        </check-permission-role>
+      </template>
       <formio-modal-dialog
         ref="fileUploadModal"
         title="Upload file"
@@ -59,8 +73,9 @@ export default defineComponent({
     const formioUtils = useFormioUtils();
     const fileUploadModal = ref({} as ModalDialog<FormIOForm | boolean>);
     const initialData = ref({ studentId: props.studentId });
+    const studentFileUploads = ref({} as typeof StudentFileUploads);
 
-    const uploadFile = async (loadStudentFileUploads: () => void) => {
+    const uploadFile = async () => {
       const modalResult = await fileUploadModal.value.showModal();
       if (!modalResult) {
         return;
@@ -78,7 +93,7 @@ export default defineComponent({
         snackBar.success(
           "The documents were submitted and a notification was sent to the student.",
         );
-        loadStudentFileUploads();
+        studentFileUploads.value.loadStudentFileUploads();
       } catch {
         snackBar.error("An unexpected error happened.");
       }
@@ -88,6 +103,7 @@ export default defineComponent({
       Role,
       initialData,
       fileUploadModal,
+      studentFileUploads,
     };
   },
 });
