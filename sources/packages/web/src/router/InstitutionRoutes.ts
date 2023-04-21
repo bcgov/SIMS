@@ -108,6 +108,7 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
         },
         meta: {
           clientType: ClientIdType.Institution,
+          allowOnlyBCPublic: true,
           institutionUserTypes: [
             InstitutionUserTypes.admin,
             InstitutionUserTypes.user,
@@ -459,6 +460,7 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
             InstitutionUserTypes.admin,
             InstitutionUserTypes.user,
           ],
+          allowOnlyBCPublic: true,
         },
         children: [
           {
