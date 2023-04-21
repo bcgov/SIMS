@@ -5,7 +5,11 @@ import { createFakeStudent } from "./student";
 
 /**
  * Create fake student file upload object.
- * @param student entity.
+ * @params relations entity relations
+ * - `student` related student relation.
+ * - `creator` related user relation.
+ * @param options related to StudentFile
+ * - `fileOrigin` option for specifying the fileOrigin
  * @returns created studentFile object.
  */
 export function createFakeStudentFileUpload(
@@ -25,7 +29,7 @@ export function createFakeStudentFileUpload(
   studentFile.mimeType = faker.system.mimeType();
   studentFile.fileContent = Buffer.from(faker.random.words(50), "utf-8");
   studentFile.student = relations?.student ?? createFakeStudent();
-  studentFile.creator = { id: relations?.creator?.id } as User;
+  studentFile.creator = relations?.creator;
   studentFile.fileOrigin = options?.fileOrigin ?? FileOriginType.Ministry;
   return studentFile;
 }
@@ -33,8 +37,11 @@ export function createFakeStudentFileUpload(
 /**
  * Save fake student file upload.
  * @param dataSource data source to persist studentFileUpload.
- * @param relations student entity relations.
- * - `student` related student.
+ * @param relations entity relations.
+ * - `student` related student relation.
+ * - `creator` related user relation.
+ * @param options related to StudentFile
+ * - `fileOrigin` option for specifying the fileOrigin
  * @returns persisted studentFile.
  */
 export async function saveFakeStudentFileUpload(

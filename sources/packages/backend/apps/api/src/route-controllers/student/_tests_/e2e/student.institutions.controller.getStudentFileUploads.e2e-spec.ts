@@ -1,6 +1,5 @@
 import { HttpStatus, INestApplication } from "@nestjs/common";
 import * as request from "supertest";
-import * as assert from "assert";
 import { DataSource, Repository } from "typeorm";
 import {
   authorizeUserTokenForLocation,
@@ -50,8 +49,8 @@ describe("StudentInstitutionsController(e2e)-getStudentFileUploads", () => {
   });
 
   it("Should get the student file uploads when student has at least one application submitted for the institution.", async () => {
-    // Student who has application submitted to institution.
     // Arrange.
+    // Student who has application submitted to institution.
     const student = await saveFakeStudent(appDataSource);
     const application = createFakeApplication({
       location: collegeFLocation,
@@ -90,8 +89,8 @@ describe("StudentInstitutionsController(e2e)-getStudentFileUploads", () => {
   });
 
   it("Should not get the student file uploads when student has at least one application submitted for the institution but the fileOrigin is set to Temporary", async () => {
-    // Student who has application submitted to institution.
     // Arrange.
+    // Student who has application submitted to institution.
     const student = await saveFakeStudent(appDataSource);
     const application = createFakeApplication({
       location: collegeFLocation,

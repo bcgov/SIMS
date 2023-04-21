@@ -123,7 +123,8 @@ export class StudentService {
   }
 
   /**
-   * Get all student documents for AEST / Institution user.
+   * Get all student documents.
+   * @param studentId student id.
    * @return list of student documents.
    */
   async getStudentFileDetails(
