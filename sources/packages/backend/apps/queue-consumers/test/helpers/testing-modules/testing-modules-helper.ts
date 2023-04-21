@@ -11,7 +11,7 @@ import {
   overrideImportsMetadata,
 } from "@sims/test-utils";
 import * as Client from "ssh2-sftp-client";
-import { createMock } from "@golevelup/ts-jest";
+import { DeepMocked, createMock } from "@golevelup/ts-jest";
 import { QueueModule } from "@sims/services/queue";
 import { ZeebeModule } from "@sims/services";
 
@@ -23,7 +23,7 @@ export class CreateTestingModuleResult {
   module: TestingModule;
   dataSource: DataSource;
   zbClient: ZBClient;
-  sshClientMock: Client;
+  sshClientMock: DeepMocked<Client>;
 }
 
 /**

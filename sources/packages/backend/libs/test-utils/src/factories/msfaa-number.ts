@@ -27,6 +27,6 @@ export function createFakeMSFAANumber(relations: {
   msfaaNumber.cancelledDate = null;
   msfaaNumber.newIssuingProvince = null;
   msfaaNumber.student = relations.student;
-  msfaaNumber.referenceApplication = relations.referenceApplication;
+  msfaaNumber.referenceApplication = relations?.referenceApplication;
   return msfaaNumber;
 }
