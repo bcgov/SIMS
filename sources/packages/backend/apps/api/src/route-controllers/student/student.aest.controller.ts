@@ -104,7 +104,9 @@ export class StudentAESTController extends BaseController {
   async getAESTStudentFiles(
     @Param("studentId", ParseIntPipe) studentId: number,
   ): Promise<StudentFileDetailsAPIOutDTO[]> {
-    return this.studentControllerService.getStudentUploadedFiles(studentId);
+    return this.studentControllerService.getStudentUploadedFiles(
+      studentId,
+    ) as Promise<StudentFileDetailsAPIOutDTO[]>;
   }
 
   /**

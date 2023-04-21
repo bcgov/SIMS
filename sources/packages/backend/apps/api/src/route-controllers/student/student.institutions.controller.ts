@@ -85,6 +85,8 @@ export class StudentInstitutionsController extends BaseController {
   async getInstitutionStudentFiles(
     @Param("studentId", ParseIntPipe) studentId: number,
   ): Promise<StudentFileDetailsAPIOutDTO[]> {
-    return this.studentControllerService.getStudentUploadedFiles(studentId);
+    return this.studentControllerService.getStudentUploadedFiles(
+      studentId,
+    ) as Promise<StudentFileDetailsAPIOutDTO[]>;
   }
 }

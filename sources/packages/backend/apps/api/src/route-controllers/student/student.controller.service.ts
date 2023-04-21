@@ -19,6 +19,7 @@ import {
   SearchStudentAPIOutDTO,
   StudentProfileAPIOutDTO,
   StudentFileDetailsAPIOutDTO,
+  StudentUploadFileAPIOutDTO,
 } from "./models/student.dto";
 import { transformAddressDetailsForAddressBlockForm } from "../utils/address-utils";
 
@@ -143,17 +144,22 @@ export class StudentControllerService {
    */
   async getStudentUploadedFiles(
     studentId: number,
-  ): Promise<StudentFileDetailsAPIOutDTO[]> {
+    options?: { extendedDetails: boolean },
+  ): Promise<StudentFileDetailsAPIOutDTO[] | StudentUploadFileAPIOutDTO[]> {
     const studentDocuments = await this.fileService.getStudentUploadedFiles(
       studentId,
     );
     return studentDocuments.map((studentDocument) => ({
       fileName: studentDocument.fileName,
       uniqueFileName: studentDocument.uniqueFileName,
-      metadata: studentDocument.metadata,
-      groupName: studentDocument.groupName,
-      updatedAt: studentDocument.updatedAt,
       fileOrigin: studentDocument.fileOrigin,
+      metadata: options?.extendedDetails ? studentDocument.metadata : undefined,
+      groupName: options?.extendedDetails
+        ? studentDocument.groupName
+        : undefined,
+      updatedAt: options?.extendedDetails
+        ? studentDocument.updatedAt
+        : undefined,
     }));
   }
 

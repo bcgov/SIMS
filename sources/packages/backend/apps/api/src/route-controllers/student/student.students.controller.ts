@@ -179,14 +179,10 @@ export class StudentStudentsController extends BaseController {
   async getStudentFiles(
     @UserToken() studentUserToken: StudentUserToken,
   ): Promise<StudentUploadFileAPIOutDTO[]> {
-    const studentDocuments = await this.fileService.getStudentUploadedFiles(
+    return this.studentControllerService.getStudentUploadedFiles(
       studentUserToken.studentId,
-    );
-    return studentDocuments.map((studentDocument) => ({
-      fileName: studentDocument.fileName,
-      uniqueFileName: studentDocument.uniqueFileName,
-      fileOrigin: studentDocument.fileOrigin,
-    }));
+      { extendedDetails: false },
+    ) as Promise<StudentUploadFileAPIOutDTO[]>;
   }
 
   /**
