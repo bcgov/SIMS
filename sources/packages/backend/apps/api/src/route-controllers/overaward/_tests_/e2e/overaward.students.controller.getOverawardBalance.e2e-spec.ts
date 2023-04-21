@@ -1,64 +1,80 @@
 import { HttpStatus, INestApplication } from "@nestjs/common";
 import * as request from "supertest";
-import { createFakeDisbursementOveraward } from "@sims/test-utils";
-import { Repository } from "typeorm";
+import {
+  createFakeDisbursementOveraward,
+  saveFakeStudent,
+} from "@sims/test-utils";
+import { DataSource, Repository } from "typeorm";
 import {
   DisbursementOveraward,
   DisbursementOverawardOriginType,
-  Student,
 } from "@sims/sims-db";
 import {
   BEARER_AUTH_TYPE,
   createTestingAppModule,
-  FakeStudentUsersTypes,
-  getStudentByFakeStudentUserType,
-  getStudentToken,
+  MockedMethods,
 } from "../../../../testHelpers";
+import { mockStudentUserAndGetUserToken } from "../../../../testHelpers/user/student-user-mock";
 
 describe("OverawardStudentsController(e2e)-getOverawardBalance", () => {
   let app: INestApplication;
-  let student: Student;
+  let appDataSource: DataSource;
+  let appMockedMethods: MockedMethods;
   let disbursementOverawardRepo: Repository<DisbursementOveraward>;
 
   beforeAll(async () => {
-    const { nestApplication, dataSource } = await createTestingAppModule();
+    const { nestApplication, dataSource, mockedMethods } =
+      await createTestingAppModule({
+        mockGetUserLoginInfo: true,
+      });
     app = nestApplication;
-    student = await getStudentByFakeStudentUserType(
-      FakeStudentUsersTypes.FakeStudentUserType1,
-      dataSource,
-    );
+    appDataSource = dataSource;
+    appMockedMethods = mockedMethods;
     disbursementOverawardRepo = dataSource.getRepository(DisbursementOveraward);
   });
 
-  it.skip("Should return correct value for overaward balance when available.", async () => {
+  it("Should return correct value for overaward balance when available.", async () => {
     // Arrange
-    // Create an overaward.
-    const legacyOveraward = createFakeDisbursementOveraward({ student });
-    legacyOveraward.disbursementValueCode = "CSLF";
-    legacyOveraward.overawardValue = 500;
-    legacyOveraward.originType =
-      DisbursementOverawardOriginType.LegacyOveraward;
-    // Create a manual overaward deduction.
-    const manualOveraward = createFakeDisbursementOveraward({ student });
-    manualOveraward.disbursementValueCode = "CSLF";
-    manualOveraward.overawardValue = -100;
-    manualOveraward.originType = DisbursementOverawardOriginType.ManualRecord;
-    // Persist the overawards.
-    await disbursementOverawardRepo.save([legacyOveraward, manualOveraward]);
-    const endpoint = "/students/overaward/balance";
-    const studentToken = await getStudentToken(
-      FakeStudentUsersTypes.FakeStudentUserType1,
+    const student = await saveFakeStudent(appDataSource);
+    const studentToken = await mockStudentUserAndGetUserToken(
+      student,
+      appMockedMethods,
     );
+    // Create an overaward.
+    const legacyOverawardCSLF = createFakeDisbursementOveraward({ student });
+    legacyOverawardCSLF.disbursementValueCode = "CSLF";
+    legacyOverawardCSLF.overawardValue = 500;
+    legacyOverawardCSLF.originType =
+      DisbursementOverawardOriginType.LegacyOveraward;
+
+    // Create a manual overaward deduction.
+    const manualOverawardCSLF = createFakeDisbursementOveraward({ student });
+    manualOverawardCSLF.disbursementValueCode = "CSLF";
+    manualOverawardCSLF.overawardValue = -100;
+    manualOverawardCSLF.originType =
+      DisbursementOverawardOriginType.ManualRecord;
+
+    // Create a manual overaward deduction.
+    const manualOverawardCSLP = createFakeDisbursementOveraward({ student });
+    manualOverawardCSLP.disbursementValueCode = "CSLP";
+    manualOverawardCSLP.overawardValue = 99;
+    manualOverawardCSLP.originType =
+      DisbursementOverawardOriginType.ManualRecord;
+
+    // Persist the overawards.
+    await disbursementOverawardRepo.save([
+      legacyOverawardCSLF,
+      manualOverawardCSLF,
+      manualOverawardCSLP,
+    ]);
+    const endpoint = "/students/overaward/balance";
 
     // Act/Assert
     await request(app.getHttpServer())
       .get(endpoint)
       .auth(studentToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
-      .then((response) => {
-        // TODO change the mock student token.
-        expect(response.body.overawardBalanceValues.CSLF).toBe("400.00");
-      });
+      .expect({ overawardBalanceValues: { CSLF: "400.00", CSLP: "99.00" } });
   });
 
   afterAll(async () => {

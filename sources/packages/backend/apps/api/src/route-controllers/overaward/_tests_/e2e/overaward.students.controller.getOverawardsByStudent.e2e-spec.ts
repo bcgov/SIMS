@@ -4,45 +4,50 @@ import {
   createFakeDisbursementOveraward,
   createFakeStudentAssessment,
   createFakeApplication,
+  saveFakeStudent,
 } from "@sims/test-utils";
-import { Repository } from "typeorm";
+import { DataSource, Repository } from "typeorm";
 import {
   Application,
   DisbursementOveraward,
   DisbursementOverawardOriginType,
-  Student,
   StudentAssessment,
 } from "@sims/sims-db";
 import {
   BEARER_AUTH_TYPE,
   createTestingAppModule,
-  getStudentToken,
-  FakeStudentUsersTypes,
-  getStudentByFakeStudentUserType,
+  MockedMethods,
 } from "../../../../testHelpers";
-import { StudentsOverawardAPIOutDTO } from "../../models/overaward.dto";
+import { mockStudentUserAndGetUserToken } from "../../../../testHelpers/user/student-user-mock";
 
 describe("OverawardStudentsController(e2e)-getOverawardsByStudent", () => {
   let app: INestApplication;
+  let appDataSource: DataSource;
+  let appMockedMethods: MockedMethods;
   let assessmentRepo: Repository<StudentAssessment>;
   let applicationRepo: Repository<Application>;
   let disbursementOverawardRepo: Repository<DisbursementOveraward>;
-  let student: Student;
 
   beforeAll(async () => {
-    const { nestApplication, dataSource } = await createTestingAppModule();
+    const { nestApplication, dataSource, mockedMethods } =
+      await createTestingAppModule({
+        mockGetUserLoginInfo: true,
+      });
     app = nestApplication;
     assessmentRepo = dataSource.getRepository(StudentAssessment);
     applicationRepo = dataSource.getRepository(Application);
     disbursementOverawardRepo = dataSource.getRepository(DisbursementOveraward);
-    student = await getStudentByFakeStudentUserType(
-      FakeStudentUsersTypes.FakeStudentUserType1,
-      dataSource,
-    );
+    appDataSource = dataSource;
+    appMockedMethods = mockedMethods;
   });
 
   it("Should return student overawards when available.", async () => {
     // Arrange
+    const student = await saveFakeStudent(appDataSource);
+    const studentToken = await mockStudentUserAndGetUserToken(
+      student,
+      appMockedMethods,
+    );
     // Prepare the student assessment to create overaward.
     const application = await applicationRepo.save(
       createFakeApplication({
@@ -55,40 +60,49 @@ describe("OverawardStudentsController(e2e)-getOverawardsByStudent", () => {
     application.currentAssessment = studentAssessment;
     await applicationRepo.save(application);
     // Create an overaward.
-    const reassessmentOveraward = createFakeDisbursementOveraward({ student });
+    let reassessmentOveraward = createFakeDisbursementOveraward({ student });
     reassessmentOveraward.studentAssessment = studentAssessment;
     reassessmentOveraward.disbursementValueCode = "CSLP";
     reassessmentOveraward.overawardValue = 500;
     reassessmentOveraward.originType =
       DisbursementOverawardOriginType.ReassessmentOveraward;
     reassessmentOveraward.addedDate = new Date();
-    await disbursementOverawardRepo.save(reassessmentOveraward);
-    const endpoint = "/students/overaward";
-    const studentToken = await getStudentToken(
-      FakeStudentUsersTypes.FakeStudentUserType1,
+    reassessmentOveraward = await disbursementOverawardRepo.save(
+      reassessmentOveraward,
     );
+    // Create a manual overaward deduction.
+    let manualOveraward = createFakeDisbursementOveraward({ student });
+    manualOveraward.disbursementValueCode = "CSLP";
+    manualOveraward.overawardValue = -123;
+    manualOveraward.originType = DisbursementOverawardOriginType.ManualRecord;
+    manualOveraward.addedDate = new Date();
+    manualOveraward = await disbursementOverawardRepo.save(manualOveraward);
+
+    const endpoint = "/students/overaward";
 
     // Act/Assert
     await request(app.getHttpServer())
       .get(endpoint)
       .auth(studentToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
-      .then((response) => {
-        expect(response.body.length).toBeGreaterThan(0);
-        const overawards = response.body as StudentsOverawardAPIOutDTO[];
-        // TODO change the expect.arrayContaining, when we create the mock student token.
-        expect(overawards).toEqual(
-          expect.arrayContaining([
-            expect.objectContaining({
-              applicationNumber:
-                reassessmentOveraward.studentAssessment.application
-                  .applicationNumber,
-              awardValueCode: reassessmentOveraward.disbursementValueCode,
-              overawardValue: reassessmentOveraward.overawardValue,
-            }),
-          ]),
-        );
-      });
+      .expect([
+        {
+          dateAdded: manualOveraward.addedDate.toISOString(),
+          createdAt: manualOveraward.createdAt.toISOString(),
+          overawardOrigin: manualOveraward.originType,
+          awardValueCode: manualOveraward.disbursementValueCode,
+          overawardValue: manualOveraward.overawardValue,
+        },
+        {
+          dateAdded: reassessmentOveraward.addedDate.toISOString(),
+          createdAt: reassessmentOveraward.createdAt.toISOString(),
+          overawardOrigin: reassessmentOveraward.originType,
+          awardValueCode: reassessmentOveraward.disbursementValueCode,
+          overawardValue: reassessmentOveraward.overawardValue,
+          applicationNumber: application.applicationNumber,
+          assessmentTriggerType: studentAssessment.triggerType,
+        },
+      ]);
   });
 
   afterAll(async () => {
