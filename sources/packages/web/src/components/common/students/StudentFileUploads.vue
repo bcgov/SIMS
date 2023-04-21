@@ -5,8 +5,20 @@
         title="File Uploads"
         :recordsCount="studentFileUploads?.length"
       >
-        <template #actions>
-          <slot name="uploadBtn"></slot>
+        <template #actions v-if="canUploadFiles">
+          <check-permission-role :role="Role.StudentUploadFile">
+            <template #="{ notAllowed }">
+              <v-btn
+                color="primary"
+                data-cy="uploadFileButton"
+                @click="uploadFile"
+                prepend-icon="fa:fa fa-plus-circle"
+                class="float-right"
+                :disabled="notAllowed"
+                >Upload file</v-btn
+              >
+            </template>
+          </check-permission-role>
         </template>
       </body-header>
     </template>
@@ -57,27 +69,58 @@
         </DataTable>
       </toggle-content>
     </content-group>
-    <slot></slot>
+    <formio-modal-dialog
+      ref="fileUploadModal"
+      title="Upload file"
+      :formData="initialData"
+      formName="uploadStudentDocumentsAEST"
+    >
+      <template #actions="{ cancel, submit }">
+        <v-row class="m-0 p-0">
+          <v-btn color="primary" variant="outlined" @click="cancel"
+            >Cancel</v-btn
+          >
+          <check-permission-role :role="Role.StudentUploadFile">
+            <template #="{ notAllowed }">
+              <v-btn
+                class="float-right"
+                @click="submit"
+                color="primary"
+                variant="elevated"
+                :disabled="notAllowed"
+                >Upload now</v-btn
+              >
+            </template>
+          </check-permission-role>
+        </v-row>
+      </template>
+    </formio-modal-dialog>
   </body-header-container>
 </template>
 
 <script lang="ts">
 import { onMounted, ref, defineComponent } from "vue";
-import {
-  DEFAULT_PAGE_LIMIT,
-  PAGINATION_LIST,
-  LayoutTemplates,
-  Role,
-} from "@/types";
+import { DEFAULT_PAGE_LIMIT, FormIOForm, PAGINATION_LIST, Role } from "@/types";
 import { StudentService } from "@/services/StudentService";
-import { useFormatters, useFileUtils } from "@/composables";
+import { useFormatters, useFileUtils, ModalDialog } from "@/composables";
+import FormioModalDialog from "@/components/generic/FormioModalDialog.vue";
+import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
 import { StudentUploadFileAPIOutDTO } from "@/services/http/dto/Student.dto";
 
 export default defineComponent({
+  components: {
+    CheckPermissionRole,
+    FormioModalDialog,
+  },
   props: {
     studentId: {
       type: Number,
       required: true,
+    },
+    canUploadFiles: {
+      type: Boolean,
+      required: false,
+      default: false,
     },
     canDownloadFiles: {
       type: Boolean,
@@ -85,14 +128,23 @@ export default defineComponent({
       default: false,
     },
   },
-  setup(props) {
+  emits: ["uploadFile"],
+  setup(props, context) {
     const studentFileUploads = ref([] as StudentUploadFileAPIOutDTO[]);
+    const fileUploadModal = ref({} as ModalDialog<FormIOForm | boolean>);
     const { dateOnlyLongString, emptyStringFiller } = useFormatters();
     const fileUtils = useFileUtils();
+    const initialData = ref({ studentId: props.studentId });
 
     const loadStudentFileUploads = async () => {
       studentFileUploads.value =
         await StudentService.shared.getStudentFileDetails(props.studentId);
+    };
+
+    const uploadFile = () => {
+      context.emit("uploadFile", fileUploadModal, () =>
+        loadStudentFileUploads(),
+      );
     };
 
     onMounted(loadStudentFileUploads);
@@ -103,10 +155,11 @@ export default defineComponent({
       PAGINATION_LIST,
       dateOnlyLongString,
       emptyStringFiller,
-      LayoutTemplates,
+      uploadFile,
       Role,
       studentFileUploads,
-      loadStudentFileUploads,
+      fileUploadModal,
+      initialData,
     };
   },
 });
