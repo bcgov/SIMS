@@ -102,12 +102,19 @@
 import { onMounted, ref, defineComponent } from "vue";
 import { DEFAULT_PAGE_LIMIT, FormIOForm, PAGINATION_LIST, Role } from "@/types";
 import { StudentService } from "@/services/StudentService";
-import { useFormatters, useFileUtils, ModalDialog } from "@/composables";
+import {
+  useFormatters,
+  useFileUtils,
+  ModalDialog,
+  useSnackBar,
+  useFormioUtils,
+} from "@/composables";
 import FormioModalDialog from "@/components/generic/FormioModalDialog.vue";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
 import { StudentUploadFileAPIOutDTO } from "@/services/http/dto/Student.dto";
 
 export default defineComponent({
+  emits: ["uploadFile"],
   components: {
     CheckPermissionRole,
     FormioModalDialog,
@@ -128,23 +135,34 @@ export default defineComponent({
       default: false,
     },
   },
-  emits: ["uploadFile"],
   setup(props, context) {
     const studentFileUploads = ref([] as StudentUploadFileAPIOutDTO[]);
     const fileUploadModal = ref({} as ModalDialog<FormIOForm | boolean>);
     const { dateOnlyLongString, emptyStringFiller } = useFormatters();
     const fileUtils = useFileUtils();
     const initialData = ref({ studentId: props.studentId });
+    const formioUtils = useFormioUtils();
+    const snackBar = useSnackBar();
 
     const loadStudentFileUploads = async () => {
       studentFileUploads.value =
         await StudentService.shared.getStudentFileDetails(props.studentId);
     };
 
-    const uploadFile = () => {
-      context.emit("uploadFile", fileUploadModal, () =>
-        loadStudentFileUploads(),
-      );
+    const uploadFile = async () => {
+      const modalResult = await fileUploadModal.value.showModal();
+      if (!modalResult) {
+        return;
+      }
+
+      try {
+        const associatedFiles = formioUtils.getAssociatedFiles(modalResult);
+        context.emit("uploadFile", associatedFiles, () =>
+          loadStudentFileUploads(),
+        );
+      } catch {
+        snackBar.error("An unexpected error happened.");
+      }
     };
 
     onMounted(loadStudentFileUploads);

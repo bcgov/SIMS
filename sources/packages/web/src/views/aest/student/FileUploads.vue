@@ -12,7 +12,7 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import { useFormioUtils, useSnackBar } from "@/composables";
+import { useSnackBar } from "@/composables";
 import StudentFileUploads from "@/components/common/students/StudentFileUploads.vue";
 import { StudentService } from "@/services/StudentService";
 import { AESTFileUploadToStudentAPIInDTO } from "@/services/http/dto/Student.dto";
@@ -27,19 +27,12 @@ export default defineComponent({
   },
   setup(props) {
     const snackBar = useSnackBar();
-    const formioUtils = useFormioUtils();
 
     const uploadFile = async (
-      fileUploadModal,
+      associatedFiles: string[],
       loadStudentFileUploads: () => void,
     ) => {
-      const modalResult = await fileUploadModal.value.showModal();
-      if (!modalResult) {
-        return;
-      }
-
       try {
-        const associatedFiles = formioUtils.getAssociatedFiles(modalResult);
         const payload: AESTFileUploadToStudentAPIInDTO = {
           associatedFiles,
         };
