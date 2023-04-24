@@ -7,7 +7,8 @@
         </template>
       </header-navigator>
     </template>
-    <v-row>
+    <v-row
+      >student-applications
       <v-col cols="12">
         <student-applications
           @editApplicationAction="editApplicationAction"
@@ -24,7 +25,7 @@
 import { ref, defineComponent } from "vue";
 import StartApplication from "@/views/student/financial-aid-application/Applications.vue";
 import { ApplicationStatus } from "@/types";
-import StudentApplications from "@/components/aest/StudentApplications.vue";
+import StudentApplications from "@/components/common/students/StudentApplications.vue";
 import { ApplicationService } from "@/services/ApplicationService";
 import { useRouter } from "vue-router";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";

@@ -109,9 +109,10 @@ export class ApplicationApi extends HttpBaseClient {
     studentId?: number,
   ): Promise<PaginatedResultsAPIOutDTO<ApplicationSummaryAPIOutDTO>> {
     let url =
-      AuthService.shared.authClientType === ClientIdType.AEST
+      AuthService.shared.authClientType === ClientIdType.AEST ||
+      AuthService.shared.authClientType === ClientIdType.Institution
         ? `student/${studentId}/application-summary`
-        : `student/application-summary`;
+        : "student/application-summary";
     // Adding pagination params. There is always a default page and pageCount for paginated APIs.
     url = addPaginationOptions(url, page, pageCount, "?");
     //Adding Sort params. There is always a default sortField and sortOrder for COE.

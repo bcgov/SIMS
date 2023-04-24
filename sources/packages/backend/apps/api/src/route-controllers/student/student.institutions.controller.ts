@@ -7,6 +7,7 @@ import {
   Param,
   ParseIntPipe,
   Post,
+  Query,
 } from "@nestjs/common";
 import { ApiNotFoundResponse, ApiTags } from "@nestjs/swagger";
 import { StudentService } from "../../services";
@@ -18,9 +19,14 @@ import {
   StudentSearchAPIInDTO,
   SearchStudentAPIOutDTO,
   StudentProfileAPIOutDTO,
+  ApplicationSummaryAPIOutDTO,
 } from "./models/student.dto";
 import { IInstitutionUserToken } from "../../auth";
 import { StudentControllerService } from "./student.controller.service";
+import {
+  ApplicationPaginationOptionsAPIInDTO,
+  PaginatedResultsAPIOutDTO,
+} from "../models/pagination.dto";
 
 /**
  * Student controller for institutions.
@@ -72,5 +78,25 @@ export class StudentInstitutionsController extends BaseController {
     @Param("studentId", ParseIntPipe) studentId: number,
   ): Promise<StudentProfileAPIOutDTO> {
     return this.studentControllerService.getStudentProfile(studentId);
+  }
+
+  /**
+   * Get the list of applications that belongs to a student for the institution.
+   * TODO: Authorization must be enabled to validate if the student has submitted
+   * @param studentId student.
+   * @returns list of applications that belongs to a student for the institution.
+   */
+  @Get(":studentId/application-summary")
+  @ApiNotFoundResponse({ description: "Student not found." })
+  async getStudentApplicationSummary(
+    @UserToken() userToken: IInstitutionUserToken,
+    @Param("studentId", ParseIntPipe) studentId: number,
+    @Query() paginationOptions: ApplicationPaginationOptionsAPIInDTO,
+  ): Promise<PaginatedResultsAPIOutDTO<ApplicationSummaryAPIOutDTO>> {
+    return this.studentControllerService.getStudentApplicationSummary(
+      studentId,
+      paginationOptions,
+      userToken.authorizations.institutionId,
+    );
   }
 }

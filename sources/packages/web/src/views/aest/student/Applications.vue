@@ -9,7 +9,7 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import StudentApplications from "@/components/aest/StudentApplications.vue";
+import StudentApplications from "@/components/common/students/StudentApplications.vue";
 import { useRouter } from "vue-router";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 
@@ -21,7 +21,7 @@ export default defineComponent({
       required: true,
     },
   },
-  setup(props: any) {
+  setup(props) {
     const router = useRouter();
     const goToApplication = (id: number) => {
       return router.push({

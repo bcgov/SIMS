@@ -41,7 +41,11 @@
               >
             </v-btn>
 
-            <span v-if="clientType === ClientIdType.AEST"
+            <span
+              v-if="
+                clientType === ClientIdType.AEST ||
+                clientType === ClientIdType.Institution
+              "
               >{{ slotProps.data.applicationName }}
             </span>
           </template>
@@ -113,7 +117,12 @@
                 </v-btn>
               </span>
             </span>
-            <span v-if="clientType === ClientIdType.AEST">
+            <span
+              v-if="
+                clientType === ClientIdType.AEST ||
+                clientType === ClientIdType.Institution
+              "
+            >
               <v-btn
                 variant="outlined"
                 @click="$emit('goToApplication', slotProps.data.id)"
