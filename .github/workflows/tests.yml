@@ -13,6 +13,7 @@ jobs:
     name: SIMS API E2E Tests
     runs-on: ubuntu-latest
     env:
+      NODE_OPTIONS: "--max_old_space_size=4096"
       PROJECT_NAME: aest-sims
       BUILD_ID: ${{ github.event.number }}
       POSTGRES_PASSWORD: bcgov!
