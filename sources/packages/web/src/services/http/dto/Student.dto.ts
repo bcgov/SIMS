@@ -67,9 +67,10 @@ export interface StudentUploadFileAPIOutDTO {
 }
 
 /**
- *  AEST user to view student uploaded documents.
+ *  AEST / Institution user to view student uploaded documents.
  */
-export interface AESTStudentFileAPIOutDTO extends StudentUploadFileAPIOutDTO {
+export interface StudentFileDetailsAPIOutDTO
+  extends StudentUploadFileAPIOutDTO {
   metadata: StudentFileMetadataAPIOutDTO;
   groupName: string;
   updatedAt: Date;
