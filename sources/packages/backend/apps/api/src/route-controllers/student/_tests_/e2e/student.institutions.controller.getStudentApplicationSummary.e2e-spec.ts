@@ -53,7 +53,6 @@ describe("StudentInstitutionsController(e2e)-getStudentApplicationSummary", () =
       InstitutionTokenTypes.CollegeCUser,
       collegeCLocation,
     );
-
     applicationRepo = appDataSource.getRepository(Application);
     studentAssessmentRepo = dataSource.getRepository(StudentAssessment);
     educationProgramOfferingRepo = dataSource.getRepository(
@@ -65,7 +64,7 @@ describe("StudentInstitutionsController(e2e)-getStudentApplicationSummary", () =
   it("Should get the student application details as summary when student has a submitted application for the institution (application with location id saved).", async () => {
     // Arrange
 
-    // Student who has application submitted to institution.
+    // Student has a submitted application to the institution.
     const student = await saveFakeStudent(appDataSource);
     const application = createFakeApplication({
       location: collegeCLocation,
@@ -119,11 +118,12 @@ describe("StudentInstitutionsController(e2e)-getStudentApplicationSummary", () =
   it("Should get an empty array as application summary when student has a draft application for the institution (application without the location id saved(i.e draft/cancelled draft status)).", async () => {
     // Arrange
 
-    // Student draft application .
+    // Student has a draft application to the institution.
     const student = await saveFakeStudent(appDataSource);
     const application = createFakeApplication({
       student,
     });
+    application.data.selectedLocation = collegeCLocation.id;
     application.applicationStatus = ApplicationStatus.Draft;
     await applicationRepo.save(application);
 
@@ -146,19 +146,28 @@ describe("StudentInstitutionsController(e2e)-getStudentApplicationSummary", () =
   it("Should get an empty array as application summary when student has a submitted application in a different location.", async () => {
     // Arrange
 
-    // Student draft application .
+    // Student has a submitted application in a different location.
     const student = await saveFakeStudent(appDataSource);
     const fakeInstitutionLocation = createFakeLocation();
     const saveFakeInstitutionLocation = await institutionLocationRepo.save(
       fakeInstitutionLocation,
     );
-
     const application = createFakeApplication({
       location: saveFakeInstitutionLocation,
       student,
     });
-    application.applicationStatus = ApplicationStatus.Draft;
-    await applicationRepo.save(application);
+    const savedApplication = await applicationRepo.save(application);
+
+    // Original assessment.
+    const fakeOriginalAssessment = createFakeStudentAssessment({
+      auditUser: student.user,
+    });
+    fakeOriginalAssessment.application = savedApplication;
+    const savedOriginalAssessment = await studentAssessmentRepo.save(
+      fakeOriginalAssessment,
+    );
+    savedApplication.currentAssessment = savedOriginalAssessment;
+    await applicationRepo.save(savedApplication);
 
     const endpoint = `/institutions/student/${student.id}/application-summary?page=0&pageLimit=10`;
     const institutionUserToken = await getInstitutionToken(
@@ -175,6 +184,7 @@ describe("StudentInstitutionsController(e2e)-getStudentApplicationSummary", () =
         count: 0,
       });
   });
+
   afterAll(async () => {
     await app?.close();
   });
