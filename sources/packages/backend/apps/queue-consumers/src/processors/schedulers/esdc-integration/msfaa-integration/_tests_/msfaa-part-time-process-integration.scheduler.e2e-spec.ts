@@ -16,10 +16,12 @@ import * as Client from "ssh2-sftp-client";
 import { IsNull } from "typeorm";
 import { saveMSFAATestInputsData } from "./msfaa-factory";
 import {
+  MSFAATestInputData,
   MSFAA_PART_TIME_MARRIED,
   MSFAA_PART_TIME_OTHER_COUNTRY,
   MSFAA_PART_TIME_RELATIONSHIP_OTHER,
 } from "./msfaa-part-time-process-integration.scheduler.models";
+import { OfferingIntensity } from "@sims/sims-db";
 
 describe(
   describeProcessorRootTest(QueueNames.PartTimeMSFAAProcessIntegration),
@@ -41,6 +43,12 @@ describe(
 
     beforeEach(async () => {
       jest.clearAllMocks();
+      // Expected sequence control group name.
+      const msfaaSequenceGroupName = `MSFAA_${
+        OfferingIntensity.partTime
+      }_SENT_FILE_${getISODateOnlyString(new Date())}`;
+      // Reset MSFAA part time number.
+      await db.sequenceControl.delete({ sequenceName: msfaaSequenceGroupName });
       // Cancel any pending MSFAA.
       await db.msfaaNumber.update(
         { cancelledDate: IsNull() },
@@ -50,22 +58,30 @@ describe(
 
     it("Should generate an MSFAA part-time file when there are pending MSFAA records.", async () => {
       // Arrange
-      await saveMSFAATestInputsData(
-        db,
+      const msfaaInputData: MSFAATestInputData[] = [
         MSFAA_PART_TIME_MARRIED,
         MSFAA_PART_TIME_OTHER_COUNTRY,
         MSFAA_PART_TIME_RELATIONSHIP_OTHER,
-      );
+      ];
+      await saveMSFAATestInputsData(db, msfaaInputData);
       // Queued job.
       const job = createMock<Job<void>>();
 
       // Act
-      await processor.processMSFAA(job);
+      const msfaaRequestResults = await processor.processMSFAA(job);
 
       // Assert
       const uploadedFile = getUploadedFile(sftpClientMock);
-      expect(uploadedFile.remoteFilePath).toBeDefined();
-      expect(uploadedFile.fileLines?.length).toBe(5);
+      // Assert process result.
+      expect(msfaaRequestResults).toHaveLength(1);
+      const [msfaaRequestResult] = msfaaRequestResults;
+      expect(msfaaRequestResult).toStrictEqual({
+        generatedFile: uploadedFile.remoteFilePath,
+        uploadedRecords: msfaaInputData.length,
+        offeringIntensity: OfferingIntensity.partTime,
+      });
+      // Assert file output.
+      expect(uploadedFile.fileLines?.length).toBe(msfaaInputData.length + 2);
       const [
         header,
         msfaaPartTimeMarried,
@@ -73,9 +89,13 @@ describe(
         msfaaPartTimeRelationshipOther,
         footer,
       ] = uploadedFile.fileLines;
+      // Validate header start fixed infrmation.
       expect(header.substring(0, 47)).toBe(
         "100BC  MSFAA SENT                              ",
       );
+      // Validate header sequence number.
+      expect(header.substring(59, 65)).toBe("000001");
+      // Validate records.
       expect(msfaaPartTimeMarried).toBe(
         "2000000001000900000000PABCD1995062920230425Doe                      John              MMAddress Line 1                          Address Line 2                          Calgary                  AB  H1H 1H1         Canada              1111111111          john.doe@somedomain.com                                                                                                                                                                                                                    PT                                                                                                              ",
       );
@@ -85,6 +105,7 @@ describe(
       expect(msfaaPartTimeRelationshipOther).toBe(
         "2000000001002900000002PIHKL2001123020230425Other Doe                Other John        FOAddress Line 1                          Address Line 2                          Victoria                 BC  H1H 1H1         Canada              99999999999999999999jane.doe@someotherdomain.com                                                                                                                                                                                                               PT                                                                                                              ",
       );
+      // Validate static footer.
       expect(footer).toBe(
         "999MSFAA SENT                              000000003000002700000003                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     ",
       );

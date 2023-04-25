@@ -68,7 +68,7 @@ export async function saveMSFAATestInputData(
 
 export async function saveMSFAATestInputsData(
   db: E2EDataSources,
-  ...msfaas: MSFAATestInputData[]
+  msfaas: MSFAATestInputData[],
 ): Promise<MSFAANumber[]> {
   const saveMSFAAPromises = msfaas.map((msfaa) =>
     saveMSFAATestInputData(db, msfaa),
