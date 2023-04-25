@@ -8,38 +8,58 @@ import { DataSource, Repository } from "typeorm";
 import {
   DisbursementOveraward,
   DisbursementOverawardOriginType,
+  IdentityProviders,
 } from "@sims/sims-db";
 import {
   BEARER_AUTH_TYPE,
   createTestingAppModule,
-  MockedMethods,
+  FakeStudentUsersTypes,
+  getProviderInstanceForModule,
+  getStudentToken,
 } from "../../../../testHelpers";
-import { mockStudentUserAndGetUserToken } from "../../../../testHelpers/user/student-user-mock";
+import { UserService } from "../../../../services";
+import { TestingModule } from "@nestjs/testing";
+import { AuthModule } from "../../../../auth/auth.module";
 
 describe("OverawardStudentsController(e2e)-getOverawardBalance", () => {
   let app: INestApplication;
   let appDataSource: DataSource;
-  let appMockedMethods: MockedMethods;
+  let appModule: TestingModule;
   let disbursementOverawardRepo: Repository<DisbursementOveraward>;
 
   beforeAll(async () => {
-    const { nestApplication, dataSource, mockedMethods } =
-      await createTestingAppModule({
-        mockGetUserLoginInfo: true,
-      });
+    const { nestApplication, module, dataSource } =
+      await createTestingAppModule();
     app = nestApplication;
     appDataSource = dataSource;
-    appMockedMethods = mockedMethods;
+    appModule = module;
     disbursementOverawardRepo = dataSource.getRepository(DisbursementOveraward);
   });
 
   it("Should return correct value for overaward balance when available.", async () => {
     // Arrange
     const student = await saveFakeStudent(appDataSource);
-    const studentToken = await mockStudentUserAndGetUserToken(
-      student,
-      appMockedMethods,
+
+    // Mock user service for auth module
+    const userService = await getProviderInstanceForModule<UserService>(
+      appModule,
+      AuthModule,
+      UserService,
     );
+    userService.getUserLoginInfo = jest.fn(() =>
+      Promise.resolve({
+        id: student.user.id,
+        isActive: true,
+        studentId: student.id,
+        identityProviderType: IdentityProviders.BCSC,
+      }),
+    );
+
+    // Get any student user token
+    const studentToken = await getStudentToken(
+      FakeStudentUsersTypes.FakeStudentUserType1,
+    );
+
     // Create an overaward.
     const legacyOverawardCSLF = createFakeDisbursementOveraward({ student });
     legacyOverawardCSLF.disbursementValueCode = "CSLF";
