@@ -31,15 +31,18 @@ export function createFakeStudent(user?: User): Student {
  * @param dataSource data source to persist student.
  * @param relations student entity relations.
  * - `user` related user.
+ * - `student` student to be created an associated with other relations.
  * - `sinValidation` related SIN validation.
  * @returns persisted student with relations provided.
  */
 export async function saveFakeStudent(
   dataSource: DataSource,
-  relations?: { user?: User; sinValidation?: SINValidation },
+  relations?: { student?: Student; user?: User; sinValidation?: SINValidation },
 ): Promise<Student> {
   const studentRepo = dataSource.getRepository(Student);
-  const student = await studentRepo.save(createFakeStudent(relations?.user));
+  const student = await studentRepo.save(
+    relations?.student ?? createFakeStudent(relations?.user),
+  );
   // Saving SIN validation after student is saved due to cyclic dependency error.
   student.sinValidation =
     relations?.sinValidation ?? createFakeSINValidation({ student });

@@ -58,6 +58,7 @@ export class MSFAANumberService extends RecordDataModelService<MSFAANumber> {
       .andWhere("offering.offeringIntensity = :offeringIntensity", {
         offeringIntensity,
       })
+      .orderBy("msfaaNumber.msfaaNumber")
       .getMany();
   }
 

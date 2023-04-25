@@ -10,14 +10,16 @@ import { PartTimeMSFAAProcessIntegrationScheduler } from "../msfaa-part-time-pro
 import {
   E2EDataSources,
   createE2EDataSources,
-  createFakeMSFAANumber,
   getUploadedFile,
-  saveFakeApplication,
-  saveFakeStudent,
 } from "@sims/test-utils";
-import { OfferingIntensity, RelationshipStatus } from "@sims/sims-db";
 import * as Client from "ssh2-sftp-client";
 import { IsNull } from "typeorm";
+import { saveMSFAATestInputsData } from "./msfaa-factory";
+import {
+  MSFAA_PART_TIME_MARRIED,
+  MSFAA_PART_TIME_OTHER_COUNTRY,
+  MSFAA_PART_TIME_RELATIONSHIP_OTHER,
+} from "./msfaa-part-time-process-integration.scheduler.models";
 
 describe(
   describeProcessorRootTest(QueueNames.PartTimeMSFAAProcessIntegration),
@@ -48,31 +50,12 @@ describe(
 
     it("Should generate an MSFAA part-time file when there are pending MSFAA records.", async () => {
       // Arrange
-
-      // Student.
-      const student = await saveFakeStudent(db.dataSource);
-      student.gender = "male";
-      await db.student.save(student);
-      // Application.
-      const referenceApplication = await saveFakeApplication(db.dataSource, {
-        student,
-      });
-      referenceApplication.relationshipStatus = RelationshipStatus.Single;
-      await db.application.save(referenceApplication);
-      // Offering.
-      const offering = referenceApplication.currentAssessment.offering;
-      offering.offeringIntensity = OfferingIntensity.partTime;
-      await db.educationProgramOffering.save(offering);
-      // MSFAA.
-      const msfaa = createFakeMSFAANumber({
-        student,
-        referenceApplication,
-      });
-      msfaa.dateRequested = null;
-      msfaa.dateSigned = null;
-      msfaa.serviceProviderReceivedDate = null;
-      msfaa.offeringIntensity = OfferingIntensity.partTime;
-      await db.msfaaNumber.save(msfaa);
+      await saveMSFAATestInputsData(
+        db,
+        MSFAA_PART_TIME_MARRIED,
+        MSFAA_PART_TIME_OTHER_COUNTRY,
+        MSFAA_PART_TIME_RELATIONSHIP_OTHER,
+      );
       // Queued job.
       const job = createMock<Job<void>>();
 
@@ -82,7 +65,29 @@ describe(
       // Assert
       const uploadedFile = getUploadedFile(sftpClientMock);
       expect(uploadedFile.remoteFilePath).toBeDefined();
-      expect(uploadedFile.fileLines?.length).toBe(3);
+      expect(uploadedFile.fileLines?.length).toBe(5);
+      const [
+        header,
+        msfaaPartTimeMarried,
+        msfaaPartTimeOtherCountry,
+        msfaaPartTimeRelationshipOther,
+        footer,
+      ] = uploadedFile.fileLines;
+      expect(header.substring(0, 47)).toBe(
+        "100BC  MSFAA SENT                              ",
+      );
+      expect(msfaaPartTimeMarried).toBe(
+        "2000000001000900000000PABCD1995062920230425Doe                      John              MMAddress Line 1                          Address Line 2                          Calgary                  AB  H1H 1H1         Canada              1111111111          john.doe@somedomain.com                                                                                                                                                                                                                    PT                                                                                                              ",
+      );
+      expect(msfaaPartTimeOtherCountry).toBe(
+        "2000000001001900000001PEFDG1999123120230425Other Doe                Jane              OSAddress Line 1                                                                  Some city on United StateBC                  United States       222222222222222     jane.doe@somedomain.com                                                                                                                                                                                                                    PT                                                                                                              ",
+      );
+      expect(msfaaPartTimeRelationshipOther).toBe(
+        "2000000001002900000002PIHKL2001123020230425Other Doe                Other John        FOAddress Line 1                          Address Line 2                          Victoria                 BC  H1H 1H1         Canada              99999999999999999999jane.doe@someotherdomain.com                                                                                                                                                                                                               PT                                                                                                              ",
+      );
+      expect(footer).toBe(
+        "999MSFAA SENT                              000000003000002700000003                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     ",
+      );
     });
   },
 );
