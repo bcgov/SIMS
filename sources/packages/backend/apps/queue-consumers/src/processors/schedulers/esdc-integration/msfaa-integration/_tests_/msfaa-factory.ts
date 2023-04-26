@@ -10,34 +10,42 @@ import {
 import { MSFAATestInputData } from "./msfaa-part-time-process-integration.scheduler.models";
 import { createFakeSINValidation } from "@sims/test-utils/factories/sin-validation";
 
+/**
+ * Save an MSFAA record providing all data that will be
+ * part of the MSFAA file generation.
+ * @param db data source helper.
+ * @param msfaa test input data.
+ * @returns a saved MSFAA record that used th input
+ * test data to be created.
+ */
 export async function saveMSFAATestInputData(
   db: E2EDataSources,
-  msfaa: MSFAATestInputData,
+  msfaaDataInput: MSFAATestInputData,
 ): Promise<MSFAANumber> {
   // User.
   const fakeUser = createFakeUser();
-  fakeUser.firstName = msfaa.givenName;
-  fakeUser.lastName = msfaa.surname;
-  fakeUser.email = msfaa.email;
+  fakeUser.firstName = msfaaDataInput.givenName;
+  fakeUser.lastName = msfaaDataInput.surname;
+  fakeUser.email = msfaaDataInput.email;
   // Student.
   const fakeStudent = createFakeStudent(fakeUser);
-  fakeStudent.birthDate = msfaa.birthDate;
-  fakeStudent.gender = msfaa.gender;
+  fakeStudent.birthDate = msfaaDataInput.birthDate;
+  fakeStudent.gender = msfaaDataInput.gender;
   fakeStudent.contactInfo = {
     address: {
-      addressLine1: msfaa.addressLine1,
-      addressLine2: msfaa.addressLine2,
-      city: msfaa.city,
-      country: msfaa.country,
-      selectedCountry: msfaa.country,
-      provinceState: msfaa.provinceState,
-      postalCode: msfaa.postalCode,
+      addressLine1: msfaaDataInput.addressLine1,
+      addressLine2: msfaaDataInput.addressLine2,
+      city: msfaaDataInput.city,
+      country: msfaaDataInput.country,
+      selectedCountry: msfaaDataInput.country,
+      provinceState: msfaaDataInput.provinceState,
+      postalCode: msfaaDataInput.postalCode,
     },
-    phone: msfaa.phone,
+    phone: msfaaDataInput.phone,
   };
   // SIN validation.
   const sinValidation = createFakeSINValidation({ student: fakeStudent });
-  sinValidation.sin = msfaa.sin;
+  sinValidation.sin = msfaaDataInput.sin;
   // Student.
   const student = await saveFakeStudent(db.dataSource, {
     student: fakeStudent,
@@ -45,19 +53,19 @@ export async function saveMSFAATestInputData(
   });
   // Application, offering, location.
   const referenceApplication = await saveFakeApplication(db.dataSource, {});
-  referenceApplication.relationshipStatus = msfaa.maritalStatus;
+  referenceApplication.relationshipStatus = msfaaDataInput.maritalStatus;
   await db.application.save(referenceApplication);
   const offering = referenceApplication.currentAssessment.offering;
-  offering.offeringIntensity = msfaa.offeringIntensity;
+  offering.offeringIntensity = msfaaDataInput.offeringIntensity;
   await db.educationProgramOffering.save(offering);
-  offering.institutionLocation.institutionCode = msfaa.institutionCode;
+  offering.institutionLocation.institutionCode = msfaaDataInput.institutionCode;
   await db.institutionLocation.save(offering.institutionLocation);
   // MSFAA.
   const newMSFAANumber = createFakeMSFAANumber({
     student,
     referenceApplication,
   });
-  newMSFAANumber.msfaaNumber = msfaa.msfaaNumber;
+  newMSFAANumber.msfaaNumber = msfaaDataInput.msfaaNumber;
   newMSFAANumber.dateRequested = null;
   newMSFAANumber.dateSigned = null;
   newMSFAANumber.serviceProviderReceivedDate = null;
@@ -66,11 +74,18 @@ export async function saveMSFAATestInputData(
   return db.msfaaNumber.save(newMSFAANumber);
 }
 
+/**
+ * Saves a list of MSFAA test records.
+ * @param db data source helper.
+ * @param msfaaDataInputs input data for the MSFAA records to be created.
+ * @returns all MSFAA records created. The result order may differ
+ * from the array input order.
+ */
 export async function saveMSFAATestInputsData(
   db: E2EDataSources,
-  msfaas: MSFAATestInputData[],
+  msfaaDataInputs: MSFAATestInputData[],
 ): Promise<MSFAANumber[]> {
-  const saveMSFAAPromises = msfaas.map((msfaa) =>
+  const saveMSFAAPromises = msfaaDataInputs.map((msfaa) =>
     saveMSFAATestInputData(db, msfaa),
   );
   return Promise.all(saveMSFAAPromises);

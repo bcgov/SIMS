@@ -1,5 +1,8 @@
 import { OfferingIntensity, RelationshipStatus } from "@sims/sims-db";
 
+/**
+ * Values part of an MSFAA file record.
+ */
 export interface MSFAATestInputData {
   msfaaNumber: string;
   sin: string;

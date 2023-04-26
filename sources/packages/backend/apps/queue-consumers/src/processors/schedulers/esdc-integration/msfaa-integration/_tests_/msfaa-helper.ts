@@ -9,7 +9,7 @@ import { getISODateOnlyString } from "@sims/utilities";
 import * as dayjs from "dayjs";
 
 /**
- * Created the sequence group name by the offering intensity.
+ * Creates the sequence group name by the offering intensity.
  * @param offeringIntensity offering intensity.
  * @returns the sequence group name by the offering intensity.
  */
@@ -23,10 +23,10 @@ export function getMSFAASequenceGroupName(
 
 /**
  * Create a jest spyOn to intercept the call for the method invoked to create
- * the file content. This method receives parameters, like the processDate that
+ * the file content. This method receives parameters, like the processDate, that
  * need to be used for many MSFAA file content validations.
  * This does not replace the actual method implementation that will still be called.
- * @param app Nestjs to retrieve the service that will have the method mocked.
+ * @param app Nestjs application to retrieve the service that will have the method mocked.
  * @returns jest spyOn mock.
  */
 export function createMSFAARequestContentSpyOnMock(
@@ -50,8 +50,7 @@ export function getProcessDateFromMSFAARequestContent(
   processDateFormatted: string;
   processTimeFormatted: string;
 } {
-  // Method expected to be called once and received the processDate
-  // parameter at index 3.
+  // Method expected to be called once and receive the processDate parameter at index 3.
   const [[, , , processDateParameter]] = mockedMethod.mock.calls;
   const dayjsDate = dayjs(processDateParameter);
   const processDateFormatted = dayjsDate.format(DATE_FORMAT);

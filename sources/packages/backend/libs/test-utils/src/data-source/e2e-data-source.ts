@@ -47,6 +47,12 @@ import {
 } from "@sims/sims-db";
 import { DataSource, Repository } from "typeorm";
 
+/**
+ * Database helper to provide easy access to all repositories as needed.
+ * Intended to be used exclusively for E2E tests.
+ * @param dataSource Nestjs data source that provides access to all repositories.
+ * @returns database repositories.
+ */
 export function createE2EDataSources(dataSource: DataSource): E2EDataSources {
   return {
     dataSource,
@@ -114,6 +120,9 @@ export function createE2EDataSources(dataSource: DataSource): E2EDataSources {
   };
 }
 
+/**
+ * Database repositories.
+ */
 export interface E2EDataSources {
   dataSource: DataSource;
   application: Repository<Application>;

@@ -22,6 +22,12 @@ export function createSSHServiceMock(
   return sshServiceMock;
 }
 
+/**
+ * Get the parameters provided to the put method of the SSH client that
+ * represents the data that would be uploaded to the SFTP in a real scenario.
+ * @param sshClientMock SSH mocked client.
+ * @returns file name and file content of the supposed-to-be uploaded file.
+ */
 export function getUploadedFile(
   sshClientMock: DeepMocked<Client>,
 ): UploadedFile {

@@ -38,14 +38,13 @@ describe(
     let sftpClientMock: DeepMocked<Client>;
 
     beforeAll(async () => {
-      console.time("MSFAA");
       const { nestApplication, dataSource, sshClientMock } =
         await createTestingAppModule();
       app = nestApplication;
+      db = createE2EDataSources(dataSource);
       sftpClientMock = sshClientMock;
       // Processor under test.
       processor = app.get(PartTimeMSFAAProcessIntegrationScheduler);
-      db = createE2EDataSources(dataSource);
     });
 
     beforeEach(async () => {
@@ -63,7 +62,7 @@ describe(
       );
     });
 
-    it("Should generate an MSFAA part-time file when there are pending MSFAA records and update database records with dateRequested.", async () => {
+    it("Should generate an MSFAA part-time file and update the dateRequested when there are pending MSFAA records.", async () => {
       // Arrange
       const msfaaInputData: MSFAATestInputData[] = [
         MSFAA_PART_TIME_MARRIED,

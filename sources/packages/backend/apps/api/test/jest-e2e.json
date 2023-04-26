@@ -10,7 +10,6 @@
   "transform": {
     "^.+\\.(t|j)s$": "ts-jest"
   },
-  "coverageProvider": "v8",
   "testTimeout": 60000,
   "setupFiles": [
     "<rootDir>/../../env-setup.js"
