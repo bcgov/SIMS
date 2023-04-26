@@ -15,7 +15,7 @@ import { TestingModule } from "@nestjs/testing";
  */
 export async function getProviderInstanceForModule<T>(
   testingModule: TestingModule,
-  module: Type<unknown>,
+  module: Type,
   provider: Type<T>,
 ) {
   const discovery = testingModule.get(DiscoveryService);
