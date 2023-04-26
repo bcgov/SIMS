@@ -149,11 +149,11 @@ describe("StudentInstitutionsController(e2e)-getStudentApplicationSummary", () =
     // Student has a submitted application in a different location.
     const student = await saveFakeStudent(appDataSource);
     const fakeInstitutionLocation = createFakeLocation();
-    const saveFakeInstitutionLocation = await institutionLocationRepo.save(
+    const savedFakeInstitutionLocation = await institutionLocationRepo.save(
       fakeInstitutionLocation,
     );
     const application = createFakeApplication({
-      location: saveFakeInstitutionLocation,
+      location: savedFakeInstitutionLocation,
       student,
     });
     const savedApplication = await applicationRepo.save(application);

@@ -10,7 +10,7 @@ import {
   Query,
 } from "@nestjs/common";
 import { ApiNotFoundResponse, ApiTags } from "@nestjs/swagger";
-import { StudentService } from "../../services";
+import { StudentService, StudentFileService } from "../../services";
 import { ClientTypeBaseRoute } from "../../types";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { AllowAuthorizedParty, UserToken } from "../../auth/decorators";
@@ -20,6 +20,7 @@ import {
   SearchStudentAPIOutDTO,
   StudentProfileAPIOutDTO,
   ApplicationSummaryAPIOutDTO,
+  StudentFileDetailsAPIOutDTO,
 } from "./models/student.dto";
 import { IInstitutionUserToken } from "../../auth";
 import { StudentControllerService } from "./student.controller.service";
@@ -37,6 +38,7 @@ import {
 export class StudentInstitutionsController extends BaseController {
   constructor(
     private readonly studentService: StudentService,
+    private readonly fileService: StudentFileService,
     private readonly studentControllerService: StudentControllerService,
   ) {
     super();
@@ -98,5 +100,19 @@ export class StudentInstitutionsController extends BaseController {
       paginationOptions,
       userToken.authorizations.institutionId,
     );
+  }
+
+  /**
+   * Get all the documents uploaded by student.
+   * @param studentId student id.
+   * @returns list of student documents.
+   */
+  @Get(":studentId/documents")
+  async getInstitutionStudentFiles(
+    @Param("studentId", ParseIntPipe) studentId: number,
+  ): Promise<StudentFileDetailsAPIOutDTO[]> {
+    return this.studentControllerService.getStudentUploadedFiles(studentId, {
+      extendedDetails: true,
+    }) as Promise<StudentFileDetailsAPIOutDTO[]>;
   }
 }

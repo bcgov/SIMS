@@ -1,7 +1,7 @@
 import HttpBaseClient from "@/services/http/common/HttpBaseClient";
 import {
   AESTFileUploadToStudentAPIInDTO,
-  AESTStudentFileAPIOutDTO,
+  StudentFileDetailsAPIOutDTO,
   CreateStudentAPIInDTO,
   SearchStudentAPIOutDTO,
   StudentFileUploaderAPIInDTO,
@@ -127,10 +127,10 @@ export class StudentApi extends HttpBaseClient {
    * Get all student documents uploaded by student uploader.
    * @return list of student documents.
    */
-  async getAESTStudentFiles(
+  async getStudentFileDetails(
     studentId: number,
-  ): Promise<AESTStudentFileAPIOutDTO[]> {
-    return this.getCall<AESTStudentFileAPIOutDTO[]>(
+  ): Promise<StudentFileDetailsAPIOutDTO[]> {
+    return this.getCall<StudentFileDetailsAPIOutDTO[]>(
       this.addClientRoot(`student/${studentId}/documents`),
     );
   }

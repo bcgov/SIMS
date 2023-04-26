@@ -159,9 +159,9 @@ export class StudentUploadFileAPIOutDTO {
 }
 
 /**
- *  AEST user to view student uploaded documents.
+ *  AEST / Institution user to view student uploaded documents.
  */
-export class AESTStudentFileAPIOutDTO extends StudentUploadFileAPIOutDTO {
+export class StudentFileDetailsAPIOutDTO extends StudentUploadFileAPIOutDTO {
   metadata: StudentFileMetadataAPIOutDTO;
   groupName: string;
   updatedAt: Date;

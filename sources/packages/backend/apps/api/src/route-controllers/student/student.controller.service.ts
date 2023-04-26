@@ -18,6 +18,8 @@ import {
   ApplicationSummaryAPIOutDTO,
   SearchStudentAPIOutDTO,
   StudentProfileAPIOutDTO,
+  StudentFileDetailsAPIOutDTO,
+  StudentUploadFileAPIOutDTO,
 } from "./models/student.dto";
 import { transformAddressDetailsForAddressBlockForm } from "../utils/address-utils";
 
@@ -133,6 +135,34 @@ export class StudentControllerService {
       validSin: student.sinValidation.isValidSIN,
       sin: student.sinValidation.sin,
     };
+  }
+
+  /**
+   * Get the student uploaded files.
+   * @param studentId student id to retrieve the data.
+   * @param options related to student file uploads
+   * - `extendedDetails` option to specify the additional properties to be returned (metadata, groupName, updatedAt) as a part of the studentDocuments.
+   * @returns student file details.
+   */
+  async getStudentUploadedFiles(
+    studentId: number,
+    options?: { extendedDetails: boolean },
+  ): Promise<StudentFileDetailsAPIOutDTO[] | StudentUploadFileAPIOutDTO[]> {
+    const studentDocuments = await this.fileService.getStudentUploadedFiles(
+      studentId,
+    );
+    return studentDocuments.map((studentDocument) => ({
+      fileName: studentDocument.fileName,
+      uniqueFileName: studentDocument.uniqueFileName,
+      fileOrigin: studentDocument.fileOrigin,
+      metadata: options?.extendedDetails ? studentDocument.metadata : undefined,
+      groupName: options?.extendedDetails
+        ? studentDocument.groupName
+        : undefined,
+      updatedAt: options?.extendedDetails
+        ? studentDocument.updatedAt
+        : undefined,
+    }));
   }
 
   /**
