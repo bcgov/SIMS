@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { MSFAANumber, OfferingIntensity } from "@sims/sims-db";
 import { LoggerService, InjectLogger } from "@sims/utilities/logger";
-import { getUTCNow, getISODateOnlyString } from "@sims/utilities";
+import { getISODateOnlyString } from "@sims/utilities";
 import { EntityManager } from "typeorm";
 import { SequenceControlService } from "@sims/services";
 import {
