@@ -9,10 +9,14 @@ import {
   Post,
 } from "@nestjs/common";
 import { ApiNotFoundResponse, ApiTags } from "@nestjs/swagger";
-import { StudentService, StudentFileService } from "../../services";
+import { StudentService } from "../../services";
 import { ClientTypeBaseRoute } from "../../types";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
-import { AllowAuthorizedParty, UserToken } from "../../auth/decorators";
+import {
+  AllowAuthorizedParty,
+  UserToken,
+  IsBcPublicInstitution,
+} from "../../auth/decorators";
 import BaseController from "../BaseController";
 import {
   StudentSearchAPIInDTO,
@@ -27,12 +31,12 @@ import { StudentControllerService } from "./student.controller.service";
  * Student controller for institutions.
  */
 @AllowAuthorizedParty(AuthorizedParties.institution)
+@IsBcPublicInstitution()
 @Controller("student")
 @ApiTags(`${ClientTypeBaseRoute.Institution}-student`)
 export class StudentInstitutionsController extends BaseController {
   constructor(
     private readonly studentService: StudentService,
-    private readonly fileService: StudentFileService,
     private readonly studentControllerService: StudentControllerService,
   ) {
     super();
@@ -42,7 +46,6 @@ export class StudentInstitutionsController extends BaseController {
    * Search students based on the search criteria.
    * Returns a 200 HTTP status instead of 201 to indicate that the operation
    * was completed with success but no resource was created.
-   * TODO add decorator to restrict to BC Public institutions.
    * @param searchCriteria criteria to be used in the search.
    * @returns searched student details.
    */

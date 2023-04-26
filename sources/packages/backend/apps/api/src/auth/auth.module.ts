@@ -11,6 +11,8 @@ import {
   StudentService,
   SINValidationService,
   DesignationAgreementLocationService,
+  InstitutionService,
+  BCeIDService,
 } from "../services";
 import { JwtAuthGuard } from "./guards/jwt-auth.guard";
 import { JwtStrategy } from "./jwt.strategy";
@@ -23,6 +25,7 @@ import {
   GroupsGuard,
   SINValidationGuard,
   RequiresStudentAccountGuard,
+  InstitutionBCPublicGuard,
 } from "./guards";
 import { RolesGuard } from "./guards/roles.guard";
 import { ConfigModule } from "@sims/utilities/config";
@@ -51,6 +54,8 @@ const jwtModule = JwtModule.register({
     DesignationAgreementLocationService,
     DisbursementOverawardService,
     NoteSharedService,
+    InstitutionService,
+    BCeIDService,
     {
       provide: APP_GUARD,
       useClass: JwtAuthGuard,
@@ -87,6 +92,7 @@ const jwtModule = JwtModule.register({
       provide: APP_GUARD,
       useClass: SINValidationGuard,
     },
+    { provide: APP_GUARD, useClass: InstitutionBCPublicGuard },
   ],
   exports: [jwtModule, TokensService, KeycloakService],
 })
