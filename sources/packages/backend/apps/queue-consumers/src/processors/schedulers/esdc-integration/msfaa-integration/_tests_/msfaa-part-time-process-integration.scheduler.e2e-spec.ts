@@ -32,6 +32,7 @@ describe(
     let sftpClientMock: DeepMocked<Client>;
 
     beforeAll(async () => {
+      console.time("MSFAA");
       const { nestApplication, dataSource, sshClientMock } =
         await createTestingAppModule();
       app = nestApplication;
@@ -109,6 +110,7 @@ describe(
       expect(footer).toBe(
         "999MSFAA SENT                              000000003000002700000003                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     ",
       );
+      console.timeEnd("MSFAA");
     });
   },
 );
