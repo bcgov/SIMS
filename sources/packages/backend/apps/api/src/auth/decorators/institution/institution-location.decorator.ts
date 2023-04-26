@@ -1,5 +1,8 @@
 import { SetMetadata } from "@nestjs/common";
-import { InstitutionUserRoles, InstitutionUserTypes } from "../user-types.enum";
+import {
+  InstitutionUserRoles,
+  InstitutionUserTypes,
+} from "../../user-types.enum";
 
 export const HAS_LOCATION_ACCESS_KEY = "has-location-access-key";
 

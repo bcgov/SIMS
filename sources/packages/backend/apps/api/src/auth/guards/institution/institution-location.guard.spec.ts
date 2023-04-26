@@ -1,15 +1,15 @@
 import {
   createFakeHttpContext,
   createFakeReflectorForHasLocationAccess,
-} from "../../testHelpers";
-import { InstitutionUserAuthorizations } from "../../services/institution-user-auth/institution-user-auth.models";
-import { HasLocationAccessParam } from "../decorators";
+} from "../../../testHelpers";
+import { InstitutionUserAuthorizations } from "../../../services/institution-user-auth/institution-user-auth.models";
+import { HasLocationAccessParam } from "../../decorators";
 import { InstitutionLocationGuard } from "./institution-location.guard";
 import {
   AuthorizedParties,
   IInstitutionUserToken,
   InstitutionUserTypes,
-} from "..";
+} from "../..";
 
 const activateGuard = async (
   locationId: number,
