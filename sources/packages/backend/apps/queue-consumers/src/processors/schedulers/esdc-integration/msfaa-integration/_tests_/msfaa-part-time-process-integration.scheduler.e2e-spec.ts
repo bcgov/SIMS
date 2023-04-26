@@ -13,7 +13,7 @@ import {
   getUploadedFile,
 } from "@sims/test-utils";
 import * as Client from "ssh2-sftp-client";
-import { IsNull } from "typeorm";
+import { In, IsNull } from "typeorm";
 import { saveMSFAATestInputsData } from "./msfaa-factory";
 import {
   MSFAATestInputData,
@@ -27,6 +27,7 @@ import {
   getMSFAASequenceGroupName,
   getProcessDateFromMSFAARequestContent,
 } from "./msfaa-helper";
+import * as dayjs from "dayjs";
 
 describe(
   describeProcessorRootTest(QueueNames.PartTimeMSFAAProcessIntegration),
@@ -62,14 +63,17 @@ describe(
       );
     });
 
-    it("Should generate an MSFAA part-time file when there are pending MSFAA records.", async () => {
+    it("Should generate an MSFAA part-time file when there are pending MSFAA records and update database records with dateRequested.", async () => {
       // Arrange
       const msfaaInputData: MSFAATestInputData[] = [
         MSFAA_PART_TIME_MARRIED,
         MSFAA_PART_TIME_OTHER_COUNTRY,
         MSFAA_PART_TIME_RELATIONSHIP_OTHER,
       ];
-      await saveMSFAATestInputsData(db, msfaaInputData);
+      const createdMSFAARecords = await saveMSFAATestInputsData(
+        db,
+        msfaaInputData,
+      );
       // Queued job.
       const job = createMock<Job<void>>();
       // Spy on the MSFAA content creation to intercept the process date and time used.
@@ -81,11 +85,11 @@ describe(
 
       // Assert
       expect(createMSFAARequestContentMock).toHaveBeenCalledTimes(1);
-      const { processDate, processTime } =
+      const { processDate, processDateFormatted, processTimeFormatted } =
         getProcessDateFromMSFAARequestContent(createMSFAARequestContentMock);
       const uploadedFile = getUploadedFile(sftpClientMock);
       expect(uploadedFile.remoteFilePath).toBe(
-        `MSFT-Request\\DPBC.EDU.MSFA.SENT.PT.${processDate}.001`,
+        `MSFT-Request\\DPBC.EDU.MSFA.SENT.PT.${processDateFormatted}.001`,
       );
       // Assert process result.
       expect(msfaaRequestResults).toHaveLength(1);
@@ -95,6 +99,7 @@ describe(
         uploadedRecords: msfaaInputData.length,
         offeringIntensity: OfferingIntensity.partTime,
       });
+
       // Assert file output.
       expect(uploadedFile.fileLines?.length).toBe(msfaaInputData.length + 2);
       const [
@@ -106,22 +111,38 @@ describe(
       ] = uploadedFile.fileLines;
       // Validate header.
       expect(header).toBe(
-        `100BC  MSFAA SENT                              ${processDate}${processTime}000001                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       `,
+        `100BC  MSFAA SENT                              ${processDateFormatted}${processTimeFormatted}000001                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       `,
       );
       // Validate records.
       expect(msfaaPartTimeMarried).toBe(
-        `2000000001000900000000PABCD19950630${processDate}Doe                      John              MMAddress Line 1                          Address Line 2                          Calgary                  AB  H1H 1H1         Canada              1111111111          john.doe@somedomain.com                                                                                                                                                                                                                    PT                                                                                                              `,
+        `2000000001000900000000PABCD19950630${processDateFormatted}Doe                      John              MMAddress Line 1                          Address Line 2                          Calgary                  AB  H1H 1H1         Canada              1111111111          john.doe@somedomain.com                                                                                                                                                                                                                    PT                                                                                                              `,
       );
       expect(msfaaPartTimeOtherCountry).toBe(
-        `2000000001001900000001PEFDG20000101${processDate}Other Doe                Jane              OSAddress Line 1                                                                  Some city on United StateBC                  United States       222222222222222     jane.doe@somedomain.com                                                                                                                                                                                                                    PT                                                                                                              `,
+        `2000000001001900000001PEFDG20000101${processDateFormatted}Other Doe                Jane              OSAddress Line 1                                                                  Some city on United StateBC                  United States       222222222222222     jane.doe@somedomain.com                                                                                                                                                                                                                    PT                                                                                                              `,
       );
       expect(msfaaPartTimeRelationshipOther).toBe(
-        `2000000001002900000002PIHKL20011231${processDate}Other Doe                Other John        FOAddress Line 1                          Address Line 2                          Victoria                 BC  H1H 1H1         Canada              99999999999999999999jane.doe@someotherdomain.com                                                                                                                                                                                                               PT                                                                                                              `,
+        `2000000001002900000002PIHKL20011231${processDateFormatted}Other Doe                Other John        FOAddress Line 1                          Address Line 2                          Victoria                 BC  H1H 1H1         Canada              99999999999999999999jane.doe@someotherdomain.com                                                                                                                                                                                                               PT                                                                                                              `,
       );
       // Validate static footer.
       expect(footer).toBe(
         "999MSFAA SENT                              000000003000002700000003                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     ",
       );
+
+      // Assert database changes.
+      // Find the updated MSFAA records previously created.
+      const msfaaIDs = createdMSFAARecords.map((msfaa) => msfaa.id);
+      const msfaaUpdatedRecords = await db.msfaaNumber.find({
+        select: {
+          dateRequested: true,
+        },
+        where: {
+          id: In(msfaaIDs),
+        },
+      });
+      const allMSFAAsHaveDateRequested = msfaaUpdatedRecords.every((msfaa) =>
+        dayjs(msfaa.dateRequested).isSame(processDate),
+      );
+      expect(allMSFAAsHaveDateRequested).toBe(true);
     });
   },
 );

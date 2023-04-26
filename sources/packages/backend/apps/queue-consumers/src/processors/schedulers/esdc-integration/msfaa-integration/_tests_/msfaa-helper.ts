@@ -8,6 +8,11 @@ import { OfferingIntensity } from "@sims/sims-db";
 import { getISODateOnlyString } from "@sims/utilities";
 import * as dayjs from "dayjs";
 
+/**
+ * Created the sequence group name by the offering intensity.
+ * @param offeringIntensity offering intensity.
+ * @returns the sequence group name by the offering intensity.
+ */
 export function getMSFAASequenceGroupName(
   offeringIntensity: OfferingIntensity,
 ) {
@@ -16,6 +21,14 @@ export function getMSFAASequenceGroupName(
   )}`;
 }
 
+/**
+ * Create a jest spyOn to intercept the call for the method invoked to create
+ * the file content. This method receives parameters, like the processDate that
+ * need to be used for many MSFAA file content validations.
+ * This does not replace the actual method implementation that will still be called.
+ * @param app Nestjs to retrieve the service that will have the method mocked.
+ * @returns jest spyOn mock.
+ */
 export function createMSFAARequestContentSpyOnMock(
   app: INestApplication,
 ): jest.SpyInstance {
@@ -23,15 +36,29 @@ export function createMSFAARequestContentSpyOnMock(
   return jest.spyOn(msfaaIntegrationService, "createMSFAARequestContent");
 }
 
+/**
+ * Gets the processDate parameter from the method createMSFAARequestContent
+ * from the service {@link MSFAAIntegrationService}.
+ * @param mockedMethod createMSFAARequestContent method previously mocked
+ * using {@link createMSFAARequestContentSpyOnMock}.
+ * @returns processDate and the perspectives formatted date and time.
+ */
 export function getProcessDateFromMSFAARequestContent(
   mockedMethod: jest.SpyInstance,
-): { processDate: string; processTime: string } {
+): {
+  processDate: Date;
+  processDateFormatted: string;
+  processTimeFormatted: string;
+} {
+  // Method expected to be called once and received the processDate
+  // parameter at index 3.
   const [[, , , processDateParameter]] = mockedMethod.mock.calls;
   const dayjsDate = dayjs(processDateParameter);
-  const processDate = dayjsDate.format(DATE_FORMAT);
-  const processTime = dayjsDate.format(TIME_FORMAT);
+  const processDateFormatted = dayjsDate.format(DATE_FORMAT);
+  const processTimeFormatted = dayjsDate.format(TIME_FORMAT);
   return {
-    processDate,
-    processTime,
+    processDate: processDateParameter,
+    processDateFormatted,
+    processTimeFormatted,
   };
 }
