@@ -22,7 +22,7 @@ import { DisbursementOverawardService } from "@sims/services";
 import { StudentService } from "../../services";
 import {
   OverawardBalanceAPIOutDTO,
-  AESTOverawardAPIOutDTO,
+  OverawardDetailsAPIOutDTO,
   OverawardManualRecordAPIInDTO,
 } from "./models/overaward.dto";
 import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
@@ -72,7 +72,7 @@ export class OverawardAESTController extends BaseController {
   @Get("student/:studentId")
   async getOverawardsByStudent(
     @Param("studentId", ParseIntPipe) studentId: number,
-  ): Promise<AESTOverawardAPIOutDTO[]> {
+  ): Promise<OverawardDetailsAPIOutDTO[]> {
     const studentExist = await this.studentService.studentExists(studentId);
     if (!studentExist) {
       throw new NotFoundException("Student not found.");

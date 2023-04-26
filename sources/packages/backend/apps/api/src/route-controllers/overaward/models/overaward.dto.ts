@@ -30,7 +30,7 @@ export class StudentsOverawardAPIOutDTO {
   assessmentTriggerType?: AssessmentTriggerType;
 }
 
-export class AESTOverawardAPIOutDTO extends StudentsOverawardAPIOutDTO {
+export class OverawardDetailsAPIOutDTO extends StudentsOverawardAPIOutDTO {
   addedByUser?: string;
 }
 

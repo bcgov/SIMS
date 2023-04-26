@@ -74,6 +74,7 @@ export const InstitutionRoutesConst = {
   STUDENT_APPLICATIONS: Symbol(),
   STUDENT_RESTRICTIONS: Symbol(),
   STUDENT_FILE_UPLOADS: Symbol(),
+  STUDENT_OVERAWARDS: Symbol(),
   STUDENT_NOTES: Symbol(),
 };
 
@@ -91,7 +92,7 @@ export const AESTRoutesConst = {
   STUDENT_FILE_UPLOADS: Symbol(),
   STUDENT_NOTES: Symbol(),
   SIN_MANAGEMENT: Symbol(),
-  OVERAWARDS: Symbol(),
+  STUDENT_OVERAWARDS: Symbol(),
   PROGRAM_DETAILS: Symbol(),
   SEARCH_INSTITUTIONS: Symbol(),
   INSTITUTION_PROFILE: Symbol(),
