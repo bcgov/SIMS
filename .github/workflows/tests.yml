@@ -38,9 +38,6 @@ jobs:
       E2E_TEST_AEST_MOF_OPERATIONS_USER: ministry-user-mof-operations@e2e-tests
       E2E_TEST_AEST_READ_ONLY_USER: ministry-user-read-only@e2e-tests
       E2E_TEST_PASSWORD: ${{ secrets.E2E_TEST_PASSWORD }}
-      ESDC_REQUEST_FOLDER: MSFT-Request
-      ESDC_RESPONSE_FOLDER: MSFT-Response
-      ESDC_ENVIRONMENT_CODE: D
     steps:
       # Checkout the PR branch.
       - name: Checkout Target Branch
@@ -132,6 +129,9 @@ jobs:
       QUEUE_PREFIX: "{sims-local}"
       QUEUE_CONSUMERS_PORT: 3001
       DB_SCHEMA: sims
+      ESDC_REQUEST_FOLDER: MSFT-Request
+      ESDC_RESPONSE_FOLDER: MSFT-Response
+      ESDC_ENVIRONMENT_CODE: D
     steps:
       # Checkout the PR branch.
       - name: Checkout Target Branch
