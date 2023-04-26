@@ -73,6 +73,14 @@ export default defineComponent({
         }),
       },
       {
+        label: "Overawards",
+        icon: "fa:fa fa-circle-dollar-to-slot",
+        command: () => ({
+          name: InstitutionRoutesConst.STUDENT_OVERAWARDS,
+          params: { studentId: props.studentId },
+        }),
+      },
+      {
         label: "Notes",
         icon: "fa:fa fa-sticky-note",
         command: () => ({
