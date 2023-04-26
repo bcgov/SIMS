@@ -2,14 +2,12 @@ import { HttpStatus, INestApplication } from "@nestjs/common";
 import * as request from "supertest";
 import {
   createFakeDisbursementOveraward,
-  getProviderInstanceForModule,
   saveFakeStudent,
 } from "@sims/test-utils";
 import { DataSource, Repository } from "typeorm";
 import {
   DisbursementOveraward,
   DisbursementOverawardOriginType,
-  IdentityProviders,
 } from "@sims/sims-db";
 import {
   BEARER_AUTH_TYPE,
@@ -17,9 +15,7 @@ import {
   FakeStudentUsersTypes,
   getStudentToken,
 } from "../../../../testHelpers";
-import { UserService } from "../../../../services";
 import { TestingModule } from "@nestjs/testing";
-import { AuthModule } from "../../../../auth/auth.module";
 import { mockUserLoginInfo } from "apps/api/src/testHelpers/auth/student-user-helper";
 
 describe("OverawardStudentsController(e2e)-getOverawardBalance", () => {
@@ -41,6 +37,7 @@ describe("OverawardStudentsController(e2e)-getOverawardBalance", () => {
     // Arrange
     const student = await saveFakeStudent(appDataSource);
 
+    // Mock user service to return the saved student.
     await mockUserLoginInfo(appModule, student);
 
     // Get any student user token.
