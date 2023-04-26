@@ -69,9 +69,10 @@ export class MSFAARequestProcessingService extends ESDCFileHandler {
 
     //Create records and create the unique file sequence number
     let uploadResult: MSFAAUploadResult;
+    const processDate = new Date();
     await this.sequenceService.consumeNextSequence(
       `MSFAA_${offeringIntensity}_SENT_FILE_${getISODateOnlyString(
-        new Date(),
+        processDate,
       )}`,
       async (nextSequenceNumber: number, entityManager: EntityManager) => {
         try {
@@ -82,6 +83,7 @@ export class MSFAARequestProcessingService extends ESDCFileHandler {
             msfaaRecords,
             nextSequenceNumber,
             totalSINHash,
+            processDate,
           );
           // Create the request filename with the file path for the MSFAA Request
           // sent File.
@@ -102,7 +104,7 @@ export class MSFAARequestProcessingService extends ESDCFileHandler {
           const msfaaNumberRepo = entityManager.getRepository(MSFAANumber);
           this.msfaaNumberService.updateRecordsInSentFile(
             msfaaRecordIds,
-            getUTCNow(),
+            processDate,
             msfaaNumberRepo,
           );
         } catch (error) {
