@@ -11,19 +11,16 @@ import {
   Application,
   DisbursementOveraward,
   DisbursementOverawardOriginType,
-  IdentityProviders,
   StudentAssessment,
 } from "@sims/sims-db";
 import {
   BEARER_AUTH_TYPE,
   createTestingAppModule,
   FakeStudentUsersTypes,
-  getProviderInstanceForModule,
   getStudentToken,
 } from "../../../../testHelpers";
-import { UserService } from "../../../../services";
 import { TestingModule } from "@nestjs/testing";
-import { AuthModule } from "../../../../auth/auth.module";
+import { mockUserLoginInfo } from "apps/api/src/testHelpers/auth/student-user-helper";
 
 describe("OverawardStudentsController(e2e)-getOverawardsByStudent", () => {
   let app: INestApplication;
@@ -48,22 +45,10 @@ describe("OverawardStudentsController(e2e)-getOverawardsByStudent", () => {
     // Arrange
     const student = await saveFakeStudent(appDataSource);
 
-    // Mock user service for auth module
-    const userService = await getProviderInstanceForModule<UserService>(
-      appModule,
-      AuthModule,
-      UserService,
-    );
-    userService.getUserLoginInfo = jest.fn(() =>
-      Promise.resolve({
-        id: student.user.id,
-        isActive: true,
-        studentId: student.id,
-        identityProviderType: IdentityProviders.BCSC,
-      }),
-    );
+    // Mock user service to return the saved student.
+    await mockUserLoginInfo(appModule, student);
 
-    // Get any student user token
+    // Get any student user token.
     const studentToken = await getStudentToken(
       FakeStudentUsersTypes.FakeStudentUserType1,
     );
@@ -80,23 +65,25 @@ describe("OverawardStudentsController(e2e)-getOverawardsByStudent", () => {
     application.currentAssessment = studentAssessment;
     await applicationRepo.save(application);
     // Create an overaward.
-    let reassessmentOveraward = createFakeDisbursementOveraward({ student });
+    const reassessmentOveraward = createFakeDisbursementOveraward({ student });
     reassessmentOveraward.studentAssessment = studentAssessment;
     reassessmentOveraward.disbursementValueCode = "CSLP";
     reassessmentOveraward.overawardValue = 500;
     reassessmentOveraward.originType =
       DisbursementOverawardOriginType.ReassessmentOveraward;
     reassessmentOveraward.addedDate = new Date();
-    reassessmentOveraward = await disbursementOverawardRepo.save(
+    const savedReassessmentOveraward = await disbursementOverawardRepo.save(
       reassessmentOveraward,
     );
     // Create a manual overaward deduction.
-    let manualOveraward = createFakeDisbursementOveraward({ student });
+    const manualOveraward = createFakeDisbursementOveraward({ student });
     manualOveraward.disbursementValueCode = "CSLP";
     manualOveraward.overawardValue = -123;
     manualOveraward.originType = DisbursementOverawardOriginType.ManualRecord;
     manualOveraward.addedDate = new Date();
-    manualOveraward = await disbursementOverawardRepo.save(manualOveraward);
+    const savedManualOveraward = await disbursementOverawardRepo.save(
+      manualOveraward,
+    );
 
     const endpoint = "/students/overaward";
 
@@ -107,18 +94,18 @@ describe("OverawardStudentsController(e2e)-getOverawardsByStudent", () => {
       .expect(HttpStatus.OK)
       .expect([
         {
-          dateAdded: manualOveraward.addedDate.toISOString(),
-          createdAt: manualOveraward.createdAt.toISOString(),
-          overawardOrigin: manualOveraward.originType,
-          awardValueCode: manualOveraward.disbursementValueCode,
-          overawardValue: manualOveraward.overawardValue,
+          dateAdded: savedManualOveraward.addedDate.toISOString(),
+          createdAt: savedManualOveraward.createdAt.toISOString(),
+          overawardOrigin: savedManualOveraward.originType,
+          awardValueCode: savedManualOveraward.disbursementValueCode,
+          overawardValue: savedManualOveraward.overawardValue,
         },
         {
-          dateAdded: reassessmentOveraward.addedDate.toISOString(),
-          createdAt: reassessmentOveraward.createdAt.toISOString(),
-          overawardOrigin: reassessmentOveraward.originType,
-          awardValueCode: reassessmentOveraward.disbursementValueCode,
-          overawardValue: reassessmentOveraward.overawardValue,
+          dateAdded: savedReassessmentOveraward.addedDate.toISOString(),
+          createdAt: savedReassessmentOveraward.createdAt.toISOString(),
+          overawardOrigin: savedReassessmentOveraward.originType,
+          awardValueCode: savedReassessmentOveraward.disbursementValueCode,
+          overawardValue: savedReassessmentOveraward.overawardValue,
           applicationNumber: application.applicationNumber,
           assessmentTriggerType: studentAssessment.triggerType,
         },
