@@ -64,7 +64,7 @@ describe(
 
     it("Should generate an MSFAA part-time file and update the dateRequested when there are pending MSFAA records.", async () => {
       // Arrange
-      const msfaaInputData: MSFAATestInputData[] = [
+      const msfaaInputData = [
         MSFAA_PART_TIME_MARRIED,
         MSFAA_PART_TIME_OTHER_COUNTRY,
         MSFAA_PART_TIME_RELATIONSHIP_OTHER,
@@ -91,13 +91,13 @@ describe(
         `MSFT-Request\\DPBC.EDU.MSFA.SENT.PT.${processDateFormatted}.001`,
       );
       // Assert process result.
-      expect(msfaaRequestResults).toHaveLength(1);
-      const [msfaaRequestResult] = msfaaRequestResults;
-      expect(msfaaRequestResult).toStrictEqual({
-        generatedFile: uploadedFile.remoteFilePath,
-        uploadedRecords: msfaaInputData.length,
-        offeringIntensity: OfferingIntensity.partTime,
-      });
+      expect(msfaaRequestResults).toStrictEqual([
+        {
+          generatedFile: uploadedFile.remoteFilePath,
+          uploadedRecords: msfaaInputData.length,
+          offeringIntensity: OfferingIntensity.partTime,
+        },
+      ]);
 
       // Assert file output.
       expect(uploadedFile.fileLines?.length).toBe(msfaaInputData.length + 2);

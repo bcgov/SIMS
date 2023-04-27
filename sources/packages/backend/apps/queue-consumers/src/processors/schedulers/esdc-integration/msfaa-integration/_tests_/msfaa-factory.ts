@@ -15,8 +15,8 @@ import { createFakeSINValidation } from "@sims/test-utils/factories/sin-validati
  * part of the MSFAA file generation.
  * @param db data source helper.
  * @param msfaa test input data.
- * @returns a saved MSFAA record that used th input
- * test data to be created.
+ * @returns a saved MSFAA record that uses the input test
+ * data to be created.
  */
 export async function saveMSFAATestInputData(
   db: E2EDataSources,
