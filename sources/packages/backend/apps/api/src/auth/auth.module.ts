@@ -26,6 +26,7 @@ import {
   SINValidationGuard,
   RequiresStudentAccountGuard,
   InstitutionBCPublicGuard,
+  InstitutionStudentDataAccessGuard,
 } from "./guards";
 import { RolesGuard } from "./guards/roles.guard";
 import { ConfigModule } from "@sims/utilities/config";
@@ -93,6 +94,7 @@ const jwtModule = JwtModule.register({
       useClass: SINValidationGuard,
     },
     { provide: APP_GUARD, useClass: InstitutionBCPublicGuard },
+    { provide: APP_GUARD, useClass: InstitutionStudentDataAccessGuard },
   ],
   exports: [jwtModule, TokensService, KeycloakService],
 })

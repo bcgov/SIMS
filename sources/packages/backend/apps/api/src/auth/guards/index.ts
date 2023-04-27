@@ -2,6 +2,7 @@ export * from "./authorized-parties.guard";
 export * from "./institution/institution-admin.guard";
 export * from "./institution/institution-location.guard";
 export * from "./institution/institution-bc-public.guard";
+export * from "./institution/institution-student-data-access.guard";
 export * from "./jwt-auth.guard";
 export * from "./active-user.guard";
 export * from "./groups.guard";

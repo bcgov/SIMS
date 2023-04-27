@@ -16,6 +16,7 @@ import {
   AllowAuthorizedParty,
   UserToken,
   IsBcPublicInstitution,
+  HasStudentDataAccess,
 } from "../../auth/decorators";
 import BaseController from "../BaseController";
 import {
@@ -71,6 +72,7 @@ export class StudentInstitutionsController extends BaseController {
    * @param studentId student.
    * @returns student profile details.
    */
+  @HasStudentDataAccess("studentId")
   @Get(":studentId")
   @ApiNotFoundResponse({ description: "Student not found." })
   async getStudentProfile(
@@ -84,6 +86,7 @@ export class StudentInstitutionsController extends BaseController {
    * @param studentId student id.
    * @returns list of student documents.
    */
+  @HasStudentDataAccess("studentId")
   @Get(":studentId/documents")
   async getInstitutionStudentFiles(
     @Param("studentId", ParseIntPipe) studentId: number,
