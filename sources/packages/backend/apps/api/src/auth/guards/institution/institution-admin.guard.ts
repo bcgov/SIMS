@@ -1,9 +1,8 @@
 import { Injectable, CanActivate, ExecutionContext } from "@nestjs/common";
 import { Reflector } from "@nestjs/core";
 import { InstitutionUserAuthorizations } from "../../../services/institution-user-auth/institution-user-auth.models";
-import { AuthorizedParties } from "../../authorized-parties.enum";
+import { AuthorizedParties, InstitutionUserRoles } from "../..";
 import { IS_INSTITUTION_ADMIN_KEY } from "../../decorators/institution/institution-admin.decorator";
-import { InstitutionUserRoles } from "../../user-types.enum";
 
 /**
  * Inspect the token to check if the user has institution admin rights.

@@ -22,19 +22,13 @@ export class InstitutionType extends RecordDataModel {
    * Is the institution type BC Private.
    */
   get isBCPrivate(): boolean {
-    if (INSTITUTION_TYPE_BC_PRIVATE === this.id) {
-      return true;
-    }
-    return false;
+    return INSTITUTION_TYPE_BC_PRIVATE === this.id;
   }
 
   /**
    * Is the institution type BC Public.
    */
   get isBCPublic(): boolean {
-    if (INSTITUTION_TYPE_BC_PUBLIC === this.id) {
-      return true;
-    }
-    return false;
+    return INSTITUTION_TYPE_BC_PUBLIC === this.id;
   }
 }

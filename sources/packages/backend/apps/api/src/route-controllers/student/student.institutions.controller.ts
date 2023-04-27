@@ -15,7 +15,7 @@ import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import {
   AllowAuthorizedParty,
   UserToken,
-  IsBcPublicInstitution,
+  IsBCPublicInstitution,
   HasStudentDataAccess,
 } from "../../auth/decorators";
 import BaseController from "../BaseController";
@@ -32,7 +32,7 @@ import { StudentControllerService } from "./student.controller.service";
  * Student controller for institutions.
  */
 @AllowAuthorizedParty(AuthorizedParties.institution)
-@IsBcPublicInstitution()
+@IsBCPublicInstitution()
 @Controller("student")
 @ApiTags(`${ClientTypeBaseRoute.Institution}-student`)
 export class StudentInstitutionsController extends BaseController {

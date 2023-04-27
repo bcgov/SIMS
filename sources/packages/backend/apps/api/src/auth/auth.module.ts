@@ -93,8 +93,14 @@ const jwtModule = JwtModule.register({
       provide: APP_GUARD,
       useClass: SINValidationGuard,
     },
-    { provide: APP_GUARD, useClass: InstitutionBCPublicGuard },
-    { provide: APP_GUARD, useClass: InstitutionStudentDataAccessGuard },
+    {
+      provide: APP_GUARD,
+      useClass: InstitutionBCPublicGuard,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: InstitutionStudentDataAccessGuard,
+    },
   ],
   exports: [jwtModule, TokensService, KeycloakService],
 })
