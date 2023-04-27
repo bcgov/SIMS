@@ -16,7 +16,6 @@ import * as Client from "ssh2-sftp-client";
 import { In, IsNull } from "typeorm";
 import { saveMSFAATestInputsData } from "./msfaa-factory";
 import {
-  MSFAATestInputData,
   MSFAA_PART_TIME_MARRIED,
   MSFAA_PART_TIME_OTHER_COUNTRY,
   MSFAA_PART_TIME_RELATIONSHIP_OTHER,
