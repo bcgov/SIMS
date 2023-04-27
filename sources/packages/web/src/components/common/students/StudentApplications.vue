@@ -31,7 +31,7 @@
         <Column :field="StudentApplicationFields.ApplicationName" header="Name">
           <template #body="slotProps">
             <v-btn
-              v-if="clientType === ClientIdType.Student"
+              v-if="enableViewApplicationOnName"
               variant="plain"
               @click="$emit('goToApplication', slotProps.data.id)"
               color="primary"
@@ -41,11 +41,7 @@
               >
             </v-btn>
 
-            <span
-              v-if="
-                clientType === ClientIdType.AEST ||
-                clientType === ClientIdType.Institution
-              "
+            <span v-if="!enableViewApplicationOnName"
               >{{ slotProps.data.applicationName }}
             </span>
           </template>
@@ -76,7 +72,7 @@
         </Column>
         <Column :field="StudentApplicationFields.Actions" header="Actions">
           <template #body="slotProps">
-            <span v-if="clientType === ClientIdType.Student">
+            <span v-if="manageApplicationBtns">
               <span
                 v-if="
                   !(
@@ -117,12 +113,7 @@
                 </v-btn>
               </span>
             </span>
-            <span
-              v-if="
-                clientType === ClientIdType.AEST ||
-                clientType === ClientIdType.Institution
-              "
-            >
+            <span v-if="enableViewApplicationBtn">
               <v-btn
                 variant="outlined"
                 @click="$emit('goToApplication', slotProps.data.id)"
@@ -145,14 +136,12 @@ import {
   DataTableSortOrder,
   PAGINATION_LIST,
   StudentApplicationFields,
-  ClientIdType,
   SINStatusEnum,
 } from "@/types";
 import { ApplicationService } from "@/services/ApplicationService";
 import { useFormatters } from "@/composables";
 import StatusChipApplication from "@/components/generic/StatusChipApplication.vue";
 import { useStore } from "vuex";
-import { AuthService } from "@/services/AuthService";
 import {
   ApplicationSummaryAPIOutDTO,
   PaginatedResultsAPIOutDTO,
@@ -166,6 +155,21 @@ export default defineComponent({
       type: Number,
       required: false,
     },
+    enableViewApplicationBtn: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
+    manageApplicationBtns: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
+    enableViewApplicationOnName: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
   },
   setup(props, { emit }) {
     const loading = ref(false);
@@ -177,8 +181,6 @@ export default defineComponent({
     const currentPageLimit = ref();
     const { dateOnlyLongString } = useFormatters();
     const store = useStore();
-
-    const clientType = computed(() => AuthService.shared.authClientType);
 
     const sinValidStatus = computed(
       () => store.state.student.sinValidStatus.sinStatus,
@@ -243,11 +245,9 @@ export default defineComponent({
       loading,
       defaultSortOrder,
       StudentApplicationFields,
-      ClientIdType,
       reloadApplications,
       SINStatusEnum,
       sinValidStatus,
-      clientType,
       emitCancel,
     };
   },

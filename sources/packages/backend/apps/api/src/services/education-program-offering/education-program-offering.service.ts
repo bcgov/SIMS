@@ -34,7 +34,6 @@ import {
   EducationProgramOfferingBasicData,
 } from "./education-program-offering.service.models";
 import {
-  FieldSortOrder,
   sortOfferingsColumnMap,
   PaginationOptions,
   PaginatedResults,
@@ -45,6 +44,7 @@ import {
   CustomNamedError,
   dateDifference,
   decimalRound,
+  FieldSortOrder,
   QueueNames,
 } from "@sims/utilities";
 import {

@@ -30,10 +30,9 @@ import {
   PIR_OR_DATE_OVERLAP_ERROR,
   PaginationOptions,
   PaginatedResults,
-  FieldSortOrder,
   OrderByCondition,
 } from "../../utilities";
-import { CustomNamedError, QueueNames } from "@sims/utilities";
+import { CustomNamedError, FieldSortOrder, QueueNames } from "@sims/utilities";
 import {
   SFASApplicationService,
   SFASPartTimeApplicationsService,

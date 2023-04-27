@@ -85,6 +85,7 @@ export class StudentInstitutionsController extends BaseController {
   /**
    * Get the list of applications that belongs to a student for the institution.
    * TODO: Authorization must be enabled to validate if the student has submitted
+   * at least one application for the institution of the user.
    * @param studentId student.
    * @returns list of applications that belongs to a student for the institution.
    */

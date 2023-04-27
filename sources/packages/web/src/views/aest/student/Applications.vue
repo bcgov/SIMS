@@ -1,6 +1,7 @@
 <template>
   <tab-container>
     <student-applications
+      :enable-view-application-btn="true"
       :studentId="studentId"
       @goToApplication="goToApplication"
     />

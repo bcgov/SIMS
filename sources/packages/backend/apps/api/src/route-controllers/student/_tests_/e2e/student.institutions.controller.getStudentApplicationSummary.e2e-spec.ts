@@ -4,7 +4,6 @@ import { DataSource, Repository } from "typeorm";
 import {
   authorizeUserTokenForLocation,
   BEARER_AUTH_TYPE,
-  createFakeLocation,
   createTestingAppModule,
   getAuthRelatedEntities,
   getInstitutionToken,
@@ -12,10 +11,8 @@ import {
 } from "../../../../testHelpers";
 import {
   createFakeInstitutionLocation,
-  createFakeApplication,
   saveFakeStudent,
-  createFakeStudentAssessment,
-  createFakeEducationProgramOffering,
+  saveFakeApplication,
 } from "@sims/test-utils";
 import {
   Application,
@@ -23,15 +20,15 @@ import {
   EducationProgramOffering,
   Institution,
   InstitutionLocation,
-  OfferingIntensity,
   StudentAssessment,
 } from "@sims/sims-db";
+import { FieldSortOrder } from "@sims/utilities";
 
 describe("StudentInstitutionsController(e2e)-getStudentApplicationSummary", () => {
   let app: INestApplication;
   let appDataSource: DataSource;
-  let collegeC: Institution;
-  let collegeCLocation: InstitutionLocation;
+  let collegeF: Institution;
+  let collegeFLocation: InstitutionLocation;
   let applicationRepo: Repository<Application>;
   let studentAssessmentRepo: Repository<StudentAssessment>;
   let institutionLocationRepo: Repository<InstitutionLocation>;
@@ -44,14 +41,14 @@ describe("StudentInstitutionsController(e2e)-getStudentApplicationSummary", () =
     // College C.
     const { institution } = await getAuthRelatedEntities(
       appDataSource,
-      InstitutionTokenTypes.CollegeCUser,
+      InstitutionTokenTypes.CollegeFUser,
     );
-    collegeC = institution;
-    collegeCLocation = createFakeInstitutionLocation(collegeC);
+    collegeF = institution;
+    collegeFLocation = createFakeInstitutionLocation(collegeF);
     await authorizeUserTokenForLocation(
       appDataSource,
-      InstitutionTokenTypes.CollegeCUser,
-      collegeCLocation,
+      InstitutionTokenTypes.CollegeFUser,
+      collegeFLocation,
     );
     applicationRepo = appDataSource.getRepository(Application);
     studentAssessmentRepo = dataSource.getRepository(StudentAssessment);
@@ -61,37 +58,22 @@ describe("StudentInstitutionsController(e2e)-getStudentApplicationSummary", () =
     institutionLocationRepo = dataSource.getRepository(InstitutionLocation);
   });
 
-  it("Should get the student application details as summary when student has a submitted application for the institution (application with location id saved).", async () => {
+  it("Should get the student application details as summary when student has a submitted application \
+  for the institution (application with location id saved).", async () => {
     // Arrange
 
     // Student has a submitted application to the institution.
     const student = await saveFakeStudent(appDataSource);
-    const application = createFakeApplication({
-      location: collegeCLocation,
+
+    const savedApplication = await saveFakeApplication(appDataSource, {
+      institution: collegeF,
+      institutionLocation: collegeFLocation,
       student,
     });
-    const savedApplication = await applicationRepo.save(application);
-    // Original assessment.
-    const fakeOriginalAssessment = createFakeStudentAssessment({
-      auditUser: student.user,
-    });
-    fakeOriginalAssessment.application = savedApplication;
-    // Offering.
-    const fakeOffering = createFakeEducationProgramOffering({
-      auditUser: student.user,
-    });
-    fakeOffering.offeringIntensity = OfferingIntensity.fullTime;
-    const savedOffering = await educationProgramOfferingRepo.save(fakeOffering);
-    fakeOriginalAssessment.offering = savedOffering;
-    const savedOriginalAssessment = await studentAssessmentRepo.save(
-      fakeOriginalAssessment,
-    );
-    savedApplication.currentAssessment = savedOriginalAssessment;
-    await applicationRepo.save(savedApplication);
 
     const endpoint = `/institutions/student/${student.id}/application-summary?page=0&pageLimit=10`;
     const institutionUserToken = await getInstitutionToken(
-      InstitutionTokenTypes.CollegeCUser,
+      InstitutionTokenTypes.CollegeFUser,
     );
 
     // Act/Assert
@@ -102,34 +84,48 @@ describe("StudentInstitutionsController(e2e)-getStudentApplicationSummary", () =
       .expect({
         results: [
           {
-            id: application.id,
-            applicationNumber: application.applicationNumber,
+            id: savedApplication.id,
+            applicationNumber: savedApplication.applicationNumber,
             studyStartPeriod:
-              application.currentAssessment.offering.studyStartDate,
-            studyEndPeriod: application.currentAssessment.offering.studyEndDate,
+              savedApplication.currentAssessment.offering.studyStartDate,
+            studyEndPeriod:
+              savedApplication.currentAssessment.offering.studyEndDate,
             applicationName: "Financial Aid Application",
-            status: application.applicationStatus,
+            status: savedApplication.applicationStatus,
           },
         ],
         count: 1,
       });
   });
 
-  it("Should get an empty array as application summary when student has a draft application for the institution (application without the location id saved(i.e draft/cancelled draft status)).", async () => {
+  it("Should get the first submitted student application details as summary when student has two submitted/Inprogress \
+  application for the institution (application with location id saved) when pagination is 1.", async () => {
     // Arrange
 
-    // Student has a draft application to the institution.
+    // Student has one submitted and one inprogress application to the institution.
     const student = await saveFakeStudent(appDataSource);
-    const application = createFakeApplication({
+    // Application 1.
+    const savedApplication1 = await saveFakeApplication(appDataSource, {
+      institution: collegeF,
+      institutionLocation: collegeFLocation,
       student,
     });
-    application.data.selectedLocation = collegeCLocation.id;
-    application.applicationStatus = ApplicationStatus.Draft;
-    await applicationRepo.save(application);
 
-    const endpoint = `/institutions/student/${student.id}/application-summary?page=0&pageLimit=10`;
+    // Application 2.
+    await saveFakeApplication(
+      appDataSource,
+      {
+        institution: collegeF,
+        institutionLocation: collegeFLocation,
+        student,
+      },
+      { applicationStatus: ApplicationStatus.InProgress },
+    );
+
+    // By default the application is sorted by status.
+    const endpoint = `/institutions/student/${student.id}/application-summary?page=0&pageLimit=1`;
     const institutionUserToken = await getInstitutionToken(
-      InstitutionTokenTypes.CollegeCUser,
+      InstitutionTokenTypes.CollegeFUser,
     );
 
     // Act/Assert
@@ -138,40 +134,54 @@ describe("StudentInstitutionsController(e2e)-getStudentApplicationSummary", () =
       .auth(institutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
       .expect({
-        results: [],
-        count: 0,
+        results: [
+          {
+            id: savedApplication1.id,
+            applicationNumber: savedApplication1.applicationNumber,
+            studyStartPeriod:
+              savedApplication1.currentAssessment.offering.studyStartDate,
+            studyEndPeriod:
+              savedApplication1.currentAssessment.offering.studyEndDate,
+            applicationName: "Financial Aid Application",
+            status: savedApplication1.applicationStatus,
+          },
+        ],
+        count: 2,
       });
   });
 
-  it("Should get an empty array as application summary when student has a submitted application in a different location.", async () => {
+  it(`Should get all the two student application details in ${FieldSortOrder.DESC} order of application number \
+  as summary when student has two submitted/Inprogress application for the institution (application with location id saved)\
+  and when sortField= is application number and sortOrder is ${FieldSortOrder.DESC}. `, async () => {
     // Arrange
 
-    // Student has a submitted application in a different location.
+    // Student has a submitted application to the institution.
     const student = await saveFakeStudent(appDataSource);
-    const fakeInstitutionLocation = createFakeLocation();
-    const savedFakeInstitutionLocation = await institutionLocationRepo.save(
-      fakeInstitutionLocation,
-    );
-    const application = createFakeApplication({
-      location: savedFakeInstitutionLocation,
+    // Application 1.
+    const savedApplication1 = await saveFakeApplication(appDataSource, {
+      institution: collegeF,
+      institutionLocation: collegeFLocation,
       student,
     });
-    const savedApplication = await applicationRepo.save(application);
 
-    // Original assessment.
-    const fakeOriginalAssessment = createFakeStudentAssessment({
-      auditUser: student.user,
-    });
-    fakeOriginalAssessment.application = savedApplication;
-    const savedOriginalAssessment = await studentAssessmentRepo.save(
-      fakeOriginalAssessment,
+    // Application 2.
+    const savedApplication2 = await saveFakeApplication(
+      appDataSource,
+      {
+        institution: collegeF,
+        institutionLocation: collegeFLocation,
+        student,
+      },
+      { applicationStatus: ApplicationStatus.InProgress },
     );
-    savedApplication.currentAssessment = savedOriginalAssessment;
-    await applicationRepo.save(savedApplication);
 
-    const endpoint = `/institutions/student/${student.id}/application-summary?page=0&pageLimit=10`;
+    savedApplication1.applicationNumber = "1000000000";
+    savedApplication2.applicationNumber = "1000000001";
+    await applicationRepo.save([savedApplication1, savedApplication2]);
+
+    const endpoint = `/institutions/student/${student.id}/application-summary?page=0&pageLimit=10&sortField=applicationNumber&sortOrder=${FieldSortOrder.DESC}`;
     const institutionUserToken = await getInstitutionToken(
-      InstitutionTokenTypes.CollegeCUser,
+      InstitutionTokenTypes.CollegeFUser,
     );
 
     // Act/Assert
@@ -180,8 +190,29 @@ describe("StudentInstitutionsController(e2e)-getStudentApplicationSummary", () =
       .auth(institutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
       .expect({
-        results: [],
-        count: 0,
+        results: [
+          {
+            id: savedApplication2.id,
+            applicationNumber: savedApplication2.applicationNumber,
+            studyStartPeriod:
+              savedApplication2.currentAssessment.offering.studyStartDate,
+            studyEndPeriod:
+              savedApplication2.currentAssessment.offering.studyEndDate,
+            applicationName: "Financial Aid Application",
+            status: savedApplication2.applicationStatus,
+          },
+          {
+            id: savedApplication1.id,
+            applicationNumber: savedApplication1.applicationNumber,
+            studyStartPeriod:
+              savedApplication1.currentAssessment.offering.studyStartDate,
+            studyEndPeriod:
+              savedApplication1.currentAssessment.offering.studyEndDate,
+            applicationName: "Financial Aid Application",
+            status: savedApplication1.applicationStatus,
+          },
+        ],
+        count: 2,
       });
   });
 
