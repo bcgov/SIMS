@@ -15,7 +15,7 @@ import * as dayjs from "dayjs";
  */
 export function getMSFAASequenceGroupName(
   offeringIntensity: OfferingIntensity,
-) {
+): string {
   return `MSFAA_${offeringIntensity}_SENT_FILE_${getISODateOnlyString(
     new Date(),
   )}`;

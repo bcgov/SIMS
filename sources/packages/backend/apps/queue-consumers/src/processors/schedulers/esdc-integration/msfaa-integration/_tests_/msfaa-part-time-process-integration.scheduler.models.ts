@@ -55,7 +55,7 @@ export const MSFAA_PART_TIME_OTHER_COUNTRY: MSFAATestInputData = {
   addressLine1: "Address Line 1",
   addressLine2: undefined,
   city: "Some city on United States",
-  provinceState: "BC",
+  provinceState: undefined,
   postalCode: undefined,
   country: "United States",
   phone: "222222222222222",

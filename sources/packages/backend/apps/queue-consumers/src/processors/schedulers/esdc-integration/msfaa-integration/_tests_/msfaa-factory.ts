@@ -52,7 +52,7 @@ export async function saveMSFAATestInputData(
     sinValidation,
   });
   // Application, offering, location.
-  const referenceApplication = await saveFakeApplication(db.dataSource, {});
+  const referenceApplication = await saveFakeApplication(db.dataSource);
   referenceApplication.relationshipStatus = msfaaDataInput.maritalStatus;
   await db.application.save(referenceApplication);
   const offering = referenceApplication.currentAssessment.offering;
