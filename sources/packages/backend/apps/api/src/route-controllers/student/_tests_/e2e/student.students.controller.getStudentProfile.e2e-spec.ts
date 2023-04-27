@@ -6,11 +6,11 @@ import {
   createTestingAppModule,
   FakeStudentUsersTypes,
   getStudentToken,
+  mockUserLoginInfo,
 } from "../../../../testHelpers";
 import { saveFakeStudent } from "@sims/test-utils";
 import { determinePDStatus, getUserFullName } from "../../../../utilities";
 import { TestingModule } from "@nestjs/testing";
-import { mockUserLoginInfo } from "apps/api/src/testHelpers/auth/student-user-helper";
 
 describe("StudentInstitutionsController(e2e)-searchStudents", () => {
   let app: INestApplication;

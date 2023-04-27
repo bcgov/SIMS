@@ -18,9 +18,9 @@ import {
   createTestingAppModule,
   FakeStudentUsersTypes,
   getStudentToken,
+  mockUserLoginInfo,
 } from "../../../../testHelpers";
 import { TestingModule } from "@nestjs/testing";
-import { mockUserLoginInfo } from "apps/api/src/testHelpers/auth/student-user-helper";
 
 describe("OverawardStudentsController(e2e)-getOverawardsByStudent", () => {
   let app: INestApplication;
