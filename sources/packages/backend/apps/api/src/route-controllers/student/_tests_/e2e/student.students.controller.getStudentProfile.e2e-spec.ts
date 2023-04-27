@@ -12,7 +12,7 @@ import { saveFakeStudent } from "@sims/test-utils";
 import { determinePDStatus, getUserFullName } from "../../../../utilities";
 import { TestingModule } from "@nestjs/testing";
 
-describe("StudentInstitutionsController(e2e)-searchStudents", () => {
+describe("StudentInstitutionsController(e2e)-getStudentProfile", () => {
   let app: INestApplication;
   let appDataSource: DataSource;
   let appModule: TestingModule;
