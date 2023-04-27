@@ -11,6 +11,7 @@ import {
 } from "@sims/test-utils";
 import { QueueModule } from "@sims/services/queue";
 import { ZeebeModule } from "@sims/services";
+import { DiscoveryModule } from "@golevelup/nestjs-discovery";
 
 /**
  * Result from a createTestingModule to support E2E tests creation.
@@ -39,7 +40,7 @@ export async function createTestingAppModule(): Promise<CreateTestingModuleResul
   );
   await KeycloakConfig.load();
   const module: TestingModule = await Test.createTestingModule({
-    imports: [AppModule],
+    imports: [AppModule, DiscoveryModule],
   }).compile();
   const nestApplication = module.createNestApplication();
   setGlobalPipes(nestApplication);
