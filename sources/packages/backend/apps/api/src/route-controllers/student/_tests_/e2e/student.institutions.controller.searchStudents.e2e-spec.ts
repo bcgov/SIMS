@@ -320,23 +320,15 @@ describe("StudentInstitutionsController(e2e)-searchStudents", () => {
 
   it("Should not find the student when student does not have an application for that institution.", async () => {
     // Arrange
-    const { application } = await saveStudentWithApplicationForCollegeF(
-      ApplicationStatus.Submitted,
-    );
-
     const { institution: collegeC } = await getAuthRelatedEntities(
       appDataSource,
       InstitutionTokenTypes.CollegeCUser,
     );
     const collegeCLocation = createFakeInstitutionLocation(collegeC);
-    await authorizeUserTokenForLocation(
-      appDataSource,
-      InstitutionTokenTypes.CollegeCUser,
-      collegeCLocation,
-    );
-    const collegeCInstitutionUserToken = await getInstitutionToken(
-      InstitutionTokenTypes.CollegeCUser,
-    );
+    const application = await saveFakeApplication(appDataSource, {
+      institutionLocation: collegeCLocation,
+    });
+
     const searchPayload = {
       appNumber: application.applicationNumber,
       firstName: "",
@@ -348,7 +340,7 @@ describe("StudentInstitutionsController(e2e)-searchStudents", () => {
     await request(app.getHttpServer())
       .post(endpoint)
       .send(searchPayload)
-      .auth(collegeCInstitutionUserToken, BEARER_AUTH_TYPE)
+      .auth(collegeFInstitutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
       .expect([]);
   });
