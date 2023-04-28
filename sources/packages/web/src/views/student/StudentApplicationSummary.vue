@@ -10,7 +10,7 @@
     <v-row>
       <v-col cols="12">
         <student-applications
-          :manage-application-btns="true"
+          :manage-application="true"
           :enable-view-application-on-name="true"
           @editApplicationAction="editApplicationAction"
           @openConfirmCancel="confirmCancelApplication"

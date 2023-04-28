@@ -2,7 +2,7 @@
   <tab-container>
     <student-applications
       :studentId="studentId"
-      :enable-view-application-btn="true"
+      :enable-view-application="true"
     />
   </tab-container>
 </template>

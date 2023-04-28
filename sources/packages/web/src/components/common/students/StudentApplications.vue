@@ -72,7 +72,7 @@
         </Column>
         <Column :field="StudentApplicationFields.Actions" header="Actions">
           <template #body="slotProps">
-            <span v-if="manageApplicationBtns">
+            <span v-if="manageApplication">
               <span
                 v-if="
                   !(
@@ -113,7 +113,7 @@
                 </v-btn>
               </span>
             </span>
-            <span v-if="enableViewApplicationBtn">
+            <span v-if="enableViewApplication">
               <v-btn
                 variant="outlined"
                 @click="$emit('goToApplication', slotProps.data.id)"
@@ -155,12 +155,12 @@ export default defineComponent({
       type: Number,
       required: false,
     },
-    enableViewApplicationBtn: {
+    enableViewApplication: {
       type: Boolean,
       required: false,
       default: false,
     },
-    manageApplicationBtns: {
+    manageApplication: {
       type: Boolean,
       required: false,
       default: false,

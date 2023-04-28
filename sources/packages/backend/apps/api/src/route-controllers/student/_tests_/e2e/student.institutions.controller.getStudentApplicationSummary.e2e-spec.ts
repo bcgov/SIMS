@@ -93,7 +93,7 @@ describe("StudentInstitutionsController(e2e)-getStudentApplicationSummary", () =
 
   it(
     "Should get the first submitted student application details as summary when student has two submitted/Inprogress " +
-      "application for the institution (application with location id saved) when pagination is 1.",
+      "application for the institution when pagination is 1.",
     async () => {
       // Arrange
 
@@ -148,7 +148,7 @@ describe("StudentInstitutionsController(e2e)-getStudentApplicationSummary", () =
 
   it(
     `Should get all the two student application details in ${FieldSortOrder.DESC} order of application number ` +
-      "as summary when student has two submitted/Inprogress application for the institution (application with location id saved) " +
+      "as summary when student has two submitted/Inprogress application for the institution " +
       `and when sortField= is application number and sortOrder is ${FieldSortOrder.DESC}. `,
     async () => {
       // Arrange
