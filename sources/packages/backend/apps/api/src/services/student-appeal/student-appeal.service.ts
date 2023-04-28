@@ -21,13 +21,12 @@ import {
 } from "./student-appeal.model";
 import { StudentAppealRequestsService } from "../student-appeal-request/student-appeal-request.service";
 import {
-  FieldSortOrder,
   PaginatedResults,
   PaginationOptions,
   SortPriority,
   OrderByCondition,
 } from "../../utilities";
-import { CustomNamedError } from "@sims/utilities";
+import { CustomNamedError, FieldSortOrder } from "@sims/utilities";
 import {
   STUDENT_APPEAL_INVALID_OPERATION,
   STUDENT_APPEAL_NOT_FOUND,

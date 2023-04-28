@@ -3,7 +3,6 @@ import {
   COE_WINDOW,
   COE_DENIED_REASON_OTHER_ID,
   PaginationOptions,
-  FieldSortOrder,
   PaginatedResults,
   OrderByCondition,
 } from "../../utilities";
@@ -12,6 +11,7 @@ import {
   getISODateOnlyString,
   isBetweenPeriod,
   isBeforeDate,
+  FieldSortOrder,
 } from "@sims/utilities";
 import { DataSource, UpdateResult, Brackets, EntityManager } from "typeorm";
 import { SequenceControlService } from "@sims/services";

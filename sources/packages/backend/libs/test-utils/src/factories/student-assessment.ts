@@ -25,7 +25,7 @@ export function createFakeStudentAssessment(relations?: {
   assessment.triggerType = AssessmentTriggerType.OriginalAssessment;
   assessment.offering =
     relations?.offering ??
-    createFakeEducationProgramOffering({ auditUser: relations.auditUser });
+    createFakeEducationProgramOffering({ auditUser: relations?.auditUser });
   assessment.studentAppeal = null;
   assessment.studentScholasticStanding = null;
   assessment.noaApprovalStatus = null;
