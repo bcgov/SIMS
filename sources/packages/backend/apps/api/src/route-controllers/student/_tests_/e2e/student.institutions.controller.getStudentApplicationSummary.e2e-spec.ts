@@ -4,6 +4,7 @@ import { DataSource, Repository } from "typeorm";
 import {
   authorizeUserTokenForLocation,
   BEARER_AUTH_TYPE,
+  createFakeLocation,
   createTestingAppModule,
   getAuthRelatedEntities,
   getInstitutionToken,
@@ -34,11 +35,10 @@ describe("StudentInstitutionsController(e2e)-getStudentApplicationSummary", () =
     app = nestApplication;
     appDataSource = dataSource;
     // College F.
-    const { institution } = await getAuthRelatedEntities(
+    const { institution: collegeF } = await getAuthRelatedEntities(
       appDataSource,
       InstitutionTokenTypes.CollegeFUser,
     );
-    collegeF = institution;
     collegeFLocation = createFakeInstitutionLocation(collegeF);
     await authorizeUserTokenForLocation(
       appDataSource,
@@ -84,6 +84,56 @@ describe("StudentInstitutionsController(e2e)-getStudentApplicationSummary", () =
                 savedApplication.currentAssessment.offering.studyEndDate,
               applicationName: "Financial Aid Application",
               status: savedApplication.applicationStatus,
+            },
+          ],
+          count: 1,
+        });
+    },
+  );
+
+  it(
+    "Should get the student application details belonging to the required institution as summary when student has a submitted application" +
+      "for the institution and another submitted application in another institution.",
+    async () => {
+      // Arrange
+
+      // Student has a submitted application to the institution.
+      const student = await saveFakeStudent(appDataSource);
+      // Application 1 for college F.
+      const savedApplication1 = await saveFakeApplication(appDataSource, {
+        institution: collegeF,
+        institutionLocation: collegeFLocation,
+        student,
+      });
+
+      // Application 2 for another college.
+      const fakeInstitutionLocation = createFakeLocation();
+      await saveFakeApplication(appDataSource, {
+        institutionLocation: fakeInstitutionLocation,
+        student,
+      });
+
+      const endpoint = `/institutions/student/${student.id}/application-summary?page=0&pageLimit=10`;
+      const institutionUserToken = await getInstitutionToken(
+        InstitutionTokenTypes.CollegeFUser,
+      );
+
+      // Act/Assert
+      await request(app.getHttpServer())
+        .get(endpoint)
+        .auth(institutionUserToken, BEARER_AUTH_TYPE)
+        .expect(HttpStatus.OK)
+        .expect({
+          results: [
+            {
+              id: savedApplication1.id,
+              applicationNumber: savedApplication1.applicationNumber,
+              studyStartPeriod:
+                savedApplication1.currentAssessment.offering.studyStartDate,
+              studyEndPeriod:
+                savedApplication1.currentAssessment.offering.studyEndDate,
+              applicationName: "Financial Aid Application",
+              status: savedApplication1.applicationStatus,
             },
           ],
           count: 1,
