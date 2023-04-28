@@ -24,3 +24,4 @@ export * from "./mocks/zeebe-client-mock";
 export * from "./mocks/ssh-service-mock";
 export * from "./mocks/queue-module-mock";
 export * from "./modules/modules-utils";
+export * from "./data-source/e2e-data-source";

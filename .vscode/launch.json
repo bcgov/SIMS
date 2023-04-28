@@ -30,7 +30,8 @@
         "program": "${workspaceFolder}/sources/packages/backend/node_modules/jest/bin/jest"
       },
       "env": {
-        "ENVIRONMENT": "test"
+        "ENVIRONMENT": "test",
+        "TZ": "UTC"
       }
     },
     {
@@ -51,7 +52,8 @@
         "program": "${workspaceFolder}/sources/packages/backend/node_modules/jest/bin/jest"
       },
       "env": {
-        "ENVIRONMENT": "test"
+        "ENVIRONMENT": "test",
+        "TZ": "UTC"
       }
     },
     {
@@ -73,7 +75,8 @@
         "program": "${workspaceFolder}/sources/packages/backend/node_modules/jest/bin/jest"
       },
       "env": {
-        "ENVIRONMENT": "test"
+        "ENVIRONMENT": "test",
+        "TZ": "UTC"
       }
     },
     {
@@ -94,7 +97,8 @@
         "program": "${workspaceFolder}/sources/packages/backend/node_modules/jest/bin/jest"
       },
       "env": {
-        "ENVIRONMENT": "test"
+        "ENVIRONMENT": "test",
+        "TZ": "UTC"
       }
     },
     {
@@ -116,7 +120,8 @@
         "program": "${workspaceFolder}/sources/packages/backend/node_modules/jest/bin/jest"
       },
       "env": {
-        "ENVIRONMENT": "test"
+        "ENVIRONMENT": "test",
+        "TZ": "UTC"
       }
     },
     {
@@ -137,7 +142,8 @@
         "program": "${workspaceFolder}/sources/packages/backend/node_modules/jest/bin/jest"
       },
       "env": {
-        "ENVIRONMENT": "test"
+        "ENVIRONMENT": "test",
+        "TZ": "UTC"
       }
     }
   ]
