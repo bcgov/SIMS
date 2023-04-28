@@ -2,6 +2,7 @@ import * as Client from "ssh2-sftp-client";
 import { SshService } from "@sims/integrations/services";
 import { DeepMocked } from "@golevelup/ts-jest";
 import { END_OF_LINE } from "@sims/utilities";
+import { readFileSync } from "fs";
 
 export interface UploadedFile {
   remoteFilePath: string;
@@ -40,4 +41,17 @@ export function getUploadedFile(
     uploadedFile.remoteFilePath = remoteFilePath.toString();
   }
   return uploadedFile;
+}
+
+export function mockDownloadFiles(
+  sshClientMock: DeepMocked<Client>,
+  filePaths: string[],
+): void {
+  const fileInfos = filePaths.map(
+    (filePath) => ({ name: filePath } as Client.FileInfo),
+  );
+  sshClientMock.list.mockResolvedValue(fileInfos);
+  sshClientMock.get.mockImplementation((filePath: string) => {
+    return Promise.resolve(readFileSync(filePath));
+  });
 }
