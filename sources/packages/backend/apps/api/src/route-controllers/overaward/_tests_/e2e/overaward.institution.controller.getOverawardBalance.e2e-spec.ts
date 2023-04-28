@@ -1,14 +1,13 @@
 import { HttpStatus, INestApplication } from "@nestjs/common";
 import * as request from "supertest";
 import {
-  createFakeStudent,
   createFakeDisbursementOveraward,
+  saveFakeStudent,
 } from "@sims/test-utils";
-import { Repository } from "typeorm";
+import { DataSource, Repository } from "typeorm";
 import {
   DisbursementOveraward,
   DisbursementOverawardOriginType,
-  Student,
 } from "@sims/sims-db";
 
 import {
@@ -20,29 +19,29 @@ import {
 
 describe("OverawardInstitutionController(e2e)-getOverawardBalance", () => {
   let app: INestApplication;
-  let studentRepo: Repository<Student>;
+  let appDataSource: DataSource;
   let disbursementOverawardRepo: Repository<DisbursementOveraward>;
 
   beforeAll(async () => {
     const { nestApplication, dataSource } = await createTestingAppModule();
     app = nestApplication;
-    studentRepo = dataSource.getRepository(Student);
+    appDataSource = dataSource;
     disbursementOverawardRepo = dataSource.getRepository(DisbursementOveraward);
   });
 
-  it("Should return correct value for overaward balance", async () => {
-    // Arrange
-    const student = await studentRepo.save(createFakeStudent());
+  it("Should return correct value for overaward balance when student has some overawards", async () => {
+    // Arrange.
+    const student = await saveFakeStudent(appDataSource);
     // Create an overaward.
     const legacyOveraward = createFakeDisbursementOveraward({ student });
-    legacyOveraward.disbursementValueCode = "CSLF";
+    legacyOveraward.disbursementValueCode = "BCSL";
     legacyOveraward.overawardValue = 500;
     legacyOveraward.originType =
       DisbursementOverawardOriginType.LegacyOveraward;
     // Create a manual overaward deduction.
     const manualOveraward = createFakeDisbursementOveraward({ student });
-    manualOveraward.disbursementValueCode = "CSLF";
-    manualOveraward.overawardValue = -100;
+    manualOveraward.disbursementValueCode = "BCSL";
+    manualOveraward.overawardValue = -200;
     manualOveraward.originType = DisbursementOverawardOriginType.ManualRecord;
     // Persist the overawards.
     await disbursementOverawardRepo.save([legacyOveraward, manualOveraward]);
@@ -51,14 +50,12 @@ describe("OverawardInstitutionController(e2e)-getOverawardBalance", () => {
     );
     const endpoint = `/institutions/overaward/student/${student.id}/balance`;
 
-    // Act/Assert
+    // Act/Assert.
     await request(app.getHttpServer())
       .get(endpoint)
       .auth(institutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
-      .then((response) => {
-        expect(response.body.overawardBalanceValues.CSLF).toBe("400.00");
-      });
+      .expect({ overawardBalanceValues: { BCSL: "300.00" } });
   });
 
   afterAll(async () => {

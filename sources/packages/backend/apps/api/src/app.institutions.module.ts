@@ -43,7 +43,7 @@ import {
   EducationProgramOfferingControllerService,
   ConfirmationOfEnrollmentControllerService,
   StudentInstitutionsController,
-  OverawardInstitutionController,
+  OverawardInstitutionsController,
   StudentControllerService,
   OverawardControllerService,
 } from "./route-controllers";
@@ -79,7 +79,7 @@ import { UserControllerService } from "./route-controllers/user/user.controller.
     EducationProgramOfferingInstitutionsController,
     UserInstitutionsController,
     StudentInstitutionsController,
-    OverawardInstitutionController,
+    OverawardInstitutionsController,
   ],
   providers: [
     WorkflowClientService,

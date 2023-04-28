@@ -5,12 +5,11 @@ import {
   createFakeDisbursementOveraward,
   createFakeUser,
   createFakeStudentAssessment,
-  createFakeApplication,
+  saveFakeApplication,
 } from "@sims/test-utils";
-import { Repository } from "typeorm";
+import { Repository, DataSource } from "typeorm";
 import {
   Application,
-  AssessmentTriggerType,
   DisbursementOveraward,
   DisbursementOverawardOriginType,
   Student,
@@ -24,11 +23,11 @@ import {
   getInstitutionToken,
   InstitutionTokenTypes,
 } from "../../../../testHelpers";
-import { OverawardDetailsAPIOutDTO } from "../../models/overaward.dto";
 import { getUserFullName } from "../../../../utilities";
 
 describe("OverawardInstitutionController(e2e)-getOverawardsByStudent", () => {
   let app: INestApplication;
+  let appDataSource: DataSource;
   let userRepo: Repository<User>;
   let studentRepo: Repository<Student>;
   let assessmentRepo: Repository<StudentAssessment>;
@@ -38,6 +37,7 @@ describe("OverawardInstitutionController(e2e)-getOverawardsByStudent", () => {
   beforeAll(async () => {
     const { nestApplication, dataSource } = await createTestingAppModule();
     app = nestApplication;
+    appDataSource = dataSource;
     userRepo = dataSource.getRepository(User);
     studentRepo = dataSource.getRepository(Student);
     assessmentRepo = dataSource.getRepository(StudentAssessment);
@@ -45,16 +45,14 @@ describe("OverawardInstitutionController(e2e)-getOverawardsByStudent", () => {
     disbursementOverawardRepo = dataSource.getRepository(DisbursementOveraward);
   });
 
-  it("Should return student overawards", async () => {
-    // Arrange
+  it("Should return student overawards when student has some overawards", async () => {
+    // Arrange.
     const user = await userRepo.save(createFakeUser());
     const student = await studentRepo.save(createFakeStudent());
     // Prepare the student assessment to create overaward.
-    const application = await applicationRepo.save(
-      createFakeApplication({
-        student,
-      }),
-    );
+    const application = await saveFakeApplication(appDataSource, {
+      student,
+    });
     const studentAssessment = await assessmentRepo.save(
       createFakeStudentAssessment({ auditUser: user, application }),
     );
@@ -64,8 +62,8 @@ describe("OverawardInstitutionController(e2e)-getOverawardsByStudent", () => {
     const reassessmentOveraward = createFakeDisbursementOveraward({ student });
     reassessmentOveraward.studentAssessment = studentAssessment;
     reassessmentOveraward.creator = user;
-    reassessmentOveraward.disbursementValueCode = "CSLF";
-    reassessmentOveraward.overawardValue = 500;
+    reassessmentOveraward.disbursementValueCode = "CSLP";
+    reassessmentOveraward.overawardValue = 100;
     reassessmentOveraward.originType =
       DisbursementOverawardOriginType.ReassessmentOveraward;
     reassessmentOveraward.addedBy = user;
@@ -76,30 +74,22 @@ describe("OverawardInstitutionController(e2e)-getOverawardsByStudent", () => {
     );
     const endpoint = `/institutions/overaward/student/${student.id}`;
 
-    // Act/Assert
+    // Act/Assert.
     await request(app.getHttpServer())
       .get(endpoint)
       .auth(institutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
-      .then((response) => {
-        expect(response.body).toHaveLength(1);
-        const [overaward] = response.body as OverawardDetailsAPIOutDTO[];
-        expect(overaward.dateAdded).toBe(
-          reassessmentOveraward.addedDate.toISOString(),
-        );
-        expect(overaward.overawardOrigin).toBe(
-          DisbursementOverawardOriginType.ReassessmentOveraward,
-        );
-        expect(overaward.addedByUser).toBe(
-          getUserFullName(reassessmentOveraward.addedBy),
-        );
-        expect(overaward.applicationNumber).toBe(application.applicationNumber);
-        expect(overaward.assessmentTriggerType).toBe(
-          AssessmentTriggerType.OriginalAssessment,
-        );
-        expect(overaward.awardValueCode).toBe("CSLF");
-        expect(overaward.overawardValue).toBe(500);
-      });
+      .expect([
+        {
+          dateAdded: reassessmentOveraward.addedDate.toISOString(),
+          createdAt: reassessmentOveraward.createdAt.toISOString(),
+          overawardOrigin: reassessmentOveraward.originType,
+          awardValueCode: reassessmentOveraward.disbursementValueCode,
+          overawardValue: reassessmentOveraward.overawardValue,
+          applicationNumber: application.applicationNumber,
+          assessmentTriggerType: studentAssessment.triggerType,
+        },
+      ]);
   });
 
   afterAll(async () => {
