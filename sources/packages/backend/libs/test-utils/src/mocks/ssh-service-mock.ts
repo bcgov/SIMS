@@ -43,15 +43,36 @@ export function getUploadedFile(
   return uploadedFile;
 }
 
+/**
+ * Create the mocks to allow the simulation of a file download from
+ * the SFTP. Based on file names provided, real files content will be
+ * retrieved from the disk.
+ * When performing SFTP calls to request the files two methods are used.
+ * The first one (list) is used to retrieve the files available to be downloaded,
+ * the second one (get) will be actually returning the file content.
+ * This helper allows the mock of the list and get methods is a way the first one
+ * will provide the file name to the second one, allowing it to know which specific
+ * file should be retrieved from the disk.
+ * @param sshClientMock SSH client mock to have the list and get
+ * methods mocked.
+ * @param filePaths list of files to be returned from the disk.
+ * @param fileTransformation allow the file content to be manipulated
+ * before be returned from the SSH get method mock result.
+ */
 export function mockDownloadFiles(
   sshClientMock: DeepMocked<Client>,
   filePaths: string[],
+  fileTransformation?: (fileContent: string) => string,
 ): void {
   const fileInfos = filePaths.map(
     (filePath) => ({ name: filePath } as Client.FileInfo),
   );
   sshClientMock.list.mockResolvedValue(fileInfos);
   sshClientMock.get.mockImplementation((filePath: string) => {
-    return Promise.resolve(readFileSync(filePath));
+    let fileContent = readFileSync(filePath).toString();
+    if (fileTransformation) {
+      fileContent = fileTransformation(fileContent);
+    }
+    return Promise.resolve(fileContent);
   });
 }

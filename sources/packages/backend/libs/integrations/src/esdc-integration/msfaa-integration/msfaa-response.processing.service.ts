@@ -3,7 +3,10 @@ import { MSFAANumberService } from "@sims/integrations/services";
 import { OfferingIntensity } from "@sims/sims-db";
 import { LoggerService, InjectLogger } from "@sims/utilities/logger";
 import { ProcessSFTPResponseResult } from "../models/esdc-integration.model";
-import { MSFAASFTPResponseFile } from "./models/msfaa-integration.model";
+import {
+  MSFAASFTPResponseFile,
+  ReceivedStatusCode,
+} from "./models/msfaa-integration.model";
 import { MSFAAResponseCancelledRecord } from "./msfaa-files/msfaa-response-cancelled-record";
 import { MSFAAResponseReceivedRecord } from "./msfaa-files/msfaa-response-received-record";
 import { MSFAAIntegrationService } from "./msfaa.integration.service";
@@ -55,15 +58,19 @@ export class MSFAAResponseProcessingService {
       return result;
     }
 
+    result.processSummary.push("File contains:");
     result.processSummary.push(
-      `File contains ${responseFile.receivedRecords.length} received records and ${responseFile.cancelledRecords.length} cancelled records.`,
+      `Confirmed MSFAA (type ${ReceivedStatusCode.Received}): ${responseFile.receivedRecords.length}.`,
+    );
+    result.processSummary.push(
+      `Cancelled MSFAA (type ${ReceivedStatusCode.Cancelled}): ${responseFile.cancelledRecords.length}.`,
     );
 
     for (const receivedRecord of responseFile.receivedRecords) {
       try {
         await this.processReceivedRecord(receivedRecord);
         result.processSummary.push(
-          `Status record from line ${receivedRecord.lineNumber}.`,
+          `Record from line ${receivedRecord.lineNumber}, updated as confirmed.`,
         );
       } catch (error) {
         // Log the error but allow the process to continue.
@@ -76,7 +83,7 @@ export class MSFAAResponseProcessingService {
       try {
         await this.processCancelledRecord(cancelledRecord);
         result.processSummary.push(
-          `Status cancelled record from line ${cancelledRecord.lineNumber}.`,
+          `Record from line ${cancelledRecord.lineNumber}, updated as canceled.`,
         );
       } catch (error) {
         // Log the error but allow the process to continue.
