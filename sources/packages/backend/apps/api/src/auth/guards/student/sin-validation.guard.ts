@@ -1,8 +1,8 @@
 import { Injectable, CanActivate, ExecutionContext } from "@nestjs/common";
 import { Reflector } from "@nestjs/core";
-import { StudentService } from "../../services";
-import { CHECK_SIN_VALIDATION_KEY } from "../decorators/check-sin-status.decorator";
-import { IUserToken } from "../userToken.interface";
+import { StudentService } from "../../../services";
+import { CHECK_SIN_VALIDATION_KEY } from "../../decorators/student/check-sin-status.decorator";
+import { IUserToken } from "../../userToken.interface";
 /**
  * This guard validates an API for Valid SIN if it is decorated with @checkSinValidation.
  */

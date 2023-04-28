@@ -1,5 +1,5 @@
 import { SetMetadata } from "@nestjs/common";
-import { InstitutionUserRoles } from "../user-types.enum";
+import { InstitutionUserRoles } from "../../user-types.enum";
 
 export const IS_INSTITUTION_ADMIN_KEY = "is-institution-admin";
 

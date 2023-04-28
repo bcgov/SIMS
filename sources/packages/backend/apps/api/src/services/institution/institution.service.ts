@@ -12,8 +12,10 @@ import {
   NoteType,
   IdentityProviders,
   getUserFullNameLikeSearch,
+  Application,
+  ApplicationStatus,
 } from "@sims/sims-db";
-import { DataSource, EntityManager, IsNull, Repository } from "typeorm";
+import { DataSource, EntityManager, IsNull, Not, Repository } from "typeorm";
 import { InstitutionUserType, UserInfo } from "../../types";
 import { BCeIDService } from "../bceid/bceid.service";
 import { AccountDetails } from "../bceid/account-details.model";
@@ -38,7 +40,6 @@ import {
   INSTITUTION_USER_ALREADY_EXISTS,
   LEGAL_SIGNING_AUTHORITY_EXIST,
 } from "../../constants";
-import { INSTITUTION_TYPE_BC_PRIVATE } from "@sims/sims-db/constant";
 import { InstitutionUserAuthService } from "../institution-user-auth/institution-user-auth.service";
 import { UserService } from "../user/user.service";
 
@@ -46,6 +47,7 @@ import { UserService } from "../user/user.service";
 export class InstitutionService extends RecordDataModelService<Institution> {
   institutionUserRepo: Repository<InstitutionUser>;
   institutionUserTypeAndRoleRepo: Repository<InstitutionUserTypeAndRole>;
+  applicationRepo: Repository<Application>;
 
   constructor(
     private readonly dataSource: DataSource,
@@ -58,6 +60,7 @@ export class InstitutionService extends RecordDataModelService<Institution> {
     this.institutionUserTypeAndRoleRepo = dataSource.getRepository(
       InstitutionUserTypeAndRole,
     );
+    this.applicationRepo = dataSource.getRepository(Application);
   }
 
   /**
@@ -697,16 +700,6 @@ export class InstitutionService extends RecordDataModelService<Institution> {
   }
 
   /**
-   * Check if institution is private.
-   * @param institutionId is the institution id.
-   * @returns boolean true if institution is private, else false.
-   */
-  async isPrivateInstitution(institutionId: number): Promise<boolean> {
-    const institutionType = await this.getInstitutionTypeById(institutionId);
-    return INSTITUTION_TYPE_BC_PRIVATE === institutionType.institutionType.id;
-  }
-
-  /**
    * Get the institutionType by institution id.
    * @param institutionId Institution id.
    * @returns Institution retrieved, if found, otherwise returns null.
@@ -959,5 +952,26 @@ export class InstitutionService extends RecordDataModelService<Institution> {
       institutionUser.modifier = { id: userId } as User;
       await this.institutionUserRepo.save(institutionUser);
     }
+  }
+
+  /**
+   * Find if the institution
+   * has access to student data of given student.
+   * @param institutionId institution.
+   * @param studentId student.
+   * @returns value which specifies if the institution
+   * has access to student data of given student.
+   */
+  async hasStudentDataAccess(
+    institutionId: number,
+    studentId: number,
+  ): Promise<boolean> {
+    return this.applicationRepo.exist({
+      where: {
+        student: { id: studentId },
+        location: { institution: { id: institutionId } },
+        applicationStatus: Not(ApplicationStatus.Overwritten),
+      },
+    });
   }
 }
