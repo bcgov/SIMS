@@ -82,14 +82,19 @@ describe(
       const processResult = await processor.processMSFAAResponses(job);
 
       // Assert
-      expect(processResult).toBe([
-        "Processing file msfaa-part-time-receive-file-with-cancelation-record.dat.",
-        "File contains:",
-        "Confirmed MSFAA (type R): 2.",
-        "Cancelled MSFAA (type C): 1.",
-        "Record from line 1, updated as confirmed.",
-        "Record from line 3, updated as confirmed.",
-        "Record from line 2, updated as canceled.",
+      expect(processResult).toStrictEqual([
+        {
+          processSummary: [
+            "Processing file msfaa-part-time-receive-file-with-cancelation-record.dat.",
+            "File contains:",
+            "Confirmed MSFAA (type R): 2.",
+            "Cancelled MSFAA (type C): 1.",
+            "Record from line 1, updated as confirmed.",
+            "Record from line 3, updated as confirmed.",
+            "Record from line 2, updated as canceled.",
+          ],
+          errorsSummary: [],
+        },
       ]);
       // Find the updated MSFAA records previously created.
       const msfaaIDs = createdMSFAARecords.map((msfaa) => msfaa.id);
