@@ -1,11 +1,11 @@
 import { Injectable, CanActivate, ExecutionContext } from "@nestjs/common";
 import { Reflector } from "@nestjs/core";
-import { IInstitutionUserToken } from "..";
-import { AuthorizedParties } from "../authorized-parties.enum";
+import { IInstitutionUserToken } from "../..";
+import { AuthorizedParties } from "../../authorized-parties.enum";
 import {
   HasLocationAccessParam,
   HAS_LOCATION_ACCESS_KEY,
-} from "../decorators/institution-location.decorator";
+} from "../../decorators";
 
 @Injectable()
 export class InstitutionLocationGuard implements CanActivate {

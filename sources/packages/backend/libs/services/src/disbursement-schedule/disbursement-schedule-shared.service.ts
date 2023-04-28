@@ -680,7 +680,7 @@ export class DisbursementScheduleSharedService extends RecordDataModelService<Di
   async totalDisbursedBCSLAmount(studentId: number): Promise<number> {
     const total = await this.repo
       .createQueryBuilder("disbursement")
-      .select("SUM(disbursementValue.valueAmount)")
+      .select("SUM(disbursementValue.effectiveAmount)")
       .innerJoin("disbursement.disbursementValues", "disbursementValue")
       .innerJoin("disbursement.studentAssessment", "studentAssessment")
       .innerJoin("studentAssessment.application", "application")

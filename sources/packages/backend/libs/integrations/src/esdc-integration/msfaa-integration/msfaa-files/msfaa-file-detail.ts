@@ -49,13 +49,13 @@ export class MSFAAFileDetail implements MSFAARequestFileLine {
     record.append(this.genderCode);
     record.append(this.maritalStatusCode);
     record.appendWithEndFiller(this.addressLine1, 40, SPACE_FILLER);
-    record.appendWithEndFiller(this.addressLine2, 40, SPACE_FILLER);
+    record.appendWithEndFiller(this.addressLine2 ?? "", 40, SPACE_FILLER);
     record.appendWithEndFiller(this.city, 25, SPACE_FILLER);
     record.appendWithEndFiller(this.provinceState ?? "", 4, SPACE_FILLER);
-    record.appendWithEndFiller(this.postalCode, 16, SPACE_FILLER);
+    record.appendWithEndFiller(this.postalCode ?? "", 16, SPACE_FILLER);
     record.appendWithEndFiller(this.country, 20, SPACE_FILLER);
-    record.appendWithEndFiller(this.phone, 20, SPACE_FILLER);
-    record.appendWithEndFiller(this.email, 70, SPACE_FILLER);
+    record.appendWithEndFiller(this.phone ?? "", 20, SPACE_FILLER);
+    record.appendWithEndFiller(this.email ?? "", 70, SPACE_FILLER);
     record.repeatAppend(SPACE_FILLER, 40); // Alternate Address line 1.
     record.repeatAppend(SPACE_FILLER, 40); // Alternate Address line 2.
     record.repeatAppend(SPACE_FILLER, 25); // Alternate City.
