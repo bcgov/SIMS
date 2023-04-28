@@ -92,8 +92,8 @@ describe("StudentInstitutionsController(e2e)-getStudentApplicationSummary", () =
   );
 
   it(
-    "Should get the student application details belonging to the required institution as summary when student has a submitted application" +
-      "for the institution and another submitted application in another institution.",
+    "Should get the student application details belonging to the requested institution as summary when student has a submitted application " +
+      "for the institution and another submitted application for another institution.",
     async () => {
       // Arrange
 
