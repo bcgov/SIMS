@@ -1,19 +1,19 @@
 import { Controller, Param, ParseIntPipe, Get } from "@nestjs/common";
-import { ApiNotFoundResponse, ApiTags } from "@nestjs/swagger";
+import { ApiTags } from "@nestjs/swagger";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { AllowAuthorizedParty } from "../../auth/decorators";
 import { ClientTypeBaseRoute } from "../../types";
 import BaseController from "../BaseController";
 import {
   OverawardBalanceAPIOutDTO,
-  OverawardDetailsAPIOutDTO,
+  StudentsOverawardAPIOutDTO,
 } from "./models/overaward.dto";
 import { OverawardControllerService } from "..";
 
 @AllowAuthorizedParty(AuthorizedParties.institution)
 @Controller("overaward")
 @ApiTags(`${ClientTypeBaseRoute.Institution}-overaward`)
-export class OverawardInstitutionController extends BaseController {
+export class OverawardInstitutionsController extends BaseController {
   constructor(
     private readonly overawardControllerService: OverawardControllerService,
   ) {
@@ -25,9 +25,6 @@ export class OverawardInstitutionController extends BaseController {
    * @param studentId student.
    * @returns overaward balance for student.
    */
-  @ApiNotFoundResponse({
-    description: "Student not found.",
-  })
   @Get("student/:studentId/balance")
   async getOverawardBalance(
     @Param("studentId", ParseIntPipe) studentId: number,
@@ -40,15 +37,10 @@ export class OverawardInstitutionController extends BaseController {
    * @param studentId student.
    * @returns overaward details of a student.
    */
-  @ApiNotFoundResponse({
-    description: "Student not found.",
-  })
   @Get("student/:studentId")
   async getOverawardsByStudent(
     @Param("studentId", ParseIntPipe) studentId: number,
-  ): Promise<OverawardDetailsAPIOutDTO[]> {
-    return this.overawardControllerService.getOverawardsByStudent(studentId, {
-      audit: true,
-    });
+  ): Promise<StudentsOverawardAPIOutDTO[]> {
+    return this.overawardControllerService.getOverawardsByStudent(studentId);
   }
 }

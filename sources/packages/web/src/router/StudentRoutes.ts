@@ -178,7 +178,7 @@ export const studentRoutes: Array<RouteRecordRaw> = [
       },
       {
         path: AppRoutes.StudentOverawardsBalance,
-        name: StudentRoutesConst.STUDENT_OVERAWARDS_BALANCE,
+        name: StudentRoutesConst.STUDENT_OVERAWARDS,
         component: StudentOverawardsBalance,
         meta: {
           clientType: ClientIdType.Student,

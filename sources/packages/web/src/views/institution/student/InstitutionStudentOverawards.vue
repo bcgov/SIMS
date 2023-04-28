@@ -1,6 +1,6 @@
 <template>
   <tab-container :enableCardView="false">
-    <student-overaward-details :studentId="studentId" :showAddedBy="true"
+    <student-overaward-details :studentId="studentId"
   /></tab-container>
 </template>
 <script lang="ts">

@@ -24,7 +24,7 @@ import {
   getAESTToken,
   createTestingAppModule,
 } from "../../../../testHelpers";
-import { OverawardDetailsAPIOutDTO } from "../../models/overaward.dto";
+import { AESTOverawardAPIOutDTO } from "../../models/overaward.dto";
 import { getUserFullName } from "../../../../utilities";
 
 describe("OverawardAESTController(e2e)-getOverawardsByStudent", () => {
@@ -115,7 +115,7 @@ describe("OverawardAESTController(e2e)-getOverawardsByStudent", () => {
       .expect(HttpStatus.OK)
       .then((response) => {
         expect(response.body).toHaveLength(1);
-        const [overaward] = response.body as OverawardDetailsAPIOutDTO[];
+        const [overaward] = response.body as AESTOverawardAPIOutDTO[];
         expect(overaward.dateAdded).toBe(
           reassessmentOveraward.addedDate.toISOString(),
         );
