@@ -4,9 +4,7 @@ import {
   DEFAULT_PAGE_LIMIT,
   StudentApplicationFields,
   DataTableSortOrder,
-  ClientIdType,
 } from "@/types";
-import { AuthService } from "../AuthService";
 import HttpBaseClient from "./common/HttpBaseClient";
 import {
   ApplicationSummaryAPIOutDTO,
