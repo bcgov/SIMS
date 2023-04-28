@@ -53,6 +53,13 @@ import {
   QueueConfiguration,
 } from "./entities";
 
+interface DatabaseCacheConfig {
+  type: "database" | "redis" | "ioredis/cluster";
+  options?: { host: string; port: number; password?: string };
+  tableName?: string;
+  duration?: number;
+}
+
 export const ormConfig: PostgresConnectionOptions = {
   type: "postgres",
   host: process.env.POSTGRES_HOST || "localhost",
@@ -61,8 +68,26 @@ export const ormConfig: PostgresConnectionOptions = {
   username: process.env.POSTGRES_USER || "admin",
   password: process.env.POSTGRES_PASSWORD,
   schema: process.env.DB_SCHEMA || "sims",
+  cache: getRedisCacheConfig(),
   synchronize: false,
 };
+
+function getRedisCacheConfig(): DatabaseCacheConfig {
+  const standaloneMode = process.env.REDIS_STANDALONE_MODE;
+  if (standaloneMode) {
+    return {
+      type: "redis",
+      options: {
+        host: process.env.REDIS_HOST,
+        port: +process.env.REDIS_PORT,
+        password: process.env.REDIS_PASSWORD,
+      },
+    };
+  }
+  return {
+    type: "ioredis/cluster",
+  };
+}
 
 export const simsDataSource = new DataSource({
   ...ormConfig,
