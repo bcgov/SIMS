@@ -23,7 +23,6 @@ import {
   getInstitutionToken,
   InstitutionTokenTypes,
 } from "../../../../testHelpers";
-import { getUserFullName } from "../../../../utilities";
 
 describe("OverawardInstitutionController(e2e)-getOverawardsByStudent", () => {
   let app: INestApplication;
