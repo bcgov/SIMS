@@ -9,7 +9,12 @@ import { PartTimeMSFAAProcessResponseIntegrationScheduler } from "../msfaa-part-
 import {
   E2EDataSources,
   createE2EDataSources,
+  createFileFromStructuredRecords,
+  getStructuredRecords,
   mockDownloadFiles,
+  MSFAA_PART_TIME_RECEIVE_FILE_WITH_CANCELATION_RECORD,
+  MSFAA_PART_TIME_RECEIVE_FILE_WITH_INVALID_RECORDS_COUNT,
+  MSFAA_PART_TIME_RECEIVE_FILE_WITH_INVALID_SIN_HASH_TOTAL,
 } from "@sims/test-utils";
 import * as Client from "ssh2-sftp-client";
 import { Job } from "bull";
@@ -31,6 +36,7 @@ describe(
     let sftpClientMock: DeepMocked<Client>;
 
     beforeAll(async () => {
+      // Set the ESDC response folder to the files mocks folders.
       process.env.ESDC_RESPONSE_FOLDER = path.join(
         __dirname,
         "msfaa-receive-files",
@@ -75,7 +81,7 @@ describe(
       const job = createMock<Job<void>>();
 
       mockDownloadFiles(sftpClientMock, [
-        "msfaa-part-time-receive-file-with-cancelation-record.dat",
+        MSFAA_PART_TIME_RECEIVE_FILE_WITH_CANCELATION_RECORD,
       ]);
 
       // Act
@@ -96,6 +102,8 @@ describe(
           errorsSummary: [],
         },
       ]);
+      // Assert that the file was deleted from SFTP.
+      expect(sftpClientMock.delete).toHaveBeenCalled();
       // Find the updated MSFAA records previously created.
       const msfaaIDs = createdMSFAARecords.map((msfaa) => msfaa.id);
       const msfaaUpdatedRecords = await db.msfaaNumber.find({
@@ -125,6 +133,179 @@ describe(
       // Validate second confirmed record.
       expect(secondSignedMSFAA.dateSigned).toBe("2021-11-22");
       expect(secondSignedMSFAA.serviceProviderReceivedDate).toBe("2021-11-23");
+    });
+
+    it("Should successfully process 2 MSFAA records when a file has 3 records but one contains an error.", async () => {
+      // Arrange
+      // Crate only 2 records instead of 3 to force an error while updating the missing record.
+      const msfaaInputData = [
+        MSFAA_PART_TIME_OTHER_COUNTRY,
+        MSFAA_PART_TIME_RELATIONSHIP_OTHER,
+      ];
+      const createdMSFAARecords = await saveMSFAATestInputsData(
+        db,
+        msfaaInputData,
+      );
+
+      // Queued job.
+      const job = createMock<Job<void>>();
+
+      mockDownloadFiles(sftpClientMock, [
+        MSFAA_PART_TIME_RECEIVE_FILE_WITH_CANCELATION_RECORD,
+      ]);
+
+      // Act
+      const processResults = await processor.processMSFAAResponses(job);
+
+      // Assert
+      // TODO: Validate the processResults.
+      // Assert that the file was deleted from SFTP.
+      expect(sftpClientMock.delete).toHaveBeenCalled();
+      // Find the updated MSFAA records previously created.
+      const msfaaIDs = createdMSFAARecords.map((msfaa) => msfaa.id);
+      const msfaaUpdatedRecords = await db.msfaaNumber.find({
+        select: {
+          msfaaNumber: true,
+          dateSigned: true,
+          serviceProviderReceivedDate: true,
+          cancelledDate: true,
+          newIssuingProvince: true,
+        },
+        where: {
+          id: In(msfaaIDs),
+        },
+        order: {
+          msfaaNumber: "ASC",
+        },
+      });
+      expect(msfaaUpdatedRecords).toHaveLength(msfaaInputData.length);
+      const [cancelledMSFAA, secondSignedMSFAA] = msfaaUpdatedRecords;
+      // Validate cancelled record.
+      expect(cancelledMSFAA.cancelledDate).toBe("2021-11-24");
+      expect(cancelledMSFAA.newIssuingProvince).toBe("ON");
+      // Validate second confirmed record.
+      expect(secondSignedMSFAA.dateSigned).toBe("2021-11-22");
+      expect(secondSignedMSFAA.serviceProviderReceivedDate).toBe("2021-11-23");
+    });
+
+    it("Should throw an error when the MSFAA file contains a invalid SIN hash total.", async () => {
+      // Arrange
+      // Queued job.
+      const job = createMock<Job<void>>();
+
+      mockDownloadFiles(sftpClientMock, [
+        MSFAA_PART_TIME_RECEIVE_FILE_WITH_INVALID_SIN_HASH_TOTAL,
+      ]);
+
+      // Act
+      const processResult = await processor.processMSFAAResponses(job);
+
+      // Assert
+      expect(processResult).toStrictEqual([
+        {
+          processSummary: [
+            "Processing file msfaa-part-time-receive-file-with-invalid-sin-hash-total.dat.",
+          ],
+          errorsSummary: [
+            "Error downloading file msfaa-part-time-receive-file-with-invalid-sin-hash-total.dat. Error: The MSFAA file has TotalSINHash inconsistent with the total sum of sin in the records",
+          ],
+        },
+      ]);
+      // Assert that the file was not deleted from SFTP.
+      expect(sftpClientMock.delete).not.toHaveBeenCalled();
+    });
+
+    it("Should throw an error when the MSFAA file contains a invalid record count.", async () => {
+      // Arrange
+      // Queued job.
+      const job = createMock<Job<void>>();
+
+      mockDownloadFiles(sftpClientMock, [
+        MSFAA_PART_TIME_RECEIVE_FILE_WITH_INVALID_RECORDS_COUNT,
+      ]);
+
+      // Act
+      const processResult = await processor.processMSFAAResponses(job);
+
+      // Assert
+      expect(processResult).toStrictEqual([
+        {
+          processSummary: [
+            "Processing file msfaa-part-time-receive-file-with-invalid-records-count.dat.",
+          ],
+          errorsSummary: [
+            "Error downloading file msfaa-part-time-receive-file-with-invalid-records-count.dat. Error: The MSFAA file has invalid number of records",
+          ],
+        },
+      ]);
+      // Assert that the file was not deleted from SFTP.
+      expect(sftpClientMock.delete).not.toHaveBeenCalled();
+    });
+
+    it("Should throw an error when the MSFAA file contains a invalid header code.", async () => {
+      // Arrange
+      // Queued job.
+      const job = createMock<Job<void>>();
+
+      mockDownloadFiles(
+        sftpClientMock,
+        [MSFAA_PART_TIME_RECEIVE_FILE_WITH_CANCELATION_RECORD],
+        (fileContent: string) => {
+          // Force the header to be wrong.
+          return fileContent.replace("100", "999");
+        },
+      );
+
+      // Act
+      const processResult = await processor.processMSFAAResponses(job);
+
+      // Assert
+      expect(processResult).toStrictEqual([
+        {
+          processSummary: [
+            "Processing file msfaa-part-time-receive-file-with-cancelation-record.dat.",
+          ],
+          errorsSummary: [
+            "Error downloading file msfaa-part-time-receive-file-with-cancelation-record.dat. Error: The MSFAA file has an invalid transaction code on header",
+          ],
+        },
+      ]);
+      // Assert that the file was not deleted from SFTP.
+      expect(sftpClientMock.delete).not.toHaveBeenCalled();
+    });
+
+    it("Should throw an error when the MSFAA file contains a invalid footer code.", async () => {
+      // Arrange
+      // Queued job.
+      const job = createMock<Job<void>>();
+
+      mockDownloadFiles(
+        sftpClientMock,
+        [MSFAA_PART_TIME_RECEIVE_FILE_WITH_CANCELATION_RECORD],
+        (fileContent: string) => {
+          const file = getStructuredRecords(fileContent);
+          // Force the footer to be wrong.
+          file.footer = file.footer.replace("999", "001");
+          return createFileFromStructuredRecords(file);
+        },
+      );
+
+      // Act
+      const processResult = await processor.processMSFAAResponses(job);
+
+      // Assert
+      expect(processResult).toStrictEqual([
+        {
+          processSummary: [
+            "Processing file msfaa-part-time-receive-file-with-cancelation-record.dat.",
+          ],
+          errorsSummary: [
+            "Error downloading file msfaa-part-time-receive-file-with-cancelation-record.dat. Error: The MSFAA file has an invalid transaction code on trailer",
+          ],
+        },
+      ]);
+      // Assert that the file was not deleted from SFTP.
+      expect(sftpClientMock.delete).not.toHaveBeenCalled();
     });
   },
 );

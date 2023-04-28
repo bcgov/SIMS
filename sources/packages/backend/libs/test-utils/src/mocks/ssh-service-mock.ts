@@ -4,6 +4,17 @@ import { DeepMocked } from "@golevelup/ts-jest";
 import { END_OF_LINE } from "@sims/utilities";
 import { readFileSync } from "fs";
 
+// MSFAA received files mocks.
+export const MSFAA_PART_TIME_RECEIVE_FILE_WITH_CANCELATION_RECORD =
+  "msfaa-part-time-receive-file-with-cancelation-record.dat";
+export const MSFAA_PART_TIME_RECEIVE_FILE_WITH_INVALID_RECORDS_COUNT =
+  "msfaa-part-time-receive-file-with-invalid-records-count.dat";
+export const MSFAA_PART_TIME_RECEIVE_FILE_WITH_INVALID_SIN_HASH_TOTAL =
+  "msfaa-part-time-receive-file-with-invalid-sin-hash-total.dat";
+
+/**
+ * Represents a mocked uploaded file.
+ */
 export interface UploadedFile {
   remoteFilePath: string;
   fileLines: string[];
@@ -75,4 +86,38 @@ export function mockDownloadFiles(
     }
     return Promise.resolve(fileContent);
   });
+}
+
+/**
+ * Represents a file that contains a header, records and a footer.
+ */
+export interface StructuredFile {
+  header: string;
+  records: string[];
+  footer: string;
+}
+
+/**
+ * Extracts the file, header and footer from a file.
+ * @param fileContent file string to have the header and footer extracted.
+ * @returns header, records and footer.
+ */
+export function getStructuredRecords(fileContent: string): StructuredFile {
+  const fileLines = fileContent.split(END_OF_LINE);
+  const header = fileLines.shift();
+  const footer = fileLines.pop();
+  return {
+    header,
+    records: fileLines,
+    footer,
+  };
+}
+
+/**
+ * Combine a header, records and a footer into a file content string.
+ * @param file header, records and footer to be combined into a file content string.
+ * @returns header, records and a footer combined into a file content string.
+ */
+export function createFileFromStructuredRecords(file: StructuredFile): string {
+  return [file.header, ...file.records, file.footer].join(END_OF_LINE);
 }
