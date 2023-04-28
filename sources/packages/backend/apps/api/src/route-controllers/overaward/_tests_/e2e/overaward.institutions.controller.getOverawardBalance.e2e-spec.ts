@@ -29,8 +29,8 @@ describe("OverawardInstitutionsController(e2e)-getOverawardBalance", () => {
     disbursementOverawardRepo = dataSource.getRepository(DisbursementOveraward);
   });
 
-  it("Should return correct value for overaward balance when student has some overawards", async () => {
-    // Arrange.
+  it("Should return correct value for overaward balance when student has some overawards.", async () => {
+    // Arrange
     const student = await saveFakeStudent(appDataSource);
     // Create an overaward.
     const legacyOveraward = createFakeDisbursementOveraward({ student });
