@@ -1,9 +1,7 @@
 import { HttpStatus, INestApplication } from "@nestjs/common";
 import * as request from "supertest";
 import {
-  createFakeStudent,
   createFakeDisbursementOveraward,
-  createFakeUser,
   createFakeStudentAssessment,
   saveFakeApplication,
 } from "@sims/test-utils";
@@ -24,7 +22,7 @@ import {
   InstitutionTokenTypes,
 } from "../../../../testHelpers";
 
-describe("OverawardInstitutionController(e2e)-getOverawardsByStudent", () => {
+describe("OverawardInstitutionsController(e2e)-getOverawardsByStudent", () => {
   let app: INestApplication;
   let appDataSource: DataSource;
   let userRepo: Repository<User>;
@@ -46,14 +44,15 @@ describe("OverawardInstitutionController(e2e)-getOverawardsByStudent", () => {
 
   it("Should return student overawards when student has some overawards", async () => {
     // Arrange.
-    const user = await userRepo.save(createFakeUser());
-    const student = await studentRepo.save(createFakeStudent());
     // Prepare the student assessment to create overaward.
-    const application = await saveFakeApplication(appDataSource, {
-      student,
-    });
+    const application = await saveFakeApplication(appDataSource);
+    const student = application.student;
+    const user = application.student.user;
     const studentAssessment = await assessmentRepo.save(
-      createFakeStudentAssessment({ auditUser: user, application }),
+      createFakeStudentAssessment({
+        auditUser: user,
+        application,
+      }),
     );
     application.currentAssessment = studentAssessment;
     await applicationRepo.save(application);

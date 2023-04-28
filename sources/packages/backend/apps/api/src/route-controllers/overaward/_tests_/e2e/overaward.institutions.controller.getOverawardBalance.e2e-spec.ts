@@ -17,7 +17,7 @@ import {
   InstitutionTokenTypes,
 } from "../../../../testHelpers";
 
-describe("OverawardInstitutionController(e2e)-getOverawardBalance", () => {
+describe("OverawardInstitutionsController(e2e)-getOverawardBalance", () => {
   let app: INestApplication;
   let appDataSource: DataSource;
   let disbursementOverawardRepo: Repository<DisbursementOveraward>;
