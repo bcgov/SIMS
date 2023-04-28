@@ -10,9 +10,7 @@ import {
   Application,
   DisbursementOveraward,
   DisbursementOverawardOriginType,
-  Student,
   StudentAssessment,
-  User,
 } from "@sims/sims-db";
 
 import {
@@ -25,8 +23,6 @@ import {
 describe("OverawardInstitutionsController(e2e)-getOverawardsByStudent", () => {
   let app: INestApplication;
   let appDataSource: DataSource;
-  let userRepo: Repository<User>;
-  let studentRepo: Repository<Student>;
   let assessmentRepo: Repository<StudentAssessment>;
   let applicationRepo: Repository<Application>;
   let disbursementOverawardRepo: Repository<DisbursementOveraward>;
@@ -35,15 +31,13 @@ describe("OverawardInstitutionsController(e2e)-getOverawardsByStudent", () => {
     const { nestApplication, dataSource } = await createTestingAppModule();
     app = nestApplication;
     appDataSource = dataSource;
-    userRepo = dataSource.getRepository(User);
-    studentRepo = dataSource.getRepository(Student);
     assessmentRepo = dataSource.getRepository(StudentAssessment);
     applicationRepo = dataSource.getRepository(Application);
     disbursementOverawardRepo = dataSource.getRepository(DisbursementOveraward);
   });
 
-  it("Should return student overawards when student has some overawards", async () => {
-    // Arrange.
+  it("Should return student overawards when student has some overawards.", async () => {
+    // Arrange
     // Prepare the student assessment to create overaward.
     const application = await saveFakeApplication(appDataSource);
     const student = application.student;
