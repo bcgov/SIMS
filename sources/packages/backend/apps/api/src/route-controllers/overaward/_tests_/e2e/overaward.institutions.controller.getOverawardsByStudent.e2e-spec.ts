@@ -42,17 +42,9 @@ describe("OverawardInstitutionsController(e2e)-getOverawardsByStudent", () => {
     const application = await saveFakeApplication(appDataSource);
     const student = application.student;
     const user = application.student.user;
-    const studentAssessment = await assessmentRepo.save(
-      createFakeStudentAssessment({
-        auditUser: user,
-        application,
-      }),
-    );
-    application.currentAssessment = studentAssessment;
-    await applicationRepo.save(application);
     // Create an overaward.
     const reassessmentOveraward = createFakeDisbursementOveraward({ student });
-    reassessmentOveraward.studentAssessment = studentAssessment;
+    reassessmentOveraward.studentAssessment = application.currentAssessment;
     reassessmentOveraward.creator = user;
     reassessmentOveraward.disbursementValueCode = "CSLP";
     reassessmentOveraward.overawardValue = 100;
@@ -79,7 +71,7 @@ describe("OverawardInstitutionsController(e2e)-getOverawardsByStudent", () => {
           awardValueCode: reassessmentOveraward.disbursementValueCode,
           overawardValue: reassessmentOveraward.overawardValue,
           applicationNumber: application.applicationNumber,
-          assessmentTriggerType: studentAssessment.triggerType,
+          assessmentTriggerType: application.currentAssessment.triggerType,
         },
       ]);
   });
