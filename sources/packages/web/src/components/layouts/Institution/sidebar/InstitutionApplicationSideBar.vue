@@ -7,7 +7,6 @@
       active-color="primary"
       class="no-wrap"
       :items="items"
-      data-cy="institutionApplicationSideBar"
     />
   </v-navigation-drawer>
 </template>
@@ -41,13 +40,6 @@ export default defineComponent({
               studentId: props.studentId,
             },
           },
-        },
-      },
-      {
-        title: "Assessments",
-        props: {
-          prependIcon: "mdi-checkbox-marked-outline",
-          to: {},
         },
       },
     ]);
