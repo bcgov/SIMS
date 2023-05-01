@@ -11,12 +11,11 @@ import {
   getUserFullNameLikeSearch,
 } from "@sims/sims-db";
 import {
-  FieldSortOrder,
   OrderByCondition,
   PaginatedResults,
   PaginationOptions,
 } from "../../utilities";
-import { CustomNamedError } from "@sims/utilities";
+import { CustomNamedError, FieldSortOrder } from "@sims/utilities";
 import {
   STUDENT_APPLICATION_EXCEPTION_INVALID_STATE,
   STUDENT_APPLICATION_EXCEPTION_NOT_FOUND,
