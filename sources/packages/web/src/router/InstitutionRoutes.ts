@@ -5,6 +5,7 @@ import InstitutionCreate from "@/views/institution/InstitutionCreate.vue";
 import InstitutionUserProfile from "@/views/institution/InstitutionUserProfile.vue";
 import AppInstitution from "@/views/institution/AppInstitution.vue";
 import ManageLocation from "@/views/institution/ManageLocations.vue";
+import ApplicationDetails from "@/components/common/ApplicationDetails.vue";
 import LocationPrograms from "@/views/institution/locations/programs/LocationPrograms.vue";
 import LocationProgramInfoRequestSummary from "@/views/institution/locations/program-info-request/LocationProgramInfoRequestSummary.vue";
 import ActiveApplicationsSummary from "@/views/institution/locations/active-applications/LocationActiveApplicationSummary.vue";
@@ -40,7 +41,7 @@ import InstitutionSearchStudents from "@/views/institution/student/InstitutionSe
 import InstitutionStudentDetails from "@/views/institution/student/InstitutionStudentDetails.vue";
 import InstitutionStudentProfile from "@/views/institution/student/InstitutionStudentProfile.vue";
 import InstitutionStudentApplications from "@/views/institution/student/InstitutionStudentApplications.vue";
-import StudentApplicationView from "@/views/institution/student/InstitutionStudentApplicationView.vue";
+import InstitutionApplicationView from "@/views/institution/student/InstitutionStudentApplicationView.vue";
 import InstitutionStudentRestrictions from "@/views/institution/student/InstitutionStudentRestrictions.vue";
 import InstitutionStudentFileUploads from "@/views/institution/student/InstitutionStudentFileUploads.vue";
 import InstitutionStudentNotes from "@/views/institution/student/InstitutionStudentNotes.vue";
@@ -489,17 +490,6 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
                 InstitutionUserTypes.user,
               ],
             },
-            children: [
-              {
-                path: "",
-                name: InstitutionRoutesConst.STUDENT_APPLICATION_DETAILS,
-                props: true,
-                component: StudentApplicationView,
-                meta: {
-                  clientType: ClientIdType.AEST,
-                },
-              },
-            ],
           },
           {
             path: AppRoutes.Restrictions,
@@ -538,6 +528,27 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
                 InstitutionUserTypes.admin,
                 InstitutionUserTypes.user,
               ],
+            },
+          },
+        ],
+      },
+      {
+        path: AppRoutes.ApplicationDetail,
+        props: true,
+        components: {
+          default: ApplicationDetails,
+        },
+        meta: {
+          clientType: ClientIdType.AEST,
+        },
+        children: [
+          {
+            path: "",
+            name: InstitutionRoutesConst.STUDENT_APPLICATION_DETAILS,
+            props: true,
+            component: InstitutionApplicationView,
+            meta: {
+              clientType: ClientIdType.AEST,
             },
           },
         ],
