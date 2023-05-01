@@ -541,7 +541,11 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
           sidebar: InstitutionApplicationSideBar,
         },
         meta: {
-          clientType: ClientIdType.AEST,
+          clientType: ClientIdType.Institution,
+          institutionUserTypes: [
+            InstitutionUserTypes.admin,
+            InstitutionUserTypes.user,
+          ],
         },
         children: [
           {
@@ -550,7 +554,11 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
             props: true,
             component: InstitutionApplicationView,
             meta: {
-              clientType: ClientIdType.AEST,
+              clientType: ClientIdType.Institution,
+              institutionUserTypes: [
+                InstitutionUserTypes.admin,
+                InstitutionUserTypes.user,
+              ],
             },
           },
         ],
