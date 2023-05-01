@@ -26,6 +26,7 @@ import { ClientIdType } from "@/types/contracts/ConfigContract";
 import { AuthStatus, AppRoutes, InstitutionUserTypes } from "@/types";
 import ManageInstitutionSideBar from "@/components/layouts/Institution/sidebar/ManageInstitutionSideBar.vue";
 import InstitutionHomeSideBar from "@/components/layouts/Institution/sidebar/HomeSideBar.vue";
+import InstitutionApplicationSideBar from "@/components/layouts/Institution/sidebar/InstitutionApplicationSideBar.vue";
 import LocationProgramAddEdit from "@/views/institution/locations/programs/LocationProgramAddEdit.vue";
 import LocationCOERequest from "@/views/institution/locations/confirmation-of-enrollment/ApplicationDetailsForCOE.vue";
 import LocationProgramView from "@/views/institution/locations/programs/LocationProgramView.vue";
@@ -537,6 +538,7 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
         props: true,
         components: {
           default: ApplicationDetails,
+          sidebar: InstitutionApplicationSideBar,
         },
         meta: {
           clientType: ClientIdType.AEST,
