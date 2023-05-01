@@ -127,7 +127,7 @@ export class ApplicationControllerService {
    * @param application
    * @returns Application DTO
    */
-  async transformToApplicationForAESTDTO(
+  async transformToApplicationForDTO(
     application: Application,
   ): Promise<ApplicationBaseAPIOutDTO> {
     return {

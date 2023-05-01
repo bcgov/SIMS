@@ -25,6 +25,7 @@ import {
   EducationProgramOfferingValidationService,
 } from "./services";
 import {
+  ApplicationControllerService,
   DesignationAgreementInstitutionsController,
   DesignationAgreementControllerService,
   InstitutionInstitutionsController,
@@ -44,6 +45,7 @@ import {
   ConfirmationOfEnrollmentControllerService,
   StudentInstitutionsController,
   StudentControllerService,
+  ApplicationInstitutionsController,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
 import {
@@ -70,6 +72,7 @@ import { UserControllerService } from "./route-controllers/user/user.controller.
     InstitutionInstitutionsController,
     InstitutionUserInstitutionsController,
     InstitutionLocationInstitutionsController,
+    ApplicationInstitutionsController,
     ScholasticStandingInstitutionsController,
     ConfirmationOfEnrollmentInstitutionsController,
     EducationProgramInstitutionsController,
@@ -79,6 +82,7 @@ import { UserControllerService } from "./route-controllers/user/user.controller.
     StudentInstitutionsController,
   ],
   providers: [
+    ApplicationControllerService,
     WorkflowClientService,
     FormService,
     DesignationAgreementService,

@@ -40,6 +40,7 @@ import InstitutionSearchStudents from "@/views/institution/student/InstitutionSe
 import InstitutionStudentDetails from "@/views/institution/student/InstitutionStudentDetails.vue";
 import InstitutionStudentProfile from "@/views/institution/student/InstitutionStudentProfile.vue";
 import InstitutionStudentApplications from "@/views/institution/student/InstitutionStudentApplications.vue";
+import StudentApplicationView from "@/views/institution/student/InstitutionStudentApplicationView.vue";
 import InstitutionStudentRestrictions from "@/views/institution/student/InstitutionStudentRestrictions.vue";
 import InstitutionStudentFileUploads from "@/views/institution/student/InstitutionStudentFileUploads.vue";
 import InstitutionStudentNotes from "@/views/institution/student/InstitutionStudentNotes.vue";
@@ -488,6 +489,17 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
                 InstitutionUserTypes.user,
               ],
             },
+            children: [
+              {
+                path: "",
+                name: InstitutionRoutesConst.STUDENT_APPLICATION_DETAILS,
+                props: true,
+                component: StudentApplicationView,
+                meta: {
+                  clientType: ClientIdType.AEST,
+                },
+              },
+            ],
           },
           {
             path: AppRoutes.Restrictions,
