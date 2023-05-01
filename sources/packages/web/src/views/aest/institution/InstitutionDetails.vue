@@ -48,7 +48,7 @@ export default defineComponent({
       required: true,
     },
   },
-  setup(props: any) {
+  setup(props) {
     const tab = ref("institution-tab");
     const institutionBasicDetail = ref({} as InstitutionBasicAPIOutDTO);
     const items = ref([

@@ -30,7 +30,7 @@ export default defineComponent({
     },
   },
   emits: ["click"],
-  setup(_props: any, context: SetupContext) {
+  setup(_props, context: SetupContext) {
     const { executeLogout } = useAuth();
     const logoClick = () => {
       context.emit("click");

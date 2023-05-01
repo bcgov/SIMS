@@ -64,12 +64,12 @@ export default defineComponent({
   components: { ActiveApplicationSummaryData },
   props: {
     locationId: {
-      type: Number,
+      type: String,
       required: true,
     },
   },
 
-  setup(props: any) {
+  setup(props) {
     const { getLocationName } = useInstitutionState();
     const tab = ref("active-application-tab");
 

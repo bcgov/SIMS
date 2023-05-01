@@ -65,7 +65,7 @@ export default defineComponent({
       required: true,
     },
   },
-  setup(props: any) {
+  setup(props) {
     const toggleNotes = ref("allNotes");
     const notes = ref();
     const filteredNoteType = ref();

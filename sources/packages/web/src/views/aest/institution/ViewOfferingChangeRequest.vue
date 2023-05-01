@@ -106,7 +106,7 @@ export default defineComponent({
     },
   },
 
-  setup(props: any) {
+  setup(props) {
     const tab = ref("requested-change");
     const headerDetails = ref({} as ProgramOfferingHeader);
     const assessOfferingChangeModalRef = ref(

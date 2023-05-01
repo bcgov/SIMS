@@ -38,7 +38,7 @@ export default defineComponent({
     maxWidth: { type: Number, required: false },
   },
   emits: ["loaded"],
-  setup(_props: any, context: SetupContext) {
+  setup(_props, context: SetupContext) {
     const { checkFormioValidity } = useFormioUtils();
     const { showDialog, resolvePromise, showModal } = useModalDialog<
       FormIOForm | boolean

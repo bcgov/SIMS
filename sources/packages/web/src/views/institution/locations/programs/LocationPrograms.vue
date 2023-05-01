@@ -100,11 +100,11 @@ export default defineComponent({
   components: { StatusChipProgram },
   props: {
     locationId: {
-      type: Number,
+      type: String,
       required: true,
     },
   },
-  setup(props: any) {
+  setup(props) {
     const { getLocationName } = useInstitutionState();
     const router = useRouter();
     const programAndCount = ref(
@@ -136,7 +136,7 @@ export default defineComponent({
       loading.value = true;
       programAndCount.value =
         await EducationProgramService.shared.getProgramsSummaryByLocationId(
-          props.locationId,
+          parseInt(props.locationId),
           {
             searchCriteria: searchBox.value,
             sortField,
@@ -164,7 +164,7 @@ export default defineComponent({
     const loadProgramDetails = async () => {
       locationDetails.value =
         await InstitutionService.shared.getInstitutionLocation(
-          props.locationId,
+          parseInt(props.locationId),
         );
     };
 

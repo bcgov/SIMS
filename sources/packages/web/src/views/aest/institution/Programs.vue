@@ -119,7 +119,7 @@ export default defineComponent({
       required: true,
     },
   },
-  setup(props: any) {
+  setup(props) {
     const router = useRouter();
     const institutionProgramsSummary = ref(
       {} as PaginatedResults<EducationProgramsSummary>,

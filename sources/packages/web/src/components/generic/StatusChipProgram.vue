@@ -2,18 +2,20 @@
   <chip-status :status="chipStatus" :label="status" />
 </template>
 <script lang="ts">
-import { computed, defineComponent } from "vue";
+import { computed, defineComponent, PropType } from "vue";
 import ChipStatus from "@/components/generic/ChipStatus.vue";
 import { useProgram } from "@/composables";
+import { ProgramStatus } from "@/types";
+
 export default defineComponent({
   components: { ChipStatus },
   props: {
     status: {
-      type: String,
+      type: String as PropType<ProgramStatus>,
       required: true,
     },
   },
-  setup(props: any) {
+  setup(props) {
     const { mapProgramChipStatus } = useProgram();
     const chipStatus = computed(() => mapProgramChipStatus(props.status));
     return { chipStatus };

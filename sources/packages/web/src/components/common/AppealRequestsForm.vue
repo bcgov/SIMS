@@ -35,7 +35,7 @@ export default defineComponent({
       default: false,
     },
   },
-  setup(_props: any, context: SetupContext) {
+  setup(_props, context: SetupContext) {
     const { checkFormioValidity } = useFormioUtils();
     const appealForms: any[] = [];
     const appealFormLoaded = (form: any) => {

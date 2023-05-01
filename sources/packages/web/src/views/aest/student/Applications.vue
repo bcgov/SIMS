@@ -21,7 +21,7 @@ export default defineComponent({
       required: true,
     },
   },
-  setup(props: any) {
+  setup(props) {
     const router = useRouter();
     const goToApplication = (id: number) => {
       return router.push({

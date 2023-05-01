@@ -80,7 +80,7 @@ export default defineComponent({
       required: true,
     },
   },
-  setup(props: any, context: SetupContext) {
+  setup(_props, context: SetupContext) {
     const { isLegalSigningAuthority } = useInstitutionAuth();
     const { dateOnlyLongString } = useFormatters();
 

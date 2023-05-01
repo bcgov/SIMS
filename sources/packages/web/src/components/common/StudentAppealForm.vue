@@ -12,7 +12,7 @@ export default defineComponent({
       required: true,
     },
   },
-  setup(props: any, context: SetupContext) {
+  setup(_props, context: SetupContext) {
     const formLoaded = (form: any) => {
       context.emit("appealFormLoaded", form);
     };

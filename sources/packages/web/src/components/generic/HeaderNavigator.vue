@@ -47,6 +47,7 @@ export default defineComponent({
     },
   },
 
+  // TODO: remove 'any' type. `props.routeLocation` needs to be required or have a default value but logic must be revisited.
   setup(props: any) {
     const router = useRouter();
 

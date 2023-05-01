@@ -64,11 +64,11 @@ export default defineComponent({
   components: { COESummaryData },
   props: {
     locationId: {
-      type: Number,
+      type: String,
       required: true,
     },
   },
-  setup(props: any) {
+  setup(props) {
     const { getLocationName } = useInstitutionState();
     const tab = ref("coe-tab");
 

@@ -76,7 +76,7 @@
 </template>
 
 <script lang="ts">
-import { ref, watch, computed, defineComponent } from "vue";
+import { ref, watch, computed, defineComponent, PropType } from "vue";
 import { useRouter } from "vue-router";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import { ConfirmationOfEnrollmentService } from "@/services/ConfirmationOfEnrollmentService";
@@ -87,6 +87,7 @@ import {
   DEFAULT_PAGE_NUMBER,
   PageAndSortEvent,
   LayoutTemplates,
+  EnrollmentPeriod,
 } from "@/types";
 import { useFormatters } from "@/composables";
 import StatusChipCOE from "@/components/generic/StatusChipCOE.vue";
@@ -113,11 +114,11 @@ export default defineComponent({
       required: true,
     },
     enrollmentPeriod: {
-      type: String,
+      type: String as PropType<EnrollmentPeriod>,
       required: true,
     },
   },
-  setup(props: any) {
+  setup(props) {
     const router = useRouter();
     const { dateOnlyLongString } = useFormatters();
     const disbursements = ref(

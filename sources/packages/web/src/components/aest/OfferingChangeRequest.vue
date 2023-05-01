@@ -34,7 +34,7 @@ export default defineComponent({
   //TODO: This emit needs to be removed when the program and offering header component
   //TODO: is enhanced to load header values with it's own API call.
   emits: ["getHeaderDetails"],
-  setup(props: any, context: SetupContext) {
+  setup(props, context: SetupContext) {
     const initialData = ref({} as EducationProgramOfferingAPIOutDTO);
 
     onMounted(async () => {

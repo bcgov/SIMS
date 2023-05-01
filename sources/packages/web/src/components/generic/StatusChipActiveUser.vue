@@ -13,7 +13,7 @@ export default defineComponent({
       required: true,
     },
   },
-  setup(props: any) {
+  setup(props) {
     const chipStatus = computed(() =>
       props.isActive ? StatusChipTypes.Success : StatusChipTypes.Default,
     );

@@ -51,7 +51,7 @@ export default defineComponent({
     },
   },
   emits: ["submitInstitutionProfile"],
-  setup(_props: any, context: SetupContext) {
+  setup(_props, context: SetupContext) {
     const formioDataLoader = useFormioDropdownLoader();
 
     const submitInstitutionProfile = async (

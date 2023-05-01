@@ -65,7 +65,7 @@ export default defineComponent({
       required: false,
     },
   },
-  setup(props: any, context: SetupContext) {
+  setup(props, context: SetupContext) {
     // Component's names on Form.IO definition that will be manipulated.
     const LOCATIONS_DROPDOWN_KEY = "selectedLocation";
     const PROGRAMS_DROPDOWN_KEY = "selectedProgram";

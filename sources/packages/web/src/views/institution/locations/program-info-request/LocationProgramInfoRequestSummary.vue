@@ -70,11 +70,11 @@ export default defineComponent({
   components: { StatusChipProgramInfoRequest },
   props: {
     locationId: {
-      type: Number,
+      type: String,
       required: true,
     },
   },
-  setup(props: any) {
+  setup(props) {
     const { getLocationName } = useInstitutionState();
     const router = useRouter();
     const { dateOnlyLongString } = useFormatters();
@@ -101,12 +101,12 @@ export default defineComponent({
       () => props.locationId,
       async (currValue) => {
         //update the list
-        await updateSummaryList(currValue);
+        await updateSummaryList(parseInt(currValue));
       },
     );
 
     onMounted(async () => {
-      await updateSummaryList(props.locationId);
+      await updateSummaryList(parseInt(props.locationId));
     });
 
     return {

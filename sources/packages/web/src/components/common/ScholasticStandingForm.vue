@@ -15,7 +15,7 @@
 </template>
 
 <script lang="ts">
-import { ref, SetupContext, watch, defineComponent } from "vue";
+import { ref, SetupContext, watch, defineComponent, PropType } from "vue";
 import {
   ActiveApplicationDataAPIOutDTO,
   ScholasticStandingSubmittedDetailsAPIOutDTO,
@@ -34,7 +34,7 @@ export default defineComponent({
   emits: ["submit", "cancel"],
   props: {
     initialData: {
-      type: Object,
+      type: Object as PropType<ScholasticStandingSubmittedDetailsAPIOutDTO>,
       required: true,
     },
     readOnly: {
@@ -48,13 +48,13 @@ export default defineComponent({
       default: false,
     },
   },
-  setup(props: any, context: SetupContext) {
+  setup(props, context: SetupContext) {
     const data = ref(
       {} as ScholasticStanding | ScholasticStandingBeforeSubmission,
     );
 
     const setReadOnlyData = () => {
-      data.value = { ...props.initialData, readOnly: props.readOnly };
+      data.value = { ...props.initialData, readonly: props.readOnly };
     };
 
     watch(

@@ -27,7 +27,7 @@ export default defineComponent({
     },
   },
   emits: ["updateInstitutionLocation"],
-  setup(_props: any, context: SetupContext) {
+  setup(_props, context: SetupContext) {
     const processing = ref(false);
     const updateInstitutionLocation = async (
       form: FormIOForm<InstitutionLocationFormAPIOutDTO>,

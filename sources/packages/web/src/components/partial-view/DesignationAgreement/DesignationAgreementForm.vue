@@ -39,7 +39,7 @@ export default defineComponent({
       required: false,
     },
   },
-  setup(props: any, context: SetupContext) {
+  setup(_props, context: SetupContext) {
     const router = useRouter();
     // Regular hyperlinks ids presents inside the form.io definition that
     // needs execute a redirect in the vue application.

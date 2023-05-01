@@ -81,7 +81,7 @@
 </template>
 
 <script lang="ts">
-import { ref, watch, defineComponent } from "vue";
+import { ref, watch, defineComponent, toRef } from "vue";
 import {
   DEFAULT_PAGE_LIMIT,
   PAGINATION_LIST,
@@ -111,7 +111,7 @@ export default defineComponent({
       required: true,
     },
   },
-  setup(props: any) {
+  setup(props) {
     const showModal = ref(false);
     const studentSINValidations = ref([] as SINValidations[]);
     const addNewSINModal = ref(
@@ -131,7 +131,7 @@ export default defineComponent({
         await StudentService.shared.getStudentSINValidations(props.studentId);
     };
 
-    watch(props.studentId, loadSINValidations, { immediate: true });
+    watch(toRef(props, "studentId"), loadSINValidations, { immediate: true });
 
     const addNewSIN = async () => {
       const addNewSINData = await addNewSINModal.value.showModal();

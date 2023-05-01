@@ -15,7 +15,14 @@
 </template>
 
 <script lang="ts">
-import { onMounted, ref, computed, watch, defineComponent } from "vue";
+import {
+  onMounted,
+  ref,
+  computed,
+  watch,
+  defineComponent,
+  PropType,
+} from "vue";
 import { ClientIdType } from "@/types";
 import {
   ModalDialog,
@@ -36,12 +43,12 @@ export default defineComponent({
   components: { ConfirmExtendTime },
   props: {
     clientIdType: {
-      type: String,
+      type: String as PropType<ClientIdType>,
       required: true,
       default: "" as ClientIdType,
     },
   },
-  setup(props: any) {
+  setup(props) {
     const interval = ref();
     const extendTimeModal = ref({} as ModalDialog<boolean>);
     const { isAuthenticated } = useInstitutionAuth();
