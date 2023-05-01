@@ -2,12 +2,10 @@ import { HttpStatus, INestApplication } from "@nestjs/common";
 import * as request from "supertest";
 import {
   createFakeDisbursementOveraward,
-  createFakeStudentAssessment,
   saveFakeApplication,
 } from "@sims/test-utils";
 import { Repository, DataSource } from "typeorm";
 import {
-  Application,
   DisbursementOveraward,
   DisbursementOverawardOriginType,
   StudentAssessment,
@@ -23,16 +21,12 @@ import {
 describe("OverawardInstitutionsController(e2e)-getOverawardsByStudent", () => {
   let app: INestApplication;
   let appDataSource: DataSource;
-  let assessmentRepo: Repository<StudentAssessment>;
-  let applicationRepo: Repository<Application>;
   let disbursementOverawardRepo: Repository<DisbursementOveraward>;
 
   beforeAll(async () => {
     const { nestApplication, dataSource } = await createTestingAppModule();
     app = nestApplication;
     appDataSource = dataSource;
-    assessmentRepo = dataSource.getRepository(StudentAssessment);
-    applicationRepo = dataSource.getRepository(Application);
     disbursementOverawardRepo = dataSource.getRepository(DisbursementOveraward);
   });
 
