@@ -30,10 +30,9 @@ import {
   PIR_OR_DATE_OVERLAP_ERROR,
   PaginationOptions,
   PaginatedResults,
-  FieldSortOrder,
   OrderByCondition,
 } from "../../utilities";
-import { CustomNamedError, QueueNames } from "@sims/utilities";
+import { CustomNamedError, FieldSortOrder, QueueNames } from "@sims/utilities";
 import {
   SFASApplicationService,
   SFASPartTimeApplicationsService,
@@ -585,12 +584,15 @@ export class ApplicationService extends RecordDataModelService<Application> {
 
   /**
    * Get all student applications.
-   * @param studentId student id .
+   * @param studentId student id.
+   * @param pagination options to execute the pagination.
+   * @param institutionId id of the institution that the student applied to.
    * @returns student Application list.
    */
   async getAllStudentApplications(
     studentId: number,
     pagination: PaginationOptions,
+    institutionId?: number,
   ): Promise<[Application[], number]> {
     const applicationQuery = this.repo
       .createQueryBuilder("application")
@@ -608,6 +610,17 @@ export class ApplicationService extends RecordDataModelService<Application> {
       .andWhere("application.applicationStatus != :overwrittenStatus", {
         overwrittenStatus: ApplicationStatus.Overwritten,
       });
+    // If institution id is present, get only the applications
+    // linked with the institution.
+
+    if (institutionId) {
+      applicationQuery
+        .innerJoin("application.location", "institutionLocation")
+        .innerJoin("institutionLocation.institution", "institution")
+        .andWhere("institution.id = :institutionId", {
+          institutionId,
+        });
+    }
 
     // sorting
     if (

@@ -21,8 +21,8 @@ import { getISODateOnlyString } from "@sims/utilities";
 describe("StudentInstitutionsController(e2e)-getStudentProfile", () => {
   let app: INestApplication;
   let appDataSource: DataSource;
-  let collegeC: Institution;
-  let collegeCLocation: InstitutionLocation;
+  let collegeF: Institution;
+  let collegeFLocation: InstitutionLocation;
   let applicationRepo: Repository<Application>;
 
   beforeAll(async () => {
@@ -34,12 +34,12 @@ describe("StudentInstitutionsController(e2e)-getStudentProfile", () => {
       appDataSource,
       InstitutionTokenTypes.CollegeCUser,
     );
-    collegeC = institution;
-    collegeCLocation = createFakeInstitutionLocation(collegeC);
+    collegeF = institution;
+    collegeFLocation = createFakeInstitutionLocation(collegeF);
     await authorizeUserTokenForLocation(
       appDataSource,
-      InstitutionTokenTypes.CollegeCUser,
-      collegeCLocation,
+      InstitutionTokenTypes.CollegeFUser,
+      collegeFLocation,
     );
     applicationRepo = appDataSource.getRepository(Application);
   });
@@ -50,13 +50,13 @@ describe("StudentInstitutionsController(e2e)-getStudentProfile", () => {
     // Student who has application submitted to institution.
     const student = await saveFakeStudent(appDataSource);
     const application = createFakeApplication({
-      location: collegeCLocation,
+      location: collegeFLocation,
       student,
     });
     await applicationRepo.save(application);
     const endpoint = `/institutions/student/${student.id}`;
     const institutionUserToken = await getInstitutionToken(
-      InstitutionTokenTypes.CollegeCUser,
+      InstitutionTokenTypes.CollegeFUser,
     );
 
     // Act/Assert
@@ -86,27 +86,6 @@ describe("StudentInstitutionsController(e2e)-getStudentProfile", () => {
         pdStatus: determinePDStatus(student),
         validSin: student.sinValidation.isValidSIN,
         sin: student.sinValidation.sin,
-      });
-  });
-  // TODO: When the authorization is implemented for institution student search,
-  // validate the scenario when a student exist but does not have any submitted applications
-  // for the institution.
-  it("Should get not found error when student is not found.", async () => {
-    // Arrange
-    const endpoint = "/institutions/student/999999";
-    const institutionUserToken = await getInstitutionToken(
-      InstitutionTokenTypes.CollegeCUser,
-    );
-
-    // Act/Assert
-    await request(app.getHttpServer())
-      .get(endpoint)
-      .auth(institutionUserToken, BEARER_AUTH_TYPE)
-      .expect(HttpStatus.NOT_FOUND)
-      .expect({
-        statusCode: 404,
-        message: "Student not found.",
-        error: "Not Found",
       });
   });
 

@@ -170,16 +170,19 @@ export class StudentControllerService {
    * This API will be used by students.
    * @param studentId student id to retrieve the application summary.
    * @param pagination options to execute the pagination.
+   * @param institutionId id of the institution that the student applied to.
    * @returns student application list with total count.
    */
   async getStudentApplicationSummary(
     studentId: number,
     pagination: ApplicationPaginationOptionsAPIInDTO,
+    institutionId?: number,
   ): Promise<PaginatedResultsAPIOutDTO<ApplicationSummaryAPIOutDTO>> {
     const [applications, count] =
       await this.applicationService.getAllStudentApplications(
         studentId,
         pagination,
+        institutionId,
       );
 
     return {

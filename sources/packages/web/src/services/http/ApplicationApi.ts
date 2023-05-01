@@ -4,9 +4,7 @@ import {
   DEFAULT_PAGE_LIMIT,
   StudentApplicationFields,
   DataTableSortOrder,
-  ClientIdType,
 } from "@/types";
-import { AuthService } from "../AuthService";
 import HttpBaseClient from "./common/HttpBaseClient";
 import {
   ApplicationSummaryAPIOutDTO,
@@ -108,10 +106,9 @@ export class ApplicationApi extends HttpBaseClient {
     sortOrder?: DataTableSortOrder,
     studentId?: number,
   ): Promise<PaginatedResultsAPIOutDTO<ApplicationSummaryAPIOutDTO>> {
-    let url =
-      AuthService.shared.authClientType === ClientIdType.AEST
-        ? `student/${studentId}/application-summary`
-        : `student/application-summary`;
+    let url = studentId
+      ? `student/${studentId}/application-summary`
+      : "student/application-summary";
     // Adding pagination params. There is always a default page and pageCount for paginated APIs.
     url = addPaginationOptions(url, page, pageCount, "?");
     //Adding Sort params. There is always a default sortField and sortOrder for COE.

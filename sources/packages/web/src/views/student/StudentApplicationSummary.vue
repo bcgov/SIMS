@@ -10,6 +10,8 @@
     <v-row>
       <v-col cols="12">
         <student-applications
+          :manage-application="true"
+          :enable-view-application-on-name="true"
           @editApplicationAction="editApplicationAction"
           @openConfirmCancel="confirmCancelApplication"
           @goToApplication="goToApplication"
@@ -24,7 +26,7 @@
 import { ref, defineComponent } from "vue";
 import StartApplication from "@/views/student/financial-aid-application/Applications.vue";
 import { ApplicationStatus } from "@/types";
-import StudentApplications from "@/components/aest/StudentApplications.vue";
+import StudentApplications from "@/components/common/students/StudentApplications.vue";
 import { ApplicationService } from "@/services/ApplicationService";
 import { useRouter } from "vue-router";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";

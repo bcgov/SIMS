@@ -1,6 +1,6 @@
 import { IsEnum, IsIn, IsOptional, Max, MaxLength, Min } from "class-validator";
-import { FieldSortOrder } from "../../utilities";
 import { PAGINATION_SEARCH_MAX_LENGTH } from "../../constants";
+import { FieldSortOrder } from "@sims/utilities";
 
 /**
  * Common parameters used when an API result
