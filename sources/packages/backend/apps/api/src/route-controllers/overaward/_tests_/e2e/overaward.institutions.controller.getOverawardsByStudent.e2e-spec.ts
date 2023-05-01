@@ -8,7 +8,6 @@ import { Repository, DataSource } from "typeorm";
 import {
   DisbursementOveraward,
   DisbursementOverawardOriginType,
-  StudentAssessment,
 } from "@sims/sims-db";
 
 import {
