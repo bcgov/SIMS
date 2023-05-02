@@ -74,3 +74,16 @@ export function getPartTimeMaritalStatusCode(
 export function getPPDFlag(hasPPD?: boolean): string {
   return hasPPD === true ? "Y" : "N";
 }
+
+/**
+ * Return specific country code for Canada. For any other
+ * country just return the country as provided.
+ * @param country country name.
+ * @returns expected country for ESDC files.
+ */
+export function getCountryCode(country: string): string {
+  if (country.toUpperCase() === "CANADA") {
+    return "CAN";
+  }
+  return country;
+}
