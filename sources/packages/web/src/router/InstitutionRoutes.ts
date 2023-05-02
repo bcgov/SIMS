@@ -122,7 +122,11 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
           default: LocationPrograms,
           sidebar: InstitutionHomeSideBar,
         },
-        props: true,
+        props: {
+          default: (route) => ({
+            locationId: parseInt(route.params.locationId[0]),
+          }),
+        },
         meta: {
           clientType: ClientIdType.Institution,
           institutionUserTypes: [
@@ -139,7 +143,7 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
           sidebar: InstitutionHomeSideBar,
         },
         props: {
-          default: (route) => ({
+          default: (route: RouteLocationNormalized) => ({
             locationId: parseInt(route.params.locationId[0]),
           }),
         },
@@ -171,7 +175,11 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
           default: LocationProgramInfoRequestSummary,
           sidebar: InstitutionHomeSideBar,
         },
-        props: true,
+        props: {
+          default: (route) => ({
+            locationId: parseInt(route.params.locationId[0]),
+          }),
+        },
         meta: {
           clientType: ClientIdType.Institution,
           institutionUserTypes: [
@@ -187,7 +195,11 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
           default: LocationCOESummary,
           sidebar: InstitutionHomeSideBar,
         },
-        props: true,
+        props: {
+          default: (route) => ({
+            locationId: parseInt(route.params.locationId[0]),
+          }),
+        },
         meta: {
           clientType: ClientIdType.Institution,
           institutionUserTypes: [

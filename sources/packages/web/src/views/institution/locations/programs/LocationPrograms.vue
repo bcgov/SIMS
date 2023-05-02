@@ -100,7 +100,7 @@ export default defineComponent({
   components: { StatusChipProgram },
   props: {
     locationId: {
-      type: String,
+      type: Number,
       required: true,
     },
   },
@@ -117,7 +117,7 @@ export default defineComponent({
     const currentPageLimit = ref();
 
     const locationName = computed(() => {
-      return getLocationName(parseInt(props.locationId));
+      return getLocationName(props.locationId);
     });
 
     /**
@@ -136,7 +136,7 @@ export default defineComponent({
       loading.value = true;
       programAndCount.value =
         await EducationProgramService.shared.getProgramsSummaryByLocationId(
-          parseInt(props.locationId),
+          props.locationId,
           {
             searchCriteria: searchBox.value,
             sortField,
@@ -164,7 +164,7 @@ export default defineComponent({
     const loadProgramDetails = async () => {
       locationDetails.value =
         await InstitutionService.shared.getInstitutionLocation(
-          parseInt(props.locationId),
+          props.locationId,
         );
     };
 

@@ -64,7 +64,7 @@ export default defineComponent({
   components: { COESummaryData },
   props: {
     locationId: {
-      type: String,
+      type: Number,
       required: true,
     },
   },
@@ -73,7 +73,7 @@ export default defineComponent({
     const tab = ref("coe-tab");
 
     const locationName = computed(() => {
-      return getLocationName(parseInt(props.locationId));
+      return getLocationName(props.locationId);
     });
     return { EnrollmentPeriod, COETab, tab, locationName };
   },

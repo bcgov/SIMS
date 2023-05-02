@@ -70,7 +70,7 @@ export default defineComponent({
   components: { StatusChipProgramInfoRequest },
   props: {
     locationId: {
-      type: String,
+      type: Number,
       required: true,
     },
   },
@@ -81,7 +81,7 @@ export default defineComponent({
     const applications = ref([] as PIRSummaryAPIOutDTO[]);
 
     const locationName = computed(() => {
-      return getLocationName(parseInt(props.locationId));
+      return getLocationName(props.locationId);
     });
 
     const goToViewApplication = (applicationId: number) => {
@@ -101,12 +101,12 @@ export default defineComponent({
       () => props.locationId,
       async (currValue) => {
         //update the list
-        await updateSummaryList(parseInt(currValue));
+        await updateSummaryList(currValue);
       },
     );
 
     onMounted(async () => {
-      await updateSummaryList(parseInt(props.locationId));
+      await updateSummaryList(props.locationId);
     });
 
     return {
