@@ -19,3 +19,8 @@ export const SERVICE_ACCOUNT_DEFAULT_USER_EMAIL = "dev_sabc@gov.bc.ca";
  * Minimum value amount to generate an overaward for a federal loan.
  */
 export const MIN_CANADA_LOAN_OVERAWARD = 250;
+
+/**
+ * Lifetime of ORM cache in milliseconds.
+ */
+export const ORM_CACHE_LIFETIME = 10 * 60 * 1000;

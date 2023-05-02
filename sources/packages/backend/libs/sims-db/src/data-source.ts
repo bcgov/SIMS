@@ -52,10 +52,17 @@ import {
   DisbursementOveraward,
   QueueConfiguration,
 } from "./entities";
+import { ClusterNode, ClusterOptions, RedisOptions } from "ioredis";
+import { ORM_CACHE_LIFETIME } from "@sims/utilities";
 
 interface DatabaseCacheConfig {
   type: "database" | "redis" | "ioredis/cluster";
-  options?: { host: string; port: number; password?: string };
+  options?:
+    | RedisOptions
+    | {
+        startupNodes: ClusterNode[];
+        options?: ClusterOptions;
+      };
   tableName?: string;
   duration?: number;
 }
@@ -74,6 +81,7 @@ export const ormConfig: PostgresConnectionOptions = {
 
 function getRedisCacheConfig(): DatabaseCacheConfig {
   const standaloneMode = process.env.REDIS_STANDALONE_MODE;
+  const cacheDuration = ORM_CACHE_LIFETIME;
   if (standaloneMode) {
     return {
       type: "redis",
@@ -82,10 +90,22 @@ function getRedisCacheConfig(): DatabaseCacheConfig {
         port: +process.env.REDIS_PORT,
         password: process.env.REDIS_PASSWORD,
       },
+      duration: cacheDuration,
     };
   }
   return {
     type: "ioredis/cluster",
+    options: {
+      startupNodes: [
+        { host: process.env.REDIS_HOST, port: +process.env.REDIS_PORT },
+      ],
+      options: {
+        redisOptions: {
+          password: process.env.REDIS_PASSWORD,
+        },
+      },
+    },
+    duration: cacheDuration,
   };
 }
 
