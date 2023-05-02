@@ -55,7 +55,7 @@ import {
 import { ClusterNode, ClusterOptions, RedisOptions } from "ioredis";
 import { ORM_CACHE_LIFETIME } from "@sims/utilities";
 
-interface DatabaseCacheConfig {
+interface ORMCacheConfig {
   type: "database" | "redis" | "ioredis/cluster";
   options?:
     | RedisOptions
@@ -75,11 +75,11 @@ export const ormConfig: PostgresConnectionOptions = {
   username: process.env.POSTGRES_USER || "admin",
   password: process.env.POSTGRES_PASSWORD,
   schema: process.env.DB_SCHEMA || "sims",
-  cache: getRedisCacheConfig(),
+  cache: getORMCacheConfig(),
   synchronize: false,
 };
 
-function getRedisCacheConfig(): DatabaseCacheConfig {
+function getORMCacheConfig(): ORMCacheConfig {
   const standaloneMode = process.env.REDIS_STANDALONE_MODE;
   const cacheDuration = ORM_CACHE_LIFETIME;
   if (standaloneMode) {
