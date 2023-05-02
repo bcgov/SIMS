@@ -44,8 +44,9 @@ import {
   EducationProgramOfferingControllerService,
   ConfirmationOfEnrollmentControllerService,
   StudentInstitutionsController,
+  OverawardInstitutionsController,
   StudentControllerService,
-  ApplicationInstitutionsController,
+  OverawardControllerService,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
 import {
@@ -64,6 +65,7 @@ import {
 } from "@sims/services/sfas";
 import { UserInstitutionsController } from "./route-controllers/user/user.institutions.controller";
 import { UserControllerService } from "./route-controllers/user/user.controller.service";
+import { ApplicationInstitutionsController } from "./route-controllers/application/application.institutions.controller";
 
 @Module({
   imports: [AuthModule],
@@ -80,6 +82,7 @@ import { UserControllerService } from "./route-controllers/user/user.controller.
     EducationProgramOfferingInstitutionsController,
     UserInstitutionsController,
     StudentInstitutionsController,
+    OverawardInstitutionsController,
   ],
   providers: [
     ApplicationControllerService,
@@ -127,6 +130,7 @@ import { UserControllerService } from "./route-controllers/user/user.controller.
     NoteSharedService,
     StudentControllerService,
     RestrictionSharedService,
+    OverawardControllerService,
   ],
 })
 export class AppInstitutionsModule {}

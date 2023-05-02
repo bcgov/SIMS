@@ -45,6 +45,7 @@ import InstitutionStudentApplications from "@/views/institution/student/Institut
 import InstitutionApplicationView from "@/views/institution/student/InstitutionStudentApplicationView.vue";
 import InstitutionStudentRestrictions from "@/views/institution/student/InstitutionStudentRestrictions.vue";
 import InstitutionStudentFileUploads from "@/views/institution/student/InstitutionStudentFileUploads.vue";
+import InstitutionStudentOverawards from "@/views/institution/student/InstitutionStudentOverawards.vue";
 import InstitutionStudentNotes from "@/views/institution/student/InstitutionStudentNotes.vue";
 
 export const institutionRoutes: Array<RouteRecordRaw> = [
@@ -510,6 +511,19 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
             name: InstitutionRoutesConst.STUDENT_FILE_UPLOADS,
             props: true,
             component: InstitutionStudentFileUploads,
+            meta: {
+              clientType: ClientIdType.Institution,
+              institutionUserTypes: [
+                InstitutionUserTypes.admin,
+                InstitutionUserTypes.user,
+              ],
+            },
+          },
+          {
+            path: AppRoutes.Overawards,
+            name: InstitutionRoutesConst.STUDENT_OVERAWARDS,
+            props: true,
+            component: InstitutionStudentOverawards,
             meta: {
               clientType: ClientIdType.Institution,
               institutionUserTypes: [

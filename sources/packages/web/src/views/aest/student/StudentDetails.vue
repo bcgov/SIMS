@@ -97,7 +97,7 @@ export default defineComponent({
         label: "Overawards",
         icon: "fa:fa fa-circle-dollar-to-slot",
         command: () => ({
-          name: AESTRoutesConst.OVERAWARDS,
+          name: AESTRoutesConst.STUDENT_OVERAWARDS,
           params: { studentId: props.studentId },
         }),
       },

@@ -154,7 +154,7 @@ export default defineComponent({
             title: "Overawards Balance",
             props: {
               to: {
-                name: StudentRoutesConst.STUDENT_OVERAWARDS_BALANCE,
+                name: StudentRoutesConst.STUDENT_OVERAWARDS,
               },
             },
           },

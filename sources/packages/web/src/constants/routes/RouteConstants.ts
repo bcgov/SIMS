@@ -25,7 +25,7 @@ export const StudentRoutesConst = {
   STUDENT_APPLICATION_DETAILS: Symbol(),
   STUDENT_REQUEST_CHANGE: Symbol(),
   STUDENT_ACCOUNT_ACTIVITY: Symbol(),
-  STUDENT_OVERAWARDS_BALANCE: Symbol(),
+  STUDENT_OVERAWARDS: Symbol(),
   STUDENT_ACCOUNT_APPLICATION_IN_PROGRESS: Symbol(),
   STUDENT_APPEAL_REQUESTS: Symbol(),
 };
@@ -75,6 +75,7 @@ export const InstitutionRoutesConst = {
   STUDENT_APPLICATION_DETAILS: Symbol(),
   STUDENT_RESTRICTIONS: Symbol(),
   STUDENT_FILE_UPLOADS: Symbol(),
+  STUDENT_OVERAWARDS: Symbol(),
   STUDENT_NOTES: Symbol(),
 };
 
@@ -92,7 +93,7 @@ export const AESTRoutesConst = {
   STUDENT_FILE_UPLOADS: Symbol(),
   STUDENT_NOTES: Symbol(),
   SIN_MANAGEMENT: Symbol(),
-  OVERAWARDS: Symbol(),
+  STUDENT_OVERAWARDS: Symbol(),
   PROGRAM_DETAILS: Symbol(),
   SEARCH_INSTITUTIONS: Symbol(),
   INSTITUTION_PROFILE: Symbol(),
