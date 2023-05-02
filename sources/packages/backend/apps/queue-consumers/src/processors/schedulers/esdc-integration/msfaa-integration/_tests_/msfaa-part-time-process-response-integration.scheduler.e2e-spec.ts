@@ -96,7 +96,7 @@ describe(
             "Cancelled MSFAA records (type C): 1.",
             "Record from line 1, updated as confirmed.",
             "Record from line 3, updated as confirmed.",
-            "Record from line 2, updated as canceled.",
+            "Record from line 2, updated as cancelled.",
           ],
           errorsSummary: [],
         },
@@ -166,7 +166,7 @@ describe(
             "Confirmed MSFAA records (type R): 2.",
             "Cancelled MSFAA records (type C): 1.",
             "Record from line 3, updated as confirmed.",
-            "Record from line 2, updated as canceled.",
+            "Record from line 2, updated as cancelled.",
           ],
           errorsSummary: [
             `Error processing record line number 1 from file ${expectedFilePath}`,

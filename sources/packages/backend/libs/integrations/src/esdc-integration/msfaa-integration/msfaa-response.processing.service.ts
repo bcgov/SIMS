@@ -83,7 +83,7 @@ export class MSFAAResponseProcessingService {
       try {
         await this.processCancelledRecord(cancelledRecord);
         result.processSummary.push(
-          `Record from line ${cancelledRecord.lineNumber}, updated as canceled.`,
+          `Record from line ${cancelledRecord.lineNumber}, updated as cancelled.`,
         );
       } catch (error) {
         // Log the error but allow the process to continue.
