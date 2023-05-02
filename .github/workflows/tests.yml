@@ -23,7 +23,6 @@ jobs:
       REDIS_PORT: 6379
       REDIS_PASSWORD: redis
       REDIS_STANDALONE_MODE: "true"
-      DISABLE_CACHE: "true"
       QUEUE_PREFIX: "{sims-local}"
       API_PORT: 3000
       QUEUE_CONSUMERS_PORT: 3001
