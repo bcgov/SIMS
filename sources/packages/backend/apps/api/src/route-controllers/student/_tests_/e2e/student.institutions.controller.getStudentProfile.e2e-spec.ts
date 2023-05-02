@@ -92,36 +92,6 @@ describe("StudentInstitutionsController(e2e)-getStudentProfile", () => {
 
   it("Should throw forbidden error when the institution type is not BC Public.", async () => {
     // Arrange
-
-    const { student, collegeCApplication } =
-      await saveStudentApplicationForCollegeC(appDataSource);
-
-    await authorizeUserTokenForLocation(
-      appDataSource,
-      InstitutionTokenTypes.CollegeCUser,
-      collegeCApplication.location,
-    );
-
-    // College C is not a BC Public institution.
-    const collegeCInstitutionUserToken = await getInstitutionToken(
-      InstitutionTokenTypes.CollegeCUser,
-    );
-
-    const endpoint = `/institutions/student/${student.id}`;
-
-    // Act/Assert
-    await request(app.getHttpServer())
-      .get(endpoint)
-      .auth(collegeCInstitutionUserToken, BEARER_AUTH_TYPE)
-      .expect({
-        statusCode: HttpStatus.FORBIDDEN,
-        message: "Forbidden resource",
-        error: "Forbidden",
-      });
-  });
-
-  it("Should throw forbidden error when the institution type is not BC Public.", async () => {
-    // Arrange
     // Student submitting an application to College C.
     const { student, collegeCApplication } =
       await saveStudentApplicationForCollegeC(appDataSource);

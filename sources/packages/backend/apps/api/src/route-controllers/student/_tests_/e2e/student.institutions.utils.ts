@@ -8,6 +8,7 @@ import {
   getAuthRelatedEntities,
 } from "../../../../testHelpers";
 import { DataSource } from "typeorm";
+import { Application, Student } from "@sims/sims-db";
 
 /**
  * Save student application for College C
@@ -17,7 +18,7 @@ import { DataSource } from "typeorm";
  */
 export async function saveStudentApplicationForCollegeC(
   dataSource: DataSource,
-) {
+): Promise<{ student: Student; collegeCApplication: Application }> {
   const student = await saveFakeStudent(dataSource);
   const { institution } = await getAuthRelatedEntities(
     dataSource,

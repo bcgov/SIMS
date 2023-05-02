@@ -73,7 +73,6 @@ export class StudentInstitutionsController extends BaseController {
 
   /**
    * Get the student information that represents the profile.
-   * at least one application for the institution of the user.
    * @param studentId student.
    * @returns student profile details.
    */
@@ -88,7 +87,6 @@ export class StudentInstitutionsController extends BaseController {
 
   /**
    * Get the list of applications that belongs to a student for the institution.
-   * at least one application for the institution of the user.
    * @param studentId student.
    * @returns list of applications that belongs to a student for the institution.
    */
