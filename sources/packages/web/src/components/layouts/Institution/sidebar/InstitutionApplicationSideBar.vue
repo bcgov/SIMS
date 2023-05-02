@@ -27,7 +27,7 @@ export default defineComponent({
       required: true,
     },
   },
-  setup(props: any) {
+  setup(props) {
     const items = ref<MenuItemModel[]>([
       {
         title: "Student",
