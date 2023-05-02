@@ -65,6 +65,7 @@ interface ORMCacheConfig {
       };
   tableName?: string;
   duration?: number;
+  ignoreErrors?: boolean;
 }
 
 export const ormConfig: PostgresConnectionOptions = {
@@ -79,9 +80,16 @@ export const ormConfig: PostgresConnectionOptions = {
   synchronize: false,
 };
 
-function getORMCacheConfig(): ORMCacheConfig {
+function getORMCacheConfig(): ORMCacheConfig | false {
+  const isCacheDisabled = process.env.DISABLE_CACHE;
+
+  if (isCacheDisabled) {
+    return false;
+  }
+
   const standaloneMode = process.env.REDIS_STANDALONE_MODE;
   const cacheDuration = ORM_CACHE_LIFETIME;
+
   if (standaloneMode) {
     return {
       type: "redis",
@@ -91,6 +99,7 @@ function getORMCacheConfig(): ORMCacheConfig {
         password: process.env.REDIS_PASSWORD,
       },
       duration: cacheDuration,
+      ignoreErrors: true,
     };
   }
   return {
