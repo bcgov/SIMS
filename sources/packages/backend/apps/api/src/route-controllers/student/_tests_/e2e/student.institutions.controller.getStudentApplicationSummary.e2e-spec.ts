@@ -22,6 +22,7 @@ import {
   InstitutionLocation,
 } from "@sims/sims-db";
 import { FieldSortOrder } from "@sims/utilities";
+import { saveStudentApplicationForCollegeC } from "./student.institutions.utils";
 
 describe("StudentInstitutionsController(e2e)-getStudentApplicationSummary", () => {
   let app: INestApplication;
@@ -264,6 +265,58 @@ describe("StudentInstitutionsController(e2e)-getStudentApplicationSummary", () =
         });
     },
   );
+
+  it("Should throw forbidden error when the institution type is not BC Public.", async () => {
+    // Arrange
+
+    const { student, collegeCApplication } =
+      await saveStudentApplicationForCollegeC(appDataSource);
+
+    await authorizeUserTokenForLocation(
+      appDataSource,
+      InstitutionTokenTypes.CollegeCUser,
+      collegeCApplication.location,
+    );
+
+    // College C is not a BC Public institution.
+    const collegeCInstitutionUserToken = await getInstitutionToken(
+      InstitutionTokenTypes.CollegeCUser,
+    );
+
+    const endpoint = `/institutions/student/${student.id}/application-summary?page=0&pageLimit=10&sortField=applicationNumber&sortOrder=${FieldSortOrder.DESC}`;
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .get(endpoint)
+      .auth(collegeCInstitutionUserToken, BEARER_AUTH_TYPE)
+      .expect({
+        statusCode: HttpStatus.FORBIDDEN,
+        message: "Forbidden resource",
+        error: "Forbidden",
+      });
+  });
+
+  it("Should throw forbidden error when student does not have at least one application submitted for the institution.", async () => {
+    // Arrange
+    const student = await saveFakeStudent(appDataSource);
+
+    // College F is a BC Public institution.
+    const institutionUserToken = await getInstitutionToken(
+      InstitutionTokenTypes.CollegeFUser,
+    );
+
+    const endpoint = `/institutions/student/${student.id}/application-summary?page=0&pageLimit=10&sortField=applicationNumber&sortOrder=${FieldSortOrder.DESC}`;
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .get(endpoint)
+      .auth(institutionUserToken, BEARER_AUTH_TYPE)
+      .expect({
+        statusCode: HttpStatus.FORBIDDEN,
+        message: "Forbidden resource",
+        error: "Forbidden",
+      });
+  });
 
   afterAll(async () => {
     await app?.close();
