@@ -17,6 +17,7 @@ import { FixedFormatFileLine } from "@sims/integrations/services/ssh";
 import { SshService } from "@sims/integrations/services";
 import {
   combineDecimalPlaces,
+  getCountryCode,
   getDisbursementEffectiveAmountByValueCode,
   getGenderCode,
   getPPDFlag,
@@ -109,7 +110,7 @@ export class ECertPartTimeIntegrationService extends ECertIntegrationService {
       record.addressLine1 = ecertRecord.addressLine1;
       record.addressLine2 = ecertRecord.addressLine2;
       record.city = ecertRecord.city;
-      record.country = ecertRecord.country;
+      record.country = getCountryCode(ecertRecord.country);
       record.provinceState = ecertRecord.provinceState;
       record.postalCode = ecertRecord.postalCode;
       record.emailAddress = ecertRecord.email;
