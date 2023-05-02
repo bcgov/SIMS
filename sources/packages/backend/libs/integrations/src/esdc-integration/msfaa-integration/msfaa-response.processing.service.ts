@@ -60,10 +60,10 @@ export class MSFAAResponseProcessingService {
 
     result.processSummary.push("File contains:");
     result.processSummary.push(
-      `Confirmed MSFAA (type ${ReceivedStatusCode.Received}): ${responseFile.receivedRecords.length}.`,
+      `Confirmed MSFAA records (type ${ReceivedStatusCode.Received}): ${responseFile.receivedRecords.length}.`,
     );
     result.processSummary.push(
-      `Cancelled MSFAA (type ${ReceivedStatusCode.Cancelled}): ${responseFile.cancelledRecords.length}.`,
+      `Cancelled MSFAA records (type ${ReceivedStatusCode.Cancelled}): ${responseFile.cancelledRecords.length}.`,
     );
 
     for (const receivedRecord of responseFile.receivedRecords) {

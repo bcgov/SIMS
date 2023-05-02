@@ -58,10 +58,10 @@ export function getUploadedFile(
  * Create the mocks to allow the simulation of a file download from
  * the SFTP. Based on file names provided, real files content will be
  * retrieved from the disk.
- * When performing SFTP calls to request the files two methods are used.
- * The first one (list) is used to retrieve the files available to be downloaded,
+ * When performing SFTP calls to request the files two methods are used,
+ * the first one (list) is used to retrieve the files available to be downloaded,
  * the second one (get) will be actually returning the file content.
- * This helper allows the mock of the list and get methods is a way the first one
+ * This helper allows the mock of the list and get methods in a way the first one
  * will provide the file name to the second one, allowing it to know which specific
  * file should be retrieved from the disk.
  * @param sshClientMock SSH client mock to have the list and get

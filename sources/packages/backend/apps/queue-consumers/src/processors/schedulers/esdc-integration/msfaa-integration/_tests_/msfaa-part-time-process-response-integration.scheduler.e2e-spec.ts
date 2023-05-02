@@ -34,13 +34,12 @@ describe(
     let processor: PartTimeMSFAAProcessResponseIntegrationScheduler;
     let db: E2EDataSources;
     let sftpClientMock: DeepMocked<Client>;
+    let msfaaMocksDownloadFolder: string;
 
     beforeAll(async () => {
+      msfaaMocksDownloadFolder = path.join(__dirname, "msfaa-receive-files");
       // Set the ESDC response folder to the files mocks folders.
-      process.env.ESDC_RESPONSE_FOLDER = path.join(
-        __dirname,
-        "msfaa-receive-files",
-      );
+      process.env.ESDC_RESPONSE_FOLDER = msfaaMocksDownloadFolder;
       const { nestApplication, dataSource, sshClientMock } =
         await createTestingAppModule();
       app = nestApplication;
@@ -91,10 +90,10 @@ describe(
       expect(processResult).toStrictEqual([
         {
           processSummary: [
-            "Processing file msfaa-part-time-receive-file-with-cancelation-record.dat.",
+            `Processing file ${MSFAA_PART_TIME_RECEIVE_FILE_WITH_CANCELATION_RECORD}.`,
             "File contains:",
-            "Confirmed MSFAA (type R): 2.",
-            "Cancelled MSFAA (type C): 1.",
+            "Confirmed MSFAA records (type R): 2.",
+            "Cancelled MSFAA records (type C): 1.",
             "Record from line 1, updated as confirmed.",
             "Record from line 3, updated as confirmed.",
             "Record from line 2, updated as canceled.",
@@ -135,7 +134,7 @@ describe(
       expect(secondSignedMSFAA.serviceProviderReceivedDate).toBe("2021-11-23");
     });
 
-    it("Should successfully process 2 MSFAA records when a file has 3 records but one contains an error.", async () => {
+    it("Should successfully process 2 MSFAA records when a file has 3 records but one throws an error during DB update.", async () => {
       // Arrange
       // Crate only 2 records instead of 3 to force an error while updating the missing record.
       const msfaaInputData = [
@@ -158,7 +157,22 @@ describe(
       const processResults = await processor.processMSFAAResponses(job);
 
       // Assert
-      // TODO: Validate the processResults.
+      const expectedFilePath = `${msfaaMocksDownloadFolder}/${MSFAA_PART_TIME_RECEIVE_FILE_WITH_CANCELATION_RECORD}`;
+      expect(processResults).toStrictEqual([
+        {
+          processSummary: [
+            `Processing file ${MSFAA_PART_TIME_RECEIVE_FILE_WITH_CANCELATION_RECORD}.`,
+            "File contains:",
+            "Confirmed MSFAA records (type R): 2.",
+            "Cancelled MSFAA records (type C): 1.",
+            "Record from line 3, updated as confirmed.",
+            "Record from line 2, updated as canceled.",
+          ],
+          errorsSummary: [
+            `Error processing record line number 1 from file ${expectedFilePath}`,
+          ],
+        },
+      ]);
       // Assert that the file was deleted from SFTP.
       expect(sftpClientMock.delete).toHaveBeenCalled();
       // Find the updated MSFAA records previously created.
@@ -188,7 +202,7 @@ describe(
       expect(secondSignedMSFAA.serviceProviderReceivedDate).toBe("2021-11-23");
     });
 
-    it("Should throw an error when the MSFAA file contains a invalid SIN hash total.", async () => {
+    it("Should throw an error when the MSFAA file contains an invalid SIN hash total.", async () => {
       // Arrange
       // Queued job.
       const job = createMock<Job<void>>();
@@ -204,7 +218,7 @@ describe(
       expect(processResult).toStrictEqual([
         {
           processSummary: [
-            "Processing file msfaa-part-time-receive-file-with-invalid-sin-hash-total.dat.",
+            `Processing file ${MSFAA_PART_TIME_RECEIVE_FILE_WITH_INVALID_SIN_HASH_TOTAL}.`,
           ],
           errorsSummary: [
             "Error downloading file msfaa-part-time-receive-file-with-invalid-sin-hash-total.dat. Error: The MSFAA file has TotalSINHash inconsistent with the total sum of sin in the records",
@@ -215,7 +229,7 @@ describe(
       expect(sftpClientMock.delete).not.toHaveBeenCalled();
     });
 
-    it("Should throw an error when the MSFAA file contains a invalid record count.", async () => {
+    it("Should throw an error when the MSFAA file contains an invalid record count.", async () => {
       // Arrange
       // Queued job.
       const job = createMock<Job<void>>();
@@ -231,7 +245,7 @@ describe(
       expect(processResult).toStrictEqual([
         {
           processSummary: [
-            "Processing file msfaa-part-time-receive-file-with-invalid-records-count.dat.",
+            `Processing file ${MSFAA_PART_TIME_RECEIVE_FILE_WITH_INVALID_RECORDS_COUNT}.`,
           ],
           errorsSummary: [
             "Error downloading file msfaa-part-time-receive-file-with-invalid-records-count.dat. Error: The MSFAA file has invalid number of records",
@@ -242,7 +256,7 @@ describe(
       expect(sftpClientMock.delete).not.toHaveBeenCalled();
     });
 
-    it("Should throw an error when the MSFAA file contains a invalid header code.", async () => {
+    it("Should throw an error when the MSFAA file contains an invalid header code.", async () => {
       // Arrange
       // Queued job.
       const job = createMock<Job<void>>();
@@ -263,7 +277,7 @@ describe(
       expect(processResult).toStrictEqual([
         {
           processSummary: [
-            "Processing file msfaa-part-time-receive-file-with-cancelation-record.dat.",
+            `Processing file ${MSFAA_PART_TIME_RECEIVE_FILE_WITH_CANCELATION_RECORD}.`,
           ],
           errorsSummary: [
             "Error downloading file msfaa-part-time-receive-file-with-cancelation-record.dat. Error: The MSFAA file has an invalid transaction code on header",
@@ -274,7 +288,7 @@ describe(
       expect(sftpClientMock.delete).not.toHaveBeenCalled();
     });
 
-    it("Should throw an error when the MSFAA file contains a invalid footer code.", async () => {
+    it("Should throw an error when the MSFAA file contains an invalid footer code.", async () => {
       // Arrange
       // Queued job.
       const job = createMock<Job<void>>();
@@ -297,7 +311,7 @@ describe(
       expect(processResult).toStrictEqual([
         {
           processSummary: [
-            "Processing file msfaa-part-time-receive-file-with-cancelation-record.dat.",
+            `Processing file ${MSFAA_PART_TIME_RECEIVE_FILE_WITH_CANCELATION_RECORD}.`,
           ],
           errorsSummary: [
             "Error downloading file msfaa-part-time-receive-file-with-cancelation-record.dat. Error: The MSFAA file has an invalid transaction code on trailer",
