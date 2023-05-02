@@ -57,7 +57,7 @@ describe(
         { dateSigned: IsNull() },
         { dateSigned: getISODateOnlyString(new Date()) },
       );
-      // Cancel any pending MSFAA.
+      // Cancel any not canceled MSFAA.
       await db.msfaaNumber.update(
         { cancelledDate: IsNull() },
         { cancelledDate: getISODateOnlyString(new Date()) },
@@ -121,11 +121,11 @@ describe(
         },
       });
       expect(msfaaUpdatedRecords).toHaveLength(msfaaInputData.length);
-      const [fistSignedMSFAA, cancelledMSFAA, secondSignedMSFAA] =
+      const [firstSignedMSFAA, cancelledMSFAA, secondSignedMSFAA] =
         msfaaUpdatedRecords;
       // Validate fist confirmed record.
-      expect(fistSignedMSFAA.dateSigned).toBe("2021-11-20");
-      expect(fistSignedMSFAA.serviceProviderReceivedDate).toBe("2021-11-21");
+      expect(firstSignedMSFAA.dateSigned).toBe("2021-11-20");
+      expect(firstSignedMSFAA.serviceProviderReceivedDate).toBe("2021-11-21");
       // Validate cancelled record.
       expect(cancelledMSFAA.cancelledDate).toBe("2021-11-24");
       expect(cancelledMSFAA.newIssuingProvince).toBe("ON");
