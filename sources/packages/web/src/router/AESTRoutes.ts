@@ -162,7 +162,7 @@ export const aestRoutes: Array<RouteRecordRaw> = [
           },
           {
             path: AppRoutes.Overawards,
-            name: AESTRoutesConst.OVERAWARDS,
+            name: AESTRoutesConst.STUDENT_OVERAWARDS,
             props: true,
             component: Overawards,
             meta: {
