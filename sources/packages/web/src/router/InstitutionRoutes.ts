@@ -1,4 +1,4 @@
-import { RouteRecordRaw } from "vue-router";
+import { RouteLocationNormalized, RouteRecordRaw } from "vue-router";
 import InstitutionDashboard from "@/views/institution/InstitutionDashboard.vue";
 import InstitutionProfile from "@/views/institution/InstitutionProfile.vue";
 import InstitutionCreate from "@/views/institution/InstitutionCreate.vue";
@@ -138,7 +138,11 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
           default: ActiveApplicationsSummary,
           sidebar: InstitutionHomeSideBar,
         },
-        props: true,
+        props: {
+          default: (route) => ({
+            locationId: parseInt(route.params.locationId[0]),
+          }),
+        },
         meta: {
           clientType: ClientIdType.Institution,
           institutionUserTypes: [

@@ -64,7 +64,7 @@ export default defineComponent({
   components: { ActiveApplicationSummaryData },
   props: {
     locationId: {
-      type: String,
+      type: Number,
       required: true,
     },
   },
@@ -74,7 +74,7 @@ export default defineComponent({
     const tab = ref("active-application-tab");
 
     const locationName = computed(() => {
-      return getLocationName(parseInt(props.locationId));
+      return getLocationName(props.locationId);
     });
 
     return { tab, ActiveApplicationTab, locationName };
