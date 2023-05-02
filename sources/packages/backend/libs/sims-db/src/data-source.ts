@@ -81,9 +81,9 @@ export const ormConfig: PostgresConnectionOptions = {
 };
 
 function getORMCacheConfig(): ORMCacheConfig | false {
-  const isCacheDisabled = process.env.DISABLE_CACHE;
+  const isORMCacheDisabled = process.env.DISABLE_ORM_CACHE;
 
-  if (isCacheDisabled) {
+  if (isORMCacheDisabled) {
     return false;
   }
 
