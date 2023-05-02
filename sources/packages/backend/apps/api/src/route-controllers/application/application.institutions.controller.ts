@@ -1,10 +1,4 @@
-import {
-  Controller,
-  Get,
-  NotFoundException,
-  Param,
-  ParseIntPipe,
-} from "@nestjs/common";
+import { Controller, Get, Param, ParseIntPipe } from "@nestjs/common";
 import { ApplicationService } from "../../services";
 import BaseController from "../BaseController";
 import { ApplicationBaseAPIOutDTO } from "./models/application.dto";
@@ -15,7 +9,7 @@ import {
   UserToken,
 } from "../../auth/decorators";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
-import { ApiNotFoundResponse, ApiTags } from "@nestjs/swagger";
+import { ApiTags } from "@nestjs/swagger";
 import { ClientTypeBaseRoute } from "../../types";
 import { ApplicationControllerService } from "./application.controller.service";
 import { IInstitutionUserToken } from "../../auth";
@@ -37,11 +31,10 @@ export class ApplicationInstitutionsController extends BaseController {
    * This API will be used by ministry users.
    * @param applicationId
    * @param studentId
-   * @returns Application details
+   * @returns Application details.
    */
   @HasStudentDataAccess("studentId")
   @Get(":applicationId/student/:studentId")
-  @ApiNotFoundResponse({ description: "Application not found." })
   async getApplication(
     @UserToken() userToken: IInstitutionUserToken,
     @Param("applicationId", ParseIntPipe) applicationId: number,
@@ -55,12 +48,6 @@ export class ApplicationInstitutionsController extends BaseController {
         institutionId: userToken.authorizations.institutionId,
       },
     );
-    if (!application) {
-      throw new NotFoundException(
-        `Application id ${applicationId} was not found.`,
-      );
-    }
-
     application.data =
       await this.applicationControllerService.generateApplicationFormData(
         application.data,
