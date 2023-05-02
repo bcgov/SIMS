@@ -268,7 +268,6 @@ describe("StudentInstitutionsController(e2e)-getStudentApplicationSummary", () =
 
   it("Should throw forbidden error when the institution type is not BC Public.", async () => {
     // Arrange
-
     const { student, collegeCApplication } =
       await saveStudentApplicationForCollegeC(appDataSource);
 

@@ -54,6 +54,7 @@ import {
 } from "./entities";
 import { ClusterNode, ClusterOptions, RedisOptions } from "ioredis";
 import { ORM_CACHE_LIFETIME } from "@sims/utilities";
+import { ConfigService } from "@sims/utilities/config";
 
 interface ORMCacheConfig {
   type: "database" | "redis" | "ioredis/cluster";
@@ -81,40 +82,36 @@ export const ormConfig: PostgresConnectionOptions = {
 };
 
 function getORMCacheConfig(): ORMCacheConfig | false {
-  const isORMCacheDisabled = process.env.DISABLE_ORM_CACHE;
+  const config = new ConfigService();
 
-  if (isORMCacheDisabled) {
+  if (config.database.isORMCacheDisabled) {
     return false;
   }
 
-  const standaloneMode = process.env.REDIS_STANDALONE_MODE;
-  const cacheDuration = ORM_CACHE_LIFETIME;
-
-  if (standaloneMode) {
+  if (config.redis.redisStandaloneMode) {
     return {
       type: "redis",
       options: {
-        host: process.env.REDIS_HOST,
-        port: +process.env.REDIS_PORT,
-        password: process.env.REDIS_PASSWORD,
+        host: config.redis.redisHost,
+        port: config.redis.redisPort,
+        password: config.redis.redisPassword,
       },
-      duration: cacheDuration,
-      ignoreErrors: true,
+      duration: ORM_CACHE_LIFETIME,
     };
   }
   return {
     type: "ioredis/cluster",
     options: {
       startupNodes: [
-        { host: process.env.REDIS_HOST, port: +process.env.REDIS_PORT },
+        { host: config.redis.redisHost, port: config.redis.redisPort },
       ],
       options: {
         redisOptions: {
-          password: process.env.REDIS_PASSWORD,
+          password: config.redis.redisPassword,
         },
       },
     },
-    duration: cacheDuration,
+    duration: ORM_CACHE_LIFETIME,
   };
 }
 
