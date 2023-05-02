@@ -10,6 +10,7 @@ import BaseController from "../BaseController";
 import { ApplicationBaseAPIOutDTO } from "./models/application.dto";
 import {
   AllowAuthorizedParty,
+  HasStudentDataAccess,
   IsBCPublicInstitution,
   UserToken,
 } from "../../auth/decorators";
@@ -35,18 +36,22 @@ export class ApplicationInstitutionsController extends BaseController {
    * API to fetch application details by applicationId.
    * This API will be used by ministry users.
    * @param applicationId
+   * @param studentId
    * @returns Application details
    */
-  @Get(":applicationId")
+  @HasStudentDataAccess("studentId")
+  @Get(":applicationId/student/:studentId")
   @ApiNotFoundResponse({ description: "Application not found." })
   async getApplication(
     @UserToken() userToken: IInstitutionUserToken,
     @Param("applicationId", ParseIntPipe) applicationId: number,
+    @Param("studentId", ParseIntPipe) studentId: number,
   ): Promise<ApplicationBaseAPIOutDTO> {
     const application = await this.applicationService.getApplicationById(
       applicationId,
       {
         loadDynamicData: true,
+        studentId: studentId,
         institutionId: userToken.authorizations.institutionId,
       },
     );

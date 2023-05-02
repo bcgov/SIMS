@@ -79,15 +79,18 @@ export class ApplicationApi extends HttpBaseClient {
 
   /**
    * API Client for application detail.
-   * @param applicationId
-   * @returns
+   * @param applicationId for the application.
+   * @param studentId for the student.
+   * @returns application details.
    */
   async getApplicationDetails(
     applicationId: number,
+    studentId?: number,
   ): Promise<ApplicationBaseAPIOutDTO> {
-    return this.getCall<ApplicationBaseAPIOutDTO>(
-      this.addClientRoot(`application/${applicationId}`),
-    );
+    const url = studentId
+      ? `application/${applicationId}/student/${studentId}`
+      : `application/${applicationId}`;
+    return this.getCall<ApplicationBaseAPIOutDTO>(this.addClientRoot(url));
   }
 
   /**
