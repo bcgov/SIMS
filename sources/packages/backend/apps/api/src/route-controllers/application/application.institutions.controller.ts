@@ -51,7 +51,7 @@ export class ApplicationInstitutionsController extends BaseController {
       await this.applicationControllerService.generateApplicationFormData(
         application.data,
       );
-    return this.applicationControllerService.transformToApplicationForDTO(
+    return this.applicationControllerService.transformToApplicationDTO(
       application,
     );
   }
