@@ -1,4 +1,9 @@
-import { Injectable, CanActivate, ExecutionContext } from "@nestjs/common";
+import {
+  Injectable,
+  CanActivate,
+  ExecutionContext,
+  ForbiddenException,
+} from "@nestjs/common";
 import { Reflector } from "@nestjs/core";
 import { IInstitutionUserToken } from "../..";
 import { INSTITUTION_IS_BC_PUBLIC_KEY } from "../../decorators";
@@ -30,7 +35,11 @@ export class InstitutionBCPublicGuard implements CanActivate {
         await this.institutionService.getInstitutionTypeById(
           user.authorizations.institutionId,
         );
-      return institutionType.isBCPublic;
+      if (institutionType.isBCPublic) {
+        return true;
+      }
+      // The institution is found to be not a BC Public institution.
+      throw new ForbiddenException("The institution is not BC Public.");
     }
 
     return false;
