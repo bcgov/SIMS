@@ -42,11 +42,9 @@ export class InstitutionStudentDataAccessGuard implements CanActivate {
           user.authorizations.institutionId,
           studentId,
         );
-
       if (hasStudentDataAccess) {
         return true;
       }
-
       // The institution does not have access to student data.
       throw new ForbiddenException(
         "The institution is not allowed access the student data of given student.",
