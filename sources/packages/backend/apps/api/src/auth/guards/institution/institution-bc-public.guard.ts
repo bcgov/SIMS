@@ -39,7 +39,7 @@ export class InstitutionBCPublicGuard implements CanActivate {
         return true;
       }
       // The institution is found to be not a BC Public institution.
-      throw new ForbiddenException("The institution is not  BC Public.");
+      throw new ForbiddenException("The institution is not BC Public.");
     }
 
     return false;

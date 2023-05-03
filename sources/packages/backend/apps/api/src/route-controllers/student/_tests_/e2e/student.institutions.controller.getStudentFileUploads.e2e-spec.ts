@@ -8,6 +8,8 @@ import {
   getAuthRelatedEntities,
   getInstitutionToken,
   InstitutionTokenTypes,
+  INSTITUTION_BC_PUBLIC_ERROR_MESSAGE,
+  INSTITUTION_STUDENT_DATA_ACCESS_ERROR_MESSAGE,
 } from "../../../../testHelpers";
 import {
   createFakeInstitutionLocation,
@@ -21,11 +23,7 @@ import {
   Institution,
   InstitutionLocation,
 } from "@sims/sims-db";
-import {
-  INSTITUTION_BC_PUBLIC_ERROR_MESSAGE,
-  INSTITUTION_STUDENT_DATA_ACCESS_ERROR_MESSAGE,
-  saveStudentApplicationForCollegeC,
-} from "./student.institutions.utils";
+import { saveStudentApplicationForCollegeC } from "./student.institutions.utils";
 
 describe("StudentInstitutionsController(e2e)-getStudentFileUploads", () => {
   let app: INestApplication;

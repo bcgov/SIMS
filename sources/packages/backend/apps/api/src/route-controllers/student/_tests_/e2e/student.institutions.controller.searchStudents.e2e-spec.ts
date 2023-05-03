@@ -8,6 +8,7 @@ import {
   getAuthRelatedEntities,
   InstitutionTokenTypes,
   authorizeUserTokenForLocation,
+  INSTITUTION_BC_PUBLIC_ERROR_MESSAGE,
 } from "../../../../testHelpers";
 import {
   createFakeInstitutionLocation,
@@ -21,7 +22,6 @@ import {
   InstitutionLocation,
   Student,
 } from "@sims/sims-db";
-import { INSTITUTION_BC_PUBLIC_ERROR_MESSAGE } from "./student.institutions.utils";
 
 describe("StudentInstitutionsController(e2e)-searchStudents", () => {
   let app: INestApplication;

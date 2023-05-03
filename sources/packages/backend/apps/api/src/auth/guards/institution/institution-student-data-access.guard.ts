@@ -47,7 +47,7 @@ export class InstitutionStudentDataAccessGuard implements CanActivate {
       }
       // The institution does not have access to student data.
       throw new ForbiddenException(
-        "The institution is not allowed access the student data of given student.",
+        "The institution is not allowed access to the student data of the given student.",
       );
     }
 

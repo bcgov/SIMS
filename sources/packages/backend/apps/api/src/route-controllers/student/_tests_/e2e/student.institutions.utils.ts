@@ -34,9 +34,3 @@ export async function saveStudentApplicationForCollegeC(
     collegeCApplication: application,
   };
 }
-
-export const INSTITUTION_BC_PUBLIC_ERROR_MESSAGE =
-  "The institution is not  BC Public.";
-
-export const INSTITUTION_STUDENT_DATA_ACCESS_ERROR_MESSAGE =
-  "The institution is not allowed access the student data of given student.";
