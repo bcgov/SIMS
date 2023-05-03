@@ -140,3 +140,9 @@ export async function authorizeUserTokenForLocation(
     InstitutionUserTypes.user,
   );
 }
+
+export const INSTITUTION_BC_PUBLIC_ERROR_MESSAGE =
+  "The institution is not BC Public.";
+
+export const INSTITUTION_STUDENT_DATA_ACCESS_ERROR_MESSAGE =
+  "The institution is not allowed access to the student data of the given student.";

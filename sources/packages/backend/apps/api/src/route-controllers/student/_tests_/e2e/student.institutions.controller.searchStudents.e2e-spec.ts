@@ -8,6 +8,7 @@ import {
   getAuthRelatedEntities,
   InstitutionTokenTypes,
   authorizeUserTokenForLocation,
+  INSTITUTION_BC_PUBLIC_ERROR_MESSAGE,
 } from "../../../../testHelpers";
 import {
   createFakeInstitutionLocation,
@@ -364,6 +365,33 @@ describe("StudentInstitutionsController(e2e)-searchStudents", () => {
       .auth(collegeFInstitutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
       .expect([]);
+  });
+
+  it("Should throw forbidden error when the institution type is not BC Public.", async () => {
+    // Arrange
+    const searchPayload = {
+      appNumber: "",
+      firstName: "",
+      lastName: "search last name",
+      sin: "",
+    };
+
+    // College C is not a BC Public institution.
+    const collegeCInstitutionUserToken = await getInstitutionToken(
+      InstitutionTokenTypes.CollegeCUser,
+    );
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .post(endpoint)
+      .send(searchPayload)
+      .auth(collegeCInstitutionUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.FORBIDDEN)
+      .expect({
+        statusCode: HttpStatus.FORBIDDEN,
+        message: INSTITUTION_BC_PUBLIC_ERROR_MESSAGE,
+        error: "Forbidden",
+      });
   });
 
   /**

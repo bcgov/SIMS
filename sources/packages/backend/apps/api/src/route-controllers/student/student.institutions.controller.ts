@@ -73,8 +73,6 @@ export class StudentInstitutionsController extends BaseController {
 
   /**
    * Get the student information that represents the profile.
-   * TODO: Authorization must be enabled to validate if the student has submitted
-   * at least one application for the institution of the user.
    * @param studentId student.
    * @returns student profile details.
    */
@@ -89,11 +87,10 @@ export class StudentInstitutionsController extends BaseController {
 
   /**
    * Get the list of applications that belongs to a student for the institution.
-   * TODO: Authorization must be enabled to validate if the student has submitted
-   * at least one application for the institution of the user.
    * @param studentId student.
    * @returns list of applications that belongs to a student for the institution.
    */
+  @HasStudentDataAccess("studentId")
   @Get(":studentId/application-summary")
   @ApiNotFoundResponse({ description: "Student not found." })
   async getStudentApplicationSummary(
