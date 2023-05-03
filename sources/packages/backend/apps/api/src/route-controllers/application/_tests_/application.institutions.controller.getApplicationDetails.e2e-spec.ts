@@ -111,7 +111,7 @@ describe("ApplicationInstitutionsController(e2e)-getApplicationDetails", () => {
         .expect(HttpStatus.FORBIDDEN)
         .expect({
           statusCode: 403,
-          message: "Forbidden resource",
+          message: "The institution is not BC Public.",
           error: "Forbidden",
         });
     },
@@ -139,7 +139,8 @@ describe("ApplicationInstitutionsController(e2e)-getApplicationDetails", () => {
       .expect(HttpStatus.FORBIDDEN)
       .expect({
         statusCode: 403,
-        message: "Forbidden resource",
+        message:
+          "The institution is not allowed access to the student data of the given student.",
         error: "Forbidden",
       });
   });
