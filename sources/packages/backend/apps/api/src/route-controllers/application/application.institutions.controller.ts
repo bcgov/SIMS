@@ -28,8 +28,8 @@ export class ApplicationInstitutionsController extends BaseController {
   /**
    * API to fetch application details by applicationId.
    * This API will be used by institution users.
-   * @param applicationId
-   * @param studentId
+   * @param applicationId for the application.
+   * @param studentId for the student.
    * @returns Application details.
    */
   @HasStudentDataAccess("studentId")

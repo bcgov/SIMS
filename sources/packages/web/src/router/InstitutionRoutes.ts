@@ -560,6 +560,7 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
             InstitutionUserTypes.admin,
             InstitutionUserTypes.user,
           ],
+          allowOnlyBCPublic: true,
         },
         children: [
           {
@@ -567,13 +568,6 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
             name: InstitutionRoutesConst.STUDENT_APPLICATION_DETAILS,
             props: true,
             component: InstitutionApplicationView,
-            meta: {
-              clientType: ClientIdType.Institution,
-              institutionUserTypes: [
-                InstitutionUserTypes.admin,
-                InstitutionUserTypes.user,
-              ],
-            },
           },
         ],
       },
