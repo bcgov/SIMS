@@ -15,7 +15,7 @@
       Student Application Details
       {{
         applicationDetail.applicationNumber
-          ? " - " + applicationDetail.applicationNumber
+          ? HYPHEN_WITH_SPACE + applicationDetail.applicationNumber
           : ""
       }}
     </h2>
@@ -33,6 +33,7 @@ import { onMounted, ref, defineComponent } from "vue";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import { ApplicationBaseAPIOutDTO } from "@/services/http/dto";
 import { ApplicationService } from "@/services/ApplicationService";
+import { HYPHEN_WITH_SPACE } from "@/composables/useFormatters";
 import StudentApplication from "@/components/common/StudentApplication.vue";
 
 export default defineComponent({
@@ -71,6 +72,7 @@ export default defineComponent({
       initialData,
       selectedForm,
       AESTRoutesConst,
+      HYPHEN_WITH_SPACE,
     };
   },
 });
