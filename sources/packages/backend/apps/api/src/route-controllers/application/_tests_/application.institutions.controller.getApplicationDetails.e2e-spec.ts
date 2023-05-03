@@ -53,12 +53,12 @@ describe("ApplicationInstitutionsController(e2e)-getApplicationDetails", () => {
 
   it(
     "Should get the student application details when student has a submitted application " +
-      "for the institution (application with location id saved).",
+      "for the institution.",
     async () => {
       // Arrange
       // Student has a submitted application to the institution.
       const student = await saveFakeStudent(appDataSource);
-      //Create new application.
+      // Create new application.
       const savedApplication = await saveFakeApplication(appDataSource, {
         institution: collegeF,
         institutionLocation: collegeFLocation,
@@ -87,13 +87,13 @@ describe("ApplicationInstitutionsController(e2e)-getApplicationDetails", () => {
   );
 
   it(
-    "Should not have access to get the student application details when student has a submitted application " +
-      "for a different institution (application with location id saved).",
+    "Should not have access to get the student application details if the student submitted and application to  " +
+      "non-public institution.",
     async () => {
       // Arrange
       // Student has a submitted application to the institution.
       const student = await saveFakeStudent(appDataSource);
-      //Create new application.
+      // Create new application.
       const savedApplication = await saveFakeApplication(appDataSource, {
         institutionLocation: collegeCLocation,
         student,
@@ -117,11 +117,11 @@ describe("ApplicationInstitutionsController(e2e)-getApplicationDetails", () => {
     },
   );
 
-  it("Should not get the student application details when application is submitted for different institution ", async () => {
+  it("Should not get the student application details when application is submitted for different institution.", async () => {
     // Arrange
     // Student has a submitted application to the institution.
     const student = await saveFakeStudent(appDataSource);
-    //Create new application.
+    // Create new application.
     const savedApplication = await saveFakeApplication(appDataSource, {
       institutionLocation: collegeCLocation,
       student,

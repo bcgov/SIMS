@@ -8,11 +8,10 @@ import {
   IsBCPublicInstitution,
   UserToken,
 } from "../../auth/decorators";
-import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { ApiTags } from "@nestjs/swagger";
 import { ClientTypeBaseRoute } from "../../types";
 import { ApplicationControllerService } from "./application.controller.service";
-import { IInstitutionUserToken } from "../../auth";
+import { AuthorizedParties, IInstitutionUserToken } from "../../auth";
 
 @AllowAuthorizedParty(AuthorizedParties.institution)
 @IsBCPublicInstitution()
@@ -28,7 +27,7 @@ export class ApplicationInstitutionsController extends BaseController {
 
   /**
    * API to fetch application details by applicationId.
-   * This API will be used by ministry users.
+   * This API will be used by institution users.
    * @param applicationId
    * @param studentId
    * @returns Application details.
