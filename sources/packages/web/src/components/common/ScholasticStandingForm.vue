@@ -24,11 +24,11 @@ import { FormIOForm } from "@/types";
 
 interface ScholasticStanding
   extends ScholasticStandingSubmittedDetailsAPIOutDTO {
-  readonly: boolean;
+  readOnly: boolean;
 }
 interface ScholasticStandingBeforeSubmission
   extends ActiveApplicationDataAPIOutDTO {
-  readonly: boolean;
+  readOnly: boolean;
 }
 export default defineComponent({
   emits: ["submit", "cancel"],
@@ -54,7 +54,7 @@ export default defineComponent({
     );
 
     const setReadOnlyData = () => {
-      data.value = { ...props.initialData, readonly: props.readOnly };
+      data.value = { ...props.initialData, readOnly: props.readOnly };
     };
 
     watch(
