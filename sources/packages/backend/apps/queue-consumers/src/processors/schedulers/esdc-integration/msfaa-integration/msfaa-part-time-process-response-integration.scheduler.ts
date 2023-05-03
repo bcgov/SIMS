@@ -25,7 +25,7 @@ export class PartTimeMSFAAProcessResponseIntegrationScheduler extends BaseSchedu
    * @returns Summary with what was processed and the list of all errors, if any.
    */
   @Process()
-  async processMSFAA(job: Job<void>): Promise<ProcessResponseQueue[]> {
+  async processMSFAAResponses(job: Job<void>): Promise<ProcessResponseQueue[]> {
     const summary = new QueueProcessSummary({
       appLogger: this.logger,
       jobLogger: job,
