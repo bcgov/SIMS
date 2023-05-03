@@ -102,7 +102,7 @@ export class MSFAARequestProcessingService extends ESDCFileHandler {
           // holds the transaction already created to manage the
           // sequence number.
           const msfaaNumberRepo = entityManager.getRepository(MSFAANumber);
-          this.msfaaNumberService.updateRecordsInSentFile(
+          await this.msfaaNumberService.updateRecordsInSentFile(
             msfaaRecordIds,
             processDate,
             msfaaNumberRepo,
