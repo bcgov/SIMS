@@ -17,7 +17,6 @@ import { MSFAAResponseRecordIdentification } from "./msfaa-files/msfaa-response-
 import { ConfigService, ESDCIntegrationConfig } from "@sims/utilities/config";
 import { SFTPIntegrationBase, SshService } from "@sims/integrations/services";
 import {
-  getCountryCode,
   getGenderCode,
   getMaritalStatusCode,
   getOfferingIntensityCode,
@@ -83,7 +82,7 @@ export class MSFAAIntegrationService extends SFTPIntegrationBase<MSFAASFTPRespon
       msfaaDetail.city = msfaaRecord.city;
       msfaaDetail.provinceState = msfaaRecord.provinceState;
       msfaaDetail.postalCode = msfaaRecord.postalCode;
-      msfaaDetail.country = getCountryCode(msfaaRecord.country);
+      msfaaDetail.country = msfaaRecord.country;
       msfaaDetail.phone = msfaaRecord.phone;
       msfaaDetail.email = msfaaRecord.email;
       msfaaDetail.offeringIntensityCode = getOfferingIntensityCode(
