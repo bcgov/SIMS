@@ -7,6 +7,8 @@ import {
   createTestingAppModule,
   getAuthRelatedEntities,
   getInstitutionToken,
+  INSTITUTION_BC_PUBLIC_ERROR_MESSAGE,
+  INSTITUTION_STUDENT_DATA_ACCESS_ERROR_MESSAGE,
   InstitutionTokenTypes,
 } from "../../../testHelpers";
 import {
@@ -111,7 +113,7 @@ describe("ApplicationInstitutionsController(e2e)-getApplicationDetails", () => {
         .expect(HttpStatus.FORBIDDEN)
         .expect({
           statusCode: 403,
-          message: "The institution is not BC Public.",
+          message: INSTITUTION_BC_PUBLIC_ERROR_MESSAGE,
           error: "Forbidden",
         });
     },
@@ -139,8 +141,7 @@ describe("ApplicationInstitutionsController(e2e)-getApplicationDetails", () => {
       .expect(HttpStatus.FORBIDDEN)
       .expect({
         statusCode: 403,
-        message:
-          "The institution is not allowed access to the student data of the given student.",
+        message: INSTITUTION_STUDENT_DATA_ACCESS_ERROR_MESSAGE,
         error: "Forbidden",
       });
   });
