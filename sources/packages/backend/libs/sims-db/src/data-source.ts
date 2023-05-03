@@ -81,6 +81,10 @@ export const ormConfig: PostgresConnectionOptions = {
   synchronize: false,
 };
 
+/**
+ * Get cache configuration of the ORM.
+ * @returns ORM cache config.
+ */
 function getORMCacheConfig(): ORMCacheConfig | false {
   const config = new ConfigService();
 

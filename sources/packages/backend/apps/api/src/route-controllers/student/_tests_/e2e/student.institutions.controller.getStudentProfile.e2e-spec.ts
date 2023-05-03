@@ -17,7 +17,11 @@ import {
 import { Application, Institution, InstitutionLocation } from "@sims/sims-db";
 import { determinePDStatus, getUserFullName } from "../../../../utilities";
 import { getISODateOnlyString } from "@sims/utilities";
-import { saveStudentApplicationForCollegeC } from "./student.institutions.utils";
+import {
+  INSTITUTION_BC_PUBLIC_ERROR_MESSAGE,
+  INSTITUTION_STUDENT_DATA_ACCESS_ERROR_MESSAGE,
+  saveStudentApplicationForCollegeC,
+} from "./student.institutions.utils";
 
 describe("StudentInstitutionsController(e2e)-getStudentProfile", () => {
   let app: INestApplication;
@@ -113,9 +117,10 @@ describe("StudentInstitutionsController(e2e)-getStudentProfile", () => {
     await request(app.getHttpServer())
       .get(endpoint)
       .auth(collegeCInstitutionUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.FORBIDDEN)
       .expect({
         statusCode: HttpStatus.FORBIDDEN,
-        message: "Forbidden resource",
+        message: INSTITUTION_BC_PUBLIC_ERROR_MESSAGE,
         error: "Forbidden",
       });
   });
@@ -135,9 +140,10 @@ describe("StudentInstitutionsController(e2e)-getStudentProfile", () => {
     await request(app.getHttpServer())
       .get(endpoint)
       .auth(institutionUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.FORBIDDEN)
       .expect({
         statusCode: HttpStatus.FORBIDDEN,
-        message: "Forbidden resource",
+        message: INSTITUTION_STUDENT_DATA_ACCESS_ERROR_MESSAGE,
         error: "Forbidden",
       });
   });

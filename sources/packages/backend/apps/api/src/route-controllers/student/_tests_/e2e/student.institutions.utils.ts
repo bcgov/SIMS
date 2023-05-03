@@ -13,7 +13,7 @@ import { Application, Student } from "@sims/sims-db";
 /**
  * Save student application for College C
  * with a College C location.
- * @param dataSource
+ * @param dataSource data source to connect the database.
  * @returns student and application details with application location.
  */
 export async function saveStudentApplicationForCollegeC(
@@ -34,3 +34,9 @@ export async function saveStudentApplicationForCollegeC(
     collegeCApplication: application,
   };
 }
+
+export const INSTITUTION_BC_PUBLIC_ERROR_MESSAGE =
+  "The institution is not  BC Public.";
+
+export const INSTITUTION_STUDENT_DATA_ACCESS_ERROR_MESSAGE =
+  "The institution is not allowed access the student data of given student.";

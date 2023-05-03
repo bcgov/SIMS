@@ -21,7 +21,7 @@ import {
   InstitutionLocation,
   Student,
 } from "@sims/sims-db";
-import { saveStudentApplicationForCollegeC } from "./student.institutions.utils";
+import { INSTITUTION_BC_PUBLIC_ERROR_MESSAGE } from "./student.institutions.utils";
 
 describe("StudentInstitutionsController(e2e)-searchStudents", () => {
   let app: INestApplication;
@@ -367,6 +367,33 @@ describe("StudentInstitutionsController(e2e)-searchStudents", () => {
       .expect([]);
   });
 
+  it("Should throw forbidden error when the institution type is not BC Public.", async () => {
+    // Arrange
+    const searchPayload = {
+      appNumber: "",
+      firstName: "",
+      lastName: "search last name",
+      sin: "",
+    };
+
+    // College C is not a BC Public institution.
+    const collegeCInstitutionUserToken = await getInstitutionToken(
+      InstitutionTokenTypes.CollegeCUser,
+    );
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .post(endpoint)
+      .send(searchPayload)
+      .auth(collegeCInstitutionUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.FORBIDDEN)
+      .expect({
+        statusCode: HttpStatus.FORBIDDEN,
+        message: INSTITUTION_BC_PUBLIC_ERROR_MESSAGE,
+        error: "Forbidden",
+      });
+  });
+
   /**
    * Saves a student and an application for the student for College F.
    * @param applicationStatus application status.
@@ -393,44 +420,6 @@ describe("StudentInstitutionsController(e2e)-searchStudents", () => {
       application,
     };
   };
-
-  it("Should throw forbidden error when the institution type is not BC Public.", async () => {
-    // Arrange
-
-    // Student submitting an application to College C.
-    const { collegeCApplication } = await saveStudentApplicationForCollegeC(
-      appDataSource,
-    );
-
-    await authorizeUserTokenForLocation(
-      appDataSource,
-      InstitutionTokenTypes.CollegeCUser,
-      collegeCApplication.location,
-    );
-
-    const searchPayload = {
-      appNumber: collegeCApplication.applicationNumber,
-      firstName: "",
-      lastName: "",
-      sin: "",
-    };
-
-    // College C is not a BC Public institution.
-    const collegeCInstitutionUserToken = await getInstitutionToken(
-      InstitutionTokenTypes.CollegeCUser,
-    );
-
-    // Act/Assert
-    await request(app.getHttpServer())
-      .post(endpoint)
-      .send(searchPayload)
-      .auth(collegeCInstitutionUserToken, BEARER_AUTH_TYPE)
-      .expect({
-        statusCode: HttpStatus.FORBIDDEN,
-        message: "Forbidden resource",
-        error: "Forbidden",
-      });
-  });
 
   afterAll(async () => {
     await app?.close();

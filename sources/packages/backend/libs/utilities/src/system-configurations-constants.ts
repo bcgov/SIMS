@@ -21,6 +21,6 @@ export const SERVICE_ACCOUNT_DEFAULT_USER_EMAIL = "dev_sabc@gov.bc.ca";
 export const MIN_CANADA_LOAN_OVERAWARD = 250;
 
 /**
- * Lifetime of ORM cache in milliseconds.
+ * Default lifetime of ORM cache in milliseconds.
  */
 export const ORM_CACHE_LIFETIME = 10 * 60 * 1000;
