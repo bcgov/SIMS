@@ -55,6 +55,7 @@ export * from "./confirmation-of-enrollment/confirmation-of-enrollment.controlle
 export * from "./confirmation-of-enrollment/confirmation-of-enrollment.aest.controller";
 export * from "./overaward/overaward.controller.service";
 export * from "./overaward/overaward.aest.controller";
+export * from "./overaward/overaward.institutions.controller";
 export * from "./overaward/overaward.students.controller";
 export * from "./student/student.institutions.controller";
 export * from "./restriction/restriction.institution.controller";

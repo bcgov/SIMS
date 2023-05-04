@@ -27,6 +27,7 @@ jobs:
       API_PORT: 3000
       QUEUE_CONSUMERS_PORT: 3001
       DB_SCHEMA: sims
+      DISABLE_ORM_CACHE: "true"
       KEYCLOAK_REALM: "aestsims"
       KEYCLOAK_AUTH_URL: "https://dev.loginproxy.gov.bc.ca/auth/"
       BCeID_WEB_SERVICE_WSDL: "https://gws1.test.bceid.ca/webservices/Client/V10/BCeIDService.asmx?wsdl"
@@ -75,6 +76,7 @@ jobs:
       REDIS_STANDALONE_MODE: "true"
       QUEUE_PREFIX: "{sims-local}"
       DB_SCHEMA: sims
+      DISABLE_ORM_CACHE: "true"
     steps:
       # Checkout the PR branch.
       - name: Checkout Target Branch
@@ -129,6 +131,7 @@ jobs:
       QUEUE_PREFIX: "{sims-local}"
       QUEUE_CONSUMERS_PORT: 3001
       DB_SCHEMA: sims
+      DISABLE_ORM_CACHE: "true"
       ESDC_REQUEST_FOLDER: MSFT-Request
       ESDC_RESPONSE_FOLDER: MSFT-Response
       ESDC_ENVIRONMENT_CODE: D

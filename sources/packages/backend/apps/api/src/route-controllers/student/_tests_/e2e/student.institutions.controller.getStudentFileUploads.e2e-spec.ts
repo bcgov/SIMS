@@ -8,6 +8,8 @@ import {
   getAuthRelatedEntities,
   getInstitutionToken,
   InstitutionTokenTypes,
+  INSTITUTION_BC_PUBLIC_ERROR_MESSAGE,
+  INSTITUTION_STUDENT_DATA_ACCESS_ERROR_MESSAGE,
 } from "../../../../testHelpers";
 import {
   createFakeInstitutionLocation,
@@ -21,6 +23,7 @@ import {
   Institution,
   InstitutionLocation,
 } from "@sims/sims-db";
+import { saveStudentApplicationForCollegeC } from "./student.institutions.utils";
 
 describe("StudentInstitutionsController(e2e)-getStudentFileUploads", () => {
   let app: INestApplication;
@@ -121,6 +124,70 @@ describe("StudentInstitutionsController(e2e)-getStudentFileUploads", () => {
       .auth(institutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
       .expect([]);
+  });
+
+  it("Should throw forbidden error when the institution type is not BC Public.", async () => {
+    // Arrange
+    // Student submitting an application to College C.
+    const { student, collegeCApplication } =
+      await saveStudentApplicationForCollegeC(appDataSource);
+
+    // Save fake file upload for the student.
+    await saveFakeStudentFileUpload(
+      appDataSource,
+      {
+        student,
+        creator: student.user,
+      },
+      { fileOrigin: FileOriginType.Temporary },
+    );
+
+    await authorizeUserTokenForLocation(
+      appDataSource,
+      InstitutionTokenTypes.CollegeCUser,
+      collegeCApplication.location,
+    );
+
+    // College C is not a BC Public institution.
+    const collegeCInstitutionUserToken = await getInstitutionToken(
+      InstitutionTokenTypes.CollegeCUser,
+    );
+
+    const endpoint = `/institutions/student/${student.id}/documents`;
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .get(endpoint)
+      .auth(collegeCInstitutionUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.FORBIDDEN)
+      .expect({
+        statusCode: HttpStatus.FORBIDDEN,
+        message: INSTITUTION_BC_PUBLIC_ERROR_MESSAGE,
+        error: "Forbidden",
+      });
+  });
+
+  it("Should throw forbidden error when student does not have at least one application submitted for the institution.", async () => {
+    // Arrange
+    const student = await saveFakeStudent(appDataSource);
+
+    // College F is a BC Public institution.
+    const institutionUserToken = await getInstitutionToken(
+      InstitutionTokenTypes.CollegeFUser,
+    );
+
+    const endpoint = `/institutions/student/${student.id}/documents`;
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .get(endpoint)
+      .auth(institutionUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.FORBIDDEN)
+      .expect({
+        statusCode: HttpStatus.FORBIDDEN,
+        message: INSTITUTION_STUDENT_DATA_ACCESS_ERROR_MESSAGE,
+        error: "Forbidden",
+      });
   });
 
   afterAll(async () => {
