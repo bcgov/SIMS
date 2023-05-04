@@ -47,6 +47,7 @@ import {
   StudentControllerService,
   RestrictionInstitutionController,
   OverawardControllerService,
+  RestrictionControllerService,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
 import {
@@ -100,6 +101,7 @@ import { UserControllerService } from "./route-controllers/user/user.controller.
     StudentFileService,
     StudentRestrictionService,
     RestrictionService,
+    RestrictionControllerService,
     StudentScholasticStandingsService,
     StudentAssessmentService,
     ScholasticStandingControllerService,

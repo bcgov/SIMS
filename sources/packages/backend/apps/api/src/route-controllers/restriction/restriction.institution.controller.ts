@@ -1,12 +1,5 @@
-import {
-  Controller,
-  Get,
-  Param,
-  ParseIntPipe,
-  NotFoundException,
-} from "@nestjs/common";
+import { Controller, Get, Param, ParseIntPipe } from "@nestjs/common";
 import BaseController from "../BaseController";
-import { StudentRestrictionService } from "../../services";
 import {
   RestrictionSummaryAPIOutDTO,
   RestrictionDetailAPIOutDTO,
@@ -18,9 +11,8 @@ import {
   IsBCPublicInstitution,
 } from "../../auth/decorators";
 import { ClientTypeBaseRoute } from "../../types";
-import { getUserFullName } from "../../utilities";
-import { ApiTags, ApiNotFoundResponse } from "@nestjs/swagger";
-import { RestrictionNotificationType } from "@sims/sims-db/entities";
+import { ApiTags } from "@nestjs/swagger";
+import { RestrictionControllerService } from "./restriction.controller.service";
 
 /**
  * Controller for Institution Restrictions.
@@ -32,7 +24,7 @@ import { RestrictionNotificationType } from "@sims/sims-db/entities";
 @ApiTags(`${ClientTypeBaseRoute.Institution}-restriction`)
 export class RestrictionInstitutionController extends BaseController {
   constructor(
-    private readonly studentRestrictionService: StudentRestrictionService,
+    private readonly restrictionControllerService: RestrictionControllerService,
   ) {
     super();
   }
@@ -47,28 +39,9 @@ export class RestrictionInstitutionController extends BaseController {
   async getStudentRestrictions(
     @Param("studentId", ParseIntPipe) studentId: number,
   ): Promise<RestrictionSummaryAPIOutDTO[]> {
-    const studentRestrictions =
-      await this.studentRestrictionService.getStudentRestrictionsById(
-        studentId,
-      );
-    const filteredStudentRestrictions = studentRestrictions.filter(
-      (studentRestriction) =>
-        studentRestriction.restriction.notificationType !==
-          RestrictionNotificationType.NoEffect &&
-        studentRestriction.restriction.restrictionCategory.toLowerCase() !==
-          "verification",
-    );
-    return filteredStudentRestrictions?.map((filteredStudentRestriction) => ({
-      restrictionId: filteredStudentRestriction.id,
-      restrictionType: filteredStudentRestriction.restriction.restrictionType,
-      restrictionCategory:
-        filteredStudentRestriction.restriction.restrictionCategory,
-      restrictionCode: filteredStudentRestriction.restriction.restrictionCode,
-      description: filteredStudentRestriction.restriction.description,
-      createdAt: filteredStudentRestriction.createdAt,
-      updatedAt: filteredStudentRestriction.updatedAt,
-      isActive: filteredStudentRestriction.isActive,
-    }));
+    return this.restrictionControllerService.getStudentRestrictions(studentId, {
+      filterRestrictions: true,
+    });
   }
 
   /**
@@ -77,36 +50,15 @@ export class RestrictionInstitutionController extends BaseController {
    * @param studentRestrictionId id of the student restriction.
    * @returns Student restriction detail view.
    */
-  @ApiNotFoundResponse({
-    description: "The student restriction does not exist.",
-  })
   @HasStudentDataAccess("studentId")
   @Get("student/:studentId/studentRestriction/:studentRestrictionId")
   async getStudentRestrictionDetail(
     @Param("studentId", ParseIntPipe) studentId: number,
     @Param("studentRestrictionId", ParseIntPipe) studentRestrictionId: number,
   ): Promise<RestrictionDetailAPIOutDTO> {
-    const studentRestriction =
-      await this.studentRestrictionService.getStudentRestrictionDetailsById(
-        studentId,
-        studentRestrictionId,
-      );
-    if (!studentRestriction) {
-      throw new NotFoundException("The student restriction does not exist.");
-    }
-    return {
-      restrictionId: studentRestriction.id,
-      restrictionType: studentRestriction.restriction.restrictionType,
-      restrictionCategory: studentRestriction.restriction.restrictionCategory,
-      restrictionCode: studentRestriction.restriction.restrictionCode,
-      description: studentRestriction.restriction.description,
-      createdAt: studentRestriction.createdAt,
-      updatedAt: studentRestriction.updatedAt,
-      createdBy: getUserFullName(studentRestriction.creator),
-      updatedBy: getUserFullName(studentRestriction.modifier),
-      isActive: studentRestriction.isActive,
-      restrictionNote: studentRestriction.restrictionNote?.description,
-      resolutionNote: studentRestriction.resolutionNote?.description,
-    };
+    return this.restrictionControllerService.getStudentRestrictionDetail(
+      studentId,
+      studentRestrictionId,
+    );
   }
 }
