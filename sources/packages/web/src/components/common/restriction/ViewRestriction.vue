@@ -125,7 +125,7 @@ export default defineComponent({
       default: false,
     },
   },
-  setup(props: any) {
+  setup(props) {
     const NOTES_MAX_CHARACTERS = 500;
     const { checkMaxCharacters } = useValidators();
     const { showDialog, showModal, resolvePromise } = useModalDialog<

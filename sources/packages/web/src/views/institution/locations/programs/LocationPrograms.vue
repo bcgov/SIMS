@@ -104,7 +104,7 @@ export default defineComponent({
       required: true,
     },
   },
-  setup(props: any) {
+  setup(props) {
     const { getLocationName } = useInstitutionState();
     const router = useRouter();
     const programAndCount = ref(
@@ -117,7 +117,7 @@ export default defineComponent({
     const currentPageLimit = ref();
 
     const locationName = computed(() => {
-      return getLocationName(parseInt(props.locationId));
+      return getLocationName(props.locationId);
     });
 
     /**

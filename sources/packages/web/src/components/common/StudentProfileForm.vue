@@ -36,7 +36,7 @@ export default defineComponent({
       default: false,
     },
   },
-  setup(props: any) {
+  setup(props) {
     const initialData = ref({} as StudentProfileFormModel);
 
     const saveLabel = computed(() =>

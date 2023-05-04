@@ -23,7 +23,7 @@
 
 <script lang="ts">
 import { useFormioDropdownLoader } from "@/composables";
-import { PropType, SetupContext, defineComponent } from "vue";
+import { PropType, defineComponent } from "vue";
 import { FormIOForm, InstitutionProfileForm, Role } from "@/types";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
 
@@ -51,7 +51,7 @@ export default defineComponent({
     },
   },
   emits: ["submitInstitutionProfile"],
-  setup(_props: any, context: SetupContext) {
+  setup(_props, context) {
     const formioDataLoader = useFormioDropdownLoader();
 
     const submitInstitutionProfile = async (

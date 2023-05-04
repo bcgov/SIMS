@@ -69,7 +69,7 @@ export default defineComponent({
       required: false,
     },
   },
-  setup(props: any) {
+  setup(props) {
     const processing = ref(false);
     const snackBar = useSnackBar();
     const router = useRouter();

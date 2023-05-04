@@ -96,7 +96,7 @@ export default defineComponent({
       default: false,
     },
   },
-  setup(props: any) {
+  setup(props) {
     const {
       showDialog,
       resolvePromise,

@@ -17,7 +17,7 @@
 </template>
 
 <script lang="ts">
-import { SetupContext, PropType, defineComponent } from "vue";
+import { PropType, defineComponent } from "vue";
 import { useRouter } from "vue-router";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import { RouteHelper } from "@/helpers";
@@ -39,7 +39,7 @@ export default defineComponent({
       required: false,
     },
   },
-  setup(props: any, context: SetupContext) {
+  setup(_props, context) {
     const router = useRouter();
     // Regular hyperlinks ids presents inside the form.io definition that
     // needs execute a redirect in the vue application.

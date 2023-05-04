@@ -35,7 +35,7 @@ export default defineComponent({
       type: String,
     },
   },
-  setup(props: any) {
+  setup(props) {
     const bannerIcon = computed(() => {
       switch (props.type) {
         case BannerTypes.Success:
