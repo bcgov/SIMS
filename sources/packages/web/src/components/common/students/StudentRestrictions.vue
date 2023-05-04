@@ -169,7 +169,7 @@ export default defineComponent({
       const viewStudentRestrictionData =
         await viewRestriction.value.showModal();
       if (viewStudentRestrictionData) {
-        resolveRestriction(
+        await resolveRestriction(
           viewStudentRestrictionData as RestrictionDetailAPIOutDTO,
         );
       }
@@ -197,7 +197,7 @@ export default defineComponent({
     const addStudentRestriction = async () => {
       const addStudentRestrictionData = await addRestriction.value.showModal();
       if (addStudentRestrictionData) {
-        createNewRestriction(
+        await createNewRestriction(
           addStudentRestrictionData as AssignRestrictionAPIInDTO,
         );
       }
