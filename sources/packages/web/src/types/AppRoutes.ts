@@ -106,4 +106,5 @@ export enum AppRoutes {
   StudentNotes = "student-notes/:studentId",
   StudentRestrictions = "student-restrictions/:studentId",
   Overawards = "overawards",
+  ApplicationView = "view",
 }

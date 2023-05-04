@@ -549,6 +549,7 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
       },
       {
         path: AppRoutes.ApplicationDetail,
+        redirect: { name: InstitutionRoutesConst.STUDENT_APPLICATION_DETAILS },
         props: true,
         components: {
           default: ApplicationDetails,
@@ -564,7 +565,7 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
         },
         children: [
           {
-            path: "",
+            path: AppRoutes.ApplicationView,
             name: InstitutionRoutesConst.STUDENT_APPLICATION_DETAILS,
             props: true,
             component: InstitutionApplicationView,

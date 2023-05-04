@@ -10,7 +10,6 @@ dayjs.extend(customParseFormat);
 
 const DEFAULT_EMPTY_VALUE = "-";
 export const DATE_ONLY_ISO_FORMAT = "YYYY-MM-DD";
-export const HYPHEN_WITH_SPACE = " - ";
 
 /**
  * Helpers to adjust how values are shown in the UI.

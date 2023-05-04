@@ -13,11 +13,7 @@
     </template>
     <h2 class="color-blue pb-4">
       Student Application Details
-      {{
-        applicationDetail.applicationNumber
-          ? HYPHEN_WITH_SPACE + applicationDetail.applicationNumber
-          : ""
-      }}
+      {{ applicationDetail.applicationNumber }}
     </h2>
     <StudentApplication
       :selectedForm="selectedForm"
@@ -33,7 +29,6 @@ import { onMounted, ref, defineComponent } from "vue";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import { ApplicationBaseAPIOutDTO } from "@/services/http/dto";
 import { ApplicationService } from "@/services/ApplicationService";
-import { HYPHEN_WITH_SPACE } from "@/composables/useFormatters";
 import StudentApplication from "@/components/common/StudentApplication.vue";
 
 export default defineComponent({
@@ -73,7 +68,6 @@ export default defineComponent({
       initialData,
       selectedForm,
       InstitutionRoutesConst,
-      HYPHEN_WITH_SPACE,
     };
   },
 });
