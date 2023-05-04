@@ -78,6 +78,7 @@
       ref="viewRestriction"
       :restrictionData="studentRestriction"
       :allowedRole="Role.StudentResolveRestriction"
+      :canResolveRestriction="canResolveRestriction"
     />
     <add-student-restriction-modal
       v-if="canAddRestrictions"
@@ -123,6 +124,11 @@ export default defineComponent({
       required: true,
     },
     canAddRestrictions: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
+    canResolveRestriction: {
       type: Boolean,
       required: false,
       default: false,

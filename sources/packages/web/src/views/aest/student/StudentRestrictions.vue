@@ -3,6 +3,7 @@
     ><student-restrictions
       :studentId="studentId"
       :canAddRestrictions="true"
+      :canResolveRestriction="true"
     ></student-restrictions
   ></tab-container>
 </template>

@@ -35,39 +35,43 @@
                 " /></v-col
           ></v-row>
         </content-group>
-        <template
-          v-if="restrictionData.restrictionType !== RestrictionType.Federal"
-        >
-          <v-divider></v-divider>
-          <h3 class="category-header-medium mb-5">Resolution</h3>
-        </template>
-        <v-textarea
-          v-if="allowUserToEdit"
-          label="Resolution reason"
-          v-model="formModel.resolutionNote"
-          variant="outlined"
-          :rules="[(v) => checkResolutionNotesLength(v)]" />
-        <content-group
-          v-if="
-            !restrictionData.isActive &&
-            restrictionData.restrictionType !== RestrictionType.Federal
-          "
-        >
-          <title-value
-            propertyTitle="Resolution reason"
-            :propertyValue="restrictionData.resolutionNote"
+        <template v-if="canResolveRestriction">
+          <template
+            v-if="restrictionData.restrictionType !== RestrictionType.Federal"
+          >
+            <v-divider></v-divider>
+            <h3 class="category-header-medium mb-5">Resolution</h3>
+          </template>
+          <v-textarea
+            v-if="allowUserToEdit"
+            label="Resolution reason"
+            v-model="formModel.resolutionNote"
+            variant="outlined"
+            :rules="[(v) => checkResolutionNotesLength(v)]"
           />
-          <v-row
-            ><v-col
-              ><title-value
-                propertyTitle="Date resolved"
-                :propertyValue="restrictionData.updatedAt" /></v-col
-            ><v-col
-              ><title-value
-                propertyTitle="Resolved by"
-                :propertyValue="restrictionData.updatedBy" /></v-col
-          ></v-row> </content-group
-      ></template>
+          <content-group
+            v-if="
+              !restrictionData.isActive &&
+              restrictionData.restrictionType !== RestrictionType.Federal
+            "
+          >
+            <title-value
+              propertyTitle="Resolution reason"
+              :propertyValue="restrictionData.resolutionNote"
+            />
+            <v-row
+              ><v-col
+                ><title-value
+                  propertyTitle="Date resolved"
+                  :propertyValue="restrictionData.updatedAt" /></v-col
+              ><v-col
+                ><title-value
+                  propertyTitle="Resolved by"
+                  :propertyValue="restrictionData.updatedBy" /></v-col
+            ></v-row>
+          </content-group>
+        </template>
+      </template>
       <template #footer>
         <check-permission-role :role="allowedRole">
           <template #="{ notAllowed }">
@@ -115,6 +119,11 @@ export default defineComponent({
       type: String as PropType<Role>,
       required: true,
     },
+    canResolveRestriction: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
   },
   setup(props: any) {
     const NOTES_MAX_CHARACTERS = 500;
@@ -153,7 +162,8 @@ export default defineComponent({
     const allowUserToEdit = computed(
       () =>
         props.restrictionData.isActive &&
-        props.restrictionData.restrictionType !== RestrictionType.Federal,
+        props.restrictionData.restrictionType !== RestrictionType.Federal &&
+        props.canResolveRestriction,
     );
 
     return {
