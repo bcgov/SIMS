@@ -5,7 +5,7 @@ import InstitutionCreate from "@/views/institution/InstitutionCreate.vue";
 import InstitutionUserProfile from "@/views/institution/InstitutionUserProfile.vue";
 import AppInstitution from "@/views/institution/AppInstitution.vue";
 import ManageLocation from "@/views/institution/ManageLocations.vue";
-import ApplicationDetails from "@/components/common/ApplicationDetails.vue";
+import ApplicationDetails from "@/views/institution/ApplicationDetails.vue";
 import LocationPrograms from "@/views/institution/locations/programs/LocationPrograms.vue";
 import LocationProgramInfoRequestSummary from "@/views/institution/locations/program-info-request/LocationProgramInfoRequestSummary.vue";
 import ActiveApplicationsSummary from "@/views/institution/locations/active-applications/LocationActiveApplicationSummary.vue";

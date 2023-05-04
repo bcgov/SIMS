@@ -19,7 +19,7 @@ import Designation from "@/views/aest/institution/Designation.vue";
 import Restrictions from "@/views/aest/institution/Restrictions.vue";
 import FileUploads from "@/views/aest/student/FileUploads.vue";
 import InstitutionNotes from "@/views/aest/institution/InstitutionNotes.vue";
-import ApplicationDetails from "@/components/common/ApplicationDetails.vue";
+import ApplicationDetails from "@/views/aest/ApplicationDetails.vue";
 import StudentApplicationView from "@/views/aest/StudentApplicationView.vue";
 import AESTHomeSideBar from "@/components/layouts/aest/AESTHomeSideBar.vue";
 import StudentNotes from "@/views/aest/student/StudentNotes.vue";
