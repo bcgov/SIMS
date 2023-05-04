@@ -128,7 +128,7 @@ export default defineComponent({
       default: false,
     },
   },
-  setup(props: any) {
+  setup(props) {
     const studentRestrictions = ref();
     const { dateOnlyLongString } = useFormatters();
     const showModal = ref(false);
