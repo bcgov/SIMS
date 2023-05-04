@@ -15,7 +15,7 @@ import { AuthorizedParties, IInstitutionUserToken } from "../../auth";
 
 @AllowAuthorizedParty(AuthorizedParties.institution)
 @IsBCPublicInstitution()
-@Controller("application")
+@Controller("student")
 @ApiTags(`${ClientTypeBaseRoute.Institution}-application`)
 export class ApplicationInstitutionsController extends BaseController {
   constructor(
@@ -33,7 +33,7 @@ export class ApplicationInstitutionsController extends BaseController {
    * @returns Application details.
    */
   @HasStudentDataAccess("studentId")
-  @Get(":applicationId/student/:studentId")
+  @Get(":studentId/application/:applicationId")
   async getApplication(
     @UserToken() userToken: IInstitutionUserToken,
     @Param("applicationId", ParseIntPipe) applicationId: number,

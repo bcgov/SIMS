@@ -88,7 +88,7 @@ export class ApplicationApi extends HttpBaseClient {
     studentId?: number,
   ): Promise<ApplicationBaseAPIOutDTO> {
     const url = studentId
-      ? `application/${applicationId}/student/${studentId}`
+      ? `student/${studentId}/application/${applicationId}`
       : `application/${applicationId}`;
     return this.getCall<ApplicationBaseAPIOutDTO>(this.addClientRoot(url));
   }

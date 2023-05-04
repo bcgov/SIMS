@@ -13,7 +13,6 @@ import {
 } from "../../../testHelpers";
 import {
   createFakeInstitutionLocation,
-  saveFakeStudent,
   saveFakeApplication,
 } from "@sims/test-utils";
 import { Institution, InstitutionLocation } from "@sims/sims-db";
@@ -58,16 +57,14 @@ describe("ApplicationInstitutionsController(e2e)-getApplicationDetails", () => {
       "for the institution.",
     async () => {
       // Arrange
-      // Student has a submitted application to the institution.
-      const student = await saveFakeStudent(appDataSource);
       // Create new application.
       const savedApplication = await saveFakeApplication(appDataSource, {
         institution: collegeF,
         institutionLocation: collegeFLocation,
-        student,
       });
 
-      const endpoint = `/institutions/application/${savedApplication.id}/student/${student.id}`;
+      const student = savedApplication.student;
+      const endpoint = `/institutions/student/${student.id}/application/${savedApplication.id}`;
       const institutionUserToken = await getInstitutionToken(
         InstitutionTokenTypes.CollegeFUser,
       );
@@ -93,15 +90,13 @@ describe("ApplicationInstitutionsController(e2e)-getApplicationDetails", () => {
       "non-public institution.",
     async () => {
       // Arrange
-      // Student has a submitted application to the institution.
-      const student = await saveFakeStudent(appDataSource);
       // Create new application.
       const savedApplication = await saveFakeApplication(appDataSource, {
         institutionLocation: collegeCLocation,
-        student,
       });
 
-      const endpoint = `/institutions/application/${savedApplication.id}/student/${student.id}`;
+      const student = savedApplication.student;
+      const endpoint = `/institutions/student/${student.id}/application/${savedApplication.id}`;
       const institutionUserTokenCUser = await getInstitutionToken(
         InstitutionTokenTypes.CollegeCUser,
       );
@@ -121,15 +116,13 @@ describe("ApplicationInstitutionsController(e2e)-getApplicationDetails", () => {
 
   it("Should not get the student application details when application is submitted for different institution.", async () => {
     // Arrange
-    // Student has a submitted application to the institution.
-    const student = await saveFakeStudent(appDataSource);
     // Create new application.
     const savedApplication = await saveFakeApplication(appDataSource, {
       institutionLocation: collegeCLocation,
-      student,
     });
 
-    const endpoint = `/institutions/application/${savedApplication.id}/student/${student.id}`;
+    const student = savedApplication.student;
+    const endpoint = `/institutions/student/${student.id}/application/${savedApplication.id}`;
     const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeFUser,
     );
