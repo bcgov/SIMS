@@ -15,7 +15,7 @@
 </template>
 
 <script lang="ts">
-import { ref, SetupContext, watch, defineComponent, PropType } from "vue";
+import { ref, watch, defineComponent, PropType } from "vue";
 import {
   ActiveApplicationDataAPIOutDTO,
   ScholasticStandingSubmittedDetailsAPIOutDTO,
@@ -48,7 +48,7 @@ export default defineComponent({
       default: false,
     },
   },
-  setup(props, context: SetupContext) {
+  setup(props, context) {
     const data = ref(
       {} as ScholasticStanding | ScholasticStandingBeforeSubmission,
     );

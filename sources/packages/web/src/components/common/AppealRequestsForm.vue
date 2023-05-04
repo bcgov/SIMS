@@ -18,7 +18,7 @@
 </template>
 <script lang="ts">
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
-import { SetupContext, defineComponent } from "vue";
+import { defineComponent } from "vue";
 import { useFormioUtils } from "@/composables";
 import { StudentAppealRequest } from "@/types";
 
@@ -35,7 +35,7 @@ export default defineComponent({
       default: false,
     },
   },
-  setup(_props, context: SetupContext) {
+  setup(_props, context) {
     const { checkFormioValidity } = useFormioUtils();
     const appealForms: any[] = [];
     const appealFormLoaded = (form: any) => {

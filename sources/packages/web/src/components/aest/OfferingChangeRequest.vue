@@ -3,7 +3,7 @@
 </template>
 
 <script lang="ts">
-import { onMounted, ref, SetupContext, defineComponent } from "vue";
+import { onMounted, ref, defineComponent } from "vue";
 import { EducationProgramOfferingService } from "@/services/EducationProgramOfferingService";
 import { OfferingStatus, OfferingRelationType } from "@/types";
 import { EducationProgramOfferingAPIOutDTO } from "@/services/http/dto";
@@ -34,7 +34,7 @@ export default defineComponent({
   //TODO: This emit needs to be removed when the program and offering header component
   //TODO: is enhanced to load header values with it's own API call.
   emits: ["getHeaderDetails"],
-  setup(props, context: SetupContext) {
+  setup(props, context) {
     const initialData = ref({} as EducationProgramOfferingAPIOutDTO);
 
     onMounted(async () => {

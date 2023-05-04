@@ -24,7 +24,7 @@ import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
 import { useFormioUtils, useModalDialog } from "@/composables";
 import { FormIOForm } from "@/types";
 import formio from "@/components/generic/formio.vue";
-import { SetupContext, defineComponent } from "vue";
+import { defineComponent } from "vue";
 
 export default defineComponent({
   components: {
@@ -38,7 +38,7 @@ export default defineComponent({
     maxWidth: { type: Number, required: false },
   },
   emits: ["loaded"],
-  setup(_props, context: SetupContext) {
+  setup(_props, context) {
     const { checkFormioValidity } = useFormioUtils();
     const { showDialog, resolvePromise, showModal } = useModalDialog<
       FormIOForm | boolean
