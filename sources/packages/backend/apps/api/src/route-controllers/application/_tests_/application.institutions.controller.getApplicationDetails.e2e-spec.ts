@@ -52,67 +52,59 @@ describe("ApplicationInstitutionsController(e2e)-getApplicationDetails", () => {
     );
   });
 
-  it(
-    "Should get the student application details when student has a submitted application " +
-      "for the institution.",
-    async () => {
-      // Arrange
-      // Create new application.
-      const savedApplication = await saveFakeApplication(appDataSource, {
-        institution: collegeF,
-        institutionLocation: collegeFLocation,
+  it("Should get the student application details when student has a submitted application for the institution.", async () => {
+    // Arrange
+    // Create new application.
+    const savedApplication = await saveFakeApplication(appDataSource, {
+      institution: collegeF,
+      institutionLocation: collegeFLocation,
+    });
+
+    const student = savedApplication.student;
+    const endpoint = `/institutions/student/${student.id}/application/${savedApplication.id}`;
+    const institutionUserToken = await getInstitutionToken(
+      InstitutionTokenTypes.CollegeFUser,
+    );
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .get(endpoint)
+      .auth(institutionUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK)
+      .expect({
+        data: {},
+        id: savedApplication.id,
+        applicationStatus: savedApplication.applicationStatus,
+        applicationNumber: savedApplication.applicationNumber,
+        applicationFormName: "SFAA2022-23",
+        applicationProgramYearID: savedApplication.programYearId,
       });
+  });
 
-      const student = savedApplication.student;
-      const endpoint = `/institutions/student/${student.id}/application/${savedApplication.id}`;
-      const institutionUserToken = await getInstitutionToken(
-        InstitutionTokenTypes.CollegeFUser,
-      );
+  it("Should not have access to get the student application details if the student submitted and application to non-public institution.", async () => {
+    // Arrange
+    // Create new application.
+    const savedApplication = await saveFakeApplication(appDataSource, {
+      institutionLocation: collegeCLocation,
+    });
 
-      // Act/Assert
-      await request(app.getHttpServer())
-        .get(endpoint)
-        .auth(institutionUserToken, BEARER_AUTH_TYPE)
-        .expect(HttpStatus.OK)
-        .expect({
-          data: {},
-          id: savedApplication.id,
-          applicationStatus: savedApplication.applicationStatus,
-          applicationNumber: savedApplication.applicationNumber,
-          applicationFormName: "SFAA2022-23",
-          applicationProgramYearID: savedApplication.programYearId,
-        });
-    },
-  );
+    const student = savedApplication.student;
+    const endpoint = `/institutions/student/${student.id}/application/${savedApplication.id}`;
+    const institutionUserTokenCUser = await getInstitutionToken(
+      InstitutionTokenTypes.CollegeCUser,
+    );
 
-  it(
-    "Should not have access to get the student application details if the student submitted and application to  " +
-      "non-public institution.",
-    async () => {
-      // Arrange
-      // Create new application.
-      const savedApplication = await saveFakeApplication(appDataSource, {
-        institutionLocation: collegeCLocation,
+    // Act/Assert
+    await request(app.getHttpServer())
+      .get(endpoint)
+      .auth(institutionUserTokenCUser, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.FORBIDDEN)
+      .expect({
+        statusCode: 403,
+        message: INSTITUTION_BC_PUBLIC_ERROR_MESSAGE,
+        error: "Forbidden",
       });
-
-      const student = savedApplication.student;
-      const endpoint = `/institutions/student/${student.id}/application/${savedApplication.id}`;
-      const institutionUserTokenCUser = await getInstitutionToken(
-        InstitutionTokenTypes.CollegeCUser,
-      );
-
-      // Act/Assert
-      await request(app.getHttpServer())
-        .get(endpoint)
-        .auth(institutionUserTokenCUser, BEARER_AUTH_TYPE)
-        .expect(HttpStatus.FORBIDDEN)
-        .expect({
-          statusCode: 403,
-          message: INSTITUTION_BC_PUBLIC_ERROR_MESSAGE,
-          error: "Forbidden",
-        });
-    },
-  );
+  });
 
   it("Should not get the student application details when application is submitted for different institution.", async () => {
     // Arrange
