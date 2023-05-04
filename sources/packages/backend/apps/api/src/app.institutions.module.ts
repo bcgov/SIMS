@@ -44,6 +44,7 @@ import {
   ConfirmationOfEnrollmentControllerService,
   StudentInstitutionsController,
   StudentControllerService,
+  RestrictionInstitutionController,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
 import {
@@ -77,6 +78,7 @@ import { UserControllerService } from "./route-controllers/user/user.controller.
     EducationProgramOfferingInstitutionsController,
     UserInstitutionsController,
     StudentInstitutionsController,
+    RestrictionInstitutionController,
   ],
   providers: [
     WorkflowClientService,
