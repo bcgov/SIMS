@@ -10,8 +10,6 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import StudentRestrictions from "@/components/common/students/StudentRestrictions.vue";
-import { RestrictionService } from "@/services/RestrictionService";
-import { AssignRestrictionAPIInDTO } from "@/services/http/dto";
 
 export default defineComponent({
   components: { StudentRestrictions },
