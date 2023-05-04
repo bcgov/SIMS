@@ -128,7 +128,7 @@ export default defineComponent({
       required: false,
     },
   },
-  setup(props: any) {
+  setup(props) {
     const formatter = useFormatters();
     const router = useRouter();
     const clientType = computed(() => AuthService.shared.authClientType);

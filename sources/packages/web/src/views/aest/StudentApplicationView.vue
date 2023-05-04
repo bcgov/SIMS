@@ -49,7 +49,7 @@ export default defineComponent({
       required: true,
     },
   },
-  setup(props: any) {
+  setup(props) {
     const applicationDetail = ref({} as ApplicationBaseAPIOutDTO);
     const initialData = ref({});
     const selectedForm = ref();

@@ -42,7 +42,7 @@ export default defineComponent({
       required: true,
     },
   },
-  setup(props: any) {
+  setup(props) {
     const { dateOnlyLongString } = useFormatters();
     const formName = ref();
     const formData = ref();

@@ -21,7 +21,7 @@ export default defineComponent({
       required: true,
     },
   },
-  setup(props: any) {
+  setup(props) {
     const hasBusinessGuid = ref(false);
     watch(
       () => props.institutionId,

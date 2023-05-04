@@ -83,7 +83,7 @@ export default defineComponent({
       default: {} as ProgramOfferingHeader,
     },
   },
-  setup(props: any) {
+  setup(props) {
     const router = useRouter();
     const { dateOnlyLongString } = useFormatters();
     const showApprovalDetails = computed(

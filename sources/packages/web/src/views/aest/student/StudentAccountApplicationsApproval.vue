@@ -87,7 +87,7 @@ export default defineComponent({
       required: true,
     },
   },
-  setup(props: any) {
+  setup(props) {
     const snackBar = useSnackBar();
     const router = useRouter();
     let formIOForm: FormIOForm<StudentAccountApplicationApprovalAPIInDTO>;

@@ -40,7 +40,7 @@ export default defineComponent({
       default: true,
     },
   },
-  setup(props: any) {
+  setup(props) {
     const processing = ref(false);
     // Hooks
     const store = useStore();

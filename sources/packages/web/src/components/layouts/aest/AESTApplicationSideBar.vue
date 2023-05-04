@@ -51,7 +51,7 @@ export default defineComponent({
       required: true,
     },
   },
-  setup(props: any) {
+  setup(props) {
     const router = useRouter();
     const relatedParentPartners = ref([] as MenuModel[]);
     const studentMenu = ref<StudentApplicationMenu>({

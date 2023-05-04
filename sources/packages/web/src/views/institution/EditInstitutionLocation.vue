@@ -46,7 +46,7 @@ export default defineComponent({
       required: true,
     },
   },
-  setup(props: any) {
+  setup(props) {
     // Hooks
     const store = useStore();
     const initialData = ref({} as InstitutionLocationEdit);

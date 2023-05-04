@@ -21,7 +21,7 @@ export default defineComponent({
   components: {
     ErrorMessage,
   },
-  setup(props: any) {
+  setup(props) {
     const isValid = useFieldError(props.propertyName);
     return {
       isValid,

@@ -140,7 +140,7 @@ export default defineComponent({
       required: true,
     },
   },
-  setup(props: any) {
+  setup(props) {
     const institutionProfileDetail = ref({} as InstitutionDetailAPIOutDTO);
     const { emptyStringFiller, dateOnlyLongString } = useFormatters();
     const router = useRouter();

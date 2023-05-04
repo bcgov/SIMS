@@ -225,7 +225,7 @@ export default defineComponent({
       default: false,
     },
   },
-  setup(props: any) {
+  setup(props) {
     const snackBar = useSnackBar();
     const { institutionUserRoleToDisplay } = useFormatters();
     const usersListAndCount = ref({} as InstitutionUserSummary);

@@ -121,7 +121,7 @@ export default defineComponent({
     },
   },
 
-  setup(props: any) {
+  setup(props) {
     const router = useRouter();
     const page = ref(DEFAULT_PAGE_NUMBER);
     const pageLimit = ref(DEFAULT_PAGE_LIMIT);

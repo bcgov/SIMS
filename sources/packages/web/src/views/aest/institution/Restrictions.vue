@@ -127,7 +127,7 @@ export default defineComponent({
       required: true,
     },
   },
-  setup(props: any) {
+  setup(props) {
     const institutionRestrictions = ref();
     const { dateOnlyLongString } = useFormatters();
     const showModal = ref(false);
