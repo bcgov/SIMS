@@ -70,7 +70,7 @@ export default defineComponent({
       required: true,
     },
   },
-  setup(props: any) {
+  setup(props) {
     const { checkNotesLengthRule } = useRules();
     const restrictionCategories = ref([] as SelectItemType[]);
     const restrictionReasons = ref([] as SelectItemType[]);

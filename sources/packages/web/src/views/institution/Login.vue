@@ -73,7 +73,7 @@ export default defineComponent({
       default: false,
     },
   },
-  setup(props: any) {
+  setup(props) {
     const { executeLogin } = useAuth();
     const login = async () => {
       await executeLogin(ClientIdType.Institution, IdentityProviders.BCeIDBoth);

@@ -21,7 +21,7 @@
 
 <script lang="ts">
 import { useAuth } from "@/composables";
-import { SetupContext, defineComponent } from "vue";
+import { defineComponent } from "vue";
 export default defineComponent({
   props: {
     subtitle: {
@@ -30,7 +30,7 @@ export default defineComponent({
     },
   },
   emits: ["click"],
-  setup(_props: any, context: SetupContext) {
+  setup(_props, context) {
     const { executeLogout } = useAuth();
     const logoClick = () => {
       context.emit("click");

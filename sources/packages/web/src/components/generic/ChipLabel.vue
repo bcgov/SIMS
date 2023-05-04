@@ -19,7 +19,7 @@ export default defineComponent({
       required: false,
     },
   },
-  setup(props: any) {
+  setup(props) {
     const chipColor = computed(() => {
       switch (props.status) {
         case StatusChipTypes.Success:

@@ -89,7 +89,7 @@ export default defineComponent({
       required: true,
     },
   },
-  setup(props: any) {
+  setup(props) {
     const snackBar = useSnackBar();
     const initialData = ref({} as EducationProgramOfferingAPIOutDTO);
     const assessOfferingModalRef = ref(

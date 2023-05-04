@@ -32,7 +32,7 @@ export default defineComponent({
       required: true,
     },
   },
-  setup(props: any) {
+  setup(props) {
     const initialData = ref({} as ScholasticStandingSubmittedDetailsAPIOutDTO);
 
     onMounted(async () => {

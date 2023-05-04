@@ -46,7 +46,7 @@ export default defineComponent({
       required: true,
     },
   },
-  setup(props: any) {
+  setup(props) {
     const { emptyStringFiller } = useFormatters();
     const applicationDetail = ref({} as ApplicationBaseAPIOutDTO);
     const initialData = ref({});

@@ -74,14 +74,14 @@ export default defineComponent({
       required: true,
     },
   },
-  setup(props: any) {
+  setup(props) {
     const { getLocationName } = useInstitutionState();
     const router = useRouter();
     const { dateOnlyLongString } = useFormatters();
     const applications = ref([] as PIRSummaryAPIOutDTO[]);
 
     const locationName = computed(() => {
-      return getLocationName(parseInt(props.locationId));
+      return getLocationName(props.locationId);
     });
 
     const goToViewApplication = (applicationId: number) => {

@@ -104,7 +104,7 @@ export default defineComponent({
     },
   },
   emits: ["submitData"],
-  setup(props: any, context: any) {
+  setup(_props, context) {
     const { dateOnlyLongString, timeOnlyInHoursAndMinutes } = useFormatters();
     const showModal = ref(false);
     const createNotesModal = ref({} as ModalDialog<NoteAPIInDTO | boolean>);

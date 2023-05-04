@@ -35,7 +35,7 @@ export default defineComponent({
       required: true,
     },
   },
-  setup(props: any) {
+  setup(props) {
     const formatter = useFormatters();
     const { mapDesignationChipStatus } = useDesignationAgreement();
 

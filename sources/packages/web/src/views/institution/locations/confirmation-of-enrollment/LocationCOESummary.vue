@@ -68,12 +68,12 @@ export default defineComponent({
       required: true,
     },
   },
-  setup(props: any) {
+  setup(props) {
     const { getLocationName } = useInstitutionState();
     const tab = ref("coe-tab");
 
     const locationName = computed(() => {
-      return getLocationName(parseInt(props.locationId));
+      return getLocationName(props.locationId);
     });
     return { EnrollmentPeriod, COETab, tab, locationName };
   },

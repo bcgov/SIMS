@@ -106,7 +106,7 @@ export default defineComponent({
       required: false,
     },
   },
-  setup(props: any) {
+  setup(props) {
     const formModel = reactive(new UserManagementModel());
 
     watch(

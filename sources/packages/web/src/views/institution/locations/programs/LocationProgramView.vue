@@ -48,7 +48,7 @@ export default defineComponent({
       required: true,
     },
   },
-  setup(props: any) {
+  setup(props) {
     const educationProgram = ref({} as EducationProgramAPIOutDTO);
     const getEducationProgramAndOffering = async () => {
       educationProgram.value =
