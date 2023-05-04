@@ -56,7 +56,6 @@ describe("ApplicationInstitutionsController(e2e)-getApplicationDetails", () => {
     // Arrange
     // Create new application.
     const savedApplication = await saveFakeApplication(appDataSource, {
-      institution: collegeF,
       institutionLocation: collegeFLocation,
     });
 
