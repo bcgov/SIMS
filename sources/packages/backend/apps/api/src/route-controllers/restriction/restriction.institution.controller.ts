@@ -58,15 +58,16 @@ export class RestrictionInstitutionController extends BaseController {
         studentRestriction.restriction.restrictionCategory.toLowerCase() !==
           "verification",
     );
-    return filteredStudentRestrictions?.map((studentRestriction) => ({
-      restrictionId: studentRestriction.id,
-      restrictionType: studentRestriction.restriction.restrictionType,
-      restrictionCategory: studentRestriction.restriction.restrictionCategory,
-      restrictionCode: studentRestriction.restriction.restrictionCode,
-      description: studentRestriction.restriction.description,
-      createdAt: studentRestriction.createdAt,
-      updatedAt: studentRestriction.updatedAt,
-      isActive: studentRestriction.isActive,
+    return filteredStudentRestrictions?.map((filteredStudentRestriction) => ({
+      restrictionId: filteredStudentRestriction.id,
+      restrictionType: filteredStudentRestriction.restriction.restrictionType,
+      restrictionCategory:
+        filteredStudentRestriction.restriction.restrictionCategory,
+      restrictionCode: filteredStudentRestriction.restriction.restrictionCode,
+      description: filteredStudentRestriction.restriction.description,
+      createdAt: filteredStudentRestriction.createdAt,
+      updatedAt: filteredStudentRestriction.updatedAt,
+      isActive: filteredStudentRestriction.isActive,
     }));
   }
 
