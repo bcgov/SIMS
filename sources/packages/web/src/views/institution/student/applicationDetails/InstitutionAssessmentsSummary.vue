@@ -13,13 +13,14 @@
     <request-assessment
       class="mb-5"
       :applicationId="applicationId"
+      :studentId="studentId"
       @viewStudentAppeal="goToStudentAppeal"
       @viewApplicationException="goToApplicationException"
       @viewOfferingRequest="goToOfferingRequest"
     />
     <history-assessment
-      class="mb-5"
       :applicationId="applicationId"
+      :studentId="studentId"
       :viewRequestTypes="assessmentRequestTypes"
       @viewStudentAppeal="goToStudentAppeal"
       @viewAssessment="gotToViewAssessment"
@@ -37,7 +38,8 @@ import { defineComponent } from "vue";
 import { AssessmentTriggerType } from "@/types";
 import RequestAssessment from "@/components/aest/students/assessment/Request.vue";
 import HistoryAssessment from "@/components/aest/students/assessment/History.vue";
-
+// todo: remove the default value for student and institution id
+// todo: set required: true
 export default defineComponent({
   components: {
     RequestAssessment,
@@ -46,14 +48,17 @@ export default defineComponent({
   props: {
     studentId: {
       type: Number,
-      required: true,
+      required: false,
+      default: 275,
     },
     applicationId: {
       type: Number,
-      required: true,
+      required: false,
+      default: 1734,
     },
   },
   setup(props) {
+    // todo: check with jason if we need all form and view assessment for all types.
     const router = useRouter();
     // The assessment trigger types for which the request form must be visible by default.
     const assessmentRequestTypes = [

@@ -21,13 +21,18 @@ export class StudentAssessmentsService {
    * Get all requested assessments for an student application,
    * i.e, this will fetch the combination of pending and denied
    * student appeal and scholastic standings for an application.
-   * @param applicationId, application number.
+   * @param applicationId, application id.
+   * @param studentId, student id.
    * @returns assessment requests for a student application.
    */
   async getAssessmentRequest(
     applicationId: number,
+    studentId?: number,
   ): Promise<RequestAssessmentSummaryAPIOutDTO[]> {
-    return ApiClient.StudentAssessmentApi.getAssessmentRequest(applicationId);
+    return ApiClient.StudentAssessmentApi.getAssessmentRequest(
+      applicationId,
+      studentId,
+    );
   }
   /**
    * Get history of assessments for an application,

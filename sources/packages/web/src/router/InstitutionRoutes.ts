@@ -43,6 +43,7 @@ import InstitutionStudentApplications from "@/views/institution/student/Institut
 import InstitutionStudentRestrictions from "@/views/institution/student/InstitutionStudentRestrictions.vue";
 import InstitutionStudentFileUploads from "@/views/institution/student/InstitutionStudentFileUploads.vue";
 import InstitutionStudentNotes from "@/views/institution/student/InstitutionStudentNotes.vue";
+import InstitutionAssessmentsSummary from "@/views/institution/student/applicationDetails/InstitutionAssessmentsSummary.vue";
 
 export const institutionRoutes: Array<RouteRecordRaw> = [
   {
@@ -447,7 +448,7 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
         },
       },
       {
-        path: AppRoutes.InstitutionStudentDetail,
+        path: AppRoutes.StudentDetail,
         name: InstitutionRoutesConst.STUDENT_DETAILS,
         props: true,
         components: {
@@ -464,7 +465,7 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
         },
         children: [
           {
-            path: AppRoutes.InstitutionStudentProfile,
+            path: AppRoutes.StudentProfile,
             name: InstitutionRoutesConst.STUDENT_PROFILE,
             props: true,
             component: InstitutionStudentProfile,
@@ -529,6 +530,21 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
             },
           },
         ],
+      },
+      // todo: move the move inside application details as a child after guru, merge his PR
+
+      {
+        path: AppRoutes.InstitutionAssessmentSummary,
+        name: InstitutionRoutesConst.ASSESSMENTS_SUMMARY,
+        props: true,
+        component: InstitutionAssessmentsSummary,
+        meta: {
+          clientType: ClientIdType.Institution,
+          institutionUserTypes: [
+            InstitutionUserTypes.admin,
+            InstitutionUserTypes.user,
+          ],
+        },
       },
     ],
     beforeEnter: (to, _from, next) => {

@@ -57,3 +57,4 @@ export * from "./overaward/overaward.controller.service";
 export * from "./overaward/overaward.aest.controller";
 export * from "./overaward/overaward.students.controller";
 export * from "./student/student.institutions.controller";
+export * from "./assessment/assessment.institutions.controller";

@@ -66,10 +66,12 @@ export class ApplicationExceptionService extends RecordDataModelService<Applicat
    * submitted, for instance, when there are documents to be reviewed.
    * @param applicationId application associated with the exception.
    * @param status statuses to be filtered.
+   * @param studentId student id.
    * @returns student application exception information.
    */
   async getExceptionsByApplicationId(
     applicationId: number,
+    studentId?: number,
     ...status: ApplicationExceptionStatus[]
   ): Promise<ApplicationException[]> {
     const query = this.repo
@@ -83,6 +85,11 @@ export class ApplicationExceptionService extends RecordDataModelService<Applicat
       .where("application.Id = :applicationId", { applicationId });
     if (status) {
       query.andWhere("exception.exceptionStatus IN (:...status)", { status });
+    }
+    if (studentId) {
+      query
+        .innerJoin("application.student", "student")
+        .andWhere("student.id = :studentId", { studentId });
     }
     return query.getMany();
   }

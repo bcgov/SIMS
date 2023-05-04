@@ -107,7 +107,7 @@ export const aestRoutes: Array<RouteRecordRaw> = [
         },
         children: [
           {
-            path: AppRoutes.AESTStudentProfile,
+            path: AppRoutes.StudentProfile,
             name: AESTRoutesConst.STUDENT_PROFILE,
             props: true,
             component: StudentProfile,

@@ -39,50 +39,16 @@ export class AssessmentAESTController extends BaseController {
   /**
    * Get all pending and declined requests related to an application which would result
    * a new assessment when that request is approved.
-   * @param applicationId application number.
+   * @param applicationId application id.
    * @returns assessment requests or exceptions for a student application.
    */
   @Get("application/:applicationId/requests")
   async getRequestedAssessmentSummary(
     @Param("applicationId", ParseIntPipe) applicationId: number,
   ): Promise<RequestAssessmentSummaryAPIOutDTO[]> {
-    const requestAssessmentSummary: RequestAssessmentSummaryAPIOutDTO[] = [];
-    const offeringChange =
-      await this.educationProgramOfferingService.getOfferingRequestsByApplicationId(
-        applicationId,
-      );
-    if (offeringChange) {
-      requestAssessmentSummary.push({
-        id: offeringChange.id,
-        submittedDate: offeringChange.submittedDate,
-        status: offeringChange.offeringStatus,
-        requestType: RequestAssessmentTypeAPIOutDTO.OfferingRequest,
-        programId: offeringChange.educationProgram.id,
-      });
-    }
-    const applicationExceptions =
-      await this.applicationExceptionService.getExceptionsByApplicationId(
-        applicationId,
-        ApplicationExceptionStatus.Pending,
-        ApplicationExceptionStatus.Declined,
-      );
-    // When a pending or denied application exception exist then no other request can exist
-    // for the given application.
-    if (applicationExceptions.length > 0) {
-      const applicationExceptionArray: RequestAssessmentSummaryAPIOutDTO[] =
-        applicationExceptions.map((applicationException) => ({
-          id: applicationException.id,
-          submittedDate: applicationException.createdAt,
-          status: applicationException.exceptionStatus,
-          requestType: RequestAssessmentTypeAPIOutDTO.StudentException,
-        }));
-      return requestAssessmentSummary.concat(applicationExceptionArray);
-    }
-    const appeals =
-      await this.assessmentControllerService.getPendingAndDeniedAppeals(
-        applicationId,
-      );
-    return requestAssessmentSummary.concat(appeals);
+    return this.assessmentControllerService.requestedStudentAssessmentSummary(
+      applicationId,
+    );
   }
 
   /**

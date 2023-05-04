@@ -1204,12 +1204,14 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
   /**
    * Get changed offering for an application Id.
    * @param applicationId Application id
+   * @param studentId student id.
    * @returns Offering and program details.
    */
   async getOfferingRequestsByApplicationId(
     applicationId: number,
+    studentId?: number,
   ): Promise<EducationProgramOffering> {
-    return this.repo
+    const offeringRequest = this.repo
       .createQueryBuilder("offering")
       .select([
         "offering.id",
@@ -1228,8 +1230,14 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       .where("application.id = :applicationId", { applicationId })
       .andWhere("precedingOffering.offeringStatus = :offeringStatus", {
         offeringStatus: OfferingStatus.ChangeUnderReview,
-      })
-      .getOne();
+      });
+
+    if (studentId) {
+      offeringRequest
+        .innerJoin("application.student", "student")
+        .andWhere("student.id = :studentId", { studentId });
+    }
+    return offeringRequest.getOne();
   }
 
   /**

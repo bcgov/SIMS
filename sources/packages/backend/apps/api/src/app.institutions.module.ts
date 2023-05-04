@@ -23,6 +23,10 @@ import {
   StudentService,
   EducationProgramOfferingImportCSVService,
   EducationProgramOfferingValidationService,
+  DisbursementReceiptService,
+  StudentAppealService,
+  ApplicationExceptionService,
+  StudentAppealRequestsService,
 } from "./services";
 import {
   DesignationAgreementInstitutionsController,
@@ -44,6 +48,8 @@ import {
   ConfirmationOfEnrollmentControllerService,
   StudentInstitutionsController,
   StudentControllerService,
+  AssessmentInstitutionsController,
+  AssessmentControllerService,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
 import {
@@ -77,6 +83,7 @@ import { UserControllerService } from "./route-controllers/user/user.controller.
     EducationProgramOfferingInstitutionsController,
     UserInstitutionsController,
     StudentInstitutionsController,
+    AssessmentInstitutionsController,
   ],
   providers: [
     WorkflowClientService,
@@ -123,6 +130,11 @@ import { UserControllerService } from "./route-controllers/user/user.controller.
     NoteSharedService,
     StudentControllerService,
     RestrictionSharedService,
+    AssessmentControllerService,
+    DisbursementReceiptService,
+    StudentAppealService,
+    ApplicationExceptionService,
+    StudentAppealRequestsService,
   ],
 })
 export class AppInstitutionsModule {}
