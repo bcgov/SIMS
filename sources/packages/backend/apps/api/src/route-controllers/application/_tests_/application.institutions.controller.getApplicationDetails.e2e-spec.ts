@@ -80,7 +80,7 @@ describe("ApplicationInstitutionsController(e2e)-getApplicationDetails", () => {
       });
   });
 
-  it("Should not have access to get the student application details if the student submitted and application to non-public institution.", async () => {
+  it("Should not have access to get the student application details when the student submitted an application to non-public institution.", async () => {
     // Arrange
     // Create new application.
     const savedApplication = await saveFakeApplication(appDataSource, {
