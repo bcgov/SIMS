@@ -60,7 +60,7 @@ describe("ApplicationInstitutionsController(e2e)-getApplicationDetails", () => {
     });
 
     const student = savedApplication.student;
-    const endpoint = `/institutions/student/${student.id}/application/${savedApplication.id}`;
+    const endpoint = `/institutions/application/student/${student.id}/application/${savedApplication.id}`;
     const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeFUser,
     );
@@ -88,7 +88,7 @@ describe("ApplicationInstitutionsController(e2e)-getApplicationDetails", () => {
     });
 
     const student = savedApplication.student;
-    const endpoint = `/institutions/student/${student.id}/application/${savedApplication.id}`;
+    const endpoint = `/institutions/application/student/${student.id}/application/${savedApplication.id}`;
     const institutionUserTokenCUser = await getInstitutionToken(
       InstitutionTokenTypes.CollegeCUser,
     );
@@ -113,7 +113,7 @@ describe("ApplicationInstitutionsController(e2e)-getApplicationDetails", () => {
     });
 
     const student = savedApplication.student;
-    const endpoint = `/institutions/student/${student.id}/application/${savedApplication.id}`;
+    const endpoint = `/institutions/application/student/${student.id}/application/${savedApplication.id}`;
     const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeFUser,
     );
