@@ -72,6 +72,7 @@ export const InstitutionRoutesConst = {
   STUDENT_PROFILE: Symbol(),
   STUDENT_DETAILS: Symbol(),
   STUDENT_APPLICATIONS: Symbol(),
+  STUDENT_APPLICATION_DETAILS: Symbol(),
   STUDENT_RESTRICTIONS: Symbol(),
   STUDENT_FILE_UPLOADS: Symbol(),
   STUDENT_OVERAWARDS: Symbol(),

@@ -173,6 +173,7 @@ export const aestRoutes: Array<RouteRecordRaw> = [
       },
       {
         path: AppRoutes.ApplicationDetail,
+        redirect: { name: AESTRoutesConst.APPLICATION_DETAILS },
         props: true,
         components: {
           default: ApplicationDetails,
@@ -183,7 +184,7 @@ export const aestRoutes: Array<RouteRecordRaw> = [
         },
         children: [
           {
-            path: "",
+            path: AppRoutes.ApplicationView,
             name: AESTRoutesConst.APPLICATION_DETAILS,
             props: true,
             component: StudentApplicationView,
