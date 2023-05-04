@@ -1,5 +1,9 @@
-import { Injectable } from "@nestjs/common";
-import { Param, ParseIntPipe, NotFoundException } from "@nestjs/common";
+import {
+  Param,
+  ParseIntPipe,
+  NotFoundException,
+  Injectable,
+} from "@nestjs/common";
 import { StudentRestrictionService } from "../../services";
 import {
   RestrictionSummaryAPIOutDTO,
