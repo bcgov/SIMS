@@ -11,6 +11,21 @@ import {
 import { createFakeStudent } from "./student";
 import { DataSource } from "typeorm";
 
+/**
+ * Create and save fake student restriction.
+ * @param dataSource data source to persist student restriction.
+ * @param relations student restriction entity relations.
+ * - `student` related student.
+ * - `application` application associated with the student.
+ * - `creator` related user relation.
+ * @param options related to StudentRestriction.
+ * - `restrictionType` option for specifying the restriction type.
+ * - `restrictionCode` option for specifying the restriction code.
+ * - `restrictionCategory` option for specifying the restriction category.
+ * - `actionType` option for specifying the restriction action type.
+ * - `notificationType` option for specifying the restriction notification type.
+ * @returns persisted student restriction.
+ */
 export async function saveFakeStudentRestriction(
   dataSource: DataSource,
   relations?: {

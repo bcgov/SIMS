@@ -22,7 +22,9 @@ export class RestrictionControllerService {
   /**
    * Get restrictions for a student.
    * @param studentId id of the student to retrieve restrictions.
-   * @returns Student restrictions.
+   * @param options query options.
+   * - `filterRestrictions` option to filter restrictions based on notificationType and restrictionCategory.
+   * @returns student restrictions for the provided student id.
    */
   async getStudentRestrictions(
     @Param("studentId", ParseIntPipe) studentId: number,
