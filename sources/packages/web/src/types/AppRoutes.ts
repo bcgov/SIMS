@@ -105,4 +105,5 @@ export enum AppRoutes {
   Restrictions = "restrictions",
   FileUploads = "files",
   Notes = "notes",
+  ApplicationView = "view",
 }

@@ -1,4 +1,9 @@
-import { Injectable, CanActivate, ExecutionContext } from "@nestjs/common";
+import {
+  Injectable,
+  CanActivate,
+  ExecutionContext,
+  ForbiddenException,
+} from "@nestjs/common";
 import { Reflector } from "@nestjs/core";
 import { IInstitutionUserToken } from "../..";
 import { INSTITUTION_HAS_STUDENT_DATA_ACCESS_KEY } from "../../decorators";
@@ -37,7 +42,13 @@ export class InstitutionStudentDataAccessGuard implements CanActivate {
           user.authorizations.institutionId,
           studentId,
         );
-      return hasStudentDataAccess;
+      if (hasStudentDataAccess) {
+        return true;
+      }
+      // The institution does not have access to student data.
+      throw new ForbiddenException(
+        "The institution is not allowed access to the student data of the given student.",
+      );
     }
 
     return false;

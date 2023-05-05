@@ -16,7 +16,7 @@
 
 <script lang="ts">
 import { InstitutionLocationFormAPIOutDTO } from "@/services/http/dto";
-import { ref, SetupContext, defineComponent } from "vue";
+import { ref, defineComponent } from "vue";
 import { FormIOForm } from "@/types";
 
 export default defineComponent({
@@ -27,7 +27,7 @@ export default defineComponent({
     },
   },
   emits: ["updateInstitutionLocation"],
-  setup(_props: any, context: SetupContext) {
+  setup(_props, context) {
     const processing = ref(false);
     const updateInstitutionLocation = async (
       form: FormIOForm<InstitutionLocationFormAPIOutDTO>,

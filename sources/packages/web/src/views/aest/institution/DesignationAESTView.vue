@@ -90,7 +90,7 @@ export default defineComponent({
       required: false,
     },
   },
-  setup(props: any) {
+  setup(props) {
     const formatter = useFormatters();
     const { mapDesignationChipStatus } = useDesignationAgreement();
     const designationAgreement = ref({} as DesignationAgreementAPIOutDTO);

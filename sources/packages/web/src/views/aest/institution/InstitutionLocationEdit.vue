@@ -33,7 +33,7 @@ export default defineComponent({
       required: true,
     },
   },
-  setup(props: any) {
+  setup(props) {
     const initialData = ref({} as InstitutionLocationEdit);
     const snackBar = useSnackBar();
     const router = useRouter();

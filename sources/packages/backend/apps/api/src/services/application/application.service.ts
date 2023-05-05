@@ -513,16 +513,21 @@ export class ApplicationService extends RecordDataModelService<Application> {
 
   /**
    * Gets a student application by applicationId.
-   * Student id can be provided for authorization purposes.
+   * Student id/ institution id can be provided for authorization purposes.
    * @param applicationId application id.
    * @param options object that should contain:
    * - `loadDynamicData` indicates if the dynamic data(JSONB) should be loaded.
    * - `studentId` student id.
+   * - `institutionId` institution id.
    * @returns student application.
    */
   async getApplicationById(
     applicationId: number,
-    options?: { loadDynamicData?: boolean; studentId?: number },
+    options?: {
+      loadDynamicData?: boolean;
+      studentId?: number;
+      institutionId?: number;
+    },
   ): Promise<Application> {
     return this.repo.findOne({
       select: {
@@ -578,6 +583,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
         student: {
           id: options?.studentId,
         },
+        location: { institution: { id: options?.institutionId } },
       },
     });
   }

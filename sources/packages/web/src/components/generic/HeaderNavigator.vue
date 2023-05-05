@@ -31,8 +31,8 @@
   </v-row>
 </template>
 <script lang="ts">
-import { defineComponent } from "vue";
-import { useRouter } from "vue-router";
+import { defineComponent, PropType } from "vue";
+import { RouteLocationRaw, useRouter } from "vue-router";
 
 export default defineComponent({
   props: {
@@ -43,15 +43,17 @@ export default defineComponent({
       type: String,
     },
     routeLocation: {
-      type: Object,
+      type: Object as PropType<RouteLocationRaw>,
     },
   },
 
-  setup(props: any) {
+  setup(props) {
     const router = useRouter();
 
     const goBack = () => {
-      router.push(props.routeLocation);
+      if (props.routeLocation) {
+        router.push(props.routeLocation);
+      }
     };
     return { goBack };
   },

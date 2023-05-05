@@ -17,6 +17,7 @@ export * from "./designation-agreement/designation-agreement.controller.service"
 export * from "./designation-agreement/designation-agreement.aest.controller";
 export * from "./application/application.aest.controller";
 export * from "./application/application.students.controller";
+export * from "./application/application.institutions.controller";
 export * from "./assessment/assessment.controller.service";
 export * from "./institution/institution.aest.controller";
 export * from "./institution/institution.institutions.controller";
@@ -55,6 +56,7 @@ export * from "./confirmation-of-enrollment/confirmation-of-enrollment.controlle
 export * from "./confirmation-of-enrollment/confirmation-of-enrollment.aest.controller";
 export * from "./overaward/overaward.controller.service";
 export * from "./overaward/overaward.aest.controller";
+export * from "./overaward/overaward.institutions.controller";
 export * from "./overaward/overaward.students.controller";
 export * from "./student/student.institutions.controller";
 export * from "./assessment/assessment.institutions.controller";

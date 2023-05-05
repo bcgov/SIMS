@@ -14,7 +14,7 @@ export default defineComponent({
   props: {
     text: String,
   },
-  setup(props: any) {
+  setup(props) {
     const paragraphs = computed(() => {
       if (!props.text) {
         return null;

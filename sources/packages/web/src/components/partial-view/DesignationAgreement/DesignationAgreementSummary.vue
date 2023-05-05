@@ -62,7 +62,7 @@ import {
 import { useFormatters, useInstitutionAuth } from "@/composables";
 import ToggleContent from "@/components/generic/ToggleContent.vue";
 import StatusChipDesignation from "@/components/generic/StatusChipDesignation.vue";
-import { SetupContext, defineComponent } from "vue";
+import { defineComponent } from "vue";
 
 export default defineComponent({
   emits: ["viewDesignation"],
@@ -80,7 +80,7 @@ export default defineComponent({
       required: true,
     },
   },
-  setup(props: any, context: SetupContext) {
+  setup(_props, context) {
     const { isLegalSigningAuthority } = useInstitutionAuth();
     const { dateOnlyLongString } = useFormatters();
 

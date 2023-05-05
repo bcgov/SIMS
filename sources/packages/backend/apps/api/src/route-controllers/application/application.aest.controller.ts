@@ -52,7 +52,7 @@ export class ApplicationAESTController extends BaseController {
       await this.applicationControllerService.generateApplicationFormData(
         application.data,
       );
-    return this.applicationControllerService.transformToApplicationForAESTDTO(
+    return this.applicationControllerService.transformToApplicationDTO(
       application,
     );
   }

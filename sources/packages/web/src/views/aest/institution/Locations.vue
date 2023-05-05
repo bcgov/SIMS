@@ -21,7 +21,7 @@ export default defineComponent({
       required: true,
     },
   },
-  setup(props: any) {
+  setup(props) {
     const gotToEditLocation = (locationId: number) => {
       return router.push({
         name: AESTRoutesConst.EDIT_INSTITUTION_LOCATION,

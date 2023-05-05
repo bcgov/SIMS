@@ -32,7 +32,7 @@ export default defineComponent({
       required: false,
     },
   },
-  setup(props: any) {
+  setup(props) {
     const fullTitleMessage = computed(() => {
       if (props.recordsCount) {
         return `${props.title} (${props.recordsCount})`;

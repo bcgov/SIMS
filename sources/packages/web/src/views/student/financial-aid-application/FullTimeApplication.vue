@@ -94,7 +94,7 @@ export default defineComponent({
       required: true,
     },
   },
-  setup(props: any) {
+  setup(props) {
     const formatter = useFormatters();
     const router = useRouter();
     const initialData = ref({});

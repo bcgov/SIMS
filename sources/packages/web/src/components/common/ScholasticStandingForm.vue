@@ -15,7 +15,7 @@
 </template>
 
 <script lang="ts">
-import { ref, SetupContext, watch, defineComponent } from "vue";
+import { ref, watch, defineComponent, PropType } from "vue";
 import {
   ActiveApplicationDataAPIOutDTO,
   ScholasticStandingSubmittedDetailsAPIOutDTO,
@@ -24,17 +24,17 @@ import { FormIOForm } from "@/types";
 
 interface ScholasticStanding
   extends ScholasticStandingSubmittedDetailsAPIOutDTO {
-  readonly: boolean;
+  readOnly: boolean;
 }
 interface ScholasticStandingBeforeSubmission
   extends ActiveApplicationDataAPIOutDTO {
-  readonly: boolean;
+  readOnly: boolean;
 }
 export default defineComponent({
   emits: ["submit", "cancel"],
   props: {
     initialData: {
-      type: Object,
+      type: Object as PropType<ScholasticStandingSubmittedDetailsAPIOutDTO>,
       required: true,
     },
     readOnly: {
@@ -48,7 +48,7 @@ export default defineComponent({
       default: false,
     },
   },
-  setup(props: any, context: SetupContext) {
+  setup(props, context) {
     const data = ref(
       {} as ScholasticStanding | ScholasticStandingBeforeSubmission,
     );

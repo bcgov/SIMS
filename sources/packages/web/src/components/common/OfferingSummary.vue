@@ -125,7 +125,7 @@ export default defineComponent({
       required: true,
     },
   },
-  setup(props: any) {
+  setup(props) {
     const router = useRouter();
     const loading = ref(false);
     const searchBox = ref("");

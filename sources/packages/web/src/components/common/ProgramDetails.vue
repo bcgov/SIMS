@@ -110,7 +110,7 @@ export default defineComponent({
       default: {} as EducationProgramAPIOutDTO,
     },
   },
-  setup(props: any) {
+  setup(props) {
     const router = useRouter();
     const clientType = computed(() => AuthService.shared.authClientType);
 

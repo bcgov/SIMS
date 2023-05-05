@@ -13,7 +13,7 @@ export default defineComponent({
       required: true,
     },
   },
-  setup(props: any) {
+  setup(props) {
     const precedingOffering = ref({} as PrecedingOfferingSummaryAPIOutDTO);
     const bannerText = computed(() => {
       if (precedingOffering.value?.applicationsCount > 1) {

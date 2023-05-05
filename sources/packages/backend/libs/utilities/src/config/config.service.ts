@@ -192,6 +192,7 @@ export class ConfigService {
   get database(): DatabaseConfiguration {
     return this.getCachedConfig("databaseConfiguration", {
       databaseName: process.env.POSTGRES_DB,
+      isORMCacheDisabled: process.env.DISABLE_ORM_CACHE === "true",
     });
   }
 

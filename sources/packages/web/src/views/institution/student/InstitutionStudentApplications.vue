@@ -3,7 +3,7 @@
     <student-applications
       :studentId="studentId"
       :enable-view-application="true"
-      @goToApplication="goToApplicationDetails"
+      @goToApplication="goToApplication"
     />
   </tab-container>
 </template>
@@ -22,21 +22,18 @@ export default defineComponent({
       required: true,
     },
   },
-  setup() {
+  setup(props) {
     const router = useRouter();
-    // todo: This logic will be remove in guru's PR. ASSESSMENTS_SUMMARY is assessed by the new sidebar.
-    const goToApplicationDetails = (id: number) => {
-      console.log(id, "___________");
+    const goToApplication = (id: number) => {
       return router.push({
-        name: InstitutionRoutesConst.ASSESSMENTS_SUMMARY,
+        name: InstitutionRoutesConst.STUDENT_APPLICATION_DETAILS,
         params: {
-          id: id,
+          applicationId: id,
+          studentId: props.studentId,
         },
       });
     };
-    return {
-      goToApplicationDetails,
-    };
+    return { goToApplication };
   },
 });
 </script>

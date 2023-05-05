@@ -1,10 +1,11 @@
-import { RouteRecordRaw } from "vue-router";
+import { RouteLocationNormalized, RouteRecordRaw } from "vue-router";
 import InstitutionDashboard from "@/views/institution/InstitutionDashboard.vue";
 import InstitutionProfile from "@/views/institution/InstitutionProfile.vue";
 import InstitutionCreate from "@/views/institution/InstitutionCreate.vue";
 import InstitutionUserProfile from "@/views/institution/InstitutionUserProfile.vue";
 import AppInstitution from "@/views/institution/AppInstitution.vue";
 import ManageLocation from "@/views/institution/ManageLocations.vue";
+import ApplicationDetails from "@/views/institution/ApplicationDetails.vue";
 import LocationPrograms from "@/views/institution/locations/programs/LocationPrograms.vue";
 import LocationProgramInfoRequestSummary from "@/views/institution/locations/program-info-request/LocationProgramInfoRequestSummary.vue";
 import ActiveApplicationsSummary from "@/views/institution/locations/active-applications/LocationActiveApplicationSummary.vue";
@@ -25,6 +26,7 @@ import { ClientIdType } from "@/types/contracts/ConfigContract";
 import { AuthStatus, AppRoutes, InstitutionUserTypes } from "@/types";
 import ManageInstitutionSideBar from "@/components/layouts/Institution/sidebar/ManageInstitutionSideBar.vue";
 import InstitutionHomeSideBar from "@/components/layouts/Institution/sidebar/HomeSideBar.vue";
+import InstitutionApplicationSideBar from "@/components/layouts/Institution/sidebar/InstitutionApplicationSideBar.vue";
 import LocationProgramAddEdit from "@/views/institution/locations/programs/LocationProgramAddEdit.vue";
 import LocationCOERequest from "@/views/institution/locations/confirmation-of-enrollment/ApplicationDetailsForCOE.vue";
 import LocationProgramView from "@/views/institution/locations/programs/LocationProgramView.vue";
@@ -40,8 +42,10 @@ import InstitutionSearchStudents from "@/views/institution/student/InstitutionSe
 import InstitutionStudentDetails from "@/views/institution/student/InstitutionStudentDetails.vue";
 import InstitutionStudentProfile from "@/views/institution/student/InstitutionStudentProfile.vue";
 import InstitutionStudentApplications from "@/views/institution/student/InstitutionStudentApplications.vue";
+import InstitutionApplicationView from "@/views/institution/student/InstitutionStudentApplicationView.vue";
 import InstitutionStudentRestrictions from "@/views/institution/student/InstitutionStudentRestrictions.vue";
 import InstitutionStudentFileUploads from "@/views/institution/student/InstitutionStudentFileUploads.vue";
+import InstitutionStudentOverawards from "@/views/institution/student/InstitutionStudentOverawards.vue";
 import InstitutionStudentNotes from "@/views/institution/student/InstitutionStudentNotes.vue";
 import InstitutionAssessmentsSummary from "@/views/institution/student/applicationDetails/InstitutionAssessmentsSummary.vue";
 
@@ -123,7 +127,11 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
           default: LocationPrograms,
           sidebar: InstitutionHomeSideBar,
         },
-        props: true,
+        props: {
+          default: (route) => ({
+            locationId: parseInt(route.params.locationId[0]),
+          }),
+        },
         meta: {
           clientType: ClientIdType.Institution,
           institutionUserTypes: [
@@ -139,7 +147,11 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
           default: ActiveApplicationsSummary,
           sidebar: InstitutionHomeSideBar,
         },
-        props: true,
+        props: {
+          default: (route: RouteLocationNormalized) => ({
+            locationId: parseInt(route.params.locationId[0]),
+          }),
+        },
         meta: {
           clientType: ClientIdType.Institution,
           institutionUserTypes: [
@@ -168,7 +180,11 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
           default: LocationProgramInfoRequestSummary,
           sidebar: InstitutionHomeSideBar,
         },
-        props: true,
+        props: {
+          default: (route) => ({
+            locationId: parseInt(route.params.locationId[0]),
+          }),
+        },
         meta: {
           clientType: ClientIdType.Institution,
           institutionUserTypes: [
@@ -184,7 +200,11 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
           default: LocationCOESummary,
           sidebar: InstitutionHomeSideBar,
         },
-        props: true,
+        props: {
+          default: (route) => ({
+            locationId: parseInt(route.params.locationId[0]),
+          }),
+        },
         meta: {
           clientType: ClientIdType.Institution,
           institutionUserTypes: [
@@ -517,6 +537,19 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
             },
           },
           {
+            path: AppRoutes.Overawards,
+            name: InstitutionRoutesConst.STUDENT_OVERAWARDS,
+            props: true,
+            component: InstitutionStudentOverawards,
+            meta: {
+              clientType: ClientIdType.Institution,
+              institutionUserTypes: [
+                InstitutionUserTypes.admin,
+                InstitutionUserTypes.user,
+              ],
+            },
+          },
+          {
             path: AppRoutes.Notes,
             name: InstitutionRoutesConst.STUDENT_NOTES,
             props: true,
@@ -531,20 +564,36 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
           },
         ],
       },
-      // todo: move the move inside application details as a child after guru, merge his PR
-
       {
-        path: AppRoutes.InstitutionAssessmentSummary,
-        name: InstitutionRoutesConst.ASSESSMENTS_SUMMARY,
+        path: AppRoutes.ApplicationDetail,
+        redirect: { name: InstitutionRoutesConst.STUDENT_APPLICATION_DETAILS },
         props: true,
-        component: InstitutionAssessmentsSummary,
+        components: {
+          default: ApplicationDetails,
+          sidebar: InstitutionApplicationSideBar,
+        },
         meta: {
           clientType: ClientIdType.Institution,
           institutionUserTypes: [
             InstitutionUserTypes.admin,
             InstitutionUserTypes.user,
           ],
+          allowOnlyBCPublic: true,
         },
+        children: [
+          {
+            path: AppRoutes.ApplicationView,
+            name: InstitutionRoutesConst.STUDENT_APPLICATION_DETAILS,
+            props: true,
+            component: InstitutionApplicationView,
+          },
+          {
+            path: AppRoutes.InstitutionAssessmentSummary,
+            name: InstitutionRoutesConst.ASSESSMENTS_SUMMARY,
+            props: true,
+            component: InstitutionAssessmentsSummary,
+          },
+        ],
       },
     ],
     beforeEnter: (to, _from, next) => {

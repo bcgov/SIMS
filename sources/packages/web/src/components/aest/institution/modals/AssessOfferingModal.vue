@@ -31,7 +31,7 @@
 </template>
 
 <script lang="ts">
-import { ref, reactive, computed, defineComponent } from "vue";
+import { ref, reactive, computed, defineComponent, PropType } from "vue";
 import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
 import { useModalDialog, useRules } from "@/composables";
 import ErrorSummary from "@/components/generic/ErrorSummary.vue";
@@ -43,7 +43,7 @@ export default defineComponent({
   components: { ModalDialogBase, CheckPermissionRole, ErrorSummary },
   props: {
     offeringStatus: {
-      type: String,
+      type: String as PropType<OfferingStatus>,
       required: true,
     },
     processing: {
@@ -52,7 +52,7 @@ export default defineComponent({
       default: false,
     },
   },
-  setup(props: any) {
+  setup(props) {
     const { checkNotesLengthRule } = useRules();
     const { showDialog, showModal, resolvePromise } = useModalDialog<
       OfferingAssessmentAPIInDTO | boolean

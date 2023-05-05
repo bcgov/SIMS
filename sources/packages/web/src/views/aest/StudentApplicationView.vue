@@ -13,11 +13,7 @@
     </template>
     <h2 class="color-blue pb-4">
       Student Application Details
-      {{
-        applicationDetail.applicationNumber
-          ? " - " + applicationDetail.applicationNumber
-          : ""
-      }}
+      {{ emptyStringFiller(applicationDetail.applicationNumber) }}
     </h2>
     <StudentApplication
       :selectedForm="selectedForm"
@@ -33,6 +29,7 @@ import { onMounted, ref, defineComponent } from "vue";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import { ApplicationBaseAPIOutDTO } from "@/services/http/dto";
 import { ApplicationService } from "@/services/ApplicationService";
+import { useFormatters } from "@/composables/useFormatters";
 import StudentApplication from "@/components/common/StudentApplication.vue";
 
 export default defineComponent({
@@ -49,7 +46,8 @@ export default defineComponent({
       required: true,
     },
   },
-  setup(props: any) {
+  setup(props) {
+    const { emptyStringFiller } = useFormatters();
     const applicationDetail = ref({} as ApplicationBaseAPIOutDTO);
     const initialData = ref({});
     const selectedForm = ref();
@@ -71,6 +69,7 @@ export default defineComponent({
       initialData,
       selectedForm,
       AESTRoutesConst,
+      emptyStringFiller,
     };
   },
 });

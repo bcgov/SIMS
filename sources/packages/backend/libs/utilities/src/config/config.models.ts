@@ -101,6 +101,7 @@ export interface InstitutionIntegrationConfig {
 
 export interface DatabaseConfiguration {
   databaseName: string;
+  isORMCacheDisabled: boolean;
 }
 
 export interface RedisConfiguration {

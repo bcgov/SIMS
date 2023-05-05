@@ -29,6 +29,7 @@ import {
   StudentAppealRequestsService,
 } from "./services";
 import {
+  ApplicationControllerService,
   DesignationAgreementInstitutionsController,
   DesignationAgreementControllerService,
   InstitutionInstitutionsController,
@@ -47,9 +48,11 @@ import {
   EducationProgramOfferingControllerService,
   ConfirmationOfEnrollmentControllerService,
   StudentInstitutionsController,
+  OverawardInstitutionsController,
   StudentControllerService,
   AssessmentInstitutionsController,
   AssessmentControllerService,
+  OverawardControllerService,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
 import {
@@ -68,6 +71,7 @@ import {
 } from "@sims/services/sfas";
 import { UserInstitutionsController } from "./route-controllers/user/user.institutions.controller";
 import { UserControllerService } from "./route-controllers/user/user.controller.service";
+import { ApplicationInstitutionsController } from "./route-controllers/application/application.institutions.controller";
 
 @Module({
   imports: [AuthModule],
@@ -76,6 +80,7 @@ import { UserControllerService } from "./route-controllers/user/user.controller.
     InstitutionInstitutionsController,
     InstitutionUserInstitutionsController,
     InstitutionLocationInstitutionsController,
+    ApplicationInstitutionsController,
     ScholasticStandingInstitutionsController,
     ConfirmationOfEnrollmentInstitutionsController,
     EducationProgramInstitutionsController,
@@ -84,8 +89,10 @@ import { UserControllerService } from "./route-controllers/user/user.controller.
     UserInstitutionsController,
     StudentInstitutionsController,
     AssessmentInstitutionsController,
+    OverawardInstitutionsController,
   ],
   providers: [
+    ApplicationControllerService,
     WorkflowClientService,
     FormService,
     DesignationAgreementService,
@@ -135,6 +142,7 @@ import { UserControllerService } from "./route-controllers/user/user.controller.
     StudentAppealService,
     ApplicationExceptionService,
     StudentAppealRequestsService,
+    OverawardControllerService,
   ],
 })
 export class AppInstitutionsModule {}

@@ -15,7 +15,7 @@ export default defineComponent({
       required: true,
     },
   },
-  setup(props: any) {
+  setup(props) {
     const { mapApplicationChipStatus } = useApplication();
     const chipStatus = computed(() => mapApplicationChipStatus(props.status));
     return { chipStatus };
