@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { DataSource, EntityManager, IsNull, Repository } from "typeorm";
+import { DataSource, IsNull, Repository } from "typeorm";
 import {
   MSFAANumber,
   Student,

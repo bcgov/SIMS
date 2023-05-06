@@ -119,9 +119,7 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
         // Create a new MSFAA number in case the previous one is no longer valid.
         const newMSFAANumber =
           await this.msfaaNumberSharedService.createMSFAANumber(
-            studentId,
             applicationId,
-            offeringIntensity,
             systemUser.id,
           );
         msfaaNumberId = newMSFAANumber.id;

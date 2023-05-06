@@ -80,6 +80,7 @@ import {
   ConfirmationOfEnrollmentService,
   NoteSharedService,
   RestrictionSharedService,
+  MSFAANumberSharedService,
 } from "@sims/services";
 
 @Module({
@@ -160,6 +161,7 @@ import {
     NoteSharedService,
     OverawardControllerService,
     RestrictionSharedService,
+    MSFAANumberSharedService,
   ],
 })
 export class AppAESTModule {}
