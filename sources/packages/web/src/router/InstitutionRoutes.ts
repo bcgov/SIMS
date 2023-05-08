@@ -128,7 +128,7 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
         },
         props: {
           default: (route) => ({
-            locationId: parseInt(route.params.locationId[0]),
+            locationId: parseInt(route.params.locationId as string),
           }),
         },
         meta: {
@@ -148,7 +148,7 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
         },
         props: {
           default: (route: RouteLocationNormalized) => ({
-            locationId: parseInt(route.params.locationId[0]),
+            locationId: parseInt(route.params.locationId as string),
           }),
         },
         meta: {
@@ -181,7 +181,7 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
         },
         props: {
           default: (route) => ({
-            locationId: parseInt(route.params.locationId[0]),
+            locationId: parseInt(route.params.locationId as string),
           }),
         },
         meta: {
@@ -201,7 +201,7 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
         },
         props: {
           default: (route) => ({
-            locationId: parseInt(route.params.locationId[0]),
+            locationId: parseInt(route.params.locationId as string),
           }),
         },
         meta: {
