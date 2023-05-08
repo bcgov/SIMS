@@ -226,7 +226,7 @@ describe("ApplicationAESTController(e2e)-reissueMSFAA", () => {
     },
   );
 
-  it("Should throw an UnprocessableEntityException when the associated MSFAA is not cancelled.", async () => {
+  it("Should throw a UnprocessableEntityException when the associated MSFAA is not cancelled.", async () => {
     // Arrange
     const student = await saveFakeStudent(db.dataSource);
     const currentMSFAA = createFakeMSFAANumber(
@@ -260,7 +260,7 @@ describe("ApplicationAESTController(e2e)-reissueMSFAA", () => {
       });
   });
 
-  it("Should throw an UnprocessableEntityException when there is no pending disbursement associated with the application.", async () => {
+  it("Should throw a UnprocessableEntityException when there is no pending disbursement associated with the application.", async () => {
     // Arrange
     // Application with cancelled MSFAA to be reissued.
     const application = await saveFakeApplicationDisbursements(
@@ -292,7 +292,7 @@ describe("ApplicationAESTController(e2e)-reissueMSFAA", () => {
       });
   });
 
-  it("Should throw an UnprocessableEntityException when there is no assessment associated with the application.", async () => {
+  it("Should throw a UnprocessableEntityException when there is no assessment associated with the application.", async () => {
     // Arrange
     const applicationToReissueMSFAA = await saveFakeApplication(
       db.dataSource,
@@ -313,6 +313,22 @@ describe("ApplicationAESTController(e2e)-reissueMSFAA", () => {
         message:
           "Not possible to reissue an MSFAA when there is no pending disbursements for the application.",
         error: "Unprocessable Entity",
+      });
+  });
+
+  it("Should throw a NotFoundException when the application does not exist.", async () => {
+    // Arrange
+    const endpoint = `/aest/application/9999/reissue-msfaa`;
+    const token = await getAESTToken(AESTGroups.BusinessAdministrators);
+    // Act/Assert
+    await request(app.getHttpServer())
+      .post(endpoint)
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.NOT_FOUND)
+      .expect({
+        statusCode: HttpStatus.NOT_FOUND,
+        message: `Application id 9999 was not found.`,
+        error: "Not Found",
       });
   });
 

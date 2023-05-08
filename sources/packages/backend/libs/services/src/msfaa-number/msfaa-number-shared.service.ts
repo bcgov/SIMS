@@ -46,32 +46,9 @@ export class MSFAANumberSharedService {
     referenceApplicationId: number,
     auditUserId: number,
   ): Promise<MSFAANumber> {
-    const application = await this.getApplicationForMSFAA(
+    const application = await this.getApplicationForMSFAACreation(
       referenceApplicationId,
     );
-    if (!application) {
-      throw new CustomNamedError(
-        `Application id ${referenceApplicationId} was not found.`,
-        APPLICATION_NOT_FOUND,
-      );
-    }
-    const nowAllowedApplicationStatuses = [
-      ApplicationStatus.Draft,
-      ApplicationStatus.Cancelled,
-      ApplicationStatus.Overwritten,
-    ];
-    if (nowAllowedApplicationStatuses.includes(application.applicationStatus)) {
-      throw new CustomNamedError(
-        `Not possible to create an MSFAA when the application status is '${application.applicationStatus}'.`,
-        INVALID_OPERATION_IN_THE_CURRENT_STATUS,
-      );
-    }
-    if (!application.currentAssessment?.offering) {
-      throw new CustomNamedError(
-        `Not possible to create an MSFAA when the offering is not set.`,
-        APPLICATION_INVALID_DATA_TO_CREATE_MSFAA_ERROR,
-      );
-    }
     return this.internalCreateMSFAANumber(
       application.student.id,
       application.id,
@@ -93,7 +70,7 @@ export class MSFAANumberSharedService {
     referenceApplicationId: number,
     auditUserId: number,
   ): Promise<MSFAANumber> {
-    const application = await this.getApplicationForMSFAA(
+    const application = await this.getApplicationForMSFAACreation(
       referenceApplicationId,
     );
     const pendingDisbursement =
@@ -221,10 +198,10 @@ export class MSFAANumberSharedService {
    * @param applicationId reference application for the MSFAA creation.
    * @returns the application with the data needed for the MSFAA creation.
    */
-  private async getApplicationForMSFAA(
+  private async getApplicationForMSFAACreation(
     applicationId: number,
   ): Promise<Application> {
-    return this.applicationRepo.findOne({
+    const application = await this.applicationRepo.findOne({
       select: {
         id: true,
         student: {
@@ -258,5 +235,31 @@ export class MSFAANumberSharedService {
         id: applicationId,
       },
     });
+
+    if (!application) {
+      throw new CustomNamedError(
+        `Application id ${applicationId} was not found.`,
+        APPLICATION_NOT_FOUND,
+      );
+    }
+    const nowAllowedApplicationStatuses = [
+      ApplicationStatus.Draft,
+      ApplicationStatus.Cancelled,
+      ApplicationStatus.Overwritten,
+    ];
+    if (nowAllowedApplicationStatuses.includes(application.applicationStatus)) {
+      throw new CustomNamedError(
+        `Not possible to create an MSFAA when the application status is '${application.applicationStatus}'.`,
+        INVALID_OPERATION_IN_THE_CURRENT_STATUS,
+      );
+    }
+    if (!application.currentAssessment?.offering) {
+      throw new CustomNamedError(
+        `Not possible to create an MSFAA when the offering is not set.`,
+        APPLICATION_INVALID_DATA_TO_CREATE_MSFAA_ERROR,
+      );
+    }
+
+    return application;
   }
 }
