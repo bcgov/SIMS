@@ -123,8 +123,8 @@ describe("ApplicationAESTController(e2e)-reissueMSFAA", () => {
   );
 
   it(
-    "Should reissue an MSFAA and associate with all pending disbursements for the current student " +
-      "when all the disbursements are pending but one and one application is not for the same offering intensity.",
+    "Should reissue an MSFAA and associate with only pending disbursements across multiple applications for the same offering intensity and same student " +
+      "when some disbursements are pending, some are not and there is at least on application from a different intensity.",
     async () => {
       // Arrange
       const student = await saveFakeStudent(db.dataSource);
@@ -292,7 +292,7 @@ describe("ApplicationAESTController(e2e)-reissueMSFAA", () => {
       });
   });
 
-  it("Should throw a UnprocessableEntityException when there is no assessment associated with the application.", async () => {
+  it("Should throw a UnprocessableEntityException when the application is not in the expected status.", async () => {
     // Arrange
     const application = await saveFakeApplication(db.dataSource, undefined, {
       applicationStatus: ApplicationStatus.Draft,
