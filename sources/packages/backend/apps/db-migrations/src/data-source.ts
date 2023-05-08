@@ -11,7 +11,7 @@ export const ormConfig: PostgresConnectionOptions = {
   password: process.env.POSTGRES_PASSWORD,
   schema: process.env.DB_SCHEMA || "sims",
   synchronize: false,
-  migrations: ["apps/db-migrations/src/migrations/*{.ts,.js}"],
+  migrations: ["src/migrations/*{.ts,.js}"],
 };
 
 /**
