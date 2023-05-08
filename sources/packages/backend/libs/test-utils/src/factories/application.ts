@@ -11,6 +11,7 @@ import {
   EducationProgramOffering,
   Institution,
   InstitutionLocation,
+  MSFAANumber,
   OfferingIntensity,
   ProgramYear,
   RelationshipStatus,
@@ -75,6 +76,7 @@ export async function saveFakeApplicationDisbursements(
     institutionLocation?: InstitutionLocation;
     disbursementValues?: DisbursementValue[];
     student?: Student;
+    msfaaNumber: MSFAANumber;
   },
   options?: {
     applicationStatus?: ApplicationStatus;
@@ -106,6 +108,7 @@ export async function saveFakeApplicationDisbursements(
       ? COEStatus.completed
       : COEStatus.required;
   firstSchedule.disbursementScheduleStatus = DisbursementScheduleStatus.Pending;
+  firstSchedule.msfaaNumber = relations?.msfaaNumber;
   disbursementSchedules.push(firstSchedule);
   if (options?.createSecondDisbursement) {
     // Original assessment - second disbursement.
@@ -121,6 +124,7 @@ export async function saveFakeApplicationDisbursements(
     // First schedule is created with the current date as default.
     // Adding 60 days to create some time between the first and second schedules.
     secondSchedule.disbursementDate = getISODateOnlyString(addDays(60));
+    secondSchedule.msfaaNumber = relations?.msfaaNumber;
     disbursementSchedules.push(secondSchedule);
   }
   savedApplication.currentAssessment.disbursementSchedules =

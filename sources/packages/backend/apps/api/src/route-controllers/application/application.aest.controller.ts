@@ -24,7 +24,7 @@ import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
 import { MSFAANumberSharedService } from "@sims/services";
 import { CustomNamedError } from "@sims/utilities";
 import {
-  APPLICATION_INVALID_DATA_TO_REISSUE_MSFAA_ERROR,
+  APPLICATION_INVALID_DATA_TO_CREATE_MSFAA_ERROR,
   APPLICATION_NOT_FOUND,
   INVALID_OPERATION_IN_THE_CURRENT_STATUS,
 } from "@sims/services/constants";
@@ -84,8 +84,7 @@ export class ApplicationAESTController extends BaseController {
   @ApiNotFoundResponse({ description: "Application id not found." })
   @ApiUnprocessableEntityResponse({
     description:
-      "Not possible to create or reissue an MSFAA for the current application status, or " +
-      "not possible to reissue an MSFAA when there is no pending disbursements for the application, or " +
+      "Not possible to reissue an MSFAA when there is no pending disbursements for the application, or " +
       "not possible to reissue an MSFAA when the current associated MSFAA is not cancelled.",
   })
   async reissueMSFAA(
@@ -104,7 +103,7 @@ export class ApplicationAESTController extends BaseController {
           case APPLICATION_NOT_FOUND:
             throw new NotFoundException(error.message);
           case INVALID_OPERATION_IN_THE_CURRENT_STATUS:
-          case APPLICATION_INVALID_DATA_TO_REISSUE_MSFAA_ERROR:
+          case APPLICATION_INVALID_DATA_TO_CREATE_MSFAA_ERROR:
             throw new UnprocessableEntityException(error.message);
         }
       }
