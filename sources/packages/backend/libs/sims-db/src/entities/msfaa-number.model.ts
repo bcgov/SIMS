@@ -3,16 +3,10 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
-  OneToMany,
   PrimaryGeneratedColumn,
   RelationId,
 } from "typeorm";
-import {
-  Application,
-  DisbursementSchedule,
-  OfferingIntensity,
-  Student,
-} from ".";
+import { Application, OfferingIntensity, Student } from ".";
 import { ColumnNames, TableNames } from "../constant";
 import { RecordDataModel } from "./record.model";
 

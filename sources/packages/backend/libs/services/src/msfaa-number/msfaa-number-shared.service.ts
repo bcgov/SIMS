@@ -74,7 +74,7 @@ export class MSFAANumberSharedService {
       referenceApplicationId,
     );
     const pendingDisbursement =
-      application.currentAssessment?.disbursementSchedules.find(
+      application.currentAssessment.disbursementSchedules.find(
         (schedule) =>
           schedule.disbursementScheduleStatus ===
           DisbursementScheduleStatus.Pending,
@@ -204,6 +204,7 @@ export class MSFAANumberSharedService {
     const application = await this.applicationRepo.findOne({
       select: {
         id: true,
+        applicationStatus: true,
         student: {
           id: true,
         },

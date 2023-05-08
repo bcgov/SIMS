@@ -84,7 +84,8 @@ export class ApplicationAESTController extends BaseController {
   @ApiNotFoundResponse({ description: "Application id not found." })
   @ApiUnprocessableEntityResponse({
     description:
-      "Not possible to reissue an MSFAA when there is no pending disbursements for the application, or " +
+      "Not possible to create an MSFAA due to an invalid application status, or " +
+      "not possible to reissue an MSFAA when there is no pending disbursements for the application, or " +
       "not possible to reissue an MSFAA when the current associated MSFAA is not cancelled.",
   })
   async reissueMSFAA(

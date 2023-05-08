@@ -294,14 +294,10 @@ describe("ApplicationAESTController(e2e)-reissueMSFAA", () => {
 
   it("Should throw a UnprocessableEntityException when there is no assessment associated with the application.", async () => {
     // Arrange
-    const applicationToReissueMSFAA = await saveFakeApplication(
-      db.dataSource,
-      undefined,
-      {
-        applicationStatus: ApplicationStatus.Draft,
-      },
-    );
-    const endpoint = `/aest/application/${applicationToReissueMSFAA.id}/reissue-msfaa`;
+    const application = await saveFakeApplication(db.dataSource, undefined, {
+      applicationStatus: ApplicationStatus.Draft,
+    });
+    const endpoint = `/aest/application/${application.id}/reissue-msfaa`;
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
     // Act/Assert
     await request(app.getHttpServer())
@@ -311,7 +307,7 @@ describe("ApplicationAESTController(e2e)-reissueMSFAA", () => {
       .expect({
         statusCode: HttpStatus.UNPROCESSABLE_ENTITY,
         message:
-          "Not possible to reissue an MSFAA when there is no pending disbursements for the application.",
+          "Not possible to create an MSFAA when the application status is 'Draft'.",
         error: "Unprocessable Entity",
       });
   });

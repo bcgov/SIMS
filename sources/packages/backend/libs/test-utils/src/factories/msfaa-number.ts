@@ -14,9 +14,9 @@ import * as faker from "faker";
  */
 export enum MSFAAStates {
   Pending = 0,
-  Signed = 1 << 0,
-  CancelledSystem = 1 << 1,
-  CancelledOtherProvince = 1 << 2,
+  Signed = 1,
+  CancelledSystem = 2,
+  CancelledOtherProvince = 4,
 }
 
 /**
