@@ -76,7 +76,7 @@ export async function saveFakeApplicationDisbursements(
     institutionLocation?: InstitutionLocation;
     disbursementValues?: DisbursementValue[];
     student?: Student;
-    msfaaNumber: MSFAANumber;
+    msfaaNumber?: MSFAANumber;
   },
   options?: {
     applicationStatus?: ApplicationStatus;

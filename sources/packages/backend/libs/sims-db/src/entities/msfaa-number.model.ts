@@ -118,16 +118,4 @@ export class MSFAANumber extends RecordDataModel {
     referencedColumnName: ColumnNames.ID,
   })
   referenceApplication: Application;
-  /**
-   * Disbursement schedules associated with this MSFAA.
-   */
-  @OneToMany(
-    () => DisbursementSchedule,
-    (disbursementSchedule) => disbursementSchedule.msfaaNumber,
-    {
-      eager: false,
-      cascade: false,
-    },
-  )
-  disbursementSchedules: DisbursementSchedule[];
 }
