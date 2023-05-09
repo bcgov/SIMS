@@ -1,0 +1,77 @@
+apiVersion: template.openshift.io/v1
+kind: Template
+metadata:
+  name: ${NAME}
+labels:
+  project: ${PROJECT}
+  service: ${SERVICE_NAME}
+  annotations:
+    description: "Template for running a job that performs a database migrations"
+parameters:
+  - name: NAME
+    required: true
+  - name: PROJECT
+    value: sims
+  - name: SERVICE_NAME
+    value: db-migrations
+  - name: JOB_NAME
+    description: db-migrations
+    required: true
+    value: db-migrations-job
+  - name: IMAGE_STREAM_TAG
+    required: true
+  - name: BUILD_NAMESPACE
+    required: true
+  - name: IMAGE_REGISTRY
+    value: image-registry.openshift-image-registry.svc:5000
+  - name: PORT
+    required: true
+  - name: DB_SERVICE
+    value: patroni-master
+  - name: DB_SECRET_NAME
+    value: patroni-creds
+  - name: DB_USERNAME_KEY
+    value: superuser-username
+  - name: DB_PASSWORD_KEY
+    value: superuser-password
+objects:
+  - apiVersion: batch/v1
+    kind: Job
+    metadata:
+      name: ${JOB_NAME}
+    spec:
+      template:
+        metadata:
+          name: ${JOB_NAME}
+        spec:
+          containers:
+            - name: db-migrations-container
+              image: ${IMAGE_REGISTRY}/${BUILD_NAMESPACE}/${IMAGE_STREAM_TAG}
+              env:
+                - name: PORT
+                  value: "${PORT}"
+                - name: POSTGRES_HOST
+                  value: "${DB_SERVICE}"
+                - name: POSTGRES_USER
+                  valueFrom:
+                    secretKeyRef:
+                      key: ${DB_USERNAME_KEY}
+                      name: ${DB_SECRET_NAME}
+                - name: POSTGRES_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      key: ${DB_PASSWORD_KEY}
+                      name: ${DB_SECRET_NAME}
+                - name: POSTGRES_DB
+                  valueFrom:
+                    secretKeyRef:
+                      key: ${DATABASE_NAME_KEY}
+                      name: ${DB_SECRET_NAME}
+              resources:
+                requests:
+                  cpu: 100m
+                  memory: 128Mi
+                limits:
+                  cpu: 200m
+                  memory: 256Mi
+          restartPolicy: OnFailure

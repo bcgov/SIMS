@@ -35,6 +35,10 @@ export FORMIO_ROOT_EMAIL := $(or ${FORMIO_ROOT_EMAIL}, dev_sabc@gov.bc.ca)
 export MONGODB_URI := $(or ${MONGODB_URI}, $$MONGODB_URI)
 export QUEUE_PREFIX := $(or $(QUEUE_PREFIX), {sims-local})
 
+define DB_MIGRATIONS
+"$(HOST_PREFIX)db-migrations-$(APP_NAME)"
+endef
+
 define API
 "$(HOST_PREFIX)api-$(APP_NAME)"
 endef
@@ -294,6 +298,26 @@ create-new-db:
 	@echo "+\n++ Creating DB ($(NEW_DB)) in $(NAMESPACE) patroni db cluster"
 	@oc -n $(NAMESPACE) process -f openshift/database/createdb-job.yml -p DB_NAME=$(NEW_DB) -p BUILD_NAMESPACE=$(BUILD_NAMESPACE) -p JOB_NAME=$(JOB_NAME) | oc -n $(NAMESPACE) apply -f -
 
+deploy-db-migrations:
+	test -n "$(NAMESPACE)"
+	test -n "$(BUILD_NAMESPACE)"
+	test -n "$(DB_SERVICE_NAME)"
+	test -n "$(DB_MIGRATIONS_BUILD_REF)"
+	test -n "$(BUILD_REF)"
+	test -n "$(DATABASE_NAME_KEY)"
+	test -n "$(DB_MIGRATIONS)"
+	@echo "+\n++ Deploying DB_MIGRATIONS with tag: $(BUILD_REF)\n+"
+	@oc -n $(NAMESPACE) process -f openshift/db-migrations-deploy.yml \
+		-p NAME=$(DB_MIGRATIONS) \
+		-p DB_SERVICE=$(DB_SERVICE_NAME) \
+		-p BUILD_NAMESPACE=$(BUILD_NAMESPACE) \
+		-p IMAGE_STREAM_TAG="$(DB_MIGRATIONS_BUILD_REF):$(BUILD_REF)" \
+		-p BUILD_TAG=$(BUILD_REF) \
+		-p DATABASE_NAME_KEY=$(DATABASE_NAME_KEY) \
+		-p JOB_NAME=DB-migrations \
+		| oc -n $(NAMESPACE) apply -f -
+	$(call rollout_and_wait,dc/$(DB_MIGRATIONS))
+	
 deploy-api:
 	test -n "$(NAMESPACE)"
 	test -n "$(BUILD_NAMESPACE)"
