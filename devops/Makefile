@@ -318,7 +318,7 @@ deploy-db-migrations:
 		-p DATABASE_NAME_KEY=$(DATABASE_NAME_KEY) \
 		-p JOB_NAME=database.migrations \
 		| oc -n $(NAMESPACE) apply -f -
-	$(call rollout_and_wait,dc/$(DB_MIGRATIONS))
+	$(call rollout_and_wait,job/$(DB_MIGRATIONS))
 	
 deploy-api:
 	test -n "$(NAMESPACE)"
