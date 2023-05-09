@@ -4,10 +4,10 @@ FROM registry.access.redhat.com/ubi8/nodejs-16:1-5
 LABEL maintainer="BC GOV"
 
 # Copying package.json and package-lock.json
-COPY ./package.json ./
+COPY ./package*.json ./
 
 # Installing dependencies
-RUN npm i
+RUN npm ci
 
 # Copying sources
 COPY . .
