@@ -4,7 +4,7 @@
       <header-navigator
         title="Assessments"
         subTitle="View Submission"
-        :routeLocation="assessmentsSummaryRoute"
+        :routeLocation="backRouteLocation"
       />
     </template>
     <template #sub-header>
@@ -13,7 +13,8 @@
     <formio-container
       formName="studentExceptions"
       :formData="applicationExceptions"
-      @submitted="submitted"
+      :readOnly="readOnlyForm"
+      @submitted="$emit('submitted', $event)"
     >
       <template #actions="{ submit }" v-if="!readOnly">
         <check-permission-role :role="Role.StudentApproveDeclineExceptions">
@@ -32,16 +33,12 @@
   </full-page-container>
 </template>
 <script lang="ts">
-import { ref, onMounted, defineComponent } from "vue";
-import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
-import { useRouter } from "vue-router";
+import { ref, onMounted, defineComponent, PropType } from "vue";
+import { RouteLocationRaw, useRouter } from "vue-router";
 import { ApplicationExceptionService } from "@/services/ApplicationExceptionService";
-import { ApplicationExceptionStatus, FormIOForm, Role } from "@/types";
-import {
-  ApplicationExceptionAPIOutDTO,
-  UpdateApplicationExceptionAPIInDTO,
-} from "@/services/http/dto";
-import { useAssessment, useFormatters, useSnackBar } from "@/composables";
+import { ApplicationExceptionStatus, Role } from "@/types";
+import { ApplicationExceptionAPIOutDTO } from "@/services/http/dto";
+import { useAssessment, useFormatters } from "@/composables";
 import HeaderTitleValue from "@/components/generic/HeaderTitleValue.vue";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
 
@@ -77,35 +74,46 @@ type ApplicationExceptionFormModel = Omit<
 };
 
 export default defineComponent({
+  // todo: ann emit new
+  emits: ["submitted"],
   components: { HeaderTitleValue, CheckPermissionRole },
   props: {
     studentId: {
       type: Number,
-      required: true,
-    },
-    applicationId: {
-      type: Number,
-      required: true,
+      required: false,
     },
     exceptionId: {
       type: Number,
       required: true,
     },
+    backRouteLocation: {
+      type: Object as PropType<RouteLocationRaw>,
+      required: true,
+    },
+    processing: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
+    readOnlyForm: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
   },
   setup(props) {
     const router = useRouter();
-    const snackBar = useSnackBar();
     const { dateOnlyLongString } = useFormatters();
     const { mapRequestAssessmentChipStatus } = useAssessment();
     const applicationExceptions = ref({} as ApplicationExceptionFormModel);
     const submittedDate = ref("");
-    const processing = ref(false);
     const readOnly = ref(true);
 
     onMounted(async () => {
       const applicationException =
-        await ApplicationExceptionService.shared.getExceptionById(
+        await ApplicationExceptionService.shared.getExceptionDetails(
           props.exceptionId,
+          props.studentId,
         );
       applicationExceptions.value = {
         ...applicationException,
@@ -123,48 +131,17 @@ export default defineComponent({
       );
       readOnly.value =
         applicationException.exceptionStatus !==
-        ApplicationExceptionStatus.Pending;
+          ApplicationExceptionStatus.Pending || props.readOnlyForm;
     });
 
-    const assessmentsSummaryRoute = {
-      name: AESTRoutesConst.ASSESSMENTS_SUMMARY,
-      params: {
-        applicationId: props.applicationId,
-        studentId: props.studentId,
-      },
-    };
-
     const gotToAssessmentsSummary = () => {
-      router.push(assessmentsSummaryRoute);
-    };
-
-    const submitted = async (form: FormIOForm) => {
-      processing.value = true;
-      try {
-        const approveExceptionPayload =
-          form.data as UpdateApplicationExceptionAPIInDTO;
-        await ApplicationExceptionService.shared.approveException(
-          props.exceptionId,
-          approveExceptionPayload,
-        );
-        snackBar.success(
-          `Application exception status is now ${approveExceptionPayload.exceptionStatus}.`,
-        );
-        gotToAssessmentsSummary();
-      } catch {
-        snackBar.error("An unexpected error happened during the approval.");
-      } finally {
-        processing.value = false;
-      }
+      router.push(props.backRouteLocation);
     };
 
     return {
       gotToAssessmentsSummary,
-      assessmentsSummaryRoute,
       applicationExceptions,
-      submitted,
       submittedDate,
-      processing,
       readOnly,
       Role,
     };

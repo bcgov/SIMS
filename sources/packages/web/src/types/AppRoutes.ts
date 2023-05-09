@@ -47,7 +47,6 @@ export enum AppRoutes {
   InstitutionManageUsers = "manage-users",
   ActiveApplicationScholasticStandingView = "active-application/location/:locationId/scholastic-standing/:scholasticStandingId",
   OfferingsUpload = "offerings-upload",
-  InstitutionAssessmentSummary = "assessment-summary",
   // AEST
   AESTRoot = "/ministry",
   AESTDashboard = "dashboard",
@@ -61,12 +60,9 @@ export enum AppRoutes {
   AESTInstitutionProfileCreate = "institution-profile/create",
   PendingDesignations = "institution/designation/pending",
   DesignationAESTView = "institution/designation/:designationId/institution/:institutionId?",
-  AssessmentSummary = "assessment-summary",
   ScholasticStandingView = "scholastic-standing/:scholasticStandingId",
-  StudentAppealRequestsApproval = "request-changes/:appealId",
   NoticeOfAssessmentView = "notice-of-assessment/:assessmentId",
   Reports = "reports",
-  ApplicationExceptionsApproval = "application-exceptions/:exceptionId",
   Exceptions = "exceptions",
   OfferingChangeRequests = "institution/offering/change-requests",
   ViewOfferingChangeRequest = "institution/offering-change-request/:offeringId/program/:programId",
@@ -106,4 +102,8 @@ export enum AppRoutes {
   FileUploads = "files",
   Notes = "notes",
   ApplicationView = "view",
+  AssessmentSummary = "assessment-summary",
+  ApplicationException = "application-exceptions/:exceptionId",
+  StudentAppealRequest = "request-changes/:appealId",
+
 }

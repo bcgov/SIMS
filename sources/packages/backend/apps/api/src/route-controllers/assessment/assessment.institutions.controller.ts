@@ -2,44 +2,29 @@ import { Controller, Get, Param, ParseIntPipe } from "@nestjs/common";
 import BaseController from "../BaseController";
 import {
   AllowAuthorizedParty,
-  Groups,
   HasStudentDataAccess,
   IsBCPublicInstitution,
 } from "../../auth/decorators";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { ClientTypeBaseRoute } from "../../types";
-import { UserGroups } from "../../auth/user-groups.enum";
 import {
   AssessmentHistorySummaryAPIOutDTO,
-  AssessmentNOAAPIOutDTO,
   RequestAssessmentSummaryAPIOutDTO,
-  AwardDetailsAPIOutDTO,
-  RequestAssessmentTypeAPIOutDTO,
 } from "./models/assessment.dto";
-import {
-  ApiNotFoundResponse,
-  ApiTags,
-  ApiUnprocessableEntityResponse,
-} from "@nestjs/swagger";
+import { ApiTags } from "@nestjs/swagger";
 import { AssessmentControllerService } from "./assessment.controller.service";
-import {
-  EducationProgramOfferingService,
-  ApplicationExceptionService,
-} from "../../services";
-import { ApplicationExceptionStatus } from "@sims/sims-db";
 
 /**
  * Assessment controller for institutions.
  */
 @AllowAuthorizedParty(AuthorizedParties.institution)
 @Controller("assessment")
+@IsBCPublicInstitution()
 @ApiTags(`${ClientTypeBaseRoute.Institution}-assessment`)
 export class AssessmentInstitutionsController extends BaseController {
   constructor(
-    private readonly assessmentControllerService: AssessmentControllerService,
-  ) //   private readonly educationProgramOfferingService: EducationProgramOfferingService,
-  //   private readonly applicationExceptionService: ApplicationExceptionService,
-  {
+    private readonly assessmentControllerService: AssessmentControllerService, //   private readonly educationProgramOfferingService: EducationProgramOfferingService, //   private readonly applicationExceptionService: ApplicationExceptionService,
+  ) {
     super();
   }
 
@@ -50,9 +35,8 @@ export class AssessmentInstitutionsController extends BaseController {
    * @param applicationId application id.
    * @returns assessment requests or exceptions for the student application.
    */
-  // @IsBCPublicInstitution()
-  // @HasStudentDataAccess("studentId")
-  @Get("/student/:studentId/application/:applicationId/requests")
+  @HasStudentDataAccess("studentId")
+  @Get("student/:studentId/application/:applicationId/requests")
   async getRequestedAssessmentSummary(
     @Param("studentId", ParseIntPipe) studentId: number,
     @Param("applicationId", ParseIntPipe) applicationId: number,
@@ -63,23 +47,26 @@ export class AssessmentInstitutionsController extends BaseController {
     );
   }
 
-  // /**
-  //  * Method to get history of assessments for an application,
-  //  * i.e, this will have original assessment for the
-  //  * student application, and all approved student
-  //  * appeal and scholastic standings for the application
-  //  * which will have different assessment status.
-  //  * @param applicationId, application number.
-  //  * @returns summary of the assessment history for a student application.
-  //  */
-  // @Get("application/:applicationId/history")
-  // async getAssessmentHistorySummary(
-  //   @Param("applicationId", ParseIntPipe) applicationId: number,
-  // ): Promise<AssessmentHistorySummaryAPIOutDTO[]> {
-  //   return this.assessmentControllerService.getAssessmentHistorySummary(
-  //     applicationId,
-  //   );
-  // }
+  /**
+   * Method to get history of assessments for an application,
+   * i.e, this will have original assessment for the
+   * student application, and all approved student
+   * appeal and scholastic standings for the application
+   * which will have different assessment status.
+   * @param studentId student id.
+   * @param applicationId, application id.
+   * @returns summary of the assessment history for a student application.
+   */
+  @Get("student/:studentId/application/:applicationId/history")
+  async getAssessmentHistorySummary(
+    @Param("studentId", ParseIntPipe) studentId: number,
+    @Param("applicationId", ParseIntPipe) applicationId: number,
+  ): Promise<AssessmentHistorySummaryAPIOutDTO[]> {
+    return this.assessmentControllerService.getAssessmentHistorySummary(
+      applicationId,
+      studentId,
+    );
+  }
 
   // /**
   //  * Get the NOA values for a student application on a particular assessment.

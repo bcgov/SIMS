@@ -106,6 +106,10 @@ export default defineComponent({
       type: Array as PropType<AssessmentTriggerType[]>,
       required: true,
     },
+    studentId: {
+      type: Number,
+      required: false,
+    },
   },
   setup(props, context) {
     const { dateOnlyLongString } = useFormatters();
@@ -114,6 +118,7 @@ export default defineComponent({
       assessmentHistory.value =
         await StudentAssessmentsService.shared.getAssessmentHistory(
           props.applicationId,
+          props.studentId,
         );
     });
 

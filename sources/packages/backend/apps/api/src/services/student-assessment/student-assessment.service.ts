@@ -234,7 +234,7 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
    * * WHEN 3:if assessmentWorkflowId is not null
    * * and assessmentData is not null, then status
    * * is Completed.
-   * @param applicationId applicationId.
+   * @param applicationId application id.
    * @param studentId applicant student.
    * @returns AssessmentHistory list
    */

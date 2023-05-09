@@ -53,7 +53,7 @@ export class EducationProgramInstitutionsController extends BaseController {
    * @param paginationOptions pagination options.
    * @returns paginated programs summary.
    */
-  @HasLocationAccess("locationId")
+  // @HasLocationAccess("locationId")
   @Get("location/:locationId/summary")
   async getProgramsSummaryByLocationId(
     @Param("locationId", ParseIntPipe) locationId: number,

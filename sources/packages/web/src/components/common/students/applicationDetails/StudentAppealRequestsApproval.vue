@@ -1,10 +1,11 @@
 <template>
+  <!-- todo: why container?? -->
   <v-container>
     <div class="mb-4">
       <header-navigator
         title="Assessment"
         subTitle="View Request"
-        :routeLocation="assessmentsSummaryRoute"
+        :routeLocation="backRouteLocation"
       />
     </div>
     <full-page-container>
@@ -18,7 +19,7 @@
       <appeal-requests-approval-form
         :studentAppealRequests="studentAppealRequests"
         :readOnly="readOnly"
-        @submitted="submitted"
+        @submitted="$emit('submitted', $event)"
       >
         <template #approval-actions="{ submit }" v-if="!readOnly">
           <v-row justify="center" class="m-2">
@@ -49,24 +50,17 @@
   </v-container>
 </template>
 <script lang="ts">
-import { ref, onMounted, computed, defineComponent } from "vue";
-import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
-import { useRouter } from "vue-router";
+import { ref, onMounted, computed, defineComponent, PropType } from "vue";
+import { RouteLocationRaw, useRouter } from "vue-router";
 import { StudentAppealService } from "@/services/StudentAppealService";
-import { useFormatters, useSnackBar } from "@/composables";
-import {
-  StudentAppealRequest,
-  StudentAppealApproval,
-  StudentAppealStatus,
-  ApiProcessError,
-  Role,
-} from "@/types";
+import { useFormatters } from "@/composables";
+import { StudentAppealRequest, StudentAppealStatus, Role } from "@/types";
 import AppealRequestsApprovalForm from "@/components/aest/AppealRequestsApprovalForm.vue";
 import StatusChipRequestedAssessment from "@/components/generic/StatusChipRequestedAssessment.vue";
-import { ASSESSMENT_ALREADY_IN_PROGRESS } from "@/services/http/dto/Assessment.dto";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
 
 export default defineComponent({
+  emit: ["submitted"],
   components: {
     AppealRequestsApprovalForm,
     StatusChipRequestedAssessment,
@@ -77,30 +71,36 @@ export default defineComponent({
       type: Number,
       required: true,
     },
-    applicationId: {
-      type: Number,
-      required: true,
-    },
     appealId: {
       type: Number,
       required: true,
     },
+    backRouteLocation: {
+      type: Object as PropType<RouteLocationRaw>,
+      required: true,
+    },
+    readOnlyForm: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
   },
   setup(props) {
     const router = useRouter();
-
-    const snackBar = useSnackBar();
     const { dateOnlyLongString } = useFormatters();
     const studentAppealRequests = ref([] as StudentAppealRequest[]);
     const appealStatus = ref(StudentAppealStatus.Pending);
     const readOnly = computed(
-      () => appealStatus.value !== StudentAppealStatus.Pending,
+      () =>
+        appealStatus.value !== StudentAppealStatus.Pending ||
+        props.readOnlyForm,
     );
 
     onMounted(async () => {
       const appeal =
         await StudentAppealService.shared.getStudentAppealWithRequests(
           props.appealId,
+          props.studentId,
         );
       studentAppealRequests.value = appeal.appealRequests.map((request) => ({
         id: request.id,
@@ -118,43 +118,13 @@ export default defineComponent({
       appealStatus.value = appeal.status;
     });
 
-    const assessmentsSummaryRoute = {
-      name: AESTRoutesConst.ASSESSMENTS_SUMMARY,
-      params: {
-        applicationId: props.applicationId,
-        studentId: props.studentId,
-      },
-    };
-
     const gotToAssessmentsSummary = () => {
-      router.push(assessmentsSummaryRoute);
-    };
-
-    const submitted = async (approvals: StudentAppealApproval[]) => {
-      try {
-        await StudentAppealService.shared.approveStudentAppealRequests(
-          props.appealId,
-          approvals,
-        );
-        snackBar.success("The request was completed with success.");
-
-        gotToAssessmentsSummary();
-      } catch (error: unknown) {
-        if (error instanceof ApiProcessError) {
-          if (error.errorType === ASSESSMENT_ALREADY_IN_PROGRESS) {
-            snackBar.warn(error.message);
-            return;
-          }
-        }
-        snackBar.error("An unexpected error happened during the approval.");
-      }
+      router.push(props.backRouteLocation);
     };
 
     return {
       gotToAssessmentsSummary,
-      assessmentsSummaryRoute,
       studentAppealRequests,
-      submitted,
       appealStatus,
       readOnly,
       Role,

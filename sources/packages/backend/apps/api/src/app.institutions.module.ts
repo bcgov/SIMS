@@ -53,6 +53,13 @@ import {
   AssessmentInstitutionsController,
   AssessmentControllerService,
   OverawardControllerService,
+  ApplicationExceptionInstitutionsController,
+  ApplicationExceptionControllerService,
+  UserInstitutionsController,
+  ApplicationInstitutionsController,
+  UserControllerService,
+  StudentAppealInstitutionsController,
+  StudentAppealControllerService,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
 import {
@@ -69,9 +76,6 @@ import {
   SFASApplicationService,
   SFASPartTimeApplicationsService,
 } from "@sims/services/sfas";
-import { UserInstitutionsController } from "./route-controllers/user/user.institutions.controller";
-import { UserControllerService } from "./route-controllers/user/user.controller.service";
-import { ApplicationInstitutionsController } from "./route-controllers/application/application.institutions.controller";
 
 @Module({
   imports: [AuthModule],
@@ -90,6 +94,8 @@ import { ApplicationInstitutionsController } from "./route-controllers/applicati
     StudentInstitutionsController,
     AssessmentInstitutionsController,
     OverawardInstitutionsController,
+    ApplicationExceptionInstitutionsController,
+    StudentAppealInstitutionsController,
   ],
   providers: [
     ApplicationControllerService,
@@ -143,6 +149,8 @@ import { ApplicationInstitutionsController } from "./route-controllers/applicati
     ApplicationExceptionService,
     StudentAppealRequestsService,
     OverawardControllerService,
+    ApplicationExceptionControllerService,
+    StudentAppealControllerService,
   ],
 })
 export class AppInstitutionsModule {}

@@ -41,9 +41,9 @@ import SupportingUser from "@/views/aest/SupportingUser.vue";
 import PendingDesignations from "@/views/aest/institution/PendingDesignation.vue";
 import DesignationAESTView from "@/views/aest/institution/DesignationAESTView.vue";
 import AssessmentsSummary from "@/views/aest/AssessmentsSummary.vue";
-import StudentAppealRequestsApproval from "@/views/aest/StudentAppealRequestsApproval.vue";
+import StudentAppealRequestsApproval from "@/views/aest/student/applicationDetails/StudentAppealRequestsApproval.vue";
 import NoticeOfAssessment from "@/views/aest/NoticeOfAssessment.vue";
-import ApplicationExceptionsApproval from "@/views/aest/ApplicationExceptionsApproval.vue";
+import ApplicationExceptionsApproval from "@/views/aest/student/applicationDetails/ApplicationExceptionsApproval.vue";
 import ViewScholasticStanding from "@/views/aest/student/ViewScholasticStanding.vue";
 import SINManagement from "@/views/aest/student/SINManagement.vue";
 import Overawards from "@/views/aest/student/Overawards.vue";
@@ -220,7 +220,7 @@ export const aestRoutes: Array<RouteRecordRaw> = [
             },
           },
           {
-            path: AppRoutes.StudentAppealRequestsApproval,
+            path: AppRoutes.StudentAppealRequest,
             name: AESTRoutesConst.STUDENT_APPEAL_REQUESTS_APPROVAL,
             props: true,
             component: StudentAppealRequestsApproval,
@@ -238,7 +238,7 @@ export const aestRoutes: Array<RouteRecordRaw> = [
             },
           },
           {
-            path: AppRoutes.ApplicationExceptionsApproval,
+            path: AppRoutes.ApplicationException,
             name: AESTRoutesConst.APPLICATION_EXCEPTIONS_APPROVAL,
             props: true,
             component: ApplicationExceptionsApproval,

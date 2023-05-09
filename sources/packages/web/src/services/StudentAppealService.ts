@@ -35,10 +35,17 @@ export class StudentAppealService {
     });
   }
 
+  /**
+   * Get student application appeal.
+   * @param appealId appeal id.
+   * @param studentId student id.
+   * @returns student application appeal.
+   */
   async getStudentAppealWithRequests(
     appealId: number,
+    studentId?: number,
   ): Promise<StudentAppealAPIOutDTO> {
-    return ApiClient.StudentAppealApi.getStudentAppealWithRequests(appealId);
+    return ApiClient.StudentAppealApi.getStudentAppealWithRequests(appealId, studentId);
   }
 
   async approveStudentAppealRequests(

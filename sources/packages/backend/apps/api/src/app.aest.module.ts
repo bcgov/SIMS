@@ -64,6 +64,8 @@ import {
   ConfirmationOfEnrollmentControllerService,
   OverawardAESTController,
   OverawardControllerService,
+  ApplicationExceptionControllerService,
+  StudentAppealControllerService,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
 import {
@@ -160,6 +162,8 @@ import {
     NoteSharedService,
     OverawardControllerService,
     RestrictionSharedService,
+    ApplicationExceptionControllerService,
+    StudentAppealControllerService,
   ],
 })
 export class AppAESTModule {}

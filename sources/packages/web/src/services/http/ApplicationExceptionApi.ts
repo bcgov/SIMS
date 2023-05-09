@@ -18,13 +18,18 @@ export class ApplicationExceptionApi extends HttpBaseClient {
    * Get a student application exception detected after the student application was
    * submitted, for instance, when there are documents to be reviewed.
    * @param exceptionId exception to be retrieved.
+   * @param studentId student id.
    * @returns student application exception information.
    */
-  async getExceptionById(
+  async getExceptionDetails(
     exceptionId: number,
+    studentId?: number,
   ): Promise<ApplicationExceptionAPIOutDTO> {
+    const endpoint = studentId
+      ? `application-exception/student/${studentId}/exception/${exceptionId}`
+      : `application-exception/${exceptionId}`;
     return this.getCall<ApplicationExceptionAPIOutDTO>(
-      this.addClientRoot(`application-exception/${exceptionId}`),
+      this.addClientRoot(endpoint),
     );
   }
 

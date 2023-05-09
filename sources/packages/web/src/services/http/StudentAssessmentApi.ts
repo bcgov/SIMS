@@ -36,14 +36,19 @@ export class StudentAssessmentApi extends HttpBaseClient {
    * student application, and all approved student
    * appeal and scholastic standings for the application
    * which will have different assessment status.
-   * @param applicationId, application number.
+   * @param applicationId, application id.
+   * @param studentId, student id.
    * @returns AssessmentHistorySummaryDTO list.
    */
   public async getAssessmentHistory(
     applicationId: number,
+    studentId?: number,
   ): Promise<AssessmentHistorySummaryAPIOutDTO[]> {
+    const endpoint = studentId
+      ? `assessment/student/${studentId}/application/${applicationId}/history`
+      : `assessment/application/${applicationId}/history`;
     return this.getCall<AssessmentHistorySummaryAPIOutDTO[]>(
-      this.addClientRoot(`assessment/application/${applicationId}/history`),
+      this.addClientRoot(endpoint),
     );
   }
 

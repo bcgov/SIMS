@@ -244,7 +244,7 @@ export class AssessmentControllerService {
    * Get history of approved assessment requests and
    * unsuccessful scholastic standing change requests(which will not create new assessment)
    * for an application.
-   * @param applicationId, application number.
+   * @param applicationId, application id.
    * @param studentId applicant student.
    * @returns summary of the assessment history for a student application.
    */
@@ -256,6 +256,7 @@ export class AssessmentControllerService {
       this.assessmentService.assessmentHistorySummary(applicationId, studentId),
       this.studentScholasticStandingsService.getUnsuccessfulScholasticStandings(
         applicationId,
+        studentId,
       ),
     ]);
     const history: AssessmentHistorySummaryAPIOutDTO[] = assessments.map(

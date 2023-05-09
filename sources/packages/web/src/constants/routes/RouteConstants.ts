@@ -78,6 +78,8 @@ export const InstitutionRoutesConst = {
   STUDENT_OVERAWARDS: Symbol(),
   STUDENT_NOTES: Symbol(),
   ASSESSMENTS_SUMMARY: Symbol(),
+  APPLICATION_EXCEPTION: Symbol(),
+  STUDENT_APPEAL_REQUEST: Symbol(),
 };
 
 /**

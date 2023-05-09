@@ -48,6 +48,8 @@ import InstitutionStudentFileUploads from "@/views/institution/student/Instituti
 import InstitutionStudentOverawards from "@/views/institution/student/InstitutionStudentOverawards.vue";
 import InstitutionStudentNotes from "@/views/institution/student/InstitutionStudentNotes.vue";
 import InstitutionAssessmentsSummary from "@/views/institution/student/applicationDetails/InstitutionAssessmentsSummary.vue";
+import ApplicationExceptions from "@/views/institution/student/applicationDetails/ApplicationExceptions.vue";
+import StudentAppealRequest from "@/views/institution/student/applicationDetails/StudentAppealRequest.vue";
 
 export const institutionRoutes: Array<RouteRecordRaw> = [
   {
@@ -174,7 +176,7 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
         },
       },
       {
-        path: `${AppRoutes.LocationProgramInfoRequestSummary}`,
+        path: AppRoutes.LocationProgramInfoRequestSummary,
         name: InstitutionRoutesConst.PROGRAM_INFO_REQUEST_SUMMARY,
         components: {
           default: LocationProgramInfoRequestSummary,
@@ -194,7 +196,7 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
         },
       },
       {
-        path: `${AppRoutes.LocationCOESummary}`,
+        path: AppRoutes.LocationCOESummary,
         name: InstitutionRoutesConst.COE_SUMMARY,
         components: {
           default: LocationCOESummary,
@@ -588,10 +590,22 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
             component: InstitutionApplicationView,
           },
           {
-            path: AppRoutes.InstitutionAssessmentSummary,
+            path: AppRoutes.AssessmentSummary,
             name: InstitutionRoutesConst.ASSESSMENTS_SUMMARY,
             props: true,
             component: InstitutionAssessmentsSummary,
+          },
+          {
+            path: AppRoutes.ApplicationException,
+            name: InstitutionRoutesConst.APPLICATION_EXCEPTION,
+            props: true,
+            component: ApplicationExceptions,
+          },
+          {
+            path: AppRoutes.StudentAppealRequest,
+            name: InstitutionRoutesConst.STUDENT_APPEAL_REQUEST,
+            props: true,
+            component: StudentAppealRequest,
           },
         ],
       },

@@ -457,12 +457,14 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
   /**
    * Get unsuccessful scholastic standing of a student application.
    * @param applicationId application id.
+   * @param studentId student id.
    * @return student scholastic standing.
    */
   async getUnsuccessfulScholasticStandings(
     applicationId: number,
+    studentId?: number,
   ): Promise<StudentScholasticStanding> {
-    return this.repo
+    const unsuccessfulScholasticStandings = this.repo
       .createQueryBuilder("studentScholasticStanding")
       .select([
         "studentScholasticStanding.id",
@@ -470,8 +472,15 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
       ])
       .innerJoin("studentScholasticStanding.application", "application")
       .where("application.id = :applicationId", { applicationId })
-      .andWhere("studentScholasticStanding.unsuccessfulWeeks IS NOT NULL")
-      .getOne();
+      .andWhere("studentScholasticStanding.unsuccessfulWeeks IS NOT NULL");
+
+    if (studentId) {
+      unsuccessfulScholasticStandings
+        .innerJoin("application.student", "student")
+        .andWhere("student.id = :studentId", { studentId });
+    }
+
+    return unsuccessfulScholasticStandings.getOne();
   }
 
   /**

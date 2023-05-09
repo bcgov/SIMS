@@ -40,13 +40,18 @@ export class StudentAssessmentsService {
    * student application, and all approved student
    * appeal and scholastic standings for the application
    * which will have different assessment status.
-   * @param applicationId, application number.
+   * @param applicationId, application id.
+   * @param studentId, student id.
    * @returns summary of the assessment history for a student application.
    */
   async getAssessmentHistory(
     applicationId: number,
+    studentId?: number,
   ): Promise<AssessmentHistorySummaryAPIOutDTO[]> {
-    return ApiClient.StudentAssessmentApi.getAssessmentHistory(applicationId);
+    return ApiClient.StudentAssessmentApi.getAssessmentHistory(
+      applicationId,
+      studentId,
+    );
   }
 
   /**
