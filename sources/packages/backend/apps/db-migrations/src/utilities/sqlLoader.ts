@@ -1,6 +1,6 @@
 import * as fs from "fs";
 import * as path from "path";
-const sqlDirPath = "src/sql";
+const sqlDirPath = "apps/db-migrations/src/sql";
 
 /**
  * @description Get SQL dir path

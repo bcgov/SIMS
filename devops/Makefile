@@ -316,7 +316,7 @@ deploy-db-migrations:
 		-p IMAGE_STREAM_TAG="$(DB_MIGRATIONS_BUILD_REF):$(BUILD_REF)" \
 		-p BUILD_TAG=$(BUILD_REF) \
 		-p DATABASE_NAME_KEY=$(DATABASE_NAME_KEY) \
-		-p JOB_NAME=DB-migrations \
+		-p JOB_NAME=database.migrations \
 		| oc -n $(NAMESPACE) apply -f -
 	$(call rollout_and_wait,dc/$(DB_MIGRATIONS))
 	

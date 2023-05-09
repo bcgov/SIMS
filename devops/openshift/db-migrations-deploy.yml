@@ -2,20 +2,22 @@ apiVersion: template.openshift.io/v1
 kind: Template
 metadata:
   name: ${NAME}
+  annotations:
+    description: "Template for running a job that performs a database migrations"
 labels:
   project: ${PROJECT}
   service: ${SERVICE_NAME}
-  annotations:
-    description: "Template for running a job that performs a database migrations"
 parameters:
   - name: NAME
     required: true
+  - name: BUILD_TAG
+    value: "0"
   - name: PROJECT
     value: sims
   - name: SERVICE_NAME
     value: db-migrations
   - name: JOB_NAME
-    description: db-migrations
+    description: database.migrations
     required: true
     value: db-migrations-job
   - name: IMAGE_STREAM_TAG
@@ -24,8 +26,6 @@ parameters:
     required: true
   - name: IMAGE_REGISTRY
     value: image-registry.openshift-image-registry.svc:5000
-  - name: PORT
-    required: true
   - name: DB_SERVICE
     value: patroni-master
   - name: DB_SECRET_NAME
@@ -34,6 +34,8 @@ parameters:
     value: superuser-username
   - name: DB_PASSWORD_KEY
     value: superuser-password
+  - name: DATABASE_NAME_KEY
+    required: true
 objects:
   - apiVersion: batch/v1
     kind: Job
@@ -48,8 +50,8 @@ objects:
             - name: db-migrations-container
               image: ${IMAGE_REGISTRY}/${BUILD_NAMESPACE}/${IMAGE_STREAM_TAG}
               env:
-                - name: PORT
-                  value: "${PORT}"
+                - name: VERSION
+                  value: ${BUILD_TAG}
                 - name: POSTGRES_HOST
                   value: "${DB_SERVICE}"
                 - name: POSTGRES_USER
