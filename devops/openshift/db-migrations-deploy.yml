@@ -71,9 +71,9 @@ objects:
                       name: ${DB_SECRET_NAME}
               resources:
                 requests:
-                  cpu: 100m
-                  memory: 128Mi
+                  cpu: 500m
+                  memory: 512Mi
                 limits:
-                  cpu: 200m
-                  memory: 256Mi
+                  cpu: 500m
+                  memory: 512Mi
           restartPolicy: Never
