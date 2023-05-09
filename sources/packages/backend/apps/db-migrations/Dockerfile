@@ -1,5 +1,5 @@
 # Base Image
-FROM registry.access.redhat.com/ubi8/nodejs-16:1-5
+FROM artifacts.developer.gov.bc.ca/docker-remote/node:12.2.0-alpine
 
 LABEL maintainer="BC GOV"
 
