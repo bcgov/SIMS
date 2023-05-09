@@ -35,6 +35,9 @@ export FORMIO_ROOT_EMAIL := $(or ${FORMIO_ROOT_EMAIL}, dev_sabc@gov.bc.ca)
 export MONGODB_URI := $(or ${MONGODB_URI}, $$MONGODB_URI)
 export QUEUE_PREFIX := $(or $(QUEUE_PREFIX), {sims-local})
 
+export	MAX_WAIT=6 # Maximum wait time in seconds
+export WAIT_TIME=0   # Initialize wait time to zero
+
 define DB_MIGRATIONS
 "$(HOST_PREFIX)db-migrations-$(APP_NAME)"
 endef
@@ -124,7 +127,7 @@ init-oc: | print-status init-project
 oc-build-patroni: | print-status build-patroni
 oc-deploy-patroni: | print-status deploy-patroni
 oc-build-db-migrations: | print-status build-db-migrations
-oc-deploy-db-migrations: | print-status deploy-and-delete-db-migrations
+oc-deploy-db-migrations: | print-status deploy-db-migrations wait-for-db-migrations delete-db-migrations
 oc-build-api: | print-status build-api
 oc-deploy-api: | print-status deploy-api
 oc-build-workers: | print-status build-workers
@@ -304,7 +307,7 @@ create-new-db:
 	@echo "+\n++ Creating DB ($(NEW_DB)) in $(NAMESPACE) patroni db cluster"
 	@oc -n $(NAMESPACE) process -f openshift/database/createdb-job.yml -p DB_NAME=$(NEW_DB) -p BUILD_NAMESPACE=$(BUILD_NAMESPACE) -p JOB_NAME=$(JOB_NAME) | oc -n $(NAMESPACE) apply -f -
 
-deploy-and-delete-db-migrations:
+deploy-db-migrations:
 	test -n "$(NAMESPACE)"
 	test -n "$(BUILD_NAMESPACE)"
 	test -n "$(DB_SERVICE_NAME)"
@@ -322,9 +325,15 @@ deploy-and-delete-db-migrations:
 		-p DATABASE_NAME_KEY=$(DATABASE_NAME_KEY) \
 		-p JOB_NAME=$(DB_MIGRATIONS_JOB_NAME) \
 		| oc -n $(NAMESPACE) apply -f - 
-		while [ "$$(oc get job $(DB_MIGRATIONS_JOB_NAME) -o=jsonpath='{.status.conditions[?(@.type=="Complete")].status}' || echo "None")" != "True" ]; do sleep 5; done
-		oc delete job $(DB_MIGRATIONS_JOB_NAME) 
+
+wait-for-db-migrations:
+	while [ "$$(oc get job $(DB_MIGRATIONS_JOB_NAME) -o=jsonpath='{.status.conditions[?(@.type=="Complete")].status}' || echo "None")" != "True" ] && [ "$$WAIT_TIME" -lt "$$MAX_WAIT" ]; do sleep 5; WAIT_TIME=$$((WAIT_TIME+5)); done
 	
+	if [ "$$(oc get job $(DB_MIGRATIONS_JOB_NAME) -o=jsonpath='{.status.conditions[?(@.type=="Complete")].status}' || echo "None")" != "True" ]; then echo "Error: Job $(DB_MIGRATIONS_JOB_NAME) failed to complete within the specified timeout"; exit 1; fi
+
+delete-db-migrations:
+	oc delete job $(DB_MIGRATIONS_JOB_NAME)
+
 deploy-api:
 	test -n "$(NAMESPACE)"
 	test -n "$(BUILD_NAMESPACE)"
