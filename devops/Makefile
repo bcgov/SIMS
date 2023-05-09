@@ -39,6 +39,10 @@ define DB_MIGRATIONS
 "$(HOST_PREFIX)db-migrations-$(APP_NAME)"
 endef
 
+define DB_MIGRATIONS_JOB_NAME
+"db.migrations"
+endef
+
 define API
 "$(HOST_PREFIX)api-$(APP_NAME)"
 endef
@@ -316,9 +320,9 @@ deploy-db-migrations:
 		-p IMAGE_STREAM_TAG="$(DB_MIGRATIONS_BUILD_REF):$(BUILD_REF)" \
 		-p BUILD_TAG=$(BUILD_REF) \
 		-p DATABASE_NAME_KEY=$(DATABASE_NAME_KEY) \
-		-p JOB_NAME=database.migrations \
+		-p JOB_NAME=$(DB_MIGRATIONS_JOB_NAME) \
 		| oc -n $(NAMESPACE) apply -f -
-	$(call rollout_and_wait,job/$(DB_MIGRATIONS))
+	$(call delete --wait,job/$(DB_MIGRATIONS_JOB_NAME))
 	
 deploy-api:
 	test -n "$(NAMESPACE)"
