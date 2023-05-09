@@ -16,4 +16,4 @@ COPY . .
 RUN npm run build db-migrations
 
 # Entry point
-CMD [ "npm", "run", "start:prod:queue-consumers" ]
+CMD [ "npm", "run", "start:prod:db-migrations" ]
