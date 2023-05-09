@@ -1,13 +1,11 @@
-import { NotFoundException } from "@nestjs/common";
-import { StudentAppealService } from "../../services";
-import BaseController from "../BaseController";
+import { Injectable, NotFoundException } from "@nestjs/common";
 import { StudentAppealAPIOutDTO } from "./models/student-appeal.dto";
 import { getUserFullName } from "../../utilities";
+import { StudentAppealService } from "../../services";
 
-export class StudentAppealControllerService extends BaseController {
-  constructor(private readonly studentAppealService: StudentAppealService) {
-    super();
-  }
+@Injectable()
+export class StudentAppealControllerService {
+  constructor(private readonly studentAppealService: StudentAppealService) {}
 
   /**
    * Get the student appeal and its requests.

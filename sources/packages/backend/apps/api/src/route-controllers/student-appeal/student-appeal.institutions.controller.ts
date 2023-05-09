@@ -1,19 +1,9 @@
-import {
-  Controller,
-  Param,
-  Get,
-  ParseIntPipe,
-} from "@nestjs/common";
+import { Controller, Param, Get, ParseIntPipe } from "@nestjs/common";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
-import {
-  AllowAuthorizedParty,
-} from "../../auth/decorators";
-import {
-  ApiNotFoundResponse,
-  ApiTags,
-} from "@nestjs/swagger";
+import { AllowAuthorizedParty } from "../../auth/decorators";
+import { ApiNotFoundResponse, ApiTags } from "@nestjs/swagger";
 import BaseController from "../BaseController";
-import {  ClientTypeBaseRoute } from "../../types";
+import { ClientTypeBaseRoute } from "../../types";
 import { StudentAppealAPIOutDTO } from "./models/student-appeal.dto";
 import { StudentAppealControllerService } from "./student-appeal.controller.service";
 
