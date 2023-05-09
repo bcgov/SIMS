@@ -25,7 +25,7 @@ on:
         type: choice
         required: false
         options:
-          -
+          - noRelease
           - draft
           - publish
 
@@ -126,6 +126,10 @@ jobs:
         run: |
           oc login --token=${{ secrets.SA_TOKEN }} --server=https://api.silver.devops.gov.bc.ca:6443
       # Build the images
+      - name: Build DB-Migrations Image
+        working-directory: "./devops"
+        run: |
+          make oc-build-db-migrations
       - name: Build SIMS-API Image
         working-directory: "./devops"
         run: |

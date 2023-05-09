@@ -8,6 +8,7 @@ on:
         required: true
         default: ""
       environment:
+        description: 'Openshift Environment'
         required: true
         type: environment
       deployCamundaDefinitions:
@@ -79,6 +80,11 @@ jobs:
       - name: Log in to OpenShift
         run: |
           oc login --token=${{ secrets.SA_TOKEN }} --server=https://api.silver.devops.gov.bc.ca:6443
+      # Run db-migrations
+      - name: Run db-migrations
+        working-directory: "./devops/"
+        run: |
+          make oc-deploy-db-migrations
       # Deploy SIMS-Api
       - name: Deploy SIMS-API
         working-directory: "./devops/"
