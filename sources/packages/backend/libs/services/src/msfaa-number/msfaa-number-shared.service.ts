@@ -64,6 +64,7 @@ export class MSFAANumberSharedService {
    * Reissuing an MSFAA is only valid for an application with pending disbursement
    * where the MSFAA is cancelled.
    * @param referenceApplicationId reference application id.
+   * @param auditUserId user that should be considered the one that is causing the changes.
    * @returns the newly created MSFAA.
    */
   async reissueMSFAA(
@@ -176,7 +177,9 @@ export class MSFAANumberSharedService {
   }
 
   /**
-   * Generates the next number for an MSFAA.
+   * Generates the next number for an MSFAA
+   * considering the offering intensity.
+   * @param offeringIntensity offering intensity.
    * @returns number to be used for the next MSFAA.
    */
   private async consumeNextSequence(
