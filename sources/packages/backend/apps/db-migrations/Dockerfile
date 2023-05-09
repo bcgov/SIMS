@@ -12,5 +12,8 @@ RUN npm ci
 # Copying sources
 COPY . .
 
+# Building app
+RUN npm run build db-migrations
+
 # Entry point
-CMD [ "npm", "run", "migration:run" ]
+CMD [ "npm", "run", "start:prod:db-migrations" ]
