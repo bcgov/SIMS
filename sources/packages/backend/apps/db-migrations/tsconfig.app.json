@@ -2,8 +2,9 @@
   "extends": "../../tsconfig.json",
   "compilerOptions": {
     "declaration": false,
+    "sourceRoot": "src/",
     "outDir": "../../dist/apps/db-migrations"
   },
-  "include": ["src/**/*"],
+  "include": ["src/**/*", "src/sql/**/*"],
   "exclude": ["node_modules", "dist", "test", "**/*spec.ts"]
 }
