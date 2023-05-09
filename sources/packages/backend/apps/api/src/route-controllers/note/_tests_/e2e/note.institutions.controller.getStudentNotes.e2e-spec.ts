@@ -33,8 +33,7 @@ describe("NoteInstitutionsController(e2e)-getStudentNotes", () => {
   let db: E2EDataSources;
 
   beforeAll(async () => {
-    const { nestApplication, dataSource } = await createTestingAppModule();
-    app = nestApplication;
+    const { dataSource } = await createTestingAppModule();
     db = createE2EDataSources(dataSource);
 
     // College F.
@@ -50,7 +49,7 @@ describe("NoteInstitutionsController(e2e)-getStudentNotes", () => {
     );
   });
 
-  it("Should allow access to the expected AEST users groups.", async () => {
+  it("Should get all note types for a student when student they are available.", async () => {
     // Arrange
     // Create new application.
     const savedApplication = await saveFakeApplication(db.dataSource, {
@@ -186,11 +185,12 @@ describe("NoteInstitutionsController(e2e)-getStudentNotes", () => {
       .expect([noteToApiReturn(expectedNote)]);
   });
 
-  it("Should not get notes restriction notification type 'no effect' when any are available.", async () => {
+  it("Should not get notes for student restriction with notification type 'no effect' when any are available.", async () => {
     // Arrange
     const savedApplication = await saveFakeApplication(db.dataSource, {
       institutionLocation: collegeFLocation,
     });
+    const student = savedApplication.student;
     // Get any restriction with notification type "No effect".
     const notificationTypeNoEffectRestriction = await db.restriction.findOne({
       where: {
@@ -198,11 +198,10 @@ describe("NoteInstitutionsController(e2e)-getStudentNotes", () => {
       },
     });
     await saveFakeStudentRestriction(db.dataSource, {
-      student: savedApplication.student,
+      student,
       restriction: notificationTypeNoEffectRestriction,
       application: savedApplication,
     });
-    const student = savedApplication.student;
     const user = await db.user.save(createFakeUser());
     const [generalNote, designationNote] = await saveFakeStudentNotes(
       db.dataSource,
