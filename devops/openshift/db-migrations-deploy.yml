@@ -36,6 +36,14 @@ parameters:
     value: superuser-password
   - name: DATABASE_NAME_KEY
     required: true
+  - name: CPU_LIMIT
+    value: "1.0"
+  - name: MEMORY_LIMIT
+    value: "2000M"
+  - name: CPU_REQUEST
+    value: "0.5"
+  - name: MEMORY_REQUEST
+    value: "1000M"
 objects:
   - apiVersion: batch/v1
     kind: Job
@@ -70,10 +78,10 @@ objects:
                       key: ${DATABASE_NAME_KEY}
                       name: ${DB_SECRET_NAME}
               resources:
-                requests:
-                  cpu: 500m
-                  memory: 512Mi
                 limits:
-                  cpu: 500m
-                  memory: 512Mi
+                  cpu: ${CPU_LIMIT}
+                  memory: ${MEMORY_LIMIT}
+                requests:
+                  cpu: ${CPU_REQUEST}
+                  memory: ${MEMORY_REQUEST}
           restartPolicy: Never

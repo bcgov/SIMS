@@ -7,7 +7,7 @@ LABEL maintainer="BC GOV"
 COPY ./package*.json ./
 
 # Installing dependencies
-RUN npm ci
+RUN npm i
 
 # Copying sources
 COPY . .
