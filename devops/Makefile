@@ -119,6 +119,8 @@ endef
 init-oc: | print-status init-project
 oc-build-patroni: | print-status build-patroni
 oc-deploy-patroni: | print-status deploy-patroni
+oc-build-db-migrations: | print-status build-db-migrations
+oc-deploy-db-migrations: | print-status deploy-db-migrations
 oc-build-api: | print-status build-api
 oc-deploy-api: | print-status deploy-api
 oc-build-workers: | print-status build-workers
