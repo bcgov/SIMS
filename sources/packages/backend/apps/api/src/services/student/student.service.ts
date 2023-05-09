@@ -12,6 +12,8 @@ import {
   StudentUser,
   DisbursementOveraward,
   DisbursementOverawardOriginType,
+  RestrictionNotificationType,
+  StudentRestriction,
 } from "@sims/sims-db";
 import { DataSource, EntityManager } from "typeorm";
 import { StudentUserToken } from "../../auth/userToken.interface";
@@ -519,14 +521,19 @@ export class StudentService extends RecordDataModelService<Student> {
   }
 
   /**
-   * Service to get notes for a student.
-   * @param studentId
-   * @param noteType
-   * @returns Notes.
+   * Get notes for a student and note type. Options can be used to filter notes.
+   * @param studentId student id.
+   * @param noteType note type.
+   * @param options options to filter notes:
+   * - `filterNoEffectRestrictionNotes`: if true, do not include notes for student restrictions with notification type = "No effect".
+   * @returns student notes.
    */
   async getStudentNotes(
     studentId: number,
     noteType?: NoteType,
+    options?: {
+      filterNoEffectRestrictionNotes?: boolean;
+    },
   ): Promise<Note[]> {
     const studentNoteQuery = this.repo
       .createQueryBuilder("student")
@@ -543,6 +550,23 @@ export class StudentService extends RecordDataModelService<Student> {
       .where("student.id = :studentId", { studentId });
     if (noteType) {
       studentNoteQuery.andWhere("note.noteType = :noteType", { noteType });
+    }
+    if (options?.filterNoEffectRestrictionNotes) {
+      const filterSubQuery = this.dataSource
+        .getRepository(StudentRestriction)
+        .createQueryBuilder("studentRestriction")
+        .select("note.id")
+        .innerJoin("studentRestriction.restrictionNote", "note")
+        .innerJoin("studentRestriction.restriction", "restriction")
+        .innerJoin("studentRestriction.student", "student")
+        .where("student.id = :studentId", { studentId })
+        .andWhere(
+          "restriction.notificationType = :restrictionNotificationType",
+          { restrictionNotificationType: RestrictionNotificationType.NoEffect },
+        );
+      studentNoteQuery
+        .andWhere("note.id not in  (" + filterSubQuery.getQuery() + ")")
+        .setParameters(filterSubQuery.getParameters());
     }
     const student = await studentNoteQuery.orderBy("note.id", "DESC").getOne();
     return student?.notes;

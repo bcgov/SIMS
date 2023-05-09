@@ -47,6 +47,7 @@ import {
   OverawardInstitutionsController,
   StudentControllerService,
   OverawardControllerService,
+  NoteInstitutionsController,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
 import {
@@ -83,6 +84,7 @@ import { ApplicationInstitutionsController } from "./route-controllers/applicati
     UserInstitutionsController,
     StudentInstitutionsController,
     OverawardInstitutionsController,
+    NoteInstitutionsController,
   ],
   providers: [
     ApplicationControllerService,

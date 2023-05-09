@@ -2,7 +2,7 @@
   <body-header-container>
     <v-row class="m-2">
       <v-col class="category-header-large color-blue">{{ title }}</v-col>
-      <v-col>
+      <v-col v-if="allowAddingNotes">
         <check-permission-role :role="allowedRole">
           <template #="{ notAllowed }">
             <v-btn
@@ -101,6 +101,10 @@ export default defineComponent({
     allowedRole: {
       type: String as PropType<Role>,
       required: true,
+    },
+    allowAddingNotes: {
+      type: Boolean,
+      default: true,
     },
   },
   emits: ["submitData"],
