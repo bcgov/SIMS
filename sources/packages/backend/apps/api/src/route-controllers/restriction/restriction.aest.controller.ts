@@ -76,7 +76,18 @@ export class RestrictionAESTController extends BaseController {
   async getStudentRestrictions(
     @Param("studentId", ParseIntPipe) studentId: number,
   ): Promise<RestrictionSummaryAPIOutDTO[]> {
-    return this.restrictionControllerService.getStudentRestrictions(studentId);
+    const studentRestrictions =
+      await this.restrictionControllerService.getStudentRestrictions(studentId);
+    return studentRestrictions?.map((studentRestriction) => ({
+      restrictionId: studentRestriction.id,
+      restrictionType: studentRestriction.restriction.restrictionType,
+      restrictionCategory: studentRestriction.restriction.restrictionCategory,
+      restrictionCode: studentRestriction.restriction.restrictionCode,
+      description: studentRestriction.restriction.description,
+      createdAt: studentRestriction.createdAt,
+      updatedAt: studentRestriction.updatedAt,
+      isActive: studentRestriction.isActive,
+    }));
   }
 
   /**
@@ -123,10 +134,25 @@ export class RestrictionAESTController extends BaseController {
     @Param("studentId", ParseIntPipe) studentId: number,
     @Param("studentRestrictionId", ParseIntPipe) studentRestrictionId: number,
   ): Promise<RestrictionDetailAPIOutDTO> {
-    return this.restrictionControllerService.getStudentRestrictionDetail(
-      studentId,
-      studentRestrictionId,
-    );
+    const studentRestriction =
+      await this.restrictionControllerService.getStudentRestrictionDetail(
+        studentId,
+        studentRestrictionId,
+      );
+    return {
+      restrictionId: studentRestriction.id,
+      restrictionType: studentRestriction.restriction.restrictionType,
+      restrictionCategory: studentRestriction.restriction.restrictionCategory,
+      restrictionCode: studentRestriction.restriction.restrictionCode,
+      description: studentRestriction.restriction.description,
+      createdAt: studentRestriction.createdAt,
+      updatedAt: studentRestriction.updatedAt,
+      createdBy: getUserFullName(studentRestriction.creator),
+      updatedBy: getUserFullName(studentRestriction.modifier),
+      isActive: studentRestriction.isActive,
+      restrictionNote: studentRestriction.restrictionNote?.description,
+      resolutionNote: studentRestriction.resolutionNote?.description,
+    };
   }
 
   /**

@@ -35,13 +35,9 @@
                 " /></v-col
           ></v-row>
         </content-group>
-        <template v-if="canResolveRestriction">
-          <template
-            v-if="restrictionData.restrictionType !== RestrictionType.Federal"
-          >
-            <v-divider></v-divider>
-            <h3 class="category-header-medium mb-5">Resolution</h3>
-          </template>
+        <template v-if="showResolution">
+          <v-divider></v-divider>
+          <h3 class="category-header-medium mb-5">Resolution</h3>
           <v-textarea
             v-if="allowUserToEdit"
             label="Resolution reason"
@@ -63,7 +59,9 @@
               ><v-col
                 ><title-value
                   propertyTitle="Date resolved"
-                  :propertyValue="restrictionData.updatedAt" /></v-col
+                  :propertyValue="
+                    dateOnlyLongString(restrictionData.updatedAt)
+                  " /></v-col
               ><v-col
                 ><title-value
                   propertyTitle="Resolved by"
@@ -95,7 +93,7 @@
 import { PropType, ref, reactive, computed, defineComponent } from "vue";
 import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
 import ErrorSummary from "@/components/generic/ErrorSummary.vue";
-import { useModalDialog, useValidators } from "@/composables";
+import { useFormatters, useModalDialog, useValidators } from "@/composables";
 import { Role, RestrictionType, VForm, RestrictionStatus } from "@/types";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
 import { RestrictionDetailAPIOutDTO } from "@/services/http/dto";
@@ -128,6 +126,7 @@ export default defineComponent({
   setup(props) {
     const NOTES_MAX_CHARACTERS = 500;
     const { checkMaxCharacters } = useValidators();
+    const { dateOnlyLongString } = useFormatters();
     const { showDialog, showModal, resolvePromise } = useModalDialog<
       RestrictionDetailAPIOutDTO | false
     >();
@@ -166,6 +165,12 @@ export default defineComponent({
         props.canResolveRestriction,
     );
 
+    const showResolution = computed(
+      () =>
+        props.canResolveRestriction &&
+        props.restrictionData.restrictionType !== RestrictionType.Federal,
+    );
+
     return {
       showDialog,
       showModal,
@@ -178,6 +183,8 @@ export default defineComponent({
       RestrictionStatus,
       checkResolutionNotesLength,
       allowUserToEdit,
+      showResolution,
+      dateOnlyLongString,
     };
   },
 });

@@ -20,10 +20,5 @@ export default defineComponent({
       required: true,
     },
   },
-  setup() {
-    return {
-      StudentRestrictions,
-    };
-  },
 });
 </script>

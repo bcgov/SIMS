@@ -10,6 +10,7 @@ import {
   EducationProgramOffering,
   RestrictionActionType,
 } from "@sims/sims-db";
+import { RestrictionNotificationType } from "@sims/sims-db/entities";
 import { DataSource, EntityManager } from "typeorm";
 import { CustomNamedError } from "@sims/utilities";
 import {
@@ -35,14 +36,19 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
 
   /**
    * Service method to get all restrictions as a summary for a student.
-   * @param studentId
-   * @param onlyActive is a flag, which decides whether to select all
+   * @param studentId.
+   * @param options related to student restrictions.
+   * - `filterNoEffectRestrictions` filterNoEffectRestrictions is a flag to filter restrictions based on notificationType.
+   * - `onlyActive` onlyActive is a flag, which decides whether to select all
    * restrictions (i.e false) or to select only active restrictions (i.e true).
    * @returns Student restrictions.
    */
   async getStudentRestrictionsById(
     studentId: number,
-    onlyActive = false,
+    options?: {
+      filterNoEffectRestrictions?: boolean;
+      onlyActive?: boolean;
+    },
   ): Promise<StudentRestriction[]> {
     const query = this.repo
       .createQueryBuilder("studentRestrictions")
@@ -60,8 +66,14 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
       .innerJoin("studentRestrictions.restriction", "restriction")
       .innerJoin("studentRestrictions.student", "student")
       .where("student.id = :studentId", { studentId });
-    if (onlyActive) {
+    if (options?.onlyActive) {
       query.andWhere("studentRestrictions.isActive = true");
+    }
+    if (options?.filterNoEffectRestrictions) {
+      query.andWhere(
+        "restriction.notificationType != :restrictionNotificationType",
+        { restrictionNotificationType: RestrictionNotificationType.NoEffect },
+      );
     }
     return query
       .orderBy("studentRestrictions.isActive", "DESC")
@@ -73,13 +85,18 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
    * Get student restriction detail.
    * @param studentId student id.
    * @param studentRestrictionId student restriction id.
+   * @param options for student restrictions.
+   * - `filterNoEffectRestrictions` filterNoEffectRestrictions flag to filter restrictions based on notificationType.
    * @returns Student Restriction details.
    */
   async getStudentRestrictionDetailsById(
     studentId: number,
     studentRestrictionId: number,
+    options?: {
+      filterNoEffectRestrictions?: boolean;
+    },
   ): Promise<StudentRestriction> {
-    return this.repo
+    const query = this.repo
       .createQueryBuilder("studentRestrictions")
       .select([
         "studentRestrictions.id",
@@ -106,8 +123,16 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
       .where("student.id = :studentId", { studentId })
       .andWhere("studentRestrictions.id = :studentRestrictionId", {
         studentRestrictionId,
-      })
-      .getOne();
+      });
+    if (options?.filterNoEffectRestrictions) {
+      query.andWhere(
+        "restriction.notificationType != :restrictionNotificationType",
+        {
+          restrictionNotificationType: RestrictionNotificationType.NoEffect,
+        },
+      );
+    }
+    return query.getOne();
   }
 
   /**

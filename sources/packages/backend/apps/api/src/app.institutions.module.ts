@@ -45,7 +45,7 @@ import {
   StudentInstitutionsController,
   OverawardInstitutionsController,
   StudentControllerService,
-  RestrictionInstitutionController,
+  RestrictionInstitutionsController,
   OverawardControllerService,
   RestrictionControllerService,
 } from "./route-controllers";
@@ -81,7 +81,7 @@ import { UserControllerService } from "./route-controllers/user/user.controller.
     EducationProgramOfferingInstitutionsController,
     UserInstitutionsController,
     StudentInstitutionsController,
-    RestrictionInstitutionController,
+    RestrictionInstitutionsController,
     OverawardInstitutionsController,
   ],
   providers: [

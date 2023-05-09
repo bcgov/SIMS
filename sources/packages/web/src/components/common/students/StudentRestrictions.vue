@@ -20,59 +20,62 @@
       </body-header>
     </template>
     <content-group>
-      <DataTable
-        :value="studentRestrictions"
-        :paginator="true"
-        :rows="DEFAULT_PAGE_LIMIT"
-        :rowsPerPageOptions="PAGINATION_LIST"
+      <toggle-content
+        :toggled="studentRestrictions && !studentRestrictions.length"
+        message="No records found."
       >
-        <template #empty>
-          <p class="text-center font-weight-bold">No records found.</p>
-        </template>
-        <Column
-          field="restrictionCategory"
-          header="Category"
-          :sortable="true"
-        ></Column>
-        <Column field="description" header="Reason">
-          <template #body="slotProps">{{
-            `${slotProps.data.restrictionCode} - ${slotProps.data.description}`
-          }}</template></Column
+        <DataTable
+          :value="studentRestrictions"
+          :paginator="true"
+          :rows="DEFAULT_PAGE_LIMIT"
+          :rowsPerPageOptions="PAGINATION_LIST"
         >
-        <Column field="createdAt" header="Added"
-          ><template #body="slotProps">{{
-            dateOnlyLongString(slotProps.data.createdAt)
-          }}</template></Column
-        >
-        <Column field="updatedAt" header="Resolved">
-          <template #body="slotProps">{{
-            slotProps.data.isActive
-              ? "-"
-              : dateOnlyLongString(slotProps.data.updatedAt)
-          }}</template></Column
-        >
-        <Column field="isActive" header="Status">
-          <template #body="slotProps">
-            <status-chip-restriction
-              :status="
-                slotProps.data.isActive
-                  ? RestrictionStatus.Active
-                  : RestrictionStatus.Resolved
-              "
-            />
-          </template>
-        </Column>
-        <Column field="restrictionId" header="">
-          <template #body="slotProps">
-            <v-btn
-              color="primary"
-              variant="outlined"
-              @click="viewStudentRestriction(slotProps.data.restrictionId)"
-              >View</v-btn
-            >
-          </template></Column
-        >
-      </DataTable>
+          <Column
+            field="restrictionCategory"
+            header="Category"
+            :sortable="true"
+          ></Column>
+          <Column field="description" header="Reason">
+            <template #body="slotProps">{{
+              `${slotProps.data.restrictionCode} - ${slotProps.data.description}`
+            }}</template></Column
+          >
+          <Column field="createdAt" header="Added"
+            ><template #body="slotProps">{{
+              dateOnlyLongString(slotProps.data.createdAt)
+            }}</template></Column
+          >
+          <Column field="updatedAt" header="Resolved">
+            <template #body="slotProps">{{
+              conditionalEmptyStringFiller(
+                dateOnlyLongString(slotProps.data.updatedAt),
+                slotProps.data.isActive,
+              )
+            }}</template></Column
+          >
+          <Column field="isActive" header="Status">
+            <template #body="slotProps">
+              <status-chip-restriction
+                :status="
+                  slotProps.data.isActive
+                    ? RestrictionStatus.Active
+                    : RestrictionStatus.Resolved
+                "
+              />
+            </template>
+          </Column>
+          <Column field="restrictionId" header="">
+            <template #body="slotProps">
+              <v-btn
+                color="primary"
+                variant="outlined"
+                @click="viewStudentRestriction(slotProps.data.restrictionId)"
+                >View</v-btn
+              >
+            </template></Column
+          >
+        </DataTable>
+      </toggle-content>
     </content-group>
     <view-restriction-modal
       ref="viewRestriction"
@@ -95,6 +98,7 @@ import { RestrictionService } from "@/services/RestrictionService";
 import ViewRestrictionModal from "@/components/common/restriction/ViewRestriction.vue";
 import AddStudentRestrictionModal from "@/components/common/restriction/AddRestriction.vue";
 import { useFormatters, ModalDialog, useSnackBar } from "@/composables";
+const { emptyStringFiller, conditionalEmptyStringFiller } = useFormatters();
 import {
   RestrictionStatus,
   DEFAULT_PAGE_LIMIT,
@@ -234,6 +238,8 @@ export default defineComponent({
       RestrictionEntityType,
       LayoutTemplates,
       Role,
+      emptyStringFiller,
+      conditionalEmptyStringFiller,
     };
   },
 });

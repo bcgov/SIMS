@@ -1,15 +1,13 @@
 import {
   Application,
   Restriction,
-  RestrictionActionType,
-  RestrictionNotificationType,
-  RestrictionType,
   Student,
   StudentRestriction,
   User,
 } from "@sims/sims-db";
 import { createFakeStudent } from "./student";
 import { DataSource } from "typeorm";
+import { createFakeUser } from "./user";
 
 /**
  * Create and save fake student restriction.
@@ -31,32 +29,21 @@ export async function saveFakeStudentRestriction(
   relations?: {
     student?: Student;
     application?: Application;
+    restriction: Restriction;
     creator?: User;
   },
-  options?: {
-    restrictionType?: RestrictionType;
-    restrictionCode?: string;
-    restrictionCategory?: string;
-    actionType?: RestrictionActionType;
-    notificationType?: RestrictionNotificationType;
-  },
 ): Promise<StudentRestriction> {
-  const restrictionRepo = dataSource.getRepository(Restriction);
-  const restriction = await restrictionRepo.findOne({
-    where: {
-      restrictionType: options?.restrictionType,
-      restrictionCode: options?.restrictionCode,
-      restrictionCategory: options?.restrictionCategory,
-      actionType: options?.actionType,
-      notificationType: options?.notificationType,
-    },
-  });
   const studentRestrictionRepo = dataSource.getRepository(StudentRestriction);
+  const userRepo = dataSource.getRepository(User);
+  const user = relations?.creator ?? createFakeUser();
+  if (!relations?.creator) {
+    userRepo.save(user);
+  }
   const studentRestriction = new StudentRestriction();
   studentRestriction.student = relations?.student ?? createFakeStudent();
   studentRestriction.application = relations?.application;
   studentRestriction.isActive = true;
-  studentRestriction.restriction = restriction;
-  studentRestriction.creator = relations?.creator;
+  studentRestriction.restriction = relations.restriction;
+  studentRestriction.creator = user;
   return studentRestrictionRepo.save(studentRestriction);
 }

@@ -32,7 +32,10 @@ export class RestrictionStudentsController extends BaseController {
     const studentRestrictions =
       await this.studentRestrictionService.getStudentRestrictionsById(
         studentToken.studentId,
-        true,
+        {
+          filterNoEffectRestrictions: false,
+          onlyActive: true,
+        },
       );
 
     return studentRestrictions.map((studentRestriction) => ({
