@@ -1,15 +1,10 @@
 # Base Image
-FROM artifacts.developer.gov.bc.ca/docker-remote/node:12.2.0-alpine
+FROM registry.access.redhat.com/ubi8/nodejs-16:1-5
 
 LABEL maintainer="BC GOV"
 
-WORKDIR /app
-
 # Copying package.json and package-lock.json
 COPY ./package*.json ./
-
-RUN set -x \
-  && chmod -R 777 /app/
 
 # Installing dependencies
 RUN npm ci
