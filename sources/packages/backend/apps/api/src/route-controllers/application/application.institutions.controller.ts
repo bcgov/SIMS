@@ -1,25 +1,23 @@
-import {
-  Controller,
-  Get,
-  NotFoundException,
-  Param,
-  ParseIntPipe,
-} from "@nestjs/common";
+import { Controller, Get, Param, ParseIntPipe } from "@nestjs/common";
 import { ApplicationService } from "../../services";
 import BaseController from "../BaseController";
 import { ApplicationBaseAPIOutDTO } from "./models/application.dto";
-import { AllowAuthorizedParty, Groups } from "../../auth/decorators";
-import { AuthorizedParties } from "../../auth/authorized-parties.enum";
-import { UserGroups } from "../../auth/user-groups.enum";
-import { ApiNotFoundResponse, ApiTags } from "@nestjs/swagger";
+import {
+  AllowAuthorizedParty,
+  HasStudentDataAccess,
+  IsBCPublicInstitution,
+  UserToken,
+} from "../../auth/decorators";
+import { ApiTags } from "@nestjs/swagger";
 import { ClientTypeBaseRoute } from "../../types";
 import { ApplicationControllerService } from "./application.controller.service";
+import { AuthorizedParties, IInstitutionUserToken } from "../../auth";
 
-@AllowAuthorizedParty(AuthorizedParties.aest)
-@Groups(UserGroups.AESTUser)
+@AllowAuthorizedParty(AuthorizedParties.institution)
+@IsBCPublicInstitution()
 @Controller("application")
-@ApiTags(`${ClientTypeBaseRoute.AEST}-application`)
-export class ApplicationAESTController extends BaseController {
+@ApiTags(`${ClientTypeBaseRoute.Institution}-application`)
+export class ApplicationInstitutionsController extends BaseController {
   constructor(
     private readonly applicationService: ApplicationService,
     private readonly applicationControllerService: ApplicationControllerService,
@@ -29,25 +27,26 @@ export class ApplicationAESTController extends BaseController {
 
   /**
    * API to fetch application details by applicationId.
-   * This API will be used by ministry users.
-   * @param applicationId
-   * @returns Application details
+   * This API will be used by institution users.
+   * @param applicationId for the application.
+   * @param studentId for the student.
+   * @returns Application details.
    */
-  @Get(":applicationId")
-  @ApiNotFoundResponse({ description: "Application not found." })
+  @HasStudentDataAccess("studentId")
+  @Get("student/:studentId/application/:applicationId")
   async getApplication(
+    @UserToken() userToken: IInstitutionUserToken,
     @Param("applicationId", ParseIntPipe) applicationId: number,
+    @Param("studentId", ParseIntPipe) studentId: number,
   ): Promise<ApplicationBaseAPIOutDTO> {
     const application = await this.applicationService.getApplicationById(
       applicationId,
-      { loadDynamicData: true },
+      {
+        loadDynamicData: true,
+        studentId: studentId,
+        institutionId: userToken.authorizations.institutionId,
+      },
     );
-    if (!application) {
-      throw new NotFoundException(
-        `Application id ${applicationId} was not found.`,
-      );
-    }
-
     application.data =
       await this.applicationControllerService.generateApplicationFormData(
         application.data,

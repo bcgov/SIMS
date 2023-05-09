@@ -71,12 +71,17 @@ export class ApplicationService {
   /**
    * Get application detail of given application.
    * @param applicationId for the application.
+   * @param studentId for the student.
    * @returns application details.
    */
   async getApplicationDetail(
     applicationId: number,
+    studentId?: number,
   ): Promise<ApplicationBaseAPIOutDTO> {
-    return ApiClient.Application.getApplicationDetails(applicationId);
+    return ApiClient.Application.getApplicationDetails(
+      applicationId,
+      studentId,
+    );
   }
 
   /**
