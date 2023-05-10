@@ -33,7 +33,8 @@ describe("NoteInstitutionsController(e2e)-getStudentNotes", () => {
   let db: E2EDataSources;
 
   beforeAll(async () => {
-    const { dataSource } = await createTestingAppModule();
+    const { nestApplication, dataSource } = await createTestingAppModule();
+    app = nestApplication;
     db = createE2EDataSources(dataSource);
 
     // College F.
