@@ -57,6 +57,7 @@ export class AssessmentInstitutionsController extends BaseController {
    * @param applicationId, application id.
    * @returns summary of the assessment history for a student application.
    */
+  @HasStudentDataAccess("studentId")
   @Get("student/:studentId/application/:applicationId/history")
   async getAssessmentHistorySummary(
     @Param("studentId", ParseIntPipe) studentId: number,
