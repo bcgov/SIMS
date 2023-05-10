@@ -74,20 +74,9 @@ export class RestrictionAESTController extends BaseController {
   async getStudentRestrictions(
     @Param("studentId", ParseIntPipe) studentId: number,
   ): Promise<RestrictionSummaryAPIOutDTO[]> {
-    const studentRestrictions =
-      await this.studentRestrictionService.getStudentRestrictionsById(
-        studentId,
-      );
-    return studentRestrictions?.map((studentRestriction) => ({
-      restrictionId: studentRestriction.id,
-      restrictionType: studentRestriction.restriction.restrictionType,
-      restrictionCategory: studentRestriction.restriction.restrictionCategory,
-      restrictionCode: studentRestriction.restriction.restrictionCode,
-      description: studentRestriction.restriction.description,
-      createdAt: studentRestriction.createdAt,
-      updatedAt: studentRestriction.updatedAt,
-      isActive: studentRestriction.isActive,
-    }));
+    return this.restrictionControllerService.getStudentRestrictions(studentId, {
+      extendedDetails: true,
+    }) as Promise<RestrictionSummaryAPIOutDTO[]>;
   }
 
   /**
@@ -134,25 +123,13 @@ export class RestrictionAESTController extends BaseController {
     @Param("studentId", ParseIntPipe) studentId: number,
     @Param("studentRestrictionId", ParseIntPipe) studentRestrictionId: number,
   ): Promise<RestrictionDetailAPIOutDTO> {
-    const studentRestriction =
-      await this.studentRestrictionService.getStudentRestrictionDetailsById(
-        studentId,
-        studentRestrictionId,
-      );
-    return {
-      restrictionId: studentRestriction.id,
-      restrictionType: studentRestriction.restriction.restrictionType,
-      restrictionCategory: studentRestriction.restriction.restrictionCategory,
-      restrictionCode: studentRestriction.restriction.restrictionCode,
-      description: studentRestriction.restriction.description,
-      createdAt: studentRestriction.createdAt,
-      updatedAt: studentRestriction.updatedAt,
-      createdBy: getUserFullName(studentRestriction.creator),
-      updatedBy: getUserFullName(studentRestriction.modifier),
-      isActive: studentRestriction.isActive,
-      restrictionNote: studentRestriction.restrictionNote?.description,
-      resolutionNote: studentRestriction.resolutionNote?.description,
-    };
+    return this.restrictionControllerService.getStudentRestrictionDetail(
+      studentId,
+      studentRestrictionId,
+      {
+        extendedDetails: true,
+      },
+    ) as Promise<RestrictionDetailAPIOutDTO>;
   }
 
   /**
