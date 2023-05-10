@@ -4,7 +4,7 @@ import { AllowAuthorizedParty } from "../../auth/decorators";
 import { ApiNotFoundResponse, ApiTags } from "@nestjs/swagger";
 import BaseController from "../BaseController";
 import { ClientTypeBaseRoute } from "../../types";
-import { StudentAppealAPIOutDTO } from "./models/student-appeal.dto";
+import { DetailedStudentAppealAPIOutDTO } from "./models/student-appeal.dto";
 import { StudentAppealControllerService } from "./student-appeal.controller.service";
 
 /**
@@ -21,10 +21,10 @@ export class StudentAppealInstitutionsController extends BaseController {
   }
 
   /**
-   * Get the student appeal and its requests.
+   * Get the student appeal details.
    * @param appealId appeal id to be retrieved.
    * @param studentId student id.
-   * @returns the student appeal and its requests.
+   * @returns the student appeal details.
    */
   @Get("student/:studentId/appeal/:appealId/requests")
   @ApiNotFoundResponse({
@@ -33,10 +33,11 @@ export class StudentAppealInstitutionsController extends BaseController {
   async getStudentAppealWithRequest(
     @Param("studentId", ParseIntPipe) studentId: number,
     @Param("appealId", ParseIntPipe) appealId: number,
-  ): Promise<StudentAppealAPIOutDTO> {
+  ): Promise<DetailedStudentAppealAPIOutDTO> {
     return this.studentAppealControllerService.getStudentAppealWithRequest(
       appealId,
       studentId,
+      {assessDetails: true}
     );
   }
 }

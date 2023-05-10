@@ -1,5 +1,10 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
-import { StudentAppealAPIOutDTO } from "./models/student-appeal.dto";
+import {
+  StudentAppealAPIOutDTO,
+  DetailedStudentAppealAPIOutDTO,
+  StudentAppealRequestAPIOutDTO,
+  DetailedStudentAppealRequestAPIOutDTO,
+} from "./models/student-appeal.dto";
 import { getUserFullName } from "../../utilities";
 import { StudentAppealService } from "../../services";
 
@@ -16,7 +21,10 @@ export class StudentAppealControllerService {
   async getStudentAppealWithRequest(
     appealId: number,
     studentId?: number,
-  ): Promise<StudentAppealAPIOutDTO> {
+    options?: {
+      assessDetails?: false;
+    },
+  ): Promise<StudentAppealAPIOutDTO | DetailedStudentAppealAPIOutDTO> {
     const studentAppeal =
       await this.studentAppealService.getAppealAndRequestsById(
         appealId,
@@ -30,15 +38,23 @@ export class StudentAppealControllerService {
       id: studentAppeal.id,
       submittedDate: studentAppeal.submittedDate,
       status: studentAppeal.status,
-      appealRequests: studentAppeal.appealRequests.map((appealRequest) => ({
-        id: appealRequest.id,
-        appealStatus: appealRequest.appealStatus,
-        submittedData: appealRequest.submittedData,
-        submittedFormName: appealRequest.submittedFormName,
-        assessedDate: appealRequest.assessedDate,
-        noteDescription: appealRequest.note?.description,
-        assessedByUserName: getUserFullName(appealRequest.assessedBy),
-      })),
+      appealRequests: studentAppeal.appealRequests.map((appealRequest) => {
+        const requests: DetailedStudentAppealRequestAPIOutDTO
+           = {
+          id: appealRequest.id,
+          appealStatus: appealRequest.appealStatus,
+          submittedData: appealRequest.submittedData,
+          submittedFormName: appealRequest.submittedFormName,
+        };
+        if (options?.assessDetails) {
+          requests.assessedDate = appealRequest.assessedDate;
+          requests.noteDescription = appealRequest.note?.description;
+          requests.assessedByUserName = getUserFullName(
+            appealRequest.assessedBy,
+          );
+        }
+        return requests;
+      }),
     };
   }
 }

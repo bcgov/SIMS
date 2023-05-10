@@ -46,12 +46,13 @@ export default defineComponent({
         studentId: props.studentId,
       },
     };
-    // todo: ann test
-    const submitted = async (form: FormIOForm) => {
+
+    const submitted = async (
+      form: FormIOForm<UpdateApplicationExceptionAPIInDTO>,
+    ) => {
       processing.value = true;
       try {
-        const approveExceptionPayload =
-          form.data as UpdateApplicationExceptionAPIInDTO;
+        const approveExceptionPayload = form.data;
         await ApplicationExceptionService.shared.approveException(
           props.exceptionId,
           approveExceptionPayload,

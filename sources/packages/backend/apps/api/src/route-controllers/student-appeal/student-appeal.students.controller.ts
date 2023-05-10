@@ -54,6 +54,7 @@ export class StudentAppealStudentsController extends BaseController {
     private readonly studentAppealService: StudentAppealService,
     private readonly applicationService: ApplicationService,
     private readonly formService: FormService,
+    private readonly studentAppealControllerService: StudentAppealControllerService,
   ) {
     super();
   }
@@ -155,7 +156,6 @@ export class StudentAppealStudentsController extends BaseController {
   /**
    * Get the student appeal and its requests.
    * @param appealId appeal id to be retrieved.
-   * todo: ann controller service already created, dto is different work on it
    * @returns the student appeal and its requests.
    */
   @Get(":appealId/requests")
@@ -166,25 +166,9 @@ export class StudentAppealStudentsController extends BaseController {
     @Param("appealId", ParseIntPipe) appealId: number,
     @UserToken() userToken: StudentUserToken,
   ): Promise<StudentAppealAPIOutDTO> {
-    const studentAppeal =
-      await this.studentAppealService.getAppealAndRequestsById(
-        appealId,
-        userToken.studentId,
-      );
-    if (!studentAppeal) {
-      throw new NotFoundException("Not able to find the student appeal.");
-    }
-
-    return {
-      id: studentAppeal.id,
-      submittedDate: studentAppeal.submittedDate,
-      status: studentAppeal.status,
-      appealRequests: studentAppeal.appealRequests.map((appealRequest) => ({
-        id: appealRequest.id,
-        appealStatus: appealRequest.appealStatus,
-        submittedData: appealRequest.submittedData,
-        submittedFormName: appealRequest.submittedFormName,
-      })),
-    };
+    return this.studentAppealControllerService.getStudentAppealWithRequest(
+      appealId,
+      userToken.studentId,
+    );
   }
 }

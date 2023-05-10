@@ -23,7 +23,7 @@ import { AssessmentControllerService } from "./assessment.controller.service";
 @ApiTags(`${ClientTypeBaseRoute.Institution}-assessment`)
 export class AssessmentInstitutionsController extends BaseController {
   constructor(
-    private readonly assessmentControllerService: AssessmentControllerService, //   private readonly educationProgramOfferingService: EducationProgramOfferingService, //   private readonly applicationExceptionService: ApplicationExceptionService,
+    private readonly assessmentControllerService: AssessmentControllerService,
   ) {
     super();
   }
@@ -67,40 +67,4 @@ export class AssessmentInstitutionsController extends BaseController {
       studentId,
     );
   }
-
-  // /**
-  //  * Get the NOA values for a student application on a particular assessment.
-  //  * @param assessmentId assessment id to get the NOA values.
-  //  * @returns NOA and application data.
-  //  */
-  // @Get(":assessmentId/noa")
-  // @ApiNotFoundResponse({
-  //   description: "Assessment id not found.",
-  // })
-  // @ApiUnprocessableEntityResponse({
-  //   description: "Notice of assessment data is not present.",
-  // })
-  // async getAssessmentNOA(
-  //   @Param("assessmentId", ParseIntPipe) assessmentId: number,
-  // ): Promise<AssessmentNOAAPIOutDTO> {
-  //   return this.assessmentControllerService.getAssessmentNOA(assessmentId);
-  // }
-
-  // /**
-  //  * Get estimated and actual(if present) award details of an assessment.
-  //  * @param assessmentId assessment to which awards details belong to.
-  //  * @returns estimated and actual award details.
-  //  */
-  // @Get(":assessmentId/award")
-  // @ApiNotFoundResponse({
-  //   description: "Assessment not found.",
-  // })
-  // async getAssessmentAwardDetails(
-  //   @Param("assessmentId", ParseIntPipe) assessmentId: number,
-  // ): Promise<AwardDetailsAPIOutDTO> {
-  //   return this.assessmentControllerService.getAssessmentAwardDetails(
-  //     assessmentId,
-  //     true,
-  //   );
-  // }
 }

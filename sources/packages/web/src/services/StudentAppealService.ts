@@ -45,7 +45,10 @@ export class StudentAppealService {
     appealId: number,
     studentId?: number,
   ): Promise<StudentAppealAPIOutDTO> {
-    return ApiClient.StudentAppealApi.getStudentAppealWithRequests(appealId, studentId);
+    return ApiClient.StudentAppealApi.getStudentAppealWithRequests(
+      appealId,
+      studentId,
+    );
   }
 
   async approveStudentAppealRequests(

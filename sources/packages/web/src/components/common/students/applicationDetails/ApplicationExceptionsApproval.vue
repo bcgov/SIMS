@@ -36,8 +36,11 @@
 import { ref, onMounted, defineComponent, PropType } from "vue";
 import { RouteLocationRaw, useRouter } from "vue-router";
 import { ApplicationExceptionService } from "@/services/ApplicationExceptionService";
-import { ApplicationExceptionStatus, Role } from "@/types";
-import { ApplicationExceptionAPIOutDTO } from "@/services/http/dto";
+import { ApplicationExceptionStatus, FormIOForm, Role } from "@/types";
+import {
+  ApplicationExceptionAPIOutDTO,
+  UpdateApplicationExceptionAPIInDTO,
+} from "@/services/http/dto";
 import { useAssessment, useFormatters } from "@/composables";
 import HeaderTitleValue from "@/components/generic/HeaderTitleValue.vue";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
@@ -74,8 +77,11 @@ type ApplicationExceptionFormModel = Omit<
 };
 
 export default defineComponent({
-  // todo: ann emit new
-  emits: ["submitted"],
+  emits: {
+    submitted: (form: FormIOForm<UpdateApplicationExceptionAPIInDTO>) => {
+      return !!form;
+    },
+  },
   components: { HeaderTitleValue, CheckPermissionRole },
   props: {
     studentId: {

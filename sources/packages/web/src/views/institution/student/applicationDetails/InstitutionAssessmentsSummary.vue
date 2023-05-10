@@ -10,30 +10,14 @@
         subTitle="Assessment"
       />
     </template>
-    <!-- <request-assessment
+    <request-assessment
       class="mb-5"
       :applicationId="applicationId"
       :studentId="studentId"
       @viewStudentAppeal="goToStudentAppeal"
       @viewApplicationException="goToApplicationException"
-      @viewOfferingRequest="goToOfferingRequest"
     />
-    <history-assessment
-      :applicationId="applicationId"
-      :studentId="studentId"
-      :viewRequestTypes="assessmentRequestTypes"
-      @viewStudentAppeal="goToStudentAppeal"
-      @viewAssessment="gotToViewAssessment"
-      @viewOfferingRequest="goToOfferingRequest"
-      @viewApplicationException="goToApplicationException"
-      @viewScholasticStandingChange="goToScholasticStanding"
-    /> -->
-    <request-assessment
-      :applicationId="applicationId"
-      :studentId="studentId"
-      @viewStudentAppeal="goToStudentAppeal"
-      @viewApplicationException="goToApplicationException"
-    />
+
     <history-assessment
       :applicationId="applicationId"
       :studentId="studentId"
@@ -68,7 +52,6 @@ export default defineComponent({
     },
   },
   setup(props) {
-    // todo: check with jason if we need all form and view assessment for all types.
     const router = useRouter();
     // The assessment trigger types for which the request form must be visible by default.
     const assessmentRequestTypes = [
@@ -100,44 +83,10 @@ export default defineComponent({
       });
     };
 
-    // const gotToViewAssessment = (assessmentId: number) => {
-    //   router.push({
-    //     name: InstitutionRoutesConst.ASSESSMENT_AWARD_VIEW,
-    //     params: {
-    //       studentId: props.studentId,
-    //       applicationId: props.applicationId,
-    //       assessmentId,
-    //     },
-    //   });
-    // };
-
-    // const goToScholasticStanding = (scholasticStandingId: number) => {
-    //   router.push({
-    //     name: InstitutionRoutesConst.SCHOLASTIC_STANDING_VIEW,
-    //     params: {
-    //       studentId: props.studentId,
-    //       applicationId: props.applicationId,
-    //       scholasticStandingId,
-    //     },
-    //   });
-    // };
-    // const goToOfferingRequest = (offeringId: number, programId: number) => {
-    //   router.push({
-    //     name: InstitutionRoutesConst.OFFERING_CHANGE_REQUEST_VIEW,
-    //     params: {
-    //       offeringId,
-    //       programId,
-    //     },
-    //   });
-    // };
-
     return {
       InstitutionRoutesConst,
       goToStudentAppeal,
-      // gotToViewAssessment,
       goToApplicationException,
-      // goToScholasticStanding,
-      // goToOfferingRequest,
       assessmentRequestTypes,
     };
   },

@@ -109,6 +109,8 @@ import {
     OverawardAESTController,
   ],
   providers: [
+    ApplicationExceptionControllerService,
+    StudentAppealControllerService,
     WorkflowClientService,
     InstitutionRestrictionService,
     SupportingUserService,
@@ -162,8 +164,6 @@ import {
     NoteSharedService,
     OverawardControllerService,
     RestrictionSharedService,
-    ApplicationExceptionControllerService,
-    StudentAppealControllerService,
   ],
 })
 export class AppAESTModule {}
