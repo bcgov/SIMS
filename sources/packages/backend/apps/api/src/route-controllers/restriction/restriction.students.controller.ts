@@ -33,7 +33,6 @@ export class RestrictionStudentsController extends BaseController {
       await this.studentRestrictionService.getStudentRestrictionsById(
         studentToken.studentId,
         {
-          filterNoEffectRestrictions: false,
           onlyActive: true,
         },
       );

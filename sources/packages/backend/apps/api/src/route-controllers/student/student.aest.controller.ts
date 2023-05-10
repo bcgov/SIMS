@@ -244,7 +244,6 @@ export class StudentAESTController extends BaseController {
     const [student, studentRestrictions] = await Promise.all([
       this.studentControllerService.getStudentProfile(studentId),
       this.studentRestrictionService.getStudentRestrictionsById(studentId, {
-        filterNoEffectRestrictions: false,
         onlyActive: true,
       }),
     ]);
