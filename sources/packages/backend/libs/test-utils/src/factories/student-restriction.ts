@@ -26,7 +26,7 @@ import { createFakeUser } from "./user";
  */
 export async function saveFakeStudentRestriction(
   dataSource: DataSource,
-  relations?: {
+  relations: {
     student?: Student;
     application?: Application;
     restriction: Restriction;
