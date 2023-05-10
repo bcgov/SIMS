@@ -9,7 +9,6 @@ import {
   AssessmentNOAAPIOutDTO,
   RequestAssessmentSummaryAPIOutDTO,
   AwardDetailsAPIOutDTO,
-  RequestAssessmentTypeAPIOutDTO,
 } from "./models/assessment.dto";
 import {
   ApiNotFoundResponse,
@@ -17,11 +16,6 @@ import {
   ApiUnprocessableEntityResponse,
 } from "@nestjs/swagger";
 import { AssessmentControllerService } from "./assessment.controller.service";
-import {
-  EducationProgramOfferingService,
-  ApplicationExceptionService,
-} from "../../services";
-import { ApplicationExceptionStatus } from "@sims/sims-db";
 
 @AllowAuthorizedParty(AuthorizedParties.aest)
 @Groups(UserGroups.AESTUser)
@@ -30,8 +24,6 @@ import { ApplicationExceptionStatus } from "@sims/sims-db";
 export class AssessmentAESTController extends BaseController {
   constructor(
     private readonly assessmentControllerService: AssessmentControllerService,
-    private readonly educationProgramOfferingService: EducationProgramOfferingService,
-    private readonly applicationExceptionService: ApplicationExceptionService,
   ) {
     super();
   }

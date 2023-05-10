@@ -44,6 +44,7 @@ import {
   INVALID_APPLICATION_NUMBER,
 } from "../../constants";
 import { StudentAppealRequestModel } from "../../services/student-appeal/student-appeal.model";
+import { StudentAppealControllerService } from "./student-appeal.controller.service";
 
 @AllowAuthorizedParty(AuthorizedParties.student)
 @RequiresStudentAccount()

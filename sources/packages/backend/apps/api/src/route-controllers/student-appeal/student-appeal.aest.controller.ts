@@ -77,7 +77,7 @@ export class StudentAppealAESTController extends BaseController {
     return this.studentAppealControllerService.getStudentAppealWithRequest(
       appealId,
       undefined,
-      {assessDetails: true}
+      { assessDetails: true },
     );
   }
 

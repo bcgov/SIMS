@@ -1,7 +1,7 @@
 import ApiClient from "@/services/http/ApiClient";
 import { PaginationOptions, StudentAppealRequest } from "@/types";
 import {
-  StudentAppealAPIOutDTO,
+  DetailedStudentAppealAPIOutDTO,
   StudentAppealPendingSummaryAPIOutDTO,
   StudentAppealRequestAPIInDTO,
   StudentAppealRequestApprovalAPIInDTO,
@@ -44,7 +44,7 @@ export class StudentAppealService {
   async getStudentAppealWithRequests(
     appealId: number,
     studentId?: number,
-  ): Promise<StudentAppealAPIOutDTO> {
+  ): Promise<DetailedStudentAppealAPIOutDTO> {
     return ApiClient.StudentAppealApi.getStudentAppealWithRequests(
       appealId,
       studentId,

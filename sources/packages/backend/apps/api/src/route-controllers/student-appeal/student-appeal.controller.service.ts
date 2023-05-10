@@ -22,7 +22,7 @@ export class StudentAppealControllerService {
     appealId: number,
     studentId?: number,
     options?: {
-      assessDetails?: false;
+      assessDetails?: boolean;
     },
   ): Promise<StudentAppealAPIOutDTO | DetailedStudentAppealAPIOutDTO> {
     const studentAppeal =
@@ -39,19 +39,19 @@ export class StudentAppealControllerService {
       submittedDate: studentAppeal.submittedDate,
       status: studentAppeal.status,
       appealRequests: studentAppeal.appealRequests.map((appealRequest) => {
-        const requests: DetailedStudentAppealRequestAPIOutDTO
-           = {
+        let requests = {
           id: appealRequest.id,
           appealStatus: appealRequest.appealStatus,
           submittedData: appealRequest.submittedData,
           submittedFormName: appealRequest.submittedFormName,
-        };
+        } as StudentAppealRequestAPIOutDTO;
         if (options?.assessDetails) {
-          requests.assessedDate = appealRequest.assessedDate;
-          requests.noteDescription = appealRequest.note?.description;
-          requests.assessedByUserName = getUserFullName(
-            appealRequest.assessedBy,
-          );
+          requests = {
+            ...requests,
+            assessedDate: appealRequest.assessedDate,
+            noteDescription: appealRequest.note?.description,
+            assessedByUserName: getUserFullName(appealRequest.assessedBy),
+          } as DetailedStudentAppealRequestAPIOutDTO;
         }
         return requests;
       }),

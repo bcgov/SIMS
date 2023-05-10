@@ -1,6 +1,10 @@
 import { Controller, Param, Get, ParseIntPipe } from "@nestjs/common";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
-import { AllowAuthorizedParty } from "../../auth/decorators";
+import { 
+  AllowAuthorizedParty,
+  IsBCPublicInstitution,
+  HasStudentDataAccess, 
+} from "../../auth/decorators";
 import { ApiNotFoundResponse, ApiTags } from "@nestjs/swagger";
 import BaseController from "../BaseController";
 import { ClientTypeBaseRoute } from "../../types";
@@ -11,6 +15,7 @@ import { StudentAppealControllerService } from "./student-appeal.controller.serv
  * Student appeal controller for institutions.
  */
 @AllowAuthorizedParty(AuthorizedParties.institution)
+@IsBCPublicInstitution()
 @Controller("appeal")
 @ApiTags(`${ClientTypeBaseRoute.Institution}-appeal`)
 export class StudentAppealInstitutionsController extends BaseController {
@@ -26,6 +31,7 @@ export class StudentAppealInstitutionsController extends BaseController {
    * @param studentId student id.
    * @returns the student appeal details.
    */
+  @HasStudentDataAccess("studentId")
   @Get("student/:studentId/appeal/:appealId/requests")
   @ApiNotFoundResponse({
     description: "Not able to find the student appeal.",
@@ -37,7 +43,7 @@ export class StudentAppealInstitutionsController extends BaseController {
     return this.studentAppealControllerService.getStudentAppealWithRequest(
       appealId,
       studentId,
-      {assessDetails: true}
+      { assessDetails: true },
     );
   }
 }

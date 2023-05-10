@@ -38,7 +38,9 @@ export class StudentAppealApi extends HttpBaseClient {
     const endpoint = studentId
       ? `appeal/student/${studentId}/appeal/${appealId}/requests`
       : `appeal/${appealId}/requests`;
-    return this.getCall<StudentAppealAPIOutDTO|DetailedStudentAppealAPIOutDTO>(this.addClientRoot(endpoint));
+    return this.getCall<
+      StudentAppealAPIOutDTO | DetailedStudentAppealAPIOutDTO
+    >(this.addClientRoot(endpoint));
   }
 
   async approveStudentAppealRequests(
