@@ -1,5 +1,6 @@
 import { Controller, Get, Param, ParseIntPipe } from "@nestjs/common";
 import BaseController from "../BaseController";
+import { StudentRestrictionService } from "../../services";
 import {
   RestrictionInstitutionDetailAPIOutDTO,
   RestrictionInstitutionSummaryAPIOutDTO,
@@ -12,8 +13,8 @@ import {
 } from "../../auth/decorators";
 import { ClientTypeBaseRoute } from "../../types";
 import { ApiNotFoundResponse, ApiTags } from "@nestjs/swagger";
-import { RestrictionControllerService } from "./restriction.controller.service";
 import { getUserFullName } from "../../utilities";
+import { StudentRestriction } from "@sims/sims-db";
 
 /**
  * Controller for Institution Restrictions.
@@ -26,7 +27,7 @@ import { getUserFullName } from "../../utilities";
 @ApiTags(`${ClientTypeBaseRoute.Institution}-restriction`)
 export class RestrictionInstitutionsController extends BaseController {
   constructor(
-    private readonly restrictionControllerService: RestrictionControllerService,
+    private readonly studentRestrictionService: StudentRestrictionService,
   ) {
     super();
   }
@@ -41,21 +42,23 @@ export class RestrictionInstitutionsController extends BaseController {
     @Param("studentId", ParseIntPipe) studentId: number,
   ): Promise<RestrictionInstitutionSummaryAPIOutDTO[]> {
     const studentRestrictions =
-      await this.restrictionControllerService.getStudentRestrictions(
+      await this.studentRestrictionService.getStudentRestrictionsById(
         studentId,
         {
           filterNoEffectRestrictions: true,
         },
       );
-    return studentRestrictions?.map((studentRestriction) => ({
-      restrictionId: studentRestriction.id,
-      restrictionType: studentRestriction.restriction.restrictionType,
-      restrictionCategory: studentRestriction.restriction.restrictionCategory,
-      restrictionCode: studentRestriction.restriction.restrictionCode,
-      description: studentRestriction.restriction.description,
-      createdAt: studentRestriction.createdAt,
-      isActive: studentRestriction.isActive,
-    }));
+    return studentRestrictions?.map(
+      (studentRestriction: StudentRestriction) => ({
+        restrictionId: studentRestriction.id,
+        restrictionType: studentRestriction.restriction.restrictionType,
+        restrictionCategory: studentRestriction.restriction.restrictionCategory,
+        restrictionCode: studentRestriction.restriction.restrictionCode,
+        description: studentRestriction.restriction.description,
+        createdAt: studentRestriction.createdAt,
+        isActive: studentRestriction.isActive,
+      }),
+    );
   }
 
   /**
@@ -73,7 +76,7 @@ export class RestrictionInstitutionsController extends BaseController {
     @Param("studentRestrictionId", ParseIntPipe) studentRestrictionId: number,
   ): Promise<RestrictionInstitutionDetailAPIOutDTO> {
     const studentRestriction =
-      await this.restrictionControllerService.getStudentRestrictionDetail(
+      await this.studentRestrictionService.getStudentRestrictionDetailsById(
         studentId,
         studentRestrictionId,
         {

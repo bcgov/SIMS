@@ -21,7 +21,7 @@
     </template>
     <content-group>
       <toggle-content
-        :toggled="studentRestrictions && !studentRestrictions.length"
+        :toggled="!studentRestrictions?.length"
         message="No records found."
       >
         <DataTable
