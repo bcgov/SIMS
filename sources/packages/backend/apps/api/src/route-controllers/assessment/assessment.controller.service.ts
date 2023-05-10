@@ -98,8 +98,11 @@ export class AssessmentControllerService {
       );
       disbursementDetails[`${disbursementIdentifier}Status`] =
         schedule.coeStatus;
-      disbursementDetails[`${disbursementIdentifier}MSFAANumber`] =
-        schedule.msfaaNumber.msfaaNumber;
+      disbursementDetails[`${disbursementIdentifier}MSFAA`] = {
+        msfaaNumber: schedule.msfaaNumber.msfaaNumber,
+        cancelledDate: schedule.msfaaNumber.cancelledDate,
+        dateSigned: schedule.msfaaNumber.dateSigned,
+      };
       disbursementDetails[`${disbursementIdentifier}TuitionRemittance`] =
         schedule.tuitionRemittanceRequestedAmount;
       disbursementDetails[`${disbursementIdentifier}Id`] = schedule.id;

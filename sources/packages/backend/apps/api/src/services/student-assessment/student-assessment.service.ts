@@ -71,6 +71,8 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
         "disbursementSchedule.coeStatus",
         "disbursementSchedule.tuitionRemittanceRequestedAmount",
         "msfaaNumber.msfaaNumber",
+        "msfaaNumber.dateSigned",
+        "msfaaNumber.cancelledDate",
         "disbursementValue.valueType",
         "disbursementValue.valueCode",
         "disbursementValue.valueAmount",
