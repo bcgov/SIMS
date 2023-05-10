@@ -3,13 +3,10 @@ import { Brackets, DataSource } from "typeorm";
 import {
   RecordDataModelService,
   MSFAANumber,
-  Student,
-  Application,
   OfferingIntensity,
 } from "@sims/sims-db";
 import * as dayjs from "dayjs";
 import { MAX_MSFAA_VALID_DAYS } from "@sims/utilities";
-import { SequenceControlService } from "@sims/services";
 
 /**
  * Service layer for MSFAA (Master Student Financial Aid Agreement)
@@ -17,53 +14,8 @@ import { SequenceControlService } from "@sims/services";
  */
 @Injectable()
 export class MSFAANumberService extends RecordDataModelService<MSFAANumber> {
-  constructor(
-    dataSource: DataSource,
-    private readonly sequenceService: SequenceControlService,
-  ) {
+  constructor(dataSource: DataSource) {
     super(dataSource.getRepository(MSFAANumber));
-  }
-
-  /**
-   * Creates a new MSFAA record with a new number for the specified student.
-   * @param studentId student to have a new MSFAA record created.
-   * @param referenceApplicationId reference application id.
-   * @param offeringIntensity offering intensity since the MSFAA are calculated
-   * individually based on, for instance, the Part time/Full time.
-   * @returns Created MSFAA record.
-   */
-  async createMSFAANumber(
-    studentId: number,
-    referenceApplicationId: number,
-    offeringIntensity: OfferingIntensity,
-  ): Promise<MSFAANumber> {
-    const newMSFAANumber = new MSFAANumber();
-    newMSFAANumber.msfaaNumber = await this.consumeNextSequence(
-      offeringIntensity,
-    );
-    newMSFAANumber.student = { id: studentId } as Student;
-    newMSFAANumber.referenceApplication = {
-      id: referenceApplicationId,
-    } as Application;
-    newMSFAANumber.offeringIntensity = offeringIntensity;
-    return this.repo.save(newMSFAANumber);
-  }
-
-  /**
-   * Generates the next number for an MSFAA.
-   * @returns number to be used for the next MSFAA.
-   */
-  private async consumeNextSequence(
-    offeringIntensity: OfferingIntensity,
-  ): Promise<string> {
-    let nextNumber: number;
-    await this.sequenceService.consumeNextSequence(
-      offeringIntensity + "_MSFAA_STUDENT_NUMBER",
-      async (nextSequenceNumber: number) => {
-        nextNumber = nextSequenceNumber;
-      },
-    );
-    return nextNumber.toString();
   }
 
   /**

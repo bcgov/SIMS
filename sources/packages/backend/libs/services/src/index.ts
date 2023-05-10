@@ -26,3 +26,4 @@ export * from "./confirmation-of-enrollment/models/confirmation-of-enrollment.mo
 export * from "./restriction/model/restriction.model";
 export * from "./restriction/restriction-shared.service";
 export * from "./restriction/student-restriction-shared.service";
+export * from "./msfaa-number/msfaa-number-shared.service";
