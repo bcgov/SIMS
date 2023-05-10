@@ -1,7 +1,5 @@
 <template>
-  <tab-container
-    ><student-restrictions :studentId="studentId"></student-restrictions
-  ></tab-container>
+  <tab-container><student-restrictions :studentId="studentId" /></tab-container>
 </template>
 
 <script lang="ts">
