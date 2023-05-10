@@ -165,8 +165,8 @@ export function useFormatters() {
    * @returns '-' or the actual string.
    */
   const conditionalEmptyStringFiller = (
+    condition: boolean,
     value?: string,
-    condition?: boolean,
   ): string => {
     if (condition) {
       return emptyStringFiller(value);

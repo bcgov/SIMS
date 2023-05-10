@@ -146,6 +146,3 @@ export const INSTITUTION_BC_PUBLIC_ERROR_MESSAGE =
 
 export const INSTITUTION_STUDENT_DATA_ACCESS_ERROR_MESSAGE =
   "The institution is not allowed access to the student data of the given student.";
-
-export const RESTRICTION_NOT_FOUND_ERROR_MESSAGE =
-  "The student restriction does not exist.";

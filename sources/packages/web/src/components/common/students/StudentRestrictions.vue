@@ -48,8 +48,8 @@
           <Column field="updatedAt" header="Resolved">
             <template #body="slotProps">{{
               conditionalEmptyStringFiller(
-                dateOnlyLongString(slotProps.data.updatedAt),
                 slotProps.data.isActive,
+                dateOnlyLongString(slotProps.data.updatedAt),
               )
             }}</template></Column
           >

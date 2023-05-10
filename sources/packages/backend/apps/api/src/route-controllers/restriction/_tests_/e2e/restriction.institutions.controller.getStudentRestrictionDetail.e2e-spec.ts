@@ -22,10 +22,10 @@ import {
   INSTITUTION_BC_PUBLIC_ERROR_MESSAGE,
   INSTITUTION_STUDENT_DATA_ACCESS_ERROR_MESSAGE,
   InstitutionTokenTypes,
-  RESTRICTION_NOT_FOUND_ERROR_MESSAGE,
 } from "../../../../testHelpers";
 import * as request from "supertest";
 import { getUserFullName } from "../../../../utilities";
+import { RESTRICTION_NOT_FOUND_ERROR_MESSAGE } from "apps/api/src/services/restriction/constants";
 
 describe("RestrictionInstitutionsController(e2e)-getStudentRestrictionDetail.", () => {
   let app: INestApplication;
