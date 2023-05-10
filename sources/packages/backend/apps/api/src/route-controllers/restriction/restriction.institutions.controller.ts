@@ -1,4 +1,10 @@
-import { Controller, Get, Param, ParseIntPipe } from "@nestjs/common";
+import {
+  Controller,
+  Get,
+  Param,
+  ParseIntPipe,
+  NotFoundException,
+} from "@nestjs/common";
 import BaseController from "../BaseController";
 import { StudentRestrictionService } from "../../services";
 import {
@@ -80,6 +86,9 @@ export class RestrictionInstitutionsController extends BaseController {
           filterNoEffectRestrictions: true,
         },
       );
+    if (!studentRestriction) {
+      throw new NotFoundException("The student restriction does not exist.");
+    }
     return {
       restrictionId: studentRestriction.id,
       restrictionType: studentRestriction.restriction.restrictionType,
