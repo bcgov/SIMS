@@ -46,7 +46,6 @@ import {
 import { Role } from "../../auth/roles.enum";
 import { OptionItemAPIOutDTO } from "../models/common.dto";
 import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
-import { RestrictionControllerService } from "./restriction.controller.service";
 
 /**
  * Controller for AEST Restrictions.
@@ -58,7 +57,6 @@ import { RestrictionControllerService } from "./restriction.controller.service";
 @ApiTags(`${ClientTypeBaseRoute.AEST}-restriction`)
 export class RestrictionAESTController extends BaseController {
   constructor(
-    private readonly restrictionControllerService: RestrictionControllerService,
     private readonly studentRestrictionService: StudentRestrictionService,
     private readonly restrictionService: RestrictionService,
     private readonly institutionRestrictionService: InstitutionRestrictionService,
@@ -77,7 +75,9 @@ export class RestrictionAESTController extends BaseController {
     @Param("studentId", ParseIntPipe) studentId: number,
   ): Promise<RestrictionSummaryAPIOutDTO[]> {
     const studentRestrictions =
-      await this.restrictionControllerService.getStudentRestrictions(studentId);
+      await this.studentRestrictionService.getStudentRestrictionsById(
+        studentId,
+      );
     return studentRestrictions?.map((studentRestriction) => ({
       restrictionId: studentRestriction.id,
       restrictionType: studentRestriction.restriction.restrictionType,
@@ -135,7 +135,7 @@ export class RestrictionAESTController extends BaseController {
     @Param("studentRestrictionId", ParseIntPipe) studentRestrictionId: number,
   ): Promise<RestrictionDetailAPIOutDTO> {
     const studentRestriction =
-      await this.restrictionControllerService.getStudentRestrictionDetail(
+      await this.studentRestrictionService.getStudentRestrictionDetailsById(
         studentId,
         studentRestrictionId,
       );

@@ -14,7 +14,6 @@ import {
 import { ClientTypeBaseRoute } from "../../types";
 import { ApiNotFoundResponse, ApiTags } from "@nestjs/swagger";
 import { getUserFullName } from "../../utilities";
-import { StudentRestriction } from "@sims/sims-db";
 
 /**
  * Controller for Institution Restrictions.
@@ -48,17 +47,15 @@ export class RestrictionInstitutionsController extends BaseController {
           filterNoEffectRestrictions: true,
         },
       );
-    return studentRestrictions?.map(
-      (studentRestriction: StudentRestriction) => ({
-        restrictionId: studentRestriction.id,
-        restrictionType: studentRestriction.restriction.restrictionType,
-        restrictionCategory: studentRestriction.restriction.restrictionCategory,
-        restrictionCode: studentRestriction.restriction.restrictionCode,
-        description: studentRestriction.restriction.description,
-        createdAt: studentRestriction.createdAt,
-        isActive: studentRestriction.isActive,
-      }),
-    );
+    return studentRestrictions?.map((studentRestriction) => ({
+      restrictionId: studentRestriction.id,
+      restrictionType: studentRestriction.restriction.restrictionType,
+      restrictionCategory: studentRestriction.restriction.restrictionCategory,
+      restrictionCode: studentRestriction.restriction.restrictionCode,
+      description: studentRestriction.restriction.description,
+      createdAt: studentRestriction.createdAt,
+      isActive: studentRestriction.isActive,
+    }));
   }
 
   /**

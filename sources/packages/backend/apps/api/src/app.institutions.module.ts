@@ -48,7 +48,6 @@ import {
   StudentControllerService,
   RestrictionInstitutionsController,
   OverawardControllerService,
-  RestrictionControllerService,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
 import {
@@ -105,7 +104,6 @@ import { ApplicationInstitutionsController } from "./route-controllers/applicati
     StudentFileService,
     StudentRestrictionService,
     RestrictionService,
-    RestrictionControllerService,
     StudentScholasticStandingsService,
     StudentAssessmentService,
     ScholasticStandingControllerService,
