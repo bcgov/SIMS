@@ -64,7 +64,7 @@ export class RestrictionInstitutionsController extends BaseController {
    * @param studentRestrictionId id of the student restriction.
    * @returns Student restriction detail view.
    */
-  @Get("student/:studentId/studentRestriction/:studentRestrictionId")
+  @Get("student/:studentId/student-restriction/:studentRestrictionId")
   @ApiNotFoundResponse({
     description: "The student restriction does not exist.",
   })
