@@ -13,6 +13,7 @@ import { NoteType } from "@sims/sims-db";
 import { NoteAPIOutDTO, transformToNoteDTO } from "./models/note.dto";
 import {
   AllowAuthorizedParty,
+  HasStudentDataAccess,
   IsBCPublicInstitution,
 } from "../../auth/decorators";
 import { ApiNotFoundResponse, ApiTags } from "@nestjs/swagger";
@@ -38,6 +39,7 @@ export class NoteInstitutionsController extends BaseController {
    * @returns student notes.
    */
   @ApiNotFoundResponse({ description: "Student not found." })
+  @HasStudentDataAccess("studentId")
   @Get("student/:studentId")
   async getStudentNotes(
     @Param("studentId", ParseIntPipe) studentId: number,
