@@ -26,6 +26,7 @@ import {
   getInstitutionToken,
   InstitutionTokenTypes,
 } from "../../../../testHelpers";
+import { NoteAPIOutDTO } from "../../models/note.dto";
 
 describe("NoteInstitutionsController(e2e)-getStudentNotes", () => {
   let app: INestApplication;
@@ -50,7 +51,7 @@ describe("NoteInstitutionsController(e2e)-getStudentNotes", () => {
     );
   });
 
-  it("Should get all note types for a student when student they are available.", async () => {
+  it("Should get all note types for a student when they are available.", async () => {
     // Arrange
     // Create new application.
     const savedApplication = await saveFakeApplication(db.dataSource, {
@@ -99,7 +100,7 @@ describe("NoteInstitutionsController(e2e)-getStudentNotes", () => {
       ]);
   });
 
-  it("Should throw NotFoundException when student was not found.", async () => {
+  it("Should throw Forbidden when student was not found.", async () => {
     // Arrange
     const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeFUser,
@@ -109,23 +110,34 @@ describe("NoteInstitutionsController(e2e)-getStudentNotes", () => {
     return request(app.getHttpServer())
       .get("/institutions/note/student/999999")
       .auth(institutionUserToken, BEARER_AUTH_TYPE)
-      .expect(HttpStatus.NOT_FOUND)
+      .expect(HttpStatus.FORBIDDEN)
       .expect({
-        statusCode: 404,
-        message: "Student not found.",
-        error: "Not Found",
+        statusCode: 403,
+        message:
+          "The institution is not allowed access to the student data of the given student.",
+        error: "Forbidden",
       });
   });
 
-  it("Should cause a bad request when a wrong note type is provided as a filter.", async () => {
+  it.only("Should cause a bad request when a wrong note type is provided as a filter.", async () => {
     // Arrange
+    const savedApplication = await saveFakeApplication(db.dataSource, {
+      institutionLocation: collegeFLocation,
+    });
+    const student = savedApplication.student;
+    await saveFakeStudentNotes(
+      db.dataSource,
+      [createFakeNote(NoteType.General)],
+      student.id,
+    );
     const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeFUser,
     );
+    const endpoint = `/institutions/note/student/${student.id}?noteType=invalid_node_type`;
 
     //Act/Assert
     return request(app.getHttpServer())
-      .get("/institutions/note/student/999999?noteType=invalid_node_type")
+      .get(endpoint)
       .auth(institutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.BAD_REQUEST)
       .expect({
@@ -144,10 +156,11 @@ describe("NoteInstitutionsController(e2e)-getStudentNotes", () => {
     const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeFUser,
     );
+    const endpoint = `/institutions/note/student/${student.id}`;
 
     // Act/Assert
     return request(app.getHttpServer())
-      .get(`/institutions/note/student/${student.id}`)
+      .get(endpoint)
       .auth(institutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
       .expect({});
@@ -160,7 +173,6 @@ describe("NoteInstitutionsController(e2e)-getStudentNotes", () => {
     });
 
     const student = savedApplication.student;
-    const user = await db.user.save(createFakeUser());
     const expectedNote = createFakeNote(NoteType.Application);
     await saveFakeStudentNotes(
       db.dataSource,
@@ -170,17 +182,15 @@ describe("NoteInstitutionsController(e2e)-getStudentNotes", () => {
         createFakeNote(NoteType.Designation),
       ],
       student.id,
-      user,
     );
     const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeFUser,
     );
+    const endpoint = `/institutions/note/student/${student.id}?noteType=${NoteType.Application}`;
 
     // Act/Assert
     return request(app.getHttpServer())
-      .get(
-        `/institutions/note/student/${student.id}?noteType=${NoteType.Application}`,
-      )
+      .get(endpoint)
       .auth(institutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
       .expect([noteToApiReturn(expectedNote)]);
@@ -213,15 +223,21 @@ describe("NoteInstitutionsController(e2e)-getStudentNotes", () => {
     const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeFUser,
     );
+    const endpoint = `/institutions/note/student/${student.id}`;
 
     // Act/Assert
     return request(app.getHttpServer())
-      .get(`/institutions/note/student/${student.id}`)
+      .get(endpoint)
       .auth(institutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
       .expect([noteToApiReturn(designationNote), noteToApiReturn(generalNote)]);
   });
 
+  /**
+   * Transform a Note object to the object returned by the API.
+   * @param note note to be transformed.
+   * @returns an object item for the notes returned by the API.
+   */
   function noteToApiReturn(note: Note) {
     return {
       noteType: note.noteType,

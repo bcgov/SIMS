@@ -53,6 +53,7 @@ import {
   NoteEntityType,
   LayoutTemplates,
   Role,
+  NoteItemModel,
 } from "@/types";
 import { NoteAPIInDTO } from "@/services/http/dto";
 
@@ -65,13 +66,13 @@ export default defineComponent({
     },
     allowAddingNotes: {
       type: Boolean,
-      default: true,
+      required: false,
     },
   },
   setup(props) {
     const toggleNotes = ref("allNotes");
-    const notes = ref();
-    const filteredNoteType = ref();
+    const notes = ref([] as NoteItemModel[]);
+    const filteredNoteType = ref({} as StudentNoteType | undefined);
     const { dateOnlyLongString } = useFormatters();
     const snackBar = useSnackBar();
 
@@ -93,9 +94,7 @@ export default defineComponent({
       }
     };
 
-    onMounted(async () => {
-      await filterNotes();
-    });
+    onMounted(filterNotes);
     return {
       notes,
       dateOnlyLongString,

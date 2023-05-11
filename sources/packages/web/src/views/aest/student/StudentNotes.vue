@@ -5,11 +5,9 @@
     /></tab-container>
   </body-header-container>
 </template>
-
 <script lang="ts">
 import { defineComponent } from "vue";
 import StudentNotes from "@/components/common/notes/StudentNotes.vue";
-
 export default defineComponent({
   components: { StudentNotes },
   props: {
@@ -17,11 +15,6 @@ export default defineComponent({
       type: Number,
       required: true,
     },
-  },
-  setup() {
-    return {
-      StudentNotes,
-    };
   },
 });
 </script>

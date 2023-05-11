@@ -104,7 +104,7 @@ export default defineComponent({
     },
     allowAddingNotes: {
       type: Boolean,
-      default: true,
+      required: false,
     },
   },
   emits: ["submitData"],

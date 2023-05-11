@@ -25,6 +25,7 @@ import { ParseEnumQueryPipe } from "../utils/custom-validation-pipe";
  */
 @AllowAuthorizedParty(AuthorizedParties.institution)
 @IsBCPublicInstitution()
+@HasStudentDataAccess("studentId")
 @Controller("note")
 @ApiTags(`${ClientTypeBaseRoute.Institution}-note`)
 export class NoteInstitutionsController extends BaseController {
@@ -38,17 +39,11 @@ export class NoteInstitutionsController extends BaseController {
    * @param noteType note type enum which is passed to filter the notes.
    * @returns student notes.
    */
-  @ApiNotFoundResponse({ description: "Student not found." })
-  @HasStudentDataAccess("studentId")
   @Get("student/:studentId")
   async getStudentNotes(
     @Param("studentId", ParseIntPipe) studentId: number,
     @Query("noteType", new ParseEnumQueryPipe(NoteType)) noteType?: NoteType,
   ): Promise<NoteAPIOutDTO[]> {
-    const student = await this.studentService.getStudentById(studentId);
-    if (!student) {
-      throw new NotFoundException("Student not found.");
-    }
     const studentNotes = await this.studentService.getStudentNotes(
       studentId,
       noteType,

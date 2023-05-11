@@ -565,7 +565,7 @@ export class StudentService extends RecordDataModelService<Student> {
           { restrictionNotificationType: RestrictionNotificationType.NoEffect },
         );
       studentNoteQuery
-        .andWhere("note.id not in  (" + filterSubQuery.getQuery() + ")")
+        .andWhere(`note.id not in (${filterSubQuery.getQuery()})`)
         .setParameters(filterSubQuery.getParameters());
     }
     const student = await studentNoteQuery.orderBy("note.id", "DESC").getOne();
