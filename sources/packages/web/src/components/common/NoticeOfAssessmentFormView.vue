@@ -9,6 +9,7 @@
     ref="confirmReissueMSFAA"
     okLabel="Reissue MSFAA number now"
     cancelLabel="Cancel"
+    :loading="msfaaReissueProcessing"
     ><template #content
       ><span class="font-bold">Are you sure you want to proceed?</span>
       <p class="mt-5">
@@ -22,7 +23,7 @@
 </template>
 
 <script lang="ts">
-import { watch, defineComponent, ref, onMounted } from "vue";
+import { defineComponent, ref, onMounted } from "vue";
 import { StudentAssessmentsService } from "@/services/StudentAssessmentsService";
 import { AssessmentNOAAPIOutDTO } from "@/services/http/dto";
 import { ModalDialog, useFormatters } from "@/composables";
@@ -37,7 +38,6 @@ import {
 } from "@/types";
 
 interface NoticeOfAssessment extends AssessmentNOAAPIOutDTO {
-  viewOnly?: boolean;
   canReissueMSFAA: boolean;
 }
 
@@ -63,8 +63,12 @@ export default defineComponent({
     ) => {
       return !!applicationStatus && !!noaApprovalStatus;
     },
-    reissueMSFAA: (applicationId: number, loadNOA: () => Promise<void>) => {
-      return !!applicationId && !!loadNOA;
+    reissueMSFAA: (
+      applicationId: number,
+      loadNOA: () => Promise<void>,
+      processing: (processing: boolean) => void,
+    ) => {
+      return !!applicationId && !!loadNOA && !!processing;
     },
   },
   components: { ConfirmModal },
@@ -72,10 +76,6 @@ export default defineComponent({
     assessmentId: {
       type: Number,
       required: true,
-    },
-    viewOnly: {
-      type: Boolean,
-      required: false,
     },
     canReissueMSFAA: {
       type: Boolean,
@@ -86,6 +86,7 @@ export default defineComponent({
     const { dateOnlyLongString } = useFormatters();
     const confirmReissueMSFAA = ref({} as ModalDialog<boolean>);
     const initialData = ref({} as NoticeOfAssessment);
+    const msfaaReissueProcessing = ref(false);
 
     const getMSFAAStatusClass = (isMSFAACancelled: boolean): string => {
       return isMSFAACancelled ? MSFAA_CANCELED_CLASS : MSFAA_SUCCESS_CLASS;
@@ -129,7 +130,6 @@ export default defineComponent({
             !!noaDisbursementSchedule.disbursement2MSFAACancelledDate));
       initialData.value = {
         ...assessment,
-        viewOnly: props.viewOnly,
         canReissueMSFAA,
       };
       emit(
@@ -141,24 +141,25 @@ export default defineComponent({
 
     onMounted(loadNOA);
 
-    watch(
-      () => props.viewOnly,
-      () => {
-        initialData.value.viewOnly = props.viewOnly;
-      },
-    );
+    const setMSFAAReissueProcessing = (processing: boolean) => {
+      msfaaReissueProcessing.value = processing;
+    };
 
     const customEvent = async (_form: FormIOForm, event: FormIOCustomEvent) => {
       if (event.type === FormIOCustomEventTypes.ReissueMSFAA)
         if (await confirmReissueMSFAA.value.showModal()) {
-          emit("reissueMSFAA", initialData.value.applicationId, () =>
-            loadNOA(),
+          emit(
+            "reissueMSFAA",
+            initialData.value.applicationId,
+            () => loadNOA(),
+            (processing) => setMSFAAReissueProcessing(processing),
           );
         }
     };
 
     return {
       confirmReissueMSFAA,
+      msfaaReissueProcessing,
       customEvent,
       initialData,
     };

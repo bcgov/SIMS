@@ -1,6 +1,6 @@
 <template>
-  <v-container>
-    <div class="mb-4">
+  <full-page-container>
+    <template #header>
       <header-navigator
         title="Assessment"
         subTitle="Notice of Assessment"
@@ -9,10 +9,12 @@
           params: { applicationId, studentId, assessmentId },
         }"
       />
-    </div>
-  </v-container>
-  <full-page-container>
-    <notice-of-assessment-form-view :assessmentId="assessmentId" />
+    </template>
+    <notice-of-assessment-form-view
+      :assessmentId="assessmentId"
+      :can-reissue-m-s-f-a-a="true"
+      @reissue-m-s-f-a-a="reissueMSFAA"
+    />
   </full-page-container>
 </template>
 
@@ -20,6 +22,8 @@
 import { defineComponent } from "vue";
 import NoticeOfAssessmentFormView from "@/components/common/NoticeOfAssessmentFormView.vue";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
+import { ApplicationService } from "@/services/ApplicationService";
+import { useSnackBar } from "@/composables";
 
 export default defineComponent({
   components: {
@@ -40,7 +44,25 @@ export default defineComponent({
     },
   },
   setup() {
-    return { AESTRoutesConst };
+    const snackBar = useSnackBar();
+    const reissueMSFAA = async (
+      applicationId: number,
+      reloadNOA: () => Promise<void>,
+      processing: (processing: boolean) => void,
+    ) => {
+      try {
+        processing(true);
+        await ApplicationService.shared.reissueMSFAA(applicationId);
+        snackBar.success("MSFAA was reissued successfully.");
+        await reloadNOA();
+      } catch (error: unknown) {
+        snackBar.error("Error while reissuing the MSFAA.");
+      } finally {
+        processing(false);
+      }
+    };
+
+    return { reissueMSFAA, AESTRoutesConst };
   },
 });
 </script>
