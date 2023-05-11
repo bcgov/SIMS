@@ -47,14 +47,8 @@
 import { onMounted, ref, defineComponent } from "vue";
 import Notes from "@/components/common/notes/Notes.vue";
 import { NoteService } from "@/services/NoteService";
-import { useFormatters, useSnackBar } from "@/composables";
-import {
-  StudentNoteType,
-  NoteEntityType,
-  LayoutTemplates,
-  Role,
-  NoteItemModel,
-} from "@/types";
+import { useSnackBar } from "@/composables";
+import { StudentNoteType, NoteEntityType, Role, NoteItemModel } from "@/types";
 import { NoteAPIInDTO } from "@/services/http/dto";
 
 export default defineComponent({
@@ -73,7 +67,6 @@ export default defineComponent({
     const toggleNotes = ref("allNotes");
     const notes = ref([] as NoteItemModel[]);
     const filteredNoteType = ref({} as StudentNoteType | undefined);
-    const { dateOnlyLongString } = useFormatters();
     const snackBar = useSnackBar();
 
     const filterNotes = async (noteType?: StudentNoteType) => {
@@ -97,13 +90,10 @@ export default defineComponent({
     onMounted(filterNotes);
     return {
       notes,
-      dateOnlyLongString,
       StudentNoteType,
       filterNotes,
-      filteredNoteType,
       addNote,
       NoteEntityType,
-      LayoutTemplates,
       toggleNotes,
       Role,
     };

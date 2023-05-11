@@ -6,6 +6,7 @@ import {
   createFakeUser,
   E2EDataSources,
   saveFakeApplication,
+  saveFakeStudent,
   saveFakeStudentRestriction,
 } from "@sims/test-utils";
 import {
@@ -26,7 +27,6 @@ import {
   getInstitutionToken,
   InstitutionTokenTypes,
 } from "../../../../testHelpers";
-import { NoteAPIOutDTO } from "../../models/note.dto";
 
 describe("NoteInstitutionsController(e2e)-getStudentNotes", () => {
   let app: INestApplication;
@@ -100,7 +100,7 @@ describe("NoteInstitutionsController(e2e)-getStudentNotes", () => {
       ]);
   });
 
-  it("Should throw Forbidden when student was not found.", async () => {
+  it("Should throw Forbidden when student does not exist.", async () => {
     // Arrange
     const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeFUser,
@@ -119,7 +119,28 @@ describe("NoteInstitutionsController(e2e)-getStudentNotes", () => {
       });
   });
 
-  it.only("Should cause a bad request when a wrong note type is provided as a filter.", async () => {
+  it("Should throw Forbidden when student exists but does not have an application for the institution.", async () => {
+    // Arrange
+    const institutionUserToken = await getInstitutionToken(
+      InstitutionTokenTypes.CollegeFUser,
+    );
+    const student = await saveFakeStudent(db.dataSource);
+    const endpoint = `/institutions/note/student/${student.id}`;
+
+    //Act/Assert
+    return request(app.getHttpServer())
+      .get(endpoint)
+      .auth(institutionUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.FORBIDDEN)
+      .expect({
+        statusCode: 403,
+        message:
+          "The institution is not allowed access to the student data of the given student.",
+        error: "Forbidden",
+      });
+  });
+
+  it("Should cause a bad request when a wrong note type is provided as a filter.", async () => {
     // Arrange
     const savedApplication = await saveFakeApplication(db.dataSource, {
       institutionLocation: collegeFLocation,
