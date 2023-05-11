@@ -25,7 +25,7 @@ objects:
         app: ${NAME}
       name: ${NAME}
     spec:
-      replicas: 2
+      replicas: "${{REPLICAS}}"
       selector:
         app: ${NAME}
       strategy:
@@ -157,6 +157,18 @@ objects:
         termination: edge
         insecureEdgeTerminationPolicy: Redirect
       wildcardPolicy: None
+  - apiVersion: autoscaling/v1
+    kind: HorizontalPodAutoscaler
+    metadata:
+      name: ${NAME}-hpa
+    spec:
+      scaleTargetRef:
+        apiVersion: apps/v1
+        kind: ReplicationController
+        name: ${NAME}-rc
+      minReplicas: "${{REPLICAS}}"
+      maxReplicas: 10
+      targetCPUUtilizationPercentage: 90
 
 parameters:
   - name: NAME
@@ -196,6 +208,8 @@ parameters:
     description: The TAG name for this environment, e.g., dev, test, prod
     required: true
     value: latest
+  - name: REPLICAS
+    value: "2"
   - name: CPU_REQUEST
     displayName: Resources CPU Request
     description: The resources CPU request (in cores) for this build.
