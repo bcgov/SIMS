@@ -59,25 +59,12 @@ describe("NoteInstitutionsController(e2e)-getStudentNotes", () => {
     });
 
     const student = savedApplication.student;
-    const [
-      generalNotes,
-      systemNotes,
-      applicationNotes,
-      designationNotes,
-      overawardNotes,
-      programNotes,
-      restrictionNotes,
-    ] = await saveFakeStudentNotes(
+    const fakeNotes = Object.values(NoteType).map((nodeType) =>
+      createFakeNote(nodeType),
+    );
+    const savedNotes = await saveFakeStudentNotes(
       db.dataSource,
-      [
-        createFakeNote(NoteType.General),
-        createFakeNote(NoteType.System),
-        createFakeNote(NoteType.Application),
-        createFakeNote(NoteType.Designation),
-        createFakeNote(NoteType.Overaward),
-        createFakeNote(NoteType.Program),
-        createFakeNote(NoteType.Restriction),
-      ],
+      fakeNotes,
       student.id,
     );
     const institutionUserToken = await getInstitutionToken(
@@ -86,18 +73,13 @@ describe("NoteInstitutionsController(e2e)-getStudentNotes", () => {
     const endpoint = `/institutions/note/student/${student.id}`;
 
     // Act/Assert
+    const expectedAPIReturnNotes = savedNotes
+      .reverse()
+      .map((savedNote) => noteToApiReturn(savedNote));
     await request(app.getHttpServer())
       .get(endpoint)
       .auth(institutionUserToken, BEARER_AUTH_TYPE)
-      .expect([
-        noteToApiReturn(restrictionNotes),
-        noteToApiReturn(programNotes),
-        noteToApiReturn(overawardNotes),
-        noteToApiReturn(designationNotes),
-        noteToApiReturn(applicationNotes),
-        noteToApiReturn(systemNotes),
-        noteToApiReturn(generalNotes),
-      ]);
+      .expect(expectedAPIReturnNotes);
   });
 
   it("Should throw Forbidden when student does not exist.", async () => {
@@ -231,7 +213,7 @@ describe("NoteInstitutionsController(e2e)-getStudentNotes", () => {
       },
     });
 
-    // Creates restriction and resolution notes
+    // Creates student restriction and resolution notes
     await saveFakeStudentRestriction(db.dataSource, {
       student,
       restriction: notificationTypeNoEffectRestriction,
