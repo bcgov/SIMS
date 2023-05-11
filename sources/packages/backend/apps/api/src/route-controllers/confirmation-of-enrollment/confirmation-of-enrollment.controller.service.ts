@@ -31,6 +31,7 @@ export class ConfirmationOfEnrollmentControllerService extends BaseController {
    * hence the COE approval happens twice for application with more than once disbursement.
    * Irrespective of number of COEs to be approved, application status is set to complete
    * on first COE approval.
+   * TODO:To be moved.
    * @param disbursementScheduleId disbursement schedule id of COE.
    * @param auditUserId user who confirms enrollment.
    * @param payload COE confirmation information.
