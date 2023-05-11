@@ -21,7 +21,9 @@
             ><v-col
               ><title-value
                 propertyTitle="Date created"
-                :propertyValue="restrictionData.createdAt" /></v-col
+                :propertyValue="
+                  dateOnlyLongString(restrictionData.createdAt)
+                " /></v-col
             ><v-col
               ><title-value
                 propertyTitle="Created by"
