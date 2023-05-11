@@ -197,7 +197,7 @@ jobs:
         run: |
           oc login --token=${{ secrets.SA_TOKEN }} --server=https://api.silver.devops.gov.bc.ca:6443
           if [ $? -ne 0 ]; then
-            echo "Failed to log in to OpenShift. Please check the credentials and connection details."
+            echo "Failed to log in to OpenShift. Please check the openshift credentials and connection details."
             exit 1
           fi
       # Run db-migrations
