@@ -73,7 +73,8 @@ describe("RestrictionInstitutionsController(e2e)-getStudentRestrictionDetail.", 
     const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeCUser,
     );
-    const endpoint = `/institutions/restriction/student/11111/student-restriction/99999`;
+    const endpoint =
+      "/institutions/restriction/student/11111/student-restriction/99999";
     // Act/Assert
     await request(app.getHttpServer())
       .get(endpoint)
