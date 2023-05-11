@@ -1,11 +1,4 @@
-import {
-  Controller,
-  Get,
-  Param,
-  Query,
-  ParseIntPipe,
-  NotFoundException,
-} from "@nestjs/common";
+import { Controller, Get, Param, Query, ParseIntPipe } from "@nestjs/common";
 import { StudentService } from "../../services";
 import BaseController from "../BaseController";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
@@ -16,7 +9,7 @@ import {
   HasStudentDataAccess,
   IsBCPublicInstitution,
 } from "../../auth/decorators";
-import { ApiNotFoundResponse, ApiTags } from "@nestjs/swagger";
+import { ApiTags } from "@nestjs/swagger";
 import { ClientTypeBaseRoute } from "../../types";
 import { ParseEnumQueryPipe } from "../utils/custom-validation-pipe";
 
