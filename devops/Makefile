@@ -127,7 +127,7 @@ init-oc: | print-status init-project
 oc-build-patroni: | print-status build-patroni
 oc-deploy-patroni: | print-status deploy-patroni
 oc-build-db-migrations: | print-status build-db-migrations
-oc-deploy-db-migrations: | print-status deploy-db-migrations wait-for-db-migrations delete-db-migrations
+oc-run-db-migrations: | print-status run-db-migrations wait-for-db-migrations delete-db-migrations
 oc-build-api: | print-status build-api
 oc-deploy-api: | print-status deploy-api
 oc-build-workers: | print-status build-workers
@@ -307,7 +307,7 @@ create-new-db:
 	@echo "+\n++ Creating DB ($(NEW_DB)) in $(NAMESPACE) patroni db cluster"
 	@oc -n $(NAMESPACE) process -f openshift/database/createdb-job.yml -p DB_NAME=$(NEW_DB) -p BUILD_NAMESPACE=$(BUILD_NAMESPACE) -p JOB_NAME=$(JOB_NAME) | oc -n $(NAMESPACE) apply -f -
 
-deploy-db-migrations:
+run-db-migrations:
 	test -n "$(NAMESPACE)"
 	test -n "$(BUILD_NAMESPACE)"
 	test -n "$(DB_SERVICE_NAME)"

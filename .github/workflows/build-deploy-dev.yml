@@ -204,9 +204,9 @@ jobs:
       - name: Run db-migrations
         working-directory: "./devops/"
         run: |
-          make oc-deploy-db-migrations
+          make oc-run-db-migrations
           if [ $? -ne 0 ]; then
-            echo "Failed to deploy DB Migrations."
+            echo "Failed to run DB Migrations."
             exit 1
           fi
       # Deploy SIMS-API, Workers, Queues, and Web/Frontend in parallel after db-migrations.
