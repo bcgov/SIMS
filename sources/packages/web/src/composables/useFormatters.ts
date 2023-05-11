@@ -159,6 +159,22 @@ export function useFormatters() {
   };
 
   /**
+   * Converts an empty or null string to '-', else return the actual string if the 'condition' is true.
+   * @param value string.
+   * @param condition expression
+   * @returns '-' or the actual string.
+   */
+  const conditionalEmptyStringFiller = (
+    condition: boolean,
+    value?: string,
+  ): string => {
+    if (condition) {
+      return emptyStringFiller(value);
+    }
+    return DEFAULT_EMPTY_VALUE;
+  };
+
+  /**
    * Converts a boolean to a Yes/No description value.
    * @param boolValue value to be converted to Yes/No.
    * @returns Yes, No or a default empty value case not a expected flag value as Y or N.
@@ -239,6 +255,7 @@ export function useFormatters() {
     getISODateOnlyString,
     institutionUserRoleToDisplay,
     emptyStringFiller,
+    conditionalEmptyStringFiller,
     formatCurrency,
   };
 }

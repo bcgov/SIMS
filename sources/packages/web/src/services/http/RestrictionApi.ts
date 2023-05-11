@@ -40,7 +40,7 @@ export class RestrictionApi extends HttpBaseClient {
   ): Promise<RestrictionDetailAPIOutDTO> {
     return this.getCall<RestrictionDetailAPIOutDTO>(
       this.addClientRoot(
-        `restriction/student/${studentId}/studentRestriction/${studentRestrictionId}`,
+        `restriction/student/${studentId}/student-restriction/${studentRestrictionId}`,
       ),
     );
   }
