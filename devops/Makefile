@@ -36,7 +36,7 @@ export MONGODB_URI := $(or ${MONGODB_URI}, $$MONGODB_URI)
 export QUEUE_PREFIX := $(or $(QUEUE_PREFIX), {sims-local})
 
 export MAX_WAIT=300 # Maximum wait time in seconds
-export WAIT_TIME=0   # Initialize wait time to zero
+export WAIT_TIME=0  # Initialize wait time to zero
 
 define DB_MIGRATIONS
 "$(HOST_PREFIX)db-migrations-$(APP_NAME)"
