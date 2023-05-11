@@ -125,8 +125,12 @@ jobs:
       - name: Log in to OpenShift
         run: |
           oc login --token=${{ secrets.SA_TOKEN }} --server=https://api.silver.devops.gov.bc.ca:6443
+          if [ $? -ne 0 ]; then
+            echo "Failed to log in to OpenShift. Please check the credentials and connection details."
+            exit 1
+          fi
        # Build the images in parallel.
-      - name: Build Images
+      - name: Build db-migrations, api, workers, queues and web Images in parallel
         working-directory: "./devops"
         run: |
             make oc-build-db-migrations &
@@ -192,13 +196,21 @@ jobs:
       - name: Log in to OpenShift
         run: |
           oc login --token=${{ secrets.SA_TOKEN }} --server=https://api.silver.devops.gov.bc.ca:6443
+          if [ $? -ne 0 ]; then
+            echo "Failed to log in to OpenShift. Please check the credentials and connection details."
+            exit 1
+          fi
       # Run db-migrations
       - name: Run db-migrations
         working-directory: "./devops/"
         run: |
           make oc-deploy-db-migrations
+          if [ $? -ne 0 ]; then
+            echo "Failed to deploy DB Migrations."
+            exit 1
+          fi
       # Deploy SIMS-API, Workers, Queues, and Web/Frontend in parallel after db-migrations.
-      - name: Deploy SIMS-API, Workers, Queues, and Web/Frontend
+      - name: Deploy SIMS-API, Workers, Queues, and Web/Frontend in parallel
         working-directory: "./devops/"
         run: |
           make oc-deploy-api &
