@@ -18,13 +18,15 @@ export function createFakeStudentRestriction(relations: {
   student: Student;
   restriction: Restriction;
   application?: Application;
-  note?: Note;
+  restrictionNote?: Note;
+  resolutionNote?: Note;
 }): StudentRestriction {
   const studentRestriction = new StudentRestriction();
   studentRestriction.student = relations.student;
   studentRestriction.application = relations.application;
   studentRestriction.restriction = relations.restriction;
-  studentRestriction.restrictionNote = relations.note;
+  studentRestriction.restrictionNote = relations.restrictionNote;
+  studentRestriction.resolutionNote = relations.resolutionNote;
   return studentRestriction;
 }
 
@@ -40,15 +42,20 @@ export async function saveFakeStudentRestriction(
     student: Student;
     restriction: Restriction;
     application?: Application;
-    note?: Note;
+    restrictionNote?: Note;
+    resolutionNote?: Note;
   },
 ): Promise<StudentRestriction> {
-  const [note] = await saveFakeStudentNotes(
+  const [restrictionNote, resolutionNote] = await saveFakeStudentNotes(
     dataSource,
-    [createFakeNote(NoteType.Restriction)],
+    [
+      createFakeNote(NoteType.Restriction),
+      createFakeNote(NoteType.Restriction),
+    ],
     relations.student.id,
   );
-  relations.note = note;
+  relations.restrictionNote = restrictionNote;
+  relations.resolutionNote = resolutionNote;
   const studentRestrictionRepo = dataSource.getRepository(StudentRestriction);
   const studentRestriction = createFakeStudentRestriction(relations);
   return studentRestrictionRepo.save(studentRestriction);

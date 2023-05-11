@@ -217,29 +217,31 @@ describe("NoteInstitutionsController(e2e)-getStudentNotes", () => {
       .expect([noteToApiReturn(expectedNote)]);
   });
 
-  it("Should not get notes for student restriction with notification type 'no effect' when any are available.", async () => {
+  it("Should not get notes for student restriction and resolution notes with notification type 'no effect' when any are available.", async () => {
     // Arrange
     const savedApplication = await saveFakeApplication(db.dataSource, {
       institutionLocation: collegeFLocation,
     });
     const student = savedApplication.student;
+
     // Get any restriction with notification type "No effect".
     const notificationTypeNoEffectRestriction = await db.restriction.findOne({
       where: {
         notificationType: RestrictionNotificationType.NoEffect,
       },
     });
+
+    // Creates restriction and resolution notes
     await saveFakeStudentRestriction(db.dataSource, {
       student,
       restriction: notificationTypeNoEffectRestriction,
       application: savedApplication,
     });
-    const user = await db.user.save(createFakeUser());
+
     const [generalNote, designationNote] = await saveFakeStudentNotes(
       db.dataSource,
       [createFakeNote(NoteType.Designation), createFakeNote(NoteType.General)],
       student.id,
-      user,
     );
     const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeFUser,

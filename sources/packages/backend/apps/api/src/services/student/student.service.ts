@@ -552,7 +552,7 @@ export class StudentService extends RecordDataModelService<Student> {
       studentNoteQuery.andWhere("note.noteType = :noteType", { noteType });
     }
     if (options?.filterNoEffectRestrictionNotes) {
-      const filterSubQuery = this.dataSource
+      const filterOutRestrictionNoteSubQuery = this.dataSource
         .getRepository(StudentRestriction)
         .createQueryBuilder("studentRestriction")
         .select("note.id")
@@ -564,9 +564,27 @@ export class StudentService extends RecordDataModelService<Student> {
           "restriction.notificationType = :restrictionNotificationType",
           { restrictionNotificationType: RestrictionNotificationType.NoEffect },
         );
+      const filterOutResolutionNoteSubQuery = this.dataSource
+        .getRepository(StudentRestriction)
+        .createQueryBuilder("studentRestriction")
+        .select("note.id")
+        .innerJoin("studentRestriction.resolutionNote", "note")
+        .innerJoin("studentRestriction.restriction", "restriction")
+        .innerJoin("studentRestriction.student", "student")
+        .where("student.id = :studentId", { studentId })
+        .andWhere(
+          "restriction.notificationType = :restrictionNotificationType",
+          { restrictionNotificationType: RestrictionNotificationType.NoEffect },
+        );
       studentNoteQuery
-        .andWhere(`note.id not in (${filterSubQuery.getQuery()})`)
-        .setParameters(filterSubQuery.getParameters());
+        .andWhere(
+          `note.id not in (${filterOutRestrictionNoteSubQuery.getQuery()})`,
+        )
+        .andWhere(
+          `note.id not in (${filterOutResolutionNoteSubQuery.getQuery()})`,
+        )
+        .setParameters(filterOutRestrictionNoteSubQuery.getParameters())
+        .setParameters(filterOutResolutionNoteSubQuery.getParameters());
     }
     const student = await studentNoteQuery.orderBy("note.id", "DESC").getOne();
     return student?.notes;
