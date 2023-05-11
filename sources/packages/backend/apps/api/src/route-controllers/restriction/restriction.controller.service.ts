@@ -15,12 +15,35 @@ export class RestrictionControllerService {
   ) {}
 
   /**
+   * Get restrictions for a student for aest view.
+   * @param studentId id of the student to retrieve restrictions.
+   * @param options for restrictions.
+   * - `extendedDetails` option to specify the additional property (updatedAt) to be returned to the aest.
+   * @returns student restrictions for the provided student id.
+   */
+  async getStudentRestrictions(
+    studentId: number,
+    options: { extendedDetails?: boolean },
+  ): Promise<RestrictionSummaryAPIOutDTO[]>;
+
+  /**
+   * Get restrictions for a student for institution view.
+   * @param studentId id of the student to retrieve restrictions.
+   * @param options for restrictions.
+   * - `filterNoEffectRestrictions` option to filter restrictions based on notificationType.
+   * @returns student restrictions for the provided student id.
+   */
+  async getStudentRestrictions(
+    studentId: number,
+    options?: { filterNoEffectRestrictions?: boolean },
+  ): Promise<RestrictionInstitutionSummaryAPIOutDTO[]>;
+
+  /**
    * Get restrictions for a student.
    * @param studentId id of the student to retrieve restrictions.
-   * @param options to filter restrictions.
+   * @param options for restrictions.
    * - `extendedDetails` option to specify the additional property (updatedAt) to be returned to the aest.
    * - `filterNoEffectRestrictions` option to filter restrictions based on notificationType.
-   * - `onlyActive` onlyActive is a flag, which decides whether to select all or only the active restrictions.
    * @returns student restrictions for the provided student id.
    */
   async getStudentRestrictions(
@@ -28,7 +51,6 @@ export class RestrictionControllerService {
     options?: {
       extendedDetails?: boolean;
       filterNoEffectRestrictions?: boolean;
-      onlyActive?: boolean;
     },
   ): Promise<
     RestrictionInstitutionSummaryAPIOutDTO[] | RestrictionSummaryAPIOutDTO[]
@@ -38,7 +60,6 @@ export class RestrictionControllerService {
         studentId,
         {
           filterNoEffectRestrictions: options?.filterNoEffectRestrictions,
-          onlyActive: options?.onlyActive,
         },
       );
     return studentRestrictions?.map((studentRestriction) => ({
@@ -54,6 +75,38 @@ export class RestrictionControllerService {
       isActive: studentRestriction.isActive,
     }));
   }
+
+  /**
+   * Get the details of restriction for aest view.
+   * @param studentId id of the student.
+   * @param studentRestrictionId id of the student restriction.
+   * @param options for restrictions.
+   * - `extendedDetails` option to specify the additional properties (updatedBy, updatedAt, resolutionNote) to be returned to the aest.
+   * @returns Student restriction detail view.
+   */
+  async getStudentRestrictionDetail(
+    studentId: number,
+    studentRestrictionId: number,
+    options?: {
+      extendedDetails?: boolean;
+    },
+  ): Promise<RestrictionDetailAPIOutDTO>;
+
+  /**
+   * Get the details of restriction for institution view.
+   * @param studentId id of the student.
+   * @param studentRestrictionId id of the student restriction.
+   * @param options for restrictions.
+   * - `filterNoEffectRestrictions` option to filter restrictions based on notificationType.
+   * @returns Student restriction detail view.
+   */
+  async getStudentRestrictionDetail(
+    studentId: number,
+    studentRestrictionId: number,
+    options?: {
+      filterNoEffectRestrictions?: boolean;
+    },
+  ): Promise<RestrictionInstitutionDetailAPIOutDTO>;
 
   /**
    * Get the details for view student restriction.

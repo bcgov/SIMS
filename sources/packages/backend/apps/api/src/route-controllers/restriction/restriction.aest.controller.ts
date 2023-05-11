@@ -78,7 +78,7 @@ export class RestrictionAESTController extends BaseController {
   ): Promise<RestrictionSummaryAPIOutDTO[]> {
     return this.restrictionControllerService.getStudentRestrictions(studentId, {
       extendedDetails: true,
-    }) as Promise<RestrictionSummaryAPIOutDTO[]>;
+    });
   }
 
   /**
@@ -134,7 +134,7 @@ export class RestrictionAESTController extends BaseController {
       {
         extendedDetails: true,
       },
-    ) as Promise<RestrictionDetailAPIOutDTO>;
+    );
   }
 
   /**
