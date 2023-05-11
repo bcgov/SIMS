@@ -1,9 +1,7 @@
 <template>
-  <body-header-container>
-    <tab-container
-      ><student-notes :studentId="studentId" :allowAddingNotes="true"
-    /></tab-container>
-  </body-header-container>
+  <tab-container
+    ><student-notes :studentId="studentId" :allowAddingNotes="true"
+  /></tab-container>
 </template>
 <script lang="ts">
 import { defineComponent } from "vue";
