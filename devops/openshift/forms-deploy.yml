@@ -26,6 +26,9 @@ objects:
       name: ${NAME}
     spec:
       replicas: "${{REPLICAS}}"
+      disruptionBudget:
+        maxUnavailable: 1
+        minAvailable: "${{REPLICAS}}"
       selector:
         app: ${NAME}
       strategy:

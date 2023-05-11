@@ -12,6 +12,9 @@ objects:
       name: ${NAME}
     spec:
       replicas: "${{REPLICAS}}"
+      disruptionBudget:
+        maxUnavailable: 1
+        minAvailable: "${{REPLICAS}}"
       revisionHistoryLimit: 10
       selector:
         deploymentconfig: ${NAME}
