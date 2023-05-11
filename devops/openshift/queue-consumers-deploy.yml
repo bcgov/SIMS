@@ -242,7 +242,7 @@ objects:
         name: ${NAME}-rc
       minReplicas: "${{REPLICAS}}"
       maxReplicas: 10
-      targetCPUUtilizationPercentage: 90
+      targetCPUUtilizationPercentage: 80
 parameters:
   - name: NAME
     required: true
