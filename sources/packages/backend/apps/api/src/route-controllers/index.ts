@@ -60,3 +60,4 @@ export * from "./overaward/overaward.institutions.controller";
 export * from "./overaward/overaward.students.controller";
 export * from "./student/student.institutions.controller";
 export * from "./restriction/restriction.institutions.controller";
+export * from "./restriction/restriction.controller.service";

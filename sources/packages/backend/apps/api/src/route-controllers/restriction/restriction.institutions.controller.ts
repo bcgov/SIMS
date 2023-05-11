@@ -1,12 +1,5 @@
-import {
-  Controller,
-  Get,
-  Param,
-  ParseIntPipe,
-  NotFoundException,
-} from "@nestjs/common";
+import { Controller, Get, Param, ParseIntPipe } from "@nestjs/common";
 import BaseController from "../BaseController";
-import { StudentRestrictionService } from "../../services";
 import {
   RestrictionInstitutionDetailAPIOutDTO,
   RestrictionInstitutionSummaryAPIOutDTO,
@@ -19,7 +12,7 @@ import {
 } from "../../auth/decorators";
 import { ClientTypeBaseRoute } from "../../types";
 import { ApiNotFoundResponse, ApiTags } from "@nestjs/swagger";
-import { getUserFullName } from "../../utilities";
+import { RestrictionControllerService } from "./restriction.controller.service";
 
 /**
  * Controller for Institution Restrictions.
@@ -32,7 +25,7 @@ import { getUserFullName } from "../../utilities";
 @ApiTags(`${ClientTypeBaseRoute.Institution}-restriction`)
 export class RestrictionInstitutionsController extends BaseController {
   constructor(
-    private readonly studentRestrictionService: StudentRestrictionService,
+    private readonly restrictionControllerService: RestrictionControllerService,
   ) {
     super();
   }

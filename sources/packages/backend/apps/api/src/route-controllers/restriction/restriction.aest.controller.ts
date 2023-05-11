@@ -46,6 +46,7 @@ import {
 import { Role } from "../../auth/roles.enum";
 import { OptionItemAPIOutDTO } from "../models/common.dto";
 import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
+import { RestrictionControllerService } from "./restriction.controller.service";
 
 /**
  * Controller for AEST Restrictions.
@@ -57,6 +58,7 @@ import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
 @ApiTags(`${ClientTypeBaseRoute.AEST}-restriction`)
 export class RestrictionAESTController extends BaseController {
   constructor(
+    private readonly restrictionControllerService: RestrictionControllerService,
     private readonly studentRestrictionService: StudentRestrictionService,
     private readonly restrictionService: RestrictionService,
     private readonly institutionRestrictionService: InstitutionRestrictionService,

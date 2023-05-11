@@ -1,6 +1,5 @@
 import { NotFoundException, Injectable } from "@nestjs/common";
 import { StudentRestrictionService } from "../../services";
-import { StudentRestriction } from "@sims/sims-db";
 import {
   RestrictionDetailAPIOutDTO,
   RestrictionInstitutionDetailAPIOutDTO,
