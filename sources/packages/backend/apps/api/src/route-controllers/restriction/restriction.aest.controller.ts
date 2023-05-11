@@ -123,7 +123,7 @@ export class RestrictionAESTController extends BaseController {
   @ApiNotFoundResponse({
     description: "The student restriction does not exist.",
   })
-  @Get("student/:studentId/studentRestriction/:studentRestrictionId")
+  @Get("student/:studentId/student-restriction/:studentRestrictionId")
   async getStudentRestrictionDetail(
     @Param("studentId", ParseIntPipe) studentId: number,
     @Param("studentRestrictionId", ParseIntPipe) studentRestrictionId: number,
