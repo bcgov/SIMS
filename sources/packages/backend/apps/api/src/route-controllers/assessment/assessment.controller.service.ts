@@ -62,6 +62,7 @@ export class AssessmentControllerService {
 
     return {
       assessment: assessment.assessmentData,
+      applicationId: assessment.application.id,
       noaApprovalStatus: assessment.noaApprovalStatus,
       applicationStatus: assessment.application.applicationStatus,
       applicationNumber: assessment.application.applicationNumber,
@@ -97,12 +98,15 @@ export class AssessmentControllerService {
         schedule.disbursementDate,
       );
       disbursementDetails[`${disbursementIdentifier}Status`] =
+        schedule.disbursementScheduleStatus;
+      disbursementDetails[`${disbursementIdentifier}COEStatus`] =
         schedule.coeStatus;
-      disbursementDetails[`${disbursementIdentifier}MSFAA`] = {
-        msfaaNumber: schedule.msfaaNumber.msfaaNumber,
-        cancelledDate: schedule.msfaaNumber.cancelledDate,
-        dateSigned: schedule.msfaaNumber.dateSigned,
-      };
+      disbursementDetails[`${disbursementIdentifier}MSFAANumber`] =
+        schedule.msfaaNumber.msfaaNumber;
+      disbursementDetails[`${disbursementIdentifier}MSFAACancelledDate`] =
+        schedule.msfaaNumber.cancelledDate;
+      disbursementDetails[`${disbursementIdentifier}MSFAADateSigned`] =
+        schedule.msfaaNumber.dateSigned;
       disbursementDetails[`${disbursementIdentifier}TuitionRemittance`] =
         schedule.tuitionRemittanceRequestedAmount;
       disbursementDetails[`${disbursementIdentifier}Id`] = schedule.id;

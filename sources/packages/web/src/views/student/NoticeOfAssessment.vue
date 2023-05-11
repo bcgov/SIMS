@@ -33,6 +33,8 @@
     <notice-of-assessment-form-view
       :assessmentId="assessmentId"
       :view-only="viewOnly"
+      :can-reissue-m-s-f-a-a="true"
+      @reissue-m-s-f-a-a="reissueMSFAA"
       @assessmentDataLoaded="assessmentDataLoaded"
     />
 
@@ -105,6 +107,16 @@ export default defineComponent({
         });
       }
     };
+
+    const reissueMSFAA = async (
+      applicationId: number,
+      reloadNOA: () => Promise<void>,
+    ) => {
+      // TODO: Call api to reissue MSFAA.
+      console.log("Reissue: " + applicationId);
+      await reloadNOA();
+    };
+
     return {
       confirmAssessment,
       StudentRoutesConst,
@@ -115,6 +127,7 @@ export default defineComponent({
       viewOnly,
       confirmCancelApplication,
       cancelApplicationModal,
+      reissueMSFAA,
       assessmentDataLoaded,
     };
   },

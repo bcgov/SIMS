@@ -75,6 +75,7 @@ export enum FormIOCustomEventTypes {
   RouteToParentInformation = "routeToParentInformation",
   RouteToPartnerInformation = "routeToPartnerInformation",
   RouteToProgramInformationRequestSummaryPage = "routeToProgramInformationRequestSummaryPage",
+  ReissueMSFAA = "reissueMSFAA",
 }
 
 export interface FormIOComponent {
