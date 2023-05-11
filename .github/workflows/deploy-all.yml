@@ -85,26 +85,17 @@ jobs:
         working-directory: "./devops/"
         run: |
           make oc-deploy-db-migrations
-      # Deploy SIMS-Api
-      - name: Deploy SIMS-API
+      # Deploy SIMS-API, Workers, Queues, and Web/Frontend in parallel after db-migrations.
+      - name: Deploy SIMS-API, Workers, Queues, and Web/Frontend
         working-directory: "./devops/"
         run: |
-          make oc-deploy-api
-      # Deploy Workers
-      - name: Deploy Workers
-        working-directory: "./devops/"
+          make oc-deploy-api &
+          make oc-deploy-workers &
+          make oc-deploy-queue-consumers &
+          make oc-deploy-web &
+      - name: Wait for parallel deployments to finish
         run: |
-          make oc-deploy-workers
-      # Deploy Queues
-      - name: Deploy Queue Consumers
-        working-directory: "./devops/"
-        run: |
-          make oc-deploy-queue-consumers
-      # Deploy Deploy Web/Frontend
-      - name: Deploy Web/Frontend
-        working-directory: "./devops/"
-        run: |
-          make oc-deploy-web
+          wait
   deployCamundaDefinitions:
     if: ${{ github.event.inputs.deployCamundaDefinitions == 'true' }}
     name: Deploy BPMNs and DMNs to Camunda

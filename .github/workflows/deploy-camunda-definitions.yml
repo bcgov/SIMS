@@ -4,9 +4,11 @@ on:
   workflow_dispatch:
     inputs:
       environment:
+        description: 'Openshift Environment'
         required: true
         type: environment
       gitRef:
+        description: 'Github reference'
         required: true
         type: string
   workflow_call:
