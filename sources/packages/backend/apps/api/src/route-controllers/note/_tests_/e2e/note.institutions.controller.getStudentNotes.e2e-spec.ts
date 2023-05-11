@@ -72,10 +72,10 @@ describe("NoteInstitutionsController(e2e)-getStudentNotes", () => {
     const endpoint = `/institutions/note/student/${student.id}`;
 
     // Act/Assert
-    const reversedSavedNotes = savedNotes.reverse();
-    const expectedAPIReturnNotes = reversedSavedNotes.map((savedNote) =>
-      noteToApiReturn(savedNote),
-    );
+    const expectedAPIReturnNotes = savedNotes
+      .slice()
+      .reverse()
+      .map((savedNote) => noteToApiReturn(savedNote));
     await request(app.getHttpServer())
       .get(endpoint)
       .auth(institutionUserToken, BEARER_AUTH_TYPE)
