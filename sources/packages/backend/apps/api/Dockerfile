@@ -3,7 +3,6 @@ FROM registry.access.redhat.com/ubi8/nodejs-16:1-5
 
 LABEL maintainer="BC GOV"
 
-
 # Application Port
 ENV PORT 3000
 
