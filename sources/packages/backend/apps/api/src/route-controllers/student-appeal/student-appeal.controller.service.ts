@@ -53,7 +53,7 @@ export class StudentAppealControllerService {
             assessedByUserName: getUserFullName(appealRequest.assessedBy),
           } as T;
         }
-        return request as T;
+        return request;
       }),
     };
   }
