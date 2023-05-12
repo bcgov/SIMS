@@ -18,6 +18,7 @@ import {
 import {
   StudentAppealAPIInDTO,
   StudentAppealAPIOutDTO,
+  StudentAppealRequestAPIOutDTO,
 } from "./models/student-appeal.dto";
 import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
@@ -166,10 +167,10 @@ export class StudentAppealStudentsController extends BaseController {
   async getStudentAppealWithRequests(
     @Param("appealId", ParseIntPipe) appealId: number,
     @UserToken() userToken: StudentUserToken,
-  ): Promise<StudentAppealAPIOutDTO> {
-    return this.studentAppealControllerService.getStudentAppealWithRequest(
+  ): Promise<StudentAppealAPIOutDTO<StudentAppealRequestAPIOutDTO>> {
+    return this.studentAppealControllerService.getStudentAppealWithRequest<StudentAppealRequestAPIOutDTO>(
       appealId,
-      userToken.studentId,
+      { studentId : userToken.studentId },
     );
   }
 }

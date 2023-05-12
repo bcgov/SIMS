@@ -17,6 +17,7 @@ import { ApplicationExceptionControllerService } from "./application-exception.c
 @AllowAuthorizedParty(AuthorizedParties.institution)
 @Controller("application-exception")
 @IsBCPublicInstitution()
+@HasStudentDataAccess("studentId")
 @ApiTags(`${ClientTypeBaseRoute.Institution}-application-exception`)
 export class ApplicationExceptionInstitutionsController extends BaseController {
   constructor(
@@ -31,7 +32,6 @@ export class ApplicationExceptionInstitutionsController extends BaseController {
    * @param exceptionId exception to be retrieved.
    * @returns student application exception information.
    */
-  @HasStudentDataAccess("studentId")
   @Get("student/:studentId/exception/:exceptionId")
   @ApiNotFoundResponse({
     description: "Student application exception not found.",

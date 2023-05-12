@@ -1,9 +1,6 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
 import {
   StudentAppealAPIOutDTO,
-  DetailedStudentAppealAPIOutDTO,
-  StudentAppealRequestAPIOutDTO,
-  DetailedStudentAppealRequestAPIOutDTO,
 } from "./models/student-appeal.dto";
 import { getUserFullName } from "../../utilities";
 import { StudentAppealService } from "../../services";
@@ -15,20 +12,22 @@ export class StudentAppealControllerService {
   /**
    * Get the student appeal and its requests.
    * @param appealId appeal id to be retrieved.
-   * @param studentId student id.
+   * @param options options
+   * - `studentId` student id.
+   * - `assessDetails`, if true, will return access details.
    * @returns the student appeal and its requests.
    */
-  async getStudentAppealWithRequest(
+  async getStudentAppealWithRequest<T>(
     appealId: number,
-    studentId?: number,
     options?: {
+      studentId?: number,
       assessDetails?: boolean;
     },
-  ): Promise<StudentAppealAPIOutDTO | DetailedStudentAppealAPIOutDTO> {
+  ): Promise<StudentAppealAPIOutDTO<T>> {
     const studentAppeal =
       await this.studentAppealService.getAppealAndRequestsById(
         appealId,
-        studentId,
+        options?.studentId,
       );
     if (!studentAppeal) {
       throw new NotFoundException("Not able to find the student appeal.");
@@ -39,21 +38,22 @@ export class StudentAppealControllerService {
       submittedDate: studentAppeal.submittedDate,
       status: studentAppeal.status,
       appealRequests: studentAppeal.appealRequests.map((appealRequest) => {
-        let requests = {
+        let request = {
           id: appealRequest.id,
           appealStatus: appealRequest.appealStatus,
           submittedData: appealRequest.submittedData,
           submittedFormName: appealRequest.submittedFormName,
-        } as StudentAppealRequestAPIOutDTO;
+        } as T;
+
         if (options?.assessDetails) {
-          requests = {
-            ...requests,
+          request = {
+            ...request,
             assessedDate: appealRequest.assessedDate,
             noteDescription: appealRequest.note?.description,
             assessedByUserName: getUserFullName(appealRequest.assessedBy),
-          } as DetailedStudentAppealRequestAPIOutDTO;
+          } as T;
         }
-        return requests;
+        return request as T;
       }),
     };
   }

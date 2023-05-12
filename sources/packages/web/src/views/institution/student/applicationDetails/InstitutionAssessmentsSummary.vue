@@ -17,7 +17,6 @@
       @viewStudentAppeal="goToStudentAppeal"
       @viewApplicationException="goToApplicationException"
     />
-
     <history-assessment
       :applicationId="applicationId"
       :studentId="studentId"

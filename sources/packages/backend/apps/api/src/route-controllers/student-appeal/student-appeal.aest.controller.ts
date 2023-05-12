@@ -30,7 +30,8 @@ import BaseController from "../BaseController";
 import { ApiProcessError, ClientTypeBaseRoute } from "../../types";
 import { UserGroups } from "../../auth/user-groups.enum";
 import {
-  DetailedStudentAppealAPIOutDTO,
+  DetailedStudentAppealRequestAPIOutDTO,
+  StudentAppealAPIOutDTO,
   StudentAppealApprovalAPIInDTO,
   StudentAppealPendingSummaryAPIOutDTO,
 } from "./models/student-appeal.dto";
@@ -73,10 +74,9 @@ export class StudentAppealAESTController extends BaseController {
   })
   async getStudentAppealWithRequests(
     @Param("appealId", ParseIntPipe) appealId: number,
-  ): Promise<DetailedStudentAppealAPIOutDTO> {
-    return this.studentAppealControllerService.getStudentAppealWithRequest(
+  ): Promise<StudentAppealAPIOutDTO<DetailedStudentAppealRequestAPIOutDTO>> {
+    return this.studentAppealControllerService.getStudentAppealWithRequest<DetailedStudentAppealRequestAPIOutDTO>(
       appealId,
-      undefined,
       { assessDetails: true },
     );
   }

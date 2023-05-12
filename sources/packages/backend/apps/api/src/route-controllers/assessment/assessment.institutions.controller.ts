@@ -12,7 +12,7 @@ import {
   RequestAssessmentSummaryAPIOutDTO,
 } from "./models/assessment.dto";
 import { ApiTags } from "@nestjs/swagger";
-import { AssessmentControllerService } from "./assessment.controller.service";
+import { AssessmentControllerService } from "..";
 
 /**
  * Assessment controller for institutions.
@@ -20,6 +20,7 @@ import { AssessmentControllerService } from "./assessment.controller.service";
 @AllowAuthorizedParty(AuthorizedParties.institution)
 @Controller("assessment")
 @IsBCPublicInstitution()
+@HasStudentDataAccess("studentId")
 @ApiTags(`${ClientTypeBaseRoute.Institution}-assessment`)
 export class AssessmentInstitutionsController extends BaseController {
   constructor(
@@ -35,7 +36,6 @@ export class AssessmentInstitutionsController extends BaseController {
    * @param applicationId application id.
    * @returns assessment requests or exceptions for the student application.
    */
-  @HasStudentDataAccess("studentId")
   @Get("student/:studentId/application/:applicationId/requests")
   async getRequestedAssessmentSummary(
     @Param("studentId", ParseIntPipe) studentId: number,
@@ -48,7 +48,7 @@ export class AssessmentInstitutionsController extends BaseController {
   }
 
   /**
-   * Method to get history of assessments for an application,
+   * Get history of assessments for an application,
    * i.e, this will have original assessment for the
    * student application, and all approved student
    * appeal and scholastic standings for the application
@@ -57,7 +57,6 @@ export class AssessmentInstitutionsController extends BaseController {
    * @param applicationId, application id.
    * @returns summary of the assessment history for a student application.
    */
-  @HasStudentDataAccess("studentId")
   @Get("student/:studentId/application/:applicationId/history")
   async getAssessmentHistorySummary(
     @Param("studentId", ParseIntPipe) studentId: number,
