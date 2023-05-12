@@ -4,22 +4,16 @@ FROM registry.access.redhat.com/ubi8/nodejs-16:1-5
 LABEL maintainer="BC GOV"
 
 # Copying package.json and package-lock.json
-COPY package*.json ./
+COPY ./package*.json ./
 
 # Installing dependencies
-RUN npm ci --ignore-scripts
+RUN npm ci
 
 # Copying sources
-COPY apps/queue-consumers ./apps/queue-consumers
-COPY tsconfig.json ./
-COPY tsconfig.build.json ./
-COPY env-setup.js ./
+COPY . .
 
 # Building app
 RUN npm run build queue-consumers
-
-# Set the non-root user
-USER node
 
 # Entry point
 CMD [ "npm", "run", "start:prod:queue-consumers" ]
