@@ -15,9 +15,6 @@ COPY tsconfig.json ./
 COPY tsconfig.build.json ./
 COPY env-setup.js ./
 
-# Building app
-RUN npm run build db-migrations
-
 # Set the non-root user
 USER node
 
