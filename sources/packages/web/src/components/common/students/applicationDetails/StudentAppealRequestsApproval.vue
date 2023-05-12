@@ -60,7 +60,7 @@ import {
 import AppealRequestsApprovalForm from "@/components/aest/AppealRequestsApprovalForm.vue";
 import StatusChipRequestedAssessment from "@/components/generic/StatusChipRequestedAssessment.vue";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
-
+import { DetailedStudentAppealRequestAPIOutDTO } from "@/services/http/dto/StudentAppeal.dto";
 export default defineComponent({
   emits: {
     submitted: (approvals: StudentAppealApproval[]) => {
@@ -104,7 +104,7 @@ export default defineComponent({
 
     onMounted(async () => {
       const appeal =
-        await StudentAppealService.shared.getStudentAppealWithRequests(
+        await StudentAppealService.shared.getStudentAppealWithRequests<DetailedStudentAppealRequestAPIOutDTO>(
           props.appealId,
           props.studentId,
         );

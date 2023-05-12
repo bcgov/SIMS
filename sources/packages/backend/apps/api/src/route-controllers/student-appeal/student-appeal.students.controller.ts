@@ -170,7 +170,7 @@ export class StudentAppealStudentsController extends BaseController {
   ): Promise<StudentAppealAPIOutDTO<StudentAppealRequestAPIOutDTO>> {
     return this.studentAppealControllerService.getStudentAppealWithRequest<StudentAppealRequestAPIOutDTO>(
       appealId,
-      { studentId : userToken.studentId },
+      { studentId: userToken.studentId },
     );
   }
 }

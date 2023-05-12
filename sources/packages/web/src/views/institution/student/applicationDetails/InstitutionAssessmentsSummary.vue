@@ -3,10 +3,7 @@
     <template #header>
       <header-navigator
         title="Student applications"
-        :routeLocation="{
-          name: InstitutionRoutesConst.STUDENT_APPLICATIONS,
-          params: { studentId },
-        }"
+        :routeLocation="backRoute"
         subTitle="Assessment"
       />
     </template>
@@ -30,7 +27,7 @@
 <script lang="ts">
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import { useRouter } from "vue-router";
-import { defineComponent } from "vue";
+import { defineComponent, computed } from "vue";
 import { AssessmentTriggerType } from "@/types";
 import RequestAssessment from "@/components/aest/students/assessment/Request.vue";
 import HistoryAssessment from "@/components/aest/students/assessment/History.vue";
@@ -82,11 +79,19 @@ export default defineComponent({
       });
     };
 
+    const backRoute = computed({
+      name: InstitutionRoutesConst.STUDENT_APPLICATIONS,
+      params: {
+        studentId: props.studentId,
+      },
+    });
+
     return {
       InstitutionRoutesConst,
       goToStudentAppeal,
       goToApplicationException,
       assessmentRequestTypes,
+      backRoute,
     };
   },
 });
