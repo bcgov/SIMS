@@ -6,7 +6,6 @@ LABEL maintainer="BC GOV"
 # Application Port
 ENV PORT 3000
 
-
 # Copying package.json and package-lock.json
 COPY ./package*.json ./
 
