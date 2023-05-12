@@ -7,16 +7,16 @@ LABEL maintainer="BC GOV"
 WORKDIR /app
 
 # Copying package.json and package-lock.json
-COPY package*.json ./
+COPY package*.json ./app/
 
 # Installing dependencies
 RUN npm ci --ignore-scripts
 
 # Copying sources
-COPY apps/db-migrations ./apps/db-migrations
-COPY tsconfig.json ./
-COPY tsconfig.build.json ./
-COPY env-setup.js ./
+COPY apps/db-migrations ./app/apps/db-migrations
+COPY tsconfig.json ./app/
+COPY tsconfig.build.json ./app/
+COPY env-setup.js ./app/
 
 # Building app
 RUN npm run build db-migrations
