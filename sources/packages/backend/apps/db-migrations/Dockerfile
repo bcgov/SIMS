@@ -19,10 +19,5 @@ COPY env-setup.js ./
 # Building app
 RUN npm run build db-migrations
 
-RUN addgroup -S nonroot \
-  && adduser -S nonroot -G nonroot
-
-USER nonroot
-
 # Entry point
 CMD [ "npm", "run", "start:prod:db-migrations" ]
