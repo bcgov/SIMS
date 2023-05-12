@@ -10,13 +10,13 @@
     okLabel="Reissue MSFAA number now"
     cancelLabel="Cancel"
     :loading="msfaaReissueProcessing"
-    ><template #content
-      ><span class="font-bold">Are you sure you want to proceed?</span>
-      <p class="mt-5">
-        Reissuing an MSFAA number will impact the student's pending
-        disbursements meaning a new number will be provided for the pending
-        disbursements. The student will still be able to see their cancelled
-        MSFAA number on their Notice of Assessment.
+    ><template #content>
+      <p>
+        <strong>Are you sure you want to proceed?</strong> Reissuing an MSFAA
+        number will impact the student's pending disbursements meaning a new
+        number will be provided for the pending disbursements. The student will
+        still be able to see their cancelled MSFAA number on their Notice of
+        Assessment.
       </p>
     </template></confirm-modal
   >
