@@ -6,17 +6,20 @@ LABEL maintainer="BC GOV"
 # Set the working directory
 WORKDIR /app
 
+# Updating container path variable with node bin
+ENV PATH $PATH:/app/node_modules/.bin
+
 # Copying package.json and package-lock.json
-COPY package*.json ./app/
+COPY package*.json ./
 
 # Installing dependencies
 RUN npm ci --ignore-scripts
 
 # Copying sources
-COPY apps/db-migrations ./app/apps/db-migrations
-COPY tsconfig.json ./app/
-COPY tsconfig.build.json ./app/
-COPY env-setup.js ./app/
+COPY apps/db-migrations ./apps/db-migrations
+COPY tsconfig.json ./
+COPY tsconfig.build.json ./
+COPY env-setup.js ./
 
 # Building app
 RUN npm run build db-migrations
