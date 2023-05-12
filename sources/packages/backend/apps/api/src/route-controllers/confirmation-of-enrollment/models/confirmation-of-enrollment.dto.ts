@@ -1,7 +1,10 @@
-import { Min, IsOptional, Max } from "class-validator";
+import { Min, Max, IsNotEmpty, ValidateIf } from "class-validator";
 import { COEStatus, ProgramInfoStatus } from "@sims/sims-db";
 import { COEApprovalPeriodStatus } from "../../../services/disbursement-schedule/disbursement-schedule.models";
-import { MONEY_VALUE_FOR_UNKNOWN_MAX_VALUE } from "../../../utilities";
+import {
+  COE_DENIED_REASON_OTHER_ID,
+  MONEY_VALUE_FOR_UNKNOWN_MAX_VALUE,
+} from "../../../utilities";
 
 export class ApplicationDetailsForCOEAPIOutDTO {
   applicationProgramName: string;
@@ -42,7 +45,11 @@ export class COEDeniedReasonAPIOutDTO {
 export class DenyConfirmationOfEnrollmentAPIInDTO {
   @Min(1)
   coeDenyReasonId: number;
-  @IsOptional()
+  @IsNotEmpty()
+  @ValidateIf(
+    (value: DenyConfirmationOfEnrollmentAPIInDTO) =>
+      value.coeDenyReasonId === COE_DENIED_REASON_OTHER_ID,
+  )
   otherReasonDesc?: string;
 }
 

@@ -56,7 +56,7 @@ export class ConfirmationOfEnrollmentAESTController extends BaseController {
     await this.confirmationOfEnrollmentControllerService.confirmEnrollment(
       disbursementScheduleId,
       userToken.userId,
-      { tuitionRemittanceAmount: 0 }, // Tuition remittance amount is always 0 when confirmed by ministry.
+      0, // Tuition remittance amount is always 0 when confirmed by ministry.
       { allowOutsideCOEApprovalPeriod: true },
     );
   }

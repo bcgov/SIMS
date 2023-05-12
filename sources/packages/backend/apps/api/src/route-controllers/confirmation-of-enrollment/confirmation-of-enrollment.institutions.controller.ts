@@ -4,11 +4,11 @@ import {
   Get,
   Patch,
   NotFoundException,
-  UnprocessableEntityException,
   Body,
   Query,
   ParseEnumPipe,
   ParseIntPipe,
+  UnprocessableEntityException,
 } from "@nestjs/common";
 import {
   HasLocationAccess,
@@ -25,12 +25,12 @@ import { DisbursementSchedule } from "@sims/sims-db";
 import { getUserFullName } from "../../utilities/auth-utils";
 import {
   getCOEDeniedReason,
-  COE_DENIED_REASON_OTHER_ID,
   credentialTypeToDisplay,
   deliveryMethod,
 } from "../../utilities";
 import {
   COE_WINDOW,
+  CustomNamedError,
   getDateOnlyFormat,
   getISODateOnlyString,
 } from "@sims/utilities";
@@ -57,7 +57,13 @@ import { ConfirmationOfEnrollmentControllerService } from "./confirmation-of-enr
 import {
   ConfirmationOfEnrollmentService,
   DisbursementOverawardService,
+  DisbursementScheduleSharedService,
 } from "@sims/services";
+import {
+  ENROLMENT_ALREADY_COMPLETED,
+  ENROLMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE,
+  ENROLMENT_NOT_FOUND,
+} from "@sims/services/constants";
 
 @AllowAuthorizedParty(AuthorizedParties.institution)
 @Controller("location")
@@ -71,6 +77,7 @@ export class ConfirmationOfEnrollmentInstitutionsController extends BaseControll
     private readonly confirmationOfEnrollmentControllerService: ConfirmationOfEnrollmentControllerService,
     private readonly confirmationOfEnrollmentService: ConfirmationOfEnrollmentService,
     private readonly disbursementOverawardService: DisbursementOverawardService,
+    private readonly disbursementScheduleSharedService: DisbursementScheduleSharedService,
   ) {
     super();
   }
@@ -259,7 +266,7 @@ export class ConfirmationOfEnrollmentInstitutionsController extends BaseControll
     await this.confirmationOfEnrollmentControllerService.confirmEnrollment(
       disbursementScheduleId,
       userToken.userId,
-      payload,
+      payload.tuitionRemittanceAmount,
       { locationId },
     );
   }
@@ -286,31 +293,25 @@ export class ConfirmationOfEnrollmentInstitutionsController extends BaseControll
     @Body() payload: DenyConfirmationOfEnrollmentAPIInDTO,
     @UserToken() userToken: IUserToken,
   ): Promise<void> {
-    if (
-      payload.coeDenyReasonId === COE_DENIED_REASON_OTHER_ID &&
-      !payload.otherReasonDesc
-    ) {
-      throw new UnprocessableEntityException(
-        "Other is selected as COE reason, specify the reason for the COE denial.",
-      );
-    }
-    const disbursementSchedule =
-      await this.disbursementScheduleService.getDisbursementAndApplicationSummary(
+    try {
+      await this.disbursementScheduleSharedService.declineEnrolment(
         disbursementScheduleId,
-        locationId,
+        userToken.userId,
+        payload,
+        { locationId },
       );
-
-    if (!disbursementSchedule) {
-      throw new NotFoundException(
-        "Unable to find a COE which could be completed.",
-      );
+    } catch (error: unknown) {
+      if (error instanceof CustomNamedError) {
+        switch (error.name) {
+          case ENROLMENT_NOT_FOUND:
+            throw new NotFoundException(error.message);
+          case ENROLMENT_ALREADY_COMPLETED:
+          case ENROLMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE:
+            throw new UnprocessableEntityException(error.message);
+        }
+      }
+      throw error;
     }
-    await this.disbursementScheduleService.updateCOEToDenied(
-      disbursementSchedule.id,
-      userToken.userId,
-      payload.coeDenyReasonId,
-      payload.otherReasonDesc,
-    );
   }
 
   /**

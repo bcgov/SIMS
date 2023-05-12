@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { DataSource, EntityManager, IsNull } from "typeorm";
+import { DataSource, EntityManager, IsNull, UpdateResult } from "typeorm";
 import {
   RecordDataModelService,
   DisbursementSchedule,
@@ -975,6 +975,58 @@ export class DisbursementScheduleSharedService extends RecordDataModelService<Di
   }
 
   /**
+   * Decline COE for a disbursement schedule.
+   ** Note: If an application has 2 COEs, and if the first COE is rejected then 2nd COE is implicitly rejected.
+   * @param disbursementScheduleId disbursement schedule id to be updated.
+   * @param auditUserId user that should be considered the one that is causing the changes.
+   * @param coeDeniedReasonId denied reason id of a denied COE.
+   * @param otherReasonDesc result of the update operation.
+   */
+  async updateCOEToDeclined(
+    disbursementScheduleId: number,
+    auditUserId: number,
+    declinedReason: { coeDeniedReasonId: number; otherReasonDesc?: string },
+  ): Promise<UpdateResult> {
+    const auditUser = { id: auditUserId } as User;
+    const now = new Date();
+    return await this.dataSource.transaction(
+      async (transactionalEntityManager) => {
+        const updateResult = await transactionalEntityManager
+          .getRepository(DisbursementSchedule)
+          .createQueryBuilder()
+          .update(DisbursementSchedule)
+          .set({
+            coeStatus: COEStatus.declined,
+            coeUpdatedBy: auditUser,
+            coeUpdatedAt: now,
+            coeDeniedReason: { id: declinedReason.coeDeniedReasonId },
+            coeDeniedOtherDesc: declinedReason.otherReasonDesc,
+            modifier: auditUser,
+            updatedAt: now,
+          })
+          .where("id = :disbursementScheduleId", { disbursementScheduleId })
+          .andWhere("coeStatus = :required", { required: COEStatus.required })
+          .execute();
+
+        if (updateResult.affected !== 1) {
+          throw new Error(
+            `While updating COE status to '${COEStatus.declined}' the number of affected row was bigger than the expected one. Expected 1 received ${updateResult.affected}`,
+          );
+        }
+
+        // Create a student notification when COE is confirmed.
+        await this.createNotificationForDisbursementUpdate(
+          disbursementScheduleId,
+          auditUserId,
+          transactionalEntityManager,
+        );
+
+        return updateResult;
+      },
+    );
+  }
+
+  /**
    * Approve confirmation of enrollment(COE).
    * An application can have up to two COEs based on the disbursement schedule,
    * hence the COE approval happens twice for application with more than once disbursement.
@@ -984,6 +1036,10 @@ export class DisbursementScheduleSharedService extends RecordDataModelService<Di
    * @param auditUserId user who confirms enrollment.
    * @param payload COE confirmation information.
    * @param options Confirm COE options.
+   * - `locationId` location id of the application..
+   * - `allowOutsideCOEApprovalPeriod` allow COEs which are outside the valid COE confirmation period to be confirmed..
+   * - `enrolmentConfirmationDate` date of enrolment confirmation.
+   * - `applicationNumber` application number of the enrolment.
    */
   async confirmEnrollment(
     disbursementScheduleId: number,
@@ -993,6 +1049,7 @@ export class DisbursementScheduleSharedService extends RecordDataModelService<Di
       locationId?: number;
       allowOutsideCOEApprovalPeriod?: boolean;
       enrolmentConfirmationDate?: string | Date;
+      applicationNumber?: string;
     },
   ): Promise<void> {
     // Get the disbursement and application summary for COE.
@@ -1004,6 +1061,18 @@ export class DisbursementScheduleSharedService extends RecordDataModelService<Di
 
     if (!disbursementSchedule) {
       throw new CustomNamedError("Enrolment not found.", ENROLMENT_NOT_FOUND);
+    }
+
+    const application = disbursementSchedule.studentAssessment.application;
+
+    if (
+      options?.applicationNumber &&
+      options?.applicationNumber !== application.applicationNumber
+    ) {
+      throw new CustomNamedError(
+        "Enrolment for the given application not found.",
+        ENROLMENT_NOT_FOUND,
+      );
     }
 
     if (disbursementSchedule.coeStatus !== COEStatus.required) {
@@ -1060,7 +1129,7 @@ export class DisbursementScheduleSharedService extends RecordDataModelService<Di
     // Validate tuition remittance amount.
     await this.validateTuitionRemittance(
       tuitionRemittanceAmount,
-      disbursementSchedule,
+      disbursementSchedule.id,
     );
 
     await this.updateDisbursementAndApplicationCOEApproval(
@@ -1072,17 +1141,72 @@ export class DisbursementScheduleSharedService extends RecordDataModelService<Di
     );
   }
 
+  async declineEnrolment(
+    disbursementScheduleId: number,
+    auditUserId: number,
+    declineReason: { coeDenyReasonId: number; otherReasonDesc?: string },
+    options: {
+      locationId?: number;
+      applicationNumber?: string;
+    },
+  ): Promise<void> {
+    const disbursementSchedule =
+      await this.getDisbursementAndApplicationSummary(
+        disbursementScheduleId,
+        options?.locationId,
+      );
+
+    if (!disbursementSchedule) {
+      throw new CustomNamedError("Enrolment not found.", ENROLMENT_NOT_FOUND);
+    }
+
+    const application = disbursementSchedule.studentAssessment.application;
+
+    if (
+      options?.applicationNumber &&
+      options?.applicationNumber !== application.applicationNumber
+    ) {
+      throw new CustomNamedError(
+        "Enrolment for the given application not found.",
+        ENROLMENT_NOT_FOUND,
+      );
+    }
+
+    if (disbursementSchedule.coeStatus !== COEStatus.required) {
+      throw new CustomNamedError(
+        "Enrolment already completed and can neither be confirmed nor declined",
+        ENROLMENT_ALREADY_COMPLETED,
+      );
+    }
+
+    if (
+      ![ApplicationStatus.Enrolment, ApplicationStatus.Completed].includes(
+        disbursementSchedule.studentAssessment.application.applicationStatus,
+      )
+    ) {
+      throw new CustomNamedError(
+        "Enrolment cannot be declined as application is not in a valid status for this operation.",
+        ENROLMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE,
+      );
+    }
+
+    await this.updateCOEToDeclined(disbursementSchedule.id, auditUserId, {
+      coeDeniedReasonId: declineReason.coeDenyReasonId,
+      otherReasonDesc: declineReason.otherReasonDesc,
+    });
+  }
+
   /**
    * Validate Institution Users to request tuition remittance at the time
    * of confirming enrolment, not to exceed the lesser than both
    * (Actual tuition + Program related costs) and (Canada grants + Canada Loan + BC Loan).
    * @param tuitionRemittanceAmount tuition remittance submitted by institution.
-   * @param disbursementSchedule disbursement schedule.
+   * @param disbursementScheduleId disbursement schedule id.
    * @throws UnprocessableEntityException.
    */
   private async validateTuitionRemittance(
     tuitionRemittanceAmount: number,
-    disbursementSchedule: DisbursementSchedule,
+    disbursementScheduleId: number,
   ): Promise<void> {
     // If the tuition remittance amount is set to 0, then skip validation.
     if (!tuitionRemittanceAmount) {
@@ -1091,7 +1215,7 @@ export class DisbursementScheduleSharedService extends RecordDataModelService<Di
 
     const maxTuitionAllowed =
       await this.confirmationOfEnrollmentService.getEstimatedMaxTuitionRemittance(
-        disbursementSchedule.id,
+        disbursementScheduleId,
       );
 
     if (tuitionRemittanceAmount > maxTuitionAllowed) {
@@ -1105,6 +1229,7 @@ export class DisbursementScheduleSharedService extends RecordDataModelService<Di
   /**
    * Generates the next document number to be associated
    * with a disbursement.
+   * @returns sequence number for disbursement document number.
    */
   private async getNextDocumentNumber(): Promise<number> {
     let nextDocumentNumber: number;

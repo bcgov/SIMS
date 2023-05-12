@@ -334,62 +334,6 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
   }
 
   /**
-   * Deny COE for a disbursement schedule.
-   ** Note: If an application has 2 COEs, and if the first COE is rejected then 2nd COE is implicitly rejected.
-   * @param disbursementScheduleId disbursement schedule id to be updated.
-   * @param auditUserId user that should be considered the one that is causing the changes.
-   * @param coeDeniedReasonId denied reason id of a denied COE.
-   * @param otherReasonDesc result of the update operation.
-   */
-  async updateCOEToDenied(
-    disbursementScheduleId: number,
-    auditUserId: number,
-    coeDeniedReasonId: number,
-    otherReasonDesc: string,
-  ): Promise<UpdateResult> {
-    const auditUser = { id: auditUserId } as User;
-    const now = new Date();
-    return await this.dataSource.transaction(
-      async (transactionalEntityManager) => {
-        const updateResult = await transactionalEntityManager
-          .getRepository(DisbursementSchedule)
-          .createQueryBuilder()
-          .update(DisbursementSchedule)
-          .set({
-            coeStatus: COEStatus.declined,
-            coeUpdatedBy: auditUser,
-            coeUpdatedAt: now,
-            coeDeniedReason: { id: coeDeniedReasonId },
-            coeDeniedOtherDesc:
-              coeDeniedReasonId === COE_DENIED_REASON_OTHER_ID
-                ? otherReasonDesc
-                : null,
-            modifier: auditUser,
-            updatedAt: now,
-          })
-          .where("id = :disbursementScheduleId", { disbursementScheduleId })
-          .andWhere("coeStatus = :required", { required: COEStatus.required })
-          .execute();
-
-        if (updateResult.affected !== 1) {
-          throw new Error(
-            `While updating COE status to '${COEStatus.declined}' the number of affected row was bigger than the expected one. Expected 1 received ${updateResult.affected}`,
-          );
-        }
-
-        // Create a student notification when COE is confirmed.
-        await this.createNotificationForDisbursementUpdate(
-          disbursementScheduleId,
-          auditUserId,
-          transactionalEntityManager,
-        );
-
-        return updateResult;
-      },
-    );
-  }
-
-  /**
    * Get the first disbursement schedule of a disbursement.
    * @param options options to execute the search. If onlyPendingCOE is true,
    * only records with coeStatus defined as 'Required' will be considered.
