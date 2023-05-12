@@ -3,23 +3,8 @@ FROM registry.access.redhat.com/ubi8/nodejs-16:1-5
 
 LABEL maintainer="BC GOV"
 
-# Set the working directory
-WORKDIR /app
-
-# Updating container path variable with node bin
-ENV PATH $PATH:/app/node_modules/.bin
-
-# Create a non-root user
-RUN groupadd -r nonroot && useradd -r -g nonroot nonroot
-
-# Give ownership of the application directory to the non-root user
-RUN chown -R nonroot:nonroot /app
-
-# Switch to the non-root user
-USER nonroot
-
 # Copying package.json and package-lock.json
-COPY package*.json ./app/
+COPY package*.json ./
 
 # Installing dependencies
 RUN npm ci --ignore-scripts
