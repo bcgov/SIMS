@@ -25,6 +25,7 @@ import {
   getAuthRelatedEntities,
   getInstitutionToken,
   InstitutionTokenTypes,
+  INSTITUTION_STUDENT_DATA_ACCESS_ERROR_MESSAGE,
 } from "../../../../testHelpers";
 
 describe("NoteInstitutionsController(e2e)-getStudentNotes", () => {
@@ -95,8 +96,7 @@ describe("NoteInstitutionsController(e2e)-getStudentNotes", () => {
       .expect(HttpStatus.FORBIDDEN)
       .expect({
         statusCode: 403,
-        message:
-          "The institution is not allowed access to the student data of the given student.",
+        message: INSTITUTION_STUDENT_DATA_ACCESS_ERROR_MESSAGE,
         error: "Forbidden",
       });
   });
@@ -116,8 +116,7 @@ describe("NoteInstitutionsController(e2e)-getStudentNotes", () => {
       .expect(HttpStatus.FORBIDDEN)
       .expect({
         statusCode: 403,
-        message:
-          "The institution is not allowed access to the student data of the given student.",
+        message: INSTITUTION_STUDENT_DATA_ACCESS_ERROR_MESSAGE,
         error: "Forbidden",
       });
   });
