@@ -125,22 +125,27 @@ jobs:
       - name: Log in to OpenShift
         run: |
           oc login --token=${{ secrets.SA_TOKEN }} --server=https://api.silver.devops.gov.bc.ca:6443
-          if [ $? -ne 0 ]; then
-            echo "Failed to log in to OpenShift. Please check the credentials and connection details."
-            exit 1
-          fi
-       # Build the images in parallel.
-      - name: Build db-migrations, api, workers, queues and web Images in parallel
+      # Build the images
+      - name: Build db-migrations Image
         working-directory: "./devops"
         run: |
-            make oc-build-db-migrations &
-            make oc-build-api &
-            make oc-build-workers &
-            make oc-build-queue-consumers &
-            make oc-build-web
-      - name: Wait for parallel builds to finish
+          make oc-build-db-migrations
+      - name: Build SIMS-API Image
+        working-directory: "./devops"
         run: |
-          wait
+          make oc-build-api
+      - name: Build Workers Image
+        working-directory: "./devops"
+        run: |
+          make oc-build-workers
+      - name: Build Queue Consumers Image
+        working-directory: "./devops"
+        run: |
+          make oc-build-queue-consumers
+      - name: Build Web/Frontend Image
+        working-directory: "./devops"
+        run: |
+          make oc-build-web
 
   # Deploying all packages
   deployDev:
@@ -196,27 +201,28 @@ jobs:
       - name: Log in to OpenShift
         run: |
           oc login --token=${{ secrets.SA_TOKEN }} --server=https://api.silver.devops.gov.bc.ca:6443
-          if [ $? -ne 0 ]; then
-            echo "Failed to log in to OpenShift. Please check the openshift credentials and connection details."
-            exit 1
-          fi
       # Run db-migrations
       - name: Run db-migrations
         working-directory: "./devops/"
         run: |
           make oc-run-db-migrations
-          if [ $? -ne 0 ]; then
-            echo "Failed to run DB Migrations."
-            exit 1
-          fi
-      # Deploy SIMS-API, Workers, Queues, and Web/Frontend in parallel after db-migrations.
-      - name: Deploy SIMS-API, Workers, Queues, and Web/Frontend in parallel
+      # Deploy SIMS-Api
+      - name: Deploy SIMS-API
         working-directory: "./devops/"
         run: |
-          make oc-deploy-api &
-          make oc-deploy-workers &
-          make oc-deploy-queue-consumers &
-          make oc-deploy-web &
-      - name: Wait for parallel deployments to finish
+          make oc-deploy-api
+      # Deploy Workers
+      - name: Deploy Workers
+        working-directory: "./devops/"
         run: |
-          wait
+          make oc-deploy-workers
+      # Deploy Queue Consumers
+      - name: Deploy Queue Consumers
+        working-directory: "./devops/"
+        run: |
+          make oc-deploy-queue-consumers
+      # Deploy Deploy Web/Frontend
+      - name: Deploy Web/Frontend
+        working-directory: "./devops/"
+        run: |
+          make oc-deploy-web
