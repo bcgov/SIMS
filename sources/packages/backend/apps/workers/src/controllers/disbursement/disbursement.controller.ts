@@ -16,9 +16,11 @@ import {
 } from "./disbursement.dto";
 import { CustomNamedError } from "@sims/utilities";
 import {
+  APPLICATION_INVALID_DATA_TO_CREATE_MSFAA_ERROR,
   ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE,
   ASSESSMENT_NOT_FOUND,
   DISBURSEMENT_SCHEDULES_ALREADY_CREATED,
+  INVALID_OPERATION_IN_THE_CURRENT_STATUS,
   Workers,
 } from "@sims/services/constants";
 import {
@@ -99,6 +101,8 @@ export class DisbursementController {
       if (error instanceof CustomNamedError) {
         switch (error.name) {
           case DISBURSEMENT_NOT_FOUND:
+          case INVALID_OPERATION_IN_THE_CURRENT_STATUS:
+          case APPLICATION_INVALID_DATA_TO_CREATE_MSFAA_ERROR:
             return job.error(error.name, error.message);
           case DISBURSEMENT_MSFAA_ALREADY_ASSOCIATED:
             return job.complete();
