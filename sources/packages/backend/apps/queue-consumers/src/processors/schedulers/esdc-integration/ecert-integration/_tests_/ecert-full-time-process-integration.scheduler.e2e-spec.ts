@@ -17,6 +17,7 @@ import {
   User,
 } from "@sims/sims-db";
 import {
+  MSFAAStates,
   createFakeApplication,
   createFakeDisbursementOveraward,
   createFakeDisbursementSchedule,
@@ -88,7 +89,10 @@ describe(
       await studentRepo.save(savedStudent);
       // MSFAA Number.
       const savedMSFAANumber = await msfaaNumberRepo.save(
-        createFakeMSFAANumber({ student: savedStudent }),
+        createFakeMSFAANumber(
+          { student: savedStudent },
+          { state: MSFAAStates.Signed },
+        ),
       );
       // Create and save application.
       const fakeApplication = createFakeApplication({ student: savedStudent });

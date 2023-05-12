@@ -26,6 +26,7 @@ import {
   DisbursementOverawardService,
   NotificationsModule,
   NoteSharedService,
+  MSFAANumberSharedService,
 } from "@sims/services";
 import { LoggerModule } from "@sims/utilities/logger";
 import { ConfigModule } from "@sims/utilities/config";
@@ -60,6 +61,7 @@ import { SystemUserModule } from "@sims/services/system-users";
     DisbursementScheduleService,
     SequenceControlService,
     MSFAANumberService,
+    MSFAANumberSharedService,
     DisbursementOverawardService,
     NoteSharedService,
   ],
