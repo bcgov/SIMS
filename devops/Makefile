@@ -316,7 +316,7 @@ run-db-migrations:
 	test -n "$(DATABASE_NAME_KEY)"
 	test -n "$(DB_MIGRATIONS)"
 	@echo "+\n++ Deploying DB_MIGRATIONS with tag: $(BUILD_REF)\n+"
-	@oc -n $(NAMESPACE) process -f openshift/db-migrations-deploy.yml \
+	@oc -n $(NAMESPACE) process -f openshift/db-migrations-job.yml \
 		-p NAME=$(DB_MIGRATIONS) \
 		-p DB_SERVICE=$(DB_SERVICE_NAME) \
 		-p BUILD_NAMESPACE=$(BUILD_NAMESPACE) \
