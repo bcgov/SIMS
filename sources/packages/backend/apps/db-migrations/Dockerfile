@@ -9,8 +9,17 @@ WORKDIR /app
 # Updating container path variable with node bin
 ENV PATH $PATH:/app/node_modules/.bin
 
+# Create a non-root user
+RUN groupadd -r nonroot && useradd -r -g nonroot nonroot
+
+# Give ownership of the application directory to the non-root user
+RUN chown -R nonroot:nonroot /app
+
+# Switch to the non-root user
+USER nonroot
+
 # Copying package.json and package-lock.json
-COPY package*.json ./
+COPY package*.json ./app/
 
 # Installing dependencies
 RUN npm ci --ignore-scripts
@@ -23,15 +32,6 @@ COPY env-setup.js ./
 
 # Building app
 RUN npm run build db-migrations
-
-# Create a non-root user
-RUN groupadd -r nonroot && useradd -r -g nonroot nonroot
-
-# Give ownership of the application directory to the non-root user
-RUN chown -R nonroot:nonroot /app
-
-# Switch to the non-root user
-USER nonroot
 
 # Entry point
 CMD [ "npm", "run", "start:prod:db-migrations" ]
