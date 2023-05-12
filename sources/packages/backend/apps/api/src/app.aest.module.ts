@@ -66,6 +66,7 @@ import {
   OverawardControllerService,
   ApplicationExceptionControllerService,
   StudentAppealControllerService,
+  RestrictionControllerService,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
 import {
@@ -144,6 +145,7 @@ import {
     SFASPartTimeApplicationsService,
     StudentRestrictionService,
     RestrictionService,
+    RestrictionControllerService,
     ApplicationExceptionService,
     StudentScholasticStandingsService,
     ScholasticStandingControllerService,

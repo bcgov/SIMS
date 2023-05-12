@@ -60,6 +60,9 @@ import {
   UserControllerService,
   StudentAppealInstitutionsController,
   StudentAppealControllerService,
+  RestrictionInstitutionsController,
+  NoteInstitutionsController,
+  RestrictionControllerService,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
 import {
@@ -96,6 +99,9 @@ import {
     OverawardInstitutionsController,
     ApplicationExceptionInstitutionsController,
     StudentAppealInstitutionsController,
+    RestrictionInstitutionsController,
+    OverawardInstitutionsController,
+    NoteInstitutionsController,
   ],
   providers: [
     ApplicationControllerService,
@@ -115,6 +121,7 @@ import {
     StudentFileService,
     StudentRestrictionService,
     RestrictionService,
+    RestrictionControllerService,
     StudentScholasticStandingsService,
     StudentAssessmentService,
     ScholasticStandingControllerService,

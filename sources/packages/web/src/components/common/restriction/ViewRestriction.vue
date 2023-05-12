@@ -21,7 +21,9 @@
             ><v-col
               ><title-value
                 propertyTitle="Date created"
-                :propertyValue="restrictionData.createdAt" /></v-col
+                :propertyValue="
+                  dateOnlyLongString(restrictionData.createdAt)
+                " /></v-col
             ><v-col
               ><title-value
                 propertyTitle="Created by"
@@ -35,39 +37,41 @@
                 " /></v-col
           ></v-row>
         </content-group>
-        <template
-          v-if="restrictionData.restrictionType !== RestrictionType.Federal"
-        >
+        <template v-if="showResolution">
           <v-divider></v-divider>
           <h3 class="category-header-medium mb-5">Resolution</h3>
-        </template>
-        <v-textarea
-          v-if="allowUserToEdit"
-          label="Resolution reason"
-          v-model="formModel.resolutionNote"
-          variant="outlined"
-          :rules="[(v) => checkResolutionNotesLength(v)]" />
-        <content-group
-          v-if="
-            !restrictionData.isActive &&
-            restrictionData.restrictionType !== RestrictionType.Federal
-          "
-        >
-          <title-value
-            propertyTitle="Resolution reason"
-            :propertyValue="restrictionData.resolutionNote"
+          <v-textarea
+            v-if="allowUserToEdit"
+            label="Resolution reason"
+            v-model="formModel.resolutionNote"
+            variant="outlined"
+            :rules="[(v) => checkResolutionNotesLength(v)]"
           />
-          <v-row
-            ><v-col
-              ><title-value
-                propertyTitle="Date resolved"
-                :propertyValue="restrictionData.updatedAt" /></v-col
-            ><v-col
-              ><title-value
-                propertyTitle="Resolved by"
-                :propertyValue="restrictionData.updatedBy" /></v-col
-          ></v-row> </content-group
-      ></template>
+          <content-group
+            v-if="
+              !restrictionData.isActive &&
+              restrictionData.restrictionType !== RestrictionType.Federal
+            "
+          >
+            <title-value
+              propertyTitle="Resolution reason"
+              :propertyValue="restrictionData.resolutionNote"
+            />
+            <v-row
+              ><v-col
+                ><title-value
+                  propertyTitle="Date resolved"
+                  :propertyValue="
+                    dateOnlyLongString(restrictionData.updatedAt)
+                  " /></v-col
+              ><v-col
+                ><title-value
+                  propertyTitle="Resolved by"
+                  :propertyValue="restrictionData.updatedBy" /></v-col
+            ></v-row>
+          </content-group>
+        </template>
+      </template>
       <template #footer>
         <check-permission-role :role="allowedRole">
           <template #="{ notAllowed }">
@@ -91,7 +95,7 @@
 import { PropType, ref, reactive, computed, defineComponent } from "vue";
 import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
 import ErrorSummary from "@/components/generic/ErrorSummary.vue";
-import { useModalDialog, useValidators } from "@/composables";
+import { useFormatters, useModalDialog, useValidators } from "@/composables";
 import { Role, RestrictionType, VForm, RestrictionStatus } from "@/types";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
 import { RestrictionDetailAPIOutDTO } from "@/services/http/dto";
@@ -115,10 +119,16 @@ export default defineComponent({
       type: String as PropType<Role>,
       required: true,
     },
+    canResolveRestriction: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
   },
   setup(props) {
     const NOTES_MAX_CHARACTERS = 500;
     const { checkMaxCharacters } = useValidators();
+    const { dateOnlyLongString } = useFormatters();
     const { showDialog, showModal, resolvePromise } = useModalDialog<
       RestrictionDetailAPIOutDTO | false
     >();
@@ -153,6 +163,13 @@ export default defineComponent({
     const allowUserToEdit = computed(
       () =>
         props.restrictionData.isActive &&
+        props.restrictionData.restrictionType !== RestrictionType.Federal &&
+        props.canResolveRestriction,
+    );
+
+    const showResolution = computed(
+      () =>
+        props.canResolveRestriction &&
         props.restrictionData.restrictionType !== RestrictionType.Federal,
     );
 
@@ -168,6 +185,8 @@ export default defineComponent({
       RestrictionStatus,
       checkResolutionNotesLength,
       allowUserToEdit,
+      showResolution,
+      dateOnlyLongString,
     };
   },
 });
