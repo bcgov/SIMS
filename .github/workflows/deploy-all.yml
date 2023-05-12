@@ -8,7 +8,7 @@ on:
         required: true
         default: ""
       environment:
-        description: 'Openshift Environment'
+        description: "Environment"
         required: true
         type: environment
       deployCamundaDefinitions:
