@@ -79,12 +79,12 @@ export default defineComponent({
       });
     };
 
-    const backRoute = computed({
+    const backRoute = computed(() => ({
       name: InstitutionRoutesConst.STUDENT_APPLICATIONS,
       params: {
         studentId: props.studentId,
       },
-    });
+    }));
 
     return {
       InstitutionRoutesConst,
