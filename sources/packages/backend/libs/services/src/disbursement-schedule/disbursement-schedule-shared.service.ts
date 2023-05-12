@@ -13,17 +13,41 @@ import {
   DisbursementOverawardOriginType,
   Student,
   configureIdleTransactionSessionTimeout,
+  COEStatus,
+  User,
+  Application,
 } from "@sims/sims-db";
-import { DisbursementSaveModel } from "./disbursement-schedule.models";
-import { CustomNamedError, MIN_CANADA_LOAN_OVERAWARD } from "@sims/utilities";
+import {
+  COEApprovalPeriodStatus,
+  DisbursementSaveModel,
+} from "./disbursement-schedule.models";
+import {
+  COE_WINDOW,
+  CustomNamedError,
+  MIN_CANADA_LOAN_OVERAWARD,
+  addDays,
+  getISODateOnlyString,
+  isBeforeDate,
+  isBetweenPeriod,
+} from "@sims/utilities";
 import {
   ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE,
   ASSESSMENT_NOT_FOUND,
+  DISBURSEMENT_DOCUMENT_NUMBER_SEQUENCE_GROUP,
   DISBURSEMENT_SCHEDULES_ALREADY_CREATED,
+  ENROLMENT_ALREADY_COMPLETED,
+  ENROLMENT_CONFIRMATION_DATE_NOT_WITHIN_APPROVAL_PERIOD,
+  ENROLMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE,
+  ENROLMENT_NOT_FOUND,
+  FIRST_COE_NOT_COMPLETE,
   GRANTS_TYPES,
+  INVALID_TUITION_REMITTANCE_AMOUNT,
   LOAN_TYPES,
 } from "../constants";
 import { SystemUsersService } from "@sims/services/system-users";
+import { ConfirmationOfEnrollmentService } from "../confirmation-of-enrollment/confirmation-of-enrollment.service";
+import { SequenceControlService } from "../sequence-control/sequence-control.service";
+import { NotificationActionsService } from "../notifications";
 
 // Timeout to handle the worst-case scenario where the commit/rollback
 // was not executed due to a possible catastrophic failure.
@@ -69,6 +93,9 @@ export class DisbursementScheduleSharedService extends RecordDataModelService<Di
   constructor(
     private readonly dataSource: DataSource,
     private readonly systemUsersService: SystemUsersService,
+    private readonly confirmationOfEnrollmentService: ConfirmationOfEnrollmentService,
+    private readonly sequenceService: SequenceControlService,
+    private readonly notificationActionsService: NotificationActionsService,
   ) {
     super(dataSource.getRepository(DisbursementSchedule));
   }
@@ -697,5 +724,396 @@ export class DisbursementScheduleSharedService extends RecordDataModelService<Di
       })
       .getRawOne<{ sum?: number }>();
     return +(total?.sum ?? 0);
+  }
+
+  /**
+   * Summary of disbursement and application for Approval/Denial of COE.
+   * @param disbursementScheduleId disbursement schedule id of COE.
+   * @param locationId location id.
+   * @returns disbursement and application summary.
+   */
+  async getDisbursementAndApplicationSummary(
+    disbursementScheduleId: number,
+    locationId?: number,
+  ): Promise<DisbursementSchedule> {
+    const disbursementAndApplicationQuery = this.repo
+      .createQueryBuilder("disbursementSchedule")
+      .select([
+        "disbursementSchedule.id",
+        "disbursementSchedule.disbursementDate",
+        "disbursementSchedule.coeStatus",
+        "application.id",
+        "application.applicationStatus",
+        "application.applicationNumber",
+        "studentAssessment.id",
+        "studentAssessment.assessmentWorkflowId",
+        "currentAssessment.id",
+        "offering.actualTuitionCosts",
+        "offering.programRelatedCosts",
+        "offering.studyEndDate",
+        "disbursementValues.valueType",
+        "disbursementValues.valueCode",
+        "disbursementValues.valueAmount",
+      ])
+      .innerJoin("disbursementSchedule.studentAssessment", "studentAssessment")
+      .innerJoin(
+        "disbursementSchedule.disbursementValues",
+        "disbursementValues",
+      )
+      .innerJoin("studentAssessment.application", "application")
+      .innerJoin("application.currentAssessment", "currentAssessment")
+      .innerJoin("currentAssessment.offering", "offering")
+      .innerJoin("offering.institutionLocation", "location")
+      .where("disbursementSchedule.id = :disbursementScheduleId", {
+        disbursementScheduleId,
+      });
+
+    if (locationId) {
+      disbursementAndApplicationQuery.andWhere("location.id = :locationId", {
+        locationId,
+      });
+    }
+    return disbursementAndApplicationQuery.getOne();
+  }
+
+  /**
+   * Get COE approval period status which defines
+   * if the COE can be confirmed by institution on current date.
+   * @param disbursementDate disbursement date.
+   * @param studyEndDate study end date of the offering.
+   * @param enrolmentConfirmationDate date of confirmation of enrolment.
+   * @returns COE approval period status.
+   */
+  getCOEApprovalPeriodStatus(
+    disbursementDate: string | Date,
+    studyEndDate: string | Date,
+    enrolmentConfirmationDate?: string | Date,
+  ): COEApprovalPeriodStatus {
+    if (!disbursementDate || !studyEndDate) {
+      throw new Error(
+        "disbursementDate and studyEndDate are required for COE window verification.",
+      );
+    }
+    // Enrolment period start date(COE_WINDOW days before disbursement date).
+    const enrolmentPeriodStart = addDays(-COE_WINDOW, disbursementDate);
+    //Current date as date only string.
+    const coeConfirmationDate = getISODateOnlyString(
+      enrolmentConfirmationDate ?? new Date(),
+    );
+    // Enrolment period end date is study period end date.
+    // Is the enrolment now within eligible approval period.
+    if (
+      isBetweenPeriod(coeConfirmationDate, {
+        startDate: enrolmentPeriodStart,
+        endDate: studyEndDate,
+      })
+    ) {
+      return COEApprovalPeriodStatus.WithinApprovalPeriod;
+    }
+    // Is the enrolment now before the eligible approval period.
+    if (isBeforeDate(coeConfirmationDate, enrolmentPeriodStart)) {
+      return COEApprovalPeriodStatus.BeforeApprovalPeriod;
+    }
+
+    return COEApprovalPeriodStatus.AfterApprovalPeriod;
+  }
+
+  /**
+   * Get the first disbursement schedule of a disbursement.
+   * @param options options to execute the search. If onlyPendingCOE is true,
+   * only records with coeStatus defined as 'Required' will be considered.
+   * @returns first disbursement schedule, if any.
+   */
+  async getFirstDisbursementScheduleByApplication(
+    applicationId: number,
+    onlyPendingCOE?: boolean,
+  ): Promise<DisbursementSchedule> {
+    const query = this.repo
+      .createQueryBuilder("disbursementSchedule")
+      .select([
+        "disbursementSchedule.id",
+        "disbursementSchedule.coeStatus",
+        "disbursementSchedule.coeDeniedOtherDesc",
+        "coeDeniedReason.id",
+        "coeDeniedReason.reason",
+        "studentAssessment.id",
+        "application.id",
+        "application.applicationStatus",
+      ])
+      .innerJoin("disbursementSchedule.studentAssessment", "studentAssessment")
+      .innerJoin("studentAssessment.application", "application")
+      .innerJoin("application.currentAssessment", "currentAssessment")
+      .leftJoin("disbursementSchedule.coeDeniedReason", "coeDeniedReason")
+      .where("studentAssessment.id = currentAssessment.id")
+      .andWhere("application.applicationStatus IN (:...status)", {
+        status: [ApplicationStatus.Enrolment, ApplicationStatus.Completed],
+      })
+      .andWhere("application.id = :applicationId", {
+        applicationId: applicationId,
+      });
+
+    if (onlyPendingCOE) {
+      query.andWhere("disbursementSchedule.coeStatus = :required", {
+        required: COEStatus.required,
+      });
+    }
+
+    query.orderBy("disbursementSchedule.disbursementDate").limit(1);
+    return query.getOne();
+  }
+
+  /**
+   * On COE Approval, update disbursement schedule with document number and
+   * COE related columns. Update the Application status to completed, if it is first COE.
+   * The update to Application and Disbursement schedule happens in single transaction.
+   * @param disbursementScheduleId disbursement schedule Id.
+   * @param userId User updating the confirmation of enrollment.
+   * @param applicationId application Id.
+   * @param applicationStatus application status of the disbursed application.
+   * @param tuitionRemittanceRequestedAmount tuition remittance amount requested by the institution.
+   */
+  async updateDisbursementAndApplicationCOEApproval(
+    disbursementScheduleId: number,
+    userId: number,
+    applicationId: number,
+    applicationStatus: ApplicationStatus,
+    tuitionRemittanceRequestedAmount: number,
+  ): Promise<void> {
+    const documentNumber = await this.getNextDocumentNumber();
+    const auditUser = { id: userId } as User;
+    const now = new Date();
+
+    await this.dataSource.transaction(async (transactionalEntityManager) => {
+      await transactionalEntityManager
+        .getRepository(DisbursementSchedule)
+        .createQueryBuilder()
+        .update(DisbursementSchedule)
+        .set({
+          documentNumber: documentNumber,
+          coeStatus: COEStatus.completed,
+          coeUpdatedBy: auditUser,
+          coeUpdatedAt: now,
+          modifier: auditUser,
+          updatedAt: now,
+          tuitionRemittanceRequestedAmount: tuitionRemittanceRequestedAmount,
+        })
+        .where("id = :disbursementScheduleId", { disbursementScheduleId })
+        .execute();
+
+      if (applicationStatus === ApplicationStatus.Enrolment) {
+        await transactionalEntityManager
+          .getRepository(Application)
+          .createQueryBuilder()
+          .update(Application)
+          .set({
+            applicationStatus: ApplicationStatus.Completed,
+            modifier: auditUser,
+            updatedAt: now,
+          })
+          .where("id = :applicationId", { applicationId })
+          .execute();
+      }
+      // Create a student notification when COE is confirmed.
+      await this.createNotificationForDisbursementUpdate(
+        disbursementScheduleId,
+        userId,
+        transactionalEntityManager,
+      );
+    });
+  }
+
+  /**
+   * Create institution confirm COE notification to notify student
+   * when institution confirms a COE to their application.
+   * @param disbursementScheduleId updated disbursement schedule.
+   * @param auditUserId user who creates notification.
+   * @param transactionalEntityManager entity manager to execute in transaction.
+   */
+  async createNotificationForDisbursementUpdate(
+    disbursementScheduleId: number,
+    auditUserId: number,
+    transactionalEntityManager: EntityManager,
+  ): Promise<void> {
+    const disbursement = await transactionalEntityManager
+      .getRepository(DisbursementSchedule)
+      .findOne({
+        select: {
+          id: true,
+          studentAssessment: {
+            id: true,
+            application: {
+              id: true,
+              student: {
+                id: true,
+                user: {
+                  id: true,
+                  firstName: true,
+                  lastName: true,
+                  email: true,
+                },
+              },
+            },
+          },
+        },
+        relations: {
+          studentAssessment: { application: { student: { user: true } } },
+        },
+        where: { id: disbursementScheduleId },
+      });
+
+    const studentUser = disbursement.studentAssessment.application.student.user;
+    await this.notificationActionsService.saveInstitutionCompletesCOENotification(
+      {
+        givenNames: studentUser.firstName,
+        lastName: studentUser.lastName,
+        toAddress: studentUser.email,
+        userId: studentUser.id,
+      },
+      auditUserId,
+      transactionalEntityManager,
+    );
+  }
+
+  /**
+   * Approve confirmation of enrollment(COE).
+   * An application can have up to two COEs based on the disbursement schedule,
+   * hence the COE approval happens twice for application with more than once disbursement.
+   * Irrespective of number of COEs to be approved, application status is set to complete
+   * on first COE approval.
+   * @param disbursementScheduleId disbursement schedule id of COE.
+   * @param auditUserId user who confirms enrollment.
+   * @param payload COE confirmation information.
+   * @param options Confirm COE options.
+   */
+  async confirmEnrollment(
+    disbursementScheduleId: number,
+    auditUserId: number,
+    tuitionRemittance: number,
+    options?: {
+      locationId?: number;
+      allowOutsideCOEApprovalPeriod?: boolean;
+      enrolmentConfirmationDate?: string | Date;
+    },
+  ): Promise<void> {
+    // Get the disbursement and application summary for COE.
+    const disbursementSchedule =
+      await this.getDisbursementAndApplicationSummary(
+        disbursementScheduleId,
+        options?.locationId,
+      );
+
+    if (!disbursementSchedule) {
+      throw new CustomNamedError("Enrolment not found.", ENROLMENT_NOT_FOUND);
+    }
+
+    if (disbursementSchedule.coeStatus !== COEStatus.required) {
+      throw new CustomNamedError(
+        "Enrolment already completed and can neither be confirmed nor declined",
+        ENROLMENT_ALREADY_COMPLETED,
+      );
+    }
+
+    if (
+      ![ApplicationStatus.Enrolment, ApplicationStatus.Completed].includes(
+        disbursementSchedule.studentAssessment.application.applicationStatus,
+      )
+    ) {
+      throw new CustomNamedError(
+        "Enrolment cannot be confirmed as application is not in a valid status for this operation.",
+        ENROLMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE,
+      );
+    }
+    if (!options?.allowOutsideCOEApprovalPeriod) {
+      const approvalPeriodStatus = this.getCOEApprovalPeriodStatus(
+        disbursementSchedule.disbursementDate,
+        disbursementSchedule.studentAssessment.application.currentAssessment
+          .offering.studyEndDate,
+        options.enrolmentConfirmationDate,
+      );
+      if (
+        approvalPeriodStatus !== COEApprovalPeriodStatus.WithinApprovalPeriod
+      ) {
+        throw new CustomNamedError(
+          "The enrolment cannot be confirmed as enrolment confirmation date is not within the valid approval period.",
+          ENROLMENT_CONFIRMATION_DATE_NOT_WITHIN_APPROVAL_PERIOD,
+        );
+      }
+    }
+
+    const firstOutstandingDisbursement =
+      await this.getFirstDisbursementScheduleByApplication(
+        disbursementSchedule.studentAssessment.application.id,
+        true,
+      );
+
+    if (disbursementSchedule.id !== firstOutstandingDisbursement.id) {
+      throw new CustomNamedError(
+        "First disbursement(COE) not complete. Please complete the first disbursement.",
+        FIRST_COE_NOT_COMPLETE,
+      );
+    }
+
+    // If no tuition remittance is set then, it is defaulted to 0.
+    // This happens when ministry confirms COE.
+    const tuitionRemittanceAmount = tuitionRemittance ?? 0;
+
+    // Validate tuition remittance amount.
+    await this.validateTuitionRemittance(
+      tuitionRemittanceAmount,
+      disbursementSchedule,
+    );
+
+    await this.updateDisbursementAndApplicationCOEApproval(
+      disbursementScheduleId,
+      auditUserId,
+      disbursementSchedule.studentAssessment.application.id,
+      disbursementSchedule.studentAssessment.application.applicationStatus,
+      tuitionRemittanceAmount,
+    );
+  }
+
+  /**
+   * Validate Institution Users to request tuition remittance at the time
+   * of confirming enrolment, not to exceed the lesser than both
+   * (Actual tuition + Program related costs) and (Canada grants + Canada Loan + BC Loan).
+   * @param tuitionRemittanceAmount tuition remittance submitted by institution.
+   * @param disbursementSchedule disbursement schedule.
+   * @throws UnprocessableEntityException.
+   */
+  private async validateTuitionRemittance(
+    tuitionRemittanceAmount: number,
+    disbursementSchedule: DisbursementSchedule,
+  ): Promise<void> {
+    // If the tuition remittance amount is set to 0, then skip validation.
+    if (!tuitionRemittanceAmount) {
+      return;
+    }
+
+    const maxTuitionAllowed =
+      await this.confirmationOfEnrollmentService.getEstimatedMaxTuitionRemittance(
+        disbursementSchedule.id,
+      );
+
+    if (tuitionRemittanceAmount > maxTuitionAllowed) {
+      throw new CustomNamedError(
+        "Tuition amount provided should be lesser than both (Actual tuition + Program related costs) and (Canada grants + Canada Loan + BC Loan).",
+        INVALID_TUITION_REMITTANCE_AMOUNT,
+      );
+    }
+  }
+
+  /**
+   * Generates the next document number to be associated
+   * with a disbursement.
+   */
+  private async getNextDocumentNumber(): Promise<number> {
+    let nextDocumentNumber: number;
+    await this.sequenceService.consumeNextSequence(
+      DISBURSEMENT_DOCUMENT_NUMBER_SEQUENCE_GROUP,
+      async (nextSequenceNumber) => {
+        nextDocumentNumber = nextSequenceNumber;
+      },
+    );
+    return nextDocumentNumber;
   }
 }

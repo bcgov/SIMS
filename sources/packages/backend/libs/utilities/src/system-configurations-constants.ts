@@ -24,3 +24,7 @@ export const MIN_CANADA_LOAN_OVERAWARD = 250;
  * Default lifetime of ORM cache in milliseconds.
  */
 export const ORM_CACHE_LIFETIME = 10 * 60 * 1000;
+/**
+ * Minimum number of days from COE approval date to the disbursement date.
+ */
+export const COE_WINDOW = 21;

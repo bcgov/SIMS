@@ -5,10 +5,6 @@ import {
 } from "@nestjs/common";
 import { ConfirmationOfEnrollmentService } from "@sims/services";
 import { DisbursementSchedule } from "@sims/sims-db";
-import {
-  FIRST_COE_NOT_COMPLETE,
-  INVALID_TUITION_REMITTANCE_AMOUNT,
-} from "../../constants";
 import { DisbursementScheduleService } from "../../services";
 import { COEApprovalPeriodStatus } from "../../services/disbursement-schedule/disbursement-schedule.models";
 import { ApiProcessError } from "../../types";
@@ -82,7 +78,7 @@ export class ConfirmationOfEnrollmentControllerService extends BaseController {
       throw new UnprocessableEntityException(
         new ApiProcessError(
           "First disbursement(COE) not complete. Please complete the first disbursement.",
-          FIRST_COE_NOT_COMPLETE,
+          "FIRST_COE_NOT_COMPLETE",
         ),
       );
     }
@@ -132,7 +128,7 @@ export class ConfirmationOfEnrollmentControllerService extends BaseController {
       throw new UnprocessableEntityException(
         new ApiProcessError(
           "Tuition amount provided should be lesser than both (Actual tuition + Program related costs) and (Canada grants + Canada Loan + BC Loan).",
-          INVALID_TUITION_REMITTANCE_AMOUNT,
+          "INVALID_TUITION_REMITTANCE_AMOUNT",
         ),
       );
     }

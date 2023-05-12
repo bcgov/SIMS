@@ -24,13 +24,16 @@ import {
 import { DisbursementSchedule } from "@sims/sims-db";
 import { getUserFullName } from "../../utilities/auth-utils";
 import {
-  COE_WINDOW,
   getCOEDeniedReason,
   COE_DENIED_REASON_OTHER_ID,
   credentialTypeToDisplay,
   deliveryMethod,
 } from "../../utilities";
-import { getDateOnlyFormat, getISODateOnlyString } from "@sims/utilities";
+import {
+  COE_WINDOW,
+  getDateOnlyFormat,
+  getISODateOnlyString,
+} from "@sims/utilities";
 import {
   ApplicationDetailsForCOEAPIOutDTO,
   DenyConfirmationOfEnrollmentAPIInDTO,

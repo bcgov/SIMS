@@ -1,6 +1,5 @@
 import { Injectable } from "@nestjs/common";
 import {
-  COE_WINDOW,
   COE_DENIED_REASON_OTHER_ID,
   PaginationOptions,
   PaginatedResults,
@@ -12,6 +11,7 @@ import {
   isBetweenPeriod,
   isBeforeDate,
   FieldSortOrder,
+  COE_WINDOW,
 } from "@sims/utilities";
 import { DataSource, UpdateResult, Brackets, EntityManager } from "typeorm";
 import { SequenceControlService } from "@sims/services";
