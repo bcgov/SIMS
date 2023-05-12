@@ -18,5 +18,8 @@ COPY env-setup.js ./
 # Building app
 RUN npm run build db-migrations
 
+# Set the non-root user
+USER node
+
 # Entry point
 CMD [ "npm", "run", "start:prod:db-migrations" ]
