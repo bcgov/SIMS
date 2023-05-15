@@ -2,6 +2,7 @@ name: Build and Deploy to OpenShift/Camunda - DEV
 
 on:
   pull_request:
+    types: [opened, reopened, synchronize, closed]
     branches:
       - Segregate_DB_Migrations_Deployment
   workflow_dispatch:
