@@ -1,23 +1,29 @@
 import {
+  ConfirmationOfEnrollmentService,
+  DisbursementScheduleSharedService,
   NotificationActionsService,
   SequenceControlService,
+  SystemUsersService,
 } from "@sims/services";
-import { DisbursementScheduleService } from "../../disbursement-schedule-service";
 import { DataSource } from "typeorm";
-import { addDays } from "@sims/utilities";
-import { COE_WINDOW } from "../../../../utilities";
+import { COE_WINDOW, addDays } from "@sims/utilities";
 import { COEApprovalPeriodStatus } from "../../disbursement-schedule.models";
 
 describe("DisbursementScheduleService-getCOEApprovalPeriodStatus", () => {
-  let service: DisbursementScheduleService;
+  let service: DisbursementScheduleSharedService;
 
   beforeAll(async () => {
     const dataSource = {} as DataSource;
     dataSource.getRepository = jest.fn();
     const sequenceService = {} as SequenceControlService;
     const notificationActionsService = {} as NotificationActionsService;
-    service = new DisbursementScheduleService(
+    const confirmationOfEnrollmentService =
+      {} as ConfirmationOfEnrollmentService;
+    const systemUsersService = {} as SystemUsersService;
+    service = new DisbursementScheduleSharedService(
       dataSource,
+      systemUsersService,
+      confirmationOfEnrollmentService,
       sequenceService,
       notificationActionsService,
     );

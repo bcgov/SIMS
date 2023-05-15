@@ -1141,6 +1141,15 @@ export class DisbursementScheduleSharedService extends RecordDataModelService<Di
     );
   }
 
+  /**
+   * Decline the enrolment of an application.
+   * @param disbursementScheduleId disbursement schedule id.
+   * @param auditUserId user who confirms enrollment.
+   * @param declineReason reason for declining the enrolment.
+   * @param options decline enrolment options.
+   * - `locationId` location id of the application.
+   * - `applicationNumber` application number of the enrolment.
+   */
   async declineEnrolment(
     disbursementScheduleId: number,
     auditUserId: number,

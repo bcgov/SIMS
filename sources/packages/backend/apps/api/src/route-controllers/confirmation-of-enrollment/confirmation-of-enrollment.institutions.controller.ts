@@ -207,7 +207,7 @@ export class ConfirmationOfEnrollmentInstitutionsController extends BaseControll
       applicationCOEStatus: disbursementSchedule.coeStatus,
       applicationId: disbursementSchedule.studentAssessment.application.id,
       coeApprovalPeriodStatus:
-        this.disbursementScheduleService.getCOEApprovalPeriodStatus(
+        this.disbursementScheduleSharedService.getCOEApprovalPeriodStatus(
           disbursementSchedule.disbursementDate,
           offering.studyEndDate,
         ),
