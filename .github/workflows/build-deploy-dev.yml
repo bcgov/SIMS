@@ -126,14 +126,32 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - run: echo "created release ${{ needs.createTag.outputs.newTag }} ${{ steps.createNewRelease.outputs.html_url }}!"
 
-  # Build and run DB migrations.    
+# Common steps for checkout the target branch and login to OpenShift.
+  checkout-and-login:
+    runs-on: ubuntu-latest
+    needs: createTag
+    steps:
+      - name: Print env
+        run: |
+          echo BUILD NAMESPACE: $BUILD_NAMESPACE
+          echo BRANCH: ${{ needs.createTag.outputs.newTag }}
+      - name: Checkout Target Branch
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ needs.createTag.outputs.newTag }}
+      - name: Log in to OpenShift
+        run: |
+          oc login --token=${{ secrets.SA_TOKEN }} --server=https://api.silver.devops.gov.bc.ca:6443
+
+
+  # Build and run DB migrations.
   build-run-db-migrations:
     name: Run db-migrations
     runs-on: ubuntu-latest
     needs: createTag
     if: github.event.pull_request.merged == true || github.event_name == 'workflow_dispatch'
     steps:
-      - name: Run Checkout and Login
+      - name: Use Checkout and Login
         uses: ./.github/workflows/checkout-and-login.yml
 
       - name: Build db-migrations Image
@@ -148,7 +166,7 @@ jobs:
 
   # Build and deploy SIMS API.
   build-deploy-sims-api:
-    name: Deploy SIMS-API
+    name: Build and Deploy SIMS-API
     runs-on: ubuntu-latest
     needs: build-run-db-migrations
     if: github.event.pull_request.merged == true || github.event_name == 'workflow_dispatch'
@@ -168,7 +186,7 @@ jobs:
 
   # Build and deploy workers.
   build-deploy-workers:
-    name: Deploy Workers
+    name: Build and Deploy Workers
     runs-on: ubuntu-latest
     needs: build-run-db-migrations
     if: github.event.pull_request.merged == true || github.event_name == 'workflow_dispatch'
@@ -188,7 +206,7 @@ jobs:
 
   # Build and deploy queue consumers.
   build-deploy-queue-consumers:
-    name: Deploy Queue Consumers
+    name: Build and Deploy Queue Consumers
     runs-on: ubuntu-latest
     needs: build-run-db-migrations
     if: github.event.pull_request.merged == true || github.event_name == 'workflow_dispatch'
@@ -208,7 +226,7 @@ jobs:
 
   # Build and Web/Frontend.
   build-deploy-web-frontend:
-    name: Deploy Web/Frontend
+    name: Build and Deploy Web/Frontend
     runs-on: ubuntu-latest
     needs: build-run-db-migrations
     if: github.event.pull_request.merged == true || github.event_name == 'workflow_dispatch'
