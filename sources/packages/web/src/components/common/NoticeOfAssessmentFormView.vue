@@ -41,15 +41,25 @@ interface NoticeOfAssessment extends AssessmentNOAAPIOutDTO {
   canReissueMSFAA: boolean;
 }
 
+enum MSFAAStatus {
+  Pending = "pending",
+  Signed = "signed",
+  Cancelled = "cancelled",
+}
+
 export interface NOADisbursementSchedule {
-  disbursement1Status: string;
-  disbursement1MSFAACancelledDate: string;
+  disbursement1Status: DisbursementScheduleStatus;
+  disbursement1MSFAADateSigned: Date;
+  disbursement1MSFAACancelledDate: Date;
   disbursement1MSFAACancelledDateFormatted: string;
   disbursement1MSFAAStatusClass: string;
-  disbursement2Status: string;
-  disbursement2MSFAACancelledDate: string;
+  disbursement1MSFAAStatus: MSFAAStatus;
+  disbursement2Status: DisbursementScheduleStatus;
+  disbursement2MSFAADateSigned: Date;
+  disbursement2MSFAACancelledDate: Date;
   disbursement2MSFAACancelledDateFormatted: string;
   disbursement2MSFAAStatusClass: string;
+  disbursement2MSFAAStatus: MSFAAStatus;
 }
 
 const MSFAA_SUCCESS_CLASS = "fa fa-check-circle text-success";
@@ -88,8 +98,20 @@ export default defineComponent({
     const initialData = ref({} as NoticeOfAssessment);
     const msfaaReissueProcessing = ref(false);
 
-    const getMSFAAStatusClass = (isMSFAACancelled: boolean): string => {
-      return isMSFAACancelled ? MSFAA_CANCELED_CLASS : MSFAA_SUCCESS_CLASS;
+    const getMSFAAStatus = (
+      signedDate?: Date,
+      cancelledDate?: Date,
+    ): MSFAAStatus => {
+      if (cancelledDate) {
+        return MSFAAStatus.Cancelled;
+      }
+      return signedDate ? MSFAAStatus.Signed : MSFAAStatus.Pending;
+    };
+
+    const getMSFAAStatusClass = (msfaaStatus: MSFAAStatus): string => {
+      return msfaaStatus === MSFAAStatus.Cancelled
+        ? MSFAA_CANCELED_CLASS
+        : MSFAA_SUCCESS_CLASS;
     };
 
     const loadNOA = async () => {
@@ -101,23 +123,29 @@ export default defineComponent({
         assessment.disbursement as NOADisbursementSchedule;
       // Adjust disbursement schedules
       // First disbursement.
+      const firstMSFAAStatus = getMSFAAStatus(
+        noaDisbursementSchedule.disbursement1MSFAADateSigned,
+        noaDisbursementSchedule.disbursement1MSFAACancelledDate,
+      );
+      noaDisbursementSchedule.disbursement1MSFAAStatus = firstMSFAAStatus;
       noaDisbursementSchedule.disbursement1MSFAACancelledDateFormatted =
         dateOnlyLongString(
           noaDisbursementSchedule.disbursement1MSFAACancelledDate,
         );
       noaDisbursementSchedule.disbursement1MSFAAStatusClass =
-        getMSFAAStatusClass(
-          !!noaDisbursementSchedule.disbursement1MSFAACancelledDate,
-        );
+        getMSFAAStatusClass(firstMSFAAStatus);
       // Second disbursement.
+      const secondMSFAAStatus = getMSFAAStatus(
+        noaDisbursementSchedule.disbursement2MSFAADateSigned,
+        noaDisbursementSchedule.disbursement2MSFAACancelledDate,
+      );
+      noaDisbursementSchedule.disbursement2MSFAAStatus = secondMSFAAStatus;
       noaDisbursementSchedule.disbursement2MSFAACancelledDateFormatted =
         dateOnlyLongString(
           noaDisbursementSchedule.disbursement2MSFAACancelledDate,
         );
       noaDisbursementSchedule.disbursement2MSFAAStatusClass =
-        getMSFAAStatusClass(
-          !!noaDisbursementSchedule.disbursement2MSFAACancelledDate,
-        );
+        getMSFAAStatusClass(secondMSFAAStatus);
       // Checks if the component allows the MSFAA reissue and if there is
       // one pending disbursement with a cancelled MSFAA.
       const canReissueMSFAA =
@@ -132,6 +160,7 @@ export default defineComponent({
         ...assessment,
         canReissueMSFAA,
       };
+      console.log(assessment);
       emit(
         "assessmentDataLoaded",
         initialData.value.applicationStatus,
