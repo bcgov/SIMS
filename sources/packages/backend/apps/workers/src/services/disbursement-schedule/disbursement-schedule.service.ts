@@ -13,12 +13,15 @@ import {
   DISBURSEMENT_MSFAA_ALREADY_ASSOCIATED,
   DISBURSEMENT_NOT_FOUND,
 } from "../../constants";
+import { MSFAANumberSharedService, SystemUsersService } from "@sims/services";
 
 @Injectable()
 export class DisbursementScheduleService extends RecordDataModelService<DisbursementSchedule> {
   constructor(
     dataSource: DataSource,
     private readonly msfaaNumberService: MSFAANumberService,
+    private readonly msfaaNumberSharedService: MSFAANumberSharedService,
+    private readonly systemUsersService: SystemUsersService,
   ) {
     super(dataSource.getRepository(DisbursementSchedule));
   }
@@ -74,6 +77,7 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
     const offeringIntensity =
       firstDisbursement.studentAssessment.offering.offeringIntensity;
     const applicationId = firstDisbursement.studentAssessment.application.id;
+    const systemUser = await this.systemUsersService.systemUser();
 
     // Checks if there is an MSFAA that could be considered valid.
     const existingValidMSFAANumber =
@@ -113,20 +117,21 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
         msfaaNumberId = previousSignedDisbursement.msfaaNumber.id;
       } else {
         // Create a new MSFAA number in case the previous one is no longer valid.
-        const newMSFAANumber = await this.msfaaNumberService.createMSFAANumber(
-          studentId,
-          applicationId,
-          offeringIntensity,
-        );
+        const newMSFAANumber =
+          await this.msfaaNumberSharedService.createMSFAANumber(
+            applicationId,
+            systemUser.id,
+          );
         msfaaNumberId = newMSFAANumber.id;
       }
     }
     const msfaaNumber = { id: msfaaNumberId } as MSFAANumber;
 
     // Associate all the disbursements of the given assessment with MSFAA.
-    disbursements.forEach(
-      (disbursement) => (disbursement.msfaaNumber = msfaaNumber),
-    );
+    disbursements.forEach((disbursement) => {
+      disbursement.msfaaNumber = msfaaNumber;
+      disbursement.modifier = systemUser;
+    });
     await this.repo.save(disbursements);
   }
 

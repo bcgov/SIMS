@@ -10,17 +10,22 @@ export class StudentAppealControllerService {
   /**
    * Get the student appeal and its requests.
    * @param appealId appeal id to be retrieved.
-   * @param studentId student id.
+   * @param options options
+   * - `studentId` student id.
+   * - `assessDetails`, if true, will return access details.
    * @returns the student appeal and its requests.
    */
-  async getStudentAppealWithRequest(
+  async getStudentAppealWithRequest<T>(
     appealId: number,
-    studentId?: number,
-  ): Promise<StudentAppealAPIOutDTO> {
+    options?: {
+      studentId?: number;
+      assessDetails?: boolean;
+    },
+  ): Promise<StudentAppealAPIOutDTO<T>> {
     const studentAppeal =
       await this.studentAppealService.getAppealAndRequestsById(
         appealId,
-        studentId,
+        options?.studentId,
       );
     if (!studentAppeal) {
       throw new NotFoundException("Not able to find the student appeal.");
@@ -30,15 +35,24 @@ export class StudentAppealControllerService {
       id: studentAppeal.id,
       submittedDate: studentAppeal.submittedDate,
       status: studentAppeal.status,
-      appealRequests: studentAppeal.appealRequests.map((appealRequest) => ({
-        id: appealRequest.id,
-        appealStatus: appealRequest.appealStatus,
-        submittedData: appealRequest.submittedData,
-        submittedFormName: appealRequest.submittedFormName,
-        assessedDate: appealRequest.assessedDate,
-        noteDescription: appealRequest.note?.description,
-        assessedByUserName: getUserFullName(appealRequest.assessedBy),
-      })),
+      appealRequests: studentAppeal.appealRequests.map((appealRequest) => {
+        let request = {
+          id: appealRequest.id,
+          appealStatus: appealRequest.appealStatus,
+          submittedData: appealRequest.submittedData,
+          submittedFormName: appealRequest.submittedFormName,
+        } as T;
+
+        if (options?.assessDetails) {
+          request = {
+            ...request,
+            assessedDate: appealRequest.assessedDate,
+            noteDescription: appealRequest.note?.description,
+            assessedByUserName: getUserFullName(appealRequest.assessedBy),
+          } as T;
+        }
+        return request;
+      }),
     };
   }
 }

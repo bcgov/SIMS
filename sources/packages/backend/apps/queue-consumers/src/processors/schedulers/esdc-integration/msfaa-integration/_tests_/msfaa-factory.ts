@@ -66,11 +66,6 @@ export async function saveMSFAATestInputData(
     referenceApplication,
   });
   newMSFAANumber.msfaaNumber = msfaaDataInput.msfaaNumber;
-  newMSFAANumber.dateRequested = null;
-  newMSFAANumber.dateSigned = null;
-  newMSFAANumber.serviceProviderReceivedDate = null;
-  newMSFAANumber.cancelledDate = null;
-  newMSFAANumber.newIssuingProvince = null;
   return db.msfaaNumber.save(newMSFAANumber);
 }
 

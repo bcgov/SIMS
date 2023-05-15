@@ -66,6 +66,7 @@ import {
   OverawardControllerService,
   ApplicationExceptionControllerService,
   StudentAppealControllerService,
+  RestrictionControllerService,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
 import {
@@ -82,6 +83,7 @@ import {
   ConfirmationOfEnrollmentService,
   NoteSharedService,
   RestrictionSharedService,
+  MSFAANumberSharedService,
 } from "@sims/services";
 
 @Module({
@@ -109,6 +111,8 @@ import {
     OverawardAESTController,
   ],
   providers: [
+    ApplicationExceptionControllerService,
+    StudentAppealControllerService,
     WorkflowClientService,
     InstitutionRestrictionService,
     SupportingUserService,
@@ -141,6 +145,7 @@ import {
     SFASPartTimeApplicationsService,
     StudentRestrictionService,
     RestrictionService,
+    RestrictionControllerService,
     ApplicationExceptionService,
     StudentScholasticStandingsService,
     ScholasticStandingControllerService,
@@ -162,8 +167,7 @@ import {
     NoteSharedService,
     OverawardControllerService,
     RestrictionSharedService,
-    ApplicationExceptionControllerService,
-    StudentAppealControllerService,
+    MSFAANumberSharedService,
   ],
 })
 export class AppAESTModule {}

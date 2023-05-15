@@ -34,6 +34,7 @@ import { StudentAppealService } from "@/services/StudentAppealService";
 import { StudentAppealRequest, StudentAppealStatus } from "@/types";
 import AppealRequestsApprovalForm from "@/components/aest/AppealRequestsApprovalForm.vue";
 import StatusChipRequestedAssessment from "@/components/generic/StatusChipRequestedAssessment.vue";
+import { StudentAppealRequestAPIOutDTO } from "@/services/http/dto/StudentAppeal.dto";
 
 export default defineComponent({
   components: {
@@ -56,7 +57,7 @@ export default defineComponent({
 
     onMounted(async () => {
       const appeal =
-        await StudentAppealService.shared.getStudentAppealWithRequests(
+        await StudentAppealService.shared.getStudentAppealWithRequests<StudentAppealRequestAPIOutDTO>(
           props.appealId,
         );
       studentAppealRequests.value =

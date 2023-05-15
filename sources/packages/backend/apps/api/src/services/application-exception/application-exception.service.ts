@@ -76,6 +76,7 @@ export class ApplicationExceptionService extends RecordDataModelService<Applicat
    * Get a student application exception detected after the student application was
    * submitted, for instance, when there are documents to be reviewed.
    * @param applicationId application associated with the exception.
+   * @param studentId student id.
    * @param status statuses to be filtered.
    * @param studentId student id.
    * @returns student application exception information.

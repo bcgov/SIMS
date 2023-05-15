@@ -18,6 +18,7 @@ import {
 import {
   StudentAppealAPIInDTO,
   StudentAppealAPIOutDTO,
+  StudentAppealRequestAPIOutDTO,
 } from "./models/student-appeal.dto";
 import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
@@ -44,6 +45,7 @@ import {
   INVALID_APPLICATION_NUMBER,
 } from "../../constants";
 import { StudentAppealRequestModel } from "../../services/student-appeal/student-appeal.model";
+import { StudentAppealControllerService } from "./student-appeal.controller.service";
 
 @AllowAuthorizedParty(AuthorizedParties.student)
 @RequiresStudentAccount()
@@ -54,6 +56,7 @@ export class StudentAppealStudentsController extends BaseController {
     private readonly studentAppealService: StudentAppealService,
     private readonly applicationService: ApplicationService,
     private readonly formService: FormService,
+    private readonly studentAppealControllerService: StudentAppealControllerService,
   ) {
     super();
   }
@@ -165,26 +168,10 @@ export class StudentAppealStudentsController extends BaseController {
   async getStudentAppealWithRequests(
     @Param("appealId", ParseIntPipe) appealId: number,
     @UserToken() userToken: StudentUserToken,
-  ): Promise<StudentAppealAPIOutDTO> {
-    const studentAppeal =
-      await this.studentAppealService.getAppealAndRequestsById(
-        appealId,
-        userToken.studentId,
-      );
-    if (!studentAppeal) {
-      throw new NotFoundException("Not able to find the student appeal.");
-    }
-
-    return {
-      id: studentAppeal.id,
-      submittedDate: studentAppeal.submittedDate,
-      status: studentAppeal.status,
-      appealRequests: studentAppeal.appealRequests.map((appealRequest) => ({
-        id: appealRequest.id,
-        appealStatus: appealRequest.appealStatus,
-        submittedData: appealRequest.submittedData,
-        submittedFormName: appealRequest.submittedFormName,
-      })),
-    };
+  ): Promise<StudentAppealAPIOutDTO<StudentAppealRequestAPIOutDTO>> {
+    return this.studentAppealControllerService.getStudentAppealWithRequest<StudentAppealRequestAPIOutDTO>(
+      appealId,
+      { studentId: userToken.studentId },
+    );
   }
 }

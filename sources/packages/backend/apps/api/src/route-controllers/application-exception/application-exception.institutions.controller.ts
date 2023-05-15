@@ -1,5 +1,9 @@
 import { Controller, Get, Param, ParseIntPipe } from "@nestjs/common";
-import { AllowAuthorizedParty } from "../../auth/decorators";
+import {
+  AllowAuthorizedParty,
+  IsBCPublicInstitution,
+  HasStudentDataAccess,
+} from "../../auth/decorators";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { ClientTypeBaseRoute } from "../../types";
 import { ApiNotFoundResponse, ApiTags } from "@nestjs/swagger";
@@ -12,6 +16,8 @@ import { ApplicationExceptionControllerService } from "./application-exception.c
  */
 @AllowAuthorizedParty(AuthorizedParties.institution)
 @Controller("application-exception")
+@IsBCPublicInstitution()
+@HasStudentDataAccess("studentId")
 @ApiTags(`${ClientTypeBaseRoute.Institution}-application-exception`)
 export class ApplicationExceptionInstitutionsController extends BaseController {
   constructor(

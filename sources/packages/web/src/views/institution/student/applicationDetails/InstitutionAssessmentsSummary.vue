@@ -3,10 +3,7 @@
     <template #header>
       <header-navigator
         title="Student applications"
-        :routeLocation="{
-          name: InstitutionRoutesConst.STUDENT_APPLICATIONS,
-          params: { studentId },
-        }"
+        :routeLocation="backRoute"
         subTitle="Assessment"
       />
     </template>
@@ -29,6 +26,7 @@
       @viewScholasticStandingChange="goToScholasticStanding"
     /> -->
     <request-assessment
+      class="mb-5"
       :applicationId="applicationId"
       :studentId="studentId"
       @viewStudentAppeal="goToStudentAppeal"
@@ -47,7 +45,7 @@
 <script lang="ts">
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import { useRouter } from "vue-router";
-import { defineComponent } from "vue";
+import { defineComponent, computed } from "vue";
 import { AssessmentTriggerType } from "@/types";
 import RequestAssessment from "@/components/aest/students/assessment/Request.vue";
 import HistoryAssessment from "@/components/aest/students/assessment/History.vue";
@@ -68,7 +66,6 @@ export default defineComponent({
     },
   },
   setup(props) {
-    // todo: check with jason if we need all form and view assessment for all types.
     const router = useRouter();
     // The assessment trigger types for which the request form must be visible by default.
     const assessmentRequestTypes = [
@@ -130,6 +127,12 @@ export default defineComponent({
     //     },
     //   });
     // };
+    const backRoute = computed(() => ({
+      name: InstitutionRoutesConst.STUDENT_APPLICATIONS,
+      params: {
+        studentId: props.studentId,
+      },
+    }));
 
     return {
       InstitutionRoutesConst,
@@ -139,6 +142,7 @@ export default defineComponent({
       // goToScholasticStanding,
       // goToOfferingRequest,
       assessmentRequestTypes,
+      backRoute,
     };
   },
 });

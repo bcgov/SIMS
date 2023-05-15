@@ -45,7 +45,6 @@ export default defineComponent({
         studentId: props.studentId,
       },
     };
-    // todo: ann check snackbar
     const submitted = async (approvals: StudentAppealApproval[]) => {
       try {
         await StudentAppealService.shared.approveStudentAppealRequests(
