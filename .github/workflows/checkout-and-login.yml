@@ -1,0 +1,26 @@
+# checkout-and-login.yml
+name: Common Steps for checkout the target branch and login to openshift
+
+on:
+  workflow_dispatch:
+
+env:
+  BUILD_NAMESPACE: 0c27fb-tools
+  BUILD_REF: ${{ needs.createTag.outputs.newTag }}
+  HOST_PREFIX: ${{ secrets.HOST_PREFIX }}
+
+jobs:
+  common:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print env
+        run: |
+          echo BUILD NAMESPACE: $BUILD_NAMESPACE
+          echo BRANCH: $BUILD_REF
+      - name: Checkout Target Branch
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ BUILD_REF }}
+      - name: Log in to OpenShift
+        run: |
+          oc login --token=${{ secrets.SA_TOKEN }} --server=https://api.silver.devops.gov.bc.ca:6443
