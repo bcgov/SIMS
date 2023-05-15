@@ -1,8 +1,8 @@
 import { Controller, Get, Param, ParseIntPipe } from "@nestjs/common";
-import { 
+import {
   AllowAuthorizedParty,
   IsBCPublicInstitution,
-  HasStudentDataAccess, 
+  HasStudentDataAccess,
 } from "../../auth/decorators";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { ClientTypeBaseRoute } from "../../types";

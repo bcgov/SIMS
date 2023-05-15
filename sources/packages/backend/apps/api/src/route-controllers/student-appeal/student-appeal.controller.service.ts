@@ -1,7 +1,5 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
-import {
-  StudentAppealAPIOutDTO,
-} from "./models/student-appeal.dto";
+import { StudentAppealAPIOutDTO } from "./models/student-appeal.dto";
 import { getUserFullName } from "../../utilities";
 import { StudentAppealService } from "../../services";
 
@@ -20,7 +18,7 @@ export class StudentAppealControllerService {
   async getStudentAppealWithRequest<T>(
     appealId: number,
     options?: {
-      studentId?: number,
+      studentId?: number;
       assessDetails?: boolean;
     },
   ): Promise<StudentAppealAPIOutDTO<T>> {
