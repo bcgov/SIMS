@@ -1,0 +1,23 @@
+name: Checkout and Login
+
+on:
+  workflow_run:
+    workflows: [Build and Deploy to OpenShift/Camunda - DEV]
+    types:
+      - completed
+
+jobs:
+  checkout-and-login:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print env
+        run: |
+          echo BUILD NAMESPACE: $BUILD_NAMESPACE
+          echo BRANCH: $BUILD_REF
+      - name: Checkout Target Branch
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.workflow_run.conclusion == 'success' && needs.createTag.outputs.newTag }}
+      - name: Log in to OpenShift
+        run: |
+          oc login --token=${{ secrets.SA_TOKEN }} --server=https://api.silver.devops.gov.bc.ca:6443
