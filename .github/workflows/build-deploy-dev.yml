@@ -4,7 +4,7 @@ on:
   pull_request:
     types: [opened, reopened, synchronize, closed]
     branches:
-      - main
+      - Segregate_DB_Migrations_Deployment
   workflow_dispatch:
     inputs:
       bumb:
@@ -130,13 +130,14 @@ jobs:
   checkout-and-login:
     name: Checkout and Login
     runs-on: ubuntu-latest
+    needs: createTag
     steps:
       - name: Print env
         run: |
           echo BUILD NAMESPACE: $BUILD_NAMESPACE
           echo BRANCH: $BUILD_REF
       - name: Checkout Target Branch
-        uses: ./.github/actions/checkout@v3
+        uses: actions/checkout@v3
         with:
           ref: ${{ needs.createTag.outputs.newTag }}
       - name: Log in to OpenShift
