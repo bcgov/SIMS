@@ -32,7 +32,6 @@
     </template>
     <notice-of-assessment-form-view
       :assessmentId="assessmentId"
-      :view-only="viewOnly"
       @assessmentDataLoaded="assessmentDataLoaded"
     />
 
@@ -105,6 +104,7 @@ export default defineComponent({
         });
       }
     };
+
     return {
       confirmAssessment,
       StudentRoutesConst,

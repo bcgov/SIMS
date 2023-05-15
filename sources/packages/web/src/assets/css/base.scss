@@ -16,6 +16,10 @@ html * {
   font-weight: $font-weight-bold;
 }
 
+strong {
+  @extend .font-bold;
+}
+
 .bold-text {
   @extend .font-bold;
   font-style: $font-style-normal;
