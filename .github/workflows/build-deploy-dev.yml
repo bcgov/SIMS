@@ -124,6 +124,25 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - run: echo "created release ${{ needs.createTag.outputs.newTag }} ${{ steps.createNewRelease.outputs.html_url }}!"
+  
+  # Reusable step: Checkout target branch and login to OpenShift.
+  checkout-and-login:
+    name: Checkout and Login
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print env
+        run: |
+          echo BUILD NAMESPACE: $BUILD_NAMESPACE
+          echo BRANCH: $BUILD_REF
+      - name: Checkout Target Branch
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ needs.createTag.outputs.newTag }}
+      - name: Log in to OpenShift
+        run: |
+          oc login --token=${{ secrets.SA_TOKEN }} --server=https://api.silver.devops.gov.bc.ca:6443
+
+
 
   # Build and run DB migrations.    
   build-run-db-migrations:
