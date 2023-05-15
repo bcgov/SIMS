@@ -1,12 +1,12 @@
 import ApiClient from "@/services/http/ApiClient";
 import { PaginationOptions, StudentAppealRequest } from "@/types";
 import {
+  PaginatedResultsAPIOutDTO,
   StudentAppealAPIOutDTO,
   StudentAppealPendingSummaryAPIOutDTO,
   StudentAppealRequestAPIInDTO,
   StudentAppealRequestApprovalAPIInDTO,
-} from "@/services/http/dto/StudentAppeal.dto";
-import { PaginatedResultsAPIOutDTO } from "./http/dto";
+} from "./http/dto";
 
 /**
  * Client service layer for Student Appeal.
@@ -35,10 +35,20 @@ export class StudentAppealService {
     });
   }
 
-  async getStudentAppealWithRequests(
+  /**
+   * Get student application appeal.
+   * @param appealId appeal id.
+   * @param studentId student id.
+   * @returns student application appeal.
+   */
+  async getStudentAppealWithRequests<T>(
     appealId: number,
-  ): Promise<StudentAppealAPIOutDTO> {
-    return ApiClient.StudentAppealApi.getStudentAppealWithRequests(appealId);
+    studentId?: number,
+  ): Promise<StudentAppealAPIOutDTO<T>> {
+    return ApiClient.StudentAppealApi.getStudentAppealWithRequests<T>(
+      appealId,
+      studentId,
+    );
   }
 
   async approveStudentAppealRequests(

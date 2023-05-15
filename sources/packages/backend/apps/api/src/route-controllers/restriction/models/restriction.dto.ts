@@ -18,12 +18,30 @@ export class RestrictionBaseAPIOutDTO {
 }
 
 /**
+ * DTO class for institution restriction summary.
+ */
+export class RestrictionInstitutionSummaryAPIOutDTO extends RestrictionBaseAPIOutDTO {
+  createdAt: Date;
+  isActive: boolean;
+}
+
+/**
  * DTO class for student/institution restriction summary.
  */
 export class RestrictionSummaryAPIOutDTO extends RestrictionBaseAPIOutDTO {
   createdAt: Date;
   updatedAt: Date;
   isActive: boolean;
+}
+
+/**
+ * DTO class for institution restriction details.
+ */
+export class RestrictionInstitutionDetailAPIOutDTO extends RestrictionBaseAPIOutDTO {
+  createdAt: Date;
+  createdBy: string;
+  isActive: boolean;
+  restrictionNote: string;
 }
 
 /**

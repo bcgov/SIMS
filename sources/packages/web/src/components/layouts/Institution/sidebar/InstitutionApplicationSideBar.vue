@@ -42,6 +42,19 @@ export default defineComponent({
           },
         },
       },
+      {
+        title: "Assessments",
+        props: {
+          prependIcon: "mdi-checkbox-marked-outline",
+          to: {
+            name: InstitutionRoutesConst.ASSESSMENTS_SUMMARY,
+            params: {
+              applicationId: props.applicationId,
+              studentId: props.studentId,
+            },
+          },
+        },
+      },
     ]);
     return {
       items,

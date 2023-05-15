@@ -74,8 +74,10 @@ export class MSFAANumberSharedService {
     const application = await this.getApplicationForMSFAACreation(
       referenceApplicationId,
     );
-    const pendingDisbursement =
-      application.currentAssessment.disbursementSchedules.find(
+    // If multiple disbursements are pending they must be associated with the same
+    // MSFAA hence selecting the first one should be enough for the validations.
+    const [pendingDisbursement] =
+      application.currentAssessment.disbursementSchedules.filter(
         (schedule) =>
           schedule.disbursementScheduleStatus ===
           DisbursementScheduleStatus.Pending,

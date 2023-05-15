@@ -46,6 +46,7 @@ import {
 import { Role } from "../../auth/roles.enum";
 import { OptionItemAPIOutDTO } from "../models/common.dto";
 import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
+import { RestrictionControllerService } from "./restriction.controller.service";
 
 /**
  * Controller for AEST Restrictions.
@@ -57,6 +58,7 @@ import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
 @ApiTags(`${ClientTypeBaseRoute.AEST}-restriction`)
 export class RestrictionAESTController extends BaseController {
   constructor(
+    private readonly restrictionControllerService: RestrictionControllerService,
     private readonly studentRestrictionService: StudentRestrictionService,
     private readonly restrictionService: RestrictionService,
     private readonly institutionRestrictionService: InstitutionRestrictionService,
@@ -74,20 +76,9 @@ export class RestrictionAESTController extends BaseController {
   async getStudentRestrictions(
     @Param("studentId", ParseIntPipe) studentId: number,
   ): Promise<RestrictionSummaryAPIOutDTO[]> {
-    const studentRestrictions =
-      await this.studentRestrictionService.getStudentRestrictionsById(
-        studentId,
-      );
-    return studentRestrictions?.map((studentRestriction) => ({
-      restrictionId: studentRestriction.id,
-      restrictionType: studentRestriction.restriction.restrictionType,
-      restrictionCategory: studentRestriction.restriction.restrictionCategory,
-      restrictionCode: studentRestriction.restriction.restrictionCode,
-      description: studentRestriction.restriction.description,
-      createdAt: studentRestriction.createdAt,
-      updatedAt: studentRestriction.updatedAt,
-      isActive: studentRestriction.isActive,
-    }));
+    return this.restrictionControllerService.getStudentRestrictions(studentId, {
+      extendedDetails: true,
+    });
   }
 
   /**
@@ -132,33 +123,18 @@ export class RestrictionAESTController extends BaseController {
   @ApiNotFoundResponse({
     description: "The student restriction does not exist.",
   })
-  @Get("student/:studentId/studentRestriction/:studentRestrictionId")
+  @Get("student/:studentId/student-restriction/:studentRestrictionId")
   async getStudentRestrictionDetail(
     @Param("studentId", ParseIntPipe) studentId: number,
     @Param("studentRestrictionId", ParseIntPipe) studentRestrictionId: number,
   ): Promise<RestrictionDetailAPIOutDTO> {
-    const studentRestriction =
-      await this.studentRestrictionService.getStudentRestrictionDetailsById(
-        studentId,
-        studentRestrictionId,
-      );
-    if (!studentRestriction) {
-      throw new NotFoundException("The student restriction does not exist.");
-    }
-    return {
-      restrictionId: studentRestriction.id,
-      restrictionType: studentRestriction.restriction.restrictionType,
-      restrictionCategory: studentRestriction.restriction.restrictionCategory,
-      restrictionCode: studentRestriction.restriction.restrictionCode,
-      description: studentRestriction.restriction.description,
-      createdAt: studentRestriction.createdAt,
-      updatedAt: studentRestriction.updatedAt,
-      createdBy: getUserFullName(studentRestriction.creator),
-      updatedBy: getUserFullName(studentRestriction.modifier),
-      isActive: studentRestriction.isActive,
-      restrictionNote: studentRestriction.restrictionNote?.description,
-      resolutionNote: studentRestriction.resolutionNote?.description,
-    };
+    return this.restrictionControllerService.getStudentRestrictionDetail(
+      studentId,
+      studentRestrictionId,
+      {
+        extendedDetails: true,
+      },
+    );
   }
 
   /**

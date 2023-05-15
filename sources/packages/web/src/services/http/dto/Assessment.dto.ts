@@ -42,6 +42,7 @@ export interface AssessmentHistorySummaryAPIOutDTO {
 
 export interface AssessmentNOAAPIOutDTO {
   assessment: Assessment;
+  applicationId: number;
   applicationNumber: string;
   fullName: string;
   programName: string;
