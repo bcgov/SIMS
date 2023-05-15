@@ -75,6 +75,7 @@ jobs:
     name: "Create tag"
     if:  github.event.pull_request.merged == true || github.event_name == 'workflow_dispatch' 
     runs-on: ubuntu-latest
+    needs: checkEnv
     steps:
       - name: Get bumb value
         uses: haya14busa/action-cond@v1
@@ -135,7 +136,7 @@ jobs:
           echo BUILD NAMESPACE: $BUILD_NAMESPACE
           echo BRANCH: $BUILD_REF
       - name: Checkout Target Branch
-        uses: actions/checkout@v3
+        uses: ./.github/actions/checkout@v3
         with:
           ref: ${{ needs.createTag.outputs.newTag }}
       - name: Log in to OpenShift
