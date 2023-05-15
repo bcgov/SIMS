@@ -149,7 +149,7 @@ jobs:
   build-deploy-sims-api:
     name: Deploy SIMS-API
     runs-on: ubuntu-latest
-    needs: run-db-migrations
+    needs: build-run-db-migrations
     if: github.event.pull_request.merged == true || github.event_name == 'workflow_dispatch'
     steps:
       - name: Run Checkout and Login
@@ -169,7 +169,7 @@ jobs:
   build-deploy-workers:
     name: Deploy Workers
     runs-on: ubuntu-latest
-    needs: run-db-migrations
+    needs: build-run-db-migrations
     if: github.event.pull_request.merged == true || github.event_name == 'workflow_dispatch'
     steps:
       - name: Run Checkout and Login
@@ -189,7 +189,7 @@ jobs:
   build-deploy-queue-consumers:
     name: Deploy Queue Consumers
     runs-on: ubuntu-latest
-    needs: run-db-migrations
+    needs: build-run-db-migrations
     if: github.event.pull_request.merged == true || github.event_name == 'workflow_dispatch'
     steps:
       - name: Run Checkout and Login
@@ -209,7 +209,7 @@ jobs:
   build-deploy-web-frontend:
     name: Deploy Web/Frontend
     runs-on: ubuntu-latest
-    needs: run-db-migrations
+    needs: build-run-db-migrations
     if: github.event.pull_request.merged == true || github.event_name == 'workflow_dispatch'
     steps:
       - name: Run Checkout and Login
