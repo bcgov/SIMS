@@ -20,13 +20,13 @@
             <Column
               field="submittedDate"
               header="Submitted date"
-              sortable="true"
+              :sortable="true"
               ><template #body="slotProps">{{
                 dateOnlyLongString(slotProps.data.submittedDate)
               }}</template></Column
             >
-            <Column field="requestType" header="Type" sortable="true"></Column>
-            <Column header="Request form" sortable="false"
+            <Column field="requestType" header="Type" :sortable="true"></Column>
+            <Column header="Request form" :sortable="false"
               ><template #body="{ data }"
                 ><v-btn
                   @click="viewRequestForm(data)"
@@ -39,7 +39,7 @@
                 ></template
               ></Column
             >
-            <Column field="status" header="Status" sortable="true">
+            <Column field="status" header="Status" :sortable="true">
               <template #body="slotProps"
                 ><status-chip-requested-assessment
                   :status="slotProps.data.status" /></template
@@ -80,6 +80,10 @@ export default defineComponent({
       required: false,
       default: true,
     },
+    studentId: {
+      type: Number,
+      required: false,
+    },
   },
   setup(props, context) {
     const { dateOnlyLongString } = useFormatters();
@@ -89,6 +93,7 @@ export default defineComponent({
       requestedAssessment.value =
         await StudentAssessmentsService.shared.getAssessmentRequest(
           props.applicationId,
+          props.studentId,
         );
     });
 

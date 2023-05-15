@@ -44,6 +44,7 @@ import {
 } from "../models/pagination.dto";
 import { Role } from "../../auth/roles.enum";
 import { WorkflowClientService } from "@sims/services";
+import { ApplicationExceptionControllerService } from "./application-exception.controller.service";
 
 @AllowAuthorizedParty(AuthorizedParties.aest)
 @Groups(UserGroups.AESTUser)
@@ -53,6 +54,7 @@ export class ApplicationExceptionAESTController extends BaseController {
   constructor(
     private readonly applicationExceptionService: ApplicationExceptionService,
     private readonly workflowClientService: WorkflowClientService,
+    private readonly applicationExceptionControllerService: ApplicationExceptionControllerService,
   ) {
     super();
   }
@@ -70,23 +72,9 @@ export class ApplicationExceptionAESTController extends BaseController {
   async getExceptionById(
     @Param("exceptionId", ParseIntPipe) exceptionId: number,
   ): Promise<ApplicationExceptionAPIOutDTO> {
-    const applicationException =
-      await this.applicationExceptionService.getExceptionById(exceptionId);
-    if (!applicationException) {
-      throw new NotFoundException("Student application exception not found.");
-    }
-    return {
-      exceptionStatus: applicationException.exceptionStatus,
-      submittedDate: applicationException.createdAt,
-      noteDescription: applicationException.exceptionNote?.description,
-      assessedByUserName: getUserFullName(applicationException.assessedBy),
-      assessedDate: applicationException.assessedDate,
-      exceptionRequests: applicationException.exceptionRequests.map(
-        (request) => ({
-          exceptionName: request.exceptionName,
-        }),
-      ),
-    };
+    return this.applicationExceptionControllerService.getExceptionDetails(
+      exceptionId,
+    );
   }
 
   /**

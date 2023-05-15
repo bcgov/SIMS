@@ -30,6 +30,7 @@ import BaseController from "../BaseController";
 import { ApiProcessError, ClientTypeBaseRoute } from "../../types";
 import { UserGroups } from "../../auth/user-groups.enum";
 import {
+  DetailedStudentAppealRequestAPIOutDTO,
   StudentAppealAPIOutDTO,
   StudentAppealApprovalAPIInDTO,
   StudentAppealPendingSummaryAPIOutDTO,
@@ -47,6 +48,7 @@ import {
   StudentAppealPendingPaginationOptionsAPIInDTO,
 } from "../models/pagination.dto";
 import { Role } from "../../auth/roles.enum";
+import { StudentAppealControllerService } from "./student-appeal.controller.service";
 
 @AllowAuthorizedParty(AuthorizedParties.aest)
 @Groups(UserGroups.AESTUser)
@@ -56,6 +58,7 @@ export class StudentAppealAESTController extends BaseController {
   constructor(
     private readonly studentAppealService: StudentAppealService,
     private readonly studentAssessmentService: StudentAssessmentService,
+    private readonly studentAppealControllerService: StudentAppealControllerService,
   ) {
     super();
   }
@@ -71,27 +74,11 @@ export class StudentAppealAESTController extends BaseController {
   })
   async getStudentAppealWithRequests(
     @Param("appealId", ParseIntPipe) appealId: number,
-  ): Promise<StudentAppealAPIOutDTO> {
-    const studentAppeal =
-      await this.studentAppealService.getAppealAndRequestsById(appealId);
-    if (!studentAppeal) {
-      throw new NotFoundException("Not able to find the student appeal.");
-    }
-
-    return {
-      id: studentAppeal.id,
-      submittedDate: studentAppeal.submittedDate,
-      status: studentAppeal.status,
-      appealRequests: studentAppeal.appealRequests.map((appealRequest) => ({
-        id: appealRequest.id,
-        appealStatus: appealRequest.appealStatus,
-        submittedData: appealRequest.submittedData,
-        submittedFormName: appealRequest.submittedFormName,
-        assessedDate: appealRequest.assessedDate,
-        noteDescription: appealRequest.note?.description,
-        assessedByUserName: getUserFullName(appealRequest.assessedBy),
-      })),
-    };
+  ): Promise<StudentAppealAPIOutDTO<DetailedStudentAppealRequestAPIOutDTO>> {
+    return this.studentAppealControllerService.getStudentAppealWithRequest<DetailedStudentAppealRequestAPIOutDTO>(
+      appealId,
+      { assessDetails: true },
+    );
   }
 
   /**

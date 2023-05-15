@@ -3,6 +3,7 @@ import {
   COEStatus,
   DisbursementReceipt,
   AssessmentTriggerType,
+  ApplicationExceptionStatus,
 } from "@sims/sims-db";
 import {
   Injectable,
@@ -14,6 +15,8 @@ import {
   DisbursementReceiptService,
   StudentAppealService,
   StudentScholasticStandingsService,
+  EducationProgramOfferingService,
+  ApplicationExceptionService,
 } from "../../services";
 import {
   AssessmentNOAAPIOutDTO,
@@ -33,6 +36,8 @@ export class AssessmentControllerService {
     private readonly disbursementReceiptService: DisbursementReceiptService,
     private readonly studentAppealService: StudentAppealService,
     private readonly studentScholasticStandingsService: StudentScholasticStandingsService,
+    private readonly educationProgramOfferingService: EducationProgramOfferingService,
+    private readonly applicationExceptionService: ApplicationExceptionService,
   ) {}
 
   /**
@@ -239,7 +244,7 @@ export class AssessmentControllerService {
    * Get history of approved assessment requests and
    * unsuccessful scholastic standing change requests(which will not create new assessment)
    * for an application.
-   * @param applicationId, application number.
+   * @param applicationId, application id.
    * @param studentId applicant student.
    * @returns summary of the assessment history for a student application.
    */
@@ -251,6 +256,7 @@ export class AssessmentControllerService {
       this.assessmentService.assessmentHistorySummary(applicationId, studentId),
       this.studentScholasticStandingsService.getUnsuccessfulScholasticStandings(
         applicationId,
+        studentId,
       ),
     ]);
     const history: AssessmentHistorySummaryAPIOutDTO[] = assessments.map(
@@ -281,5 +287,57 @@ export class AssessmentControllerService {
     }
 
     return history;
+  }
+
+  /**
+   * Get all pending and declined requests related to an application which would result
+   * a new assessment when that request is approved.
+   * @param applicationId application id.
+   * @param studentId student id.
+   * @returns assessment requests or exceptions for the student application.
+   */
+  async requestedStudentAssessmentSummary(
+    applicationId: number,
+    studentId?: number,
+  ): Promise<RequestAssessmentSummaryAPIOutDTO[]> {
+    const requestAssessmentSummary: RequestAssessmentSummaryAPIOutDTO[] = [];
+    const offeringChange =
+      await this.educationProgramOfferingService.getOfferingRequestsByApplicationId(
+        applicationId,
+        studentId,
+      );
+    if (offeringChange) {
+      requestAssessmentSummary.push({
+        id: offeringChange.id,
+        submittedDate: offeringChange.submittedDate,
+        status: offeringChange.offeringStatus,
+        requestType: RequestAssessmentTypeAPIOutDTO.OfferingRequest,
+        programId: offeringChange.educationProgram.id,
+      });
+    }
+    const applicationExceptions =
+      await this.applicationExceptionService.getExceptionsByApplicationId(
+        applicationId,
+        studentId,
+        ApplicationExceptionStatus.Pending,
+        ApplicationExceptionStatus.Declined,
+      );
+    // When a pending or denied application exception exist then no other request can exist
+    // for the given application.
+    if (applicationExceptions.length > 0) {
+      const applicationExceptionArray: RequestAssessmentSummaryAPIOutDTO[] =
+        applicationExceptions.map((applicationException) => ({
+          id: applicationException.id,
+          submittedDate: applicationException.createdAt,
+          status: applicationException.exceptionStatus,
+          requestType: RequestAssessmentTypeAPIOutDTO.StudentException,
+        }));
+      return requestAssessmentSummary.concat(applicationExceptionArray);
+    }
+    const appeals = await this.getPendingAndDeniedAppeals(
+      applicationId,
+      studentId,
+    );
+    return requestAssessmentSummary.concat(appeals);
   }
 }

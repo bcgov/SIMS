@@ -23,6 +23,10 @@ import {
   StudentService,
   EducationProgramOfferingImportCSVService,
   EducationProgramOfferingValidationService,
+  DisbursementReceiptService,
+  StudentAppealService,
+  ApplicationExceptionService,
+  StudentAppealRequestsService,
 } from "./services";
 import {
   ApplicationControllerService,
@@ -46,8 +50,17 @@ import {
   StudentInstitutionsController,
   OverawardInstitutionsController,
   StudentControllerService,
-  RestrictionInstitutionsController,
+  AssessmentInstitutionsController,
+  AssessmentControllerService,
   OverawardControllerService,
+  ApplicationExceptionInstitutionsController,
+  ApplicationExceptionControllerService,
+  UserInstitutionsController,
+  ApplicationInstitutionsController,
+  UserControllerService,
+  StudentAppealInstitutionsController,
+  StudentAppealControllerService,
+  RestrictionInstitutionsController,
   NoteInstitutionsController,
   RestrictionControllerService,
 } from "./route-controllers";
@@ -66,9 +79,6 @@ import {
   SFASApplicationService,
   SFASPartTimeApplicationsService,
 } from "@sims/services/sfas";
-import { UserInstitutionsController } from "./route-controllers/user/user.institutions.controller";
-import { UserControllerService } from "./route-controllers/user/user.controller.service";
-import { ApplicationInstitutionsController } from "./route-controllers/application/application.institutions.controller";
 
 @Module({
   imports: [AuthModule],
@@ -85,6 +95,10 @@ import { ApplicationInstitutionsController } from "./route-controllers/applicati
     EducationProgramOfferingInstitutionsController,
     UserInstitutionsController,
     StudentInstitutionsController,
+    AssessmentInstitutionsController,
+    OverawardInstitutionsController,
+    ApplicationExceptionInstitutionsController,
+    StudentAppealInstitutionsController,
     RestrictionInstitutionsController,
     OverawardInstitutionsController,
     NoteInstitutionsController,
@@ -136,7 +150,14 @@ import { ApplicationInstitutionsController } from "./route-controllers/applicati
     NoteSharedService,
     StudentControllerService,
     RestrictionSharedService,
+    AssessmentControllerService,
+    DisbursementReceiptService,
+    StudentAppealService,
+    ApplicationExceptionService,
+    StudentAppealRequestsService,
     OverawardControllerService,
+    ApplicationExceptionControllerService,
+    StudentAppealControllerService,
   ],
 })
 export class AppInstitutionsModule {}
