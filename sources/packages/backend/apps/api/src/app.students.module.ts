@@ -52,6 +52,8 @@ import {
   WorkflowClientService,
   NoteSharedService,
   RestrictionSharedService,
+  DisbursementScheduleSharedService,
+  ConfirmationOfEnrollmentService,
 } from "@sims/services";
 import {
   SFASIndividualService,
@@ -114,6 +116,8 @@ import { ATBCIntegrationModule } from "@sims/integrations/atbc-integration";
     NoteSharedService,
     OverawardControllerService,
     StudentAppealControllerService,
+    DisbursementScheduleSharedService,
+    ConfirmationOfEnrollmentService,
   ],
 })
 export class AppStudentsModule {}
