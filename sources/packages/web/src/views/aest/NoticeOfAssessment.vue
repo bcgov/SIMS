@@ -55,7 +55,7 @@ export default defineComponent({
         await ApplicationService.shared.reissueMSFAA(applicationId);
         snackBar.success("MSFAA was reissued successfully.");
         await reloadNOA();
-      } catch (error: unknown) {
+      } catch {
         snackBar.error("Error while reissuing the MSFAA.");
       } finally {
         processing(false);
