@@ -45,6 +45,7 @@ export default defineComponent({
         studentId: props.studentId,
       },
     };
+
     const submitted = async (approvals: StudentAppealApproval[]) => {
       try {
         await StudentAppealService.shared.approveStudentAppealRequests(

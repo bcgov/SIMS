@@ -101,6 +101,7 @@ export default defineComponent({
         appealStatus.value !== StudentAppealStatus.Pending ||
         props.readOnlyForm,
     );
+
     onMounted(async () => {
       const appeal =
         await StudentAppealService.shared.getStudentAppealWithRequests<DetailedStudentAppealRequestAPIOutDTO>(
@@ -122,9 +123,11 @@ export default defineComponent({
       }));
       appealStatus.value = appeal.status;
     });
+
     const gotToAssessmentsSummary = () => {
       router.push(props.backRouteLocation);
     };
+
     return {
       gotToAssessmentsSummary,
       studentAppealRequests,
