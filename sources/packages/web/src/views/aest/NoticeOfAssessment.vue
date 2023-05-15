@@ -11,7 +11,7 @@
       />
     </template>
     <notice-of-assessment-form-view
-      :assessmentId="assessmentId"
+      :assessment-id="assessmentId"
       :can-reissue-m-s-f-a-a="true"
       @reissue-m-s-f-a-a="reissueMSFAA"
     />

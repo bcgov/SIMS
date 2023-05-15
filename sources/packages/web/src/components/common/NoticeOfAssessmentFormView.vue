@@ -141,7 +141,7 @@ export default defineComponent({
         );
       const noaDisbursementSchedule =
         assessment.disbursement as NOADisbursementSchedule;
-      // Adjust disbursement schedules
+      // Adjust disbursement schedules.
       // First disbursement.
       const firstMSFAAStatus = getMSFAAStatus(
         noaDisbursementSchedule.disbursement1MSFAADateSigned,

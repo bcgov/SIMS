@@ -66,7 +66,6 @@ export default defineComponent({
     },
     loading: {
       type: Boolean,
-      required: false,
       default: false,
     },
   },
