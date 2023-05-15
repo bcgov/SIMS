@@ -47,6 +47,11 @@ enum MSFAAStatus {
   Cancelled = "cancelled",
 }
 
+/**
+ * Dynamic data that must be inspected to render the
+ * individual MSFAA statuses and appended properties
+ * to be consumed by the form.io definition.
+ */
 export interface NOADisbursementSchedule {
   disbursement1Status: DisbursementScheduleStatus;
   disbursement1MSFAADateSigned: Date;
@@ -62,8 +67,14 @@ export interface NOADisbursementSchedule {
   disbursement2MSFAAStatus: MSFAAStatus;
 }
 
-const MSFAA_SUCCESS_CLASS = "fa fa-check-circle text-success";
-const MSFAA_CANCELED_CLASS = "fa fa-times-circle text-danger";
+/**
+ * MSFAA success icon displayed when a MSFAA is not cancelled.
+ */
+const MSFAA_SUCCESS_CLASS = "fa-regular fa-check-circle text-success";
+/**
+ * MSFAA error icon displayed when the MSFAA is cancelled.
+ */
+const MSFAA_CANCELED_CLASS = "fa-regular fa-times-circle text-danger";
 
 export default defineComponent({
   emits: {
@@ -98,6 +109,11 @@ export default defineComponent({
     const initialData = ref({} as NoticeOfAssessment);
     const msfaaReissueProcessing = ref(false);
 
+    /**
+     * Defines the MSFAA status based on the signed date and cancelled dates.
+     * @param signedDate signed date.
+     * @param cancelledDate cancelled date.
+     */
     const getMSFAAStatus = (
       signedDate?: Date,
       cancelledDate?: Date,
@@ -108,6 +124,10 @@ export default defineComponent({
       return signedDate ? MSFAAStatus.Signed : MSFAAStatus.Pending;
     };
 
+    /**
+     * Defines the icon class to displayed depending on the MSFAA status.
+     * @param msfaaStatus MSFAA status.
+     */
     const getMSFAAStatusClass = (msfaaStatus: MSFAAStatus): string => {
       return msfaaStatus === MSFAAStatus.Cancelled
         ? MSFAA_CANCELED_CLASS
@@ -160,7 +180,6 @@ export default defineComponent({
         ...assessment,
         canReissueMSFAA,
       };
-      console.log(assessment);
       emit(
         "assessmentDataLoaded",
         initialData.value.applicationStatus,
