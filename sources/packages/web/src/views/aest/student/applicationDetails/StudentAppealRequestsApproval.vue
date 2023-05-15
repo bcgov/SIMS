@@ -1,9 +1,19 @@
 <template>
-  <student-appeal-requests-approval
-    :appealId="appealId"
-    :backRouteLocation="assessmentsSummaryRoute"
-    @submitted="submitted"
-  />
+  <full-page-container>
+    <template #header>
+      <header-navigator
+        title="Assessment"
+        subTitle="View Request"
+        :routeLocation="assessmentsSummaryRoute"
+      />
+    </template>
+    <student-appeal-requests-approval
+      :appealId="appealId"
+      :backRouteLocation="assessmentsSummaryRoute"
+      :showApprovalDetails="true"
+      @submitted="submitted"
+    />
+  </full-page-container>
 </template>
 
 <script lang="ts">

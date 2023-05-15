@@ -54,7 +54,7 @@ import ViewOfferingChangeRequestComplete from "@/views/aest/institution/ViewOffe
 import StudentApplicationAppeals from "@/views/aest/student/StudentApplicationAppeals.vue";
 import StudentAccountApplications from "@/views/aest/student/StudentAccountApplications.vue";
 import StudentAccountApplicationsApproval from "@/views/aest/student/StudentAccountApplicationsApproval.vue";
-import AssessmentAward from "@/views/aest/student/AssessmentAward.vue";
+import AssessmentAward from "@/views/aest/student/applicationDetails/AssessmentAward.vue";
 
 export const aestRoutes: Array<RouteRecordRaw> = [
   {

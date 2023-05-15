@@ -74,6 +74,11 @@ type ApplicationExceptionFormModel = Omit<
    * for easy consumption inside form.io definition.
    */
   exceptionNames: string[];
+  /**
+   * showStaffApproval will decide id the staff approval section should
+   * be hidden or not.
+   */
+  showStaffApproval: boolean;
 };
 
 export default defineComponent({
@@ -106,6 +111,11 @@ export default defineComponent({
       required: false,
       default: false,
     },
+    showStaffApproval: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
   },
   setup(props) {
     const router = useRouter();
@@ -131,6 +141,7 @@ export default defineComponent({
         exceptionNames: applicationException.exceptionRequests.map(
           (exception) => exception.exceptionName,
         ),
+        showStaffApproval: props.showStaffApproval,
       };
       submittedDate.value = dateOnlyLongString(
         applicationException.submittedDate,

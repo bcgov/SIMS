@@ -49,7 +49,7 @@ export default defineComponent({
 
     const goToStudentAppeal = (appealId: number) => {
       router.push({
-        name: StudentRoutesConst.STUDENT_APPEAL_REQUESTS,
+        name: StudentRoutesConst.STUDENT_APPEAL_REQUEST,
         params: {
           applicationId: props.applicationId,
           appealId,

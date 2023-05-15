@@ -1962,9 +1962,9 @@
       "customConditional": "",
       "conditional": {
         "json": "",
-        "show": null,
-        "when": null,
-        "eq": ""
+        "show": "true",
+        "when": "showStaffApproval",
+        "eq": "true"
       },
       "logic": [
         {
@@ -2438,6 +2438,24 @@
       "id": "em0j9y"
     },
     {
+      "input": true,
+      "tableView": true,
+      "key": "showStaffApproval",
+      "label": "showStaffApproval",
+      "protected": false,
+      "unique": false,
+      "persistent": true,
+      "type": "hidden",
+      "tags": [],
+      "conditional": {
+        "show": "",
+        "when": null,
+        "eq": ""
+      },
+      "properties": {},
+      "customDefaultValue": "value = true"
+    },
+    {
       "label": "applicationId",
       "labelWidth": "",
       "labelMargin": "",
@@ -2583,5 +2601,8 @@
       "inputType": "hidden",
       "id": "ebj504b"
     }
-  ]
+  ],
+  "created": "2023-01-11T21:27:07.621Z",
+  "modified": "2023-05-15T23:12:40.484Z",
+  "machineName": "studentExceptions"
 }

@@ -6,6 +6,7 @@ import {
   StudentAppealPendingSummaryAPIOutDTO,
   StudentAppealRequestAPIInDTO,
   StudentAppealRequestApprovalAPIInDTO,
+  DetailedStudentAppealRequestAPIOutDTO,
 } from "./http/dto";
 
 /**
@@ -41,11 +42,11 @@ export class StudentAppealService {
    * @param studentId student id.
    * @returns student application appeal.
    */
-  async getStudentAppealWithRequests<T>(
+  async getStudentAppealWithRequests(
     appealId: number,
     studentId?: number,
-  ): Promise<StudentAppealAPIOutDTO<T>> {
-    return ApiClient.StudentAppealApi.getStudentAppealWithRequests<T>(
+  ): Promise<StudentAppealAPIOutDTO<DetailedStudentAppealRequestAPIOutDTO>> {
+    return ApiClient.StudentAppealApi.getStudentAppealWithRequests<DetailedStudentAppealRequestAPIOutDTO>(
       appealId,
       studentId,
     );

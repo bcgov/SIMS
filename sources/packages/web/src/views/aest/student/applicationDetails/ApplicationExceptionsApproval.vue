@@ -3,6 +3,7 @@
     :exceptionId="exceptionId"
     :backRouteLocation="assessmentsSummaryRoute"
     :processing="processing"
+    :showStaffApproval="true"
     @submitted="submitted"
   />
 </template>

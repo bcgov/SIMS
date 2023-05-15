@@ -37,6 +37,7 @@
       :studentId="studentId"
       :viewRequestTypes="assessmentRequestTypes"
       @viewStudentAppeal="goToStudentAppeal"
+      @viewAssessment="gotToViewAssessment"
       @viewApplicationException="goToApplicationException"
     />
   </full-page-container>
@@ -97,17 +98,17 @@ export default defineComponent({
       });
     };
 
-    // const gotToViewAssessment = (assessmentId: number) => {
-    //   router.push({
-    //     name: InstitutionRoutesConst.ASSESSMENT_AWARD_VIEW,
-    //     params: {
-    //       studentId: props.studentId,
-    //       applicationId: props.applicationId,
-    //       assessmentId,
-    //     },
-    //   });
-    // };
-
+    const gotToViewAssessment = (assessmentId: number) => {
+      router.push({
+        name: InstitutionRoutesConst.ASSESSMENT_AWARD_VIEW,
+        params: {
+          studentId: props.studentId,
+          applicationId: props.applicationId,
+          assessmentId,
+        },
+      });
+    };
+    // TODO: CONFIRM WITH JASON
     // const goToScholasticStanding = (scholasticStandingId: number) => {
     //   router.push({
     //     name: InstitutionRoutesConst.SCHOLASTIC_STANDING_VIEW,
@@ -118,6 +119,7 @@ export default defineComponent({
     //     },
     //   });
     // };
+    // TODO: CONFIRM WITH JASON
     // const goToOfferingRequest = (offeringId: number, programId: number) => {
     //   router.push({
     //     name: InstitutionRoutesConst.OFFERING_CHANGE_REQUEST_VIEW,
@@ -137,7 +139,7 @@ export default defineComponent({
     return {
       InstitutionRoutesConst,
       goToStudentAppeal,
-      // gotToViewAssessment,
+      gotToViewAssessment,
       goToApplicationException,
       // goToScholasticStanding,
       // goToOfferingRequest,

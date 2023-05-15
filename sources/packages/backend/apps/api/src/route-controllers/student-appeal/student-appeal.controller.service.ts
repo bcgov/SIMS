@@ -1,5 +1,9 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
-import { StudentAppealAPIOutDTO } from "./models/student-appeal.dto";
+import {
+  DetailedStudentAppealRequestAPIOutDTO,
+  StudentAppealAPIOutDTO,
+  StudentAppealRequestAPIOutDTO,
+} from "./models/student-appeal.dto";
 import { getUserFullName } from "../../utilities";
 import { StudentAppealService } from "../../services";
 
@@ -15,13 +19,20 @@ export class StudentAppealControllerService {
    * - `assessDetails`, if true, will return access details.
    * @returns the student appeal and its requests.
    */
-  async getStudentAppealWithRequest<T>(
+  async getStudentAppealWithRequest<
+    T extends
+      | DetailedStudentAppealRequestAPIOutDTO
+      | StudentAppealRequestAPIOutDTO,
+    R = T extends DetailedStudentAppealRequestAPIOutDTO
+      ? DetailedStudentAppealRequestAPIOutDTO
+      : StudentAppealRequestAPIOutDTO,
+  >(
     appealId: number,
     options?: {
       studentId?: number;
       assessDetails?: boolean;
     },
-  ): Promise<StudentAppealAPIOutDTO<T>> {
+  ): Promise<StudentAppealAPIOutDTO<R>> {
     const studentAppeal =
       await this.studentAppealService.getAppealAndRequestsById(
         appealId,
@@ -41,7 +52,7 @@ export class StudentAppealControllerService {
           appealStatus: appealRequest.appealStatus,
           submittedData: appealRequest.submittedData,
           submittedFormName: appealRequest.submittedFormName,
-        } as T;
+        } as R;
 
         if (options?.assessDetails) {
           request = {
@@ -49,7 +60,7 @@ export class StudentAppealControllerService {
             assessedDate: appealRequest.assessedDate,
             noteDescription: appealRequest.note?.description,
             assessedByUserName: getUserFullName(appealRequest.assessedBy),
-          } as T;
+          } as R;
         }
         return request;
       }),

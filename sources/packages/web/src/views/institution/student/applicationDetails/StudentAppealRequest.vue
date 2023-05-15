@@ -1,10 +1,18 @@
 <template>
-  <student-appeal-requests-approval
-    :studentId="studentId"
-    :appealId="appealId"
-    :backRouteLocation="assessmentsSummaryRoute"
-    :readOnlyForm="true"
-  />
+  <full-page-container>
+    <template #header>
+      <header-navigator
+        title="Assessment"
+        subTitle="View Request"
+        :routeLocation="assessmentsSummaryRoute"
+      />
+    </template>
+    <student-appeal-requests-approval
+      :studentId="studentId"
+      :appealId="appealId"
+      :readOnlyForm="true"
+    />
+  </full-page-container>
 </template>
 
 <script lang="ts">

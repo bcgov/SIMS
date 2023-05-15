@@ -1,50 +1,42 @@
 <template>
-  <full-page-container>
-    <template #header>
-      <header-navigator
-        title="Assessment"
-        subTitle="View Request"
-        :routeLocation="backRouteLocation"
-      />
+  <body-header title="Student change">
+    <template #status-chip>
+      <status-chip-requested-assessment
+        :status="appealStatus"
+      ></status-chip-requested-assessment>
     </template>
-    <body-header title="Student change">
-      <template #status-chip>
-        <status-chip-requested-assessment
-          :status="appealStatus"
-        ></status-chip-requested-assessment>
-      </template>
-    </body-header>
-    <appeal-requests-approval-form
-      :studentAppealRequests="studentAppealRequests"
-      :readOnly="readOnly"
-      @submitted="$emit('submitted', $event)"
-    >
-      <template #approval-actions="{ submit }" v-if="!readOnly">
-        <v-row justify="center" class="m-2">
-          <v-btn
-            color="primary"
-            variant="outlined"
-            class="mr-2"
-            data-cy="cancelApprovalRequestButton"
-            @click="gotToAssessmentsSummary"
-            >Cancel</v-btn
-          >
-          <check-permission-role :role="Role.StudentApproveDeclineAppeals">
-            <template #="{ notAllowed }">
-              <v-btn
-                color="primary"
-                class="ml-2"
-                data-cy="completeStudentRequest"
-                @click="submit"
-                :disabled="notAllowed"
-                >Complete student request
-              </v-btn>
-            </template>
-          </check-permission-role>
-        </v-row>
-      </template>
-    </appeal-requests-approval-form>
-  </full-page-container>
+  </body-header>
+  <appeal-requests-approval-form
+    :studentAppealRequests="studentAppealRequests"
+    :readOnly="readOnly"
+    :showApprovalDetails="showApprovalDetails"
+    @submitted="$emit('submitted', $event)"
+  >
+    <template #approval-actions="{ submit }" v-if="!readOnly">
+      <v-row justify="center" class="m-2">
+        <v-btn
+          color="primary"
+          variant="outlined"
+          class="mr-2"
+          data-cy="cancelApprovalRequestButton"
+          @click="gotToAssessmentsSummary"
+          >Cancel</v-btn
+        >
+        <check-permission-role :role="Role.StudentApproveDeclineAppeals">
+          <template #="{ notAllowed }">
+            <v-btn
+              color="primary"
+              class="ml-2"
+              data-cy="completeStudentRequest"
+              @click="submit"
+              :disabled="notAllowed"
+              >Complete student request
+            </v-btn>
+          </template>
+        </check-permission-role>
+      </v-row>
+    </template>
+  </appeal-requests-approval-form>
 </template>
 <script lang="ts">
 import { ref, onMounted, computed, defineComponent, PropType } from "vue";
@@ -60,7 +52,6 @@ import {
 import AppealRequestsApprovalForm from "@/components/aest/AppealRequestsApprovalForm.vue";
 import StatusChipRequestedAssessment from "@/components/generic/StatusChipRequestedAssessment.vue";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
-import { DetailedStudentAppealRequestAPIOutDTO } from "@/services/http/dto/StudentAppeal.dto";
 export default defineComponent({
   emits: {
     submitted: (approvals: StudentAppealApproval[]) => {
@@ -83,9 +74,14 @@ export default defineComponent({
     },
     backRouteLocation: {
       type: Object as PropType<RouteLocationRaw>,
-      required: true,
+      required: false,
     },
     readOnlyForm: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
+    showApprovalDetails: {
       type: Boolean,
       required: false,
       default: false,
@@ -104,7 +100,7 @@ export default defineComponent({
 
     onMounted(async () => {
       const appeal =
-        await StudentAppealService.shared.getStudentAppealWithRequests<DetailedStudentAppealRequestAPIOutDTO>(
+        await StudentAppealService.shared.getStudentAppealWithRequests(
           props.appealId,
           props.studentId,
         );
@@ -125,7 +121,9 @@ export default defineComponent({
     });
 
     const gotToAssessmentsSummary = () => {
-      router.push(props.backRouteLocation);
+      if (props.backRouteLocation) {
+        router.push(props.backRouteLocation);
+      }
     };
 
     return {
