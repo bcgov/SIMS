@@ -133,7 +133,7 @@ jobs:
     if: github.event.pull_request.merged == true || github.event_name == 'workflow_dispatch'
     steps:
       - name: Run Checkout and Login
-        uses: checkout-and-login
+        uses: ./.github/workflows/checkout-and-login.yml
 
       - name: Build db-migrations Image
         working-directory: "./devops"
@@ -153,7 +153,7 @@ jobs:
     if: github.event.pull_request.merged == true || github.event_name == 'workflow_dispatch'
     steps:
       - name: Run Checkout and Login
-        uses: checkout-and-login
+        uses: ./.github/workflows/checkout-and-login.yml
 
       - name: Build SIMS-API Image
         working-directory: "./devops"
@@ -173,7 +173,7 @@ jobs:
     if: github.event.pull_request.merged == true || github.event_name == 'workflow_dispatch'
     steps:
       - name: Run Checkout and Login
-        uses: checkout-and-login
+        uses: ./.github/workflows/checkout-and-login.yml
 
       - name: Build Workers Image
         working-directory: "./devops"
@@ -193,7 +193,7 @@ jobs:
     if: github.event.pull_request.merged == true || github.event_name == 'workflow_dispatch'
     steps:
       - name: Run Checkout and Login
-        uses: checkout-and-login
+        uses: ./.github/workflows/checkout-and-login.yml
 
       - name: Build Queue Consumers Image
         working-directory: "./devops"
@@ -213,7 +213,7 @@ jobs:
     if: github.event.pull_request.merged == true || github.event_name == 'workflow_dispatch'
     steps:
       - name: Run Checkout and Login
-        uses: checkout-and-login
+        uses: ./.github/workflows/checkout-and-login.yml
 
       - name: Build Web/Frontend Image
         working-directory: "./devops"
