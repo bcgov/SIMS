@@ -74,22 +74,21 @@ export class MSFAANumberSharedService {
     const application = await this.getApplicationForMSFAACreation(
       referenceApplicationId,
     );
-    const pendingDisbursement =
+    // If multiple disbursements are pending they must be associated with the same
+    // MSFAA hence selecting the first one should be enough for the validations.
+    const [pendingDisbursement] =
       application.currentAssessment.disbursementSchedules.filter(
         (schedule) =>
           schedule.disbursementScheduleStatus ===
           DisbursementScheduleStatus.Pending,
       );
-    if (!pendingDisbursement?.length) {
+    if (!pendingDisbursement) {
       throw new CustomNamedError(
         "Not possible to reissue an MSFAA when there is no pending disbursements for the application.",
         APPLICATION_INVALID_DATA_TO_CREATE_MSFAA_ERROR,
       );
     }
-    const hasPendingAndCancelledMSFAA = pendingDisbursement.some(
-      (disbursement) => !!disbursement.msfaaNumber.cancelledDate,
-    );
-    if (!hasPendingAndCancelledMSFAA) {
+    if (!pendingDisbursement.msfaaNumber.cancelledDate) {
       throw new CustomNamedError(
         "Not possible to reissue an MSFAA when the current associated MSFAA is not cancelled.",
         APPLICATION_INVALID_DATA_TO_CREATE_MSFAA_ERROR,

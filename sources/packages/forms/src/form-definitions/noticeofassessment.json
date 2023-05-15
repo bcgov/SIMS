@@ -298,7 +298,7 @@
           "lockKey": true
         },
         {
-          "label": "First Disbursement MSFAA status (pending | signed | Cancelled)",
+          "label": "Second Disbursement MSFAA status (pending | signed | Cancelled)",
           "customClass": "",
           "modalEdit": false,
           "defaultValue": null,
@@ -310,7 +310,7 @@
           "customDefaultValue": "",
           "calculateValue": "",
           "calculateServer": false,
-          "key": "disbursement1MSFAAStatus2",
+          "key": "disbursement2MSFAAStatus",
           "tags": [],
           "properties": {},
           "logic": [],
@@ -384,8 +384,7 @@
         "eq": ""
       },
       "properties": {},
-      "lockKey": true,
-      "isNew": false
+      "lockKey": true
     },
     {
       "label": "Your Assessment",
@@ -2749,8 +2748,7 @@
                       "allowMultipleMasks": false,
                       "addons": [],
                       "id": "ehqv5z",
-                      "hideLabel": true,
-                      "isNew": false
+                      "hideLabel": true
                     },
                     {
                       "label": "HTML",

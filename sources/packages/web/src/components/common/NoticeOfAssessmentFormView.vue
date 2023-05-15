@@ -113,6 +113,7 @@ export default defineComponent({
      * Defines the MSFAA status based on the signed date and cancelled dates.
      * @param signedDate signed date.
      * @param cancelledDate cancelled date.
+     * @returns MSFAA status.
      */
     const getMSFAAStatus = (
       signedDate?: Date,
@@ -127,6 +128,7 @@ export default defineComponent({
     /**
      * Defines the icon class to displayed depending on the MSFAA status.
      * @param msfaaStatus MSFAA status.
+     * @returns MSFAA css classes to set the MSFAA status icon.
      */
     const getMSFAAStatusClass = (msfaaStatus: MSFAAStatus): string => {
       return msfaaStatus === MSFAAStatus.Cancelled
