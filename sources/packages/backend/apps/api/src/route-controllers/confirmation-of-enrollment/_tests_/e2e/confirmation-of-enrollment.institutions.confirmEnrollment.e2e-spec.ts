@@ -24,11 +24,8 @@ import {
   Institution,
   InstitutionLocation,
 } from "@sims/sims-db";
-import {
-  COE_WINDOW,
-  MONEY_VALUE_FOR_UNKNOWN_MAX_VALUE,
-} from "../../../../utilities";
-import { addDays, getISODateOnlyString } from "@sims/utilities";
+import { MONEY_VALUE_FOR_UNKNOWN_MAX_VALUE } from "../../../../utilities";
+import { COE_WINDOW, addDays, getISODateOnlyString } from "@sims/utilities";
 
 describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-confirmEnrollment", () => {
   let app: INestApplication;
