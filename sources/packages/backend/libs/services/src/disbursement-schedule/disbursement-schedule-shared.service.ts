@@ -1052,7 +1052,7 @@ export class DisbursementScheduleSharedService extends RecordDataModelService<Di
     options?: {
       locationId?: number;
       allowOutsideCOEApprovalPeriod?: boolean;
-      enrolmentConfirmationDate?: string | Date;
+      enrolmentConfirmationDate?: Date;
       applicationNumber?: string;
     },
   ): Promise<void> {
@@ -1142,6 +1142,7 @@ export class DisbursementScheduleSharedService extends RecordDataModelService<Di
       disbursementSchedule.studentAssessment.application.id,
       disbursementSchedule.studentAssessment.application.applicationStatus,
       tuitionRemittanceAmount,
+      options?.enrolmentConfirmationDate,
     );
   }
 
