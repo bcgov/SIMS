@@ -247,11 +247,11 @@ export class ConfirmationOfEnrollmentInstitutionsController extends BaseControll
   })
   @ApiUnprocessableEntityResponse({
     description:
-      "Enrolment already completed and can neither be confirmed nor declined" +
-      "or Enrolment cannot be confirmed as application is not in a valid status." +
-      "or The enrolment cannot be confirmed as enrolment confirmation date is not within the valid approval period." +
-      "or Tuition amount provided should be lesser than both (actual tuition + program related costs) and (Canada grants + Canada Loan + BC Loan) " +
-      "or the first disbursement(COE) is not completed and it must be completed.",
+      "Enrolment already completed and can neither be confirmed nor declined " +
+      "or enrolment cannot be confirmed as application is not in a valid status " +
+      "or enrolment cannot be confirmed as enrolment confirmation date is not within the valid approval period " +
+      "or tuition amount provided should be lesser than both (actual tuition + program related costs) and (Canada grants + Canada Loan + BC Loan) " +
+      "or first disbursement(COE) is not completed and it must be completed.",
   })
   @Patch(
     ":locationId/confirmation-of-enrollment/disbursement-schedule/:disbursementScheduleId/confirm",
@@ -285,8 +285,8 @@ export class ConfirmationOfEnrollmentInstitutionsController extends BaseControll
   })
   @ApiUnprocessableEntityResponse({
     description:
-      "Enrolment already completed and can neither be confirmed nor declined." +
-      "or Enrolment cannot be declined as application is not in a valid status.",
+      "Enrolment already completed and can neither be confirmed nor declined " +
+      "or enrolment cannot be declined as application is not in a valid status.",
   })
   @Patch(
     ":locationId/confirmation-of-enrollment/disbursement-schedule/:disbursementScheduleId/deny",

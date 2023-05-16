@@ -32,7 +32,7 @@ export class ECEResponseIntegrationService extends SFTPIntegrationBase<
       // If the header is not the expected one, throw an error.
       throw new Error(error);
     }
-    //Read the last line to check if the footer record type is the expected one.
+    // Read the last line to check if the footer record type is the expected one.
     const footer = new ECEResponseFileFooter(fileLines.pop());
     if (footer.recordType !== RecordTypeCodes.ECETrailer) {
       const error = `The ECE response file ${remoteFilePath} has an invalid record type on footer: ${footer.recordType}`;

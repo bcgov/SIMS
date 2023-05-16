@@ -22,8 +22,7 @@ export class ECEResponseFileDetail extends ECEResponseFileRecord {
    * Unique index number for disbursement record.
    */
   get disbursementIdentifier(): number {
-    const disbursementIdentifier = this.line.substring(5, 15);
-    return +disbursementIdentifier;
+    return +this.line.substring(5, 15);
   }
 
   /**
@@ -70,6 +69,6 @@ export class ECEResponseFileDetail extends ECEResponseFileRecord {
     if (!this.applicationNumber) {
       errors.push("application number not found or invalid.");
     }
-    return errors.join(", ");
+    return errors.length ? errors.join(", ") : undefined;
   }
 }

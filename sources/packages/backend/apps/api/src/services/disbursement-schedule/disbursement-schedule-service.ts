@@ -6,7 +6,6 @@ import {
 } from "../../utilities";
 import { addDays, FieldSortOrder, COE_WINDOW } from "@sims/utilities";
 import { DataSource, Brackets } from "typeorm";
-import { SequenceControlService } from "@sims/services";
 import {
   RecordDataModelService,
   ApplicationStatus,
@@ -14,7 +13,6 @@ import {
   DisbursementSchedule,
   getUserFullNameLikeSearch,
 } from "@sims/sims-db";
-import { NotificationActionsService } from "@sims/services/notifications";
 import { EnrollmentPeriod } from "./disbursement-schedule.models";
 
 /**
@@ -22,11 +20,7 @@ import { EnrollmentPeriod } from "./disbursement-schedule.models";
  */
 @Injectable()
 export class DisbursementScheduleService extends RecordDataModelService<DisbursementSchedule> {
-  constructor(
-    private readonly dataSource: DataSource,
-    private readonly sequenceService: SequenceControlService,
-    private readonly notificationActionsService: NotificationActionsService,
-  ) {
+  constructor(dataSource: DataSource) {
     super(dataSource.getRepository(DisbursementSchedule));
   }
 
