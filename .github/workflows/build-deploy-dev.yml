@@ -135,6 +135,9 @@ jobs:
     steps:
       - name: Run Checkout and Login
         uses: ./.github/workflows/checkout-and-login.yml
+        id: checkout
+        with:
+          branch: ${{ needs.createTag.outputs.newTag }}
 
       - name: Build db-migrations Image
         working-directory: "./devops"

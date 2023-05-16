@@ -8,15 +8,20 @@ on:
 jobs:
   checkout-and-login:
     runs-on: ubuntu-latest
+    outputs:
+      branch: ${{ steps.set-branch.outputs.branch }}
     steps:
+      - name: Set Branch
+        id: set-branch
+        run: echo "::set-output name=branch::${{ needs.createTag.outputs.newTag }}"
       - name: Print env
         run: |
           echo BUILD NAMESPACE: $BUILD_NAMESPACE
-          echo BRANCH: ${{ needs.createTag.outputs.newTag }}
+          echo BRANCH: ${{ steps.set-branch.outputs.branch }}
       - name: Checkout Target Branch
         uses: actions/checkout@v3
         with:
-          ref: ${{ needs.createTag.outputs.newTag }}
+          ref: ${{ steps.set-branch.outputs.branch }}
       - name: Log in to OpenShift
         run: |
           oc login --token=${{ secrets.SA_TOKEN }} --server=https://api.silver.devops.gov.bc.ca:6443
