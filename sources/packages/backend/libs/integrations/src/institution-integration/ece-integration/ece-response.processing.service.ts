@@ -6,6 +6,7 @@ import {
   InstitutionIntegrationConfig,
 } from "@sims/utilities/config";
 import { ProcessSummaryResult } from "@sims/integrations/models";
+import { ECE_RESPONSE_FILE_NAME } from "@sims/integrations/constants";
 
 /**
  * Read and process the ECE response files which are
@@ -28,7 +29,10 @@ export class ECEResponseProcessingService {
    */
   async process(): Promise<ProcessSummaryResult[]> {
     // Get the list of all files from SFTP ordered by file name.
-    const fileSearch = new RegExp("^\\/\\w{4}\\/CONR_008.TXT$", "i");
+    const fileSearch = new RegExp(
+      `^\\/\\w{4}\\/${ECE_RESPONSE_FILE_NAME}$`,
+      "i",
+    );
     const filePaths = await this.integrationService.getResponseFilesFullPath(
       this.institutionIntegrationConfig.ftpResponseFolder,
       fileSearch,
