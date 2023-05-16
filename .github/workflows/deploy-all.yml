@@ -188,6 +188,7 @@ jobs:
         run: |
           make oc-deploy-web
 
+  # Deploy Camunda Definitions
   deployCamundaDefinitions:
     if: ${{ github.event.inputs.deployCamundaDefinitions == 'true' }}
     name: Deploy BPMNs and DMNs to Camunda
@@ -199,6 +200,7 @@ jobs:
       gitRef: ${{ github.event.inputs.gitRef }}
     secrets: inherit
 
+  # Deploy Formio Definitions
   deployFormioDefinitions:
     if: ${{ github.event.inputs.deployFormioDefinitions == 'true' }}
     name: Deploy Form.io definitions
