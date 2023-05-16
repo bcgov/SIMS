@@ -137,6 +137,7 @@ jobs:
         run: |
           echo BUILD NAMESPACE: $BUILD_NAMESPACE
           echo BRANCH: ${{ needs.createTag.outputs.newTag }}
+          echo HOST_PREFIX: $HOST_PREFIX
           
       - name: Checkout Target Branch
         uses: actions/checkout@v3
@@ -163,6 +164,7 @@ jobs:
         run: |
           echo BUILD NAMESPACE: $BUILD_NAMESPACE
           echo BRANCH: ${{ needs.createTag.outputs.newTag }}
+          echo HOST_PREFIX: $HOST_PREFIX
           
       - name: Checkout Target Branch
         uses: actions/checkout@v3
@@ -189,6 +191,7 @@ jobs:
         run: |
           echo BUILD NAMESPACE: $BUILD_NAMESPACE
           echo BRANCH: ${{ needs.createTag.outputs.newTag }}
+          echo HOST_PREFIX: $HOST_PREFIX
           
       - name: Checkout Target Branch
         uses: actions/checkout@v3
@@ -215,6 +218,7 @@ jobs:
         run: |
           echo BUILD NAMESPACE: $BUILD_NAMESPACE
           echo BRANCH: ${{ needs.createTag.outputs.newTag }}
+          echo HOST_PREFIX: $HOST_PREFIX
           
       - name: Checkout Target Branch
         uses: actions/checkout@v3
@@ -241,6 +245,7 @@ jobs:
         run: |
           echo BUILD NAMESPACE: $BUILD_NAMESPACE
           echo BRANCH: ${{ needs.createTag.outputs.newTag }}
+          echo HOST_PREFIX: $HOST_PREFIX
           
       - name: Checkout Target Branch
         uses: actions/checkout@v3
@@ -267,6 +272,7 @@ jobs:
         run: |
           echo BUILD NAMESPACE: $BUILD_NAMESPACE
           echo BRANCH: ${{ needs.createTag.outputs.newTag }}
+          echo HOST_PREFIX: $HOST_PREFIX
           
       - name: Checkout Target Branch
         uses: actions/checkout@v3
@@ -293,6 +299,7 @@ jobs:
         run: |
           echo BUILD NAMESPACE: $BUILD_NAMESPACE
           echo BRANCH: ${{ needs.createTag.outputs.newTag }}
+          echo HOST_PREFIX: $HOST_PREFIX
           
       - name: Checkout Target Branch
         uses: actions/checkout@v3
@@ -319,6 +326,7 @@ jobs:
         run: |
           echo BUILD NAMESPACE: $BUILD_NAMESPACE
           echo BRANCH: ${{ needs.createTag.outputs.newTag }}
+          echo HOST_PREFIX: $HOST_PREFIX
           
       - name: Checkout Target Branch
         uses: actions/checkout@v3
@@ -345,6 +353,7 @@ jobs:
         run: |
           echo BUILD NAMESPACE: $BUILD_NAMESPACE
           echo BRANCH: ${{ needs.createTag.outputs.newTag }}
+          echo HOST_PREFIX: $HOST_PREFIX
           
       - name: Checkout Target Branch
         uses: actions/checkout@v3
@@ -371,6 +380,7 @@ jobs:
         run: |
           echo BUILD NAMESPACE: $BUILD_NAMESPACE
           echo BRANCH: ${{ needs.createTag.outputs.newTag }}
+          echo HOST_PREFIX: $HOST_PREFIX
           
       - name: Checkout Target Branch
         uses: actions/checkout@v3
