@@ -153,7 +153,7 @@ describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-confirmEnrollment"
       .expect({
         statusCode: 422,
         message:
-          "Confirmation of enrollment not found or application status not valid.",
+          "Enrolment cannot be confirmed as application is not in a valid status for this operation.",
         error: "Unprocessable Entity",
       });
   });
@@ -192,7 +192,7 @@ describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-confirmEnrollment"
       .expect({
         statusCode: 422,
         message:
-          "The enrolment cannot be confirmed as current date is not within the valid approval period.",
+          "The enrolment cannot be confirmed as enrolment confirmation date is not within the valid approval period.",
         error: "Unprocessable Entity",
       });
   });
