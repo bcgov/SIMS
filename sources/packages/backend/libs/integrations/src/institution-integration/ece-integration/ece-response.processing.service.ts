@@ -28,7 +28,7 @@ export class ECEResponseProcessingService {
    */
   async process(): Promise<ProcessSummaryResult[]> {
     // Get the list of all files from SFTP ordered by file name.
-    const fileSearch = new RegExp(`CONR_008.TXT`, "i");
+    const fileSearch = new RegExp("^\\/\\w{4}\\/CONR_008.TXT$", "i");
     const filePaths = await this.integrationService.getResponseFilesFullPath(
       this.institutionIntegrationConfig.ftpResponseFolder,
       fileSearch,
