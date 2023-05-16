@@ -128,7 +128,7 @@ describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-confirmEnrollment"
     expect(updatedDisbursementSchedule.coeStatus).toBe(COEStatus.completed);
   });
 
-  it("Should throw NotFoundException when application status is not valid.", async () => {
+  it("Should throw Unprocessable Entity when application status is not valid.", async () => {
     // Arrange
     const application = await saveFakeApplicationDisbursements(
       appDataSource,
@@ -149,12 +149,12 @@ describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-confirmEnrollment"
         await getInstitutionToken(InstitutionTokenTypes.CollegeCUser),
         BEARER_AUTH_TYPE,
       )
-      .expect(HttpStatus.NOT_FOUND)
+      .expect(HttpStatus.UNPROCESSABLE_ENTITY)
       .expect({
-        statusCode: 404,
+        statusCode: 422,
         message:
           "Confirmation of enrollment not found or application status not valid.",
-        error: "Not Found",
+        error: "Unprocessable Entity",
       });
   });
 

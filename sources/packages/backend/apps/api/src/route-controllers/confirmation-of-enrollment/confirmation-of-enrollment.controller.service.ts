@@ -60,9 +60,9 @@ export class ConfirmationOfEnrollmentControllerService extends BaseController {
           case ENROLMENT_ALREADY_COMPLETED:
           case ENROLMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE:
           case ENROLMENT_CONFIRMATION_DATE_NOT_WITHIN_APPROVAL_PERIOD:
-          case INVALID_TUITION_REMITTANCE_AMOUNT:
             throw new UnprocessableEntityException(error.message);
           case FIRST_COE_NOT_COMPLETE:
+          case INVALID_TUITION_REMITTANCE_AMOUNT:
             throw new UnprocessableEntityException(
               new ApiProcessError(error.message, error.name),
             );
