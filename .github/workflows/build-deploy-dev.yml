@@ -4,7 +4,7 @@ on:
   pull_request:
     types: [opened, reopened, synchronize, closed]
     branches:
-      - Segregate_DB_Migrations_Deployment
+      - main
   workflow_dispatch:
     inputs:
       bumb:
@@ -126,9 +126,9 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - run: echo "created release ${{ needs.createTag.outputs.newTag }} ${{ steps.createNewRelease.outputs.html_url }}!"
 
-  # Build and run DB migrations.
-  build-run-db-migrations:
-    name: Run db-migrations
+  # Build DB migrations.
+  build-db-migrations:
+    name: Build db-migrations
     runs-on: ubuntu-latest
     needs: createTag
     if: github.event.pull_request.merged == true || github.event_name == 'workflow_dispatch'
@@ -152,16 +152,11 @@ jobs:
         run: |
           make oc-build-db-migrations
 
-      - name: Run db-migrations
-        working-directory: "./devops/"
-        run: |
-          make oc-run-db-migrations
-
-  # Build and deploy SIMS API.
-  build-deploy-sims-api:
-    name: Build and Deploy SIMS-API
+  # Build SIMS-API
+  build-sims-api:
+    name: Build SIMS-API
     runs-on: ubuntu-latest
-    needs: build-run-db-migrations
+    needs: build-db-migrations
     if: github.event.pull_request.merged == true || github.event_name == 'workflow_dispatch'
     steps:
       - name: Print env
@@ -183,16 +178,89 @@ jobs:
         run: |
           make oc-build-api
 
-      - name: Deploy SIMS-API
-        working-directory: "./devops/"
-        run: |
-          make oc-deploy-api
-
-  # Build and deploy workers.
-  build-deploy-workers:
-    name: Build and Deploy Workers
+  # Build Workers
+  build-workers:
+    name: Build Workers
     runs-on: ubuntu-latest
-    needs: build-run-db-migrations
+    needs: build-db-migrations
+    if: github.event.pull_request.merged == true || github.event_name == 'workflow_dispatch'
+    steps:
+      - name: Print env
+        run: |
+          echo BUILD NAMESPACE: $BUILD_NAMESPACE
+          echo BRANCH: ${{ needs.createTag.outputs.newTag }}
+          
+      - name: Checkout Target Branch
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ needs.createTag.outputs.newTag }}
+
+      - name: Log in to OpenShift
+        run: |
+          oc login --token=${{ secrets.SA_TOKEN }} --server=https://api.silver.devops.gov.bc.ca:6443
+    
+      - name: Build Workers Image
+        working-directory: "./devops"
+        run: |
+          make oc-build-workers
+
+  # Build Queue Consumers
+  build-queue-consumers:
+    name: Build Queue Consumers
+    runs-on: ubuntu-latest
+    needs: build-db-migrations
+    if: github.event.pull_request.merged == true || github.event_name == 'workflow_dispatch'
+    steps:
+      - name: Print env
+        run: |
+          echo BUILD NAMESPACE: $BUILD_NAMESPACE
+          echo BRANCH: ${{ needs.createTag.outputs.newTag }}
+          
+      - name: Checkout Target Branch
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ needs.createTag.outputs.newTag }}
+
+      - name: Log in to OpenShift
+        run: |
+          oc login --token=${{ secrets.SA_TOKEN }} --server=https://api.silver.devops.gov.bc.ca:6443
+      
+      - name: Build Queue Consumers Image
+        working-directory: "./devops"
+        run: |
+          make oc-build-queue-consumers
+  
+  # Build Web/Frontend
+  build-web-frontend:
+    name: Build Web/Frontend
+    runs-on: ubuntu-latest
+    needs: build-db-migrations
+    if: github.event.pull_request.merged == true || github.event_name == 'workflow_dispatch'
+    steps:
+      - name: Print env
+        run: |
+          echo BUILD NAMESPACE: $BUILD_NAMESPACE
+          echo BRANCH: ${{ needs.createTag.outputs.newTag }}
+          
+      - name: Checkout Target Branch
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ needs.createTag.outputs.newTag }}
+
+      - name: Log in to OpenShift
+        run: |
+          oc login --token=${{ secrets.SA_TOKEN }} --server=https://api.silver.devops.gov.bc.ca:6443
+      
+      - name: Build Web/Frontend Image
+        working-directory: "./devops"
+        run: |
+          make oc-build-web
+    
+  # Run DB migrations.
+  run-db-migrations:
+    name: Run db-migrations
+    runs-on: ubuntu-latest
+    needs: build-db-migrations
     if: github.event.pull_request.merged == true || github.event_name == 'workflow_dispatch'
     steps:
       - name: Print env
@@ -209,21 +277,68 @@ jobs:
         run: |
           oc login --token=${{ secrets.SA_TOKEN }} --server=https://api.silver.devops.gov.bc.ca:6443
 
-      - name: Build Workers Image
-        working-directory: "./devops"
+      - name: Run db-migrations
+        working-directory: "./devops/"
         run: |
-          make oc-build-workers
+          make oc-run-db-migrations
+
+  # Deploy SIMS API.
+  deploy-sims-api:
+    name: Deploy SIMS-API
+    runs-on: ubuntu-latest
+    needs: [run-db-migrations, build-sims-api]
+    if: github.event.pull_request.merged == true || github.event_name == 'workflow_dispatch'
+    steps:
+      - name: Print env
+        run: |
+          echo BUILD NAMESPACE: $BUILD_NAMESPACE
+          echo BRANCH: ${{ needs.createTag.outputs.newTag }}
+          
+      - name: Checkout Target Branch
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ needs.createTag.outputs.newTag }}
+
+      - name: Log in to OpenShift
+        run: |
+          oc login --token=${{ secrets.SA_TOKEN }} --server=https://api.silver.devops.gov.bc.ca:6443
+
+      - name: Deploy SIMS-API
+        working-directory: "./devops/"
+        run: |
+          make oc-deploy-api
+
+  # Deploy workers.
+  deploy-workers:
+    name: Deploy Workers
+    runs-on: ubuntu-latest
+    needs: [run-db-migrations, build-workers]
+    if: github.event.pull_request.merged == true || github.event_name == 'workflow_dispatch'
+    steps:
+      - name: Print env
+        run: |
+          echo BUILD NAMESPACE: $BUILD_NAMESPACE
+          echo BRANCH: ${{ needs.createTag.outputs.newTag }}
+          
+      - name: Checkout Target Branch
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ needs.createTag.outputs.newTag }}
+
+      - name: Log in to OpenShift
+        run: |
+          oc login --token=${{ secrets.SA_TOKEN }} --server=https://api.silver.devops.gov.bc.ca:6443
 
       - name: Deploy Workers
         working-directory: "./devops/"
         run: |
           make oc-deploy-workers
 
-  # Build and deploy queue consumers.
-  build-deploy-queue-consumers:
-    name: Build and Deploy Queue Consumers
+  # Deploy queue consumers.
+  deploy-queue-consumers:
+    name: Deploy Queue Consumers
     runs-on: ubuntu-latest
-    needs: build-run-db-migrations
+    needs: [run-db-migrations, build-queue-consumers]
     if: github.event.pull_request.merged == true || github.event_name == 'workflow_dispatch'
     steps:
       - name: Print env
@@ -239,22 +354,17 @@ jobs:
       - name: Log in to OpenShift
         run: |
           oc login --token=${{ secrets.SA_TOKEN }} --server=https://api.silver.devops.gov.bc.ca:6443
-
-      - name: Build Queue Consumers Image
-        working-directory: "./devops"
-        run: |
-          make oc-build-queue-consumers
 
       - name: Deploy Queue Consumers
         working-directory: "./devops/"
         run: |
           make oc-deploy-queue-consumers
 
-  # Build and Web/Frontend.
-  build-deploy-web-frontend:
-    name: Build and Deploy Web/Frontend
+  # Deploy Web/Frontend.
+  deploy-web-frontend:
+    name: Deploy Web/Frontend
     runs-on: ubuntu-latest
-    needs: build-run-db-migrations
+    needs: [run-db-migrations, build-web-frontend]
     if: github.event.pull_request.merged == true || github.event_name == 'workflow_dispatch'
     steps:
       - name: Print env
@@ -270,13 +380,9 @@ jobs:
       - name: Log in to OpenShift
         run: |
           oc login --token=${{ secrets.SA_TOKEN }} --server=https://api.silver.devops.gov.bc.ca:6443
-
-      - name: Build Web/Frontend Image
-        working-directory: "./devops"
-        run: |
-          make oc-build-web
-
+      
       - name: Deploy Web/Frontend
         working-directory: "./devops/"
         run: |
           make oc-deploy-web
+      
