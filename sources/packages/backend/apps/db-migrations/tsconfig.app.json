@@ -2,6 +2,7 @@
   "extends": "../../tsconfig.json",
   "compilerOptions": {
     "declaration": false,
+    "sourceMap": false,
     "outDir": "../../dist/apps/db-migrations"
   },
   "include": ["src/**/*", "src/sql/**/*"],
