@@ -193,7 +193,7 @@ jobs:
     if: ${{ github.event.inputs.deployCamundaDefinitions == 'true' }}
     name: Deploy BPMNs and DMNs to Camunda
     needs:
-      - deploy
+      - deploy-sims-api
     uses: ./.github/workflows/deploy-camunda-definitions.yml
     with:
       environment: ${{ github.event.inputs.environment }}
@@ -205,7 +205,7 @@ jobs:
     if: ${{ github.event.inputs.deployFormioDefinitions == 'true' }}
     name: Deploy Form.io definitions
     needs:
-      - deploy
+      - deploy-sims-api
     uses: ./.github/workflows/deploy-formio-definitions.yml
     with:
       environment: ${{ github.event.inputs.environment }}
