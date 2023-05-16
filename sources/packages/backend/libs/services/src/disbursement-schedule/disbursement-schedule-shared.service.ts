@@ -879,10 +879,11 @@ export class DisbursementScheduleSharedService extends RecordDataModelService<Di
     applicationId: number,
     applicationStatus: ApplicationStatus,
     tuitionRemittanceRequestedAmount: number,
+    enrolmentConfirmationDate?: Date,
   ): Promise<void> {
     const documentNumber = await this.getNextDocumentNumber();
     const auditUser = { id: userId } as User;
-    const now = new Date();
+    const coeConfirmationDate = enrolmentConfirmationDate ?? new Date();
 
     await this.dataSource.transaction(async (transactionalEntityManager) => {
       await transactionalEntityManager
@@ -893,9 +894,9 @@ export class DisbursementScheduleSharedService extends RecordDataModelService<Di
           documentNumber: documentNumber,
           coeStatus: COEStatus.completed,
           coeUpdatedBy: auditUser,
-          coeUpdatedAt: now,
+          coeUpdatedAt: coeConfirmationDate,
           modifier: auditUser,
-          updatedAt: now,
+          updatedAt: coeConfirmationDate,
           tuitionRemittanceRequestedAmount: tuitionRemittanceRequestedAmount,
         })
         .where("id = :disbursementScheduleId", { disbursementScheduleId })
@@ -909,7 +910,7 @@ export class DisbursementScheduleSharedService extends RecordDataModelService<Di
           .set({
             applicationStatus: ApplicationStatus.Completed,
             modifier: auditUser,
-            updatedAt: now,
+            updatedAt: coeConfirmationDate,
           })
           .where("id = :applicationId", { applicationId })
           .execute();
