@@ -157,7 +157,7 @@ jobs:
   build-sims-api:
     name: Build SIMS-API
     runs-on: ubuntu-latest
-    needs: build-db-migrations
+    needs: createTag
     if: github.event.pull_request.merged == true || github.event_name == 'workflow_dispatch'
     steps:
       - name: Print env
@@ -184,7 +184,7 @@ jobs:
   build-workers:
     name: Build Workers
     runs-on: ubuntu-latest
-    needs: build-db-migrations
+    needs: createTag
     if: github.event.pull_request.merged == true || github.event_name == 'workflow_dispatch'
     steps:
       - name: Print env
@@ -211,7 +211,7 @@ jobs:
   build-queue-consumers:
     name: Build Queue Consumers
     runs-on: ubuntu-latest
-    needs: build-db-migrations
+    needs: createTag
     if: github.event.pull_request.merged == true || github.event_name == 'workflow_dispatch'
     steps:
       - name: Print env
@@ -238,7 +238,7 @@ jobs:
   build-web-frontend:
     name: Build Web/Frontend
     runs-on: ubuntu-latest
-    needs: build-db-migrations
+    needs: createTag
     if: github.event.pull_request.merged == true || github.event_name == 'workflow_dispatch'
     steps:
       - name: Print env
