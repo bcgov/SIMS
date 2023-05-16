@@ -63,13 +63,11 @@ jobs:
   run-db-migrations:
     name: Run db-migrations
     runs-on: ubuntu-latest
-    needs: build-db-migrations
-    if: github.event.pull_request.merged == true || github.event_name == 'workflow_dispatch'
     steps:
       - name: Print env
         run: |
           echo BUILD NAMESPACE: $BUILD_NAMESPACE
-          echo BRANCH: ${{ needs.createTag.outputs.newTag }}
+          echo BRANCH: ${{ github.event.inputs.gitRef }}
           echo HOST_PREFIX: $HOST_PREFIX
           
       - name: Checkout Target Branch
@@ -90,13 +88,12 @@ jobs:
   deploy-sims-api:
     name: Deploy SIMS-API
     runs-on: ubuntu-latest
-    needs: [run-db-migrations, build-sims-api]
-    if: github.event.pull_request.merged == true || github.event_name == 'workflow_dispatch'
+    needs: run-db-migrations
     steps:
       - name: Print env
         run: |
           echo BUILD NAMESPACE: $BUILD_NAMESPACE
-          echo BRANCH: ${{ needs.createTag.outputs.newTag }}
+          echo BRANCH: ${{ github.event.inputs.gitRef }}
           echo HOST_PREFIX: $HOST_PREFIX
           
       - name: Checkout Target Branch
@@ -117,13 +114,12 @@ jobs:
   deploy-workers:
     name: Deploy Workers
     runs-on: ubuntu-latest
-    needs: [run-db-migrations, build-workers]
-    if: github.event.pull_request.merged == true || github.event_name == 'workflow_dispatch'
+    needs: run-db-migrations
     steps:
       - name: Print env
         run: |
           echo BUILD NAMESPACE: $BUILD_NAMESPACE
-          echo BRANCH: ${{ needs.createTag.outputs.newTag }}
+          echo BRANCH: ${{ github.event.inputs.gitRef }}
           echo HOST_PREFIX: $HOST_PREFIX
           
       - name: Checkout Target Branch
@@ -144,13 +140,12 @@ jobs:
   deploy-queue-consumers:
     name: Deploy Queue Consumers
     runs-on: ubuntu-latest
-    needs: [run-db-migrations, build-queue-consumers]
-    if: github.event.pull_request.merged == true || github.event_name == 'workflow_dispatch'
+    needs: run-db-migrations
     steps:
       - name: Print env
         run: |
           echo BUILD NAMESPACE: $BUILD_NAMESPACE
-          echo BRANCH: ${{ needs.createTag.outputs.newTag }}
+          echo BRANCH: ${{ github.event.inputs.gitRef }}
           echo HOST_PREFIX: $HOST_PREFIX
           
       - name: Checkout Target Branch
@@ -171,13 +166,12 @@ jobs:
   deploy-web-frontend:
     name: Deploy Web/Frontend
     runs-on: ubuntu-latest
-    needs: [run-db-migrations, build-web-frontend]
-    if: github.event.pull_request.merged == true || github.event_name == 'workflow_dispatch'
+    needs: run-db-migrations
     steps:
       - name: Print env
         run: |
           echo BUILD NAMESPACE: $BUILD_NAMESPACE
-          echo BRANCH: ${{ needs.createTag.outputs.newTag }}
+          echo BRANCH: ${{ github.event.inputs.gitRef }}
           echo HOST_PREFIX: $HOST_PREFIX
           
       - name: Checkout Target Branch
