@@ -39,6 +39,7 @@ export FILE_UPLOAD_ALLOWED_EXTENSIONS := $(or $(FILE_UPLOAD_ALLOWED_EXTENSIONS),
 export SFAS_RECEIVE_FOLDER := $(or $(SFAS_RECEIVE_FOLDER), SFAS-Receive)
 #Institution Integration
 export INSTITUTION_REQUEST_FOLDER := $(or $(INSTITUTION_REQUEST_FOLDER), Institution-Request)
+export INSTITUTION_RESPONSE_FOLDER := $(or $(INSTITUTION_RESPONSE_FOLDER), Institution-Response)
 export SWAGGER_ENABLED := $(or ${SWAGGER_ENABLED}, true)
 export APPLICATION_ARCHIVE_DAYS := $(or ${APPLICATION_ARCHIVE_DAYS}, 43)
 #Formio forms integration
@@ -59,8 +60,6 @@ export CRA_REQUEST_FOLDER := $(or $(CRA_REQUEST_FOLDER), CRA-Request)
 export CRA_RESPONSE_FOLDER := $(or $(CRA_RESPONSE_FOLDER), CRA-Response)
 export CRA_PROGRAM_AREA_CODE := $(or $(CRA_PROGRAM_AREA_CODE), )
 export CRA_ENVIRONMENT_CODE := $(or $(CRA_ENVIRONMENT_CODE), )
-#Institution Integration
-export INSTITUTION_REQUEST_FOLDER := $(or $(INSTITUTION_REQUEST_FOLDER), Institution-Request)
 
 # Starts all applications: SIMS application (Web Portals, SIMS Api, Workers, Queue Consumers), 
 # and also Form.io server, and Camunda releated services.
