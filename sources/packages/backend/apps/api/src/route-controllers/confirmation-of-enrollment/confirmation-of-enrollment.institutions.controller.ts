@@ -29,7 +29,6 @@ import {
   deliveryMethod,
 } from "../../utilities";
 import {
-  COE_WINDOW,
   CustomNamedError,
   getDateOnlyFormat,
   getISODateOnlyString,
@@ -244,13 +243,14 @@ export class ConfirmationOfEnrollmentInstitutionsController extends BaseControll
    */
   @HasLocationAccess("locationId")
   @ApiNotFoundResponse({
-    description:
-      "Confirmation of enrollment not found or application status not valid.",
+    description: "Enrolment not found.",
   })
   @ApiUnprocessableEntityResponse({
     description:
-      "Tuition amount provided should be lesser than both (actual tuition + program related costs) and (Canada grants + Canada Loan + BC Loan) " +
-      `or confirmation of enrollment window is greater than ${COE_WINDOW} days ` +
+      "Enrolment already completed and can neither be confirmed nor declined" +
+      "or Enrolment cannot be confirmed as application is not in a valid status." +
+      "or The enrolment cannot be confirmed as enrolment confirmation date is not within the valid approval period." +
+      "or Tuition amount provided should be lesser than both (actual tuition + program related costs) and (Canada grants + Canada Loan + BC Loan) " +
       "or the first disbursement(COE) is not completed and it must be completed.",
   })
   @Patch(
@@ -281,7 +281,12 @@ export class ConfirmationOfEnrollmentInstitutionsController extends BaseControll
    */
   @HasLocationAccess("locationId")
   @ApiNotFoundResponse({
-    description: "Unable to find a COE which could be completed.",
+    description: "Enrolment not found.",
+  })
+  @ApiUnprocessableEntityResponse({
+    description:
+      "Enrolment already completed and can neither be confirmed nor declined." +
+      "or Enrolment cannot be declined as application is not in a valid status.",
   })
   @Patch(
     ":locationId/confirmation-of-enrollment/disbursement-schedule/:disbursementScheduleId/deny",

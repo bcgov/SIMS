@@ -1,8 +1,8 @@
 import { ECEResponseFileRecord } from "./ece-response-file-record";
 
 /**
- * Disbursement receipt header record.
- * The header record is parsed to get the batch run date which is the processing date of the file.
+ * ECE response file header.
+ * Read and parse the header record of ECE response file.
  */
 export class ECEResponseFileHeader extends ECEResponseFileRecord {
   constructor(line: string) {

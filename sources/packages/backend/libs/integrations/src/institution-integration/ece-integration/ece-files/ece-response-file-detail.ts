@@ -3,15 +3,17 @@ import { ECEResponseFileRecord } from "./ece-response-file-record";
 import { DATE_FORMAT } from "../models/ece-integration.model";
 
 /**
- * Disbursement receipt detail record which has the receipt details for disbursements sent.
- * The document number which is present in each of the receipt detail record connects the
- * disbursement sent with the receipt received.
+ * ECE response file detail.
+ * Read and parse the detail records of ECE response file.
  */
 export class ECEResponseFileDetail extends ECEResponseFileRecord {
   constructor(line: string, lineNumber: number) {
     super(line, lineNumber);
   }
 
+  /**
+   * Unique code used to identify a post secondary institution.
+   */
   get institutionCode(): string {
     return this.line.substring(1, 5);
   }
@@ -24,19 +26,32 @@ export class ECEResponseFileDetail extends ECEResponseFileRecord {
     return +disbursementIdentifier;
   }
 
+  /**
+   * Application number.
+   */
   get applicationNumber(): string {
     return this.line.substring(85, 95);
   }
 
+  /**
+   * Indicates if the student is enrolled.
+   */
   get isEnrolmentConfirmed(): boolean {
     return this.line.substring(134, 135) === "Y";
   }
 
+  /**
+   * Enrolment confirmation date.
+   */
   get enrolmentConfirmationDate(): Date {
     const enrolmentConfirmationDate = this.line.substring(135, 143);
     return getDateOnlyFromFormat(enrolmentConfirmationDate, DATE_FORMAT);
   }
 
+  /**
+   * Indicates the amount to be paid from bank
+   * to the educational institution.
+   */
   get payToSchoolAmount(): number {
     const schoolAmount = this.line.substring(144, 150);
     return +schoolAmount;
@@ -48,11 +63,11 @@ export class ECEResponseFileDetail extends ECEResponseFileRecord {
    */
   getInvalidDataMessage(): string | undefined {
     const errors: string[] = [];
-    if (isNaN(+this.payToSchoolAmount)) {
-      errors.push("invalid Pay to school amount");
-    }
     if (isNaN(this.disbursementIdentifier)) {
-      errors.push("invalid unique index number for the disbursement record");
+      errors.push("invalid unique index number for the disbursement record.");
+    }
+    if (!this.applicationNumber) {
+      errors.push("application number not found or invalid.");
     }
     return errors.join(", ");
   }

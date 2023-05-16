@@ -1,6 +1,9 @@
+/**
+ * Common result summary model for file processing.
+ */
 export class ProcessSummaryResult {
   /**
-   * General log for the queue processing.
+   * Summary details of the processing.
    */
   summary: string[] = [];
   /**
@@ -8,7 +11,7 @@ export class ProcessSummaryResult {
    */
   warnings: string[] = [];
   /**
-   * Errors that did not stopped the process from continue.
+   * Errors that happened during the file processing.
    */
   errors: string[] = [];
 }

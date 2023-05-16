@@ -153,7 +153,7 @@ describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-confirmEnrollment"
       .expect({
         statusCode: 422,
         message:
-          "Enrolment cannot be confirmed as application is not in a valid status for this operation.",
+          "Enrolment cannot be confirmed as application is not in a valid status.",
         error: "Unprocessable Entity",
       });
   });

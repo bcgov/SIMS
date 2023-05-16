@@ -33,7 +33,7 @@ export class ConfirmationOfEnrollmentControllerService extends BaseController {
    * on first COE approval.
    * @param disbursementScheduleId disbursement schedule id of COE.
    * @param auditUserId user who confirms enrollment.
-   * @param payload COE confirmation information.
+   * @param tuitionRemittanceAmount tuition remittance amount.
    * @param options Confirm COE options.
    */
   async confirmEnrollment(

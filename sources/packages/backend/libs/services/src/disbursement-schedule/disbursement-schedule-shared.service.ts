@@ -727,7 +727,7 @@ export class DisbursementScheduleSharedService extends RecordDataModelService<Di
   }
 
   /**
-   * Summary of disbursement and application for Approval/Denial of COE.
+   * Disbursement and application details of the given disbursement.
    * @param disbursementScheduleId disbursement schedule id of COE.
    * @param locationId location id.
    * @returns disbursement and application summary.
@@ -819,8 +819,9 @@ export class DisbursementScheduleSharedService extends RecordDataModelService<Di
   }
 
   /**
-   * Get the first disbursement schedule of a disbursement.
-   * @param options options to execute the search. If onlyPendingCOE is true,
+   * Get the first disbursement schedule of an application.
+   * @param applicationId application id.
+   * @param onlyPendingCOE If onlyPendingCOE is true,
    * only records with coeStatus defined as 'Required' will be considered.
    * @returns first disbursement schedule, if any.
    */
@@ -872,7 +873,7 @@ export class DisbursementScheduleSharedService extends RecordDataModelService<Di
    * @param applicationStatus application status of the disbursed application.
    * @param tuitionRemittanceRequestedAmount tuition remittance amount requested by the institution.
    */
-  async updateDisbursementAndApplicationCOEApproval(
+  private async updateDisbursementAndApplicationCOEApproval(
     disbursementScheduleId: number,
     userId: number,
     applicationId: number,
@@ -979,10 +980,12 @@ export class DisbursementScheduleSharedService extends RecordDataModelService<Di
    ** Note: If an application has 2 COEs, and if the first COE is rejected then 2nd COE is implicitly rejected.
    * @param disbursementScheduleId disbursement schedule id to be updated.
    * @param auditUserId user that should be considered the one that is causing the changes.
-   * @param coeDeniedReasonId denied reason id of a denied COE.
+   * @param declinedReason COE declined reason details.
+   * - `coeDeniedReasonId` Denied reason id.
+   * - `otherReasonDesc` Other reason if the COE decline reason is other.
    * @param otherReasonDesc result of the update operation.
    */
-  async updateCOEToDeclined(
+  private async updateCOEToDeclined(
     disbursementScheduleId: number,
     auditUserId: number,
     declinedReason: { coeDeniedReasonId: number; otherReasonDesc?: string },
@@ -1034,9 +1037,9 @@ export class DisbursementScheduleSharedService extends RecordDataModelService<Di
    * on first COE approval.
    * @param disbursementScheduleId disbursement schedule id of COE.
    * @param auditUserId user who confirms enrollment.
-   * @param payload COE confirmation information.
+   * @param tuitionRemittance tuition remittance amount.
    * @param options Confirm COE options.
-   * - `locationId` location id of the application..
+   * - `locationId` location id of the application.
    * - `allowOutsideCOEApprovalPeriod` allow COEs which are outside the valid COE confirmation period to be confirmed..
    * - `enrolmentConfirmationDate` date of enrolment confirmation.
    * - `applicationNumber` application number of the enrolment.
@@ -1088,7 +1091,7 @@ export class DisbursementScheduleSharedService extends RecordDataModelService<Di
       )
     ) {
       throw new CustomNamedError(
-        "Enrolment cannot be confirmed as application is not in a valid status for this operation.",
+        "Enrolment cannot be confirmed as application is not in a valid status.",
         ENROLMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE,
       );
     }
@@ -1183,7 +1186,7 @@ export class DisbursementScheduleSharedService extends RecordDataModelService<Di
 
     if (disbursementSchedule.coeStatus !== COEStatus.required) {
       throw new CustomNamedError(
-        "Enrolment already completed and can neither be confirmed nor declined",
+        "Enrolment already completed and can neither be confirmed nor declined.",
         ENROLMENT_ALREADY_COMPLETED,
       );
     }
@@ -1194,7 +1197,7 @@ export class DisbursementScheduleSharedService extends RecordDataModelService<Di
       )
     ) {
       throw new CustomNamedError(
-        "Enrolment cannot be declined as application is not in a valid status for this operation.",
+        "Enrolment cannot be declined as application is not in a valid status.",
         ENROLMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE,
       );
     }

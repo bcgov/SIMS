@@ -14,6 +14,9 @@ export abstract class ECEResponseFileRecord {
     return this._lineNumber;
   }
 
+  /**
+   * Record type of the records in the file.
+   */
   get recordType(): RecordTypeCodes {
     return this.line.substring(0, 1) as RecordTypeCodes;
   }
