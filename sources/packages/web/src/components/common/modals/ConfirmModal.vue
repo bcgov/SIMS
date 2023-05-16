@@ -4,7 +4,6 @@
     dialogType="warning"
     :showDialog="showDialog"
     :maxWidth="maxWidth"
-    @click="extendTime"
   >
     <template #content>
       <slot name="content">{{ text }}</slot>
@@ -17,6 +16,7 @@
         @secondaryClick="resolvePromise(false)"
         :disablePrimaryButton="disablePrimaryButton"
         :showSecondaryButton="showSecondaryButton"
+        :processing="loading"
       />
     </template>
   </modal-dialog-base>
@@ -63,6 +63,10 @@ export default defineComponent({
       type: Boolean,
       required: false,
       default: true,
+    },
+    loading: {
+      type: Boolean,
+      default: false,
     },
   },
   setup() {

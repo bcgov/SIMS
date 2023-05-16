@@ -22,13 +22,13 @@
           <div class="my-3">
             <status-info-enrolment
               :coeStatus="
-                assessmentAwardData.estimatedAward.disbursement1Status as COEStatus
+                assessmentAwardData.estimatedAward.disbursement1COEStatus as COEStatus
               "
             />
             <confirm-enrolment
               v-if="allowConfirmEnrolment"
               :coeStatus="
-                assessmentAwardData.estimatedAward.disbursement1Status as COEStatus
+                assessmentAwardData.estimatedAward.disbursement1COEStatus as COEStatus
               "
               :applicationStatus="assessmentAwardData.applicationStatus"
               :disbursementId="
@@ -92,7 +92,7 @@
             {{
               getFinalAwardNotAvailableMessage(
                 assessmentAwardData.estimatedAward
-                  .disbursement1Status as COEStatus,
+                  .disbursement1COEStatus as COEStatus,
               )
             }}
           </div>
@@ -118,13 +118,13 @@
           <div class="my-3">
             <status-info-enrolment
               :coeStatus="
-                assessmentAwardData.estimatedAward.disbursement2Status as COEStatus
+                assessmentAwardData.estimatedAward.disbursement2COEStatus as COEStatus
               "
             />
             <confirm-enrolment
               v-if="allowConfirmEnrolment"
               :coeStatus="
-                assessmentAwardData.estimatedAward.disbursement2Status as COEStatus
+                assessmentAwardData.estimatedAward.disbursement2COEStatus as COEStatus
               "
               :applicationStatus="assessmentAwardData.applicationStatus"
               :disbursementId="
@@ -190,7 +190,7 @@
             {{
               getFinalAwardNotAvailableMessage(
                 assessmentAwardData.estimatedAward
-                  .disbursement2Status as COEStatus,
+                  .disbursement2COEStatus as COEStatus,
               )
             }}
           </div>
@@ -233,7 +233,7 @@ export default defineComponent({
   setup(props) {
     const isFirstDisbursementCompleted = computed<boolean>(
       () =>
-        props.assessmentAwardData.estimatedAward?.disbursement1Status ===
+        props.assessmentAwardData.estimatedAward?.disbursement1COEStatus ===
         COEStatus.completed,
     );
     const isSecondDisbursementAvailable = computed(
@@ -241,7 +241,7 @@ export default defineComponent({
     );
     const isSecondDisbursementCompleted = computed<boolean>(
       () =>
-        props.assessmentAwardData.estimatedAward?.disbursement2Status ===
+        props.assessmentAwardData.estimatedAward?.disbursement2COEStatus ===
         COEStatus.completed,
     );
     const showFirstFinalAward = computed<boolean>(

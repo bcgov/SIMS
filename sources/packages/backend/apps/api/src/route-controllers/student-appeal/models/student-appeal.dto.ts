@@ -41,16 +41,19 @@ export class StudentAppealRequestAPIOutDTO {
   submittedData: unknown;
   submittedFormName: string;
   appealStatus: StudentAppealStatus;
+}
+
+export class DetailedStudentAppealRequestAPIOutDTO extends StudentAppealRequestAPIOutDTO {
   assessedDate?: Date;
   assessedByUserName?: string;
   noteDescription?: string;
 }
 
-export class StudentAppealAPIOutDTO {
+export class StudentAppealAPIOutDTO<T> {
   id: number;
   submittedDate: Date;
   status: StudentAppealStatus;
-  appealRequests: StudentAppealRequestAPIOutDTO[];
+  appealRequests: T[];
 }
 
 export class StudentAppealRequestApprovalAPIInDTO {

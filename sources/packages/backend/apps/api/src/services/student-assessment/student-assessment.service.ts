@@ -54,6 +54,7 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
       .select([
         "assessment.assessmentData",
         "assessment.noaApprovalStatus",
+        "application.id",
         "application.applicationNumber",
         "application.applicationStatus",
         "student.id",
@@ -68,9 +69,12 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
         "disbursementSchedule.id",
         "disbursementSchedule.documentNumber",
         "disbursementSchedule.disbursementDate",
+        "disbursementSchedule.disbursementScheduleStatus",
         "disbursementSchedule.coeStatus",
         "disbursementSchedule.tuitionRemittanceRequestedAmount",
         "msfaaNumber.msfaaNumber",
+        "msfaaNumber.dateSigned",
+        "msfaaNumber.cancelledDate",
         "disbursementValue.valueType",
         "disbursementValue.valueCode",
         "disbursementValue.valueAmount",
@@ -234,7 +238,7 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
    * * WHEN 3:if assessmentWorkflowId is not null
    * * and assessmentData is not null, then status
    * * is Completed.
-   * @param applicationId applicationId.
+   * @param applicationId application id.
    * @param studentId applicant student.
    * @returns AssessmentHistory list
    */

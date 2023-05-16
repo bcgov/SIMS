@@ -3,37 +3,31 @@
     <template #header>
       <header-navigator
         title="Student applications"
-        :routeLocation="{
-          name: AESTRoutesConst.STUDENT_APPLICATIONS,
-          params: { studentId },
-        }"
+        :routeLocation="backRoute"
         subTitle="Assessment"
       />
     </template>
-    <RequestAssessment
+    <request-assessment
       class="mb-5"
       :applicationId="applicationId"
+      :studentId="studentId"
       @viewStudentAppeal="goToStudentAppeal"
       @viewApplicationException="goToApplicationException"
-      @viewOfferingRequest="goToOfferingRequest"
     />
-    <HistoryAssessment
-      class="mb-5"
+    <history-assessment
       :applicationId="applicationId"
+      :studentId="studentId"
       :viewRequestTypes="assessmentRequestTypes"
       @viewStudentAppeal="goToStudentAppeal"
-      @viewAssessment="gotToViewAssessment"
-      @viewOfferingRequest="goToOfferingRequest"
       @viewApplicationException="goToApplicationException"
-      @viewScholasticStandingChange="goToScholasticStanding"
     />
   </full-page-container>
 </template>
 
 <script lang="ts">
-import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
+import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import { useRouter } from "vue-router";
-import { defineComponent } from "vue";
+import { defineComponent, computed } from "vue";
 import { AssessmentTriggerType } from "@/types";
 import RequestAssessment from "@/components/aest/students/assessment/Request.vue";
 import HistoryAssessment from "@/components/aest/students/assessment/History.vue";
@@ -65,7 +59,7 @@ export default defineComponent({
 
     const goToStudentAppeal = (appealId: number) => {
       router.push({
-        name: AESTRoutesConst.STUDENT_APPEAL_REQUESTS_APPROVAL,
+        name: InstitutionRoutesConst.STUDENT_APPEAL_REQUEST,
         params: {
           studentId: props.studentId,
           applicationId: props.applicationId,
@@ -76,7 +70,7 @@ export default defineComponent({
 
     const goToApplicationException = (exceptionId: number) => {
       router.push({
-        name: AESTRoutesConst.APPLICATION_EXCEPTIONS_APPROVAL,
+        name: InstitutionRoutesConst.APPLICATION_EXCEPTION,
         params: {
           studentId: props.studentId,
           applicationId: props.applicationId,
@@ -85,45 +79,19 @@ export default defineComponent({
       });
     };
 
-    const gotToViewAssessment = (assessmentId: number) => {
-      router.push({
-        name: AESTRoutesConst.ASSESSMENT_AWARD_VIEW,
-        params: {
-          studentId: props.studentId,
-          applicationId: props.applicationId,
-          assessmentId,
-        },
-      });
-    };
-
-    const goToScholasticStanding = (scholasticStandingId: number) => {
-      router.push({
-        name: AESTRoutesConst.SCHOLASTIC_STANDING_VIEW,
-        params: {
-          studentId: props.studentId,
-          applicationId: props.applicationId,
-          scholasticStandingId,
-        },
-      });
-    };
-    const goToOfferingRequest = (offeringId: number, programId: number) => {
-      router.push({
-        name: AESTRoutesConst.OFFERING_CHANGE_REQUEST_VIEW,
-        params: {
-          offeringId,
-          programId,
-        },
-      });
-    };
+    const backRoute = computed(() => ({
+      name: InstitutionRoutesConst.STUDENT_APPLICATIONS,
+      params: {
+        studentId: props.studentId,
+      },
+    }));
 
     return {
-      AESTRoutesConst,
+      InstitutionRoutesConst,
       goToStudentAppeal,
-      gotToViewAssessment,
       goToApplicationException,
-      goToScholasticStanding,
-      goToOfferingRequest,
       assessmentRequestTypes,
+      backRoute,
     };
   },
 });

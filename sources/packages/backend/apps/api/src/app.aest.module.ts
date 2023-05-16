@@ -64,6 +64,8 @@ import {
   ConfirmationOfEnrollmentControllerService,
   OverawardAESTController,
   OverawardControllerService,
+  ApplicationExceptionControllerService,
+  StudentAppealControllerService,
   RestrictionControllerService,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
@@ -109,6 +111,8 @@ import {
     OverawardAESTController,
   ],
   providers: [
+    ApplicationExceptionControllerService,
+    StudentAppealControllerService,
     WorkflowClientService,
     InstitutionRestrictionService,
     SupportingUserService,

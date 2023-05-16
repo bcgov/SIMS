@@ -53,6 +53,7 @@ export class AssessmentNOAAPIOutDTO {
       "Part-time and full-time will have some common and some specific properties for each payload.",
   })
   assessment: Assessment;
+  applicationId: number;
   applicationNumber: string;
   fullName: string;
   programName: string;

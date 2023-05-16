@@ -14,16 +14,20 @@ export interface StudentAppealRequestAPIOutDTO {
   submittedData: unknown;
   submittedFormName: string;
   appealStatus: StudentAppealStatus;
+}
+
+export interface DetailedStudentAppealRequestAPIOutDTO
+  extends StudentAppealRequestAPIOutDTO {
   assessedDate?: Date;
   assessedByUserName?: string;
   noteDescription?: string;
 }
 
-export interface StudentAppealAPIOutDTO {
+export interface StudentAppealAPIOutDTO<T> {
   id: number;
   submittedDate: Date;
   status: StudentAppealStatus;
-  appealRequests: StudentAppealRequestAPIOutDTO[];
+  appealRequests: T[];
 }
 
 export interface StudentAppealRequestApprovalAPIInDTO {
