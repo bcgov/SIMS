@@ -265,7 +265,7 @@ jobs:
   run-db-migrations:
     name: Run db-migrations
     runs-on: ubuntu-latest
-    needs: build-db-migrations
+    needs: [build-db-migrations, build-sims-api, build-workers, build-queue-consumers, build-web-frontend]
     if: github.event.pull_request.merged == true || github.event_name == 'workflow_dispatch'
     steps:
       - name: Print env
@@ -292,7 +292,7 @@ jobs:
   deploy-sims-api:
     name: Deploy SIMS-API
     runs-on: ubuntu-latest
-    needs: [run-db-migrations, build-sims-api]
+    needs: run-db-migrations
     if: github.event.pull_request.merged == true || github.event_name == 'workflow_dispatch'
     steps:
       - name: Print env
@@ -319,7 +319,7 @@ jobs:
   deploy-workers:
     name: Deploy Workers
     runs-on: ubuntu-latest
-    needs: [run-db-migrations, build-workers]
+    needs: run-db-migrations
     if: github.event.pull_request.merged == true || github.event_name == 'workflow_dispatch'
     steps:
       - name: Print env
@@ -346,7 +346,7 @@ jobs:
   deploy-queue-consumers:
     name: Deploy Queue Consumers
     runs-on: ubuntu-latest
-    needs: [run-db-migrations, build-queue-consumers]
+    needs: run-db-migrations
     if: github.event.pull_request.merged == true || github.event_name == 'workflow_dispatch'
     steps:
       - name: Print env
@@ -373,7 +373,7 @@ jobs:
   deploy-web-frontend:
     name: Deploy Web/Frontend
     runs-on: ubuntu-latest
-    needs: [run-db-migrations, build-web-frontend]
+    needs: run-db-migrations
     if: github.event.pull_request.merged == true || github.event_name == 'workflow_dispatch'
     steps:
       - name: Print env
