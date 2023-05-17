@@ -35,6 +35,9 @@ export FORMIO_ROOT_EMAIL := $(or ${FORMIO_ROOT_EMAIL}, dev_sabc@gov.bc.ca)
 export MONGODB_URI := $(or ${MONGODB_URI}, $$MONGODB_URI)
 export QUEUE_PREFIX := $(or $(QUEUE_PREFIX), {sims-local})
 
+export MAX_WAIT=300 # Maximum wait time in seconds.
+export WAIT_TIME=0  # Initialize wait time to zero.
+
 define DB_MIGRATIONS
 "$(HOST_PREFIX)db-migrations-$(APP_NAME)"
 endef
@@ -123,7 +126,7 @@ init-oc: | print-status init-project
 oc-build-patroni: | print-status build-patroni
 oc-deploy-patroni: | print-status deploy-patroni
 oc-build-db-migrations: | print-status build-db-migrations
-oc-run-db-migrations: | print-status run-db-migrations
+oc-run-db-migrations: | print-status delete-db-migrations run-db-migrations wait-for-db-migrations
 oc-build-api: | print-status build-api
 oc-deploy-api: | print-status deploy-api
 oc-build-workers: | print-status build-workers
@@ -322,6 +325,19 @@ run-db-migrations:
 		-p DATABASE_NAME_KEY=$(DATABASE_NAME_KEY) \
 		-p JOB_NAME=$(DB_MIGRATIONS_JOB_NAME) \
 		| oc -n $(NAMESPACE) apply -f - 
+
+wait-for-db-migrations: 
+	while [ "$$(oc get job $(DB_MIGRATIONS_JOB_NAME) -o=jsonpath='{.status.conditions[?(@.type=="Complete")].status}' || echo "None")" != "True" ] && [ "$$WAIT_TIME" -lt "$$MAX_WAIT" ]; do sleep 5; WAIT_TIME=$$((WAIT_TIME+5)); done
+	if [ "$$(oc get job $(DB_MIGRATIONS_JOB_NAME) -o=jsonpath='{.status.conditions[?(@.type=="Complete")].status}' || echo "None")" != "True" ]; then echo "Error: Job $(DB_MIGRATIONS_JOB_NAME) failed to complete within the specified timeout"; exit 1; fi
+
+delete-db-migrations:
+	@if [ -n "$(shell oc get job $(DB_MIGRATIONS_JOB_NAME) -o name 2>/dev/null)" ]; then \
+		oc delete job $(DB_MIGRATIONS_JOB_NAME); \
+			echo "Job deleted."; \
+	else \
+		echo "Job not found."; \
+	fi
+
 
 deploy-api:
 	test -n "$(NAMESPACE)"
