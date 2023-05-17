@@ -52,7 +52,6 @@ import {
   WorkflowClientService,
   NoteSharedService,
   RestrictionSharedService,
-  DisbursementScheduleSharedService,
   ConfirmationOfEnrollmentService,
 } from "@sims/services";
 import {
@@ -116,7 +115,6 @@ import { ATBCIntegrationModule } from "@sims/integrations/atbc-integration";
     NoteSharedService,
     OverawardControllerService,
     StudentAppealControllerService,
-    DisbursementScheduleSharedService,
     ConfirmationOfEnrollmentService,
   ],
 })

@@ -56,7 +56,6 @@ import { ConfirmationOfEnrollmentControllerService } from "./confirmation-of-enr
 import {
   ConfirmationOfEnrollmentService,
   DisbursementOverawardService,
-  DisbursementScheduleSharedService,
 } from "@sims/services";
 import {
   ENROLMENT_ALREADY_COMPLETED,
@@ -76,7 +75,6 @@ export class ConfirmationOfEnrollmentInstitutionsController extends BaseControll
     private readonly confirmationOfEnrollmentControllerService: ConfirmationOfEnrollmentControllerService,
     private readonly confirmationOfEnrollmentService: ConfirmationOfEnrollmentService,
     private readonly disbursementOverawardService: DisbursementOverawardService,
-    private readonly disbursementScheduleSharedService: DisbursementScheduleSharedService,
   ) {
     super();
   }
@@ -206,7 +204,7 @@ export class ConfirmationOfEnrollmentInstitutionsController extends BaseControll
       applicationCOEStatus: disbursementSchedule.coeStatus,
       applicationId: disbursementSchedule.studentAssessment.application.id,
       coeApprovalPeriodStatus:
-        this.disbursementScheduleSharedService.getCOEApprovalPeriodStatus(
+        this.confirmationOfEnrollmentService.getCOEApprovalPeriodStatus(
           disbursementSchedule.disbursementDate,
           offering.studyEndDate,
         ),
@@ -299,7 +297,7 @@ export class ConfirmationOfEnrollmentInstitutionsController extends BaseControll
     @UserToken() userToken: IUserToken,
   ): Promise<void> {
     try {
-      await this.disbursementScheduleSharedService.declineEnrolment(
+      await this.confirmationOfEnrollmentService.declineEnrolment(
         disbursementScheduleId,
         userToken.userId,
         payload,

@@ -3,7 +3,7 @@ import {
   NotFoundException,
   UnprocessableEntityException,
 } from "@nestjs/common";
-import { DisbursementScheduleSharedService } from "@sims/services";
+import { ConfirmationOfEnrollmentService } from "@sims/services";
 import { ApiProcessError } from "../../types";
 import BaseController from "../BaseController";
 import { ConfirmEnrollmentOptions } from "./models/confirmation-of-enrollment.models";
@@ -20,7 +20,7 @@ import {
 @Injectable()
 export class ConfirmationOfEnrollmentControllerService extends BaseController {
   constructor(
-    private readonly disbursementScheduleSharedService: DisbursementScheduleSharedService,
+    private readonly confirmationOfEnrollmentService: ConfirmationOfEnrollmentService,
   ) {
     super();
   }
@@ -43,7 +43,7 @@ export class ConfirmationOfEnrollmentControllerService extends BaseController {
     options?: ConfirmEnrollmentOptions,
   ): Promise<void> {
     try {
-      await this.disbursementScheduleSharedService.confirmEnrollment(
+      await this.confirmationOfEnrollmentService.confirmEnrollment(
         disbursementScheduleId,
         auditUserId,
         tuitionRemittanceAmount,

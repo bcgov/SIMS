@@ -73,7 +73,6 @@ import {
   WorkflowClientService,
   NoteSharedService,
   RestrictionSharedService,
-  DisbursementScheduleSharedService,
 } from "@sims/services";
 import {
   SFASIndividualService,
@@ -159,7 +158,6 @@ import {
     OverawardControllerService,
     ApplicationExceptionControllerService,
     StudentAppealControllerService,
-    DisbursementScheduleSharedService,
   ],
 })
 export class AppInstitutionsModule {}
