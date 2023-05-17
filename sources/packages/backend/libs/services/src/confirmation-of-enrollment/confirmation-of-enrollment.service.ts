@@ -148,7 +148,7 @@ export class ConfirmationOfEnrollmentService {
    * @param locationId location id.
    * @returns disbursement and application summary.
    */
-  async getDisbursementAndApplicationSummary(
+  private async getDisbursementAndApplicationSummary(
     disbursementScheduleId: number,
     locationId?: number,
   ): Promise<DisbursementSchedule> {
@@ -347,7 +347,7 @@ export class ConfirmationOfEnrollmentService {
    * @param auditUserId user who creates notification.
    * @param transactionalEntityManager entity manager to execute in transaction.
    */
-  async createNotificationForDisbursementUpdate(
+  private async createNotificationForDisbursementUpdate(
     disbursementScheduleId: number,
     auditUserId: number,
     transactionalEntityManager: EntityManager,
