@@ -133,6 +133,8 @@ jobs:
     runs-on: ubuntu-latest
     needs: createTag
     if: github.event.pull_request.merged == true || github.event_name == 'workflow_dispatch'
+    env:
+      BUILD_REF: ${{ needs.createTag.outputs.newTag }}
     steps:
       - name: Print env
         run: |
@@ -161,6 +163,8 @@ jobs:
     runs-on: ubuntu-latest
     needs: createTag
     if: github.event.pull_request.merged == true || github.event_name == 'workflow_dispatch'
+    env:
+      BUILD_REF: ${{ needs.createTag.outputs.newTag }}
     steps:
       - name: Print env
         run: |
@@ -189,6 +193,8 @@ jobs:
     runs-on: ubuntu-latest
     needs: createTag
     if: github.event.pull_request.merged == true || github.event_name == 'workflow_dispatch'
+    env:
+      BUILD_REF: ${{ needs.createTag.outputs.newTag }}
     steps:
       - name: Print env
         run: |
@@ -217,6 +223,8 @@ jobs:
     runs-on: ubuntu-latest
     needs: createTag
     if: github.event.pull_request.merged == true || github.event_name == 'workflow_dispatch'
+    env:
+      BUILD_REF: ${{ needs.createTag.outputs.newTag }}
     steps:
       - name: Print env
         run: |
@@ -245,6 +253,8 @@ jobs:
     runs-on: ubuntu-latest
     needs: createTag
     if: github.event.pull_request.merged == true || github.event_name == 'workflow_dispatch'
+    env:
+      BUILD_REF: ${{ needs.createTag.outputs.newTag }}
     steps:
       - name: Print env
         run: |
