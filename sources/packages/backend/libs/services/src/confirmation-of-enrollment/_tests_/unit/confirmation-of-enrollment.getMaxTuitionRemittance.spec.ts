@@ -1,15 +1,25 @@
 import { ConfirmationOfEnrollmentService } from "@sims/services/confirmation-of-enrollment/confirmation-of-enrollment.service";
 import { DisbursementSchedule, DisbursementValueType } from "@sims/sims-db";
-import { Repository } from "typeorm";
+import { DataSource, Repository } from "typeorm";
 import { MaxTuitionRemittanceTypes } from "../../models/confirmation-of-enrollment.models";
+import { SequenceControlService } from "@sims/services/sequence-control/sequence-control.service";
+import { NotificationActionsService } from "@sims/services/notifications";
 
 describe("ConfirmationOfEnrollmentService-getMaxTuitionRemittance", () => {
   let service: ConfirmationOfEnrollmentService;
 
   beforeAll(() => {
     // disbursementScheduleRepo is not a dependency for getMaxTuitionRemittance.
+    const dataSource = {} as DataSource;
     const disbursementScheduleRepo = {} as Repository<DisbursementSchedule>;
-    service = new ConfirmationOfEnrollmentService(disbursementScheduleRepo);
+    const sequenceService = {} as SequenceControlService;
+    const notificationActionsService = {} as NotificationActionsService;
+    service = new ConfirmationOfEnrollmentService(
+      disbursementScheduleRepo,
+      dataSource,
+      sequenceService,
+      notificationActionsService,
+    );
   });
 
   it("Should calculate total estimated value from awards when awards are lesser than offering costs", () => {

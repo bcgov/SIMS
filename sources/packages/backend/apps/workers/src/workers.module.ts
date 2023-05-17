@@ -27,6 +27,7 @@ import {
   NotificationsModule,
   NoteSharedService,
   MSFAANumberSharedService,
+  ConfirmationOfEnrollmentService,
 } from "@sims/services";
 import { LoggerModule } from "@sims/utilities/logger";
 import { ConfigModule } from "@sims/utilities/config";
@@ -64,6 +65,7 @@ import { SystemUserModule } from "@sims/services/system-users";
     MSFAANumberSharedService,
     DisbursementOverawardService,
     NoteSharedService,
+    ConfirmationOfEnrollmentService,
   ],
 })
 export class WorkersModule {}

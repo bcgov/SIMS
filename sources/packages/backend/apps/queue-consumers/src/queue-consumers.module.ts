@@ -31,6 +31,7 @@ import {
   StudentRestrictionSharedService,
   WorkflowClientService,
   ZeebeModule,
+  ConfirmationOfEnrollmentService,
 } from "@sims/services";
 import { DatabaseModule } from "@sims/sims-db";
 import { IER12IntegrationModule } from "@sims/integrations/institution-integration/ier12-integration";
@@ -108,6 +109,7 @@ import { ECEProcessIntegrationScheduler } from "./processors/schedulers/institut
     ProcessArchiveApplicationsScheduler,
     SystemUsersService,
     ApplicationService,
+    ConfirmationOfEnrollmentService,
   ],
 })
 export class QueueConsumersModule {}
