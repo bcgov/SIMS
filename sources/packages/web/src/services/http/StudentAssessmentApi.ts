@@ -79,13 +79,16 @@ export class StudentAssessmentApi extends HttpBaseClient {
   /**
    * Get estimated and actual(if present) award details of an assessment.
    * @param assessmentId assessment to which awards details belong to.
+   * @param studentId, student id.
    * @returns estimated and actual award details.
    */
   async getAssessmentAwardDetails(
     assessmentId: number,
+    studentId?: number,
   ): Promise<AwardDetailsAPIOutDTO> {
-    return this.getCall<AwardDetailsAPIOutDTO>(
-      this.addClientRoot(`assessment/${assessmentId}/award`),
-    );
+    const endpoint = studentId
+      ? `assessment/student/${studentId}/assessment/${assessmentId}/award`
+      : `assessment/${assessmentId}/award`;
+    return this.getCall<AwardDetailsAPIOutDTO>(this.addClientRoot(endpoint));
   }
 }

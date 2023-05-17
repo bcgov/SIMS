@@ -42,7 +42,7 @@ import PendingDesignations from "@/views/aest/institution/PendingDesignation.vue
 import DesignationAESTView from "@/views/aest/institution/DesignationAESTView.vue";
 import AssessmentsSummary from "@/views/aest/student/applicationDetails/AssessmentsSummary.vue";
 import StudentAppealRequestsApproval from "@/views/aest/student/applicationDetails/StudentAppealRequestsApproval.vue";
-import NoticeOfAssessment from "@/views/aest/NoticeOfAssessment.vue";
+import NoticeOfAssessment from "@/views/aest/student/applicationDetails/NoticeOfAssessment.vue";
 import ApplicationExceptionsApproval from "@/views/aest/student/applicationDetails/ApplicationExceptionsApproval.vue";
 import ViewScholasticStanding from "@/views/aest/student/ViewScholasticStanding.vue";
 import SINManagement from "@/views/aest/student/SINManagement.vue";

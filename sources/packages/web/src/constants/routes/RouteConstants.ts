@@ -9,7 +9,7 @@ export const StudentRoutesConst = {
   STUDENT_PROFILE_EDIT: Symbol(),
   FINANCIAL_AID_APPLICATION: Symbol(),
   APPLICATIONS: Symbol(),
-  ASSESSMENT: Symbol(),
+  NOTICE_OF_ASSESSMENT_VIEW: Symbol(),
   ASSESSMENT_AWARD_VIEW: Symbol(),
   PERSONAL_INFO: Symbol(),
   SELECT_PROGRAM: Symbol(),
@@ -81,6 +81,7 @@ export const InstitutionRoutesConst = {
   APPLICATION_EXCEPTION: Symbol(),
   STUDENT_APPEAL_REQUEST: Symbol(),
   ASSESSMENT_AWARD_VIEW: Symbol(),
+  NOTICE_OF_ASSESSMENT_VIEW: Symbol(),
 };
 
 /**

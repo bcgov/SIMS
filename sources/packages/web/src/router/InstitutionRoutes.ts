@@ -51,6 +51,7 @@ import InstitutionAssessmentsSummary from "@/views/institution/student/applicati
 import ApplicationExceptions from "@/views/institution/student/applicationDetails/ApplicationExceptions.vue";
 import StudentAppealRequest from "@/views/institution/student/applicationDetails/StudentAppealRequest.vue";
 import AssessmentAward from "@/views/institution/student/applicationDetails/AssessmentAward.vue";
+import NoticeOfAssessment from "@/views/institution/student/applicationDetails/NoticeOfAssessment.vue";
 
 export const institutionRoutes: Array<RouteRecordRaw> = [
   {
@@ -608,12 +609,17 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
             props: true,
             component: StudentAppealRequest,
           },
-
           {
             path: AppRoutes.AssessmentAwardView,
             name: InstitutionRoutesConst.ASSESSMENT_AWARD_VIEW,
             props: true,
             component: AssessmentAward,
+          },
+          {
+            path: AppRoutes.NoticeOfAssessmentView,
+            name: InstitutionRoutesConst.NOTICE_OF_ASSESSMENT_VIEW,
+            props: true,
+            component: NoticeOfAssessment,
           },
         ],
       },

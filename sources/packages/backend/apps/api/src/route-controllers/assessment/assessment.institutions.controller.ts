@@ -9,9 +9,10 @@ import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { ClientTypeBaseRoute } from "../../types";
 import {
   AssessmentHistorySummaryAPIOutDTO,
+  AwardDetailsAPIOutDTO,
   RequestAssessmentSummaryAPIOutDTO,
 } from "./models/assessment.dto";
-import { ApiTags } from "@nestjs/swagger";
+import { ApiNotFoundResponse, ApiTags } from "@nestjs/swagger";
 import { AssessmentControllerService } from "..";
 
 /**
@@ -86,21 +87,24 @@ export class AssessmentInstitutionsController extends BaseController {
   //   return this.assessmentControllerService.getAssessmentNOA(assessmentId);
   // }
 
-  // /**
-  //  * Get estimated and actual(if present) award details of an assessment.
-  //  * @param assessmentId assessment to which awards details belong to.
-  //  * @returns estimated and actual award details.
-  //  */
-  // @Get(":assessmentId/award")
-  // @ApiNotFoundResponse({
-  //   description: "Assessment not found.",
-  // })
-  // async getAssessmentAwardDetails(
-  //   @Param("assessmentId", ParseIntPipe) assessmentId: number,
-  // ): Promise<AwardDetailsAPIOutDTO> {
-  //   return this.assessmentControllerService.getAssessmentAwardDetails(
-  //     assessmentId,
-  //     true,
-  //   );
-  // }
+  /**
+   * Get estimated and actual(if present) award details of an assessment.
+   * @param studentId, student id.
+   * @param assessmentId assessment to which awards details belong to.
+   * @returns estimated and actual award details.
+   */
+  @Get("student/:studentId/assessment/:assessmentId/award")
+  @ApiNotFoundResponse({
+    description: "Assessment not found.",
+  })
+  async getAssessmentAwardDetails(
+    @Param("studentId", ParseIntPipe) studentId: number,
+    @Param("assessmentId", ParseIntPipe) assessmentId: number,
+  ): Promise<AwardDetailsAPIOutDTO> {
+    return this.assessmentControllerService.getAssessmentAwardDetails(
+      assessmentId,
+      true,
+      studentId,
+    );
+  }
 }
