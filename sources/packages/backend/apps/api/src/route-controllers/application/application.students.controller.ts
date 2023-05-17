@@ -24,7 +24,6 @@ import {
   APPLICATION_NOT_FOUND,
   APPLICATION_NOT_VALID,
   EducationProgramOfferingService,
-  DisbursementScheduleService,
   StudentAssessmentService,
   INVALID_OPERATION_IN_THE_CURRENT_STATUS,
   ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE,
@@ -71,6 +70,7 @@ import { CustomNamedError } from "@sims/utilities";
 import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
 import { ApplicationData } from "@sims/sims-db/entities/application.model";
 import { ApplicationStatus, StudentAppealStatus } from "@sims/sims-db";
+import { ConfirmationOfEnrollmentService } from "@sims/services";
 
 @AllowAuthorizedParty(AuthorizedParties.student)
 @RequiresStudentAccount()
@@ -83,7 +83,7 @@ export class ApplicationStudentsController extends BaseController {
     private readonly studentService: StudentService,
     private readonly programYearService: ProgramYearService,
     private readonly offeringService: EducationProgramOfferingService,
-    private readonly disbursementScheduleService: DisbursementScheduleService,
+    private readonly confirmationOfEnrollmentService: ConfirmationOfEnrollmentService,
     private readonly assessmentService: StudentAssessmentService,
     private readonly applicationControllerService: ApplicationControllerService,
     private readonly craIncomeVerificationService: CRAIncomeVerificationService,
@@ -121,7 +121,7 @@ export class ApplicationStudentsController extends BaseController {
         application.data,
       );
     const firstCOEPromise =
-      this.disbursementScheduleService.getFirstDisbursementScheduleByApplication(
+      this.confirmationOfEnrollmentService.getFirstDisbursementScheduleByApplication(
         applicationId,
       );
     const [applicationData, firstCOE] = await Promise.all([

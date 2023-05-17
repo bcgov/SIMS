@@ -183,6 +183,7 @@ export class ConfigService {
   get institutionIntegration(): InstitutionIntegrationConfig {
     return this.getCachedConfig("institutionIntegrationConfig", {
       ftpRequestFolder: process.env.INSTITUTION_REQUEST_FOLDER,
+      ftpResponseFolder: process.env.INSTITUTION_RESPONSE_FOLDER,
     });
   }
 

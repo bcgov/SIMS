@@ -12,6 +12,9 @@ objects:
       name: ${NAME}
     spec:
       replicas: "${{REPLICAS}}"
+      disruptionBudget:
+        maxUnavailable: 0
+        minAvailable: "${{REPLICAS}}"
       revisionHistoryLimit: 10
       selector:
         deploymentconfig: ${NAME}
@@ -90,6 +93,11 @@ objects:
                   valueFrom:
                     secretKeyRef:
                       key: ${INSTITUTION_REQUEST_FOLDER_NAME_KEY}
+                      name: ${QUEUE_CONSUMERS_SECRET_NAME}
+                - name: INSTITUTION_RESPONSE_FOLDER
+                  valueFrom:
+                    secretKeyRef:
+                      key: ${INSTITUTION_RESPONSE_FOLDER_NAME_KEY}
                       name: ${QUEUE_CONSUMERS_SECRET_NAME}
                 - name: BYPASS_CRA_INCOME_VERIFICATION
                   value: ${BYPASS_CRA_INCOME_VERIFICATION}
@@ -231,6 +239,18 @@ objects:
       to:
         kind: Service
         name: ${NAME}
+  - apiVersion: autoscaling/v1
+    kind: HorizontalPodAutoscaler
+    metadata:
+      name: ${NAME}-hpa
+    spec:
+      scaleTargetRef:
+        apiVersion: apps/v1
+        kind: ReplicationController
+        name: ${NAME}-rc
+      minReplicas: "${{REPLICAS}}"
+      maxReplicas: 10
+      targetCPUUtilizationPercentage: 80
 parameters:
   - name: NAME
     required: true
@@ -284,6 +304,8 @@ parameters:
     required: true
   - name: INSTITUTION_REQUEST_FOLDER_NAME_KEY
     value: institution-request-folder
+  - name: INSTITUTION_RESPONSE_FOLDER_NAME_KEY
+    value: institution-response-folder
   - name: BYPASS_CRA_INCOME_VERIFICATION
     value: "false"
   - name: REDIS_SERVICE

@@ -12,6 +12,9 @@ objects:
       name: ${NAME}
     spec:
       replicas: "${{REPLICAS}}"
+      disruptionBudget:
+        maxUnavailable: 1
+        minAvailable: "${{REPLICAS}}"
       revisionHistoryLimit: 10
       selector:
         deploymentconfig: ${NAME}
@@ -82,6 +85,18 @@ objects:
       to:
         kind: Service
         name: ${NAME}
+  - apiVersion: autoscaling/v1
+    kind: HorizontalPodAutoscaler
+    metadata:
+      name: ${NAME}-hpa
+    spec:
+      scaleTargetRef:
+        apiVersion: apps/v1
+        kind: ReplicationController
+        name: ${NAME}-rc
+      minReplicas: "${{REPLICAS}}"
+      maxReplicas: 10
+      targetCPUUtilizationPercentage: 80
 parameters:
   - name: NAME
     required: true

@@ -1,0 +1,89 @@
+apiVersion: template.openshift.io/v1
+kind: Template
+metadata:
+  name: ${NAME}
+  annotations:
+    description: "Template for running a job that performs a database migrations"
+labels:
+  project: ${PROJECT}
+  service: ${SERVICE_NAME}
+objects:
+  - apiVersion: batch/v1
+    kind: Job
+    metadata:
+      name: ${JOB_NAME}
+    spec:
+      activeDeadlineSeconds: 300  # The maximum duration the job can run.
+      backoffLimit: 5  # The number of retries for a job.
+      template:
+        metadata:
+          name: ${JOB_NAME}
+        spec:
+          containers:
+            - name: db-migrations-container
+              image: ${IMAGE_REGISTRY}/${BUILD_NAMESPACE}/${IMAGE_STREAM_TAG}
+              env:
+                - name: VERSION
+                  value: ${BUILD_TAG}
+                - name: POSTGRES_HOST
+                  value: "${DB_SERVICE}"
+                - name: POSTGRES_USER
+                  valueFrom:
+                    secretKeyRef:
+                      key: ${DB_USERNAME_KEY}
+                      name: ${DB_SECRET_NAME}
+                - name: POSTGRES_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      key: ${DB_PASSWORD_KEY}
+                      name: ${DB_SECRET_NAME}
+                - name: POSTGRES_DB
+                  valueFrom:
+                    secretKeyRef:
+                      key: ${DATABASE_NAME_KEY}
+                      name: ${DB_SECRET_NAME}
+              resources:
+                limits:
+                  cpu: ${CPU_LIMIT}
+                  memory: ${MEMORY_LIMIT}
+                requests:
+                  cpu: ${CPU_REQUEST}
+                  memory: ${MEMORY_REQUEST}
+          restartPolicy: OnFailure
+parameters:
+  - name: NAME
+    required: true
+  - name: BUILD_TAG
+    value: "0"
+  - name: PROJECT
+    value: sims
+  - name: SERVICE_NAME
+    value: db-migrations
+  - name: JOB_NAME
+    description: database.migrations
+    required: true
+    value: db-migrations-job
+  - name: IMAGE_STREAM_TAG
+    required: true
+  - name: BUILD_NAMESPACE
+    required: true
+  - name: IMAGE_REGISTRY
+    value: image-registry.openshift-image-registry.svc:5000
+  - name: DB_SERVICE
+    value: patroni-master
+  - name: DB_SECRET_NAME
+    value: patroni-creds
+  - name: DB_USERNAME_KEY
+    value: superuser-username
+  - name: DB_PASSWORD_KEY
+    value: superuser-password
+  - name: DATABASE_NAME_KEY
+    required: true
+  - name: CPU_LIMIT
+    value: "1.0"
+  - name: MEMORY_LIMIT
+    value: "2000M"
+  - name: CPU_REQUEST
+    value: "0.5"
+  - name: MEMORY_REQUEST
+    value: "1000M"

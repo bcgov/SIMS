@@ -11,6 +11,8 @@ import {
 } from "@sims/integrations/services";
 import { ECEProcessingService } from "./ece.processing.service";
 import { ECEIntegrationService } from "./ece.integration.service";
+import { ECEResponseIntegrationService } from "./ece-response.integration.service";
+import { ECEResponseProcessingService } from "./ece-response.processing.service";
 
 @Global()
 @Module({
@@ -23,7 +25,9 @@ import { ECEIntegrationService } from "./ece.integration.service";
     ECEIntegrationService,
     StudentRestrictionSharedService,
     RestrictionSharedService,
+    ECEResponseIntegrationService,
+    ECEResponseProcessingService,
   ],
-  exports: [ECEProcessingService],
+  exports: [ECEProcessingService, ECEResponseProcessingService],
 })
 export class ECEIntegrationModule {}

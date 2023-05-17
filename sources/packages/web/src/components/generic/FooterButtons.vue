@@ -19,15 +19,9 @@
         data-cy="primaryFooterButton"
         color="primary"
         @click="$emit('primaryClick')"
+        :loading="processing"
       >
-        <v-progress-circular
-          v-if="processing"
-          bg-color="white"
-          indeterminate
-          color="secondary"
-          class="ml-2"
-          :size="20"
-        />{{ primaryLabel }}</v-btn
+        {{ primaryLabel }}</v-btn
       >
     </slot>
   </v-row>
