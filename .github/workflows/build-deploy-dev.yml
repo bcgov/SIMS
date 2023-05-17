@@ -25,9 +25,36 @@ on:
         type: choice
         required: false
         options:
-          -
+          - noRelease
           - draft
           - publish
+env:
+  NAMESPACE: ${{ secrets.OPENSHIFT_ENV_NAMESPACE }}
+  HOST_PREFIX: ${{ secrets.HOST_PREFIX }}
+  BUILD_NAMESPACE: 0c27fb-tools
+  KEYCLOAK_REALM: "aestsims"
+  KEYCLOAK_AUTH_URL: ${{ secrets.KEYCLOAK_AUTH_URL }}
+  BCeID_WEB_SERVICE_WSDL: ${{ secrets.BCeID_WEB_SERVICE_WSDL }}
+  SITE_MINDER_LOGOUT_URL: ${{ secrets.SITE_MINDER_LOGOUT_URL }}
+  ATBC_LOGIN_ENDPOINT: ${{ secrets.ATBC_LOGIN_ENDPOINT }}
+  ATBC_ENDPOINT: ${{ secrets.ATBC_ENDPOINT }}
+  SWAGGER_ENABLED: true
+  APPLICATION_ARCHIVE_DAYS: 43
+  BYPASS_APPLICATION_SUBMIT_VALIDATIONS: ${{ secrets.BYPASS_APPLICATION_SUBMIT_VALIDATIONS }}
+  BYPASS_CRA_INCOME_VERIFICATION: ${{ secrets.BYPASS_CRA_INCOME_VERIFICATION }}
+  API_SECRET_NAME: ${{ secrets.OPENSHIFT_SIMS_CREDS_NAME }}
+  WORKERS_SECRET_NAME: ${{ secrets.OPENSHIFT_SIMS_CREDS_NAME }}
+  QUEUE_CONSUMERS_SECRET_NAME: ${{ secrets.OPENSHIFT_SIMS_CREDS_NAME }}
+  FORMS_SECRET_NAME: ${{ secrets.FORMS_SECRET_NAME }}
+  QUEUE_PREFIX: ${{ secrets.QUEUE_PREFIX }}
+  API_PORT: ${{ secrets.API_PORT }}
+  WEB_PORT: ${{ secrets.WEB_PORT }}
+  API: ${{ format('{0}api-sims', secrets.HOST_PREFIX) }}
+  WEB: ${{ format('{0}web-sims', secrets.HOST_PREFIX) }}
+  WORKERS: ${{ format('{0}workers-sims', secrets.HOST_PREFIX) }}
+  QUEUE_CONSUMERS: ${{ format('{0}queue-consumers-sims', secrets.HOST_PREFIX) }}
+  SWAGGER_NAME: ${{ format('{0}swagger', secrets.HOST_PREFIX) }}
+  DATABASE_NAME_KEY: ${{ secrets.DATABASE_NAME_KEY }}
 
 jobs:
   # Print variables for logging and debugging purposes
@@ -48,6 +75,7 @@ jobs:
     name: "Create tag"
     if:  github.event.pull_request.merged == true || github.event_name == 'workflow_dispatch' 
     runs-on: ubuntu-latest
+    needs: checkEnv
     steps:
       - name: Get bumb value
         uses: haya14busa/action-cond@v1
@@ -98,122 +126,273 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - run: echo "created release ${{ needs.createTag.outputs.newTag }} ${{ steps.createNewRelease.outputs.html_url }}!"
 
-  # Building all packages
-  build:
-    name: Building all packages
-    environment: DEV
+  # Build DB migrations.
+  build-db-migrations:
+    name: Build db-migrations
     runs-on: ubuntu-latest
     needs: createTag
-    if: github.event.pull_request.merged == true || github.event_name == 'workflow_dispatch' 
-    env:
-      BUILD_NAMESPACE: 0c27fb-tools
-      BUILD_REF: ${{ needs.createTag.outputs.newTag }}
-      HOST_PREFIX: ${{ secrets.HOST_PREFIX }}
+    if: github.event.pull_request.merged == true || github.event_name == 'workflow_dispatch'
     steps:
-      # Checkout the PR branch
       - name: Print env
         run: |
           echo BUILD NAMESPACE: $BUILD_NAMESPACE
-          echo BRANCH: $BUILD_REF
+          echo BRANCH: ${{ needs.createTag.outputs.newTag }}
+          echo HOST_PREFIX: $HOST_PREFIX
+          
       - name: Checkout Target Branch
         uses: actions/checkout@v3
         with:
           ref: ${{ needs.createTag.outputs.newTag }}
-      # Log in to OpenShift.
-      # Note: The secrets needed to log in are NOT available if the PR comes from a FORK.
-      # PR's must originate from a branch off the original repo or else all openshift `oc` commands will fail.
+
       - name: Log in to OpenShift
         run: |
           oc login --token=${{ secrets.SA_TOKEN }} --server=https://api.silver.devops.gov.bc.ca:6443
-      # Build the images
+
+      - name: Build db-migrations Image
+        working-directory: "./devops"
+        run: |
+          make oc-build-db-migrations
+
+  # Build SIMS-API
+  build-sims-api:
+    name: Build SIMS-API
+    runs-on: ubuntu-latest
+    needs: createTag
+    if: github.event.pull_request.merged == true || github.event_name == 'workflow_dispatch'
+    steps:
+      - name: Print env
+        run: |
+          echo BUILD NAMESPACE: $BUILD_NAMESPACE
+          echo BRANCH: ${{ needs.createTag.outputs.newTag }}
+          echo HOST_PREFIX: $HOST_PREFIX
+          
+      - name: Checkout Target Branch
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ needs.createTag.outputs.newTag }}
+
+      - name: Log in to OpenShift
+        run: |
+          oc login --token=${{ secrets.SA_TOKEN }} --server=https://api.silver.devops.gov.bc.ca:6443
+
       - name: Build SIMS-API Image
         working-directory: "./devops"
         run: |
           make oc-build-api
-      - name: Build Workers Image
-        working-directory: "./devops"
-        run: |
-          make oc-build-workers
-      - name: Build Queue Consumers Image
-        working-directory: "./devops"
-        run: |
-          make oc-build-queue-consumers
-      - name: Build Web/Frontend Image
-        working-directory: "./devops"
-        run: |
-          make oc-build-web
 
-  # Deploying all packages
-  deployDev:
-    name: Deploying all packages
+  # Build Workers
+  build-workers:
+    name: Build Workers
     runs-on: ubuntu-latest
-    environment: DEV
-    needs:
-      - build
-      - createTag
-    env:
-      NAMESPACE: ${{ secrets.OPENSHIFT_ENV_NAMESPACE }}
-      BUILD_REF: ${{ needs.createTag.outputs.newTag }}
-      HOST_PREFIX: ${{ secrets.HOST_PREFIX }}
-      BUILD_NAMESPACE: 0c27fb-tools
-      KEYCLOAK_REALM: "aestsims"
-      KEYCLOAK_AUTH_URL: ${{ secrets.KEYCLOAK_AUTH_URL }}
-      BCeID_WEB_SERVICE_WSDL: ${{ secrets.BCeID_WEB_SERVICE_WSDL }}
-      SITE_MINDER_LOGOUT_URL: ${{ secrets.SITE_MINDER_LOGOUT_URL }}
-      ATBC_LOGIN_ENDPOINT: ${{ secrets.ATBC_LOGIN_ENDPOINT }}
-      ATBC_ENDPOINT: ${{ secrets.ATBC_ENDPOINT }}
-      SWAGGER_ENABLED: true
-      APPLICATION_ARCHIVE_DAYS: 43
-      BYPASS_APPLICATION_SUBMIT_VALIDATIONS: ${{ secrets.BYPASS_APPLICATION_SUBMIT_VALIDATIONS }}
-      BYPASS_CRA_INCOME_VERIFICATION: ${{ secrets.BYPASS_CRA_INCOME_VERIFICATION }}
-      API_SECRET_NAME: ${{ secrets.OPENSHIFT_SIMS_CREDS_NAME }}
-      WORKERS_SECRET_NAME: ${{ secrets.OPENSHIFT_SIMS_CREDS_NAME }}
-      QUEUE_CONSUMERS_SECRET_NAME: ${{ secrets.OPENSHIFT_SIMS_CREDS_NAME }}
-      FORMS_SECRET_NAME: ${{ secrets.FORMS_SECRET_NAME }}
-      QUEUE_PREFIX: ${{ secrets.QUEUE_PREFIX }}
-      API_PORT: ${{ secrets.API_PORT }}
-      WEB_PORT: ${{ secrets.WEB_PORT }}
-      API: ${{ format('{0}api-sims', secrets.HOST_PREFIX) }}
-      WEB: ${{ format('{0}web-sims', secrets.HOST_PREFIX) }}
-      WORKERS: ${{ format('{0}workers-sims', secrets.HOST_PREFIX) }}
-      QUEUE_CONSUMERS: ${{ format('{0}queue-consumers-sims', secrets.HOST_PREFIX) }}
-      SWAGGER_NAME: ${{ format('{0}swagger', secrets.HOST_PREFIX) }}
-      DATABASE_NAME_KEY: ${{ secrets.DATABASE_NAME_KEY }}
+    needs: createTag
+    if: github.event.pull_request.merged == true || github.event_name == 'workflow_dispatch'
     steps:
       - name: Print env
         run: |
           echo BUILD NAMESPACE: $BUILD_NAMESPACE
-          echo NAMESPACE: $NAMESPACE
-          echo BRANCH: $BUILD_REF
+          echo BRANCH: ${{ needs.createTag.outputs.newTag }}
           echo HOST_PREFIX: $HOST_PREFIX
-      # Checkout the PR branch
+          
       - name: Checkout Target Branch
         uses: actions/checkout@v3
         with:
           ref: ${{ needs.createTag.outputs.newTag }}
-      # Log in to OpenShift.
-      # Note: The secrets needed to log in are NOT available if the PR comes from a FORK.
-      # PR's must originate from a branch off the original repo or else all openshift `oc` commands will fail.
+
       - name: Log in to OpenShift
         run: |
           oc login --token=${{ secrets.SA_TOKEN }} --server=https://api.silver.devops.gov.bc.ca:6443
-      # Deploy SIMS-Api
+    
+      - name: Build Workers Image
+        working-directory: "./devops"
+        run: |
+          make oc-build-workers
+
+  # Build Queue Consumers
+  build-queue-consumers:
+    name: Build Queue Consumers
+    runs-on: ubuntu-latest
+    needs: createTag
+    if: github.event.pull_request.merged == true || github.event_name == 'workflow_dispatch'
+    steps:
+      - name: Print env
+        run: |
+          echo BUILD NAMESPACE: $BUILD_NAMESPACE
+          echo BRANCH: ${{ needs.createTag.outputs.newTag }}
+          echo HOST_PREFIX: $HOST_PREFIX
+          
+      - name: Checkout Target Branch
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ needs.createTag.outputs.newTag }}
+
+      - name: Log in to OpenShift
+        run: |
+          oc login --token=${{ secrets.SA_TOKEN }} --server=https://api.silver.devops.gov.bc.ca:6443
+      
+      - name: Build Queue Consumers Image
+        working-directory: "./devops"
+        run: |
+          make oc-build-queue-consumers
+  
+  # Build Web/Frontend
+  build-web-frontend:
+    name: Build Web/Frontend
+    runs-on: ubuntu-latest
+    needs: createTag
+    if: github.event.pull_request.merged == true || github.event_name == 'workflow_dispatch'
+    steps:
+      - name: Print env
+        run: |
+          echo BUILD NAMESPACE: $BUILD_NAMESPACE
+          echo BRANCH: ${{ needs.createTag.outputs.newTag }}
+          echo HOST_PREFIX: $HOST_PREFIX
+          
+      - name: Checkout Target Branch
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ needs.createTag.outputs.newTag }}
+
+      - name: Log in to OpenShift
+        run: |
+          oc login --token=${{ secrets.SA_TOKEN }} --server=https://api.silver.devops.gov.bc.ca:6443
+      
+      - name: Build Web/Frontend Image
+        working-directory: "./devops"
+        run: |
+          make oc-build-web
+    
+  # Run DB migrations.
+  run-db-migrations:
+    name: Run db-migrations
+    runs-on: ubuntu-latest
+    needs: [build-db-migrations, build-sims-api, build-workers, build-queue-consumers, build-web-frontend]
+    if: github.event.pull_request.merged == true || github.event_name == 'workflow_dispatch'
+    steps:
+      - name: Print env
+        run: |
+          echo BUILD NAMESPACE: $BUILD_NAMESPACE
+          echo BRANCH: ${{ needs.createTag.outputs.newTag }}
+          echo HOST_PREFIX: $HOST_PREFIX
+          
+      - name: Checkout Target Branch
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ needs.createTag.outputs.newTag }}
+
+      - name: Log in to OpenShift
+        run: |
+          oc login --token=${{ secrets.SA_TOKEN }} --server=https://api.silver.devops.gov.bc.ca:6443
+
+      - name: Run db-migrations
+        working-directory: "./devops/"
+        run: |
+          make oc-run-db-migrations
+
+  # Deploy SIMS API.
+  deploy-sims-api:
+    name: Deploy SIMS-API
+    runs-on: ubuntu-latest
+    needs: run-db-migrations
+    if: github.event.pull_request.merged == true || github.event_name == 'workflow_dispatch'
+    steps:
+      - name: Print env
+        run: |
+          echo BUILD NAMESPACE: $BUILD_NAMESPACE
+          echo BRANCH: ${{ needs.createTag.outputs.newTag }}
+          echo HOST_PREFIX: $HOST_PREFIX
+          
+      - name: Checkout Target Branch
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ needs.createTag.outputs.newTag }}
+
+      - name: Log in to OpenShift
+        run: |
+          oc login --token=${{ secrets.SA_TOKEN }} --server=https://api.silver.devops.gov.bc.ca:6443
+
       - name: Deploy SIMS-API
         working-directory: "./devops/"
         run: |
           make oc-deploy-api
-      # Deploy Workers
+
+  # Deploy workers.
+  deploy-workers:
+    name: Deploy Workers
+    runs-on: ubuntu-latest
+    needs: run-db-migrations
+    if: github.event.pull_request.merged == true || github.event_name == 'workflow_dispatch'
+    steps:
+      - name: Print env
+        run: |
+          echo BUILD NAMESPACE: $BUILD_NAMESPACE
+          echo BRANCH: ${{ needs.createTag.outputs.newTag }}
+          echo HOST_PREFIX: $HOST_PREFIX
+          
+      - name: Checkout Target Branch
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ needs.createTag.outputs.newTag }}
+
+      - name: Log in to OpenShift
+        run: |
+          oc login --token=${{ secrets.SA_TOKEN }} --server=https://api.silver.devops.gov.bc.ca:6443
+
       - name: Deploy Workers
         working-directory: "./devops/"
         run: |
           make oc-deploy-workers
-      # Deploy Queue Consumers
+
+  # Deploy queue consumers.
+  deploy-queue-consumers:
+    name: Deploy Queue Consumers
+    runs-on: ubuntu-latest
+    needs: run-db-migrations
+    if: github.event.pull_request.merged == true || github.event_name == 'workflow_dispatch'
+    steps:
+      - name: Print env
+        run: |
+          echo BUILD NAMESPACE: $BUILD_NAMESPACE
+          echo BRANCH: ${{ needs.createTag.outputs.newTag }}
+          echo HOST_PREFIX: $HOST_PREFIX
+          
+      - name: Checkout Target Branch
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ needs.createTag.outputs.newTag }}
+
+      - name: Log in to OpenShift
+        run: |
+          oc login --token=${{ secrets.SA_TOKEN }} --server=https://api.silver.devops.gov.bc.ca:6443
+
       - name: Deploy Queue Consumers
         working-directory: "./devops/"
         run: |
           make oc-deploy-queue-consumers
-      # Deploy Deploy Web/Frontend
+
+  # Deploy Web/Frontend.
+  deploy-web-frontend:
+    name: Deploy Web/Frontend
+    runs-on: ubuntu-latest
+    needs: run-db-migrations
+    if: github.event.pull_request.merged == true || github.event_name == 'workflow_dispatch'
+    steps:
+      - name: Print env
+        run: |
+          echo BUILD NAMESPACE: $BUILD_NAMESPACE
+          echo BRANCH: ${{ needs.createTag.outputs.newTag }}
+          echo HOST_PREFIX: $HOST_PREFIX
+          
+      - name: Checkout Target Branch
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ needs.createTag.outputs.newTag }}
+
+      - name: Log in to OpenShift
+        run: |
+          oc login --token=${{ secrets.SA_TOKEN }} --server=https://api.silver.devops.gov.bc.ca:6443
+      
       - name: Deploy Web/Frontend
         working-directory: "./devops/"
         run: |
           make oc-deploy-web
+      

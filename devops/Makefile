@@ -25,6 +25,7 @@ export QUEUE_CONSUMERS_PORT := $(or ${QUEUE_CONSUMERS_PORT}, 7000)
 export WEB_PORT := $(or ${WEB_PORT}, 3030)
 export DATABASE_NAME_KEY := $(or ${DATABASE_NAME_KEY}, database-name)
 export DB_NAME := $(or ${DB_NAME}, SIMSDB)
+export DB_MIGRATIONS_BUILD_REF := $(or ${DB_MIGRATIONS_BUILD_REF}, db-migrations-${APP_NAME})
 export API_BUILD_REF := $(or ${API_BUILD_REF}, api-${APP_NAME})
 export WORKERS_BUILD_REF := $(or ${WORKERS_BUILD_REF}, workers-${APP_NAME})
 export QUEUE_CONSUMERS_BUILD_REF := $(or ${QUEUE_CONSUMERS_BUILD_REF}, queue-consumers-${APP_NAME})
@@ -33,6 +34,14 @@ export FORMS_BUILD_REF := $(or ${FORMS_BUILD_REF}, forms)
 export FORMIO_ROOT_EMAIL := $(or ${FORMIO_ROOT_EMAIL}, dev_sabc@gov.bc.ca)
 export MONGODB_URI := $(or ${MONGODB_URI}, $$MONGODB_URI)
 export QUEUE_PREFIX := $(or $(QUEUE_PREFIX), {sims-local})
+
+define DB_MIGRATIONS
+"$(HOST_PREFIX)db-migrations-$(APP_NAME)"
+endef
+
+define DB_MIGRATIONS_JOB_NAME
+"db.migrations"
+endef
 
 define API
 "$(HOST_PREFIX)api-$(APP_NAME)"
@@ -110,10 +119,11 @@ define rollout_and_wait
 @oc -n $(NAMESPACE) rollout status $1
 endef
 
-
 init-oc: | print-status init-project
 oc-build-patroni: | print-status build-patroni
 oc-deploy-patroni: | print-status deploy-patroni
+oc-build-db-migrations: | print-status build-db-migrations
+oc-run-db-migrations: | print-status run-db-migrations
 oc-build-api: | print-status build-api
 oc-deploy-api: | print-status deploy-api
 oc-build-workers: | print-status build-workers
@@ -221,6 +231,14 @@ init-artifactory-secret-credential:
 	@oc secrets link default artifactory-secret-credential
 	@oc secrets link builder artifactory-secret-credential
 
+build-db-migrations:
+	test -n "$(BUILD_NAMESPACE)"
+	test -n "$(BUILD_REF)"
+	test -n "$(DB_MIGRATIONS_BUILD_REF)"
+	@echo "+\n++ BUILDING DB migrations with tag: $(BUILD_REF)\n+"
+	@oc -n $(BUILD_NAMESPACE) process -f $(BUILD_TEMPLATE_PATH) -p TAG=$(BUILD_REF) -p SOURCE_REPOSITORY_REF=$(BUILD_REF) -p BASE_IMAGE_NAME="nodejs-16" -p BASE_IMAGE_TAG="1" -p BASE_IMAGE_REPO="artifacts.developer.gov.bc.ca/redhat-docker-remote/ubi8/" -p SOURCE_CONTEXT_DIR=$(SOURCE_CONTEXT_DIR)backend -p DOCKER_FILE_PATH=apps/db-migrations/Dockerfile -p NAME=$(DB_MIGRATIONS_BUILD_REF) | oc -n $(BUILD_NAMESPACE) apply -f -
+	@oc -n $(BUILD_NAMESPACE) start-build bc/$(DB_MIGRATIONS_BUILD_REF) --wait
+
 build-api:
 	test -n "$(BUILD_NAMESPACE)"
 	test -n "$(BUILD_REF)"
@@ -284,6 +302,25 @@ create-new-db:
 	test -n $(JOB_NAME)
 	@echo "+\n++ Creating DB ($(NEW_DB)) in $(NAMESPACE) patroni db cluster"
 	@oc -n $(NAMESPACE) process -f openshift/database/createdb-job.yml -p DB_NAME=$(NEW_DB) -p BUILD_NAMESPACE=$(BUILD_NAMESPACE) -p JOB_NAME=$(JOB_NAME) | oc -n $(NAMESPACE) apply -f -
+
+run-db-migrations:
+	test -n "$(NAMESPACE)"
+	test -n "$(BUILD_NAMESPACE)"
+	test -n "$(DB_SERVICE_NAME)"
+	test -n "$(DB_MIGRATIONS_BUILD_REF)"
+	test -n "$(BUILD_REF)"
+	test -n "$(DATABASE_NAME_KEY)"
+	test -n "$(DB_MIGRATIONS)"
+	@echo "+\n++ Deploying DB_MIGRATIONS with tag: $(BUILD_REF)\n+"
+	@oc -n $(NAMESPACE) process -f openshift/db-migrations-job.yml \
+		-p NAME=$(DB_MIGRATIONS) \
+		-p DB_SERVICE=$(DB_SERVICE_NAME) \
+		-p BUILD_NAMESPACE=$(BUILD_NAMESPACE) \
+		-p IMAGE_STREAM_TAG="$(DB_MIGRATIONS_BUILD_REF):$(BUILD_REF)" \
+		-p BUILD_TAG=$(BUILD_REF) \
+		-p DATABASE_NAME_KEY=$(DATABASE_NAME_KEY) \
+		-p JOB_NAME=$(DB_MIGRATIONS_JOB_NAME) \
+		| oc -n $(NAMESPACE) apply -f - 
 
 deploy-api:
 	test -n "$(NAMESPACE)"
