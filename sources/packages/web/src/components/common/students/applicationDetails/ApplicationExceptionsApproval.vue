@@ -75,7 +75,7 @@ type ApplicationExceptionFormModel = Omit<
    */
   exceptionNames: string[];
   /**
-   * showStaffApproval will decide id the staff approval section should
+   * ShowStaffApproval will decide if the staff approval section should
    * be hidden or not.
    */
   showStaffApproval: boolean;
