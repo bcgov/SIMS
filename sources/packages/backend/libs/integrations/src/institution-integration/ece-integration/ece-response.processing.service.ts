@@ -15,7 +15,10 @@ import {
   processInParallel,
 } from "@sims/utilities";
 import { ECEResponseFileDetail } from "./ece-files/ece-response-file-detail";
-import { ECEDisbursements } from "./models/ece-integration.model";
+import {
+  AWARD_DETAILS_KEY,
+  ECEDisbursements,
+} from "./models/ece-integration.model";
 import {
   ConfirmationOfEnrollmentService,
   SystemUsersService,
@@ -55,6 +58,15 @@ export class ECEResponseProcessingService {
     // Get all the institution codes who are enabled for integration.
     const integrationEnabledInstitutions =
       await this.institutionLocationService.getAllIntegrationEnabledInstitutionCodes();
+    const institutionCodes = integrationEnabledInstitutions.join(", ");
+    const processingResults: ProcessSummaryResult[] = [];
+    processingResults.push({
+      summary: [
+        `Processing ECE response for institution codes ${institutionCodes}`,
+      ],
+      warnings: [],
+      errors: [],
+    });
     const filePaths = integrationEnabledInstitutions.map((institutionCode) =>
       path.join(
         this.institutionIntegrationConfig.ftpResponseFolder,
@@ -68,7 +80,8 @@ export class ECEResponseProcessingService {
         this.processDisbursementsInECEResponseFile(remoteFilePath),
       filePaths,
     );
-    return result;
+    processingResults.push(...result);
+    return processingResults;
   }
 
   /**
@@ -80,15 +93,21 @@ export class ECEResponseProcessingService {
     remoteFilePath: string,
   ): Promise<ProcessSummaryResult> {
     const processSummary: ProcessSummaryResult = new ProcessSummaryResult();
+    let isECEResponseFileExist = false;
     processSummary.summary.push(`Reading file ${remoteFilePath}.`);
     this.logger.log(`Starting download of file ${remoteFilePath}.`);
     try {
       const eceFileDetailRecords =
         await this.integrationService.downloadResponseFile(remoteFilePath);
-      if (!eceFileDetailRecords.length) {
+      isECEResponseFileExist = !!eceFileDetailRecords.length;
+      // Check if the file exist in remote server and summary info
+      // if the file is not found.
+      if (!isECEResponseFileExist) {
         processSummary.summary.push(`File ${remoteFilePath} not found.`);
         return processSummary;
       }
+      // Sanitize all the ece response detail records and
+      // transform them to disbursements which could be individually processed.
       const disbursementsToProcess =
         this.sanitizeAndTransformToDisbursements(eceFileDetailRecords);
       const auditUser = await this.systemUsersService.systemUser();
@@ -97,11 +116,17 @@ export class ECEResponseProcessingService {
         auditUser.id,
         processSummary,
       );
+      await this.deleteTheProcessedFile(remoteFilePath, processSummary);
     } catch (error: unknown) {
       this.logger.error(error);
       processSummary.errors.push(
-        `Error downloading file ${remoteFilePath}. ${error}`,
+        `Error processing the file ${remoteFilePath}. ${error}`,
       );
+    } finally {
+      // Delete the ECE response file, if the file exist in remote server.
+      if (isECEResponseFileExist) {
+        await this.deleteTheProcessedFile(remoteFilePath, processSummary);
+      }
     }
     return processSummary;
   }
@@ -123,7 +148,7 @@ export class ECEResponseProcessingService {
         disbursements[eceDetailRecord.disbursementIdentifier] = {
           institutionCode: eceDetailRecord.institutionCode,
           applicationNumber: eceDetailRecord.applicationNumber,
-          awardDetails: [
+          [AWARD_DETAILS_KEY]: [
             {
               payToSchoolAmount: eceDetailRecord.payToSchoolAmount,
               isEnrolmentConfirmed: eceDetailRecord.isEnrolmentConfirmed,
@@ -134,7 +159,9 @@ export class ECEResponseProcessingService {
         };
       } else {
         const awardDetails =
-          disbursements[eceDetailRecord.disbursementIdentifier]["awardDetails"];
+          disbursements[eceDetailRecord.disbursementIdentifier][
+            AWARD_DETAILS_KEY
+          ];
         awardDetails.push({
           payToSchoolAmount: eceDetailRecord.payToSchoolAmount,
           isEnrolmentConfirmed: eceDetailRecord.isEnrolmentConfirmed,
@@ -220,6 +247,23 @@ export class ECEResponseProcessingService {
           );
         }
       }
+    }
+  }
+
+  private async deleteTheProcessedFile(
+    remoteFilePath: string,
+    processSummary: ProcessSummaryResult,
+  ) {
+    try {
+      //Deleting the file once it has been processed.
+      await this.integrationService.deleteFile(remoteFilePath);
+      processSummary.summary.push(
+        `The file ${remoteFilePath} has been deleted after processing.`,
+      );
+    } catch (error: unknown) {
+      processSummary.errors.push(
+        `Error while deleting the file: ${remoteFilePath}`,
+      );
     }
   }
 

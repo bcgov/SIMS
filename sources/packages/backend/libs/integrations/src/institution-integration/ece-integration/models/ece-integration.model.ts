@@ -37,11 +37,13 @@ export enum RecordTypeCodes {
   ECETrailer = "3",
 }
 
+export const AWARD_DETAILS_KEY = "awardDetails";
+
 export interface ECEDisbursements {
-  [disbursementId: string]: {
+  [disbursementScheduleId: string]: {
     institutionCode: string;
     applicationNumber: string;
-    awardDetails: {
+    [AWARD_DETAILS_KEY]: {
       payToSchoolAmount: number;
       isEnrolmentConfirmed: boolean;
       enrolmentConfirmationDate: Date;

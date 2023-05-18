@@ -516,7 +516,7 @@ export class ConfirmationOfEnrollmentService {
         disbursementSchedule.disbursementDate,
         disbursementSchedule.studentAssessment.application.currentAssessment
           .offering.studyEndDate,
-        options.enrolmentConfirmationDate,
+        options?.enrolmentConfirmationDate,
       );
       if (
         approvalPeriodStatus !== COEApprovalPeriodStatus.WithinApprovalPeriod
