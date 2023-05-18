@@ -50,13 +50,6 @@ ENV DEBUG=""
 RUN set -x \
   && chmod -R 777 /app/
 
-# Adding a nonroot user
-RUN addgroup -S nonroot \
-    && adduser -S nonroot -G nonroot
-
-# Switching to the added nonroot user
-USER nonroot
-
 # This will initialize the application based on
 # some questions to the user (login email, password, etc.)
 ENTRYPOINT [ "node", "main" ]
