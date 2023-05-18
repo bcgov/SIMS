@@ -137,7 +137,7 @@ oc-deploy-patroni: | print-status deploy-patroni
 oc-build-db-migrations: | print-status build-db-migrations
 oc-run-db-migrations: | print-status delete-db-migrations run-db-migrations wait-for-db-migrations
 oc-build-revert-db-migrations: | print-status build-revert-db-migrations
-oc-revert-db-migrations : | print-status delete-revert-db-migrations revert-db-migrations VERSION_DIFFERENCE=$(VERSION_DIFFERENCE) wait-for-revert-db-migrations
+oc-revert-db-migrations : | print-status delete-revert-db-migrations revert-db-migrations wait-for-revert-db-migrations
 oc-build-api: | print-status build-api
 oc-deploy-api: | print-status deploy-api
 oc-build-workers: | print-status build-workers
@@ -288,7 +288,7 @@ build-revert-db-migrations:
 			-p SOURCE_CONTEXT_DIR=$(SOURCE_CONTEXT_DIR)backend \
 			-p DOCKER_FILE_PATH=apps/db-migrations/revert/Dockerfile \
 			-p NAME=$(REVERT_DB_MIGRATIONS_BUILD_REF) \
-			-p ARG_KEY_1=$(VERSION_DIFFERENCE) | oc -n $(BUILD_NAMESPACE) apply -f -
+			-p ARG_VAL_1=$(VERSION_DIFFERENCE) | oc -n $(BUILD_NAMESPACE) apply -f -
 	@oc -n $(BUILD_NAMESPACE) start-build bc/$(REVERT_DB_MIGRATIONS_BUILD_REF) --wait
 
 build-api:
