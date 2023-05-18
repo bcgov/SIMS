@@ -88,7 +88,6 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-eligibility-CSGD
     const assessmentConsolidatedData =
       createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
     assessmentConsolidatedData.studentDataTaxReturnIncome = 32999;
-    // Not eligible dependent because he is over 22 and no declared on taxes.
     assessmentConsolidatedData.studentDataDependants = [
       createFakeStudentDependentNotEligible(
         DependentEligibility.Eligible0To18YearsOld,

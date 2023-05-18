@@ -15,7 +15,7 @@ import { PROGRAM_YEAR } from "../../constants/program-year.constants";
  * where both will result in the BCAG calculation.
  * These tests are only intended to check the BCAG2Year eligibility.
  */
-describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-eligibility-BCAG2Year`, () => {
+describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-eligibility-BCAG2Year.`, () => {
   // Expected and not expected credentials types.
   const EXPECTED_PROGRAM_CREDENTIAL_TYPES = [
     CredentialType.UnderGraduateCertificate,

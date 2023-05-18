@@ -9,7 +9,7 @@ import {
   createFakeStudentDependentEligible,
 } from "../../../test-utils/factories";
 
-describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-eligibility-CSGF`, () => {
+describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-eligibility-CSGF.`, () => {
   // Expected and not expected credentials types.
   const EXPECTED_PROGRAM_CREDENTIAL_TYPES = [
     CredentialType.UnderGraduateCertificate,
