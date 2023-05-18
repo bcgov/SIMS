@@ -17,6 +17,7 @@ import {
   StudentScholasticStandingsService,
   EducationProgramOfferingService,
   ApplicationExceptionService,
+  MASKED_MSFAA_NUMER,
 } from "../../services";
 import {
   AssessmentNOAAPIOutDTO,
@@ -43,16 +44,21 @@ export class AssessmentControllerService {
   /**
    * Get the notice of assessment data from the assessment.
    * @param assessmentId assessment id to be retrieved.
-   * @param studentId optional student for authorization when needed.
+   * @param options for NOA.
+   * - `studentId` optional student for authorization when needed.
+   * - `maskMSFAA` mask MSFAA or not.
    * @returns notice of assessment data.
    */
   async getAssessmentNOA(
     assessmentId: number,
-    studentId?: number,
+    options?: {
+      studentId?: number;
+      maskMSFAA?: boolean;
+    },
   ): Promise<AssessmentNOAAPIOutDTO> {
     const assessment = await this.assessmentService.getAssessmentForNOA(
       assessmentId,
-      studentId,
+      options?.studentId,
     );
 
     if (!assessment) {
@@ -81,6 +87,7 @@ export class AssessmentControllerService {
       offeringStudyEndDate: getDateOnlyFormat(assessment.offering.studyEndDate),
       disbursement: this.populateDisbursementAwardValues(
         assessment.disbursementSchedules,
+        { maskMSFAA: options?.maskMSFAA },
       ),
     };
   }
@@ -88,14 +95,24 @@ export class AssessmentControllerService {
   /**
    * Disbursement data is populated with dynamic key in a defined pattern to be compatible with form table.
    * @param disbursementSchedules disbursement schedule details.
-   * @param includeDocumentNumber when true document number is mapped
+   * @param options for NOA.
+   * - `includeDocumentNumber` when true document number is mapped
    * to disbursement dynamic data.
+   * - `maskMSFAA` mask MSFAA or not.
    * @returns disbursement dynamic award data.
    */
   private populateDisbursementAwardValues(
     disbursementSchedules: DisbursementSchedule[],
-    includeDocumentNumber = false,
+    options?: {
+      includeDocumentNumber?: boolean;
+      maskMSFAA?: boolean;
+    },
   ): Record<string, string | number> {
+    // Setting default value.
+    const includeDocumentNumber = options?.includeDocumentNumber
+      ? options.includeDocumentNumber
+      : false;
+    const maskMSFAA = options?.maskMSFAA ? options.maskMSFAA : false;
     const disbursementDetails = {};
     disbursementSchedules.forEach((schedule, index) => {
       const disbursementIdentifier = `disbursement${index + 1}`;
@@ -106,8 +123,11 @@ export class AssessmentControllerService {
         schedule.disbursementScheduleStatus;
       disbursementDetails[`${disbursementIdentifier}COEStatus`] =
         schedule.coeStatus;
-      disbursementDetails[`${disbursementIdentifier}MSFAANumber`] =
-        schedule.msfaaNumber.msfaaNumber;
+      disbursementDetails[`${disbursementIdentifier}MSFAANumber`] = maskMSFAA
+        ? MASKED_MSFAA_NUMER
+        : schedule.msfaaNumber.msfaaNumber;
+      disbursementDetails[`${disbursementIdentifier}MSFAAId`] =
+        schedule.msfaaNumber.id;
       disbursementDetails[`${disbursementIdentifier}MSFAACancelledDate`] =
         schedule.msfaaNumber.cancelledDate;
       disbursementDetails[`${disbursementIdentifier}MSFAADateSigned`] =
@@ -150,7 +170,7 @@ export class AssessmentControllerService {
     }
     const estimatedAward = this.populateDisbursementAwardValues(
       assessment.disbursementSchedules,
-      includeDocumentNumber,
+      { includeDocumentNumber },
     );
     const [firstDisbursement, secondDisbursement] =
       assessment.disbursementSchedules;

@@ -55,14 +55,17 @@ export class StudentAssessmentApi extends HttpBaseClient {
   /**
    * Get the NOA values for a student application on a particular assessment.
    * @param assessmentId assessment id to get the NOA values.
+   * @param studentId student id.
    * @returns NOA and application data.
    */
   async getAssessmentNOA(
     assessmentId: number,
+    studentId?: number,
   ): Promise<AssessmentNOAAPIOutDTO> {
-    return this.getCall<AssessmentNOAAPIOutDTO>(
-      this.addClientRoot(`assessment/${assessmentId}/noa`),
-    );
+    const endpoint = studentId
+      ? `assessment/student/${studentId}/assessment/${assessmentId}/noa`
+      : `assessment/${assessmentId}/noa`;
+    return this.getCall<AssessmentNOAAPIOutDTO>(this.addClientRoot(endpoint));
   }
 
   /**

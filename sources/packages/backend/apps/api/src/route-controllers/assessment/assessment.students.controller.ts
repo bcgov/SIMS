@@ -62,10 +62,9 @@ export class AssessmentStudentsController extends BaseController {
     @Param("assessmentId", ParseIntPipe) assessmentId: number,
     @UserToken() userToken: StudentUserToken,
   ): Promise<AssessmentNOAAPIOutDTO> {
-    return this.assessmentControllerService.getAssessmentNOA(
-      assessmentId,
-      userToken.studentId,
-    );
+    return this.assessmentControllerService.getAssessmentNOA(assessmentId, {
+      studentId: userToken.studentId,
+    });
   }
 
   /**

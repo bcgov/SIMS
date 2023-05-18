@@ -568,7 +568,7 @@
       "customConditional": "",
       "conditional": {
         "json": "",
-        "show": null,
+        "show": "",
         "when": null,
         "eq": ""
       },
@@ -3471,7 +3471,7 @@
                   "properties": {},
                   "hideLabel": true,
                   "customClass": "formio-panel-unset",
-                  "customConditional": "show = data.disbursement.disbursement1MSFAANumber !== data.disbursement.disbursement2MSFAANumber && !!data.disbursement.disbursement2MSFAANumber"
+                  "customConditional": "show = data.disbursement.disbursement1MSFAAId !== data.disbursement.disbursement2MSFAAId && !!data.disbursement.disbursement2MSFAANumber"
                 }
               ],
               "width": 6,
@@ -17703,5 +17703,7 @@
       "lazyLoad": false,
       "id": "eb78nwj"
     }
-  ]
+  ],
+  "created": "2023-01-11T21:27:05.082Z",
+  "modified": "2023-05-18T18:46:22.271Z"
 }

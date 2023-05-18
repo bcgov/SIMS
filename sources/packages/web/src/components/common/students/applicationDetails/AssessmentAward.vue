@@ -16,7 +16,7 @@
   <assessment-award-details
     :assessmentAwardData="assessmentAwardData"
     :allowConfirmEnrolment="allowConfirmEnrolment"
-    @confirmEnrolment="confirmEnrolment"
+    @confirmEnrolment="$emit('confirmEnrolment', $event)"
   />
 </template>
 <script lang="ts">

@@ -57,12 +57,17 @@ export class StudentAssessmentsService {
   /**
    * Get the NOA values for a student application on a particular assessment.
    * @param assessmentId assessment id to get the NOA values.
+   * @param studentId student id.
    * @returns NOA and application data.
    */
   async getAssessmentNOA(
     assessmentId: number,
+    studentId?: number,
   ): Promise<AssessmentNOAAPIOutDTO> {
-    return ApiClient.StudentAssessmentApi.getAssessmentNOA(assessmentId);
+    return ApiClient.StudentAssessmentApi.getAssessmentNOA(
+      assessmentId,
+      studentId,
+    );
   }
 
   /**

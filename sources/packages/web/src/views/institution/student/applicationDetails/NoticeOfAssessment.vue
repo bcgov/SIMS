@@ -1,25 +1,26 @@
 <template>
-  <v-container>
-    <div class="mb-4">
+  <full-page-container>
+    <template #header>
       <header-navigator
         title="Assessment"
         subTitle="Notice of Assessment"
         :routeLocation="{
-          name: AESTRoutesConst.ASSESSMENT_AWARD_VIEW,
+          name: InstitutionRoutesConst.ASSESSMENT_AWARD_VIEW,
           params: { applicationId, studentId, assessmentId },
         }"
       />
-    </div>
-  </v-container>
-  <full-page-container>
-    <notice-of-assessment-form-view :assessmentId="assessmentId" />
+    </template>
+    <notice-of-assessment-form-view
+      :assessment-id="assessmentId"
+      :student-id="studentId"
+    />
   </full-page-container>
 </template>
 
 <script lang="ts">
 import { defineComponent } from "vue";
 import NoticeOfAssessmentFormView from "@/components/common/NoticeOfAssessmentFormView.vue";
-import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
+import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 
 export default defineComponent({
   components: {
@@ -40,7 +41,7 @@ export default defineComponent({
     },
   },
   setup() {
-    return { AESTRoutesConst };
+    return { InstitutionRoutesConst };
   },
 });
 </script>

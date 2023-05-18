@@ -9,10 +9,15 @@ import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { ClientTypeBaseRoute } from "../../types";
 import {
   AssessmentHistorySummaryAPIOutDTO,
+  AssessmentNOAAPIOutDTO,
   AwardDetailsAPIOutDTO,
   RequestAssessmentSummaryAPIOutDTO,
 } from "./models/assessment.dto";
-import { ApiNotFoundResponse, ApiTags } from "@nestjs/swagger";
+import {
+  ApiNotFoundResponse,
+  ApiTags,
+  ApiUnprocessableEntityResponse,
+} from "@nestjs/swagger";
 import { AssessmentControllerService } from "..";
 
 /**
@@ -69,23 +74,28 @@ export class AssessmentInstitutionsController extends BaseController {
     );
   }
 
-  // /**
-  //  * Get the NOA values for a student application on a particular assessment.
-  //  * @param assessmentId assessment id to get the NOA values.
-  //  * @returns NOA and application data.
-  //  */
-  // @Get(":assessmentId/noa")
-  // @ApiNotFoundResponse({
-  //   description: "Assessment id not found.",
-  // })
-  // @ApiUnprocessableEntityResponse({
-  //   description: "Notice of assessment data is not present.",
-  // })
-  // async getAssessmentNOA(
-  //   @Param("assessmentId", ParseIntPipe) assessmentId: number,
-  // ): Promise<AssessmentNOAAPIOutDTO> {
-  //   return this.assessmentControllerService.getAssessmentNOA(assessmentId);
-  // }
+  /**
+   * Get the NOA values for a student application on a particular assessment.
+   * @param studentId, student id.
+   * @param assessmentId assessment id to get the NOA values.
+   * @returns NOA and application data.
+   */
+  @Get("student/:studentId/assessment/:assessmentId/noa")
+  @ApiNotFoundResponse({
+    description: "Assessment id not found.",
+  })
+  @ApiUnprocessableEntityResponse({
+    description: "Notice of assessment data is not present.",
+  })
+  async getAssessmentNOA(
+    @Param("studentId", ParseIntPipe) studentId: number,
+    @Param("assessmentId", ParseIntPipe) assessmentId: number,
+  ): Promise<AssessmentNOAAPIOutDTO> {
+    return this.assessmentControllerService.getAssessmentNOA(assessmentId, {
+      studentId: studentId,
+      maskMSFAA: true,
+    });
+  }
 
   /**
    * Get estimated and actual(if present) award details of an assessment.
