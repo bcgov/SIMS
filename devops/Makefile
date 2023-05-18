@@ -46,6 +46,10 @@ define DB_MIGRATIONS_JOB_NAME
 "db.migrations"
 endef
 
+define REVERT_DB_MIGRATIONS_JOB_NAME
+"revert.db.migrations"
+endef
+
 define API
 "$(HOST_PREFIX)api-$(APP_NAME)"
 endef
@@ -127,6 +131,7 @@ oc-build-patroni: | print-status build-patroni
 oc-deploy-patroni: | print-status deploy-patroni
 oc-build-db-migrations: | print-status build-db-migrations
 oc-run-db-migrations: | print-status delete-db-migrations run-db-migrations wait-for-db-migrations
+oc-revert-db-migrations: | print-status delete-revert-db-migrations revert-db-migrations wait-for-revert-db-migrations
 oc-build-api: | print-status build-api
 oc-deploy-api: | print-status deploy-api
 oc-build-workers: | print-status build-workers
@@ -338,6 +343,36 @@ delete-db-migrations:
 		echo "Job not found."; \
 	fi
 
+revert-db-migrations:
+	test -n "$(NAMESPACE)"
+	test -n "$(BUILD_NAMESPACE)"
+	test -n "$(DB_SERVICE_NAME)"
+	test -n "$(DB_MIGRATIONS_BUILD_REF)"
+	test -n "$(BUILD_REF)"
+	test -n "$(DATABASE_NAME_KEY)"
+	test -n "$(DB_MIGRATIONS)"
+	@echo "+\n++ Deploying DB_MIGRATIONS with tag: $(BUILD_REF)\n+"
+	@oc -n $(NAMESPACE) process -f openshift/revert-db-migrations-job.yml \
+		-p NAME=$(DB_MIGRATIONS) \
+		-p DB_SERVICE=$(DB_SERVICE_NAME) \
+		-p BUILD_NAMESPACE=$(BUILD_NAMESPACE) \
+		-p IMAGE_STREAM_TAG="$(DB_MIGRATIONS_BUILD_REF):$(BUILD_REF)" \
+		-p BUILD_TAG=$(BUILD_REF) \
+		-p DATABASE_NAME_KEY=$(DATABASE_NAME_KEY) \
+		-p JOB_NAME=$(REVERT_DB_MIGRATIONS_JOB_NAME) \
+		| oc -n $(NAMESPACE) apply -f - 
+
+wait-for-revert-db-migrations: 
+	while [ "$$(oc get job $(REVERT_DB_MIGRATIONS_JOB_NAME) -o=jsonpath='{.status.conditions[?(@.type=="Complete")].status}' || echo "None")" != "True" ] && [ "$$WAIT_TIME" -lt "$$MAX_WAIT" ]; do sleep 5; WAIT_TIME=$$((WAIT_TIME+5)); done
+	if [ "$$(oc get job $(REVERT_DB_MIGRATIONS_JOB_NAME) -o=jsonpath='{.status.conditions[?(@.type=="Complete")].status}' || echo "None")" != "True" ]; then echo "Error: Job $(REVERT_DB_MIGRATIONS_JOB_NAME) failed to complete within the specified timeout"; exit 1; fi
+
+delete-revert-db-migrations:
+	@if [ -n "$(shell oc get job $(REVERT_DB_MIGRATIONS_JOB_NAME) -o name 2>/dev/null)" ]; then \
+		oc delete job $(REVERT_DB_MIGRATIONS_JOB_NAME); \
+			echo "Job deleted."; \
+	else \
+		echo "Job not found."; \
+	fi
 
 deploy-api:
 	test -n "$(NAMESPACE)"
