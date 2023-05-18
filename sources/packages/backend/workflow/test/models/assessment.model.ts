@@ -5,10 +5,30 @@ import {
   OfferingDeliveryOptions,
 } from "@sims/test-utils";
 
-export interface StudentDependentTable {
+export interface StudentDependent {
   dateOfBirth: string;
   attendingPostSecondarySchool: YesNoOptions;
   declaredOnTaxes: YesNoOptions;
+}
+
+export enum CredentialType {
+  UnderGraduateCertificate = "undergraduateCertificate",
+  UnderGraduateDiploma = "undergraduateDiploma",
+  UnderGraduateDegree = "undergraduateDegree",
+  GraduateCertificate = "graduateCertificate",
+  GraduateDiploma = "graduateDiploma",
+  GraduateDegreeOrMasters = "graduateDegreeOrMasters",
+  PostGraduateOrDoctorate = "postGraduateOrDoctorate",
+  QualifyingStudies = "qualifyingStudies",
+}
+
+export enum ProgramLengthOptions {
+  WeeksToLessThanYear = "12WeeksToLessThan1Year",
+  OneToTwoYears = "1YearToLessThan2Years",
+  TwoToThreeYears = "2YearsToLessThan3Years",
+  ThreeToFourYears = "3YearsToLessThan4Years",
+  FourToFiveYears = "4YearsToLessThan5Years",
+  FiveOrMoreYears = "5YearsOrMore",
 }
 
 /**
@@ -30,8 +50,8 @@ export interface AssessmentConsolidatedData {
   programLocation: Provinces;
   institutionLocationProvince: Provinces;
   institutionType: string;
-  programLength: string;
-  programCredentialType: string;
+  programLength: ProgramLengthOptions;
+  programCredentialType: CredentialType;
   offeringDelivered: OfferingDeliveryOptions;
   offeringProgramRelatedCosts: number;
   offeringActualTuitionCosts: number;
@@ -50,7 +70,7 @@ export interface AssessmentConsolidatedData {
   studentDataEstimatedSpouseIncome?: number;
   studentDataLivingWithPartner?: YesNoOptions;
   studentDataCRAReportedIncome?: number;
-  studentDataDependants?: StudentDependentTable[];
+  studentDataDependants?: StudentDependent[];
   studentDataGovernmentFundingCosts?: number;
   studentDataNongovernmentFundingCosts?: number;
   studentDataParentVoluntaryContributionsCosts?: number;
@@ -144,6 +164,24 @@ export interface CalculatedAssessmentModel {
   calculatedDataTotalSpouseContribution: number;
   calculatedDataTotalFederalFSC: number;
   calculatedDataTotalProvincialFSC: number;
+  calculatedDataTotalEligibleDependants: number;
+  calculatedDataFamilySize: number;
   totalFederalContribution: number;
   totalProvincialContribution: number;
+  // CSGP
+  awardEligibilityCSGP: boolean;
+  federalAwardNetCSGPAmount: number;
+  provincialAwardNetCSGPAmount: number;
+  // CSGD
+  awardEligibilityCSGD: boolean;
+  federalAwardNetCSGDAmount: number;
+  provincialAwardNetCSGDAmount: number;
+  // CSGF
+  awardEligibilityCSGF: number;
+  federalAwardNetCSGFAmount: number;
+  provincialAwardNetCSGFAmount: number;
+  // CSGT
+  awardEligibilityCSGT: boolean;
+  federalAwardNetCSGTAmount: number;
+  provincialAwardNetCSGTAmount: number;
 }

@@ -1,23 +1,12 @@
 import { OfferingIntensity } from "@sims/sims-db";
-import {
-  AssessmentConsolidatedData,
-  AssessmentModel,
-  CalculatedAssessmentModel,
-} from "../../models";
-import { ZBClient } from "zeebe-node";
+import { AssessmentModel } from "../../models";
 import {
   createFakeAssessmentConsolidatedData,
-  PROCESS_INSTANCE_CREATE_TIMEOUT,
-  ZeebeMockedClient,
+  executeFulltimeAssessmentForProgramYear,
 } from "../../test-utils";
 import { PROGRAM_YEAR } from "../constants/program-year.constants";
 
 describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}`, () => {
-  let zeebeClientProvider: ZBClient;
-  beforeAll(async () => {
-    zeebeClientProvider = ZeebeMockedClient.getMockedZeebeInstance();
-  });
-
   it("Should generate expected fulltime assessment values when the student is single and independent.", async () => {
     // Arrange
     const assessmentConsolidatedData =
@@ -52,19 +41,12 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}`, () => {
       studentTotalFederalContribution: 216.34615384615384,
       studentTotalProvincialContribution: 78.45576923076923,
     };
-
-    // Act/Assert
-    const calculatedAssessment =
-      await zeebeClientProvider.createProcessInstanceWithResult<
-        AssessmentConsolidatedData,
-        CalculatedAssessmentModel
-      >({
-        bpmnProcessId: `fulltime-assessment-${PROGRAM_YEAR}`,
-        variables: {
-          ...assessmentConsolidatedData,
-        },
-        requestTimeout: PROCESS_INSTANCE_CREATE_TIMEOUT,
-      });
+    // Act
+    const calculatedAssessment = await executeFulltimeAssessmentForProgramYear(
+      PROGRAM_YEAR,
+      assessmentConsolidatedData,
+    );
+    // Assert
     // TODO: totalFederalContribution and totalProvincialContribution needs to be validated
     // once it is fixed in bpmn.
     expect(calculatedAssessment.variables.offeringWeeks).toBe(

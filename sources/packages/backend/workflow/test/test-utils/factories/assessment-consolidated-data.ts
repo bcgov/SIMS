@@ -1,4 +1,8 @@
-import { AssessmentConsolidatedData } from "../../models/assessment.model";
+import {
+  AssessmentConsolidatedData,
+  CredentialType,
+  ProgramLengthOptions,
+} from "../../models/assessment.model";
 import {
   Provinces,
   YesNoOptions,
@@ -34,8 +38,8 @@ export function createFakeAssessmentConsolidatedData(
     programLocation: Provinces.BritishColumbia,
     institutionLocationProvince: Provinces.BritishColumbia,
     institutionType: "BC Public",
-    programLength: "1YearToLessThan2Years",
-    programCredentialType: "undergraduateDegree",
+    programLength: ProgramLengthOptions.OneToTwoYears,
+    programCredentialType: CredentialType.UnderGraduateDegree,
     offeringDelivered: OfferingDeliveryOptions.Onsite,
     offeringProgramRelatedCosts: 5000,
     offeringActualTuitionCosts: 20000,

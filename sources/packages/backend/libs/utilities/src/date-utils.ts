@@ -169,6 +169,24 @@ export const addDays = (daysToAdd: number, date?: Date | string): Date => {
 };
 
 /**
+ * Add units amounts (days, months, years) to a date and returns it as a date only ISO string.
+ * @param date date to be incremented (to subtract just provide a negative value).
+ * @param toAdd amount of units to be added.
+ * @param unit unit type.
+ * @returns date only as ISO string (YYYY-MM-DD).
+ */
+export function addToDateOnlyString(
+  date: string | Date,
+  toAdd: number,
+  unit: dayjs.OpUnitType,
+): string | undefined {
+  if (date) {
+    return getISODateOnlyString(dayjs(date).add(toAdd, unit).toDate());
+  }
+  return undefined;
+}
+
+/**
  * @param date in which the search has to happen
  * from midnight to next day midnight.
  * @returns typeorm findOperator object between the date.
