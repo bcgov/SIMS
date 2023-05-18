@@ -12,4 +12,11 @@ RUN npm i -g serve
 COPY --from=builder /opt/app-root/src/dist .
 COPY --from=builder /opt/app-root/src/serve.json .
 
+# Adding a nonroot user
+RUN addgroup -S nonroot \
+    && adduser -S nonroot -G nonroot
+
+# Switching to the added nonroot user
+USER nonroot
+
 CMD ["sh", "-c","serve", "-p", "$PORT", "-s", "."]

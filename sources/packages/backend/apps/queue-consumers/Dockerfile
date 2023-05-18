@@ -15,5 +15,12 @@ COPY . .
 # Building app
 RUN npm run build queue-consumers
 
+# Adding a nonroot user
+RUN addgroup -S nonroot \
+    && adduser -S nonroot -G nonroot
+
+# Switching to the added nonroot user
+USER nonroot
+
 # Entry point
 CMD [ "npm", "run", "start:prod:queue-consumers" ]

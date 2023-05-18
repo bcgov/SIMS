@@ -21,5 +21,12 @@ RUN npm run build api
 # Exposing application port
 EXPOSE ${PORT}
 
+# Adding a nonroot user
+RUN addgroup -S nonroot \
+    && adduser -S nonroot -G nonroot
+
+# Switching to the added nonroot user
+USER nonroot
+
 # Entry point
 CMD [ "npm", "run", "start:prod:api" ]
