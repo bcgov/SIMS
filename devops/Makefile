@@ -26,6 +26,7 @@ export WEB_PORT := $(or ${WEB_PORT}, 3030)
 export DATABASE_NAME_KEY := $(or ${DATABASE_NAME_KEY}, database-name)
 export DB_NAME := $(or ${DB_NAME}, SIMSDB)
 export DB_MIGRATIONS_BUILD_REF := $(or ${DB_MIGRATIONS_BUILD_REF}, db-migrations-${APP_NAME})
+export REVERT_DB_MIGRATIONS_BUILD_REF := $(or ${REVERT_DB_MIGRATIONS_BUILD_REF}, revert-db-migrations-${APP_NAME})
 export API_BUILD_REF := $(or ${API_BUILD_REF}, api-${APP_NAME})
 export WORKERS_BUILD_REF := $(or ${WORKERS_BUILD_REF}, workers-${APP_NAME})
 export QUEUE_CONSUMERS_BUILD_REF := $(or ${QUEUE_CONSUMERS_BUILD_REF}, queue-consumers-${APP_NAME})
@@ -44,6 +45,10 @@ endef
 
 define DB_MIGRATIONS_JOB_NAME
 "db.migrations"
+endef
+
+define REVERT_DB_MIGRATIONS
+"$(HOST_PREFIX)revert-db-migrations-$(APP_NAME)"
 endef
 
 define REVERT_DB_MIGRATIONS_JOB_NAME
@@ -131,7 +136,8 @@ oc-build-patroni: | print-status build-patroni
 oc-deploy-patroni: | print-status deploy-patroni
 oc-build-db-migrations: | print-status build-db-migrations
 oc-run-db-migrations: | print-status delete-db-migrations run-db-migrations wait-for-db-migrations
-oc-revert-db-migrations: | print-status delete-revert-db-migrations revert-db-migrations wait-for-revert-db-migrations
+oc-build-revert-db-migrations: | print-status build-revert-db-migrations
+oc-revert-db-migrations : | print-status delete-revert-db-migrations revert-db-migrations VERSION_DIFFERENCE=$(VERSION_DIFFERENCE) wait-for-revert-db-migrations
 oc-build-api: | print-status build-api
 oc-deploy-api: | print-status deploy-api
 oc-build-workers: | print-status build-workers
@@ -248,6 +254,15 @@ build-db-migrations:
 	@oc -n $(BUILD_NAMESPACE) process -f $(BUILD_TEMPLATE_PATH) -p TAG=$(BUILD_REF) -p SOURCE_REPOSITORY_REF=$(BUILD_REF) -p BASE_IMAGE_NAME="nodejs-16" -p BASE_IMAGE_TAG="1" -p BASE_IMAGE_REPO="artifacts.developer.gov.bc.ca/redhat-docker-remote/ubi8/" -p SOURCE_CONTEXT_DIR=$(SOURCE_CONTEXT_DIR)backend -p DOCKER_FILE_PATH=apps/db-migrations/Dockerfile -p NAME=$(DB_MIGRATIONS_BUILD_REF) | oc -n $(BUILD_NAMESPACE) apply -f -
 	@oc -n $(BUILD_NAMESPACE) start-build bc/$(DB_MIGRATIONS_BUILD_REF) --wait
 
+build-revert-db-migrations:
+	test -n "$(BUILD_NAMESPACE)"
+	test -n "$(BUILD_REF)"
+	test -n "$(REVERT_DB_MIGRATIONS_BUILD_REF)"
+	@echo "+\n++ BUILDING revert DB migrations with tag: $(BUILD_REF)\n+"
+	@oc -n $(BUILD_NAMESPACE) process -f $(BUILD_TEMPLATE_PATH) -p TAG=$(BUILD_REF) -p SOURCE_REPOSITORY_REF=$(BUILD_REF) -p BASE_IMAGE_NAME="nodejs-16" -p BASE_IMAGE_TAG="1" -p BASE_IMAGE_REPO="artifacts.developer.gov.bc.ca/redhat-docker-remote/ubi8/" -p SOURCE_CONTEXT_DIR=$(SOURCE_CONTEXT_DIR)backend -p DOCKER_FILE_PATH=apps/db-migrations/revert/Dockerfile -p NAME=$(REVERT_DB_MIGRATIONS_BUILD_REF) | oc -n $(BUILD_NAMESPACE) apply -f -
+	@oc -n $(BUILD_NAMESPACE) start-build bc/$(REVERT_DB_MIGRATIONS_BUILD_REF) --wait
+
+
 build-api:
 	test -n "$(BUILD_NAMESPACE)"
 	test -n "$(BUILD_REF)"
@@ -347,19 +362,21 @@ revert-db-migrations:
 	test -n "$(NAMESPACE)"
 	test -n "$(BUILD_NAMESPACE)"
 	test -n "$(DB_SERVICE_NAME)"
-	test -n "$(DB_MIGRATIONS_BUILD_REF)"
+	test -n "$(REVERT_DB_MIGRATIONS_BUILD_REF)"
 	test -n "$(BUILD_REF)"
 	test -n "$(DATABASE_NAME_KEY)"
-	test -n "$(DB_MIGRATIONS)"
-	@echo "+\n++ Deploying DB_MIGRATIONS with tag: $(BUILD_REF)\n+"
+	test -n "$(REVERT_DB_MIGRATIONS)"
+	test -n "$(VERSION_DIFFERENCE)"
+	@echo "+\n++ Deploying REVERT_DB_MIGRATIONS with tag: $(BUILD_REF)\n+"
 	@oc -n $(NAMESPACE) process -f openshift/revert-db-migrations-job.yml \
-		-p NAME=$(DB_MIGRATIONS) \
+		-p NAME=$(REVERT_DB_MIGRATIONS) \
 		-p DB_SERVICE=$(DB_SERVICE_NAME) \
 		-p BUILD_NAMESPACE=$(BUILD_NAMESPACE) \
-		-p IMAGE_STREAM_TAG="$(DB_MIGRATIONS_BUILD_REF):$(BUILD_REF)" \
+		-p IMAGE_STREAM_TAG="$(REVERT_DB_MIGRATIONS_BUILD_REF):$(BUILD_REF)" \
 		-p BUILD_TAG=$(BUILD_REF) \
 		-p DATABASE_NAME_KEY=$(DATABASE_NAME_KEY) \
 		-p JOB_NAME=$(REVERT_DB_MIGRATIONS_JOB_NAME) \
+		-p VERSION_DIFFERENCE=$(VERSION_DIFFERENCE) \
 		| oc -n $(NAMESPACE) apply -f - 
 
 wait-for-revert-db-migrations: 

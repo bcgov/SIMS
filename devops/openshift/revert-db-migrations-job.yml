@@ -3,7 +3,7 @@ kind: Template
 metadata:
   name: ${NAME}
   annotations:
-    description: "Template for running a job that performs a database migrations"
+    description: "Template for running a job that reverts database migrations"
 labels:
   project: ${PROJECT}
   service: ${SERVICE_NAME}
@@ -20,7 +20,7 @@ objects:
           name: ${JOB_NAME}
         spec:
           containers:
-            - name: db-migrations-container
+            - name: revert-db-migrations-container
               image: ${IMAGE_REGISTRY}/${BUILD_NAMESPACE}/${IMAGE_STREAM_TAG}
               env:
                 - name: VERSION
@@ -58,11 +58,11 @@ parameters:
   - name: PROJECT
     value: sims
   - name: SERVICE_NAME
-    value: db-migrations
+    value: revert-db-migrations
   - name: JOB_NAME
-    description: database migrations
+    description: revert database migrations
     required: true
-    value: db.migrations
+    value: revert.db.migrations
   - name: IMAGE_STREAM_TAG
     required: true
   - name: BUILD_NAMESPACE

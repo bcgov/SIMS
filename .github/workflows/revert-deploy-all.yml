@@ -49,6 +49,7 @@ env:
   DATABASE_NAME_KEY: ${{ secrets.DATABASE_NAME_KEY }}
 
 jobs:
+  #Calculate release cycle version from the latest version
   revert_release:
     runs-on: ubuntu-latest
 
@@ -84,8 +85,53 @@ jobs:
           version_difference=$(git rev-list --count ${latest_release}..${revert_release})
           echo "::set-output name=version_difference::${version_difference}"
   
+  # Build REVERT DB migrations.
+  build-revert-db-migrations:
+    name: Build revert-db-migrations
+    environment: ${{ github.event.inputs.environment }}
+    if: ${{ github.event.inputs.revert_run_db_migration == 'true' }}
+    runs-on: ubuntu-latest
+    needs: createTag
+    steps:
+      - name: Confirm revert
+        id: confirmation
+        run: |
+          echo "Are you sure you want to run the revert on DB Migration/ the current state of DB backup is complete?"
+          read -r -p "Type 'yes' to confirm: " confirm
+          echo "::set-output name=confirm::${confirm}"
+
+      - name: Check confirmation
+        id: check_confirmation
+        run: |
+          if [[ "${{ steps.confirmation.outputs.confirm }}" != "yes" ]]; then
+            echo "Revert cancelled."
+            exit 0
+          fi
+          
+      - name: Print env
+        run: |
+          echo BUILD NAMESPACE: $BUILD_NAMESPACE
+          echo BRANCH: ${{ github.event.inputs.gitRef }}
+          echo HOST_PREFIX: $HOST_PREFIX
+          
+      - name: Checkout Target Branch
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.inputs.gitRef }}
+
+      - name: Log in to OpenShift
+        run: |
+          oc login --token=${{ secrets.SA_TOKEN }} --server=https://api.silver.devops.gov.bc.ca:6443
+
+      - name: Build revert-db-migrations Image
+        working-directory: "./devops"
+        run: |
+          make oc-build-revert-db-migrations
+
+  # Revert DB Migrations
   revert_db_migration:
     needs: revert_release
+    environment: ${{ github.event.inputs.environment }}
     if: ${{ github.event.inputs.revert_run_db_migration == 'true' }}
     runs-on: ubuntu-latest
     steps:
