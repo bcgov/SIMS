@@ -4,8 +4,7 @@ FROM registry.access.redhat.com/ubi8/nodejs-16:1-5
 LABEL maintainer="BC GOV"
 
 # Dockerfile content
-ARG VERSION_DIFFERENCE
-ENV VERSION_DIFFERENCE=${VERSION_DIFFERENCE}
+RUN echo ${ARG_KEY_1}
 
 # Copying package.json and package-lock.json
 COPY package*.json ./
@@ -23,4 +22,4 @@ COPY env-setup.js ./
 USER node
 
 # Entry point
-CMD [ "npm", "run", "start:prod:db-migrations" ]
+CMD [ "npm", "run", "start:prod:revert-db-migrations", "$ARG_KEY_1" ]
