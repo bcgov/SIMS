@@ -181,11 +181,20 @@ print-status:
 
 init-project:
 	@echo "Run initial set-up for the project, including network security\n" 
-	@oc -n $(NAMESPACE) process -f openshift/networkpolicy.yml -p NAMESPACE=$(NAMESPACE) | oc -n $(NAMESPACE) apply -f -
-	@oc -n $(BUILD_NAMESPACE) policy add-role-to-group system:image-puller system:serviceaccounts:$(NAMESPACE)
+	@oc -n $(NAMESPACE) process -f openshift/networkpolicy.yml \
+			-p NAMESPACE=$(NAMESPACE) | oc -n $(NAMESPACE) apply -f -
+	@oc -n $(BUILD_NAMESPACE) policy add-role-to-group \
+			system:image-puller system:serviceaccounts:$(NAMESPACE)
 
 build-patroni:
-	@oc -n $(BUILD_NAMESPACE) process -f $(BUILD_TEMPLATE_PATH)  -p NAME=patroni -p TAG="12-latest" -p BASE_IMAGE_NAME=postgres -p BASE_IMAGE_TAG="12" -p SOURCE_REPOSITORY_URL="https://github.com/BCDevOps/platform-services.git" -p SOURCE_REPOSITORY_REF="master" -p SOURCE_CONTEXT_DIR="apps/pgsql/patroni/docker" | oc -n $(BUILD_NAMESPACE) apply -f -
+	@oc -n $(BUILD_NAMESPACE) process -f $(BUILD_TEMPLATE_PATH) \
+			-p NAME=patroni \
+			-p TAG="12-latest" \
+			-p BASE_IMAGE_NAME=postgres \
+			-p BASE_IMAGE_TAG="12" \
+			-p SOURCE_REPOSITORY_URL="https://github.com/BCDevOps/platform-services.git" \
+			-p SOURCE_REPOSITORY_REF="master" \
+			-p SOURCE_CONTEXT_DIR="apps/pgsql/patroni/docker" | oc -n $(BUILD_NAMESPACE) apply -f -
 	@oc -n $(BUILD_NAMESPACE) start-build bc/patroni --wait
 
 init-secrets:
@@ -251,24 +260,52 @@ build-db-migrations:
 	test -n "$(BUILD_REF)"
 	test -n "$(DB_MIGRATIONS_BUILD_REF)"
 	@echo "+\n++ BUILDING DB migrations with tag: $(BUILD_REF)\n+"
-	@oc -n $(BUILD_NAMESPACE) process -f $(BUILD_TEMPLATE_PATH) -p TAG=$(BUILD_REF) -p SOURCE_REPOSITORY_REF=$(BUILD_REF) -p BASE_IMAGE_NAME="nodejs-16" -p BASE_IMAGE_TAG="1" -p BASE_IMAGE_REPO="artifacts.developer.gov.bc.ca/redhat-docker-remote/ubi8/" -p SOURCE_CONTEXT_DIR=$(SOURCE_CONTEXT_DIR)backend -p DOCKER_FILE_PATH=apps/db-migrations/Dockerfile -p NAME=$(DB_MIGRATIONS_BUILD_REF) | oc -n $(BUILD_NAMESPACE) apply -f -
+	@oc -n $(BUILD_NAMESPACE) process \
+			-f $(BUILD_TEMPLATE_PATH) \
+			-p TAG=$(BUILD_REF) \
+			-p SOURCE_REPOSITORY_REF=$(BUILD_REF) \
+			-p BASE_IMAGE_NAME="nodejs-16" \
+			-p BASE_IMAGE_TAG="1" \
+			-p BASE_IMAGE_REPO="artifacts.developer.gov.bc.ca/redhat-docker-remote/ubi8/" \
+			-p SOURCE_CONTEXT_DIR=$(SOURCE_CONTEXT_DIR)backend \
+			-p DOCKER_FILE_PATH=apps/db-migrations/Dockerfile \
+			-p NAME=$(DB_MIGRATIONS_BUILD_REF) | oc -n $(BUILD_NAMESPACE) apply -f -
 	@oc -n $(BUILD_NAMESPACE) start-build bc/$(DB_MIGRATIONS_BUILD_REF) --wait
 
 build-revert-db-migrations:
 	test -n "$(BUILD_NAMESPACE)"
 	test -n "$(BUILD_REF)"
 	test -n "$(REVERT_DB_MIGRATIONS_BUILD_REF)"
+	test -n "$(VERSION_DIFFERENCE)"
 	@echo "+\n++ BUILDING revert DB migrations with tag: $(BUILD_REF)\n+"
-	@oc -n $(BUILD_NAMESPACE) process -f $(BUILD_TEMPLATE_PATH) -p TAG=$(BUILD_REF) -p SOURCE_REPOSITORY_REF=$(BUILD_REF) -p BASE_IMAGE_NAME="nodejs-16" -p BASE_IMAGE_TAG="1" -p BASE_IMAGE_REPO="artifacts.developer.gov.bc.ca/redhat-docker-remote/ubi8/" -p SOURCE_CONTEXT_DIR=$(SOURCE_CONTEXT_DIR)backend -p DOCKER_FILE_PATH=apps/db-migrations/revert/Dockerfile -p NAME=$(REVERT_DB_MIGRATIONS_BUILD_REF) | oc -n $(BUILD_NAMESPACE) apply -f -
+	@oc -n $(BUILD_NAMESPACE) process \
+			-f $(BUILD_TEMPLATE_PATH) \
+			-p TAG=$(BUILD_REF) \
+			-p SOURCE_REPOSITORY_REF=$(BUILD_REF) \
+			-p BASE_IMAGE_NAME="nodejs-16" \
+			-p BASE_IMAGE_TAG="1" \
+			-p BASE_IMAGE_REPO="artifacts.developer.gov.bc.ca/redhat-docker-remote/ubi8/" \
+			-p SOURCE_CONTEXT_DIR=$(SOURCE_CONTEXT_DIR)backend \
+			-p DOCKER_FILE_PATH=apps/db-migrations/revert/Dockerfile \
+			-p NAME=$(REVERT_DB_MIGRATIONS_BUILD_REF) \
+			-p VERSION_DIFFERENCE=$(VERSION_DIFFERENCE) | oc -n $(BUILD_NAMESPACE) apply -f -
 	@oc -n $(BUILD_NAMESPACE) start-build bc/$(REVERT_DB_MIGRATIONS_BUILD_REF) --wait
-
 
 build-api:
 	test -n "$(BUILD_NAMESPACE)"
 	test -n "$(BUILD_REF)"
 	test -n "$(API_BUILD_REF)"
 	@echo "+\n++ BUILDING API with tag: $(BUILD_REF)\n+"
-	@oc -n $(BUILD_NAMESPACE) process -f $(BUILD_TEMPLATE_PATH) -p TAG=$(BUILD_REF) -p SOURCE_REPOSITORY_REF=$(BUILD_REF) -p BASE_IMAGE_NAME="nodejs-16" -p BASE_IMAGE_TAG="1" -p BASE_IMAGE_REPO="artifacts.developer.gov.bc.ca/redhat-docker-remote/ubi8/" -p SOURCE_CONTEXT_DIR=$(SOURCE_CONTEXT_DIR)backend -p DOCKER_FILE_PATH=apps/api/Dockerfile -p NAME=$(API_BUILD_REF) | oc -n $(BUILD_NAMESPACE) apply -f -
+	@oc -n $(BUILD_NAMESPACE) process \
+			-f $(BUILD_TEMPLATE_PATH) \
+			-p TAG=$(BUILD_REF) \
+			-p SOURCE_REPOSITORY_REF=$(BUILD_REF) \
+			-p BASE_IMAGE_NAME="nodejs-16" \
+			-p BASE_IMAGE_TAG="1" \
+			-p BASE_IMAGE_REPO="artifacts.developer.gov.bc.ca/redhat-docker-remote/ubi8/" \
+			-p SOURCE_CONTEXT_DIR=$(SOURCE_CONTEXT_DIR)backend \
+			-p DOCKER_FILE_PATH=apps/api/Dockerfile \
+			-p NAME=$(API_BUILD_REF) | oc -n $(BUILD_NAMESPACE) apply -f -
 	@oc -n $(BUILD_NAMESPACE) start-build bc/$(API_BUILD_REF) --wait
 
 build-workers:
@@ -276,7 +313,16 @@ build-workers:
 	test -n "$(BUILD_REF)"
 	test -n "$(WORKERS_BUILD_REF)"
 	@echo "+\n++ BUILDING WORKERS with tag: $(BUILD_REF)\n+"
-	@oc -n $(BUILD_NAMESPACE) process -f $(BUILD_TEMPLATE_PATH) -p TAG=$(BUILD_REF) -p SOURCE_REPOSITORY_REF=$(BUILD_REF) -p BASE_IMAGE_NAME="nodejs-16" -p BASE_IMAGE_TAG="1" -p BASE_IMAGE_REPO="artifacts.developer.gov.bc.ca/redhat-docker-remote/ubi8/" -p SOURCE_CONTEXT_DIR=$(SOURCE_CONTEXT_DIR)backend -p DOCKER_FILE_PATH=apps/workers/Dockerfile -p NAME=$(WORKERS_BUILD_REF) | oc -n $(BUILD_NAMESPACE) apply -f -
+	@oc -n $(BUILD_NAMESPACE) process \
+			-f $(BUILD_TEMPLATE_PATH) \
+			-p TAG=$(BUILD_REF) \
+			-p SOURCE_REPOSITORY_REF=$(BUILD_REF) \
+			-p BASE_IMAGE_NAME="nodejs-16" \
+			-p BASE_IMAGE_TAG="1" \
+			-p BASE_IMAGE_REPO="artifacts.developer.gov.bc.ca/redhat-docker-remote/ubi8/" \
+			-p SOURCE_CONTEXT_DIR=$(SOURCE_CONTEXT_DIR)backend \
+			-p DOCKER_FILE_PATH=apps/workers/Dockerfile \
+			-p NAME=$(WORKERS_BUILD_REF) | oc -n $(BUILD_NAMESPACE) apply -f -
 	@oc -n $(BUILD_NAMESPACE) start-build bc/$(WORKERS_BUILD_REF) --wait
 
 build-queue-consumers:
@@ -284,7 +330,16 @@ build-queue-consumers:
 	test -n "$(BUILD_REF)"
 	test -n "$(QUEUE_CONSUMERS_BUILD_REF)"
 	@echo "+\n++ BUILDING QUEUE_CONSUMERS with tag: $(BUILD_REF)\n+"
-	@oc -n $(BUILD_NAMESPACE) process -f $(BUILD_TEMPLATE_PATH) -p TAG=$(BUILD_REF) -p SOURCE_REPOSITORY_REF=$(BUILD_REF) -p BASE_IMAGE_NAME="nodejs-16" -p BASE_IMAGE_TAG="1" -p BASE_IMAGE_REPO="artifacts.developer.gov.bc.ca/redhat-docker-remote/ubi8/" -p SOURCE_CONTEXT_DIR=$(SOURCE_CONTEXT_DIR)backend -p DOCKER_FILE_PATH=apps/queue-consumers/Dockerfile -p NAME=$(QUEUE_CONSUMERS_BUILD_REF) | oc -n $(BUILD_NAMESPACE) apply -f -
+	@oc -n $(BUILD_NAMESPACE) process \
+			-f $(BUILD_TEMPLATE_PATH) \
+			-p TAG=$(BUILD_REF) \
+			-p SOURCE_REPOSITORY_REF=$(BUILD_REF) \
+			-p BASE_IMAGE_NAME="nodejs-16" \
+			-p BASE_IMAGE_TAG="1" \
+			-p BASE_IMAGE_REPO="artifacts.developer.gov.bc.ca/redhat-docker-remote/ubi8/" \
+			-p SOURCE_CONTEXT_DIR=$(SOURCE_CONTEXT_DIR)backend \
+			-p DOCKER_FILE_PATH=apps/queue-consumers/Dockerfile \
+			-p NAME=$(QUEUE_CONSUMERS_BUILD_REF) | oc -n $(BUILD_NAMESPACE) apply -f -
 	@oc -n $(BUILD_NAMESPACE) start-build bc/$(QUEUE_CONSUMERS_BUILD_REF) --wait
 
 build-web:
@@ -292,7 +347,15 @@ build-web:
 	test -n "$(BUILD_REF)"
 	test -n "$(WEB_BUILD_REF)"
 	@echo "+\n++ BUILDING WEB with tag: $(BUILD_REF)\n+"
-	@oc -n $(BUILD_NAMESPACE) process -f $(BUILD_TEMPLATE_PATH) -p TAG=$(BUILD_REF) -p SOURCE_REPOSITORY_REF=$(BUILD_REF) -p BASE_IMAGE_NAME="nodejs-16" -p BASE_IMAGE_TAG="1" -p BASE_IMAGE_REPO="artifacts.developer.gov.bc.ca/redhat-docker-remote/ubi8/" -p SOURCE_CONTEXT_DIR=$(SOURCE_CONTEXT_DIR)web -p NAME=$(WEB_BUILD_REF) | oc -n $(BUILD_NAMESPACE) apply -f -
+	@oc -n $(BUILD_NAMESPACE) process \
+			-f $(BUILD_TEMPLATE_PATH) \
+			-p TAG=$(BUILD_REF) \
+			-p SOURCE_REPOSITORY_REF=$(BUILD_REF) \
+			-p BASE_IMAGE_NAME="nodejs-16" \
+			-p BASE_IMAGE_TAG="1" \
+			-p BASE_IMAGE_REPO="artifacts.developer.gov.bc.ca/redhat-docker-remote/ubi8/" \
+			-p SOURCE_CONTEXT_DIR=$(SOURCE_CONTEXT_DIR)web \
+			-p NAME=$(WEB_BUILD_REF) | oc -n $(BUILD_NAMESPACE) apply -f -
 	@oc -n $(BUILD_NAMESPACE) start-build bc/$(WEB_BUILD_REF) --wait
 
 init-patroni:
@@ -304,15 +367,23 @@ init-redis:
 	@oc -n $(NAMESPACE) process -f openshift/database/redis-secrets.yml | oc -n $(NAMESPACE) apply -f -
 
 deploy-patroni:
-	@oc -n $(NAMESPACE) process -f openshift/database/patroni-deploy.yml -p BUILD_NAMESPACE=$(BUILD_NAMESPACE) -p IMAGE_STREAM_TAG=patroni:12-latest | oc -n $(NAMESPACE) apply -f -
+	@oc -n $(NAMESPACE) process -f openshift/database/patroni-deploy.yml \
+			-p BUILD_NAMESPACE=$(BUILD_NAMESPACE) \
+			-p IMAGE_STREAM_TAG=patroni:12-latest | oc -n $(NAMESPACE) apply -f -
 
 deploy-redis:
-	@oc -n $(NAMESPACE) process -f openshift/database/redis-ha-deploy.yml -p IMAGE_NAME="redis" -p IMAGE_TAG="6.2.7-alpine" -p IMAGE_REGISTRY="artifacts.developer.gov.bc.ca/docker-remote" | oc -n $(NAMESPACE) apply -f -
+	@oc -n $(NAMESPACE) process -f openshift/database/redis-ha-deploy.yml \
+			-p IMAGE_NAME="redis" \
+			-p IMAGE_TAG="6.2.7-alpine" \
+			-p IMAGE_REGISTRY="artifacts.developer.gov.bc.ca/docker-remote" | oc -n $(NAMESPACE) apply -f -
 
 # Command to initialize the redis cluster.
 # Make sure that all the redis pods are up and running before initializing the cluster.
 init-redis-cluster:
-	@oc exec -n $(NAMESPACE) -it redis-0 -- redis-cli -a $(oc get secret -n $(NAMESPACE) redis-creds -o jsonpath='{.data.password}' | base64 -d) --cluster create --cluster-replicas 1 $(oc get pods -n $(NAMESPACE) -l app=redis -o jsonpath='{range.items[*]}{.status.podIP}:6379 ')
+	@oc exec -n $(NAMESPACE) -it redis-0 -- redis-cli \
+		-a $(oc get secret -n $(NAMESPACE) redis-creds -o jsonpath='{.data.password}' | base64 -d) \
+		--cluster create --cluster-replicas 1 \
+		$(oc get pods -n $(NAMESPACE) -l app=redis -o jsonpath='{range.items[*]}{.status.podIP}:6379 ')
 
 create-db:
 	test -n $(DB_NAME)
@@ -366,7 +437,6 @@ revert-db-migrations:
 	test -n "$(BUILD_REF)"
 	test -n "$(DATABASE_NAME_KEY)"
 	test -n "$(REVERT_DB_MIGRATIONS)"
-	test -n "$(VERSION_DIFFERENCE)"
 	@echo "+\n++ Deploying REVERT_DB_MIGRATIONS with tag: $(BUILD_REF)\n+"
 	@oc -n $(NAMESPACE) process -f openshift/revert-db-migrations-job.yml \
 		-p NAME=$(REVERT_DB_MIGRATIONS) \
@@ -376,7 +446,6 @@ revert-db-migrations:
 		-p BUILD_TAG=$(BUILD_REF) \
 		-p DATABASE_NAME_KEY=$(DATABASE_NAME_KEY) \
 		-p JOB_NAME=$(REVERT_DB_MIGRATIONS_JOB_NAME) \
-		-p VERSION_DIFFERENCE=$(VERSION_DIFFERENCE) \
 		| oc -n $(NAMESPACE) apply -f - 
 
 wait-for-revert-db-migrations: 

@@ -3,6 +3,10 @@ FROM registry.access.redhat.com/ubi8/nodejs-16:1-5
 
 LABEL maintainer="BC GOV"
 
+# Dockerfile content
+ARG VERSION_DIFFERENCE
+ENV VERSION_DIFFERENCE=${VERSION_DIFFERENCE}
+
 # Copying package.json and package-lock.json
 COPY package*.json ./
 
