@@ -5,7 +5,6 @@ LABEL maintainer="BC GOV"
 
 # Dockerfile content
 ARG ARG_KEY_1
-RUN echo "-$ARG_KEY_1"
 
 # Copying package.json and package-lock.json
 COPY package*.json ./
