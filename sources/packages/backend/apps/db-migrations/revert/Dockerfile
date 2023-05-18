@@ -5,7 +5,7 @@ LABEL maintainer="BC GOV"
 
 # Dockerfile content
 ARG ARG_KEY_1
-RUN echo "$ARG_KEY_1"
+RUN echo "-$ARG_KEY_1"
 
 # Copying package.json and package-lock.json
 COPY package*.json ./
@@ -23,4 +23,4 @@ COPY env-setup.js ./
 USER node
 
 # Entry point
-CMD [ "npm", "run", "start:prod:revert-db-migrations", "$ARG_KEY_1" ]
+CMD [ "npm", "run", "start:prod:revert-db-migrations", "-$ARG_KEY_1" ]
