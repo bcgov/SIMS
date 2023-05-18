@@ -23,4 +23,4 @@ COPY env-setup.js ./
 USER node
 
 # Entry point
-CMD [ "npm", "run", "start:prod:revert-db-migrations", "-$ARG_VAL_1" ]
+CMD [ "npm", "run", "start:prod:revert-db-migrations", "-$ARG_KEY_1" ]
