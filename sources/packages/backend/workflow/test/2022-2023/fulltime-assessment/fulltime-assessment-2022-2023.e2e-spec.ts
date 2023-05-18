@@ -12,7 +12,7 @@ import {
 } from "../../test-utils";
 import { PROGRAM_YEAR } from "../constants/program-year.constants";
 
-describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}`, () => {
+describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}.`, () => {
   let zeebeClientProvider: ZBClient;
   beforeAll(async () => {
     zeebeClientProvider = ZeebeMockedClient.getMockedZeebeInstance();

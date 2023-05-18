@@ -5,7 +5,7 @@ import {
 } from "../../../test-utils";
 import { PROGRAM_YEAR } from "../../constants/program-year.constants";
 
-describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-eligibility-SBSD`, () => {
+describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-eligibility-SBSD.`, () => {
   // Expected and not expected institution types.
   const EXPECTED_INSTITUTION_TYPES = [
     InstitutionTypes.BCPublic,

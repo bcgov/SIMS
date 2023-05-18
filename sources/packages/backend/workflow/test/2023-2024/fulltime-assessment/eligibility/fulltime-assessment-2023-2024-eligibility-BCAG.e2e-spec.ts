@@ -9,7 +9,7 @@ import {
 } from "../../../test-utils";
 import { PROGRAM_YEAR } from "../../constants/program-year.constants";
 
-describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-eligibility-BCAG`, () => {
+describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-eligibility-BCAG.`, () => {
   // Expected and not expected credentials types.
   const EXPECTED_PROGRAM_CREDENTIAL_TYPES = [
     CredentialType.UnderGraduateDegree,

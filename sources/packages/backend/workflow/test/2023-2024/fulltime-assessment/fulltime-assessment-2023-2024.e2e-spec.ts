@@ -6,7 +6,7 @@ import {
 } from "../../test-utils";
 import { PROGRAM_YEAR } from "../constants/program-year.constants";
 
-describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}`, () => {
+describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}.`, () => {
   it("Should generate expected fulltime assessment values when the student is single and independent.", async () => {
     // Arrange
     const assessmentConsolidatedData =

@@ -4,7 +4,7 @@ import {
 } from "../../../test-utils";
 import { PROGRAM_YEAR } from "../../constants/program-year.constants";
 
-describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-eligibility-CSGP`, () => {
+describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-eligibility-CSGP.`, () => {
   it("Should determine CSGP as eligible when financial need is at least $1 and the student has PD status as true.", async () => {
     // Arrange
     const assessmentConsolidatedData =

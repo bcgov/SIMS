@@ -9,7 +9,7 @@ import {
   createFakeStudentDependentNotEligible,
 } from "../../../test-utils/factories";
 
-describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-eligibility-CSGD`, () => {
+describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-eligibility-CSGD.`, () => {
   it("Should determine CSGD as eligible when financial need is at least $1 and total family income is under the threshold and eligible dependents are greater than 1.", async () => {
     // Arrange
     const assessmentConsolidatedData =
