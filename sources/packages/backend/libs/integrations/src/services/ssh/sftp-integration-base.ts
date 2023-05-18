@@ -84,6 +84,15 @@ export abstract class SFTPIntegrationBase<DownloadType> {
       .sort();
   }
 
+  protected async downloadResponseFileLines(
+    remoteFilePath: string,
+  ): Promise<string[]>;
+
+  protected async downloadResponseFileLines(
+    remoteFilePath: string,
+    checkIfFileExist: boolean,
+  ): Promise<string[] | false>;
+
   /**
    * Downloads the file specified on 'fileName' parameter from the
    * SFAS integration folder on the SFTP.
@@ -92,9 +101,16 @@ export abstract class SFTPIntegrationBase<DownloadType> {
    */
   protected async downloadResponseFileLines(
     remoteFilePath: string,
-  ): Promise<string[]> {
+    checkIfFileExist = false,
+  ): Promise<string[] | false> {
     const client = await this.getClient();
     try {
+      if (checkIfFileExist) {
+        const fileExist = await client.exists(remoteFilePath);
+        if (!fileExist) {
+          return false;
+        }
+      }
       // Read all the file content and create a buffer.
       const fileContent = await client.get(remoteFilePath);
       // Convert the file content to an array of text lines and remove possible blank lines.
