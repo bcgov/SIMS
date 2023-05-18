@@ -9,3 +9,6 @@ export const DISBURSEMENT_FILE_GENERATION_ANTICIPATION_DAYS = 5;
  * File name of the ECE response file sent by institutions.
  */
 export const ECE_RESPONSE_FILE_NAME = "CONR_008.TXT";
+
+export const ECE_RESPONSE_COE_DECLINED_REASON =
+  "Please speak to your institution.";
