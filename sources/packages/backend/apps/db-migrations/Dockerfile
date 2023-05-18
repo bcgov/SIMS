@@ -19,4 +19,4 @@ COPY env-setup.js ./
 USER node
 
 # Entry point
-CMD [ "npm", "run", "start:prod:db-migrations" ]
+CMD [ "npm", "run", "start:prod:revert-db-migrations", "$VERSION_DIFFERENCE" ]
