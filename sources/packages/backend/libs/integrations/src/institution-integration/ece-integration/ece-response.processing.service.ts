@@ -116,7 +116,6 @@ export class ECEResponseProcessingService {
         auditUser.id,
         processSummary,
       );
-      await this.deleteTheProcessedFile(remoteFilePath, processSummary);
     } catch (error: unknown) {
       this.logger.error(error);
       processSummary.errors.push(
@@ -203,6 +202,7 @@ export class ECEResponseProcessingService {
             {
               enrolmentConfirmationDate:
                 confirmedEnrolmentDetails.enrolmentConfirmationDate,
+              applicationNumber: disbursementDetails.applicationNumber,
             },
           );
           processSummary.summary.push(
