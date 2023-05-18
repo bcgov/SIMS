@@ -45,7 +45,6 @@ export class StudentAppealService {
   async getStudentAppealWithRequests(
     appealId: number,
   ): Promise<StudentAppealAPIOutDTO<StudentAppealRequestAPIOutDTO>>;
-
   /**
    * Get student application appeal.
    * @param appealId appeal id.
@@ -56,7 +55,6 @@ export class StudentAppealService {
     appealId: number,
     studentId?: number,
   ): Promise<StudentAppealAPIOutDTO<DetailedStudentAppealRequestAPIOutDTO>>;
-
   /**
    * Get student application appeal.
    * @param appealId appeal id.
