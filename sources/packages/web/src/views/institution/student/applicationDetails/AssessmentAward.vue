@@ -4,10 +4,7 @@
       <header-navigator
         title="Assessments"
         subTitle="View Assessment"
-        :routeLocation="{
-          name: InstitutionRoutesConst.ASSESSMENTS_SUMMARY,
-          params: { applicationId, studentId },
-        }"
+        :routeLocation="routeLocation"
       />
       <detail-header :headerMap="headerMap" />
     </template>
@@ -68,11 +65,20 @@ export default defineComponent({
       },
     }));
 
+    const routeLocation = computed(() => ({
+      name: InstitutionRoutesConst.ASSESSMENTS_SUMMARY,
+      params: {
+        applicationId: props.applicationId,
+        studentId: props.studentId,
+      },
+    }));
+
     return {
       InstitutionRoutesConst,
       noticeOfAssessmentRoute,
       assessmentAwardData,
       headerMap,
+      routeLocation,
     };
   },
 });

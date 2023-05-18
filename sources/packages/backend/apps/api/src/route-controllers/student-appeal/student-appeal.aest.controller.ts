@@ -72,7 +72,7 @@ export class StudentAppealAESTController extends BaseController {
   @ApiNotFoundResponse({
     description: "Not able to find the student appeal.",
   })
-  async getStudentAppealWithRequests(
+  async getStudentAppealWithRequest(
     @Param("appealId", ParseIntPipe) appealId: number,
   ): Promise<StudentAppealAPIOutDTO<DetailedStudentAppealRequestAPIOutDTO>> {
     return this.studentAppealControllerService.getStudentAppealWithRequest<DetailedStudentAppealRequestAPIOutDTO>(

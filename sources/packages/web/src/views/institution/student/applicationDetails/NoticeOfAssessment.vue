@@ -4,10 +4,7 @@
       <header-navigator
         title="Assessment"
         subTitle="Notice of Assessment"
-        :routeLocation="{
-          name: InstitutionRoutesConst.ASSESSMENT_AWARD_VIEW,
-          params: { applicationId, studentId, assessmentId },
-        }"
+        :routeLocation="routeLocation"
       />
     </template>
     <notice-of-assessment-form-view
@@ -18,7 +15,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import { defineComponent, computed } from "vue";
 import NoticeOfAssessmentFormView from "@/components/common/NoticeOfAssessmentFormView.vue";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 
@@ -40,8 +37,16 @@ export default defineComponent({
       required: true,
     },
   },
-  setup() {
-    return { InstitutionRoutesConst };
+  setup(props) {
+    const routeLocation = computed(() => ({
+      name: InstitutionRoutesConst.ASSESSMENT_AWARD_VIEW,
+      params: {
+        applicationId: props.applicationId,
+        studentId: props.studentId,
+        assessmentId: props.assessmentId,
+      },
+    }));
+    return { InstitutionRoutesConst, routeLocation };
   },
 });
 </script>

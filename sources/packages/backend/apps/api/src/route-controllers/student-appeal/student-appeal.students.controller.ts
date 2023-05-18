@@ -164,7 +164,7 @@ export class StudentAppealStudentsController extends BaseController {
   @ApiNotFoundResponse({
     description: "Not able to find the student appeal.",
   })
-  async getStudentAppealWithRequests(
+  async getStudentAppealWithRequest(
     @Param("appealId", ParseIntPipe) appealId: number,
     @UserToken() userToken: StudentUserToken,
   ): Promise<StudentAppealAPIOutDTO<StudentAppealRequestAPIOutDTO>> {

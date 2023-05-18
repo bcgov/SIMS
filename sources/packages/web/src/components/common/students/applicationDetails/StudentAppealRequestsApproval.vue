@@ -99,7 +99,7 @@ export default defineComponent({
 
     onMounted(async () => {
       const appeal =
-        await StudentAppealService.shared.getStudentAppealWithRequests(
+        await StudentAppealService.shared.getStudentAppealWithRequest(
           props.appealId,
           props.studentId,
         );

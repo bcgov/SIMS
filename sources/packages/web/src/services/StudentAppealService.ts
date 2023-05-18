@@ -42,7 +42,7 @@ export class StudentAppealService {
    * @param appealId appeal id.
    * @returns student application appeal.
    */
-  async getStudentAppealWithRequests(
+  async getStudentAppealWithRequest(
     appealId: number,
   ): Promise<StudentAppealAPIOutDTO<StudentAppealRequestAPIOutDTO>>;
 
@@ -52,7 +52,7 @@ export class StudentAppealService {
    * @param studentId student id.
    * @returns student application appeal.
    */
-  async getStudentAppealWithRequests(
+  async getStudentAppealWithRequest(
     appealId: number,
     studentId?: number,
   ): Promise<StudentAppealAPIOutDTO<DetailedStudentAppealRequestAPIOutDTO>>;
@@ -63,7 +63,7 @@ export class StudentAppealService {
    * @param studentId student id.
    * @returns student application appeal.
    */
-  async getStudentAppealWithRequests(
+  async getStudentAppealWithRequest(
     appealId: number,
     studentId?: number,
   ): Promise<
@@ -71,7 +71,7 @@ export class StudentAppealService {
       StudentAppealRequestAPIOutDTO | DetailedStudentAppealRequestAPIOutDTO
     >
   > {
-    return ApiClient.StudentAppealApi.getStudentAppealWithRequests<
+    return ApiClient.StudentAppealApi.getStudentAppealWithRequest<
       StudentAppealRequestAPIOutDTO | DetailedStudentAppealRequestAPIOutDTO
     >(appealId, studentId);
   }
