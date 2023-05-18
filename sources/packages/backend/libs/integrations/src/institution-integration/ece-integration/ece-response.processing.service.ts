@@ -114,10 +114,31 @@ export class ECEResponseProcessingService {
       const disbursementsToProcess =
         this.sanitizeAndTransformToDisbursements(eceFileDetailRecords);
       const auditUser = await this.systemUsersService.systemUser();
-      await this.validateAndUpdateEnrolmentStatus(
+      const {
+        totalDisbursements,
+        disbursementsSuccessfullyProcessed,
+        disbursementsSkipped,
+        duplicateDisbursements,
+        disbursementsFailedToProcess,
+      } = await this.validateAndUpdateEnrolmentStatus(
         disbursementsToProcess,
         auditUser.id,
         processSummary,
+      );
+      processSummary.summary.push(
+        `Total disbursements found: ${totalDisbursements}`,
+      );
+      processSummary.summary.push(
+        `Disbursements successfully updated: ${disbursementsSuccessfullyProcessed}`,
+      );
+      processSummary.summary.push(
+        `Disbursements skipped to be processed: ${disbursementsSkipped}`,
+      );
+      processSummary.summary.push(
+        `Disbursements considered duplicate and skipped: ${duplicateDisbursements}`,
+      );
+      processSummary.summary.push(
+        `Disbursements failed to process: ${disbursementsFailedToProcess}`,
       );
     } catch (error: unknown) {
       this.logger.error(error);
@@ -185,10 +206,23 @@ export class ECEResponseProcessingService {
     disbursements: ECEDisbursements,
     auditUserId: number,
     processSummary: ProcessSummaryResult,
-  ) {
-    for (const [disbursementScheduleId, disbursementDetails] of Object.entries(
-      disbursements,
-    )) {
+  ): Promise<{
+    totalDisbursements: number;
+    disbursementsSuccessfullyProcessed: number;
+    disbursementsSkipped: number;
+    duplicateDisbursements: number;
+    disbursementsFailedToProcess: number;
+  }> {
+    const disbursementSchedules = Object.entries(disbursements);
+    const totalDisbursements = disbursementSchedules.length;
+    let disbursementsSuccessfullyProcessed = 0;
+    let disbursementsSkipped = 0;
+    let duplicateDisbursements = 0;
+    let disbursementsFailedToProcess = 0;
+    for (const [
+      disbursementScheduleId,
+      disbursementDetails,
+    ] of disbursementSchedules) {
       const confirmedEnrolmentDetails = disbursementDetails.awardDetails.find(
         (awardDetail) => awardDetail.isEnrolmentConfirmed,
       );
@@ -208,6 +242,7 @@ export class ECEResponseProcessingService {
               applicationNumber: disbursementDetails.applicationNumber,
             },
           );
+          ++disbursementsSuccessfullyProcessed;
           processSummary.summary.push(
             `For disbursement ${disbursementScheduleId}, enrolment has been confirmed.`,
           );
@@ -230,15 +265,22 @@ export class ECEResponseProcessingService {
         if (error instanceof CustomNamedError) {
           switch (error.name) {
             case ENROLMENT_NOT_FOUND:
-            case ENROLMENT_ALREADY_COMPLETED:
+              ++disbursementsSkipped;
               processSummary.warnings.push(
                 `For disbursement ${disbursementScheduleId}, record skipped due to reason: ${error.message}`,
+              );
+              break;
+            case ENROLMENT_ALREADY_COMPLETED:
+              ++duplicateDisbursements;
+              processSummary.warnings.push(
+                `For disbursement ${disbursementScheduleId}, record is considered as duplicate and skipped due to reason: ${error.message}`,
               );
               break;
             case ENROLMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE:
             case ENROLMENT_CONFIRMATION_DATE_NOT_WITHIN_APPROVAL_PERIOD:
             case FIRST_COE_NOT_COMPLETE:
             case INVALID_TUITION_REMITTANCE_AMOUNT:
+              ++disbursementsFailedToProcess;
               processSummary.errors.push(
                 `For disbursement ${disbursementScheduleId}, record failed to process due to reason: ${error.message}`,
               );
@@ -251,6 +293,13 @@ export class ECEResponseProcessingService {
         }
       }
     }
+    return {
+      totalDisbursements,
+      disbursementsSuccessfullyProcessed,
+      disbursementsSkipped,
+      duplicateDisbursements,
+      disbursementsFailedToProcess,
+    };
   }
 
   private async deleteTheProcessedFile(
