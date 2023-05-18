@@ -7,26 +7,6 @@
         subTitle="Assessment"
       />
     </template>
-    <!-- <request-assessment
-      class="mb-5"
-      :applicationId="applicationId"
-      :studentId="studentId"
-      @viewStudentAppeal="goToStudentAppeal"
-      @viewApplicationException="goToApplicationException"
-      @viewOfferingRequest="goToOfferingRequest"
-    />
-    <history-assessment
-      :applicationId="applicationId"
-      :studentId="studentId"
-      :viewRequestTypes="assessmentRequestTypes"
-      @viewStudentAppeal="goToStudentAppeal"
-      @viewAssessment="gotToViewAssessment"
-      @viewOfferingRequest="goToOfferingRequest"
-      @viewApplicationException="goToApplicationException"
-      @viewScholasticStandingChange="goToScholasticStanding"
-    /> -->
-    <!-- // TODO: ANN CHECK WITH JASON -->
-
     <request-assessment
       class="mb-5"
       :applicationId="applicationId"
@@ -110,27 +90,7 @@ export default defineComponent({
         },
       });
     };
-    // TODO: CONFIRM WITH JASON
-    // const goToScholasticStanding = (scholasticStandingId: number) => {
-    //   router.push({
-    //     name: InstitutionRoutesConst.SCHOLASTIC_STANDING_VIEW,
-    //     params: {
-    //       studentId: props.studentId,
-    //       applicationId: props.applicationId,
-    //       scholasticStandingId,
-    //     },
-    //   });
-    // };
-    // TODO: CONFIRM WITH JASON
-    // const goToOfferingRequest = (offeringId: number, programId: number) => {
-    //   router.push({
-    //     name: InstitutionRoutesConst.OFFERING_CHANGE_REQUEST_VIEW,
-    //     params: {
-    //       offeringId,
-    //       programId,
-    //     },
-    //   });
-    // };
+
     const backRoute = computed(() => ({
       name: InstitutionRoutesConst.STUDENT_APPLICATIONS,
       params: {
@@ -143,8 +103,6 @@ export default defineComponent({
       goToStudentAppeal,
       gotToViewAssessment,
       goToApplicationException,
-      // goToScholasticStanding,
-      // goToOfferingRequest,
       assessmentRequestTypes,
       backRoute,
     };

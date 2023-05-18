@@ -35,17 +35,18 @@ export class StudentAppealApi extends HttpBaseClient {
   async getStudentAppealWithRequests<
     T extends
       | DetailedStudentAppealRequestAPIOutDTO
-      | StudentAppealRequestAPIOutDTO,
-    R = T extends DetailedStudentAppealRequestAPIOutDTO
-      ? DetailedStudentAppealRequestAPIOutDTO
-      : StudentAppealRequestAPIOutDTO,
-  >(appealId: number, studentId?: number): Promise<StudentAppealAPIOutDTO<R>> {
+      | StudentAppealRequestAPIOutDTO
+      | number,
+    R = StudentAppealAPIOutDTO<
+      T extends DetailedStudentAppealRequestAPIOutDTO
+        ? DetailedStudentAppealRequestAPIOutDTO
+        : StudentAppealRequestAPIOutDTO
+    >,
+  >(appealId: number, studentId?: number): Promise<R> {
     const endpoint = studentId
       ? `appeal/student/${studentId}/appeal/${appealId}/requests`
       : `appeal/${appealId}/requests`;
-    return this.getCall<StudentAppealAPIOutDTO<R>>(
-      this.addClientRoot(endpoint),
-    );
+    return this.getCall<R>(this.addClientRoot(endpoint));
   }
 
   async approveStudentAppealRequests(
