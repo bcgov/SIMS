@@ -61,15 +61,6 @@ export class ECEResponseProcessingService {
     // Get all the institution codes who are enabled for integration.
     const integrationEnabledInstitutions =
       await this.institutionLocationService.getAllIntegrationEnabledInstitutionCodes();
-    const institutionCodes = integrationEnabledInstitutions.join(", ");
-    const processingResults: ProcessSummaryResult[] = [];
-    processingResults.push({
-      summary: [
-        `Processing ECE response for institution codes ${institutionCodes}`,
-      ],
-      warnings: [],
-      errors: [],
-    });
     const filePaths = integrationEnabledInstitutions.map((institutionCode) =>
       path.join(
         this.institutionIntegrationConfig.ftpResponseFolder,
@@ -83,8 +74,7 @@ export class ECEResponseProcessingService {
         this.processDisbursementsInECEResponseFile(remoteFilePath),
       filePaths,
     );
-    processingResults.push(...result);
-    return processingResults;
+    return result;
   }
 
   /**
@@ -97,7 +87,7 @@ export class ECEResponseProcessingService {
   ): Promise<ProcessSummaryResult> {
     const processSummary: ProcessSummaryResult = new ProcessSummaryResult();
     let isECEResponseFileExist = false;
-    processSummary.summary.push(`Reading file ${remoteFilePath}.`);
+    processSummary.summary.push(`Starting download of file ${remoteFilePath}.`);
     this.logger.log(`Starting download of file ${remoteFilePath}.`);
     try {
       const eceFileDetailRecords =
@@ -106,7 +96,9 @@ export class ECEResponseProcessingService {
       // Check if the file exist in remote server and summary info
       // if the file is not found.
       if (!isECEResponseFileExist) {
-        processSummary.summary.push(`File ${remoteFilePath} not found.`);
+        const warningMessage = `File ${remoteFilePath} not found.`;
+        processSummary.summary.push(warningMessage);
+        this.logger.log(warningMessage);
         return processSummary;
       }
       // Sanitize all the ece response detail records and
@@ -140,6 +132,7 @@ export class ECEResponseProcessingService {
       processSummary.summary.push(
         `Disbursements failed to process: ${disbursementsFailedToProcess}`,
       );
+      this.logger.log(`SCompleted processing the file ${remoteFilePath}.`);
     } catch (error: unknown) {
       this.logger.error(error);
       processSummary.errors.push(
