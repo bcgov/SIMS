@@ -19,7 +19,7 @@ export class StudentAppealControllerService {
    * - `assessDetails`, if true, will return access details.
    * @returns the student appeal and its requests.
    */
-  async getStudentAppealWithRequest<
+  async getStudentAppealWithRequests<
     T extends
       | DetailedStudentAppealRequestAPIOutDTO
       | StudentAppealRequestAPIOutDTO,

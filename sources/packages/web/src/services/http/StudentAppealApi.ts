@@ -32,7 +32,7 @@ export class StudentAppealApi extends HttpBaseClient {
    * @param studentId student id.
    * @returns student application appeal.
    */
-  async getStudentAppealWithRequest<
+  async getStudentAppealWithRequests<
     T extends
       | DetailedStudentAppealRequestAPIOutDTO
       | StudentAppealRequestAPIOutDTO

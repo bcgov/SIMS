@@ -164,11 +164,11 @@ export class StudentAppealStudentsController extends BaseController {
   @ApiNotFoundResponse({
     description: "Not able to find the student appeal.",
   })
-  async getStudentAppealWithRequest(
+  async getStudentAppealWithRequests(
     @Param("appealId", ParseIntPipe) appealId: number,
     @UserToken() userToken: StudentUserToken,
   ): Promise<StudentAppealAPIOutDTO<StudentAppealRequestAPIOutDTO>> {
-    return this.studentAppealControllerService.getStudentAppealWithRequest<StudentAppealRequestAPIOutDTO>(
+    return this.studentAppealControllerService.getStudentAppealWithRequests<StudentAppealRequestAPIOutDTO>(
       appealId,
       { studentId: userToken.studentId },
     );
