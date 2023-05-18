@@ -10,25 +10,34 @@ import {
 } from "../../../test-utils/factories";
 
 describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-eligibility-CSGF`, () => {
+  // Expected and not expected credentials types.
+  const EXPECTED_PROGRAM_CREDENTIAL_TYPES = [
+    CredentialType.UnderGraduateCertificate,
+    CredentialType.GraduateCertificate,
+    CredentialType.UnderGraduateDiploma,
+    CredentialType.GraduateDiploma,
+    CredentialType.UnderGraduateDegree,
+  ];
+  const NOT_EXPECTED_PROGRAM_CREDENTIAL_TYPES = Object.values(
+    CredentialType,
+  ).filter((type) => !EXPECTED_PROGRAM_CREDENTIAL_TYPES.includes(type));
+  // Expected and not expected program length options.
+  const EXPECTED_PROGRAM_LENGTH = [
+    ProgramLengthOptions.TwoToThreeYears,
+    ProgramLengthOptions.ThreeToFourYears,
+    ProgramLengthOptions.FourToFiveYears,
+    ProgramLengthOptions.FiveOrMoreYears,
+  ];
+  const NOT_EXPECTED_PROGRAM_LENGTH = Object.values(
+    ProgramLengthOptions,
+  ).filter((type) => !EXPECTED_PROGRAM_LENGTH.includes(type));
+
   describe(
     "Should determine CSGF as eligible when programCredentialType and programLength are the expected ones " +
       "and financial need is at least $1 and total family income is below the threshold.",
     () => {
-      const expectedProgramCredentialTypes = [
-        CredentialType.UnderGraduateCertificate,
-        CredentialType.GraduateCertificate,
-        CredentialType.UnderGraduateDiploma,
-        CredentialType.GraduateDiploma,
-        CredentialType.UnderGraduateDegree,
-      ];
-      const expectedProgramLength = [
-        ProgramLengthOptions.TwoToThreeYears,
-        ProgramLengthOptions.ThreeToFourYears,
-        ProgramLengthOptions.FourToFiveYears,
-        ProgramLengthOptions.FiveOrMoreYears,
-      ];
-      for (const programCredentialType of expectedProgramCredentialTypes) {
-        for (const programLength of expectedProgramLength) {
+      for (const programCredentialType of EXPECTED_PROGRAM_CREDENTIAL_TYPES) {
+        for (const programLength of EXPECTED_PROGRAM_LENGTH) {
           it(`programCredentialType is ${programCredentialType} and programLength is ${programLength}`, async () => {
             // Arrange
             const assessmentConsolidatedData =
@@ -70,6 +79,41 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-eligibility-CSGF
     },
   );
 
+  describe(
+    "Should determine CSGF as not eligible when programCredentialType and programLength are not the expected ones " +
+      "and financial need is at least $1 and total family income is below the threshold.",
+    () => {
+      for (const programCredentialType of NOT_EXPECTED_PROGRAM_CREDENTIAL_TYPES) {
+        for (const programLength of NOT_EXPECTED_PROGRAM_LENGTH) {
+          it(`programCredentialType is ${programCredentialType} and programLength is ${programLength}`, async () => {
+            // Arrange
+            const assessmentConsolidatedData =
+              createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
+            assessmentConsolidatedData.programCredentialType =
+              programCredentialType;
+            assessmentConsolidatedData.programLength = programLength;
+            assessmentConsolidatedData.studentDataTaxReturnIncome = 70000;
+            assessmentConsolidatedData.studentDataDependants = [
+              createFakeStudentDependentEligible(
+                DependentEligibility.Eligible18To22YearsOldDeclaredOnTaxes,
+              ),
+            ];
+            // Act
+            const calculatedAssessment =
+              await executeFulltimeAssessmentForProgramYear(
+                PROGRAM_YEAR,
+                assessmentConsolidatedData,
+              );
+            // Assert
+            expect(calculatedAssessment.variables.awardEligibilityCSGF).toBe(
+              false,
+            );
+          });
+        }
+      }
+    },
+  );
+
   it("Should determine CSGF as not eligible when total family income is above the threshold.", async () => {
     // Arrange
     const assessmentConsolidatedData =
@@ -98,50 +142,6 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-eligibility-CSGF
       assessmentConsolidatedData.studentDataTaxReturnIncome,
     );
     expect(calculatedAssessment.variables.calculatedDataFamilySize).toBe(3);
-    expect(calculatedAssessment.variables.awardEligibilityCSGF).toBe(false);
-  });
-
-  it("Should determine CSGF as not eligible when programCredentialType is not expected.", async () => {
-    // Arrange
-    const assessmentConsolidatedData =
-      createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
-    assessmentConsolidatedData.programCredentialType =
-      CredentialType.GraduateDegreeOrMasters;
-    assessmentConsolidatedData.programLength =
-      ProgramLengthOptions.TwoToThreeYears;
-    assessmentConsolidatedData.studentDataTaxReturnIncome = 50000;
-    // Act
-    const calculatedAssessment = await executeFulltimeAssessmentForProgramYear(
-      PROGRAM_YEAR,
-      assessmentConsolidatedData,
-    );
-    // Assert
-    expect(calculatedAssessment.variables.calculatedDataTotalFamilyIncome).toBe(
-      assessmentConsolidatedData.studentDataTaxReturnIncome,
-    );
-    expect(calculatedAssessment.variables.calculatedDataFamilySize).toBe(1);
-    expect(calculatedAssessment.variables.awardEligibilityCSGF).toBe(false);
-  });
-
-  it("Should determine CSGF as not eligible when programLength is not expected.", async () => {
-    // Arrange
-    const assessmentConsolidatedData =
-      createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
-    assessmentConsolidatedData.programCredentialType =
-      CredentialType.UnderGraduateCertificate;
-    assessmentConsolidatedData.programLength =
-      ProgramLengthOptions.WeeksToLessThanYear;
-    assessmentConsolidatedData.studentDataTaxReturnIncome = 50000;
-    // Act
-    const calculatedAssessment = await executeFulltimeAssessmentForProgramYear(
-      PROGRAM_YEAR,
-      assessmentConsolidatedData,
-    );
-    // Assert
-    expect(calculatedAssessment.variables.calculatedDataTotalFamilyIncome).toBe(
-      assessmentConsolidatedData.studentDataTaxReturnIncome,
-    );
-    expect(calculatedAssessment.variables.calculatedDataFamilySize).toBe(1);
     expect(calculatedAssessment.variables.awardEligibilityCSGF).toBe(false);
   });
 });
