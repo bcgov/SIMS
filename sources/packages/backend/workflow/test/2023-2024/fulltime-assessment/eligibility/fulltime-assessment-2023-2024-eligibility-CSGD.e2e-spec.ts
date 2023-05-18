@@ -1,16 +1,16 @@
 import {
   createFakeConsolidatedFulltimeData,
   executeFulltimeAssessmentForProgramYear,
-} from "../../test-utils";
-import { PROGRAM_YEAR } from "../constants/program-year.constants";
+} from "../../../test-utils";
+import { PROGRAM_YEAR } from "../../constants/program-year.constants";
 import {
   DependentEligibility,
   createFakeStudentDependentEligible,
   createFakeStudentDependentNotEligible,
-} from "../../test-utils/factories";
+} from "../../../test-utils/factories";
 
 describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-eligibility-CSGD`, () => {
-  it("Should determine CSGD (federal and provincial) as eligible when financial need is at least $1 and total family income is under the threshold and eligible dependents are greater than 1.", async () => {
+  it("Should determine CSGD as eligible when financial need is at least $1 and total family income is under the threshold and eligible dependents are greater than 1.", async () => {
     // Arrange
     const assessmentConsolidatedData =
       createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
@@ -63,7 +63,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-eligibility-CSGD
     ).toBeGreaterThan(0);
   });
 
-  it("Should determine CSGD (federal and provincial) as not eligible when financial need is at least $1 and total family income is above the threshold and eligible dependents are greater than 1.", async () => {
+  it("Should determine CSGD as not eligible when financial need is at least $1 and total family income is above the threshold and eligible dependents are greater than 1.", async () => {
     // Arrange
     const assessmentConsolidatedData =
       createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
@@ -83,7 +83,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-eligibility-CSGD
     expect(calculatedAssessment.variables.awardEligibilityCSGD).toBe(false);
   });
 
-  it("Should determine CSGD (federal and provincial) as not eligible when financial need is at least $1 and total family income is above the threshold and eligible dependents is 0.", async () => {
+  it("Should determine CSGD as not eligible when financial need is at least $1 and total family income is above the threshold and eligible dependents is 0.", async () => {
     // Arrange
     const assessmentConsolidatedData =
       createFakeConsolidatedFulltimeData(PROGRAM_YEAR);

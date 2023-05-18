@@ -2,12 +2,12 @@ import {
   CredentialType,
   InstitutionTypes,
   ProgramLengthOptions,
-} from "../../models";
+} from "../../../models";
 import {
   createFakeConsolidatedFulltimeData,
   executeFulltimeAssessmentForProgramYear,
-} from "../../test-utils";
-import { PROGRAM_YEAR } from "../constants/program-year.constants";
+} from "../../../test-utils";
+import { PROGRAM_YEAR } from "../../constants/program-year.constants";
 
 describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-eligibility-BCAG`, () => {
   // Expected and not expected credentials types.
@@ -29,7 +29,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-eligibility-BCAG
     ProgramLengthOptions,
   ).filter((type) => !EXPECTED_PROGRAM_LENGTH.includes(type));
 
-  describe("Should determine BCAG (federal and provincial) as eligible when programCredentialType and programLength are the expected ones and institution is BC Public and financial need is at least $1.", () => {
+  describe("Should determine BCAG as eligible when programCredentialType and programLength are the expected ones and institution is BC Public and financial need is at least $1.", () => {
     for (const programCredentialType of EXPECTED_PROGRAM_CREDENTIAL_TYPES) {
       for (const programLength of EXPECTED_PROGRAM_LENGTH) {
         it(`programCredentialType is ${programCredentialType} and programLength is ${programLength}`, async () => {
@@ -60,7 +60,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-eligibility-BCAG
     }
   });
 
-  describe("Should determine BCAG (federal and provincial) as not eligible when programCredentialType and programLength are not the expected ones.", () => {
+  describe("Should determine BCAG as not eligible when programCredentialType and programLength are not the expected ones.", () => {
     for (const programCredentialType of NOT_EXPECTED_PROGRAM_CREDENTIAL_TYPES) {
       for (const programLength of NOT_EXPECTED_PROGRAM_LENGTH) {
         it(`programCredentialType is ${programCredentialType} and programLength is ${programLength}`, async () => {
@@ -85,7 +85,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-eligibility-BCAG
     }
   });
 
-  describe("Should determine BCAG (federal and provincial) as not eligible when institution type is different then BC Public.", () => {
+  describe("Should determine BCAG as not eligible when institution type is different then BC Public.", () => {
     const notExpectedInstitutionsTypes = Object.values(InstitutionTypes).filter(
       (type) => type !== InstitutionTypes.BCPublic,
     );

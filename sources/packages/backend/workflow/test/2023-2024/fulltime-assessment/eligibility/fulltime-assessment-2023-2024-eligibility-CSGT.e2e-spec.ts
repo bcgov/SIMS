@@ -1,12 +1,12 @@
 import {
   createFakeConsolidatedFulltimeData,
   executeFulltimeAssessmentForProgramYear,
-} from "../../test-utils";
-import { PROGRAM_YEAR } from "../constants/program-year.constants";
+} from "../../../test-utils";
+import { PROGRAM_YEAR } from "../../constants/program-year.constants";
 import { addToDateOnlyString } from "@sims/utilities";
 
 describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-eligibility-CSGT`, () => {
-  it("Should determine CSGT (federal and provincial) as eligible when studentDataWhenDidYouGraduateOrLeaveHighSchool was at least 10 years ago.", async () => {
+  it("Should determine CSGT as eligible when studentDataWhenDidYouGraduateOrLeaveHighSchool was at least 10 years ago.", async () => {
     // Arrange
     const assessmentConsolidatedData =
       createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
@@ -27,7 +27,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-eligibility-CSGT
     ).toBeGreaterThan(0);
   });
 
-  it("Should determine CSGT (federal and provincial) as eligible when studentDataWhenDidYouGraduateOrLeaveHighSchool was less than 10 years ago.", async () => {
+  it("Should determine CSGT as eligible when studentDataWhenDidYouGraduateOrLeaveHighSchool was less than 10 years ago.", async () => {
     // Arrange
     const assessmentConsolidatedData =
       createFakeConsolidatedFulltimeData(PROGRAM_YEAR);

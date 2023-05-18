@@ -1,17 +1,17 @@
-import { CredentialType, ProgramLengthOptions } from "../../models";
+import { CredentialType, ProgramLengthOptions } from "../../../models";
 import {
   createFakeConsolidatedFulltimeData,
   executeFulltimeAssessmentForProgramYear,
-} from "../../test-utils";
-import { PROGRAM_YEAR } from "../constants/program-year.constants";
+} from "../../../test-utils";
+import { PROGRAM_YEAR } from "../../constants/program-year.constants";
 import {
   DependentEligibility,
   createFakeStudentDependentEligible,
-} from "../../test-utils/factories";
+} from "../../../test-utils/factories";
 
 describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-eligibility-CSGF`, () => {
   describe(
-    "Should determine CSGF (federal and provincial) as eligible when programCredentialType and programLength are the expected ones " +
+    "Should determine CSGF as eligible when programCredentialType and programLength are the expected ones " +
       "and financial need is at least $1 and total family income is below the threshold.",
     () => {
       const expectedProgramCredentialTypes = [
@@ -70,7 +70,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-eligibility-CSGF
     },
   );
 
-  it("Should determine CSGF (federal and provincial) as not eligible when total family income is above the threshold.", async () => {
+  it("Should determine CSGF as not eligible when total family income is above the threshold.", async () => {
     // Arrange
     const assessmentConsolidatedData =
       createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
@@ -101,7 +101,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-eligibility-CSGF
     expect(calculatedAssessment.variables.awardEligibilityCSGF).toBe(false);
   });
 
-  it("Should determine CSGF (federal and provincial) as not eligible when programCredentialType is not expected.", async () => {
+  it("Should determine CSGF as not eligible when programCredentialType is not expected.", async () => {
     // Arrange
     const assessmentConsolidatedData =
       createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
@@ -123,7 +123,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-eligibility-CSGF
     expect(calculatedAssessment.variables.awardEligibilityCSGF).toBe(false);
   });
 
-  it("Should determine CSGF (federal and provincial) as not eligible when programLength is not expected.", async () => {
+  it("Should determine CSGF as not eligible when programLength is not expected.", async () => {
     // Arrange
     const assessmentConsolidatedData =
       createFakeConsolidatedFulltimeData(PROGRAM_YEAR);

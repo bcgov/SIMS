@@ -1,11 +1,11 @@
 import {
   createFakeConsolidatedFulltimeData,
   executeFulltimeAssessmentForProgramYear,
-} from "../../test-utils";
-import { PROGRAM_YEAR } from "../constants/program-year.constants";
+} from "../../../test-utils";
+import { PROGRAM_YEAR } from "../../constants/program-year.constants";
 
 describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-eligibility-CSGP`, () => {
-  it("Should determine CSGP (federal and provincial) as eligible when financial need is at least $1 and the student has PD status as true.", async () => {
+  it("Should determine CSGP as eligible when financial need is at least $1 and the student has PD status as true.", async () => {
     // Arrange
     const assessmentConsolidatedData =
       createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
@@ -25,7 +25,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-eligibility-CSGP
     );
   });
 
-  it("Should determine CSGP (federal and provincial) as not eligible when financial need is at least $1 and the student has PD status as false.", async () => {
+  it("Should determine CSGP as not eligible when financial need is at least $1 and the student has PD status as false.", async () => {
     // Arrange
     const assessmentConsolidatedData =
       createFakeConsolidatedFulltimeData(PROGRAM_YEAR);

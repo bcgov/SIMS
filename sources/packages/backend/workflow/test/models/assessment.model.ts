@@ -197,4 +197,14 @@ export interface CalculatedAssessmentModel {
   awardEligibilityBCAG: boolean;
   federalAwardNetBCAGAmount: number;
   provincialAwardNetBCAGAmount: number;
+  // BCAG2Year
+  awardEligibilityBCAG2Year: number;
+  // BGPD
+  awardEligibilityBGPD: true;
+  federalAwardNetBGPDAmount: number;
+  provincialAwardNetBGPDAmount: number;
+  // SBSD
+  awardEligibilitySBSD: true;
+  federalAwardNetSBSDAmount: number;
+  provincialAwardNetSBSDAmount: number;
 }
