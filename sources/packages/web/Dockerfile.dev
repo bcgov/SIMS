@@ -18,8 +18,9 @@ COPY ./package*.json ./
 # Installing dependencies
 RUN npm ci
 
+
 # Copying sources
-COPY . .
+COPY . .  
 
 # Building app
 RUN npm run build
