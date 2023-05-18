@@ -4,8 +4,8 @@ FROM registry.access.redhat.com/ubi8/nodejs-16:1-5
 LABEL maintainer="BC GOV"
 
 # Dockerfile content
-ARG ARG_VAL_1
-RUN echo "-$ARG_VAL_1"
+ARG ARG_KEY_1
+RUN echo "-$ARG_KEY_1"
 
 # Copying package.json and package-lock.json
 COPY package*.json ./

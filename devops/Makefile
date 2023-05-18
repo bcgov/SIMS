@@ -288,7 +288,7 @@ build-revert-db-migrations:
 			-p SOURCE_CONTEXT_DIR=$(SOURCE_CONTEXT_DIR)backend \
 			-p DOCKER_FILE_PATH=apps/db-migrations/revert/Dockerfile \
 			-p NAME=$(REVERT_DB_MIGRATIONS_BUILD_REF) \
-			-p ARG_VAL_1=$(VERSION_DIFFERENCE) | oc -n $(BUILD_NAMESPACE) apply -f -
+			-p ARG_KEY_1=$(VERSION_DIFFERENCE) | oc -n $(BUILD_NAMESPACE) apply -f -
 	@oc -n $(BUILD_NAMESPACE) start-build bc/$(REVERT_DB_MIGRATIONS_BUILD_REF) --wait
 
 build-api:
