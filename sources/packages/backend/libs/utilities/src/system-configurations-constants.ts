@@ -28,3 +28,5 @@ export const ORM_CACHE_LIFETIME = 10 * 60 * 1000;
  * Minimum number of days from COE approval date to the disbursement date.
  */
 export const COE_WINDOW = 21;
+
+export const COE_DENIED_REASON_OTHER_ID = 1;

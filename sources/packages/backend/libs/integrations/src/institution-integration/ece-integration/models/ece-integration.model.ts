@@ -36,3 +36,15 @@ export enum RecordTypeCodes {
   ECEDetail = "2",
   ECETrailer = "3",
 }
+
+export interface ECEDisbursements {
+  [disbursementId: string]: {
+    institutionCode: string;
+    applicationNumber: string;
+    awardDetails: {
+      payToSchoolAmount: number;
+      isEnrolmentConfirmed: boolean;
+      enrolmentConfirmationDate: Date;
+    }[];
+  };
+}

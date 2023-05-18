@@ -574,7 +574,7 @@ export class ConfirmationOfEnrollmentService {
     disbursementScheduleId: number,
     auditUserId: number,
     declineReason: { coeDenyReasonId: number; otherReasonDesc?: string },
-    options: {
+    options?: {
       locationId?: number;
       applicationNumber?: string;
     },
