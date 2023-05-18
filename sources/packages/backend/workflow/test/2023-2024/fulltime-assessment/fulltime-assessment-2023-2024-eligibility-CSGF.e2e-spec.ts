@@ -36,7 +36,6 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-eligibility-CSGF
             assessmentConsolidatedData.programCredentialType =
               programCredentialType;
             assessmentConsolidatedData.programLength = programLength;
-            ProgramLengthOptions.FourToFiveYears;
             assessmentConsolidatedData.studentDataTaxReturnIncome = 70000;
             assessmentConsolidatedData.studentDataDependants = [
               createFakeStudentDependentEligible(

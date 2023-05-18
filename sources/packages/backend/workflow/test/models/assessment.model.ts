@@ -31,6 +31,15 @@ export enum ProgramLengthOptions {
   FiveOrMoreYears = "5YearsOrMore",
 }
 
+export enum InstitutionTypes {
+  BCPublic = "BC Public",
+  BCPrivate = "BC Private",
+  OutOfProvince = "Out of Province",
+  UnitedStates = "United States",
+  International = "International",
+  InternationalMedical = "International Medical",
+}
+
 /**
  * Data required to calculate the assessment data of an application.
  */
@@ -49,7 +58,7 @@ export interface AssessmentConsolidatedData {
   studentTaxYear: number;
   programLocation: Provinces;
   institutionLocationProvince: Provinces;
-  institutionType: string;
+  institutionType: InstitutionTypes;
   programLength: ProgramLengthOptions;
   programCredentialType: CredentialType;
   offeringDelivered: OfferingDeliveryOptions;
@@ -184,4 +193,8 @@ export interface CalculatedAssessmentModel {
   awardEligibilityCSGT: boolean;
   federalAwardNetCSGTAmount: number;
   provincialAwardNetCSGTAmount: number;
+  // BCAG
+  awardEligibilityBCAG: boolean;
+  federalAwardNetBCAGAmount: number;
+  provincialAwardNetBCAGAmount: number;
 }
