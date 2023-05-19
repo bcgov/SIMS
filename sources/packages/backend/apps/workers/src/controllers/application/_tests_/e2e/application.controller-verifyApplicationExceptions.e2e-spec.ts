@@ -32,7 +32,7 @@ describe("ApplicationController(e2e)-verifyApplicationExceptions", () => {
     applicationController = nestApplication.get(ApplicationController);
   });
 
-  it("Should verify application exceptions when there are some available for the application.", async () => {
+  it("Should create and associate application exceptions when there are some exceptions for the application.", async () => {
     // Arrange
     const fakeApplication = createFakeApplication();
     fakeApplication.data = {
@@ -72,7 +72,7 @@ describe("ApplicationController(e2e)-verifyApplicationExceptions", () => {
     );
   });
 
-  it("Should not insert any application exception when there is no application exception in application data.", async () => {
+  it("Should not create any application exception when there is no application exception in application data.", async () => {
     // Arrange
     const fakeApplication = createFakeApplication();
     const savedApplication = await db.application.save(fakeApplication);

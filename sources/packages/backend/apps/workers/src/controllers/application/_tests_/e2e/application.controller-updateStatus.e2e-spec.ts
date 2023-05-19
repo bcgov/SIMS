@@ -104,7 +104,7 @@ describe("ApplicationController(e2e)-updateStatus", () => {
     );
   });
 
-  it("Should return error when it does not receive the correct original status.", async () => {
+  it("Should return error when it does not find the application.", async () => {
     // Arrange
     const updateApplicationStatusPayload =
       createFakeUpdateApplicationStatusPayload(
