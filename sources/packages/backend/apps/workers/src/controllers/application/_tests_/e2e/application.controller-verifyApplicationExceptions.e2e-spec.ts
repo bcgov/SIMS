@@ -3,7 +3,9 @@ import { ApplicationData, ApplicationExceptionStatus } from "@sims/sims-db";
 import {
   createE2EDataSources,
   createFakeApplication,
+  createFakeApplicationException,
   E2EDataSources,
+  saveFakeApplication,
 } from "@sims/test-utils";
 import { ICustomHeaders } from "zeebe-node";
 import {
@@ -121,5 +123,52 @@ describe("ApplicationController(e2e)-verifyApplicationExceptions", () => {
       [FAKE_WORKER_JOB_ERROR_MESSAGE_PROPERTY]: "Application id not found.",
       [FAKE_WORKER_JOB_ERROR_CODE_PROPERTY]: APPLICATION_NOT_FOUND,
     });
+  });
+
+  it("Should not create an application exception when there is already one for the application.", async () => {
+    // Arrange
+    const fakeApplication = createFakeApplication();
+    fakeApplication.data = {
+      workflowName: "",
+      test: {
+        test: "studentApplicationException",
+      },
+    } as ApplicationData;
+    const fakeApplicationException = createFakeApplicationException();
+    fakeApplicationException.exceptionStatus =
+      ApplicationExceptionStatus.Approved;
+    const savedFakeApplicationException = await db.applicationException.save(
+      fakeApplicationException,
+    );
+    fakeApplication.applicationException = savedFakeApplicationException;
+    const savedApplication = await db.application.save(fakeApplication);
+
+    const verifyApplicationExceptionsPayload =
+      createFakeVerifyApplicationExceptionsPayload(savedApplication.id);
+
+    // Act
+    const result = await applicationController.verifyApplicationExceptions(
+      createFakeWorkerJob<
+        ApplicationExceptionsJobInDTO,
+        ICustomHeaders,
+        ApplicationExceptionsJobOutDTO
+      >(verifyApplicationExceptionsPayload),
+    );
+
+    // Asserts
+    expect(result).toHaveProperty(
+      FAKE_WORKER_JOB_RESULT_PROPERTY,
+      MockedZeebeJobResult.Complete,
+    );
+
+    const updatedApplication = await db.application.findOne({
+      relations: { applicationException: true },
+      where: {
+        id: savedApplication.id,
+      },
+    });
+    expect(updatedApplication.applicationException.exceptionStatus).toBe(
+      ApplicationExceptionStatus.Approved,
+    );
   });
 });
