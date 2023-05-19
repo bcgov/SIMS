@@ -200,11 +200,11 @@ export interface CalculatedAssessmentModel {
   // BCAG2Year
   awardEligibilityBCAG2Year: number;
   // BGPD
-  awardEligibilityBGPD: true;
+  awardEligibilityBGPD: boolean;
   federalAwardNetBGPDAmount: number;
   provincialAwardNetBGPDAmount: number;
   // SBSD
-  awardEligibilitySBSD: true;
+  awardEligibilitySBSD: boolean;
   federalAwardNetSBSDAmount: number;
   provincialAwardNetSBSDAmount: number;
 }
