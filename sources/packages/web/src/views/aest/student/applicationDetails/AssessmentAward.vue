@@ -11,42 +11,28 @@
       />
       <detail-header :headerMap="headerMap" />
     </template>
-    <body-header
-      title="Summary"
-      subTitle="Below is the summary from your assessment. To view your entire assessment, click on View assessment."
-    >
-      <template #actions>
-        <v-btn
-          class="float-right"
-          color="primary"
-          prepend-icon="fa:far fa-file-lines"
-          @click="goToNoticeOfAssessment"
-          >View assessment</v-btn
-        >
-      </template>
-    </body-header>
-    <assessment-award-details
-      :assessmentAwardData="assessmentAwardData"
-      :allowConfirmEnrolment="true"
-      @confirmEnrolment="confirmEnrolment"
+    <assessment-award
+      :assessment-award-data="assessmentAwardData"
+      :notice-of-assessment-route="noticeOfAssessmentRoute"
+      :allow-confirm-enrolment="true"
+      @confirm-enrolment="confirmEnrolment"
     />
   </full-page-container>
 </template>
 <script lang="ts">
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
-import { useRouter } from "vue-router";
-import { ref, onMounted, defineComponent } from "vue";
+import { ref, onMounted, defineComponent, computed } from "vue";
 import { useAssessment, useSnackBar } from "@/composables";
 import { StudentAssessmentsService } from "@/services/StudentAssessmentsService";
 import { AwardDetailsAPIOutDTO } from "@/services/http/dto";
 import { ConfirmationOfEnrollmentService } from "@/services/ConfirmationOfEnrollmentService";
 import { FIRST_COE_NOT_COMPLETE } from "@/constants";
 import { ApiProcessError } from "@/types";
-import AssessmentAwardDetails from "@/components/common/AssessmentAwardDetails.vue";
 import DetailHeader from "@/components/generic/DetailHeader.vue";
+import AssessmentAward from "@/components/common/students/applicationDetails/AssessmentAward.vue";
 
 export default defineComponent({
-  components: { AssessmentAwardDetails, DetailHeader },
+  components: { AssessmentAward, DetailHeader },
   props: {
     studentId: {
       type: Number,
@@ -62,7 +48,6 @@ export default defineComponent({
     },
   },
   setup(props) {
-    const router = useRouter();
     const assessmentAwardData = ref<AwardDetailsAPIOutDTO>();
     const { mapAssessmentDetailHeader } = useAssessment();
     const headerMap = ref<Record<string, string>>({});
@@ -78,16 +63,14 @@ export default defineComponent({
 
     onMounted(loadAssessmentAwardValues);
 
-    const goToNoticeOfAssessment = () => {
-      return router.push({
-        name: AESTRoutesConst.NOTICE_OF_ASSESSMENT_VIEW,
-        params: {
-          studentId: props.studentId,
-          applicationId: props.applicationId,
-          assessmentId: props.assessmentId,
-        },
-      });
-    };
+    const noticeOfAssessmentRoute = computed(() => ({
+      name: AESTRoutesConst.NOTICE_OF_ASSESSMENT_VIEW,
+      params: {
+        studentId: props.studentId,
+        applicationId: props.applicationId,
+        assessmentId: props.assessmentId,
+      },
+    }));
 
     const confirmEnrolment = async (disbursementId: number) => {
       try {
@@ -110,7 +93,7 @@ export default defineComponent({
 
     return {
       AESTRoutesConst,
-      goToNoticeOfAssessment,
+      noticeOfAssessmentRoute,
       assessmentAwardData,
       headerMap,
       confirmEnrolment,

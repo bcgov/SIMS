@@ -9,9 +9,15 @@ import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { ClientTypeBaseRoute } from "../../types";
 import {
   AssessmentHistorySummaryAPIOutDTO,
+  AssessmentNOAAPIOutDTO,
+  AwardDetailsAPIOutDTO,
   RequestAssessmentSummaryAPIOutDTO,
 } from "./models/assessment.dto";
-import { ApiTags } from "@nestjs/swagger";
+import {
+  ApiNotFoundResponse,
+  ApiTags,
+  ApiUnprocessableEntityResponse,
+} from "@nestjs/swagger";
 import { AssessmentControllerService } from "..";
 
 /**
@@ -64,6 +70,49 @@ export class AssessmentInstitutionsController extends BaseController {
   ): Promise<AssessmentHistorySummaryAPIOutDTO[]> {
     return this.assessmentControllerService.getAssessmentHistorySummary(
       applicationId,
+      studentId,
+    );
+  }
+
+  /**
+   * Get the NOA values for a student application on a particular assessment.
+   * @param studentId, student id.
+   * @param assessmentId assessment id to get the NOA values.
+   * @returns NOA and application data.
+   */
+  @Get("student/:studentId/assessment/:assessmentId/noa")
+  @ApiNotFoundResponse({
+    description: "Assessment id not found.",
+  })
+  @ApiUnprocessableEntityResponse({
+    description: "Notice of assessment data is not present.",
+  })
+  async getAssessmentNOA(
+    @Param("studentId", ParseIntPipe) studentId: number,
+    @Param("assessmentId", ParseIntPipe) assessmentId: number,
+  ): Promise<AssessmentNOAAPIOutDTO> {
+    return this.assessmentControllerService.getAssessmentNOA(assessmentId, {
+      studentId: studentId,
+    });
+  }
+
+  /**
+   * Get estimated and actual(if present) award details of an assessment.
+   * @param studentId, student id.
+   * @param assessmentId assessment to which awards details belong to.
+   * @returns estimated and actual award details.
+   */
+  @Get("student/:studentId/assessment/:assessmentId/award")
+  @ApiNotFoundResponse({
+    description: "Assessment not found.",
+  })
+  async getAssessmentAwardDetails(
+    @Param("studentId", ParseIntPipe) studentId: number,
+    @Param("assessmentId", ParseIntPipe) assessmentId: number,
+  ): Promise<AwardDetailsAPIOutDTO> {
+    return this.assessmentControllerService.getAssessmentAwardDetails(
+      assessmentId,
+      true,
       studentId,
     );
   }

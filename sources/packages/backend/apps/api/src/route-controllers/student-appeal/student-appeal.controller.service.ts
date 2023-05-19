@@ -1,5 +1,9 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
-import { StudentAppealAPIOutDTO } from "./models/student-appeal.dto";
+import {
+  DetailedStudentAppealRequestAPIOutDTO,
+  StudentAppealAPIOutDTO,
+  StudentAppealRequestAPIOutDTO,
+} from "./models/student-appeal.dto";
 import { getUserFullName } from "../../utilities";
 import { StudentAppealService } from "../../services";
 
@@ -15,7 +19,11 @@ export class StudentAppealControllerService {
    * - `assessDetails`, if true, will return access details.
    * @returns the student appeal and its requests.
    */
-  async getStudentAppealWithRequest<T>(
+  async getStudentAppealWithRequests<
+    T extends
+      | DetailedStudentAppealRequestAPIOutDTO
+      | StudentAppealRequestAPIOutDTO,
+  >(
     appealId: number,
     options?: {
       studentId?: number;

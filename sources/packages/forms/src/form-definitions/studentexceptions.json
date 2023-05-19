@@ -1962,9 +1962,9 @@
       "customConditional": "",
       "conditional": {
         "json": "",
-        "show": null,
-        "when": null,
-        "eq": ""
+        "show": "true",
+        "when": "showStaffApproval",
+        "eq": "true"
       },
       "logic": [
         {
@@ -2436,6 +2436,24 @@
       "tree": false,
       "lazyLoad": false,
       "id": "em0j9y"
+    },
+    {
+      "input": true,
+      "tableView": true,
+      "key": "showStaffApproval",
+      "label": "showStaffApproval",
+      "protected": false,
+      "unique": false,
+      "persistent": true,
+      "type": "hidden",
+      "tags": [],
+      "conditional": {
+        "show": "",
+        "when": null,
+        "eq": ""
+      },
+      "properties": {},
+      "customDefaultValue": "value = true"
     },
     {
       "label": "applicationId",
