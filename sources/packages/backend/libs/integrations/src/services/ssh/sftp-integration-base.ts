@@ -84,10 +84,24 @@ export abstract class SFTPIntegrationBase<DownloadType> {
       .sort();
   }
 
+  /**
+   * Downloads the file specified on 'fileName' parameter from the
+   * SFAS integration folder on the SFTP.
+   * @param remoteFilePath full remote file path with file name.
+   * @returns parsed records from the file.
+   */
   protected async downloadResponseFileLines(
     remoteFilePath: string,
   ): Promise<string[]>;
 
+  /**
+   * Downloads the file specified on 'fileName' parameter from the
+   * SFAS integration folder on the SFTP.
+   * @param remoteFilePath full remote file path with file name.
+   * @param checkIfFileExist when set to true, check if file
+   * exist before downloading it.
+   * @returns parsed records from the file.
+   */
   protected async downloadResponseFileLines(
     remoteFilePath: string,
     checkIfFileExist: boolean,
