@@ -9,7 +9,7 @@ export const StudentRoutesConst = {
   STUDENT_PROFILE_EDIT: Symbol(),
   FINANCIAL_AID_APPLICATION: Symbol(),
   APPLICATIONS: Symbol(),
-  ASSESSMENT: Symbol(),
+  NOTICE_OF_ASSESSMENT_VIEW: Symbol(),
   ASSESSMENT_AWARD_VIEW: Symbol(),
   PERSONAL_INFO: Symbol(),
   SELECT_PROGRAM: Symbol(),
@@ -27,7 +27,7 @@ export const StudentRoutesConst = {
   STUDENT_ACCOUNT_ACTIVITY: Symbol(),
   STUDENT_OVERAWARDS: Symbol(),
   STUDENT_ACCOUNT_APPLICATION_IN_PROGRESS: Symbol(),
-  STUDENT_APPEAL_REQUESTS: Symbol(),
+  STUDENT_APPEAL_REQUEST: Symbol(),
 };
 
 /**
@@ -80,6 +80,8 @@ export const InstitutionRoutesConst = {
   ASSESSMENTS_SUMMARY: Symbol(),
   APPLICATION_EXCEPTION: Symbol(),
   STUDENT_APPEAL_REQUEST: Symbol(),
+  ASSESSMENT_AWARD_VIEW: Symbol(),
+  NOTICE_OF_ASSESSMENT_VIEW: Symbol(),
 };
 
 /**

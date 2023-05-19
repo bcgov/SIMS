@@ -13,24 +13,12 @@
       />
       <detail-header :headerMap="headerData" />
     </template>
-    <v-card class="p-4">
-      <body-header
-        title="Summary"
-        subTitle="Below is the summary from your assessment. To view your entire assessment, click on View assessment."
-      >
-        <template #actions>
-          <v-btn
-            class="float-right"
-            color="primary"
-            prepend-icon="fa:far fa-file-lines"
-            @click="goToNoticeOfAssessment"
-            >View assessment</v-btn
-          >
-        </template>
-      </body-header>
-      <assessment-award-details :assessmentAwardData="assessmentAward" />
-    </v-card>
-    <v-card class="p-4 my-3">
+    <body-header-container :enable-card-view="true">
+      <assessment-award
+        :assessment-award-data="assessmentAwardData"
+        :notice-of-assessment-route="noticeOfAssessmentRoute"
+    /></body-header-container>
+    <body-header-container :enable-card-view="true">
       <v-row>
         <v-col>
           <h2 class="category-header-medium primary-color">
@@ -59,22 +47,22 @@
             src="@/assets/images/person-with-piggy-bank.svg"
         /></v-col>
       </v-row>
-    </v-card>
+    </body-header-container>
   </student-page-container>
 </template>
 <script lang="ts">
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
-import { useRouter } from "vue-router";
-import { ref, onMounted, defineComponent } from "vue";
+import { ref, onMounted, defineComponent, computed } from "vue";
 import { useAssessment } from "@/composables";
 import { StudentAssessmentsService } from "@/services/StudentAssessmentsService";
 import { AwardDetailsAPIOutDTO } from "@/services/http/dto";
 import { LayoutTemplates } from "@/types";
-import AssessmentAwardDetails from "@/components/common/AssessmentAwardDetails.vue";
 import DetailHeader from "@/components/generic/DetailHeader.vue";
+import AssessmentAward from "@/components/common/students/applicationDetails/AssessmentAward.vue";
+import BodyHeaderContainer from "@/components/layouts/BodyHeaderContainer.vue";
 
 export default defineComponent({
-  components: { AssessmentAwardDetails, DetailHeader },
+  components: { AssessmentAward, DetailHeader, BodyHeaderContainer },
   props: {
     applicationId: {
       type: Number,
@@ -86,33 +74,30 @@ export default defineComponent({
     },
   },
   setup(props) {
-    const router = useRouter();
-    const assessmentAward = ref<AwardDetailsAPIOutDTO>();
+    const assessmentAwardData = ref<AwardDetailsAPIOutDTO>();
     const { mapAssessmentDetailHeader } = useAssessment();
     const headerData = ref<Record<string, string>>({});
 
     onMounted(async () => {
-      assessmentAward.value =
+      assessmentAwardData.value =
         await StudentAssessmentsService.shared.getAssessmentAwardDetails(
           props.assessmentId,
         );
-      headerData.value = mapAssessmentDetailHeader(assessmentAward.value);
+      headerData.value = mapAssessmentDetailHeader(assessmentAwardData.value);
     });
 
-    const goToNoticeOfAssessment = () => {
-      return router.push({
-        name: StudentRoutesConst.ASSESSMENT,
-        params: {
-          applicationId: props.applicationId,
-          assessmentId: props.assessmentId,
-        },
-      });
-    };
+    const noticeOfAssessmentRoute = computed(() => ({
+      name: StudentRoutesConst.NOTICE_OF_ASSESSMENT_VIEW,
+      params: {
+        applicationId: props.applicationId,
+        assessmentId: props.assessmentId,
+      },
+    }));
 
     return {
       StudentRoutesConst,
-      goToNoticeOfAssessment,
-      assessmentAward,
+      noticeOfAssessmentRoute,
+      assessmentAwardData,
       headerData,
       LayoutTemplates,
     };

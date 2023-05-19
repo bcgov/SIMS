@@ -61,7 +61,6 @@ export enum AppRoutes {
   PendingDesignations = "institution/designation/pending",
   DesignationAESTView = "institution/designation/:designationId/institution/:institutionId?",
   ScholasticStandingView = "scholastic-standing/:scholasticStandingId",
-  NoticeOfAssessmentView = "notice-of-assessment/:assessmentId",
   Reports = "reports",
   Exceptions = "exceptions",
   OfferingChangeRequests = "institution/offering/change-requests",
@@ -105,4 +104,5 @@ export enum AppRoutes {
   AssessmentSummary = "assessment-summary",
   ApplicationException = "application-exceptions/:exceptionId",
   StudentAppealRequest = "request-changes/:appealId",
+  NoticeOfAssessmentView = "assessment/:assessmentId/notice-of-assessment",
 }

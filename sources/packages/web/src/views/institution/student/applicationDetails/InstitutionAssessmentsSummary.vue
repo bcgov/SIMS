@@ -19,6 +19,7 @@
       :studentId="studentId"
       :viewRequestTypes="assessmentRequestTypes"
       @viewStudentAppeal="goToStudentAppeal"
+      @viewAssessment="gotToViewAssessment"
       @viewApplicationException="goToApplicationException"
     />
   </full-page-container>
@@ -79,6 +80,17 @@ export default defineComponent({
       });
     };
 
+    const gotToViewAssessment = (assessmentId: number) => {
+      router.push({
+        name: InstitutionRoutesConst.ASSESSMENT_AWARD_VIEW,
+        params: {
+          studentId: props.studentId,
+          applicationId: props.applicationId,
+          assessmentId,
+        },
+      });
+    };
+
     const backRoute = computed(() => ({
       name: InstitutionRoutesConst.STUDENT_APPLICATIONS,
       params: {
@@ -89,6 +101,7 @@ export default defineComponent({
     return {
       InstitutionRoutesConst,
       goToStudentAppeal,
+      gotToViewAssessment,
       goToApplicationException,
       assessmentRequestTypes,
       backRoute,

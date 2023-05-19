@@ -3,25 +3,26 @@
     <template #header>
       <header-navigator
         title="Assessment"
-        subTitle="View Request"
-        :routeLocation="assessmentsSummaryRoute"
+        subTitle="Notice of Assessment"
+        :routeLocation="routeLocation"
       />
     </template>
-    <student-appeal-requests-approval
-      :studentId="studentId"
-      :appealId="appealId"
-      :readOnlyForm="true"
+    <notice-of-assessment-form-view
+      :assessment-id="assessmentId"
+      :student-id="studentId"
     />
   </full-page-container>
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import { defineComponent, computed } from "vue";
+import NoticeOfAssessmentFormView from "@/components/common/NoticeOfAssessmentFormView.vue";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
-import StudentAppealRequestsApproval from "@/components/common/students/applicationDetails/StudentAppealRequestsApproval.vue";
 
 export default defineComponent({
-  components: { StudentAppealRequestsApproval },
+  components: {
+    NoticeOfAssessmentFormView,
+  },
   props: {
     studentId: {
       type: Number,
@@ -31,22 +32,21 @@ export default defineComponent({
       type: Number,
       required: true,
     },
-    appealId: {
+    assessmentId: {
       type: Number,
       required: true,
     },
   },
   setup(props) {
-    const assessmentsSummaryRoute = {
-      name: InstitutionRoutesConst.ASSESSMENTS_SUMMARY,
+    const routeLocation = computed(() => ({
+      name: InstitutionRoutesConst.ASSESSMENT_AWARD_VIEW,
       params: {
         applicationId: props.applicationId,
         studentId: props.studentId,
+        assessmentId: props.assessmentId,
       },
-    };
-    return {
-      assessmentsSummaryRoute,
-    };
+    }));
+    return { InstitutionRoutesConst, routeLocation };
   },
 });
 </script>

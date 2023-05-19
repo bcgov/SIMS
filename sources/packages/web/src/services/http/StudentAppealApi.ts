@@ -2,12 +2,14 @@ import { getPaginationQueryString } from "@/helpers";
 import HttpBaseClient from "@/services/http/common/HttpBaseClient";
 import { PaginationOptions } from "@/types";
 import {
+  DetailedStudentAppealRequestAPIOutDTO,
   PaginatedResultsAPIOutDTO,
   StudentAppealAPIInDTO,
   StudentAppealAPIOutDTO,
   StudentAppealApprovalAPIInDTO,
   StudentAppealPendingSummaryAPIOutDTO,
   StudentAppealRequestApprovalAPIInDTO,
+  StudentAppealRequestAPIOutDTO,
 } from "./dto";
 
 /**
@@ -25,15 +27,16 @@ export class StudentAppealApi extends HttpBaseClient {
   }
 
   /**
-   * Get student application appeal for ministry.
+   * Get student application appeal.
    * @param appealId appeal id.
    * @param studentId student id.
    * @returns student application appeal.
    */
-  async getStudentAppealWithRequests<T>(
-    appealId: number,
-    studentId?: number,
-  ): Promise<StudentAppealAPIOutDTO<T>> {
+  async getStudentAppealWithRequests<
+    T extends
+      | DetailedStudentAppealRequestAPIOutDTO
+      | StudentAppealRequestAPIOutDTO,
+  >(appealId: number, studentId?: number): Promise<StudentAppealAPIOutDTO<T>> {
     const endpoint = studentId
       ? `appeal/student/${studentId}/appeal/${appealId}/requests`
       : `appeal/${appealId}/requests`;

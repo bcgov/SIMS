@@ -94,7 +94,7 @@ export const studentRoutes: Array<RouteRecordRaw> = [
       },
       {
         path: AppRoutes.Assessment,
-        name: StudentRoutesConst.ASSESSMENT,
+        name: StudentRoutesConst.NOTICE_OF_ASSESSMENT_VIEW,
         component: Assessment,
         props: true,
         meta: {
@@ -161,7 +161,7 @@ export const studentRoutes: Array<RouteRecordRaw> = [
       },
       {
         path: AppRoutes.StudentAppealRequests,
-        name: StudentRoutesConst.STUDENT_APPEAL_REQUESTS,
+        name: StudentRoutesConst.STUDENT_APPEAL_REQUEST,
         component: StudentAppealRequests,
         props: true,
         meta: {

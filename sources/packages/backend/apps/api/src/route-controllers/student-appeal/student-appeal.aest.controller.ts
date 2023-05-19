@@ -75,7 +75,7 @@ export class StudentAppealAESTController extends BaseController {
   async getStudentAppealWithRequests(
     @Param("appealId", ParseIntPipe) appealId: number,
   ): Promise<StudentAppealAPIOutDTO<DetailedStudentAppealRequestAPIOutDTO>> {
-    return this.studentAppealControllerService.getStudentAppealWithRequest<DetailedStudentAppealRequestAPIOutDTO>(
+    return this.studentAppealControllerService.getStudentAppealWithRequests<DetailedStudentAppealRequestAPIOutDTO>(
       appealId,
       { assessDetails: true },
     );

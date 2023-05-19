@@ -568,7 +568,7 @@
       "customConditional": "",
       "conditional": {
         "json": "",
-        "show": null,
+        "show": "",
         "when": null,
         "eq": ""
       },
@@ -3471,7 +3471,7 @@
                   "properties": {},
                   "hideLabel": true,
                   "customClass": "formio-panel-unset",
-                  "customConditional": "show = data.disbursement.disbursement1MSFAANumber !== data.disbursement.disbursement2MSFAANumber && !!data.disbursement.disbursement2MSFAANumber"
+                  "customConditional": "show = data.disbursement.disbursement1MSFAAId !== data.disbursement.disbursement2MSFAAId && !!data.disbursement.disbursement2MSFAAId"
                 }
               ],
               "width": 6,
