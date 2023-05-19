@@ -40,7 +40,7 @@ export class StudentAppealApi extends HttpBaseClient {
     const endpoint = studentId
       ? `appeal/student/${studentId}/appeal/${appealId}/requests`
       : `appeal/${appealId}/requests`;
-    return this.getCall<StudentAppealAPIOutDTO<R>>(
+    return this.getCall<StudentAppealAPIOutDTO<T>>(
       this.addClientRoot(endpoint),
     );
   }

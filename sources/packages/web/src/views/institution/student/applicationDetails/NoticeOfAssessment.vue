@@ -37,7 +37,6 @@ export default defineComponent({
       required: true,
     },
   },
-
   setup(props) {
     const routeLocation = computed(() => ({
       name: InstitutionRoutesConst.ASSESSMENT_AWARD_VIEW,
