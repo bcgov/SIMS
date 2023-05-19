@@ -163,36 +163,24 @@ describe("DisbursementController(e2e)-saveDisbursementSchedules", () => {
     // For Canada Loan there will be an overaward of 250 that should not be created
     // because there is a constraint to create overawards for student only if the debt
     // is greater than 250.
-    await assertAwardDeduction(
-      firstDisbursement,
-      DisbursementValueType.CanadaLoan,
-      {
-        valueAmount: 1000,
-        disbursedAmountSubtracted: 1000,
-      },
-    );
-    await assertAwardDeduction(
-      firstDisbursement,
-      DisbursementValueType.BCLoan,
-      {
-        valueAmount: 250,
-        disbursedAmountSubtracted: 250,
-      },
-    );
+    assertAwardDeduction(firstDisbursement, DisbursementValueType.CanadaLoan, {
+      valueAmount: 1000,
+      disbursedAmountSubtracted: 1000,
+    });
+    assertAwardDeduction(firstDisbursement, DisbursementValueType.BCLoan, {
+      valueAmount: 250,
+      disbursedAmountSubtracted: 250,
+    });
     // Assert secondDisbursement.
-    await assertAwardDeduction(
-      secondDisbursement,
-      DisbursementValueType.BCLoan,
-      {
-        valueAmount: 350,
-        disbursedAmountSubtracted: 350,
-      },
-    );
+    assertAwardDeduction(secondDisbursement, DisbursementValueType.BCLoan, {
+      valueAmount: 350,
+      disbursedAmountSubtracted: 350,
+    });
     // Grants do not generate overaward. The the Canada grant CSGP got 1500 already
     // disbursed value so the student already received $300 extra. For this case the
     // student will not receive the money for the grant but will no be charged either
     // for the $300 already received.
-    await assertAwardDeduction(
+    assertAwardDeduction(
       secondDisbursement,
       DisbursementValueType.CanadaGrant,
       {
@@ -211,10 +199,10 @@ describe("DisbursementController(e2e)-saveDisbursementSchedules", () => {
     );
     expect(grantOveraward).toBeUndefined();
     // Assert overaward creation.
-    await assertOveraward(overawards, "BCSL", 150);
+    assertOveraward(overawards, "BCSL", 150);
   });
 
-  async function assertAwardDeduction(
+  function assertAwardDeduction(
     createdDisbursement: DisbursementSchedule,
     valueType: DisbursementValueType,
     assertValues: {
@@ -232,7 +220,7 @@ describe("DisbursementController(e2e)-saveDisbursementSchedules", () => {
     );
   }
 
-  async function assertOveraward(
+  function assertOveraward(
     overawards: DisbursementOveraward[],
     awardCode: string,
     awardValue: number,
