@@ -3,13 +3,8 @@ FROM node:16.17.0-alpine3.16
 
 LABEL maintainer="BC GOV"
 
-# Updating container path variable with node bin
-ENV PATH $PATH:/app/node_modules/.bin
-
 # Application Port
 ENV PORT 3000
-
-WORKDIR /app
 
 # Copying package.json and package-lock.json
 COPY ./package*.json ./
@@ -25,12 +20,6 @@ RUN npm run build api
 
 # Exposing application port
 EXPOSE ${PORT}
-
-# Change ownership of app directory to user node and group node
-RUN chown -R node:node /app
-
-RUN set -x \
- && chmod -R 777 /app/
 
 # Using nonroot user
 USER node
