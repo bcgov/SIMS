@@ -27,9 +27,9 @@ RUN npm run build api
 EXPOSE ${PORT}
 
 # Change ownership of app directory to user node and group node
-RUN chown -R node:node /app
+RUN chown -R node:node ./app
 
-RUN chmod -R 777 /app
+RUN chmod -R 777 ./app
 
 # Using nonroot user
 USER node
