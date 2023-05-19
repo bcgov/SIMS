@@ -48,7 +48,7 @@ RUN ln -sf $NPM_PACKAGES/node_modules node_modules
 ENV DEBUG=""
 
 RUN set -x \
-  && chmod -R 777 /app/
+  && chmod -R 770 /app/
 
 # Adding a nonroot user
 RUN addgroup -S nonroot \
