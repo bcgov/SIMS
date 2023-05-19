@@ -25,7 +25,7 @@ import {
   FAKE_WORKER_JOB_RESULT_PROPERTY,
   MockedZeebeJobResult,
 } from "../../../../../test/utils/worker-job-mock";
-import { createTestingAppModule } from "../../../../testHelpers";
+import { createTestingAppModule } from "../../../../../test/helpers";
 
 describe("DisbursementController(e2e)-saveDisbursementSchedules", () => {
   let db: E2EDataSources;

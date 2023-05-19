@@ -24,15 +24,12 @@ export function createFakeUpdateApplicationStatusPayload(
     IOutputVariables
   >
 > {
-  const variables = {
-    applicationId,
-  };
   return createFakeWorkerJob<
     ApplicationUpdateStatusJobInDTO,
     ApplicationUpdateStatusJobHeaderDTO,
     IOutputVariables
   >({
-    variables,
+    variables: { applicationId },
     customHeaders: { fromStatus, toStatus },
   });
 }

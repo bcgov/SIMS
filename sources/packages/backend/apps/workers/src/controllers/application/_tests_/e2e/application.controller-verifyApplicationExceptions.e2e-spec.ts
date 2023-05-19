@@ -13,7 +13,7 @@ import {
   FAKE_WORKER_JOB_RESULT_PROPERTY,
   MockedZeebeJobResult,
 } from "../../../../../test/utils/worker-job-mock";
-import { createTestingAppModule } from "../../../../testHelpers";
+import { createTestingAppModule } from "../../../../../test/helpers";
 import { ApplicationController } from "../../application.controller";
 import {
   ApplicationExceptionsJobInDTO,
@@ -65,8 +65,7 @@ describe("ApplicationController(e2e)-verifyApplicationExceptions", () => {
         id: savedApplication.id,
       },
     });
-    expect(updatedApplication.applicationException).toHaveProperty(
-      "exceptionStatus",
+    expect(updatedApplication.applicationException.exceptionStatus).toBe(
       ApplicationExceptionStatus.Pending,
     );
   });
@@ -117,7 +116,7 @@ describe("ApplicationController(e2e)-verifyApplicationExceptions", () => {
     );
 
     // Asserts
-    expect(result).toBe({
+    expect(result).toEqual({
       [FAKE_WORKER_JOB_RESULT_PROPERTY]: MockedZeebeJobResult.Error,
       [FAKE_WORKER_JOB_ERROR_MESSAGE_PROPERTY]: "Application id not found.",
       [FAKE_WORKER_JOB_ERROR_CODE_PROPERTY]: APPLICATION_NOT_FOUND,

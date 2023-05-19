@@ -1,7 +1,7 @@
 import { INestApplication } from "@nestjs/common";
 import { Test, TestingModule } from "@nestjs/testing";
 import { DataSource } from "typeorm";
-import { WorkersModule } from "../../workers.module";
+import { WorkersModule } from "../../../src/workers.module";
 import {
   createZeebeModuleMock,
   overrideImportsMetadata,

@@ -4,14 +4,14 @@ import {
   E2EDataSources,
   saveFakeApplication,
 } from "@sims/test-utils";
-import { saveFakeSupportingUser } from "@sims/test-utils/factories/supporting-user";
+import { createFakeSupportingUser } from "@sims/test-utils/factories/supporting-user";
 import { IOutputVariables } from "zeebe-node";
 import {
   createFakeWorkerJob,
   FAKE_WORKER_JOB_RESULT_PROPERTY,
   MockedZeebeJobResult,
 } from "../../../../../test/utils/worker-job-mock";
-import { createTestingAppModule } from "../../../../testHelpers";
+import { createTestingAppModule } from "../../../../../test/helpers";
 import { SupportingUserController } from "../../supporting-user.controller";
 import {
   CreateSupportingUsersJobInDTO,
@@ -29,7 +29,7 @@ describe("SupportingUserController(e2e)-createSupportingUsers", () => {
     supportingUserController = nestApplication.get(SupportingUserController);
   });
 
-  it("Should create parent supporting users when requested.", async () => {
+  it("Should create parents supporting users when requested.", async () => {
     // Arrange
     const savedApplication = await saveFakeApplication(db.dataSource);
     const fakeCreateSupportingUsersPayload =
@@ -60,11 +60,12 @@ describe("SupportingUserController(e2e)-createSupportingUsers", () => {
       },
     });
     expect(updatedApplication.supportingUsers).toHaveLength(2);
-    expect(updatedApplication.supportingUsers[0]).toHaveProperty(
+    const [parent1, parent2] = updatedApplication.supportingUsers;
+    expect(parent1).toHaveProperty(
       "supportingUserType",
       SupportingUserType.Parent,
     );
-    expect(updatedApplication.supportingUsers[1]).toHaveProperty(
+    expect(parent2).toHaveProperty(
       "supportingUserType",
       SupportingUserType.Parent,
     );
@@ -109,9 +110,11 @@ describe("SupportingUserController(e2e)-createSupportingUsers", () => {
   it("Should not create supporting users when application already has one.", async () => {
     // Arrange
     const savedApplication = await saveFakeApplication(db.dataSource);
-    await saveFakeSupportingUser(db.dataSource, SupportingUserType.Partner, {
+    const fakeSupportingUser = createFakeSupportingUser({
       application: savedApplication,
     });
+    fakeSupportingUser.supportingUserType = SupportingUserType.Partner;
+    await db.supportingUser.save(fakeSupportingUser);
 
     const fakeCreateSupportingUsersPayload =
       createFakeCreateSupportingUsersPayload(savedApplication.id, [

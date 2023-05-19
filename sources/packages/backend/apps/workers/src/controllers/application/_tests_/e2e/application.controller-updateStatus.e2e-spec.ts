@@ -13,7 +13,7 @@ import {
   FAKE_WORKER_JOB_RESULT_PROPERTY,
   MockedZeebeJobResult,
 } from "../../../../../test/utils/worker-job-mock";
-import { createTestingAppModule } from "../../../../testHelpers";
+import { createTestingAppModule } from "../../../../../test/helpers";
 import { ApplicationController } from "../../application.controller";
 import {
   ApplicationUpdateStatusJobHeaderDTO,
@@ -58,8 +58,9 @@ describe("ApplicationController(e2e)-updateStatus", () => {
     );
 
     // Asserts that the application status has changed to declined.
-    const expectedApplication = await db.application.findOneBy({
-      id: savedApplication.id,
+    const expectedApplication = await db.application.findOne({
+      select: { applicationStatus: true },
+      where: { id: savedApplication.id },
     });
     expect(expectedApplication.applicationStatus).toBe(
       ApplicationStatus.Cancelled,
@@ -87,16 +88,17 @@ describe("ApplicationController(e2e)-updateStatus", () => {
     );
 
     // Asserts
-    expect(result).toBe({
+    expect(result).toEqual({
       [FAKE_WORKER_JOB_RESULT_PROPERTY]: MockedZeebeJobResult.Error,
       [FAKE_WORKER_JOB_ERROR_MESSAGE_PROPERTY]:
         "The application status was not updated either because the application id was not found or the application is not in the expected status.",
       [FAKE_WORKER_JOB_ERROR_CODE_PROPERTY]: APPLICATION_STATUS_NOT_UPDATED,
     });
 
-    // Asserts that the application status has not changed to declined
-    const expectedApplication = await db.application.findOneBy({
-      id: savedApplication.id,
+    // Asserts that the application status has not changed to declined.
+    const expectedApplication = await db.application.findOne({
+      select: { applicationStatus: true },
+      where: { id: savedApplication.id },
     });
     expect(expectedApplication.applicationStatus).toBe(
       ApplicationStatus.Submitted,
@@ -122,7 +124,7 @@ describe("ApplicationController(e2e)-updateStatus", () => {
     );
 
     // Asserts
-    expect(result).toBe({
+    expect(result).toEqual({
       [FAKE_WORKER_JOB_RESULT_PROPERTY]: MockedZeebeJobResult.Error,
       [FAKE_WORKER_JOB_ERROR_MESSAGE_PROPERTY]:
         "The application status was not updated either because the application id was not found or the application is not in the expected status.",

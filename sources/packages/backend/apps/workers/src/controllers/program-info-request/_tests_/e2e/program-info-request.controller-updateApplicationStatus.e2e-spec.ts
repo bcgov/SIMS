@@ -14,7 +14,7 @@ import {
   FAKE_WORKER_JOB_RESULT_PROPERTY,
   MockedZeebeJobResult,
 } from "../../../../../test/utils/worker-job-mock";
-import { createTestingAppModule } from "../../../../testHelpers";
+import { createTestingAppModule } from "../../../../../test/helpers";
 import { ProgramInfoRequestController } from "../../program-info-request.controller";
 import {
   ProgramInfoRequestJobHeaderDTO,
@@ -69,7 +69,7 @@ describe("ProgramInfoRequestController(e2e)-updateApplicationStatus", () => {
       MockedZeebeJobResult.Complete,
     );
 
-    // Asserts that the application PIR status has changed to declined
+    // Asserts that the application PIR status has changed to declined.
     const expectedApplication = await db.application.findOneBy({
       id: savedApplication.id,
     });
@@ -136,7 +136,7 @@ describe("ProgramInfoRequestController(e2e)-updateApplicationStatus", () => {
     );
 
     // Assert
-    expect(result).toBe({
+    expect(result).toEqual({
       [FAKE_WORKER_JOB_RESULT_PROPERTY]: MockedZeebeJobResult.Error,
       [FAKE_WORKER_JOB_ERROR_MESSAGE_PROPERTY]:
         "Application not found while verifying the PIR.",
