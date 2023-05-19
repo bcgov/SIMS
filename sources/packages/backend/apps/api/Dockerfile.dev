@@ -12,13 +12,13 @@ ENV PORT 3000
 WORKDIR /app
 
 # Copying package.json and package-lock.json
-COPY ./package*.json ./
+COPY --chown=node:node ./package*.json ./
 
 # Installing dependencies
 RUN npm ci --ignore-scripts
 
 # Copying sources
-COPY . .
+COPY --chown=node:node . .
 
 # Building app
 RUN npm run build api
@@ -26,7 +26,7 @@ RUN npm run build api
 # Exposing application port
 EXPOSE ${PORT}
 
-# Change ownership of app to user and group node
+# Change ownership of app directory to user node and group node
 RUN chown -R node:node /app
 
 # Using nonroot user
