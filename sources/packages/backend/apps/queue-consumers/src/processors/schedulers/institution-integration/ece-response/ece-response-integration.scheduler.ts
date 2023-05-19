@@ -30,11 +30,11 @@ export class ECEResponseIntegrationScheduler extends BaseScheduler<void> {
     this.logger.log(
       `Processing ECE request integration job ${job.id} of type ${job.name}.`,
     );
-    this.logger.log("Executing ECE request file generation ...");
-    const uploadResults = await this.eceResponseProcessingService.process();
-    this.logger.log("ECE request file generation completed.");
+    this.logger.log("Processing ECE response files ...");
+    const processingResult = await this.eceResponseProcessingService.process();
+    this.logger.log("Processing ECE response files completed.");
     await this.cleanSchedulerQueueHistory();
-    return uploadResults;
+    return processingResult;
   }
 
   @InjectLogger()

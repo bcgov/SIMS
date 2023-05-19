@@ -55,7 +55,7 @@ export class ECEResponseProcessingService {
   /**
    * Process all the available ECE response files in SFTP location.
    * Once the file is processed, it gets deleted.
-   * @returns Process summary.
+   * @returns Process summary result.
    */
   async process(): Promise<ProcessSummaryResult[]> {
     // Get all the institution codes who are enabled for integration.
@@ -79,7 +79,7 @@ export class ECEResponseProcessingService {
 
   /**
    * Process individual ECE response file sent by institution.
-   * @param remoteFilePath ECE response file path
+   * @param remoteFilePath ECE response file path.
    * @returns process summary result.
    */
   private async processDisbursementsInECEResponseFile(
@@ -147,6 +147,12 @@ export class ECEResponseProcessingService {
     return processSummary;
   }
 
+  /**
+   * Sanitize the the detail records and transform the
+   * detail records to individual disbursements.
+   * @param eceFileDetailRecords detail records of ece file.
+   * @returns disbursements to be processed.
+   */
   private sanitizeAndTransformToDisbursements(
     eceFileDetailRecords: ECEResponseFileDetail[],
   ): ECEDisbursements {
@@ -194,6 +200,7 @@ export class ECEResponseProcessingService {
    * @param disbursements disbursements to be processed,
    * @param auditUser user who confirm or decline the enrolment.
    * @param processSummary process summary.
+   * @returns count of disbursements processed, successfully updated, skipped and failed.
    */
   private async validateAndUpdateEnrolmentStatus(
     disbursements: ECEDisbursements,
@@ -295,6 +302,11 @@ export class ECEResponseProcessingService {
     };
   }
 
+  /**
+   * Delete the ece response file.
+   * @param remoteFilePath file path.
+   * @param processSummary process summary.
+   */
   private async deleteTheProcessedFile(
     remoteFilePath: string,
     processSummary: ProcessSummaryResult,
