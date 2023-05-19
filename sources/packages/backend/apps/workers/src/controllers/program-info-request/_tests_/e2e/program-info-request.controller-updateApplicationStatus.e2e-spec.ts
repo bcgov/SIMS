@@ -73,7 +73,7 @@ describe("ProgramInfoRequestController(e2e)-updateApplicationStatus", () => {
     const expectedApplication = await db.application.findOneBy({
       id: savedApplication.id,
     });
-    expect(expectedApplication.pirStatus).toEqual(ProgramInfoStatus.declined);
+    expect(expectedApplication.pirStatus).toBe(ProgramInfoStatus.declined);
   });
 
   it("Should not update application PIR status when already set.", async () => {
@@ -115,7 +115,7 @@ describe("ProgramInfoRequestController(e2e)-updateApplicationStatus", () => {
     const expectedApplication = await db.application.findOneBy({
       id: savedApplication.id,
     });
-    expect(expectedApplication.pirStatus).toEqual(ProgramInfoStatus.required);
+    expect(expectedApplication.pirStatus).toBe(ProgramInfoStatus.required);
   });
 
   it("Should have job error status when could not find the application.", async () => {
@@ -136,7 +136,7 @@ describe("ProgramInfoRequestController(e2e)-updateApplicationStatus", () => {
     );
 
     // Assert
-    expect(result).toEqual({
+    expect(result).toBe({
       [FAKE_WORKER_JOB_RESULT_PROPERTY]: MockedZeebeJobResult.Error,
       [FAKE_WORKER_JOB_ERROR_MESSAGE_PROPERTY]:
         "Application not found while verifying the PIR.",

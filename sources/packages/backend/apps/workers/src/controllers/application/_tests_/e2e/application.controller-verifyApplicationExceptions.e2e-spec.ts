@@ -117,7 +117,7 @@ describe("ApplicationController(e2e)-verifyApplicationExceptions", () => {
     );
 
     // Asserts
-    expect(result).toEqual({
+    expect(result).toBe({
       [FAKE_WORKER_JOB_RESULT_PROPERTY]: MockedZeebeJobResult.Error,
       [FAKE_WORKER_JOB_ERROR_MESSAGE_PROPERTY]: "Application id not found.",
       [FAKE_WORKER_JOB_ERROR_CODE_PROPERTY]: APPLICATION_NOT_FOUND,

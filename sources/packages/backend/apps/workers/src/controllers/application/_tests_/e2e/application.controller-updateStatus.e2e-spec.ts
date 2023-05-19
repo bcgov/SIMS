@@ -57,11 +57,11 @@ describe("ApplicationController(e2e)-updateStatus", () => {
       MockedZeebeJobResult.Complete,
     );
 
-    // Asserts that the application status has changed to declined
+    // Asserts that the application status has changed to declined.
     const expectedApplication = await db.application.findOneBy({
       id: savedApplication.id,
     });
-    expect(expectedApplication.applicationStatus).toEqual(
+    expect(expectedApplication.applicationStatus).toBe(
       ApplicationStatus.Cancelled,
     );
   });
@@ -87,7 +87,7 @@ describe("ApplicationController(e2e)-updateStatus", () => {
     );
 
     // Asserts
-    expect(result).toEqual({
+    expect(result).toBe({
       [FAKE_WORKER_JOB_RESULT_PROPERTY]: MockedZeebeJobResult.Error,
       [FAKE_WORKER_JOB_ERROR_MESSAGE_PROPERTY]:
         "The application status was not updated either because the application id was not found or the application is not in the expected status.",
@@ -98,7 +98,7 @@ describe("ApplicationController(e2e)-updateStatus", () => {
     const expectedApplication = await db.application.findOneBy({
       id: savedApplication.id,
     });
-    expect(expectedApplication.applicationStatus).toEqual(
+    expect(expectedApplication.applicationStatus).toBe(
       ApplicationStatus.Submitted,
     );
   });
@@ -122,7 +122,7 @@ describe("ApplicationController(e2e)-updateStatus", () => {
     );
 
     // Asserts
-    expect(result).toEqual({
+    expect(result).toBe({
       [FAKE_WORKER_JOB_RESULT_PROPERTY]: MockedZeebeJobResult.Error,
       [FAKE_WORKER_JOB_ERROR_MESSAGE_PROPERTY]:
         "The application status was not updated either because the application id was not found or the application is not in the expected status.",
