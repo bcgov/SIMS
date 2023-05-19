@@ -64,6 +64,7 @@ export class AssessmentStudentsController extends BaseController {
   ): Promise<AssessmentNOAAPIOutDTO> {
     return this.assessmentControllerService.getAssessmentNOA(assessmentId, {
       studentId: userToken.studentId,
+      maskMSFAA: false,
     });
   }
 

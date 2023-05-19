@@ -36,10 +36,7 @@ export class StudentAppealApi extends HttpBaseClient {
     T extends
       | DetailedStudentAppealRequestAPIOutDTO
       | StudentAppealRequestAPIOutDTO,
-    R = T extends DetailedStudentAppealRequestAPIOutDTO
-      ? DetailedStudentAppealRequestAPIOutDTO
-      : StudentAppealRequestAPIOutDTO,
-  >(appealId: number, studentId?: number): Promise<StudentAppealAPIOutDTO<R>> {
+  >(appealId: number, studentId?: number): Promise<StudentAppealAPIOutDTO<T>> {
     const endpoint = studentId
       ? `appeal/student/${studentId}/appeal/${appealId}/requests`
       : `appeal/${appealId}/requests`;

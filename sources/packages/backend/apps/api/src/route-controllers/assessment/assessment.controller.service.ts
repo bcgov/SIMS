@@ -17,7 +17,7 @@ import {
   StudentScholasticStandingsService,
   EducationProgramOfferingService,
   ApplicationExceptionService,
-  MASKED_MSFAA_NUMER,
+  MASKED_MSFAA_NUMBER,
 } from "../../services";
 import {
   AssessmentNOAAPIOutDTO,
@@ -109,10 +109,10 @@ export class AssessmentControllerService {
     },
   ): Record<string, string | number> {
     // Setting default value.
-    const includeDocumentNumber = options?.includeDocumentNumber
-      ? options.includeDocumentNumber
-      : false;
-    const maskMSFAA = options?.maskMSFAA ? options.maskMSFAA : false;
+    const includeDocumentNumber = options?.includeDocumentNumber ?? false;
+    const maskMSFAA = [true, false].includes(options?.maskMSFAA)
+      ? options.maskMSFAA
+      : true;
     const disbursementDetails = {};
     disbursementSchedules.forEach((schedule, index) => {
       const disbursementIdentifier = `disbursement${index + 1}`;
@@ -124,7 +124,7 @@ export class AssessmentControllerService {
       disbursementDetails[`${disbursementIdentifier}COEStatus`] =
         schedule.coeStatus;
       disbursementDetails[`${disbursementIdentifier}MSFAANumber`] = maskMSFAA
-        ? MASKED_MSFAA_NUMER
+        ? MASKED_MSFAA_NUMBER
         : schedule.msfaaNumber.msfaaNumber;
       disbursementDetails[`${disbursementIdentifier}MSFAAId`] =
         schedule.msfaaNumber.id;

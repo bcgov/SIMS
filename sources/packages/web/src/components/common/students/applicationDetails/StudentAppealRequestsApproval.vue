@@ -1,9 +1,7 @@
 <template>
   <body-header title="Student change">
     <template #status-chip>
-      <status-chip-requested-assessment
-        :status="appealStatus"
-      ></status-chip-requested-assessment>
+      <status-chip-requested-assessment :status="appealStatus" />
     </template>
   </body-header>
   <appeal-requests-approval-form
@@ -52,6 +50,7 @@ import {
 import AppealRequestsApprovalForm from "@/components/aest/AppealRequestsApprovalForm.vue";
 import StatusChipRequestedAssessment from "@/components/generic/StatusChipRequestedAssessment.vue";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
+
 export default defineComponent({
   emits: {
     submitted: (approvals: StudentAppealApproval[]) => {

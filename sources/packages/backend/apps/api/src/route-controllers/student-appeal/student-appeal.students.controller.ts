@@ -168,7 +168,7 @@ export class StudentAppealStudentsController extends BaseController {
     @Param("appealId", ParseIntPipe) appealId: number,
     @UserToken() userToken: StudentUserToken,
   ): Promise<StudentAppealAPIOutDTO<StudentAppealRequestAPIOutDTO>> {
-    return this.studentAppealControllerService.getStudentAppealWithRequest<StudentAppealRequestAPIOutDTO>(
+    return this.studentAppealControllerService.getStudentAppealWithRequests<StudentAppealRequestAPIOutDTO>(
       appealId,
       { studentId: userToken.studentId },
     );

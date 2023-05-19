@@ -19,20 +19,17 @@ export class StudentAppealControllerService {
    * - `assessDetails`, if true, will return access details.
    * @returns the student appeal and its requests.
    */
-  async getStudentAppealWithRequest<
+  async getStudentAppealWithRequests<
     T extends
       | DetailedStudentAppealRequestAPIOutDTO
       | StudentAppealRequestAPIOutDTO,
-    R = T extends DetailedStudentAppealRequestAPIOutDTO
-      ? DetailedStudentAppealRequestAPIOutDTO
-      : StudentAppealRequestAPIOutDTO,
   >(
     appealId: number,
     options?: {
       studentId?: number;
       assessDetails?: boolean;
     },
-  ): Promise<StudentAppealAPIOutDTO<R>> {
+  ): Promise<StudentAppealAPIOutDTO<T>> {
     const studentAppeal =
       await this.studentAppealService.getAppealAndRequestsById(
         appealId,
@@ -52,7 +49,7 @@ export class StudentAppealControllerService {
           appealStatus: appealRequest.appealStatus,
           submittedData: appealRequest.submittedData,
           submittedFormName: appealRequest.submittedFormName,
-        } as R;
+        } as T;
 
         if (options?.assessDetails) {
           request = {
@@ -60,7 +57,7 @@ export class StudentAppealControllerService {
             assessedDate: appealRequest.assessedDate,
             noteDescription: appealRequest.note?.description,
             assessedByUserName: getUserFullName(appealRequest.assessedBy),
-          } as R;
+          } as T;
         }
         return request;
       }),
