@@ -23,6 +23,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-eligibility-CSGP
     expect(calculatedAssessment.variables.provincialAwardNetCSGPAmount).toBe(
       4000,
     );
+    expect(calculatedAssessment.variables.awardEligibilityCSGP).toBe(true);
   });
 
   it("Should determine CSGP as not eligible when financial need is at least $1 and the student has PD status as false.", async () => {
