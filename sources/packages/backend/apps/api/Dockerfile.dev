@@ -29,7 +29,7 @@ EXPOSE ${PORT}
 # Change ownership of app directory to user node and group node
 RUN chown -R node:node /app
 
-RUN chmod 700 /app
+RUN chmod 777 /app
 
 # Using nonroot user
 USER node
