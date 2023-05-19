@@ -27,7 +27,6 @@ describe("ApplicationController(e2e)-updateStatus", () => {
 
   beforeAll(async () => {
     const { nestApplication, dataSource } = await createTestingAppModule();
-    await nestApplication.init();
     db = createE2EDataSources(dataSource);
     applicationController = nestApplication.get(ApplicationController);
   });

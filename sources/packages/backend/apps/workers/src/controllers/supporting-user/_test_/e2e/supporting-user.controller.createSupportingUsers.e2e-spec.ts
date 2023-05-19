@@ -25,7 +25,6 @@ describe("SupportingUserController(e2e)-createSupportingUsers", () => {
 
   beforeAll(async () => {
     const { nestApplication, dataSource } = await createTestingAppModule();
-    await nestApplication.init();
     db = createE2EDataSources(dataSource);
     supportingUserController = nestApplication.get(SupportingUserController);
   });
