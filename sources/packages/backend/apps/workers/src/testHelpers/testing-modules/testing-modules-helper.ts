@@ -6,7 +6,6 @@ import {
   createZeebeModuleMock,
   overrideImportsMetadata,
 } from "@sims/test-utils";
-import { QueueModule } from "@sims/services/queue";
 import { ZeebeModule } from "@sims/services";
 
 /**
