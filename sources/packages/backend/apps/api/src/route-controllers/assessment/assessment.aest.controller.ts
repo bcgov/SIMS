@@ -76,7 +76,9 @@ export class AssessmentAESTController extends BaseController {
   async getAssessmentNOA(
     @Param("assessmentId", ParseIntPipe) assessmentId: number,
   ): Promise<AssessmentNOAAPIOutDTO> {
-    return this.assessmentControllerService.getAssessmentNOA(assessmentId);
+    return this.assessmentControllerService.getAssessmentNOA(assessmentId, {
+      maskMSFAA: false,
+    });
   }
 
   /**

@@ -110,7 +110,9 @@ export class AssessmentControllerService {
   ): Record<string, string | number> {
     // Setting default value.
     const includeDocumentNumber = options?.includeDocumentNumber ?? false;
-    const maskMSFAA = options?.maskMSFAA ? options.maskMSFAA : false;
+    const maskMSFAA = [true, false].includes(options?.maskMSFAA)
+      ? options.maskMSFAA
+      : true;
     const disbursementDetails = {};
     disbursementSchedules.forEach((schedule, index) => {
       const disbursementIdentifier = `disbursement${index + 1}`;
