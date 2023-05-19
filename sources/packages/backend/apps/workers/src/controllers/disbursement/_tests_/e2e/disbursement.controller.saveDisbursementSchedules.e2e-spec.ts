@@ -212,7 +212,7 @@ describe("DisbursementController(e2e)-saveDisbursementSchedules", () => {
     );
     expect(grantOveraward).toBeUndefined();
     // Assert overaward creation.
-    assertOveraward(overawards, "BCSL", 150);
+    await assertOveraward(overawards, "BCSL", 150);
   });
 
   async function assertAwardDeduction(
