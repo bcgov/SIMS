@@ -20,14 +20,14 @@ import {
 import { createFakeDisbursementSchedule } from "@sims/test-utils/factories/disbursement-schedule";
 import { createFakeDisbursementValue } from "@sims/test-utils/factories/disbursement-value";
 import { createFakeSaveDisbursementSchedulesPayload } from "./save-disbursement-schedules-payloads";
-import { DisbursementController } from "../disbursement.controller";
+import { DisbursementController } from "../../disbursement.controller";
 import {
   FAKE_WORKER_JOB_RESULT_PROPERTY,
   MockedZeebeJobResult,
-} from "../../../../test/utils/worker-job-mock";
-import { createTestingAppModule } from "../../../testHelpers";
+} from "../../../../../test/utils/worker-job-mock";
+import { createTestingAppModule } from "../../../../testHelpers";
 
-describe("Disbursement Schedule Service - Create disbursement", () => {
+describe("DisbursementController(e2e)-saveDisbursementSchedules", () => {
   let db: E2EDataSources;
   let disbursementController: DisbursementController;
 

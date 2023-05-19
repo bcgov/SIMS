@@ -8,13 +8,13 @@ import {
 import { ProgramInfoStatus } from "@sims/sims-db";
 
 /**
- * Creates a fake payload to update application status.
+ * Creates a fake payload to update application pir status.
  * @param applicationId application id.
  * @param studentDataSelectedProgram pir education program id.
  * @param programInfoStatus pir status.
  * @returns fake payload to update application status.
  */
-export function createFakeUpdateApplicationStatusPayload(
+export function createFakeUpdatePIRStatusPayload(
   applicationId: number,
   studentDataSelectedProgram: number,
   programInfoStatus: ProgramInfoStatus,

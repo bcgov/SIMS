@@ -3,10 +3,10 @@ import {
   createE2EDataSources,
   createFakeApplication,
   createFakeEducationProgramOffering,
-  createFakeStudent,
   createFakeUser,
   E2EDataSources,
 } from "@sims/test-utils";
+import { APPLICATION_NOT_FOUND } from "../../../../constants";
 import {
   createFakeWorkerJob,
   FAKE_WORKER_JOB_ERROR_CODE_PROPERTY,
@@ -21,9 +21,9 @@ import {
   ProgramInfoRequestJobInDTO,
   ProgramInfoRequestJobOutDTO,
 } from "../../program-info-request.dto";
-import { createFakeUpdateApplicationStatusPayload } from "./update-application-status";
+import { createFakeUpdatePIRStatusPayload } from "./update-pir-status";
 
-describe("Program info request controller - updateApplicationStatus", () => {
+describe("ProgramInfoRequestController(e2e)-updateApplicationStatus", () => {
   let db: E2EDataSources;
   let programInfoRequestController: ProgramInfoRequestController;
 
@@ -49,12 +49,11 @@ describe("Program info request controller - updateApplicationStatus", () => {
     } as EducationProgram;
     const savedApplication = await db.application.save(fakeApplication);
 
-    const updateApplicationStatusPayload =
-      createFakeUpdateApplicationStatusPayload(
-        savedApplication.id,
-        savedApplication.pirProgram.id,
-        ProgramInfoStatus.declined,
-      );
+    const updateApplicationStatusPayload = createFakeUpdatePIRStatusPayload(
+      savedApplication.id,
+      savedApplication.pirProgram.id,
+      ProgramInfoStatus.declined,
+    );
 
     // Act
     const result = await programInfoRequestController.updateApplicationStatus(
@@ -92,12 +91,11 @@ describe("Program info request controller - updateApplicationStatus", () => {
     fakeApplication.pirStatus = ProgramInfoStatus.required;
     const savedApplication = await db.application.save(fakeApplication);
 
-    const updateApplicationStatusPayload =
-      createFakeUpdateApplicationStatusPayload(
-        savedApplication.id,
-        savedApplication.pirProgram.id,
-        ProgramInfoStatus.completed,
-      );
+    const updateApplicationStatusPayload = createFakeUpdatePIRStatusPayload(
+      savedApplication.id,
+      savedApplication.pirProgram.id,
+      ProgramInfoStatus.completed,
+    );
 
     //Act
     const result = await programInfoRequestController.updateApplicationStatus(
@@ -123,12 +121,11 @@ describe("Program info request controller - updateApplicationStatus", () => {
 
   it("Should have job error status when could not find the application.", async () => {
     // Arrange
-    const updateApplicationStatusPayload =
-      createFakeUpdateApplicationStatusPayload(
-        999999,
-        999999,
-        ProgramInfoStatus.completed,
-      );
+    const updateApplicationStatusPayload = createFakeUpdatePIRStatusPayload(
+      999999,
+      999999,
+      ProgramInfoStatus.completed,
+    );
 
     //Act
     const result = await programInfoRequestController.updateApplicationStatus(
@@ -144,7 +141,7 @@ describe("Program info request controller - updateApplicationStatus", () => {
       [FAKE_WORKER_JOB_RESULT_PROPERTY]: MockedZeebeJobResult.Error,
       [FAKE_WORKER_JOB_ERROR_MESSAGE_PROPERTY]:
         "Application not found while verifying the PIR.",
-      [FAKE_WORKER_JOB_ERROR_CODE_PROPERTY]: "APPLICATION_NOT_FOUND",
+      [FAKE_WORKER_JOB_ERROR_CODE_PROPERTY]: APPLICATION_NOT_FOUND,
     });
   });
 });
