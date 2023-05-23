@@ -28,7 +28,7 @@ export class ECEResponseIntegrationScheduler extends BaseScheduler<void> {
     job: Job<void>,
   ): Promise<QueueProcessSummaryResult[]> {
     this.logger.log(
-      `Processing ECE request integration job ${job.id} of type ${job.name}.`,
+      `Processing ECE response integration job ${job.id} of type ${job.name}.`,
     );
     this.logger.log("Processing ECE response files ...");
     const processingResult = await this.eceResponseProcessingService.process();

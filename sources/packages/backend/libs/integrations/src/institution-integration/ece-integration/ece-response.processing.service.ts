@@ -19,7 +19,7 @@ import {
 } from "@sims/utilities";
 import { ECEResponseFileDetail } from "./ece-files/ece-response-file-detail";
 import {
-  AWARD_DETAILS_KEY,
+  DisbursementProcessingDetails,
   ECEDisbursements,
 } from "./models/ece-integration.model";
 import {
@@ -85,7 +85,7 @@ export class ECEResponseProcessingService {
   private async processDisbursementsInECEResponseFile(
     remoteFilePath: string,
   ): Promise<ProcessSummaryResult> {
-    const processSummary: ProcessSummaryResult = new ProcessSummaryResult();
+    const processSummary = new ProcessSummaryResult();
     let isECEResponseFileExist = false;
     processSummary.summary.push(`Starting download of file ${remoteFilePath}.`);
     this.logger.log(`Starting download of file ${remoteFilePath}.`);
@@ -132,7 +132,7 @@ export class ECEResponseProcessingService {
       processSummary.summary.push(
         `Disbursements failed to process: ${disbursementsFailedToProcess}`,
       );
-      this.logger.log(`SCompleted processing the file ${remoteFilePath}.`);
+      this.logger.log(`Completed processing the file ${remoteFilePath}.`);
     } catch (error: unknown) {
       this.logger.error(error);
       processSummary.errors.push(
@@ -141,7 +141,7 @@ export class ECEResponseProcessingService {
     } finally {
       // Delete the ECE response file, if the file exist in remote server.
       if (isECEResponseFileExist) {
-        await this.deleteTheProcessedFile(remoteFilePath, processSummary);
+        await this.deleteProcessedFile(remoteFilePath, processSummary);
       }
     }
     return processSummary;
@@ -170,26 +170,14 @@ export class ECEResponseProcessingService {
         disbursements[eceDetailRecord.disbursementIdentifier] = {
           institutionCode: eceDetailRecord.institutionCode,
           applicationNumber: eceDetailRecord.applicationNumber,
-          [AWARD_DETAILS_KEY]: [
-            {
-              payToSchoolAmount: eceDetailRecord.payToSchoolAmount,
-              isEnrolmentConfirmed: eceDetailRecord.isEnrolmentConfirmed,
-              enrolmentConfirmationDate:
-                eceDetailRecord.enrolmentConfirmationDate,
-            },
-          ],
+          awardDetails: [],
         };
-      } else {
-        const awardDetails =
-          disbursements[eceDetailRecord.disbursementIdentifier][
-            AWARD_DETAILS_KEY
-          ];
-        awardDetails.push({
-          payToSchoolAmount: eceDetailRecord.payToSchoolAmount,
-          isEnrolmentConfirmed: eceDetailRecord.isEnrolmentConfirmed,
-          enrolmentConfirmationDate: eceDetailRecord.enrolmentConfirmationDate,
-        });
       }
+      disbursements[eceDetailRecord.disbursementIdentifier].awardDetails.push({
+        payToSchoolAmount: eceDetailRecord.payToSchoolAmount,
+        isEnrolmentConfirmed: eceDetailRecord.isEnrolmentConfirmed,
+        enrolmentConfirmationDate: eceDetailRecord.enrolmentConfirmationDate,
+      });
     }
     return disbursements;
   }
@@ -198,7 +186,7 @@ export class ECEResponseProcessingService {
    * Validate the disbursement and application and
    * update the enrolment status.
    * @param disbursements disbursements to be processed,
-   * @param auditUser user who confirm or decline the enrolment.
+   * @param auditUserId user who confirm or decline the enrolment.
    * @param processSummary process summary.
    * @returns count of disbursements processed, successfully updated, skipped and failed.
    */
@@ -206,19 +194,11 @@ export class ECEResponseProcessingService {
     disbursements: ECEDisbursements,
     auditUserId: number,
     processSummary: ProcessSummaryResult,
-  ): Promise<{
-    totalDisbursements: number;
-    disbursementsSuccessfullyProcessed: number;
-    disbursementsSkipped: number;
-    duplicateDisbursements: number;
-    disbursementsFailedToProcess: number;
-  }> {
+  ): Promise<DisbursementProcessingDetails> {
     const disbursementSchedules = Object.entries(disbursements);
-    const totalDisbursements = disbursementSchedules.length;
-    let disbursementsSuccessfullyProcessed = 0;
-    let disbursementsSkipped = 0;
-    let duplicateDisbursements = 0;
-    let disbursementsFailedToProcess = 0;
+    const disbursementProcessingDetails = new DisbursementProcessingDetails();
+    disbursementProcessingDetails.totalDisbursements =
+      disbursementSchedules.length;
     for (const [
       disbursementScheduleId,
       disbursementDetails,
@@ -242,9 +222,9 @@ export class ECEResponseProcessingService {
               applicationNumber: disbursementDetails.applicationNumber,
             },
           );
-          ++disbursementsSuccessfullyProcessed;
+          ++disbursementProcessingDetails.disbursementsSuccessfullyProcessed;
           processSummary.summary.push(
-            `For disbursement ${disbursementScheduleId}, enrolment has been confirmed.`,
+            `Disbursement ${disbursementScheduleId}, enrolment confirmed.`,
           );
         } else {
           // Decline enrolment.
@@ -257,32 +237,33 @@ export class ECEResponseProcessingService {
             },
             { applicationNumber: disbursementDetails.applicationNumber },
           );
+          ++disbursementProcessingDetails.disbursementsSuccessfullyProcessed;
           processSummary.summary.push(
-            `For disbursement ${disbursementScheduleId}, enrolment has been declined.`,
+            `Disbursement ${disbursementScheduleId}, enrolment declined.`,
           );
         }
       } catch (error: unknown) {
         if (error instanceof CustomNamedError) {
           switch (error.name) {
             case ENROLMENT_NOT_FOUND:
-              ++disbursementsSkipped;
+              ++disbursementProcessingDetails.disbursementsSkipped;
               processSummary.warnings.push(
-                `For disbursement ${disbursementScheduleId}, record skipped due to reason: ${error.message}`,
+                `Disbursement ${disbursementScheduleId}, record skipped due to reason: ${error.message}`,
               );
               break;
             case ENROLMENT_ALREADY_COMPLETED:
-              ++duplicateDisbursements;
+              ++disbursementProcessingDetails.duplicateDisbursements;
               processSummary.warnings.push(
-                `For disbursement ${disbursementScheduleId}, record is considered as duplicate and skipped due to reason: ${error.message}`,
+                `Disbursement ${disbursementScheduleId}, record is considered as duplicate and skipped due to reason: ${error.message}`,
               );
               break;
             case ENROLMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE:
             case ENROLMENT_CONFIRMATION_DATE_NOT_WITHIN_APPROVAL_PERIOD:
             case FIRST_COE_NOT_COMPLETE:
             case INVALID_TUITION_REMITTANCE_AMOUNT:
-              ++disbursementsFailedToProcess;
+              ++disbursementProcessingDetails.disbursementsFailedToProcess;
               processSummary.errors.push(
-                `For disbursement ${disbursementScheduleId}, record failed to process due to reason: ${error.message}`,
+                `Disbursement ${disbursementScheduleId}, record failed to process due to reason: ${error.message}`,
               );
               break;
           }
@@ -293,13 +274,7 @@ export class ECEResponseProcessingService {
         }
       }
     }
-    return {
-      totalDisbursements,
-      disbursementsSuccessfullyProcessed,
-      disbursementsSkipped,
-      duplicateDisbursements,
-      disbursementsFailedToProcess,
-    };
+    return disbursementProcessingDetails;
   }
 
   /**
@@ -307,19 +282,19 @@ export class ECEResponseProcessingService {
    * @param remoteFilePath file path.
    * @param processSummary process summary.
    */
-  private async deleteTheProcessedFile(
+  private async deleteProcessedFile(
     remoteFilePath: string,
     processSummary: ProcessSummaryResult,
-  ) {
+  ): Promise<void> {
     try {
-      //Deleting the file once it has been processed.
+      // Deleting the file once it has been processed.
       await this.integrationService.deleteFile(remoteFilePath);
       processSummary.summary.push(
         `The file ${remoteFilePath} has been deleted after processing.`,
       );
     } catch (error: unknown) {
       processSummary.errors.push(
-        `Error while deleting the file: ${remoteFilePath}`,
+        `Error while deleting the file: ${remoteFilePath}. ${error}`,
       );
     }
   }

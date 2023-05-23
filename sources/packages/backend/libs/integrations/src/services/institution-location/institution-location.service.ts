@@ -1,15 +1,17 @@
 import { Injectable } from "@nestjs/common";
-import { InstitutionLocation, RecordDataModelService } from "@sims/sims-db";
-import { DataSource } from "typeorm";
+import { InjectRepository } from "@nestjs/typeorm";
+import { InstitutionLocation } from "@sims/sims-db";
+import { Repository } from "typeorm";
 
 /**
  * Institution location service.
  */
 @Injectable()
-export class InstitutionLocationService extends RecordDataModelService<InstitutionLocation> {
-  constructor(dataSource: DataSource) {
-    super(dataSource.getRepository(InstitutionLocation));
-  }
+export class InstitutionLocationService {
+  constructor(
+    @InjectRepository(InstitutionLocation)
+    private readonly institutionLocationRepo: Repository<InstitutionLocation>,
+  ) {}
 
   /**
    * Get all the institution codes of the institutions who
@@ -17,9 +19,8 @@ export class InstitutionLocationService extends RecordDataModelService<Instituti
    * @returns institution codes.
    */
   async getAllIntegrationEnabledInstitutionCodes(): Promise<string[]> {
-    const locations = await this.repo.find({
+    const locations = await this.institutionLocationRepo.find({
       select: {
-        id: true,
         institutionCode: true,
       },
       where: {

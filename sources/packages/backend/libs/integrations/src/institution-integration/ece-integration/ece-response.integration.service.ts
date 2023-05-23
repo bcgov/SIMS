@@ -23,17 +23,16 @@ export class ECEResponseIntegrationService extends SFTPIntegrationBase<
   async downloadResponseFile(
     remoteFilePath: string,
   ): Promise<ECEResponseFileDetail[]> {
-    const fileLines = await this.downloadResponseFileLines(
-      remoteFilePath,
-      true,
-    );
+    const fileLines = await this.downloadResponseFileLines(remoteFilePath, {
+      checkIfFileExist: true,
+    });
     // Check if the file exist in the remote server.
     if (!fileLines) {
       return [];
     }
     // The file is not expected to be empty without content.
     if (!fileLines.length) {
-      const error = `The ECE response file is empty and cannot be processed.`;
+      const error = "The ECE response file is empty and cannot be processed.";
       this.logger.error(error);
       throw new Error(error);
     }
@@ -55,14 +54,16 @@ export class ECEResponseIntegrationService extends SFTPIntegrationBase<
     }
     // The file is expected to have at least one detail record.
     if (!fileLines.length) {
-      const error = `The ECE response file does not have any detail records to process.`;
+      const error =
+        "The ECE response file does not have any detail records to process.";
       this.logger.error(error);
       throw new Error(error);
     }
     // The total count of detail records is mentioned in the footer record and it is expected to
     // match the actual count of total records.
     if (fileLines.length !== footer.totalDetailRecords) {
-      const error = `In the total count of detail records mentioned in the footer record does not match with the actual total details records count.`;
+      const error =
+        "In the total count of detail records mentioned in the footer record does not match with the actual total details records count.";
       this.logger.error(error);
       throw new Error(error);
     }

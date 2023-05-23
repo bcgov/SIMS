@@ -98,13 +98,13 @@ export abstract class SFTPIntegrationBase<DownloadType> {
    * Downloads the file specified on 'fileName' parameter from the
    * SFAS integration folder on the SFTP.
    * @param remoteFilePath full remote file path with file name.
-   * @param checkIfFileExist when set to true, check if file
-   * exist before downloading it.
+   * @param options download file options.
+   * -  `checkIfFileExist` when set to true, check if file exist before downloading it.
    * @returns parsed records from the file.
    */
   protected async downloadResponseFileLines(
     remoteFilePath: string,
-    checkIfFileExist: boolean,
+    options?: { checkIfFileExist: boolean },
   ): Promise<string[] | false>;
 
   /**
@@ -115,11 +115,11 @@ export abstract class SFTPIntegrationBase<DownloadType> {
    */
   protected async downloadResponseFileLines(
     remoteFilePath: string,
-    checkIfFileExist = false,
+    options?: { checkIfFileExist: boolean },
   ): Promise<string[] | false> {
     const client = await this.getClient();
     try {
-      if (checkIfFileExist) {
+      if (options?.checkIfFileExist) {
         const fileExist = await client.exists(remoteFilePath);
         if (!fileExist) {
           return false;
