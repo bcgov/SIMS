@@ -594,6 +594,8 @@ export class ConfirmationOfEnrollmentService {
 
     const application = disbursementSchedule.studentAssessment.application;
 
+    // Only if the application number is present in options
+    // validate the application number.
     if (
       options?.applicationNumber &&
       options?.applicationNumber !== application.applicationNumber

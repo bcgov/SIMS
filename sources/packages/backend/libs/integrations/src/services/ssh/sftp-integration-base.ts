@@ -104,7 +104,7 @@ export abstract class SFTPIntegrationBase<DownloadType> {
    */
   protected async downloadResponseFileLines(
     remoteFilePath: string,
-    options?: { checkIfFileExist: boolean },
+    options: { checkIfFileExist: boolean },
   ): Promise<string[] | false>;
 
   /**
