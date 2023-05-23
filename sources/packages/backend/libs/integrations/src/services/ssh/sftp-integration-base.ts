@@ -92,9 +92,41 @@ export abstract class SFTPIntegrationBase<DownloadType> {
    */
   protected async downloadResponseFileLines(
     remoteFilePath: string,
-  ): Promise<string[]> {
+  ): Promise<string[]>;
+
+  /**
+   * Downloads the file specified on 'fileName' parameter from the
+   * SFAS integration folder on the SFTP.
+   * @param remoteFilePath full remote file path with file name.
+   * @param options download file options.
+   * -  `checkIfFileExist` when set to true, check if file exist before downloading it.
+   * @returns parsed records from the file.
+   */
+  protected async downloadResponseFileLines(
+    remoteFilePath: string,
+    options: { checkIfFileExist: boolean },
+  ): Promise<string[] | false>;
+
+  /**
+   * Downloads the file specified on 'fileName' parameter from the
+   * SFAS integration folder on the SFTP.
+   * @param remoteFilePath full remote file path with file name.
+   * @param options download file options.
+   * -  `checkIfFileExist` when set to true, check if file exist before downloading it.
+   * @returns parsed records from the file.
+   */
+  protected async downloadResponseFileLines(
+    remoteFilePath: string,
+    options?: { checkIfFileExist: boolean },
+  ): Promise<string[] | false> {
     const client = await this.getClient();
     try {
+      if (options?.checkIfFileExist) {
+        const fileExist = await client.exists(remoteFilePath);
+        if (!fileExist) {
+          return false;
+        }
+      }
       // Read all the file content and create a buffer.
       const fileContent = await client.get(remoteFilePath);
       // Convert the file content to an array of text lines and remove possible blank lines.

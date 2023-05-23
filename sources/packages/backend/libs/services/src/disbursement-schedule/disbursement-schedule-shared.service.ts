@@ -24,9 +24,6 @@ import {
   LOAN_TYPES,
 } from "../constants";
 import { SystemUsersService } from "@sims/services/system-users";
-import { ConfirmationOfEnrollmentService } from "../confirmation-of-enrollment/confirmation-of-enrollment.service";
-import { SequenceControlService } from "../sequence-control/sequence-control.service";
-import { NotificationActionsService } from "../notifications";
 
 // Timeout to handle the worst-case scenario where the commit/rollback
 // was not executed due to a possible catastrophic failure.
@@ -72,9 +69,6 @@ export class DisbursementScheduleSharedService extends RecordDataModelService<Di
   constructor(
     private readonly dataSource: DataSource,
     private readonly systemUsersService: SystemUsersService,
-    private readonly confirmationOfEnrollmentService: ConfirmationOfEnrollmentService,
-    private readonly sequenceService: SequenceControlService,
-    private readonly notificationActionsService: NotificationActionsService,
   ) {
     super(dataSource.getRepository(DisbursementSchedule));
   }

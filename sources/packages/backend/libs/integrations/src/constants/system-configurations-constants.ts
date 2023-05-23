@@ -9,3 +9,9 @@ export const DISBURSEMENT_FILE_GENERATION_ANTICIPATION_DAYS = 5;
  * File name of the ECE response file sent by institutions.
  */
 export const ECE_RESPONSE_FILE_NAME = "CONR_008.TXT";
+
+/**
+ * Reason to be saved while declining an enrolment through ECE file integration.
+ */
+export const ECE_RESPONSE_COE_DECLINED_REASON =
+  "A reason was not provided by your institution. Please speak to your Financial Aid Officer at your institution for details.";

@@ -3,10 +3,13 @@ import {
   RestrictionSharedService,
   StudentRestrictionSharedService,
   WorkflowClientService,
+  ConfirmationOfEnrollmentService,
+  SequenceControlService,
 } from "@sims/services";
 import { ConfigModule } from "@sims/utilities/config";
 import {
   DisbursementScheduleService,
+  InstitutionLocationService,
   SshService,
 } from "@sims/integrations/services";
 import { ECEProcessingService } from "./ece.processing.service";
@@ -27,6 +30,9 @@ import { ECEResponseProcessingService } from "./ece-response.processing.service"
     RestrictionSharedService,
     ECEResponseIntegrationService,
     ECEResponseProcessingService,
+    InstitutionLocationService,
+    ConfirmationOfEnrollmentService,
+    SequenceControlService,
   ],
   exports: [ECEProcessingService, ECEResponseProcessingService],
 })

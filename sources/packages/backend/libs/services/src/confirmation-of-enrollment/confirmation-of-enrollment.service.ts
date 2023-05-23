@@ -288,6 +288,7 @@ export class ConfirmationOfEnrollmentService {
    * @param applicationId application Id.
    * @param applicationStatus application status of the disbursed application.
    * @param tuitionRemittanceRequestedAmount tuition remittance amount requested by the institution.
+   * @param enrolmentConfirmationDate enrolment confirmation date.
    */
   private async updateDisbursementAndApplicationCOEApproval(
     disbursementScheduleId: number,
@@ -516,7 +517,7 @@ export class ConfirmationOfEnrollmentService {
         disbursementSchedule.disbursementDate,
         disbursementSchedule.studentAssessment.application.currentAssessment
           .offering.studyEndDate,
-        options.enrolmentConfirmationDate,
+        options?.enrolmentConfirmationDate,
       );
       if (
         approvalPeriodStatus !== COEApprovalPeriodStatus.WithinApprovalPeriod
@@ -566,6 +567,8 @@ export class ConfirmationOfEnrollmentService {
    * @param disbursementScheduleId disbursement schedule id.
    * @param auditUserId user who confirms enrollment.
    * @param declineReason reason for declining the enrolment.
+   * - `coeDenyReasonId` COE denied reason id.
+   * - `otherReasonDesc` COE Other denied reason description.
    * @param options decline enrolment options.
    * - `locationId` location id of the application.
    * - `applicationNumber` application number of the enrolment.
@@ -574,7 +577,7 @@ export class ConfirmationOfEnrollmentService {
     disbursementScheduleId: number,
     auditUserId: number,
     declineReason: { coeDenyReasonId: number; otherReasonDesc?: string },
-    options: {
+    options?: {
       locationId?: number;
       applicationNumber?: string;
     },
@@ -591,6 +594,8 @@ export class ConfirmationOfEnrollmentService {
 
     const application = disbursementSchedule.studentAssessment.application;
 
+    // Only if the application number is present in options
+    // validate the application number.
     if (
       options?.applicationNumber &&
       options?.applicationNumber !== application.applicationNumber
@@ -631,7 +636,6 @@ export class ConfirmationOfEnrollmentService {
    * (Actual tuition + Program related costs) and (Canada grants + Canada Loan + BC Loan).
    * @param tuitionRemittanceAmount tuition remittance submitted by institution.
    * @param disbursementScheduleId disbursement schedule id.
-   * @throws UnprocessableEntityException.
    */
   private async validateTuitionRemittance(
     tuitionRemittanceAmount: number,

@@ -1,10 +1,8 @@
 import { Min, Max, IsNotEmpty, ValidateIf } from "class-validator";
 import { COEStatus, ProgramInfoStatus } from "@sims/sims-db";
 import { COEApprovalPeriodStatus } from "../../../services/disbursement-schedule/disbursement-schedule.models";
-import {
-  COE_DENIED_REASON_OTHER_ID,
-  MONEY_VALUE_FOR_UNKNOWN_MAX_VALUE,
-} from "../../../utilities";
+import { MONEY_VALUE_FOR_UNKNOWN_MAX_VALUE } from "../../../utilities";
+import { COE_DENIED_REASON_OTHER_ID } from "@sims/utilities";
 
 export class ApplicationDetailsForCOEAPIOutDTO {
   applicationProgramName: string;
