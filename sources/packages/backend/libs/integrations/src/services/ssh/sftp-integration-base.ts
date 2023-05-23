@@ -111,6 +111,8 @@ export abstract class SFTPIntegrationBase<DownloadType> {
    * Downloads the file specified on 'fileName' parameter from the
    * SFAS integration folder on the SFTP.
    * @param remoteFilePath full remote file path with file name.
+   * @param options download file options.
+   * -  `checkIfFileExist` when set to true, check if file exist before downloading it.
    * @returns parsed records from the file.
    */
   protected async downloadResponseFileLines(

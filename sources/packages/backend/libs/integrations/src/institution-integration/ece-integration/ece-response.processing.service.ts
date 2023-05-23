@@ -169,7 +169,7 @@ export class ECEResponseProcessingService {
     }
     if (hasErrors) {
       throw new Error(
-        `The file consists invalid data and cannot be processed.`,
+        "The file consists invalid data and cannot be processed.",
       );
     }
   }
