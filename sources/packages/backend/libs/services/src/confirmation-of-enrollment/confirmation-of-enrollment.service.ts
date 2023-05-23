@@ -288,6 +288,7 @@ export class ConfirmationOfEnrollmentService {
    * @param applicationId application Id.
    * @param applicationStatus application status of the disbursed application.
    * @param tuitionRemittanceRequestedAmount tuition remittance amount requested by the institution.
+   * @param enrolmentConfirmationDate enrolment confirmation date.
    */
   private async updateDisbursementAndApplicationCOEApproval(
     disbursementScheduleId: number,
@@ -566,6 +567,8 @@ export class ConfirmationOfEnrollmentService {
    * @param disbursementScheduleId disbursement schedule id.
    * @param auditUserId user who confirms enrollment.
    * @param declineReason reason for declining the enrolment.
+   * - `coeDenyReasonId` COE denied reason id.
+   * - `otherReasonDesc` COE Other denied reason description.
    * @param options decline enrolment options.
    * - `locationId` location id of the application.
    * - `applicationNumber` application number of the enrolment.
@@ -631,7 +634,6 @@ export class ConfirmationOfEnrollmentService {
    * (Actual tuition + Program related costs) and (Canada grants + Canada Loan + BC Loan).
    * @param tuitionRemittanceAmount tuition remittance submitted by institution.
    * @param disbursementScheduleId disbursement schedule id.
-   * @throws UnprocessableEntityException.
    */
   private async validateTuitionRemittance(
     tuitionRemittanceAmount: number,
