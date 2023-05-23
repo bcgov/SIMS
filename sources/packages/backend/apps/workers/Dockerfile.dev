@@ -9,23 +9,18 @@ ENV PATH $PATH:/app/node_modules/.bin
 WORKDIR /app
 
 # Copying package.json and package-lock.json
-COPY ./package*.json ./
+COPY --chown=node:node ./package*.json ./
 
 # Installing dependencies
 RUN npm ci
 
 # Copying sources
-COPY . .
+COPY --chown=node:node . .
 
 # Building app
 RUN npm run build workers
 
-# Adding a nonroot user
-RUN addgroup -S nonroot \
-    && adduser -S nonroot -G nonroot
-
-# Switching to the added nonroot user
-USER nonroot
+USER node
 
 # Entry point
 CMD [ "npm", "run", "docker:start:workers" ]
