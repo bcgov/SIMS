@@ -4,6 +4,7 @@ FROM node:16.17.0-alpine3.16
 LABEL maintainer="BC GOV"
 
 RUN mkdir /app && chown node:node /app
+RUN mkdir -p /app/apps/workers/coverage/ && chown node:node /app/apps/workers/coverage/
 
 WORKDIR /app
 
