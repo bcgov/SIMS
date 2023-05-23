@@ -3,10 +3,10 @@ FROM node:16.17.0-alpine3.16
 
 LABEL maintainer="BC GOV"
 
+USER node
+
 # Updating container path variable with node bin
 ENV PATH $PATH:/app/node_modules/.bin
-
-USER node
 
 WORKDIR /app
 
