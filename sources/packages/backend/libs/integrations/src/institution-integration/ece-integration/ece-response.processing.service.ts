@@ -101,10 +101,11 @@ export class ECEResponseProcessingService {
         this.logger.log(warningMessage);
         return processSummary;
       }
-      // Sanitize all the ece response detail records and
-      // transform them to disbursements which could be individually processed.
+      // Sanitize all the ece response detail records.
+      this.sanitizeDisbursements(eceFileDetailRecords, processSummary);
+      // Transform ece response detail records to disbursements which could be individually processed.
       const disbursementsToProcess =
-        this.sanitizeAndTransformToDisbursements(eceFileDetailRecords);
+        this.transformDetailRecordsToDisbursements(eceFileDetailRecords);
       const auditUser = await this.systemUsersService.systemUser();
       const {
         totalDisbursements,
@@ -148,22 +149,41 @@ export class ECEResponseProcessingService {
   }
 
   /**
-   * Sanitize the the detail records and transform the
-   * detail records to individual disbursements.
+   * Sanitize all the disbursement records before processing.
+   * @param eceFileDetailRecords ECE disbursement records
+   * @param processSummaryResult process summary result.
+   */
+  private sanitizeDisbursements(
+    eceFileDetailRecords: ECEResponseFileDetail[],
+    processSummaryResult: ProcessSummaryResult,
+  ): void {
+    let hasErrors = false;
+    for (const eceDetailRecord of eceFileDetailRecords) {
+      const errorMessage = eceDetailRecord.getInvalidDataMessage();
+      if (errorMessage) {
+        hasErrors = true;
+        processSummaryResult.errors.push(
+          `${errorMessage} at line ${eceDetailRecord.lineNumber}`,
+        );
+      }
+    }
+    if (hasErrors) {
+      throw new Error(
+        `The file consists invalid data and cannot be processed.`,
+      );
+    }
+  }
+
+  /**
+   * Transform the detail records to individual disbursements.
    * @param eceFileDetailRecords detail records of ece file.
    * @returns disbursements to be processed.
    */
-  private sanitizeAndTransformToDisbursements(
+  private transformDetailRecordsToDisbursements(
     eceFileDetailRecords: ECEResponseFileDetail[],
   ): ECEDisbursements {
     const disbursements = {} as ECEDisbursements;
     for (const eceDetailRecord of eceFileDetailRecords) {
-      const errorMessage = eceDetailRecord.getInvalidDataMessage();
-      if (errorMessage) {
-        throw new Error(
-          `${errorMessage} at line ${eceDetailRecord.lineNumber}`,
-        );
-      }
       const disbursement =
         disbursements[eceDetailRecord.disbursementIdentifier];
       if (!disbursement) {
