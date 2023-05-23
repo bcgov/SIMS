@@ -6,6 +6,8 @@ LABEL maintainer="BC GOV"
 # Updating container path variable with node bin
 ENV PATH $PATH:/app/node_modules/.bin
 
+USER node
+
 WORKDIR /app
 
 # Copying package.json and package-lock.json
@@ -19,8 +21,6 @@ COPY --chown=node:node . .
 
 # Building app
 RUN npm run build workers
-
-USER node
 
 # Entry point
 CMD [ "npm", "run", "docker:start:workers" ]
