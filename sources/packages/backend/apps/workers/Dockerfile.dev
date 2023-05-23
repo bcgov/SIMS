@@ -5,10 +5,10 @@ LABEL maintainer="BC GOV"
 
 USER node
 
+WORKDIR /app
+
 # Updating container path variable with node bin
 ENV PATH $PATH:/app/node_modules/.bin
-
-WORKDIR /app
 
 # Copying package.json and package-lock.json
 COPY --chown=node:node ./package*.json ./
