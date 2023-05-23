@@ -21,5 +21,8 @@ RUN npm run build api
 # Exposing application port
 EXPOSE ${PORT}
 
+# Using nonroot user
+USER node
+
 # Entry point
 CMD [ "npm", "run", "start:prod:api" ]

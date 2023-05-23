@@ -15,5 +15,8 @@ COPY . .
 # Building app
 RUN npm run build workers
 
+# Using nonroot user
+USER node
+
 # Entry point
 CMD [ "npm", "run", "start:prod:workers" ]
