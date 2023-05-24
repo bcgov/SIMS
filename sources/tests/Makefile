@@ -20,7 +20,7 @@ e2e-tests-api:
 
 e2e-tests-workers:
 	@echo "+\n++ Make: Starting containers for Workers E2E tests \n+"
-	@sudo mkdir -m a=rwx -p /app/apps/workers/coverage/
+	@sudo mkdir -m a=rwx -p /coverage/workers
 	@docker-compose run --name workers-e2e --rm workers npm run test:e2e:workers
 	@docker-compose down --rmi all -v
 	
