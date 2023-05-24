@@ -20,9 +20,12 @@ e2e-tests-api:
 
 e2e-tests-workers:
 	@echo "+\n++ Make: Starting containers for Workers E2E tests \n+"
-	@sudo mkdir -m a=rwx -p /coverage/workers
-	@docker-compose run --name workers-e2e --rm workers npm run test:e2e:workers
+	@docker-compose run --name workers-e2e workers npm run test:e2e:workers
+	@mkdir -p ./coverage/workers
+	@docker cp workers-e2e:app/apps/workers/coverage/clover.xml ./coverage/workers
+	@docker rm workers-e2e
 	@docker-compose down --rmi all -v
+	
 	
 e2e-tests-queue-consumers:
 	@echo "+\n++ Make: Starting containers for Queue Consumers E2E tests \n+"
