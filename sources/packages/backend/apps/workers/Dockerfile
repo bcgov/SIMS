@@ -11,14 +11,10 @@ RUN npm ci
 
 # Copying sources.
 COPY ./apps/workers ./apps/workers
-COPY ./apps/db-migrations ./apps/db-migrations
 COPY ./libs ./libs
 
 # Building app
 RUN npm run build workers
-
-# Ensure that the non-root user will be able to write the coverage report.
-RUN mkdir -p /app/apps/workers/coverage/ && chown node /app/apps/workers/coverage/
 
 # Executing the image with a non-root user.
 USER node
