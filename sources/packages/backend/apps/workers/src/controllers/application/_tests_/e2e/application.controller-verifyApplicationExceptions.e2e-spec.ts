@@ -61,6 +61,7 @@ describe("ApplicationController(e2e)-verifyApplicationExceptions", () => {
     );
 
     const updatedApplication = await db.application.findOne({
+      select: { applicationException: { exceptionStatus: true } },
       relations: { applicationException: true },
       where: {
         id: savedApplication.id,
@@ -94,6 +95,7 @@ describe("ApplicationController(e2e)-verifyApplicationExceptions", () => {
     );
 
     const updatedApplication = await db.application.findOne({
+      select: { applicationException: { exceptionStatus: true } },
       relations: { applicationException: true },
       where: {
         id: savedApplication.id,
@@ -161,6 +163,7 @@ describe("ApplicationController(e2e)-verifyApplicationExceptions", () => {
     );
 
     const updatedApplication = await db.application.findOne({
+      select: { applicationException: { exceptionStatus: true } },
       relations: { applicationException: true },
       where: {
         id: savedApplication.id,

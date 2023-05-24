@@ -2,7 +2,6 @@ import { Application, SupportingUser, SupportingUserType } from "@sims/sims-db";
 
 /**
  * Creates a fake supporting user.
- * @param supportingUserType supporting user type to be created.
  * @param relations dependencies:
  * - `application`: application that the supporting user is associated with.
  * @returns a fake supporting user.

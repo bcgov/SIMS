@@ -70,8 +70,9 @@ describe("ProgramInfoRequestController(e2e)-updateApplicationStatus", () => {
     );
 
     // Asserts that the application PIR status has changed to declined.
-    const expectedApplication = await db.application.findOneBy({
-      id: savedApplication.id,
+    const expectedApplication = await db.application.findOne({
+      select: { pirStatus: true },
+      where: { id: savedApplication.id },
     });
     expect(expectedApplication.pirStatus).toBe(ProgramInfoStatus.declined);
   });
@@ -111,9 +112,10 @@ describe("ProgramInfoRequestController(e2e)-updateApplicationStatus", () => {
       MockedZeebeJobResult.Complete,
     );
 
-    // Asserts that the application PIR status has not changed
-    const expectedApplication = await db.application.findOneBy({
-      id: savedApplication.id,
+    // Asserts that the application PIR status has not changed.
+    const expectedApplication = await db.application.findOne({
+      select: { pirStatus: true },
+      where: { id: savedApplication.id },
     });
     expect(expectedApplication.pirStatus).toBe(ProgramInfoStatus.required);
   });

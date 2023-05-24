@@ -54,6 +54,7 @@ describe("SupportingUserController(e2e)-createSupportingUsers", () => {
     );
 
     const updatedApplication = await db.application.findOne({
+      select: { supportingUsers: true },
       relations: { supportingUsers: true },
       where: {
         id: savedApplication.id,
@@ -95,13 +96,15 @@ describe("SupportingUserController(e2e)-createSupportingUsers", () => {
     );
 
     const updatedApplication = await db.application.findOne({
+      select: { supportingUsers: true },
       relations: { supportingUsers: true },
       where: {
         id: savedApplication.id,
       },
     });
     expect(updatedApplication.supportingUsers).toHaveLength(1);
-    expect(updatedApplication.supportingUsers[0]).toHaveProperty(
+    const [supportingUser] = updatedApplication.supportingUsers;
+    expect(supportingUser).toHaveProperty(
       "supportingUserType",
       SupportingUserType.Partner,
     );
@@ -138,13 +141,15 @@ describe("SupportingUserController(e2e)-createSupportingUsers", () => {
     );
 
     const updatedApplication = await db.application.findOne({
+      select: { supportingUsers: true },
       relations: { supportingUsers: true },
       where: {
         id: savedApplication.id,
       },
     });
     expect(updatedApplication.supportingUsers).toHaveLength(1);
-    expect(updatedApplication.supportingUsers[0]).toHaveProperty(
+    const [supportingUser] = updatedApplication.supportingUsers;
+    expect(supportingUser).toHaveProperty(
       "supportingUserType",
       SupportingUserType.Partner,
     );
