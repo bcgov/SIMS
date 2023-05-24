@@ -6,7 +6,7 @@ LABEL maintainer="BC GOV"
 WORKDIR /app
 
 # Copying root files to image workdir.
-COPY package.json package-lock.json tsconfig.json ./env-setup.js ./
+COPY /*.json /*.js ./
 
 # Installing dependencies.
 RUN npm ci

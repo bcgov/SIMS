@@ -15,15 +15,18 @@ backend-unit-tests:
 
 e2e-tests-api:
 	@echo "+\n++ Make: Starting containers for API E2E tests \n+"
-	@docker-compose run --name api-e2e-$(BUILD_REF) --rm api npm run test:e2e:api
+	@docker-compose run --name api-e2e-$(BUILD_REF) api npm run test:e2e:api
+	@mkdir -p coverage/api
+	@docker cp api-e2e-$(BUILD_REF):app/apps/api/coverage/clover.xml coverage/api
+	@docker rm api-e2e-$(BUILD_REF)
 	@docker-compose down --rmi all -v
 
 e2e-tests-workers:
 	@echo "+\n++ Make: Starting containers for Workers E2E tests \n+"
-	@docker-compose run --name workers-e2e workers npm run test:e2e:workers
-	@mkdir -p ./coverage/workers
-	@docker cp workers-e2e:app/apps/workers/coverage/clover.xml ./coverage/workers
-	@docker rm workers-e2e
+	@docker-compose run --name workers-e2e-$(BUILD_REF) workers npm run test:e2e:workers
+	@mkdir -p coverage/workers
+	@docker cp workers-e2e-$(BUILD_REF):app/apps/workers/coverage/clover.xml coverage/workers
+	@docker rm workers-e2e-$(BUILD_REF)
 	@docker-compose down --rmi all -v
 	
 e2e-tests-queue-consumers:
