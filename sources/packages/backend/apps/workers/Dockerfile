@@ -3,24 +3,25 @@ FROM registry.access.redhat.com/ubi8/nodejs-16:1-5
 
 LABEL maintainer="BC GOV"
 
-# Copying package.json and package-lock.json
-COPY ./package*.json ./
+# Copying root files to image workdir.
+COPY /*.json /*.js ./
 
 # Installing dependencies
 RUN npm ci
 
-# Copying sources
-COPY . .
+# Copying sources.
+COPY ./apps/workers ./apps/workers
+COPY ./apps/db-migrations ./apps/db-migrations
+COPY ./libs ./libs
 
 # Building app
 RUN npm run build workers
 
-# Adding a nonroot user
-RUN addgroup -S nonroot \
-    && adduser -S nonroot -G nonroot
+# Ensure that the non-root user will be able to write the coverage report.
+RUN mkdir -p /app/apps/workers/coverage/ && chown node /app/apps/workers/coverage/
 
-# Switching to the added nonroot user
-USER nonroot
+# Executing the image with a non-root user.
+USER node
 
 # Entry point
 CMD [ "npm", "run", "start:prod:workers" ]

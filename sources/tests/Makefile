@@ -5,11 +5,6 @@ export $(shell sed 's/=.*//' ../../.env)
 # Override values from the global .env file.
 export $(shell sed 's/=.*//' .env-e2e-tests)
 
-DOCKER_USER_UID := 10001
-DOCKER_USER_GID := 10001
-export DOCKER_USER_UID
-export DOCKER_USER_GID
-
 backend-unit-tests:
 	@cd ../packages/backend && npm i && npm run test:cov
 
@@ -31,7 +26,10 @@ e2e-tests-workers:
 	
 e2e-tests-queue-consumers:
 	@echo "+\n++ Make: Starting containers for Queue Consumers E2E tests \n+"
-	@docker-compose run --name queue-consumers-e2e-$(BUILD_REF) --rm queue-consumers npm run test:e2e:queue-consumers
+	@docker-compose run --name queue-consumers-e2e-$(BUILD_REF) queue-consumers npm run test:e2e:queue-consumers
+	@mkdir -p coverage/queue-consumers
+	@docker cp queue-consumers-e2e-$(BUILD_REF):app/apps/queue-consumers/coverage/clover.xml coverage/queue-consumers
+	@docker rm queue-consumers-e2e-$(BUILD_REF)
 	@docker-compose down --rmi all -v
 
 e2e-tests-workflow:
