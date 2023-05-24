@@ -5,27 +5,25 @@ LABEL maintainer="BC GOV"
 
 WORKDIR /app
 
-# Updating container path variable with node bin
-ENV PATH $PATH:/app/node_modules/.bin
+# Copying root files to image workdir.
+COPY package.json package-lock.json tsconfig.json ./env-setup.js ./
 
-# Copying package.json and package-lock.json
-COPY ./*.json ./
-
-# Installing dependencies
+# Installing dependencies.
 RUN npm ci
 
-# Copying sources
+# Copying sources.
 COPY ./apps/workers ./apps/workers
 COPY ./apps/db-migrations ./apps/db-migrations
 COPY ./libs ./libs
-COPY ./env-setup.js ./
 
-# Building app
+# Building app.
 RUN npm run build workers
 
-RUN mkdir -p /app/apps/workers/coverage/ && chown node:node /app/apps/workers/coverage/
+# Ensure that the non-root user will be able to write the coverage report.
+RUN mkdir -p /app/apps/workers/coverage/ && chown node /app/apps/workers/coverage/
 
-USER node:node
+# Executing the image with a non-root user.
+USER node
 
-# Entry point
+# Entrypoint
 CMD [ "npm", "run", "docker:start:workers" ]
