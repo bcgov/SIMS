@@ -20,7 +20,7 @@ e2e-tests-api:
 
 e2e-tests-workers:
 	@echo "+\n++ Make: Starting containers for Workers E2E tests \n+"
-	@sudo mkdir -p /app/apps/workers/coverage/ && chown $DOCKER_USER_UID:$DOCKER_USER_GID /app/apps/workers/coverage/
+	@sudo mkdir -p /app/apps/workers/coverage/ && chown $(DOCKER_USER_UID):$(DOCKER_USER_GID) /app/apps/workers/coverage/
 	@docker-compose run --name workers-e2e --rm workers npm run test:e2e:workers
 	@docker-compose down --rmi all -v
 	
