@@ -79,6 +79,9 @@ services:
     build:
       context: ../packages/backend
       dockerfile: ./apps/workers/Dockerfile.dev
+      args:
+        UID: ${DOCKER_USER_UID}
+        GID: ${DOCKER_USER_GID}
     environment:
       - NODE_ENV=docker
       - POSTGRES_HOST=postgres

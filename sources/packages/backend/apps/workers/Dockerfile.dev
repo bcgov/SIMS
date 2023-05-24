@@ -3,19 +3,31 @@ FROM node:16.17.0-alpine3.16
 
 LABEL maintainer="BC GOV"
 
+ARG UNAME=nonroot
+ARG UID
+ARG GID
+
+RUN addgroup -S $UNAME -g $GID \
+    && adduser -S -G $UNAME -u $UID $UNAME
+
+RUN mkdir /app && chown $UID:$GID /app
+RUN mkdir -p /app/apps/workers/coverage/ && chown $UID:$GID /app/apps/workers/coverage/
+
+USER $UID:$GID
+
 WORKDIR /app
 
 # Updating container path variable with node bin
 ENV PATH $PATH:/app/node_modules/.bin
 
 # Copying package.json and package-lock.json
-COPY ./package*.json ./
+COPY --chown=$UID:$GID ./package*.json ./
 
 # Installing dependencies
 RUN npm ci
 
 # Copying sources
-COPY . .
+COPY --chown=$UID:$GID . .
 
 # Building app
 RUN npm run build workers
