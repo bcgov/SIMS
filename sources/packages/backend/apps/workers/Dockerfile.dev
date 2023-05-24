@@ -3,27 +3,34 @@ FROM node:16.17.0-alpine3.16
 
 LABEL maintainer="BC GOV"
 
-RUN mkdir /app && chown node:node /app
-RUN mkdir -p /app/apps/workers/coverage/ && chown node:node /app/apps/workers/coverage/
+ARG UNAME=nonroot
+ARG UID=10001
+ARG GID=10001
+
+RUN addgroup -S $UNAME -g $GID \
+    && adduser -S -G $UNAME -u $UID $UNAME
+
+RUN mkdir /app && chown $UID:$GID /app
+RUN mkdir -p /app/apps/workers/coverage/ && chown $UID:$GID /app/apps/workers/coverage/
 
 WORKDIR /app
-
-USER node
 
 # Updating container path variable with node bin
 ENV PATH $PATH:/app/node_modules/.bin
 
 # Copying package.json and package-lock.json
-COPY --chown=node:node ./package*.json ./
+COPY --chown=$UID:$GID ./package*.json ./
 
 # Installing dependencies
 RUN npm ci
 
 # Copying sources
-COPY --chown=node:node . .
+COPY --chown=$UID:$GID . .
 
 # Building app
 RUN npm run build workers
+
+USER $UNAME
 
 # Entry point
 CMD [ "npm", "run", "docker:start:workers" ]
