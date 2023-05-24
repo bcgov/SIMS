@@ -26,7 +26,6 @@ e2e-tests-workers:
 	@docker rm workers-e2e
 	@docker-compose down --rmi all -v
 	
-	
 e2e-tests-queue-consumers:
 	@echo "+\n++ Make: Starting containers for Queue Consumers E2E tests \n+"
 	@docker-compose run --name queue-consumers-e2e-$(BUILD_REF) --rm queue-consumers npm run test:e2e:queue-consumers
