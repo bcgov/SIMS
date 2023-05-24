@@ -15,7 +15,7 @@ WORKDIR /app
 COPY /*.json /*.js ./
 
 # Installing dependencies
-RUN npm ci --ignore-scripts
+RUN npm ci
 
 # Copying sources.
 COPY ./apps/api ./apps/api
