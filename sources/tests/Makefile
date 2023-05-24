@@ -15,7 +15,7 @@ e2e-tests-api:
 
 e2e-tests-workers:
 	@echo "+\n++ Make: Starting containers for Workers E2E tests \n+"
-	@mkdir /coverage && chown 10001:10001 -R /coverage
+	@chown 10001:10001 -R /coverage
 	@docker-compose run --name workers-e2e --rm workers npm run test:e2e:workers
 	@docker-compose down --rmi all -v
 
