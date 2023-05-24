@@ -5,8 +5,8 @@ export $(shell sed 's/=.*//' ../../.env)
 # Override values from the global .env file.
 export $(shell sed 's/=.*//' .env-e2e-tests)
 
-DOCKER_USER_UID := $(shell id -u)
-DOCKER_USER_GID := $(shell id -g)
+DOCKER_USER_UID := 10001
+DOCKER_USER_GID := 10001
 export DOCKER_USER_UID
 export DOCKER_USER_GID
 
