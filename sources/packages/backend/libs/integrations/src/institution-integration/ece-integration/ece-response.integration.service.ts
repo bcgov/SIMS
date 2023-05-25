@@ -81,7 +81,7 @@ export class ECEResponseIntegrationService extends SFTPIntegrationBase<
     }
     const records: ECEResponseFileDetail[] = [];
     fileLines.forEach((line, index) => {
-      const record = new ECEResponseFileDetail(line, index + 1);
+      const record = new ECEResponseFileDetail(line, index + 2);
       records.push(record);
     });
     return records;
