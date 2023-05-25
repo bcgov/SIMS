@@ -107,12 +107,14 @@ describe(
         "Disbursements failed to process: 0",
         `The file ${confirmEnrolmentResponseFile} has been deleted after processing.`,
       ];
-      expect(sftpClientMock.delete).toHaveBeenCalled();
       expect(processResult).toStrictEqual([expectedResult]);
+      // Expect the delete method to be called.
+      expect(sftpClientMock.delete).toHaveBeenCalled();
     });
 
     it("Should process an ECE response file and decline the enrolment when the disbursement and application is valid.", async () => {
       // Arrange
+      // Mock institution code to decline the enrolment.
       const confirmEnrolmentInstitutionCode = "DECL";
       const confirmEnrolmentResponseFile = path.join(
         process.env.INSTITUTION_RESPONSE_FOLDER,
@@ -166,8 +168,9 @@ describe(
         "Disbursements failed to process: 0",
         `The file ${confirmEnrolmentResponseFile} has been deleted after processing.`,
       ];
-      expect(sftpClientMock.delete).toHaveBeenCalled();
       expect(processResult).toStrictEqual([expectedResult]);
+      // Expect the delete method to be called.
+      expect(sftpClientMock.delete).toHaveBeenCalled();
     });
 
     it("Should skip the ECE disbursement when the enrolment is already completed.", async () => {
@@ -229,8 +232,9 @@ describe(
       expectedResult.warnings = [
         `Disbursement ${disbursement.id}, record is considered as duplicate and skipped due to reason: Enrolment already completed and can neither be confirmed nor declined`,
       ];
-      expect(sftpClientMock.delete).toHaveBeenCalled();
       expect(processResult).toStrictEqual([expectedResult]);
+      // Expect the delete method to be called.
+      expect(sftpClientMock.delete).toHaveBeenCalled();
     });
 
     it("Should skip the ECE disbursement when disbursement and disbursement does not belong to the system.", async () => {
@@ -278,8 +282,9 @@ describe(
       expectedResult.warnings = [
         `Disbursement ${fakeDisbursementId}, record skipped due to reason: Enrolment not found.`,
       ];
-      expect(sftpClientMock.delete).toHaveBeenCalled();
       expect(processResult).toStrictEqual([expectedResult]);
+      // Expect the delete method to be called.
+      expect(sftpClientMock.delete).toHaveBeenCalled();
     });
 
     it("Should skip the ECE disbursement when disbursement and application does not belong to the system.", async () => {
@@ -342,8 +347,9 @@ describe(
       expectedResult.warnings = [
         `Disbursement ${disbursement.id}, record skipped due to reason: Enrolment for the given application not found.`,
       ];
-      expect(sftpClientMock.delete).toHaveBeenCalled();
       expect(processResult).toStrictEqual([expectedResult]);
+      // Expect the delete method to be called.
+      expect(sftpClientMock.delete).toHaveBeenCalled();
     });
 
     it("Should stop processing the ECE response file when the header record is not valid.", async () => {
@@ -384,8 +390,9 @@ describe(
       expectedResult.errors = [
         `Error processing the file ${confirmEnrolmentResponseFile}. Error: The ECE response file has an invalid record type on header: 2`,
       ];
-      expect(sftpClientMock.delete).toHaveBeenCalled();
       expect(processResult).toStrictEqual([expectedResult]);
+      // Expect the delete method to be called.
+      expect(sftpClientMock.delete).toHaveBeenCalled();
     });
 
     it("Should stop processing the ECE response file when the detail record is not valid.", async () => {
@@ -427,8 +434,9 @@ describe(
         "Invalid record type on detail: 3 at line 1.",
         `Error processing the file ${confirmEnrolmentResponseFile}. Error: The file consists invalid data and cannot be processed.`,
       ];
-      expect(sftpClientMock.delete).toHaveBeenCalled();
       expect(processResult).toStrictEqual([expectedResult]);
+      // Expect the delete method to be called.
+      expect(sftpClientMock.delete).toHaveBeenCalled();
     });
 
     it("Should stop processing the ECE response file when the footer record is not valid.", async () => {
@@ -469,8 +477,9 @@ describe(
       expectedResult.errors = [
         `Error processing the file ${confirmEnrolmentResponseFile}. Error: The ECE response file has an invalid record type on footer: 4`,
       ];
-      expect(sftpClientMock.delete).toHaveBeenCalled();
       expect(processResult).toStrictEqual([expectedResult]);
+      // Expect the delete method to be called.
+      expect(sftpClientMock.delete).toHaveBeenCalled();
     });
 
     it("Should stop processing the ECE response file when the count of detail in the footer record is incorrect.", async () => {
@@ -511,8 +520,9 @@ describe(
       expectedResult.errors = [
         `Error processing the file ${confirmEnrolmentResponseFile}. Error: The total count of detail records mentioned in the footer record does not match with the actual total details records count.`,
       ];
-      expect(sftpClientMock.delete).toHaveBeenCalled();
       expect(processResult).toStrictEqual([expectedResult]);
+      // Expect the delete method to be called.
+      expect(sftpClientMock.delete).toHaveBeenCalled();
     });
 
     it("Should stop processing the ECE response file when one of the detail records have invalid data.", async () => {
@@ -556,8 +566,9 @@ describe(
         "Invalid unique index number for the disbursement record, Invalid application number at line 1.",
         `Error processing the file ${confirmEnrolmentResponseFile}. Error: The file consists invalid data and cannot be processed.`,
       ];
-      expect(sftpClientMock.delete).toHaveBeenCalled();
       expect(processResult).toStrictEqual([expectedResult]);
+      // Expect the delete method to be called.
+      expect(sftpClientMock.delete).toHaveBeenCalled();
     });
   },
 );
