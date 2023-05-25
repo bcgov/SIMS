@@ -17,7 +17,7 @@ COPY ./libs ./libs
 RUN npm run build workers
 
 # Executing the image with a non-root user.
-USER node
+USER 1001
 
 # Entry point
 CMD [ "npm", "run", "start:prod:workers" ]
