@@ -5,13 +5,10 @@ import { createFakeInstitution } from "./institution";
 /**
  * Create fake institution location.
  * @param institution institution.
- * @param options institution location options.
- * - `institutionCode` institution code.
  * @returns institution location
  */
 export function createFakeInstitutionLocation(
   institution?: Institution,
-  options?: { institutionCode?: string },
 ): InstitutionLocation {
   const institutionLocation = new InstitutionLocation();
 
@@ -33,12 +30,10 @@ export function createFakeInstitutionLocation(
     email: faker.internet.email(),
     phone: faker.phone.phoneNumber("##########"),
   };
-  institutionLocation.institutionCode =
-    options?.institutionCode ??
-    faker.random.alpha({
-      count: 4,
-      upcase: true,
-    });
+  institutionLocation.institutionCode = faker.random.alpha({
+    count: 4,
+    upcase: true,
+  });
   return institutionLocation;
 }
 

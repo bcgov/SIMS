@@ -9,8 +9,6 @@ import { ECEResponseIntegrationScheduler } from "../ece-response-integration.sch
 import {
   E2EDataSources,
   createE2EDataSources,
-  createFakeInstitution,
-  createFakeInstitutionLocation,
   formatDate,
   mockDownloadFiles,
   saveFakeApplicationDisbursements,
@@ -20,11 +18,11 @@ import { Job } from "bull";
 import * as path from "path";
 import { ECE_RESPONSE_FILE_NAME } from "@sims/integrations/constants";
 import { ProcessSummaryResult } from "@sims/integrations/models";
+import { ApplicationStatus, InstitutionLocation } from "@sims/sims-db";
 import {
-  ApplicationStatus,
-  Institution,
-  InstitutionLocation,
-} from "@sims/sims-db";
+  createInstitutionLocations,
+  enableIntegration,
+} from "./ece-response-helper";
 
 describe(
   describeProcessorRootTest(QueueNames.ECEProcessResponseIntegration),
@@ -571,92 +569,3 @@ describe(
     });
   },
 );
-
-/**
- * Create institution locations to be used for testing.
- * @param e2eDataSources e2e data sources.
- * @returns institution locations.
- */
-async function createInstitutionLocations(
-  e2eDataSources: E2EDataSources,
-): Promise<{
-  institutionLocationCONF: InstitutionLocation;
-  institutionLocationDECL: InstitutionLocation;
-  institutionLocationSKIP: InstitutionLocation;
-  institutionLocationFAIL: InstitutionLocation;
-}> {
-  const institution = await e2eDataSources.institution.save(
-    createFakeInstitution(),
-  );
-  const institutionLocationCONF = await findOrCreateInstitutionLocation(
-    institution,
-    "CONF",
-    e2eDataSources,
-  );
-  const institutionLocationDECL = await findOrCreateInstitutionLocation(
-    institution,
-    "DECL",
-    e2eDataSources,
-  );
-
-  const institutionLocationSKIP = await findOrCreateInstitutionLocation(
-    institution,
-    "SKIP",
-    e2eDataSources,
-  );
-
-  const institutionLocationFAIL = await findOrCreateInstitutionLocation(
-    institution,
-    "FAIL",
-    e2eDataSources,
-  );
-
-  return {
-    institutionLocationCONF,
-    institutionLocationDECL,
-    institutionLocationSKIP,
-    institutionLocationFAIL,
-  };
-}
-
-/**
- * Look for an existing institution location by institution code
- * if not found create one.
- * @param institution institution.
- * @param institutionCode institution code.
- * @param e2eDataSources e2e data sources.
- * @returns institution location.
- */
-async function findOrCreateInstitutionLocation(
-  institution: Institution,
-  institutionCode: string,
-  e2eDataSources: E2EDataSources,
-): Promise<InstitutionLocation> {
-  let institutionLocation = await e2eDataSources.institutionLocation.findOne({
-    select: { id: true, institutionCode: true },
-    where: { institutionCode },
-  });
-  if (!institutionLocation) {
-    institutionLocation = await e2eDataSources.institutionLocation.save(
-      createFakeInstitutionLocation(institution, { institutionCode }),
-    );
-  }
-  return institutionLocation;
-}
-
-/**
- * Enable integration for the given institution location.
- * @param institutionLocation institution location.
- * @param e2eDataSources e2e data sources.
- */
-async function enableIntegration(
-  institutionLocation: InstitutionLocation,
-  e2eDataSources: E2EDataSources,
-): Promise<void> {
-  await e2eDataSources.institutionLocation.update(
-    {
-      id: institutionLocation.id,
-    },
-    { hasIntegration: true },
-  );
-}
