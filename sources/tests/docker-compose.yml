@@ -64,8 +64,6 @@ services:
       - E2E_TEST_AEST_READ_ONLY_USER=${E2E_TEST_AEST_READ_ONLY_USER}
       - E2E_TEST_PASSWORD=${E2E_TEST_PASSWORD}
       - DISABLE_ORM_CACHE=${DISABLE_ORM_CACHE}
-    volumes:
-      - ./coverage/api:/app/apps/api/coverage
     networks:
       - local-network-tests
     restart: always
@@ -96,8 +94,6 @@ services:
       - REDIS_PASSWORD=${REDIS_PASSWORD}
       - REDIS_STANDALONE_MODE=${REDIS_STANDALONE_MODE}
       - DISABLE_ORM_CACHE=${DISABLE_ORM_CACHE}
-    volumes:
-      - ./coverage/workers:/app/apps/workers/coverage
     networks:
       - local-network-tests
     restart: always
@@ -155,8 +151,6 @@ services:
       - APPLICATION_ARCHIVE_DAYS=${APPLICATION_ARCHIVE_DAYS}
       - QUEUE_CONSUMERS_PORT=${QUEUE_CONSUMERS_PORT}
       - DISABLE_ORM_CACHE=${DISABLE_ORM_CACHE}
-    volumes:
-      - ./coverage/queue-consumers:/app/apps/queue-consumers/coverage
     networks:
       - local-network-tests
     restart: always
@@ -177,7 +171,7 @@ services:
     networks:
       - local-network-tests
   # - Postgres
-   # - services
+  # - services
   # Networks
 networks:
   local-network-tests:

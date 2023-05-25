@@ -3,22 +3,27 @@ FROM node:16.17.0-alpine3.16
 
 LABEL maintainer="BC GOV"
 
-# Updating container path variable with node bin
-ENV PATH $PATH:/app/node_modules/.bin
-
 WORKDIR /app
 
-# Copying package.json and package-lock.json
-COPY ./package*.json ./
+# Copying root files to image workdir.
+COPY /*.json /*.js ./
 
-# Installing dependencies
+# Installing dependencies.
 RUN npm ci
 
-# Copying sources
-COPY . .
+# Copying sources.
+COPY ./apps/workers ./apps/workers
+COPY ./apps/db-migrations ./apps/db-migrations
+COPY ./libs ./libs
 
-# Building app
+# Building app.
 RUN npm run build workers
 
-# Entry point
+# Ensure that the non-root user will be able to write the coverage report.
+RUN mkdir -p /app/apps/workers/coverage/ && chown node /app/apps/workers/coverage/
+
+# Executing the image with a non-root user.
+USER node
+
+# Entrypoint
 CMD [ "npm", "run", "docker:start:workers" ]
