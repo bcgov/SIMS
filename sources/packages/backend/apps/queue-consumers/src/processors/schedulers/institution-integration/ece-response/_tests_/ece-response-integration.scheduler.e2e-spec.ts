@@ -4,7 +4,6 @@ import { QueueNames } from "@sims/utilities";
 import {
   createTestingAppModule,
   describeProcessorRootTest,
-  formatDate,
 } from "../../../../../../test/helpers";
 import { ECEResponseIntegrationScheduler } from "../ece-response-integration.scheduler";
 import {
@@ -12,6 +11,7 @@ import {
   createE2EDataSources,
   createFakeInstitution,
   createFakeInstitutionLocation,
+  formatDate,
   mockDownloadFiles,
   saveFakeApplicationDisbursements,
 } from "@sims/test-utils";
