@@ -25,11 +25,10 @@ import {
   Institution,
   InstitutionLocation,
 } from "@sims/sims-db";
-import { getDateOnlyFormat, getUserFullName } from "@sims/utilities";
+import { getDateOnlyFormat } from "@sims/utilities";
 import { MASKED_MSFAA_NUMBER } from "@sims/services/constants";
 import { saveStudentApplicationForCollegeC } from "../../../student/_tests_/e2e/student.institutions.utils";
-
-jest.setTimeout(99999999);
+import { getUserFullName } from "../../../../utilities";
 
 describe("AssessmentInstitutionsController(e2e)-getAssessmentNOA", () => {
   let app: INestApplication;
@@ -186,7 +185,6 @@ describe("AssessmentInstitutionsController(e2e)-getAssessmentNOA", () => {
 
     // Student has an application to the institution eligible for NOA.
     const student = await saveFakeStudent(db.dataSource);
-
     const currentMSFAA = createFakeMSFAANumber(
       { student },
       {
@@ -194,7 +192,7 @@ describe("AssessmentInstitutionsController(e2e)-getAssessmentNOA", () => {
       },
     );
     await db.msfaaNumber.save(currentMSFAA);
-    const application = await saveFakeApplicationDisbursements(db.dataSource, {
+    await saveFakeApplicationDisbursements(db.dataSource, {
       institution: collegeF,
       institutionLocation: collegeFLocation,
       student,

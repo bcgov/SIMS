@@ -1,10 +1,4 @@
-import { StudentAssessment } from "@sims/sims-db";
-
-export enum StudentAssessmentStatus {
-  Submitted = "Submitted",
-  InProgress = "In Progress",
-  Completed = "Completed",
-}
+import { StudentAssessment, StudentAssessmentStatus } from "@sims/sims-db";
 
 /**
  * Service model to fetch Assessment History.

@@ -1,4 +1,3 @@
-import { StudentAssessmentStatus } from "../../../services/student-assessment/student-assessment.models";
 import {
   ApplicationExceptionStatus,
   ApplicationStatus,
@@ -8,6 +7,7 @@ import {
   OfferingIntensity,
   OfferingStatus,
   StudentAppealStatus,
+  StudentAssessmentStatus,
 } from "@sims/sims-db";
 import { ApiProperty } from "@nestjs/swagger";
 
