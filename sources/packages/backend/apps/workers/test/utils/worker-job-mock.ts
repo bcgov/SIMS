@@ -12,6 +12,8 @@ export enum MockedZeebeJobResult {
 }
 
 export const FAKE_WORKER_JOB_RESULT_PROPERTY = "resultType";
+export const FAKE_WORKER_JOB_ERROR_MESSAGE_PROPERTY = "errorMessage";
+export const FAKE_WORKER_JOB_ERROR_CODE_PROPERTY = "errorCode";
 
 export interface FakeWorkerJobResult {
   [FAKE_WORKER_JOB_RESULT_PROPERTY]: MockedZeebeJobResult;
