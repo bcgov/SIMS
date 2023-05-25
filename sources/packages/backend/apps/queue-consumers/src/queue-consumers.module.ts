@@ -23,6 +23,8 @@ import {
   SFASIntegrationScheduler,
   ATBCResponseIntegrationScheduler,
   ProcessArchiveApplicationsScheduler,
+  ECEProcessIntegrationScheduler,
+  ECEResponseIntegrationScheduler,
 } from "./processors";
 import {
   DisbursementScheduleSharedService,
@@ -53,7 +55,6 @@ import { StudentAssessmentService, ApplicationService } from "./services";
 import { SFASIntegrationModule } from "@sims/integrations/sfas-integration";
 import { ATBCIntegrationModule } from "@sims/integrations/atbc-integration";
 import { ECEIntegrationModule } from "@sims/integrations/institution-integration/ece-integration";
-import { ECEProcessIntegrationScheduler } from "./processors/schedulers/institution-integration/ece-request/ece-process-integration.scheduler";
 
 @Module({
   imports: [
@@ -107,6 +108,7 @@ import { ECEProcessIntegrationScheduler } from "./processors/schedulers/institut
     FullTimeMSFAAProcessResponseIntegrationScheduler,
     PartTimeMSFAAProcessResponseIntegrationScheduler,
     ProcessArchiveApplicationsScheduler,
+    ECEResponseIntegrationScheduler,
     SystemUsersService,
     ApplicationService,
     ConfirmationOfEnrollmentService,

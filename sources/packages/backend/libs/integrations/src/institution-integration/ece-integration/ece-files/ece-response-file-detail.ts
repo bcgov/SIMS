@@ -64,10 +64,10 @@ export class ECEResponseFileDetail extends ECEResponseFileRecord {
   getInvalidDataMessage(): string | undefined {
     const errors: string[] = [];
     if (isNaN(this.disbursementIdentifier)) {
-      errors.push("invalid unique index number for the disbursement record.");
+      errors.push("Invalid unique index number for the disbursement record.");
     }
-    if (!this.applicationNumber) {
-      errors.push("application number not found or invalid.");
+    if (!this.applicationNumber?.trim()) {
+      errors.push("Invalid application number.");
     }
     return errors.length ? errors.join(", ") : undefined;
   }

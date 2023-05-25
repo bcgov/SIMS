@@ -24,3 +24,4 @@ export * from "./schedulers/esdc-integration/msfaa-integration/msfaa-part-time-p
 export * from "./schedulers/sfas-integration/sfas-integration.scheduler";
 export * from "./schedulers/atbc-respone-integration/atbc-response-integration.scheduler";
 export * from "./schedulers/application/process-archive-application.scheduler";
+export * from "./schedulers/institution-integration/ece-response/ece-response-integration.scheduler";

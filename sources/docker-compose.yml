@@ -61,7 +61,6 @@ services:
       - ${API_PORT}:${API_PORT}
     volumes:
       - ./packages/backend/apps/api/src:/app/src
-      - ./packages/backend/coverage/api:/app/apps/api/coverage
     networks:
       - local-network
     restart: always
@@ -94,7 +93,6 @@ services:
       - REDIS_STANDALONE_MODE=${REDIS_STANDALONE_MODE}
     volumes:
       - ./packages/backend/apps/workers/src:/app/src
-      - ./packages/backend/coverage/workers:/app/apps/workers/coverage
     networks:
       - local-network
     restart: always
@@ -156,7 +154,6 @@ services:
       - ${QUEUE_CONSUMERS_PORT}:${QUEUE_CONSUMERS_PORT}
     volumes:
       - ./packages/backend/apps/queue-consumers/src:/app/src
-      - ./packages/backend/coverage/queue-consumers:/app/apps/queue-consumers/coverage
     networks:
       - local-network
     restart: always

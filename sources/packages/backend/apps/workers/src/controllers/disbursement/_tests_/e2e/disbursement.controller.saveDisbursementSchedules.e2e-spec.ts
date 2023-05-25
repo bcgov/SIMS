@@ -1,6 +1,4 @@
-import { Test, TestingModule } from "@nestjs/testing";
 import {
-  Application,
   ApplicationStatus,
   AssessmentTriggerType,
   DisbursementOveraward,
@@ -8,71 +6,44 @@ import {
   DisbursementSchedule,
   DisbursementScheduleStatus,
   DisbursementValueType,
-  EducationProgramOffering,
-  Student,
-  StudentAssessment,
-  User,
 } from "@sims/sims-db";
 import {
+  createE2EDataSources,
   createFakeApplication,
   createFakeDisbursementOveraward,
   createFakeEducationProgramOffering,
   createFakeStudent,
   createFakeStudentAssessment,
   createFakeUser,
+  E2EDataSources,
 } from "@sims/test-utils";
 import { createFakeDisbursementSchedule } from "@sims/test-utils/factories/disbursement-schedule";
 import { createFakeDisbursementValue } from "@sims/test-utils/factories/disbursement-value";
-import { DataSource, Repository } from "typeorm";
-import { ZBClient } from "zeebe-node";
-import { WorkersModule } from "../../../workers.module";
 import { createFakeSaveDisbursementSchedulesPayload } from "./save-disbursement-schedules-payloads";
-import { DisbursementController } from "../disbursement.controller";
+import { DisbursementController } from "../../disbursement.controller";
 import {
   FAKE_WORKER_JOB_RESULT_PROPERTY,
   MockedZeebeJobResult,
-} from "../../../../test/utils/worker-job-mock";
+} from "../../../../../test/utils/worker-job-mock";
+import { createTestingAppModule } from "../../../../../test/helpers";
 
-describe("Disbursement Schedule Service - Create disbursement", () => {
-  let userRepo: Repository<User>;
-  let studentRepo: Repository<Student>;
-  let applicationRepo: Repository<Application>;
-  let studentAssessmentRepo: Repository<StudentAssessment>;
-  let educationProgramOfferingRepo: Repository<EducationProgramOffering>;
-  let disbursementOverawardRepo: Repository<DisbursementOveraward>;
-  let disbursementScheduleRepo: Repository<DisbursementSchedule>;
+describe("DisbursementController(e2e)-saveDisbursementSchedules", () => {
+  let db: E2EDataSources;
   let disbursementController: DisbursementController;
 
   beforeAll(async () => {
-    const moduleFixture: TestingModule = await Test.createTestingModule({
-      imports: [WorkersModule],
-    })
-      .overrideProvider(ZBClient)
-      .useValue({})
-      .compile();
-    const app = moduleFixture.createNestApplication();
-    await app.init();
-
-    const dataSource = app.get(DataSource);
-    userRepo = dataSource.getRepository(User);
-    studentRepo = dataSource.getRepository(Student);
-    applicationRepo = dataSource.getRepository(Application);
-    studentAssessmentRepo = dataSource.getRepository(StudentAssessment);
-    educationProgramOfferingRepo = dataSource.getRepository(
-      EducationProgramOffering,
-    );
-    disbursementOverawardRepo = dataSource.getRepository(DisbursementOveraward);
-    disbursementScheduleRepo = dataSource.getRepository(DisbursementSchedule);
-    disbursementController = app.get(DisbursementController);
+    const { nestApplication, dataSource } = await createTestingAppModule();
+    db = createE2EDataSources(dataSource);
+    disbursementController = nestApplication.get(DisbursementController);
   });
 
   it("Should generate an overaward when a reassessment happens and the student is entitled to less money", async () => {
     // Arrange
-    const savedUser = await userRepo.save(createFakeUser());
-    const savedStudent = await studentRepo.save(createFakeStudent(savedUser));
+    const savedUser = await db.user.save(createFakeUser());
+    const savedStudent = await db.student.save(createFakeStudent(savedUser));
     const fakeApplication = createFakeApplication({ student: savedStudent });
     fakeApplication.applicationNumber = "OA_TEST001";
-    const savedApplication = await applicationRepo.save(fakeApplication);
+    const savedApplication = await db.application.save(fakeApplication);
     // Original assessment.
     const fakeOriginalAssessment = createFakeStudentAssessment({
       auditUser: savedUser,
@@ -120,7 +91,7 @@ describe("Disbursement Schedule Service - Create disbursement", () => {
       secondSchedule,
     ];
     // Reassessment.
-    const savedOffering = await educationProgramOfferingRepo.save(
+    const savedOffering = await db.educationProgramOffering.save(
       createFakeEducationProgramOffering({ auditUser: savedUser }),
     );
     const fakeReassessment = createFakeStudentAssessment({
@@ -130,20 +101,20 @@ describe("Disbursement Schedule Service - Create disbursement", () => {
     fakeReassessment.triggerType = AssessmentTriggerType.OfferingChange;
     fakeReassessment.application = savedApplication;
     const [savedOriginalAssessment, savedReassessment] =
-      await studentAssessmentRepo.save([
+      await db.studentAssessment.save([
         fakeOriginalAssessment,
         fakeReassessment,
       ]);
     savedApplication.currentAssessment = fakeReassessment;
     savedApplication.applicationStatus = ApplicationStatus.Completed;
-    await applicationRepo.save(savedApplication);
+    await db.application.save(savedApplication);
 
     const fakeOverawardForSameApplication = createFakeDisbursementOveraward();
     fakeOverawardForSameApplication.student = savedStudent;
     fakeOverawardForSameApplication.studentAssessment = savedOriginalAssessment;
     fakeOverawardForSameApplication.originType =
       DisbursementOverawardOriginType.ReassessmentOveraward;
-    const preExistingOveraward = await disbursementOverawardRepo.save(
+    const preExistingOveraward = await db.disbursementOveraward.save(
       fakeOverawardForSameApplication,
     );
 
@@ -163,7 +134,7 @@ describe("Disbursement Schedule Service - Create disbursement", () => {
     // Assert overawards for the same application were deleted.
     // Deleted means deletedAt has a value defined.
     const softDeletedPreExistingOveraward =
-      await disbursementOverawardRepo.findOne({
+      await db.disbursementOveraward.findOne({
         select: {
           id: true,
           deletedAt: true,
@@ -176,7 +147,7 @@ describe("Disbursement Schedule Service - Create disbursement", () => {
     expect(softDeletedPreExistingOveraward).toBeDefined();
     expect(softDeletedPreExistingOveraward.deletedAt).toBeTruthy();
 
-    const createdDisbursements = await disbursementScheduleRepo.find({
+    const createdDisbursements = await db.disbursementSchedule.find({
       relations: {
         disbursementValues: true,
       },
@@ -219,7 +190,7 @@ describe("Disbursement Schedule Service - Create disbursement", () => {
     );
 
     // Overaward asserts
-    const overawards = await disbursementOverawardRepo.find({
+    const overawards = await db.disbursementOveraward.find({
       where: { student: { id: savedStudent.id } },
     });
     // Assert overaward not created for grants.
@@ -231,7 +202,7 @@ describe("Disbursement Schedule Service - Create disbursement", () => {
     assertOveraward(overawards, "BCSL", 150);
   });
 
-  async function assertAwardDeduction(
+  function assertAwardDeduction(
     createdDisbursement: DisbursementSchedule,
     valueType: DisbursementValueType,
     assertValues: {
@@ -249,7 +220,7 @@ describe("Disbursement Schedule Service - Create disbursement", () => {
     );
   }
 
-  async function assertOveraward(
+  function assertOveraward(
     overawards: DisbursementOveraward[],
     awardCode: string,
     awardValue: number,

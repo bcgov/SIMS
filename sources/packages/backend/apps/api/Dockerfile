@@ -6,20 +6,24 @@ LABEL maintainer="BC GOV"
 # Application Port
 ENV PORT 3000
 
-# Copying package.json and package-lock.json
-COPY ./package*.json ./
+# Copying root files to image workdir.
+COPY /*.json /*.js ./
 
 # Installing dependencies
 RUN npm ci
 
-# Copying sources
-COPY . .
+# Copying sources.
+COPY ./apps/api ./apps/api
+COPY ./libs ./libs
 
 # Building app
 RUN npm run build api
 
 # Exposing application port
 EXPOSE ${PORT}
+
+# Executing the image with a non-root user.
+USER node
 
 # Entry point
 CMD [ "npm", "run", "start:prod:api" ]
