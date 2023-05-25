@@ -178,7 +178,7 @@ export class ECEResponseProcessingService {
       if (errorMessage) {
         hasErrors = true;
         processSummaryResult.errors.push(
-          `${errorMessage} Error at line ${eceDetailRecord.lineNumber}.`,
+          `${errorMessage} at line ${eceDetailRecord.lineNumber}.`,
         );
       }
     }
