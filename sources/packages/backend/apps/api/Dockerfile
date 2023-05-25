@@ -23,7 +23,7 @@ RUN npm run build api
 EXPOSE ${PORT}
 
 # Executing the image with a non-root user.
-USER node
+USER 1001
 
 # Entry point
 CMD [ "npm", "run", "start:prod:api" ]
