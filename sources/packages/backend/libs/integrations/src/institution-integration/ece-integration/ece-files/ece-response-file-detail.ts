@@ -1,6 +1,6 @@
 import { getDateOnlyFromFormat } from "@sims/utilities";
 import { ECEResponseFileRecord } from "./ece-response-file-record";
-import { DATE_FORMAT } from "../models/ece-integration.model";
+import { DATE_FORMAT, RecordTypeCodes } from "../models/ece-integration.model";
 
 /**
  * ECE response file detail.
@@ -63,6 +63,9 @@ export class ECEResponseFileDetail extends ECEResponseFileRecord {
    */
   getInvalidDataMessage(): string | undefined {
     const errors: string[] = [];
+    if (this.recordType !== RecordTypeCodes.ECEDetail) {
+      errors.push(`Invalid record type on detail: ${this.recordType}.`);
+    }
     if (isNaN(this.disbursementIdentifier)) {
       errors.push("Invalid unique index number for the disbursement record.");
     }

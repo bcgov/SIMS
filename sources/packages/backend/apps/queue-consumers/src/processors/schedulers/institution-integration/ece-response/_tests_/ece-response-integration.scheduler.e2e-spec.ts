@@ -23,7 +23,7 @@ import { ProcessSummaryResult } from "@sims/integrations/models";
 import { ApplicationStatus } from "@sims/sims-db";
 
 describe(
-  describeProcessorRootTest(QueueNames.PartTimeMSFAAProcessResponseIntegration),
+  describeProcessorRootTest(QueueNames.ECEProcessResponseIntegration),
   () => {
     let app: INestApplication;
     let processor: ECEResponseIntegrationScheduler;
@@ -53,7 +53,7 @@ describe(
       jest.clearAllMocks();
     });
 
-    it("Should process an ECE response file and confirm the enrolment of given disbursement.", async () => {
+    it("Should process an ECE response file and confirm the enrolment  when the disbursement and application is valid.", async () => {
       // Arrange
       const confirmEnrolmentInstitutionCode = "CONF";
       const confirmEnrolmentResponseFile = path.join(
@@ -112,7 +112,7 @@ describe(
       expect(processResult).toStrictEqual([expectedResult]);
     });
 
-    it("Should process an ECE response file and decline the enrolment of given disbursement.", async () => {
+    it("Should process an ECE response file and decline the enrolment when the disbursement and application is valid.", async () => {
       // Arrange
       const confirmEnrolmentInstitutionCode = "DECL";
       const confirmEnrolmentResponseFile = path.join(
@@ -164,6 +164,342 @@ describe(
         "Disbursements considered duplicate and skipped: 0",
         "Disbursements failed to process: 0",
         `The file ${confirmEnrolmentResponseFile} has been deleted after processing.`,
+      ];
+      // Assert that the file was deleted from SFTP.
+      expect(sftpClientMock.delete).toHaveBeenCalled();
+      expect(processResult).toStrictEqual([expectedResult]);
+    });
+
+    it("Should skip the ECE disbursement when the enrolment is already completed.", async () => {
+      // Arrange
+      const confirmEnrolmentInstitutionCode = "CONF";
+      const confirmEnrolmentResponseFile = path.join(
+        process.env.INSTITUTION_RESPONSE_FOLDER,
+        confirmEnrolmentInstitutionCode,
+        ECE_RESPONSE_FILE_NAME,
+      );
+      // Mock the implementation to return the mocked institution code.
+      institutionLocationService.getAllIntegrationEnabledInstitutionCodes =
+        async () => {
+          return [confirmEnrolmentInstitutionCode];
+        };
+
+      // Create disbursement to confirm enrolment.
+      const application = await saveFakeApplicationDisbursements(
+        db.dataSource,
+        undefined,
+        {
+          applicationStatus: ApplicationStatus.Completed,
+        },
+      );
+
+      const [disbursement] =
+        application.currentAssessment.disbursementSchedules;
+
+      // Queued job.
+      const job = createMock<Job<void>>();
+
+      mockDownloadFiles(
+        sftpClientMock,
+        [ECE_RESPONSE_FILE_NAME],
+        (fileContent: string) => {
+          // Modify the file content to have the correct disbursement id and the application number.
+          return fileContent
+            .replace("DISBNUMBER", disbursement.id.toString().padStart(10, "0"))
+            .replace("APPLNUMBER", application.applicationNumber)
+            .replace("ENRLDATE", formatDate(new Date(), "YYYYMMDD"));
+        },
+      );
+
+      // Act
+      const processResult = await processor.processECEResponse(job);
+      const expectedResult: ProcessSummaryResult = new ProcessSummaryResult();
+      expectedResult.summary = [
+        `Starting download of file ${confirmEnrolmentResponseFile}.`,
+        "Total disbursements found: 1",
+        "Disbursements successfully updated: 0",
+        "Disbursements skipped to be processed: 0",
+        "Disbursements considered duplicate and skipped: 1",
+        "Disbursements failed to process: 0",
+        `The file ${confirmEnrolmentResponseFile} has been deleted after processing.`,
+      ];
+      expectedResult.warnings = [
+        `Disbursement ${disbursement.id}, record is considered as duplicate and skipped due to reason: Enrolment already completed and can neither be confirmed nor declined`,
+      ];
+      // Assert that the file was deleted from SFTP.
+      expect(sftpClientMock.delete).toHaveBeenCalled();
+      expect(processResult).toStrictEqual([expectedResult]);
+    });
+
+    it("Should skip the ECE disbursement when disbursement and disbursement does not belong to the system.", async () => {
+      // Arrange
+      const confirmEnrolmentInstitutionCode = "CONF";
+      const confirmEnrolmentResponseFile = path.join(
+        process.env.INSTITUTION_RESPONSE_FOLDER,
+        confirmEnrolmentInstitutionCode,
+        ECE_RESPONSE_FILE_NAME,
+      );
+      // Mock the implementation to return the mocked institution code.
+      institutionLocationService.getAllIntegrationEnabledInstitutionCodes =
+        async () => {
+          return [confirmEnrolmentInstitutionCode];
+        };
+
+      const fakeDisbursementId = "1111111111";
+
+      // Queued job.
+      const job = createMock<Job<void>>();
+
+      mockDownloadFiles(
+        sftpClientMock,
+        [ECE_RESPONSE_FILE_NAME],
+        (fileContent: string) => {
+          // Modify the file content to have the correct disbursement id and the application number.
+          return fileContent.replace("DISBNUMBER", fakeDisbursementId);
+        },
+      );
+
+      // Act
+      const processResult = await processor.processECEResponse(job);
+      const expectedResult: ProcessSummaryResult = new ProcessSummaryResult();
+      expectedResult.summary = [
+        `Starting download of file ${confirmEnrolmentResponseFile}.`,
+        "Total disbursements found: 1",
+        "Disbursements successfully updated: 0",
+        "Disbursements skipped to be processed: 1",
+        "Disbursements considered duplicate and skipped: 0",
+        "Disbursements failed to process: 0",
+        `The file ${confirmEnrolmentResponseFile} has been deleted after processing.`,
+      ];
+      expectedResult.warnings = [
+        `Disbursement ${fakeDisbursementId}, record skipped due to reason: Enrolment not found.`,
+      ];
+      // Assert that the file was deleted from SFTP.
+      expect(sftpClientMock.delete).toHaveBeenCalled();
+      expect(processResult).toStrictEqual([expectedResult]);
+    });
+
+    it("Should skip the ECE disbursement when disbursement and application does not belong to the system.", async () => {
+      // Arrange
+      const confirmEnrolmentInstitutionCode = "CONF";
+      const confirmEnrolmentResponseFile = path.join(
+        process.env.INSTITUTION_RESPONSE_FOLDER,
+        confirmEnrolmentInstitutionCode,
+        ECE_RESPONSE_FILE_NAME,
+      );
+      // Mock the implementation to return the mocked institution code.
+      institutionLocationService.getAllIntegrationEnabledInstitutionCodes =
+        async () => {
+          return [confirmEnrolmentInstitutionCode];
+        };
+
+      // Create disbursement to confirm enrolment.
+      const application = await saveFakeApplicationDisbursements(
+        db.dataSource,
+        undefined,
+        {
+          applicationStatus: ApplicationStatus.Completed,
+        },
+      );
+
+      const [disbursement] =
+        application.currentAssessment.disbursementSchedules;
+
+      const fakeApplicationNumber = "AAAAAAAAAA";
+
+      // Queued job.
+      const job = createMock<Job<void>>();
+
+      mockDownloadFiles(
+        sftpClientMock,
+        [ECE_RESPONSE_FILE_NAME],
+        (fileContent: string) => {
+          // Modify the file content to have the correct disbursement id and the application number.
+          return fileContent
+            .replace("DISBNUMBER", disbursement.id.toString().padStart(10, "0"))
+            .replace("APPLNUMBER", fakeApplicationNumber);
+        },
+      );
+
+      // Act
+      const processResult = await processor.processECEResponse(job);
+      const expectedResult: ProcessSummaryResult = new ProcessSummaryResult();
+      expectedResult.summary = [
+        `Starting download of file ${confirmEnrolmentResponseFile}.`,
+        "Total disbursements found: 1",
+        "Disbursements successfully updated: 0",
+        "Disbursements skipped to be processed: 1",
+        "Disbursements considered duplicate and skipped: 0",
+        "Disbursements failed to process: 0",
+        `The file ${confirmEnrolmentResponseFile} has been deleted after processing.`,
+      ];
+      expectedResult.warnings = [
+        `Disbursement ${disbursement.id}, record skipped due to reason: Enrolment for the given application not found.`,
+      ];
+      // Assert that the file was deleted from SFTP.
+      expect(sftpClientMock.delete).toHaveBeenCalled();
+      expect(processResult).toStrictEqual([expectedResult]);
+    });
+
+    it("Should stop processing the ECE response file when the header record is not valid.", async () => {
+      // Arrange
+      const confirmEnrolmentInstitutionCode = "FAIL";
+      const confirmEnrolmentResponseFile = path.join(
+        process.env.INSTITUTION_RESPONSE_FOLDER,
+        confirmEnrolmentInstitutionCode,
+        ECE_RESPONSE_FILE_NAME,
+      );
+      // Mock the implementation to return the mocked institution code.
+      institutionLocationService.getAllIntegrationEnabledInstitutionCodes =
+        async () => {
+          return [confirmEnrolmentInstitutionCode];
+        };
+
+      // Queued job.
+      const job = createMock<Job<void>>();
+
+      mockDownloadFiles(
+        sftpClientMock,
+        [ECE_RESPONSE_FILE_NAME],
+        (fileContent: string) => {
+          // Modify the file content to have the correct disbursement id and the application number.
+          return fileContent.replace("1AJAACONFIRMATION", "2AJAACONFIRMATION");
+        },
+      );
+
+      // Act
+      const processResult = await processor.processECEResponse(job);
+      const expectedResult: ProcessSummaryResult = new ProcessSummaryResult();
+      expectedResult.summary = [
+        `Starting download of file ${confirmEnrolmentResponseFile}.`,
+        `The file ${confirmEnrolmentResponseFile} has been deleted after processing.`,
+      ];
+      expectedResult.errors = [
+        `Error processing the file ${confirmEnrolmentResponseFile}. Error: The ECE response file has an invalid record type on header: 2`,
+      ];
+      // Assert that the file was deleted from SFTP.
+      expect(sftpClientMock.delete).toHaveBeenCalled();
+      expect(processResult).toStrictEqual([expectedResult]);
+    });
+
+    it("Should stop processing the ECE response file when the detail record is not valid.", async () => {
+      // Arrange
+      const confirmEnrolmentInstitutionCode = "FAIL";
+      const confirmEnrolmentResponseFile = path.join(
+        process.env.INSTITUTION_RESPONSE_FOLDER,
+        confirmEnrolmentInstitutionCode,
+        ECE_RESPONSE_FILE_NAME,
+      );
+      // Mock the implementation to return the mocked institution code.
+      institutionLocationService.getAllIntegrationEnabledInstitutionCodes =
+        async () => {
+          return [confirmEnrolmentInstitutionCode];
+        };
+
+      // Queued job.
+      const job = createMock<Job<void>>();
+
+      mockDownloadFiles(
+        sftpClientMock,
+        [ECE_RESPONSE_FILE_NAME],
+        (fileContent: string) => {
+          // Modify the file content to have the correct disbursement id and the application number.
+          return fileContent.replace("2AJBH", "3AJBH");
+        },
+      );
+
+      // Act
+      const processResult = await processor.processECEResponse(job);
+      const expectedResult: ProcessSummaryResult = new ProcessSummaryResult();
+      expectedResult.summary = [
+        `Starting download of file ${confirmEnrolmentResponseFile}.`,
+        `The file ${confirmEnrolmentResponseFile} has been deleted after processing.`,
+      ];
+      expectedResult.errors = [
+        "Invalid record type on detail: 3. Error at line 1.",
+        `Error processing the file ${confirmEnrolmentResponseFile}. Error: The file consists invalid data and cannot be processed.`,
+      ];
+      // Assert that the file was deleted from SFTP.
+      expect(sftpClientMock.delete).toHaveBeenCalled();
+      expect(processResult).toStrictEqual([expectedResult]);
+    });
+
+    it("Should stop processing the ECE response file when the footer record is not valid.", async () => {
+      // Arrange
+      const confirmEnrolmentInstitutionCode = "FAIL";
+      const confirmEnrolmentResponseFile = path.join(
+        process.env.INSTITUTION_RESPONSE_FOLDER,
+        confirmEnrolmentInstitutionCode,
+        ECE_RESPONSE_FILE_NAME,
+      );
+      // Mock the implementation to return the mocked institution code.
+      institutionLocationService.getAllIntegrationEnabledInstitutionCodes =
+        async () => {
+          return [confirmEnrolmentInstitutionCode];
+        };
+
+      // Queued job.
+      const job = createMock<Job<void>>();
+
+      mockDownloadFiles(
+        sftpClientMock,
+        [ECE_RESPONSE_FILE_NAME],
+        (fileContent: string) => {
+          // Modify the file content to have the correct disbursement id and the application number.
+          return fileContent.replace("3000001", "4000001");
+        },
+      );
+
+      // Act
+      const processResult = await processor.processECEResponse(job);
+      const expectedResult: ProcessSummaryResult = new ProcessSummaryResult();
+      expectedResult.summary = [
+        `Starting download of file ${confirmEnrolmentResponseFile}.`,
+        `The file ${confirmEnrolmentResponseFile} has been deleted after processing.`,
+      ];
+      expectedResult.errors = [
+        `Error processing the file ${confirmEnrolmentResponseFile}. Error: The ECE response file has an invalid record type on footer: 4`,
+      ];
+      // Assert that the file was deleted from SFTP.
+      expect(sftpClientMock.delete).toHaveBeenCalled();
+      expect(processResult).toStrictEqual([expectedResult]);
+    });
+
+    it("Should stop processing the ECE response file when the count of detail in the footer record is incorrect.", async () => {
+      // Arrange
+      const confirmEnrolmentInstitutionCode = "FAIL";
+      const confirmEnrolmentResponseFile = path.join(
+        process.env.INSTITUTION_RESPONSE_FOLDER,
+        confirmEnrolmentInstitutionCode,
+        ECE_RESPONSE_FILE_NAME,
+      );
+      // Mock the implementation to return the mocked institution code.
+      institutionLocationService.getAllIntegrationEnabledInstitutionCodes =
+        async () => {
+          return [confirmEnrolmentInstitutionCode];
+        };
+
+      // Queued job.
+      const job = createMock<Job<void>>();
+
+      mockDownloadFiles(
+        sftpClientMock,
+        [ECE_RESPONSE_FILE_NAME],
+        (fileContent: string) => {
+          // Modify the file content to have the correct disbursement id and the application number.
+          return fileContent.replace("3000001", "3000002");
+        },
+      );
+
+      // Act
+      const processResult = await processor.processECEResponse(job);
+      const expectedResult: ProcessSummaryResult = new ProcessSummaryResult();
+      expectedResult.summary = [
+        `Starting download of file ${confirmEnrolmentResponseFile}.`,
+        `The file ${confirmEnrolmentResponseFile} has been deleted after processing.`,
+      ];
+      expectedResult.errors = [
+        `Error processing the file ${confirmEnrolmentResponseFile}. Error: The total count of detail records mentioned in the footer record does not match with the actual total details records count.`,
       ];
       // Assert that the file was deleted from SFTP.
       expect(sftpClientMock.delete).toHaveBeenCalled();

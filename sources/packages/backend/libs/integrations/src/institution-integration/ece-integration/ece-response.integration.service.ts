@@ -5,6 +5,8 @@ import { ECEResponseFileDetail } from "./ece-files/ece-response-file-detail";
 import { ECEResponseFileHeader } from "./ece-files/ece-response-file-header";
 import { RecordTypeCodes } from "./models/ece-integration.model";
 import { ECEResponseFileFooter } from "./ece-files/ece-response-file-footer";
+import { CustomNamedError } from "@sims/utilities";
+import { UNEXPECTED_ERROR_DOWNLOADING_FILE } from "@sims/services/constants";
 
 @Injectable()
 export class ECEResponseIntegrationService extends SFTPIntegrationBase<
@@ -23,9 +25,19 @@ export class ECEResponseIntegrationService extends SFTPIntegrationBase<
   async downloadResponseFile(
     remoteFilePath: string,
   ): Promise<ECEResponseFileDetail[]> {
-    const fileLines = await this.downloadResponseFileLines(remoteFilePath, {
-      checkIfFileExist: true,
-    });
+    let fileLines: false | string[];
+    try {
+      fileLines = await this.downloadResponseFileLines(remoteFilePath, {
+        checkIfFileExist: true,
+      });
+    } catch (error: unknown) {
+      this.logger.error(error);
+      throw new CustomNamedError(
+        "Unexpected error while downloading the integration file.",
+        UNEXPECTED_ERROR_DOWNLOADING_FILE,
+      );
+    }
+
     // Check if the file exist in the remote server.
     if (!fileLines) {
       return [];
@@ -47,7 +59,7 @@ export class ECEResponseIntegrationService extends SFTPIntegrationBase<
     // Read the last line to check if the footer record type is the expected one.
     const footer = new ECEResponseFileFooter(fileLines.pop());
     if (footer.recordType !== RecordTypeCodes.ECETrailer) {
-      const error = `The ECE response file ${remoteFilePath} has an invalid record type on footer: ${footer.recordType}`;
+      const error = `The ECE response file has an invalid record type on footer: ${footer.recordType}`;
       this.logger.error(error);
       // If the footer is not the expected one.
       throw new Error(error);
@@ -63,7 +75,7 @@ export class ECEResponseIntegrationService extends SFTPIntegrationBase<
     // match the actual count of total records.
     if (fileLines.length !== footer.totalDetailRecords) {
       const error =
-        "In the total count of detail records mentioned in the footer record does not match with the actual total details records count.";
+        "The total count of detail records mentioned in the footer record does not match with the actual total details records count.";
       this.logger.error(error);
       throw new Error(error);
     }
