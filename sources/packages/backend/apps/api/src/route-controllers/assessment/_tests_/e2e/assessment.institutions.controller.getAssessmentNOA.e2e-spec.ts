@@ -112,15 +112,7 @@ describe("AssessmentInstitutionsController(e2e)-getAssessmentNOA", () => {
             firstDisbursementSchedule.disbursementScheduleStatus,
           disbursement1TuitionRemittance:
             firstDisbursementSchedule.tuitionRemittanceRequestedAmount,
-          ...("disbursement1bcsl" in awards && {
-            disbursement1bcsl: awards.disbursement1bcsl,
-          }),
-          ...("disbursement1csgf" in awards && {
-            disbursement1csgf: awards.disbursement1csgf,
-          }),
-          ...("disbursement1cslf" in awards && {
-            disbursement1cslf: awards.disbursement1cslf,
-          }),
+          ...awards,
         },
         fullName: getUserFullName(application.student.user),
         locationName: assessment.offering.institutionLocation.name,

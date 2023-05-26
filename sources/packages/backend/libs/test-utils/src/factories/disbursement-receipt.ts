@@ -47,14 +47,10 @@ export function createFakeDisbursementReceipt(relations: {
     upcase: true,
   });
   receipt.studyPeriodEndDate = isoDateNow;
-  receipt.totalEntitledGrantAmount = receipt.totalDisbursedAmount =
-    randomAmount;
-  receipt.totalDisbursedGrantAmount = receipt.totalDisbursedAmount =
-    randomAmount;
-  receipt.totalDisbursedGrantAmountStudent = receipt.totalDisbursedAmount =
-    randomAmount;
-  receipt.totalDisbursedGrantAmountInstitution = receipt.totalDisbursedAmount =
-    randomAmount;
+  receipt.totalEntitledGrantAmount = randomAmount;
+  receipt.totalDisbursedGrantAmount = randomAmount;
+  receipt.totalDisbursedGrantAmountStudent = randomAmount;
+  receipt.totalDisbursedGrantAmountInstitution = randomAmount;
   receipt.createdAt = now;
   return receipt;
 }
