@@ -2,6 +2,11 @@ import { Institution, InstitutionLocation } from "@sims/sims-db";
 import * as faker from "faker";
 import { createFakeInstitution } from "./institution";
 
+/**
+ * Create fake institution location.
+ * @param institution institution.
+ * @returns institution location
+ */
 export function createFakeInstitutionLocation(
   institution?: Institution,
 ): InstitutionLocation {

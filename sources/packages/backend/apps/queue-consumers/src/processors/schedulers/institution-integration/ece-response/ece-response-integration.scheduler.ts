@@ -24,7 +24,7 @@ export class ECEResponseIntegrationScheduler extends BaseScheduler<void> {
    * @returns Processing result log.
    */
   @Process()
-  async processECERequest(
+  async processECEResponse(
     job: Job<void>,
   ): Promise<QueueProcessSummaryResult[]> {
     this.logger.log(

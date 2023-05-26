@@ -33,6 +33,7 @@ import {
   ENROLMENT_NOT_FOUND,
   FIRST_COE_NOT_COMPLETE,
   INVALID_TUITION_REMITTANCE_AMOUNT,
+  UNEXPECTED_ERROR_DOWNLOADING_FILE,
 } from "@sims/services/constants";
 
 /**
@@ -86,7 +87,13 @@ export class ECEResponseProcessingService {
     remoteFilePath: string,
   ): Promise<ProcessSummaryResult> {
     const processSummary = new ProcessSummaryResult();
-    let isECEResponseFileExist = false;
+    // Setting the default value to true because, in the event of error
+    // thrown from downloadResponseFile due to any data validation in the file
+    // the value of isECEResponseFileExist will remain false which will be inaccurate as the file exist
+    // and file deletion will not happen.
+    // In the event of runtime error during downloading the file, it is handled with custom error
+    // and taken care that isECEResponseFileExist is set to false when this error happens.
+    let isECEResponseFileExist = true;
     processSummary.summary.push(`Starting download of file ${remoteFilePath}.`);
     this.logger.log(`Starting download of file ${remoteFilePath}.`);
     try {
@@ -136,6 +143,14 @@ export class ECEResponseProcessingService {
       this.logger.log(`Completed processing the file ${remoteFilePath}.`);
     } catch (error: unknown) {
       this.logger.error(error);
+      // In the event of runtime error during downloading the file, it is handled with custom error
+      // and taken care that isECEResponseFileExist is set to false when this error happens.
+      if (
+        error instanceof CustomNamedError &&
+        error.name === UNEXPECTED_ERROR_DOWNLOADING_FILE
+      ) {
+        isECEResponseFileExist = false;
+      }
       processSummary.errors.push(
         `Error processing the file ${remoteFilePath}. ${error}`,
       );
@@ -163,7 +178,7 @@ export class ECEResponseProcessingService {
       if (errorMessage) {
         hasErrors = true;
         processSummaryResult.errors.push(
-          `${errorMessage} at line ${eceDetailRecord.lineNumber}`,
+          `${errorMessage} at line ${eceDetailRecord.lineNumber}.`,
         );
       }
     }
