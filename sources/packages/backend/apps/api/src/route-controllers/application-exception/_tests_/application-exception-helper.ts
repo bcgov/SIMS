@@ -50,11 +50,12 @@ export async function saveFakeApplicationWithApplicationException(
     creator: student.user,
     assessedBy,
   });
-  applicationException.exceptionStatus = options?.applicationExceptionStatus;
-  applicationException = await applicationExceptionRepo.save(
-    applicationException,
-  );
-
+  if (options?.applicationExceptionStatus) {
+    applicationException.exceptionStatus = options?.applicationExceptionStatus;
+    applicationException = await applicationExceptionRepo.save(
+      applicationException,
+    );
+  }
   const application = await applicationRepo.save(
     createFakeApplication({
       student,

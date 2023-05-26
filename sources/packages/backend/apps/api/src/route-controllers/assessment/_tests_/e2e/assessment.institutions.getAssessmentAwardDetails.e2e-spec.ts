@@ -18,7 +18,7 @@ import {
   MSFAAStates,
   E2EDataSources,
   createE2EDataSources,
-  createFakeDisbursementReceipts,
+  createFakeDisbursementReceipt,
   createFakeDisbursementReceiptValue,
 } from "@sims/test-utils";
 import {
@@ -83,7 +83,7 @@ describe("AssessmentInstitutionsController(e2e)-getAssessmentAwardDetails", () =
     const [firstDisbursementSchedule] =
       application.currentAssessment.disbursementSchedules;
 
-    const disbursementReceipt = createFakeDisbursementReceipts({
+    const disbursementReceipt = createFakeDisbursementReceipt({
       disbursementSchedule: firstDisbursementSchedule,
       student,
       institutionLocation: collegeFLocation,
@@ -97,9 +97,11 @@ describe("AssessmentInstitutionsController(e2e)-getAssessmentAwardDetails", () =
         disbursement.valueAmount;
       disbursementReceiptsValues.push(
         createFakeDisbursementReceiptValue(
-          disbursement.valueCode,
-          disbursement.valueAmount,
           { disbursementReceipt },
+          {
+            grantType: disbursement.valueCode,
+            grantAmount: disbursement.valueAmount,
+          },
         ),
       );
     });

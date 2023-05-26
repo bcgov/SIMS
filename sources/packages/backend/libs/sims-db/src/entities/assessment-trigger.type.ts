@@ -37,9 +37,3 @@ export enum AssessmentTriggerType {
    */
   StudentAppeal = "Student appeal",
 }
-
-export enum StudentAssessmentStatus {
-  Submitted = "Submitted",
-  InProgress = "In Progress",
-  Completed = "Completed",
-}
