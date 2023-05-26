@@ -7,6 +7,14 @@ import {
 import { getISODateOnlyString } from "@sims/utilities";
 import * as faker from "faker";
 
+/**
+ * Create fake disbursement receipts.
+ * @param relations dependencies.
+ * - `disbursementSchedule` related disbursement schedule.
+ * - `student` related student.
+ * - `institutionLocation` related institution location.
+ * @returns disbursement receipt.
+ */
 export function createFakeDisbursementReceipts(relations: {
   disbursementSchedule: DisbursementSchedule;
   student: Student;
