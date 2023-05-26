@@ -155,15 +155,7 @@ describe("AssessmentInstitutionsController(e2e)-getAssessmentAwardDetails", () =
             firstDisbursementSchedule.tuitionRemittanceRequestedAmount,
           disbursement1Id: firstDisbursementSchedule.id,
           disbursement1DocumentNumber: firstDisbursementSchedule.documentNumber,
-          ...("disbursement1bcsl" in awards && {
-            disbursement1bcsl: awards.disbursement1bcsl,
-          }),
-          ...("disbursement1csgf" in awards && {
-            disbursement1csgf: awards.disbursement1csgf,
-          }),
-          ...("disbursement1cslf" in awards && {
-            disbursement1cslf: awards.disbursement1cslf,
-          }),
+          ...awards,
         },
         finalAward: finalAwards,
       });

@@ -20,7 +20,7 @@ import { DataSource } from "typeorm";
  * @param dataSource application dataSource.
  * @param relations dependencies.
  * - `institutionLocation` related location.
- * @param options additional options:
+ * @param options additional options.
  * - `applicationExceptionStatus` application exception status.
  *  @returns application with an application exception associated.
  */

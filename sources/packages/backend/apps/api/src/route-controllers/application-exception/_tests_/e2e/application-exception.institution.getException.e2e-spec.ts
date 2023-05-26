@@ -27,7 +27,6 @@ import { saveStudentApplicationForCollegeC } from "../../../student/_tests_/e2e/
 describe("ApplicationExceptionInstitutionsController(e2e)-getException", () => {
   let app: INestApplication;
   let db: E2EDataSources;
-  let collegeF: Institution;
   let collegeFLocation: InstitutionLocation;
 
   beforeAll(async () => {
