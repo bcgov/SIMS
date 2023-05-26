@@ -12,7 +12,6 @@ import {
 } from "../../../../testHelpers";
 import {
   ApplicationExceptionStatus,
-  Institution,
   InstitutionLocation,
 } from "@sims/sims-db";
 import { saveFakeApplicationWithApplicationException } from "../application-exception-helper";
