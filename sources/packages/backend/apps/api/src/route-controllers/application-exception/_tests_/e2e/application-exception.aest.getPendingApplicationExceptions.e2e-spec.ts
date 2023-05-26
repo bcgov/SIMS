@@ -25,19 +25,23 @@ describe("ApplicationExceptionAESTController(e2e)-getPendingApplicationException
     // Arrange
     const application1Promise = saveFakeApplicationWithApplicationException(
       appDataSource,
-      ApplicationExceptionStatus.Pending,
+      undefined,
+      { applicationExceptionStatus: ApplicationExceptionStatus.Pending },
     );
     const application2Promise = saveFakeApplicationWithApplicationException(
       appDataSource,
-      ApplicationExceptionStatus.Pending,
+      undefined,
+      { applicationExceptionStatus: ApplicationExceptionStatus.Pending },
     );
     const application3Promise = saveFakeApplicationWithApplicationException(
       appDataSource,
-      ApplicationExceptionStatus.Approved,
+      undefined,
+      { applicationExceptionStatus: ApplicationExceptionStatus.Approved },
     );
     const application4Promise = saveFakeApplicationWithApplicationException(
       appDataSource,
-      ApplicationExceptionStatus.Declined,
+      undefined,
+      { applicationExceptionStatus: ApplicationExceptionStatus.Declined },
     );
     const [application1, application2, application3, application4] =
       await Promise.all([

@@ -18,8 +18,15 @@ import {
   MSFAAStates,
   E2EDataSources,
   createE2EDataSources,
+  createFakeDisbursementReceipts,
+  createFakeDisbursementReceiptValue,
 } from "@sims/test-utils";
-import { Institution, InstitutionLocation } from "@sims/sims-db";
+import {
+  ApplicationStatus,
+  DisbursementReceiptValue,
+  Institution,
+  InstitutionLocation,
+} from "@sims/sims-db";
 import { getDateOnlyFormat } from "@sims/utilities";
 import { MASKED_MSFAA_NUMBER } from "@sims/services/constants";
 import { saveStudentApplicationForCollegeC } from "../../../student/_tests_/e2e/student.institutions.utils";
@@ -60,20 +67,51 @@ describe("AssessmentInstitutionsController(e2e)-getAssessmentAwardDetails", () =
       },
     );
     await db.msfaaNumber.save(currentMSFAA);
-    const application = await saveFakeApplicationDisbursements(db.dataSource, {
-      institution: collegeF,
-      institutionLocation: collegeFLocation,
-      student,
-      msfaaNumber: currentMSFAA,
-    });
+    const application = await saveFakeApplicationDisbursements(
+      db.dataSource,
+      {
+        institution: collegeF,
+        institutionLocation: collegeFLocation,
+        student,
+        msfaaNumber: currentMSFAA,
+      },
+      {
+        applicationStatus: ApplicationStatus.Completed,
+      },
+    );
     const assessment = application.currentAssessment;
     const [firstDisbursementSchedule] =
       application.currentAssessment.disbursementSchedules;
 
+    const disbursementReceipt = createFakeDisbursementReceipts({
+      disbursementSchedule: firstDisbursementSchedule,
+      student,
+      institutionLocation: collegeFLocation,
+    });
+    await db.disbursementReceipt.save(disbursementReceipt);
+
     const awards = {};
+    const disbursementReceiptsValues = [] as DisbursementReceiptValue[];
     firstDisbursementSchedule.disbursementValues.forEach((disbursement) => {
       awards[`disbursement1${disbursement.valueCode.toLowerCase()}`] =
         disbursement.valueAmount;
+      disbursementReceiptsValues.push(
+        createFakeDisbursementReceiptValue(
+          disbursement.valueCode,
+          disbursement.valueAmount,
+          { disbursementReceipt },
+        ),
+      );
+    });
+    await db.disbursementReceiptValue.save(disbursementReceiptsValues);
+
+    const finalAwards = {};
+    finalAwards[`disbursementReceipt1Id`] = disbursementReceipt.id;
+
+    disbursementReceiptsValues.forEach((disbursementReceiptsValue) => {
+      finalAwards[
+        `disbursementReceipt1${disbursementReceiptsValue.grantType.toLowerCase()}`
+      ] = disbursementReceiptsValue.grantAmount;
     });
 
     const endpoint = `/institutions/assessment/student/${student.id}/assessment/${assessment.id}/award`;
@@ -125,8 +163,7 @@ describe("AssessmentInstitutionsController(e2e)-getAssessmentAwardDetails", () =
             disbursement1cslf: awards.disbursement1cslf,
           }),
         },
-        // todo: ann check
-        finalAward: {},
+        finalAward: finalAwards,
       });
   });
 
@@ -153,7 +190,7 @@ describe("AssessmentInstitutionsController(e2e)-getAssessmentAwardDetails", () =
       InstitutionTokenTypes.CollegeFUser,
     );
 
-    const endpoint = `/institutions/assessment/student/${student.id}/assessment/9999/award`;
+    const endpoint = `/institutions/assessment/student/${student.id}/assessment/9999999/award`;
 
     // Act/Assert
     await request(app.getHttpServer())
@@ -183,7 +220,7 @@ describe("AssessmentInstitutionsController(e2e)-getAssessmentAwardDetails", () =
     const collegeCInstitutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeCUser,
     );
-    const endpoint = `/institutions/assessment/student/${student.id}/assessment/9999/award`;
+    const endpoint = `/institutions/assessment/student/${student.id}/assessment/9999999/award`;
 
     // Act/Assert
     await request(app.getHttpServer())
@@ -206,7 +243,7 @@ describe("AssessmentInstitutionsController(e2e)-getAssessmentAwardDetails", () =
       InstitutionTokenTypes.CollegeFUser,
     );
 
-    const endpoint = `/institutions/assessment/student/${student.id}/assessment/9999/award`;
+    const endpoint = `/institutions/assessment/student/${student.id}/assessment/9999999/award`;
 
     // Act/Assert
     await request(app.getHttpServer())

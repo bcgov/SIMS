@@ -2,6 +2,7 @@ import ApiClient from "@/services/http/ApiClient";
 import {
   ApplicationExceptionAPIOutDTO,
   ApplicationExceptionSummaryAPIOutDTO,
+  DetailedApplicationExceptionAPIOutDTO,
   UpdateApplicationExceptionAPIInDTO,
 } from "@/services/http/dto";
 import { PaginatedResults, PaginationOptions } from "@/types";
@@ -21,11 +22,12 @@ export class ApplicationExceptionService {
    * @param studentId student id.
    * @returns student application exception information.
    */
-  async getExceptionDetails(
-    exceptionId: number,
-    studentId?: number,
-  ): Promise<ApplicationExceptionAPIOutDTO> {
-    return ApiClient.ApplicationExceptionApi.getExceptionDetails(
+  async getExceptionDetails<
+    T extends
+      | DetailedApplicationExceptionAPIOutDTO
+      | ApplicationExceptionAPIOutDTO,
+  >(exceptionId: number, studentId?: number): Promise<T> {
+    return ApiClient.ApplicationExceptionApi.getExceptionDetails<T>(
       exceptionId,
       studentId,
     );

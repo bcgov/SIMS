@@ -11,6 +11,7 @@ import {
   DisbursementFeedbackErrors,
   DisbursementOveraward,
   DisbursementReceipt,
+  DisbursementReceiptValue,
   DisbursementSchedule,
   DisbursementValue,
   EducationProgram,
@@ -73,6 +74,9 @@ export function createE2EDataSources(dataSource: DataSource): E2EDataSources {
     ),
     disbursementOveraward: dataSource.getRepository(DisbursementOveraward),
     disbursementReceipt: dataSource.getRepository(DisbursementReceipt),
+    disbursementReceiptValue: dataSource.getRepository(
+      DisbursementReceiptValue,
+    ),
     disbursementSchedule: dataSource.getRepository(DisbursementSchedule),
     disbursementValue: dataSource.getRepository(DisbursementValue),
     educationProgram: dataSource.getRepository(EducationProgram),
@@ -136,6 +140,7 @@ export interface E2EDataSources {
   disbursementFeedbackErrors: Repository<DisbursementFeedbackErrors>;
   disbursementOveraward: Repository<DisbursementOveraward>;
   disbursementReceipt: Repository<DisbursementReceipt>;
+  disbursementReceiptValue: Repository<DisbursementReceiptValue>;
   disbursementSchedule: Repository<DisbursementSchedule>;
   disbursementValue: Repository<DisbursementValue>;
   educationProgram: Repository<EducationProgram>;

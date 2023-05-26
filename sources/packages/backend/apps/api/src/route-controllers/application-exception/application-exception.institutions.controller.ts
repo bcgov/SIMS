@@ -40,9 +40,9 @@ export class ApplicationExceptionInstitutionsController extends BaseController {
     @Param("studentId", ParseIntPipe) studentId: number,
     @Param("exceptionId", ParseIntPipe) exceptionId: number,
   ): Promise<ApplicationExceptionAPIOutDTO> {
-    return this.applicationExceptionControllerService.getExceptionDetails(
+    return this.applicationExceptionControllerService.getExceptionDetails<ApplicationExceptionAPIOutDTO>(
       exceptionId,
-      studentId,
+      { studentId },
     );
   }
 }

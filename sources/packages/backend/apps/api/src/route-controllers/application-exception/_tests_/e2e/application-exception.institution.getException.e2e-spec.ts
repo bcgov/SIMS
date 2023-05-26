@@ -1,36 +1,30 @@
 import { HttpStatus, INestApplication } from "@nestjs/common";
 import * as request from "supertest";
 import {
-  authorizeUserTokenForLocation,
   BEARER_AUTH_TYPE,
-  createTestingAppModule,
-  getAuthRelatedEntities,
-  getInstitutionToken,
   INSTITUTION_BC_PUBLIC_ERROR_MESSAGE,
   INSTITUTION_STUDENT_DATA_ACCESS_ERROR_MESSAGE,
   InstitutionTokenTypes,
+  authorizeUserTokenForLocation,
+  createTestingAppModule,
+  getAuthRelatedEntities,
+  getInstitutionToken,
 } from "../../../../testHelpers";
 import {
-  createFakeInstitutionLocation,
-  saveFakeStudent,
-  saveFakeApplicationDisbursements,
-  createFakeMSFAANumber,
-  MSFAAStates,
-  E2EDataSources,
-  createE2EDataSources,
-  createFakeStudentScholasticStanding,
-  createFakeUser,
-} from "@sims/test-utils";
-import {
-  ApplicationStatus,
-  AssessmentTriggerType,
+  ApplicationExceptionStatus,
   Institution,
   InstitutionLocation,
-  StudentAssessmentStatus,
 } from "@sims/sims-db";
+import { saveFakeApplicationWithApplicationException } from "../application-exception-helper";
+import {
+  E2EDataSources,
+  createE2EDataSources,
+  createFakeInstitutionLocation,
+  saveFakeStudent,
+} from "@sims/test-utils";
 import { saveStudentApplicationForCollegeC } from "../../../student/_tests_/e2e/student.institutions.utils";
 
-describe("AssessmentInstitutionsController(e2e)-getAssessmentHistorySummary", () => {
+describe("ApplicationExceptionInstitutionsController(e2e)-getException", () => {
   let app: INestApplication;
   let db: E2EDataSources;
   let collegeF: Institution;
@@ -53,68 +47,63 @@ describe("AssessmentInstitutionsController(e2e)-getAssessmentHistorySummary", ()
     );
   });
 
-  it("Should get the student assessment history summary for an eligible application when an eligible public institution user tries to access it.", async () => {
+  it(
+    "Should get the eligible application exception of a student belonging to a public " +
+      "institution when the same public institution requests to see the details.",
+    async () => {
+      // Arrange
+
+      const application = await saveFakeApplicationWithApplicationException(
+        db.dataSource,
+        { institutionLocation: collegeFLocation },
+        { applicationExceptionStatus: ApplicationExceptionStatus.Approved },
+      );
+      const applicationException = application.applicationException;
+
+      const endpoint = `/institutions/application-exception/student/${application.student.id}/exception/${applicationException.id}`;
+      const institutionUserToken = await getInstitutionToken(
+        InstitutionTokenTypes.CollegeFUser,
+      );
+      // Act/Assert
+      await request(app.getHttpServer())
+        .get(endpoint)
+        .auth(institutionUserToken, BEARER_AUTH_TYPE)
+        .expect(HttpStatus.OK)
+        .expect({
+          exceptionStatus: applicationException.exceptionStatus,
+          submittedDate: applicationException.createdAt.toISOString(),
+          exceptionRequests: applicationException.exceptionRequests.map(
+            (request) => ({
+              exceptionName: request.exceptionName,
+            }),
+          ),
+        });
+    },
+  );
+
+  it("Should throw not found response error when the public institution requests to see the exception details that does not exist for the institution .", async () => {
     // Arrange
 
-    // Student has an application to the institution.
-    const student = await saveFakeStudent(db.dataSource);
-
-    const currentMSFAA = createFakeMSFAANumber(
-      { student },
-      {
-        state: MSFAAStates.Signed,
-      },
-    );
-    await db.msfaaNumber.save(currentMSFAA);
-    const application = await saveFakeApplicationDisbursements(
+    const application = await saveFakeApplicationWithApplicationException(
       db.dataSource,
-      {
-        institution: collegeF,
-        institutionLocation: collegeFLocation,
-        student,
-        msfaaNumber: currentMSFAA,
-      },
-      { applicationStatus: ApplicationStatus.Completed },
+      { institutionLocation: collegeFLocation },
+      { applicationExceptionStatus: ApplicationExceptionStatus.Approved },
     );
-    const originalAssessment = application.currentAssessment;
-    const submittedByInstitutionUser = await db.user.save(createFakeUser());
 
-    // Create a scholastic standing for the completed application.
-    const scholasticStanding = createFakeStudentScholasticStanding({
-      submittedBy: submittedByInstitutionUser,
-      application,
-    });
-    scholasticStanding.unsuccessfulWeeks = 10;
-    await db.studentScholasticStanding.save(scholasticStanding);
-
-    const endpoint = `/institutions/assessment/student/${student.id}/application/${application.id}/history`;
+    const endpoint = `/institutions/application-exception/student/${application.student.id}/exception/9999999`;
     const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeFUser,
     );
-
     // Act/Assert
     await request(app.getHttpServer())
       .get(endpoint)
       .auth(institutionUserToken, BEARER_AUTH_TYPE)
-      .expect(HttpStatus.OK)
-      .expect([
-        {
-          submittedDate: scholasticStanding.createdAt.toISOString(),
-          triggerType: AssessmentTriggerType.ScholasticStandingChange,
-          status: StudentAssessmentStatus.Completed,
-          studentScholasticStandingId: scholasticStanding.id,
-          hasUnsuccessfulWeeks: true,
-        },
-        {
-          assessmentId: originalAssessment.id,
-          submittedDate: originalAssessment.submittedDate.toISOString(),
-          triggerType: AssessmentTriggerType.OriginalAssessment,
-          assessmentDate: originalAssessment.assessmentDate,
-          status: "Submitted",
-          offeringId: originalAssessment.offering.id,
-          programId: originalAssessment.offering.educationProgram.id,
-        },
-      ]);
+      .expect(HttpStatus.NOT_FOUND)
+      .expect({
+        statusCode: 404,
+        message: "Student application exception not found.",
+        error: "Not Found",
+      });
   });
 
   it("Should throw forbidden error when the institution type is not BC Public.", async () => {
@@ -133,7 +122,7 @@ describe("AssessmentInstitutionsController(e2e)-getAssessmentHistorySummary", ()
     const collegeCInstitutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeCUser,
     );
-    const endpoint = `/institutions/assessment/student/${student.id}/application/9999999/history`;
+    const endpoint = `/institutions/application-exception/student/${student.id}/exception/9999999`;
 
     // Act/Assert
     await request(app.getHttpServer())
@@ -156,7 +145,7 @@ describe("AssessmentInstitutionsController(e2e)-getAssessmentHistorySummary", ()
       InstitutionTokenTypes.CollegeFUser,
     );
 
-    const endpoint = `/institutions/assessment/student/${student.id}/application/9999999/history`;
+    const endpoint = `/institutions/application-exception/student/${student.id}/exception/9999999`;
 
     // Act/Assert
     await request(app.getHttpServer())

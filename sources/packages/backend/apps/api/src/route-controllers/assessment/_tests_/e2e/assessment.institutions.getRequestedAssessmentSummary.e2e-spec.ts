@@ -18,8 +18,6 @@ import {
   MSFAAStates,
   E2EDataSources,
   createE2EDataSources,
-  createFakeStudentScholasticStanding,
-  createFakeUser,
   createFakeStudentAppealRequest,
   createFakeStudentAppeal,
 } from "@sims/test-utils";
@@ -29,7 +27,6 @@ import {
   Institution,
   InstitutionLocation,
   StudentAppealStatus,
-  StudentAssessmentStatus,
 } from "@sims/sims-db";
 import { saveStudentApplicationForCollegeC } from "../../../student/_tests_/e2e/student.institutions.utils";
 
@@ -125,7 +122,7 @@ describe("AssessmentInstitutionsController(e2e)-getRequestedAssessmentSummary", 
     const collegeCInstitutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeCUser,
     );
-    const endpoint = `/institutions/assessment/student/${student.id}/application/9999/requests`;
+    const endpoint = `/institutions/assessment/student/${student.id}/application/9999999/requests`;
 
     // Act/Assert
     await request(app.getHttpServer())
@@ -148,7 +145,7 @@ describe("AssessmentInstitutionsController(e2e)-getRequestedAssessmentSummary", 
       InstitutionTokenTypes.CollegeFUser,
     );
 
-    const endpoint = `/institutions/assessment/student/${student.id}/application/9999/requests`;
+    const endpoint = `/institutions/assessment/student/${student.id}/application/9999999/requests`;
 
     // Act/Assert
     await request(app.getHttpServer())

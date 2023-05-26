@@ -21,10 +21,14 @@ export interface ApplicationExceptionRequestAPIOutDTO {
 export interface ApplicationExceptionAPIOutDTO {
   exceptionStatus: ApplicationExceptionStatus;
   submittedDate: Date;
-  noteDescription: string;
-  assessedByUserName?: string;
-  assessedDate?: Date;
   exceptionRequests: ApplicationExceptionRequestAPIOutDTO[];
+}
+
+export interface DetailedApplicationExceptionAPIOutDTO
+  extends ApplicationExceptionAPIOutDTO {
+  noteDescription: string;
+  assessedByUserName: string;
+  assessedDate: Date;
 }
 
 export interface ApplicationExceptionSummaryAPIOutDTO {

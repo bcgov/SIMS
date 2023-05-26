@@ -20,7 +20,6 @@ import {
   createE2EDataSources,
 } from "@sims/test-utils";
 import {
-  Assessment,
   AssessmentStatus,
   Institution,
   InstitutionLocation,
@@ -87,10 +86,6 @@ describe("AssessmentInstitutionsController(e2e)-getAssessmentNOA", () => {
       InstitutionTokenTypes.CollegeFUser,
     );
 
-    const savedAssessmentDetails = getSavedAssessmentDetails(
-      assessment.assessmentData,
-    );
-
     // Act/Assert
     await request(app.getHttpServer())
       .get(endpoint)
@@ -100,7 +95,7 @@ describe("AssessmentInstitutionsController(e2e)-getAssessmentNOA", () => {
         applicationId: application.id,
         applicationNumber: application.applicationNumber,
         applicationStatus: application.applicationStatus,
-        assessment: savedAssessmentDetails,
+        assessment: assessment.assessmentData,
         disbursement: {
           disbursement1COEStatus: firstDisbursementSchedule.coeStatus,
           disbursement1Date: getDateOnlyFormat(
@@ -199,7 +194,7 @@ describe("AssessmentInstitutionsController(e2e)-getAssessmentNOA", () => {
       msfaaNumber: currentMSFAA,
     });
 
-    const endpoint = `/institutions/assessment/student/${student.id}/assessment/9999/noa`;
+    const endpoint = `/institutions/assessment/student/${student.id}/assessment/9999999/noa`;
     const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeFUser,
     );
@@ -232,7 +227,7 @@ describe("AssessmentInstitutionsController(e2e)-getAssessmentNOA", () => {
     const collegeCInstitutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeCUser,
     );
-    const endpoint = `/institutions/assessment/student/${student.id}/assessment/9999/noa`;
+    const endpoint = `/institutions/assessment/student/${student.id}/assessment/9999999/noa`;
 
     // Act/Assert
     await request(app.getHttpServer())
@@ -255,7 +250,7 @@ describe("AssessmentInstitutionsController(e2e)-getAssessmentNOA", () => {
       InstitutionTokenTypes.CollegeFUser,
     );
 
-    const endpoint = `/institutions/assessment/student/${student.id}/assessment/9999/noa`;
+    const endpoint = `/institutions/assessment/student/${student.id}/assessment/9999999/noa`;
 
     // Act/Assert
     await request(app.getHttpServer())
@@ -268,90 +263,6 @@ describe("AssessmentInstitutionsController(e2e)-getAssessmentNOA", () => {
         error: "Forbidden",
       });
   });
-
-  /**
-   * Get the saved formatted assessment details.
-   * @param assessmentData assessment data.
-   * @returns a assessment details object as
-   * returned by the noa endpoint.
-   */
-  function getSavedAssessmentDetails(
-    assessmentData: Assessment,
-  ): Record<string, string | number> {
-    return {
-      ...(assessmentData.alimonyOrChildSupport && {
-        alimonyOrChildSupport: assessmentData.alimonyOrChildSupport,
-      }),
-      ...(assessmentData.booksAndSuppliesCost && {
-        booksAndSuppliesCost: assessmentData.booksAndSuppliesCost,
-      }),
-      ...(assessmentData.childcareCost && {
-        childcareCost: assessmentData.childcareCost,
-      }),
-      ...(assessmentData.exceptionalEducationCost && {
-        exceptionalEducationCost: assessmentData.exceptionalEducationCost,
-      }),
-      ...(assessmentData.federalAssessmentNeed && {
-        federalAssessmentNeed: assessmentData.federalAssessmentNeed,
-      }),
-      ...(assessmentData.livingAllowance && {
-        livingAllowance: assessmentData.livingAllowance,
-      }),
-      ...(assessmentData.otherAllowableCost && {
-        otherAllowableCost: assessmentData.otherAllowableCost,
-      }),
-      ...(assessmentData.parentAssessedContribution && {
-        parentAssessedContribution: assessmentData.parentAssessedContribution,
-      }),
-      ...(assessmentData.partnerAssessedContribution && {
-        partnerAssessedContribution: assessmentData.partnerAssessedContribution,
-      }),
-      ...(assessmentData.provincialAssessmentNeed && {
-        provincialAssessmentNeed: assessmentData.provincialAssessmentNeed,
-      }),
-      ...(assessmentData.secondResidenceCost && {
-        secondResidenceCost: assessmentData.secondResidenceCost,
-      }),
-      ...(assessmentData.studentTotalFederalContribution && {
-        studentTotalFederalContribution:
-          assessmentData.studentTotalFederalContribution,
-      }),
-      ...(assessmentData.studentTotalProvincialContribution && {
-        studentTotalProvincialContribution:
-          assessmentData.studentTotalProvincialContribution,
-      }),
-      ...(assessmentData.totalAssessedCost && {
-        totalAssessedCost: assessmentData.totalAssessedCost,
-      }),
-      ...(assessmentData.totalAssessmentNeed && {
-        totalAssessmentNeed: assessmentData.totalAssessmentNeed,
-      }),
-      ...(assessmentData.totalFamilyIncome && {
-        totalFamilyIncome: assessmentData.totalFamilyIncome,
-      }),
-      ...(assessmentData.totalFederalAward && {
-        totalFederalAward: assessmentData.totalFederalAward,
-      }),
-      ...(assessmentData.totalFederalContribution && {
-        totalFederalContribution: assessmentData.totalFederalContribution,
-      }),
-      ...(assessmentData.totalProvincialAward && {
-        totalProvincialAward: assessmentData.totalProvincialAward,
-      }),
-      ...(assessmentData.totalProvincialContribution && {
-        totalProvincialContribution: assessmentData.totalProvincialContribution,
-      }),
-      ...(assessmentData.transportationCost && {
-        transportationCost: assessmentData.transportationCost,
-      }),
-      ...(assessmentData.tuitionCost && {
-        tuitionCost: assessmentData.tuitionCost,
-      }),
-      ...(assessmentData.weeks && {
-        weeks: assessmentData.weeks,
-      }),
-    };
-  }
 
   afterAll(async () => {
     await app?.close();
