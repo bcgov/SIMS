@@ -54,7 +54,6 @@ describe("StudentAppealInstitutionsController(e2e)-getStudentAppealWithRequests"
 
   it("Should get the student appeal request details when public institution requests to see the details that belong to the institution.", async () => {
     // Arrange
-
     // Student has an application to the institution.
     const student = await saveFakeStudent(db.dataSource);
 
@@ -111,7 +110,6 @@ describe("StudentAppealInstitutionsController(e2e)-getStudentAppealWithRequests"
 
   it("Should throw not found response error when the public institution requests to see the appeal details that does not exist for the institution .", async () => {
     // Arrange
-
     // Student has an application to the institution.
     const student = await saveFakeStudent(db.dataSource);
 

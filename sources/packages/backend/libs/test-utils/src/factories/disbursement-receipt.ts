@@ -2,7 +2,6 @@ import {
   DisbursementReceipt,
   DisbursementSchedule,
   InstitutionLocation,
-  Student,
 } from "@sims/sims-db";
 import { getISODateOnlyString } from "@sims/utilities";
 import * as faker from "faker";
@@ -11,15 +10,15 @@ import * as faker from "faker";
  * Create fake disbursement receipts.
  * @param relations dependencies.
  * - `disbursementSchedule` related disbursement schedule.
- * - `student` related student.
  * - `institutionLocation` related institution location.
  * @returns disbursement receipt.
  */
 export function createFakeDisbursementReceipt(relations: {
   disbursementSchedule: DisbursementSchedule;
-  student: Student;
   institutionLocation?: InstitutionLocation;
 }): DisbursementReceipt {
+  const student =
+    relations.disbursementSchedule.studentAssessment.application.student;
   const now = new Date();
   const isoDateNow = getISODateOnlyString(new Date());
   const randomAmount = faker.random.number({
@@ -29,7 +28,7 @@ export function createFakeDisbursementReceipt(relations: {
   const receipt = new DisbursementReceipt();
   receipt.batchRunDate = isoDateNow;
   receipt.studentSIN =
-    relations.student.sinValidation.sin ??
+    student.sinValidation.sin ??
     faker.random.number({ min: 100000000, max: 899999999 }).toString();
   receipt.disbursementSchedule = relations.disbursementSchedule;
   receipt.fundingType = faker.random.alpha({ count: 2, upcase: true });

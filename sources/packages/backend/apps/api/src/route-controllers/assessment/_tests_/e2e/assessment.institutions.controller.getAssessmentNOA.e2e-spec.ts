@@ -25,7 +25,7 @@ import {
   InstitutionLocation,
 } from "@sims/sims-db";
 import { getDateOnlyFormat } from "@sims/utilities";
-import { MASKED_MSFAA_NUMBER } from "@sims/services/constants";
+import { MASKED_MSFAA_NUMBER } from "../../../../../src/services";
 import { saveStudentApplicationForCollegeC } from "../../../student/_tests_/e2e/student.institutions.utils";
 import { getUserFullName } from "../../../../utilities";
 
@@ -130,7 +130,6 @@ describe("AssessmentInstitutionsController(e2e)-getAssessmentNOA", () => {
 
   it("Should throw unprocessable entity exception when assessment data is not found.", async () => {
     // Arrange
-
     // Student has an application to the institution eligible for NOA.
     const student = await saveFakeStudent(db.dataSource);
 
@@ -169,7 +168,6 @@ describe("AssessmentInstitutionsController(e2e)-getAssessmentNOA", () => {
 
   it("Should throw not found exception when assessment is not found.", async () => {
     // Arrange
-
     // Student has an application to the institution eligible for NOA.
     const student = await saveFakeStudent(db.dataSource);
     const currentMSFAA = createFakeMSFAANumber(

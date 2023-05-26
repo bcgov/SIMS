@@ -52,10 +52,10 @@ export async function saveFakeApplicationWithApplicationException(
   });
   if (options?.applicationExceptionStatus) {
     applicationException.exceptionStatus = options?.applicationExceptionStatus;
-    applicationException = await applicationExceptionRepo.save(
-      applicationException,
-    );
   }
+  applicationException = await applicationExceptionRepo.save(
+    applicationException,
+  );
   const application = await applicationRepo.save(
     createFakeApplication({
       student,

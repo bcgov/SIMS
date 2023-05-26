@@ -28,8 +28,8 @@ import {
   InstitutionLocation,
 } from "@sims/sims-db";
 import { getDateOnlyFormat } from "@sims/utilities";
-import { MASKED_MSFAA_NUMBER } from "@sims/services/constants";
 import { saveStudentApplicationForCollegeC } from "../../../student/_tests_/e2e/student.institutions.utils";
+import { MASKED_MSFAA_NUMBER } from "../../../../../src/services";
 
 describe("AssessmentInstitutionsController(e2e)-getAssessmentAwardDetails", () => {
   let app: INestApplication;
@@ -108,7 +108,7 @@ describe("AssessmentInstitutionsController(e2e)-getAssessmentAwardDetails", () =
     await db.disbursementReceiptValue.save(disbursementReceiptsValues);
 
     const finalAwards = {};
-    finalAwards[`disbursementReceipt1Id`] = disbursementReceipt.id;
+    finalAwards["disbursementReceipt1Id"] = disbursementReceipt.id;
 
     disbursementReceiptsValues.forEach((disbursementReceiptsValue) => {
       finalAwards[
