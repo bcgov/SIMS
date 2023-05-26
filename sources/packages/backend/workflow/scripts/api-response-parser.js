@@ -36,7 +36,7 @@ function setValuesFromPayload(payload, fieldName, fieldsNamesPath) {
     // Extract the child field name (e.g. someChild);
     const childFieldName = fieldName.substring(parentIndex + 1);
     // Ensures that the parent exists in the payload.
-    const parentPayload = null;
+    let parentPayload = null;
     if (payload.hasProp(parentFieldName)) {
       parentPayload = payload.prop(parentFieldName);
     }
@@ -50,7 +50,7 @@ function setValuesFromPayload(payload, fieldName, fieldsNamesPath) {
   } else {
     // This means that the last field on the hierarchy was reached and
     // the variable can be set.
-    const fieldValue = null;
+    let fieldValue = null;
     if (payload.hasProp(fieldName)) {
       const fieldProp = payload.prop(fieldName);
       if (fieldProp.isArray() || fieldProp.isObject()) {
