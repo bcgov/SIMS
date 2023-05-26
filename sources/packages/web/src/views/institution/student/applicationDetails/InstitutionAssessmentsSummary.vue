@@ -7,7 +7,6 @@
         subTitle="Assessment"
       />
     </template>
-
     <request-assessment
       class="mb-5"
       :applicationId="applicationId"

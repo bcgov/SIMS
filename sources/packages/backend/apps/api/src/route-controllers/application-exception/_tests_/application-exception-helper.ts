@@ -3,7 +3,6 @@ import {
   ApplicationException,
   ApplicationExceptionRequest,
   ApplicationExceptionStatus,
-  Institution,
   InstitutionLocation,
   Student,
 } from "@sims/sims-db";
