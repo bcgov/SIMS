@@ -60,7 +60,7 @@ export async function saveFakeApplicationWithApplicationException(
     createFakeApplication({
       student,
       applicationException,
-      location: relations.institutionLocation,
+      location: relations?.institutionLocation,
     }),
   );
 
