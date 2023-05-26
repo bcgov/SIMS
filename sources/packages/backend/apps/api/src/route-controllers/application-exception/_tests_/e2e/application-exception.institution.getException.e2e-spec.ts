@@ -10,10 +10,7 @@ import {
   getAuthRelatedEntities,
   getInstitutionToken,
 } from "../../../../testHelpers";
-import {
-  ApplicationExceptionStatus,
-  InstitutionLocation,
-} from "@sims/sims-db";
+import { ApplicationExceptionStatus, InstitutionLocation } from "@sims/sims-db";
 import { saveFakeApplicationWithApplicationException } from "../application-exception-helper";
 import {
   E2EDataSources,
@@ -50,7 +47,6 @@ describe("ApplicationExceptionInstitutionsController(e2e)-getException", () => {
       "institution when the same public institution requests to see the details.",
     async () => {
       // Arrange
-
       const application = await saveFakeApplicationWithApplicationException(
         db.dataSource,
         { institutionLocation: collegeFLocation },
@@ -81,7 +77,6 @@ describe("ApplicationExceptionInstitutionsController(e2e)-getException", () => {
 
   it("Should throw not found response error when the public institution requests to see the exception details that does not exist for the institution .", async () => {
     // Arrange
-
     const application = await saveFakeApplicationWithApplicationException(
       db.dataSource,
       { institutionLocation: collegeFLocation },
