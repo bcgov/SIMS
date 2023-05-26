@@ -1,9 +1,9 @@
 // Sample code to write to the console.
 // var system = java.lang.System;
 
-var httpSuccessCode = connector.getVariable("httpSuccessCode");
-var errorCodeName = connector.getVariable("errorCodeName");
-var statusCode = connector.getVariable("statusCode");
+const httpSuccessCode = connector.getVariable("httpSuccessCode");
+const errorCodeName = connector.getVariable("errorCodeName");
+const statusCode = connector.getVariable("statusCode");
 if (statusCode !== parseInt(httpSuccessCode)) {
   throw new org.camunda.bpm.engine.delegate.BpmnError(errorCodeName, response);
 }
@@ -11,11 +11,11 @@ if (statusCode !== parseInt(httpSuccessCode)) {
 /**
  * Input field names are expected in the format someParent.someChild.
  */
-var INPUT_HIERARCHY_SEPARATOR = ".";
+const INPUT_HIERARCHY_SEPARATOR = ".";
 /**
  * Output connector variables will be created in the format someParent_someChild.
  */
-var OUTPUT_HIERARCHY_SEPARATOR = "_";
+const OUTPUT_HIERARCHY_SEPARATOR = "_";
 
 /**
  * Recursively read the values from the payload to create workflow variables.
@@ -28,15 +28,15 @@ var OUTPUT_HIERARCHY_SEPARATOR = "_";
  */
 function setValuesFromPayload(payload, fieldName, fieldsNamesPath) {
   // Check if the field has some hierarchy (e.g. someParent.someChild).
-  var parentIndex = fieldName.indexOf(INPUT_HIERARCHY_SEPARATOR);
+  const parentIndex = fieldName.indexOf(INPUT_HIERARCHY_SEPARATOR);
   if (payload && parentIndex > -1) {
     // Extract the parent field name (e.g. someParent);
-    var parentFieldName = fieldName.substring(0, parentIndex);
+    const parentFieldName = fieldName.substring(0, parentIndex);
     fieldsNamesPath.push(parentFieldName);
     // Extract the child field name (e.g. someChild);
-    var childFieldName = fieldName.substring(parentIndex + 1);
+    const childFieldName = fieldName.substring(parentIndex + 1);
     // Ensures that the parent exists in the payload.
-    var parentPayload = null;
+    const parentPayload = null;
     if (payload.hasProp(parentFieldName)) {
       parentPayload = payload.prop(parentFieldName);
     }
@@ -44,15 +44,15 @@ function setValuesFromPayload(payload, fieldName, fieldsNamesPath) {
   } else if (payload === null) {
     // If parent does not exists just set null to the variable.
     fieldsNamesPath = fieldsNamesPath.concat(
-      fieldName.split(INPUT_HIERARCHY_SEPARATOR)
+      fieldName.split(INPUT_HIERARCHY_SEPARATOR),
     );
     setVariableWithFullName(fieldsNamesPath, null);
   } else {
     // This means that the last field on the hierarchy was reached and
     // the variable can be set.
-    var fieldValue = null;
+    const fieldValue = null;
     if (payload.hasProp(fieldName)) {
-      var fieldProp = payload.prop(fieldName);
+      const fieldProp = payload.prop(fieldName);
       if (fieldProp.isArray() || fieldProp.isObject()) {
         fieldValue = fieldProp;
       } else {
@@ -71,13 +71,13 @@ function setValuesFromPayload(payload, fieldName, fieldsNamesPath) {
  * @param fieldValue value to be set.
  */
 function setVariableWithFullName(fieldsNamesPath, fieldValue) {
-  var fullVariableName = fieldsNamesPath.join(OUTPUT_HIERARCHY_SEPARATOR);
+  const fullVariableName = fieldsNamesPath.join(OUTPUT_HIERARCHY_SEPARATOR);
   connector.setVariable(fullVariableName, fieldValue);
 }
 
 // Script entry point that will iterate through all the variables requested to be created.
-var fieldNames = connector.getVariable("fieldNames");
-var output = S(connector.getVariable("response"));
-for (var i = 0; i < fieldNames.length; i++) {
+const fieldNames = connector.getVariable("fieldNames");
+const output = S(connector.getVariable("response"));
+for (let i = 0; i < fieldNames.length; i++) {
   setValuesFromPayload(output, fieldNames[i], []);
 }

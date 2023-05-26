@@ -2,10 +2,10 @@
 // var system = java.lang.System;
 // system.out.println(“System out println”);
 
-var applicationExceptions = [];
-var dynamicData = S(execution.getVariable("applicationData"));
+const applicationExceptions = [];
+const dynamicData = S(execution.getVariable("applicationData"));
 // Value assigned to a property to determine that it is an application exception.
-var STUDENT_APPLICATION_EXCEPTION_VALUE_IDENTIFIER =
+const STUDENT_APPLICATION_EXCEPTION_VALUE_IDENTIFIER =
   "studentApplicationException";
 
 /**
@@ -16,8 +16,8 @@ var STUDENT_APPLICATION_EXCEPTION_VALUE_IDENTIFIER =
  */
 function searchExceptions(payload) {
   if (payload.isArray()) {
-    var arrayItems = payload.elements();
-    for (var i = 0; i < arrayItems.length; i++) {
+    const arrayItems = payload.elements();
+    for (let i = 0; i < arrayItems.length; i++) {
       // If the payload is an array, iterate through each item
       // looking for some application exception.
       searchExceptions(arrayItems[i]);
@@ -25,10 +25,10 @@ function searchExceptions(payload) {
   } else if (payload.isObject()) {
     // If the payload is an object, iterate through its properties
     // looking for some application exception.
-    var objectFieldNames = payload.fieldNames();
-    for (var i = 0; i < objectFieldNames.length; i++) {
-      var fieldName = objectFieldNames[i];
-      var objectProp = payload.prop(fieldName);
+    const objectFieldNames = payload.fieldNames();
+    for (let i = 0; i < objectFieldNames.length; i++) {
+      const fieldName = objectFieldNames[i];
+      const objectProp = payload.prop(fieldName);
       if (objectProp.isArray() || objectProp.isObject()) {
         searchExceptions(objectProp);
       } else if (
@@ -58,13 +58,13 @@ function arrayToPayload(fieldName) {
 searchExceptions(dynamicData);
 // Prepare the payload that will be used to call the SIMS API
 // and create the application exceptions, if needed.
-var applicationExceptionsPayload = applicationExceptions.map(arrayToPayload);
+const applicationExceptionsPayload = applicationExceptions.map(arrayToPayload);
 execution.setVariable(
   "applicationExceptions",
-  JSON.stringify(applicationExceptionsPayload)
+  JSON.stringify(applicationExceptionsPayload),
 );
 // Set hasApplicationExceptions for easy verification on the workflow decisions.
 execution.setVariable(
   "hasApplicationExceptions",
-  applicationExceptions.length > 0
+  applicationExceptions.length > 0,
 );
