@@ -82,11 +82,25 @@ describe("ApplicationExceptionInstitutionsController(e2e)-getException", () => {
       { institutionLocation: collegeFLocation },
       { applicationExceptionStatus: ApplicationExceptionStatus.Approved },
     );
+    // Submit another application to college C.
+    const { institution } = await getAuthRelatedEntities(
+      db.dataSource,
+      InstitutionTokenTypes.CollegeCUser,
+    );
+    const collegeCLocation = createFakeInstitutionLocation(institution);
 
-    const endpoint = `/institutions/application-exception/student/${application.student.id}/exception/9999999`;
+    const collegeCApplication =
+      await saveFakeApplicationWithApplicationException(
+        db.dataSource,
+        { institutionLocation: collegeCLocation },
+        { applicationExceptionStatus: ApplicationExceptionStatus.Approved },
+      );
+
+    const endpoint = `/institutions/application-exception/student/${application.student.id}/exception/${collegeCApplication.applicationException.id}`;
     const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeFUser,
     );
+
     // Act/Assert
     await request(app.getHttpServer())
       .get(endpoint)
