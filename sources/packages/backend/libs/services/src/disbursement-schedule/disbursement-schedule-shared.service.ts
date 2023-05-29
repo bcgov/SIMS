@@ -487,10 +487,10 @@ export class DisbursementScheduleSharedService extends RecordDataModelService<Di
    * @param totalAlreadyDisbursedValues sum of the awards already
    * disbursed per award code.
    */
-  private async applyGrantsAlreadyDisbursedValues(
+  private applyGrantsAlreadyDisbursedValues(
     disbursementSchedules: DisbursementSchedule[],
     totalAlreadyDisbursedValues: Record<string, number>,
-  ): Promise<void> {
+  ): void {
     const grantsAwards = this.getAwardsByAwardType(
       disbursementSchedules,
       GRANTS_TYPES,
