@@ -85,7 +85,6 @@ describe("AssessmentInstitutionsController(e2e)-getAssessmentAwardDetails", () =
 
     const disbursementReceipt = createFakeDisbursementReceipt({
       disbursementSchedule: firstDisbursementSchedule,
-      student,
       institutionLocation: collegeFLocation,
     });
     await db.disbursementReceipt.save(disbursementReceipt);
