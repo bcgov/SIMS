@@ -36,8 +36,8 @@ async function getAuthToken(): Promise<AxiosResponse<String>> {
 async function uploadResultFile() {
   const auth = await getAuthToken();
   const url = `${TQ_API_URL}/plan/${TQ_RUN_ID}/junit_xml`;
-  var formData = new FormData();
-  var resultFile = fs.createReadStream("test-results.xml");
+  const formData = new FormData();
+  const resultFile = fs.createReadStream("test-results.xml");
   formData.append("file", resultFile, "test-results.xml");
   try {
     const settings = {
