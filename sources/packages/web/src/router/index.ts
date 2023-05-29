@@ -41,7 +41,7 @@ const router = createRouter({
 // results in router not working as expected on page refresh.
 router.beforeResolve(async (to, _from, next) => {
   if (to.meta?.clientType === ClientIdType.Institution) {
-    validateInstitutionUserAccess(to, _from, next);
+    await validateInstitutionUserAccess(to, _from, next);
   } else {
     next();
   }

@@ -163,7 +163,7 @@ export default defineComponent({
     };
 
     onMounted(async () => {
-      getInstitutionLocationList();
+      await getInstitutionLocationList();
     });
 
     return {

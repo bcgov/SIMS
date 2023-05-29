@@ -54,4 +54,6 @@ async function uploadResultFile() {
     throw error;
   }
 }
-uploadResultFile();
+(async () => {
+  await uploadResultFile();
+})();

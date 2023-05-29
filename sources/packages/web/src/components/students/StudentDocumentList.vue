@@ -80,8 +80,8 @@ export default defineComponent({
 
     watch(
       () => props.reload,
-      () => {
-        getStudentDocuments();
+      async () => {
+        await getStudentDocuments();
       },
       {
         immediate: true,

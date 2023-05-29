@@ -148,7 +148,7 @@ export class DesignationAgreementAESTController extends BaseController {
         (location) => location.locationId,
       );
       const validInstitutionLocations =
-        this.institutionLocationService.validateInstitutionLocations(
+        await this.institutionLocationService.validateInstitutionLocations(
           designation.institution.id,
           locationIds,
         );

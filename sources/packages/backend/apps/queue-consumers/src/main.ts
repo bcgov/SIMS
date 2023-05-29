@@ -9,7 +9,7 @@ import { Queue } from "bull";
 import { QueueConsumersModule } from "./queue-consumers.module";
 import * as basicAuth from "express-basic-auth";
 
-async function bootstrap() {
+(async () => {
   const app = await NestFactory.create(QueueConsumersModule);
   const config = app.get<ConfigService>(ConfigService);
   // Queue service.
@@ -41,5 +41,4 @@ async function bootstrap() {
   );
 
   await app.listen(config.queueConsumersPort);
-}
-bootstrap();
+})();

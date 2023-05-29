@@ -1,7 +1,7 @@
 import { DataSource } from "typeorm";
 import { ormConfig } from "./data-source";
 
-async function bootstrap() {
+(async () => {
   const migrationDataSource = new DataSource({
     ...ormConfig,
     logging: ["error", "warn", "info"],
@@ -22,5 +22,4 @@ async function bootstrap() {
   } finally {
     await dataSource.destroy();
   }
-}
-bootstrap();
+})();

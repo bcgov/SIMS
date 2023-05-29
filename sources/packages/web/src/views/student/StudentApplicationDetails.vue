@@ -174,7 +174,7 @@ export default defineComponent({
 
     const confirmEditApplication = async () => {
       if (await editApplicationModal.value.showModal()) {
-        editApplication();
+        await editApplication();
       }
     };
 
