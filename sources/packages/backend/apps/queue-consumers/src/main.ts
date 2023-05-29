@@ -42,4 +42,6 @@ async function bootstrap() {
 
   await app.listen(config.queueConsumersPort);
 }
-bootstrap();
+(async () => {
+  await bootstrap();
+})();

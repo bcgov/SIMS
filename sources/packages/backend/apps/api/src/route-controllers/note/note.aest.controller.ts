@@ -111,7 +111,9 @@ export class NoteAESTController extends BaseController {
     @Body() payload: NoteAPIInDTO,
   ): Promise<PrimaryIdentifierAPIOutDTO> {
     const institution =
-      this.institutionService.getBasicInstitutionDetailById(institutionId);
+      await this.institutionService.getBasicInstitutionDetailById(
+        institutionId,
+      );
     if (!institution) {
       throw new NotFoundException("Institution not found.");
     }

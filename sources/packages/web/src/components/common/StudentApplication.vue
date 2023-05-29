@@ -172,7 +172,7 @@ export default defineComponent({
       };
       formInstance.on("prevPage", prevNextNavigation);
       formInstance.on("nextPage", prevNextNavigation);
-      loadFormDependencies();
+      await loadFormDependencies();
     };
 
     const getOfferingDetails = async (form: any, locationId: number) => {
@@ -243,7 +243,7 @@ export default defineComponent({
         await formioUtils.resetCheckBox(form, OFFERING_NOT_LISTED, {
           offeringnotListed: false,
         });
-        getOfferingDetails(form, locationId);
+        await getOfferingDetails(form, locationId);
       }
       if (
         event.changed?.component.key === OFFERINGS_DROPDOWN_KEY &&
@@ -302,8 +302,8 @@ export default defineComponent({
 
     watch(
       () => props.initialData,
-      () => {
-        loadFormDependencies();
+      async () => {
+        await loadFormDependencies();
       },
     );
     return {

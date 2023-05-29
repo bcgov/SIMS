@@ -41,7 +41,7 @@ export class CancelApplicationAssessmentProcessor {
       appLogger: this.logger,
       jobLogger: job,
     });
-    summary.info(
+    await summary.info(
       `Cancelling application assessment id ${job.data.assessmentId}`,
     );
     const assessment = await this.studentAssessmentService.getAssessmentById(
@@ -86,7 +86,7 @@ export class CancelApplicationAssessmentProcessor {
           throw error;
         }
         // NOT_FOUND error means that the call to Camunda was successful but the workflow instance was not found.
-        summary.warn(
+        await summary.warn(
           "Workflow instance was not cancelled because the workflow id was not found on Camunda. " +
             "This can happen if the workflow was already completed or if it was cancelled, for instance, manually using the workflow UI. " +
             "This is not considered an error and the cancellation can proceed.",

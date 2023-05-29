@@ -152,7 +152,7 @@ export class StudentAESTController extends BaseController {
     @Body("uniqueFileName") uniqueFileName: string,
     @Body("group") groupName: string,
   ): Promise<FileCreateAPIOutDTO> {
-    const studentExists = this.studentService.studentExists(studentId);
+    const studentExists = await this.studentService.studentExists(studentId);
     if (!studentExists) {
       throw new NotFoundException("Student was not found.");
     }

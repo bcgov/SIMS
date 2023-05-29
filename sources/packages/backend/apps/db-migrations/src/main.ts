@@ -23,4 +23,6 @@ async function bootstrap() {
     await dataSource.destroy();
   }
 }
-bootstrap();
+(async () => {
+  await bootstrap();
+})();

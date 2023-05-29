@@ -56,4 +56,6 @@ async function bootstrap() {
   }
   await app.get(SeedExecutor).executeSeed(testClassList);
 }
-bootstrap();
+(async () => {
+  await bootstrap();
+})();

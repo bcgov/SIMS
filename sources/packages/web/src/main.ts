@@ -33,7 +33,7 @@ import FooterButtons from "@/components/generic/FooterButtons.vue";
 import TitleValue from "@/components/generic/TitleValue.vue";
 import StatusInfoLabel from "@/components/generic/StatusInfoLabel.vue";
 
-AppConfigService.shared.init().then(() => {
+await AppConfigService.shared.init().then(() => {
   createApp(App)
     .use(vuetify)
     .use(store)

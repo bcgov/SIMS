@@ -254,11 +254,11 @@ export default defineComponent({
       }
     };
 
-    const wizardSubmit = () => {
+    const wizardSubmit = async () => {
       if (
         existingApplication.value.applicationStatus !== ApplicationStatus.Draft
       ) {
-        confirmEditApplication();
+        await confirmEditApplication();
       } else {
         applicationWizard.submit();
       }

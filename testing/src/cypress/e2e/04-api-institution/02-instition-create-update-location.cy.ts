@@ -100,19 +100,19 @@ describe("[Institution Create/Update] Verify location create/update", () => {
     );
   });
 
-  it("Verify to create new Non-Canadian location", () => {
-    createOrUpdateInstitutionLocation(token, uniqueId1, false, true);
+  it("Verify to create new Non-Canadian location", async () => {
+    await createOrUpdateInstitutionLocation(token, uniqueId1, false, true);
   });
 
-  it("Verify to create new Canadian location", () => {
-    createOrUpdateInstitutionLocation(token, uniqueId2, true, true);
+  it("Verify to create new Canadian location", async () => {
+    await createOrUpdateInstitutionLocation(token, uniqueId2, true, true);
   });
 
-  it("Verify to update the existing location to Canadian Location", () => {
-    createOrUpdateInstitutionLocation(token, uniqueId3, true, true);
+  it("Verify to update the existing location to Canadian Location", async () => {
+    await createOrUpdateInstitutionLocation(token, uniqueId3, true, true);
   });
 
-  it("[Institution Create/Update] - Verify to update the existing location to Non-Canadian Location", () => {
-    createOrUpdateInstitutionLocation(token, uniqueId4, false, true);
+  it("[Institution Create/Update] - Verify to update the existing location to Non-Canadian Location", async () => {
+    await createOrUpdateInstitutionLocation(token, uniqueId4, false, true);
   });
 });

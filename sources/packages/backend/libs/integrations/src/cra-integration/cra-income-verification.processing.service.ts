@@ -103,7 +103,7 @@ export class CRAIncomeVerificationProcessingService {
           const incomeVerificationRepo = entityManager.getRepository(
             CRAIncomeVerification,
           );
-          this.incomeVerificationService.updateSentFile(
+          await this.incomeVerificationService.updateSentFile(
             verificationsIds,
             getUTCNow(),
             fileInfo.fileName,

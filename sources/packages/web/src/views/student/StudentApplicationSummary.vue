@@ -78,7 +78,7 @@ export default defineComponent({
 
     const confirmEditApplication = async (applicationId: number) => {
       if (await editApplicationModal.value.showModal()) {
-        goToEditApplication(applicationId);
+        await goToEditApplication(applicationId);
       }
     };
 
@@ -86,9 +86,11 @@ export default defineComponent({
       status: ApplicationStatus,
       applicationId: number,
     ) => {
-      if (status !== ApplicationStatus.Draft)
-        confirmEditApplication(applicationId);
-      else goToEditApplication(applicationId);
+      if (status !== ApplicationStatus.Draft) {
+        await confirmEditApplication(applicationId);
+      } else {
+        await goToEditApplication(applicationId);
+      }
     };
 
     const confirmCancelApplication = async (

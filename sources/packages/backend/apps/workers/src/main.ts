@@ -19,4 +19,6 @@ async function bootstrap() {
 
   logger.log("Workers initialized!");
 }
-bootstrap();
+(async () => {
+  await bootstrap();
+})();
