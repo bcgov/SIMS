@@ -129,7 +129,7 @@ export class DisbursementScheduleSharedService extends RecordDataModelService<Di
       assessment.modifier = auditUser;
       // Adjust the saved grants disbursements with the values already disbursed.
       // !Intended to process only grants (CanadaGrant/BCGrant)
-      await this.applyGrantsAlreadyDisbursedValues(
+      this.applyGrantsAlreadyDisbursedValues(
         disbursementSchedules,
         totalAlreadyDisbursedValues,
       );
