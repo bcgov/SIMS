@@ -81,7 +81,7 @@ export abstract class SFTPIntegrationBase<DownloadType> {
 
     return filesToProcess
       .map((file) => path.join(remoteDownloadFolder, file.name))
-      .sort();
+      .sort((a, b) => a.localeCompare(b));
   }
 
   /**

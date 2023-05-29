@@ -44,7 +44,7 @@ function setValuesFromPayload(payload, fieldName, fieldsNamesPath) {
   } else if (payload === null) {
     // If parent does not exists just set null to the variable.
     fieldsNamesPath = fieldsNamesPath.concat(
-      fieldName.split(INPUT_HIERARCHY_SEPARATOR)
+      fieldName.split(INPUT_HIERARCHY_SEPARATOR),
     );
     setVariableWithFullName(fieldsNamesPath, null);
   } else {

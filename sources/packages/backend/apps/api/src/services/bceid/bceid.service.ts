@@ -183,7 +183,7 @@ export class BCeIDService {
     );
 
     try {
-      var client = await createClientAsync(this.bceidConfig.wsdlEndpoint, {
+      const client = await createClientAsync(this.bceidConfig.wsdlEndpoint, {
         wsdl_headers: wsdlAuthHeader,
       });
       client.setSecurity(clientSecurity);

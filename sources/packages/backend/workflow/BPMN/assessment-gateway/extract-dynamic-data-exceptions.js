@@ -61,10 +61,10 @@ searchExceptions(dynamicData);
 var applicationExceptionsPayload = applicationExceptions.map(arrayToPayload);
 execution.setVariable(
   "applicationExceptions",
-  JSON.stringify(applicationExceptionsPayload)
+  JSON.stringify(applicationExceptionsPayload),
 );
 // Set hasApplicationExceptions for easy verification on the workflow decisions.
 execution.setVariable(
   "hasApplicationExceptions",
-  applicationExceptions.length > 0
+  applicationExceptions.length > 0,
 );
