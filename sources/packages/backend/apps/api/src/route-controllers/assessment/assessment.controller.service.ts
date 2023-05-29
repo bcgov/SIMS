@@ -18,6 +18,7 @@ import {
   StudentScholasticStandingsService,
   EducationProgramOfferingService,
   ApplicationExceptionService,
+  MASKED_MSFAA_NUMBER,
 } from "../../services";
 import {
   AssessmentNOAAPIOutDTO,
@@ -28,7 +29,6 @@ import {
 } from "./models/assessment.dto";
 import { getUserFullName } from "../../utilities";
 import { getDateOnlyFormat } from "@sims/utilities";
-import { MASKED_MSFAA_NUMBER } from "@sims/services/constants";
 
 @Injectable()
 export class AssessmentControllerService {

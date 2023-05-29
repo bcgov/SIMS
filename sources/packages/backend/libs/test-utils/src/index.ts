@@ -26,5 +26,6 @@ export * from "./mocks/ssh-service-mock";
 export * from "./mocks/queue-module-mock";
 export * from "./modules/modules-utils";
 export * from "./data-source/e2e-data-source";
-export * from "./factories/disbursement_receipts";
+export * from "./factories/disbursement-receipt";
 export * from "./factories/disbursement-receipt-value";
+export * from "./date-utils";

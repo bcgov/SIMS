@@ -8,7 +8,6 @@
       />
       <detail-header :headerMap="headerMap" />
     </template>
-    <!-- todo: should inistition be allowed to accept coe from here? -->
     <assessment-award
       :assessment-award-data="assessmentAwardData"
       :notice-of-assessment-route="noticeOfAssessmentRoute"
