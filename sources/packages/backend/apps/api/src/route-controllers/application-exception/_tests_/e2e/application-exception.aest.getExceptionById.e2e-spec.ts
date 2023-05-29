@@ -25,7 +25,8 @@ describe("ApplicationExceptionAESTController(e2e)-getExceptionById", () => {
     // Arrange
     const application = await saveFakeApplicationWithApplicationException(
       appDataSource,
-      ApplicationExceptionStatus.Approved,
+      undefined,
+      { applicationExceptionStatus: ApplicationExceptionStatus.Approved },
     );
     const endpoint = `/aest/application-exception/${application.applicationException.id}`;
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);

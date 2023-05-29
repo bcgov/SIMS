@@ -39,6 +39,7 @@ import { ApplicationExceptionService } from "@/services/ApplicationExceptionServ
 import { ApplicationExceptionStatus, FormIOForm, Role } from "@/types";
 import {
   ApplicationExceptionAPIOutDTO,
+  DetailedApplicationExceptionAPIOutDTO,
   UpdateApplicationExceptionAPIInDTO,
 } from "@/services/http/dto";
 import { useAssessment, useFormatters } from "@/composables";
@@ -127,7 +128,7 @@ export default defineComponent({
 
     onMounted(async () => {
       const applicationException =
-        await ApplicationExceptionService.shared.getExceptionDetails(
+        await ApplicationExceptionService.shared.getExceptionDetails<DetailedApplicationExceptionAPIOutDTO>(
           props.exceptionId,
           props.studentId,
         );

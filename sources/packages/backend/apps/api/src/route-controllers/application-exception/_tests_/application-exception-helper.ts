@@ -3,6 +3,7 @@ import {
   ApplicationException,
   ApplicationExceptionRequest,
   ApplicationExceptionStatus,
+  InstitutionLocation,
   Student,
 } from "@sims/sims-db";
 import {
@@ -17,12 +18,20 @@ import { DataSource } from "typeorm";
 /**
  * Create a fake application with an application exception associated.
  * @param dataSource application dataSource.
- * @param applicationExceptionStatus application exception status.
- * @returns application with an application exception associated.
+ * @param relations dependencies.
+ * - `institutionLocation` related location.
+ * @param options additional options.
+ * - `applicationExceptionStatus` application exception status.
+ *  @returns application with an application exception associated.
  */
 export async function saveFakeApplicationWithApplicationException(
   dataSource: DataSource,
-  applicationExceptionStatus: ApplicationExceptionStatus,
+  relations?: {
+    institutionLocation?: InstitutionLocation;
+  },
+  options?: {
+    applicationExceptionStatus: ApplicationExceptionStatus;
+  },
 ): Promise<Application> {
   const applicationRepo = dataSource.getRepository(Application);
   const applicationExceptionRepo =
@@ -41,13 +50,18 @@ export async function saveFakeApplicationWithApplicationException(
     creator: student.user,
     assessedBy,
   });
-  applicationException.exceptionStatus = applicationExceptionStatus;
+  if (options?.applicationExceptionStatus) {
+    applicationException.exceptionStatus = options?.applicationExceptionStatus;
+  }
   applicationException = await applicationExceptionRepo.save(
     applicationException,
   );
-
   const application = await applicationRepo.save(
-    createFakeApplication({ student, applicationException }),
+    createFakeApplication({
+      student,
+      applicationException,
+      location: relations?.institutionLocation,
+    }),
   );
 
   await applicationExceptionRequestRepo.save(

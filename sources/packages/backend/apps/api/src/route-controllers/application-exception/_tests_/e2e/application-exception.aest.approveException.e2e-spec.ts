@@ -33,7 +33,8 @@ describe("ApplicationExceptionAESTController(e2e)-approveException", () => {
     // Arrange
     const application = await saveFakeApplicationWithApplicationException(
       appDataSource,
-      ApplicationExceptionStatus.Pending,
+      undefined,
+      { applicationExceptionStatus: ApplicationExceptionStatus.Pending },
     );
     const updateApplicationException = {
       exceptionStatus: ApplicationExceptionStatus.Approved,
@@ -71,7 +72,8 @@ describe("ApplicationExceptionAESTController(e2e)-approveException", () => {
     // Arrange
     const application = await saveFakeApplicationWithApplicationException(
       appDataSource,
-      ApplicationExceptionStatus.Pending,
+      undefined,
+      { applicationExceptionStatus: ApplicationExceptionStatus.Pending },
     );
     const updateApplicationException = {
       exceptionStatus: ApplicationExceptionStatus.Declined,
@@ -131,7 +133,8 @@ describe("ApplicationExceptionAESTController(e2e)-approveException", () => {
     // Arrange
     const application = await saveFakeApplicationWithApplicationException(
       appDataSource,
-      ApplicationExceptionStatus.Declined,
+      undefined,
+      { applicationExceptionStatus: ApplicationExceptionStatus.Declined },
     );
     const updateApplicationException = {
       exceptionStatus: ApplicationExceptionStatus.Approved,

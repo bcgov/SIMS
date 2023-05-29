@@ -8,6 +8,7 @@ import {
   StudentAssessment,
   User,
   mapFromRawAndEntities,
+  StudentAssessmentStatus,
 } from "@sims/sims-db";
 import { Brackets, DataSource } from "typeorm";
 import { InjectQueue } from "@nestjs/bull";
@@ -18,10 +19,7 @@ import {
   ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE,
   ASSESSMENT_NOT_FOUND,
 } from "./student-assessment.constants";
-import {
-  AssessmentHistory,
-  StudentAssessmentStatus,
-} from "./student-assessment.models";
+import { AssessmentHistory } from "./student-assessment.models";
 import { StartAssessmentQueueInDTO } from "@sims/services/queue";
 
 /**

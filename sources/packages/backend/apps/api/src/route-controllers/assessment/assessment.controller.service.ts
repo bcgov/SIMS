@@ -4,6 +4,7 @@ import {
   DisbursementReceipt,
   AssessmentTriggerType,
   ApplicationExceptionStatus,
+  StudentAssessmentStatus,
 } from "@sims/sims-db";
 import {
   Injectable,
@@ -28,7 +29,6 @@ import {
 } from "./models/assessment.dto";
 import { getUserFullName } from "../../utilities";
 import { getDateOnlyFormat } from "@sims/utilities";
-import { StudentAssessmentStatus } from "../../services/student-assessment/student-assessment.models";
 
 @Injectable()
 export class AssessmentControllerService {

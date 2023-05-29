@@ -25,8 +25,8 @@ import {
 } from "@nestjs/swagger";
 import BaseController from "../BaseController";
 import {
-  ApplicationExceptionAPIOutDTO,
   ApplicationExceptionSummaryAPIOutDTO,
+  DetailedApplicationExceptionAPIOutDTO,
   UpdateApplicationExceptionAPIInDTO,
 } from "./models/application-exception.dto";
 import { IUserToken } from "../../auth/userToken.interface";
@@ -71,9 +71,10 @@ export class ApplicationExceptionAESTController extends BaseController {
   })
   async getExceptionById(
     @Param("exceptionId", ParseIntPipe) exceptionId: number,
-  ): Promise<ApplicationExceptionAPIOutDTO> {
-    return this.applicationExceptionControllerService.getExceptionDetails(
+  ): Promise<DetailedApplicationExceptionAPIOutDTO> {
+    return this.applicationExceptionControllerService.getExceptionDetails<DetailedApplicationExceptionAPIOutDTO>(
       exceptionId,
+      { assessDetails: true },
     );
   }
 

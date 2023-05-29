@@ -48,10 +48,13 @@ export class ApplicationExceptionRequestAPIOutDTO {
 export class ApplicationExceptionAPIOutDTO {
   exceptionStatus: ApplicationExceptionStatus;
   submittedDate: Date;
-  noteDescription: string;
-  assessedByUserName?: string;
-  assessedDate?: Date;
   exceptionRequests: ApplicationExceptionRequestAPIOutDTO[];
+}
+
+export class DetailedApplicationExceptionAPIOutDTO extends ApplicationExceptionAPIOutDTO {
+  noteDescription: string;
+  assessedByUserName: string;
+  assessedDate: Date;
 }
 
 export class ApplicationExceptionSummaryAPIOutDTO {

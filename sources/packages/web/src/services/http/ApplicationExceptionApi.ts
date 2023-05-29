@@ -3,6 +3,7 @@ import HttpBaseClient from "@/services/http/common/HttpBaseClient";
 import {
   ApplicationExceptionAPIOutDTO,
   ApplicationExceptionSummaryAPIOutDTO,
+  DetailedApplicationExceptionAPIOutDTO,
   PaginatedResultsAPIOutDTO,
   UpdateApplicationExceptionAPIInDTO,
 } from "@/services/http/dto";
@@ -21,16 +22,15 @@ export class ApplicationExceptionApi extends HttpBaseClient {
    * @param studentId student id.
    * @returns student application exception information.
    */
-  async getExceptionDetails(
-    exceptionId: number,
-    studentId?: number,
-  ): Promise<ApplicationExceptionAPIOutDTO> {
+  async getExceptionDetails<
+    T extends
+      | ApplicationExceptionAPIOutDTO
+      | DetailedApplicationExceptionAPIOutDTO,
+  >(exceptionId: number, studentId?: number): Promise<T> {
     const endpoint = studentId
       ? `application-exception/student/${studentId}/exception/${exceptionId}`
       : `application-exception/${exceptionId}`;
-    return this.getCall<ApplicationExceptionAPIOutDTO>(
-      this.addClientRoot(endpoint),
-    );
+    return this.getCall<T>(this.addClientRoot(endpoint));
   }
 
   /**

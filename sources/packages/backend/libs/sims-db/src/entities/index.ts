@@ -81,3 +81,4 @@ export * from "./disbursement-overaward-origin.type";
 export * from "./disbursement-overaward.model";
 export * from "./notification-permanent-failure-error.type";
 export * from "./queue_configuration.model";
+export * from "./student-assessment-status.type";

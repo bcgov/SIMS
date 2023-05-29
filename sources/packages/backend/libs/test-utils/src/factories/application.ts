@@ -109,6 +109,7 @@ export async function saveFakeApplicationDisbursements(
       : COEStatus.required;
   firstSchedule.disbursementScheduleStatus = DisbursementScheduleStatus.Pending;
   firstSchedule.msfaaNumber = relations?.msfaaNumber;
+  firstSchedule.studentAssessment = savedApplication.currentAssessment;
   disbursementSchedules.push(firstSchedule);
   if (options?.createSecondDisbursement) {
     // Original assessment - second disbursement.
@@ -125,6 +126,7 @@ export async function saveFakeApplicationDisbursements(
     // Adding 60 days to create some time between the first and second schedules.
     secondSchedule.disbursementDate = getISODateOnlyString(addDays(60));
     secondSchedule.msfaaNumber = relations?.msfaaNumber;
+    secondSchedule.studentAssessment = savedApplication.currentAssessment;
     disbursementSchedules.push(secondSchedule);
   }
   savedApplication.currentAssessment.disbursementSchedules =

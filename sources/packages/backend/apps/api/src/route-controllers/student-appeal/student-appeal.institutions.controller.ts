@@ -9,8 +9,8 @@ import { ApiNotFoundResponse, ApiTags } from "@nestjs/swagger";
 import BaseController from "../BaseController";
 import { ClientTypeBaseRoute } from "../../types";
 import {
-  DetailedStudentAppealRequestAPIOutDTO,
   StudentAppealAPIOutDTO,
+  StudentAppealRequestAPIOutDTO,
 } from "./models/student-appeal.dto";
 import { StudentAppealControllerService } from "..";
 
@@ -42,10 +42,10 @@ export class StudentAppealInstitutionsController extends BaseController {
   async getStudentAppealWithRequests(
     @Param("studentId", ParseIntPipe) studentId: number,
     @Param("appealId", ParseIntPipe) appealId: number,
-  ): Promise<StudentAppealAPIOutDTO<DetailedStudentAppealRequestAPIOutDTO>> {
-    return this.studentAppealControllerService.getStudentAppealWithRequests<DetailedStudentAppealRequestAPIOutDTO>(
+  ): Promise<StudentAppealAPIOutDTO<StudentAppealRequestAPIOutDTO>> {
+    return this.studentAppealControllerService.getStudentAppealWithRequests<StudentAppealRequestAPIOutDTO>(
       appealId,
-      { assessDetails: true, studentId: studentId },
+      { studentId: studentId },
     );
   }
 }
