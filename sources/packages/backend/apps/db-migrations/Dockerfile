@@ -15,8 +15,5 @@ COPY tsconfig.json ./
 COPY tsconfig.build.json ./
 COPY env-setup.js ./
 
-# Set the non-root user
-USER 1001
-
 # Entry point
 CMD [ "npm", "run", "start:prod:db-migrations" ]
