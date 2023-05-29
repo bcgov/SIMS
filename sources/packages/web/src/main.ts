@@ -33,29 +33,32 @@ import FooterButtons from "@/components/generic/FooterButtons.vue";
 import TitleValue from "@/components/generic/TitleValue.vue";
 import StatusInfoLabel from "@/components/generic/StatusInfoLabel.vue";
 
-await AppConfigService.shared.init().then(() => {
-  createApp(App)
-    .use(vuetify)
-    .use(store)
-    .use(router)
-    .use(PrimeVue)
-    .component("DataTable", DataTable)
-    .component("Column", Column)
-    .component("BodyHeader", BodyHeader)
-    .component("ContentGroup", ContentGroup)
-    .component("ContentGroupInfo", ContentGroupInfo)
-    .component("TooltipIcon", TooltipIcon)
-    .component("StatusInfoLabel", StatusInfoLabel)
-    .component("FullPageContainer", FullPageContainer)
-    .component("TabContainer", TabContainer)
-    .component("BodyHeaderContainer", BodyHeaderContainer)
-    .component("StudentPageContainer", StudentPageContainer)
-    .component("HeaderNavigator", HeaderNavigator)
-    .component("Banner", Banner)
-    .component("formio", formio)
-    .component("ToggleContent", ToggleContent)
-    .component("FormioContainer", FormioContainer)
-    .component("FooterButtons", FooterButtons)
-    .component("TitleValue", TitleValue)
-    .mount("#app");
-});
+AppConfigService.shared
+  .init()
+  .then(() => {
+    createApp(App)
+      .use(vuetify)
+      .use(store)
+      .use(router)
+      .use(PrimeVue)
+      .component("DataTable", DataTable)
+      .component("Column", Column)
+      .component("BodyHeader", BodyHeader)
+      .component("ContentGroup", ContentGroup)
+      .component("ContentGroupInfo", ContentGroupInfo)
+      .component("TooltipIcon", TooltipIcon)
+      .component("StatusInfoLabel", StatusInfoLabel)
+      .component("FullPageContainer", FullPageContainer)
+      .component("TabContainer", TabContainer)
+      .component("BodyHeaderContainer", BodyHeaderContainer)
+      .component("StudentPageContainer", StudentPageContainer)
+      .component("HeaderNavigator", HeaderNavigator)
+      .component("Banner", Banner)
+      .component("formio", formio)
+      .component("ToggleContent", ToggleContent)
+      .component("FormioContainer", FormioContainer)
+      .component("FooterButtons", FooterButtons)
+      .component("TitleValue", TitleValue)
+      .mount("#app");
+  })
+  .catch((e) => e);
