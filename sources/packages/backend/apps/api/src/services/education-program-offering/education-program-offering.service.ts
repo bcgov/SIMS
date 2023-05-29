@@ -1260,6 +1260,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
         newStudyBreak.breakDays = dateDifference(
           eachBreak.breakEndDate,
           eachBreak.breakStartDate,
+          true,
         );
         newStudyBreak.breakStartDate = eachBreak.breakStartDate;
         newStudyBreak.breakEndDate = eachBreak.breakEndDate;
@@ -1279,6 +1280,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     const totalDays = dateDifference(
       offering.studyEndDate,
       offering.studyStartDate,
+      true,
     );
 
     // Allowable amount of break days allowed.
