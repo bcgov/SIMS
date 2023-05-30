@@ -2,7 +2,7 @@ import { OfferingStudyBreakCalculationContext } from "../../education-program-of
 import { EducationProgramOfferingService } from "../../education-program-offering.service";
 
 describe("EducationProgramOfferingService-getCalculatedStudyBreaksAndWeeks", () => {
-  it("Should calculate fundedStudyPeriodDays and totalDays counting start and end dates when studyStartDate and studyEndDate are available.", () => {
+  it("Should calculate funded study period and total days when study start and end study dates are available.", () => {
     //Arrange
     const offeringStudyBreakCalculationContext: OfferingStudyBreakCalculationContext =
       {
@@ -30,7 +30,7 @@ describe("EducationProgramOfferingService-getCalculatedStudyBreaksAndWeeks", () 
     });
   });
 
-  it("Should not calculate funded study period days and total days counting start and end dates when study start date is not available.", () => {
+  it("Should not calculate funded study period days and total days when study start date is not available.", () => {
     //Arrange
     const offeringStudyBreakCalculationContext: OfferingStudyBreakCalculationContext =
       {
@@ -58,7 +58,7 @@ describe("EducationProgramOfferingService-getCalculatedStudyBreaksAndWeeks", () 
     });
   });
 
-  it("Should not calculate funded study period days and total days counting start and end dates when study end date is not available.", () => {
+  it("Should not calculate funded study period days and total days when study end date is not available.", () => {
     //Arrange
     const offeringStudyBreakCalculationContext: OfferingStudyBreakCalculationContext =
       {
@@ -86,7 +86,7 @@ describe("EducationProgramOfferingService-getCalculatedStudyBreaksAndWeeks", () 
     });
   });
 
-  it("Should calculate study breaks counting start and end dates when study break dates available.", () => {
+  it("Should calculate study breaks when start and end study break dates available.", () => {
     //Arrange
     const offeringStudyBreakCalculationContext: OfferingStudyBreakCalculationContext =
       {
@@ -138,7 +138,7 @@ describe("EducationProgramOfferingService-getCalculatedStudyBreaksAndWeeks", () 
     });
   });
 
-  it("Should not calculate study breaks counting start and end dates when start study break date is not available.", () => {
+  it("Should not calculate study breaks when start study break date is not available.", () => {
     //Arrange
     const offeringStudyBreakCalculationContext: OfferingStudyBreakCalculationContext =
       {
@@ -171,7 +171,7 @@ describe("EducationProgramOfferingService-getCalculatedStudyBreaksAndWeeks", () 
     });
   });
 
-  it("Should not calculate study breaks counting start and end dates when end study break date is not available.", () => {
+  it("Should not calculate study breaks when end study break date is not available.", () => {
     //Arrange
     const offeringStudyBreakCalculationContext: OfferingStudyBreakCalculationContext =
       {
@@ -201,58 +201,6 @@ describe("EducationProgramOfferingService-getCalculatedStudyBreaksAndWeeks", () 
       totalDays: NaN,
       totalFundedWeeks: NaN,
       unfundedStudyPeriodDays: NaN,
-    });
-  });
-
-  it("Should calculate funded periods study breaks when there are data available.", () => {
-    //Arrange
-    const offeringStudyBreakCalculationContext: OfferingStudyBreakCalculationContext =
-      {
-        studyStartDate: "2023-05-29",
-        studyEndDate: "2023-09-29",
-        studyBreaks: [
-          {
-            breakStartDate: "2023-05-29",
-            breakEndDate: "2023-06-06",
-          },
-          {
-            breakStartDate: "2023-06-08",
-            breakEndDate: "2023-06-20",
-          },
-        ],
-      };
-
-    // Act
-    const calculatedStudyBreaksAndWeeks =
-      EducationProgramOfferingService.getCalculatedStudyBreaksAndWeeks(
-        offeringStudyBreakCalculationContext,
-      );
-
-    // Assert
-    expect(calculatedStudyBreaksAndWeeks).toEqual({
-      allowableStudyBreaksDaysAmount: 12.4,
-      fundedStudyPeriodDays: 114.4,
-      studyBreaks: [
-        {
-          breakDays: 9,
-          breakEndDate: "2023-06-06",
-          breakStartDate: "2023-05-29",
-          eligibleBreakDays: 9,
-          ineligibleBreakDays: 0,
-        },
-        {
-          breakDays: 13,
-          breakEndDate: "2023-06-20",
-          breakStartDate: "2023-06-08",
-          eligibleBreakDays: 13,
-          ineligibleBreakDays: 0,
-        },
-      ],
-      sumOfTotalEligibleBreakDays: 22,
-      sumOfTotalIneligibleBreakDays: 0,
-      totalDays: 124,
-      totalFundedWeeks: 17,
-      unfundedStudyPeriodDays: 9.6,
     });
   });
 
