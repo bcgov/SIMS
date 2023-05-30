@@ -24,11 +24,13 @@ import {
 import {
   ApplicationStatus,
   AssessmentTriggerType,
+  EducationProgramOffering,
   Institution,
   InstitutionLocation,
   StudentAppealStatus,
 } from "@sims/sims-db";
 import { saveStudentApplicationForCollegeC } from "../../../student/_tests_/e2e/student.institutions.utils";
+import { createFakeOfferingRequestChange } from "@sims/test-utils/factories/offering-change-request";
 
 describe("AssessmentInstitutionsController(e2e)-getRequestedAssessmentSummary", () => {
   let app: INestApplication;
@@ -105,6 +107,54 @@ describe("AssessmentInstitutionsController(e2e)-getRequestedAssessmentSummary", 
         },
       ]);
   });
+
+  it.only(
+    "Should not get the 'offering change' assessment requests details in the request summary " +
+      "for an eligible application when an eligible public institution user tries to access it and " +
+      "student offering change is pending with the ministry.",
+    async () => {
+      // Arrange
+
+      // Student has an application to the institution.
+      const student = await saveFakeStudent(db.dataSource);
+
+      const currentMSFAA = createFakeMSFAANumber(
+        { student },
+        {
+          state: MSFAAStates.Signed,
+        },
+      );
+      await db.msfaaNumber.save(currentMSFAA);
+      const application = await saveFakeApplicationDisbursements(
+        db.dataSource,
+        {
+          institution: collegeF,
+          institutionLocation: collegeFLocation,
+          student,
+          msfaaNumber: currentMSFAA,
+        },
+        { applicationStatus: ApplicationStatus.Completed },
+      );
+
+      // Create pending offering change.
+      const offeringRequestOfferings = createFakeOfferingRequestChange({
+        currentOffering: application.currentAssessment.offering,
+      });
+      application.currentAssessment.offering = offeringRequestOfferings[0];
+      await db.educationProgramOffering.save(offeringRequestOfferings);
+      const endpoint = `/institutions/assessment/student/${student.id}/application/${application.id}/requests`;
+      const institutionUserToken = await getInstitutionToken(
+        InstitutionTokenTypes.CollegeFUser,
+      );
+
+      // Act/Assert
+      await request(app.getHttpServer())
+        .get(endpoint)
+        .auth(institutionUserToken, BEARER_AUTH_TYPE)
+        .expect(HttpStatus.OK)
+        .expect([]);
+    },
+  );
 
   it("Should throw forbidden error when the institution type is not BC Public.", async () => {
     // Arrange
