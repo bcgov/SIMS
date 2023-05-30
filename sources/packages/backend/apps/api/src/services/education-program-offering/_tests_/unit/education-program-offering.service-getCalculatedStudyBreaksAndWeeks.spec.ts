@@ -18,7 +18,7 @@ describe("EducationProgramOfferingService-getCalculatedStudyBreaksAndWeeks", () 
       );
 
     // Assert
-    expect(calculatedStudyBreaksAndWeeks).toEqual({
+    expect(calculatedStudyBreaksAndWeeks).toStrictEqual({
       allowableStudyBreaksDaysAmount: 1,
       fundedStudyPeriodDays: 10,
       studyBreaks: [],
@@ -46,7 +46,7 @@ describe("EducationProgramOfferingService-getCalculatedStudyBreaksAndWeeks", () 
       );
 
     // Assert
-    expect(calculatedStudyBreaksAndWeeks).toEqual({
+    expect(calculatedStudyBreaksAndWeeks).toStrictEqual({
       allowableStudyBreaksDaysAmount: NaN,
       fundedStudyPeriodDays: NaN,
       studyBreaks: [],
@@ -74,7 +74,7 @@ describe("EducationProgramOfferingService-getCalculatedStudyBreaksAndWeeks", () 
       );
 
     // Assert
-    expect(calculatedStudyBreaksAndWeeks).toEqual({
+    expect(calculatedStudyBreaksAndWeeks).toStrictEqual({
       allowableStudyBreaksDaysAmount: NaN,
       fundedStudyPeriodDays: NaN,
       studyBreaks: [],
@@ -111,7 +111,7 @@ describe("EducationProgramOfferingService-getCalculatedStudyBreaksAndWeeks", () 
       );
 
     // Assert
-    expect(calculatedStudyBreaksAndWeeks).toEqual({
+    expect(calculatedStudyBreaksAndWeeks).toStrictEqual({
       allowableStudyBreaksDaysAmount: NaN,
       fundedStudyPeriodDays: NaN,
       studyBreaks: [
@@ -159,7 +159,7 @@ describe("EducationProgramOfferingService-getCalculatedStudyBreaksAndWeeks", () 
       );
 
     // Assert
-    expect(calculatedStudyBreaksAndWeeks).toEqual({
+    expect(calculatedStudyBreaksAndWeeks).toStrictEqual({
       allowableStudyBreaksDaysAmount: NaN,
       fundedStudyPeriodDays: NaN,
       studyBreaks: [],
@@ -192,7 +192,7 @@ describe("EducationProgramOfferingService-getCalculatedStudyBreaksAndWeeks", () 
       );
 
     // Assert
-    expect(calculatedStudyBreaksAndWeeks).toEqual({
+    expect(calculatedStudyBreaksAndWeeks).toStrictEqual({
       allowableStudyBreaksDaysAmount: NaN,
       fundedStudyPeriodDays: NaN,
       studyBreaks: [],
@@ -225,7 +225,7 @@ describe("EducationProgramOfferingService-getCalculatedStudyBreaksAndWeeks", () 
       );
 
     // Assert
-    expect(calculatedStudyBreaksAndWeeks).toEqual({
+    expect(calculatedStudyBreaksAndWeeks).toStrictEqual({
       allowableStudyBreaksDaysAmount: 12.4,
       fundedStudyPeriodDays: 113.4,
       studyBreaks: [
