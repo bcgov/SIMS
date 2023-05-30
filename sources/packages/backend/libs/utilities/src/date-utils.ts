@@ -50,19 +50,16 @@ export const isAfter = (
 };
 
 /**
- * Difference in days between endDate and startDate (endDate-startDate).
+ * Difference in days between endDate and startDate (endDate-startDate) with start and end date inclusive.
  * @param endDate end date.
  * @param startDate start date.
- * @param inclusiveDiff whether it should consider start and end date as part of the calculation.
  * @returns the date difference in days.
  */
 export const dateDifference = (
   endDate: string | Date,
   startDate: string | Date,
-  inclusiveDiff?: boolean,
 ): number => {
-  const diff = dayjs(endDate).diff(startDate, "days");
-  return inclusiveDiff ? diff + 1 : diff;
+  return dayjs(endDate).diff(startDate, "days") + 1;
 };
 
 /**
