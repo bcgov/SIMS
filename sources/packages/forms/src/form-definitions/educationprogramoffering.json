@@ -2771,7 +2771,7 @@
                       "requireDecimal": false,
                       "inputFormat": "plain",
                       "truncateMultipleSpaces": false,
-                      "calculateValue": "value = 0;\r\nif (row.breakStartDate && row.breakEndDate) {\r\n  const diffDays = moment(row.breakEndDate, \"YYYY-MM-DD\").diff(\r\n    moment(row.breakStartDate, \"YYYY-MM-DD\"),\r\n    \"days\"\r\n  );\r\n  value = Math.max(diffDays, 0);\r\n}\r\n",
+                      "calculateValue": "value = 0;\r\nif (row.breakStartDate && row.breakEndDate) {\r\n  const diffDays = moment(row.breakEndDate, \"YYYY-MM-DD\").diff(\r\n    moment(row.breakStartDate, \"YYYY-MM-DD\"),\r\n    \"days\"\r\n  ) + 1 ;\r\n  value = Math.max(diffDays, 0);\r\n}\r\n",
                       "calculateServer": true,
                       "validate": {
                         "required": true,
