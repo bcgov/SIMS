@@ -123,14 +123,14 @@ export default defineComponent({
       if (await extendTimeModal.value.showModal()) {
         extendUserSessionTime();
       } else {
-        logoff();
+        await logoff();
       }
     };
 
-    const checkIdle = () => {
+    const checkIdle = async () => {
       // Check if it was logged out from another tab/window.
       if (isLoggedOut()) {
-        logoff();
+        await logoff();
         return;
       }
 
@@ -144,13 +144,13 @@ export default defineComponent({
       // Exceeded user session time.
       if (idleTimeInSeconds > maximumIdleTime.value) {
         // Logoff immediately in case session is expired.
-        logoff();
+        await logoff();
       } else if (
         idleTimeInSeconds >=
         maximumIdleTime.value - COUNT_DOWN_TIMER_FOR_LOGOUT
       ) {
         // Open modal.
-        confirmExtendTimeModal();
+        await confirmExtendTimeModal();
       } else {
         // Close modal.
         extendTimeModal.value.showDialog = false;

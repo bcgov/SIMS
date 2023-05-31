@@ -124,7 +124,9 @@ export class InstitutionAESTController extends BaseController {
     @UserToken() userToken: IUserToken,
   ): Promise<void> {
     const institution =
-      this.institutionService.getBasicInstitutionDetailById(institutionId);
+      await this.institutionService.getBasicInstitutionDetailById(
+        institutionId,
+      );
     if (!institution) {
       throw new NotFoundException("Institution not found.");
     }

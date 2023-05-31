@@ -6,9 +6,9 @@ const TQ_USERNAME = process.env.TQ_USER_NAME;
 const TQ_PASSWORD = process.env.TQ_PASSWORD;
 const TQ_SECRET = process.env.TQ_SECRET;
 const TQ_RUN_ID = process.env.TQ_RUN_ID; //( default id is 26606. Will need to change once we have integrated TQ account for the team)
-const TQ_API_URL = 'https://api.testquality.com/api'
+const TQ_API_URL = "https://api.testquality.com/api";
 
-async function getAuthToken (): Promise<AxiosResponse<String>> {
+async function getAuthToken(): Promise<AxiosResponse<String>> {
   const auth_url = `${TQ_API_URL}/oauth/access_token`;
   const body = {
     grant_type: "password",
@@ -31,13 +31,13 @@ async function getAuthToken (): Promise<AxiosResponse<String>> {
     console.error(error);
     throw error;
   }
-};
+}
 
 async function uploadResultFile() {
   const auth = await getAuthToken();
   const url = `${TQ_API_URL}/plan/${TQ_RUN_ID}/junit_xml`;
-  var formData = new FormData();
-  var resultFile = fs.createReadStream("test-results.xml");
+  const formData = new FormData();
+  const resultFile = fs.createReadStream("test-results.xml");
   formData.append("file", resultFile, "test-results.xml");
   try {
     const settings = {
@@ -54,4 +54,6 @@ async function uploadResultFile() {
     throw error;
   }
 }
-uploadResultFile();
+(async () => {
+  await uploadResultFile();
+})();

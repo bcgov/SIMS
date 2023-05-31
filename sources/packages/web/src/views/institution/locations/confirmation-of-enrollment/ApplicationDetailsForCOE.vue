@@ -214,9 +214,9 @@ export default defineComponent({
           label: "Confirm enrolment",
           textColor:
             isCOERequired && !isCOEWithinApprovalPeriod ? "text-muted" : "",
-          command: () => {
+          command: async () => {
             if (isCOERequired && isCOEWithinApprovalPeriod) {
-              showHideConfirmCOE();
+              await showHideConfirmCOE();
             }
           },
         },

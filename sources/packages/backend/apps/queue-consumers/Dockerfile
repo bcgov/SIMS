@@ -16,8 +16,5 @@ COPY ./libs ./libs
 # Building app
 RUN npm run build queue-consumers
 
-# Executing the image with a non-root user.
-USER 1001
-
 # Entry point
 CMD [ "npm", "run", "start:prod:queue-consumers" ]

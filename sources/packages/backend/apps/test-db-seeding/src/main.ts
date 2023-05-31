@@ -19,7 +19,7 @@ const FILTER_CLASSES = "filter=";
  */
 const TEST_DB_NAME = "_TESTS";
 
-async function bootstrap() {
+(async () => {
   const app = await NestFactory.create(TestDbSeedingModule);
   // Config instance.
   const configService = app.get(ConfigService);
@@ -55,5 +55,4 @@ async function bootstrap() {
       .split(",");
   }
   await app.get(SeedExecutor).executeSeed(testClassList);
-}
-bootstrap();
+})();
