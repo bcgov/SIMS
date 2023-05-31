@@ -24,7 +24,6 @@ import {
 import {
   ApplicationStatus,
   AssessmentTriggerType,
-  EducationProgramOffering,
   Institution,
   InstitutionLocation,
   StudentAppealStatus,
@@ -108,7 +107,7 @@ describe("AssessmentInstitutionsController(e2e)-getRequestedAssessmentSummary", 
       ]);
   });
 
-  it.only(
+  it(
     "Should not get the 'offering change' assessment requests details in the request summary " +
       "for an eligible application when an eligible public institution user tries to access it and " +
       "student offering change is pending with the ministry.",

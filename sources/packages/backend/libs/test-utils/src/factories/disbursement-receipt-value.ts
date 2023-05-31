@@ -3,8 +3,8 @@ import faker from "faker";
 
 /**
  * Create fake disbursement receipt value.
- * @param initialValues initial values that need to assigned
- * while creating a disbursement receipt value.
+ * @param initialValues initial values that need to be assigned
+ * while creating a fake disbursement receipt value.
  * @param relations dependencies.
  * - `disbursementReceipt` related disbursement receipt.
  * @returns disbursement receipt value.

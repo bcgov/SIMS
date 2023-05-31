@@ -11,8 +11,7 @@ export function createFakeOfferingRequestChange(relations: {
 }): EducationProgramOffering[] {
   const now = new Date();
   const requestedOfferingId = relations.currentOffering.id;
-  let requestedOffering = new EducationProgramOffering();
-  requestedOffering = relations.currentOffering;
+  const requestedOffering = relations.currentOffering;
   delete requestedOffering.id;
   requestedOffering.offeringStatus = OfferingStatus.ChangeAwaitingApproval;
   requestedOffering.parentOffering =
