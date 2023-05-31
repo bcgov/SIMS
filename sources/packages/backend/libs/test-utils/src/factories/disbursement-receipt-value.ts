@@ -1,26 +1,29 @@
 import { DisbursementReceipt, DisbursementReceiptValue } from "@sims/sims-db";
+import faker from "faker";
 
 /**
  * Create fake disbursement receipt value.
+ * @param initialValues initial values that need to assigned
+ * while creating a disbursement receipt value.
  * @param relations dependencies.
  * - `disbursementReceipt` related disbursement receipt.
- * @param options options
- * - `grantType` type of grant to be created.
- * - `grantAmount` grant amount to be created.
  * @returns disbursement receipt value.
  */
 export function createFakeDisbursementReceiptValue(
+  initialValues: Partial<DisbursementReceiptValue>,
   relations: {
     disbursementReceipt: DisbursementReceipt;
   },
-  options: {
-    grantType: string;
-    grantAmount: number;
-  },
 ): DisbursementReceiptValue {
   const disbursementReceiptValue = new DisbursementReceiptValue();
-  disbursementReceiptValue.grantType = options.grantType;
-  disbursementReceiptValue.grantAmount = options.grantAmount;
+  disbursementReceiptValue.grantType =
+    initialValues.grantType ?? faker.random.alpha({ count: 4 });
+  disbursementReceiptValue.grantAmount =
+    initialValues.grantAmount ??
+    faker.random.number({
+      min: 1000,
+      max: 9999,
+    });
   disbursementReceiptValue.disbursementReceipt = relations.disbursementReceipt;
   return disbursementReceiptValue;
 }

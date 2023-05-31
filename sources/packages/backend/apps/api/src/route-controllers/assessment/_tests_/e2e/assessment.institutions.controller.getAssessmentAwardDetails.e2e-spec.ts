@@ -96,11 +96,11 @@ describe("AssessmentInstitutionsController(e2e)-getAssessmentAwardDetails", () =
         disbursement.valueAmount;
       disbursementReceiptsValues.push(
         createFakeDisbursementReceiptValue(
-          { disbursementReceipt },
           {
             grantType: disbursement.valueCode,
             grantAmount: disbursement.valueAmount,
           },
+          { disbursementReceipt },
         ),
       );
     });

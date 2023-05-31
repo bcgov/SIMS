@@ -140,7 +140,6 @@ describe("AssessmentInstitutionsController(e2e)-getRequestedAssessmentSummary", 
       const offeringRequestOfferings = createFakeOfferingRequestChange({
         currentOffering: application.currentAssessment.offering,
       });
-      application.currentAssessment.offering = offeringRequestOfferings[0];
       await db.educationProgramOffering.save(offeringRequestOfferings);
       const endpoint = `/institutions/assessment/student/${student.id}/application/${application.id}/requests`;
       const institutionUserToken = await getInstitutionToken(
