@@ -163,9 +163,10 @@ describe("AssessmentInstitutionsController(e2e)-getRequestedAssessmentSummary", 
       const ministryToken = await getAESTToken(
         AESTGroups.BusinessAdministrators,
       );
+
       // Act/Assert
       await request(app.getHttpServer())
-        .get(ministryEndpoint)
+        .get(ministryEndpoint)git add 
         .auth(ministryToken, BEARER_AUTH_TYPE)
         .expect(HttpStatus.OK)
         .expect([
