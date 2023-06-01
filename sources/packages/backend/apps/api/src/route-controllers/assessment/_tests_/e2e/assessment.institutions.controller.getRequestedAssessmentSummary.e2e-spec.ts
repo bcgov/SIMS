@@ -166,7 +166,7 @@ describe("AssessmentInstitutionsController(e2e)-getRequestedAssessmentSummary", 
 
       // Act/Assert
       await request(app.getHttpServer())
-        .get(ministryEndpoint)git add 
+        .get(ministryEndpoint)
         .auth(ministryToken, BEARER_AUTH_TYPE)
         .expect(HttpStatus.OK)
         .expect([
