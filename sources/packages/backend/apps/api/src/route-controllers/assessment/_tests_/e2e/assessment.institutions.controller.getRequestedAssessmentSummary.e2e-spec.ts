@@ -157,7 +157,7 @@ describe("AssessmentInstitutionsController(e2e)-getRequestedAssessmentSummary", 
         .expect(HttpStatus.OK)
         .expect([]);
 
-      // Checking the same scenario with the ministry user, to make sure that a fake offering change was created.
+      // Checking the same scenario with the ministry endpoint with a ministry user, to make sure that a fake offering change was created.
       // Arrange.
       const ministryEndpoint = `/aest/assessment/application/${application.id}/requests`;
       const ministryToken = await getAESTToken(
