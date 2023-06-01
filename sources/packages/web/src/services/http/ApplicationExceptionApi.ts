@@ -33,7 +33,7 @@ export class ApplicationExceptionApi extends HttpBaseClient {
     applicationId?: number,
   ): Promise<T> {
     const endpoint = studentId
-      ? `application-exception/student/${studentId}/applicationId/${applicationId}/exception/${exceptionId}`
+      ? `application-exception/student/${studentId}/application/${applicationId}/exception/${exceptionId}`
       : `application-exception/${exceptionId}`;
     return this.getCall<T>(this.addClientRoot(endpoint));
   }

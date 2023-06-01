@@ -33,7 +33,7 @@ export class ApplicationExceptionInstitutionsController extends BaseController {
    * @param exceptionId exception to be retrieved.
    * @returns student application exception information.
    */
-  @Get("student/:studentId/applicationId/:applicationId/exception/:exceptionId")
+  @Get("student/:studentId/application/:applicationId/exception/:exceptionId")
   @ApiNotFoundResponse({
     description: "Student application exception not found.",
   })
