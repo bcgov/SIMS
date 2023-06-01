@@ -36,6 +36,7 @@
     </template>
   </appeal-requests-approval-form>
 </template>
+
 <script lang="ts">
 import { ref, onMounted, computed, defineComponent, PropType } from "vue";
 import { RouteLocationRaw, useRouter } from "vue-router";
@@ -56,6 +57,9 @@ export default defineComponent({
   emits: {
     submitted: (approvals: StudentAppealApproval[]) => {
       return !!approvals.length;
+    },
+    setHideView: (value: boolean) => {
+      return value;
     },
   },
   components: {
@@ -86,12 +90,17 @@ export default defineComponent({
       required: false,
       default: false,
     },
+    applicationId: {
+      type: Number,
+      required: false,
+    },
   },
-  setup(props) {
+  setup(props, { emit }) {
     const router = useRouter();
     const { dateOnlyLongString } = useFormatters();
     const studentAppealRequests = ref([] as StudentAppealRequest[]);
     const appealStatus = ref(StudentAppealStatus.Pending);
+
     const readOnly = computed(
       () =>
         appealStatus.value !== StudentAppealStatus.Pending ||
@@ -99,25 +108,30 @@ export default defineComponent({
     );
 
     onMounted(async () => {
-      const appeal =
-        await StudentAppealService.shared.getStudentAppealWithRequests<DetailedStudentAppealRequestAPIOutDTO>(
-          props.appealId,
-          props.studentId,
-        );
-      studentAppealRequests.value = appeal.appealRequests.map((request) => ({
-        id: request.id,
-        data: request.submittedData,
-        formName: request.submittedFormName,
-        approval: {
+      try {
+        const appeal =
+          await StudentAppealService.shared.getStudentAppealWithRequests<DetailedStudentAppealRequestAPIOutDTO>(
+            props.appealId,
+            props.studentId,
+            props.applicationId,
+          );
+        studentAppealRequests.value = appeal.appealRequests.map((request) => ({
           id: request.id,
-          appealStatus: request.appealStatus,
-          assessedDate: dateOnlyLongString(request.assessedDate),
-          assessedByUserName: request.assessedByUserName,
-          noteDescription: request.noteDescription ?? "",
-          showAudit: request.appealStatus !== StudentAppealStatus.Pending,
-        },
-      }));
-      appealStatus.value = appeal.status;
+          data: request.submittedData,
+          formName: request.submittedFormName,
+          approval: {
+            id: request.id,
+            appealStatus: request.appealStatus,
+            assessedDate: dateOnlyLongString(request.assessedDate),
+            assessedByUserName: request.assessedByUserName,
+            noteDescription: request.noteDescription ?? "",
+            showAudit: request.appealStatus !== StudentAppealStatus.Pending,
+          },
+        }));
+        appealStatus.value = appeal.status;
+      } catch {
+        emit("setHideView", true);
+      }
     });
 
     const gotToAssessmentsSummary = () => {

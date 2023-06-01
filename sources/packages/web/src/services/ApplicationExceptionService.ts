@@ -20,16 +20,22 @@ export class ApplicationExceptionService {
    * submitted, for instance, when there are documents to be reviewed.
    * @param exceptionId exception to be retrieved.
    * @param studentId student id.
+   * @param applicationId application id.
    * @returns student application exception information.
    */
   async getExceptionDetails<
     T extends
       | DetailedApplicationExceptionAPIOutDTO
       | ApplicationExceptionAPIOutDTO,
-  >(exceptionId: number, studentId?: number): Promise<T> {
+  >(
+    exceptionId: number,
+    studentId?: number,
+    applicationId?: number,
+  ): Promise<T> {
     return ApiClient.ApplicationExceptionApi.getExceptionDetails<T>(
       exceptionId,
       studentId,
+      applicationId,
     );
   }
 

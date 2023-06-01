@@ -17,13 +17,13 @@ export class InstitutionStudentDataAccessGuard implements CanActivate {
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const institutionStudentDataAccessParam =
-      this.reflector.getAllAndOverride<string>(
-        INSTITUTION_HAS_STUDENT_DATA_ACCESS_KEY,
-        [context.getHandler(), context.getClass()],
-      );
-
-    if (!institutionStudentDataAccessParam) {
+    const institutionStudentDataAccessParam = this.reflector.getAllAndOverride<
+      string[]
+    >(INSTITUTION_HAS_STUDENT_DATA_ACCESS_KEY, [
+      context.getHandler(),
+      context.getClass(),
+    ]);
+    if (!institutionStudentDataAccessParam?.length) {
       return true;
     }
 
@@ -34,14 +34,16 @@ export class InstitutionStudentDataAccessGuard implements CanActivate {
       user: IInstitutionUserToken;
       params: Record<string, string>;
     } = context.switchToHttp().getRequest();
-
     if (user?.isActive) {
-      const studentId = +params[institutionStudentDataAccessParam];
+      const studentId = +params.studentId;
+      const applicationId = +params.applicationId;
       const hasStudentDataAccess =
         await this.institutionService.hasStudentDataAccess(
           user.authorizations.institutionId,
           studentId,
+          { applicationId },
         );
+
       if (hasStudentDataAccess) {
         return true;
       }

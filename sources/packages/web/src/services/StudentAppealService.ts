@@ -41,16 +41,22 @@ export class StudentAppealService {
    * Get student application appeal.
    * @param appealId appeal id.
    * @param studentId student id.
+   * @param applicationId application id.
    * @returns student application appeal.
    */
   async getStudentAppealWithRequests<
     T extends
       | StudentAppealRequestAPIOutDTO
       | DetailedStudentAppealRequestAPIOutDTO,
-  >(appealId: number, studentId?: number): Promise<StudentAppealAPIOutDTO<T>> {
+  >(
+    appealId: number,
+    studentId?: number,
+    applicationId?: number,
+  ): Promise<StudentAppealAPIOutDTO<T>> {
     return ApiClient.StudentAppealApi.getStudentAppealWithRequests<T>(
       appealId,
       studentId,
+      applicationId,
     );
   }
 

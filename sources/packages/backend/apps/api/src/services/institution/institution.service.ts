@@ -15,7 +15,14 @@ import {
   Application,
   ApplicationStatus,
 } from "@sims/sims-db";
-import { DataSource, EntityManager, IsNull, Not, Repository } from "typeorm";
+import {
+  DataSource,
+  EntityManager,
+  FindOptionsWhere,
+  IsNull,
+  Not,
+  Repository,
+} from "typeorm";
 import { InstitutionUserType, UserInfo } from "../../types";
 import { BCeIDService } from "../bceid/bceid.service";
 import { AccountDetails } from "../bceid/account-details.model";
@@ -960,20 +967,34 @@ export class InstitutionService extends RecordDataModelService<Institution> {
    * has access to student data of given student.
    * @param institutionId institution.
    * @param studentId student.
+   * @param options options for the query:
+   * - `applicationId` application id.
    * @returns value which specifies if the institution
    * has access to student data of given student.
    */
   async hasStudentDataAccess(
     institutionId: number,
     studentId: number,
+    options?: {
+      applicationId?: number;
+    },
   ): Promise<boolean> {
-    const institutionStudentDataAccess = await this.applicationRepo.findOne({
-      select: { id: true },
-      where: {
+    let findOptions: FindOptionsWhere<Application> = {
+      student: { id: studentId },
+      location: { institution: { id: institutionId } },
+      applicationStatus: Not(ApplicationStatus.Overwritten),
+    };
+    if (options?.applicationId) {
+      findOptions = {
         student: { id: studentId },
         location: { institution: { id: institutionId } },
         applicationStatus: Not(ApplicationStatus.Overwritten),
-      },
+        id: options?.applicationId,
+      };
+    }
+    const institutionStudentDataAccess = await this.applicationRepo.findOne({
+      select: { id: true },
+      where: findOptions,
       cache: true,
     });
     return !!institutionStudentDataAccess;

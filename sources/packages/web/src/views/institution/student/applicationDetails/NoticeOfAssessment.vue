@@ -1,5 +1,5 @@
 <template>
-  <full-page-container>
+  <full-page-container v-if="!hideView">
     <template #header>
       <header-navigator
         title="Assessment"
@@ -10,12 +10,14 @@
     <notice-of-assessment-form-view
       :assessment-id="assessmentId"
       :student-id="studentId"
+      :application-id="applicationId"
+      @set-hide-view="setHideView"
     />
   </full-page-container>
 </template>
 
 <script lang="ts">
-import { defineComponent, computed } from "vue";
+import { defineComponent, computed, ref } from "vue";
 import NoticeOfAssessmentFormView from "@/components/common/NoticeOfAssessmentFormView.vue";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 
@@ -38,6 +40,7 @@ export default defineComponent({
     },
   },
   setup(props) {
+    const hideView = ref(false);
     const routeLocation = computed(() => ({
       name: InstitutionRoutesConst.ASSESSMENT_AWARD_VIEW,
       params: {
@@ -47,7 +50,10 @@ export default defineComponent({
       },
     }));
 
-    return { routeLocation };
+    const setHideView = (value: boolean) => {
+      hideView.value = value;
+    };
+    return { routeLocation, hideView, setHideView };
   },
 });
 </script>

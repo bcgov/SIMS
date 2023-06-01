@@ -18,6 +18,7 @@ export class ApplicationExceptionControllerService {
    * @param exceptionId exception to be retrieved.
    * @param options options
    * - `studentId` student id.
+   * - `applicationId` application id.
    * - `assessDetails`, if true, will return access details.
    * @returns student application exception information.
    */
@@ -29,6 +30,7 @@ export class ApplicationExceptionControllerService {
     exceptionId: number,
     options?: {
       studentId?: number;
+      applicationId?: number;
       assessDetails?: boolean;
     },
   ): Promise<T> {
@@ -36,6 +38,7 @@ export class ApplicationExceptionControllerService {
       await this.applicationExceptionService.getExceptionDetails(
         exceptionId,
         options?.studentId,
+        options?.applicationId,
       );
     if (!applicationException) {
       throw new NotFoundException("Student application exception not found.");

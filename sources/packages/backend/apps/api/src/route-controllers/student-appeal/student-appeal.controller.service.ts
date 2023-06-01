@@ -16,6 +16,7 @@ export class StudentAppealControllerService {
    * @param appealId appeal id to be retrieved.
    * @param options options
    * - `studentId` student id.
+   * - `applicationId`, application id.
    * - `assessDetails`, if true, will return access details.
    * @returns the student appeal and its requests.
    */
@@ -27,6 +28,7 @@ export class StudentAppealControllerService {
     appealId: number,
     options?: {
       studentId?: number;
+      applicationId?: number;
       assessDetails?: boolean;
     },
   ): Promise<StudentAppealAPIOutDTO<T>> {
@@ -34,6 +36,7 @@ export class StudentAppealControllerService {
       await this.studentAppealService.getAppealAndRequestsById(
         appealId,
         options?.studentId,
+        options?.applicationId,
       );
     if (!studentAppeal) {
       throw new NotFoundException("Not able to find the student appeal.");

@@ -17,7 +17,7 @@ import { ApplicationExceptionControllerService } from "./application-exception.c
 @AllowAuthorizedParty(AuthorizedParties.institution)
 @Controller("application-exception")
 @IsBCPublicInstitution()
-@HasStudentDataAccess("studentId")
+@HasStudentDataAccess("studentId", "applicationId")
 @ApiTags(`${ClientTypeBaseRoute.Institution}-application-exception`)
 export class ApplicationExceptionInstitutionsController extends BaseController {
   constructor(
@@ -29,20 +29,22 @@ export class ApplicationExceptionInstitutionsController extends BaseController {
   /**
    * Get a student application exception of a student.
    * @param studentId student id.
+   * @param applicationId application id.
    * @param exceptionId exception to be retrieved.
    * @returns student application exception information.
    */
-  @Get("student/:studentId/exception/:exceptionId")
+  @Get("student/:studentId/applicationId/:applicationId/exception/:exceptionId")
   @ApiNotFoundResponse({
     description: "Student application exception not found.",
   })
   async getException(
     @Param("studentId", ParseIntPipe) studentId: number,
+    @Param("applicationId", ParseIntPipe) applicationId: number,
     @Param("exceptionId", ParseIntPipe) exceptionId: number,
   ): Promise<ApplicationExceptionAPIOutDTO> {
     return this.applicationExceptionControllerService.getExceptionDetails<ApplicationExceptionAPIOutDTO>(
       exceptionId,
-      { studentId },
+      { studentId, applicationId },
     );
   }
 }

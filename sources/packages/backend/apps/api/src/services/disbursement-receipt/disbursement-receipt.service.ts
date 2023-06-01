@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { DataSource } from "typeorm";
+import { DataSource, FindOptionsWhere } from "typeorm";
 import { RecordDataModelService, DisbursementReceipt } from "@sims/sims-db";
 
 /**
@@ -18,12 +18,43 @@ export class DisbursementReceiptService extends RecordDataModelService<Disbursem
    * receipt belongs to.
    * @param studentId student to whom the disbursement
    * receipt belongs to.
+   * @param applicationId application id.
    * @returns disbursement receipt details.
    */
   async getDisbursementReceiptByAssessment(
     assessmentId: number,
     studentId?: number,
+    applicationId?: number,
   ): Promise<DisbursementReceipt[]> {
+    let findOptions: FindOptionsWhere<DisbursementReceipt> = {
+      disbursementSchedule: {
+        studentAssessment: {
+          id: assessmentId,
+          application: studentId ? { student: { id: studentId } } : undefined,
+        },
+      },
+    };
+    if (studentId && applicationId) {
+      findOptions = {
+        disbursementSchedule: {
+          studentAssessment: {
+            id: assessmentId,
+            application: { student: { id: studentId }, id: applicationId },
+          },
+        },
+      };
+    }
+    if (!studentId && applicationId) {
+      findOptions = {
+        disbursementSchedule: {
+          studentAssessment: {
+            id: assessmentId,
+            application: { id: applicationId },
+          },
+        },
+      };
+    }
+
     return this.repo.find({
       select: {
         id: true,
@@ -34,14 +65,7 @@ export class DisbursementReceiptService extends RecordDataModelService<Disbursem
         disbursementReceiptValues: true,
         disbursementSchedule: true,
       },
-      where: {
-        disbursementSchedule: {
-          studentAssessment: {
-            id: assessmentId,
-            application: studentId ? { student: { id: studentId } } : undefined,
-          },
-        },
-      },
+      where: findOptions,
     });
   }
 }
