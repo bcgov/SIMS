@@ -2,25 +2,27 @@ import { EducationProgramOffering, OfferingStatus } from "@sims/sims-db";
 
 /**
  * Create a fake offering request change.
- * @param relations dependencies:
- *  - `currentOffering` current offering, which is requested for the changed.
+ * @param options dependencies:
+ *  - `currentOffering` current offering, which is requested for the changed, which is
+ * already saved in the DB.
  * @returns the current and requested offering.
  */
-export function createFakeOfferingRequestChange(relations: {
+export function createFakeOfferingRequestChange(options: {
   currentOffering: EducationProgramOffering;
 }): EducationProgramOffering[] {
   const now = new Date();
-  const requestedOfferingId = relations.currentOffering.id;
-  const requestedOffering = relations.currentOffering;
+  const requestedOfferingId = options.currentOffering.id;
+  const requestedOffering = options.currentOffering;
   delete requestedOffering.id;
   requestedOffering.offeringStatus = OfferingStatus.ChangeAwaitingApproval;
   requestedOffering.parentOffering =
-    relations.currentOffering.parentOffering ??
+    options.currentOffering.parentOffering ??
     ({ id: requestedOfferingId } as EducationProgramOffering);
   requestedOffering.precedingOffering = {
     id: requestedOfferingId,
   } as EducationProgramOffering;
   requestedOffering.createdAt = now;
+  requestedOffering.submittedDate = now;
 
   // Update the status and audit details of current offering.
   const precedingOffering = new EducationProgramOffering();

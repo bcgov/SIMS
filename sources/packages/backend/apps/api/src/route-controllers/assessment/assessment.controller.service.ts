@@ -322,7 +322,7 @@ export class AssessmentControllerService {
    * @param applicationId application id.
    * @param options options for request assessments,
    * - `studentId` student id.
-   * - `showOfferingChange` will decide weather to show assessment
+   * - `includeOfferingChanges` will decide whether to include assessment
    * request for offering change.
    * @returns assessment requests or exceptions for the student application.
    */
@@ -330,12 +330,11 @@ export class AssessmentControllerService {
     applicationId: number,
     options?: {
       studentId?: number;
-      showOfferingChange?: boolean;
+      includeOfferingChanges?: boolean;
     },
   ): Promise<RequestAssessmentSummaryAPIOutDTO[]> {
-    const showOfferingChange = options?.showOfferingChange ? true : false;
     const requestAssessmentSummary: RequestAssessmentSummaryAPIOutDTO[] = [];
-    if (showOfferingChange) {
+    if (options?.includeOfferingChanges) {
       const offeringChange =
         await this.educationProgramOfferingService.getOfferingRequestsByApplicationId(
           applicationId,

@@ -41,7 +41,7 @@ export class AssessmentAESTController extends BaseController {
     return this.assessmentControllerService.requestedStudentAssessmentSummary(
       applicationId,
       {
-        showOfferingChange: true,
+        includeOfferingChanges: true,
       },
     );
   }

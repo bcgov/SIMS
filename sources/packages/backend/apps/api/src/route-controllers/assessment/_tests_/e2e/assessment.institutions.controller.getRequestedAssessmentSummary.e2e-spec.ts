@@ -1,9 +1,11 @@
 import { HttpStatus, INestApplication } from "@nestjs/common";
 import * as request from "supertest";
 import {
+  AESTGroups,
   authorizeUserTokenForLocation,
   BEARER_AUTH_TYPE,
   createTestingAppModule,
+  getAESTToken,
   getAuthRelatedEntities,
   getInstitutionToken,
   INSTITUTION_BC_PUBLIC_ERROR_MESSAGE,
@@ -30,6 +32,7 @@ import {
 } from "@sims/sims-db";
 import { saveStudentApplicationForCollegeC } from "../../../student/_tests_/e2e/student.institutions.utils";
 import { createFakeOfferingRequestChange } from "@sims/test-utils/factories/offering-change-request";
+import { RequestAssessmentTypeAPIOutDTO } from "../../models/assessment.dto";
 
 describe("AssessmentInstitutionsController(e2e)-getRequestedAssessmentSummary", () => {
   let app: INestApplication;
@@ -139,7 +142,9 @@ describe("AssessmentInstitutionsController(e2e)-getRequestedAssessmentSummary", 
       const offeringRequestOfferings = createFakeOfferingRequestChange({
         currentOffering: application.currentAssessment.offering,
       });
-      await db.educationProgramOffering.save(offeringRequestOfferings);
+      const [, requestedOffering] = await db.educationProgramOffering.save(
+        offeringRequestOfferings,
+      );
       const endpoint = `/institutions/assessment/student/${student.id}/application/${application.id}/requests`;
       const institutionUserToken = await getInstitutionToken(
         InstitutionTokenTypes.CollegeFUser,
@@ -151,6 +156,27 @@ describe("AssessmentInstitutionsController(e2e)-getRequestedAssessmentSummary", 
         .auth(institutionUserToken, BEARER_AUTH_TYPE)
         .expect(HttpStatus.OK)
         .expect([]);
+
+      // Checking the same scenario with the ministry user, to make sure that a fake offering change was created.
+      // Arrange.
+      const ministryEndpoint = `/aest/assessment/application/${application.id}/requests`;
+      const ministryToken = await getAESTToken(
+        AESTGroups.BusinessAdministrators,
+      );
+      // Act/Assert
+      await request(app.getHttpServer())
+        .get(ministryEndpoint)
+        .auth(ministryToken, BEARER_AUTH_TYPE)
+        .expect(HttpStatus.OK)
+        .expect([
+          {
+            id: requestedOffering.id,
+            submittedDate: requestedOffering.submittedDate.toISOString(),
+            status: requestedOffering.offeringStatus,
+            requestType: RequestAssessmentTypeAPIOutDTO.OfferingRequest,
+            programId: requestedOffering.educationProgram.id,
+          },
+        ]);
     },
   );
 
