@@ -11,8 +11,10 @@ describe("Auth Ministry", () => {
 
     //Assert
     const decodedToken = jwtService.decode(token);
-    expect(decodedToken["resource_access"].aest.roles.sort()).toEqual(
-      Object.values(Role).sort(),
-    );
+    expect(
+      decodedToken["resource_access"].aest.roles.sort((a, b) =>
+        a.localeCompare(b),
+      ),
+    ).toEqual(Object.values(Role).sort((a, b) => a.localeCompare(b)));
   });
 });
