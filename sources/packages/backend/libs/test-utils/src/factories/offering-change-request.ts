@@ -2,7 +2,7 @@ import { EducationProgramOffering, OfferingStatus } from "@sims/sims-db";
 
 /**
  * Create a fake offering request change.
- * @param options dependencies:
+ * @param options options:
  *  - `currentOffering` current offering, which is requested for the changed, which is
  * already saved in the DB.
  * @returns the current and requested offering.
