@@ -92,7 +92,7 @@ export default defineComponent({
       required: false,
     },
   },
-  setup(props, { emit }) {
+  setup(props) {
     const router = useRouter();
     const { dateOnlyLongString } = useFormatters();
     const studentAppealRequests = ref([] as StudentAppealRequest[]);

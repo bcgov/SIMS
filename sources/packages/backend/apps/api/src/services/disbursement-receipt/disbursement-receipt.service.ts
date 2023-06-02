@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { DataSource, FindOptionsWhere } from "typeorm";
+import { DataSource } from "typeorm";
 import { RecordDataModelService, DisbursementReceipt } from "@sims/sims-db";
 
 /**
@@ -16,15 +16,18 @@ export class DisbursementReceiptService extends RecordDataModelService<Disbursem
    * given assessment.
    * @param assessmentId assessment to which disbursement
    * receipt belongs to.
-   * @param studentId student to whom the disbursement
+   * @param options options for the query:
+   * - `studentId` student to whom the disbursement
    * receipt belongs to.
-   * @param applicationId application id.
+   * - `applicationId` application id.
    * @returns disbursement receipt details.
    */
   async getDisbursementReceiptByAssessment(
     assessmentId: number,
-    studentId?: number,
-    applicationId?: number,
+    options?: {
+      studentId?: number;
+      applicationId?: number;
+    },
   ): Promise<DisbursementReceipt[]> {
     return this.repo.find({
       select: {
@@ -41,9 +44,9 @@ export class DisbursementReceiptService extends RecordDataModelService<Disbursem
           studentAssessment: {
             id: assessmentId,
             application: {
-              id: applicationId ?? undefined,
+              id: options?.applicationId ?? undefined,
               student: {
-                id: studentId ?? undefined,
+                id: options?.studentId ?? undefined,
               },
             },
           },
