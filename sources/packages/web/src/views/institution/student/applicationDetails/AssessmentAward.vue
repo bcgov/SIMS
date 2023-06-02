@@ -1,5 +1,5 @@
 <template>
-  <full-page-container v-if="!hideView">
+  <full-page-container>
     <template #header>
       <header-navigator
         title="Assessments"
@@ -11,7 +11,6 @@
     <assessment-award
       :assessment-award-data="assessmentAwardData"
       :notice-of-assessment-route="noticeOfAssessmentRoute"
-      @set-hide-view="setHideView"
     />
   </full-page-container>
 </template>
@@ -41,23 +40,18 @@ export default defineComponent({
     },
   },
   setup(props) {
-    const hideView = ref(false);
     const assessmentAwardData = ref<AwardDetailsAPIOutDTO>();
     const { mapAssessmentDetailHeader } = useAssessment();
     const headerMap = ref<Record<string, string>>({});
 
     const loadAssessmentAwardValues = async () => {
-      try {
-        assessmentAwardData.value =
-          await StudentAssessmentsService.shared.getAssessmentAwardDetails(
-            props.assessmentId,
-            props.studentId,
-            props.applicationId,
-          );
-        headerMap.value = mapAssessmentDetailHeader(assessmentAwardData.value);
-      } catch {
-        hideView.value = true;
-      }
+      assessmentAwardData.value =
+        await StudentAssessmentsService.shared.getAssessmentAwardDetails(
+          props.assessmentId,
+          props.studentId,
+          props.applicationId,
+        );
+      headerMap.value = mapAssessmentDetailHeader(assessmentAwardData.value);
     };
 
     onMounted(loadAssessmentAwardValues);
@@ -85,7 +79,6 @@ export default defineComponent({
       assessmentAwardData,
       headerMap,
       routeLocation,
-      hideView,
     };
   },
 });

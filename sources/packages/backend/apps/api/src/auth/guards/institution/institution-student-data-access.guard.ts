@@ -3,6 +3,7 @@ import {
   CanActivate,
   ExecutionContext,
   ForbiddenException,
+  BadRequestException,
 } from "@nestjs/common";
 import { Reflector } from "@nestjs/core";
 import { IInstitutionUserToken } from "../..";
@@ -37,8 +38,22 @@ export class InstitutionStudentDataAccessGuard implements CanActivate {
       params: Record<string, string>;
     } = context.switchToHttp().getRequest();
     if (user?.isActive) {
-      const studentId = +params.studentId;
-      const applicationId = +params.applicationId;
+      let applicationId = undefined;
+      const studentId =
+        +params[institutionStudentDataAccessParam.studentIdParamName];
+      if (!studentId) {
+        // Student id not found in the url.
+        throw new BadRequestException("Student id not found in the url.");
+      }
+      if (institutionStudentDataAccessParam.applicationIdParamName) {
+        applicationId =
+          +params[institutionStudentDataAccessParam.applicationIdParamName];
+        if (!applicationId) {
+          // Application id not found in the url.
+          throw new BadRequestException("Application id not found in the url.");
+        }
+      }
+
       const hasStudentDataAccess =
         await this.institutionService.hasStudentDataAccess(
           user.authorizations.institutionId,

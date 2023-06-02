@@ -58,9 +58,6 @@ export default defineComponent({
     submitted: (approvals: StudentAppealApproval[]) => {
       return !!approvals.length;
     },
-    setHideView: (value: boolean) => {
-      return value;
-    },
   },
   components: {
     AppealRequestsApprovalForm,
@@ -108,30 +105,26 @@ export default defineComponent({
     );
 
     onMounted(async () => {
-      try {
-        const appeal =
-          await StudentAppealService.shared.getStudentAppealWithRequests<DetailedStudentAppealRequestAPIOutDTO>(
-            props.appealId,
-            props.studentId,
-            props.applicationId,
-          );
-        studentAppealRequests.value = appeal.appealRequests.map((request) => ({
+      const appeal =
+        await StudentAppealService.shared.getStudentAppealWithRequests<DetailedStudentAppealRequestAPIOutDTO>(
+          props.appealId,
+          props.studentId,
+          props.applicationId,
+        );
+      studentAppealRequests.value = appeal.appealRequests.map((request) => ({
+        id: request.id,
+        data: request.submittedData,
+        formName: request.submittedFormName,
+        approval: {
           id: request.id,
-          data: request.submittedData,
-          formName: request.submittedFormName,
-          approval: {
-            id: request.id,
-            appealStatus: request.appealStatus,
-            assessedDate: dateOnlyLongString(request.assessedDate),
-            assessedByUserName: request.assessedByUserName,
-            noteDescription: request.noteDescription ?? "",
-            showAudit: request.appealStatus !== StudentAppealStatus.Pending,
-          },
-        }));
-        appealStatus.value = appeal.status;
-      } catch {
-        emit("setHideView", true);
-      }
+          appealStatus: request.appealStatus,
+          assessedDate: dateOnlyLongString(request.assessedDate),
+          assessedByUserName: request.assessedByUserName,
+          noteDescription: request.noteDescription ?? "",
+          showAudit: request.appealStatus !== StudentAppealStatus.Pending,
+        },
+      }));
+      appealStatus.value = appeal.status;
     });
 
     const gotToAssessmentsSummary = () => {

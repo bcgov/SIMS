@@ -979,22 +979,14 @@ export class InstitutionService extends RecordDataModelService<Institution> {
       applicationId?: number;
     },
   ): Promise<boolean> {
-    let findOptions: FindOptionsWhere<Application> = {
-      student: { id: studentId },
-      location: { institution: { id: institutionId } },
-      applicationStatus: Not(ApplicationStatus.Overwritten),
-    };
-    if (options?.applicationId) {
-      findOptions = {
+    const institutionStudentDataAccess = await this.applicationRepo.findOne({
+      select: { id: true },
+      where: {
         student: { id: studentId },
         location: { institution: { id: institutionId } },
         applicationStatus: Not(ApplicationStatus.Overwritten),
         id: options?.applicationId,
-      };
-    }
-    const institutionStudentDataAccess = await this.applicationRepo.findOne({
-      select: { id: true },
-      where: findOptions,
+      },
       cache: true,
     });
     return !!institutionStudentDataAccess;

@@ -91,9 +91,6 @@ export default defineComponent({
     ) => {
       return !!applicationId && !!loadNOA && !!processing;
     },
-    setHideView: (value: boolean) => {
-      return value;
-    },
   },
   components: { ConfirmModal },
   props: {
@@ -148,62 +145,58 @@ export default defineComponent({
     };
 
     const loadNOA = async () => {
-      try {
-        const assessment =
-          await StudentAssessmentsService.shared.getAssessmentNOA(
-            props.assessmentId,
-            props.studentId,
-            props.applicationId,
-          );
-        const noaDisbursementSchedule =
-          assessment.disbursement as NOADisbursementSchedule;
-        // Adjust disbursement schedules.
-        // First disbursement.
-        const firstMSFAAStatus = getMSFAAStatus(
-          noaDisbursementSchedule.disbursement1MSFAADateSigned,
+      const assessment =
+        await StudentAssessmentsService.shared.getAssessmentNOA(
+          props.assessmentId,
+          props.studentId,
+          props.applicationId,
+        );
+      const noaDisbursementSchedule =
+        assessment.disbursement as NOADisbursementSchedule;
+      // Adjust disbursement schedules.
+      // First disbursement.
+      const firstMSFAAStatus = getMSFAAStatus(
+        noaDisbursementSchedule.disbursement1MSFAADateSigned,
+        noaDisbursementSchedule.disbursement1MSFAACancelledDate,
+      );
+      noaDisbursementSchedule.disbursement1MSFAAStatus = firstMSFAAStatus;
+      noaDisbursementSchedule.disbursement1MSFAACancelledDateFormatted =
+        dateOnlyLongString(
           noaDisbursementSchedule.disbursement1MSFAACancelledDate,
         );
-        noaDisbursementSchedule.disbursement1MSFAAStatus = firstMSFAAStatus;
-        noaDisbursementSchedule.disbursement1MSFAACancelledDateFormatted =
-          dateOnlyLongString(
-            noaDisbursementSchedule.disbursement1MSFAACancelledDate,
-          );
-        noaDisbursementSchedule.disbursement1MSFAAStatusClass =
-          getMSFAAStatusClass(firstMSFAAStatus);
-        // Second disbursement.
-        const secondMSFAAStatus = getMSFAAStatus(
-          noaDisbursementSchedule.disbursement2MSFAADateSigned,
+      noaDisbursementSchedule.disbursement1MSFAAStatusClass =
+        getMSFAAStatusClass(firstMSFAAStatus);
+      // Second disbursement.
+      const secondMSFAAStatus = getMSFAAStatus(
+        noaDisbursementSchedule.disbursement2MSFAADateSigned,
+        noaDisbursementSchedule.disbursement2MSFAACancelledDate,
+      );
+      noaDisbursementSchedule.disbursement2MSFAAStatus = secondMSFAAStatus;
+      noaDisbursementSchedule.disbursement2MSFAACancelledDateFormatted =
+        dateOnlyLongString(
           noaDisbursementSchedule.disbursement2MSFAACancelledDate,
         );
-        noaDisbursementSchedule.disbursement2MSFAAStatus = secondMSFAAStatus;
-        noaDisbursementSchedule.disbursement2MSFAACancelledDateFormatted =
-          dateOnlyLongString(
-            noaDisbursementSchedule.disbursement2MSFAACancelledDate,
-          );
-        noaDisbursementSchedule.disbursement2MSFAAStatusClass =
-          getMSFAAStatusClass(secondMSFAAStatus);
-        // Checks if the component allows the MSFAA reissue and if there is
-        // one pending disbursement with a cancelled MSFAA.
-        const canReissueMSFAA =
-          props.canReissueMSFAA &&
-          ((noaDisbursementSchedule.disbursement1Status ===
+      noaDisbursementSchedule.disbursement2MSFAAStatusClass =
+        getMSFAAStatusClass(secondMSFAAStatus);
+      // Checks if the component allows the MSFAA reissue and if there is
+      // one pending disbursement with a cancelled MSFAA.
+      const canReissueMSFAA =
+        props.canReissueMSFAA &&
+        ((noaDisbursementSchedule.disbursement1Status ===
+          DisbursementScheduleStatus.Pending &&
+          !!noaDisbursementSchedule.disbursement1MSFAACancelledDate) ||
+          (noaDisbursementSchedule.disbursement2Status ===
             DisbursementScheduleStatus.Pending &&
-            !!noaDisbursementSchedule.disbursement1MSFAACancelledDate) ||
-            (noaDisbursementSchedule.disbursement2Status ===
-              DisbursementScheduleStatus.Pending &&
-              !!noaDisbursementSchedule.disbursement2MSFAACancelledDate));
-        initialData.value = {
-          ...assessment,
-          canReissueMSFAA,
-        };
-        emit(
-          "assessmentDataLoaded",
-          initialData.value.applicationStatus,
-          initialData.value.noaApprovalStatus,
-        );
-      } catch {
-        emit("setHideView", true);
-      }
+            !!noaDisbursementSchedule.disbursement2MSFAACancelledDate));
+      initialData.value = {
+        ...assessment,
+        canReissueMSFAA,
+      };
+      emit(
+        "assessmentDataLoaded",
+        initialData.value.applicationStatus,
+        initialData.value.noaApprovalStatus,
+      );
     };
 
     onMounted(loadNOA);

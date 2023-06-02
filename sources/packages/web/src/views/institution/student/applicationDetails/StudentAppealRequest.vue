@@ -1,5 +1,5 @@
 <template>
-  <full-page-container v-if="!hideView">
+  <full-page-container>
     <template #header>
       <header-navigator
         title="Assessment"
@@ -12,7 +12,6 @@
       :appealId="appealId"
       :readOnlyForm="true"
       :application-id="applicationId"
-      @set-hide-view="setHideView"
     />
   </full-page-container>
 </template>
@@ -39,7 +38,6 @@ export default defineComponent({
     },
   },
   setup(props) {
-    const hideView = ref(false);
     const assessmentsSummaryRoute = {
       name: InstitutionRoutesConst.ASSESSMENTS_SUMMARY,
       params: {
@@ -47,14 +45,9 @@ export default defineComponent({
         studentId: props.studentId,
       },
     };
-    const setHideView = (value: boolean) => {
-      hideView.value = value;
-    };
 
     return {
       assessmentsSummaryRoute,
-      hideView,
-      setHideView,
     };
   },
 });

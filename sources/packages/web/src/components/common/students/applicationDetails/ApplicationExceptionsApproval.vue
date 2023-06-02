@@ -1,5 +1,5 @@
 <template>
-  <full-page-container v-if="!hideView">
+  <full-page-container>
     <template #header>
       <header-navigator
         title="Assessments"
@@ -129,37 +129,32 @@ export default defineComponent({
     const applicationExceptions = ref({} as ApplicationExceptionFormModel);
     const submittedDate = ref("");
     const readOnly = ref(true);
-    const hideView = ref(false);
 
     onMounted(async () => {
-      try {
-        const applicationException =
-          await ApplicationExceptionService.shared.getExceptionDetails<DetailedApplicationExceptionAPIOutDTO>(
-            props.exceptionId,
-            props.studentId,
-            props.applicationId,
-          );
-        applicationExceptions.value = {
-          ...applicationException,
-          assessedDate: dateOnlyLongString(applicationException.assessedDate),
-          exceptionStatusClass: mapRequestAssessmentChipStatus(
-            applicationException.exceptionStatus,
-          ),
-          exceptionStatusOnLoad: applicationException.exceptionStatus,
-          exceptionNames: applicationException.exceptionRequests.map(
-            (exception) => exception.exceptionName,
-          ),
-          showStaffApproval: props.showStaffApproval,
-        };
-        submittedDate.value = dateOnlyLongString(
-          applicationException.submittedDate,
+      const applicationException =
+        await ApplicationExceptionService.shared.getExceptionDetails<DetailedApplicationExceptionAPIOutDTO>(
+          props.exceptionId,
+          props.studentId,
+          props.applicationId,
         );
-        readOnly.value =
-          applicationException.exceptionStatus !==
-            ApplicationExceptionStatus.Pending || props.readOnlyForm;
-      } catch (error: unknown) {
-        hideView.value = true;
-      }
+      applicationExceptions.value = {
+        ...applicationException,
+        assessedDate: dateOnlyLongString(applicationException.assessedDate),
+        exceptionStatusClass: mapRequestAssessmentChipStatus(
+          applicationException.exceptionStatus,
+        ),
+        exceptionStatusOnLoad: applicationException.exceptionStatus,
+        exceptionNames: applicationException.exceptionRequests.map(
+          (exception) => exception.exceptionName,
+        ),
+        showStaffApproval: props.showStaffApproval,
+      };
+      submittedDate.value = dateOnlyLongString(
+        applicationException.submittedDate,
+      );
+      readOnly.value =
+        applicationException.exceptionStatus !==
+          ApplicationExceptionStatus.Pending || props.readOnlyForm;
     });
 
     const gotToAssessmentsSummary = () => {
@@ -172,7 +167,6 @@ export default defineComponent({
       submittedDate,
       readOnly,
       Role,
-      hideView,
     };
   },
 });
