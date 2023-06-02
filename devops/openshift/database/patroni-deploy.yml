@@ -8,12 +8,19 @@ metadata:
 labels:
   project: ${PROJECT}
   service: ${NAME}
+  app: ${NAME}	
+  phase: deploy	
+  app.kubernetes.io/instance: ${NAME}	
+  app.kubernetes.io/component: database	
+  app.kubernetes.io/name: patroni	
+  app.kubernetes.io/managed-by: template
 objects:
 - apiVersion: v1
   kind: Service
   metadata:
     name: ${NAME}-master
     labels:
+      app: ${NAME}
       cluster-name: ${NAME}
   spec:
     ports:
@@ -23,13 +30,21 @@ objects:
     selector:
       role: master
       cluster-name: ${NAME}
+      app.kubernetes.io/name: patroni
+      sessionAffinity: None
+      type: ClusterIP
+    status:
+      loadBalancer: {}
 - apiVersion: apps/v1
   kind: StatefulSet
   metadata:
     name: ${NAME}
+    app: ${NAME}
+    generation: 3
     labels:
       cluster-name: ${NAME}
   spec:
+    podManagementPolicy: OrderedReady
     replicas: ${{REPLICAS}}
     revisionHistoryLimit: 10
     selector:
@@ -40,8 +55,10 @@ objects:
     template:
       metadata:
         labels:
+          app: ${NAME}
           statefulset: ${NAME}
           cluster-name: ${NAME}
+          app.kubernetes.io/name: patroni
       spec:
         affinity:
           podAntiAffinity:
@@ -66,7 +83,7 @@ objects:
                 apiVersion: v1
                 fieldPath: metadata.namespace
           - name: PATRONI_KUBERNETES_LABELS
-            value: '{"cluster-name": "${NAME}"}'
+            value: '{"cluster-name": "${NAME}", "app.kubernetes.io/name": "patroni"}'
           - name: PATRONI_SUPERUSER_USERNAME
             valueFrom:
               secretKeyRef:
@@ -119,7 +136,10 @@ objects:
             value: 0.0.0.0:5432
           - name: PATRONI_RESTAPI_LISTEN
             value: 0.0.0.0:8008
-          image: ${IMAGE_REGISTRY}/${BUILD_NAMESPACE}/${IMAGE_STREAM_TAG}
+          image: ${IMAGE_REGISTRY}/${IMAGE_STREAM_NAMESPACE}/${IMAGE_NAME}:${IMAGE_TAG}
+          # Because we are using image reference to a tag, we need to always
+          # pull the image otherwise we end up with outdated/out-of-sync
+          # image depending on the node where it is running
           imagePullPolicy: Always
           name: ${NAME}
           ports:
@@ -144,11 +164,20 @@ objects:
           volumeMounts:
           - mountPath: /home/postgres/pgdata
             name: ${NAME}
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
         serviceAccountName: ${NAME}
+        terminationGracePeriodSeconds: 0
     updateStrategy:
       type: RollingUpdate
     volumeClaimTemplates:
     - metadata:
+        annotations:
+          volume.beta.kubernetes.io/storage-class: ${STORAGE_CLASS}
+        labels:
+          app: ${NAME}
         name: ${NAME}
       spec:
         storageClassName: ${STORAGE_CLASS}
@@ -186,21 +215,26 @@ parameters:
   description: Maximum amount of memory the container can use.
   displayName: Memory Limit
   value: 512Mi
-- name: BUILD_NAMESPACE
+- name: IMAGE_STREAM_NAMESPACE
   description: |
     The OpenShift Namespace where the patroni and postgresql
     ImageStream resides.
   displayName: ImageStream Namespace
-  required: true
-- name: IMAGE_STREAM_TAG
+  value: bcgov
+- name: IMAGE_NAME
   description: |
-    Patroni ImageTag
-  value: patroni:12-latest
+    The Patroni image stream name
+  value: patroni-postgres
+- name: IMAGE_TAG
+  description: |
+    The image tag used to specify which image you would like deployed.
+    Don't use `latest`.
+  value: "12.4-latest"
 - name: PVC_SIZE
   description: 
     The size of the persistent volume to create.
   displayName: Persistent Volume Size
-  value: 2Gi
+  value: 21Gi
 - name: STORAGE_CLASS
   value: netapp-file-standard
 - name: IMAGE_REGISTRY
