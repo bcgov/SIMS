@@ -6,7 +6,10 @@ import {
 } from "@nestjs/common";
 import { Reflector } from "@nestjs/core";
 import { IInstitutionUserToken } from "../..";
-import { INSTITUTION_HAS_STUDENT_DATA_ACCESS_KEY } from "../../decorators";
+import {
+  HasStudentDataAccessParam,
+  INSTITUTION_HAS_STUDENT_DATA_ACCESS_KEY,
+} from "../../decorators";
 import { InstitutionService } from "../../../services";
 
 @Injectable()
@@ -17,13 +20,12 @@ export class InstitutionStudentDataAccessGuard implements CanActivate {
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const institutionStudentDataAccessParam = this.reflector.getAllAndOverride<
-      string[]
-    >(INSTITUTION_HAS_STUDENT_DATA_ACCESS_KEY, [
-      context.getHandler(),
-      context.getClass(),
-    ]);
-    if (!institutionStudentDataAccessParam?.length) {
+    const institutionStudentDataAccessParam =
+      this.reflector.getAllAndOverride<HasStudentDataAccessParam>(
+        INSTITUTION_HAS_STUDENT_DATA_ACCESS_KEY,
+        [context.getHandler(), context.getClass()],
+      );
+    if (!institutionStudentDataAccessParam) {
       return true;
     }
 

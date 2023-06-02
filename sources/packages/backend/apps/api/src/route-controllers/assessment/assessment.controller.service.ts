@@ -154,10 +154,11 @@ export class AssessmentControllerService {
    * Get estimated and actual(if present) award details of an assessment.
    * @param assessmentId assessment to which awards details belong to.
    * @param includeDocumentNumber when true document number is mapped
-   * to disbursement dynamic data.\
+   * to disbursement dynamic data.
    * @param options options,
    * - `studentId` studentId student to whom the award details belong to.
-   * - `applicationId` applications id.
+   * - `applicationId` application is used for authorization purposes to
+   * ensure that a user has access to the specific application data.
    * @returns estimated and actual award details.
    */
   async getAssessmentAwardDetails(

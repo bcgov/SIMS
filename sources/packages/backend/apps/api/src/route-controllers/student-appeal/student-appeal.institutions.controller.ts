@@ -49,7 +49,7 @@ export class StudentAppealInstitutionsController extends BaseController {
   ): Promise<StudentAppealAPIOutDTO<StudentAppealRequestAPIOutDTO>> {
     return this.studentAppealControllerService.getStudentAppealWithRequests<StudentAppealRequestAPIOutDTO>(
       appealId,
-      { studentId: studentId, applicationId: applicationId },
+      { studentId, applicationId },
     );
   }
 }
