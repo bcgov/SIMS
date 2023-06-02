@@ -1,5 +1,5 @@
 import { JwtService } from "@nestjs/jwt";
-import { Role } from "../src/auth";
+import { IUserToken, Role } from "../src/auth";
 import { AESTGroups, getAESTToken } from "../src/testHelpers";
 
 const jwtService = new JwtService();
@@ -10,9 +10,9 @@ describe("Auth Ministry", () => {
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
 
     //Assert
-    const decodedToken = jwtService.decode(token);
+    const decodedToken = jwtService.decode(token) as IUserToken;
     expect(
-      decodedToken["resource_access"].aest.roles.sort((a, b) =>
+      decodedToken.resource_access.aest.roles.sort((a, b) =>
         a.localeCompare(b),
       ),
     ).toEqual(Object.values(Role).sort((a, b) => a.localeCompare(b)));
