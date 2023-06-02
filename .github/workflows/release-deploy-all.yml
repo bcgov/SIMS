@@ -1,4 +1,4 @@
-name: Deploy to OpenShift/Camunda
+name: Release - Deploy all
 
 on:
   workflow_dispatch:
@@ -70,7 +70,7 @@ jobs:
           echo BUILD NAMESPACE: $BUILD_NAMESPACE
           echo BRANCH: ${{ github.event.inputs.gitRef }}
           echo HOST_PREFIX: $HOST_PREFIX
-          
+
       - name: Checkout Target Branch
         uses: actions/checkout@v3
         with:
@@ -97,7 +97,7 @@ jobs:
           echo BUILD NAMESPACE: $BUILD_NAMESPACE
           echo BRANCH: ${{ github.event.inputs.gitRef }}
           echo HOST_PREFIX: $HOST_PREFIX
-          
+
       - name: Checkout Target Branch
         uses: actions/checkout@v3
         with:
@@ -124,7 +124,7 @@ jobs:
           echo BUILD NAMESPACE: $BUILD_NAMESPACE
           echo BRANCH: ${{ github.event.inputs.gitRef }}
           echo HOST_PREFIX: $HOST_PREFIX
-          
+
       - name: Checkout Target Branch
         uses: actions/checkout@v3
         with:
@@ -151,7 +151,7 @@ jobs:
           echo BUILD NAMESPACE: $BUILD_NAMESPACE
           echo BRANCH: ${{ github.event.inputs.gitRef }}
           echo HOST_PREFIX: $HOST_PREFIX
-          
+
       - name: Checkout Target Branch
         uses: actions/checkout@v3
         with:
@@ -178,7 +178,7 @@ jobs:
           echo BUILD NAMESPACE: $BUILD_NAMESPACE
           echo BRANCH: ${{ github.event.inputs.gitRef }}
           echo HOST_PREFIX: $HOST_PREFIX
-          
+
       - name: Checkout Target Branch
         uses: actions/checkout@v3
         with:
@@ -187,7 +187,7 @@ jobs:
       - name: Log in to OpenShift
         run: |
           oc login --token=${{ secrets.SA_TOKEN }} --server=https://api.silver.devops.gov.bc.ca:6443
-      
+
       - name: Deploy Web/Frontend
         working-directory: "./devops/"
         run: |

@@ -1,7 +1,5 @@
 name: Release - Build All
 
-# Temporary to allow test before mrging to main.
-
 on:
   # Disabling while on testing phase.
   # pull_request:
