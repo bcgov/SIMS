@@ -15,14 +15,7 @@ import {
   Application,
   ApplicationStatus,
 } from "@sims/sims-db";
-import {
-  DataSource,
-  EntityManager,
-  FindOptionsWhere,
-  IsNull,
-  Not,
-  Repository,
-} from "typeorm";
+import { DataSource, EntityManager, IsNull, Not, Repository } from "typeorm";
 import { InstitutionUserType, UserInfo } from "../../types";
 import { BCeIDService } from "../bceid/bceid.service";
 import { AccountDetails } from "../bceid/account-details.model";
