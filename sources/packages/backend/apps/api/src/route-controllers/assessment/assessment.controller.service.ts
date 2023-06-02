@@ -320,32 +320,40 @@ export class AssessmentControllerService {
    * Get all pending and declined requests related to an application which would result
    * a new assessment when that request is approved.
    * @param applicationId application id.
-   * @param studentId student id.
+   * @param options options for request assessments,
+   * - `studentId` student id.
+   * - `includeOfferingChanges` will decide whether to include assessment
+   * request for offering change.
    * @returns assessment requests or exceptions for the student application.
    */
   async requestedStudentAssessmentSummary(
     applicationId: number,
-    studentId?: number,
+    options?: {
+      studentId?: number;
+      includeOfferingChanges?: boolean;
+    },
   ): Promise<RequestAssessmentSummaryAPIOutDTO[]> {
     const requestAssessmentSummary: RequestAssessmentSummaryAPIOutDTO[] = [];
-    const offeringChange =
-      await this.educationProgramOfferingService.getOfferingRequestsByApplicationId(
-        applicationId,
-        studentId,
-      );
-    if (offeringChange) {
-      requestAssessmentSummary.push({
-        id: offeringChange.id,
-        submittedDate: offeringChange.submittedDate,
-        status: offeringChange.offeringStatus,
-        requestType: RequestAssessmentTypeAPIOutDTO.OfferingRequest,
-        programId: offeringChange.educationProgram.id,
-      });
+    if (options?.includeOfferingChanges) {
+      const offeringChange =
+        await this.educationProgramOfferingService.getOfferingRequestsByApplicationId(
+          applicationId,
+          options?.studentId,
+        );
+      if (offeringChange) {
+        requestAssessmentSummary.push({
+          id: offeringChange.id,
+          submittedDate: offeringChange.submittedDate,
+          status: offeringChange.offeringStatus,
+          requestType: RequestAssessmentTypeAPIOutDTO.OfferingRequest,
+          programId: offeringChange.educationProgram.id,
+        });
+      }
     }
     const applicationExceptions =
       await this.applicationExceptionService.getExceptionsByApplicationId(
         applicationId,
-        studentId,
+        options?.studentId,
         ApplicationExceptionStatus.Pending,
         ApplicationExceptionStatus.Declined,
       );
@@ -363,7 +371,7 @@ export class AssessmentControllerService {
     }
     const appeals = await this.getPendingAndDeniedAppeals(
       applicationId,
-      studentId,
+      options?.studentId,
     );
     return requestAssessmentSummary.concat(appeals);
   }
