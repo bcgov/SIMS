@@ -45,7 +45,6 @@ export default defineComponent({
         studentId: props.studentId,
       },
     };
-
     return {
       assessmentsSummaryRoute,
     };

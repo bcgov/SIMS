@@ -47,6 +47,7 @@ export default defineComponent({
         assessmentId: props.assessmentId,
       },
     }));
+
     return { routeLocation };
   },
 });
