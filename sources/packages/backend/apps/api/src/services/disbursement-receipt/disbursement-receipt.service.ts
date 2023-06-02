@@ -44,9 +44,9 @@ export class DisbursementReceiptService extends RecordDataModelService<Disbursem
           studentAssessment: {
             id: assessmentId,
             application: {
-              id: options?.applicationId ?? undefined,
+              id: options?.applicationId,
               student: {
-                id: options?.studentId ?? undefined,
+                id: options?.studentId,
               },
             },
           },
