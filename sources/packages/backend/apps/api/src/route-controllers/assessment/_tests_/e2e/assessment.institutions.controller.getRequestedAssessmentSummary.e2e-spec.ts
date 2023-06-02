@@ -1,11 +1,9 @@
 import { HttpStatus, INestApplication } from "@nestjs/common";
 import * as request from "supertest";
 import {
-  AESTGroups,
   authorizeUserTokenForLocation,
   BEARER_AUTH_TYPE,
   createTestingAppModule,
-  getAESTToken,
   getAuthRelatedEntities,
   getInstitutionToken,
   INSTITUTION_BC_PUBLIC_ERROR_MESSAGE,
@@ -32,18 +30,23 @@ import {
 } from "@sims/sims-db";
 import { saveStudentApplicationForCollegeC } from "../../../student/_tests_/e2e/student.institutions.utils";
 import { createFakeOfferingRequestChange } from "@sims/test-utils/factories/offering-change-request";
-import { RequestAssessmentTypeAPIOutDTO } from "../../models/assessment.dto";
+import { TestingModule } from "@nestjs/testing";
+import { EducationProgramOfferingService } from "../../../../../src/services";
 
 describe("AssessmentInstitutionsController(e2e)-getRequestedAssessmentSummary", () => {
   let app: INestApplication;
   let db: E2EDataSources;
   let collegeF: Institution;
   let collegeFLocation: InstitutionLocation;
+  let appModule: TestingModule;
 
   beforeAll(async () => {
-    const { nestApplication, dataSource } = await createTestingAppModule();
+    const { nestApplication, module, dataSource } =
+      await createTestingAppModule();
     app = nestApplication;
+    appModule = module;
     db = createE2EDataSources(dataSource);
+
     // College F.
     const { institution: collegeF } = await getAuthRelatedEntities(
       db.dataSource,
@@ -157,27 +160,22 @@ describe("AssessmentInstitutionsController(e2e)-getRequestedAssessmentSummary", 
         .expect(HttpStatus.OK)
         .expect([]);
 
-      // Checking the same scenario with the ministry endpoint with a ministry user, to make sure that a fake offering change was created.
-      // Arrange.
-      const ministryEndpoint = `/aest/assessment/application/${application.id}/requests`;
-      const ministryToken = await getAESTToken(
-        AESTGroups.BusinessAdministrators,
+      // Checking the same scenario with the educationProgramOfferingService service, to make sure that a fake offering change was created.
+      const educationProgramOfferingService = appModule.get(
+        EducationProgramOfferingService,
       );
+      const offeringChange =
+        await educationProgramOfferingService.getOfferingRequestsByApplicationId(
+          application.id,
+          student.id,
+        );
 
-      // Act/Assert
-      await request(app.getHttpServer())
-        .get(ministryEndpoint)
-        .auth(ministryToken, BEARER_AUTH_TYPE)
-        .expect(HttpStatus.OK)
-        .expect([
-          {
-            id: requestedOffering.id,
-            submittedDate: requestedOffering.submittedDate.toISOString(),
-            status: requestedOffering.offeringStatus,
-            requestType: RequestAssessmentTypeAPIOutDTO.OfferingRequest,
-            programId: requestedOffering.educationProgram.id,
-          },
-        ]);
+      expect(offeringChange).toMatchObject({
+        id: requestedOffering.id,
+        submittedDate: requestedOffering.submittedDate,
+        offeringStatus: requestedOffering.offeringStatus,
+        educationProgram: { id: requestedOffering.educationProgram.id },
+      });
     },
   );
 
