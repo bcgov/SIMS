@@ -42,7 +42,7 @@ jobs:
         id: defineTagName
         uses: actions/github-script@v6
         with:
-          script: return "${{ github.ref_name }}".replace("release/", "").replace("hotfix/", "") + "." + "${{ github.run_number }}";
+          script: return "${{ github.ref_name }}".replace("release/", "").replace("hotfix/", "") + "-" + "${{ github.run_number }}";
           result-encoding: string
       # Checkout the code to apply the tag.
       - name: Checkout the code
