@@ -37,19 +37,21 @@ jobs:
     runs-on: ubuntu-latest
     needs: checkEnv
     steps:
-      # Define tag name (e.g. v1.0.0+123).
+      # Define tag name (e.g. v1.0.0.123).
       - name: Define tag name
         id: defineTagName
         uses: actions/github-script@v6
         with:
           script: return "${{ github.ref_name }}".replace("release/", "").replace("hotfix/", "") + "." + "${{ github.run_number }}";
           result-encoding: string
-      # Create tag
-      - name: Tag the branch
+      # Checkout the code to apply the tag.
+      - name: Checkout the code
         uses: actions/checkout@v3
         with:
           ref: ${{ github.ref_name }}
-      - run: |
+      # Create tag
+      - name: Tag the branch
+        run: |
           git config user.name github-actions
           git config user.email github-actions@github.com
           git tag "${{ steps.defineTagName.outputs.result }}"

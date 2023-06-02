@@ -4,7 +4,7 @@
 # https://docs.github.com/en/code-security/dependabot/working-with-dependabot/automating-dependabot-with-github-actions
 # To allow access to the secrets in both cases, the test users' passwords (or any other secret) are defined at the
 # repository level and also at the `dependabot` secrets for now.
-name: Tests
+name: Repo Checks - Tests
 
 on: [pull_request]
 

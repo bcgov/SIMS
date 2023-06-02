@@ -1,4 +1,4 @@
-name: Deploy Form.io resources
+name: Release - Deploy Form.io resources
 
 on:
   workflow_dispatch:
@@ -8,7 +8,7 @@ on:
         required: true
         type: environment
       gitRef:
-        description: 'Github reference'
+        description: "Github reference"
         required: true
         type: string
   workflow_call:
@@ -33,7 +33,7 @@ jobs:
       - name: Checkout Target Branch
         uses: actions/checkout@v3
         with:
-          ref:  ${{ github.event.inputs.gitRef }}
+          ref: ${{ github.event.inputs.gitRef }}
       - name: Setup Nodejs
         uses: actions/setup-node@v3
         with:
