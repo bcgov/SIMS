@@ -60,8 +60,7 @@ export class AssessmentControllerService {
   ): Promise<AssessmentNOAAPIOutDTO> {
     const assessment = await this.assessmentService.getAssessmentForNOA(
       assessmentId,
-      options?.studentId,
-      options?.applicationId,
+      { studentId: options?.studentId, applicationId: options?.applicationId },
     );
 
     if (!assessment) {
@@ -171,8 +170,7 @@ export class AssessmentControllerService {
   ): Promise<AwardDetailsAPIOutDTO> {
     const assessment = await this.assessmentService.getAssessmentForNOA(
       assessmentId,
-      options?.studentId,
-      options?.applicationId,
+      options,
     );
 
     if (!assessment) {
@@ -190,8 +188,7 @@ export class AssessmentControllerService {
       const disbursementReceipts =
         await this.disbursementReceiptService.getDisbursementReceiptByAssessment(
           assessmentId,
-          options?.studentId,
-          options?.applicationId,
+          options,
         );
       if (disbursementReceipts.length) {
         finalAward = this.populateDisbursementReceiptAwardValues(

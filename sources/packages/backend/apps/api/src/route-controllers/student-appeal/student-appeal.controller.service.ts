@@ -33,11 +33,10 @@ export class StudentAppealControllerService {
     },
   ): Promise<StudentAppealAPIOutDTO<T>> {
     const studentAppeal =
-      await this.studentAppealService.getAppealAndRequestsById(
-        appealId,
-        options?.studentId,
-        options?.applicationId,
-      );
+      await this.studentAppealService.getAppealAndRequestsById(appealId, {
+        studentId: options?.studentId,
+        applicationId: options?.applicationId,
+      });
     if (!studentAppeal) {
       throw new NotFoundException("Not able to find the student appeal.");
     }

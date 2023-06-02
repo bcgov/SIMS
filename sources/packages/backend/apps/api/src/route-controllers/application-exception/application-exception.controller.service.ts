@@ -35,11 +35,10 @@ export class ApplicationExceptionControllerService {
     },
   ): Promise<T> {
     const applicationException =
-      await this.applicationExceptionService.getExceptionDetails(
-        exceptionId,
-        options?.studentId,
-        options?.applicationId,
-      );
+      await this.applicationExceptionService.getExceptionDetails(exceptionId, {
+        studentId: options?.studentId,
+        applicationId: options?.applicationId,
+      });
     if (!applicationException) {
       throw new NotFoundException("Student application exception not found.");
     }
