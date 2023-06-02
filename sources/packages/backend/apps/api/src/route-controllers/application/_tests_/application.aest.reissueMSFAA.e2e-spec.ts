@@ -349,6 +349,40 @@ describe("ApplicationAESTController(e2e)-reissueMSFAA", () => {
     }
   }
 
+  it("Should not reissue an MSFAA when user is not a business administrator.", async () => {
+    // Arrange
+    const student = await saveFakeStudent(db.dataSource);
+    const currentMSFAA = createFakeMSFAANumber(
+      { student },
+      {
+        state: MSFAAStates.Signed | MSFAAStates.CancelledOtherProvince,
+      },
+    );
+    await db.msfaaNumber.save(currentMSFAA);
+    const application = await saveFakeApplicationDisbursements(
+      db.dataSource,
+      { student, msfaaNumber: currentMSFAA },
+      {
+        applicationStatus: ApplicationStatus.Completed,
+        createSecondDisbursement: true,
+      },
+    );
+
+    const endpoint = `/aest/application/${application.id}/reissue-msfaa`;
+    const token = await getAESTToken(AESTGroups.OperationsAdministrators);
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .post(endpoint)
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.FORBIDDEN)
+      .expect({
+        statusCode: HttpStatus.FORBIDDEN,
+        message: "Forbidden resource",
+        error: "Forbidden",
+      });
+  });
+
   afterAll(async () => {
     await app?.close();
   });

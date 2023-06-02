@@ -5,7 +5,7 @@ import { AESTGroups, getAESTToken } from "../src/testHelpers";
 const jwtService = new JwtService();
 
 describe("Auth Ministry", () => {
-  it("Should have specific roles when ministry user is a business administrator.", async () => {
+  it("Should have all roles when ministry user is a business administrator.", async () => {
     //Act
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
 
