@@ -43,7 +43,7 @@ define DB_MIGRATIONS
 endef
 
 define DB_MIGRATIONS_JOB_NAME
-"db.migrations"
+"$(HOST_PREFIX)db.migrations"
 endef
 
 define API
@@ -322,12 +322,12 @@ run-db-migrations:
 		| oc -n $(NAMESPACE) apply -f - 
 
 wait-for-db-migrations: 
-	while [ "$$(oc get job $(DB_MIGRATIONS_JOB_NAME) -o=jsonpath='{.status.conditions[?(@.type=="Complete")].status}' || echo "None")" != "True" ] && [ "$$WAIT_TIME" -lt "$$MAX_WAIT" ]; do sleep 5; WAIT_TIME=$$((WAIT_TIME+5)); done
-	if [ "$$(oc get job $(DB_MIGRATIONS_JOB_NAME) -o=jsonpath='{.status.conditions[?(@.type=="Complete")].status}' || echo "None")" != "True" ]; then echo "Error: Job $(DB_MIGRATIONS_JOB_NAME) failed to complete within the specified timeout"; exit 1; fi
+	while [ "$$(oc -n $(NAMESPACE) get job $(DB_MIGRATIONS_JOB_NAME) -o=jsonpath='{.status.conditions[?(@.type=="Complete")].status}' || echo "None")" != "True" ] && [ "$$WAIT_TIME" -lt "$$MAX_WAIT" ]; do sleep 5; WAIT_TIME=$$((WAIT_TIME+5)); done
+	if [ "$$(oc -n $(NAMESPACE) get job $(DB_MIGRATIONS_JOB_NAME) -o=jsonpath='{.status.conditions[?(@.type=="Complete")].status}' || echo "None")" != "True" ]; then echo "Error: Job $(DB_MIGRATIONS_JOB_NAME) failed to complete within the specified timeout"; exit 1; fi
 
 delete-db-migrations:
-	@if [ -n "$(shell oc get job $(DB_MIGRATIONS_JOB_NAME) -o name 2>/dev/null)" ]; then \
-		oc delete job $(DB_MIGRATIONS_JOB_NAME); \
+	@if [ -n "$(shell oc -n $(NAMESPACE) get job $(DB_MIGRATIONS_JOB_NAME) -o name 2>/dev/null)" ]; then \
+		oc -n $(NAMESPACE) delete job $(DB_MIGRATIONS_JOB_NAME); \
 			echo "Job deleted."; \
 	else \
 		echo "Job not found."; \

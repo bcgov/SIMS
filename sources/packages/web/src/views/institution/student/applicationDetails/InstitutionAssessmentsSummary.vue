@@ -17,7 +17,7 @@
     <history-assessment
       :applicationId="applicationId"
       :studentId="studentId"
-      :viewRequestTypes="assessmentRequestTypes"
+      :viewRequestTypes="assessmentRequestViewTypes"
       @viewStudentAppeal="goToStudentAppeal"
       @viewAssessment="gotToViewAssessment"
       @viewApplicationException="goToApplicationException"
@@ -51,10 +51,8 @@ export default defineComponent({
   setup(props) {
     const router = useRouter();
     // The assessment trigger types for which the request form must be visible by default.
-    const assessmentRequestTypes = [
+    const assessmentRequestViewTypes = [
       AssessmentTriggerType.StudentAppeal,
-      AssessmentTriggerType.OfferingChange,
-      AssessmentTriggerType.ScholasticStandingChange,
       AssessmentTriggerType.OriginalAssessment,
     ];
 
@@ -103,7 +101,7 @@ export default defineComponent({
       goToStudentAppeal,
       gotToViewAssessment,
       goToApplicationException,
-      assessmentRequestTypes,
+      assessmentRequestViewTypes,
       backRoute,
     };
   },

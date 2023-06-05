@@ -40,6 +40,9 @@ export class AssessmentAESTController extends BaseController {
   ): Promise<RequestAssessmentSummaryAPIOutDTO[]> {
     return this.assessmentControllerService.requestedStudentAssessmentSummary(
       applicationId,
+      {
+        includeOfferingChanges: true,
+      },
     );
   }
 

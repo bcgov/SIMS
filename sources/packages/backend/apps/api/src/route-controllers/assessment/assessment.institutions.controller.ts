@@ -49,7 +49,7 @@ export class AssessmentInstitutionsController extends BaseController {
   ): Promise<RequestAssessmentSummaryAPIOutDTO[]> {
     return this.assessmentControllerService.requestedStudentAssessmentSummary(
       applicationId,
-      studentId,
+      { studentId },
     );
   }
 
