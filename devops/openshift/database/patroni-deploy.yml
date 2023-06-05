@@ -37,7 +37,6 @@ objects:
         statefulset: ${NAME}
         cluster-name: ${NAME}
     serviceName: ${NAME}
-    podManagementPolicy: Parallel
     template:
       metadata:
         labels:
@@ -206,7 +205,7 @@ parameters:
   description: 
     The size of the persistent volume to create.
   displayName: Persistent Volume Size
-  value: 21Gi
+  value: 2Gi
 - name: STORAGE_CLASS
   value: netapp-file-standard
 - name: IMAGE_REGISTRY
