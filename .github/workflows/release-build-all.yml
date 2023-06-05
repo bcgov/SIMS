@@ -177,7 +177,7 @@ jobs:
 
   # Deploy All
   deployAll:
-    if: github.event_name == 'pull_request' && env.ALLOW_AUTOMATIC_MAIN_BRANCH_DEPLOY_TO_DEV == 'true' && github.ref_name == 'main'
+    if: github.event_name == 'workflow_dispatch' && vars.ALLOW_AUTOMATIC_MAIN_BRANCH_DEPLOY_TO_DEV == 'true' && github.ref_name == 'release-workflows-1917'
     name: Deploy All to DEV
     needs:
       [
