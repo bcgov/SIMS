@@ -19,6 +19,15 @@ on:
       gitRef:
         required: true
         type: string
+    secrets:
+      ZEEBE_ADDRESS:
+        required: true
+      ZEEBE_AUTHORIZATION_SERVER_URL:
+        required: true
+      ZEEBE_CLIENT_ID:
+        required: true
+      ZEEBE_CLIENT_SECRET:
+        required: true
 
 jobs:
   deploy:

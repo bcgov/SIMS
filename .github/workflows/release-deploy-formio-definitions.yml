@@ -19,6 +19,13 @@ on:
       gitRef:
         required: true
         type: string
+    secrets:
+      FORMS_URL:
+        required: true
+      FORMS_SA_USER_NAME:
+        required: true
+      FORMS_SA_PASSWORD:
+        required: true
 
 jobs:
   deploy:

@@ -33,6 +33,37 @@ on:
       deployFormioDefinitions:
         required: true
         type: string
+    secrets:
+      SA_TOKEN:
+        required: true
+      OPENSHIFT_ENV_NAMESPACE:
+        required: true
+      HOST_PREFIX:
+        required: true
+      KEYCLOAK_AUTH_URL:
+        required: true
+      BCeID_WEB_SERVICE_WSDL:
+        required: true
+      SITE_MINDER_LOGOUT_URL:
+        required: true
+      ATBC_LOGIN_ENDPOINT:
+        required: true
+      ATBC_ENDPOINT:
+        required: true
+      BYPASS_APPLICATION_SUBMIT_VALIDATIONS:
+        required: true
+      BYPASS_CRA_INCOME_VERIFICATION:
+        required: true
+      OPENSHIFT_SIMS_CREDS_NAME:
+        required: true
+      FORMS_SECRET_NAME:
+        required: true
+      QUEUE_PREFIX:
+        required: true
+      API_PORT:
+        required: true
+      WEB_PORT:
+        required: true
 
 env:
   NAMESPACE: ${{ secrets.OPENSHIFT_ENV_NAMESPACE }}
