@@ -115,7 +115,7 @@ describe("AssessmentInstitutionsController(e2e)-getAssessmentAwardDetails", () =
       ] = disbursementReceiptsValue.grantAmount;
     });
 
-    const endpoint = `/institutions/assessment/student/${student.id}/assessment/${assessment.id}/award`;
+    const endpoint = `/institutions/assessment/student/${student.id}/application/${application.id}/assessment/${assessment.id}/award`;
     const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeFUser,
     );
@@ -172,7 +172,7 @@ describe("AssessmentInstitutionsController(e2e)-getAssessmentAwardDetails", () =
       },
     );
     await db.msfaaNumber.save(currentMSFAA);
-    await saveFakeApplicationDisbursements(db.dataSource, {
+    const application = await saveFakeApplicationDisbursements(db.dataSource, {
       institution: collegeF,
       institutionLocation: collegeFLocation,
       student,
@@ -183,7 +183,7 @@ describe("AssessmentInstitutionsController(e2e)-getAssessmentAwardDetails", () =
       InstitutionTokenTypes.CollegeFUser,
     );
 
-    const endpoint = `/institutions/assessment/student/${student.id}/assessment/9999999/award`;
+    const endpoint = `/institutions/assessment/student/${student.id}/application/${application.id}/assessment/9999999/award`;
 
     // Act/Assert
     await request(app.getHttpServer())
@@ -213,7 +213,7 @@ describe("AssessmentInstitutionsController(e2e)-getAssessmentAwardDetails", () =
     const collegeCInstitutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeCUser,
     );
-    const endpoint = `/institutions/assessment/student/${student.id}/assessment/9999999/award`;
+    const endpoint = `/institutions/assessment/student/${student.id}/application/${collegeCApplication.id}/assessment/9999999/award`;
 
     // Act/Assert
     await request(app.getHttpServer())
@@ -236,7 +236,7 @@ describe("AssessmentInstitutionsController(e2e)-getAssessmentAwardDetails", () =
       InstitutionTokenTypes.CollegeFUser,
     );
 
-    const endpoint = `/institutions/assessment/student/${student.id}/assessment/9999999/award`;
+    const endpoint = `/institutions/assessment/student/${student.id}/application/9999999/assessment/9999999/award`;
 
     // Act/Assert
     await request(app.getHttpServer())

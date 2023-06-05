@@ -10,6 +10,7 @@
     <notice-of-assessment-form-view
       :assessment-id="assessmentId"
       :student-id="studentId"
+      :application-id="applicationId"
     />
   </full-page-container>
 </template>

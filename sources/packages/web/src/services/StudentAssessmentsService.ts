@@ -58,15 +58,18 @@ export class StudentAssessmentsService {
    * Get the NOA values for a student application on a particular assessment.
    * @param assessmentId assessment id to get the NOA values.
    * @param studentId student id.
+   * @param applicationId, application id.
    * @returns NOA and application data.
    */
   async getAssessmentNOA(
     assessmentId: number,
     studentId?: number,
+    applicationId?: number,
   ): Promise<AssessmentNOAAPIOutDTO> {
     return ApiClient.StudentAssessmentApi.getAssessmentNOA(
       assessmentId,
       studentId,
+      applicationId,
     );
   }
 
@@ -82,15 +85,18 @@ export class StudentAssessmentsService {
    * Get estimated and actual(if present) award details of an assessment.
    * @param assessmentId assessment to which awards details belong to.
    * @param studentId, student id.
+   * @param applicationId, application id.
    * @returns estimated and actual award details.
    */
   async getAssessmentAwardDetails(
     assessmentId: number,
     studentId?: number,
+    applicationId?: number,
   ): Promise<AwardDetailsAPIOutDTO> {
     return ApiClient.StudentAssessmentApi.getAssessmentAwardDetails(
       assessmentId,
       studentId,
+      applicationId,
     );
   }
 }

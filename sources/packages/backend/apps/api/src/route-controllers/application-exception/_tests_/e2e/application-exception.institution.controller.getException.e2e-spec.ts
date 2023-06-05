@@ -54,7 +54,7 @@ describe("ApplicationExceptionInstitutionsController(e2e)-getException", () => {
       );
       const applicationException = application.applicationException;
 
-      const endpoint = `/institutions/application-exception/student/${application.student.id}/exception/${applicationException.id}`;
+      const endpoint = `/institutions/application-exception/student/${application.student.id}/application/${application.id}/exception/${applicationException.id}`;
       const institutionUserToken = await getInstitutionToken(
         InstitutionTokenTypes.CollegeFUser,
       );
@@ -96,7 +96,7 @@ describe("ApplicationExceptionInstitutionsController(e2e)-getException", () => {
         { applicationExceptionStatus: ApplicationExceptionStatus.Approved },
       );
 
-    const endpoint = `/institutions/application-exception/student/${application.student.id}/exception/${collegeCApplication.applicationException.id}`;
+    const endpoint = `/institutions/application-exception/student/${application.student.id}/application/${application.id}/exception/${collegeCApplication.applicationException.id}`;
     const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeFUser,
     );
@@ -129,7 +129,7 @@ describe("ApplicationExceptionInstitutionsController(e2e)-getException", () => {
     const collegeCInstitutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeCUser,
     );
-    const endpoint = `/institutions/application-exception/student/${student.id}/exception/9999999`;
+    const endpoint = `/institutions/application-exception/student/${student.id}/application/${collegeCApplication.id}/exception/9999999`;
 
     // Act/Assert
     await request(app.getHttpServer())
@@ -152,7 +152,7 @@ describe("ApplicationExceptionInstitutionsController(e2e)-getException", () => {
       InstitutionTokenTypes.CollegeFUser,
     );
 
-    const endpoint = `/institutions/application-exception/student/${student.id}/exception/9999999`;
+    const endpoint = `/institutions/application-exception/student/${student.id}/application/9999999/exception/9999999`;
 
     // Act/Assert
     await request(app.getHttpServer())

@@ -4,6 +4,7 @@
     :exceptionId="exceptionId"
     :backRouteLocation="assessmentsSummaryRoute"
     :readOnlyForm="true"
+    :application-id="applicationId"
   />
 </template>
 <script lang="ts">

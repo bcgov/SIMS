@@ -106,6 +106,10 @@ export default defineComponent({
       type: Number,
       required: false,
     },
+    applicationId: {
+      type: Number,
+      required: false,
+    },
   },
   setup(props, { emit }) {
     const { dateOnlyLongString } = useFormatters();
@@ -145,6 +149,7 @@ export default defineComponent({
         await StudentAssessmentsService.shared.getAssessmentNOA(
           props.assessmentId,
           props.studentId,
+          props.applicationId,
         );
       const noaDisbursementSchedule =
         assessment.disbursement as NOADisbursementSchedule;

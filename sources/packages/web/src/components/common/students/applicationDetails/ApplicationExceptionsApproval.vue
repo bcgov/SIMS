@@ -117,6 +117,10 @@ export default defineComponent({
       required: false,
       default: false,
     },
+    applicationId: {
+      type: Number,
+      required: false,
+    },
   },
   setup(props) {
     const router = useRouter();
@@ -131,6 +135,7 @@ export default defineComponent({
         await ApplicationExceptionService.shared.getExceptionDetails<DetailedApplicationExceptionAPIOutDTO>(
           props.exceptionId,
           props.studentId,
+          props.applicationId,
         );
       applicationExceptions.value = {
         ...applicationException,
