@@ -8,13 +8,13 @@ describe("Auth Ministry", () => {
   it("Should have all roles when ministry user is a business administrator.", async () => {
     //Act
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
+    const decodedToken = jwtService.decode(token) as IUserToken;
+    const expectedRoles = decodedToken.resource_access.aest.roles.sort((a, b) =>
+      a.localeCompare(b),
+    );
+    const allAESTRoles = Object.values(Role).sort((a, b) => a.localeCompare(b));
 
     //Assert
-    const decodedToken = jwtService.decode(token) as IUserToken;
-    expect(
-      decodedToken.resource_access.aest.roles.sort((a, b) =>
-        a.localeCompare(b),
-      ),
-    ).toEqual(Object.values(Role).sort((a, b) => a.localeCompare(b)));
+    expect(expectedRoles).toEqual(allAESTRoles);
   });
 });
