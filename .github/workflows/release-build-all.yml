@@ -175,9 +175,11 @@ jobs:
         run: |
           make oc-build-web
 
-  # Deploy All
+  # Deploy all applications to DEV when there is a pull request on the main branch.
+  # If DEV is used to deploy a release or hotfix branch the automatic deploy can be stopped using the env variable because there
+  # is a potencial to main/relase/hotfix branches have differences (for instance o DB) that would not be backward compatible.
   deployAll:
-    if: github.event_name == 'workflow_dispatch' && vars.ALLOW_AUTOMATIC_MAIN_BRANCH_DEPLOY_TO_DEV == 'true' && github.ref_name == 'release-workflows-1917'
+    if: github.event_name == 'pull_request' && vars.ALLOW_AUTOMATIC_MAIN_BRANCH_DEPLOY_TO_DEV == 'true' && github.ref_name == 'main'
     name: Deploy All to DEV
     needs:
       [
