@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       gitRef:
-        description: "Git Ref (e.g. main+456)"
+        description: "Git Ref (e.g. main-456)"
         required: true
         default: ""
       releaseType:
