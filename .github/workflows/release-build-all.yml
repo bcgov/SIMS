@@ -183,3 +183,17 @@ jobs:
         working-directory: "./devops"
         run: |
           make oc-build-web
+
+  # Deploy All
+  deployAll:
+    if: ${{ github.ref_name == 'main' }}
+    name: Deploy All
+    needs:
+      [build-sims-api, build-workers, build-queue-consumers, build-web-frontend]
+    uses: ./.github/workflows/release-deploy-all.yml
+    with:
+      environment: DEV
+      gitRef: ${{ github.event.inputs.gitRef }}
+      deployCamundaDefinitions: "true"
+      deployFormioDefinitions: "true"
+    secrets: inherit
