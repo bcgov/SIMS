@@ -191,7 +191,7 @@ jobs:
 
   # Deploy All
   deployAll:
-    if: ${{ github.ref_name == 'main' }}
+    if: ${{ github.ref_name == 'release-workflows-1917' }}
     name: Deploy All
     # needs:
     #   [
