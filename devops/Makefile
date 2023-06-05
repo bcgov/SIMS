@@ -279,7 +279,9 @@ init-redis:
 	@oc -n $(NAMESPACE) process -f openshift/database/redis-secrets.yml | oc -n $(NAMESPACE) apply -f -
 
 deploy-patroni:
-	@oc -n $(NAMESPACE) process -f openshift/database/patroni-deploy.yml | oc -n $(NAMESPACE) apply -f -
+	@oc -n $(NAMESPACE) process -f openshift/database/patroni-deploy.yml \
+			-p PVC_SIZE=$(PVC_SIZE) \
+			| oc -n $(NAMESPACE) apply -f -
 
 deploy-redis:
 	@oc -n $(NAMESPACE) process -f openshift/database/redis-ha-deploy.yml -p IMAGE_NAME="redis" -p IMAGE_TAG="6.2.7-alpine" -p IMAGE_REGISTRY="artifacts.developer.gov.bc.ca/docker-remote" | oc -n $(NAMESPACE) apply -f -
