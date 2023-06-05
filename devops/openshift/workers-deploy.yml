@@ -33,6 +33,8 @@ objects:
                   value: ${NODE_ENV}
                 - name: POSTGRES_HOST
                   value: "${DB_SERVICE}"
+                - name: REDIS_HOST
+                  value: "${REDIS_SERVICE}"
                 - name: POSTGRES_USER
                   valueFrom:
                     secretKeyRef:
@@ -53,6 +55,11 @@ objects:
                     secretKeyRef:
                       key: ${ZEEBE_ADDRESS_KEY}
                       name: ${WORKERS_SECRET_NAME}
+                - name: REDIS_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      key: ${REDIS_PASSWORD_KEY}
+                      name: ${REDIS_SECRET_NAME}
                 - name: ZEEBE_CLIENT_ID
                   valueFrom:
                     secretKeyRef:
@@ -147,3 +154,9 @@ parameters:
     require: true
   - name: BYPASS_CRA_INCOME_VERIFICATION
     value: "false"
+  - name: REDIS_SERVICE
+    value: redis
+  - name: REDIS_SECRET_NAME
+    value: redis-creds
+  - name: REDIS_PASSWORD_KEY
+    value: password
