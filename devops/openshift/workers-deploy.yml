@@ -35,6 +35,11 @@ objects:
                   value: "${DB_SERVICE}"
                 - name: REDIS_HOST
                   value: "${REDIS_SERVICE}"
+                - name: REDIS_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      key: ${REDIS_PASSWORD_KEY}
+                      name: ${REDIS_SECRET_NAME}
                 - name: POSTGRES_USER
                   valueFrom:
                     secretKeyRef:
@@ -55,11 +60,6 @@ objects:
                     secretKeyRef:
                       key: ${ZEEBE_ADDRESS_KEY}
                       name: ${WORKERS_SECRET_NAME}
-                - name: REDIS_PASSWORD
-                  valueFrom:
-                    secretKeyRef:
-                      key: ${REDIS_PASSWORD_KEY}
-                      name: ${REDIS_SECRET_NAME}
                 - name: ZEEBE_CLIENT_ID
                   valueFrom:
                     secretKeyRef:
