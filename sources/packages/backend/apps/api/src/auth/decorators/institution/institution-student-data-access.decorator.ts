@@ -22,5 +22,5 @@ export const HasStudentDataAccess = (
 
 export interface HasStudentDataAccessParam {
   studentIdParamName: string;
-  applicationIdParamName: string;
+  applicationIdParamName?: string;
 }
