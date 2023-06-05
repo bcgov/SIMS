@@ -206,7 +206,7 @@ parameters:
   description: 
     The size of the persistent volume to create.
   displayName: Persistent Volume Size
-  value: 2Gi
+  value: 21Gi
 - name: STORAGE_CLASS
   value: netapp-file-standard
 - name: IMAGE_REGISTRY
