@@ -182,7 +182,7 @@ jobs:
     name: Deploy All to DEV
     uses: ./.github/workflows/release-deploy-all.yml
     with:
-      environment: DEV
+      environment: "DEV"
       gitRef: main-11
       deployCamundaDefinitions: "true"
       deployFormioDefinitions: "true"
