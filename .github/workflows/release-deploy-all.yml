@@ -1,4 +1,4 @@
-name: Deploy to OpenShift/Camunda
+name: Release - Deploy all
 
 on:
   workflow_dispatch:
@@ -33,6 +33,37 @@ on:
       deployFormioDefinitions:
         required: true
         type: string
+    secrets:
+      SA_TOKEN:
+        required: true
+      OPENSHIFT_ENV_NAMESPACE:
+        required: true
+      HOST_PREFIX:
+        required: true
+      KEYCLOAK_AUTH_URL:
+        required: true
+      BCeID_WEB_SERVICE_WSDL:
+        required: true
+      SITE_MINDER_LOGOUT_URL:
+        required: true
+      ATBC_LOGIN_ENDPOINT:
+        required: true
+      ATBC_ENDPOINT:
+        required: true
+      BYPASS_APPLICATION_SUBMIT_VALIDATIONS:
+        required: true
+      BYPASS_CRA_INCOME_VERIFICATION:
+        required: true
+      OPENSHIFT_SIMS_CREDS_NAME:
+        required: true
+      FORMS_SECRET_NAME:
+        required: true
+      QUEUE_PREFIX:
+        required: true
+      API_PORT:
+        required: true
+      WEB_PORT:
+        required: true
 
 env:
   NAMESPACE: ${{ secrets.OPENSHIFT_ENV_NAMESPACE }}
@@ -70,7 +101,7 @@ jobs:
           echo BUILD NAMESPACE: $BUILD_NAMESPACE
           echo BRANCH: ${{ github.event.inputs.gitRef }}
           echo HOST_PREFIX: $HOST_PREFIX
-          
+
       - name: Checkout Target Branch
         uses: actions/checkout@v3
         with:
@@ -97,7 +128,7 @@ jobs:
           echo BUILD NAMESPACE: $BUILD_NAMESPACE
           echo BRANCH: ${{ github.event.inputs.gitRef }}
           echo HOST_PREFIX: $HOST_PREFIX
-          
+
       - name: Checkout Target Branch
         uses: actions/checkout@v3
         with:
@@ -124,7 +155,7 @@ jobs:
           echo BUILD NAMESPACE: $BUILD_NAMESPACE
           echo BRANCH: ${{ github.event.inputs.gitRef }}
           echo HOST_PREFIX: $HOST_PREFIX
-          
+
       - name: Checkout Target Branch
         uses: actions/checkout@v3
         with:
@@ -151,7 +182,7 @@ jobs:
           echo BUILD NAMESPACE: $BUILD_NAMESPACE
           echo BRANCH: ${{ github.event.inputs.gitRef }}
           echo HOST_PREFIX: $HOST_PREFIX
-          
+
       - name: Checkout Target Branch
         uses: actions/checkout@v3
         with:
@@ -178,7 +209,7 @@ jobs:
           echo BUILD NAMESPACE: $BUILD_NAMESPACE
           echo BRANCH: ${{ github.event.inputs.gitRef }}
           echo HOST_PREFIX: $HOST_PREFIX
-          
+
       - name: Checkout Target Branch
         uses: actions/checkout@v3
         with:
@@ -187,7 +218,7 @@ jobs:
       - name: Log in to OpenShift
         run: |
           oc login --token=${{ secrets.SA_TOKEN }} --server=https://api.silver.devops.gov.bc.ca:6443
-      
+
       - name: Deploy Web/Frontend
         working-directory: "./devops/"
         run: |
@@ -198,7 +229,7 @@ jobs:
     if: ${{ github.event.inputs.deployCamundaDefinitions == 'true' }}
     name: Deploy BPMNs and DMNs to Camunda
     needs: deploy-sims-api
-    uses: ./.github/workflows/deploy-camunda-definitions.yml
+    uses: ./.github/workflows/release-deploy-camunda-definitions.yml
     with:
       environment: ${{ github.event.inputs.environment }}
       gitRef: ${{ github.event.inputs.gitRef }}
@@ -209,7 +240,7 @@ jobs:
     if: ${{ github.event.inputs.deployFormioDefinitions == 'true' }}
     name: Deploy Form.io definitions
     needs: deploy-sims-api
-    uses: ./.github/workflows/deploy-formio-definitions.yml
+    uses: ./.github/workflows/release-deploy-formio-definitions.yml
     with:
       environment: ${{ github.event.inputs.environment }}
       gitRef: ${{ github.event.inputs.gitRef }}

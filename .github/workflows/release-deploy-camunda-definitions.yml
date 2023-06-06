@@ -1,4 +1,4 @@
-name: Deploy Camunda Resources
+name: Release - Deploy Camunda Resources
 
 on:
   workflow_dispatch:
@@ -8,7 +8,7 @@ on:
         required: true
         type: environment
       gitRef:
-        description: 'Github reference'
+        description: "Github reference"
         required: true
         type: string
   workflow_call:
@@ -19,6 +19,15 @@ on:
       gitRef:
         required: true
         type: string
+    secrets:
+      ZEEBE_ADDRESS:
+        required: true
+      ZEEBE_AUTHORIZATION_SERVER_URL:
+        required: true
+      ZEEBE_CLIENT_ID:
+        required: true
+      ZEEBE_CLIENT_SECRET:
+        required: true
 
 jobs:
   deploy:
@@ -38,7 +47,7 @@ jobs:
       - name: Checkout Target Branch
         uses: actions/checkout@v3
         with:
-          ref:  ${{ github.event.inputs.gitRef }}
+          ref: ${{ github.event.inputs.gitRef }}
       - name: Setup Nodejs
         uses: actions/setup-node@v3
         with:

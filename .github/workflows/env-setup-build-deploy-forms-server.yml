@@ -1,4 +1,4 @@
-name: Build and Deploy Formio Server.
+name: Env Setup - Build and Deploy Forms Server
 
 on:
   workflow_dispatch:
