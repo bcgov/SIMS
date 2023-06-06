@@ -350,7 +350,7 @@ describe("ApplicationAESTController(e2e)-reissueMSFAA", () => {
     }
   }
 
-  it.only("Should not reissue an MSFAA when user is not a business administrator.", async () => {
+  it("Should not reissue an MSFAA when user is not a business administrator.", async () => {
     // Arrange
     const endpoint = "/aest/application/123/reissue-msfaa";
     const token = await getAESTToken(AESTGroups.OperationsAdministrators);
