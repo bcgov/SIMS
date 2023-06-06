@@ -95,6 +95,29 @@ jobs:
     name: Run db-migrations
     environment: ${{ github.event.inputs.environment }}
     runs-on: ubuntu-latest
+    env:
+      NAMESPACE: ${{ secrets.OPENSHIFT_ENV_NAMESPACE }}
+      BUILD_REF: ${{ github.event.inputs.gitRef }}
+      HOST_PREFIX: ${{ secrets.HOST_PREFIX }}
+      BUILD_NAMESPACE: 0c27fb-tools
+      KEYCLOAK_REALM: "aestsims"
+      KEYCLOAK_AUTH_URL: ${{ secrets.KEYCLOAK_AUTH_URL }}
+      BCeID_WEB_SERVICE_WSDL: ${{ secrets.BCeID_WEB_SERVICE_WSDL }}
+      SITE_MINDER_LOGOUT_URL: ${{ secrets.SITE_MINDER_LOGOUT_URL }}
+      ATBC_LOGIN_ENDPOINT: ${{ secrets.ATBC_LOGIN_ENDPOINT }}
+      ATBC_ENDPOINT: ${{ secrets.ATBC_ENDPOINT }}
+      SWAGGER_ENABLED: true
+      APPLICATION_ARCHIVE_DAYS: 43
+      BYPASS_APPLICATION_SUBMIT_VALIDATIONS: ${{ secrets.BYPASS_APPLICATION_SUBMIT_VALIDATIONS }}
+      BYPASS_CRA_INCOME_VERIFICATION: ${{ secrets.BYPASS_CRA_INCOME_VERIFICATION }}
+      API_SECRET_NAME: ${{ secrets.OPENSHIFT_SIMS_CREDS_NAME }}
+      WORKERS_SECRET_NAME: ${{ secrets.OPENSHIFT_SIMS_CREDS_NAME }}
+      QUEUE_CONSUMERS_SECRET_NAME: ${{ secrets.OPENSHIFT_SIMS_CREDS_NAME }}
+      FORMS_SECRET_NAME: ${{ secrets.FORMS_SECRET_NAME }}
+      QUEUE_PREFIX: ${{ secrets.QUEUE_PREFIX }}
+      API_PORT: ${{ secrets.API_PORT }}
+      WEB_PORT: ${{ secrets.WEB_PORT }}
+      DATABASE_NAME_KEY: ${{ secrets.DATABASE_NAME_KEY }}
     steps:
       - name: Print env
         run: |
