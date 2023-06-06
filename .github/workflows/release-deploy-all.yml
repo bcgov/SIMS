@@ -231,7 +231,7 @@ jobs:
 
   # Deploy Camunda Definitions
   deployCamundaDefinitions:
-    if: ${{ inputs.deployCamundaDefinitions == true }}
+    if: ${{ inputs.deployCamundaDefinitions }}
     name: Deploy BPMNs and DMNs to Camunda
     needs: deploy-sims-api
     uses: ./.github/workflows/release-deploy-camunda-definitions.yml
@@ -242,7 +242,7 @@ jobs:
 
   # Deploy Formio Definitions
   deployFormioDefinitions:
-    if: ${{ inputs.deployFormioDefinitions == true }}
+    if: ${{ inputs.deployFormioDefinitions }}
     name: Deploy Form.io definitions
     needs: deploy-sims-api
     uses: ./.github/workflows/release-deploy-formio-definitions.yml
