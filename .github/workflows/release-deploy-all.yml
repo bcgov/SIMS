@@ -69,7 +69,7 @@ jobs:
   # Run DB migrations.
   run-db-migrations:
     name: Run db-migrations
-    environment: DEV
+    environment: ${{ github.event.inputs.environment }}
     runs-on: ubuntu-latest
     env:
       NAMESPACE: ${{ secrets.OPENSHIFT_ENV_NAMESPACE }}
