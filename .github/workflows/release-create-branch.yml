@@ -10,7 +10,7 @@ on:
       releaseType:
         description: "Release type"
         type: choice
-        required: false
+        required: true
         options:
           - release
           - hotfix
