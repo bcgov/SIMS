@@ -10,7 +10,7 @@ on:
   workflow_dispatch:
 
 env:
-  BUILD_NAMESPACE: 0c27fb-tools
+  BUILD_NAMESPACE: ${{ vars.BUILD_NAMESPACE }}
 
 jobs:
   # Print variables for logging and debugging purposes.
@@ -73,7 +73,7 @@ jobs:
   #         ref: ${{ needs.createTag.outputs.newTag }}
   #     - name: Log in to OpenShift
   #       run: |
-  #         oc login --token=${{ secrets.SA_TOKEN }} --server=https://api.silver.devops.gov.bc.ca:6443
+  #         oc login --token=${{ secrets.SA_TOKEN }} --server=${{ vars.OPENSHIFT_CLUSTER_URL }}
   #     - name: Build db-migrations Image
   #       working-directory: "./devops"
   #       run: |
@@ -97,7 +97,7 @@ jobs:
   #         ref: ${{ needs.createTag.outputs.newTag }}
   #     - name: Log in to OpenShift
   #       run: |
-  #         oc login --token=${{ secrets.SA_TOKEN }} --server=https://api.silver.devops.gov.bc.ca:6443
+  #         oc login --token=${{ secrets.SA_TOKEN }} --server=${{ vars.OPENSHIFT_CLUSTER_URL }}
   #     - name: Build SIMS-API Image
   #       working-directory: "./devops"
   #       run: |
@@ -121,7 +121,7 @@ jobs:
   #         ref: ${{ needs.createTag.outputs.newTag }}
   #     - name: Log in to OpenShift
   #       run: |
-  #         oc login --token=${{ secrets.SA_TOKEN }} --server=https://api.silver.devops.gov.bc.ca:6443
+  #         oc login --token=${{ secrets.SA_TOKEN }} --server=${{ vars.OPENSHIFT_CLUSTER_URL }}
   #     - name: Build Workers Image
   #       working-directory: "./devops"
   #       run: |
@@ -145,7 +145,7 @@ jobs:
   #         ref: ${{ needs.createTag.outputs.newTag }}
   #     - name: Log in to OpenShift
   #       run: |
-  #         oc login --token=${{ secrets.SA_TOKEN }} --server=https://api.silver.devops.gov.bc.ca:6443
+  #         oc login --token=${{ secrets.SA_TOKEN }} --server=${{ vars.OPENSHIFT_CLUSTER_URL }}
   #     - name: Build Queue Consumers Image
   #       working-directory: "./devops"
   #       run: |
@@ -169,7 +169,7 @@ jobs:
   #         ref: ${{ needs.createTag.outputs.newTag }}
   #     - name: Log in to OpenShift
   #       run: |
-  #         oc login --token=${{ secrets.SA_TOKEN }} --server=https://api.silver.devops.gov.bc.ca:6443
+  #         oc login --token=${{ secrets.SA_TOKEN }} --server=${{ vars.OPENSHIFT_CLUSTER_URL }}
   #     - name: Build Web/Frontend Image
   #       working-directory: "./devops"
   #       run: |
