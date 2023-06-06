@@ -1,10 +1,10 @@
 import { JwtService } from "@nestjs/jwt";
-import { IUserToken, Role } from "../src/auth";
-import { AESTGroups, getAESTToken } from "../src/testHelpers";
+import { IUserToken, Role } from "../../../../auth";
+import { AESTGroups, getAESTToken } from "../../..";
 
 const jwtService = new JwtService();
 
-describe("Auth Ministry", () => {
+describe("(e2e)-getAESTToken()", () => {
   it("Should have all roles when ministry user is a business administrator.", async () => {
     //Act
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
