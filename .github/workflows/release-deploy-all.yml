@@ -233,7 +233,11 @@ jobs:
     with:
       environment: ${{ github.event.inputs.environment }}
       gitRef: ${{ github.event.inputs.gitRef }}
-    secrets: inherit
+    secrets:
+      ZEEBE_ADDRESS: ${{ secrets.ZEEBE_ADDRESS }}
+      ZEEBE_AUTHORIZATION_SERVER_URL: ${{ secrets.ZEEBE_AUTHORIZATION_SERVER_URL }}
+      ZEEBE_CLIENT_ID: ${{ secrets.ZEEBE_CLIENT_ID }}
+      ZEEBE_CLIENT_SECRET: ${{ secrets.ZEEBE_CLIENT_SECRET }}
 
   # Deploy Formio Definitions
   deployFormioDefinitions:
@@ -244,4 +248,7 @@ jobs:
     with:
       environment: ${{ github.event.inputs.environment }}
       gitRef: ${{ github.event.inputs.gitRef }}
-    secrets: inherit
+    secrets:
+      FORMS_URL: ${{ secrets.FORMS_URL }}
+      FORMS_SA_USER_NAME: ${{ secrets.FORMS_SA_USER_NAME }}
+      FORMS_SA_PASSWORD: ${{ secrets.FORMS_SA_PASSWORD }}
