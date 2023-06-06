@@ -1,4 +1,5 @@
-name: Release - Deploy all
+name: Release - Deploy All
+run-name: Release - Deploy all from ${{ inputs.gitRef }} to ${{ inputs.environment }}
 
 on:
   workflow_dispatch:
@@ -29,10 +30,10 @@ on:
         type: string
       deployCamundaDefinitions:
         required: true
-        type: string
+        type: boolean
       deployFormioDefinitions:
         required: true
-        type: string
+        type: boolean
     secrets:
       SA_TOKEN:
         required: true
@@ -67,7 +68,7 @@ on:
 
 env:
   NAMESPACE: ${{ secrets.OPENSHIFT_ENV_NAMESPACE }}
-  BUILD_REF: ${{ github.event.inputs.gitRef }}
+  BUILD_REF: ${{ inputs.gitRef }}
   HOST_PREFIX: ${{ secrets.HOST_PREFIX }}
   BUILD_NAMESPACE: 0c27fb-tools
   KEYCLOAK_REALM: "aestsims"
@@ -93,23 +94,24 @@ jobs:
   # Run DB migrations.
   run-db-migrations:
     name: Run db-migrations
-    environment: ${{ github.event.inputs.environment }}
+    environment: ${{ inputs.environment }}
     runs-on: ubuntu-latest
     steps:
       - name: Print env
         run: |
+          echo Git Environment: ${{ inputs.environment }}
+          echo Git Red: ${{ inputs.gitRef }}
           echo BUILD NAMESPACE: $BUILD_NAMESPACE
-          echo BRANCH: ${{ github.event.inputs.gitRef }}
           echo HOST_PREFIX: $HOST_PREFIX
 
       - name: Checkout Target Branch
         uses: actions/checkout@v3
         with:
-          ref: ${{ github.event.inputs.gitRef }}
+          ref: ${{ inputs.gitRef }}
 
       - name: Log in to OpenShift
         run: |
-          oc login --token=${{ secrets.SA_TOKEN }} --server=https://api.silver.devops.gov.bc.ca:6443
+          oc login --token=${{ secrets.SA_TOKEN }} --server=${{ vars.OPENSHIFT_CLUSTER_URL }}
 
       - name: Run db-migrations
         working-directory: "./devops/"
@@ -119,24 +121,25 @@ jobs:
   # Deploy SIMS API.
   deploy-sims-api:
     name: Deploy SIMS-API
-    environment: ${{ github.event.inputs.environment }}
+    environment: ${{ inputs.environment }}
     runs-on: ubuntu-latest
     needs: run-db-migrations
     steps:
       - name: Print env
         run: |
           echo BUILD NAMESPACE: $BUILD_NAMESPACE
-          echo BRANCH: ${{ github.event.inputs.gitRef }}
+          echo BUILD ENVIRONMENT: ${{ inputs.environment }}
+          echo GIT REF: ${{ inputs.gitRef }}
           echo HOST_PREFIX: $HOST_PREFIX
 
       - name: Checkout Target Branch
         uses: actions/checkout@v3
         with:
-          ref: ${{ github.event.inputs.gitRef }}
+          ref: ${{ inputs.gitRef }}
 
       - name: Log in to OpenShift
         run: |
-          oc login --token=${{ secrets.SA_TOKEN }} --server=https://api.silver.devops.gov.bc.ca:6443
+          oc login --token=${{ secrets.SA_TOKEN }} --server=${{ vars.OPENSHIFT_CLUSTER_URL }}
 
       - name: Deploy SIMS-API
         working-directory: "./devops/"
@@ -146,24 +149,25 @@ jobs:
   # Deploy workers.
   deploy-workers:
     name: Deploy Workers
-    environment: ${{ github.event.inputs.environment }}
+    environment: ${{ inputs.environment }}
     runs-on: ubuntu-latest
     needs: run-db-migrations
     steps:
       - name: Print env
         run: |
           echo BUILD NAMESPACE: $BUILD_NAMESPACE
-          echo BRANCH: ${{ github.event.inputs.gitRef }}
+          echo BUILD ENVIRONMENT: ${{ inputs.environment }}
+          echo GIT REF: ${{ inputs.gitRef }}
           echo HOST_PREFIX: $HOST_PREFIX
 
       - name: Checkout Target Branch
         uses: actions/checkout@v3
         with:
-          ref: ${{ github.event.inputs.gitRef }}
+          ref: ${{ inputs.gitRef }}
 
       - name: Log in to OpenShift
         run: |
-          oc login --token=${{ secrets.SA_TOKEN }} --server=https://api.silver.devops.gov.bc.ca:6443
+          oc login --token=${{ secrets.SA_TOKEN }} --server=${{ vars.OPENSHIFT_CLUSTER_URL }}
 
       - name: Deploy Workers
         working-directory: "./devops/"
@@ -173,24 +177,25 @@ jobs:
   # Deploy queue consumers.
   deploy-queue-consumers:
     name: Deploy Queue Consumers
-    environment: ${{ github.event.inputs.environment }}
+    environment: ${{ inputs.environment }}
     runs-on: ubuntu-latest
     needs: run-db-migrations
     steps:
       - name: Print env
         run: |
           echo BUILD NAMESPACE: $BUILD_NAMESPACE
-          echo BRANCH: ${{ github.event.inputs.gitRef }}
+          echo BUILD ENVIRONMENT: ${{ inputs.environment }}
+          echo GIT REF: ${{ inputs.gitRef }}
           echo HOST_PREFIX: $HOST_PREFIX
 
       - name: Checkout Target Branch
         uses: actions/checkout@v3
         with:
-          ref: ${{ github.event.inputs.gitRef }}
+          ref: ${{ inputs.gitRef }}
 
       - name: Log in to OpenShift
         run: |
-          oc login --token=${{ secrets.SA_TOKEN }} --server=https://api.silver.devops.gov.bc.ca:6443
+          oc login --token=${{ secrets.SA_TOKEN }} --server=${{ vars.OPENSHIFT_CLUSTER_URL }}
 
       - name: Deploy Queue Consumers
         working-directory: "./devops/"
@@ -200,24 +205,25 @@ jobs:
   # Deploy Web/Frontend.
   deploy-web-frontend:
     name: Deploy Web/Frontend
-    environment: ${{ github.event.inputs.environment }}
+    environment: ${{ inputs.environment }}
     runs-on: ubuntu-latest
     needs: run-db-migrations
     steps:
       - name: Print env
         run: |
           echo BUILD NAMESPACE: $BUILD_NAMESPACE
-          echo BRANCH: ${{ github.event.inputs.gitRef }}
+          echo BUILD ENVIRONMENT: ${{ inputs.environment }}
+          echo GIT REF: ${{ inputs.gitRef }}
           echo HOST_PREFIX: $HOST_PREFIX
 
       - name: Checkout Target Branch
         uses: actions/checkout@v3
         with:
-          ref: ${{ github.event.inputs.gitRef }}
+          ref: ${{ inputs.gitRef }}
 
       - name: Log in to OpenShift
         run: |
-          oc login --token=${{ secrets.SA_TOKEN }} --server=https://api.silver.devops.gov.bc.ca:6443
+          oc login --token=${{ secrets.SA_TOKEN }} --server=${{ vars.OPENSHIFT_CLUSTER_URL }}
 
       - name: Deploy Web/Frontend
         working-directory: "./devops/"
@@ -226,22 +232,22 @@ jobs:
 
   # Deploy Camunda Definitions
   deployCamundaDefinitions:
-    if: ${{ github.event.inputs.deployCamundaDefinitions == 'true' }}
+    if: ${{ inputs.deployCamundaDefinitions }}
     name: Deploy BPMNs and DMNs to Camunda
     needs: deploy-sims-api
     uses: ./.github/workflows/release-deploy-camunda-definitions.yml
     with:
-      environment: ${{ github.event.inputs.environment }}
-      gitRef: ${{ github.event.inputs.gitRef }}
+      environment: ${{ inputs.environment }}
+      gitRef: ${{ inputs.gitRef }}
     secrets: inherit
 
   # Deploy Formio Definitions
   deployFormioDefinitions:
-    if: ${{ github.event.inputs.deployFormioDefinitions == 'true' }}
+    if: ${{ inputs.deployFormioDefinitions }}
     name: Deploy Form.io definitions
     needs: deploy-sims-api
     uses: ./.github/workflows/release-deploy-formio-definitions.yml
     with:
-      environment: ${{ github.event.inputs.environment }}
-      gitRef: ${{ github.event.inputs.gitRef }}
+      environment: ${{ inputs.environment }}
+      gitRef: ${{ inputs.gitRef }}
     secrets: inherit

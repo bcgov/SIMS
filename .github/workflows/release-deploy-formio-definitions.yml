@@ -1,4 +1,5 @@
 name: Release - Deploy Form.io resources
+run-name: Release - Deploy Form.io resources from ${{ inputs.gitRef }} to ${{ inputs.environment }}
 
 on:
   workflow_dispatch:
@@ -31,7 +32,7 @@ jobs:
   deploy:
     name: Deploy Form.io definitions
     runs-on: ubuntu-latest
-    environment: ${{ github.event.inputs.environment }}
+    environment: ${{ inputs.environment }}
     env:
       FORMS_URL: ${{ secrets.FORMS_URL }}
       FORMS_SA_USER_NAME: ${{ secrets.FORMS_SA_USER_NAME }}
@@ -40,7 +41,7 @@ jobs:
       - name: Checkout Target Branch
         uses: actions/checkout@v3
         with:
-          ref: ${{ github.event.inputs.gitRef }}
+          ref: ${{ inputs.gitRef }}
       - name: Setup Nodejs
         uses: actions/setup-node@v3
         with:

@@ -1,4 +1,5 @@
 name: Release - Build All
+run-name: Release - Build all from ${{ github.ref_name }}(build ${{ github.run_number }})
 
 on:
   pull_request:
@@ -10,7 +11,7 @@ on:
   workflow_dispatch:
 
 env:
-  BUILD_NAMESPACE: 0c27fb-tools
+  BUILD_NAMESPACE: ${{ vars.BUILD_NAMESPACE }}
 
 jobs:
   # Print variables for logging and debugging purposes.
@@ -23,8 +24,8 @@ jobs:
         run: |
           echo Git Base Ref: ${{ github.base_ref }}
           echo Git Ref Name: ${{ github.ref_name }}
-          echo Git Pull Run Number: ${{ github.run_number }}
-          echo Git Pull Request Ref: ${{ github.event.pull_request.head.sha }}
+          echo Git Head: ${{ github.event.pull_request.head.sha }}
+          echo Run Number: ${{ github.run_number }}
           echo OC CLI Version: $(oc version)
 
   # Create new tag.
@@ -73,7 +74,7 @@ jobs:
           ref: ${{ needs.createTag.outputs.newTag }}
       - name: Log in to OpenShift
         run: |
-          oc login --token=${{ secrets.SA_TOKEN }} --server=https://api.silver.devops.gov.bc.ca:6443
+          oc login --token=${{ secrets.SA_TOKEN }} --server=${{ vars.OPENSHIFT_CLUSTER_URL }}
       - name: Build db-migrations Image
         working-directory: "./devops"
         run: |
@@ -97,7 +98,7 @@ jobs:
           ref: ${{ needs.createTag.outputs.newTag }}
       - name: Log in to OpenShift
         run: |
-          oc login --token=${{ secrets.SA_TOKEN }} --server=https://api.silver.devops.gov.bc.ca:6443
+          oc login --token=${{ secrets.SA_TOKEN }} --server=${{ vars.OPENSHIFT_CLUSTER_URL }}
       - name: Build SIMS-API Image
         working-directory: "./devops"
         run: |
@@ -121,7 +122,7 @@ jobs:
           ref: ${{ needs.createTag.outputs.newTag }}
       - name: Log in to OpenShift
         run: |
-          oc login --token=${{ secrets.SA_TOKEN }} --server=https://api.silver.devops.gov.bc.ca:6443
+          oc login --token=${{ secrets.SA_TOKEN }} --server=${{ vars.OPENSHIFT_CLUSTER_URL }}
       - name: Build Workers Image
         working-directory: "./devops"
         run: |
@@ -145,7 +146,7 @@ jobs:
           ref: ${{ needs.createTag.outputs.newTag }}
       - name: Log in to OpenShift
         run: |
-          oc login --token=${{ secrets.SA_TOKEN }} --server=https://api.silver.devops.gov.bc.ca:6443
+          oc login --token=${{ secrets.SA_TOKEN }} --server=${{ vars.OPENSHIFT_CLUSTER_URL }}
       - name: Build Queue Consumers Image
         working-directory: "./devops"
         run: |
@@ -169,7 +170,7 @@ jobs:
           ref: ${{ needs.createTag.outputs.newTag }}
       - name: Log in to OpenShift
         run: |
-          oc login --token=${{ secrets.SA_TOKEN }} --server=https://api.silver.devops.gov.bc.ca:6443
+          oc login --token=${{ secrets.SA_TOKEN }} --server=${{ vars.OPENSHIFT_CLUSTER_URL }}
       - name: Build Web/Frontend Image
         working-directory: "./devops"
         run: |
@@ -178,7 +179,7 @@ jobs:
   # Deploy all applications to DEV when there is a pull request on the main branch.
   # If DEV is used to deploy a release or hotfix branch the automatic deploy can be stopped using the env variable because there
   # is a Potential to main/relase/hotfix branches have differences (for instance the DB) that would not be backward compatible.
-  deployAll:
+  deployAlltoDEV:
     if: github.event_name == 'pull_request' && vars.ALLOW_AUTOMATIC_MAIN_BRANCH_DEPLOY_TO_DEV == 'true' && github.ref_name == 'main'
     name: Deploy All to DEV
     needs:
@@ -194,6 +195,6 @@ jobs:
     with:
       environment: DEV
       gitRef: ${{ needs.createTag.outputs.newTag }}
-      deployCamundaDefinitions: "true"
-      deployFormioDefinitions: "true"
+      deployCamundaDefinitions: true
+      deployFormioDefinitions: true
     secrets: inherit
