@@ -69,11 +69,11 @@ jobs:
   # Run DB migrations.
   run-db-migrations:
     name: Run db-migrations
-    environment: ${{ github.event.inputs.environment }}
+    environment: ${{ inputs.environment }}
     runs-on: ubuntu-latest
     env:
       NAMESPACE: ${{ secrets.OPENSHIFT_ENV_NAMESPACE }}
-      BUILD_REF: ${{ github.event.inputs.gitRef }}
+      BUILD_REF: ${{ inputs.gitRef }}
       HOST_PREFIX: ${{ secrets.HOST_PREFIX }}
       BUILD_NAMESPACE: 0c27fb-tools
       KEYCLOAK_REALM: "aestsims"
