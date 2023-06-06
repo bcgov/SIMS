@@ -194,7 +194,7 @@ jobs:
     uses: ./.github/workflows/release-deploy-all.yml
     with:
       environment: DEV
-      gitRef: main-11
+      gitRef: ${{ needs.createTag.outputs.newTag }}
       deployCamundaDefinitions: true
       deployFormioDefinitions: true
     secrets: inherit
