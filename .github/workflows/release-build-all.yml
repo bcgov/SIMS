@@ -28,7 +28,7 @@ jobs:
           echo Run Number: ${{ github.run_number }}
           echo OC CLI Version: $(oc version)
 
-  # # Create new tag.
+  # Create new tag.
   createTag:
     name: Create tag
     runs-on: ubuntu-latest
