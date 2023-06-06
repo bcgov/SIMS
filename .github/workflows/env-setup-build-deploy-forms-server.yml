@@ -1,4 +1,5 @@
 name: Env Setup - Build and Deploy Forms Server
+run-name: Env Setup - Build and deploy forms server from ${{ inputs.gitRef }}(form.io tag ${{ inputs.formioTag }}) to ${{ inputs.environment }}
 
 on:
   workflow_dispatch:

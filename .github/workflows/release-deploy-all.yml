@@ -1,4 +1,5 @@
-name: Release - Deploy all
+name: Release - Deploy All
+run-name: Release - Deploy all from ${{ inputs.gitRef }} to ${{ inputs.environment }}
 
 on:
   workflow_dispatch:

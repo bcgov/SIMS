@@ -1,4 +1,5 @@
 name: Release - Build All
+run-name: Release - Build all from ${{ github.ref_name }}(build ${{ github.run_number }})
 
 on:
   pull_request:
@@ -28,158 +29,168 @@ jobs:
           echo OC CLI Version: $(oc version)
 
   # # Create new tag.
-  # createTag:
-  #   name: Create tag
-  #   runs-on: ubuntu-latest
-  #   needs: checkEnv
-  #   steps:
-  #     # Define tag name (e.g. v1.0.0-123).
-  #     - name: Define tag name
-  #       id: defineTagName
-  #       uses: actions/github-script@v6
-  #       with:
-  #         script: return "${{ github.ref_name }}".replace("release/", "").replace("hotfix/", "") + "-" + "${{ github.run_number }}";
-  #         result-encoding: string
-  #     # Checkout the code to apply the tag.
-  #     - name: Checkout the code
-  #       uses: actions/checkout@v3
-  #       with:
-  #         ref: ${{ github.ref_name }}
-  #     # Create tag.
-  #     - name: Tag the branch
-  #       run: |
-  #         git config user.name github-actions
-  #         git config user.email github-actions@github.com
-  #         git tag "${{ steps.defineTagName.outputs.result }}"
-  #         git push origin "${{ steps.defineTagName.outputs.result }}"
-  #   outputs:
-  #     newTag: ${{ steps.defineTagName.outputs.result }}
+  createTag:
+    name: Create tag
+    runs-on: ubuntu-latest
+    needs: checkEnv
+    steps:
+      # Define tag name (e.g. v1.0.0-123).
+      - name: Define tag name
+        id: defineTagName
+        uses: actions/github-script@v6
+        with:
+          script: return "${{ github.ref_name }}".replace("release/", "").replace("hotfix/", "") + "-" + "${{ github.run_number }}";
+          result-encoding: string
+      # Checkout the code to apply the tag.
+      - name: Checkout the code
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.ref_name }}
+      # Create tag.
+      - name: Tag the branch
+        run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git tag "${{ steps.defineTagName.outputs.result }}"
+          git push origin "${{ steps.defineTagName.outputs.result }}"
+    outputs:
+      newTag: ${{ steps.defineTagName.outputs.result }}
 
-  # # Build DB migrations.
-  # build-db-migrations:
-  #   name: Build db-migrations
-  #   runs-on: ubuntu-latest
-  #   needs: createTag
-  #   env:
-  #     BUILD_REF: ${{ needs.createTag.outputs.newTag }}
-  #   steps:
-  #     - name: Print env
-  #       run: |
-  #         echo BUILD NAMESPACE: $BUILD_NAMESPACE
-  #         echo BRANCH: ${{ needs.createTag.outputs.newTag }}
-  #     - name: Checkout Target Branch
-  #       uses: actions/checkout@v3
-  #       with:
-  #         ref: ${{ needs.createTag.outputs.newTag }}
-  #     - name: Log in to OpenShift
-  #       run: |
-  #         oc login --token=${{ secrets.SA_TOKEN }} --server=${{ vars.OPENSHIFT_CLUSTER_URL }}
-  #     - name: Build db-migrations Image
-  #       working-directory: "./devops"
-  #       run: |
-  #         make oc-build-db-migrations
+  # Build DB migrations.
+  build-db-migrations:
+    name: Build db-migrations
+    runs-on: ubuntu-latest
+    needs: createTag
+    env:
+      BUILD_REF: ${{ needs.createTag.outputs.newTag }}
+    steps:
+      - name: Print env
+        run: |
+          echo BUILD NAMESPACE: $BUILD_NAMESPACE
+          echo BRANCH: ${{ needs.createTag.outputs.newTag }}
+      - name: Checkout Target Branch
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ needs.createTag.outputs.newTag }}
+      - name: Log in to OpenShift
+        run: |
+          oc login --token=${{ secrets.SA_TOKEN }} --server=${{ vars.OPENSHIFT_CLUSTER_URL }}
+      - name: Build db-migrations Image
+        working-directory: "./devops"
+        run: |
+          make oc-build-db-migrations
 
-  # # Build SIMS-API
-  # build-sims-api:
-  #   name: Build SIMS-API
-  #   runs-on: ubuntu-latest
-  #   needs: createTag
-  #   env:
-  #     BUILD_REF: ${{ needs.createTag.outputs.newTag }}
-  #   steps:
-  #     - name: Print env
-  #       run: |
-  #         echo BUILD NAMESPACE: $BUILD_NAMESPACE
-  #         echo BRANCH: ${{ needs.createTag.outputs.newTag }}
-  #     - name: Checkout Target Branch
-  #       uses: actions/checkout@v3
-  #       with:
-  #         ref: ${{ needs.createTag.outputs.newTag }}
-  #     - name: Log in to OpenShift
-  #       run: |
-  #         oc login --token=${{ secrets.SA_TOKEN }} --server=${{ vars.OPENSHIFT_CLUSTER_URL }}
-  #     - name: Build SIMS-API Image
-  #       working-directory: "./devops"
-  #       run: |
-  #         make oc-build-api
+  # Build SIMS-API
+  build-sims-api:
+    name: Build SIMS-API
+    runs-on: ubuntu-latest
+    needs: createTag
+    env:
+      BUILD_REF: ${{ needs.createTag.outputs.newTag }}
+    steps:
+      - name: Print env
+        run: |
+          echo BUILD NAMESPACE: $BUILD_NAMESPACE
+          echo BRANCH: ${{ needs.createTag.outputs.newTag }}
+      - name: Checkout Target Branch
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ needs.createTag.outputs.newTag }}
+      - name: Log in to OpenShift
+        run: |
+          oc login --token=${{ secrets.SA_TOKEN }} --server=${{ vars.OPENSHIFT_CLUSTER_URL }}
+      - name: Build SIMS-API Image
+        working-directory: "./devops"
+        run: |
+          make oc-build-api
 
-  # # Build Workers
-  # build-workers:
-  #   name: Build Workers
-  #   runs-on: ubuntu-latest
-  #   needs: createTag
-  #   env:
-  #     BUILD_REF: ${{ needs.createTag.outputs.newTag }}
-  #   steps:
-  #     - name: Print env
-  #       run: |
-  #         echo BUILD NAMESPACE: $BUILD_NAMESPACE
-  #         echo BRANCH: ${{ needs.createTag.outputs.newTag }}
-  #     - name: Checkout Target Branch
-  #       uses: actions/checkout@v3
-  #       with:
-  #         ref: ${{ needs.createTag.outputs.newTag }}
-  #     - name: Log in to OpenShift
-  #       run: |
-  #         oc login --token=${{ secrets.SA_TOKEN }} --server=${{ vars.OPENSHIFT_CLUSTER_URL }}
-  #     - name: Build Workers Image
-  #       working-directory: "./devops"
-  #       run: |
-  #         make oc-build-workers
+  # Build Workers
+  build-workers:
+    name: Build Workers
+    runs-on: ubuntu-latest
+    needs: createTag
+    env:
+      BUILD_REF: ${{ needs.createTag.outputs.newTag }}
+    steps:
+      - name: Print env
+        run: |
+          echo BUILD NAMESPACE: $BUILD_NAMESPACE
+          echo BRANCH: ${{ needs.createTag.outputs.newTag }}
+      - name: Checkout Target Branch
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ needs.createTag.outputs.newTag }}
+      - name: Log in to OpenShift
+        run: |
+          oc login --token=${{ secrets.SA_TOKEN }} --server=${{ vars.OPENSHIFT_CLUSTER_URL }}
+      - name: Build Workers Image
+        working-directory: "./devops"
+        run: |
+          make oc-build-workers
 
-  # # Build Queue Consumers
-  # build-queue-consumers:
-  #   name: Build Queue Consumers
-  #   runs-on: ubuntu-latest
-  #   needs: createTag
-  #   env:
-  #     BUILD_REF: ${{ needs.createTag.outputs.newTag }}
-  #   steps:
-  #     - name: Print env
-  #       run: |
-  #         echo BUILD NAMESPACE: $BUILD_NAMESPACE
-  #         echo BRANCH: ${{ needs.createTag.outputs.newTag }}
-  #     - name: Checkout Target Branch
-  #       uses: actions/checkout@v3
-  #       with:
-  #         ref: ${{ needs.createTag.outputs.newTag }}
-  #     - name: Log in to OpenShift
-  #       run: |
-  #         oc login --token=${{ secrets.SA_TOKEN }} --server=${{ vars.OPENSHIFT_CLUSTER_URL }}
-  #     - name: Build Queue Consumers Image
-  #       working-directory: "./devops"
-  #       run: |
-  #         make oc-build-queue-consumers
+  # Build Queue Consumers
+  build-queue-consumers:
+    name: Build Queue Consumers
+    runs-on: ubuntu-latest
+    needs: createTag
+    env:
+      BUILD_REF: ${{ needs.createTag.outputs.newTag }}
+    steps:
+      - name: Print env
+        run: |
+          echo BUILD NAMESPACE: $BUILD_NAMESPACE
+          echo BRANCH: ${{ needs.createTag.outputs.newTag }}
+      - name: Checkout Target Branch
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ needs.createTag.outputs.newTag }}
+      - name: Log in to OpenShift
+        run: |
+          oc login --token=${{ secrets.SA_TOKEN }} --server=${{ vars.OPENSHIFT_CLUSTER_URL }}
+      - name: Build Queue Consumers Image
+        working-directory: "./devops"
+        run: |
+          make oc-build-queue-consumers
 
-  # # Build Web/Frontend
-  # build-web-frontend:
-  #   name: Build Web/Frontend
-  #   runs-on: ubuntu-latest
-  #   needs: createTag
-  #   env:
-  #     BUILD_REF: ${{ needs.createTag.outputs.newTag }}
-  #   steps:
-  #     - name: Print env
-  #       run: |
-  #         echo BUILD NAMESPACE: $BUILD_NAMESPACE
-  #         echo BRANCH: ${{ needs.createTag.outputs.newTag }}
-  #     - name: Checkout Target Branch
-  #       uses: actions/checkout@v3
-  #       with:
-  #         ref: ${{ needs.createTag.outputs.newTag }}
-  #     - name: Log in to OpenShift
-  #       run: |
-  #         oc login --token=${{ secrets.SA_TOKEN }} --server=${{ vars.OPENSHIFT_CLUSTER_URL }}
-  #     - name: Build Web/Frontend Image
-  #       working-directory: "./devops"
-  #       run: |
-  #         make oc-build-web
+  # Build Web/Frontend
+  build-web-frontend:
+    name: Build Web/Frontend
+    runs-on: ubuntu-latest
+    needs: createTag
+    env:
+      BUILD_REF: ${{ needs.createTag.outputs.newTag }}
+    steps:
+      - name: Print env
+        run: |
+          echo BUILD NAMESPACE: $BUILD_NAMESPACE
+          echo BRANCH: ${{ needs.createTag.outputs.newTag }}
+      - name: Checkout Target Branch
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ needs.createTag.outputs.newTag }}
+      - name: Log in to OpenShift
+        run: |
+          oc login --token=${{ secrets.SA_TOKEN }} --server=${{ vars.OPENSHIFT_CLUSTER_URL }}
+      - name: Build Web/Frontend Image
+        working-directory: "./devops"
+        run: |
+          make oc-build-web
 
   # Deploy all applications to DEV when there is a pull request on the main branch.
   # If DEV is used to deploy a release or hotfix branch the automatic deploy can be stopped using the env variable because there
   # is a Potential to main/relase/hotfix branches have differences (for instance the DB) that would not be backward compatible.
   deployAlltoDEV:
+    if: github.event_name == 'pull_request' && vars.ALLOW_AUTOMATIC_MAIN_BRANCH_DEPLOY_TO_DEV == 'true' && github.ref_name == 'main'
     name: Deploy All to DEV
+    needs:
+      [
+        createTag,
+        build-db-migrations,
+        build-sims-api,
+        build-workers,
+        build-queue-consumers,
+        build-web-frontend,
+      ]
     uses: ./.github/workflows/release-deploy-all.yml
     with:
       environment: DEV
