@@ -98,9 +98,9 @@ jobs:
     steps:
       - name: Print env
         run: |
+          echo Git Environment: ${{ inputs.environment }}
+          echo Git Red: ${{ inputs.gitRef }}
           echo BUILD NAMESPACE: $BUILD_NAMESPACE
-          echo BUILD ENVIRONMENT: ${{ inputs.environment }}
-          echo BRANCH: ${{ inputs.gitRef }}
           echo HOST_PREFIX: $HOST_PREFIX
 
       - name: Checkout Target Branch
@@ -110,7 +110,7 @@ jobs:
 
       - name: Log in to OpenShift
         run: |
-          oc login --token=${{ secrets.SA_TOKEN }} --server=https://api.silver.devops.gov.bc.ca:6443
+          oc login --token=${{ secrets.SA_TOKEN }} --server=${{ vars.OPENSHIFT_CLUSTER_URL }}
 
       - name: Run db-migrations
         working-directory: "./devops/"
@@ -128,7 +128,7 @@ jobs:
         run: |
           echo BUILD NAMESPACE: $BUILD_NAMESPACE
           echo BUILD ENVIRONMENT: ${{ inputs.environment }}
-          echo BRANCH: ${{ inputs.gitRef }}
+          echo GIT REF: ${{ inputs.gitRef }}
           echo HOST_PREFIX: $HOST_PREFIX
 
       - name: Checkout Target Branch
@@ -138,7 +138,7 @@ jobs:
 
       - name: Log in to OpenShift
         run: |
-          oc login --token=${{ secrets.SA_TOKEN }} --server=https://api.silver.devops.gov.bc.ca:6443
+          oc login --token=${{ secrets.SA_TOKEN }} --server=${{ vars.OPENSHIFT_CLUSTER_URL }}
 
       - name: Deploy SIMS-API
         working-directory: "./devops/"
@@ -156,7 +156,7 @@ jobs:
         run: |
           echo BUILD NAMESPACE: $BUILD_NAMESPACE
           echo BUILD ENVIRONMENT: ${{ inputs.environment }}
-          echo BRANCH: ${{ inputs.gitRef }}
+          echo GIT REF: ${{ inputs.gitRef }}
           echo HOST_PREFIX: $HOST_PREFIX
 
       - name: Checkout Target Branch
@@ -166,7 +166,7 @@ jobs:
 
       - name: Log in to OpenShift
         run: |
-          oc login --token=${{ secrets.SA_TOKEN }} --server=https://api.silver.devops.gov.bc.ca:6443
+          oc login --token=${{ secrets.SA_TOKEN }} --server=${{ vars.OPENSHIFT_CLUSTER_URL }}
 
       - name: Deploy Workers
         working-directory: "./devops/"
@@ -184,7 +184,7 @@ jobs:
         run: |
           echo BUILD NAMESPACE: $BUILD_NAMESPACE
           echo BUILD ENVIRONMENT: ${{ inputs.environment }}
-          echo BRANCH: ${{ inputs.gitRef }}
+          echo GIT REF: ${{ inputs.gitRef }}
           echo HOST_PREFIX: $HOST_PREFIX
 
       - name: Checkout Target Branch
@@ -194,7 +194,7 @@ jobs:
 
       - name: Log in to OpenShift
         run: |
-          oc login --token=${{ secrets.SA_TOKEN }} --server=https://api.silver.devops.gov.bc.ca:6443
+          oc login --token=${{ secrets.SA_TOKEN }} --server=${{ vars.OPENSHIFT_CLUSTER_URL }}
 
       - name: Deploy Queue Consumers
         working-directory: "./devops/"
@@ -212,7 +212,7 @@ jobs:
         run: |
           echo BUILD NAMESPACE: $BUILD_NAMESPACE
           echo BUILD ENVIRONMENT: ${{ inputs.environment }}
-          echo BRANCH: ${{ inputs.gitRef }}
+          echo GIT REF: ${{ inputs.gitRef }}
           echo HOST_PREFIX: $HOST_PREFIX
 
       - name: Checkout Target Branch
@@ -222,7 +222,7 @@ jobs:
 
       - name: Log in to OpenShift
         run: |
-          oc login --token=${{ secrets.SA_TOKEN }} --server=https://api.silver.devops.gov.bc.ca:6443
+          oc login --token=${{ secrets.SA_TOKEN }} --server=${{ vars.OPENSHIFT_CLUSTER_URL }}
 
       - name: Deploy Web/Frontend
         working-directory: "./devops/"

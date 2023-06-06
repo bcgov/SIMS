@@ -23,8 +23,8 @@ jobs:
         run: |
           echo Git Base Ref: ${{ github.base_ref }}
           echo Git Ref Name: ${{ github.ref_name }}
-          echo Git Pull Run Number: ${{ github.run_number }}
-          echo Git Pull Request Ref: ${{ github.event.pull_request.head.sha }}
+          echo Git Head: ${{ github.event.pull_request.head.sha }}
+          echo Run Number: ${{ github.run_number }}        
           echo OC CLI Version: $(oc version)
 
   # # Create new tag.
