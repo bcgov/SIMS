@@ -184,6 +184,6 @@ jobs:
     with:
       environment: DEV
       gitRef: main-11
-      deployCamundaDefinitions: "true"
-      deployFormioDefinitions: "true"
+      deployCamundaDefinitions: true
+      deployFormioDefinitions: true
     secrets: inherit

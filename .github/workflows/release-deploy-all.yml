@@ -29,10 +29,10 @@ on:
         type: string
       deployCamundaDefinitions:
         required: true
-        type: string
+        type: boolean
       deployFormioDefinitions:
         required: true
-        type: string
+        type: boolean
     secrets:
       SA_TOKEN:
         required: true
@@ -99,6 +99,7 @@ jobs:
       - name: Print env
         run: |
           echo BUILD NAMESPACE: $BUILD_NAMESPACE
+          echo BUILD ENVIRONMENT: ${{ inputs.environment }}
           echo BRANCH: ${{ inputs.gitRef }}
           echo HOST_PREFIX: $HOST_PREFIX
 
@@ -126,6 +127,7 @@ jobs:
       - name: Print env
         run: |
           echo BUILD NAMESPACE: $BUILD_NAMESPACE
+          echo BUILD ENVIRONMENT: ${{ inputs.environment }}
           echo BRANCH: ${{ inputs.gitRef }}
           echo HOST_PREFIX: $HOST_PREFIX
 
@@ -153,6 +155,7 @@ jobs:
       - name: Print env
         run: |
           echo BUILD NAMESPACE: $BUILD_NAMESPACE
+          echo BUILD ENVIRONMENT: ${{ inputs.environment }}
           echo BRANCH: ${{ inputs.gitRef }}
           echo HOST_PREFIX: $HOST_PREFIX
 
@@ -180,6 +183,7 @@ jobs:
       - name: Print env
         run: |
           echo BUILD NAMESPACE: $BUILD_NAMESPACE
+          echo BUILD ENVIRONMENT: ${{ inputs.environment }}
           echo BRANCH: ${{ inputs.gitRef }}
           echo HOST_PREFIX: $HOST_PREFIX
 
@@ -207,6 +211,7 @@ jobs:
       - name: Print env
         run: |
           echo BUILD NAMESPACE: $BUILD_NAMESPACE
+          echo BUILD ENVIRONMENT: ${{ inputs.environment }}
           echo BRANCH: ${{ inputs.gitRef }}
           echo HOST_PREFIX: $HOST_PREFIX
 
@@ -226,7 +231,7 @@ jobs:
 
   # Deploy Camunda Definitions
   deployCamundaDefinitions:
-    if: ${{ inputs.deployCamundaDefinitions == 'true' }}
+    if: ${{ inputs.deployCamundaDefinitions == true }}
     name: Deploy BPMNs and DMNs to Camunda
     needs: deploy-sims-api
     uses: ./.github/workflows/release-deploy-camunda-definitions.yml
@@ -237,7 +242,7 @@ jobs:
 
   # Deploy Formio Definitions
   deployFormioDefinitions:
-    if: ${{ inputs.deployFormioDefinitions == 'true' }}
+    if: ${{ inputs.deployFormioDefinitions == true }}
     name: Deploy Form.io definitions
     needs: deploy-sims-api
     uses: ./.github/workflows/release-deploy-formio-definitions.yml
