@@ -10,7 +10,12 @@ import {
 import { ApplicationService } from "../../services";
 import BaseController from "../BaseController";
 import { ApplicationBaseAPIOutDTO } from "./models/application.dto";
-import { AllowAuthorizedParty, Groups, UserToken } from "../../auth/decorators";
+import {
+  AllowAuthorizedParty,
+  Groups,
+  Roles,
+  UserToken,
+} from "../../auth/decorators";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { UserGroups } from "../../auth/user-groups.enum";
 import {
@@ -28,7 +33,7 @@ import {
   APPLICATION_NOT_FOUND,
   INVALID_OPERATION_IN_THE_CURRENT_STATUS,
 } from "@sims/services/constants";
-import { IUserToken } from "../../auth";
+import { IUserToken, Role } from "../../auth";
 
 @AllowAuthorizedParty(AuthorizedParties.aest)
 @Groups(UserGroups.AESTUser)
@@ -80,6 +85,7 @@ export class ApplicationAESTController extends BaseController {
    * @param applicationId reference application id.
    * @returns the newly created MSFAA.
    */
+  @Roles(Role.StudentReissueMSFAA)
   @Post(":applicationId/reissue-msfaa")
   @ApiNotFoundResponse({ description: "Application id not found." })
   @ApiUnprocessableEntityResponse({
