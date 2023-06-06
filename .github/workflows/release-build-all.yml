@@ -180,15 +180,6 @@ jobs:
   # is a Potential to main/relase/hotfix branches have differences (for instance the DB) that would not be backward compatible.
   deployAlltoDEV:
     name: Deploy All to DEV
-    needs:
-      [
-        createTag,
-        build-db-migrations,
-        build-sims-api,
-        build-workers,
-        build-queue-consumers,
-        build-web-frontend,
-      ]
     uses: ./.github/workflows/release-deploy-all.yml
     with:
       environment: DEV
