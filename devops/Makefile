@@ -171,6 +171,7 @@ init-project:
 	@echo "Run initial set-up for the project, including network security\n" 
 	@oc -n $(NAMESPACE) process -f openshift/networkpolicy.yml -p NAMESPACE=$(NAMESPACE) | oc -n $(NAMESPACE) apply -f -
 	@oc -n $(BUILD_NAMESPACE) policy add-role-to-group system:image-puller system:serviceaccounts:$(NAMESPACE)
+	@oc -n $(NAMESPACE) create rolebinding github-action --clusterrole=edit --serviceaccount=$(BUILD_NAMESPACE):github-action --namespace=$(NAMESPACE)
 
 init-secrets:
 	@echo "++\n Deploy SIMS Creds Secrets $(NAMESPACE) \n++"
