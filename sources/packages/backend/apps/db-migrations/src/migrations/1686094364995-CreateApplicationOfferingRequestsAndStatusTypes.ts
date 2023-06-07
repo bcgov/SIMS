@@ -22,7 +22,7 @@ export class CreateApplicationOfferingRequestsAndStatusTypes1686094364995
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
       getSQLFileData(
-        "Drop-application-offering_change-requests.sql",
+        "Drop-application-offering-change-requests.sql",
         "ApplicationOfferingChangeRequests",
       ),
     );

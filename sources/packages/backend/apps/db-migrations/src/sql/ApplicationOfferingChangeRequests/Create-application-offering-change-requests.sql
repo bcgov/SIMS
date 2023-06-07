@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS sims.application_offering_change_requests (
+CREATE TABLE sims.application_offering_change_requests (
   id SERIAL PRIMARY KEY,
   application_id INT NOT NULL REFERENCES sims.applications(id),
   change_offering_id INT NOT NULL REFERENCES sims.education_programs_offerings(id),
