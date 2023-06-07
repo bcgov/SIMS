@@ -81,7 +81,7 @@ describe("AssessmentInstitutionsController(e2e)-getAssessmentNOA", () => {
         disbursement.valueAmount;
     });
 
-    const endpoint = `/institutions/assessment/student/${student.id}/assessment/${assessment.id}/noa`;
+    const endpoint = `/institutions/assessment/student/${student.id}/application/${application.id}/assessment/${assessment.id}/noa`;
     const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeFUser,
     );
@@ -149,7 +149,7 @@ describe("AssessmentInstitutionsController(e2e)-getAssessmentNOA", () => {
     application.currentAssessment.noaApprovalStatus = AssessmentStatus.required;
     application.currentAssessment.assessmentData = null;
     await db.application.save(application);
-    const endpoint = `/institutions/assessment/student/${student.id}/assessment/${application.currentAssessment.id}/noa`;
+    const endpoint = `/institutions/assessment/student/${student.id}/application/${application.id}/assessment/${application.currentAssessment.id}/noa`;
     const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeFUser,
     );
@@ -177,14 +177,14 @@ describe("AssessmentInstitutionsController(e2e)-getAssessmentNOA", () => {
       },
     );
     await db.msfaaNumber.save(currentMSFAA);
-    await saveFakeApplicationDisbursements(db.dataSource, {
+    const application = await saveFakeApplicationDisbursements(db.dataSource, {
       institution: collegeF,
       institutionLocation: collegeFLocation,
       student,
       msfaaNumber: currentMSFAA,
     });
 
-    const endpoint = `/institutions/assessment/student/${student.id}/assessment/9999999/noa`;
+    const endpoint = `/institutions/assessment/student/${student.id}/application/${application.id}/assessment/9999999/noa`;
     const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeFUser,
     );
@@ -217,7 +217,7 @@ describe("AssessmentInstitutionsController(e2e)-getAssessmentNOA", () => {
     const collegeCInstitutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeCUser,
     );
-    const endpoint = `/institutions/assessment/student/${student.id}/assessment/9999999/noa`;
+    const endpoint = `/institutions/assessment/student/${student.id}/application/${collegeCApplication.id}/assessment/9999999/noa`;
 
     // Act/Assert
     await request(app.getHttpServer())
@@ -240,7 +240,7 @@ describe("AssessmentInstitutionsController(e2e)-getAssessmentNOA", () => {
       InstitutionTokenTypes.CollegeFUser,
     );
 
-    const endpoint = `/institutions/assessment/student/${student.id}/assessment/9999999/noa`;
+    const endpoint = `/institutions/assessment/student/${student.id}/application/9999999/assessment/9999999/noa`;
 
     // Act/Assert
     await request(app.getHttpServer())

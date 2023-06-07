@@ -960,12 +960,17 @@ export class InstitutionService extends RecordDataModelService<Institution> {
    * has access to student data of given student.
    * @param institutionId institution.
    * @param studentId student.
+   * @param options options for the query:
+   * - `applicationId` application id.
    * @returns value which specifies if the institution
    * has access to student data of given student.
    */
   async hasStudentDataAccess(
     institutionId: number,
     studentId: number,
+    options?: {
+      applicationId?: number;
+    },
   ): Promise<boolean> {
     const institutionStudentDataAccess = await this.applicationRepo.findOne({
       select: { id: true },
@@ -973,6 +978,7 @@ export class InstitutionService extends RecordDataModelService<Institution> {
         student: { id: studentId },
         location: { institution: { id: institutionId } },
         applicationStatus: Not(ApplicationStatus.Overwritten),
+        id: options?.applicationId,
       },
       cache: true,
     });

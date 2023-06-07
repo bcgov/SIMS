@@ -83,7 +83,7 @@ describe("StudentAppealInstitutionsController(e2e)-getStudentAppealWithRequests"
     });
     await db.studentAppeal.save(appeal);
 
-    const endpoint = `/institutions/appeal/student/${application.student.id}/appeal/${appeal.id}/requests`;
+    const endpoint = `/institutions/appeal/student/${application.student.id}/application/${application.id}/appeal/${appeal.id}/requests`;
 
     const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeFUser,
@@ -131,7 +131,7 @@ describe("StudentAppealInstitutionsController(e2e)-getStudentAppealWithRequests"
       { applicationStatus: ApplicationStatus.Completed },
     );
 
-    const endpoint = `/institutions/appeal/student/${application.student.id}/appeal/9999999/requests`;
+    const endpoint = `/institutions/appeal/student/${application.student.id}/application/${application.id}/appeal/9999999/requests`;
     const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeFUser,
     );
@@ -164,7 +164,7 @@ describe("StudentAppealInstitutionsController(e2e)-getStudentAppealWithRequests"
     const collegeCInstitutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeCUser,
     );
-    const endpoint = `/institutions/appeal/student/${student.id}/appeal/9999999/requests`;
+    const endpoint = `/institutions/appeal/student/${student.id}/application/${collegeCApplication.id}/appeal/9999999/requests`;
 
     // Act/Assert
     await request(app.getHttpServer())
@@ -187,7 +187,7 @@ describe("StudentAppealInstitutionsController(e2e)-getStudentAppealWithRequests"
       InstitutionTokenTypes.CollegeFUser,
     );
 
-    const endpoint = `/institutions/appeal/student/${student.id}/appeal/9999999/requests`;
+    const endpoint = `/institutions/appeal/student/${student.id}/application/9999999/appeal/9999999/requests`;
 
     // Act/Assert
     await request(app.getHttpServer())

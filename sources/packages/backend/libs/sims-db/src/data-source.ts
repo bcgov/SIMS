@@ -57,7 +57,7 @@ import { ORM_CACHE_LIFETIME } from "@sims/utilities";
 import { ConfigService } from "@sims/utilities/config";
 
 interface ORMCacheConfig {
-  type: "database" | "redis" | "ioredis/cluster";
+  type: "database" | "ioredis" | "ioredis/cluster";
   options?:
     | RedisOptions
     | {
@@ -94,7 +94,7 @@ function getORMCacheConfig(): ORMCacheConfig | false {
 
   if (config.redis.redisStandaloneMode) {
     return {
-      type: "redis",
+      type: "ioredis",
       options: {
         host: config.redis.redisHost,
         port: config.redis.redisPort,

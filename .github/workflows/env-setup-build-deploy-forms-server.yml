@@ -1,4 +1,5 @@
-name: Build and Deploy Formio Server.
+name: Env Setup - Build and Deploy Forms Server
+run-name: Env Setup - Build and deploy forms server from ${{ inputs.gitRef }}(form.io tag ${{ inputs.formioTag }}) to ${{ inputs.environment }}
 
 on:
   workflow_dispatch:
@@ -21,12 +22,12 @@ jobs:
   build_deploy:
     name: Build and Deploy Formio Server.
     runs-on: ubuntu-latest
-    environment: ${{ github.event.inputs.environment }}
+    environment: ${{ inputs.environment }}
     env:
-      FORMIO_SOURCE_REPO_TAG: ${{ github.event.inputs.formioTag }}
+      FORMIO_SOURCE_REPO_TAG: ${{ inputs.formioTag }}
       FORMS_NAME: forms
       NAMESPACE: ${{ secrets.OPENSHIFT_ENV_NAMESPACE }}
-      BUILD_REF: ${{ github.event.inputs.formioTag }}
+      BUILD_REF: ${{ inputs.formioTag }}
       HOST_PREFIX: ${{ secrets.HOST_PREFIX }}
       MONGODB_URI: ${{ secrets.MONGODB_URI }}
       BUILD_NAMESPACE: 0c27fb-tools
@@ -41,7 +42,7 @@ jobs:
       - name: Checkout Target Branch
         uses: actions/checkout@v3
         with:
-          ref: ${{ github.event.inputs.gitRef }}
+          ref: ${{ inputs.gitRef }}
       # Log in to OpenShift.
       # Note: The secrets needed to log in are NOT available if the PR comes from a FORK.
       # PR's must originate from a branch off the original repo or else all openshift `oc` commands will fail.

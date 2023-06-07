@@ -117,7 +117,7 @@ export class AssessmentStudentsController extends BaseController {
     return this.assessmentControllerService.getAssessmentAwardDetails(
       assessmentId,
       false,
-      userToken.studentId,
+      { studentId: userToken.studentId },
     );
   }
 

@@ -19,7 +19,7 @@ import { StudentAppealControllerService } from "..";
  */
 @AllowAuthorizedParty(AuthorizedParties.institution)
 @IsBCPublicInstitution()
-@HasStudentDataAccess("studentId")
+@HasStudentDataAccess("studentId", "applicationId")
 @Controller("appeal")
 @ApiTags(`${ClientTypeBaseRoute.Institution}-appeal`)
 export class StudentAppealInstitutionsController extends BaseController {
@@ -32,20 +32,24 @@ export class StudentAppealInstitutionsController extends BaseController {
   /**
    * Get the student appeal details.
    * @param studentId student id.
+   * @param applicationId application id.
    * @param appealId appeal id to be retrieved.
    * @returns the student appeal details.
    */
-  @Get("student/:studentId/appeal/:appealId/requests")
+  @Get(
+    "student/:studentId/application/:applicationId/appeal/:appealId/requests",
+  )
   @ApiNotFoundResponse({
     description: "Not able to find the student appeal.",
   })
   async getStudentAppealWithRequests(
     @Param("studentId", ParseIntPipe) studentId: number,
+    @Param("applicationId", ParseIntPipe) applicationId: number,
     @Param("appealId", ParseIntPipe) appealId: number,
   ): Promise<StudentAppealAPIOutDTO<StudentAppealRequestAPIOutDTO>> {
     return this.studentAppealControllerService.getStudentAppealWithRequests<StudentAppealRequestAPIOutDTO>(
       appealId,
-      { studentId: studentId },
+      { studentId, applicationId },
     );
   }
 }

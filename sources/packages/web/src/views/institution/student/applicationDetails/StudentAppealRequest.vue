@@ -11,6 +11,7 @@
       :studentId="studentId"
       :appealId="appealId"
       :readOnlyForm="true"
+      :application-id="applicationId"
     />
   </full-page-container>
 </template>

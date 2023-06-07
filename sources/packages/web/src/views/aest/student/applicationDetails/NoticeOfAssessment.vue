@@ -12,7 +12,7 @@
     </template>
     <notice-of-assessment-form-view
       :assessment-id="assessmentId"
-      :can-reissue-m-s-f-a-a="true"
+      :can-reissue-m-s-f-a-a="hasStudentReissueMSFAARole"
       @reissue-m-s-f-a-a="reissueMSFAA"
     />
   </full-page-container>
@@ -23,7 +23,8 @@ import { defineComponent } from "vue";
 import NoticeOfAssessmentFormView from "@/components/common/NoticeOfAssessmentFormView.vue";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import { ApplicationService } from "@/services/ApplicationService";
-import { useSnackBar } from "@/composables";
+import { useAuth, useSnackBar } from "@/composables";
+import { Role } from "@/types";
 
 export default defineComponent({
   components: {
@@ -45,6 +46,8 @@ export default defineComponent({
   },
   setup() {
     const snackBar = useSnackBar();
+    const { hasRole } = useAuth();
+    const hasStudentReissueMSFAARole = hasRole(Role.StudentReissueMSFAA);
     const reissueMSFAA = async (
       applicationId: number,
       reloadNOA: () => Promise<void>,
@@ -62,7 +65,7 @@ export default defineComponent({
       }
     };
 
-    return { reissueMSFAA, AESTRoutesConst };
+    return { reissueMSFAA, AESTRoutesConst, hasStudentReissueMSFAARole };
   },
 });
 </script>
