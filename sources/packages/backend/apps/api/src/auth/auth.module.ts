@@ -6,7 +6,6 @@ import {
   InstitutionLocationService,
   InstitutionUserAuthService,
   KeycloakService,
-  TokensService,
   UserService,
   StudentService,
   SINValidationService,
@@ -46,7 +45,6 @@ const jwtModule = JwtModule.register({
     UserService,
     InstitutionLocationService,
     InstitutionUserAuthService,
-    TokensService,
     KeycloakService,
     JwtStrategy,
     StudentService,
@@ -102,6 +100,6 @@ const jwtModule = JwtModule.register({
       useClass: InstitutionStudentDataAccessGuard,
     },
   ],
-  exports: [jwtModule, TokensService, KeycloakService],
+  exports: [jwtModule, KeycloakService],
 })
 export class AuthModule {}

@@ -78,16 +78,6 @@ export class ConfigService {
   /**
    * SIMS API API client credential configuration.
    */
-  get simsApiClientCredential(): ClientCredential {
-    return this.getCachedConfig("simsApiClientCredentialConfig", {
-      clientId: process.env.SIMS_API_CLIENT_ID,
-      clientSecret: process.env.SIMS_API_CLIENT_SECRET,
-    });
-  }
-
-  /**
-   * SIMS API API client credential configuration.
-   */
   get zoneBSFTP(): SFTPConfig {
     return this.getCachedConfig("zoneBSFTPConfig", {
       host: process.env.ZONE_B_SFTP_SERVER,

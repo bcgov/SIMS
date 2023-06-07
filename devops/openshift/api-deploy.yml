@@ -103,16 +103,6 @@ objects:
                       name: ${FORMS_SECRET_NAME}
                 - name: SITE_MINDER_LOGOUT_URL
                   value: ${SITE_MINDER_LOGOUT_URL}
-                - name: SIMS_API_CLIENT_ID
-                  valueFrom:
-                    secretKeyRef:
-                      key: ${SIMS_API_CLIENT_ID_NAME_KEY}
-                      name: ${API_SECRET_NAME}
-                - name: SIMS_API_CLIENT_SECRET
-                  valueFrom:
-                    secretKeyRef:
-                      key: ${SIMS_API_CLIENT_SECRET_NAME_KEY}
-                      name: ${API_SECRET_NAME}
                 - name: FILE_UPLOAD_MAX_FILE_SIZE
                   value: ${FILE_UPLOAD_MAX_FILE_SIZE}
                 - name: FILE_UPLOAD_ALLOWED_EXTENSIONS
@@ -340,10 +330,6 @@ parameters:
     value: FORMS_URL
   - name: SITE_MINDER_LOGOUT_URL
     require: true
-  - name: SIMS_API_CLIENT_ID_NAME_KEY
-    value: sims-api-client-id
-  - name: SIMS_API_CLIENT_SECRET_NAME_KEY
-    value: sims-api-client-secret
   - name: FILE_UPLOAD_MAX_FILE_SIZE
     value: "4194304"
   - name: FILE_UPLOAD_ALLOWED_EXTENSIONS
