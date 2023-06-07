@@ -103,10 +103,10 @@ export class ApplicationOfferingChangeRequest extends RecordDataModel {
    * In progress with SABC, Approved, Declined by student, Declined by SABC).
    */
   @Column({
-    name: "application_offering_change_requests_status",
+    name: "application_offering_change_request_status",
     type: "enum",
     enum: ApplicationOfferingChangeRequestStatus,
-    enumName: "ApplicationExceptionStatus",
+    enumName: "ApplicationOfferingChangeRequestStatus",
   })
   applicationOfferingChangeRequestsStatus: ApplicationOfferingChangeRequestStatus;
 

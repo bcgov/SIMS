@@ -3,7 +3,7 @@ CREATE TABLE IF NOT EXISTS sims.application_offering_change_requests (
   application_id INT NOT NULL REFERENCES sims.applications(id),
   change_offering_id INT NOT NULL REFERENCES sims.education_programs_offerings(id),
   active_offering_id INT NOT NULL REFERENCES sims.education_programs_offerings(id),
-  application_offering_change_requests_status sims.application_offering_change_request_status_types NOT NULL,
+  application_offering_change_request_status sims.application_offering_change_request_status_types NOT NULL,
   assessed_date TIMESTAMP WITH TIME ZONE,
   assessed_by INT REFERENCES sims.users(id),
   student_action_date TIMESTAMP WITH TIME ZONE,
@@ -31,7 +31,7 @@ COMMENT ON COLUMN sims.application_offering_change_requests.change_offering_id I
 
 COMMENT ON COLUMN sims.application_offering_change_requests.active_offering_id IS 'Foreign key reference to the education programs offerings table. The actual offering of the application that was requested for the application specific offering change.';
 
-COMMENT ON COLUMN sims.application_offering_change_requests.application_offering_change_requests_status IS 'Current status of application specific offering request change (e.g. In progress with the student, In progress with SABC, Approved, Declined by student, Declined by SABC).';
+COMMENT ON COLUMN sims.application_offering_change_requests.application_offering_change_request_status IS 'Current status of application specific offering request change (e.g. In progress with the student, In progress with SABC, Approved, Declined by student, Declined by SABC).';
 
 COMMENT ON COLUMN sims.application_offering_change_requests.assessed_date IS 'Date that the Ministry approved or denied the application specific offering request change.';
 
