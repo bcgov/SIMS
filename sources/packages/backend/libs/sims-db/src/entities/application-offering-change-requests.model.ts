@@ -63,7 +63,7 @@ export class ApplicationOfferingChangeRequest extends RecordDataModel {
   )
   changeOfferingId: number;
   /**
-   * The new offering created by the institution for the application specific offering change.
+   * The new or existing offering assigned by the institution for the application specific offering change.
    */
   @ManyToOne(() => EducationProgramOffering, {
     eager: false,
@@ -155,8 +155,8 @@ export class ApplicationOfferingChangeRequest extends RecordDataModel {
    */
   @OneToOne(() => Note, { eager: false, cascade: false, nullable: true })
   @JoinColumn({
-    name: "ministry_note_id",
+    name: "assessed_note_id",
     referencedColumnName: ColumnNames.ID,
   })
-  ministryNote?: Note;
+  assessedNote?: Note;
 }

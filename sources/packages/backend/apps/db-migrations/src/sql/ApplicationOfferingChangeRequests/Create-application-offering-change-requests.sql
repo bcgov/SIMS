@@ -8,16 +8,12 @@ CREATE TABLE sims.application_offering_change_requests (
   assessed_by INT REFERENCES sims.users(id),
   student_action_date TIMESTAMP WITH TIME ZONE,
   reason VARCHAR(500) NOT NULL,
-  ministry_note_id INT REFERENCES sims.notes(id),
+  assessed_note_id INT REFERENCES sims.notes(id),
   -- Audit columns
   created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW (),
   updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW (),
-  creator INT NULL DEFAULT NULL REFERENCES sims.users(id) ON DELETE
-  SET
-    NULL,
-    modifier INT NULL DEFAULT NULL REFERENCES sims.users(id) ON DELETE
-  SET
-    NULL
+  creator INT NULL DEFAULT NULL REFERENCES sims.users(id),
+  modifier INT NULL DEFAULT NULL REFERENCES sims.users(id)
 );
 
 -- ## Comments
@@ -27,7 +23,7 @@ COMMENT ON COLUMN sims.application_offering_change_requests.id IS 'Auto-generate
 
 COMMENT ON COLUMN sims.application_offering_change_requests.application_id IS 'Foreign key reference to the applications table. Application on which the application specific offering change was requested.';
 
-COMMENT ON COLUMN sims.application_offering_change_requests.change_offering_id IS 'Foreign key reference to the education programs offerings table. The new offering created by the institution for the application specific offering change.';
+COMMENT ON COLUMN sims.application_offering_change_requests.change_offering_id IS 'Foreign key reference to the education programs offerings table. The new or existing offering assigned by the institution for the application specific offering change.';
 
 COMMENT ON COLUMN sims.application_offering_change_requests.active_offering_id IS 'Foreign key reference to the education programs offerings table. The actual offering of the application that was requested for the application specific offering change.';
 
@@ -41,7 +37,7 @@ COMMENT ON COLUMN sims.application_offering_change_requests.student_action_date 
 
 COMMENT ON COLUMN sims.application_offering_change_requests.reason IS 'The reason for application specific offering request change added by institution.';
 
-COMMENT ON COLUMN sims.application_offering_change_requests.ministry_note_id IS 'Note added by the Ministry while approving or denying the application specific offering request change.';
+COMMENT ON COLUMN sims.application_offering_change_requests.assessed_note_id IS 'Note added by the Ministry while approving or denying the application specific offering request change.';
 
 COMMENT ON COLUMN sims.application_offering_change_requests.created_at IS 'Record creation timestamp.';
 
