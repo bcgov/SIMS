@@ -3,7 +3,6 @@ import {
   ATBCIntegrationConfig,
   AuthConfig,
   BCeIDConfig,
-  ClientCredential,
   CRAIntegrationConfig,
   ESDCIntegrationConfig,
   FormsConfig,
