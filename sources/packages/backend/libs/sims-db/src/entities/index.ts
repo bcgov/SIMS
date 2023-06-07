@@ -82,3 +82,5 @@ export * from "./disbursement-overaward.model";
 export * from "./notification-permanent-failure-error.type";
 export * from "./queue_configuration.model";
 export * from "./student-assessment-status.type";
+export * from "./application-offering-change-request-status.type";
+export * from "./application-offering-change-requests.model";
