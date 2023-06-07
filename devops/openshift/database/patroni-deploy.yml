@@ -228,7 +228,6 @@ parameters:
 - name: IMAGE_TAG
   description: |
     The image tag used to specify which image you would like deployed.
-    Don't use `latest`.
   value: "12.4-latest"
 - name: PVC_SIZE
   description: 
