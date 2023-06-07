@@ -4,7 +4,7 @@ import {
   JoinColumn,
   ManyToOne,
   OneToOne,
-  PrimaryColumn,
+  PrimaryGeneratedColumn,
 } from "typeorm";
 import { ColumnNames, TableNames } from "../constant";
 import { RecordDataModel } from "./record.model";
@@ -24,10 +24,7 @@ export class ApplicationOfferingChangeRequest extends RecordDataModel {
   /**
    * Auto-generated sequential primary key column.
    */
-  @PrimaryColumn({
-    name: "id",
-    nullable: false,
-  })
+  @PrimaryGeneratedColumn()
   id: number;
 
   /**
