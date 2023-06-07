@@ -1,0 +1,1 @@
+DROP TYPE IF EXISTS sims.application_offering_change_request_status_types;
