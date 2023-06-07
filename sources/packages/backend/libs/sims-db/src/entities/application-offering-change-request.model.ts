@@ -5,7 +5,6 @@ import {
   ManyToOne,
   OneToOne,
   PrimaryColumn,
-  RelationId,
 } from "typeorm";
 import { ColumnNames, TableNames } from "../constant";
 import { RecordDataModel } from "./record.model";
@@ -25,21 +24,12 @@ export class ApplicationOfferingChangeRequest extends RecordDataModel {
   /**
    * Auto-generated sequential primary key column.
    */
-
   @PrimaryColumn({
     name: "id",
     nullable: false,
   })
   id: number;
 
-  /**
-   * Student Application id related to application specific offering change request.
-   */
-  @RelationId(
-    (applicationOfferingChangeRequest: ApplicationOfferingChangeRequest) =>
-      applicationOfferingChangeRequest.application,
-  )
-  applicationId: number;
   /**
    * Student Application on which the application specific offering change was requested.
    */
@@ -55,14 +45,6 @@ export class ApplicationOfferingChangeRequest extends RecordDataModel {
   application: Application;
 
   /**
-   * The new offering id created by the institution for the application specific offering change.
-   */
-  @RelationId(
-    (applicationOfferingChangeRequest: ApplicationOfferingChangeRequest) =>
-      applicationOfferingChangeRequest.requestedOffering,
-  )
-  requestedOfferingId: number;
-  /**
    * The new or existing offering assigned by the institution for the application specific offering change.
    */
   @ManyToOne(() => EducationProgramOffering, {
@@ -76,14 +58,6 @@ export class ApplicationOfferingChangeRequest extends RecordDataModel {
   })
   requestedOffering: EducationProgramOffering;
 
-  /**
-   * The actual offering id that where requested for the application specific offering change by the institution.
-   */
-  @RelationId(
-    (applicationOfferingChangeRequest: ApplicationOfferingChangeRequest) =>
-      applicationOfferingChangeRequest.activeOffering,
-  )
-  activeOfferingId: number;
   /**
    *The actual offering that where requested for the application specific offering change by the institution.
    */
@@ -108,7 +82,7 @@ export class ApplicationOfferingChangeRequest extends RecordDataModel {
     enum: ApplicationOfferingChangeRequestStatus,
     enumName: "ApplicationOfferingChangeRequestStatus",
   })
-  applicationOfferingChangeRequestsStatus: ApplicationOfferingChangeRequestStatus;
+  applicationOfferingChangeRequestStatus: ApplicationOfferingChangeRequestStatus;
 
   /**
    * Date that the Ministry approved or denied the application specific offering request change.
