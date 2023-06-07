@@ -17,8 +17,8 @@ import { ApplicationOfferingChangeRequestStatus } from "./application-offering-c
 
 const REASON_MAX_LENGTH = 500;
 /**
- * Represents the list of application (completed and not archived)
- * specific offering change request, which is requested by institution.
+ * Represents the list of application specific offering change request,
+ * which is requested by institution.
  */
 @Entity({ name: TableNames.ApplicationOfferingChangeRequests })
 export class ApplicationOfferingChangeRequest extends RecordDataModel {
@@ -33,7 +33,7 @@ export class ApplicationOfferingChangeRequest extends RecordDataModel {
   id: number;
 
   /**
-   * Student Application id related to application offering change request.
+   * Student Application id related to application specific offering change request.
    */
   @RelationId(
     (applicationOfferingChangeRequest: ApplicationOfferingChangeRequest) =>
@@ -41,7 +41,7 @@ export class ApplicationOfferingChangeRequest extends RecordDataModel {
   )
   applicationId: number;
   /**
-   * Student Application on which the application offering change was requested.
+   * Student Application on which the application specific offering change was requested.
    */
   @ManyToOne(() => Application, {
     eager: false,
@@ -55,7 +55,7 @@ export class ApplicationOfferingChangeRequest extends RecordDataModel {
   application: Application;
 
   /**
-   * The new offering id created by the institution for the application offering change.
+   * The new offering id created by the institution for the application specific offering change.
    */
   @RelationId(
     (applicationOfferingChangeRequest: ApplicationOfferingChangeRequest) =>
@@ -63,7 +63,7 @@ export class ApplicationOfferingChangeRequest extends RecordDataModel {
   )
   changeOfferingId: number;
   /**
-   * The new offering created by the institution for the application offering change.
+   * The new offering created by the institution for the application specific offering change.
    */
   @ManyToOne(() => EducationProgramOffering, {
     eager: false,
@@ -77,7 +77,7 @@ export class ApplicationOfferingChangeRequest extends RecordDataModel {
   changeOffering: EducationProgramOffering;
 
   /**
-   * The actual offering id that where requested for the application offering change by the institution.
+   * The actual offering id that where requested for the application specific offering change by the institution.
    */
   @RelationId(
     (applicationOfferingChangeRequest: ApplicationOfferingChangeRequest) =>
@@ -85,7 +85,7 @@ export class ApplicationOfferingChangeRequest extends RecordDataModel {
   )
   activeOfferingId: number;
   /**
-   *The actual offering that where requested for the application offering change by the institution.
+   *The actual offering that where requested for the application specific offering change by the institution.
    */
   @ManyToOne(() => EducationProgramOffering, {
     eager: false,
@@ -99,7 +99,7 @@ export class ApplicationOfferingChangeRequest extends RecordDataModel {
   activeOffering: EducationProgramOffering;
 
   /**
-   * Current status of application offering request change (e.g. In progress with the student,
+   * Current status of application specific offering request change (e.g. In progress with the student,
    * In progress with SABC, Approved, Declined by student, Declined by SABC).
    */
   @Column({
@@ -111,7 +111,7 @@ export class ApplicationOfferingChangeRequest extends RecordDataModel {
   applicationOfferingChangeRequestsStatus: ApplicationOfferingChangeRequestStatus;
 
   /**
-   * Date that the Ministry approved or denied the application offering request change.
+   * Date that the Ministry approved or denied the application specific offering request change.
    */
   @Column({
     name: "assessed_date",
@@ -121,7 +121,7 @@ export class ApplicationOfferingChangeRequest extends RecordDataModel {
   assessedDate?: Date;
 
   /**
-   * Ministry user that approved or denied the application offering request change.
+   * Ministry user that approved or denied the application specific offering request change.
    */
   @ManyToOne(() => User, { eager: false, cascade: false })
   @JoinColumn({
@@ -131,7 +131,7 @@ export class ApplicationOfferingChangeRequest extends RecordDataModel {
   assessedBy?: User;
 
   /**
-   * Date that the Student approved or denied the application offering request change.
+   * Date that the Student approved or denied the application specific offering request change.
    */
   @Column({
     name: "student_action_date",
@@ -141,7 +141,7 @@ export class ApplicationOfferingChangeRequest extends RecordDataModel {
   studentActionDate?: Date;
 
   /**
-   * The reason for application offering request change added by institution.
+   * The reason for application specific offering request change added by institution.
    */
   @Column({
     name: "reason",
@@ -151,7 +151,7 @@ export class ApplicationOfferingChangeRequest extends RecordDataModel {
 
   /**
    * Note added by the Ministry while approving or denying the application
-   * offering request change.
+   * specific offering request change.
    */
   @OneToOne(() => Note, { eager: false, cascade: false, nullable: true })
   @JoinColumn({
