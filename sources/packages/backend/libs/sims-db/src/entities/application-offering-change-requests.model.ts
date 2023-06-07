@@ -59,9 +59,9 @@ export class ApplicationOfferingChangeRequest extends RecordDataModel {
    */
   @RelationId(
     (applicationOfferingChangeRequest: ApplicationOfferingChangeRequest) =>
-      applicationOfferingChangeRequest.changeOffering,
+      applicationOfferingChangeRequest.requestedOffering,
   )
-  changeOfferingId: number;
+  requestedOfferingId: number;
   /**
    * The new or existing offering assigned by the institution for the application specific offering change.
    */
@@ -71,10 +71,10 @@ export class ApplicationOfferingChangeRequest extends RecordDataModel {
     nullable: false,
   })
   @JoinColumn({
-    name: "change_offering_id",
+    name: "requested_offering_id",
     referencedColumnName: ColumnNames.ID,
   })
-  changeOffering: EducationProgramOffering;
+  requestedOffering: EducationProgramOffering;
 
   /**
    * The actual offering id that where requested for the application specific offering change by the institution.
