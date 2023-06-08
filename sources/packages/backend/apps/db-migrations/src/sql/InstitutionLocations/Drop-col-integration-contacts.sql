@@ -1,2 +1,2 @@
 ALTER TABLE
-    sims.institution_locations DROP COLUMN IF EXISTS integration_contacts;
+    sims.institution_locations DROP COLUMN integration_contacts;
