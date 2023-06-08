@@ -41,8 +41,6 @@ jobs:
         with:
           ref: ${{ inputs.gitRef }}
       # Log in to OpenShift.
-      # Note: The secrets needed to log in are NOT available if the PR comes from a FORK.
-      # PR's must originate from a branch off the original repo or else all openshift `oc` commands will fail.
       - name: Log in to OpenShift
         run: |
           oc login --token=${{ secrets.SA_TOKEN }} --server=${{ vars.OPENSHIFT_CLUSTER_URL }}
