@@ -1,6 +1,7 @@
 import { getDateOnlyFromFormat } from "@sims/utilities";
 import { ECEResponseFileRecord } from "./ece-response-file-record";
 import { DATE_FORMAT, RecordTypeCodes } from "../models/ece-integration.model";
+import { YNOptions } from "@sims/integrations/models";
 
 /**
  * ECE response file detail.
@@ -35,8 +36,8 @@ export class ECEResponseFileDetail extends ECEResponseFileRecord {
   /**
    * Indicates if the student is enrolled.
    */
-  get enrolmentConfirmationFlag(): string {
-    return this.line.substring(134, 135);
+  get enrolmentConfirmationFlag(): YNOptions {
+    return this.line.substring(134, 135) as YNOptions;
   }
 
   /**

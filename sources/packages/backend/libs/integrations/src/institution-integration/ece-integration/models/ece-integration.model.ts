@@ -1,3 +1,4 @@
+import { YNOptions } from "@sims/integrations/models";
 import { DisbursementValue } from "@sims/sims-db";
 
 export const ECE_SENT_TITLE = "CONFIRMATION REQUEST";
@@ -40,11 +41,13 @@ export enum RecordTypeCodes {
 export interface DisbursementDetails {
   institutionCode: string;
   applicationNumber: string;
-  awardDetails: {
-    payToSchoolAmount: number;
-    enrolmentConfirmationFlag: string;
-    enrolmentConfirmationDate: Date;
-  }[];
+  awardDetails: DisbursementAwardDetails[];
+}
+
+export interface DisbursementAwardDetails {
+  payToSchoolAmount: number;
+  enrolmentConfirmationFlag: YNOptions;
+  enrolmentConfirmationDate: Date;
 }
 
 export interface ECEDisbursements {

@@ -6,7 +6,7 @@ import {
   ConfigService,
   InstitutionIntegrationConfig,
 } from "@sims/utilities/config";
-import { ProcessSummaryResult } from "@sims/integrations/models";
+import { ProcessSummaryResult, YNOptions } from "@sims/integrations/models";
 import {
   ECE_RESPONSE_COE_DECLINED_REASON,
   ECE_RESPONSE_FILE_NAME,
@@ -259,7 +259,8 @@ export class ECEResponseProcessingService {
       try {
         this.validateDisbursement(disbursementDetails);
         const confirmedEnrolmentDetails = disbursementDetails.awardDetails.find(
-          (awardDetail) => awardDetail.enrolmentConfirmationFlag === "Y",
+          (awardDetail) =>
+            awardDetail.enrolmentConfirmationFlag === YNOptions.Y,
         );
         if (confirmedEnrolmentDetails) {
           // Confirm enrolment.
@@ -340,7 +341,8 @@ export class ECEResponseProcessingService {
     const errors: string[] = [];
 
     const hasInvalidEnrolmentConfirmationFlag = disbursement.awardDetails.some(
-      (award) => !["Y", "N"].includes(award.enrolmentConfirmationFlag),
+      (award) =>
+        !Object.values(YNOptions).includes(award.enrolmentConfirmationFlag),
     );
 
     if (hasInvalidEnrolmentConfirmationFlag) {
@@ -348,7 +350,7 @@ export class ECEResponseProcessingService {
     }
 
     const confirmedEnrolments = disbursement.awardDetails.filter(
-      (award) => award.enrolmentConfirmationFlag === "Y",
+      (award) => award.enrolmentConfirmationFlag === YNOptions.Y,
     );
 
     // Validate the enrolment confirmation date for confirmed enrolments.
