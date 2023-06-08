@@ -48,7 +48,7 @@ RUN ln -sf $NPM_PACKAGES/node_modules node_modules
 ENV DEBUG=""
 
 RUN set -x \
-  && chmod -R 766 /app/
+  && chmod -R 777 /app/
 
 # This will initialize the application based on
 # some questions to the user (login email, password, etc.)
