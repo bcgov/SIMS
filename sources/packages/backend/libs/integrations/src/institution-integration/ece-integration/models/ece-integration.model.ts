@@ -52,6 +52,7 @@ export interface ECEDisbursements {
 }
 
 export class DisbursementProcessingDetails {
+  fileParsingErrors = 0;
   totalDisbursements = 0;
   disbursementsSuccessfullyProcessed = 0;
   disbursementsSkipped = 0;

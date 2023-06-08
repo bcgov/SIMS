@@ -98,6 +98,8 @@ export class ECEResponseProcessingService {
     let isECEResponseFileExist = true;
     processSummary.summary.push(`Starting download of file ${remoteFilePath}.`);
     this.logger.log(`Starting download of file ${remoteFilePath}.`);
+    // Disbursement processing count.
+    const disbursementProcessingDetails = new DisbursementProcessingDetails();
     try {
       const eceFileDetailRecords =
         await this.integrationService.downloadResponseFile(remoteFilePath);
@@ -110,40 +112,32 @@ export class ECEResponseProcessingService {
         this.logger.log(warningMessage);
         return processSummary;
       }
+      // Set the total disbursements count.
+      disbursementProcessingDetails.totalDisbursements =
+        eceFileDetailRecords.length;
       // Sanitize all the ece response detail records.
-      this.sanitizeDisbursements(eceFileDetailRecords, processSummary);
+      this.sanitizeDisbursements(
+        eceFileDetailRecords,
+        processSummary,
+        disbursementProcessingDetails,
+      );
       // Transform ece response detail records to disbursements which could be individually processed.
       const disbursementsToProcess =
         this.transformDetailRecordsToDisbursements(eceFileDetailRecords);
       const auditUser = await this.systemUsersService.systemUser();
-      const {
-        totalDisbursements,
-        disbursementsSuccessfullyProcessed,
-        disbursementsSkipped,
-        duplicateDisbursements,
-        disbursementsFailedToProcess,
-      } = await this.validateAndUpdateEnrolmentStatus(
+      await this.validateAndUpdateEnrolmentStatus(
         disbursementsToProcess,
         auditUser.id,
         processSummary,
+        disbursementProcessingDetails,
       );
-      processSummary.summary.push(
-        `Total disbursements found: ${totalDisbursements}`,
-      );
-      processSummary.summary.push(
-        `Disbursements successfully updated: ${disbursementsSuccessfullyProcessed}`,
-      );
-      processSummary.summary.push(
-        `Disbursements skipped to be processed: ${disbursementsSkipped}`,
-      );
-      processSummary.summary.push(
-        `Disbursements considered duplicate and skipped: ${duplicateDisbursements}`,
-      );
-      processSummary.summary.push(
-        `Disbursements failed to process: ${disbursementsFailedToProcess}`,
-      );
+
       this.logger.log(`Completed processing the file ${remoteFilePath}.`);
     } catch (error: unknown) {
+      // If error is thrown while downloading the file processing errors must be incremented.
+      if (!disbursementProcessingDetails.fileParsingErrors) {
+        ++disbursementProcessingDetails.fileParsingErrors;
+      }
       this.logger.error(error);
       // In the event of runtime error during downloading the file, it is handled with custom error
       // and taken care that isECEResponseFileExist is set to false when this error happens.
@@ -163,6 +157,25 @@ export class ECEResponseProcessingService {
         await this.deleteProcessedFile(remoteFilePath, processSummary);
       }
     }
+    // Populate the process summary count.
+    processSummary.summary.push(
+      `Total file parsing errors: ${disbursementProcessingDetails.fileParsingErrors}`,
+    );
+    processSummary.summary.push(
+      `Total disbursements found: ${disbursementProcessingDetails.totalDisbursements}`,
+    );
+    processSummary.summary.push(
+      `Disbursements successfully updated: ${disbursementProcessingDetails.disbursementsSuccessfullyProcessed}`,
+    );
+    processSummary.summary.push(
+      `Disbursements skipped to be processed: ${disbursementProcessingDetails.disbursementsSkipped}`,
+    );
+    processSummary.summary.push(
+      `Disbursements considered duplicate and skipped: ${disbursementProcessingDetails.duplicateDisbursements}`,
+    );
+    processSummary.summary.push(
+      `Disbursements failed to process: ${disbursementProcessingDetails.disbursementsFailedToProcess}`,
+    );
     return processSummary;
   }
 
@@ -174,12 +187,14 @@ export class ECEResponseProcessingService {
   private sanitizeDisbursements(
     eceFileDetailRecords: ECEResponseFileDetail[],
     processSummaryResult: ProcessSummaryResult,
+    disbursementProcessingDetails: DisbursementProcessingDetails,
   ): void {
     let hasErrors = false;
     for (const eceDetailRecord of eceFileDetailRecords) {
       const errorMessage = eceDetailRecord.getInvalidDataMessage();
       if (errorMessage) {
         hasErrors = true;
+        ++disbursementProcessingDetails.fileParsingErrors;
         processSummaryResult.errors.push(
           `${errorMessage} at line ${eceDetailRecord.lineNumber}.`,
         );
@@ -232,9 +247,9 @@ export class ECEResponseProcessingService {
     disbursements: ECEDisbursements,
     auditUserId: number,
     processSummary: ProcessSummaryResult,
+    disbursementProcessingDetails: DisbursementProcessingDetails,
   ): Promise<DisbursementProcessingDetails> {
     const disbursementSchedules = Object.entries(disbursements);
-    const disbursementProcessingDetails = new DisbursementProcessingDetails();
     disbursementProcessingDetails.totalDisbursements =
       disbursementSchedules.length;
     for (const [
