@@ -35,8 +35,8 @@ export class ECEResponseFileDetail extends ECEResponseFileRecord {
   /**
    * Indicates if the student is enrolled.
    */
-  get isEnrolmentConfirmed(): boolean {
-    return this.line.substring(134, 135) === "Y";
+  get enrolmentConfirmationFlag(): string {
+    return this.line.substring(134, 135);
   }
 
   /**

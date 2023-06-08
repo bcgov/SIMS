@@ -19,6 +19,7 @@ import {
 } from "@sims/utilities";
 import { ECEResponseFileDetail } from "./ece-files/ece-response-file-detail";
 import {
+  DisbursementDetails,
   DisbursementProcessingDetails,
   ECEDisbursements,
 } from "./models/ece-integration.model";
@@ -27,6 +28,7 @@ import {
   SystemUsersService,
 } from "@sims/services";
 import {
+  ECE_DISBURSEMENT_DATA_NOT_VALID,
   ENROLMENT_ALREADY_COMPLETED,
   ENROLMENT_CONFIRMATION_DATE_NOT_WITHIN_APPROVAL_PERIOD,
   ENROLMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE,
@@ -154,6 +156,7 @@ export class ECEResponseProcessingService {
       processSummary.errors.push(
         `Error processing the file ${remoteFilePath}. ${error}`,
       );
+      processSummary.errors.push("File processing aborted.");
     } finally {
       // Delete the ECE response file, if the file exist in remote server.
       if (isECEResponseFileExist) {
@@ -210,7 +213,7 @@ export class ECEResponseProcessingService {
       }
       disbursements[eceDetailRecord.disbursementIdentifier].awardDetails.push({
         payToSchoolAmount: eceDetailRecord.payToSchoolAmount,
-        isEnrolmentConfirmed: eceDetailRecord.isEnrolmentConfirmed,
+        enrolmentConfirmationFlag: eceDetailRecord.enrolmentConfirmationFlag,
         enrolmentConfirmationDate: eceDetailRecord.enrolmentConfirmationDate,
       });
     }
@@ -238,10 +241,11 @@ export class ECEResponseProcessingService {
       disbursementScheduleId,
       disbursementDetails,
     ] of disbursementSchedules) {
-      const confirmedEnrolmentDetails = disbursementDetails.awardDetails.find(
-        (awardDetail) => awardDetail.isEnrolmentConfirmed,
-      );
       try {
+        this.validateDisbursement(disbursementDetails);
+        const confirmedEnrolmentDetails = disbursementDetails.awardDetails.find(
+          (awardDetail) => awardDetail.enrolmentConfirmationFlag === "Y",
+        );
         if (confirmedEnrolmentDetails) {
           // Confirm enrolment.
           const tuitionRemittance = disbursementDetails.awardDetails
@@ -296,6 +300,7 @@ export class ECEResponseProcessingService {
             case ENROLMENT_CONFIRMATION_DATE_NOT_WITHIN_APPROVAL_PERIOD:
             case FIRST_COE_NOT_COMPLETE:
             case INVALID_TUITION_REMITTANCE_AMOUNT:
+            case ECE_DISBURSEMENT_DATA_NOT_VALID:
               ++disbursementProcessingDetails.disbursementsFailedToProcess;
               processSummary.errors.push(
                 `Disbursement ${disbursementScheduleId}, record failed to process due to reason: ${error.message}`,
@@ -310,6 +315,51 @@ export class ECEResponseProcessingService {
       }
     }
     return disbursementProcessingDetails;
+  }
+
+  /**
+   * Validate disbursement data.
+   * @param disbursement disbursement.
+   */
+  private validateDisbursement(disbursement: DisbursementDetails): void {
+    const errors: string[] = [];
+
+    const hasInvalidEnrolmentConfirmationFlag = disbursement.awardDetails.some(
+      (award) => !["Y", "N"].includes(award.enrolmentConfirmationFlag),
+    );
+
+    if (hasInvalidEnrolmentConfirmationFlag) {
+      errors.push("Invalid enrolment confirmation flag");
+    }
+
+    const confirmedEnrolments = disbursement.awardDetails.filter(
+      (award) => award.enrolmentConfirmationFlag === "Y",
+    );
+
+    // Validate the enrolment confirmation date for confirmed enrolments.
+    const hasInvalidEnrolmentConfirmationDate = disbursement.awardDetails.some(
+      (award) => award.enrolmentConfirmationDate.toString() === "Invalid Date",
+    );
+
+    if (hasInvalidEnrolmentConfirmationDate) {
+      errors.push("Invalid enrolment confirmation date");
+    }
+
+    // Validate the pay to school amount for confirmed enrolments.
+    const hasInvalidPayToSchoolAmount = confirmedEnrolments.some((award) =>
+      isNaN(award.payToSchoolAmount),
+    );
+
+    if (hasInvalidPayToSchoolAmount) {
+      errors.push("Invalid pay to school amount");
+    }
+
+    if (errors.length) {
+      throw new CustomNamedError(
+        errors.join(", ").concat("."),
+        ECE_DISBURSEMENT_DATA_NOT_VALID,
+      );
+    }
   }
 
   /**

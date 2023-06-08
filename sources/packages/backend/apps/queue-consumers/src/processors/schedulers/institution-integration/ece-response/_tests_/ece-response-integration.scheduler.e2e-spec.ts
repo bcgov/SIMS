@@ -398,6 +398,7 @@ describe(
       ];
       expectedResult.errors = [
         `Error processing the file ${confirmEnrolmentResponseFile}. Error: The ECE response file has an invalid record type on header: 2`,
+        "File processing aborted.",
       ];
       expect(processResult).toStrictEqual([expectedResult]);
       // Expect the delete method to be called.
@@ -439,6 +440,7 @@ describe(
       expectedResult.errors = [
         "Invalid record type on detail: 3 at line 2.",
         `Error processing the file ${confirmEnrolmentResponseFile}. Error: The file consists invalid data and cannot be processed.`,
+        "File processing aborted.",
       ];
       expect(processResult).toStrictEqual([expectedResult]);
       // Expect the delete method to be called.
@@ -479,6 +481,7 @@ describe(
       ];
       expectedResult.errors = [
         `Error processing the file ${confirmEnrolmentResponseFile}. Error: The ECE response file has an invalid record type on footer: 4`,
+        "File processing aborted.",
       ];
       expect(processResult).toStrictEqual([expectedResult]);
       // Expect the delete method to be called.
@@ -519,6 +522,7 @@ describe(
       ];
       expectedResult.errors = [
         `Error processing the file ${confirmEnrolmentResponseFile}. Error: The total count of detail records mentioned in the footer record does not match with the actual total details records count.`,
+        "File processing aborted.",
       ];
       expect(processResult).toStrictEqual([expectedResult]);
       // Expect the delete method to be called.
@@ -562,6 +566,7 @@ describe(
       expectedResult.errors = [
         "Invalid unique index number for the disbursement record, Invalid application number at line 2.",
         `Error processing the file ${confirmEnrolmentResponseFile}. Error: The file consists invalid data and cannot be processed.`,
+        "File processing aborted.",
       ];
       expect(processResult).toStrictEqual([expectedResult]);
       // Expect the delete method to be called.
