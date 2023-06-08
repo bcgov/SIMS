@@ -27,7 +27,7 @@ COMMENT ON COLUMN sims.application_offering_change_requests.requested_offering_i
 
 COMMENT ON COLUMN sims.application_offering_change_requests.active_offering_id IS 'Foreign key reference to the education programs offerings table. The actual offering of the application that was requested for the application specific offering change.';
 
-COMMENT ON COLUMN sims.application_offering_change_requests.application_offering_change_request_status IS 'Current status of application specific offering request change (e.g. In progress with the student, In progress with SABC, Approved, Declined by student, Declined by SABC).';
+COMMENT ON COLUMN sims.application_offering_change_requests.application_offering_change_request_status IS 'Current status of application specific offering request change (e.g. In progress with student, In progress with SABC, Approved, Declined by student, Declined by SABC).';
 
 COMMENT ON COLUMN sims.application_offering_change_requests.assessed_date IS 'Date that the Ministry approved or denied the application specific offering request change.';
 

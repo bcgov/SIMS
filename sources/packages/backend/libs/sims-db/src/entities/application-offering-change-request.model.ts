@@ -70,7 +70,7 @@ export class ApplicationOfferingChangeRequest extends RecordDataModel {
   activeOffering: EducationProgramOffering;
 
   /**
-   * Current status of application specific offering request change (e.g. In progress with the student,
+   * Current status of application specific offering request change (e.g. In progress with student,
    * In progress with SABC, Approved, Declined by student, Declined by SABC).
    */
   @Column({

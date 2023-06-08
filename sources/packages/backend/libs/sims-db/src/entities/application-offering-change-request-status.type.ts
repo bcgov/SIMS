@@ -6,7 +6,7 @@ export enum ApplicationOfferingChangeRequestStatus {
    * The status is set when the institution creates a
    * application specific offering change request.
    */
-  InProgressWithTheStudent = "In progress with the student",
+  InProgressWithStudent = "In progress with student",
   /**
    * The status is set after student approval and waiting for
    * SABC action.
