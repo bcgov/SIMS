@@ -56,6 +56,7 @@ export const TableNames = {
   Messages: "notification_messages",
   Notifications: "notifications",
   QueueConfigurations: "queue_configurations",
+  ApplicationOfferingChangeRequests: "application_offering_change_requests",
 };
 
 export const INSTITUTION_TYPE_BC_PUBLIC = 1;
