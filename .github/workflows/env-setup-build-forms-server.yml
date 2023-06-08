@@ -21,7 +21,7 @@ jobs:
     env:
       FORMIO_SOURCE_REPO_TAG: ${{ inputs.formioTag }}
       BUILD_REF: ${{ inputs.formioTag }}
-      BUILD_NAMESPACE: 0c27fb-tools
+      BUILD_NAMESPACE: ${{ vars.BUILD_NAMESPACE }}
     steps:
       - name: Print env
         run: |
@@ -33,8 +33,6 @@ jobs:
         with:
           ref: ${{ inputs.gitRef }}
       # Log in to OpenShift.
-      # Note: The secrets needed to log in are NOT available if the PR comes from a FORK.
-      # PR's must originate from a branch off the original repo or else all openshift `oc` commands will fail.
       - name: Log in to OpenShift
         run: |
           oc login --token=${{ secrets.SA_TOKEN }} --server=https://api.silver.devops.gov.bc.ca:6443
