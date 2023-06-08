@@ -100,24 +100,6 @@ export class KeycloakService {
   }
 
   /**
-   * Retrieve an token from Keycloak using a provided client id and client secret.
-   * @param clientSecret Client secret.
-   * @param clientId Client ID.
-   * @returns token
-   */
-  public async getTokenFromClientSecret(
-    clientId: string,
-    clientSecret: string,
-  ): Promise<TokenResponse> {
-    const payload = {
-      grant_type: "client_credentials",
-      client_id: clientId,
-      client_secret: clientSecret,
-    };
-    return this.getKeyCloakToken(payload);
-  }
-
-  /**
    * Retrieve an token from Keycloak.
    * @param payload Payload request (e.g. password or client_credentials).
    * @returns token
