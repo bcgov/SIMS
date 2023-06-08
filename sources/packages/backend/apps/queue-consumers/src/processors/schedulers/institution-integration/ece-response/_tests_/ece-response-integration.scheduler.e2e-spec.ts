@@ -1,6 +1,6 @@
 import { DeepMocked, createMock } from "@golevelup/ts-jest";
 import { INestApplication } from "@nestjs/common";
-import { QueueNames } from "@sims/utilities";
+import { QueueNames, addDays } from "@sims/utilities";
 import {
   createTestingAppModule,
   describeProcessorRootTest,
@@ -567,6 +567,207 @@ describe(
         "Invalid unique index number for the disbursement record, Invalid application number at line 2.",
         `Error processing the file ${confirmEnrolmentResponseFile}. Error: The file consists invalid data and cannot be processed.`,
         "File processing aborted.",
+      ];
+      expect(processResult).toStrictEqual([expectedResult]);
+      // Expect the delete method to be called.
+      expect(sftpClientMock.delete).toHaveBeenCalled();
+    });
+
+    it("Should skip the processing and log error of any detail record with invalid enrolment confirmation flag and process other disbursements.", async () => {
+      // Arrange
+      // Including a valid disbursement in this test case to ensure that
+      // when there is a enrolment data validation error, only that particular disbursement is aborted
+      // and other disbursements are processed.
+      // Enable integration for institution location
+      // used for test.
+      await enableIntegration(locationCONF, db);
+      const confirmEnrolmentResponseFile = path.join(
+        process.env.INSTITUTION_RESPONSE_FOLDER,
+        locationCONF.institutionCode,
+        ECE_RESPONSE_FILE_NAME,
+      );
+
+      // Create disbursement to confirm enrolment.
+      const application = await saveFakeApplicationDisbursements(
+        db.dataSource,
+        undefined,
+        {
+          applicationStatus: ApplicationStatus.Enrolment,
+        },
+      );
+
+      const [disbursement] =
+        application.currentAssessment.disbursementSchedules;
+
+      // Queued job.
+      const job = createMock<Job<void>>();
+
+      // Modify the data in mock file to have the correct values for
+      // disbursement and application number.
+      mockDownloadFiles(
+        sftpClientMock,
+        [ECE_RESPONSE_FILE_NAME],
+        (fileContent: string) => {
+          return fileContent
+            .replace("DISBNUMBER", disbursement.id.toString().padStart(10, "0"))
+            .replace("APPLNUMBER", application.applicationNumber)
+            .replace("ENRLDATE", formatDate(new Date(), "YYYYMMDD"))
+            .replace("Y20230418N", "K20230418N");
+        },
+      );
+
+      // Act
+      const processResult = await processor.processECEResponse(job);
+
+      // Assert
+      const expectedResult: ProcessSummaryResult = new ProcessSummaryResult();
+      expectedResult.summary = [
+        `Starting download of file ${confirmEnrolmentResponseFile}.`,
+        `Disbursement ${disbursement.id}, enrolment confirmed.`,
+        "Total disbursements found: 2",
+        "Disbursements successfully updated: 1",
+        "Disbursements skipped to be processed: 0",
+        "Disbursements considered duplicate and skipped: 0",
+        "Disbursements failed to process: 1",
+        `The file ${confirmEnrolmentResponseFile} has been deleted after processing.`,
+      ];
+      expectedResult.errors = [
+        "Disbursement 1119353191, record failed to process due to reason: Invalid enrolment confirmation flag.",
+      ];
+      expect(processResult).toStrictEqual([expectedResult]);
+      // Expect the delete method to be called.
+      expect(sftpClientMock.delete).toHaveBeenCalled();
+    });
+
+    it("Should skip the processing and log error of any detail record with invalid enrolment confirmation date and pay to school amount and process other disbursements.", async () => {
+      // Arrange
+      // Including a valid disbursement in this test case to ensure that
+      // when there is a enrolment data validation error, only that particular disbursement is aborted
+      // and other disbursements are processed.
+      // Enable integration for institution location
+      // used for test.
+      await enableIntegration(locationCONF, db);
+      const confirmEnrolmentResponseFile = path.join(
+        process.env.INSTITUTION_RESPONSE_FOLDER,
+        locationCONF.institutionCode,
+        ECE_RESPONSE_FILE_NAME,
+      );
+
+      // Create disbursement to confirm enrolment.
+      const application = await saveFakeApplicationDisbursements(
+        db.dataSource,
+        undefined,
+        {
+          applicationStatus: ApplicationStatus.Enrolment,
+        },
+      );
+
+      const [disbursement] =
+        application.currentAssessment.disbursementSchedules;
+
+      // Queued job.
+      const job = createMock<Job<void>>();
+
+      // Modify the data in mock file to have the correct values for
+      // disbursement and application number.
+      mockDownloadFiles(
+        sftpClientMock,
+        [ECE_RESPONSE_FILE_NAME],
+        (fileContent: string) => {
+          return fileContent
+            .replace("DISBNUMBER", disbursement.id.toString().padStart(10, "0"))
+            .replace("APPLNUMBER", application.applicationNumber)
+            .replace("ENRLDATE", formatDate(new Date(), "YYYYMMDD"))
+            .replace("Y20230418N000000", "YNOTADATENNANNUM");
+        },
+      );
+
+      // Act
+      const processResult = await processor.processECEResponse(job);
+
+      // Assert
+      const expectedResult: ProcessSummaryResult = new ProcessSummaryResult();
+      expectedResult.summary = [
+        `Starting download of file ${confirmEnrolmentResponseFile}.`,
+        `Disbursement ${disbursement.id}, enrolment confirmed.`,
+        "Total disbursements found: 2",
+        "Disbursements successfully updated: 1",
+        "Disbursements skipped to be processed: 0",
+        "Disbursements considered duplicate and skipped: 0",
+        "Disbursements failed to process: 1",
+        `The file ${confirmEnrolmentResponseFile} has been deleted after processing.`,
+      ];
+      expectedResult.errors = [
+        "Disbursement 1119353191, record failed to process due to reason: Invalid enrolment confirmation date, Invalid pay to school amount.",
+      ];
+      expect(processResult).toStrictEqual([expectedResult]);
+      // Expect the delete method to be called.
+      expect(sftpClientMock.delete).toHaveBeenCalled();
+    });
+
+    it("Should skip the processing and log error of any disbursement when enrolment confirmation date is outside the approval period.", async () => {
+      // Arrange
+      // Enable integration for institution location
+      // used for test.
+      await enableIntegration(locationCONF, db);
+      const confirmEnrolmentResponseFile = path.join(
+        process.env.INSTITUTION_RESPONSE_FOLDER,
+        locationCONF.institutionCode,
+        ECE_RESPONSE_FILE_NAME,
+      );
+
+      // Create disbursement to confirm enrolment.
+      const application = await saveFakeApplicationDisbursements(
+        db.dataSource,
+        undefined,
+        {
+          applicationStatus: ApplicationStatus.Enrolment,
+        },
+      );
+
+      const [disbursement] =
+        application.currentAssessment.disbursementSchedules;
+
+      const disbursementDate = disbursement.disbursementDate;
+
+      // Queued job.
+      const job = createMock<Job<void>>();
+
+      // Modify the data in mock file to have the correct values for
+      // disbursement and application number.
+      mockDownloadFiles(
+        sftpClientMock,
+        [ECE_RESPONSE_FILE_NAME],
+        (fileContent: string) => {
+          return fileContent
+            .replace("DISBNUMBER", disbursement.id.toString().padStart(10, "0"))
+            .replace("APPLNUMBER", application.applicationNumber)
+            .replace(
+              "ENRLDATE",
+              formatDate(addDays(-23, disbursementDate), "YYYYMMDD"),
+            );
+        },
+      );
+
+      // Act
+      const processResult = await processor.processECEResponse(job);
+
+      // Assert
+      const expectedResult: ProcessSummaryResult = new ProcessSummaryResult();
+      expectedResult.summary = [
+        `Starting download of file ${confirmEnrolmentResponseFile}.`,
+        "Total disbursements found: 2",
+        "Disbursements successfully updated: 0",
+        "Disbursements skipped to be processed: 1",
+        "Disbursements considered duplicate and skipped: 0",
+        "Disbursements failed to process: 1",
+        `The file ${confirmEnrolmentResponseFile} has been deleted after processing.`,
+      ];
+      expectedResult.warnings = [
+        "Disbursement 1119353191, record skipped due to reason: Enrolment not found.",
+      ];
+      expectedResult.errors = [
+        `Disbursement ${disbursement.id}, record failed to process due to reason: The enrolment cannot be confirmed as enrolment confirmation date is not within the valid approval period.`,
       ];
       expect(processResult).toStrictEqual([expectedResult]);
       // Expect the delete method to be called.

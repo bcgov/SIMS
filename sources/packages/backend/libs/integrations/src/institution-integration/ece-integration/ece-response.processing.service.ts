@@ -337,7 +337,7 @@ export class ECEResponseProcessingService {
     );
 
     // Validate the enrolment confirmation date for confirmed enrolments.
-    const hasInvalidEnrolmentConfirmationDate = disbursement.awardDetails.some(
+    const hasInvalidEnrolmentConfirmationDate = confirmedEnrolments.some(
       (award) => award.enrolmentConfirmationDate.toString() === "Invalid Date",
     );
 
