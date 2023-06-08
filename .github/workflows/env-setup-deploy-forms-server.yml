@@ -28,8 +28,6 @@ jobs:
       NAMESPACE: ${{ secrets.OPENSHIFT_ENV_NAMESPACE }}
       BUILD_REF: ${{ inputs.formioTag }}
       HOST_PREFIX: ${{ secrets.HOST_PREFIX }}
-      FORMIO_ROOT_EMAIL: ${{ secrets.FORMIO_ROOT_EMAIL }}
-      FORMS_URL: ${{ secrets.FORMS_URL }}
       MONGODB_URI: ${{ secrets.MONGODB_URI }}
     steps:
       - name: Print env
