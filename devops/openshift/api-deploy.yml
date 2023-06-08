@@ -86,16 +86,6 @@ objects:
                     secretKeyRef:
                       key: ${BCeID_WEB_SERVICE_AUTH_USER_PASSWORD_NAME_KEY}
                       name: ${API_SECRET_NAME}
-                - name: WORKFLOW_SA_USER_NAME
-                  valueFrom:
-                    secretKeyRef:
-                      key: ${WORKFLOW_SA_USER_NAME_NAME_KEY}
-                      name: ${API_SECRET_NAME}
-                - name: WORKFLOW_SA_PASSWORD
-                  valueFrom:
-                    secretKeyRef:
-                      key: ${WORKFLOW_SA_PASSWORD_NAME_KEY}
-                      name: ${API_SECRET_NAME}
                 - name: FORMS_SA_USER_NAME
                   valueFrom:
                     secretKeyRef:
@@ -113,16 +103,6 @@ objects:
                       name: ${FORMS_SECRET_NAME}
                 - name: SITE_MINDER_LOGOUT_URL
                   value: ${SITE_MINDER_LOGOUT_URL}
-                - name: SIMS_API_CLIENT_ID
-                  valueFrom:
-                    secretKeyRef:
-                      key: ${SIMS_API_CLIENT_ID_NAME_KEY}
-                      name: ${API_SECRET_NAME}
-                - name: SIMS_API_CLIENT_SECRET
-                  valueFrom:
-                    secretKeyRef:
-                      key: ${SIMS_API_CLIENT_SECRET_NAME_KEY}
-                      name: ${API_SECRET_NAME}
                 - name: FILE_UPLOAD_MAX_FILE_SIZE
                   value: ${FILE_UPLOAD_MAX_FILE_SIZE}
                 - name: FILE_UPLOAD_ALLOWED_EXTENSIONS
@@ -342,10 +322,6 @@ parameters:
     value: bceid-web-service-auth-user-name
   - name: BCeID_WEB_SERVICE_AUTH_USER_PASSWORD_NAME_KEY
     value: bceid-web-service-auth-user-password
-  - name: WORKFLOW_SA_USER_NAME_NAME_KEY
-    value: workflow-sa-user-name
-  - name: WORKFLOW_SA_PASSWORD_NAME_KEY
-    value: workflow-sa-password
   - name: FORMIO_ROOT_EMAIL_NAME_KEY
     value: FORMIO_ROOT_EMAIL
   - name: FORMIO_ROOT_PASSWORD_NAME_KEY
@@ -354,10 +330,6 @@ parameters:
     value: FORMS_URL
   - name: SITE_MINDER_LOGOUT_URL
     require: true
-  - name: SIMS_API_CLIENT_ID_NAME_KEY
-    value: sims-api-client-id
-  - name: SIMS_API_CLIENT_SECRET_NAME_KEY
-    value: sims-api-client-secret
   - name: FILE_UPLOAD_MAX_FILE_SIZE
     value: "4194304"
   - name: FILE_UPLOAD_ALLOWED_EXTENSIONS

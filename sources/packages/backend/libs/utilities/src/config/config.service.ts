@@ -3,7 +3,6 @@ import {
   ATBCIntegrationConfig,
   AuthConfig,
   BCeIDConfig,
-  ClientCredential,
   CRAIntegrationConfig,
   ESDCIntegrationConfig,
   FormsConfig,
@@ -72,16 +71,6 @@ export class ConfigService {
         userName: process.env.FORMS_SA_USER_NAME,
         password: process.env.FORMS_SA_PASSWORD,
       },
-    });
-  }
-
-  /**
-   * SIMS API API client credential configuration.
-   */
-  get simsApiClientCredential(): ClientCredential {
-    return this.getCachedConfig("simsApiClientCredentialConfig", {
-      clientId: process.env.SIMS_API_CLIENT_ID,
-      clientSecret: process.env.SIMS_API_CLIENT_SECRET,
     });
   }
 
