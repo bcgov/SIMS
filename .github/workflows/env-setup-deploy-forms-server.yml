@@ -1,0 +1,54 @@
+name: Env Setup - Deploy Forms Server
+run-name: Env Setup - Deploy forms server from ${{ inputs.gitRef }}(form.io tag ${{ inputs.formioTag }}) to ${{ inputs.environment }}
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: "Environment the formio is deployed."
+        required: true
+        type: environment
+      formioTag:
+        description: "Formio tag, please refer https://github.com/formio/formio/tags to deploy the appropriate tag."
+        type: string
+        required: true
+        default: "v2.5.3"
+      gitRef:
+        description: "Git Ref"
+        required: true
+        default: ""
+
+jobs:
+  deploy:
+    name: Deploy Forms Server
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+    env:
+      FORMS_NAME: forms
+      NAMESPACE: ${{ secrets.OPENSHIFT_ENV_NAMESPACE }}
+      BUILD_REF: ${{ inputs.formioTag }}
+      HOST_PREFIX: ${{ secrets.HOST_PREFIX }}
+      FORMIO_ROOT_EMAIL: ${{ secrets.FORMIO_ROOT_EMAIL }}
+      FORMS_URL: ${{ secrets.FORMS_URL }}
+    steps:
+      - name: Print env
+        run: |
+          echo NAMESPACE: $NAMESPACE
+          echo BRANCH: $BUILD_REF
+          echo HOST_PREFIX: $HOST_PREFIX
+      # Checkout the PR branch
+      - name: Checkout Target Branch
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ inputs.gitRef }}
+      # Log in to OpenShift.
+      # Note: The secrets needed to log in are NOT available if the PR comes from a FORK.
+      # PR's must originate from a branch off the original repo or else all openshift `oc` commands will fail.
+      - name: Log in to OpenShift
+        run: |
+          oc login --token=${{ secrets.SA_TOKEN }} --server=https://api.silver.devops.gov.bc.ca:6443
+      # Deploy Forms
+      - name: Deploy Forms server
+        working-directory: "./devops/"
+        run: |
+          make oc-deploy-forms

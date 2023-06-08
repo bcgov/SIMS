@@ -1,13 +1,9 @@
-name: Env Setup - Build and Deploy Forms Server
-run-name: Env Setup - Build and deploy forms server from ${{ inputs.gitRef }}(form.io tag ${{ inputs.formioTag }}) to ${{ inputs.environment }}
+name: Env Setup - Build Forms Server
+run-name: Env Setup - Build forms server from ${{ inputs.gitRef }}(form.io tag ${{ inputs.formioTag }}) to ${{ inputs.environment }}
 
 on:
   workflow_dispatch:
     inputs:
-      environment:
-        description: "Environment the formio is deployed."
-        required: true
-        type: environment
       formioTag:
         description: "Formio tag, please refer https://github.com/formio/formio/tags to deploy the appropriate tag."
         type: string
@@ -19,25 +15,18 @@ on:
         default: ""
 
 jobs:
-  build_deploy:
-    name: Build and Deploy Formio Server.
+  build:
+    name: Build Forms Server
     runs-on: ubuntu-latest
-    environment: ${{ inputs.environment }}
     env:
       FORMIO_SOURCE_REPO_TAG: ${{ inputs.formioTag }}
-      FORMS_NAME: forms
-      NAMESPACE: ${{ secrets.OPENSHIFT_ENV_NAMESPACE }}
       BUILD_REF: ${{ inputs.formioTag }}
-      HOST_PREFIX: ${{ secrets.HOST_PREFIX }}
-      MONGODB_URI: ${{ secrets.MONGODB_URI }}
       BUILD_NAMESPACE: 0c27fb-tools
     steps:
       - name: Print env
         run: |
           echo BUILD NAMESPACE: $BUILD_NAMESPACE
-          echo NAMESPACE: $NAMESPACE
           echo BRANCH: $BUILD_REF
-          echo HOST_PREFIX: $HOST_PREFIX
       # Checkout the PR branch
       - name: Checkout Target Branch
         uses: actions/checkout@v3
@@ -54,8 +43,3 @@ jobs:
         working-directory: "./devops/"
         run: |
           make oc-build-forms
-      # Deploy Forms
-      - name: Deploy Forms server
-        working-directory: "./devops/"
-        run: |
-          make oc-deploy-forms
