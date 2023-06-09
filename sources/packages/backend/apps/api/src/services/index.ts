@@ -1,6 +1,5 @@
 export * from "./auth/keycloak/keycloak.service";
 export * from "./auth/token-cache.service";
-export * from "./auth/tokens.service";
 export * from "./student/student.service";
 export * from "./user/user.service";
 export * from "./bceid/bceid.service";
