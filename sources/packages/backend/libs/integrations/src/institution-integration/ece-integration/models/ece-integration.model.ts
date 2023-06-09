@@ -37,22 +37,36 @@ export enum RecordTypeCodes {
   ECETrailer = "3",
 }
 
+export interface DisbursementDetails {
+  institutionCode: string;
+  applicationNumber: string;
+  awardDetails: DisbursementAwardDetails[];
+}
+
+export interface DisbursementAwardDetails {
+  payToSchoolAmount: number;
+  enrolmentConfirmationFlag: YNOptions;
+  enrolmentConfirmationDate: Date;
+}
+
 export interface ECEDisbursements {
-  [disbursementScheduleId: string]: {
-    institutionCode: string;
-    applicationNumber: string;
-    awardDetails: {
-      payToSchoolAmount: number;
-      isEnrolmentConfirmed: boolean;
-      enrolmentConfirmationDate: Date;
-    }[];
-  };
+  [disbursementScheduleId: string]: DisbursementDetails;
 }
 
 export class DisbursementProcessingDetails {
+  fileParsingErrors = 0;
+  totalRecords = 0;
   totalDisbursements = 0;
   disbursementsSuccessfullyProcessed = 0;
   disbursementsSkipped = 0;
   duplicateDisbursements = 0;
   disbursementsFailedToProcess = 0;
+}
+
+/**
+ * Single character Yes | No option.
+ */
+export enum YNOptions {
+  Y = "Y",
+  N = "N",
 }

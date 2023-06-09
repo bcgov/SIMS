@@ -19,18 +19,22 @@ import {
 } from "@sims/utilities";
 import { ECEResponseFileDetail } from "./ece-files/ece-response-file-detail";
 import {
+  DisbursementDetails,
   DisbursementProcessingDetails,
   ECEDisbursements,
+  YNOptions,
 } from "./models/ece-integration.model";
 import {
   ConfirmationOfEnrollmentService,
   SystemUsersService,
 } from "@sims/services";
 import {
+  ECE_DISBURSEMENT_DATA_NOT_VALID,
   ENROLMENT_ALREADY_COMPLETED,
   ENROLMENT_CONFIRMATION_DATE_NOT_WITHIN_APPROVAL_PERIOD,
   ENROLMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE,
   ENROLMENT_NOT_FOUND,
+  FILE_PARSING_ERROR,
   FIRST_COE_NOT_COMPLETE,
   INVALID_TUITION_REMITTANCE_AMOUNT,
   UNEXPECTED_ERROR_DOWNLOADING_FILE,
@@ -96,6 +100,8 @@ export class ECEResponseProcessingService {
     let isECEResponseFileExist = true;
     processSummary.summary.push(`Starting download of file ${remoteFilePath}.`);
     this.logger.log(`Starting download of file ${remoteFilePath}.`);
+    // Disbursement processing count.
+    const disbursementProcessingDetails = new DisbursementProcessingDetails();
     try {
       const eceFileDetailRecords =
         await this.integrationService.downloadResponseFile(remoteFilePath);
@@ -108,58 +114,75 @@ export class ECEResponseProcessingService {
         this.logger.log(warningMessage);
         return processSummary;
       }
+      // Set the total records count.
+      disbursementProcessingDetails.totalRecords = eceFileDetailRecords.length;
       // Sanitize all the ece response detail records.
-      this.sanitizeDisbursements(eceFileDetailRecords, processSummary);
+      this.sanitizeDisbursements(
+        eceFileDetailRecords,
+        processSummary,
+        disbursementProcessingDetails,
+      );
       // Transform ece response detail records to disbursements which could be individually processed.
       const disbursementsToProcess =
         this.transformDetailRecordsToDisbursements(eceFileDetailRecords);
       const auditUser = await this.systemUsersService.systemUser();
-      const {
-        totalDisbursements,
-        disbursementsSuccessfullyProcessed,
-        disbursementsSkipped,
-        duplicateDisbursements,
-        disbursementsFailedToProcess,
-      } = await this.validateAndUpdateEnrolmentStatus(
+      await this.validateAndUpdateEnrolmentStatus(
         disbursementsToProcess,
         auditUser.id,
         processSummary,
+        disbursementProcessingDetails,
       );
-      processSummary.summary.push(
-        `Total disbursements found: ${totalDisbursements}`,
-      );
-      processSummary.summary.push(
-        `Disbursements successfully updated: ${disbursementsSuccessfullyProcessed}`,
-      );
-      processSummary.summary.push(
-        `Disbursements skipped to be processed: ${disbursementsSkipped}`,
-      );
-      processSummary.summary.push(
-        `Disbursements considered duplicate and skipped: ${duplicateDisbursements}`,
-      );
-      processSummary.summary.push(
-        `Disbursements failed to process: ${disbursementsFailedToProcess}`,
-      );
+
       this.logger.log(`Completed processing the file ${remoteFilePath}.`);
     } catch (error: unknown) {
-      this.logger.error(error);
-      // In the event of runtime error during downloading the file, it is handled with custom error
-      // and taken care that isECEResponseFileExist is set to false when this error happens.
-      if (
-        error instanceof CustomNamedError &&
-        error.name === UNEXPECTED_ERROR_DOWNLOADING_FILE
-      ) {
-        isECEResponseFileExist = false;
+      if (error instanceof CustomNamedError) {
+        switch (error.name) {
+          // In the event of runtime error during downloading the file, it is handled with custom error
+          // and taken care that isECEResponseFileExist is set to false when this error happens.
+          case UNEXPECTED_ERROR_DOWNLOADING_FILE:
+            isECEResponseFileExist = false;
+            // Increment the file parsing error.
+            ++disbursementProcessingDetails.fileParsingErrors;
+            break;
+          case FILE_PARSING_ERROR:
+            // Increment the file parsing error.
+            ++disbursementProcessingDetails.fileParsingErrors;
+            break;
+        }
       }
+      this.logger.error(error);
       processSummary.errors.push(
         `Error processing the file ${remoteFilePath}. ${error}`,
       );
+      processSummary.errors.push("File processing aborted.");
     } finally {
       // Delete the ECE response file, if the file exist in remote server.
       if (isECEResponseFileExist) {
         await this.deleteProcessedFile(remoteFilePath, processSummary);
       }
     }
+    // Populate the process summary count.
+    processSummary.summary.push(
+      `Total file parsing errors: ${disbursementProcessingDetails.fileParsingErrors}`,
+    );
+    processSummary.summary.push(
+      `Total detail records found: ${disbursementProcessingDetails.totalRecords}`,
+    );
+    processSummary.summary.push(
+      `Total disbursements found: ${disbursementProcessingDetails.totalDisbursements}`,
+    );
+    processSummary.summary.push(
+      `Disbursements successfully updated: ${disbursementProcessingDetails.disbursementsSuccessfullyProcessed}`,
+    );
+    processSummary.summary.push(
+      `Disbursements skipped to be processed: ${disbursementProcessingDetails.disbursementsSkipped}`,
+    );
+    processSummary.summary.push(
+      `Disbursements considered duplicate and skipped: ${disbursementProcessingDetails.duplicateDisbursements}`,
+    );
+    processSummary.summary.push(
+      `Disbursements failed to process: ${disbursementProcessingDetails.disbursementsFailedToProcess}`,
+    );
     return processSummary;
   }
 
@@ -171,12 +194,14 @@ export class ECEResponseProcessingService {
   private sanitizeDisbursements(
     eceFileDetailRecords: ECEResponseFileDetail[],
     processSummaryResult: ProcessSummaryResult,
+    disbursementProcessingDetails: DisbursementProcessingDetails,
   ): void {
     let hasErrors = false;
     for (const eceDetailRecord of eceFileDetailRecords) {
       const errorMessage = eceDetailRecord.getInvalidDataMessage();
       if (errorMessage) {
         hasErrors = true;
+        ++disbursementProcessingDetails.fileParsingErrors;
         processSummaryResult.errors.push(
           `${errorMessage} at line ${eceDetailRecord.lineNumber}.`,
         );
@@ -210,7 +235,7 @@ export class ECEResponseProcessingService {
       }
       disbursements[eceDetailRecord.disbursementIdentifier].awardDetails.push({
         payToSchoolAmount: eceDetailRecord.payToSchoolAmount,
-        isEnrolmentConfirmed: eceDetailRecord.isEnrolmentConfirmed,
+        enrolmentConfirmationFlag: eceDetailRecord.enrolmentConfirmationFlag,
         enrolmentConfirmationDate: eceDetailRecord.enrolmentConfirmationDate,
       });
     }
@@ -229,22 +254,28 @@ export class ECEResponseProcessingService {
     disbursements: ECEDisbursements,
     auditUserId: number,
     processSummary: ProcessSummaryResult,
+    disbursementProcessingDetails: DisbursementProcessingDetails,
   ): Promise<DisbursementProcessingDetails> {
     const disbursementSchedules = Object.entries(disbursements);
-    const disbursementProcessingDetails = new DisbursementProcessingDetails();
+    // Total disbursements.
     disbursementProcessingDetails.totalDisbursements =
       disbursementSchedules.length;
     for (const [
       disbursementScheduleId,
       disbursementDetails,
     ] of disbursementSchedules) {
-      const confirmedEnrolmentDetails = disbursementDetails.awardDetails.find(
-        (awardDetail) => awardDetail.isEnrolmentConfirmed,
-      );
       try {
+        this.validateDisbursement(disbursementDetails);
+        const confirmedEnrolmentDetails = disbursementDetails.awardDetails.find(
+          (awardDetail) =>
+            awardDetail.enrolmentConfirmationFlag === YNOptions.Y,
+        );
         if (confirmedEnrolmentDetails) {
           // Confirm enrolment.
+          // Calculate tuition remittance from all enrolments which have
+          // enrolment confirmation flag Y.
           const tuitionRemittance = disbursementDetails.awardDetails
+            .filter((award) => award.enrolmentConfirmationFlag === YNOptions.Y)
             .map((award) => award.payToSchoolAmount)
             .reduce((accumulator, currentValue) => accumulator + currentValue);
           await this.confirmationOfEnrollmentService.confirmEnrollment(
@@ -296,6 +327,7 @@ export class ECEResponseProcessingService {
             case ENROLMENT_CONFIRMATION_DATE_NOT_WITHIN_APPROVAL_PERIOD:
             case FIRST_COE_NOT_COMPLETE:
             case INVALID_TUITION_REMITTANCE_AMOUNT:
+            case ECE_DISBURSEMENT_DATA_NOT_VALID:
               ++disbursementProcessingDetails.disbursementsFailedToProcess;
               processSummary.errors.push(
                 `Disbursement ${disbursementScheduleId}, record failed to process due to reason: ${error.message}`,
@@ -310,6 +342,52 @@ export class ECEResponseProcessingService {
       }
     }
     return disbursementProcessingDetails;
+  }
+
+  /**
+   * Validate disbursement data.
+   * @param disbursement disbursement.
+   */
+  private validateDisbursement(disbursement: DisbursementDetails): void {
+    const errors: string[] = [];
+
+    const hasInvalidEnrolmentConfirmationFlag = disbursement.awardDetails.some(
+      (award) =>
+        !Object.values(YNOptions).includes(award.enrolmentConfirmationFlag),
+    );
+
+    if (hasInvalidEnrolmentConfirmationFlag) {
+      errors.push("Invalid enrolment confirmation flag");
+    }
+
+    const confirmedEnrolments = disbursement.awardDetails.filter(
+      (award) => award.enrolmentConfirmationFlag === YNOptions.Y,
+    );
+
+    // Validate the enrolment confirmation date for confirmed enrolments.
+    const hasInvalidEnrolmentConfirmationDate = confirmedEnrolments.some(
+      (award) => !award.enrolmentConfirmationDate,
+    );
+
+    if (hasInvalidEnrolmentConfirmationDate) {
+      errors.push("Invalid enrolment confirmation date");
+    }
+
+    // Validate the pay to school amount for confirmed enrolments.
+    const hasInvalidPayToSchoolAmount = confirmedEnrolments.some((award) =>
+      isNaN(award.payToSchoolAmount),
+    );
+
+    if (hasInvalidPayToSchoolAmount) {
+      errors.push("Invalid pay to school amount");
+    }
+
+    if (errors.length) {
+      throw new CustomNamedError(
+        errors.join(", ").concat("."),
+        ECE_DISBURSEMENT_DATA_NOT_VALID,
+      );
+    }
   }
 
   /**

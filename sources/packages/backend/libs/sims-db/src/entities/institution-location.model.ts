@@ -34,7 +34,7 @@ export class InstitutionLocation extends RecordDataModel {
   })
   name: string;
 
-  @OneToOne((type) => Institution, { eager: false, cascade: true })
+  @OneToOne(() => Institution, { eager: false, cascade: true })
   @JoinColumn({
     name: "institution_id",
     referencedColumnName: ColumnNames.ID,
@@ -61,4 +61,15 @@ export class InstitutionLocation extends RecordDataModel {
     nullable: false,
   })
   hasIntegration?: boolean;
+
+  /**
+   * Contacts who receive notification email on integration file processing.
+   */
+  @Column({
+    name: "integration_contacts",
+    nullable: true,
+    array: true,
+    type: "varchar",
+  })
+  integrationContacts?: string[];
 }
