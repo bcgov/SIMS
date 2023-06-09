@@ -1,17 +1,21 @@
-name: Release - Deploy All
-run-name: Release - Deploy all from ${{ inputs.gitRef }} to ${{ inputs.environment }}
+name: Release - Deploy
+run-name: Release - Deploy ${{ inputs.gitRef }} to ${{ inputs.environment }}
 
 on:
   workflow_dispatch:
     inputs:
       gitRef:
-        description: "Git Ref (e.g. v1.0.0 or v1.0.0-prerelease.1)"
+        description: "Git Tag (e.g. v1.0.0-45)"
         required: true
-        default: ""
+        default: "v0.0.0-0"
       environment:
         description: "Environment"
         required: true
         type: environment
+      deployDBMigrations:
+        description: "Deploy Database"
+        type: boolean
+        default: true
       deployWebAndAPI:
         description: "Deploy SIMS-API and Web"
         type: boolean
@@ -105,6 +109,7 @@ env:
 jobs:
   # Run DB migrations.
   run-db-migrations:
+    if: ${{ inputs.deployDBMigrations}}
     name: Run db-migrations
     environment: ${{ inputs.environment }}
     runs-on: ubuntu-latest
@@ -248,7 +253,7 @@ jobs:
 
   # Deploy Camunda Definitions
   deployCamundaDefinitions:
-    if: ${{ inputs.deployCamundaDefinitions }}
+    if: ${{ inputs.deployCamundaDefinitions || always() }}
     name: Deploy BPMNs and DMNs to Camunda
     needs: deploy-sims-api
     uses: ./.github/workflows/release-deploy-camunda-definitions.yml
@@ -259,7 +264,7 @@ jobs:
 
   # Deploy Formio Definitions
   deployFormioDefinitions:
-    if: ${{ inputs.deployFormioDefinitions }}
+    if: ${{ inputs.deployFormioDefinitions || always() }}
     name: Deploy Form.io definitions
     needs: deploy-sims-api
     uses: ./.github/workflows/release-deploy-formio-definitions.yml
