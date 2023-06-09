@@ -23,6 +23,7 @@ import {
   createInstitutionLocations,
   enableIntegration,
 } from "./ece-response-helper";
+import { FILE_PARSING_ERROR } from "@sims/services/constants";
 
 describe(
   describeProcessorRootTest(QueueNames.ECEProcessResponseIntegration),
@@ -414,7 +415,7 @@ describe(
         "Disbursements failed to process: 0",
       ];
       expectedResult.errors = [
-        `Error processing the file ${confirmEnrolmentResponseFile}. Error: The ECE response file has an invalid record type on header: 2`,
+        `Error processing the file ${confirmEnrolmentResponseFile}. ${FILE_PARSING_ERROR}: The ECE response file has an invalid record type on header: 2`,
         "File processing aborted.",
       ];
       expect(processResult).toStrictEqual([expectedResult]);
@@ -511,7 +512,7 @@ describe(
         "Disbursements failed to process: 0",
       ];
       expectedResult.errors = [
-        `Error processing the file ${confirmEnrolmentResponseFile}. Error: The ECE response file has an invalid record type on footer: 4`,
+        `Error processing the file ${confirmEnrolmentResponseFile}. ${FILE_PARSING_ERROR}: The ECE response file has an invalid record type on footer: 4`,
         "File processing aborted.",
       ];
       expect(processResult).toStrictEqual([expectedResult]);
@@ -559,7 +560,7 @@ describe(
         "Disbursements failed to process: 0",
       ];
       expectedResult.errors = [
-        `Error processing the file ${confirmEnrolmentResponseFile}. Error: The total count of detail records mentioned in the footer record does not match with the actual total details records count.`,
+        `Error processing the file ${confirmEnrolmentResponseFile}. ${FILE_PARSING_ERROR}: The total count of detail records mentioned in the footer record does not match with the actual total details records count.`,
         "File processing aborted.",
       ];
       expect(processResult).toStrictEqual([expectedResult]);
@@ -621,7 +622,7 @@ describe(
     it("Should skip the processing and log error when detail record with invalid enrolment confirmation flag is present and process other disbursements.", async () => {
       // Arrange
       // Including a valid disbursement in this test case to ensure that
-      // when there is a enrolment data validation error, only that particular disbursement is aborted
+      // when there is a enrolment data validation error, only that particular disbursement is failed to process
       // and other disbursements are processed.
       // Enable integration for institution location
       // used for test.
@@ -695,7 +696,7 @@ describe(
     it("Should skip the processing and log error when detail record with invalid enrolment confirmation date and pay to school amount is present and process other disbursements.", async () => {
       // Arrange
       // Including a valid disbursement in this test case to ensure that
-      // when there is a enrolment data validation error, only that particular disbursement is aborted
+      // when there is a enrolment data validation error, only that particular disbursement is failed to process
       // and other disbursements are processed.
       // Enable integration for institution location
       // used for test.

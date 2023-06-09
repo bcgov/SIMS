@@ -45,7 +45,7 @@ export class ECEResponseFileDetail extends ECEResponseFileRecord {
    */
   get enrolmentConfirmationDate(): Date {
     const enrolmentConfirmationDate = this.line.substring(135, 143);
-    return getDateOnlyFromFormat(enrolmentConfirmationDate, DATE_FORMAT);
+    return getDateOnlyFromFormat(enrolmentConfirmationDate, DATE_FORMAT, true);
   }
 
   /**

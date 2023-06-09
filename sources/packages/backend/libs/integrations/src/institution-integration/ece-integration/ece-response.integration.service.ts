@@ -6,7 +6,10 @@ import { ECEResponseFileHeader } from "./ece-files/ece-response-file-header";
 import { RecordTypeCodes } from "./models/ece-integration.model";
 import { ECEResponseFileFooter } from "./ece-files/ece-response-file-footer";
 import { CustomNamedError } from "@sims/utilities";
-import { UNEXPECTED_ERROR_DOWNLOADING_FILE } from "@sims/services/constants";
+import {
+  FILE_PARSING_ERROR,
+  UNEXPECTED_ERROR_DOWNLOADING_FILE,
+} from "@sims/services/constants";
 
 @Injectable()
 export class ECEResponseIntegrationService extends SFTPIntegrationBase<
@@ -42,48 +45,52 @@ export class ECEResponseIntegrationService extends SFTPIntegrationBase<
     if (!fileLines) {
       return [];
     }
-    // The file is not expected to be empty without content.
-    if (!fileLines.length) {
-      const error = "The ECE response file is empty and cannot be processed.";
-      this.logger.error(error);
-      throw new Error(error);
+    try {
+      // The file is not expected to be empty without content.
+      if (!fileLines.length) {
+        const error = "The ECE response file is empty and cannot be processed.";
+        this.logger.error(error);
+        throw new Error(error);
+      }
+      // Read the first line to check if the header record type is the expected one.
+      const header = new ECEResponseFileHeader(fileLines.shift()); // Read and remove header.
+      if (header.recordType !== RecordTypeCodes.ECEHeader) {
+        const error = `The ECE response file has an invalid record type on header: ${header.recordType}`;
+        this.logger.error(error);
+        // If the header is not the expected one, throw an error.
+        throw new Error(error);
+      }
+      // Read the last line to check if the footer record type is the expected one.
+      const footer = new ECEResponseFileFooter(fileLines.pop());
+      if (footer.recordType !== RecordTypeCodes.ECETrailer) {
+        const error = `The ECE response file has an invalid record type on footer: ${footer.recordType}`;
+        this.logger.error(error);
+        // If the footer is not the expected one.
+        throw new Error(error);
+      }
+      // The file is expected to have at least one detail record.
+      if (!fileLines.length) {
+        const error =
+          "The ECE response file does not have any detail records to process.";
+        this.logger.error(error);
+        throw new Error(error);
+      }
+      // The total count of detail records is mentioned in the footer record and it is expected to
+      // match the actual count of total records.
+      if (fileLines.length !== footer.totalDetailRecords) {
+        const error =
+          "The total count of detail records mentioned in the footer record does not match with the actual total details records count.";
+        this.logger.error(error);
+        throw new Error(error);
+      }
+      const records: ECEResponseFileDetail[] = [];
+      fileLines.forEach((line, index) => {
+        const record = new ECEResponseFileDetail(line, index + 2);
+        records.push(record);
+      });
+      return records;
+    } catch (error: unknown) {
+      throw new CustomNamedError(error["message"], FILE_PARSING_ERROR);
     }
-    // Read the first line to check if the header record type is the expected one.
-    const header = new ECEResponseFileHeader(fileLines.shift()); // Read and remove header.
-    if (header.recordType !== RecordTypeCodes.ECEHeader) {
-      const error = `The ECE response file has an invalid record type on header: ${header.recordType}`;
-      this.logger.error(error);
-      // If the header is not the expected one, throw an error.
-      throw new Error(error);
-    }
-    // Read the last line to check if the footer record type is the expected one.
-    const footer = new ECEResponseFileFooter(fileLines.pop());
-    if (footer.recordType !== RecordTypeCodes.ECETrailer) {
-      const error = `The ECE response file has an invalid record type on footer: ${footer.recordType}`;
-      this.logger.error(error);
-      // If the footer is not the expected one.
-      throw new Error(error);
-    }
-    // The file is expected to have at least one detail record.
-    if (!fileLines.length) {
-      const error =
-        "The ECE response file does not have any detail records to process.";
-      this.logger.error(error);
-      throw new Error(error);
-    }
-    // The total count of detail records is mentioned in the footer record and it is expected to
-    // match the actual count of total records.
-    if (fileLines.length !== footer.totalDetailRecords) {
-      const error =
-        "The total count of detail records mentioned in the footer record does not match with the actual total details records count.";
-      this.logger.error(error);
-      throw new Error(error);
-    }
-    const records: ECEResponseFileDetail[] = [];
-    fileLines.forEach((line, index) => {
-      const record = new ECEResponseFileDetail(line, index + 2);
-      records.push(record);
-    });
-    return records;
   }
 }

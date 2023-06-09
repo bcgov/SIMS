@@ -7,12 +7,14 @@ import * as localizedFormat from "dayjs/plugin/localizedFormat";
 import * as timezone from "dayjs/plugin/timezone";
 import * as dayOfYear from "dayjs/plugin/dayOfYear";
 import * as isBetween from "dayjs/plugin/isBetween";
+import * as customParseFormat from "dayjs/plugin/customParseFormat";
 import { Between, FindOperator } from "typeorm";
 dayjs.extend(utc);
 dayjs.extend(localizedFormat);
 dayjs.extend(timezone);
 dayjs.extend(dayOfYear);
 dayjs.extend(isBetween);
+dayjs.extend(customParseFormat);
 
 export const DATE_ONLY_ISO_FORMAT = "YYYY-MM-DD";
 export const DATE_ONLY_FORMAT = "MMM DD YYYY";
@@ -122,13 +124,23 @@ export function getDateOnly(stringDate: string): Date | null {
   return null;
 }
 
+/**
+ * Get date from date-string in the given format.
+ * @param stringDate date string.
+ * @param stringDateFormat date format.
+ * @param validateFormat validate the date string against date format.
+ * @returns parsed date.
+ */
 export function getDateOnlyFromFormat(
   stringDate: string,
   stringDateFormat: string,
+  validateFormat = false,
 ): Date | null {
-  const isoDate = dayjs(stringDate, stringDateFormat).format(
-    DATE_ONLY_ISO_FORMAT,
-  );
+  const formattedDate = dayjs(stringDate, stringDateFormat, validateFormat);
+  if (validateFormat && !formattedDate.isValid()) {
+    return null;
+  }
+  const isoDate = formattedDate.format(DATE_ONLY_ISO_FORMAT);
   return getDateOnly(isoDate);
 }
 

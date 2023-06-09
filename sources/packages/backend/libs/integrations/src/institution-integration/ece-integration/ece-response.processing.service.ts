@@ -33,6 +33,7 @@ import {
   ENROLMENT_CONFIRMATION_DATE_NOT_WITHIN_APPROVAL_PERIOD,
   ENROLMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE,
   ENROLMENT_NOT_FOUND,
+  FILE_PARSING_ERROR,
   FIRST_COE_NOT_COMPLETE,
   INVALID_TUITION_REMITTANCE_AMOUNT,
   UNEXPECTED_ERROR_DOWNLOADING_FILE,
@@ -133,19 +134,22 @@ export class ECEResponseProcessingService {
 
       this.logger.log(`Completed processing the file ${remoteFilePath}.`);
     } catch (error: unknown) {
-      // If error is thrown while downloading the file processing errors must be incremented.
-      if (!disbursementProcessingDetails.fileParsingErrors) {
-        ++disbursementProcessingDetails.fileParsingErrors;
+      if (error instanceof CustomNamedError) {
+        switch (error.name) {
+          // In the event of runtime error during downloading the file, it is handled with custom error
+          // and taken care that isECEResponseFileExist is set to false when this error happens.
+          case UNEXPECTED_ERROR_DOWNLOADING_FILE:
+            isECEResponseFileExist = false;
+            // Increment the file parsing error.
+            ++disbursementProcessingDetails.fileParsingErrors;
+            break;
+          case FILE_PARSING_ERROR:
+            // Increment the file parsing error.
+            ++disbursementProcessingDetails.fileParsingErrors;
+            break;
+        }
       }
       this.logger.error(error);
-      // In the event of runtime error during downloading the file, it is handled with custom error
-      // and taken care that isECEResponseFileExist is set to false when this error happens.
-      if (
-        error instanceof CustomNamedError &&
-        error.name === UNEXPECTED_ERROR_DOWNLOADING_FILE
-      ) {
-        isECEResponseFileExist = false;
-      }
       processSummary.errors.push(
         `Error processing the file ${remoteFilePath}. ${error}`,
       );
@@ -267,7 +271,10 @@ export class ECEResponseProcessingService {
         );
         if (confirmedEnrolmentDetails) {
           // Confirm enrolment.
+          // Calculate tuition remittance from all enrolments which have
+          // enrolment confirmation flag Y.
           const tuitionRemittance = disbursementDetails.awardDetails
+            .filter((award) => award.enrolmentConfirmationFlag === YNOptions.Y)
             .map((award) => award.payToSchoolAmount)
             .reduce((accumulator, currentValue) => accumulator + currentValue);
           await this.confirmationOfEnrollmentService.confirmEnrollment(
@@ -358,7 +365,7 @@ export class ECEResponseProcessingService {
 
     // Validate the enrolment confirmation date for confirmed enrolments.
     const hasInvalidEnrolmentConfirmationDate = confirmedEnrolments.some(
-      (award) => award.enrolmentConfirmationDate.toString() === "Invalid Date",
+      (award) => !award.enrolmentConfirmationDate,
     );
 
     if (hasInvalidEnrolmentConfirmationDate) {
