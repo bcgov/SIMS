@@ -137,7 +137,7 @@ jobs:
 
   # Deploy SIMS API.
   deploy-sims-api:
-    if: ${{ inputs.deployWebAndAPI }}
+    if: ${{ always() && inputs.deployWebAndAPI && (needs.run-db-migrations.result == 'success' || needs.run-db-migrations.result == 'skipped')  }}
     name: Deploy SIMS-API
     environment: ${{ inputs.environment }}
     runs-on: ubuntu-latest
@@ -166,7 +166,7 @@ jobs:
 
   # Deploy workers.
   deploy-workers:
-    if: ${{ inputs.deployWorkflowWorkers }}
+    if: ${{ always() && inputs.deployWorkflowWorkers && (needs.run-db-migrations.result == 'success' || needs.run-db-migrations.result == 'skipped')  }}
     name: Deploy Workers
     environment: ${{ inputs.environment }}
     runs-on: ubuntu-latest
@@ -195,7 +195,7 @@ jobs:
 
   # Deploy queue consumers.
   deploy-queue-consumers:
-    if: ${{ inputs.deployQueueConsumers }}
+    if: ${{ always() && inputs.deployQueueConsumers && (needs.run-db-migrations.result == 'success' || needs.run-db-migrations.result == 'skipped')  }}
     name: Deploy Queue Consumers
     environment: ${{ inputs.environment }}
     runs-on: ubuntu-latest
@@ -224,7 +224,7 @@ jobs:
 
   # Deploy Web/Frontend.
   deploy-web-frontend:
-    if: ${{ inputs.deployWebAndAPI }}
+    if: ${{ always() && inputs.deployWebAndAPI && (needs.run-db-migrations.result == 'success' || needs.run-db-migrations.result == 'skipped')  }}
     name: Deploy Web/Frontend
     environment: ${{ inputs.environment }}
     runs-on: ubuntu-latest
@@ -253,7 +253,7 @@ jobs:
 
   # Deploy Camunda Definitions
   deployCamundaDefinitions:
-    if: ${{ inputs.deployCamundaDefinitions && (needs.deploy-sims-api.result == 'success' || needs.deploy-sims-api.result == 'skipped')  }}
+    if: ${{ always() && inputs.deployCamundaDefinitions && (needs.deploy-sims-api.result == 'success' || needs.deploy-sims-api.result == 'skipped')  }}
     name: Deploy BPMNs and DMNs to Camunda
     needs: deploy-sims-api
     uses: ./.github/workflows/release-deploy-camunda-definitions.yml
@@ -264,7 +264,7 @@ jobs:
 
   # Deploy Formio Definitions
   deployFormioDefinitions:
-    if: ${{ inputs.deployFormioDefinitions && (needs.deploy-sims-api.result == 'success' || needs.deploy-sims-api.result == 'skipped')  }}
+    if: ${{ always() && inputs.deployFormioDefinitions && (needs.deploy-sims-api.result == 'success' || needs.deploy-sims-api.result == 'skipped')  }}
     name: Deploy Form.io definitions
     needs: deploy-sims-api
     uses: ./.github/workflows/release-deploy-formio-definitions.yml
