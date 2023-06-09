@@ -90,7 +90,14 @@ export class ECEResponseIntegrationService extends SFTPIntegrationBase<
       });
       return records;
     } catch (error: unknown) {
-      throw new CustomNamedError(error["message"], FILE_PARSING_ERROR);
+      if (error instanceof Error) {
+        throw new CustomNamedError(error.message, FILE_PARSING_ERROR);
+      }
+      this.logger.error(error);
+      throw new CustomNamedError(
+        "Unexpected error while parsing the ECE file",
+        FILE_PARSING_ERROR,
+      );
     }
   }
 }
