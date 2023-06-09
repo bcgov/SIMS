@@ -195,6 +195,11 @@ jobs:
     with:
       environment: DEV
       gitRef: ${{ needs.createTag.outputs.newTag }}
+      deployDBMigrations: true
+      deployWeb: true
+      deploySIMAPI: true
+      deployQueueConsumers: true
+      deployWorkflowWorkers: true
       deployCamundaDefinitions: true
       deployFormioDefinitions: true
     secrets: inherit

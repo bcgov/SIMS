@@ -16,8 +16,12 @@ on:
         description: "Deploy Database"
         type: boolean
         default: true
-      deployWebAndAPI:
-        description: "Deploy SIMS-API and Web"
+      deployWeb:
+        description: "Deploy Web"
+        type: boolean
+        default: true
+      deploySIMAPI:
+        description: "Deploy SIMS-API"
         type: boolean
         default: true
       deployQueueConsumers:
@@ -29,11 +33,11 @@ on:
         type: boolean
         default: true
       deployCamundaDefinitions:
-        description: "Deploy Camunda BPMN/DMN from main"
+        description: "Deploy Camunda BPMN/DMN"
         type: boolean
         default: true
       deployFormioDefinitions:
-        description: "Deploy Form.io forms from main"
+        description: "Deploy Form.io forms"
         type: boolean
         default: true
   workflow_call:
@@ -44,12 +48,28 @@ on:
       environment:
         required: true
         type: string
+      deployDBMigrations:
+        description: "Deploy Database"
+        type: boolean
+      deployWeb:
+        description: "Deploy Web"
+        type: boolean
+      deploySIMAPI:
+        description: "Deploy SIMS-API"
+        type: boolean
+      deployQueueConsumers:
+        description: "Deploy Queue Consumers"
+        type: boolean
+      deployWorkflowWorkers:
+        description: "Deploy Workflow Workers"
+        type: boolean
       deployCamundaDefinitions:
-        required: true
+        description: "Deploy Camunda BPMN/DMN"
         type: boolean
       deployFormioDefinitions:
-        required: true
+        description: "Deploy Form.io forms"
         type: boolean
+
     secrets:
       SA_TOKEN:
         required: true
@@ -137,7 +157,7 @@ jobs:
 
   # Deploy SIMS API.
   deploy-sims-api:
-    if: ${{ always() && inputs.deployWebAndAPI && (needs.run-db-migrations.result == 'success' || needs.run-db-migrations.result == 'skipped')  }}
+    if: ${{ always() && inputs.deploySIMAPI && (needs.run-db-migrations.result == 'success' || needs.run-db-migrations.result == 'skipped')  }}
     name: Deploy SIMS-API
     environment: ${{ inputs.environment }}
     runs-on: ubuntu-latest
@@ -224,7 +244,7 @@ jobs:
 
   # Deploy Web/Frontend.
   deploy-web-frontend:
-    if: ${{ always() && inputs.deployWebAndAPI && (needs.run-db-migrations.result == 'success' || needs.run-db-migrations.result == 'skipped')  }}
+    if: ${{ always() && inputs.deployWeb && (needs.run-db-migrations.result == 'success' || needs.run-db-migrations.result == 'skipped')  }}
     name: Deploy Web/Frontend
     environment: ${{ inputs.environment }}
     runs-on: ubuntu-latest
