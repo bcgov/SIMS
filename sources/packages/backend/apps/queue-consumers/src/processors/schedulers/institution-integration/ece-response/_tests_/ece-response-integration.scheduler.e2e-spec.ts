@@ -1,6 +1,6 @@
 import { DeepMocked, createMock } from "@golevelup/ts-jest";
 import { INestApplication } from "@nestjs/common";
-import { QueueNames, addDays } from "@sims/utilities";
+import { COE_WINDOW, QueueNames, addDays } from "@sims/utilities";
 import {
   createTestingAppModule,
   describeProcessorRootTest,
@@ -121,6 +121,7 @@ describe(
         `Disbursement ${disbursement.id}, enrolment confirmed.`,
         `The file ${confirmEnrolmentResponseFile} has been deleted after processing.`,
         "Total file parsing errors: 0",
+        "Total detail records found: 2",
         "Total disbursements found: 2",
         "Disbursements successfully updated: 1",
         "Disbursements skipped to be processed: 1",
@@ -182,6 +183,7 @@ describe(
         `Disbursement ${disbursement.id}, enrolment declined.`,
         `The file ${confirmEnrolmentResponseFile} has been deleted after processing.`,
         "Total file parsing errors: 0",
+        "Total detail records found: 2",
         "Total disbursements found: 2",
         "Disbursements successfully updated: 1",
         "Disbursements skipped to be processed: 1",
@@ -244,6 +246,7 @@ describe(
         `Starting download of file ${confirmEnrolmentResponseFile}.`,
         `The file ${confirmEnrolmentResponseFile} has been deleted after processing.`,
         "Total file parsing errors: 0",
+        "Total detail records found: 1",
         "Total disbursements found: 1",
         "Disbursements successfully updated: 0",
         "Disbursements skipped to be processed: 0",
@@ -292,6 +295,7 @@ describe(
         `Starting download of file ${confirmEnrolmentResponseFile}.`,
         `The file ${confirmEnrolmentResponseFile} has been deleted after processing.`,
         "Total file parsing errors: 0",
+        "Total detail records found: 1",
         "Total disbursements found: 1",
         "Disbursements successfully updated: 0",
         "Disbursements skipped to be processed: 1",
@@ -355,6 +359,7 @@ describe(
         `Starting download of file ${confirmEnrolmentResponseFile}.`,
         `The file ${confirmEnrolmentResponseFile} has been deleted after processing.`,
         "Total file parsing errors: 0",
+        "Total detail records found: 1",
         "Total disbursements found: 1",
         "Disbursements successfully updated: 0",
         "Disbursements skipped to be processed: 1",
@@ -401,6 +406,7 @@ describe(
         `Starting download of file ${confirmEnrolmentResponseFile}.`,
         `The file ${confirmEnrolmentResponseFile} has been deleted after processing.`,
         "Total file parsing errors: 1",
+        "Total detail records found: 0",
         "Total disbursements found: 0",
         "Disbursements successfully updated: 0",
         "Disbursements skipped to be processed: 0",
@@ -448,7 +454,8 @@ describe(
         `Starting download of file ${confirmEnrolmentResponseFile}.`,
         `The file ${confirmEnrolmentResponseFile} has been deleted after processing.`,
         "Total file parsing errors: 1",
-        "Total disbursements found: 1",
+        "Total detail records found: 1",
+        "Total disbursements found: 0",
         "Disbursements successfully updated: 0",
         "Disbursements skipped to be processed: 0",
         "Disbursements considered duplicate and skipped: 0",
@@ -496,6 +503,7 @@ describe(
         `Starting download of file ${confirmEnrolmentResponseFile}.`,
         `The file ${confirmEnrolmentResponseFile} has been deleted after processing.`,
         "Total file parsing errors: 1",
+        "Total detail records found: 0",
         "Total disbursements found: 0",
         "Disbursements successfully updated: 0",
         "Disbursements skipped to be processed: 0",
@@ -543,6 +551,7 @@ describe(
         `Starting download of file ${confirmEnrolmentResponseFile}.`,
         `The file ${confirmEnrolmentResponseFile} has been deleted after processing.`,
         "Total file parsing errors: 1",
+        "Total detail records found: 0",
         "Total disbursements found: 0",
         "Disbursements successfully updated: 0",
         "Disbursements skipped to be processed: 0",
@@ -592,7 +601,8 @@ describe(
         `Starting download of file ${confirmEnrolmentResponseFile}.`,
         `The file ${confirmEnrolmentResponseFile} has been deleted after processing.`,
         "Total file parsing errors: 1",
-        "Total disbursements found: 1",
+        "Total detail records found: 1",
+        "Total disbursements found: 0",
         "Disbursements successfully updated: 0",
         "Disbursements skipped to be processed: 0",
         "Disbursements considered duplicate and skipped: 0",
@@ -643,11 +653,17 @@ describe(
         sftpClientMock,
         [ECE_RESPONSE_FILE_NAME],
         (fileContent: string) => {
-          return fileContent
-            .replace("DISBNUMBER", disbursement.id.toString().padStart(10, "0"))
-            .replace("APPLNUMBER", application.applicationNumber)
-            .replace("ENRLDATE", formatDate(new Date(), "YYYYMMDD"))
-            .replace("Y20230418N", "K20230418N");
+          return (
+            fileContent
+              .replace(
+                "DISBNUMBER",
+                disbursement.id.toString().padStart(10, "0"),
+              )
+              .replace("APPLNUMBER", application.applicationNumber)
+              .replace("ENRLDATE", formatDate(new Date(), "YYYYMMDD"))
+              // Replacing Y with K. As Y is present in other places using a pattern.
+              .replace("Y20230418N", "K20230418N")
+          );
         },
       );
 
@@ -661,6 +677,7 @@ describe(
         `Disbursement ${disbursement.id}, enrolment confirmed.`,
         `The file ${confirmEnrolmentResponseFile} has been deleted after processing.`,
         "Total file parsing errors: 0",
+        "Total detail records found: 2",
         "Total disbursements found: 2",
         "Disbursements successfully updated: 1",
         "Disbursements skipped to be processed: 0",
@@ -710,11 +727,17 @@ describe(
         sftpClientMock,
         [ECE_RESPONSE_FILE_NAME],
         (fileContent: string) => {
-          return fileContent
-            .replace("DISBNUMBER", disbursement.id.toString().padStart(10, "0"))
-            .replace("APPLNUMBER", application.applicationNumber)
-            .replace("ENRLDATE", formatDate(new Date(), "YYYYMMDD"))
-            .replace("Y20230418N000000", "YNOTADATENNANNUM");
+          return (
+            fileContent
+              .replace(
+                "DISBNUMBER",
+                disbursement.id.toString().padStart(10, "0"),
+              )
+              .replace("APPLNUMBER", application.applicationNumber)
+              .replace("ENRLDATE", formatDate(new Date(), "YYYYMMDD"))
+              // Replacing date 20230418 and amount 000000 with invalid data.
+              .replace("Y20230418N000000", "YNOTADATENNANNUM")
+          );
         },
       );
 
@@ -728,6 +751,7 @@ describe(
         `Disbursement ${disbursement.id}, enrolment confirmed.`,
         `The file ${confirmEnrolmentResponseFile} has been deleted after processing.`,
         "Total file parsing errors: 0",
+        "Total detail records found: 2",
         "Total disbursements found: 2",
         "Disbursements successfully updated: 1",
         "Disbursements skipped to be processed: 0",
@@ -781,7 +805,10 @@ describe(
             .replace("APPLNUMBER", application.applicationNumber)
             .replace(
               "ENRLDATE",
-              formatDate(addDays(-23, disbursementDate), "YYYYMMDD"),
+              formatDate(
+                addDays(-(COE_WINDOW + 2), disbursementDate),
+                "YYYYMMDD",
+              ),
             );
         },
       );
@@ -795,6 +822,7 @@ describe(
         `Starting download of file ${confirmEnrolmentResponseFile}.`,
         `The file ${confirmEnrolmentResponseFile} has been deleted after processing.`,
         "Total file parsing errors: 0",
+        "Total detail records found: 2",
         "Total disbursements found: 2",
         "Disbursements successfully updated: 0",
         "Disbursements skipped to be processed: 1",
@@ -866,6 +894,7 @@ describe(
         `Starting download of file ${confirmEnrolmentResponseFile}.`,
         `The file ${confirmEnrolmentResponseFile} has been deleted after processing.`,
         "Total file parsing errors: 0",
+        "Total detail records found: 2",
         "Total disbursements found: 2",
         "Disbursements successfully updated: 0",
         "Disbursements skipped to be processed: 1",

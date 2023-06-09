@@ -65,10 +65,11 @@ export class InstitutionLocation extends RecordDataModel {
   /**
    * Contacts who receive notification email on integration file processing.
    */
-  @Column("varchar", {
+  @Column({
     name: "integration_contacts",
     nullable: true,
     array: true,
+    type: "varchar",
   })
   integrationContacts?: string[];
 }

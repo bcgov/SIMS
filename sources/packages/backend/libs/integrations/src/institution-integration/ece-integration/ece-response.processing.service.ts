@@ -112,9 +112,8 @@ export class ECEResponseProcessingService {
         this.logger.log(warningMessage);
         return processSummary;
       }
-      // Set the total disbursements count.
-      disbursementProcessingDetails.totalDisbursements =
-        eceFileDetailRecords.length;
+      // Set the total records count.
+      disbursementProcessingDetails.totalRecords = eceFileDetailRecords.length;
       // Sanitize all the ece response detail records.
       this.sanitizeDisbursements(
         eceFileDetailRecords,
@@ -160,6 +159,9 @@ export class ECEResponseProcessingService {
     // Populate the process summary count.
     processSummary.summary.push(
       `Total file parsing errors: ${disbursementProcessingDetails.fileParsingErrors}`,
+    );
+    processSummary.summary.push(
+      `Total detail records found: ${disbursementProcessingDetails.totalRecords}`,
     );
     processSummary.summary.push(
       `Total disbursements found: ${disbursementProcessingDetails.totalDisbursements}`,
@@ -250,6 +252,7 @@ export class ECEResponseProcessingService {
     disbursementProcessingDetails: DisbursementProcessingDetails,
   ): Promise<DisbursementProcessingDetails> {
     const disbursementSchedules = Object.entries(disbursements);
+    // Total disbursements.
     disbursementProcessingDetails.totalDisbursements =
       disbursementSchedules.length;
     for (const [
