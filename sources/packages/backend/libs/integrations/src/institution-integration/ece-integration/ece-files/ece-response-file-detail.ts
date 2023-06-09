@@ -1,7 +1,10 @@
 import { getDateOnlyFromFormat } from "@sims/utilities";
 import { ECEResponseFileRecord } from "./ece-response-file-record";
-import { DATE_FORMAT, RecordTypeCodes } from "../models/ece-integration.model";
-import { YNOptions } from "@sims/integrations/models";
+import {
+  DATE_FORMAT,
+  RecordTypeCodes,
+  YNOptions,
+} from "../models/ece-integration.model";
 
 /**
  * ECE response file detail.

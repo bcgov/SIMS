@@ -6,7 +6,7 @@ import {
   ConfigService,
   InstitutionIntegrationConfig,
 } from "@sims/utilities/config";
-import { ProcessSummaryResult, YNOptions } from "@sims/integrations/models";
+import { ProcessSummaryResult } from "@sims/integrations/models";
 import {
   ECE_RESPONSE_COE_DECLINED_REASON,
   ECE_RESPONSE_FILE_NAME,
@@ -22,6 +22,7 @@ import {
   DisbursementDetails,
   DisbursementProcessingDetails,
   ECEDisbursements,
+  YNOptions,
 } from "./models/ece-integration.model";
 import {
   ConfirmationOfEnrollmentService,

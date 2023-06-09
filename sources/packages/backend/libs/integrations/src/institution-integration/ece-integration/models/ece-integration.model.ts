@@ -1,4 +1,3 @@
-import { YNOptions } from "@sims/integrations/models";
 import { DisbursementValue } from "@sims/sims-db";
 
 export const ECE_SENT_TITLE = "CONFIRMATION REQUEST";
@@ -62,4 +61,12 @@ export class DisbursementProcessingDetails {
   disbursementsSkipped = 0;
   duplicateDisbursements = 0;
   disbursementsFailedToProcess = 0;
+}
+
+/**
+ * Single character Yes | No option.
+ */
+export enum YNOptions {
+  Y = "Y",
+  N = "N",
 }

@@ -15,11 +15,3 @@ export class ProcessSummaryResult {
    */
   errors: string[] = [];
 }
-
-/**
- * Single character Yes | No option.
- */
-export enum YNOptions {
-  Y = "Y",
-  N = "N",
-}
