@@ -12,6 +12,18 @@ on:
         description: "Environment"
         required: true
         type: environment
+      deployWebAndAPI:
+        description: "Deploy SIMS-API and Web"
+        type: boolean
+        default: true
+      deployQueueConsumers:
+        description: "Deploy Queue Consumers"
+        type: boolean
+        default: true
+      deployWorkflowWorkers:
+        description: "Deploy Workflow Workers"
+        type: boolean
+        default: true
       deployCamundaDefinitions:
         description: "Deploy Camunda BPMN/DMN from main"
         type: boolean
@@ -120,6 +132,7 @@ jobs:
 
   # Deploy SIMS API.
   deploy-sims-api:
+    if: ${{ inputs.deployWebAndAPI }}
     name: Deploy SIMS-API
     environment: ${{ inputs.environment }}
     runs-on: ubuntu-latest
@@ -148,6 +161,7 @@ jobs:
 
   # Deploy workers.
   deploy-workers:
+    if: ${{ inputs.deployWorkflowWorkers }}
     name: Deploy Workers
     environment: ${{ inputs.environment }}
     runs-on: ubuntu-latest
@@ -176,6 +190,7 @@ jobs:
 
   # Deploy queue consumers.
   deploy-queue-consumers:
+    if: ${{ inputs.deployQueueConsumers }}
     name: Deploy Queue Consumers
     environment: ${{ inputs.environment }}
     runs-on: ubuntu-latest
@@ -204,6 +219,7 @@ jobs:
 
   # Deploy Web/Frontend.
   deploy-web-frontend:
+    if: ${{ inputs.deployWebAndAPI }}
     name: Deploy Web/Frontend
     environment: ${{ inputs.environment }}
     runs-on: ubuntu-latest
