@@ -1,6 +1,8 @@
 name: Release - Deploy
 run-name: Release - Deploy ${{ inputs.gitRef }} to ${{ inputs.environment }} (${{ ((inputs.deployDBMigrations && inputs.deployWeb && inputs.deploySIMSAPI && inputs.deployQueueConsumers && inputs.deployWorkflowWorkers && inputs.deployCamundaDefinitions && inputs.deployFormioDefinitions) && 'Complete deploy') || 'Partial deploy' }})
 
+concurrency: ensure-single-deployment
+
 on:
   workflow_dispatch:
     inputs:
@@ -129,7 +131,6 @@ env:
 jobs:
   inputs:
     name: Log deploy inputs
-    concurrency: ${{ inputs.environment }}
     runs-on: ubuntu-latest
     steps:
       - name: Log
@@ -148,7 +149,6 @@ jobs:
   run-db-migrations:
     if: ${{ inputs.deployDBMigrations}}
     name: Run db-migrations
-    concurrency: ${{ inputs.environment }}
     environment: ${{ inputs.environment }}
     runs-on: ubuntu-latest
     steps:
@@ -177,7 +177,6 @@ jobs:
   deploy-sims-api:
     if: ${{ always() && inputs.deploySIMSAPI && (needs.run-db-migrations.result == 'success' || needs.run-db-migrations.result == 'skipped')  }}
     name: Deploy SIMS-API
-    concurrency: ${{ inputs.environment }}
     environment: ${{ inputs.environment }}
     runs-on: ubuntu-latest
     needs: run-db-migrations
@@ -207,7 +206,6 @@ jobs:
   deploy-workers:
     if: ${{ always() && inputs.deployWorkflowWorkers && (needs.run-db-migrations.result == 'success' || needs.run-db-migrations.result == 'skipped')  }}
     name: Deploy Workers
-    concurrency: ${{ inputs.environment }}
     environment: ${{ inputs.environment }}
     runs-on: ubuntu-latest
     needs: run-db-migrations
@@ -237,7 +235,6 @@ jobs:
   deploy-queue-consumers:
     if: ${{ always() && inputs.deployQueueConsumers && (needs.run-db-migrations.result == 'success' || needs.run-db-migrations.result == 'skipped')  }}
     name: Deploy Queue Consumers
-    concurrency: ${{ inputs.environment }}
     environment: ${{ inputs.environment }}
     runs-on: ubuntu-latest
     needs: run-db-migrations
@@ -267,7 +264,6 @@ jobs:
   deploy-web-frontend:
     if: ${{ always() && inputs.deployWeb && (needs.run-db-migrations.result == 'success' || needs.run-db-migrations.result == 'skipped')  }}
     name: Deploy Web/Frontend
-    concurrency: ${{ inputs.environment }}
     environment: ${{ inputs.environment }}
     runs-on: ubuntu-latest
     needs: run-db-migrations
@@ -297,7 +293,6 @@ jobs:
   deployCamundaDefinitions:
     if: ${{ always() && inputs.deployCamundaDefinitions && (needs.deploy-sims-api.result == 'success' || needs.deploy-sims-api.result == 'skipped')  }}
     name: Deploy BPMNs and DMNs to Camunda
-    concurrency: ${{ inputs.environment }}
     needs: deploy-sims-api
     uses: ./.github/workflows/release-deploy-camunda-definitions.yml
     with:
@@ -309,7 +304,6 @@ jobs:
   deployFormioDefinitions:
     if: ${{ always() && inputs.deployFormioDefinitions && (needs.deploy-sims-api.result == 'success' || needs.deploy-sims-api.result == 'skipped')  }}
     name: Deploy Form.io definitions
-    concurrency: ${{ inputs.environment }}
     needs: deploy-sims-api
     uses: ./.github/workflows/release-deploy-formio-definitions.yml
     with:
