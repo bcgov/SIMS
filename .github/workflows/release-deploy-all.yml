@@ -1,6 +1,8 @@
 name: Release - Deploy
 run-name: Release - Deploy ${{ inputs.gitRef }} to ${{ inputs.environment }} (${{ ((inputs.deployDBMigrations && inputs.deployWeb && inputs.deploySIMSAPI && inputs.deployQueueConsumers && inputs.deployWorkflowWorkers && inputs.deployCamundaDefinitions && inputs.deployFormioDefinitions) && 'Complete deploy') || 'Partial deploy' }})
 
+concurrency: ${{ inputs.environment }}
+
 on:
   workflow_dispatch:
     inputs:
