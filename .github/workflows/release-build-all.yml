@@ -197,7 +197,7 @@ jobs:
       gitRef: ${{ needs.createTag.outputs.newTag }}
       deployDBMigrations: true
       deployWeb: true
-      deploySIMAPI: true
+      deploySIMSAPI: true
       deployQueueConsumers: true
       deployWorkflowWorkers: true
       deployCamundaDefinitions: true

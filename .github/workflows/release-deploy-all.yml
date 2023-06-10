@@ -1,5 +1,5 @@
 name: Release - Deploy
-run-name: Release - Deploy ${{ inputs.gitRef }} to ${{ inputs.environment }} (${{ ((inputs.deployDBMigrations && inputs.deployWeb && inputs.deploySIMAPI && inputs.deployQueueConsumers && inputs.deployWorkflowWorkers && inputs.deployCamundaDefinitions && inputs.deployFormioDefinitions) && 'Complete deploy') || 'Partial deploy' }})
+run-name: Release - Deploy ${{ inputs.gitRef }} to ${{ inputs.environment }} (${{ ((inputs.deployDBMigrations && inputs.deployWeb && inputs.deploySIMSAPI && inputs.deployQueueConsumers && inputs.deployWorkflowWorkers && inputs.deployCamundaDefinitions && inputs.deployFormioDefinitions) && 'Complete deploy') || 'Partial deploy' }})
 
 on:
   workflow_dispatch:
@@ -20,7 +20,7 @@ on:
         description: "Deploy Web"
         type: boolean
         default: true
-      deploySIMAPI:
+      deploySIMSAPI:
         description: "Deploy SIMS-API"
         type: boolean
         default: true
@@ -54,7 +54,7 @@ on:
       deployWeb:
         description: "Deploy Web"
         type: boolean
-      deploySIMAPI:
+      deploySIMSAPI:
         description: "Deploy SIMS-API"
         type: boolean
       deployQueueConsumers:
@@ -133,7 +133,16 @@ jobs:
     steps:
       - name: Log
         run: |
-          echo workflow inputs: ${{ toJson(inputs) }}
+          echo Git Tag: ${{ inputs.gitRef }}
+          echo Environment: ${{ inputs.environment }}
+          echo Deploy Database: ${{ inputs.deployDBMigrations }}
+          echo Deploy Web: ${{ inputs.deployWeb }}
+          echo Deploy SIMS-API: ${{ inputs.deploySIMSAPI }}
+          echo Deploy Queue Consumers: ${{ inputs.deployQueueConsumers }}
+          echo Deploy Workflow Workers: ${{ inputs.deployWorkflowWorkers }}
+          echo Deploy Camunda BPMN/DMN: ${{ inputs.deployCamundaDefinitions }}
+          echo Deploy Form.io forms: ${{ inputs.deployFormioDefinitions }}
+
   # Run DB migrations.
   run-db-migrations:
     if: ${{ inputs.deployDBMigrations}}
@@ -164,7 +173,7 @@ jobs:
 
   # Deploy SIMS API.
   deploy-sims-api:
-    if: ${{ always() && inputs.deploySIMAPI && (needs.run-db-migrations.result == 'success' || needs.run-db-migrations.result == 'skipped')  }}
+    if: ${{ always() && inputs.deploySIMSAPI && (needs.run-db-migrations.result == 'success' || needs.run-db-migrations.result == 'skipped')  }}
     name: Deploy SIMS-API
     environment: ${{ inputs.environment }}
     runs-on: ubuntu-latest
