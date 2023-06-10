@@ -1,5 +1,5 @@
 name: Release - Deploy
-run-name: Release - Deploy ${{ inputs.gitRef }} to ${{ inputs.environment }}
+run-name: Release - Deploy ${{ inputs.gitRef }} to ${{ inputs.environment }} (${{ ((inputs.deployDBMigrations && inputs.deployWeb && inputs.deploySIMAPI && inputs.deployQueueConsumers && inputs.deployWorkflowWorkers && inputs.deployCamundaDefinitions && inputs.deployFormioDefinitions) && 'Complete deploy') || 'Partial deploy' }})
 
 on:
   workflow_dispatch:
@@ -127,6 +127,13 @@ env:
   DATABASE_NAME_KEY: ${{ secrets.DATABASE_NAME_KEY }}
 
 jobs:
+  inputs:
+    name: Log deploy inputs
+    runs-on: ubuntu-latest
+    steps:
+      - name: Log
+        run: |
+          echo workflow inputs: ${{ toJson(inputs) }}
   # Run DB migrations.
   run-db-migrations:
     if: ${{ inputs.deployDBMigrations}}
