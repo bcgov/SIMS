@@ -8,3 +8,4 @@ export * from "./esdc-utils";
 export * from "./sqlLoader";
 export * from "./parallel-processing-utils";
 export * from "./datatable-config";
+export * from "./base64-utils";

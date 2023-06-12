@@ -1,6 +1,10 @@
 import { HttpStatus, Injectable } from "@nestjs/common";
 import axios, { AxiosError } from "axios";
-import { GCNotifyErrorResponse, GCNotifyResult } from "./gc-notify.model";
+import {
+  EmailMessage,
+  GCNotifyErrorResponse,
+  GCNotifyResult,
+} from "./gc-notify.model";
 import { LoggerService, InjectLogger } from "@sims/utilities/logger";
 import { ConfigService, GCNotify } from "@sims/utilities/config";
 import { CustomNamedError } from "@sims/utilities";
@@ -19,10 +23,10 @@ export class GCNotifyService {
 
   /**
    * Send email notification by passing the requestPayload.
-   * @param payload
+   * @param payload email message payload.
    * @returns GC Notify API call response.
    */
-  async sendEmailNotification(payload: unknown): Promise<GCNotifyResult> {
+  async sendEmailNotification(payload: EmailMessage): Promise<GCNotifyResult> {
     try {
       const response = await axios.post(this.gcNotifyConfig.url, payload, {
         headers: {

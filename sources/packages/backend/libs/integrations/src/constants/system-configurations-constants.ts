@@ -15,3 +15,9 @@ export const ECE_RESPONSE_FILE_NAME = "CONR_008.TXT";
  */
 export const ECE_RESPONSE_COE_DECLINED_REASON =
   "A reason was not provided by your institution. Please speak to your Financial Aid Officer at your institution for details.";
+
+/**
+ * Name of the email attachment file sent in ECE Response processing notification.
+ */
+export const ECE_RESPONSE_ATTACHMENT_FILE_NAME =
+  "processing_summary_report.txt";

@@ -40,3 +40,16 @@ export interface NotificationProcessingSummary {
   notificationsProcessed: number;
   notificationsSuccessfullyProcessed: number;
 }
+
+export interface ECEResponseFileProcessingNotification {
+  institutionCode: string;
+  integrationContacts: string;
+  fileParsingErrors: number;
+  totalRecords: number;
+  totalDisbursements: number;
+  disbursementsSuccessfullyProcessed: number;
+  disbursementsSkipped: number;
+  duplicateDisbursements: number;
+  disbursementsFailedToProcess: number;
+  attachmentFileContent: string;
+}
