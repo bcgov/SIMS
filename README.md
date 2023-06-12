@@ -23,7 +23,7 @@ High, new features released weekly
 - [Technologies Overview](./docs/technologies-overview.md)
 - [BCeID-Web Service Integration](./docs/bceid-webservice-integration.md)
 - How To
-  - [DevOps](./docs/howto/devops.md)
+  - [DevOps](https://github.com/bcgov/SIMS/wiki/DevOps-and-Running-the-Application#devops)
   - [Database Migration](./docs/howto/db-migration.md)
   - [Keycloak Configuration](./docs/hotwot/keycloak-config.md)
 
