@@ -109,13 +109,16 @@ export class MSFAANumberSharedService {
    * @param offeringIntensity offering intensity.
    * @param auditUserId user that should be considered the one that is causing the changes.
    * individually based on, for instance, the Part time/Full time.
+   * @params options.
+   * - `msfaaNumber` reactivated msfaaNumber.
    * @returns created MSFAA record.
    */
-  private async internalCreateMSFAANumber(
+  public async internalCreateMSFAANumber(
     studentId: number,
     referenceApplicationId: number,
     offeringIntensity: OfferingIntensity,
     auditUserId: number,
+    options?: { msfaaNumber?: MSFAANumber },
   ): Promise<MSFAANumber> {
     return this.dataSource.transaction(async (entityManager) => {
       const auditUser = await this.systemUsersService.systemUser();
@@ -136,19 +139,26 @@ export class MSFAANumberSharedService {
           updatedAt: now,
         },
       );
-      // Create the new MSFAA record for the student.
-      const newMSFAANumber = new MSFAANumber();
-      newMSFAANumber.msfaaNumber = await this.consumeNextSequence(
-        offeringIntensity,
-      );
-      newMSFAANumber.student = { id: studentId } as Student;
-      newMSFAANumber.referenceApplication = {
-        id: referenceApplicationId,
-      } as Application;
-      newMSFAANumber.offeringIntensity = offeringIntensity;
-      newMSFAANumber.creator = { id: auditUserId } as User;
-      newMSFAANumber.createdAt = now;
-      await entityManager.getRepository(MSFAANumber).save(newMSFAANumber);
+      let newMSFAANumber: MSFAANumber = null;
+      // There is not a MSFAA number to be re-activated.
+      if (!options?.msfaaNumber) {
+        // Create the new MSFAA record for the student.
+        newMSFAANumber = new MSFAANumber();
+        newMSFAANumber.msfaaNumber = await this.consumeNextSequence(
+          offeringIntensity,
+        );
+        newMSFAANumber.student = { id: studentId } as Student;
+        newMSFAANumber.referenceApplication = {
+          id: referenceApplicationId,
+        } as Application;
+        newMSFAANumber.offeringIntensity = offeringIntensity;
+        newMSFAANumber.creator = { id: auditUserId } as User;
+        newMSFAANumber.createdAt = now;
+        await entityManager.getRepository(MSFAANumber).save(newMSFAANumber);
+      } else {
+        // The reactivated msfaaNumber.
+        newMSFAANumber = options?.msfaaNumber;
+      }
       // Associate pending disbursements with the new MSFAA.
       const disbursementScheduleRepo =
         entityManager.getRepository(DisbursementSchedule);
@@ -168,7 +178,7 @@ export class MSFAANumberSharedService {
         (schedule) => schedule.id,
       );
       if (schedulesIdsToUpdate.length) {
-        disbursementScheduleRepo.update(schedulesIdsToUpdate, {
+        await disbursementScheduleRepo.update(schedulesIdsToUpdate, {
           msfaaNumber: newMSFAANumber,
           modifier: auditUser,
           updatedAt: now,

@@ -1,27 +1,5 @@
 import { OfferingIntensity, RelationshipStatus } from "@sims/sims-db";
-
-/**
- * Values part of an MSFAA file record.
- */
-export interface MSFAATestInputData {
-  msfaaNumber: string;
-  sin: string;
-  institutionCode: string;
-  birthDate: string;
-  surname: string;
-  givenName: string;
-  gender: string;
-  maritalStatus: RelationshipStatus;
-  addressLine1: string;
-  addressLine2: string;
-  city: string;
-  provinceState: string;
-  postalCode: string;
-  country: string;
-  phone: string;
-  email: string;
-  offeringIntensity: OfferingIntensity;
-}
+import { MSFAATestInputData } from "./msfaa-helper";
 
 export const MSFAA_PART_TIME_MARRIED: MSFAATestInputData = {
   msfaaNumber: "1000",

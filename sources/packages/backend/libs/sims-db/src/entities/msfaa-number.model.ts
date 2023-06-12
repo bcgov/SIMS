@@ -93,6 +93,7 @@ export class MSFAANumber extends RecordDataModel {
    * Student id related to this MSFAA.
    */
   @RelationId((msfaaNumber: MSFAANumber) => msfaaNumber.student)
+  @Column({ name: "student_id" })
   studentId: number;
   /**
    * Student related to this MSFAA.
@@ -103,6 +104,12 @@ export class MSFAANumber extends RecordDataModel {
     referencedColumnName: ColumnNames.ID,
   })
   student: Student;
+  /**
+   * ApplicationId related to this MSFAA.
+   */
+  @RelationId((msfaaNumber: MSFAANumber) => msfaaNumber.referenceApplication)
+  @Column({ name: "reference_application_id" })
+  referenceApplicationId: number;
   /**
    * Application that creates the MSFAA Number.
    */

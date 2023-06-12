@@ -31,6 +31,7 @@ export enum MSFAAStates {
  * an MSFAA can have for the different scenarios along its lifetime. More than one
  * state can be combined, for instance, to create a signed MSFAA that was also
  * cancelled.
+ * - `offeringIntensity` offeringIntensity associated with the MSFAANumber.
  * @returns MSFAA number record ready to be saved.
  */
 export function createFakeMSFAANumber(
@@ -40,12 +41,14 @@ export function createFakeMSFAANumber(
   },
   options?: {
     state?: MSFAAStates;
+    offeringIntensity?: OfferingIntensity;
   },
 ): MSFAANumber {
   const now = new Date();
   const dateOnly = getISODateOnlyString(now);
   const msfaaNumber = new MSFAANumber();
-  msfaaNumber.offeringIntensity = OfferingIntensity.fullTime;
+  msfaaNumber.offeringIntensity =
+    options?.offeringIntensity ?? OfferingIntensity.fullTime;
   msfaaNumber.student = relations.student;
   msfaaNumber.referenceApplication = relations?.referenceApplication;
   msfaaNumber.msfaaNumber = faker.random

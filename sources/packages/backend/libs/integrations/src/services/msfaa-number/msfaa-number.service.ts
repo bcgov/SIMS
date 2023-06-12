@@ -6,6 +6,7 @@ import {
   OfferingIntensity,
 } from "@sims/sims-db";
 import { getISODateOnlyString } from "@sims/utilities";
+import { MSFAANumberSharedService, SystemUsersService } from "@sims/services";
 
 /**
  * Service layer for MSFAA (Master Student Financial Aid Agreement)
@@ -13,7 +14,11 @@ import { getISODateOnlyString } from "@sims/utilities";
  */
 @Injectable()
 export class MSFAANumberService extends RecordDataModelService<MSFAANumber> {
-  constructor(dataSource: DataSource) {
+  constructor(
+    dataSource: DataSource,
+    private readonly msfaaNumberSharedService: MSFAANumberSharedService,
+    private readonly systemUsersService: SystemUsersService,
+  ) {
     super(dataSource.getRepository(MSFAANumber));
   }
 
@@ -93,12 +98,12 @@ export class MSFAANumberService extends RecordDataModelService<MSFAANumber> {
    * MSFAA received on the database with the
    * information received. If the information was already received
    * the record will not be updated.
-   * @param msfaaNumber MSFAA number
-   * @param dateSigned date in which the borrower indicated the MSFAA was signed
-   * @param serviceProviderReceivedDate date in which the MSFAA was received by/resolve from CanadaPost/Kiosk
+   * @param msfaaNumber MSFAA number.
+   * @param dateSigned date in which the borrower indicated the MSFAA was signed.
+   * @param serviceProviderReceivedDate date in which the MSFAA was received by/resolve from CanadaPost/Kiosk.
    * @returns update result. Only one row is supposed to be affected.
    */
-  async updateReceivedFile(
+  async updateReceivedRecord(
     msfaaNumber: string,
     dateSigned: Date,
     serviceProviderReceivedDate: Date,
@@ -108,10 +113,38 @@ export class MSFAANumberService extends RecordDataModelService<MSFAANumber> {
         "Not all required fields to update a received MSFAA record were provided.",
       );
     }
-
+    // Check if the msfaa number needs to be reactivated or simply updated with a signed date.
+    const retrievedMSFAARecord = await this.repo.findOne({
+      select: {
+        id: true,
+        studentId: true,
+        referenceApplicationId: true,
+        cancelledDate: true,
+        dateSigned: true,
+        offeringIntensity: true,
+      },
+      where: {
+        msfaaNumber,
+      },
+    });
+    if (
+      !retrievedMSFAARecord.dateSigned &&
+      retrievedMSFAARecord.cancelledDate
+    ) {
+      // This msfaa number was originally cancelled and is being reactivated now. Re-associate all disbursements pending e-cert generation for the same offering intensity with this msfaa number.
+      await this.msfaaNumberSharedService.internalCreateMSFAANumber(
+        retrievedMSFAARecord.studentId,
+        retrievedMSFAARecord.referenceApplicationId,
+        retrievedMSFAARecord.offeringIntensity,
+        (
+          await this.systemUsersService.systemUser()
+        ).id,
+        { msfaaNumber: { id: retrievedMSFAARecord.id } as MSFAANumber },
+      );
+    }
     return this.repo.update(
       {
-        msfaaNumber: msfaaNumber,
+        msfaaNumber,
         dateSigned: IsNull(),
         serviceProviderReceivedDate: IsNull(),
       },
@@ -120,6 +153,8 @@ export class MSFAANumberService extends RecordDataModelService<MSFAANumber> {
         serviceProviderReceivedDate: getISODateOnlyString(
           serviceProviderReceivedDate,
         ),
+        cancelledDate: null,
+        newIssuingProvince: null,
       },
     );
   }

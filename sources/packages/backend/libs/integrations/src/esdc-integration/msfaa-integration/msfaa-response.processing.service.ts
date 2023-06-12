@@ -118,7 +118,7 @@ export class MSFAAResponseProcessingService {
     // The update of msfaa always comes from an external source through integration.
     // Hence the date fields are parsed as date object from external source as their date format
     // may not be necessarily ISO date format.
-    const updateResult = await this.msfaaNumberService.updateReceivedFile(
+    const updateResult = await this.msfaaNumberService.updateReceivedRecord(
       receivedRecord.msfaaNumber,
       receivedRecord.borrowerSignedDate,
       receivedRecord.serviceProviderReceivedDate,
