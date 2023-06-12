@@ -54,7 +54,7 @@ export interface EmailMessage {
       | number
       | {
           file: string;
-          fileName: string;
+          filename: string;
           sending_method: "attach" | "link";
         };
   };

@@ -19,6 +19,7 @@ import { GCNotifyService } from "./gc-notify.service";
 import { NotificationService } from "./notification.service";
 import { InjectLogger, LoggerService } from "@sims/utilities/logger";
 import { ECE_RESPONSE_ATTACHMENT_FILE_NAME } from "@sims/integrations/constants";
+import { SystemUsersService } from "@sims/services/system-users";
 
 @Injectable()
 export class NotificationActionsService {
@@ -26,6 +27,7 @@ export class NotificationActionsService {
     private readonly gcNotifyService: GCNotifyService,
     private readonly notificationService: NotificationService,
     private readonly notificationMessageService: NotificationMessageService,
+    private readonly systemUsersService: SystemUsersService,
   ) {}
 
   /**
@@ -416,12 +418,11 @@ export class NotificationActionsService {
    * can be multiple.
    * TODO: Use email bulk send in GC Notify when bulk send email is available.
    * @param notification notification.
-   * @param auditUserId user who creates notification.
    */
   async saveECEResponseFileProcessingNotification(
     notification: ECEResponseFileProcessingNotification,
-    auditUserId: number,
   ): Promise<void> {
+    const auditUser = await this.systemUsersService.systemUser();
     const templateId = await this.notificationMessageService.getTemplateId(
       NotificationMessageType.ECEResponseFileProcessing,
     );
@@ -432,6 +433,8 @@ export class NotificationActionsService {
         email_address: integrationContact,
         template_id: templateId,
         personalisation: {
+          date: this.getDateTimeOnPSTTimeZone(),
+          institutionCode: notification.institutionCode,
           fileParsingErrors: notification.fileParsingErrors,
           totalRecords: notification.totalRecords,
           totalDisbursements: notification.totalDisbursements,
@@ -443,7 +446,7 @@ export class NotificationActionsService {
             notification.disbursementsFailedToProcess,
           application_file: {
             file: base64Encode(notification.attachmentFileContent),
-            fileName: ECE_RESPONSE_ATTACHMENT_FILE_NAME,
+            filename: ECE_RESPONSE_ATTACHMENT_FILE_NAME,
             sending_method: "attach",
           },
         },
@@ -458,7 +461,7 @@ export class NotificationActionsService {
     }
     await this.notificationService.saveNotifications(
       eceResponseFileProcessingNotifications,
-      auditUserId,
+      auditUser.id,
     );
   }
 

@@ -43,7 +43,7 @@ export interface NotificationProcessingSummary {
 
 export interface ECEResponseFileProcessingNotification {
   institutionCode: string;
-  integrationContacts: string;
+  integrationContacts: string[];
   fileParsingErrors: number;
   totalRecords: number;
   totalDisbursements: number;
