@@ -189,7 +189,6 @@ describe(
       //Now reactivate the cancelled MSFAA
       const processResult = await processor.processMSFAA(job);
       // Assert
-      console.log(processResult);
       expect(processResult).toStrictEqual([
         {
           processSummary: [
