@@ -25,7 +25,7 @@ High, new features released weekly
 - How To
   - [DevOps](https://github.com/bcgov/SIMS/wiki/DevOps-and-Running-the-Application#devops)
   - [Database Migration](./docs/howto/db-migration.md)
-  - [Keycloak Configuration](./docs/hotwot/keycloak-config.md)
+  - [Keycloak Configuration](https://github.com/bcgov/SIMS/wiki/Keycloak-Config)
 
 ## License
 
