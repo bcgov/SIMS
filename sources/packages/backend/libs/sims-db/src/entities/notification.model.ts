@@ -128,4 +128,8 @@ export enum NotificationMessageType {
    * SIN Validation complete.
    */
   SINValidationComplete = 10,
+  /**
+   * ECE response file processing details.
+   */
+  ECEResponseFileProcessing = 11,
 }

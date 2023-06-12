@@ -36,6 +36,7 @@
     </template>
   </appeal-requests-approval-form>
 </template>
+
 <script lang="ts">
 import { ref, onMounted, computed, defineComponent, PropType } from "vue";
 import { RouteLocationRaw, useRouter } from "vue-router";
@@ -86,12 +87,17 @@ export default defineComponent({
       required: false,
       default: false,
     },
+    applicationId: {
+      type: Number,
+      required: false,
+    },
   },
   setup(props) {
     const router = useRouter();
     const { dateOnlyLongString } = useFormatters();
     const studentAppealRequests = ref([] as StudentAppealRequest[]);
     const appealStatus = ref(StudentAppealStatus.Pending);
+
     const readOnly = computed(
       () =>
         appealStatus.value !== StudentAppealStatus.Pending ||
@@ -103,6 +109,7 @@ export default defineComponent({
         await StudentAppealService.shared.getStudentAppealWithRequests<DetailedStudentAppealRequestAPIOutDTO>(
           props.appealId,
           props.studentId,
+          props.applicationId,
         );
       studentAppealRequests.value = appeal.appealRequests.map((request) => ({
         id: request.id,

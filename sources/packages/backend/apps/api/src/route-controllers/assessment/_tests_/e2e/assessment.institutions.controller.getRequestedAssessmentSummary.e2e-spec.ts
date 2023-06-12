@@ -29,17 +29,24 @@ import {
   StudentAppealStatus,
 } from "@sims/sims-db";
 import { saveStudentApplicationForCollegeC } from "../../../student/_tests_/e2e/student.institutions.utils";
+import { createFakeOfferingRequestChange } from "@sims/test-utils/factories/offering-change-request";
+import { TestingModule } from "@nestjs/testing";
+import { EducationProgramOfferingService } from "../../../../../src/services";
 
 describe("AssessmentInstitutionsController(e2e)-getRequestedAssessmentSummary", () => {
   let app: INestApplication;
   let db: E2EDataSources;
   let collegeF: Institution;
   let collegeFLocation: InstitutionLocation;
+  let appModule: TestingModule;
 
   beforeAll(async () => {
-    const { nestApplication, dataSource } = await createTestingAppModule();
+    const { nestApplication, module, dataSource } =
+      await createTestingAppModule();
     app = nestApplication;
+    appModule = module;
     db = createE2EDataSources(dataSource);
+
     // College F.
     const { institution: collegeF } = await getAuthRelatedEntities(
       db.dataSource,
@@ -105,6 +112,72 @@ describe("AssessmentInstitutionsController(e2e)-getRequestedAssessmentSummary", 
         },
       ]);
   });
+
+  it(
+    "Should not get the 'offering change' assessment requests details in the request summary " +
+      "for an eligible application when an eligible public institution user tries to access it and " +
+      "student offering change is pending with the ministry.",
+    async () => {
+      // Arrange
+
+      // Student has an application to the institution.
+      const student = await saveFakeStudent(db.dataSource);
+
+      const currentMSFAA = createFakeMSFAANumber(
+        { student },
+        {
+          state: MSFAAStates.Signed,
+        },
+      );
+      await db.msfaaNumber.save(currentMSFAA);
+      const application = await saveFakeApplicationDisbursements(
+        db.dataSource,
+        {
+          institution: collegeF,
+          institutionLocation: collegeFLocation,
+          student,
+          msfaaNumber: currentMSFAA,
+        },
+        { applicationStatus: ApplicationStatus.Completed },
+      );
+
+      // Create pending offering change.
+      const offeringRequestOfferings = createFakeOfferingRequestChange({
+        currentOffering: application.currentAssessment.offering,
+      });
+      const [, requestedOffering] = await db.educationProgramOffering.save(
+        offeringRequestOfferings,
+      );
+      const endpoint = `/institutions/assessment/student/${student.id}/application/${application.id}/requests`;
+      const institutionUserToken = await getInstitutionToken(
+        InstitutionTokenTypes.CollegeFUser,
+      );
+
+      // Act/Assert
+      await request(app.getHttpServer())
+        .get(endpoint)
+        .auth(institutionUserToken, BEARER_AUTH_TYPE)
+        .expect(HttpStatus.OK)
+        .expect([]);
+
+      // Checking the same scenario with the educationProgramOfferingService service, to make sure that a fake offering change was created.
+      const educationProgramOfferingService = appModule.get(
+        EducationProgramOfferingService,
+      );
+      const offeringChange =
+        await educationProgramOfferingService.getOfferingRequestsByApplicationId(
+          application.id,
+          student.id,
+        );
+
+      expect(offeringChange).toMatchObject({
+        id: requestedOffering.id,
+        submittedDate: requestedOffering.submittedDate,
+        offeringStatus: requestedOffering.offeringStatus,
+        educationProgram: { id: requestedOffering.educationProgram.id },
+      });
+    },
+  );
 
   it("Should throw forbidden error when the institution type is not BC Public.", async () => {
     // Arrange

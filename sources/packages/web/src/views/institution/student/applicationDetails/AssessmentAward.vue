@@ -49,6 +49,7 @@ export default defineComponent({
         await StudentAssessmentsService.shared.getAssessmentAwardDetails(
           props.assessmentId,
           props.studentId,
+          props.applicationId,
         );
       headerMap.value = mapAssessmentDetailHeader(assessmentAwardData.value);
     };

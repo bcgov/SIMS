@@ -26,7 +26,7 @@ import { AssessmentControllerService } from "..";
 @AllowAuthorizedParty(AuthorizedParties.institution)
 @Controller("assessment")
 @IsBCPublicInstitution()
-@HasStudentDataAccess("studentId")
+@HasStudentDataAccess("studentId", "applicationId")
 @ApiTags(`${ClientTypeBaseRoute.Institution}-assessment`)
 export class AssessmentInstitutionsController extends BaseController {
   constructor(
@@ -49,7 +49,7 @@ export class AssessmentInstitutionsController extends BaseController {
   ): Promise<RequestAssessmentSummaryAPIOutDTO[]> {
     return this.assessmentControllerService.requestedStudentAssessmentSummary(
       applicationId,
-      studentId,
+      { studentId },
     );
   }
 
@@ -77,10 +77,13 @@ export class AssessmentInstitutionsController extends BaseController {
   /**
    * Get the NOA values for a student application on a particular assessment.
    * @param studentId, student id.
+   * @param applicationId, application id.
    * @param assessmentId assessment id to get the NOA values.
    * @returns NOA and application data.
    */
-  @Get("student/:studentId/assessment/:assessmentId/noa")
+  @Get(
+    "student/:studentId/application/:applicationId/assessment/:assessmentId/noa",
+  )
   @ApiNotFoundResponse({
     description: "Assessment id not found.",
   })
@@ -89,31 +92,37 @@ export class AssessmentInstitutionsController extends BaseController {
   })
   async getAssessmentNOA(
     @Param("studentId", ParseIntPipe) studentId: number,
+    @Param("applicationId", ParseIntPipe) applicationId: number,
     @Param("assessmentId", ParseIntPipe) assessmentId: number,
   ): Promise<AssessmentNOAAPIOutDTO> {
     return this.assessmentControllerService.getAssessmentNOA(assessmentId, {
       studentId: studentId,
+      applicationId,
     });
   }
 
   /**
    * Get estimated and actual(if present) award details of an assessment.
    * @param studentId, student id.
+   * @param applicationId, application id.
    * @param assessmentId assessment to which awards details belong to.
    * @returns estimated and actual award details.
    */
-  @Get("student/:studentId/assessment/:assessmentId/award")
+  @Get(
+    "student/:studentId/application/:applicationId/assessment/:assessmentId/award",
+  )
   @ApiNotFoundResponse({
     description: "Assessment not found.",
   })
   async getAssessmentAwardDetails(
     @Param("studentId", ParseIntPipe) studentId: number,
+    @Param("applicationId", ParseIntPipe) applicationId: number,
     @Param("assessmentId", ParseIntPipe) assessmentId: number,
   ): Promise<AwardDetailsAPIOutDTO> {
     return this.assessmentControllerService.getAssessmentAwardDetails(
       assessmentId,
       true,
-      studentId,
+      { studentId, applicationId },
     );
   }
 }

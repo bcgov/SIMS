@@ -316,6 +316,7 @@ describe("ApplicationAESTController(e2e)-reissueMSFAA", () => {
     // Arrange
     const endpoint = `/aest/application/9999/reissue-msfaa`;
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
+
     // Act/Assert
     await request(app.getHttpServer())
       .post(endpoint)
@@ -348,6 +349,23 @@ describe("ApplicationAESTController(e2e)-reissueMSFAA", () => {
       );
     }
   }
+
+  it("Should not reissue an MSFAA when user is not a business administrator.", async () => {
+    // Arrange
+    const endpoint = "/aest/application/123/reissue-msfaa";
+    const token = await getAESTToken(AESTGroups.OperationsAdministrators);
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .post(endpoint)
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.FORBIDDEN)
+      .expect({
+        statusCode: HttpStatus.FORBIDDEN,
+        message: "Forbidden resource",
+        error: "Forbidden",
+      });
+  });
 
   afterAll(async () => {
     await app?.close();

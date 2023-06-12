@@ -1,6 +1,10 @@
 import { getDateOnlyFromFormat } from "@sims/utilities";
 import { ECEResponseFileRecord } from "./ece-response-file-record";
-import { DATE_FORMAT, RecordTypeCodes } from "../models/ece-integration.model";
+import {
+  DATE_FORMAT,
+  RecordTypeCodes,
+  YNOptions,
+} from "../models/ece-integration.model";
 
 /**
  * ECE response file detail.
@@ -35,8 +39,8 @@ export class ECEResponseFileDetail extends ECEResponseFileRecord {
   /**
    * Indicates if the student is enrolled.
    */
-  get isEnrolmentConfirmed(): boolean {
-    return this.line.substring(134, 135) === "Y";
+  get enrolmentConfirmationFlag(): YNOptions {
+    return this.line.substring(134, 135) as YNOptions;
   }
 
   /**
@@ -44,7 +48,7 @@ export class ECEResponseFileDetail extends ECEResponseFileRecord {
    */
   get enrolmentConfirmationDate(): Date {
     const enrolmentConfirmationDate = this.line.substring(135, 143);
-    return getDateOnlyFromFormat(enrolmentConfirmationDate, DATE_FORMAT);
+    return getDateOnlyFromFormat(enrolmentConfirmationDate, DATE_FORMAT, true);
   }
 
   /**

@@ -46,6 +46,7 @@ export class AssessmentControllerService {
    * @param assessmentId assessment id to be retrieved.
    * @param options for NOA.
    * - `studentId` optional student for authorization when needed.
+   * - `applicationId` application id,
    * - `maskMSFAA` mask MSFAA or not.
    * @returns notice of assessment data.
    */
@@ -53,12 +54,13 @@ export class AssessmentControllerService {
     assessmentId: number,
     options?: {
       studentId?: number;
+      applicationId?: number;
       maskMSFAA?: boolean;
     },
   ): Promise<AssessmentNOAAPIOutDTO> {
     const assessment = await this.assessmentService.getAssessmentForNOA(
       assessmentId,
-      options?.studentId,
+      { studentId: options?.studentId, applicationId: options?.applicationId },
     );
 
     if (!assessment) {
@@ -152,17 +154,23 @@ export class AssessmentControllerService {
    * @param assessmentId assessment to which awards details belong to.
    * @param includeDocumentNumber when true document number is mapped
    * to disbursement dynamic data.
-   * @param studentId studentId student to whom the award details belong to.
+   * @param options options,
+   * - `studentId` studentId student to whom the award details belong to.
+   * - `applicationId` application is used for authorization purposes to
+   * ensure that a user has access to the specific application data.
    * @returns estimated and actual award details.
    */
   async getAssessmentAwardDetails(
     assessmentId: number,
     includeDocumentNumber = false,
-    studentId?: number,
+    options?: {
+      studentId?: number;
+      applicationId?: number;
+    },
   ): Promise<AwardDetailsAPIOutDTO> {
     const assessment = await this.assessmentService.getAssessmentForNOA(
       assessmentId,
-      studentId,
+      options,
     );
 
     if (!assessment) {
@@ -180,7 +188,7 @@ export class AssessmentControllerService {
       const disbursementReceipts =
         await this.disbursementReceiptService.getDisbursementReceiptByAssessment(
           assessmentId,
-          studentId,
+          options,
         );
       if (disbursementReceipts.length) {
         finalAward = this.populateDisbursementReceiptAwardValues(
@@ -320,32 +328,40 @@ export class AssessmentControllerService {
    * Get all pending and declined requests related to an application which would result
    * a new assessment when that request is approved.
    * @param applicationId application id.
-   * @param studentId student id.
+   * @param options options for request assessments,
+   * - `studentId` student id.
+   * - `includeOfferingChanges` will decide whether to include assessment
+   * request for offering change.
    * @returns assessment requests or exceptions for the student application.
    */
   async requestedStudentAssessmentSummary(
     applicationId: number,
-    studentId?: number,
+    options?: {
+      studentId?: number;
+      includeOfferingChanges?: boolean;
+    },
   ): Promise<RequestAssessmentSummaryAPIOutDTO[]> {
     const requestAssessmentSummary: RequestAssessmentSummaryAPIOutDTO[] = [];
-    const offeringChange =
-      await this.educationProgramOfferingService.getOfferingRequestsByApplicationId(
-        applicationId,
-        studentId,
-      );
-    if (offeringChange) {
-      requestAssessmentSummary.push({
-        id: offeringChange.id,
-        submittedDate: offeringChange.submittedDate,
-        status: offeringChange.offeringStatus,
-        requestType: RequestAssessmentTypeAPIOutDTO.OfferingRequest,
-        programId: offeringChange.educationProgram.id,
-      });
+    if (options?.includeOfferingChanges) {
+      const offeringChange =
+        await this.educationProgramOfferingService.getOfferingRequestsByApplicationId(
+          applicationId,
+          options?.studentId,
+        );
+      if (offeringChange) {
+        requestAssessmentSummary.push({
+          id: offeringChange.id,
+          submittedDate: offeringChange.submittedDate,
+          status: offeringChange.offeringStatus,
+          requestType: RequestAssessmentTypeAPIOutDTO.OfferingRequest,
+          programId: offeringChange.educationProgram.id,
+        });
+      }
     }
     const applicationExceptions =
       await this.applicationExceptionService.getExceptionsByApplicationId(
         applicationId,
-        studentId,
+        options?.studentId,
         ApplicationExceptionStatus.Pending,
         ApplicationExceptionStatus.Declined,
       );
@@ -363,7 +379,7 @@ export class AssessmentControllerService {
     }
     const appeals = await this.getPendingAndDeniedAppeals(
       applicationId,
-      studentId,
+      options?.studentId,
     );
     return requestAssessmentSummary.concat(appeals);
   }

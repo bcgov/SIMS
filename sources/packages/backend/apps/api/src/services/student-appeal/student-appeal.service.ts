@@ -177,12 +177,17 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
   /**
    * Get the student appeal and its requests.
    * @param appealId appeal if to be retrieved.
-   * @param studentId applicant student.
+   * @param options options for the query:
+   * - `studentId` applicant student.
+   * - `applicationId` application id.
    * @returns student appeal and its requests.
    */
   async getAppealAndRequestsById(
     appealId: number,
-    studentId?: number,
+    options?: {
+      studentId?: number;
+      applicationId?: number;
+    },
   ): Promise<StudentAppealWithStatus> {
     const query = this.repo
       .createQueryBuilder("studentAppeal")
@@ -205,9 +210,14 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
       .leftJoin("appealRequest.note", "note")
       .where("studentAppeal.id = :appealId", { appealId });
 
-    if (studentId) {
+    if (options?.studentId) {
       query.andWhere("application.student.id = :studentId", {
-        studentId,
+        studentId: options?.studentId,
+      });
+    }
+    if (options?.applicationId) {
+      query.andWhere("application.id = :applicationId", {
+        applicationId: options?.applicationId,
       });
     }
     const queryResult = await query.getRawAndEntities();
