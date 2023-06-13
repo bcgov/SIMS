@@ -99,7 +99,7 @@ export class ECEResponseProcessingService {
 
   /**
    * Process individual ECE response file sent by institution.
-   * @param remoteFilePath ECE response file path.
+   * @param institutionFileDetail file details.
    * @returns process summary result.
    */
   private async processDisbursementsInECEResponseFile(
@@ -420,7 +420,7 @@ export class ECEResponseProcessingService {
   /**
    * Create ECE Response file processing notifications.
    * @param institutionCode institution of the processing file.
-   * @param auditUserId user who creates notification.
+   * @param auditUserId user that creates notification.
    * @param disbursementProcessingDetails disbursement processing count.
    * @param processSummaryResult process summary details.
    */
