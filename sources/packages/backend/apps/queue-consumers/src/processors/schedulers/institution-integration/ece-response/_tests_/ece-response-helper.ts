@@ -49,10 +49,13 @@ export async function createInstitutionLocations(
     "FAIL",
     e2eDataSources,
   );
+  // Institution location to test disbursement with multiple detail records.
   const institutionLocationMULT = await findOrCreateInstitutionLocation(
     institution,
     "MULT",
     e2eDataSources,
+    // Multiple integration contacts.
+    { integrationContacts: [faker.internet.email(), faker.internet.email()] },
   );
 
   return {
@@ -70,12 +73,14 @@ export async function createInstitutionLocations(
  * @param institution institution.
  * @param institutionCode institution code.
  * @param e2eDataSources e2e data sources.
+ * @param integrationContacts integration contacts.
  * @returns institution location.
  */
 async function findOrCreateInstitutionLocation(
   institution: Institution,
   institutionCode: string,
   e2eDataSources: E2EDataSources,
+  options?: { integrationContacts?: string[] },
 ): Promise<InstitutionLocation> {
   let institutionLocation = await e2eDataSources.institutionLocation.findOne({
     select: { id: true, institutionCode: true },
@@ -86,7 +91,9 @@ async function findOrCreateInstitutionLocation(
     newInstitutionLocation.institutionCode = institutionCode;
     institutionLocation = newInstitutionLocation;
   }
-  institutionLocation.integrationContacts = [faker.internet.email()];
+  institutionLocation.integrationContacts = options?.integrationContacts ?? [
+    faker.internet.email(),
+  ];
   return await e2eDataSources.institutionLocation.save(institutionLocation);
 }
 

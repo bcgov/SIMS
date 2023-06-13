@@ -50,6 +50,7 @@ describe(
     let locationDECL: InstitutionLocation;
     let locationSKIP: InstitutionLocation;
     let locationFAIL: InstitutionLocation;
+    // Institution location to test disbursement with multiple detail records.
     let locationMULT: InstitutionLocation;
 
     beforeAll(async () => {
@@ -159,7 +160,11 @@ describe(
       expect(sftpClientMock.delete).toHaveBeenCalled();
       // Expect the notifications to be created.
       const notifications = await getUnsentECEResponseNotifications(db);
-      expect(notifications).toHaveLength(1);
+      // TODO: When bulk send email is implemented, we must always expect 1 notification
+      // record to be created.
+      expect(notifications).toHaveLength(
+        locationCONF.integrationContacts.length,
+      );
       const updatedDisbursement = await db.disbursementSchedule.findOne({
         select: { coeStatus: true },
         where: { id: disbursement.id },
@@ -260,13 +265,20 @@ describe(
       expect(sftpClientMock.delete).toHaveBeenCalled();
       // Expect the notifications to be created.
       const notifications = await getUnsentECEResponseNotifications(db);
-      expect(notifications).toHaveLength(1);
+      expect(notifications).toHaveLength(
+        locationMULT.integrationContacts.length,
+      );
       const updatedDisbursement = await db.disbursementSchedule.findOne({
-        select: { coeStatus: true },
+        select: {
+          coeStatus: true,
+          tuitionRemittanceRequestedAmount: true,
+          tuitionRemittanceEffectiveAmount: true,
+        },
         where: { id: disbursement.id },
       });
       // Expect the COE status of the updated disbursement to be completed.
       expect(updatedDisbursement.coeStatus).toBe(COEStatus.completed);
+      expect(updatedDisbursement.tuitionRemittanceRequestedAmount).toBe(20);
     });
 
     it("Should process an ECE response file and decline the enrolment when the disbursement and application is valid.", async () => {
@@ -331,7 +343,9 @@ describe(
       expect(sftpClientMock.delete).toHaveBeenCalled();
       // Expect the notifications to be created.
       const notifications = await getUnsentECEResponseNotifications(db);
-      expect(notifications).toHaveLength(1);
+      expect(notifications).toHaveLength(
+        locationDECL.integrationContacts.length,
+      );
       const updatedDisbursement = await db.disbursementSchedule.findOne({
         select: { coeStatus: true },
         where: { id: disbursement.id },
@@ -403,7 +417,9 @@ describe(
       expect(sftpClientMock.delete).toHaveBeenCalled();
       // Expect the notifications to be created.
       const notifications = await getUnsentECEResponseNotifications(db);
-      expect(notifications).toHaveLength(1);
+      expect(notifications).toHaveLength(
+        locationSKIP.integrationContacts.length,
+      );
     });
 
     it("Should skip the ECE disbursement when disbursement does not belong to the system.", async () => {
@@ -458,7 +474,9 @@ describe(
       expect(sftpClientMock.delete).toHaveBeenCalled();
       // Expect the notifications to be created.
       const notifications = await getUnsentECEResponseNotifications(db);
-      expect(notifications).toHaveLength(1);
+      expect(notifications).toHaveLength(
+        locationSKIP.integrationContacts.length,
+      );
     });
 
     it("Should skip the ECE disbursement when application does not belong to the system.", async () => {
@@ -573,7 +591,9 @@ describe(
       expect(sftpClientMock.delete).toHaveBeenCalled();
       // Expect the notifications to be created.
       const notifications = await getUnsentECEResponseNotifications(db);
-      expect(notifications).toHaveLength(1);
+      expect(notifications).toHaveLength(
+        locationFAIL.integrationContacts.length,
+      );
     });
 
     it("Should stop processing the ECE response file when the detail record is not valid.", async () => {
@@ -625,7 +645,9 @@ describe(
       expect(sftpClientMock.delete).toHaveBeenCalled();
       // Expect the notifications to be created.
       const notifications = await getUnsentECEResponseNotifications(db);
-      expect(notifications).toHaveLength(1);
+      expect(notifications).toHaveLength(
+        locationFAIL.integrationContacts.length,
+      );
     });
 
     it("Should stop processing the ECE response file when the footer record is not valid.", async () => {
@@ -676,7 +698,9 @@ describe(
       expect(sftpClientMock.delete).toHaveBeenCalled();
       // Expect the notifications to be created.
       const notifications = await getUnsentECEResponseNotifications(db);
-      expect(notifications).toHaveLength(1);
+      expect(notifications).toHaveLength(
+        locationFAIL.integrationContacts.length,
+      );
     });
 
     it("Should stop processing the ECE response file when the count of detail in the footer record is incorrect.", async () => {
@@ -727,7 +751,9 @@ describe(
       expect(sftpClientMock.delete).toHaveBeenCalled();
       // Expect the notifications to be created.
       const notifications = await getUnsentECEResponseNotifications(db);
-      expect(notifications).toHaveLength(1);
+      expect(notifications).toHaveLength(
+        locationFAIL.integrationContacts.length,
+      );
     });
 
     it("Should stop processing the ECE response file when one of the detail records have invalid data.", async () => {
@@ -781,7 +807,9 @@ describe(
       expect(sftpClientMock.delete).toHaveBeenCalled();
       // Expect the notifications to be created.
       const notifications = await getUnsentECEResponseNotifications(db);
-      expect(notifications).toHaveLength(1);
+      expect(notifications).toHaveLength(
+        locationSKIP.integrationContacts.length,
+      );
     });
 
     it("Should skip the processing and log error when detail record with invalid enrolment confirmation flag is present and process other disbursements.", async () => {
@@ -858,7 +886,9 @@ describe(
       expect(sftpClientMock.delete).toHaveBeenCalled();
       // Expect the notifications to be created.
       const notifications = await getUnsentECEResponseNotifications(db);
-      expect(notifications).toHaveLength(1);
+      expect(notifications).toHaveLength(
+        locationCONF.integrationContacts.length,
+      );
     });
 
     it("Should skip the processing and log error when detail record with invalid enrolment confirmation date and pay to school amount is present and process other disbursements.", async () => {
@@ -935,7 +965,9 @@ describe(
       expect(sftpClientMock.delete).toHaveBeenCalled();
       // Expect the notifications to be created.
       const notifications = await getUnsentECEResponseNotifications(db);
-      expect(notifications).toHaveLength(1);
+      expect(notifications).toHaveLength(
+        locationCONF.integrationContacts.length,
+      );
     });
 
     it("Should skip the processing and log error when enrolment confirmation date is before the approval period.", async () => {
@@ -1012,7 +1044,9 @@ describe(
       expect(sftpClientMock.delete).toHaveBeenCalled();
       // Expect the notifications to be created.
       const notifications = await getUnsentECEResponseNotifications(db);
-      expect(notifications).toHaveLength(1);
+      expect(notifications).toHaveLength(
+        locationCONF.integrationContacts.length,
+      );
     });
 
     it("Should skip the processing and log error when enrolment confirmation date is after the approval period.", async () => {
@@ -1087,7 +1121,9 @@ describe(
       expect(sftpClientMock.delete).toHaveBeenCalled();
       // Expect the notifications to be created.
       const notifications = await getUnsentECEResponseNotifications(db);
-      expect(notifications).toHaveLength(1);
+      expect(notifications).toHaveLength(
+        locationCONF.integrationContacts.length,
+      );
     });
   },
 );
