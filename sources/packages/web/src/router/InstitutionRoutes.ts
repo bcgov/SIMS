@@ -52,6 +52,7 @@ import ApplicationExceptions from "@/views/institution/student/applicationDetail
 import StudentAppealRequest from "@/views/institution/student/applicationDetails/StudentAppealRequest.vue";
 import AssessmentAward from "@/views/institution/student/applicationDetails/AssessmentAward.vue";
 import NoticeOfAssessment from "@/views/institution/student/applicationDetails/NoticeOfAssessment.vue";
+import RequestApplicationChange from "@/views/institution/locations/request-a-change/RequestAChange.vue";
 
 export const institutionRoutes: Array<RouteRecordRaw> = [
   {
@@ -149,6 +150,26 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
         name: InstitutionRoutesConst.ACTIVE_APPLICATIONS_SUMMARY,
         components: {
           default: ActiveApplicationsSummary,
+          sidebar: InstitutionHomeSideBar,
+        },
+        props: {
+          default: (route: RouteLocationNormalized) => ({
+            locationId: parseInt(route.params.locationId as string),
+          }),
+        },
+        meta: {
+          clientType: ClientIdType.Institution,
+          institutionUserTypes: [
+            InstitutionUserTypes.admin,
+            InstitutionUserTypes.user,
+          ],
+        },
+      },
+      {
+        path: AppRoutes.RequestAChange,
+        name: InstitutionRoutesConst.REQUEST_A_CHANGE,
+        components: {
+          default: RequestApplicationChange,
           sidebar: InstitutionHomeSideBar,
         },
         props: {

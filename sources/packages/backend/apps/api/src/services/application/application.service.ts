@@ -1,5 +1,14 @@
 import { Injectable } from "@nestjs/common";
-import { DataSource, In, Not, Brackets } from "typeorm";
+import {
+  DataSource,
+  In,
+  Not,
+  Brackets,
+  FindOptionsOrder,
+  FindOptionsWhere,
+  ILike,
+  Raw,
+} from "typeorm";
 import { LoggerService, InjectLogger } from "@sims/utilities/logger";
 import {
   RecordDataModelService,
@@ -17,6 +26,7 @@ import {
   User,
   ApplicationData,
   getUserFullNameLikeSearch,
+  ApplicationOfferingChangeRequestStatus,
 } from "@sims/sims-db";
 import { StudentFileService } from "../student-file/student-file.service";
 import {
@@ -52,6 +62,7 @@ import { InjectQueue } from "@nestjs/bull";
 import { Queue } from "bull";
 import { CancelAssessmentQueueInDTO } from "@sims/services/queue";
 import { InstitutionLocationService } from "../institution-location/institution-location.service";
+import { join } from "path";
 
 export const APPLICATION_DRAFT_NOT_FOUND = "APPLICATION_DRAFT_NOT_FOUND";
 export const MORE_THAN_ONE_APPLICATION_DRAFT_ERROR =
@@ -1541,6 +1552,84 @@ export class ApplicationService extends RecordDataModelService<Application> {
         },
       },
     });
+  }
+
+  /**
+   * Gets all eligible application that can be requested for application
+   * offering change.
+   * @param {number} locationId location id.
+   * @param paginationOptions options to execute the pagination.
+   * @returns list of eligible application that can be requested for
+   * application offering change.
+   */
+  async getEligibleApplicationOfferingChangeApplications(
+    locationId: number,
+    paginationOptions: PaginationOptions,
+  ): Promise<PaginatedResults<Application>> {
+    const activeApplicationQuery = this.repo
+      .createQueryBuilder("application")
+      .select([
+        "application.applicationNumber",
+        "application.id",
+        "currentAssessment.id",
+        "offering.studyStartDate",
+        "offering.studyEndDate",
+        "student.id",
+        "user.firstName",
+        "user.lastName",
+      ])
+      .leftJoin("application.currentAssessment", "currentAssessment")
+      .leftJoin("currentAssessment.offering", "offering")
+      .leftJoin(
+        "currentAssessment.applicationOfferingChangeRequest",
+        "applicationOfferingChangeRequest",
+      )
+      .innerJoin("application.student", "student")
+      .innerJoin("student.user", "user")
+      .where(
+        "applicationOfferingChangeRequest.applicationOfferingChangeRequestStatus NOT IN (:...status)",
+        {
+          status: [
+            ApplicationOfferingChangeRequestStatus.InProgressWithSABC,
+            ApplicationOfferingChangeRequestStatus.InProgressWithStudent,
+          ],
+        },
+      )
+      .where("application.location.id = :locationId", { locationId })
+      .andWhere("application.applicationStatus = :applicationStatus", {
+        applicationStatus: ApplicationStatus.Completed,
+      })
+      .andWhere("application.isArchived = false");
+
+    if (paginationOptions.searchCriteria) {
+      activeApplicationQuery
+        .andWhere(
+          new Brackets((qb) => {
+            qb.where(getUserFullNameLikeSearch()).orWhere(
+              "application.applicationNumber Ilike :searchCriteria",
+            );
+          }),
+        )
+        .setParameter(
+          "searchCriteria",
+          `%${paginationOptions.searchCriteria.trim()}%`,
+        );
+    }
+
+    activeApplicationQuery
+      .orderBy(
+        this.transformToEntitySortField(
+          paginationOptions.sortField,
+          paginationOptions.sortOrder,
+        ),
+      )
+      .offset(paginationOptions.page * paginationOptions.pageLimit)
+      .limit(paginationOptions.pageLimit);
+    const [result, count] = await activeApplicationQuery.getManyAndCount();
+    return {
+      results: result,
+      count: count,
+    };
   }
 
   @InjectLogger()

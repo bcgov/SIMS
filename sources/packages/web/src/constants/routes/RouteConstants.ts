@@ -82,6 +82,7 @@ export const InstitutionRoutesConst = {
   STUDENT_APPEAL_REQUEST: Symbol(),
   ASSESSMENT_AWARD_VIEW: Symbol(),
   NOTICE_OF_ASSESSMENT_VIEW: Symbol(),
+  REQUEST_A_CHANGE: Symbol(),
 };
 
 /**

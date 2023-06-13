@@ -16,6 +16,8 @@ import {
   AESTCreateInstitutionAPIInDTO,
   PrimaryIdentifierAPIOutDTO,
   OptionItemAPIOutDTO,
+  PaginatedResultsAPIOutDTO,
+  ApplicationOfferingChangeSummaryAPIOutDTO,
 } from "@/services/http/dto";
 
 export class InstitutionService {
@@ -158,5 +160,25 @@ export class InstitutionService {
    */
   async getMyInstitutionLocationsDetails() {
     return ApiClient.InstitutionLocation.getMyInstitutionLocationsDetails();
+  }
+
+  /**
+   * Gets all eligible application that can be requested for application
+   * offering change.
+   * @param {number} locationId location id.
+   * @param paginationOptions options to execute the pagination.
+   * @returns list of eligible application that can be requested for
+   * application offering change.
+   */
+  async getEligibleApplicationOfferingChangeApplications(
+    locationId: number,
+    paginationOptions: PaginationOptions,
+  ): Promise<
+    PaginatedResultsAPIOutDTO<ApplicationOfferingChangeSummaryAPIOutDTO>
+  > {
+    return ApiClient.Institution.getEligibleApplicationOfferingChangeApplications(
+      locationId,
+      paginationOptions,
+    );
   }
 }
