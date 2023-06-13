@@ -54,24 +54,8 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", (
     // Arrange
     const payload = {
       dynamicData: {
-        eligibilityOfficers: [
-          {
-            name: "",
-            positionTitle: "",
-            email: "",
-            phone: "",
-          },
-        ],
-        enrolmentOfficers: [
-          {
-            name: "",
-            positionTitle: "",
-            email: "",
-            phone: "",
-          },
-        ],
-        textArea:
-          "WHEREAS:\n\nA The Ministry of Post Secondary and Future Skills (“the Ministry”) is responsible for ...",
+        eligibilityOfficers: [],
+        enrolmentOfficers: [],
         scheduleA: false,
         scheduleB: false,
         scheduleD: false,
