@@ -1,9 +1,16 @@
-import { Institution, InstitutionLocation } from "@sims/sims-db";
+import {
+  Institution,
+  InstitutionLocation,
+  Notification,
+  NotificationMessageType,
+} from "@sims/sims-db";
 import {
   E2EDataSources,
   createFakeInstitution,
   createFakeInstitutionLocation,
 } from "@sims/test-utils";
+import * as faker from "faker";
+import { IsNull } from "typeorm";
 
 /**
  * Create institution locations to be used for testing.
@@ -72,11 +79,10 @@ async function findOrCreateInstitutionLocation(
   if (!institutionLocation) {
     const newInstitutionLocation = createFakeInstitutionLocation(institution);
     newInstitutionLocation.institutionCode = institutionCode;
-    institutionLocation = await e2eDataSources.institutionLocation.save(
-      newInstitutionLocation,
-    );
+    institutionLocation = newInstitutionLocation;
   }
-  return institutionLocation;
+  institutionLocation.integrationContacts = [faker.internet.email()];
+  return await e2eDataSources.institutionLocation.save(institutionLocation);
 }
 
 /**
@@ -94,4 +100,23 @@ export async function enableIntegration(
     },
     { hasIntegration: true },
   );
+}
+
+/**
+ * Get all unsent ECE Response notifications.
+ * @param e2eDataSources e2e data sources.
+ * @returns Unsent ECE Response notifications.
+ */
+export async function getUnsentECEResponseNotifications(
+  e2eDataSources: E2EDataSources,
+): Promise<Notification[]> {
+  return await e2eDataSources.notification.find({
+    select: { id: true },
+    where: {
+      notificationMessage: {
+        id: NotificationMessageType.ECEResponseFileProcessing,
+      },
+      dateSent: IsNull(),
+    },
+  });
 }

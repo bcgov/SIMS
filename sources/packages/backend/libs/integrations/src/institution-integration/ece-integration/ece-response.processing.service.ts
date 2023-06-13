@@ -428,34 +428,37 @@ export class ECEResponseProcessingService {
     institutionCode: string,
     disbursementProcessingDetails: DisbursementProcessingDetails,
     processSummaryResult: ProcessSummaryResult,
-  ) {
+  ): Promise<void> {
     try {
       const integrationContacts =
         await this.institutionLocationService.getIntegrationContactsByInstitutionCode(
           institutionCode,
         );
 
-      const notification: ECEResponseFileProcessingNotification = {
-        institutionCode,
-        integrationContacts,
-        fileParsingErrors: disbursementProcessingDetails.fileParsingErrors,
-        totalRecords: disbursementProcessingDetails.totalRecords,
-        totalDisbursements: disbursementProcessingDetails.totalDisbursements,
-        disbursementsSuccessfullyProcessed:
-          disbursementProcessingDetails.disbursementsSuccessfullyProcessed,
-        disbursementsSkipped:
-          disbursementProcessingDetails.disbursementsSkipped,
-        duplicateDisbursements:
-          disbursementProcessingDetails.duplicateDisbursements,
-        disbursementsFailedToProcess:
-          disbursementProcessingDetails.disbursementsFailedToProcess,
-        attachmentFileContent:
-          this.buildEmailAttachmentBody(processSummaryResult),
-      };
+      // Create email notifications only if integration contacts are available.
+      if (integrationContacts.length) {
+        const notification: ECEResponseFileProcessingNotification = {
+          institutionCode,
+          integrationContacts,
+          fileParsingErrors: disbursementProcessingDetails.fileParsingErrors,
+          totalRecords: disbursementProcessingDetails.totalRecords,
+          totalDisbursements: disbursementProcessingDetails.totalDisbursements,
+          disbursementsSuccessfullyProcessed:
+            disbursementProcessingDetails.disbursementsSuccessfullyProcessed,
+          disbursementsSkipped:
+            disbursementProcessingDetails.disbursementsSkipped,
+          duplicateDisbursements:
+            disbursementProcessingDetails.duplicateDisbursements,
+          disbursementsFailedToProcess:
+            disbursementProcessingDetails.disbursementsFailedToProcess,
+          attachmentFileContent:
+            this.buildEmailAttachmentBody(processSummaryResult),
+        };
 
-      await this.notificationActionsService.saveECEResponseFileProcessingNotification(
-        notification,
-      );
+        await this.notificationActionsService.saveECEResponseFileProcessingNotification(
+          notification,
+        );
+      }
     } catch (error: unknown) {
       this.logger.error(error);
       processSummaryResult.errors.push(

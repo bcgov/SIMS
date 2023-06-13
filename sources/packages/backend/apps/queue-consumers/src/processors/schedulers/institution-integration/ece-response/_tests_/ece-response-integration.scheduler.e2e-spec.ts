@@ -1,6 +1,11 @@
 import { DeepMocked, createMock } from "@golevelup/ts-jest";
 import { INestApplication } from "@nestjs/common";
-import { COE_WINDOW, QueueNames, addDays } from "@sims/utilities";
+import {
+  COE_WINDOW,
+  QueueNames,
+  addDays,
+  getISODateOnlyString,
+} from "@sims/utilities";
 import {
   createTestingAppModule,
   describeProcessorRootTest,
@@ -22,8 +27,10 @@ import { ApplicationStatus, InstitutionLocation } from "@sims/sims-db";
 import {
   createInstitutionLocations,
   enableIntegration,
+  getUnsentECEResponseNotifications,
 } from "./ece-response-helper";
 import { FILE_PARSING_ERROR } from "@sims/services/constants";
+import { IsNull } from "typeorm";
 
 describe(
   describeProcessorRootTest(QueueNames.ECEProcessResponseIntegration),
@@ -71,9 +78,15 @@ describe(
         { hasIntegration: true },
         { hasIntegration: false },
       );
+
+      // Add the date sent to current date to verify newly created notifications.
+      await db.notification.update(
+        { dateSent: IsNull() },
+        { dateSent: getISODateOnlyString(new Date()) },
+      );
     });
 
-    it("Should process an ECE response file and confirm the enrolment when the disbursement and application is valid.", async () => {
+    it("Should process an ECE response file and confirm the enrolment and create notification when the disbursement and application is valid.", async () => {
       // Arrange
       // Enable integration for institution location
       // used for test.
@@ -135,6 +148,9 @@ describe(
       expect(processResult).toStrictEqual([expectedResult]);
       // Expect the delete method to be called.
       expect(sftpClientMock.delete).toHaveBeenCalled();
+      // Expect the notifications to be created.
+      const notifications = await getUnsentECEResponseNotifications(db);
+      expect(notifications).toHaveLength(1);
     });
 
     it("Should process an ECE response file and decline the enrolment when the disbursement and application is valid.", async () => {
@@ -197,6 +213,9 @@ describe(
       expect(processResult).toStrictEqual([expectedResult]);
       // Expect the delete method to be called.
       expect(sftpClientMock.delete).toHaveBeenCalled();
+      // Expect the notifications to be created.
+      const notifications = await getUnsentECEResponseNotifications(db);
+      expect(notifications).toHaveLength(1);
     });
 
     it("Should skip the ECE disbursement when the enrolment is already completed.", async () => {
@@ -260,6 +279,9 @@ describe(
       expect(processResult).toStrictEqual([expectedResult]);
       // Expect the delete method to be called.
       expect(sftpClientMock.delete).toHaveBeenCalled();
+      // Expect the notifications to be created.
+      const notifications = await getUnsentECEResponseNotifications(db);
+      expect(notifications).toHaveLength(1);
     });
 
     it("Should skip the ECE disbursement when disbursement does not belong to the system.", async () => {
@@ -309,6 +331,9 @@ describe(
       expect(processResult).toStrictEqual([expectedResult]);
       // Expect the delete method to be called.
       expect(sftpClientMock.delete).toHaveBeenCalled();
+      // Expect the notifications to be created.
+      const notifications = await getUnsentECEResponseNotifications(db);
+      expect(notifications).toHaveLength(1);
     });
 
     it("Should skip the ECE disbursement when application does not belong to the system.", async () => {
@@ -421,6 +446,9 @@ describe(
       expect(processResult).toStrictEqual([expectedResult]);
       // Expect the delete method to be called.
       expect(sftpClientMock.delete).toHaveBeenCalled();
+      // Expect the notifications to be created.
+      const notifications = await getUnsentECEResponseNotifications(db);
+      expect(notifications).toHaveLength(1);
     });
 
     it("Should stop processing the ECE response file when the detail record is not valid.", async () => {
@@ -470,6 +498,9 @@ describe(
       expect(processResult).toStrictEqual([expectedResult]);
       // Expect the delete method to be called.
       expect(sftpClientMock.delete).toHaveBeenCalled();
+      // Expect the notifications to be created.
+      const notifications = await getUnsentECEResponseNotifications(db);
+      expect(notifications).toHaveLength(1);
     });
 
     it("Should stop processing the ECE response file when the footer record is not valid.", async () => {
@@ -518,6 +549,9 @@ describe(
       expect(processResult).toStrictEqual([expectedResult]);
       // Expect the delete method to be called.
       expect(sftpClientMock.delete).toHaveBeenCalled();
+      // Expect the notifications to be created.
+      const notifications = await getUnsentECEResponseNotifications(db);
+      expect(notifications).toHaveLength(1);
     });
 
     it("Should stop processing the ECE response file when the count of detail in the footer record is incorrect.", async () => {
