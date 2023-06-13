@@ -89,7 +89,8 @@ describe(
         { hasIntegration: false },
       );
 
-      // Add the date sent to current date to verify newly created notifications.
+      // Update the date sent to current date to verify newly created notifications
+      // with date sent as null.
       await db.notification.update(
         { dateSent: IsNull() },
         { dateSent: getISODateOnlyString(new Date()) },
@@ -188,6 +189,7 @@ describe(
       const application = await saveFakeApplicationDisbursements(
         db.dataSource,
         {
+          // Save disbursement with custom award value to validate tuition remittance.
           disbursementValues: [
             createFakeDisbursementValue(
               DisbursementValueType.CanadaLoan,
@@ -207,6 +209,10 @@ describe(
       // Queued job.
       const job = createMock<Job<void>>();
 
+      const disbursementId = disbursement.id.toString().padStart(10, "0");
+      const applicationNumber = application.applicationNumber;
+      const currentDate = formatDate(new Date(), "YYYYMMDD");
+
       // Modify the data in mock file to have the correct values for
       // disbursement and application number.
       mockDownloadFiles(
@@ -216,26 +222,17 @@ describe(
           return (
             fileContent
               // Set the disbursement number to expected disbursement in multiple detail records.
-              .replace(
-                "DISBNUMB01",
-                disbursement.id.toString().padStart(10, "0"),
-              )
-              .replace(
-                "DISBNUMB02",
-                disbursement.id.toString().padStart(10, "0"),
-              )
-              .replace(
-                "DISBNUMB03",
-                disbursement.id.toString().padStart(10, "0"),
-              )
+              .replace("DISBNUMB01", disbursementId)
+              .replace("DISBNUMB02", disbursementId)
+              .replace("DISBNUMB03", disbursementId)
               // Set the application number to expected application in multiple detail records.
-              .replace("APPLNUMB01", application.applicationNumber)
-              .replace("APPLNUMB02", application.applicationNumber)
-              .replace("APPLNUMB03", application.applicationNumber)
+              .replace("APPLNUMB01", applicationNumber)
+              .replace("APPLNUMB02", applicationNumber)
+              .replace("APPLNUMB03", applicationNumber)
               // Set the enrolment confirmation to expected date in multiple detail records.
-              .replace("ENRLDT01", formatDate(new Date(), "YYYYMMDD"))
-              .replace("ENRLDT02", formatDate(new Date(), "YYYYMMDD"))
-              .replace("ENRLDT03", formatDate(new Date(), "YYYYMMDD"))
+              .replace("ENRLDT01", currentDate)
+              .replace("ENRLDT02", currentDate)
+              .replace("ENRLDT03", currentDate)
           );
         },
       );
@@ -278,10 +275,13 @@ describe(
       });
       // Expect the COE status of the updated disbursement to be completed.
       expect(updatedDisbursement.coeStatus).toBe(COEStatus.completed);
+      // The file has 3 detail records for the disbursement, with pay to school amount of 10 in each record.
+      // 2 out of 3 detail records have enrolment confirmation flag as Y.
+      // Hence 20 is the expected value.
       expect(updatedDisbursement.tuitionRemittanceRequestedAmount).toBe(20);
     });
 
-    it("Should process an ECE response file and decline the enrolment when the disbursement and application is valid.", async () => {
+    it("Should process an ECE response file and decline the enrolment and create notification when the disbursement and application is valid.", async () => {
       // Arrange
       // Enable integration for institution location
       // used for test.
@@ -354,7 +354,7 @@ describe(
       expect(updatedDisbursement.coeStatus).toBe(COEStatus.declined);
     });
 
-    it("Should skip the ECE disbursement when the enrolment is already completed.", async () => {
+    it("Should skip the ECE disbursement and create notification when the enrolment is already completed.", async () => {
       // Arrange
       // Enable integration for institution location
       // used for test.
@@ -422,7 +422,7 @@ describe(
       );
     });
 
-    it("Should skip the ECE disbursement when disbursement does not belong to the system.", async () => {
+    it("Should skip the ECE disbursement and create notification when disbursement does not belong to the system.", async () => {
       // Arrange
       // Enable integration for institution location
       // used for test.
@@ -479,7 +479,7 @@ describe(
       );
     });
 
-    it("Should skip the ECE disbursement when application does not belong to the system.", async () => {
+    it("Should skip the ECE disbursement and create notification when application does not belong to the system.", async () => {
       // Arrange
       // Enable integration for institution location
       // used for test.
@@ -543,7 +543,7 @@ describe(
       expect(sftpClientMock.delete).toHaveBeenCalled();
     });
 
-    it("Should stop processing the ECE response file when the header record is not valid.", async () => {
+    it("Should stop processing the ECE response file and create notification when the header record is not valid.", async () => {
       // Arrange
       // Enable integration for institution location
       // used for test.
@@ -596,7 +596,7 @@ describe(
       );
     });
 
-    it("Should stop processing the ECE response file when the detail record is not valid.", async () => {
+    it("Should stop processing the ECE response file and create notification when the detail record is not valid.", async () => {
       // Arrange
       // Enable integration for institution location
       // used for test.
@@ -650,7 +650,7 @@ describe(
       );
     });
 
-    it("Should stop processing the ECE response file when the footer record is not valid.", async () => {
+    it("Should stop processing the ECE response file and create notification when the footer record is not valid.", async () => {
       // Arrange
       // Enable integration for institution location
       // used for test.
@@ -703,7 +703,7 @@ describe(
       );
     });
 
-    it("Should stop processing the ECE response file when the count of detail in the footer record is incorrect.", async () => {
+    it("Should stop processing the ECE response file and create notification when the count of detail in the footer record is incorrect.", async () => {
       // Arrange
       // Enable integration for institution location
       // used for test.
@@ -756,7 +756,7 @@ describe(
       );
     });
 
-    it("Should stop processing the ECE response file when one of the detail records have invalid data.", async () => {
+    it("Should stop processing the ECE response file and create notification when one of the detail records have invalid data.", async () => {
       // Arrange
       // Enable integration for institution location
       // used for test.
@@ -812,7 +812,7 @@ describe(
       );
     });
 
-    it("Should skip the processing and log error when detail record with invalid enrolment confirmation flag is present and process other disbursements.", async () => {
+    it("Should skip the processing and log error and create notification when detail record with invalid enrolment confirmation flag is present and process other disbursements.", async () => {
       // Arrange
       // Including a valid disbursement in this test case to ensure that
       // when there is a enrolment data validation error, only that particular disbursement is failed to process
@@ -891,7 +891,7 @@ describe(
       );
     });
 
-    it("Should skip the processing and log error when detail record with invalid enrolment confirmation date and pay to school amount is present and process other disbursements.", async () => {
+    it("Should skip the processing and log error and create notification when detail record with invalid enrolment confirmation date and pay to school amount is present and process other disbursements.", async () => {
       // Arrange
       // Including a valid disbursement in this test case to ensure that
       // when there is a enrolment data validation error, only that particular disbursement is failed to process
@@ -970,7 +970,7 @@ describe(
       );
     });
 
-    it("Should skip the processing and log error when enrolment confirmation date is before the approval period.", async () => {
+    it("Should skip the processing and log error and create notification when enrolment confirmation date is before the approval period.", async () => {
       // Arrange
       // Enable integration for institution location
       // used for test.
@@ -1049,7 +1049,7 @@ describe(
       );
     });
 
-    it("Should skip the processing and log error when enrolment confirmation date is after the approval period.", async () => {
+    it("Should skip the processing and log error and create notification when enrolment confirmation date is after the approval period.", async () => {
       // Arrange
       // Enable integration for institution location
       // used for test.
