@@ -123,7 +123,7 @@ export async function enableIntegration(
 export async function getUnsentECEResponseNotifications(
   e2eDataSources: E2EDataSources,
 ): Promise<Notification[]> {
-  return await e2eDataSources.notification.find({
+  return e2eDataSources.notification.find({
     select: { id: true },
     where: {
       notificationMessage: {

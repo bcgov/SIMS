@@ -271,7 +271,6 @@ describe(
         select: {
           coeStatus: true,
           tuitionRemittanceRequestedAmount: true,
-          tuitionRemittanceEffectiveAmount: true,
         },
         where: { id: disbursement.id },
       });
@@ -547,6 +546,11 @@ describe(
       expect(processResult).toStrictEqual([expectedResult]);
       // Expect the delete method to be called.
       expect(sftpClientMock.delete).toHaveBeenCalled();
+      // Expect the notifications to be created.
+      const notifications = await getUnsentECEResponseNotifications(db);
+      expect(notifications).toHaveLength(
+        locationSKIP.integrationContacts.length,
+      );
     });
 
     it("Should stop processing the ECE response file and create notification when the header record is not valid.", async () => {
