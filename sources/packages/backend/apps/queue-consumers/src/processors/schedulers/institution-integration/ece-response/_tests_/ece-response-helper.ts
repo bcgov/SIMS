@@ -24,6 +24,7 @@ export async function createInstitutionLocations(
   institutionLocationDECL: InstitutionLocation;
   institutionLocationSKIP: InstitutionLocation;
   institutionLocationFAIL: InstitutionLocation;
+  institutionLocationMULT: InstitutionLocation;
 }> {
   const institution = await e2eDataSources.institution.save(
     createFakeInstitution(),
@@ -51,11 +52,18 @@ export async function createInstitutionLocations(
     e2eDataSources,
   );
 
+  const institutionLocationMULT = await findOrCreateInstitutionLocation(
+    institution,
+    "MULT",
+    e2eDataSources,
+  );
+
   return {
     institutionLocationCONF,
     institutionLocationDECL,
     institutionLocationSKIP,
     institutionLocationFAIL,
+    institutionLocationMULT,
   };
 }
 
