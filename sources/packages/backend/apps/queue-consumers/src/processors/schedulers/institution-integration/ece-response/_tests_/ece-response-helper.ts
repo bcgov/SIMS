@@ -74,7 +74,7 @@ export async function createInstitutionLocations(
  * @param institutionCode institution code.
  * @param e2eDataSources e2e data sources.
  * @param options options.
- * - `integrationContacts integration contacts.
+ * - `integrationContacts` integration contacts.
  * @returns institution location.
  */
 async function findOrCreateInstitutionLocation(
@@ -95,7 +95,7 @@ async function findOrCreateInstitutionLocation(
   institutionLocation.integrationContacts = options?.integrationContacts ?? [
     faker.internet.email(),
   ];
-  return await e2eDataSources.institutionLocation.save(institutionLocation);
+  return e2eDataSources.institutionLocation.save(institutionLocation);
 }
 
 /**
