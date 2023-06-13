@@ -103,7 +103,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", (
       exceptionalExpenses: 555,
     };
 
-    // Act
+    // Act/Assert
     let educationProgramOfferingId;
     await request(app.getHttpServer())
       .post(endpoint)
@@ -115,7 +115,6 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", (
         educationProgramOfferingId = response.body.id;
       });
 
-    // Assert
     const createdEducationProgramOffering =
       await db.educationProgramOffering.findOne({
         where: { id: educationProgramOfferingId },

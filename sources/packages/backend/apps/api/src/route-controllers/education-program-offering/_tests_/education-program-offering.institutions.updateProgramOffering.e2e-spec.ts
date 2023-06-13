@@ -111,7 +111,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-updateProgramOffer
       exceptionalExpenses: 555,
     };
 
-    // Act
+    // Act/Assert
     await request(app.getHttpServer())
       .patch(endpoint)
       .send(payload)
@@ -119,7 +119,6 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-updateProgramOffer
       .expect(HttpStatus.OK)
       .expect({});
 
-    // Assert
     const updatedEducationProgramOffering =
       await db.educationProgramOffering.findOne({
         where: { id: savedEducationProgramOffering.id },

@@ -104,7 +104,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", (
     );
     const endpoint = "/institutions/education-program";
 
-    // Act
+    // Act/Assert
     let educationProgramId;
     await request(app.getHttpServer())
       .post(endpoint)
@@ -116,7 +116,6 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", (
         educationProgramId = response.body.id;
       });
 
-    // Assert
     const educationProgram = await db.educationProgram.findOne({
       where: { id: educationProgramId },
     });
