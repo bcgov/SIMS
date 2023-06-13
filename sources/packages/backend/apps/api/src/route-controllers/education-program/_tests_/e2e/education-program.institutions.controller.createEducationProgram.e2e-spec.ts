@@ -45,7 +45,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", (
     collegeFUser = institutionUser;
   });
 
-  it("Should request designation for a public institution when institution user is legal signing authority.", async () => {
+  it("Should create an education program when valid data is passed.", async () => {
     // Arrange
     const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeFAdminLegalSigningUser,

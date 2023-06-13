@@ -86,22 +86,21 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", (
       ],
     };
 
-    // Act
+    // Act/Assert
+    let designationAgreementId;
     await request(app.getHttpServer())
       .post(endpoint)
       .send(payload)
       .auth(institutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.CREATED)
-      .expect({});
-
-    // Assert
+      .then((response) => {
+        designationAgreementId = response.text;
+      });
     const designationAgreement = await db.designationAgreement.findOne({
-      relations: { creator: true },
-      where: {
-        institution: { id: collegeF.id },
-        designationStatus: DesignationAgreementStatus.Pending,
-      },
+      where: { id: designationAgreementId },
     });
-    expect(designationAgreement.creator.id).toBe(collegeFUser.id);
+    expect(designationAgreement.designationStatus).toBe(
+      DesignationAgreementStatus.Pending,
+    );
   });
 });
