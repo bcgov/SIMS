@@ -458,6 +458,13 @@ export class ECEResponseProcessingService {
         await this.notificationActionsService.saveECEResponseFileProcessingNotification(
           notification,
         );
+        processSummaryResult.summary.push(
+          "Notification has been created to send email to integration contacts.",
+        );
+      } else {
+        processSummaryResult.summary.push(
+          "Notification cannot be created as no integration contacts found for the institution.",
+        );
       }
     } catch (error: unknown) {
       this.logger.error(error);

@@ -73,7 +73,8 @@ export async function createInstitutionLocations(
  * @param institution institution.
  * @param institutionCode institution code.
  * @param e2eDataSources e2e data sources.
- * @param integrationContacts integration contacts.
+ * @param options options.
+ * - `integrationContacts integration contacts.
  * @returns institution location.
  */
 async function findOrCreateInstitutionLocation(

@@ -145,6 +145,7 @@ describe(
         `Starting download of file ${confirmEnrolmentResponseFile}.`,
         `Disbursement ${disbursement.id}, enrolment confirmed.`,
         `The file ${confirmEnrolmentResponseFile} has been deleted after processing.`,
+        "Notification has been created to send email to integration contacts.",
         "Total file parsing errors: 0",
         "Total detail records found: 2",
         "Total disbursements found: 2",
@@ -246,6 +247,7 @@ describe(
         `Starting download of file ${confirmEnrolmentResponseFile}.`,
         `Disbursement ${disbursement.id}, enrolment confirmed.`,
         `The file ${confirmEnrolmentResponseFile} has been deleted after processing.`,
+        "Notification has been created to send email to integration contacts.",
         "Total file parsing errors: 0",
         "Total detail records found: 4",
         "Total disbursements found: 2",
@@ -327,6 +329,7 @@ describe(
         `Starting download of file ${confirmEnrolmentResponseFile}.`,
         `Disbursement ${disbursement.id}, enrolment declined.`,
         `The file ${confirmEnrolmentResponseFile} has been deleted after processing.`,
+        "Notification has been created to send email to integration contacts.",
         "Total file parsing errors: 0",
         "Total detail records found: 2",
         "Total disbursements found: 2",
@@ -401,6 +404,7 @@ describe(
       expectedResult.summary = [
         `Starting download of file ${confirmEnrolmentResponseFile}.`,
         `The file ${confirmEnrolmentResponseFile} has been deleted after processing.`,
+        "Notification has been created to send email to integration contacts.",
         "Total file parsing errors: 0",
         "Total detail records found: 1",
         "Total disbursements found: 1",
@@ -458,6 +462,7 @@ describe(
       expectedResult.summary = [
         `Starting download of file ${confirmEnrolmentResponseFile}.`,
         `The file ${confirmEnrolmentResponseFile} has been deleted after processing.`,
+        "Notification has been created to send email to integration contacts.",
         "Total file parsing errors: 0",
         "Total detail records found: 1",
         "Total disbursements found: 1",
@@ -527,6 +532,7 @@ describe(
       expectedResult.summary = [
         `Starting download of file ${confirmEnrolmentResponseFile}.`,
         `The file ${confirmEnrolmentResponseFile} has been deleted after processing.`,
+        "Notification has been created to send email to integration contacts.",
         "Total file parsing errors: 0",
         "Total detail records found: 1",
         "Total disbursements found: 1",
@@ -574,6 +580,7 @@ describe(
       expectedResult.summary = [
         `Starting download of file ${confirmEnrolmentResponseFile}.`,
         `The file ${confirmEnrolmentResponseFile} has been deleted after processing.`,
+        "Notification has been created to send email to integration contacts.",
         "Total file parsing errors: 1",
         "Total detail records found: 0",
         "Total disbursements found: 0",
@@ -627,6 +634,7 @@ describe(
       expectedResult.summary = [
         `Starting download of file ${confirmEnrolmentResponseFile}.`,
         `The file ${confirmEnrolmentResponseFile} has been deleted after processing.`,
+        "Notification has been created to send email to integration contacts.",
         "Total file parsing errors: 1",
         "Total detail records found: 1",
         "Total disbursements found: 0",
@@ -681,6 +689,7 @@ describe(
       expectedResult.summary = [
         `Starting download of file ${confirmEnrolmentResponseFile}.`,
         `The file ${confirmEnrolmentResponseFile} has been deleted after processing.`,
+        "Notification has been created to send email to integration contacts.",
         "Total file parsing errors: 1",
         "Total detail records found: 0",
         "Total disbursements found: 0",
@@ -734,6 +743,7 @@ describe(
       expectedResult.summary = [
         `Starting download of file ${confirmEnrolmentResponseFile}.`,
         `The file ${confirmEnrolmentResponseFile} has been deleted after processing.`,
+        "Notification has been created to send email to integration contacts.",
         "Total file parsing errors: 1",
         "Total detail records found: 0",
         "Total disbursements found: 0",
@@ -789,6 +799,7 @@ describe(
       expectedResult.summary = [
         `Starting download of file ${confirmEnrolmentResponseFile}.`,
         `The file ${confirmEnrolmentResponseFile} has been deleted after processing.`,
+        "Notification has been created to send email to integration contacts.",
         "Total file parsing errors: 1",
         "Total detail records found: 1",
         "Total disbursements found: 0",
@@ -870,6 +881,7 @@ describe(
         `Starting download of file ${confirmEnrolmentResponseFile}.`,
         `Disbursement ${disbursement.id}, enrolment confirmed.`,
         `The file ${confirmEnrolmentResponseFile} has been deleted after processing.`,
+        "Notification has been created to send email to integration contacts.",
         "Total file parsing errors: 0",
         "Total detail records found: 2",
         "Total disbursements found: 2",
@@ -949,6 +961,7 @@ describe(
         `Starting download of file ${confirmEnrolmentResponseFile}.`,
         `Disbursement ${disbursement.id}, enrolment confirmed.`,
         `The file ${confirmEnrolmentResponseFile} has been deleted after processing.`,
+        "Notification has been created to send email to integration contacts.",
         "Total file parsing errors: 0",
         "Total detail records found: 2",
         "Total disbursements found: 2",
@@ -1025,6 +1038,7 @@ describe(
       expectedResult.summary = [
         `Starting download of file ${confirmEnrolmentResponseFile}.`,
         `The file ${confirmEnrolmentResponseFile} has been deleted after processing.`,
+        "Notification has been created to send email to integration contacts.",
         "Total file parsing errors: 0",
         "Total detail records found: 2",
         "Total disbursements found: 2",
@@ -1102,6 +1116,7 @@ describe(
       expectedResult.summary = [
         `Starting download of file ${confirmEnrolmentResponseFile}.`,
         `The file ${confirmEnrolmentResponseFile} has been deleted after processing.`,
+        "Notification has been created to send email to integration contacts.",
         "Total file parsing errors: 0",
         "Total detail records found: 2",
         "Total disbursements found: 2",
