@@ -73,7 +73,7 @@ export class ECEResponseFileDetail extends ECEResponseFileRecord {
     if (isNaN(this.disbursementIdentifier)) {
       errors.push("Invalid unique index number for the disbursement record");
     }
-    if (!this.applicationNumber?.trim()) {
+    if (!this.applicationNumber?.trim() || isNaN(+this.applicationNumber)) {
       errors.push("Invalid application number");
     }
     return errors.length ? errors.join(", ") : undefined;

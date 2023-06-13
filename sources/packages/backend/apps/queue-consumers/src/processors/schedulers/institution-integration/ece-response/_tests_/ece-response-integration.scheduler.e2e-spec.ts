@@ -418,6 +418,7 @@ describe(
       );
 
       const fakeDisbursementId = "1111111111";
+      const fakeApplicationNumber = "9999999999";
 
       // Queued job.
       const job = createMock<Job<void>>();
@@ -427,7 +428,9 @@ describe(
         sftpClientMock,
         [ECE_RESPONSE_FILE_NAME],
         (fileContent: string) => {
-          return fileContent.replace("DISBNUMBER", fakeDisbursementId);
+          return fileContent
+            .replace("DISBNUMBER", fakeDisbursementId)
+            .replace("APPLNUMBER", fakeApplicationNumber);
         },
       );
 
@@ -481,7 +484,7 @@ describe(
       const [disbursement] =
         application.currentAssessment.disbursementSchedules;
 
-      const fakeApplicationNumber = "AAAAAAAAAA";
+      const fakeApplicationNumber = "9999999999";
 
       // Queued job.
       const job = createMock<Job<void>>();

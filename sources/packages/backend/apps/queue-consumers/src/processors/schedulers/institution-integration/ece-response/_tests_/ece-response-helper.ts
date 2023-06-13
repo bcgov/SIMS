@@ -39,19 +39,16 @@ export async function createInstitutionLocations(
     "DECL",
     e2eDataSources,
   );
-
   const institutionLocationSKIP = await findOrCreateInstitutionLocation(
     institution,
     "SKIP",
     e2eDataSources,
   );
-
   const institutionLocationFAIL = await findOrCreateInstitutionLocation(
     institution,
     "FAIL",
     e2eDataSources,
   );
-
   const institutionLocationMULT = await findOrCreateInstitutionLocation(
     institution,
     "MULT",
