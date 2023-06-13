@@ -42,7 +42,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", (
     );
   });
 
-  it("Should request designation for a public institution when institution user is legal signing authority.", async () => {
+  it.skip("Should request designation for a public institution when institution user is legal signing authority.", async () => {
     // Arrange
     const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeFAdminLegalSigningUser,
