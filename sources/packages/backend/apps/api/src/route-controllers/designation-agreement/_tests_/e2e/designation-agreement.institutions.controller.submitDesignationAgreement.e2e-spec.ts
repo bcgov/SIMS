@@ -8,6 +8,7 @@ import {
   E2EDataSources,
   createE2EDataSources,
   createFakeInstitutionLocation,
+  getProviderInstanceForModule,
 } from "@sims/test-utils";
 import {
   createTestingAppModule,
@@ -18,15 +19,21 @@ import {
   getAuthRelatedEntities,
 } from "../../../../testHelpers";
 import * as request from "supertest";
+import { FormService } from "../../../../services";
+import { DryRunSubmissionResult } from "../../../../types";
+import { TestingModule } from "@nestjs/testing";
+import { AppInstitutionsModule } from "../../../../app.institutions.module";
 
 describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", () => {
   let app: INestApplication;
   let db: E2EDataSources;
   let collegeF: Institution;
   let collegeFLocation: InstitutionLocation;
+  let testingModule: TestingModule;
 
   beforeAll(async () => {
-    const { nestApplication, dataSource } = await createTestingAppModule();
+    const { nestApplication, dataSource, module } =
+      await createTestingAppModule();
     app = nestApplication;
     db = createE2EDataSources(dataSource);
     const { institution } = await getAuthRelatedEntities(
@@ -40,14 +47,11 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", (
       InstitutionTokenTypes.CollegeFAdminLegalSigningUser,
       collegeFLocation,
     );
+    testingModule = module;
   });
 
-  it.skip("Should request designation for a public institution when institution user is legal signing authority.", async () => {
+  it("Should request designation for a public institution when institution user is legal signing authority.", async () => {
     // Arrange
-    const institutionUserToken = await getInstitutionToken(
-      InstitutionTokenTypes.CollegeFAdminLegalSigningUser,
-    );
-    const endpoint = "/institutions/designation-agreement";
     const payload = {
       dynamicData: {
         eligibilityOfficers: [
@@ -82,6 +86,18 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", (
         },
       ],
     };
+    const formService = await getProviderInstanceForModule(
+      testingModule,
+      AppInstitutionsModule,
+      FormService,
+    );
+    jest.spyOn(formService, "dryRunSubmission").mockImplementation(async () => {
+      return { valid: true, data: { data: payload } } as DryRunSubmissionResult;
+    });
+    const institutionUserToken = await getInstitutionToken(
+      InstitutionTokenTypes.CollegeFAdminLegalSigningUser,
+    );
+    const endpoint = "/institutions/designation-agreement";
 
     // Act/Assert
     let designationAgreementId;

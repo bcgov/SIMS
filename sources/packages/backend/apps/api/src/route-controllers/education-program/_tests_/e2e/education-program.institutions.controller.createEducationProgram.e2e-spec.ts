@@ -9,6 +9,7 @@ import {
   E2EDataSources,
   createE2EDataSources,
   createFakeInstitutionLocation,
+  getProviderInstanceForModule,
 } from "@sims/test-utils";
 import {
   createTestingAppModule,
@@ -19,6 +20,10 @@ import {
   getAuthRelatedEntities,
 } from "../../../../testHelpers";
 import * as request from "supertest";
+import { FormService } from "../../../../services";
+import { DryRunSubmissionResult } from "../../../../types";
+import { TestingModule } from "@nestjs/testing";
+import { AppInstitutionsModule } from "../../../../app.institutions.module";
 
 describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", () => {
   let app: INestApplication;
@@ -26,9 +31,11 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", (
   let collegeF: Institution;
   let collegeFLocation: InstitutionLocation;
   let collegeFUser: User;
+  let testingModule: TestingModule;
 
   beforeAll(async () => {
-    const { nestApplication, dataSource } = await createTestingAppModule();
+    const { nestApplication, dataSource, module } =
+      await createTestingAppModule();
     app = nestApplication;
     db = createE2EDataSources(dataSource);
     const { institution, user: institutionUser } = await getAuthRelatedEntities(
@@ -43,14 +50,11 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", (
       collegeFLocation,
     );
     collegeFUser = institutionUser;
+    testingModule = module;
   });
 
   it("Should create an education program when valid data is passed.", async () => {
     // Arrange
-    const institutionUserToken = await getInstitutionToken(
-      InstitutionTokenTypes.CollegeFUser,
-    );
-    const endpoint = "/institutions/education-program";
     const payload = {
       name: "Education Program test",
       description: "Education Program description...",
@@ -87,6 +91,18 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", (
       applicationStatus: "",
       hasOfferings: false,
     };
+    const formService = await getProviderInstanceForModule(
+      testingModule,
+      AppInstitutionsModule,
+      FormService,
+    );
+    jest.spyOn(formService, "dryRunSubmission").mockImplementation(async () => {
+      return { valid: true, data: { data: payload } } as DryRunSubmissionResult;
+    });
+    const institutionUserToken = await getInstitutionToken(
+      InstitutionTokenTypes.CollegeFUser,
+    );
+    const endpoint = "/institutions/education-program";
 
     // Act
     let educationProgramId;
