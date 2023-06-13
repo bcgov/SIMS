@@ -3,7 +3,6 @@ import {
   DesignationAgreementStatus,
   Institution,
   InstitutionLocation,
-  User,
 } from "@sims/sims-db";
 import {
   E2EDataSources,
@@ -25,13 +24,12 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", (
   let db: E2EDataSources;
   let collegeF: Institution;
   let collegeFLocation: InstitutionLocation;
-  let collegeFUser: User;
 
   beforeAll(async () => {
     const { nestApplication, dataSource } = await createTestingAppModule();
     app = nestApplication;
     db = createE2EDataSources(dataSource);
-    const { institution, user: institutionUser } = await getAuthRelatedEntities(
+    const { institution } = await getAuthRelatedEntities(
       db.dataSource,
       InstitutionTokenTypes.CollegeFAdminLegalSigningUser,
     );
@@ -42,7 +40,6 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", (
       InstitutionTokenTypes.CollegeFAdminLegalSigningUser,
       collegeFLocation,
     );
-    collegeFUser = institutionUser;
   });
 
   it("Should request designation for a public institution when institution user is legal signing authority.", async () => {

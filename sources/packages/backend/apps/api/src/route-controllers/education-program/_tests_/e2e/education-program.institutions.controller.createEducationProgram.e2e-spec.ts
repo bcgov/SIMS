@@ -33,13 +33,13 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", (
     db = createE2EDataSources(dataSource);
     const { institution, user: institutionUser } = await getAuthRelatedEntities(
       db.dataSource,
-      InstitutionTokenTypes.CollegeFAdminLegalSigningUser,
+      InstitutionTokenTypes.CollegeFUser,
     );
     collegeF = institution;
     collegeFLocation = createFakeInstitutionLocation(collegeF);
     await authorizeUserTokenForLocation(
       db.dataSource,
-      InstitutionTokenTypes.CollegeFAdminLegalSigningUser,
+      InstitutionTokenTypes.CollegeFUser,
       collegeFLocation,
     );
     collegeFUser = institutionUser;
@@ -48,7 +48,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", (
   it("Should create an education program when valid data is passed.", async () => {
     // Arrange
     const institutionUserToken = await getInstitutionToken(
-      InstitutionTokenTypes.CollegeFAdminLegalSigningUser,
+      InstitutionTokenTypes.CollegeFUser,
     );
     const endpoint = "/institutions/education-program";
     const payload = {
