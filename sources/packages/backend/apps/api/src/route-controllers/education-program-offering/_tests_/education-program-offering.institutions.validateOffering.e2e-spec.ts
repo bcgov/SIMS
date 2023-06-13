@@ -3,7 +3,6 @@ import {
   Institution,
   InstitutionLocation,
   OfferingIntensity,
-  OfferingStatus,
   OfferingTypes,
   User,
 } from "@sims/sims-db";

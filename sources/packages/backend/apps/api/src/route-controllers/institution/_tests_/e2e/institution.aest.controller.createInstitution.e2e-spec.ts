@@ -28,7 +28,7 @@ describe("InstitutionAESTController(e2e)-createInstitution", () => {
       establishedDate: "2023-06-01",
       primaryEmail: "test@test.ca",
       primaryPhone: "7785367878",
-      website: "http://www.test.ca",
+      website: "https://www.test.ca",
       primaryContactFirstName: "Primary",
       primaryContactLastName: "Contact",
       primaryContactEmail: "test@test.ca",
