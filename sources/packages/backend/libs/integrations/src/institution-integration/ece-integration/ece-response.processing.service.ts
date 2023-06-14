@@ -484,10 +484,16 @@ export class ECEResponseProcessingService {
     const attachmentBody = new StringBuilder();
     attachmentBody.appendLine("Summary:");
     attachmentBody.appendLine(processSummaryResult.summary.join(END_OF_LINE));
+    const warnings = processSummaryResult.warnings.length
+      ? processSummaryResult.warnings.join(END_OF_LINE)
+      : "NONE";
     attachmentBody.appendLine("Warnings:");
-    attachmentBody.appendLine(processSummaryResult.warnings.join(END_OF_LINE));
+    attachmentBody.appendLine(warnings);
+    const errors = processSummaryResult.errors.length
+      ? processSummaryResult.errors.join(END_OF_LINE)
+      : "NONE";
     attachmentBody.appendLine("Errors:");
-    attachmentBody.appendLine(processSummaryResult.warnings.join(END_OF_LINE));
+    attachmentBody.appendLine(errors);
     return attachmentBody.toString();
   }
 
