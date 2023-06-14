@@ -105,7 +105,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", (
     const endpoint = "/institutions/education-program";
 
     // Act/Assert
-    let educationProgramId;
+    let educationProgramId: number;
     await request(app.getHttpServer())
       .post(endpoint)
       .send(payload)

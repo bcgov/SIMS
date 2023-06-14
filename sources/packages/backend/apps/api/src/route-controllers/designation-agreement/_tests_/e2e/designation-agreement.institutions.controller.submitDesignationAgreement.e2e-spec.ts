@@ -84,7 +84,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", (
     const endpoint = "/institutions/designation-agreement";
 
     // Act/Assert
-    let designationAgreementId;
+    let designationAgreementId: string;
     await request(app.getHttpServer())
       .post(endpoint)
       .send(payload)
@@ -94,7 +94,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", (
         designationAgreementId = response.text;
       });
     const designationAgreement = await db.designationAgreement.findOne({
-      where: { id: designationAgreementId },
+      where: { id: +designationAgreementId },
     });
     expect(designationAgreement.designationStatus).toBe(
       DesignationAgreementStatus.Pending,

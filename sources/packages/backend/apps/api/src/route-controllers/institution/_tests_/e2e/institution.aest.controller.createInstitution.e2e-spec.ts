@@ -50,7 +50,7 @@ describe("InstitutionAESTController(e2e)-createInstitution", () => {
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
 
     // Act/Assert
-    let institutionId;
+    let institutionId: number;
     await request(app.getHttpServer())
       .post(endpoint)
       .send(payload)
