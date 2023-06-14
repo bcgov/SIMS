@@ -179,7 +179,7 @@ export class ECEResponseProcessingService {
 
         // Create notification email which gets sent to
         // the integration contacts of the institution
-        // when a ece file exist for an institution.
+        // when a ECE file exists for an institution.
         await this.createECEResponseProcessingNotification(
           institutionCode,
           disbursementProcessingDetails,
@@ -420,7 +420,6 @@ export class ECEResponseProcessingService {
   /**
    * Create ECE Response file processing notifications.
    * @param institutionCode institution of the processing file.
-   * @param auditUserId user that creates notification.
    * @param disbursementProcessingDetails disbursement processing count.
    * @param processSummaryResult process summary details.
    */

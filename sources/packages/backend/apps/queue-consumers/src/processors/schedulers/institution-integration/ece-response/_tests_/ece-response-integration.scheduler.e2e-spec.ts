@@ -1,11 +1,6 @@
 import { DeepMocked, createMock } from "@golevelup/ts-jest";
 import { INestApplication } from "@nestjs/common";
-import {
-  COE_WINDOW,
-  QueueNames,
-  addDays,
-  getISODateOnlyString,
-} from "@sims/utilities";
+import { COE_WINDOW, QueueNames, addDays } from "@sims/utilities";
 import {
   createTestingAppModule,
   describeProcessorRootTest,
@@ -93,7 +88,7 @@ describe(
       // with date sent as null.
       await db.notification.update(
         { dateSent: IsNull() },
-        { dateSent: getISODateOnlyString(new Date()) },
+        { dateSent: new Date() },
       );
     });
 
@@ -425,7 +420,7 @@ describe(
       );
     });
 
-    it("Should skip the ECE disbursement and create notification when disbursement does not belong to the system.", async () => {
+    it("Should skip the ECE disbursement and create notification when disbursement and application does not belong to the system.", async () => {
       // Arrange
       // Enable integration for institution location
       // used for test.

@@ -52,9 +52,8 @@ export function createFakeApplication(relations?: {
   // Application numbers are expected to be a string of number
   // with fixed length of 10 characters.
   application.applicationNumber = faker.random
-    .number(9999999999)
-    .toString()
-    .padStart(10, "0");
+    .number({ max: 9999999999, min: 1000000000 })
+    .toString();
   application.applicationException = relations?.applicationException;
   application.location = relations?.location;
   return application;

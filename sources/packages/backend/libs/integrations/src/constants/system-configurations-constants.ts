@@ -20,4 +20,4 @@ export const ECE_RESPONSE_COE_DECLINED_REASON =
  * Name of the email attachment file sent in ECE Response processing notification.
  */
 export const ECE_RESPONSE_ATTACHMENT_FILE_NAME =
-  "processing_summary_report.txt";
+  "Processing_Summary_Report.txt";

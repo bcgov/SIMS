@@ -4,5 +4,5 @@
  * @returns Base64 encoded string.
  */
 export function base64Encode(stringToEncode: string): string {
-  return Buffer.from(stringToEncode, "binary").toString("base64");
+  return Buffer.from(stringToEncode).toString("base64");
 }

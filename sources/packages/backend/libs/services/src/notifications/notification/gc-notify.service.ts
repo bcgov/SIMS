@@ -1,7 +1,7 @@
 import { HttpStatus, Injectable } from "@nestjs/common";
 import axios, { AxiosError } from "axios";
 import {
-  EmailMessage,
+  NotificationEmailMessage,
   GCNotifyErrorResponse,
   GCNotifyResult,
 } from "./gc-notify.model";
@@ -26,7 +26,9 @@ export class GCNotifyService {
    * @param payload email message payload.
    * @returns GC Notify API call response.
    */
-  async sendEmailNotification(payload: EmailMessage): Promise<GCNotifyResult> {
+  async sendEmailNotification(
+    payload: NotificationEmailMessage,
+  ): Promise<GCNotifyResult> {
     try {
       const response = await axios.post(this.gcNotifyConfig.url, payload, {
         headers: {

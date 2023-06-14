@@ -19,7 +19,10 @@ import {
   SaveNotificationModel,
 } from "./notification.model";
 import { LoggerService, InjectLogger } from "@sims/utilities/logger";
-import { EmailMessage, GCNotifyErrorResponse } from "./gc-notify.model";
+import {
+  NotificationEmailMessage,
+  GCNotifyErrorResponse,
+} from "./gc-notify.model";
 import { CustomNamedError, processInParallel } from "@sims/utilities";
 import { GC_NOTIFY_PERMANENT_FAILURE_ERROR } from "@sims/services/constants";
 
@@ -127,7 +130,7 @@ export class NotificationService extends RecordDataModelService<Notification> {
     // Call GC Notify send email method.
     try {
       await this.gcNotifyService.sendEmailNotification(
-        notification.messagePayload as EmailMessage,
+        notification.messagePayload as NotificationEmailMessage,
       );
       await this.updateNotification(notification.id);
       return true;

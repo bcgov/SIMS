@@ -45,7 +45,7 @@ export interface GCNotifyErrorResponse {
 /**
  * Email message format.
  */
-export interface EmailMessage {
+export interface NotificationEmailMessage {
   template_id: string;
   email_address: string;
   personalisation?: {

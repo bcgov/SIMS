@@ -13,7 +13,7 @@ import {
   StudentFileUploadNotification,
   StudentNotification,
   ECEResponseFileProcessingNotification,
-  EmailMessage,
+  NotificationEmailMessage,
 } from "..";
 import { GCNotifyService } from "./gc-notify.service";
 import { NotificationService } from "./notification.service";
@@ -429,7 +429,7 @@ export class NotificationActionsService {
     const eceResponseFileProcessingNotifications = [];
 
     for (const integrationContact of notification.integrationContacts) {
-      const messagePayload: EmailMessage = {
+      const messagePayload: NotificationEmailMessage = {
         email_address: integrationContact,
         template_id: templateId,
         personalisation: {
