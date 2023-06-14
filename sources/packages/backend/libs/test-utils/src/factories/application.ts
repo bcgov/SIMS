@@ -49,7 +49,11 @@ export function createFakeApplication(relations?: {
   application.applicationStatus = ApplicationStatus.Submitted;
   application.relationshipStatus = RelationshipStatus.Single;
   application.currentAssessment = relations?.currentStudentAssessment;
-  application.applicationNumber = faker.random.alphaNumeric(10);
+  // Application numbers are expected to be a string of number
+  // with fixed length of 10 characters.
+  application.applicationNumber = faker.random
+    .number({ max: 9999999999, min: 1000000000 })
+    .toString();
   application.applicationException = relations?.applicationException;
   application.location = relations?.location;
   return application;

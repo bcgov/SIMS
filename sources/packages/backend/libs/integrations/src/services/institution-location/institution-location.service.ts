@@ -29,4 +29,23 @@ export class InstitutionLocationService {
     });
     return locations.map((location) => location.institutionCode);
   }
+
+  /**
+   * Get integration contacts for given institution.
+   * @param institutionCode institution code.
+   * @returns integration contacts.
+   */
+  async getIntegrationContactsByInstitutionCode(
+    institutionCode: string,
+  ): Promise<string[]> {
+    const location = await this.institutionLocationRepo.findOne({
+      select: {
+        integrationContacts: true,
+      },
+      where: {
+        institutionCode,
+      },
+    });
+    return location.integrationContacts;
+  }
 }

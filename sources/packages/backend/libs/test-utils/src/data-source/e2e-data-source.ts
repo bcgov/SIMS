@@ -24,6 +24,7 @@ import {
   InstitutionUserTypeAndRole,
   MSFAANumber,
   Note,
+  Notification,
   PIRDeniedReason,
   ProgramYear,
   QueueConfiguration,
@@ -121,6 +122,7 @@ export function createE2EDataSources(dataSource: DataSource): E2EDataSources {
     studentUser: dataSource.getRepository(StudentUser),
     supportingUser: dataSource.getRepository(SupportingUser),
     user: dataSource.getRepository(User),
+    notification: dataSource.getRepository(Notification),
   };
 }
 
@@ -175,4 +177,5 @@ export interface E2EDataSources {
   studentUser: Repository<StudentUser>;
   supportingUser: Repository<SupportingUser>;
   user: Repository<User>;
+  notification: Repository<Notification>;
 }
