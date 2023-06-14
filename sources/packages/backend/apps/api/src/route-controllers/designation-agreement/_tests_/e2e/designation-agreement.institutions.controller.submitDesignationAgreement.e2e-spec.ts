@@ -24,7 +24,7 @@ import { DryRunSubmissionResult } from "../../../../types";
 import { TestingModule } from "@nestjs/testing";
 import { AppInstitutionsModule } from "../../../../app.institutions.module";
 
-describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", () => {
+describe("DesignationAgreementInstitutionsController(e2e)-submitDesignationAgreement", () => {
   let app: INestApplication;
   let db: E2EDataSources;
   let collegeF: Institution;
