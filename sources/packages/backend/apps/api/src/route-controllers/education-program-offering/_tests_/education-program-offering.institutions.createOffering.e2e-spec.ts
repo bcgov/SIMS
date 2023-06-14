@@ -54,7 +54,6 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", (
     const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeFUser,
     );
-
     const fakeEducationProgram = createFakeEducationProgram(
       collegeF,
       collegeFUser,
@@ -114,7 +113,6 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", (
         expect(response.body.id).toBeGreaterThan(0);
         educationProgramOfferingId = response.body.id;
       });
-
     const createdEducationProgramOffering =
       await db.educationProgramOffering.findOne({
         where: { id: educationProgramOfferingId },

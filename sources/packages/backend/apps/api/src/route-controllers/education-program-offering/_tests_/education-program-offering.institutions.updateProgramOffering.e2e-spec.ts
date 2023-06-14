@@ -63,7 +63,6 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-updateProgramOffer
     const savedFakeEducationProgram = await db.educationProgram.save(
       fakeEducationProgram,
     );
-
     const savedEducationProgramOffering =
       await db.educationProgramOffering.save(
         createFakeEducationProgramOffering(
@@ -118,7 +117,6 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-updateProgramOffer
       .auth(institutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
       .expect({});
-
     const updatedEducationProgramOffering =
       await db.educationProgramOffering.findOne({
         where: { id: savedEducationProgramOffering.id },
