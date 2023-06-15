@@ -1,5 +1,6 @@
 import { HttpStatus, INestApplication } from "@nestjs/common";
 import {
+  EducationProgram,
   Institution,
   InstitutionLocation,
   OfferingIntensity,
@@ -30,6 +31,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-validateOffering",
   let collegeF: Institution;
   let collegeFLocation: InstitutionLocation;
   let collegeFUser: User;
+  let collegeFEducationProgram: EducationProgram;
 
   beforeAll(async () => {
     const { nestApplication, dataSource } = await createTestingAppModule();
@@ -47,6 +49,15 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-validateOffering",
       InstitutionTokenTypes.CollegeFUser,
       collegeFLocation,
     );
+    const fakeEducationProgram = createFakeEducationProgram(
+      collegeF,
+      collegeFUser,
+    );
+    fakeEducationProgram.sabcCode = faker.random.alpha({ count: 4 });
+    fakeEducationProgram.deliveredOnline = true;
+    collegeFEducationProgram = await db.educationProgram.save(
+      fakeEducationProgram,
+    );
   });
 
   it("Should validate an offering when passed valid data.", async () => {
@@ -55,16 +66,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-validateOffering",
       InstitutionTokenTypes.CollegeFUser,
     );
 
-    const fakeEducationProgram = createFakeEducationProgram(
-      collegeF,
-      collegeFUser,
-    );
-    fakeEducationProgram.sabcCode = faker.random.alpha({ count: 4 });
-    fakeEducationProgram.deliveredOnline = true;
-    const savedFakeEducationProgram = await db.educationProgram.save(
-      fakeEducationProgram,
-    );
-    const endpoint = `/institutions/education-program-offering/location/${collegeFLocation.id}/education-program/${savedFakeEducationProgram.id}/validation`;
+    const endpoint = `/institutions/education-program-offering/location/${collegeFLocation.id}/education-program/${collegeFEducationProgram.id}/validation`;
     const payload = {
       offeringName: "Offering validation",
       yearOfStudy: 1,
