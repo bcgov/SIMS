@@ -84,17 +84,18 @@ describe("DesignationAgreementInstitutionsController(e2e)-submitDesignationAgree
     const endpoint = "/institutions/designation-agreement";
 
     // Act/Assert
-    let designationAgreementId: string;
+    let designationAgreementId: number;
     await request(app.getHttpServer())
       .post(endpoint)
       .send(payload)
       .auth(institutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.CREATED)
       .then((response) => {
-        designationAgreementId = response.text;
+        expect(response.body.id).toBeGreaterThan(0);
+        designationAgreementId = response.body.id;
       });
     const designationAgreement = await db.designationAgreement.findOne({
-      where: { id: +designationAgreementId },
+      where: { id: designationAgreementId },
     });
     expect(designationAgreement.designationStatus).toBe(
       DesignationAgreementStatus.Pending,
