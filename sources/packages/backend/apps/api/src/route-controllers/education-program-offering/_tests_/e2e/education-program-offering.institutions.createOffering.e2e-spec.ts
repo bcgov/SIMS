@@ -21,7 +21,7 @@ import {
   authorizeUserTokenForLocation,
   getAuthRelatedEntities,
   createFakeEducationProgram,
-} from "../../../testHelpers";
+} from "../../../../testHelpers";
 import * as request from "supertest";
 
 describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", () => {
@@ -63,6 +63,13 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", (
       fakeEducationProgram,
     );
     const endpoint = `/institutions/education-program-offering/location/${collegeFLocation.id}/education-program/${savedFakeEducationProgram.id}`;
+    const studyBreak = {
+      breakStartDate: "2023-12-01",
+      breakEndDate: "2024-01-01",
+      breakDays: 32,
+      eligibleBreakDays: 21,
+      ineligibleBreakDays: 11,
+    };
     const payload = {
       offeringName: "Offering 1",
       yearOfStudy: 1,
@@ -73,15 +80,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", (
       studyStartDate: "2023-09-01",
       studyEndDate: "2024-06-30",
       lacksStudyBreaks: false,
-      studyBreaks: [
-        {
-          breakStartDate: "2023-12-01",
-          breakEndDate: "2024-01-01",
-          breakDays: 32,
-          eligibleBreakDays: 21,
-          ineligibleBreakDays: 11,
-        },
-      ],
+      studyBreaks: [studyBreak],
       studyBreaksOverlappingDetection: false,
       studyPeriodBreakdown: {
         totalDays: 304,
@@ -91,7 +90,6 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", (
       },
       offeringType: OfferingTypes.Public,
       offeringDeclaration: true,
-      mode: "editable",
       validationWarnings: [],
       validationInfos: ["invalidStudyBreakAmountOfDays"],
       applicationId: "",
@@ -136,15 +134,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", (
         offeringWILType: null,
         studyBreaks: {
           totalDays: payload.studyPeriodBreakdown.totalDays,
-          studyBreaks: [
-            {
-              breakDays: payload.studyBreaks[0].breakDays,
-              breakEndDate: payload.studyBreaks[0].breakEndDate,
-              breakStartDate: payload.studyBreaks[0].breakStartDate,
-              eligibleBreakDays: payload.studyBreaks[0].eligibleBreakDays,
-              ineligibleBreakDays: payload.studyBreaks[0].ineligibleBreakDays,
-            },
-          ],
+          studyBreaks: [studyBreak],
           totalFundedWeeks: payload.studyPeriodBreakdown.totalFundedWeeks,
           fundedStudyPeriodDays:
             payload.studyPeriodBreakdown.fundedStudyPeriodDays,

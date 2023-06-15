@@ -22,7 +22,7 @@ import {
   getAuthRelatedEntities,
   createFakeEducationProgram,
   createFakeEducationProgramOffering,
-} from "../../../testHelpers";
+} from "../../../../testHelpers";
 import * as request from "supertest";
 
 describe("EducationProgramOfferingInstitutionsController(e2e)-updateProgramOffering", () => {
