@@ -101,4 +101,8 @@ describe("DesignationAgreementInstitutionsController(e2e)-submitDesignationAgree
       DesignationAgreementStatus.Pending,
     );
   });
+
+  afterAll(async () => {
+    await app?.close();
+  });
 });

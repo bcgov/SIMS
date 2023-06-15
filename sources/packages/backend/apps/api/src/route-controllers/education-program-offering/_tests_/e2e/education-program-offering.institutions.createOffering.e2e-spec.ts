@@ -148,4 +148,8 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", (
       }),
     );
   });
+
+  afterAll(async () => {
+    await app?.close();
+  });
 });

@@ -161,4 +161,8 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-updateProgramOffer
       }),
     );
   });
+
+  afterAll(async () => {
+    await app?.close();
+  });
 });
