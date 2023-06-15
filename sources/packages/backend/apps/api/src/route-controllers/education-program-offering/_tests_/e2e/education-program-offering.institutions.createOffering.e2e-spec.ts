@@ -92,8 +92,6 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", (
       offeringDeclaration: true,
       validationWarnings: [],
       validationInfos: ["invalidStudyBreakAmountOfDays"],
-      applicationId: "",
-      applicationStatus: "",
       actualTuitionCosts: 1234,
       programRelatedCosts: 3211,
       mandatoryFees: 456,
