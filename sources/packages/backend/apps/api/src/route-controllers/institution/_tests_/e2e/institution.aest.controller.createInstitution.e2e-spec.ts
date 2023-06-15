@@ -18,7 +18,7 @@ describe("InstitutionAESTController(e2e)-createInstitution", () => {
     db = createE2EDataSources(dataSource);
   });
 
-  it("Should create institution when validate is passed.", async () => {
+  it("Should create institution when valid data is passed.", async () => {
     // Arrange
     const payload = {
       legalOperatingName: "Create Institution legal operating name",
