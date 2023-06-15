@@ -75,9 +75,9 @@ describe("DesignationAgreementInstitutionsController(e2e)-submitDesignationAgree
       AppInstitutionsModule,
       FormService,
     );
-    jest.spyOn(formService, "dryRunSubmission").mockImplementation(async () => {
-      return { valid: true, data: { data: payload } } as DryRunSubmissionResult;
-    });
+    formService.dryRunSubmission = jest
+      .fn()
+      .mockResolvedValue({ valid: true, data: { data: payload } });
     const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeFAdminLegalSigningUser,
     );
