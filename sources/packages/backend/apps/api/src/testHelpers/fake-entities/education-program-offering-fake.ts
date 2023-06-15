@@ -30,6 +30,6 @@ export function createFakeEducationProgramOffering(
   offering.courseLoad = 45;
   offering.hasOfferingWILComponent = "no";
   offering.offeringDeclaration = true;
-  offering.offeringStatus = OfferingStatus.CreationPending;
+  offering.offeringStatus = OfferingStatus.Approved;
   return offering;
 }

@@ -84,11 +84,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", (
       hasTravel: "no",
       hasIntlExchange: "no",
       programDeclaration: true,
-      totalOfferings: "",
-      isBCPrivate: "",
       programStatus: ProgramStatus.Approved,
-      applicationId: "",
-      applicationStatus: "",
       hasOfferings: false,
     };
     const formService = await getProviderInstanceForModule(
@@ -96,9 +92,9 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", (
       AppInstitutionsModule,
       FormService,
     );
-    jest.spyOn(formService, "dryRunSubmission").mockImplementation(async () => {
-      return { valid: true, data: { data: payload } } as DryRunSubmissionResult;
-    });
+    formService.dryRunSubmission = jest
+      .fn()
+      .mockResolvedValue({ valid: true, data: { data: payload } });
     const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeFUser,
     );

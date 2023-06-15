@@ -22,6 +22,7 @@ import {
   createFakeEducationProgram,
 } from "../../../../testHelpers";
 import * as request from "supertest";
+import * as faker from "faker";
 
 describe("EducationProgramOfferingInstitutionsController(e2e)-validateOffering", () => {
   let app: INestApplication;
@@ -48,7 +49,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-validateOffering",
     );
   });
 
-  it("Should approve an offering when passed valid data.", async () => {
+  it("Should validate an offering when passed valid data.", async () => {
     // Arrange
     const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeFUser,
@@ -58,7 +59,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-validateOffering",
       collegeF,
       collegeFUser,
     );
-    fakeEducationProgram.sabcCode = "hgha";
+    fakeEducationProgram.sabcCode = faker.random.alpha({ count: 4 });
     fakeEducationProgram.deliveredOnline = true;
     const savedFakeEducationProgram = await db.educationProgram.save(
       fakeEducationProgram,
@@ -92,11 +93,8 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-validateOffering",
       },
       offeringType: OfferingTypes.Public,
       offeringDeclaration: true,
-      mode: "editable",
       validationWarnings: [],
       validationInfos: ["invalidStudyBreakAmountOfDays"],
-      applicationId: "",
-      applicationStatus: "",
       actualTuitionCosts: 1234,
       programRelatedCosts: 3211,
       mandatoryFees: 456,

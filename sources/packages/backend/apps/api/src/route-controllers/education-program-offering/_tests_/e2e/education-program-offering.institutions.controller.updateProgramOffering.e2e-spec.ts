@@ -21,10 +21,12 @@ import {
   authorizeUserTokenForLocation,
   getAuthRelatedEntities,
   createFakeEducationProgram,
+  createFakeEducationProgramOffering,
 } from "../../../../testHelpers";
 import * as request from "supertest";
+import * as faker from "faker";
 
-describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", () => {
+describe("EducationProgramOfferingInstitutionsController(e2e)-updateProgramOffering", () => {
   let app: INestApplication;
   let db: E2EDataSources;
   let collegeF: Institution;
@@ -49,7 +51,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", (
     );
   });
 
-  it("Should create a new offering when passed valid data.", async () => {
+  it("Should update a new offering when passed valid data.", async () => {
     // Arrange
     const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeFUser,
@@ -58,11 +60,18 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", (
       collegeF,
       collegeFUser,
     );
-    fakeEducationProgram.sabcCode = "nbgvc";
+    fakeEducationProgram.sabcCode = faker.random.alpha({ count: 4 });
     const savedFakeEducationProgram = await db.educationProgram.save(
       fakeEducationProgram,
     );
-    const endpoint = `/institutions/education-program-offering/location/${collegeFLocation.id}/education-program/${savedFakeEducationProgram.id}`;
+    const savedEducationProgramOffering =
+      await db.educationProgramOffering.save(
+        createFakeEducationProgramOffering(
+          savedFakeEducationProgram,
+          collegeFLocation,
+        ),
+      );
+    const endpoint = `/institutions/education-program-offering/location/${collegeFLocation.id}/education-program/${savedFakeEducationProgram.id}/offering/${savedEducationProgramOffering.id}`;
     const studyBreak = {
       breakStartDate: "2023-12-01",
       breakEndDate: "2024-01-01",
@@ -71,7 +80,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", (
       ineligibleBreakDays: 11,
     };
     const payload = {
-      offeringName: "Offering 1",
+      offeringName: "Updated offering name",
       yearOfStudy: 1,
       showYearOfStudy: true,
       offeringIntensity: OfferingIntensity.fullTime,
@@ -99,21 +108,17 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", (
     };
 
     // Act/Assert
-    let educationProgramOfferingId: number;
     await request(app.getHttpServer())
-      .post(endpoint)
+      .patch(endpoint)
       .send(payload)
       .auth(institutionUserToken, BEARER_AUTH_TYPE)
-      .expect(HttpStatus.CREATED)
-      .then((response) => {
-        expect(response.body.id).toBeGreaterThan(0);
-        educationProgramOfferingId = response.body.id;
-      });
-    const createdEducationProgramOffering =
+      .expect(HttpStatus.OK)
+      .expect({});
+    const updatedEducationProgramOffering =
       await db.educationProgramOffering.findOne({
-        where: { id: educationProgramOfferingId },
+        where: { id: savedEducationProgramOffering.id },
       });
-    expect(createdEducationProgramOffering).toEqual(
+    expect(updatedEducationProgramOffering).toEqual(
       expect.objectContaining({
         name: payload.offeringName,
         studyStartDate: payload.studyStartDate,
@@ -142,7 +147,6 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", (
         offeringDeclaration: payload.offeringDeclaration,
         assessedDate: null,
         offeringStatus: OfferingStatus.CreationPending,
-        courseLoad: null,
       }),
     );
   });
