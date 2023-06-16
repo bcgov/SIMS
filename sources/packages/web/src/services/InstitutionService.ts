@@ -165,18 +165,18 @@ export class InstitutionService {
   /**
    * Gets all eligible application that can be requested for application
    * offering change.
-   * @param {number} locationId location id.
+   * @param locationId location id.
    * @param paginationOptions options to execute the pagination.
    * @returns list of eligible application that can be requested for
    * application offering change.
    */
-  async getEligibleApplicationOfferingChangeApplications(
+  async getEligibleApplicationOfferingChangeRecords(
     locationId: number,
     paginationOptions: PaginationOptions,
   ): Promise<
     PaginatedResultsAPIOutDTO<ApplicationOfferingChangeSummaryAPIOutDTO>
   > {
-    return ApiClient.Institution.getEligibleApplicationOfferingChangeApplications(
+    return ApiClient.Institution.getEligibleApplicationOfferingChangeRecords(
       locationId,
       paginationOptions,
     );

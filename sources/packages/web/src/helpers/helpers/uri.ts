@@ -61,6 +61,9 @@ export const getPaginationQueryString = (
 ) => {
   if (enableZeroPage) {
     paginationOptions.page = paginationOptions.page - 1;
+    if (paginationOptions.searchCriteria) {
+      paginationOptions.page = 0;
+    }
   }
 
   const parameters: string[] = [];
@@ -72,7 +75,8 @@ export const getPaginationQueryString = (
   // Sort parameters.
   if (paginationOptions.sortField && paginationOptions.sortOrder) {
     const sortDBOrder =
-      paginationOptions.sortOrder === DataTableSortOrder.DESC
+      paginationOptions.sortOrder === DataTableSortOrder.DESC ||
+      DataTableSortByOrder.DESC
         ? FieldSortOrder.DESC
         : FieldSortOrder.ASC;
     parameters.push(

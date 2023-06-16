@@ -9,6 +9,7 @@ import {
   RelationId,
 } from "typeorm";
 import {
+  ApplicationOfferingChangeRequest,
   CRAIncomeVerification,
   EducationProgram,
   InstitutionLocation,
@@ -327,6 +328,20 @@ export class Application extends RecordDataModel {
     },
   )
   studentScholasticStandings?: StudentScholasticStanding[];
+  /**
+   * Application offering change Request associated with this application.
+   */
+  @OneToMany(
+    () => ApplicationOfferingChangeRequest,
+    (applicationOfferingChangeRequest) =>
+      applicationOfferingChangeRequest.application,
+    {
+      eager: false,
+      cascade: false,
+      nullable: true,
+    },
+  )
+  applicationOfferingChangeRequest?: ApplicationOfferingChangeRequest[];
 }
 
 /**

@@ -2,10 +2,7 @@
   <tab-container>
     <body-header-container>
       <template #header>
-        <body-header
-          title="Applications"
-          :recordsCount="applications.results?.length"
-        >
+        <body-header title="Applications" :recordsCount="applications.count">
           <template #actions>
             <v-text-field
               density="compact"
@@ -13,7 +10,7 @@
               variant="outlined"
               v-model="searchCriteria"
               data-cy="searchCriteria"
-              @keyup.enter="searchActiveApplications"
+              @keyup.enter="searchApplicationOfferingChangeRecords"
               prepend-inner-icon="mdi-magnify"
               hide-details="auto"
             >
@@ -21,38 +18,35 @@
           </template>
         </body-header>
         <content-group>
-          <toggle-content :toggled="!applications.results?.length">
-            <!-- todo: ann use vuetify datatable -->
-            <DataTable
-              :value="applications.results"
-              :lazy="true"
-              :paginator="true"
-              :rows="pageLimit"
-              :rowsPerPageOptions="PAGINATION_LIST"
-              :totalRecords="applications.count"
-              @page="pageEvent"
-              @sort="sortEvent"
+          <toggle-content :toggled="!applications.count">
+            <v-data-table-server
+              :headers="AvailableToChangeOfferingChangeSummaryHeaders"
+              :items="applications.results"
+              :items-length="applications.count"
+              :loading="loading"
+              :items-per-page="DEFAULT_PAGE_LIMIT"
+              @update:options="paginationAndSortEvent"
             >
-              <Column field="fullName" header="Name" :sortable="true"> </Column>
-              <Column field="studyStartPeriod" header="Study dates">
-                <template #body="slotProps">
-                  <span>
-                    {{ dateOnlyLongString(slotProps.data.studyStartPeriod) }} -
-                    {{ dateOnlyLongString(slotProps.data.studyEndPeriod) }}
-                  </span>
-                </template>
-              </Column>
-              <Column
-                field="applicationNumber"
-                header="Application #"
-                :sortable="true"
-              ></Column>
-              <Column header="Action">
-                <template #body>
-                  <v-btn color="primary">Request a change</v-btn>
-                </template>
-              </Column>
-            </DataTable>
+              <template #[`item.fullName`]="{ item }">
+                <span data-cy="fullName">{{ item.columns.fullName }} </span>
+              </template>
+              <template #[`item.studyStartPeriod`]="{ item }">
+                <span data-cy="studyStartPeriod">
+                  {{ dateOnlyLongString(item.columns.studyStartPeriod) }}
+                  -
+                  {{ dateOnlyLongString(item.value.studyEndPeriod) }}
+                </span> </template
+              ><template #[`item.applicationNumber`]="{ item }">
+                <span data-cy="applicationNumber"
+                  >{{ item.columns.applicationNumber }}
+                </span>
+              </template>
+              <template #[`item.applicationId`]>
+                <v-btn data-cy="applicationId" color="primary"
+                  >Request a change</v-btn
+                >
+              </template>
+            </v-data-table-server>
           </toggle-content>
         </content-group>
       </template>
@@ -62,23 +56,17 @@
 
 <script lang="ts">
 import { ref, watch, defineComponent } from "vue";
-import { useRouter } from "vue-router";
-import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import { InstitutionService } from "@/services/InstitutionService";
 import {
   DEFAULT_PAGE_LIMIT,
-  PAGINATION_LIST,
-  DataTableSortOrder,
-  DEFAULT_PAGE_NUMBER,
-  PageAndSortEvent,
+  DataTableOptions,
   PaginatedResults,
-  ApplicationScholasticStandingStatus,
-  LayoutTemplates,
+  AvailableToChangeOfferingChangeSummaryHeaders,
+  DataTableSortByOrder,
+  DEFAULT_DATATABLE_PAGE_NUMBER,
 } from "@/types";
 import { ApplicationOfferingChangeSummaryAPIOutDTO } from "@/services/http/dto";
 import { useFormatters } from "@/composables";
-
-const DEFAULT_SORT_FIELD = "applicationNumber";
 
 export default defineComponent({
   props: {
@@ -89,87 +77,82 @@ export default defineComponent({
   },
 
   setup(props) {
-    const router = useRouter();
-    const page = ref(DEFAULT_PAGE_NUMBER);
-    const pageLimit = ref(DEFAULT_PAGE_LIMIT);
-    const sortField = ref(DEFAULT_SORT_FIELD);
-    const sortOrder = ref(DataTableSortOrder.ASC);
-    const searchCriteria = ref();
+    const loading = ref(false);
+    const searchCriteria = ref("");
     const { dateOnlyLongString } = useFormatters();
     const applications = ref(
       {} as PaginatedResults<ApplicationOfferingChangeSummaryAPIOutDTO>,
     );
+    let currentPage = NaN;
+    let currentPageLimit = NaN;
 
-    const goToViewApplication = (applicationId: number) => {
-      router.push({
-        name: InstitutionRoutesConst.ACTIVE_APPLICATION_EDIT,
-        params: { locationId: props.locationId, applicationId },
-      });
-    };
-
-    const goToViewScholasticStanding = (scholasticStandingId: number) => {
-      router.push({
-        name: InstitutionRoutesConst.SCHOLASTIC_STANDING_VIEW,
-        params: { locationId: props.locationId, scholasticStandingId },
-      });
-    };
-
-    const getSummaryList = async (locationId: number) => {
+    /**
+     * Load eligible application offering change records for institution.
+     * @param page page number, if nothing passed then {@link DEFAULT_DATATABLE_PAGE_NUMBER}.
+     * @param pageCount page limit, if nothing passed then {@link DEFAULT_PAGE_LIMIT}.
+     * @param sortField sort field, if nothing passed then api sorts with application number.
+     * @param sortOrder sort oder, if nothing passed then {@link DataTableSortByOrder.ASC}.
+     */
+    const getSummaryList = async (
+      page = DEFAULT_DATATABLE_PAGE_NUMBER,
+      pageCount = DEFAULT_PAGE_LIMIT,
+      sortField?: string,
+      sortOrder?: DataTableSortByOrder,
+    ) => {
+      loading.value = true;
       applications.value =
-        await InstitutionService.shared.getEligibleApplicationOfferingChangeApplications(
-          locationId,
+        await InstitutionService.shared.getEligibleApplicationOfferingChangeRecords(
+          props.locationId,
           {
-            page: page.value,
-            pageLimit: pageLimit.value,
-            sortField: sortField.value,
-            sortOrder: sortOrder.value,
+            page,
+            sortField,
+            sortOrder,
+            pageLimit: pageCount,
             searchCriteria: searchCriteria.value,
           },
         );
+      loading.value = false;
     };
 
-    const pageEvent = async (event: PageAndSortEvent) => {
-      page.value = event?.page;
-      pageLimit.value = event?.rows;
-      await getSummaryList(props.locationId);
+    // Pagination sort event callback.
+    const paginationAndSortEvent = async (event: DataTableOptions) => {
+      currentPage = event.page;
+      currentPageLimit = event.itemsPerPage;
+      const [sortByOptions] = event.sortBy;
+      await getSummaryList(
+        event.page,
+        event.itemsPerPage,
+        sortByOptions?.key,
+        sortByOptions?.order,
+      );
     };
 
-    const sortEvent = async (event: PageAndSortEvent) => {
-      page.value = DEFAULT_PAGE_NUMBER;
-      pageLimit.value = DEFAULT_PAGE_LIMIT;
-      sortField.value = event.sortField;
-      sortOrder.value = event.sortOrder;
-      await getSummaryList(props.locationId);
-    };
-
-    const searchActiveApplications = async () => {
-      page.value = DEFAULT_PAGE_NUMBER;
-      pageLimit.value = DEFAULT_PAGE_LIMIT;
-      await getSummaryList(props.locationId);
+    // Search table.
+    const searchApplicationOfferingChangeRecords = async () => {
+      await getSummaryList(
+        currentPage ?? DEFAULT_DATATABLE_PAGE_NUMBER,
+        currentPageLimit ?? DEFAULT_PAGE_LIMIT,
+      );
     };
 
     watch(
       () => props.locationId,
-      async (currValue) => {
-        //update the list
-        await getSummaryList(currValue);
+      async () => {
+        // Update the list.
+        await getSummaryList();
       },
       { immediate: true },
     );
 
     return {
-      ApplicationScholasticStandingStatus,
+      DEFAULT_PAGE_LIMIT,
       applications,
       dateOnlyLongString,
-      goToViewApplication,
-      pageEvent,
-      sortEvent,
-      searchActiveApplications,
-      pageLimit,
+      paginationAndSortEvent,
+      searchApplicationOfferingChangeRecords,
       searchCriteria,
-      goToViewScholasticStanding,
-      PAGINATION_LIST,
-      LayoutTemplates,
+      AvailableToChangeOfferingChangeSummaryHeaders,
+      loading,
     };
   },
 });

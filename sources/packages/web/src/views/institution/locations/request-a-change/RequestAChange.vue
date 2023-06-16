@@ -4,7 +4,7 @@
       <header-navigator
         :title="locationName"
         data-cy="requestAnApplicationChangeHeader"
-        subTitle="Request an Application Change"
+        sub-title="Request an Application Change"
       />
     </template>
     <template #tab-header>
@@ -30,19 +30,19 @@
         :value="ActiveRequestAChangeTab.AvailableToChangeTab"
         :eager="false"
       >
-        <available-to-change-summary :locationId="locationId" />
+        <available-to-change-summary :location-id="locationId" />
       </v-window-item>
       <v-window-item
         :value="ActiveRequestAChangeTab.InprogressTab"
         :eager="false"
       >
-        hello
+        <!-- todo: InprogressTab -->
       </v-window-item>
       <v-window-item
         :value="ActiveRequestAChangeTab.CompletedTab"
         :eager="false"
       >
-        hello
+        <!-- todo: CompletedTab -->
       </v-window-item>
     </v-window>
   </full-page-container>
@@ -53,7 +53,6 @@ import AvailableToChangeSummary from "@/components/institutions/request-a-change
 import { ref, computed, defineComponent } from "vue";
 import { useInstitutionState } from "@/composables";
 
-// todo: ann double check, if its needed or not
 enum ActiveRequestAChangeTab {
   AvailableToChangeTab = "available-to-change-tab",
   InprogressTab = "inprogress-tab",

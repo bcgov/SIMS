@@ -270,22 +270,21 @@ export class InstitutionLocationInstitutionsController extends BaseController {
   /**
    * Gets all eligible application that can be requested for application
    * offering change.
-   * @param {number} locationId location id.
+   * @param locationId location id.
    * @param paginationOptions options to execute the pagination.
    * @returns list of eligible application that can be requested for
    * application offering change.
    */
   @HasLocationAccess("locationId")
   @Get(":locationId/active-applications/request-change")
-  // todo: ann add max validation to location id
-  async getEligibleApplicationOfferingChangeApplications(
+  async getEligibleApplicationOfferingChangeRecords(
     @Param("locationId", ParseIntPipe) locationId: number,
     @Query() pagination: ApplicationStatusPaginationOptionsAPIInDTO,
   ): Promise<
     PaginatedResultsAPIOutDTO<ApplicationOfferingChangeSummaryAPIOutDTO>
   > {
     const applications =
-      await this.applicationService.getEligibleApplicationOfferingChangeApplications(
+      await this.applicationService.getEligibleApplicationOfferingChangeRecords(
         locationId,
         pagination,
       );

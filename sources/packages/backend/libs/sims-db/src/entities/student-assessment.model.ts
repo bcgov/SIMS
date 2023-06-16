@@ -20,6 +20,7 @@ import { AssessmentTriggerType } from "./assessment-trigger.type";
 import { RecordDataModel } from "./record.model";
 import { StudentScholasticStanding } from "./student-scholastic-standing.model";
 import { ApplicationOfferingChangeRequest } from "./application-offering-change-request.model";
+
 /**
  * Represents all the assessments and reassessments processed for a particular
  * Student Application. When a assessment/reassessment is needed it will use
@@ -173,8 +174,6 @@ export class StudentAssessment extends RecordDataModel {
     referencedColumnName: ColumnNames.ID,
   })
   studentScholasticStanding?: StudentScholasticStanding;
- 
-
   /**
    * Indicates the status of the NOA approval when the student must approve the
    * money values prior to the institution COE approval and disbursements or when
@@ -196,7 +195,6 @@ export class StudentAssessment extends RecordDataModel {
       studentAssessment.disbursementSchedules,
   )
   disbursementSchedulesIds?: number[];
-
   /**
    * Disbursements related to this assessment.
    */
@@ -210,9 +208,8 @@ export class StudentAssessment extends RecordDataModel {
     },
   )
   disbursementSchedules?: DisbursementSchedule[];
-
   /**
-   * When the reassessment happen due to a application offering change request (by institution),
+   * When the reassessment happen due to an application offering change request (by institution),
    * this will provide to the workflow the data that need be changed.
    */
   @ManyToOne(() => ApplicationOfferingChangeRequest, {

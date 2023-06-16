@@ -156,3 +156,27 @@ export interface DataTableOptions {
  * Default DataTable page number.
  */
 export const DEFAULT_DATATABLE_PAGE_NUMBER = 1;
+
+/**
+ * Available to change application offering change summary header.
+ */
+export const AvailableToChangeOfferingChangeSummaryHeaders = [
+  {
+    title: "Name",
+    key: "fullName",
+  },
+  {
+    title: "Study dates",
+    sortable: false,
+    key: "studyStartPeriod",
+  },
+  {
+    title: "Application #",
+    key: "applicationNumber",
+  },
+  {
+    title: "Action",
+    sortable: false,
+    key: "applicationId",
+  },
+];
