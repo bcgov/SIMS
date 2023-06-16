@@ -82,7 +82,6 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", (
       studyEndDate: "2024-06-30",
       lacksStudyBreaks: false,
       studyBreaks: [studyBreak],
-      studyBreaksOverlappingDetection: false,
       studyPeriodBreakdown: {
         totalDays: 304,
         totalFundedWeeks: 42,
@@ -91,7 +90,6 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", (
       },
       offeringType: OfferingTypes.Public,
       offeringDeclaration: true,
-      validationWarnings: [],
       validationInfos: ["invalidStudyBreakAmountOfDays"],
       actualTuitionCosts: 1234,
       programRelatedCosts: 3211,
