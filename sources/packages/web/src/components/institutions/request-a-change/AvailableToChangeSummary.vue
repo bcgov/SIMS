@@ -3,6 +3,16 @@
     <body-header-container>
       <template #header>
         <body-header title="Applications" :recordsCount="applications.count">
+          <template #subtitle>
+            Request a change for a program and offering in an application
+            <tooltip-icon
+              >Only "completed" applications can be requested to change. For
+              applications that are in progress, please have the student edit
+              their application from their account. If the student has received
+              funding already, the student will need to "request a change" from
+              their account.</tooltip-icon
+            >
+          </template>
           <template #actions>
             <v-text-field
               density="compact"
@@ -35,8 +45,9 @@
                   {{ dateOnlyLongString(item.columns.studyStartPeriod) }}
                   -
                   {{ dateOnlyLongString(item.value.studyEndPeriod) }}
-                </span> </template
-              ><template #[`item.applicationNumber`]="{ item }">
+                </span>
+              </template>
+              <template #[`item.applicationNumber`]="{ item }">
                 <span data-cy="applicationNumber"
                   >{{ item.columns.applicationNumber }}
                 </span>
@@ -75,7 +86,6 @@ export default defineComponent({
       required: true,
     },
   },
-
   setup(props) {
     const loading = ref(false);
     const searchCriteria = ref("");

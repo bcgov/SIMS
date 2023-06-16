@@ -67,7 +67,6 @@ export default defineComponent({
       required: true,
     },
   },
-
   setup(props) {
     const { getLocationName } = useInstitutionState();
     const tab = ref(ActiveRequestAChangeTab.AvailableToChangeTab);

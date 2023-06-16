@@ -329,7 +329,7 @@ export class Application extends RecordDataModel {
   )
   studentScholasticStandings?: StudentScholasticStanding[];
   /**
-   * Application offering change Request associated with this application.
+   * Application offering change request associated with this application.
    */
   @OneToMany(
     () => ApplicationOfferingChangeRequest,
