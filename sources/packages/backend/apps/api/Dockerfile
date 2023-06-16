@@ -15,7 +15,7 @@ RUN npm ci
 # Copying sources.
 COPY ./apps/api ./apps/api
 COPY ./libs ./libs
-COPY ./apps/db-migations/src/data-source.ts ./apps/api/src/data-source.ts
+COPY ./apps/db-migrations/src/data-source.ts ./apps/api/src/data-source.ts
 
 # Building app
 RUN npm run build api
