@@ -24,7 +24,7 @@ import { FormService } from "../../../../services";
 import { TestingModule } from "@nestjs/testing";
 import { AppInstitutionsModule } from "../../../../app.institutions.module";
 
-describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", () => {
+describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", () => {
   let app: INestApplication;
   let db: E2EDataSources;
   let collegeF: Institution;
