@@ -16,6 +16,7 @@ import {
   AESTCreateInstitutionAPIInDTO,
   PrimaryIdentifierAPIOutDTO,
   OptionItemAPIOutDTO,
+  InstitutionProfileAPIInDTO,
 } from "@/services/http/dto";
 
 export class InstitutionService {
@@ -52,7 +53,7 @@ export class InstitutionService {
   }
 
   async updateInstitution(
-    data: InstitutionContactAPIInDTO,
+    data: InstitutionContactAPIInDTO | InstitutionProfileAPIInDTO,
     institutionId?: number,
   ): Promise<void> {
     await ApiClient.Institution.updateInstitution(data, institutionId);

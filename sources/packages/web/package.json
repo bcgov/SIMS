@@ -15,6 +15,7 @@
     "@types/vuelidate": "^0.7.13",
     "@vee-validate/rules": "^4.0.4",
     "axios": "^0.21.2",
+    "class-transformer": "^0.5.1",
     "core-js": "^3.8.3",
     "dayjs": "^1.10.7",
     "formiojs": "^4.13.4",

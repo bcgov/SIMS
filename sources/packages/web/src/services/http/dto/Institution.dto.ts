@@ -3,6 +3,7 @@ import {
   AddressAPIOutDTO,
   AddressDetailsFormAPIDTO,
 } from "@/services/http/dto";
+import { Expose } from "class-transformer";
 
 export interface InstitutionContactAPIOutDTO {
   primaryContactEmail: string;
@@ -12,11 +13,16 @@ export interface InstitutionContactAPIOutDTO {
   mailingAddress: AddressAPIOutDTO;
 }
 
-export interface InstitutionContactAPIInDTO {
+export class InstitutionContactAPIInDTO {
+  @Expose()
   primaryContactEmail: string;
+  @Expose()
   primaryContactFirstName: string;
+  @Expose()
   primaryContactLastName: string;
+  @Expose()
   primaryContactPhone: string;
+  @Expose()
   mailingAddress: AddressDetailsFormAPIDTO;
 }
 
@@ -32,14 +38,22 @@ export interface InstitutionProfileAPIOutDTO
   institutionType: number;
 }
 
-export interface InstitutionProfileAPIInDTO extends InstitutionContactAPIInDTO {
+export class InstitutionProfileAPIInDTO extends InstitutionContactAPIInDTO {
+  @Expose()
   operatingName: string;
+  @Expose()
   primaryPhone: string;
+  @Expose()
   primaryEmail: string;
+  @Expose()
   website: string;
+  @Expose()
   regulatingBody: string;
+  @Expose()
   otherRegulatingBody?: string;
+  @Expose()
   establishedDate: Date;
+  @Expose()
   institutionType: number;
 }
 
