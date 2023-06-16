@@ -35,5 +35,6 @@ export function createFakeEducationProgram(
   program.institution = institution ?? createFakeInstitution();
   program.programIntensity = ProgramIntensity.fullTime;
   program.submittedBy = user;
+  program.fieldOfStudyCode = 1;
   return program;
 }

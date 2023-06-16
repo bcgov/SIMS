@@ -16,7 +16,7 @@ export function createFakeDesignationAgreement(
   fakeInstitution?: Institution,
   fakeUser?: User,
   fakeInstitutionLocations?: InstitutionLocation[],
-  designationStatus = DesignationAgreementStatus.Pending,
+  designationStatus = DesignationAgreementStatus.Approved,
 ): DesignationAgreement {
   const now = new Date();
 
