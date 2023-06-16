@@ -31,10 +31,6 @@ objects:
       role: master
       cluster-name: ${NAME}
       app.kubernetes.io/name: patroni
-      sessionAffinity: None
-      type: ClusterIP
-    status:
-      loadBalancer: {}
 - apiVersion: apps/v1
   kind: StatefulSet
   metadata:
