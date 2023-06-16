@@ -1556,7 +1556,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
     locationId: number,
     paginationOptions: PaginationOptions,
   ): Promise<PaginatedResults<Application>> {
-    const activeApplicationQuery = this.repo
+    const applicationQuery = this.repo
       .createQueryBuilder("application")
       .select([
         "application.applicationNumber",
@@ -1598,7 +1598,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
       .andWhere("application.isArchived = false");
 
     if (paginationOptions.searchCriteria) {
-      activeApplicationQuery
+      applicationQuery
         .andWhere(
           new Brackets((qb) => {
             qb.where(getUserFullNameLikeSearch()).orWhere(
@@ -1612,7 +1612,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
         );
     }
 
-    activeApplicationQuery
+    applicationQuery
       .orderBy(
         this.transformToEntitySortField(
           paginationOptions.sortField,
@@ -1621,7 +1621,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
       )
       .offset(paginationOptions.page * paginationOptions.pageLimit)
       .limit(paginationOptions.pageLimit);
-    const [result, count] = await activeApplicationQuery.getManyAndCount();
+    const [result, count] = await applicationQuery.getManyAndCount();
     return {
       results: result,
       count: count,
