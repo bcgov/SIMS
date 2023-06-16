@@ -90,7 +90,6 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", (
       },
       offeringType: OfferingTypes.Public,
       offeringDeclaration: true,
-      validationInfos: ["invalidStudyBreakAmountOfDays"],
       actualTuitionCosts: 1234,
       programRelatedCosts: 3211,
       mandatoryFees: 456,
