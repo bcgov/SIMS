@@ -91,6 +91,7 @@ export default defineComponent({
     );
     let currentPage = NaN;
     let currentPageLimit = NaN;
+    
     /**
      * Load eligible applications offering change records for institution.
      * @param page page number, if nothing passed then {@link DEFAULT_DATATABLE_PAGE_NUMBER}.

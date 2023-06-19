@@ -93,6 +93,9 @@ export class PaginatedResultsAPIOutDTO<T> {
   count: number;
 }
 
+/**
+ * Extended pagination option for the application offering change.
+ */
 export class OfferinfChangePaginationOptionsAPIInDTO extends PaginationOptionsAPIInDTO {
   @IsOptional()
   @IsIn(["applicationNumber", "fullName"])

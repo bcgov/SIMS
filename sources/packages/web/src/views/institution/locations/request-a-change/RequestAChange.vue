@@ -3,7 +3,6 @@
     <template #header>
       <header-navigator
         :title="locationName"
-        data-cy="requestAnApplicationChangeHeader"
         sub-title="Request an Application Change"
       />
     </template>
@@ -13,15 +12,13 @@
           :value="ActiveRequestAChangeTab.AvailableToChangeTab"
           :ripple="false"
         >
-          <span class="label-bold" data-cy="availableToChangeTab">
-            Available to change
-          </span>
+          <span class="label-bold"> Available to change </span>
         </v-tab>
         <v-tab :value="ActiveRequestAChangeTab.InprogressTab" :ripple="false">
-          <span class="label-bold" data-cy="inprogressTab"> In progress </span>
+          <span class="label-bold"> In progress </span>
         </v-tab>
         <v-tab :value="ActiveRequestAChangeTab.CompletedTab" :ripple="false">
-          <span class="label-bold" data-cy="completedTab"> Completed </span>
+          <span class="label-bold"> Completed </span>
         </v-tab>
       </v-tabs>
     </template>
