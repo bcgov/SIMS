@@ -1,5 +1,4 @@
 import {
-  DEFAULT_DATATABLE_PAGE_NUMBER,
   DataTableSortByOrder,
   DataTableSortOrder,
   FieldSortOrder,
@@ -62,9 +61,6 @@ export const getPaginationQueryString = (
 ) => {
   if (enableZeroPage) {
     paginationOptions.page = paginationOptions.page - 1;
-    if (paginationOptions.searchCriteria) {
-      paginationOptions.page = DEFAULT_DATATABLE_PAGE_NUMBER - 1;
-    }
   }
 
   const parameters: string[] = [];

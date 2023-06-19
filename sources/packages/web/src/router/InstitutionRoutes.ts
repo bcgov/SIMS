@@ -166,8 +166,8 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
         },
       },
       {
-        path: AppRoutes.RequestAChange,
-        name: InstitutionRoutesConst.REQUEST_A_CHANGE,
+        path: AppRoutes.RequestApplicationOfferingChange,
+        name: InstitutionRoutesConst.REQUEST_CHANGE,
         components: {
           default: RequestApplicationChange,
           sidebar: InstitutionHomeSideBar,

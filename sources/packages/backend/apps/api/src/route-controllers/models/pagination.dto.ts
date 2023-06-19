@@ -92,3 +92,9 @@ export class PaginatedResultsAPIOutDTO<T> {
   results: T[];
   count: number;
 }
+
+export class OfferinfChangePaginationOptionsAPIInDTO extends PaginationOptionsAPIInDTO {
+  @IsOptional()
+  @IsIn(["applicationNumber", "fullName"])
+  sortField?: string;
+}

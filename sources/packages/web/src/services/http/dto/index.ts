@@ -24,3 +24,4 @@ export * from "@/services/http/dto/DesignationAgreement.dto";
 export * from "@/services/http/dto/SupportingUser.dto";
 export * from "@/services/http/dto/Overaward.dto";
 export * from "@/services/http/dto/StudentAppeal.dto";
+export * from "@/services/http/dto/ApplicationOfferingChangeRequest.dto";

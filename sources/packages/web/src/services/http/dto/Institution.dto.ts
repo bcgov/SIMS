@@ -121,14 +121,3 @@ export interface AESTCreateInstitutionAPIInDTO
   extends Omit<CreateInstitutionAPIInDTO, "userEmail"> {
   legalOperatingName: string;
 }
-
-/**
- * Eligible application offering change list details.
- */
-export interface ApplicationOfferingChangeSummaryAPIOutDTO {
-  applicationNumber: string;
-  applicationId: number;
-  studyStartPeriod: string;
-  studyEndPeriod: string;
-  fullName: string;
-}

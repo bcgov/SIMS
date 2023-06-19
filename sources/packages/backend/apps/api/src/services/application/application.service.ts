@@ -17,7 +17,7 @@ import {
   User,
   ApplicationData,
   getUserFullNameLikeSearch,
-  ApplicationOfferingChangeRequestStatus,
+  transformToEntitySortField,
 } from "@sims/sims-db";
 import { StudentFileService } from "../student-file/student-file.service";
 import {
@@ -31,9 +31,8 @@ import {
   PIR_OR_DATE_OVERLAP_ERROR,
   PaginationOptions,
   PaginatedResults,
-  OrderByCondition,
 } from "../../utilities";
-import { CustomNamedError, FieldSortOrder, QueueNames } from "@sims/utilities";
+import { CustomNamedError, QueueNames } from "@sims/utilities";
 import {
   SFASApplicationService,
   SFASPartTimeApplicationsService,
@@ -868,7 +867,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
 
     activeApplicationQuery
       .orderBy(
-        this.transformToEntitySortField(
+        transformToEntitySortField(
           paginationOptions.sortField,
           paginationOptions.sortOrder,
         ),
@@ -900,32 +899,6 @@ export class ApplicationService extends RecordDataModelService<Application> {
       return ApplicationScholasticStandingStatus.Unavailable;
     }
     return ApplicationScholasticStandingStatus.Available;
-  }
-
-  /**
-   * Transformation to convert the data table column name to database column name.
-   * Any changes to the data object (e.g data table) in presentation layer must be adjusted here.
-   * @param sortField database fields to be sorted.
-   * @param sortOrder sort order of fields (Ascending or Descending order).
-   * @returns OrderByCondition
-   */
-  private transformToEntitySortField(
-    sortField = "applicationNumber",
-    sortOrder = FieldSortOrder.ASC,
-  ): OrderByCondition {
-    const orderByCondition = {};
-    if (sortField === "fullName") {
-      orderByCondition["user.firstName"] = sortOrder;
-      orderByCondition["user.lastName"] = sortOrder;
-      return orderByCondition;
-    }
-
-    const fieldSortOptions = {
-      applicationNumber: "application.applicationNumber",
-    };
-    const dbColumnName = fieldSortOptions[sortField];
-    orderByCondition[dbColumnName] = sortOrder;
-    return orderByCondition;
   }
 
   /**
@@ -1542,90 +1515,6 @@ export class ApplicationService extends RecordDataModelService<Application> {
         },
       },
     });
-  }
-
-  /**
-   * Gets all eligible application that can be requested for application
-   * offering change.
-   * @param locationId location id.
-   * @param paginationOptions options to execute the pagination.
-   * @returns list of eligible application that can be requested for
-   * application offering change.
-   */
-  async getEligibleApplicationOfferingChangeRecords(
-    locationId: number,
-    paginationOptions: PaginationOptions,
-  ): Promise<PaginatedResults<Application>> {
-    const applicationQuery = this.repo
-      .createQueryBuilder("application")
-      .select([
-        "application.applicationNumber",
-        "application.id",
-        "currentAssessment.id",
-        "offering.studyStartDate",
-        "offering.studyEndDate",
-        "student.id",
-        "user.firstName",
-        "user.lastName",
-      ])
-      .leftJoin("application.currentAssessment", "currentAssessment")
-      .leftJoin("currentAssessment.offering", "offering")
-      .leftJoin(
-        "application.applicationOfferingChangeRequest",
-        "applicationOfferingChangeRequest",
-      )
-      .innerJoin("application.student", "student")
-      .innerJoin("student.user", "user")
-      .where(
-        new Brackets((qb) =>
-          qb
-            .where("applicationOfferingChangeRequest.id IS NULL")
-            .orWhere(
-              "applicationOfferingChangeRequest.applicationOfferingChangeRequestStatus NOT IN (:...status)",
-              {
-                status: [
-                  ApplicationOfferingChangeRequestStatus.InProgressWithSABC,
-                  ApplicationOfferingChangeRequestStatus.InProgressWithStudent,
-                ],
-              },
-            ),
-        ),
-      )
-      .andWhere("application.location.id = :locationId", { locationId })
-      .andWhere("application.applicationStatus = :applicationStatus", {
-        applicationStatus: ApplicationStatus.Completed,
-      })
-      .andWhere("application.isArchived = false");
-
-    if (paginationOptions.searchCriteria) {
-      applicationQuery
-        .andWhere(
-          new Brackets((qb) => {
-            qb.where(getUserFullNameLikeSearch()).orWhere(
-              "application.applicationNumber Ilike :searchCriteria",
-            );
-          }),
-        )
-        .setParameter(
-          "searchCriteria",
-          `%${paginationOptions.searchCriteria.trim()}%`,
-        );
-    }
-
-    applicationQuery
-      .orderBy(
-        this.transformToEntitySortField(
-          paginationOptions.sortField,
-          paginationOptions.sortOrder,
-        ),
-      )
-      .offset(paginationOptions.page * paginationOptions.pageLimit)
-      .limit(paginationOptions.pageLimit);
-    const [result, count] = await applicationQuery.getManyAndCount();
-    return {
-      results: result,
-      count: count,
-    };
   }
 
   @InjectLogger()

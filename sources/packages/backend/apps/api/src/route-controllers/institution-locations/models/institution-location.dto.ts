@@ -102,14 +102,3 @@ export class InstitutionLocationsAPIOutDTO {
   id: number;
   name: string;
 }
-
-/**
- * Eligible application offering change list details.
- */
-export class ApplicationOfferingChangeSummaryAPIOutDTO {
-  applicationNumber: string;
-  applicationId: number;
-  studyStartPeriod: string;
-  studyEndPeriod: string;
-  fullName: string;
-}

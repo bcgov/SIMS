@@ -2,7 +2,7 @@
   <tab-container>
     <body-header-container>
       <template #header>
-        <body-header title="Applications" :recordsCount="applications.count">
+        <body-header title="Applications" :recordsCount="applications?.count">
           <template #subtitle>
             Request a change for a program and offering in an application
             <tooltip-icon
@@ -19,7 +19,6 @@
               label="Search name or application #"
               variant="outlined"
               v-model="searchCriteria"
-              data-cy="searchCriteria"
               @keyup.enter="searchApplicationOfferingChangeRecords"
               prepend-inner-icon="mdi-magnify"
               hide-details="auto"
@@ -28,34 +27,29 @@
           </template>
         </body-header>
         <content-group>
-          <toggle-content :toggled="!applications.count">
+          <toggle-content :toggled="!applications?.count">
             <v-data-table-server
               :headers="AvailableToChangeOfferingChangeSummaryHeaders"
-              :items="applications.results"
-              :items-length="applications.count"
+              :items="applications?.results"
+              :items-length="applications?.count"
               :loading="loading"
-              :items-per-page="DEFAULT_PAGE_LIMIT"
+              v-model:items-per-page="DEFAULT_PAGE_LIMIT"
               @update:options="paginationAndSortEvent"
+              :search="searchCriteria"
             >
               <template #[`item.fullName`]="{ item }">
-                <span data-cy="fullName">{{ item.columns.fullName }} </span>
+                {{ item.columns.fullName }}
               </template>
               <template #[`item.studyStartPeriod`]="{ item }">
-                <span data-cy="studyStartPeriod">
-                  {{ dateOnlyLongString(item.columns.studyStartPeriod) }}
-                  -
-                  {{ dateOnlyLongString(item.value.studyEndPeriod) }}
-                </span>
+                {{ dateOnlyLongString(item.columns.studyStartPeriod) }}
+                -
+                {{ dateOnlyLongString(item.value.studyEndPeriod) }}
               </template>
               <template #[`item.applicationNumber`]="{ item }">
-                <span data-cy="applicationNumber"
-                  >{{ item.columns.applicationNumber }}
-                </span>
+                >{{ item.columns.applicationNumber }}
               </template>
               <template #[`item.applicationId`]>
-                <v-btn data-cy="applicationId" color="primary"
-                  >Request a change</v-btn
-                >
+                <v-btn color="primary">Request a change</v-btn>
               </template>
             </v-data-table-server>
           </toggle-content>
@@ -67,7 +61,6 @@
 
 <script lang="ts">
 import { ref, watch, defineComponent } from "vue";
-import { InstitutionService } from "@/services/InstitutionService";
 import {
   DEFAULT_PAGE_LIMIT,
   DataTableOptions,
@@ -76,8 +69,9 @@ import {
   DataTableSortByOrder,
   DEFAULT_DATATABLE_PAGE_NUMBER,
 } from "@/types";
-import { ApplicationOfferingChangeSummaryAPIOutDTO } from "@/services/http/dto";
 import { useFormatters } from "@/composables";
+import { ApplicationOfferingChangeSummaryAPIOutDTO } from "@/services/http/dto";
+import { ApplicationOfferingChangeRequestService } from "@/services/ApplicationOfferingChangeRequestService";
 
 export default defineComponent({
   props: {
@@ -91,13 +85,14 @@ export default defineComponent({
     const searchCriteria = ref("");
     const { dateOnlyLongString } = useFormatters();
     const applications = ref(
-      {} as PaginatedResults<ApplicationOfferingChangeSummaryAPIOutDTO>,
+      {} as
+        | PaginatedResults<ApplicationOfferingChangeSummaryAPIOutDTO>
+        | undefined,
     );
     let currentPage = NaN;
     let currentPageLimit = NaN;
-
     /**
-     * Load eligible application offering change records for institution.
+     * Load eligible applications offering change records for institution.
      * @param page page number, if nothing passed then {@link DEFAULT_DATATABLE_PAGE_NUMBER}.
      * @param pageCount page limit, if nothing passed then {@link DEFAULT_PAGE_LIMIT}.
      * @param sortField sort field, if nothing passed then api sorts with application number.
@@ -111,7 +106,7 @@ export default defineComponent({
     ) => {
       loading.value = true;
       applications.value =
-        await InstitutionService.shared.getEligibleApplicationOfferingChangeRecords(
+        await ApplicationOfferingChangeRequestService.shared.getEligibleApplicationOfferingChangeRecords(
           props.locationId,
           {
             page,
@@ -139,6 +134,8 @@ export default defineComponent({
 
     // Search table.
     const searchApplicationOfferingChangeRecords = async () => {
+      // Fix for the search pagination issue.
+      applications.value = undefined;
       await getSummaryList(
         currentPage ?? DEFAULT_DATATABLE_PAGE_NUMBER,
         currentPageLimit ?? DEFAULT_PAGE_LIMIT,

@@ -210,7 +210,7 @@ export class StudentAssessment extends RecordDataModel {
   disbursementSchedules?: DisbursementSchedule[];
   /**
    * When the reassessment happen due to an application offering change request (by institution),
-   * this will provide to the workflow the data that need be changed.
+   * this will provide to the workflow the data that needs be changed.
    */
   @ManyToOne(() => ApplicationOfferingChangeRequest, {
     eager: false,

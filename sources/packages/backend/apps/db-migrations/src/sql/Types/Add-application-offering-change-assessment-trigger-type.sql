@@ -1,3 +1,3 @@
 ALTER TYPE sims.assessment_trigger_types
 ADD
-  VALUE if not exists 'Application offering change';
+  VALUE 'Application offering change';

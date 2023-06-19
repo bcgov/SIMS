@@ -13,13 +13,8 @@ import {
   AESTCreateInstitutionAPIInDTO,
   PrimaryIdentifierAPIOutDTO,
   OptionItemAPIOutDTO,
-  ApplicationOfferingChangeSummaryAPIOutDTO,
 } from "@/services/http/dto";
-import {
-  addPaginationOptions,
-  addSortOptions,
-  getPaginationQueryString,
-} from "@/helpers";
+import { addPaginationOptions, addSortOptions } from "@/helpers";
 
 export class InstitutionApi extends HttpBaseClient {
   /**
@@ -145,26 +140,5 @@ export class InstitutionApi extends HttpBaseClient {
     return this.getCall<InstitutionBasicAPIOutDTO>(
       this.addClientRoot(`institution/${institutionId}/basic-details`),
     );
-  }
-
-  /**
-   * Gets all eligible application that can be requested for application
-   * offering change.
-   * @param locationId location id.
-   * @param paginationOptions options to execute the pagination.
-   * @returns list of eligible application that can be requested for
-   * application offering change.
-   */
-  async getEligibleApplicationOfferingChangeRecords(
-    locationId: number,
-    paginationOptions: PaginationOptions,
-  ): Promise<
-    PaginatedResultsAPIOutDTO<ApplicationOfferingChangeSummaryAPIOutDTO>
-  > {
-    let url = `location/${locationId}/active-applications/request-change?`;
-    url += getPaginationQueryString(paginationOptions, true);
-    return this.getCall<
-      PaginatedResultsAPIOutDTO<ApplicationOfferingChangeSummaryAPIOutDTO>
-    >(this.addClientRoot(url));
   }
 }

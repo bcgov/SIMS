@@ -47,7 +47,6 @@ import {
   InstitutionLocationFormAPIInDTO,
   InstitutionLocationDetailsAPIOutDTO,
   InstitutionLocationsAPIOutDTO,
-  ApplicationOfferingChangeSummaryAPIOutDTO,
 } from "./models/institution-location.dto";
 import { FormNames } from "../../services/form/constants";
 import { transformAddressDetailsForAddressBlockForm } from "../utils/address-utils";
@@ -265,42 +264,5 @@ export class InstitutionLocationInstitutionsController extends BaseController {
         name: location.name,
       };
     });
-  }
-
-  /**
-   * Gets all eligible application that can be requested for application
-   * offering change.
-   * @param locationId location id.
-   * @param paginationOptions options to execute the pagination.
-   * @returns list of eligible application that can be requested for
-   * application offering change.
-   */
-  @HasLocationAccess("locationId")
-  @Get(":locationId/active-applications/request-change")
-  async getEligibleApplicationOfferingChangeRecords(
-    @Param("locationId", ParseIntPipe) locationId: number,
-    @Query() pagination: ApplicationStatusPaginationOptionsAPIInDTO,
-  ): Promise<
-    PaginatedResultsAPIOutDTO<ApplicationOfferingChangeSummaryAPIOutDTO>
-  > {
-    const applications =
-      await this.applicationService.getEligibleApplicationOfferingChangeRecords(
-        locationId,
-        pagination,
-      );
-
-    return {
-      results: applications.results.map((eachApplication) => {
-        const offering = eachApplication.currentAssessment?.offering;
-        return {
-          applicationNumber: eachApplication.applicationNumber,
-          applicationId: eachApplication.id,
-          studyStartPeriod: getISODateOnlyString(offering?.studyStartDate),
-          studyEndPeriod: getISODateOnlyString(offering?.studyEndDate),
-          fullName: getUserFullName(eachApplication.student.user),
-        };
-      }),
-      count: applications.count,
-    };
   }
 }
