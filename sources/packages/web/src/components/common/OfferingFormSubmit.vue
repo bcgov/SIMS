@@ -62,7 +62,6 @@ export default defineComponent({
   props: {
     data: {
       type: Object as PropType<OfferingFormModel>,
-      required: true,
       default: {} as OfferingFormModel,
     },
     formMode: {
@@ -85,13 +84,12 @@ export default defineComponent({
     },
     enableValidationsOnInit: {
       type: Boolean,
-      required: true,
       default: false,
     },
   },
   setup(props, context) {
     const snackBar = useSnackBar();
-    const { setComponentValue } = useFormioUtils();
+    const { setComponentValue, excludeExtraneousValues } = useFormioUtils();
     const processing = ref(false);
     const offeringWarningsModal = ref({} as ModalDialog<boolean>);
     // Defines when the first manual validation happened to allow the
@@ -114,11 +112,17 @@ export default defineComponent({
     const validateOfferingData = async (
       data: EducationProgramOfferingAPIInDTO,
     ): Promise<OfferingValidationResultAPIOutDTO> => {
+      console.log(data);
+      const dataTyped = excludeExtraneousValues(
+        EducationProgramOfferingAPIInDTO,
+        data,
+      );
+      console.log(dataTyped);
       const validationResult =
         await EducationProgramOfferingService.shared.validateOffering(
           props.locationId,
           props.programId,
-          data,
+          dataTyped,
         );
       if (
         !lastCalculationDate ||

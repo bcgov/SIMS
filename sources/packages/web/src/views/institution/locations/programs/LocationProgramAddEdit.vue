@@ -50,7 +50,7 @@ import {
 } from "@/constants/routes/RouteConstants";
 import { onMounted, ref, computed, defineComponent } from "vue";
 import { ApiProcessError, ClientIdType, FormIOForm } from "@/types";
-import { useSnackBar } from "@/composables";
+import { useFormioUtils, useSnackBar } from "@/composables";
 import { AuthService } from "@/services/AuthService";
 import { BannerTypes } from "@/types/contracts/Banner";
 import {
@@ -72,6 +72,7 @@ export default defineComponent({
   setup(props) {
     const processing = ref(false);
     const snackBar = useSnackBar();
+    const { excludeExtraneousValues } = useFormioUtils();
     const router = useRouter();
     const clientType = computed(() => AuthService.shared.authClientType);
     const programData = ref({} as EducationProgramAPIOutDTO);
@@ -178,15 +179,19 @@ export default defineComponent({
       if (isInstitutionUser.value) {
         try {
           processing.value = true;
+          const dataTyped = excludeExtraneousValues(
+            EducationProgramAPIInDTO,
+            form.data,
+          );
           if (props.programId) {
             await EducationProgramService.shared.updateEducationProgram(
               props.programId,
-              form.data,
+              dataTyped,
             );
             snackBar.success("Education Program updated successfully!");
           } else {
             await EducationProgramService.shared.createEducationProgram(
-              form.data,
+              dataTyped,
             );
             snackBar.success("Education Program created successfully!");
           }
