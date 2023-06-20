@@ -55,8 +55,8 @@ export class ApplicationOfferingChangeRequestInstitutionsController extends Base
         return {
           applicationNumber: eachApplication.applicationNumber,
           applicationId: eachApplication.id,
-          studyStartPeriod: offering?.studyStartDate,
-          studyEndPeriod: offering?.studyEndDate,
+          studyStartPeriod: offering.studyStartDate,
+          studyEndPeriod: offering.studyEndDate,
           fullName: getUserFullName(eachApplication.student.user),
         };
       }),
