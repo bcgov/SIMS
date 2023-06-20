@@ -35,7 +35,6 @@
               :loading="loading"
               v-model:items-per-page="DEFAULT_PAGE_LIMIT"
               @update:options="paginationAndSortEvent"
-              :search="searchCriteria"
             >
               <template #[`item.fullName`]="{ item }">
                 {{ item.columns.fullName }}
@@ -91,7 +90,7 @@ export default defineComponent({
     );
     let currentPage = NaN;
     let currentPageLimit = NaN;
-    
+
     /**
      * Load eligible applications offering change records for institution.
      * @param page page number, if nothing passed then {@link DEFAULT_DATATABLE_PAGE_NUMBER}.
