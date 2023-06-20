@@ -4,8 +4,9 @@ import {
   YesNoOptions,
   OfferingDeliveryOptions,
 } from "@sims/test-utils";
+import { JSONDoc } from "zeebe-node";
 
-export interface StudentDependent {
+export interface StudentDependent extends JSONDoc {
   dateOfBirth: string;
   attendingPostSecondarySchool: YesNoOptions;
   declaredOnTaxes: YesNoOptions;
@@ -43,7 +44,7 @@ export enum InstitutionTypes {
 /**
  * Data required to calculate the assessment data of an application.
  */
-export interface AssessmentConsolidatedData {
+export interface AssessmentConsolidatedData extends JSONDoc {
   studentDataDependantstatus: "dependant" | "independant";
   programYear: string;
   programYearStartDate: string;
@@ -71,8 +72,8 @@ export interface AssessmentConsolidatedData {
   offeringStudyEndDate?: string;
   offeringStudyStartDate?: string;
   assessmentTriggerType?: AssessmentTriggerType;
-  appealsStudentIncomeAppealData?: unknown;
-  appealsPartnerIncomeAppealData?: unknown;
+  appealsStudentIncomeAppealData?: JSONDoc;
+  appealsPartnerIncomeAppealData?: JSONDoc;
   studentDataIsYourSpouseACanadianCitizen?: YesNoOptions;
   studentDataParentValidSinNumber?: YesNoOptions;
   studentDataNumberOfParents?: 1 | 2;
@@ -86,7 +87,7 @@ export interface AssessmentConsolidatedData {
   studentDataPartnerStudyWeeks?: number;
   studentDataPartnerEmploymentInsurance?: YesNoOptions;
   studentDataPartnerFedralProvincialPDReceiptCost?: number;
-  studentDataParentDependentTable?: unknown;
+  studentDataParentDependentTable?: JSONDoc;
   studentDataStudentParentNetAssests?: number;
   studentDataStudentParentNetContribution?: number;
   studentDataPartnerTotalIncomeAssistance?: number;
