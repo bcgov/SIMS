@@ -96,7 +96,7 @@ export class PaginatedResultsAPIOutDTO<T> {
 /**
  * Extended pagination option for the application offering change.
  */
-export class OfferinfChangePaginationOptionsAPIInDTO extends PaginationOptionsAPIInDTO {
+export class OfferingChangePaginationOptionsAPIInDTO extends PaginationOptionsAPIInDTO {
   @IsOptional()
   @IsIn(["applicationNumber", "fullName"])
   sortField?: string;

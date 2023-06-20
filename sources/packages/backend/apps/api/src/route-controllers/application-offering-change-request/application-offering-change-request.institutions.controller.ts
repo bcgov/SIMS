@@ -5,7 +5,7 @@ import { AllowAuthorizedParty, HasLocationAccess } from "../../auth/decorators";
 import { ClientTypeBaseRoute } from "../../types";
 import { getUserFullName } from "../../utilities";
 import {
-  OfferinfChangePaginationOptionsAPIInDTO,
+  OfferingChangePaginationOptionsAPIInDTO,
   PaginatedResultsAPIOutDTO,
 } from "../models/pagination.dto";
 import BaseController from "../BaseController";
@@ -17,9 +17,14 @@ import { ApplicationOfferingChangeRequestService } from "../../services";
  */
 @AllowAuthorizedParty(AuthorizedParties.institution)
 @Controller("location/:locationId/application-offering-change-request")
-@ApiTags(`${ClientTypeBaseRoute.Institution}-location-application-offering-change-request`)
+@ApiTags(
+  `${ClientTypeBaseRoute.Institution}-location-application-offering-change-request`,
+)
+@HasLocationAccess("locationId")
 export class ApplicationOfferingChangeRequestInstitutionsController extends BaseController {
-  constructor(private readonly applicationOfferingChangeRequestService: ApplicationOfferingChangeRequestService) {
+  constructor(
+    private readonly applicationOfferingChangeRequestService: ApplicationOfferingChangeRequestService,
+  ) {
     super();
   }
 
@@ -31,11 +36,10 @@ export class ApplicationOfferingChangeRequestInstitutionsController extends Base
    * @returns list of eligible applications that can be requested for
    * application offering change.
    */
-  @HasLocationAccess("locationId")
   @Get("available")
   async getEligibleApplicationOfferingChangeRecords(
     @Param("locationId", ParseIntPipe) locationId: number,
-    @Query() pagination: OfferinfChangePaginationOptionsAPIInDTO,
+    @Query() pagination: OfferingChangePaginationOptionsAPIInDTO,
   ): Promise<
     PaginatedResultsAPIOutDTO<ApplicationOfferingChangeSummaryAPIOutDTO>
   > {
