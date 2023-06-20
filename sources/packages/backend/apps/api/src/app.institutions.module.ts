@@ -27,6 +27,7 @@ import {
   StudentAppealService,
   ApplicationExceptionService,
   StudentAppealRequestsService,
+  ApplicationOfferingChangeRequestService,
 } from "./services";
 import {
   ApplicationControllerService,
@@ -63,6 +64,7 @@ import {
   RestrictionInstitutionsController,
   NoteInstitutionsController,
   RestrictionControllerService,
+  ApplicationOfferingChangeRequestInstitutionsController,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
 import {
@@ -102,6 +104,7 @@ import {
     RestrictionInstitutionsController,
     OverawardInstitutionsController,
     NoteInstitutionsController,
+    ApplicationOfferingChangeRequestInstitutionsController,
   ],
   providers: [
     ApplicationControllerService,
@@ -158,6 +161,7 @@ import {
     OverawardControllerService,
     ApplicationExceptionControllerService,
     StudentAppealControllerService,
+    ApplicationOfferingChangeRequestService,
   ],
 })
 export class AppInstitutionsModule {}
