@@ -1,4 +1,4 @@
-import { PaginationOptions } from "../types";
+import { PaginationOptions } from "@/types";
 import ApiClient from "./http/ApiClient";
 import {
   PaginatedResultsAPIOutDTO,
@@ -21,13 +21,13 @@ export class ApplicationOfferingChangeRequestService {
    * @returns list of eligible applications that can be requested for
    * application offering change.
    */
-  async getEligibleApplicationOfferingChangeRecords(
+  async getEligibleApplications(
     locationId: number,
     paginationOptions: PaginationOptions,
   ): Promise<
     PaginatedResultsAPIOutDTO<ApplicationOfferingChangeSummaryAPIOutDTO>
   > {
-    return ApiClient.ApplicationOfferingChangeRequestApi.getEligibleApplicationOfferingChangeRecords(
+    return ApiClient.ApplicationOfferingChangeRequestApi.getEligibleApplications(
       locationId,
       paginationOptions,
     );

@@ -15,7 +15,7 @@ export class ApplicationOfferingChangeRequestApi extends HttpBaseClient {
    * @returns list of eligible applications that can be requested for
    * application offering change.
    */
-  async getEligibleApplicationOfferingChangeRecords(
+  async getEligibleApplications(
     locationId: number,
     paginationOptions: PaginationOptions,
   ): Promise<

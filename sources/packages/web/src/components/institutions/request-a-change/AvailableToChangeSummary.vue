@@ -45,7 +45,7 @@
                 {{ dateOnlyLongString(item.value.studyEndPeriod) }}
               </template>
               <template #[`item.applicationNumber`]="{ item }">
-                >{{ item.columns.applicationNumber }}
+                {{ item.columns.applicationNumber }}
               </template>
               <template #[`item.applicationId`]>
                 <v-btn color="primary">Request a change</v-btn>
@@ -106,7 +106,7 @@ export default defineComponent({
     ) => {
       loading.value = true;
       applications.value =
-        await ApplicationOfferingChangeRequestService.shared.getEligibleApplicationOfferingChangeRecords(
+        await ApplicationOfferingChangeRequestService.shared.getEligibleApplications(
           props.locationId,
           {
             page,

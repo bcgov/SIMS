@@ -1,14 +1,13 @@
-import { FieldSortOrder } from "@sims/utilities";
-import { OrderByCondition } from "typeorm";
+import { FieldSortOrder, OrderByCondition } from "@sims/utilities";
 
- /**
-   * Transformation to convert the data table column name to database column name.
-   * Any changes to the data object (e.g data table) in presentation layer must be adjusted here.
-   * @param sortField database fields to be sorted.
-   * @param sortOrder sort order of fields (Ascending or Descending order).
-   * @returns OrderByCondition
-   */
- export function transformToEntitySortField(
+/**
+ * Transformation to convert the application data table column name to database column name.
+ * Any changes to the data object (e.g data table) in presentation layer must be adjusted here.
+ * @param sortField database fields to be sorted.
+ * @param sortOrder sort order of fields (Ascending or Descending order).
+ * @returns OrderByCondition
+ */
+export function transformToApplicationEntitySortField(
   sortField = "applicationNumber",
   sortOrder = FieldSortOrder.ASC,
 ): OrderByCondition {

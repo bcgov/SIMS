@@ -17,7 +17,7 @@ import {
   User,
   ApplicationData,
   getUserFullNameLikeSearch,
-  transformToEntitySortField,
+  transformToApplicationEntitySortField,
 } from "@sims/sims-db";
 import { StudentFileService } from "../student-file/student-file.service";
 import {
@@ -867,7 +867,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
 
     activeApplicationQuery
       .orderBy(
-        transformToEntitySortField(
+        transformToApplicationEntitySortField(
           paginationOptions.sortField,
           paginationOptions.sortOrder,
         ),

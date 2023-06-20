@@ -5,7 +5,7 @@ import {
   ApplicationOfferingChangeRequestStatus,
   ApplicationStatus,
   getUserFullNameLikeSearch,
-  transformToEntitySortField,
+  transformToApplicationEntitySortField,
 } from "@sims/sims-db";
 import { Brackets, Repository } from "typeorm";
 import { PaginatedResults, PaginationOptions } from "../../utilities";
@@ -25,7 +25,7 @@ export class ApplicationOfferingChangeRequestService {
    * @returns list of eligible applications that can be requested for
    * application offering change.
    */
-  async getEligibleApplicationOfferingChangeRecords(
+  async getEligibleApplications(
     locationId: number,
     paginationOptions: PaginationOptions,
   ): Promise<PaginatedResults<Application>> {
@@ -41,14 +41,14 @@ export class ApplicationOfferingChangeRequestService {
         "user.firstName",
         "user.lastName",
       ])
-      .leftJoin("application.currentAssessment", "currentAssessment")
-      .leftJoin("currentAssessment.offering", "offering")
+      .innerJoin("application.currentAssessment", "currentAssessment")
+      .innerJoin("currentAssessment.offering", "offering")
       .leftJoin(
         "application.applicationOfferingChangeRequest",
         "applicationOfferingChangeRequest",
       )
-      .leftJoin("application.student", "student")
-      .leftJoin("student.user", "user")
+      .innerJoin("application.student", "student")
+      .innerJoin("student.user", "user")
       .where(
         new Brackets((qb) =>
           qb
@@ -87,7 +87,7 @@ export class ApplicationOfferingChangeRequestService {
 
     applicationQuery
       .orderBy(
-        transformToEntitySortField(
+        transformToApplicationEntitySortField(
           paginationOptions.sortField,
           paginationOptions.sortOrder,
         ),

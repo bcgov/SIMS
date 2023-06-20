@@ -37,14 +37,14 @@ export class ApplicationOfferingChangeRequestInstitutionsController extends Base
    * application offering change.
    */
   @Get("available")
-  async getEligibleApplicationOfferingChangeRecords(
+  async getEligibleApplications(
     @Param("locationId", ParseIntPipe) locationId: number,
     @Query() pagination: OfferingChangePaginationOptionsAPIInDTO,
   ): Promise<
     PaginatedResultsAPIOutDTO<ApplicationOfferingChangeSummaryAPIOutDTO>
   > {
     const applications =
-      await this.applicationOfferingChangeRequestService.getEligibleApplicationOfferingChangeRecords(
+      await this.applicationOfferingChangeRequestService.getEligibleApplications(
         locationId,
         pagination,
       );
