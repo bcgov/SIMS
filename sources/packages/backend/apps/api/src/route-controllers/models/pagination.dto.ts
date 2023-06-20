@@ -92,3 +92,12 @@ export class PaginatedResultsAPIOutDTO<T> {
   results: T[];
   count: number;
 }
+
+/**
+ * Extended pagination option for the application offering change.
+ */
+export class OfferingChangePaginationOptionsAPIInDTO extends PaginationOptionsAPIInDTO {
+  @IsOptional()
+  @IsIn(["applicationNumber", "fullName"])
+  sortField?: string;
+}

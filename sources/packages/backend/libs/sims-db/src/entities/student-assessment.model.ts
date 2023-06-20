@@ -19,6 +19,7 @@ import { ColumnNames, TableNames } from "../constant";
 import { AssessmentTriggerType } from "./assessment-trigger.type";
 import { RecordDataModel } from "./record.model";
 import { StudentScholasticStanding } from "./student-scholastic-standing.model";
+import { ApplicationOfferingChangeRequest } from "./application-offering-change-request.model";
 
 /**
  * Represents all the assessments and reassessments processed for a particular
@@ -207,6 +208,19 @@ export class StudentAssessment extends RecordDataModel {
     },
   )
   disbursementSchedules?: DisbursementSchedule[];
+  /**
+   * When the reassessment happen due to an application offering change request (by institution),
+   * this will provide to the workflow the data that needs to be changed.
+   */
+  @ManyToOne(() => ApplicationOfferingChangeRequest, {
+    eager: false,
+    nullable: true,
+  })
+  @JoinColumn({
+    name: "application_offering_change_request_id",
+    referencedColumnName: ColumnNames.ID,
+  })
+  applicationOfferingChangeRequest?: ApplicationOfferingChangeRequest;
 }
 
 /**

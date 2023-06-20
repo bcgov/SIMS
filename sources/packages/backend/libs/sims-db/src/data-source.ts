@@ -51,6 +51,7 @@ import {
   NotificationMessage,
   DisbursementOveraward,
   QueueConfiguration,
+  ApplicationOfferingChangeRequest,
 } from "./entities";
 import { ClusterNode, ClusterOptions, RedisOptions } from "ioredis";
 import { ORM_CACHE_LIFETIME } from "@sims/utilities";
@@ -175,4 +176,5 @@ export const DBEntities = [
   NotificationMessage,
   DisbursementOveraward,
   QueueConfiguration,
+  ApplicationOfferingChangeRequest
 ];

@@ -120,6 +120,18 @@ export default defineComponent({
                   },
                 },
               },
+              {
+                title: "Request a Change",
+                props: {
+                  prependIcon: "fa:far fa-folder",
+                  to: {
+                    name: InstitutionRoutesConst.REQUEST_CHANGE,
+                    params: {
+                      locationId: data.id,
+                    },
+                  },
+                },
+              },
             ],
           });
         }
