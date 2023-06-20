@@ -2,6 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import {
   Application,
+  ApplicationOfferingChangeRequest,
   ApplicationOfferingChangeRequestStatus,
   ApplicationStatus,
   getUserFullNameLikeSearch,
@@ -15,6 +16,8 @@ export class ApplicationOfferingChangeRequestService {
   constructor(
     @InjectRepository(Application)
     private readonly applicationRepo: Repository<Application>,
+    @InjectRepository(ApplicationOfferingChangeRequest)
+    private readonly applicationOfferingChangeRequestRepo: Repository<ApplicationOfferingChangeRequest>,
   ) {}
 
   /**
@@ -95,6 +98,76 @@ export class ApplicationOfferingChangeRequestService {
       .offset(paginationOptions.page * paginationOptions.pageLimit)
       .limit(paginationOptions.pageLimit);
     const [result, count] = await applicationQuery.getManyAndCount();
+    return {
+      results: result,
+      count,
+    };
+  }
+
+  /**
+   * Gets applications summary that where requested for application
+   * offering change by status/statuses.
+   * @param locationId location id.
+   * @param paginationOptions options to execute the pagination.
+   * @param statuses list of status that need to be included in the query.
+   * @returns list of application that where requested for
+   * application offering change by their status/statuses.
+   */
+  async getRequestsSummaryByStatus(
+    locationId: number,
+    paginationOptions: PaginationOptions,
+    statuses: ApplicationOfferingChangeRequestStatus[],
+  ): Promise<PaginatedResults<ApplicationOfferingChangeRequest>> {
+    const offeringChange = this.applicationOfferingChangeRequestRepo
+      .createQueryBuilder("applicationOfferingChangeRequest")
+      .select([
+        "applicationOfferingChangeRequest.id",
+        "applicationOfferingChangeRequest.applicationOfferingChangeRequestStatus",
+        "application.applicationNumber",
+        "currentAssessment.id",
+        "offering.studyStartDate",
+        "offering.studyEndDate",
+        "student.id",
+        "user.firstName",
+        "user.lastName",
+      ])
+      .innerJoin("applicationOfferingChangeRequest.application", "application")
+      .innerJoin("application.currentAssessment", "currentAssessment")
+      .innerJoin("currentAssessment.offering", "offering")
+      .innerJoin("application.student", "student")
+      .innerJoin("student.user", "user")
+      .where("application.location.id = :locationId", { locationId })
+      .andWhere(
+        "applicationOfferingChangeRequest.applicationOfferingChangeRequestStatus IN (:...statuses)",
+        {
+          statuses,
+        },
+      );
+    if (paginationOptions.searchCriteria) {
+      offeringChange
+        .andWhere(
+          new Brackets((qb) => {
+            qb.where(getUserFullNameLikeSearch()).orWhere(
+              "application.applicationNumber Ilike :searchCriteria",
+            );
+          }),
+        )
+        .setParameter(
+          "searchCriteria",
+          `%${paginationOptions.searchCriteria.trim()}%`,
+        );
+    }
+
+    offeringChange
+      .orderBy(
+        transformToApplicationEntitySortField(
+          paginationOptions.sortField,
+          paginationOptions.sortOrder,
+        ),
+      )
+      .offset(paginationOptions.page * paginationOptions.pageLimit)
+      .limit(paginationOptions.pageLimit);
+    const [result, count] = await offeringChange.getManyAndCount();
     return {
       results: result,
       count,

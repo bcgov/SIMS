@@ -9,8 +9,12 @@ import {
   PaginatedResultsAPIOutDTO,
 } from "../models/pagination.dto";
 import BaseController from "../BaseController";
-import { ApplicationOfferingChangeSummaryAPIOutDTO } from "./models/application-offering-change-request.institutions.dto";
+import {
+  ApplicationOfferingChangeAPIOutDTO,
+  ApplicationOfferingChangeSummaryAPIOutDTO,
+} from "./models/application-offering-change-request.institutions.dto";
 import { ApplicationOfferingChangeRequestService } from "../../services";
+import { ApplicationOfferingChangeRequestStatus } from "@sims/sims-db";
 
 /**
  * Application offering change request controller for institutions client.
@@ -51,7 +55,7 @@ export class ApplicationOfferingChangeRequestInstitutionsController extends Base
 
     return {
       results: applications.results.map((eachApplication) => {
-        const offering = eachApplication.currentAssessment?.offering;
+        const offering = eachApplication.currentAssessment.offering;
         return {
           applicationNumber: eachApplication.applicationNumber,
           applicationId: eachApplication.id,
@@ -61,6 +65,92 @@ export class ApplicationOfferingChangeRequestInstitutionsController extends Base
         };
       }),
       count: applications.count,
+    };
+  }
+  // todo: ann check below code , dto (OfferingChangePaginationOptionsAPIInDTO and specfic for th endpoint) and update the endpoint
+  /**
+   * Gets all in progress application where requested for application
+   * offering change.
+   * @param locationId location id.
+   * @param paginationOptions options to execute the pagination.
+   * @returns list of inprogress application that where requested for
+   * application offering change.
+   */
+  @HasLocationAccess("locationId")
+  @Get("in-progress")
+  async getInprogressApplicationOfferingChangeRecords(
+    @Param("locationId", ParseIntPipe) locationId: number,
+    @Query() pagination: OfferingChangePaginationOptionsAPIInDTO,
+  ): Promise<PaginatedResultsAPIOutDTO<ApplicationOfferingChangeAPIOutDTO>> {
+    const offeringChange =
+      await this.applicationOfferingChangeRequestService.getRequestsSummaryByStatus(
+        locationId,
+        pagination,
+        [
+          ApplicationOfferingChangeRequestStatus.InProgressWithSABC,
+          ApplicationOfferingChangeRequestStatus.InProgressWithStudent,
+        ],
+      );
+    // todo: ann check the query to use innerjoins
+    return {
+      results: offeringChange.results.map((eachOfferingChange) => {
+        const offering =
+          eachOfferingChange.application.currentAssessment.offering;
+        return {
+          applicationNumber: eachOfferingChange.application.applicationNumber,
+          applicationId: eachOfferingChange.application.id,
+          studyStartPeriod: offering.studyStartDate,
+          studyEndPeriod: offering.studyEndDate,
+          fullName: getUserFullName(
+            eachOfferingChange.application.student.user,
+          ),
+          status: eachOfferingChange.applicationOfferingChangeRequestStatus,
+        };
+      }),
+      count: offeringChange.count,
+    };
+  }
+
+  /**
+   * Gets all completed (Approved/ Declined) application where requested
+   * for application offering change.
+   * @param locationId location id.
+   * @param paginationOptions options to execute the pagination.
+   * @returns list of completed application that where requested for
+   * application offering change.
+   */
+  @HasLocationAccess("locationId")
+  @Get("completed")
+  async getCompletedApplicationOfferingChangeRecords(
+    @Param("locationId", ParseIntPipe) locationId: number,
+    @Query() pagination: OfferingChangePaginationOptionsAPIInDTO,
+  ): Promise<PaginatedResultsAPIOutDTO<ApplicationOfferingChangeAPIOutDTO>> {
+    const offeringChange =
+      await this.applicationOfferingChangeRequestService.getRequestsSummaryByStatus(
+        locationId,
+        pagination,
+        [
+          ApplicationOfferingChangeRequestStatus.Approved,
+          ApplicationOfferingChangeRequestStatus.DeclinedByStudent,
+          ApplicationOfferingChangeRequestStatus.DeclinedBySABC,
+        ],
+      );
+    return {
+      results: offeringChange.results.map((eachOfferingChange) => {
+        const offering =
+          eachOfferingChange.application.currentAssessment.offering;
+        return {
+          applicationNumber: eachOfferingChange.application.applicationNumber,
+          applicationId: eachOfferingChange.application.id,
+          studyStartPeriod: offering.studyStartDate,
+          studyEndPeriod: offering.studyEndDate,
+          fullName: getUserFullName(
+            eachOfferingChange.application.student.user,
+          ),
+          status: eachOfferingChange.applicationOfferingChangeRequestStatus,
+        };
+      }),
+      count: offeringChange.count,
     };
   }
 }

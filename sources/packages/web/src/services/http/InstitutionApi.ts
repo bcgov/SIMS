@@ -17,6 +17,9 @@ import {
 import { addPaginationOptions, addSortOptions } from "@/helpers";
 
 export class InstitutionApi extends HttpBaseClient {
+  getCompletedApplicationOfferingChangeRecords (locationId: number, paginationOptions: PaginationOptions): PaginatedResultsAPIOutDTO<import("@/services/http/dto").ApplicationOfferingChangeAPIOutDTO> | PromiseLike<PaginatedResultsAPIOutDTO<import("@/services/http/dto").ApplicationOfferingChangeAPIOutDTO>> {
+    throw new Error("Method not implemented.");
+  }
   /**
    * Create institutions that are not allowed to create the profile by
    * themselves due to limitations, for instance, when the institution
