@@ -104,12 +104,7 @@ export interface InstitutionBasicAPIOutDTO {
   hasBusinessGuid: boolean;
 }
 
-/**
- * DTO for institution creation by the institution user during the on board process
- * when the institution profile and the admin user must be created altogether.
- */
-export interface CreateInstitutionAPIInDTO {
-  userEmail: string;
+export interface CreateInstitution {
   operatingName: string;
   primaryPhone: string;
   primaryEmail: string;
@@ -126,12 +121,73 @@ export interface CreateInstitutionAPIInDTO {
 }
 
 /**
+ * DTO for institution creation by the institution user during the on board process
+ * when the institution profile and the admin user must be created altogether.
+ */
+export class CreateInstitutionAPIInDTO implements CreateInstitution {
+  @Expose()
+  userEmail: string;
+  @Expose()
+  operatingName: string;
+  @Expose()
+  primaryPhone: string;
+  @Expose()
+  primaryEmail: string;
+  @Expose()
+  website: string;
+  @Expose()
+  regulatingBody: string;
+  @Expose()
+  otherRegulatingBody?: string;
+  @Expose()
+  establishedDate: string;
+  @Expose()
+  primaryContactFirstName: string;
+  @Expose()
+  primaryContactLastName: string;
+  @Expose()
+  primaryContactEmail: string;
+  @Expose()
+  primaryContactPhone: string;
+  @Expose()
+  institutionType: number;
+  @Expose()
+  mailingAddress: AddressDetailsFormAPIDTO;
+}
+
+/**
  * Ministry user institution creation. No user information is provided and
  * user related information (e.g. userEmail) is not needed. Besides that,
  * the Ministry user should be able to provide all data needed to create
  * the institution.
  */
-export interface AESTCreateInstitutionAPIInDTO
-  extends Omit<CreateInstitutionAPIInDTO, "userEmail"> {
+export class AESTCreateInstitutionAPIInDTO implements CreateInstitution {
+  @Expose()
   legalOperatingName: string;
+  @Expose()
+  operatingName: string;
+  @Expose()
+  primaryPhone: string;
+  @Expose()
+  primaryEmail: string;
+  @Expose()
+  website: string;
+  @Expose()
+  regulatingBody: string;
+  @Expose()
+  otherRegulatingBody?: string;
+  @Expose()
+  establishedDate: string;
+  @Expose()
+  primaryContactFirstName: string;
+  @Expose()
+  primaryContactLastName: string;
+  @Expose()
+  primaryContactEmail: string;
+  @Expose()
+  primaryContactPhone: string;
+  @Expose()
+  institutionType: number;
+  @Expose()
+  mailingAddress: AddressDetailsFormAPIDTO;
 }
