@@ -4,7 +4,7 @@ import {
   DATE_FORMAT,
   TIME_FORMAT,
 } from "@sims/integrations/esdc-integration/msfaa-integration/models/msfaa-integration.model";
-import { OfferingIntensity, RelationshipStatus } from "@sims/sims-db";
+import { OfferingIntensity } from "@sims/sims-db";
 import { getISODateOnlyString } from "@sims/utilities";
 import * as dayjs from "dayjs";
 

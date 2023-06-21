@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { DataSource, In, IsNull, Not, Repository, UpdateResult } from "typeorm";
+import { DataSource, In, IsNull, Repository, UpdateResult } from "typeorm";
 import {
   RecordDataModelService,
   MSFAANumber,

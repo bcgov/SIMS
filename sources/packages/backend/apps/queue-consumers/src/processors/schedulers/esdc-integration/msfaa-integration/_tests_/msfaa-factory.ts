@@ -1,4 +1,4 @@
-import { MSFAANumber, OfferingIntensity, Student } from "@sims/sims-db";
+import { MSFAANumber, Student } from "@sims/sims-db";
 import {
   E2EDataSources,
   MSFAAStates,

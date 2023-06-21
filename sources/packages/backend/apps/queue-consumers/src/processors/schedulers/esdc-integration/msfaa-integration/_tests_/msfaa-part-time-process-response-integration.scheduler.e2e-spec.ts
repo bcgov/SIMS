@@ -35,9 +35,9 @@ import {
   MSFAA_PART_TIME_MARRIED,
   MSFAA_PART_TIME_OTHER_COUNTRY,
   MSFAA_PART_TIME_RELATIONSHIP_OTHER,
+  PART_TIME_SAMPLE_MSFAA_NUMBER,
 } from "./msfaa-process-integration.scheduler.models";
 import { saveMSFAATestInputsData } from "./msfaa-factory";
-import { PART_TIME_SAMPLE_MSFAA_NUMBER } from "./msfaa-process-integration.scheduler.models";
 import { In, IsNull } from "typeorm";
 
 describe(
