@@ -11,6 +11,9 @@ import {
 } from "@sims/sims-db";
 import { StudyBreak } from "../../confirmation-of-enrollment/models/confirmation-of-enrollment.dto";
 import { ApplicationScholasticStandingStatus } from "../../../services/application/application.models";
+import { ApplicationStatusPaginationOptionsAPIInDTO } from "../../models/pagination.dto";
+import { ToBoolean } from "../../../utilities/class-transform";
+import { IsBoolean } from "class-validator";
 
 export class ActiveApplicationDataAPIOutDTO {
   applicationProgramName: string;
@@ -42,6 +45,15 @@ export class ActiveApplicationSummaryAPIOutDTO {
   fullName: string;
   scholasticStandingId?: number;
   applicationScholasticStandingStatus: ApplicationScholasticStandingStatus;
+}
+
+/**
+ * Query string options available for active applications summary.
+ */
+export class ActiveApplicationSummaryAPIQueryStringDTO extends ApplicationStatusPaginationOptionsAPIInDTO {
+  @IsBoolean()
+  @ToBoolean()
+  archived: boolean;
 }
 
 /**
