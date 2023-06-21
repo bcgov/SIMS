@@ -1,9 +1,9 @@
-import { StatusChipTypes } from "@/components/generic/StatusChip.models";
 import {
   ApplicationExceptionStatus,
   StudentAppealStatus,
   StudentAssessmentStatus,
   AssessmentDetailHeader,
+  StatusChipTypes,
 } from "@/types";
 
 export function useAssessment() {

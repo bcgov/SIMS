@@ -33,13 +33,13 @@
         :value="ActiveRequestAChangeTab.InprogressTab"
         :eager="false"
       >
-        <!-- todo: InprogressTab -->
+        <inprogress-offering-change-summary :location-id="locationId" />
       </v-window-item>
       <v-window-item
         :value="ActiveRequestAChangeTab.CompletedTab"
         :eager="false"
       >
-        <!-- todo: CompletedTab -->
+        <completed-offering-change-summary :location-id="locationId" />
       </v-window-item>
     </v-window>
   </full-page-container>
@@ -47,6 +47,8 @@
 
 <script lang="ts">
 import AvailableToChangeSummary from "@/components/institutions/request-a-change/AvailableToChangeSummary.vue";
+import InprogressOfferingChangeSummary from "@/components/institutions/request-a-change/InprogressOfferingChangeSummary.vue";
+import CompletedOfferingChangeSummary from "@/components/institutions/request-a-change/CompletedOfferingChangeSummary.vue";
 import { ref, computed, defineComponent } from "vue";
 import { useInstitutionState } from "@/composables";
 
@@ -57,7 +59,11 @@ enum ActiveRequestAChangeTab {
 }
 
 export default defineComponent({
-  components: { AvailableToChangeSummary },
+  components: {
+    AvailableToChangeSummary,
+    InprogressOfferingChangeSummary,
+    CompletedOfferingChangeSummary,
+  },
   props: {
     locationId: {
       type: Number,

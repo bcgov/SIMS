@@ -1,5 +1,4 @@
-import { StatusChipTypes } from "@/components/generic/StatusChip.models";
-import { RestrictionStatus } from "@/types";
+import { RestrictionStatus, StatusChipTypes } from "@/types";
 
 export function useRestriction() {
   const mapRestrictionChipStatus = (

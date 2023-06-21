@@ -113,7 +113,7 @@ export class ApplicationOfferingChangeRequestService {
    * @returns list of application that where requested for
    * application offering change by their status/statuses.
    */
-  async getRequestsSummaryByStatus(
+  async getRequestedSummary(
     locationId: number,
     paginationOptions: PaginationOptions,
     statuses: ApplicationOfferingChangeRequestStatus[],
@@ -130,6 +130,8 @@ export class ApplicationOfferingChangeRequestService {
         "student.id",
         "user.firstName",
         "user.lastName",
+        "applicationOfferingChangeRequest.assessedDate",
+        "applicationOfferingChangeRequest.studentActionDate",
       ])
       .innerJoin("applicationOfferingChangeRequest.application", "application")
       .innerJoin("application.currentAssessment", "currentAssessment")

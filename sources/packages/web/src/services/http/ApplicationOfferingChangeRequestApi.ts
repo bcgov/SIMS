@@ -3,7 +3,8 @@ import { PaginationOptions } from "@/types";
 import {
   PaginatedResultsAPIOutDTO,
   ApplicationOfferingChangeSummaryAPIOutDTO,
-  ApplicationOfferingChangeAPIOutDTO,
+  CompletedApplicationOfferingChangesAPIOutDTO,
+  InprogressApplicationOfferingChangesAPIOutDTO,
 } from "@/services/http/dto";
 import { getPaginationQueryString } from "@/helpers";
 
@@ -29,7 +30,6 @@ export class ApplicationOfferingChangeRequestApi extends HttpBaseClient {
     >(this.addClientRoot(url));
   }
 
-  // todo: ann change the below 2 endpoint and check all dto and code
   /**
    * Gets all in progress application where requested for application
    * offering change.
@@ -38,14 +38,16 @@ export class ApplicationOfferingChangeRequestApi extends HttpBaseClient {
    * @returns list of inprogress application that where requested for
    * application offering change.
    */
-  async getInprogressApplicationOfferingChangeRecords(
+  async getInprogressApplications(
     locationId: number,
     paginationOptions: PaginationOptions,
-  ): Promise<PaginatedResultsAPIOutDTO<ApplicationOfferingChangeAPIOutDTO>> {
-    let url = `location/${locationId}/request-change/in-progress?`;
+  ): Promise<
+    PaginatedResultsAPIOutDTO<InprogressApplicationOfferingChangesAPIOutDTO>
+  > {
+    let url = `location/${locationId}/application-offering-change-request/in-progress?`;
     url += getPaginationQueryString(paginationOptions, true);
     return this.getCall<
-      PaginatedResultsAPIOutDTO<ApplicationOfferingChangeAPIOutDTO>
+      PaginatedResultsAPIOutDTO<InprogressApplicationOfferingChangesAPIOutDTO>
     >(this.addClientRoot(url));
   }
 
@@ -57,14 +59,16 @@ export class ApplicationOfferingChangeRequestApi extends HttpBaseClient {
    * @returns list of completed application that where requested for
    * application offering change.
    */
-  async getCompletedApplicationOfferingChangeRecords(
+  async getCompletedApplications(
     locationId: number,
     paginationOptions: PaginationOptions,
-  ): Promise<PaginatedResultsAPIOutDTO<ApplicationOfferingChangeAPIOutDTO>> {
-    let url = `location/${locationId}/request-change/completed?`;
+  ): Promise<
+    PaginatedResultsAPIOutDTO<CompletedApplicationOfferingChangesAPIOutDTO>
+  > {
+    let url = `location/${locationId}/application-offering-change-request/completed?`;
     url += getPaginationQueryString(paginationOptions, true);
     return this.getCall<
-      PaginatedResultsAPIOutDTO<ApplicationOfferingChangeAPIOutDTO>
+      PaginatedResultsAPIOutDTO<CompletedApplicationOfferingChangesAPIOutDTO>
     >(this.addClientRoot(url));
   }
 }

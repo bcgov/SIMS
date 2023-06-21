@@ -12,13 +12,26 @@ export interface ApplicationOfferingChangeSummaryAPIOutDTO {
 }
 
 /**
- * Application offering change list.
+ * Inprogress application offering change details.
  */
-export interface ApplicationOfferingChangeAPIOutDTO {
+export interface InprogressApplicationOfferingChangesAPIOutDTO {
   applicationNumber: string;
   applicationId: number;
   studyStartPeriod: string;
   studyEndPeriod: string;
   fullName: string;
   status: ApplicationOfferingChangeRequestStatus;
+}
+
+/**
+ * Completed application offering change details.
+ */
+export interface CompletedApplicationOfferingChangesAPIOutDTO {
+  applicationNumber: string;
+  applicationId: number;
+  studyStartPeriod: string;
+  studyEndPeriod: string;
+  fullName: string;
+  status: ApplicationOfferingChangeRequestStatus;
+  dateCompleted: Date;
 }

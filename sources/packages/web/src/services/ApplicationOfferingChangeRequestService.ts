@@ -3,7 +3,8 @@ import ApiClient from "@/services/http/ApiClient";
 import {
   PaginatedResultsAPIOutDTO,
   ApplicationOfferingChangeSummaryAPIOutDTO,
-  ApplicationOfferingChangeAPIOutDTO,
+  CompletedApplicationOfferingChangesAPIOutDTO,
+  InprogressApplicationOfferingChangesAPIOutDTO,
 } from "@/services/http/dto";
 
 export class ApplicationOfferingChangeRequestService {
@@ -34,8 +35,6 @@ export class ApplicationOfferingChangeRequestService {
     );
   }
 
-  // todo: ann double check,
-
   /**
    * Gets all in progress application where requested for application
    * offering change.
@@ -44,11 +43,13 @@ export class ApplicationOfferingChangeRequestService {
    * @returns list of inprogress application that where requested for
    * application offering change.
    */
-  async getInprogressApplicationOfferingChangeRecords(
+  async getInprogressApplications(
     locationId: number,
     paginationOptions: PaginationOptions,
-  ): Promise<PaginatedResultsAPIOutDTO<ApplicationOfferingChangeAPIOutDTO>> {
-    return ApiClient.ApplicationOfferingChangeRequestApi.getInprogressApplicationOfferingChangeRecords(
+  ): Promise<
+    PaginatedResultsAPIOutDTO<InprogressApplicationOfferingChangesAPIOutDTO>
+  > {
+    return ApiClient.ApplicationOfferingChangeRequestApi.getInprogressApplications(
       locationId,
       paginationOptions,
     );
@@ -62,11 +63,13 @@ export class ApplicationOfferingChangeRequestService {
    * @returns list of completed application that where requested for
    * application offering change.
    */
-  async getCompletedApplicationOfferingChangeRecords(
+  async getCompletedApplications(
     locationId: number,
     paginationOptions: PaginationOptions,
-  ): Promise<PaginatedResultsAPIOutDTO<ApplicationOfferingChangeAPIOutDTO>> {
-    return ApiClient.ApplicationOfferingChangeRequestApi.getCompletedApplicationOfferingChangeRecords(
+  ): Promise<
+    PaginatedResultsAPIOutDTO<CompletedApplicationOfferingChangesAPIOutDTO>
+  > {
+    return ApiClient.ApplicationOfferingChangeRequestApi.getCompletedApplications(
       locationId,
       paginationOptions,
     );

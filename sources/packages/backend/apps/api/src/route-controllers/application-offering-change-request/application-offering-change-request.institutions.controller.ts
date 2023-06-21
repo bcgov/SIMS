@@ -6,11 +6,13 @@ import { ClientTypeBaseRoute } from "../../types";
 import { getUserFullName } from "../../utilities";
 import {
   OfferingChangePaginationOptionsAPIInDTO,
+  OfferingChangePaginationRequestedOptionsAPIInDTO,
   PaginatedResultsAPIOutDTO,
 } from "../models/pagination.dto";
 import BaseController from "../BaseController";
 import {
-  ApplicationOfferingChangeAPIOutDTO,
+  CompletedApplicationOfferingChangesAPIOutDTO,
+  InprogressApplicationOfferingChangesAPIOutDTO,
   ApplicationOfferingChangeSummaryAPIOutDTO,
 } from "./models/application-offering-change-request.institutions.dto";
 import { ApplicationOfferingChangeRequestService } from "../../services";
@@ -52,7 +54,6 @@ export class ApplicationOfferingChangeRequestInstitutionsController extends Base
         locationId,
         pagination,
       );
-
     return {
       results: applications.results.map((eachApplication) => {
         const offering = eachApplication.currentAssessment.offering;
@@ -67,7 +68,7 @@ export class ApplicationOfferingChangeRequestInstitutionsController extends Base
       count: applications.count,
     };
   }
-  // todo: ann check below code , dto (OfferingChangePaginationOptionsAPIInDTO and specfic for th endpoint) and update the endpoint
+
   /**
    * Gets all in progress application where requested for application
    * offering change.
@@ -78,12 +79,14 @@ export class ApplicationOfferingChangeRequestInstitutionsController extends Base
    */
   @HasLocationAccess("locationId")
   @Get("in-progress")
-  async getInprogressApplicationOfferingChangeRecords(
+  async getInprogressApplications(
     @Param("locationId", ParseIntPipe) locationId: number,
-    @Query() pagination: OfferingChangePaginationOptionsAPIInDTO,
-  ): Promise<PaginatedResultsAPIOutDTO<ApplicationOfferingChangeAPIOutDTO>> {
+    @Query() pagination: OfferingChangePaginationRequestedOptionsAPIInDTO,
+  ): Promise<
+    PaginatedResultsAPIOutDTO<InprogressApplicationOfferingChangesAPIOutDTO>
+  > {
     const offeringChange =
-      await this.applicationOfferingChangeRequestService.getRequestsSummaryByStatus(
+      await this.applicationOfferingChangeRequestService.getRequestedSummary(
         locationId,
         pagination,
         [
@@ -91,7 +94,6 @@ export class ApplicationOfferingChangeRequestInstitutionsController extends Base
           ApplicationOfferingChangeRequestStatus.InProgressWithStudent,
         ],
       );
-    // todo: ann check the query to use innerjoins
     return {
       results: offeringChange.results.map((eachOfferingChange) => {
         const offering =
@@ -121,12 +123,14 @@ export class ApplicationOfferingChangeRequestInstitutionsController extends Base
    */
   @HasLocationAccess("locationId")
   @Get("completed")
-  async getCompletedApplicationOfferingChangeRecords(
+  async getCompletedApplications(
     @Param("locationId", ParseIntPipe) locationId: number,
-    @Query() pagination: OfferingChangePaginationOptionsAPIInDTO,
-  ): Promise<PaginatedResultsAPIOutDTO<ApplicationOfferingChangeAPIOutDTO>> {
+    @Query() pagination: OfferingChangePaginationRequestedOptionsAPIInDTO,
+  ): Promise<
+    PaginatedResultsAPIOutDTO<CompletedApplicationOfferingChangesAPIOutDTO>
+  > {
     const offeringChange =
-      await this.applicationOfferingChangeRequestService.getRequestsSummaryByStatus(
+      await this.applicationOfferingChangeRequestService.getRequestedSummary(
         locationId,
         pagination,
         [
@@ -148,6 +152,9 @@ export class ApplicationOfferingChangeRequestInstitutionsController extends Base
             eachOfferingChange.application.student.user,
           ),
           status: eachOfferingChange.applicationOfferingChangeRequestStatus,
+          dateCompleted:
+            eachOfferingChange.assessedDate ??
+            eachOfferingChange.studentActionDate,
         };
       }),
       count: offeringChange.count,

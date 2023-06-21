@@ -4,11 +4,8 @@
       <template #header>
         <body-header title="Applications" :recordsCount="applications?.count">
           <template #subtitle>
-            Request a change for a program and offering in an application
-            <tooltip-icon
-              >Only applications in the "completed status" are shown below to
-              request a change.
-            </tooltip-icon>
+            Waiting for the student and StudentAid BC decision on the requested
+            change
           </template>
           <template #actions>
             <v-text-field
@@ -26,7 +23,7 @@
         <content-group>
           <toggle-content :toggled="!applications?.count">
             <v-data-table-server
-              :headers="AvailableToChangeOfferingChangeSummaryHeaders"
+              :headers="InprogressOfferingChangeSummaryHeaders"
               :items="applications?.results"
               :items-length="applications?.count"
               :loading="loading"
@@ -42,10 +39,14 @@
                 {{ dateOnlyLongString(item.value.studyEndPeriod) }}
               </template>
               <template #[`item.applicationNumber`]="{ item }">
-                {{ item.columns.applicationNumber }}
+                {{ item.columns.applicationNumber }} </template
+              ><template #[`item.status`]="{ item }">
+                <status-chip-application-offering-change
+                  :status="item.columns.status"
+                />
               </template>
               <template #[`item.applicationId`]>
-                <v-btn color="primary">Request a change </v-btn>
+                <v-btn color="primary">View</v-btn>
               </template>
             </v-data-table-server>
           </toggle-content>
@@ -61,15 +62,17 @@ import {
   DEFAULT_PAGE_LIMIT,
   DataTableOptions,
   PaginatedResults,
-  AvailableToChangeOfferingChangeSummaryHeaders,
+  InprogressOfferingChangeSummaryHeaders,
   DataTableSortByOrder,
   DEFAULT_DATATABLE_PAGE_NUMBER,
 } from "@/types";
 import { useFormatters } from "@/composables";
-import { ApplicationOfferingChangeSummaryAPIOutDTO } from "@/services/http/dto";
+import { InprogressApplicationOfferingChangesAPIOutDTO } from "@/services/http/dto";
 import { ApplicationOfferingChangeRequestService } from "@/services/ApplicationOfferingChangeRequestService";
+import StatusChipApplicationOfferingChange from "@/components/generic/StatusChipApplicationOfferingChange.vue";
 
 export default defineComponent({
+  components: { StatusChipApplicationOfferingChange },
   props: {
     locationId: {
       type: Number,
@@ -82,14 +85,14 @@ export default defineComponent({
     const { dateOnlyLongString } = useFormatters();
     const applications = ref(
       {} as
-        | PaginatedResults<ApplicationOfferingChangeSummaryAPIOutDTO>
+        | PaginatedResults<InprogressApplicationOfferingChangesAPIOutDTO>
         | undefined,
     );
     let currentPage = NaN;
     let currentPageLimit = NaN;
 
     /**
-     * Load eligible applications offering change records for institution.
+     * Load inprogress applications offering change records for institution.
      * @param page page number, if nothing passed then {@link DEFAULT_DATATABLE_PAGE_NUMBER}.
      * @param pageCount page limit, if nothing passed then {@link DEFAULT_PAGE_LIMIT}.
      * @param sortField sort field, if nothing passed then api sorts with application number.
@@ -103,7 +106,7 @@ export default defineComponent({
     ) => {
       loading.value = true;
       applications.value =
-        await ApplicationOfferingChangeRequestService.shared.getEligibleApplications(
+        await ApplicationOfferingChangeRequestService.shared.getInprogressApplications(
           props.locationId,
           {
             page,
@@ -155,7 +158,7 @@ export default defineComponent({
       paginationAndSortEvent,
       searchApplicationOfferingChangeRecords,
       searchCriteria,
-      AvailableToChangeOfferingChangeSummaryHeaders,
+      InprogressOfferingChangeSummaryHeaders,
       loading,
     };
   },

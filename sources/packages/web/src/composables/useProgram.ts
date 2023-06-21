@@ -1,5 +1,4 @@
-import { StatusChipTypes } from "@/components/generic/StatusChip.models";
-import { ProgramStatus } from "@/types";
+import { ProgramStatus, StatusChipTypes } from "@/types";
 
 export function useProgram() {
   const mapProgramChipStatus = (status: ProgramStatus): StatusChipTypes => {

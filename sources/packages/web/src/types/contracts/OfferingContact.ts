@@ -1,5 +1,5 @@
-import { StatusChipTypes } from "@/components/generic/StatusChip.models";
 import { EducationProgramOfferingAPIOutDTO } from "@/services/http/dto";
+import { StatusChipTypes } from "./StatusChip";
 
 /**
  * Valid Intensity of the Offerings.
