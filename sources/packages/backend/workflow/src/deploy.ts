@@ -125,6 +125,6 @@ import {
     console.error(error);
     throw error;
   } finally {
-    zeebeClient.close();
+    await zeebeClient.close();
   }
 })();
