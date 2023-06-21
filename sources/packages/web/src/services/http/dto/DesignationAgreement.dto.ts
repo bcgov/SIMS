@@ -1,4 +1,5 @@
 import { InstitutionLocationData } from "@/types/contracts/institutionLocationContract";
+import { Expose, Type } from "class-transformer";
 
 export interface SubmitDesignationAgreementAPIInDTO {
   dynamicData: unknown;
@@ -66,21 +67,27 @@ export enum DesignationAgreementStatus {
   Declined = "Declined",
 }
 
-export interface DesignationLocationAPIInDTO {
+export class DesignationLocationAPIInDTO {
+  @Expose()
   locationId: number;
-  locationName: string;
-  locationAddress: string;
+  @Expose()
   approved: boolean;
-  existingDesignationLocation: boolean;
 }
+
 /**
- * DTO Object to Approve/Deny a designation agreement.
+ * Approve or deny a designation agreement.
  * startDate, endDate and locationsDesignations used only for approval.
  */
-export interface UpdateDesignationDetailsAPIInDTO {
+export class UpdateDesignationDetailsAPIInDTO {
+  @Expose()
   designationStatus: DesignationAgreementStatus;
+  @Expose()
   startDate?: string;
+  @Expose()
   endDate?: string;
+  @Expose()
+  @Type(() => DesignationLocationAPIInDTO)
   locationsDesignations?: DesignationLocationAPIInDTO[];
+  @Expose()
   note: string;
 }

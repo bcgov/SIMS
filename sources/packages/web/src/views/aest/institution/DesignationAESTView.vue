@@ -60,14 +60,14 @@ import DesignationAgreementForm from "@/components/partial-view/DesignationAgree
 import { DesignationAgreementService } from "@/services/DesignationAgreementService";
 import { InstitutionService } from "@/services/InstitutionService";
 import {
-  UpdateDesignationDetailsAPIInDTO,
   DesignationAgreementStatus,
-  DesignationLocationAPIInDTO,
   DesignationAgreementAPIOutDTO,
 } from "@/services/http/dto";
 import {
   DesignationModel,
   DesignationFormViewModes,
+  UpdateDesignationDetailsModel,
+  UpdateDesignationLocationsListItem,
 } from "@/components/partial-view/DesignationAgreement/DesignationAgreementForm.models";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
@@ -105,10 +105,10 @@ export default defineComponent({
     );
 
     const approveDenyDesignationModal = ref(
-      {} as ModalDialog<UpdateDesignationDetailsAPIInDTO | boolean>,
+      {} as ModalDialog<UpdateDesignationDetailsModel | boolean>,
     );
 
-    const updateDesignationModel = ref({} as UpdateDesignationDetailsAPIInDTO);
+    const updateDesignationModel = ref({} as UpdateDesignationDetailsModel);
 
     const routeLocation = computed(() =>
       props.institutionId
@@ -157,14 +157,13 @@ export default defineComponent({
     ) => {
       updateDesignationModel.value.designationStatus = designationStatus;
       if (designationStatus === DesignationAgreementStatus.Approved) {
-        /*If the update action is Approval, build the designation location array for form
-          by merging the institution locations list with designation locations list
-        */
+        // If the update action is Approval, build the designation location array for form
+        // by merging the institution locations list with designation locations list
         const institutionLocations =
           await InstitutionService.shared.getAllInstitutionLocations(
             designationAgreement.value.institutionId,
           );
-        //On re-approval of same designation start date and end date should be preloaded.
+        // On re-approval of same designation start date and end date should be preloaded.
         updateDesignationModel.value.startDate =
           designationAgreement.value.startDate;
         updateDesignationModel.value.endDate =
@@ -172,7 +171,8 @@ export default defineComponent({
 
         updateDesignationModel.value.locationsDesignations =
           institutionLocations?.map((institutionLocation) => {
-            const designationLocation = {} as DesignationLocationAPIInDTO;
+            const designationLocation =
+              {} as UpdateDesignationLocationsListItem;
             designationLocation.locationId = institutionLocation.id;
             designationLocation.locationName = institutionLocation.name;
             designationLocation.locationAddress = formatter.getFormattedAddress(
@@ -193,13 +193,13 @@ export default defineComponent({
       const response = await approveDenyDesignationModal.value.showModal(
         updateDesignationModel.value,
       );
-      //Update designation only on a submit action.
+      // Update designation only on a submit action.
       if (response) {
         try {
           processing.value = true;
           await DesignationAgreementService.shared.updateDesignationAgreement(
             props.designationId,
-            response as UpdateDesignationDetailsAPIInDTO,
+            response as UpdateDesignationDetailsModel,
           );
           snackBar.success(
             `The given designation has been ${designationStatus.toLowerCase()} and notes added.`,
@@ -213,8 +213,8 @@ export default defineComponent({
           processing.value = false;
         }
       }
-      //If cancel click from approval modal, Update data must be cleared.
-      updateDesignationModel.value = {} as UpdateDesignationDetailsAPIInDTO;
+      // If cancel click from approval modal, Update data must be cleared.
+      updateDesignationModel.value = {} as UpdateDesignationDetailsModel;
     };
 
     return {
