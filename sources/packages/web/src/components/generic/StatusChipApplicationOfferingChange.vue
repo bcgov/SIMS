@@ -1,6 +1,7 @@
 <template>
   <chip-status :status="chipStatus" :label="status" />
 </template>
+
 <script lang="ts">
 import { computed, PropType, defineComponent } from "vue";
 import ChipStatus from "@/components/generic/ChipStatus.vue";

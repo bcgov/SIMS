@@ -3,7 +3,7 @@
     <body-header-container>
       <template #header>
         <body-header title="Applications" :recordsCount="applications?.count">
-          <template #subtitle> Outcome of the requested change </template>
+          <template #subtitle>Outcome of the requested change</template>
           <template #actions>
             <v-text-field
               density="compact"
@@ -24,9 +24,10 @@
               :items="applications?.results"
               :items-length="applications?.count"
               :loading="loading"
-              v-model:items-per-page="DEFAULT_PAGE_LIMIT"
+              :items-per-page="DEFAULT_PAGE_LIMIT"
               @update:options="paginationAndSortEvent"
-              ><template #[`item.dateCompleted`]="{ item }">
+            >
+              <template #[`item.dateCompleted`]="{ item }">
                 {{ dateOnlyLongString(item.columns.dateCompleted) }}
               </template>
               <template #[`item.fullName`]="{ item }">
@@ -91,13 +92,13 @@ export default defineComponent({
     let currentPageLimit = NaN;
 
     /**
-     * Load inprogress applications offering change records for institution.
+     * Load completed applications offering change records for institution.
      * @param page page number, if nothing passed then {@link DEFAULT_DATATABLE_PAGE_NUMBER}.
      * @param pageCount page limit, if nothing passed then {@link DEFAULT_PAGE_LIMIT}.
      * @param sortField sort field, if nothing passed then api sorts with application number.
      * @param sortOrder sort oder, if nothing passed then {@link DataTableSortByOrder.ASC}.
      */
-    const getSummaryList = async (
+    const getCompletedSummaryList = async (
       page = DEFAULT_DATATABLE_PAGE_NUMBER,
       pageCount = DEFAULT_PAGE_LIMIT,
       sortField?: string,
@@ -123,7 +124,7 @@ export default defineComponent({
       currentPage = event.page;
       currentPageLimit = event.itemsPerPage;
       const [sortByOptions] = event.sortBy;
-      await getSummaryList(
+      await getCompletedSummaryList(
         event.page,
         event.itemsPerPage,
         sortByOptions?.key,
@@ -135,7 +136,7 @@ export default defineComponent({
     const searchApplicationOfferingChangeRecords = async () => {
       // Fix for the search pagination issue.
       applications.value = undefined;
-      await getSummaryList(
+      await getCompletedSummaryList(
         currentPage ?? DEFAULT_DATATABLE_PAGE_NUMBER,
         currentPageLimit ?? DEFAULT_PAGE_LIMIT,
       );
@@ -145,7 +146,7 @@ export default defineComponent({
       () => props.locationId,
       async () => {
         // Update the list.
-        await getSummaryList();
+        await getCompletedSummaryList();
       },
       { immediate: true },
     );

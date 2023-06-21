@@ -27,7 +27,7 @@
               :items="applications?.results"
               :items-length="applications?.count"
               :loading="loading"
-              v-model:items-per-page="DEFAULT_PAGE_LIMIT"
+              :items-per-page="DEFAULT_PAGE_LIMIT"
               @update:options="paginationAndSortEvent"
             >
               <template #[`item.fullName`]="{ item }">
@@ -98,7 +98,7 @@ export default defineComponent({
      * @param sortField sort field, if nothing passed then api sorts with application number.
      * @param sortOrder sort oder, if nothing passed then {@link DataTableSortByOrder.ASC}.
      */
-    const getSummaryList = async (
+    const getInprogressSummaryList = async (
       page = DEFAULT_DATATABLE_PAGE_NUMBER,
       pageCount = DEFAULT_PAGE_LIMIT,
       sortField?: string,
@@ -124,7 +124,7 @@ export default defineComponent({
       currentPage = event.page;
       currentPageLimit = event.itemsPerPage;
       const [sortByOptions] = event.sortBy;
-      await getSummaryList(
+      await getInprogressSummaryList(
         event.page,
         event.itemsPerPage,
         sortByOptions?.key,
@@ -136,7 +136,7 @@ export default defineComponent({
     const searchApplicationOfferingChangeRecords = async () => {
       // Fix for the search pagination issue.
       applications.value = undefined;
-      await getSummaryList(
+      await getInprogressSummaryList(
         currentPage ?? DEFAULT_DATATABLE_PAGE_NUMBER,
         currentPageLimit ?? DEFAULT_PAGE_LIMIT,
       );
@@ -146,7 +146,7 @@ export default defineComponent({
       () => props.locationId,
       async () => {
         // Update the list.
-        await getSummaryList();
+        await getInprogressSummaryList();
       },
       { immediate: true },
     );

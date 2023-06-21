@@ -105,13 +105,11 @@ export class ApplicationOfferingChangeRequestService {
   }
 
   /**
-   * Gets applications summary that where requested for application
-   * offering change by status/statuses.
+   * Gets application offering request change list.
    * @param locationId location id.
    * @param paginationOptions options to execute the pagination.
    * @param statuses list of status that need to be included in the query.
-   * @returns list of application that where requested for
-   * application offering change by their status/statuses.
+   * @returns list of requested application offering changes.
    */
   async getRequestedSummary(
     locationId: number,
@@ -145,7 +143,7 @@ export class ApplicationOfferingChangeRequestService {
           statuses,
         },
       );
-    if (paginationOptions.searchCriteria) {
+    if (paginationOptions.searchCriteria?.trim()) {
       offeringChange
         .andWhere(
           new Brackets((qb) => {
@@ -156,10 +154,9 @@ export class ApplicationOfferingChangeRequestService {
         )
         .setParameter(
           "searchCriteria",
-          `%${paginationOptions.searchCriteria.trim()}%`,
+          `%${paginationOptions.searchCriteria}%`,
         );
     }
-
     offeringChange
       .orderBy(
         transformToApplicationEntitySortField(

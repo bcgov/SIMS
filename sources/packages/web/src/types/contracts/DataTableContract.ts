@@ -216,6 +216,7 @@ export const InprogressOfferingChangeSummaryHeaders = [
 export const CompletedOfferingChangeSummaryHeaders = [
   {
     title: "Date completed",
+    sortable: false,
     key: "dateCompleted",
   },
   {

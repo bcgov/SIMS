@@ -45,7 +45,7 @@
                 {{ item.columns.applicationNumber }}
               </template>
               <template #[`item.applicationId`]>
-                <v-btn color="primary">Request a change </v-btn>
+                <v-btn color="primary">Request a change</v-btn>
               </template>
             </v-data-table-server>
           </toggle-content>

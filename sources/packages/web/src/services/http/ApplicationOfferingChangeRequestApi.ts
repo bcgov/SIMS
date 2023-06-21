@@ -31,12 +31,10 @@ export class ApplicationOfferingChangeRequestApi extends HttpBaseClient {
   }
 
   /**
-   * Gets all in progress application where requested for application
-   * offering change.
+   * Gets all in progress application offering request changes.
    * @param locationId location id.
    * @param paginationOptions options to execute the pagination.
-   * @returns list of inprogress application that where requested for
-   * application offering change.
+   * @returns list of inprogress application offering request changes.
    */
   async getInprogressApplications(
     locationId: number,
@@ -52,12 +50,10 @@ export class ApplicationOfferingChangeRequestApi extends HttpBaseClient {
   }
 
   /**
-   * Gets all completed (Approved/ Declined) application where requested
-   * for application offering change.
+   * Gets all completed (Approved/ Declined) application offering request changes.
    * @param locationId location id.
    * @param paginationOptions options to execute the pagination.
-   * @returns list of completed application that where requested for
-   * application offering change.
+   * @returns list of completed application offering request changes.
    */
   async getCompletedApplications(
     locationId: number,
