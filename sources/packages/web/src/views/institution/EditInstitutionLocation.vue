@@ -36,7 +36,7 @@ import { InstitutionService } from "@/services/InstitutionService";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import { AuthService } from "@/services/AuthService";
 import { InstitutionLocationEdit, BannerTypes } from "@/types";
-import { useSnackBar } from "@/composables";
+import { useFormioUtils, useSnackBar } from "@/composables";
 
 export default defineComponent({
   components: { LocationEditForm },
@@ -51,14 +51,17 @@ export default defineComponent({
     const store = useStore();
     const initialData = ref({} as InstitutionLocationEdit);
     const snackBar = useSnackBar();
+    const { excludeExtraneousValues } = useFormioUtils();
     const router = useRouter();
-    const updateInstitutionLocation = async (
-      data: InstitutionLocationPrimaryContactAPIInDTO,
-    ) => {
+    const updateInstitutionLocation = async (data: unknown) => {
       try {
+        const typedData = excludeExtraneousValues(
+          InstitutionLocationPrimaryContactAPIInDTO,
+          data,
+        );
         await InstitutionService.shared.updateInstitutionLocation(
           props.locationId,
-          data,
+          typedData,
         );
         router.push(goBackRouteParams.value);
         store.dispatch("institution/getUserInstitutionLocationDetails");
