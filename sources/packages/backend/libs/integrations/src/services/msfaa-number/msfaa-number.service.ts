@@ -108,7 +108,7 @@ export class MSFAANumberService extends RecordDataModelService<MSFAANumber> {
     offeringIntensity: OfferingIntensity,
     dateSigned: Date,
     serviceProviderReceivedDate: Date,
-  ): Promise<UpdateResult> {
+  ): Promise<void> {
     if (!dateSigned || !serviceProviderReceivedDate) {
       throw new Error(
         "Not all required fields to update a received MSFAA record were provided.",
@@ -133,25 +133,23 @@ export class MSFAANumberService extends RecordDataModelService<MSFAANumber> {
         offeringIntensity,
       },
     });
-    if (!retrievedMSFAARecord) {
-      throw new Error("MSFAA Number not found");
-    }
     const systemUser = await this.systemUsersService.systemUser();
     // If there is a retrievedMSFAARecord, then the msfaa number was cancelled earlier and is now being reactivated.
-    if (retrievedMSFAARecord.cancelledDate) {
+    if (retrievedMSFAARecord?.cancelledDate) {
       // Re-associate all disbursements pending e-cert generation for the same offering intensity with this msfaa number.
-      await this.msfaaNumberSharedService.reactivateMsfaaNumber(
+      await this.msfaaNumberSharedService.reactivateMSFAANumber(
         retrievedMSFAARecord.student?.id,
         retrievedMSFAARecord.referenceApplication?.id,
         retrievedMSFAARecord.offeringIntensity,
         systemUser?.id,
-        retrievedMSFAARecord.msfaaNumber,
+        retrievedMSFAARecord.id,
+        msfaaNumber,
         dateSigned,
         serviceProviderReceivedDate,
       );
     } else {
       // No reactivation, just update the dateSigned and serviceProviderReceivedDate.
-      return this.repo.update(
+      const updateResult = await this.repo.update(
         {
           msfaaNumber,
           dateSigned: IsNull(),
@@ -165,6 +163,12 @@ export class MSFAANumberService extends RecordDataModelService<MSFAANumber> {
           modifier: systemUser,
         },
       );
+      // Incase no record updated.
+      if (!updateResult.affected) {
+        throw new Error(
+          `Error while updating MSFAA number: ${msfaaNumber}. Number of affected rows was ${updateResult.affected}, expected 1.`,
+        );
+      }
     }
   }
 

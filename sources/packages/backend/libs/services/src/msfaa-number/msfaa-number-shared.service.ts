@@ -112,21 +112,22 @@ export class MSFAANumberSharedService {
    * @param dateSigned date the msfaaNumber got signed.
    * @param serviceProviderReceivedDate serviceProviderReceivedDate date.
    */
-  async reactivateMsfaaNumber(
+  async reactivateMSFAANumber(
     studentId: number,
     referenceApplicationId: number,
     offeringIntensity: OfferingIntensity,
     auditUserId: number,
+    msfaaNumberId: number,
     msfaaNumber: string,
     dateSigned: Date,
     serviceProviderReceivedDate: Date,
-  ): Promise<void> {
-    await this.internalActivateMSFAANumber(
+  ): Promise<MSFAANumber> {
+    return this.internalActivateMSFAANumber(
       studentId,
       referenceApplicationId,
       offeringIntensity,
       auditUserId,
-      { msfaaNumber, dateSigned, serviceProviderReceivedDate },
+      { msfaaNumberId, msfaaNumber, dateSigned, serviceProviderReceivedDate },
     );
   }
 
@@ -149,9 +150,10 @@ export class MSFAANumberSharedService {
     offeringIntensity: OfferingIntensity,
     auditUserId: number,
     options?: {
-      msfaaNumber?: string;
-      dateSigned?: Date;
-      serviceProviderReceivedDate?: Date;
+      msfaaNumberId: number;
+      msfaaNumber: string;
+      dateSigned: Date;
+      serviceProviderReceivedDate: Date;
     },
   ): Promise<MSFAANumber> {
     return this.dataSource.transaction(async (entityManager) => {
@@ -175,10 +177,10 @@ export class MSFAANumberSharedService {
       );
       // The reactivated msfaaNumber.
       let newMSFAANumber: MSFAANumber = {
-        msfaaNumber: options?.msfaaNumber,
+        id: options?.msfaaNumberId,
       } as MSFAANumber;
       // If there is not a MSFAA number to be re-activated.
-      if (!options?.msfaaNumber) {
+      if (!options?.msfaaNumberId) {
         // Create the new MSFAA record for the student.
         newMSFAANumber = new MSFAANumber();
         newMSFAANumber.msfaaNumber = await this.consumeNextSequence(
@@ -195,22 +197,28 @@ export class MSFAANumberSharedService {
       } else {
         // Reactivate this msfaa record.
         const systemUser = await this.systemUsersService.systemUser();
-        return await this.dataSource.getRepository(MSFAANumber).update(
-          {
-            msfaaNumber: options?.msfaaNumber,
-            dateSigned: IsNull(),
-            serviceProviderReceivedDate: IsNull(),
-          },
-          {
-            dateSigned: getISODateOnlyString(options?.dateSigned),
-            serviceProviderReceivedDate: getISODateOnlyString(
-              options?.serviceProviderReceivedDate,
-            ),
-            cancelledDate: null,
-            newIssuingProvince: null,
-            modifier: systemUser,
-          },
-        );
+        const updateResult = await this.dataSource
+          .getRepository(MSFAANumber)
+          .update(
+            {
+              id: options?.msfaaNumberId,
+            },
+            {
+              dateSigned: getISODateOnlyString(options?.dateSigned),
+              serviceProviderReceivedDate: getISODateOnlyString(
+                options?.serviceProviderReceivedDate,
+              ),
+              cancelledDate: null,
+              newIssuingProvince: null,
+              modifier: systemUser,
+            },
+          );
+        // Incase no record updated.
+        if (!updateResult.affected) {
+          throw new Error(
+            `Error while updating MSFAA number: ${options?.msfaaNumber}. Number of affected rows was ${updateResult.affected}, expected 1.`,
+          );
+        }
       }
       // Associate pending disbursements with the new MSFAA.
       const disbursementScheduleRepo =
