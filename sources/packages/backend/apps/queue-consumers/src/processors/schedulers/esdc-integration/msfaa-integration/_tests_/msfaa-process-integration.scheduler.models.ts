@@ -1,5 +1,51 @@
 import { OfferingIntensity, RelationshipStatus } from "@sims/sims-db";
-import { MSFAATestInputData } from "./msfaa-helper";
+
+/** Sample MSFAA Numbers. */
+export const PART_TIME_SAMPLE_MSFAA_NUMBER = "1000";
+export const FULL_TIME_SAMPLE_MSFAA_NUMBER = "2000";
+
+/**
+ * Values part of an MSFAA file record.
+ */
+export interface MSFAATestInputData {
+  msfaaNumber: string;
+  sin: string;
+  institutionCode: string;
+  birthDate: string;
+  surname: string;
+  givenName: string;
+  gender: string;
+  maritalStatus: RelationshipStatus;
+  addressLine1: string;
+  addressLine2: string;
+  city: string;
+  provinceState: string;
+  postalCode: string;
+  country: string;
+  phone: string;
+  email: string;
+  offeringIntensity: OfferingIntensity;
+}
+
+export const MSFAA_FULL_TIME_MARRIED: MSFAATestInputData = {
+  msfaaNumber: "2000",
+  sin: "900000000",
+  institutionCode: "ABCD",
+  birthDate: "1995-06-30",
+  surname: "Doe",
+  givenName: "John",
+  gender: "male",
+  maritalStatus: RelationshipStatus.Married,
+  addressLine1: "Address Line 1",
+  addressLine2: "Address Line 2",
+  city: "Calgary",
+  provinceState: "AB",
+  postalCode: "H1H 1H1",
+  country: "Canada",
+  phone: "1111111111",
+  email: "john.doe@somedomain.com",
+  offeringIntensity: OfferingIntensity.fullTime,
+};
 
 export const MSFAA_PART_TIME_MARRIED: MSFAATestInputData = {
   msfaaNumber: "1000",

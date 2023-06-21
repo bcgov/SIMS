@@ -49,7 +49,7 @@ export class MSFAANumberSharedService {
     const application = await this.getApplicationForMSFAACreation(
       referenceApplicationId,
     );
-    return this.internalCreateMSFAANumber(
+    return this.internalActivateMSFAANumber(
       application.student.id,
       application.id,
       application.currentAssessment.offering.offeringIntensity,
@@ -94,11 +94,39 @@ export class MSFAANumberSharedService {
         APPLICATION_INVALID_DATA_TO_CREATE_MSFAA_ERROR,
       );
     }
-    return this.internalCreateMSFAANumber(
+    return this.internalActivateMSFAANumber(
       application.student.id,
       application.id,
       application.currentAssessment.offering.offeringIntensity,
       auditUserId,
+    );
+  }
+
+  /**
+   *
+   * @param studentId student for which the MSFAA record will be reactivated.
+   * @param referenceApplicationId reference application id.
+   * @param offeringIntensity offering intensity.
+   * @param auditUserId user causing the change.
+   * @param msfaaNumber reactivated msfaaNumber.
+   * @param dateSigned date the msfaaNumber got signed.
+   * @param serviceProviderReceivedDate serviceProviderReceivedDate date.
+   */
+  async reactivateMsfaaNumber(
+    studentId: number,
+    referenceApplicationId: number,
+    offeringIntensity: OfferingIntensity,
+    auditUserId: number,
+    msfaaNumber: string,
+    dateSigned: Date,
+    serviceProviderReceivedDate: Date,
+  ): Promise<void> {
+    await this.internalActivateMSFAANumber(
+      studentId,
+      referenceApplicationId,
+      offeringIntensity,
+      auditUserId,
+      { msfaaNumber, dateSigned, serviceProviderReceivedDate },
     );
   }
 
@@ -109,16 +137,22 @@ export class MSFAANumberSharedService {
    * @param offeringIntensity offering intensity.
    * @param auditUserId user that should be considered the one that is causing the changes.
    * individually based on, for instance, the Part time/Full time.
-   * @params options.
+   * @param options.
    * - `msfaaNumber` reactivated msfaaNumber.
+   * - `dateSigned` date the msfaaNumber got signed.
+   * - `serviceProviderReceivedDate` serviceProviderReceivedDate date.
    * @returns created MSFAA record.
    */
-  public async internalCreateMSFAANumber(
+  private async internalActivateMSFAANumber(
     studentId: number,
     referenceApplicationId: number,
     offeringIntensity: OfferingIntensity,
     auditUserId: number,
-    options?: { msfaaNumber?: MSFAANumber },
+    options?: {
+      msfaaNumber?: string;
+      dateSigned?: Date;
+      serviceProviderReceivedDate?: Date;
+    },
   ): Promise<MSFAANumber> {
     return this.dataSource.transaction(async (entityManager) => {
       const auditUser = await this.systemUsersService.systemUser();
@@ -139,8 +173,11 @@ export class MSFAANumberSharedService {
           updatedAt: now,
         },
       );
-      let newMSFAANumber: MSFAANumber = null;
-      // There is not a MSFAA number to be re-activated.
+      // The reactivated msfaaNumber.
+      let newMSFAANumber: MSFAANumber = {
+        msfaaNumber: options?.msfaaNumber,
+      } as MSFAANumber;
+      // If there is not a MSFAA number to be re-activated.
       if (!options?.msfaaNumber) {
         // Create the new MSFAA record for the student.
         newMSFAANumber = new MSFAANumber();
@@ -156,8 +193,24 @@ export class MSFAANumberSharedService {
         newMSFAANumber.createdAt = now;
         await entityManager.getRepository(MSFAANumber).save(newMSFAANumber);
       } else {
-        // The reactivated msfaaNumber.
-        newMSFAANumber = options?.msfaaNumber;
+        // Reactivate this msfaa record.
+        const systemUser = await this.systemUsersService.systemUser();
+        return await this.dataSource.getRepository(MSFAANumber).update(
+          {
+            msfaaNumber: options?.msfaaNumber,
+            dateSigned: IsNull(),
+            serviceProviderReceivedDate: IsNull(),
+          },
+          {
+            dateSigned: getISODateOnlyString(options?.dateSigned),
+            serviceProviderReceivedDate: getISODateOnlyString(
+              options?.serviceProviderReceivedDate,
+            ),
+            cancelledDate: null,
+            newIssuingProvince: null,
+            modifier: systemUser,
+          },
+        );
       }
       // Associate pending disbursements with the new MSFAA.
       const disbursementScheduleRepo =

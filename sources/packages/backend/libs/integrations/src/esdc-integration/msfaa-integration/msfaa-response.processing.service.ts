@@ -120,6 +120,7 @@ export class MSFAAResponseProcessingService {
     // may not be necessarily ISO date format.
     const updateResult = await this.msfaaNumberService.updateReceivedRecord(
       receivedRecord.msfaaNumber,
+      receivedRecord.offeringIntensity,
       receivedRecord.borrowerSignedDate,
       receivedRecord.serviceProviderReceivedDate,
     );

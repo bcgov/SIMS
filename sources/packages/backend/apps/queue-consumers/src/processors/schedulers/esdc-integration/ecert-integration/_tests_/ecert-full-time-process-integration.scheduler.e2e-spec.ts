@@ -106,7 +106,7 @@ describe(
       const savedMSFAANumber = await msfaaNumberRepo.save(
         createFakeMSFAANumber(
           { student: savedStudent },
-          { state: MSFAAStates.Signed },
+          { msfaaState: MSFAAStates.Signed },
         ),
       );
       // Create and save application.

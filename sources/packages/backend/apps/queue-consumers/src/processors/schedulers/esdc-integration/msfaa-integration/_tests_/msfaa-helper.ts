@@ -11,29 +11,6 @@ import * as dayjs from "dayjs";
 export const THROW_AWAY_MSFAA_NUMBER = "3000";
 
 /**
- * Values part of an MSFAA file record.
- */
-export interface MSFAATestInputData {
-  msfaaNumber: string;
-  sin: string;
-  institutionCode: string;
-  birthDate: string;
-  surname: string;
-  givenName: string;
-  gender: string;
-  maritalStatus: RelationshipStatus;
-  addressLine1: string;
-  addressLine2: string;
-  city: string;
-  provinceState: string;
-  postalCode: string;
-  country: string;
-  phone: string;
-  email: string;
-  offeringIntensity: OfferingIntensity;
-}
-
-/**
  * Creates the sequence group name by the offering intensity.
  * @param offeringIntensity offering intensity.
  * @returns the sequence group name by the offering intensity.

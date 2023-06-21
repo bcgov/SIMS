@@ -8,18 +8,18 @@ import {
   saveFakeApplication,
   saveFakeStudent,
 } from "@sims/test-utils";
-import { MSFAATestInputData } from "./msfaa-helper";
+import { MSFAATestInputData } from "./msfaa-process-integration.scheduler.models";
 import { createFakeSINValidation } from "@sims/test-utils/factories/sin-validation";
 
 /**
  * Save an MSFAA record providing all data that will be
  * part of the MSFAA file generation.
  * @param db data source helper.
- * @param msfaa test input data.
+ * @param msfaaDataInput msfaa test input data.
  * @param relations
  * - `fakeStudent` fakeStudent to be associated with the MSFAATestInputData.
  * @param options to saveMsfaaTestInputData.
- * - `state` if provided, specifies the MSFAA State to be associated with the provided MSFAATestInputData.
+ * - `msfaaState` if provided, specifies the MSFAA State to be associated with the provided MSFAATestInputData.
  * - `offeringIntensity` if provided, specifies the offering intensity associated with the provided MSFAATestInputData.
  * @returns a saved MSFAA record that uses the input test
  * data to be created.
@@ -28,7 +28,7 @@ export async function saveMSFAATestInputData(
   db: E2EDataSources,
   msfaaDataInput: MSFAATestInputData,
   relations?: { fakeStudent?: Student },
-  options?: { state?: MSFAAStates; offeringIntensity?: OfferingIntensity },
+  options?: { msfaaState?: MSFAAStates },
 ): Promise<MSFAANumber> {
   // User.
   const fakeUser = createFakeUser();
@@ -38,7 +38,7 @@ export async function saveMSFAATestInputData(
   // Student.
   let fakeStudent: Student;
   if (!relations?.fakeStudent) {
-    fakeStudent = createFakeStudent(fakeUser);
+    fakeStudent = relations?.fakeStudent ?? createFakeStudent(fakeUser);
     fakeStudent.birthDate = msfaaDataInput.birthDate;
     fakeStudent.gender = msfaaDataInput.gender;
     fakeStudent.contactInfo = {
@@ -81,7 +81,12 @@ export async function saveMSFAATestInputData(
       student,
       referenceApplication,
     },
-    { state: options?.state, offeringIntensity: options?.offeringIntensity },
+    {
+      msfaaState: options?.msfaaState,
+    },
+    {
+      offeringIntensity: msfaaDataInput.offeringIntensity,
+    },
   );
   newMSFAANumber.msfaaNumber = msfaaDataInput.msfaaNumber;
   return db.msfaaNumber.save(newMSFAANumber);
@@ -94,8 +99,7 @@ export async function saveMSFAATestInputData(
  * @param relations
  * - `student` student to be associated with the MSFAATestInputData.
  * @param options to saveMsfaaTestInputData.
- * - `state` if provided, specifies the MSFAA State to be associated with the provided MSFAATestInputData.
- * - `offeringIntensity` if provided, specifies the offering intensity associated with the provided MSFAATestInputData.
+ * - `msfaaState` if provided, specifies the MSFAA State to be associated with the provided MSFAATestInputData.
  * @returns all MSFAA records created. The result order may differ
  * from the array input order.
  */
@@ -103,7 +107,7 @@ export async function saveMSFAATestInputsData(
   db: E2EDataSources,
   msfaaDataInputs: MSFAATestInputData[],
   relations?: { student: Student },
-  options?: { state?: MSFAAStates; offeringIntensity?: OfferingIntensity },
+  options?: { msfaaState?: MSFAAStates },
 ): Promise<MSFAANumber[]> {
   const saveMSFAAPromises = msfaaDataInputs.map((msfaa) =>
     saveMSFAATestInputData(
@@ -111,8 +115,7 @@ export async function saveMSFAATestInputsData(
       msfaa,
       { fakeStudent: relations?.student },
       {
-        state: options?.state,
-        offeringIntensity: options?.offeringIntensity,
+        msfaaState: options?.msfaaState,
       },
     ),
   );

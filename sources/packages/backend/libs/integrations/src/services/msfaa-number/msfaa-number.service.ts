@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { DataSource, In, IsNull, Repository, UpdateResult } from "typeorm";
+import { DataSource, In, IsNull, Not, Repository, UpdateResult } from "typeorm";
 import {
   RecordDataModelService,
   MSFAANumber,
@@ -105,6 +105,7 @@ export class MSFAANumberService extends RecordDataModelService<MSFAANumber> {
    */
   async updateReceivedRecord(
     msfaaNumber: string,
+    offeringIntensity: OfferingIntensity,
     dateSigned: Date,
     serviceProviderReceivedDate: Date,
   ): Promise<UpdateResult> {
@@ -113,50 +114,58 @@ export class MSFAANumberService extends RecordDataModelService<MSFAANumber> {
         "Not all required fields to update a received MSFAA record were provided.",
       );
     }
-    // Check if the msfaa number needs to be reactivated or simply updated with a signed date.
+    // Check if the msfaa number needs to be reactivated or simply updated with a signed date. The msfaa record will need to reactivated if it is present in the database as cancelled.
     const retrievedMSFAARecord = await this.repo.findOne({
       select: {
         id: true,
-        studentId: true,
-        referenceApplicationId: true,
+        student: { id: true },
+        referenceApplication: { id: true },
         cancelledDate: true,
         dateSigned: true,
         offeringIntensity: true,
       },
+      relations: {
+        student: true,
+        referenceApplication: true,
+      },
       where: {
         msfaaNumber,
+        offeringIntensity,
       },
     });
-    if (
-      !retrievedMSFAARecord.dateSigned &&
-      retrievedMSFAARecord.cancelledDate
-    ) {
-      // This msfaa number was originally cancelled and is being reactivated now. Re-associate all disbursements pending e-cert generation for the same offering intensity with this msfaa number.
-      await this.msfaaNumberSharedService.internalCreateMSFAANumber(
-        retrievedMSFAARecord.studentId,
-        retrievedMSFAARecord.referenceApplicationId,
+    if (!retrievedMSFAARecord) {
+      throw new Error("MSFAA Number not found");
+    }
+    const systemUser = await this.systemUsersService.systemUser();
+    // If there is a retrievedMSFAARecord, then the msfaa number was cancelled earlier and is now being reactivated.
+    if (retrievedMSFAARecord.cancelledDate) {
+      // Re-associate all disbursements pending e-cert generation for the same offering intensity with this msfaa number.
+      await this.msfaaNumberSharedService.reactivateMsfaaNumber(
+        retrievedMSFAARecord.student?.id,
+        retrievedMSFAARecord.referenceApplication?.id,
         retrievedMSFAARecord.offeringIntensity,
-        (
-          await this.systemUsersService.systemUser()
-        ).id,
-        { msfaaNumber: { id: retrievedMSFAARecord.id } as MSFAANumber },
+        systemUser?.id,
+        retrievedMSFAARecord.msfaaNumber,
+        dateSigned,
+        serviceProviderReceivedDate,
+      );
+    } else {
+      // No reactivation, just update the dateSigned and serviceProviderReceivedDate.
+      return this.repo.update(
+        {
+          msfaaNumber,
+          dateSigned: IsNull(),
+          serviceProviderReceivedDate: IsNull(),
+        },
+        {
+          dateSigned: getISODateOnlyString(dateSigned),
+          serviceProviderReceivedDate: getISODateOnlyString(
+            serviceProviderReceivedDate,
+          ),
+          modifier: systemUser,
+        },
       );
     }
-    return this.repo.update(
-      {
-        msfaaNumber,
-        dateSigned: IsNull(),
-        serviceProviderReceivedDate: IsNull(),
-      },
-      {
-        dateSigned: getISODateOnlyString(dateSigned),
-        serviceProviderReceivedDate: getISODateOnlyString(
-          serviceProviderReceivedDate,
-        ),
-        cancelledDate: null,
-        newIssuingProvince: null,
-      },
-    );
   }
 
   /**

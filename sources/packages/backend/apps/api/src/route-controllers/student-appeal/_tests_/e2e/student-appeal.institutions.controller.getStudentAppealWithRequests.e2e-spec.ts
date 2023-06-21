@@ -60,7 +60,7 @@ describe("StudentAppealInstitutionsController(e2e)-getStudentAppealWithRequests"
     const currentMSFAA = createFakeMSFAANumber(
       { student },
       {
-        state: MSFAAStates.Signed,
+        msfaaState: MSFAAStates.Signed,
       },
     );
     await db.msfaaNumber.save(currentMSFAA);
@@ -116,7 +116,7 @@ describe("StudentAppealInstitutionsController(e2e)-getStudentAppealWithRequests"
     const currentMSFAA = createFakeMSFAANumber(
       { student },
       {
-        state: MSFAAStates.Signed,
+        msfaaState: MSFAAStates.Signed,
       },
     );
     await db.msfaaNumber.save(currentMSFAA);

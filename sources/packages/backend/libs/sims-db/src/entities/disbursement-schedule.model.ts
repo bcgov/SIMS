@@ -181,9 +181,6 @@ export class DisbursementSchedule extends RecordDataModel {
     (disbursementSchedule: DisbursementSchedule) =>
       disbursementSchedule.msfaaNumber,
   )
-  @Column({
-    name: "msfaa_number_id",
-  })
   msfaaNumberId?: number;
   /**
    * MSFAA (Master Student Financial Aid Agreement)
