@@ -108,9 +108,10 @@ export class MSFAANumberSharedService {
    * @param referenceApplicationId reference application id.
    * @param offeringIntensity offering intensity.
    * @param auditUserId user causing the change.
-   * @param msfaaNumber reactivated msfaaNumber.
+   * @param msfaaNumber msfaaNumber to be reactivated.
    * @param dateSigned date the msfaaNumber got signed.
    * @param serviceProviderReceivedDate serviceProviderReceivedDate date.
+   * @returns reactivated MSFAA record.
    */
   async reactivateMSFAANumber(
     studentId: number,
@@ -143,7 +144,8 @@ export class MSFAANumberSharedService {
    * @param auditUserId user that should be considered the one that is causing the changes.
    * individually based on, for instance, the Part time/Full time.
    * @param options.
-   * - `msfaaNumber` reactivated msfaaNumber.
+   * - `msfaaNumberId` id of the msfaaNumber to be reactivated.
+   * - `msfaaNumber` msfaaNumber to be reactivated.
    * - `dateSigned` date the msfaaNumber got signed.
    * - `serviceProviderReceivedDate` serviceProviderReceivedDate date.
    * @returns created MSFAA record.

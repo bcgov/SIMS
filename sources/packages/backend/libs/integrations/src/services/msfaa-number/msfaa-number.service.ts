@@ -99,9 +99,9 @@ export class MSFAANumberService extends RecordDataModelService<MSFAANumber> {
    * information received. If the information was already received
    * the record will not be updated.
    * @param msfaaNumber MSFAA number.
+   * @param offeringIntensity associated offering intensity.
    * @param dateSigned date in which the borrower indicated the MSFAA was signed.
    * @param serviceProviderReceivedDate date in which the MSFAA was received by/resolve from CanadaPost/Kiosk.
-   * @returns update result. Only one row is supposed to be affected.
    */
   async updateReceivedRecord(
     msfaaNumber: string,
@@ -134,7 +134,7 @@ export class MSFAANumberService extends RecordDataModelService<MSFAANumber> {
       },
     });
     const systemUser = await this.systemUsersService.systemUser();
-    // If there is a retrievedMSFAARecord, then the msfaa number was cancelled earlier and is now being reactivated.
+    // If there is a retrievedMSFAARecord, check if the msfaa number was cancelled earlier. If yes, reactivate it.
     if (retrievedMSFAARecord?.cancelledDate) {
       // Re-associate all disbursements pending e-cert generation for the same offering intensity with this msfaa number.
       await this.msfaaNumberSharedService.reactivateMSFAANumber(
