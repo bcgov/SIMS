@@ -192,7 +192,7 @@ export default defineComponent({
         processing.value = true;
 
         if (initialData.value.hasExistingApplication) {
-          const dataTyped = excludeExtraneousValues(
+          const typedData = excludeExtraneousValues(
             EducationProgramOfferingBasicDataAPIInDTO,
             data,
           );
@@ -200,10 +200,10 @@ export default defineComponent({
             props.locationId,
             props.programId,
             props.offeringId,
-            dataTyped,
+            typedData,
           );
         } else {
-          const dataTyped = excludeExtraneousValues(
+          const typedData = excludeExtraneousValues(
             EducationProgramOfferingAPIInDTO,
             data,
           );
@@ -211,7 +211,7 @@ export default defineComponent({
             props.locationId,
             props.programId,
             props.offeringId,
-            dataTyped,
+            typedData,
           );
         }
         snackBar.success("Offering updated.");

@@ -112,17 +112,15 @@ export default defineComponent({
     const validateOfferingData = async (
       data: EducationProgramOfferingAPIInDTO,
     ): Promise<OfferingValidationResultAPIOutDTO> => {
-      console.log(data);
-      const dataTyped = excludeExtraneousValues(
+      const typedData = excludeExtraneousValues(
         EducationProgramOfferingAPIInDTO,
         data,
       );
-      console.log(dataTyped);
       const validationResult =
         await EducationProgramOfferingService.shared.validateOffering(
           props.locationId,
           props.programId,
-          dataTyped,
+          typedData,
         );
       if (
         !lastCalculationDate ||

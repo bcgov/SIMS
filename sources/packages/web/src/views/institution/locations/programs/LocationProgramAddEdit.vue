@@ -179,19 +179,19 @@ export default defineComponent({
       if (isInstitutionUser.value) {
         try {
           processing.value = true;
-          const dataTyped = excludeExtraneousValues(
+          const typedData = excludeExtraneousValues(
             EducationProgramAPIInDTO,
             form.data,
           );
           if (props.programId) {
             await EducationProgramService.shared.updateEducationProgram(
               props.programId,
-              dataTyped,
+              typedData,
             );
             snackBar.success("Education Program updated successfully!");
           } else {
             await EducationProgramService.shared.createEducationProgram(
-              dataTyped,
+              typedData,
             );
             snackBar.success("Education Program created successfully!");
           }

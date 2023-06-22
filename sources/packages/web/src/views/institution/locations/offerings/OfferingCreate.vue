@@ -64,14 +64,14 @@ export default defineComponent({
     const submit = async (data: OfferingFormModel) => {
       try {
         processing.value = true;
-        const dataTyped = excludeExtraneousValues(
+        const typedData = excludeExtraneousValues(
           EducationProgramOfferingAPIInDTO,
           data,
         );
         await EducationProgramOfferingService.shared.createProgramOffering(
           props.locationId,
           props.programId,
-          dataTyped,
+          typedData,
         );
         snackBar.success("Offering created.");
         goBack();
