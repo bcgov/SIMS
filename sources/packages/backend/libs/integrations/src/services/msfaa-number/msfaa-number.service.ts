@@ -142,8 +142,7 @@ export class MSFAANumberService extends RecordDataModelService<MSFAANumber> {
         retrievedMSFAARecord.referenceApplication?.id,
         retrievedMSFAARecord.offeringIntensity,
         systemUser?.id,
-        retrievedMSFAARecord.id,
-        msfaaNumber,
+        { id: retrievedMSFAARecord.id, msfaaNumber } as MSFAANumber,
         dateSigned,
         serviceProviderReceivedDate,
       );

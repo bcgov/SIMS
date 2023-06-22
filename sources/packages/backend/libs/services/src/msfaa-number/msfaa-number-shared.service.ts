@@ -117,8 +117,7 @@ export class MSFAANumberSharedService {
     referenceApplicationId: number,
     offeringIntensity: OfferingIntensity,
     auditUserId: number,
-    msfaaNumberId: number,
-    msfaaNumber: string,
+    msfaaNumber: Partial<MSFAANumber>,
     dateSigned: Date,
     serviceProviderReceivedDate: Date,
   ): Promise<MSFAANumber> {
@@ -127,7 +126,12 @@ export class MSFAANumberSharedService {
       referenceApplicationId,
       offeringIntensity,
       auditUserId,
-      { msfaaNumberId, msfaaNumber, dateSigned, serviceProviderReceivedDate },
+      {
+        msfaaNumberId: msfaaNumber.id,
+        msfaaNumber: msfaaNumber.msfaaNumber,
+        dateSigned,
+        serviceProviderReceivedDate,
+      },
     );
   }
 
