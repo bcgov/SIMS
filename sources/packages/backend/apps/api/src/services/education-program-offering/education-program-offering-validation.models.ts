@@ -46,7 +46,8 @@ import {
   OFFERING_STUDY_BREAK_MAX_DAYS,
   OFFERING_STUDY_BREAK_MIN_DAYS,
   OFFERING_STUDY_PERIOD_MAX_DAYS,
-  OFFERING_STUDY_PERIOD_MIN_DAYS,
+  FT_OFFERING_STUDY_PERIOD_MIN_DAYS,
+  PT_OFFERING_STUDY_PERIOD_MIN_DAYS,
   OFFERING_YEAR_OF_STUDY_MAX_VALUE,
   OFFERING_YEAR_OF_STUDY_MIN_VALUE,
 } from "../../utilities";
@@ -320,6 +321,18 @@ const studyEndDateProperty = (offering: OfferingValidationModel) =>
   offering.studyEndDate;
 
 /**
+ * Get study period minimum length based on offering intensity.
+ * @param offering offering.
+ * @returns minimum study period length in number of days.
+ */
+const studyPeriodMinLength = (offering: OfferingValidationModel) => {
+  if (offering.offeringIntensity === OfferingIntensity.fullTime) {
+    return FT_OFFERING_STUDY_PERIOD_MIN_DAYS;
+  }
+  return PT_OFFERING_STUDY_PERIOD_MIN_DAYS;
+};
+
+/**
  * Complete offering data with all validations needed to ensure data
  * consistency. Program data and locations data need to be present to
  * ensure a successfully validation.
@@ -353,7 +366,7 @@ export class OfferingValidationModel {
   @IsDateAfter(studyStartDateProperty, userFriendlyNames.studyEndDate)
   @PeriodMinLength(
     studyStartDateProperty,
-    OFFERING_STUDY_PERIOD_MIN_DAYS,
+    studyPeriodMinLength,
     userFriendlyNames.studyEndDate,
     {
       context: ValidationContext.CreateWarning(
@@ -595,6 +608,7 @@ export class OfferingValidationModel {
   @HasValidOfferingPeriodForFundedDays(
     studyStartDateProperty,
     studyEndDateProperty,
+    studyPeriodMinLength,
     {
       context: ValidationContext.CreateWarning(
         OfferingValidationWarnings.InvalidStudyDatesPeriodLength,

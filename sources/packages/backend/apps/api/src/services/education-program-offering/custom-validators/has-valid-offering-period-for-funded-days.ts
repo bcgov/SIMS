@@ -5,10 +5,7 @@ import {
   ValidationOptions,
   ValidationArguments,
 } from "class-validator";
-import {
-  OFFERING_STUDY_PERIOD_MAX_DAYS,
-  OFFERING_STUDY_PERIOD_MIN_DAYS,
-} from "../../../utilities";
+import { OFFERING_STUDY_PERIOD_MAX_DAYS } from "../../../utilities";
 import { StudyBreak } from "../education-program-offering-validation.models";
 import { OfferingCalculationValidationBaseConstraint } from "./offering-calculation-validation-base-constraint";
 
@@ -23,20 +20,24 @@ class HasValidOfferingPeriodForFundedDaysConstraint
   implements ValidatorConstraintInterface
 {
   validate(studyBreaks: StudyBreak[], args: ValidationArguments): boolean {
+    const [, , offeringMinDaysAllowed] = args.constraints;
+    const offeringMinDaysAllowedValue = offeringMinDaysAllowed(args.object);
     const calculatedStudyBreaksAndWeeks = this.getCalculatedStudyBreaks(
       studyBreaks,
       args,
     );
     return (
       calculatedStudyBreaksAndWeeks.fundedStudyPeriodDays >=
-        OFFERING_STUDY_PERIOD_MIN_DAYS &&
+        offeringMinDaysAllowedValue &&
       calculatedStudyBreaksAndWeeks.fundedStudyPeriodDays <=
         OFFERING_STUDY_PERIOD_MAX_DAYS
     );
   }
 
-  defaultMessage() {
-    return `The funded study amount of days is ineligible for StudentAid BC funding. Your dates must be between ${OFFERING_STUDY_PERIOD_MIN_DAYS} to ${OFFERING_STUDY_PERIOD_MAX_DAYS} days.`;
+  defaultMessage(args: ValidationArguments) {
+    const [, , minDaysAllowed] = args.constraints;
+    const minDaysAllowedValue = minDaysAllowed(args.object);
+    return `The funded study amount of days is ineligible for StudentAid BC funding. Your dates must be between ${minDaysAllowedValue} to ${OFFERING_STUDY_PERIOD_MAX_DAYS} days.`;
   }
 }
 
@@ -47,11 +48,13 @@ class HasValidOfferingPeriodForFundedDaysConstraint
  * @param startPeriodProperty property of the model that identifies the offering start date.
  * @param endPeriodProperty property of the model that identifies the offering end date.
  * @param validationOptions validations options.
+ * @param offeringMinDaysAllowed study period minimum length in number of days.
  * @returns true if the study period is valid, otherwise, false.
  */
 export function HasValidOfferingPeriodForFundedDays(
   startPeriodProperty: (targetObject: unknown) => Date | string,
   endPeriodProperty: (targetObject: unknown) => Date | string,
+  offeringMinDaysAllowed: (targetObject: unknown) => number,
   validationOptions?: ValidationOptions,
 ) {
   return (object: unknown, propertyName: string) => {
@@ -60,7 +63,11 @@ export function HasValidOfferingPeriodForFundedDays(
       target: object.constructor,
       propertyName,
       options: validationOptions,
-      constraints: [startPeriodProperty, endPeriodProperty],
+      constraints: [
+        startPeriodProperty,
+        endPeriodProperty,
+        offeringMinDaysAllowed,
+      ],
       validator: HasValidOfferingPeriodForFundedDaysConstraint,
     });
   };

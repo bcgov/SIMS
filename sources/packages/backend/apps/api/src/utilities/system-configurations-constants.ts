@@ -60,9 +60,15 @@ export const OFFERING_COURSE_LOAD_MIN_VALUE = 20;
  */
 export const OFFERING_COURSE_LOAD_MAX_VALUE = 59;
 /**
- * Minimum amount of days to an offering study period.
+ * Minimum amount of days to a full time offering study period.
  */
-export const OFFERING_STUDY_PERIOD_MIN_DAYS = 42;
+export const FT_OFFERING_STUDY_PERIOD_MIN_DAYS = 84;
+
+/**
+ * Minimum amount of days to a part time offering study period.
+ */
+export const PT_OFFERING_STUDY_PERIOD_MIN_DAYS = 42;
+
 /**
  * Maximum amount of days to an offering study period.
  */

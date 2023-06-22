@@ -16,12 +16,16 @@ import { dateDifference, getDateOnlyFormat } from "@sims/utilities";
 class PeriodMinLengthConstraint implements ValidatorConstraintInterface {
   validate(value: Date | string, args: ValidationArguments): boolean {
     const [startDateProperty, minDaysAllowed] = args.constraints;
+    const minDaysAllowedValue =
+      minDaysAllowed instanceof Function
+        ? minDaysAllowed(args.object)
+        : minDaysAllowed;
     const periodStartDate = startDateProperty(args.object);
     if (!periodStartDate) {
       // The related property does not exists in the provided object to be compared.
       return false;
     }
-    return dateDifference(value, periodStartDate) >= minDaysAllowed;
+    return dateDifference(value, periodStartDate) >= minDaysAllowedValue;
   }
 
   defaultMessage(args: ValidationArguments) {
@@ -49,7 +53,7 @@ class PeriodMinLengthConstraint implements ValidatorConstraintInterface {
  */
 export function PeriodMinLength(
   startDateProperty: (targetObject: unknown) => Date | string,
-  minDaysAllowed: number,
+  minDaysAllowed: ((targetObject: unknown) => number) | number,
   propertyDisplayName?: string,
   validationOptions?: ValidationOptions,
 ) {
