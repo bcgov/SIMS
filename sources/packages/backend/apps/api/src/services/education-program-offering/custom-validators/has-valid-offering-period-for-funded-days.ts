@@ -20,8 +20,7 @@ class HasValidOfferingPeriodForFundedDaysConstraint
   implements ValidatorConstraintInterface
 {
   validate(studyBreaks: StudyBreak[], args: ValidationArguments): boolean {
-    const [, , offeringMinDaysAllowed] = args.constraints;
-    const offeringMinDaysAllowedValue = offeringMinDaysAllowed(args.object);
+    const offeringMinDaysAllowedValue = this.getOfferingMinAllowedDays(args);
     const calculatedStudyBreaksAndWeeks = this.getCalculatedStudyBreaks(
       studyBreaks,
       args,
@@ -35,9 +34,18 @@ class HasValidOfferingPeriodForFundedDaysConstraint
   }
 
   defaultMessage(args: ValidationArguments) {
-    const [, , minDaysAllowed] = args.constraints;
-    const minDaysAllowedValue = minDaysAllowed(args.object);
-    return `The funded study amount of days is ineligible for StudentAid BC funding. Your dates must be between ${minDaysAllowedValue} to ${OFFERING_STUDY_PERIOD_MAX_DAYS} days.`;
+    const offeringMinDaysAllowedValue = this.getOfferingMinAllowedDays(args);
+    return `The funded study amount of days is ineligible for StudentAid BC funding. Your dates must be between ${offeringMinDaysAllowedValue} to ${OFFERING_STUDY_PERIOD_MAX_DAYS} days.`;
+  }
+
+  /**
+   * Get offering minimum allowed days from args
+   * @param args validation arguments.
+   * @returns minimum allowed days.
+   */
+  private getOfferingMinAllowedDays(args: ValidationArguments): number {
+    const [, , offeringMinDaysAllowed] = args.constraints;
+    return offeringMinDaysAllowed(args.object) as number;
   }
 }
 

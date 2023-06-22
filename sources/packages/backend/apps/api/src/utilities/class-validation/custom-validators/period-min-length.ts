@@ -15,11 +15,8 @@ import { dateDifference, getDateOnlyFormat } from "@sims/utilities";
 @ValidatorConstraint()
 class PeriodMinLengthConstraint implements ValidatorConstraintInterface {
   validate(value: Date | string, args: ValidationArguments): boolean {
-    const [startDateProperty, minDaysAllowed] = args.constraints;
-    const minDaysAllowedValue =
-      minDaysAllowed instanceof Function
-        ? minDaysAllowed(args.object)
-        : minDaysAllowed;
+    const [startDateProperty] = args.constraints;
+    const minDaysAllowedValue = this.getMinAllowedDays(args);
     const periodStartDate = startDateProperty(args.object);
     if (!periodStartDate) {
       // The related property does not exists in the provided object to be compared.
@@ -29,13 +26,27 @@ class PeriodMinLengthConstraint implements ValidatorConstraintInterface {
   }
 
   defaultMessage(args: ValidationArguments) {
-    const [startDateProperty, minDaysAllowed, propertyDisplayName] =
-      args.constraints;
+    const [startDateProperty, , propertyDisplayName] = args.constraints;
     const startDate = getDateOnlyFormat(startDateProperty(args.object));
     const endDate = getDateOnlyFormat(args.value);
+    const minDaysAllowedValue = this.getMinAllowedDays(args);
     return `${
       propertyDisplayName ?? args.property
-    }, the number of day(s) between ${startDate} and ${endDate} must be at least ${minDaysAllowed}.`;
+    }, the number of day(s) between ${startDate} and ${endDate} must be at least ${minDaysAllowedValue}.`;
+  }
+
+  /**
+   * Get minimum allowed days from args
+   * @param args
+   * @returns minimum allowed days.
+   */
+  private getMinAllowedDays(args: ValidationArguments): number {
+    const [, minDaysAllowed] = args.constraints;
+    const minDaysAllowedValue =
+      minDaysAllowed instanceof Function
+        ? (minDaysAllowed(args.object) as number)
+        : minDaysAllowed;
+    return minDaysAllowedValue as number;
   }
 }
 
