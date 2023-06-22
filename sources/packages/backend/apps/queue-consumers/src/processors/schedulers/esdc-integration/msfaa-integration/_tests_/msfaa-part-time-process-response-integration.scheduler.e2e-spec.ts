@@ -79,6 +79,18 @@ describe(
 
     it("Should process an MSFAA response with confirmations and a cancellation and update all records when the file is received as expected.", async () => {
       // Arrange
+      // Ensuring that any previous runs of this test or any other test do not have the same Msfaa numbers as the ones used below.
+      const MsfaaRecordsToUpdate = [
+        MSFAA_PART_TIME_MARRIED.msfaaNumber,
+        MSFAA_PART_TIME_OTHER_COUNTRY.msfaaNumber,
+        MSFAA_PART_TIME_RELATIONSHIP_OTHER.msfaaNumber,
+      ];
+      await db.msfaaNumber.update(
+        {
+          msfaaNumber: In(MsfaaRecordsToUpdate),
+        },
+        { msfaaNumber: THROW_AWAY_MSFAA_NUMBER },
+      );
       const msfaaInputData = [
         MSFAA_PART_TIME_MARRIED,
         MSFAA_PART_TIME_OTHER_COUNTRY,
@@ -150,7 +162,7 @@ describe(
     it("Should reactivate a cancelled MSFAA when the same MSFAA is received in the response file and re-associate this reactivated MSFAA with all pending disbursements.", async () => {
       // Arrange
       // Create a cancelled MSFAA. The Msfaa number used for creating the cancelled Msfaa record is the same as the one used in the msfaa-part-time-file-with-reactivation-record.dat
-      // Ensuring that any previous runs of this test or any other test do not have the same Msfaa id as the one in the re-activation file.
+      // Ensuring that any previous runs of this test or any other test do not have the same Msfaa number as the one in the re-activation file.
       await db.msfaaNumber.update(
         { msfaaNumber: PART_TIME_SAMPLE_MSFAA_NUMBER },
         { msfaaNumber: THROW_AWAY_MSFAA_NUMBER },
@@ -316,6 +328,18 @@ describe(
 
     it("Should successfully process 2 MSFAA records when a file has 3 records but one throws an error during DB update.", async () => {
       // Arrange
+      // Ensuring that any previous runs of this test or any other test do not have the same Msfaa numbers as the ones used below.
+      const MsfaaRecordsToUpdate = [
+        MSFAA_PART_TIME_OTHER_COUNTRY.msfaaNumber,
+        MSFAA_PART_TIME_RELATIONSHIP_OTHER.msfaaNumber,
+        PART_TIME_SAMPLE_MSFAA_NUMBER,
+      ];
+      await db.msfaaNumber.update(
+        {
+          msfaaNumber: In(MsfaaRecordsToUpdate),
+        },
+        { msfaaNumber: THROW_AWAY_MSFAA_NUMBER },
+      );
       // Crate only 2 records instead of 3 to force an error while updating the missing record.
       const msfaaInputData = [
         MSFAA_PART_TIME_OTHER_COUNTRY,
