@@ -54,6 +54,7 @@ describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", (
 
   it("Should create an education program when valid data is passed.", async () => {
     // Arrange
+    const programStatus = ProgramStatus.Approved;
     const payload = {
       name: "Education Program test",
       description: "Education Program description...",
@@ -83,17 +84,16 @@ describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", (
       hasTravel: "no",
       hasIntlExchange: "no",
       programDeclaration: true,
-      programStatus: ProgramStatus.Approved,
-      hasOfferings: false,
     };
     const formService = await getProviderInstanceForModule(
       testingModule,
       AppInstitutionsModule,
       FormService,
     );
-    formService.dryRunSubmission = jest
-      .fn()
-      .mockResolvedValue({ valid: true, data: { data: payload } });
+    formService.dryRunSubmission = jest.fn().mockResolvedValue({
+      valid: true,
+      data: { data: { ...payload, programStatus } },
+    });
     const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeFUser,
     );
@@ -107,6 +107,7 @@ describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", (
       .auth(institutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.CREATED)
       .then((response) => {
+        console.log(response.body);
         expect(response.body.id).toBeGreaterThan(0);
         educationProgramId = response.body.id;
       });
@@ -134,7 +135,7 @@ describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", (
         eslEligibility: payload.eslEligibility,
         hasJointInstitution: payload.hasJointInstitution,
         hasJointDesignatedInstitution: null,
-        programStatus: payload.programStatus,
+        programStatus,
         programIntensity: payload.programIntensity,
         institutionProgramCode: payload.institutionProgramCode,
         minHoursWeek: null,
