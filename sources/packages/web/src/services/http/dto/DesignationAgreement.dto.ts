@@ -4,6 +4,7 @@ import { Expose, Type } from "class-transformer";
 export interface SubmitDesignationAgreementAPIInDTO {
   dynamicData: unknown;
   locations: SubmittedLocationsAPIInDTO[];
+  isBCPrivate: boolean;
 }
 
 export interface SubmittedLocationsAPIInDTO {
