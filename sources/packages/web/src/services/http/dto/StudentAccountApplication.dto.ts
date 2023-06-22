@@ -1,4 +1,5 @@
 import { CreateStudentAPIInDTO } from "@/services/http/dto";
+import { Expose } from "class-transformer";
 
 export interface CreateStudentAccountApplicationAPIInDTO {
   submittedData: unknown;
@@ -25,11 +26,13 @@ export interface StudentAccountApplicationAPIOutDTO {
  * contain the source of truth that must be used to update the existing user
  * and also create or update the student account as needed.
  */
-export interface StudentAccountApplicationApprovalAPIInDTO
-  extends CreateStudentAPIInDTO {
+export class StudentAccountApplicationApprovalAPIInDTO extends CreateStudentAPIInDTO {
+  @Expose()
   firstName: string;
+  @Expose()
   lastName: string;
+  @Expose()
   email: string;
+  @Expose()
   dateOfBirth: string;
-  gender: string;
 }

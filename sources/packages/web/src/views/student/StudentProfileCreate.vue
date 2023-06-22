@@ -26,6 +26,7 @@ import {
   useFormatters,
   useStudentStore,
   useAuthBCeID,
+  useFormioUtils,
 } from "@/composables";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 import { StudentService } from "@/services/StudentService";
@@ -49,6 +50,7 @@ export default defineComponent({
   setup() {
     const router = useRouter();
     const snackBar = useSnackBar();
+    const { excludeExtraneousValues } = useFormioUtils();
     const initialData = ref({} as StudentProfileFormModel);
     const { bcscParsedToken } = useAuthBCSC();
     const { bceidParsedToken } = useAuthBCeID();
@@ -88,7 +90,11 @@ export default defineComponent({
           IdentityProviders.BCSC
         ) {
           // BCSC users can create their own accounts.
-          await StudentService.shared.createStudent(form.data);
+          const typedData = excludeExtraneousValues(
+            CreateStudentAPIInDTO,
+            form.data,
+          );
+          await StudentService.shared.createStudent(typedData);
           await Promise.all([
             studentStore.setHasStudentAccount(true),
             studentStore.updateProfileData(),

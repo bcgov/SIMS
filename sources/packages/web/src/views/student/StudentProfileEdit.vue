@@ -16,7 +16,7 @@
 <script lang="ts">
 import { ref, onMounted, defineComponent } from "vue";
 import { useRouter } from "vue-router";
-import { ModalDialog, useSnackBar } from "@/composables";
+import { ModalDialog, useFormioUtils, useSnackBar } from "@/composables";
 import {
   StudentProfileFormModel,
   StudentProfileFormModes,
@@ -37,6 +37,7 @@ export default defineComponent({
   setup() {
     const router = useRouter();
     const snackBar = useSnackBar();
+    const { excludeExtraneousValues } = useFormioUtils();
     const initialData = ref({} as StudentProfileFormModel);
     const pdStatusApplicationModal = ref({} as ModalDialog<boolean>);
     const processing = ref(false);
@@ -80,7 +81,11 @@ export default defineComponent({
     const submitted = async (form: FormIOForm<UpdateStudentAPIInDTO>) => {
       try {
         processing.value = true;
-        await StudentService.shared.updateStudent(form.data);
+        const typedData = excludeExtraneousValues(
+          UpdateStudentAPIInDTO,
+          form.data,
+        );
+        await StudentService.shared.updateStudent(typedData);
         snackBar.success("Student contact information updated!");
         router.push({ name: StudentRoutesConst.STUDENT_DASHBOARD });
       } catch {
