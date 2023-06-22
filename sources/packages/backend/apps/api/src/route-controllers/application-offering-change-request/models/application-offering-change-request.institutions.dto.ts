@@ -6,19 +6,19 @@ import { ApplicationOfferingChangeRequestStatus } from "@sims/sims-db";
 export class ApplicationOfferingChangeSummaryAPIOutDTO {
   applicationNumber: string;
   applicationId: number;
-  studyStartPeriod: string;
-  studyEndPeriod: string;
+  studyStartDate: string;
+  studyEndDate: string;
   fullName: string;
 }
 
 /**
- * Inprogress application offering change details.
+ * In progress application offering change details.
  */
-export class InprogressApplicationOfferingChangesAPIOutDTO {
+export class InProgressApplicationOfferingChangesAPIOutDTO {
   applicationNumber: string;
   applicationId: number;
-  studyStartPeriod: string;
-  studyEndPeriod: string;
+  studyStartDate: string;
+  studyEndDate: string;
   fullName: string;
   status: ApplicationOfferingChangeRequestStatus;
 }
@@ -29,8 +29,8 @@ export class InprogressApplicationOfferingChangesAPIOutDTO {
 export class CompletedApplicationOfferingChangesAPIOutDTO {
   applicationNumber: string;
   applicationId: number;
-  studyStartPeriod: string;
-  studyEndPeriod: string;
+  studyStartDate: string;
+  studyEndDate: string;
   fullName: string;
   status: ApplicationOfferingChangeRequestStatus;
   dateCompleted: Date;

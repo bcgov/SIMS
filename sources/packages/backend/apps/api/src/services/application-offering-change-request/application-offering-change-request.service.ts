@@ -121,6 +121,8 @@ export class ApplicationOfferingChangeRequestService {
       .select([
         "applicationOfferingChangeRequest.id",
         "applicationOfferingChangeRequest.applicationOfferingChangeRequestStatus",
+        "applicationOfferingChangeRequest.assessedDate",
+        "applicationOfferingChangeRequest.studentActionDate",
         "application.applicationNumber",
         "currentAssessment.id",
         "offering.studyStartDate",
@@ -128,8 +130,6 @@ export class ApplicationOfferingChangeRequestService {
         "student.id",
         "user.firstName",
         "user.lastName",
-        "applicationOfferingChangeRequest.assessedDate",
-        "applicationOfferingChangeRequest.studentActionDate",
       ])
       .innerJoin("applicationOfferingChangeRequest.application", "application")
       .innerJoin("application.currentAssessment", "currentAssessment")

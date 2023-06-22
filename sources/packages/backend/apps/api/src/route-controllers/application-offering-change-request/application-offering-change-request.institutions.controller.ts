@@ -12,7 +12,7 @@ import {
 import BaseController from "../BaseController";
 import {
   CompletedApplicationOfferingChangesAPIOutDTO,
-  InprogressApplicationOfferingChangesAPIOutDTO,
+  InProgressApplicationOfferingChangesAPIOutDTO,
   ApplicationOfferingChangeSummaryAPIOutDTO,
 } from "./models/application-offering-change-request.institutions.dto";
 import { ApplicationOfferingChangeRequestService } from "../../services";
@@ -38,8 +38,8 @@ export class ApplicationOfferingChangeRequestInstitutionsController extends Base
    * Gets all eligible applications that can be requested for application
    * offering change.
    * @param locationId location id.
-   * @param paginationOptions options to execute the pagination.
-   * @returns list of eligible applications that can be requested for
+   * @param pagination options to execute the pagination.
+   * @returns list and count of eligible applications that can be requested for
    * application offering change.
    */
   @Get("available")
@@ -60,8 +60,8 @@ export class ApplicationOfferingChangeRequestInstitutionsController extends Base
         return {
           applicationNumber: eachApplication.applicationNumber,
           applicationId: eachApplication.id,
-          studyStartPeriod: offering.studyStartDate,
-          studyEndPeriod: offering.studyEndDate,
+          studyStartDate: offering.studyStartDate,
+          studyEndDate: offering.studyEndDate,
           fullName: getUserFullName(eachApplication.student.user),
         };
       }),
@@ -70,18 +70,17 @@ export class ApplicationOfferingChangeRequestInstitutionsController extends Base
   }
 
   /**
-   * Gets all in progress application offering request changes.
+   * Get all in progress application offering change requests.
    * @param locationId location id.
-   * @param paginationOptions options to execute the pagination.
-   * @returns list of inprogress application offering request changes.
+   * @param pagination options to execute the pagination.
+   * @returns list and count of inprogress application offering change requests.
    */
-  @HasLocationAccess("locationId")
   @Get("in-progress")
   async getInprogressApplications(
     @Param("locationId", ParseIntPipe) locationId: number,
     @Query() pagination: OfferingChangePaginationRequestedOptionsAPIInDTO,
   ): Promise<
-    PaginatedResultsAPIOutDTO<InprogressApplicationOfferingChangesAPIOutDTO>
+    PaginatedResultsAPIOutDTO<InProgressApplicationOfferingChangesAPIOutDTO>
   > {
     const offeringChange =
       await this.applicationOfferingChangeRequestService.getRequestedSummary(
@@ -99,8 +98,8 @@ export class ApplicationOfferingChangeRequestInstitutionsController extends Base
         return {
           applicationNumber: eachOfferingChange.application.applicationNumber,
           applicationId: eachOfferingChange.application.id,
-          studyStartPeriod: offering.studyStartDate,
-          studyEndPeriod: offering.studyEndDate,
+          studyStartDate: offering.studyStartDate,
+          studyEndDate: offering.studyEndDate,
           fullName: getUserFullName(
             eachOfferingChange.application.student.user,
           ),
@@ -112,12 +111,11 @@ export class ApplicationOfferingChangeRequestInstitutionsController extends Base
   }
 
   /**
-   * Gets all completed (Approved/ Declined) application offering request changes.
+   * Get all completed (Approved/ Declined) application offering change requests.
    * @param locationId location id.
-   * @param paginationOptions options to execute the pagination.
-   * @returns list of completed application offering request changes.
+   * @param pagination options to execute the pagination.
+   * @returns list and count of completed application offering change requests.
    */
-  @HasLocationAccess("locationId")
   @Get("completed")
   async getCompletedApplications(
     @Param("locationId", ParseIntPipe) locationId: number,
@@ -142,8 +140,8 @@ export class ApplicationOfferingChangeRequestInstitutionsController extends Base
         return {
           applicationNumber: eachOfferingChange.application.applicationNumber,
           applicationId: eachOfferingChange.application.id,
-          studyStartPeriod: offering.studyStartDate,
-          studyEndPeriod: offering.studyEndDate,
+          studyStartDate: offering.studyStartDate,
+          studyEndDate: offering.studyEndDate,
           fullName: getUserFullName(
             eachOfferingChange.application.student.user,
           ),

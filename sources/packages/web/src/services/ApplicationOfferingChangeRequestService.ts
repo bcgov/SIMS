@@ -4,7 +4,7 @@ import {
   PaginatedResultsAPIOutDTO,
   ApplicationOfferingChangeSummaryAPIOutDTO,
   CompletedApplicationOfferingChangesAPIOutDTO,
-  InprogressApplicationOfferingChangesAPIOutDTO,
+  InProgressApplicationOfferingChangesAPIOutDTO,
 } from "@/services/http/dto";
 
 export class ApplicationOfferingChangeRequestService {
@@ -45,7 +45,7 @@ export class ApplicationOfferingChangeRequestService {
     locationId: number,
     paginationOptions: PaginationOptions,
   ): Promise<
-    PaginatedResultsAPIOutDTO<InprogressApplicationOfferingChangesAPIOutDTO>
+    PaginatedResultsAPIOutDTO<InProgressApplicationOfferingChangesAPIOutDTO>
   > {
     return ApiClient.ApplicationOfferingChangeRequestApi.getInprogressApplications(
       locationId,

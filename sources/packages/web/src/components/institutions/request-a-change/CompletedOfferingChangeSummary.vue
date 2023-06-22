@@ -17,41 +17,41 @@
             </v-text-field>
           </template>
         </body-header>
-        <content-group>
-          <toggle-content :toggled="!applications?.count">
-            <v-data-table-server
-              :headers="CompletedOfferingChangeSummaryHeaders"
-              :items="applications?.results"
-              :items-length="applications?.count"
-              :loading="loading"
-              :items-per-page="DEFAULT_PAGE_LIMIT"
-              @update:options="paginationAndSortEvent"
-            >
-              <template #[`item.dateCompleted`]="{ item }">
-                {{ dateOnlyLongString(item.columns.dateCompleted) }}
-              </template>
-              <template #[`item.fullName`]="{ item }">
-                {{ item.columns.fullName }}
-              </template>
-              <template #[`item.studyStartPeriod`]="{ item }">
-                {{ dateOnlyLongString(item.columns.studyStartPeriod) }}
-                -
-                {{ dateOnlyLongString(item.value.studyEndPeriod) }}
-              </template>
-              <template #[`item.applicationNumber`]="{ item }">
-                {{ item.columns.applicationNumber }} </template
-              ><template #[`item.status`]="{ item }">
-                <status-chip-application-offering-change
-                  :status="item.columns.status"
-                />
-              </template>
-              <template #[`item.applicationId`]>
-                <v-btn color="primary">View</v-btn>
-              </template>
-            </v-data-table-server>
-          </toggle-content>
-        </content-group>
       </template>
+      <content-group>
+        <toggle-content :toggled="!applications?.count">
+          <v-data-table-server
+            :headers="CompletedOfferingChangeSummaryHeaders"
+            :items="applications?.results"
+            :items-length="applications?.count"
+            :loading="loading"
+            :items-per-page="DEFAULT_PAGE_LIMIT"
+            @update:options="paginationAndSortEvent"
+          >
+            <template #[`item.dateCompleted`]="{ item }">
+              {{ dateOnlyLongString(item.columns.dateCompleted) }}
+            </template>
+            <template #[`item.fullName`]="{ item }">
+              {{ item.columns.fullName }}
+            </template>
+            <template #[`item.studyStartDate`]="{ item }">
+              {{ dateOnlyLongString(item.columns.studyStartDate) }}
+              -
+              {{ dateOnlyLongString(item.value.studyEndDate) }}
+            </template>
+            <template #[`item.applicationNumber`]="{ item }">
+              {{ item.columns.applicationNumber }} </template
+            ><template #[`item.status`]="{ item }">
+              <status-chip-application-offering-change
+                :status="item.columns.status"
+              />
+            </template>
+            <template #[`item.applicationId`]>
+              <v-btn color="primary">View</v-btn>
+            </template>
+          </v-data-table-server>
+        </toggle-content>
+      </content-group>
     </body-header-container>
   </tab-container>
 </template>

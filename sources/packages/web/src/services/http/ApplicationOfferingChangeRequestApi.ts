@@ -4,7 +4,7 @@ import {
   PaginatedResultsAPIOutDTO,
   ApplicationOfferingChangeSummaryAPIOutDTO,
   CompletedApplicationOfferingChangesAPIOutDTO,
-  InprogressApplicationOfferingChangesAPIOutDTO,
+  InProgressApplicationOfferingChangesAPIOutDTO,
 } from "@/services/http/dto";
 import { getPaginationQueryString } from "@/helpers";
 
@@ -40,12 +40,12 @@ export class ApplicationOfferingChangeRequestApi extends HttpBaseClient {
     locationId: number,
     paginationOptions: PaginationOptions,
   ): Promise<
-    PaginatedResultsAPIOutDTO<InprogressApplicationOfferingChangesAPIOutDTO>
+    PaginatedResultsAPIOutDTO<InProgressApplicationOfferingChangesAPIOutDTO>
   > {
     let url = `location/${locationId}/application-offering-change-request/in-progress?`;
     url += getPaginationQueryString(paginationOptions, true);
     return this.getCall<
-      PaginatedResultsAPIOutDTO<InprogressApplicationOfferingChangesAPIOutDTO>
+      PaginatedResultsAPIOutDTO<InProgressApplicationOfferingChangesAPIOutDTO>
     >(this.addClientRoot(url));
   }
 

@@ -20,38 +20,38 @@
             </v-text-field>
           </template>
         </body-header>
-        <content-group>
-          <toggle-content :toggled="!applications?.count">
-            <v-data-table-server
-              :headers="InprogressOfferingChangeSummaryHeaders"
-              :items="applications?.results"
-              :items-length="applications?.count"
-              :loading="loading"
-              :items-per-page="DEFAULT_PAGE_LIMIT"
-              @update:options="paginationAndSortEvent"
-            >
-              <template #[`item.fullName`]="{ item }">
-                {{ item.columns.fullName }}
-              </template>
-              <template #[`item.studyStartPeriod`]="{ item }">
-                {{ dateOnlyLongString(item.columns.studyStartPeriod) }}
-                -
-                {{ dateOnlyLongString(item.value.studyEndPeriod) }}
-              </template>
-              <template #[`item.applicationNumber`]="{ item }">
-                {{ item.columns.applicationNumber }} </template
-              ><template #[`item.status`]="{ item }">
-                <status-chip-application-offering-change
-                  :status="item.columns.status"
-                />
-              </template>
-              <template #[`item.applicationId`]>
-                <v-btn color="primary">View</v-btn>
-              </template>
-            </v-data-table-server>
-          </toggle-content>
-        </content-group>
       </template>
+      <content-group>
+        <toggle-content :toggled="!applications?.count">
+          <v-data-table-server
+            :headers="InProgressOfferingChangeSummaryHeaders"
+            :items="applications?.results"
+            :items-length="applications?.count"
+            :loading="loading"
+            :items-per-page="DEFAULT_PAGE_LIMIT"
+            @update:options="paginationAndSortEvent"
+          >
+            <template #[`item.fullName`]="{ item }">
+              {{ item.columns.fullName }}
+            </template>
+            <template #[`item.studyStartDate`]="{ item }">
+              {{ dateOnlyLongString(item.columns.studyStartDate) }}
+              -
+              {{ dateOnlyLongString(item.value.studyEndDate) }}
+            </template>
+            <template #[`item.applicationNumber`]="{ item }">
+              {{ item.columns.applicationNumber }} </template
+            ><template #[`item.status`]="{ item }">
+              <status-chip-application-offering-change
+                :status="item.columns.status"
+              />
+            </template>
+            <template #[`item.applicationId`]>
+              <v-btn color="primary">View</v-btn>
+            </template>
+          </v-data-table-server>
+        </toggle-content>
+      </content-group>
     </body-header-container>
   </tab-container>
 </template>
@@ -62,12 +62,12 @@ import {
   DEFAULT_PAGE_LIMIT,
   DataTableOptions,
   PaginatedResults,
-  InprogressOfferingChangeSummaryHeaders,
+  InProgressOfferingChangeSummaryHeaders,
   DataTableSortByOrder,
   DEFAULT_DATATABLE_PAGE_NUMBER,
 } from "@/types";
 import { useFormatters } from "@/composables";
-import { InprogressApplicationOfferingChangesAPIOutDTO } from "@/services/http/dto";
+import { InProgressApplicationOfferingChangesAPIOutDTO } from "@/services/http/dto";
 import { ApplicationOfferingChangeRequestService } from "@/services/ApplicationOfferingChangeRequestService";
 import StatusChipApplicationOfferingChange from "@/components/generic/StatusChipApplicationOfferingChange.vue";
 
@@ -85,20 +85,20 @@ export default defineComponent({
     const { dateOnlyLongString } = useFormatters();
     const applications = ref(
       {} as
-        | PaginatedResults<InprogressApplicationOfferingChangesAPIOutDTO>
+        | PaginatedResults<InProgressApplicationOfferingChangesAPIOutDTO>
         | undefined,
     );
     let currentPage = NaN;
     let currentPageLimit = NaN;
 
     /**
-     * Load inprogress applications offering change records for institution.
+     * Load in progress applications offering change records for institution.
      * @param page page number, if nothing passed then {@link DEFAULT_DATATABLE_PAGE_NUMBER}.
      * @param pageCount page limit, if nothing passed then {@link DEFAULT_PAGE_LIMIT}.
      * @param sortField sort field, if nothing passed then api sorts with application number.
      * @param sortOrder sort oder, if nothing passed then {@link DataTableSortByOrder.ASC}.
      */
-    const getInprogressSummaryList = async (
+    const getInProgressSummaryList = async (
       page = DEFAULT_DATATABLE_PAGE_NUMBER,
       pageCount = DEFAULT_PAGE_LIMIT,
       sortField?: string,
@@ -124,7 +124,7 @@ export default defineComponent({
       currentPage = event.page;
       currentPageLimit = event.itemsPerPage;
       const [sortByOptions] = event.sortBy;
-      await getInprogressSummaryList(
+      await getInProgressSummaryList(
         event.page,
         event.itemsPerPage,
         sortByOptions?.key,
@@ -134,9 +134,12 @@ export default defineComponent({
 
     // Search table.
     const searchApplicationOfferingChangeRecords = async () => {
-      // Fix for the search pagination issue.
+      // When search is happing in a page other than the first page,
+      // There is an unexpected behavior, probably which can be
+      // fixed in the stable vuetify version.
+      // Below is the fix for the search pagination issue.
       applications.value = undefined;
-      await getInprogressSummaryList(
+      await getInProgressSummaryList(
         currentPage ?? DEFAULT_DATATABLE_PAGE_NUMBER,
         currentPageLimit ?? DEFAULT_PAGE_LIMIT,
       );
@@ -146,7 +149,7 @@ export default defineComponent({
       () => props.locationId,
       async () => {
         // Update the list.
-        await getInprogressSummaryList();
+        await getInProgressSummaryList();
       },
       { immediate: true },
     );
@@ -158,7 +161,7 @@ export default defineComponent({
       paginationAndSortEvent,
       searchApplicationOfferingChangeRecords,
       searchCriteria,
-      InprogressOfferingChangeSummaryHeaders,
+      InProgressOfferingChangeSummaryHeaders,
       loading,
     };
   },

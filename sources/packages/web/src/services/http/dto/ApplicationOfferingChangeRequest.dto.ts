@@ -6,19 +6,19 @@ import { ApplicationOfferingChangeRequestStatus } from "@/types";
 export interface ApplicationOfferingChangeSummaryAPIOutDTO {
   applicationNumber: string;
   applicationId: number;
-  studyStartPeriod: string;
-  studyEndPeriod: string;
+  studyStartDate: string;
+  studyEndDate: string;
   fullName: string;
 }
 
 /**
- * Inprogress application offering change details.
+ * In progress application offering change details.
  */
-export interface InprogressApplicationOfferingChangesAPIOutDTO {
+export interface InProgressApplicationOfferingChangesAPIOutDTO {
   applicationNumber: string;
   applicationId: number;
-  studyStartPeriod: string;
-  studyEndPeriod: string;
+  studyStartDate: string;
+  studyEndDate: string;
   fullName: string;
   status: ApplicationOfferingChangeRequestStatus;
 }
@@ -29,8 +29,8 @@ export interface InprogressApplicationOfferingChangesAPIOutDTO {
 export interface CompletedApplicationOfferingChangesAPIOutDTO {
   applicationNumber: string;
   applicationId: number;
-  studyStartPeriod: string;
-  studyEndPeriod: string;
+  studyStartDate: string;
+  studyEndDate: string;
   fullName: string;
   status: ApplicationOfferingChangeRequestStatus;
   dateCompleted: Date;

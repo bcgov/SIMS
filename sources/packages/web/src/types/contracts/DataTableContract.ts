@@ -168,7 +168,7 @@ export const AvailableToChangeOfferingChangeSummaryHeaders = [
   {
     title: "Study dates",
     sortable: false,
-    key: "studyStartPeriod",
+    key: "studyStartDate",
   },
   {
     title: "Application #",
@@ -184,7 +184,7 @@ export const AvailableToChangeOfferingChangeSummaryHeaders = [
 /**
  * In progress application offering change summary header.
  */
-export const InprogressOfferingChangeSummaryHeaders = [
+export const InProgressOfferingChangeSummaryHeaders = [
   {
     title: "Name",
     key: "fullName",
@@ -192,7 +192,7 @@ export const InprogressOfferingChangeSummaryHeaders = [
   {
     title: "Study dates",
     sortable: false,
-    key: "studyStartPeriod",
+    key: "studyStartDate",
   },
   {
     title: "Application #",
@@ -226,7 +226,7 @@ export const CompletedOfferingChangeSummaryHeaders = [
   {
     title: "Study dates",
     sortable: false,
-    key: "studyStartPeriod",
+    key: "studyStartDate",
   },
   {
     title: "Application #",
