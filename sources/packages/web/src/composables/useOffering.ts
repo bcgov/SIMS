@@ -1,5 +1,4 @@
-import { StatusChipTypes } from "@/components/generic/StatusChip.models";
-import { OfferingStatus } from "@/types";
+import { OfferingStatus, StatusChipTypes } from "@/types";
 
 export function useOffering() {
   const mapOfferingChipStatus = (status: OfferingStatus): StatusChipTypes => {

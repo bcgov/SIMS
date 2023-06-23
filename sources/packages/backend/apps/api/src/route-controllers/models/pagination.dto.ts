@@ -101,3 +101,12 @@ export class OfferingChangePaginationOptionsAPIInDTO extends PaginationOptionsAP
   @IsIn(["applicationNumber", "fullName"])
   sortField?: string;
 }
+
+/**
+ * Extended pagination option for the inprogress and completed application offering change.
+ */
+export class OfferingChangePaginationRequestedOptionsAPIInDTO extends PaginationOptionsAPIInDTO {
+  @IsOptional()
+  @IsIn(["applicationNumber", "fullName"])
+  sortField?: string;
+}

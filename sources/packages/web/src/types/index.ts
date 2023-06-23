@@ -41,3 +41,5 @@ export * from "@/types/contracts/StatusInfo";
 export * from "@/types/contracts/Assessment";
 export * from "@/types/contracts/Overaward";
 export * from "@/types/contracts/StudentScholasticStanding";
+export * from "@/types/contracts/ApplicationOfferingChangeRequestStatus";
+export * from "@/types/contracts/StatusChip";

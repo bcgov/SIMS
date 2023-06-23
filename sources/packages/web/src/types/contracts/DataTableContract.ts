@@ -168,11 +168,74 @@ export const AvailableToChangeOfferingChangeSummaryHeaders = [
   {
     title: "Study dates",
     sortable: false,
-    key: "studyStartPeriod",
+    key: "studyStartDate",
   },
   {
     title: "Application #",
     key: "applicationNumber",
+  },
+  {
+    title: "Action",
+    sortable: false,
+    key: "applicationId",
+  },
+];
+
+/**
+ * In progress application offering change summary header.
+ */
+export const InProgressOfferingChangeSummaryHeaders = [
+  {
+    title: "Name",
+    key: "fullName",
+  },
+  {
+    title: "Study dates",
+    sortable: false,
+    key: "studyStartDate",
+  },
+  {
+    title: "Application #",
+    key: "applicationNumber",
+  },
+  {
+    title: "Status",
+    sortable: false,
+    key: "status",
+  },
+  {
+    title: "Action",
+    sortable: false,
+    key: "applicationId",
+  },
+];
+
+/**
+ * Completed application offering change summary header.
+ */
+export const CompletedOfferingChangeSummaryHeaders = [
+  {
+    title: "Date completed",
+    sortable: false,
+    key: "dateCompleted",
+  },
+  {
+    title: "Name",
+    key: "fullName",
+  },
+  {
+    title: "Study dates",
+    sortable: false,
+    key: "studyStartDate",
+  },
+  {
+    title: "Application #",
+    key: "applicationNumber",
+  },
+  {
+    title: "Status",
+    sortable: false,
+    key: "status",
   },
   {
     title: "Action",
