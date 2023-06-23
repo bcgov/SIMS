@@ -134,7 +134,7 @@ export default defineComponent({
 
     // Search table.
     const searchApplicationOfferingChangeRecords = async () => {
-      // When search is happing in a page other than the first page,
+      // When search is happening in a page other than the first page,
       // There is an unexpected behavior, probably which can be
       // fixed in the stable vuetify version.
       // Below is the fix for the search pagination issue.
