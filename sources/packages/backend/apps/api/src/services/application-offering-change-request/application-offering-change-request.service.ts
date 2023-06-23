@@ -111,7 +111,7 @@ export class ApplicationOfferingChangeRequestService {
    * @param statuses list of status that need to be included in the query.
    * @returns list of requested application offering changes.
    */
-  async getRequestedSummary(
+  async getSummaryByStatus(
     locationId: number,
     paginationOptions: PaginationOptions,
     statuses: ApplicationOfferingChangeRequestStatus[],

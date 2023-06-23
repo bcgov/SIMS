@@ -106,7 +106,7 @@ export default defineComponent({
     ) => {
       loading.value = true;
       applications.value =
-        await ApplicationOfferingChangeRequestService.shared.getInprogressApplications(
+        await ApplicationOfferingChangeRequestService.shared.getInProgressApplications(
           props.locationId,
           {
             page,

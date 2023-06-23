@@ -41,13 +41,13 @@ export class ApplicationOfferingChangeRequestService {
    * @param paginationOptions options to execute the pagination.
    * @returns list of inprogress application offering request changes.
    */
-  async getInprogressApplications(
+  async getInProgressApplications(
     locationId: number,
     paginationOptions: PaginationOptions,
   ): Promise<
     PaginatedResultsAPIOutDTO<InProgressApplicationOfferingChangesAPIOutDTO>
   > {
-    return ApiClient.ApplicationOfferingChangeRequestApi.getInprogressApplications(
+    return ApiClient.ApplicationOfferingChangeRequestApi.getInProgressApplications(
       locationId,
       paginationOptions,
     );

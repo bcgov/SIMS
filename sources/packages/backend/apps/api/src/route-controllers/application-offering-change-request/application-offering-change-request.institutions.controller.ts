@@ -76,14 +76,14 @@ export class ApplicationOfferingChangeRequestInstitutionsController extends Base
    * @returns list and count of inprogress application offering change requests.
    */
   @Get("in-progress")
-  async getInprogressApplications(
+  async getInProgressApplications(
     @Param("locationId", ParseIntPipe) locationId: number,
     @Query() pagination: OfferingChangePaginationRequestedOptionsAPIInDTO,
   ): Promise<
     PaginatedResultsAPIOutDTO<InProgressApplicationOfferingChangesAPIOutDTO>
   > {
     const offeringChange =
-      await this.applicationOfferingChangeRequestService.getRequestedSummary(
+      await this.applicationOfferingChangeRequestService.getSummaryByStatus(
         locationId,
         pagination,
         [
@@ -124,7 +124,7 @@ export class ApplicationOfferingChangeRequestInstitutionsController extends Base
     PaginatedResultsAPIOutDTO<CompletedApplicationOfferingChangesAPIOutDTO>
   > {
     const offeringChange =
-      await this.applicationOfferingChangeRequestService.getRequestedSummary(
+      await this.applicationOfferingChangeRequestService.getSummaryByStatus(
         locationId,
         pagination,
         [

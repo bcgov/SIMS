@@ -134,7 +134,10 @@ export default defineComponent({
 
     // Search table.
     const searchApplicationOfferingChangeRecords = async () => {
-      // Fix for the search pagination issue.
+      // When search is happing in a page other than the first page,
+      // There is an unexpected behavior, probably which can be
+      // fixed in the stable vuetify version.
+      // Below is the fix for the search pagination issue.
       applications.value = undefined;
       await getCompletedSummaryList(
         currentPage ?? DEFAULT_DATATABLE_PAGE_NUMBER,
