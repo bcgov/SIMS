@@ -21,6 +21,7 @@ abstract class PaginationOptionsAPIInDTO {
    * Page number.
    */
   @Min(0)
+  @Max(Number.MAX_SAFE_INTEGER)
   page: number;
   /**
    * Page size or records per page.

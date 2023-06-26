@@ -1,9 +1,9 @@
 {
     "title": "Education Program",
-    "display": "form",
-    "type": "form",
     "name": "educationProgram",
     "path": "educationprogram",
+    "type": "form",
+    "display": "form",
     "tags": [
         "common"
     ],
@@ -816,7 +816,8 @@
                     "addons": [],
                     "inputType": "text",
                     "id": "e7oydq",
-                    "defaultValue": ""
+                    "defaultValue": "",
+                    "isNew": false
                 },
                 {
                     "label": "Field of study code",
@@ -917,7 +918,7 @@
                     "labelWidth": "",
                     "labelMargin": "",
                     "placeholder": "",
-                    "description": "Format (####) Optional**",
+                    "description": "Format (#####) Optional**",
                     "tooltip": "",
                     "prefix": "",
                     "suffix": "",
@@ -961,8 +962,8 @@
                         "maxLength": "",
                         "minWords": "",
                         "maxWords": "",
-                        "pattern": "[0-9]{4}",
-                        "customMessage": "Incorrect Format'",
+                        "pattern": "[0-9]{5}",
+                        "customMessage": "Incorrect Format",
                         "custom": "",
                         "customPrivate": false,
                         "json": "",
@@ -977,7 +978,7 @@
                     "tags": [],
                     "properties": {},
                     "conditional": {
-                        "show": null,
+                        "show": "",
                         "when": null,
                         "eq": "",
                         "json": ""
@@ -1022,7 +1023,8 @@
                     "addons": [],
                     "inputType": "text",
                     "id": "esqh37ui",
-                    "defaultValue": ""
+                    "defaultValue": "",
+                    "lockKey": true
                 },
                 {
                     "label": "SABC program code, if this program has been approved for SABC funding before",
@@ -1090,7 +1092,7 @@
                     "tags": [],
                     "properties": {},
                     "conditional": {
-                        "show": null,
+                        "show": "",
                         "when": null,
                         "eq": "",
                         "json": ""
@@ -2064,7 +2066,8 @@
                     "allowMultipleMasks": false,
                     "addons": [],
                     "tag": "p",
-                    "id": "eaximc"
+                    "id": "eaximc",
+                    "className": ""
                 },
                 {
                     "label": "Program length",
@@ -5906,7 +5909,8 @@
                     "allowMultipleMasks": false,
                     "addons": [],
                     "tag": "p",
-                    "id": "exxean"
+                    "id": "exxean",
+                    "className": ""
                 },
                 {
                     "label": "I confirm this program meets the policies outlined in the StudentAid BC policy manual.",
