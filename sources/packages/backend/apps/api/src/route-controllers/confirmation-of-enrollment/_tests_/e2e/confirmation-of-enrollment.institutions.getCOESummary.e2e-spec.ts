@@ -128,6 +128,30 @@ describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-getCOESummary", ()
       });
   });
 
+  it("Should return a BadRequest error when the page number has an invalid integer.", async () => {
+    // Arrange
+    const collegeCLocation = createFakeInstitutionLocation(collegeC);
+    await authorizeUserTokenForLocation(
+      appDataSource,
+      InstitutionTokenTypes.CollegeCUser,
+      collegeCLocation,
+    );
+    const invalidPage = Number.MAX_SAFE_INTEGER + 1;
+    const endpoint = `/institutions/location/${collegeCLocation.id}/confirmation-of-enrollment/enrollmentPeriod/${EnrollmentPeriod.Current}?page=${invalidPage}&pageLimit=10&sortField=disbursementDate&sortOrder=ASC`;
+    const token = await getInstitutionToken(InstitutionTokenTypes.CollegeCUser);
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .get(endpoint)
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.BAD_REQUEST)
+      .expect({
+        statusCode: HttpStatus.BAD_REQUEST,
+        message: ["page must not be greater than 9007199254740991"],
+        error: "Bad Request",
+      });
+  });
+
   it("Should get the COE upcoming summary when there are 2 COEs available.", async () => {
     // Arrange
     const collegeCLocation = createFakeInstitutionLocation(collegeC);

@@ -286,7 +286,9 @@ deploy-redis:
 # Command to initialize the redis cluster.
 # Make sure that all the redis pods are up and running before initializing the cluster.
 init-redis-cluster:
-	@oc exec -n $(NAMESPACE) -it redis-0 -- redis-cli -a $(oc get secret -n $(NAMESPACE) redis-creds -o jsonpath='{.data.password}' | base64 -d) --cluster create --cluster-replicas 1 $(oc get pods -n $(NAMESPACE) -l app=redis -o jsonpath='{range.items[*]}{.status.podIP}:6379 ')
+	REDIS_PASSWORD=$$(oc get secret -n $(NAMESPACE) redis-creds -o jsonpath='{.data.password}' | base64 -d); \
+	REDIS_NODES=$$(oc get pods -n $(NAMESPACE) -l app=redis -o jsonpath='{range .items[*]}{.status.podIP}:6379 ' | sed 's/ :6379 $$/ /'); \
+	oc exec -n $(NAMESPACE) -it redis-0 -- redis-cli -a $$REDIS_PASSWORD --cluster create $$REDIS_NODES --cluster-replicas 1
 
 create-db:
 	test -n $(DB_NAME)
