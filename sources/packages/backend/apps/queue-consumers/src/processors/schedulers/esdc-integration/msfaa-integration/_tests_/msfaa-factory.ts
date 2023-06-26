@@ -1,4 +1,4 @@
-import { MSFAANumber, Student } from "@sims/sims-db";
+import { MSFAANumber } from "@sims/sims-db";
 import {
   E2EDataSources,
   createFakeMSFAANumber,

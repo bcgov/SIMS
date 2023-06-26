@@ -19,9 +19,7 @@ import {
 import { THROW_AWAY_MSFAA_NUMBER } from "./msfaa-helper";
 import {
   ApplicationStatus,
-  DisbursementSchedule,
   DisbursementScheduleStatus,
-  MSFAANumber,
   OfferingIntensity,
 } from "@sims/sims-db";
 import * as Client from "ssh2-sftp-client";

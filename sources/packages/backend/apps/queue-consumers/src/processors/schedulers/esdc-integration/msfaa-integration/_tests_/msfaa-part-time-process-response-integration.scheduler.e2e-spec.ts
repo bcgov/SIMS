@@ -24,7 +24,6 @@ import {
 import { THROW_AWAY_MSFAA_NUMBER } from "./msfaa-helper";
 import {
   ApplicationStatus,
-  DisbursementSchedule,
   DisbursementScheduleStatus,
   OfferingIntensity,
 } from "@sims/sims-db";
