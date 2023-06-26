@@ -1,12 +1,13 @@
 {
   "title": "Education Program Offering",
-  "display": "form",
-  "type": "form",
   "name": "educationprogramoffering",
   "path": "educationprogramoffering",
+  "type": "form",
+  "display": "form",
   "tags": [
     "common"
   ],
+  "owner": "63e3d91e5df786ce7093da47",
   "components": [
     {
       "label": "HTML",
@@ -170,7 +171,8 @@
       "showWordCount": false,
       "allowMultipleMasks": false,
       "addons": [],
-      "id": "ec8hh1"
+      "id": "ec8hh1",
+      "isNew": false
     },
     {
       "label": "HTML",
@@ -836,7 +838,8 @@
               "inputType": "radio",
               "fieldSet": false,
               "id": "epwmfzr",
-              "defaultValue": ""
+              "defaultValue": "",
+              "lockKey": true
             },
             {
               "label": "Study period intensity popup",
@@ -1022,7 +1025,8 @@
                   "allowMultipleMasks": false,
                   "addons": [],
                   "id": "emuvfb",
-                  "defaultValue": ""
+                  "defaultValue": "",
+                  "inputType": "number"
                 }
               ],
               "placeholder": "",
@@ -2085,7 +2089,7 @@
                       "value": ""
                     }
                   ],
-                  "content": "<strong class=\"ml-2\">This study period is ineligible for StudentAid BC funding</strong>\n<br>\n<span>Your dates must be between 42 to 365 days.</span>",
+                  "content": "<strong class=\"ml-2\">This study period is ineligible for StudentAid BC funding</strong>\n<br>\n<span>Your dates must be between {{data.studyPeriodMinDays}} to {{data.studyPeriodMaxDays}} days.</span>",
                   "refreshOnChange": true,
                   "customClass": "banner-warning ",
                   "hidden": false,
@@ -2094,7 +2098,7 @@
                   "tags": [],
                   "properties": {},
                   "conditional": {
-                    "show": null,
+                    "show": "",
                     "when": null,
                     "eq": "",
                     "json": ""
@@ -2153,7 +2157,8 @@
                   "showWordCount": false,
                   "allowMultipleMasks": false,
                   "addons": [],
-                  "id": "ebhbfou"
+                  "id": "ebhbfou",
+                  "isNew": false
                 }
               ],
               "placeholder": "",
@@ -2375,7 +2380,8 @@
                   "allowMultipleMasks": false,
                   "addons": [],
                   "tag": "p",
-                  "id": "eity25i"
+                  "id": "eity25i",
+                  "className": ""
                 },
                 {
                   "label": "No study breaks",
@@ -2650,7 +2656,8 @@
                       "addons": [],
                       "inputType": "text",
                       "id": "eufdf4l0000000",
-                      "defaultValue": ""
+                      "defaultValue": "",
+                      "inDataGrid": true
                     },
                     {
                       "label": "Break end date",
@@ -2760,7 +2767,8 @@
                       "addons": [],
                       "inputType": "text",
                       "id": "endqveo000000",
-                      "defaultValue": ""
+                      "defaultValue": "",
+                      "inDataGrid": true
                     },
                     {
                       "label": "Total break days",
@@ -2837,7 +2845,9 @@
                       "showWordCount": false,
                       "properties": {},
                       "allowMultipleMasks": false,
-                      "addons": []
+                      "addons": [],
+                      "inDataGrid": true,
+                      "inputType": "number"
                     },
                     {
                       "label": "Total eligible break days",
@@ -2913,7 +2923,9 @@
                       "showWordCount": false,
                       "properties": {},
                       "allowMultipleMasks": false,
-                      "addons": []
+                      "addons": [],
+                      "inDataGrid": true,
+                      "inputType": "number"
                     },
                     {
                       "label": "Total ineligible break days",
@@ -2989,7 +3001,9 @@
                       "showWordCount": false,
                       "properties": {},
                       "allowMultipleMasks": false,
-                      "addons": []
+                      "addons": [],
+                      "inDataGrid": true,
+                      "inputType": "number"
                     }
                   ],
                   "placeholder": "",
@@ -4169,7 +4183,8 @@
               "allowMultipleMasks": false,
               "addons": [],
               "tag": "p",
-              "id": "e6zws5q"
+              "id": "e6zws5q",
+              "className": ""
             },
             {
               "collapsible": false,
@@ -4264,7 +4279,8 @@
                           "properties": {},
                           "allowMultipleMasks": false,
                           "addons": [],
-                          "id": "ey5wqhj"
+                          "id": "ey5wqhj",
+                          "inputType": "number"
                         }
                       ],
                       "width": 6,
@@ -4355,7 +4371,8 @@
                           "properties": {},
                           "allowMultipleMasks": false,
                           "addons": [],
-                          "id": "ezezla"
+                          "id": "ezezla",
+                          "inputType": "number"
                         }
                       ],
                       "width": 6,
@@ -4520,7 +4537,8 @@
                           "properties": {},
                           "allowMultipleMasks": false,
                           "addons": [],
-                          "id": "eont0uf"
+                          "id": "eont0uf",
+                          "inputType": "number"
                         }
                       ],
                       "width": 6,
@@ -4611,7 +4629,8 @@
                           "properties": {},
                           "allowMultipleMasks": false,
                           "addons": [],
-                          "id": "esc41a"
+                          "id": "esc41a",
+                          "inputType": "number"
                         }
                       ],
                       "width": 6,
@@ -5184,7 +5203,8 @@
               "allowMultipleMasks": false,
               "addons": [],
               "tag": "p",
-              "id": "e7678z"
+              "id": "e7678z",
+              "className": ""
             },
             {
               "label": "I confirm this study period offering meets the policies outlined in the StudentAid BC policy manual.",
@@ -5725,6 +5745,46 @@
       "addons": [],
       "inputType": "hidden",
       "id": "ejidpjh"
+    },
+    {
+      "input": true,
+      "tableView": true,
+      "key": "studyPeriodMinDays",
+      "label": "Study period minimum days",
+      "protected": false,
+      "unique": false,
+      "persistent": true,
+      "type": "hidden",
+      "tags": [],
+      "conditional": {
+        "show": "",
+        "when": null,
+        "eq": ""
+      },
+      "properties": {},
+      "lockKey": true,
+      "customDefaultValue": "",
+      "calculateValue": "value = data.offeringIntensity === 'Full Time' ? 84 : 42;"
+    },
+    {
+      "input": true,
+      "tableView": true,
+      "key": "studyPeriodMaxDays",
+      "label": "Study period maximum days",
+      "protected": false,
+      "unique": false,
+      "persistent": true,
+      "type": "hidden",
+      "tags": [],
+      "conditional": {
+        "show": "",
+        "when": null,
+        "eq": ""
+      },
+      "properties": {},
+      "defaultValue": "365",
+      "lockKey": true,
+      "isNew": false
     }
   ]
 }
