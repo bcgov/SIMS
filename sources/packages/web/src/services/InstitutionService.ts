@@ -52,6 +52,11 @@ export class InstitutionService {
     return ApiClient.Institution.createInstitutionWithAssociatedUser(data);
   }
 
+  /**
+   * Update institution profile details.
+   * @param data institution details to be updated.
+   * @param institutionId id for the institution to be updated.
+   */
   async updateInstitution(
     data: InstitutionContactAPIInDTO | InstitutionProfileAPIInDTO,
     institutionId?: number,

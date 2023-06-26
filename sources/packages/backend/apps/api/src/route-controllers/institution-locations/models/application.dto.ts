@@ -50,7 +50,7 @@ export class ActiveApplicationSummaryAPIOutDTO {
 /**
  * Query string options available for active applications summary.
  */
-export class ActiveApplicationSummaryAPIQueryStringDTO extends ApplicationStatusPaginationOptionsAPIInDTO {
+export class ActiveApplicationSummaryQueryStringAPIInDTO extends ApplicationStatusPaginationOptionsAPIInDTO {
   @IsBoolean()
   @ToBoolean()
   archived: boolean;
