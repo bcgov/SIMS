@@ -24,9 +24,9 @@ import {
 import { THROW_AWAY_MSFAA_NUMBER } from "./msfaa-helper";
 import {
   ApplicationStatus,
+  DisbursementSchedule,
   DisbursementScheduleStatus,
   OfferingIntensity,
-  MSFAANumber,
 } from "@sims/sims-db";
 import * as Client from "ssh2-sftp-client";
 import { Job } from "bull";
@@ -161,7 +161,7 @@ describe(
 
     it("Should reactivate a cancelled MSFAA when the same MSFAA is received in the response file and re-associate this reactivated MSFAA with all pending disbursements.", async () => {
       // Arrange
-      // Create a cancelled MSFAA. The Msfaa number used for creating the cancelled Msfaa record is the same as the one used in the msfaa-part-time-file-with-reactivation-record.dat
+      // Create a cancelled MSFAA. The Msfaa number used for creating the cancelled Msfaa record is the same as the one used in the msfaa-part-time-file-with-reactivation-record.dat.
       // Ensuring that any previous runs of this test or any other test do not have the same Msfaa number as the one in the re-activation file.
       await db.msfaaNumber.update(
         { msfaaNumber: PART_TIME_SAMPLE_MSFAA_NUMBER },
@@ -177,7 +177,7 @@ describe(
           {
             msfaaNumber: PART_TIME_SAMPLE_MSFAA_NUMBER,
             offeringIntensity: OfferingIntensity.partTime,
-          } as MSFAANumber,
+          },
         ),
       );
       // Create Pending MSFAA and associate it with disbursements from the two applications.
@@ -214,7 +214,9 @@ describe(
           applicationStatus: ApplicationStatus.Completed,
           offeringIntensity: OfferingIntensity.partTime,
           createSecondDisbursement: true,
-          disbursementScheduleStatusB: DisbursementScheduleStatus.Sent,
+          secondDisbursementInitialValues: {
+            disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
+          },
         },
       );
       // Queued job.
@@ -317,11 +319,11 @@ describe(
       expect(appASecondDisbursementScheduleMsfaaNumberId.msfaaNumber.id).toBe(
         cancelledMSFAARecord.id,
       );
-      expect(appBFirstDisbursementScheduleMsfaaNumberId.msfaaNumber.id).toBe(
+      expect(appBSecondDisbursementScheduleMsfaaNumberId.msfaaNumber.id).toBe(
         cancelledMSFAARecord.id,
       );
       // Validate msfaa unchanged for all sent disbursements.
-      expect(appBSecondDisbursementScheduleMsfaaNumberId.msfaaNumber.id).toBe(
+      expect(appBFirstDisbursementScheduleMsfaaNumberId.msfaaNumber.id).toBe(
         currentMSFAA.id,
       );
     });

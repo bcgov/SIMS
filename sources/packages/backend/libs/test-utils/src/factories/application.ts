@@ -68,8 +68,8 @@ export function createFakeApplication(relations?: {
  * - `offeringIntensity` if provided sets the offering intensity for the created fakeApplication.
  * - `createSecondDisbursement` if provided and true creates a second disbursement,
  * otherwise only one disbursement will be created.
- * - `disbursementScheduleStatusA` if provided sets the disbursement schedule status for the first disbursement otherwise sets to pending status by default.
- * - `disbursementScheduleStatusB` if provided sets the disbursement schedule status for the second disbursement otherwise sets to pending status by default.
+ * - `firstDisbursementInitialValues` if provided sets the disbursement schedule status for the first disbursement otherwise sets to pending status by default.
+ * - `secondDisbursementInitialValues` if provided sets the disbursement schedule status for the second disbursement otherwise sets to pending status by default.
  * @returns the created application and its dependencies including the disbursement
  * with the confirmation of enrollment data.
  */
@@ -86,8 +86,8 @@ export async function saveFakeApplicationDisbursements(
     applicationStatus?: ApplicationStatus;
     offeringIntensity?: OfferingIntensity;
     createSecondDisbursement?: boolean;
-    disbursementScheduleStatusA?: DisbursementScheduleStatus;
-    disbursementScheduleStatusB?: DisbursementScheduleStatus;
+    firstDisbursementInitialValues?: Partial<DisbursementSchedule>;
+    secondDisbursementInitialValues?: Partial<DisbursementSchedule>;
   },
 ): Promise<Application> {
   const applicationRepo = dataSource.getRepository(Application);
@@ -115,7 +115,8 @@ export async function saveFakeApplicationDisbursements(
       ? COEStatus.completed
       : COEStatus.required;
   firstSchedule.disbursementScheduleStatus =
-    options?.disbursementScheduleStatusA ?? DisbursementScheduleStatus.Pending;
+    options?.firstDisbursementInitialValues.disbursementScheduleStatus ??
+    DisbursementScheduleStatus.Pending;
   firstSchedule.msfaaNumber = relations?.msfaaNumber;
   firstSchedule.studentAssessment = savedApplication.currentAssessment;
   disbursementSchedules.push(firstSchedule);
@@ -129,7 +130,7 @@ export async function saveFakeApplicationDisbursements(
     });
     secondSchedule.coeStatus = COEStatus.required;
     secondSchedule.disbursementScheduleStatus =
-      options?.disbursementScheduleStatusB ??
+      options?.secondDisbursementInitialValues.disbursementScheduleStatus ??
       DisbursementScheduleStatus.Pending;
     // First schedule is created with the current date as default.
     // Adding 60 days to create some time between the first and second schedules.

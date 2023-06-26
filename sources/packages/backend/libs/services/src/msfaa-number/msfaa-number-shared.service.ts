@@ -103,7 +103,7 @@ export class MSFAANumberSharedService {
   }
 
   /**
-   *
+   * Reactivates the provided MSFAA record for the specified student.
    * @param studentId student for which the MSFAA record will be reactivated.
    * @param referenceApplicationId reference application id.
    * @param offeringIntensity offering intensity.
@@ -128,16 +128,20 @@ export class MSFAANumberSharedService {
       offeringIntensity,
       auditUserId,
       {
-        msfaaNumberId: msfaaNumber.id,
-        msfaaNumber: msfaaNumber.msfaaNumber,
-        dateSigned,
-        serviceProviderReceivedDate,
+        existingMSFAA: {
+          id: msfaaNumber.id,
+          msfaaNumber: msfaaNumber.msfaaNumber,
+          dateSigned: getISODateOnlyString(dateSigned),
+          serviceProviderReceivedDate: getISODateOnlyString(
+            serviceProviderReceivedDate,
+          ),
+        },
       },
     );
   }
 
   /**
-   * Creates a new MSFAA record with a new number for the specified student.
+   * Creates a new MSFAA record with a new number or associates an existing MSFAA record for the specified student.
    * @param studentId student to have a new MSFAA record created.
    * @param referenceApplicationId reference application id.
    * @param offeringIntensity offering intensity.
@@ -156,10 +160,10 @@ export class MSFAANumberSharedService {
     offeringIntensity: OfferingIntensity,
     auditUserId: number,
     options?: {
-      msfaaNumberId: number;
-      msfaaNumber: string;
-      dateSigned: Date;
-      serviceProviderReceivedDate: Date;
+      existingMSFAA: Pick<
+        MSFAANumber,
+        "id" | "msfaaNumber" | "dateSigned" | "serviceProviderReceivedDate"
+      >;
     },
   ): Promise<MSFAANumber> {
     return this.dataSource.transaction(async (entityManager) => {
@@ -182,47 +186,41 @@ export class MSFAANumberSharedService {
         },
       );
       // The reactivated msfaaNumber.
-      let newMSFAANumber: MSFAANumber = {
-        id: options?.msfaaNumberId,
+      let newActiveMSFAA = {
+        id: options?.existingMSFAA.id,
       } as MSFAANumber;
       // If there is not a MSFAA number to be re-activated.
-      if (!options?.msfaaNumberId) {
+      if (!options?.existingMSFAA) {
         // Create the new MSFAA record for the student.
-        newMSFAANumber = new MSFAANumber();
-        newMSFAANumber.msfaaNumber = await this.consumeNextSequence(
+        newActiveMSFAA = new MSFAANumber();
+        newActiveMSFAA.msfaaNumber = await this.consumeNextSequence(
           offeringIntensity,
         );
-        newMSFAANumber.student = { id: studentId } as Student;
-        newMSFAANumber.referenceApplication = {
+        newActiveMSFAA.student = { id: studentId } as Student;
+        newActiveMSFAA.referenceApplication = {
           id: referenceApplicationId,
         } as Application;
-        newMSFAANumber.offeringIntensity = offeringIntensity;
-        newMSFAANumber.creator = { id: auditUserId } as User;
-        newMSFAANumber.createdAt = now;
-        await entityManager.getRepository(MSFAANumber).save(newMSFAANumber);
+        newActiveMSFAA.offeringIntensity = offeringIntensity;
+        newActiveMSFAA.creator = { id: auditUserId } as User;
+        newActiveMSFAA.createdAt = now;
+        await entityManager.getRepository(MSFAANumber).save(newActiveMSFAA);
       } else {
         // Reactivate this msfaa record.
         const systemUser = await this.systemUsersService.systemUser();
         const updateResult = await this.dataSource
           .getRepository(MSFAANumber)
-          .update(
-            {
-              id: options?.msfaaNumberId,
-            },
-            {
-              dateSigned: getISODateOnlyString(options?.dateSigned),
-              serviceProviderReceivedDate: getISODateOnlyString(
-                options?.serviceProviderReceivedDate,
-              ),
-              cancelledDate: null,
-              newIssuingProvince: null,
-              modifier: systemUser,
-            },
-          );
+          .update(options.existingMSFAA.id, {
+            dateSigned: options.existingMSFAA.dateSigned,
+            serviceProviderReceivedDate:
+              options.existingMSFAA.serviceProviderReceivedDate,
+            cancelledDate: null,
+            newIssuingProvince: null,
+            modifier: systemUser,
+          });
         // Incase no record updated.
         if (!updateResult.affected) {
           throw new Error(
-            `Error while updating MSFAA number: ${options?.msfaaNumber}. Number of affected rows was ${updateResult.affected}, expected 1.`,
+            `Error while updating MSFAA number: ${options.existingMSFAA.msfaaNumber}. Number of affected rows was ${updateResult.affected}, expected 1.`,
           );
         }
       }
@@ -246,12 +244,12 @@ export class MSFAANumberSharedService {
       );
       if (schedulesIdsToUpdate.length) {
         await disbursementScheduleRepo.update(schedulesIdsToUpdate, {
-          msfaaNumber: newMSFAANumber,
+          msfaaNumber: newActiveMSFAA,
           modifier: auditUser,
           updatedAt: now,
         });
       }
-      return newMSFAANumber;
+      return newActiveMSFAA;
     });
   }
 

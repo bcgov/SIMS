@@ -19,6 +19,7 @@ import {
 import { THROW_AWAY_MSFAA_NUMBER } from "./msfaa-helper";
 import {
   ApplicationStatus,
+  DisbursementSchedule,
   DisbursementScheduleStatus,
   MSFAANumber,
   OfferingIntensity,
@@ -68,7 +69,7 @@ describe(
 
     it("Should reactivate a cancelled MSFAA when the same MSFAA is received in the response file and re-associate this reactivated MSFAA with all pending disbursements.", async () => {
       // Arrange
-      // Create a cancelled MSFAA. The Msfaa number used for creating the cancelled Msfaa record is the same as the one used in the msfaa-full-time-file-with-reactivation-record.dat
+      // Create a cancelled MSFAA. The Msfaa number used for creating the cancelled Msfaa record is the same as the one used in the msfaa-full-time-file-with-reactivation-record.dat.
       // Ensuring that any previous runs of this test or any other test do not have the same Msfaa id as the one in the re-activation file.
       await db.msfaaNumber.update(
         { msfaaNumber: FULL_TIME_SAMPLE_MSFAA_NUMBER },
@@ -84,7 +85,7 @@ describe(
           {
             msfaaNumber: FULL_TIME_SAMPLE_MSFAA_NUMBER,
             offeringIntensity: OfferingIntensity.fullTime,
-          } as MSFAANumber,
+          },
         ),
       );
       // Create Pending MSFAA and associate it with disbursements from the two applications.
@@ -109,7 +110,9 @@ describe(
           applicationStatus: ApplicationStatus.Completed,
           offeringIntensity: OfferingIntensity.fullTime,
           createSecondDisbursement: true,
-          disbursementScheduleStatusA: DisbursementScheduleStatus.Sent,
+          secondDisbursementInitialValues: {
+            disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
+          },
         },
       );
       const applicationB = await saveFakeApplicationDisbursements(
@@ -122,7 +125,9 @@ describe(
           applicationStatus: ApplicationStatus.Completed,
           offeringIntensity: OfferingIntensity.fullTime,
           createSecondDisbursement: true,
-          disbursementScheduleStatusB: DisbursementScheduleStatus.Sent,
+          secondDisbursementInitialValues: {
+            disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
+          },
         },
       );
       // Queued job.
@@ -131,7 +136,7 @@ describe(
         MSFAA_FULL_TIME_RECEIVE_FILE_WITH_REACTIVATION_RECORD,
       ]);
       // Act
-      // Now reactivate the cancelled MSFAA
+      // Now reactivate the cancelled MSFAA.
       const processResult = await processor.processMSFAA(job);
       // Assert
       expect(processResult).toStrictEqual([
@@ -213,17 +218,17 @@ describe(
           where: { id: appBSecondDisbursementSchedule.id },
         });
       // Validate msfaa updated for all pending disbursements.
-      expect(appAFirstDisbursementScheduleMsfaaNumberId.msfaaNumber.id).toBe(
-        currentMSFAA.id,
-      );
       expect(appASecondDisbursementScheduleMsfaaNumberId.msfaaNumber.id).toBe(
         cancelledMSFAARecord.id,
       );
-      expect(appBFirstDisbursementScheduleMsfaaNumberId.msfaaNumber.id).toBe(
+      expect(appBSecondDisbursementScheduleMsfaaNumberId.msfaaNumber.id).toBe(
         cancelledMSFAARecord.id,
       );
       // Validate msfaa unchanged for all sent disbursements.
-      expect(appBSecondDisbursementScheduleMsfaaNumberId.msfaaNumber.id).toBe(
+      expect(appAFirstDisbursementScheduleMsfaaNumberId.msfaaNumber.id).toBe(
+        currentMSFAA.id,
+      );
+      expect(appBFirstDisbursementScheduleMsfaaNumberId.msfaaNumber.id).toBe(
         currentMSFAA.id,
       );
     });

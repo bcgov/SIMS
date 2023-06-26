@@ -133,9 +133,14 @@ export class MSFAANumberService extends RecordDataModelService<MSFAANumber> {
         offeringIntensity,
       },
     });
+    if (!retrievedMSFAARecord) {
+      throw new Error(
+        `MSFAA number not found for: ${msfaaNumber} and offering intensity: ${offeringIntensity}`,
+      );
+    }
     const systemUser = await this.systemUsersService.systemUser();
     // If there is a retrievedMSFAARecord, check if the msfaa number was cancelled earlier. If yes, reactivate it.
-    if (retrievedMSFAARecord?.cancelledDate) {
+    if (retrievedMSFAARecord.cancelledDate) {
       // Re-associate all disbursements pending e-cert generation for the same offering intensity with this msfaa number.
       await this.msfaaNumberSharedService.reactivateMSFAANumber(
         retrievedMSFAARecord.student?.id,
@@ -146,28 +151,28 @@ export class MSFAANumberService extends RecordDataModelService<MSFAANumber> {
         dateSigned,
         serviceProviderReceivedDate,
       );
-    } else {
-      // No reactivation, just update the dateSigned and serviceProviderReceivedDate.
-      const updateResult = await this.repo.update(
-        {
-          msfaaNumber,
-          dateSigned: IsNull(),
-          serviceProviderReceivedDate: IsNull(),
-        },
-        {
-          dateSigned: getISODateOnlyString(dateSigned),
-          serviceProviderReceivedDate: getISODateOnlyString(
-            serviceProviderReceivedDate,
-          ),
-          modifier: systemUser,
-        },
+      return;
+    }
+    // No reactivation, just update the dateSigned and serviceProviderReceivedDate.
+    const updateResult = await this.repo.update(
+      {
+        msfaaNumber,
+        dateSigned: IsNull(),
+        serviceProviderReceivedDate: IsNull(),
+      },
+      {
+        dateSigned: getISODateOnlyString(dateSigned),
+        serviceProviderReceivedDate: getISODateOnlyString(
+          serviceProviderReceivedDate,
+        ),
+        modifier: systemUser,
+      },
+    );
+    // Incase no record updated.
+    if (!updateResult.affected) {
+      throw new Error(
+        `Error while updating MSFAA number: ${msfaaNumber}. Number of affected rows was ${updateResult.affected}, expected 1.`,
       );
-      // Incase no record updated.
-      if (!updateResult.affected) {
-        throw new Error(
-          `Error while updating MSFAA number: ${msfaaNumber}. Number of affected rows was ${updateResult.affected}, expected 1.`,
-        );
-      }
     }
   }
 

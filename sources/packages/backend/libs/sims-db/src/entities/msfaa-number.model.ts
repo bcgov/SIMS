@@ -104,11 +104,6 @@ export class MSFAANumber extends RecordDataModel {
   })
   student: Student;
   /**
-   * ApplicationId related to this MSFAA.
-   */
-  @RelationId((msfaaNumber: MSFAANumber) => msfaaNumber.referenceApplication)
-  referenceApplicationId: number;
-  /**
    * Application that creates the MSFAA Number.
    */
   @ManyToOne(() => Application, { eager: false, cascade: false })

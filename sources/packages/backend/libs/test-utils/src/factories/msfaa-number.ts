@@ -27,11 +27,11 @@ export enum MSFAAStates {
  * MSFAA creation and the one that will provide additional student information
  * for the MSFAA request file.
  * @param options additional options.
- * - `state` allow the record to be created in one of the possible 'states' that
+ * - `msfaaState` allow the record to be created in one of the possible 'states' that
  * an MSFAA can have for the different scenarios along its lifetime. More than one
  * state can be combined, for instance, to create a signed MSFAA that was also
  * cancelled.
- * - `offeringIntensity` offeringIntensity associated with the MSFAANumber.
+ * @param msfaaInitialValues initial msfaa record.
  * @returns MSFAA number record ready to be saved.
  */
 export function createFakeMSFAANumber(
