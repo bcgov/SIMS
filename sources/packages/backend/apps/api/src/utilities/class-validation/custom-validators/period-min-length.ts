@@ -36,8 +36,8 @@ class PeriodMinLengthConstraint implements ValidatorConstraintInterface {
   }
 
   /**
-   * Get minimum allowed days from args
-   * @param args
+   * Get minimum allowed days from args.
+   * @param args validation arguments.
    * @returns minimum allowed days.
    */
   private getMinAllowedDays(args: ValidationArguments): number {
@@ -57,6 +57,7 @@ class PeriodMinLengthConstraint implements ValidatorConstraintInterface {
  * @param startDateProperty indicates the property that define the
  * start of a period.
  * @param minDaysAllowed min allowed days to the period be considered valid.
+ * This could be a value or a function that returns a value of minimum allowed days.
  * @param propertyDisplayName user-friendly property name to be added to the
  * validation message.
  * @param validationOptions validations options.

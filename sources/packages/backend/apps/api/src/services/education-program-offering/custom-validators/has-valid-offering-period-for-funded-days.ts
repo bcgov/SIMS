@@ -39,7 +39,7 @@ class HasValidOfferingPeriodForFundedDaysConstraint
   }
 
   /**
-   * Get offering minimum allowed days from args
+   * Get offering minimum allowed days from args.
    * @param args validation arguments.
    * @returns minimum allowed days.
    */
