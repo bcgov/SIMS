@@ -124,5 +124,7 @@ import {
     console.error("Error while executing the deployment.");
     console.error(error);
     throw error;
+  } finally {
+    await zeebeClient.close();
   }
 })();

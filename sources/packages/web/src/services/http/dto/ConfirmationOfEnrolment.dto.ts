@@ -1,4 +1,4 @@
-import { StatusChipTypes } from "@/components/generic/StatusChip.models";
+import { StatusChipTypes } from "@/types/contracts/StatusChip";
 import {
   COEApprovalPeriodStatus,
   COEStatus,

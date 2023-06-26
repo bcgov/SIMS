@@ -4,11 +4,8 @@
       <template #header>
         <body-header title="Applications" :recordsCount="applications?.count">
           <template #subtitle>
-            Request a change for a program and offering in an application
-            <tooltip-icon
-              >Only applications in the "completed status" are shown below to
-              request a change.
-            </tooltip-icon>
+            Waiting for the student and StudentAid BC decision on the requested
+            change
           </template>
           <template #actions>
             <v-text-field
@@ -27,11 +24,11 @@
       <content-group>
         <toggle-content :toggled="!applications?.count">
           <v-data-table-server
-            :headers="AvailableToChangeOfferingChangeSummaryHeaders"
+            :headers="InProgressOfferingChangeSummaryHeaders"
             :items="applications?.results"
             :items-length="applications?.count"
             :loading="loading"
-            v-model:items-per-page="DEFAULT_PAGE_LIMIT"
+            :items-per-page="DEFAULT_PAGE_LIMIT"
             @update:options="paginationAndSortEvent"
           >
             <template #[`item.fullName`]="{ item }">
@@ -43,10 +40,14 @@
               {{ dateOnlyLongString(item.value.studyEndDate) }}
             </template>
             <template #[`item.applicationNumber`]="{ item }">
-              {{ item.columns.applicationNumber }}
+              {{ item.columns.applicationNumber }} </template
+            ><template #[`item.status`]="{ item }">
+              <status-chip-application-offering-change
+                :status="item.columns.status"
+              />
             </template>
             <template #[`item.applicationId`]>
-              <v-btn color="primary">Request a change</v-btn>
+              <v-btn color="primary">View</v-btn>
             </template>
           </v-data-table-server>
         </toggle-content>
@@ -61,15 +62,17 @@ import {
   DEFAULT_PAGE_LIMIT,
   DataTableOptions,
   PaginatedResults,
-  AvailableToChangeOfferingChangeSummaryHeaders,
+  InProgressOfferingChangeSummaryHeaders,
   DataTableSortByOrder,
   DEFAULT_DATATABLE_PAGE_NUMBER,
 } from "@/types";
 import { useFormatters } from "@/composables";
-import { ApplicationOfferingChangeSummaryAPIOutDTO } from "@/services/http/dto";
+import { InProgressApplicationOfferingChangesAPIOutDTO } from "@/services/http/dto";
 import { ApplicationOfferingChangeRequestService } from "@/services/ApplicationOfferingChangeRequestService";
+import StatusChipApplicationOfferingChange from "@/components/generic/StatusChipApplicationOfferingChange.vue";
 
 export default defineComponent({
+  components: { StatusChipApplicationOfferingChange },
   props: {
     locationId: {
       type: Number,
@@ -82,20 +85,20 @@ export default defineComponent({
     const { dateOnlyLongString } = useFormatters();
     const applications = ref(
       {} as
-        | PaginatedResults<ApplicationOfferingChangeSummaryAPIOutDTO>
+        | PaginatedResults<InProgressApplicationOfferingChangesAPIOutDTO>
         | undefined,
     );
     let currentPage = NaN;
     let currentPageLimit = NaN;
 
     /**
-     * Load eligible applications offering change records for institution.
+     * Load in progress applications offering change records for institution.
      * @param page page number, if nothing passed then {@link DEFAULT_DATATABLE_PAGE_NUMBER}.
      * @param pageCount page limit, if nothing passed then {@link DEFAULT_PAGE_LIMIT}.
      * @param sortField sort field, if nothing passed then api sorts with application number.
      * @param sortOrder sort oder, if nothing passed then {@link DataTableSortByOrder.ASC}.
      */
-    const getSummaryList = async (
+    const getInProgressSummaryList = async (
       page = DEFAULT_DATATABLE_PAGE_NUMBER,
       pageCount = DEFAULT_PAGE_LIMIT,
       sortField?: string,
@@ -103,7 +106,7 @@ export default defineComponent({
     ) => {
       loading.value = true;
       applications.value =
-        await ApplicationOfferingChangeRequestService.shared.getEligibleApplications(
+        await ApplicationOfferingChangeRequestService.shared.getInProgressApplications(
           props.locationId,
           {
             page,
@@ -121,7 +124,7 @@ export default defineComponent({
       currentPage = event.page;
       currentPageLimit = event.itemsPerPage;
       const [sortByOptions] = event.sortBy;
-      await getSummaryList(
+      await getInProgressSummaryList(
         event.page,
         event.itemsPerPage,
         sortByOptions?.key,
@@ -131,9 +134,12 @@ export default defineComponent({
 
     // Search table.
     const searchApplicationOfferingChangeRecords = async () => {
-      // Fix for the search pagination issue.
+      // When search is happening in a page other than the first page,
+      // There is an unexpected behavior, probably which can be
+      // fixed in the stable vuetify version.
+      // Below is the fix for the search pagination issue.
       applications.value = undefined;
-      await getSummaryList(
+      await getInProgressSummaryList(
         currentPage ?? DEFAULT_DATATABLE_PAGE_NUMBER,
         currentPageLimit ?? DEFAULT_PAGE_LIMIT,
       );
@@ -143,7 +149,7 @@ export default defineComponent({
       () => props.locationId,
       async () => {
         // Update the list.
-        await getSummaryList();
+        await getInProgressSummaryList();
       },
       { immediate: true },
     );
@@ -155,7 +161,7 @@ export default defineComponent({
       paginationAndSortEvent,
       searchApplicationOfferingChangeRecords,
       searchCriteria,
-      AvailableToChangeOfferingChangeSummaryHeaders,
+      InProgressOfferingChangeSummaryHeaders,
       loading,
     };
   },
