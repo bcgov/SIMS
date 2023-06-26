@@ -1,19 +1,14 @@
 import { ProgramIntensity, ProgramStatus } from "@sims/sims-db";
-import { Allow } from "class-validator";
 
 export interface ProgramDeliveryTypes {
   deliveredOnSite: boolean;
   deliveredOnline: boolean;
 }
 
-export class EntranceRequirements {
-  @Allow()
+export interface EntranceRequirements {
   hasMinimumAge: boolean;
-  @Allow()
   minHighSchool: boolean;
-  @Allow()
   requirementsByInstitution: boolean;
-  @Allow()
   requirementsByBCITA: boolean;
 }
 

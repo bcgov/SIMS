@@ -107,7 +107,6 @@ describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", (
       .auth(institutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.CREATED)
       .then((response) => {
-        console.log(response.body);
         expect(response.body.id).toBeGreaterThan(0);
         educationProgramId = response.body.id;
       });

@@ -2,10 +2,10 @@ import { Transform } from "class-transformer";
 
 /**
  * Converts a plain property to boolean.
- * @returns converted boolean value.
+ * @returns function that will return the converted boolean value.
  */
-export const ToBoolean = () => {
-  return (target: any, key: string) => {
+export const ToBoolean = (): ((target: unknown, key: string) => void) => {
+  return (target: unknown, key: string) => {
     return Transform(
       ({ obj }) => {
         return valueToBoolean(obj[key]);
@@ -22,7 +22,7 @@ export const ToBoolean = () => {
  * @param value expected value to be converted, if needed.
  * @returns boolean value if object is defined.
  */
-const valueToBoolean = (value: unknown) => {
+const valueToBoolean = (value: unknown): boolean | undefined => {
   if (value === null || value === undefined) {
     return undefined;
   }
