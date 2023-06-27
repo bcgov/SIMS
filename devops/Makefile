@@ -13,8 +13,7 @@ export HOST_PREFIX := $(or $(HOST_PREFIX), $$HOST_PREFIX)
 export NEW_DB := $(or $(NEW_DB), $$NEW_DB)
 export JOB_NAME := $(or $(JOB_NAME), $$JN)
 export SITE_MINDER_LOGOUT_URL := $(or $(SITE_MINDER_LOGOUT_URL), https://logontest7.gov.bc.ca/clp-cgi/logoff.cgi)
-export BACKUP_POSTGRESQL_APP_NAME := $(or $(BACKUP_POSTGRESQL_APP_NAME), postgresql-backup)
-export BACKUP_MONGODB_APP_NAME := $(or $(BACKUP_MONGODB_APP_NAME), mongodb-backup)
+export BACKUP_POSTGRESQL_APP_NAME := $(or $(BACKUP_POSTGRESQL_APP_NAME), patroni-simsdb-backup)
 export BACKUP_CONFIGMAP_NAME := $(or $(BACKUP_CONFIGMAP_NAME), backup-conf)
 export BYPASS_CRA_INCOME_VERIFICATION := $(or $(BYPASS_CRA_INCOME_VERIFICATION), false)
 export BYPASS_APPLICATION_SUBMIT_VALIDATIONS := $(or $(BYPASS_APPLICATION_SUBMIT_VALIDATIONS), false)
@@ -143,16 +142,15 @@ oc-build-forms: | print-status build-forms
 oc-deploy-ha-mongo: | print-status deploy-ha-mongo
 oc-deploy-forms: | print-status deploy-forms
 
+# Build backup structure
+oc-db-backup-patroni-simsdb-build: | print-status db-backup-build-patroni
+oc-db-backup-patroni-simsdb-build-delete: | print-status db-backup-build-delete-patroni
+
 # Create/delete backup structure
-# Create/delete config map shared accross postgresql and mongodb.
-oc-db-backup-configmap-init: | print-status db-backup-configmap
-oc-db-backup-configmap-delete: | print-status db-backup-configmap-delete
-# Create/delete structure for postgresql.
-oc-db-backup-init-postgresql: | print-status db-backup-build-postgresql db-backup-deploy-postgresql
-oc-db-backup-delete-postgresql: | print-status db-backup-build-delete-postgresql db-backup-deploy-delete-postgresql
-# Create/delete structure for mongodb.
-oc-db-backup-init-mongodb: | print-status db-backup-build-mongodb db-backup-deploy-mongodb
-oc-db-backup-delete-mongodb: | print-status db-backup-build-delete-mongodb db-backup-deploy-delete-mongodb
+# Create/delete structure for patroni.
+oc-db-backup-patroni-simsdb-deploy: | print-status db-backup-configmap db-backup-deploy-patroni
+oc-db-backup-patroni-simsdb-deploy-delete: | print-status db-backup-configmap-delete db-backup-deploy-delete-patroni
+
 
 print-status:
 	@echo " +---------------------------------------------------------+ "
@@ -490,22 +488,8 @@ deploy-forms:
 	$(call rollout_and_wait,dc/$(FORMS_NAME))
 
 # Create database backup structure (build/configmap/deploy)
-
-# Create the config map to be shared by POSTGRES and mongodb.
-db-backup-configmap:
-	test -n "$(NAMESPACE)"
-	test -n "$(BACKUP_POSTGRESQL_APP_NAME)"
-	test -n "$(BACKUP_MONGODB_APP_NAME)"
-	@echo "+\n++ Creating configmap resources for database backups on $(NAMESPACE)\n+"
-	oc -n $(NAMESPACE) create configmap $(BACKUP_CONFIGMAP_NAME) --from-file=./openshift/database-backup/backup.conf
-
-db-backup-configmap-delete:
-	test -n "$(NAMESPACE)"
-	@echo "+\n++ Removing configmap resoures for database backups on $(NAMESPACE)\n+"
-	oc -n $(NAMESPACE) delete configmap/$(BACKUP_CONFIGMAP_NAME)
-
 # Create the POSTGRES structure
-db-backup-build-postgresql:
+db-backup-build-patroni:
 	test -n "$(BUILD_NAMESPACE)"
 	test -n "$(BACKUP_POSTGRESQL_APP_NAME)"
 	@echo "+\n++ Creating build resources for database backups on $(BUILD_NAMESPACE)\n+"
@@ -514,14 +498,27 @@ db-backup-build-postgresql:
 		-p BASE_IMAGE_FOR_BUILD=artifacts.developer.gov.bc.ca/docker-remote/centos/postgresql-12-centos7:20200917-804ef01 \
 		| oc -n $(BUILD_NAMESPACE) apply -f -
 
-db-backup-build-delete-postgresql:
+db-backup-build-delete-patroni:
 	test -n "$(NAMESPACE)"
 	test -n "$(BUILD_NAMESPACE)"
 	test -n "$(BACKUP_POSTGRESQL_APP_NAME)"
 	@echo "+\n++ Removing build resoures for database backups on $(NAMESPACE)\n+"
 	oc -n $(BUILD_NAMESPACE) delete is/$(BACKUP_POSTGRESQL_APP_NAME) bc/$(BACKUP_POSTGRESQL_APP_NAME)
 
-db-backup-deploy-postgresql:
+# Create the config map to be shared by POSTGRES.
+db-backup-configmap:
+	test -n "$(NAMESPACE)"
+	test -n "$(BACKUP_POSTGRESQL_APP_NAME)"
+	@echo "+\n++ Creating configmap resources for database backups on $(NAMESPACE)\n+"
+	oc -n $(NAMESPACE) create configmap $(BACKUP_CONFIGMAP_NAME) --from-file=./openshift/database-backup/backup.conf
+
+db-backup-configmap-delete:
+	test -n "$(NAMESPACE)"
+	@echo "+\n++ Removing configmap resoures for database backups on $(NAMESPACE)\n+"
+	oc -n $(NAMESPACE) delete configmap/$(BACKUP_CONFIGMAP_NAME)
+
+# Deploy POSTGRES backup container.
+db-backup-deploy-patroni:
 	test -n "$(NAMESPACE)"
 	test -n "$(BUILD_NAMESPACE)"
 	test -n "$(BACKUP_POSTGRESQL_APP_NAME)"
@@ -538,14 +535,13 @@ db-backup-deploy-postgresql:
   	-p ENVIRONMENT_NAME=$(NAMESPACE) \
 		-p CONFIG_MAP_NAME=$(BACKUP_CONFIGMAP_NAME) \
 		-p VERIFICATION_VOLUME_NAME=$(BACKUP_POSTGRESQL_APP_NAME)-verification-pvc \
-		-p DATABASE_SERVER_NAME=PATRONI_MASTER \
-		-p DATABASE_SECRET_NAME=patroni-creds \
-		-p DATABASE_SECRET_USER_KEY_NAME=superuser-username \
-		-p DATABASE_SECRET_PASSWORD_KEY_NAME=superuser-password \
+		-p DATABASE_DEPLOYMENT_NAME=patroni-creds \
+		-p DATABASE_USER_KEY_NAME=superuser-username \
+		-p DATABASE_PASSWORD_KEY_NAME=superuser-password \
   	-p ENVIRONMENT_FRIENDLY_NAME='SIMS $(NAMESPACE) POSTGRESQL DB Backups' \
 		| oc -n $(NAMESPACE) apply -f -	                                                                       
 
-db-backup-deploy-delete-postgresql:
+db-backup-deploy-delete-patroni:
 	test -n "$(NAMESPACE)"
 	test -n "$(BACKUP_POSTGRESQL_APP_NAME)"
 	@echo "+\n++ Removing deploy resoures for database backups on $(NAMESPACE)\n+"
@@ -557,60 +553,6 @@ db-backup-deploy-delete-postgresql:
 # The below PVCs are not deleted.
 # pvc/$(BACKUP_POSTGRESQL_APP_NAME)-pvc \
 # pvc/$(BACKUP_POSTGRESQL_APP_NAME)-verification-pvc \
-	
-# Create the MONGODB structure
-db-backup-build-mongodb:
-	test -n "$(BUILD_NAMESPACE)"
-	test -n "$(BACKUP_MONGODB_APP_NAME)"
-	@echo "+\n++ Creating build resources for database backups on $(BUILD_NAMESPACE)\n+"
-	oc -n $(BUILD_NAMESPACE) process -f ./openshift/database-backup/backup-build.yaml \
-		-p NAME=$(BACKUP_MONGODB_APP_NAME) OUTPUT_IMAGE_TAG=v1 \
-		-p BASE_IMAGE_FOR_BUILD=artifacts.developer.gov.bc.ca/redhat-docker-remote/rhscl/mongodb-36-rhel7 \
-		| oc -n $(BUILD_NAMESPACE) apply -f -
-
-db-backup-build-delete-mongodb:
-	test -n "$(NAMESPACE)"
-	test -n "$(BUILD_NAMESPACE)"
-	test -n "$(BACKUP_MONGODB_APP_NAME)"
-	@echo "+\n++ Removing build resoures for database backups on $(NAMESPACE)\n+"
-	oc -n $(BUILD_NAMESPACE) delete is/$(BACKUP_MONGODB_APP_NAME) bc/$(BACKUP_MONGODB_APP_NAME)
-
-db-backup-deploy-mongodb:
-	test -n "$(NAMESPACE)"
-	test -n "$(BUILD_NAMESPACE)"
-	test -n "$(BACKUP_MONGODB_APP_NAME)"
-	@echo "+\n++ Creating deploy config resoures for database backups on $(NAMESPACE)\n+"
-	oc -n $(NAMESPACE) process -f ./openshift/database-backup/backup-deploy.yaml \
-  	-p NAME=$(BACKUP_MONGODB_APP_NAME) \
-  	-p IMAGE_NAMESPACE=$(BUILD_NAMESPACE) \
-  	-p SOURCE_IMAGE_NAME=$(BACKUP_MONGODB_APP_NAME) \
-  	-p TAG_NAME=v1 \
-		-p FTP_SECRET_KEY=$(BACKUP_MONGODB_APP_NAME)-ftp-secret \
-  	-p BACKUP_VOLUME_NAME=$(BACKUP_MONGODB_APP_NAME)-pvc \
-		-p BACKUP_VOLUME_SIZE=5Gi \
-  	-p VERIFICATION_VOLUME_SIZE=1Gi \
-  	-p ENVIRONMENT_NAME=$(NAMESPACE) \
-		-p CONFIG_MAP_NAME=$(BACKUP_CONFIGMAP_NAME) \
-		-p VERIFICATION_VOLUME_NAME=$(BACKUP_MONGODB_APP_NAME)-verification-pvc \
-		-p DATABASE_SERVER_NAME=MONGO \
-		-p DATABASE_SECRET_NAME=mongodb-creds \
-		-p DATABASE_SECRET_USER_KEY_NAME=username \
-		-p DATABASE_SECRET_PASSWORD_KEY_NAME=password \
-  	-p ENVIRONMENT_FRIENDLY_NAME='SIMS $(NAMESPACE) MONGO DB Backups' \
-		| oc -n $(NAMESPACE) apply -f -
-
-db-backup-deploy-delete-mongodb:
-	test -n "$(NAMESPACE)"
-	test -n "$(BACKUP_MONGODB_APP_NAME)"
-	@echo "+\n++ Removing deploy resoures for database backups on $(NAMESPACE)\n+"
-	oc -n $(NAMESPACE) delete \
-  	secret/$(BACKUP_MONGODB_APP_NAME) \
-  	secret/$(BACKUP_MONGODB_APP_NAME)-ftp-secret \
-  	dc/$(BACKUP_MONGODB_APP_NAME) \
-  	networkpolicy/$(BACKUP_MONGODB_APP_NAME)
-# The below PVCs are not deleted.
-# pvc/$(BACKUP_MONGODB_APP_NAME)-pvc
-# pvc/$(BACKUP_MONGODB_APP_NAME)-verification-pvc
 
 # Remove redis and resources including secrets from openshift namespace.
 delete-redis:
