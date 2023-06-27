@@ -72,7 +72,7 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-getComplet
             ApplicationOfferingChangeRequestStatus.Approved,
         },
       );
-    // Student 4 has a in progress with student application offering change request with a different institution.
+    // Student 4 has an in progress with student application offering change request with a different institution.
     await saveFakeApplicationOfferingRequestChange(db.dataSource);
     // Student 5 has a declined by student application for the institution, that have a approved application offering change request.
     const applicationOfferingChange5 =
