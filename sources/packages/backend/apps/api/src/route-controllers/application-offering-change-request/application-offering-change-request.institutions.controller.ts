@@ -6,7 +6,8 @@ import { ClientTypeBaseRoute } from "../../types";
 import { getUserFullName } from "../../utilities";
 import {
   OfferingChangePaginationOptionsAPIInDTO,
-  OfferingChangePaginationRequestedOptionsAPIInDTO,
+  InprogressOfferingChangePaginationOptionsAPIInDTO,
+  CompletedOfferingChangePaginationOptionsAPIInDTO,
   PaginatedResultsAPIOutDTO,
 } from "../models/pagination.dto";
 import BaseController from "../BaseController";
@@ -78,7 +79,7 @@ export class ApplicationOfferingChangeRequestInstitutionsController extends Base
   @Get("in-progress")
   async getInProgressApplications(
     @Param("locationId", ParseIntPipe) locationId: number,
-    @Query() pagination: OfferingChangePaginationRequestedOptionsAPIInDTO,
+    @Query() pagination: InprogressOfferingChangePaginationOptionsAPIInDTO,
   ): Promise<
     PaginatedResultsAPIOutDTO<InProgressApplicationOfferingChangesAPIOutDTO>
   > {
@@ -119,7 +120,7 @@ export class ApplicationOfferingChangeRequestInstitutionsController extends Base
   @Get("completed")
   async getCompletedApplications(
     @Param("locationId", ParseIntPipe) locationId: number,
-    @Query() pagination: OfferingChangePaginationRequestedOptionsAPIInDTO,
+    @Query() pagination: CompletedOfferingChangePaginationOptionsAPIInDTO,
   ): Promise<
     PaginatedResultsAPIOutDTO<CompletedApplicationOfferingChangesAPIOutDTO>
   > {
