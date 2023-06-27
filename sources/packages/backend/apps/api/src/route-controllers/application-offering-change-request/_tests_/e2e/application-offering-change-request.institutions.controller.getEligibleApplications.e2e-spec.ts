@@ -46,7 +46,7 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-getEligibl
   });
 
   it(
-    `Should return all available eligible applications that can be requested for an application` +
+    `Should return all available eligible applications that can be requested for an application ` +
       `offering change for the location in ${FieldSortOrder.DESC} order of application number when requested.`,
     async () => {
       // Arrange
