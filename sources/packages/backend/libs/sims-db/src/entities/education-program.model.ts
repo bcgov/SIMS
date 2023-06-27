@@ -78,7 +78,7 @@ export class EducationProgram extends RecordDataModel {
   @Column({
     name: "other_regulatory_body",
   })
-  otherRegulatoryBody: string;
+  otherRegulatoryBody?: string;
   /**
    * How will this Program be delivered - On site.
    */
