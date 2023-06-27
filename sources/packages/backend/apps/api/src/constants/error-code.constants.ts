@@ -119,6 +119,11 @@ export const DUPLICATE_INSTITUTION_LOCATION_CODE =
  */
 export const DUPLICATE_SABC_CODE = "DUPLICATE_SABC_CODE";
 /**
+ * Entrance requirements options and none of the above cannot be selected at the same time.
+ */
+export const ENTRANCE_REQUIREMENTS_WRONG_STATE_CODE =
+  "ENTRANCE_REQUIREMENTS_WRONG_STATE_CODE";
+/**
  * Institution location not valid.
  */
 export const INSTITUTION_LOCATION_NOT_VALID = "INSTITUTION_LOCATION_NOT_VALID";

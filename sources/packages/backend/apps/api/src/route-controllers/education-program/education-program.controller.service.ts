@@ -24,6 +24,7 @@ import { FormNames } from "../../services/form/constants";
 import {
   EDUCATION_PROGRAM_NOT_FOUND,
   DUPLICATE_SABC_CODE,
+  ENTRANCE_REQUIREMENTS_WRONG_STATE_CODE,
 } from "../../constants";
 import { INSTITUTION_TYPE_BC_PRIVATE } from "@sims/sims-db/constant";
 import { ApiProcessError } from "../../types";
@@ -128,6 +129,11 @@ export class EducationProgramControllerService {
             new ApiProcessError(error.message, error.name),
           );
         }
+        if (error.name === ENTRANCE_REQUIREMENTS_WRONG_STATE_CODE) {
+          throw new UnprocessableEntityException(
+            new ApiProcessError(error.message, error.name),
+          );
+        }
       }
       throw error;
     }
@@ -171,6 +177,7 @@ export class EducationProgramControllerService {
       nocCode: program.nocCode,
       sabcCode: program.sabcCode,
       regulatoryBody: program.regulatoryBody,
+      otherRegulatoryBody: program.otherRegulatoryBody,
       programDeliveryTypes: {
         deliveredOnSite: program.deliveredOnSite,
         deliveredOnline: program.deliveredOnline,
@@ -194,6 +201,8 @@ export class EducationProgramControllerService {
         minHighSchool: program.minHighSchool,
         requirementsByInstitution: program.requirementsByInstitution,
         requirementsByBCITA: program.requirementsByBCITA,
+        noneOfTheAboveEntranceRequirements:
+          program.noneOfTheAboveEntranceRequirements,
       },
       hasWILComponent: program.hasWILComponent,
       isWILApproved: program.isWILApproved,

@@ -1,4 +1,10 @@
-import { Allow, IsDateString, IsNotEmpty, MaxLength } from "class-validator";
+import {
+  Allow,
+  IsDateString,
+  IsNotEmpty,
+  MaxLength,
+  ValidateIf,
+} from "class-validator";
 import {
   EntranceRequirements,
   ProgramDeliveryTypes,
@@ -8,6 +14,7 @@ import {
   ProgramStatus,
   ProgramIntensity,
 } from "@sims/sims-db";
+import { OTHER_REGULATING_BODY_MAX_LENGTH } from "apps/api/src/constants";
 
 /**
  * Education program complete information.
@@ -24,6 +31,7 @@ export class EducationProgramAPIOutDTO {
   sabcCode: string;
   programStatus: ProgramStatus;
   regulatoryBody: string;
+  otherRegulatoryBody: string;
   programDeliveryTypes: ProgramDeliveryTypes;
   deliveredOnlineAlsoOnsite?: string;
   sameOnlineCreditsEarned?: string;
@@ -100,6 +108,8 @@ export class EducationProgramAPIInDTO {
   sabcCode: string;
   @Allow()
   regulatoryBody: string;
+  @Allow()
+  otherRegulatoryBody: string;
   @Allow()
   programDeliveryTypes: ProgramDeliveryTypes;
   @Allow()

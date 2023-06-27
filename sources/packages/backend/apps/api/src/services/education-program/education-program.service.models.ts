@@ -10,6 +10,7 @@ export interface EntranceRequirements {
   minHighSchool: boolean;
   requirementsByInstitution: boolean;
   requirementsByBCITA: boolean;
+  noneOfTheAboveEntranceRequirements: boolean;
 }
 
 export interface SaveEducationProgram {
@@ -20,6 +21,7 @@ export interface SaveEducationProgram {
   nocCode: string;
   sabcCode: string;
   regulatoryBody: string;
+  otherRegulatoryBody: string;
   programDeliveryTypes: ProgramDeliveryTypes;
   deliveredOnlineAlsoOnsite?: string;
   sameOnlineCreditsEarned?: string;
@@ -35,6 +37,7 @@ export interface SaveEducationProgram {
   isAviationProgram?: string;
   minHoursWeekAvi?: string;
   entranceRequirements: EntranceRequirements;
+  noneOfTheAboveEntranceRequirements: boolean;
   hasWILComponent: string;
   isWILApproved?: string;
   wilProgramEligibility?: string;

@@ -23,6 +23,8 @@ import * as request from "supertest";
 import { FormService } from "../../../../services";
 import { TestingModule } from "@nestjs/testing";
 import { AppInstitutionsModule } from "../../../../app.institutions.module";
+import * as faker from "faker";
+import { ENTRANCE_REQUIREMENTS_WRONG_STATE_CODE } from "../../../../constants";
 
 describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", () => {
   let app: INestApplication;
@@ -61,8 +63,8 @@ describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", (
       cipCode: "11.1111",
       fieldOfStudyCode: "15",
       nocCode: "2174",
-      sabcCode: "PQP0",
-      institutionProgramCode: "DDD",
+      sabcCode: `${faker.random.alpha({ count: 3 })}1`,
+      institutionProgramCode: faker.random.alpha({ count: 3 }),
       programIntensity: "Full Time and Part Time",
       programDeliveryTypes: {
         deliveredOnSite: true,
@@ -70,12 +72,14 @@ describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", (
       },
       completionYears: "12WeeksToLessThan1Year",
       courseLoadCalculation: "credit",
-      regulatoryBody: "ptib",
+      regulatoryBody: "other",
+      otherRegulatoryBody: "Other RB test",
       entranceRequirements: {
         minHighSchool: true,
         hasMinimumAge: true,
         requirementsByInstitution: true,
         requirementsByBCITA: true,
+        noneOfTheAboveEntranceRequirements: false,
       },
       eslEligibility: "lessThan20",
       hasJointInstitution: "no",
@@ -123,6 +127,7 @@ describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", (
         nocCode: payload.nocCode,
         sabcCode: payload.sabcCode,
         regulatoryBody: payload.regulatoryBody,
+        otherRegulatoryBody: payload.otherRegulatoryBody,
         deliveredOnSite: payload.programDeliveryTypes.deliveredOnSite,
         deliveredOnline: payload.programDeliveryTypes.deliveredOnline,
         deliveredOnlineAlsoOnsite: null,
@@ -130,7 +135,6 @@ describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", (
         earnAcademicCreditsOtherInstitution: null,
         courseLoadCalculation: payload.courseLoadCalculation,
         completionYears: payload.completionYears,
-        hasMinimumAge: true,
         eslEligibility: payload.eslEligibility,
         hasJointInstitution: payload.hasJointInstitution,
         hasJointDesignatedInstitution: null,
@@ -140,9 +144,13 @@ describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", (
         minHoursWeek: null,
         isAviationProgram: null,
         minHoursWeekAvi: null,
-        minHighSchool: true,
-        requirementsByInstitution: true,
-        requirementsByBCITA: true,
+        hasMinimumAge: payload.entranceRequirements.hasMinimumAge,
+        minHighSchool: payload.entranceRequirements.minHighSchool,
+        requirementsByInstitution:
+          payload.entranceRequirements.requirementsByInstitution,
+        requirementsByBCITA: payload.entranceRequirements.requirementsByBCITA,
+        noneOfTheAboveEntranceRequirements:
+          payload.entranceRequirements.noneOfTheAboveEntranceRequirements,
         hasWILComponent: payload.hasWILComponent,
         isWILApproved: null,
         wilProgramEligibility: null,
@@ -160,6 +168,68 @@ describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", (
         submittedById: collegeFUser.id,
       }),
     );
+  });
+
+  it("Should not allow any entrance requirement option selected when 'none of the above' is selected.", async () => {
+    // Arrange
+    const payload = {
+      name: "Education Program test",
+      description: "Education Program description...",
+      credentialType: "undergraduateCertificate",
+      cipCode: "11.1111",
+      fieldOfStudyCode: "15",
+      nocCode: "2174",
+      sabcCode: `${faker.random.alpha({ count: 3 })}1`,
+      institutionProgramCode: faker.random.alpha({ count: 3 }),
+      programIntensity: "Full Time and Part Time",
+      programDeliveryTypes: {
+        deliveredOnSite: true,
+        deliveredOnline: false,
+      },
+      completionYears: "12WeeksToLessThan1Year",
+      courseLoadCalculation: "credit",
+      regulatoryBody: "other",
+      otherRegulatoryBody: "Other RB test",
+      entranceRequirements: {
+        minHighSchool: true,
+        hasMinimumAge: false,
+        requirementsByInstitution: false,
+        requirementsByBCITA: false,
+        noneOfTheAboveEntranceRequirements: true,
+      },
+      eslEligibility: "lessThan20",
+      hasJointInstitution: "no",
+      hasWILComponent: "no",
+      hasTravel: "no",
+      hasIntlExchange: "no",
+      programDeclaration: true,
+      programStatus: ProgramStatus.Approved,
+      hasOfferings: false,
+    };
+    const formService = await getProviderInstanceForModule(
+      testingModule,
+      AppInstitutionsModule,
+      FormService,
+    );
+    formService.dryRunSubmission = jest
+      .fn()
+      .mockResolvedValue({ valid: true, data: { data: payload } });
+    const institutionUserToken = await getInstitutionToken(
+      InstitutionTokenTypes.CollegeFUser,
+    );
+    const endpoint = "/institutions/education-program";
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .post(endpoint)
+      .send(payload)
+      .auth(institutionUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.UNPROCESSABLE_ENTITY)
+      .expect({
+        message:
+          "Entrance requirements options and none of the above cannot be selected at the same time.",
+        errorType: ENTRANCE_REQUIREMENTS_WRONG_STATE_CODE,
+      });
   });
 
   afterAll(async () => {
