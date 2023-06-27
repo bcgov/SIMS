@@ -79,7 +79,7 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-getEligibl
       await saveFakeApplicationOfferingRequestChange(db.dataSource, {
         institutionLocation: collegeFLocation,
       });
-      // Student 6 has a completed application for the institution, that have a approved application offering change request.
+      // Student 6 has a completed application for the institution, that have an approved application offering change request.
       const applicationOfferingChange6 =
         await saveFakeApplicationOfferingRequestChange(
           db.dataSource,

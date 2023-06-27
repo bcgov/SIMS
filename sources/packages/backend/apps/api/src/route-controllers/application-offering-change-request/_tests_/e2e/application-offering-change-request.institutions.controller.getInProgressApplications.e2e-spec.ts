@@ -75,7 +75,7 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-getInProgr
       );
     // Student 4 has an in progress with student application offering change request with a different institution.
     await saveFakeApplicationOfferingRequestChange(db.dataSource);
-    // Student 5 has an completed application for the institution, that have a approved application offering change request.
+    // Student 5 has an completed application for the institution, that have an approved application offering change request.
     await saveFakeApplicationOfferingRequestChange(
       db.dataSource,
       {
