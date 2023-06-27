@@ -43,7 +43,6 @@ describe("InstitutionAESTController(e2e)-createInstitution", () => {
         provinceState: "BC",
         canadaPostalCode: "V1V1V1",
       },
-      clientType: "aest",
     };
     const endpoint = "/aest/institution";
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);

@@ -5,8 +5,10 @@ import {
   ProgramInfoStatus,
   StudyBreakCOE,
 } from "@/types";
+import { Expose } from "class-transformer";
 
-export interface ConfirmationOfEnrollmentAPIInDTO {
+export class ConfirmationOfEnrollmentAPIInDTO {
+  @Expose()
   tuitionRemittanceAmount: number;
 }
 

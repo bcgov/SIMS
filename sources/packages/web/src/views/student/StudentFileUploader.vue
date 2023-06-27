@@ -48,6 +48,7 @@ export default defineComponent({
   setup() {
     const reloadDocuments = ref(false);
     const formioUtils = useFormioUtils();
+    const { excludeExtraneousValues } = useFormioUtils();
     const snackBar = useSnackBar();
     const processing = ref(false);
 
@@ -56,9 +57,13 @@ export default defineComponent({
     ) => {
       try {
         processing.value = true;
+        const submittedForm = excludeExtraneousValues(
+          StudentFileUploaderInfoAPIInDTO,
+          form.data,
+        );
         const associatedFiles = formioUtils.getAssociatedFiles(form);
         const payload: StudentFileUploaderAPIInDTO = {
-          submittedForm: form.data,
+          submittedForm,
           associatedFiles,
         };
         await StudentService.shared.saveStudentFiles(payload);

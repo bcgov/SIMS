@@ -7,6 +7,7 @@ import "primevue/resources/primevue.min.css";
 import "primeicons/primeicons.css";
 import "primeflex/primeflex.css";
 
+import "reflect-metadata";
 import { createApp } from "vue";
 import vuetify from "./plugins/vuetify";
 import App from "./App.vue";

@@ -5,7 +5,7 @@ export const INVALID_OPERATION_IN_THE_CURRENT_STATUS =
   "INVALID_OPERATION_IN_THE_CURRENT_STATUS";
 
 export interface ScholasticStandingDataAPIInDTO {
-  scholasticStanding: string;
+  scholasticStandingChangeType: string;
   dateOfChange?: string;
   booksAndSupplies?: number;
   dateOfCompletion?: string;

@@ -21,11 +21,11 @@ import { useRouter } from "vue-router";
 import { ClientIdType, Role } from "@/types";
 import {
   InstitutionDetailAPIOutDTO,
-  InstitutionContactAPIInDTO,
+  InstitutionProfileAPIInDTO,
 } from "@/services/http/dto";
 import { InstitutionService } from "@/services/InstitutionService";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
-import { useSnackBar } from "@/composables";
+import { useFormioUtils, useSnackBar } from "@/composables";
 import InstitutionProfileForm from "@/components/institutions/profile/InstitutionProfileForm.vue";
 
 export default defineComponent({
@@ -39,16 +39,21 @@ export default defineComponent({
   setup(props) {
     const snackBar = useSnackBar();
     const router = useRouter();
+    const { excludeExtraneousValues } = useFormioUtils();
     const institutionProfileModel = ref({} as InstitutionDetailAPIOutDTO);
     const institutionProfileRoute = {
       name: AESTRoutesConst.INSTITUTION_PROFILE,
       params: { institutionId: props.institutionId },
     };
 
-    const updateInstitution = async (data: InstitutionContactAPIInDTO) => {
+    const updateInstitution = async (data: InstitutionProfileAPIInDTO) => {
       try {
-        await InstitutionService.shared.updateInstitution(
+        const typedData = excludeExtraneousValues(
+          InstitutionProfileAPIInDTO,
           data,
+        );
+        await InstitutionService.shared.updateInstitution(
+          typedData,
           props.institutionId,
         );
         snackBar.success("Institution successfully updated!");

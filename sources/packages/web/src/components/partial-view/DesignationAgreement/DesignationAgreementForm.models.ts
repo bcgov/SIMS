@@ -20,7 +20,7 @@ export interface DesignationLocationsListItem {
   locationName: string;
   locationAddress: string;
   requestForDesignation: boolean;
-  approvedForDesignation?: boolean;
+  approvedForDesignation: boolean;
 }
 
 /**
@@ -45,4 +45,30 @@ export interface DesignationModel {
   isBCPrivate: boolean;
   designationStatus?: DesignationAgreementStatus;
   designationStatusClass?: string;
+}
+
+/**
+ * Details for approve or update an approved designation agreement.
+ */
+export interface UpdateDesignationDetailsModel {
+  designationStatus: DesignationAgreementStatus;
+  startDate?: string;
+  endDate?: string;
+  locationsDesignations?: UpdateDesignationLocationsListItem[];
+  note: string;
+  existingDesignationLocation: boolean;
+}
+
+/**
+ * Location item for a designation approval or an update for
+ * an approved designation.
+ */
+export interface UpdateDesignationLocationsListItem {
+  locationId: number;
+  locationName: string;
+  locationAddress: string;
+  requestForDesignation: boolean;
+  approvedForDesignation?: boolean;
+  approved: boolean;
+  existingDesignationLocation: boolean;
 }

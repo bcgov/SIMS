@@ -7,6 +7,7 @@ import {
   AddressDetailsFormAPIDTO,
   AddressAPIOutDTO,
 } from "@/services/http/dto";
+import { Expose } from "class-transformer";
 
 export interface InstitutionLocationFormAPIInDTO
   extends AddressDetailsFormAPIDTO {
@@ -18,18 +19,56 @@ export interface InstitutionLocationFormAPIInDTO
   primaryContactPhone: string;
 }
 
-export interface InstitutionLocationPrimaryContactAPIInDTO {
+export class InstitutionLocationPrimaryContactAPIInDTO {
+  @Expose()
   primaryContactFirstName: string;
+  @Expose()
   primaryContactLastName: string;
+  @Expose()
   primaryContactEmail: string;
+  @Expose()
   primaryContactPhone: string;
 }
 
-export interface InstitutionLocationAPIInDTO
-  extends AddressDetailsFormAPIDTO,
-    InstitutionLocationPrimaryContactAPIInDTO {
+export class InstitutionLocationAPIInDTO
+  implements
+    AddressDetailsFormAPIDTO,
+    InstitutionLocationPrimaryContactAPIInDTO
+{
+  @Expose()
   locationName: string;
+  @Expose()
   institutionCode: string;
+  // From InstitutionLocationPrimaryContactAPIInDTO.
+  @Expose()
+  primaryContactFirstName: string;
+  @Expose()
+  primaryContactLastName: string;
+  @Expose()
+  primaryContactEmail: string;
+  @Expose()
+  primaryContactPhone: string;
+  // From InstitutionLocationPrimaryContactAPIInDTO.
+  @Expose()
+  addressLine1: string;
+  @Expose()
+  addressLine2?: string;
+  @Expose()
+  city: string;
+  @Expose()
+  country: string;
+  @Expose()
+  postalCode: string;
+  @Expose()
+  provinceState?: string;
+  @Expose()
+  canadaPostalCode?: string;
+  @Expose()
+  otherPostalCode?: string;
+  @Expose()
+  selectedCountry?: string;
+  @Expose()
+  otherCountry?: string;
 }
 
 export interface InstitutionLocationFormAPIOutDTO

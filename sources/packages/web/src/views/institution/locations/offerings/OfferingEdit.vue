@@ -77,12 +77,12 @@
 import { useRouter } from "vue-router";
 import { EducationProgramOfferingService } from "@/services/EducationProgramOfferingService";
 import { onMounted, ref, computed, defineComponent } from "vue";
-import { OfferingFormModes, OfferingStatus } from "@/types";
+import { OfferingFormModel, OfferingFormModes, OfferingStatus } from "@/types";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
-import { ModalDialog, useSnackBar } from "@/composables";
+import { ModalDialog, useFormioUtils, useSnackBar } from "@/composables";
 import {
   EducationProgramOfferingAPIInDTO,
-  EducationProgramOfferingAPIOutDTO,
+  EducationProgramOfferingBasicDataAPIInDTO,
   OfferingAssessmentAPIInDTO,
 } from "@/services/http/dto";
 import ProgramOfferingDetailHeader from "@/components/common/ProgramOfferingDetailHeader.vue";
@@ -115,6 +115,7 @@ export default defineComponent({
   setup(props) {
     const router = useRouter();
     const snackBar = useSnackBar();
+    const { excludeExtraneousValues } = useFormioUtils();
     const processing = ref(false);
     const formMode = ref(OfferingFormModes.Readonly);
     const items = [
@@ -132,7 +133,7 @@ export default defineComponent({
         },
       },
     ];
-    const initialData = ref({} as EducationProgramOfferingAPIOutDTO);
+    const initialData = ref({} as OfferingFormModel);
     const assessOfferingModalRef = ref(
       {} as ModalDialog<OfferingAssessmentAPIInDTO | boolean>,
     );
@@ -175,29 +176,42 @@ export default defineComponent({
           : OfferingFormModes.Editable;
       }
       formMode.value = mode;
-      initialData.value = programOffering;
+      initialData.value = programOffering as OfferingFormModel;
     };
 
     onMounted(async () => {
       await loadFormData();
     });
 
-    const submit = async (data: EducationProgramOfferingAPIInDTO) => {
+    const submit = async (
+      data:
+        | EducationProgramOfferingAPIInDTO
+        | EducationProgramOfferingBasicDataAPIInDTO,
+    ) => {
       try {
         processing.value = true;
+
         if (initialData.value.hasExistingApplication) {
+          const typedData = excludeExtraneousValues(
+            EducationProgramOfferingBasicDataAPIInDTO,
+            data,
+          );
           await EducationProgramOfferingService.shared.updateProgramOfferingBasicInformation(
             props.locationId,
             props.programId,
             props.offeringId,
-            data,
+            typedData,
           );
         } else {
+          const typedData = excludeExtraneousValues(
+            EducationProgramOfferingAPIInDTO,
+            data,
+          );
           await EducationProgramOfferingService.shared.updateProgramOffering(
             props.locationId,
             props.programId,
             props.offeringId,
-            data,
+            typedData,
           );
         }
         snackBar.success("Offering updated.");

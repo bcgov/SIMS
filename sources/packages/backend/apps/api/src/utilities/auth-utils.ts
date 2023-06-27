@@ -46,6 +46,7 @@ export function setGlobalPipes(app: INestApplication) {
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
+      forbidNonWhitelisted: true,
       transform: true,
       transformOptions: { enableImplicitConversion: true },
       disableErrorMessages: false,

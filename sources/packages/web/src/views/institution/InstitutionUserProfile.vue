@@ -39,9 +39,12 @@
 import { ref, onMounted, defineComponent } from "vue";
 import { useRouter } from "vue-router";
 import { UserService } from "../../services/UserService";
-import { useSnackBar } from "@/composables";
+import { useFormioUtils, useSnackBar } from "@/composables";
 import { FormIOForm } from "../../types";
-import { InstitutionUserDetailsAPIOutDTO } from "@/services/http/dto";
+import {
+  InstitutionUserDetailsAPIOutDTO,
+  InstitutionUserPersistAPIInDTO,
+} from "@/services/http/dto";
 import { InstitutionRoutesConst } from "../../constants/routes/RouteConstants";
 import { BannerTypes } from "@/types/contracts/Banner";
 
@@ -49,6 +52,7 @@ export default defineComponent({
   setup() {
     // Hooks
     const snackBar = useSnackBar();
+    const { excludeExtraneousValues } = useFormioUtils();
     const router = useRouter();
     // Data-bind
     const initialData = ref({});
@@ -59,9 +63,11 @@ export default defineComponent({
     ) => {
       try {
         processing.value = true;
-        await UserService.shared.updateInstitutionUser({
-          userEmail: form.data.userEmail,
-        });
+        const typedData = excludeExtraneousValues(
+          InstitutionUserPersistAPIInDTO,
+          form.data,
+        );
+        await UserService.shared.updateInstitutionUser(typedData);
         snackBar.success("Institution User successfully updated!");
         router.push({
           name: InstitutionRoutesConst.INSTITUTION_DASHBOARD,
