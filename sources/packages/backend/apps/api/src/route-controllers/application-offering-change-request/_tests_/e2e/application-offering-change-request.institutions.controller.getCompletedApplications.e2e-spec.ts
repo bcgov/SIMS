@@ -56,11 +56,11 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-getComplet
         applicationStatus: ApplicationStatus.Completed,
       },
     );
-    // Student 2 has a in progress with student application offering change request for the institution,
+    // Student 2 has an in-progress with student application offering a change request for the institution.
     await saveFakeApplicationOfferingRequestChange(db.dataSource, {
       institutionLocation: collegeFLocation,
     });
-    // Student 3 has a approved application offering change request for the institution,
+    // Student 3 has a approved application offering change request for the institution.
     const applicationOfferingChange3 =
       await saveFakeApplicationOfferingRequestChange(
         db.dataSource,
@@ -72,7 +72,7 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-getComplet
             ApplicationOfferingChangeRequestStatus.Approved,
         },
       );
-    // Student 4 has a in progress with student application offering change request with a different institution,
+    // Student 4 has a in progress with student application offering change request with a different institution.
     await saveFakeApplicationOfferingRequestChange(db.dataSource);
     // Student 5 has a declined by student application for the institution, that have a approved application offering change request.
     const applicationOfferingChange5 =
@@ -172,7 +172,7 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-getComplet
   it("Should return only matching completed application offering changes for the location when searched.", async () => {
     // Arrange
 
-    // Student 1 has a approved application offering change request for the institution,
+    // Student 1 has a approved application offering change request for the institution.
     const applicationOfferingChange1 =
       await saveFakeApplicationOfferingRequestChange(
         db.dataSource,
@@ -184,7 +184,7 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-getComplet
             ApplicationOfferingChangeRequestStatus.Approved,
         },
       );
-    // Student 2 has a approved with student application offering change request with a different institution,
+    // Student 2 has a approved with student application offering change request with a different institution.
     const applicationOfferingChange2 =
       await saveFakeApplicationOfferingRequestChange(db.dataSource, undefined, {
         applicationOfferingChangeRequestStatus:

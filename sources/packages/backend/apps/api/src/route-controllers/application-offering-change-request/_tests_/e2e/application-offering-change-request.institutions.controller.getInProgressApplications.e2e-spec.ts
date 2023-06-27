@@ -56,12 +56,12 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-getInProgr
         applicationStatus: ApplicationStatus.Completed,
       },
     );
-    // Student 2 has a in progress with student application offering change request for the institution,
+    // Student 2 has an in progress with student application offering change request for the institution.
     const applicationOfferingChange2 =
       await saveFakeApplicationOfferingRequestChange(db.dataSource, {
         institutionLocation: collegeFLocation,
       });
-    // Student 3 has a in progress with SABC application offering change request for the institution,
+    // Student 3 has an in progress with SABC application offering change request for the institution.
     const applicationOfferingChange3 =
       await saveFakeApplicationOfferingRequestChange(
         db.dataSource,
@@ -73,9 +73,9 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-getInProgr
             ApplicationOfferingChangeRequestStatus.InProgressWithSABC,
         },
       );
-    // Student 4 has a in progress with student application offering change request with a different institution,
+    // Student 4 has an in progress with student application offering change request with a different institution.
     await saveFakeApplicationOfferingRequestChange(db.dataSource);
-    // Student 5 has a completed application for the institution, that have a approved application offering change request.
+    // Student 5 has an completed application for the institution, that have a approved application offering change request.
     await saveFakeApplicationOfferingRequestChange(
       db.dataSource,
       {
@@ -132,11 +132,11 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-getInProgr
   it("Should return only matching in progress application offering changes for the location when searched.", async () => {
     // Arrange
 
-    // Student 1 has a in progress with student application offering change request for the institution,
+    // Student 1 has an in progress with student application offering change request for the institution.
     await saveFakeApplicationOfferingRequestChange(db.dataSource, {
       institutionLocation: collegeFLocation,
     });
-    // Student 2 has a in progress with SABC application offering change request for the institution,
+    // Student 2 has an in progress with SABC application offering change request for the institution.
     const applicationOfferingChange2 =
       await saveFakeApplicationOfferingRequestChange(
         db.dataSource,
