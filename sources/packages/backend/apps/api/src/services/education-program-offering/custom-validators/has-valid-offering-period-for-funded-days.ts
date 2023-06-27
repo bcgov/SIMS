@@ -55,8 +55,8 @@ class HasValidOfferingPeriodForFundedDaysConstraint
  * allowed study period amount of days.
  * @param startPeriodProperty property of the model that identifies the offering start date.
  * @param endPeriodProperty property of the model that identifies the offering end date.
- * @param validationOptions validations options.
  * @param offeringMinDaysAllowed study period minimum length in number of days.
+ * @param validationOptions validations options.
  * @returns true if the study period is valid, otherwise, false.
  */
 export function HasValidOfferingPeriodForFundedDays(

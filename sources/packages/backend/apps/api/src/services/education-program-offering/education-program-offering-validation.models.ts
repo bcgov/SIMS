@@ -46,8 +46,8 @@ import {
   OFFERING_STUDY_BREAK_MAX_DAYS,
   OFFERING_STUDY_BREAK_MIN_DAYS,
   OFFERING_STUDY_PERIOD_MAX_DAYS,
-  FT_OFFERING_STUDY_PERIOD_MIN_DAYS,
-  PT_OFFERING_STUDY_PERIOD_MIN_DAYS,
+  OFFERING_STUDY_PERIOD_MIN_DAYS_FULL_TIME,
+  OFFERING_STUDY_PERIOD_MIN_DAYS_PART_TIME,
   OFFERING_YEAR_OF_STUDY_MAX_VALUE,
   OFFERING_YEAR_OF_STUDY_MIN_VALUE,
 } from "../../utilities";
@@ -327,9 +327,9 @@ const studyEndDateProperty = (offering: OfferingValidationModel) =>
  */
 const studyPeriodMinLength = (offering: OfferingValidationModel) => {
   if (offering.offeringIntensity === OfferingIntensity.fullTime) {
-    return FT_OFFERING_STUDY_PERIOD_MIN_DAYS;
+    return OFFERING_STUDY_PERIOD_MIN_DAYS_FULL_TIME;
   }
-  return PT_OFFERING_STUDY_PERIOD_MIN_DAYS;
+  return OFFERING_STUDY_PERIOD_MIN_DAYS_PART_TIME;
 };
 
 /**
