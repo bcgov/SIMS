@@ -59,7 +59,7 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-getEligibl
           applicationStatus: ApplicationStatus.Completed,
         },
       );
-      // Student 2 has a completed application to the institution.
+      // Student 2 has a completed application to the institution, which will be archived.
       const application2 = await saveFakeApplicationDisbursements(
         db.dataSource,
         { institutionLocation: collegeFLocation },
@@ -93,9 +93,11 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-getEligibl
         );
       const application6 = applicationOfferingChange6.application;
 
+      // Set application2 as archived.
+      application2.isArchived = true;
+
       application1.applicationNumber = "1000000000";
-      application2.applicationNumber = "1000000001";
-      application6.applicationNumber = "1000000002";
+      application6.applicationNumber = "1000000001";
       await db.application.save([application1, application2, application6]);
 
       const endpoint = `/institutions/location/${collegeFLocation.id}/application-offering-change-request/available?page=0&pageLimit=10&sortField=applicationNumber&sortOrder=${FieldSortOrder.DESC}`;
@@ -120,15 +122,6 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-getEligibl
               fullName: getUserFullName(application6.student.user),
             },
             {
-              applicationNumber: application2.applicationNumber,
-              applicationId: application2.id,
-              studyStartDate:
-                application2.currentAssessment.offering.studyStartDate,
-              studyEndDate:
-                application2.currentAssessment.offering.studyEndDate,
-              fullName: getUserFullName(application2.student.user),
-            },
-            {
               applicationNumber: application1.applicationNumber,
               applicationId: application1.id,
               studyStartDate:
@@ -138,7 +131,7 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-getEligibl
               fullName: getUserFullName(application1.student.user),
             },
           ],
-          count: 3,
+          count: 2,
         });
     },
   );
