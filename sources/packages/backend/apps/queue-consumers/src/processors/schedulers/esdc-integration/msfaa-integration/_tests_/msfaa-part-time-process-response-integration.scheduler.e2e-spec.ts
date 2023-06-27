@@ -240,7 +240,6 @@ describe(
       // Find the updated MSFAA records previously created.
       const msfaaReactivatedRecord = await db.msfaaNumber.findOne({
         select: {
-          msfaaNumber: true,
           dateSigned: true,
           serviceProviderReceivedDate: true,
           cancelledDate: true,
