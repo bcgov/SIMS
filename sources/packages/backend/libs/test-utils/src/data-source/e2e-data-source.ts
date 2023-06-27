@@ -3,6 +3,7 @@ import {
   Application,
   ApplicationException,
   ApplicationExceptionRequest,
+  ApplicationOfferingChangeRequest,
   ApplicationStudentFile,
   COEDeniedReason,
   CRAIncomeVerification,
@@ -123,6 +124,9 @@ export function createE2EDataSources(dataSource: DataSource): E2EDataSources {
     supportingUser: dataSource.getRepository(SupportingUser),
     user: dataSource.getRepository(User),
     notification: dataSource.getRepository(Notification),
+    applicationOfferingChangeRequest: dataSource.getRepository(
+      ApplicationOfferingChangeRequest,
+    ),
   };
 }
 
@@ -178,4 +182,5 @@ export interface E2EDataSources {
   supportingUser: Repository<SupportingUser>;
   user: Repository<User>;
   notification: Repository<Notification>;
+  applicationOfferingChangeRequest: Repository<ApplicationOfferingChangeRequest>;
 }

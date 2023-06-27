@@ -143,7 +143,7 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-getEligibl
     },
   );
 
-  it("Should return only searched available eligible application that can be requested for an application offering change for the location when requested.", async () => {
+  it("Should return only matching available eligible application that can be requested for an application offering change for the location when searched.", async () => {
     // Arrange
 
     // Student 1 has a completed application to the institution.
