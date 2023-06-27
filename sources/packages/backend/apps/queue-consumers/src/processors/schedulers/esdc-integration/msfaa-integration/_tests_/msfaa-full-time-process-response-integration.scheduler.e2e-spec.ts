@@ -79,10 +79,10 @@ describe(
           { student },
           {
             msfaaState: MSFAAStates.CancelledOtherProvince,
-          },
-          {
-            msfaaNumber: FULL_TIME_SAMPLE_MSFAA_NUMBER,
-            offeringIntensity: OfferingIntensity.fullTime,
+            msfaaInitialValues: {
+              msfaaNumber: FULL_TIME_SAMPLE_MSFAA_NUMBER,
+              offeringIntensity: OfferingIntensity.fullTime,
+            },
           },
         ),
       );
@@ -91,9 +91,9 @@ describe(
         { student },
         {
           msfaaState: MSFAAStates.Pending,
-        },
-        {
-          offeringIntensity: OfferingIntensity.fullTime,
+          msfaaInitialValues: {
+            offeringIntensity: OfferingIntensity.fullTime,
+          },
         },
       );
       await db.msfaaNumber.save(currentMSFAA);

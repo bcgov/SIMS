@@ -61,10 +61,17 @@ export async function saveMSFAATestInputData(
   offering.institutionLocation.institutionCode = msfaaDataInput.institutionCode;
   await db.institutionLocation.save(offering.institutionLocation);
   // MSFAA.
-  const newMSFAANumber = createFakeMSFAANumber({
-    student,
-    referenceApplication,
-  });
+  const newMSFAANumber = createFakeMSFAANumber(
+    {
+      student,
+      referenceApplication,
+    },
+    {
+      msfaaInitialValues: {
+        offeringIntensity: msfaaDataInput.offeringIntensity,
+      },
+    },
+  );
   newMSFAANumber.msfaaNumber = msfaaDataInput.msfaaNumber;
   return db.msfaaNumber.save(newMSFAANumber);
 }

@@ -31,7 +31,7 @@ export enum MSFAAStates {
  * an MSFAA can have for the different scenarios along its lifetime. More than one
  * state can be combined, for instance, to create a signed MSFAA that was also
  * cancelled.
- * @param msfaaInitialValues initial msfaa record.
+ * - `msfaaInitialValues` initial msfaa record.
  * @returns MSFAA number record ready to be saved.
  */
 export function createFakeMSFAANumber(
@@ -41,18 +41,19 @@ export function createFakeMSFAANumber(
   },
   options?: {
     msfaaState?: MSFAAStates;
+    msfaaInitialValues?: Partial<MSFAANumber>;
   },
-  msfaaInitialValues?: Partial<MSFAANumber>,
 ): MSFAANumber {
   const now = new Date();
   const dateOnly = getISODateOnlyString(now);
   const msfaaNumber = new MSFAANumber();
   msfaaNumber.offeringIntensity =
-    msfaaInitialValues?.offeringIntensity ?? OfferingIntensity.fullTime;
+    options?.msfaaInitialValues?.offeringIntensity ??
+    OfferingIntensity.fullTime;
   msfaaNumber.student = relations.student;
   msfaaNumber.referenceApplication = relations?.referenceApplication;
   msfaaNumber.msfaaNumber =
-    msfaaInitialValues?.msfaaNumber ??
+    options?.msfaaInitialValues?.msfaaNumber ??
     faker.random
       .number({
         min: 1000000000,
