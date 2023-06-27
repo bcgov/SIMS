@@ -135,7 +135,7 @@ export class MSFAANumberService extends RecordDataModelService<MSFAANumber> {
     });
     if (!retrievedMSFAARecord) {
       throw new Error(
-        `MSFAA number not found for: ${msfaaNumber} and offering intensity: ${offeringIntensity}`,
+        `MSFAA number ${msfaaNumber} not found for offering intensity ${offeringIntensity}.`,
       );
     }
     const systemUser = await this.systemUsersService.systemUser();

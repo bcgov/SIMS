@@ -147,11 +147,11 @@ export class MSFAANumberSharedService {
    * @param offeringIntensity offering intensity.
    * @param auditUserId user that should be considered the one that is causing the changes.
    * individually based on, for instance, the Part time/Full time.
-   * @param options.
-   * - `msfaaNumberId` id of the msfaaNumber to be reactivated.
-   * - `msfaaNumber` msfaaNumber to be reactivated.
-   * - `dateSigned` date the msfaaNumber got signed.
-   * - `serviceProviderReceivedDate` serviceProviderReceivedDate date.
+   * @param options to reactivate msfaa record.
+   * - `existingMSFAA` containing the msfaaNumberId as the id of the msfaaNumber,
+   * msfaaNumber as the msfaaNumber of the msfaa record,
+   * dateSigned as the date the msfaaNumber got signed,
+   * and serviceProviderReceivedDate as the serviceProviderReceivedDate of the msfaa record to be reactivated.
    * @returns created MSFAA record.
    */
   private async internalActivateMSFAANumber(

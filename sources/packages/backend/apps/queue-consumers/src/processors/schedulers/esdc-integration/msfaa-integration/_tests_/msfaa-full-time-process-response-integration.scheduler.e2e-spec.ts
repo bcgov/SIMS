@@ -63,16 +63,16 @@ describe(
         { cancelledDate: IsNull() },
         { cancelledDate: getISODateOnlyString(new Date()) },
       );
-    });
-
-    it("Should reactivate a cancelled MSFAA when the same MSFAA is received in the response file and re-associate this reactivated MSFAA with all pending disbursements.", async () => {
-      // Arrange
-      // Create a cancelled MSFAA. The Msfaa number used for creating the cancelled Msfaa record is the same as the one used in the msfaa-full-time-file-with-reactivation-record.dat.
       // Ensuring that any previous runs of this test or any other test do not have the same Msfaa id as the one in the re-activation file.
       await db.msfaaNumber.update(
         { msfaaNumber: FULL_TIME_SAMPLE_MSFAA_NUMBER },
         { msfaaNumber: THROW_AWAY_MSFAA_NUMBER },
       );
+    });
+
+    it("Should reactivate a cancelled MSFAA when the same MSFAA is received in the response file and re-associate this reactivated MSFAA with all pending disbursements.", async () => {
+      // Arrange
+      // Create a cancelled MSFAA. The Msfaa number used for creating the cancelled Msfaa record is the same as the one used in the msfaa-full-time-file-with-reactivation-record.dat.
       const student = await saveFakeStudent(db.dataSource);
       const cancelledMSFAARecord = await db.msfaaNumber.save(
         createFakeMSFAANumber(
