@@ -213,7 +213,7 @@ describe(
           applicationStatus: ApplicationStatus.Completed,
           offeringIntensity: OfferingIntensity.partTime,
           createSecondDisbursement: true,
-          secondDisbursementInitialValues: {
+          firstDisbursementInitialValues: {
             disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
           },
         },

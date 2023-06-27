@@ -115,7 +115,7 @@ export async function saveFakeApplicationDisbursements(
       ? COEStatus.completed
       : COEStatus.required;
   firstSchedule.disbursementScheduleStatus =
-    options?.firstDisbursementInitialValues.disbursementScheduleStatus ??
+    options?.firstDisbursementInitialValues?.disbursementScheduleStatus ??
     DisbursementScheduleStatus.Pending;
   firstSchedule.msfaaNumber = relations?.msfaaNumber;
   firstSchedule.studentAssessment = savedApplication.currentAssessment;
@@ -130,7 +130,7 @@ export async function saveFakeApplicationDisbursements(
     });
     secondSchedule.coeStatus = COEStatus.required;
     secondSchedule.disbursementScheduleStatus =
-      options?.secondDisbursementInitialValues.disbursementScheduleStatus ??
+      options?.secondDisbursementInitialValues?.disbursementScheduleStatus ??
       DisbursementScheduleStatus.Pending;
     // First schedule is created with the current date as default.
     // Adding 60 days to create some time between the first and second schedules.

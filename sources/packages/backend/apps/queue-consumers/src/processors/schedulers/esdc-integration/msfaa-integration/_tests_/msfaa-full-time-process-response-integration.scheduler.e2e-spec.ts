@@ -108,7 +108,7 @@ describe(
           applicationStatus: ApplicationStatus.Completed,
           offeringIntensity: OfferingIntensity.fullTime,
           createSecondDisbursement: true,
-          secondDisbursementInitialValues: {
+          firstDisbursementInitialValues: {
             disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
           },
         },
@@ -123,7 +123,7 @@ describe(
           applicationStatus: ApplicationStatus.Completed,
           offeringIntensity: OfferingIntensity.fullTime,
           createSecondDisbursement: true,
-          secondDisbursementInitialValues: {
+          firstDisbursementInitialValues: {
             disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
           },
         },
