@@ -45,7 +45,7 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-getInProgr
     );
   });
 
-  it(`Should return all in progress application offering change request for the location in ${FieldSortOrder.DESC} order of name when requested.`, async () => {
+  it(`Should return all in progress application offering change requests for the location in ${FieldSortOrder.DESC} order of name when requested.`, async () => {
     // Arrange
 
     // Student 1 has a completed application to the institution.
@@ -129,7 +129,7 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-getInProgr
       });
   });
 
-  it("Should return only matching in progress application that can be requested for an application offering change for the location when searched.", async () => {
+  it("Should return only matching in progress application offering changes for the location when searched.", async () => {
     // Arrange
 
     // Student 1 has a in progress with student application offering change request for the institution,

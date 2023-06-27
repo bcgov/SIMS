@@ -45,7 +45,7 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-getComplet
     );
   });
 
-  it(`Should return all completed application offering change request for the location in ${FieldSortOrder.ASC} order of name when requested.`, async () => {
+  it(`Should return all completed application offering change requests for the location in ${FieldSortOrder.ASC} order of name when requested.`, async () => {
     // Arrange
 
     // Student 1 has a completed application to the institution.
@@ -169,7 +169,7 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-getComplet
       });
   });
 
-  it("Should return only matching completed application that can be requested for an application offering change for the location when searched.", async () => {
+  it("Should return only matching completed application offering changes for the location when searched.", async () => {
     // Arrange
 
     // Student 1 has a approved application offering change request for the institution,

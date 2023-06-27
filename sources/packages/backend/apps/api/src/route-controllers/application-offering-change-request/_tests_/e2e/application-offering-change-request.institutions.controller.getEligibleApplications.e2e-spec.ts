@@ -46,13 +46,13 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-getEligibl
   });
 
   it(
-    `Should return all available eligible application that can be requested for an application` +
+    `Should return all available eligible applications that can be requested for an application` +
       `offering change for the location in ${FieldSortOrder.DESC} order of application number when requested.`,
     async () => {
       // Arrange
 
       // Student 1 has a completed application to the institution.
-      const applicationA = await saveFakeApplicationDisbursements(
+      const application1 = await saveFakeApplicationDisbursements(
         db.dataSource,
         { institutionLocation: collegeFLocation },
         {
@@ -60,7 +60,7 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-getEligibl
         },
       );
       // Student 2 has a completed application to the institution.
-      const applicationB = await saveFakeApplicationDisbursements(
+      const application2 = await saveFakeApplicationDisbursements(
         db.dataSource,
         { institutionLocation: collegeFLocation },
         {
@@ -80,7 +80,7 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-getEligibl
         institutionLocation: collegeFLocation,
       });
       // Student 6 has a completed application for the institution, that have a approved application offering change request.
-      const applicationOfferingChange =
+      const applicationOfferingChange6 =
         await saveFakeApplicationOfferingRequestChange(
           db.dataSource,
           {
@@ -91,12 +91,12 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-getEligibl
               ApplicationOfferingChangeRequestStatus.Approved,
           },
         );
-      const applicationC = applicationOfferingChange.application;
+      const application6 = applicationOfferingChange6.application;
 
-      applicationA.applicationNumber = "1000000000";
-      applicationB.applicationNumber = "1000000001";
-      applicationC.applicationNumber = "1000000002";
-      await db.application.save([applicationA, applicationB, applicationC]);
+      application1.applicationNumber = "1000000000";
+      application2.applicationNumber = "1000000001";
+      application6.applicationNumber = "1000000002";
+      await db.application.save([application1, application2, application6]);
 
       const endpoint = `/institutions/location/${collegeFLocation.id}/application-offering-change-request/available?page=0&pageLimit=10&sortField=applicationNumber&sortOrder=${FieldSortOrder.DESC}`;
       const institutionUserToken = await getInstitutionToken(
@@ -111,31 +111,31 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-getEligibl
         .expect({
           results: [
             {
-              applicationNumber: applicationC.applicationNumber,
-              applicationId: applicationC.id,
+              applicationNumber: application6.applicationNumber,
+              applicationId: application6.id,
               studyStartDate:
-                applicationC.currentAssessment.offering.studyStartDate,
+                application6.currentAssessment.offering.studyStartDate,
               studyEndDate:
-                applicationC.currentAssessment.offering.studyEndDate,
-              fullName: getUserFullName(applicationC.student.user),
+                application6.currentAssessment.offering.studyEndDate,
+              fullName: getUserFullName(application6.student.user),
             },
             {
-              applicationNumber: applicationB.applicationNumber,
-              applicationId: applicationB.id,
+              applicationNumber: application2.applicationNumber,
+              applicationId: application2.id,
               studyStartDate:
-                applicationB.currentAssessment.offering.studyStartDate,
+                application2.currentAssessment.offering.studyStartDate,
               studyEndDate:
-                applicationB.currentAssessment.offering.studyEndDate,
-              fullName: getUserFullName(applicationB.student.user),
+                application2.currentAssessment.offering.studyEndDate,
+              fullName: getUserFullName(application2.student.user),
             },
             {
-              applicationNumber: applicationA.applicationNumber,
-              applicationId: applicationA.id,
+              applicationNumber: application1.applicationNumber,
+              applicationId: application1.id,
               studyStartDate:
-                applicationA.currentAssessment.offering.studyStartDate,
+                application1.currentAssessment.offering.studyStartDate,
               studyEndDate:
-                applicationA.currentAssessment.offering.studyEndDate,
-              fullName: getUserFullName(applicationA.student.user),
+                application1.currentAssessment.offering.studyEndDate,
+              fullName: getUserFullName(application1.student.user),
             },
           ],
           count: 3,
@@ -143,11 +143,11 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-getEligibl
     },
   );
 
-  it("Should return only matching available eligible application that can be requested for an application offering change for the location when searched.", async () => {
+  it("Should return only matching available eligible applications that can be requested for an application offering change for the location when searched.", async () => {
     // Arrange
 
     // Student 1 has a completed application to the institution.
-    const applicationA = await saveFakeApplicationDisbursements(
+    const application1 = await saveFakeApplicationDisbursements(
       db.dataSource,
       { institutionLocation: collegeFLocation },
       {
@@ -163,7 +163,7 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-getEligibl
       },
     );
 
-    const endpoint = `/institutions/location/${collegeFLocation.id}/application-offering-change-request/available?page=0&pageLimit=10&searchCriteria=${applicationA.applicationNumber}`;
+    const endpoint = `/institutions/location/${collegeFLocation.id}/application-offering-change-request/available?page=0&pageLimit=10&searchCriteria=${application1.applicationNumber}`;
     const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeFUser,
     );
@@ -176,12 +176,12 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-getEligibl
       .expect({
         results: [
           {
-            applicationNumber: applicationA.applicationNumber,
-            applicationId: applicationA.id,
+            applicationNumber: application1.applicationNumber,
+            applicationId: application1.id,
             studyStartDate:
-              applicationA.currentAssessment.offering.studyStartDate,
-            studyEndDate: applicationA.currentAssessment.offering.studyEndDate,
-            fullName: getUserFullName(applicationA.student.user),
+              application1.currentAssessment.offering.studyStartDate,
+            studyEndDate: application1.currentAssessment.offering.studyEndDate,
+            fullName: getUserFullName(application1.student.user),
           },
         ],
         count: 1,

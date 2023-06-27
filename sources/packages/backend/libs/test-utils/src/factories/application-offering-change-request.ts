@@ -12,7 +12,15 @@ import { createFakeEducationProgramOffering } from "./education-program-offering
 import { createFakeUser } from "./user";
 import * as faker from "faker";
 
-// todo: ann add comments
+/**
+ * Create and save a fake application offering request change record.
+ * @param dataSource manages the repositories to save the data.
+ * @param relations dependencies:
+ * - `institutionLocation` related location.
+ * @param options additional options:
+ * - `applicationOfferingChangeRequestStatus` application offering change request status.
+ * @returns created and saved application offering request change record.
+ */
 export async function saveFakeApplicationOfferingRequestChange(
   dataSource: DataSource,
   relations?: {
