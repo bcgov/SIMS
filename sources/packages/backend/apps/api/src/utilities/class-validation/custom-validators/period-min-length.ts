@@ -44,7 +44,7 @@ class PeriodMinLengthConstraint implements ValidatorConstraintInterface {
     const [, minDaysAllowed] = args.constraints;
     const minDaysAllowedValue =
       minDaysAllowed instanceof Function
-        ? (minDaysAllowed(args.object) as number)
+        ? minDaysAllowed(args.object)
         : minDaysAllowed;
     return minDaysAllowedValue as number;
   }
