@@ -24,7 +24,6 @@ import { FormService } from "../../../../services";
 import { TestingModule } from "@nestjs/testing";
 import { AppInstitutionsModule } from "../../../../app.institutions.module";
 import * as faker from "faker";
-import { ENTRANCE_REQUIREMENTS_WRONG_STATE_CODE } from "../../../../constants";
 
 describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", () => {
   let app: INestApplication;

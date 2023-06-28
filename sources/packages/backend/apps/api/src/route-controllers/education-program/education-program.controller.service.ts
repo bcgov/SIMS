@@ -24,7 +24,6 @@ import { FormNames } from "../../services/form/constants";
 import {
   EDUCATION_PROGRAM_NOT_FOUND,
   DUPLICATE_SABC_CODE,
-  ENTRANCE_REQUIREMENTS_WRONG_STATE_CODE,
 } from "../../constants";
 import { INSTITUTION_TYPE_BC_PRIVATE } from "@sims/sims-db/constant";
 import { ApiProcessError } from "../../types";
@@ -125,11 +124,6 @@ export class EducationProgramControllerService {
           throw new NotFoundException(error.message);
         }
         if (error.name === DUPLICATE_SABC_CODE) {
-          throw new UnprocessableEntityException(
-            new ApiProcessError(error.message, error.name),
-          );
-        }
-        if (error.name === ENTRANCE_REQUIREMENTS_WRONG_STATE_CODE) {
           throw new UnprocessableEntityException(
             new ApiProcessError(error.message, error.name),
           );
