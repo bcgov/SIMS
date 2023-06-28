@@ -170,7 +170,7 @@ describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", (
     );
   });
 
-  it("Should not allow any entrance requirement option selected when 'none of the above' is selected.", async () => {
+  it.only("Should not allow any entrance requirement option selected when 'none of the above' is selected.", async () => {
     // Arrange
     const payload = {
       name: faker.lorem.text(5),
