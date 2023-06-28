@@ -9,9 +9,6 @@ import { useAuth } from "..";
 export function useInstitutionAuth(rootStore?: Store<any>) {
   const store = rootStore ?? useStore();
 
-  const authorizations =
-    store.state.institution.authorizationsState?.authorizations ?? [];
-
   const { isAuthenticated } = useAuth();
   const isAuthenticatedInstitutionUser = computed(() => {
     return isAuthenticated.value && store.state.institution.userState.isActive;
@@ -21,7 +18,9 @@ export function useInstitutionAuth(rootStore?: Store<any>) {
     () => store.state.institution.userState.userFullName,
   );
   const userEmail = computed(() => store.state.institution.userState.email);
-  const userAuth = computed(() => authorizations);
+  const userAuth = computed(
+    () => store.state.institution.authorizationsState?.authorizations ?? [],
+  );
   const isLegalSigningAuthority = computed(() =>
     store.state.institution.authorizationsState?.authorizations.some(
       (auth: InstitutionUserAuthRolesAndLocation) =>
