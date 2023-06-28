@@ -28,7 +28,7 @@ import { InstitutionLocationFormAPIInDTO } from "@/services/http/dto";
 import { InstitutionService } from "../../services/InstitutionService";
 import { InstitutionRoutesConst } from "../../constants/routes/RouteConstants";
 
-import { useSnackBar } from "@/composables";
+import { useFormioUtils, useSnackBar } from "@/composables";
 import { ref, defineComponent } from "vue";
 import { FormIOForm, ApiProcessError } from "@/types";
 
@@ -45,14 +45,17 @@ export default defineComponent({
     // Hooks
     const store = useStore();
     const snackBar = useSnackBar();
+    const { excludeExtraneousValues } = useFormioUtils();
     const router = useRouter();
-    const submitted = async (
-      form: FormIOForm<InstitutionLocationFormAPIInDTO>,
-    ) => {
+    const submitted = async (form: FormIOForm<unknown>) => {
       processing.value = true;
       if (props.createMode) {
         try {
-          await InstitutionService.shared.createInstitutionLocation(form.data);
+          const typedData = excludeExtraneousValues(
+            InstitutionLocationFormAPIInDTO,
+            form.data,
+          );
+          await InstitutionService.shared.createInstitutionLocation(typedData);
           router.push({ name: InstitutionRoutesConst.MANAGE_LOCATIONS });
           store.dispatch("institution/getUserInstitutionLocationDetails");
           snackBar.success("Institution Location created Successfully!");
