@@ -58,8 +58,8 @@ describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", (
     // Arrange
     const programStatus = ProgramStatus.Approved;
     const payload = {
-      name: faker.lorem.text(5),
-      description: faker.lorem.text(5),
+      name: faker.lorem.words(5),
+      description: faker.lorem.words(5),
       credentialType: "undergraduateCertificate",
       cipCode: "11.1111",
       fieldOfStudyCode: "15",
@@ -170,12 +170,12 @@ describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", (
     );
   });
 
-  // TODO: Fix the problem that happens only in Github Actions
-  it.skip("Should not allow any entrance requirement option selected when 'none of the above' is selected.", async () => {
+  it("Should not allow any entrance requirement option selected when 'none of the above' is selected.", async () => {
     // Arrange
+    const programStatus = ProgramStatus.Approved;
     const payload = {
-      name: faker.lorem.text(5),
-      description: faker.lorem.text(5),
+      name: faker.lorem.words(5),
+      description: faker.lorem.words(5),
       credentialType: "undergraduateCertificate",
       cipCode: "11.1111",
       fieldOfStudyCode: "15",
@@ -204,17 +204,16 @@ describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", (
       hasTravel: "no",
       hasIntlExchange: "no",
       programDeclaration: true,
-      programStatus: ProgramStatus.Approved,
-      hasOfferings: false,
     };
     const formService = await getProviderInstanceForModule(
       testingModule,
       AppInstitutionsModule,
       FormService,
     );
-    formService.dryRunSubmission = jest
-      .fn()
-      .mockResolvedValue({ valid: true, data: { data: payload } });
+    formService.dryRunSubmission = jest.fn().mockResolvedValue({
+      valid: true,
+      data: { data: { ...payload, programStatus } },
+    });
     const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeFUser,
     );
