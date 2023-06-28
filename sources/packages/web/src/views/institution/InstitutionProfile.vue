@@ -34,7 +34,7 @@ import {
   InstitutionContactAPIInDTO,
 } from "@/services/http/dto";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
-import { useSnackBar } from "@/composables";
+import { useFormioUtils, useSnackBar } from "@/composables";
 import { useStore } from "vuex";
 import InstitutionProfileForm from "@/components/institutions/profile/InstitutionProfileForm.vue";
 import { BannerTypes } from "@/types";
@@ -45,13 +45,18 @@ export default defineComponent({
     // Hooks
     const store = useStore();
     const snackBar = useSnackBar();
+    const { excludeExtraneousValues } = useFormioUtils();
     const router = useRouter();
     // Data-bind
     const institutionProfileModel = ref({} as InstitutionDetailAPIOutDTO);
 
     const updateInstitution = async (data: InstitutionContactAPIInDTO) => {
       try {
-        await InstitutionService.shared.updateInstitution(data);
+        const typedData = excludeExtraneousValues(
+          InstitutionContactAPIInDTO,
+          data,
+        );
+        await InstitutionService.shared.updateInstitution(typedData);
         snackBar.success("Institution successfully updated!");
         await store.dispatch("institution/getInstitutionDetails");
         router.push({

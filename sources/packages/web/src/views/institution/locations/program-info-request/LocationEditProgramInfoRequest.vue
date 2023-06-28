@@ -49,7 +49,11 @@ import {
   PIR_OR_DATE_OVERLAP_ERROR,
   OFFERING_INTENSITY_MISMATCH,
 } from "@/constants";
-import { ProgramInfoRequestAPIOutDTO } from "@/services/http/dto";
+import {
+  CompleteProgramInfoRequestAPIInDTO,
+  DenyProgramInfoRequestAPIInDTO,
+  ProgramInfoRequestAPIOutDTO,
+} from "@/services/http/dto";
 
 export default defineComponent({
   props: {
@@ -219,17 +223,25 @@ export default defineComponent({
       try {
         processing.value = true;
         if (form.data.denyProgramInformationRequest) {
+          const typedData = formioUtils.excludeExtraneousValues(
+            DenyProgramInfoRequestAPIInDTO,
+            form.data,
+          );
           await ProgramInfoRequestService.shared.denyProgramInfoRequest(
             props.locationId,
             props.applicationId,
-            form.data,
+            typedData,
           );
           snackBar.success("Program Information Request denied successfully!");
         } else {
+          const typedData = formioUtils.excludeExtraneousValues(
+            CompleteProgramInfoRequestAPIInDTO,
+            form.data,
+          );
           await ProgramInfoRequestService.shared.completeProgramInfoRequest(
             props.locationId,
             props.applicationId,
-            form.data,
+            typedData,
           );
           snackBar.success(
             "Program Information Request completed successfully!",

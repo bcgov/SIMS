@@ -1,15 +1,19 @@
 import { FileOriginType, StudentPDStatus } from "@/types";
 import { ContactInformationAPIOutDTO } from "./Address.dto";
 import { AddressDetailsFormAPIDTO } from "./Common.dto";
+import { Expose } from "class-transformer";
 
 /**
  * Data saved while creating the student profile.
  * SIN validation not added to DTO because it is going
  * to be handled by the Form.IO dryRun validation.
  */
-export interface CreateStudentAPIInDTO extends AddressDetailsFormAPIDTO {
+export class CreateStudentAPIInDTO extends AddressDetailsFormAPIDTO {
+  @Expose()
   phone: string;
+  @Expose()
   sinNumber: string;
+  @Expose()
   gender: string;
 }
 
@@ -17,9 +21,15 @@ export interface CreateStudentAPIInDTO extends AddressDetailsFormAPIDTO {
  * Updates the student information that the student is allowed to change
  * in the solution. Other data must be edited externally (e.g. BCSC).
  */
-export interface UpdateStudentAPIInDTO extends AddressDetailsFormAPIDTO {
+export class UpdateStudentAPIInDTO extends AddressDetailsFormAPIDTO {
+  @Expose()
   phone: string;
+  @Expose()
   gender: string;
+  @Expose()
+  mode: string;
+  @Expose()
+  identityProvider: string;
 }
 
 export interface StudentProfileAPIOutDTO {
@@ -40,8 +50,10 @@ export interface StudentProfileAPIOutDTO {
 /**
  *  Student uploader interface
  */
-export interface StudentFileUploaderInfoAPIInDTO {
+export class StudentFileUploaderInfoAPIInDTO {
+  @Expose()
   documentPurpose: string;
+  @Expose()
   applicationNumber?: string;
 }
 

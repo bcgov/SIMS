@@ -1,3 +1,5 @@
+import { Expose } from "class-transformer";
+
 export interface BCeIDDetailsAPIOutDTO {
   user: UserDetailsAPIOutDTO;
   institution: InstitutionLocationDetailsAPIOutDTO;
@@ -36,6 +38,7 @@ export interface InstitutionUserDetailsAPIOutDTO {
   userEmail: string;
 }
 
-export interface InstitutionUserPersistAPIInDTO {
+export class InstitutionUserPersistAPIInDTO {
+  @Expose()
   userEmail: string;
 }

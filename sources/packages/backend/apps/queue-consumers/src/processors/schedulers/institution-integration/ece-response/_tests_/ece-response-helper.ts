@@ -1,9 +1,16 @@
-import { Institution, InstitutionLocation } from "@sims/sims-db";
+import {
+  Institution,
+  InstitutionLocation,
+  Notification,
+  NotificationMessageType,
+} from "@sims/sims-db";
 import {
   E2EDataSources,
   createFakeInstitution,
   createFakeInstitutionLocation,
 } from "@sims/test-utils";
+import * as faker from "faker";
+import { IsNull } from "typeorm";
 
 /**
  * Create institution locations to be used for testing.
@@ -17,6 +24,7 @@ export async function createInstitutionLocations(
   institutionLocationDECL: InstitutionLocation;
   institutionLocationSKIP: InstitutionLocation;
   institutionLocationFAIL: InstitutionLocation;
+  institutionLocationMULT: InstitutionLocation;
 }> {
   const institution = await e2eDataSources.institution.save(
     createFakeInstitution(),
@@ -31,17 +39,27 @@ export async function createInstitutionLocations(
     "DECL",
     e2eDataSources,
   );
-
   const institutionLocationSKIP = await findOrCreateInstitutionLocation(
     institution,
     "SKIP",
     e2eDataSources,
   );
-
   const institutionLocationFAIL = await findOrCreateInstitutionLocation(
     institution,
     "FAIL",
     e2eDataSources,
+  );
+  // Institution location to test disbursement with multiple detail records.
+  const institutionLocationMULT = await findOrCreateInstitutionLocation(
+    institution,
+    "MULT",
+    e2eDataSources,
+    // Multiple integration contacts.
+    {
+      initialValues: {
+        integrationContacts: [faker.internet.email(), faker.internet.email()],
+      },
+    },
   );
 
   return {
@@ -49,6 +67,7 @@ export async function createInstitutionLocations(
     institutionLocationDECL,
     institutionLocationSKIP,
     institutionLocationFAIL,
+    institutionLocationMULT,
   };
 }
 
@@ -58,12 +77,15 @@ export async function createInstitutionLocations(
  * @param institution institution.
  * @param institutionCode institution code.
  * @param e2eDataSources e2e data sources.
+ * @param options options.
+ * - `initialValues` initial values of institution location.
  * @returns institution location.
  */
 async function findOrCreateInstitutionLocation(
   institution: Institution,
   institutionCode: string,
   e2eDataSources: E2EDataSources,
+  options?: { initialValues?: Partial<InstitutionLocation> },
 ): Promise<InstitutionLocation> {
   let institutionLocation = await e2eDataSources.institutionLocation.findOne({
     select: { id: true, institutionCode: true },
@@ -72,11 +94,11 @@ async function findOrCreateInstitutionLocation(
   if (!institutionLocation) {
     const newInstitutionLocation = createFakeInstitutionLocation(institution);
     newInstitutionLocation.institutionCode = institutionCode;
-    institutionLocation = await e2eDataSources.institutionLocation.save(
-      newInstitutionLocation,
-    );
+    institutionLocation = newInstitutionLocation;
   }
-  return institutionLocation;
+  institutionLocation.integrationContacts = options?.initialValues
+    .integrationContacts ?? [faker.internet.email()];
+  return e2eDataSources.institutionLocation.save(institutionLocation);
 }
 
 /**
@@ -94,4 +116,23 @@ export async function enableIntegration(
     },
     { hasIntegration: true },
   );
+}
+
+/**
+ * Get all unsent ECE Response notifications.
+ * @param e2eDataSources e2e data sources.
+ * @returns Unsent ECE Response notifications.
+ */
+export async function getUnsentECEResponseNotifications(
+  e2eDataSources: E2EDataSources,
+): Promise<Notification[]> {
+  return e2eDataSources.notification.find({
+    select: { id: true },
+    where: {
+      notificationMessage: {
+        id: NotificationMessageType.ECEResponseFileProcessing,
+      },
+      dateSent: IsNull(),
+    },
+  });
 }

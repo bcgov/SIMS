@@ -1,0 +1,2 @@
+ALTER TABLE
+  sims.student_assessments DROP COLUMN application_offering_change_request_id;

@@ -19,7 +19,10 @@ import {
   SaveNotificationModel,
 } from "./notification.model";
 import { LoggerService, InjectLogger } from "@sims/utilities/logger";
-import { GCNotifyErrorResponse } from "./gc-notify.model";
+import {
+  NotificationEmailMessage,
+  GCNotifyErrorResponse,
+} from "./gc-notify.model";
 import { CustomNamedError, processInParallel } from "@sims/utilities";
 import { GC_NOTIFY_PERMANENT_FAILURE_ERROR } from "@sims/services/constants";
 
@@ -42,7 +45,8 @@ export class NotificationService extends RecordDataModelService<Notification> {
    * Saves all notifications.
    * @param notifications information to create the notifications.
    * @param auditUserId id of the user creating the notifications.
-   * @param entityManager optional repository that can be provided, for instance,
+   * @param options save notification options.
+   * - `entityManager` optional repository that can be provided, for instance,
    * to execute the command as part of an existing transaction. If not provided
    * the local repository will be used instead.
    * @returns created notification ids.
@@ -50,7 +54,9 @@ export class NotificationService extends RecordDataModelService<Notification> {
   async saveNotifications(
     notifications: SaveNotificationModel[],
     auditUserId: number,
-    entityManager: EntityManager,
+    options?: {
+      entityManager: EntityManager;
+    },
   ): Promise<number[]> {
     const newNotifications = notifications.map((notification) => ({
       user: { id: notification.userId } as User,
@@ -60,7 +66,8 @@ export class NotificationService extends RecordDataModelService<Notification> {
         id: notification.messageType,
       } as NotificationMessage,
     }));
-    const repository = entityManager?.getRepository(Notification) ?? this.repo;
+    const repository =
+      options?.entityManager?.getRepository(Notification) ?? this.repo;
     // Breaks the execution in chunks to allow the inserts of a huge amount of records.
     // During the tests the execution started to failed at 20,000 records. Even not being
     // the expected amount of records, the code will be able to process this amount under
@@ -123,7 +130,7 @@ export class NotificationService extends RecordDataModelService<Notification> {
     // Call GC Notify send email method.
     try {
       await this.gcNotifyService.sendEmailNotification(
-        notification.messagePayload,
+        notification.messagePayload as NotificationEmailMessage,
       );
       await this.updateNotification(notification.id);
       return true;

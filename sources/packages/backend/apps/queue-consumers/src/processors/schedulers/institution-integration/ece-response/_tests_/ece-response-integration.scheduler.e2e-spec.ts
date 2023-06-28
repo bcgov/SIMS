@@ -9,6 +9,7 @@ import { ECEResponseIntegrationScheduler } from "../ece-response-integration.sch
 import {
   E2EDataSources,
   createE2EDataSources,
+  createFakeDisbursementValue,
   formatDate,
   mockDownloadFiles,
   saveFakeApplicationDisbursements,
@@ -18,12 +19,19 @@ import { Job } from "bull";
 import * as path from "path";
 import { ECE_RESPONSE_FILE_NAME } from "@sims/integrations/constants";
 import { ProcessSummaryResult } from "@sims/integrations/models";
-import { ApplicationStatus, InstitutionLocation } from "@sims/sims-db";
+import {
+  ApplicationStatus,
+  COEStatus,
+  DisbursementValueType,
+  InstitutionLocation,
+} from "@sims/sims-db";
 import {
   createInstitutionLocations,
   enableIntegration,
+  getUnsentECEResponseNotifications,
 } from "./ece-response-helper";
 import { FILE_PARSING_ERROR } from "@sims/services/constants";
+import { IsNull } from "typeorm";
 
 describe(
   describeProcessorRootTest(QueueNames.ECEProcessResponseIntegration),
@@ -37,6 +45,8 @@ describe(
     let locationDECL: InstitutionLocation;
     let locationSKIP: InstitutionLocation;
     let locationFAIL: InstitutionLocation;
+    // Institution location to test disbursement with multiple detail records.
+    let locationMULT: InstitutionLocation;
 
     beforeAll(async () => {
       eceResponseMockDownloadFolder = path.join(
@@ -57,11 +67,13 @@ describe(
         institutionLocationDECL,
         institutionLocationSKIP,
         institutionLocationFAIL,
+        institutionLocationMULT,
       } = await createInstitutionLocations(db);
       locationCONF = institutionLocationCONF;
       locationDECL = institutionLocationDECL;
       locationSKIP = institutionLocationSKIP;
       locationFAIL = institutionLocationFAIL;
+      locationMULT = institutionLocationMULT;
     });
 
     beforeEach(async () => {
@@ -71,9 +83,16 @@ describe(
         { hasIntegration: true },
         { hasIntegration: false },
       );
+
+      // Update the date sent to current date to verify newly created notifications
+      // with date sent as null.
+      await db.notification.update(
+        { dateSent: IsNull() },
+        { dateSent: new Date() },
+      );
     });
 
-    it("Should process an ECE response file and confirm the enrolment when the disbursement and application is valid.", async () => {
+    it("Should process an ECE response file and confirm the enrolment and create notification when the disbursement and application is valid.", async () => {
       // Arrange
       // Enable integration for institution location
       // used for test.
@@ -121,6 +140,7 @@ describe(
         `Starting download of file ${confirmEnrolmentResponseFile}.`,
         `Disbursement ${disbursement.id}, enrolment confirmed.`,
         `The file ${confirmEnrolmentResponseFile} has been deleted after processing.`,
+        "Notification has been created to send email to integration contacts.",
         "Total file parsing errors: 0",
         "Total detail records found: 2",
         "Total disbursements found: 2",
@@ -135,9 +155,129 @@ describe(
       expect(processResult).toStrictEqual([expectedResult]);
       // Expect the delete method to be called.
       expect(sftpClientMock.delete).toHaveBeenCalled();
+      // Expect the notifications to be created.
+      const notifications = await getUnsentECEResponseNotifications(db);
+      // TODO: When bulk send email is implemented, we must always expect 1 notification
+      // record to be created.
+      expect(notifications).toHaveLength(
+        locationCONF.integrationContacts.length,
+      );
+      const updatedDisbursement = await db.disbursementSchedule.findOne({
+        select: { coeStatus: true },
+        where: { id: disbursement.id },
+      });
+      // Expect the COE status of the updated disbursement to be completed.
+      expect(updatedDisbursement.coeStatus).toBe(COEStatus.completed);
     });
 
-    it("Should process an ECE response file and decline the enrolment when the disbursement and application is valid.", async () => {
+    it("Should process an ECE response file and confirm the enrolment and create notification when a disbursement has multiple detail records.", async () => {
+      // Arrange
+      // Enable integration for institution location
+      // used for test.
+      await enableIntegration(locationMULT, db);
+      const confirmEnrolmentResponseFile = path.join(
+        process.env.INSTITUTION_RESPONSE_FOLDER,
+        locationMULT.institutionCode,
+        ECE_RESPONSE_FILE_NAME,
+      );
+
+      // Create disbursement to confirm enrolment.
+      const application = await saveFakeApplicationDisbursements(
+        db.dataSource,
+        {
+          // Save disbursement with custom award value to validate tuition remittance.
+          disbursementValues: [
+            createFakeDisbursementValue(
+              DisbursementValueType.CanadaLoan,
+              "CSLF",
+              1000,
+            ),
+          ],
+        },
+        {
+          applicationStatus: ApplicationStatus.Enrolment,
+        },
+      );
+
+      const [disbursement] =
+        application.currentAssessment.disbursementSchedules;
+
+      // Queued job.
+      const job = createMock<Job<void>>();
+
+      const disbursementId = disbursement.id.toString().padStart(10, "0");
+      const applicationNumber = application.applicationNumber;
+      const currentDate = formatDate(new Date(), "YYYYMMDD");
+
+      // Modify the data in mock file to have the correct values for
+      // disbursement and application number.
+      mockDownloadFiles(
+        sftpClientMock,
+        [ECE_RESPONSE_FILE_NAME],
+        (fileContent: string) => {
+          return (
+            fileContent
+              // Set the disbursement number to expected disbursement in multiple detail records.
+              .replace("DISBNUMB01", disbursementId)
+              .replace("DISBNUMB02", disbursementId)
+              .replace("DISBNUMB03", disbursementId)
+              // Set the application number to expected application in multiple detail records.
+              .replace("APPLNUMB01", applicationNumber)
+              .replace("APPLNUMB02", applicationNumber)
+              .replace("APPLNUMB03", applicationNumber)
+              // Set the enrolment confirmation to expected date in multiple detail records.
+              .replace("ENRLDT01", currentDate)
+              .replace("ENRLDT02", currentDate)
+              .replace("ENRLDT03", currentDate)
+          );
+        },
+      );
+
+      // Act
+      const processResult = await processor.processECEResponse(job);
+
+      // Assert
+      const expectedResult: ProcessSummaryResult = new ProcessSummaryResult();
+      expectedResult.summary = [
+        `Starting download of file ${confirmEnrolmentResponseFile}.`,
+        `Disbursement ${disbursement.id}, enrolment confirmed.`,
+        `The file ${confirmEnrolmentResponseFile} has been deleted after processing.`,
+        "Notification has been created to send email to integration contacts.",
+        "Total file parsing errors: 0",
+        "Total detail records found: 4",
+        "Total disbursements found: 2",
+        "Disbursements successfully updated: 1",
+        "Disbursements skipped to be processed: 1",
+        "Disbursements considered duplicate and skipped: 0",
+        "Disbursements failed to process: 0",
+      ];
+      expectedResult.warnings = [
+        "Disbursement 1119353191, record skipped due to reason: Enrolment not found.",
+      ];
+      expect(processResult).toStrictEqual([expectedResult]);
+      // Expect the delete method to be called.
+      expect(sftpClientMock.delete).toHaveBeenCalled();
+      // Expect the notifications to be created.
+      const notifications = await getUnsentECEResponseNotifications(db);
+      expect(notifications).toHaveLength(
+        locationMULT.integrationContacts.length,
+      );
+      const updatedDisbursement = await db.disbursementSchedule.findOne({
+        select: {
+          coeStatus: true,
+          tuitionRemittanceRequestedAmount: true,
+        },
+        where: { id: disbursement.id },
+      });
+      // Expect the COE status of the updated disbursement to be completed.
+      expect(updatedDisbursement.coeStatus).toBe(COEStatus.completed);
+      // The file has 3 detail records for the disbursement, with pay to school amount of 10 in each record.
+      // 2 out of 3 detail records have enrolment confirmation flag as Y.
+      // Hence 20 is the expected value.
+      expect(updatedDisbursement.tuitionRemittanceRequestedAmount).toBe(20);
+    });
+
+    it("Should process an ECE response file and decline the enrolment and create notification when the disbursement and application is valid.", async () => {
       // Arrange
       // Enable integration for institution location
       // used for test.
@@ -183,6 +323,7 @@ describe(
         `Starting download of file ${confirmEnrolmentResponseFile}.`,
         `Disbursement ${disbursement.id}, enrolment declined.`,
         `The file ${confirmEnrolmentResponseFile} has been deleted after processing.`,
+        "Notification has been created to send email to integration contacts.",
         "Total file parsing errors: 0",
         "Total detail records found: 2",
         "Total disbursements found: 2",
@@ -197,9 +338,20 @@ describe(
       expect(processResult).toStrictEqual([expectedResult]);
       // Expect the delete method to be called.
       expect(sftpClientMock.delete).toHaveBeenCalled();
+      // Expect the notifications to be created.
+      const notifications = await getUnsentECEResponseNotifications(db);
+      expect(notifications).toHaveLength(
+        locationDECL.integrationContacts.length,
+      );
+      const updatedDisbursement = await db.disbursementSchedule.findOne({
+        select: { coeStatus: true },
+        where: { id: disbursement.id },
+      });
+      // Expect the COE status of the updated disbursement to be declined.
+      expect(updatedDisbursement.coeStatus).toBe(COEStatus.declined);
     });
 
-    it("Should skip the ECE disbursement when the enrolment is already completed.", async () => {
+    it("Should skip the ECE disbursement and create notification when the enrolment is already completed.", async () => {
       // Arrange
       // Enable integration for institution location
       // used for test.
@@ -246,6 +398,7 @@ describe(
       expectedResult.summary = [
         `Starting download of file ${confirmEnrolmentResponseFile}.`,
         `The file ${confirmEnrolmentResponseFile} has been deleted after processing.`,
+        "Notification has been created to send email to integration contacts.",
         "Total file parsing errors: 0",
         "Total detail records found: 1",
         "Total disbursements found: 1",
@@ -260,9 +413,14 @@ describe(
       expect(processResult).toStrictEqual([expectedResult]);
       // Expect the delete method to be called.
       expect(sftpClientMock.delete).toHaveBeenCalled();
+      // Expect the notifications to be created.
+      const notifications = await getUnsentECEResponseNotifications(db);
+      expect(notifications).toHaveLength(
+        locationSKIP.integrationContacts.length,
+      );
     });
 
-    it("Should skip the ECE disbursement when disbursement does not belong to the system.", async () => {
+    it("Should skip the ECE disbursement and create notification when disbursement and application does not belong to the system.", async () => {
       // Arrange
       // Enable integration for institution location
       // used for test.
@@ -274,6 +432,7 @@ describe(
       );
 
       const fakeDisbursementId = "1111111111";
+      const fakeApplicationNumber = "9999999999";
 
       // Queued job.
       const job = createMock<Job<void>>();
@@ -283,7 +442,9 @@ describe(
         sftpClientMock,
         [ECE_RESPONSE_FILE_NAME],
         (fileContent: string) => {
-          return fileContent.replace("DISBNUMBER", fakeDisbursementId);
+          return fileContent
+            .replace("DISBNUMBER", fakeDisbursementId)
+            .replace("APPLNUMBER", fakeApplicationNumber);
         },
       );
 
@@ -295,6 +456,7 @@ describe(
       expectedResult.summary = [
         `Starting download of file ${confirmEnrolmentResponseFile}.`,
         `The file ${confirmEnrolmentResponseFile} has been deleted after processing.`,
+        "Notification has been created to send email to integration contacts.",
         "Total file parsing errors: 0",
         "Total detail records found: 1",
         "Total disbursements found: 1",
@@ -309,9 +471,14 @@ describe(
       expect(processResult).toStrictEqual([expectedResult]);
       // Expect the delete method to be called.
       expect(sftpClientMock.delete).toHaveBeenCalled();
+      // Expect the notifications to be created.
+      const notifications = await getUnsentECEResponseNotifications(db);
+      expect(notifications).toHaveLength(
+        locationSKIP.integrationContacts.length,
+      );
     });
 
-    it("Should skip the ECE disbursement when application does not belong to the system.", async () => {
+    it("Should skip the ECE disbursement and create notification when application does not belong to the system.", async () => {
       // Arrange
       // Enable integration for institution location
       // used for test.
@@ -334,7 +501,7 @@ describe(
       const [disbursement] =
         application.currentAssessment.disbursementSchedules;
 
-      const fakeApplicationNumber = "AAAAAAAAAA";
+      const fakeApplicationNumber = "9999999999";
 
       // Queued job.
       const job = createMock<Job<void>>();
@@ -359,6 +526,7 @@ describe(
       expectedResult.summary = [
         `Starting download of file ${confirmEnrolmentResponseFile}.`,
         `The file ${confirmEnrolmentResponseFile} has been deleted after processing.`,
+        "Notification has been created to send email to integration contacts.",
         "Total file parsing errors: 0",
         "Total detail records found: 1",
         "Total disbursements found: 1",
@@ -373,9 +541,14 @@ describe(
       expect(processResult).toStrictEqual([expectedResult]);
       // Expect the delete method to be called.
       expect(sftpClientMock.delete).toHaveBeenCalled();
+      // Expect the notifications to be created.
+      const notifications = await getUnsentECEResponseNotifications(db);
+      expect(notifications).toHaveLength(
+        locationSKIP.integrationContacts.length,
+      );
     });
 
-    it("Should stop processing the ECE response file when the header record is not valid.", async () => {
+    it("Should stop processing the ECE response file and create notification when the header record is not valid.", async () => {
       // Arrange
       // Enable integration for institution location
       // used for test.
@@ -406,6 +579,7 @@ describe(
       expectedResult.summary = [
         `Starting download of file ${confirmEnrolmentResponseFile}.`,
         `The file ${confirmEnrolmentResponseFile} has been deleted after processing.`,
+        "Notification has been created to send email to integration contacts.",
         "Total file parsing errors: 1",
         "Total detail records found: 0",
         "Total disbursements found: 0",
@@ -421,9 +595,14 @@ describe(
       expect(processResult).toStrictEqual([expectedResult]);
       // Expect the delete method to be called.
       expect(sftpClientMock.delete).toHaveBeenCalled();
+      // Expect the notifications to be created.
+      const notifications = await getUnsentECEResponseNotifications(db);
+      expect(notifications).toHaveLength(
+        locationFAIL.integrationContacts.length,
+      );
     });
 
-    it("Should stop processing the ECE response file when the detail record is not valid.", async () => {
+    it("Should stop processing the ECE response file and create notification when the detail record is not valid.", async () => {
       // Arrange
       // Enable integration for institution location
       // used for test.
@@ -454,6 +633,7 @@ describe(
       expectedResult.summary = [
         `Starting download of file ${confirmEnrolmentResponseFile}.`,
         `The file ${confirmEnrolmentResponseFile} has been deleted after processing.`,
+        "Notification has been created to send email to integration contacts.",
         "Total file parsing errors: 1",
         "Total detail records found: 1",
         "Total disbursements found: 0",
@@ -470,9 +650,14 @@ describe(
       expect(processResult).toStrictEqual([expectedResult]);
       // Expect the delete method to be called.
       expect(sftpClientMock.delete).toHaveBeenCalled();
+      // Expect the notifications to be created.
+      const notifications = await getUnsentECEResponseNotifications(db);
+      expect(notifications).toHaveLength(
+        locationFAIL.integrationContacts.length,
+      );
     });
 
-    it("Should stop processing the ECE response file when the footer record is not valid.", async () => {
+    it("Should stop processing the ECE response file and create notification when the footer record is not valid.", async () => {
       // Arrange
       // Enable integration for institution location
       // used for test.
@@ -503,6 +688,7 @@ describe(
       expectedResult.summary = [
         `Starting download of file ${confirmEnrolmentResponseFile}.`,
         `The file ${confirmEnrolmentResponseFile} has been deleted after processing.`,
+        "Notification has been created to send email to integration contacts.",
         "Total file parsing errors: 1",
         "Total detail records found: 0",
         "Total disbursements found: 0",
@@ -518,9 +704,14 @@ describe(
       expect(processResult).toStrictEqual([expectedResult]);
       // Expect the delete method to be called.
       expect(sftpClientMock.delete).toHaveBeenCalled();
+      // Expect the notifications to be created.
+      const notifications = await getUnsentECEResponseNotifications(db);
+      expect(notifications).toHaveLength(
+        locationFAIL.integrationContacts.length,
+      );
     });
 
-    it("Should stop processing the ECE response file when the count of detail in the footer record is incorrect.", async () => {
+    it("Should stop processing the ECE response file and create notification when the count of detail in the footer record is incorrect.", async () => {
       // Arrange
       // Enable integration for institution location
       // used for test.
@@ -551,6 +742,7 @@ describe(
       expectedResult.summary = [
         `Starting download of file ${confirmEnrolmentResponseFile}.`,
         `The file ${confirmEnrolmentResponseFile} has been deleted after processing.`,
+        "Notification has been created to send email to integration contacts.",
         "Total file parsing errors: 1",
         "Total detail records found: 0",
         "Total disbursements found: 0",
@@ -566,9 +758,14 @@ describe(
       expect(processResult).toStrictEqual([expectedResult]);
       // Expect the delete method to be called.
       expect(sftpClientMock.delete).toHaveBeenCalled();
+      // Expect the notifications to be created.
+      const notifications = await getUnsentECEResponseNotifications(db);
+      expect(notifications).toHaveLength(
+        locationFAIL.integrationContacts.length,
+      );
     });
 
-    it("Should stop processing the ECE response file when one of the detail records have invalid data.", async () => {
+    it("Should stop processing the ECE response file and create notification when one of the detail records have invalid data.", async () => {
       // Arrange
       // Enable integration for institution location
       // used for test.
@@ -601,6 +798,7 @@ describe(
       expectedResult.summary = [
         `Starting download of file ${confirmEnrolmentResponseFile}.`,
         `The file ${confirmEnrolmentResponseFile} has been deleted after processing.`,
+        "Notification has been created to send email to integration contacts.",
         "Total file parsing errors: 1",
         "Total detail records found: 1",
         "Total disbursements found: 0",
@@ -617,9 +815,14 @@ describe(
       expect(processResult).toStrictEqual([expectedResult]);
       // Expect the delete method to be called.
       expect(sftpClientMock.delete).toHaveBeenCalled();
+      // Expect the notifications to be created.
+      const notifications = await getUnsentECEResponseNotifications(db);
+      expect(notifications).toHaveLength(
+        locationSKIP.integrationContacts.length,
+      );
     });
 
-    it("Should skip the processing and log error when detail record with invalid enrolment confirmation flag is present and process other disbursements.", async () => {
+    it("Should skip the processing and log error and create notification when detail record with invalid enrolment confirmation flag is present and process other disbursements.", async () => {
       // Arrange
       // Including a valid disbursement in this test case to ensure that
       // when there is a enrolment data validation error, only that particular disbursement is failed to process
@@ -677,6 +880,7 @@ describe(
         `Starting download of file ${confirmEnrolmentResponseFile}.`,
         `Disbursement ${disbursement.id}, enrolment confirmed.`,
         `The file ${confirmEnrolmentResponseFile} has been deleted after processing.`,
+        "Notification has been created to send email to integration contacts.",
         "Total file parsing errors: 0",
         "Total detail records found: 2",
         "Total disbursements found: 2",
@@ -691,9 +895,14 @@ describe(
       expect(processResult).toStrictEqual([expectedResult]);
       // Expect the delete method to be called.
       expect(sftpClientMock.delete).toHaveBeenCalled();
+      // Expect the notifications to be created.
+      const notifications = await getUnsentECEResponseNotifications(db);
+      expect(notifications).toHaveLength(
+        locationCONF.integrationContacts.length,
+      );
     });
 
-    it("Should skip the processing and log error when detail record with invalid enrolment confirmation date and pay to school amount is present and process other disbursements.", async () => {
+    it("Should skip the processing and log error and create notification when detail record with invalid enrolment confirmation date and pay to school amount is present and process other disbursements.", async () => {
       // Arrange
       // Including a valid disbursement in this test case to ensure that
       // when there is a enrolment data validation error, only that particular disbursement is failed to process
@@ -751,6 +960,7 @@ describe(
         `Starting download of file ${confirmEnrolmentResponseFile}.`,
         `Disbursement ${disbursement.id}, enrolment confirmed.`,
         `The file ${confirmEnrolmentResponseFile} has been deleted after processing.`,
+        "Notification has been created to send email to integration contacts.",
         "Total file parsing errors: 0",
         "Total detail records found: 2",
         "Total disbursements found: 2",
@@ -765,9 +975,14 @@ describe(
       expect(processResult).toStrictEqual([expectedResult]);
       // Expect the delete method to be called.
       expect(sftpClientMock.delete).toHaveBeenCalled();
+      // Expect the notifications to be created.
+      const notifications = await getUnsentECEResponseNotifications(db);
+      expect(notifications).toHaveLength(
+        locationCONF.integrationContacts.length,
+      );
     });
 
-    it("Should skip the processing and log error when enrolment confirmation date is before the approval period.", async () => {
+    it("Should skip the processing and log error and create notification when enrolment confirmation date is before the approval period.", async () => {
       // Arrange
       // Enable integration for institution location
       // used for test.
@@ -822,6 +1037,7 @@ describe(
       expectedResult.summary = [
         `Starting download of file ${confirmEnrolmentResponseFile}.`,
         `The file ${confirmEnrolmentResponseFile} has been deleted after processing.`,
+        "Notification has been created to send email to integration contacts.",
         "Total file parsing errors: 0",
         "Total detail records found: 2",
         "Total disbursements found: 2",
@@ -839,9 +1055,14 @@ describe(
       expect(processResult).toStrictEqual([expectedResult]);
       // Expect the delete method to be called.
       expect(sftpClientMock.delete).toHaveBeenCalled();
+      // Expect the notifications to be created.
+      const notifications = await getUnsentECEResponseNotifications(db);
+      expect(notifications).toHaveLength(
+        locationCONF.integrationContacts.length,
+      );
     });
 
-    it("Should skip the processing and log error when enrolment confirmation date is after the approval period.", async () => {
+    it("Should skip the processing and log error and create notification when enrolment confirmation date is after the approval period.", async () => {
       // Arrange
       // Enable integration for institution location
       // used for test.
@@ -894,6 +1115,7 @@ describe(
       expectedResult.summary = [
         `Starting download of file ${confirmEnrolmentResponseFile}.`,
         `The file ${confirmEnrolmentResponseFile} has been deleted after processing.`,
+        "Notification has been created to send email to integration contacts.",
         "Total file parsing errors: 0",
         "Total detail records found: 2",
         "Total disbursements found: 2",
@@ -911,6 +1133,11 @@ describe(
       expect(processResult).toStrictEqual([expectedResult]);
       // Expect the delete method to be called.
       expect(sftpClientMock.delete).toHaveBeenCalled();
+      // Expect the notifications to be created.
+      const notifications = await getUnsentECEResponseNotifications(db);
+      expect(notifications).toHaveLength(
+        locationCONF.integrationContacts.length,
+      );
     });
   },
 );

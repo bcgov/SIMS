@@ -1,9 +1,10 @@
 import { NotificationMessageType } from "@sims/sims-db";
+import { NotificationEmailMessage } from "./gc-notify.model";
 
 export interface SaveNotificationModel {
   userId?: number;
   messageType: NotificationMessageType;
-  messagePayload: unknown;
+  messagePayload: NotificationEmailMessage;
 }
 
 export interface StudentFileUploadNotification {
@@ -39,4 +40,17 @@ export interface StudentNotification {
 export interface NotificationProcessingSummary {
   notificationsProcessed: number;
   notificationsSuccessfullyProcessed: number;
+}
+
+export interface ECEResponseFileProcessingNotification {
+  institutionCode: string;
+  integrationContacts: string[];
+  fileParsingErrors: number;
+  totalRecords: number;
+  totalDisbursements: number;
+  disbursementsSuccessfullyProcessed: number;
+  disbursementsSkipped: number;
+  duplicateDisbursements: number;
+  disbursementsFailedToProcess: number;
+  attachmentFileContent: string;
 }

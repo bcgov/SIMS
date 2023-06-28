@@ -17,6 +17,7 @@ import {
   User,
   ApplicationData,
   getUserFullNameLikeSearch,
+  transformToApplicationEntitySortField,
 } from "@sims/sims-db";
 import { StudentFileService } from "../student-file/student-file.service";
 import {
@@ -30,9 +31,8 @@ import {
   PIR_OR_DATE_OVERLAP_ERROR,
   PaginationOptions,
   PaginatedResults,
-  OrderByCondition,
 } from "../../utilities";
-import { CustomNamedError, FieldSortOrder, QueueNames } from "@sims/utilities";
+import { CustomNamedError, QueueNames } from "@sims/utilities";
 import {
   SFASApplicationService,
   SFASPartTimeApplicationsService,
@@ -867,7 +867,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
 
     activeApplicationQuery
       .orderBy(
-        this.transformToEntitySortField(
+        transformToApplicationEntitySortField(
           paginationOptions.sortField,
           paginationOptions.sortOrder,
         ),
@@ -899,32 +899,6 @@ export class ApplicationService extends RecordDataModelService<Application> {
       return ApplicationScholasticStandingStatus.Unavailable;
     }
     return ApplicationScholasticStandingStatus.Available;
-  }
-
-  /**
-   * Transformation to convert the data table column name to database column name.
-   * Any changes to the data object (e.g data table) in presentation layer must be adjusted here.
-   * @param sortField database fields to be sorted.
-   * @param sortOrder sort order of fields (Ascending or Descending order).
-   * @returns OrderByCondition
-   */
-  private transformToEntitySortField(
-    sortField = "applicationNumber",
-    sortOrder = FieldSortOrder.ASC,
-  ): OrderByCondition {
-    const orderByCondition = {};
-    if (sortField === "fullName") {
-      orderByCondition["user.firstName"] = sortOrder;
-      orderByCondition["user.lastName"] = sortOrder;
-      return orderByCondition;
-    }
-
-    const fieldSortOptions = {
-      applicationNumber: "application.applicationNumber",
-    };
-    const dbColumnName = fieldSortOptions[sortField];
-    orderByCondition[dbColumnName] = sortOrder;
-    return orderByCondition;
   }
 
   /**

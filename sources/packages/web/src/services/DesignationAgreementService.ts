@@ -7,6 +7,8 @@ import {
   DesignationAgreementStatus,
   UpdateDesignationDetailsAPIInDTO,
 } from "@/services/http/dto";
+import { UpdateDesignationDetailsModel } from "@/components/partial-view/DesignationAgreement/DesignationAgreementForm.models";
+import { useFormioUtils } from "@/composables";
 
 /**
  * Client service layer for Designation agreements.
@@ -55,19 +57,23 @@ export class DesignationAgreementService {
 
   async updateDesignationAgreement(
     designationId: number,
-    designation: UpdateDesignationDetailsAPIInDTO,
+    designation: UpdateDesignationDetailsModel,
   ): Promise<void> {
-    /**Filtering the locations which are either approved or denied(already approved location) only.
-     * locationsDesignations will have value only when approval is done.
-     */
+    // Filtering the locations which are either approved or denied(already approved location) only.
+    // locationsDesignations will have value only when approval is done.
     designation.locationsDesignations =
       designation.locationsDesignations?.filter(
         (location) =>
           location.existingDesignationLocation || location.approved === true,
       );
+    const { excludeExtraneousValues } = useFormioUtils();
+    const typedPayload = excludeExtraneousValues(
+      UpdateDesignationDetailsAPIInDTO,
+      designation,
+    );
     await ApiClient.DesignationAgreement.updateDesignationAgreement(
       designationId,
-      designation,
+      typedPayload,
     );
   }
 }

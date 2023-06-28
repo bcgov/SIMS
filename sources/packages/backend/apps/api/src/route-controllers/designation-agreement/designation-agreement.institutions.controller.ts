@@ -37,6 +37,7 @@ import {
 } from "@nestjs/swagger";
 import BaseController from "../BaseController";
 import { ClientTypeBaseRoute } from "../../types";
+import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
 
 /***
  * Designation agreement dedicated controller for Institution.
@@ -76,7 +77,7 @@ export class DesignationAgreementInstitutionsController extends BaseController {
   async submitDesignationAgreement(
     @UserToken() userToken: IInstitutionUserToken,
     @Body() payload: SubmitDesignationAgreementAPIInDTO,
-  ) {
+  ): Promise<PrimaryIdentifierAPIOutDTO> {
     // Validates if the user has the right role.
     const isLegalSigningAuthority = userToken.authorizations.hasAdminRole(
       InstitutionUserRoles.legalSigningAuthority,
@@ -125,7 +126,7 @@ export class DesignationAgreementInstitutionsController extends BaseController {
           .filter((location) => location.requestForDesignation)
           .map((location) => location.locationId),
       );
-    return createdDesignation.id;
+    return { id: createdDesignation.id };
   }
 
   /**

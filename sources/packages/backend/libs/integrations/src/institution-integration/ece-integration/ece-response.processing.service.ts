@@ -15,6 +15,8 @@ import { InstitutionLocationService } from "@sims/integrations/services";
 import {
   COE_DENIED_REASON_OTHER_ID,
   CustomNamedError,
+  END_OF_LINE,
+  StringBuilder,
   processInParallel,
 } from "@sims/utilities";
 import { ECEResponseFileDetail } from "./ece-files/ece-response-file-detail";
@@ -26,6 +28,8 @@ import {
 } from "./models/ece-integration.model";
 import {
   ConfirmationOfEnrollmentService,
+  ECEResponseFileProcessingNotification,
+  NotificationActionsService,
   SystemUsersService,
 } from "@sims/services";
 import {
@@ -40,6 +44,11 @@ import {
   UNEXPECTED_ERROR_DOWNLOADING_FILE,
 } from "@sims/services/constants";
 
+interface InstitutionFileDetail {
+  path: string;
+  institutionCode: string;
+}
+
 /**
  * Read and process the ECE response files which are
  * downloaded from SFTP location.
@@ -53,6 +62,7 @@ export class ECEResponseProcessingService {
     private readonly institutionLocationService: InstitutionLocationService,
     private readonly confirmationOfEnrollmentService: ConfirmationOfEnrollmentService,
     private readonly systemUsersService: SystemUsersService,
+    private readonly notificationActionsService: NotificationActionsService,
   ) {
     this.institutionIntegrationConfig = config.institutionIntegration;
   }
@@ -66,30 +76,37 @@ export class ECEResponseProcessingService {
     // Get all the institution codes who are enabled for integration.
     const integrationEnabledInstitutions =
       await this.institutionLocationService.getAllIntegrationEnabledInstitutionCodes();
-    const filePaths = integrationEnabledInstitutions.map((institutionCode) =>
-      path.join(
-        this.institutionIntegrationConfig.ftpResponseFolder,
+    const filePathDetails: InstitutionFileDetail[] =
+      integrationEnabledInstitutions.map((institutionCode) => ({
+        path: path.join(
+          this.institutionIntegrationConfig.ftpResponseFolder,
+          institutionCode,
+          ECE_RESPONSE_FILE_NAME,
+        ),
         institutionCode,
-        ECE_RESPONSE_FILE_NAME,
-      ),
-    );
+      }));
     // Process all the files in parallel.
-    const result = await processInParallel<ProcessSummaryResult, string>(
-      (remoteFilePath: string) =>
-        this.processDisbursementsInECEResponseFile(remoteFilePath),
-      filePaths,
+    const result = await processInParallel<
+      ProcessSummaryResult,
+      InstitutionFileDetail
+    >(
+      (remoteFileDetail: InstitutionFileDetail) =>
+        this.processDisbursementsInECEResponseFile(remoteFileDetail),
+      filePathDetails,
     );
     return result;
   }
 
   /**
    * Process individual ECE response file sent by institution.
-   * @param remoteFilePath ECE response file path.
+   * @param institutionFileDetail file details.
    * @returns process summary result.
    */
   private async processDisbursementsInECEResponseFile(
-    remoteFilePath: string,
+    institutionFileDetail: InstitutionFileDetail,
   ): Promise<ProcessSummaryResult> {
+    const institutionCode = institutionFileDetail.institutionCode;
+    const remoteFilePath = institutionFileDetail.path;
     const processSummary = new ProcessSummaryResult();
     // Setting the default value to true because, in the event of error
     // thrown from downloadResponseFile due to any data validation in the file
@@ -159,8 +176,18 @@ export class ECEResponseProcessingService {
       // Delete the ECE response file, if the file exist in remote server.
       if (isECEResponseFileExist) {
         await this.deleteProcessedFile(remoteFilePath, processSummary);
+
+        // Create notification email which gets sent to
+        // the integration contacts of the institution
+        // when a ECE file exists for an institution.
+        await this.createECEResponseProcessingNotification(
+          institutionCode,
+          disbursementProcessingDetails,
+          processSummary,
+        );
       }
     }
+
     // Populate the process summary count.
     processSummary.summary.push(
       `Total file parsing errors: ${disbursementProcessingDetails.fileParsingErrors}`,
@@ -388,6 +415,86 @@ export class ECEResponseProcessingService {
         ECE_DISBURSEMENT_DATA_NOT_VALID,
       );
     }
+  }
+
+  /**
+   * Create ECE Response file processing notifications.
+   * @param institutionCode institution of the processing file.
+   * @param disbursementProcessingDetails disbursement processing count.
+   * @param processSummaryResult process summary details.
+   */
+  private async createECEResponseProcessingNotification(
+    institutionCode: string,
+    disbursementProcessingDetails: DisbursementProcessingDetails,
+    processSummaryResult: ProcessSummaryResult,
+  ): Promise<void> {
+    try {
+      const integrationContacts =
+        await this.institutionLocationService.getIntegrationContactsByInstitutionCode(
+          institutionCode,
+        );
+
+      // Create email notifications only if integration contacts are available.
+      if (integrationContacts.length) {
+        const notification: ECEResponseFileProcessingNotification = {
+          institutionCode,
+          integrationContacts,
+          fileParsingErrors: disbursementProcessingDetails.fileParsingErrors,
+          totalRecords: disbursementProcessingDetails.totalRecords,
+          totalDisbursements: disbursementProcessingDetails.totalDisbursements,
+          disbursementsSuccessfullyProcessed:
+            disbursementProcessingDetails.disbursementsSuccessfullyProcessed,
+          disbursementsSkipped:
+            disbursementProcessingDetails.disbursementsSkipped,
+          duplicateDisbursements:
+            disbursementProcessingDetails.duplicateDisbursements,
+          disbursementsFailedToProcess:
+            disbursementProcessingDetails.disbursementsFailedToProcess,
+          attachmentFileContent:
+            this.buildEmailAttachmentBody(processSummaryResult),
+        };
+
+        await this.notificationActionsService.saveECEResponseFileProcessingNotification(
+          notification,
+        );
+        processSummaryResult.summary.push(
+          "Notification has been created to send email to integration contacts.",
+        );
+      } else {
+        processSummaryResult.summary.push(
+          "Notification cannot be created as no integration contacts found for the institution.",
+        );
+      }
+    } catch (error: unknown) {
+      this.logger.error(error);
+      processSummaryResult.errors.push(
+        "Unexpected error while creating notifications.",
+      );
+    }
+  }
+
+  /**
+   * Build the email attachment content from process summary.
+   * @param processSummaryResult process summary.
+   * @returns email attachment body.
+   */
+  private buildEmailAttachmentBody(
+    processSummaryResult: ProcessSummaryResult,
+  ): string {
+    const attachmentBody = new StringBuilder();
+    attachmentBody.appendLine("Summary:");
+    attachmentBody.appendLine(processSummaryResult.summary.join(END_OF_LINE));
+    const warnings = processSummaryResult.warnings.length
+      ? processSummaryResult.warnings.join(END_OF_LINE)
+      : "NONE";
+    attachmentBody.appendLine("Warnings:");
+    attachmentBody.appendLine(warnings);
+    const errors = processSummaryResult.errors.length
+      ? processSummaryResult.errors.join(END_OF_LINE)
+      : "NONE";
+    attachmentBody.appendLine("Errors:");
+    attachmentBody.appendLine(errors);
+    return attachmentBody.toString();
   }
 
   /**

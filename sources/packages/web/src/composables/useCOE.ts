@@ -1,5 +1,4 @@
-import { StatusChipTypes } from "@/components/generic/StatusChip.models";
-import { COEStatus } from "@/types";
+import { COEStatus, StatusChipTypes } from "@/types";
 
 export function useCOE() {
   const mapCOEChipStatus = (status: COEStatus): StatusChipTypes => {

@@ -41,3 +41,21 @@ export interface GCNotifyErrorResponse {
   errors: GCNotifyErrorDetail[];
   status_code: HttpStatus;
 }
+
+/**
+ * Email message format.
+ */
+export interface NotificationEmailMessage {
+  template_id: string;
+  email_address: string;
+  personalisation?: {
+    [key: string]:
+      | string
+      | number
+      | {
+          file: string;
+          filename: string;
+          sending_method: "attach" | "link";
+        };
+  };
+}

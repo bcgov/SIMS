@@ -49,7 +49,7 @@ import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import { BannerTypes } from "@/types/contracts/Banner";
 import ProgramOfferingDetailHeader from "@/components/common/ProgramOfferingDetailHeader.vue";
 import OfferingFormSubmit from "@/components/common/OfferingFormSubmit.vue";
-import { useSnackBar } from "@/composables";
+import { useFormioUtils, useSnackBar } from "@/composables";
 
 export default defineComponent({
   components: {
@@ -73,6 +73,7 @@ export default defineComponent({
   setup(props) {
     const router = useRouter();
     const snackBar = useSnackBar();
+    const { excludeExtraneousValues } = useFormioUtils();
     const processing = ref(false);
     const initialData = ref({} as EducationProgramOfferingAPIOutDTO);
     const editLocationOfferingsRoute = {
@@ -97,14 +98,18 @@ export default defineComponent({
         );
     });
 
-    const submit = async (data: EducationProgramOfferingAPIInDTO) => {
+    const submit = async (data: unknown) => {
       try {
         processing.value = true;
+        const typedData = excludeExtraneousValues(
+          EducationProgramOfferingAPIInDTO,
+          data,
+        );
         await EducationProgramOfferingService.shared.requestChange(
           props.locationId,
           props.programId,
           props.offeringId,
-          data,
+          typedData,
         );
         snackBar.success("Offering change requested.");
         router.push({

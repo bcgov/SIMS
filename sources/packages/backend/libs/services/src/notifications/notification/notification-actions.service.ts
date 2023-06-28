@@ -1,6 +1,10 @@
 import { Injectable } from "@nestjs/common";
 import { NotificationMessageType } from "@sims/sims-db";
-import { getDateOnlyFormat, getPSTPDTDateTime } from "@sims/utilities";
+import {
+  base64Encode,
+  getDateOnlyFormat,
+  getPSTPDTDateTime,
+} from "@sims/utilities";
 import { EntityManager } from "typeorm";
 import { NotificationMessageService } from "../notification-message/notification-message.service";
 import {
@@ -8,10 +12,14 @@ import {
   MinistryStudentFileUploadNotification,
   StudentFileUploadNotification,
   StudentNotification,
+  ECEResponseFileProcessingNotification,
+  NotificationEmailMessage,
 } from "..";
 import { GCNotifyService } from "./gc-notify.service";
 import { NotificationService } from "./notification.service";
 import { InjectLogger, LoggerService } from "@sims/utilities/logger";
+import { ECE_RESPONSE_ATTACHMENT_FILE_NAME } from "@sims/integrations/constants";
+import { SystemUsersService } from "@sims/services/system-users";
 
 @Injectable()
 export class NotificationActionsService {
@@ -19,6 +27,7 @@ export class NotificationActionsService {
     private readonly gcNotifyService: GCNotifyService,
     private readonly notificationService: NotificationService,
     private readonly notificationMessageService: NotificationMessageService,
+    private readonly systemUsersService: SystemUsersService,
   ) {}
 
   /**
@@ -59,7 +68,7 @@ export class NotificationActionsService {
     await this.notificationService.saveNotifications(
       [notificationToSend],
       auditUserId,
-      entityManager,
+      { entityManager },
     );
   }
 
@@ -98,7 +107,7 @@ export class NotificationActionsService {
     await this.notificationService.saveNotifications(
       [notificationToSend],
       auditUserId,
-      entityManager,
+      { entityManager },
     );
   }
 
@@ -135,7 +144,7 @@ export class NotificationActionsService {
     await this.notificationService.saveNotifications(
       notificationsToSend,
       auditUserId,
-      entityManager,
+      { entityManager },
     );
   }
 
@@ -172,7 +181,7 @@ export class NotificationActionsService {
     await this.notificationService.saveNotifications(
       [exceptionCompleteNotification],
       auditUserId,
-      entityManager,
+      { entityManager },
     );
   }
 
@@ -209,7 +218,7 @@ export class NotificationActionsService {
     await this.notificationService.saveNotifications(
       [changeRequestCompleteNotification],
       auditUserId,
-      entityManager,
+      { entityManager },
     );
   }
 
@@ -246,7 +255,7 @@ export class NotificationActionsService {
     await this.notificationService.saveNotifications(
       [institutionReportChangeNotification],
       auditUserId,
-      entityManager,
+      { entityManager },
     );
   }
 
@@ -283,7 +292,7 @@ export class NotificationActionsService {
     await this.notificationService.saveNotifications(
       [institutionCompletePIRNotification],
       auditUserId,
-      entityManager,
+      { entityManager },
     );
   }
 
@@ -320,7 +329,7 @@ export class NotificationActionsService {
     await this.notificationService.saveNotifications(
       [institutionConfirmCOENotification],
       auditUserId,
-      entityManager,
+      { entityManager },
     );
   }
 
@@ -365,7 +374,7 @@ export class NotificationActionsService {
     await this.notificationService.saveNotifications(
       [assessmentReadyNotification],
       auditUserId,
-      entityManager,
+      { entityManager },
     );
   }
 
@@ -399,7 +408,60 @@ export class NotificationActionsService {
     await this.notificationService.saveNotifications(
       [sinCompleteNotification],
       auditUserId,
-      entityManager,
+      { entityManager },
+    );
+  }
+
+  /**
+   * Create ECE Response file processing notifications.
+   * Currently multiple notifications are created as integration contacts
+   * can be multiple.
+   * TODO: Use email bulk send in GC Notify when bulk send email is available.
+   * @param notification notification.
+   */
+  async saveECEResponseFileProcessingNotification(
+    notification: ECEResponseFileProcessingNotification,
+  ): Promise<void> {
+    const auditUser = await this.systemUsersService.systemUser();
+    const templateId = await this.notificationMessageService.getTemplateId(
+      NotificationMessageType.ECEResponseFileProcessing,
+    );
+    const eceResponseFileProcessingNotifications = [];
+
+    for (const integrationContact of notification.integrationContacts) {
+      const messagePayload: NotificationEmailMessage = {
+        email_address: integrationContact,
+        template_id: templateId,
+        personalisation: {
+          date: this.getDateTimeOnPSTTimeZone(),
+          institutionCode: notification.institutionCode,
+          fileParsingErrors: notification.fileParsingErrors,
+          totalRecords: notification.totalRecords,
+          totalDisbursements: notification.totalDisbursements,
+          disbursementsSuccessfullyProcessed:
+            notification.disbursementsSuccessfullyProcessed,
+          disbursementsSkipped: notification.disbursementsSkipped,
+          duplicateDisbursements: notification.duplicateDisbursements,
+          disbursementsFailedToProcess:
+            notification.disbursementsFailedToProcess,
+          application_file: {
+            file: base64Encode(notification.attachmentFileContent),
+            filename: ECE_RESPONSE_ATTACHMENT_FILE_NAME,
+            sending_method: "attach",
+          },
+        },
+      };
+      const eceResponseFileProcessingNotification = {
+        messageType: NotificationMessageType.ECEResponseFileProcessing,
+        messagePayload: messagePayload,
+      };
+      eceResponseFileProcessingNotifications.push(
+        eceResponseFileProcessingNotification,
+      );
+    }
+    await this.notificationService.saveNotifications(
+      eceResponseFileProcessingNotifications,
+      auditUser.id,
     );
   }
 

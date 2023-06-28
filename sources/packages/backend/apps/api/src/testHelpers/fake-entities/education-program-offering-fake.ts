@@ -6,6 +6,7 @@ import {
   InstitutionLocation,
   OfferingTypes,
   OfferingIntensity,
+  OfferingStatus,
 } from "@sims/sims-db";
 import { createFakeEducationProgram } from "./education-program-fake";
 
@@ -29,5 +30,6 @@ export function createFakeEducationProgramOffering(
   offering.courseLoad = 45;
   offering.hasOfferingWILComponent = "no";
   offering.offeringDeclaration = true;
+  offering.offeringStatus = OfferingStatus.Approved;
   return offering;
 }

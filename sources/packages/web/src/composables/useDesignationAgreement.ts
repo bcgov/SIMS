@@ -1,5 +1,5 @@
-import { StatusChipTypes } from "@/components/generic/StatusChip.models";
 import { DesignationAgreementStatus } from "@/services/http/dto";
+import { StatusChipTypes } from "@/types";
 
 export function useDesignationAgreement() {
   const mapDesignationChipStatus = (

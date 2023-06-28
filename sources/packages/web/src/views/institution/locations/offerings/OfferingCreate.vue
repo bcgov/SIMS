@@ -21,13 +21,13 @@
 <script lang="ts">
 import { useRouter } from "vue-router";
 import { computed, defineComponent, ref } from "vue";
-import { OfferingFormModes, OfferingStatus } from "@/types";
+import { OfferingFormModel, OfferingFormModes, OfferingStatus } from "@/types";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import OfferingFormSubmit from "@/components/common/OfferingFormSubmit.vue";
 import { BannerTypes } from "@/types/contracts/Banner";
 import { EducationProgramOfferingService } from "@/services/EducationProgramOfferingService";
 import { EducationProgramOfferingAPIInDTO } from "@/services/http/dto";
-import { useSnackBar } from "@/composables";
+import { useFormioUtils, useSnackBar } from "@/composables";
 
 export default defineComponent({
   components: {
@@ -49,6 +49,7 @@ export default defineComponent({
   },
   setup(props) {
     const snackBar = useSnackBar();
+    const { excludeExtraneousValues } = useFormioUtils();
     const router = useRouter();
     const processing = ref(false);
 
@@ -60,13 +61,17 @@ export default defineComponent({
       },
     }));
 
-    const submit = async (data: EducationProgramOfferingAPIInDTO) => {
+    const submit = async (data: OfferingFormModel) => {
       try {
         processing.value = true;
+        const typedData = excludeExtraneousValues(
+          EducationProgramOfferingAPIInDTO,
+          data,
+        );
         await EducationProgramOfferingService.shared.createProgramOffering(
           props.locationId,
           props.programId,
-          data,
+          typedData,
         );
         snackBar.success("Offering created.");
         goBack();

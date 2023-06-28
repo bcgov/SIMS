@@ -1,5 +1,4 @@
-import { StatusChipTypes } from "@/components/generic/StatusChip.models";
-import { ApplicationScholasticStandingStatus } from "@/types";
+import { ApplicationScholasticStandingStatus, StatusChipTypes } from "@/types";
 
 export function useActiveApplication() {
   const mapActiveApplicationChipStatus = (

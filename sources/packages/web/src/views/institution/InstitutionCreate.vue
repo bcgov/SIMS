@@ -37,7 +37,11 @@ import { UserService } from "@/services/UserService";
 import { InstitutionService } from "@/services/InstitutionService";
 import { CreateInstitutionAPIInDTO } from "@/services/http/dto";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
-import { useFormioDropdownLoader, useSnackBar } from "@/composables";
+import {
+  useFormioDropdownLoader,
+  useFormioUtils,
+  useSnackBar,
+} from "@/composables";
 import { FormIOForm } from "@/types";
 
 export default defineComponent({
@@ -45,6 +49,7 @@ export default defineComponent({
     const processing = ref(false);
     const store = useStore();
     const snackBar = useSnackBar();
+    const { excludeExtraneousValues } = useFormioUtils();
     const router = useRouter();
     const formioDataLoader = useFormioDropdownLoader();
     const initialData = ref({});
@@ -52,8 +57,12 @@ export default defineComponent({
     const submitted = async (form: FormIOForm<CreateInstitutionAPIInDTO>) => {
       try {
         processing.value = true;
-        await InstitutionService.shared.createInstitutionWithAssociatedUser(
+        const typedData = excludeExtraneousValues(
+          CreateInstitutionAPIInDTO,
           form.data,
+        );
+        await InstitutionService.shared.createInstitutionWithAssociatedUser(
+          typedData,
         );
         await store.dispatch("institution/initialize");
         snackBar.success("Institution and User successfully created!");

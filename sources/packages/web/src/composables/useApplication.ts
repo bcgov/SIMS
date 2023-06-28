@@ -1,8 +1,8 @@
-import { StatusChipTypes } from "@/components/generic/StatusChip.models";
 import {
   ApplicationDetailHeader,
   ApplicationStatus,
   OfferingIntensity,
+  StatusChipTypes,
 } from "@/types";
 import { useFormatters } from "@/composables/useFormatters";
 

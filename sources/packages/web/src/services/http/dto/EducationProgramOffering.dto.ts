@@ -1,4 +1,5 @@
 import { OfferingIntensity, OfferingStatus, OfferingTypes } from "@/types";
+import { Expose, Type } from "class-transformer";
 
 /**
  * Payload DTO to assess an offering.
@@ -37,49 +38,70 @@ export interface StudyBreakOutDTO {
   breakEndDate: Date;
 }
 
-export interface StudyBreakInDTO {
+export class StudyBreakInDTO {
+  @Expose()
   breakStartDate: Date;
+  @Expose()
   breakEndDate: Date;
 }
 
-export interface StudyBreaksAndWeeksOutDTO {
-  studyBreaks: StudyBreakOutDTO[];
-  fundedStudyPeriodDays: number;
-  totalDays: number;
-  totalFundedWeeks: number;
-  unfundedStudyPeriodDays: number;
-}
-
-export interface StudyBreaksAndWeeksInDTO {
-  studyBreaks: StudyBreakInDTO[];
-  fundedStudyPeriodDays: number;
-  totalDays: number;
-  totalFundedWeeks: number;
-  unfundedStudyPeriodDays: number;
-}
-
-export interface EducationProgramOfferingAPIInDTO {
+export class EducationProgramOfferingAPIInDTO {
+  @Expose()
   offeringName: string;
+  @Expose()
   studyStartDate: string;
+  @Expose()
   studyEndDate: string;
+  @Expose()
   actualTuitionCosts: number;
+  @Expose()
   programRelatedCosts: number;
+  @Expose()
   mandatoryFees: number;
+  @Expose()
   exceptionalExpenses: number;
-  offeringDelivered: string;
+  @Expose()
+  offeringDelivered: OfferingDeliveryOptions;
+  @Expose()
   lacksStudyBreaks: boolean;
+  @Expose()
   offeringIntensity: OfferingIntensity;
+  @Expose()
   yearOfStudy: number;
-  hasOfferingWILComponent: string;
+  @Expose()
+  hasOfferingWILComponent: WILComponentOptions;
+  @Expose()
   offeringDeclaration: boolean;
+  @Expose()
   offeringStatus: OfferingStatus;
+  @Expose()
   offeringType: OfferingTypes;
-  offeringWILType?: string;
-  showYearOfStudy?: boolean;
-  breaksAndWeeks?: StudyBreaksAndWeeksInDTO;
-  assessedBy?: string;
-  assessedDate?: Date;
+  @Expose()
+  offeringWILComponentType?: string;
+  @Expose()
+  showYearOfStudy: boolean;
+  @Expose()
+  @Type(() => StudyBreakInDTO)
+  studyBreaks: StudyBreakInDTO[];
+  @Expose()
   courseLoad?: number;
+}
+
+/**
+ * Offering delivery options.
+ */
+export enum OfferingDeliveryOptions {
+  Onsite = "onsite",
+  Online = "online",
+  Blended = "blended",
+}
+
+/**
+ * WIL(work-integrated learning) options.
+ */
+export enum WILComponentOptions {
+  Yes = "yes",
+  No = "no",
 }
 
 export interface EducationProgramOfferingAPIOutDTO {
@@ -187,6 +209,7 @@ export interface OfferingValidationResultAPIOutDTO {
  * Offering data that can be freely changed and will not affect
  * the assessment in case there is one associated.
  */
-export interface EducationProgramOfferingBasicDataAPIInDTO {
+export class EducationProgramOfferingBasicDataAPIInDTO {
+  @Expose()
   offeringName: string;
 }

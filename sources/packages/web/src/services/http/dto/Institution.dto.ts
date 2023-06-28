@@ -3,6 +3,7 @@ import {
   AddressAPIOutDTO,
   AddressDetailsFormAPIDTO,
 } from "@/services/http/dto";
+import { Expose } from "class-transformer";
 
 export interface InstitutionContactAPIOutDTO {
   primaryContactEmail: string;
@@ -12,11 +13,16 @@ export interface InstitutionContactAPIOutDTO {
   mailingAddress: AddressAPIOutDTO;
 }
 
-export interface InstitutionContactAPIInDTO {
+export class InstitutionContactAPIInDTO {
+  @Expose()
   primaryContactEmail: string;
+  @Expose()
   primaryContactFirstName: string;
+  @Expose()
   primaryContactLastName: string;
+  @Expose()
   primaryContactPhone: string;
+  @Expose()
   mailingAddress: AddressDetailsFormAPIDTO;
 }
 
@@ -32,14 +38,22 @@ export interface InstitutionProfileAPIOutDTO
   institutionType: number;
 }
 
-export interface InstitutionProfileAPIInDTO extends InstitutionContactAPIInDTO {
+export class InstitutionProfileAPIInDTO extends InstitutionContactAPIInDTO {
+  @Expose()
   operatingName: string;
+  @Expose()
   primaryPhone: string;
+  @Expose()
   primaryEmail: string;
+  @Expose()
   website: string;
+  @Expose()
   regulatingBody: string;
+  @Expose()
   otherRegulatingBody?: string;
+  @Expose()
   establishedDate: Date;
+  @Expose()
   institutionType: number;
 }
 
@@ -90,25 +104,42 @@ export interface InstitutionBasicAPIOutDTO {
   hasBusinessGuid: boolean;
 }
 
+export class CreateInstitution {
+  @Expose()
+  operatingName: string;
+  @Expose()
+  primaryPhone: string;
+  @Expose()
+  primaryEmail: string;
+  @Expose()
+  website: string;
+  @Expose()
+  regulatingBody: string;
+  @Expose()
+  otherRegulatingBody?: string;
+  @Expose()
+  establishedDate: string;
+  @Expose()
+  primaryContactFirstName: string;
+  @Expose()
+  primaryContactLastName: string;
+  @Expose()
+  primaryContactEmail: string;
+  @Expose()
+  primaryContactPhone: string;
+  @Expose()
+  institutionType: number;
+  @Expose()
+  mailingAddress: AddressDetailsFormAPIDTO;
+}
+
 /**
  * DTO for institution creation by the institution user during the on board process
  * when the institution profile and the admin user must be created altogether.
  */
-export interface CreateInstitutionAPIInDTO {
+export class CreateInstitutionAPIInDTO extends CreateInstitution {
+  @Expose()
   userEmail: string;
-  operatingName: string;
-  primaryPhone: string;
-  primaryEmail: string;
-  website: string;
-  regulatingBody: string;
-  otherRegulatingBody?: string;
-  establishedDate: string;
-  primaryContactFirstName: string;
-  primaryContactLastName: string;
-  primaryContactEmail: string;
-  primaryContactPhone: string;
-  institutionType: number;
-  mailingAddress: AddressDetailsFormAPIDTO;
 }
 
 /**
@@ -117,7 +148,7 @@ export interface CreateInstitutionAPIInDTO {
  * the Ministry user should be able to provide all data needed to create
  * the institution.
  */
-export interface AESTCreateInstitutionAPIInDTO
-  extends Omit<CreateInstitutionAPIInDTO, "userEmail"> {
+export class AESTCreateInstitutionAPIInDTO extends CreateInstitution {
+  @Expose()
   legalOperatingName: string;
 }

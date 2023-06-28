@@ -2,11 +2,9 @@ import {
   BadRequestException,
   Body,
   Controller,
-  DefaultValuePipe,
   Get,
   NotFoundException,
   Param,
-  ParseBoolPipe,
   ParseIntPipe,
   Patch,
   Post,
@@ -38,6 +36,7 @@ import { getISODateOnlyString, CustomNamedError } from "@sims/utilities";
 import {
   ActiveApplicationDataAPIOutDTO,
   ActiveApplicationSummaryAPIOutDTO,
+  ActiveApplicationSummaryQueryStringAPIInDTO,
   transformToActiveApplicationDataAPIOutDTO,
 } from "./models/application.dto";
 import BaseController from "../BaseController";
@@ -50,10 +49,7 @@ import {
 } from "./models/institution-location.dto";
 import { FormNames } from "../../services/form/constants";
 import { transformAddressDetailsForAddressBlockForm } from "../utils/address-utils";
-import {
-  ApplicationStatusPaginationOptionsAPIInDTO,
-  PaginatedResultsAPIOutDTO,
-} from "../models/pagination.dto";
+import { PaginatedResultsAPIOutDTO } from "../models/pagination.dto";
 import { DUPLICATE_INSTITUTION_LOCATION_CODE } from "../../constants";
 import { InstitutionLocationModel } from "../../services/institution-location/institution-location.models";
 
@@ -147,7 +143,8 @@ export class InstitutionLocationInstitutionsController extends BaseController {
    * Get all active application of a location in an institution
    * with application_status is completed.
    * @param locationId location id.
-   * @param pagination options to execute the pagination.
+   * @param queryStringDTO represents all query strings expected to be received by
+   * this endpoint (pagination options and archive filter).
    * @param archived archive value of applications requested by user.
    * @returns Student active application list of an institution location.
    */
@@ -155,14 +152,12 @@ export class InstitutionLocationInstitutionsController extends BaseController {
   @Get(":locationId/active-applications")
   async getActiveApplications(
     @Param("locationId", ParseIntPipe) locationId: number,
-    @Query() pagination: ApplicationStatusPaginationOptionsAPIInDTO,
-    @Query("archived", new DefaultValuePipe(false), ParseBoolPipe)
-    archived: boolean,
+    @Query() queryStringDTO: ActiveApplicationSummaryQueryStringAPIInDTO,
   ): Promise<PaginatedResultsAPIOutDTO<ActiveApplicationSummaryAPIOutDTO>> {
     const applications = await this.applicationService.getActiveApplications(
       locationId,
-      pagination,
-      archived,
+      queryStringDTO,
+      queryStringDTO.archived,
     );
 
     return {

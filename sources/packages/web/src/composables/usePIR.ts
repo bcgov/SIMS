@@ -1,5 +1,4 @@
-import { StatusChipTypes } from "@/components/generic/StatusChip.models";
-import { ProgramInfoStatus } from "@/types";
+import { ProgramInfoStatus, StatusChipTypes } from "@/types";
 
 export function usePIR() {
   const mapPIRChipStatus = (status: ProgramInfoStatus): StatusChipTypes => {

@@ -23,6 +23,7 @@ import { ScholasticStandingApi } from "@/services/http/ScholasticStandingApi";
 import { InstitutionUserApi } from "@/services/http/InstitutionUserApi";
 import { StudentAccountApplicationApi } from "@/services/http/StudentAccountApplicationApi";
 import { OverawardApi } from "@/services/http/OverawardApi";
+import { ApplicationOfferingChangeRequestApi } from "./ApplicationOfferingChangeRequestApi";
 
 const ApiClient = {
   Configs: new ConfigApi(),
@@ -50,6 +51,8 @@ const ApiClient = {
   InstitutionUserApi: new InstitutionUserApi(),
   StudentAccountApplicationApi: new StudentAccountApplicationApi(),
   OverawardApi: new OverawardApi(),
+  ApplicationOfferingChangeRequestApi:
+    new ApplicationOfferingChangeRequestApi(),
 };
 
 export default ApiClient;
