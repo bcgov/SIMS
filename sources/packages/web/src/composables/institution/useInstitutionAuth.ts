@@ -1,4 +1,7 @@
-import { InstitutionLocationState, InstitutionUserRoles } from "@/types";
+import {
+  InstitutionUserAuthRolesAndLocation,
+  InstitutionUserRoles,
+} from "@/types";
 import { computed } from "vue";
 import { Store, useStore } from "vuex";
 import { useAuth } from "..";
@@ -6,45 +9,48 @@ import { useAuth } from "..";
 export function useInstitutionAuth(rootStore?: Store<any>) {
   const store = rootStore ?? useStore();
 
-  // From store get institution details.
-  const institutionDetails = store.state
-    .institution as InstitutionLocationState;
-
-  // From institution details in store, get institution user details and authorizations.
-  const institutionUserDetails = institutionDetails.userState;
   const authorizations =
-    institutionDetails.authorizationsState.authorizations ?? [];
+    store.state.institution.authorizationsState?.authorizations ?? [];
 
   const { isAuthenticated } = useAuth();
-  const isAuthenticatedInstitutionUser = computed(
-    () => isAuthenticated.value && institutionUserDetails.isActive,
+  const isAuthenticatedInstitutionUser = computed(() => {
+    return isAuthenticated.value && store.state.institution.userState.isActive;
+  });
+  const isAdmin = computed(() => store.state.institution.userState.isAdmin);
+  const userFullName = computed(
+    () => store.state.institution.userState.userFullName,
   );
-  const isAdmin = computed(() => institutionUserDetails.isAdmin);
-  const userFullName = computed(() => institutionUserDetails.userFullName);
-  const userEmail = computed(() => institutionUserDetails.email);
+  const userEmail = computed(() => store.state.institution.userState.email);
   const userAuth = computed(() => authorizations);
   const isLegalSigningAuthority = computed(() =>
-    authorizations.some(
-      (auth) => auth.userRole === InstitutionUserRoles.legalSigningAuthority,
+    store.state.institution.authorizationsState?.authorizations.some(
+      (auth: InstitutionUserAuthRolesAndLocation) =>
+        auth.userRole === InstitutionUserRoles.legalSigningAuthority,
     ),
   );
   // If the bceid authenticated user is not an existing sims user
   // then it is assumed that the user has logged in to setup institution
   // and they are identified as institution set up user in route context.
   const isInstitutionSetupUser = computed(
-    () => institutionUserDetails.isInstitutionSetupUser,
+    () => store.state.institution.userState.isInstitutionSetupUser,
   );
   const hasLocationAccess = (locationId: number) =>
-    authorizations.some(
-      (authorization) => authorization.locationId === locationId,
+    store.state.institution.authorizationsState?.authorizations.some(
+      (auth: InstitutionUserAuthRolesAndLocation) =>
+        auth.locationId === locationId,
     );
-  const [userAuthorization] = authorizations;
-  // User type Admin | User.
-  const userType = computed(() => userAuthorization?.userType);
 
-  const isBCPublic = computed(
-    () => institutionDetails.institutionState?.isBCPublic,
-  );
+  // User type Admin | User.
+  const userType = computed(() => {
+    if (!store.state.institution.authorizationsState?.authorizations) {
+      return undefined;
+    }
+    const [userAuthorization] =
+      store.state.institution.authorizationsState.authorizations;
+    return userAuthorization?.userType;
+  });
+
+  const isBCPublic = computed(() => store.state.institutionState?.isBCPublic);
 
   return {
     isAdmin,
