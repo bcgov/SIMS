@@ -102,7 +102,7 @@ export class EducationProgramAPIInDTO {
   @Allow()
   regulatoryBody: string;
   @Allow()
-  otherRegulatoryBody: string;
+  otherRegulatoryBody?: string;
   @Allow()
   programDeliveryTypes: ProgramDeliveryTypes;
   @Allow()
