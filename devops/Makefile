@@ -143,11 +143,11 @@ oc-build-forms: | print-status build-forms
 oc-deploy-ha-mongo: | print-status deploy-ha-mongo
 oc-deploy-forms: | print-status deploy-forms
 
-# Build backup structure
+# Build backup structure.
 oc-db-backup-patroni-simsdb-build: | print-status db-backup-build-patroni
 oc-db-backup-patroni-simsdb-build-delete: | print-status db-backup-build-patroni-delete
 
-# Create/delete backup structure
+# Create/delete backup structure.
 # Create/delete structure for patroni.
 oc-db-backup-patroni-simsdb-deploy: | print-status db-backup-configmap db-backup-deploy-patroni
 oc-db-backup-patroni-simsdb-deploy-delete: | print-status db-backup-configmap-delete db-backup-deploy-patroni-delete
