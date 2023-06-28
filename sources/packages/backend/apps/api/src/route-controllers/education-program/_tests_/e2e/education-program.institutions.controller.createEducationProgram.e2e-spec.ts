@@ -233,6 +233,7 @@ describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", (
   });
 
   afterAll(async () => {
+    jest.clearAllMocks();
     await app?.close();
   });
 });
