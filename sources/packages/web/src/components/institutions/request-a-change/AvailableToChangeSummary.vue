@@ -6,12 +6,9 @@
           <template #subtitle>
             Request a change for a program and offering in an application
             <tooltip-icon
-              >Only "completed" applications can be requested to change. For
-              applications that are in progress, please have the student edit
-              their application from their account. If the student has received
-              funding already, the student will need to "request a change" from
-              their account.</tooltip-icon
-            >
+              >Only applications in the "completed status" are shown below to
+              request a change.
+            </tooltip-icon>
           </template>
           <template #actions>
             <v-text-field
@@ -26,34 +23,34 @@
             </v-text-field>
           </template>
         </body-header>
-        <content-group>
-          <toggle-content :toggled="!applications?.count">
-            <v-data-table-server
-              :headers="AvailableToChangeOfferingChangeSummaryHeaders"
-              :items="applications?.results"
-              :items-length="applications?.count"
-              :loading="loading"
-              v-model:items-per-page="DEFAULT_PAGE_LIMIT"
-              @update:options="paginationAndSortEvent"
-            >
-              <template #[`item.fullName`]="{ item }">
-                {{ item.columns.fullName }}
-              </template>
-              <template #[`item.studyStartPeriod`]="{ item }">
-                {{ dateOnlyLongString(item.columns.studyStartPeriod) }}
-                -
-                {{ dateOnlyLongString(item.value.studyEndPeriod) }}
-              </template>
-              <template #[`item.applicationNumber`]="{ item }">
-                {{ item.columns.applicationNumber }}
-              </template>
-              <template #[`item.applicationId`]>
-                <v-btn color="primary">Request a change</v-btn>
-              </template>
-            </v-data-table-server>
-          </toggle-content>
-        </content-group>
       </template>
+      <content-group>
+        <toggle-content :toggled="!applications?.count">
+          <v-data-table-server
+            :headers="AvailableToChangeOfferingChangeSummaryHeaders"
+            :items="applications?.results"
+            :items-length="applications?.count"
+            :loading="loading"
+            v-model:items-per-page="DEFAULT_PAGE_LIMIT"
+            @update:options="paginationAndSortEvent"
+          >
+            <template #[`item.fullName`]="{ item }">
+              {{ item.columns.fullName }}
+            </template>
+            <template #[`item.studyStartDate`]="{ item }">
+              {{ dateOnlyLongString(item.columns.studyStartDate) }}
+              -
+              {{ dateOnlyLongString(item.value.studyEndDate) }}
+            </template>
+            <template #[`item.applicationNumber`]="{ item }">
+              {{ item.columns.applicationNumber }}
+            </template>
+            <template #[`item.applicationId`]>
+              <v-btn color="primary">Request a change</v-btn>
+            </template>
+          </v-data-table-server>
+        </toggle-content>
+      </content-group>
     </body-header-container>
   </tab-container>
 </template>

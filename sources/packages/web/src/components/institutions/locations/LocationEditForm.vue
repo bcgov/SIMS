@@ -15,7 +15,6 @@
 </template>
 
 <script lang="ts">
-import { InstitutionLocationFormAPIOutDTO } from "@/services/http/dto";
 import { ref, defineComponent } from "vue";
 import { FormIOForm } from "@/types";
 
@@ -29,9 +28,7 @@ export default defineComponent({
   emits: ["updateInstitutionLocation"],
   setup(_props, context) {
     const processing = ref(false);
-    const updateInstitutionLocation = async (
-      form: FormIOForm<InstitutionLocationFormAPIOutDTO>,
-    ) => {
+    const updateInstitutionLocation = async (form: FormIOForm<unknown>) => {
       processing.value = true;
       context.emit("updateInstitutionLocation", form.data);
       processing.value = false;

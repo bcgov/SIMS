@@ -717,7 +717,7 @@ export class InstitutionService extends RecordDataModelService<Institution> {
       where: {
         id: institutionId,
       },
-      cache: true,
+      // TODO:Implement the cache again after updating cache eviction strategy.
     });
   }
 

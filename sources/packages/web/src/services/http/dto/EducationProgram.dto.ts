@@ -4,6 +4,7 @@ import {
   ProgramIntensity,
   ProgramStatus,
 } from "@/types";
+import { Expose, Type } from "class-transformer";
 
 /**
  * Complete education program information needed for the institution.
@@ -75,37 +76,70 @@ export interface EducationProgramsSummaryAPIOutDTO {
  * Complete program information used to create or
  * update an education program.
  */
-export interface EducationProgramAPIInDTO {
+export class EducationProgramAPIInDTO {
+  @Expose()
   name: string;
+  @Expose()
   description?: string;
+  @Expose()
   credentialType: string;
+  @Expose()
   cipCode: string;
+  @Expose()
   nocCode: string;
+  @Expose()
   sabcCode: string;
+  @Expose()
   regulatoryBody: string;
+  @Expose()
   programDeliveryTypes: ProgramDeliveryTypes;
+  @Expose()
   deliveredOnlineAlsoOnsite?: string;
+  @Expose()
   sameOnlineCreditsEarned?: string;
+  @Expose()
   earnAcademicCreditsOtherInstitution?: string;
+  @Expose()
   courseLoadCalculation: string;
+  @Expose()
   completionYears: string;
+  @Expose()
   eslEligibility: string;
+  @Expose()
   hasJointInstitution: string;
+  @Expose()
   hasJointDesignatedInstitution: string;
+  @Expose()
   programIntensity: ProgramIntensity;
+  @Expose()
   institutionProgramCode?: string;
+  @Expose()
   minHoursWeek?: string;
+  @Expose()
   isAviationProgram?: string;
+  @Expose()
   minHoursWeekAvi?: string;
+  @Expose()
+  @Type(() => EntranceRequirements)
   entranceRequirements: EntranceRequirements;
+  @Expose()
   hasWILComponent: string;
+  @Expose()
   isWILApproved?: string;
+  @Expose()
   wilProgramEligibility?: string;
+  @Expose()
   hasTravel: string;
+  @Expose()
   travelProgramEligibility?: string;
+  @Expose()
   hasIntlExchange?: string;
+  @Expose()
   intlExchangeProgramEligibility?: string;
+  @Expose()
   programDeclaration: boolean;
+  @Expose()
+  fieldOfStudyCode: number;
 }
 
 export interface StudentEducationProgramAPIOutDTO {

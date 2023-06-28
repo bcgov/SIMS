@@ -37,7 +37,7 @@ describe("ApplicationAESTController(e2e)-reissueMSFAA", () => {
     const currentMSFAA = createFakeMSFAANumber(
       { student },
       {
-        state: MSFAAStates.Signed | MSFAAStates.CancelledOtherProvince,
+        msfaaState: MSFAAStates.Signed | MSFAAStates.CancelledOtherProvince,
       },
     );
     await db.msfaaNumber.save(currentMSFAA);
@@ -82,7 +82,7 @@ describe("ApplicationAESTController(e2e)-reissueMSFAA", () => {
       const currentMSFAA = createFakeMSFAANumber(
         { student },
         {
-          state: MSFAAStates.CancelledSystem,
+          msfaaState: MSFAAStates.CancelledSystem,
         },
       );
       await db.msfaaNumber.save(currentMSFAA);
@@ -131,7 +131,7 @@ describe("ApplicationAESTController(e2e)-reissueMSFAA", () => {
       const currentMSFAA = createFakeMSFAANumber(
         { student },
         {
-          state: MSFAAStates.Signed | MSFAAStates.CancelledOtherProvince,
+          msfaaState: MSFAAStates.Signed | MSFAAStates.CancelledOtherProvince,
         },
       );
       await db.msfaaNumber.save(currentMSFAA);
@@ -232,7 +232,7 @@ describe("ApplicationAESTController(e2e)-reissueMSFAA", () => {
     const currentMSFAA = createFakeMSFAANumber(
       { student },
       {
-        state: MSFAAStates.Signed,
+        msfaaState: MSFAAStates.Signed,
       },
     );
     await db.msfaaNumber.save(currentMSFAA);

@@ -1,4 +1,5 @@
 import { FormIOForm } from "@/types";
+import { ClassConstructor, plainToClass } from "class-transformer";
 import { Utils } from "formiojs";
 
 /**
@@ -162,6 +163,20 @@ export function useFormioUtils() {
     return !(await Promise.all(promises)).some((eachForm) => !eachForm);
   };
 
+  /**
+   * Indicates if extraneous properties should be excluded from object.
+   * @param type class type to be used to identify the extraneous properties.
+   * @param plainObject object to be checked and have extraneous properties removed.
+   * @returns the plain object provided converted to the class type with no
+   * extraneous properties.
+   */
+  const excludeExtraneousValues = <T, V>(
+    type: ClassConstructor<T>,
+    plainObject: V,
+  ): T => {
+    return plainToClass(type, plainObject, { excludeExtraneousValues: true });
+  };
+
   return {
     getComponent,
     redrawComponent,
@@ -175,5 +190,6 @@ export function useFormioUtils() {
     setRadioOptions,
     resetCheckBox,
     checkFormioValidity,
+    excludeExtraneousValues,
   };
 }

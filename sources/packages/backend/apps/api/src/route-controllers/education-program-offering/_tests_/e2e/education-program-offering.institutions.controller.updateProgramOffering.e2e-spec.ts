@@ -75,9 +75,12 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-updateProgramOffer
     const studyBreak = {
       breakStartDate: "2023-12-01",
       breakEndDate: "2024-01-01",
-      breakDays: 32,
-      eligibleBreakDays: 21,
-      ineligibleBreakDays: 11,
+    };
+    const studyPeriodBreakdown = {
+      totalDays: 304,
+      totalFundedWeeks: 42,
+      fundedStudyPeriodDays: 293,
+      unfundedStudyPeriodDays: 11,
     };
     const payload = {
       offeringName: "Updated offering name",
@@ -89,13 +92,12 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-updateProgramOffer
       studyStartDate: "2023-09-01",
       studyEndDate: "2024-06-30",
       lacksStudyBreaks: false,
-      studyBreaks: [studyBreak],
-      studyPeriodBreakdown: {
-        totalDays: 304,
-        totalFundedWeeks: 42,
-        fundedStudyPeriodDays: 293,
-        unfundedStudyPeriodDays: 11,
-      },
+      studyBreaks: [
+        {
+          breakStartDate: studyBreak.breakStartDate,
+          breakEndDate: studyBreak.breakEndDate,
+        },
+      ],
       offeringType: OfferingTypes.Public,
       offeringDeclaration: true,
       actualTuitionCosts: 1234,
@@ -133,13 +135,19 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-updateProgramOffer
         hasOfferingWILComponent: payload.hasOfferingWILComponent,
         offeringWILType: null,
         studyBreaks: {
-          totalDays: payload.studyPeriodBreakdown.totalDays,
-          studyBreaks: [studyBreak],
-          totalFundedWeeks: payload.studyPeriodBreakdown.totalFundedWeeks,
-          fundedStudyPeriodDays:
-            payload.studyPeriodBreakdown.fundedStudyPeriodDays,
-          unfundedStudyPeriodDays:
-            payload.studyPeriodBreakdown.unfundedStudyPeriodDays,
+          totalDays: studyPeriodBreakdown.totalDays,
+          studyBreaks: [
+            {
+              breakStartDate: studyBreak.breakStartDate,
+              breakEndDate: studyBreak.breakEndDate,
+              breakDays: 32,
+              eligibleBreakDays: 21,
+              ineligibleBreakDays: 11,
+            },
+          ],
+          totalFundedWeeks: studyPeriodBreakdown.totalFundedWeeks,
+          fundedStudyPeriodDays: studyPeriodBreakdown.fundedStudyPeriodDays,
+          unfundedStudyPeriodDays: studyPeriodBreakdown.unfundedStudyPeriodDays,
         },
         offeringDeclaration: payload.offeringDeclaration,
         assessedDate: null,

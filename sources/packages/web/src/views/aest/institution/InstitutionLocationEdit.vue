@@ -22,7 +22,7 @@ import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import LocationEditForm from "@/components/institutions/locations/LocationEditForm.vue";
 import { InstitutionLocationEdit, ApiProcessError } from "@/types";
 import { InstitutionLocationAPIInDTO } from "@/services/http/dto";
-import { useSnackBar } from "@/composables";
+import { useFormioUtils, useSnackBar } from "@/composables";
 import { AuthService } from "@/services/AuthService";
 
 export default defineComponent({
@@ -36,18 +36,21 @@ export default defineComponent({
   setup(props) {
     const initialData = ref({} as InstitutionLocationEdit);
     const snackBar = useSnackBar();
+    const { excludeExtraneousValues } = useFormioUtils();
     const router = useRouter();
-    const updateInstitutionLocation = async (
-      data: InstitutionLocationAPIInDTO,
-    ) => {
+    const updateInstitutionLocation = async (data: unknown) => {
       try {
+        const typedData = excludeExtraneousValues(
+          InstitutionLocationAPIInDTO,
+          data,
+        );
         await InstitutionService.shared.updateInstitutionLocation(
           props.locationId,
-          data,
+          typedData,
         );
         router.push(goBackRouteParams.value);
         snackBar.success(
-          `Your location information for ${data.locationName} have been updated`,
+          `Your location information for ${typedData.locationName} have been updated`,
         );
       } catch (error: unknown) {
         if (error instanceof ApiProcessError) {

@@ -118,18 +118,12 @@ export class MSFAAResponseProcessingService {
     // The update of msfaa always comes from an external source through integration.
     // Hence the date fields are parsed as date object from external source as their date format
     // may not be necessarily ISO date format.
-    const updateResult = await this.msfaaNumberService.updateReceivedFile(
+    await this.msfaaNumberService.updateReceivedRecord(
       receivedRecord.msfaaNumber,
+      receivedRecord.offeringIntensity,
       receivedRecord.borrowerSignedDate,
       receivedRecord.serviceProviderReceivedDate,
     );
-
-    // Expected to update 1 and only 1 record.
-    if (updateResult.affected !== 1) {
-      throw new Error(
-        `Error while updating MSFAA number: ${receivedRecord.msfaaNumber}. Number of affected rows was ${updateResult.affected}, expected 1.`,
-      );
-    }
   }
 
   /**

@@ -1,12 +1,14 @@
-import { StatusChipTypes } from "@/components/generic/StatusChip.models";
+import { StatusChipTypes } from "@/types/contracts/StatusChip";
 import {
   COEApprovalPeriodStatus,
   COEStatus,
   ProgramInfoStatus,
   StudyBreakCOE,
 } from "@/types";
+import { Expose } from "class-transformer";
 
-export interface ConfirmationOfEnrollmentAPIInDTO {
+export class ConfirmationOfEnrollmentAPIInDTO {
+  @Expose()
   tuitionRemittanceAmount: number;
 }
 

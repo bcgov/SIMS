@@ -1,3 +1,5 @@
+import { Expose } from "class-transformer";
+
 export interface OptionItemAPIOutDTO {
   id: number;
   description: string;
@@ -16,16 +18,26 @@ export interface InstitutionPrimaryContactAPIOutDTO {
  * a generic address interface that is used extend or used as nested type
  * for both IN and OUT DTOs
  */
-export interface AddressDetailsFormAPIDTO {
+export class AddressDetailsFormAPIDTO {
+  @Expose()
   addressLine1: string;
+  @Expose()
   addressLine2?: string;
+  @Expose()
   city: string;
+  @Expose()
   country: string;
+  @Expose()
   postalCode: string;
+  @Expose()
   provinceState?: string;
+  @Expose()
   canadaPostalCode?: string;
+  @Expose()
   otherPostalCode?: string;
+  @Expose()
   selectedCountry?: string;
+  @Expose()
   otherCountry?: string;
 }
 

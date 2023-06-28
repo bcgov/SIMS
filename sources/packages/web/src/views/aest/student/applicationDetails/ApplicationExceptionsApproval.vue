@@ -14,7 +14,7 @@ import { useRouter } from "vue-router";
 import { ApplicationExceptionService } from "@/services/ApplicationExceptionService";
 import { FormIOForm } from "@/types";
 import { UpdateApplicationExceptionAPIInDTO } from "@/services/http/dto";
-import { useSnackBar } from "@/composables";
+import { useFormioUtils, useSnackBar } from "@/composables";
 import ApplicationExceptionsApproval from "@/components/common/students/applicationDetails/ApplicationExceptionsApproval.vue";
 
 export default defineComponent({
@@ -38,6 +38,7 @@ export default defineComponent({
   setup(props) {
     const router = useRouter();
     const snackBar = useSnackBar();
+    const { excludeExtraneousValues } = useFormioUtils();
     const processing = ref(false);
 
     const assessmentsSummaryRoute = {
@@ -53,13 +54,16 @@ export default defineComponent({
     ) => {
       processing.value = true;
       try {
-        const approveExceptionPayload = form.data;
+        const typedData = excludeExtraneousValues(
+          UpdateApplicationExceptionAPIInDTO,
+          form.data,
+        );
         await ApplicationExceptionService.shared.approveException(
           props.exceptionId,
-          approveExceptionPayload,
+          typedData,
         );
         snackBar.success(
-          `Application exception status is now ${approveExceptionPayload.exceptionStatus}.`,
+          `Application exception status is now ${typedData.exceptionStatus}.`,
         );
         router.push(assessmentsSummaryRoute);
       } catch {

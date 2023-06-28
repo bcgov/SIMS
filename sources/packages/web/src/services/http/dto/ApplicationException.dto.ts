@@ -1,4 +1,5 @@
 import { ApplicationExceptionStatus } from "@/types";
+import { Expose } from "class-transformer";
 
 export interface ApplicationExceptionRequestAPIInDTO {
   exceptionName: string;
@@ -9,8 +10,10 @@ export interface CreateApplicationExceptionAPIInDTO {
   exceptionRequests: ApplicationExceptionRequestAPIInDTO[];
 }
 
-export interface UpdateApplicationExceptionAPIInDTO {
+export class UpdateApplicationExceptionAPIInDTO {
+  @Expose()
   exceptionStatus: ApplicationExceptionStatus;
+  @Expose()
   noteDescription: string;
 }
 

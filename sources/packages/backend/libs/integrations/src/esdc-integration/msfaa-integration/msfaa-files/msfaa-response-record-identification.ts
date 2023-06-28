@@ -1,3 +1,4 @@
+import { OfferingIntensity } from "@sims/sims-db";
 import {
   RecordTypeCodes,
   ReceivedStatusCode,
@@ -9,6 +10,10 @@ export class MSFAAResponseRecordIdentification {
     this.msfaaNumber = line.substring(3, 13);
     this.sin = line.substring(13, 22);
     this.statusCode = line.substring(22, 23) as ReceivedStatusCode;
+    this.offeringIntensity =
+      line.substring(39, 41) === "PT"
+        ? OfferingIntensity.partTime
+        : OfferingIntensity.fullTime;
     this.line = line;
     this.lineNumber = lineNumber;
   }
@@ -29,6 +34,10 @@ export class MSFAAResponseRecordIdentification {
    * Status codes used alongside the records.
    */
   public readonly statusCode: ReceivedStatusCode;
+  /**
+   * Offering Intensity associated with the MSFAA record.
+   */
+  public readonly offeringIntensity: OfferingIntensity;
   /**
    * Original line read from the MSFAA response file.
    */

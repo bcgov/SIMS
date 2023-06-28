@@ -4,8 +4,10 @@ import {
   OfferingTypes,
   ProgramInfoStatus,
 } from "@/types";
+import { Expose } from "class-transformer";
 
-export interface CompleteProgramInfoRequestAPIInDTO {
+export class CompleteProgramInfoRequestAPIInDTO {
+  @Expose()
   selectedOffering: number;
 }
 
@@ -47,7 +49,9 @@ export interface PIRSummaryAPIOutDTO {
   fullName: string;
 }
 
-export interface DenyProgramInfoRequestAPIInDTO {
+export class DenyProgramInfoRequestAPIInDTO {
+  @Expose()
   pirDenyReasonId: number;
+  @Expose()
   otherReasonDesc?: string;
 }

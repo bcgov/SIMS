@@ -62,7 +62,7 @@ describe("AssessmentInstitutionsController(e2e)-getAssessmentHistorySummary", ()
     const currentMSFAA = createFakeMSFAANumber(
       { student },
       {
-        state: MSFAAStates.Signed,
+        msfaaState: MSFAAStates.Signed,
       },
     );
     await db.msfaaNumber.save(currentMSFAA);

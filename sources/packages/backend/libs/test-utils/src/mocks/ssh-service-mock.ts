@@ -11,6 +11,10 @@ export const MSFAA_PART_TIME_RECEIVE_FILE_WITH_INVALID_RECORDS_COUNT =
   "msfaa-part-time-receive-file-with-invalid-records-count.dat";
 export const MSFAA_PART_TIME_RECEIVE_FILE_WITH_INVALID_SIN_HASH_TOTAL =
   "msfaa-part-time-receive-file-with-invalid-sin-hash-total.dat";
+export const MSFAA_PART_TIME_RECEIVE_FILE_WITH_REACTIVATION_RECORD =
+  "msfaa-part-time-receive-file-with-reactivation-record.dat";
+export const MSFAA_FULL_TIME_RECEIVE_FILE_WITH_REACTIVATION_RECORD =
+  "msfaa-full-time-receive-file-with-reactivation-record.dat";
 
 /**
  * Represents a mocked uploaded file.

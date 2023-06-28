@@ -91,7 +91,7 @@ export default defineComponent({
     const snackBar = useSnackBar();
     const router = useRouter();
     let formIOForm: FormIOForm<StudentAccountApplicationApprovalAPIInDTO>;
-    const { checkFormioValidity } = useFormioUtils();
+    const { checkFormioValidity, excludeExtraneousValues } = useFormioUtils();
     const initialData = ref({} as StudentProfileFormModel);
     const processing = ref(false);
     const createStudentAccountModal = ref({} as ModalDialog<boolean>);
@@ -131,9 +131,13 @@ export default defineComponent({
             return;
           }
           processing.value = true;
+          const typedData = excludeExtraneousValues(
+            StudentAccountApplicationApprovalAPIInDTO,
+            formIOForm.data,
+          );
           await StudentAccountApplicationService.shared.approveStudentAccountApplication(
             props.studentAccountApplicationId,
-            formIOForm.data,
+            typedData,
           );
           snackBar.success(
             "Student account application approved and student account created.",

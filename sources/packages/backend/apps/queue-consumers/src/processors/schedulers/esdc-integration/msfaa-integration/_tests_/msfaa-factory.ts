@@ -7,14 +7,14 @@ import {
   saveFakeApplication,
   saveFakeStudent,
 } from "@sims/test-utils";
-import { MSFAATestInputData } from "./msfaa-part-time-process-integration.scheduler.models";
+import { MSFAATestInputData } from "./msfaa-process-integration.scheduler.models";
 import { createFakeSINValidation } from "@sims/test-utils/factories/sin-validation";
 
 /**
  * Save an MSFAA record providing all data that will be
  * part of the MSFAA file generation.
  * @param db data source helper.
- * @param msfaa test input data.
+ * @param msfaaDataInput msfaa test input data.
  * @returns a saved MSFAA record that uses the input test
  * data to be created.
  */
@@ -61,10 +61,17 @@ export async function saveMSFAATestInputData(
   offering.institutionLocation.institutionCode = msfaaDataInput.institutionCode;
   await db.institutionLocation.save(offering.institutionLocation);
   // MSFAA.
-  const newMSFAANumber = createFakeMSFAANumber({
-    student,
-    referenceApplication,
-  });
+  const newMSFAANumber = createFakeMSFAANumber(
+    {
+      student,
+      referenceApplication,
+    },
+    {
+      msfaaInitialValues: {
+        offeringIntensity: msfaaDataInput.offeringIntensity,
+      },
+    },
+  );
   newMSFAANumber.msfaaNumber = msfaaDataInput.msfaaNumber;
   return db.msfaaNumber.save(newMSFAANumber);
 }

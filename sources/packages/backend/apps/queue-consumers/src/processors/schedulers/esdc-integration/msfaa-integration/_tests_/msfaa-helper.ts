@@ -8,6 +8,8 @@ import { OfferingIntensity } from "@sims/sims-db";
 import { getISODateOnlyString } from "@sims/utilities";
 import * as dayjs from "dayjs";
 
+export const THROW_AWAY_MSFAA_NUMBER = "3000";
+
 /**
  * Creates the sequence group name by the offering intensity.
  * @param offeringIntensity offering intensity.

@@ -1,5 +1,6 @@
 import { EducationProgramsSummaryAPIOutDTO } from "@/services/http/dto";
 import { OfferingStatus } from "@/types";
+import { Expose } from "class-transformer";
 
 /**
  * Program intensities of the education program.
@@ -35,10 +36,14 @@ export interface ProgramDeliveryTypes {
   deliveredOnline: boolean;
 }
 
-export interface EntranceRequirements {
+export class EntranceRequirements {
+  @Expose()
   hasMinimumAge: boolean;
+  @Expose()
   minHighSchool: boolean;
+  @Expose()
   requirementsByInstitution: boolean;
+  @Expose()
   requirementsByBCITA: boolean;
 }
 
