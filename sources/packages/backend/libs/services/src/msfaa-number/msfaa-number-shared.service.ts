@@ -186,9 +186,7 @@ export class MSFAANumberSharedService {
         },
       );
       // The reactivated msfaaNumber.
-      let newActiveMSFAA = {
-        id: options?.existingMSFAA.id,
-      } as MSFAANumber;
+      let newActiveMSFAA = options?.existingMSFAA as MSFAANumber;
       // If there is not a MSFAA number to be re-activated.
       if (!options?.existingMSFAA) {
         // Create the new MSFAA record for the student.
