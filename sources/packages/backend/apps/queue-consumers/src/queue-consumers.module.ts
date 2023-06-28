@@ -34,6 +34,7 @@ import {
   WorkflowClientService,
   ZeebeModule,
   ConfirmationOfEnrollmentService,
+  MSFAANumberSharedService,
 } from "@sims/services";
 import { DatabaseModule } from "@sims/sims-db";
 import { IER12IntegrationModule } from "@sims/integrations/institution-integration/ier12-integration";
@@ -112,6 +113,7 @@ import { ECEIntegrationModule } from "@sims/integrations/institution-integration
     SystemUsersService,
     ApplicationService,
     ConfirmationOfEnrollmentService,
+    MSFAANumberSharedService,
   ],
 })
 export class QueueConsumersModule {}

@@ -1,6 +1,12 @@
 import { OfferingIntensity, RelationshipStatus } from "@sims/sims-db";
 
 /**
+ * Sample MSFAA Numbers.
+ */
+export const PART_TIME_SAMPLE_MSFAA_NUMBER = "1000";
+export const FULL_TIME_SAMPLE_MSFAA_NUMBER = "2000";
+
+/**
  * Values part of an MSFAA file record.
  */
 export interface MSFAATestInputData {

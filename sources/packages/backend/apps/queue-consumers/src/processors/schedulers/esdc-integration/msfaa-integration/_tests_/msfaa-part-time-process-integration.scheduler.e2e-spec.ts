@@ -19,7 +19,7 @@ import {
   MSFAA_PART_TIME_MARRIED,
   MSFAA_PART_TIME_OTHER_COUNTRY,
   MSFAA_PART_TIME_RELATIONSHIP_OTHER,
-} from "./msfaa-part-time-process-integration.scheduler.models";
+} from "./msfaa-process-integration.scheduler.models";
 import { OfferingIntensity } from "@sims/sims-db";
 import {
   createMSFAARequestContentSpyOnMock,

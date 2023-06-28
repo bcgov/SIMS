@@ -17,7 +17,9 @@ import {
   User,
 } from "@sims/sims-db";
 import {
+  E2EDataSources,
   MSFAAStates,
+  createE2EDataSources,
   createFakeApplication,
   createFakeDisbursementOveraward,
   createFakeDisbursementSchedule,
@@ -54,6 +56,7 @@ describe(
     let disbursementOverawardRepo: Repository<DisbursementOveraward>;
     let disbursementScheduleRepo: Repository<DisbursementSchedule>;
     let disbursementValueRepo: Repository<DisbursementValue>;
+    let db: E2EDataSources;
 
     beforeAll(async () => {
       const { nestApplication, dataSource } = await createTestingAppModule();
@@ -73,6 +76,18 @@ describe(
       disbursementValueRepo = dataSource.getRepository(DisbursementValue);
       // Processor under test.
       processor = app.get(FullTimeECertProcessIntegrationScheduler);
+      db = createE2EDataSources(dataSource);
+    });
+
+    beforeEach(async () => {
+      // Ensures that every disbursement on database is cancelled allowing the e-Certs to
+      // be generated with the data created for every specific scenario.
+      await db.disbursementSchedule.update(
+        {
+          disbursementScheduleStatus: Not(DisbursementScheduleStatus.Cancelled),
+        },
+        { disbursementScheduleStatus: DisbursementScheduleStatus.Cancelled },
+      );
     });
 
     it("Should execute overawards deductions and calculate awards effective value", async () => {
@@ -91,7 +106,7 @@ describe(
       const savedMSFAANumber = await msfaaNumberRepo.save(
         createFakeMSFAANumber(
           { student: savedStudent },
-          { state: MSFAAStates.Signed },
+          { msfaaState: MSFAAStates.Signed },
         ),
       );
       // Create and save application.

@@ -27,10 +27,11 @@ export enum MSFAAStates {
  * MSFAA creation and the one that will provide additional student information
  * for the MSFAA request file.
  * @param options additional options.
- * - `state` allow the record to be created in one of the possible 'states' that
+ * - `msfaaState` allow the record to be created in one of the possible 'states' that
  * an MSFAA can have for the different scenarios along its lifetime. More than one
  * state can be combined, for instance, to create a signed MSFAA that was also
  * cancelled.
+ * - `msfaaInitialValues` initial msfaa record.
  * @returns MSFAA number record ready to be saved.
  */
 export function createFakeMSFAANumber(
@@ -39,23 +40,28 @@ export function createFakeMSFAANumber(
     referenceApplication?: Application;
   },
   options?: {
-    state?: MSFAAStates;
+    msfaaState?: MSFAAStates;
+    msfaaInitialValues?: Partial<MSFAANumber>;
   },
 ): MSFAANumber {
   const now = new Date();
   const dateOnly = getISODateOnlyString(now);
   const msfaaNumber = new MSFAANumber();
-  msfaaNumber.offeringIntensity = OfferingIntensity.fullTime;
+  msfaaNumber.offeringIntensity =
+    options?.msfaaInitialValues?.offeringIntensity ??
+    OfferingIntensity.fullTime;
   msfaaNumber.student = relations.student;
   msfaaNumber.referenceApplication = relations?.referenceApplication;
-  msfaaNumber.msfaaNumber = faker.random
-    .number({
-      min: 1000000000,
-      max: 9999999999,
-    })
-    .toString();
+  msfaaNumber.msfaaNumber =
+    options?.msfaaInitialValues?.msfaaNumber ??
+    faker.random
+      .number({
+        min: 1000000000,
+        max: 9999999999,
+      })
+      .toString();
 
-  if (!options?.state || options.state & MSFAAStates.Pending) {
+  if (!options?.msfaaState || options.msfaaState & MSFAAStates.Pending) {
     msfaaNumber.dateRequested = null;
     msfaaNumber.dateSigned = null;
     msfaaNumber.serviceProviderReceivedDate = null;
@@ -63,17 +69,17 @@ export function createFakeMSFAANumber(
     msfaaNumber.newIssuingProvince = null;
   }
 
-  if (options?.state & MSFAAStates.Signed) {
+  if (options?.msfaaState & MSFAAStates.Signed) {
     msfaaNumber.dateRequested = now;
     msfaaNumber.dateSigned = dateOnly;
     msfaaNumber.serviceProviderReceivedDate = dateOnly;
   }
 
-  if (options?.state & MSFAAStates.CancelledSystem) {
+  if (options?.msfaaState & MSFAAStates.CancelledSystem) {
     msfaaNumber.cancelledDate = dateOnly;
   }
 
-  if (options?.state & MSFAAStates.CancelledOtherProvince) {
+  if (options?.msfaaState & MSFAAStates.CancelledOtherProvince) {
     msfaaNumber.newIssuingProvince = "ON";
     msfaaNumber.cancelledDate = dateOnly;
   }

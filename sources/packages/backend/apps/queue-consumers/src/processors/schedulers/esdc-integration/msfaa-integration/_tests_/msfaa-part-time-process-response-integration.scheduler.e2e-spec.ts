@@ -15,7 +15,18 @@ import {
   MSFAA_PART_TIME_RECEIVE_FILE_WITH_CANCELATION_RECORD,
   MSFAA_PART_TIME_RECEIVE_FILE_WITH_INVALID_RECORDS_COUNT,
   MSFAA_PART_TIME_RECEIVE_FILE_WITH_INVALID_SIN_HASH_TOTAL,
+  MSFAA_PART_TIME_RECEIVE_FILE_WITH_REACTIVATION_RECORD,
+  MSFAAStates,
+  saveFakeApplicationDisbursements,
+  saveFakeStudent,
+  createFakeMSFAANumber,
 } from "@sims/test-utils";
+import { THROW_AWAY_MSFAA_NUMBER } from "./msfaa-helper";
+import {
+  ApplicationStatus,
+  DisbursementScheduleStatus,
+  OfferingIntensity,
+} from "@sims/sims-db";
 import * as Client from "ssh2-sftp-client";
 import { Job } from "bull";
 import * as path from "path";
@@ -23,7 +34,8 @@ import {
   MSFAA_PART_TIME_MARRIED,
   MSFAA_PART_TIME_OTHER_COUNTRY,
   MSFAA_PART_TIME_RELATIONSHIP_OTHER,
-} from "./msfaa-part-time-process-integration.scheduler.models";
+  PART_TIME_SAMPLE_MSFAA_NUMBER,
+} from "./msfaa-process-integration.scheduler.models";
 import { saveMSFAATestInputsData } from "./msfaa-factory";
 import { In, IsNull } from "typeorm";
 
@@ -61,6 +73,19 @@ describe(
       await db.msfaaNumber.update(
         { cancelledDate: IsNull() },
         { cancelledDate: getISODateOnlyString(new Date()) },
+      );
+      // Ensuring that any previous runs of this test or any other test do not have the same Msfaa numbers as the ones used below.
+      const MsfaaRecordsToUpdate = [
+        MSFAA_PART_TIME_MARRIED.msfaaNumber,
+        MSFAA_PART_TIME_OTHER_COUNTRY.msfaaNumber,
+        MSFAA_PART_TIME_RELATIONSHIP_OTHER.msfaaNumber,
+        PART_TIME_SAMPLE_MSFAA_NUMBER,
+      ];
+      await db.msfaaNumber.update(
+        {
+          msfaaNumber: In(MsfaaRecordsToUpdate),
+        },
+        { msfaaNumber: THROW_AWAY_MSFAA_NUMBER },
       );
     });
 
@@ -132,6 +157,169 @@ describe(
       // Validate second confirmed record.
       expect(secondSignedMSFAA.dateSigned).toBe("2021-11-22");
       expect(secondSignedMSFAA.serviceProviderReceivedDate).toBe("2021-11-23");
+    });
+
+    it("Should reactivate a cancelled MSFAA when the same MSFAA is received in the response file and re-associate this reactivated MSFAA with all pending disbursements.", async () => {
+      // Arrange
+      // Create a cancelled MSFAA. The Msfaa number used for creating the cancelled Msfaa record is the same as the one used in the msfaa-part-time-file-with-reactivation-record.dat.
+      const student = await saveFakeStudent(db.dataSource);
+      const cancelledMSFAARecord = await db.msfaaNumber.save(
+        createFakeMSFAANumber(
+          { student },
+          {
+            msfaaState: MSFAAStates.CancelledOtherProvince,
+            msfaaInitialValues: {
+              msfaaNumber: PART_TIME_SAMPLE_MSFAA_NUMBER,
+              offeringIntensity: OfferingIntensity.partTime,
+            },
+          },
+        ),
+      );
+      // Create Pending MSFAA and associate it with disbursements from the two applications.
+      const currentMSFAA = createFakeMSFAANumber(
+        { student },
+        {
+          msfaaState: MSFAAStates.Pending,
+          msfaaInitialValues: {
+            offeringIntensity: OfferingIntensity.partTime,
+          },
+        },
+      );
+      await db.msfaaNumber.save(currentMSFAA);
+      // Create 2 applications with 4 disbursements - 3 pending state and 1 sent.
+      const applicationA = await saveFakeApplicationDisbursements(
+        db.dataSource,
+        {
+          student,
+          msfaaNumber: currentMSFAA,
+        },
+        {
+          applicationStatus: ApplicationStatus.Completed,
+          offeringIntensity: OfferingIntensity.partTime,
+          createSecondDisbursement: true,
+        },
+      );
+      const applicationB = await saveFakeApplicationDisbursements(
+        db.dataSource,
+        {
+          student,
+          msfaaNumber: currentMSFAA,
+        },
+        {
+          applicationStatus: ApplicationStatus.Completed,
+          offeringIntensity: OfferingIntensity.partTime,
+          createSecondDisbursement: true,
+          firstDisbursementInitialValues: {
+            disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
+          },
+        },
+      );
+      // Queued job.
+      const job = createMock<Job<void>>();
+      mockDownloadFiles(sftpClientMock, [
+        MSFAA_PART_TIME_RECEIVE_FILE_WITH_REACTIVATION_RECORD,
+      ]);
+      // Act
+      // Now reactivate the cancelled MSFAA.
+      const processResult = await processor.processMSFAAResponses(job);
+      // Assert
+      expect(processResult).toStrictEqual([
+        {
+          processSummary: [
+            `Processing file ${MSFAA_PART_TIME_RECEIVE_FILE_WITH_REACTIVATION_RECORD}.`,
+            "File contains:",
+            "Confirmed MSFAA records (type R): 1.",
+            "Cancelled MSFAA records (type C): 0.",
+            "Record from line 1, updated as confirmed.",
+          ],
+          errorsSummary: [],
+        },
+      ]);
+      // Assert that the file was deleted from SFTP.
+      expect(sftpClientMock.delete).toHaveBeenCalled();
+      // Find the updated MSFAA records previously created.
+      const msfaaReactivatedRecord = await db.msfaaNumber.findOne({
+        select: {
+          dateSigned: true,
+          serviceProviderReceivedDate: true,
+          cancelledDate: true,
+          newIssuingProvince: true,
+        },
+        where: {
+          id: cancelledMSFAARecord.id,
+        },
+      });
+      // Validate reactivated confirmed record.
+      expect(msfaaReactivatedRecord.dateSigned).toBe("2023-05-02");
+      expect(msfaaReactivatedRecord.serviceProviderReceivedDate).toBe(
+        "2023-05-03",
+      );
+      expect(msfaaReactivatedRecord.cancelledDate).toBe(null);
+      expect(msfaaReactivatedRecord.newIssuingProvince).toBe(null);
+      // Validate msfaa updated to the reactivated msfaa for all pending disbursements.
+      const [appAFirstDisbursementSchedule, appASecondDisbursementSchedule] =
+        applicationA.currentAssessment.disbursementSchedules;
+      const appAFirstDisbursementScheduleMsfaaNumberId =
+        await db.disbursementSchedule.findOne({
+          select: {
+            id: true,
+            msfaaNumber: { id: true },
+          },
+          relations: {
+            msfaaNumber: true,
+          },
+          where: { id: appAFirstDisbursementSchedule.id },
+        });
+      const appASecondDisbursementScheduleMsfaaNumberId =
+        await db.disbursementSchedule.findOne({
+          select: {
+            id: true,
+            msfaaNumber: { id: true },
+          },
+          relations: {
+            msfaaNumber: true,
+          },
+          where: { id: appASecondDisbursementSchedule.id },
+        });
+      const [appBFirstDisbursementSchedule, appBSecondDisbursementSchedule] =
+        applicationB.currentAssessment.disbursementSchedules;
+      const appBFirstDisbursementScheduleMsfaaNumberId =
+        await db.disbursementSchedule.findOne({
+          select: {
+            id: true,
+            msfaaNumber: { id: true },
+          },
+          relations: {
+            msfaaNumber: true,
+          },
+          where: { id: appBFirstDisbursementSchedule.id },
+        });
+      const appBSecondDisbursementScheduleMsfaaNumberId =
+        await db.disbursementSchedule.findOne({
+          select: {
+            id: true,
+            msfaaNumber: { id: true },
+            disbursementScheduleStatus: true,
+          },
+          relations: {
+            msfaaNumber: true,
+          },
+          where: { id: appBSecondDisbursementSchedule.id },
+        });
+      // Validate msfaa updated for all pending disbursements.
+      expect(appAFirstDisbursementScheduleMsfaaNumberId.msfaaNumber.id).toBe(
+        cancelledMSFAARecord.id,
+      );
+      expect(appASecondDisbursementScheduleMsfaaNumberId.msfaaNumber.id).toBe(
+        cancelledMSFAARecord.id,
+      );
+      expect(appBSecondDisbursementScheduleMsfaaNumberId.msfaaNumber.id).toBe(
+        cancelledMSFAARecord.id,
+      );
+      // Validate msfaa unchanged for all sent disbursements.
+      expect(appBFirstDisbursementScheduleMsfaaNumberId.msfaaNumber.id).toBe(
+        currentMSFAA.id,
+      );
     });
 
     it("Should successfully process 2 MSFAA records when a file has 3 records but one throws an error during DB update.", async () => {

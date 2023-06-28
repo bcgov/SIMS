@@ -6,6 +6,7 @@ import {
   OfferingIntensity,
 } from "@sims/sims-db";
 import { getISODateOnlyString } from "@sims/utilities";
+import { MSFAANumberSharedService, SystemUsersService } from "@sims/services";
 
 /**
  * Service layer for MSFAA (Master Student Financial Aid Agreement)
@@ -13,7 +14,11 @@ import { getISODateOnlyString } from "@sims/utilities";
  */
 @Injectable()
 export class MSFAANumberService extends RecordDataModelService<MSFAANumber> {
-  constructor(dataSource: DataSource) {
+  constructor(
+    dataSource: DataSource,
+    private readonly msfaaNumberSharedService: MSFAANumberSharedService,
+    private readonly systemUsersService: SystemUsersService,
+  ) {
     super(dataSource.getRepository(MSFAANumber));
   }
 
@@ -93,25 +98,65 @@ export class MSFAANumberService extends RecordDataModelService<MSFAANumber> {
    * MSFAA received on the database with the
    * information received. If the information was already received
    * the record will not be updated.
-   * @param msfaaNumber MSFAA number
-   * @param dateSigned date in which the borrower indicated the MSFAA was signed
-   * @param serviceProviderReceivedDate date in which the MSFAA was received by/resolve from CanadaPost/Kiosk
-   * @returns update result. Only one row is supposed to be affected.
+   * @param msfaaNumber MSFAA number.
+   * @param offeringIntensity associated offering intensity.
+   * @param dateSigned date in which the borrower indicated the MSFAA was signed.
+   * @param serviceProviderReceivedDate date in which the MSFAA was received by/resolve from CanadaPost/Kiosk.
    */
-  async updateReceivedFile(
+  async updateReceivedRecord(
     msfaaNumber: string,
+    offeringIntensity: OfferingIntensity,
     dateSigned: Date,
     serviceProviderReceivedDate: Date,
-  ): Promise<UpdateResult> {
+  ): Promise<void> {
     if (!dateSigned || !serviceProviderReceivedDate) {
       throw new Error(
         "Not all required fields to update a received MSFAA record were provided.",
       );
     }
-
-    return this.repo.update(
+    // Check if the msfaa number needs to be reactivated or simply updated with a signed date. The msfaa record will need to reactivated if it is present in the database as cancelled.
+    const retrievedMSFAARecord = await this.repo.findOne({
+      select: {
+        id: true,
+        student: { id: true },
+        referenceApplication: { id: true },
+        cancelledDate: true,
+        dateSigned: true,
+        offeringIntensity: true,
+      },
+      relations: {
+        student: true,
+        referenceApplication: true,
+      },
+      where: {
+        msfaaNumber,
+        offeringIntensity,
+      },
+    });
+    if (!retrievedMSFAARecord) {
+      throw new Error(
+        `MSFAA number ${msfaaNumber} not found for offering intensity ${offeringIntensity}.`,
+      );
+    }
+    const systemUser = await this.systemUsersService.systemUser();
+    // If there is a retrievedMSFAARecord, check if the msfaa number was cancelled earlier. If yes, reactivate it.
+    if (retrievedMSFAARecord.cancelledDate) {
+      // Re-associate all disbursements pending e-cert generation for the same offering intensity with this msfaa number.
+      await this.msfaaNumberSharedService.reactivateMSFAANumber(
+        retrievedMSFAARecord.student?.id,
+        retrievedMSFAARecord.referenceApplication?.id,
+        retrievedMSFAARecord.offeringIntensity,
+        systemUser?.id,
+        { id: retrievedMSFAARecord.id, msfaaNumber },
+        dateSigned,
+        serviceProviderReceivedDate,
+      );
+      return;
+    }
+    // No reactivation, just update the dateSigned and serviceProviderReceivedDate.
+    const updateResult = await this.repo.update(
       {
-        msfaaNumber: msfaaNumber,
+        msfaaNumber,
         dateSigned: IsNull(),
         serviceProviderReceivedDate: IsNull(),
       },
@@ -120,8 +165,15 @@ export class MSFAANumberService extends RecordDataModelService<MSFAANumber> {
         serviceProviderReceivedDate: getISODateOnlyString(
           serviceProviderReceivedDate,
         ),
+        modifier: systemUser,
       },
     );
+    // Incase no record updated.
+    if (!updateResult.affected) {
+      throw new Error(
+        `Error while updating MSFAA number: ${msfaaNumber}. Number of affected rows was ${updateResult.affected}, expected 1.`,
+      );
+    }
   }
 
   /**
