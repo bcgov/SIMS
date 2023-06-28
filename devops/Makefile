@@ -13,7 +13,7 @@ export HOST_PREFIX := $(or $(HOST_PREFIX), $$HOST_PREFIX)
 export NEW_DB := $(or $(NEW_DB), $$NEW_DB)
 export JOB_NAME := $(or $(JOB_NAME), $$JN)
 export SITE_MINDER_LOGOUT_URL := $(or $(SITE_MINDER_LOGOUT_URL), https://logontest7.gov.bc.ca/clp-cgi/logoff.cgi)
-export BACKUP_POSTGRESQL_APP_NAME := $(or $(BACKUP_POSTGRESQL_APP_NAME), patroni-simsdb-backup)
+export PATRONI_SIMSDB_BACKUP_APP_NAME := $(or $(PATRONI_SIMSDB_BACKUP_APP_NAME), patroni-simsdb-backup)
 export PATRONI_SIMSDB_BACKUP_CONFIGMAP_NAME := $(or $(PATRONI_SIMSDB_BACKUP_CONFIGMAP_NAME), patroni-simsdb-backup-conf)
 export PATRONI_SIMSDB_BACKUP_CONFIG_FILE_NAME := $(or $(PATRONI_SIMSDB_BACKUP_CONFIG_FILE_NAME), patroni-simsdb-backup.conf)
 export BYPASS_CRA_INCOME_VERIFICATION := $(or $(BYPASS_CRA_INCOME_VERIFICATION), false)
@@ -492,24 +492,24 @@ deploy-forms:
 # Create the POSTGRES structure
 db-backup-build-patroni:
 	test -n "$(BUILD_NAMESPACE)"
-	test -n "$(BACKUP_POSTGRESQL_APP_NAME)"
+	test -n "$(PATRONI_SIMSDB_BACKUP_APP_NAME)"
 	@echo "+\n++ Creating build resources for database backups on $(BUILD_NAMESPACE)\n+"
 	oc -n $(BUILD_NAMESPACE) process -f ./openshift/database-backup/backup-build.yaml \
-		-p NAME=$(BACKUP_POSTGRESQL_APP_NAME) OUTPUT_IMAGE_TAG=v1 \
+		-p NAME=$(PATRONI_SIMSDB_BACKUP_APP_NAME) OUTPUT_IMAGE_TAG=v1 \
 		-p BASE_IMAGE_FOR_BUILD=quay.io/fedora/postgresql-14:14 \
 		| oc -n $(BUILD_NAMESPACE) apply -f -
 
 db-backup-build-patroni-delete:
 	test -n "$(NAMESPACE)"
 	test -n "$(BUILD_NAMESPACE)"
-	test -n "$(BACKUP_POSTGRESQL_APP_NAME)"
+	test -n "$(PATRONI_SIMSDB_BACKUP_APP_NAME)"
 	@echo "+\n++ Removing build resoures for database backups on $(NAMESPACE)\n+"
-	oc -n $(BUILD_NAMESPACE) delete is/$(BACKUP_POSTGRESQL_APP_NAME) bc/$(BACKUP_POSTGRESQL_APP_NAME)
+	oc -n $(BUILD_NAMESPACE) delete is/$(PATRONI_SIMSDB_BACKUP_APP_NAME) bc/$(PATRONI_SIMSDB_BACKUP_APP_NAME)
 
 # Create the config map to be shared by POSTGRES.
 db-backup-configmap:
 	test -n "$(NAMESPACE)"
-	test -n "$(BACKUP_POSTGRESQL_APP_NAME)"
+	test -n "$(PATRONI_SIMSDB_BACKUP_APP_NAME)"
 	@echo "+\n++ Creating configmap resources for database backups on $(NAMESPACE)\n+"
 	oc -n $(NAMESPACE) create configmap $(PATRONI_SIMSDB_BACKUP_CONFIGMAP_NAME) --from-file=./openshift/database-backup/$(PATRONI_SIMSDB_BACKUP_CONFIG_FILE_NAME)
 
@@ -522,21 +522,21 @@ db-backup-configmap-delete:
 db-backup-deploy-patroni:
 	test -n "$(NAMESPACE)"
 	test -n "$(BUILD_NAMESPACE)"
-	test -n "$(BACKUP_POSTGRESQL_APP_NAME)"
+	test -n "$(PATRONI_SIMSDB_BACKUP_APP_NAME)"
 	@echo "+\n++ Creating deploy config resoures for database backups on $(NAMESPACE)\n+"
 	oc -n $(NAMESPACE) process -f ./openshift/database-backup/backup-deploy.yaml \
-  	-p NAME=$(BACKUP_POSTGRESQL_APP_NAME) \
+  	-p NAME=$(PATRONI_SIMSDB_BACKUP_APP_NAME) \
   	-p IMAGE_NAMESPACE=$(BUILD_NAMESPACE) \
-  	-p SOURCE_IMAGE_NAME=$(BACKUP_POSTGRESQL_APP_NAME) \
+  	-p SOURCE_IMAGE_NAME=$(PATRONI_SIMSDB_BACKUP_APP_NAME) \
   	-p TAG_NAME=v1 \
-		-p FTP_SECRET_KEY=$(BACKUP_POSTGRESQL_APP_NAME)-ftp-secret \
-  	-p BACKUP_VOLUME_NAME=$(BACKUP_POSTGRESQL_APP_NAME)-pvc \
+		-p FTP_SECRET_KEY=$(PATRONI_SIMSDB_BACKUP_APP_NAME)-ftp-secret \
+  	-p BACKUP_VOLUME_NAME=$(PATRONI_SIMSDB_BACKUP_APP_NAME)-pvc \
 		-p BACKUP_VOLUME_SIZE=20Gi \
   	-p VERIFICATION_VOLUME_SIZE=5Gi \
   	-p ENVIRONMENT_NAME=$(NAMESPACE) \
 		-p CONFIG_MAP_NAME=$(PATRONI_SIMSDB_BACKUP_CONFIGMAP_NAME) \
 		-p CUSTOM_CONFIG_FILE_NAME=$(PATRONI_SIMSDB_BACKUP_CONFIG_FILE_NAME) \
-		-p VERIFICATION_VOLUME_NAME=$(BACKUP_POSTGRESQL_APP_NAME)-verification-pvc \
+		-p VERIFICATION_VOLUME_NAME=$(PATRONI_SIMSDB_BACKUP_APP_NAME)-verification-pvc \
 		-p DATABASE_DEPLOYMENT_NAME=patroni-creds \
 		-p DATABASE_USER_KEY_NAME=superuser-username \
 		-p DATABASE_PASSWORD_KEY_NAME=superuser-password \
@@ -545,16 +545,16 @@ db-backup-deploy-patroni:
 
 db-backup-deploy-patroni-delete:
 	test -n "$(NAMESPACE)"
-	test -n "$(BACKUP_POSTGRESQL_APP_NAME)"
+	test -n "$(PATRONI_SIMSDB_BACKUP_APP_NAME)"
 	@echo "+\n++ Removing deploy resoures for database backups on $(NAMESPACE)\n+"
 	oc -n $(NAMESPACE) delete \
-  	secret/$(BACKUP_POSTGRESQL_APP_NAME) \
-  	secret/$(BACKUP_POSTGRESQL_APP_NAME)-ftp-secret \
-  	dc/$(BACKUP_POSTGRESQL_APP_NAME) \
-  	networkpolicy/$(BACKUP_POSTGRESQL_APP_NAME)
+  	secret/$(PATRONI_SIMSDB_BACKUP_APP_NAME) \
+  	secret/$(PATRONI_SIMSDB_BACKUP_APP_NAME)-ftp-secret \
+  	dc/$(PATRONI_SIMSDB_BACKUP_APP_NAME) \
+  	networkpolicy/$(PATRONI_SIMSDB_BACKUP_APP_NAME)
 # The below PVCs are not deleted.
-# pvc/$(BACKUP_POSTGRESQL_APP_NAME)-pvc \
-# pvc/$(BACKUP_POSTGRESQL_APP_NAME)-verification-pvc \
+# pvc/$(PATRONI_SIMSDB_BACKUP_APP_NAME)-pvc \
+# pvc/$(PATRONI_SIMSDB_BACKUP_APP_NAME)-verification-pvc \
 
 # Remove redis and resources including secrets from openshift namespace.
 delete-redis:
