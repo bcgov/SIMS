@@ -57,8 +57,8 @@ describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", (
   it("Should create an education program when valid data is passed.", async () => {
     // Arrange
     const payload = {
-      name: "Education Program test",
-      description: "Education Program description...",
+      name: faker.lorem.text(5),
+      description: faker.lorem.text(5),
       credentialType: "undergraduateCertificate",
       cipCode: "11.1111",
       fieldOfStudyCode: "15",
@@ -173,8 +173,8 @@ describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", (
   it("Should not allow any entrance requirement option selected when 'none of the above' is selected.", async () => {
     // Arrange
     const payload = {
-      name: "Education Program test",
-      description: "Education Program description...",
+      name: faker.lorem.text(5),
+      description: faker.lorem.text(5),
       credentialType: "undergraduateCertificate",
       cipCode: "11.1111",
       fieldOfStudyCode: "15",
