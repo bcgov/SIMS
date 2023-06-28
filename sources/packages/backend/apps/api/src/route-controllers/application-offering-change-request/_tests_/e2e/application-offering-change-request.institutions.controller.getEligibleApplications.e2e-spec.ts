@@ -88,8 +88,10 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-getEligibl
             institutionLocation: collegeFLocation,
           },
           {
-            applicationOfferingChangeRequestStatus:
-              ApplicationOfferingChangeRequestStatus.Approved,
+            initialValues: {
+              applicationOfferingChangeRequestStatus:
+                ApplicationOfferingChangeRequestStatus.Approved,
+            },
           },
         );
       const applicationWithApprovedApplicationOfferingChange =

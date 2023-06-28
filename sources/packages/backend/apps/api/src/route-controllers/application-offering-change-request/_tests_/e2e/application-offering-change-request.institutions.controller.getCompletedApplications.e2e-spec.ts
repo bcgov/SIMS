@@ -56,7 +56,7 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-getComplet
         applicationStatus: ApplicationStatus.Completed,
       },
     );
-    // Student 2 has an in-progress with student application offering change request for the institution.
+    // Student 2 has an in progress with student application offering change request for the institution.
     await saveFakeApplicationOfferingRequestChange(db, {
       institutionLocation: collegeFLocation,
     });
@@ -68,8 +68,10 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-getComplet
           institutionLocation: collegeFLocation,
         },
         {
-          applicationOfferingChangeRequestStatus:
-            ApplicationOfferingChangeRequestStatus.Approved,
+          initialValues: {
+            applicationOfferingChangeRequestStatus:
+              ApplicationOfferingChangeRequestStatus.Approved,
+          },
         },
       );
     // Student 4 has an in progress with student application offering change request with a different institution.
@@ -82,8 +84,10 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-getComplet
           institutionLocation: collegeFLocation,
         },
         {
-          applicationOfferingChangeRequestStatus:
-            ApplicationOfferingChangeRequestStatus.DeclinedByStudent,
+          initialValues: {
+            applicationOfferingChangeRequestStatus:
+              ApplicationOfferingChangeRequestStatus.DeclinedByStudent,
+          },
         },
       );
     // Student 6 has a declined by SABC application offering change request.
@@ -94,8 +98,10 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-getComplet
           institutionLocation: collegeFLocation,
         },
         {
-          applicationOfferingChangeRequestStatus:
-            ApplicationOfferingChangeRequestStatus.DeclinedBySABC,
+          initialValues: {
+            applicationOfferingChangeRequestStatus:
+              ApplicationOfferingChangeRequestStatus.DeclinedBySABC,
+          },
         },
       );
 
@@ -210,15 +216,19 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-getComplet
           institutionLocation: collegeFLocation,
         },
         {
-          applicationOfferingChangeRequestStatus:
-            ApplicationOfferingChangeRequestStatus.Approved,
+          initialValues: {
+            applicationOfferingChangeRequestStatus:
+              ApplicationOfferingChangeRequestStatus.Approved,
+          },
         },
       );
     // Student 2 has an approved with student application offering change request with a different institution.
     const approvedApplicationOfferingChangeForDifferentLocation =
       await saveFakeApplicationOfferingRequestChange(db, undefined, {
-        applicationOfferingChangeRequestStatus:
-          ApplicationOfferingChangeRequestStatus.Approved,
+        initialValues: {
+          applicationOfferingChangeRequestStatus:
+            ApplicationOfferingChangeRequestStatus.Approved,
+        },
       });
     // Student 3 has a declined by student application offering change request.
     await saveFakeApplicationOfferingRequestChange(
@@ -227,8 +237,10 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-getComplet
         institutionLocation: collegeFLocation,
       },
       {
-        applicationOfferingChangeRequestStatus:
-          ApplicationOfferingChangeRequestStatus.DeclinedByStudent,
+        initialValues: {
+          applicationOfferingChangeRequestStatus:
+            ApplicationOfferingChangeRequestStatus.DeclinedByStudent,
+        },
       },
     );
     // Student 4 has a declined by SABC offering change request.
@@ -238,8 +250,10 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-getComplet
         institutionLocation: collegeFLocation,
       },
       {
-        applicationOfferingChangeRequestStatus:
-          ApplicationOfferingChangeRequestStatus.DeclinedBySABC,
+        initialValues: {
+          applicationOfferingChangeRequestStatus:
+            ApplicationOfferingChangeRequestStatus.DeclinedBySABC,
+        },
       },
     );
 

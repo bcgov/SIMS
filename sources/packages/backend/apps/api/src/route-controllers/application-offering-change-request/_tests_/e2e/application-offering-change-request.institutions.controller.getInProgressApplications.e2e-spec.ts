@@ -69,8 +69,10 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-getInProgr
           institutionLocation: collegeFLocation,
         },
         {
-          applicationOfferingChangeRequestStatus:
-            ApplicationOfferingChangeRequestStatus.InProgressWithSABC,
+          initialValues: {
+            applicationOfferingChangeRequestStatus:
+              ApplicationOfferingChangeRequestStatus.InProgressWithSABC,
+          },
         },
       );
     // Student 4 has an in progress with student application offering change request with a different institution.
@@ -82,8 +84,10 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-getInProgr
         institutionLocation: collegeFLocation,
       },
       {
-        applicationOfferingChangeRequestStatus:
-          ApplicationOfferingChangeRequestStatus.Approved,
+        initialValues: {
+          applicationOfferingChangeRequestStatus:
+            ApplicationOfferingChangeRequestStatus.Approved,
+        },
       },
     );
     const applicationWithInProgressWithStudentApplicationOfferingChange =
@@ -166,8 +170,10 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-getInProgr
           institutionLocation: collegeFLocation,
         },
         {
-          applicationOfferingChangeRequestStatus:
-            ApplicationOfferingChangeRequestStatus.InProgressWithSABC,
+          initialValues: {
+            applicationOfferingChangeRequestStatus:
+              ApplicationOfferingChangeRequestStatus.InProgressWithSABC,
+          },
         },
       );
     const applicationWithInProgressWithSABCApplicationOfferingChange =

@@ -25,7 +25,7 @@ export async function saveFakeApplicationOfferingRequestChange(
     institutionLocation?: InstitutionLocation;
   },
   options?: {
-    applicationOfferingChangeRequestStatus?: ApplicationOfferingChangeRequestStatus;
+    initialValues: Partial<ApplicationOfferingChangeRequest>;
   },
 ): Promise<ApplicationOfferingChangeRequest> {
   const savedUser = await db.user.save(createFakeUser());
@@ -50,7 +50,7 @@ export async function saveFakeApplicationOfferingRequestChange(
   applicationOfferingChangeRequest.activeOffering =
     application.currentAssessment.offering;
   applicationOfferingChangeRequest.applicationOfferingChangeRequestStatus =
-    options?.applicationOfferingChangeRequestStatus ??
+    options?.initialValues.applicationOfferingChangeRequestStatus ??
     ApplicationOfferingChangeRequestStatus.InProgressWithStudent;
   applicationOfferingChangeRequest.reason = faker.lorem.sentence(3);
 
