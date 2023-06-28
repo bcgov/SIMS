@@ -14,10 +14,23 @@ export function useInstitutionState(rootStore?: Store<any>) {
     ).name;
   };
 
+  /**
+   * Get all store information needed for the institution store.
+   */
   const initialize = async () => {
     await store.dispatch("institution/initialize");
   };
 
+  /**
+   * Get institution details needed for the institution store.
+   */
+  const getInstitutionDetails = async () => {
+    await store.dispatch("institution/getInstitutionDetails");
+  };
+
+  /**
+   * Set the institution setup user property to institution user state.
+   */
   const setInstitutionSetupUser = async () => {
     await store.dispatch("institution/setInstitutionSetupUser");
   };
@@ -27,5 +40,6 @@ export function useInstitutionState(rootStore?: Store<any>) {
     getLocationName,
     setInstitutionSetupUser,
     initialize,
+    getInstitutionDetails,
   };
 }

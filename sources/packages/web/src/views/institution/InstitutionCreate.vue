@@ -32,7 +32,6 @@
 <script lang="ts">
 import { ref, onMounted, defineComponent } from "vue";
 import { useRouter } from "vue-router";
-import { useStore } from "vuex";
 import { UserService } from "@/services/UserService";
 import { InstitutionService } from "@/services/InstitutionService";
 import { CreateInstitutionAPIInDTO } from "@/services/http/dto";
@@ -40,6 +39,7 @@ import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import {
   useFormioDropdownLoader,
   useFormioUtils,
+  useInstitutionState,
   useSnackBar,
 } from "@/composables";
 import { FormIOForm } from "@/types";
@@ -47,9 +47,9 @@ import { FormIOForm } from "@/types";
 export default defineComponent({
   setup() {
     const processing = ref(false);
-    const store = useStore();
     const snackBar = useSnackBar();
     const { excludeExtraneousValues } = useFormioUtils();
+    const { initialize } = useInstitutionState();
     const router = useRouter();
     const formioDataLoader = useFormioDropdownLoader();
     const initialData = ref({});
@@ -64,9 +64,8 @@ export default defineComponent({
         await InstitutionService.shared.createInstitutionWithAssociatedUser(
           typedData,
         );
-        await store.dispatch("institution/initialize");
+        await initialize();
         snackBar.success("Institution and User successfully created!");
-        await store.dispatch("institution/getInstitutionDetails");
         router.push({
           name: InstitutionRoutesConst.INSTITUTION_DASHBOARD,
         });

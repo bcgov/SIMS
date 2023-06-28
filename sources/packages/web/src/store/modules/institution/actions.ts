@@ -8,24 +8,23 @@ import {
 import { InstitutionUserService } from "@/services/InstitutionUserService";
 
 export const actions: ActionTree<InstitutionLocationState, RootState> = {
-  async initialize(context): Promise<boolean> {
-    /*
-    authHeader are only needed for initial stores, 
-    since during the first initializing token are not ready yet
-    */
+  /**
+   * Get all store information needed for the institution store.
+   * @param context store context.
+   */
+  async initialize(context): Promise<void> {
     await Promise.all([
       context.dispatch("getInstitutionDetails"),
       context.dispatch("getUserInstitutionDetails"),
       context.dispatch("getUserInstitutionLocationDetails"),
     ]);
-    return true;
   },
 
+  /**
+   * Get institution details needed for the institution store.
+   * @param context store context.
+   */
   async getInstitutionDetails(context): Promise<void> {
-    /*
-    authHeader are only needed for initial stores, 
-    since during the first initializing token are not ready yet
-    */
     const response = await InstitutionService.shared.getDetail();
     context.commit("setInstitutionDetails", {
       legalOperatingName: response.legalOperatingName,
@@ -37,22 +36,22 @@ export const actions: ActionTree<InstitutionLocationState, RootState> = {
     } as InstitutionStateForStore);
   },
 
+  /**
+   * Get institution user details needed for the institution store.
+   * @param context store context.
+   */
   async getUserInstitutionDetails(context): Promise<void> {
-    /*
-    authHeader are only needed for initial stores, 
-    since during the first initializing token are not ready yet
-    */
     const resultComment =
       await InstitutionUserService.shared.getMyInstitutionDetails();
     context.commit("setMyDetailsState", resultComment?.user);
     context.commit("setMyAuthorizationState", resultComment?.authorizations);
   },
 
+  /**
+   * Get institution location details needed for the institution store.
+   * @param context store context.
+   */
   async getUserInstitutionLocationDetails(context): Promise<void> {
-    /*
-    authHeader are only needed for initial stores, 
-    since during the first initializing token are not ready yet
-    */
     const resultComment =
       await InstitutionService.shared.getMyInstitutionLocationsDetails();
     context.commit("setMyInstitutionLocationsDetailsState", resultComment);
