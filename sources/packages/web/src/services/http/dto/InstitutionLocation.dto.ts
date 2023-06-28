@@ -9,13 +9,18 @@ import {
 } from "@/services/http/dto";
 import { Expose } from "class-transformer";
 
-export interface InstitutionLocationFormAPIInDTO
-  extends AddressDetailsFormAPIDTO {
+export class InstitutionLocationFormAPIInDTO extends AddressDetailsFormAPIDTO {
+  @Expose()
   locationName: string;
+  @Expose()
   institutionCode: string;
+  @Expose()
   primaryContactFirstName: string;
+  @Expose()
   primaryContactLastName: string;
+  @Expose()
   primaryContactEmail: string;
+  @Expose()
   primaryContactPhone: string;
 }
 
