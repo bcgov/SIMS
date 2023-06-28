@@ -56,7 +56,7 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-getComplet
         applicationStatus: ApplicationStatus.Completed,
       },
     );
-    // Student 2 has an in-progress with student application offering a change request for the institution.
+    // Student 2 has an in-progress with student application offering change request for the institution.
     await saveFakeApplicationOfferingRequestChange(db, {
       institutionLocation: collegeFLocation,
     });
@@ -117,11 +117,11 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-getComplet
       declinedBySABCApplicationOfferingChange.application;
 
     applicationWithApprovedApplicationOfferingChange.applicationNumber =
-      "1000000000";
+      "1000000002";
     applicationWithDeclinedByStudentApplicationOfferingChange.applicationNumber =
       "1000000001";
     applicationWithDeclinedBySABCApplicationOfferingChange.applicationNumber =
-      "1000000002";
+      "1000000000";
 
     await db.application.save([
       applicationWithApprovedApplicationOfferingChange,
@@ -143,20 +143,21 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-getComplet
         results: [
           {
             applicationNumber:
-              applicationWithApprovedApplicationOfferingChange.applicationNumber,
+              applicationWithDeclinedBySABCApplicationOfferingChange.applicationNumber,
             studyStartDate:
-              applicationWithApprovedApplicationOfferingChange.currentAssessment
-                .offering.studyStartDate,
+              applicationWithDeclinedBySABCApplicationOfferingChange
+                .currentAssessment.offering.studyStartDate,
             studyEndDate:
-              applicationWithApprovedApplicationOfferingChange.currentAssessment
-                .offering.studyEndDate,
+              applicationWithDeclinedBySABCApplicationOfferingChange
+                .currentAssessment.offering.studyEndDate,
             fullName: getUserFullName(
-              applicationWithApprovedApplicationOfferingChange.student.user,
+              applicationWithDeclinedBySABCApplicationOfferingChange.student
+                .user,
             ),
             status:
-              approvedApplicationOfferingChange.applicationOfferingChangeRequestStatus,
+              declinedBySABCApplicationOfferingChange.applicationOfferingChangeRequestStatus,
             dateCompleted:
-              approvedApplicationOfferingChange.assessedDate.toISOString(),
+              declinedBySABCApplicationOfferingChange.assessedDate.toISOString(),
           },
           {
             applicationNumber:
@@ -178,21 +179,20 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-getComplet
           },
           {
             applicationNumber:
-              applicationWithDeclinedBySABCApplicationOfferingChange.applicationNumber,
+              applicationWithApprovedApplicationOfferingChange.applicationNumber,
             studyStartDate:
-              applicationWithDeclinedBySABCApplicationOfferingChange
-                .currentAssessment.offering.studyStartDate,
+              applicationWithApprovedApplicationOfferingChange.currentAssessment
+                .offering.studyStartDate,
             studyEndDate:
-              applicationWithDeclinedBySABCApplicationOfferingChange
-                .currentAssessment.offering.studyEndDate,
+              applicationWithApprovedApplicationOfferingChange.currentAssessment
+                .offering.studyEndDate,
             fullName: getUserFullName(
-              applicationWithDeclinedBySABCApplicationOfferingChange.student
-                .user,
+              applicationWithApprovedApplicationOfferingChange.student.user,
             ),
             status:
-              declinedBySABCApplicationOfferingChange.applicationOfferingChangeRequestStatus,
+              approvedApplicationOfferingChange.applicationOfferingChangeRequestStatus,
             dateCompleted:
-              declinedBySABCApplicationOfferingChange.assessedDate.toISOString(),
+              approvedApplicationOfferingChange.assessedDate.toISOString(),
           },
         ],
         count: 3,
