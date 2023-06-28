@@ -140,7 +140,7 @@ objects:
               configMap:
                 name: ${CONFIG_MAP_NAME}
                 items:
-                  - key: ${CONFIG_FILE_NAME}
+                  - key: ${CUSTOM_CONFIG_FILE_NAME}
                     path: ${CONFIG_FILE_NAME}
           containers:
             - name: ${NAME}
@@ -374,6 +374,11 @@ parameters:
     description: Used for backward compatibility only.  Ignored when using the recommended `backup.conf` and cron backup strategy.  Period (d,m,s) between backups in a format used by the sleep command
     required: false
     value: ""
+  - name: CUSTOM_CONFIG_FILE_NAME
+    displayName: Custom Config File Name
+    description: The name of the custom configuration file.
+    required: true
+    value: backup.conf
   - name: CONFIG_FILE_NAME
     displayName: Config File Name
     description: The name of the configuration file.
