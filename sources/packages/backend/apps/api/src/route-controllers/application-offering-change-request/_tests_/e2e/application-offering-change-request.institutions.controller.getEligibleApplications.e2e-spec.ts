@@ -27,6 +27,7 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-getEligibl
   let app: INestApplication;
   let db: E2EDataSources;
   let collegeFLocation: InstitutionLocation;
+  let institutionUserToken: string;
 
   beforeAll(async () => {
     const { nestApplication, dataSource } = await createTestingAppModule();
@@ -42,6 +43,10 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-getEligibl
       db.dataSource,
       InstitutionTokenTypes.CollegeFUser,
       collegeFLocation,
+    );
+    // Institution token.
+    institutionUserToken = await getInstitutionToken(
+      InstitutionTokenTypes.CollegeFUser,
     );
   });
 
@@ -110,9 +115,6 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-getEligibl
       ]);
 
       const endpoint = `/institutions/location/${collegeFLocation.id}/application-offering-change-request/available?page=0&pageLimit=10&sortField=applicationNumber&sortOrder=${FieldSortOrder.DESC}`;
-      const institutionUserToken = await getInstitutionToken(
-        InstitutionTokenTypes.CollegeFUser,
-      );
 
       // Act/Assert
       await request(app.getHttpServer())
@@ -172,9 +174,6 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-getEligibl
     );
 
     const endpoint = `/institutions/location/${collegeFLocation.id}/application-offering-change-request/available?page=0&pageLimit=10&searchCriteria=${completedApplication.applicationNumber}`;
-    const institutionUserToken = await getInstitutionToken(
-      InstitutionTokenTypes.CollegeFUser,
-    );
 
     // Act/Assert
     await request(app.getHttpServer())

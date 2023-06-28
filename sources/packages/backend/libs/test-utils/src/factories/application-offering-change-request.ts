@@ -16,7 +16,7 @@ import { E2EDataSources } from "../data-source/e2e-data-source";
  * @param relations dependencies:
  * - `institutionLocation` related location.
  * @param options additional options:
- * - `applicationOfferingChangeRequestStatus` application offering change request status.
+ * - `initialValues` initial values.
  * @returns created and saved application offering request change record.
  */
 export async function saveFakeApplicationOfferingRequestChange(

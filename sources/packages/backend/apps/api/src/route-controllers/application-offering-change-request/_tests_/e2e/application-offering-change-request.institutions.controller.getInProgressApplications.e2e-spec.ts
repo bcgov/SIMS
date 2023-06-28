@@ -27,6 +27,7 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-getInProgr
   let app: INestApplication;
   let db: E2EDataSources;
   let collegeFLocation: InstitutionLocation;
+  let institutionUserToken: string;
 
   beforeAll(async () => {
     const { nestApplication, dataSource } = await createTestingAppModule();
@@ -42,6 +43,10 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-getInProgr
       db.dataSource,
       InstitutionTokenTypes.CollegeFUser,
       collegeFLocation,
+    );
+    // Institution token.
+    institutionUserToken = await getInstitutionToken(
+      InstitutionTokenTypes.CollegeFUser,
     );
   });
 
@@ -107,9 +112,6 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-getInProgr
     ]);
 
     const endpoint = `/institutions/location/${collegeFLocation.id}/application-offering-change-request/in-progress?page=0&pageLimit=10&sortField=fullName&sortOrder=${FieldSortOrder.DESC}`;
-    const institutionUserToken = await getInstitutionToken(
-      InstitutionTokenTypes.CollegeFUser,
-    );
 
     // Act/Assert
     await request(app.getHttpServer())
@@ -187,14 +189,11 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-getInProgr
       applicationWithInProgressWithSABCApplicationOfferingChange.student.user,
     );
 
-    const endpoint = `/institutions/location/${
-      collegeFLocation.id
-    }/application-offering-change-request/in-progress?page=0&pageLimit=10&searchCriteria=${getUserFullName(
-      applicationWithInProgressWithSABCApplicationOfferingChange.student.user,
-    )}`;
-    const institutionUserToken = await getInstitutionToken(
-      InstitutionTokenTypes.CollegeFUser,
-    );
+    const applicationWithInProgressWithSABCApplicationOfferingChangeFullName =
+      getUserFullName(
+        applicationWithInProgressWithSABCApplicationOfferingChange.student.user,
+      );
+    const endpoint = `/institutions/location/${collegeFLocation.id}/application-offering-change-request/in-progress?page=0&pageLimit=10&searchCriteria=${applicationWithInProgressWithSABCApplicationOfferingChangeFullName}`;
 
     // Act/Assert
     await request(app.getHttpServer())

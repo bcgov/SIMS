@@ -27,6 +27,7 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-getComplet
   let app: INestApplication;
   let db: E2EDataSources;
   let collegeFLocation: InstitutionLocation;
+  let institutionUserToken: string;
 
   beforeAll(async () => {
     const { nestApplication, dataSource } = await createTestingAppModule();
@@ -42,6 +43,10 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-getComplet
       db.dataSource,
       InstitutionTokenTypes.CollegeFUser,
       collegeFLocation,
+    );
+    // Institution token.
+    institutionUserToken = await getInstitutionToken(
+      InstitutionTokenTypes.CollegeFUser,
     );
   });
 
@@ -136,9 +141,6 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-getComplet
     ]);
 
     const endpoint = `/institutions/location/${collegeFLocation.id}/application-offering-change-request/completed?page=0&pageLimit=10&sortField=applicationNumber&sortOrder=${FieldSortOrder.ASC}`;
-    const institutionUserToken = await getInstitutionToken(
-      InstitutionTokenTypes.CollegeFUser,
-    );
 
     // Act/Assert
     await request(app.getHttpServer())
@@ -244,47 +246,53 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-getComplet
       },
     );
     // Student 4 has a declined by SABC offering change request.
-    await saveFakeApplicationOfferingRequestChange(
-      db,
-      {
-        institutionLocation: collegeFLocation,
-      },
-      {
-        initialValues: {
-          applicationOfferingChangeRequestStatus:
-            ApplicationOfferingChangeRequestStatus.DeclinedBySABC,
+    const declinedBySABCApplicationOfferingChange =
+      await saveFakeApplicationOfferingRequestChange(
+        db,
+        {
+          institutionLocation: collegeFLocation,
         },
-      },
-    );
+        {
+          initialValues: {
+            applicationOfferingChangeRequestStatus:
+              ApplicationOfferingChangeRequestStatus.DeclinedBySABC,
+          },
+        },
+      );
 
     approvedApplicationOfferingChange.assessedDate = new Date();
+    declinedBySABCApplicationOfferingChange.assessedDate = new Date();
 
-    await db.applicationOfferingChangeRequest.save(
+    await db.applicationOfferingChangeRequest.save([
       approvedApplicationOfferingChange,
-    );
+      declinedBySABCApplicationOfferingChange,
+    ]);
 
     const applicationWithApprovedApplicationOfferingChange =
       approvedApplicationOfferingChange.application;
     const applicationWithApprovedApplicationOfferingChangeForDifferentLocation =
       approvedApplicationOfferingChangeForDifferentLocation.application;
+    const applicationWithDeclinedBySABCApplicationOfferingChange =
+      declinedBySABCApplicationOfferingChange.application;
 
     applicationWithApprovedApplicationOfferingChange.student.user.firstName =
-      "TestStudent";
+      "TestStudentSuffix";
     // Student 2 belong to different institution but have same name.
     applicationWithApprovedApplicationOfferingChangeForDifferentLocation.student.user.firstName =
-      "TestStudent";
+      "TestStudentSuffix";
+    applicationWithDeclinedBySABCApplicationOfferingChange.student.user.firstName =
+      "PrefixTestStudent";
 
     await db.user.save([
       applicationWithApprovedApplicationOfferingChange.student.user,
       applicationWithApprovedApplicationOfferingChangeForDifferentLocation
         .student.user,
+      applicationWithDeclinedBySABCApplicationOfferingChange.student.user,
     ]);
 
-    const endpoint = `/institutions/location/${collegeFLocation.id}/application-offering-change-request/completed?page=0&pageLimit=10&searchCriteria=${applicationWithApprovedApplicationOfferingChange.student.user.firstName}`;
-    const institutionUserToken = await getInstitutionToken(
-      InstitutionTokenTypes.CollegeFUser,
-    );
-
+    const searchKeyword = "TestStudent";
+    const endpoint = `/institutions/location/${collegeFLocation.id}/application-offering-change-request/completed?page=0&pageLimit=10&searchCriteria=${searchKeyword}`;
+    console.log(endpoint);
     // Act/Assert
     await request(app.getHttpServer())
       .get(endpoint)
@@ -309,8 +317,26 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-getComplet
             dateCompleted:
               approvedApplicationOfferingChange.assessedDate.toISOString(),
           },
+          {
+            applicationNumber:
+              applicationWithDeclinedBySABCApplicationOfferingChange.applicationNumber,
+            studyStartDate:
+              applicationWithDeclinedBySABCApplicationOfferingChange
+                .currentAssessment.offering.studyStartDate,
+            studyEndDate:
+              applicationWithDeclinedBySABCApplicationOfferingChange
+                .currentAssessment.offering.studyEndDate,
+            fullName: getUserFullName(
+              applicationWithDeclinedBySABCApplicationOfferingChange.student
+                .user,
+            ),
+            status:
+              declinedBySABCApplicationOfferingChange.applicationOfferingChangeRequestStatus,
+            dateCompleted:
+              declinedBySABCApplicationOfferingChange.assessedDate.toISOString(),
+          },
         ],
-        count: 1,
+        count: 2,
       });
   });
 
