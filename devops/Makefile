@@ -510,7 +510,7 @@ db-backup-configmap:
 	test -n "$(NAMESPACE)"
 	test -n "$(BACKUP_POSTGRESQL_APP_NAME)"
 	@echo "+\n++ Creating configmap resources for database backups on $(NAMESPACE)\n+"
-	oc -n $(NAMESPACE) create configmap $(BACKUP_CONFIGMAP_NAME) --from-file=./openshift/database-backup/backup.conf
+	oc -n $(NAMESPACE) create configmap $(BACKUP_CONFIGMAP_NAME) --from-file=./openshift/database-backup/simsdb-patroni-backup.conf
 
 db-backup-configmap-delete:
 	test -n "$(NAMESPACE)"
