@@ -4,17 +4,15 @@ import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { AllowAuthorizedParty, HasLocationAccess } from "../../auth/decorators";
 import { ClientTypeBaseRoute } from "../../types";
 import { getUserFullName } from "../../utilities";
-import {
-  OfferingChangePaginationOptionsAPIInDTO,
-  InprogressOfferingChangePaginationOptionsAPIInDTO,
-  CompletedOfferingChangePaginationOptionsAPIInDTO,
-  PaginatedResultsAPIOutDTO,
-} from "../models/pagination.dto";
+import { PaginatedResultsAPIOutDTO } from "../models/pagination.dto";
 import BaseController from "../BaseController";
 import {
   CompletedApplicationOfferingChangesAPIOutDTO,
   InProgressApplicationOfferingChangesAPIOutDTO,
   ApplicationOfferingChangeSummaryAPIOutDTO,
+  OfferingChangePaginationOptionsAPIInDTO,
+  InProgressOfferingChangePaginationOptionsAPIInDTO,
+  CompletedOfferingChangePaginationOptionsAPIInDTO,
 } from "./models/application-offering-change-request.institutions.dto";
 import { ApplicationOfferingChangeRequestService } from "../../services";
 import { ApplicationOfferingChangeRequestStatus } from "@sims/sims-db";
@@ -79,7 +77,7 @@ export class ApplicationOfferingChangeRequestInstitutionsController extends Base
   @Get("in-progress")
   async getInProgressApplications(
     @Param("locationId", ParseIntPipe) locationId: number,
-    @Query() pagination: InprogressOfferingChangePaginationOptionsAPIInDTO,
+    @Query() pagination: InProgressOfferingChangePaginationOptionsAPIInDTO,
   ): Promise<
     PaginatedResultsAPIOutDTO<InProgressApplicationOfferingChangesAPIOutDTO>
   > {

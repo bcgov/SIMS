@@ -57,14 +57,14 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-getInProgr
       },
     );
     // Student 2 has an in progress with student application offering change request for the institution.
-    const applicationOfferingChange2 =
-      await saveFakeApplicationOfferingRequestChange(db.dataSource, {
+    const inProgressWithStudentApplicationOfferingChange =
+      await saveFakeApplicationOfferingRequestChange(db, {
         institutionLocation: collegeFLocation,
       });
     // Student 3 has an in progress with SABC application offering change request for the institution.
-    const applicationOfferingChange3 =
+    const inProgressWithSABCApplicationOfferingChange =
       await saveFakeApplicationOfferingRequestChange(
-        db.dataSource,
+        db,
         {
           institutionLocation: collegeFLocation,
         },
@@ -74,10 +74,10 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-getInProgr
         },
       );
     // Student 4 has an in progress with student application offering change request with a different institution.
-    await saveFakeApplicationOfferingRequestChange(db.dataSource);
+    await saveFakeApplicationOfferingRequestChange(db);
     // Student 5 has an completed application for the institution, that have an approved application offering change request.
     await saveFakeApplicationOfferingRequestChange(
-      db.dataSource,
+      db,
       {
         institutionLocation: collegeFLocation,
       },
@@ -86,13 +86,21 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-getInProgr
           ApplicationOfferingChangeRequestStatus.Approved,
       },
     );
-    const application2 = applicationOfferingChange2.application;
-    const application3 = applicationOfferingChange3.application;
+    const applicationWithInProgressWithStudentApplicationOfferingChange =
+      inProgressWithStudentApplicationOfferingChange.application;
+    const applicationWithInProgressWithSABCApplicationOfferingChange =
+      inProgressWithSABCApplicationOfferingChange.application;
 
-    application2.student.user.firstName = "Alex";
-    application3.student.user.firstName = "Zachariah";
+    applicationWithInProgressWithStudentApplicationOfferingChange.student.user.firstName =
+      "Alex";
+    applicationWithInProgressWithSABCApplicationOfferingChange.student.user.firstName =
+      "Zachariah";
 
-    await db.user.save([application2.student.user, application3.student.user]);
+    await db.user.save([
+      applicationWithInProgressWithStudentApplicationOfferingChange.student
+        .user,
+      applicationWithInProgressWithSABCApplicationOfferingChange.student.user,
+    ]);
 
     const endpoint = `/institutions/location/${collegeFLocation.id}/application-offering-change-request/in-progress?page=0&pageLimit=10&sortField=fullName&sortOrder=${FieldSortOrder.DESC}`;
     const institutionUserToken = await getInstitutionToken(
@@ -107,22 +115,36 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-getInProgr
       .expect({
         results: [
           {
-            applicationNumber: application3.applicationNumber,
+            applicationNumber:
+              applicationWithInProgressWithSABCApplicationOfferingChange.applicationNumber,
             studyStartDate:
-              application3.currentAssessment.offering.studyStartDate,
-            studyEndDate: application3.currentAssessment.offering.studyEndDate,
-            fullName: getUserFullName(application3.student.user),
+              applicationWithInProgressWithSABCApplicationOfferingChange
+                .currentAssessment.offering.studyStartDate,
+            studyEndDate:
+              applicationWithInProgressWithSABCApplicationOfferingChange
+                .currentAssessment.offering.studyEndDate,
+            fullName: getUserFullName(
+              applicationWithInProgressWithSABCApplicationOfferingChange.student
+                .user,
+            ),
             status:
-              applicationOfferingChange3.applicationOfferingChangeRequestStatus,
+              inProgressWithSABCApplicationOfferingChange.applicationOfferingChangeRequestStatus,
           },
           {
-            applicationNumber: application2.applicationNumber,
+            applicationNumber:
+              applicationWithInProgressWithStudentApplicationOfferingChange.applicationNumber,
             studyStartDate:
-              application2.currentAssessment.offering.studyStartDate,
-            studyEndDate: application2.currentAssessment.offering.studyEndDate,
-            fullName: getUserFullName(application2.student.user),
+              applicationWithInProgressWithStudentApplicationOfferingChange
+                .currentAssessment.offering.studyStartDate,
+            studyEndDate:
+              applicationWithInProgressWithStudentApplicationOfferingChange
+                .currentAssessment.offering.studyEndDate,
+            fullName: getUserFullName(
+              applicationWithInProgressWithStudentApplicationOfferingChange
+                .student.user,
+            ),
             status:
-              applicationOfferingChange2.applicationOfferingChangeRequestStatus,
+              inProgressWithStudentApplicationOfferingChange.applicationOfferingChangeRequestStatus,
           },
         ],
         count: 2,
@@ -133,13 +155,13 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-getInProgr
     // Arrange
 
     // Student 1 has an in progress with student application offering change request for the institution.
-    await saveFakeApplicationOfferingRequestChange(db.dataSource, {
+    await saveFakeApplicationOfferingRequestChange(db, {
       institutionLocation: collegeFLocation,
     });
     // Student 2 has an in progress with SABC application offering change request for the institution.
-    const applicationOfferingChange2 =
+    const inProgressWithSABCApplicationOfferingChange =
       await saveFakeApplicationOfferingRequestChange(
-        db.dataSource,
+        db,
         {
           institutionLocation: collegeFLocation,
         },
@@ -148,16 +170,21 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-getInProgr
             ApplicationOfferingChangeRequestStatus.InProgressWithSABC,
         },
       );
-    const application2 = applicationOfferingChange2.application;
+    const applicationWithInProgressWithSABCApplicationOfferingChange =
+      inProgressWithSABCApplicationOfferingChange.application;
 
-    application2.student.user.firstName = "Test";
-    application2.student.user.lastName = "Student";
-    await db.user.save(application2.student.user);
+    applicationWithInProgressWithSABCApplicationOfferingChange.student.user.firstName =
+      "Test";
+    applicationWithInProgressWithSABCApplicationOfferingChange.student.user.lastName =
+      "Student";
+    await db.user.save(
+      applicationWithInProgressWithSABCApplicationOfferingChange.student.user,
+    );
 
     const endpoint = `/institutions/location/${
       collegeFLocation.id
     }/application-offering-change-request/in-progress?page=0&pageLimit=10&searchCriteria=${getUserFullName(
-      application2.student.user,
+      applicationWithInProgressWithSABCApplicationOfferingChange.student.user,
     )}`;
     const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeFUser,
@@ -171,13 +198,20 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-getInProgr
       .expect({
         results: [
           {
-            applicationNumber: application2.applicationNumber,
+            applicationNumber:
+              applicationWithInProgressWithSABCApplicationOfferingChange.applicationNumber,
             studyStartDate:
-              application2.currentAssessment.offering.studyStartDate,
-            studyEndDate: application2.currentAssessment.offering.studyEndDate,
-            fullName: getUserFullName(application2.student.user),
+              applicationWithInProgressWithSABCApplicationOfferingChange
+                .currentAssessment.offering.studyStartDate,
+            studyEndDate:
+              applicationWithInProgressWithSABCApplicationOfferingChange
+                .currentAssessment.offering.studyEndDate,
+            fullName: getUserFullName(
+              applicationWithInProgressWithSABCApplicationOfferingChange.student
+                .user,
+            ),
             status:
-              applicationOfferingChange2.applicationOfferingChangeRequestStatus,
+              inProgressWithSABCApplicationOfferingChange.applicationOfferingChangeRequestStatus,
           },
         ],
         count: 1,

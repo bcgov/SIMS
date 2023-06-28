@@ -57,13 +57,13 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-getComplet
       },
     );
     // Student 2 has an in-progress with student application offering a change request for the institution.
-    await saveFakeApplicationOfferingRequestChange(db.dataSource, {
+    await saveFakeApplicationOfferingRequestChange(db, {
       institutionLocation: collegeFLocation,
     });
     // Student 3 has an approved application offering change request for the institution.
-    const applicationOfferingChange3 =
+    const approvedApplicationOfferingChange =
       await saveFakeApplicationOfferingRequestChange(
-        db.dataSource,
+        db,
         {
           institutionLocation: collegeFLocation,
         },
@@ -73,11 +73,11 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-getComplet
         },
       );
     // Student 4 has an in progress with student application offering change request with a different institution.
-    await saveFakeApplicationOfferingRequestChange(db.dataSource);
-    // Student 5 has a declined by student application for the institution, that have an approved application offering change request.
-    const applicationOfferingChange5 =
+    await saveFakeApplicationOfferingRequestChange(db);
+    // Student 5 has a declined by student application application offering change request.
+    const declinedByStudentApplicationOfferingChange =
       await saveFakeApplicationOfferingRequestChange(
-        db.dataSource,
+        db,
         {
           institutionLocation: collegeFLocation,
         },
@@ -86,10 +86,10 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-getComplet
             ApplicationOfferingChangeRequestStatus.DeclinedByStudent,
         },
       );
-    // Student 6 has a declined by student application for the institution, that have an approved application offering change request.
-    const applicationOfferingChange6 =
+    // Student 6 has a declined by SABC application offering change request.
+    const declinedBySABCApplicationOfferingChange =
       await saveFakeApplicationOfferingRequestChange(
-        db.dataSource,
+        db,
         {
           institutionLocation: collegeFLocation,
         },
@@ -99,25 +99,35 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-getComplet
         },
       );
 
-    applicationOfferingChange3.assessedDate = new Date();
-    applicationOfferingChange5.studentActionDate = new Date();
-    applicationOfferingChange6.assessedDate = new Date();
+    approvedApplicationOfferingChange.assessedDate = new Date();
+    declinedByStudentApplicationOfferingChange.studentActionDate = new Date();
+    declinedBySABCApplicationOfferingChange.assessedDate = new Date();
 
     await db.applicationOfferingChangeRequest.save([
-      applicationOfferingChange3,
-      applicationOfferingChange5,
-      applicationOfferingChange6,
+      approvedApplicationOfferingChange,
+      declinedByStudentApplicationOfferingChange,
+      declinedBySABCApplicationOfferingChange,
     ]);
 
-    const application3 = applicationOfferingChange3.application;
-    const application5 = applicationOfferingChange5.application;
-    const application6 = applicationOfferingChange6.application;
+    const applicationWithApprovedApplicationOfferingChange =
+      approvedApplicationOfferingChange.application;
+    const applicationWithDeclinedByStudentApplicationOfferingChange =
+      declinedByStudentApplicationOfferingChange.application;
+    const applicationWithDeclinedBySABCApplicationOfferingChange =
+      declinedBySABCApplicationOfferingChange.application;
 
-    application3.applicationNumber = "1000000000";
-    application5.applicationNumber = "1000000001";
-    application6.applicationNumber = "1000000002";
+    applicationWithApprovedApplicationOfferingChange.applicationNumber =
+      "1000000000";
+    applicationWithDeclinedByStudentApplicationOfferingChange.applicationNumber =
+      "1000000001";
+    applicationWithDeclinedBySABCApplicationOfferingChange.applicationNumber =
+      "1000000002";
 
-    await db.application.save([application3, application5, application6]);
+    await db.application.save([
+      applicationWithApprovedApplicationOfferingChange,
+      applicationWithDeclinedByStudentApplicationOfferingChange,
+      applicationWithDeclinedBySABCApplicationOfferingChange,
+    ]);
 
     const endpoint = `/institutions/location/${collegeFLocation.id}/application-offering-change-request/completed?page=0&pageLimit=10&sortField=applicationNumber&sortOrder=${FieldSortOrder.ASC}`;
     const institutionUserToken = await getInstitutionToken(
@@ -132,37 +142,57 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-getComplet
       .expect({
         results: [
           {
-            applicationNumber: application3.applicationNumber,
+            applicationNumber:
+              applicationWithApprovedApplicationOfferingChange.applicationNumber,
             studyStartDate:
-              application3.currentAssessment.offering.studyStartDate,
-            studyEndDate: application3.currentAssessment.offering.studyEndDate,
-            fullName: getUserFullName(application3.student.user),
+              applicationWithApprovedApplicationOfferingChange.currentAssessment
+                .offering.studyStartDate,
+            studyEndDate:
+              applicationWithApprovedApplicationOfferingChange.currentAssessment
+                .offering.studyEndDate,
+            fullName: getUserFullName(
+              applicationWithApprovedApplicationOfferingChange.student.user,
+            ),
             status:
-              applicationOfferingChange3.applicationOfferingChangeRequestStatus,
+              approvedApplicationOfferingChange.applicationOfferingChangeRequestStatus,
             dateCompleted:
-              applicationOfferingChange3.assessedDate.toISOString(),
+              approvedApplicationOfferingChange.assessedDate.toISOString(),
           },
           {
-            applicationNumber: application5.applicationNumber,
+            applicationNumber:
+              applicationWithDeclinedByStudentApplicationOfferingChange.applicationNumber,
             studyStartDate:
-              application5.currentAssessment.offering.studyStartDate,
-            studyEndDate: application5.currentAssessment.offering.studyEndDate,
-            fullName: getUserFullName(application5.student.user),
+              applicationWithDeclinedByStudentApplicationOfferingChange
+                .currentAssessment.offering.studyStartDate,
+            studyEndDate:
+              applicationWithDeclinedByStudentApplicationOfferingChange
+                .currentAssessment.offering.studyEndDate,
+            fullName: getUserFullName(
+              applicationWithDeclinedByStudentApplicationOfferingChange.student
+                .user,
+            ),
             status:
-              applicationOfferingChange5.applicationOfferingChangeRequestStatus,
+              declinedByStudentApplicationOfferingChange.applicationOfferingChangeRequestStatus,
             dateCompleted:
-              applicationOfferingChange5.studentActionDate.toISOString(),
+              declinedByStudentApplicationOfferingChange.studentActionDate.toISOString(),
           },
           {
-            applicationNumber: application6.applicationNumber,
+            applicationNumber:
+              applicationWithDeclinedBySABCApplicationOfferingChange.applicationNumber,
             studyStartDate:
-              application6.currentAssessment.offering.studyStartDate,
-            studyEndDate: application6.currentAssessment.offering.studyEndDate,
-            fullName: getUserFullName(application6.student.user),
+              applicationWithDeclinedBySABCApplicationOfferingChange
+                .currentAssessment.offering.studyStartDate,
+            studyEndDate:
+              applicationWithDeclinedBySABCApplicationOfferingChange
+                .currentAssessment.offering.studyEndDate,
+            fullName: getUserFullName(
+              applicationWithDeclinedBySABCApplicationOfferingChange.student
+                .user,
+            ),
             status:
-              applicationOfferingChange6.applicationOfferingChangeRequestStatus,
+              declinedBySABCApplicationOfferingChange.applicationOfferingChangeRequestStatus,
             dateCompleted:
-              applicationOfferingChange6.assessedDate.toISOString(),
+              declinedBySABCApplicationOfferingChange.assessedDate.toISOString(),
           },
         ],
         count: 3,
@@ -173,9 +203,9 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-getComplet
     // Arrange
 
     // Student 1 has an approved application offering change request for the institution.
-    const applicationOfferingChange1 =
+    const approvedApplicationOfferingChange =
       await saveFakeApplicationOfferingRequestChange(
-        db.dataSource,
+        db,
         {
           institutionLocation: collegeFLocation,
         },
@@ -185,14 +215,14 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-getComplet
         },
       );
     // Student 2 has an approved with student application offering change request with a different institution.
-    const applicationOfferingChange2 =
-      await saveFakeApplicationOfferingRequestChange(db.dataSource, undefined, {
+    const approvedApplicationOfferingChangeForDifferentLocation =
+      await saveFakeApplicationOfferingRequestChange(db, undefined, {
         applicationOfferingChangeRequestStatus:
           ApplicationOfferingChangeRequestStatus.Approved,
       });
-    // Student 3 has a declined by student application for the institution, that have an approved application offering change request.
+    // Student 3 has a declined by student application offering change request.
     await saveFakeApplicationOfferingRequestChange(
-      db.dataSource,
+      db,
       {
         institutionLocation: collegeFLocation,
       },
@@ -201,9 +231,9 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-getComplet
           ApplicationOfferingChangeRequestStatus.DeclinedByStudent,
       },
     );
-    // Student 4 has a declined ny student application for the institution, that have an approved application offering change request.
+    // Student 4 has a declined by SABC offering change request.
     await saveFakeApplicationOfferingRequestChange(
-      db.dataSource,
+      db,
       {
         institutionLocation: collegeFLocation,
       },
@@ -213,20 +243,30 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-getComplet
       },
     );
 
-    applicationOfferingChange1.assessedDate = new Date();
+    approvedApplicationOfferingChange.assessedDate = new Date();
 
-    await db.applicationOfferingChangeRequest.save(applicationOfferingChange1);
+    await db.applicationOfferingChangeRequest.save(
+      approvedApplicationOfferingChange,
+    );
 
-    const application1 = applicationOfferingChange1.application;
-    const application2 = applicationOfferingChange2.application;
+    const applicationWithApprovedApplicationOfferingChange =
+      approvedApplicationOfferingChange.application;
+    const applicationWithApprovedApplicationOfferingChangeForDifferentLocation =
+      approvedApplicationOfferingChangeForDifferentLocation.application;
 
-    application1.student.user.firstName = "TestStudent";
+    applicationWithApprovedApplicationOfferingChange.student.user.firstName =
+      "TestStudent";
     // Student 2 belong to different institution but have same name.
-    application2.student.user.firstName = "TestStudent";
+    applicationWithApprovedApplicationOfferingChangeForDifferentLocation.student.user.firstName =
+      "TestStudent";
 
-    await db.user.save([application1.student.user, application2.student.user]);
+    await db.user.save([
+      applicationWithApprovedApplicationOfferingChange.student.user,
+      applicationWithApprovedApplicationOfferingChangeForDifferentLocation
+        .student.user,
+    ]);
 
-    const endpoint = `/institutions/location/${collegeFLocation.id}/application-offering-change-request/completed?page=0&pageLimit=10&searchCriteria=${application1.student.user.firstName}`;
+    const endpoint = `/institutions/location/${collegeFLocation.id}/application-offering-change-request/completed?page=0&pageLimit=10&searchCriteria=${applicationWithApprovedApplicationOfferingChange.student.user.firstName}`;
     const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeFUser,
     );
@@ -239,15 +279,21 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-getComplet
       .expect({
         results: [
           {
-            applicationNumber: application1.applicationNumber,
+            applicationNumber:
+              applicationWithApprovedApplicationOfferingChange.applicationNumber,
             studyStartDate:
-              application1.currentAssessment.offering.studyStartDate,
-            studyEndDate: application1.currentAssessment.offering.studyEndDate,
-            fullName: getUserFullName(application1.student.user),
+              applicationWithApprovedApplicationOfferingChange.currentAssessment
+                .offering.studyStartDate,
+            studyEndDate:
+              applicationWithApprovedApplicationOfferingChange.currentAssessment
+                .offering.studyEndDate,
+            fullName: getUserFullName(
+              applicationWithApprovedApplicationOfferingChange.student.user,
+            ),
             status:
-              applicationOfferingChange1.applicationOfferingChangeRequestStatus,
+              approvedApplicationOfferingChange.applicationOfferingChangeRequestStatus,
             dateCompleted:
-              applicationOfferingChange1.assessedDate.toISOString(),
+              approvedApplicationOfferingChange.assessedDate.toISOString(),
           },
         ],
         count: 1,

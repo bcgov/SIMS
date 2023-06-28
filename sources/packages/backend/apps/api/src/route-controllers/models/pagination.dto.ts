@@ -6,7 +6,7 @@ import { FieldSortOrder } from "@sims/utilities";
  * Common parameters used when an API result
  * must enable pagination and search options.
  */
-abstract class PaginationOptionsAPIInDTO {
+export abstract class PaginationOptionsAPIInDTO {
   /**
    * Field to be sorted.
    */
@@ -91,31 +91,4 @@ export class OfferingsPaginationOptionsAPIInDTO extends PaginationOptionsAPIInDT
 export class PaginatedResultsAPIOutDTO<T> {
   results: T[];
   count: number;
-}
-
-/**
- * Extended pagination option for the application offering change.
- */
-export class OfferingChangePaginationOptionsAPIInDTO extends PaginationOptionsAPIInDTO {
-  @IsOptional()
-  @IsIn(["applicationNumber", "fullName"])
-  sortField?: string;
-}
-
-/**
- * Extended pagination option for the completed application offering change.
- */
-export class CompletedOfferingChangePaginationOptionsAPIInDTO extends PaginationOptionsAPIInDTO {
-  @IsOptional()
-  @IsIn(["applicationNumber", "fullName"])
-  sortField?: string;
-}
-
-/**
- * Extended pagination option for the inprogress application offering change.
- */
-export class InprogressOfferingChangePaginationOptionsAPIInDTO extends PaginationOptionsAPIInDTO {
-  @IsOptional()
-  @IsIn(["applicationNumber", "fullName"])
-  sortField?: string;
 }

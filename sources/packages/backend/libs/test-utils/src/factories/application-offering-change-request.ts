@@ -2,19 +2,17 @@ import {
   ApplicationOfferingChangeRequest,
   ApplicationOfferingChangeRequestStatus,
   ApplicationStatus,
-  EducationProgramOffering,
   InstitutionLocation,
-  User,
 } from "@sims/sims-db";
 import { saveFakeApplicationDisbursements } from "./application";
-import { DataSource } from "typeorm";
 import { createFakeEducationProgramOffering } from "./education-program-offering";
 import { createFakeUser } from "./user";
 import * as faker from "faker";
+import { E2EDataSources } from "../data-source/e2e-data-source";
 
 /**
  * Create and save a fake application offering request change record.
- * @param dataSource manages the repositories to save the data.
+ * @param db manages the repositories to save the data.
  * @param relations dependencies:
  * - `institutionLocation` related location.
  * @param options additional options:
@@ -22,7 +20,7 @@ import * as faker from "faker";
  * @returns created and saved application offering request change record.
  */
 export async function saveFakeApplicationOfferingRequestChange(
-  dataSource: DataSource,
+  db: E2EDataSources,
   relations?: {
     institutionLocation?: InstitutionLocation;
   },
@@ -30,21 +28,15 @@ export async function saveFakeApplicationOfferingRequestChange(
     applicationOfferingChangeRequestStatus?: ApplicationOfferingChangeRequestStatus;
   },
 ): Promise<ApplicationOfferingChangeRequest> {
-  const userRepo = dataSource.getRepository(User);
-  const savedUser = await userRepo.save(createFakeUser());
-
-  const applicationOfferingChangeRequestRepo = dataSource.getRepository(
-    ApplicationOfferingChangeRequest,
-  );
-  const offeringRepo = dataSource.getRepository(EducationProgramOffering);
-  const requestedOffering = await offeringRepo.save(
+  const savedUser = await db.user.save(createFakeUser());
+  const requestedOffering = await db.educationProgramOffering.save(
     createFakeEducationProgramOffering({
       ...relations,
       auditUser: savedUser,
     }),
   );
   const application = await saveFakeApplicationDisbursements(
-    dataSource,
+    db.dataSource,
     relations,
     {
       applicationStatus: ApplicationStatus.Completed,
@@ -60,9 +52,9 @@ export async function saveFakeApplicationOfferingRequestChange(
   applicationOfferingChangeRequest.applicationOfferingChangeRequestStatus =
     options?.applicationOfferingChangeRequestStatus ??
     ApplicationOfferingChangeRequestStatus.InProgressWithStudent;
-  applicationOfferingChangeRequest.reason = faker.lorem.sentence();
+  applicationOfferingChangeRequest.reason = faker.lorem.sentence(3);
 
-  return applicationOfferingChangeRequestRepo.save(
+  return db.applicationOfferingChangeRequest.save(
     applicationOfferingChangeRequest,
   );
 }
