@@ -14,7 +14,8 @@ export NEW_DB := $(or $(NEW_DB), $$NEW_DB)
 export JOB_NAME := $(or $(JOB_NAME), $$JN)
 export SITE_MINDER_LOGOUT_URL := $(or $(SITE_MINDER_LOGOUT_URL), https://logontest7.gov.bc.ca/clp-cgi/logoff.cgi)
 export BACKUP_POSTGRESQL_APP_NAME := $(or $(BACKUP_POSTGRESQL_APP_NAME), patroni-simsdb-backup)
-export BACKUP_CONFIGMAP_NAME := $(or $(BACKUP_CONFIGMAP_NAME), backup-conf)
+export PATRONI_SIMSDB_BACKUP_CONFIGMAP_NAME := $(or $(PATRONI_SIMSDB_BACKUP_CONFIGMAP_NAME), patroni-simsdb-backup-conf)
+export PATRONI_SIMSDB_BACKUP_CONFIG_FILE_NAME := $(or $(PATRONI_SIMSDB_BACKUP_CONFIG_FILE_NAME), patroni-simsdb-backup.conf)
 export BYPASS_CRA_INCOME_VERIFICATION := $(or $(BYPASS_CRA_INCOME_VERIFICATION), false)
 export BYPASS_APPLICATION_SUBMIT_VALIDATIONS := $(or $(BYPASS_APPLICATION_SUBMIT_VALIDATIONS), false)
 export SWAGGER_ENABLED := $(or ${SWAGGER_ENABLED}, true)
@@ -510,12 +511,12 @@ db-backup-configmap:
 	test -n "$(NAMESPACE)"
 	test -n "$(BACKUP_POSTGRESQL_APP_NAME)"
 	@echo "+\n++ Creating configmap resources for database backups on $(NAMESPACE)\n+"
-	oc -n $(NAMESPACE) create configmap $(BACKUP_CONFIGMAP_NAME) --from-file=./openshift/database-backup/patroni-simsdb-backup.conf
+	oc -n $(NAMESPACE) create configmap $(PATRONI_SIMSDB_BACKUP_CONFIGMAP_NAME) --from-file=./openshift/database-backup/$(PATRONI_SIMSDB_BACKUP_CONFIG_FILE_NAME)
 
 db-backup-configmap-delete:
 	test -n "$(NAMESPACE)"
 	@echo "+\n++ Removing configmap resoures for database backups on $(NAMESPACE)\n+"
-	oc -n $(NAMESPACE) delete configmap/$(BACKUP_CONFIGMAP_NAME)
+	oc -n $(NAMESPACE) delete configmap/$(PATRONI_SIMSDB_BACKUP_CONFIGMAP_NAME)
 
 # Deploy POSTGRES backup container.
 db-backup-deploy-patroni:
@@ -533,7 +534,8 @@ db-backup-deploy-patroni:
 		-p BACKUP_VOLUME_SIZE=20Gi \
   	-p VERIFICATION_VOLUME_SIZE=5Gi \
   	-p ENVIRONMENT_NAME=$(NAMESPACE) \
-		-p CONFIG_MAP_NAME=$(BACKUP_CONFIGMAP_NAME) \
+		-p CONFIG_MAP_NAME=$(PATRONI_SIMSDB_BACKUP_CONFIGMAP_NAME) \
+		-p CONFIG_FILE_NAME=$(PATRONI_SIMSDB_BACKUP_CONFIG_FILE_NAME) \
 		-p VERIFICATION_VOLUME_NAME=$(BACKUP_POSTGRESQL_APP_NAME)-verification-pvc \
 		-p DATABASE_DEPLOYMENT_NAME=patroni-creds \
 		-p DATABASE_USER_KEY_NAME=superuser-username \
