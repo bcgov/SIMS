@@ -170,6 +170,7 @@ describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", (
     );
   });
 
+  // TODO: Fix the problem that happens only in Github Actions
   it.skip("Should not allow any entrance requirement option selected when 'none of the above' is selected.", async () => {
     // Arrange
     const payload = {
