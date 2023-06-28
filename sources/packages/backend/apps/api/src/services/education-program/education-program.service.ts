@@ -29,7 +29,6 @@ import { EducationProgramOfferingService } from "../education-program-offering/e
 import {
   EDUCATION_PROGRAM_NOT_FOUND,
   DUPLICATE_SABC_CODE,
-  ENTRANCE_REQUIREMENTS_WRONG_STATE_CODE,
 } from "../../constants";
 
 const OTHER_REGULATORY_BODY = "other";
