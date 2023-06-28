@@ -45,6 +45,8 @@ export class EntranceRequirements {
   requirementsByInstitution: boolean;
   @Expose()
   requirementsByBCITA: boolean;
+  @Expose()
+  noneOfTheAboveEntranceRequirements: boolean;
 }
 
 export interface ProgramOfferingHeader {

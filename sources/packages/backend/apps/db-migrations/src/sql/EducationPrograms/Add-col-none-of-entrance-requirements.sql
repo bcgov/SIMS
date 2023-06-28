@@ -2,6 +2,6 @@
 ALTER TABLE
     sims.education_programs
 ADD
-    COLUMN none_of_entrance_requirements BOOLEAN NOT NULL DEFAULT FALSE;
+    COLUMN none_of_entrance_requirements BOOLEAN;
 
-COMMENT ON COLUMN sims.education_programs.none_of_entrance_requirements IS 'True when none of the above entrance requirements is selected.';
+COMMENT ON COLUMN sims.education_programs.none_of_entrance_requirements IS 'True when none of the entrance requirements is selected.';

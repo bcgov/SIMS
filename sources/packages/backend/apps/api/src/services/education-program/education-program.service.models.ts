@@ -21,7 +21,7 @@ export interface SaveEducationProgram {
   nocCode: string;
   sabcCode: string;
   regulatoryBody: string;
-  otherRegulatoryBody: string;
+  otherRegulatoryBody?: string;
   programDeliveryTypes: ProgramDeliveryTypes;
   deliveredOnlineAlsoOnsite?: string;
   sameOnlineCreditsEarned?: string;

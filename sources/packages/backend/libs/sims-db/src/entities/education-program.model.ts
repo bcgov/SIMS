@@ -77,6 +77,7 @@ export class EducationProgram extends RecordDataModel {
    */
   @Column({
     name: "other_regulatory_body",
+    nullable: false,
   })
   otherRegulatoryBody?: string;
   /**
@@ -258,6 +259,7 @@ export class EducationProgram extends RecordDataModel {
    */
   @Column({
     name: "none_of_entrance_requirements",
+    nullable: true,
   })
   noneOfTheAboveEntranceRequirements?: boolean;
 

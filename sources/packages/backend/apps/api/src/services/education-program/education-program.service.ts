@@ -135,8 +135,6 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
       }
     }
 
-    this.validateEntranceRequirements(educationProgram);
-
     // Assign attributes for update from payload only if existing program has no offering(s).
     if (!hasExistingOffering) {
       program.fieldOfStudyCode = educationProgram.fieldOfStudyCode;
@@ -210,27 +208,6 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
       program.modifier = auditUser;
     }
     return this.repo.save(program);
-  }
-
-  /**
-   * Ensures that when 'none of the above' is selected, other options are set to false.
-   * @throws CustomNamedError in case entrance requirements are in a wrong state.
-   * @param educationProgram education programs details to have entrance requirements validated.
-   */
-  private validateEntranceRequirements(educationProgram: SaveEducationProgram) {
-    if (
-      educationProgram.entranceRequirements
-        .noneOfTheAboveEntranceRequirements &&
-      (educationProgram.entranceRequirements.hasMinimumAge ||
-        educationProgram.entranceRequirements.minHighSchool ||
-        educationProgram.entranceRequirements.requirementsByBCITA ||
-        educationProgram.entranceRequirements.requirementsByInstitution)
-    ) {
-      throw new CustomNamedError(
-        "Entrance requirements options and none of the above cannot be selected at the same time.",
-        ENTRANCE_REQUIREMENTS_WRONG_STATE_CODE,
-      );
-    }
   }
 
   /**

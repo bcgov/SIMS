@@ -24,7 +24,7 @@ export class EducationProgramAPIOutDTO {
   sabcCode: string;
   programStatus: ProgramStatus;
   regulatoryBody: string;
-  otherRegulatoryBody: string;
+  otherRegulatoryBody?: string;
   programDeliveryTypes: ProgramDeliveryTypes;
   deliveredOnlineAlsoOnsite?: string;
   sameOnlineCreditsEarned?: string;
