@@ -144,12 +144,12 @@ oc-deploy-forms: | print-status deploy-forms
 
 # Build backup structure
 oc-db-backup-patroni-simsdb-build: | print-status db-backup-build-patroni
-oc-db-backup-patroni-simsdb-build-delete: | print-status db-backup-build-delete-patroni
+oc-db-backup-patroni-simsdb-build-delete: | print-status db-backup-build-patroni-delete
 
 # Create/delete backup structure
 # Create/delete structure for patroni.
 oc-db-backup-patroni-simsdb-deploy: | print-status db-backup-configmap db-backup-deploy-patroni
-oc-db-backup-patroni-simsdb-deploy-delete: | print-status db-backup-configmap-delete db-backup-deploy-delete-patroni
+oc-db-backup-patroni-simsdb-deploy-delete: | print-status db-backup-configmap-delete db-backup-deploy-patroni-delete
 
 
 print-status:
@@ -498,7 +498,7 @@ db-backup-build-patroni:
 		-p BASE_IMAGE_FOR_BUILD=quay.io/fedora/postgresql-14:14 \
 		| oc -n $(BUILD_NAMESPACE) apply -f -
 
-db-backup-build-delete-patroni:
+db-backup-build-patroni-delete:
 	test -n "$(NAMESPACE)"
 	test -n "$(BUILD_NAMESPACE)"
 	test -n "$(BACKUP_POSTGRESQL_APP_NAME)"
@@ -541,7 +541,7 @@ db-backup-deploy-patroni:
   	-p ENVIRONMENT_FRIENDLY_NAME='SIMS $(NAMESPACE) POSTGRESQL DB Backups' \
 		| oc -n $(NAMESPACE) apply -f -	                                                                       
 
-db-backup-deploy-delete-patroni:
+db-backup-deploy-patroni-delete:
 	test -n "$(NAMESPACE)"
 	test -n "$(BACKUP_POSTGRESQL_APP_NAME)"
 	@echo "+\n++ Removing deploy resoures for database backups on $(NAMESPACE)\n+"
