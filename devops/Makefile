@@ -495,7 +495,7 @@ db-backup-build-patroni:
 	@echo "+\n++ Creating build resources for database backups on $(BUILD_NAMESPACE)\n+"
 	oc -n $(BUILD_NAMESPACE) process -f ./openshift/database-backup/backup-build.yaml \
 		-p NAME=$(BACKUP_POSTGRESQL_APP_NAME) OUTPUT_IMAGE_TAG=v1 \
-		-p BASE_IMAGE_FOR_BUILD=artifacts.developer.gov.bc.ca/docker-remote/centos/postgresql-12-centos7:20200917-804ef01 \
+		-p BASE_IMAGE_FOR_BUILD=quay.io/fedora/postgresql-14:14 \
 		| oc -n $(BUILD_NAMESPACE) apply -f -
 
 db-backup-build-delete-patroni:
