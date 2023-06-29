@@ -7,7 +7,7 @@
         subTitle="Programs"
       />
     </template>
-    <body-header title="All programs" :recordsCount="programAndCount.count">
+    <body-header title="All programs" :recordsCount="programAndCount?.count">
       <template #actions>
         <v-row class="m-0 p-0">
           <v-text-field
@@ -34,13 +34,13 @@
     </body-header>
     <content-group>
       <toggle-content
-        :toggled="!programAndCount.count"
+        :toggled="!programAndCount?.count"
         message="You don't have programs yet"
       >
         <v-data-table-server
           :headers="ProgramSummaryHeaders"
-          :items="programAndCount.results"
-          :items-length="programAndCount.count"
+          :items="programAndCount?.results"
+          :items-length="programAndCount?.count"
           :loading="loading"
           :items-per-page="DEFAULT_PAGE_LIMIT"
           @update:options="paginationAndSortEvent"
@@ -108,7 +108,7 @@ export default defineComponent({
     const { getLocationName } = useInstitutionState();
     const router = useRouter();
     const programAndCount = ref(
-      {} as PaginatedResults<EducationProgramsSummary>,
+      {} as PaginatedResults<EducationProgramsSummary> | undefined,
     );
     const locationDetails = ref();
     const loading = ref(false);
@@ -170,6 +170,11 @@ export default defineComponent({
 
     // Search program table.
     const searchProgramTable = async () => {
+      // When search is happening in a page other than the first page,
+      // There is an unexpected behavior, probably which can be
+      // fixed in the stable vuetify version.
+      // Below is the fix for the search issue.
+      programAndCount.value = undefined;
       await loadSummary(
         currentPage.value ?? DEFAULT_DATATABLE_PAGE_NUMBER,
         currentPageLimit.value ?? DEFAULT_PAGE_LIMIT,
