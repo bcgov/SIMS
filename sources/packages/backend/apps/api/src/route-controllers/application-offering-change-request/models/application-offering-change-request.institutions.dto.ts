@@ -1,4 +1,6 @@
 import { ApplicationOfferingChangeRequestStatus } from "@sims/sims-db";
+import { IsIn, IsOptional } from "class-validator";
+import { PaginationOptionsAPIInDTO } from "../../models/pagination.dto";
 
 /**
  * Eligible applications offering change list details.
@@ -34,4 +36,31 @@ export class CompletedApplicationOfferingChangesAPIOutDTO {
   fullName: string;
   status: ApplicationOfferingChangeRequestStatus;
   dateCompleted: Date;
+}
+
+/**
+ * Extended pagination option for the application offering change.
+ */
+export class OfferingChangePaginationOptionsAPIInDTO extends PaginationOptionsAPIInDTO {
+  @IsOptional()
+  @IsIn(["applicationNumber", "fullName"])
+  sortField?: string;
+}
+
+/**
+ * Extended pagination option for the completed application offering change.
+ */
+export class CompletedOfferingChangePaginationOptionsAPIInDTO extends PaginationOptionsAPIInDTO {
+  @IsOptional()
+  @IsIn(["applicationNumber", "fullName"])
+  sortField?: string;
+}
+
+/**
+ * Extended pagination option for the in progress application offering change.
+ */
+export class InProgressOfferingChangePaginationOptionsAPIInDTO extends PaginationOptionsAPIInDTO {
+  @IsOptional()
+  @IsIn(["applicationNumber", "fullName"])
+  sortField?: string;
 }
