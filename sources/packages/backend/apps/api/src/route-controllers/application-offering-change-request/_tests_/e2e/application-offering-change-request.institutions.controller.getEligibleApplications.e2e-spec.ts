@@ -99,8 +99,41 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-getEligibl
             },
           },
         );
+      // Student 7 has a declined by student application application offering change request.
+      const declinedByStudentApplicationOfferingChange =
+        await saveFakeApplicationOfferingRequestChange(
+          db,
+          {
+            institutionLocation: collegeFLocation,
+          },
+          {
+            initialValues: {
+              applicationOfferingChangeRequestStatus:
+                ApplicationOfferingChangeRequestStatus.DeclinedByStudent,
+            },
+          },
+        );
+      // Student 8 has a declined by SABC application offering change request.
+      const declinedBySABCApplicationOfferingChange =
+        await saveFakeApplicationOfferingRequestChange(
+          db,
+          {
+            institutionLocation: collegeFLocation,
+          },
+          {
+            initialValues: {
+              applicationOfferingChangeRequestStatus:
+                ApplicationOfferingChangeRequestStatus.DeclinedBySABC,
+            },
+          },
+        );
+
       const applicationWithApprovedApplicationOfferingChange =
         approvedApplicationOfferingChange.application;
+      const applicationWithDeclinedByStudentApplicationOfferingChange =
+        declinedByStudentApplicationOfferingChange.application;
+      const applicationWithDeclinedBySABCApplicationOfferingChange =
+        declinedBySABCApplicationOfferingChange.application;
 
       // Set application as archived.
       archivedCompletedApplication.isArchived = true;
@@ -108,10 +141,17 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-getEligibl
       completedApplication.applicationNumber = "1000000000";
       applicationWithApprovedApplicationOfferingChange.applicationNumber =
         "1000000001";
+      applicationWithDeclinedByStudentApplicationOfferingChange.applicationNumber =
+        "1000000002";
+      applicationWithDeclinedBySABCApplicationOfferingChange.applicationNumber =
+        "1000000003";
+
       await db.application.save([
         completedApplication,
         archivedCompletedApplication,
         applicationWithApprovedApplicationOfferingChange,
+        applicationWithDeclinedByStudentApplicationOfferingChange,
+        applicationWithDeclinedBySABCApplicationOfferingChange,
       ]);
 
       const endpoint = `/institutions/location/${collegeFLocation.id}/application-offering-change-request/available?page=0&pageLimit=10&sortField=applicationNumber&sortOrder=${FieldSortOrder.DESC}`;
@@ -123,6 +163,38 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-getEligibl
         .expect(HttpStatus.OK)
         .expect({
           results: [
+            {
+              applicationNumber:
+                applicationWithDeclinedBySABCApplicationOfferingChange.applicationNumber,
+              applicationId:
+                applicationWithDeclinedBySABCApplicationOfferingChange.id,
+              studyStartDate:
+                applicationWithDeclinedBySABCApplicationOfferingChange
+                  .currentAssessment.offering.studyStartDate,
+              studyEndDate:
+                applicationWithDeclinedBySABCApplicationOfferingChange
+                  .currentAssessment.offering.studyEndDate,
+              fullName: getUserFullName(
+                applicationWithDeclinedBySABCApplicationOfferingChange.student
+                  .user,
+              ),
+            },
+            {
+              applicationNumber:
+                applicationWithDeclinedByStudentApplicationOfferingChange.applicationNumber,
+              applicationId:
+                applicationWithDeclinedByStudentApplicationOfferingChange.id,
+              studyStartDate:
+                applicationWithDeclinedByStudentApplicationOfferingChange
+                  .currentAssessment.offering.studyStartDate,
+              studyEndDate:
+                applicationWithDeclinedByStudentApplicationOfferingChange
+                  .currentAssessment.offering.studyEndDate,
+              fullName: getUserFullName(
+                applicationWithDeclinedByStudentApplicationOfferingChange
+                  .student.user,
+              ),
+            },
             {
               applicationNumber:
                 applicationWithApprovedApplicationOfferingChange.applicationNumber,
@@ -148,7 +220,7 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-getEligibl
               fullName: getUserFullName(completedApplication.student.user),
             },
           ],
-          count: 2,
+          count: 4,
         });
     },
   );
