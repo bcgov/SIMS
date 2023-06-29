@@ -116,7 +116,7 @@ export class NotificationActionsService {
    * Creates a notification when an MSFAA record gets cancelled.
    * @param notification input parameters to generate the notification.
    * @param auditUserId user that should be considered the one that is causing the changes.
-   * @param entityManager entity manager to execute in transaction.
+   * @param entityManager optional entity manager to execute in transaction.
    */
   async saveMSFAACancellationNotification(
     notification: MSFAACancellationNotification,
