@@ -215,16 +215,17 @@ export class MSFAANumberService extends RecordDataModelService<MSFAANumber> {
           newIssuingProvince,
         },
       );
-      // Find the student associated with the cancelled MSFAA record.
+      // Get the student associated with the cancelled MSFAA record.
       const msfaaRecord = await this.repo.findOne({
         select: {
           id: true,
           student: {
             id: true,
+            user: { id: true, firstName: true, lastName: true, email: true },
           },
         },
         relations: {
-          student: true,
+          student: { user: true },
         },
         where: {
           msfaaNumber,
