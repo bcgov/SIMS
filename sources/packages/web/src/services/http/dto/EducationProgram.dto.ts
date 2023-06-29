@@ -21,6 +21,7 @@ export interface EducationProgramAPIOutDTO {
   sabcCode: string;
   programStatus: ProgramStatus;
   regulatoryBody: string;
+  otherRegulatoryBody?: string;
   programDeliveryTypes: ProgramDeliveryTypes;
   deliveredOnlineAlsoOnsite?: string;
   sameOnlineCreditsEarned?: string;
@@ -91,6 +92,8 @@ export class EducationProgramAPIInDTO {
   sabcCode: string;
   @Expose()
   regulatoryBody: string;
+  @Expose()
+  otherRegulatoryBody: string;
   @Expose()
   programDeliveryTypes: ProgramDeliveryTypes;
   @Expose()
