@@ -37,7 +37,6 @@ export interface SaveEducationProgram {
   isAviationProgram?: string;
   minHoursWeekAvi?: string;
   entranceRequirements: EntranceRequirements;
-  noneOfTheAboveEntranceRequirements: boolean;
   hasWILComponent: string;
   isWILApproved?: string;
   wilProgramEligibility?: string;
