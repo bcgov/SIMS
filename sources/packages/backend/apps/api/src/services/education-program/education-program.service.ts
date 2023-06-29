@@ -31,6 +31,7 @@ import {
   DUPLICATE_SABC_CODE,
 } from "../../constants";
 
+const OTHER_REGULATORY_BODY = "other";
 @Injectable()
 export class EducationProgramService extends RecordDataModelService<EducationProgram> {
   private readonly offeringsRepo: Repository<EducationProgramOffering>;
@@ -143,6 +144,10 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
       // This way it can be saved when multiple programs does not have a SABC code.
       program.sabcCode = educationProgram.sabcCode?.trim() || null;
       program.regulatoryBody = educationProgram.regulatoryBody;
+      program.otherRegulatoryBody =
+        educationProgram.regulatoryBody === OTHER_REGULATORY_BODY
+          ? educationProgram.otherRegulatoryBody
+          : null;
       program.deliveredOnSite =
         educationProgram.programDeliveryTypes.deliveredOnSite ?? false;
       program.deliveredOnline =
@@ -173,6 +178,8 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
         educationProgram.entranceRequirements.requirementsByInstitution;
       program.requirementsByBCITA =
         educationProgram.entranceRequirements.requirementsByBCITA;
+      program.noneOfTheAboveEntranceRequirements =
+        educationProgram.entranceRequirements.noneOfTheAboveEntranceRequirements;
       program.hasWILComponent = educationProgram.hasWILComponent;
       program.isWILApproved = educationProgram.isWILApproved;
       program.wilProgramEligibility = educationProgram.wilProgramEligibility;
@@ -444,6 +451,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
         "programs.programIntensity",
         "programs.institutionProgramCode",
         "programs.regulatoryBody",
+        "programs.otherRegulatoryBody",
         "programs.deliveredOnSite",
         "programs.deliveredOnline",
         "programs.deliveredOnlineAlsoOnsite",
@@ -462,6 +470,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
         "programs.minHighSchool",
         "programs.requirementsByInstitution",
         "programs.requirementsByBCITA",
+        "programs.noneOfTheAboveEntranceRequirements",
         "programs.hasWILComponent",
         "programs.isWILApproved",
         "programs.wilProgramEligibility",

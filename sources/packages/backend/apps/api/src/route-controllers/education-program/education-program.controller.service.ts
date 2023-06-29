@@ -171,6 +171,7 @@ export class EducationProgramControllerService {
       nocCode: program.nocCode,
       sabcCode: program.sabcCode,
       regulatoryBody: program.regulatoryBody,
+      otherRegulatoryBody: program.otherRegulatoryBody,
       programDeliveryTypes: {
         deliveredOnSite: program.deliveredOnSite,
         deliveredOnline: program.deliveredOnline,
@@ -194,6 +195,8 @@ export class EducationProgramControllerService {
         minHighSchool: program.minHighSchool,
         requirementsByInstitution: program.requirementsByInstitution,
         requirementsByBCITA: program.requirementsByBCITA,
+        noneOfTheAboveEntranceRequirements:
+          program.noneOfTheAboveEntranceRequirements,
       },
       hasWILComponent: program.hasWILComponent,
       isWILApproved: program.isWILApproved,

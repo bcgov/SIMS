@@ -2824,140 +2824,216 @@
                     "id": "eug8su"
                 },
                 {
-                    "label": "Which regulatory body does this program belong to?",
-                    "labelPosition": "top",
-                    "widget": "html5",
-                    "labelWidth": "",
-                    "labelMargin": "",
-                    "placeholder": "",
-                    "description": "",
-                    "tooltip": "",
-                    "customClass": "",
-                    "tabindex": "",
-                    "hidden": false,
+                    "clearOnHide": false,
+                    "label": "Columns",
+                    "input": false,
+                    "tableView": false,
+                    "key": "panel1Columns",
+                    "columns": [
+                        {
+                            "components": [
+                                {
+                                    "label": "Which regulatory body does this program belong to?",
+                                    "labelPosition": "top",
+                                    "widget": "html5",
+                                    "labelWidth": "",
+                                    "labelMargin": "",
+                                    "placeholder": "",
+                                    "description": "",
+                                    "tooltip": "",
+                                    "customClass": "",
+                                    "tabindex": "",
+                                    "hidden": false,
+                                    "uniqueOptions": false,
+                                    "autofocus": false,
+                                    "disabled": false,
+                                    "tableView": true,
+                                    "modalEdit": false,
+                                    "multiple": false,
+                                    "dataSrc": "values",
+                                    "data": {
+                                        "values": [
+                                            {
+                                                "label": "PTIB",
+                                                "value": "ptib"
+                                            },
+                                            {
+                                                "label": "DQAB",
+                                                "value": "dqab"
+                                            },
+                                            {
+                                                "label": "Private Act of B.C. Legislature",
+                                                "value": "privateActLegislature"
+                                            },
+                                            {
+                                                "label": "ITA",
+                                                "value": "ita"
+                                            },
+                                            {
+                                                "label": "ICBC",
+                                                "value": "icbc"
+                                            },
+                                            {
+                                                "value": "other",
+                                                "label": "Other"
+                                            }
+                                        ],
+                                        "resource": "",
+                                        "json": "",
+                                        "url": "",
+                                        "custom": ""
+                                    },
+                                    "dataType": "",
+                                    "idPath": "id",
+                                    "valueProperty": "",
+                                    "limit": 100,
+                                    "template": "<span>{{ item.label }}</span>",
+                                    "refreshOn": "",
+                                    "refreshOnBlur": "",
+                                    "clearOnRefresh": false,
+                                    "searchEnabled": true,
+                                    "selectThreshold": 0.3,
+                                    "readOnlyValue": false,
+                                    "customOptions": {},
+                                    "useExactSearch": false,
+                                    "persistent": true,
+                                    "protected": false,
+                                    "dbIndex": false,
+                                    "encrypted": false,
+                                    "clearOnHide": true,
+                                    "customDefaultValue": "",
+                                    "calculateValue": "",
+                                    "calculateServer": false,
+                                    "allowCalculateOverride": false,
+                                    "validateOn": "change",
+                                    "validate": {
+                                        "required": true,
+                                        "onlyAvailableItems": false,
+                                        "customMessage": "",
+                                        "custom": "",
+                                        "customPrivate": false,
+                                        "json": "",
+                                        "strictDateValidation": false,
+                                        "multiple": false,
+                                        "unique": false
+                                    },
+                                    "unique": false,
+                                    "errorLabel": "",
+                                    "errors": "",
+                                    "key": "regulatoryBody",
+                                    "tags": [],
+                                    "properties": {},
+                                    "conditional": {
+                                        "show": "",
+                                        "when": null,
+                                        "eq": "",
+                                        "json": ""
+                                    },
+                                    "customConditional": "",
+                                    "logic": [],
+                                    "attributes": {
+                                        "data-cy": "regulatoryBody"
+                                    },
+                                    "overlay": {
+                                        "style": "",
+                                        "page": "",
+                                        "left": "",
+                                        "top": "",
+                                        "width": "",
+                                        "height": ""
+                                    },
+                                    "type": "select",
+                                    "indexeddb": {
+                                        "filter": {}
+                                    },
+                                    "selectFields": "",
+                                    "searchField": "",
+                                    "searchDebounce": 0.3,
+                                    "minSearch": 0,
+                                    "filter": "",
+                                    "redrawOn": "",
+                                    "input": true,
+                                    "searchThreshold": 0.3,
+                                    "prefix": "",
+                                    "suffix": "",
+                                    "dataGridLabel": false,
+                                    "showCharCount": false,
+                                    "showWordCount": false,
+                                    "allowMultipleMasks": false,
+                                    "addons": [],
+                                    "lazyLoad": true,
+                                    "authenticate": false,
+                                    "ignoreCache": false,
+                                    "fuseOptions": {
+                                        "include": "score",
+                                        "threshold": 0.3
+                                    },
+                                    "id": "e7o9328",
+                                    "defaultValue": ""
+                                }
+                            ],
+                            "width": 6,
+                            "offset": 0,
+                            "push": 0,
+                            "pull": 0
+                        },
+                        {
+                            "components": [
+                                {
+                                    "autofocus": false,
+                                    "input": true,
+                                    "tableView": true,
+                                    "inputType": "text",
+                                    "inputMask": "",
+                                    "label": "Other institution regulatory body",
+                                    "key": "otherRegulatoryBody",
+                                    "placeholder": "",
+                                    "prefix": "",
+                                    "suffix": "",
+                                    "multiple": false,
+                                    "defaultValue": "",
+                                    "protected": false,
+                                    "unique": false,
+                                    "persistent": true,
+                                    "hidden": false,
+                                    "clearOnHide": true,
+                                    "spellcheck": true,
+                                    "validate": {
+                                        "required": true,
+                                        "minLength": 1,
+                                        "maxLength": 100,
+                                        "pattern": "",
+                                        "custom": "",
+                                        "customPrivate": false
+                                    },
+                                    "conditional": {
+                                        "show": "true",
+                                        "when": "regulatoryBody",
+                                        "eq": "other"
+                                    },
+                                    "type": "textfield",
+                                    "labelPosition": "top",
+                                    "inputFormat": "plain",
+                                    "tags": [],
+                                    "properties": {},
+                                    "lockKey": true
+                                }
+                            ],
+                            "width": 6,
+                            "offset": 0,
+                            "push": 0,
+                            "pull": 0
+                        }
+                    ],
+                    "type": "columns",
                     "hideLabel": true,
-                    "uniqueOptions": false,
-                    "autofocus": false,
-                    "disabled": false,
-                    "tableView": true,
-                    "modalEdit": false,
-                    "multiple": false,
-                    "dataSrc": "values",
-                    "data": {
-                        "values": [
-                            {
-                                "label": "PTIB",
-                                "value": "ptib"
-                            },
-                            {
-                                "label": "DQAB",
-                                "value": "dqab"
-                            },
-                            {
-                                "label": "Private Act of B.C. Legislature",
-                                "value": "privateActLegislature"
-                            },
-                            {
-                                "label": "ITA",
-                                "value": "ita"
-                            },
-                            {
-                                "label": "ICBC",
-                                "value": "icbc"
-                            }
-                        ],
-                        "resource": "",
-                        "json": "",
-                        "url": "",
-                        "custom": ""
-                    },
-                    "dataType": "",
-                    "idPath": "id",
-                    "valueProperty": "",
-                    "limit": 100,
-                    "template": "<span>{{ item.label }}</span>",
-                    "refreshOn": "",
-                    "refreshOnBlur": "",
-                    "clearOnRefresh": false,
-                    "searchEnabled": true,
-                    "selectThreshold": 0.3,
-                    "readOnlyValue": false,
-                    "customOptions": {},
-                    "useExactSearch": false,
-                    "persistent": true,
-                    "protected": false,
-                    "dbIndex": false,
-                    "encrypted": false,
-                    "clearOnHide": true,
-                    "customDefaultValue": "",
-                    "calculateValue": "",
-                    "calculateServer": false,
-                    "allowCalculateOverride": false,
-                    "validateOn": "change",
-                    "validate": {
-                        "required": true,
-                        "onlyAvailableItems": false,
-                        "customMessage": "",
-                        "custom": "",
-                        "customPrivate": false,
-                        "json": "",
-                        "strictDateValidation": false,
-                        "multiple": false,
-                        "unique": false
-                    },
-                    "unique": false,
-                    "errorLabel": "",
-                    "errors": "",
-                    "key": "regulatoryBody",
                     "tags": [],
-                    "properties": {},
                     "conditional": {
-                        "show": null,
+                        "show": "",
                         "when": null,
-                        "eq": "",
-                        "json": ""
+                        "eq": ""
                     },
-                    "customConditional": "",
-                    "logic": [],
-                    "attributes": {
-                        "data-cy": "regulatoryBody"
-                    },
-                    "overlay": {
-                        "style": "",
-                        "page": "",
-                        "left": "",
-                        "top": "",
-                        "width": "",
-                        "height": ""
-                    },
-                    "type": "select",
-                    "indexeddb": {
-                        "filter": {}
-                    },
-                    "selectFields": "",
-                    "searchField": "",
-                    "searchDebounce": 0.3,
-                    "minSearch": 0,
-                    "filter": "",
-                    "redrawOn": "",
-                    "input": true,
-                    "searchThreshold": 0.3,
-                    "prefix": "",
-                    "suffix": "",
-                    "dataGridLabel": false,
-                    "showCharCount": false,
-                    "showWordCount": false,
-                    "allowMultipleMasks": false,
-                    "addons": [],
-                    "lazyLoad": true,
-                    "authenticate": false,
-                    "ignoreCache": false,
-                    "fuseOptions": {
-                        "include": "score",
-                        "threshold": 0.3
-                    },
-                    "id": "e7o9328",
-                    "defaultValue": ""
+                    "properties": {}
                 }
             ],
             "placeholder": "",
@@ -3056,7 +3132,6 @@
             "description": "",
             "errorLabel": "",
             "tooltip": "",
-            "hideLabel": false,
             "tabindex": "",
             "disabled": false,
             "autofocus": false,
@@ -3080,7 +3155,8 @@
             "showWordCount": false,
             "allowMultipleMasks": false,
             "addons": [],
-            "id": "eezpkk"
+            "id": "eezpkk",
+            "hideLabel": true
         },
         {
             "title": "Panel",
@@ -3153,7 +3229,6 @@
                     "tabindex": "",
                     "inline": false,
                     "hidden": false,
-                    "hideLabel": false,
                     "autofocus": false,
                     "disabled": false,
                     "tableView": false,
@@ -3191,6 +3266,11 @@
                             "label": "This program is approved by the B.C. Inudstry Training Authority and students must meet the entrance requirements set by the B.C. ITA.",
                             "value": "requirementsByBCITA",
                             "shortcut": ""
+                        },
+                        {
+                            "value": "noneOfTheAboveEntranceRequirements",
+                            "label": "None of the above",
+                            "shortcut": ""
                         }
                     ],
                     "persistent": true,
@@ -3206,10 +3286,10 @@
                     "validate": {
                         "required": true,
                         "onlyAvailableItems": false,
-                        "customMessage": "An entrance requirement is required.",
+                        "customMessage": "",
                         "minSelectedCount": "",
                         "maxSelectedCount": "",
-                        "custom": "",
+                        "custom": "const shouldSelectOneOfTheAboveOrAnotherOption =\r\n  (data.entranceRequirements.minHighSchool ||\r\n    data.entranceRequirements.hasMinimumAge ||\r\n    data.entranceRequirements.requirementsByInstitution ||\r\n    data.entranceRequirements.requirementsByBCITA) &&\r\n  data.entranceRequirements.noneOfTheAboveEntranceRequirements;\r\n\r\nvalid = shouldSelectOneOfTheAboveOrAnotherOption\r\n  ? \"Please select at least one of the entrance requirements or 'None of the above'.\"\r\n  : true;",
                         "customPrivate": false,
                         "json": "",
                         "strictDateValidation": false,
@@ -3259,7 +3339,86 @@
                     "allowMultipleMasks": false,
                     "addons": [],
                     "fieldSet": false,
-                    "id": "egl3cl"
+                    "id": "egl3cl",
+                    "lockKey": true
+                },
+                {
+                    "label": "Entrance requirements warning banner",
+                    "className": "alert alert-warning fa fa-exclamation-circle",
+                    "attrs": [
+                        {
+                            "attr": "",
+                            "value": ""
+                        }
+                    ],
+                    "content": "<strong> This program is ineligible for StudentAid BC funding.</strong><br/>\nAn entrance requirement is required.",
+                    "refreshOnChange": false,
+                    "customClass": "banner-warning",
+                    "key": "entrance-requirement-banner",
+                    "conditional": {
+                        "show": null,
+                        "when": null,
+                        "eq": ""
+                    },
+                    "type": "htmlelement",
+                    "input": false,
+                    "tableView": false,
+                    "placeholder": "",
+                    "prefix": "",
+                    "suffix": "",
+                    "multiple": false,
+                    "defaultValue": null,
+                    "protected": false,
+                    "unique": false,
+                    "persistent": false,
+                    "hidden": false,
+                    "clearOnHide": true,
+                    "refreshOn": "",
+                    "redrawOn": "",
+                    "modalEdit": false,
+                    "dataGridLabel": false,
+                    "labelPosition": "top",
+                    "description": "",
+                    "errorLabel": "",
+                    "tooltip": "",
+                    "tabindex": "",
+                    "disabled": false,
+                    "autofocus": false,
+                    "dbIndex": false,
+                    "customDefaultValue": "",
+                    "calculateValue": "",
+                    "calculateServer": false,
+                    "widget": null,
+                    "attributes": {},
+                    "validateOn": "change",
+                    "validate": {
+                        "required": false,
+                        "custom": "",
+                        "customPrivate": false,
+                        "strictDateValidation": false,
+                        "multiple": false,
+                        "unique": false
+                    },
+                    "overlay": {
+                        "style": "",
+                        "left": "",
+                        "top": "",
+                        "width": "",
+                        "height": ""
+                    },
+                    "allowCalculateOverride": false,
+                    "encrypted": false,
+                    "showCharCount": false,
+                    "showWordCount": false,
+                    "properties": {},
+                    "allowMultipleMasks": false,
+                    "addons": [],
+                    "tag": "p",
+                    "id": "evsiyhh",
+                    "hideLabel": true,
+                    "tags": [],
+                    "lockKey": true,
+                    "customConditional": "show =  data.entranceRequirements.noneOfTheAboveEntranceRequirements;"
                 }
             ],
             "placeholder": "",
@@ -6191,7 +6350,7 @@
             "encrypted": false,
             "redrawOn": "",
             "customDefaultValue": "",
-            "calculateValue": "if (data.hasJointDesignatedInstitution === \"no\" || data.eslEligibility === \"20OrMore\" || \r\n(data.deliveredOnlineAlsoOnsite === \"no\" && data.sameOnlineCreditsEarned === \"no\" && earnAcademicCreditsOtherInstitution === \"no\") \r\n|| (data.courseLoadCalculation === \"hours\" && data.minHoursWeek === \"no\" && data.isAviationProgram === \"no\") || (data.courseLoadCalculation === \"hours\" && data.minHoursWeek === \"no\" && data.isAviationProgram === \"yes\" && data.minHoursWeekAvi === \"no\") \r\n|| (data.hasWILComponent === \"yes\" && data.isWILApproved === \"no\") || (data.hasWILComponent === \"yes\" && data.isWILApproved === \"yes\" && data.wilProgramEligibility === \"no\") \r\n|| (data.hasTravel === \"yes\" && data.travelProgramEligibility === \"no\") || (data.hasIntlExchange === \"yes\" && data.intlExchangeProgramEligibility === \"no\")) {\r\n  value = \"Pending\";\r\n}\r\nelse {\r\n  value = \"Approved\";\r\n}",
+            "calculateValue": "if (\r\n  data.hasJointDesignatedInstitution === \"no\" ||\r\n  data.eslEligibility === \"20OrMore\" ||\r\n  data.entranceRequirements.noneOfTheAboveEntranceRequirements === true ||\r\n  (data.deliveredOnlineAlsoOnsite === \"no\" &&\r\n    data.sameOnlineCreditsEarned === \"no\" &&\r\n    data.earnAcademicCreditsOtherInstitution === \"no\") ||\r\n  (data.courseLoadCalculation === \"hours\" &&\r\n    data.minHoursWeek === \"no\" &&\r\n    data.isAviationProgram === \"no\") ||\r\n  (data.courseLoadCalculation === \"hours\" &&\r\n    data.minHoursWeek === \"no\" &&\r\n    data.isAviationProgram === \"yes\" &&\r\n    data.minHoursWeekAvi === \"no\") ||\r\n  (data.hasWILComponent === \"yes\" && data.isWILApproved === \"no\") ||\r\n  (data.hasWILComponent === \"yes\" &&\r\n    data.isWILApproved === \"yes\" &&\r\n    data.wilProgramEligibility === \"no\") ||\r\n  (data.hasTravel === \"yes\" && data.travelProgramEligibility === \"no\") ||\r\n  (data.hasIntlExchange === \"yes\" &&\r\n    data.intlExchangeProgramEligibility === \"no\")\r\n) {\r\n  value = \"Pending\";\r\n} else {\r\n  value = \"Approved\";\r\n}",
             "calculateServer": true,
             "key": "programStatus",
             "tags": [],

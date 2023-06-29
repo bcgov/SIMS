@@ -66,12 +66,20 @@ export class EducationProgram extends RecordDataModel {
   })
   sabcCode: string;
   /**
-   * Regulatory body ode. Which regulatory body has approved your delivery of this program.
+   * Regulatory body code. Which regulatory body has approved your delivery of this program.
    */
   @Column({
     name: "regulatory_body",
   })
   regulatoryBody: string;
+  /**
+   * Other regulatory body.
+   */
+  @Column({
+    name: "other_regulatory_body",
+    nullable: true,
+  })
+  otherRegulatoryBody?: string;
   /**
    * How will this Program be delivered - On site.
    */
@@ -245,6 +253,15 @@ export class EducationProgram extends RecordDataModel {
     name: "requirements_by_bcita",
   })
   requirementsByBCITA?: boolean;
+
+  /**
+   * None of the listed entrance requirements
+   */
+  @Column({
+    name: "none_of_entrance_requirements",
+    nullable: true,
+  })
+  noneOfTheAboveEntranceRequirements?: boolean;
 
   /**
    * Identifier for Work Integrated(WIL) Learning component.

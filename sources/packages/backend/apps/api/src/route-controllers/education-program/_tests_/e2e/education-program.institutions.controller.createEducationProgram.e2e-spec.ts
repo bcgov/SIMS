@@ -23,6 +23,7 @@ import * as request from "supertest";
 import { FormService } from "../../../../services";
 import { TestingModule } from "@nestjs/testing";
 import { AppInstitutionsModule } from "../../../../app.institutions.module";
+import * as faker from "faker";
 
 describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", () => {
   let app: INestApplication;
@@ -56,14 +57,14 @@ describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", (
     // Arrange
     const programStatus = ProgramStatus.Approved;
     const payload = {
-      name: "Education Program test",
-      description: "Education Program description...",
+      name: faker.lorem.words(5),
+      description: faker.lorem.words(5),
       credentialType: "undergraduateCertificate",
       cipCode: "11.1111",
       fieldOfStudyCode: "15",
       nocCode: "2174",
-      sabcCode: "PQP0",
-      institutionProgramCode: "DDD",
+      sabcCode: `${faker.random.alpha({ count: 3 })}1`,
+      institutionProgramCode: faker.random.alpha({ count: 3 }),
       programIntensity: "Full Time and Part Time",
       programDeliveryTypes: {
         deliveredOnSite: true,
@@ -71,12 +72,14 @@ describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", (
       },
       completionYears: "12WeeksToLessThan1Year",
       courseLoadCalculation: "credit",
-      regulatoryBody: "ptib",
+      regulatoryBody: "other",
+      otherRegulatoryBody: "Other RB test",
       entranceRequirements: {
         minHighSchool: true,
         hasMinimumAge: true,
         requirementsByInstitution: true,
         requirementsByBCITA: true,
+        noneOfTheAboveEntranceRequirements: false,
       },
       eslEligibility: "lessThan20",
       hasJointInstitution: "no",
@@ -123,6 +126,7 @@ describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", (
         nocCode: payload.nocCode,
         sabcCode: payload.sabcCode,
         regulatoryBody: payload.regulatoryBody,
+        otherRegulatoryBody: payload.otherRegulatoryBody,
         deliveredOnSite: payload.programDeliveryTypes.deliveredOnSite,
         deliveredOnline: payload.programDeliveryTypes.deliveredOnline,
         deliveredOnlineAlsoOnsite: null,
@@ -130,7 +134,6 @@ describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", (
         earnAcademicCreditsOtherInstitution: null,
         courseLoadCalculation: payload.courseLoadCalculation,
         completionYears: payload.completionYears,
-        hasMinimumAge: true,
         eslEligibility: payload.eslEligibility,
         hasJointInstitution: payload.hasJointInstitution,
         hasJointDesignatedInstitution: null,
@@ -140,9 +143,13 @@ describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", (
         minHoursWeek: null,
         isAviationProgram: null,
         minHoursWeekAvi: null,
-        minHighSchool: true,
-        requirementsByInstitution: true,
-        requirementsByBCITA: true,
+        hasMinimumAge: payload.entranceRequirements.hasMinimumAge,
+        minHighSchool: payload.entranceRequirements.minHighSchool,
+        requirementsByInstitution:
+          payload.entranceRequirements.requirementsByInstitution,
+        requirementsByBCITA: payload.entranceRequirements.requirementsByBCITA,
+        noneOfTheAboveEntranceRequirements:
+          payload.entranceRequirements.noneOfTheAboveEntranceRequirements,
         hasWILComponent: payload.hasWILComponent,
         isWILApproved: null,
         wilProgramEligibility: null,
