@@ -73,7 +73,7 @@ export class EducationProgram extends RecordDataModel {
   })
   regulatoryBody: string;
   /**
-   * Other regulatory body code in case it is not listed in the form.
+   * Other regulatory body.
    */
   @Column({
     name: "other_regulatory_body",
