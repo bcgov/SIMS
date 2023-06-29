@@ -816,8 +816,7 @@
                     "addons": [],
                     "inputType": "text",
                     "id": "e7oydq",
-                    "defaultValue": "",
-                    "isNew": false
+                    "defaultValue": ""
                 },
                 {
                     "label": "Field of study code",
@@ -2864,6 +2863,10 @@
                             {
                                 "label": "ICBC",
                                 "value": "icbc"
+                            },
+                            {
+                                "value": "senateOrEducationCouncil",
+                                "label": "Senate, Academic Council, Education Council, and/or Program Council and Board of Governors"
                             }
                         ],
                         "resource": "",
@@ -2912,7 +2915,7 @@
                     "tags": [],
                     "properties": {},
                     "conditional": {
-                        "show": null,
+                        "show": "",
                         "when": null,
                         "eq": "",
                         "json": ""
