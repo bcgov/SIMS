@@ -290,6 +290,17 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-getComplet
       applicationWithDeclinedBySABCApplicationOfferingChange.student.user,
     ]);
 
+    // Here there will be multiple search results with the default order of application number, so setting the application number in order to predict the order while assert.
+    applicationWithApprovedApplicationOfferingChange.applicationNumber =
+      "2000000000";
+    applicationWithDeclinedBySABCApplicationOfferingChange.applicationNumber =
+      "9000000000";
+
+    await db.application.save([
+      applicationWithApprovedApplicationOfferingChange,
+      applicationWithDeclinedBySABCApplicationOfferingChange,
+    ]);
+
     const searchKeyword = "TestStudent";
     const endpoint = `/institutions/location/${collegeFLocation.id}/application-offering-change-request/completed?page=0&pageLimit=10&searchCriteria=${searchKeyword}`;
     console.log(endpoint);
