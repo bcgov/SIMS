@@ -223,35 +223,33 @@ export class MSFAANumberService extends RecordDataModelService<MSFAANumber> {
       }
       // Only if the msfaa record was successfully cancelled, then save the msfaa cancellation notification.
       // This also takes care of the scenario where the msfaa record was already cancelled before in which case the record will not be updated and hence no notification will be saved.
-      if (updateResult.affected) {
-        // Get the student associated with the cancelled MSFAA record.
-        const msfaaRecord = await this.repo.findOne({
-          select: {
+      // Get the student associated with the cancelled MSFAA record.
+      const msfaaRecord = await this.repo.findOne({
+        select: {
+          id: true,
+          student: {
             id: true,
-            student: {
-              id: true,
-              user: { id: true, firstName: true, lastName: true, email: true },
-            },
+            user: { id: true, firstName: true, lastName: true, email: true },
           },
-          relations: {
-            student: { user: true },
-          },
-          where: {
-            msfaaNumber,
-          },
-        });
-        const systemUser = await this.systemUsersService.systemUser();
-        await this.notificationActionsService.saveMSFAACancellationNotification(
-          {
-            givenNames: msfaaRecord.student.user.firstName,
-            lastName: msfaaRecord.student.user.lastName,
-            toAddress: msfaaRecord.student.user.email,
-            userId: msfaaRecord.student.user.id,
-          },
-          systemUser.id,
-          transactionEntityManager,
-        );
-      }
+        },
+        relations: {
+          student: { user: true },
+        },
+        where: {
+          msfaaNumber,
+        },
+      });
+      const systemUser = await this.systemUsersService.systemUser();
+      await this.notificationActionsService.saveMSFAACancellationNotification(
+        {
+          givenNames: msfaaRecord.student.user.firstName,
+          lastName: msfaaRecord.student.user.lastName,
+          toAddress: msfaaRecord.student.user.email,
+          userId: msfaaRecord.student.user.id,
+        },
+        systemUser.id,
+        transactionEntityManager,
+      );
       return updateResult;
     });
   }
