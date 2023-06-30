@@ -40,6 +40,8 @@ const router = createRouter({
 // When tried to return true or route location instead of next with current version of vue-router
 // results in router not working as expected on page refresh.
 router.beforeResolve(async (to, _from, next) => {
+  // For now, all the page title is same, we can customize in future, if we want.
+  document.title = "StudentAid BC";
   if (to.meta?.clientType === ClientIdType.Institution) {
     await validateInstitutionUserAccess(to, _from, next);
   } else {
