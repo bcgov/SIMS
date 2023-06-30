@@ -215,8 +215,8 @@ export class MSFAANumberService extends RecordDataModelService<MSFAANumber> {
           newIssuingProvince,
         },
       );
-      // In case no MSFAA record was cancelled.
-      if (!updateResult.affected) {
+      // Expected to update 1 and only 1 record.
+      if (updateResult.affected !== 1) {
         throw new Error(
           `Error while cancelling MSFAA number: ${msfaaNumber}. Number of affected rows was ${updateResult.affected}, expected 1.`,
         );
