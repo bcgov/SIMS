@@ -170,8 +170,7 @@
       "showWordCount": false,
       "allowMultipleMasks": false,
       "addons": [],
-      "id": "ec8hh1",
-      "isNew": false
+      "id": "ec8hh1"
     },
     {
       "label": "HTML",
@@ -348,7 +347,7 @@
           "modalEdit": false,
           "dataGridLabel": false,
           "labelPosition": "top",
-          "description": "",
+          "description": "Please include the institution location, year of study, and cohort details directly into the name of the offering so that students can differentiate it from other similar offerings.",
           "errorLabel": "",
           "tooltip": "",
           "hideLabel": false,
@@ -364,7 +363,7 @@
           },
           "validateOn": "change",
           "conditional": {
-            "show": null,
+            "show": "",
             "when": null,
             "eq": ""
           },
@@ -389,7 +388,8 @@
           "displayMask": "",
           "spellcheck": true,
           "truncateMultipleSpaces": false,
-          "id": "euwirq"
+          "id": "euwirq",
+          "tags": []
         },
         {
           "title": "Panel",
@@ -2156,8 +2156,7 @@
                   "showWordCount": false,
                   "allowMultipleMasks": false,
                   "addons": [],
-                  "id": "ebhbfou",
-                  "isNew": false
+                  "id": "ebhbfou"
                 }
               ],
               "placeholder": "",
@@ -2308,81 +2307,6 @@
                   "id": "eod06e7"
                 },
                 {
-                  "label": "HTML",
-                  "attrs": [
-                    {
-                      "attr": "",
-                      "value": ""
-                    }
-                  ],
-                  "content": "Identify scheduled breaks for the program year (August 1 to July 31).\n<ul>\n  <li>\n    Breaks should not exceed two weeks <strong>except</strong> calendar year-end break can be up\n    to three weeks long (December to January)\n  </li>\n  <li>Do not include break dates that are before or after the study period</li>\n  <li>\n    Study breaks cannot exceed the 21 consecutive day. Excess break days will be\n    deducted from total funded study period weeks\n  </li>\n  <li>\n    Study breaks cannot exceed the 10% threshold. Excess break days will be\n    deducted from total funded study period weeks\n  </li>\n</ul>\n",
-                  "refreshOnChange": false,
-                  "customClass": "align-bullets mt-n2",
-                  "key": "html3",
-                  "type": "htmlelement",
-                  "input": false,
-                  "tableView": false,
-                  "placeholder": "",
-                  "prefix": "",
-                  "suffix": "",
-                  "multiple": false,
-                  "defaultValue": null,
-                  "protected": false,
-                  "unique": false,
-                  "persistent": false,
-                  "hidden": false,
-                  "clearOnHide": true,
-                  "refreshOn": "",
-                  "redrawOn": "",
-                  "modalEdit": false,
-                  "dataGridLabel": false,
-                  "labelPosition": "top",
-                  "description": "",
-                  "errorLabel": "",
-                  "tooltip": "",
-                  "hideLabel": false,
-                  "tabindex": "",
-                  "disabled": false,
-                  "autofocus": false,
-                  "dbIndex": false,
-                  "customDefaultValue": "",
-                  "calculateValue": "",
-                  "calculateServer": false,
-                  "widget": null,
-                  "attributes": {},
-                  "validateOn": "change",
-                  "validate": {
-                    "required": false,
-                    "custom": "",
-                    "customPrivate": false,
-                    "strictDateValidation": false,
-                    "multiple": false,
-                    "unique": false
-                  },
-                  "conditional": {
-                    "show": null,
-                    "when": null,
-                    "eq": ""
-                  },
-                  "overlay": {
-                    "style": "",
-                    "left": "",
-                    "top": "",
-                    "width": "",
-                    "height": ""
-                  },
-                  "allowCalculateOverride": false,
-                  "encrypted": false,
-                  "showCharCount": false,
-                  "showWordCount": false,
-                  "properties": {},
-                  "allowMultipleMasks": false,
-                  "addons": [],
-                  "tag": "p",
-                  "id": "eity25i",
-                  "className": ""
-                },
-                {
                   "label": "No study breaks",
                   "labelWidth": "",
                   "labelMargin": "",
@@ -2463,6 +2387,82 @@
                   "allowMultipleMasks": false,
                   "addons": [],
                   "id": "eqekqf"
+                },
+                {
+                  "label": "HTML",
+                  "attrs": [
+                    {
+                      "attr": "",
+                      "value": ""
+                    }
+                  ],
+                  "content": "Identify schedule breaks for the study period offering:\n<ul>\n  <li>\n    Study breaks of five or fewer consecutive calendar days that would normally be instructional days do not count towards study breaks.\n  </li>\n  <li>Study breaks cannot exceed three weeks, or 21 consecutive days. Excess break days will be deducted from overall funded weeks.</li>\n  <li>\n    Breaks in study may not exceed 10% (individually or cumulatively) of the study period offering length. Excess break days will be deducted from overall funded weeks.\n  </li>\n</ul>",
+                  "refreshOnChange": false,
+                  "customClass": "align-bullets mt-n2",
+                  "key": "html3",
+                  "type": "htmlelement",
+                  "input": false,
+                  "tableView": false,
+                  "placeholder": "",
+                  "prefix": "",
+                  "suffix": "",
+                  "multiple": false,
+                  "defaultValue": null,
+                  "protected": false,
+                  "unique": false,
+                  "persistent": false,
+                  "hidden": false,
+                  "clearOnHide": true,
+                  "refreshOn": "",
+                  "redrawOn": "",
+                  "modalEdit": false,
+                  "dataGridLabel": false,
+                  "labelPosition": "top",
+                  "description": "",
+                  "errorLabel": "",
+                  "tooltip": "",
+                  "tabindex": "",
+                  "disabled": false,
+                  "autofocus": false,
+                  "dbIndex": false,
+                  "customDefaultValue": "",
+                  "calculateValue": "",
+                  "calculateServer": false,
+                  "widget": null,
+                  "attributes": {},
+                  "validateOn": "change",
+                  "validate": {
+                    "required": false,
+                    "custom": "",
+                    "customPrivate": false,
+                    "strictDateValidation": false,
+                    "multiple": false,
+                    "unique": false
+                  },
+                  "conditional": {
+                    "show": "",
+                    "when": null,
+                    "eq": ""
+                  },
+                  "overlay": {
+                    "style": "",
+                    "left": "",
+                    "top": "",
+                    "width": "",
+                    "height": ""
+                  },
+                  "allowCalculateOverride": false,
+                  "encrypted": false,
+                  "showCharCount": false,
+                  "showWordCount": false,
+                  "properties": {},
+                  "allowMultipleMasks": false,
+                  "addons": [],
+                  "tag": "p",
+                  "id": "eity25i",
+                  "className": "",
+                  "tags": [],
+                  "hideLabel": true
                 },
                 {
                   "label": "Break dates",
@@ -4118,7 +4118,7 @@
                   "value": ""
                 }
               ],
-              "content": "Please add the costs for each section (use 0 if there are no costs)",
+              "content": "Please add the costs for each section (use 0 if there are no costs).\n<br>\nThese costs must comply with the maximum allowable costs according to the SABC policy manual.",
               "refreshOnChange": false,
               "customClass": "mt-n2",
               "key": "html5",
@@ -4163,7 +4163,7 @@
                 "unique": false
               },
               "conditional": {
-                "show": null,
+                "show": "",
                 "when": null,
                 "eq": ""
               },
@@ -4183,7 +4183,8 @@
               "addons": [],
               "tag": "p",
               "id": "e6zws5q",
-              "className": ""
+              "className": "",
+              "tags": []
             },
             {
               "collapsible": false,
@@ -4292,7 +4293,7 @@
                     {
                       "components": [
                         {
-                          "label": "Program related costs",
+                          "label": "Books and Supplies",
                           "prefix": "$",
                           "mask": false,
                           "tableView": false,
@@ -4352,7 +4353,7 @@
                           },
                           "validateOn": "change",
                           "conditional": {
-                            "show": null,
+                            "show": "",
                             "when": null,
                             "eq": ""
                           },
@@ -4371,7 +4372,8 @@
                           "allowMultipleMasks": false,
                           "addons": [],
                           "id": "ezezla",
-                          "inputType": "number"
+                          "inputType": "number",
+                          "tags": []
                         }
                       ],
                       "width": 6,
@@ -4550,7 +4552,7 @@
                     {
                       "components": [
                         {
-                          "label": "Exceptional expenses",
+                          "label": "Exceptional Costs",
                           "prefix": "$",
                           "mask": false,
                           "tableView": false,
@@ -4610,7 +4612,7 @@
                           },
                           "validateOn": "change",
                           "conditional": {
-                            "show": null,
+                            "show": "",
                             "when": null,
                             "eq": ""
                           },
@@ -4629,7 +4631,8 @@
                           "allowMultipleMasks": false,
                           "addons": [],
                           "id": "esc41a",
-                          "inputType": "number"
+                          "inputType": "number",
+                          "tags": []
                         }
                       ],
                       "width": 6,
@@ -5782,8 +5785,7 @@
       },
       "properties": {},
       "defaultValue": "365",
-      "lockKey": true,
-      "isNew": false
+      "lockKey": true
     }
   ]
 }
