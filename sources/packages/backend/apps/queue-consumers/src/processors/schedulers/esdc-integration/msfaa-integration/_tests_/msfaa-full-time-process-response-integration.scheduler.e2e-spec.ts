@@ -15,18 +15,20 @@ import {
   saveFakeApplicationDisbursements,
   saveFakeStudent,
   createFakeMSFAANumber,
+  MSFAA_FULL_TIME_RECEIVE_FILE_WITH_SINGLE_CANCELLATION_RECORD,
 } from "@sims/test-utils";
 import { THROW_AWAY_MSFAA_NUMBER } from "./msfaa-helper";
 import {
   ApplicationStatus,
   DisbursementScheduleStatus,
   OfferingIntensity,
+  NotificationMessageType,
 } from "@sims/sims-db";
 import * as Client from "ssh2-sftp-client";
 import { Job } from "bull";
 import * as path from "path";
 import { FULL_TIME_SAMPLE_MSFAA_NUMBER } from "./msfaa-process-integration.scheduler.models";
-import { IsNull } from "typeorm";
+import { In, IsNull } from "typeorm";
 
 describe(
   describeProcessorRootTest(QueueNames.FullTimeMSFAAProcessResponseIntegration),
@@ -63,10 +65,17 @@ describe(
         { cancelledDate: IsNull() },
         { cancelledDate: getISODateOnlyString(new Date()) },
       );
-      // Ensuring that any previous runs of this test or any other test do not have the same Msfaa id as the one in the re-activation file.
+      // Ensuring that any previous runs of this test or any other test do not have the same MSFAA number as the one used below.
       await db.msfaaNumber.update(
-        { msfaaNumber: FULL_TIME_SAMPLE_MSFAA_NUMBER },
+        {
+          msfaaNumber: FULL_TIME_SAMPLE_MSFAA_NUMBER,
+        },
         { msfaaNumber: THROW_AWAY_MSFAA_NUMBER },
+      );
+      // Update the date sent for the notifications to current date where the date sent is null.
+      await db.notification.update(
+        { dateSent: IsNull() },
+        { dateSent: new Date() },
       );
     });
 
@@ -228,6 +237,60 @@ describe(
       expect(appBFirstDisbursementScheduleMsfaaNumberId.msfaaNumber.id).toBe(
         currentMSFAA.id,
       );
+    });
+
+    it("Should cancel a pending MSFAA record when the same MSFAA record is received in the response file and persist a MSFAA cancellation notification for the same.", async () => {
+      // Arrange
+      // Create a MSFAA record in pending state with the same MSFAA number as in the msfaa-full-time-receive-file-with-single-cancellation-record.dat
+      const student = await saveFakeStudent(db.dataSource);
+      const studentUserId = student.user.id;
+      const notificationMessageType = NotificationMessageType.MSFAACancellation;
+      await db.msfaaNumber.save(
+        createFakeMSFAANumber(
+          { student },
+          {
+            msfaaState: MSFAAStates.Pending,
+            msfaaInitialValues: {
+              msfaaNumber: FULL_TIME_SAMPLE_MSFAA_NUMBER,
+              offeringIntensity: OfferingIntensity.fullTime,
+            },
+          },
+        ),
+      );
+      // Queued job.
+      const job = createMock<Job<void>>();
+      mockDownloadFiles(sftpClientMock, [
+        MSFAA_FULL_TIME_RECEIVE_FILE_WITH_SINGLE_CANCELLATION_RECORD,
+      ]);
+      // Act
+      // Now cancel the MSFAA record.
+      const processResult = await processor.processMSFAA(job);
+      // Assert
+      expect(processResult).toStrictEqual([
+        {
+          processSummary: [
+            `Processing file ${MSFAA_FULL_TIME_RECEIVE_FILE_WITH_SINGLE_CANCELLATION_RECORD}.`,
+            "File contains:",
+            "Confirmed MSFAA records (type R): 0.",
+            "Cancelled MSFAA records (type C): 1.",
+            "Record from line 1, updated as cancelled.",
+          ],
+          errorsSummary: [],
+        },
+      ]);
+      // Get the notification using the student and notification message id. Since a fake student is created for every test run, it will ensure uniqueness.
+      // Expecting one notification for the cancelled MSFAA record.
+      const notificationsQuery = db.notification
+        .createQueryBuilder("notifications")
+        .select(["notifications.id", "notifications.dateSent"])
+        .innerJoin("notifications.user", "users")
+        .innerJoin("notifications.notificationMessage", "notification_messages")
+        .where("users.id = :studentUserId", { studentUserId })
+        .andWhere("notification_messages.id = :notificationMessageType", {
+          notificationMessageType,
+        });
+      const notification = await notificationsQuery.getOne();
+      expect(notification.dateSent).toBe(null);
     });
   },
 );

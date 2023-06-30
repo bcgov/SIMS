@@ -15,6 +15,8 @@ export const MSFAA_PART_TIME_RECEIVE_FILE_WITH_REACTIVATION_RECORD =
   "msfaa-part-time-receive-file-with-reactivation-record.dat";
 export const MSFAA_FULL_TIME_RECEIVE_FILE_WITH_REACTIVATION_RECORD =
   "msfaa-full-time-receive-file-with-reactivation-record.dat";
+export const MSFAA_FULL_TIME_RECEIVE_FILE_WITH_SINGLE_CANCELLATION_RECORD =
+  "msfaa-full-time-receive-file-with-single-cancellation-record.dat";
 
 /**
  * Represents a mocked uploaded file.

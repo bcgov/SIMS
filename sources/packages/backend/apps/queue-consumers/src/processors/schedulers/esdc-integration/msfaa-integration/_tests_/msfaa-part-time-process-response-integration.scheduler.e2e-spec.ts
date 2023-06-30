@@ -25,6 +25,7 @@ import { THROW_AWAY_MSFAA_NUMBER } from "./msfaa-helper";
 import {
   ApplicationStatus,
   DisbursementScheduleStatus,
+  NotificationMessageType,
   OfferingIntensity,
 } from "@sims/sims-db";
 import * as Client from "ssh2-sftp-client";
@@ -74,7 +75,7 @@ describe(
         { cancelledDate: IsNull() },
         { cancelledDate: getISODateOnlyString(new Date()) },
       );
-      // Ensuring that any previous runs of this test or any other test do not have the same Msfaa numbers as the ones used below.
+      // Ensuring that any previous runs of this test or any other test do not have the same MSFAA numbers as the ones used below.
       const MsfaaRecordsToUpdate = [
         MSFAA_PART_TIME_MARRIED.msfaaNumber,
         MSFAA_PART_TIME_OTHER_COUNTRY.msfaaNumber,
@@ -87,9 +88,14 @@ describe(
         },
         { msfaaNumber: THROW_AWAY_MSFAA_NUMBER },
       );
+      // Update the date sent for the notifications to current date where the date sent is null.
+      await db.notification.update(
+        { dateSent: IsNull() },
+        { dateSent: new Date() },
+      );
     });
 
-    it("Should process an MSFAA response with confirmations and a cancellation and update all records when the file is received as expected.", async () => {
+    it("Should process an MSFAA response with confirmations and a cancellation and update all records when the file is received as expected. MSFAA cancellation notification should also be persisted.", async () => {
       // Arrange
       const msfaaInputData = [
         MSFAA_PART_TIME_MARRIED,
@@ -132,12 +138,15 @@ describe(
       const msfaaIDs = createdMSFAARecords.map((msfaa) => msfaa.id);
       const msfaaUpdatedRecords = await db.msfaaNumber.find({
         select: {
+          id: true,
           msfaaNumber: true,
           dateSigned: true,
           serviceProviderReceivedDate: true,
           cancelledDate: true,
           newIssuingProvince: true,
+          student: { id: true, user: { id: true } },
         },
+        relations: { student: { user: true } },
         where: {
           id: In(msfaaIDs),
         },
@@ -157,6 +166,23 @@ describe(
       // Validate second confirmed record.
       expect(secondSignedMSFAA.dateSigned).toBe("2021-11-22");
       expect(secondSignedMSFAA.serviceProviderReceivedDate).toBe("2021-11-23");
+
+      // Get the notification using the student and notification message id. Since a fake student is created for every test run, it will ensure uniqueness.
+      // Expecting one notification for the cancelled MSFAA record.
+      const studentUserId = cancelledMSFAA.student.user.id;
+      const notificationMessageType = NotificationMessageType.MSFAACancellation;
+      const notificationsQuery = db.notification
+        .createQueryBuilder("notifications")
+        .select(["notifications.id", "notifications.dateSent"])
+        .innerJoin("notifications.user", "users")
+        .innerJoin("notifications.notificationMessage", "notification_messages")
+        .where("users.id = :studentUserId", { studentUserId })
+        .andWhere("notification_messages.id = :notificationMessageType", {
+          notificationMessageType,
+        });
+      const notification = await notificationsQuery.getOne();
+      // Validate that the notification for the Cancelled MSFAA got saved to the database.
+      expect(notification.dateSent).toBe(null);
     });
 
     it("Should reactivate a cancelled MSFAA when the same MSFAA is received in the response file and re-associate this reactivated MSFAA with all pending disbursements.", async () => {
