@@ -95,7 +95,7 @@ describe(
       );
     });
 
-    it("Should process an MSFAA response with confirmations and a cancellation and update all records when the file is received as expected. MSFAA cancellation notification should also be persisted.", async () => {
+    it("Should process an MSFAA response with confirmations and cancellations, and save a notification message when the file is received as expected.", async () => {
       // Arrange
       const msfaaInputData = [
         MSFAA_PART_TIME_MARRIED,
@@ -171,18 +171,33 @@ describe(
       // Expecting one notification for the cancelled MSFAA record.
       const studentUserId = cancelledMSFAA.student.user.id;
       const notificationMessageType = NotificationMessageType.MSFAACancellation;
-      const notificationsQuery = db.notification
-        .createQueryBuilder("notifications")
-        .select(["notifications.id", "notifications.dateSent"])
-        .innerJoin("notifications.user", "users")
-        .innerJoin("notifications.notificationMessage", "notification_messages")
-        .where("users.id = :studentUserId", { studentUserId })
-        .andWhere("notification_messages.id = :notificationMessageType", {
-          notificationMessageType,
-        });
-      const notification = await notificationsQuery.getOne();
-      // Validate that the notification for the Cancelled MSFAA got saved to the database.
+      const notification = await db.notification.findOne({
+        select: {
+          id: true,
+          dateSent: true,
+          messagePayload: true,
+          notificationMessage: { templateId: true },
+          user: { email: true, firstName: true, lastName: true },
+        },
+        relations: { notificationMessage: true, user: true },
+        where: {
+          notificationMessage: {
+            id: notificationMessageType,
+          },
+          user: {
+            id: studentUserId,
+          },
+        },
+      });
       expect(notification.dateSent).toBe(null);
+      expect(notification.messagePayload).toStrictEqual({
+        email_address: notification.user.email,
+        template_id: notification.notificationMessage.templateId,
+        personalisation: {
+          lastName: notification.user.lastName,
+          givenNames: notification.user.firstName,
+        },
+      });
     });
 
     it("Should reactivate a cancelled MSFAA when the same MSFAA is received in the response file and re-associate this reactivated MSFAA with all pending disbursements.", async () => {
