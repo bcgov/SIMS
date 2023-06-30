@@ -136,7 +136,7 @@ export function useFormatters() {
       // Address line 2
       formattedAddress.push(address.addressLine2);
     }
-    // Country, province, postal code.
+    // City, province, and postal code.
     const cityPostalCountry: string[] = [];
     cityPostalCountry.push(address.city);
     if (address.provinceState) {
