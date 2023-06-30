@@ -196,13 +196,13 @@ export class MSFAANumberService extends RecordDataModelService<MSFAANumber> {
     cancelledDate: Date,
     newIssuingProvince: string,
   ): Promise<UpdateResult> {
-    return this.dataSource.transaction(async () => {
+    if (!cancelledDate || !newIssuingProvince) {
+      throw new Error(
+        "Not all required fields to update a received MSFAA record were provided.",
+      );
+    }
+    return this.dataSource.transaction(async (transactionEntityManager) => {
       // Keeping both MSFAA Cancellation update and saving of MSFAA Notification message as a part of the same transaction.
-      if (!cancelledDate || !newIssuingProvince) {
-        throw new Error(
-          "Not all required fields to update a received MSFAA record were provided.",
-        );
-      }
       // Update the MSFAA record that needs to be cancelled.
       const updateResult = await this.repo.update(
         {
@@ -215,27 +215,33 @@ export class MSFAANumberService extends RecordDataModelService<MSFAANumber> {
           newIssuingProvince,
         },
       );
-      // Get the student associated with the cancelled MSFAA record.
-      const msfaaRecord = await this.repo.findOne({
-        select: {
-          id: true,
-          student: {
-            id: true,
-            user: { id: true, firstName: true, lastName: true, email: true },
-          },
-        },
-        relations: {
-          student: { user: true },
-        },
-        where: {
-          msfaaNumber,
-        },
-      });
-      const systemUser = await this.systemUsersService.systemUser();
+      // In case no MSFAA record was cancelled.
+      if (!updateResult.affected) {
+        throw new Error(
+          `Error while cancelling MSFAA number: ${msfaaNumber}. Number of affected rows was ${updateResult.affected}, expected 1.`,
+        );
+      }
       // Only if the msfaa record was successfully cancelled, then save the msfaa cancellation notification.
-      // This also takes care of the scenario where the msfaa record was already cancelled before in which case the record will not be update and hence no notification will be saved.
+      // This also takes care of the scenario where the msfaa record was already cancelled before in which case the record will not be updated and hence no notification will be saved.
       if (updateResult.affected) {
-        this.notificationActionsService.saveMSFAACancellationNotification(
+        // Get the student associated with the cancelled MSFAA record.
+        const msfaaRecord = await this.repo.findOne({
+          select: {
+            id: true,
+            student: {
+              id: true,
+              user: { id: true, firstName: true, lastName: true, email: true },
+            },
+          },
+          relations: {
+            student: { user: true },
+          },
+          where: {
+            msfaaNumber,
+          },
+        });
+        const systemUser = await this.systemUsersService.systemUser();
+        await this.notificationActionsService.saveMSFAACancellationNotification(
           {
             givenNames: msfaaRecord.student.user.firstName,
             lastName: msfaaRecord.student.user.lastName,
@@ -243,6 +249,7 @@ export class MSFAANumberService extends RecordDataModelService<MSFAANumber> {
             userId: msfaaRecord.student.user.id,
           },
           systemUser.id,
+          transactionEntityManager,
         );
       }
       return updateResult;

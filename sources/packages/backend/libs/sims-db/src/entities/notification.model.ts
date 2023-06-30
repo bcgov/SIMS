@@ -135,5 +135,5 @@ export enum NotificationMessageType {
   /**
    * MSFAA record gets cancelled.
    */
-  MSFAACancellationComplete = 12,
+  MSFAACancellation = 12,
 }

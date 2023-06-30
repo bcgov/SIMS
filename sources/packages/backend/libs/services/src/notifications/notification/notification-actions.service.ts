@@ -124,20 +124,22 @@ export class NotificationActionsService {
     entityManager?: EntityManager,
   ): Promise<void> {
     const templateId = await this.notificationMessageService.getTemplateId(
-      NotificationMessageType.MSFAACancellationComplete,
+      NotificationMessageType.MSFAACancellation,
     );
+
+    const messagePayload: NotificationEmailMessage = {
+      email_address: notification.toAddress,
+      template_id: templateId,
+      personalisation: {
+        givenNames: notification.givenNames ?? "",
+        lastName: notification.lastName,
+      },
+    };
 
     const notificationToSend = {
       userId: notification.userId,
-      messageType: NotificationMessageType.MSFAACancellationComplete,
-      messagePayload: {
-        email_address: notification.toAddress,
-        template_id: templateId,
-        personalisation: {
-          givenNames: notification.givenNames ?? "",
-          lastName: notification.lastName,
-        },
-      },
+      messageType: NotificationMessageType.MSFAACancellation,
+      messagePayload: messagePayload,
     };
 
     // Save notification into notification table.
