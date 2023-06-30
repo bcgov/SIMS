@@ -28,7 +28,7 @@ import * as Client from "ssh2-sftp-client";
 import { Job } from "bull";
 import * as path from "path";
 import { FULL_TIME_SAMPLE_MSFAA_NUMBER } from "./msfaa-process-integration.scheduler.models";
-import { In, IsNull } from "typeorm";
+import { IsNull } from "typeorm";
 
 describe(
   describeProcessorRootTest(QueueNames.FullTimeMSFAAProcessResponseIntegration),
