@@ -204,17 +204,19 @@ export class MSFAANumberService extends RecordDataModelService<MSFAANumber> {
     return this.dataSource.transaction(async (transactionEntityManager) => {
       // Keeping both MSFAA Cancellation update and saving of MSFAA Notification message as a part of the same transaction.
       // Update the MSFAA record that needs to be cancelled.
-      const updateResult = await this.repo.update(
-        {
-          msfaaNumber: msfaaNumber,
-          cancelledDate: IsNull(),
-          newIssuingProvince: IsNull(),
-        },
-        {
-          cancelledDate: getISODateOnlyString(cancelledDate),
-          newIssuingProvince,
-        },
-      );
+      const updateResult = await transactionEntityManager
+        .getRepository(MSFAANumber)
+        .update(
+          {
+            msfaaNumber: msfaaNumber,
+            cancelledDate: IsNull(),
+            newIssuingProvince: IsNull(),
+          },
+          {
+            cancelledDate: getISODateOnlyString(cancelledDate),
+            newIssuingProvince,
+          },
+        );
       // Expected to update 1 and only 1 record.
       if (updateResult.affected !== 1) {
         throw new Error(
