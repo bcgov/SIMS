@@ -6,7 +6,11 @@ import {
   OfferingIntensity,
 } from "@sims/sims-db";
 import { getISODateOnlyString } from "@sims/utilities";
-import { MSFAANumberSharedService, SystemUsersService } from "@sims/services";
+import {
+  MSFAANumberSharedService,
+  NotificationActionsService,
+  SystemUsersService,
+} from "@sims/services";
 
 /**
  * Service layer for MSFAA (Master Student Financial Aid Agreement)
@@ -15,9 +19,10 @@ import { MSFAANumberSharedService, SystemUsersService } from "@sims/services";
 @Injectable()
 export class MSFAANumberService extends RecordDataModelService<MSFAANumber> {
   constructor(
-    dataSource: DataSource,
+    private readonly dataSource: DataSource,
     private readonly msfaaNumberSharedService: MSFAANumberSharedService,
     private readonly systemUsersService: SystemUsersService,
+    private readonly notificationActionsService: NotificationActionsService,
   ) {
     super(dataSource.getRepository(MSFAANumber));
   }
@@ -179,8 +184,8 @@ export class MSFAANumberService extends RecordDataModelService<MSFAANumber> {
   /**
    * Once the MSFAA response file is processed, updates the
    * MSFAA received cancelled records on the database with the
-   * information received. If the information was already received
-   * the record will not be updated.
+   * information received and saves a MSFAA cancellation notification message to the database.
+   * If the information was already received, the record will not be updated.
    * @param msfaaNumber MSFAA number
    * @param cancelledDate date when the MSFAA was cancelled.
    * @param newIssuingProvince New province which is issuing the MSFAA.
@@ -196,17 +201,58 @@ export class MSFAANumberService extends RecordDataModelService<MSFAANumber> {
         "Not all required fields to update a received MSFAA record were provided.",
       );
     }
-
-    return this.repo.update(
-      {
-        msfaaNumber: msfaaNumber,
-        cancelledDate: IsNull(),
-        newIssuingProvince: IsNull(),
-      },
-      {
-        cancelledDate: getISODateOnlyString(cancelledDate),
-        newIssuingProvince,
-      },
-    );
+    return this.dataSource.transaction(async (transactionEntityManager) => {
+      // Keeping both MSFAA Cancellation update and saving of MSFAA Notification message as a part of the same transaction.
+      // Update the MSFAA record that needs to be cancelled.
+      const updateResult = await transactionEntityManager
+        .getRepository(MSFAANumber)
+        .update(
+          {
+            msfaaNumber: msfaaNumber,
+            cancelledDate: IsNull(),
+            newIssuingProvince: IsNull(),
+          },
+          {
+            cancelledDate: getISODateOnlyString(cancelledDate),
+            newIssuingProvince,
+          },
+        );
+      // Expected to update 1 and only 1 record.
+      if (updateResult.affected !== 1) {
+        throw new Error(
+          `Error while cancelling MSFAA number: ${msfaaNumber}. Number of affected rows was ${updateResult.affected}, expected 1.`,
+        );
+      }
+      // Only if the msfaa record was successfully cancelled, then save the msfaa cancellation notification.
+      // This also takes care of the scenario where the msfaa record was already cancelled before in which case the record will not be updated and hence no notification will be saved.
+      // Get the student associated with the cancelled MSFAA record.
+      const msfaaRecord = await this.repo.findOne({
+        select: {
+          id: true,
+          student: {
+            id: true,
+            user: { id: true, firstName: true, lastName: true, email: true },
+          },
+        },
+        relations: {
+          student: { user: true },
+        },
+        where: {
+          msfaaNumber,
+        },
+      });
+      const systemUser = await this.systemUsersService.systemUser();
+      await this.notificationActionsService.saveMSFAACancellationNotification(
+        {
+          givenNames: msfaaRecord.student.user.firstName,
+          lastName: msfaaRecord.student.user.lastName,
+          toAddress: msfaaRecord.student.user.email,
+          userId: msfaaRecord.student.user.id,
+        },
+        systemUser.id,
+        transactionEntityManager,
+      );
+      return updateResult;
+    });
   }
 }

@@ -10,6 +10,7 @@ import { NotificationMessageService } from "../notification-message/notification
 import {
   StudentRestrictionAddedNotification,
   MinistryStudentFileUploadNotification,
+  MSFAACancellationNotification,
   StudentFileUploadNotification,
   StudentNotification,
   ECEResponseFileProcessingNotification,
@@ -101,6 +102,44 @@ export class NotificationActionsService {
           date: this.getDateTimeOnPSTTimeZone(),
         },
       },
+    };
+
+    // Save notification into notification table.
+    await this.notificationService.saveNotifications(
+      [notificationToSend],
+      auditUserId,
+      { entityManager },
+    );
+  }
+
+  /**
+   * Creates a notification when an MSFAA record gets cancelled.
+   * @param notification input parameters to generate the notification.
+   * @param auditUserId user that should be considered the one that is causing the changes.
+   * @param entityManager optional entity manager to execute in transaction.
+   */
+  async saveMSFAACancellationNotification(
+    notification: MSFAACancellationNotification,
+    auditUserId: number,
+    entityManager?: EntityManager,
+  ): Promise<void> {
+    const templateId = await this.notificationMessageService.getTemplateId(
+      NotificationMessageType.MSFAACancellation,
+    );
+
+    const messagePayload: NotificationEmailMessage = {
+      email_address: notification.toAddress,
+      template_id: templateId,
+      personalisation: {
+        givenNames: notification.givenNames ?? "",
+        lastName: notification.lastName,
+      },
+    };
+
+    const notificationToSend = {
+      userId: notification.userId,
+      messageType: NotificationMessageType.MSFAACancellation,
+      messagePayload: messagePayload,
     };
 
     // Save notification into notification table.

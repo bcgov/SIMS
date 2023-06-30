@@ -23,6 +23,13 @@ export interface MinistryStudentFileUploadNotification {
   userId: number;
 }
 
+export interface MSFAACancellationNotification {
+  givenNames: string;
+  lastName: string;
+  toAddress: string;
+  userId: number;
+}
+
 export interface StudentRestrictionAddedNotification {
   givenNames: string;
   lastName: string;

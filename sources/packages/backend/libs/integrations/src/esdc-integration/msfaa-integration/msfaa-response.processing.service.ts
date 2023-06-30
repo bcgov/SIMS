@@ -138,19 +138,11 @@ export class MSFAAResponseProcessingService {
     // The update of msfaa always comes from an external source through integration.
     // Hence the cancelled date is parsed as date object from external source as their date format
     // may not be necessarily ISO date format.
-    const updateResult =
-      await this.msfaaNumberService.updateCancelledReceivedFile(
-        cancelledRecord.msfaaNumber,
-        cancelledRecord.cancelledDate,
-        cancelledRecord.newIssuingProvince,
-      );
-
-    // Expected to update 1 and only 1 record.
-    if (updateResult.affected !== 1) {
-      throw new Error(
-        `Error while updating MSFAA number: ${cancelledRecord.msfaaNumber}. Number of affected rows was ${updateResult.affected}, expected 1.`,
-      );
-    }
+    await this.msfaaNumberService.updateCancelledReceivedFile(
+      cancelledRecord.msfaaNumber,
+      cancelledRecord.cancelledDate,
+      cancelledRecord.newIssuingProvince,
+    );
   }
 
   @InjectLogger()

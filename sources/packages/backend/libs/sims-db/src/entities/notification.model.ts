@@ -132,4 +132,8 @@ export enum NotificationMessageType {
    * ECE response file processing details.
    */
   ECEResponseFileProcessing = 11,
+  /**
+   * MSFAA record gets cancelled.
+   */
+  MSFAACancellation = 12,
 }
