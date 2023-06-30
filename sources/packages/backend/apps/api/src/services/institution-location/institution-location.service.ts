@@ -322,7 +322,8 @@ export class InstitutionLocationService extends RecordDataModelService<Instituti
       ELSE false
     END`,
         "isDesignated",
-      );
+      )
+      .orderBy("location.name");
     if (locationId) {
       return query.where("location.id = :locationId", { locationId });
     }
