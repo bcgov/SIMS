@@ -115,6 +115,40 @@ export function useFormatters() {
     return formattedAddress.join(", ");
   };
 
+  /**
+   * Format an address in the expected order where each expected
+   * address component represents an entry in the array.
+   * @param address address to be formatted.
+   * @returns string array with ordered address components.
+   * @example
+   * [
+   *   "Address Line 1"
+   *   "Address Line 2"
+   *   "City, Province, Postal Code"
+   *   "Country"
+   * ]
+   */
+  const getFormattedAddressList = (address: Address): string[] => {
+    const formattedAddress: string[] = [];
+    // Address line 1
+    formattedAddress.push(address.addressLine1);
+    if (address.addressLine2) {
+      // Address line 2
+      formattedAddress.push(address.addressLine2);
+    }
+    // City, province, and postal code.
+    const cityPostalCountry: string[] = [];
+    cityPostalCountry.push(address.city);
+    if (address.provinceState) {
+      cityPostalCountry.push(address.provinceState);
+    }
+    cityPostalCountry.push(address.postalCode);
+    formattedAddress.push(cityPostalCountry.join(", "));
+    // Country.
+    formattedAddress.push(address.country);
+    return formattedAddress;
+  };
+
   const parseSINValidStatus = (data?: boolean): SINValidStatus => {
     if (data === null) {
       return {
@@ -247,6 +281,7 @@ export function useFormatters() {
     dateOnlyToLocalDateTimeString,
     getDatesDiff,
     getFormattedAddress,
+    getFormattedAddressList,
     timeOnlyInHoursAndMinutes,
     parseSINValidStatus,
     yesNoFlagDescription,

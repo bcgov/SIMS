@@ -23,11 +23,12 @@
     </template>
     <content-group
       v-for="item in institutionLocationList"
+      class="mb-4"
       :key="item"
       data-cy="institutionLocation"
     >
       <v-row>
-        <v-col md="10">
+        <v-col>
           <div>
             <v-icon icon="mdi-map-marker-outline"></v-icon>
             <span data-cy="locationName" class="category-header-medium mx-1">{{
@@ -58,25 +59,18 @@
         </v-col>
       </v-row>
       <v-row>
-        <!-- Address 1 -->
+        <!-- Address -->
         <v-col>
-          <title-value propertyTitle="Address line 1" />
+          <title-value propertyTitle="Address" />
           <span
             class="label-value muted-content clearfix"
-            v-for="addressLine in addressList1(item)"
+            v-for="addressLine in addressList(item)"
             :key="addressLine"
             data-cy="institutionAddress1"
           >
             {{ addressLine }}
           </span>
         </v-col>
-
-        <!-- Address 2 -->
-        <v-col>
-          <title-value propertyTitle="Address line 2" />
-          <span data-cy="institutionAddress2">---</span>
-        </v-col>
-
         <!-- Primary contact -->
         <v-col>
           <title-value propertyTitle="Primary contact" />
@@ -129,7 +123,7 @@ export default defineComponent({
     },
   },
   setup(props) {
-    const formatter = useFormatters();
+    const { getFormattedAddressList } = useFormatters();
     const router = useRouter();
     const clientType = computed(() => AuthService.shared.authClientType);
     const goToAddNewLocation = () => {
@@ -145,13 +139,8 @@ export default defineComponent({
         );
     };
 
-    const addressList1 = (item: InstitutionLocationsDetails) => {
-      return [
-        item.data.address.addressLine1,
-        item.data.address.addressLine2,
-        formatter.getFormattedAddress(item.data.address),
-        item.data.address.country,
-      ].filter((address) => address);
+    const addressList = (item: InstitutionLocationsDetails) => {
+      return getFormattedAddressList(item.data.address);
     };
 
     const primaryContactList = (item: InstitutionLocationsDetails) => {
@@ -171,7 +160,7 @@ export default defineComponent({
       getInstitutionLocationList,
       institutionLocationList,
       ClientIdType,
-      addressList1,
+      addressList,
       primaryContactList,
       clientType,
       Role,
