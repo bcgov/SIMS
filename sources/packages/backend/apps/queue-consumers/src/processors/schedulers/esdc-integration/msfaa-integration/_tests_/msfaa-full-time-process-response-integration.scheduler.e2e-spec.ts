@@ -15,12 +15,14 @@ import {
   saveFakeApplicationDisbursements,
   saveFakeStudent,
   createFakeMSFAANumber,
+  MSFAA_FULL_TIME_RECEIVE_FILE_WITH_SINGLE_CANCELLATION_RECORD,
 } from "@sims/test-utils";
 import { THROW_AWAY_MSFAA_NUMBER } from "./msfaa-helper";
 import {
   ApplicationStatus,
   DisbursementScheduleStatus,
   OfferingIntensity,
+  NotificationMessageType,
 } from "@sims/sims-db";
 import * as Client from "ssh2-sftp-client";
 import { Job } from "bull";
@@ -63,10 +65,17 @@ describe(
         { cancelledDate: IsNull() },
         { cancelledDate: getISODateOnlyString(new Date()) },
       );
-      // Ensuring that any previous runs of this test or any other test do not have the same Msfaa id as the one in the re-activation file.
+      // Ensuring that any previous runs of this test or any other test do not have the same MSFAA number as the one used below.
       await db.msfaaNumber.update(
-        { msfaaNumber: FULL_TIME_SAMPLE_MSFAA_NUMBER },
+        {
+          msfaaNumber: FULL_TIME_SAMPLE_MSFAA_NUMBER,
+        },
         { msfaaNumber: THROW_AWAY_MSFAA_NUMBER },
+      );
+      // Update the date sent for the notifications to current date where the date sent is null.
+      await db.notification.update(
+        { dateSent: IsNull() },
+        { dateSent: new Date() },
       );
     });
 
@@ -228,6 +237,83 @@ describe(
       expect(appBFirstDisbursementScheduleMsfaaNumberId.msfaaNumber.id).toBe(
         currentMSFAA.id,
       );
+    });
+
+    it("Should cancel a pending MSFAA record and save a cancellation notification when an MSFAA cancellation record is received in the response file.", async () => {
+      // Arrange
+      // Create a MSFAA record in pending state with the same MSFAA number as in the msfaa-full-time-receive-file-with-single-cancellation-record.dat
+      const student = await saveFakeStudent(db.dataSource);
+      const studentUserId = student.user.id;
+      const notificationMessageType = NotificationMessageType.MSFAACancellation;
+      const pendingMSFAARecord = await db.msfaaNumber.save(
+        createFakeMSFAANumber(
+          { student },
+          {
+            msfaaInitialValues: {
+              msfaaNumber: FULL_TIME_SAMPLE_MSFAA_NUMBER,
+              offeringIntensity: OfferingIntensity.fullTime,
+            },
+          },
+        ),
+      );
+      // Queued job.
+      const job = createMock<Job<void>>();
+      mockDownloadFiles(sftpClientMock, [
+        MSFAA_FULL_TIME_RECEIVE_FILE_WITH_SINGLE_CANCELLATION_RECORD,
+      ]);
+      // Act
+      const processResult = await processor.processMSFAA(job);
+      const cancelledMSFAARecord = await db.msfaaNumber.findOne({
+        select: {
+          cancelledDate: true,
+          newIssuingProvince: true,
+        },
+        where: {
+          id: pendingMSFAARecord.id,
+        },
+      });
+      const notification = await db.notification.findOne({
+        select: {
+          id: true,
+          dateSent: true,
+          messagePayload: true,
+          notificationMessage: { templateId: true },
+          user: { email: true, firstName: true, lastName: true },
+        },
+        relations: { notificationMessage: true, user: true },
+        where: {
+          notificationMessage: {
+            id: notificationMessageType,
+          },
+          user: {
+            id: studentUserId,
+          },
+        },
+      });
+      // Assert
+      expect(processResult).toStrictEqual([
+        {
+          processSummary: [
+            `Processing file ${MSFAA_FULL_TIME_RECEIVE_FILE_WITH_SINGLE_CANCELLATION_RECORD}.`,
+            "File contains:",
+            "Confirmed MSFAA records (type R): 0.",
+            "Cancelled MSFAA records (type C): 1.",
+            "Record from line 1, updated as cancelled.",
+          ],
+          errorsSummary: [],
+        },
+      ]);
+      expect(cancelledMSFAARecord.cancelledDate).toBe("2021-11-24");
+      expect(cancelledMSFAARecord.newIssuingProvince).toBe("ON");
+      expect(notification.dateSent).toBe(null);
+      expect(notification.messagePayload).toStrictEqual({
+        email_address: notification.user.email,
+        template_id: notification.notificationMessage.templateId,
+        personalisation: {
+          lastName: notification.user.lastName,
+          givenNames: notification.user.firstName,
+        },
+      });
     });
   },
 );
