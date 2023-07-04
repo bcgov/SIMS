@@ -2316,7 +2316,7 @@
                   ],
                   "content": "Identify schedule breaks for the study period offering:\n<ul>\n  <li>\n    Study breaks of five or fewer consecutive calendar days that would normally be instructional days do not count towards study breaks.\n  </li>\n  <li>Study breaks cannot exceed three weeks, or 21 consecutive days. Excess break days will be deducted from overall funded weeks.</li>\n  <li>\n    Breaks in study may not exceed 10% (individually or cumulatively) of the study period offering length. Excess break days will be deducted from overall funded weeks.\n  </li>\n</ul>",
                   "refreshOnChange": false,
-                  "customClass": "align-bullets",
+                  "customClass": "align-bullets mt-n2",
                   "key": "html3",
                   "type": "htmlelement",
                   "input": false,
