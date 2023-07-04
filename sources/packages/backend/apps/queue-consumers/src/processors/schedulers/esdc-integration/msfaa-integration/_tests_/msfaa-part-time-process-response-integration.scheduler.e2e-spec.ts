@@ -138,7 +138,6 @@ describe(
       const msfaaIDs = createdMSFAARecords.map((msfaa) => msfaa.id);
       const msfaaUpdatedRecords = await db.msfaaNumber.find({
         select: {
-          id: true,
           msfaaNumber: true,
           dateSigned: true,
           serviceProviderReceivedDate: true,
