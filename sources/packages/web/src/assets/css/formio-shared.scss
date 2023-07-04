@@ -467,6 +467,33 @@
   height: 100%;
 }
 
+.man-with-earth {
+  @extend .img-background;
+  background-image: url("../images/man-with-earth.svg");
+  min-height: $image-min-height;
+  background-position: center;
+}
+
+.girl-on-book {
+  @extend .img-background;
+  background-image: url("../images/girl-on-book.svg");
+  min-height: $image-min-height;
+  background-position: center;
+}
+
+.webinar {
+  @extend .img-background;
+  background-image: url("../images/webinar.svg");
+  min-height: $image-min-height;
+  background-position: center;
+}
+
+.refer-a-friend {
+  @extend .img-background;
+  background-image: url("../images/refer-a-friend.svg");
+  min-height: $image-min-height;
+}
+
 .img-welcome-background {
   @extend .img-background;
   background-image: url("../images/image_institution_welcome.svg");
