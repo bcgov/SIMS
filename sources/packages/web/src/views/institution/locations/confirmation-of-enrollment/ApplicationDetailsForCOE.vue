@@ -87,6 +87,7 @@ import {
 
 import {
   ApplicationDetailsForCOEAPIOutDTO,
+  ConfirmationOfEnrollmentAPIInDTO,
   DenyConfirmationOfEnrollmentAPIInDTO,
 } from "@/services/http/dto";
 import ApproveCOE from "@/components/institutions/modals/confirmationOfEnrollment/ApproveCOE.vue";
@@ -143,8 +144,10 @@ export default defineComponent({
         return;
       }
       try {
-        const payload = modalResult as ApproveConfirmEnrollmentModel;
-        payload.tuitionRemittanceAmount = payload.tuitionRemittanceAmount ?? 0;
+        const approvalData = modalResult as ApproveConfirmEnrollmentModel;
+        const payload = new ConfirmationOfEnrollmentAPIInDTO();
+        payload.tuitionRemittanceAmount =
+          approvalData.tuitionRemittanceAmount ?? 0;
         await ConfirmationOfEnrollmentService.shared.confirmEnrollment(
           props.disbursementScheduleId,
           props.locationId,
