@@ -49,7 +49,9 @@ export function useInstitutionAuth(rootStore?: Store<any>) {
     return userAuthorization?.userType;
   });
 
-  const isBCPublic = computed(() => store.state.institutionState?.isBCPublic);
+  const isBCPublic = computed(
+    () => store.state.institution.institutionState?.isBCPublic,
+  );
 
   return {
     isAdmin,
