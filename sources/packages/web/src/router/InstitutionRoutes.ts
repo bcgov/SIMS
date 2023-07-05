@@ -53,6 +53,7 @@ import StudentAppealRequest from "@/views/institution/student/applicationDetails
 import AssessmentAward from "@/views/institution/student/applicationDetails/AssessmentAward.vue";
 import NoticeOfAssessment from "@/views/institution/student/applicationDetails/NoticeOfAssessment.vue";
 import RequestApplicationChange from "@/views/institution/locations/request-a-change/RequestAChange.vue";
+import RequestApplicationChangeForm from "@/views/institution/locations/request-a-change/RequestAChangeForm.vue";
 
 export const institutionRoutes: Array<RouteRecordRaw> = [
   {
@@ -171,6 +172,25 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
         components: {
           default: RequestApplicationChange,
           sidebar: InstitutionHomeSideBar,
+        },
+        props: {
+          default: (route: RouteLocationNormalized) => ({
+            locationId: parseInt(route.params.locationId as string),
+          }),
+        },
+        meta: {
+          clientType: ClientIdType.Institution,
+          institutionUserTypes: [
+            InstitutionUserTypes.admin,
+            InstitutionUserTypes.user,
+          ],
+        },
+      },
+      {
+        path: AppRoutes.RequestApplicationOfferingChangeSubmit,
+        name: InstitutionRoutesConst.REQUEST_CHANGE_FORM,
+        components: {
+          default: RequestApplicationChangeForm,
         },
         props: {
           default: (route: RouteLocationNormalized) => ({

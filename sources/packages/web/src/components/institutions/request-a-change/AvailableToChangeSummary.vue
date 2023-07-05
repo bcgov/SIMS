@@ -45,8 +45,12 @@
             <template #[`item.applicationNumber`]="{ item }">
               {{ item.columns.applicationNumber }}
             </template>
-            <template #[`item.applicationId`]>
-              <v-btn color="primary">Request a change</v-btn>
+            <template #[`item.applicationId`]="{ item }">
+              <v-btn
+                color="primary"
+                @click="requestAChange(item.value.applicationId)"
+                >Request a change</v-btn
+              >
             </template>
           </v-data-table-server>
         </toggle-content>
@@ -68,6 +72,8 @@ import {
 import { useFormatters } from "@/composables";
 import { ApplicationOfferingChangeSummaryAPIOutDTO } from "@/services/http/dto";
 import { ApplicationOfferingChangeRequestService } from "@/services/ApplicationOfferingChangeRequestService";
+import { useRouter } from "vue-router";
+import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 
 export default defineComponent({
   props: {
@@ -77,6 +83,7 @@ export default defineComponent({
     },
   },
   setup(props) {
+    const router = useRouter();
     const loading = ref(false);
     const searchCriteria = ref("");
     const { dateOnlyLongString } = useFormatters();
@@ -139,6 +146,20 @@ export default defineComponent({
       );
     };
 
+    /**
+     * Navigate to the form to allow the request submission.
+     * @param applicationId application to have the request created.
+     */
+    const requestAChange = (applicationId: any) => {
+      router.push({
+        name: InstitutionRoutesConst.REQUEST_CHANGE_FORM,
+        params: {
+          locationId: props.locationId,
+          applicationId,
+        },
+      });
+    };
+
     watch(
       () => props.locationId,
       async () => {
@@ -157,6 +178,7 @@ export default defineComponent({
       searchCriteria,
       AvailableToChangeOfferingChangeSummaryHeaders,
       loading,
+      requestAChange,
     };
   },
 });
