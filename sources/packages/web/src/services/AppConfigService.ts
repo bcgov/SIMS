@@ -14,6 +14,14 @@ export class AppConfigService {
     return this.instance || (this.instance = new this());
   }
 
+  /**
+   * Get the current API version.
+   * @returns current API version.
+   */
+  async version(): Promise<string> {
+    return ApiClient.Configs.getAPIVersion();
+  }
+
   private isValidConfig(config: AppConfig) {
     // Validating config from its update time with _config expiry time
     if (Date.now() - config.updateTime.getMilliseconds() > this._configExpiry) {

@@ -245,4 +245,11 @@ export class ConfigService {
       process.env.KEYCLOAK_AUTH_URL,
     ).href;
   }
+
+  /**
+   * Api version.
+   */
+  get getAPIVersion(): string {
+    return this.getCachedConfig("apiVersionConfig", process.env.VERSION);
+  }
 }

@@ -29,4 +29,14 @@ export class ConfigController extends BaseController {
       },
     };
   }
+
+  /**
+   * Gets the current API version.
+   * @returns current API version.
+   */
+  @Public()
+  @Get("version")
+  getAPIVersion(): string {
+    return this.configService.getAPIVersion;
+  }
 }

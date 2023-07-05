@@ -24,6 +24,7 @@ import {
   FormIOForm,
 } from "@/types";
 import { v4 as uuid } from "uuid";
+import { AppConfigService } from "@/services/AppConfigService";
 
 export default defineComponent({
   emits: {
@@ -80,19 +81,22 @@ export default defineComponent({
     };
 
     onMounted(async () => {
+      const version = await AppConfigService.shared.version();
+      const cachedFormName = `${props.formName}-${version}`;
+
       let cachedFormDefinition: string | null = null;
       // Avoid caching during development to allow that the changes
       // on form.io definitions have effect immediately.
       if (process.env.NODE_ENV !== "development") {
         try {
           // Try to load the definition from the session storage.
-          cachedFormDefinition = sessionStorage.getItem(props.formName);
+          cachedFormDefinition = sessionStorage.getItem(cachedFormName);
         } catch {
           // No action needed. In case of failure it will load the form from the server
           // in the same way as it is the first time load.
         }
       }
-
+      // todo: add the new version in env example
       let formDefinition: any;
       if (cachedFormDefinition) {
         formDefinition = JSON.parse(cachedFormDefinition);
@@ -104,7 +108,7 @@ export default defineComponent({
         );
         try {
           sessionStorage.setItem(
-            props.formName,
+            cachedFormName,
             JSON.stringify(formDefinition),
           );
         } catch {
