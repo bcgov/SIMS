@@ -96,7 +96,6 @@ export default defineComponent({
           // in the same way as it is the first time load.
         }
       }
-      // todo: add the new version in env example
       let formDefinition: any;
       if (cachedFormDefinition) {
         formDefinition = JSON.parse(cachedFormDefinition);
