@@ -1071,8 +1071,8 @@
                         "value": "ptib"
                       },
                       {
-                        "label": "ITA",
-                        "value": "ita"
+                        "label": "Skilled Trades BC",
+                        "value": "skilledTradesBC"
                       },
                       {
                         "value": "other",
@@ -1545,8 +1545,7 @@
                   "addons": [],
                   "inputType": "text",
                   "id": "eez2sc9",
-                  "defaultValue": null,
-                  "isNew": false
+                  "defaultValue": null
                 }
               ],
               "width": 6,
