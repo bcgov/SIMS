@@ -81,7 +81,7 @@ export default defineComponent({
     };
 
     onMounted(async () => {
-      const version = await AppConfigService.shared.version();
+      const { version } = await AppConfigService.shared.config();
       const cachedFormName = `${props.formName}-${version}`;
 
       let cachedFormDefinition: string | null = null;

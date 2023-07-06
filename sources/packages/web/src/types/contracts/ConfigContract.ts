@@ -17,4 +17,5 @@ export enum ClientTypeBaseRoute {
 export interface AppConfig {
   authConfig: AuthConfigAPIOutDTO;
   updateTime: Date;
+  version: string;
 }
