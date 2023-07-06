@@ -1,6 +1,8 @@
 # Set time zone for the same expected from Openshift.
 TZ=UTC
 
+VERSION=v0.0.1
+
 # Project Specific Env
 PROJECT_NAME=sims
 ENVIRONMENT=local

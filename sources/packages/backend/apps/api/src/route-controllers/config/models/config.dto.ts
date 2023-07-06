@@ -1,5 +1,6 @@
 export class ConfigAPIOutDTO {
   auth: AuthConfigAPIOutDTO;
+  version: string;
 }
 
 export class AuthConfigAPIOutDTO {

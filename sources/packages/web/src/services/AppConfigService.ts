@@ -59,6 +59,7 @@ export class AppConfigService {
     const appConfig: AppConfig = {
       authConfig: config.auth,
       updateTime: new Date(),
+      version: config.version,
     };
     return appConfig;
   }
