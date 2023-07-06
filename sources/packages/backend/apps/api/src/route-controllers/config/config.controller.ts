@@ -27,7 +27,7 @@ export class ConfigController extends BaseController {
         clientIds: authConfig.clientIds,
         externalSiteMinderLogoutUrl: authConfig.externalSiteMinderLogoutUrl,
       },
-      version: this.configService.getAPIVersion,
+      version: this.configService.apiVersion,
     };
   }
 }
