@@ -247,7 +247,8 @@ export class ConfigService {
   }
 
   /**
-   * Api version.
+   * Gets the current API version.
+   * @returns current API version.
    */
   get getAPIVersion(): string {
     return this.getCachedConfig("apiVersionConfig", process.env.VERSION);
