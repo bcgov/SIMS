@@ -12,82 +12,7 @@
     <hr class="horizontal-divider" />
     <h2 class="category-header-large primary-color">Application Details</h2>
     <p>Review the active program and offering details below.</p>
-    <content-group-info>
-      <h3 class="category-header-medium primary-color">
-        Practical Nursing Program
-      </h3>
-      <p>
-        The PNA program is available for students who have completed an HCA,
-        RCA, or HSRCA program. 61 week program.
-      </p>
-      <v-row>
-        <v-col cols="12" sm="6">
-          <title-value propertyTitle="Credential" propertyValue="Diploma" />
-        </v-col>
-        <v-col cols="12" sm="6">
-          <title-value
-            propertyTitle="Program delivery"
-            propertyValue="Blended"
-          />
-        </v-col>
-      </v-row>
-    </content-group-info>
-    <content-group-info>
-      <h3 class="category-header-medium primary-color">Fall 2023 - Year 1</h3>
-      <v-row>
-        <v-col cols="12">
-          <title-value
-            propertyTitle="Location"
-            propertyValue="Interurban Campus"
-          />
-        </v-col>
-        <v-col cols="12" sm="6">
-          <title-value
-            propertyTitle="Study intensity"
-            propertyValue="Part-time"
-          />
-        </v-col>
-        <v-col cols="12" sm="6">
-          <title-value propertyTitle="Study delivery" propertyValue="Online" />
-        </v-col>
-        <v-col cols="12" sm="6">
-          <title-value
-            propertyTitle="Study dates"
-            propertyValue="Jan 21 2021 - Dec 21 2021"
-          />
-        </v-col>
-        <v-col cols="12" sm="6">
-          <title-value
-            propertyTitle="Study breaks"
-            propertyValue="Feb 14 2021 - Feb 17 2021"
-          />
-        </v-col>
-      </v-row>
-      <h3 class="category-header-medium primary-color mt-6">Study costs</h3>
-      <v-row>
-        <v-col cols="12" sm="6">
-          <title-value propertyTitle="Tuition" propertyValue="$4000.00" />
-        </v-col>
-        <v-col cols="12" sm="6">
-          <title-value
-            propertyTitle="Program related costs"
-            propertyValue="$3000.00"
-          />
-        </v-col>
-        <v-col cols="12" sm="6">
-          <title-value
-            propertyTitle="Mandatory fees"
-            propertyValue="$2000.00"
-          />
-        </v-col>
-        <v-col cols="12" sm="6">
-          <title-value
-            propertyTitle="Exceptional expenses"
-            propertyValue="$1000.00"
-          />
-        </v-col>
-      </v-row>
-    </content-group-info>
+    <offering-view :offeringId="offeringId" :locationId="locationId" />
     <hr class="horizontal-divider" />
     <h2 class="category-header-large primary-color">Request details</h2>
     <p>
@@ -128,13 +53,19 @@
 
 <script lang="ts">
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
-import { computed, defineComponent, ref } from "vue";
+import { computed, defineComponent, onMounted, ref } from "vue";
 import { RouteLocationRaw, useRouter } from "vue-router";
 import DetailHeader from "@/components/generic/DetailHeader.vue";
+import { ApplicationOfferingChangesAPIOutDTO } from "@/services/http/dto";
+import { ApplicationOfferingChangeRequestService } from "@/services/ApplicationOfferingChangeRequestService";
 
 export default defineComponent({
   components: { DetailHeader },
   props: {
+    offeringId: {
+      type: Number,
+      required: true,
+    },
     locationId: {
       type: Number,
       required: true,
@@ -145,6 +76,17 @@ export default defineComponent({
     const headerDetailsData = ref<Record<string, string>>({
       "Application #": "loading...",
       Location: "location",
+    });
+    const requestChangeData = ref({} as ApplicationOfferingChangesAPIOutDTO);
+
+    onMounted(async () => {
+      requestChangeData.value =
+        await ApplicationOfferingChangeRequestService.shared.getById(
+          props.offeringId,
+          {
+            locationId: props.locationId,
+          },
+        );
     });
 
     const goBackRouteParams = computed(
@@ -165,7 +107,13 @@ export default defineComponent({
       console.log("submit");
     };
 
-    return { submit, cancel, goBackRouteParams, headerDetailsData };
+    return {
+      requestChangeData,
+      submit,
+      cancel,
+      goBackRouteParams,
+      headerDetailsData,
+    };
   },
 });
 </script>

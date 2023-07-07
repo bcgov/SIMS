@@ -185,7 +185,7 @@ export class EducationProgramOfferingAESTController extends BaseController {
   ): Promise<EducationProgramOfferingAPIOutDTO> {
     const offering = await this.programOfferingService.getOfferingById(
       offeringId,
-      true,
+      { isPrecedingOffering: true },
     );
     if (!offering) {
       throw new NotFoundException("Offering not found.");

@@ -51,6 +51,7 @@ import {
   EducationProgramOfferingAPIOutDTO,
   EducationProgramOfferingBasicDataAPIInDTO,
   EducationProgramOfferingSummaryAPIOutDTO,
+  EducationProgramOfferingSummaryViewAPIOutDTO,
   OfferingValidationResultAPIOutDTO,
 } from "./models/education-program-offering.dto";
 import {
@@ -579,5 +580,31 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
       }
       throw error;
     }
+  }
+
+  /**
+   * Gets the offering simplified details, not including, for instance,
+   * validations, approvals and extensive data.
+   * Useful to have an overview of the offering details, for instance,
+   * when the user needs need to have quick access to data in order to
+   * support operations like confirmation of enrolment or scholastic
+   * standing requests.
+   * @param offeringId offering.
+   * @param locationId offering location.
+   * @returns offering details.
+   */
+  @HasLocationAccess("locationId")
+  @ApiNotFoundResponse({
+    description: "Not able to find the Education Program offering.",
+  })
+  @Get("location/:locationId/offering/:offeringId/summary-view")
+  async getOfferingSummaryViewById(
+    @Param("offeringId", ParseIntPipe) offeringId: number,
+    @Param("locationId", ParseIntPipe) locationId: number,
+  ): Promise<EducationProgramOfferingSummaryViewAPIOutDTO> {
+    return this.educationProgramOfferingControllerService.getOfferingById(
+      offeringId,
+      { locationId },
+    );
   }
 }

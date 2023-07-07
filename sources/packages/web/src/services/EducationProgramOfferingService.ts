@@ -19,6 +19,7 @@ import {
   OfferingBulkInsertValidationResultAPIOutDTO,
   OfferingValidationResultAPIOutDTO,
   EducationProgramOfferingBasicDataAPIInDTO,
+  EducationProgramOfferingSummaryViewAPIOutDTO,
 } from "@/services/http/dto";
 import {
   OFFERING_CREATION_CRITICAL_ERROR,
@@ -367,5 +368,29 @@ export class EducationProgramOfferingService {
         true,
       ),
     };
+  }
+
+  /**
+   * Gets the offering simplified details, not including, for instance,
+   * validations, approvals and extensive data.
+   * Useful to have an overview of the offering details, for instance,
+   * when the user needs need to have quick access to data in order to
+   * support operations like confirmation of enrolment or scholastic
+   * standing requests.
+   * @param offeringId offering.
+   * @param options method options:
+   * - `locationId`: location for authorization.
+   * @returns offering details.
+   */
+  async getOfferingSummaryViewById(
+    offeringId: number,
+    options?: {
+      locationId?: number;
+    },
+  ): Promise<EducationProgramOfferingSummaryViewAPIOutDTO> {
+    return ApiClient.EducationProgramOffering.getOfferingSummaryViewById(
+      offeringId,
+      options,
+    );
   }
 }

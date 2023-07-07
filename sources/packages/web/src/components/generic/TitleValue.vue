@@ -8,7 +8,9 @@ Used when we need to display title and the value inside a container
     </slot>
   </div>
   <div class="mb-2 label-value muted-content">
-    {{ propertyValue }}
+    <slot name="value">
+      {{ propertyValue }}
+    </slot>
   </div>
 </template>
 

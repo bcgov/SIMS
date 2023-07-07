@@ -27,7 +27,11 @@ import {
   OfferingValidationModel,
   CreateFromValidatedOfferingError,
 } from "../../services";
-import { getOfferingNameAndPeriod, getUserFullName } from "../../utilities";
+import {
+  deliveryMethod,
+  getOfferingNameAndPeriod,
+  getUserFullName,
+} from "../../utilities";
 import { OptionItemAPIOutDTO } from "../models/common.dto";
 import {
   OfferingsPaginationOptionsAPIInDTO,
@@ -37,6 +41,7 @@ import {
   EducationProgramOfferingAPIInDTO,
   EducationProgramOfferingAPIOutDTO,
   EducationProgramOfferingSummaryAPIOutDTO,
+  EducationProgramOfferingSummaryViewAPIOutDTO,
   OfferingBulkInsertValidationResultAPIOutDTO,
 } from "./models/education-program-offering.dto";
 
@@ -45,6 +50,7 @@ export class EducationProgramOfferingControllerService {
   constructor(
     private readonly offeringService: EducationProgramOfferingService,
     private readonly programService: EducationProgramService,
+    private readonly programOfferingService: EducationProgramOfferingService,
   ) {}
 
   /**
@@ -335,6 +341,59 @@ export class EducationProgramOfferingControllerService {
       validationInfos: validatedOffering.infos.map((info) => info.typeCode),
       validationWarnings: validatedOffering.warnings.map(
         (warning) => warning.typeCode,
+      ),
+    };
+  }
+
+  /**
+   * Gets the offering simplified details, not including, for instance,
+   * validations, approvals and extensive data.
+   * Useful to have an overview of the offering details, for instance,
+   * when the user needs need to have quick access to data in order to
+   * support operations like confirmation of enrolment or scholastic
+   * standing requests.
+   * @param offering to be transformed.
+   * @param options method options:
+   * - `locationId`: location for authorization.
+   * @returns education program offering.
+   */
+  async getOfferingById(
+    offeringId: number,
+    options?: {
+      locationId?: number;
+    },
+  ): Promise<EducationProgramOfferingSummaryViewAPIOutDTO> {
+    const offering = await this.programOfferingService.getOfferingById(
+      offeringId,
+      { locationId: options?.locationId },
+    );
+    if (!offering) {
+      throw new NotFoundException(
+        "Not able to find the Education Program offering.",
+      );
+    }
+    const program = offering.educationProgram;
+    return {
+      id: offering.id,
+      offeringName: offering.name,
+      studyStartDate: offering.studyStartDate,
+      studyEndDate: offering.studyEndDate,
+      actualTuitionCosts: offering.actualTuitionCosts,
+      programRelatedCosts: offering.programRelatedCosts,
+      mandatoryFees: offering.mandatoryFees,
+      exceptionalExpenses: offering.exceptionalExpenses,
+      offeringDelivered: offering.offeringDelivered,
+      lacksStudyBreaks: offering.lacksStudyBreaks,
+      offeringIntensity: offering.offeringIntensity,
+      studyBreaks: offering.studyBreaks?.studyBreaks,
+      locationName: offering.institutionLocation.name,
+      programId: program.id,
+      programName: program.name,
+      programDescription: program.description,
+      programCredential: program.credentialType,
+      programDelivery: deliveryMethod(
+        program.deliveredOnline,
+        program.deliveredOnSite,
       ),
     };
   }

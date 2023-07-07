@@ -26,6 +26,7 @@ export function useFormatters() {
   const dateOnlyToLocalDateTimeString = (date: Date | string): string => {
     return dayjs(date).format();
   };
+
   /**
    * Get the date only part of a date/time or string.
    * @param date date/time or string to have the date extracted.
@@ -34,6 +35,7 @@ export function useFormatters() {
   const getISODateOnlyString = (date: Date | string): string => {
     return dayjs(date).format(DATE_ONLY_ISO_FORMAT);
   };
+
   /**
    * Convert a string or date to a string format like "Aug 05 2021".
    * @param date string or date to be converted.
@@ -52,6 +54,32 @@ export function useFormatters() {
       return dayjs(date, format, strict).format("MMM DD YYYY");
     }
     return "";
+  };
+
+  /**
+   * Converts a start and end dates a string format like "Aug 05 2021 - Dec 12 2021".
+   * @param startDate start period date to be converted.
+   * @param endDate end period date to be converted.
+   * @param format specific date string format expected. If the format
+   * is not the expected it will convert the date as as 'Invalid Date'.
+   * @param strict requires that the format and input match exactly,
+   * including delimiters.
+   * @returns string representation (e.g. Aug 05 2021).
+   */
+  const dateOnlyLongPeriodString = (
+    startDate?: string | Date,
+    endDate?: string | Date,
+    format?: string,
+    strict?: boolean,
+  ): string => {
+    if (startDate && endDate) {
+      return `${dateOnlyLongString(
+        startDate,
+        format,
+        strict,
+      )} - ${dateOnlyLongString(endDate, format, strict)}`;
+    }
+    return DEFAULT_EMPTY_VALUE;
   };
 
   /**
@@ -278,6 +306,7 @@ export function useFormatters() {
 
   return {
     dateOnlyLongString,
+    dateOnlyLongPeriodString,
     dateOnlyToLocalDateTimeString,
     getDatesDiff,
     getFormattedAddress,

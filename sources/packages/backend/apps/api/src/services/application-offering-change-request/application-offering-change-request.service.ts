@@ -172,4 +172,56 @@ export class ApplicationOfferingChangeRequestService {
       count,
     };
   }
+
+  /**
+   * Get the Application Offering Change Request by its id.
+   * @param id the Application Offering Change Request id.
+   * @param options method options:
+   * - `locationId`: location for authorization.
+   * @returns
+   */
+  async getById(
+    id: number,
+    options?: {
+      locationId?: number;
+    },
+  ): Promise<ApplicationOfferingChangeRequest> {
+    return this.applicationOfferingChangeRequestRepo.findOne({
+      select: {
+        id: true,
+        reason: true,
+        activeOffering: {
+          id: true,
+        },
+        requestedOffering: {
+          id: true,
+          educationProgram: {
+            id: true,
+            name: true,
+          },
+        },
+        application: {
+          id: true,
+          applicationNumber: true,
+          location: {
+            id: true,
+            name: true,
+          },
+        },
+        assessedNote: {
+          id: true,
+          description: true,
+        },
+      },
+      relations: {
+        application: { location: true },
+      },
+      where: {
+        id,
+        application: {
+          location: { id: options.locationId },
+        },
+      },
+    });
+  }
 }

@@ -1,5 +1,12 @@
-import { Controller, Get, Param, ParseIntPipe, Query } from "@nestjs/common";
-import { ApiTags } from "@nestjs/swagger";
+import {
+  Controller,
+  Get,
+  NotFoundException,
+  Param,
+  ParseIntPipe,
+  Query,
+} from "@nestjs/common";
+import { ApiNotFoundResponse, ApiTags } from "@nestjs/swagger";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { AllowAuthorizedParty, HasLocationAccess } from "../../auth/decorators";
 import { ClientTypeBaseRoute } from "../../types";
@@ -13,6 +20,7 @@ import {
   OfferingChangePaginationOptionsAPIInDTO,
   InProgressOfferingChangePaginationOptionsAPIInDTO,
   CompletedOfferingChangePaginationOptionsAPIInDTO,
+  ApplicationOfferingChangesAPIOutDTO,
 } from "./models/application-offering-change-request.institutions.dto";
 import { ApplicationOfferingChangeRequestService } from "../../services";
 import { ApplicationOfferingChangeRequestStatus } from "@sims/sims-db";
@@ -151,6 +159,46 @@ export class ApplicationOfferingChangeRequestInstitutionsController extends Base
         };
       }),
       count: offeringChange.count,
+    };
+  }
+
+  /**
+   * Get the Application Offering Change Request details.
+   * @param applicationOfferingChangeRequestId the Application Offering Change Request id.
+   * @param locationId location id.
+   * @returns Application Offering Change Request details.
+   */
+  @Get(":applicationOfferingChangeRequestId")
+  @ApiNotFoundResponse({
+    description: "Not able to find an Application Offering Change Request.",
+  })
+  async getById(
+    @Param("applicationOfferingChangeRequestId", ParseIntPipe)
+    applicationOfferingChangeRequestId: number,
+    @Param("locationId", ParseIntPipe) locationId: number,
+  ): Promise<ApplicationOfferingChangesAPIOutDTO> {
+    const request = await this.applicationOfferingChangeRequestService.getById(
+      applicationOfferingChangeRequestId,
+      { locationId },
+    );
+    if (!request) {
+      throw new NotFoundException(
+        "Not able to find an Application Offering Change Request.",
+      );
+    }
+    return {
+      id: request.id,
+      applicationId: request.application.id,
+      applicationNumber: request.application.applicationNumber,
+      locationName: request.application.location.name,
+      activeOfferingId: request.activeOffering.id,
+      requestedOfferingId: request.requestedOffering.id,
+      requestedOfferingDescription: request.requestedOffering.name,
+      requestedOfferingProgramId: request.requestedOffering.educationProgram.id,
+      requestedOfferingProgramName:
+        request.requestedOffering.educationProgram.name,
+      reason: request.reason,
+      assessedNoteDescription: request.assessedNote.description,
     };
   }
 }

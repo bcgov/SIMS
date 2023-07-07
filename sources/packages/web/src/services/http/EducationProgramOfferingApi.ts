@@ -14,6 +14,7 @@ import {
   EducationProgramOfferingAPIOutDTO,
   OfferingValidationResultAPIOutDTO,
   EducationProgramOfferingBasicDataAPIInDTO,
+  EducationProgramOfferingSummaryViewAPIOutDTO,
 } from "@/services/http/dto";
 import { AxiosRequestConfig } from "axios";
 import ApiClient from "./ApiClient";
@@ -309,6 +310,30 @@ export class EducationProgramOfferingApi extends HttpBaseClient {
       `education-program-offering/bulk-insert?validation-only=${validationOnly}`,
       formData,
       requestConfig,
+    );
+  }
+
+  /**
+   * Gets the offering simplified details, not including, for instance,
+   * validations, approvals and extensive data.
+   * Useful to have an overview of the offering details, for instance,
+   * when the user needs need to have quick access to data in order to
+   * support operations like confirmation of enrolment or scholastic
+   * standing requests.
+   * @param offeringId offering.
+   * @param options method options:
+   * - `locationId`: location for authorization.
+   * @returns offering details.
+   */
+  async getOfferingSummaryViewById(
+    offeringId: number,
+    options?: {
+      locationId?: number;
+    },
+  ): Promise<EducationProgramOfferingSummaryViewAPIOutDTO> {
+    const url = `education-program-offering/location/${options?.locationId}/offering/${offeringId}/summary-view`;
+    return this.getCall<EducationProgramOfferingSummaryViewAPIOutDTO>(
+      this.addClientRoot(url),
     );
   }
 }

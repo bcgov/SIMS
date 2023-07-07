@@ -5,6 +5,7 @@ import {
   ApplicationOfferingChangeSummaryAPIOutDTO,
   CompletedApplicationOfferingChangesAPIOutDTO,
   InProgressApplicationOfferingChangesAPIOutDTO,
+  ApplicationOfferingChangesAPIOutDTO,
 } from "@/services/http/dto";
 
 export class ApplicationOfferingChangeRequestService {
@@ -68,6 +69,25 @@ export class ApplicationOfferingChangeRequestService {
     return ApiClient.ApplicationOfferingChangeRequestApi.getCompletedApplications(
       locationId,
       paginationOptions,
+    );
+  }
+
+  /**
+   * Get the Application Offering Change Request details.
+   * @param applicationOfferingChangeRequestId the Application Offering Change Request id.
+   * @param options method options:
+   * - `locationId`: location for authorization.
+   * @returns Application Offering Change Request details.
+   */
+  async getById(
+    applicationOfferingChangeRequestId: number,
+    options?: {
+      locationId?: number;
+    },
+  ): Promise<ApplicationOfferingChangesAPIOutDTO> {
+    return ApiClient.ApplicationOfferingChangeRequestApi.getById(
+      applicationOfferingChangeRequestId,
+      { locationId: options?.locationId },
     );
   }
 }
