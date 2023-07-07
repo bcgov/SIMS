@@ -1025,7 +1025,7 @@
           "defaultValue": null
         },
         {
-          "label": "Institution regulating body",
+          "label": "Institution regulatory body",
           "labelPosition": "top",
           "widget": "choicesjs",
           "labelWidth": "",
@@ -1174,7 +1174,7 @@
           "tableView": true,
           "inputType": "text",
           "inputMask": "",
-          "label": "Other regulating body",
+          "label": "Other regulatory body",
           "key": "otherRegulatingBody",
           "placeholder": "",
           "prefix": "",
