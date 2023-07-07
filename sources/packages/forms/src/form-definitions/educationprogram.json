@@ -2820,8 +2820,7 @@
                     "showWordCount": false,
                     "allowMultipleMasks": false,
                     "addons": [],
-                    "id": "eug8su",
-                    "isNew": false
+                    "id": "eug8su"
                 },
                 {
                     "label": "Which regulatory body does this program belong to?",
@@ -2964,7 +2963,9 @@
                         "threshold": 0.3
                     },
                     "id": "e7o9328",
-                    "defaultValue": ""
+                    "defaultValue": "",
+                    "hideLabel": true,
+                    "isNew": false
                 },
                 {
                     "autofocus": false,
@@ -3003,8 +3004,7 @@
                     "inputFormat": "plain",
                     "tags": [],
                     "properties": {},
-                    "lockKey": true,
-                    "isNew": false
+                    "lockKey": true
                 }
             ],
             "placeholder": "",
