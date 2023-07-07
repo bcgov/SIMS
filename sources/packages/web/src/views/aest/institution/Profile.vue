@@ -56,12 +56,12 @@
               :propertyValue="institutionProfileDetail.institutionTypeName"
             />
             <title-value
-              propertyTitle="Regulating body"
+              propertyTitle="Regulatory body"
               :propertyValue="institutionProfileDetail.regulatingBody"
             />
             <title-value
               v-if="institutionProfileDetail.regulatingBody === 'other'"
-              propertyTitle="Other regulating body"
+              propertyTitle="Other regulatory body"
               :propertyValue="institutionProfileDetail.otherRegulatingBody"
             />
           </v-col>
