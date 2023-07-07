@@ -543,7 +543,7 @@ db-backup-deploy-patroni:
 		-p DATABASE_USER_KEY_NAME=database-user \
 		-p DATABASE_PASSWORD_KEY_NAME=database-password \
   	-p ENVIRONMENT_FRIENDLY_NAME='SIMS $(NAMESPACE) POSTGRESQL DB Backups' \
-		-p TABLE_SCHEMA='sims'
+		-p TABLE_SCHEMA='sims' \
 		| oc -n $(NAMESPACE) apply -f -	                                                                       
 
 db-backup-deploy-patroni-delete:
