@@ -540,9 +540,10 @@ db-backup-deploy-patroni:
 		-p CUSTOM_CONFIG_FILE_NAME=$(PATRONI_SIMSDB_BACKUP_CONFIG_FILE_NAME) \
 		-p VERIFICATION_VOLUME_NAME=$(PATRONI_SIMSDB_BACKUP_APP_NAME)-verification-pvc \
 		-p DATABASE_DEPLOYMENT_NAME=patroni-creds \
-		-p DATABASE_USER_KEY_NAME=superuser-username \
-		-p DATABASE_PASSWORD_KEY_NAME=superuser-password \
+		-p DATABASE_USER_KEY_NAME=database-user \
+		-p DATABASE_PASSWORD_KEY_NAME=database-password \
   	-p ENVIRONMENT_FRIENDLY_NAME='SIMS $(NAMESPACE) POSTGRESQL DB Backups' \
+		-p TABLE_SCHEMA='sims'
 		| oc -n $(NAMESPACE) apply -f -	                                                                       
 
 db-backup-deploy-patroni-delete:
