@@ -3,11 +3,9 @@ import { NotificationMessageService } from "./notification-message/notification-
 import { NotificationActionsService } from "./notification/notification-actions.service";
 import { GCNotifyService } from "./notification/gc-notify.service";
 import { NotificationService } from "./notification/notification.service";
-import { HttpModule } from "@nestjs/axios";
 
 @Global()
 @Module({
-  imports: [HttpModule],
   providers: [
     GCNotifyService,
     NotificationActionsService,
