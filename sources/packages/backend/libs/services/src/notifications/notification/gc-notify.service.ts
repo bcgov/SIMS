@@ -1,5 +1,5 @@
 import { HttpStatus, Injectable } from "@nestjs/common";
-import axios, { AxiosError } from "axios";
+import { AxiosError } from "axios";
 import {
   NotificationEmailMessage,
   GCNotifyErrorResponse,
@@ -9,11 +9,16 @@ import { LoggerService, InjectLogger } from "@sims/utilities/logger";
 import { ConfigService, GCNotify } from "@sims/utilities/config";
 import { CustomNamedError } from "@sims/utilities";
 import { GC_NOTIFY_PERMANENT_FAILURE_ERROR } from "@sims/services/constants";
+import { HttpService } from "@nestjs/axios";
+import { firstValueFrom } from "rxjs";
 
 @Injectable()
 export class GCNotifyService {
   private readonly gcNotifyConfig: GCNotify;
-  constructor(private readonly configService: ConfigService) {
+  constructor(
+    private readonly configService: ConfigService,
+    private readonly httpService: HttpService,
+  ) {
     this.gcNotifyConfig = this.configService.notify;
   }
 
@@ -30,11 +35,13 @@ export class GCNotifyService {
     payload: NotificationEmailMessage,
   ): Promise<GCNotifyResult> {
     try {
-      const response = await axios.post(this.gcNotifyConfig.url, payload, {
-        headers: {
-          Authorization: `ApiKey-v1 ${this.gcNotifyConfig.apiKey}`,
-        },
-      });
+      const response = await firstValueFrom(
+        this.httpService.post(this.gcNotifyConfig.url, payload, {
+          headers: {
+            Authorization: `ApiKey-v1 ${this.gcNotifyConfig.apiKey}`,
+          },
+        }),
+      );
       return response.data as GCNotifyResult;
     } catch (error: unknown) {
       const axiosError = error as AxiosError<GCNotifyErrorResponse>;

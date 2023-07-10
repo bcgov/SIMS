@@ -21,9 +21,18 @@ import { ConfigModule } from "@sims/utilities/config";
 import { DatabaseModule } from "@sims/sims-db";
 import { NotificationsModule } from "@sims/services/notifications";
 import { QueueModule } from "@sims/services/queue";
+import { HttpModule } from "@nestjs/axios";
 
 @Module({
   imports: [
+    {
+      ...HttpModule.register({
+        // `timeout` specifies the number of milliseconds before the request times out.
+        // If the request takes longer than `timeout`, the request will be aborted.
+        timeout: 5000,
+      }),
+      global: true,
+    },
     DatabaseModule,
     LoggerModule,
     ConfigModule,

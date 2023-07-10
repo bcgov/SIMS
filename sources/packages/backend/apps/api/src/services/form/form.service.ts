@@ -1,11 +1,12 @@
 import { HttpStatus, Injectable } from "@nestjs/common";
 import { DryRunSubmissionResult } from "../../types";
 import { ConfigService, FormsConfig } from "@sims/utilities/config";
-import axios from "axios";
 import { LoggerService, InjectLogger } from "@sims/utilities/logger";
 import { JwtService } from "@nestjs/jwt";
 import { TokenCacheService } from "..";
 import { TokenCacheResponse } from "../auth/token-cache.service.models";
+import { HttpService } from "@nestjs/axios";
+import { firstValueFrom } from "rxjs";
 
 // Expected header name to send the authorization token to formio API.
 const FORMIO_TOKEN_NAME = "x-jwt-token";
@@ -17,6 +18,7 @@ export class FormService {
   constructor(
     private readonly configService: ConfigService,
     private readonly jwtService: JwtService,
+    private readonly httpService: HttpService,
   ) {
     this.tokenCacheService = new TokenCacheService("Form.IO", () =>
       this.getToken(),
@@ -34,9 +36,8 @@ export class FormService {
    */
   async fetch(formName: string) {
     const authHeader = await this.createAuthHeader();
-    const content = await axios.get(
-      `${this.config.formsUrl}/${formName}`,
-      authHeader,
+    const content = await firstValueFrom(
+      this.httpService.get(`${this.config.formsUrl}/${formName}`, authHeader),
     );
     return content.data;
   }
@@ -45,9 +46,12 @@ export class FormService {
    * Lists form definitions that contains the tag 'common'.
    */
   async list() {
-    return (
-      await axios.get(`${this.config.formsUrl}/form?type=form&tags=common`)
-    ).data;
+    const content = await firstValueFrom(
+      this.httpService.get(
+        `${this.config.formsUrl}/form?type=form&tags=common`,
+      ),
+    );
+    return content.data;
   }
 
   /**
@@ -68,11 +72,14 @@ export class FormService {
   ): Promise<DryRunSubmissionResult<T>> {
     try {
       const authHeader = await this.createAuthHeader();
-      const submissionResponse = await axios.post(
-        `${this.config.formsUrl}/${formName}/submission?dryRun=1`,
-        { data },
-        authHeader,
+      const submissionResponse = await firstValueFrom(
+        this.httpService.post(
+          `${this.config.formsUrl}/${formName}/submission?dryRun=1`,
+          { data },
+          authHeader,
+        ),
       );
+
       return { valid: true, data: submissionResponse.data, formName };
     } catch (error) {
       if (error.response?.data) {
@@ -131,16 +138,14 @@ export class FormService {
    */
   private async getUserLogin() {
     try {
-      const authRequest = await axios.post(
-        `${this.config.formsUrl}/user/login`,
-        {
+      const authRequest = await firstValueFrom(
+        this.httpService.post(`${this.config.formsUrl}/user/login`, {
           data: {
             email: this.config.serviceAccountCredential.userName,
             password: this.config.serviceAccountCredential.password,
           },
-        },
+        }),
       );
-
       return authRequest;
     } catch (excp) {
       this.logger.error(`Received exception while getting form SA token`);
