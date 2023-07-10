@@ -4,7 +4,7 @@ import {
   Application,
   RecordDataModelService,
   Restriction,
-  RestrictionActionType,
+  RestrictionNotificationType,
   Student,
   StudentRestriction,
   User,
@@ -92,7 +92,7 @@ export class StudentRestrictionSharedService extends RecordDataModelService<Stud
 
   /**
    * Gets the notifications information for student restrictions that are
-   * eligible to generate a notification (actionType not defined as NoEffect).
+   * eligible to generate a notification.
    * @param restrictionIds student restriction ids.
    * @param entityManager optional repository that can be provided, for instance,
    * to execute the command as part of an existing transaction. If not provided
@@ -133,7 +133,9 @@ export class StudentRestrictionSharedService extends RecordDataModelService<Stud
         where: {
           id: In(ids),
           restriction: {
-            actionType: Not(ArrayContains([RestrictionActionType.NoEffect])),
+            notificationType: Not(
+              ArrayContains([RestrictionNotificationType.NoEffect]),
+            ),
           },
         },
       });
