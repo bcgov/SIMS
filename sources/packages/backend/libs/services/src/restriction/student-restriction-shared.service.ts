@@ -4,7 +4,7 @@ import {
   Application,
   RecordDataModelService,
   Restriction,
-  RestrictionActionType,
+  RestrictionNotificationType,
   Student,
   StudentRestriction,
   User,
@@ -133,7 +133,9 @@ export class StudentRestrictionSharedService extends RecordDataModelService<Stud
         where: {
           id: In(ids),
           restriction: {
-            actionType: Not(ArrayContains([RestrictionActionType.NoEffect])),
+            notificationType: Not(
+              ArrayContains([RestrictionNotificationType.NoEffect]),
+            ),
           },
         },
       });
