@@ -1,4 +1,7 @@
-import { ApplicationOfferingChangeRequestStatus } from "@sims/sims-db";
+import {
+  ApplicationOfferingChangeRequestStatus,
+  OfferingIntensity,
+} from "@sims/sims-db";
 import { IsIn, IsOptional } from "class-validator";
 import { PaginationOptionsAPIInDTO } from "../../models/pagination.dto";
 
@@ -10,6 +13,19 @@ export class ApplicationOfferingChangeSummaryAPIOutDTO {
   applicationId: number;
   studyStartDate: string;
   studyEndDate: string;
+  fullName: string;
+}
+
+/**
+ * Applications details for an eligible application to request an offering change.
+ */
+export class ApplicationOfferingChangeSummaryDetailAPIOutDTO {
+  applicationNumber: string;
+  applicationId: number;
+  programId: number;
+  offeringId: number;
+  offeringIntensity: OfferingIntensity;
+  programYearId: number;
   fullName: string;
 }
 

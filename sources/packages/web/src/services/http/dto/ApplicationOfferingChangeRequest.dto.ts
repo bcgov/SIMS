@@ -1,4 +1,7 @@
-import { ApplicationOfferingChangeRequestStatus } from "@/types";
+import {
+  ApplicationOfferingChangeRequestStatus,
+  OfferingIntensity,
+} from "@/types";
 
 /**
  * Eligible applications offering change list details.
@@ -8,6 +11,19 @@ export interface ApplicationOfferingChangeSummaryAPIOutDTO {
   applicationId: number;
   studyStartDate: string;
   studyEndDate: string;
+  fullName: string;
+}
+
+/**
+ * Applications details for an eligible application to request an offering change.
+ */
+export interface ApplicationOfferingChangeSummaryDetailAPIOutDTO {
+  applicationNumber: string;
+  applicationId: number;
+  programId: number;
+  offeringId: number;
+  offeringIntensity: OfferingIntensity;
+  programYearId: number;
   fullName: string;
 }
 

@@ -6,6 +6,7 @@ import {
   CompletedApplicationOfferingChangesAPIOutDTO,
   InProgressApplicationOfferingChangesAPIOutDTO,
   ApplicationOfferingChangesAPIOutDTO,
+  ApplicationOfferingChangeSummaryDetailAPIOutDTO,
 } from "@/services/http/dto";
 import { getPaginationQueryString } from "@/helpers";
 
@@ -29,6 +30,22 @@ export class ApplicationOfferingChangeRequestApi extends HttpBaseClient {
     return this.getCall<
       PaginatedResultsAPIOutDTO<ApplicationOfferingChangeSummaryAPIOutDTO>
     >(this.addClientRoot(url));
+  }
+
+  /**
+   * Gets a eligible application that can be requested for application
+   * offering change.
+   * @param locationId location id.
+   * @returns eligible application.
+   */
+  async getEligibleApplication(
+    locationId: number,
+    applicationId: number,
+  ): Promise<ApplicationOfferingChangeSummaryDetailAPIOutDTO> {
+    const url = `location/${locationId}/application-offering-change-request/available/application/${applicationId}`;
+    return this.getCall<ApplicationOfferingChangeSummaryDetailAPIOutDTO>(
+      this.addClientRoot(url),
+    );
   }
 
   /**

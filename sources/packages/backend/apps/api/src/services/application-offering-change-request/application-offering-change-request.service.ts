@@ -21,6 +21,35 @@ export class ApplicationOfferingChangeRequestService {
   ) {}
 
   /**
+   * Gets a eligible application that can be requested for application
+   * offering change.
+   * @param locationId location id.
+   * @param options method options:
+   * - `applicationId` specific eligible application to be retrieved.
+   * @returns eligible application.
+   */
+  async getEligibleApplications(
+    locationId: number,
+    options: {
+      applicationId?: number;
+    },
+  ): Promise<Application>;
+  /**
+   * Gets all eligible applications that can be requested for application
+   * offering change.
+   * @param locationId location id.
+   * @param options method options:
+   * - `paginationOptions` options to execute the pagination.
+   * @returns list of eligible applications that can be requested for
+   * application offering change.
+   */
+  async getEligibleApplications(
+    locationId: number,
+    options: {
+      pagination?: PaginationOptions;
+    },
+  ): Promise<PaginatedResults<Application>>;
+  /**
    * Gets all eligible applications that can be requested for application
    * offering change.
    * @param locationId location id.
@@ -30,22 +59,31 @@ export class ApplicationOfferingChangeRequestService {
    */
   async getEligibleApplications(
     locationId: number,
-    paginationOptions: PaginationOptions,
-  ): Promise<PaginatedResults<Application>> {
+    options: {
+      pagination?: PaginationOptions;
+      applicationId?: number;
+    },
+  ): Promise<PaginatedResults<Application> | Application> {
     const applicationQuery = this.applicationRepo
       .createQueryBuilder("application")
       .select([
         "application.applicationNumber",
         "application.id",
+        "programYear.id",
         "currentAssessment.id",
+        "educationProgram.id",
+        "offering.id",
         "offering.studyStartDate",
         "offering.studyEndDate",
+        "offering.offeringIntensity",
         "student.id",
         "user.firstName",
         "user.lastName",
       ])
+      .innerJoin("application.programYear", "programYear")
       .innerJoin("application.currentAssessment", "currentAssessment")
       .innerJoin("currentAssessment.offering", "offering")
+      .innerJoin("offering.educationProgram", "educationProgram")
       .leftJoin(
         "application.applicationOfferingChangeRequest",
         "applicationOfferingChangeRequest",
@@ -73,7 +111,15 @@ export class ApplicationOfferingChangeRequestService {
       })
       .andWhere("application.isArchived = false");
 
-    if (paginationOptions.searchCriteria?.trim()) {
+    if (options.applicationId) {
+      applicationQuery.andWhere("application.id = :applicationId", {
+        applicationId: options.applicationId,
+      });
+      // If searching by application id there is no need for pagination.
+      return applicationQuery.getOne();
+    }
+
+    if (options.pagination?.searchCriteria?.trim()) {
       applicationQuery
         .andWhere(
           new Brackets((qb) => {
@@ -84,19 +130,20 @@ export class ApplicationOfferingChangeRequestService {
         )
         .setParameter(
           "searchCriteria",
-          `%${paginationOptions.searchCriteria}%`,
+          `%${options.pagination.searchCriteria}%`,
         );
     }
 
     applicationQuery
       .orderBy(
         transformToApplicationEntitySortField(
-          paginationOptions.sortField,
-          paginationOptions.sortOrder,
+          options.pagination.sortField,
+          options.pagination.sortOrder,
         ),
       )
-      .offset(paginationOptions.page * paginationOptions.pageLimit)
-      .limit(paginationOptions.pageLimit);
+      .offset(options.pagination.page * options.pagination.pageLimit)
+      .limit(options.pagination.pageLimit);
+
     const [result, count] = await applicationQuery.getManyAndCount();
     return {
       results: result,

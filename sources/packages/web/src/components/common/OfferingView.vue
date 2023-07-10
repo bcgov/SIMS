@@ -58,7 +58,7 @@
       <v-col cols="12" sm="6">
         <title-value propertyTitle="Study breaks">
           <template #value>
-            <ul>
+            <ul class="no-bullets">
               <li
                 v-for="studyBreak in offeringViewData.studyBreaks"
                 :key="studyBreak.breakStartDate"
@@ -109,14 +109,14 @@
 import { useFormatters } from "@/composables";
 import { EducationProgramOfferingService } from "@/services/EducationProgramOfferingService";
 import { EducationProgramOfferingSummaryViewAPIOutDTO } from "@/services/http/dto";
-import { onMounted } from "vue";
+import { watch } from "vue";
 import { defineComponent, ref } from "vue";
 
 export default defineComponent({
   props: {
     offeringId: {
       type: Number,
-      required: true,
+      required: false,
     },
     locationId: {
       type: Number,
@@ -129,15 +129,23 @@ export default defineComponent({
       {} as EducationProgramOfferingSummaryViewAPIOutDTO,
     );
 
-    onMounted(async () => {
-      offeringViewData.value =
-        await EducationProgramOfferingService.shared.getOfferingSummaryViewById(
-          props.offeringId,
-          {
-            locationId: props.locationId,
-          },
-        );
-    });
+    watch(
+      () => [props.offeringId, props.locationId],
+      async () => {
+        if (props.offeringId) {
+          offeringViewData.value =
+            await EducationProgramOfferingService.shared.getOfferingSummaryViewById(
+              props.offeringId,
+              {
+                locationId: props.locationId,
+              },
+            );
+        }
+      },
+      {
+        immediate: true,
+      },
+    );
 
     return {
       offeringViewData,

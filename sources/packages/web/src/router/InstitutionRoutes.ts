@@ -53,7 +53,7 @@ import StudentAppealRequest from "@/views/institution/student/applicationDetails
 import AssessmentAward from "@/views/institution/student/applicationDetails/AssessmentAward.vue";
 import NoticeOfAssessment from "@/views/institution/student/applicationDetails/NoticeOfAssessment.vue";
 import RequestApplicationChange from "@/views/institution/locations/request-a-change/RequestAChange.vue";
-import RequestApplicationChangeForm from "@/views/institution/locations/request-a-change/RequestAChangeForm.vue";
+import RequestApplicationChangeFormSubmit from "@/views/institution/locations/request-a-change/RequestAChangeFormSubmit.vue";
 
 export const institutionRoutes: Array<RouteRecordRaw> = [
   {
@@ -190,11 +190,12 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
         path: AppRoutes.RequestApplicationOfferingChangeSubmit,
         name: InstitutionRoutesConst.REQUEST_CHANGE_FORM,
         components: {
-          default: RequestApplicationChangeForm,
+          default: RequestApplicationChangeFormSubmit,
         },
         props: {
           default: (route: RouteLocationNormalized) => ({
             locationId: parseInt(route.params.locationId as string),
+            applicationId: parseInt(route.params.applicationId as string),
           }),
         },
         meta: {

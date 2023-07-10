@@ -6,6 +6,7 @@ import {
   CompletedApplicationOfferingChangesAPIOutDTO,
   InProgressApplicationOfferingChangesAPIOutDTO,
   ApplicationOfferingChangesAPIOutDTO,
+  ApplicationOfferingChangeSummaryDetailAPIOutDTO,
 } from "@/services/http/dto";
 
 export class ApplicationOfferingChangeRequestService {
@@ -33,6 +34,22 @@ export class ApplicationOfferingChangeRequestService {
     return ApiClient.ApplicationOfferingChangeRequestApi.getEligibleApplications(
       locationId,
       paginationOptions,
+    );
+  }
+
+  /**
+   * Gets a eligible application that can be requested for application
+   * offering change.
+   * @param locationId location id.
+   * @returns eligible application.
+   */
+  async getEligibleApplication(
+    locationId: number,
+    applicationId: number,
+  ): Promise<ApplicationOfferingChangeSummaryDetailAPIOutDTO> {
+    return ApiClient.ApplicationOfferingChangeRequestApi.getEligibleApplication(
+      locationId,
+      applicationId,
     );
   }
 

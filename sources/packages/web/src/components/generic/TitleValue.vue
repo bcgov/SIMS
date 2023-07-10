@@ -20,7 +20,7 @@ export default defineComponent({
   props: {
     propertyValue: {
       type: String,
-      required: true,
+      required: false,
     },
     propertyTitle: {
       type: String,

@@ -21,6 +21,7 @@ import {
   InProgressOfferingChangePaginationOptionsAPIInDTO,
   CompletedOfferingChangePaginationOptionsAPIInDTO,
   ApplicationOfferingChangesAPIOutDTO,
+  ApplicationOfferingChangeSummaryDetailAPIOutDTO,
 } from "./models/application-offering-change-request.institutions.dto";
 import { ApplicationOfferingChangeRequestService } from "../../services";
 import { ApplicationOfferingChangeRequestStatus } from "@sims/sims-db";
@@ -59,7 +60,7 @@ export class ApplicationOfferingChangeRequestInstitutionsController extends Base
     const applications =
       await this.applicationOfferingChangeRequestService.getEligibleApplications(
         locationId,
-        pagination,
+        { pagination },
       );
     return {
       results: applications.results.map((eachApplication) => {
@@ -73,6 +74,42 @@ export class ApplicationOfferingChangeRequestInstitutionsController extends Base
         };
       }),
       count: applications.count,
+    };
+  }
+
+  /**
+   * Gets a eligible application that can be requested for application
+   * offering change.
+   * @param locationId location id.
+   * @returns eligible application.
+   */
+  @ApiNotFoundResponse({
+    description: "Application not found or it is not eligible.",
+  })
+  @Get("available/application/:applicationId")
+  async getEligibleApplication(
+    @Param("locationId", ParseIntPipe) locationId: number,
+    @Param("applicationId", ParseIntPipe) applicationId: number,
+  ): Promise<ApplicationOfferingChangeSummaryDetailAPIOutDTO> {
+    const application =
+      await this.applicationOfferingChangeRequestService.getEligibleApplications(
+        locationId,
+        { applicationId },
+      );
+    if (!application) {
+      throw new NotFoundException(
+        "Application not found or it is not eligible.",
+      );
+    }
+    return {
+      applicationNumber: application.applicationNumber,
+      applicationId: application.id,
+      programId: application.currentAssessment.offering.educationProgram.id,
+      offeringId: application.currentAssessment.offering.id,
+      offeringIntensity:
+        application.currentAssessment.offering.offeringIntensity,
+      programYearId: application.programYear.id,
+      fullName: getUserFullName(application.student.user),
     };
   }
 

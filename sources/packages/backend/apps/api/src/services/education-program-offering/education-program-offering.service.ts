@@ -731,7 +731,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     }
 
     if (options?.locationId) {
-      offeringQuery.andWhere("institutionLocation.id = : locationId", {
+      offeringQuery.andWhere("institutionLocation.id = :locationId", {
         locationId: options?.locationId,
       });
     }

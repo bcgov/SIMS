@@ -12,13 +12,23 @@ export function useRules() {
   };
 
   const checkNotesLengthRule = (notes: string) => {
-    if (notes) {
+    return checkLengthRule(notes, NOTES_MAX_CHARACTERS);
+  };
+
+  const checkLengthRule = (
+    value: string,
+    maxLength: number,
+    fieldName?: string,
+  ) => {
+    if (value) {
       return (
-        checkMaxCharacters(notes, NOTES_MAX_CHARACTERS) ||
-        `Max ${NOTES_MAX_CHARACTERS} characters.`
+        checkMaxCharacters(value, maxLength) || `Max ${maxLength} characters.`
       );
     }
-    return "Note is required.";
+    if (fieldName) {
+      return `${fieldName} is required.`;
+    }
+    return "Required field.";
   };
 
   const checkStringDateFormatRule = (dateString: string) => {
@@ -92,6 +102,7 @@ export function useRules() {
     checkStringDateFormatRule,
     checkNullOrEmptyRule,
     checkOnlyDigitsRule,
+    checkLengthRule,
     numberRangeRule,
   };
 }
