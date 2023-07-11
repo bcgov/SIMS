@@ -1,5 +1,4 @@
 import { Injectable } from "@nestjs/common";
-import axios from "axios";
 import { AccountDetails } from "./account-details.model";
 import {
   SearchAccountOptions,
@@ -8,6 +7,7 @@ import {
 import getAccountDetailsMock from "./mockups/getAccountDetails.mock";
 import searchBCeIDAccountsMock from "./mockups/searchBCeIDAccounts.mock";
 import { KeycloakService } from "../auth/keycloak/keycloak.service";
+import { HttpService } from "@nestjs/axios";
 
 // This service is intended to return only fake data for development purposes only.
 // It allows the simulation of the response from BCeID Web Service.
@@ -18,6 +18,7 @@ import { KeycloakService } from "../auth/keycloak/keycloak.service";
 // This is achieved through the use of the BCeIDServiceProvider.
 @Injectable()
 export class BCeIDServiceMock {
+  constructor(private readonly httpService: HttpService) {}
   private async getDevResponse(path: string) {
     if (
       !process.env.E2E_TEST_INSTITUTION_USERNAME ||
@@ -34,10 +35,9 @@ export class BCeIDServiceMock {
       );
 
       if (token) {
-        const resp = await axios.get(`${baseURL}${path}`, {
+        const resp = await this.httpService.axiosRef.get(`${baseURL}${path}`, {
           headers: { Authorization: `Bearer ${token.access_token}` },
         });
-
         return resp.data;
       }
       return null;

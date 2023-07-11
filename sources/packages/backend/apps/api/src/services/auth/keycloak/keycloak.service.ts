@@ -1,4 +1,3 @@
-import axios from "axios";
 import { Injectable } from "@nestjs/common";
 import { stringify } from "qs";
 import { TokenResponse } from "./token-response.model";
@@ -7,6 +6,7 @@ import { OpenIdConfig } from "./openid-config.model";
 import { KeycloakConfig } from "../../../auth/keycloakConfig";
 import { LoggerService, InjectLogger } from "@sims/utilities/logger";
 import { AuthConfig, ConfigService } from "@sims/utilities/config";
+import { HttpService } from "@nestjs/axios";
 
 /**
  * Manage the HTTP requests that need to be executed to Keycloak.
@@ -23,7 +23,10 @@ export class KeycloakService {
   @InjectLogger()
   logger: LoggerService;
 
-  constructor(configService: ConfigService) {
+  constructor(
+    configService: ConfigService,
+    private readonly httpService: HttpService,
+  ) {
     this.authConfig = configService.auth;
   }
 
@@ -35,7 +38,8 @@ export class KeycloakService {
    */
   public static get shared(): KeycloakService {
     return (
-      KeycloakService._shared || (this._shared = new this(new ConfigService()))
+      KeycloakService._shared ||
+      (this._shared = new this(new ConfigService(), new HttpService()))
     );
   }
 
@@ -48,7 +52,9 @@ export class KeycloakService {
    */
   public async getOpenIdConfig(): Promise<OpenIdConfig> {
     try {
-      const response = await axios.get(this.authConfig.openIdConfigurationUrl);
+      const response = await this.httpService.axiosRef.get(
+        this.authConfig.openIdConfigurationUrl,
+      );
       return response.data as OpenIdConfig;
     } catch (ex) {
       // TODO: Add a logger.
@@ -65,7 +71,10 @@ export class KeycloakService {
    */
   public async getRealmConfig(): Promise<RealmConfig> {
     try {
-      const response = await axios.get(KeycloakConfig.openIdConfig.issuer);
+      const response = await this.httpService.axiosRef.get(
+        KeycloakConfig.openIdConfig.issuer,
+      );
+
       return {
         public_key: response.data.public_key,
         token_service: response.data["token-service"],
@@ -107,7 +116,7 @@ export class KeycloakService {
   private async getKeyCloakToken(payload: any): Promise<TokenResponse> {
     try {
       const data = stringify(payload);
-      const response = await axios.post(
+      const response = await this.httpService.axiosRef.post(
         KeycloakConfig.openIdConfig.token_endpoint,
         data,
         {

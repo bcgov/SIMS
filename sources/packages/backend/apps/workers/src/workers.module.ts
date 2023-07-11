@@ -28,6 +28,7 @@ import {
   NoteSharedService,
   MSFAANumberSharedService,
   ConfirmationOfEnrollmentService,
+  GlobalHttpModule,
 } from "@sims/services";
 import { LoggerModule } from "@sims/utilities/logger";
 import { ConfigModule } from "@sims/utilities/config";
@@ -35,6 +36,7 @@ import { SystemUserModule } from "@sims/services/system-users";
 
 @Module({
   imports: [
+    GlobalHttpModule,
     DatabaseModule,
     ConfigModule,
     LoggerModule,

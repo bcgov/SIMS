@@ -15,7 +15,7 @@ import { AppInstitutionsModule } from "./app.institutions.module";
 import { ClientTypeBaseRoute } from "./types";
 import { AppStudentsModule } from "./app.students.module";
 import { AppSupportingUsersModule } from "./app.supporting-users.module";
-import { ZeebeModule } from "@sims/services";
+import { GlobalHttpModule, ZeebeModule } from "@sims/services";
 import { LoggerModule } from "@sims/utilities/logger";
 import { ConfigModule } from "@sims/utilities/config";
 import { DatabaseModule } from "@sims/sims-db";
@@ -24,6 +24,7 @@ import { QueueModule } from "@sims/services/queue";
 
 @Module({
   imports: [
+    GlobalHttpModule,
     DatabaseModule,
     LoggerModule,
     ConfigModule,

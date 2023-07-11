@@ -35,6 +35,7 @@ import {
   ZeebeModule,
   ConfirmationOfEnrollmentService,
   MSFAANumberSharedService,
+  GlobalHttpModule,
 } from "@sims/services";
 import { DatabaseModule } from "@sims/sims-db";
 import { IER12IntegrationModule } from "@sims/integrations/institution-integration/ier12-integration";
@@ -59,6 +60,7 @@ import { ECEIntegrationModule } from "@sims/integrations/institution-integration
 
 @Module({
   imports: [
+    GlobalHttpModule,
     DatabaseModule,
     QueueModule,
     ZeebeModule.forRoot(),

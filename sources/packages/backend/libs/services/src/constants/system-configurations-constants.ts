@@ -70,3 +70,8 @@ export const MSFAA_PART_TIME_FILE_CODE = "PBC.EDU.MSFA.SENT.PT.";
  * all the time.
  */
 export const SFAS_IMPORT_RECORDS_PROGRESS_REPORT_PACE = 1000;
+
+/**
+ * Http service timeout.
+ */
+export const HTTP_SERVICE_TIMEOUT = 30000;
