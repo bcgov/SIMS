@@ -1,8 +1,15 @@
 import {
   ApplicationOfferingChangeRequestStatus,
   OfferingIntensity,
+  REASON_MAX_LENGTH,
 } from "@sims/sims-db";
-import { IsIn, IsOptional } from "class-validator";
+import {
+  IsIn,
+  IsNotEmpty,
+  IsOptional,
+  IsPositive,
+  MaxLength,
+} from "class-validator";
 import { PaginationOptionsAPIInDTO } from "../../models/pagination.dto";
 
 /**
@@ -33,6 +40,7 @@ export class ApplicationOfferingChangeSummaryDetailAPIOutDTO {
  * In progress application offering change details.
  */
 export class InProgressApplicationOfferingChangesAPIOutDTO {
+  id: number;
   applicationNumber: string;
   applicationId: number;
   studyStartDate: string;
@@ -45,6 +53,7 @@ export class InProgressApplicationOfferingChangesAPIOutDTO {
  * Completed application offering change details.
  */
 export class CompletedApplicationOfferingChangesAPIOutDTO {
+  id: number;
   applicationNumber: string;
   applicationId: number;
   studyStartDate: string;
@@ -86,6 +95,7 @@ export class InProgressOfferingChangePaginationOptionsAPIInDTO extends Paginatio
  */
 export class ApplicationOfferingChangesAPIOutDTO {
   id: number;
+  status: ApplicationOfferingChangeRequestStatus;
   applicationId: number;
   applicationNumber: string;
   locationName: string;
@@ -96,4 +106,18 @@ export class ApplicationOfferingChangesAPIOutDTO {
   requestedOfferingProgramName: string;
   reason?: string;
   assessedNoteDescription?: string;
+  studentFullName: string;
+}
+
+/**
+ * Information provided by the institution to create a new application offering change request.
+ */
+export class CreateApplicationOfferingChangeRequestAPIInDTO {
+  @IsPositive()
+  applicationId: number;
+  @IsPositive()
+  offeringId: number;
+  @IsNotEmpty()
+  @MaxLength(REASON_MAX_LENGTH)
+  reason: string;
 }

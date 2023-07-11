@@ -31,6 +31,7 @@ export interface ApplicationOfferingChangeSummaryDetailAPIOutDTO {
  * In progress application offering change details.
  */
 export interface InProgressApplicationOfferingChangesAPIOutDTO {
+  id: number;
   applicationNumber: string;
   applicationId: number;
   studyStartDate: string;
@@ -43,6 +44,7 @@ export interface InProgressApplicationOfferingChangesAPIOutDTO {
  * Completed application offering change details.
  */
 export interface CompletedApplicationOfferingChangesAPIOutDTO {
+  id: number;
   applicationNumber: string;
   applicationId: number;
   studyStartDate: string;
@@ -55,8 +57,9 @@ export interface CompletedApplicationOfferingChangesAPIOutDTO {
 /**
  * Application Offering Change Request details.
  */
-export class ApplicationOfferingChangesAPIOutDTO {
+export interface ApplicationOfferingChangesAPIOutDTO {
   id: number;
+  status: ApplicationOfferingChangeRequestStatus;
   applicationId: number;
   applicationNumber: string;
   locationName: string;
@@ -67,4 +70,14 @@ export class ApplicationOfferingChangesAPIOutDTO {
   requestedOfferingProgramName: string;
   reason?: string;
   assessedNoteDescription?: string;
+  studentFullName: string;
+}
+
+/**
+ * Information provided by the institution to create a new application offering change request.
+ */
+export interface CreateApplicationOfferingChangeRequestAPIInDTO {
+  applicationId: number;
+  offeringId: number;
+  reason: string;
 }

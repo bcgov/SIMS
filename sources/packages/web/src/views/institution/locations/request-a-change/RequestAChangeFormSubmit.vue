@@ -8,13 +8,14 @@
       />
     </template>
     <request-a-change-form
-      :offeringId="activeOfferingId"
       :locationId="locationId"
+      :offeringId="activeOfferingId"
       :studentName="studentName"
       :applicationNumber="applicationNumber"
     >
       <v-form ref="requestAChangeForm">
         <v-autocomplete
+          :readonly="processing"
           hide-details="auto"
           density="compact"
           variant="outlined"
@@ -27,6 +28,7 @@
           :rules="[(v: string) => checkNullOrEmptyRule(v, 'Program')]"
         ></v-autocomplete>
         <v-autocomplete
+          :readonly="processing"
           hide-details="auto"
           density="compact"
           variant="outlined"
@@ -39,10 +41,12 @@
           :rules="[(v:string) => checkNullOrEmptyRule(v, 'Offering')]"
         ></v-autocomplete>
         <v-textarea
+          :readonly="processing"
           label="Reason for change"
           variant="outlined"
           hide-details="auto"
           class="mt-4"
+          v-model="reasonForChange"
           :rules="[(v:string) => checkLengthRule(v, 500, 'Reason for change')]"
         />
         <p class="mt-1 brand-gray-text">
@@ -50,7 +54,7 @@
         </p>
       </v-form>
       <footer-buttons
-        :processing="false"
+        :processing="processing"
         primaryLabel="Submit requested change"
         @primaryClick="submit"
         @secondaryClick="cancel"
@@ -73,7 +77,7 @@ import { ApplicationOfferingChangeRequestService } from "@/services/ApplicationO
 import { VForm } from "@/types";
 import { EducationProgramService } from "@/services/EducationProgramService";
 import { EducationProgramOfferingService } from "@/services/EducationProgramOfferingService";
-import { useRules } from "@/composables";
+import { useRules, useSnackBar } from "@/composables";
 
 export default defineComponent({
   components: { RequestAChangeForm },
@@ -89,11 +93,14 @@ export default defineComponent({
   },
   setup(props) {
     const router = useRouter();
+    const snackBar = useSnackBar();
     const { checkNullOrEmptyRule, checkLengthRule } = useRules();
+    const processing = ref(false);
     // Readonly data.
     let application: ApplicationOfferingChangeSummaryDetailAPIOutDTO;
     const studentName = ref("");
     const applicationNumber = ref("");
+    const reasonForChange = ref("");
     const requestChangeData = ref({} as ApplicationOfferingChangesAPIOutDTO);
     const activeOfferingId = ref<number>();
     // Vue form data.
@@ -134,6 +141,7 @@ export default defineComponent({
           return;
         }
       }
+      // Reset offering models.
       offerings.value = [];
       selectedOffering.value = undefined;
     };
@@ -158,8 +166,23 @@ export default defineComponent({
       if (!validationResult.valid) {
         return;
       }
-      // Do submit.
-      requestAChangeForm.value.reset();
+      try {
+        processing.value = true;
+        await ApplicationOfferingChangeRequestService.shared.createApplicationOfferingChangeRequest(
+          props.locationId,
+          {
+            applicationId: props.applicationId,
+            offeringId: Number(selectedOffering.value),
+            reason: reasonForChange.value,
+          },
+        );
+        // TODO: redirect to "in progress".
+        router.push(goBackRouteParams.value);
+      } catch {
+        snackBar.error("Unexpected error while submitting the request.");
+      } finally {
+        processing.value = false;
+      }
     };
 
     return {
@@ -175,9 +198,11 @@ export default defineComponent({
       selectedProgramChanged,
       offerings,
       selectedOffering,
+      reasonForChange,
       requestAChangeForm,
       checkNullOrEmptyRule,
       checkLengthRule,
+      processing,
     };
   },
 });

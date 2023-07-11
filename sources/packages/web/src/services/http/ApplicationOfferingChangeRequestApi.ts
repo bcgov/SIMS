@@ -7,6 +7,7 @@ import {
   InProgressApplicationOfferingChangesAPIOutDTO,
   ApplicationOfferingChangesAPIOutDTO,
   ApplicationOfferingChangeSummaryDetailAPIOutDTO,
+  CreateApplicationOfferingChangeRequestAPIInDTO,
 } from "@/services/http/dto";
 import { getPaginationQueryString } from "@/helpers";
 
@@ -105,5 +106,19 @@ export class ApplicationOfferingChangeRequestApi extends HttpBaseClient {
     return this.getCall<ApplicationOfferingChangesAPIOutDTO>(
       this.addClientRoot(url),
     );
+  }
+
+  /**
+   * Creates a new application offering change request.
+   * @param locationId location id.
+   * @param payload information to create the new request.
+   * @returns newly change request id created.
+   */
+  async createApplicationOfferingChangeRequest(
+    locationId: number,
+    payload: CreateApplicationOfferingChangeRequestAPIInDTO,
+  ): Promise<void> {
+    const url = `location/${locationId}/application-offering-change-request`;
+    await this.postCall(this.addClientRoot(url), payload);
   }
 }

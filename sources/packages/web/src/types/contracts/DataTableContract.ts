@@ -206,7 +206,7 @@ export const InProgressOfferingChangeSummaryHeaders = [
   {
     title: "Action",
     sortable: false,
-    key: "applicationId",
+    key: "id",
   },
 ];
 

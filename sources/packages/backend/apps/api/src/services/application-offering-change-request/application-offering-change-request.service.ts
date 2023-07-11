@@ -5,6 +5,9 @@ import {
   ApplicationOfferingChangeRequest,
   ApplicationOfferingChangeRequestStatus,
   ApplicationStatus,
+  EducationProgram,
+  EducationProgramOffering,
+  User,
   getUserFullNameLikeSearch,
   transformToApplicationEntitySortField,
 } from "@sims/sims-db";
@@ -237,11 +240,13 @@ export class ApplicationOfferingChangeRequestService {
       select: {
         id: true,
         reason: true,
+        applicationOfferingChangeRequestStatus: true,
         activeOffering: {
           id: true,
         },
         requestedOffering: {
           id: true,
+          name: true,
           educationProgram: {
             id: true,
             name: true,
@@ -254,6 +259,14 @@ export class ApplicationOfferingChangeRequestService {
             id: true,
             name: true,
           },
+          student: {
+            id: true,
+            user: {
+              id: true,
+              firstName: true,
+              lastName: true,
+            },
+          },
         },
         assessedNote: {
           id: true,
@@ -261,7 +274,17 @@ export class ApplicationOfferingChangeRequestService {
         },
       },
       relations: {
-        application: { location: true },
+        application: {
+          location: true,
+          student: {
+            user: true,
+          },
+        },
+        activeOffering: true,
+        requestedOffering: {
+          educationProgram: true,
+        },
+        assessedNote: true,
       },
       where: {
         id,
@@ -270,5 +293,45 @@ export class ApplicationOfferingChangeRequestService {
         },
       },
     });
+  }
+
+  /**
+   * Creates a new application offering change request.
+   * @param locationId location id used for authorization.
+   * @param applicationId application that will have the changed requested.
+   * @param offeringId offering being requested to be changed.
+   * @param reason reason provided by the institution to have the offering changed.
+   * @param auditUserId used creating the request.
+   * @returns created application offering change request.
+   */
+  async createRequest(
+    locationId: number,
+    applicationId: number,
+    offeringId: number,
+    reason: string,
+    auditUserId: number,
+  ): Promise<ApplicationOfferingChangeRequest> {
+    // Validates if the application is eligible to have an offering request change created.
+    const application = await this.getEligibleApplications(locationId, {
+      applicationId,
+    });
+    if (!application) {
+      throw new Error("Application not found or it is not eligible.");
+    }
+    // TODO: validate if the offering id can be associated. Apply same rules used to load the dropdown?
+    // TODO: Validate if the offering belongs to the location.
+
+    const newRequest = new ApplicationOfferingChangeRequest();
+    newRequest.application = application;
+    newRequest.activeOffering = application.currentAssessment.offering;
+    newRequest.requestedOffering = {
+      id: offeringId,
+    } as EducationProgramOffering;
+    newRequest.creator = { id: auditUserId } as User;
+    newRequest.applicationOfferingChangeRequestStatus =
+      ApplicationOfferingChangeRequestStatus.InProgressWithStudent;
+    newRequest.reason = reason;
+
+    return this.applicationOfferingChangeRequestRepo.save(newRequest);
   }
 }

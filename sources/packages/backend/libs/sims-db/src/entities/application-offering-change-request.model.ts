@@ -14,7 +14,7 @@ import { User } from "./user.model";
 import { Note } from "./note.model";
 import { ApplicationOfferingChangeRequestStatus } from "./application-offering-change-request-status.type";
 
-const REASON_MAX_LENGTH = 500;
+export const REASON_MAX_LENGTH = 500;
 /**
  * Represents the list of application specific offering change request,
  * which is requested by institution.

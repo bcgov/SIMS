@@ -46,8 +46,10 @@
                 :status="item.columns.status"
               />
             </template>
-            <template #[`item.applicationId`]>
-              <v-btn color="primary">View</v-btn>
+            <template #[`item.applicationId`]="{ item }">
+              <v-btn color="primary" @click="viewRequestAChange(item.value.id)"
+                >View</v-btn
+              >
             </template>
           </v-data-table-server>
         </toggle-content>
@@ -70,6 +72,8 @@ import { useFormatters } from "@/composables";
 import { CompletedApplicationOfferingChangesAPIOutDTO } from "@/services/http/dto";
 import { ApplicationOfferingChangeRequestService } from "@/services/ApplicationOfferingChangeRequestService";
 import StatusChipApplicationOfferingChange from "@/components/generic/StatusChipApplicationOfferingChange.vue";
+import { useRouter } from "vue-router";
+import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 
 export default defineComponent({
   components: { StatusChipApplicationOfferingChange },
@@ -80,6 +84,7 @@ export default defineComponent({
     },
   },
   setup(props) {
+    const router = useRouter();
     const loading = ref(false);
     const searchCriteria = ref("");
     const { dateOnlyLongString } = useFormatters();
@@ -145,6 +150,20 @@ export default defineComponent({
       );
     };
 
+    /**
+     * Navigate to the form to view a previously created request.
+     * @param applicationOfferingChangeRequestId request id.
+     */
+    const viewRequestAChange = (applicationOfferingChangeRequestId: any) => {
+      router.push({
+        name: InstitutionRoutesConst.REQUEST_CHANGE_FORM_VIEW,
+        params: {
+          locationId: props.locationId,
+          applicationOfferingChangeRequestId,
+        },
+      });
+    };
+
     watch(
       () => props.locationId,
       async () => {
@@ -163,6 +182,7 @@ export default defineComponent({
       searchCriteria,
       CompletedOfferingChangeSummaryHeaders,
       loading,
+      viewRequestAChange,
     };
   },
 });

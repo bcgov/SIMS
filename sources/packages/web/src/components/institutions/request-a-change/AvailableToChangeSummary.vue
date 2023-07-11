@@ -152,7 +152,7 @@ export default defineComponent({
      */
     const requestAChange = (applicationId: any) => {
       router.push({
-        name: InstitutionRoutesConst.REQUEST_CHANGE_FORM,
+        name: InstitutionRoutesConst.REQUEST_CHANGE_FORM_SUBMIT,
         params: {
           locationId: props.locationId,
           applicationId,

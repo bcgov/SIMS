@@ -1,14 +1,20 @@
 import {
+  Body,
   Controller,
   Get,
   NotFoundException,
   Param,
   ParseIntPipe,
+  Post,
   Query,
 } from "@nestjs/common";
 import { ApiNotFoundResponse, ApiTags } from "@nestjs/swagger";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
-import { AllowAuthorizedParty, HasLocationAccess } from "../../auth/decorators";
+import {
+  AllowAuthorizedParty,
+  HasLocationAccess,
+  UserToken,
+} from "../../auth/decorators";
 import { ClientTypeBaseRoute } from "../../types";
 import { getUserFullName } from "../../utilities";
 import { PaginatedResultsAPIOutDTO } from "../models/pagination.dto";
@@ -22,9 +28,12 @@ import {
   CompletedOfferingChangePaginationOptionsAPIInDTO,
   ApplicationOfferingChangesAPIOutDTO,
   ApplicationOfferingChangeSummaryDetailAPIOutDTO,
+  CreateApplicationOfferingChangeRequestAPIInDTO,
 } from "./models/application-offering-change-request.institutions.dto";
 import { ApplicationOfferingChangeRequestService } from "../../services";
 import { ApplicationOfferingChangeRequestStatus } from "@sims/sims-db";
+import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
+import { IInstitutionUserToken } from "../../auth";
 
 /**
  * Application offering change request controller for institutions client.
@@ -140,6 +149,7 @@ export class ApplicationOfferingChangeRequestInstitutionsController extends Base
         const offering =
           eachOfferingChange.application.currentAssessment.offering;
         return {
+          id: eachOfferingChange.id,
           applicationNumber: eachOfferingChange.application.applicationNumber,
           applicationId: eachOfferingChange.application.id,
           studyStartDate: offering.studyStartDate,
@@ -182,6 +192,7 @@ export class ApplicationOfferingChangeRequestInstitutionsController extends Base
         const offering =
           eachOfferingChange.application.currentAssessment.offering;
         return {
+          id: eachOfferingChange.id,
           applicationNumber: eachOfferingChange.application.applicationNumber,
           applicationId: eachOfferingChange.application.id,
           studyStartDate: offering.studyStartDate,
@@ -225,6 +236,7 @@ export class ApplicationOfferingChangeRequestInstitutionsController extends Base
     }
     return {
       id: request.id,
+      status: request.applicationOfferingChangeRequestStatus,
       applicationId: request.application.id,
       applicationNumber: request.application.applicationNumber,
       locationName: request.application.location.name,
@@ -235,7 +247,31 @@ export class ApplicationOfferingChangeRequestInstitutionsController extends Base
       requestedOfferingProgramName:
         request.requestedOffering.educationProgram.name,
       reason: request.reason,
-      assessedNoteDescription: request.assessedNote.description,
+      assessedNoteDescription: request.assessedNote?.description,
+      studentFullName: getUserFullName(request.application.student.user),
     };
+  }
+
+  /**
+   * Creates a new application offering change request.
+   * @param locationId location id.
+   * @param payload information to create the new request.
+   * @returns newly change request id created.
+   */
+  @Post()
+  async createApplicationOfferingChangeRequest(
+    @UserToken() userToken: IInstitutionUserToken,
+    @Param("locationId", ParseIntPipe) locationId: number,
+    @Body() payload: CreateApplicationOfferingChangeRequestAPIInDTO,
+  ): Promise<PrimaryIdentifierAPIOutDTO> {
+    const newRequest =
+      await this.applicationOfferingChangeRequestService.createRequest(
+        locationId,
+        payload.applicationId,
+        payload.offeringId,
+        payload.reason,
+        userToken.userId,
+      );
+    return { id: newRequest.id };
   }
 }
