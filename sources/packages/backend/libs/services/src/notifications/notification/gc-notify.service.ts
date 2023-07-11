@@ -10,7 +10,6 @@ import { ConfigService, GCNotify } from "@sims/utilities/config";
 import { CustomNamedError } from "@sims/utilities";
 import { GC_NOTIFY_PERMANENT_FAILURE_ERROR } from "@sims/services/constants";
 import { HttpService } from "@nestjs/axios";
-import { firstValueFrom } from "rxjs";
 
 @Injectable()
 export class GCNotifyService {
@@ -35,12 +34,14 @@ export class GCNotifyService {
     payload: NotificationEmailMessage,
   ): Promise<GCNotifyResult> {
     try {
-      const response = await firstValueFrom(
-        this.httpService.post(this.gcNotifyConfig.url, payload, {
+      const response = await this.httpService.axiosRef.post(
+        this.gcNotifyConfig.url,
+        payload,
+        {
           headers: {
             Authorization: `ApiKey-v1 ${this.gcNotifyConfig.apiKey}`,
           },
-        }),
+        },
       );
       return response.data as GCNotifyResult;
     } catch (error: unknown) {

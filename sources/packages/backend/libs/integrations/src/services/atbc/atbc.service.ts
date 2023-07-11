@@ -9,7 +9,6 @@ import {
   ATBCPDCheckerPayload,
   ATBCStudentModel,
 } from "./models/atbc.model";
-import { firstValueFrom } from "rxjs";
 import { HttpService } from "@nestjs/axios";
 
 @Injectable()
@@ -60,16 +59,14 @@ export class ATBCService {
         rejectUnauthorized: false,
       });
 
-      const authRequest = await firstValueFrom(
-        this.httpService.post(
-          this.config.ATBCLoginEndpoint,
-          {
-            usr: this.config.ATBCUserName,
-            pwd: this.config.ATBCPassword,
-            app: this.config.ATBCApp,
-          },
-          { httpsAgent: agent },
-        ),
+      const authRequest = await this.httpService.axiosRef.post(
+        this.config.ATBCLoginEndpoint,
+        {
+          usr: this.config.ATBCUserName,
+          pwd: this.config.ATBCPassword,
+          app: this.config.ATBCApp,
+        },
+        { httpsAgent: agent },
       );
       return authRequest?.data as ATBCAuthTokenResponse;
     } catch (excp) {
@@ -90,8 +87,10 @@ export class ATBCService {
     try {
       const config = await this.getConfig();
       const apiEndpoint = `${this.config.ATBCEndpoint}/pd-clients`;
-      const res = await firstValueFrom(
-        this.httpService.post(apiEndpoint, payload, config),
+      const res = await this.httpService.axiosRef.post(
+        apiEndpoint,
+        payload,
+        config,
       );
       return res?.data as ATBCCreateClientResponse;
     } catch (excp) {
@@ -111,8 +110,10 @@ export class ATBCService {
     try {
       const config = await this.getConfig();
       const apiEndpoint = `${this.config.ATBCEndpoint}/pd`;
-      const res = await firstValueFrom(
-        this.httpService.post(apiEndpoint, payload, config),
+      const res = await this.httpService.axiosRef.post(
+        apiEndpoint,
+        payload,
+        config,
       );
       return res?.data as ATBCPDCheckerResponse;
     } catch (excp) {

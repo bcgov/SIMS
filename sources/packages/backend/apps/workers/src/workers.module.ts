@@ -28,22 +28,15 @@ import {
   NoteSharedService,
   MSFAANumberSharedService,
   ConfirmationOfEnrollmentService,
+  GlobalHttpModule,
 } from "@sims/services";
 import { LoggerModule } from "@sims/utilities/logger";
 import { ConfigModule } from "@sims/utilities/config";
 import { SystemUserModule } from "@sims/services/system-users";
-import { HttpModule } from "@nestjs/axios";
 
 @Module({
   imports: [
-    {
-      ...HttpModule.register({
-        // `timeout` specifies the number of milliseconds before the request times out.
-        // If the request takes longer than `timeout`, the request will be aborted.
-        timeout: 5000,
-      }),
-      global: true,
-    },
+    GlobalHttpModule,
     DatabaseModule,
     ConfigModule,
     LoggerModule,

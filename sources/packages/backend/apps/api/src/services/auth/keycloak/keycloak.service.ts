@@ -6,7 +6,6 @@ import { OpenIdConfig } from "./openid-config.model";
 import { KeycloakConfig } from "../../../auth/keycloakConfig";
 import { LoggerService, InjectLogger } from "@sims/utilities/logger";
 import { AuthConfig, ConfigService } from "@sims/utilities/config";
-import { firstValueFrom } from "rxjs";
 import { HttpService } from "@nestjs/axios";
 
 /**
@@ -53,8 +52,8 @@ export class KeycloakService {
    */
   public async getOpenIdConfig(): Promise<OpenIdConfig> {
     try {
-      const response = await firstValueFrom(
-        this.httpService.get(this.authConfig.openIdConfigurationUrl),
+      const response = await this.httpService.axiosRef.get(
+        this.authConfig.openIdConfigurationUrl,
       );
       return response.data as OpenIdConfig;
     } catch (ex) {
@@ -72,9 +71,10 @@ export class KeycloakService {
    */
   public async getRealmConfig(): Promise<RealmConfig> {
     try {
-      const response = await firstValueFrom(
-        this.httpService.get(KeycloakConfig.openIdConfig.issuer),
+      const response = await this.httpService.axiosRef.get(
+        KeycloakConfig.openIdConfig.issuer,
       );
+
       return {
         public_key: response.data.public_key,
         token_service: response.data["token-service"],
@@ -116,14 +116,12 @@ export class KeycloakService {
   private async getKeyCloakToken(payload: any): Promise<TokenResponse> {
     try {
       const data = stringify(payload);
-      const response = await firstValueFrom(
-        this.httpService.post(
-          KeycloakConfig.openIdConfig.token_endpoint,
-          data,
-          {
-            headers: { "Content-Type": "application/x-www-form-urlencoded" },
-          },
-        ),
+      const response = await this.httpService.axiosRef.post(
+        KeycloakConfig.openIdConfig.token_endpoint,
+        data,
+        {
+          headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        },
       );
       return response.data as TokenResponse;
     } catch (ex) {

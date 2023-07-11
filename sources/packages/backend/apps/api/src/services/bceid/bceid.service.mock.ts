@@ -8,7 +8,6 @@ import getAccountDetailsMock from "./mockups/getAccountDetails.mock";
 import searchBCeIDAccountsMock from "./mockups/searchBCeIDAccounts.mock";
 import { KeycloakService } from "../auth/keycloak/keycloak.service";
 import { HttpService } from "@nestjs/axios";
-import { firstValueFrom } from "rxjs";
 
 // This service is intended to return only fake data for development purposes only.
 // It allows the simulation of the response from BCeID Web Service.
@@ -36,11 +35,9 @@ export class BCeIDServiceMock {
       );
 
       if (token) {
-        const resp = await firstValueFrom(
-          this.httpService.get(`${baseURL}${path}`, {
-            headers: { Authorization: `Bearer ${token.access_token}` },
-          }),
-        );
+        const resp = await this.httpService.axiosRef.get(`${baseURL}${path}`, {
+          headers: { Authorization: `Bearer ${token.access_token}` },
+        });
         return resp.data;
       }
       return null;

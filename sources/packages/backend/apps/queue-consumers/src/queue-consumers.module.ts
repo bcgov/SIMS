@@ -35,6 +35,7 @@ import {
   ZeebeModule,
   ConfirmationOfEnrollmentService,
   MSFAANumberSharedService,
+  GlobalHttpModule,
 } from "@sims/services";
 import { DatabaseModule } from "@sims/sims-db";
 import { IER12IntegrationModule } from "@sims/integrations/institution-integration/ier12-integration";
@@ -56,18 +57,10 @@ import { StudentAssessmentService, ApplicationService } from "./services";
 import { SFASIntegrationModule } from "@sims/integrations/sfas-integration";
 import { ATBCIntegrationModule } from "@sims/integrations/atbc-integration";
 import { ECEIntegrationModule } from "@sims/integrations/institution-integration/ece-integration";
-import { HttpModule } from "@nestjs/axios";
 
 @Module({
   imports: [
-    {
-      ...HttpModule.register({
-        // `timeout` specifies the number of milliseconds before the request times out.
-        // If the request takes longer than `timeout`, the request will be aborted.
-        timeout: 5000,
-      }),
-      global: true,
-    },
+    GlobalHttpModule,
     DatabaseModule,
     QueueModule,
     ZeebeModule.forRoot(),

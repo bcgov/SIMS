@@ -6,7 +6,6 @@ import { JwtService } from "@nestjs/jwt";
 import { TokenCacheService } from "..";
 import { TokenCacheResponse } from "../auth/token-cache.service.models";
 import { HttpService } from "@nestjs/axios";
-import { firstValueFrom } from "rxjs";
 
 // Expected header name to send the authorization token to formio API.
 const FORMIO_TOKEN_NAME = "x-jwt-token";
@@ -36,9 +35,11 @@ export class FormService {
    */
   async fetch(formName: string) {
     const authHeader = await this.createAuthHeader();
-    const content = await firstValueFrom(
-      this.httpService.get(`${this.config.formsUrl}/${formName}`, authHeader),
+    const content = await this.httpService.axiosRef.get(
+      `${this.config.formsUrl}/${formName}`,
+      authHeader,
     );
+
     return content.data;
   }
 
@@ -46,10 +47,8 @@ export class FormService {
    * Lists form definitions that contains the tag 'common'.
    */
   async list() {
-    const content = await firstValueFrom(
-      this.httpService.get(
-        `${this.config.formsUrl}/form?type=form&tags=common`,
-      ),
+    const content = await this.httpService.axiosRef.get(
+      `${this.config.formsUrl}/form?type=form&tags=common`,
     );
     return content.data;
   }
@@ -72,12 +71,10 @@ export class FormService {
   ): Promise<DryRunSubmissionResult<T>> {
     try {
       const authHeader = await this.createAuthHeader();
-      const submissionResponse = await firstValueFrom(
-        this.httpService.post(
-          `${this.config.formsUrl}/${formName}/submission?dryRun=1`,
-          { data },
-          authHeader,
-        ),
+      const submissionResponse = await this.httpService.axiosRef.post(
+        `${this.config.formsUrl}/${formName}/submission?dryRun=1`,
+        { data },
+        authHeader,
       );
 
       return { valid: true, data: submissionResponse.data, formName };
@@ -138,13 +135,14 @@ export class FormService {
    */
   private async getUserLogin() {
     try {
-      const authRequest = await firstValueFrom(
-        this.httpService.post(`${this.config.formsUrl}/user/login`, {
+      const authRequest = await this.httpService.axiosRef.post(
+        `${this.config.formsUrl}/user/login`,
+        {
           data: {
             email: this.config.serviceAccountCredential.userName,
             password: this.config.serviceAccountCredential.password,
           },
-        }),
+        },
       );
       return authRequest;
     } catch (excp) {
