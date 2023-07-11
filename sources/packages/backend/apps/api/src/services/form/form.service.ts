@@ -39,7 +39,6 @@ export class FormService {
       `${this.config.formsUrl}/${formName}`,
       authHeader,
     );
-
     return content.data;
   }
 
