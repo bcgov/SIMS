@@ -114,7 +114,6 @@ export class ApplicationOfferingChangeRequestService {
    * Creates a new application offering change request.
    * @param locationId location id.
    * @param payload information to create the new request.
-   * @returns newly change request id created.
    */
   async createApplicationOfferingChangeRequest(
     locationId: number,
