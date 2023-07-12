@@ -60,8 +60,11 @@ $badge-border-success: rgb(22, 201, 46, 0.2);
 $badge-border-inactive: rgb(51, 58, 71, 0.2);
 $badge-background-color: white;
 
-/** Font family - bold **/
-$font-bold: "BCSans-bold";
+/** 
+* TODO: Variable needs to be renamed to $font and all the references for it need to be updated too. 
+* Font family 
+**/
+$font-bold: "BCSans";
 
 /** font weight bold**/
 $font-weight-bold: bold;
