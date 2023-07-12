@@ -10,6 +10,7 @@
     "build-local": "vue-cli-service build"
   },
   "dependencies": {
+    "@bcgov/bc-sans": "^2.0.0",
     "@mdi/font": "5.9.55",
     "@mdi/js": "^5.9.55",
     "@types/vuelidate": "^0.7.13",
