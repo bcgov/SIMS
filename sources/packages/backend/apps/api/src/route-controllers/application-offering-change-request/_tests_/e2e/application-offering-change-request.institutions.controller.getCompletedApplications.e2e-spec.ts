@@ -150,6 +150,7 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-getComplet
       .expect({
         results: [
           {
+            id: declinedBySABCApplicationOfferingChange.id,
             applicationNumber:
               applicationWithDeclinedBySABCApplicationOfferingChange.applicationNumber,
             studyStartDate:
@@ -168,6 +169,7 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-getComplet
               declinedBySABCApplicationOfferingChange.assessedDate.toISOString(),
           },
           {
+            id: declinedByStudentApplicationOfferingChange.id,
             applicationNumber:
               applicationWithDeclinedByStudentApplicationOfferingChange.applicationNumber,
             studyStartDate:
@@ -186,6 +188,7 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-getComplet
               declinedByStudentApplicationOfferingChange.studentActionDate.toISOString(),
           },
           {
+            id: approvedApplicationOfferingChange.id,
             applicationNumber:
               applicationWithApprovedApplicationOfferingChange.applicationNumber,
             studyStartDate:
@@ -312,6 +315,7 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-getComplet
       .expect({
         results: [
           {
+            id: approvedApplicationOfferingChange.id,
             applicationNumber:
               applicationWithApprovedApplicationOfferingChange.applicationNumber,
             studyStartDate:
@@ -329,6 +333,7 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-getComplet
               approvedApplicationOfferingChange.assessedDate.toISOString(),
           },
           {
+            id: declinedBySABCApplicationOfferingChange.id,
             applicationNumber:
               applicationWithDeclinedBySABCApplicationOfferingChange.applicationNumber,
             studyStartDate:

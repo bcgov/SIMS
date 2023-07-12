@@ -5,7 +5,6 @@ import {
   ApplicationOfferingChangeRequest,
   ApplicationOfferingChangeRequestStatus,
   ApplicationStatus,
-  EducationProgram,
   EducationProgramOffering,
   User,
   getUserFullNameLikeSearch,
@@ -311,9 +310,7 @@ export class ApplicationOfferingChangeRequestService {
     if (!application) {
       throw new Error("Application not found or it is not eligible.");
     }
-    // TODO: validate if the offering id can be associated. Apply same rules used to load the dropdown?
-    // TODO: Validate if the offering belongs to the location.
-
+    // TODO: Apply the same validations from PIR.
     const newRequest = new ApplicationOfferingChangeRequest();
     newRequest.application = application;
     newRequest.activeOffering = application.currentAssessment.offering;

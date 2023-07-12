@@ -121,6 +121,7 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-getInProgr
       .expect({
         results: [
           {
+            id: inProgressWithSABCApplicationOfferingChange.id,
             applicationNumber:
               applicationWithInProgressWithSABCApplicationOfferingChange.applicationNumber,
             studyStartDate:
@@ -137,6 +138,7 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-getInProgr
               inProgressWithSABCApplicationOfferingChange.applicationOfferingChangeRequestStatus,
           },
           {
+            id: inProgressWithStudentApplicationOfferingChange.id,
             applicationNumber:
               applicationWithInProgressWithStudentApplicationOfferingChange.applicationNumber,
             studyStartDate:
@@ -203,6 +205,7 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-getInProgr
       .expect({
         results: [
           {
+            id: inProgressWithSABCApplicationOfferingChange.id,
             applicationNumber:
               applicationWithInProgressWithSABCApplicationOfferingChange.applicationNumber,
             studyStartDate:

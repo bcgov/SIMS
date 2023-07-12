@@ -264,6 +264,7 @@ export class ApplicationOfferingChangeRequestInstitutionsController extends Base
     @Param("locationId", ParseIntPipe) locationId: number,
     @Body() payload: CreateApplicationOfferingChangeRequestAPIInDTO,
   ): Promise<PrimaryIdentifierAPIOutDTO> {
+    // TODO: Apply the same validations from PIR.
     const newRequest =
       await this.applicationOfferingChangeRequestService.createRequest(
         locationId,

@@ -109,8 +109,7 @@
 import { useFormatters } from "@/composables";
 import { EducationProgramOfferingService } from "@/services/EducationProgramOfferingService";
 import { EducationProgramOfferingSummaryViewAPIOutDTO } from "@/services/http/dto";
-import { watch } from "vue";
-import { defineComponent, ref } from "vue";
+import { defineComponent, watch, ref } from "vue";
 
 export default defineComponent({
   props: {
