@@ -28,7 +28,6 @@ export class ApplicationOfferingChangeSummaryAPIOutDTO {
  */
 export class ApplicationOfferingChangeSummaryDetailAPIOutDTO {
   applicationNumber: string;
-  applicationId: number;
   programId: number;
   offeringId: number;
   offeringIntensity: OfferingIntensity;

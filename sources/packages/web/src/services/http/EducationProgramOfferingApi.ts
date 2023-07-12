@@ -325,13 +325,15 @@ export class EducationProgramOfferingApi extends HttpBaseClient {
    * - `locationId`: location for authorization.
    * @returns offering details.
    */
-  async getOfferingSummaryViewById(
+  async getOfferingSummaryDetailsById(
     offeringId: number,
     options?: {
       locationId?: number;
     },
   ): Promise<EducationProgramOfferingSummaryViewAPIOutDTO> {
-    const url = `education-program-offering/location/${options?.locationId}/offering/${offeringId}/summary-view`;
+    const url = options?.locationId
+      ? `education-program-offering/location/${options.locationId}/offering/${offeringId}/summary-details`
+      : `education-program-offering/offering/${offeringId}/summary-details`;
     return this.getCall<EducationProgramOfferingSummaryViewAPIOutDTO>(
       this.addClientRoot(url),
     );

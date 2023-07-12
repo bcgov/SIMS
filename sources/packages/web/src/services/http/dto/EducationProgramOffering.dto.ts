@@ -226,7 +226,7 @@ export interface EducationProgramOfferingSummaryViewAPIOutDTO {
   offeringDelivered: string;
   lacksStudyBreaks: boolean;
   offeringIntensity: OfferingIntensity;
-  studyBreaks: StudyBreakAPIOutDTO[];
+  studyBreaks?: StudyBreakAPIOutDTO[];
   locationName: string;
   programId: number;
   programName: string;

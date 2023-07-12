@@ -90,6 +90,7 @@ export class ApplicationOfferingChangeRequestInstitutionsController extends Base
    * Gets an eligible application that can be requested for application
    * offering change.
    * @param locationId location id.
+   * @param applicationId application id.
    * @returns eligible application.
    */
   @ApiNotFoundResponse({
@@ -112,7 +113,6 @@ export class ApplicationOfferingChangeRequestInstitutionsController extends Base
     }
     return {
       applicationNumber: application.applicationNumber,
-      applicationId: application.id,
       programId: application.currentAssessment.offering.educationProgram.id,
       offeringId: application.currentAssessment.offering.id,
       offeringIntensity:
@@ -265,7 +265,7 @@ export class ApplicationOfferingChangeRequestInstitutionsController extends Base
     @Body() payload: CreateApplicationOfferingChangeRequestAPIInDTO,
   ): Promise<PrimaryIdentifierAPIOutDTO> {
     // TODO: Apply the same validations from PIR.
-    const newRequest =
+    const applicationOfferingChangeRequest =
       await this.applicationOfferingChangeRequestService.createRequest(
         locationId,
         payload.applicationId,
@@ -273,6 +273,6 @@ export class ApplicationOfferingChangeRequestInstitutionsController extends Base
         payload.reason,
         userToken.userId,
       );
-    return { id: newRequest.id };
+    return { id: applicationOfferingChangeRequest.id };
   }
 }

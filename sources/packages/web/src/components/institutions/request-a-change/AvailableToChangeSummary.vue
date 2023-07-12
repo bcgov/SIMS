@@ -31,24 +31,23 @@
             :items="applications?.results"
             :items-length="applications?.count"
             :loading="loading"
+            item-value="applicationId"
             v-model:items-per-page="DEFAULT_PAGE_LIMIT"
             @update:options="paginationAndSortEvent"
           >
             <template #[`item.fullName`]="{ item }">
-              {{ item.columns.fullName }}
+              {{ item.raw.fullName }}
             </template>
             <template #[`item.studyStartDate`]="{ item }">
-              {{ dateOnlyLongString(item.columns.studyStartDate) }}
+              {{ dateOnlyLongString(item.raw.studyStartDate) }}
               -
-              {{ dateOnlyLongString(item.value.studyEndDate) }}
+              {{ dateOnlyLongString(item.raw.studyEndDate) }}
             </template>
             <template #[`item.applicationNumber`]="{ item }">
-              {{ item.columns.applicationNumber }}
+              {{ item.raw.applicationNumber }}
             </template>
             <template #[`item.applicationId`]="{ item }">
-              <v-btn
-                color="primary"
-                @click="requestAChange(item.value.applicationId)"
+              <v-btn color="primary" @click="requestAChange(item.value)"
                 >Request a change</v-btn
               >
             </template>

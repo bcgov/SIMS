@@ -42,6 +42,7 @@ export class ApplicationOfferingChangeRequestService {
    * Gets an eligible application that can be requested for application
    * offering change.
    * @param locationId location id.
+   * @param applicationId application id.
    * @returns eligible application.
    */
   async getEligibleApplication(

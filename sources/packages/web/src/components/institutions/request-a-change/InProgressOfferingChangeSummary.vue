@@ -28,22 +28,23 @@
             :items="applications?.results"
             :items-length="applications?.count"
             :loading="loading"
+            item-value="id"
             :items-per-page="DEFAULT_PAGE_LIMIT"
             @update:options="paginationAndSortEvent"
           >
             <template #[`item.fullName`]="{ item }">
-              {{ item.columns.fullName }}
+              {{ item.raw.fullName }}
             </template>
             <template #[`item.studyStartDate`]="{ item }">
-              {{ dateOnlyLongString(item.columns.studyStartDate) }}
+              {{ dateOnlyLongString(item.raw.studyStartDate) }}
               -
-              {{ dateOnlyLongString(item.value.studyEndDate) }}
+              {{ dateOnlyLongString(item.raw.studyEndDate) }}
             </template>
             <template #[`item.applicationNumber`]="{ item }">
-              {{ item.columns.applicationNumber }} </template
+              {{ item.raw.applicationNumber }} </template
             ><template #[`item.status`]="{ item }">
               <status-chip-application-offering-change
-                :status="item.columns.status"
+                :status="item.raw.status"
               />
             </template>
             <template #[`item.id`]="{ item }">

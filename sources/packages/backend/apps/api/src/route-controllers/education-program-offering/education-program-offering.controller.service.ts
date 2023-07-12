@@ -352,7 +352,7 @@ export class EducationProgramOfferingControllerService {
    * when the user needs need to have quick access to data in order to
    * support operations like confirmation of enrolment or scholastic
    * standing requests or offering change request.
-   * @param offering to be transformed.
+   * @param offeringId offering id.
    * @param options method options:
    * - `locationId`: location for authorization.
    * @returns education program offering.

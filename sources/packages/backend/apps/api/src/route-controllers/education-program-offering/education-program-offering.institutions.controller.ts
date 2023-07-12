@@ -597,8 +597,8 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
   @ApiNotFoundResponse({
     description: "Not able to find the Education Program offering.",
   })
-  @Get("location/:locationId/offering/:offeringId/summary-view")
-  async getOfferingSummaryViewById(
+  @Get("location/:locationId/offering/:offeringId/summary-details")
+  async getOfferingSummaryDetailsById(
     @Param("offeringId", ParseIntPipe) offeringId: number,
     @Param("locationId", ParseIntPipe) locationId: number,
   ): Promise<EducationProgramOfferingSummaryViewAPIOutDTO> {

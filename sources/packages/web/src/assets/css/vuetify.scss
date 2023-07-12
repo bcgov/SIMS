@@ -173,6 +173,6 @@
 // Changes the background of readonly inputs.
 .v-input--readonly {
   .v-field {
-    background-color: #e4e6eb;
+    background-color: $read-only-background;
   }
 }

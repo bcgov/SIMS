@@ -33,7 +33,7 @@ export class ApplicationOfferingChangeRequestService {
   async getEligibleApplications(
     locationId: number,
     options: {
-      applicationId?: number;
+      applicationId: number;
     },
   ): Promise<Application>;
   /**
@@ -41,21 +41,23 @@ export class ApplicationOfferingChangeRequestService {
    * offering change.
    * @param locationId location id.
    * @param options method options:
-   * - `paginationOptions` options to execute the pagination.
+   * - `pagination` options to execute the pagination.
    * @returns list of eligible applications that can be requested for
    * application offering change.
    */
   async getEligibleApplications(
     locationId: number,
     options: {
-      pagination?: PaginationOptions;
+      pagination: PaginationOptions;
     },
   ): Promise<PaginatedResults<Application>>;
   /**
    * Gets all eligible applications that can be requested for application
    * offering change.
    * @param locationId location id.
-   * @param paginationOptions options to execute the pagination.
+   * @param options method options:
+   * - `pagination` options to execute the pagination.
+   * - `applicationId` specific eligible application to be retrieved.
    * @returns list of eligible applications that can be requested for
    * application offering change.
    */
@@ -106,7 +108,7 @@ export class ApplicationOfferingChangeRequestService {
       })
       .andWhere("application.isArchived = false");
 
-    if (options.applicationId) {
+    if (options?.applicationId) {
       applicationQuery.andWhere("application.id = :applicationId", {
         applicationId: options.applicationId,
       });
@@ -281,7 +283,7 @@ export class ApplicationOfferingChangeRequestService {
       where: {
         id,
         application: {
-          location: { id: options.locationId },
+          location: { id: options?.locationId },
         },
       },
     });

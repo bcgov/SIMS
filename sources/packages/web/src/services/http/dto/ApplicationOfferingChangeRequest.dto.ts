@@ -19,7 +19,6 @@ export interface ApplicationOfferingChangeSummaryAPIOutDTO {
  */
 export interface ApplicationOfferingChangeSummaryDetailAPIOutDTO {
   applicationNumber: string;
-  applicationId: number;
   programId: number;
   offeringId: number;
   offeringIntensity: OfferingIntensity;

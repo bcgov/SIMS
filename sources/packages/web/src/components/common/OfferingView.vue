@@ -119,7 +119,7 @@ export default defineComponent({
     },
     locationId: {
       type: Number,
-      required: false,
+      required: true,
     },
   },
   setup(props) {
@@ -133,7 +133,7 @@ export default defineComponent({
       async () => {
         if (props.offeringId) {
           offeringViewData.value =
-            await EducationProgramOfferingService.shared.getOfferingSummaryViewById(
+            await EducationProgramOfferingService.shared.getOfferingSummaryDetailsById(
               props.offeringId,
               {
                 locationId: props.locationId,

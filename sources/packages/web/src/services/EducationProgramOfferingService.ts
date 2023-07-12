@@ -382,13 +382,13 @@ export class EducationProgramOfferingService {
    * - `locationId`: location for authorization.
    * @returns offering details.
    */
-  async getOfferingSummaryViewById(
+  async getOfferingSummaryDetailsById(
     offeringId: number,
     options?: {
       locationId?: number;
     },
   ): Promise<EducationProgramOfferingSummaryViewAPIOutDTO> {
-    return ApiClient.EducationProgramOffering.getOfferingSummaryViewById(
+    return ApiClient.EducationProgramOffering.getOfferingSummaryDetailsById(
       offeringId,
       options,
     );
