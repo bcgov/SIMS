@@ -588,7 +588,7 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
    * Useful to have an overview of the offering details, for instance,
    * when the user needs need to have quick access to data in order to
    * support operations like confirmation of enrolment or scholastic
-   * standing requests.
+   * standing requests or offering change request.
    * @param offeringId offering.
    * @param locationId offering location.
    * @returns offering details.

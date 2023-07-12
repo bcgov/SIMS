@@ -34,7 +34,7 @@ export class ApplicationOfferingChangeRequestApi extends HttpBaseClient {
   }
 
   /**
-   * Gets a eligible application that can be requested for application
+   * Gets an eligible application that can be requested for application
    * offering change.
    * @param locationId location id.
    * @returns eligible application.
@@ -88,7 +88,7 @@ export class ApplicationOfferingChangeRequestApi extends HttpBaseClient {
   }
 
   /**
-   * Get the Application Offering Change Request details.
+   * Gets the Application Offering Change Request details.
    * @param applicationOfferingChangeRequestId the Application Offering Change Request id.
    * @param options method options:
    * - `locationId`: location for authorization.

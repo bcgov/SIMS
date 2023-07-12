@@ -74,7 +74,7 @@ export interface ApplicationOfferingChangesAPIOutDTO {
 }
 
 /**
- * Information provided by the institution to create a new application offering change request.
+ * Information provided by the institution to create a new Application Offering Change Request.
  */
 export interface CreateApplicationOfferingChangeRequestAPIInDTO {
   applicationId: number;

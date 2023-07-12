@@ -23,7 +23,7 @@ export class ApplicationOfferingChangeRequestService {
   ) {}
 
   /**
-   * Gets a eligible application that can be requested for application
+   * Gets an eligible application that can be requested for application
    * offering change.
    * @param locationId location id.
    * @param options method options:
@@ -114,7 +114,7 @@ export class ApplicationOfferingChangeRequestService {
       return applicationQuery.getOne();
     }
 
-    if (options.pagination?.searchCriteria?.trim()) {
+    if (options.pagination.searchCriteria?.trim()) {
       applicationQuery
         .andWhere(
           new Brackets((qb) => {
