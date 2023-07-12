@@ -23,6 +23,7 @@
           :items="programs"
           item-title="description"
           item-value="id"
+          class="mt-4"
           v-model="selectedProgram"
           @update:modelValue="selectedProgramChanged"
           :rules="[(v: string) => checkNullOrEmptyRule(v, 'Program')]"
@@ -67,7 +68,7 @@
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import { computed, defineComponent, onMounted, ref } from "vue";
 import { RouteLocationRaw, useRouter } from "vue-router";
-import RequestAChangeForm from "./RequestAChangeForm.vue";
+import RequestAChangeForm from "@/components/institutions/request-a-change/RequestAChangeForm.vue";
 import {
   ApplicationOfferingChangeSummaryDetailAPIOutDTO,
   ApplicationOfferingChangesAPIOutDTO,

@@ -90,24 +90,17 @@ export class ApplicationOfferingChangeRequestService {
       .leftJoin(
         "application.applicationOfferingChangeRequest",
         "applicationOfferingChangeRequest",
+        "applicationOfferingChangeRequest.applicationOfferingChangeRequestStatus IN (:...status)",
+        {
+          status: [
+            ApplicationOfferingChangeRequestStatus.InProgressWithSABC,
+            ApplicationOfferingChangeRequestStatus.InProgressWithStudent,
+          ],
+        },
       )
       .innerJoin("application.student", "student")
       .innerJoin("student.user", "user")
-      .where(
-        new Brackets((qb) =>
-          qb
-            .where("applicationOfferingChangeRequest.id IS NULL")
-            .orWhere(
-              "applicationOfferingChangeRequest.applicationOfferingChangeRequestStatus NOT IN (:...status)",
-              {
-                status: [
-                  ApplicationOfferingChangeRequestStatus.InProgressWithSABC,
-                  ApplicationOfferingChangeRequestStatus.InProgressWithStudent,
-                ],
-              },
-            ),
-        ),
-      )
+      .where("applicationOfferingChangeRequest.id IS NULL")
       .andWhere("application.location.id = :locationId", { locationId })
       .andWhere("application.applicationStatus = :applicationStatus", {
         applicationStatus: ApplicationStatus.Completed,
@@ -228,7 +221,7 @@ export class ApplicationOfferingChangeRequestService {
    * @param id the Application Offering Change Request id.
    * @param options method options:
    * - `locationId`: location for authorization.
-   * @returns
+   * @returns application offering change request.
    */
   async getById(
     id: number,

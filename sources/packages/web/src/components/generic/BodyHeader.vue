@@ -1,7 +1,9 @@
 <template>
   <v-row no-gutters>
-    <v-col>
+    <v-col cols="auto" class="mr-2">
       <h2 class="category-header-large color-blue">{{ fullTitleMessage }}</h2>
+    </v-col>
+    <v-col cols="auto" class="mr-2">
       <slot name="status-chip"></slot>
     </v-col>
     <v-col>

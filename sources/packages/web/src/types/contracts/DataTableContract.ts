@@ -240,6 +240,6 @@ export const CompletedOfferingChangeSummaryHeaders = [
   {
     title: "Action",
     sortable: false,
-    key: "applicationId",
+    key: "id",
   },
 ];

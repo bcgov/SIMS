@@ -46,8 +46,8 @@
                 :status="item.columns.status"
               />
             </template>
-            <template #[`item.applicationId`]="{ item }">
-              <v-btn color="primary" @click="viewRequestAChange(item.value.id)"
+            <template #[`item.id`]="{ item }">
+              <v-btn color="primary" @click="viewRequestAChange(item.value)"
                 >View</v-btn
               >
             </template>

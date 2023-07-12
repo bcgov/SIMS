@@ -169,3 +169,10 @@
 .v-overlay-container .v-tooltip .v-overlay__content {
   @extend .tooltip-style;
 }
+
+// Changes the background of readonly inputs.
+.v-input--readonly {
+  .v-field {
+    background-color: #e4e6eb;
+  }
+}

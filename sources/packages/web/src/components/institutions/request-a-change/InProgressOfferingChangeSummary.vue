@@ -47,9 +47,7 @@
               />
             </template>
             <template #[`item.id`]="{ item }">
-              <v-btn
-                color="primary"
-                @click="viewRequestAChange(item.columns.id)"
+              <v-btn color="primary" @click="viewRequestAChange(item.value)"
                 >View</v-btn
               >
             </template>

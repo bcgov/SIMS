@@ -12,12 +12,14 @@
       :offeringId="changeRequest.activeOfferingId"
       :studentName="changeRequest.studentFullName"
       :applicationNumber="changeRequest.applicationNumber"
+      :status="changeRequest.status"
     >
       <v-text-field
         label="Program"
         :readonly="true"
         v-model="changeRequest.requestedOfferingProgramName"
         variant="outlined"
+        class="mt-4"
       />
       <v-text-field
         label="Offering"
@@ -38,10 +40,7 @@
         This note is visible to students and StudentAid BC staff.
       </p>
       <v-textarea
-        v-if="
-          changeRequest.status ===
-          ApplicationOfferingChangeRequestStatus.DeclinedBySABC
-        "
+        v-if="showNotesFromStudentAidBC"
         :readonly="true"
         label="Notes from StudentAid BC"
         variant="outlined"
@@ -54,13 +53,13 @@
 </template>
 
 <script lang="ts">
-import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import { computed, defineComponent, onMounted, ref } from "vue";
 import { RouteLocationRaw } from "vue-router";
-import RequestAChangeForm from "./RequestAChangeForm.vue";
 import { ApplicationOfferingChangesAPIOutDTO } from "@/services/http/dto";
 import { ApplicationOfferingChangeRequestService } from "@/services/ApplicationOfferingChangeRequestService";
 import { ApplicationOfferingChangeRequestStatus } from "@/types";
+import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
+import RequestAChangeForm from "@/components/institutions/request-a-change/RequestAChangeForm.vue";
 
 export default defineComponent({
   components: { RequestAChangeForm },
@@ -105,10 +104,18 @@ export default defineComponent({
         } as RouteLocationRaw),
     );
 
+    const showNotesFromStudentAidBC = computed(() => {
+      return [
+        ApplicationOfferingChangeRequestStatus.Approved,
+        ApplicationOfferingChangeRequestStatus.DeclinedBySABC,
+      ].includes(changeRequest.value.status);
+    });
+
     return {
       subTitle,
       changeRequest,
       goBackRouteParams,
+      showNotesFromStudentAidBC,
       ApplicationOfferingChangeRequestStatus,
     };
   },
