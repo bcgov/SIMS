@@ -292,7 +292,7 @@ export class ApplicationOfferingChangeRequestService {
   /**
    * Creates a new application offering change request.
    * @param locationId location id used for authorization.
-   * @param applicationId application that will have the changed requested.
+   * @param applicationId application that will have the change requested.
    * @param offeringId offering being requested to be changed.
    * @param reason reason provided by the institution to have the offering changed.
    * @param auditUserId used creating the request.
