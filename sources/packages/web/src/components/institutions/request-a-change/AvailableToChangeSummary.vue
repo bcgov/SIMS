@@ -31,22 +31,25 @@
             :items="applications?.results"
             :items-length="applications?.count"
             :loading="loading"
+            item-value="applicationId"
             v-model:items-per-page="DEFAULT_PAGE_LIMIT"
             @update:options="paginationAndSortEvent"
           >
             <template #[`item.fullName`]="{ item }">
-              {{ item.columns.fullName }}
+              {{ item.raw.fullName }}
             </template>
             <template #[`item.studyStartDate`]="{ item }">
-              {{ dateOnlyLongString(item.columns.studyStartDate) }}
+              {{ dateOnlyLongString(item.raw.studyStartDate) }}
               -
-              {{ dateOnlyLongString(item.value.studyEndDate) }}
+              {{ dateOnlyLongString(item.raw.studyEndDate) }}
             </template>
             <template #[`item.applicationNumber`]="{ item }">
-              {{ item.columns.applicationNumber }}
+              {{ item.raw.applicationNumber }}
             </template>
-            <template #[`item.applicationId`]>
-              <v-btn color="primary">Request a change</v-btn>
+            <template #[`item.applicationId`]="{ item }">
+              <v-btn color="primary" @click="requestAChange(item.value)"
+                >Request a change</v-btn
+              >
             </template>
           </v-data-table-server>
         </toggle-content>
@@ -68,6 +71,8 @@ import {
 import { useFormatters } from "@/composables";
 import { ApplicationOfferingChangeSummaryAPIOutDTO } from "@/services/http/dto";
 import { ApplicationOfferingChangeRequestService } from "@/services/ApplicationOfferingChangeRequestService";
+import { useRouter } from "vue-router";
+import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 
 export default defineComponent({
   props: {
@@ -77,6 +82,7 @@ export default defineComponent({
     },
   },
   setup(props) {
+    const router = useRouter();
     const loading = ref(false);
     const searchCriteria = ref("");
     const { dateOnlyLongString } = useFormatters();
@@ -139,6 +145,20 @@ export default defineComponent({
       );
     };
 
+    /**
+     * Navigate to the form to allow the request submission.
+     * @param applicationId application to have the request created.
+     */
+    const requestAChange = (applicationId: any) => {
+      router.push({
+        name: InstitutionRoutesConst.REQUEST_CHANGE_FORM_SUBMIT,
+        params: {
+          locationId: props.locationId,
+          applicationId,
+        },
+      });
+    };
+
     watch(
       () => props.locationId,
       async () => {
@@ -157,6 +177,7 @@ export default defineComponent({
       searchCriteria,
       AvailableToChangeOfferingChangeSummaryHeaders,
       loading,
+      requestAChange,
     };
   },
 });

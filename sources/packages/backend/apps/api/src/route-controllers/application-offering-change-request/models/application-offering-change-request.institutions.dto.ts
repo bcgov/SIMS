@@ -1,5 +1,15 @@
-import { ApplicationOfferingChangeRequestStatus } from "@sims/sims-db";
-import { IsIn, IsOptional } from "class-validator";
+import {
+  ApplicationOfferingChangeRequestStatus,
+  OfferingIntensity,
+  REASON_MAX_LENGTH,
+} from "@sims/sims-db";
+import {
+  IsIn,
+  IsNotEmpty,
+  IsOptional,
+  IsPositive,
+  MaxLength,
+} from "class-validator";
 import { PaginationOptionsAPIInDTO } from "../../models/pagination.dto";
 
 /**
@@ -14,9 +24,22 @@ export class ApplicationOfferingChangeSummaryAPIOutDTO {
 }
 
 /**
+ * Applications details for an eligible application to request an offering change.
+ */
+export class ApplicationOfferingChangeSummaryDetailAPIOutDTO {
+  applicationNumber: string;
+  programId: number;
+  offeringId: number;
+  offeringIntensity: OfferingIntensity;
+  programYearId: number;
+  fullName: string;
+}
+
+/**
  * In progress application offering change details.
  */
 export class InProgressApplicationOfferingChangesAPIOutDTO {
+  id: number;
   applicationNumber: string;
   applicationId: number;
   studyStartDate: string;
@@ -29,6 +52,7 @@ export class InProgressApplicationOfferingChangesAPIOutDTO {
  * Completed application offering change details.
  */
 export class CompletedApplicationOfferingChangesAPIOutDTO {
+  id: number;
   applicationNumber: string;
   applicationId: number;
   studyStartDate: string;
@@ -63,4 +87,36 @@ export class InProgressOfferingChangePaginationOptionsAPIInDTO extends Paginatio
   @IsOptional()
   @IsIn(["applicationNumber", "fullName"])
   sortField?: string;
+}
+
+/**
+ * Application Offering Change Request details.
+ */
+export class ApplicationOfferingChangesAPIOutDTO {
+  id: number;
+  status: ApplicationOfferingChangeRequestStatus;
+  applicationId: number;
+  applicationNumber: string;
+  locationName: string;
+  activeOfferingId: number;
+  requestedOfferingId: number;
+  requestedOfferingDescription: string;
+  requestedOfferingProgramId: number;
+  requestedOfferingProgramName: string;
+  reason?: string;
+  assessedNoteDescription?: string;
+  studentFullName: string;
+}
+
+/**
+ * Information provided by the institution to create a new Application Offering Change Request.
+ */
+export class CreateApplicationOfferingChangeRequestAPIInDTO {
+  @IsPositive()
+  applicationId: number;
+  @IsPositive()
+  offeringId: number;
+  @IsNotEmpty()
+  @MaxLength(REASON_MAX_LENGTH)
+  reason: string;
 }

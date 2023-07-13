@@ -5,6 +5,9 @@ import {
   ApplicationOfferingChangeSummaryAPIOutDTO,
   CompletedApplicationOfferingChangesAPIOutDTO,
   InProgressApplicationOfferingChangesAPIOutDTO,
+  ApplicationOfferingChangesAPIOutDTO,
+  ApplicationOfferingChangeSummaryDetailAPIOutDTO,
+  CreateApplicationOfferingChangeRequestAPIInDTO,
 } from "@/services/http/dto";
 import { getPaginationQueryString } from "@/helpers";
 
@@ -28,6 +31,23 @@ export class ApplicationOfferingChangeRequestApi extends HttpBaseClient {
     return this.getCall<
       PaginatedResultsAPIOutDTO<ApplicationOfferingChangeSummaryAPIOutDTO>
     >(this.addClientRoot(url));
+  }
+
+  /**
+   * Gets an eligible application that can be requested for application
+   * offering change.
+   * @param locationId location id.
+   * @param applicationId application id.
+   * @returns eligible application.
+   */
+  async getEligibleApplication(
+    locationId: number,
+    applicationId: number,
+  ): Promise<ApplicationOfferingChangeSummaryDetailAPIOutDTO> {
+    const url = `location/${locationId}/application-offering-change-request/available/application/${applicationId}`;
+    return this.getCall<ApplicationOfferingChangeSummaryDetailAPIOutDTO>(
+      this.addClientRoot(url),
+    );
   }
 
   /**
@@ -66,5 +86,39 @@ export class ApplicationOfferingChangeRequestApi extends HttpBaseClient {
     return this.getCall<
       PaginatedResultsAPIOutDTO<CompletedApplicationOfferingChangesAPIOutDTO>
     >(this.addClientRoot(url));
+  }
+
+  /**
+   * Gets the Application Offering Change Request details.
+   * @param applicationOfferingChangeRequestId the Application Offering Change Request id.
+   * @param options method options:
+   * - `locationId`: location for authorization.
+   * @returns Application Offering Change Request details.
+   */
+  async getById(
+    applicationOfferingChangeRequestId: number,
+    options?: {
+      locationId?: number;
+    },
+  ): Promise<ApplicationOfferingChangesAPIOutDTO> {
+    const url = options?.locationId
+      ? `location/${options.locationId}/application-offering-change-request/${applicationOfferingChangeRequestId}`
+      : `application-offering-change-request/${applicationOfferingChangeRequestId}`;
+    return this.getCall<ApplicationOfferingChangesAPIOutDTO>(
+      this.addClientRoot(url),
+    );
+  }
+
+  /**
+   * Creates a new application offering change request.
+   * @param locationId location id.
+   * @param payload information to create the new request.
+   */
+  async createApplicationOfferingChangeRequest(
+    locationId: number,
+    payload: CreateApplicationOfferingChangeRequestAPIInDTO,
+  ): Promise<void> {
+    const url = `location/${locationId}/application-offering-change-request`;
+    await this.postCall(this.addClientRoot(url), payload);
   }
 }

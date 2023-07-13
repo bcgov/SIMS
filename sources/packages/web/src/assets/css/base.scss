@@ -397,3 +397,12 @@ strong {
   color: #fff;
   background-color: rgba(51, 51, 51, 0.95);
 }
+
+.brand-gray-text {
+  color: $brand-grey;
+}
+
+ul.no-bullets {
+  list-style-type: none !important;
+  margin: 0;
+}

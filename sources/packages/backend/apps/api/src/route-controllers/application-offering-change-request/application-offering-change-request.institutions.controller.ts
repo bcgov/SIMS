@@ -1,7 +1,20 @@
-import { Controller, Get, Param, ParseIntPipe, Query } from "@nestjs/common";
-import { ApiTags } from "@nestjs/swagger";
+import {
+  Body,
+  Controller,
+  Get,
+  NotFoundException,
+  Param,
+  ParseIntPipe,
+  Post,
+  Query,
+} from "@nestjs/common";
+import { ApiNotFoundResponse, ApiTags } from "@nestjs/swagger";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
-import { AllowAuthorizedParty, HasLocationAccess } from "../../auth/decorators";
+import {
+  AllowAuthorizedParty,
+  HasLocationAccess,
+  UserToken,
+} from "../../auth/decorators";
 import { ClientTypeBaseRoute } from "../../types";
 import { getUserFullName } from "../../utilities";
 import { PaginatedResultsAPIOutDTO } from "../models/pagination.dto";
@@ -13,9 +26,14 @@ import {
   OfferingChangePaginationOptionsAPIInDTO,
   InProgressOfferingChangePaginationOptionsAPIInDTO,
   CompletedOfferingChangePaginationOptionsAPIInDTO,
+  ApplicationOfferingChangesAPIOutDTO,
+  ApplicationOfferingChangeSummaryDetailAPIOutDTO,
+  CreateApplicationOfferingChangeRequestAPIInDTO,
 } from "./models/application-offering-change-request.institutions.dto";
 import { ApplicationOfferingChangeRequestService } from "../../services";
 import { ApplicationOfferingChangeRequestStatus } from "@sims/sims-db";
+import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
+import { IInstitutionUserToken } from "../../auth";
 
 /**
  * Application offering change request controller for institutions client.
@@ -51,7 +69,7 @@ export class ApplicationOfferingChangeRequestInstitutionsController extends Base
     const applications =
       await this.applicationOfferingChangeRequestService.getEligibleApplications(
         locationId,
-        pagination,
+        { pagination },
       );
     return {
       results: applications.results.map((eachApplication) => {
@@ -65,6 +83,42 @@ export class ApplicationOfferingChangeRequestInstitutionsController extends Base
         };
       }),
       count: applications.count,
+    };
+  }
+
+  /**
+   * Gets an eligible application that can be requested for application
+   * offering change.
+   * @param locationId location id.
+   * @param applicationId application id.
+   * @returns eligible application.
+   */
+  @ApiNotFoundResponse({
+    description: "Application not found or it is not eligible.",
+  })
+  @Get("available/application/:applicationId")
+  async getEligibleApplication(
+    @Param("locationId", ParseIntPipe) locationId: number,
+    @Param("applicationId", ParseIntPipe) applicationId: number,
+  ): Promise<ApplicationOfferingChangeSummaryDetailAPIOutDTO> {
+    const application =
+      await this.applicationOfferingChangeRequestService.getEligibleApplications(
+        locationId,
+        { applicationId },
+      );
+    if (!application) {
+      throw new NotFoundException(
+        "Application not found or it is not eligible.",
+      );
+    }
+    return {
+      applicationNumber: application.applicationNumber,
+      programId: application.currentAssessment.offering.educationProgram.id,
+      offeringId: application.currentAssessment.offering.id,
+      offeringIntensity:
+        application.currentAssessment.offering.offeringIntensity,
+      programYearId: application.programYear.id,
+      fullName: getUserFullName(application.student.user),
     };
   }
 
@@ -95,6 +149,7 @@ export class ApplicationOfferingChangeRequestInstitutionsController extends Base
         const offering =
           eachOfferingChange.application.currentAssessment.offering;
         return {
+          id: eachOfferingChange.id,
           applicationNumber: eachOfferingChange.application.applicationNumber,
           applicationId: eachOfferingChange.application.id,
           studyStartDate: offering.studyStartDate,
@@ -137,6 +192,7 @@ export class ApplicationOfferingChangeRequestInstitutionsController extends Base
         const offering =
           eachOfferingChange.application.currentAssessment.offering;
         return {
+          id: eachOfferingChange.id,
           applicationNumber: eachOfferingChange.application.applicationNumber,
           applicationId: eachOfferingChange.application.id,
           studyStartDate: offering.studyStartDate,
@@ -152,5 +208,71 @@ export class ApplicationOfferingChangeRequestInstitutionsController extends Base
       }),
       count: offeringChange.count,
     };
+  }
+
+  /**
+   * Gets the Application Offering Change Request details.
+   * @param applicationOfferingChangeRequestId the Application Offering Change Request id.
+   * @param locationId location id.
+   * @returns Application Offering Change Request details.
+   */
+  @Get(":applicationOfferingChangeRequestId")
+  @ApiNotFoundResponse({
+    description: "Not able to find an Application Offering Change Request.",
+  })
+  async getById(
+    @Param("applicationOfferingChangeRequestId", ParseIntPipe)
+    applicationOfferingChangeRequestId: number,
+    @Param("locationId", ParseIntPipe) locationId: number,
+  ): Promise<ApplicationOfferingChangesAPIOutDTO> {
+    const request = await this.applicationOfferingChangeRequestService.getById(
+      applicationOfferingChangeRequestId,
+      { locationId },
+    );
+    if (!request) {
+      throw new NotFoundException(
+        "Not able to find an Application Offering Change Request.",
+      );
+    }
+    return {
+      id: request.id,
+      status: request.applicationOfferingChangeRequestStatus,
+      applicationId: request.application.id,
+      applicationNumber: request.application.applicationNumber,
+      locationName: request.application.location.name,
+      activeOfferingId: request.activeOffering.id,
+      requestedOfferingId: request.requestedOffering.id,
+      requestedOfferingDescription: request.requestedOffering.name,
+      requestedOfferingProgramId: request.requestedOffering.educationProgram.id,
+      requestedOfferingProgramName:
+        request.requestedOffering.educationProgram.name,
+      reason: request.reason,
+      assessedNoteDescription: request.assessedNote?.description,
+      studentFullName: getUserFullName(request.application.student.user),
+    };
+  }
+
+  /**
+   * Creates a new application offering change request.
+   * @param locationId location id.
+   * @param payload information to create the new request.
+   * @returns newly change request id created.
+   */
+  @Post()
+  async createApplicationOfferingChangeRequest(
+    @UserToken() userToken: IInstitutionUserToken,
+    @Param("locationId", ParseIntPipe) locationId: number,
+    @Body() payload: CreateApplicationOfferingChangeRequestAPIInDTO,
+  ): Promise<PrimaryIdentifierAPIOutDTO> {
+    // TODO: Apply the same validations from PIR.
+    const applicationOfferingChangeRequest =
+      await this.applicationOfferingChangeRequestService.createRequest(
+        locationId,
+        payload.applicationId,
+        payload.offeringId,
+        payload.reason,
+        userToken.userId,
+      );
+    return { id: applicationOfferingChangeRequest.id };
   }
 }

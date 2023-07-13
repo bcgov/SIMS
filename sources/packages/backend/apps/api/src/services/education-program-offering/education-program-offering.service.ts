@@ -656,12 +656,17 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
    * Get offering details by offering id.
    * If isPrecedingOffering is supplied then retrieve the preceding offering details.
    * @param offeringId offering id.
-   * @param isPrecedingOffering when true preceding offering details are retrieved.
+   * @param options options for the query:
+   * - `locationId`: location for authorization.
+   * - `isPrecedingOffering`: when true preceding offering details are retrieved.
    * @returns offering object.
    */
   async getOfferingById(
     offeringId: number,
-    isPrecedingOffering?: boolean,
+    options?: {
+      locationId?: number;
+      isPrecedingOffering?: boolean;
+    },
   ): Promise<EducationProgramOffering> {
     const offeringQuery = this.repo
       .createQueryBuilder("offering")
@@ -694,13 +699,19 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
         "institution.id",
         "institution.legalOperatingName",
         "institution.operatingName",
+        "educationProgram.id",
+        "educationProgram.name",
+        "educationProgram.description",
+        "educationProgram.credentialType",
+        "educationProgram.deliveredOnline",
+        "educationProgram.deliveredOnSite",
       ])
       .innerJoin("offering.educationProgram", "educationProgram")
       .innerJoin("offering.institutionLocation", "institutionLocation")
       .innerJoin("institutionLocation.institution", "institution")
       .leftJoin("offering.assessedBy", "assessedBy");
 
-    if (isPrecedingOffering) {
+    if (options?.isPrecedingOffering) {
       offeringQuery
         .where((qb) => {
           const subQuery = qb
@@ -716,6 +727,12 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     } else {
       offeringQuery.where("offering.id= :offeringId", {
         offeringId,
+      });
+    }
+
+    if (options?.locationId) {
+      offeringQuery.andWhere("institutionLocation.id = :locationId", {
+        locationId: options.locationId,
       });
     }
 

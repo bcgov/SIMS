@@ -37,6 +37,8 @@ export enum AppRoutes {
   LocationUsers = "location-users/",
   ActiveApplicationsSummary = "active-applications/location/:locationId/summary",
   RequestApplicationOfferingChange = "location/:locationId/application-offering-change",
+  RequestApplicationOfferingChangeSubmit = "location/:locationId/application/:applicationId/application-offering-change/submit",
+  RequestApplicationOfferingChangeView = "location/:locationId/application-offering-change/:applicationOfferingChangeRequestId",
   ActiveApplicationEdit = "active-applications/location/:locationId/application/:applicationId",
   LocationProgramInfoRequestSummary = "program-info-request/location/:locationId/summary",
   LocationCOESummary = "confirmation-of-enrollment/location/:locationId/summary",

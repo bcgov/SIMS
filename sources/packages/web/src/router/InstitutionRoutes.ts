@@ -53,6 +53,8 @@ import StudentAppealRequest from "@/views/institution/student/applicationDetails
 import AssessmentAward from "@/views/institution/student/applicationDetails/AssessmentAward.vue";
 import NoticeOfAssessment from "@/views/institution/student/applicationDetails/NoticeOfAssessment.vue";
 import RequestApplicationChange from "@/views/institution/locations/request-a-change/RequestAChange.vue";
+import RequestApplicationChangeFormSubmit from "@/views/institution/locations/request-a-change/RequestAChangeFormSubmit.vue";
+import RequestApplicationChangeFormView from "@/views/institution/locations/request-a-change/RequestAChangeFormView.vue";
 
 export const institutionRoutes: Array<RouteRecordRaw> = [
   {
@@ -175,6 +177,48 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
         props: {
           default: (route: RouteLocationNormalized) => ({
             locationId: parseInt(route.params.locationId as string),
+          }),
+        },
+        meta: {
+          clientType: ClientIdType.Institution,
+          institutionUserTypes: [
+            InstitutionUserTypes.admin,
+            InstitutionUserTypes.user,
+          ],
+        },
+      },
+      {
+        path: AppRoutes.RequestApplicationOfferingChangeSubmit,
+        name: InstitutionRoutesConst.REQUEST_CHANGE_FORM_SUBMIT,
+        components: {
+          default: RequestApplicationChangeFormSubmit,
+        },
+        props: {
+          default: (route: RouteLocationNormalized) => ({
+            locationId: parseInt(route.params.locationId as string),
+            applicationId: parseInt(route.params.applicationId as string),
+          }),
+        },
+        meta: {
+          clientType: ClientIdType.Institution,
+          institutionUserTypes: [
+            InstitutionUserTypes.admin,
+            InstitutionUserTypes.user,
+          ],
+        },
+      },
+      {
+        path: AppRoutes.RequestApplicationOfferingChangeView,
+        name: InstitutionRoutesConst.REQUEST_CHANGE_FORM_VIEW,
+        components: {
+          default: RequestApplicationChangeFormView,
+        },
+        props: {
+          default: (route: RouteLocationNormalized) => ({
+            locationId: parseInt(route.params.locationId as string),
+            applicationOfferingChangeRequestId: parseInt(
+              route.params.applicationOfferingChangeRequestId as string,
+            ),
           }),
         },
         meta: {

@@ -206,7 +206,7 @@ export const InProgressOfferingChangeSummaryHeaders = [
   {
     title: "Action",
     sortable: false,
-    key: "applicationId",
+    key: "id",
   },
 ];
 
@@ -240,6 +240,6 @@ export const CompletedOfferingChangeSummaryHeaders = [
   {
     title: "Action",
     sortable: false,
-    key: "applicationId",
+    key: "id",
   },
 ];

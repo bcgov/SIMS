@@ -213,3 +213,24 @@ export class EducationProgramOfferingBasicDataAPIInDTO {
   @Expose()
   offeringName: string;
 }
+
+export interface EducationProgramOfferingSummaryViewAPIOutDTO {
+  id: number;
+  offeringName: string;
+  studyStartDate: string;
+  studyEndDate: string;
+  actualTuitionCosts: number;
+  programRelatedCosts: number;
+  mandatoryFees: number;
+  exceptionalExpenses: number;
+  offeringDelivered: string;
+  lacksStudyBreaks: boolean;
+  offeringIntensity: OfferingIntensity;
+  studyBreaks?: StudyBreakAPIOutDTO[];
+  locationName: string;
+  programId: number;
+  programName: string;
+  programDescription: string;
+  programCredential: string;
+  programDelivery: string;
+}
