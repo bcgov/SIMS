@@ -17,7 +17,7 @@ import {
   saveFakeStudent,
 } from "@sims/test-utils";
 import { Application, Institution, InstitutionLocation } from "@sims/sims-db";
-import { determinePDStatus, getUserFullName } from "../../../../utilities";
+import { getUserFullName } from "../../../../utilities";
 import { getISODateOnlyString } from "@sims/utilities";
 import { saveStudentApplicationForCollegeC } from "./student.institutions.utils";
 
@@ -86,7 +86,7 @@ describe("StudentInstitutionsController(e2e)-getStudentProfile", () => {
           },
           phone: student.contactInfo.phone,
         },
-        pdStatus: determinePDStatus(student),
+        pdStatus: student.pdStatus,
         validSin: student.sinValidation.isValidSIN,
         sin: student.sinValidation.sin,
       });

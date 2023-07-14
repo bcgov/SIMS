@@ -15,6 +15,7 @@ import { StudentUserToken } from "../../auth/userToken.interface";
 import { ClientTypeBaseRoute } from "../../types";
 import BaseController from "../BaseController";
 import { ATBCIntegrationProcessingService } from "@sims/integrations/atbc-integration";
+import { PDStatus } from "@sims/sims-db";
 
 @AllowAuthorizedParty(AuthorizedParties.student)
 @RequiresStudentAccount()
@@ -45,15 +46,11 @@ export class ATBCStudentController extends BaseController {
     const student = await this.studentService.getStudentById(
       studentUserToken.studentId,
     );
-    // Check the PD status in DB. Student should only be allowed to check the PD status once.
-    // studentPDSentAt is set when student apply for PD status for the first.
-    // studentPDVerified is null before PD scheduled job update status.
-    // studentPDVerified is true if PD confirmed by ATBC or is true from sfas_individual table.
-    // studentPDVerified is false if PD denied by ATBC.
+    // To apply for a PD, student must have completed the SIN validation and
+    // not applied for PD already.
     if (
       !student.sinValidation.isValidSIN ||
-      !!student.studentPDSentAt ||
-      student.studentPDVerified !== null
+      student.pdStatus !== PDStatus.NotRequested
     ) {
       throw new UnprocessableEntityException(
         "Either the client does not have a validated SIN or the request was already sent to ATBC.",
