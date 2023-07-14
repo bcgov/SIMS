@@ -30,7 +30,7 @@ export interface MSFAACancellationNotification {
   userId: number;
 }
 
-export interface OfferingChangeRequestInProgressWithStudentNotification {
+export interface ApplicationOfferingChangeRequestInProgressWithStudentNotification {
   givenNames: string;
   lastName: string;
   toAddress: string;

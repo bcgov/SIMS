@@ -15,7 +15,7 @@ import {
   StudentNotification,
   ECEResponseFileProcessingNotification,
   NotificationEmailMessage,
-  OfferingChangeRequestInProgressWithStudentNotification,
+  ApplicationOfferingChangeRequestInProgressWithStudentNotification,
 } from "..";
 import { GCNotifyService } from "./gc-notify.service";
 import { NotificationService } from "./notification.service";
@@ -158,7 +158,7 @@ export class NotificationActionsService {
    * @param entityManager optional entity manager to execute in transaction.
    */
   async saveOfferingChangeRequestInProgressWithStudent(
-    notification: OfferingChangeRequestInProgressWithStudentNotification,
+    notification: ApplicationOfferingChangeRequestInProgressWithStudentNotification,
     auditUserId: number,
     entityManager?: EntityManager,
   ): Promise<void> {

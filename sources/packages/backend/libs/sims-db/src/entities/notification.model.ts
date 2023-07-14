@@ -137,7 +137,7 @@ export enum NotificationMessageType {
    */
   MSFAACancellation = 12,
   /**
-   *  OfferingChangeRequest is in progress with student.
+   *  An Application Offering Change Request is in progress with the student.
    */
   OfferingChangeRequestInProgressWithStudent = 13,
 }

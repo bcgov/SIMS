@@ -330,8 +330,9 @@ export class ApplicationOfferingChangeRequestService {
       ApplicationOfferingChangeRequestStatus.InProgressWithStudent;
     newRequest.reason = reason;
     return this.dataSource.transaction(async (transactionEntityManager) => {
-      const applicationOfferingChangeRequest =
-        this.applicationOfferingChangeRequestRepo.save(newRequest);
+      const applicationOfferingChangeRequest = await transactionEntityManager
+        .getRepository(ApplicationOfferingChangeRequest)
+        .save(newRequest);
       const systemUser = await this.systemUsersService.systemUser();
       await this.notificationActionsService.saveOfferingChangeRequestInProgressWithStudent(
         {
