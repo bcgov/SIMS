@@ -10,16 +10,20 @@ import {
   getUserFullNameLikeSearch,
   transformToApplicationEntitySortField,
 } from "@sims/sims-db";
-import { Brackets, Repository } from "typeorm";
+import { DataSource, Brackets, Repository } from "typeorm";
 import { PaginatedResults, PaginationOptions } from "../../utilities";
+import { NotificationActionsService, SystemUsersService } from "@sims/services";
 
 @Injectable()
 export class ApplicationOfferingChangeRequestService {
   constructor(
+    private readonly dataSource: DataSource,
     @InjectRepository(Application)
     private readonly applicationRepo: Repository<Application>,
     @InjectRepository(ApplicationOfferingChangeRequest)
     private readonly applicationOfferingChangeRequestRepo: Repository<ApplicationOfferingChangeRequest>,
+    private readonly notificationActionsService: NotificationActionsService,
+    private readonly systemUsersService: SystemUsersService,
   ) {}
 
   /**
@@ -81,8 +85,10 @@ export class ApplicationOfferingChangeRequestService {
         "offering.studyEndDate",
         "offering.offeringIntensity",
         "student.id",
+        "user.id",
         "user.firstName",
         "user.lastName",
+        "user.email",
       ])
       .innerJoin("application.programYear", "programYear")
       .innerJoin("application.currentAssessment", "currentAssessment")
@@ -290,7 +296,7 @@ export class ApplicationOfferingChangeRequestService {
   }
 
   /**
-   * Creates a new application offering change request.
+   * Creates a new application offering change request and saves an offering change request inprogress with student notification message to the database.
    * @param locationId location id used for authorization.
    * @param applicationId application that will have the change requested.
    * @param offeringId offering being requested to be changed.
@@ -323,7 +329,21 @@ export class ApplicationOfferingChangeRequestService {
     newRequest.applicationOfferingChangeRequestStatus =
       ApplicationOfferingChangeRequestStatus.InProgressWithStudent;
     newRequest.reason = reason;
-
-    return this.applicationOfferingChangeRequestRepo.save(newRequest);
+    return this.dataSource.transaction(async (transactionEntityManager) => {
+      const applicationOfferingChangeRequest =
+        this.applicationOfferingChangeRequestRepo.save(newRequest);
+      const systemUser = await this.systemUsersService.systemUser();
+      await this.notificationActionsService.saveOfferingChangeRequestInProgressWithStudent(
+        {
+          givenNames: application.student.user.firstName,
+          lastName: application.student.user.lastName,
+          toAddress: application.student.user.email,
+          userId: application.student.user.id,
+        },
+        systemUser.id,
+        transactionEntityManager,
+      );
+      return applicationOfferingChangeRequest;
+    });
   }
 }
