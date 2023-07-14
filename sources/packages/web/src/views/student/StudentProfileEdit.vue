@@ -26,8 +26,9 @@ import PDStatusApplicationModal from "@/components/students/modals/PDStatusAppli
 import { StudentService } from "@/services/StudentService";
 import { UpdateStudentAPIInDTO } from "@/services/http/dto/Student.dto";
 import { AuthService } from "@/services/AuthService";
-import { FormIOForm } from "@/types";
+import { ApiProcessError, FormIOForm } from "@/types";
 import StudentProfileForm from "@/components/common/StudentProfileForm.vue";
+import { PD_REQUEST_NOT_ALLOWED } from "@/constants";
 
 export default defineComponent({
   components: {
@@ -64,9 +65,16 @@ export default defineComponent({
         snackBar.success(
           "Your application is submitted. The outcome will display on your profile",
         );
-      } catch {
+      } catch (error: unknown) {
+        if (
+          error instanceof ApiProcessError &&
+          error.errorType === PD_REQUEST_NOT_ALLOWED
+        ) {
+          snackBar.error(`${error.message}`);
+          return;
+        }
         snackBar.error(
-          "An error happened during the apply PD process. Please try after sometime.",
+          "Unexpected error while applying for PD. Please try after sometime.",
         );
       }
       await getStudentDetails();

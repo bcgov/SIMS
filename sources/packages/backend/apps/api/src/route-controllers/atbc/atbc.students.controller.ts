@@ -12,10 +12,11 @@ import {
   UserToken,
 } from "../../auth/decorators";
 import { StudentUserToken } from "../../auth/userToken.interface";
-import { ClientTypeBaseRoute } from "../../types";
+import { ApiProcessError, ClientTypeBaseRoute } from "../../types";
 import BaseController from "../BaseController";
 import { ATBCIntegrationProcessingService } from "@sims/integrations/atbc-integration";
 import { PDStatus } from "@sims/sims-db";
+import { PD_REQUEST_NOT_ALLOWED } from "../../constants";
 
 @AllowAuthorizedParty(AuthorizedParties.student)
 @RequiresStudentAccount()
@@ -46,14 +47,17 @@ export class ATBCStudentController extends BaseController {
     const student = await this.studentService.getStudentById(
       studentUserToken.studentId,
     );
-    // To apply for a PD, student must have completed the SIN validation and
+    // To apply for a PD, SIN validation must be completed for the student and
     // not applied for PD already.
     if (
       !student.sinValidation.isValidSIN ||
       student.pdStatus !== PDStatus.NotRequested
     ) {
       throw new UnprocessableEntityException(
-        "Either the client does not have a validated SIN or the request was already sent to ATBC.",
+        new ApiProcessError(
+          "Either SIN validation is not complete or requested for PD already.",
+          PD_REQUEST_NOT_ALLOWED,
+        ),
       );
     }
     // This is the only place in application where we call an external application

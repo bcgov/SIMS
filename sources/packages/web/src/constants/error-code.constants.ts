@@ -73,3 +73,7 @@ export const DUPLICATE_INSTITUTION_LOCATION_CODE =
  * Duplicate SABC code for the institution.
  */
 export const DUPLICATE_SABC_CODE = "DUPLICATE_SABC_CODE";
+/**
+ * Request for permanent disability not allowed.
+ */
+export const PD_REQUEST_NOT_ALLOWED = "PD_REQUEST_NOT_ALLOWED";

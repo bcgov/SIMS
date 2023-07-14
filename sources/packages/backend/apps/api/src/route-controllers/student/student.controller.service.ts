@@ -114,7 +114,6 @@ export class StudentControllerService {
    * @returns student profile details.
    */
   async getStudentProfile(studentId: number): Promise<StudentProfileAPIOutDTO> {
-    console.log(studentId);
     const student = await this.studentService.getStudentById(studentId);
     if (!student) {
       throw new NotFoundException("Student not found.");
