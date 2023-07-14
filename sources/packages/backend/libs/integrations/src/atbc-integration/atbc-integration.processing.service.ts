@@ -45,7 +45,7 @@ export class ATBCIntegrationProcessingService {
     if (response) {
       const auditUser = await this.systemUsersService.systemUser();
       // Update PD sent date.
-      await this.studentService.updatePDSentDate(student.id, auditUser);
+      await this.studentService.updatePDRequested(student.id, auditUser);
     }
     return response;
   }

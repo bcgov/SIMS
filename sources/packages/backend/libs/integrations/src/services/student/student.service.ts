@@ -1,5 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import {
+  PDStatus,
   RecordDataModelService,
   SINValidation,
   Student,
@@ -7,7 +8,7 @@ import {
 } from "@sims/sims-db";
 import { getUTCNow } from "@sims/utilities";
 import { InjectLogger, LoggerService } from "@sims/utilities/logger";
-import { DataSource, EntityManager } from "typeorm";
+import { DataSource, EntityManager, UpdateResult } from "typeorm";
 
 @Injectable()
 export class StudentService extends RecordDataModelService<Student> {
@@ -32,23 +33,25 @@ export class StudentService extends RecordDataModelService<Student> {
   }
 
   /**
-   * Update the PD Sent Date
+   * Update the PD status to requested.
    * @param studentId student who's PD status is to be updated.
    * @param auditUser user who is making the changes.
-   * @returns Student who's PD sent date is updated.
+   * @returns update result.
    */
-  async updatePDSentDate(studentId: number, auditUser: User): Promise<Student> {
-    // get the Student Object
-    const studentToUpdate = await this.repo.findOneOrFail({
-      where: { id: studentId },
-    });
-    if (studentToUpdate) {
-      const now = new Date();
-      studentToUpdate.studentPDSentAt = now;
-      studentToUpdate.modifier = auditUser;
-      studentToUpdate.updatedAt = now;
-      return this.repo.save(studentToUpdate);
-    }
+  async updatePDRequested(
+    studentId: number,
+    auditUser: User,
+  ): Promise<UpdateResult> {
+    const now = new Date();
+    return this.repo.update(
+      { id: studentId },
+      {
+        studentPDSentAt: now,
+        modifier: auditUser,
+        updatedAt: now,
+        pdStatus: PDStatus.Requested,
+      },
+    );
   }
 
   /**

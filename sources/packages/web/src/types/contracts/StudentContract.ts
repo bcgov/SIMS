@@ -10,13 +10,14 @@ export interface StudentProfile extends StudentProfileAPIOutDTO {
 }
 
 /**
- * Enumeration for student permanent disability status.
+ * Permanent disability status of student.
  */
-export enum StudentPDStatus {
-  Yes = "Yes",
-  No = "No",
-  NotRequested = "Not Requested",
-  Pending = "Pending",
+export enum PDStatus {
+  NotRequested = "Not requested",
+  Requested = "Requested",
+  PD = "PD",
+  PPD = "PPD",
+  Declined = "Declined",
 }
 
 /**
