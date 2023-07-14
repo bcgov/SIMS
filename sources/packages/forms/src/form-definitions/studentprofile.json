@@ -1730,9 +1730,9 @@
           "tags": [],
           "properties": {},
           "conditional": {
-            "show": true,
+            "show": "true",
             "when": "pdStatus",
-            "eq": "Not Requested",
+            "eq": "Not requested",
             "json": ""
           },
           "customConditional": "",
