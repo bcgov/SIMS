@@ -20,7 +20,7 @@ High, new features released weekly
 
 ## Continue Reading
 
-- [Technologies Overview](./docs/technologies-overview.md)
+- [Technologies Overview](https://github.com/bcgov/SIMS/wiki/Technologies-Overview)
 - [BCeID-Web Service Integration](./docs/bceid-webservice-integration.md)
 - How To
   - [DevOps](https://github.com/bcgov/SIMS/wiki/DevOps-and-Running-the-Application#devops)
