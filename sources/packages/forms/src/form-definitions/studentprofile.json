@@ -1613,13 +1613,13 @@
           "tags": []
         },
         {
-          "label": "Permanent disability (PD) status",
+          "label": "Disability status",
           "labelPosition": "top",
           "labelWidth": "",
           "labelMargin": "",
           "placeholder": "",
           "description": "",
-          "tooltip": "If you have a permanent disability, you may apply for a status here, that we will use to help you apply for eligible grants or bursaries in your applications. Please go to <a href='https://studentaidbc.ca/' target='_blank'>studentaidbc.ca</a> for more information.",
+          "tooltip": "If you have a disability, you may apply for a status here, that we will use to help you apply for eligible grants or bursaries in your applications. Please go to <a href='https://studentaidbc.ca/' target='_blank'>studentaidbc.ca</a> for more information.",
           "prefix": "",
           "suffix": "",
           "widget": {
@@ -1673,11 +1673,11 @@
           "unique": false,
           "errorLabel": "",
           "errors": "",
-          "key": "pdStatus",
+          "key": "disabilityStatus",
           "tags": [],
           "properties": {},
           "conditional": {
-            "show": null,
+            "show": "",
             "when": null,
             "eq": "",
             "json": ""
@@ -1702,7 +1702,8 @@
           "addons": [],
           "inputType": "text",
           "id": "eeplqe",
-          "defaultValue": ""
+          "defaultValue": "",
+          "lockKey": true
         },
         {
           "label": "Apply for PD status",
@@ -1731,7 +1732,7 @@
           "properties": {},
           "conditional": {
             "show": "true",
-            "when": "pdStatus",
+            "when": "disabilityStatus",
             "eq": "Not requested",
             "json": ""
           },
