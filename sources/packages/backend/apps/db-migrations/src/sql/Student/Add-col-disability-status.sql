@@ -1,7 +1,7 @@
 ALTER TABLE
     sims.students
 ADD
-    COLUMN IF NOT EXISTS disability_status sims.disability_status;
+    COLUMN IF NOT EXISTS disability_status sims.disability_status NOT NULL DEFAULT 'Not requested';
 
 COMMENT ON COLUMN sims.students.disability_status IS 'Disability status of the student. The disability could be PD or PPD.';
 
@@ -16,11 +16,3 @@ SET
         WHEN pd_verified = false THEN 'Declined'
         ELSE 'Not requested' :: sims.disability_status
     END;
-
--- Set not null constraint after updating the column.
-ALTER TABLE
-    sims.students
-ALTER COLUMN
-    disability_status
-SET
-    NOT NULL;

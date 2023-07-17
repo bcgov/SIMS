@@ -15,6 +15,8 @@ export class CreateStudentAPIInDTO extends AddressDetailsFormAPIDTO {
   sinNumber: string;
   @Expose()
   gender: string;
+  @Expose()
+  sinConsent: boolean;
 }
 
 /**

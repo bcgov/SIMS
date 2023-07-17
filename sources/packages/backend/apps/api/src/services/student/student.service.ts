@@ -168,16 +168,19 @@ export class StudentService extends RecordDataModelService<Student> {
     student.sinConsent = studentInfo.sinConsent;
     try {
       // Get PD status from SFAS integration data.
-      const sfasStudentPDVerified =
-        await this.sfasIndividualService.getPDStatus(
+      const sfasIndividual =
+        await this.sfasIndividualService.getIndividualStudent(
           user.lastName,
           student.birthDate,
           studentSIN,
         );
-      student.studentPDVerified = sfasStudentPDVerified;
-      student.disabilityStatus = this.getDisabilityStatus(
-        sfasStudentPDVerified,
-      );
+      // If SFAS individual exist with matching details, read the pd status.
+      if (sfasIndividual) {
+        student.studentPDVerified = sfasIndividual.pdStatus;
+        student.disabilityStatus = this.getDisabilityStatus(
+          sfasIndividual.pdStatus,
+        );
+      }
     } catch (error) {
       this.logger.error("Unable to get SFAS information of student.");
       this.logger.error(error);
