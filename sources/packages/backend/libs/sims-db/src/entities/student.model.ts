@@ -109,7 +109,7 @@ export class Student extends RecordDataModel {
     name: "disability_status",
     type: "enum",
     enum: DisabilityStatus,
-    enumName: "PDStatus",
+    enumName: "DisabilityStatus",
   })
   disabilityStatus: DisabilityStatus;
 }

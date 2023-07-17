@@ -175,7 +175,9 @@ export class StudentService extends RecordDataModelService<Student> {
           studentSIN,
         );
       student.studentPDVerified = sfasStudentPDVerified;
-      student.disabilityStatus = this.getPDStatus(sfasStudentPDVerified);
+      student.disabilityStatus = this.getDisabilityStatus(
+        sfasStudentPDVerified,
+      );
     } catch (error) {
       this.logger.error("Unable to get SFAS information of student.");
       this.logger.error(error);
@@ -674,11 +676,11 @@ export class StudentService extends RecordDataModelService<Student> {
   }
 
   /**
-   * Get student PD status.
+   * Get student disability status.
    * @param pdVerified sfas pdVerified flag.
-   * @returns PD status.
+   * @returns disability status.
    */
-  private getPDStatus(pdVerified: boolean): DisabilityStatus {
+  private getDisabilityStatus(pdVerified: boolean): DisabilityStatus {
     if (pdVerified) {
       return DisabilityStatus.PD;
     }

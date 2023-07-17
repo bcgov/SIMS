@@ -33,12 +33,12 @@ export class StudentService extends RecordDataModelService<Student> {
   }
 
   /**
-   * Update the PD status to requested.
+   * Update the disability status to requested.
    * @param studentId student who's PD status is to be updated.
    * @param auditUser user who is making the changes.
    * @returns update result.
    */
-  async updatePDRequested(
+  async updateDisabilityRequested(
     studentId: number,
     auditUser: User,
   ): Promise<UpdateResult> {

@@ -74,7 +74,7 @@ export class StudentService {
   }
 
   async applyForDisabilityStatus(): Promise<void> {
-    return ApiClient.Students.applyForDisabilityStatus();
+    await ApiClient.Students.applyForDisabilityStatus();
   }
 
   /**

@@ -40,22 +40,22 @@ export class ATBCStudentController extends BaseController {
     description:
       "Either the client does not have a validated SIN or the request was already sent to ATBC.",
   })
-  async applyForPDStatus(
+  async applyForDisabilityStatus(
     @UserToken() studentUserToken: StudentUserToken,
   ): Promise<void> {
     // Get student details
     const student = await this.studentService.getStudentById(
       studentUserToken.studentId,
     );
-    // To apply for a PD, SIN validation must be completed for the student and
-    // not applied for PD already.
+    // To apply for a disability status, SIN validation must be completed for the student and
+    // not applied for disability status already.
     if (
       !student.sinValidation.isValidSIN ||
       student.disabilityStatus !== DisabilityStatus.NotRequested
     ) {
       throw new UnprocessableEntityException(
         new ApiProcessError(
-          "Either SIN validation is not complete or requested for PD already.",
+          "Either SIN validation is not complete or requested for disability status already.",
           DISABILITY_REQUEST_NOT_ALLOWED,
         ),
       );
@@ -64,6 +64,8 @@ export class ATBCStudentController extends BaseController {
     // in API instead of using queues. This is because once the student applies for PD,
     // after a successful API call the apply for PD button needs to be disabled to avoid
     // duplicate requests coming.
-    await this.atbcIntegrationProcessingService.applyForPDStatus(student.id);
+    await this.atbcIntegrationProcessingService.applyForDisabilityStatus(
+      student.id,
+    );
   }
 }

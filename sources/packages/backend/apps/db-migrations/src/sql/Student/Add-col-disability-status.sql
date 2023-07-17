@@ -3,7 +3,7 @@ ALTER TABLE
 ADD
     COLUMN IF NOT EXISTS disability_status sims.disability_status;
 
-COMMENT ON COLUMN sims.students.disability_status IS 'Disability status of the student.';
+COMMENT ON COLUMN sims.students.disability_status IS 'Disability status of the student. The disability could be PD or PPD.';
 
 -- Update the disability_status column based on pd_verified and pd_date_sent for existing data.
 UPDATE

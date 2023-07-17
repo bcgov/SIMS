@@ -1,4 +1,4 @@
-import { FileOriginType, PDStatus } from "@/types";
+import { FileOriginType, DisabilityStatus } from "@/types";
 import { ContactInformationAPIOutDTO } from "./Address.dto";
 import { AddressDetailsFormAPIDTO } from "./Common.dto";
 import { Expose } from "class-transformer";
@@ -41,7 +41,7 @@ export interface StudentProfileAPIOutDTO {
   dateOfBirth: string;
   contact: ContactInformationAPIOutDTO;
   validSin: boolean;
-  disabilityStatus: PDStatus;
+  disabilityStatus: DisabilityStatus;
   sin: string;
   sinConsent: boolean;
   hasRestriction?: boolean;
