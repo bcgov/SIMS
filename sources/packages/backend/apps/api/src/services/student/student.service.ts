@@ -14,7 +14,7 @@ import {
   DisbursementOverawardOriginType,
   RestrictionNotificationType,
   StudentRestriction,
-  PDStatus,
+  DisabilityStatus,
 } from "@sims/sims-db";
 import { DataSource, EntityManager } from "typeorm";
 import { StudentUserToken } from "../../auth/userToken.interface";
@@ -70,7 +70,7 @@ export class StudentService extends RecordDataModelService<Student> {
         "student.studentPDVerified",
         "student.studentPDSentAt",
         "student.studentPDUpdateAt",
-        "student.pdStatus",
+        "student.disabilityStatus",
         "sinValidation.id",
         "sinValidation.sin",
         "sinValidation.isValidSIN",
@@ -175,7 +175,7 @@ export class StudentService extends RecordDataModelService<Student> {
           studentSIN,
         );
       student.studentPDVerified = sfasStudentPDVerified;
-      student.pdStatus = this.getPDStatus(sfasStudentPDVerified);
+      student.disabilityStatus = this.getPDStatus(sfasStudentPDVerified);
     } catch (error) {
       this.logger.error("Unable to get SFAS information of student.");
       this.logger.error(error);
@@ -678,13 +678,13 @@ export class StudentService extends RecordDataModelService<Student> {
    * @param pdVerified sfas pdVerified flag.
    * @returns PD status.
    */
-  private getPDStatus(pdVerified: boolean): PDStatus {
+  private getPDStatus(pdVerified: boolean): DisabilityStatus {
     if (pdVerified) {
-      return PDStatus.PD;
+      return DisabilityStatus.PD;
     }
     if (pdVerified === false) {
-      return PDStatus.Declined;
+      return DisabilityStatus.Declined;
     }
-    return PDStatus.NotRequested;
+    return DisabilityStatus.NotRequested;
   }
 }

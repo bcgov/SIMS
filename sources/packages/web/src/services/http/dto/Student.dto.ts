@@ -41,7 +41,7 @@ export interface StudentProfileAPIOutDTO {
   dateOfBirth: string;
   contact: ContactInformationAPIOutDTO;
   validSin: boolean;
-  pdStatus: PDStatus;
+  disabilityStatus: PDStatus;
   sin: string;
   sinConsent: boolean;
   hasRestriction?: boolean;

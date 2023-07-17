@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import {
-  PDStatus,
+  DisabilityStatus,
   RecordDataModelService,
   SINValidation,
   Student,
@@ -49,7 +49,7 @@ export class StudentService extends RecordDataModelService<Student> {
         studentPDSentAt: now,
         modifier: auditUser,
         updatedAt: now,
-        pdStatus: PDStatus.Requested,
+        disabilityStatus: DisabilityStatus.Requested,
       },
     );
   }

@@ -73,8 +73,8 @@ export class StudentService {
     await ApiClient.Students.synchronizeFromUserToken();
   }
 
-  async applyForPDStatus(): Promise<void> {
-    return ApiClient.Students.applyForPDStatus();
+  async applyForDisabilityStatus(): Promise<void> {
+    return ApiClient.Students.applyForDisabilityStatus();
   }
 
   /**

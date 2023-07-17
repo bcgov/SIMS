@@ -84,4 +84,4 @@ export * from "./queue_configuration.model";
 export * from "./student-assessment-status.type";
 export * from "./application-offering-change-request-status.type";
 export * from "./application-offering-change-request.model";
-export * from "./student-pd-status.type";
+export * from "./student-disability-status.type";

@@ -15,8 +15,8 @@ import { StudentUserToken } from "../../auth/userToken.interface";
 import { ApiProcessError, ClientTypeBaseRoute } from "../../types";
 import BaseController from "../BaseController";
 import { ATBCIntegrationProcessingService } from "@sims/integrations/atbc-integration";
-import { PDStatus } from "@sims/sims-db";
-import { PD_REQUEST_NOT_ALLOWED } from "../../constants";
+import { DisabilityStatus } from "@sims/sims-db";
+import { DISABILITY_REQUEST_NOT_ALLOWED } from "../../constants";
 
 @AllowAuthorizedParty(AuthorizedParties.student)
 @RequiresStudentAccount()
@@ -31,11 +31,11 @@ export class ATBCStudentController extends BaseController {
   }
 
   /**
-   * Creates the request for ATBC PD evaluation.
-   * Student should only be allowed to check the PD status once and the
+   * Creates the request for ATBC disability evaluation.
+   * Student should only be allowed to check the disability status once and the
    * SIN validation must be already done with a successful result.
    */
-  @Patch("apply-pd-status")
+  @Patch("apply-disability-status")
   @ApiUnprocessableEntityResponse({
     description:
       "Either the client does not have a validated SIN or the request was already sent to ATBC.",
@@ -51,12 +51,12 @@ export class ATBCStudentController extends BaseController {
     // not applied for PD already.
     if (
       !student.sinValidation.isValidSIN ||
-      student.pdStatus !== PDStatus.NotRequested
+      student.disabilityStatus !== DisabilityStatus.NotRequested
     ) {
       throw new UnprocessableEntityException(
         new ApiProcessError(
           "Either SIN validation is not complete or requested for PD already.",
-          PD_REQUEST_NOT_ALLOWED,
+          DISABILITY_REQUEST_NOT_ALLOWED,
         ),
       );
     }

@@ -12,7 +12,7 @@ import {
 import { ColumnNames, TableNames } from "../constant";
 import { RecordDataModel } from "./record.model";
 import { User } from "./user.model";
-import { ContactInfo, Note, PDStatus, StudentRestriction } from ".";
+import { ContactInfo, Note, DisabilityStatus, StudentRestriction } from ".";
 import { SINValidation } from "./sin-validation.model";
 
 @Entity({ name: TableNames.Student })
@@ -103,13 +103,13 @@ export class Student extends RecordDataModel {
   studentRestrictions?: StudentRestriction[];
 
   /**
-   * Permanent disability status of the student.
+   * Disability status of the student.
    */
   @Column({
-    name: "pd_status",
+    name: "disability_status",
     type: "enum",
-    enum: PDStatus,
+    enum: DisabilityStatus,
     enumName: "PDStatus",
   })
-  pdStatus: PDStatus;
+  disabilityStatus: DisabilityStatus;
 }

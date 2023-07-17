@@ -17,7 +17,7 @@ import {
   FileOriginType,
   NOTE_DESCRIPTION_MAX_LENGTH,
   FILE_NAME_MAX_LENGTH,
-  PDStatus,
+  DisabilityStatus,
 } from "@sims/sims-db";
 import {
   AddressAPIOutDTO,
@@ -180,7 +180,7 @@ export class StudentProfileAPIOutDTO {
   dateOfBirth: string;
   contact: ContactInformationAPIOutDTO;
   validSin: boolean;
-  pdStatus: PDStatus;
+  disabilityStatus: DisabilityStatus;
   sin: string;
 }
 

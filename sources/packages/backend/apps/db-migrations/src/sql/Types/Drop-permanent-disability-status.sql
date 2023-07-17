@@ -1,1 +1,0 @@
-DROP TYPE sims.permanent_disability_status;

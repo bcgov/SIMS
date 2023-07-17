@@ -131,7 +131,7 @@ export class StudentControllerService {
         address: transformAddressDetailsForAddressBlockForm(address),
         phone: student.contactInfo.phone,
       },
-      pdStatus: student.pdStatus,
+      disabilityStatus: student.disabilityStatus,
       validSin: student.sinValidation.isValidSIN,
       sin: student.sinValidation.sin,
     };

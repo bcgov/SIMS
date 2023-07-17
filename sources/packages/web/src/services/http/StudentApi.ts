@@ -66,8 +66,11 @@ export class StudentApi extends HttpBaseClient {
    * Student should only be allowed to check the PD status once and the
    * SIN validation must be already done with a successful result.
    */
-  async applyForPDStatus(): Promise<void> {
-    await this.patchCall(this.addClientRoot("atbc/apply-pd-status"), null);
+  async applyForDisabilityStatus(): Promise<void> {
+    await this.patchCall(
+      this.addClientRoot("atbc/apply-disability-status"),
+      null,
+    );
   }
 
   /**

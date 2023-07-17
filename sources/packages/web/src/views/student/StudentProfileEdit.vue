@@ -28,7 +28,7 @@ import { UpdateStudentAPIInDTO } from "@/services/http/dto/Student.dto";
 import { AuthService } from "@/services/AuthService";
 import { ApiProcessError, FormIOForm } from "@/types";
 import StudentProfileForm from "@/components/common/StudentProfileForm.vue";
-import { PD_REQUEST_NOT_ALLOWED } from "@/constants";
+import { DISABILITY_REQUEST_NOT_ALLOWED } from "@/constants";
 
 export default defineComponent({
   components: {
@@ -61,20 +61,20 @@ export default defineComponent({
 
     const applyPDStatus = async () => {
       try {
-        await StudentService.shared.applyForPDStatus();
+        await StudentService.shared.applyForDisabilityStatus();
         snackBar.success(
           "Your application is submitted. The outcome will display on your profile",
         );
       } catch (error: unknown) {
         if (
           error instanceof ApiProcessError &&
-          error.errorType === PD_REQUEST_NOT_ALLOWED
+          error.errorType === DISABILITY_REQUEST_NOT_ALLOWED
         ) {
           snackBar.error(`${error.message}`);
           return;
         }
         snackBar.error(
-          "Unexpected error while applying for PD. Please try after sometime.",
+          "Unexpected error while applying for disability status. Please try after sometime.",
         );
       }
       await getStudentDetails();

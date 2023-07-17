@@ -154,7 +154,7 @@ export default defineComponent({
         studentPhoneNumber: studentInfo.contact.phone,
         studentHomeAddress: formattedAddress,
         studentEmail: studentInfo.email,
-        pdStatus: studentInfo.pdStatus,
+        disabilityStatus: studentInfo.disabilityStatus,
       };
       const programYear = {
         programYearStartDate: applicationData.programYearStartDate,

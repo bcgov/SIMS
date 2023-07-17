@@ -124,6 +124,6 @@ export const DUPLICATE_SABC_CODE = "DUPLICATE_SABC_CODE";
 export const INSTITUTION_LOCATION_NOT_VALID = "INSTITUTION_LOCATION_NOT_VALID";
 
 /**
- * Request for permanent disability not allowed.
+ * Request for disability not allowed.
  */
-export const PD_REQUEST_NOT_ALLOWED = "PD_REQUEST_NOT_ALLOWED";
+export const DISABILITY_REQUEST_NOT_ALLOWED = "DISABILITY_REQUEST_NOT_ALLOWED";

@@ -70,7 +70,7 @@ export enum StudentProfileFormModes {
 
 export type StudentProfileFormModel = Pick<
   StudentProfileAPIOutDTO,
-  "firstName" | "lastName" | "gender" | "email" | "pdStatus"
+  "firstName" | "lastName" | "gender" | "email" | "disabilityStatus"
 > &
   AddressDetailsFormAPIDTO & {
     phone: string;
