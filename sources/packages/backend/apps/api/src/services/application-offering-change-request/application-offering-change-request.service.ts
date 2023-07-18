@@ -334,7 +334,7 @@ export class ApplicationOfferingChangeRequestService {
         .getRepository(ApplicationOfferingChangeRequest)
         .save(newRequest);
       const systemUser = await this.systemUsersService.systemUser();
-      await this.notificationActionsService.saveOfferingChangeRequestInProgressWithStudent(
+      await this.notificationActionsService.saveApplicationOfferingChangeRequestInProgressWithStudent(
         {
           givenNames: application.student.user.firstName,
           lastName: application.student.user.lastName,

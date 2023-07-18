@@ -157,13 +157,13 @@ export class NotificationActionsService {
    * @param auditUserId user that should be considered the one that is causing the changes.
    * @param entityManager optional entity manager to execute in transaction.
    */
-  async saveOfferingChangeRequestInProgressWithStudent(
+  async saveApplicationOfferingChangeRequestInProgressWithStudent(
     notification: ApplicationOfferingChangeRequestInProgressWithStudentNotification,
     auditUserId: number,
     entityManager?: EntityManager,
   ): Promise<void> {
     const templateId = await this.notificationMessageService.getTemplateId(
-      NotificationMessageType.OfferingChangeRequestInProgressWithStudent,
+      NotificationMessageType.ApplicationOfferingChangeRequestInProgressWithStudent,
     );
     const messagePayload: NotificationEmailMessage = {
       email_address: notification.toAddress,
@@ -176,7 +176,7 @@ export class NotificationActionsService {
     const notificationToSend = {
       userId: notification.userId,
       messageType:
-        NotificationMessageType.OfferingChangeRequestInProgressWithStudent,
+        NotificationMessageType.ApplicationOfferingChangeRequestInProgressWithStudent,
       messagePayload: messagePayload,
     };
     // Save notification into notification table.

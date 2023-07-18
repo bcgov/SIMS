@@ -1,13 +1,13 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 import { getSQLFileData } from "../utilities/sqlLoader";
 
-export class InsertOfferingChangeRequestInProgressWithStudentMessage1689361018784
+export class InsertApplicationOfferingChangeRequestInProgressWithStudentMessage1689361018784
   implements MigrationInterface
 {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
       getSQLFileData(
-        "Insert-offering-change-request-inprogress-with-student-message.sql",
+        "Insert-application-offering-change-request-inprogress-with-student-message.sql",
         "NotificationMessages",
       ),
     );
@@ -16,7 +16,7 @@ export class InsertOfferingChangeRequestInProgressWithStudentMessage168936101878
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
       getSQLFileData(
-        "Delete-offering-change-request-inprogress-with-student-message.sql",
+        "Delete-application-offering-change-request-inprogress-with-student-message.sql",
         "NotificationMessages",
       ),
     );

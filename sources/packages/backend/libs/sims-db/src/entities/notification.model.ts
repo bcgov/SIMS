@@ -139,5 +139,5 @@ export enum NotificationMessageType {
   /**
    *  An Application Offering Change Request is in progress with the student.
    */
-  OfferingChangeRequestInProgressWithStudent = 13,
+  ApplicationOfferingChangeRequestInProgressWithStudent = 13,
 }
