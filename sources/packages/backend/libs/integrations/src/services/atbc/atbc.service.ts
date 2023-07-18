@@ -8,8 +8,10 @@ import {
   ATBCPDCheckerResponse,
   ATBCPDCheckerPayload,
   ATBCStudentModel,
+  ATBCDisabilityStatusResponse,
 } from "./models/atbc.model";
 import { HttpService } from "@nestjs/axios";
+import { formatDate } from "@sims/utilities";
 
 @Injectable()
 export class ATBCService {
@@ -27,10 +29,11 @@ export class ATBCService {
    * Executes the token request
    * @returns bearer header.
    */
-  private async getConfig(): Promise<ATBCHeader> {
-    const token = await this.getAuthToken();
+  private async getATBCEndpointConfig(): Promise<ATBCHeader> {
+    const loginResponse = await this.loginToATBC();
+    const accessToken = loginResponse.accessToken;
     return {
-      headers: { Authorization: `Bearer ${token}` },
+      headers: { Authorization: `Bearer ${accessToken}` },
       // (NOTE: this will disable client verification)
       // TODO: add certificate for PROD
       httpsAgent: new (require("https").Agent)({
@@ -40,12 +43,31 @@ export class ATBCService {
   }
 
   /**
-   * Gets the authentication token value to authorize the ATBC Endpoints.
-   * @returns the token that is needed to bearer authentication.
+   * Check for student PD updates.
+   * @param student student.
+   * @returns PD status response.
    */
-  private async getAuthToken(): Promise<string> {
-    const authResponse = await this.loginToATBC();
-    return authResponse?.accessToken;
+  async getStudentDisabilityStatusUpdatesByDate(
+    date?: Date,
+  ): Promise<ATBCDisabilityStatusResponse[]> {
+    const processingDate = date ?? new Date();
+    const processingDateString = formatDate(processingDate, "YYYY/MM/DD");
+    try {
+      this.logger.log("Checking for student disability status updates.");
+
+      const headers = await this.getATBCEndpointConfig();
+      const apiEndpoint = `${this.config.ATBCEndpoint}/sfas?sfasDate=${processingDateString}`;
+      const studentPDUpdateResponse = await this.httpService.axiosRef.get<
+        ATBCDisabilityStatusResponse[]
+      >(apiEndpoint, headers);
+      return studentPDUpdateResponse.data;
+    } catch (error: unknown) {
+      this.logger.error(
+        `Unexpected error occurred while checking for student disability status updates.`,
+      );
+      this.logger.error(error);
+      throw error;
+    }
   }
 
   /**
@@ -85,7 +107,7 @@ export class ATBCService {
     payload: ATBCCreateClientPayload,
   ): Promise<ATBCCreateClientResponse> {
     try {
-      const config = await this.getConfig();
+      const config = await this.getATBCEndpointConfig();
       const apiEndpoint = `${this.config.ATBCEndpoint}/pd-clients`;
       const res = await this.httpService.axiosRef.post(
         apiEndpoint,
@@ -108,7 +130,7 @@ export class ATBCService {
     payload: ATBCPDCheckerPayload,
   ): Promise<ATBCPDCheckerResponse> {
     try {
-      const config = await this.getConfig();
+      const config = await this.getATBCEndpointConfig();
       const apiEndpoint = `${this.config.ATBCEndpoint}/pd`;
       const res = await this.httpService.axiosRef.post(
         apiEndpoint,

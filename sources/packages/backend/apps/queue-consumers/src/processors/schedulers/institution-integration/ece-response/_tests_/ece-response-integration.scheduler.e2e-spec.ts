@@ -1,6 +1,6 @@
 import { DeepMocked, createMock } from "@golevelup/ts-jest";
 import { INestApplication } from "@nestjs/common";
-import { COE_WINDOW, QueueNames, addDays } from "@sims/utilities";
+import { COE_WINDOW, QueueNames, addDays, formatDate } from "@sims/utilities";
 import {
   createTestingAppModule,
   describeProcessorRootTest,
@@ -10,7 +10,6 @@ import {
   E2EDataSources,
   createE2EDataSources,
   createFakeDisbursementValue,
-  formatDate,
   mockDownloadFiles,
   saveFakeApplicationDisbursements,
 } from "@sims/test-utils";

@@ -56,10 +56,10 @@ export class ATBCIntegrationProcessingService {
   }
 
   /**
-   * Process all the pending PD requests applied by students.
+   * Process all the pending disability requests applied by students.
    */
-  async processPendingPDRequests(): Promise<ProcessPDRequestSummary> {
-    // Students who applied for PD and waiting for confirmation.
+  async processPendingDisabilityRequests(): Promise<ProcessPDRequestSummary> {
+    // Students who applied for disability status and waiting for confirmation.
     const students = await this.studentService.getStudentsAppliedForPD();
     let updatedPDstatusCount = 0;
 

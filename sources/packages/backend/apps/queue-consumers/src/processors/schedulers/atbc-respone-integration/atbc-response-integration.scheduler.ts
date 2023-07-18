@@ -39,7 +39,7 @@ export class ATBCResponseIntegrationScheduler extends BaseScheduler<void> {
     });
     await summary.info("Processing PD status for students.");
     const processingResult =
-      await this.atbcIntegrationProcessingService.processPendingPDRequests();
+      await this.atbcIntegrationProcessingService.processPendingDisabilityRequests();
     await summary.info(
       `Total PD request status processed ${processingResult.pdRequestsProcessed}`,
     );

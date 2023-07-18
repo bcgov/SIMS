@@ -8,7 +8,7 @@ import {
 } from "@sims/sims-db";
 import { getUTCNow } from "@sims/utilities";
 import { InjectLogger, LoggerService } from "@sims/utilities/logger";
-import { DataSource, EntityManager, UpdateResult } from "typeorm";
+import { DataSource, EntityManager, Raw, UpdateResult } from "typeorm";
 
 @Injectable()
 export class StudentService extends RecordDataModelService<Student> {
@@ -143,6 +143,50 @@ export class StudentService extends RecordDataModelService<Student> {
     studentToUpdate.modifier = { id: auditUserId } as User;
     studentToUpdate.sinValidation = sinValidation;
     return studentRepo.save(studentToUpdate);
+  }
+
+  /**
+   * Get student SIN, Last name and birth date.
+   * @param sin sin.
+   * @param lastName last name.
+   * @param birthDate birth date.
+   * @returns student.
+   */
+  async getStudentBySINAndLastNameAndBirthDate(
+    sin: string,
+    lastName: string,
+    birthDate: string,
+  ): Promise<Student> {
+    return this.repo.findOne({
+      select: { id: true, disabilityStatus: true },
+      where: {
+        sinValidation: { sin },
+        user: {
+          lastName: Raw((alias) => `LOWER(${alias}) = LOWER(:lastName)`, {
+            lastName,
+          }),
+        },
+        birthDate,
+      },
+    });
+  }
+
+  /**
+   * Update disability student.
+   * @param studentId
+   * @param pdStatus
+   * @param pdUpdatedAt
+   * @returns update result.
+   */
+  async updateDisabilityStatus(
+    studentId: number,
+    disabilityStatus: DisabilityStatus,
+    pdUpdatedAt: Date,
+  ): Promise<UpdateResult> {
+    return this.repo.update(
+      { id: studentId },
+      { disabilityStatus, studentPDUpdateAt: pdUpdatedAt },
+    );
   }
 
   @InjectLogger()

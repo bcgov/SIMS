@@ -28,5 +28,4 @@ export * from "./modules/modules-utils";
 export * from "./data-source/e2e-data-source";
 export * from "./factories/disbursement-receipt";
 export * from "./factories/disbursement-receipt-value";
-export * from "./date-utils";
 export * from "./factories/application-offering-change-request";
