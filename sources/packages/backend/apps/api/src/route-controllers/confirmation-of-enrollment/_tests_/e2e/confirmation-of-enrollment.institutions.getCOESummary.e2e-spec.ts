@@ -49,7 +49,9 @@ describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-getCOESummary", ()
 
   it("Should get the COE current summary when there are 2 COEs available.", async () => {
     // Arrange
-    const collegeCLocation = createFakeInstitutionLocation(collegeC);
+    const collegeCLocation = createFakeInstitutionLocation({
+      institution: collegeC,
+    });
     await authorizeUserTokenForLocation(
       appDataSource,
       InstitutionTokenTypes.CollegeCUser,
@@ -130,7 +132,9 @@ describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-getCOESummary", ()
 
   it("Should return a BadRequest error when the page number has an invalid integer.", async () => {
     // Arrange
-    const collegeCLocation = createFakeInstitutionLocation(collegeC);
+    const collegeCLocation = createFakeInstitutionLocation({
+      institution: collegeC,
+    });
     await authorizeUserTokenForLocation(
       appDataSource,
       InstitutionTokenTypes.CollegeCUser,
@@ -154,7 +158,9 @@ describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-getCOESummary", ()
 
   it("Should get the COE upcoming summary when there are 2 COEs available.", async () => {
     // Arrange
-    const collegeCLocation = createFakeInstitutionLocation(collegeC);
+    const collegeCLocation = createFakeInstitutionLocation({
+      institution: collegeC,
+    });
     await authorizeUserTokenForLocation(
       appDataSource,
       InstitutionTokenTypes.CollegeCUser,

@@ -102,8 +102,9 @@ export class CreateInstitutionsAndAuthenticationUsers {
       if (user.userType === InstitutionUserTypes.user) {
         // Crate a default location.
         // Create a default location to have it associated with the regular user.
-        const fakeInstitutionDefaultLocation =
-          createFakeInstitutionLocation(savedInstitution);
+        const fakeInstitutionDefaultLocation = createFakeInstitutionLocation({
+          institution: savedInstitution,
+        });
         fakeInstitutionDefaultLocation.name = "Default Location";
         location = await this.institutionLocationRepo.save(
           fakeInstitutionDefaultLocation,

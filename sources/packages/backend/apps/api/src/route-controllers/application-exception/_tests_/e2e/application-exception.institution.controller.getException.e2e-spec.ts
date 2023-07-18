@@ -34,7 +34,7 @@ describe("ApplicationExceptionInstitutionsController(e2e)-getException", () => {
       db.dataSource,
       InstitutionTokenTypes.CollegeFUser,
     );
-    collegeFLocation = createFakeInstitutionLocation(collegeF);
+    collegeFLocation = createFakeInstitutionLocation({ institution: collegeF });
     await authorizeUserTokenForLocation(
       db.dataSource,
       InstitutionTokenTypes.CollegeFUser,
@@ -87,7 +87,7 @@ describe("ApplicationExceptionInstitutionsController(e2e)-getException", () => {
       db.dataSource,
       InstitutionTokenTypes.CollegeCUser,
     );
-    const collegeCLocation = createFakeInstitutionLocation(institution);
+    const collegeCLocation = createFakeInstitutionLocation({ institution });
 
     const collegeCApplication =
       await saveFakeApplicationWithApplicationException(

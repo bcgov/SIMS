@@ -11,6 +11,9 @@ import { createFakeInstitution } from "@sims/test-utils";
 export function createFakeEducationProgram(
   institution?: Institution,
   user?: User,
+  options?: {
+    initialValue?: Partial<EducationProgram>;
+  },
 ): EducationProgram {
   const program = new EducationProgram();
   program.name = faker.name.jobArea();
@@ -18,9 +21,9 @@ export function createFakeEducationProgram(
   program.credentialType = "credentialType";
   program.cipCode = "cipCode";
   program.nocCode = "nocCode";
-  program.sabcCode = "sabcCode";
+  program.sabcCode = options?.initialValue?.sabcCode ?? "sabcCode";
   program.regulatoryBody = "regulatoryBody";
-  program.deliveredOnSite = false;
+  program.deliveredOnSite = options?.initialValue?.deliveredOnSite ?? false;
   program.deliveredOnline = false;
   program.courseLoadCalculation = "courseLoadCalculation";
   program.completionYears = "completionYears";

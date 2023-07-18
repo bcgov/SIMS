@@ -45,7 +45,7 @@ describe("AssessmentInstitutionsController(e2e)-getAssessmentHistorySummary", ()
       db.dataSource,
       InstitutionTokenTypes.CollegeFUser,
     );
-    collegeFLocation = createFakeInstitutionLocation(collegeF);
+    collegeFLocation = createFakeInstitutionLocation({ institution: collegeF });
     await authorizeUserTokenForLocation(
       db.dataSource,
       InstitutionTokenTypes.CollegeFUser,

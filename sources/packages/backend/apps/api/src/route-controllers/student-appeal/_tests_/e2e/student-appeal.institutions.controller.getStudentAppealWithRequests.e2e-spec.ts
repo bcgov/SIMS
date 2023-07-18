@@ -44,7 +44,7 @@ describe("StudentAppealInstitutionsController(e2e)-getStudentAppealWithRequests"
       db.dataSource,
       InstitutionTokenTypes.CollegeFUser,
     );
-    collegeFLocation = createFakeInstitutionLocation(collegeF);
+    collegeFLocation = createFakeInstitutionLocation({ institution: collegeF });
     await authorizeUserTokenForLocation(
       db.dataSource,
       InstitutionTokenTypes.CollegeFUser,

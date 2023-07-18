@@ -24,7 +24,9 @@ export async function saveStudentApplicationForCollegeC(
     dataSource,
     InstitutionTokenTypes.CollegeCUser,
   );
-  const collegeCLocation = createFakeInstitutionLocation(institution);
+  const collegeCLocation = createFakeInstitutionLocation({
+    institution: institution,
+  });
   const application = await saveFakeApplication(dataSource, {
     student,
     institutionLocation: collegeCLocation,

@@ -43,14 +43,13 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-updateProgramOffer
     );
     collegeF = institution;
     collegeFUser = institutionUser;
-    collegeFLocation = createFakeInstitutionLocation(collegeF);
+    collegeFLocation = createFakeInstitutionLocation({ institution: collegeF });
     await authorizeUserTokenForLocation(
       db.dataSource,
       InstitutionTokenTypes.CollegeFUser,
       collegeFLocation,
     );
   });
-
   it("Should update a new offering when passed valid data.", async () => {
     // Arrange
     const institutionUserToken = await getInstitutionToken(

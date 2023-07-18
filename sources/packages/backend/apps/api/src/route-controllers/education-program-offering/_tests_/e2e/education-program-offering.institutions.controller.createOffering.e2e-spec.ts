@@ -42,7 +42,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", (
     );
     collegeF = institution;
     collegeFUser = institutionUser;
-    collegeFLocation = createFakeInstitutionLocation(collegeF);
+    collegeFLocation = createFakeInstitutionLocation({ institution: collegeF });
     await authorizeUserTokenForLocation(
       db.dataSource,
       InstitutionTokenTypes.CollegeFUser,
