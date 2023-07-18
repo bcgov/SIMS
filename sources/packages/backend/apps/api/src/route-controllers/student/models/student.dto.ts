@@ -17,12 +17,12 @@ import {
   FileOriginType,
   NOTE_DESCRIPTION_MAX_LENGTH,
   FILE_NAME_MAX_LENGTH,
+  DisabilityStatus,
 } from "@sims/sims-db";
 import {
   AddressAPIOutDTO,
   AddressDetailsAPIInDTO,
 } from "../../../route-controllers/models/common.dto";
-import { StudentPDStatus } from "../../../types";
 
 export class ContactInformationAPIOutDTO {
   address: AddressAPIOutDTO;
@@ -180,7 +180,7 @@ export class StudentProfileAPIOutDTO {
   dateOfBirth: string;
   contact: ContactInformationAPIOutDTO;
   validSin: boolean;
-  pdStatus: StudentPDStatus;
+  disabilityStatus: DisabilityStatus;
   sin: string;
 }
 

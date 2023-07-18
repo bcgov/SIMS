@@ -12,20 +12,17 @@ export class SFASIndividualService extends DataModelService<SFASIndividual> {
   }
 
   /**
-   * Get the permanent disability status from SFAS, if available.
+   * Get SFAS student, if available.
    * @param lastName student last name.
    * @param birthDate student data of birth.
    * @param sin student Social Insurance Number.
-   * @returns the permanent disability if present or null. Even when
-   * the record is present os SFAS, the value could still be null,
-   * what means that a permanent disability verification was never
-   * executed for the student.
+   * @returns SFAS Student.
    */
-  async getPDStatus(
+  async getIndividualStudent(
     lastName: string,
     birthDate: string,
     sin: string,
-  ): Promise<boolean | null> {
+  ): Promise<SFASIndividual> {
     const individual = await this.repo
       .createQueryBuilder("individual")
       .select("individual.pdStatus")
@@ -36,7 +33,7 @@ export class SFASIndividualService extends DataModelService<SFASIndividual> {
       .andWhere("individual.birthDate = :birthDate", { birthDate })
       .getOne();
 
-    return individual?.pdStatus;
+    return individual;
   }
 
   /**

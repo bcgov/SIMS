@@ -12,9 +12,11 @@ import {
   UserToken,
 } from "../../auth/decorators";
 import { StudentUserToken } from "../../auth/userToken.interface";
-import { ClientTypeBaseRoute } from "../../types";
+import { ApiProcessError, ClientTypeBaseRoute } from "../../types";
 import BaseController from "../BaseController";
 import { ATBCIntegrationProcessingService } from "@sims/integrations/atbc-integration";
+import { DisabilityStatus } from "@sims/sims-db";
+import { DISABILITY_REQUEST_NOT_ALLOWED } from "../../constants";
 
 @AllowAuthorizedParty(AuthorizedParties.student)
 @RequiresStudentAccount()
@@ -29,40 +31,41 @@ export class ATBCStudentController extends BaseController {
   }
 
   /**
-   * Creates the request for ATBC PD evaluation.
-   * Student should only be allowed to check the PD status once and the
+   * Creates the request for ATBC disability evaluation.
+   * Student should only be allowed to check the disability status once and the
    * SIN validation must be already done with a successful result.
    */
-  @Patch("apply-pd-status")
+  @Patch("apply-disability-status")
   @ApiUnprocessableEntityResponse({
     description:
       "Either the client does not have a validated SIN or the request was already sent to ATBC.",
   })
-  async applyForPDStatus(
+  async applyForDisabilityStatus(
     @UserToken() studentUserToken: StudentUserToken,
   ): Promise<void> {
     // Get student details
     const student = await this.studentService.getStudentById(
       studentUserToken.studentId,
     );
-    // Check the PD status in DB. Student should only be allowed to check the PD status once.
-    // studentPDSentAt is set when student apply for PD status for the first.
-    // studentPDVerified is null before PD scheduled job update status.
-    // studentPDVerified is true if PD confirmed by ATBC or is true from sfas_individual table.
-    // studentPDVerified is false if PD denied by ATBC.
+    // To apply for a disability status, SIN validation must be completed for the student and
+    // not applied for disability status already.
     if (
       !student.sinValidation.isValidSIN ||
-      !!student.studentPDSentAt ||
-      student.studentPDVerified !== null
+      student.disabilityStatus !== DisabilityStatus.NotRequested
     ) {
       throw new UnprocessableEntityException(
-        "Either the client does not have a validated SIN or the request was already sent to ATBC.",
+        new ApiProcessError(
+          "Either SIN validation is not complete or requested for disability status already.",
+          DISABILITY_REQUEST_NOT_ALLOWED,
+        ),
       );
     }
     // This is the only place in application where we call an external application
     // in API instead of using queues. This is because once the student applies for PD,
     // after a successful API call the apply for PD button needs to be disabled to avoid
     // duplicate requests coming.
-    await this.atbcIntegrationProcessingService.applyForPDStatus(student.id);
+    await this.atbcIntegrationProcessingService.applyForDisabilityStatus(
+      student.id,
+    );
   }
 }

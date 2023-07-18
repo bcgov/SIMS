@@ -11,7 +11,7 @@ import {
   ApplicationPaginationOptionsAPIInDTO,
   PaginatedResultsAPIOutDTO,
 } from "../models/pagination.dto";
-import { determinePDStatus, getUserFullName } from "../../utilities";
+import { getUserFullName } from "../../utilities";
 import { getISODateOnlyString } from "@sims/utilities";
 import { AddressInfo, Application, Student } from "@sims/sims-db";
 import {
@@ -131,7 +131,7 @@ export class StudentControllerService {
         address: transformAddressDetailsForAddressBlockForm(address),
         phone: student.contactInfo.phone,
       },
-      pdStatus: determinePDStatus(student),
+      disabilityStatus: student.disabilityStatus,
       validSin: student.sinValidation.isValidSIN,
       sin: student.sinValidation.sin,
     };

@@ -9,7 +9,7 @@ import {
   mockUserLoginInfo,
 } from "../../../../testHelpers";
 import { saveFakeStudent } from "@sims/test-utils";
-import { determinePDStatus, getUserFullName } from "../../../../utilities";
+import { getUserFullName } from "../../../../utilities";
 import { TestingModule } from "@nestjs/testing";
 
 describe("StudentInstitutionsController(e2e)-getStudentProfile", () => {
@@ -62,7 +62,7 @@ describe("StudentInstitutionsController(e2e)-getStudentProfile", () => {
           },
           phone: student.contactInfo.phone,
         },
-        pdStatus: determinePDStatus(student),
+        disabilityStatus: student.disabilityStatus,
         validSin: student.sinValidation.isValidSIN,
         sin: student.sinValidation.sin,
       });

@@ -1,0 +1,1 @@
+DROP TYPE sims.disability_status;

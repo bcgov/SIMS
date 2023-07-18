@@ -10,13 +10,16 @@ export interface StudentProfile extends StudentProfileAPIOutDTO {
 }
 
 /**
- * Enumeration for student permanent disability status.
+ * Disability status of student.
  */
-export enum StudentPDStatus {
-  Yes = "Yes",
-  No = "No",
-  NotRequested = "Not Requested",
-  Pending = "Pending",
+export enum DisabilityStatus {
+  NotRequested = "Not requested",
+  Requested = "Requested",
+  /** Permanent Disability. */
+  PD = "PD",
+  /** Persistent and Prolonged Disability.*/
+  PPD = "PPD",
+  Declined = "Declined",
 }
 
 /**
@@ -69,7 +72,7 @@ export enum StudentProfileFormModes {
 
 export type StudentProfileFormModel = Pick<
   StudentProfileAPIOutDTO,
-  "firstName" | "lastName" | "gender" | "email" | "pdStatus"
+  "firstName" | "lastName" | "gender" | "email" | "disabilityStatus"
 > &
   AddressDetailsFormAPIDTO & {
     phone: string;

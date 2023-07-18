@@ -39,8 +39,8 @@
         </v-col>
         <v-col>
           <title-value
-            propertyTitle="Permanent disability status"
-            :propertyValue="studentDetail.pdStatus"
+            propertyTitle="Disability status"
+            :propertyValue="studentDetail.disabilityStatus"
         /></v-col>
       </v-row>
       <v-row>

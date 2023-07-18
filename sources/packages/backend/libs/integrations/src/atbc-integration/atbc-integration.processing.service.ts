@@ -21,11 +21,13 @@ export class ATBCIntegrationProcessingService {
   ) {}
 
   /**
-   * Apply for PD status calling the ATBC endpoint.
+   * Apply for disability status calling the ATBC endpoint.
    * @param studentId student who applied for PD status.
    * @returns ATBC response.
    */
-  async applyForPDStatus(studentId: number): Promise<ATBCCreateClientResponse> {
+  async applyForDisabilityStatus(
+    studentId: number,
+  ): Promise<ATBCCreateClientResponse> {
     // Student who requested to apply PD status.
     const student = await this.studentService.getStudentById(studentId);
     const payload: ATBCCreateClientPayload = {
@@ -45,7 +47,10 @@ export class ATBCIntegrationProcessingService {
     if (response) {
       const auditUser = await this.systemUsersService.systemUser();
       // Update PD sent date.
-      await this.studentService.updatePDSentDate(student.id, auditUser);
+      await this.studentService.updateDisabilityRequested(
+        student.id,
+        auditUser,
+      );
     }
     return response;
   }

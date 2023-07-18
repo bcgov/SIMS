@@ -37,7 +37,7 @@ describe("Test ATBC Controller", () => {
 
     // Act/Assert
     await request(app.getHttpServer())
-      .patch("/students/atbc/apply-pd-status")
+      .patch("/students/atbc/apply-disability-status")
       .auth(accessToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK);
   });
