@@ -1,5 +1,5 @@
 import * as faker from "faker";
-import { SINValidation, Student, User } from "@sims/sims-db";
+import { DisabilityStatus, SINValidation, Student, User } from "@sims/sims-db";
 import { createFakeUser } from "@sims/test-utils";
 import { DataSource } from "typeorm";
 import { createFakeSINValidation } from "./sin-validation";
@@ -23,6 +23,7 @@ export function createFakeStudent(user?: User): Student {
     phone: faker.phone.phoneNumber(),
   };
   student.sinConsent = true;
+  student.disabilityStatus = DisabilityStatus.NotRequested;
   return student;
 }
 
