@@ -5,9 +5,6 @@ import { ATBCHeader, ATBCAuthTokenResponse } from "./models/atbc-auth.model";
 import {
   ATBCCreateClientResponse,
   ATBCCreateClientPayload,
-  ATBCPDCheckerResponse,
-  ATBCPDCheckerPayload,
-  ATBCStudentModel,
   ATBCDisabilityStatusResponse,
 } from "./models/atbc.model";
 import { HttpService } from "@nestjs/axios";
@@ -43,9 +40,9 @@ export class ATBCService {
   }
 
   /**
-   * Check for student PD updates.
+   * Check for student disability status updates.
    * @param student student.
-   * @returns PD status response.
+   * @returns student disability status updates.
    */
   async getStudentDisabilityStatusUpdatesByDate(
     date?: Date,
@@ -117,57 +114,6 @@ export class ATBCService {
       return res?.data as ATBCCreateClientResponse;
     } catch (excp) {
       this.logger.error(`Received exception while creating client at ATBC`);
-      this.logger.error(excp);
-      throw excp;
-    }
-  }
-  /**
-   * Check PD status of the student with SIN number on ATBC.
-   * @returns the result of a success full authentication or throws an exception
-   * in case the result is anything different from HTTP 200 code.
-   */
-  private async checkPDStatus(
-    payload: ATBCPDCheckerPayload,
-  ): Promise<ATBCPDCheckerResponse> {
-    try {
-      const config = await this.getATBCEndpointConfig();
-      const apiEndpoint = `${this.config.ATBCEndpoint}/pd`;
-      const res = await this.httpService.axiosRef.post(
-        apiEndpoint,
-        payload,
-        config,
-      );
-      return res?.data as ATBCPDCheckerResponse;
-    } catch (excp) {
-      this.logger.error(
-        `Received exception while checking the PD status at ATBC`,
-      );
-      this.logger.error(excp);
-      throw excp;
-    }
-  }
-
-  /**
-   * Check PD status for a student.
-   * @param student student.
-   * @returns PD status response.
-   */
-  async checkStudentPDStatus(
-    student: ATBCStudentModel,
-  ): Promise<ATBCPDCheckerResponse> {
-    try {
-      // create PD checker payload
-      const payload: ATBCPDCheckerPayload = {
-        id: student.sin,
-      };
-      // api to check the student PD status in ATBC
-      this.logger.log(`Checking PD status of student ${student.id}`);
-      // try {
-      return await this.checkPDStatus(payload);
-    } catch (excp) {
-      this.logger.error(
-        `Received exception while checking the PD status of student ${student.id} at ATBC`,
-      );
       this.logger.error(excp);
       throw excp;
     }

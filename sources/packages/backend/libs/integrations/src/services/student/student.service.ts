@@ -17,22 +17,6 @@ export class StudentService extends RecordDataModelService<Student> {
   }
 
   /**
-   * Get all students who applied for permanent disability
-   * and waiting for the confirmation from ATBC.
-   * @returns students
-   */
-  async getStudentsAppliedForPD(): Promise<Student[]> {
-    return this.repo
-      .createQueryBuilder("student")
-      .select(["student.id", "sinValidation.id", "sinValidation.sin"])
-      .innerJoin("student.sinValidation", "sinValidation")
-      .where("student.studentPDSentAt is not null")
-      .andWhere("student.studentPDUpdateAt is null")
-      .andWhere("student.studentPDVerified is null")
-      .getMany();
-  }
-
-  /**
    * Update the disability status to requested.
    * @param studentId student who's PD status is to be updated.
    * @param auditUser user who is making the changes.
@@ -146,7 +130,7 @@ export class StudentService extends RecordDataModelService<Student> {
   }
 
   /**
-   * Get student SIN, Last name and birth date.
+   * Get student by SIN, Last name and birth date.
    * @param sin sin.
    * @param lastName last name.
    * @param birthDate birth date.
@@ -172,20 +156,20 @@ export class StudentService extends RecordDataModelService<Student> {
   }
 
   /**
-   * Update disability student.
-   * @param studentId
-   * @param pdStatus
-   * @param pdUpdatedAt
+   * Update disability status of a student.
+   * @param studentId student id.
+   * @param disabilityStatus disability status.
+   * @param disabilityStatusUpdatedDate disability status updated date.
    * @returns update result.
    */
   async updateDisabilityStatus(
     studentId: number,
     disabilityStatus: DisabilityStatus,
-    pdUpdatedAt: Date,
+    disabilityStatusUpdatedDate: Date,
   ): Promise<UpdateResult> {
     return this.repo.update(
       { id: studentId },
-      { disabilityStatus, studentPDUpdateAt: pdUpdatedAt },
+      { disabilityStatus, studentPDUpdateAt: disabilityStatusUpdatedDate },
     );
   }
 

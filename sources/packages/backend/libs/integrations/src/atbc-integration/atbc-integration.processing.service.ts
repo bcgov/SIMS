@@ -1,16 +1,23 @@
 import { Injectable } from "@nestjs/common";
 import { LoggerService, InjectLogger } from "@sims/utilities/logger";
-import { processInParallel } from "@sims/utilities";
+import {
+  getDateOnlyFromFormat,
+  getISODateOnlyString,
+  processInParallel,
+} from "@sims/utilities";
 import { SystemUsersService } from "@sims/services/system-users";
 import {
   StudentService,
   ATBCService,
   ATBCCreateClientPayload,
   ATBCCreateClientResponse,
-  ATBCPDStatus,
 } from "../services";
-import { Student } from "@sims/sims-db";
-import { ProcessPDRequestSummary } from "./models/atbc-integration.model";
+import { DisabilityStatus } from "@sims/sims-db";
+import {
+  DATE_FORMAT,
+  StudentDisabilityStatusDetail,
+} from "./models/atbc-integration.model";
+import { ProcessSummaryResult } from "../models";
 
 @Injectable()
 export class ATBCIntegrationProcessingService {
@@ -58,50 +65,78 @@ export class ATBCIntegrationProcessingService {
   /**
    * Process all the pending disability requests applied by students.
    */
-  async processPendingDisabilityRequests(): Promise<ProcessPDRequestSummary> {
+  async processAppliedDisabilityRequests(): Promise<ProcessSummaryResult> {
+    const processSummaryResult: ProcessSummaryResult =
+      new ProcessSummaryResult();
     // Students who applied for disability status and waiting for confirmation.
-    const students = await this.studentService.getStudentsAppliedForPD();
-    let updatedPDstatusCount = 0;
+    const studentDisabilityUpdates =
+      await this.atbcService.getStudentDisabilityStatusUpdatesByDate();
 
-    if (students.length) {
-      this.logger.log(`Processing PD requests for ${students.length} students`);
-
+    const studentsToUpdate: StudentDisabilityStatusDetail[] =
+      studentDisabilityUpdates.map((student) => ({
+        sin: student.SIN,
+        lastName: student.APP_LAST_NAME,
+        birthDate: getDateOnlyFromFormat(student.BIRTH_DTE, DATE_FORMAT),
+        disabilityStatus: student.D8Y_TYPE as DisabilityStatus,
+        disabilityStatusUpdatedDate: getDateOnlyFromFormat(
+          student.D8Y_DTE,
+          DATE_FORMAT,
+        ),
+      }));
+    let updatedDisabilityStatusCount = 0;
+    this.logger.log(
+      `Processing disability status requests for ${studentsToUpdate.length} students`,
+    );
+    processSummaryResult.summary.push(
+      `Total disability status requests processed: ${studentsToUpdate.length}`,
+    );
+    if (studentsToUpdate.length) {
       const processingResults = await processInParallel(
-        (student: Student) => this.processStudentPDStatus(student),
-        students,
+        (studentDisabilityStatusDetail: StudentDisabilityStatusDetail) =>
+          this.processStudentDisabilityStatusUpdate(
+            studentDisabilityStatusDetail,
+          ),
+        studentsToUpdate,
       );
 
-      updatedPDstatusCount += processingResults.filter(
+      updatedDisabilityStatusCount += processingResults.filter(
         (result) => result,
       ).length;
     }
-    return {
-      pdRequestsProcessed: students.length,
-      pdRequestsUpdated: updatedPDstatusCount,
-    };
+    processSummaryResult.summary.push(
+      `Students updated with disability status: ${updatedDisabilityStatusCount}`,
+    );
+    return processSummaryResult;
   }
 
   /**
-   * Check the PD status of given student at ATBC and update the
-   * status in db if the status is updated at ATBC end.
-   * @param student student.
+   * Update the disability status of the given student.
+   * Identify the student by SIN, last name and birth date
+   * and update the disability status of the student only if the status has changed.
+   * e.g. if ATBC response has same disability status (PD/PPD) which is already present
+   * in the system, update does not happen.
+   * @param studentDisabilityDetail student disability status details.
    */
-  private async processStudentPDStatus(student: Student): Promise<boolean> {
-    const atbcPDCheckResponse = await this.atbcService.checkStudentPDStatus({
-      id: student.id,
-      sin: student.sinValidation.sin,
-    });
-
-    if (
-      atbcPDCheckResponse.e9yStatusId === ATBCPDStatus.Confirmed ||
-      atbcPDCheckResponse.e9yStatusId === ATBCPDStatus.Denied
-    ) {
-      this.logger.log(
-        `Updating PD Status for student ${student.id}, status ${atbcPDCheckResponse.e9yStatusId} ${atbcPDCheckResponse.e9yStatus}, `,
+  private async processStudentDisabilityStatusUpdate(
+    studentDisabilityStatusDetail: StudentDisabilityStatusDetail,
+  ): Promise<boolean> {
+    const student =
+      await this.studentService.getStudentBySINAndLastNameAndBirthDate(
+        studentDisabilityStatusDetail.sin,
+        studentDisabilityStatusDetail.lastName,
+        getISODateOnlyString(studentDisabilityStatusDetail.birthDate),
       );
-      await this.studentService.updatePDStatusNDate(
+    if (!student) {
+      return false;
+    }
+    if (
+      student.disabilityStatus !==
+      studentDisabilityStatusDetail.disabilityStatus
+    ) {
+      await this.studentService.updateDisabilityStatus(
         student.id,
-        atbcPDCheckResponse.e9yStatusId === ATBCPDStatus.Confirmed,
+        studentDisabilityStatusDetail.disabilityStatus,
+        studentDisabilityStatusDetail.disabilityStatusUpdatedDate,
       );
       return true;
     }
