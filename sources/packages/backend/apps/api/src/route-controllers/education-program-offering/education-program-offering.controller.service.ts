@@ -243,7 +243,6 @@ export class EducationProgramOfferingControllerService {
             })),
           };
         });
-
       throw new UnprocessableEntityException(
         new ApiProcessError(
           "An offering has invalid data.",
