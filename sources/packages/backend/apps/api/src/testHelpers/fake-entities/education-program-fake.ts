@@ -8,9 +8,20 @@ import {
 } from "@sims/sims-db";
 import { createFakeInstitution } from "@sims/test-utils";
 
+/**
+ * Create fake education program.
+ * @param relations dependencies.
+ * - `institution` related institution.
+ * - `user` related user.
+ * @param options dependencies.
+ * - `initialValues` initial values.
+ * @returns
+ */
 export function createFakeEducationProgram(
-  institution?: Institution,
-  user?: User,
+  relations?: {
+    institution?: Institution;
+    user?: User;
+  },
   options?: {
     initialValue?: Partial<EducationProgram>;
   },
@@ -35,9 +46,9 @@ export function createFakeEducationProgram(
   program.hasTravel = "yes";
   program.hasIntlExchange = "yes";
   program.programDeclaration = true;
-  program.institution = institution ?? createFakeInstitution();
+  program.institution = relations?.institution ?? createFakeInstitution();
   program.programIntensity = ProgramIntensity.fullTime;
-  program.submittedBy = user;
+  program.submittedBy = relations?.user;
   program.fieldOfStudyCode = 1;
   return program;
 }

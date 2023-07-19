@@ -55,10 +55,10 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-updateProgramOffer
     const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeFUser,
     );
-    const fakeEducationProgram = createFakeEducationProgram(
-      collegeF,
-      collegeFUser,
-    );
+    const fakeEducationProgram = createFakeEducationProgram({
+      institution: collegeF,
+      user: collegeFUser,
+    });
     fakeEducationProgram.sabcCode = faker.random.alpha({ count: 4 });
     const savedFakeEducationProgram = await db.educationProgram.save(
       fakeEducationProgram,

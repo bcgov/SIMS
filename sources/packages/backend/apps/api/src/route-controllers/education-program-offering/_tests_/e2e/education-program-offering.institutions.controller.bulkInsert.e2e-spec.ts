@@ -23,9 +23,9 @@ import {
 import * as request from "supertest";
 import * as path from "path";
 import { In } from "typeorm";
-import { convertStringToPEM } from "apps/api/src/utilities/certificate-utils";
+import { OFFERING_VALIDATION_CRITICAL_ERROR } from "../../../../constants";
+import { OfferingValidationWarnings } from "../../../../services";
 
-jest.setTimeout(9000000);
 describe("EducationProgramOfferingInstitutionsController(e2e)-bulkInsert", () => {
   let app: INestApplication;
   let db: E2EDataSources;
@@ -81,9 +81,9 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-bulkInsert", () =>
   });
 
   it(
-    "Should create a approved and a creation pending offerings from the bulk" +
-      " offering CSV file with existing location code and SABC code, one with" +
-      " same delivery method and another with different delivery method when uploaded.",
+    "Should create an approved and a creation pending offerings when a multi line bulk" +
+      " offering CSV file with existing location code and SABC code, and one with" +
+      " same delivery method and another with different delivery method is uploaded.",
     async () => {
       // Arrange
       // Creating an institution location with same location code as that of the
@@ -112,10 +112,9 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-bulkInsert", () =>
       );
       // Create a program for the institution with the same SABC code as that of the
       // first row of the multiple CSV file.
-      // Setting deliveredOnSite as true, to create an approved offering.
+      // Setting deliveredOnSite as true, as that of the CSV, so that it will create an approved offering.
       const educationProgramSBC2 = createFakeEducationProgram(
-        collegeF,
-        collegeFUser,
+        { institution: collegeF, user: collegeFUser },
         {
           initialValue: {
             sabcCode: csvProgramSABCCodeSBC2,
@@ -125,11 +124,10 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-bulkInsert", () =>
       );
       // Create a program for the institution with the same SABC code as that of the
       // second row of the multiple CSV file.
-      // In CSV delivery method does not match with the existing program, which will
-      // create an 'Creation pending' application.
+      // Delivery method of the CSV does not match with the below program, which will
+      // create an 'Creation pending' offering when inserted.
       const educationProgramSBC4 = createFakeEducationProgram(
-        collegeF,
-        collegeFUser,
+        { institution: collegeF, user: collegeFUser },
         {
           initialValue: {
             sabcCode: csvProgramSABCCodeSBC4,
@@ -165,6 +163,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-bulkInsert", () =>
           expect(responseOfferingSBC4).toHaveProperty("id");
         });
 
+      // Checking the created offering statuses.
       const [offeringSBC2, offeringSBC4] =
         await db.educationProgramOffering.find({
           select: {
@@ -199,9 +198,9 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-bulkInsert", () =>
   );
 
   it(
-    "Should return validation warnings from the bulk offering CSV file with existing" +
+    "Should return validation warnings when bulk offering CSV file with existing" +
       " location code and SABC code, with different delivery method and invalid study period" +
-      " when uploaded.",
+      " is uploaded.",
     async () => {
       // Arrange
       // Creating an institution location with same location code as that of the
@@ -221,8 +220,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-bulkInsert", () =>
       // single CSV file.
       // In CSV delivery method is onsite, which does not match with the existing program.
       const educationProgramSBC2 = createFakeEducationProgram(
-        collegeF,
-        collegeFUser,
+        { institution: collegeF, user: collegeFUser },
         {
           initialValue: {
             sabcCode: csvProgramSABCCodeSBC2,
@@ -246,7 +244,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-bulkInsert", () =>
         .expect(HttpStatus.UNPROCESSABLE_ENTITY)
         .expect({
           message: "An offering has invalid data.",
-          errorType: "OFFERING_VALIDATION_CRITICAL_ERROR",
+          errorType: OFFERING_VALIDATION_CRITICAL_ERROR,
           objectInfo: [
             {
               recordIndex: 0,
@@ -254,17 +252,19 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-bulkInsert", () =>
               sabcProgramCode: csvProgramSABCCodeSBC2,
               startDate: "2023-09-06",
               endDate: "2023-10-15",
-              offeringStatus: "Creation pending",
+              offeringStatus: OfferingStatus.CreationPending,
               errors: [],
               infos: [],
               warnings: [
                 {
-                  typeCode: "invalidStudyDatesPeriodLength",
+                  typeCode:
+                    OfferingValidationWarnings.InvalidStudyDatesPeriodLength,
                   message:
                     "End date, the number of day(s) between Sep 06 2023 and Oct 15 2023 must be at least 84.",
                 },
                 {
-                  typeCode: "programOfferingDeliveryMismatch",
+                  typeCode:
+                    OfferingValidationWarnings.ProgramOfferingDeliveryMismatch,
                   message:
                     "Delivery type has an offering delivery that is not allowed by its program.",
                 },
@@ -282,7 +282,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-bulkInsert", () =>
     },
   );
 
-  it("Should return program related validation error when bulk offering CSV file with a non existing program SABC code when uploaded. ", async () => {
+  it("Should return program related validation error when bulk offering CSV file with a non existing program SABC code is uploaded. ", async () => {
     // Arrange
     const randomSABCCode = `XXXX1`;
 
@@ -298,10 +298,9 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-bulkInsert", () =>
       },
     );
 
-    // Create a program for the institution with the same sabc code as that of th CSV file.
+    // Create a program for the institution with a different SABC code as that of th CSV file.
     const educationProgram = createFakeEducationProgram(
-      collegeF,
-      collegeFUser,
+      { institution: collegeF, user: collegeFUser },
       {
         initialValue: {
           sabcCode: randomSABCCode,
@@ -324,7 +323,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-bulkInsert", () =>
       .expect(HttpStatus.UNPROCESSABLE_ENTITY)
       .expect({
         message: "An offering has invalid data.",
-        errorType: "OFFERING_VALIDATION_CRITICAL_ERROR",
+        errorType: OFFERING_VALIDATION_CRITICAL_ERROR,
         objectInfo: [
           {
             recordIndex: 0,
@@ -347,17 +346,17 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-bulkInsert", () =>
 
   it(
     "Should return institution location validation errors and delivery method warning " +
-      "error when bulk offering CSV file with a non existing location code when uploaded and program with different delivery method.",
+      "error when bulk offering CSV file with a non existing location code and program " +
+      "with different delivery method is uploaded",
     async () => {
       // Arrange
-      // Creating an institution location with same location code as that of the CSV file.
+      // Creating an institution location with a different location code that is not in theCSV file.
       const collegeFLocation = createFakeInstitutionLocation({
         institution: collegeF,
       });
       // Create a program for the institution with the same SABC code as that of th CSV file.
       const educationProgramSBC2 = createFakeEducationProgram(
-        collegeF,
-        collegeFUser,
+        { institution: collegeF, user: collegeFUser },
         {
           initialValue: {
             sabcCode: csvProgramSABCCodeSBC2,
@@ -380,7 +379,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-bulkInsert", () =>
         .expect(HttpStatus.UNPROCESSABLE_ENTITY)
         .expect({
           message: "An offering has invalid data.",
-          errorType: "OFFERING_VALIDATION_CRITICAL_ERROR",
+          errorType: OFFERING_VALIDATION_CRITICAL_ERROR,
           objectInfo: [
             {
               recordIndex: 0,
@@ -394,7 +393,8 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-bulkInsert", () =>
               infos: [],
               warnings: [
                 {
-                  typeCode: "programOfferingDeliveryMismatch",
+                  typeCode:
+                    OfferingValidationWarnings.ProgramOfferingDeliveryMismatch,
                   message:
                     "Delivery type has an offering delivery that is not allowed by its program.",
                 },

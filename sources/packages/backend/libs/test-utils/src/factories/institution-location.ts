@@ -4,8 +4,10 @@ import { createFakeInstitution } from "./institution";
 
 /**
  * Create fake institution location.
- * todo: ann refactor comment
- * @param institution institution.
+ * @param relations dependencies.
+ * - `institution` related institution.
+ * @param options dependencies.
+ * - `initialValues` initial values.
  * @returns institution location
  */
 export function createFakeInstitutionLocation(
