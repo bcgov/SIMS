@@ -15,6 +15,7 @@ import {
   StudentNotification,
   ECEResponseFileProcessingNotification,
   NotificationEmailMessage,
+  ApplicationOfferingChangeRequestInProgressWithStudentNotification,
 } from "..";
 import { GCNotifyService } from "./gc-notify.service";
 import { NotificationService } from "./notification.service";
@@ -142,6 +143,42 @@ export class NotificationActionsService {
       messagePayload: messagePayload,
     };
 
+    // Save notification into notification table.
+    await this.notificationService.saveNotifications(
+      [notificationToSend],
+      auditUserId,
+      { entityManager },
+    );
+  }
+
+  /**
+   * Creates a notification when an Offering Change Request is inprogress with the student.
+   * @param notification input parameters to generate the notification.
+   * @param auditUserId user that should be considered the one that is causing the changes.
+   * @param entityManager optional entity manager to execute in transaction.
+   */
+  async saveApplicationOfferingChangeRequestInProgressWithStudent(
+    notification: ApplicationOfferingChangeRequestInProgressWithStudentNotification,
+    auditUserId: number,
+    entityManager?: EntityManager,
+  ): Promise<void> {
+    const templateId = await this.notificationMessageService.getTemplateId(
+      NotificationMessageType.ApplicationOfferingChangeRequestInProgressWithStudent,
+    );
+    const messagePayload: NotificationEmailMessage = {
+      email_address: notification.toAddress,
+      template_id: templateId,
+      personalisation: {
+        givenNames: notification.givenNames ?? "",
+        lastName: notification.lastName,
+      },
+    };
+    const notificationToSend = {
+      userId: notification.userId,
+      messageType:
+        NotificationMessageType.ApplicationOfferingChangeRequestInProgressWithStudent,
+      messagePayload: messagePayload,
+    };
     // Save notification into notification table.
     await this.notificationService.saveNotifications(
       [notificationToSend],

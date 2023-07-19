@@ -136,4 +136,8 @@ export enum NotificationMessageType {
    * MSFAA record gets cancelled.
    */
   MSFAACancellation = 12,
+  /**
+   *  An Application Offering Change Request is in progress with the student.
+   */
+  ApplicationOfferingChangeRequestInProgressWithStudent = 13,
 }
