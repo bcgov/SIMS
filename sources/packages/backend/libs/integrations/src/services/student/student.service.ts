@@ -6,7 +6,6 @@ import {
   Student,
   User,
 } from "@sims/sims-db";
-import { getUTCNow } from "@sims/utilities";
 import { InjectLogger, LoggerService } from "@sims/utilities/logger";
 import { DataSource, EntityManager, Raw, UpdateResult } from "typeorm";
 
@@ -36,28 +35,6 @@ export class StudentService extends RecordDataModelService<Student> {
         disabilityStatus: DisabilityStatus.Requested,
       },
     );
-  }
-
-  /**
-   * Update the PD Sent Date
-   * @param studentId Student id.
-   * @param status PD status.
-   * @returns updated student.
-   */
-  async updatePDStatusNDate(
-    studentId: number,
-    status: boolean,
-  ): Promise<Student> {
-    // get the Student Object
-    const studentToUpdate = await this.repo.findOneOrFail({
-      where: { id: studentId },
-    });
-    if (studentToUpdate) {
-      studentToUpdate.studentPDVerified = status;
-      // Date in UTC format
-      studentToUpdate.studentPDUpdateAt = getUTCNow();
-      return this.repo.save(studentToUpdate);
-    }
   }
 
   /**
