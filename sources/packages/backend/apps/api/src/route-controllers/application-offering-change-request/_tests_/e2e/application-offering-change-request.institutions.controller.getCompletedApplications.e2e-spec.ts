@@ -303,7 +303,7 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-getComplet
 
     const searchKeyword = "TestStudent";
     const endpoint = `/institutions/location/${collegeFLocation.id}/application-offering-change-request/completed?page=0&pageLimit=10&searchCriteria=${searchKeyword}`;
-    console.log(endpoint);
+
     // Act/Assert
     await request(app.getHttpServer())
       .get(endpoint)

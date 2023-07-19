@@ -37,10 +37,6 @@ export function createFakeInstitutionLocation(
     email: faker.internet.email(),
     phone: faker.phone.phoneNumber("##########"),
   };
-  console.log(
-    options?.initialValue,
-    "================options?.initialValue?.institutionCode",
-  );
   institutionLocation.institutionCode =
     options?.initialValue?.institutionCode ??
     faker.random.alpha({

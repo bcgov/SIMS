@@ -24,7 +24,7 @@ export function createFakeEducationProgram(
   program.sabcCode = options?.initialValue?.sabcCode ?? "sabcCode";
   program.regulatoryBody = "regulatoryBody";
   program.deliveredOnSite = options?.initialValue?.deliveredOnSite ?? false;
-  program.deliveredOnline = false;
+  program.deliveredOnline = options?.initialValue?.deliveredOnline ?? false;
   program.courseLoadCalculation = "courseLoadCalculation";
   program.completionYears = "completionYears";
   program.eslEligibility = "eslEligibility";
