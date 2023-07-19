@@ -7,5 +7,3 @@ export interface StudentDisabilityStatusDetail {
   disabilityStatus: DisabilityStatus;
   disabilityStatusUpdatedDate: Date;
 }
-
-export const DATE_FORMAT = "YYYY/MM/DD";

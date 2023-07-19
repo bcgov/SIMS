@@ -23,3 +23,5 @@ export interface ATBCDisabilityStatusResponse {
   D8Y_TYPE: string;
   D8Y_DTE: string;
 }
+
+export const ATBC_DATE_FORMAT = "YYYY/MM/DD";

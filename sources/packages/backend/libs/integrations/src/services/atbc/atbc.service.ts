@@ -6,21 +6,19 @@ import {
   ATBCCreateClientResponse,
   ATBCCreateClientPayload,
   ATBCDisabilityStatusResponse,
+  ATBC_DATE_FORMAT,
 } from "./models/atbc.model";
 import { HttpService } from "@nestjs/axios";
 import { formatDate } from "@sims/utilities";
 
 @Injectable()
 export class ATBCService {
+  private readonly atbcIntegrationConfig: ATBCIntegrationConfig;
   constructor(
-    private readonly configService: ConfigService,
+    configService: ConfigService,
     private readonly httpService: HttpService,
   ) {
-    this.logger.log("[Created]");
-  }
-
-  private get config(): ATBCIntegrationConfig {
-    return this.configService.atbcIntegration;
+    this.atbcIntegrationConfig = configService.atbcIntegration;
   }
   /**
    * Executes the token request
@@ -48,12 +46,11 @@ export class ATBCService {
     date?: Date,
   ): Promise<ATBCDisabilityStatusResponse[]> {
     const processingDate = date ?? new Date();
-    const processingDateString = formatDate(processingDate, "YYYY/MM/DD");
+    const processingDateString = formatDate(processingDate, ATBC_DATE_FORMAT);
     try {
       this.logger.log("Checking for student disability status updates.");
-
       const headers = await this.getATBCEndpointConfig();
-      const apiEndpoint = `${this.config.ATBCEndpoint}/sfas?sfasDate=${processingDateString}`;
+      const apiEndpoint = `${this.atbcIntegrationConfig.ATBCEndpoint}/sfas?sfasDate=${processingDateString}`;
       const studentPDUpdateResponse = await this.httpService.axiosRef.get<
         ATBCDisabilityStatusResponse[]
       >(apiEndpoint, headers);
@@ -72,18 +69,18 @@ export class ATBCService {
    * @returns the result of a success full authentication or throws an exception
    * in case the result is anything different from HTTP 200 code.
    */
-  async loginToATBC(): Promise<ATBCAuthTokenResponse> {
+  private async loginToATBC(): Promise<ATBCAuthTokenResponse> {
     try {
       const agent = new (require("https").Agent)({
         rejectUnauthorized: false,
       });
 
       const authRequest = await this.httpService.axiosRef.post(
-        this.config.ATBCLoginEndpoint,
+        this.atbcIntegrationConfig.ATBCLoginEndpoint,
         {
-          usr: this.config.ATBCUserName,
-          pwd: this.config.ATBCPassword,
-          app: this.config.ATBCApp,
+          usr: this.atbcIntegrationConfig.ATBCUserName,
+          pwd: this.atbcIntegrationConfig.ATBCPassword,
+          app: this.atbcIntegrationConfig.ATBCApp,
         },
         { httpsAgent: agent },
       );
@@ -105,7 +102,7 @@ export class ATBCService {
   ): Promise<ATBCCreateClientResponse> {
     try {
       const config = await this.getATBCEndpointConfig();
-      const apiEndpoint = `${this.config.ATBCEndpoint}/pd-clients`;
+      const apiEndpoint = `${this.atbcIntegrationConfig.ATBCEndpoint}/pd-clients`;
       const res = await this.httpService.axiosRef.post(
         apiEndpoint,
         payload,

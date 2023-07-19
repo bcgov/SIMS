@@ -11,12 +11,10 @@ import {
   ATBCService,
   ATBCCreateClientPayload,
   ATBCCreateClientResponse,
+  ATBC_DATE_FORMAT,
 } from "../services";
 import { DisabilityStatus } from "@sims/sims-db";
-import {
-  DATE_FORMAT,
-  StudentDisabilityStatusDetail,
-} from "./models/atbc-integration.model";
+import { StudentDisabilityStatusDetail } from "./models/atbc-integration.model";
 import { ProcessSummaryResult } from "../models";
 
 @Injectable()
@@ -76,11 +74,11 @@ export class ATBCIntegrationProcessingService {
       studentDisabilityUpdates.map((student) => ({
         sin: student.SIN,
         lastName: student.APP_LAST_NAME,
-        birthDate: getDateOnlyFromFormat(student.BIRTH_DTE, DATE_FORMAT),
+        birthDate: getDateOnlyFromFormat(student.BIRTH_DTE, ATBC_DATE_FORMAT),
         disabilityStatus: student.D8Y_TYPE as DisabilityStatus,
         disabilityStatusUpdatedDate: getDateOnlyFromFormat(
           student.D8Y_DTE,
-          DATE_FORMAT,
+          ATBC_DATE_FORMAT,
         ),
       }));
     let updatedDisabilityStatusCount = 0;
