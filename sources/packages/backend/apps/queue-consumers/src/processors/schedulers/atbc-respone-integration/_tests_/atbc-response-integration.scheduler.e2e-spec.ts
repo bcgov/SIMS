@@ -180,7 +180,7 @@ async function getStudentDisabilityStatusDetails(
  */
 function createFakeATBCResponse(options?: {
   student?: Student;
-  disabilityStatus?: string;
+  disabilityStatus?: DisabilityStatus.PD | DisabilityStatus.PPD;
   disabilityStatusUpdatedDate?: Date;
 }): ATBCDisabilityStatusResponse {
   const studentBirthDate = options?.student?.birthDate ?? new Date();
