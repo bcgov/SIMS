@@ -43,16 +43,16 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-validateOffering",
     );
     collegeF = institution;
     collegeFUser = institutionUser;
-    collegeFLocation = createFakeInstitutionLocation(collegeF);
+    collegeFLocation = createFakeInstitutionLocation({ institution: collegeF });
     await authorizeUserTokenForLocation(
       db.dataSource,
       InstitutionTokenTypes.CollegeFUser,
       collegeFLocation,
     );
-    const fakeEducationProgram = createFakeEducationProgram(
-      collegeF,
-      collegeFUser,
-    );
+    const fakeEducationProgram = createFakeEducationProgram({
+      institution: collegeF,
+      user: collegeFUser,
+    });
     fakeEducationProgram.sabcCode = faker.random.alpha({ count: 4 });
     fakeEducationProgram.deliveredOnline = true;
     collegeFEducationProgram = await db.educationProgram.save(

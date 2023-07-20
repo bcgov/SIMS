@@ -42,7 +42,9 @@ describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-confirmEnrollment"
       InstitutionTokenTypes.CollegeCUser,
     );
     collegeC = institution;
-    await locationRepo.save(createFakeInstitutionLocation(collegeC));
+    await locationRepo.save(
+      createFakeInstitutionLocation({ institution: collegeC }),
+    );
   });
 
   it("Should allow the COE confirmation when COE is outside the valid COE window.", async () => {

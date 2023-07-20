@@ -49,7 +49,7 @@ describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-confirmEnrollment"
       InstitutionTokenTypes.CollegeCUser,
     );
     collegeC = institution;
-    collegeCLocation = createFakeInstitutionLocation(collegeC);
+    collegeCLocation = createFakeInstitutionLocation({ institution: collegeC });
     await authorizeUserTokenForLocation(
       appDataSource,
       InstitutionTokenTypes.CollegeCUser,

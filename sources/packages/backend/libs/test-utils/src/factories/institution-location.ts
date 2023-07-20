@@ -4,16 +4,25 @@ import { createFakeInstitution } from "./institution";
 
 /**
  * Create fake institution location.
- * @param institution institution.
+ * @param relations dependencies.
+ * - `institution` related institution.
+ * @param options dependencies.
+ * - `initialValues` initial values.
  * @returns institution location
  */
 export function createFakeInstitutionLocation(
-  institution?: Institution,
+  relations?: {
+    institution?: Institution;
+  },
+  options?: {
+    initialValue?: Partial<InstitutionLocation>;
+  },
 ): InstitutionLocation {
   const institutionLocation = new InstitutionLocation();
 
   institutionLocation.name = faker.company.companyName();
-  institutionLocation.institution = institution ?? createFakeInstitution();
+  institutionLocation.institution =
+    relations?.institution ?? createFakeInstitution();
   institutionLocation.data = {
     address: {
       addressLine1: faker.address.streetAddress(),
@@ -30,10 +39,12 @@ export function createFakeInstitutionLocation(
     email: faker.internet.email(),
     phone: faker.phone.phoneNumber("##########"),
   };
-  institutionLocation.institutionCode = faker.random.alpha({
-    count: 4,
-    upcase: true,
-  });
+  institutionLocation.institutionCode =
+    options?.initialValue?.institutionCode ??
+    faker.random.alpha({
+      count: 4,
+      upcase: true,
+    });
   return institutionLocation;
 }
 
@@ -43,7 +54,7 @@ export function createMultipleFakeInstitutionLocations(
 ): InstitutionLocation[] {
   const institutionLocation: InstitutionLocation[] = [];
   for (let i = 0; i < count; i++) {
-    institutionLocation.push(createFakeInstitutionLocation(institution));
+    institutionLocation.push(createFakeInstitutionLocation({ institution }));
   }
   return institutionLocation;
 }

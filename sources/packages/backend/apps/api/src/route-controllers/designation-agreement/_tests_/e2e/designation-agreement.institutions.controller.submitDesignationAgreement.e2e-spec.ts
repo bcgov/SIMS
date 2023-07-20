@@ -40,7 +40,7 @@ describe("DesignationAgreementInstitutionsController(e2e)-submitDesignationAgree
       InstitutionTokenTypes.CollegeFAdminLegalSigningUser,
     );
     collegeF = institution;
-    collegeFLocation = createFakeInstitutionLocation(collegeF);
+    collegeFLocation = createFakeInstitutionLocation({ institution: collegeF });
     await authorizeUserTokenForLocation(
       db.dataSource,
       InstitutionTokenTypes.CollegeFAdminLegalSigningUser,

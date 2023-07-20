@@ -47,7 +47,7 @@ describe("RestrictionInstitutionsController(e2e)-getStudentRestrictionDetail.", 
       InstitutionTokenTypes.CollegeFUser,
     );
     collegeF = institution;
-    collegeFLocation = createFakeInstitutionLocation(collegeF);
+    collegeFLocation = createFakeInstitutionLocation({ institution: collegeF });
     await authorizeUserTokenForLocation(
       appDataSource,
       InstitutionTokenTypes.CollegeFUser,
@@ -64,7 +64,7 @@ describe("RestrictionInstitutionsController(e2e)-getStudentRestrictionDetail.", 
       InstitutionTokenTypes.CollegeCUser,
     );
     collegeC = institution;
-    collegeCLocation = createFakeInstitutionLocation(collegeC);
+    collegeCLocation = createFakeInstitutionLocation({ institution: collegeC });
     await authorizeUserTokenForLocation(
       appDataSource,
       InstitutionTokenTypes.CollegeCUser,
@@ -94,7 +94,7 @@ describe("RestrictionInstitutionsController(e2e)-getStudentRestrictionDetail.", 
       InstitutionTokenTypes.CollegeCUser,
     );
     collegeC = institution;
-    collegeCLocation = createFakeInstitutionLocation(collegeC);
+    collegeCLocation = createFakeInstitutionLocation({ institution: collegeC });
     await authorizeUserTokenForLocation(
       appDataSource,
       InstitutionTokenTypes.CollegeCUser,

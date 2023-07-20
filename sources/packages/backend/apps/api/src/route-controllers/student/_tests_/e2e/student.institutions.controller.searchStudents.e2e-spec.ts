@@ -43,7 +43,7 @@ describe("StudentInstitutionsController(e2e)-searchStudents", () => {
       appDataSource,
       InstitutionTokenTypes.CollegeFUser,
     );
-    collegeFLocation = createFakeInstitutionLocation(collegeF);
+    collegeFLocation = createFakeInstitutionLocation({ institution: collegeF });
 
     await authorizeUserTokenForLocation(
       appDataSource,
@@ -325,7 +325,9 @@ describe("StudentInstitutionsController(e2e)-searchStudents", () => {
       appDataSource,
       InstitutionTokenTypes.CollegeCUser,
     );
-    const collegeCLocation = createFakeInstitutionLocation(collegeC);
+    const collegeCLocation = createFakeInstitutionLocation({
+      institution: collegeC,
+    });
     const application = await saveFakeApplication(appDataSource, {
       institutionLocation: collegeCLocation,
     });

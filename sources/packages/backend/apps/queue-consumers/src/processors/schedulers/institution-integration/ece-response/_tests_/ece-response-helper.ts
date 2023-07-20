@@ -92,7 +92,9 @@ async function findOrCreateInstitutionLocation(
     where: { institutionCode },
   });
   if (!institutionLocation) {
-    const newInstitutionLocation = createFakeInstitutionLocation(institution);
+    const newInstitutionLocation = createFakeInstitutionLocation({
+      institution,
+    });
     newInstitutionLocation.institutionCode = institutionCode;
     institutionLocation = newInstitutionLocation;
   }

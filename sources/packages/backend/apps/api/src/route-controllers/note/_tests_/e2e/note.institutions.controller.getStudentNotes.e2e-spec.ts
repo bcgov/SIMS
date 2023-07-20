@@ -43,7 +43,7 @@ describe("NoteInstitutionsController(e2e)-getStudentNotes", () => {
       dataSource,
       InstitutionTokenTypes.CollegeFUser,
     );
-    collegeFLocation = createFakeInstitutionLocation(collegeF);
+    collegeFLocation = createFakeInstitutionLocation({ institution: collegeF });
     await authorizeUserTokenForLocation(
       dataSource,
       InstitutionTokenTypes.CollegeFUser,

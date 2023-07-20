@@ -8,9 +8,23 @@ import {
 } from "@sims/sims-db";
 import { createFakeInstitution } from "@sims/test-utils";
 
+/**
+ * Create fake education program.
+ * @param relations dependencies.
+ * - `institution` related institution.
+ * - `user` related user.
+ * @param options dependencies.
+ * - `initialValues` initial values.
+ * @returns returns fake education program.
+ */
 export function createFakeEducationProgram(
-  institution?: Institution,
-  user?: User,
+  relations?: {
+    institution?: Institution;
+    user?: User;
+  },
+  options?: {
+    initialValue?: Partial<EducationProgram>;
+  },
 ): EducationProgram {
   const program = new EducationProgram();
   program.name = faker.name.jobArea();
@@ -18,10 +32,10 @@ export function createFakeEducationProgram(
   program.credentialType = "credentialType";
   program.cipCode = "cipCode";
   program.nocCode = "nocCode";
-  program.sabcCode = "sabcCode";
+  program.sabcCode = options?.initialValue?.sabcCode ?? "sabcCode";
   program.regulatoryBody = "regulatoryBody";
-  program.deliveredOnSite = false;
-  program.deliveredOnline = false;
+  program.deliveredOnSite = options?.initialValue?.deliveredOnSite ?? false;
+  program.deliveredOnline = options?.initialValue?.deliveredOnline ?? false;
   program.courseLoadCalculation = "courseLoadCalculation";
   program.completionYears = "completionYears";
   program.eslEligibility = "eslEligibility";
@@ -32,9 +46,9 @@ export function createFakeEducationProgram(
   program.hasTravel = "yes";
   program.hasIntlExchange = "yes";
   program.programDeclaration = true;
-  program.institution = institution ?? createFakeInstitution();
+  program.institution = relations?.institution ?? createFakeInstitution();
   program.programIntensity = ProgramIntensity.fullTime;
-  program.submittedBy = user;
+  program.submittedBy = relations?.user;
   program.fieldOfStudyCode = 1;
   return program;
 }
