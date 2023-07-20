@@ -141,7 +141,9 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-bulkInsert", () =>
         "bulk-insert/multiple-upload.csv",
       );
 
-      let [responseOfferingSBC1, responseOfferingSBC2] = [undefined, undefined];
+      let responseOfferingSBC1: EducationProgram,
+        responseOfferingSBC2: EducationProgram;
+
       // Act/Assert
       await request(app.getHttpServer())
         .post(endpoint)
@@ -162,6 +164,9 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-bulkInsert", () =>
           },
           where: {
             id: In([responseOfferingSBC1.id, responseOfferingSBC2.id]),
+          },
+          order: {
+            name: "ASC",
           },
         });
 
