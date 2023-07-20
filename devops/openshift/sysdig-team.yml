@@ -1,0 +1,11 @@
+apiVersion: ops.gov.bc.ca/v1alpha1
+kind: SysdigTeam
+metadata:
+  name: 0c27fb-sysdigteam
+  namespace: 0c27fb-tools
+spec:
+  team:
+    description: The Sysdig Team for the OpenShift Project Set SIMS
+    users:
+    - name: gurumoorthy.mohan@aot-technologies.com
+      role: ROLE_TEAM_EDIT
