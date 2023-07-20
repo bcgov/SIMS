@@ -34,12 +34,8 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-bulkInsert", () =>
   let institutionUserToken: string;
   let endpoint: string;
   let csvLocationCodeYESK: string;
-  let csvProgramSABCCodeSBC2: string;
-  let csvLocationCodeKSEY: string;
-  let csvProgramSABCCodeSBC4: string;
-  let multipleOfferingFilePath: string;
-  let singleOfferingFilePath: string;
-  let singleOfferingWithValidationErrorsFilePath: string;
+  let collegeFLocationYESK: InstitutionLocation;
+  let csvProgramSABCCodeSBC1: string;
 
   beforeAll(async () => {
     const { nestApplication, dataSource } = await createTestingAppModule();
@@ -52,31 +48,47 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-bulkInsert", () =>
     collegeF = institution;
     collegeFUser = institutionUser;
 
-    // location code in the single and multiple CSV.
+    // Location code in the single and multiple CSV files.
     csvLocationCodeYESK = "YESK";
-    // SABC code in the single and multiple CSV.
-    csvProgramSABCCodeSBC2 = "SBC2";
-    // Second location code in the multiple CSV.
-    csvLocationCodeKSEY = "KSEY";
-    // Second SABC code in the multiple CSV.
-    csvProgramSABCCodeSBC4 = "SBC4";
+    // SABC code in the single and multiple CSV files.
+    csvProgramSABCCodeSBC1 = "SBC1";
 
     institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeFUser,
     );
+
+    // Create a program for the institution with the same SABC code as that of the
+    // CSV file.
+    const educationProgramSBC1 = createFakeEducationProgram(
+      { institution: collegeF, user: collegeFUser },
+      {
+        initialValue: {
+          sabcCode: csvProgramSABCCodeSBC1,
+        } as Partial<EducationProgram>,
+      },
+    );
+    await db.educationProgram.save(educationProgramSBC1);
+
     endpoint = "/institutions/education-program-offering/bulk-insert";
 
-    multipleOfferingFilePath = path.join(
-      __dirname,
-      "bulk-insert/multiple-upload.csv",
+    // Arrange
+    // Creating an institution location with same location code as that of the
+    // CSV file.
+    collegeFLocationYESK = createFakeInstitutionLocation(
+      {
+        institution: collegeF,
+      },
+      {
+        initialValue: {
+          institutionCode: csvLocationCodeYESK,
+        } as Partial<InstitutionLocation>,
+      },
     );
-    singleOfferingFilePath = path.join(
-      __dirname,
-      "bulk-insert/single-upload.csv",
-    );
-    singleOfferingWithValidationErrorsFilePath = path.join(
-      __dirname,
-      "bulk-insert/single-upload-with-validation-errors.csv",
+
+    await authorizeUserTokenForLocation(
+      db.dataSource,
+      InstitutionTokenTypes.CollegeFUser,
+      collegeFLocationYESK,
     );
   });
 
@@ -86,20 +98,13 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-bulkInsert", () =>
       " same delivery method and another with different delivery method is uploaded.",
     async () => {
       // Arrange
+      // Second location code in the multiple CSV.
+      const csvLocationCodeKSEY = "KSEY";
+      // SABC code in the second row of the multiple CSV.
+      const csvProgramSABCCodeSBC2 = "SBC2";
+
       // Creating an institution location with same location code as that of the
-      // first row of the multiple CSV file.
-      const collegeFLocationYESK = createFakeInstitutionLocation(
-        {
-          institution: collegeF,
-        },
-        {
-          initialValue: {
-            institutionCode: csvLocationCodeYESK,
-          } as Partial<InstitutionLocation>,
-        },
-      );
-      // Creating an institution location with same location code as that of the
-      // second row of the multiple CSV file.
+      // second row in the CSV file.
       const collegeFLocationKSEY = createFakeInstitutionLocation(
         {
           institution: collegeF,
@@ -111,7 +116,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-bulkInsert", () =>
         },
       );
       // Create a program for the institution with the same SABC code as that of the
-      // first row of the multiple CSV file.
+      // second row of the multiple CSV file.
       // Setting deliveredOnSite as true, as that of the CSV, so that it will create an approved offering.
       const educationProgramSBC2 = createFakeEducationProgram(
         { institution: collegeF, user: collegeFUser },
@@ -122,35 +127,21 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-bulkInsert", () =>
           } as Partial<EducationProgram>,
         },
       );
-      // Create a program for the institution with the same SABC code as that of the
-      // second row of the multiple CSV file.
-      // Delivery method of the CSV does not match with the below program, which will
-      // create an 'Creation pending' offering when inserted.
-      const educationProgramSBC4 = createFakeEducationProgram(
-        { institution: collegeF, user: collegeFUser },
-        {
-          initialValue: {
-            sabcCode: csvProgramSABCCodeSBC4,
-          } as Partial<EducationProgram>,
-        },
-      );
-      await db.educationProgram.save([
-        educationProgramSBC2,
-        educationProgramSBC4,
-      ]);
 
-      await authorizeUserTokenForLocation(
-        db.dataSource,
-        InstitutionTokenTypes.CollegeFUser,
-        collegeFLocationYESK,
-      );
+      await db.educationProgram.save(educationProgramSBC2);
+
       await authorizeUserTokenForLocation(
         db.dataSource,
         InstitutionTokenTypes.CollegeFUser,
         collegeFLocationKSEY,
       );
 
-      let [responseOfferingSBC2, responseOfferingSBC4] = [undefined, undefined];
+      const multipleOfferingFilePath = path.join(
+        __dirname,
+        "bulk-insert/multiple-upload.csv",
+      );
+
+      let [responseOfferingSBC1, responseOfferingSBC2] = [undefined, undefined];
       // Act/Assert
       await request(app.getHttpServer())
         .post(endpoint)
@@ -158,41 +149,32 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-bulkInsert", () =>
         .auth(institutionUserToken, BEARER_AUTH_TYPE)
         .expect(HttpStatus.CREATED)
         .expect((response) => {
-          [responseOfferingSBC2, responseOfferingSBC4] = response.body;
+          [responseOfferingSBC1, responseOfferingSBC2] = response.body;
+          expect(responseOfferingSBC1).toHaveProperty("id");
           expect(responseOfferingSBC2).toHaveProperty("id");
-          expect(responseOfferingSBC4).toHaveProperty("id");
         });
 
       // Checking the created offering statuses.
-      const [offeringSBC2, offeringSBC4] =
+      const [offeringSBC1, offeringSBC2] =
         await db.educationProgramOffering.find({
           select: {
             offeringStatus: true,
           },
           where: {
-            id: In([responseOfferingSBC2.id, responseOfferingSBC4.id]),
+            id: In([responseOfferingSBC1.id, responseOfferingSBC2.id]),
           },
         });
 
-      expect(offeringSBC2).toHaveProperty(
-        "offeringStatus",
-        OfferingStatus.Approved,
-      );
-      expect(offeringSBC4).toHaveProperty(
+      // Delivery method of the program 'SBC1' in the CSV does not match with the existing program, which will
+      // create an 'Creation pending' offering when inserted.
+
+      expect(offeringSBC1).toHaveProperty(
         "offeringStatus",
         OfferingStatus.CreationPending,
       );
-
-      // Clear test data.
-      await cleanTestData(
-        csvProgramSABCCodeSBC2,
-        collegeFLocationYESK,
-        csvLocationCodeYESK,
-      );
-      await cleanTestData(
-        csvProgramSABCCodeSBC4,
-        collegeFLocationKSEY,
-        csvLocationCodeKSEY,
+      expect(offeringSBC2).toHaveProperty(
+        "offeringStatus",
+        OfferingStatus.Approved,
       );
     },
   );
@@ -203,37 +185,9 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-bulkInsert", () =>
       " is uploaded.",
     async () => {
       // Arrange
-      // Creating an institution location with same location code as that of the
-      // single CSV file.
-      const collegeFLocationYESK = createFakeInstitutionLocation(
-        {
-          institution: collegeF,
-        },
-        {
-          initialValue: {
-            institutionCode: csvLocationCodeYESK,
-          } as Partial<InstitutionLocation>,
-        },
-      );
-
-      // Create a program for the institution with the same SABC code as that of the
-      // single CSV file.
-      // In CSV delivery method is onsite, which does not match with the existing program.
-      const educationProgramSBC2 = createFakeEducationProgram(
-        { institution: collegeF, user: collegeFUser },
-        {
-          initialValue: {
-            sabcCode: csvProgramSABCCodeSBC2,
-          } as Partial<EducationProgram>,
-        },
-      );
-
-      await db.educationProgram.save(educationProgramSBC2);
-
-      await authorizeUserTokenForLocation(
-        db.dataSource,
-        InstitutionTokenTypes.CollegeFUser,
-        collegeFLocationYESK,
+      const singleOfferingWithValidationErrorsFilePath = path.join(
+        __dirname,
+        "bulk-insert/single-upload-with-validation-errors.csv",
       );
 
       // Act/Assert
@@ -249,9 +203,9 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-bulkInsert", () =>
             {
               recordIndex: 0,
               locationCode: csvLocationCodeYESK,
-              sabcProgramCode: csvProgramSABCCodeSBC2,
-              startDate: "2023-09-06",
-              endDate: "2023-10-15",
+              sabcProgramCode: csvProgramSABCCodeSBC1,
+              startDate: "2023-09-05",
+              endDate: "2023-10-14",
               offeringStatus: OfferingStatus.CreationPending,
               errors: [],
               infos: [],
@@ -260,7 +214,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-bulkInsert", () =>
                   typeCode:
                     OfferingValidationWarnings.InvalidStudyDatesPeriodLength,
                   message:
-                    "End date, the number of day(s) between Sep 06 2023 and Oct 15 2023 must be at least 84.",
+                    "End date, the number of day(s) between Sep 05 2023 and Oct 14 2023 must be at least 84.",
                 },
                 {
                   typeCode:
@@ -272,48 +226,18 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-bulkInsert", () =>
             },
           ],
         });
-
-      // Clear test data.
-      await cleanTestData(
-        csvProgramSABCCodeSBC2,
-        collegeFLocationYESK,
-        csvLocationCodeYESK,
-      );
     },
   );
 
   it("Should return program related validation error when bulk offering CSV file with a non existing program SABC code is uploaded. ", async () => {
     // Arrange
-    const randomSABCCode = `XXXX1`;
 
-    // Creating an institution location with same location code as that of the CSV file.
-    const collegeFLocation = createFakeInstitutionLocation(
-      {
-        institution: collegeF,
-      },
-      {
-        initialValue: {
-          institutionCode: csvLocationCodeYESK,
-        } as Partial<InstitutionLocation>,
-      },
+    const singleOfferingFilePath = path.join(
+      __dirname,
+      "bulk-insert/single-upload-example1.csv",
     );
-
-    // Create a program for the institution with a different SABC code as that of th CSV file.
-    const educationProgram = createFakeEducationProgram(
-      { institution: collegeF, user: collegeFUser },
-      {
-        initialValue: {
-          sabcCode: randomSABCCode,
-        } as Partial<EducationProgram>,
-      },
-    );
-    await db.educationProgram.save(educationProgram);
-
-    await authorizeUserTokenForLocation(
-      db.dataSource,
-      InstitutionTokenTypes.CollegeFUser,
-      collegeFLocation,
-    );
+    // SABC code from the CSV, that does not exists in the DB.
+    const csvProgramSABCCodeSBC3 = "SBC3";
 
     // Act/Assert
     await request(app.getHttpServer())
@@ -328,9 +252,9 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-bulkInsert", () =>
           {
             recordIndex: 0,
             locationCode: csvLocationCodeYESK,
-            sabcProgramCode: csvProgramSABCCodeSBC2,
-            startDate: "2023-09-06",
-            endDate: "2024-08-15",
+            sabcProgramCode: csvProgramSABCCodeSBC3,
+            startDate: "2023-09-04",
+            endDate: "2024-08-13",
             errors: [
               "Not able to find a program related to this offering or it was not provided.",
             ],
@@ -339,9 +263,6 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-bulkInsert", () =>
           },
         ],
       });
-
-    // Clear test data.
-    await cleanTestData(randomSABCCode, collegeFLocation, csvLocationCodeYESK);
   });
 
   it(
@@ -350,25 +271,11 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-bulkInsert", () =>
       "with different delivery method is uploaded",
     async () => {
       // Arrange
-      // Creating an institution location with a different location code that is not in theCSV file.
-      const collegeFLocation = createFakeInstitutionLocation({
-        institution: collegeF,
-      });
-      // Create a program for the institution with the same SABC code as that of th CSV file.
-      const educationProgramSBC2 = createFakeEducationProgram(
-        { institution: collegeF, user: collegeFUser },
-        {
-          initialValue: {
-            sabcCode: csvProgramSABCCodeSBC2,
-          } as Partial<EducationProgram>,
-        },
-      );
-      await db.educationProgram.save(educationProgramSBC2);
-
-      await authorizeUserTokenForLocation(
-        db.dataSource,
-        InstitutionTokenTypes.CollegeFUser,
-        collegeFLocation,
+      // Location code from the CSV, that doesn't exists in DB.
+      const csvLocationCodeAESK = "AESK";
+      const singleOfferingFilePath = path.join(
+        __dirname,
+        "bulk-insert/single-upload-example2.csv",
       );
 
       // Act/Assert
@@ -383,10 +290,10 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-bulkInsert", () =>
           objectInfo: [
             {
               recordIndex: 0,
-              locationCode: csvLocationCodeYESK,
-              sabcProgramCode: csvProgramSABCCodeSBC2,
-              startDate: "2023-09-06",
-              endDate: "2024-08-15",
+              locationCode: csvLocationCodeAESK,
+              sabcProgramCode: csvProgramSABCCodeSBC1,
+              startDate: "2023-09-02",
+              endDate: "2024-08-12",
               errors: [
                 "Related institution location was not found or was not provided.",
               ],
@@ -402,38 +309,8 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-bulkInsert", () =>
             },
           ],
         });
-
-      // Clear test data.
-      await cleanTestData(csvProgramSABCCodeSBC2, collegeFLocation);
     },
   );
-
-  /**
-   * Clear the test data.
-   * @param sabcCode sabcCode related entity to be deleted.
-   * @param location location related entity to be deleted.
-   * @param locationCode locationCode related entity to be deleted.
-   */
-  async function cleanTestData(
-    sabcCode: string,
-    location: InstitutionLocation,
-    locationCode?: string,
-  ): Promise<void> {
-    await db.institutionUserAuth.delete({
-      location: {
-        id: location.id,
-      },
-    });
-    await db.educationProgramOffering.delete({
-      institutionLocation: {
-        id: location.id,
-      },
-    });
-    await db.educationProgram.delete({ sabcCode: sabcCode });
-    if (locationCode) {
-      await db.institutionLocation.delete({ institutionCode: locationCode });
-    }
-  }
 
   afterAll(async () => {
     await app?.close();
