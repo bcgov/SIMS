@@ -8,5 +8,6 @@ export class CleanDatabase {
   async cleanDatabase(): Promise<void> {
     // Drops the database and all its data.It will erase all your database tables and their data.
     await this.dataSource.dropDatabase();
+    await this.dataSource.query("DROP EXTENSION pg_trgm");
   }
 }

@@ -17,7 +17,6 @@ export interface ATBCCreateClientPayload {
  */
 export interface ATBCDisabilityStatusResponse {
   SIN: string;
-  APP_FIRST_NAME: string;
   APP_LAST_NAME: string;
   BIRTH_DTE: string;
   D8Y_TYPE: string;

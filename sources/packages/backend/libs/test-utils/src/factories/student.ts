@@ -6,7 +6,10 @@ import { createFakeSINValidation } from "./sin-validation";
 import { getISODateOnlyString } from "@sims/utilities";
 // TODO: the parameter user must be moved to relations and all the references must be
 // updated.
-export function createFakeStudent(user?: User): Student {
+export function createFakeStudent(
+  user?: User,
+  options?: { initialValue: Partial<Student> },
+): Student {
   const student = new Student();
   student.user = user ?? createFakeUser();
   student.birthDate = getISODateOnlyString(faker.date.past(18));
@@ -23,7 +26,8 @@ export function createFakeStudent(user?: User): Student {
     phone: faker.phone.phoneNumber(),
   };
   student.sinConsent = true;
-  student.disabilityStatus = DisabilityStatus.NotRequested;
+  student.disabilityStatus =
+    options?.initialValue?.disabilityStatus ?? DisabilityStatus.NotRequested;
   return student;
 }
 
@@ -34,15 +38,21 @@ export function createFakeStudent(user?: User): Student {
  * - `user` related user.
  * - `student` student to be created an associated with other relations.
  * - `sinValidation` related SIN validation.
+ * @param options student options.
+ * - `initialValue` student initial values.
  * @returns persisted student with relations provided.
  */
 export async function saveFakeStudent(
   dataSource: DataSource,
   relations?: { student?: Student; user?: User; sinValidation?: SINValidation },
+  options?: { initialValue?: Partial<Student> },
 ): Promise<Student> {
   const studentRepo = dataSource.getRepository(Student);
   const student = await studentRepo.save(
-    relations?.student ?? createFakeStudent(relations?.user),
+    relations?.student ??
+      createFakeStudent(relations?.user, {
+        initialValue: options?.initialValue,
+      }),
   );
   // Saving SIN validation after student is saved due to cyclic dependency error.
   student.sinValidation =
