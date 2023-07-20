@@ -62,6 +62,7 @@ export class ATBCIntegrationProcessingService {
 
   /**
    * Process all the pending disability requests applied by students.
+   * @returns process summary result.
    */
   async processAppliedDisabilityRequests(): Promise<ProcessSummaryResult> {
     const processSummaryResult: ProcessSummaryResult =
@@ -83,7 +84,7 @@ export class ATBCIntegrationProcessingService {
       }));
     let updatedDisabilityStatusCount = 0;
     this.logger.log(
-      `Processing disability status requests for ${studentsToUpdate.length} students`,
+      `Total disability status requests processed: ${studentsToUpdate.length}`,
     );
     processSummaryResult.summary.push(
       `Total disability status requests processed: ${studentsToUpdate.length}`,
@@ -97,7 +98,7 @@ export class ATBCIntegrationProcessingService {
         studentsToUpdate,
       );
 
-      updatedDisabilityStatusCount += processingResults.filter(
+      updatedDisabilityStatusCount = processingResults.filter(
         (result) => result,
       ).length;
     }
@@ -113,17 +114,17 @@ export class ATBCIntegrationProcessingService {
    * and update the disability status of the student only if the status has changed.
    * e.g. if ATBC response has same disability status (PD/PPD) which is already present
    * in the system, update does not happen.
-   * @param studentDisabilityDetail student disability status details.
+   * @param studentDisabilityStatusDetail student disability status details.
+   * @return processing status.
    */
   private async processStudentDisabilityStatusUpdate(
     studentDisabilityStatusDetail: StudentDisabilityStatusDetail,
   ): Promise<boolean> {
-    const student =
-      await this.studentService.getStudentBySINAndLastNameAndBirthDate(
-        studentDisabilityStatusDetail.sin,
-        studentDisabilityStatusDetail.lastName,
-        getISODateOnlyString(studentDisabilityStatusDetail.birthDate),
-      );
+    const student = await this.studentService.getStudentByPersonalInfo(
+      studentDisabilityStatusDetail.sin,
+      studentDisabilityStatusDetail.lastName,
+      getISODateOnlyString(studentDisabilityStatusDetail.birthDate),
+    );
     if (!student) {
       return false;
     }
@@ -131,6 +132,9 @@ export class ATBCIntegrationProcessingService {
       student.disabilityStatus !==
       studentDisabilityStatusDetail.disabilityStatus
     ) {
+      this.logger.log(
+        `Updating disability status for student id ${student.id}`,
+      );
       await this.studentService.updateDisabilityStatus(
         student.id,
         studentDisabilityStatusDetail.disabilityStatus,

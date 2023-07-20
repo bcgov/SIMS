@@ -39,7 +39,7 @@ export class ATBCService {
 
   /**
    * Check for student disability status updates.
-   * @param student student.
+   * @param date disability retrieval date.
    * @returns student disability status updates.
    */
   async getStudentDisabilityStatusUpdatesByDate(
@@ -57,7 +57,7 @@ export class ATBCService {
       return studentPDUpdateResponse.data;
     } catch (error: unknown) {
       this.logger.error(
-        `Unexpected error occurred while checking for student disability status updates.`,
+        "Unexpected error occurred while checking for student disability status updates.",
       );
       this.logger.error(error);
       throw error;

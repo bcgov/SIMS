@@ -107,13 +107,13 @@ export class StudentService extends RecordDataModelService<Student> {
   }
 
   /**
-   * Get student by SIN, Last name and birth date.
+   * Get student by student personal information.
    * @param sin sin.
    * @param lastName last name.
    * @param birthDate birth date.
    * @returns student.
    */
-  async getStudentBySINAndLastNameAndBirthDate(
+  async getStudentByPersonalInfo(
     sin: string,
     lastName: string,
     birthDate: string,

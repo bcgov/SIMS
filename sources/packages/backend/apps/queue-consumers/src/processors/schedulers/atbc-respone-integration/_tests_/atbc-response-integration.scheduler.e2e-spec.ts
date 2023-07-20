@@ -60,12 +60,12 @@ describe(describeProcessorRootTest(QueueNames.ATBCResponseIntegration), () => {
     const [pdResponse, ppdResponse, pdResponseForNonExistingStudent] = [
       createFakeATBCResponse({
         student: studentAppliedDisabilityAndPDReceived,
-        disabilityStatus: "PD",
+        disabilityStatus: DisabilityStatus.PD,
         disabilityStatusUpdatedDate: addDays(-1),
       }),
       createFakeATBCResponse({
         student: studentAppliedDisabilityAndPPDReceived,
-        disabilityStatus: "PPD",
+        disabilityStatus: DisabilityStatus.PPD,
         disabilityStatusUpdatedDate: addDays(-2),
       }),
       createFakeATBCResponse(),
@@ -125,7 +125,7 @@ describe(describeProcessorRootTest(QueueNames.ATBCResponseIntegration), () => {
     // Mocking ATBC response to return same disability status which was updated earlier.
     const pdResponse = createFakeATBCResponse({
       student: studentAppliedDisabilityAndUpdatedAlready,
-      disabilityStatus: "PD",
+      disabilityStatus: DisabilityStatus.PD,
       disabilityStatusUpdatedDate: addDays(-2),
     });
     // Mock the implementation of ATBC API response.
