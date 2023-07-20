@@ -30,6 +30,7 @@ import {
   CRAIncomeVerificationService,
   SupportingUserService,
   StudentAppealService,
+  ApplicationOfferingChangeRequestService,
 } from "../../services";
 import { IUserToken, StudentUserToken } from "../../auth/userToken.interface";
 import BaseController from "../BaseController";
@@ -69,7 +70,11 @@ import { ApplicationControllerService } from "./application.controller.service";
 import { CustomNamedError } from "@sims/utilities";
 import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
 import { ApplicationData } from "@sims/sims-db/entities/application.model";
-import { ApplicationStatus, StudentAppealStatus } from "@sims/sims-db";
+import {
+  ApplicationOfferingChangeRequestStatus,
+  ApplicationStatus,
+  StudentAppealStatus,
+} from "@sims/sims-db";
 import { ConfirmationOfEnrollmentService } from "@sims/services";
 
 @AllowAuthorizedParty(AuthorizedParties.student)
@@ -89,6 +94,7 @@ export class ApplicationStudentsController extends BaseController {
     private readonly craIncomeVerificationService: CRAIncomeVerificationService,
     private readonly supportingUserService: SupportingUserService,
     private readonly studentAppealService: StudentAppealService,
+    private readonly applicationOfferingChangeRequestService: ApplicationOfferingChangeRequestService,
   ) {
     super();
   }
@@ -537,6 +543,14 @@ export class ApplicationStudentsController extends BaseController {
         );
       appealStatus = mostRecentAppeal?.status;
     }
+    let mostRecentApplicationOfferingChangeRequestStatus: ApplicationOfferingChangeRequestStatus;
+    if (application.applicationStatus === ApplicationStatus.Completed) {
+      mostRecentApplicationOfferingChangeRequestStatus =
+        await this.applicationOfferingChangeRequestService.getApplicationOfferingChangeRequestStatus(
+          applicationId,
+          userToken.studentId,
+        );
+    }
 
     const disbursements =
       application.currentAssessment?.disbursementSchedules ?? [];
@@ -555,6 +569,8 @@ export class ApplicationStudentsController extends BaseController {
       exceptionStatus: application.applicationException?.exceptionStatus,
       appealStatus,
       scholasticStandingChangeType: scholasticStandingChange?.changeType,
+      applicationOfferingChangeRequestStatus:
+        mostRecentApplicationOfferingChangeRequestStatus,
     };
   }
 
@@ -611,6 +627,11 @@ export class ApplicationStudentsController extends BaseController {
         userToken.studentId,
         { limit: 1 },
       );
+    const applicationOfferingChangeRequestStatus =
+      await this.applicationOfferingChangeRequestService.getApplicationOfferingChangeRequestStatus(
+        applicationId,
+        userToken.studentId,
+      );
     const [application, [mostRecentAppeal]] = await Promise.all([
       getApplicationPromise,
       mostRecentAppealsPromises,
@@ -631,6 +652,7 @@ export class ApplicationStudentsController extends BaseController {
       assessmentTriggerType: application.currentAssessment.triggerType,
       appealStatus: mostRecentAppeal?.status,
       scholasticStandingChangeType: scholasticStandingChange?.changeType,
+      applicationOfferingChangeRequestStatus,
     };
   }
 }

@@ -19,6 +19,7 @@ import {
   AssessmentNOAAPIOutDTO,
   AwardDetailsAPIOutDTO,
   RequestAssessmentSummaryAPIOutDTO,
+  RequestAssessmentTypeAPIOutDTO,
   AssessmentHistorySummaryAPIOutDTO,
 } from "./models/assessment.dto";
 import {
@@ -30,9 +31,11 @@ import { AssessmentControllerService } from "./assessment.controller.service";
 import {
   ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE,
   ASSESSMENT_NOT_FOUND,
+  ApplicationOfferingChangeRequestService,
   StudentAssessmentService,
 } from "../../services";
 import { StudentUserToken } from "../../auth/userToken.interface";
+import { ApplicationOfferingChangeRequestStatus } from "@sims/sims-db";
 
 @AllowAuthorizedParty(AuthorizedParties.student)
 @RequiresStudentAccount()
@@ -42,6 +45,7 @@ export class AssessmentStudentsController extends BaseController {
   constructor(
     private readonly studentAssessmentService: StudentAssessmentService,
     private readonly assessmentControllerService: AssessmentControllerService,
+    private readonly applicationOfferingChangeRequestService: ApplicationOfferingChangeRequestService,
   ) {
     super();
   }
@@ -133,10 +137,34 @@ export class AssessmentStudentsController extends BaseController {
     @Param("applicationId", ParseIntPipe) applicationId: number,
     @UserToken() userToken: StudentUserToken,
   ): Promise<RequestAssessmentSummaryAPIOutDTO[]> {
-    return this.assessmentControllerService.getPendingAndDeniedAppeals(
-      applicationId,
-      userToken.studentId,
-    );
+    const pendingAndDeniedAppeals =
+      await this.assessmentControllerService.getPendingAndDeniedAppeals(
+        applicationId,
+        userToken.studentId,
+      );
+    const inProgressAndDeclinedApplicationOfferingChangeRequests =
+      await this.applicationOfferingChangeRequestService.getApplicationOfferingChangeRequestsByStatus(
+        applicationId,
+        userToken.studentId,
+        [
+          ApplicationOfferingChangeRequestStatus.InProgressWithStudent,
+          ApplicationOfferingChangeRequestStatus.InProgressWithSABC,
+          ApplicationOfferingChangeRequestStatus.DeclinedByStudent,
+          ApplicationOfferingChangeRequestStatus.DeclinedBySABC,
+        ],
+      );
+    const studentInProgressAndDeclinedApplicationOfferingChangeRequestsArray: RequestAssessmentSummaryAPIOutDTO[] =
+      inProgressAndDeclinedApplicationOfferingChangeRequests.map((request) => ({
+        id: request.id,
+        submittedDate: request.createdAt,
+        status: request.applicationOfferingChangeRequestStatus,
+        requestType:
+          RequestAssessmentTypeAPIOutDTO.ApplicationOfferingChangeRequest,
+      }));
+    return [
+      ...pendingAndDeniedAppeals,
+      ...studentInProgressAndDeclinedApplicationOfferingChangeRequestsArray,
+    ];
   }
 
   /**

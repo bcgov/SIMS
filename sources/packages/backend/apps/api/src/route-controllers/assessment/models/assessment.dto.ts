@@ -1,5 +1,6 @@
 import {
   ApplicationExceptionStatus,
+  ApplicationOfferingChangeRequestStatus,
   ApplicationStatus,
   Assessment,
   AssessmentStatus,
@@ -15,12 +16,14 @@ export enum RequestAssessmentTypeAPIOutDTO {
   StudentException = "Student exceptions",
   StudentAppeal = "Student appeal",
   OfferingRequest = "Offering request",
+  ApplicationOfferingChangeRequest = "Application offering change",
 }
 
 type RequestAssessmentSummaryStatus =
   | StudentAppealStatus
   | ApplicationExceptionStatus
-  | OfferingStatus;
+  | OfferingStatus
+  | ApplicationOfferingChangeRequestStatus;
 
 export class RequestAssessmentSummaryAPIOutDTO {
   id: number;

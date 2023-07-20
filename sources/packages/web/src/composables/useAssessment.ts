@@ -4,24 +4,60 @@ import {
   StudentAssessmentStatus,
   AssessmentDetailHeader,
   StatusChipTypes,
+  StatusChipLabelTypes,
+  ApplicationOfferingChangeRequestStatus,
 } from "@/types";
 
 export function useAssessment() {
   const mapRequestAssessmentChipStatus = (
-    status: StudentAppealStatus | ApplicationExceptionStatus,
+    status:
+      | StudentAppealStatus
+      | ApplicationExceptionStatus
+      | ApplicationOfferingChangeRequestStatus,
   ): StatusChipTypes => {
     switch (status) {
       case StudentAppealStatus.Approved:
       case ApplicationExceptionStatus.Approved:
+      case ApplicationOfferingChangeRequestStatus.Approved:
         return StatusChipTypes.Success;
       case StudentAppealStatus.Pending:
       case ApplicationExceptionStatus.Pending:
+      case ApplicationOfferingChangeRequestStatus.InProgressWithStudent:
+      case ApplicationOfferingChangeRequestStatus.InProgressWithSABC:
         return StatusChipTypes.Warning;
       case StudentAppealStatus.Declined:
       case ApplicationExceptionStatus.Declined:
+      case ApplicationOfferingChangeRequestStatus.DeclinedByStudent:
+      case ApplicationOfferingChangeRequestStatus.DeclinedBySABC:
         return StatusChipTypes.Error;
       default:
         return StatusChipTypes.Inactive;
+    }
+  };
+
+  const mapRequestAssessmentChipStatusLabel = (
+    status:
+      | StudentAppealStatus
+      | ApplicationExceptionStatus
+      | ApplicationOfferingChangeRequestStatus,
+  ): StatusChipLabelTypes => {
+    switch (status) {
+      case StudentAppealStatus.Approved:
+      case ApplicationExceptionStatus.Approved:
+      case ApplicationOfferingChangeRequestStatus.Approved:
+        return StatusChipLabelTypes.Completed;
+      case StudentAppealStatus.Pending:
+      case ApplicationExceptionStatus.Pending:
+      case ApplicationOfferingChangeRequestStatus.InProgressWithStudent:
+      case ApplicationOfferingChangeRequestStatus.InProgressWithSABC:
+        return StatusChipLabelTypes.Pending;
+      case StudentAppealStatus.Declined:
+      case ApplicationExceptionStatus.Declined:
+      case ApplicationOfferingChangeRequestStatus.DeclinedByStudent:
+      case ApplicationOfferingChangeRequestStatus.DeclinedBySABC:
+        return StatusChipLabelTypes.Declined;
+      default:
+        return StatusChipLabelTypes.Pending;
     }
   };
 
@@ -53,6 +89,7 @@ export function useAssessment() {
 
   return {
     mapRequestAssessmentChipStatus,
+    mapRequestAssessmentChipStatusLabel,
     mapAssessmentHistoryChipStatus,
     mapAssessmentDetailHeader,
   };

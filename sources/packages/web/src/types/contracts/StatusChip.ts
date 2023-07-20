@@ -5,3 +5,9 @@ export enum StatusChipTypes {
   Default = "black",
   Inactive = "inactive",
 }
+
+export enum StatusChipLabelTypes {
+  Pending = "Pending",
+  Declined = "Declined",
+  Completed = "Completed",
+}

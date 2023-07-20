@@ -101,7 +101,7 @@ export default defineComponent({
       type: Number,
       required: true,
     },
-    // Assessment trigger types for which request for is available to view.
+    // Assessment trigger types for which request form is available to view.
     viewRequestTypes: {
       type: Array as PropType<AssessmentTriggerType[]>,
       required: true,

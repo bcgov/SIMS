@@ -10,7 +10,7 @@ import {
   getUserFullNameLikeSearch,
   transformToApplicationEntitySortField,
 } from "@sims/sims-db";
-import { DataSource, Brackets, Repository } from "typeorm";
+import { DataSource, Brackets, Repository, In } from "typeorm";
 import { PaginatedResults, PaginationOptions } from "../../utilities";
 import { NotificationActionsService, SystemUsersService } from "@sims/services";
 
@@ -291,6 +291,70 @@ export class ApplicationOfferingChangeRequestService {
         application: {
           location: { id: options?.locationId },
         },
+      },
+    });
+  }
+
+  /**
+   * Get the Application Offering Change Request Status by the application id.
+   * @param applicationId the application id.
+   * @param studentId the student id.
+   * @returns application offering change request status.
+   */
+  async getApplicationOfferingChangeRequestStatus(
+    applicationId: number,
+    studentId: number,
+  ): Promise<ApplicationOfferingChangeRequestStatus> {
+    const applicationOfferingChangeRequest =
+      await this.applicationOfferingChangeRequestRepo.findOne({
+        select: {
+          id: true,
+          applicationOfferingChangeRequestStatus: true,
+          createdAt: true,
+        },
+        relations: {
+          application: {
+            student: true,
+          },
+        },
+        where: {
+          application: { id: applicationId, student: { id: studentId } },
+        },
+        order: {
+          createdAt: "DESC",
+        },
+      });
+    return applicationOfferingChangeRequest.applicationOfferingChangeRequestStatus;
+  }
+
+  /**
+   * Get all the Application Offering Change Requests that are in the in progress or declined state for the provided application id.
+   * @param applicationId the application id.
+   * @param studentId the student id.
+   * @param applicationOfferingChangeRequestStatuses list of application offering change request statuses.
+   * @returns application offering change requests.
+   */
+  async getApplicationOfferingChangeRequestsByStatus(
+    applicationId: number,
+    studentId: number,
+    applicationOfferingChangeRequestStatuses: ApplicationOfferingChangeRequestStatus[],
+  ): Promise<ApplicationOfferingChangeRequest[]> {
+    return this.applicationOfferingChangeRequestRepo.find({
+      select: {
+        id: true,
+        applicationOfferingChangeRequestStatus: true,
+        createdAt: true,
+      },
+      relations: {
+        application: {
+          student: true,
+        },
+      },
+      where: {
+        applicationOfferingChangeRequestStatus: In(
+          applicationOfferingChangeRequestStatuses,
+        ),
+        application: { id: applicationId, student: { id: studentId } },
       },
     });
   }

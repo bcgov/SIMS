@@ -10,6 +10,7 @@ import {
   AssessmentTriggerType,
   StudentAppealStatus,
   StudentScholasticStandingChangeType,
+  ApplicationOfferingChangeRequestStatus,
 } from "@/types";
 
 export interface InProgressApplicationDetailsAPIOutDTO {
@@ -99,6 +100,7 @@ export interface ApplicationProgressDetailsAPIOutDTO {
   exceptionStatus?: ApplicationExceptionStatus;
   appealStatus?: StudentAppealStatus;
   scholasticStandingChangeType?: StudentScholasticStandingChangeType;
+  applicationOfferingChangeRequestStatus?: ApplicationOfferingChangeRequestStatus;
 }
 
 export interface DisbursementDetailsAPIOutDTO {
@@ -119,4 +121,5 @@ export interface CompletedApplicationDetailsAPIOutDTO
   secondDisbursement?: DisbursementDetailsAPIOutDTO;
   appealStatus?: StudentAppealStatus;
   scholasticStandingChangeType?: StudentScholasticStandingChangeType;
+  applicationOfferingChangeRequestStatus?: ApplicationOfferingChangeRequestStatus;
 }

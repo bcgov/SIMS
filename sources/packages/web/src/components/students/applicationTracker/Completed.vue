@@ -53,6 +53,70 @@
     :background-color="hasDisbursementEvent ? undefined : 'success-bg'"
     content="StudentAid BC has determined an outcome with 1 or more of your requested change. Please review your new assessment in the table below."
   />
+  <!-- Student application change request - in progress with student -->
+  <application-status-tracker-banner
+    v-if="
+      assessmentDetails.applicationOfferingChangeRequestStatus ===
+      ApplicationOfferingChangeRequestStatus.InProgressWithStudent
+    "
+    label="Action required! Do you want to allow your institution to make changes to your application?"
+    icon="fa:fas fa-exclamation-triangle"
+    icon-color="warning"
+    background-color="warning-bg"
+    content="Your institution is proposing changes to your application. Please review the details and allow (or decline) the proposed change from your institution. Allowing the change will enable StudentAid BC to make a final decision on the proposed changes, which will result in a new assessment if the changes are approved. Please review the changes carefully and contact your institution if you require more information."
+  >
+    <template #actions>
+      <v-btn color="primary">Review changes</v-btn>
+    </template>
+  </application-status-tracker-banner>
+  <!-- Student application change request - in progress with ministry -->
+  <application-status-tracker-banner
+    v-if="
+      assessmentDetails.applicationOfferingChangeRequestStatus ===
+      ApplicationOfferingChangeRequestStatus.InProgressWithSABC
+    "
+    label="StudentAid BC is reviewing the requested changes proposed by your institution"
+    icon="fa:fas fa-exclamation-triangle"
+    icon-color="warning"
+    background-color="warning-bg"
+    content="If the requested change is approved by StudentAid BC, your application will be re-evaluated with a new assessment below."
+  />
+  <!-- Student application change request - declined by student -->
+  <application-status-tracker-banner
+    v-if="
+      assessmentDetails.applicationOfferingChangeRequestStatus ===
+      ApplicationOfferingChangeRequestStatus.DeclinedByStudent
+    "
+    label="You’ve declined the requested change proposed by your institution"
+    icon="fa:fas fa-exclamation-circle"
+    icon-color="danger"
+    background-color="error-bg"
+    content="Your application will proceed forward, based on your last assessment."
+  />
+  <!-- Student application change request - declined by ministry -->
+  <application-status-tracker-banner
+    v-if="
+      assessmentDetails.applicationOfferingChangeRequestStatus ===
+      ApplicationOfferingChangeRequestStatus.DeclinedBySABC
+    "
+    label="Your requested change was declined"
+    icon="fa:fas fa-exclamation-circle"
+    icon-color="danger"
+    background-color="error-bg"
+    content="StudentAid BC has determined an outcome with 1 or more of the requested changes. You can review the outcomes of your requested changes in the table below by clicking “View request”. Please note your application will proceed without your requested changes, based on your last assessment."
+  />
+  <!-- Student application change request - approved by ministry -->
+  <application-status-tracker-banner
+    v-if="
+      assessmentDetails.applicationOfferingChangeRequestStatus ===
+      ApplicationOfferingChangeRequestStatus.Approved
+    "
+    label="The requested changes proposed by your institution was approved! Please review your new assessment."
+    icon="fa:fas fa-check-circle"
+    icon-color="success"
+    background-color="success-bg"
+    content="StudentAid BC has approved the requested change proposed by your institution. Please review your new assessment in the table below."
+  />
   <!-- Offering changed -->
   <application-status-tracker-banner
     v-if="
@@ -89,6 +153,7 @@
 </template>
 <script lang="ts">
 import {
+  ApplicationOfferingChangeRequestStatus,
   AssessmentTriggerType,
   COEStatus,
   StudentAppealStatus,
@@ -145,6 +210,7 @@ export default defineComponent({
       StudentAppealStatus,
       hasDisbursementEvent,
       StudentScholasticStandingChangeType,
+      ApplicationOfferingChangeRequestStatus,
     };
   },
 });
