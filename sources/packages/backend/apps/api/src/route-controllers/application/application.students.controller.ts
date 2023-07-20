@@ -627,14 +627,19 @@ export class ApplicationStudentsController extends BaseController {
         userToken.studentId,
         { limit: 1 },
       );
-    const applicationOfferingChangeRequestStatus =
-      await this.applicationOfferingChangeRequestService.getApplicationOfferingChangeRequestStatus(
+    const mostRecentApplicationOfferingChangeRequestStatusPromise =
+      this.applicationOfferingChangeRequestService.getApplicationOfferingChangeRequestStatus(
         applicationId,
         userToken.studentId,
       );
-    const [application, [mostRecentAppeal]] = await Promise.all([
+    const [
+      application,
+      [mostRecentAppeal],
+      mostRecentApplicationOfferingChangeRequestStatus,
+    ] = await Promise.all([
       getApplicationPromise,
       mostRecentAppealsPromises,
+      mostRecentApplicationOfferingChangeRequestStatusPromise,
     ]);
     if (!application) {
       throw new NotFoundException(
@@ -652,7 +657,8 @@ export class ApplicationStudentsController extends BaseController {
       assessmentTriggerType: application.currentAssessment.triggerType,
       appealStatus: mostRecentAppeal?.status,
       scholasticStandingChangeType: scholasticStandingChange?.changeType,
-      applicationOfferingChangeRequestStatus,
+      applicationOfferingChangeRequestStatus:
+        mostRecentApplicationOfferingChangeRequestStatus,
     };
   }
 }

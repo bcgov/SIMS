@@ -324,7 +324,7 @@ export class ApplicationOfferingChangeRequestService {
           createdAt: "DESC",
         },
       });
-    return applicationOfferingChangeRequest.applicationOfferingChangeRequestStatus;
+    return applicationOfferingChangeRequest?.applicationOfferingChangeRequestStatus;
   }
 
   /**
