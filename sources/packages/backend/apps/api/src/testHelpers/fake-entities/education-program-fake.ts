@@ -15,7 +15,7 @@ import { createFakeInstitution } from "@sims/test-utils";
  * - `user` related user.
  * @param options dependencies.
  * - `initialValues` initial values.
- * @returns
+ * @returns returns fake education program.
  */
 export function createFakeEducationProgram(
   relations?: {
