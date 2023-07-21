@@ -35,4 +35,6 @@ export class StudentAccountApplicationApprovalAPIInDTO extends CreateStudentAPII
   email: string;
   @Expose()
   dateOfBirth: string;
+  @Expose()
+  identityProvider: string;
 }
