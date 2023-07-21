@@ -24,8 +24,7 @@ export class ATBCResponseIntegrationScheduler extends BaseScheduler<void> {
   }
 
   /**
-   * Process all the applied PD requests to verify the status with ATBC
-   * and update the database with processed records.
+   * Process all the applied disability status requests by students.
    * @param job ATBC response integration job.
    * @returns processing result.
    */
@@ -37,17 +36,11 @@ export class ATBCResponseIntegrationScheduler extends BaseScheduler<void> {
       appLogger: this.logger,
       jobLogger: job,
     });
-    await summary.info("Processing PD status for students.");
+    await summary.info("Processing disability status for students.");
     const processingResult =
-      await this.atbcIntegrationProcessingService.processPendingPDRequests();
-    await summary.info(
-      `Total PD request status processed ${processingResult.pdRequestsProcessed}`,
-    );
-    await summary.info(
-      `Total PD request status updated ${processingResult.pdRequestsUpdated}`,
-    );
-    await summary.info("Completed processing PD status.");
+      await this.atbcIntegrationProcessingService.processAppliedDisabilityRequests();
+    await summary.info("Completed processing disability status.");
     await this.cleanSchedulerQueueHistory();
-    return summary.getSummary();
+    return processingResult;
   }
 }

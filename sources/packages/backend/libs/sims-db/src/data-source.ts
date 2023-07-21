@@ -176,5 +176,5 @@ export const DBEntities = [
   NotificationMessage,
   DisbursementOveraward,
   QueueConfiguration,
-  ApplicationOfferingChangeRequest
+  ApplicationOfferingChangeRequest,
 ];

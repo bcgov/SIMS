@@ -6,30 +6,13 @@ import {
   Student,
   User,
 } from "@sims/sims-db";
-import { getUTCNow } from "@sims/utilities";
 import { InjectLogger, LoggerService } from "@sims/utilities/logger";
-import { DataSource, EntityManager, UpdateResult } from "typeorm";
+import { DataSource, EntityManager, Raw, UpdateResult } from "typeorm";
 
 @Injectable()
 export class StudentService extends RecordDataModelService<Student> {
   constructor(dataSource: DataSource) {
     super(dataSource.getRepository(Student));
-  }
-
-  /**
-   * Get all students who applied for permanent disability
-   * and waiting for the confirmation from ATBC.
-   * @returns students
-   */
-  async getStudentsAppliedForPD(): Promise<Student[]> {
-    return this.repo
-      .createQueryBuilder("student")
-      .select(["student.id", "sinValidation.id", "sinValidation.sin"])
-      .innerJoin("student.sinValidation", "sinValidation")
-      .where("student.studentPDSentAt is not null")
-      .andWhere("student.studentPDUpdateAt is null")
-      .andWhere("student.studentPDVerified is null")
-      .getMany();
   }
 
   /**
@@ -52,28 +35,6 @@ export class StudentService extends RecordDataModelService<Student> {
         disabilityStatus: DisabilityStatus.Requested,
       },
     );
-  }
-
-  /**
-   * Update the PD Sent Date
-   * @param studentId Student id.
-   * @param status PD status.
-   * @returns updated student.
-   */
-  async updatePDStatusNDate(
-    studentId: number,
-    status: boolean,
-  ): Promise<Student> {
-    // get the Student Object
-    const studentToUpdate = await this.repo.findOneOrFail({
-      where: { id: studentId },
-    });
-    if (studentToUpdate) {
-      studentToUpdate.studentPDVerified = status;
-      // Date in UTC format
-      studentToUpdate.studentPDUpdateAt = getUTCNow();
-      return this.repo.save(studentToUpdate);
-    }
   }
 
   /**
@@ -143,6 +104,50 @@ export class StudentService extends RecordDataModelService<Student> {
     studentToUpdate.modifier = { id: auditUserId } as User;
     studentToUpdate.sinValidation = sinValidation;
     return studentRepo.save(studentToUpdate);
+  }
+
+  /**
+   * Get student by student personal information.
+   * @param sin sin.
+   * @param lastName last name.
+   * @param birthDate birth date.
+   * @returns student.
+   */
+  async getStudentByPersonalInfo(
+    sin: string,
+    lastName: string,
+    birthDate: string,
+  ): Promise<Student> {
+    return this.repo.findOne({
+      select: { id: true, disabilityStatus: true },
+      where: {
+        sinValidation: { sin },
+        user: {
+          lastName: Raw((alias) => `LOWER(${alias}) = LOWER(:lastName)`, {
+            lastName,
+          }),
+        },
+        birthDate,
+      },
+    });
+  }
+
+  /**
+   * Update disability status of a student.
+   * @param studentId student id.
+   * @param disabilityStatus disability status.
+   * @param disabilityStatusUpdatedDate disability status updated date.
+   * @returns update result.
+   */
+  async updateDisabilityStatus(
+    studentId: number,
+    disabilityStatus: DisabilityStatus,
+    disabilityStatusUpdatedDate: Date,
+  ): Promise<UpdateResult> {
+    return this.repo.update(
+      { id: studentId },
+      { disabilityStatus, studentPDUpdateAt: disabilityStatusUpdatedDate },
+    );
   }
 
   @InjectLogger()

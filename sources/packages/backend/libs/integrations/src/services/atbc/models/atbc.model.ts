@@ -1,9 +1,3 @@
-export enum ATBCPDStatus {
-  Confirmed = 1,
-  Denied = 2,
-  Processing = 3,
-}
-
 export interface ATBCCreateClientResponse {
   message: string;
   code: number;
@@ -18,17 +12,15 @@ export interface ATBCCreateClientPayload {
   email: string;
 }
 
-export interface ATBCPDCheckerPayload {
-  id: string;
+/**
+ * ATBC disability status Response.
+ */
+export interface ATBCDisabilityStatusResponse {
+  SIN: string;
+  APP_LAST_NAME: string;
+  BIRTH_DTE: string;
+  D8Y_TYPE: string;
+  D8Y_DTE: string;
 }
 
-export interface ATBCPDCheckerResponse {
-  id: string;
-  e9yStatusId: number;
-  e9yStatus: string;
-}
-
-export interface ATBCStudentModel {
-  id: number;
-  sin: string;
-}
+export const ATBC_DATE_FORMAT = "YYYY/MM/DD";
