@@ -328,7 +328,7 @@ export class ApplicationOfferingChangeRequestService {
   }
 
   /**
-   * Get all the Application Offering Change Requests that are in the in progress or declined state for the provided application id.
+   * Get all the Application Offering Change Requests for the provided application id filtered by the application offering change request statuses.
    * @param applicationId the application id.
    * @param studentId the student id.
    * @param applicationOfferingChangeRequestStatuses list of application offering change request statuses.
@@ -344,11 +344,6 @@ export class ApplicationOfferingChangeRequestService {
         id: true,
         applicationOfferingChangeRequestStatus: true,
         createdAt: true,
-      },
-      relations: {
-        application: {
-          student: true,
-        },
       },
       where: {
         applicationOfferingChangeRequestStatus: In(

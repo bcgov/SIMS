@@ -127,8 +127,8 @@ export class AssessmentStudentsController extends BaseController {
 
   /**
    * Get all requests related to an application for a student
-   *  i.e, this will fetch all pending and denied
-   * student appeals.
+   *  i.e, this will fetch all pending and denied student appeals
+   * along with the pending and declined application offering change requests.
    * @param applicationId application number.
    * @returns assessment requests or exceptions for a student application.
    */
@@ -153,7 +153,7 @@ export class AssessmentStudentsController extends BaseController {
           ApplicationOfferingChangeRequestStatus.DeclinedBySABC,
         ],
       );
-    const studentInProgressAndDeclinedApplicationOfferingChangeRequestsArray: RequestAssessmentSummaryAPIOutDTO[] =
+    const studentInProgressAndDeclinedApplicationOfferingChangeRequests: RequestAssessmentSummaryAPIOutDTO[] =
       inProgressAndDeclinedApplicationOfferingChangeRequests.map((request) => ({
         id: request.id,
         submittedDate: request.createdAt,
@@ -163,7 +163,7 @@ export class AssessmentStudentsController extends BaseController {
       }));
     return [
       ...pendingAndDeniedAppeals,
-      ...studentInProgressAndDeclinedApplicationOfferingChangeRequestsArray,
+      ...studentInProgressAndDeclinedApplicationOfferingChangeRequests,
     ];
   }
 

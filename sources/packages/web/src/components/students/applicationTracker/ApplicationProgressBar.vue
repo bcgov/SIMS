@@ -126,9 +126,8 @@ export default defineComponent({
         return "error";
       } else if (statusIconDetails.value.statusType === "success") {
         return "success";
-      } else {
-        return "warning";
       }
+      return "warning";
     });
 
     onMounted(async () => {

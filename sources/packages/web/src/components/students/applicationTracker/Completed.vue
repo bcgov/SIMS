@@ -87,7 +87,7 @@
       assessmentDetails.applicationOfferingChangeRequestStatus ===
       ApplicationOfferingChangeRequestStatus.DeclinedByStudent
     "
-    label="You’ve declined the requested change proposed by your institution"
+    label="You've declined the requested change proposed by your institution"
     icon="fa:fas fa-exclamation-circle"
     icon-color="danger"
     background-color="error-bg"

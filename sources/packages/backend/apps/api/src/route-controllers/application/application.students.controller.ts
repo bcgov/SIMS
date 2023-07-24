@@ -534,6 +534,7 @@ export class ApplicationStudentsController extends BaseController {
     }
 
     let appealStatus: StudentAppealStatus;
+    let applicationOfferingChangeRequestStatus: ApplicationOfferingChangeRequestStatus;
     if (application.applicationStatus === ApplicationStatus.Completed) {
       const [mostRecentAppeal] =
         await this.studentAppealService.getAppealsForApplication(
@@ -542,10 +543,7 @@ export class ApplicationStudentsController extends BaseController {
           { limit: 1 },
         );
       appealStatus = mostRecentAppeal?.status;
-    }
-    let mostRecentApplicationOfferingChangeRequestStatus: ApplicationOfferingChangeRequestStatus;
-    if (application.applicationStatus === ApplicationStatus.Completed) {
-      mostRecentApplicationOfferingChangeRequestStatus =
+      applicationOfferingChangeRequestStatus =
         await this.applicationOfferingChangeRequestService.getApplicationOfferingChangeRequestStatus(
           applicationId,
           userToken.studentId,
@@ -569,8 +567,7 @@ export class ApplicationStudentsController extends BaseController {
       exceptionStatus: application.applicationException?.exceptionStatus,
       appealStatus,
       scholasticStandingChangeType: scholasticStandingChange?.changeType,
-      applicationOfferingChangeRequestStatus:
-        mostRecentApplicationOfferingChangeRequestStatus,
+      applicationOfferingChangeRequestStatus,
     };
   }
 
@@ -627,7 +624,7 @@ export class ApplicationStudentsController extends BaseController {
         userToken.studentId,
         { limit: 1 },
       );
-    const mostRecentApplicationOfferingChangeRequestStatusPromise =
+    const applicationOfferingChangeRequestStatusPromise =
       this.applicationOfferingChangeRequestService.getApplicationOfferingChangeRequestStatus(
         applicationId,
         userToken.studentId,
@@ -635,11 +632,11 @@ export class ApplicationStudentsController extends BaseController {
     const [
       application,
       [mostRecentAppeal],
-      mostRecentApplicationOfferingChangeRequestStatus,
+      applicationOfferingChangeRequestStatus,
     ] = await Promise.all([
       getApplicationPromise,
       mostRecentAppealsPromises,
-      mostRecentApplicationOfferingChangeRequestStatusPromise,
+      applicationOfferingChangeRequestStatusPromise,
     ]);
     if (!application) {
       throw new NotFoundException(
@@ -657,8 +654,7 @@ export class ApplicationStudentsController extends BaseController {
       assessmentTriggerType: application.currentAssessment.triggerType,
       appealStatus: mostRecentAppeal?.status,
       scholasticStandingChangeType: scholasticStandingChange?.changeType,
-      applicationOfferingChangeRequestStatus:
-        mostRecentApplicationOfferingChangeRequestStatus,
+      applicationOfferingChangeRequestStatus,
     };
   }
 }

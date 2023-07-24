@@ -37,9 +37,9 @@ export enum AssessmentTriggerType {
    */
   StudentAppeal = "Student appeal",
   /**
-   * Triggered when the Institution creates an offering change request to the
-   * student that will result in the assessment to be recalculated due to a
-   * possible impact in the money that the student is receiving.
+   * Triggered when the Institution creates an offering change request for the student
+   * which requires student and SABC approval that will result in the assessment to be
+   * recalculated due to a possible impact on the money that the student is receiving.
    */
   ApplicationOfferingChange = "Application offering change",
 }

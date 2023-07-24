@@ -40,7 +40,7 @@ export function useAssessment() {
       | StudentAppealStatus
       | ApplicationExceptionStatus
       | ApplicationOfferingChangeRequestStatus,
-  ): StatusChipLabelTypes => {
+  ): StatusChipLabelTypes | string => {
     switch (status) {
       case StudentAppealStatus.Approved:
       case ApplicationExceptionStatus.Approved:
@@ -57,7 +57,7 @@ export function useAssessment() {
       case ApplicationOfferingChangeRequestStatus.DeclinedBySABC:
         return StatusChipLabelTypes.Declined;
       default:
-        return StatusChipLabelTypes.Pending;
+        return "";
     }
   };
 
