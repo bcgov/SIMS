@@ -134,13 +134,13 @@ export class AssessmentStudentsController extends BaseController {
     @Param("applicationId", ParseIntPipe) applicationId: number,
     @UserToken() userToken: StudentUserToken,
   ): Promise<RequestAssessmentSummaryAPIOutDTO[]> {
-    const pendingAndDeniedAppeals =
-      await this.assessmentControllerService.getPendingAndDeniedAppeals(
+    const pendingAndDeniedAppealsPromise =
+      this.assessmentControllerService.getPendingAndDeniedAppeals(
         applicationId,
         userToken.studentId,
       );
-    const studentInProgressAndDeclinedApplicationOfferingChangeRequests =
-      await this.assessmentControllerService.getApplicationOfferingChangeRequestsByStatus(
+    const studentInProgressAndDeclinedApplicationOfferingChangeRequestsPromise =
+      this.assessmentControllerService.getApplicationOfferingChangeRequestsByStatus(
         applicationId,
         userToken.studentId,
         [
@@ -150,6 +150,13 @@ export class AssessmentStudentsController extends BaseController {
           ApplicationOfferingChangeRequestStatus.DeclinedBySABC,
         ],
       );
+    const [
+      pendingAndDeniedAppeals,
+      studentInProgressAndDeclinedApplicationOfferingChangeRequests,
+    ] = await Promise.all([
+      pendingAndDeniedAppealsPromise,
+      studentInProgressAndDeclinedApplicationOfferingChangeRequestsPromise,
+    ]);
     return [
       ...pendingAndDeniedAppeals,
       ...studentInProgressAndDeclinedApplicationOfferingChangeRequests,
