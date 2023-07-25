@@ -1,28 +1,4 @@
 <template>
-  <!-- Scholastic standing changed -->
-  <application-status-tracker-banner
-    v-if="
-      assessmentDetails.assessmentTriggerType ===
-      AssessmentTriggerType.ScholasticStandingChange
-    "
-    label="You have a new assessment due to your scholastic standing"
-    icon="fa:fas fa-check-circle"
-    icon-color="success"
-    :background-color="hasDisbursementEvent ? undefined : 'success-bg'"
-    content="Your institution informed us of your scholastic standing, which changed your assessment evaluation. Please review your new assessment in the table below. You can also click “View request” to see the details from your institution. Please contact the Financial Aid Officer from your institution, if you have questions about your scholastic standing."
-  />
-  <!-- Scholastic standing changed - student did not complete the program -->
-  <application-status-tracker-banner
-    v-if="
-      assessmentDetails.scholasticStandingChangeType ===
-      StudentScholasticStandingChangeType.StudentDidNotCompleteProgram
-    "
-    label="Your institution reported that you did not complete your studies"
-    icon="fa:fas fa-exclamation-circle"
-    icon-color="danger"
-    background-color="error-bg"
-    content="You no longer meet StudentAid BC's requirements to receive funding for financial aid. Any scheduled payments will be cancelled. Please contact the Financial Aid Officer from your institution if you require more information."
-  />
   <!-- Student appeal - waiting approval -->
   <application-status-tracker-banner
     v-if="assessmentDetails.appealStatus === StudentAppealStatus.Pending"
@@ -31,27 +7,6 @@
     icon-color="warning"
     background-color="warning-bg"
     content="StudentAid BC is reviewing your requested change. If your requested change is approved, your application will be re-evaluated with a new assessment below."
-  />
-  <!-- Student appeal - declined -->
-  <application-status-tracker-banner
-    v-if="assessmentDetails.appealStatus === StudentAppealStatus.Declined"
-    label="Your requested change was declined"
-    icon="fa:fas fa-exclamation-circle"
-    icon-color="danger"
-    background-color="error-bg"
-    content="StudentAid BC has determined an outcome with 1 or more of your requested changes. You can review the outcomes of your requested changes in the table below by clicking “View request”. Please note your application will proceed without your requested changes, based on your last assessment."
-  />
-  <!-- Student appeal - approved -->
-  <application-status-tracker-banner
-    v-if="
-      assessmentDetails.assessmentTriggerType ===
-      AssessmentTriggerType.StudentAppeal
-    "
-    label="Your requested change was approved! Please review your new assessment."
-    icon="fa:fas fa-check-circle"
-    icon-color="success"
-    :background-color="hasDisbursementEvent ? undefined : 'success-bg'"
-    content="StudentAid BC has determined an outcome with 1 or more of your requested change. Please review your new assessment in the table below."
   />
   <!-- Student application change request - in progress with student -->
   <application-status-tracker-banner
@@ -81,6 +36,27 @@
     background-color="warning-bg"
     content="If the requested change is approved by StudentAid BC, your application will be re-evaluated with a new assessment below."
   />
+  <!-- Scholastic standing changed - student did not complete the program -->
+  <application-status-tracker-banner
+    v-if="
+      assessmentDetails.scholasticStandingChangeType ===
+      StudentScholasticStandingChangeType.StudentDidNotCompleteProgram
+    "
+    label="Your institution reported that you did not complete your studies"
+    icon="fa:fas fa-exclamation-circle"
+    icon-color="danger"
+    background-color="error-bg"
+    content="You no longer meet StudentAid BC's requirements to receive funding for financial aid. Any scheduled payments will be cancelled. Please contact the Financial Aid Officer from your institution if you require more information."
+  />
+  <!-- Student appeal - declined -->
+  <application-status-tracker-banner
+    v-if="assessmentDetails.appealStatus === StudentAppealStatus.Declined"
+    label="Your requested change was declined"
+    icon="fa:fas fa-exclamation-circle"
+    icon-color="danger"
+    background-color="error-bg"
+    content="StudentAid BC has determined an outcome with 1 or more of your requested changes. You can review the outcomes of your requested changes in the table below by clicking “View request”. Please note your application will proceed without your requested changes, based on your last assessment."
+  />
   <!-- Student application change request - declined by student -->
   <application-status-tracker-banner
     v-if="
@@ -99,23 +75,23 @@
       assessmentDetails.applicationOfferingChangeRequestStatus ===
       ApplicationOfferingChangeRequestStatus.DeclinedBySABC
     "
-    label="Your requested change was declined"
+    label="StudentAid BC declined the requested changes proposed by your institution"
     icon="fa:fas fa-exclamation-circle"
     icon-color="danger"
     background-color="error-bg"
-    content="StudentAid BC has determined an outcome with 1 or more of the requested changes. You can review the outcomes of your requested changes in the table below by clicking “View request”. Please note your application will proceed without your requested changes, based on your last assessment."
+    content="You can review the outcomes of your requested changes in the table below by clicking “View request”. Please note your application will proceed without your requested changes, based on your last assessment."
   />
-  <!-- Student application change request - approved by ministry -->
+  <!-- Scholastic standing changed -->
   <application-status-tracker-banner
     v-if="
-      assessmentDetails.applicationOfferingChangeRequestStatus ===
-      ApplicationOfferingChangeRequestStatus.Approved
+      assessmentDetails.assessmentTriggerType ===
+      AssessmentTriggerType.ScholasticStandingChange
     "
-    label="The requested changes proposed by your institution was approved! Please review your new assessment."
+    label="You have a new assessment due to your scholastic standing"
     icon="fa:fas fa-check-circle"
     icon-color="success"
-    background-color="success-bg"
-    content="StudentAid BC has approved the requested change proposed by your institution. Please review your new assessment in the table below."
+    :background-color="hasDisbursementEvent ? undefined : 'success-bg'"
+    content="Your institution informed us of your scholastic standing, which changed your assessment evaluation. Please review your new assessment in the table below. You can also click “View request” to see the details from your institution. Please contact the Financial Aid Officer from your institution, if you have questions about your scholastic standing."
   />
   <!-- Offering changed -->
   <application-status-tracker-banner
@@ -128,6 +104,30 @@
     icon-color="success"
     :background-color="hasDisbursementEvent ? undefined : 'success-bg'"
     content="Your institution updated the study period that was submitted with your application, which changed your assessment evaluation. Please review your new assessment in the table below. If you have concerns or require more information, please contact the Financial Aid Officer from your institution."
+  />
+  <!-- Student appeal - approved -->
+  <application-status-tracker-banner
+    v-if="
+      assessmentDetails.assessmentTriggerType ===
+      AssessmentTriggerType.StudentAppeal
+    "
+    label="Your requested change was approved! Please review your new assessment."
+    icon="fa:fas fa-check-circle"
+    icon-color="success"
+    :background-color="hasDisbursementEvent ? undefined : 'success-bg'"
+    content="StudentAid BC has determined an outcome with 1 or more of your requested change. Please review your new assessment in the table below."
+  />
+  <!-- Student application change request - approved by ministry -->
+  <application-status-tracker-banner
+    v-if="
+      assessmentDetails.assessmentTriggerType ===
+      AssessmentTriggerType.ApplicationOfferingChange
+    "
+    label="The requested changes proposed by your institution was approved! Please review your new assessment."
+    icon="fa:fas fa-check-circle"
+    icon-color="success"
+    background-color="success-bg"
+    content="StudentAid BC has approved the requested change proposed by your institution. Please review your new assessment in the table below."
   />
   <!-- Disbursement/COE banners -->
   <multiple-disbursement-banner
