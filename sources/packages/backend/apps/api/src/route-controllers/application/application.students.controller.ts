@@ -536,18 +536,23 @@ export class ApplicationStudentsController extends BaseController {
     let appealStatus: StudentAppealStatus;
     let applicationOfferingChangeRequestStatus: ApplicationOfferingChangeRequestStatus;
     if (application.applicationStatus === ApplicationStatus.Completed) {
-      const [mostRecentAppeal] =
-        await this.studentAppealService.getAppealsForApplication(
+      const appealPromise = this.studentAppealService.getAppealsForApplication(
+        applicationId,
+        userToken.studentId,
+        { limit: 1 },
+      );
+      const applicationOfferingChangeRequestPromise =
+        this.applicationOfferingChangeRequestService.getApplicationOfferingChangeRequest(
           applicationId,
           userToken.studentId,
-          { limit: 1 },
         );
-      appealStatus = mostRecentAppeal?.status;
+      const [[appeal], applicationOfferingChangeRequest] = await Promise.all([
+        appealPromise,
+        applicationOfferingChangeRequestPromise,
+      ]);
+      appealStatus = appeal?.status;
       applicationOfferingChangeRequestStatus =
-        await this.applicationOfferingChangeRequestService.getApplicationOfferingChangeRequestStatus(
-          applicationId,
-          userToken.studentId,
-        );
+        applicationOfferingChangeRequest?.applicationOfferingChangeRequestStatus;
     }
 
     const disbursements =
@@ -624,19 +629,19 @@ export class ApplicationStudentsController extends BaseController {
         userToken.studentId,
         { limit: 1 },
       );
-    const applicationOfferingChangeRequestStatusPromise =
-      this.applicationOfferingChangeRequestService.getApplicationOfferingChangeRequestStatus(
+    const applicationOfferingChangeRequestPromise =
+      this.applicationOfferingChangeRequestService.getApplicationOfferingChangeRequest(
         applicationId,
         userToken.studentId,
       );
     const [
       application,
       [mostRecentAppeal],
-      applicationOfferingChangeRequestStatus,
+      { applicationOfferingChangeRequestStatus },
     ] = await Promise.all([
       getApplicationPromise,
       mostRecentAppealsPromises,
-      applicationOfferingChangeRequestStatusPromise,
+      applicationOfferingChangeRequestPromise,
     ]);
     if (!application) {
       throw new NotFoundException(

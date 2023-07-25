@@ -19,7 +19,6 @@ import {
   AssessmentNOAAPIOutDTO,
   AwardDetailsAPIOutDTO,
   RequestAssessmentSummaryAPIOutDTO,
-  RequestAssessmentTypeAPIOutDTO,
   AssessmentHistorySummaryAPIOutDTO,
 } from "./models/assessment.dto";
 import {
@@ -31,7 +30,6 @@ import { AssessmentControllerService } from "./assessment.controller.service";
 import {
   ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE,
   ASSESSMENT_NOT_FOUND,
-  ApplicationOfferingChangeRequestService,
   StudentAssessmentService,
 } from "../../services";
 import { StudentUserToken } from "../../auth/userToken.interface";
@@ -45,7 +43,6 @@ export class AssessmentStudentsController extends BaseController {
   constructor(
     private readonly studentAssessmentService: StudentAssessmentService,
     private readonly assessmentControllerService: AssessmentControllerService,
-    private readonly applicationOfferingChangeRequestService: ApplicationOfferingChangeRequestService,
   ) {
     super();
   }
@@ -142,8 +139,8 @@ export class AssessmentStudentsController extends BaseController {
         applicationId,
         userToken.studentId,
       );
-    const inProgressAndDeclinedApplicationOfferingChangeRequests =
-      await this.applicationOfferingChangeRequestService.getApplicationOfferingChangeRequestsByStatus(
+    const studentInProgressAndDeclinedApplicationOfferingChangeRequests =
+      await this.assessmentControllerService.getApplicationOfferingChangeRequestsByStatus(
         applicationId,
         userToken.studentId,
         [
@@ -153,14 +150,6 @@ export class AssessmentStudentsController extends BaseController {
           ApplicationOfferingChangeRequestStatus.DeclinedBySABC,
         ],
       );
-    const studentInProgressAndDeclinedApplicationOfferingChangeRequests: RequestAssessmentSummaryAPIOutDTO[] =
-      inProgressAndDeclinedApplicationOfferingChangeRequests.map((request) => ({
-        id: request.id,
-        submittedDate: request.createdAt,
-        status: request.applicationOfferingChangeRequestStatus,
-        requestType:
-          RequestAssessmentTypeAPIOutDTO.ApplicationOfferingChangeRequest,
-      }));
     return [
       ...pendingAndDeniedAppeals,
       ...studentInProgressAndDeclinedApplicationOfferingChangeRequests,

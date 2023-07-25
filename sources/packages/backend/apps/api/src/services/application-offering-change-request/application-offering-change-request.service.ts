@@ -296,22 +296,17 @@ export class ApplicationOfferingChangeRequestService {
   }
 
   /**
-   * Get the Application Offering Change Request Status by the application id.
+   * Get the Application Offering Change Request by the application id.
    * @param applicationId the application id.
    * @param studentId the student id.
    * @returns application offering change request status.
    */
-  async getApplicationOfferingChangeRequestStatus(
+  async getApplicationOfferingChangeRequest(
     applicationId: number,
     studentId: number,
-  ): Promise<ApplicationOfferingChangeRequestStatus> {
+  ): Promise<ApplicationOfferingChangeRequest> {
     const applicationOfferingChangeRequest =
       await this.applicationOfferingChangeRequestRepo.findOne({
-        select: {
-          id: true,
-          applicationOfferingChangeRequestStatus: true,
-          createdAt: true,
-        },
         relations: {
           application: {
             student: true,
@@ -324,7 +319,7 @@ export class ApplicationOfferingChangeRequestService {
           createdAt: "DESC",
         },
       });
-    return applicationOfferingChangeRequest?.applicationOfferingChangeRequestStatus;
+    return applicationOfferingChangeRequest;
   }
 
   /**
