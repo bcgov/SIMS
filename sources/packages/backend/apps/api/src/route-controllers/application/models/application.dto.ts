@@ -13,6 +13,7 @@ import {
   StudentAppealStatus,
   AssessmentTriggerType,
   StudentScholasticStandingChangeType,
+  ApplicationOfferingChangeRequestStatus,
 } from "@sims/sims-db";
 import { JsonMaxSize } from "../../../utilities/class-validation";
 import { JSON_20KB } from "../../../constants";
@@ -156,6 +157,7 @@ export class ApplicationProgressDetailsAPIOutDTO {
   exceptionStatus?: ApplicationExceptionStatus;
   appealStatus?: StudentAppealStatus;
   scholasticStandingChangeType?: StudentScholasticStandingChangeType;
+  applicationOfferingChangeRequestStatus?: ApplicationOfferingChangeRequestStatus;
 }
 
 export class DisbursementDetailsAPIOutDTO {
@@ -173,4 +175,5 @@ export class CompletedApplicationDetailsAPIOutDTO extends EnrolmentApplicationDe
   assessmentTriggerType: AssessmentTriggerType;
   appealStatus?: StudentAppealStatus;
   scholasticStandingChangeType?: StudentScholasticStandingChangeType;
+  applicationOfferingChangeRequestStatus?: ApplicationOfferingChangeRequestStatus;
 }

@@ -30,6 +30,7 @@ import {
   CRAIncomeVerificationService,
   SupportingUserService,
   StudentAppealService,
+  ApplicationOfferingChangeRequestService,
 } from "../../services";
 import { IUserToken, StudentUserToken } from "../../auth/userToken.interface";
 import BaseController from "../BaseController";
@@ -69,7 +70,11 @@ import { ApplicationControllerService } from "./application.controller.service";
 import { CustomNamedError } from "@sims/utilities";
 import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
 import { ApplicationData } from "@sims/sims-db/entities/application.model";
-import { ApplicationStatus, StudentAppealStatus } from "@sims/sims-db";
+import {
+  ApplicationOfferingChangeRequestStatus,
+  ApplicationStatus,
+  StudentAppealStatus,
+} from "@sims/sims-db";
 import { ConfirmationOfEnrollmentService } from "@sims/services";
 
 @AllowAuthorizedParty(AuthorizedParties.student)
@@ -89,6 +94,7 @@ export class ApplicationStudentsController extends BaseController {
     private readonly craIncomeVerificationService: CRAIncomeVerificationService,
     private readonly supportingUserService: SupportingUserService,
     private readonly studentAppealService: StudentAppealService,
+    private readonly applicationOfferingChangeRequestService: ApplicationOfferingChangeRequestService,
   ) {
     super();
   }
@@ -528,14 +534,25 @@ export class ApplicationStudentsController extends BaseController {
     }
 
     let appealStatus: StudentAppealStatus;
+    let applicationOfferingChangeRequestStatus: ApplicationOfferingChangeRequestStatus;
     if (application.applicationStatus === ApplicationStatus.Completed) {
-      const [mostRecentAppeal] =
-        await this.studentAppealService.getAppealsForApplication(
+      const appealPromise = this.studentAppealService.getAppealsForApplication(
+        applicationId,
+        userToken.studentId,
+        { limit: 1 },
+      );
+      const applicationOfferingChangeRequestPromise =
+        this.applicationOfferingChangeRequestService.getApplicationOfferingChangeRequest(
           applicationId,
           userToken.studentId,
-          { limit: 1 },
         );
-      appealStatus = mostRecentAppeal?.status;
+      const [[appeal], applicationOfferingChangeRequest] = await Promise.all([
+        appealPromise,
+        applicationOfferingChangeRequestPromise,
+      ]);
+      appealStatus = appeal?.status;
+      applicationOfferingChangeRequestStatus =
+        applicationOfferingChangeRequest?.applicationOfferingChangeRequestStatus;
     }
 
     const disbursements =
@@ -555,6 +572,7 @@ export class ApplicationStudentsController extends BaseController {
       exceptionStatus: application.applicationException?.exceptionStatus,
       appealStatus,
       scholasticStandingChangeType: scholasticStandingChange?.changeType,
+      applicationOfferingChangeRequestStatus,
     };
   }
 
@@ -605,16 +623,22 @@ export class ApplicationStudentsController extends BaseController {
         studentId: userToken.studentId,
         applicationStatus: [ApplicationStatus.Completed],
       });
-    const mostRecentAppealsPromises =
-      this.studentAppealService.getAppealsForApplication(
+    const appealPromise = this.studentAppealService.getAppealsForApplication(
+      applicationId,
+      userToken.studentId,
+      { limit: 1 },
+    );
+    const applicationOfferingChangeRequestPromise =
+      this.applicationOfferingChangeRequestService.getApplicationOfferingChangeRequest(
         applicationId,
         userToken.studentId,
-        { limit: 1 },
       );
-    const [application, [mostRecentAppeal]] = await Promise.all([
-      getApplicationPromise,
-      mostRecentAppealsPromises,
-    ]);
+    const [application, [appeal], applicationOfferingChangeRequest] =
+      await Promise.all([
+        getApplicationPromise,
+        appealPromise,
+        applicationOfferingChangeRequestPromise,
+      ]);
     if (!application) {
       throw new NotFoundException(
         `Application not found or not on ${ApplicationStatus.Completed} status.`,
@@ -629,8 +653,10 @@ export class ApplicationStudentsController extends BaseController {
       firstDisbursement: enrolmentDetails.firstDisbursement,
       secondDisbursement: enrolmentDetails.secondDisbursement,
       assessmentTriggerType: application.currentAssessment.triggerType,
-      appealStatus: mostRecentAppeal?.status,
+      appealStatus: appeal?.status,
       scholasticStandingChangeType: scholasticStandingChange?.changeType,
+      applicationOfferingChangeRequestStatus:
+        applicationOfferingChangeRequest?.applicationOfferingChangeRequestStatus,
     };
   }
 }

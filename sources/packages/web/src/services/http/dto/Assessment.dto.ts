@@ -1,5 +1,6 @@
 import {
   ApplicationExceptionStatus,
+  ApplicationOfferingChangeRequestStatus,
   ApplicationStatus,
   Assessment,
   AssessmentStatus,
@@ -15,12 +16,16 @@ export enum RequestAssessmentTypeAPIOutDTO {
   StudentException = "Student exceptions",
   StudentAppeal = "Student appeal",
   OfferingRequest = "Offering request",
+  ApplicationOfferingChangeRequest = "Application offering change",
 }
 
 export interface RequestAssessmentSummaryAPIOutDTO {
   id: number;
   submittedDate: Date;
-  status: StudentAppealStatus | ApplicationExceptionStatus;
+  status:
+    | StudentAppealStatus
+    | ApplicationExceptionStatus
+    | ApplicationOfferingChangeRequestStatus;
   requestType: RequestAssessmentTypeAPIOutDTO;
   programId?: number;
 }

@@ -33,6 +33,7 @@ import {
   StudentAssessmentService,
 } from "../../services";
 import { StudentUserToken } from "../../auth/userToken.interface";
+import { ApplicationOfferingChangeRequestStatus } from "@sims/sims-db";
 
 @AllowAuthorizedParty(AuthorizedParties.student)
 @RequiresStudentAccount()
@@ -123,8 +124,8 @@ export class AssessmentStudentsController extends BaseController {
 
   /**
    * Get all requests related to an application for a student
-   *  i.e, this will fetch all pending and denied
-   * student appeals.
+   *  i.e, this will fetch all pending and denied student appeals
+   * along with the pending and declined application offering change requests.
    * @param applicationId application number.
    * @returns assessment requests or exceptions for a student application.
    */
@@ -133,10 +134,33 @@ export class AssessmentStudentsController extends BaseController {
     @Param("applicationId", ParseIntPipe) applicationId: number,
     @UserToken() userToken: StudentUserToken,
   ): Promise<RequestAssessmentSummaryAPIOutDTO[]> {
-    return this.assessmentControllerService.getPendingAndDeniedAppeals(
-      applicationId,
-      userToken.studentId,
-    );
+    const pendingAndDeniedAppealsPromise =
+      this.assessmentControllerService.getPendingAndDeniedAppeals(
+        applicationId,
+        userToken.studentId,
+      );
+    const studentInProgressAndDeclinedApplicationOfferingChangeRequestsPromise =
+      this.assessmentControllerService.getApplicationOfferingChangeRequestsByStatus(
+        applicationId,
+        userToken.studentId,
+        [
+          ApplicationOfferingChangeRequestStatus.InProgressWithStudent,
+          ApplicationOfferingChangeRequestStatus.InProgressWithSABC,
+          ApplicationOfferingChangeRequestStatus.DeclinedByStudent,
+          ApplicationOfferingChangeRequestStatus.DeclinedBySABC,
+        ],
+      );
+    const [
+      pendingAndDeniedAppeals,
+      studentInProgressAndDeclinedApplicationOfferingChangeRequests,
+    ] = await Promise.all([
+      pendingAndDeniedAppealsPromise,
+      studentInProgressAndDeclinedApplicationOfferingChangeRequestsPromise,
+    ]);
+    return [
+      ...pendingAndDeniedAppeals,
+      ...studentInProgressAndDeclinedApplicationOfferingChangeRequests,
+    ];
   }
 
   /**

@@ -50,6 +50,7 @@ import {
   COEStatus,
   StudentAppealStatus,
   StudentScholasticStandingChangeType,
+  ApplicationOfferingChangeRequestStatus,
 } from "@/types";
 import { PropType, ref, defineComponent, computed, onMounted } from "vue";
 import { ApplicationProgressDetailsAPIOutDTO } from "@/services/http/dto/Application.dto";
@@ -123,12 +124,7 @@ export default defineComponent({
     const trackFillColor = computed<string>(() => {
       if (statusIconDetails.value.statusType === "error") {
         return "error";
-      }
-      if (
-        props.applicationStatus === ApplicationStatus.Completed &&
-        applicationProgressDetails.value.appealStatus !==
-          StudentAppealStatus.Pending
-      ) {
+      } else if (statusIconDetails.value.statusType === "success") {
         return "success";
       }
       return "warning";
@@ -155,7 +151,13 @@ export default defineComponent({
         statusIconDetails.value = STATUS_ICON_ERROR;
       } else if (
         applicationProgressDetails.value.appealStatus ===
-        StudentAppealStatus.Pending
+          StudentAppealStatus.Pending ||
+        applicationProgressDetails.value
+          .applicationOfferingChangeRequestStatus ===
+          ApplicationOfferingChangeRequestStatus.InProgressWithSABC ||
+        applicationProgressDetails.value
+          .applicationOfferingChangeRequestStatus ===
+          ApplicationOfferingChangeRequestStatus.InProgressWithStudent
       ) {
         // Application is completed but has warnings.
         statusIconDetails.value = STATUS_ICON_WARNING;

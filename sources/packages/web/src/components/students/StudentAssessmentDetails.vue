@@ -35,7 +35,10 @@ export default defineComponent({
   setup(props) {
     const router = useRouter();
     // The assessment trigger types for which the request form is visible to student.
-    const studentAssessmentRequestTypes = [AssessmentTriggerType.StudentAppeal];
+    const studentAssessmentRequestTypes = [
+      AssessmentTriggerType.StudentAppeal,
+      AssessmentTriggerType.ApplicationOfferingChange,
+    ];
 
     const gotToViewAssessment = (assessmentId: number) => {
       router.push({
