@@ -57,6 +57,7 @@ import { ClusterNode, ClusterOptions, RedisOptions } from "ioredis";
 import {
   ORM_CACHE_LIFETIME,
   ORM_CACHE_REDIS_COMMAND_TIMEOUT,
+  ORM_CACHE_REDIS_RETRY_INTERVAL,
 } from "@sims/utilities";
 import { ConfigService } from "@sims/utilities/config";
 
@@ -104,6 +105,7 @@ function getORMCacheConfig(): ORMCacheConfig | false {
         port: config.redis.redisPort,
         password: config.redis.redisPassword,
         commandTimeout: ORM_CACHE_REDIS_COMMAND_TIMEOUT,
+        retryStrategy: () => ORM_CACHE_REDIS_RETRY_INTERVAL,
       },
       ignoreErrors: true,
       duration: ORM_CACHE_LIFETIME,
@@ -120,6 +122,7 @@ function getORMCacheConfig(): ORMCacheConfig | false {
           password: config.redis.redisPassword,
           commandTimeout: ORM_CACHE_REDIS_COMMAND_TIMEOUT,
         },
+        clusterRetryStrategy: () => ORM_CACHE_REDIS_RETRY_INTERVAL,
       },
     },
     ignoreErrors: true,
