@@ -6,7 +6,12 @@ import { SINValidStatus } from "@/store/modules/student/student";
 import { Address, InstitutionUserRoles, SINStatusEnum } from "@/types";
 import dayjs, { QUnitType, OpUnitType } from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
+import utc from "dayjs/plugin/utc";
+import isSameOrAfter from "dayjs/plugin/isSameOrAfter";
+
 dayjs.extend(customParseFormat);
+dayjs.extend(utc);
+dayjs.extend(isSameOrAfter);
 
 const DEFAULT_EMPTY_VALUE = "-";
 export const DATE_ONLY_ISO_FORMAT = "YYYY-MM-DD";
@@ -304,6 +309,21 @@ export function useFormatters() {
     return `${negativeValueDisplay}$${Math.abs(currencyValue).toFixed(2)}`;
   };
 
+  /**
+   * Validates if the given date 1 is before the given date 2.
+   * @param date1 given date 1.
+   * @param date2 given date 2.
+   * @returns if the given date 1 is before the given date 2.
+   */
+  const isBeforeDate = (
+    date1: string | Date,
+    date2: string | Date,
+  ): boolean => {
+    return dayjs(dayjs(date1).format("YYYY-MM-DD")).isBefore(
+      dayjs(date2).format("YYYY-MM-DD"),
+    );
+  };
+
   return {
     dateOnlyLongString,
     dateOnlyLongPeriodString,
@@ -321,5 +341,6 @@ export function useFormatters() {
     emptyStringFiller,
     conditionalEmptyStringFiller,
     formatCurrency,
+    isBeforeDate,
   };
 }

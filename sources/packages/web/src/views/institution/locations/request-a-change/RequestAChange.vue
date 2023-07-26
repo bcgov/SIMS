@@ -7,7 +7,19 @@
       />
     </template>
     <template #tab-header>
-      <v-tabs v-model="tab" stacked color="primary">
+      <v-tabs stacked color="primary"
+        ><v-tab
+          v-for="item in tabItems"
+          :key="item.label"
+          :to="item.command()"
+          :ripple="false"
+          ><div>
+            <span class="label-bold"> {{ item.label }} </span>
+          </div>
+        </v-tab>
+      </v-tabs>
+      <!-- iiiiiiiiiiiiiiiiiiiiii -->
+      <!-- <v-tabs v-model="tab" stacked color="primary">
         <v-tab
           :value="ActiveRequestAChangeTab.AvailableToChangeTab"
           :ripple="false"
@@ -20,9 +32,11 @@
         <v-tab :value="ActiveRequestAChangeTab.CompletedTab" :ripple="false">
           <span class="label-bold"> Completed </span>
         </v-tab>
-      </v-tabs>
+      </v-tabs>-->
     </template>
-    <v-window v-model="tab">
+    <router-view />
+
+    <!-- <v-window v-model="tab">
       <v-window-item
         :value="ActiveRequestAChangeTab.AvailableToChangeTab"
         :eager="false"
@@ -41,29 +55,16 @@
       >
         <completed-offering-change-summary :location-id="locationId" />
       </v-window-item>
-    </v-window>
+    </v-window> -->
   </full-page-container>
 </template>
 
 <script lang="ts">
-import AvailableToChangeSummary from "@/components/institutions/request-a-change/AvailableToChangeSummary.vue";
-import InProgressOfferingChangeSummary from "@/components/institutions/request-a-change/InProgressOfferingChangeSummary.vue";
-import CompletedOfferingChangeSummary from "@/components/institutions/request-a-change/CompletedOfferingChangeSummary.vue";
 import { ref, computed, defineComponent } from "vue";
 import { useInstitutionState } from "@/composables";
-
-enum ActiveRequestAChangeTab {
-  AvailableToChangeTab = "available-to-change-tab",
-  InprogressTab = "inprogress-tab",
-  CompletedTab = "complete-tab",
-}
+import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 
 export default defineComponent({
-  components: {
-    AvailableToChangeSummary,
-    InProgressOfferingChangeSummary,
-    CompletedOfferingChangeSummary,
-  },
   props: {
     locationId: {
       type: Number,
@@ -72,13 +73,37 @@ export default defineComponent({
   },
   setup(props) {
     const { getLocationName } = useInstitutionState();
-    const tab = ref(ActiveRequestAChangeTab.AvailableToChangeTab);
+    const tabItems = ref([
+      {
+        label: "Available to change",
+        command: () => ({
+          name: InstitutionRoutesConst.REQUEST_CHANGE_AVAILABLE_TO_CHANGE,
+          params: {
+            locationId: props.locationId,
+          },
+        }),
+      },
+      {
+        label: "In progress",
+        command: () => ({
+          name: InstitutionRoutesConst.REQUEST_CHANGE_IN_PROGRESS,
+          params: { locationId: props.locationId },
+        }),
+      },
+      {
+        label: "Completed",
+        command: () => ({
+          name: InstitutionRoutesConst.REQUEST_CHANGE_COMPLETED,
+          params: { locationId: props.locationId },
+        }),
+      },
+    ]);
 
     const locationName = computed(() => {
       return getLocationName(props.locationId);
     });
 
-    return { tab, ActiveRequestAChangeTab, locationName };
+    return { locationName, tabItems };
   },
 });
 </script>

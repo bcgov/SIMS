@@ -27,7 +27,7 @@
           v-model="selectedProgram"
           @update:modelValue="selectedProgramChanged"
           :rules="[(v: string) => checkNullOrEmptyRule(v, 'Program')]"
-        ></v-autocomplete>
+        />
         <v-autocomplete
           :readonly="processing"
           hide-details="auto"
@@ -40,7 +40,15 @@
           item-value="id"
           v-model="selectedOffering"
           :rules="[(v:string) => checkNullOrEmptyRule(v, 'Offering')]"
-        ></v-autocomplete>
+          @update:modelValue="offeringOnChange"
+        />
+        <banner
+          v-if="isPastOfferingEndDate"
+          class="mt-2"
+          :type="BannerTypes.Warning"
+          header="This study end date has passed"
+          summary="The selected study period has passed. Students can no longer receive funding. Continuing with the application will require StudentAid BC approval to be eligible for funding."
+        />
         <v-textarea
           :readonly="processing"
           label="Reason for change"
@@ -78,7 +86,8 @@ import { ApplicationOfferingChangeRequestService } from "@/services/ApplicationO
 import { VForm } from "@/types";
 import { EducationProgramService } from "@/services/EducationProgramService";
 import { EducationProgramOfferingService } from "@/services/EducationProgramOfferingService";
-import { useRules, useSnackBar } from "@/composables";
+import { useRules, useSnackBar, useFormatters } from "@/composables";
+import { BannerTypes } from "@/types/contracts/Banner";
 
 export default defineComponent({
   components: { RequestAChangeForm },
@@ -112,6 +121,8 @@ export default defineComponent({
     // Offerings dropdown.
     const offerings = ref([] as OptionItemAPIOutDTO[]);
     const selectedOffering = ref<number>();
+    const { isBeforeDate } = useFormatters();
+    const isPastOfferingEndDate = ref<boolean>(false);
 
     onMounted(async () => {
       application =
@@ -186,6 +197,21 @@ export default defineComponent({
       }
     };
 
+    const offeringOnChange = async (offeringId: number) => {
+      const offeringViewData =
+        await EducationProgramOfferingService.shared.getOfferingSummaryDetailsById(
+          offeringId,
+          {
+            locationId: props.locationId,
+          },
+        );
+
+      isPastOfferingEndDate.value = isBeforeDate(
+        offeringViewData.studyEndDate,
+        new Date(),
+      );
+    };
+
     return {
       requestChangeData,
       studentName,
@@ -204,6 +230,9 @@ export default defineComponent({
       checkNullOrEmptyRule,
       checkLengthRule,
       processing,
+      offeringOnChange,
+      BannerTypes,
+      isPastOfferingEndDate,
     };
   },
 });
