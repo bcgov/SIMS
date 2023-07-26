@@ -14,9 +14,13 @@ import {
   createFakeStudentScholasticStanding,
   createFakeUser,
   saveFakeApplicationDisbursements,
+  saveFakeApplicationOfferingRequestChange,
+  createE2EDataSources,
+  E2EDataSources,
 } from "@sims/test-utils";
 import {
   Application,
+  ApplicationOfferingChangeRequestStatus,
   ApplicationStatus,
   COEStatus,
   DisbursementSchedule,
@@ -38,11 +42,13 @@ describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", ()
   let studentAppealRepo: Repository<StudentAppeal>;
   let submittedByInstitutionUser: User;
   let student: Student;
+  let db: E2EDataSources;
 
   beforeAll(async () => {
     const { nestApplication, dataSource } = await createTestingAppModule();
     app = nestApplication;
     appDataSource = dataSource;
+    db = createE2EDataSources(dataSource);
     const userRepo = dataSource.getRepository(User);
     applicationRepo = dataSource.getRepository(Application);
     disbursementScheduleRepo = dataSource.getRepository(DisbursementSchedule);
@@ -184,7 +190,7 @@ describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", ()
       });
   });
 
-  it(`Should get application details with the most updated appeal status when the application has more than one student appeals associated with.`, async () => {
+  it("Should get application details with the most updated appeal status and most updated application offering change request status when the application has more than one student appeals and more than one application offering change requests associated with it.", async () => {
     // Arrange
     const application = await saveFakeApplicationDisbursements(
       appDataSource,
@@ -209,7 +215,34 @@ describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", ()
       appealRequests: [pendingAppealRequest],
     });
     await studentAppealRepo.save([approvedAppeal, pendingAppeal]);
-
+    // Create approved application offering change request.
+    await saveFakeApplicationOfferingRequestChange(
+      db,
+      {
+        application,
+      },
+      {
+        initialValues: {
+          applicationOfferingChangeRequestStatus:
+            ApplicationOfferingChangeRequestStatus.Approved,
+        },
+      },
+    );
+    // Create pending application offering change request.
+    await saveFakeApplicationOfferingRequestChange(db, { application });
+    // Create declined application offering change request.
+    await saveFakeApplicationOfferingRequestChange(
+      db,
+      {
+        application,
+      },
+      {
+        initialValues: {
+          applicationOfferingChangeRequestStatus:
+            ApplicationOfferingChangeRequestStatus.DeclinedBySABC,
+        },
+      },
+    );
     const endpoint = `/students/application/${application.id}/completed`;
     const token = await getStudentToken(
       FakeStudentUsersTypes.FakeStudentUserType1,
@@ -227,6 +260,8 @@ describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", ()
         },
         assessmentTriggerType: application.currentAssessment.triggerType,
         appealStatus: StudentAppealStatus.Pending,
+        applicationOfferingChangeRequestStatus:
+          ApplicationOfferingChangeRequestStatus.DeclinedBySABC,
       });
   });
 

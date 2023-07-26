@@ -1,4 +1,5 @@
 import {
+  Application,
   ApplicationOfferingChangeRequest,
   ApplicationOfferingChangeRequestStatus,
   ApplicationStatus,
@@ -15,6 +16,7 @@ import { E2EDataSources } from "../data-source/e2e-data-source";
  * @param db manages the repositories to save the data.
  * @param relations dependencies:
  * - `institutionLocation` related location.
+ * - `application` related application.
  * @param options additional options:
  * - `initialValues` initial values.
  * @returns created and saved application offering request change record.
@@ -23,6 +25,7 @@ export async function saveFakeApplicationOfferingRequestChange(
   db: E2EDataSources,
   relations?: {
     institutionLocation?: InstitutionLocation;
+    application?: Application;
   },
   options?: {
     initialValues: Partial<ApplicationOfferingChangeRequest>;
@@ -35,14 +38,18 @@ export async function saveFakeApplicationOfferingRequestChange(
       auditUser: savedUser,
     }),
   );
-  const application = await saveFakeApplicationDisbursements(
-    db.dataSource,
-    relations,
-    {
-      applicationStatus: ApplicationStatus.Completed,
-    },
-  );
-
+  let application: Application;
+  if (!relations?.application) {
+    application = await saveFakeApplicationDisbursements(
+      db.dataSource,
+      relations,
+      {
+        applicationStatus: ApplicationStatus.Completed,
+      },
+    );
+  } else {
+    application = relations?.application;
+  }
   const applicationOfferingChangeRequest =
     new ApplicationOfferingChangeRequest();
   applicationOfferingChangeRequest.application = application;
