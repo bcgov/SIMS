@@ -97,6 +97,11 @@ function getORMCacheConfig(): ORMCacheConfig | false {
     return false;
   }
 
+  const retryStrategy = (times: number) => {
+    const delay = Math.min(times * 100, ORM_CACHE_REDIS_RETRY_INTERVAL);
+    return delay;
+  };
+
   if (config.redis.redisStandaloneMode) {
     return {
       type: "ioredis",
@@ -105,7 +110,7 @@ function getORMCacheConfig(): ORMCacheConfig | false {
         port: config.redis.redisPort,
         password: config.redis.redisPassword,
         commandTimeout: ORM_CACHE_REDIS_COMMAND_TIMEOUT,
-        retryStrategy: () => ORM_CACHE_REDIS_RETRY_INTERVAL,
+        retryStrategy,
       },
       ignoreErrors: true,
       duration: ORM_CACHE_LIFETIME,

@@ -28,7 +28,7 @@ export const ORM_CACHE_LIFETIME = 10 * 60 * 1000;
 /**
  * Redis command timeout of the ORM cache in milliseconds.
  */
-export const ORM_CACHE_REDIS_COMMAND_TIMEOUT = 60 * 1000;
+export const ORM_CACHE_REDIS_COMMAND_TIMEOUT = 5 * 1000;
 
 /**
  * Redis retry interval to retry connection
