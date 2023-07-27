@@ -346,7 +346,8 @@
           "addons": [],
           "inputType": "text",
           "id": "eiloy9e",
-          "defaultValue": ""
+          "defaultValue": "",
+          "isNew": false
         },
         {
           "label": "Operating name",
@@ -395,7 +396,7 @@
           "validate": {
             "required": true,
             "minLength": "",
-            "maxLength": 100,
+            "maxLength": 250,
             "minWords": "",
             "maxWords": "",
             "pattern": "",
@@ -414,7 +415,7 @@
           "tags": [],
           "properties": {},
           "conditional": {
-            "show": null,
+            "show": "",
             "when": null,
             "eq": "",
             "json": ""
@@ -439,7 +440,8 @@
           "addons": [],
           "inputType": "text",
           "id": "eaql8hg",
-          "defaultValue": ""
+          "defaultValue": "",
+          "isNew": false
         },
         {
           "label": "Institution type",

@@ -809,7 +809,9 @@
           "displayMask": "",
           "spellcheck": true,
           "truncateMultipleSpaces": false,
-          "id": "e1kw40ev"
+          "id": "e1kw40ev",
+          "isNew": false,
+          "tags": []
         },
         {
           "label": "Operating name",
@@ -858,7 +860,7 @@
           "validate": {
             "required": true,
             "minLength": "",
-            "maxLength": 100,
+            "maxLength": 250,
             "minWords": "",
             "maxWords": "",
             "pattern": "",
@@ -877,7 +879,7 @@
           "tags": [],
           "properties": {},
           "conditional": {
-            "show": null,
+            "show": "",
             "when": null,
             "eq": "",
             "json": ""
@@ -1165,8 +1167,7 @@
             "threshold": 0.3
           },
           "id": "eu71knzh",
-          "defaultValue": "",
-          "isNew": false
+          "defaultValue": ""
         },
         {
           "autofocus": false,
@@ -1205,8 +1206,7 @@
           "inputFormat": "plain",
           "tags": [],
           "properties": {},
-          "lockKey": true,
-          "isNew": false
+          "lockKey": true
         },
         {
           "label": "Established date",
