@@ -24,6 +24,22 @@ export const MIN_CANADA_LOAN_OVERAWARD = 250;
  * Default lifetime of ORM cache in milliseconds.
  */
 export const ORM_CACHE_LIFETIME = 10 * 60 * 1000;
+
+/**
+ * Redis command timeout of the ORM cache in milliseconds.
+ */
+export const ORM_CACHE_REDIS_COMMAND_TIMEOUT = 5 * 1000;
+
+/**
+ * Redis retry interval to retry connection
+ * when a connection cannot be established to redis.
+ *
+ * Ref for standalone: https://github.com/redis/ioredis/tree/v4#auto-reconnect
+ *
+ * Ref for cluster: https://github.com/redis/ioredis/tree/v4#cluster
+ */
+export const ORM_CACHE_REDIS_RETRY_INTERVAL = 60 * 1000;
+
 /**
  * Minimum number of days from COE approval date to the disbursement date.
  */

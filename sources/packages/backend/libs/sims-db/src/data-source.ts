@@ -54,7 +54,11 @@ import {
   ApplicationOfferingChangeRequest,
 } from "./entities";
 import { ClusterNode, ClusterOptions, RedisOptions } from "ioredis";
-import { ORM_CACHE_LIFETIME } from "@sims/utilities";
+import {
+  ORM_CACHE_LIFETIME,
+  ORM_CACHE_REDIS_COMMAND_TIMEOUT,
+  ORM_CACHE_REDIS_RETRY_INTERVAL,
+} from "@sims/utilities";
 import { ConfigService } from "@sims/utilities/config";
 
 interface ORMCacheConfig {
@@ -93,6 +97,11 @@ function getORMCacheConfig(): ORMCacheConfig | false {
     return false;
   }
 
+  const retryStrategy = (times: number) => {
+    const delay = Math.min(times * 100, ORM_CACHE_REDIS_RETRY_INTERVAL);
+    return delay;
+  };
+
   if (config.redis.redisStandaloneMode) {
     return {
       type: "ioredis",
@@ -100,7 +109,10 @@ function getORMCacheConfig(): ORMCacheConfig | false {
         host: config.redis.redisHost,
         port: config.redis.redisPort,
         password: config.redis.redisPassword,
+        commandTimeout: ORM_CACHE_REDIS_COMMAND_TIMEOUT,
+        retryStrategy,
       },
+      ignoreErrors: true,
       duration: ORM_CACHE_LIFETIME,
     };
   }
@@ -113,9 +125,12 @@ function getORMCacheConfig(): ORMCacheConfig | false {
       options: {
         redisOptions: {
           password: config.redis.redisPassword,
+          commandTimeout: ORM_CACHE_REDIS_COMMAND_TIMEOUT,
         },
+        clusterRetryStrategy: retryStrategy,
       },
     },
+    ignoreErrors: true,
     duration: ORM_CACHE_LIFETIME,
   };
 }
