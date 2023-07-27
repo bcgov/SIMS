@@ -127,7 +127,7 @@ function getORMCacheConfig(): ORMCacheConfig | false {
           password: config.redis.redisPassword,
           commandTimeout: ORM_CACHE_REDIS_COMMAND_TIMEOUT,
         },
-        clusterRetryStrategy: () => ORM_CACHE_REDIS_RETRY_INTERVAL,
+        clusterRetryStrategy: retryStrategy,
       },
     },
     ignoreErrors: true,
