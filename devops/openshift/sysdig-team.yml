@@ -1,0 +1,43 @@
+apiVersion: ops.gov.bc.ca/v1alpha1
+kind: SysdigTeam
+metadata:
+  name: 0c27fb-sysdigteam
+  namespace: 0c27fb-tools
+spec:
+  team:
+    description: The Sysdig Team for the OpenShift Project Set SIMS
+    users:
+    - name: jason.tang@gov.bc.ca
+      role: ROLE_TEAM_EDIT
+    - name: kal.marsh@gov.bc.ca
+      role: ROLE_TEAM_EDIT
+    - name: mohammed.alnahari@gov.bc.ca
+      role: ROLE_TEAM_EDIT
+    - name: john.marchesan@gov.bc.ca
+      role: ROLE_TEAM_EDIT
+    - name: harold.a.johnson@gov.bc.ca
+      role: ROLE_TEAM_EDIT
+    - name: gurumoorthy.mohan@aot-technologies.com
+      role: ROLE_TEAM_EDIT
+    - name: dheepak.rr@aot-technologies.com
+      role: ROLE_TEAM_STANDARD
+    - name: shashank.x.shekhar@gov.bc.ca
+      role: ROLE_TEAM_STANDARD
+    - name: ann.jacob@aot-technologies.com
+      role: ROLE_TEAM_STANDARD
+    - name: andrew.signori@aot-technologies.com
+      role: ROLE_TEAM_STANDARD
+    - name: aotalsp@gmail.com
+      role: ROLE_TEAM_STANDARD
+    - name: yumeng.1.wang@gov.bc.ca
+      role: ROLE_TEAM_READ
+    - name: andre.bisseck@gov.bc.ca
+      role: ROLE_TEAM_READ
+    - name: michelle.smith@gov.bc.ca
+      role: ROLE_TEAM_READ
+    - name: burke.vandrimmelen@gov.bc.ca
+      role: ROLE_TEAM_READ
+    - name: david.malcolm@gov.bc.ca
+      role: ROLE_TEAM_READ
+    - name: chinelo.udoka@gov.bc.ca
+      role: ROLE_TEAM_READ

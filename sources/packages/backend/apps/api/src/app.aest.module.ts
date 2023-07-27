@@ -28,6 +28,7 @@ import {
   EducationProgramOfferingValidationService,
   DisbursementReceiptService,
   DisbursementScheduleService,
+  ApplicationOfferingChangeRequestService,
 } from "./services";
 import {
   SupportingUserAESTController,
@@ -166,6 +167,7 @@ import {
     OverawardControllerService,
     RestrictionSharedService,
     MSFAANumberSharedService,
+    ApplicationOfferingChangeRequestService,
   ],
 })
 export class AppAESTModule {}

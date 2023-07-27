@@ -5,6 +5,7 @@ import {
   AssessmentTriggerType,
   ApplicationExceptionStatus,
   StudentAssessmentStatus,
+  ApplicationOfferingChangeRequestStatus,
 } from "@sims/sims-db";
 import {
   Injectable,
@@ -19,6 +20,7 @@ import {
   EducationProgramOfferingService,
   ApplicationExceptionService,
   MASKED_MSFAA_NUMBER,
+  ApplicationOfferingChangeRequestService,
 } from "../../services";
 import {
   AssessmentNOAAPIOutDTO,
@@ -39,6 +41,7 @@ export class AssessmentControllerService {
     private readonly studentScholasticStandingsService: StudentScholasticStandingsService,
     private readonly educationProgramOfferingService: EducationProgramOfferingService,
     private readonly applicationExceptionService: ApplicationExceptionService,
+    private readonly applicationOfferingChangeRequestService: ApplicationOfferingChangeRequestService,
   ) {}
 
   /**
@@ -382,5 +385,32 @@ export class AssessmentControllerService {
       options?.studentId,
     );
     return requestAssessmentSummary.concat(appeals);
+  }
+
+  /**
+   * Get all the Application Offering Change Requests for the provided application id filtered by the application offering change request statuses.
+   * @param applicationId the application id.
+   * @param studentId the student id.
+   * @param applicationOfferingChangeRequestStatuses list of application offering change request statuses.
+   * @returns application offering change requests.
+   */
+  async getApplicationOfferingChangeRequestsByStatus(
+    applicationId: number,
+    studentId: number,
+    applicationOfferingChangeRequestStatuses: ApplicationOfferingChangeRequestStatus[],
+  ): Promise<RequestAssessmentSummaryAPIOutDTO[]> {
+    const filteredApplicationOfferingChangeRequests =
+      await this.applicationOfferingChangeRequestService.getApplicationOfferingChangeRequestsByStatus(
+        applicationId,
+        studentId,
+        applicationOfferingChangeRequestStatuses,
+      );
+    return filteredApplicationOfferingChangeRequests.map((request) => ({
+      id: request.id,
+      submittedDate: request.createdAt,
+      status: request.applicationOfferingChangeRequestStatus,
+      requestType:
+        RequestAssessmentTypeAPIOutDTO.ApplicationOfferingChangeRequest,
+    }));
   }
 }

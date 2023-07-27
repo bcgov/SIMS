@@ -22,6 +22,7 @@ import {
   CRAIncomeVerificationService,
   SupportingUserService,
   StudentAccountApplicationsService,
+  ApplicationOfferingChangeRequestService,
 } from "./services";
 import {
   ApplicationStudentsController,
@@ -116,6 +117,7 @@ import { ATBCIntegrationModule } from "@sims/integrations/atbc-integration";
     OverawardControllerService,
     StudentAppealControllerService,
     ConfirmationOfEnrollmentService,
+    ApplicationOfferingChangeRequestService,
   ],
 })
 export class AppStudentsModule {}
