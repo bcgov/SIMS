@@ -1,6 +1,5 @@
 import { HttpStatus, INestApplication } from "@nestjs/common";
 import * as request from "supertest";
-import { DataSource, Repository } from "typeorm";
 import {
   BEARER_AUTH_TYPE,
   createTestingAppModule,
@@ -20,23 +19,18 @@ import {
   ApplicationOfferingChangeRequestStatus,
   ApplicationStatus,
   Student,
-  StudentAppeal,
   StudentAppealStatus,
 } from "@sims/sims-db";
 
 describe("ApplicationStudentsController(e2e)-getApplicationProgressDetails", () => {
   let app: INestApplication;
-  let appDataSource: DataSource;
-  let studentAppealRepo: Repository<StudentAppeal>;
   let student: Student;
   let db: E2EDataSources;
 
   beforeAll(async () => {
     const { nestApplication, dataSource } = await createTestingAppModule();
     app = nestApplication;
-    appDataSource = dataSource;
     db = createE2EDataSources(dataSource);
-    studentAppealRepo = dataSource.getRepository(StudentAppeal);
     student = await getStudentByFakeStudentUserType(
       FakeStudentUsersTypes.FakeStudentUserType1,
       dataSource,
@@ -46,7 +40,7 @@ describe("ApplicationStudentsController(e2e)-getApplicationProgressDetails", () 
   it("Should get the status of all requests and confirmations in student application (Appeals, Application Offering Change Requests and COE).", async () => {
     // Arrange
     const application = await saveFakeApplicationDisbursements(
-      appDataSource,
+      db.dataSource,
       { student },
       {
         applicationStatus: ApplicationStatus.Completed,
@@ -61,15 +55,7 @@ describe("ApplicationStudentsController(e2e)-getApplicationProgressDetails", () 
       application,
       appealRequests: [approvedAppealRequest],
     });
-    await studentAppealRepo.save(approvedAppeal);
-    // Create pending student appeal submitted today.
-    const pendingAppealRequest = createFakeStudentAppealRequest();
-    pendingAppealRequest.appealStatus = StudentAppealStatus.Pending;
-    const pendingAppeal = createFakeStudentAppeal({
-      application,
-      appealRequests: [pendingAppealRequest],
-    });
-    await studentAppealRepo.save(pendingAppeal);
+    await db.studentAppeal.save(approvedAppeal);
     // Create declined student appeal submitted today.
     const declinedAppealRequest = createFakeStudentAppealRequest();
     declinedAppealRequest.appealStatus = StudentAppealStatus.Declined;
@@ -77,7 +63,28 @@ describe("ApplicationStudentsController(e2e)-getApplicationProgressDetails", () 
       application,
       appealRequests: [declinedAppealRequest],
     });
-    await studentAppealRepo.save(declinedAppeal);
+    await db.studentAppeal.save(declinedAppeal);
+    // Create pending student appeal submitted today.
+    const pendingAppealRequest = createFakeStudentAppealRequest();
+    pendingAppealRequest.appealStatus = StudentAppealStatus.Pending;
+    const pendingAppeal = createFakeStudentAppeal({
+      application,
+      appealRequests: [pendingAppealRequest],
+    });
+    await db.studentAppeal.save(pendingAppeal);
+    // Create declined application offering change request.
+    await saveFakeApplicationOfferingRequestChange(
+      db,
+      {
+        application,
+      },
+      {
+        initialValues: {
+          applicationOfferingChangeRequestStatus:
+            ApplicationOfferingChangeRequestStatus.DeclinedBySABC,
+        },
+      },
+    );
     // Create approved application offering change request.
     await saveFakeApplicationOfferingRequestChange(
       db,
@@ -93,19 +100,6 @@ describe("ApplicationStudentsController(e2e)-getApplicationProgressDetails", () 
     );
     // Create pending application offering change request.
     await saveFakeApplicationOfferingRequestChange(db, { application });
-    // Create declined application offering change request.
-    await saveFakeApplicationOfferingRequestChange(
-      db,
-      {
-        application,
-      },
-      {
-        initialValues: {
-          applicationOfferingChangeRequestStatus:
-            ApplicationOfferingChangeRequestStatus.DeclinedBySABC,
-        },
-      },
-    );
     const endpoint = `/students/application/${application.id}/progress-details`;
     const token = await getStudentToken(
       FakeStudentUsersTypes.FakeStudentUserType1,
@@ -123,9 +117,9 @@ describe("ApplicationStudentsController(e2e)-getApplicationProgressDetails", () 
         pirStatus: application.pirStatus,
         firstCOEStatus: firstDisbursement?.coeStatus,
         secondCOEStatus: secondDisbursement?.coeStatus,
-        appealStatus: StudentAppealStatus.Declined,
+        appealStatus: StudentAppealStatus.Pending,
         applicationOfferingChangeRequestStatus:
-          ApplicationOfferingChangeRequestStatus.DeclinedBySABC,
+          ApplicationOfferingChangeRequestStatus.InProgressWithStudent,
       });
   });
 

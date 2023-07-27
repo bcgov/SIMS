@@ -38,7 +38,7 @@ describe("AssessmentStudentsController(e2e)-getRequestedAssessmentSummary", () =
     );
   });
 
-  it("Should get the student assessment requests summary for an eligible application for a student when he tries to access it.", async () => {
+  it("Should get the student assessment requests summary for an eligible application for a student when they try to access it.", async () => {
     // Arrange
     const application = await saveFakeApplicationDisbursements(
       db.dataSource,
@@ -47,13 +47,6 @@ describe("AssessmentStudentsController(e2e)-getRequestedAssessmentSummary", () =
       },
       { applicationStatus: ApplicationStatus.Completed },
     );
-    // Create a pending student appeal.
-    const pendingAppealRequest = createFakeStudentAppealRequest();
-    pendingAppealRequest.appealStatus = StudentAppealStatus.Pending;
-    const pendingAppeal = createFakeStudentAppeal({
-      application,
-      appealRequests: [pendingAppealRequest],
-    });
     // Create a declined student appeal.
     const declinedAppealRequest = createFakeStudentAppealRequest();
     declinedAppealRequest.appealStatus = StudentAppealStatus.Declined;
@@ -61,17 +54,22 @@ describe("AssessmentStudentsController(e2e)-getRequestedAssessmentSummary", () =
       application,
       appealRequests: [declinedAppealRequest],
     });
+    await db.studentAppeal.save(declinedAppeal);
     // Create an approved student appeal.
     const approvedAppealRequest = createFakeStudentAppealRequest();
     const approvedAppeal = createFakeStudentAppeal({
       application,
       appealRequests: [approvedAppealRequest],
     });
-    await db.studentAppeal.save([
-      pendingAppeal,
-      declinedAppeal,
-      approvedAppeal,
-    ]);
+    await db.studentAppeal.save(approvedAppeal);
+    // Create a pending student appeal.
+    const pendingAppealRequest = createFakeStudentAppealRequest();
+    pendingAppealRequest.appealStatus = StudentAppealStatus.Pending;
+    const pendingAppeal = createFakeStudentAppeal({
+      application,
+      appealRequests: [pendingAppealRequest],
+    });
+    await db.studentAppeal.save(pendingAppeal);
     // Create approved application offering change request.
     await saveFakeApplicationOfferingRequestChange(
       db,
@@ -85,9 +83,6 @@ describe("AssessmentStudentsController(e2e)-getRequestedAssessmentSummary", () =
         },
       },
     );
-    // Create pending application offering change request.
-    const pendingApplicationOfferingChangeRequest =
-      await saveFakeApplicationOfferingRequestChange(db, { application });
     // Create declined application offering change request.
     const declinedApplicationOfferingChangeRequest =
       await saveFakeApplicationOfferingRequestChange(
@@ -102,6 +97,9 @@ describe("AssessmentStudentsController(e2e)-getRequestedAssessmentSummary", () =
           },
         },
       );
+    // Create pending application offering change request.
+    const pendingApplicationOfferingChangeRequest =
+      await saveFakeApplicationOfferingRequestChange(db, { application });
     const endpoint = `/students/assessment/application/${application.id}/requests`;
     const token = await getStudentToken(
       FakeStudentUsersTypes.FakeStudentUserType1,
@@ -126,17 +124,17 @@ describe("AssessmentStudentsController(e2e)-getRequestedAssessmentSummary", () =
           requestType: AssessmentTriggerType.StudentAppeal,
         },
         {
-          id: pendingApplicationOfferingChangeRequest.id,
-          submittedDate:
-            pendingApplicationOfferingChangeRequest.createdAt.toISOString(),
-          status: ApplicationOfferingChangeRequestStatus.InProgressWithStudent,
-          requestType: AssessmentTriggerType.ApplicationOfferingChange,
-        },
-        {
           id: declinedApplicationOfferingChangeRequest.id,
           submittedDate:
             declinedApplicationOfferingChangeRequest.createdAt.toISOString(),
           status: ApplicationOfferingChangeRequestStatus.DeclinedBySABC,
+          requestType: AssessmentTriggerType.ApplicationOfferingChange,
+        },
+        {
+          id: pendingApplicationOfferingChangeRequest.id,
+          submittedDate:
+            pendingApplicationOfferingChangeRequest.createdAt.toISOString(),
+          status: ApplicationOfferingChangeRequestStatus.InProgressWithStudent,
           requestType: AssessmentTriggerType.ApplicationOfferingChange,
         },
       ]);

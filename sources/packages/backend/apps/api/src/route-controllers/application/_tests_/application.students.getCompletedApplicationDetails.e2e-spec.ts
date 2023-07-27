@@ -228,8 +228,6 @@ describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", ()
         },
       },
     );
-    // Create pending application offering change request.
-    await saveFakeApplicationOfferingRequestChange(db, { application });
     // Create declined application offering change request.
     await saveFakeApplicationOfferingRequestChange(
       db,
@@ -243,6 +241,8 @@ describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", ()
         },
       },
     );
+    // Create pending application offering change request.
+    await saveFakeApplicationOfferingRequestChange(db, { application });
     const endpoint = `/students/application/${application.id}/completed`;
     const token = await getStudentToken(
       FakeStudentUsersTypes.FakeStudentUserType1,
@@ -261,7 +261,7 @@ describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", ()
         assessmentTriggerType: application.currentAssessment.triggerType,
         appealStatus: StudentAppealStatus.Pending,
         applicationOfferingChangeRequestStatus:
-          ApplicationOfferingChangeRequestStatus.DeclinedBySABC,
+          ApplicationOfferingChangeRequestStatus.InProgressWithStudent,
       });
   });
 

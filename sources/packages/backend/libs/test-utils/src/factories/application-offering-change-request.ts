@@ -38,18 +38,11 @@ export async function saveFakeApplicationOfferingRequestChange(
       auditUser: savedUser,
     }),
   );
-  let application: Application;
-  if (!relations?.application) {
-    application = await saveFakeApplicationDisbursements(
-      db.dataSource,
-      relations,
-      {
-        applicationStatus: ApplicationStatus.Completed,
-      },
-    );
-  } else {
-    application = relations?.application;
-  }
+  const application =
+    relations?.application ??
+    (await saveFakeApplicationDisbursements(db.dataSource, relations, {
+      applicationStatus: ApplicationStatus.Completed,
+    }));
   const applicationOfferingChangeRequest =
     new ApplicationOfferingChangeRequest();
   applicationOfferingChangeRequest.application = application;
