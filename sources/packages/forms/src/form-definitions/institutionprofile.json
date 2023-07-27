@@ -278,7 +278,7 @@
           "validate": {
             "required": true,
             "minLength": "",
-            "maxLength": "",
+            "maxLength": 250,
             "minWords": "",
             "maxWords": "",
             "pattern": "",
@@ -297,7 +297,7 @@
           "tags": [],
           "properties": {},
           "conditional": {
-            "show": null,
+            "show": "",
             "when": null,
             "eq": "",
             "json": ""
@@ -346,8 +346,7 @@
           "addons": [],
           "inputType": "text",
           "id": "eiloy9e",
-          "defaultValue": "",
-          "isNew": false
+          "defaultValue": ""
         },
         {
           "label": "Operating name",
@@ -440,8 +439,7 @@
           "addons": [],
           "inputType": "text",
           "id": "eaql8hg",
-          "defaultValue": "",
-          "isNew": false
+          "defaultValue": ""
         },
         {
           "label": "Institution type",
