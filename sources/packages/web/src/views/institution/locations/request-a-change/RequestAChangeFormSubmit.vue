@@ -188,8 +188,10 @@ export default defineComponent({
             reason: reasonForChange.value,
           },
         );
-        // TODO: redirect to "in progress".
-        router.push(goBackRouteParams.value);
+        router.push({
+          name: InstitutionRoutesConst.REQUEST_CHANGE_IN_PROGRESS,
+          params: { locationId: props.locationId },
+        });
       } catch {
         snackBar.error("Unexpected error while submitting the request.");
       } finally {

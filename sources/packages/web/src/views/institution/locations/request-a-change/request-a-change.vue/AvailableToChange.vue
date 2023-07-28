@@ -4,7 +4,7 @@
 
 <script lang="ts">
 import AvailableToChangeSummary from "@/components/institutions/request-a-change/AvailableToChangeSummary.vue";
-import { defineComponent, onMounted } from "vue";
+import { defineComponent } from "vue";
 
 export default defineComponent({
   components: {
@@ -15,11 +15,6 @@ export default defineComponent({
       type: Number,
       required: true,
     },
-  },
-  setup(props) {
-    onMounted(async () => {
-      console.log(props.locationId, "++++");
-    });
   },
 });
 </script>

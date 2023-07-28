@@ -25,11 +25,11 @@ import {
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { IUserToken } from "../../auth/userToken.interface";
 import {
+  APPLICATION_NOT_FOUND,
   ApplicationService,
-  EducationProgramOfferingService,
   PIRDeniedReasonService,
 } from "../../services";
-import { getUserFullName, PIR_OR_DATE_OVERLAP_ERROR } from "../../utilities";
+import { getUserFullName, STUDY_DATE_OVERLAP_ERROR } from "../../utilities";
 import { CustomNamedError, getISODateOnlyString } from "@sims/utilities";
 import {
   Application,
@@ -37,7 +37,9 @@ import {
   ProgramInfoStatus,
 } from "@sims/sims-db";
 import {
+  OFFERING_DOES_NOT_BELONG_TO_LOCATION,
   OFFERING_INTENSITY_MISMATCH,
+  OFFERING_PROGRAM_YEAR_MISMATCH,
   PIR_DENIED_REASON_NOT_FOUND_ERROR,
   PIR_REQUEST_NOT_FOUND_ERROR,
 } from "../../constants";
@@ -60,7 +62,6 @@ export class ProgramInfoRequestInstitutionsController extends BaseController {
   constructor(
     private readonly applicationService: ApplicationService,
     private readonly workflowClientService: WorkflowClientService,
-    private readonly offeringService: EducationProgramOfferingService,
     private readonly pirDeniedReasonService: PIRDeniedReasonService,
   ) {
     super();
@@ -87,9 +88,12 @@ export class ProgramInfoRequestInstitutionsController extends BaseController {
     @Param("locationId", ParseIntPipe) locationId: number,
     @Param("applicationId", ParseIntPipe) applicationId: number,
   ): Promise<ProgramInfoRequestAPIOutDTO> {
-    const application = await this.applicationService.getProgramInfoRequest(
+    const application = await this.applicationService.getApplicationInfo(
       locationId,
       applicationId,
+      {
+        onlyOriginalAssessment: true,
+      },
     );
     if (!application) {
       throw new NotFoundException(
@@ -122,10 +126,7 @@ export class ProgramInfoRequestInstitutionsController extends BaseController {
     // assessment always available for submitted student applications).
     // PIR process happens only during original assessment.
     // Offering available only when PIR is completed.
-    const originalAssessmentOffering = application.studentAssessments.find(
-      (assessment) =>
-        assessment.triggerType === AssessmentTriggerType.OriginalAssessment,
-    ).offering;
+    const originalAssessmentOffering = application.currentAssessment.offering;
     // If an offering is present (PIR is completed), this value will be the
     // program id associated with the offering, otherwise the program id
     // from PIR (sims.applications table) will be used.
@@ -217,40 +218,17 @@ export class ProgramInfoRequestInstitutionsController extends BaseController {
     @Body() payload: CompleteProgramInfoRequestAPIInDTO,
     @UserToken() userToken: IUserToken,
   ): Promise<void> {
-    // Validate if the application exists and the location has access to it.
-    const application = await this.applicationService.getProgramInfoRequest(
-      locationId,
-      applicationId,
-    );
-    if (!application) {
-      throw new NotFoundException("Application not found.");
-    }
-    // Validates if the offering exists and belongs to the location.
-    const offering = await this.offeringService.getOfferingLocationId(
-      payload.selectedOffering,
-    );
-    if (offering?.institutionLocation.id !== locationId) {
-      throw new UnauthorizedException(
-        "The location does not have access to the offering.",
-      );
-    }
-
     try {
-      // Validate possible overlaps with exists applications.
-      await this.applicationService.validateOverlappingDatesAndPIR(
+      await this.applicationService.applicationOfferingValidation(
         applicationId,
-        application.student.user.lastName,
-        application.student.user.id,
-        application.student.sinValidation.sin,
-        application.student.birthDate,
-        offering.studyStartDate,
-        offering.studyEndDate,
+        payload.selectedOffering,
+        locationId,
       );
       // Complete PIR.
       await this.applicationService.setOfferingForProgramInfoRequest(
         applicationId,
         locationId,
-        offering.id,
+        payload.selectedOffering,
         userToken.userId,
       );
       // Send a message to allow the workflow to proceed.
@@ -262,12 +240,18 @@ export class ProgramInfoRequestInstitutionsController extends BaseController {
       if (error instanceof CustomNamedError) {
         switch (error.name) {
           case PIR_REQUEST_NOT_FOUND_ERROR:
+          case APPLICATION_NOT_FOUND:
             throw new NotFoundException(
               new ApiProcessError(error.message, error.name),
             );
-          case PIR_OR_DATE_OVERLAP_ERROR:
+          case STUDY_DATE_OVERLAP_ERROR:
+          case OFFERING_PROGRAM_YEAR_MISMATCH:
           case OFFERING_INTENSITY_MISMATCH:
             throw new UnprocessableEntityException(
+              new ApiProcessError(error.message, error.name),
+            );
+          case OFFERING_DOES_NOT_BELONG_TO_LOCATION:
+            throw new UnauthorizedException(
               new ApiProcessError(error.message, error.name),
             );
         }

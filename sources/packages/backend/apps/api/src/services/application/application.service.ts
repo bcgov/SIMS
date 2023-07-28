@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, UnauthorizedException } from "@nestjs/common";
 import { DataSource, In, Not, Brackets } from "typeorm";
 import { LoggerService, InjectLogger } from "@sims/utilities/logger";
 import {
@@ -27,10 +27,11 @@ import {
 import {
   PIR_DENIED_REASON_OTHER_ID,
   sortApplicationsColumnMap,
-  PIR_OR_DATE_OVERLAP_ERROR_MESSAGE,
-  PIR_OR_DATE_OVERLAP_ERROR,
+  STUDY_DATE_OVERLAP_ERROR_MESSAGE,
+  STUDY_DATE_OVERLAP_ERROR,
   PaginationOptions,
   PaginatedResults,
+  offeringBelongToProgramYear,
 } from "../../utilities";
 import { CustomNamedError, QueueNames } from "@sims/utilities";
 import {
@@ -44,6 +45,9 @@ import {
   PIR_REQUEST_NOT_FOUND_ERROR,
   OFFERING_NOT_VALID,
   INSTITUTION_LOCATION_NOT_VALID,
+  OFFERING_INTENSITY_MISMATCH,
+  OFFERING_DOES_NOT_BELONG_TO_LOCATION,
+  OFFERING_PROGRAM_YEAR_MISMATCH,
 } from "../../constants";
 import { SequenceControlService } from "@sims/services";
 import { ConfigService } from "@sims/utilities/config";
@@ -52,6 +56,7 @@ import { InjectQueue } from "@nestjs/bull";
 import { Queue } from "bull";
 import { CancelAssessmentQueueInDTO } from "@sims/services/queue";
 import { InstitutionLocationService } from "../institution-location/institution-location.service";
+import { OptionItem } from "../../types/optionItem";
 
 export const APPLICATION_DRAFT_NOT_FOUND = "APPLICATION_DRAFT_NOT_FOUND";
 export const MORE_THAN_ONE_APPLICATION_DRAFT_ERROR =
@@ -435,18 +440,21 @@ export class ApplicationService extends RecordDataModelService<Application> {
   }
 
   /**
-   * Gets the Program Information Requests (PIR) associated with the
-   * application and the original assessment that contains the offering
-   * to be completed or that was completed during the PIR process.
+   * Gets the application details belonging to an institution location.
    * @param locationId location id.
    * @param applicationId application id.
+   * @param options options for the query.
+   * - `onlyOriginalAssessment` include only original assessment.
    * @returns student application with Program Information Request.
    */
-  async getProgramInfoRequest(
+  async getApplicationInfo(
     locationId: number,
     applicationId: number,
+    options?: {
+      onlyOriginalAssessment: boolean;
+    },
   ): Promise<Application> {
-    return this.repo
+    const applicationDetails = this.repo
       .createQueryBuilder("application")
       .select([
         "application.applicationNumber",
@@ -482,16 +490,15 @@ export class ApplicationService extends RecordDataModelService<Application> {
         "programYear.endDate",
         "sinValidation.id",
         "sinValidation.sin",
-        "studentAssessments.id",
-        "studentAssessments.triggerType",
+        "currentAssessment.id",
       ])
       .innerJoin("application.programYear", "programYear")
       .leftJoin("application.pirProgram", "pirProgram")
       .innerJoin("application.student", "student")
       .innerJoin("student.sinValidation", "sinValidation")
       .innerJoin("application.location", "location")
-      .innerJoin("application.studentAssessments", "studentAssessments")
-      .leftJoin("studentAssessments.offering", "offering")
+      .innerJoin("application.currentAssessment", "currentAssessment")
+      .leftJoin("currentAssessment.offering", "offering")
       .leftJoin("offering.educationProgram", "educationProgram")
       .innerJoin("student.user", "user")
       .leftJoin("application.pirDeniedReasonId", "PIRDeniedReason")
@@ -499,16 +506,21 @@ export class ApplicationService extends RecordDataModelService<Application> {
         applicationId,
       })
       .andWhere("location.id = :locationId", { locationId })
-      .andWhere("studentAssessments.triggerType = :triggerType", {
-        triggerType: AssessmentTriggerType.OriginalAssessment,
-      })
       .andWhere("application.pirStatus != :pirStatus", {
         pirStatus: ProgramInfoStatus.notRequired,
       })
       .andWhere("application.applicationStatus != :overwrittenStatus", {
         overwrittenStatus: ApplicationStatus.Overwritten,
-      })
-      .getOne();
+      });
+    if (options?.onlyOriginalAssessment) {
+      applicationDetails.andWhere(
+        "currentAssessment.triggerType = :triggerType",
+        {
+          triggerType: AssessmentTriggerType.OriginalAssessment,
+        },
+      );
+    }
+    return applicationDetails.getOne();
   }
 
   /**
@@ -1324,7 +1336,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
    * @param studyStartDate
    * @param studyEndDate
    */
-  async validateOverlappingDatesAndPIR(
+  async validateOverlappingDates(
     applicationId: number,
     lastName: string,
     userId: number,
@@ -1373,8 +1385,8 @@ export class ApplicationService extends RecordDataModelService<Application> {
         !!sfasPTApplicationResponse
       ) {
         throw new CustomNamedError(
-          PIR_OR_DATE_OVERLAP_ERROR_MESSAGE,
-          PIR_OR_DATE_OVERLAP_ERROR,
+          STUDY_DATE_OVERLAP_ERROR_MESSAGE,
+          STUDY_DATE_OVERLAP_ERROR,
         );
       }
     }
@@ -1515,6 +1527,88 @@ export class ApplicationService extends RecordDataModelService<Application> {
         },
       },
     });
+  }
+
+  /**
+   * Set of validations for existing application and newly
+   * selected offering, like, application belongs to the location,
+   * newly selected offering belongs to the location, is there any
+   * overlapping study dates for the student, is the offering is
+   * matching with the existing offering and the newly selected
+   * offering belong to the same program year.
+   * @param applicationId existing application id.
+   * @param selectedOffering newly selected offering id.
+   * @param locationId location id.
+   * @param options more options of the validation.
+   * - `onlyOriginalAssessment` only include original assessments
+   * (eg, In case of PIR).
+   */
+  async applicationOfferingValidation(
+    applicationId: number,
+    selectedOffering: number,
+    locationId: number,
+    options?: {
+      onlyOriginalAssessment: boolean;
+    },
+  ): Promise<void> {
+    // Validate if the application exists and the location has access to it.
+    const application = await this.getApplicationInfo(
+      locationId,
+      applicationId,
+      {
+        onlyOriginalAssessment: options?.onlyOriginalAssessment,
+      },
+    );
+    if (!application) {
+      throw new CustomNamedError(
+        APPLICATION_NOT_FOUND,
+        "Application not found.",
+      );
+    }
+    // Validates if the offering exists and belongs to the location.
+    const offering = await this.offeringService.getOfferingLocationId(
+      selectedOffering,
+    );
+    if (offering?.institutionLocation.id !== locationId) {
+      // console.log(
+      //   "error ===>> The location does not have access to the offering.",
+      // );
+      throw new CustomNamedError(
+        OFFERING_DOES_NOT_BELONG_TO_LOCATION,
+        "The location does not have access to the offering.",
+      );
+    }
+
+    // Validate possible overlaps with exists applications.
+    await this.validateOverlappingDates(
+      application.id,
+      application.student.user.lastName,
+      application.student.user.id,
+      application.student.sinValidation.sin,
+      application.student.birthDate,
+      offering.studyStartDate,
+      offering.studyEndDate,
+    );
+    // Check if the newly selected offering intensity
+    // is matching with the existing offering intensity.
+    const currentOfferingIntensity =
+      application.currentAssessment?.offering?.offeringIntensity ??
+      application.data.howWillYouBeAttendingTheProgram;
+
+    if (currentOfferingIntensity !== offering.offeringIntensity) {
+      throw new CustomNamedError(
+        OFFERING_INTENSITY_MISMATCH,
+        "Offering intensity does not match with the student selected offering.",
+      );
+    }
+
+    // Offering belongs to the application program year.
+    if (!offeringBelongToProgramYear(offering, application.programYear)) {
+      throw new CustomNamedError(
+        OFFERING_PROGRAM_YEAR_MISMATCH,
+        "Offering intensity does not match with the student selected offering.",
+      );
+    }
   }
 
   @InjectLogger()

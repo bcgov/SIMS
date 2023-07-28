@@ -127,3 +127,12 @@ export const INSTITUTION_LOCATION_NOT_VALID = "INSTITUTION_LOCATION_NOT_VALID";
  * Request for disability not allowed.
  */
 export const DISABILITY_REQUEST_NOT_ALLOWED = "DISABILITY_REQUEST_NOT_ALLOWED";
+/**
+ * Offering program year mismatch.
+ */
+export const OFFERING_PROGRAM_YEAR_MISMATCH = "OFFERING_PROGRAM_YEAR_MISMATCH";
+/**
+ * Offering does not belong to the location.
+ */
+export const OFFERING_DOES_NOT_BELONG_TO_LOCATION =
+  "OFFERING_DOES_NOT_BELONG_TO_LOCATION";

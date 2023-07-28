@@ -18,44 +18,8 @@
           </div>
         </v-tab>
       </v-tabs>
-      <!-- iiiiiiiiiiiiiiiiiiiiii -->
-      <!-- <v-tabs v-model="tab" stacked color="primary">
-        <v-tab
-          :value="ActiveRequestAChangeTab.AvailableToChangeTab"
-          :ripple="false"
-        >
-          <span class="label-bold"> Available to change </span>
-        </v-tab>
-        <v-tab :value="ActiveRequestAChangeTab.InprogressTab" :ripple="false">
-          <span class="label-bold"> In progress </span>
-        </v-tab>
-        <v-tab :value="ActiveRequestAChangeTab.CompletedTab" :ripple="false">
-          <span class="label-bold"> Completed </span>
-        </v-tab>
-      </v-tabs>-->
     </template>
     <router-view />
-
-    <!-- <v-window v-model="tab">
-      <v-window-item
-        :value="ActiveRequestAChangeTab.AvailableToChangeTab"
-        :eager="false"
-      >
-        <available-to-change-summary :location-id="locationId" />
-      </v-window-item>
-      <v-window-item
-        :value="ActiveRequestAChangeTab.InprogressTab"
-        :eager="false"
-      >
-        <in-progress-offering-change-summary :location-id="locationId" />
-      </v-window-item>
-      <v-window-item
-        :value="ActiveRequestAChangeTab.CompletedTab"
-        :eager="false"
-      >
-        <completed-offering-change-summary :location-id="locationId" />
-      </v-window-item>
-    </v-window> -->
   </full-page-container>
 </template>
 
