@@ -103,6 +103,7 @@ jobs:
           echo Git Red: ${{ inputs.gitRef }}
           echo BUILD NAMESPACE: $BUILD_NAMESPACE
           echo HOST_PREFIX: $HOST_PREFIX
+          echo DATABASE_NAME_PREFIX: $DATABASE_NAME_PREFIX
 
       - name: Checkout Target Branch
         uses: actions/checkout@v3
