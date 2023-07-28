@@ -23,7 +23,7 @@ export APPLICATION_ARCHIVE_DAYS := $(or ${APPLICATION_ARCHIVE_DAYS}, 43)
 export API_PORT := $(or ${API_PORT}, 7070)
 export QUEUE_CONSUMERS_PORT := $(or ${QUEUE_CONSUMERS_PORT}, 7000)
 export WEB_PORT := $(or ${WEB_PORT}, 3030)
-export DATABASE_NAME_KEY := $(or ${DATABASE_NAME_KEY}, database-name)
+export DATABASE_NAME := $(or ${DATABASE_NAME}, SIMSDB)
 export DB_NAME := $(or ${DB_NAME}, SIMSDB)
 export DB_MIGRATIONS_BUILD_REF := $(or ${DB_MIGRATIONS_BUILD_REF}, db-migrations-${APP_NAME})
 export API_BUILD_REF := $(or ${API_BUILD_REF}, api-${APP_NAME})
@@ -39,8 +39,8 @@ export DATABASE_NAME_PREFIX := $(or $(DATABASE_NAME_PREFIX), $$DATABASE_NAME_PRE
 export MAX_WAIT=300 # Maximum wait time in seconds.
 export WAIT_TIME=0  # Initialize wait time to zero.
 
-define DATABASE_NAME_KEY_PREFIXED
-"$(DATABASE_NAME_PREFIX)$(DATABASE_NAME_KEY)"
+define DATABASE_NAME_PREFIXED
+"$(DATABASE_NAME_PREFIX)$(DATABASE_NAME)"
 endef
 
 define DB_MIGRATIONS
@@ -313,7 +313,7 @@ run-db-migrations:
 	test -n "$(DB_SERVICE_NAME)"
 	test -n "$(DB_MIGRATIONS_BUILD_REF)"
 	test -n "$(BUILD_REF)"
-	test -n "$(DATABASE_NAME_KEY_PREFIXED)"
+	test -n "$(DATABASE_NAME_PREFIXED)"
 	test -n "$(DB_MIGRATIONS)"
 	@echo "+\n++ Deploying DB_MIGRATIONS with tag: $(BUILD_REF)\n+"
 	@oc -n $(NAMESPACE) process -f openshift/db-migrations-job.yml \
@@ -322,7 +322,7 @@ run-db-migrations:
 		-p BUILD_NAMESPACE=$(BUILD_NAMESPACE) \
 		-p IMAGE_STREAM_TAG="$(DB_MIGRATIONS_BUILD_REF):$(BUILD_REF)" \
 		-p BUILD_TAG=$(BUILD_REF) \
-		-p DATABASE_NAME_KEY=$(DATABASE_NAME_KEY_PREFIXED) \
+		-p DATABASE_NAME=$(DATABASE_NAME_PREFIXED) \
 		-p JOB_NAME=$(DB_MIGRATIONS_JOB_NAME) \
 		| oc -n $(NAMESPACE) apply -f - 
 
@@ -349,7 +349,7 @@ deploy-api:
 	test -n "$(SITE_MINDER_LOGOUT_URL)"
 	test -n "$(ATBC_LOGIN_ENDPOINT)"
 	test -n "$(ATBC_ENDPOINT)"
-	test -n "$(DATABASE_NAME_KEY_PREFIXED)"
+	test -n "$(DATABASE_NAME_PREFIXED)"
 	test -n "$(API)"
 	test -n "$(API_SECRET_NAME)"
 	test -n "$(SWAGGER_NAME)"
@@ -369,7 +369,7 @@ deploy-api:
 		-p BCeID_WEB_SERVICE_WSDL=$(BCeID_WEB_SERVICE_WSDL) \
 		-p FORMS_SECRET_NAME=$(FORMS_SECRET_NAME) \
 		-p BUILD_TAG=$(BUILD_REF) \
-		-p DATABASE_NAME_KEY=$(DATABASE_NAME_KEY_PREFIXED) \
+		-p DATABASE_NAME=$(DATABASE_NAME_PREFIXED) \
 		-p SITE_MINDER_LOGOUT_URL=$(SITE_MINDER_LOGOUT_URL) \
 		-p ATBC_LOGIN_ENDPOINT=$(ATBC_LOGIN_ENDPOINT) \
 		-p ATBC_ENDPOINT=$(ATBC_ENDPOINT) \
@@ -386,7 +386,7 @@ deploy-workers:
 	test -n "$(BUILD_REF)"
 	test -n "$(WORKERS_BUILD_REF)"
 	test -n "$(DB_SERVICE_NAME)"
-	test -n "$(DATABASE_NAME_KEY_PREFIXED)"
+	test -n "$(DATABASE_NAME_PREFIXED)"
 	test -n "$(WORKERS_SECRET_NAME)"
 	test -n "$(WORKERS)"
 	test -n "$(BYPASS_CRA_INCOME_VERIFICATION)"
@@ -398,7 +398,7 @@ deploy-workers:
 		-p DB_SERVICE=$(DB_SERVICE_NAME) \
 		-p IMAGE_STREAM_TAG="$(WORKERS_BUILD_REF):$(BUILD_REF)" \
 		-p BUILD_TAG=$(BUILD_REF) \
-		-p DATABASE_NAME_KEY=$(DATABASE_NAME_KEY_PREFIXED) \
+		-p DATABASE_NAME=$(DATABASE_NAME_PREFIXED) \
 		-p BYPASS_CRA_INCOME_VERIFICATION=$(BYPASS_CRA_INCOME_VERIFICATION) \
 		| oc -n $(NAMESPACE) apply -f -
 	$(call rollout_and_wait,dc/$(WORKERS))
@@ -409,7 +409,7 @@ deploy-queue-consumers:
 	test -n "$(BUILD_REF)"
 	test -n "$(QUEUE_CONSUMERS_BUILD_REF)"
 	test -n "$(DB_SERVICE_NAME)"
-	test -n "$(DATABASE_NAME_KEY_PREFIXED)"
+	test -n "$(DATABASE_NAME_PREFIXED)"
 	test -n "$(QUEUE_CONSUMERS_SECRET_NAME)"
 	test -n "$(QUEUE_CONSUMERS)"
 	test -n "$(QUEUE_CONSUMERS_PORT)"
@@ -425,7 +425,7 @@ deploy-queue-consumers:
 		-p DB_SERVICE=$(DB_SERVICE_NAME) \
 		-p IMAGE_STREAM_TAG="$(QUEUE_CONSUMERS_BUILD_REF):$(BUILD_REF)" \
 		-p BUILD_TAG=$(BUILD_REF) \
-		-p DATABASE_NAME_KEY=$(DATABASE_NAME_KEY_PREFIXED) \
+		-p DATABASE_NAME=$(DATABASE_NAME_PREFIXED) \
 		-p PORT=$(QUEUE_CONSUMERS_PORT) \
 		-p HOST_NAME=$(HOST) \
 		-p QUEUE_PREFIX=$(QUEUE_PREFIX) \

@@ -38,10 +38,7 @@ objects:
                       key: ${DB_PASSWORD_KEY}
                       name: ${DB_SECRET_NAME}
                 - name: POSTGRES_DB
-                  valueFrom:
-                    secretKeyRef:
-                      key: ${DATABASE_NAME_KEY}
-                      name: ${DB_SECRET_NAME}
+                  value: "${DATABASE_NAME}"
               resources:
                 limits:
                   cpu: ${CPU_LIMIT}
@@ -77,7 +74,7 @@ parameters:
     value: superuser-username
   - name: DB_PASSWORD_KEY
     value: superuser-password
-  - name: DATABASE_NAME_KEY
+  - name: DATABASE_NAME
     required: true
   - name: CPU_LIMIT
     value: "1.0"
