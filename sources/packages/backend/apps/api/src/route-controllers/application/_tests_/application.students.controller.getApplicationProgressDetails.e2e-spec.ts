@@ -115,8 +115,8 @@ describe("ApplicationStudentsController(e2e)-getApplicationProgressDetails", () 
         applicationStatusUpdatedOn:
           application.applicationStatusUpdatedOn.toISOString(),
         pirStatus: application.pirStatus,
-        firstCOEStatus: firstDisbursement?.coeStatus,
-        secondCOEStatus: secondDisbursement?.coeStatus,
+        firstCOEStatus: firstDisbursement.coeStatus,
+        secondCOEStatus: secondDisbursement.coeStatus,
         appealStatus: StudentAppealStatus.Pending,
         applicationOfferingChangeRequestStatus:
           ApplicationOfferingChangeRequestStatus.InProgressWithStudent,
