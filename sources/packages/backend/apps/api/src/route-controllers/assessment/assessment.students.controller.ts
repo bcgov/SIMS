@@ -123,7 +123,7 @@ export class AssessmentStudentsController extends BaseController {
   }
 
   /**
-   * Get all requests related to an application for a student
+   * Get all requests related to an application for a student sorted in descending order wrt. submitted date
    *  i.e, this will fetch all pending and denied student appeals
    * along with the pending and declined application offering change requests.
    * @param applicationId application number.
@@ -160,7 +160,11 @@ export class AssessmentStudentsController extends BaseController {
     return [
       ...pendingAndDeniedAppeals,
       ...studentInProgressAndDeclinedApplicationOfferingChangeRequests,
-    ];
+    ].sort(
+      (firstRequest, secondRequest) =>
+        secondRequest.submittedDate.getTime() -
+        firstRequest.submittedDate.getTime(),
+    );
   }
 
   /**
