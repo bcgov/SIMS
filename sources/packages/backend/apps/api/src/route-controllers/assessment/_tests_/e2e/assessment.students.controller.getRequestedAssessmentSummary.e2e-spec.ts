@@ -112,6 +112,20 @@ describe("AssessmentStudentsController(e2e)-getRequestedAssessmentSummary", () =
       .expect(HttpStatus.OK)
       .expect([
         {
+          id: pendingApplicationOfferingChangeRequest.id,
+          submittedDate:
+            pendingApplicationOfferingChangeRequest.createdAt.toISOString(),
+          status: ApplicationOfferingChangeRequestStatus.InProgressWithStudent,
+          requestType: AssessmentTriggerType.ApplicationOfferingChange,
+        },
+        {
+          id: declinedApplicationOfferingChangeRequest.id,
+          submittedDate:
+            declinedApplicationOfferingChangeRequest.createdAt.toISOString(),
+          status: ApplicationOfferingChangeRequestStatus.DeclinedBySABC,
+          requestType: AssessmentTriggerType.ApplicationOfferingChange,
+        },
+        {
           id: pendingAppeal.id,
           submittedDate: pendingAppeal.submittedDate.toISOString(),
           status: StudentAppealStatus.Pending,
@@ -122,20 +136,6 @@ describe("AssessmentStudentsController(e2e)-getRequestedAssessmentSummary", () =
           submittedDate: declinedAppeal.submittedDate.toISOString(),
           status: StudentAppealStatus.Declined,
           requestType: AssessmentTriggerType.StudentAppeal,
-        },
-        {
-          id: declinedApplicationOfferingChangeRequest.id,
-          submittedDate:
-            declinedApplicationOfferingChangeRequest.createdAt.toISOString(),
-          status: ApplicationOfferingChangeRequestStatus.DeclinedBySABC,
-          requestType: AssessmentTriggerType.ApplicationOfferingChange,
-        },
-        {
-          id: pendingApplicationOfferingChangeRequest.id,
-          submittedDate:
-            pendingApplicationOfferingChangeRequest.createdAt.toISOString(),
-          status: ApplicationOfferingChangeRequestStatus.InProgressWithStudent,
-          requestType: AssessmentTriggerType.ApplicationOfferingChange,
         },
       ]);
   });
