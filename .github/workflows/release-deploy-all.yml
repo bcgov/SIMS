@@ -88,7 +88,7 @@ env:
   QUEUE_PREFIX: ${{ secrets.QUEUE_PREFIX }}
   API_PORT: ${{ secrets.API_PORT }}
   WEB_PORT: ${{ secrets.WEB_PORT }}
-  DATABASE_NAME_KEY: ${{ secrets.DATABASE_NAME_KEY }}
+  DATABASE_NAME_PREFIX: ${{ secrets.DATABASE_NAME_PREFIX }}
 
 jobs:
   # Run DB migrations.

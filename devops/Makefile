@@ -34,9 +34,14 @@ export FORMS_BUILD_REF := $(or ${FORMS_BUILD_REF}, forms)
 export FORMIO_ROOT_EMAIL := $(or ${FORMIO_ROOT_EMAIL}, dev_sabc@gov.bc.ca)
 export MONGODB_URI := $(or ${MONGODB_URI}, $$MONGODB_URI)
 export QUEUE_PREFIX := $(or $(QUEUE_PREFIX), {sims-local})
+export DATABASE_NAME_PREFIX := $(or $(DATABASE_NAME_PREFIX), $$DATABASE_NAME_PREFIX)
 
 export MAX_WAIT=300 # Maximum wait time in seconds.
 export WAIT_TIME=0  # Initialize wait time to zero.
+
+define DATABASE_NAME_KEY_PREFIXED
+"$(DATABASE_NAME_PREFIX)$(DATABASE_NAME_KEY)"
+endef
 
 define DB_MIGRATIONS
 "$(HOST_PREFIX)db-migrations-$(APP_NAME)"
@@ -308,7 +313,7 @@ run-db-migrations:
 	test -n "$(DB_SERVICE_NAME)"
 	test -n "$(DB_MIGRATIONS_BUILD_REF)"
 	test -n "$(BUILD_REF)"
-	test -n "$(DATABASE_NAME_KEY)"
+	test -n "$(DATABASE_NAME_KEY_PREFIXED)"
 	test -n "$(DB_MIGRATIONS)"
 	@echo "+\n++ Deploying DB_MIGRATIONS with tag: $(BUILD_REF)\n+"
 	@oc -n $(NAMESPACE) process -f openshift/db-migrations-job.yml \
@@ -317,7 +322,7 @@ run-db-migrations:
 		-p BUILD_NAMESPACE=$(BUILD_NAMESPACE) \
 		-p IMAGE_STREAM_TAG="$(DB_MIGRATIONS_BUILD_REF):$(BUILD_REF)" \
 		-p BUILD_TAG=$(BUILD_REF) \
-		-p DATABASE_NAME_KEY=$(DATABASE_NAME_KEY) \
+		-p DATABASE_NAME_KEY=$(DATABASE_NAME_KEY_PREFIXED) \
 		-p JOB_NAME=$(DB_MIGRATIONS_JOB_NAME) \
 		| oc -n $(NAMESPACE) apply -f - 
 
@@ -344,7 +349,7 @@ deploy-api:
 	test -n "$(SITE_MINDER_LOGOUT_URL)"
 	test -n "$(ATBC_LOGIN_ENDPOINT)"
 	test -n "$(ATBC_ENDPOINT)"
-	test -n "$(DATABASE_NAME_KEY)"
+	test -n "$(DATABASE_NAME_KEY_PREFIXED)"
 	test -n "$(API)"
 	test -n "$(API_SECRET_NAME)"
 	test -n "$(SWAGGER_NAME)"
@@ -364,7 +369,7 @@ deploy-api:
 		-p BCeID_WEB_SERVICE_WSDL=$(BCeID_WEB_SERVICE_WSDL) \
 		-p FORMS_SECRET_NAME=$(FORMS_SECRET_NAME) \
 		-p BUILD_TAG=$(BUILD_REF) \
-		-p DATABASE_NAME_KEY=$(DATABASE_NAME_KEY) \
+		-p DATABASE_NAME_KEY=$(DATABASE_NAME_KEY_PREFIXED) \
 		-p SITE_MINDER_LOGOUT_URL=$(SITE_MINDER_LOGOUT_URL) \
 		-p ATBC_LOGIN_ENDPOINT=$(ATBC_LOGIN_ENDPOINT) \
 		-p ATBC_ENDPOINT=$(ATBC_ENDPOINT) \
@@ -381,7 +386,7 @@ deploy-workers:
 	test -n "$(BUILD_REF)"
 	test -n "$(WORKERS_BUILD_REF)"
 	test -n "$(DB_SERVICE_NAME)"
-	test -n "$(DATABASE_NAME_KEY)"
+	test -n "$(DATABASE_NAME_KEY_PREFIXED)"
 	test -n "$(WORKERS_SECRET_NAME)"
 	test -n "$(WORKERS)"
 	test -n "$(BYPASS_CRA_INCOME_VERIFICATION)"
@@ -393,7 +398,7 @@ deploy-workers:
 		-p DB_SERVICE=$(DB_SERVICE_NAME) \
 		-p IMAGE_STREAM_TAG="$(WORKERS_BUILD_REF):$(BUILD_REF)" \
 		-p BUILD_TAG=$(BUILD_REF) \
-		-p DATABASE_NAME_KEY=$(DATABASE_NAME_KEY) \
+		-p DATABASE_NAME_KEY=$(DATABASE_NAME_KEY_PREFIXED) \
 		-p BYPASS_CRA_INCOME_VERIFICATION=$(BYPASS_CRA_INCOME_VERIFICATION) \
 		| oc -n $(NAMESPACE) apply -f -
 	$(call rollout_and_wait,dc/$(WORKERS))
@@ -404,7 +409,7 @@ deploy-queue-consumers:
 	test -n "$(BUILD_REF)"
 	test -n "$(QUEUE_CONSUMERS_BUILD_REF)"
 	test -n "$(DB_SERVICE_NAME)"
-	test -n "$(DATABASE_NAME_KEY)"
+	test -n "$(DATABASE_NAME_KEY_PREFIXED)"
 	test -n "$(QUEUE_CONSUMERS_SECRET_NAME)"
 	test -n "$(QUEUE_CONSUMERS)"
 	test -n "$(QUEUE_CONSUMERS_PORT)"
@@ -420,7 +425,7 @@ deploy-queue-consumers:
 		-p DB_SERVICE=$(DB_SERVICE_NAME) \
 		-p IMAGE_STREAM_TAG="$(QUEUE_CONSUMERS_BUILD_REF):$(BUILD_REF)" \
 		-p BUILD_TAG=$(BUILD_REF) \
-		-p DATABASE_NAME_KEY=$(DATABASE_NAME_KEY) \
+		-p DATABASE_NAME_KEY=$(DATABASE_NAME_KEY_PREFIXED) \
 		-p PORT=$(QUEUE_CONSUMERS_PORT) \
 		-p HOST_NAME=$(HOST) \
 		-p QUEUE_PREFIX=$(QUEUE_PREFIX) \
