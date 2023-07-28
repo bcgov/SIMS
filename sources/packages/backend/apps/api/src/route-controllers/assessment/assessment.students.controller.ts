@@ -160,7 +160,11 @@ export class AssessmentStudentsController extends BaseController {
     return [
       ...pendingAndDeniedAppeals,
       ...studentInProgressAndDeclinedApplicationOfferingChangeRequests,
-    ];
+    ].sort(
+      (firstRequest, secondRequest) =>
+        secondRequest.submittedDate.getTime() -
+        firstRequest.submittedDate.getTime(),
+    );
   }
 
   /**
