@@ -49,6 +49,7 @@
           v-if="institutionsFound"
           class="mt-4"
           :autoLayout="true"
+          :scrollable="true"
           :value="institutions"
         >
           <Column

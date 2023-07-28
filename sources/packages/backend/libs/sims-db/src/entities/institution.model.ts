@@ -17,8 +17,8 @@ import { Note } from ".";
 import { AddressInfo } from "./address.type";
 import { PrimaryContact } from "./primary-contact.type";
 
-export const OPERATING_NAME_MAX_LENGTH = 64;
-export const LEGAL_OPERATING_NAME_MAX_LENGTH = 64;
+export const OPERATING_NAME_MAX_LENGTH = 250;
+export const LEGAL_OPERATING_NAME_MAX_LENGTH = 250;
 
 export interface InstitutionAddress {
   mailingAddress: AddressInfo;
