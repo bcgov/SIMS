@@ -31,11 +31,7 @@ import {
 } from "../../services";
 import { getUserFullName, STUDY_DATE_OVERLAP_ERROR } from "../../utilities";
 import { CustomNamedError, getISODateOnlyString } from "@sims/utilities";
-import {
-  Application,
-  AssessmentTriggerType,
-  ProgramInfoStatus,
-} from "@sims/sims-db";
+import { Application, ProgramInfoStatus } from "@sims/sims-db";
 import {
   OFFERING_DOES_NOT_BELONG_TO_LOCATION,
   OFFERING_INTENSITY_MISMATCH,

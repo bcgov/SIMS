@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { DataSource, In, Not, Brackets } from "typeorm";
 import { LoggerService, InjectLogger } from "@sims/utilities/logger";
 import {
@@ -56,7 +56,6 @@ import { InjectQueue } from "@nestjs/bull";
 import { Queue } from "bull";
 import { CancelAssessmentQueueInDTO } from "@sims/services/queue";
 import { InstitutionLocationService } from "../institution-location/institution-location.service";
-import { OptionItem } from "../../types/optionItem";
 
 export const APPLICATION_DRAFT_NOT_FOUND = "APPLICATION_DRAFT_NOT_FOUND";
 export const MORE_THAN_ONE_APPLICATION_DRAFT_ERROR =
