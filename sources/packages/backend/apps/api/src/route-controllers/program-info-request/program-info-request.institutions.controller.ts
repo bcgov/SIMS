@@ -92,7 +92,7 @@ export class ProgramInfoRequestInstitutionsController extends BaseController {
       locationId,
       applicationId,
       {
-        onlyOriginalAssessment: true,
+        isPir: true,
       },
     );
     if (!application) {
@@ -207,6 +207,10 @@ export class ProgramInfoRequestInstitutionsController extends BaseController {
     description:
       "Application not found or not able to find an application that requires a PIR to be completed.",
   })
+  @ApiUnprocessableEntityResponse({
+    description:
+      "Study period overlap or offering program year mismatch or offering intensity mismatch.",
+  })
   @ApiUnauthorizedResponse({
     description: "The location does not have access to the offering.",
   })
@@ -223,6 +227,7 @@ export class ProgramInfoRequestInstitutionsController extends BaseController {
         applicationId,
         payload.selectedOffering,
         locationId,
+        { isPir: true },
       );
       // Complete PIR.
       await this.applicationService.setOfferingForProgramInfoRequest(

@@ -77,3 +77,20 @@ export const DUPLICATE_SABC_CODE = "DUPLICATE_SABC_CODE";
  * Request for disability not allowed.
  */
 export const DISABILITY_REQUEST_NOT_ALLOWED = "DISABILITY_REQUEST_NOT_ALLOWED";
+/**
+ * Application not found.
+ */
+export const APPLICATION_NOT_FOUND = "APPLICATION_NOT_FOUND";
+/**
+ * Provided study dates is overlapping with the existing study periods.
+ */
+export const STUDY_DATE_OVERLAP_ERROR = "STUDY_DATE_OVERLAP_ERROR";
+/**
+ * Provided offering study dates is outside the program year.
+ */
+export const OFFERING_PROGRAM_YEAR_MISMATCH = "OFFERING_PROGRAM_YEAR_MISMATCH";
+/**
+ * Offering does not belong to the location.
+ */
+export const OFFERING_DOES_NOT_BELONG_TO_LOCATION =
+  "OFFERING_DOES_NOT_BELONG_TO_LOCATION";

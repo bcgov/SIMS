@@ -83,11 +83,18 @@ import {
   OptionItemAPIOutDTO,
 } from "@/services/http/dto";
 import { ApplicationOfferingChangeRequestService } from "@/services/ApplicationOfferingChangeRequestService";
-import { VForm } from "@/types";
+import { ApiProcessError, VForm } from "@/types";
 import { EducationProgramService } from "@/services/EducationProgramService";
 import { EducationProgramOfferingService } from "@/services/EducationProgramOfferingService";
 import { useRules, useSnackBar, useFormatters } from "@/composables";
 import { BannerTypes } from "@/types/contracts/Banner";
+import {
+  APPLICATION_NOT_FOUND,
+  OFFERING_DOES_NOT_BELONG_TO_LOCATION,
+  OFFERING_INTENSITY_MISMATCH,
+  OFFERING_PROGRAM_YEAR_MISMATCH,
+  STUDY_DATE_OVERLAP_ERROR,
+} from "@/constants";
 
 export default defineComponent({
   components: { RequestAChangeForm },
@@ -188,12 +195,28 @@ export default defineComponent({
             reason: reasonForChange.value,
           },
         );
+
         router.push({
           name: InstitutionRoutesConst.REQUEST_CHANGE_IN_PROGRESS,
           params: { locationId: props.locationId },
         });
-      } catch {
+        snackBar.success(
+          "Your request was submitted. You can view your requested change below.",
+        );
+      } catch (error: unknown) {
+        if (error instanceof ApiProcessError) {
+          switch (error.errorType) {
+            case APPLICATION_NOT_FOUND:
+            case STUDY_DATE_OVERLAP_ERROR:
+            case OFFERING_PROGRAM_YEAR_MISMATCH:
+            case OFFERING_INTENSITY_MISMATCH:
+            case OFFERING_DOES_NOT_BELONG_TO_LOCATION:
+              snackBar.error(error.message);
+              return;
+          }
+        }
         snackBar.error("Unexpected error while submitting the request.");
+        return;
       } finally {
         processing.value = false;
       }

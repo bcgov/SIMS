@@ -444,14 +444,14 @@ export class ApplicationService extends RecordDataModelService<Application> {
    * @param locationId location id.
    * @param applicationId application id.
    * @param options options for the query.
-   * - `onlyOriginalAssessment` include only original assessment.
+   * - `isPir` set true, if the query needs to be PIR related.
    * @returns student application with Program Information Request.
    */
   async getApplicationInfo(
     locationId: number,
     applicationId: number,
     options?: {
-      onlyOriginalAssessment: boolean;
+      isPir: boolean;
     },
   ): Promise<Application> {
     const applicationDetails = this.repo
@@ -506,19 +506,18 @@ export class ApplicationService extends RecordDataModelService<Application> {
         applicationId,
       })
       .andWhere("location.id = :locationId", { locationId })
-      .andWhere("application.pirStatus != :pirStatus", {
-        pirStatus: ProgramInfoStatus.notRequired,
-      })
       .andWhere("application.applicationStatus != :overwrittenStatus", {
         overwrittenStatus: ApplicationStatus.Overwritten,
       });
-    if (options?.onlyOriginalAssessment) {
-      applicationDetails.andWhere(
-        "currentAssessment.triggerType = :triggerType",
-        {
+
+    if (options?.isPir) {
+      applicationDetails
+        .andWhere("currentAssessment.triggerType = :triggerType", {
           triggerType: AssessmentTriggerType.OriginalAssessment,
-        },
-      );
+        })
+        .andWhere("application.pirStatus != :pirStatus", {
+          pirStatus: ProgramInfoStatus.notRequired,
+        });
     }
     return applicationDetails.getOne();
   }
@@ -1540,15 +1539,14 @@ export class ApplicationService extends RecordDataModelService<Application> {
    * @param selectedOffering newly selected offering id.
    * @param locationId location id.
    * @param options more options of the validation.
-   * - `onlyOriginalAssessment` only include original assessments
-   * (eg, In case of PIR).
+   * - `isPir` set true, if its PIR related.
    */
   async applicationOfferingValidation(
     applicationId: number,
     selectedOffering: number,
     locationId: number,
     options?: {
-      onlyOriginalAssessment: boolean;
+      isPir: boolean;
     },
   ): Promise<void> {
     // Validate if the application exists and the location has access to it.
@@ -1556,13 +1554,13 @@ export class ApplicationService extends RecordDataModelService<Application> {
       locationId,
       applicationId,
       {
-        onlyOriginalAssessment: options?.onlyOriginalAssessment,
+        isPir: options?.isPir,
       },
     );
     if (!application) {
       throw new CustomNamedError(
-        APPLICATION_NOT_FOUND,
         "Application not found.",
+        APPLICATION_NOT_FOUND,
       );
     }
     // Validates if the offering exists and belongs to the location.
@@ -1570,12 +1568,9 @@ export class ApplicationService extends RecordDataModelService<Application> {
       selectedOffering,
     );
     if (offering?.institutionLocation.id !== locationId) {
-      // console.log(
-      //   "error ===>> The location does not have access to the offering.",
-      // );
       throw new CustomNamedError(
-        OFFERING_DOES_NOT_BELONG_TO_LOCATION,
         "The location does not have access to the offering.",
+        OFFERING_DOES_NOT_BELONG_TO_LOCATION,
       );
     }
 
@@ -1597,16 +1592,16 @@ export class ApplicationService extends RecordDataModelService<Application> {
 
     if (currentOfferingIntensity !== offering.offeringIntensity) {
       throw new CustomNamedError(
-        OFFERING_INTENSITY_MISMATCH,
         "Offering intensity does not match with the student selected offering.",
+        OFFERING_INTENSITY_MISMATCH,
       );
     }
 
     // Offering belongs to the application program year.
     if (!offeringBelongToProgramYear(offering, application.programYear)) {
       throw new CustomNamedError(
+        "Program year is not matching with the application program year.",
         OFFERING_PROGRAM_YEAR_MISMATCH,
-        "Offering intensity does not match with the student selected offering.",
       );
     }
   }

@@ -11,7 +11,12 @@ import {
   UnauthorizedException,
   UnprocessableEntityException,
 } from "@nestjs/common";
-import { ApiNotFoundResponse, ApiTags } from "@nestjs/swagger";
+import {
+  ApiNotFoundResponse,
+  ApiTags,
+  ApiUnauthorizedResponse,
+  ApiUnprocessableEntityResponse,
+} from "@nestjs/swagger";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import {
   AllowAuthorizedParty,
@@ -271,8 +276,17 @@ export class ApplicationOfferingChangeRequestInstitutionsController extends Base
    * @param locationId location id.
    * @param payload information to create the new request.
    * @returns newly change request id created.
-   * TODO: ANN TEST
    */
+  @ApiNotFoundResponse({
+    description: "Application not found.",
+  })
+  @ApiUnprocessableEntityResponse({
+    description:
+      "Study period overlap or offering program year mismatch or offering intensity mismatch.",
+  })
+  @ApiUnauthorizedResponse({
+    description: "The location does not have access to the offering.",
+  })
   @Post()
   async createApplicationOfferingChangeRequest(
     @UserToken() userToken: IInstitutionUserToken,
@@ -314,7 +328,7 @@ export class ApplicationOfferingChangeRequestInstitutionsController extends Base
         }
       }
       throw new InternalServerErrorException(
-        "Error while submitting a application offering change request.",
+        "Error while submitting an application offering change request.",
       );
     }
   }

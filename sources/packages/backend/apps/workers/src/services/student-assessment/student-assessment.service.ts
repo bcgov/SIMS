@@ -44,8 +44,8 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
       });
       if (!assessment) {
         throw new CustomNamedError(
-          ASSESSMENT_NOT_FOUND,
           "Assessment id was not found.",
+          ASSESSMENT_NOT_FOUND,
         );
       }
       if (!assessment.assessmentWorkflowId) {
@@ -55,14 +55,14 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
       }
       if (assessment.assessmentWorkflowId !== assessmentWorkflowId) {
         throw new CustomNamedError(
-          ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE,
           `The assessment is already associated with another workflow instance. Current associated instance id ${assessment.assessmentWorkflowId}.`,
+          ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE,
         );
       }
       // The workflow was already associated with the workflow, no need to update it again.
       throw new CustomNamedError(
-        ASSESSMENT_ALREADY_ASSOCIATED_TO_WORKFLOW,
         `The assessment is already associated to the workflow.`,
+        ASSESSMENT_ALREADY_ASSOCIATED_TO_WORKFLOW,
       );
     });
   }
