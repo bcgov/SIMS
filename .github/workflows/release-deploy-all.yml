@@ -101,9 +101,6 @@ jobs:
         run: |
           echo Git Environment: ${{ inputs.environment }}
           echo Git Red: ${{ inputs.gitRef }}
-          echo BUILD NAMESPACE: $BUILD_NAMESPACE
-          echo HOST_PREFIX: $HOST_PREFIX
-          echo DATABASE_NAME_PREFIX: $DATABASE_NAME_PREFIX
 
       - name: Checkout Target Branch
         uses: actions/checkout@v3
@@ -128,11 +125,8 @@ jobs:
     steps:
       - name: Print env
         run: |
-          echo BUILD NAMESPACE: $BUILD_NAMESPACE
           echo BUILD ENVIRONMENT: ${{ inputs.environment }}
           echo GIT REF: ${{ inputs.gitRef }}
-          echo HOST_PREFIX: $HOST_PREFIX
-          echo DATABASE_NAME_PREFIX: $DATABASE_NAME_PREFIX
 
       - name: Checkout Target Branch
         uses: actions/checkout@v3
@@ -157,11 +151,8 @@ jobs:
     steps:
       - name: Print env
         run: |
-          echo BUILD NAMESPACE: $BUILD_NAMESPACE
           echo BUILD ENVIRONMENT: ${{ inputs.environment }}
           echo GIT REF: ${{ inputs.gitRef }}
-          echo HOST_PREFIX: $HOST_PREFIX
-          echo DATABASE_NAME_PREFIX: $DATABASE_NAME_PREFIX
 
       - name: Checkout Target Branch
         uses: actions/checkout@v3
@@ -186,11 +177,8 @@ jobs:
     steps:
       - name: Print env
         run: |
-          echo BUILD NAMESPACE: $BUILD_NAMESPACE
           echo BUILD ENVIRONMENT: ${{ inputs.environment }}
           echo GIT REF: ${{ inputs.gitRef }}
-          echo HOST_PREFIX: $HOST_PREFIX
-          echo DATABASE_NAME_PREFIX: $DATABASE_NAME_PREFIX
 
       - name: Checkout Target Branch
         uses: actions/checkout@v3
@@ -215,11 +203,8 @@ jobs:
     steps:
       - name: Print env
         run: |
-          echo BUILD NAMESPACE: $BUILD_NAMESPACE
           echo BUILD ENVIRONMENT: ${{ inputs.environment }}
           echo GIT REF: ${{ inputs.gitRef }}
-          echo HOST_PREFIX: $HOST_PREFIX
-          echo DATABASE_NAME_PREFIX: $DATABASE_NAME_PREFIX
 
       - name: Checkout Target Branch
         uses: actions/checkout@v3
