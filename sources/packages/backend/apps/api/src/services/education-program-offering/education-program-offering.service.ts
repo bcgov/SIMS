@@ -610,15 +610,15 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       })
       .andWhere("offerings.offeringType IN (:...offeringTypes)", {
         offeringTypes: offeringsFilter.offeringTypes,
+      })
+      .andWhere(
+        "offerings.studyStartDate BETWEEN programYear.startDate AND programYear.endDate",
+      );
+    if (offeringsFilter.offeringIntensity) {
+      query.andWhere("offerings.offeringIntensity = :offeringIntensity", {
+        offeringIntensity: offeringsFilter.offeringIntensity,
       });
-    //   .andWhere(
-    //     "offerings.studyStartDate BETWEEN programYear.startDate AND programYear.endDate",
-    //   );
-    // if (offeringsFilter.offeringIntensity) {
-    //   query.andWhere("offerings.offeringIntensity = :offeringIntensity", {
-    //     offeringIntensity: offeringsFilter.offeringIntensity,
-    //   });
-    // }
+    }
     if (offeringsFilter.offeringStatus) {
       query.andWhere("offerings.offeringStatus = :offeringStatus", {
         offeringStatus: offeringsFilter.offeringStatus,

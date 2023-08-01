@@ -328,7 +328,7 @@ export class ApplicationOfferingChangeRequestInstitutionsController extends Base
         }
       }
       throw new InternalServerErrorException(
-        "Error while submitting an application offering change request.",
+        `Error while submitting an application offering change request: ${error}`,
       );
     }
   }

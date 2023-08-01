@@ -490,27 +490,27 @@ export class ApplicationService extends RecordDataModelService<Application> {
         "currentAssessment.id",
       ])
       .innerJoin("application.programYear", "programYear")
+      .leftJoin("application.pirProgram", "pirProgram")
       .innerJoin("application.student", "student")
       .innerJoin("student.sinValidation", "sinValidation")
       .innerJoin("application.location", "location")
       .innerJoin("application.currentAssessment", "currentAssessment")
       .leftJoin("currentAssessment.offering", "offering")
       .leftJoin("offering.educationProgram", "educationProgram")
-      .leftJoin("application.pirProgram", "pirProgram")
-      .leftJoin("application.pirDeniedReasonId", "PIRDeniedReason")
       .innerJoin("student.user", "user")
+      .leftJoin("application.pirDeniedReasonId", "PIRDeniedReason")
       .where("application.id = :applicationId", {
         applicationId,
       })
       .andWhere("location.id = :locationId", { locationId })
-      .andWhere("application.applicationStatus != :overwrittenStatus", {
-        overwrittenStatus: ApplicationStatus.Overwritten,
-      })
       .andWhere("currentAssessment.triggerType = :triggerType", {
         triggerType: AssessmentTriggerType.OriginalAssessment,
       })
       .andWhere("application.pirStatus != :pirStatus", {
         pirStatus: ProgramInfoStatus.notRequired,
+      })
+      .andWhere("application.applicationStatus != :overwrittenStatus", {
+        overwrittenStatus: ApplicationStatus.Overwritten,
       })
       .getOne();
   }
