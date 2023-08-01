@@ -132,6 +132,7 @@ jobs:
           echo BUILD ENVIRONMENT: ${{ inputs.environment }}
           echo GIT REF: ${{ inputs.gitRef }}
           echo HOST_PREFIX: $HOST_PREFIX
+          echo DATABASE_NAME_PREFIX: $DATABASE_NAME_PREFIX
 
       - name: Checkout Target Branch
         uses: actions/checkout@v3
@@ -160,6 +161,7 @@ jobs:
           echo BUILD ENVIRONMENT: ${{ inputs.environment }}
           echo GIT REF: ${{ inputs.gitRef }}
           echo HOST_PREFIX: $HOST_PREFIX
+          echo DATABASE_NAME_PREFIX: $DATABASE_NAME_PREFIX
 
       - name: Checkout Target Branch
         uses: actions/checkout@v3
@@ -188,6 +190,7 @@ jobs:
           echo BUILD ENVIRONMENT: ${{ inputs.environment }}
           echo GIT REF: ${{ inputs.gitRef }}
           echo HOST_PREFIX: $HOST_PREFIX
+          echo DATABASE_NAME_PREFIX: $DATABASE_NAME_PREFIX
 
       - name: Checkout Target Branch
         uses: actions/checkout@v3
@@ -216,6 +219,7 @@ jobs:
           echo BUILD ENVIRONMENT: ${{ inputs.environment }}
           echo GIT REF: ${{ inputs.gitRef }}
           echo HOST_PREFIX: $HOST_PREFIX
+          echo DATABASE_NAME_PREFIX: $DATABASE_NAME_PREFIX
 
       - name: Checkout Target Branch
         uses: actions/checkout@v3
