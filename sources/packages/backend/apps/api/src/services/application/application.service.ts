@@ -439,23 +439,21 @@ export class ApplicationService extends RecordDataModelService<Application> {
   }
 
   /**
-   * Gets the application details belonging to an institution location.
+   * Gets the Program Information Requests (PIR) associated with the
+   * application and the original assessment that contains the offering
+   * to be completed or that was completed during the PIR process.
    * @param locationId location id.
    * @param applicationId application id.
-   * @param options options for the query.
-   * - `isPir` set true, if the query needs to be PIR related.
    * @returns student application with Program Information Request.
    */
-  async getApplicationInfo(
+  async getProgramInfoRequest(
     locationId: number,
     applicationId: number,
-    options?: {
-      isPir: boolean;
-    },
   ): Promise<Application> {
-    const applicationDetails = this.repo
+    return this.repo
       .createQueryBuilder("application")
       .select([
+        "application.id",
         "application.applicationNumber",
         "application.pirStatus",
         "application.data",
@@ -492,33 +490,29 @@ export class ApplicationService extends RecordDataModelService<Application> {
         "currentAssessment.id",
       ])
       .innerJoin("application.programYear", "programYear")
-      .leftJoin("application.pirProgram", "pirProgram")
       .innerJoin("application.student", "student")
       .innerJoin("student.sinValidation", "sinValidation")
       .innerJoin("application.location", "location")
       .innerJoin("application.currentAssessment", "currentAssessment")
       .leftJoin("currentAssessment.offering", "offering")
       .leftJoin("offering.educationProgram", "educationProgram")
-      .innerJoin("student.user", "user")
+      .leftJoin("application.pirProgram", "pirProgram")
       .leftJoin("application.pirDeniedReasonId", "PIRDeniedReason")
+      .innerJoin("student.user", "user")
       .where("application.id = :applicationId", {
         applicationId,
       })
       .andWhere("location.id = :locationId", { locationId })
       .andWhere("application.applicationStatus != :overwrittenStatus", {
         overwrittenStatus: ApplicationStatus.Overwritten,
-      });
-
-    if (options?.isPir) {
-      applicationDetails
-        .andWhere("currentAssessment.triggerType = :triggerType", {
-          triggerType: AssessmentTriggerType.OriginalAssessment,
-        })
-        .andWhere("application.pirStatus != :pirStatus", {
-          pirStatus: ProgramInfoStatus.notRequired,
-        });
-    }
-    return applicationDetails.getOne();
+      })
+      .andWhere("currentAssessment.triggerType = :triggerType", {
+        triggerType: AssessmentTriggerType.OriginalAssessment,
+      })
+      .andWhere("application.pirStatus != :pirStatus", {
+        pirStatus: ProgramInfoStatus.notRequired,
+      })
+      .getOne();
   }
 
   /**
@@ -1528,6 +1522,67 @@ export class ApplicationService extends RecordDataModelService<Application> {
   }
 
   /**
+   * Gets the application details belonging to an institution location.
+   * @param locationId location id.
+   * @param applicationId application id.
+   * @returns student application.
+   */
+  async getApplicationInfo(
+    locationId: number,
+    applicationId: number,
+  ): Promise<Application> {
+    return this.repo.findOne({
+      select: {
+        id: true,
+        data: true as unknown,
+        programYear: {
+          id: true,
+          active: true,
+          startDate: true,
+          endDate: true,
+        },
+        student: {
+          id: true,
+          birthDate: true,
+          user: {
+            id: true,
+            lastName: true,
+          },
+          sinValidation: {
+            id: true,
+            sin: true,
+          },
+        },
+        currentAssessment: {
+          id: true,
+          offering: {
+            id: true,
+            offeringIntensity: true,
+          },
+        },
+      },
+      relations: {
+        programYear: true,
+        location: true,
+        student: {
+          user: true,
+          sinValidation: true,
+        },
+        currentAssessment: {
+          offering: true,
+        },
+      },
+      where: {
+        id: applicationId,
+        location: {
+          id: locationId,
+        },
+        applicationStatus: Not(ApplicationStatus.Overwritten),
+      },
+    });
+  }
+
+  /**
    * Set of validations for existing application and newly
    * selected offering, like, application belongs to the location,
    * newly selected offering belongs to the location, is there any
@@ -1549,13 +1604,10 @@ export class ApplicationService extends RecordDataModelService<Application> {
     },
   ): Promise<void> {
     // Validate if the application exists and the location has access to it.
-    const application = await this.getApplicationInfo(
-      locationId,
-      applicationId,
-      {
-        isPir: options?.isPir,
-      },
-    );
+    const application = options?.isPir
+      ? await this.getProgramInfoRequest(locationId, applicationId)
+      : await this.getApplicationInfo(locationId, applicationId);
+
     if (!application) {
       throw new CustomNamedError(
         "Application not found.",

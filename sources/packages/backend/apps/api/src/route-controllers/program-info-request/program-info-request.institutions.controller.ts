@@ -84,12 +84,9 @@ export class ProgramInfoRequestInstitutionsController extends BaseController {
     @Param("locationId", ParseIntPipe) locationId: number,
     @Param("applicationId", ParseIntPipe) applicationId: number,
   ): Promise<ProgramInfoRequestAPIOutDTO> {
-    const application = await this.applicationService.getApplicationInfo(
+    const application = await this.applicationService.getProgramInfoRequest(
       locationId,
       applicationId,
-      {
-        isPir: true,
-      },
     );
     if (!application) {
       throw new NotFoundException(
