@@ -278,7 +278,7 @@
           "validate": {
             "required": true,
             "minLength": "",
-            "maxLength": "",
+            "maxLength": 250,
             "minWords": "",
             "maxWords": "",
             "pattern": "",
@@ -297,7 +297,7 @@
           "tags": [],
           "properties": {},
           "conditional": {
-            "show": null,
+            "show": "",
             "when": null,
             "eq": "",
             "json": ""
@@ -395,7 +395,7 @@
           "validate": {
             "required": true,
             "minLength": "",
-            "maxLength": 100,
+            "maxLength": 250,
             "minWords": "",
             "maxWords": "",
             "pattern": "",
@@ -414,7 +414,7 @@
           "tags": [],
           "properties": {},
           "conditional": {
-            "show": null,
+            "show": "",
             "when": null,
             "eq": "",
             "json": ""
