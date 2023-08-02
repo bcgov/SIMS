@@ -121,6 +121,7 @@ import {
   VForm,
   ApiProcessError,
 } from "@/types";
+import { UpdateSupportingUserAPIInDTO } from "@/services/http/dto";
 
 export default defineComponent({
   props: {
@@ -140,7 +141,7 @@ export default defineComponent({
     const studentsLastName = ref("");
     const studentsDateOfBirth = ref();
     const initialData = ref();
-    const formioUtils = useFormioUtils();
+    const { disableWizardButtons, excludeExtraneousValues } = useFormioUtils();
     const isFirstPage = ref(true);
     const isLastPage = ref(false);
     const showNav = ref(false);
@@ -156,7 +157,7 @@ export default defineComponent({
       showNav.value = true;
       formInstance = form;
       // Disable internal submit button.
-      formioUtils.disableWizardButtons(formInstance);
+      disableWizardButtons(formInstance);
       formInstance.options.buttonSettings.showSubmit = false;
       // Handle the navigation using the breadcrumbs.
       formInstance.on(
@@ -233,12 +234,16 @@ export default defineComponent({
       }
     };
 
-    const submitted = async (formData: any) => {
+    const submitted = async (formData: unknown) => {
       submitting.value = true;
       try {
+        const typedData = excludeExtraneousValues(
+          UpdateSupportingUserAPIInDTO,
+          formData,
+        );
         await SupportingUsersService.shared.updateSupportingInformation(
           props.supportingUserType,
-          { ...formData, ...getIdentifiedApplication() },
+          { ...typedData, ...getIdentifiedApplication() },
         );
 
         snackBar.success("Supporting data submitted with success.");
