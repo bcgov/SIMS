@@ -98,8 +98,9 @@ jobs:
     steps:
       - name: Print env
         run: |
-          echo Git Environment: ${{ inputs.environment }}
-          echo Git Red: ${{ inputs.gitRef }}
+          echo Deploy Environment: ${{ inputs.environment }}
+          echo GIT REF: ${{ inputs.gitRef }}
+          echo BUILD NAMESPACE: $BUILD_NAMESPACE
 
       - name: Checkout Target Branch
         uses: actions/checkout@v3
@@ -124,8 +125,9 @@ jobs:
     steps:
       - name: Print env
         run: |
-          echo BUILD ENVIRONMENT: ${{ inputs.environment }}
+          echo Deploy ENVIRONMENT: ${{ inputs.environment }}
           echo GIT REF: ${{ inputs.gitRef }}
+          echo BUILD NAMESPACE: $BUILD_NAMESPACE
 
       - name: Checkout Target Branch
         uses: actions/checkout@v3
@@ -176,8 +178,9 @@ jobs:
     steps:
       - name: Print env
         run: |
-          echo BUILD ENVIRONMENT: ${{ inputs.environment }}
+          echo Deploy ENVIRONMENT: ${{ inputs.environment }}
           echo GIT REF: ${{ inputs.gitRef }}
+          echo BUILD NAMESPACE: $BUILD_NAMESPACE
 
       - name: Checkout Target Branch
         uses: actions/checkout@v3
@@ -202,8 +205,9 @@ jobs:
     steps:
       - name: Print env
         run: |
-          echo BUILD ENVIRONMENT: ${{ inputs.environment }}
+          echo Deploy ENVIRONMENT: ${{ inputs.environment }}
           echo GIT REF: ${{ inputs.gitRef }}
+          echo BUILD NAMESPACE: $BUILD_NAMESPACE
 
       - name: Checkout Target Branch
         uses: actions/checkout@v3
