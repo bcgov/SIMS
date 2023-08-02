@@ -289,6 +289,7 @@ parameters:
   - name: BUILD_TAG
     value: "0"
   - name: QUEUE_CONSUMERS_SECRET_NAME
+    value: sims-api-creds
     required: true
   - name: ZEEBE_ADDRESS_KEY
     value: zeebe-address

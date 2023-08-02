@@ -137,6 +137,7 @@ parameters:
   - name: BUILD_TAG
     value: "0"
   - name: WORKERS_SECRET_NAME
+    value: sims-api-creds
     require: true
   - name: ATBC_LOGIN_ENDPOINT
     require: true

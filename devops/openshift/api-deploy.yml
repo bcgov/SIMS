@@ -310,6 +310,7 @@ parameters:
     value: "0"
   - name: API_SECRET_NAME
     value: sims-api-creds
+    required: true
   - name: SIMS_DB_NAME
     value: sims-db-name
   - name: FORMS_SECRET_NAME

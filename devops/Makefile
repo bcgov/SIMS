@@ -306,6 +306,7 @@ run-db-migrations:
 	test -n "$(NAMESPACE)"
 	test -n "$(BUILD_NAMESPACE)"
 	test -n "$(DB_SERVICE_NAME)"
+	test -n "$(API_SECRET_NAME)"
 	test -n "$(DB_MIGRATIONS_BUILD_REF)"
 	test -n "$(BUILD_REF)"
 	test -n "$(DB_MIGRATIONS)"
@@ -314,6 +315,7 @@ run-db-migrations:
 		-p NAME=$(DB_MIGRATIONS) \
 		-p DB_SERVICE=$(DB_SERVICE_NAME) \
 		-p BUILD_NAMESPACE=$(BUILD_NAMESPACE) \
+		-p API_SECRET_NAME=$(API_SECRET_NAME) \
 		-p IMAGE_STREAM_TAG="$(DB_MIGRATIONS_BUILD_REF):$(BUILD_REF)" \
 		-p BUILD_TAG=$(BUILD_REF) \
 		-p JOB_NAME=$(DB_MIGRATIONS_JOB_NAME) \
