@@ -54,7 +54,7 @@ objects:
                   valueFrom:
                     secretKeyRef:
                       key: ${SIMS_DB_NAME}
-                      name: ${API_SECRET_NAME}
+                      name: ${WORKERS_SECRET_NAME}
                 - name: ZEEBE_ADDRESS
                   valueFrom:
                     secretKeyRef:
@@ -124,8 +124,6 @@ parameters:
     value: superuser-username
   - name: DB_PASSWORD_KEY
     value: superuser-password
-  - name: API_SECRET_NAME
-    value: sims-api-creds
   - name: SIMS_DB_NAME
     value: sims-db-name
   - name: IMAGE_STREAM_TAG
