@@ -62,7 +62,10 @@ objects:
                       key: ${DB_PASSWORD_KEY}
                       name: ${DB_SECRET_NAME}
                 - name: POSTGRES_DB
-                  value: "${DATABASE_NAME}"
+                  valueFrom:
+                    secretKeyRef:
+                      key: ${SIMS_DB_NAME}
+                      name: ${API_SECRET_NAME}
                 - name: BCeID_WEB_SERVICE_ONLINE_SERVICE_ID
                   valueFrom:
                     secretKeyRef:
@@ -309,6 +312,8 @@ parameters:
     value: "0"
   - name: API_SECRET_NAME
     value: sims-api-creds
+  - name: SIMS_DB_NAME
+    value: sims-db-name
   - name: FORMS_SECRET_NAME
     value: forms
   - name: BCeID_WEB_SERVICE_ONLINE_SERVICE_ID_NAME_KEY

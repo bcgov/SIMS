@@ -48,7 +48,10 @@ objects:
                       key: ${DB_PASSWORD_KEY}
                       name: ${DB_SECRET_NAME}
                 - name: POSTGRES_DB
-                  value: "${DATABASE_NAME}"
+                  valueFrom:
+                    secretKeyRef:
+                      key: ${SIMS_DB_NAME}
+                      name: ${API_SECRET_NAME}
                 - name: REDIS_PASSWORD
                   valueFrom:
                     secretKeyRef:
@@ -273,8 +276,10 @@ parameters:
     value: superuser-username
   - name: DB_PASSWORD_KEY
     value: superuser-password
-  - name: DATABASE_NAME
-    required: true
+  - name: API_SECRET_NAME
+    value: sims-api-creds
+  - name: SIMS_DB_NAME
+    value: sims-db-name
   - name: IMAGE_STREAM_TAG
     required: true
   - name: BUILD_NAMESPACE
