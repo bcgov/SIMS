@@ -33,7 +33,6 @@ export FORMS_BUILD_REF := $(or ${FORMS_BUILD_REF}, forms)
 export FORMIO_ROOT_EMAIL := $(or ${FORMIO_ROOT_EMAIL}, dev_sabc@gov.bc.ca)
 export MONGODB_URI := $(or ${MONGODB_URI}, $$MONGODB_URI)
 export QUEUE_PREFIX := $(or $(QUEUE_PREFIX), {sims-local})
-export DATABASE_NAME_PREFIX := $(or $(DATABASE_NAME_PREFIX), $$DATABASE_NAME_PREFIX)
 
 export MAX_WAIT=300 # Maximum wait time in seconds.
 export WAIT_TIME=0  # Initialize wait time to zero.

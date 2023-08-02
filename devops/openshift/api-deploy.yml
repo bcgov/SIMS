@@ -306,8 +306,6 @@ parameters:
     required: true
   - name: BCeID_WEB_SERVICE_WSDL
     required: true
-  - name: DATABASE_NAME
-    required: true
   - name: BUILD_TAG
     value: "0"
   - name: API_SECRET_NAME

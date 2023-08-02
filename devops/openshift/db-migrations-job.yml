@@ -81,8 +81,6 @@ parameters:
     value: superuser-username
   - name: DB_PASSWORD_KEY
     value: superuser-password
-  - name: DATABASE_NAME
-    required: true
   - name: CPU_LIMIT
     value: "1.0"
   - name: MEMORY_LIMIT
