@@ -1,30 +1,42 @@
 import { SupportingUserType } from "@/types";
 import { ContactInformationAPIOutDTO } from "./Address.dto";
+import { Expose } from "class-transformer";
 
 /**
  * Information used to uniquely identify a Student Application.
  * The application must be search using at least 3 criteria as
  * per defined by the Ministry policies.
  */
-export interface ApplicationIdentifierAPIInDTO {
+export class ApplicationIdentifierAPIInDTO {
+  @Expose()
   applicationNumber: string;
+  @Expose()
   studentsDateOfBirth: string;
+  @Expose()
   studentsLastName: string;
 }
 
 /**
  * Data send to api to update a supporting user.
  */
-export interface UpdateSupportingUserAPIInDTO
-  extends ApplicationIdentifierAPIInDTO {
+export class UpdateSupportingUserAPIInDTO extends ApplicationIdentifierAPIInDTO {
+  @Expose()
   addressLine1: string;
+  @Expose()
   addressLine2?: string;
+  @Expose()
   city: string;
+  @Expose()
   country: string;
+  @Expose()
   phone: string;
+  @Expose()
   postalCode: string;
+  @Expose()
   provinceState?: string;
+  @Expose()
   sin: string;
+  @Expose()
   supportingData: unknown;
 }
 
