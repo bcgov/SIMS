@@ -64,8 +64,8 @@ objects:
                 - name: POSTGRES_DB
                   valueFrom:
                     secretKeyRef:
-                      key: ${DATABASE_NAME_KEY}
-                      name: ${DB_SECRET_NAME}
+                      key: ${SIMS_DB_NAME}
+                      name: ${API_SECRET_NAME}
                 - name: BCeID_WEB_SERVICE_ONLINE_SERVICE_ID
                   valueFrom:
                     secretKeyRef:
@@ -306,12 +306,12 @@ parameters:
     required: true
   - name: BCeID_WEB_SERVICE_WSDL
     required: true
-  - name: DATABASE_NAME_KEY
-    required: true
   - name: BUILD_TAG
     value: "0"
   - name: API_SECRET_NAME
-    value: sims-api-creds
+    required: true
+  - name: SIMS_DB_NAME
+    value: sims-db-name
   - name: FORMS_SECRET_NAME
     value: forms
   - name: BCeID_WEB_SERVICE_ONLINE_SERVICE_ID_NAME_KEY

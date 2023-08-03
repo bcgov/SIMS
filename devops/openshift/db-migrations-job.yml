@@ -40,8 +40,8 @@ objects:
                 - name: POSTGRES_DB
                   valueFrom:
                     secretKeyRef:
-                      key: ${DATABASE_NAME_KEY}
-                      name: ${DB_SECRET_NAME}
+                      key: ${SIMS_DB_NAME}
+                      name: ${API_SECRET_NAME}
               resources:
                 limits:
                   cpu: ${CPU_LIMIT}
@@ -59,6 +59,10 @@ parameters:
     value: sims
   - name: SERVICE_NAME
     value: db-migrations
+  - name: API_SECRET_NAME
+    required: true
+  - name: SIMS_DB_NAME
+    value: sims-db-name
   - name: JOB_NAME
     description: database.migrations
     required: true
@@ -77,8 +81,6 @@ parameters:
     value: superuser-username
   - name: DB_PASSWORD_KEY
     value: superuser-password
-  - name: DATABASE_NAME_KEY
-    required: true
   - name: CPU_LIMIT
     value: "1.0"
   - name: MEMORY_LIMIT

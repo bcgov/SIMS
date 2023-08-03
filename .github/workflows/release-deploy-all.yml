@@ -70,8 +70,8 @@ env:
   NAMESPACE: ${{ secrets.OPENSHIFT_ENV_NAMESPACE }}
   BUILD_REF: ${{ inputs.gitRef }}
   HOST_PREFIX: ${{ secrets.HOST_PREFIX }}
-  BUILD_NAMESPACE: 0c27fb-tools
-  KEYCLOAK_REALM: "aestsims"
+  BUILD_NAMESPACE: ${{ vars.BUILD_NAMESPACE }}
+  KEYCLOAK_REALM: ${{ vars.KEYCLOAK_REALM }}
   KEYCLOAK_AUTH_URL: ${{ secrets.KEYCLOAK_AUTH_URL }}
   BCeID_WEB_SERVICE_WSDL: ${{ secrets.BCeID_WEB_SERVICE_WSDL }}
   SITE_MINDER_LOGOUT_URL: ${{ secrets.SITE_MINDER_LOGOUT_URL }}
@@ -88,7 +88,6 @@ env:
   QUEUE_PREFIX: ${{ secrets.QUEUE_PREFIX }}
   API_PORT: ${{ secrets.API_PORT }}
   WEB_PORT: ${{ secrets.WEB_PORT }}
-  DATABASE_NAME_KEY: ${{ secrets.DATABASE_NAME_KEY }}
 
 jobs:
   # Run DB migrations.
@@ -99,10 +98,9 @@ jobs:
     steps:
       - name: Print env
         run: |
-          echo Git Environment: ${{ inputs.environment }}
-          echo Git Red: ${{ inputs.gitRef }}
+          echo Deploy Environment: ${{ inputs.environment }}
+          echo GIT REF: ${{ inputs.gitRef }}
           echo BUILD NAMESPACE: $BUILD_NAMESPACE
-          echo HOST_PREFIX: $HOST_PREFIX
 
       - name: Checkout Target Branch
         uses: actions/checkout@v3
@@ -127,10 +125,9 @@ jobs:
     steps:
       - name: Print env
         run: |
-          echo BUILD NAMESPACE: $BUILD_NAMESPACE
-          echo BUILD ENVIRONMENT: ${{ inputs.environment }}
+          echo Deploy ENVIRONMENT: ${{ inputs.environment }}
           echo GIT REF: ${{ inputs.gitRef }}
-          echo HOST_PREFIX: $HOST_PREFIX
+          echo BUILD NAMESPACE: $BUILD_NAMESPACE
 
       - name: Checkout Target Branch
         uses: actions/checkout@v3
@@ -155,10 +152,8 @@ jobs:
     steps:
       - name: Print env
         run: |
-          echo BUILD NAMESPACE: $BUILD_NAMESPACE
           echo BUILD ENVIRONMENT: ${{ inputs.environment }}
           echo GIT REF: ${{ inputs.gitRef }}
-          echo HOST_PREFIX: $HOST_PREFIX
 
       - name: Checkout Target Branch
         uses: actions/checkout@v3
@@ -183,10 +178,9 @@ jobs:
     steps:
       - name: Print env
         run: |
-          echo BUILD NAMESPACE: $BUILD_NAMESPACE
-          echo BUILD ENVIRONMENT: ${{ inputs.environment }}
+          echo Deploy ENVIRONMENT: ${{ inputs.environment }}
           echo GIT REF: ${{ inputs.gitRef }}
-          echo HOST_PREFIX: $HOST_PREFIX
+          echo BUILD NAMESPACE: $BUILD_NAMESPACE
 
       - name: Checkout Target Branch
         uses: actions/checkout@v3
@@ -211,10 +205,9 @@ jobs:
     steps:
       - name: Print env
         run: |
-          echo BUILD NAMESPACE: $BUILD_NAMESPACE
-          echo BUILD ENVIRONMENT: ${{ inputs.environment }}
+          echo Deploy ENVIRONMENT: ${{ inputs.environment }}
           echo GIT REF: ${{ inputs.gitRef }}
-          echo HOST_PREFIX: $HOST_PREFIX
+          echo BUILD NAMESPACE: $BUILD_NAMESPACE
 
       - name: Checkout Target Branch
         uses: actions/checkout@v3
