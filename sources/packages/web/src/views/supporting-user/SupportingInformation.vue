@@ -198,6 +198,7 @@ export default defineComponent({
     });
 
     const applicationSearch = async () => {
+      showNav.value = false;
       const validationResult = await searchApplicationsForm.value.validate();
       if (!validationResult.valid) {
         return;
