@@ -216,11 +216,21 @@ export class ProgramInfoRequestInstitutionsController extends BaseController {
     @UserToken() userToken: IUserToken,
   ): Promise<void> {
     try {
-      await this.applicationService.applicationOfferingValidation(
+      // Validate if the application exists and the location has access to it.
+      const application = await this.applicationService.getProgramInfoRequest(
+        locationId,
         applicationId,
+      );
+      if (!application) {
+        throw new CustomNamedError(
+          "Application not found.",
+          APPLICATION_NOT_FOUND,
+        );
+      }
+      await this.applicationService.validateApplicationOffering(
+        application,
         payload.selectedOffering,
         locationId,
-        { isPir: true },
       );
       // Complete PIR.
       await this.applicationService.setOfferingForProgramInfoRequest(

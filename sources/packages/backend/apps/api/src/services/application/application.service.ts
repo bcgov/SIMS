@@ -1589,36 +1589,22 @@ export class ApplicationService extends RecordDataModelService<Application> {
    * overlapping study dates for the student, is the offering is
    * matching with the existing offering and the newly selected
    * offering belong to the same program year.
-   * @param applicationId existing application id.
+   * @param application existing application.
    * @param selectedOffering newly selected offering id.
    * @param locationId location id.
-   * @param options more options of the validation.
-   * - `isPir` set true, if its PIR related.
    */
-  async applicationOfferingValidation(
-    applicationId: number,
+  async validateApplicationOffering(
+    application: Application,
     selectedOffering: number,
     locationId: number,
-    options?: {
-      isPir: boolean;
-    },
   ): Promise<void> {
-    // Validate if the application exists and the location has access to it.
-    const application = options?.isPir
-      ? await this.getProgramInfoRequest(locationId, applicationId)
-      : await this.getApplicationInfo(locationId, applicationId);
-
-    if (!application) {
-      throw new CustomNamedError(
-        "Application not found.",
-        APPLICATION_NOT_FOUND,
-      );
-    }
     // Validates if the offering exists and belongs to the location.
     const offering = await this.offeringService.getOfferingLocationId(
       selectedOffering,
+      locationId,
     );
-    if (offering?.institutionLocation.id !== locationId) {
+
+    if (!offering) {
       throw new CustomNamedError(
         "The location does not have access to the offering.",
         OFFERING_DOES_NOT_BELONG_TO_LOCATION,

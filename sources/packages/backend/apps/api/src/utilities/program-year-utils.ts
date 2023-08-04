@@ -29,15 +29,15 @@ export function getSupportingUserForm(
 
 /**
  * Check if the offering belong to the program year.
- * @param newOffering offering details.
+ * @param offering offering details.
  * @param programYear program year details.
  * @returns returns true if the offering belong to the program
  * year.
  */
 export function offeringBelongToProgramYear(
-  newOffering: EducationProgramOffering,
-  programYear: ProgramYear,
+  offering: Pick<EducationProgramOffering, "studyStartDate">,
+  programYear: Pick<ProgramYear, "startDate" | "endDate">,
 ): boolean {
-  // Check if the program start start belong to the program year.
-  return isBetweenPeriod(newOffering.studyStartDate, programYear);
+  // Check if the program start date belong to the program year.
+  return isBetweenPeriod(offering.studyStartDate, programYear);
 }

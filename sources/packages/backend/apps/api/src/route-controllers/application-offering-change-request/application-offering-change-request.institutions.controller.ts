@@ -294,15 +294,27 @@ export class ApplicationOfferingChangeRequestInstitutionsController extends Base
     @Body() payload: CreateApplicationOfferingChangeRequestAPIInDTO,
   ): Promise<PrimaryIdentifierAPIOutDTO> {
     try {
-      await this.applicationService.applicationOfferingValidation(
+      // Validate if the application exists and the location has access to it.
+      const application = await this.applicationService.getApplicationInfo(
+        locationId,
         payload.applicationId,
+      );
+      if (!application) {
+        throw new CustomNamedError(
+          "Application not found.",
+          APPLICATION_NOT_FOUND,
+        );
+      }
+
+      await this.applicationService.validateApplicationOffering(
+        application,
         payload.offeringId,
         locationId,
       );
       const applicationOfferingChangeRequest =
         await this.applicationOfferingChangeRequestService.createRequest(
           locationId,
-          payload.applicationId,
+          application.id,
           payload.offeringId,
           payload.reason,
           userToken.userId,
