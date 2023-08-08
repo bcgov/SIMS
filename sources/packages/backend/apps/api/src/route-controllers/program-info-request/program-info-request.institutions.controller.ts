@@ -256,7 +256,6 @@ export class ProgramInfoRequestInstitutionsController extends BaseController {
             );
           case OFFERING_PROGRAM_YEAR_MISMATCH:
             throw new UnprocessableEntityException(error.message);
-
           case OFFERING_DOES_NOT_BELONG_TO_LOCATION:
             throw new UnauthorizedException(error.message);
         }

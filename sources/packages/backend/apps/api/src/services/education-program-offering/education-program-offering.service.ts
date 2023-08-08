@@ -651,7 +651,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       ])
       .innerJoin("offerings.institutionLocation", "location")
       .where("offerings.id = :offeringId", { offeringId })
-      .where("location.id = :locationId", { locationId })
+      .andWhere("location.id = :locationId", { locationId })
       .getOne();
   }
 
