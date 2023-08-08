@@ -31,7 +31,11 @@ import {
 } from "../../services";
 import { getUserFullName, STUDY_DATE_OVERLAP_ERROR } from "../../utilities";
 import { CustomNamedError, getISODateOnlyString } from "@sims/utilities";
-import { Application, ProgramInfoStatus } from "@sims/sims-db";
+import {
+  Application,
+  AssessmentTriggerType,
+  ProgramInfoStatus,
+} from "@sims/sims-db";
 import {
   OFFERING_DOES_NOT_BELONG_TO_LOCATION,
   OFFERING_INTENSITY_MISMATCH,
@@ -119,7 +123,10 @@ export class ProgramInfoRequestInstitutionsController extends BaseController {
     // assessment always available for submitted student applications).
     // PIR process happens only during original assessment.
     // Offering available only when PIR is completed.
-    const originalAssessmentOffering = application.currentAssessment.offering;
+    const originalAssessmentOffering = application.studentAssessments.find(
+      (assessment) =>
+        assessment.triggerType === AssessmentTriggerType.OriginalAssessment,
+    ).offering;
     // If an offering is present (PIR is completed), this value will be the
     // program id associated with the offering, otherwise the program id
     // from PIR (sims.applications table) will be used.
@@ -216,19 +223,8 @@ export class ProgramInfoRequestInstitutionsController extends BaseController {
     @UserToken() userToken: IUserToken,
   ): Promise<void> {
     try {
-      // Validate if the application exists and the location has access to it.
-      const application = await this.applicationService.getProgramInfoRequest(
-        locationId,
-        applicationId,
-      );
-      if (!application) {
-        throw new CustomNamedError(
-          "Application not found.",
-          APPLICATION_NOT_FOUND,
-        );
-      }
       await this.applicationService.validateApplicationOffering(
-        application,
+        applicationId,
         payload.selectedOffering,
         locationId,
       );
@@ -248,20 +244,21 @@ export class ProgramInfoRequestInstitutionsController extends BaseController {
       if (error instanceof CustomNamedError) {
         switch (error.name) {
           case PIR_REQUEST_NOT_FOUND_ERROR:
-          case APPLICATION_NOT_FOUND:
             throw new NotFoundException(
               new ApiProcessError(error.message, error.name),
             );
+          case APPLICATION_NOT_FOUND:
+            throw new NotFoundException(error.message);
           case STUDY_DATE_OVERLAP_ERROR:
-          case OFFERING_PROGRAM_YEAR_MISMATCH:
           case OFFERING_INTENSITY_MISMATCH:
             throw new UnprocessableEntityException(
               new ApiProcessError(error.message, error.name),
             );
+          case OFFERING_PROGRAM_YEAR_MISMATCH:
+            throw new UnprocessableEntityException(error.message);
+
           case OFFERING_DOES_NOT_BELONG_TO_LOCATION:
-            throw new UnauthorizedException(
-              new ApiProcessError(error.message, error.name),
-            );
+            throw new UnauthorizedException(error.message);
         }
       }
       throw new InternalServerErrorException(

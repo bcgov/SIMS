@@ -52,6 +52,7 @@ import {
   OFFERING_INTENSITY_MISMATCH,
   OFFERING_PROGRAM_YEAR_MISMATCH,
 } from "../../constants";
+import { InjectLogger, LoggerService } from "@sims/utilities/logger";
 
 /**
  * Application offering change request controller for institutions client.
@@ -294,27 +295,15 @@ export class ApplicationOfferingChangeRequestInstitutionsController extends Base
     @Body() payload: CreateApplicationOfferingChangeRequestAPIInDTO,
   ): Promise<PrimaryIdentifierAPIOutDTO> {
     try {
-      // Validate if the application exists and the location has access to it.
-      const application = await this.applicationService.getApplicationInfo(
-        locationId,
-        payload.applicationId,
-      );
-      if (!application) {
-        throw new CustomNamedError(
-          "Application not found.",
-          APPLICATION_NOT_FOUND,
-        );
-      }
-
       await this.applicationService.validateApplicationOffering(
-        application,
+        payload.applicationId,
         payload.offeringId,
         locationId,
       );
       const applicationOfferingChangeRequest =
         await this.applicationOfferingChangeRequestService.createRequest(
           locationId,
-          application.id,
+          payload.applicationId,
           payload.offeringId,
           payload.reason,
           userToken.userId,
@@ -324,24 +313,26 @@ export class ApplicationOfferingChangeRequestInstitutionsController extends Base
       if (error instanceof CustomNamedError) {
         switch (error.name) {
           case APPLICATION_NOT_FOUND:
-            throw new NotFoundException(
-              new ApiProcessError(error.message, error.name),
-            );
+            throw new NotFoundException(error.message);
           case STUDY_DATE_OVERLAP_ERROR:
-          case OFFERING_PROGRAM_YEAR_MISMATCH:
           case OFFERING_INTENSITY_MISMATCH:
             throw new UnprocessableEntityException(
               new ApiProcessError(error.message, error.name),
             );
+          case OFFERING_PROGRAM_YEAR_MISMATCH:
+            throw new UnprocessableEntityException(error.message);
           case OFFERING_DOES_NOT_BELONG_TO_LOCATION:
-            throw new UnauthorizedException(
-              new ApiProcessError(error.message, error.name),
-            );
+            throw new UnauthorizedException(error.message);
         }
       }
-      throw new InternalServerErrorException(
+      this.logger.error(
         `Error while submitting an application offering change request: ${error}`,
+      );
+      throw new InternalServerErrorException(
+        "Error while submitting an application offering change request",
       );
     }
   }
+  @InjectLogger()
+  logger: LoggerService;
 }

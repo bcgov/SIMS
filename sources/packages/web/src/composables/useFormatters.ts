@@ -311,11 +311,13 @@ export function useFormatters() {
 
   /**
    * Validates if the given date 1 is before the given date 2.
+   * The comparison is only done with dates, if the date has a
+   * time object, its not considered for the comparison.
    * @param date1 given date 1.
    * @param date2 given date 2.
    * @returns if the given date 1 is before the given date 2.
    */
-  const isBeforeDate = (
+  const isBeforeDateOnly = (
     date1: string | Date,
     date2: string | Date,
   ): boolean => {
@@ -341,6 +343,6 @@ export function useFormatters() {
     emptyStringFiller,
     conditionalEmptyStringFiller,
     formatCurrency,
-    isBeforeDate,
+    isBeforeDateOnly,
   };
 }

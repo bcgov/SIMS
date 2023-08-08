@@ -89,10 +89,7 @@ import { EducationProgramOfferingService } from "@/services/EducationProgramOffe
 import { useRules, useSnackBar, useFormatters } from "@/composables";
 import { BannerTypes } from "@/types/contracts/Banner";
 import {
-  APPLICATION_NOT_FOUND,
-  OFFERING_DOES_NOT_BELONG_TO_LOCATION,
   OFFERING_INTENSITY_MISMATCH,
-  OFFERING_PROGRAM_YEAR_MISMATCH,
   STUDY_DATE_OVERLAP_ERROR,
 } from "@/constants";
 
@@ -128,7 +125,7 @@ export default defineComponent({
     // Offerings dropdown.
     const offerings = ref([] as OptionItemAPIOutDTO[]);
     const selectedOffering = ref<number>();
-    const { isBeforeDate } = useFormatters();
+    const { isBeforeDateOnly } = useFormatters();
     const isPastOfferingEndDate = ref<boolean>(false);
 
     onMounted(async () => {
@@ -206,11 +203,8 @@ export default defineComponent({
       } catch (error: unknown) {
         if (error instanceof ApiProcessError) {
           switch (error.errorType) {
-            case APPLICATION_NOT_FOUND:
             case STUDY_DATE_OVERLAP_ERROR:
-            case OFFERING_PROGRAM_YEAR_MISMATCH:
             case OFFERING_INTENSITY_MISMATCH:
-            case OFFERING_DOES_NOT_BELONG_TO_LOCATION:
               snackBar.error(error.message);
               return;
           }
@@ -231,7 +225,7 @@ export default defineComponent({
           },
         );
 
-      isPastOfferingEndDate.value = isBeforeDate(
+      isPastOfferingEndDate.value = isBeforeDateOnly(
         offeringViewData.studyEndDate,
         new Date(),
       );

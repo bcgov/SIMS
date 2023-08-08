@@ -487,15 +487,16 @@ export class ApplicationService extends RecordDataModelService<Application> {
         "programYear.endDate",
         "sinValidation.id",
         "sinValidation.sin",
-        "currentAssessment.id",
+        "studentAssessments.id",
+        "studentAssessments.triggerType",
       ])
       .innerJoin("application.programYear", "programYear")
       .leftJoin("application.pirProgram", "pirProgram")
       .innerJoin("application.student", "student")
       .innerJoin("student.sinValidation", "sinValidation")
       .innerJoin("application.location", "location")
-      .innerJoin("application.currentAssessment", "currentAssessment")
-      .leftJoin("currentAssessment.offering", "offering")
+      .innerJoin("application.studentAssessments", "studentAssessments")
+      .leftJoin("studentAssessments.offering", "offering")
       .leftJoin("offering.educationProgram", "educationProgram")
       .innerJoin("student.user", "user")
       .leftJoin("application.pirDeniedReasonId", "PIRDeniedReason")
@@ -503,7 +504,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
         applicationId,
       })
       .andWhere("location.id = :locationId", { locationId })
-      .andWhere("currentAssessment.triggerType = :triggerType", {
+      .andWhere("studentAssessments.triggerType = :triggerType", {
         triggerType: AssessmentTriggerType.OriginalAssessment,
       })
       .andWhere("application.pirStatus != :pirStatus", {
@@ -1553,13 +1554,6 @@ export class ApplicationService extends RecordDataModelService<Application> {
             sin: true,
           },
         },
-        currentAssessment: {
-          id: true,
-          offering: {
-            id: true,
-            offeringIntensity: true,
-          },
-        },
       },
       relations: {
         programYear: true,
@@ -1567,9 +1561,6 @@ export class ApplicationService extends RecordDataModelService<Application> {
         student: {
           user: true,
           sinValidation: true,
-        },
-        currentAssessment: {
-          offering: true,
         },
       },
       where: {
@@ -1589,15 +1580,27 @@ export class ApplicationService extends RecordDataModelService<Application> {
    * overlapping study dates for the student, is the offering is
    * matching with the existing offering and the newly selected
    * offering belong to the same program year.
-   * @param application existing application.
+   * @param applicationId existing application id.
    * @param selectedOffering newly selected offering id.
    * @param locationId location id.
    */
   async validateApplicationOffering(
-    application: Application,
+    applicationId: number,
     selectedOffering: number,
     locationId: number,
   ): Promise<void> {
+    // Validate if the application exists and the location has access to it.
+    const application = await this.getApplicationInfo(
+      locationId,
+      applicationId,
+    );
+    if (!application) {
+      throw new CustomNamedError(
+        "Application not found.",
+        APPLICATION_NOT_FOUND,
+      );
+    }
+
     // Validates if the offering exists and belongs to the location.
     const offering = await this.offeringService.getOfferingLocationId(
       selectedOffering,
@@ -1621,10 +1624,10 @@ export class ApplicationService extends RecordDataModelService<Application> {
       offering.studyStartDate,
       offering.studyEndDate,
     );
+
     // Check if the newly selected offering intensity
     // is matching with the existing offering intensity.
     const currentOfferingIntensity =
-      application.currentAssessment?.offering?.offeringIntensity ??
       application.data.howWillYouBeAttendingTheProgram;
 
     if (currentOfferingIntensity !== offering.offeringIntensity) {
