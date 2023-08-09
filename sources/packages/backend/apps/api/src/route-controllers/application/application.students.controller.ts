@@ -53,7 +53,7 @@ import {
 } from "../../auth/decorators";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { ApiProcessError, ClientTypeBaseRoute } from "../../types";
-import { getPIRDeniedReason, PIR_OR_DATE_OVERLAP_ERROR } from "../../utilities";
+import { getPIRDeniedReason, STUDY_DATE_OVERLAP_ERROR } from "../../utilities";
 import {
   INSTITUTION_LOCATION_NOT_VALID,
   INVALID_APPLICATION_NUMBER,
@@ -227,7 +227,7 @@ export class ApplicationStudentsController extends BaseController {
       studentToken.studentId,
     );
     try {
-      await this.applicationService.validateOverlappingDatesAndPIR(
+      await this.applicationService.validateOverlappingDates(
         applicationId,
         student.user.lastName,
         studentToken.userId,
@@ -252,7 +252,7 @@ export class ApplicationStudentsController extends BaseController {
           throw new NotFoundException(error.message);
         case APPLICATION_NOT_VALID:
         case INVALID_OPERATION_IN_THE_CURRENT_STATUS:
-        case PIR_OR_DATE_OVERLAP_ERROR:
+        case STUDY_DATE_OVERLAP_ERROR:
         case INSTITUTION_LOCATION_NOT_VALID:
         case OFFERING_NOT_VALID:
           throw new UnprocessableEntityException(

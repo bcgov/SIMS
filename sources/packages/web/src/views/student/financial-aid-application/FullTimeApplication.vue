@@ -67,7 +67,7 @@ import { ApplicationDataAPIOutDTO } from "@/services/http/dto";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 import ConfirmEditApplication from "@/components/students/modals/ConfirmEditApplication.vue";
 import {
-  PIR_OR_DATE_OVERLAP_ERROR,
+  STUDY_DATE_OVERLAP_ERROR,
   ACTIVE_STUDENT_RESTRICTION,
 } from "@/constants";
 import StudentApplication from "@/components/common/StudentApplication.vue";
@@ -207,7 +207,7 @@ export default defineComponent({
         let errorMsg = "An unexpected error has happened.";
         if (error instanceof ApiProcessError) {
           switch (error.errorType) {
-            case PIR_OR_DATE_OVERLAP_ERROR:
+            case STUDY_DATE_OVERLAP_ERROR:
               errorLabel = "Invalid submission.";
               errorMsg = error.message;
               break;

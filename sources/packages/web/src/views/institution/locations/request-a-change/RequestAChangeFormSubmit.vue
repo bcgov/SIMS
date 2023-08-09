@@ -27,7 +27,7 @@
           v-model="selectedProgram"
           @update:modelValue="selectedProgramChanged"
           :rules="[(v: string) => checkNullOrEmptyRule(v, 'Program')]"
-        ></v-autocomplete>
+        />
         <v-autocomplete
           :readonly="processing"
           hide-details="auto"
@@ -40,7 +40,15 @@
           item-value="id"
           v-model="selectedOffering"
           :rules="[(v:string) => checkNullOrEmptyRule(v, 'Offering')]"
-        ></v-autocomplete>
+          @update:modelValue="offeringOnChange"
+        />
+        <banner
+          v-if="isPastOfferingEndDate"
+          class="mt-2"
+          :type="BannerTypes.Warning"
+          header="This study end date has passed"
+          summary="The selected study period has passed. Students can no longer receive funding. Continuing with the application will require StudentAid BC approval to be eligible for funding."
+        />
         <v-textarea
           :readonly="processing"
           label="Reason for change"
@@ -75,10 +83,15 @@ import {
   OptionItemAPIOutDTO,
 } from "@/services/http/dto";
 import { ApplicationOfferingChangeRequestService } from "@/services/ApplicationOfferingChangeRequestService";
-import { VForm } from "@/types";
+import { ApiProcessError, VForm } from "@/types";
 import { EducationProgramService } from "@/services/EducationProgramService";
 import { EducationProgramOfferingService } from "@/services/EducationProgramOfferingService";
-import { useRules, useSnackBar } from "@/composables";
+import { useRules, useSnackBar, useFormatters } from "@/composables";
+import { BannerTypes } from "@/types/contracts/Banner";
+import {
+  OFFERING_INTENSITY_MISMATCH,
+  STUDY_DATE_OVERLAP_ERROR,
+} from "@/constants";
 
 export default defineComponent({
   components: { RequestAChangeForm },
@@ -112,6 +125,8 @@ export default defineComponent({
     // Offerings dropdown.
     const offerings = ref([] as OptionItemAPIOutDTO[]);
     const selectedOffering = ref<number>();
+    const { isBeforeDateOnly } = useFormatters();
+    const isPastOfferingEndDate = ref<boolean>(false);
 
     onMounted(async () => {
       application =
@@ -177,13 +192,43 @@ export default defineComponent({
             reason: reasonForChange.value,
           },
         );
-        // TODO: redirect to "in progress".
-        router.push(goBackRouteParams.value);
-      } catch {
+
+        router.push({
+          name: InstitutionRoutesConst.REQUEST_CHANGE_IN_PROGRESS,
+          params: { locationId: props.locationId },
+        });
+        snackBar.success(
+          "Your request was submitted. You can view your requested change below.",
+        );
+      } catch (error: unknown) {
+        if (error instanceof ApiProcessError) {
+          switch (error.errorType) {
+            case STUDY_DATE_OVERLAP_ERROR:
+            case OFFERING_INTENSITY_MISMATCH:
+              snackBar.error(error.message);
+              return;
+          }
+        }
         snackBar.error("Unexpected error while submitting the request.");
+        return;
       } finally {
         processing.value = false;
       }
+    };
+
+    const offeringOnChange = async (offeringId: number) => {
+      const offeringViewData =
+        await EducationProgramOfferingService.shared.getOfferingSummaryDetailsById(
+          offeringId,
+          {
+            locationId: props.locationId,
+          },
+        );
+
+      isPastOfferingEndDate.value = isBeforeDateOnly(
+        offeringViewData.studyEndDate,
+        new Date(),
+      );
     };
 
     return {
@@ -204,6 +249,9 @@ export default defineComponent({
       checkNullOrEmptyRule,
       checkLengthRule,
       processing,
+      offeringOnChange,
+      BannerTypes,
+      isPastOfferingEndDate,
     };
   },
 });

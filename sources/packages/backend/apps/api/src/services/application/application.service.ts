@@ -27,10 +27,11 @@ import {
 import {
   PIR_DENIED_REASON_OTHER_ID,
   sortApplicationsColumnMap,
-  PIR_OR_DATE_OVERLAP_ERROR_MESSAGE,
-  PIR_OR_DATE_OVERLAP_ERROR,
+  STUDY_DATE_OVERLAP_ERROR_MESSAGE,
+  STUDY_DATE_OVERLAP_ERROR,
   PaginationOptions,
   PaginatedResults,
+  offeringBelongToProgramYear,
 } from "../../utilities";
 import { CustomNamedError, QueueNames } from "@sims/utilities";
 import {
@@ -44,6 +45,9 @@ import {
   PIR_REQUEST_NOT_FOUND_ERROR,
   OFFERING_NOT_VALID,
   INSTITUTION_LOCATION_NOT_VALID,
+  OFFERING_INTENSITY_MISMATCH,
+  OFFERING_DOES_NOT_BELONG_TO_LOCATION,
+  OFFERING_PROGRAM_YEAR_MISMATCH,
 } from "../../constants";
 import { SequenceControlService } from "@sims/services";
 import { ConfigService } from "@sims/utilities/config";
@@ -449,6 +453,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
     return this.repo
       .createQueryBuilder("application")
       .select([
+        "application.id",
         "application.applicationNumber",
         "application.pirStatus",
         "application.data",
@@ -1324,7 +1329,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
    * @param studyStartDate
    * @param studyEndDate
    */
-  async validateOverlappingDatesAndPIR(
+  async validateOverlappingDates(
     applicationId: number,
     lastName: string,
     userId: number,
@@ -1373,8 +1378,8 @@ export class ApplicationService extends RecordDataModelService<Application> {
         !!sfasPTApplicationResponse
       ) {
         throw new CustomNamedError(
-          PIR_OR_DATE_OVERLAP_ERROR_MESSAGE,
-          PIR_OR_DATE_OVERLAP_ERROR,
+          STUDY_DATE_OVERLAP_ERROR_MESSAGE,
+          STUDY_DATE_OVERLAP_ERROR,
         );
       }
     }
@@ -1515,6 +1520,130 @@ export class ApplicationService extends RecordDataModelService<Application> {
         },
       },
     });
+  }
+
+  /**
+   * Gets the application details belonging to an institution location.
+   * @param locationId location id.
+   * @param applicationId application id.
+   * @returns student application.
+   */
+  async getApplicationInfo(
+    locationId: number,
+    applicationId: number,
+  ): Promise<Application> {
+    return this.repo.findOne({
+      select: {
+        id: true,
+        data: true as unknown,
+        programYear: {
+          id: true,
+          active: true,
+          startDate: true,
+          endDate: true,
+        },
+        student: {
+          id: true,
+          birthDate: true,
+          user: {
+            id: true,
+            lastName: true,
+          },
+          sinValidation: {
+            id: true,
+            sin: true,
+          },
+        },
+      },
+      relations: {
+        programYear: true,
+        location: true,
+        student: {
+          user: true,
+          sinValidation: true,
+        },
+      },
+      where: {
+        id: applicationId,
+        location: {
+          id: locationId,
+        },
+        applicationStatus: Not(ApplicationStatus.Overwritten),
+      },
+    });
+  }
+
+  /**
+   * Set of validations for existing application and newly
+   * selected offering, like, application belongs to the location,
+   * newly selected offering belongs to the location, is there any
+   * overlapping study dates for the student, is the offering is
+   * matching with the existing offering and the newly selected
+   * offering belong to the same program year.
+   * @param applicationId existing application id.
+   * @param selectedOffering newly selected offering id.
+   * @param locationId location id.
+   */
+  async validateApplicationOffering(
+    applicationId: number,
+    selectedOffering: number,
+    locationId: number,
+  ): Promise<void> {
+    // Validate if the application exists and the location has access to it.
+    const application = await this.getApplicationInfo(
+      locationId,
+      applicationId,
+    );
+    if (!application) {
+      throw new CustomNamedError(
+        "Application not found.",
+        APPLICATION_NOT_FOUND,
+      );
+    }
+
+    // Validates if the offering exists and belongs to the location.
+    const offering = await this.offeringService.getOfferingLocationId(
+      selectedOffering,
+      locationId,
+    );
+
+    if (!offering) {
+      throw new CustomNamedError(
+        "The location does not have access to the offering.",
+        OFFERING_DOES_NOT_BELONG_TO_LOCATION,
+      );
+    }
+
+    // Validate possible overlaps with exists applications.
+    await this.validateOverlappingDates(
+      application.id,
+      application.student.user.lastName,
+      application.student.user.id,
+      application.student.sinValidation.sin,
+      application.student.birthDate,
+      offering.studyStartDate,
+      offering.studyEndDate,
+    );
+
+    // Check if the newly selected offering intensity
+    // is matching with the existing offering intensity.
+    const currentOfferingIntensity =
+      application.data.howWillYouBeAttendingTheProgram;
+
+    if (currentOfferingIntensity !== offering.offeringIntensity) {
+      throw new CustomNamedError(
+        "Offering intensity does not match with the student selected offering.",
+        OFFERING_INTENSITY_MISMATCH,
+      );
+    }
+
+    // Offering belongs to the application program year.
+    if (!offeringBelongToProgramYear(offering, application.programYear)) {
+      throw new CustomNamedError(
+        "Program year is not matching with the application program year.",
+        OFFERING_PROGRAM_YEAR_MISMATCH,
+      );
+    }
   }
 
   @InjectLogger()

@@ -2,21 +2,29 @@ import {
   Body,
   Controller,
   Get,
+  InternalServerErrorException,
   NotFoundException,
   Param,
   ParseIntPipe,
   Post,
   Query,
+  UnauthorizedException,
+  UnprocessableEntityException,
 } from "@nestjs/common";
-import { ApiNotFoundResponse, ApiTags } from "@nestjs/swagger";
+import {
+  ApiNotFoundResponse,
+  ApiTags,
+  ApiUnauthorizedResponse,
+  ApiUnprocessableEntityResponse,
+} from "@nestjs/swagger";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import {
   AllowAuthorizedParty,
   HasLocationAccess,
   UserToken,
 } from "../../auth/decorators";
-import { ClientTypeBaseRoute } from "../../types";
-import { getUserFullName } from "../../utilities";
+import { ApiProcessError, ClientTypeBaseRoute } from "../../types";
+import { STUDY_DATE_OVERLAP_ERROR, getUserFullName } from "../../utilities";
 import { PaginatedResultsAPIOutDTO } from "../models/pagination.dto";
 import BaseController from "../BaseController";
 import {
@@ -30,10 +38,21 @@ import {
   ApplicationOfferingChangeSummaryDetailAPIOutDTO,
   CreateApplicationOfferingChangeRequestAPIInDTO,
 } from "./models/application-offering-change-request.institutions.dto";
-import { ApplicationOfferingChangeRequestService } from "../../services";
+import {
+  APPLICATION_NOT_FOUND,
+  ApplicationOfferingChangeRequestService,
+  ApplicationService,
+} from "../../services";
 import { ApplicationOfferingChangeRequestStatus } from "@sims/sims-db";
 import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
 import { IInstitutionUserToken } from "../../auth";
+import { CustomNamedError } from "@sims/utilities";
+import {
+  OFFERING_DOES_NOT_BELONG_TO_LOCATION,
+  OFFERING_INTENSITY_MISMATCH,
+  OFFERING_PROGRAM_YEAR_MISMATCH,
+} from "../../constants";
+import { InjectLogger, LoggerService } from "@sims/utilities/logger";
 
 /**
  * Application offering change request controller for institutions client.
@@ -47,6 +66,7 @@ import { IInstitutionUserToken } from "../../auth";
 export class ApplicationOfferingChangeRequestInstitutionsController extends BaseController {
   constructor(
     private readonly applicationOfferingChangeRequestService: ApplicationOfferingChangeRequestService,
+    private readonly applicationService: ApplicationService,
   ) {
     super();
   }
@@ -258,21 +278,61 @@ export class ApplicationOfferingChangeRequestInstitutionsController extends Base
    * @param payload information to create the new request.
    * @returns newly change request id created.
    */
+  @ApiNotFoundResponse({
+    description: "Application not found.",
+  })
+  @ApiUnprocessableEntityResponse({
+    description:
+      "Study period overlap or offering program year mismatch or offering intensity mismatch.",
+  })
+  @ApiUnauthorizedResponse({
+    description: "The location does not have access to the offering.",
+  })
   @Post()
   async createApplicationOfferingChangeRequest(
     @UserToken() userToken: IInstitutionUserToken,
     @Param("locationId", ParseIntPipe) locationId: number,
     @Body() payload: CreateApplicationOfferingChangeRequestAPIInDTO,
   ): Promise<PrimaryIdentifierAPIOutDTO> {
-    // TODO: Apply the same validations from PIR.
-    const applicationOfferingChangeRequest =
-      await this.applicationOfferingChangeRequestService.createRequest(
-        locationId,
+    try {
+      await this.applicationService.validateApplicationOffering(
         payload.applicationId,
         payload.offeringId,
-        payload.reason,
-        userToken.userId,
+        locationId,
       );
-    return { id: applicationOfferingChangeRequest.id };
+      const applicationOfferingChangeRequest =
+        await this.applicationOfferingChangeRequestService.createRequest(
+          locationId,
+          payload.applicationId,
+          payload.offeringId,
+          payload.reason,
+          userToken.userId,
+        );
+      return { id: applicationOfferingChangeRequest.id };
+    } catch (error: unknown) {
+      if (error instanceof CustomNamedError) {
+        switch (error.name) {
+          case APPLICATION_NOT_FOUND:
+            throw new NotFoundException(error.message);
+          case STUDY_DATE_OVERLAP_ERROR:
+          case OFFERING_INTENSITY_MISMATCH:
+            throw new UnprocessableEntityException(
+              new ApiProcessError(error.message, error.name),
+            );
+          case OFFERING_PROGRAM_YEAR_MISMATCH:
+            throw new UnprocessableEntityException(error.message);
+          case OFFERING_DOES_NOT_BELONG_TO_LOCATION:
+            throw new UnauthorizedException(error.message);
+        }
+      }
+      this.logger.error(
+        `Error while submitting an application offering change request: ${error}`,
+      );
+      throw new InternalServerErrorException(
+        "Error while submitting an application offering change request",
+      );
+    }
   }
+  @InjectLogger()
+  logger: LoggerService;
 }
