@@ -55,6 +55,7 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-createAppl
 
     endpoint = `/institutions/location/${collegeFLocation.id}/application-offering-change-request`;
 
+    // To check the study overlap, the BYPASS_APPLICATION_SUBMIT_VALIDATIONS needs to be set false.
     process.env = {
       ...OLD_ENV,
       BYPASS_APPLICATION_SUBMIT_VALIDATIONS: "false",
