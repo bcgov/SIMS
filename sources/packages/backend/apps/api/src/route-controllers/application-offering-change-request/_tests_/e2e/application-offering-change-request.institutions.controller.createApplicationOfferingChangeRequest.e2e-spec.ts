@@ -24,6 +24,8 @@ import {
 } from "@sims/sims-db";
 import { createFakeSINValidation } from "@sims/test-utils/factories/sin-validation";
 import { addDays } from "@sims/utilities";
+import { STUDY_DATE_OVERLAP_ERROR } from "../../../../utilities";
+import { OFFERING_INTENSITY_MISMATCH } from "../../../../constants";
 
 describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-createApplicationOfferingChangeRequest", () => {
   let app: INestApplication;
@@ -31,7 +33,6 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-createAppl
   let collegeFLocation: InstitutionLocation;
   let institutionUserToken: string;
   let endpoint: string;
-  const OLD_ENV = process.env;
 
   beforeAll(async () => {
     const { nestApplication, dataSource } = await createTestingAppModule();
@@ -56,13 +57,10 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-createAppl
     endpoint = `/institutions/location/${collegeFLocation.id}/application-offering-change-request`;
 
     // To check the study overlap, the BYPASS_APPLICATION_SUBMIT_VALIDATIONS needs to be set false.
-    process.env = {
-      ...OLD_ENV,
-      BYPASS_APPLICATION_SUBMIT_VALIDATIONS: "false",
-    };
+    process.env.BYPASS_APPLICATION_SUBMIT_VALIDATIONS = "false";
   });
 
-  it("Should able to submit application offering request for an eligible application by an institution.", async () => {
+  it("Should be able to submit application offering request for an eligible application by an institution.", async () => {
     // Arrange
     const savedUser = await db.user.save(createFakeUser());
     // Student has a completed application to the institution.
@@ -224,7 +222,7 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-createAppl
       .expect({
         message:
           "There is an existing application already with overlapping study period or a pending PIR.",
-        errorType: "STUDY_DATE_OVERLAP_ERROR",
+        errorType: STUDY_DATE_OVERLAP_ERROR,
       });
   });
 
@@ -273,7 +271,7 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-createAppl
       .expect({
         message:
           "Offering intensity does not match with the student selected offering.",
-        errorType: "OFFERING_INTENSITY_MISMATCH",
+        errorType: OFFERING_INTENSITY_MISMATCH,
       });
   });
 
