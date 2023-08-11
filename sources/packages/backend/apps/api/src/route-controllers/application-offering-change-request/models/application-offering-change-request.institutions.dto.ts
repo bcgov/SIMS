@@ -46,6 +46,8 @@ export class InProgressApplicationOfferingChangesAPIOutDTO {
   studyEndDate: string;
   fullName: string;
   status: ApplicationOfferingChangeRequestStatus;
+  createdAt: string;
+  studentId: number;
 }
 
 /**

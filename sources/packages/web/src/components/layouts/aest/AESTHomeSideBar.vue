@@ -121,6 +121,15 @@ export default defineComponent({
           },
         },
       },
+      {
+        title: "Applications",
+        props: {
+          prependIcon: "fa:far fa-folder",
+          to: {
+            name: AESTRoutesConst.PENDING_REQUEST_CHANGE_OFFERINGS,
+          },
+        },
+      },
     ]);
     return {
       menuItems,

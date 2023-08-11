@@ -156,15 +156,18 @@ export class ApplicationOfferingChangeRequestService {
 
   /**
    * Gets application offering request change list.
-   * @param locationId location id.
-   * @param paginationOptions options to execute the pagination.
    * @param statuses list of status that need to be included in the query.
+   * @param paginationOptions options to execute the pagination.
+   * @param options method options:
+   * - `locationId`: location for authorization.
    * @returns list of requested application offering changes.
    */
   async getSummaryByStatus(
-    locationId: number,
-    paginationOptions: PaginationOptions,
     statuses: ApplicationOfferingChangeRequestStatus[],
+    paginationOptions: PaginationOptions,
+    options?: {
+      locationId?: number;
+    },
   ): Promise<PaginatedResults<ApplicationOfferingChangeRequest>> {
     const offeringChange = this.applicationOfferingChangeRequestRepo
       .createQueryBuilder("applicationOfferingChangeRequest")
@@ -173,6 +176,8 @@ export class ApplicationOfferingChangeRequestService {
         "applicationOfferingChangeRequest.applicationOfferingChangeRequestStatus",
         "applicationOfferingChangeRequest.assessedDate",
         "applicationOfferingChangeRequest.studentActionDate",
+        "applicationOfferingChangeRequest.createdAt",
+        "application.id",
         "application.applicationNumber",
         "currentAssessment.id",
         "offering.studyStartDate",
@@ -186,13 +191,17 @@ export class ApplicationOfferingChangeRequestService {
       .innerJoin("currentAssessment.offering", "offering")
       .innerJoin("application.student", "student")
       .innerJoin("student.user", "user")
-      .where("application.location.id = :locationId", { locationId })
-      .andWhere(
+      .where(
         "applicationOfferingChangeRequest.applicationOfferingChangeRequestStatus IN (:...statuses)",
         {
           statuses,
         },
       );
+    if (options?.locationId) {
+      offeringChange.andWhere("application.location.id = :locationId", {
+        locationId: options?.locationId,
+      });
+    }
     if (paginationOptions.searchCriteria?.trim()) {
       offeringChange
         .andWhere(

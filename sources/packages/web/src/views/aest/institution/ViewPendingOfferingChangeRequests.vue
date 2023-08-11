@@ -1,0 +1,185 @@
+<template>
+  <full-page-container layout-template="centered-tab" :full-width="true">
+    <template #header>
+      <header-navigator title="Institution requests" subTitle="Applications" />
+      <tab-container>
+        <body-header-container>
+          <template #header>
+            <body-header
+              title="Requested application changes"
+              :recordsCount="applications?.count"
+            >
+              <template #subtitle>
+                Make a determination on a requested change for a program and
+                offering in an application.
+              </template>
+              <template #actions>
+                <v-text-field
+                  density="compact"
+                  label="Search name or application #"
+                  variant="outlined"
+                  v-model="searchCriteria"
+                  @keyup.enter="searchApplicationOfferingChangeRecords"
+                  prepend-inner-icon="mdi-magnify"
+                  hide-details="auto"
+                >
+                </v-text-field>
+              </template>
+            </body-header>
+          </template>
+          <content-group>
+            <toggle-content :toggled="!applications?.count">
+              <v-data-table-server
+                :headers="AllInProgressOfferingChangeSummaryHeaders"
+                :items="applications?.results"
+                :items-length="applications?.count"
+                :loading="loading"
+                item-value="applicationId"
+                v-model:items-per-page="DEFAULT_PAGE_LIMIT"
+                @update:options="paginationAndSortEvent"
+              >
+                <template #[`item.createdAt`]="{ item }">
+                  {{ dateOnlyLongString(item.raw.createdAt) }}
+                </template>
+                <template #[`item.fullName`]="{ item }">
+                  {{ item.raw.fullName }}
+                </template>
+                <template #[`item.applicationNumber`]="{ item }">
+                  {{ item.raw.applicationNumber }}
+                </template>
+                <template #[`item.id`]="{ item }">
+                  <v-btn
+                    color="primary"
+                    @click="viewAssessment(item.value, item.raw.studentId)"
+                    >View</v-btn
+                  >
+                </template>
+              </v-data-table-server>
+            </toggle-content>
+          </content-group>
+        </body-header-container>
+      </tab-container>
+    </template>
+  </full-page-container>
+</template>
+<script lang="ts">
+import { ref, defineComponent, onMounted } from "vue";
+import {
+  DEFAULT_PAGE_LIMIT,
+  DataTableOptions,
+  PaginatedResults,
+  AllInProgressOfferingChangeSummaryHeaders,
+  //   DataTableSortByOrder,
+  DEFAULT_DATATABLE_PAGE_NUMBER,
+  DataTableSortByOrder,
+} from "@/types";
+import { useFormatters } from "@/composables";
+import { ApplicationOfferingChangeSummaryAPIOutDTO } from "@/services/http/dto";
+import { ApplicationOfferingChangeRequestService } from "@/services/ApplicationOfferingChangeRequestService";
+import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
+import { useRouter } from "vue-router";
+
+export default defineComponent({
+  setup() {
+    const router = useRouter();
+    const loading = ref(false);
+    const searchCriteria = ref("");
+    const { dateOnlyLongString } = useFormatters();
+    const applications = ref(
+      {} as
+        | PaginatedResults<ApplicationOfferingChangeSummaryAPIOutDTO>
+        | undefined,
+    );
+    let currentPage = DEFAULT_DATATABLE_PAGE_NUMBER;
+    let currentPageLimit = DEFAULT_PAGE_LIMIT;
+
+    /**
+     * Load eligible applications offering change records for institution.
+     * @param page page number, if nothing passed then {@link DEFAULT_DATATABLE_PAGE_NUMBER}.
+     * @param pageCount page limit, if nothing passed then {@link DEFAULT_PAGE_LIMIT}.
+     * @param sortField sort field, if nothing passed then api sorts with application number.
+     * @param sortOrder sort oder, if nothing passed then {@link DataTableSortByOrder.ASC}.
+     */
+    const getSummaryList = async (
+      page = DEFAULT_DATATABLE_PAGE_NUMBER,
+      pageCount = DEFAULT_PAGE_LIMIT,
+      sortField?: string,
+      sortOrder?: DataTableSortByOrder,
+    ) => {
+      loading.value = true;
+      applications.value =
+        await ApplicationOfferingChangeRequestService.shared.getAllInProgressApplications(
+          {
+            page,
+            sortField,
+            sortOrder,
+            pageLimit: pageCount,
+            searchCriteria: searchCriteria.value,
+          },
+        );
+      loading.value = false;
+    };
+
+    onMounted(async () => {
+      await getSummaryList();
+    });
+    // Pagination sort event callback.
+    const paginationAndSortEvent = async (event: DataTableOptions) => {
+      currentPage = event.page;
+      currentPageLimit = event.itemsPerPage;
+      const [sortByOptions] = event.sortBy;
+      await getSummaryList(
+        event.page,
+        event.itemsPerPage,
+        sortByOptions?.key,
+        sortByOptions?.order,
+      );
+    };
+
+    // Search table.
+    const searchApplicationOfferingChangeRecords = async () => {
+      // Fix for the search pagination issue.
+      applications.value = undefined;
+      await getSummaryList(
+        currentPage ?? DEFAULT_DATATABLE_PAGE_NUMBER,
+        currentPageLimit ?? DEFAULT_PAGE_LIMIT,
+      );
+    };
+
+    /**
+     * Navigate to the form to view assessment.
+     * @param applicationId application to have the request created.
+     */
+    const viewAssessment = (applicationId: any, studentId: any) => {
+      router.push({
+        name: AESTRoutesConst.ASSESSMENTS_SUMMARY,
+        params: {
+          applicationId: applicationId,
+          studentId: studentId,
+        },
+      });
+    };
+
+    // watch(
+    //   () => props.locationId,
+    //   async () => {
+    //     // Update the list.
+    //     await getSummaryList();
+    //   },
+    //   { immediate: true },
+    // );
+
+    return {
+      DEFAULT_PAGE_LIMIT,
+      applications,
+      dateOnlyLongString,
+      paginationAndSortEvent,
+      searchApplicationOfferingChangeRecords,
+      searchCriteria,
+      AllInProgressOfferingChangeSummaryHeaders,
+      loading,
+      viewAssessment,
+    };
+  },
+});
+</script>

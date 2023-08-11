@@ -34,6 +34,7 @@ import { ApplicationOfferingChangeRequestService } from "../../services";
 import { ApplicationOfferingChangeRequestStatus } from "@sims/sims-db";
 import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
 import { IInstitutionUserToken } from "../../auth";
+import { getISODateOnlyString } from "@sims/utilities";
 
 /**
  * Application offering change request controller for institutions client.
@@ -137,12 +138,12 @@ export class ApplicationOfferingChangeRequestInstitutionsController extends Base
   > {
     const offeringChange =
       await this.applicationOfferingChangeRequestService.getSummaryByStatus(
-        locationId,
-        pagination,
         [
           ApplicationOfferingChangeRequestStatus.InProgressWithSABC,
           ApplicationOfferingChangeRequestStatus.InProgressWithStudent,
         ],
+        pagination,
+        { locationId },
       );
     return {
       results: offeringChange.results.map((eachOfferingChange) => {
@@ -158,6 +159,8 @@ export class ApplicationOfferingChangeRequestInstitutionsController extends Base
             eachOfferingChange.application.student.user,
           ),
           status: eachOfferingChange.applicationOfferingChangeRequestStatus,
+          createdAt: getISODateOnlyString(eachOfferingChange.createdAt),
+          studentId: eachOfferingChange.application.student.id,
         };
       }),
       count: offeringChange.count,
@@ -179,13 +182,13 @@ export class ApplicationOfferingChangeRequestInstitutionsController extends Base
   > {
     const offeringChange =
       await this.applicationOfferingChangeRequestService.getSummaryByStatus(
-        locationId,
-        pagination,
         [
           ApplicationOfferingChangeRequestStatus.Approved,
           ApplicationOfferingChangeRequestStatus.DeclinedByStudent,
           ApplicationOfferingChangeRequestStatus.DeclinedBySABC,
         ],
+        pagination,
+        { locationId },
       );
     return {
       results: offeringChange.results.map((eachOfferingChange) => {

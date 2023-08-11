@@ -68,3 +68,4 @@ export * from "./restriction/restriction.institutions.controller";
 export * from "./restriction/restriction.controller.service";
 export * from "./note/note.institutions.controller";
 export * from "./application-offering-change-request/application-offering-change-request.institutions.controller";
+export * from "./application-offering-change-request/application-offering-change-request.aest.controller";
