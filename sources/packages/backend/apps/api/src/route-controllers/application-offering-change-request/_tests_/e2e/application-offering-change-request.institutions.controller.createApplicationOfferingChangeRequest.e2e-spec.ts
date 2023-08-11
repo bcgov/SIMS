@@ -326,7 +326,7 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-createAppl
       .auth(institutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.UNPROCESSABLE_ENTITY)
       .expect({
-        statusCode: 422,
+        statusCode: HttpStatus.UNPROCESSABLE_ENTITY,
         message:
           "Program year is not matching with the application program year.",
         error: "Unprocessable Entity",
@@ -365,7 +365,7 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-createAppl
       .auth(institutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.UNAUTHORIZED)
       .expect({
-        statusCode: 401,
+        statusCode: HttpStatus.UNAUTHORIZED,
         message: "The location does not have access to the offering.",
         error: "Unauthorized",
       });
@@ -403,7 +403,7 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-createAppl
       .auth(institutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.NOT_FOUND)
       .expect({
-        statusCode: 404,
+        statusCode: HttpStatus.NOT_FOUND,
         message: "Application not found.",
         error: "Not Found",
       });
