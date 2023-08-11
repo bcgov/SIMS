@@ -20,13 +20,13 @@
 </template>
 <script lang="ts">
 import { BannerTypes } from "@/types/contracts/Banner";
-import { computed, defineComponent } from "vue";
+import { PropType, computed, defineComponent } from "vue";
 
 export default defineComponent({
   props: {
     type: {
-      type: String,
-      validator: (val: string) => val in BannerTypes,
+      type: String as PropType<BannerTypes>,
+      required: true,
     },
     header: {
       type: String,

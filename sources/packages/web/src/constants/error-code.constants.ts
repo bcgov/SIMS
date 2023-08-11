@@ -1,5 +1,4 @@
 export const OFFERING_INTENSITY_MISMATCH = "OFFERING_INTENSITY_MISMATCH";
-export const PIR_OR_DATE_OVERLAP_ERROR = "PIR_OR_DATE_OVERLAP_ERROR";
 export const ACTIVE_STUDENT_RESTRICTION = "ACTIVE_STUDENT_RESTRICTION";
 export const MISSING_STUDENT_ACCOUNT = "MISSING_STUDENT_ACCOUNT";
 export const APPLICATION_CHANGE_NOT_ELIGIBLE =
@@ -77,3 +76,7 @@ export const DUPLICATE_SABC_CODE = "DUPLICATE_SABC_CODE";
  * Request for disability not allowed.
  */
 export const DISABILITY_REQUEST_NOT_ALLOWED = "DISABILITY_REQUEST_NOT_ALLOWED";
+/**
+ * Provided study dates is overlapping with the existing study periods.
+ */
+export const STUDY_DATE_OVERLAP_ERROR = "STUDY_DATE_OVERLAP_ERROR";

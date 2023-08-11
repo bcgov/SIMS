@@ -381,7 +381,6 @@ export class ApplicationOfferingChangeRequestService {
     if (!application) {
       throw new Error("Application not found or it is not eligible.");
     }
-    // TODO: Apply the same validations from PIR.
     const newRequest = new ApplicationOfferingChangeRequest();
     newRequest.application = application;
     newRequest.activeOffering = application.currentAssessment.offering;

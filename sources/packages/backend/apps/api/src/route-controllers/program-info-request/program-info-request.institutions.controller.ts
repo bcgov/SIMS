@@ -25,11 +25,11 @@ import {
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { IUserToken } from "../../auth/userToken.interface";
 import {
+  APPLICATION_NOT_FOUND,
   ApplicationService,
-  EducationProgramOfferingService,
   PIRDeniedReasonService,
 } from "../../services";
-import { getUserFullName, PIR_OR_DATE_OVERLAP_ERROR } from "../../utilities";
+import { getUserFullName, STUDY_DATE_OVERLAP_ERROR } from "../../utilities";
 import { CustomNamedError, getISODateOnlyString } from "@sims/utilities";
 import {
   Application,
@@ -37,7 +37,9 @@ import {
   ProgramInfoStatus,
 } from "@sims/sims-db";
 import {
+  OFFERING_DOES_NOT_BELONG_TO_LOCATION,
   OFFERING_INTENSITY_MISMATCH,
+  OFFERING_PROGRAM_YEAR_MISMATCH,
   PIR_DENIED_REASON_NOT_FOUND_ERROR,
   PIR_REQUEST_NOT_FOUND_ERROR,
 } from "../../constants";
@@ -60,7 +62,6 @@ export class ProgramInfoRequestInstitutionsController extends BaseController {
   constructor(
     private readonly applicationService: ApplicationService,
     private readonly workflowClientService: WorkflowClientService,
-    private readonly offeringService: EducationProgramOfferingService,
     private readonly pirDeniedReasonService: PIRDeniedReasonService,
   ) {
     super();
@@ -206,6 +207,10 @@ export class ProgramInfoRequestInstitutionsController extends BaseController {
     description:
       "Application not found or not able to find an application that requires a PIR to be completed.",
   })
+  @ApiUnprocessableEntityResponse({
+    description:
+      "Study period overlap or offering program year mismatch or offering intensity mismatch.",
+  })
   @ApiUnauthorizedResponse({
     description: "The location does not have access to the offering.",
   })
@@ -217,40 +222,17 @@ export class ProgramInfoRequestInstitutionsController extends BaseController {
     @Body() payload: CompleteProgramInfoRequestAPIInDTO,
     @UserToken() userToken: IUserToken,
   ): Promise<void> {
-    // Validate if the application exists and the location has access to it.
-    const application = await this.applicationService.getProgramInfoRequest(
-      locationId,
-      applicationId,
-    );
-    if (!application) {
-      throw new NotFoundException("Application not found.");
-    }
-    // Validates if the offering exists and belongs to the location.
-    const offering = await this.offeringService.getOfferingLocationId(
-      payload.selectedOffering,
-    );
-    if (offering?.institutionLocation.id !== locationId) {
-      throw new UnauthorizedException(
-        "The location does not have access to the offering.",
-      );
-    }
-
     try {
-      // Validate possible overlaps with exists applications.
-      await this.applicationService.validateOverlappingDatesAndPIR(
+      await this.applicationService.validateApplicationOffering(
         applicationId,
-        application.student.user.lastName,
-        application.student.user.id,
-        application.student.sinValidation.sin,
-        application.student.birthDate,
-        offering.studyStartDate,
-        offering.studyEndDate,
+        payload.selectedOffering,
+        locationId,
       );
       // Complete PIR.
       await this.applicationService.setOfferingForProgramInfoRequest(
         applicationId,
         locationId,
-        offering.id,
+        payload.selectedOffering,
         userToken.userId,
       );
       // Send a message to allow the workflow to proceed.
@@ -265,11 +247,17 @@ export class ProgramInfoRequestInstitutionsController extends BaseController {
             throw new NotFoundException(
               new ApiProcessError(error.message, error.name),
             );
-          case PIR_OR_DATE_OVERLAP_ERROR:
+          case APPLICATION_NOT_FOUND:
+            throw new NotFoundException(error.message);
+          case STUDY_DATE_OVERLAP_ERROR:
           case OFFERING_INTENSITY_MISMATCH:
             throw new UnprocessableEntityException(
               new ApiProcessError(error.message, error.name),
             );
+          case OFFERING_PROGRAM_YEAR_MISMATCH:
+            throw new UnprocessableEntityException(error.message);
+          case OFFERING_DOES_NOT_BELONG_TO_LOCATION:
+            throw new UnauthorizedException(error.message);
         }
       }
       throw new InternalServerErrorException(

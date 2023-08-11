@@ -55,6 +55,9 @@ import NoticeOfAssessment from "@/views/institution/student/applicationDetails/N
 import RequestApplicationChange from "@/views/institution/locations/request-a-change/RequestAChange.vue";
 import RequestApplicationChangeFormSubmit from "@/views/institution/locations/request-a-change/RequestAChangeFormSubmit.vue";
 import RequestApplicationChangeFormView from "@/views/institution/locations/request-a-change/RequestAChangeFormView.vue";
+import AvailableToChange from "@/views/institution/locations/request-a-change/request-a-change/AvailableToChange.vue";
+import InProgress from "@/views/institution/locations/request-a-change/request-a-change/InProgress.vue";
+import Completed from "@/views/institution/locations/request-a-change/request-a-change/Completed.vue";
 
 export const institutionRoutes: Array<RouteRecordRaw> = [
   {
@@ -170,14 +173,17 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
       {
         path: AppRoutes.RequestApplicationOfferingChange,
         name: InstitutionRoutesConst.REQUEST_CHANGE,
-        components: {
-          default: RequestApplicationChange,
-          sidebar: InstitutionHomeSideBar,
+        redirect: {
+          name: InstitutionRoutesConst.REQUEST_CHANGE_AVAILABLE_TO_CHANGE,
         },
         props: {
           default: (route: RouteLocationNormalized) => ({
             locationId: parseInt(route.params.locationId as string),
           }),
+        },
+        components: {
+          default: RequestApplicationChange,
+          sidebar: InstitutionHomeSideBar,
         },
         meta: {
           clientType: ClientIdType.Institution,
@@ -186,6 +192,32 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
             InstitutionUserTypes.user,
           ],
         },
+        children: [
+          {
+            path: AppRoutes.RequestApplicationOfferingChangeAvailableToChange,
+            name: InstitutionRoutesConst.REQUEST_CHANGE_AVAILABLE_TO_CHANGE,
+            component: AvailableToChange,
+            props: (route: RouteLocationNormalized) => ({
+              locationId: parseInt(route.params.locationId as string),
+            }),
+          },
+          {
+            path: AppRoutes.RequestApplicationOfferingChangeInProgress,
+            name: InstitutionRoutesConst.REQUEST_CHANGE_IN_PROGRESS,
+            props: (route: RouteLocationNormalized) => ({
+              locationId: parseInt(route.params.locationId as string),
+            }),
+            component: InProgress,
+          },
+          {
+            path: AppRoutes.RequestApplicationOfferingChangeCompleted,
+            name: InstitutionRoutesConst.REQUEST_CHANGE_COMPLETED,
+            props: (route: RouteLocationNormalized) => ({
+              locationId: parseInt(route.params.locationId as string),
+            }),
+            component: Completed,
+          },
+        ],
       },
       {
         path: AppRoutes.RequestApplicationOfferingChangeSubmit,

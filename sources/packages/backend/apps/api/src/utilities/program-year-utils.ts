@@ -1,4 +1,9 @@
-import { ProgramYear, SupportingUserType } from "@sims/sims-db";
+import {
+  EducationProgramOffering,
+  ProgramYear,
+  SupportingUserType,
+} from "@sims/sims-db";
+import { isBetweenPeriod } from "@sims/utilities";
 
 /**
  * Define the form name to be used from a program year based
@@ -20,4 +25,19 @@ export function getSupportingUserForm(
     default:
       throw new Error(`Unknown supporting user type: ${userType}`);
   }
+}
+
+/**
+ * Check if the offering belong to the program year.
+ * @param offering offering details.
+ * @param programYear program year details.
+ * @returns returns true if the offering belong to the program
+ * year.
+ */
+export function offeringBelongToProgramYear(
+  offering: Pick<EducationProgramOffering, "studyStartDate">,
+  programYear: Pick<ProgramYear, "startDate" | "endDate">,
+): boolean {
+  // Check if the program start date belong to the program year.
+  return isBetweenPeriod(offering.studyStartDate, programYear);
 }

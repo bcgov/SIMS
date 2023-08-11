@@ -46,7 +46,7 @@ import {
   FormIOForm,
 } from "@/types";
 import {
-  PIR_OR_DATE_OVERLAP_ERROR,
+  STUDY_DATE_OVERLAP_ERROR,
   OFFERING_INTENSITY_MISMATCH,
 } from "@/constants";
 import {
@@ -259,7 +259,7 @@ export default defineComponent({
           "An error happened while saving the Program Information Request.";
         if (error instanceof ApiProcessError) {
           if (
-            error.errorType === PIR_OR_DATE_OVERLAP_ERROR ||
+            error.errorType === STUDY_DATE_OVERLAP_ERROR ||
             error.errorType === OFFERING_INTENSITY_MISMATCH
           ) {
             errorLabel = "Invalid submission";

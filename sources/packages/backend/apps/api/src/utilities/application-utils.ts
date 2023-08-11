@@ -1,8 +1,8 @@
 import { Application, DisbursementSchedule } from "@sims/sims-db";
 import { PIR_DENIED_REASON_OTHER_ID } from ".";
 import { COE_DENIED_REASON_OTHER_ID } from "@sims/utilities";
-export const PIR_OR_DATE_OVERLAP_ERROR = "PIR_OR_DATE_OVERLAP_ERROR";
-export const PIR_OR_DATE_OVERLAP_ERROR_MESSAGE =
+export const STUDY_DATE_OVERLAP_ERROR = "STUDY_DATE_OVERLAP_ERROR";
+export const STUDY_DATE_OVERLAP_ERROR_MESSAGE =
   "There is an existing application already with overlapping study period or a pending PIR.";
 /**
  * Gets PIR denied reason
