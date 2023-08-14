@@ -72,8 +72,8 @@ export const getPaginationQueryString = (
   // Sort parameters.
   if (paginationOptions.sortField && paginationOptions.sortOrder) {
     const sortDBOrder =
-      paginationOptions.sortOrder === DataTableSortOrder.DESC ||
-      DataTableSortByOrder.DESC
+      paginationOptions.sortOrder ===
+      (DataTableSortOrder.DESC || DataTableSortByOrder.DESC)
         ? FieldSortOrder.DESC
         : FieldSortOrder.ASC;
     parameters.push(

@@ -87,7 +87,7 @@ export class CompletedOfferingChangePaginationOptionsAPIInDTO extends Pagination
  */
 export class InProgressOfferingChangePaginationOptionsAPIInDTO extends PaginationOptionsAPIInDTO {
   @IsOptional()
-  @IsIn(["applicationNumber", "fullName"])
+  @IsIn(["applicationNumber", "fullName", "dateSubmitted", "status"])
   sortField?: string;
 }
 

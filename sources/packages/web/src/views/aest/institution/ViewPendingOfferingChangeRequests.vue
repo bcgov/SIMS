@@ -38,7 +38,7 @@
                 v-model:items-per-page="DEFAULT_PAGE_LIMIT"
                 @update:options="paginationAndSortEvent"
               >
-                <template #[`item.createdAt`]="{ item }">
+                <template #[`item.dateSubmitted`]="{ item }">
                   {{ dateOnlyLongString(item.raw.createdAt) }}
                 </template>
                 <template #[`item.fullName`]="{ item }">
@@ -47,10 +47,13 @@
                 <template #[`item.applicationNumber`]="{ item }">
                   {{ item.raw.applicationNumber }}
                 </template>
+                <template #[`item.status`]="{ item }">
+                  <status-chip-application-offering-change
+                    :status="item.raw.status"
+                  />
+                </template>
                 <template #[`item.id`]="{ item }">
-                  <v-btn
-                    color="primary"
-                    @click="viewAssessment(item.value, item.raw.studentId)"
+                  <v-btn color="primary" @click="viewAssessment(item)"
                     >View</v-btn
                   >
                 </template>
@@ -74,12 +77,14 @@ import {
   DataTableSortByOrder,
 } from "@/types";
 import { useFormatters } from "@/composables";
+import StatusChipApplicationOfferingChange from "@/components/generic/StatusChipApplicationOfferingChange.vue";
 import { ApplicationOfferingChangeSummaryAPIOutDTO } from "@/services/http/dto";
 import { ApplicationOfferingChangeRequestService } from "@/services/ApplicationOfferingChangeRequestService";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import { useRouter } from "vue-router";
 
 export default defineComponent({
+  components: { StatusChipApplicationOfferingChange },
   setup() {
     const router = useRouter();
     const loading = ref(false);
@@ -103,8 +108,8 @@ export default defineComponent({
     const getSummaryList = async (
       page = DEFAULT_DATATABLE_PAGE_NUMBER,
       pageCount = DEFAULT_PAGE_LIMIT,
-      sortField?: string,
-      sortOrder?: DataTableSortByOrder,
+      sortField = "status",
+      sortOrder = DataTableSortByOrder.ASC,
     ) => {
       loading.value = true;
       applications.value =
@@ -123,6 +128,7 @@ export default defineComponent({
     onMounted(async () => {
       await getSummaryList();
     });
+
     // Pagination sort event callback.
     const paginationAndSortEvent = async (event: DataTableOptions) => {
       currentPage = event.page;
@@ -150,12 +156,12 @@ export default defineComponent({
      * Navigate to the form to view assessment.
      * @param applicationId application to have the request created.
      */
-    const viewAssessment = (applicationId: any, studentId: any) => {
+    const viewAssessment = (item: any) => {
       router.push({
         name: AESTRoutesConst.ASSESSMENTS_SUMMARY,
         params: {
-          applicationId: applicationId,
-          studentId: studentId,
+          applicationId: item.raw.applicationId,
+          studentId: item.raw.studentId,
         },
       });
     };

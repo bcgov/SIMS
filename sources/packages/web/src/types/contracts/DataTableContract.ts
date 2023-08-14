@@ -250,14 +250,16 @@ export const CompletedOfferingChangeSummaryHeaders = [
 export const AllInProgressOfferingChangeSummaryHeaders = [
   {
     title: "Date submitted",
-    key: "createdAt",
+    key: "dateSubmitted",
   },
   {
     title: "Name",
+    sortable: false,
     key: "fullName",
   },
   {
     title: "Application #",
+    sortable: false,
     key: "applicationNumber",
   },
   {

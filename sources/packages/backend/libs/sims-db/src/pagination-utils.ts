@@ -18,6 +18,19 @@ export function transformToApplicationEntitySortField(
     return orderByCondition;
   }
 
+  if (sortField === "dateSubmitted") {
+    orderByCondition["applicationOfferingChangeRequest.createdAt"] = sortOrder;
+    return orderByCondition;
+  }
+
+  if (sortField === "status") {
+    orderByCondition[
+      "applicationOfferingChangeRequest.applicationOfferingChangeRequestStatus"
+    ] = sortOrder;
+    orderByCondition["applicationOfferingChangeRequest.createdAt"] = sortOrder;
+    return orderByCondition;
+  }
+
   const fieldSortOptions = {
     applicationNumber: "application.applicationNumber",
   };
