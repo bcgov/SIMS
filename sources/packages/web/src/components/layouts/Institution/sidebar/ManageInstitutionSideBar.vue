@@ -18,13 +18,10 @@
         active-class="active-list-item"
         bg-color="default"
         active-color="primary"
-        data-cy="offeringsUpload"
+        :items="bulkUploadItems"
+        data-cy="bulkUploadItems"
       >
-        <v-list-item
-          :to="{ name: InstitutionRoutesConst.OFFERINGS_UPLOAD }"
-          prepend-icon="fa:fa-solid fa-upload"
-          title="Offerings Upload"
-        /> </v-list
+      </v-list
     ></template>
   </v-navigation-drawer>
 </template>
@@ -32,10 +29,12 @@
 import { ref, defineComponent } from "vue";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import { MenuItemModel } from "@/types";
+import { useInstitutionState } from "@/composables";
 
 export default defineComponent({
   components: {},
   setup() {
+    const { institutionState } = useInstitutionState();
     const items = ref<MenuItemModel[]>([
       {
         title: "Manage Profile",
@@ -74,9 +73,32 @@ export default defineComponent({
         },
       },
     ]);
+    const bulkUploadItems = ref<MenuItemModel[]>([
+      {
+        title: "Offerings Upload",
+        props: {
+          prependIcon: "fa:fa-solid fa-upload",
+          to: {
+            name: InstitutionRoutesConst.OFFERINGS_UPLOAD,
+          },
+        },
+      },
+    ]);
+    if (institutionState.value.isBCPublic) {
+      bulkUploadItems.value.push({
+        title: "Withdrawal Upload",
+        props: {
+          prependIcon: "fa:fa-solid fa-upload",
+          to: {
+            name: InstitutionRoutesConst.WITHDRAWAL_UPLOAD,
+          },
+        },
+      });
+    }
 
     return {
       items,
+      bulkUploadItems,
       InstitutionRoutesConst,
     };
   },
