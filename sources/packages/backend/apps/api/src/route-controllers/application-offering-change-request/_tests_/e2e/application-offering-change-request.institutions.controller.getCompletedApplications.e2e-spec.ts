@@ -153,6 +153,8 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-getComplet
             id: declinedBySABCApplicationOfferingChange.id,
             applicationNumber:
               applicationWithDeclinedBySABCApplicationOfferingChange.applicationNumber,
+            applicationId:
+              applicationWithDeclinedBySABCApplicationOfferingChange.id,
             studyStartDate:
               applicationWithDeclinedBySABCApplicationOfferingChange
                 .currentAssessment.offering.studyStartDate,
@@ -172,6 +174,8 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-getComplet
             id: declinedByStudentApplicationOfferingChange.id,
             applicationNumber:
               applicationWithDeclinedByStudentApplicationOfferingChange.applicationNumber,
+            applicationId:
+              applicationWithDeclinedByStudentApplicationOfferingChange.id,
             studyStartDate:
               applicationWithDeclinedByStudentApplicationOfferingChange
                 .currentAssessment.offering.studyStartDate,
@@ -191,6 +195,7 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-getComplet
             id: approvedApplicationOfferingChange.id,
             applicationNumber:
               applicationWithApprovedApplicationOfferingChange.applicationNumber,
+            applicationId: applicationWithApprovedApplicationOfferingChange.id,
             studyStartDate:
               applicationWithApprovedApplicationOfferingChange.currentAssessment
                 .offering.studyStartDate,
@@ -318,6 +323,7 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-getComplet
             id: approvedApplicationOfferingChange.id,
             applicationNumber:
               applicationWithApprovedApplicationOfferingChange.applicationNumber,
+            applicationId: applicationWithApprovedApplicationOfferingChange.id,
             studyStartDate:
               applicationWithApprovedApplicationOfferingChange.currentAssessment
                 .offering.studyStartDate,
@@ -336,6 +342,8 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-getComplet
             id: declinedBySABCApplicationOfferingChange.id,
             applicationNumber:
               applicationWithDeclinedBySABCApplicationOfferingChange.applicationNumber,
+            applicationId:
+              applicationWithDeclinedBySABCApplicationOfferingChange.id,
             studyStartDate:
               applicationWithDeclinedBySABCApplicationOfferingChange
                 .currentAssessment.offering.studyStartDate,
