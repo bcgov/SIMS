@@ -20,7 +20,7 @@ import {
   ApplicationStatus,
   InstitutionLocation,
 } from "@sims/sims-db";
-import { FieldSortOrder } from "@sims/utilities";
+import { FieldSortOrder, getISODateOnlyString } from "@sims/utilities";
 import { getUserFullName } from "../../../../utilities";
 
 describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-getInProgressApplications", () => {
@@ -124,6 +124,8 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-getInProgr
             id: inProgressWithSABCApplicationOfferingChange.id,
             applicationNumber:
               applicationWithInProgressWithSABCApplicationOfferingChange.applicationNumber,
+            applicationId:
+              applicationWithInProgressWithSABCApplicationOfferingChange.id,
             studyStartDate:
               applicationWithInProgressWithSABCApplicationOfferingChange
                 .currentAssessment.offering.studyStartDate,
@@ -136,11 +138,19 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-getInProgr
             ),
             status:
               inProgressWithSABCApplicationOfferingChange.applicationOfferingChangeRequestStatus,
+            createdAt: getISODateOnlyString(
+              applicationWithInProgressWithSABCApplicationOfferingChange.createdAt,
+            ),
+            studentId:
+              applicationWithInProgressWithSABCApplicationOfferingChange.student
+                .id,
           },
           {
             id: inProgressWithStudentApplicationOfferingChange.id,
             applicationNumber:
               applicationWithInProgressWithStudentApplicationOfferingChange.applicationNumber,
+            applicationId:
+              applicationWithInProgressWithStudentApplicationOfferingChange.id,
             studyStartDate:
               applicationWithInProgressWithStudentApplicationOfferingChange
                 .currentAssessment.offering.studyStartDate,
@@ -153,6 +163,12 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-getInProgr
             ),
             status:
               inProgressWithStudentApplicationOfferingChange.applicationOfferingChangeRequestStatus,
+            createdAt: getISODateOnlyString(
+              applicationWithInProgressWithStudentApplicationOfferingChange.createdAt,
+            ),
+            studentId:
+              applicationWithInProgressWithStudentApplicationOfferingChange
+                .student.id,
           },
         ],
         count: 2,
@@ -208,6 +224,8 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-getInProgr
             id: inProgressWithSABCApplicationOfferingChange.id,
             applicationNumber:
               applicationWithInProgressWithSABCApplicationOfferingChange.applicationNumber,
+            applicationId:
+              applicationWithInProgressWithSABCApplicationOfferingChange.id,
             studyStartDate:
               applicationWithInProgressWithSABCApplicationOfferingChange
                 .currentAssessment.offering.studyStartDate,
@@ -220,6 +238,12 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-getInProgr
             ),
             status:
               inProgressWithSABCApplicationOfferingChange.applicationOfferingChangeRequestStatus,
+            createdAt: getISODateOnlyString(
+              applicationWithInProgressWithSABCApplicationOfferingChange.createdAt,
+            ),
+            studentId:
+              applicationWithInProgressWithSABCApplicationOfferingChange.student
+                .id,
           },
         ],
         count: 1,
