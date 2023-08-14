@@ -53,6 +53,7 @@ import {
   OFFERING_PROGRAM_YEAR_MISMATCH,
 } from "../../constants";
 import { InjectLogger, LoggerService } from "@sims/utilities/logger";
+import { ApplicationOfferingChangeRequestControllerService } from "..";
 
 /**
  * Application offering change request controller for institutions client.
@@ -67,6 +68,7 @@ export class ApplicationOfferingChangeRequestInstitutionsController extends Base
   constructor(
     private readonly applicationOfferingChangeRequestService: ApplicationOfferingChangeRequestService,
     private readonly applicationService: ApplicationService,
+    private readonly applicationOfferingChangeRequestControllerService: ApplicationOfferingChangeRequestControllerService,
   ) {
     super();
   }
@@ -165,23 +167,10 @@ export class ApplicationOfferingChangeRequestInstitutionsController extends Base
         { locationId },
       );
     return {
-      results: offeringChange.results.map((eachOfferingChange) => {
-        const offering =
-          eachOfferingChange.application.currentAssessment.offering;
-        return {
-          id: eachOfferingChange.id,
-          applicationNumber: eachOfferingChange.application.applicationNumber,
-          applicationId: eachOfferingChange.application.id,
-          studyStartDate: offering.studyStartDate,
-          studyEndDate: offering.studyEndDate,
-          fullName: getUserFullName(
-            eachOfferingChange.application.student.user,
-          ),
-          status: eachOfferingChange.applicationOfferingChangeRequestStatus,
-          createdAt: getISODateOnlyString(eachOfferingChange.createdAt),
-          studentId: eachOfferingChange.application.student.id,
-        };
-      }),
+      results:
+        this.applicationOfferingChangeRequestControllerService.mapToInProgressApplicationOfferingChangesAPIOutDTOs(
+          offeringChange,
+        ),
       count: offeringChange.count,
     };
   }
