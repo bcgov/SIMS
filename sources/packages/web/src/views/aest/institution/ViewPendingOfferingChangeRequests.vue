@@ -99,7 +99,7 @@ export default defineComponent({
     let currentPageLimit = DEFAULT_PAGE_LIMIT;
 
     /**
-     * Load eligible applications offering change records for institution.
+     * Load eligible applications offering change records.
      * @param page page number, if nothing passed then {@link DEFAULT_DATATABLE_PAGE_NUMBER}.
      * @param pageCount page limit, if nothing passed then {@link DEFAULT_PAGE_LIMIT}.
      * @param sortField sort field, if nothing passed then api sorts with application number.
@@ -165,15 +165,6 @@ export default defineComponent({
         },
       });
     };
-
-    // watch(
-    //   () => props.locationId,
-    //   async () => {
-    //     // Update the list.
-    //     await getSummaryList();
-    //   },
-    //   { immediate: true },
-    // );
 
     return {
       DEFAULT_PAGE_LIMIT,
