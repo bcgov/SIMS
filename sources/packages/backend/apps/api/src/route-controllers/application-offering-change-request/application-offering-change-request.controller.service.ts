@@ -1,12 +1,16 @@
 import { Injectable } from "@nestjs/common";
 import { ApplicationOfferingChangeRequest } from "@sims/sims-db";
 import { getISODateOnlyString } from "@sims/utilities";
+import { ApplicationOfferingChangeRequestService } from "../../services";
 import { getUserFullName } from "../../utilities";
 import { PaginatedResultsAPIOutDTO } from "../models/pagination.dto";
 import { InProgressApplicationOfferingChangesAPIOutDTO } from "./models/application-offering-change-request.institutions.dto";
 
 @Injectable()
 export class ApplicationOfferingChangeRequestControllerService {
+  constructor(
+    private readonly applicationOfferingChangeRequestService: ApplicationOfferingChangeRequestService,
+  ) {}
   /**
    * Map paginated results to a list of objects to be transferred by the API.
    * @param offeringChange offering change paginated results.
