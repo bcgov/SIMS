@@ -69,7 +69,7 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-getAllInPr
     // Student 3 has an in progress with student application offering change request with a different institution.
     const inProgressWithStudentApplicationOfferingChangeWithDifferentInstitution =
       await saveFakeApplicationOfferingRequestChange(db);
-    // Student 4 has an completed application for College F, that have an approved application offering change request.
+    // Student 4 has an completed application for College F, that has an approved application offering change request.
     const approvedApplicationOfferingChange =
       await saveFakeApplicationOfferingRequestChange(
         db,
