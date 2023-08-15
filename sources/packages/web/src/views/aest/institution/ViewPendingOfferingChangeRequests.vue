@@ -102,14 +102,14 @@ export default defineComponent({
      * Load eligible applications offering change records.
      * @param page page number, if nothing passed then {@link DEFAULT_DATATABLE_PAGE_NUMBER}.
      * @param pageCount page limit, if nothing passed then {@link DEFAULT_PAGE_LIMIT}.
-     * @param sortField sort field, if nothing passed then api sorts with application number.
-     * @param sortOrder sort oder, if nothing passed then {@link DataTableSortByOrder.ASC}.
+     * @param sortField sort field, if nothing passed then api sorts with status.
+     * @param sortOrder sort oder, if nothing passed then {@link DataTableSortByOrder.DESC}.
      */
     const getSummaryList = async (
       page = DEFAULT_DATATABLE_PAGE_NUMBER,
       pageCount = DEFAULT_PAGE_LIMIT,
       sortField = "status",
-      sortOrder = DataTableSortByOrder.ASC,
+      sortOrder = DataTableSortByOrder.DESC,
     ) => {
       loading.value = true;
       applications.value =
