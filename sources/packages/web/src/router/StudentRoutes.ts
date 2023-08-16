@@ -1,4 +1,4 @@
-import { RouteLocationNormalized, RouteRecordRaw } from "vue-router";
+import { RouteRecordRaw } from "vue-router";
 import StudentDashboard from "@/views/student/StudentDashboard.vue";
 import Login from "@/views/student/Login.vue";
 import AppStudent from "@/views/student/AppStudent.vue";

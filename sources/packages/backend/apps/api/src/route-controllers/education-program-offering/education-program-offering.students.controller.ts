@@ -17,7 +17,11 @@ import {
 } from "@nestjs/swagger";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { AllowAuthorizedParty, UserToken } from "../../auth/decorators";
-import { OfferingIntensity, OfferingTypes } from "@sims/sims-db";
+import {
+  OfferingIntensity,
+  OfferingTypes,
+  ApplicationOfferingPurpose,
+} from "@sims/sims-db";
 import { EducationProgramOfferingService } from "../../services";
 import { ApiProcessError, ClientTypeBaseRoute } from "../../types";
 import BaseController from "../BaseController";
@@ -28,7 +32,6 @@ import {
 import { OptionItemAPIOutDTO } from "../models/common.dto";
 import { EducationProgramOfferingControllerService } from "./education-program-offering.controller.service";
 import { ParseEnumQueryPipe } from "../utils/custom-validation-pipe";
-import { ApplicationOfferingPurpose } from "@sims/sims-db";
 import { StudentUserToken } from "../../auth";
 import { STUDENT_UNAUTHORIZED_FOR_OFFERING } from "../../constants";
 
@@ -126,10 +129,10 @@ export class EducationProgramOfferingStudentsController extends BaseController {
   ): Promise<EducationProgramOfferingSummaryViewAPIOutDTO> {
     if (
       purpose === ApplicationOfferingPurpose.OfferingChange &&
-      this.educationProgramOfferingControllerService.validateApplicationOfferingForStudent(
+      (await this.educationProgramOfferingControllerService.validateApplicationOfferingForStudent(
         offeringId,
         studentUserToken.studentId,
-      )
+      ))
     )
       return this.educationProgramOfferingControllerService.getOfferingById(
         offeringId,

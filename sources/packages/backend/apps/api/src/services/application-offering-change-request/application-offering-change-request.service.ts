@@ -452,7 +452,8 @@ export class ApplicationOfferingChangeRequestService {
       .andWhere("student.id = :studentId", { studentId })
       .getOne();
 
-    return application ? true : false;
+    if (application) return true;
+    return false;
   }
 
   /**

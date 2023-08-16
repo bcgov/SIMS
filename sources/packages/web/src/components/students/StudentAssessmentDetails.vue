@@ -14,7 +14,7 @@
     :viewRequestTypes="studentAssessmentRequestTypes"
     @viewStudentAppeal="goToStudentAppeal"
     @viewStudentApplicationOfferingChange="
-      goToCompletedStudentApplicationOfferingChangeRequest
+      goToStudentApplicationOfferingChangeRequest
     "
     @viewAssessment="goToViewAssessment"
   />
@@ -76,21 +76,9 @@ export default defineComponent({
         },
       });
     };
-    const goToCompletedStudentApplicationOfferingChangeRequest = (
-      applicationOfferingChangeRequestId: number,
-    ) => {
-      router.push({
-        name: StudentRoutesConst.STUDENT_REQUESTED_APPLICATION_OFFERING_CHANGE,
-        params: {
-          applicationOfferingChangeRequestId,
-          applicationId: props.applicationId,
-        },
-      });
-    };
     return {
       goToViewAssessment,
       goToStudentAppeal,
-      goToCompletedStudentApplicationOfferingChangeRequest,
       goToStudentApplicationOfferingChangeRequest,
       studentAssessmentRequestTypes,
     };

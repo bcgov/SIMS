@@ -137,7 +137,7 @@ export class ApplicationOfferingChangeRequestStudentsController extends BaseCont
     payload: UpdateApplicationOfferingChangeRequestAPIInDTO,
   ) {
     const studentAuthorized =
-      this.applicationOfferingChangeRequestService.validateStudentForOfferingChangeRequest(
+      await this.applicationOfferingChangeRequestService.validateStudentForOfferingChangeRequest(
         applicationOfferingChangeRequestId,
         userToken.studentId,
       );

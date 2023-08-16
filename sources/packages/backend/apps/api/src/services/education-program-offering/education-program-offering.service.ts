@@ -96,22 +96,23 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     offeringId: number,
     studentId: number,
   ): Promise<boolean> {
-    return this.applicationOfferingChangeRepo.findOne({
-      select: { id: true },
-      relations: { application: { student: true } },
-      where: [
-        {
-          application: { student: { id: studentId } },
-          activeOffering: { id: offeringId },
-        },
-        {
-          application: { student: { id: studentId } },
-          requestedOffering: { id: offeringId },
-        },
-      ],
-    })
-      ? true
-      : false;
+    const applicationOfferingChangeId =
+      this.applicationOfferingChangeRepo.findOne({
+        select: { id: true },
+        relations: { application: { student: true } },
+        where: [
+          {
+            application: { student: { id: studentId } },
+            activeOffering: { id: offeringId },
+          },
+          {
+            application: { student: { id: studentId } },
+            requestedOffering: { id: offeringId },
+          },
+        ],
+      });
+    if (applicationOfferingChangeId) return true;
+    return false;
   }
 
   /**
