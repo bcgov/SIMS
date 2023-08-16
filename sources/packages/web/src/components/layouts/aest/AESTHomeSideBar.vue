@@ -126,7 +126,7 @@ export default defineComponent({
         props: {
           prependIcon: "fa:far fa-folder",
           to: {
-            name: AESTRoutesConst.PENDING_REQUEST_CHANGE_OFFERINGS,
+            name: AESTRoutesConst.REQUEST_CHANGE_OFFERINGS,
           },
         },
       },

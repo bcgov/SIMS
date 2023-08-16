@@ -5,102 +5,74 @@ import {
   BEARER_AUTH_TYPE,
   createTestingAppModule,
   getAESTToken,
-  getAuthRelatedEntities,
-  InstitutionTokenTypes,
 } from "../../../../testHelpers";
 import {
-  createFakeInstitutionLocation,
   E2EDataSources,
   createE2EDataSources,
   saveFakeApplicationOfferingRequestChange,
 } from "@sims/test-utils";
-import {
-  ApplicationOfferingChangeRequestStatus,
-  InstitutionLocation,
-} from "@sims/sims-db";
+import { ApplicationOfferingChangeRequestStatus } from "@sims/sims-db";
 import { FieldSortOrder, getISODateOnlyString } from "@sims/utilities";
 import { getUserFullName } from "../../../../utilities";
 
 describe("ApplicationOfferingChangeRequestAESTController(e2e)-getAllInProgressApplications", () => {
   let app: INestApplication;
   let db: E2EDataSources;
-  let collegeFLocation: InstitutionLocation;
 
   beforeAll(async () => {
     const { nestApplication, dataSource } = await createTestingAppModule();
     app = nestApplication;
     db = createE2EDataSources(dataSource);
-    // College F.
-    const { institution: collegeF } = await getAuthRelatedEntities(
-      db.dataSource,
-      InstitutionTokenTypes.CollegeFUser,
-    );
-    collegeFLocation = createFakeInstitutionLocation({ institution: collegeF });
   });
 
   it("Should return all in progress application offering change requests when requested.", async () => {
     // Arrange
 
-    // Student 1 has an in progress with student application offering change request for College F.
-    const inProgressWithStudentApplicationOfferingChange =
-      await saveFakeApplicationOfferingRequestChange(db, {
-        institutionLocation: collegeFLocation,
-      });
-    // Student 2 has an in progress with SABC application offering change request for College F.
-    const inProgressWithSABCApplicationOfferingChange =
-      await saveFakeApplicationOfferingRequestChange(
-        db,
-        {
-          institutionLocation: collegeFLocation,
-        },
-        {
-          initialValues: {
-            applicationOfferingChangeRequestStatus:
-              ApplicationOfferingChangeRequestStatus.InProgressWithSABC,
-          },
-        },
-      );
-    // Student 3 has an in progress with student application offering change request with a different institution.
-    const inProgressWithStudentApplicationOfferingChangeWithDifferentInstitution =
+    // Student 1 has an in progress with student application offering change request.
+    const inProgressWithStudentApplicationOfferingChange2 =
       await saveFakeApplicationOfferingRequestChange(db);
-    // Student 4 has an completed application for College F, that has an approved application offering change request.
+    // Student 2 has an in progress with SABC application offering change request.
+    const inProgressWithSABCApplicationOfferingChange =
+      await saveFakeApplicationOfferingRequestChange(db, null, {
+        initialValues: {
+          applicationOfferingChangeRequestStatus:
+            ApplicationOfferingChangeRequestStatus.InProgressWithSABC,
+        },
+      });
+    // Student 3 has an in progress with student application offering change request.
+    const inProgressWithStudentApplicationOfferingChange1 =
+      await saveFakeApplicationOfferingRequestChange(db);
+    // Student 4 has an completed application, that has an approved application offering change request.
     const approvedApplicationOfferingChange =
-      await saveFakeApplicationOfferingRequestChange(
-        db,
-        {
-          institutionLocation: collegeFLocation,
+      await saveFakeApplicationOfferingRequestChange(db, null, {
+        initialValues: {
+          applicationOfferingChangeRequestStatus:
+            ApplicationOfferingChangeRequestStatus.Approved,
         },
-        {
-          initialValues: {
-            applicationOfferingChangeRequestStatus:
-              ApplicationOfferingChangeRequestStatus.Approved,
-          },
-        },
-      );
+      });
 
     const applicationApprovedApplicationOfferingChange =
       approvedApplicationOfferingChange.application;
-    const applicationInProgressWithStudentApplicationOfferingChangeWithDifferentInstitution =
-      inProgressWithStudentApplicationOfferingChangeWithDifferentInstitution.application;
-    const applicationWithInProgressWithStudentApplicationOfferingChange =
-      inProgressWithStudentApplicationOfferingChange.application;
+    const applicationInProgressWithStudentApplicationOfferingChange1 =
+      inProgressWithStudentApplicationOfferingChange1.application;
+    const applicationWithInProgressWithStudentApplicationOfferingChange2 =
+      inProgressWithStudentApplicationOfferingChange2.application;
     const applicationWithInProgressWithSABCApplicationOfferingChange =
       inProgressWithSABCApplicationOfferingChange.application;
 
     applicationApprovedApplicationOfferingChange.student.user.firstName =
       "Ministry Offering Change Test 1";
-    applicationInProgressWithStudentApplicationOfferingChangeWithDifferentInstitution.student.user.firstName =
+    applicationInProgressWithStudentApplicationOfferingChange1.student.user.firstName =
       "Ministry Offering Change Test 2";
-    applicationWithInProgressWithStudentApplicationOfferingChange.student.user.firstName =
+    applicationWithInProgressWithStudentApplicationOfferingChange2.student.user.firstName =
       "Ministry Offering Change Test 3";
     applicationWithInProgressWithSABCApplicationOfferingChange.student.user.firstName =
       "Ministry Offering Change Test 4";
 
     await db.user.save([
       applicationApprovedApplicationOfferingChange.student.user,
-      applicationInProgressWithStudentApplicationOfferingChangeWithDifferentInstitution
-        .student.user,
-      applicationWithInProgressWithStudentApplicationOfferingChange.student
+      applicationInProgressWithStudentApplicationOfferingChange1.student.user,
+      applicationWithInProgressWithStudentApplicationOfferingChange2.student
         .user,
       applicationWithInProgressWithSABCApplicationOfferingChange.student.user,
     ]);
@@ -143,54 +115,54 @@ describe("ApplicationOfferingChangeRequestAESTController(e2e)-getAllInProgressAp
                 .id,
           },
           {
-            id: inProgressWithStudentApplicationOfferingChangeWithDifferentInstitution.id,
+            id: inProgressWithStudentApplicationOfferingChange2.id,
             applicationNumber:
-              applicationInProgressWithStudentApplicationOfferingChangeWithDifferentInstitution.applicationNumber,
+              applicationWithInProgressWithStudentApplicationOfferingChange2.applicationNumber,
             applicationId:
-              applicationInProgressWithStudentApplicationOfferingChangeWithDifferentInstitution.id,
+              applicationWithInProgressWithStudentApplicationOfferingChange2.id,
             studyStartDate:
-              applicationInProgressWithStudentApplicationOfferingChangeWithDifferentInstitution
+              applicationWithInProgressWithStudentApplicationOfferingChange2
                 .currentAssessment.offering.studyStartDate,
             studyEndDate:
-              applicationInProgressWithStudentApplicationOfferingChangeWithDifferentInstitution
+              applicationWithInProgressWithStudentApplicationOfferingChange2
                 .currentAssessment.offering.studyEndDate,
             fullName: getUserFullName(
-              applicationInProgressWithStudentApplicationOfferingChangeWithDifferentInstitution
+              applicationWithInProgressWithStudentApplicationOfferingChange2
                 .student.user,
             ),
             status:
-              inProgressWithStudentApplicationOfferingChangeWithDifferentInstitution.applicationOfferingChangeRequestStatus,
+              inProgressWithStudentApplicationOfferingChange2.applicationOfferingChangeRequestStatus,
             createdAt: getISODateOnlyString(
-              applicationInProgressWithStudentApplicationOfferingChangeWithDifferentInstitution.createdAt,
+              applicationWithInProgressWithStudentApplicationOfferingChange2.createdAt,
             ),
             studentId:
-              applicationInProgressWithStudentApplicationOfferingChangeWithDifferentInstitution
+              applicationWithInProgressWithStudentApplicationOfferingChange2
                 .student.id,
           },
           {
-            id: inProgressWithStudentApplicationOfferingChange.id,
+            id: inProgressWithStudentApplicationOfferingChange1.id,
             applicationNumber:
-              applicationWithInProgressWithStudentApplicationOfferingChange.applicationNumber,
+              applicationInProgressWithStudentApplicationOfferingChange1.applicationNumber,
             applicationId:
-              applicationWithInProgressWithStudentApplicationOfferingChange.id,
+              applicationInProgressWithStudentApplicationOfferingChange1.id,
             studyStartDate:
-              applicationWithInProgressWithStudentApplicationOfferingChange
+              applicationInProgressWithStudentApplicationOfferingChange1
                 .currentAssessment.offering.studyStartDate,
             studyEndDate:
-              applicationWithInProgressWithStudentApplicationOfferingChange
+              applicationInProgressWithStudentApplicationOfferingChange1
                 .currentAssessment.offering.studyEndDate,
             fullName: getUserFullName(
-              applicationWithInProgressWithStudentApplicationOfferingChange
-                .student.user,
+              applicationInProgressWithStudentApplicationOfferingChange1.student
+                .user,
             ),
             status:
-              inProgressWithStudentApplicationOfferingChange.applicationOfferingChangeRequestStatus,
+              inProgressWithStudentApplicationOfferingChange1.applicationOfferingChangeRequestStatus,
             createdAt: getISODateOnlyString(
-              applicationWithInProgressWithStudentApplicationOfferingChange.createdAt,
+              applicationInProgressWithStudentApplicationOfferingChange1.createdAt,
             ),
             studentId:
-              applicationWithInProgressWithStudentApplicationOfferingChange
-                .student.id,
+              applicationInProgressWithStudentApplicationOfferingChange1.student
+                .id,
           },
         ],
         count: 3,

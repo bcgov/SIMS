@@ -8,9 +8,9 @@ import { InProgressApplicationOfferingChangesAPIOutDTO } from "./models/applicat
 @Injectable()
 export class ApplicationOfferingChangeRequestControllerService {
   /**
-   * Map paginated results to a list of objects to be transferred by the API.
+   * Map paginated results to a list of objects to be transferred.
    * @param offeringChange offering change paginated results.
-   * @returns list of objects to be transferred by the API.
+   * @returns list of objects to be transferred.
    */
   mapToInProgressApplicationOfferingChangesAPIOutDTOs(
     offeringChange: PaginatedResultsAPIOutDTO<ApplicationOfferingChangeRequest>,
