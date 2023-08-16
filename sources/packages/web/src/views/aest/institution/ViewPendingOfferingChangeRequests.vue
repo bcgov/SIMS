@@ -124,9 +124,7 @@ export default defineComponent({
       loading.value = false;
     };
 
-    onMounted(async () => {
-      await getSummaryList();
-    });
+    onMounted(getSummaryList);
 
     // Pagination sort event callback.
     const paginationAndSortEvent = async (event: DataTableOptions) => {
