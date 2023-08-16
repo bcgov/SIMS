@@ -27,7 +27,8 @@ export function transformToApplicationEntitySortField(
     orderByCondition[
       "applicationOfferingChangeRequest.applicationOfferingChangeRequestStatus"
     ] = sortOrder;
-    orderByCondition["applicationOfferingChangeRequest.createdAt"] = sortOrder;
+    orderByCondition["applicationOfferingChangeRequest.createdAt"] =
+      FieldSortOrder.ASC;
     return orderByCondition;
   }
 

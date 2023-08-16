@@ -538,7 +538,6 @@ export const aestRoutes: Array<RouteRecordRaw> = [
       {
         path: AppRoutes.PendingOfferingChangeRequests,
         name: AESTRoutesConst.PENDING_REQUEST_CHANGE_OFFERINGS,
-        props: true,
         components: {
           default: ViewPendingOfferingChangeRequests,
           sidebar: AESTHomeSideBar,

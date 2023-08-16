@@ -79,7 +79,7 @@ export class ApplicationOfferingChangeRequestApi extends HttpBaseClient {
   ): Promise<
     PaginatedResultsAPIOutDTO<InProgressApplicationOfferingChangesAPIOutDTO>
   > {
-    let url = `application-offering-change-request/in-progress?`;
+    let url = "application-offering-change-request/in-progress?";
     url += getPaginationQueryString(paginationOptions, true);
     return this.getCall<
       PaginatedResultsAPIOutDTO<InProgressApplicationOfferingChangesAPIOutDTO>

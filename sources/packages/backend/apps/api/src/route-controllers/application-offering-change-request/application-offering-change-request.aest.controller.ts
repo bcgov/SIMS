@@ -32,7 +32,7 @@ export class ApplicationOfferingChangeRequestAESTController extends BaseControll
   /**
    * Get all in progress application offering change requests.
    * @param pagination options to execute the pagination.
-   * @returns list and count of inprogress application offering change requests.
+   * @returns list and count of in progress application offering change requests.
    */
   @Get("in-progress")
   async getAllInProgressApplications(

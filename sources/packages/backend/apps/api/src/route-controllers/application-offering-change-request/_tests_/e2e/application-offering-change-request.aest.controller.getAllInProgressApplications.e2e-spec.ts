@@ -2,7 +2,6 @@ import { HttpStatus, INestApplication } from "@nestjs/common";
 import * as request from "supertest";
 import {
   AESTGroups,
-  authorizeUserTokenForLocation,
   BEARER_AUTH_TYPE,
   createTestingAppModule,
   getAESTToken,

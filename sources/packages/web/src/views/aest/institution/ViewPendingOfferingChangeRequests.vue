@@ -72,7 +72,6 @@ import {
   DataTableOptions,
   PaginatedResults,
   AllInProgressOfferingChangeSummaryHeaders,
-  //   DataTableSortByOrder,
   DEFAULT_DATATABLE_PAGE_NUMBER,
   DataTableSortByOrder,
 } from "@/types";
@@ -154,7 +153,7 @@ export default defineComponent({
 
     /**
      * Navigate to the form to view assessment.
-     * @param applicationId application to have the request created.
+     * @param item item from data table.
      */
     const viewAssessment = (item: any) => {
       router.push({
