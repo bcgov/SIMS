@@ -20,7 +20,7 @@ import {
   ApplicationStatus,
   InstitutionLocation,
 } from "@sims/sims-db";
-import { FieldSortOrder, getISODateOnlyString } from "@sims/utilities";
+import { FieldSortOrder } from "@sims/utilities";
 import { getUserFullName } from "../../../../utilities";
 
 describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-getInProgressApplications", () => {
