@@ -297,7 +297,7 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
       .innerJoin("offering.educationProgram", "educationProgram")
       .innerJoin("assessment.application", "application")
       .leftJoin("assessment.studentAppeal", "studentAppeal")
-      .innerJoin(
+      .leftJoin(
         "assessment.applicationOfferingChangeRequest",
         "applicationOfferingChangeRequest",
       )
