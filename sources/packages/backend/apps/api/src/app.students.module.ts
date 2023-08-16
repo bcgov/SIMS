@@ -35,6 +35,7 @@ import {
   EducationProgramStudentsController,
   StudentAccountApplicationStudentsController,
   EducationProgramOfferingStudentsController,
+  ApplicationOfferingChangeRequestStudentsController,
   EducationProgramOfferingControllerService,
   RestrictionStudentsController,
   ProgramYearStudentsController,
@@ -77,6 +78,7 @@ import { ATBCIntegrationModule } from "@sims/integrations/atbc-integration";
     ATBCStudentController,
     ProgramYearStudentsController,
     OverawardStudentsController,
+    ApplicationOfferingChangeRequestStudentsController,
   ],
   providers: [
     WorkflowClientService,

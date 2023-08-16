@@ -1,0 +1,160 @@
+import {
+  Body,
+  Controller,
+  Get,
+  NotFoundException,
+  Param,
+  ParseIntPipe,
+  Patch,
+  UnauthorizedException,
+} from "@nestjs/common";
+import {
+  ApiNotFoundResponse,
+  ApiTags,
+  ApiUnauthorizedResponse,
+} from "@nestjs/swagger";
+import { AuthorizedParties } from "../../auth/authorized-parties.enum";
+import { AllowAuthorizedParty, UserToken } from "../../auth/decorators";
+import { ApiProcessError, ClientTypeBaseRoute } from "../../types";
+import { getUserFullName } from "../../utilities";
+import BaseController from "../BaseController";
+import {
+  ApplicationOfferingChangesAPIOutDTO,
+  UpdateApplicationOfferingChangeRequestAPIInDTO,
+} from "./models/application-offering-change-request.dto";
+import { ApplicationOfferingChangeRequestService } from "../../services";
+import { ApplicationOfferingChangeRequestStatus } from "@sims/sims-db";
+import { StudentUserToken } from "../../auth";
+import { STUDENT_UNAUTHORIZED_FOR_APPLICATION_OFFERING_CHANGE_REQUEST } from "../../constants";
+
+/**
+ * Application offering change request controller for students client.
+ */
+@AllowAuthorizedParty(AuthorizedParties.student)
+@Controller(
+  "application-offering-change-request/:applicationOfferingChangeRequestId",
+)
+@ApiTags(`${ClientTypeBaseRoute.Student}-application-offering-change-request`)
+export class ApplicationOfferingChangeRequestStudentsController extends BaseController {
+  constructor(
+    private readonly applicationOfferingChangeRequestService: ApplicationOfferingChangeRequestService,
+  ) {
+    super();
+  }
+
+  /**
+   * Gets the Application Offering Change Request details.
+   * @param applicationOfferingChangeRequestId the Application Offering Change Request id.
+   * @param studentUserToken student user token to authorize the user.
+   * @returns Application Offering Change Request details.
+   */
+  @Get()
+  @ApiNotFoundResponse({
+    description: "Not able to find an Application Offering Change Request.",
+  })
+  async getById(
+    @Param("applicationOfferingChangeRequestId", ParseIntPipe)
+    applicationOfferingChangeRequestId: number,
+    @UserToken()
+    studentUserToken: StudentUserToken,
+  ): Promise<ApplicationOfferingChangesAPIOutDTO> {
+    const request = await this.applicationOfferingChangeRequestService.getById(
+      applicationOfferingChangeRequestId,
+      { studentId: studentUserToken.studentId },
+    );
+    if (!request) {
+      throw new NotFoundException(
+        "Not able to find an Application Offering Change Request.",
+      );
+    }
+    return {
+      id: request.id,
+      status: request.applicationOfferingChangeRequestStatus,
+      applicationId: request.application.id,
+      applicationNumber: request.application.applicationNumber,
+      locationName: request.application.location.name,
+      activeOfferingId: request.activeOffering.id,
+      requestedOfferingId: request.requestedOffering.id,
+      requestedOfferingDescription: request.requestedOffering.name,
+      requestedOfferingProgramId: request.requestedOffering.educationProgram.id,
+      requestedOfferingProgramName:
+        request.requestedOffering.educationProgram.name,
+      reason: request.reason,
+      assessedNoteDescription: request.assessedNote?.description,
+      studentFullName: getUserFullName(request.application.student.user),
+    };
+  }
+
+  /**
+   * Gets the Application Offering Change Request status.
+   * @param applicationOfferingChangeRequestId the Application Offering Change Request id.
+   * @param studentUserToken student user token to authorize the user.
+   * @returns Application Offering Change Request status.
+   */
+  @Get("application-offering-change-request-status")
+  @ApiNotFoundResponse({
+    description:
+      "Not able to get the Application Offering Change Request Status.",
+  })
+  async getApplicationOfferingChangeRequestStatusById(
+    @Param("applicationOfferingChangeRequestId", ParseIntPipe)
+    applicationOfferingChangeRequestId: number,
+    @UserToken()
+    studentUserToken: StudentUserToken,
+  ): Promise<ApplicationOfferingChangeRequestStatus> {
+    const applicationOfferingChangeRequestStatus =
+      await this.applicationOfferingChangeRequestService.getApplicationOfferingChangeRequestStatusById(
+        applicationOfferingChangeRequestId,
+        {
+          studentId: studentUserToken.studentId,
+        },
+      );
+    if (!applicationOfferingChangeRequestStatus) {
+      throw new NotFoundException(
+        "Not able to get the Application Offering Change Request Status.",
+      );
+    }
+    return applicationOfferingChangeRequestStatus;
+  }
+
+  /**
+   * Updates an application offering change request status.
+   * @param applicationOfferingChangeRequestId application offering change request id.
+   * @param userToken user token to authorize the user.
+   * @param payload information to update the application offering change request status.
+   */
+  @Patch()
+  @ApiUnauthorizedResponse({
+    description:
+      "The student does not have access to the application offering change request.",
+  })
+  async updateApplicationOfferingChangeRequestStatus(
+    @Param("applicationOfferingChangeRequestId", ParseIntPipe)
+    applicationOfferingChangeRequestId: number,
+    @UserToken()
+    userToken: StudentUserToken,
+    @Body()
+    payload: UpdateApplicationOfferingChangeRequestAPIInDTO,
+  ) {
+    const studentAuthorized =
+      this.applicationOfferingChangeRequestService.validateStudentForOfferingChangeRequest(
+        applicationOfferingChangeRequestId,
+        userToken.studentId,
+      );
+    if (studentAuthorized)
+      await this.applicationOfferingChangeRequestService.updateApplicationOfferingChangeRequestStatus(
+        applicationOfferingChangeRequestId,
+        payload.applicationOfferingChangeRequestStatus,
+        {
+          studentConsent: payload?.studentConsent,
+        },
+      );
+    else
+      throw new UnauthorizedException(
+        new ApiProcessError(
+          "Student is not authorized for the provided offering.",
+          STUDENT_UNAUTHORIZED_FOR_APPLICATION_OFFERING_CHANGE_REQUEST,
+        ),
+      );
+  }
+}

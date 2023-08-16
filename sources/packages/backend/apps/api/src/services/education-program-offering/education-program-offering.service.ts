@@ -20,6 +20,7 @@ import {
   DatabaseConstraintNames,
   PostgresDriverError,
   mapFromRawAndEntities,
+  ApplicationOfferingChangeRequest,
 } from "@sims/sims-db";
 import {
   DataSource,
@@ -72,6 +73,7 @@ import { InjectQueue } from "@nestjs/bull";
 
 @Injectable()
 export class EducationProgramOfferingService extends RecordDataModelService<EducationProgramOffering> {
+  applicationOfferingChangeRepo: Repository<ApplicationOfferingChangeRequest>;
   constructor(
     private readonly dataSource: DataSource,
     private readonly workflowClientService: WorkflowClientService,
@@ -80,6 +82,36 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     private readonly cancelAssessmentQueue: Queue<CancelAssessmentQueueInDTO>,
   ) {
     super(dataSource.getRepository(EducationProgramOffering));
+    this.applicationOfferingChangeRepo = dataSource.getRepository(
+      ApplicationOfferingChangeRequest,
+    );
+  }
+
+  /** Validates student authorization for the given education program offering.
+   * @param offeringId offering id.
+   * @param studentId student id.
+   * @returns true if the student is authorized for the given offering, otherwise false.
+   */
+  async validateApplicationOfferingForStudent(
+    offeringId: number,
+    studentId: number,
+  ): Promise<boolean> {
+    return this.applicationOfferingChangeRepo.findOne({
+      select: { id: true },
+      relations: { application: { student: true } },
+      where: [
+        {
+          application: { student: { id: studentId } },
+          activeOffering: { id: offeringId },
+        },
+        {
+          application: { student: { id: studentId } },
+          requestedOffering: { id: offeringId },
+        },
+      ],
+    })
+      ? true
+      : false;
   }
 
   /**

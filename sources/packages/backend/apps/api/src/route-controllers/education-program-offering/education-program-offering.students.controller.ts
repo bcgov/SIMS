@@ -6,23 +6,31 @@ import {
   ParseBoolPipe,
   ParseIntPipe,
   Query,
+  UnauthorizedException,
   UnprocessableEntityException,
 } from "@nestjs/common";
 import {
   ApiNotFoundResponse,
   ApiTags,
+  ApiUnauthorizedResponse,
   ApiUnprocessableEntityResponse,
 } from "@nestjs/swagger";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
-import { AllowAuthorizedParty } from "../../auth/decorators";
+import { AllowAuthorizedParty, UserToken } from "../../auth/decorators";
 import { OfferingIntensity, OfferingTypes } from "@sims/sims-db";
 import { EducationProgramOfferingService } from "../../services";
-import { ClientTypeBaseRoute } from "../../types";
+import { ApiProcessError, ClientTypeBaseRoute } from "../../types";
 import BaseController from "../BaseController";
-import { OfferingDetailsAPIOutDTO } from "./models/education-program-offering.dto";
+import {
+  EducationProgramOfferingSummaryViewAPIOutDTO,
+  OfferingDetailsAPIOutDTO,
+} from "./models/education-program-offering.dto";
 import { OptionItemAPIOutDTO } from "../models/common.dto";
 import { EducationProgramOfferingControllerService } from "./education-program-offering.controller.service";
 import { ParseEnumQueryPipe } from "../utils/custom-validation-pipe";
+import { ApplicationOfferingPurpose } from "@sims/sims-db";
+import { StudentUserToken } from "../../auth";
+import { STUDENT_UNAUTHORIZED_FOR_OFFERING } from "../../constants";
 
 @AllowAuthorizedParty(AuthorizedParties.student)
 @Controller("education-program-offering")
@@ -92,5 +100,45 @@ export class EducationProgramOfferingStudentsController extends BaseController {
       studyStartDate: offering.studyStartDate,
       studyEndDate: offering.studyEndDate,
     };
+  }
+
+  /**
+   * Gets the offering simplified details, not including, for instance,
+   * validations, approvals and extensive data.
+   * Useful to have an overview of the offering details, for instance,
+   * when the user needs need to have quick access to data in order to
+   * support operations like confirmation of enrolment or scholastic
+   * standing requests or offering change request.
+   * @param offeringId offering.
+   * @param purpose indicating the purpose to allow for the appropriate authorization flow to be used.
+   * @param studentUserToken student user token for authorization.
+   * @returns offering details.
+   */
+  @ApiUnauthorizedResponse({
+    description: "The student is not authorized for the provided offering.",
+  })
+  @Get("offering/:offeringId/summary-details")
+  async getOfferingSummaryDetailsById(
+    @Param("offeringId", ParseIntPipe) offeringId: number,
+    @Query("purpose", new ParseEnumQueryPipe(ApplicationOfferingPurpose))
+    purpose: ApplicationOfferingPurpose,
+    @UserToken() studentUserToken: StudentUserToken,
+  ): Promise<EducationProgramOfferingSummaryViewAPIOutDTO> {
+    if (
+      purpose === ApplicationOfferingPurpose.OfferingChange &&
+      this.educationProgramOfferingControllerService.validateApplicationOfferingForStudent(
+        offeringId,
+        studentUserToken.studentId,
+      )
+    )
+      return this.educationProgramOfferingControllerService.getOfferingById(
+        offeringId,
+      );
+    throw new UnauthorizedException(
+      new ApiProcessError(
+        "Student is not authorized for the provided offering.",
+        STUDENT_UNAUTHORIZED_FOR_OFFERING,
+      ),
+    );
   }
 }

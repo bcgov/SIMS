@@ -80,3 +80,11 @@ export interface CreateApplicationOfferingChangeRequestAPIInDTO {
   offeringId: number;
   reason: string;
 }
+
+/**
+ * Information to update the application offering change request by student.
+ */
+export interface UpdateApplicationOfferingChangeRequestAPIInDTO {
+  studentConsent?: boolean;
+  applicationOfferingChangeRequestStatus: ApplicationOfferingChangeRequestStatus;
+}

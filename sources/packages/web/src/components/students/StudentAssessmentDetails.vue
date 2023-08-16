@@ -4,13 +4,19 @@
     :applicationId="applicationId"
     :showWhenEmpty="false"
     @viewStudentAppeal="goToStudentAppeal"
+    @viewStudentApplicationOfferingChange="
+      goToStudentApplicationOfferingChangeRequest
+    "
   />
   <history-assessment
     class="mb-5"
     :applicationId="applicationId"
     :viewRequestTypes="studentAssessmentRequestTypes"
     @viewStudentAppeal="goToStudentAppeal"
-    @viewAssessment="gotToViewAssessment"
+    @viewStudentApplicationOfferingChange="
+      goToCompletedStudentApplicationOfferingChangeRequest
+    "
+    @viewAssessment="goToViewAssessment"
   />
 </template>
 <script lang="ts">
@@ -40,7 +46,7 @@ export default defineComponent({
       AssessmentTriggerType.ApplicationOfferingChange,
     ];
 
-    const gotToViewAssessment = (assessmentId: number) => {
+    const goToViewAssessment = (assessmentId: number) => {
       router.push({
         name: StudentRoutesConst.ASSESSMENT_AWARD_VIEW,
         params: {
@@ -59,9 +65,33 @@ export default defineComponent({
         },
       });
     };
+    const goToStudentApplicationOfferingChangeRequest = (
+      applicationOfferingChangeRequestId: number,
+    ) => {
+      router.push({
+        name: StudentRoutesConst.STUDENT_REQUESTED_APPLICATION_OFFERING_CHANGE,
+        params: {
+          applicationOfferingChangeRequestId,
+          applicationId: props.applicationId,
+        },
+      });
+    };
+    const goToCompletedStudentApplicationOfferingChangeRequest = (
+      applicationOfferingChangeRequestId: number,
+    ) => {
+      router.push({
+        name: StudentRoutesConst.STUDENT_REQUESTED_APPLICATION_OFFERING_CHANGE,
+        params: {
+          applicationOfferingChangeRequestId,
+          applicationId: props.applicationId,
+        },
+      });
+    };
     return {
-      gotToViewAssessment,
+      goToViewAssessment,
       goToStudentAppeal,
+      goToCompletedStudentApplicationOfferingChangeRequest,
+      goToStudentApplicationOfferingChangeRequest,
       studentAssessmentRequestTypes,
     };
   },

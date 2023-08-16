@@ -85,3 +85,4 @@ export * from "./student-assessment-status.type";
 export * from "./application-offering-change-request-status.type";
 export * from "./application-offering-change-request.model";
 export * from "./student-disability-status.type";
+export * from "./application-offering-purpose.type";

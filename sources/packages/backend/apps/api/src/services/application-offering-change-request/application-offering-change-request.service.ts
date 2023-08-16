@@ -227,12 +227,14 @@ export class ApplicationOfferingChangeRequestService {
    * Get the Application Offering Change Request by its id.
    * @param id the Application Offering Change Request id.
    * @param options method options:
-   * - `locationId`: location for authorization.
+   * - `studentId`: student id for student authorization.
+   * - `locationId`: location id for institution authorization.
    * @returns application offering change request.
    */
   async getById(
     id: number,
     options?: {
+      studentId?: number;
       locationId?: number;
     },
   ): Promise<ApplicationOfferingChangeRequest> {
@@ -290,6 +292,7 @@ export class ApplicationOfferingChangeRequestService {
         id,
         application: {
           location: { id: options?.locationId },
+          student: { id: options?.studentId },
         },
       },
     });
@@ -320,6 +323,31 @@ export class ApplicationOfferingChangeRequestService {
         },
       });
     return applicationOfferingChangeRequest;
+  }
+
+  /**
+   * Get the Application Offering Change Request Status by id.
+   * @param applicationOfferingChangeRequestId the application offering change request id.
+   * @param options method options:
+   * - `studentId`: student id for student authorization.
+   * @returns application offering change request status.
+   */
+  async getApplicationOfferingChangeRequestStatusById(
+    applicationOfferingChangeRequestId: number,
+    options?: {
+      studentId: number;
+    },
+  ): Promise<ApplicationOfferingChangeRequestStatus> {
+    const applicationOfferingChangeRequest =
+      await this.applicationOfferingChangeRequestRepo.findOne({
+        select: { id: true, applicationOfferingChangeRequestStatus: true },
+        relations: { application: { student: true } },
+        where: {
+          id: applicationOfferingChangeRequestId,
+          application: { student: { id: options?.studentId } },
+        },
+      });
+    return applicationOfferingChangeRequest.applicationOfferingChangeRequestStatus;
   }
 
   /**
@@ -399,5 +427,56 @@ export class ApplicationOfferingChangeRequestService {
       );
       return applicationOfferingChangeRequest;
     });
+  }
+
+  /** Validates student authorization for the provided application offering change request.
+   * @param applicationOfferingChangeRequestId application offering change request id.
+   * @param studentId student id for the authorization.
+   * @returns true if the application offering change request belongs to the student, otherwise false.
+   */
+  async validateStudentForOfferingChangeRequest(
+    applicationOfferingChangeRequestId: number,
+    studentId: number,
+  ): Promise<boolean> {
+    const { application } = await this.applicationOfferingChangeRequestRepo
+      .createQueryBuilder("applicationOfferingChangeRequest")
+      .select(["applicationOfferingChangeRequest.id", "application.id"])
+      .innerJoin("applicationOfferingChangeRequest.application", "application")
+      .innerJoin("application.student", "student")
+      .where(
+        "applicationOfferingChangeRequest.id = :applicationOfferingChangeRequestId",
+        {
+          applicationOfferingChangeRequestId,
+        },
+      )
+      .andWhere("student.id = :studentId", { studentId })
+      .getOne();
+
+    return application ? true : false;
+  }
+
+  /**
+   * Update the application offering change request status for the given applicationId.
+   * @param applicationOfferingChangeRequestId application offering change request id for which to update the status.
+   * @param applicationOfferingChangeRequestStatus application offering change request status to be updated.
+   * @param options method options:
+   * - `studentConsent` student consent to approve the application offering change request.
+   */
+  async updateApplicationOfferingChangeRequestStatus(
+    applicationOfferingChangeRequestId: number,
+    applicationOfferingChangeRequestStatus: ApplicationOfferingChangeRequestStatus,
+    options?: {
+      studentConsent: boolean;
+    },
+  ): Promise<void> {
+    await this.applicationOfferingChangeRequestRepo.update(
+      {
+        id: applicationOfferingChangeRequestId,
+      },
+      {
+        applicationOfferingChangeRequestStatus,
+        studentConsent: options?.studentConsent,
+      },
+    );
   }
 }

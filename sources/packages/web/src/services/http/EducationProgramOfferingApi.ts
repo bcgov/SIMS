@@ -333,7 +333,7 @@ export class EducationProgramOfferingApi extends HttpBaseClient {
   ): Promise<EducationProgramOfferingSummaryViewAPIOutDTO> {
     const url = options?.locationId
       ? `education-program-offering/location/${options.locationId}/offering/${offeringId}/summary-details`
-      : `education-program-offering/offering/${offeringId}/summary-details`;
+      : `education-program-offering/offering/${offeringId}/summary-details?purpose=offering-change`;
     return this.getCall<EducationProgramOfferingSummaryViewAPIOutDTO>(
       this.addClientRoot(url),
     );

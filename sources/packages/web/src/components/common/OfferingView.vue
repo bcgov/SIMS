@@ -70,38 +70,45 @@
                   )
                 }}
               </li>
+              <li v-if="!offeringViewData.studyBreaks">-</li>
             </ul>
           </template>
         </title-value>
       </v-col>
     </v-row>
-    <h3 class="category-header-medium primary-color mt-6">Study costs</h3>
-    <v-row>
-      <v-col cols="12" sm="6">
-        <title-value
-          propertyTitle="Tuition"
-          :propertyValue="formatCurrency(offeringViewData.actualTuitionCosts)"
-        />
-      </v-col>
-      <v-col cols="12" sm="6">
-        <title-value
-          propertyTitle="Program related costs"
-          :propertyValue="formatCurrency(offeringViewData.programRelatedCosts)"
-        />
-      </v-col>
-      <v-col cols="12" sm="6">
-        <title-value
-          propertyTitle="Mandatory fees"
-          :propertyValue="formatCurrency(offeringViewData.mandatoryFees)"
-        />
-      </v-col>
-      <v-col cols="12" sm="6">
-        <title-value
-          propertyTitle="Exceptional expenses"
-          :propertyValue="formatCurrency(offeringViewData.exceptionalExpenses)"
-        />
-      </v-col>
-    </v-row>
+    <div v-if="studyCostAccess">
+      <h3 class="category-header-medium primary-color mt-6">Study costs</h3>
+      <v-row>
+        <v-col cols="12" sm="6">
+          <title-value
+            propertyTitle="Tuition"
+            :propertyValue="formatCurrency(offeringViewData.actualTuitionCosts)"
+          />
+        </v-col>
+        <v-col cols="12" sm="6">
+          <title-value
+            propertyTitle="Program related costs"
+            :propertyValue="
+              formatCurrency(offeringViewData.programRelatedCosts)
+            "
+          />
+        </v-col>
+        <v-col cols="12" sm="6">
+          <title-value
+            propertyTitle="Mandatory fees"
+            :propertyValue="formatCurrency(offeringViewData.mandatoryFees)"
+          />
+        </v-col>
+        <v-col cols="12" sm="6">
+          <title-value
+            propertyTitle="Exceptional expenses"
+            :propertyValue="
+              formatCurrency(offeringViewData.exceptionalExpenses)
+            "
+          />
+        </v-col>
+      </v-row>
+    </div>
   </content-group-info>
 </template>
 
@@ -115,11 +122,16 @@ export default defineComponent({
   props: {
     offeringId: {
       type: Number,
-      required: false,
+      required: true,
     },
     locationId: {
       type: Number,
-      required: true,
+      required: false,
+    },
+    studyCostAccess: {
+      type: Boolean,
+      default: false,
+      required: false,
     },
   },
   setup(props) {

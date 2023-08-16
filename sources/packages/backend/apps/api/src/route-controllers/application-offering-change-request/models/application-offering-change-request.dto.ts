@@ -4,6 +4,8 @@ import {
   REASON_MAX_LENGTH,
 } from "@sims/sims-db";
 import {
+  IsBoolean,
+  IsEnum,
   IsIn,
   IsNotEmpty,
   IsOptional,
@@ -119,4 +121,15 @@ export class CreateApplicationOfferingChangeRequestAPIInDTO {
   @IsNotEmpty()
   @MaxLength(REASON_MAX_LENGTH)
   reason: string;
+}
+
+/**
+ * Details to update the application offering change request by student.
+ */
+export class UpdateApplicationOfferingChangeRequestAPIInDTO {
+  @IsOptional()
+  @IsBoolean()
+  studentConsent?: boolean;
+  @IsEnum(ApplicationOfferingChangeRequestStatus)
+  applicationOfferingChangeRequestStatus: ApplicationOfferingChangeRequestStatus;
 }

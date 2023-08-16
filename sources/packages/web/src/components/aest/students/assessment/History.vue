@@ -9,7 +9,10 @@
       >
       </body-header>
       <content-group class="mt-4">
-        <toggle-content :toggled="!assessmentHistory.length">
+        <toggle-content
+          :toggled="!assessmentHistory.length"
+          message="No assessments found."
+        >
           <DataTable
             :value="assessmentHistory"
             :paginator="true"
@@ -23,11 +26,11 @@
             <Column
               field="submittedDate"
               header="Submitted date"
-              sortable="true"
+              :sortable="true"
               ><template #body="slotProps">{{
                 dateOnlyLongString(slotProps.data.submittedDate)
               }}</template></Column
-            ><Column field="triggerType" header="Type" sortable="true"></Column
+            ><Column field="triggerType" header="Type" :sortable="true"></Column
             ><Column header="Request form">
               <template #body="{ data }">
                 <template v-if="canShowViewRequest(data)">
@@ -42,14 +45,14 @@
                   >
                 </template>
               </template></Column
-            ><Column field="status" header="Status" sortable="true"
+            ><Column field="status" header="Status" :sortable="true"
               ><template #body="slotProps"
                 ><status-chip-assessment-history
                   :status="slotProps.data.status" /></template></Column
             ><Column
               field="assessmentDate"
               header="Assessment date"
-              sortable="true"
+              :sortable="true"
               ><template #body="slotProps">
                 <span v-if="slotProps.data.assessmentDate">{{
                   dateOnlyLongString(slotProps.data.assessmentDate)
@@ -88,6 +91,7 @@ import { AssessmentHistorySummaryAPIOutDTO } from "@/services/http/dto/Assessmen
 export default defineComponent({
   emits: [
     "viewStudentAppeal",
+    "viewStudentApplicationOfferingChange",
     "viewScholasticStandingChange",
     "viewApplicationException",
     "viewAssessment",
@@ -126,6 +130,12 @@ export default defineComponent({
       switch (data.triggerType) {
         case AssessmentTriggerType.StudentAppeal:
           context.emit("viewStudentAppeal", data.studentAppealId);
+          break;
+        case AssessmentTriggerType.ApplicationOfferingChange:
+          context.emit(
+            "viewStudentApplicationOfferingChange",
+            data.applicationOfferingChangeRequestId,
+          );
           break;
         case AssessmentTriggerType.ScholasticStandingChange:
           context.emit(
