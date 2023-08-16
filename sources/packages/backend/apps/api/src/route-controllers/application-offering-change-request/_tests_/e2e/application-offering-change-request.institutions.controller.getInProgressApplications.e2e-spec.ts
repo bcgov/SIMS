@@ -138,12 +138,6 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-getInProgr
             ),
             status:
               inProgressWithSABCApplicationOfferingChange.applicationOfferingChangeRequestStatus,
-            createdAt: getISODateOnlyString(
-              applicationWithInProgressWithSABCApplicationOfferingChange.createdAt,
-            ),
-            studentId:
-              applicationWithInProgressWithSABCApplicationOfferingChange.student
-                .id,
           },
           {
             id: inProgressWithStudentApplicationOfferingChange.id,
@@ -163,12 +157,6 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-getInProgr
             ),
             status:
               inProgressWithStudentApplicationOfferingChange.applicationOfferingChangeRequestStatus,
-            createdAt: getISODateOnlyString(
-              applicationWithInProgressWithStudentApplicationOfferingChange.createdAt,
-            ),
-            studentId:
-              applicationWithInProgressWithStudentApplicationOfferingChange
-                .student.id,
           },
         ],
         count: 2,
@@ -238,12 +226,6 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-getInProgr
             ),
             status:
               inProgressWithSABCApplicationOfferingChange.applicationOfferingChangeRequestStatus,
-            createdAt: getISODateOnlyString(
-              applicationWithInProgressWithSABCApplicationOfferingChange.createdAt,
-            ),
-            studentId:
-              applicationWithInProgressWithSABCApplicationOfferingChange.student
-                .id,
           },
         ],
         count: 1,
