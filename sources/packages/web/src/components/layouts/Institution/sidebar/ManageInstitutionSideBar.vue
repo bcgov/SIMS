@@ -18,8 +18,8 @@
         active-class="active-list-item"
         bg-color="default"
         active-color="primary"
-        :items="bulkUploadItems"
-        data-cy="bulkUploadItems"
+        :items="sidebarBottomItems"
+        data-cy="sidebarBottomMenu"
       >
       </v-list
     ></template>
@@ -73,7 +73,7 @@ export default defineComponent({
         },
       },
     ]);
-    const bulkUploadItems = ref<MenuItemModel[]>([
+    const sidebarBottomItems = ref<MenuItemModel[]>([
       {
         title: "Offerings Upload",
         props: {
@@ -85,7 +85,7 @@ export default defineComponent({
       },
     ]);
     if (institutionState.value.isBCPublic) {
-      bulkUploadItems.value.push({
+      sidebarBottomItems.value.push({
         title: "Withdrawal Upload",
         props: {
           prependIcon: "fa:fa-solid fa-upload",
@@ -98,7 +98,7 @@ export default defineComponent({
 
     return {
       items,
-      bulkUploadItems,
+      sidebarBottomItems,
       InstitutionRoutesConst,
     };
   },
