@@ -22,7 +22,7 @@ import {
 import { FieldSortOrder, getISODateOnlyString } from "@sims/utilities";
 import { getUserFullName } from "../../../../utilities";
 
-describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-getAllInProgressApplications", () => {
+describe("ApplicationOfferingChangeRequestAESTController(e2e)-getAllInProgressApplications", () => {
   let app: INestApplication;
   let db: E2EDataSources;
   let collegeFLocation: InstitutionLocation;
@@ -103,6 +103,9 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-getAllInPr
       "Ministry Offering Change Test 4";
 
     await db.user.save([
+      applicationApprovedApplicationOfferingChange.student.user,
+      applicationInProgressWithStudentApplicationOfferingChangeWithDifferentInstitution
+        .student.user,
       applicationWithInProgressWithStudentApplicationOfferingChange.student
         .user,
       applicationWithInProgressWithSABCApplicationOfferingChange.student.user,
@@ -146,6 +149,31 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-getAllInPr
                 .id,
           },
           {
+            id: inProgressWithStudentApplicationOfferingChangeWithDifferentInstitution.id,
+            applicationNumber:
+              applicationInProgressWithStudentApplicationOfferingChangeWithDifferentInstitution.applicationNumber,
+            applicationId:
+              applicationInProgressWithStudentApplicationOfferingChangeWithDifferentInstitution.id,
+            studyStartDate:
+              applicationInProgressWithStudentApplicationOfferingChangeWithDifferentInstitution
+                .currentAssessment.offering.studyStartDate,
+            studyEndDate:
+              applicationInProgressWithStudentApplicationOfferingChangeWithDifferentInstitution
+                .currentAssessment.offering.studyEndDate,
+            fullName: getUserFullName(
+              applicationInProgressWithStudentApplicationOfferingChangeWithDifferentInstitution
+                .student.user,
+            ),
+            status:
+              inProgressWithStudentApplicationOfferingChangeWithDifferentInstitution.applicationOfferingChangeRequestStatus,
+            createdAt: getISODateOnlyString(
+              applicationInProgressWithStudentApplicationOfferingChangeWithDifferentInstitution.createdAt,
+            ),
+            studentId:
+              applicationInProgressWithStudentApplicationOfferingChangeWithDifferentInstitution
+                .student.id,
+          },
+          {
             id: inProgressWithStudentApplicationOfferingChange.id,
             applicationNumber:
               applicationWithInProgressWithStudentApplicationOfferingChange.applicationNumber,
@@ -171,7 +199,7 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-getAllInPr
                 .student.id,
           },
         ],
-        count: 2,
+        count: 3,
       });
   });
 
