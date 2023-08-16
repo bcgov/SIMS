@@ -41,7 +41,6 @@ export class ApplicationOfferingChangeSummaryDetailAPIOutDTO {
 export class InProgressApplicationOfferingChangesAPIOutDTO {
   id: number;
   applicationNumber: string;
-  applicationId: number;
   studyStartDate: string;
   studyEndDate: string;
   fullName: string;
@@ -54,7 +53,6 @@ export class InProgressApplicationOfferingChangesAPIOutDTO {
 export class CompletedApplicationOfferingChangesAPIOutDTO {
   id: number;
   applicationNumber: string;
-  applicationId: number;
   studyStartDate: string;
   studyEndDate: string;
   fullName: string;

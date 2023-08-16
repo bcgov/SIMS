@@ -171,7 +171,6 @@ export class ApplicationOfferingChangeRequestInstitutionsController extends Base
         return {
           id: eachOfferingChange.id,
           applicationNumber: eachOfferingChange.application.applicationNumber,
-          applicationId: eachOfferingChange.application.id,
           studyStartDate: offering.studyStartDate,
           studyEndDate: offering.studyEndDate,
           fullName: getUserFullName(
@@ -214,7 +213,6 @@ export class ApplicationOfferingChangeRequestInstitutionsController extends Base
         return {
           id: eachOfferingChange.id,
           applicationNumber: eachOfferingChange.application.applicationNumber,
-          applicationId: eachOfferingChange.application.id,
           studyStartDate: offering.studyStartDate,
           studyEndDate: offering.studyEndDate,
           fullName: getUserFullName(

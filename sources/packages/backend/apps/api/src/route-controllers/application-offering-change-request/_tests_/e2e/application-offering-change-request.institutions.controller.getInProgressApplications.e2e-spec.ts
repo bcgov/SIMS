@@ -124,8 +124,6 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-getInProgr
             id: inProgressWithSABCApplicationOfferingChange.id,
             applicationNumber:
               applicationWithInProgressWithSABCApplicationOfferingChange.applicationNumber,
-            applicationId:
-              applicationWithInProgressWithSABCApplicationOfferingChange.id,
             studyStartDate:
               applicationWithInProgressWithSABCApplicationOfferingChange
                 .currentAssessment.offering.studyStartDate,
@@ -143,8 +141,6 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-getInProgr
             id: inProgressWithStudentApplicationOfferingChange.id,
             applicationNumber:
               applicationWithInProgressWithStudentApplicationOfferingChange.applicationNumber,
-            applicationId:
-              applicationWithInProgressWithStudentApplicationOfferingChange.id,
             studyStartDate:
               applicationWithInProgressWithStudentApplicationOfferingChange
                 .currentAssessment.offering.studyStartDate,
@@ -212,8 +208,6 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-getInProgr
             id: inProgressWithSABCApplicationOfferingChange.id,
             applicationNumber:
               applicationWithInProgressWithSABCApplicationOfferingChange.applicationNumber,
-            applicationId:
-              applicationWithInProgressWithSABCApplicationOfferingChange.id,
             studyStartDate:
               applicationWithInProgressWithSABCApplicationOfferingChange
                 .currentAssessment.offering.studyStartDate,
