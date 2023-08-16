@@ -1,68 +1,60 @@
 <template>
-  <full-page-container layout-template="centered-tab" :full-width="true">
+  <full-page-container :full-width="true">
     <template #header>
       <header-navigator title="Institution requests" subTitle="Applications" />
-      <tab-container>
-        <body-header-container>
-          <template #header>
-            <body-header
-              title="Requested application changes"
-              :recordsCount="applications?.count"
-            >
-              <template #subtitle>
-                Make a determination on a requested change for a program and
-                offering in an application.
-              </template>
-              <template #actions>
-                <v-text-field
-                  density="compact"
-                  label="Search name or application #"
-                  variant="outlined"
-                  v-model="searchCriteria"
-                  @keyup.enter="searchApplicationOfferingChangeRecords"
-                  prepend-inner-icon="mdi-magnify"
-                  hide-details="auto"
-                >
-                </v-text-field>
-              </template>
-            </body-header>
-          </template>
-          <content-group>
-            <toggle-content :toggled="!applications?.count">
-              <v-data-table-server
-                :headers="AllInProgressOfferingChangeSummaryHeaders"
-                :items="applications?.results"
-                :items-length="applications?.count"
-                :loading="loading"
-                item-value="applicationId"
-                v-model:items-per-page="DEFAULT_PAGE_LIMIT"
-                @update:options="paginationAndSortEvent"
-              >
-                <template #[`item.dateSubmitted`]="{ item }">
-                  {{ dateOnlyLongString(item.raw.createdAt) }}
-                </template>
-                <template #[`item.fullName`]="{ item }">
-                  {{ item.raw.fullName }}
-                </template>
-                <template #[`item.applicationNumber`]="{ item }">
-                  {{ item.raw.applicationNumber }}
-                </template>
-                <template #[`item.status`]="{ item }">
-                  <status-chip-application-offering-change
-                    :status="item.raw.status"
-                  />
-                </template>
-                <template #[`item.id`]="{ item }">
-                  <v-btn color="primary" @click="viewAssessment(item)"
-                    >View</v-btn
-                  >
-                </template>
-              </v-data-table-server>
-            </toggle-content>
-          </content-group>
-        </body-header-container>
-      </tab-container>
     </template>
+    <body-header
+      title="Requested application changes"
+      :recordsCount="applications?.count"
+    >
+      <template #subtitle>
+        Make a determination on a requested change for a program and offering in
+        an application.
+      </template>
+      <template #actions>
+        <v-text-field
+          density="compact"
+          label="Search name or application #"
+          variant="outlined"
+          v-model="searchCriteria"
+          @keyup.enter="searchApplicationOfferingChangeRecords"
+          prepend-inner-icon="mdi-magnify"
+          hide-details="auto"
+        >
+        </v-text-field>
+      </template>
+    </body-header>
+    <content-group>
+      <toggle-content :toggled="!applications?.count">
+        <v-data-table-server
+          :headers="AllInProgressOfferingChangeSummaryHeaders"
+          :items="applications?.results"
+          :items-length="applications?.count"
+          :loading="loading"
+          item-value="applicationId"
+          v-model:items-per-page="DEFAULT_PAGE_LIMIT"
+          @update:options="paginationAndSortEvent"
+        >
+          <template #[`item.dateSubmitted`]="{ item }">
+            {{ dateOnlyLongString(item.raw.createdAt) }}
+          </template>
+          <template #[`item.fullName`]="{ item }">
+            {{ item.raw.fullName }}
+          </template>
+          <template #[`item.applicationNumber`]="{ item }">
+            {{ item.raw.applicationNumber }}
+          </template>
+          <template #[`item.status`]="{ item }">
+            <status-chip-application-offering-change
+              :status="item.raw.status"
+            />
+          </template>
+          <template #[`item.id`]="{ item }">
+            <v-btn color="primary" @click="viewAssessment(item)">View</v-btn>
+          </template>
+        </v-data-table-server>
+      </toggle-content>
+    </content-group>
   </full-page-container>
 </template>
 <script lang="ts">
