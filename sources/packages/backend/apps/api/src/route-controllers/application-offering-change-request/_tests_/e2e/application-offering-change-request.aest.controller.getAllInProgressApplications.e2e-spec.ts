@@ -37,14 +37,9 @@ describe("ApplicationOfferingChangeRequestAESTController(e2e)-getAllInProgressAp
       InstitutionTokenTypes.CollegeFUser,
     );
     collegeFLocation = createFakeInstitutionLocation({ institution: collegeF });
-    await authorizeUserTokenForLocation(
-      db.dataSource,
-      InstitutionTokenTypes.CollegeFUser,
-      collegeFLocation,
-    );
   });
 
-  it(`Should return all in progress application offering change requests when requested.`, async () => {
+  it("Should return all in progress application offering change requests when requested.", async () => {
     // Arrange
 
     // Student 1 has an in progress with student application offering change request for College F.
