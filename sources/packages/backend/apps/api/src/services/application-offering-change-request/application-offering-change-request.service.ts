@@ -8,6 +8,7 @@ import {
   EducationProgramOffering,
   User,
   getUserFullNameLikeSearch,
+  transformToApplicationOfferingChangeEntitySortField,
   transformToApplicationEntitySortField,
 } from "@sims/sims-db";
 import { DataSource, Brackets, Repository, In } from "typeorm";
@@ -167,6 +168,7 @@ export class ApplicationOfferingChangeRequestService {
     paginationOptions: PaginationOptions,
     options?: {
       locationId?: number;
+      useApplicationSort?: boolean;
     },
   ): Promise<PaginatedResults<ApplicationOfferingChangeRequest>> {
     const offeringChange = this.applicationOfferingChangeRequestRepo
@@ -216,13 +218,22 @@ export class ApplicationOfferingChangeRequestService {
           `%${paginationOptions.searchCriteria}%`,
         );
     }
-    offeringChange
-      .orderBy(
+    if (options?.useApplicationSort) {
+      offeringChange.orderBy(
         transformToApplicationEntitySortField(
           paginationOptions.sortField,
           paginationOptions.sortOrder,
         ),
-      )
+      );
+    } else {
+      offeringChange.orderBy(
+        transformToApplicationOfferingChangeEntitySortField(
+          paginationOptions.sortField,
+          paginationOptions.sortOrder,
+        ),
+      );
+    }
+    offeringChange
       .offset(paginationOptions.page * paginationOptions.pageLimit)
       .limit(paginationOptions.pageLimit);
     const [result, count] = await offeringChange.getManyAndCount();

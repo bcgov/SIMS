@@ -18,9 +18,30 @@ export function transformToApplicationEntitySortField(
     return orderByCondition;
   }
 
+  const fieldSortOptions = {
+    applicationNumber: "application.applicationNumber",
+  };
+  const dbColumnName = fieldSortOptions[sortField];
+  orderByCondition[dbColumnName] = sortOrder;
+  return orderByCondition;
+}
+
+/**
+ * Transformation to convert the application offering change request data table column name to
+ * database column name. Any changes to the data object (e.g data table) in presentation layer
+ * must be adjusted here.
+ * @param sortField database fields to be sorted.
+ * @param sortOrder sort order of fields (Ascending or Descending order).
+ * @returns OrderByCondition
+ */
+export function transformToApplicationOfferingChangeEntitySortField(
+  sortField = "status",
+  sortOrder = FieldSortOrder.DESC,
+): OrderByCondition {
+  const orderByCondition = {};
+
   if (sortField === "dateSubmitted") {
     orderByCondition["applicationOfferingChangeRequest.createdAt"] = sortOrder;
-    return orderByCondition;
   }
 
   if (sortField === "status") {
@@ -29,13 +50,7 @@ export function transformToApplicationEntitySortField(
     ] = sortOrder;
     orderByCondition["applicationOfferingChangeRequest.createdAt"] =
       FieldSortOrder.ASC;
-    return orderByCondition;
   }
 
-  const fieldSortOptions = {
-    applicationNumber: "application.applicationNumber",
-  };
-  const dbColumnName = fieldSortOptions[sortField];
-  orderByCondition[dbColumnName] = sortOrder;
   return orderByCondition;
 }

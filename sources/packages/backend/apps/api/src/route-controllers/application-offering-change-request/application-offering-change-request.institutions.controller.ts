@@ -53,7 +53,6 @@ import {
   OFFERING_PROGRAM_YEAR_MISMATCH,
 } from "../../constants";
 import { InjectLogger, LoggerService } from "@sims/utilities/logger";
-import { ApplicationOfferingChangeRequestControllerService } from "..";
 
 /**
  * Application offering change request controller for institutions client.
@@ -68,7 +67,6 @@ export class ApplicationOfferingChangeRequestInstitutionsController extends Base
   constructor(
     private readonly applicationOfferingChangeRequestService: ApplicationOfferingChangeRequestService,
     private readonly applicationService: ApplicationService,
-    private readonly applicationOfferingChangeRequestControllerService: ApplicationOfferingChangeRequestControllerService,
   ) {
     super();
   }
@@ -164,13 +162,24 @@ export class ApplicationOfferingChangeRequestInstitutionsController extends Base
           ApplicationOfferingChangeRequestStatus.InProgressWithStudent,
         ],
         pagination,
-        { locationId },
+        { locationId, useApplicationSort: true },
       );
     return {
-      results:
-        this.applicationOfferingChangeRequestControllerService.mapToInProgressApplicationOfferingChangesAPIOutDTOs(
-          offeringChange,
-        ),
+      results: offeringChange.results.map((eachOfferingChange) => {
+        const offering =
+          eachOfferingChange.application.currentAssessment.offering;
+        return {
+          id: eachOfferingChange.id,
+          applicationNumber: eachOfferingChange.application.applicationNumber,
+          applicationId: eachOfferingChange.application.id,
+          studyStartDate: offering.studyStartDate,
+          studyEndDate: offering.studyEndDate,
+          fullName: getUserFullName(
+            eachOfferingChange.application.student.user,
+          ),
+          status: eachOfferingChange.applicationOfferingChangeRequestStatus,
+        };
+      }),
       count: offeringChange.count,
     };
   }
@@ -196,7 +205,7 @@ export class ApplicationOfferingChangeRequestInstitutionsController extends Base
           ApplicationOfferingChangeRequestStatus.DeclinedBySABC,
         ],
         pagination,
-        { locationId },
+        { locationId, useApplicationSort: true },
       );
     return {
       results: offeringChange.results.map((eachOfferingChange) => {

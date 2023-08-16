@@ -5,14 +5,13 @@ import { AllowAuthorizedParty, Groups } from "../../auth/decorators";
 import { ClientTypeBaseRoute } from "../../types";
 import { PaginatedResultsAPIOutDTO } from "../models/pagination.dto";
 import BaseController from "../BaseController";
-import {
-  InProgressApplicationOfferingChangesAPIOutDTO,
-  InProgressOfferingChangePaginationOptionsAPIInDTO,
-} from "./models/application-offering-change-request.institutions.dto";
+import { InProgressOfferingChangePaginationOptionsAPIInDTO } from "./models/application-offering-change-request.institutions.dto";
 import { ApplicationOfferingChangeRequestService } from "../../services";
 import { ApplicationOfferingChangeRequestStatus } from "@sims/sims-db";
 import { UserGroups } from "../../auth";
-import { ApplicationOfferingChangeRequestControllerService } from "..";
+import { getUserFullName } from "../../utilities";
+import { getISODateOnlyString } from "@sims/utilities";
+import { AllInProgressApplicationOfferingChangesAPIOutDTO } from "./models/application-offering-change-request.aest.dto";
 
 /**
  * Application offering change request controller for ministry client.
@@ -24,7 +23,6 @@ import { ApplicationOfferingChangeRequestControllerService } from "..";
 export class ApplicationOfferingChangeRequestAESTController extends BaseController {
   constructor(
     private readonly applicationOfferingChangeRequestService: ApplicationOfferingChangeRequestService,
-    private readonly applicationOfferingChangeRequestControllerService: ApplicationOfferingChangeRequestControllerService,
   ) {
     super();
   }
@@ -38,7 +36,7 @@ export class ApplicationOfferingChangeRequestAESTController extends BaseControll
   async getAllInProgressApplications(
     @Query() pagination: InProgressOfferingChangePaginationOptionsAPIInDTO,
   ): Promise<
-    PaginatedResultsAPIOutDTO<InProgressApplicationOfferingChangesAPIOutDTO>
+    PaginatedResultsAPIOutDTO<AllInProgressApplicationOfferingChangesAPIOutDTO>
   > {
     const offeringChange =
       await this.applicationOfferingChangeRequestService.getSummaryByStatus(
@@ -49,10 +47,23 @@ export class ApplicationOfferingChangeRequestAESTController extends BaseControll
         pagination,
       );
     return {
-      results:
-        this.applicationOfferingChangeRequestControllerService.mapToInProgressApplicationOfferingChangesAPIOutDTOs(
-          offeringChange,
-        ),
+      results: offeringChange.results.map((eachOfferingChange) => {
+        const offering =
+          eachOfferingChange.application.currentAssessment.offering;
+        return {
+          id: eachOfferingChange.id,
+          applicationNumber: eachOfferingChange.application.applicationNumber,
+          applicationId: eachOfferingChange.application.id,
+          studyStartDate: offering.studyStartDate,
+          studyEndDate: offering.studyEndDate,
+          fullName: getUserFullName(
+            eachOfferingChange.application.student.user,
+          ),
+          status: eachOfferingChange.applicationOfferingChangeRequestStatus,
+          createdAt: getISODateOnlyString(eachOfferingChange.createdAt),
+          studentId: eachOfferingChange.application.student.id,
+        };
+      }),
       count: offeringChange.count,
     };
   }
