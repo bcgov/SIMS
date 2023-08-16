@@ -5,13 +5,15 @@ import { AllowAuthorizedParty, Groups } from "../../auth/decorators";
 import { ClientTypeBaseRoute } from "../../types";
 import { PaginatedResultsAPIOutDTO } from "../models/pagination.dto";
 import BaseController from "../BaseController";
-import { InProgressOfferingChangePaginationOptionsAPIInDTO } from "./models/application-offering-change-request.institutions.dto";
+import {
+  AllInProgressOfferingChangePaginationOptionsAPIInDTO,
+  AllInProgressApplicationOfferingChangesAPIOutDTO,
+} from "./models/application-offering-change-request.dto";
 import { ApplicationOfferingChangeRequestService } from "../../services";
 import { ApplicationOfferingChangeRequestStatus } from "@sims/sims-db";
 import { UserGroups } from "../../auth";
 import { getUserFullName } from "../../utilities";
 import { getISODateOnlyString } from "@sims/utilities";
-import { AllInProgressApplicationOfferingChangesAPIOutDTO } from "./models/application-offering-change-request.aest.dto";
 
 /**
  * Application offering change request controller for ministry client.
@@ -34,7 +36,7 @@ export class ApplicationOfferingChangeRequestAESTController extends BaseControll
    */
   @Get("in-progress")
   async getAllInProgressApplications(
-    @Query() pagination: InProgressOfferingChangePaginationOptionsAPIInDTO,
+    @Query() pagination: AllInProgressOfferingChangePaginationOptionsAPIInDTO,
   ): Promise<
     PaginatedResultsAPIOutDTO<AllInProgressApplicationOfferingChangesAPIOutDTO>
   > {

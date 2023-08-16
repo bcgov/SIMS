@@ -37,7 +37,7 @@ import {
   ApplicationOfferingChangesAPIOutDTO,
   ApplicationOfferingChangeSummaryDetailAPIOutDTO,
   CreateApplicationOfferingChangeRequestAPIInDTO,
-} from "./models/application-offering-change-request.institutions.dto";
+} from "./models/application-offering-change-request.dto";
 import {
   APPLICATION_NOT_FOUND,
   ApplicationOfferingChangeRequestService,

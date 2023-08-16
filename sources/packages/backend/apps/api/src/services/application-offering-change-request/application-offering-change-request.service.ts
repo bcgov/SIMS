@@ -161,6 +161,8 @@ export class ApplicationOfferingChangeRequestService {
    * @param paginationOptions options to execute the pagination.
    * @param options method options:
    * - `locationId`: location for authorization.
+   * - `useApplicationSort`: true in case of sorting by applicationNumber or fullName,
+   *  false in case of sorting by status or dateSubmitted.
    * @returns list of requested application offering changes.
    */
   async getSummaryByStatus(
