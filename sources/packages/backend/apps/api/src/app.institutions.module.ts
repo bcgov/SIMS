@@ -65,6 +65,7 @@ import {
   NoteInstitutionsController,
   RestrictionControllerService,
   ApplicationOfferingChangeRequestInstitutionsController,
+  ApplicationOfferingChangeRequestControllerService,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
 import {
@@ -162,6 +163,7 @@ import {
     ApplicationExceptionControllerService,
     StudentAppealControllerService,
     ApplicationOfferingChangeRequestService,
+    ApplicationOfferingChangeRequestControllerService,
   ],
 })
 export class AppInstitutionsModule {}

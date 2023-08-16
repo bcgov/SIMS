@@ -16,16 +16,16 @@ import {
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { AllowAuthorizedParty, UserToken } from "../../auth/decorators";
 import { ApiProcessError, ClientTypeBaseRoute } from "../../types";
-import { getUserFullName } from "../../utilities";
 import BaseController from "../BaseController";
 import {
   ApplicationOfferingChangesAPIOutDTO,
   UpdateApplicationOfferingChangeRequestAPIInDTO,
 } from "./models/application-offering-change-request.dto";
-import { ApplicationOfferingChangeRequestService } from "../../services";
 import { ApplicationOfferingChangeRequestStatus } from "@sims/sims-db";
 import { StudentUserToken } from "../../auth";
 import { STUDENT_UNAUTHORIZED_FOR_APPLICATION_OFFERING_CHANGE_REQUEST } from "../../constants";
+import { ApplicationOfferingChangeRequestControllerService } from "./application-offering-change-request.controller.service";
+import { ApplicationOfferingChangeRequestService } from "../../services";
 
 /**
  * Application offering change request controller for students client.
@@ -38,6 +38,7 @@ import { STUDENT_UNAUTHORIZED_FOR_APPLICATION_OFFERING_CHANGE_REQUEST } from "..
 export class ApplicationOfferingChangeRequestStudentsController extends BaseController {
   constructor(
     private readonly applicationOfferingChangeRequestService: ApplicationOfferingChangeRequestService,
+    private readonly applicationOfferingChangeRequestControllerService: ApplicationOfferingChangeRequestControllerService,
   ) {
     super();
   }
@@ -58,31 +59,10 @@ export class ApplicationOfferingChangeRequestStudentsController extends BaseCont
     @UserToken()
     studentUserToken: StudentUserToken,
   ): Promise<ApplicationOfferingChangesAPIOutDTO> {
-    const request = await this.applicationOfferingChangeRequestService.getById(
+    return this.applicationOfferingChangeRequestControllerService.getById(
       applicationOfferingChangeRequestId,
       { studentId: studentUserToken.studentId },
     );
-    if (!request) {
-      throw new NotFoundException(
-        "Not able to find an Application Offering Change Request.",
-      );
-    }
-    return {
-      id: request.id,
-      status: request.applicationOfferingChangeRequestStatus,
-      applicationId: request.application.id,
-      applicationNumber: request.application.applicationNumber,
-      locationName: request.application.location.name,
-      activeOfferingId: request.activeOffering.id,
-      requestedOfferingId: request.requestedOffering.id,
-      requestedOfferingDescription: request.requestedOffering.name,
-      requestedOfferingProgramId: request.requestedOffering.educationProgram.id,
-      requestedOfferingProgramName:
-        request.requestedOffering.educationProgram.name,
-      reason: request.reason,
-      assessedNoteDescription: request.assessedNote?.description,
-      studentFullName: getUserFullName(request.application.student.user),
-    };
   }
 
   /**

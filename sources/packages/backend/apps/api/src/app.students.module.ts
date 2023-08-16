@@ -36,6 +36,7 @@ import {
   StudentAccountApplicationStudentsController,
   EducationProgramOfferingStudentsController,
   ApplicationOfferingChangeRequestStudentsController,
+  ApplicationOfferingChangeRequestControllerService,
   EducationProgramOfferingControllerService,
   RestrictionStudentsController,
   ProgramYearStudentsController,
@@ -119,6 +120,7 @@ import { ATBCIntegrationModule } from "@sims/integrations/atbc-integration";
     OverawardControllerService,
     StudentAppealControllerService,
     ConfirmationOfEnrollmentService,
+    ApplicationOfferingChangeRequestControllerService,
     ApplicationOfferingChangeRequestService,
   ],
 })
