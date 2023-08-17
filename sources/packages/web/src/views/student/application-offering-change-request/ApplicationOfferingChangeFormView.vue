@@ -53,7 +53,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, computed, onMounted } from "vue";
+import { defineComponent, ref, computed, onMounted, watchEffect } from "vue";
 import { RouteLocationRaw } from "vue-router";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 import ApproveApplicationOfferingChangeRequestModal from "@/components/aest/students/modals/ApproveApplicationOfferingChangeRequestModal.vue";
@@ -111,6 +111,13 @@ export default defineComponent({
         }),
       },
     ]);
+    watchEffect(async () => {
+      const [, secondItem] = items.value;
+      applicationOfferingChangeRequestStatus.value ===
+      ApplicationOfferingChangeRequestStatus.Approved
+        ? (secondItem.label = "Previous application details")
+        : (secondItem.label = "Active application details");
+    });
     onMounted(async () => {
       applicationOfferingChangeRequestStatus.value =
         await ApplicationOfferingChangeRequestService.shared.getApplicationOfferingChangeRequestStatusById(

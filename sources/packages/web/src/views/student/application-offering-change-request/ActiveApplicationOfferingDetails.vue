@@ -5,12 +5,6 @@
         <template #subtitle
           ><detail-header :headerMap="headerDetailsData"
         /></template>
-        <template #status-chip>
-          <status-chip-application-offering-change
-            v-if="changeRequest.status"
-            :status="changeRequest.status"
-          />
-        </template>
       </body-header>
     </template>
     <hr class="horizontal-divider" />
@@ -22,14 +16,12 @@
 import { computed, defineComponent, ref, onMounted } from "vue";
 import DetailHeader from "@/components/generic/DetailHeader.vue";
 import OfferingView from "@/components/common/OfferingView.vue";
-import StatusChipApplicationOfferingChange from "@/components/generic/StatusChipApplicationOfferingChange.vue";
 import { ApplicationOfferingChangeRequestService } from "@/services/ApplicationOfferingChangeRequestService";
 import { ApplicationOfferingChangesAPIOutDTO } from "@/services/http/dto";
 export default defineComponent({
   components: {
     OfferingView,
     DetailHeader,
-    StatusChipApplicationOfferingChange,
   },
   props: {
     applicationOfferingChangeRequestId: {
