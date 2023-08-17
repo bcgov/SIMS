@@ -154,7 +154,7 @@ describe("ApplicationOfferingChangeRequestAESTController(e2e)-getAllInProgressAp
                 .user,
             ),
             status:
-              inProgressWithStudentApplicationOfferingChange1.applicationOfferingChangeRequestStatus,
+              inProgressWithStudentApplicationOfferingChange2.applicationOfferingChangeRequestStatus,
             createdAt: getISODateOnlyString(
               applicationInProgressWithStudentApplicationOfferingChange2.createdAt,
             ),
@@ -171,8 +171,7 @@ describe("ApplicationOfferingChangeRequestAESTController(e2e)-getAllInProgressAp
     // Arrange
 
     // Student 1 has an in progress with student application offering change request.
-    const inProgressWithStudentApplicationOfferingChange1 =
-      await saveFakeApplicationOfferingRequestChange(db);
+    await saveFakeApplicationOfferingRequestChange(db);
     // Student 2 has an in progress with SABC application offering change request.
     const inProgressWithSABCApplicationOfferingChange =
       await saveFakeApplicationOfferingRequestChange(db, null, {
@@ -185,24 +184,22 @@ describe("ApplicationOfferingChangeRequestAESTController(e2e)-getAllInProgressAp
     const inProgressWithStudentApplicationOfferingChange2 =
       await saveFakeApplicationOfferingRequestChange(db);
 
-    const applicationInProgressWithStudentApplicationOfferingChange1 =
-      inProgressWithStudentApplicationOfferingChange1.application;
     const applicationInProgressWithStudentApplicationOfferingChange2 =
       inProgressWithStudentApplicationOfferingChange2.application;
     const applicationInProgressWithSABCApplicationOfferingChange =
       inProgressWithSABCApplicationOfferingChange.application;
 
     applicationInProgressWithStudentApplicationOfferingChange2.student.user.firstName =
-      "Ministry Offering Change Search Criteria Test 1";
+      "Ministry Offering Change Search Criteria Test gffs1";
     applicationInProgressWithSABCApplicationOfferingChange.student.user.firstName =
-      "Ministry Offering Change Search Criteria Test 2";
+      "Ministry Offering Change Search Criteria Test gffs2";
 
     await db.user.save([
-      applicationInProgressWithStudentApplicationOfferingChange1.student.user,
+      applicationInProgressWithStudentApplicationOfferingChange2.student.user,
       applicationInProgressWithSABCApplicationOfferingChange.student.user,
     ]);
 
-    const endpoint = `/aest/application-offering-change-request/in-progress?page=0&pageLimit=10&sortField=status&sortOrder=${FieldSortOrder.DESC}&searchCriteria=Ministry Offering Change Search Criteria Test`;
+    const endpoint = `/aest/application-offering-change-request/in-progress?page=0&pageLimit=10&sortField=status&sortOrder=${FieldSortOrder.DESC}&searchCriteria=Ministry Offering Change Search Criteria Test gffs`;
 
     // Act/Assert
     await request(app.getHttpServer())
@@ -238,8 +235,33 @@ describe("ApplicationOfferingChangeRequestAESTController(e2e)-getAllInProgressAp
             studentId:
               applicationInProgressWithSABCApplicationOfferingChange.student.id,
           },
+          {
+            id: inProgressWithStudentApplicationOfferingChange2.id,
+            applicationNumber:
+              applicationInProgressWithStudentApplicationOfferingChange2.applicationNumber,
+            applicationId:
+              applicationInProgressWithStudentApplicationOfferingChange2.id,
+            studyStartDate:
+              applicationInProgressWithStudentApplicationOfferingChange2
+                .currentAssessment.offering.studyStartDate,
+            studyEndDate:
+              applicationInProgressWithStudentApplicationOfferingChange2
+                .currentAssessment.offering.studyEndDate,
+            fullName: getUserFullName(
+              applicationInProgressWithStudentApplicationOfferingChange2.student
+                .user,
+            ),
+            status:
+              inProgressWithStudentApplicationOfferingChange2.applicationOfferingChangeRequestStatus,
+            createdAt: getISODateOnlyString(
+              applicationInProgressWithStudentApplicationOfferingChange2.createdAt,
+            ),
+            studentId:
+              applicationInProgressWithStudentApplicationOfferingChange2.student
+                .id,
+          },
         ],
-        count: 1,
+        count: 2,
       });
   });
 
