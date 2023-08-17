@@ -12,7 +12,7 @@
         v-if="programData.hasOfferings"
         :type="BannerTypes.Success"
         header="Students have applied financial aid for this program"
-        summary="You can still make changes to the program name and description without impacting the students funding. Please create a new program if you'd like to edit the other fields."
+        summary="This program has study period offerings attached to it, and the program details can no longer be edited. If revisions are required other than to program name or program description, you must create a new program with the correct details."
       >
         <template #actions>
           <v-btn
