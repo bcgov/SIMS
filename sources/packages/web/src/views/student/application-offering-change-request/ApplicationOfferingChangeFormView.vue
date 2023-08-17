@@ -113,10 +113,12 @@ export default defineComponent({
     ]);
     watchEffect(async () => {
       const [, secondItem] = items.value;
-      applicationOfferingChangeRequestStatus.value ===
-      ApplicationOfferingChangeRequestStatus.Approved
-        ? (secondItem.label = "Previous application details")
-        : (secondItem.label = "Active application details");
+      if (
+        applicationOfferingChangeRequestStatus.value ===
+        ApplicationOfferingChangeRequestStatus.Approved
+      )
+        secondItem.label = "Previous application details";
+      else secondItem.label = "Active application details";
     });
     onMounted(async () => {
       applicationOfferingChangeRequestStatus.value =
