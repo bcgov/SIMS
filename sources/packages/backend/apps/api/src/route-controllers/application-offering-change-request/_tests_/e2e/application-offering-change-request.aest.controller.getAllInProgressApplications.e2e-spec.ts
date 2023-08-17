@@ -167,7 +167,7 @@ describe("ApplicationOfferingChangeRequestAESTController(e2e)-getAllInProgressAp
       });
   });
 
-  it("Should return all in progress application offering change requests filtered by the search criteria when requested.", async () => {
+  it("Should return all matching in progress application offering change requests filtered by the search criteria when requested.", async () => {
     // Arrange
 
     // Student 1 has an in progress with student application offering change request.
