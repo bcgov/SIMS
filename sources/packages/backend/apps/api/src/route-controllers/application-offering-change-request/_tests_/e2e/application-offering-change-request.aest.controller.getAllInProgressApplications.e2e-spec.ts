@@ -190,16 +190,16 @@ describe("ApplicationOfferingChangeRequestAESTController(e2e)-getAllInProgressAp
       inProgressWithSABCApplicationOfferingChange.application;
 
     applicationInProgressWithStudentApplicationOfferingChange2.student.user.firstName =
-      "Ministry Offering Change Search Criteria Test gffs1";
+      "Ministry Offering Change Search Criteria Test 1";
     applicationInProgressWithSABCApplicationOfferingChange.student.user.firstName =
-      "Ministry Offering Change Search Criteria Test gffs2";
+      "Ministry Offering Change Search Criteria Test 2";
 
     await db.user.save([
       applicationInProgressWithStudentApplicationOfferingChange2.student.user,
       applicationInProgressWithSABCApplicationOfferingChange.student.user,
     ]);
 
-    const endpoint = `/aest/application-offering-change-request/in-progress?page=0&pageLimit=10&sortField=status&sortOrder=${FieldSortOrder.DESC}&searchCriteria=Ministry Offering Change Search Criteria Test gffs`;
+    const endpoint = `/aest/application-offering-change-request/in-progress?page=0&pageLimit=10&sortField=status&sortOrder=${FieldSortOrder.DESC}&searchCriteria=Ministry Offering Change Search Criteria Test `;
 
     // Act/Assert
     await request(app.getHttpServer())
