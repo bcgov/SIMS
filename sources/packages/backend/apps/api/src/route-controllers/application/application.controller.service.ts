@@ -35,6 +35,7 @@ import {
 } from "@sims/sims-db";
 import { ApiProcessError } from "../../types";
 import { ACTIVE_STUDENT_RESTRICTION } from "../../constants";
+
 /**
  * This service controller is a provider which is created to extract the implementation of
  * controller in one place as their business logic is shared between different client types.

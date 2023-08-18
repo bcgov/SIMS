@@ -12,6 +12,7 @@ import { ApiTags } from "@nestjs/swagger";
 import { ClientTypeBaseRoute } from "../../types";
 import { ApplicationControllerService } from "./application.controller.service";
 import { AuthorizedParties, IInstitutionUserToken } from "../../auth";
+
 @AllowAuthorizedParty(AuthorizedParties.institution)
 @IsBCPublicInstitution()
 @Controller("application")
