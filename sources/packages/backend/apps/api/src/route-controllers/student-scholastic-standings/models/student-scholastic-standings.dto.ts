@@ -44,9 +44,9 @@ export class ScholasticStandingSubmittedDetailsAPIOutDTO extends IntersectionTyp
  */
 export interface ApplicationBulkWithdrawalValidationResultAPIOutDTO {
   recordIndex: number;
-  sin?: number;
-  applicationNumber?: number;
-  withdrawalDate?: string;
+  sin?: string;
+  applicationNumber?: string;
+  withdrawalDate?: Date;
   errors: string[];
   infos: ValidationResultAPIOutDTO[];
   warnings: ValidationResultAPIOutDTO[];

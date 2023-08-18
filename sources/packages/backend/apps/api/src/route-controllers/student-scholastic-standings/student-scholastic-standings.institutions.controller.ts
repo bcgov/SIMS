@@ -30,6 +30,7 @@ import {
 import {
   APPLICATION_NOT_FOUND,
   ASSESSMENT_ALREADY_IN_PROGRESS,
+  ApplicationWithdrawalImportTextService,
   FormService,
   INVALID_OPERATION_IN_THE_CURRENT_STATUS,
   StudentAssessmentService,
@@ -56,7 +57,6 @@ import {
 } from "../../utilities";
 import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
 import { ApplicationWithdrawalTextModel } from "../../services/application-bulk-withdrawal/application-bulk-withdrawal-text.models";
-import { ApplicationWithdrawalImportTextService } from "../../services/application-bulk-withdrawal/application-bulk-withdrawal-text.service";
 
 /**
  * Scholastic standing controller for institutions Client.

@@ -6,10 +6,18 @@ import { flattenErrorMessages } from "../../utilities/class-validation";
 import { removeUTF8BOM } from "../../utilities";
 import { LoggerService, InjectLogger } from "@sims/utilities/logger";
 import {
+  ApplicationBulkWithdrawalData,
+  ApplicationBulkWithdrawalFooter,
+  ApplicationBulkWithdrawalHeader,
   ApplicationWithdrawalTextModel,
   ApplicationWithdrawalTextValidationResult,
-  TextHeaders,
+  RecordType,
 } from "./application-bulk-withdrawal-text.models";
+import {
+  APPLICATION_WITHDRAWAL_INVALID_FOOTER_RECORD_TYPE,
+  APPLICATION_WITHDRAWAL_INVALID_HEADER_RECORD_TYPE,
+} from "../../constants";
+import { CustomNamedError } from "@sims/utilities";
 
 /**
  * Handles the offering bulk insert preparation using a CSV content.
@@ -31,27 +39,28 @@ export class ApplicationWithdrawalImportTextService {
     // Remove BOM(Byte order mark), if present.
     textContent = removeUTF8BOM(textContent);
     const fileLines = textContent.split("\n");
-
-    fileLines.shift();
-    fileLines.pop();
     // Read the first line to check if the header code is the expected one.
-    /*const header = new ApplicationBulkWithdrawalHeader(parsedResult.data.shift); // Read and remove header.
+    const header = ApplicationBulkWithdrawalHeader.createFromLine(
+      fileLines.shift(),
+    ); // Read and remove header.
     if (
-      header.recordType !== ApplicationBulkWithdrawalHeaderRecordType.Header
+      header.recordType !== RecordType.ApplicationBulkWithdrawalHeaderRecordType
     ) {
       this.logger.error(
         `The application withdrawal text file has an invalid transaction code on header: ${header.recordType}`,
       );
       // If the header is not the expected one, throw an error.
-      throw new Error(
+      throw new CustomNamedError(
         "Invalid file header.",
         APPLICATION_WITHDRAWAL_INVALID_HEADER_RECORD_TYPE,
       );
     }
     //Read the last line to check if the footer record type is the expected one and verify the total records.
-    const footer = new ApplicationBulkWithdrawalFooter(parsedResult.data.pop);
+    const footer = ApplicationBulkWithdrawalFooter.createFromLine(
+      fileLines.pop(),
+    );
     if (
-      footer.recordType !== ApplicationBulkWithdrawalFooterRecordType.Footer
+      footer.recordType !== RecordType.ApplicationBulkWithdrawalFooterRecordType
     ) {
       this.logger.error(
         `The application withdrawal text file has an invalid transaction code on footer: ${footer.recordType}`,
@@ -61,16 +70,16 @@ export class ApplicationWithdrawalImportTextService {
         "Invalid file footer.",
         APPLICATION_WITHDRAWAL_INVALID_FOOTER_RECORD_TYPE,
       );
-    }*/
-    fileLines.forEach((line) => {
+    }
+    fileLines.forEach((dataLine) => {
       const applicationWithdrawalTextModel =
         {} as ApplicationWithdrawalTextModel;
+      const data = ApplicationBulkWithdrawalData.createFromLine(dataLine);
       applicationWithdrawalModels.push(applicationWithdrawalTextModel);
-      applicationWithdrawalTextModel.sin = line[TextHeaders.sin];
-      applicationWithdrawalTextModel.applicationNumber =
-        line[TextHeaders.applicationNumber];
-      applicationWithdrawalTextModel.withdrawalDate =
-        line[TextHeaders.withdrawalDate];
+      applicationWithdrawalTextModel.recordType = data.recordType;
+      applicationWithdrawalTextModel.sin = data.sin;
+      applicationWithdrawalTextModel.applicationNumber = data.applicationNumber;
+      applicationWithdrawalTextModel.withdrawalDate = data.withdrawalDate;
     });
     return applicationWithdrawalModels;
   }
