@@ -159,17 +159,10 @@ export const APPLICATION_WITHDRAWAL_CRITICAL_ERROR =
 export const APPLICATION_WITHDRAWAL_TEXT_CONTENT_FORMAT_ERROR =
   "APPLICATION_WITHDRAWAL_TEXT_CONTENT_FORMAT_ERROR";
 /**
- * The text content has invalid header record type.
+ * The text content has invalid content, either
+ * 1. Invalid Header record type.
+ * 2. Invalid Footer record type.
+ * 3. Number of records in the footer does not match the no of data records.
  */
-export const APPLICATION_WITHDRAWAL_INVALID_HEADER_RECORD_TYPE =
-  "APPLICATION_WITHDRAWAL_INVALID_HEADER_RECORD_TYPE";
-/**
- * The text content has invalid data record type.
- */
-export const APPLICATION_WITHDRAWAL_INVALID_DATA_RECORD_TYPE =
-  "APPLICATION_WITHDRAWAL_INVALID_DATA_RECORD_TYPE";
-/**
- * The text content has invalid footer record type.
- */
-export const APPLICATION_WITHDRAWAL_INVALID_FOOTER_RECORD_TYPE =
-  "APPLICATION_WITHDRAWAL_INVALID_FOOTER_RECORD_TYPE";
+export const APPLICATION_WITHDRAWAL_INVALID_TEXT_FILE_ERROR =
+  "APPLICATION_WITHDRAWAL_INVALID_TEXT_FILE_ERROR";

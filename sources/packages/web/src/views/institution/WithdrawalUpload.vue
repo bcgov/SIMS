@@ -192,6 +192,7 @@ import { useSnackBar } from "@/composables";
 import { FileUploadProgressEventArgs } from "@/services/http/common/FileUploadProgressEvent";
 import { ApplicationService } from "@/services/ApplicationService";
 import { ApplicationBulkWithdrawal } from "@/types/contracts/institution/Application";
+import { APPLICATION_WITHDRAWAL_INVALID_TEXT_FILE_ERROR } from "@/constants";
 
 const ACCEPTED_FILE_TYPE = "text/plain";
 const MAX_OFFERING_UPLOAD_SIZE = 4194304;
@@ -253,6 +254,11 @@ export default defineComponent({
         if (error instanceof Error && error.message === "Network Error") {
           resetForm();
           showPossibleFileChangeError.value = true;
+        } else if (
+          error instanceof ApiProcessError &&
+          error.errorType === APPLICATION_WITHDRAWAL_INVALID_TEXT_FILE_ERROR
+        ) {
+          snackBar.error(error.message);
         } else {
           snackBar.error("Unexpected error while uploading the file.");
         }

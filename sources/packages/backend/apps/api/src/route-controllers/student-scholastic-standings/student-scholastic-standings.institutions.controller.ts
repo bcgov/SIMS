@@ -40,7 +40,10 @@ import { ApiProcessError, ClientTypeBaseRoute } from "../../types";
 import { CustomNamedError } from "@sims/utilities";
 import BaseController from "../BaseController";
 import { FormNames } from "../../services/form/constants";
-import { APPLICATION_CHANGE_NOT_ELIGIBLE } from "../../constants";
+import {
+  APPLICATION_CHANGE_NOT_ELIGIBLE,
+  APPLICATION_WITHDRAWAL_INVALID_TEXT_FILE_ERROR,
+} from "../../constants";
 import {
   ScholasticStandingAPIInDTO,
   ScholasticStandingSubmittedDetailsAPIOutDTO,
@@ -206,11 +209,17 @@ export class ScholasticStandingInstitutionsController extends BaseController {
         this.applicationWithdrawalImportTextService.readText(fileContent);
     } catch (error: unknown) {
       let errorMessage = "Error while parsing text file.";
-      if (error instanceof CustomNamedError) {
+      if (
+        error instanceof CustomNamedError &&
+        error.name === APPLICATION_WITHDRAWAL_INVALID_TEXT_FILE_ERROR
+      ) {
         errorMessage = error.message;
       }
       throw new BadRequestException(
-        new ApiProcessError(errorMessage, undefined),
+        new ApiProcessError(
+          errorMessage,
+          APPLICATION_WITHDRAWAL_INVALID_TEXT_FILE_ERROR,
+        ),
       );
     }
     // Validate the text models.

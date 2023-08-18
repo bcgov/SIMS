@@ -13,10 +13,7 @@ import {
   ApplicationWithdrawalTextValidationResult,
   RecordType,
 } from "./application-bulk-withdrawal-text.models";
-import {
-  APPLICATION_WITHDRAWAL_INVALID_FOOTER_RECORD_TYPE,
-  APPLICATION_WITHDRAWAL_INVALID_HEADER_RECORD_TYPE,
-} from "../../constants";
+import { APPLICATION_WITHDRAWAL_INVALID_TEXT_FILE_ERROR } from "../../constants";
 import { CustomNamedError } from "@sims/utilities";
 
 /**
@@ -51,8 +48,8 @@ export class ApplicationWithdrawalImportTextService {
       );
       // If the header is not the expected one, throw an error.
       throw new CustomNamedError(
-        "Invalid file header.",
-        APPLICATION_WITHDRAWAL_INVALID_HEADER_RECORD_TYPE,
+        "Invalid file header record type.",
+        APPLICATION_WITHDRAWAL_INVALID_TEXT_FILE_ERROR,
       );
     }
     //Read the last line to check if the footer record type is the expected one and verify the total records.
@@ -67,8 +64,18 @@ export class ApplicationWithdrawalImportTextService {
       );
       // If the footer is not the expected one.
       throw new CustomNamedError(
-        "Invalid file footer.",
-        APPLICATION_WITHDRAWAL_INVALID_FOOTER_RECORD_TYPE,
+        "Invalid file footer record type.",
+        APPLICATION_WITHDRAWAL_INVALID_TEXT_FILE_ERROR,
+      );
+    }
+    if (footer.noOfRecords !== fileLines.length) {
+      this.logger.error(
+        "The number of records in the footer does not match the no of data records",
+      );
+      // If the footer is not the expected one.
+      throw new CustomNamedError(
+        "No of records in the footer does not match number of data records.",
+        APPLICATION_WITHDRAWAL_INVALID_TEXT_FILE_ERROR,
       );
     }
     fileLines.forEach((dataLine) => {
