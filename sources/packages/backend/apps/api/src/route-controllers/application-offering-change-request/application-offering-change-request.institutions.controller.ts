@@ -37,7 +37,7 @@ import {
   ApplicationOfferingChangesAPIOutDTO,
   ApplicationOfferingChangeSummaryDetailAPIOutDTO,
   CreateApplicationOfferingChangeRequestAPIInDTO,
-} from "./models/application-offering-change-request.institutions.dto";
+} from "./models/application-offering-change-request.dto";
 import {
   APPLICATION_NOT_FOUND,
   ApplicationOfferingChangeRequestService,
@@ -157,12 +157,12 @@ export class ApplicationOfferingChangeRequestInstitutionsController extends Base
   > {
     const offeringChange =
       await this.applicationOfferingChangeRequestService.getSummaryByStatus(
-        locationId,
-        pagination,
         [
           ApplicationOfferingChangeRequestStatus.InProgressWithSABC,
           ApplicationOfferingChangeRequestStatus.InProgressWithStudent,
         ],
+        pagination,
+        { locationId, useApplicationSort: true },
       );
     return {
       results: offeringChange.results.map((eachOfferingChange) => {
@@ -171,7 +171,6 @@ export class ApplicationOfferingChangeRequestInstitutionsController extends Base
         return {
           id: eachOfferingChange.id,
           applicationNumber: eachOfferingChange.application.applicationNumber,
-          applicationId: eachOfferingChange.application.id,
           studyStartDate: offering.studyStartDate,
           studyEndDate: offering.studyEndDate,
           fullName: getUserFullName(
@@ -199,13 +198,13 @@ export class ApplicationOfferingChangeRequestInstitutionsController extends Base
   > {
     const offeringChange =
       await this.applicationOfferingChangeRequestService.getSummaryByStatus(
-        locationId,
-        pagination,
         [
           ApplicationOfferingChangeRequestStatus.Approved,
           ApplicationOfferingChangeRequestStatus.DeclinedByStudent,
           ApplicationOfferingChangeRequestStatus.DeclinedBySABC,
         ],
+        pagination,
+        { locationId, useApplicationSort: true },
       );
     return {
       results: offeringChange.results.map((eachOfferingChange) => {
@@ -214,7 +213,6 @@ export class ApplicationOfferingChangeRequestInstitutionsController extends Base
         return {
           id: eachOfferingChange.id,
           applicationNumber: eachOfferingChange.application.applicationNumber,
-          applicationId: eachOfferingChange.application.id,
           studyStartDate: offering.studyStartDate,
           studyEndDate: offering.studyEndDate,
           fullName: getUserFullName(
