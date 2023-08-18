@@ -80,3 +80,30 @@ export const DISABILITY_REQUEST_NOT_ALLOWED = "DISABILITY_REQUEST_NOT_ALLOWED";
  * Provided study dates is overlapping with the existing study periods.
  */
 export const STUDY_DATE_OVERLAP_ERROR = "STUDY_DATE_OVERLAP_ERROR";
+/**
+ * An error was found during the application withdrawal validation and the process
+ * must be stopped. Every application withdrawal validation will generate an error but
+ * some errors are classified as warnings and therefore are not considered
+ * critical, which means that critical errors are the only ones that will
+ * cause the process to be interrupted.
+ */
+export const APPLICATION_WITHDRAWAL_VALIDATION_CRITICAL_ERROR =
+  "APPLICATION_WITHDRAWAL_VALIDATION_CRITICAL_ERROR";
+/**
+ * Some error happen with one or more application withdrwal being created and
+ * the entire process was aborted. This error happens during the application withdrawal
+ * database update.
+ */
+export const APPLICATION_WITHDRAWAL_CRITICAL_ERROR =
+  "APPLICATION_WITHDRAWAL_CRITICAL_ERROR";
+/**
+ * The text content to perform the application withdrawal is not in the
+ * expected format and cannot be parsed.
+ */
+export const APPLICATION_WITHDRAWAL_TEXT_CONTENT_FORMAT_ERROR =
+  "APPLICATION_WITHDRAWAL_TEXT_CONTENT_FORMAT_ERROR";
+/**
+ * Error happen during text content parse.
+ */
+export const APPLICATION_WITHDRAWAL_TEXT_PARSE_ERROR =
+  "APPLICATION_WITHDRAWAL_TEXT_PARSE_ERROR";

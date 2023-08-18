@@ -76,6 +76,20 @@ const fileFilter = (
   }
 };
 
+/**
+ * TXT file filter, used by multer (node.js middleware),
+ * to allow only the specific MIME types files.
+ * @param file received file.
+ * @param callback callback to return the result of the validation.
+ */
+export const textFileFilter = (
+  _: unknown,
+  file: MulterFile,
+  callback: (error: Error | null, acceptFile: boolean) => void,
+) => {
+  return fileFilter(file, [".txt"], callback);
+};
+
 export interface MulterFile {
   /** Field name specified in the form */
   fieldname: string;

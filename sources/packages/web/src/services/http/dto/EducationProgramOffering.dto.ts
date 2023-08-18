@@ -1,5 +1,6 @@
 import { OfferingIntensity, OfferingStatus, OfferingTypes } from "@/types";
 import { Expose, Type } from "class-transformer";
+import { ValidationResultAPIOutDTO } from "./Common.dto";
 
 /**
  * Payload DTO to assess an offering.
@@ -172,17 +173,6 @@ export interface OfferingBulkInsertValidationResultAPIOutDTO {
   errors: string[];
   infos: ValidationResultAPIOutDTO[];
   warnings: ValidationResultAPIOutDTO[];
-}
-
-/**
- * Represents an error considered not critical for
- * an offering and provides a user-friendly message
- * and a type that uniquely identifies this warning
- * or info.
- */
-export interface ValidationResultAPIOutDTO {
-  typeCode: string;
-  message: string;
 }
 
 export interface StudyPeriodBreakdownAPIOutDTO {

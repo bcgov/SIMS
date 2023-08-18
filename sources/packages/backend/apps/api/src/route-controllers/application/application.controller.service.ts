@@ -1,4 +1,8 @@
-import { ForbiddenException, Injectable } from "@nestjs/common";
+import {
+  BadRequestException,
+  ForbiddenException,
+  Injectable,
+} from "@nestjs/common";
 import {
   EducationProgramOfferingService,
   InstitutionLocationService,
@@ -13,6 +17,7 @@ import {
   ApplicationIncomeVerification,
   ApplicationSupportingUserDetails,
   EnrolmentApplicationDetailsAPIOutDTO,
+  ApplicationBulkWithdrawalValidationResultAPIOutDTO,
 } from "./models/application.dto";
 import {
   credentialTypeToDisplay,
@@ -34,7 +39,11 @@ import {
   RestrictionActionType,
 } from "@sims/sims-db";
 import { ApiProcessError } from "../../types";
-import { ACTIVE_STUDENT_RESTRICTION } from "../../constants";
+import {
+  ACTIVE_STUDENT_RESTRICTION,
+  APPLICATION_WITHDRAWAL_TEXT_CONTENT_FORMAT_ERROR,
+} from "../../constants";
+import { ApplicationWithdrawalTextValidationResult } from "../../services/application/application-bulk-withdrawal-text.models";
 
 /**
  * This service controller is a provider which is created to extract the implementation of
@@ -333,5 +342,38 @@ export class ApplicationControllerService {
     }
 
     return supportingUserDetails;
+  }
+
+  /**
+   * Verify if all text file validations were performed with success and throw
+   * a BadRequestException in case of some failure.
+   * @param textValidations validations to be verified.
+   */
+  assertTextValidationsAreValid(
+    textValidations: ApplicationWithdrawalTextValidationResult[],
+  ) {
+    const textValidationsErrors = textValidations.filter(
+      (textValidation) => textValidation.errors.length,
+    );
+    if (textValidationsErrors.length) {
+      // At least one error was detected and the text must be fixed.
+      const validationResults: ApplicationBulkWithdrawalValidationResultAPIOutDTO[] =
+        textValidationsErrors.map((validation) => ({
+          recordIndex: validation.index,
+          sin: validation.textModel.sin,
+          applicationNumber: validation.textModel.applicationNumber,
+          withdrawalDate: validation.textModel.withdrawalDate,
+          errors: validation.errors,
+          infos: [],
+          warnings: [],
+        }));
+      throw new BadRequestException(
+        new ApiProcessError(
+          "One or more text data fields received are not in the correct format.",
+          APPLICATION_WITHDRAWAL_TEXT_CONTENT_FORMAT_ERROR,
+          validationResults,
+        ),
+      );
+    }
   }
 }

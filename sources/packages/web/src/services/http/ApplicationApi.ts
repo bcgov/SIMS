@@ -20,6 +20,9 @@ import {
   EnrolmentApplicationDetailsAPIOutDTO,
   CompletedApplicationDetailsAPIOutDTO,
 } from "@/services/http/dto";
+import { FileUploadProgressEventArgs } from "./common/FileUploadProgressEvent";
+import { AxiosRequestConfig } from "axios";
+import ApiClient from "./ApiClient";
 
 export class ApplicationApi extends HttpBaseClient {
   async getApplicationData(
@@ -191,6 +194,32 @@ export class ApplicationApi extends HttpBaseClient {
     await this.postCall(
       this.addClientRoot(`application/${applicationId}/reissue-msfaa`),
       null,
+    );
+  }
+
+  /**
+   * Process a text with applications to be withdrawn.
+   * @param file file content with all information needed to withdraw applications.
+   * @param validationOnly if true, will execute all validations and return the
+   * errors and warnings. These validations are the same executed during the
+   * final creation process. If false, the file will be processed and the records
+   * will be inserted.
+   **Validations errors are returned using different HTTP status codes.
+   * @onUploadProgress event to report the upload progress.
+   */
+  async applicationBulkWithdrawal(
+    file: Blob,
+    validationOnly: boolean,
+    onUploadProgress: (progressEvent: FileUploadProgressEventArgs) => void,
+  ): Promise<void> {
+    const formData = new FormData();
+    formData.append("file", file);
+    // Configure the request to provide upload progress status.
+    const requestConfig: AxiosRequestConfig = { onUploadProgress };
+    await ApiClient.FileUpload.upload(
+      `application/bulk-withdrawal?validation-only=${validationOnly}`,
+      formData,
+      requestConfig,
     );
   }
 }

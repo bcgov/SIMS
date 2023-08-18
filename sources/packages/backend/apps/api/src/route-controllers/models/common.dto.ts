@@ -1,5 +1,9 @@
 import { IsNotEmpty, IsOptional, ValidateIf } from "class-validator";
 import { COUNTRY_CANADA, OTHER_COUNTRY } from "../utils/address-utils";
+import {
+  OfferingValidationInfos,
+  OfferingValidationWarnings,
+} from "../../services";
 
 /**
  * Common DTO for Address.
@@ -110,4 +114,15 @@ export class FileCreateAPIOutDTO {
   url: string;
   size: number;
   mimetype: string;
+}
+
+/**
+ * Represents an error considered not critical for
+ * an offering and provides a user-friendly message
+ * and a type that uniquely identifies this warning
+ * or info.
+ */
+export class ValidationResultAPIOutDTO {
+  typeCode: OfferingValidationWarnings | OfferingValidationInfos | string;
+  message: string;
 }

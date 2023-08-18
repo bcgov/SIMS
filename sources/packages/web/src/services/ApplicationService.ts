@@ -3,6 +3,7 @@ import {
   StudentApplicationFields,
   DEFAULT_PAGE_LIMIT,
   DEFAULT_PAGE_NUMBER,
+  ApiProcessError,
 } from "@/types";
 import ApiClient from "../services/http/ApiClient";
 import {
@@ -18,7 +19,16 @@ import {
   ApplicationProgressDetailsAPIOutDTO,
   EnrolmentApplicationDetailsAPIOutDTO,
   CompletedApplicationDetailsAPIOutDTO,
+  ApplicationBulkWithdrawalValidationResultAPIOutDTO,
 } from "@/services/http/dto";
+import { FileUploadProgressEventArgs } from "./http/common/FileUploadProgressEvent";
+import { ApplicationBulkWithdrawal } from "@/types/contracts/institution/Application";
+import { DATE_ONLY_ISO_FORMAT, useFormatters } from "@/composables";
+import {
+  APPLICATION_WITHDRAWAL_CRITICAL_ERROR,
+  APPLICATION_WITHDRAWAL_TEXT_CONTENT_FORMAT_ERROR,
+  APPLICATION_WITHDRAWAL_VALIDATION_CRITICAL_ERROR,
+} from "@/constants";
 
 export class ApplicationService {
   // Share Instance
@@ -169,5 +179,74 @@ export class ApplicationService {
    */
   async reissueMSFAA(applicationId: number): Promise<void> {
     await ApiClient.Application.reissueMSFAA(applicationId);
+  }
+
+  /**
+   * Process a CSV with offerings to be created under existing programs.
+   * @param file file content with all information needed to create offerings.
+   * @param validationOnly if true, will execute all validations and return the
+   * errors and warnings. These validations are the same executed during the
+   * final creation process. If false, the file will be processed and the records
+   * will be inserted.
+   * @onUploadProgress event to report the upload progress.
+   * @returns a list with all validations errors and warning. Case no errors and
+   * warning were found, an empty array will be returned.
+   */
+  async applicationBulkWithdrawal(
+    file: Blob,
+    validationOnly: boolean,
+    onUploadProgress: (progressEvent: FileUploadProgressEventArgs) => void,
+  ): Promise<ApplicationBulkWithdrawal[]> {
+    try {
+      await ApiClient.Application.applicationBulkWithdrawal(
+        file,
+        validationOnly,
+        onUploadProgress,
+      );
+      return new Array<ApplicationBulkWithdrawal>();
+    } catch (error: unknown) {
+      // Errors that will contain records validation information that
+      // must be displayed to the user.
+      const bulkInsertValidationErrorTypes = [
+        APPLICATION_WITHDRAWAL_VALIDATION_CRITICAL_ERROR,
+        APPLICATION_WITHDRAWAL_TEXT_CONTENT_FORMAT_ERROR,
+        APPLICATION_WITHDRAWAL_CRITICAL_ERROR,
+      ];
+      if (
+        error instanceof ApiProcessError &&
+        bulkInsertValidationErrorTypes.includes(error.errorType)
+      ) {
+        const apiValidationResult = error as ApiProcessError<
+          ApplicationBulkWithdrawalValidationResultAPIOutDTO[]
+        >;
+        if (apiValidationResult.objectInfo) {
+          return apiValidationResult.objectInfo.map(
+            this.mapToApplicationBulkWithdrawal,
+          );
+        }
+      }
+      throw error;
+    }
+  }
+
+  /**
+   * Maps the API application bulk withdrawal result adding formatted values to be displayed in the UI.
+   * @param apiValidationResult validation result to be mapped and formatted.
+   * @returns application bulk withdrawal validation with additional properties formatted
+   * to be displayed to the UI.
+   */
+  private mapToApplicationBulkWithdrawal(
+    apiValidationResult: ApplicationBulkWithdrawalValidationResultAPIOutDTO,
+  ): ApplicationBulkWithdrawal {
+    const { dateOnlyLongString } = useFormatters();
+    return {
+      ...apiValidationResult,
+      recordLineNumber: apiValidationResult.recordIndex + 2, // Header + zero base index.
+      withdrawalDateFormatted: dateOnlyLongString(
+        apiValidationResult.withdrawalDate,
+        DATE_ONLY_ISO_FORMAT,
+        true,
+      ),
+    };
   }
 }

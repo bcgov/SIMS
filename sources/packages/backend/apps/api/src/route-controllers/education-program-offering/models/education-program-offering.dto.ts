@@ -9,10 +9,9 @@ import { Allow, IsEnum, IsIn, IsNotEmpty, MaxLength } from "class-validator";
 import { Type } from "class-transformer";
 import {
   OfferingDeliveryOptions,
-  OfferingValidationInfos,
-  OfferingValidationWarnings,
   WILComponentOptions,
 } from "../../../services";
+import { ValidationResultAPIOutDTO } from "../../models/common.dto";
 
 export class StudyBreakAPIOutDTO {
   breakStartDate: string;
@@ -229,15 +228,4 @@ export class OfferingBulkInsertValidationResultAPIOutDTO {
   errors: string[];
   infos: ValidationResultAPIOutDTO[];
   warnings: ValidationResultAPIOutDTO[];
-}
-
-/**
- * Represents an error considered not critical for
- * an offering and provides a user-friendly message
- * and a type that uniquely identifies this warning
- * or info.
- */
-export class ValidationResultAPIOutDTO {
-  typeCode: OfferingValidationWarnings | OfferingValidationInfos;
-  message: string;
 }

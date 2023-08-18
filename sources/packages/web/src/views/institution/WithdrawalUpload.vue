@@ -57,7 +57,7 @@
             :clearable="true"
             :accept="ACCEPTED_FILE_TYPE"
             density="compact"
-            v-model="offeringFiles"
+            v-model="withdrawalFiles"
             label="Withdrawal text file"
             variant="outlined"
             data-cy="fileUpload"
@@ -112,13 +112,7 @@
           class="mb-2"
           v-if="hasCriticalErrorsRecords"
           :type="BannerTypes.Error"
-          summary="Error! We found problems that will prevent the offerings from being created. Please review the errors below."
-        />
-        <banner
-          class="mb-2"
-          v-if="hasWarningRecords"
-          :type="BannerTypes.Warning"
-          summary="Warning! Offerings created as 'Creation Pending' will require StudentAid BC approval. Please review the warnings below."
+          summary="Error! We found problems that will prevent the bulk withdrawal from being created and uploaded. Please review the errors below."
         />
         <content-group>
           <DataTable
@@ -130,24 +124,14 @@
             breakpoint="1250px"
           >
             <Column header="Line" field="recordLineNumber"></Column>
-            <Column header="Location" field="locationCode"></Column>
-            <Column header="Program code" field="sabcProgramCode"></Column>
             <Column
-              header="Start date"
+              header="Application number"
+              field="applicationNumber"
+            ></Column>
+            <Column
+              header="Withdrawal date"
               field="startDateFormatted"
               bodyClass="text-no-wrap"
-            ></Column>
-            <Column
-              header="End date"
-              field="endDateFormatted"
-              bodyClass="text-no-wrap"
-            ></Column>
-            <Column header="Status"
-              ><template #body="slotProps">
-                <status-chip-offering
-                  v-if="slotProps.data.offeringStatus"
-                  :status="slotProps.data.offeringStatus"
-                /> </template
             ></Column>
             <Column header="Validations"
               ><template #body="slotProps">
@@ -196,7 +180,6 @@
 <script lang="ts">
 import { ref, computed, defineComponent } from "vue";
 import {
-  OfferingsUploadBulkInsert,
   DEFAULT_PAGE_LIMIT,
   PAGINATION_LIST,
   OfferingStatus,
@@ -205,27 +188,24 @@ import {
   InputFile,
   ApiProcessError,
 } from "@/types";
-import { EducationProgramOfferingService } from "@/services/EducationProgramOfferingService";
-import StatusChipOffering from "@/components/generic/StatusChipOffering.vue";
 import { useSnackBar } from "@/composables";
 import { FileUploadProgressEventArgs } from "@/services/http/common/FileUploadProgressEvent";
-import { OFFERING_VALIDATION_TEXT_PARSE_ERROR } from "@/constants";
+import { APPLICATION_WITHDRAWAL_TEXT_PARSE_ERROR } from "@/constants";
+import { ApplicationService } from "@/services/ApplicationService";
+import { ApplicationBulkWithdrawal } from "@/types/contracts/institution/Application";
 
-const ACCEPTED_FILE_TYPE = "text";
+const ACCEPTED_FILE_TYPE = "text/plain";
 const MAX_OFFERING_UPLOAD_SIZE = 4194304;
 
 export default defineComponent({
-  components: {
-    StatusChipOffering,
-  },
   setup() {
     const snackBar = useSnackBar();
     const validationProcessing = ref(false);
     const creationProcessing = ref(false);
     // Only one will be used but the component allows multiple.
-    const offeringFiles = ref<InputFile[]>([]);
+    const withdrawalFiles = ref<InputFile[]>([]);
     // Possible errors and warnings received upon file upload.
-    const validationResults = ref([] as OfferingsUploadBulkInsert[]);
+    const validationResults = ref([] as ApplicationBulkWithdrawal[]);
     const uploadForm = ref({} as VForm);
     const uploadProgress = ref({} as FileUploadProgressEventArgs);
     // Workaround to reset the file upload component to its original state.
@@ -249,9 +229,9 @@ export default defineComponent({
         } else {
           creationProcessing.value = true;
         }
-        const [fileToUpload] = offeringFiles.value;
+        const [fileToUpload] = withdrawalFiles.value;
         const uploadResults =
-          await EducationProgramOfferingService.shared.offeringBulkInsert(
+          await ApplicationService.shared.applicationBulkWithdrawal(
             fileToUpload,
             validationOnly,
             (progressEvent: FileUploadProgressEventArgs) => {
@@ -267,7 +247,7 @@ export default defineComponent({
           } else {
             // Reset for to execute a possible new file upload if needed.
             resetForm();
-            snackBar.success("Success! Offerings created.");
+            snackBar.success("Success! Applications withdrawn.");
           }
         }
       } catch (error: unknown) {
@@ -276,7 +256,7 @@ export default defineComponent({
           showPossibleFileChangeError.value = true;
         } else if (
           error instanceof ApiProcessError &&
-          error.errorType === OFFERING_VALIDATION_TEXT_PARSE_ERROR
+          error.errorType === APPLICATION_WITHDRAWAL_TEXT_PARSE_ERROR
         ) {
           snackBar.error(error.message);
         } else {
@@ -290,13 +270,6 @@ export default defineComponent({
 
     const hasCriticalErrorsRecords = computed(() =>
       validationResults.value.some((validation) => validation.errors.length),
-    );
-
-    const hasWarningRecords = computed(() =>
-      validationResults.value.some(
-        (validation) =>
-          validation.offeringStatus === OfferingStatus.CreationPending,
-      ),
     );
 
     const fileValidationRules = (files: InputFile[]) => {
@@ -315,7 +288,7 @@ export default defineComponent({
 
     const resetForm = () => {
       validationResults.value = [];
-      offeringFiles.value = [];
+      withdrawalFiles.value = [];
       textFileUploadKey.value++;
     };
 
@@ -329,13 +302,12 @@ export default defineComponent({
       creationProcessing,
       DEFAULT_PAGE_LIMIT,
       PAGINATION_LIST,
-      offeringFiles,
+      withdrawalFiles,
       uploadFile,
       validationResults,
       fileValidationRules,
       OfferingStatus,
       hasCriticalErrorsRecords,
-      hasWarningRecords,
       BannerTypes,
       uploadForm,
       ACCEPTED_FILE_TYPE,
