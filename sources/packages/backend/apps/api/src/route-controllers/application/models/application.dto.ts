@@ -17,7 +17,6 @@ import {
 } from "@sims/sims-db";
 import { JsonMaxSize } from "../../../utilities/class-validation";
 import { JSON_20KB } from "../../../constants";
-import { ValidationResultAPIOutDTO } from "../../models/common.dto";
 
 export class SaveApplicationAPIInDTO {
   /**
@@ -177,19 +176,4 @@ export class CompletedApplicationDetailsAPIOutDTO extends EnrolmentApplicationDe
   appealStatus?: StudentAppealStatus;
   scholasticStandingChangeType?: StudentScholasticStandingChangeType;
   applicationOfferingChangeRequestStatus?: ApplicationOfferingChangeRequestStatus;
-}
-
-/**
- * Represents the possible errors that can happen during the
- * application bulk withdrawal and provides a detailed description
- * for every record that has an error.
- */
-export interface ApplicationBulkWithdrawalValidationResultAPIOutDTO {
-  recordIndex: number;
-  sin?: number;
-  applicationNumber?: number;
-  withdrawalDate?: string;
-  errors: string[];
-  infos: ValidationResultAPIOutDTO[];
-  warnings: ValidationResultAPIOutDTO[];
 }

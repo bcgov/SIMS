@@ -190,7 +190,6 @@ import {
 } from "@/types";
 import { useSnackBar } from "@/composables";
 import { FileUploadProgressEventArgs } from "@/services/http/common/FileUploadProgressEvent";
-import { APPLICATION_WITHDRAWAL_TEXT_PARSE_ERROR } from "@/constants";
 import { ApplicationService } from "@/services/ApplicationService";
 import { ApplicationBulkWithdrawal } from "@/types/contracts/institution/Application";
 
@@ -254,11 +253,6 @@ export default defineComponent({
         if (error instanceof Error && error.message === "Network Error") {
           resetForm();
           showPossibleFileChangeError.value = true;
-        } else if (
-          error instanceof ApiProcessError &&
-          error.errorType === APPLICATION_WITHDRAWAL_TEXT_PARSE_ERROR
-        ) {
-          snackBar.error(error.message);
         } else {
           snackBar.error("Unexpected error while uploading the file.");
         }

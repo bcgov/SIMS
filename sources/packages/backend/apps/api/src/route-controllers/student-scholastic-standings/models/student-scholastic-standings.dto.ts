@@ -4,6 +4,7 @@ import { IsNotEmptyObject } from "class-validator";
 import { ActiveApplicationDataAPIOutDTO } from "../../../route-controllers/institution-locations/models/application.dto";
 import { JSON_10KB } from "../../../constants";
 import { StudentScholasticStandingChangeType } from "@sims/sims-db";
+import { ValidationResultAPIOutDTO } from "../../models/common.dto";
 
 /**
  * The API will also allow other properties that are not added below.
@@ -35,3 +36,18 @@ export class ScholasticStandingSubmittedDetailsAPIOutDTO extends IntersectionTyp
   ScholasticStandingData,
   ActiveApplicationDataAPIOutDTO,
 ) {}
+
+/**
+ * Represents the possible errors that can happen during the
+ * application bulk withdrawal and provides a detailed description
+ * for every record that has an error.
+ */
+export interface ApplicationBulkWithdrawalValidationResultAPIOutDTO {
+  recordIndex: number;
+  sin?: number;
+  applicationNumber?: number;
+  withdrawalDate?: string;
+  errors: string[];
+  infos: ValidationResultAPIOutDTO[];
+  warnings: ValidationResultAPIOutDTO[];
+}

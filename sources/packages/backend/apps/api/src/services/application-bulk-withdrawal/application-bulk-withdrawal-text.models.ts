@@ -3,8 +3,8 @@ import { APPLICATION_NUMBER_LENGTH } from "@sims/sims-db";
 import { IsValidSIN } from "../../utilities/class-validation";
 
 /**
- * user-friendly header names used in the CSV to be populated by the user.
- * The CSV model parser uses this as a base to parse the CSV string into an object model.
+ * user-friendly header names used in the text to be populated by the user.
+ * The text model parser uses this as a base to parse the text string into an object model.
  */
 export const TextHeaders = {
   sin: "SIN",

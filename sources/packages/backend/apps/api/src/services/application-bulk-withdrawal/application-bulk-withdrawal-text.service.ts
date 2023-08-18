@@ -3,10 +3,7 @@ import { EducationProgramService, InstitutionLocationService } from "..";
 import { plainToClass } from "class-transformer";
 import { validateSync } from "class-validator";
 import { flattenErrorMessages } from "../../utilities/class-validation";
-import { parse } from "papaparse";
 import { removeUTF8BOM } from "../../utilities";
-import { CustomNamedError } from "@sims/utilities";
-import { APPLICATION_WITHDRAWAL_TEXT_PARSE_ERROR } from "../../constants";
 import { LoggerService, InjectLogger } from "@sims/utilities/logger";
 import {
   ApplicationWithdrawalTextModel,
@@ -33,28 +30,39 @@ export class ApplicationWithdrawalImportTextService {
     const applicationWithdrawalModels: ApplicationWithdrawalTextModel[] = [];
     // Remove BOM(Byte order mark), if present.
     textContent = removeUTF8BOM(textContent);
-    const parsedResult = parse(textContent, {
-      header: true,
-      skipEmptyLines: "greedy",
-    });
-    if (parsedResult.errors.length) {
+    const fileLines = textContent.split("\n");
+
+    fileLines.shift();
+    fileLines.pop();
+    // Read the first line to check if the header code is the expected one.
+    /*const header = new ApplicationBulkWithdrawalHeader(parsedResult.data.shift); // Read and remove header.
+    if (
+      header.recordType !== ApplicationBulkWithdrawalHeaderRecordType.Header
+    ) {
       this.logger.error(
-        `The application withdrawal text parse resulted in some errors. ${JSON.stringify(
-          parsedResult.errors,
-        )}`,
+        `The application withdrawal text file has an invalid transaction code on header: ${header.recordType}`,
       );
-      throw new CustomNamedError(
-        "The application withdrawal text parse resulted in some errors. Please check the text content.",
-        APPLICATION_WITHDRAWAL_TEXT_PARSE_ERROR,
-      );
-    }
-    if (!parsedResult.data.length) {
-      throw new CustomNamedError(
-        "No records were found to be parsed. Please check the CSV content.",
-        APPLICATION_WITHDRAWAL_TEXT_PARSE_ERROR,
+      // If the header is not the expected one, throw an error.
+      throw new Error(
+        "Invalid file header.",
+        APPLICATION_WITHDRAWAL_INVALID_HEADER_RECORD_TYPE,
       );
     }
-    parsedResult.data.forEach((line) => {
+    //Read the last line to check if the footer record type is the expected one and verify the total records.
+    const footer = new ApplicationBulkWithdrawalFooter(parsedResult.data.pop);
+    if (
+      footer.recordType !== ApplicationBulkWithdrawalFooterRecordType.Footer
+    ) {
+      this.logger.error(
+        `The application withdrawal text file has an invalid transaction code on footer: ${footer.recordType}`,
+      );
+      // If the footer is not the expected one.
+      throw new CustomNamedError(
+        "Invalid file footer.",
+        APPLICATION_WITHDRAWAL_INVALID_FOOTER_RECORD_TYPE,
+      );
+    }*/
+    fileLines.forEach((line) => {
       const applicationWithdrawalTextModel =
         {} as ApplicationWithdrawalTextModel;
       applicationWithdrawalModels.push(applicationWithdrawalTextModel);
