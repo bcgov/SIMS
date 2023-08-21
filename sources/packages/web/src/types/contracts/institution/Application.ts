@@ -7,8 +7,8 @@ import { ApplicationBulkWithdrawalValidationResultAPIOutDTO } from "@/services/h
 export interface ApplicationBulkWithdrawal
   extends ApplicationBulkWithdrawalValidationResultAPIOutDTO {
   /**
-   * CSV line number that contains the error.
-   * Should match with CSV/spreadsheet line number for easy troubleshoot.
+   * Text line number that contains the error.
+   * Should match with text content line number for easy troubleshoot.
    */
   recordLineNumber: number;
   /**

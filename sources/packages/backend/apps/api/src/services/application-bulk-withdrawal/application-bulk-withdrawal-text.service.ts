@@ -17,7 +17,7 @@ import { APPLICATION_WITHDRAWAL_INVALID_TEXT_FILE_ERROR } from "../../constants"
 import { CustomNamedError } from "@sims/utilities";
 
 /**
- * Handles the offering bulk insert preparation using a CSV content.
+ * Handles the application withdrawal bulk insert preparation.
  */
 @Injectable()
 export class ApplicationWithdrawalImportTextService {

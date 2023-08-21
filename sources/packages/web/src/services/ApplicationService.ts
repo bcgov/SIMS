@@ -182,8 +182,8 @@ export class ApplicationService {
   }
 
   /**
-   * Process a CSV with offerings to be created under existing programs.
-   * @param file file content with all information needed to create offerings.
+   * Process the given text file with application withdrawal.
+   * @param file file content with all information needed to withdraw application.
    * @param validationOnly if true, will execute all validations and return the
    * errors and warnings. These validations are the same executed during the
    * final creation process. If false, the file will be processed and the records

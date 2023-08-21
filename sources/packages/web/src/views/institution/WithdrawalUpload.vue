@@ -182,7 +182,6 @@ import { ref, computed, defineComponent } from "vue";
 import {
   DEFAULT_PAGE_LIMIT,
   PAGINATION_LIST,
-  OfferingStatus,
   BannerTypes,
   VForm,
   InputFile,
@@ -195,7 +194,7 @@ import { ApplicationBulkWithdrawal } from "@/types/contracts/institution/Applica
 import { APPLICATION_WITHDRAWAL_INVALID_TEXT_FILE_ERROR } from "@/constants";
 
 const ACCEPTED_FILE_TYPE = "text/plain";
-const MAX_OFFERING_UPLOAD_SIZE = 4194304;
+const MAX_APPLICATION_WITHDRAWAL_UPLOAD_SIZE = 4194304;
 
 export default defineComponent({
   setup() {
@@ -277,7 +276,7 @@ export default defineComponent({
         return "Withdrawal text file is required.";
       }
       const [file] = files;
-      if (file.size > MAX_OFFERING_UPLOAD_SIZE) {
+      if (file.size > MAX_APPLICATION_WITHDRAWAL_UPLOAD_SIZE) {
         return "Text file size should not be greater than 4MB";
       }
       if (file.type !== ACCEPTED_FILE_TYPE) {
@@ -306,7 +305,6 @@ export default defineComponent({
       uploadFile,
       validationResults,
       fileValidationRules,
-      OfferingStatus,
       hasCriticalErrorsRecords,
       BannerTypes,
       uploadForm,
