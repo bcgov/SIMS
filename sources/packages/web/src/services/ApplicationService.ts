@@ -25,9 +25,8 @@ import { FileUploadProgressEventArgs } from "./http/common/FileUploadProgressEve
 import { ApplicationBulkWithdrawal } from "@/types/contracts/institution/Application";
 import { DATE_ONLY_ISO_FORMAT, useFormatters } from "@/composables";
 import {
-  APPLICATION_WITHDRAWAL_CRITICAL_ERROR,
+  APPLICATION_WITHDRAWAL_INVALID_TEXT_FILE_ERROR,
   APPLICATION_WITHDRAWAL_TEXT_CONTENT_FORMAT_ERROR,
-  APPLICATION_WITHDRAWAL_VALIDATION_CRITICAL_ERROR,
 } from "@/constants";
 
 export class ApplicationService {
@@ -208,9 +207,8 @@ export class ApplicationService {
       // Errors that will contain records validation information that
       // must be displayed to the user.
       const bulkInsertValidationErrorTypes = [
-        APPLICATION_WITHDRAWAL_VALIDATION_CRITICAL_ERROR,
         APPLICATION_WITHDRAWAL_TEXT_CONTENT_FORMAT_ERROR,
-        APPLICATION_WITHDRAWAL_CRITICAL_ERROR,
+        APPLICATION_WITHDRAWAL_INVALID_TEXT_FILE_ERROR,
       ];
       if (
         error instanceof ApiProcessError &&
