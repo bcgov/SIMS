@@ -162,7 +162,7 @@ export class ScholasticStandingInstitutionsController extends BaseController {
   }
   /**
    * Process a text file with application to be withdrawn.
-   * @param file file content with all information needed to create offerings.
+   * @param file text file content with all information needed to withdraw application.
    * @param validationOnly if true, will execute all validations and return the
    * errors and warnings. These validations are the same executed during the
    * final creation process. If not present or false, the file will be processed

@@ -118,7 +118,8 @@ export class FileCreateAPIOutDTO {
 
 /**
  * Represents an error considered not critical for
- * an offering and provides a user-friendly message
+ * an offering or application withdrawal
+ * and provides an user-friendly message
  * and a type that uniquely identifies this warning
  * or info.
  */
