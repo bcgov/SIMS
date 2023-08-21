@@ -1268,7 +1268,7 @@ or (calculatedDataPartnerFedralProvincialPDReceiptCost &gt; 0)</bpmn:conditionEx
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= (studentDataRelationshipStatus = "single" or studentDataRelationshipStatus = "other") and studentDataDependantstatus = "independant"</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="Flow_1rr875k" name="dependent" sourceRef="Gateway_0um3yvb" targetRef="Gateway_13qzd4v">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= (studentDataRelationshipStatus = "single" or studentDataRelationshipStatus = "other") and studentDataDependantstatus = "dependant"</bpmn:conditionExpression>
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= studentDataRelationshipStatus = "single" and studentDataDependantstatus = "dependant"</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="Flow_1qca6yi" sourceRef="Event_1duborc" targetRef="Gateway_1qh6zrs" />
     <bpmn:sequenceFlow id="Flow_0rfkk59" sourceRef="Activity_048jfh0" targetRef="Activity_1jqxw00" />
