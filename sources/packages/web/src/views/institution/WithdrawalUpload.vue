@@ -240,14 +240,12 @@ export default defineComponent({
         validationResults.value = uploadResults;
         if (uploadResults.length) {
           validationResults.value = uploadResults;
+        } else if (validationOnly) {
+          snackBar.success("Success! File validated.");
         } else {
-          if (validationOnly) {
-            snackBar.success("Success! File validated.");
-          } else {
-            // Reset for to execute a possible new file upload if needed.
-            resetForm();
-            snackBar.success("Success! Applications withdrawn.");
-          }
+          // Reset for to execute a possible new file upload if needed.
+          resetForm();
+          snackBar.success("Success! Applications withdrawn.");
         }
       } catch (error: unknown) {
         if (error instanceof Error && error.message === "Network Error") {
