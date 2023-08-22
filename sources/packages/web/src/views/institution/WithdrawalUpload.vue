@@ -128,11 +128,11 @@
               header="Application number"
               field="applicationNumber"
             ></Column>
-            <Column
-              header="Withdrawal date"
-              field="startDateFormatted"
-              bodyClass="text-no-wrap"
-            ></Column>
+            <Column header="Withdrawal date" bodyClass="text-no-wrap"
+              ><template #body="slotProps">{{
+                dateOnlyLongString(slotProps.data.withdrawalDate)
+              }}</template></Column
+            >
             <Column header="Validations"
               ><template #body="slotProps">
                 <div
@@ -187,7 +187,7 @@ import {
   InputFile,
   ApiProcessError,
 } from "@/types";
-import { useSnackBar } from "@/composables";
+import { useFormatters, useSnackBar } from "@/composables";
 import { FileUploadProgressEventArgs } from "@/services/http/common/FileUploadProgressEvent";
 import { ApplicationService } from "@/services/ApplicationService";
 import { ApplicationBulkWithdrawal } from "@/types/contracts/institution/Application";
@@ -201,6 +201,7 @@ export default defineComponent({
     const snackBar = useSnackBar();
     const validationProcessing = ref(false);
     const creationProcessing = ref(false);
+    const { dateOnlyLongString } = useFormatters();
     // Only one will be used but the component allows multiple.
     const withdrawalFiles = ref<InputFile[]>([]);
     // Possible errors and warnings received upon file upload.
@@ -310,6 +311,7 @@ export default defineComponent({
       textFileUploadKey,
       showPossibleFileChangeError,
       uploadProgress,
+      dateOnlyLongString,
     };
   },
 });

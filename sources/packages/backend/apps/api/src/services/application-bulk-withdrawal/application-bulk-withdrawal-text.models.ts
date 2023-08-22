@@ -1,4 +1,4 @@
-import { Contains, IsDate, Length } from "class-validator";
+import { Contains, IsDate, IsNumberString, Length } from "class-validator";
 import { APPLICATION_NUMBER_LENGTH } from "@sims/sims-db";
 import { IsValidSIN } from "../../utilities/class-validation";
 import { getDateOnlyFromFormat } from "@sims/utilities";
@@ -39,6 +39,12 @@ export class ApplicationWithdrawalTextModel {
   /**
    * Application Number.
    */
+  @IsNumberString(
+    { no_symbols: true },
+    {
+      message: `${DataTextHeaders.applicationNumber} must be a valid numeric application number.`,
+    },
+  )
   @Length(APPLICATION_NUMBER_LENGTH, APPLICATION_NUMBER_LENGTH, {
     message: `${DataTextHeaders.applicationNumber} must be a valid application number.`,
   })
