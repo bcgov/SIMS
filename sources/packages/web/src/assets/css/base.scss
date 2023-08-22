@@ -55,6 +55,24 @@ strong {
   border-radius: 8px;
 }
 
+.list-color {
+  background-color: $default-background !important;
+}
+
+/* Chrome, Safari and Opera */
+.div-scroll::-webkit-scrollbar {
+  overflow-y: auto;
+  height: 400px;
+  display: none;
+}
+
+.div-scroll {
+  overflow-y: auto;
+  height: 400px;
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
 /**
 * Overwrite the default margin
 * for PrimeVue components.
@@ -174,6 +192,11 @@ strong {
 .label-bold-normal {
   @extend .label-bold;
   color: $brand-black;
+}
+
+.label-bold-large-vertical-height {
+  @extend .label-bold;
+  line-height: $line-height-header-xlg !important;
 }
 
 // normal label primary

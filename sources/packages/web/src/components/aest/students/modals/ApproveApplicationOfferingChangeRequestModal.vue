@@ -6,19 +6,15 @@
         institution to make proposed changes to your application (on your
         behalf).
       </p>
-      <content-group-info class="my-3">
+      <content-group-info class="div-scroll"
+        ><h4 class="label-bold color-blue">StudentAid BC Declaration</h4>
         <v-row
           ><v-col
-            ><h4 class="label-bold color-blue">
-              StudentAid BC Declaration
-            </h4></v-col
-          ></v-row
-        >
-        <v-row
-          ><v-col
-            ><h4 class="label-bold">I. I. I/we understand that:</h4>
+            ><span class="label-bold-large-vertical-height"
+              >I. I. I/we understand that:</span
+            >
           </v-col></v-row
-        ><v-list bg-color="#f5f6f7" class="mb-5">
+        ><v-list class="list-color mb-5">
           <v-list-item>
             1. The student will have access to information provided in this
             appendix;
@@ -35,7 +31,7 @@
         </v-list>
         <v-row
           ><v-col
-            ><h4 class="label-bold">Collection and use of information</h4>
+            ><span class="label-bold">Collection and use of information</span>
           </v-col></v-row
         >
         <v-row

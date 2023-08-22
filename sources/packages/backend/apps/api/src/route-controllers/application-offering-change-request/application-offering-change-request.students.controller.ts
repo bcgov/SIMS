@@ -120,17 +120,17 @@ export class ApplicationOfferingChangeRequestStudentsController extends BaseCont
         applicationOfferingChangeRequestId,
         userToken.studentId,
       );
-    if (studentAuthorized)
-      await this.applicationOfferingChangeRequestService.updateApplicationOfferingChangeRequestStatus(
-        applicationOfferingChangeRequestId,
-        payload.applicationOfferingChangeRequestStatus,
-        {
-          studentConsent: payload?.studentConsent,
-        },
-      );
-    else
+    if (!studentAuthorized) {
       throw new UnauthorizedException(
         "Student is not authorized for the provided offering.",
       );
+    }
+    await this.applicationOfferingChangeRequestService.updateApplicationOfferingChangeRequestStatus(
+      applicationOfferingChangeRequestId,
+      payload.applicationOfferingChangeRequestStatus,
+      {
+        studentConsent: payload?.studentConsent,
+      },
+    );
   }
 }

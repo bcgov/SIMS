@@ -452,12 +452,11 @@ export class ApplicationOfferingChangeRequestService {
       .andWhere("student.id = :studentId", { studentId })
       .getOne();
 
-    if (application) return true;
-    return false;
+    return !!application;
   }
 
   /**
-   * Update the application offering change request status for the given applicationId.
+   * Update the application offering change request status for the given application offering change request id.
    * @param applicationOfferingChangeRequestId application offering change request id for which to update the status.
    * @param applicationOfferingChangeRequestStatus application offering change request status to be updated.
    * @param options method options:

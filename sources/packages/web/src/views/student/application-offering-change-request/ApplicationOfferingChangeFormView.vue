@@ -36,7 +36,7 @@
           :to="item.command()"
           :ripple="false"
         >
-          <span class="mx-2 label-bold"> {{ item.label }} </span>
+          <span class="label-bold"> {{ item.label }} </span>
         </v-tab>
       </v-tabs>
     </template>
@@ -51,8 +51,8 @@
 </template>
 
 <script lang="ts">
+import { useRouter, RouteLocationRaw } from "vue-router";
 import { defineComponent, ref, computed, onMounted, watchEffect } from "vue";
-import { RouteLocationRaw } from "vue-router";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 import ApproveApplicationOfferingChangeRequestModal from "@/components/aest/students/modals/ApproveApplicationOfferingChangeRequestModal.vue";
 import DeclineApplicationOfferingChangeRequestModal from "@/components/aest/students/modals/DeclineApplicationOfferingChangeRequestModal.vue";
@@ -60,7 +60,6 @@ import { ModalDialog, useSnackBar } from "@/composables";
 import { ApplicationOfferingChangeRequestService } from "@/services/ApplicationOfferingChangeRequestService";
 import { UpdateApplicationOfferingChangeRequestAPIInDTO } from "@/services/http/dto";
 import { ApplicationOfferingChangeRequestStatus } from "@/types";
-import router from "@/router";
 
 export default defineComponent({
   components: {
@@ -79,6 +78,7 @@ export default defineComponent({
   },
   setup(props) {
     const snackBar = useSnackBar();
+    const router = useRouter();
     const applicationOfferingChangeRequestStatus =
       ref<ApplicationOfferingChangeRequestStatus>();
     const approveApplicationOfferingChangeRequestModal = ref(
@@ -86,6 +86,19 @@ export default defineComponent({
     );
     const declineApplicationOfferingChangeRequestModal = ref(
       {} as ModalDialog<UpdateApplicationOfferingChangeRequestAPIInDTO>,
+    );
+    const getLabel = () => {
+      return applicationOfferingChangeRequestStatus.value ===
+        ApplicationOfferingChangeRequestStatus.Approved
+        ? "Previous application details"
+        : "Active application details";
+    };
+    const goBackRouteParams = computed(
+      () =>
+        ({
+          name: StudentRoutesConst.STUDENT_APPLICATION_DETAILS,
+          params: { id: props.applicationId },
+        } as RouteLocationRaw),
     );
     const items = ref([
       {
@@ -100,11 +113,7 @@ export default defineComponent({
         }),
       },
       {
-        label:
-          applicationOfferingChangeRequestStatus.value ===
-          ApplicationOfferingChangeRequestStatus.Approved
-            ? "Previous application details"
-            : "Active application details",
+        label: getLabel(),
         command: () => ({
           name: StudentRoutesConst.STUDENT_ACTIVE_APPLICATION_DETAILS,
           params: {
@@ -117,12 +126,7 @@ export default defineComponent({
     ]);
     watchEffect(() => {
       const [, secondItem] = items.value;
-      if (
-        applicationOfferingChangeRequestStatus.value ===
-        ApplicationOfferingChangeRequestStatus.Approved
-      )
-        secondItem.label = "Previous application details";
-      else secondItem.label = "Active application details";
+      secondItem.label = getLabel();
     });
     onMounted(async () => {
       applicationOfferingChangeRequestStatus.value =
@@ -140,10 +144,7 @@ export default defineComponent({
             declineApplicationOfferingChangeRequestData,
           );
           snackBar.success("Your decision has been submitted successfully");
-          router.push({
-            name: StudentRoutesConst.STUDENT_APPLICATION_DETAILS,
-            params: { id: props.applicationId },
-          });
+          router.push(goBackRouteParams.value);
         } catch {
           snackBar.error(
             "Unexpected error while approving the application offering change request",
@@ -161,23 +162,13 @@ export default defineComponent({
             approveApplicationOfferingChangeRequestData,
           );
           snackBar.success("Your decision has been submitted successfully");
-          router.push({
-            name: StudentRoutesConst.STUDENT_APPLICATION_DETAILS,
-            params: { id: props.applicationId },
-          });
+          router.push(goBackRouteParams.value);
         } catch {
           snackBar.error(
             "Unexpected error while approving the application offering change request",
           );
         }
     };
-    const goBackRouteParams = computed(
-      () =>
-        ({
-          name: StudentRoutesConst.STUDENT_APPLICATION_DETAILS,
-          params: { id: props.applicationId },
-        } as RouteLocationRaw),
-    );
     return {
       items,
       declineApplicationOfferingChangeRequest,
