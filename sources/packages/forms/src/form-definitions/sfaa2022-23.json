@@ -15469,7 +15469,7 @@
           "encrypted": false,
           "redrawOn": "data",
           "customDefaultValue": "",
-          "calculateValue": "if (data.hasDependents === 'no' && (data.relationshipStatus === 'single' || data.relationshipStatus === 'other') && data.outOfHighSchoolFor4Years === 'no' && data.howWillYouBeAttendingTheProgram === \"Full Time\") {\n  instance.setValue (true);\n}\nelse {\n  instance.setValue (false);\n}",
+          "calculateValue": "if (data.hasDependents === 'no' && (data.relationshipStatus === 'single') && data.outOfHighSchoolFor4Years === 'no' && data.howWillYouBeAttendingTheProgram === \"Full Time\") {\n  instance.setValue (true);\n}\nelse {\n  instance.setValue (false);\n}",
           "calculateServer": true,
           "key": "showParentInformation",
           "tags": [],
