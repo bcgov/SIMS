@@ -195,7 +195,6 @@ export class ScholasticStandingInstitutionsController extends BaseController {
     }),
   )
   async bulkWithdrawal(
-    @UserToken() userToken: IInstitutionUserToken,
     @UploadedFile() file: Express.Multer.File,
     @Query("validation-only", new DefaultValuePipe(false), ParseBoolPipe)
     validationOnly: boolean,
