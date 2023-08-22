@@ -53,21 +53,6 @@ export class EducationProgramOfferingControllerService {
     private readonly programOfferingService: EducationProgramOfferingService,
   ) {}
 
-  /** Validates student authorization for the given education program offering.
-   * @param offeringId offering id.
-   * @param studentId student id.
-   * @returns true is the student is authorized for the given offering, otherwise false.
-   */
-  async validateApplicationOfferingForStudent(
-    offeringId: number,
-    studentId: number,
-  ): Promise<boolean> {
-    return this.offeringService.validateApplicationOfferingForStudent(
-      offeringId,
-      studentId,
-    );
-  }
-
   /**
    * Get summary of offerings for a program and location.
    * Pagination, sort and search are available on results.

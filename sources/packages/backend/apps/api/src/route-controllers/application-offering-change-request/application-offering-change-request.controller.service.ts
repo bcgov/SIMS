@@ -26,7 +26,7 @@ export class ApplicationOfferingChangeRequestControllerService {
   ): Promise<ApplicationOfferingChangesAPIOutDTO> {
     const request = await this.applicationOfferingChangeRequestService.getById(
       id,
-      { studentId: options?.studentId },
+      { studentId: options?.studentId, locationId: options?.locationId },
     );
     if (!request) {
       throw new NotFoundException(

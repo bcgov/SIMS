@@ -115,7 +115,7 @@ export class ApplicationOfferingChangeRequestStudentsController extends BaseCont
     userToken: StudentUserToken,
     @Body()
     payload: UpdateApplicationOfferingChangeRequestAPIInDTO,
-  ) {
+  ): Promise<void> {
     const studentAuthorized =
       await this.applicationOfferingChangeRequestService.validateStudentForOfferingChangeRequest(
         applicationOfferingChangeRequestId,
@@ -131,10 +131,7 @@ export class ApplicationOfferingChangeRequestStudentsController extends BaseCont
       );
     else
       throw new UnauthorizedException(
-        new ApiProcessError(
-          "Student is not authorized for the provided offering.",
-          STUDENT_UNAUTHORIZED_FOR_APPLICATION_OFFERING_CHANGE_REQUEST,
-        ),
+        "Student is not authorized for the provided offering.",
       );
   }
 }

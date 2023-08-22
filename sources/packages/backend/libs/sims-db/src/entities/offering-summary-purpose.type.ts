@@ -1,4 +1,4 @@
-export enum ApplicationOfferingPurpose {
+export enum OfferingSummaryPurpose {
   /**
    * Purpose - Offering Change
    */

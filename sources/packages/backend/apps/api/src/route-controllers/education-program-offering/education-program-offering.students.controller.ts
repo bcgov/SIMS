@@ -20,10 +20,11 @@ import { AllowAuthorizedParty, UserToken } from "../../auth/decorators";
 import {
   OfferingIntensity,
   OfferingTypes,
-  ApplicationOfferingPurpose,
+  OfferingSummaryPurpose,
+  ApplicationOfferingChangeRequest,
 } from "@sims/sims-db";
 import { EducationProgramOfferingService } from "../../services";
-import { ApiProcessError, ClientTypeBaseRoute } from "../../types";
+import { ClientTypeBaseRoute } from "../../types";
 import BaseController from "../BaseController";
 import {
   EducationProgramOfferingSummaryViewAPIOutDTO,
@@ -33,17 +34,22 @@ import { OptionItemAPIOutDTO } from "../models/common.dto";
 import { EducationProgramOfferingControllerService } from "./education-program-offering.controller.service";
 import { ParseEnumQueryPipe } from "../utils/custom-validation-pipe";
 import { StudentUserToken } from "../../auth";
-import { STUDENT_UNAUTHORIZED_FOR_OFFERING } from "../../constants";
+import { DataSource, Repository } from "typeorm";
 
 @AllowAuthorizedParty(AuthorizedParties.student)
 @Controller("education-program-offering")
 @ApiTags(`${ClientTypeBaseRoute.Student}-education-program-offering`)
 export class EducationProgramOfferingStudentsController extends BaseController {
+  applicationOfferingChangeRepo: Repository<ApplicationOfferingChangeRequest>;
   constructor(
+    private readonly dataSource: DataSource,
     private readonly educationProgramOfferingService: EducationProgramOfferingService,
     private readonly educationProgramOfferingControllerService: EducationProgramOfferingControllerService,
   ) {
     super();
+    this.applicationOfferingChangeRepo = this.dataSource.getRepository(
+      ApplicationOfferingChangeRequest,
+    );
   }
 
   /**
@@ -123,25 +129,55 @@ export class EducationProgramOfferingStudentsController extends BaseController {
   @Get("offering/:offeringId/summary-details")
   async getOfferingSummaryDetailsById(
     @Param("offeringId", ParseIntPipe) offeringId: number,
-    @Query("purpose", new ParseEnumQueryPipe(ApplicationOfferingPurpose))
-    purpose: ApplicationOfferingPurpose,
+    @Query("purpose", new ParseEnumQueryPipe(OfferingSummaryPurpose))
+    purpose: OfferingSummaryPurpose,
     @UserToken() studentUserToken: StudentUserToken,
   ): Promise<EducationProgramOfferingSummaryViewAPIOutDTO> {
     if (
-      purpose === ApplicationOfferingPurpose.OfferingChange &&
-      (await this.educationProgramOfferingControllerService.validateApplicationOfferingForStudent(
+      await this.validateApplicationOfferingForStudent(
+        purpose,
         offeringId,
         studentUserToken.studentId,
-      ))
+      )
     )
       return this.educationProgramOfferingControllerService.getOfferingById(
         offeringId,
       );
     throw new UnauthorizedException(
-      new ApiProcessError(
-        "Student is not authorized for the provided offering.",
-        STUDENT_UNAUTHORIZED_FOR_OFFERING,
-      ),
+      "Student is not authorized for the provided offering.",
     );
+  }
+
+  /** Validates student authorization for the given education program offering.
+   * @param purpose indicating the purpose to allow for the appropriate authorization flow to be used.
+   * @param offeringId offering id.
+   * @param studentId student id.
+   * @returns true if the student is authorized for the given offering, otherwise false.
+   */
+  private async validateApplicationOfferingForStudent(
+    purpose: OfferingSummaryPurpose,
+    offeringId: number,
+    studentId: number,
+  ): Promise<boolean> {
+    if (purpose === OfferingSummaryPurpose.OfferingChange) {
+      const applicationOfferingChangeId =
+        await this.applicationOfferingChangeRepo.findOne({
+          select: { id: true },
+          relations: { application: { student: true } },
+          where: [
+            {
+              application: { student: { id: studentId } },
+              activeOffering: { id: offeringId },
+            },
+            {
+              application: { student: { id: studentId } },
+              requestedOffering: { id: offeringId },
+            },
+          ],
+        });
+      if (applicationOfferingChangeId) return true;
+      return false;
+    }
+    return false;
   }
 }

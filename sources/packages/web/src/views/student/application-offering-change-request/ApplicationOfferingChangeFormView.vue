@@ -83,6 +83,12 @@ export default defineComponent({
     const snackBar = useSnackBar();
     const applicationOfferingChangeRequestStatus =
       ref<ApplicationOfferingChangeRequestStatus>();
+    const approveApplicationOfferingChangeRequestModal = ref(
+      {} as ModalDialog<UpdateApplicationOfferingChangeRequestAPIInDTO>,
+    );
+    const declineApplicationOfferingChangeRequestModal = ref(
+      {} as ModalDialog<UpdateApplicationOfferingChangeRequestAPIInDTO>,
+    );
     const items = ref([
       {
         label: "Requested change",
@@ -111,7 +117,7 @@ export default defineComponent({
         }),
       },
     ]);
-    watchEffect(async () => {
+    watchEffect(() => {
       const [, secondItem] = items.value;
       if (
         applicationOfferingChangeRequestStatus.value ===
@@ -127,11 +133,6 @@ export default defineComponent({
         );
     });
     const showActionButtons = computed(() => true);
-    const declineApplicationOfferingChangeRequestModal = ref(
-      {} as ModalDialog<
-        UpdateApplicationOfferingChangeRequestAPIInDTO | boolean
-      >,
-    );
     const declineApplicationOfferingChangeRequest = async () => {
       const declineApplicationOfferingChangeRequestData =
         await declineApplicationOfferingChangeRequestModal.value.showModal();
@@ -139,7 +140,7 @@ export default defineComponent({
         try {
           await ApplicationOfferingChangeRequestService.shared.updateApplicationOfferingChangeRequestStatus(
             props.applicationOfferingChangeRequestId,
-            declineApplicationOfferingChangeRequestData as UpdateApplicationOfferingChangeRequestAPIInDTO,
+            declineApplicationOfferingChangeRequestData,
           );
           snackBar.success("Your decision has been submitted successfully");
           router.push({
@@ -153,11 +154,6 @@ export default defineComponent({
         }
       }
     };
-    const approveApplicationOfferingChangeRequestModal = ref(
-      {} as ModalDialog<
-        UpdateApplicationOfferingChangeRequestAPIInDTO | boolean
-      >,
-    );
     const approveApplicationOfferingChangeRequest = async () => {
       const approveApplicationOfferingChangeRequestData =
         await approveApplicationOfferingChangeRequestModal.value.showModal();
@@ -165,7 +161,7 @@ export default defineComponent({
         try {
           await ApplicationOfferingChangeRequestService.shared.updateApplicationOfferingChangeRequestStatus(
             props.applicationOfferingChangeRequestId,
-            approveApplicationOfferingChangeRequestData as UpdateApplicationOfferingChangeRequestAPIInDTO,
+            approveApplicationOfferingChangeRequestData,
           );
           snackBar.success("Your decision has been submitted successfully");
           router.push({

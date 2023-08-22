@@ -87,34 +87,6 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     );
   }
 
-  /** Validates student authorization for the given education program offering.
-   * @param offeringId offering id.
-   * @param studentId student id.
-   * @returns true if the student is authorized for the given offering, otherwise false.
-   */
-  async validateApplicationOfferingForStudent(
-    offeringId: number,
-    studentId: number,
-  ): Promise<boolean> {
-    const applicationOfferingChangeId =
-      this.applicationOfferingChangeRepo.findOne({
-        select: { id: true },
-        relations: { application: { student: true } },
-        where: [
-          {
-            application: { student: { id: studentId } },
-            activeOffering: { id: offeringId },
-          },
-          {
-            application: { student: { id: studentId } },
-            requestedOffering: { id: offeringId },
-          },
-        ],
-      });
-    if (applicationOfferingChangeId) return true;
-    return false;
-  }
-
   /**
    * Creates a new education program offering at program level
    * @param educationProgramOffering Information used to create the program offering.
