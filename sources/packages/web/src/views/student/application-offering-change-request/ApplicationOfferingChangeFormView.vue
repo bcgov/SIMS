@@ -14,14 +14,12 @@
           "
         >
           <v-btn
-            v-if="showActionButtons"
             color="primary"
             variant="outlined"
             @click="declineApplicationOfferingChangeRequest"
             >Decline change</v-btn
           >
           <v-btn
-            v-if="showActionButtons"
             color="primary"
             class="ml-2"
             @click="approveApplicationOfferingChangeRequest"
@@ -132,7 +130,6 @@ export default defineComponent({
           props.applicationOfferingChangeRequestId,
         );
     });
-    const showActionButtons = computed(() => true);
     const declineApplicationOfferingChangeRequest = async () => {
       const declineApplicationOfferingChangeRequestData =
         await declineApplicationOfferingChangeRequestModal.value.showModal();
@@ -183,7 +180,6 @@ export default defineComponent({
     );
     return {
       items,
-      showActionButtons,
       declineApplicationOfferingChangeRequest,
       approveApplicationOfferingChangeRequest,
       goBackRouteParams,

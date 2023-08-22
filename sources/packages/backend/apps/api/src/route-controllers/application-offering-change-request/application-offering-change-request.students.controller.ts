@@ -15,7 +15,7 @@ import {
 } from "@nestjs/swagger";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { AllowAuthorizedParty, UserToken } from "../../auth/decorators";
-import { ApiProcessError, ClientTypeBaseRoute } from "../../types";
+import { ClientTypeBaseRoute } from "../../types";
 import BaseController from "../BaseController";
 import {
   ApplicationOfferingChangesAPIOutDTO,
@@ -23,7 +23,6 @@ import {
 } from "./models/application-offering-change-request.dto";
 import { ApplicationOfferingChangeRequestStatus } from "@sims/sims-db";
 import { StudentUserToken } from "../../auth";
-import { STUDENT_UNAUTHORIZED_FOR_APPLICATION_OFFERING_CHANGE_REQUEST } from "../../constants";
 import { ApplicationOfferingChangeRequestControllerService } from "./application-offering-change-request.controller.service";
 import { ApplicationOfferingChangeRequestService } from "../../services";
 
