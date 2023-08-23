@@ -13,7 +13,7 @@ import {
   RecordType,
 } from "./application-bulk-withdrawal-text.models";
 import { APPLICATION_WITHDRAWAL_INVALID_TEXT_FILE_ERROR } from "../../constants";
-import { CustomNamedError, END_OF_LINE } from "@sims/utilities";
+import { CustomNamedError } from "@sims/utilities";
 
 /**
  * Handles the application withdrawal bulk insert preparation.
