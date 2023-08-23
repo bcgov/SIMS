@@ -29,7 +29,7 @@ export class ApplicationWithdrawalImportTextService {
     const applicationWithdrawalModels: ApplicationWithdrawalTextModel[] = [];
     // Remove BOM(Byte order mark), if present.
     textContent = removeUTF8BOM(textContent);
-    const fileLines = textContent.split(END_OF_LINE);
+    const fileLines = textContent.split("\n");
     // Read the first line to check if the header code is the expected one.
     const header = ApplicationBulkWithdrawalHeader.createFromLine(
       fileLines.shift(),
