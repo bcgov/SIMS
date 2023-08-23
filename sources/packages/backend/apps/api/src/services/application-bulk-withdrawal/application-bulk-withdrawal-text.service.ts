@@ -1,5 +1,4 @@
 import { Injectable } from "@nestjs/common";
-import { EducationProgramService, InstitutionLocationService } from "..";
 import { plainToClass } from "class-transformer";
 import { validateSync } from "class-validator";
 import { flattenErrorMessages } from "../../utilities/class-validation";
@@ -21,11 +20,6 @@ import { CustomNamedError, END_OF_LINE } from "@sims/utilities";
  */
 @Injectable()
 export class ApplicationWithdrawalImportTextService {
-  constructor(
-    private readonly institutionLocationService: InstitutionLocationService,
-    private readonly educationProgramService: EducationProgramService,
-  ) {}
-
   /**
    * Reads a text content and generate a text object model for each line.
    * @param textContent text content to generate the models.
