@@ -1,9 +1,5 @@
 import { IsNotEmpty, IsOptional, ValidateIf } from "class-validator";
 import { COUNTRY_CANADA, OTHER_COUNTRY } from "../utils/address-utils";
-import {
-  OfferingValidationInfos,
-  OfferingValidationWarnings,
-} from "../../services";
 
 /**
  * Common DTO for Address.
