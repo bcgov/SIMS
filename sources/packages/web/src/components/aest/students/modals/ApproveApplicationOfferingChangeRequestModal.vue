@@ -46,7 +46,6 @@
           ></v-row
         > </content-group-info
       ><v-checkbox
-        ref="declarationCheckbox"
         v-model="approveApplicationOfferingChangeRequestModal.studentConsent"
         label="I agree to the terms and conditions of the StudentAid BC Declaration
           form"

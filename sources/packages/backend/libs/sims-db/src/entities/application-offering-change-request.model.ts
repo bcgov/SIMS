@@ -97,7 +97,6 @@ export class ApplicationOfferingChangeRequest extends RecordDataModel {
   @Column({
     name: "student_consent",
     type: "boolean",
-    default: false,
   })
   studentConsent?: boolean;
 

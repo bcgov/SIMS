@@ -116,6 +116,7 @@
 import { useFormatters } from "@/composables";
 import { EducationProgramOfferingService } from "@/services/EducationProgramOfferingService";
 import { EducationProgramOfferingSummaryViewAPIOutDTO } from "@/services/http/dto";
+import { OfferingSummaryPurpose } from "@/types/contracts/OfferingSummaryPurpose";
 import { defineComponent, watch, ref } from "vue";
 
 export default defineComponent({
@@ -149,6 +150,7 @@ export default defineComponent({
               props.offeringId,
               {
                 locationId: props.locationId,
+                purpose: OfferingSummaryPurpose.ApplicationOfferingChange,
               },
             );
         }

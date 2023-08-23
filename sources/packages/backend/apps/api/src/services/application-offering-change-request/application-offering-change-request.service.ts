@@ -341,7 +341,6 @@ export class ApplicationOfferingChangeRequestService {
     const applicationOfferingChangeRequest =
       await this.applicationOfferingChangeRequestRepo.findOne({
         select: { id: true, applicationOfferingChangeRequestStatus: true },
-        relations: { application: { student: true } },
         where: {
           id: applicationOfferingChangeRequestId,
           application: { student: { id: options?.studentId } },
@@ -427,32 +426,6 @@ export class ApplicationOfferingChangeRequestService {
       );
       return applicationOfferingChangeRequest;
     });
-  }
-
-  /** Validates student authorization for the provided application offering change request.
-   * @param applicationOfferingChangeRequestId application offering change request id.
-   * @param studentId student id for the authorization.
-   * @returns true if the application offering change request belongs to the student, otherwise false.
-   */
-  async validateStudentForOfferingChangeRequest(
-    applicationOfferingChangeRequestId: number,
-    studentId: number,
-  ): Promise<boolean> {
-    const { application } = await this.applicationOfferingChangeRequestRepo
-      .createQueryBuilder("applicationOfferingChangeRequest")
-      .select(["applicationOfferingChangeRequest.id", "application.id"])
-      .innerJoin("applicationOfferingChangeRequest.application", "application")
-      .innerJoin("application.student", "student")
-      .where(
-        "applicationOfferingChangeRequest.id = :applicationOfferingChangeRequestId",
-        {
-          applicationOfferingChangeRequestId,
-        },
-      )
-      .andWhere("student.id = :studentId", { studentId })
-      .getOne();
-
-    return !!application;
   }
 
   /**

@@ -18,10 +18,10 @@ import { AllowAuthorizedParty, UserToken } from "../../auth/decorators";
 import { ClientTypeBaseRoute } from "../../types";
 import BaseController from "../BaseController";
 import {
+  ApplicationOfferingChangeRequestStatusAPIOutDTO,
   ApplicationOfferingChangesAPIOutDTO,
   UpdateApplicationOfferingChangeRequestAPIInDTO,
 } from "./models/application-offering-change-request.dto";
-import { ApplicationOfferingChangeRequestStatus } from "@sims/sims-db";
 import { StudentUserToken } from "../../auth";
 import { ApplicationOfferingChangeRequestControllerService } from "./application-offering-change-request.controller.service";
 import { ApplicationOfferingChangeRequestService } from "../../services";
@@ -30,9 +30,7 @@ import { ApplicationOfferingChangeRequestService } from "../../services";
  * Application offering change request controller for students client.
  */
 @AllowAuthorizedParty(AuthorizedParties.student)
-@Controller(
-  "application-offering-change-request/:applicationOfferingChangeRequestId",
-)
+@Controller("application-offering-change-request")
 @ApiTags(`${ClientTypeBaseRoute.Student}-application-offering-change-request`)
 export class ApplicationOfferingChangeRequestStudentsController extends BaseController {
   constructor(
@@ -48,7 +46,7 @@ export class ApplicationOfferingChangeRequestStudentsController extends BaseCont
    * @param studentUserToken student user token to authorize the user.
    * @returns Application Offering Change Request details.
    */
-  @Get()
+  @Get(":applicationOfferingChangeRequestId")
   @ApiNotFoundResponse({
     description: "Not able to find an Application Offering Change Request.",
   })
@@ -70,7 +68,9 @@ export class ApplicationOfferingChangeRequestStudentsController extends BaseCont
    * @param studentUserToken student user token to authorize the user.
    * @returns Application Offering Change Request status.
    */
-  @Get("application-offering-change-request-status")
+  @Get(
+    ":applicationOfferingChangeRequestId/application-offering-change-request-status",
+  )
   @ApiNotFoundResponse({
     description:
       "Not able to get the Application Offering Change Request Status.",
@@ -80,7 +80,7 @@ export class ApplicationOfferingChangeRequestStudentsController extends BaseCont
     applicationOfferingChangeRequestId: number,
     @UserToken()
     studentUserToken: StudentUserToken,
-  ): Promise<ApplicationOfferingChangeRequestStatus> {
+  ): Promise<ApplicationOfferingChangeRequestStatusAPIOutDTO> {
     const applicationOfferingChangeRequestStatus =
       await this.applicationOfferingChangeRequestService.getApplicationOfferingChangeRequestStatusById(
         applicationOfferingChangeRequestId,
@@ -93,7 +93,7 @@ export class ApplicationOfferingChangeRequestStudentsController extends BaseCont
         "Not able to get the Application Offering Change Request Status.",
       );
     }
-    return applicationOfferingChangeRequestStatus;
+    return { status: applicationOfferingChangeRequestStatus };
   }
 
   /**
@@ -102,7 +102,7 @@ export class ApplicationOfferingChangeRequestStudentsController extends BaseCont
    * @param userToken user token to authorize the user.
    * @param payload information to update the application offering change request status.
    */
-  @Patch()
+  @Patch(":applicationOfferingChangeRequestId")
   @ApiUnauthorizedResponse({
     description:
       "The student does not have access to the application offering change request.",
@@ -116,9 +116,9 @@ export class ApplicationOfferingChangeRequestStudentsController extends BaseCont
     payload: UpdateApplicationOfferingChangeRequestAPIInDTO,
   ): Promise<void> {
     const studentAuthorized =
-      await this.applicationOfferingChangeRequestService.validateStudentForOfferingChangeRequest(
+      await this.applicationOfferingChangeRequestService.getById(
         applicationOfferingChangeRequestId,
-        userToken.studentId,
+        { studentId: userToken.studentId },
       );
     if (!studentAuthorized) {
       throw new UnauthorizedException(

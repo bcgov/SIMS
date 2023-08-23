@@ -1,41 +1,43 @@
 <template>
-  <body-header-container>
-    <template #header>
-      <body-header :title="changeRequest.studentFullName">
-        <template #subtitle
-          ><detail-header :headerMap="headerDetailsData"
-        /></template>
-        <template #status-chip>
-          <status-chip-application-offering-change
-            v-if="changeRequest.status"
-            :status="changeRequest.status"
-          />
-        </template>
-      </body-header>
-    </template>
-    <hr class="horizontal-divider" />
-    <h2 class="category-header-large primary-color">Application Details</h2>
-    <p v-if="changeRequestNotApproved">
-      Below displays the requested changes from your institution. You can
-      compare your active application details by switching tabs located above.
-    </p>
-    <offering-view :offeringId="changeRequest.requestedOfferingId" />
-    <hr class="horizontal-divider" />
-    <h2 class="category-header-large primary-color">Request details</h2>
-    <p v-if="changeRequestNotApproved">
-      Contact your institution for more information if there are no differences
-      in the requested change above. There may be proposed changes that aren't
-      displayed such as study costs.
-    </p>
-    <v-textarea
-      :readonly="true"
-      label="Reason for change"
-      variant="outlined"
-      hide-details="auto"
-      class="mt-4"
-      v-model="changeRequest.reason"
-    />
-  </body-header-container>
+  <tab-container :enableCardView="false" class="mt-n1">
+    <body-header-container>
+      <template #header>
+        <body-header :title="changeRequest.studentFullName">
+          <template #subtitle
+            ><detail-header :headerMap="headerDetailsData"
+          /></template>
+          <template #status-chip>
+            <status-chip-application-offering-change
+              :status="changeRequest.status"
+            />
+          </template>
+        </body-header>
+      </template>
+      <hr class="horizontal-divider" />
+      <h2 class="category-header-large primary-color">Application Details</h2>
+      <p v-if="changeRequestNotApproved">
+        Below displays the requested changes from your institution. You can
+        compare your <b>active application details</b> by switching tabs located
+        above.
+      </p>
+      <offering-view :offeringId="changeRequest.requestedOfferingId" />
+      <hr class="horizontal-divider" />
+      <h2 class="category-header-large primary-color">Request details</h2>
+      <p v-if="changeRequestNotApproved">
+        Contact your institution for more information if there are no
+        differences in the requested change above. There may be proposed changes
+        that aren't displayed such as study costs.
+      </p>
+      <content-group-info
+        ><div class="mb-2">
+          <span class="category-header-medium primary-color"
+            >Reason for change</span
+          >
+        </div>
+        <span>{{ changeRequest.reason }}</span></content-group-info
+      >
+    </body-header-container>
+  </tab-container>
 </template>
 <script lang="ts">
 import { computed, defineComponent, ref, onMounted } from "vue";
@@ -45,11 +47,13 @@ import StatusChipApplicationOfferingChange from "@/components/generic/StatusChip
 import { ApplicationOfferingChangeRequestService } from "@/services/ApplicationOfferingChangeRequestService";
 import { ApplicationOfferingChangesAPIOutDTO } from "@/services/http/dto";
 import { ApplicationOfferingChangeRequestStatus } from "@/types";
+import ContentGroupInfo from "@/components/generic/ContentGroupInfo.vue";
 export default defineComponent({
   components: {
     OfferingView,
     DetailHeader,
     StatusChipApplicationOfferingChange,
+    ContentGroupInfo,
   },
   props: {
     applicationOfferingChangeRequestId: {

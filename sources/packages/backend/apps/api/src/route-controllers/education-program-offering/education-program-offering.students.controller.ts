@@ -126,6 +126,9 @@ export class EducationProgramOfferingStudentsController extends BaseController {
   @ApiUnauthorizedResponse({
     description: "The student is not authorized for the provided offering.",
   })
+  @ApiNotFoundResponse({
+    description: "Not able to find the Education Program offering.",
+  })
   @Get("offering/:offeringId/summary-details")
   async getOfferingSummaryDetailsById(
     @Param("offeringId", ParseIntPipe) offeringId: number,
@@ -133,18 +136,19 @@ export class EducationProgramOfferingStudentsController extends BaseController {
     purpose: OfferingSummaryPurpose,
     @UserToken() studentUserToken: StudentUserToken,
   ): Promise<EducationProgramOfferingSummaryViewAPIOutDTO> {
-    if (
+    const validatedApplicationOfferingForStudent =
       await this.validateApplicationOfferingForStudent(
         purpose,
         offeringId,
         studentUserToken.studentId,
-      )
-    )
-      return this.educationProgramOfferingControllerService.getOfferingById(
-        offeringId,
       );
-    throw new UnauthorizedException(
-      "Student is not authorized for the provided offering.",
+    if (!validatedApplicationOfferingForStudent) {
+      throw new UnauthorizedException(
+        "Student is not authorized for the provided offering.",
+      );
+    }
+    return this.educationProgramOfferingControllerService.getOfferingById(
+      offeringId,
     );
   }
 
@@ -159,11 +163,10 @@ export class EducationProgramOfferingStudentsController extends BaseController {
     offeringId: number,
     studentId: number,
   ): Promise<boolean> {
-    if (purpose === OfferingSummaryPurpose.OfferingChange) {
+    if (purpose === OfferingSummaryPurpose.ApplicationOfferingChange) {
       const applicationOfferingChangeId =
         await this.applicationOfferingChangeRepo.findOne({
           select: { id: true },
-          relations: { application: { student: true } },
           where: [
             {
               application: { student: { id: studentId } },
@@ -175,8 +178,7 @@ export class EducationProgramOfferingStudentsController extends BaseController {
             },
           ],
         });
-      if (applicationOfferingChangeId) return true;
-      return false;
+      return !!applicationOfferingChangeId;
     }
     return false;
   }

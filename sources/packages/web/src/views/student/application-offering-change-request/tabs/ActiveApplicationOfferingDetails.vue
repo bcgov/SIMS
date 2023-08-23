@@ -1,16 +1,18 @@
 <template>
-  <body-header-container>
-    <template #header>
-      <body-header :title="changeRequest.studentFullName">
-        <template #subtitle
-          ><detail-header :headerMap="headerDetailsData"
-        /></template>
-      </body-header>
-    </template>
-    <hr class="horizontal-divider" />
-    <h2 class="category-header-large primary-color">Application Details</h2>
-    <offering-view :offeringId="changeRequest.activeOfferingId" />
-  </body-header-container>
+  <tab-container :enableCardView="false" class="mt-n1">
+    <body-header-container>
+      <template #header>
+        <body-header :title="changeRequest.studentFullName">
+          <template #subtitle
+            ><detail-header :headerMap="headerDetailsData"
+          /></template>
+        </body-header>
+      </template>
+      <hr class="horizontal-divider" />
+      <h2 class="category-header-large primary-color">Application Details</h2>
+      <offering-view :offeringId="changeRequest.activeOfferingId" />
+    </body-header-container>
+  </tab-container>
 </template>
 <script lang="ts">
 import { computed, defineComponent, ref, onMounted } from "vue";

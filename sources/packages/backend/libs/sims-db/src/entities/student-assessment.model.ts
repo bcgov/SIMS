@@ -143,15 +143,6 @@ export class StudentAssessment extends RecordDataModel {
   )
   studentAppealId?: number;
   /**
-   * When the reassessment happen due to a student application offering change request, this will provide to
-   * the workflow the data that need to be changed.
-   */
-  @RelationId(
-    (studentAssessment: StudentAssessment) =>
-      studentAssessment.applicationOfferingChangeRequest,
-  )
-  studentApplicationOfferingChangeRequestId?: number;
-  /**
    * When the reassessment happen due to a student appeal, this will provide to
    * the workflow the data that need to be changed.
    */

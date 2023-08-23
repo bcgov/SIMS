@@ -111,6 +111,13 @@ export class ApplicationOfferingChangesAPIOutDTO {
 }
 
 /**
+ * Application Offering Change Request Status.
+ */
+export class ApplicationOfferingChangeRequestStatusAPIOutDTO {
+  status: ApplicationOfferingChangeRequestStatus;
+}
+
+/**
  * Information provided by the institution to create a new Application Offering Change Request.
  */
 export class CreateApplicationOfferingChangeRequestAPIInDTO {

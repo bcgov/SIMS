@@ -174,7 +174,7 @@ import ApplicationStatusTrackerBanner from "@/components/students/applicationTra
 import DisbursementBanner from "@/components/students/applicationTracker/DisbursementBanner.vue";
 import MultipleDisbursementBanner from "@/components/students/applicationTracker/MultipleDisbursementBanner.vue";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
-import router from "@/router";
+import { useRouter } from "vue-router";
 
 export default defineComponent({
   components: {
@@ -189,6 +189,7 @@ export default defineComponent({
     },
   },
   setup(props) {
+    const router = useRouter();
     const assessmentDetails = ref({} as CompletedApplicationDetailsAPIOutDTO);
     const multipleCOEDenialReason = ref<string>();
 
@@ -214,10 +215,10 @@ export default defineComponent({
 
     /**
      * Navigate to the form to view the application offering change request.
-     * @param applicationId application to have the request created.
+     * @param applicationOfferingChangeRequestId application offering change request id to have the request created.
      */
     const viewApplicationOfferingChangeRequest = (
-      applicationOfferingChangeRequestId: number,
+      applicationOfferingChangeRequestId: number | undefined,
     ) => {
       router.push({
         name: StudentRoutesConst.STUDENT_REQUESTED_APPLICATION_OFFERING_CHANGE,
