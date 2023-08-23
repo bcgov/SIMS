@@ -37,7 +37,7 @@ export class DisbursementReceiptIntegrationService extends SFTPIntegrationBase<D
       // If the header is not the expected one, throw an error.
       throw new Error("Invalid file header.");
     }
-    //Read the last line to check if the footer record type is the expected one and fetch the SIN Hash total.
+    // Read the last line to check if the footer record type is the expected one and fetch the SIN Hash total.
     const footer = new DisbursementReceiptFooter(fileLines.pop());
     if (footer.recordType !== DisbursementReceiptRecordType.Footer) {
       this.logger.error(

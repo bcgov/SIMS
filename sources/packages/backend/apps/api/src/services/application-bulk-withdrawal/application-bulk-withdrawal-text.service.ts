@@ -14,7 +14,7 @@ import {
   RecordType,
 } from "./application-bulk-withdrawal-text.models";
 import { APPLICATION_WITHDRAWAL_INVALID_TEXT_FILE_ERROR } from "../../constants";
-import { CustomNamedError } from "@sims/utilities";
+import { CustomNamedError, END_OF_LINE } from "@sims/utilities";
 
 /**
  * Handles the application withdrawal bulk insert preparation.
@@ -35,7 +35,7 @@ export class ApplicationWithdrawalImportTextService {
     const applicationWithdrawalModels: ApplicationWithdrawalTextModel[] = [];
     // Remove BOM(Byte order mark), if present.
     textContent = removeUTF8BOM(textContent);
-    const fileLines = textContent.split("\n");
+    const fileLines = textContent.split(END_OF_LINE);
     // Read the first line to check if the header code is the expected one.
     const header = ApplicationBulkWithdrawalHeader.createFromLine(
       fileLines.shift(),
@@ -52,7 +52,7 @@ export class ApplicationWithdrawalImportTextService {
         APPLICATION_WITHDRAWAL_INVALID_TEXT_FILE_ERROR,
       );
     }
-    //Read the last line to check if the footer record type is the expected one and verify the total records.
+    // Read the last line to check if the footer record type is the expected one and verify the total records.
     const footer = ApplicationBulkWithdrawalFooter.createFromLine(
       fileLines.pop(),
     );
