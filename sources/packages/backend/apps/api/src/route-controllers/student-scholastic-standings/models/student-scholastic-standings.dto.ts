@@ -52,8 +52,8 @@ export interface ApplicationBulkWithdrawalValidationResultAPIOutDTO {
 }
 
 /**
- * Represents an error considered not critical for
- * an offering or application withdrawal
+ * Represents an error considered not critical
+ * for application withdrawal
  * and provides an user-friendly message
  * and a type that uniquely identifies this warning
  * or info.
