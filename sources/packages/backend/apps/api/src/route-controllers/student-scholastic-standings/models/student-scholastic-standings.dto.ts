@@ -4,7 +4,6 @@ import { IsNotEmptyObject } from "class-validator";
 import { ActiveApplicationDataAPIOutDTO } from "../../../route-controllers/institution-locations/models/application.dto";
 import { JSON_10KB } from "../../../constants";
 import { StudentScholasticStandingChangeType } from "@sims/sims-db";
-import { ValidationResultAPIOutDTO } from "../../models/common.dto";
 
 /**
  * The API will also allow other properties that are not added below.
@@ -50,4 +49,16 @@ export interface ApplicationBulkWithdrawalValidationResultAPIOutDTO {
   errors: string[];
   infos: ValidationResultAPIOutDTO[];
   warnings: ValidationResultAPIOutDTO[];
+}
+
+/**
+ * Represents an error considered not critical for
+ * an offering or application withdrawal
+ * and provides an user-friendly message
+ * and a type that uniquely identifies this warning
+ * or info.
+ */
+class ValidationResultAPIOutDTO {
+  typeCode: string;
+  message: string;
 }

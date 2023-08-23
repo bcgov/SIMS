@@ -115,15 +115,3 @@ export class FileCreateAPIOutDTO {
   size: number;
   mimetype: string;
 }
-
-/**
- * Represents an error considered not critical for
- * an offering or application withdrawal
- * and provides an user-friendly message
- * and a type that uniquely identifies this warning
- * or info.
- */
-export class ValidationResultAPIOutDTO {
-  typeCode: OfferingValidationWarnings | OfferingValidationInfos | string;
-  message: string;
-}
