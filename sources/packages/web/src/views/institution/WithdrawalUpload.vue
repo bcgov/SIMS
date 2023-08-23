@@ -57,13 +57,11 @@
             :clearable="true"
             :accept="ACCEPTED_FILE_TYPE"
             density="compact"
-            v-model="withdrawalFiles"
+            :model="withdrawalFiles"
             label="Withdrawal text file"
             variant="outlined"
-            data-cy="fileUpload"
             prepend-icon="fa:fa-solid fa-file-text"
             :rules="[fileValidationRules]"
-            @change="uploadChanged"
             :key="textFileUploadKey"
           />
 

@@ -61,13 +61,12 @@
             :clearable="true"
             :accept="ACCEPTED_FILE_TYPE"
             density="compact"
-            v-model="offeringFiles"
+            :model="offeringFiles"
             label="Offering CSV file"
             variant="outlined"
             data-cy="fileUpload"
             prepend-icon="fa:fa-solid fa-file-csv"
             :rules="[fileValidationRules]"
-            @change="uploadChanged"
             :key="csvFileUploadKey"
           />
 
