@@ -50,6 +50,7 @@ export class ScholasticStandingControllerService {
       ...transformToActiveApplicationDataAPIOutDTO(application, offering),
     };
   }
+
   /**
    * Verify if all text file validations were performed with success and throw
    * a BadRequestException in case of some failure.
