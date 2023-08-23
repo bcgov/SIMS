@@ -61,7 +61,7 @@
             :clearable="true"
             :accept="ACCEPTED_FILE_TYPE"
             density="compact"
-            :model="offeringFiles"
+            v-model="offeringFiles"
             label="Offering CSV file"
             variant="outlined"
             data-cy="fileUpload"

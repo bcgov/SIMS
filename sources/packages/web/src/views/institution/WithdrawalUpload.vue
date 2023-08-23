@@ -57,7 +57,7 @@
             :clearable="true"
             :accept="ACCEPTED_FILE_TYPE"
             density="compact"
-            :model="withdrawalFiles"
+            v-model="withdrawalFiles"
             label="Withdrawal text file"
             variant="outlined"
             prepend-icon="fa:fa-solid fa-file-text"
