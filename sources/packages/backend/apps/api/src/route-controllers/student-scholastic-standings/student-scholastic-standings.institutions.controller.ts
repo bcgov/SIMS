@@ -233,6 +233,7 @@ export class ScholasticStandingInstitutionsController extends BaseController {
     this.scholasticStandingControllerService.assertTextValidationsAreValid(
       textValidations,
     );
+    // TODO Add business validation for application bulk withdrawal.
 
     if (validationOnly) {
       // If the endpoint is called only to perform the validation and no error was found
