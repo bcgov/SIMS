@@ -24,6 +24,7 @@ import { IInstitutionUserToken } from "../../auth/userToken.interface";
 import {
   AllowAuthorizedParty,
   HasLocationAccess,
+  IsBCPublicInstitution,
   IsInstitutionAdmin,
   UserToken,
 } from "../../auth/decorators";
@@ -160,9 +161,10 @@ export class ScholasticStandingInstitutionsController extends BaseController {
       userToken.authorizations.getLocationsIds(),
     );
   }
+
   /**
-   * Process a text file with application to be withdrawn.
-   * @param file text file content with all information needed to withdraw application.
+   * Process a text file with applications to be withdrawn.
+   * @param file text file content with all information needed to withdraw applications.
    * @param validationOnly if true, will execute all validations and return the
    * errors and warnings. These validations are the same executed during the
    * final creation process. If not present or false, the file will be processed
@@ -183,6 +185,7 @@ export class ScholasticStandingInstitutionsController extends BaseController {
       "some error happen with one or more application withdrawal and the entire process was aborted.",
   })
   @IsInstitutionAdmin()
+  @IsBCPublicInstitution()
   @Post("application-bulk-withdrawal")
   @UseInterceptors(
     FileInterceptor("file", {
