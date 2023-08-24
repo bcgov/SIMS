@@ -54,8 +54,8 @@
 import { useRouter, RouteLocationRaw } from "vue-router";
 import { defineComponent, ref, computed, onMounted, watchEffect } from "vue";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
-import ApproveApplicationOfferingChangeRequestModal from "@/components/aest/students/modals/ApproveApplicationOfferingChangeRequestModal.vue";
-import DeclineApplicationOfferingChangeRequestModal from "@/components/aest/students/modals/DeclineApplicationOfferingChangeRequestModal.vue";
+import ApproveApplicationOfferingChangeRequestModal from "@/components/students/modals/ApproveApplicationOfferingChangeRequestModal.vue";
+import DeclineApplicationOfferingChangeRequestModal from "@/components/students/modals/DeclineApplicationOfferingChangeRequestModal.vue";
 import { ModalDialog, useSnackBar } from "@/composables";
 import { ApplicationOfferingChangeRequestService } from "@/services/ApplicationOfferingChangeRequestService";
 import {
