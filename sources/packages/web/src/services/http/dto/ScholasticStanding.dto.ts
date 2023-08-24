@@ -34,7 +34,7 @@ export interface ScholasticStandingSubmittedDetailsAPIOutDTO
  * for every record that has an error.
  */
 export interface ApplicationBulkWithdrawalValidationResultAPIOutDTO {
-  recordIndex?: number;
+  recordIndex: number;
   applicationNumber?: number;
   withdrawalDate?: string;
   errors: string[];
