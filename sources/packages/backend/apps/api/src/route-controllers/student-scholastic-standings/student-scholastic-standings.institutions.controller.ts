@@ -63,9 +63,9 @@ import {
 } from "../../utilities";
 import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
 import {
-  ApplicationWithdrawalTextModel,
+  ApplicationWithdrawalImportTextModel,
   ApplicationWithdrawalTextValidationResult,
-} from "../../services/application-bulk-withdrawal/application-bulk-withdrawal-text.models";
+} from "../../services/application-bulk-withdrawal/application-bulk-withdrawal-import-text.models";
 
 /**
  * Scholastic standing controller for institutions Client.
@@ -210,7 +210,7 @@ export class ScholasticStandingInstitutionsController extends BaseController {
     // Read the entire file content.
     const fileContent = file.buffer.toString();
     // Convert the file raw content into text models.
-    let textModels: ApplicationWithdrawalTextModel[];
+    let textModels: ApplicationWithdrawalImportTextModel[];
     try {
       textModels =
         this.applicationWithdrawalImportTextService.readText(fileContent);

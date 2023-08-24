@@ -8,10 +8,10 @@ import {
   ApplicationBulkWithdrawalData,
   ApplicationBulkWithdrawalFooter,
   ApplicationBulkWithdrawalHeader,
-  ApplicationWithdrawalTextModel,
+  ApplicationWithdrawalImportTextModel,
   ApplicationWithdrawalTextValidationResult,
   RecordType,
-} from "./application-bulk-withdrawal-text.models";
+} from "./application-bulk-withdrawal-import-text.models";
 import { APPLICATION_WITHDRAWAL_INVALID_TEXT_FILE_ERROR } from "../../constants";
 import { CustomNamedError } from "@sims/utilities";
 
@@ -25,8 +25,9 @@ export class ApplicationWithdrawalImportTextService {
    * @param textContent text content to generate the models.
    * @returns text object models.
    */
-  readText(textContent: string): ApplicationWithdrawalTextModel[] {
-    const applicationWithdrawalModels: ApplicationWithdrawalTextModel[] = [];
+  readText(textContent: string): ApplicationWithdrawalImportTextModel[] {
+    const applicationWithdrawalModels: ApplicationWithdrawalImportTextModel[] =
+      [];
     // Remove BOM(Byte order mark), if present.
     textContent = removeUTF8BOM(textContent);
     const fileLines = textContent.split("\n");
@@ -73,14 +74,15 @@ export class ApplicationWithdrawalImportTextService {
       );
     }
     fileLines.forEach((dataLine) => {
-      const applicationWithdrawalTextModel =
-        {} as ApplicationWithdrawalTextModel;
+      const applicationWithdrawalImportTextModel =
+        {} as ApplicationWithdrawalImportTextModel;
       const data = ApplicationBulkWithdrawalData.createFromLine(dataLine);
-      applicationWithdrawalModels.push(applicationWithdrawalTextModel);
-      applicationWithdrawalTextModel.recordType = data.recordType;
-      applicationWithdrawalTextModel.sin = data.sin;
-      applicationWithdrawalTextModel.applicationNumber = data.applicationNumber;
-      applicationWithdrawalTextModel.withdrawalDate = data.withdrawalDate;
+      applicationWithdrawalModels.push(applicationWithdrawalImportTextModel);
+      applicationWithdrawalImportTextModel.recordType = data.recordType;
+      applicationWithdrawalImportTextModel.sin = data.sin;
+      applicationWithdrawalImportTextModel.applicationNumber =
+        data.applicationNumber;
+      applicationWithdrawalImportTextModel.withdrawalDate = data.withdrawalDate;
     });
     return applicationWithdrawalModels;
   }
@@ -91,23 +93,23 @@ export class ApplicationWithdrawalImportTextService {
    * @returns validation result for each model.
    */
   validateTextModels(
-    textModels: ApplicationWithdrawalTextModel[],
+    textModels: ApplicationWithdrawalImportTextModel[],
   ): ApplicationWithdrawalTextValidationResult[] {
     return textModels.map((textModel, index) => {
       // Ensures that the object received is a class. This is needed to the
       // proper validation metadata be available to the validation be performed.
-      const applicationWithdrawalTextModel = plainToClass(
-        ApplicationWithdrawalTextModel,
+      const applicationWithdrawalImportTextModel = plainToClass(
+        ApplicationWithdrawalImportTextModel,
         textModel,
         {
           enableImplicitConversion: true,
         },
       );
-      const errors = validateSync(applicationWithdrawalTextModel);
+      const errors = validateSync(applicationWithdrawalImportTextModel);
       const flattenedErrors = flattenErrorMessages(errors);
       return {
         index,
-        textModel: applicationWithdrawalTextModel,
+        textModel: applicationWithdrawalImportTextModel,
         errors: flattenedErrors,
       };
     });

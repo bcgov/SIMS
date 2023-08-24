@@ -20,7 +20,7 @@ export enum RecordType {
   ApplicationBulkWithdrawalFooterRecordType = "3",
 }
 
-export class ApplicationWithdrawalTextModel {
+export class ApplicationWithdrawalImportTextModel {
   /**
    * Data record type.
    */
@@ -75,7 +75,7 @@ export interface ApplicationWithdrawalTextValidationResult {
   /**
    * Model that was validated.
    */
-  textModel: ApplicationWithdrawalTextModel;
+  textModel: ApplicationWithdrawalImportTextModel;
   /**
    * List of possible errors. If no error is present it
    * means the model was successfully validated.
