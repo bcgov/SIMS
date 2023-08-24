@@ -44,8 +44,10 @@ import { FormNames } from "../../services/form/constants";
 import {
   APPLICATION_CHANGE_NOT_ELIGIBLE,
   APPLICATION_WITHDRAWAL_INVALID_TEXT_FILE_ERROR,
+  APPLICATION_WITHDRAWAL_TEXT_CONTENT_FORMAT_ERROR,
 } from "../../constants";
 import {
+  ApplicationBulkWithdrawalValidationResultAPIOutDTO,
   ScholasticStandingAPIInDTO,
   ScholasticStandingSubmittedDetailsAPIOutDTO,
 } from "./models/student-scholastic-standings.dto";
@@ -60,7 +62,10 @@ import {
   uploadLimits,
 } from "../../utilities";
 import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
-import { ApplicationWithdrawalTextModel } from "../../services/application-bulk-withdrawal/application-bulk-withdrawal-text.models";
+import {
+  ApplicationWithdrawalTextModel,
+  ApplicationWithdrawalTextValidationResult,
+} from "../../services/application-bulk-withdrawal/application-bulk-withdrawal-text.models";
 
 /**
  * Scholastic standing controller for institutions Client.
@@ -210,19 +215,26 @@ export class ScholasticStandingInstitutionsController extends BaseController {
       textModels =
         this.applicationWithdrawalImportTextService.readText(fileContent);
     } catch (error: unknown) {
-      let errorMessage = "Error while parsing text file.";
       if (
         error instanceof CustomNamedError &&
         error.name === APPLICATION_WITHDRAWAL_INVALID_TEXT_FILE_ERROR
       ) {
-        errorMessage = error.message;
+        // When there is an error in header and footer record, we are transforming it in the validationResult format.
+        // This can contain either header or footer error, one at a time.
+        const validationResult: ApplicationBulkWithdrawalValidationResultAPIOutDTO =
+          {
+            errors: [error.message],
+            infos: [],
+            warnings: [],
+          };
+        throw new BadRequestException(
+          new ApiProcessError(
+            error.message,
+            APPLICATION_WITHDRAWAL_INVALID_TEXT_FILE_ERROR,
+            [validationResult],
+          ),
+        );
       }
-      throw new BadRequestException(
-        new ApiProcessError(
-          errorMessage,
-          APPLICATION_WITHDRAWAL_INVALID_TEXT_FILE_ERROR,
-        ),
-      );
     }
     // Validate the text models.
     const textValidations =
@@ -230,9 +242,7 @@ export class ScholasticStandingInstitutionsController extends BaseController {
         textModels,
       );
     // Assert successful validation.
-    this.scholasticStandingControllerService.assertTextValidationsAreValid(
-      textValidations,
-    );
+    this.assertTextValidationsAreValid(textValidations);
     // TODO Add business validation for application bulk withdrawal.
 
     if (validationOnly) {
@@ -242,5 +252,37 @@ export class ScholasticStandingInstitutionsController extends BaseController {
     }
 
     // TODO create a block to do database updates for Application withdrawal.
+  }
+
+  /**
+   * Verify if all text file validations were performed with success and throw
+   * a BadRequestException in case of some failure.
+   * @param textValidations validations to be verified.
+   */
+  assertTextValidationsAreValid(
+    textValidations: ApplicationWithdrawalTextValidationResult[],
+  ) {
+    const textValidationsErrors = textValidations.filter(
+      (textValidation) => textValidation.errors.length,
+    );
+    if (textValidationsErrors.length) {
+      // At least one error was detected and the text must be fixed.
+      const validationResults: ApplicationBulkWithdrawalValidationResultAPIOutDTO[] =
+        textValidationsErrors.map((validation) => ({
+          recordIndex: validation.index,
+          applicationNumber: validation.textModel.applicationNumber,
+          withdrawalDate: validation.textModel.withdrawalDate,
+          errors: validation.errors,
+          infos: [],
+          warnings: [],
+        }));
+      throw new BadRequestException(
+        new ApiProcessError(
+          "One or more text data fields received are not in the correct format.",
+          APPLICATION_WITHDRAWAL_TEXT_CONTENT_FORMAT_ERROR,
+          validationResults,
+        ),
+      );
+    }
   }
 }

@@ -78,7 +78,6 @@ export class ApplicationWithdrawalImportTextService {
       const data = ApplicationBulkWithdrawalData.createFromLine(dataLine);
       applicationWithdrawalModels.push(applicationWithdrawalTextModel);
       applicationWithdrawalTextModel.recordType = data.recordType;
-      applicationWithdrawalTextModel.sin = data.sin;
       applicationWithdrawalTextModel.applicationNumber = data.applicationNumber;
       applicationWithdrawalTextModel.withdrawalDate = data.withdrawalDate;
     });

@@ -20,8 +20,6 @@
             >https://studentaidbc.ca/institution-officials</a
           >
         </li>
-        Use the template provided on
-        https://studentaidbc.ca/institution-officials
         <li>Please save the file as a text file ".txt"</li>
         <li>Select the file to be uploaded</li>
         <li>
@@ -121,7 +119,11 @@
             :loading="loading"
             breakpoint="1250px"
           >
-            <Column header="Line" field="recordLineNumber"></Column>
+            <Column header="Line"
+              ><template #body="slotProps">{{
+                slotProps.data.recordLineNumber ?? ""
+              }}</template></Column
+            >
             <Column
               header="Application number"
               field="applicationNumber"
@@ -183,13 +185,11 @@ import {
   BannerTypes,
   VForm,
   InputFile,
-  ApiProcessError,
 } from "@/types";
 import { useFormatters, useSnackBar } from "@/composables";
 import { FileUploadProgressEventArgs } from "@/services/http/common/FileUploadProgressEvent";
-import { ApplicationService } from "@/services/ApplicationService";
 import { ApplicationBulkWithdrawal } from "@/types/contracts/institution/Application";
-import { APPLICATION_WITHDRAWAL_INVALID_TEXT_FILE_ERROR } from "@/constants";
+import { ScholasticStandingService } from "@/services/ScholasticStandingService";
 
 const ACCEPTED_FILE_TYPE = "text/plain";
 const MAX_APPLICATION_WITHDRAWAL_UPLOAD_SIZE = 4194304;
@@ -229,7 +229,7 @@ export default defineComponent({
         }
         const [fileToUpload] = withdrawalFiles.value;
         const uploadResults =
-          await ApplicationService.shared.applicationBulkWithdrawal(
+          await ScholasticStandingService.shared.applicationBulkWithdrawal(
             fileToUpload,
             validationOnly,
             (progressEvent: FileUploadProgressEventArgs) => {
@@ -250,11 +250,6 @@ export default defineComponent({
         if (error instanceof Error && error.message === "Network Error") {
           resetForm();
           showPossibleFileChangeError.value = true;
-        } else if (
-          error instanceof ApiProcessError &&
-          error.errorType === APPLICATION_WITHDRAWAL_INVALID_TEXT_FILE_ERROR
-        ) {
-          snackBar.error(error.message);
         } else {
           snackBar.error("Unexpected error while uploading the file.");
         }

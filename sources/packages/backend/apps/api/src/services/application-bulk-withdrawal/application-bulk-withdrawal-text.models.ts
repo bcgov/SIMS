@@ -1,6 +1,5 @@
-import { Contains, IsDate, IsNumberString, Length } from "class-validator";
-import { APPLICATION_NUMBER_LENGTH } from "@sims/sims-db";
-import { IsValidSIN } from "../../utilities/class-validation";
+import { Equals, IsDate, IsNumberString, Length } from "class-validator";
+import { APPLICATION_NUMBER_LENGTH, SIN_NUMBER_LENGTH } from "@sims/sims-db";
 import { getDateOnlyFromFormat } from "@sims/utilities";
 
 export const DATE_FORMAT = "YYYYMMDD";
@@ -25,15 +24,21 @@ export class ApplicationWithdrawalTextModel {
   /**
    * Data record type.
    */
-  @Contains(RecordType.ApplicationBulkWithdrawalDataRecordType, {
+  @Equals(RecordType.ApplicationBulkWithdrawalDataRecordType, {
     message: `${DataTextHeaders.recordType} must be valid.`,
   })
   recordType: RecordType;
   /**
    * SIN.
    */
-  @IsValidSIN({
-    message: `${DataTextHeaders.sin} must be a valid SIN.`,
+  @IsNumberString(
+    { no_symbols: true },
+    {
+      message: `${DataTextHeaders.sin} must be a valid number.`,
+    },
+  )
+  @Length(SIN_NUMBER_LENGTH, SIN_NUMBER_LENGTH, {
+    message: `${DataTextHeaders.sin} must be of length ${SIN_NUMBER_LENGTH}.`,
   })
   sin: string;
   /**
@@ -42,11 +47,11 @@ export class ApplicationWithdrawalTextModel {
   @IsNumberString(
     { no_symbols: true },
     {
-      message: `${DataTextHeaders.applicationNumber} must be a valid numeric application number.`,
+      message: `${DataTextHeaders.applicationNumber} must be a valid number.`,
     },
   )
   @Length(APPLICATION_NUMBER_LENGTH, APPLICATION_NUMBER_LENGTH, {
-    message: `${DataTextHeaders.applicationNumber} must be a valid application number.`,
+    message: `${DataTextHeaders.applicationNumber} must be of length ${APPLICATION_NUMBER_LENGTH}.`,
   })
   applicationNumber: string;
   /**

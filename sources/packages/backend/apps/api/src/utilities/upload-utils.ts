@@ -64,13 +64,14 @@ const fileFilter = (
   file: MulterFile,
   allowedFileExtensions: string[],
   callback: (error: Error | null, acceptFile: boolean) => void,
-  allowedMimeType?: string[],
+  options?: { allowedMimeType?: string[] },
 ) => {
+  const isValidMimeType = options?.allowedMimeType
+    ? options?.allowedMimeType.includes(file.mimetype)
+    : true;
+
   const extension = path.extname(file.originalname).toLowerCase();
-  if (
-    allowedFileExtensions.includes(extension) &&
-    allowedMimeType.includes(file.mimetype)
-  ) {
+  if (allowedFileExtensions.includes(extension) && isValidMimeType) {
     callback(null, true);
   } else {
     callback(
@@ -91,7 +92,9 @@ export const textFileFilter = (
   file: MulterFile,
   callback: (error: Error | null, acceptFile: boolean) => void,
 ) => {
-  return fileFilter(file, [".txt"], callback, ["text/plain"]);
+  return fileFilter(file, [".txt"], callback, {
+    allowedMimeType: ["text/plain"],
+  });
 };
 
 export interface MulterFile {
