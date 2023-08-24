@@ -19,8 +19,8 @@ import { ClientTypeBaseRoute } from "../../types";
 import BaseController from "../BaseController";
 import {
   ApplicationOfferingChangeRequestStatusAPIOutDTO,
-  ApplicationOfferingChangesAPIOutDTO,
-  UpdateApplicationOfferingChangeRequestAPIInDTO,
+  ApplicationOfferingDetailsAPIOutDTO,
+  StudentApplicationOfferingChangeRequestAPIInDTO,
 } from "./models/application-offering-change-request.dto";
 import { StudentUserToken } from "../../auth";
 import { ApplicationOfferingChangeRequestControllerService } from "./application-offering-change-request.controller.service";
@@ -55,10 +55,13 @@ export class ApplicationOfferingChangeRequestStudentsController extends BaseCont
     applicationOfferingChangeRequestId: number,
     @UserToken()
     studentUserToken: StudentUserToken,
-  ): Promise<ApplicationOfferingChangesAPIOutDTO> {
+  ): Promise<ApplicationOfferingDetailsAPIOutDTO> {
     return this.applicationOfferingChangeRequestControllerService.getById(
       applicationOfferingChangeRequestId,
-      { studentId: studentUserToken.studentId },
+      {
+        studentId: studentUserToken.studentId,
+        applicationOfferingDetails: true,
+      },
     );
   }
 
@@ -113,7 +116,7 @@ export class ApplicationOfferingChangeRequestStudentsController extends BaseCont
     @UserToken()
     userToken: StudentUserToken,
     @Body()
-    payload: UpdateApplicationOfferingChangeRequestAPIInDTO,
+    payload: StudentApplicationOfferingChangeRequestAPIInDTO,
   ): Promise<void> {
     const studentAuthorized =
       await this.applicationOfferingChangeRequestService.getById(
@@ -127,10 +130,7 @@ export class ApplicationOfferingChangeRequestStudentsController extends BaseCont
     }
     await this.applicationOfferingChangeRequestService.updateApplicationOfferingChangeRequestStatus(
       applicationOfferingChangeRequestId,
-      payload.applicationOfferingChangeRequestStatus,
-      {
-        studentConsent: payload?.studentConsent,
-      },
+      payload,
     );
   }
 }

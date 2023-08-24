@@ -9,7 +9,7 @@
         <template
           #buttons
           v-if="
-            applicationOfferingChangeRequestStatus ===
+            applicationOfferingChangeRequestStatus?.status ===
             ApplicationOfferingChangeRequestStatus.InProgressWithStudent
           "
         >
@@ -58,7 +58,10 @@ import ApproveApplicationOfferingChangeRequestModal from "@/components/aest/stud
 import DeclineApplicationOfferingChangeRequestModal from "@/components/aest/students/modals/DeclineApplicationOfferingChangeRequestModal.vue";
 import { ModalDialog, useSnackBar } from "@/composables";
 import { ApplicationOfferingChangeRequestService } from "@/services/ApplicationOfferingChangeRequestService";
-import { UpdateApplicationOfferingChangeRequestAPIInDTO } from "@/services/http/dto";
+import {
+  ApplicationOfferingChangeRequestStatusAPIOutDTO,
+  StudentApplicationOfferingChangeRequestAPIInDTO,
+} from "@/services/http/dto";
 import { ApplicationOfferingChangeRequestStatus } from "@/types";
 
 export default defineComponent({
@@ -80,15 +83,15 @@ export default defineComponent({
     const snackBar = useSnackBar();
     const router = useRouter();
     const applicationOfferingChangeRequestStatus =
-      ref<ApplicationOfferingChangeRequestStatus>();
+      ref<ApplicationOfferingChangeRequestStatusAPIOutDTO>();
     const approveApplicationOfferingChangeRequestModal = ref(
-      {} as ModalDialog<UpdateApplicationOfferingChangeRequestAPIInDTO>,
+      {} as ModalDialog<StudentApplicationOfferingChangeRequestAPIInDTO>,
     );
     const declineApplicationOfferingChangeRequestModal = ref(
-      {} as ModalDialog<UpdateApplicationOfferingChangeRequestAPIInDTO>,
+      {} as ModalDialog<StudentApplicationOfferingChangeRequestAPIInDTO>,
     );
     const getLabel = () => {
-      return applicationOfferingChangeRequestStatus.value ===
+      return applicationOfferingChangeRequestStatus.value?.status ===
         ApplicationOfferingChangeRequestStatus.Approved
         ? "Previous application details"
         : "Active application details";

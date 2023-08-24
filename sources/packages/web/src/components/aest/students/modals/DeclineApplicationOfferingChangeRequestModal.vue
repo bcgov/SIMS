@@ -22,7 +22,7 @@
 import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
 import { ref, defineComponent } from "vue";
 import { useModalDialog } from "@/composables";
-import { UpdateApplicationOfferingChangeRequestAPIInDTO } from "@/services/http/dto";
+import { StudentApplicationOfferingChangeRequestAPIInDTO } from "@/services/http/dto";
 import { ApplicationOfferingChangeRequestStatus } from "@/types";
 
 export default defineComponent({
@@ -31,10 +31,10 @@ export default defineComponent({
   },
   setup() {
     const { showDialog, showModal, resolvePromise } = useModalDialog<
-      UpdateApplicationOfferingChangeRequestAPIInDTO | boolean
+      StudentApplicationOfferingChangeRequestAPIInDTO | boolean
     >();
     const declineApplicationOfferingChangeRequestModal = ref(
-      {} as UpdateApplicationOfferingChangeRequestAPIInDTO,
+      {} as StudentApplicationOfferingChangeRequestAPIInDTO,
     );
     const cancel = () => {
       resolvePromise(false);

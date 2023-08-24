@@ -2,7 +2,7 @@
   <tab-container :enableCardView="false" class="mt-n1">
     <body-header-container>
       <template #header>
-        <body-header :title="changeRequest.studentFullName">
+        <body-header :title="studentFullName">
           <template #subtitle
             ><detail-header :headerMap="headerDetailsData"
           /></template>
@@ -16,10 +16,11 @@
 </template>
 <script lang="ts">
 import { computed, defineComponent, ref, onMounted } from "vue";
+import { useStore } from "vuex";
 import DetailHeader from "@/components/generic/DetailHeader.vue";
 import OfferingView from "@/components/common/OfferingView.vue";
 import { ApplicationOfferingChangeRequestService } from "@/services/ApplicationOfferingChangeRequestService";
-import { ApplicationOfferingChangesAPIOutDTO } from "@/services/http/dto";
+import { ApplicationOfferingDetailsAPIOutDTO } from "@/services/http/dto";
 export default defineComponent({
   components: {
     OfferingView,
@@ -32,10 +33,12 @@ export default defineComponent({
     },
   },
   setup(props) {
-    const changeRequest = ref({} as ApplicationOfferingChangesAPIOutDTO);
+    const store = useStore();
+    const studentFullName = computed(() => store.state.student.fullName);
+    const changeRequest = ref({} as ApplicationOfferingDetailsAPIOutDTO);
     onMounted(async () => {
       changeRequest.value =
-        await ApplicationOfferingChangeRequestService.shared.getById(
+        await ApplicationOfferingChangeRequestService.shared.getApplicationOfferingDetailsById(
           props.applicationOfferingChangeRequestId,
         );
     });
@@ -48,6 +51,7 @@ export default defineComponent({
     );
     return {
       changeRequest,
+      studentFullName,
       headerDetailsData,
     };
   },

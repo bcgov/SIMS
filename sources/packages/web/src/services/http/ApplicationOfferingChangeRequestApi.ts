@@ -11,7 +11,9 @@ import {
   ApplicationOfferingChangesAPIOutDTO,
   ApplicationOfferingChangeSummaryDetailAPIOutDTO,
   CreateApplicationOfferingChangeRequestAPIInDTO,
-  UpdateApplicationOfferingChangeRequestAPIInDTO,
+  StudentApplicationOfferingChangeRequestAPIInDTO,
+  ApplicationOfferingDetailsAPIOutDTO,
+  ApplicationOfferingChangeRequestStatusAPIOutDTO,
 } from "@/services/http/dto";
 import { getPaginationQueryString } from "@/helpers";
 
@@ -114,15 +116,29 @@ export class ApplicationOfferingChangeRequestApi extends HttpBaseClient {
   }
 
   /**
+   * Gets the Application Offering Change Request details for the student.
+   * @param applicationOfferingChangeRequestId the Application Offering Change Request id.
+   * @returns Application Offering Change Request details.
+   */
+  async getApplicationOfferingDetailsById(
+    applicationOfferingChangeRequestId: number,
+  ): Promise<ApplicationOfferingDetailsAPIOutDTO> {
+    const url = `application-offering-change-request/${applicationOfferingChangeRequestId}`;
+    return this.getCall<ApplicationOfferingDetailsAPIOutDTO>(
+      this.addClientRoot(url),
+    );
+  }
+
+  /**
    * Gets the Application Offering Change Request status.
    * @param applicationOfferingChangeRequestId the application offering change request id.
    * @returns the application offering change request status.
    */
   async getApplicationOfferingChangeRequestStatusById(
     applicationOfferingChangeRequestId: number,
-  ): Promise<ApplicationOfferingChangeRequestStatus> {
+  ): Promise<ApplicationOfferingChangeRequestStatusAPIOutDTO> {
     const url = `application-offering-change-request/${applicationOfferingChangeRequestId}/application-offering-change-request-status`;
-    return this.getCall<ApplicationOfferingChangeRequestStatus>(
+    return this.getCall<ApplicationOfferingChangeRequestStatusAPIOutDTO>(
       this.addClientRoot(url),
     );
   }
@@ -147,7 +163,7 @@ export class ApplicationOfferingChangeRequestApi extends HttpBaseClient {
    */
   async updateApplicationOfferingChangeRequestStatus(
     applicationOfferingChangeRequestId: number,
-    payload: UpdateApplicationOfferingChangeRequestAPIInDTO,
+    payload: StudentApplicationOfferingChangeRequestAPIInDTO,
   ): Promise<void> {
     const url = `application-offering-change-request/${applicationOfferingChangeRequestId}`;
     await this.patchCall(this.addClientRoot(url), payload);

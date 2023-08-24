@@ -13,6 +13,7 @@ import {
 import { DataSource, Brackets, Repository, In } from "typeorm";
 import { PaginatedResults, PaginationOptions } from "../../utilities";
 import { NotificationActionsService, SystemUsersService } from "@sims/services";
+import { StudentApplicationOfferingChangeRequest } from "../../route-controllers/application-offering-change-request/models/application-offering-change-request.models";
 
 @Injectable()
 export class ApplicationOfferingChangeRequestService {
@@ -431,24 +432,20 @@ export class ApplicationOfferingChangeRequestService {
   /**
    * Update the application offering change request status for the given application offering change request id.
    * @param applicationOfferingChangeRequestId application offering change request id for which to update the status.
-   * @param applicationOfferingChangeRequestStatus application offering change request status to be updated.
-   * @param options method options:
-   * - `studentConsent` student consent to approve the application offering change request.
+   * @param payload the payload to be updated
    */
   async updateApplicationOfferingChangeRequestStatus(
     applicationOfferingChangeRequestId: number,
-    applicationOfferingChangeRequestStatus: ApplicationOfferingChangeRequestStatus,
-    options?: {
-      studentConsent: boolean;
-    },
+    payload: StudentApplicationOfferingChangeRequest,
   ): Promise<void> {
     await this.applicationOfferingChangeRequestRepo.update(
       {
         id: applicationOfferingChangeRequestId,
       },
       {
-        applicationOfferingChangeRequestStatus,
-        studentConsent: options?.studentConsent,
+        applicationOfferingChangeRequestStatus:
+          payload.applicationOfferingChangeRequestStatus,
+        studentConsent: payload.studentConsent,
       },
     );
   }

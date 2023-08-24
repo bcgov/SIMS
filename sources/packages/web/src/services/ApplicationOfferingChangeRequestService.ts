@@ -11,7 +11,9 @@ import {
   ApplicationOfferingChangesAPIOutDTO,
   ApplicationOfferingChangeSummaryDetailAPIOutDTO,
   CreateApplicationOfferingChangeRequestAPIInDTO,
-  UpdateApplicationOfferingChangeRequestAPIInDTO,
+  StudentApplicationOfferingChangeRequestAPIInDTO,
+  ApplicationOfferingDetailsAPIOutDTO,
+  ApplicationOfferingChangeRequestStatusAPIOutDTO,
 } from "@/services/http/dto";
 
 export class ApplicationOfferingChangeRequestService {
@@ -115,13 +117,26 @@ export class ApplicationOfferingChangeRequestService {
   }
 
   /**
+   * Gets the Application Offering Change Request details for student view.
+   * @param applicationOfferingChangeRequestId the Application Offering Change Request id.
+   * @returns Application Offering Change Request details.
+   */
+  async getApplicationOfferingDetailsById(
+    applicationOfferingChangeRequestId: number,
+  ): Promise<ApplicationOfferingDetailsAPIOutDTO> {
+    return ApiClient.ApplicationOfferingChangeRequestApi.getApplicationOfferingDetailsById(
+      applicationOfferingChangeRequestId,
+    );
+  }
+
+  /**
    * Gets the Application Offering Change Request status.
    * @param applicationOfferingChangeRequestId the application offering change request id.
    * @returns the application offering change request status.
    */
   async getApplicationOfferingChangeRequestStatusById(
     applicationOfferingChangeRequestId: number,
-  ): Promise<ApplicationOfferingChangeRequestStatus> {
+  ): Promise<ApplicationOfferingChangeRequestStatusAPIOutDTO> {
     return ApiClient.ApplicationOfferingChangeRequestApi.getApplicationOfferingChangeRequestStatusById(
       applicationOfferingChangeRequestId,
     );
@@ -149,7 +164,7 @@ export class ApplicationOfferingChangeRequestService {
    */
   async updateApplicationOfferingChangeRequestStatus(
     applicationOfferingChangeRequestId: number,
-    payload: UpdateApplicationOfferingChangeRequestAPIInDTO,
+    payload: StudentApplicationOfferingChangeRequestAPIInDTO,
   ): Promise<void> {
     await ApiClient.ApplicationOfferingChangeRequestApi.updateApplicationOfferingChangeRequestStatus(
       applicationOfferingChangeRequestId,

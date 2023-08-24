@@ -64,7 +64,7 @@
 import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
 import { ref, defineComponent, watch } from "vue";
 import { useModalDialog } from "@/composables";
-import { UpdateApplicationOfferingChangeRequestAPIInDTO } from "@/services/http/dto";
+import { StudentApplicationOfferingChangeRequestAPIInDTO } from "@/services/http/dto";
 import { ApplicationOfferingChangeRequestStatus } from "@/types";
 
 export default defineComponent({
@@ -73,10 +73,10 @@ export default defineComponent({
   },
   setup() {
     const { showDialog, showModal, resolvePromise } = useModalDialog<
-      UpdateApplicationOfferingChangeRequestAPIInDTO | boolean
+      StudentApplicationOfferingChangeRequestAPIInDTO | boolean
     >();
     const approveApplicationOfferingChangeRequestModal = ref(
-      {} as UpdateApplicationOfferingChangeRequestAPIInDTO,
+      {} as StudentApplicationOfferingChangeRequestAPIInDTO,
     );
     watch(showDialog, async (newshowDialogValue) => {
       if (newshowDialogValue) {
