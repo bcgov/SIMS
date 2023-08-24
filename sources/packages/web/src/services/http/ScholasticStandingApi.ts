@@ -63,7 +63,7 @@ export class ScholasticStandingApi extends HttpBaseClient {
     // Configure the request to provide upload progress status.
     const requestConfig: AxiosRequestConfig = { onUploadProgress };
     await ApiClient.FileUpload.upload(
-      `application-bulk-withdrawal?validation-only=${validationOnly}`,
+      `scholastic-standing/application-bulk-withdrawal?validation-only=${validationOnly}`,
       formData,
       requestConfig,
     );

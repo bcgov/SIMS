@@ -12,7 +12,6 @@ import {
   StudentScholasticStandingChangeType,
   ApplicationOfferingChangeRequestStatus,
 } from "@/types";
-import { ValidationResultAPIOutDTO } from "./Common.dto";
 
 export interface InProgressApplicationDetailsAPIOutDTO {
   id: number;
@@ -123,19 +122,4 @@ export interface CompletedApplicationDetailsAPIOutDTO
   appealStatus?: StudentAppealStatus;
   scholasticStandingChangeType?: StudentScholasticStandingChangeType;
   applicationOfferingChangeRequestStatus?: ApplicationOfferingChangeRequestStatus;
-}
-
-/**
- * Represents the possible errors that can happen during the
- * application bulk withdrawal and provides a detailed description
- * for every record that has an error.
- */
-export interface ApplicationBulkWithdrawalValidationResultAPIOutDTO {
-  recordIndex: number;
-  sin?: number;
-  applicationNumber?: number;
-  withdrawalDate?: string;
-  errors: string[];
-  infos: ValidationResultAPIOutDTO[];
-  warnings: ValidationResultAPIOutDTO[];
 }
