@@ -222,7 +222,7 @@ export class StudentAssessment extends RecordDataModel {
   })
   applicationOfferingChangeRequest?: ApplicationOfferingChangeRequest;
   /**
-   * Data used for the assessment workflow management.
+   * Assessment workflow data.
    */
   @Column({
     name: "workflow_data",
