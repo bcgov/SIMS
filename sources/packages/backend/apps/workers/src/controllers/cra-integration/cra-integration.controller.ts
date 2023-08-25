@@ -51,20 +51,26 @@ export class CRAIntegrationController {
       >
     >,
   ): Promise<MustReturnJobActionAcknowledgement> {
-    const incomeRequest =
-      await this.incomeVerificationService.createIncomeVerification(
-        job.variables.applicationId,
-        job.variables.taxYear,
-        job.variables.reportedIncome,
-        job.variables.supportingUserId,
+    try {
+      const incomeRequest =
+        await this.incomeVerificationService.createIncomeVerification(
+          job.variables.applicationId,
+          job.variables.taxYear,
+          job.variables.reportedIncome,
+          job.variables.supportingUserId,
+        );
+      const [identifier] = incomeRequest.identifiers;
+
+      await this.incomeVerificationService.checkForCRAIncomeVerificationBypass(
+        identifier.id,
       );
-    const [identifier] = incomeRequest.identifiers;
 
-    await this.incomeVerificationService.checkForCRAIncomeVerificationBypass(
-      identifier.id,
-    );
-
-    return job.complete({ incomeVerificationId: identifier.id });
+      return job.complete({ incomeVerificationId: identifier.id });
+    } catch (error: unknown) {
+      return job.fail(
+        `Unexpected error while creating the CRA income verification. ${error}`,
+      );
+    }
   }
 
   /**
@@ -85,10 +91,16 @@ export class CRAIntegrationController {
       >
     >,
   ): Promise<MustReturnJobActionAcknowledgement> {
-    const incomeVerificationCompleted =
-      await this.incomeVerificationService.isIncomeVerificationCompleted(
-        job.variables.incomeVerificationId,
+    try {
+      const incomeVerificationCompleted =
+        await this.incomeVerificationService.isIncomeVerificationCompleted(
+          job.variables.incomeVerificationId,
+        );
+      return job.complete({ incomeVerificationCompleted });
+    } catch (error: unknown) {
+      return job.fail(
+        `Unexpected error while checking the CRA income verification. ${error}`,
       );
-    return job.complete({ incomeVerificationCompleted });
+    }
   }
 }

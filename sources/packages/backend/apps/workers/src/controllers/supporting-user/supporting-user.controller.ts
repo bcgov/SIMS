@@ -39,22 +39,26 @@ export class SupportingUserController {
       >
     >,
   ): Promise<MustReturnJobActionAcknowledgement> {
-    const hasSupportingUsers =
-      await this.supportingUserService.hasSupportingUsers(
-        job.variables.applicationId,
+    try {
+      const hasSupportingUsers =
+        await this.supportingUserService.hasSupportingUsers(
+          job.variables.applicationId,
+        );
+      if (hasSupportingUsers) {
+        return job.complete();
+      }
+      const supportingUsers =
+        await this.supportingUserService.createSupportingUsers(
+          job.variables.applicationId,
+          job.variables.supportingUsersTypes,
+        );
+      const createdSupportingUsersIds = supportingUsers.map(
+        (supportingUser) => supportingUser.id,
       );
-    if (hasSupportingUsers) {
-      return job.complete();
+      return job.complete({ createdSupportingUsersIds });
+    } catch (error: unknown) {
+      return job.fail(`Unexpected error creating supporting users. ${error}`);
     }
-    const supportingUsers =
-      await this.supportingUserService.createSupportingUsers(
-        job.variables.applicationId,
-        job.variables.supportingUsersTypes,
-      );
-    const createdSupportingUsersIds = supportingUsers.map(
-      (supportingUser) => supportingUser.id,
-    );
-    return job.complete({ createdSupportingUsersIds });
   }
 
   @ZeebeWorker(Workers.LoadSupportingUserData, {
@@ -70,20 +74,26 @@ export class SupportingUserController {
       >
     >,
   ): Promise<MustReturnJobActionAcknowledgement> {
-    const supportingUser =
-      await this.supportingUserService.getSupportingUserById(
-        job.variables.supportingUserId,
+    try {
+      const supportingUser =
+        await this.supportingUserService.getSupportingUserById(
+          job.variables.supportingUserId,
+        );
+      if (!supportingUser) {
+        job.error(
+          SUPPORTING_USER_NOT_FOUND,
+          "Supporting user not found while checking for supporting user response.",
+        );
+      }
+      const outputVariables = filterObjectProperties(
+        supportingUser.supportingData,
+        job.customHeaders,
       );
-    if (!supportingUser) {
-      job.error(
-        SUPPORTING_USER_NOT_FOUND,
-        "Supporting user not found while checking for supporting user response.",
+      return job.complete(outputVariables);
+    } catch (error: unknown) {
+      return job.fail(
+        `Unexpected error while loading supporting user data. ${error}`,
       );
     }
-    const outputVariables = filterObjectProperties(
-      supportingUser.supportingData,
-      job.customHeaders,
-    );
-    return job.complete(outputVariables);
   }
 }

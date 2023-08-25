@@ -101,18 +101,24 @@ export class AssessmentController {
       ZeebeJob<AssessmentDataJobInDTO, ICustomHeaders, IOutputVariables>
     >,
   ): Promise<MustReturnJobActionAcknowledgement> {
-    const assessment = await this.studentAssessmentService.getById(
-      job.variables.assessmentId,
-    );
-    if (!assessment) {
-      return job.error(ASSESSMENT_NOT_FOUND, "Assessment not found.");
+    try {
+      const assessment = await this.studentAssessmentService.getById(
+        job.variables.assessmentId,
+      );
+      if (!assessment) {
+        return job.error(ASSESSMENT_NOT_FOUND, "Assessment not found.");
+      }
+      const assessmentDTO = this.transformToAssessmentDTO(assessment);
+      const outputVariables = filterObjectProperties(
+        assessmentDTO,
+        job.customHeaders,
+      );
+      return job.complete(outputVariables);
+    } catch (error: unknown) {
+      return job.fail(
+        `Unexpected error while loading assessment consolidated data. ${error}`,
+      );
     }
-    const assessmentDTO = this.transformToAssessmentDTO(assessment);
-    const outputVariables = filterObjectProperties(
-      assessmentDTO,
-      job.customHeaders,
-    );
-    return job.complete(outputVariables);
   }
 
   /**
@@ -127,11 +133,15 @@ export class AssessmentController {
       ZeebeJob<SaveAssessmentDataJobInDTO, ICustomHeaders, IOutputVariables>
     >,
   ): Promise<MustReturnJobActionAcknowledgement> {
-    await this.studentAssessmentService.updateAssessmentData(
-      job.variables.assessmentId,
-      job.variables.assessmentData,
-    );
-    return job.complete();
+    try {
+      await this.studentAssessmentService.updateAssessmentData(
+        job.variables.assessmentId,
+        job.variables.assessmentData,
+      );
+      return job.complete();
+    } catch (error: unknown) {
+      return job.fail(`Unexpected error saving the assessment data. ${error}`);
+    }
   }
 
   /**
@@ -150,11 +160,17 @@ export class AssessmentController {
       >
     >,
   ): Promise<MustReturnJobActionAcknowledgement> {
-    await this.studentAssessmentService.updateNOAApprovalStatus(
-      job.variables.assessmentId,
-      job.customHeaders.status,
-    );
-    return job.complete();
+    try {
+      await this.studentAssessmentService.updateNOAApprovalStatus(
+        job.variables.assessmentId,
+        job.customHeaders.status,
+      );
+      return job.complete();
+    } catch (error: unknown) {
+      return job.fail(
+        `Unexpected error while updating the NOA status. ${error}`,
+      );
+    }
   }
 
   /**

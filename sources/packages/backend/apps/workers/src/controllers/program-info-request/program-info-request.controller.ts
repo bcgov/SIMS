@@ -37,29 +37,33 @@ export class ProgramInfoRequestController {
       >
     >,
   ): Promise<MustReturnJobActionAcknowledgement> {
-    const application = await this.applicationService.getApplicationById(
-      job.variables.applicationId,
-      { loadDynamicData: false },
-    );
-    if (!application) {
-      return job.error(
-        APPLICATION_NOT_FOUND,
-        "Application not found while verifying the PIR.",
+    try {
+      const application = await this.applicationService.getApplicationById(
+        job.variables.applicationId,
+        { loadDynamicData: false },
       );
-    }
-    if (application.pirStatus) {
-      // PIR status was already set, just return it.
+      if (!application) {
+        return job.error(
+          APPLICATION_NOT_FOUND,
+          "Application not found while verifying the PIR.",
+        );
+      }
+      if (application.pirStatus) {
+        // PIR status was already set, just return it.
+        return job.complete({
+          programInfoStatus: application.pirStatus,
+        });
+      }
+      await this.applicationService.updateProgramInfoStatus(
+        job.variables.applicationId,
+        job.customHeaders.programInfoStatus,
+        job.variables.studentDataSelectedProgram,
+      );
       return job.complete({
-        programInfoStatus: application.pirStatus,
+        programInfoStatus: job.customHeaders.programInfoStatus,
       });
+    } catch (error: unknown) {
+      return job.fail(`Unexpected error while seting the PIR status. ${error}`);
     }
-    await this.applicationService.updateProgramInfoStatus(
-      job.variables.applicationId,
-      job.customHeaders.programInfoStatus,
-      job.variables.studentDataSelectedProgram,
-    );
-    return job.complete({
-      programInfoStatus: job.customHeaders.programInfoStatus,
-    });
   }
 }

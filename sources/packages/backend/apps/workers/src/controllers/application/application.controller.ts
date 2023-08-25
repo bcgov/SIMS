@@ -52,18 +52,24 @@ export class ApplicationController {
       >
     >,
   ): Promise<MustReturnJobActionAcknowledgement> {
-    const updateResult = await this.applicationService.updateStatus(
-      job.variables.applicationId,
-      job.customHeaders.fromStatus,
-      job.customHeaders.toStatus,
-    );
-    if (!updateResult.affected) {
-      return job.error(
-        APPLICATION_STATUS_NOT_UPDATED,
-        "The application status was not updated either because the application id was not found or the application is not in the expected status.",
+    try {
+      const updateResult = await this.applicationService.updateStatus(
+        job.variables.applicationId,
+        job.customHeaders.fromStatus,
+        job.customHeaders.toStatus,
+      );
+      if (!updateResult.affected) {
+        return job.error(
+          APPLICATION_STATUS_NOT_UPDATED,
+          "The application status was not updated either because the application id was not found or the application is not in the expected status.",
+        );
+      }
+      return job.complete();
+    } catch (error: unknown) {
+      return job.fail(
+        `Unexpected error while updating the application status. ${error}`,
       );
     }
-    return job.complete();
   }
 
   /**
@@ -85,36 +91,42 @@ export class ApplicationController {
       >
     >,
   ): Promise<MustReturnJobActionAcknowledgement> {
-    const application = await this.applicationService.getApplicationById(
-      job.variables.applicationId,
-      { loadDynamicData: true },
-    );
-    if (!application) {
-      return job.error(APPLICATION_NOT_FOUND, "Application id not found.");
-    }
-    if (application.applicationException) {
-      // The exceptions were already processed for this application.
+    try {
+      const application = await this.applicationService.getApplicationById(
+        job.variables.applicationId,
+        { loadDynamicData: true },
+      );
+      if (!application) {
+        return job.error(APPLICATION_NOT_FOUND, "Application id not found.");
+      }
+      if (application.applicationException) {
+        // The exceptions were already processed for this application.
+        return job.complete({
+          applicationExceptionStatus:
+            application.applicationException.exceptionStatus,
+        });
+      }
+      // Check for application exceptions present in the application dynamic data.
+      const exceptions = this.applicationExceptionService.searchExceptions(
+        application.data,
+      );
+      if (exceptions.length) {
+        const createdException =
+          await this.applicationExceptionService.createException(
+            job.variables.applicationId,
+            exceptions,
+          );
+        return job.complete({
+          applicationExceptionStatus: createdException.exceptionStatus,
+        });
+      }
       return job.complete({
-        applicationExceptionStatus:
-          application.applicationException.exceptionStatus,
+        applicationExceptionStatus: ApplicationExceptionStatus.Approved,
       });
+    } catch (error: unknown) {
+      return job.fail(
+        `Unexpected error while verifying the application exceptions. ${error}`,
+      );
     }
-    // Check for application exceptions present in the application dynamic data.
-    const exceptions = this.applicationExceptionService.searchExceptions(
-      application.data,
-    );
-    if (exceptions.length) {
-      const createdException =
-        await this.applicationExceptionService.createException(
-          job.variables.applicationId,
-          exceptions,
-        );
-      return job.complete({
-        applicationExceptionStatus: createdException.exceptionStatus,
-      });
-    }
-    return job.complete({
-      applicationExceptionStatus: ApplicationExceptionStatus.Approved,
-    });
   }
 }
