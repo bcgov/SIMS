@@ -4,13 +4,16 @@
       <template #header>
         <body-header :title="studentFullName">
           <template #subtitle
-            ><detail-header :headerMap="headerDetailsData"
+            ><detail-header
+              :headerMap="activeApplicationOfferingHeaderDetailsData"
           /></template>
         </body-header>
       </template>
       <hr class="horizontal-divider" />
       <h2 class="category-header-large primary-color">Application Details</h2>
-      <offering-view :offeringId="changeRequest.activeOfferingId" />
+      <offering-view
+        :offeringId="activeApplicationOfferingDetails.activeOfferingId"
+      />
     </body-header-container>
   </tab-container>
 </template>
@@ -35,24 +38,27 @@ export default defineComponent({
   setup(props) {
     const store = useStore();
     const studentFullName = computed(() => store.state.student.fullName);
-    const changeRequest = ref({} as ApplicationOfferingDetailsAPIOutDTO);
+    const activeApplicationOfferingDetails = ref(
+      {} as ApplicationOfferingDetailsAPIOutDTO,
+    );
     onMounted(async () => {
-      changeRequest.value =
+      activeApplicationOfferingDetails.value =
         await ApplicationOfferingChangeRequestService.shared.getApplicationOfferingDetailsById(
           props.applicationOfferingChangeRequestId,
         );
     });
-    const headerDetailsData = computed(
+    const activeApplicationOfferingHeaderDetailsData = computed(
       () =>
         ({
-          "Application #": changeRequest.value.applicationNumber ?? "",
-          Location: changeRequest.value.locationName,
+          "Application #":
+            activeApplicationOfferingDetails.value.applicationNumber ?? "",
+          Location: activeApplicationOfferingDetails.value.locationName,
         } as Record<string, string>),
     );
     return {
-      changeRequest,
+      activeApplicationOfferingDetails,
       studentFullName,
-      headerDetailsData,
+      activeApplicationOfferingHeaderDetailsData,
     };
   },
 });
