@@ -273,3 +273,29 @@ export const AllInProgressOfferingChangeSummaryHeaders = [
     key: "id",
   },
 ];
+
+/**
+ * Application withdrawal upload header.
+ */
+export const ApplicationWithdrawalUploadHeaders = [
+  {
+    title: "Line",
+    sortable: false,
+    key: "recordLineNumber",
+  },
+  {
+    title: "Application number",
+    sortable: false,
+    key: "applicationNumber",
+  },
+  {
+    title: "Withdrawal date",
+    sortable: false,
+    key: "withdrawalDate",
+  },
+  {
+    title: "Validations",
+    sortable: false,
+    key: "validations",
+  },
+];
