@@ -221,6 +221,16 @@ export class StudentAssessment extends RecordDataModel {
     referencedColumnName: ColumnNames.ID,
   })
   applicationOfferingChangeRequest?: ApplicationOfferingChangeRequest;
+  /**
+   * Represent the output of the executed assessment workflow and it is also
+   * the main content for the NOA (Notice of Assessment).
+   */
+  @Column({
+    name: "workflow_data",
+    type: "jsonb",
+    nullable: true,
+  })
+  workflowData?: WorkflowData;
 }
 
 /**
@@ -276,3 +286,13 @@ interface PartTimeAssessment extends BaseAssessment {
  * assessment payload created by camunda workflow.
  */
 export type Assessment = FullTimeAssessment | PartTimeAssessment;
+
+export interface WorkflowData {
+  studentData: {
+    dependantStatus: string;
+    relationshipStatus: string;
+  };
+  calculatedData: {
+    parentalAssets: number;
+  };
+}

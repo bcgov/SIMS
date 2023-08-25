@@ -8,6 +8,7 @@ import {
   SupportingUserType,
   StudyBreaksAndWeeks,
   AssessmentStatus,
+  WorkflowData,
 } from "@sims/sims-db";
 
 export interface AssociateWorkflowInstanceJobInDTO {
@@ -138,4 +139,9 @@ export interface UpdateNOAStatusHeaderDTO {
 
 export interface UpdateNOAStatusHeaderDTO {
   status: AssessmentStatus;
+}
+
+export interface SaveWorkflowDataJobInDTO {
+  [ASSESSMENT_ID]: number;
+  workflowData: WorkflowData;
 }

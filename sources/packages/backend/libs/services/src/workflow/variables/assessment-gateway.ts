@@ -35,3 +35,7 @@ export const PROGRAM_INFO_STATUS = "programInfoStatus";
  * Represents all the disbursements schedules (1 or 2) and its loan/grants values.
  */
 export const DISBURSEMENT_SCHEDULES = "disbursementSchedules";
+/**
+ * Workflow data.
+ */
+export const WORKFLOW_DATA = "workflowData";

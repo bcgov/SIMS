@@ -11,6 +11,7 @@ import {
   AssessmentDataJobInDTO,
   AssociateWorkflowInstanceJobInDTO,
   SaveAssessmentDataJobInDTO,
+  SaveWorkflowDataJobInDTO,
   StudentAppealRequestJobOutDTO,
   SupportingUserJobOutDTO,
   UpdateNOAStatusHeaderDTO,
@@ -34,6 +35,7 @@ import {
 import {
   ASSESSMENT_DATA,
   ASSESSMENT_ID,
+  WORKFLOW_DATA as WORKFLOW_DATA,
 } from "@sims/services/workflow/variables/assessment-gateway";
 import { CustomNamedError } from "@sims/utilities";
 import { MaxJobsToActivate } from "../../types";
@@ -153,6 +155,24 @@ export class AssessmentController {
     await this.studentAssessmentService.updateNOAApprovalStatus(
       job.variables.assessmentId,
       job.customHeaders.status,
+    );
+    return job.complete();
+  }
+
+  /**
+   * Updates status and saves workflow data.
+   */
+  @ZeebeWorker(Workers.UpdateAssessmentStatusAndSaveWorkflowData, {
+    fetchVariable: [ASSESSMENT_ID, WORKFLOW_DATA],
+  })
+  async UpdateAssessmentStatusAndSaveWorkflowData(
+    job: Readonly<
+      ZeebeJob<SaveWorkflowDataJobInDTO, ICustomHeaders, IOutputVariables>
+    >,
+  ): Promise<MustReturnJobActionAcknowledgement> {
+    await this.studentAssessmentService.UpdateAssessmentStatusAndSaveWorkflowData(
+      job.variables.assessmentId,
+      job.variables.workflowData,
     );
     return job.complete();
   }
