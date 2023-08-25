@@ -21,7 +21,6 @@ import {
   OfferingIntensity,
   OfferingTypes,
   OfferingSummaryPurpose,
-  ApplicationOfferingChangeRequest,
 } from "@sims/sims-db";
 import {
   ApplicationOfferingChangeRequestService,
