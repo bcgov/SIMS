@@ -235,6 +235,7 @@ export class ScholasticStandingInstitutionsController extends BaseController {
           ),
         );
       }
+      throw error;
     }
     // Validate the text models.
     const textValidations =
@@ -252,6 +253,7 @@ export class ScholasticStandingInstitutionsController extends BaseController {
     }
 
     // TODO create a block to do database updates for Application withdrawal.
+    return [];
   }
 
   /**
@@ -259,7 +261,7 @@ export class ScholasticStandingInstitutionsController extends BaseController {
    * a BadRequestException in case of some failure.
    * @param textValidations validations to be verified.
    */
-  assertTextValidationsAreValid(
+  private assertTextValidationsAreValid(
     textValidations: ApplicationWithdrawalTextValidationResult[],
   ) {
     const textValidationsErrors = textValidations.filter(
