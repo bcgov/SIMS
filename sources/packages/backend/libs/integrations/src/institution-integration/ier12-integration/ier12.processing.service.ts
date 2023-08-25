@@ -62,10 +62,12 @@ export class IER12ProcessingService {
     const uploadResult: IER12UploadResult[] = [];
     try {
       this.logger.log("Creating IER 12 content...");
-      for (const institutionCode of Object.keys(fileRecords)) {
+      for (const [institutionCode, ier12Records] of Object.entries(
+        fileRecords,
+      )) {
         const ierUploadResult = await this.uploadIER12Content(
           institutionCode,
-          fileRecords,
+          ier12Records,
         );
         uploadResult.push(ierUploadResult);
       }
@@ -84,13 +86,12 @@ export class IER12ProcessingService {
    */
   async uploadIER12Content(
     institutionCode: string,
-    fileRecords: Record<string, IER12Record[]>,
+    ier12Records: IER12Record[],
   ): Promise<IER12UploadResult> {
     try {
       // Create the Request content for the IER 12 file by populating the content.
-      const fileContent = this.ier12IntegrationService.createIER12FileContent(
-        fileRecords[institutionCode],
-      );
+      const fileContent =
+        this.ier12IntegrationService.createIER12FileContent(ier12Records);
       // Create the request filename with the file path for the each and every institutionCode.
       const fileInfo = this.createRequestFileName(institutionCode);
       this.logger.log("Uploading content...");
