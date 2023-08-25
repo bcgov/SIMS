@@ -129,7 +129,7 @@ export class EducationProgramOfferingStudentsController extends BaseController {
     description: "Not able to find the Education Program offering.",
   })
   @Get("offering/:offeringId/summary-details")
-  async getOfferingSummaryDetailsById(
+  async getOfferingSummaryDetails(
     @Param("offeringId", ParseIntPipe) offeringId: number,
     @Query("purpose", new ParseEnumQueryPipe(OfferingSummaryPurpose))
     purpose: OfferingSummaryPurpose,
