@@ -35,7 +35,7 @@ import {
 import {
   ASSESSMENT_DATA,
   ASSESSMENT_ID,
-  WORKFLOW_DATA as WORKFLOW_DATA,
+  WORKFLOW_DATA,
 } from "@sims/services/workflow/variables/assessment-gateway";
 import { CustomNamedError } from "@sims/utilities";
 import { MaxJobsToActivate } from "../../types";
@@ -164,17 +164,25 @@ export class AssessmentController {
    */
   @ZeebeWorker(Workers.UpdateAssessmentStatusAndSaveWorkflowData, {
     fetchVariable: [ASSESSMENT_ID, WORKFLOW_DATA],
+    maxJobsToActivate: MaxJobsToActivate.Normal,
   })
   async UpdateAssessmentStatusAndSaveWorkflowData(
     job: Readonly<
       ZeebeJob<SaveWorkflowDataJobInDTO, ICustomHeaders, IOutputVariables>
     >,
   ): Promise<MustReturnJobActionAcknowledgement> {
-    await this.studentAssessmentService.UpdateAssessmentStatusAndSaveWorkflowData(
-      job.variables.assessmentId,
-      job.variables.workflowData,
-    );
-    return job.complete();
+    try {
+      await this.studentAssessmentService.UpdateAssessmentStatusAndSaveWorkflowData(
+        job.variables.assessmentId,
+        job.variables.workflowData,
+      );
+      return job.complete();
+    } catch (error: unknown) {
+      return job.fail(
+        `Failed while
+         updating assessment status and saving workflow data. ${error}`,
+      );
+    }
   }
 
   /**
