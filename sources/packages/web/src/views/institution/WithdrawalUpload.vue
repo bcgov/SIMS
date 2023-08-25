@@ -60,7 +60,6 @@
             variant="outlined"
             prepend-icon="fa:fa-solid fa-file-text"
             :rules="[fileValidationRules]"
-            :key="textFileUploadKey"
           />
 
           <v-btn
@@ -111,66 +110,51 @@
           summary="Error! We found problems that will prevent the bulk withdrawal from being created and uploaded. Please review the errors below."
         />
         <content-group>
-          <DataTable
-            :value="validationResults"
-            :paginator="true"
-            :rows="DEFAULT_PAGE_LIMIT"
-            :rowsPerPageOptions="PAGINATION_LIST"
+          <v-data-table
+            :headers="ApplicationWithdrawalUploadHeaders"
+            :items="validationResults"
             :loading="loading"
-            breakpoint="1250px"
+            v-model:items-per-page="DEFAULT_PAGE_LIMIT"
           >
-            <Column header="Line"
-              ><template #body="slotProps">{{
-                slotProps.data.recordLineNumber ?? ""
-              }}</template></Column
-            >
-            <Column
-              header="Application number"
-              field="applicationNumber"
-            ></Column>
-            <Column header="Withdrawal date" bodyClass="text-no-wrap"
-              ><template #body="slotProps">{{
-                dateOnlyLongString(slotProps.data.withdrawalDate)
-              }}</template></Column
-            >
-            <Column header="Validations"
-              ><template #body="slotProps">
-                <div
-                  class="alert alert-danger"
-                  v-if="slotProps.data.errors.length"
-                >
-                  <ul class="m-2">
-                    <li v-for="error in slotProps.data.errors" :key="error">
-                      {{ error }}
-                    </li>
-                  </ul>
-                </div>
-                <div
-                  class="alert alert-warning"
-                  v-if="slotProps.data.warnings.length"
-                >
-                  <ul class="m-2">
-                    <li
-                      v-for="warning in slotProps.data.warnings"
-                      :key="warning"
-                    >
-                      {{ warning.message }}
-                    </li>
-                  </ul>
-                </div>
-                <div
-                  class="alert alert-info"
-                  v-if="slotProps.data.infos.length"
-                >
-                  <ul class="m-2">
-                    <li v-for="info in slotProps.data.infos" :key="info">
-                      {{ info.message }}
-                    </li>
-                  </ul>
-                </div>
-              </template></Column
-            >
-          </DataTable>
+            <template #[`item.recordLineNumber`]="{ item }">
+              {{ numberEmptyFiller(item.raw.recordLineNumber) }}
+            </template>
+            <template #[`item.applicationNumber`]="{ item }">
+              {{ item.raw.applicationNumber }}
+            </template>
+            <template #[`item.withdrawalDate`]="{ item }">
+              {{ dateOnlyLongString(item.raw.withdrawalDate) }}
+            </template>
+            <template #[`item.validations`]="{ item }">
+              <div
+                class="alert alert-danger mt-4"
+                v-if="item.raw.errors.length"
+              >
+                <ul>
+                  <li v-for="error in item.raw.errors" :key="error">
+                    {{ error }}
+                  </li>
+                </ul>
+              </div>
+              <div
+                class="alert alert-warning mt-4"
+                v-if="item.raw.warnings.length"
+              >
+                <ul>
+                  <li v-for="warning in item.raw.warnings" :key="warning">
+                    {{ warning.message }}
+                  </li>
+                </ul>
+              </div>
+              <div class="alert alert-info mt-4" v-if="item.raw.infos.length">
+                <ul>
+                  <li v-for="info in item.raw.infos" :key="info">
+                    {{ info.message }}
+                  </li>
+                </ul>
+              </div>
+            </template>
+          </v-data-table>
         </content-group>
       </content-group>
     </content-group>
@@ -185,10 +169,11 @@ import {
   BannerTypes,
   VForm,
   InputFile,
+  ApplicationWithdrawalUploadHeaders,
 } from "@/types";
 import { useFormatters, useSnackBar } from "@/composables";
 import { FileUploadProgressEventArgs } from "@/services/http/common/FileUploadProgressEvent";
-import { ApplicationBulkWithdrawal } from "@/types/contracts/institution/Application";
+import { ApplicationBulkWithdrawal } from "@/types/contracts/institution/ScholasticStanding";
 import { ScholasticStandingService } from "@/services/ScholasticStandingService";
 
 const ACCEPTED_FILE_TYPE = "text/plain";
@@ -199,17 +184,19 @@ export default defineComponent({
     const snackBar = useSnackBar();
     const validationProcessing = ref(false);
     const creationProcessing = ref(false);
-    const { dateOnlyLongString } = useFormatters();
+    const { dateOnlyLongString, numberEmptyFiller } = useFormatters();
     // Only one will be used but the component allows multiple.
     const withdrawalFiles = ref<InputFile[]>([]);
     // Possible errors and warnings received upon file upload.
     const validationResults = ref([] as ApplicationBulkWithdrawal[]);
     const uploadForm = ref({} as VForm);
     const uploadProgress = ref({} as FileUploadProgressEventArgs);
+    // TODO need to be removed after confirmation of Vuetify 3 update
     // Workaround to reset the file upload component to its original state.
     // It is apparently a vuetify beta issue. It can be removed once there is a
     // better way to force the component to reset its state.
-    const textFileUploadKey = ref(0);
+    // const textFileUploadKey = ref(0);
+
     // Specific error message to be display the error that occurs when the file upload
     // has a file selected and the user changes its contents (net::ERR_UPLOAD_FILE_CHANGED).
     const showPossibleFileChangeError = ref(false);
@@ -236,7 +223,6 @@ export default defineComponent({
               uploadProgress.value = progressEvent;
             },
           );
-        validationResults.value = uploadResults;
         if (uploadResults.length) {
           validationResults.value = uploadResults;
         } else if (validationOnly) {
@@ -280,7 +266,7 @@ export default defineComponent({
     const resetForm = () => {
       validationResults.value = [];
       withdrawalFiles.value = [];
-      textFileUploadKey.value++;
+      //textFileUploadKey.value++;
     };
 
     const loading = computed(
@@ -301,10 +287,12 @@ export default defineComponent({
       BannerTypes,
       uploadForm,
       ACCEPTED_FILE_TYPE,
-      textFileUploadKey,
+      //textFileUploadKey,
+      ApplicationWithdrawalUploadHeaders,
       showPossibleFileChangeError,
       uploadProgress,
       dateOnlyLongString,
+      numberEmptyFiller,
     };
   },
 });

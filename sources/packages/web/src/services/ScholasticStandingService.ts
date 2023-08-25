@@ -5,7 +5,7 @@ import {
   ScholasticStandingDataAPIInDTO,
   ScholasticStandingSubmittedDetailsAPIOutDTO,
 } from "@/services/http/dto";
-import { ApplicationBulkWithdrawal } from "@/types/contracts/institution/Application";
+import { ApplicationBulkWithdrawal } from "@/types/contracts/institution/ScholasticStanding";
 import { FileUploadProgressEventArgs } from "./http/common/FileUploadProgressEvent";
 import {
   APPLICATION_WITHDRAWAL_INVALID_TEXT_FILE_ERROR,

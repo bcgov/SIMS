@@ -327,6 +327,14 @@ export function useFormatters() {
     );
   };
 
+  const numberEmptyFiller = (
+    value: number,
+    defaultValue?: string,
+  ): number | string => {
+    const defaultReturnValue = defaultValue ?? "";
+    return !value || Number.isNaN(value) ? defaultReturnValue : value;
+  };
+
   return {
     dateOnlyLongString,
     dateOnlyLongPeriodString,
@@ -342,6 +350,7 @@ export function useFormatters() {
     getISODateOnlyString,
     institutionUserRoleToDisplay,
     emptyStringFiller,
+    numberEmptyFiller,
     conditionalEmptyStringFiller,
     formatCurrency,
     isBeforeDateOnly,
