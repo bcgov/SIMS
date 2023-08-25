@@ -114,7 +114,7 @@
             :headers="ApplicationWithdrawalUploadHeaders"
             :items="validationResults"
             :loading="loading"
-            v-model:items-per-page="DEFAULT_PAGE_LIMIT"
+            :items-per-page="DEFAULT_PAGE_LIMIT"
           >
             <template #[`item.recordLineNumber`]="{ item }">
               {{ numberEmptyFiller(item.raw.recordLineNumber) }}

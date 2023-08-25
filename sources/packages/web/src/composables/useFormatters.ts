@@ -335,10 +335,9 @@ export function useFormatters() {
    */
   const numberEmptyFiller = (
     value: number,
-    defaultValue?: string,
+    defaultValue = "",
   ): number | string => {
-    const defaultReturnValue = defaultValue ?? "";
-    return !value || Number.isNaN(value) ? defaultReturnValue : value;
+    return !value || Number.isNaN(value) ? defaultValue : value;
   };
 
   return {
