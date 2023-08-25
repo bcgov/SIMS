@@ -1,5 +1,5 @@
 /**
- * Indicates the purpose of the application offering change.
+ * Indicates the offering summary purpose.
  */
 export enum OfferingSummaryPurpose {
   /**

@@ -240,12 +240,12 @@ export class ApplicationOfferingChangeRequestInstitutionsController extends Base
   @ApiNotFoundResponse({
     description: "Not able to find an Application Offering Change Request.",
   })
-  async getById(
+  async getApplicationOfferingChangeRequest(
     @Param("applicationOfferingChangeRequestId", ParseIntPipe)
     applicationOfferingChangeRequestId: number,
     @Param("locationId", ParseIntPipe) locationId: number,
   ): Promise<ApplicationOfferingChangesAPIOutDTO> {
-    return this.applicationOfferingChangeRequestControllerService.getById(
+    return this.applicationOfferingChangeRequestControllerService.getApplicationOfferingChangeRequest(
       applicationOfferingChangeRequestId,
       { locationId },
     );

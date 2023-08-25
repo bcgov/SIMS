@@ -50,13 +50,13 @@ export class ApplicationOfferingChangeRequestStudentsController extends BaseCont
   @ApiNotFoundResponse({
     description: "Not able to find an Application Offering Change Request.",
   })
-  async getById(
+  async getApplicationOfferingChangeRequest(
     @Param("applicationOfferingChangeRequestId", ParseIntPipe)
     applicationOfferingChangeRequestId: number,
     @UserToken()
     studentUserToken: StudentUserToken,
   ): Promise<ApplicationOfferingDetailsAPIOutDTO> {
-    return this.applicationOfferingChangeRequestControllerService.getById(
+    return this.applicationOfferingChangeRequestControllerService.getApplicationOfferingChangeRequest(
       applicationOfferingChangeRequestId,
       {
         studentId: studentUserToken.studentId,
@@ -78,7 +78,7 @@ export class ApplicationOfferingChangeRequestStudentsController extends BaseCont
     description:
       "Not able to get the Application Offering Change Request Status.",
   })
-  async getApplicationOfferingChangeRequestStatusById(
+  async getApplicationOfferingChangeRequestStatus(
     @Param("applicationOfferingChangeRequestId", ParseIntPipe)
     applicationOfferingChangeRequestId: number,
     @UserToken()
@@ -118,12 +118,11 @@ export class ApplicationOfferingChangeRequestStudentsController extends BaseCont
     @Body()
     payload: StudentApplicationOfferingChangeRequestAPIInDTO,
   ): Promise<void> {
-    const studentAuthorized =
-      await this.applicationOfferingChangeRequestService.getById(
-        applicationOfferingChangeRequestId,
-        { studentId: userToken.studentId },
-      );
-    if (!studentAuthorized) {
+    const student = await this.applicationOfferingChangeRequestService.getById(
+      applicationOfferingChangeRequestId,
+      { studentId: userToken.studentId },
+    );
+    if (!student) {
       throw new UnauthorizedException(
         "Student is not authorized for the provided offering.",
       );

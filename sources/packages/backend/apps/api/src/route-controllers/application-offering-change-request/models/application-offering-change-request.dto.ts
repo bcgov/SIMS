@@ -109,7 +109,7 @@ export class ApplicationOfferingChangesAPIOutDTO {
   studentFullName: string;
 }
 
-export interface ApplicationOfferingDetailsAPIOutDTO {
+export class ApplicationOfferingDetailsAPIOutDTO {
   applicationNumber: string;
   locationName: string;
   status: ApplicationOfferingChangeRequestStatus;
@@ -142,7 +142,6 @@ export class CreateApplicationOfferingChangeRequestAPIInDTO {
  * Details to update the application offering change request by student.
  */
 export class StudentApplicationOfferingChangeRequestAPIInDTO {
-  @IsOptional()
   @IsBoolean()
   @ValidateIf(
     (value: StudentApplicationOfferingChangeRequestAPIInDTO) =>

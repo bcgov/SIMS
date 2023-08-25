@@ -23,7 +23,10 @@ import {
   OfferingSummaryPurpose,
   ApplicationOfferingChangeRequest,
 } from "@sims/sims-db";
-import { EducationProgramOfferingService } from "../../services";
+import {
+  ApplicationOfferingChangeRequestService,
+  EducationProgramOfferingService,
+} from "../../services";
 import { ClientTypeBaseRoute } from "../../types";
 import BaseController from "../BaseController";
 import {
@@ -34,22 +37,19 @@ import { OptionItemAPIOutDTO } from "../models/common.dto";
 import { EducationProgramOfferingControllerService } from "./education-program-offering.controller.service";
 import { ParseEnumQueryPipe } from "../utils/custom-validation-pipe";
 import { StudentUserToken } from "../../auth";
-import { DataSource, Repository } from "typeorm";
+import { DataSource } from "typeorm";
 
 @AllowAuthorizedParty(AuthorizedParties.student)
 @Controller("education-program-offering")
 @ApiTags(`${ClientTypeBaseRoute.Student}-education-program-offering`)
 export class EducationProgramOfferingStudentsController extends BaseController {
-  applicationOfferingChangeRepo: Repository<ApplicationOfferingChangeRequest>;
   constructor(
     private readonly dataSource: DataSource,
     private readonly educationProgramOfferingService: EducationProgramOfferingService,
     private readonly educationProgramOfferingControllerService: EducationProgramOfferingControllerService,
+    private readonly applicationOfferingChangeRequestService: ApplicationOfferingChangeRequestService,
   ) {
     super();
-    this.applicationOfferingChangeRepo = this.dataSource.getRepository(
-      ApplicationOfferingChangeRequest,
-    );
   }
 
   /**
@@ -164,21 +164,10 @@ export class EducationProgramOfferingStudentsController extends BaseController {
     studentId: number,
   ): Promise<boolean> {
     if (purpose === OfferingSummaryPurpose.ApplicationOfferingChange) {
-      const applicationOfferingChangeId =
-        await this.applicationOfferingChangeRepo.findOne({
-          select: { id: true },
-          where: [
-            {
-              application: { student: { id: studentId } },
-              activeOffering: { id: offeringId },
-            },
-            {
-              application: { student: { id: studentId } },
-              requestedOffering: { id: offeringId },
-            },
-          ],
-        });
-      return !!applicationOfferingChangeId;
+      return this.applicationOfferingChangeRequestService.validateApplicationOfferingForStudent(
+        offeringId,
+        studentId,
+      );
     }
     return false;
   }

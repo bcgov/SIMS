@@ -333,10 +333,10 @@ export class ApplicationOfferingChangeRequestService {
   ): Promise<ApplicationOfferingChangeRequest> {
     const applicationOfferingChangeRequest =
       await this.applicationOfferingChangeRequestRepo.findOne({
-        relations: {
-          application: {
-            student: true,
-          },
+        select: {
+          id: true,
+          applicationOfferingChangeRequestStatus: true,
+          createdAt: true,
         },
         where: {
           application: { id: applicationId, student: { id: studentId } },
@@ -397,6 +397,32 @@ export class ApplicationOfferingChangeRequestService {
         application: { id: applicationId, student: { id: studentId } },
       },
     });
+  }
+
+  /** Validates student authorization for the given education program offering.
+   * @param offeringId offering id.
+   * @param studentId student id.
+   * @returns true if the student is authorized for the given offering, otherwise false.
+   */
+  async validateApplicationOfferingForStudent(
+    offeringId: number,
+    studentId: number,
+  ): Promise<boolean> {
+    const applicationOfferingChangeId =
+      await this.applicationOfferingChangeRequestRepo.findOne({
+        select: { id: true },
+        where: [
+          {
+            application: { student: { id: studentId } },
+            activeOffering: { id: offeringId },
+          },
+          {
+            application: { student: { id: studentId } },
+            requestedOffering: { id: offeringId },
+          },
+        ],
+      });
+    return !!applicationOfferingChangeId;
   }
 
   /**

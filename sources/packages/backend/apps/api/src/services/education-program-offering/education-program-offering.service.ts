@@ -20,7 +20,6 @@ import {
   DatabaseConstraintNames,
   PostgresDriverError,
   mapFromRawAndEntities,
-  ApplicationOfferingChangeRequest,
 } from "@sims/sims-db";
 import {
   DataSource,
@@ -73,7 +72,6 @@ import { InjectQueue } from "@nestjs/bull";
 
 @Injectable()
 export class EducationProgramOfferingService extends RecordDataModelService<EducationProgramOffering> {
-  applicationOfferingChangeRepo: Repository<ApplicationOfferingChangeRequest>;
   constructor(
     private readonly dataSource: DataSource,
     private readonly workflowClientService: WorkflowClientService,
@@ -82,9 +80,6 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     private readonly cancelAssessmentQueue: Queue<CancelAssessmentQueueInDTO>,
   ) {
     super(dataSource.getRepository(EducationProgramOffering));
-    this.applicationOfferingChangeRepo = dataSource.getRepository(
-      ApplicationOfferingChangeRequest,
-    );
   }
 
   /**
