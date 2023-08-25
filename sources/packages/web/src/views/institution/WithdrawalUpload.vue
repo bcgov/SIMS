@@ -28,7 +28,7 @@
         </li>
         <li>Errors and warnings will show up below</li>
         <li>
-          If your file has errors, please fix it in the excel file first and
+          If your file has errors, please fix it in the text file first and
           re-upload
         </li>
         <li>Once there are no errors, click the "Create now" button</li>
