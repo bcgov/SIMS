@@ -1,3 +1,4 @@
+import { ValidationResultAPIOutDTO } from "./Common.dto";
 import { ActiveApplicationDataAPIOutDTO } from "./InstitutionLocation.dto";
 
 export const APPLICATION_NOT_FOUND = "APPLICATION_NOT_FOUND";
@@ -26,3 +27,17 @@ export interface ScholasticStandingDataAPIInDTO {
 export interface ScholasticStandingSubmittedDetailsAPIOutDTO
   extends ScholasticStandingDataAPIInDTO,
     ActiveApplicationDataAPIOutDTO {}
+
+/**
+ * Represents the possible errors that can happen during the
+ * application bulk withdrawal and provides a detailed description
+ * for every record that has an error.
+ */
+export interface ApplicationBulkWithdrawalValidationResultAPIOutDTO {
+  recordIndex: number;
+  applicationNumber?: number;
+  withdrawalDate?: string;
+  errors: string[];
+  infos: ValidationResultAPIOutDTO[];
+  warnings: ValidationResultAPIOutDTO[];
+}

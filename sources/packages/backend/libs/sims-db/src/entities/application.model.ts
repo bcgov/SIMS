@@ -30,6 +30,7 @@ import { StudentAssessment } from "./student-assessment.model";
 import { ApplicationException } from "./application-exceptions.model";
 
 export const APPLICATION_NUMBER_LENGTH = 10;
+export const SIN_NUMBER_LENGTH = 9;
 
 @Entity({ name: TableNames.Applications })
 export class Application extends RecordDataModel {

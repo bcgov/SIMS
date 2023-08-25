@@ -38,6 +38,7 @@ import { AuthService } from "@/services/AuthService";
 import ViewSubmittedApplicationScholasticStanding from "@/views/institution/locations/active-applications/ViewSubmittedApplicationScholasticStanding.vue";
 import OfferingRequestChange from "@/views/institution/locations/offerings/OfferingRequestChange.vue";
 import OfferingsUpload from "@/views/institution/OfferingsUpload.vue";
+import WithdrawalUpload from "@/views/institution/WithdrawalUpload.vue";
 import InstitutionSearchStudents from "@/views/institution/student/InstitutionSearchStudents.vue";
 import InstitutionStudentDetails from "@/views/institution/student/InstitutionStudentDetails.vue";
 import InstitutionStudentProfile from "@/views/institution/student/InstitutionStudentProfile.vue";
@@ -566,6 +567,19 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
         meta: {
           clientType: ClientIdType.Institution,
           institutionUserTypes: [InstitutionUserTypes.admin],
+        },
+      },
+      {
+        path: AppRoutes.WithdrawalUpload,
+        name: InstitutionRoutesConst.WITHDRAWAL_UPLOAD,
+        components: {
+          default: WithdrawalUpload,
+          sidebar: ManageInstitutionSideBar,
+        },
+        meta: {
+          clientType: ClientIdType.Institution,
+          institutionUserTypes: [InstitutionUserTypes.admin],
+          allowOnlyBCPublic: true,
         },
       },
       {

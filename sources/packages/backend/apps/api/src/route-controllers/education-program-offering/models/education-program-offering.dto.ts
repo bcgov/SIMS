@@ -237,7 +237,7 @@ export class OfferingBulkInsertValidationResultAPIOutDTO {
  * and a type that uniquely identifies this warning
  * or info.
  */
-export class ValidationResultAPIOutDTO {
+class ValidationResultAPIOutDTO {
   typeCode: OfferingValidationWarnings | OfferingValidationInfos;
   message: string;
 }

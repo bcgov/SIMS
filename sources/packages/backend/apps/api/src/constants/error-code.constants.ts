@@ -136,3 +136,17 @@ export const OFFERING_PROGRAM_YEAR_MISMATCH = "OFFERING_PROGRAM_YEAR_MISMATCH";
  */
 export const OFFERING_DOES_NOT_BELONG_TO_LOCATION =
   "OFFERING_DOES_NOT_BELONG_TO_LOCATION";
+/**
+ * The text content to perform the application withdrawal is not in the
+ * expected format and cannot be parsed.
+ */
+export const APPLICATION_WITHDRAWAL_TEXT_CONTENT_FORMAT_ERROR =
+  "APPLICATION_WITHDRAWAL_TEXT_CONTENT_FORMAT_ERROR";
+/**
+ * The text content has invalid content, either
+ * 1. Invalid Header record type.
+ * 2. Invalid Footer record type.
+ * 3. Number of records in the footer does not match the no of data records.
+ */
+export const APPLICATION_WITHDRAWAL_INVALID_TEXT_FILE_ERROR =
+  "APPLICATION_WITHDRAWAL_INVALID_TEXT_FILE_ERROR";
