@@ -59,6 +59,8 @@ export const csvFileFilter = (
  * to allow only the specific MIME types files.
  * @param file received file.
  * @param callback callback to return the result of the validation.
+ * @param options additional options.
+ * - `allowedMimeType` allowed MimeType for the file.
  */
 const fileFilter = (
   file: MulterFile,
