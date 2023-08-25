@@ -155,3 +155,26 @@ export class StudentApplicationOfferingChangeRequestAPIInDTO {
   @IsEnum(ApplicationOfferingChangeRequestStatus)
   applicationOfferingChangeRequestStatus: ApplicationOfferingChangeRequestStatus;
 }
+
+/**
+ * All in progress application offering change details.
+ */
+export class AllInProgressApplicationOfferingChangesAPIOutDTO {
+  id: number;
+  applicationNumber: string;
+  applicationId: number;
+  studyStartDate: string;
+  studyEndDate: string;
+  fullName: string;
+  status: ApplicationOfferingChangeRequestStatus;
+  createdAt: string;
+  studentId: number;
+}
+/**
+ * Extended pagination option for the in progress application offering change.
+ */
+export class AllInProgressOfferingChangePaginationOptionsAPIInDTO extends PaginationOptionsAPIInDTO {
+  @IsOptional()
+  @IsIn(["dateSubmitted", "status"])
+  sortField?: string;
+}

@@ -71,16 +71,22 @@ export const getPaginationQueryString = (
   );
   // Sort parameters.
   if (paginationOptions.sortField && paginationOptions.sortOrder) {
-    const sortDBOrder =
-      paginationOptions.sortOrder === DataTableSortOrder.DESC ||
-      DataTableSortByOrder.DESC
-        ? FieldSortOrder.DESC
-        : FieldSortOrder.ASC;
+    let sortDBOrder = "";
+    switch (paginationOptions.sortOrder) {
+      case DataTableSortOrder.DESC:
+      case DataTableSortByOrder.DESC:
+        sortDBOrder = FieldSortOrder.DESC;
+        break;
+      case DataTableSortOrder.ASC:
+      case DataTableSortByOrder.ASC:
+        sortDBOrder = FieldSortOrder.ASC;
+    }
     parameters.push(
       `${PaginationParams.SortField}=${paginationOptions.sortField}`,
     );
     parameters.push(`${PaginationParams.SortOrder}=${sortDBOrder}`);
   }
+
   // Search criteria.
   if (paginationOptions.searchCriteria) {
     parameters.push(

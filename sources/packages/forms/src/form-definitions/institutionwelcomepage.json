@@ -1,9 +1,9 @@
 {
   "title": "Institution Welcome Page",
-  "display": "form",
-  "type": "form",
   "name": "institutionwelcomepage",
   "path": "institutionwelcomepage",
+  "type": "form",
+  "display": "form",
   "tags": [
     "common"
   ],
@@ -124,7 +124,8 @@
                   "properties": {},
                   "allowMultipleMasks": false,
                   "addons": [],
-                  "id": "e1ta5vu"
+                  "id": "e1ta5vu",
+                  "className": ""
                 }
               ],
               "width": 8,
@@ -993,7 +994,7 @@
                       "value": ""
                     }
                   ],
-                  "content": "For legal signing authority\n <span\n class=\"formio-custom-tooltip\">\n   <span class=\"tooltip-text\">\n     Only a legal authority can sign off on the designation agreement. \n     </span>\n  </span>",
+                  "content": "For legal signing authority\n <span\n class=\"formio-custom-tooltip\">\n   <span class=\"tooltip-text\">\n     Only a legal authority can sign off on the designation agreement.\n     </span>\n  </span>",
                   "refreshOnChange": false,
                   "customClass": "secondary-color-light category-header-small mb-4",
                   "hidden": false,
@@ -1201,7 +1202,7 @@
                           "value": ""
                         }
                       ],
-                      "content": "<p class=\"category-header-small primary-color\">Add new user(s)</p>\n<p class=\"extra-small\">Begin by adding users from your institution who need access.</p>\n<p class=\"extra-small\">Ensure you assign a role for a legal authority or additional admins as your require.</p>",
+                      "content": "<p class=\"category-header-small primary-color\">Add new user(s)</p>\n<p class=\"extra-small\">Begin by adding other users from your institution who will be account administrators.</p>\n<p class=\"extra-small\">After creating your locations (Step 2), you can continue to add the basic users who will have access to particular locations.</p>",
                       "refreshOnChange": false,
                       "customClass": "",
                       "hidden": false,
@@ -1210,7 +1211,7 @@
                       "tags": [],
                       "properties": {},
                       "conditional": {
-                        "show": null,
+                        "show": "",
                         "when": null,
                         "eq": "",
                         "json": ""
@@ -1717,7 +1718,7 @@
                           "value": ""
                         }
                       ],
-                      "content": "<p class=\"category-header-small primary-color\">Request designation</p>\n<p class=\"extra-small\">Request designation for your institution.</p>\n<p class=\"extra-small\">You can skip this step if your institution has already been designated.</p>",
+                      "content": "<p class=\"category-header-small primary-color\">Request designation</p>\n<p class=\"extra-small\">Request designation for your institution.</p>\n<p class=\"extra-small\">Request designation status even if you have already received designation from SABC in previous years.</p>",
                       "refreshOnChange": false,
                       "customClass": "",
                       "hidden": false,
@@ -1726,7 +1727,7 @@
                       "tags": [],
                       "properties": {},
                       "conditional": {
-                        "show": null,
+                        "show": "",
                         "when": null,
                         "eq": "",
                         "json": ""

@@ -159,12 +159,12 @@ export class ApplicationOfferingChangeRequestInstitutionsController extends Base
   > {
     const offeringChange =
       await this.applicationOfferingChangeRequestService.getSummaryByStatus(
-        locationId,
-        pagination,
         [
           ApplicationOfferingChangeRequestStatus.InProgressWithSABC,
           ApplicationOfferingChangeRequestStatus.InProgressWithStudent,
         ],
+        pagination,
+        { locationId, useApplicationSort: true },
       );
     return {
       results: offeringChange.results.map((eachOfferingChange) => {
@@ -173,7 +173,6 @@ export class ApplicationOfferingChangeRequestInstitutionsController extends Base
         return {
           id: eachOfferingChange.id,
           applicationNumber: eachOfferingChange.application.applicationNumber,
-          applicationId: eachOfferingChange.application.id,
           studyStartDate: offering.studyStartDate,
           studyEndDate: offering.studyEndDate,
           fullName: getUserFullName(
@@ -201,13 +200,13 @@ export class ApplicationOfferingChangeRequestInstitutionsController extends Base
   > {
     const offeringChange =
       await this.applicationOfferingChangeRequestService.getSummaryByStatus(
-        locationId,
-        pagination,
         [
           ApplicationOfferingChangeRequestStatus.Approved,
           ApplicationOfferingChangeRequestStatus.DeclinedByStudent,
           ApplicationOfferingChangeRequestStatus.DeclinedBySABC,
         ],
+        pagination,
+        { locationId, useApplicationSort: true },
       );
     return {
       results: offeringChange.results.map((eachOfferingChange) => {
@@ -216,7 +215,6 @@ export class ApplicationOfferingChangeRequestInstitutionsController extends Base
         return {
           id: eachOfferingChange.id,
           applicationNumber: eachOfferingChange.application.applicationNumber,
-          applicationId: eachOfferingChange.application.id,
           studyStartDate: offering.studyStartDate,
           studyEndDate: offering.studyEndDate,
           fullName: getUserFullName(

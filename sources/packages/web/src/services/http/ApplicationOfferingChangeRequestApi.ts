@@ -76,6 +76,23 @@ export class ApplicationOfferingChangeRequestApi extends HttpBaseClient {
   }
 
   /**
+   * Gets all in progress application offering request changes.
+   * @param paginationOptions options to execute the pagination.
+   * @returns list of inprogress application offering request changes.
+   */
+  async getAllInProgressApplications(
+    paginationOptions: PaginationOptions,
+  ): Promise<
+    PaginatedResultsAPIOutDTO<InProgressApplicationOfferingChangesAPIOutDTO>
+  > {
+    let url = "application-offering-change-request/in-progress?";
+    url += getPaginationQueryString(paginationOptions, true);
+    return this.getCall<
+      PaginatedResultsAPIOutDTO<InProgressApplicationOfferingChangesAPIOutDTO>
+    >(this.addClientRoot(url));
+  }
+
+  /**
    * Gets all completed (Approved/ Declined) application offering request changes.
    * @param locationId location id.
    * @param paginationOptions options to execute the pagination.

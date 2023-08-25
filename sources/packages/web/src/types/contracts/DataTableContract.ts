@@ -243,3 +243,33 @@ export const CompletedOfferingChangeSummaryHeaders = [
     key: "id",
   },
 ];
+
+/**
+ * All in progress application offering changes summary header.
+ */
+export const AllInProgressOfferingChangeSummaryHeaders = [
+  {
+    title: "Date submitted",
+    key: "dateSubmitted",
+  },
+  {
+    title: "Name",
+    sortable: false,
+    key: "fullName",
+  },
+  {
+    title: "Application #",
+    sortable: false,
+    key: "applicationNumber",
+  },
+  {
+    title: "Status",
+    sortable: false,
+    key: "status",
+  },
+  {
+    title: "Action",
+    sortable: false,
+    key: "id",
+  },
+];

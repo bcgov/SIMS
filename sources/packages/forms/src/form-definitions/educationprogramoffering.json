@@ -4108,7 +4108,8 @@
               "properties": {},
               "allowMultipleMasks": false,
               "addons": [],
-              "id": "egunbad"
+              "id": "egunbad",
+              "tags": []
             },
             {
               "label": "HTML",
@@ -4118,7 +4119,7 @@
                   "value": ""
                 }
               ],
-              "content": "Please add the costs for each section (use 0 if there are no costs).\n<br>\nThese costs must comply with the maximum allowable costs according to the SABC policy manual.",
+              "content": "Please add the costs for each section (use 0 if there are no costs).\n<br>\nThese costs must comply with the maximum allowable costs according to the SABC policy manual.\n\n<br/>\nNo amounts beyond the maximum allowable limits will be factored into a student's need assessment.",
               "refreshOnChange": false,
               "customClass": "mt-n2",
               "key": "html5",
@@ -4143,7 +4144,6 @@
               "description": "",
               "errorLabel": "",
               "tooltip": "",
-              "hideLabel": false,
               "tabindex": "",
               "disabled": false,
               "autofocus": false,
@@ -4184,7 +4184,9 @@
               "tag": "p",
               "id": "e6zws5q",
               "className": "",
-              "tags": []
+              "tags": [],
+              "hideLabel": true,
+              "isNew": false
             },
             {
               "collapsible": false,

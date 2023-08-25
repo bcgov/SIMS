@@ -230,7 +230,7 @@
         },
         {
           "label": "Institution location code",
-          "tooltip": "Unique 4 digit alpha code that is assigned the first time this location is designated in Canada.",
+          "tooltip": "Unique 4 digit alpha code assigned the first time an institution is designated in Canada. If your institution has not yet been designated, input a random 4-letter code as a temporary Institution Location Code, and contact SABC to revise this code once your permanent code has been received. This code must be a valid federal education institution code prior to students submitting applications",
           "tableView": true,
           "case": "uppercase",
           "validate": {
