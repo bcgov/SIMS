@@ -222,8 +222,7 @@ export class StudentAssessment extends RecordDataModel {
   })
   applicationOfferingChangeRequest?: ApplicationOfferingChangeRequest;
   /**
-   * Represent the output of the executed assessment workflow and it is also
-   * the main content for the NOA (Notice of Assessment).
+   * Data used for the assessment workflow management.
    */
   @Column({
     name: "workflow_data",

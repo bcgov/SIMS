@@ -246,7 +246,7 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
   }
 
   /**
-   * Update assessment status and save workflow data.
+   * Updates assessment status and save workflow data.
    * @param assessmentId updated assessment.
    * @param workflowData workflow data to be saved.
    */
