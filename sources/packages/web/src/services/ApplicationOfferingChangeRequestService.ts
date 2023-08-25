@@ -1,7 +1,4 @@
-import {
-  ApplicationOfferingChangeRequestStatus,
-  PaginationOptions,
-} from "@/types";
+import { PaginationOptions } from "@/types";
 import ApiClient from "@/services/http/ApiClient";
 import {
   PaginatedResultsAPIOutDTO,

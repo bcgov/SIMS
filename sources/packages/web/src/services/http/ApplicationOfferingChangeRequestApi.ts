@@ -1,8 +1,5 @@
 import HttpBaseClient from "./common/HttpBaseClient";
-import {
-  ApplicationOfferingChangeRequestStatus,
-  PaginationOptions,
-} from "@/types";
+import { PaginationOptions } from "@/types";
 import {
   PaginatedResultsAPIOutDTO,
   ApplicationOfferingChangeSummaryAPIOutDTO,
