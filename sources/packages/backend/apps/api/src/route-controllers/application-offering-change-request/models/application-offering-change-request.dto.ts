@@ -168,6 +168,7 @@ export class AllInProgressApplicationOfferingChangesAPIOutDTO {
   createdAt: string;
   studentId: number;
 }
+
 /**
  * Extended pagination option for the in progress application offering change.
  */
