@@ -10,3 +10,4 @@ export * from "./parallel-processing-utils";
 export * from "./datatable-config";
 export * from "./base64-utils";
 export * from "./integration-utils";
+export * from "./math-utils";
