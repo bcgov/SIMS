@@ -222,7 +222,9 @@ export class StudentAssessment extends RecordDataModel {
   })
   applicationOfferingChangeRequest?: ApplicationOfferingChangeRequest;
   /**
-   * Assessment workflow data.
+   * Output of workflow calculations and data used as calculations inputs.
+   * Represents workflow variables that must be persisted after the workflow
+   * is executed for easy application consumption.
    */
   @Column({
     name: "workflow_data",
@@ -286,6 +288,11 @@ interface PartTimeAssessment extends BaseAssessment {
  */
 export type Assessment = FullTimeAssessment | PartTimeAssessment;
 
+/**
+ * Output of workflow calculations and data used as calculations inputs.
+ * Represents workflow variables that must be persisted after the workflow
+ * is executed for easy application consumption.
+ */
 export interface WorkflowData {
   studentData: {
     dependantStatus: string;

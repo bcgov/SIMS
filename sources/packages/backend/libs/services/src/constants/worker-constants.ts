@@ -12,5 +12,5 @@ export enum Workers {
   AssociateMSFAA = "associate-msfaa",
   CreateSupportingUsers = "create-supporting-users",
   LoadSupportingUserData = "load-supporting-user-data",
-  UpdateAssessmentStatusAndSaveWorkflowData = "update-assessment-status-and-save-workflow-data",
+  WorkflowWrapUp = "workflow-wrap-up",
 }

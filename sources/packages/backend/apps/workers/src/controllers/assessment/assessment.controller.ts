@@ -160,13 +160,13 @@ export class AssessmentController {
   }
 
   /**
-   * Updates status and saves workflow data.
+   * Worker to be executed at very end of the workflow responsible for latest tasks before the `end event`.
    */
-  @ZeebeWorker(Workers.UpdateAssessmentStatusAndSaveWorkflowData, {
+  @ZeebeWorker(Workers.WorkflowWrapUp, {
     fetchVariable: [ASSESSMENT_ID, WORKFLOW_DATA],
     maxJobsToActivate: MaxJobsToActivate.Normal,
   })
-  async updateAssessmentStatusAndSaveWorkflowData(
+  async workflowWrapUp(
     job: Readonly<
       ZeebeJob<SaveWorkflowDataJobInDTO, ICustomHeaders, IOutputVariables>
     >,
