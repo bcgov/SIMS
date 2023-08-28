@@ -4,7 +4,7 @@
  * @param decimalValue decimal value to be rounded.
  * @param decimalPlaces number of decimal places to be considered
  * for rounding.
- * @returns if a valid number, returns the rounded number, otherwise null.
+ * @returns if a valid number, returns the rounded number, otherwise returns null.
  */
 export function decimalRound(decimalValue: number, decimalPlaces = 2): number {
   const multiplier = Math.pow(10, decimalPlaces);
