@@ -166,13 +166,13 @@ export class AssessmentController {
     fetchVariable: [ASSESSMENT_ID, WORKFLOW_DATA],
     maxJobsToActivate: MaxJobsToActivate.Normal,
   })
-  async UpdateAssessmentStatusAndSaveWorkflowData(
+  async updateAssessmentStatusAndSaveWorkflowData(
     job: Readonly<
       ZeebeJob<SaveWorkflowDataJobInDTO, ICustomHeaders, IOutputVariables>
     >,
   ): Promise<MustReturnJobActionAcknowledgement> {
     try {
-      await this.studentAssessmentService.UpdateAssessmentStatusAndSaveWorkflowData(
+      await this.studentAssessmentService.updateAssessmentStatusAndSaveWorkflowData(
         job.variables.assessmentId,
         job.variables.workflowData,
       );

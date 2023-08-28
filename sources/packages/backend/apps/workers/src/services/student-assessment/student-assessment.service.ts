@@ -250,7 +250,7 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
    * @param assessmentId updated assessment.
    * @param workflowData workflow data to be saved.
    */
-  async UpdateAssessmentStatusAndSaveWorkflowData(
+  async updateAssessmentStatusAndSaveWorkflowData(
     assessmentId: number,
     workflowData: WorkflowData,
   ): Promise<void> {
