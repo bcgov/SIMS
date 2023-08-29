@@ -172,7 +172,6 @@ export class AssessmentController {
     >,
   ): Promise<MustReturnJobActionAcknowledgement> {
     try {
-      throw "test";
       await this.studentAssessmentService.updateAssessmentStatusAndSaveWorkflowData(
         job.variables.assessmentId,
         job.variables.workflowData,
