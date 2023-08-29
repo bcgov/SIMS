@@ -11,7 +11,7 @@ import {
   AssessmentDataJobInDTO,
   AssociateWorkflowInstanceJobInDTO,
   SaveAssessmentDataJobInDTO,
-  SaveWorkflowDataJobInDTO,
+  WorkflowWrapUpJobInDTO,
   StudentAppealRequestJobOutDTO,
   SupportingUserJobOutDTO,
   UpdateNOAStatusHeaderDTO,
@@ -168,7 +168,7 @@ export class AssessmentController {
   })
   async workflowWrapUp(
     job: Readonly<
-      ZeebeJob<SaveWorkflowDataJobInDTO, ICustomHeaders, IOutputVariables>
+      ZeebeJob<WorkflowWrapUpJobInDTO, ICustomHeaders, IOutputVariables>
     >,
   ): Promise<MustReturnJobActionAcknowledgement> {
     try {
@@ -179,8 +179,7 @@ export class AssessmentController {
       return job.complete();
     } catch (error: unknown) {
       return job.fail(
-        `Failed while
-         updating assessment status and saving workflow data. ${error}`,
+        `Failed while updating assessment status and saving workflow data. ${error}`,
       );
     }
   }

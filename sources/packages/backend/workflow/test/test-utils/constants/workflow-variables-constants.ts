@@ -24,7 +24,7 @@ export enum WorkflowServiceTasks {
   CheckIncomeRequest = "check-income-request-task",
   // Workflow - Supporting User Information Request
   CheckSupportingUserResponseTask = "check-supporting-user-response-task",
-  WorkflowWrapUp = "workflow-wrap-up",
+  WorkflowWrapUpTask = "workflow-wrap-up-task",
 }
 
 /**

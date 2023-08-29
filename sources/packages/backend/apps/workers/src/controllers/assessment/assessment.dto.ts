@@ -142,7 +142,7 @@ export interface UpdateNOAStatusHeaderDTO {
   status: AssessmentStatus;
 }
 
-export interface SaveWorkflowDataJobInDTO {
+export interface WorkflowWrapUpJobInDTO {
   [ASSESSMENT_ID]: number;
   [WORKFLOW_DATA]: WorkflowData;
 }
