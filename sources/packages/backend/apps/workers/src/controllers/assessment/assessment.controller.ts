@@ -1,4 +1,4 @@
-import { Controller } from "@nestjs/common";
+import { Controller, Logger } from "@nestjs/common";
 import { ZeebeWorker } from "../../zeebe";
 import {
   ZeebeJob,
@@ -172,14 +172,27 @@ export class AssessmentController {
     >,
   ): Promise<MustReturnJobActionAcknowledgement> {
     try {
+      throw "test";
       await this.studentAssessmentService.updateAssessmentStatusAndSaveWorkflowData(
         job.variables.assessmentId,
         job.variables.workflowData,
       );
       return job.complete();
     } catch (error: unknown) {
+      const jobLogger = new Logger(job.type);
+      jobLogger.log(
+        `Failed while updating assessment status and saving workflow data. ${JSON.stringify(
+          error,
+          null,
+          2,
+        )}`,
+      );
       return job.fail(
-        `Failed while updating assessment status and saving workflow data. ${error}`,
+        `Failed while updating assessment status and saving workflow data. ${JSON.stringify(
+          error,
+          null,
+          2,
+        )}`,
       );
     }
   }
