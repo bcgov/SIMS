@@ -70,7 +70,7 @@
         <bpmn:flowNodeRef>Activity_09v8xl0</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Gateway_11qgy63</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Event_0mtgfbi</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>update-assessment-status-and-save-workflow-data-task</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>workflow-wrap-up-task</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>update-noa-status-to-required-task</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>update-noa-status-to-not-required-task</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Gateway_04wql0w</bpmn:flowNodeRef>
@@ -662,9 +662,9 @@
     <bpmn:endEvent id="Event_0mtgfbi">
       <bpmn:incoming>Flow_0mt0uyq</bpmn:incoming>
     </bpmn:endEvent>
-    <bpmn:serviceTask id="update-assessment-status-and-save-workflow-data-task" name="Update assessment status and save workflow data">
+    <bpmn:serviceTask id="workflow-wrap-up-task" name="Workflow wrap up">
       <bpmn:extensionElements>
-        <zeebe:taskDefinition type="update-assessment-status-and-save-workflow-data" />
+        <zeebe:taskDefinition type="workflow-wrap-up" />
         <zeebe:ioMapping>
           <zeebe:input source="=assessmentId" target="assessmentId" />
           <zeebe:input source="=workflowData" target="workflowData" />
@@ -673,7 +673,7 @@
       <bpmn:incoming>Flow_0rkzx2d</bpmn:incoming>
       <bpmn:outgoing>Flow_0mt0uyq</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:sequenceFlow id="Flow_0mt0uyq" sourceRef="update-assessment-status-and-save-workflow-data-task" targetRef="Event_0mtgfbi" />
+    <bpmn:sequenceFlow id="Flow_0mt0uyq" sourceRef="workflow-wrap-up-task" targetRef="Event_0mtgfbi" />
     <bpmn:serviceTask id="update-noa-status-to-required-task" name="Update NOA status to &#39;Required&#39;">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
@@ -705,7 +705,7 @@
       <bpmn:incoming>Flow_0hmh3m7</bpmn:incoming>
       <bpmn:outgoing>Flow_0z518wc</bpmn:outgoing>
     </bpmn:exclusiveGateway>
-    <bpmn:sequenceFlow id="Flow_0rkzx2d" sourceRef="Event_0w0bgro" targetRef="update-assessment-status-and-save-workflow-data-task" />
+    <bpmn:sequenceFlow id="Flow_0rkzx2d" sourceRef="Event_0w0bgro" targetRef="workflow-wrap-up-task" />
     <bpmn:intermediateThrowEvent id="Event_0w0bgro" name="Configure workflow data">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
@@ -972,7 +972,7 @@
       <bpmndi:BPMNShape id="Event_0mtgfbi_di" bpmnElement="Event_0mtgfbi">
         <dc:Bounds x="4132" y="1592" width="36" height="36" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_0dcydtn_di" bpmnElement="update-assessment-status-and-save-workflow-data-task">
+      <bpmndi:BPMNShape id="Activity_0dcydtn_di" bpmnElement="workflow-wrap-up-task">
         <dc:Bounds x="3990" y="1570" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
