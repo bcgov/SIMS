@@ -17,7 +17,7 @@
           ><h4 class="label-bold color-blue">StudentAid BC Declaration</h4>
           <v-row
             ><v-col
-              ><span class="label-bold-large-vertical-height"
+              ><span class="label-bold-large-height"
                 >I. I. I/we understand that:</span
               >
             </v-col></v-row

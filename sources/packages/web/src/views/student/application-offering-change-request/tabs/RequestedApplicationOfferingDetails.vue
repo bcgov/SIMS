@@ -30,12 +30,14 @@
       </p>
       <content-group-info
         ><div class="mb-2">
-          <span class="category-header-medium primary-color"
-            >Reason for change</span
-          >
+          <h3 class="category-header-medium primary-color">
+            Reason for change
+          </h3>
         </div>
-        <span>{{ changeRequest.reason }}</span></content-group-info
-      >
+        <div>
+          <span>{{ changeRequest.reason }}</span>
+        </div>
+      </content-group-info>
     </body-header-container>
   </tab-container>
 </template>
