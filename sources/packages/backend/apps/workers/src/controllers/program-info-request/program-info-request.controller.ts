@@ -1,4 +1,4 @@
-import { Controller } from "@nestjs/common";
+import { Controller, Logger } from "@nestjs/common";
 import { ZeebeWorker } from "../../zeebe";
 import { ZeebeJob, MustReturnJobActionAcknowledgement } from "zeebe-node";
 import { ApplicationService } from "../../services";
@@ -63,7 +63,10 @@ export class ProgramInfoRequestController {
         programInfoStatus: job.customHeaders.programInfoStatus,
       });
     } catch (error: unknown) {
-      return job.fail(`Unexpected error while seting the PIR status. ${error}`);
+      const jobLogger = new Logger(job.type);
+      const errorMessage = `Unexpected error while setting the PIR status. ${error}`;
+      jobLogger.error(errorMessage);
+      return job.fail(errorMessage);
     }
   }
 }

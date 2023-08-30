@@ -1,4 +1,4 @@
-import { Controller } from "@nestjs/common";
+import { Controller, Logger } from "@nestjs/common";
 import { ZeebeWorker } from "../../zeebe";
 import {
   ZeebeJob,
@@ -67,9 +67,10 @@ export class CRAIntegrationController {
 
       return job.complete({ incomeVerificationId: identifier.id });
     } catch (error: unknown) {
-      return job.fail(
-        `Unexpected error while creating the CRA income verification. ${error}`,
-      );
+      const jobLogger = new Logger(job.type);
+      const errorMessage = `Unexpected error while creating the CRA income verification. ${error}`;
+      jobLogger.error(errorMessage);
+      return job.fail(errorMessage);
     }
   }
 
@@ -98,9 +99,10 @@ export class CRAIntegrationController {
         );
       return job.complete({ incomeVerificationCompleted });
     } catch (error: unknown) {
-      return job.fail(
-        `Unexpected error while checking the CRA income verification. ${error}`,
-      );
+      const jobLogger = new Logger(job.type);
+      const errorMessage = `Unexpected error while checking the CRA income verification. ${error}`;
+      jobLogger.error(errorMessage);
+      return job.fail(errorMessage);
     }
   }
 }

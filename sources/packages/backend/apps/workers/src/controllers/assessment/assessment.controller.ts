@@ -1,4 +1,4 @@
-import { Controller } from "@nestjs/common";
+import { Controller, Logger } from "@nestjs/common";
 import { ZeebeWorker } from "../../zeebe";
 import {
   ZeebeJob,
@@ -67,18 +67,21 @@ export class AssessmentController {
       );
       return job.complete();
     } catch (error: unknown) {
+      const jobLogger = new Logger(job.type);
       if (error instanceof CustomNamedError) {
         switch (error.name) {
           case ASSESSMENT_ALREADY_ASSOCIATED_TO_WORKFLOW:
+            jobLogger.log(`${error.name} ${error.message}`);
             return job.complete();
           case ASSESSMENT_NOT_FOUND:
           case ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE:
+            jobLogger.error(`${error.name} ${error.message}`);
             return job.error(error.name, error.message);
         }
       }
-      return job.fail(
-        `Not able to associate the assessment id ${job.variables.assessmentId} with the workflow instance id ${job.processInstanceKey}. ${error}`,
-      );
+      const errorMessage = `Not able to associate the assessment id ${job.variables.assessmentId} with the workflow instance id ${job.processInstanceKey}. ${error}`;
+      jobLogger.error(errorMessage);
+      return job.fail(errorMessage);
     }
   }
 
@@ -115,9 +118,10 @@ export class AssessmentController {
       );
       return job.complete(outputVariables);
     } catch (error: unknown) {
-      return job.fail(
-        `Unexpected error while loading assessment consolidated data. ${error}`,
-      );
+      const jobLogger = new Logger(job.type);
+      const errorMessage = `Unexpected error while loading assessment consolidated data. ${error}`;
+      jobLogger.error(errorMessage);
+      return job.fail(errorMessage);
     }
   }
 
@@ -140,7 +144,10 @@ export class AssessmentController {
       );
       return job.complete();
     } catch (error: unknown) {
-      return job.fail(`Unexpected error saving the assessment data. ${error}`);
+      const jobLogger = new Logger(job.type);
+      const errorMessage = `Unexpected error saving the assessment data. ${error}`;
+      jobLogger.error(errorMessage);
+      return job.fail(errorMessage);
     }
   }
 
@@ -167,9 +174,10 @@ export class AssessmentController {
       );
       return job.complete();
     } catch (error: unknown) {
-      return job.fail(
-        `Unexpected error while updating the NOA status. ${error}`,
-      );
+      const jobLogger = new Logger(job.type);
+      const errorMessage = `Unexpected error while updating the NOA status. ${error}`;
+      jobLogger.error(errorMessage);
+      return job.fail(errorMessage);
     }
   }
 

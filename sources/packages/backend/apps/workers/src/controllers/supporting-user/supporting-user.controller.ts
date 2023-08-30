@@ -1,4 +1,4 @@
-import { Controller } from "@nestjs/common";
+import { Controller, Logger } from "@nestjs/common";
 import { ZeebeWorker } from "../../zeebe";
 import {
   ZeebeJob,
@@ -57,7 +57,10 @@ export class SupportingUserController {
       );
       return job.complete({ createdSupportingUsersIds });
     } catch (error: unknown) {
-      return job.fail(`Unexpected error creating supporting users. ${error}`);
+      const jobLogger = new Logger(job.type);
+      const errorMessage = `Unexpected error while creating supporting users. ${error}`;
+      jobLogger.error(errorMessage);
+      return job.fail(errorMessage);
     }
   }
 
@@ -91,9 +94,10 @@ export class SupportingUserController {
       );
       return job.complete(outputVariables);
     } catch (error: unknown) {
-      return job.fail(
-        `Unexpected error while loading supporting user data. ${error}`,
-      );
+      const jobLogger = new Logger(job.type);
+      const errorMessage = `Unexpected error while loading supporting user data. ${error}`;
+      jobLogger.error(errorMessage);
+      return job.fail(errorMessage);
     }
   }
 }

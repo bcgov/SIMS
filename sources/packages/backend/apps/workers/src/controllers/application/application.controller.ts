@@ -1,4 +1,4 @@
-import { Controller } from "@nestjs/common";
+import { Controller, Logger } from "@nestjs/common";
 import { ZeebeWorker } from "../../zeebe";
 import {
   ZeebeJob,
@@ -66,9 +66,10 @@ export class ApplicationController {
       }
       return job.complete();
     } catch (error: unknown) {
-      return job.fail(
-        `Unexpected error while updating the application status. ${error}`,
-      );
+      const jobLogger = new Logger(job.type);
+      const errorMessage = `Unexpected error while updating the application status. ${error}`;
+      jobLogger.error(errorMessage);
+      return job.fail(errorMessage);
     }
   }
 
@@ -124,9 +125,10 @@ export class ApplicationController {
         applicationExceptionStatus: ApplicationExceptionStatus.Approved,
       });
     } catch (error: unknown) {
-      return job.fail(
-        `Unexpected error while verifying the application exceptions. ${error}`,
-      );
+      const jobLogger = new Logger(job.type);
+      const errorMessage = `Unexpected error while verifying the application exceptions. ${error}`;
+      jobLogger.error(errorMessage);
+      return job.fail(errorMessage);
     }
   }
 }

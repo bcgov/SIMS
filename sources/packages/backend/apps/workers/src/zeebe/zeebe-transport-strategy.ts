@@ -4,6 +4,7 @@ import {
   Server,
   MessageHandler,
 } from "@nestjs/microservices";
+import { firstValueFrom, isObservable } from "rxjs";
 import {
   ICustomHeaders,
   IInputVariables,
@@ -63,7 +64,11 @@ export class ZeebeTransportStrategy
       `Starting job for processInstanceKey ${job.processInstanceKey}. Retries left: ${job.retries}.`,
     );
     try {
-      return await jobHandler(job);
+      const jobResult = await jobHandler(job);
+      if (isObservable(jobResult)) {
+        await firstValueFrom(jobResult);
+      }
+      return jobResult;
     } catch (error: unknown) {
       jobLogger.error(
         `Unhandled exception while processing job ${job.type} from processInstanceKey ${job.processInstanceKey}`,

@@ -1,4 +1,4 @@
-import { Controller } from "@nestjs/common";
+import { Controller, Logger } from "@nestjs/common";
 import { ZeebeWorker } from "../../zeebe";
 import {
   ZeebeJob,
@@ -63,18 +63,21 @@ export class DisbursementController {
       );
       return job.complete();
     } catch (error: unknown) {
+      const jobLogger = new Logger(job.type);
       if (error instanceof CustomNamedError) {
         switch (error.name) {
           case DISBURSEMENT_SCHEDULES_ALREADY_CREATED:
+            jobLogger.log(`${error.name} ${error.message}`);
             return job.complete();
           case ASSESSMENT_NOT_FOUND:
           case ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE:
+            jobLogger.error(`${error.name} ${error.message}`);
             return job.error(error.name, error.message);
         }
       }
-      return job.fail(
-        `Unexpected error while creating disbursement schedules. ${error}`,
-      );
+      const errorMessage = `Unexpected error while creating disbursement schedules. ${error}`;
+      jobLogger.error(errorMessage);
+      return job.fail(errorMessage);
     }
   }
 
@@ -98,19 +101,22 @@ export class DisbursementController {
       );
       return job.complete();
     } catch (error: unknown) {
+      const jobLogger = new Logger(job.type);
       if (error instanceof CustomNamedError) {
         switch (error.name) {
           case DISBURSEMENT_NOT_FOUND:
           case INVALID_OPERATION_IN_THE_CURRENT_STATUS:
           case APPLICATION_INVALID_DATA_TO_CREATE_MSFAA_ERROR:
+            jobLogger.error(`${error.name} ${error.message}`);
             return job.error(error.name, error.message);
           case DISBURSEMENT_MSFAA_ALREADY_ASSOCIATED:
+            jobLogger.log(`${error.name} ${error.message}`);
             return job.complete();
         }
       }
-      return job.fail(
-        `Unexpected error while associating the MSFAA number to the disbursements. ${error}`,
-      );
+      const errorMessage = `Unexpected error while associating the MSFAA number to the disbursements. ${error}`;
+      jobLogger.error(errorMessage);
+      return job.fail(errorMessage);
     }
   }
 }
