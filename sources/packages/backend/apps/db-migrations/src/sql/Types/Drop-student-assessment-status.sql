@@ -1,0 +1,1 @@
+DROP TYPE sims.student_assessment_status;

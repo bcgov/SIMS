@@ -35,3 +35,29 @@ export class ScholasticStandingSubmittedDetailsAPIOutDTO extends IntersectionTyp
   ScholasticStandingData,
   ActiveApplicationDataAPIOutDTO,
 ) {}
+
+/**
+ * Represents the possible errors that can happen during the
+ * application bulk withdrawal and provides a detailed description
+ * for every record that has an error.
+ */
+export interface ApplicationBulkWithdrawalValidationResultAPIOutDTO {
+  recordIndex?: number;
+  applicationNumber?: string;
+  withdrawalDate?: Date;
+  errors: string[];
+  infos: ValidationResultAPIOutDTO[];
+  warnings: ValidationResultAPIOutDTO[];
+}
+
+/**
+ * Represents an error considered not critical
+ * for application withdrawal
+ * and provides an user-friendly message
+ * and a type that uniquely identifies this warning
+ * or info.
+ */
+class ValidationResultAPIOutDTO {
+  typeCode: string;
+  message: string;
+}

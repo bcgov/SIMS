@@ -80,3 +80,17 @@ export const DISABILITY_REQUEST_NOT_ALLOWED = "DISABILITY_REQUEST_NOT_ALLOWED";
  * Provided study dates is overlapping with the existing study periods.
  */
 export const STUDY_DATE_OVERLAP_ERROR = "STUDY_DATE_OVERLAP_ERROR";
+/**
+ * The text content to perform the application withdrawal is not in the
+ * expected format and cannot be parsed.
+ */
+export const APPLICATION_WITHDRAWAL_TEXT_CONTENT_FORMAT_ERROR =
+  "APPLICATION_WITHDRAWAL_TEXT_CONTENT_FORMAT_ERROR";
+/**
+ * The text content has invalid content, either
+ * 1. Invalid Header record type.
+ * 2. Invalid Footer record type.
+ * 3. Number of records in the footer does not match the number of data records.
+ */
+export const APPLICATION_WITHDRAWAL_INVALID_TEXT_FILE_ERROR =
+  "APPLICATION_WITHDRAWAL_INVALID_TEXT_FILE_ERROR";

@@ -21,20 +21,44 @@ export enum AssessmentStatus {
 }
 
 /**
- * Assessment History Status
+ * Student assessment statuses from its creation till the
+ * assessment gateway workflow is finalized.
  */
 export enum StudentAssessmentStatus {
-  // When assessmentWorkflowId is null,
-  // then status is Submitted.
+  /**
+   * Student assessment status is considered submitted,
+   * when the assessmentWorkflowId is null.
+   * @deprecated to be replaced by "Created" status.
+   */
   Submitted = "Submitted",
-
-  // When assessmentWorkflowId is not null
-  // and assessmentData is null, then status is
-  // InProgress.
-  InProgress = "In Progress",
-
-  // When assessmentWorkflowId is not null
-  // and assessmentData is not null, then status
-  // is Completed.
+  /**
+   * Student assessment was created.
+   */
+  Created = "Created",
+  /**
+   * Student assessment was selected and sent to the queue to be
+   * processed by Camunda.
+   */
+  Queued = "Queued",
+  /**
+   * Assessment gateway workflow started.
+   */
+  InProgress = "In progress",
+  /**
+   * Assessment gateway workflow completed, all calculations are done,
+   * and output data was saved.
+   */
   Completed = "Completed",
+  /**
+   * A cancellation was requested.
+   */
+  CancellationRequested = "Cancellation requested",
+  /**
+   * The cancellation was queued to be processed.
+   */
+  CancellationQueued = "Cancellation queued",
+  /**
+   * All processes required to have the workflow cancelled are done.
+   */
+  Cancelled = "Cancelled",
 }

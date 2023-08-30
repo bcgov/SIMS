@@ -30,6 +30,7 @@ import { StudentAssessment } from "./student-assessment.model";
 import { ApplicationException } from "./application-exceptions.model";
 
 export const APPLICATION_NUMBER_LENGTH = 10;
+export const SIN_NUMBER_LENGTH = 9;
 
 @Entity({ name: TableNames.Applications })
 export class Application extends RecordDataModel {
@@ -253,6 +254,22 @@ export class Application extends RecordDataModel {
     referencedColumnName: ColumnNames.ID,
   })
   currentAssessment?: StudentAssessment;
+  /**
+   * Represents the student assessment that is being processed currently.
+   * Differently from the current_assessment column, which points to the
+   * most recently created record, this column indicates the assessment
+   * currently being processed.
+   */
+  @ManyToOne(() => StudentAssessment, {
+    eager: false,
+    cascade: ["update"],
+    nullable: true,
+  })
+  @JoinColumn({
+    name: "current_processing_assessment_id",
+    referencedColumnName: ColumnNames.ID,
+  })
+  currentProcessingAssessment?: StudentAssessment;
   /**
    * All supporting users related to the application.
    * These users (parents/partner) will be created as needed during

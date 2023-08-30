@@ -327,6 +327,19 @@ export function useFormatters() {
     );
   };
 
+  /**
+   * Converts a undefined or NaN number as empty string or default value.
+   * @param value number need to be converted.
+   * @param defaultValue optional default value returned in case number is not valid.
+   * @returns number, default value or empty string.
+   */
+  const numberEmptyFiller = (
+    value: number,
+    defaultValue = "",
+  ): number | string => {
+    return !value || Number.isNaN(value) ? defaultValue : value;
+  };
+
   return {
     dateOnlyLongString,
     dateOnlyLongPeriodString,
@@ -342,6 +355,7 @@ export function useFormatters() {
     getISODateOnlyString,
     institutionUserRoleToDisplay,
     emptyStringFiller,
+    numberEmptyFiller,
     conditionalEmptyStringFiller,
     formatCurrency,
     isBeforeDateOnly,
