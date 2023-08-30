@@ -4,7 +4,7 @@ import {
   Server,
   MessageHandler,
 } from "@nestjs/microservices";
-import { firstValueFrom, isObservable } from "rxjs";
+import { isObservable, lastValueFrom } from "rxjs";
 import {
   ICustomHeaders,
   IInputVariables,
@@ -64,9 +64,13 @@ export class ZeebeTransportStrategy
       `Starting job for processInstanceKey ${job.processInstanceKey}. Retries left: ${job.retries}.`,
     );
     try {
+      // The return is an `Observable`for a jobHandler, which needs to be awaits.
+      // The lastValueFrom is almost exactly the same as toPromise()
+      // meaning that it will resolve with the last value that has arrived
+      // when the Observable completes.
       const jobResult = await jobHandler(job);
       if (isObservable(jobResult)) {
-        await firstValueFrom(jobResult);
+        await lastValueFrom(jobResult);
       }
       return jobResult;
     } catch (error: unknown) {
