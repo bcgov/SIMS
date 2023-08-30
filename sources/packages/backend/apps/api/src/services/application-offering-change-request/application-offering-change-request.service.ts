@@ -480,20 +480,21 @@ export class ApplicationOfferingChangeRequestService {
   /**
    * Update the application offering change request status for the given application offering change request id.
    * @param applicationOfferingChangeRequestId application offering change request id for which to update the status.
-   * @param payload the payload to be updated
+   * @param applicationOfferingChangeRequestStatus the application offering change request status to be updated.
+   * @param studentConsent student consent to approve the application offering change request.
    */
   async updateApplicationOfferingChangeRequestStatus(
     applicationOfferingChangeRequestId: number,
-    payload: StudentApplicationOfferingChangeRequest,
+    applicationOfferingChangeRequestStatus: ApplicationOfferingChangeRequestStatus,
+    studentConsent: boolean,
   ): Promise<void> {
     await this.applicationOfferingChangeRequestRepo.update(
       {
         id: applicationOfferingChangeRequestId,
       },
       {
-        applicationOfferingChangeRequestStatus:
-          payload.applicationOfferingChangeRequestStatus,
-        studentConsent: payload.studentConsent,
+        applicationOfferingChangeRequestStatus,
+        studentConsent,
       },
     );
   }

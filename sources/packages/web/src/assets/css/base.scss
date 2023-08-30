@@ -55,22 +55,9 @@ strong {
   border-radius: 8px;
 }
 
-.list-color {
-  background-color: $default-background !important;
-}
-
-/* Chrome, Safari and Opera */
-.div-scroll::-webkit-scrollbar {
-  overflow-y: auto;
-  height: 400px;
-  display: none;
-}
-
 .div-scroll {
-  overflow-y: auto;
-  height: 400px;
-  -ms-overflow-style: none; /* IE and Edge */
-  scrollbar-width: none; /* Firefox */
+  overflow-y: scroll;
+  height: 350px;
 }
 
 /**

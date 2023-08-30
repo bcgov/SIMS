@@ -133,10 +133,10 @@ export class ApplicationOfferingChangeRequestService {
    * @param applicationOfferingChangeRequestId the Application Offering Change Request id.
    * @returns Application Offering Change Request details.
    */
-  async getApplicationOfferingDetailsById(
+  async getApplicationOfferingDetails(
     applicationOfferingChangeRequestId: number,
   ): Promise<ApplicationOfferingDetailsAPIOutDTO> {
-    return ApiClient.ApplicationOfferingChangeRequestApi.getApplicationOfferingDetailsById(
+    return ApiClient.ApplicationOfferingChangeRequestApi.getApplicationOfferingDetails(
       applicationOfferingChangeRequestId,
     );
   }
@@ -146,10 +146,10 @@ export class ApplicationOfferingChangeRequestService {
    * @param applicationOfferingChangeRequestId the application offering change request id.
    * @returns the application offering change request status.
    */
-  async getApplicationOfferingChangeRequestStatusById(
+  async getApplicationOfferingChangeRequestStatus(
     applicationOfferingChangeRequestId: number,
   ): Promise<ApplicationOfferingChangeRequestStatusAPIOutDTO> {
-    return ApiClient.ApplicationOfferingChangeRequestApi.getApplicationOfferingChangeRequestStatusById(
+    return ApiClient.ApplicationOfferingChangeRequestApi.getApplicationOfferingChangeRequestStatus(
       applicationOfferingChangeRequestId,
     );
   }

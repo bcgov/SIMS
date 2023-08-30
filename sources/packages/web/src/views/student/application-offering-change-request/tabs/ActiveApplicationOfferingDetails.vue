@@ -43,7 +43,7 @@ export default defineComponent({
     );
     onMounted(async () => {
       activeApplicationOfferingDetails.value =
-        await ApplicationOfferingChangeRequestService.shared.getApplicationOfferingDetailsById(
+        await ApplicationOfferingChangeRequestService.shared.getApplicationOfferingDetails(
           props.applicationOfferingChangeRequestId,
         );
     });

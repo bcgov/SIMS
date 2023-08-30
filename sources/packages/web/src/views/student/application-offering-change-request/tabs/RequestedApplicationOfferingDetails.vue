@@ -17,8 +17,9 @@
       <h2 class="category-header-large primary-color">Application Details</h2>
       <p v-if="changeRequestNotApproved">
         Below displays the requested changes from your institution. You can
-        compare your <b>active application details</b> by switching tabs located
-        above.
+        compare your
+        <span class="font-bold">active application details</span> by switching
+        tabs located above.
       </p>
       <offering-view :offeringId="changeRequest.requestedOfferingId" />
       <hr class="horizontal-divider" />
@@ -68,7 +69,7 @@ export default defineComponent({
     const changeRequest = ref({} as ApplicationOfferingDetailsAPIOutDTO);
     onMounted(async () => {
       changeRequest.value =
-        await ApplicationOfferingChangeRequestService.shared.getApplicationOfferingDetailsById(
+        await ApplicationOfferingChangeRequestService.shared.getApplicationOfferingDetails(
           props.applicationOfferingChangeRequestId,
         );
     });

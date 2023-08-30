@@ -70,7 +70,6 @@
                   )
                 }}
               </li>
-              <li v-if="!offeringViewData.studyBreaks">-</li>
             </ul>
           </template>
         </title-value>

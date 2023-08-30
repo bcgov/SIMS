@@ -19,7 +19,7 @@
           </h2>
         </slot>
       </v-card-title>
-      <hr class="mx-6 mt-1 mb-9 horizontal-divider" />
+      <v-divider class="mx-6 mt-1 mb-4"></v-divider>
       <v-card-text class="pt-0">
         <div class="pb-2" v-if="subTitle">{{ subTitle }}</div>
         <slot name="content">Please add the modal content here!</slot>

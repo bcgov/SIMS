@@ -7,6 +7,7 @@ import {
   ParseIntPipe,
   Patch,
   UnauthorizedException,
+  UnprocessableEntityException,
 } from "@nestjs/common";
 import {
   ApiNotFoundResponse,
@@ -25,6 +26,7 @@ import {
 import { StudentUserToken } from "../../auth";
 import { ApplicationOfferingChangeRequestControllerService } from "./application-offering-change-request.controller.service";
 import { ApplicationOfferingChangeRequestService } from "../../services";
+import { ApplicationOfferingChangeRequestStatus } from "@sims/sims-db";
 
 /**
  * Application offering change request controller for students client.
@@ -127,9 +129,19 @@ export class ApplicationOfferingChangeRequestStudentsController extends BaseCont
         "Student is not authorized for the provided offering.",
       );
     }
+    if (
+      !payload.studentConsent &&
+      payload.applicationOfferingChangeRequestStatus ===
+        ApplicationOfferingChangeRequestStatus.InProgressWithSABC
+    ) {
+      throw new UnprocessableEntityException(
+        "Student consent is required to update the application offering change request status.",
+      );
+    }
     await this.applicationOfferingChangeRequestService.updateApplicationOfferingChangeRequestStatus(
       applicationOfferingChangeRequestId,
-      payload,
+      payload.applicationOfferingChangeRequestStatus,
+      payload.studentConsent,
     );
   }
 }

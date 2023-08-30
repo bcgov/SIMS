@@ -133,7 +133,7 @@ export default defineComponent({
     });
     onMounted(async () => {
       applicationOfferingChangeRequestStatus.value =
-        await ApplicationOfferingChangeRequestService.shared.getApplicationOfferingChangeRequestStatusById(
+        await ApplicationOfferingChangeRequestService.shared.getApplicationOfferingChangeRequestStatus(
           props.applicationOfferingChangeRequestId,
         );
     });

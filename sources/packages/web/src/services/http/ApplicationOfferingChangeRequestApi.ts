@@ -134,7 +134,7 @@ export class ApplicationOfferingChangeRequestApi extends HttpBaseClient {
    * @param applicationOfferingChangeRequestId the Application Offering Change Request id.
    * @returns Application Offering Change Request details.
    */
-  async getApplicationOfferingDetailsById(
+  async getApplicationOfferingDetails(
     applicationOfferingChangeRequestId: number,
   ): Promise<ApplicationOfferingDetailsAPIOutDTO> {
     const url = `application-offering-change-request/${applicationOfferingChangeRequestId}`;
@@ -148,7 +148,7 @@ export class ApplicationOfferingChangeRequestApi extends HttpBaseClient {
    * @param applicationOfferingChangeRequestId the application offering change request id.
    * @returns the application offering change request status.
    */
-  async getApplicationOfferingChangeRequestStatusById(
+  async getApplicationOfferingChangeRequestStatus(
     applicationOfferingChangeRequestId: number,
   ): Promise<ApplicationOfferingChangeRequestStatusAPIOutDTO> {
     const url = `application-offering-change-request/${applicationOfferingChangeRequestId}/application-offering-change-request-status`;
