@@ -4,6 +4,7 @@ import {
   RecordDataModelService,
   StudentAppealStatus,
   StudentAssessment,
+  WorkflowData,
 } from "@sims/sims-db";
 import { CustomNamedError } from "@sims/utilities";
 import { DataSource, EntityManager, IsNull, UpdateResult } from "typeorm";
@@ -242,5 +243,18 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
       auditUserId,
       transactionalEntityManager,
     );
+  }
+
+  /**
+   * Updates assessment status and save workflow data.
+   * @param assessmentId updated assessment.
+   * @param workflowData workflow data to be saved.
+   */
+  async updateAssessmentStatusAndSaveWorkflowData(
+    assessmentId: number,
+    workflowData: WorkflowData,
+  ): Promise<void> {
+    await this.repo.update({ id: assessmentId }, { workflowData });
+    // TODO: update assessment status.
   }
 }

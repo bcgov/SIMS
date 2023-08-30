@@ -53,6 +53,7 @@ describe(`E2E Test Workflow assessment gateway on student appeal for ${PROGRAM_Y
       WorkflowServiceTasks.SaveDisbursementSchedules,
       WorkflowServiceTasks.AssociateMSFAA,
       WorkflowServiceTasks.UpdateNOAStatusToNotRequired,
+      WorkflowServiceTasks.WorkflowWrapUpTask,
     );
     expectNotToPassThroughServiceTasks(
       assessmentGatewayResponse.variables,
