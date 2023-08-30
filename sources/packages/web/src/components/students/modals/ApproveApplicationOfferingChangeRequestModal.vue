@@ -91,6 +91,7 @@ export default defineComponent({
     );
     const cancel = () => {
       approveApplicationOfferingChangeRequest.value.reset();
+      formModel.studentConsent = false;
       approveApplicationOfferingChangeRequest.value.resetValidation();
       resolvePromise(false);
     };
