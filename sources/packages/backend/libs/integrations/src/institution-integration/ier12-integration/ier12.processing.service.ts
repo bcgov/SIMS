@@ -1,15 +1,21 @@
 import { Injectable } from "@nestjs/common";
-import { StudentAssessment } from "@sims/sims-db";
+import {
+  StudentAssessment,
+  StudentScholasticStandingChangeType,
+} from "@sims/sims-db";
 import { LoggerService, InjectLogger } from "@sims/utilities/logger";
 import {
   ConfigService,
   InstitutionIntegrationConfig,
 } from "@sims/utilities/config";
-import { getFileNameAsCurrentTimestamp } from "@sims/utilities";
+import { decimalRound, getFileNameAsCurrentTimestamp } from "@sims/utilities";
 import { IER12IntegrationService } from "./ier12.integration.service";
 import {
+  ApplicationStatusCode,
   IER12Record,
   IER12UploadResult,
+  IERAddressInfo,
+  YNFlag,
 } from "./models/ier12-integration.model";
 import { StudentAssessmentService } from "@sims/integrations/services";
 
@@ -55,9 +61,8 @@ export class IER12ProcessingService {
       if (!fileRecords[institutionCode]) {
         fileRecords[institutionCode] = [];
       }
-      fileRecords[institutionCode].push(
-        this.createIER12Record(pendingAssessment),
-      );
+      const ier12Records = this.createIER12Record(pendingAssessment);
+      fileRecords[institutionCode].push(...ier12Records);
     });
     const uploadResult: IER12UploadResult[] = [];
     try {
@@ -135,37 +140,131 @@ export class IER12ProcessingService {
    * @param pendingAssessment pending assessment of institutions.
    * @returns IER 12 record.
    */
-  private createIER12Record(pendingAssessment: StudentAssessment): IER12Record {
+  private createIER12Record(
+    pendingAssessment: StudentAssessment,
+  ): IER12Record[] {
     const application = pendingAssessment.application;
     const student = application.student;
     const user = student.user;
     const sinValidation = student.sinValidation;
     const offering = pendingAssessment.offering;
     const educationProgram = offering.educationProgram;
-    return {
+    const address = student.contactInfo.address;
+    const applicationProgramYear = application.programYear;
+    const [scholasticStanding] = application.studentScholasticStandings;
+    // TODO: Mapping has been done based on the first analysis of IER12.
+    // Mapping needs to be updated when the complete analysis is done.
+    const disbursementSchedules = pendingAssessment.disbursementSchedules;
+    const addressInfo: IERAddressInfo = {
+      addressLine1: address.addressLine1,
+      addressLine2: address.addressLine2,
+      city: address.city,
+      provinceState: address.provinceState,
+      postalCode: address.postalCode,
+    };
+    return disbursementSchedules.map<IER12Record>((disbursement) => ({
       assessmentId: pendingAssessment.id,
+      disbursementId: disbursement.id,
       applicationNumber: application.applicationNumber,
+      institutionStudentNumber: application.data.studentNumber,
       sin: sinValidation.sin,
       studentLastName: user.lastName,
       studentGivenName: user.firstName,
-      birthDate: student.birthDate,
+      birthDate: new Date(student.birthDate),
+      studentGroupCode: "A", // TODO: Dheepak
+      addressInfo,
       programName: educationProgram.name,
       programDescription: educationProgram.description,
       credentialType: educationProgram.credentialType,
-      cipCode: parseFloat(educationProgram.cipCode) * 10000,
+      fieldOfStudyCode: educationProgram.fieldOfStudyCode,
+      currentProgramYear: offering.yearOfStudy,
+      cipCode: educationProgram.cipCode.replace(".", ""),
       nocCode: educationProgram.nocCode,
       sabcCode: educationProgram.sabcCode,
       institutionProgramCode: educationProgram.institutionProgramCode,
-      programLength: offering.yearOfStudy,
-      studyStartDate: offering.studyStartDate,
-      studyEndDate: offering.studyEndDate,
-      tuitionFees: offering.actualTuitionCosts,
-      programRelatedCosts: offering.programRelatedCosts,
-      mandatoryFees: offering.mandatoryFees,
-      exceptionExpenses: offering.exceptionalExpenses,
-      totalFundedWeeks: offering.studyBreaks.totalFundedWeeks,
-      disbursementSchedules: pendingAssessment.disbursementSchedules,
-    };
+      programLength: +educationProgram.completionYears, // TODO: Dheepak reference the util.
+      studyStartDate: new Date(offering.studyStartDate),
+      studyEndDate: new Date(offering.studyEndDate),
+      tuitionFees: this.convertToAmount(offering.actualTuitionCosts),
+      booksAndSuppliesCost: this.convertToAmount(offering.programRelatedCosts),
+      mandatoryFees: this.convertToAmount(offering.mandatoryFees),
+      exceptionExpenses: this.convertToAmount(offering.exceptionalExpenses),
+      totalFundedWeeks: pendingAssessment.assessmentData.weeks,
+      courseLoad: 100, // Hard coded as IER12 currently includes full time applications only.
+      offeringIntensityIndicator: "F", // Hard coded as IER12 currently includes full time applications only.
+      applicationSubmittedDate: application.submittedDate,
+      programYear: applicationProgramYear.programYear.replace("-", ""),
+      applicationStatusCode: ApplicationStatusCode.Completed, // TODO: Dheepak reference the util.
+      applicationStatusDate: application.applicationStatusUpdatedOn,
+      cslAmount: 100, // TODO: Dheepak reference the util.
+      bcslAmount: 100, // TODO: Dheepak reference the util.
+      epAmount: 100, // TODO: Dheepak reference the util.
+      provincialDefaultFlag: YNFlag.N, // TODO: Dheepak reference the util.
+      provincialOverawardFlag: YNFlag.N, // TODO: Dheepak reference the util.
+      federalOverawardFlag: YNFlag.N, // TODO: Dheepak reference the util.
+      restrictionFlag: YNFlag.N, // TODO: Dheepak reference the util.
+      scholasticStandingEffectiveDate: scholasticStanding
+        ? this.getScholasticStandingEffectiveDate(
+            scholasticStanding.changeType,
+            new Date(offering.studyEndDate),
+          )
+        : null,
+      assessmentDate: pendingAssessment.assessmentDate,
+      withdrawalDate:
+        scholasticStanding?.changeType ===
+        StudentScholasticStandingChangeType.StudentWithdrewFromProgram
+          ? new Date(offering.studyEndDate)
+          : null,
+      partnerFlag: YNFlag.N, // TODO: Dheepak reference the util.
+      parentalAssets: this.convertToAmount(100), // TODO: Dheepak reference the util.
+      coeStatus: disbursement.coeStatus,
+      disbursementScheduleStatus: disbursement.disbursementScheduleStatus,
+      earliestDateOfDisbursement: new Date(disbursement.disbursementDate),
+      dateOfDisbursement: new Date(),
+      disbursementCancelDate: disbursement.updatedAt,
+      fundingDetails: {},
+    }));
+  }
+
+  /**
+   * Convert a number to amount by first rounding the given number
+   * to 2 decimal values and converting to format with first 8 characters holding
+   * the whole number with leading 0 and last 2 characters holding the digits which comes after decimal point.
+   *
+   * e.g. 100.67 to 0000010067
+   * 100 to 0000010000
+   * @param amount amount to be converted.
+   */
+  private convertToAmount(amount: number): string {
+    const roundedValue = decimalRound(amount).toFixed(2);
+    const [numberValue, decimalValue] = roundedValue.split(".");
+    const numberWithFiller = numberValue.padStart(8, "0");
+    return `${numberWithFiller}${decimalValue}`;
+  }
+
+  /**
+   * Identifies the given types of scholastic standing changes and
+   * returns the effective date which is study period end date of the
+   * offering which is created as a result of scholastic standing change.
+   * The change types `Student did not complete program` and `Student withdrew from program`
+   * are ignored.
+   * @param scholasticStandingChangeType scholastic standing change type.
+   * @param studyEndDate study end date.
+   * @returns scholastic standing effective date.
+   */
+  private getScholasticStandingEffectiveDate(
+    scholasticStandingChangeType: StudentScholasticStandingChangeType,
+    studyEndDate: Date,
+  ): Date | null {
+    if (
+      scholasticStandingChangeType ===
+        StudentScholasticStandingChangeType.StudentCompletedProgramEarly ||
+      scholasticStandingChangeType ===
+        StudentScholasticStandingChangeType.ChangeInIntensity
+    ) {
+      return studyEndDate;
+    }
+    return null;
   }
 
   @InjectLogger()
