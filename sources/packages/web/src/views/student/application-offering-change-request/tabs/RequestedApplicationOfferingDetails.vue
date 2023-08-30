@@ -33,9 +33,7 @@
           <h3 class="category-header-medium primary-color">
             Reason for change
           </h3>
-        </div>
-        <div>
-          <span>{{ changeRequest.reason }}</span>
+          <p>{{ changeRequest.reason }}</p>
         </div>
       </content-group-info>
     </body-header-container>

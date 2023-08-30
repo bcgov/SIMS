@@ -48,7 +48,7 @@
             >
           </title-value></content-group-info
         ><v-checkbox
-          v-model="approveApplicationOfferingChangeRequestModal.studentConsent"
+          v-model="formModel.studentConsent"
           label="I agree to the terms and conditions of the StudentAid BC Declaration
           form"
           hide-details="auto"
@@ -67,7 +67,7 @@
 </template>
 <script lang="ts">
 import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
-import { ref, defineComponent, watch } from "vue";
+import { ref, defineComponent, reactive } from "vue";
 import { useModalDialog } from "@/composables";
 import { StudentApplicationOfferingChangeRequestAPIInDTO } from "@/services/http/dto";
 import { ApplicationOfferingChangeRequestStatus, VForm } from "@/types";
@@ -86,7 +86,12 @@ export default defineComponent({
       {} as StudentApplicationOfferingChangeRequestAPIInDTO,
     );
     const approveApplicationOfferingChangeRequest = ref({} as VForm);
+    const formModel = reactive(
+      {} as StudentApplicationOfferingChangeRequestAPIInDTO,
+    );
     const cancel = () => {
+      approveApplicationOfferingChangeRequest.value.reset();
+      approveApplicationOfferingChangeRequest.value.resetValidation();
       resolvePromise(false);
     };
     const allowChange = async () => {
@@ -97,19 +102,16 @@ export default defineComponent({
       }
       approveApplicationOfferingChangeRequestModal.value.applicationOfferingChangeRequestStatus =
         ApplicationOfferingChangeRequestStatus.InProgressWithSABC;
-      resolvePromise(approveApplicationOfferingChangeRequestModal.value);
+      const payload = { ...formModel };
+      resolvePromise(payload);
+      approveApplicationOfferingChangeRequest.value.reset();
     };
-    watch(showDialog, async (newshowDialogValue) => {
-      if (newshowDialogValue) {
-        approveApplicationOfferingChangeRequestModal.value.studentConsent =
-          false;
-      }
-    });
     return {
       showDialog,
       showModal,
       cancel,
       allowChange,
+      formModel,
       approveApplicationOfferingChangeRequest,
       approveApplicationOfferingChangeRequestModal,
     };
