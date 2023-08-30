@@ -24,6 +24,10 @@ export function createUnexpectedJobFail(
   return job.fail(errorMessage);
 }
 
+/**
+ * Parse the error in a prettier format for better
+ * readability.
+ */
 function parseException(error: unknown): string {
   return JSON.stringify(error, null, 2);
 }

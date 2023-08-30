@@ -64,12 +64,18 @@ export class ZeebeTransportStrategy
       `Starting job for processInstanceKey ${job.processInstanceKey}. Retries left: ${job.retries}.`,
     );
     try {
-      // The return is an `Observable`for a jobHandler, which needs to be awaits.
-      // The lastValueFrom is almost exactly the same as toPromise()
-      // meaning that it will resolve with the last value that has arrived
-      // when the Observable completes.
+      // The jobHandler can potentially return a Promise or
+      // an Observable. The Promise will be returned from a
+      // controller when it finishes as expected returning
+      // some value. The Observable will be returned as a
+      // result of an unhandled exception when a RpcExecption
+      // will be generated and the RpcExpectionHandler will
+      // wrap this exception as an Observable object.
       const jobResult = await jobHandler(job);
       if (isObservable(jobResult)) {
+        // The lastValueFrom is almost exactly the same as toPromise()
+        // meaning that it will resolve with the last value that has arrived
+        // when the Observable completes.
         await lastValueFrom(jobResult);
       }
       return jobResult;
