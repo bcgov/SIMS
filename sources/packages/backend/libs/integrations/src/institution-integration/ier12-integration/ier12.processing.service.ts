@@ -1,5 +1,8 @@
 import { Injectable } from "@nestjs/common";
 import {
+  ApplicationStatus,
+  DisbursementValue,
+  DisbursementValueType,
   StudentAssessment,
   StudentScholasticStandingChangeType,
 } from "@sims/sims-db";
@@ -8,7 +11,10 @@ import {
   ConfigService,
   InstitutionIntegrationConfig,
 } from "@sims/utilities/config";
-import { decimalRound, getFileNameAsCurrentTimestamp } from "@sims/utilities";
+import {
+  combineDecimalPlaces,
+  getFileNameAsCurrentTimestamp,
+} from "@sims/utilities";
 import { IER12IntegrationService } from "./ier12.integration.service";
 import {
   ApplicationStatusCode,
@@ -185,16 +191,18 @@ export class IER12ProcessingService {
       programLength: +educationProgram.completionYears, // TODO: Dheepak reference the util.
       studyStartDate: new Date(offering.studyStartDate),
       studyEndDate: new Date(offering.studyEndDate),
-      tuitionFees: this.convertToAmount(offering.actualTuitionCosts),
-      booksAndSuppliesCost: this.convertToAmount(offering.programRelatedCosts),
-      mandatoryFees: this.convertToAmount(offering.mandatoryFees),
-      exceptionExpenses: this.convertToAmount(offering.exceptionalExpenses),
+      tuitionFees: combineDecimalPlaces(offering.actualTuitionCosts),
+      booksAndSuppliesCost: combineDecimalPlaces(offering.programRelatedCosts),
+      mandatoryFees: combineDecimalPlaces(offering.mandatoryFees),
+      exceptionExpenses: combineDecimalPlaces(offering.exceptionalExpenses),
       totalFundedWeeks: pendingAssessment.assessmentData.weeks,
       courseLoad: 100, // Hard coded as IER12 currently includes full time applications only.
       offeringIntensityIndicator: "F", // Hard coded as IER12 currently includes full time applications only.
       applicationSubmittedDate: application.submittedDate,
       programYear: applicationProgramYear.programYear.replace("-", ""),
-      applicationStatusCode: ApplicationStatusCode.Completed, // TODO: Dheepak reference the util.
+      applicationStatusCode: this.getApplicationStatusCode(
+        application.applicationStatus,
+      ),
       applicationStatusDate: application.applicationStatusUpdatedOn,
       cslAmount: 100, // TODO: Dheepak reference the util.
       bcslAmount: 100, // TODO: Dheepak reference the util.
@@ -216,30 +224,14 @@ export class IER12ProcessingService {
           ? new Date(offering.studyEndDate)
           : null,
       partnerFlag: YNFlag.N, // TODO: Dheepak reference the util.
-      parentalAssets: this.convertToAmount(100), // TODO: Dheepak reference the util.
+      parentalAssets: combineDecimalPlaces(100), // TODO: Dheepak read from workflow data.
       coeStatus: disbursement.coeStatus,
       disbursementScheduleStatus: disbursement.disbursementScheduleStatus,
       earliestDateOfDisbursement: new Date(disbursement.disbursementDate),
       dateOfDisbursement: new Date(),
       disbursementCancelDate: disbursement.updatedAt,
-      fundingDetails: {},
+      fundingDetails: this.getFundingDetails(disbursement.disbursementValues),
     }));
-  }
-
-  /**
-   * Convert a number to amount by first rounding the given number
-   * to 2 decimal values and converting to format with first 8 characters holding
-   * the whole number with leading 0 and last 2 characters holding the digits which comes after decimal point.
-   *
-   * e.g. 100.67 to 0000010067
-   * 100 to 0000010000
-   * @param amount amount to be converted.
-   */
-  private convertToAmount(amount: number): string {
-    const roundedValue = decimalRound(amount).toFixed(2);
-    const [numberValue, decimalValue] = roundedValue.split(".");
-    const numberWithFiller = numberValue.padStart(8, "0");
-    return `${numberWithFiller}${decimalValue}`;
   }
 
   /**
@@ -265,6 +257,83 @@ export class IER12ProcessingService {
       return studyEndDate;
     }
     return null;
+  }
+
+  /**
+   * Get application status code based on application status.
+   * @param applicationStatus application status.
+   * @returns application status code.
+   */
+  private getApplicationStatusCode(
+    applicationStatus: ApplicationStatus,
+  ): ApplicationStatusCode {
+    switch (applicationStatus) {
+      case ApplicationStatus.Submitted:
+        return ApplicationStatusCode.Submitted;
+      case ApplicationStatus.InProgress:
+        return ApplicationStatusCode.InProgress;
+      case ApplicationStatus.Assessment:
+        return ApplicationStatusCode.Assessment;
+      case ApplicationStatus.Enrolment:
+        return ApplicationStatusCode.Enrolment;
+      case ApplicationStatus.Completed:
+        return ApplicationStatusCode.Completed;
+      case ApplicationStatus.Cancelled:
+        return ApplicationStatusCode.Cancelled;
+    }
+  }
+
+  /**
+   * Get funding type and funding amount in a key value format.
+   * last 2 digits in funding amount holds the decimal value.
+   * e.g. `{"CSLF":100000,"BCSL":150000}` which represents `{"CSLF":1000.00,"BCSL":1500.00}`
+   * @param disbursementValues disbursement values.
+   * @returns funding details.
+   */
+  private getFundingDetails(
+    disbursementValues: DisbursementValue[],
+  ): Record<string, number> {
+    const fundingDetails: Record<string, number> = {};
+    disbursementValues.forEach((disbursementValue) => {
+      fundingDetails[disbursementValue.valueCode] = combineDecimalPlaces(
+        disbursementValue.valueAmount,
+      );
+    });
+    return fundingDetails;
+  }
+
+  /**
+   * Get the sum of all awards which belong to the disbursements in a single assessment.
+   * @param disbursements disbursements of a given assessment.
+   * @param awardType award type.
+   * @returns sum of awards.
+   */
+  private getSumOfAssessmentAwards(
+    assessment: StudentAssessment,
+    options?: {
+      awardTypeInclusions?: DisbursementValueType[];
+      awardTypeExclusions?: DisbursementValueType[];
+    },
+  ): number {
+    let totalAwardsAmount = 0;
+    assessment.disbursementSchedules.forEach((disbursement) => {
+      const disbursementAwardsAmount = disbursement.disbursementValues
+        .filter(
+          (disbursementValue) =>
+            (!options?.awardTypeInclusions?.length ||
+              options.awardTypeInclusions.includes(
+                disbursementValue.valueType,
+              )) &&
+            (!options?.awardTypeExclusions?.length ||
+              !options.awardTypeExclusions.includes(
+                disbursementValue.valueType,
+              )),
+        )
+        .map((disbursementValue) => disbursementValue.valueAmount)
+        .reduce((accumulator, currentValue) => accumulator + currentValue);
+      totalAwardsAmount += disbursementAwardsAmount;
+    });
+    return totalAwardsAmount;
   }
 
   @InjectLogger()

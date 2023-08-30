@@ -56,10 +56,10 @@ export interface IER12Record {
   programLength: number;
   studyStartDate: Date;
   studyEndDate: Date;
-  tuitionFees: string;
-  booksAndSuppliesCost: string;
-  mandatoryFees: string;
-  exceptionExpenses: string;
+  tuitionFees: number;
+  booksAndSuppliesCost: number;
+  mandatoryFees: number;
+  exceptionExpenses: number;
   totalFundedWeeks: number;
   courseLoad: number;
   offeringIntensityIndicator: string;
@@ -106,7 +106,7 @@ export interface IER12Record {
   // Analysis pending for the field.
   parent2Flag?: YNFlag;
   partnerFlag: YNFlag;
-  parentalAssets: string;
+  parentalAssets: number;
   // Analysis pending for the field.
   parentalAssetsExpectedContribution?: number;
   // Analysis pending for the field.
@@ -182,6 +182,11 @@ export interface IER12Record {
   // Analysis pending for the field.
   disbursementExpiryDate?: Date;
   disbursementCancelDate: Date;
+  /**
+   * Disbursement funding type and funding amount in a key value format.
+   * last 2 digits in funding amount holds the decimal value.
+   * e.g. `{"CSLF":100000,"BCSL":150000}` which represents `{"CSLF":1000.00,"BCSL":1500.00}`
+   */
   fundingDetails: Record<string, number>;
 }
 
