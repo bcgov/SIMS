@@ -22,6 +22,7 @@ import {
 } from "@sims/services/workflow/variables/cra-integration-income-verification";
 import { MaxJobsToActivate } from "../../types";
 import { Workers } from "@sims/services/constants";
+import { createUnexpectedJobFail } from "../../utilities";
 
 @Controller()
 export class CRAIntegrationController {
@@ -69,8 +70,7 @@ export class CRAIntegrationController {
       return job.complete({ incomeVerificationId: identifier.id });
     } catch (error: unknown) {
       const errorMessage = `Unexpected error while creating the CRA income verification. ${error}`;
-      jobLogger.error(errorMessage);
-      return job.fail(errorMessage);
+      return createUnexpectedJobFail(errorMessage, job, jobLogger);
     }
   }
 
@@ -102,8 +102,7 @@ export class CRAIntegrationController {
       return job.complete({ incomeVerificationCompleted });
     } catch (error: unknown) {
       const errorMessage = `Unexpected error while checking the CRA income verification. ${error}`;
-      jobLogger.error(errorMessage);
-      return job.fail(errorMessage);
+      return createUnexpectedJobFail(errorMessage, job, jobLogger);
     }
   }
 }

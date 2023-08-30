@@ -32,6 +32,7 @@ import {
   DISBURSEMENT_MSFAA_ALREADY_ASSOCIATED,
   DISBURSEMENT_NOT_FOUND,
 } from "../../constants";
+import { createUnexpectedJobFail } from "../../utilities";
 
 @Controller()
 export class DisbursementController {
@@ -77,8 +78,7 @@ export class DisbursementController {
         }
       }
       const errorMessage = `Unexpected error while creating disbursement schedules. ${error}`;
-      jobLogger.error(errorMessage);
-      return job.fail(errorMessage);
+      return createUnexpectedJobFail(errorMessage, job, jobLogger);
     }
   }
 
@@ -117,8 +117,7 @@ export class DisbursementController {
         }
       }
       const errorMessage = `Unexpected error while associating the MSFAA number to the disbursements. ${error}`;
-      jobLogger.error(errorMessage);
-      return job.fail(errorMessage);
+      return createUnexpectedJobFail(errorMessage, job, jobLogger);
     }
   }
 }

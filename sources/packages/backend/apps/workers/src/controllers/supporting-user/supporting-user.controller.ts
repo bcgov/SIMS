@@ -12,7 +12,10 @@ import {
   CreateSupportingUsersJobInDTO,
   CreateSupportingUsersJobOutDTO,
 } from "..";
-import { filterObjectProperties } from "../../utilities";
+import {
+  createUnexpectedJobFail,
+  filterObjectProperties,
+} from "../../utilities";
 import { SUPPORTING_USER_NOT_FOUND } from "../../constants";
 import { APPLICATION_ID } from "@sims/services/workflow/variables/assessment-gateway";
 import {
@@ -61,8 +64,7 @@ export class SupportingUserController {
       return job.complete({ createdSupportingUsersIds });
     } catch (error: unknown) {
       const errorMessage = `Unexpected error while creating supporting users. ${error}`;
-      jobLogger.error(errorMessage);
-      return job.fail(errorMessage);
+      return createUnexpectedJobFail(errorMessage, job, jobLogger);
     }
   }
 
@@ -99,8 +101,7 @@ export class SupportingUserController {
       return job.complete(outputVariables);
     } catch (error: unknown) {
       const errorMessage = `Unexpected error while loading supporting user data. ${error}`;
-      jobLogger.error(errorMessage);
-      return job.fail(errorMessage);
+      return createUnexpectedJobFail(errorMessage, job, jobLogger);
     }
   }
 }

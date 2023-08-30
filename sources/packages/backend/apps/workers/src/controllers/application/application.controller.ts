@@ -24,6 +24,7 @@ import {
 import { APPLICATION_ID } from "@sims/services/workflow/variables/assessment-gateway";
 import { MaxJobsToActivate } from "../../types";
 import { Workers } from "@sims/services/constants";
+import { createUnexpectedJobFail } from "../../utilities";
 
 @Controller()
 export class ApplicationController {
@@ -69,8 +70,7 @@ export class ApplicationController {
       return job.complete();
     } catch (error: unknown) {
       const errorMessage = `Unexpected error while updating the application status. ${error}`;
-      jobLogger.error(errorMessage);
-      return job.fail(errorMessage);
+      return createUnexpectedJobFail(errorMessage, job, jobLogger);
     }
   }
 
@@ -133,8 +133,7 @@ export class ApplicationController {
       });
     } catch (error: unknown) {
       const errorMessage = `Unexpected error while verifying the application exceptions. ${error}`;
-      jobLogger.error(errorMessage);
-      return job.fail(errorMessage);
+      return createUnexpectedJobFail(errorMessage, job, jobLogger);
     }
   }
 }

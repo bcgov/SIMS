@@ -14,6 +14,7 @@ import {
 } from "@sims/services/workflow/variables/assessment-gateway";
 import { MaxJobsToActivate } from "../../types";
 import { Workers } from "@sims/services/constants";
+import { createUnexpectedJobFail } from "../../utilities";
 
 @Controller()
 export class ProgramInfoRequestController {
@@ -66,8 +67,7 @@ export class ProgramInfoRequestController {
       });
     } catch (error: unknown) {
       const errorMessage = `Unexpected error while setting the PIR status. ${error}`;
-      jobLogger.error(errorMessage);
-      return job.fail(errorMessage);
+      return createUnexpectedJobFail(errorMessage, job, jobLogger);
     }
   }
 }

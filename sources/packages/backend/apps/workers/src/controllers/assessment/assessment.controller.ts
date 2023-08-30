@@ -24,7 +24,10 @@ import {
   SupportingUser,
   SupportingUserType,
 } from "@sims/sims-db";
-import { filterObjectProperties } from "../../utilities";
+import {
+  createUnexpectedJobFail,
+  filterObjectProperties,
+} from "../../utilities";
 import {
   ASSESSMENT_ALREADY_ASSOCIATED_TO_WORKFLOW,
   ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE,
@@ -81,8 +84,7 @@ export class AssessmentController {
         }
       }
       const errorMessage = `Not able to associate the assessment id ${job.variables.assessmentId} with the workflow instance id ${job.processInstanceKey}. ${error}`;
-      jobLogger.error(errorMessage);
-      return job.fail(errorMessage);
+      return createUnexpectedJobFail(errorMessage, job, jobLogger);
     }
   }
 
@@ -124,8 +126,7 @@ export class AssessmentController {
       return job.complete(outputVariables);
     } catch (error: unknown) {
       const errorMessage = `Unexpected error while loading assessment consolidated data. ${error}`;
-      jobLogger.error(errorMessage);
-      return job.fail(errorMessage);
+      return createUnexpectedJobFail(errorMessage, job, jobLogger);
     }
   }
 
@@ -151,8 +152,7 @@ export class AssessmentController {
       return job.complete();
     } catch (error: unknown) {
       const errorMessage = `Unexpected error saving the assessment data. ${error}`;
-      jobLogger.error(errorMessage);
-      return job.fail(errorMessage);
+      return createUnexpectedJobFail(errorMessage, job, jobLogger);
     }
   }
 
@@ -182,8 +182,7 @@ export class AssessmentController {
       return job.complete();
     } catch (error: unknown) {
       const errorMessage = `Unexpected error while updating the NOA status. ${error}`;
-      jobLogger.error(errorMessage);
-      return job.fail(errorMessage);
+      return createUnexpectedJobFail(errorMessage, job, jobLogger);
     }
   }
 
