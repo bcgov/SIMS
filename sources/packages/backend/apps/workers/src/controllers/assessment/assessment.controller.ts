@@ -179,11 +179,7 @@ export class AssessmentController {
       return job.complete();
     } catch (error: unknown) {
       const jobLogger = new Logger(job.type);
-      const errorMessage = `Failed while updating assessment status and saving workflow data. ${JSON.stringify(
-        error,
-        null,
-        2,
-      )}`;
+      const errorMessage = `Failed while updating assessment status and saving workflow data. ${error}`;
       jobLogger.error(errorMessage);
       return job.fail(errorMessage);
     }
