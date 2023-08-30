@@ -59,3 +59,14 @@ export interface FileCreateAPIOutDTO {
 export interface PrimaryIdentifierAPIOutDTO {
   id: number;
 }
+
+/**
+ * Represents an error considered not critical for
+ * an offering and provides a user-friendly message
+ * and a type that uniquely identifies this warning
+ * or info.
+ */
+export interface ValidationResultAPIOutDTO {
+  typeCode: string;
+  message: string;
+}

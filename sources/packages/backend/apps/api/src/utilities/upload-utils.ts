@@ -59,14 +59,21 @@ export const csvFileFilter = (
  * to allow only the specific MIME types files.
  * @param file received file.
  * @param callback callback to return the result of the validation.
+ * @param options additional options.
+ * - `allowedMimeType` allowed MimeType for the file.
  */
 const fileFilter = (
   file: MulterFile,
   allowedFileExtensions: string[],
   callback: (error: Error | null, acceptFile: boolean) => void,
+  options?: { allowedMimeType?: string[] },
 ) => {
+  const isValidMimeType = options?.allowedMimeType
+    ? options?.allowedMimeType.includes(file.mimetype)
+    : true;
+
   const extension = path.extname(file.originalname).toLowerCase();
-  if (allowedFileExtensions.includes(extension)) {
+  if (allowedFileExtensions.includes(extension) && isValidMimeType) {
     callback(null, true);
   } else {
     callback(
@@ -74,6 +81,22 @@ const fileFilter = (
       false,
     );
   }
+};
+
+/**
+ * TXT file filter, used by multer (node.js middleware),
+ * to allow only the specific MIME types files.
+ * @param file received file.
+ * @param callback callback to return the result of the validation.
+ */
+export const textFileFilter = (
+  _: unknown,
+  file: MulterFile,
+  callback: (error: Error | null, acceptFile: boolean) => void,
+) => {
+  return fileFilter(file, [".txt"], callback, {
+    allowedMimeType: ["text/plain"],
+  });
 };
 
 export interface MulterFile {

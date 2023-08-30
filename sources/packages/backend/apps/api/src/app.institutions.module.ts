@@ -28,6 +28,7 @@ import {
   ApplicationExceptionService,
   StudentAppealRequestsService,
   ApplicationOfferingChangeRequestService,
+  ApplicationWithdrawalImportTextService,
 } from "./services";
 import {
   ApplicationControllerService,
@@ -162,6 +163,7 @@ import {
     ApplicationExceptionControllerService,
     StudentAppealControllerService,
     ApplicationOfferingChangeRequestService,
+    ApplicationWithdrawalImportTextService,
   ],
 })
 export class AppInstitutionsModule {}

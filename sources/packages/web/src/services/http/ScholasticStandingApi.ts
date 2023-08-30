@@ -3,6 +3,9 @@ import {
   ScholasticStandingDataAPIInDTO,
   ScholasticStandingSubmittedDetailsAPIOutDTO,
 } from "@/services/http/dto";
+import { FileUploadProgressEventArgs } from "./common/FileUploadProgressEvent";
+import { AxiosRequestConfig } from "axios";
+import ApiClient from "./ApiClient";
 
 /**
  * Http API client for Scholastic standing.
@@ -37,6 +40,32 @@ export class ScholasticStandingApi extends HttpBaseClient {
         `scholastic-standing/location/${locationId}/application/${applicationId}`,
       ),
       { data: payload },
+    );
+  }
+
+  /**
+   * Process a text with applications to be withdrawn.
+   * @param file file content with all information needed to withdraw applications.
+   * @param validationOnly if true, will execute all validations and return the
+   * errors and warnings. These validations are the same executed during the
+   * final creation process. If false, the file will be processed and the records
+   * will be inserted.
+   **Validations errors are returned using different HTTP status codes.
+   * @onUploadProgress event to report the upload progress.
+   */
+  async applicationBulkWithdrawal(
+    file: Blob,
+    validationOnly: boolean,
+    onUploadProgress: (progressEvent: FileUploadProgressEventArgs) => void,
+  ): Promise<void> {
+    const formData = new FormData();
+    formData.append("file", file);
+    // Configure the request to provide upload progress status.
+    const requestConfig: AxiosRequestConfig = { onUploadProgress };
+    await ApiClient.FileUpload.upload(
+      `scholastic-standing/application-bulk-withdrawal?validation-only=${validationOnly}`,
+      formData,
+      requestConfig,
     );
   }
 }

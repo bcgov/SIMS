@@ -13,6 +13,7 @@ import {
   DisbursementSchedule,
   EducationProgramOffering,
   StudentAppeal,
+  StudentAssessmentStatus,
   User,
 } from ".";
 import { ColumnNames, TableNames } from "../constant";
@@ -221,6 +222,38 @@ export class StudentAssessment extends RecordDataModel {
     referencedColumnName: ColumnNames.ID,
   })
   applicationOfferingChangeRequest?: ApplicationOfferingChangeRequest;
+  /**
+   * Output of workflow calculations and data used as calculations inputs.
+   * Represents workflow variables that must be persisted after the workflow
+   * is executed for easy application consumption.
+   */
+  @Column({
+    name: "workflow_data",
+    type: "jsonb",
+    nullable: true,
+  })
+  workflowData?: WorkflowData;
+  /**
+   * Student assessment status from its creation till the workflow calculations are finalized
+   * or the workflow is cancelled.
+   */
+  @Column({
+    name: "student_assessment_status",
+    type: "enum",
+    enum: StudentAssessmentStatus,
+    enumName: "StudentAssessmentStatus",
+    nullable: false,
+  })
+  studentAssessmentStatus: StudentAssessmentStatus;
+  /**
+   * Date and time when the student_assessment_status column was updated.
+   */
+  @Column({
+    name: "student_assessment_status_updated_on",
+    type: "timestamptz",
+    nullable: false,
+  })
+  studentAssessmentStatusUpdatedOn: Date;
 }
 
 /**
@@ -276,3 +309,18 @@ interface PartTimeAssessment extends BaseAssessment {
  * assessment payload created by camunda workflow.
  */
 export type Assessment = FullTimeAssessment | PartTimeAssessment;
+
+/**
+ * Output of workflow calculations and data used as calculations inputs.
+ * Represents workflow variables that must be persisted after the workflow
+ * is executed for easy application consumption.
+ */
+export interface WorkflowData {
+  studentData: {
+    dependantStatus: string;
+    relationshipStatus: string;
+  };
+  calculatedData: {
+    parentalAssets: number;
+  };
+}
