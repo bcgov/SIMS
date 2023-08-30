@@ -1,4 +1,4 @@
-import { Controller } from "@nestjs/common";
+import { Controller, Logger } from "@nestjs/common";
 import { ZeebeWorker } from "../../zeebe";
 import {
   ZeebeJob,
@@ -11,6 +11,7 @@ import {
   AssessmentDataJobInDTO,
   AssociateWorkflowInstanceJobInDTO,
   SaveAssessmentDataJobInDTO,
+  WorkflowWrapUpJobInDTO,
   StudentAppealRequestJobOutDTO,
   SupportingUserJobOutDTO,
   UpdateNOAStatusHeaderDTO,
@@ -34,6 +35,7 @@ import {
 import {
   ASSESSMENT_DATA,
   ASSESSMENT_ID,
+  WORKFLOW_DATA,
 } from "@sims/services/workflow/variables/assessment-gateway";
 import { CustomNamedError } from "@sims/utilities";
 import { MaxJobsToActivate } from "../../types";
@@ -155,6 +157,32 @@ export class AssessmentController {
       job.customHeaders.status,
     );
     return job.complete();
+  }
+
+  /**
+   * Worker to be executed at very end of the workflow responsible for latest tasks before the `end event`.
+   */
+  @ZeebeWorker(Workers.WorkflowWrapUp, {
+    fetchVariable: [ASSESSMENT_ID, WORKFLOW_DATA],
+    maxJobsToActivate: MaxJobsToActivate.Normal,
+  })
+  async workflowWrapUp(
+    job: Readonly<
+      ZeebeJob<WorkflowWrapUpJobInDTO, ICustomHeaders, IOutputVariables>
+    >,
+  ): Promise<MustReturnJobActionAcknowledgement> {
+    try {
+      await this.studentAssessmentService.updateAssessmentStatusAndSaveWorkflowData(
+        job.variables.assessmentId,
+        job.variables.workflowData,
+      );
+      return job.complete();
+    } catch (error: unknown) {
+      const jobLogger = new Logger(job.type);
+      const errorMessage = `Failed while updating assessment status and saving workflow data. ${error}`;
+      jobLogger.error(errorMessage);
+      return job.fail(errorMessage);
+    }
   }
 
   /**

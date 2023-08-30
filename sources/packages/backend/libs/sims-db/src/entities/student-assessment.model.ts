@@ -223,6 +223,17 @@ export class StudentAssessment extends RecordDataModel {
   })
   applicationOfferingChangeRequest?: ApplicationOfferingChangeRequest;
   /**
+   * Output of workflow calculations and data used as calculations inputs.
+   * Represents workflow variables that must be persisted after the workflow
+   * is executed for easy application consumption.
+   */
+  @Column({
+    name: "workflow_data",
+    type: "jsonb",
+    nullable: true,
+  })
+  workflowData?: WorkflowData;
+  /**
    * Student assessment status from its creation till the workflow calculations are finalized
    * or the workflow is cancelled.
    */
@@ -298,3 +309,18 @@ interface PartTimeAssessment extends BaseAssessment {
  * assessment payload created by camunda workflow.
  */
 export type Assessment = FullTimeAssessment | PartTimeAssessment;
+
+/**
+ * Output of workflow calculations and data used as calculations inputs.
+ * Represents workflow variables that must be persisted after the workflow
+ * is executed for easy application consumption.
+ */
+export interface WorkflowData {
+  studentData: {
+    dependantStatus: string;
+    relationshipStatus: string;
+  };
+  calculatedData: {
+    parentalAssets: number;
+  };
+}
