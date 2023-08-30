@@ -104,12 +104,15 @@ export class AssessmentController {
       ZeebeJob<AssessmentDataJobInDTO, ICustomHeaders, IOutputVariables>
     >,
   ): Promise<MustReturnJobActionAcknowledgement> {
+    const jobLogger = new Logger(job.type);
     try {
       const assessment = await this.studentAssessmentService.getById(
         job.variables.assessmentId,
       );
       if (!assessment) {
-        return job.error(ASSESSMENT_NOT_FOUND, "Assessment not found.");
+        const message = "Assessment not found.";
+        jobLogger.error(message);
+        return job.error(ASSESSMENT_NOT_FOUND, message);
       }
       const assessmentDTO = this.transformToAssessmentDTO(assessment);
       const outputVariables = filterObjectProperties(
@@ -118,7 +121,6 @@ export class AssessmentController {
       );
       return job.complete(outputVariables);
     } catch (error: unknown) {
-      const jobLogger = new Logger(job.type);
       const errorMessage = `Unexpected error while loading assessment consolidated data. ${error}`;
       jobLogger.error(errorMessage);
       return job.fail(errorMessage);

@@ -52,6 +52,7 @@ export class ApplicationController {
       >
     >,
   ): Promise<MustReturnJobActionAcknowledgement> {
+    const jobLogger = new Logger(job.type);
     try {
       const updateResult = await this.applicationService.updateStatus(
         job.variables.applicationId,
@@ -59,14 +60,13 @@ export class ApplicationController {
         job.customHeaders.toStatus,
       );
       if (!updateResult.affected) {
-        return job.error(
-          APPLICATION_STATUS_NOT_UPDATED,
-          "The application status was not updated either because the application id was not found or the application is not in the expected status.",
-        );
+        const message =
+          "The application status was not updated either because the application id was not found or the application is not in the expected status.";
+        jobLogger.error(message);
+        return job.error(APPLICATION_STATUS_NOT_UPDATED, message);
       }
       return job.complete();
     } catch (error: unknown) {
-      const jobLogger = new Logger(job.type);
       const errorMessage = `Unexpected error while updating the application status. ${error}`;
       jobLogger.error(errorMessage);
       return job.fail(errorMessage);
@@ -92,13 +92,16 @@ export class ApplicationController {
       >
     >,
   ): Promise<MustReturnJobActionAcknowledgement> {
+    const jobLogger = new Logger(job.type);
     try {
       const application = await this.applicationService.getApplicationById(
         job.variables.applicationId,
         { loadDynamicData: true },
       );
       if (!application) {
-        return job.error(APPLICATION_NOT_FOUND, "Application id not found.");
+        const message = "Application id not found.";
+        jobLogger.error(message);
+        return job.error(APPLICATION_NOT_FOUND, message);
       }
       if (application.applicationException) {
         // The exceptions were already processed for this application.
@@ -125,7 +128,6 @@ export class ApplicationController {
         applicationExceptionStatus: ApplicationExceptionStatus.Approved,
       });
     } catch (error: unknown) {
-      const jobLogger = new Logger(job.type);
       const errorMessage = `Unexpected error while verifying the application exceptions. ${error}`;
       jobLogger.error(errorMessage);
       return job.fail(errorMessage);

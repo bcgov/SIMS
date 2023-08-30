@@ -77,16 +77,17 @@ export class SupportingUserController {
       >
     >,
   ): Promise<MustReturnJobActionAcknowledgement> {
+    const jobLogger = new Logger(job.type);
     try {
       const supportingUser =
         await this.supportingUserService.getSupportingUserById(
           job.variables.supportingUserId,
         );
       if (!supportingUser) {
-        job.error(
-          SUPPORTING_USER_NOT_FOUND,
-          "Supporting user not found while checking for supporting user response.",
-        );
+        const message =
+          "Supporting user not found while checking for supporting user response.";
+        jobLogger.error(message);
+        job.error(SUPPORTING_USER_NOT_FOUND, message);
       }
       const outputVariables = filterObjectProperties(
         supportingUser.supportingData,
@@ -94,7 +95,6 @@ export class SupportingUserController {
       );
       return job.complete(outputVariables);
     } catch (error: unknown) {
-      const jobLogger = new Logger(job.type);
       const errorMessage = `Unexpected error while loading supporting user data. ${error}`;
       jobLogger.error(errorMessage);
       return job.fail(errorMessage);
