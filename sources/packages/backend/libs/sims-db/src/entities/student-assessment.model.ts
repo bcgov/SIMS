@@ -246,7 +246,7 @@ export class StudentAssessment extends RecordDataModel {
   })
   studentAssessmentStatus: StudentAssessmentStatus;
   /**
-   * Date and time when the student_assessment_status column was set.
+   * Date and time when the student_assessment_status column was updated.
    */
   @Column({
     name: "student_assessment_status_updated_on",

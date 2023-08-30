@@ -269,7 +269,7 @@ export class Application extends RecordDataModel {
     name: "current_processing_assessment_id",
     referencedColumnName: ColumnNames.ID,
   })
-  currentProcessingAssessmentId?: StudentAssessment;
+  currentProcessingAssessment?: StudentAssessment;
   /**
    * All supporting users related to the application.
    * These users (parents/partner) will be created as needed during

@@ -1,5 +1,5 @@
 CREATE TYPE sims.student_assessment_status AS ENUM (
-    'Created',
+    'Submitted',
     'Queued',
     'In progress',
     'Completed',

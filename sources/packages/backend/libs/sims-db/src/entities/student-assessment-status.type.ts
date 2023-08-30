@@ -4,16 +4,9 @@
  */
 export enum StudentAssessmentStatus {
   /**
-   * Student assessment status is considered submitted,
-   * when the assessmentWorkflowId is null.
-   * TODO: to be removed once the assessment queues are in place.
-   * @deprecated to be replaced by the "Created" status.
+   * Student assessment was submitted and it is waiting to be processed.
    */
   Submitted = "Submitted",
-  /**
-   * Student assessment was created.
-   */
-  Created = "Created",
   /**
    * Student assessment was selected and sent to the queue to be
    * processed by Camunda.
