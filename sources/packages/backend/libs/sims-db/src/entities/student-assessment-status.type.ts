@@ -22,7 +22,7 @@ export enum StudentAssessmentStatus {
   /**
    * Assessment gateway workflow started.
    */
-  Inprogress = "In progress",
+  InProgress = "In progress",
   /**
    * Assessment gateway workflow completed, all calculations are done,
    * and output data was saved.

@@ -3,7 +3,7 @@ ALTER TABLE
 ADD
   COLUMN student_assessment_status sims.student_assessment_status NOT NULL DEFAULT 'Created';
 
-COMMENT ON COLUMN sims.student_assessments.student_assessment_status IS 'Student assessment statuses from its creation till the workflow calculations are finalized or the workflow is cancelled.';
+COMMENT ON COLUMN sims.student_assessments.student_assessment_status IS 'Student assessment status from its creation till the workflow calculations are finalized or the workflow is cancelled.';
 
 ALTER TABLE
   sims.student_assessments

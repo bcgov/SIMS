@@ -13,6 +13,7 @@ import {
   DisbursementSchedule,
   EducationProgramOffering,
   StudentAppeal,
+  StudentAssessmentStatus,
   User,
 } from ".";
 import { ColumnNames, TableNames } from "../constant";
@@ -221,6 +222,27 @@ export class StudentAssessment extends RecordDataModel {
     referencedColumnName: ColumnNames.ID,
   })
   applicationOfferingChangeRequest?: ApplicationOfferingChangeRequest;
+  /**
+   * Student assessment status from its creation till the workflow calculations are finalized
+   * or the workflow is cancelled.
+   */
+  @Column({
+    name: "student_assessment_status",
+    type: "enum",
+    enum: StudentAssessmentStatus,
+    enumName: "StudentAssessmentStatus",
+    nullable: false,
+  })
+  studentAssessmentStatus: StudentAssessmentStatus;
+  /**
+   * Date and time when the student_assessment_status column was set.
+   */
+  @Column({
+    name: "student_assessment_status_updated_on",
+    type: "timestamptz",
+    nullable: false,
+  })
+  studentAssessmentStatusUpdatedOn: Date;
 }
 
 /**
