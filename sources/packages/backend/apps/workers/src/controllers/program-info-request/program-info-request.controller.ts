@@ -66,8 +66,7 @@ export class ProgramInfoRequestController {
         programInfoStatus: job.customHeaders.programInfoStatus,
       });
     } catch (error: unknown) {
-      const errorMessage = `Unexpected error while setting the PIR status. ${error}`;
-      return createUnexpectedJobFail(errorMessage, job, jobLogger);
+      return createUnexpectedJobFail(error, job, jobLogger);
     }
   }
 }

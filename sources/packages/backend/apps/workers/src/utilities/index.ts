@@ -1,2 +1,2 @@
 export * from "./jsonpath/jsonpath-utils";
-export * from "./error-handler"
+export * from "./error-handler";

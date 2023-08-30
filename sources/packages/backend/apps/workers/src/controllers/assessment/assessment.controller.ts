@@ -83,8 +83,7 @@ export class AssessmentController {
             return job.error(error.name, error.message);
         }
       }
-      const errorMessage = `Not able to associate the assessment id ${job.variables.assessmentId} with the workflow instance id ${job.processInstanceKey}. ${error}`;
-      return createUnexpectedJobFail(errorMessage, job, jobLogger);
+      return createUnexpectedJobFail(error, job, jobLogger);
     }
   }
 
@@ -125,8 +124,7 @@ export class AssessmentController {
       jobLogger.log("Assessment consolidated data loaded.");
       return job.complete(outputVariables);
     } catch (error: unknown) {
-      const errorMessage = `Unexpected error while loading assessment consolidated data. ${error}`;
-      return createUnexpectedJobFail(errorMessage, job, jobLogger);
+      return createUnexpectedJobFail(error, job, jobLogger);
     }
   }
 
@@ -151,8 +149,7 @@ export class AssessmentController {
       jobLogger.log("Assessment data saved.");
       return job.complete();
     } catch (error: unknown) {
-      const errorMessage = `Unexpected error saving the assessment data. ${error}`;
-      return createUnexpectedJobFail(errorMessage, job, jobLogger);
+      return createUnexpectedJobFail(error, job, jobLogger);
     }
   }
 
@@ -181,8 +178,7 @@ export class AssessmentController {
       jobLogger.log("NOA status updated.");
       return job.complete();
     } catch (error: unknown) {
-      const errorMessage = `Unexpected error while updating the NOA status. ${error}`;
-      return createUnexpectedJobFail(errorMessage, job, jobLogger);
+      return createUnexpectedJobFail(error, job, jobLogger);
     }
   }
 

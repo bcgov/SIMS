@@ -1,4 +1,5 @@
 import { Logger } from "@nestjs/common";
+import { parseJSONError } from "@sims/utilities";
 import { ZeebeJob, MustReturnJobActionAcknowledgement } from "zeebe-node";
 
 /**
@@ -16,18 +17,10 @@ export function createUnexpectedJobFail(
   logger?: Logger,
 ): MustReturnJobActionAcknowledgement {
   const jobLogger = logger ?? new Logger(job.type);
-  const errorMessage = `Unexpected error while processing job. ${parseException(
+  const errorMessage = `Unexpected error while processing job. ${parseJSONError(
     error,
   )}`;
   jobLogger.error(job);
   jobLogger.error(errorMessage);
   return job.fail(errorMessage);
-}
-
-/**
- * Parse the error in a prettier format for better
- * readability.
- */
-function parseException(error: unknown): string {
-  return JSON.stringify(error, null, 2);
 }

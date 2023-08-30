@@ -63,8 +63,7 @@ export class SupportingUserController {
       jobLogger.log("Created supporting users.");
       return job.complete({ createdSupportingUsersIds });
     } catch (error: unknown) {
-      const errorMessage = `Unexpected error while creating supporting users. ${error}`;
-      return createUnexpectedJobFail(errorMessage, job, jobLogger);
+      return createUnexpectedJobFail(error, job, jobLogger);
     }
   }
 
@@ -100,8 +99,7 @@ export class SupportingUserController {
       jobLogger.log("Supporting user data loaded.");
       return job.complete(outputVariables);
     } catch (error: unknown) {
-      const errorMessage = `Unexpected error while loading supporting user data. ${error}`;
-      return createUnexpectedJobFail(errorMessage, job, jobLogger);
+      return createUnexpectedJobFail(error, job, jobLogger);
     }
   }
 }

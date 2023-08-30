@@ -69,8 +69,7 @@ export class ApplicationController {
       jobLogger.log("Updated the application status.");
       return job.complete();
     } catch (error: unknown) {
-      const errorMessage = `Unexpected error while updating the application status. ${error}`;
-      return createUnexpectedJobFail(errorMessage, job, jobLogger);
+      return createUnexpectedJobFail(error, job, jobLogger);
     }
   }
 
@@ -132,8 +131,7 @@ export class ApplicationController {
         applicationExceptionStatus: ApplicationExceptionStatus.Approved,
       });
     } catch (error: unknown) {
-      const errorMessage = `Unexpected error while verifying the application exceptions. ${error}`;
-      return createUnexpectedJobFail(errorMessage, job, jobLogger);
+      return createUnexpectedJobFail(error, job, jobLogger);
     }
   }
 }

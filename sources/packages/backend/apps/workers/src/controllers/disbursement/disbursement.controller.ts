@@ -77,8 +77,7 @@ export class DisbursementController {
             return job.error(error.name, error.message);
         }
       }
-      const errorMessage = `Unexpected error while creating disbursement schedules. ${error}`;
-      return createUnexpectedJobFail(errorMessage, job, jobLogger);
+      return createUnexpectedJobFail(error, job, jobLogger);
     }
   }
 
@@ -116,8 +115,7 @@ export class DisbursementController {
             return job.complete();
         }
       }
-      const errorMessage = `Unexpected error while associating the MSFAA number to the disbursements. ${error}`;
-      return createUnexpectedJobFail(errorMessage, job, jobLogger);
+      return createUnexpectedJobFail(error, job, jobLogger);
     }
   }
 }
