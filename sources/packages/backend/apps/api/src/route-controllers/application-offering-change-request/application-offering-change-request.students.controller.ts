@@ -13,6 +13,7 @@ import {
   ApiNotFoundResponse,
   ApiTags,
   ApiUnauthorizedResponse,
+  ApiUnprocessableEntityResponse,
 } from "@nestjs/swagger";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { AllowAuthorizedParty, UserToken } from "../../auth/decorators";
@@ -108,9 +109,13 @@ export class ApplicationOfferingChangeRequestStudentsController extends BaseCont
    * @param payload information to update the application offering change request status.
    */
   @Patch(":applicationOfferingChangeRequestId")
-  @ApiUnauthorizedResponse({
+  @ApiNotFoundResponse({
     description:
       "The student does not have access to the application offering change request.",
+  })
+  @ApiUnprocessableEntityResponse({
+    description:
+      "Invalid application offering change status or student consent not provided",
   })
   async updateApplicationOfferingChangeRequestStatus(
     @Param("applicationOfferingChangeRequestId", ParseIntPipe)
@@ -120,25 +125,42 @@ export class ApplicationOfferingChangeRequestStudentsController extends BaseCont
     @Body()
     payload: StudentApplicationOfferingChangeRequestAPIInDTO,
   ): Promise<void> {
-    const student = await this.applicationOfferingChangeRequestService.getById(
-      applicationOfferingChangeRequestId,
-      { studentId: userToken.studentId },
-    );
-    if (!student) {
-      throw new UnauthorizedException(
-        "Student is not authorized for the provided offering.",
+    const applicationOfferingChangeRequest =
+      await this.applicationOfferingChangeRequestService.applicationOfferingChangeRequestExists(
+        applicationOfferingChangeRequestId,
+        {
+          applicationOfferingChangeRequestStatus:
+            ApplicationOfferingChangeRequestStatus.InProgressWithStudent,
+          studentId: userToken.studentId,
+        },
+      );
+    if (!applicationOfferingChangeRequest) {
+      throw new NotFoundException(
+        "Application offering change not found or not in valid status to be updated.",
       );
     }
     if (
-      !payload.studentConsent &&
+      !(
+        payload.applicationOfferingChangeRequestStatus ===
+          ApplicationOfferingChangeRequestStatus.InProgressWithSABC ||
+        payload.applicationOfferingChangeRequestStatus ===
+          ApplicationOfferingChangeRequestStatus.DeclinedByStudent
+      )
+    ) {
+      throw new UnprocessableEntityException(
+        "Invalid application offering change request status.",
+      );
+    }
+    if (
       payload.applicationOfferingChangeRequestStatus ===
-        ApplicationOfferingChangeRequestStatus.InProgressWithSABC
+        ApplicationOfferingChangeRequestStatus.InProgressWithSABC &&
+      !payload.studentConsent
     ) {
       throw new UnprocessableEntityException(
         "Student consent is required to update the application offering change request status.",
       );
     }
-    await this.applicationOfferingChangeRequestService.updateApplicationOfferingChangeRequestStatus(
+    await this.applicationOfferingChangeRequestService.updateApplicationOfferingChangeRequest(
       applicationOfferingChangeRequestId,
       payload.applicationOfferingChangeRequestStatus,
       payload.studentConsent,

@@ -15,38 +15,19 @@
         </p>
         <content-group-info class="div-scroll"
           ><h4 class="label-bold color-blue mb-5">StudentAid BC Declaration</h4>
-          <title-value propertyTitle="I. I. I/we understand that:"
+          <title-value propertyTitle="StudentAid BC consent"
             ><template #value
-              ><ol class="list-color ml-5 mb-5">
-                <li>
-                  The student will have access to information provided in this
-                  appendix;
-                </li>
-                <li>
-                  The student's school will have access to information provided
-                  in this appendix;
-                </li>
-                <li>
-                  The information in this appendix is subject to audit,
-                  investigation and verification as defined in the current
-                  program year's StudentAid BC Policy Manual
-                </li>
-              </ol></template
-            ></title-value
-          >
-          <title-value propertyTitle="Collection and use of information">
-            <template #value
               ><span
-                >The information included in this form and authorized above is
-                collected and managed in accordance with sections 26(c) and
-                26(e) of the Freedom of Information and Protection of Privacy
-                Act, R.S.B.C. 1996, c. 165, and under the authority of the
-                Canada Student Financial Assistance Act, R.S.C. 1994, Chapter
-                C-28 and StudentAid BC. The information provided will be used to
-                determine eligibility for a benefit through</span
+                >I am applying for funding to assist with my education under one
+                or all of the following programs: Canada Student Loan for
+                Part-time Studies, Canada Student Grant for students with
+                Permanent Disabilities, the BC Supplemental Bursary for Students
+                with a Permanent Disability, Canada Student Grant for Part-time
+                Students, and if eligible, Canada Student Grant for Part-time
+                Students with Dependants. Read More</span
               ></template
-            >
-          </title-value></content-group-info
+            ></title-value
+          ></content-group-info
         ><v-checkbox
           v-model="formModel.studentConsent"
           label="I agree to the terms and conditions of the StudentAid BC Declaration

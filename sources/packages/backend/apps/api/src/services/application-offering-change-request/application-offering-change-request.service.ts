@@ -399,6 +399,31 @@ export class ApplicationOfferingChangeRequestService {
     });
   }
 
+  /**
+   * Validates the application offering change request for the given student and application offering change request status.
+   * @param applicationOfferingChangeId application offering change request id.
+   * @param options method options:
+   * `studentId`: student id for authorization.
+   * `applicationOfferingChangeRequestStatus`: application offering change request status for authorization.
+   * @returns true if the student is authorized for the given application offering change request status.
+   */
+  async applicationOfferingChangeRequestExists(
+    applicationOfferingChangeId: number,
+    options?: {
+      studentId?: number;
+      applicationOfferingChangeRequestStatus?: ApplicationOfferingChangeRequestStatus;
+    },
+  ): Promise<boolean> {
+    return this.applicationOfferingChangeRequestRepo.exist({
+      where: {
+        id: applicationOfferingChangeId,
+        applicationOfferingChangeRequestStatus:
+          options?.applicationOfferingChangeRequestStatus,
+        application: { student: { id: options?.studentId } },
+      },
+    });
+  }
+
   /** Validates student authorization for the given education program offering.
    * @param offeringId offering id.
    * @param studentId student id.
@@ -408,21 +433,18 @@ export class ApplicationOfferingChangeRequestService {
     offeringId: number,
     studentId: number,
   ): Promise<boolean> {
-    const applicationOfferingChangeId =
-      await this.applicationOfferingChangeRequestRepo.findOne({
-        select: { id: true },
-        where: [
-          {
-            application: { student: { id: studentId } },
-            activeOffering: { id: offeringId },
-          },
-          {
-            application: { student: { id: studentId } },
-            requestedOffering: { id: offeringId },
-          },
-        ],
-      });
-    return !!applicationOfferingChangeId;
+    return this.applicationOfferingChangeRequestRepo.exist({
+      where: [
+        {
+          application: { student: { id: studentId } },
+          activeOffering: { id: offeringId },
+        },
+        {
+          application: { student: { id: studentId } },
+          requestedOffering: { id: offeringId },
+        },
+      ],
+    });
   }
 
   /**
@@ -483,7 +505,7 @@ export class ApplicationOfferingChangeRequestService {
    * @param applicationOfferingChangeRequestStatus the application offering change request status to be updated.
    * @param studentConsent student consent to approve the application offering change request.
    */
-  async updateApplicationOfferingChangeRequestStatus(
+  async updateApplicationOfferingChangeRequest(
     applicationOfferingChangeRequestId: number,
     applicationOfferingChangeRequestStatus: ApplicationOfferingChangeRequestStatus,
     studentConsent: boolean,

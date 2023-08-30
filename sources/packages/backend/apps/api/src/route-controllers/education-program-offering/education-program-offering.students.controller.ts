@@ -17,15 +17,12 @@ import {
 } from "@nestjs/swagger";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { AllowAuthorizedParty, UserToken } from "../../auth/decorators";
-import {
-  OfferingIntensity,
-  OfferingTypes,
-  OfferingSummaryPurpose,
-} from "@sims/sims-db";
+import { OfferingIntensity, OfferingTypes } from "@sims/sims-db";
 import {
   ApplicationOfferingChangeRequestService,
   EducationProgramOfferingService,
 } from "../../services";
+import { OfferingSummaryPurpose } from "./models/education-program-offering.dto";
 import { ClientTypeBaseRoute } from "../../types";
 import BaseController from "../BaseController";
 import {
