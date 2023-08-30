@@ -65,6 +65,7 @@ export class ApplicationController {
         jobLogger.error(message);
         return job.error(APPLICATION_STATUS_NOT_UPDATED, message);
       }
+      jobLogger.log("Updated the application status.");
       return job.complete();
     } catch (error: unknown) {
       const errorMessage = `Unexpected error while updating the application status. ${error}`;
@@ -105,6 +106,7 @@ export class ApplicationController {
       }
       if (application.applicationException) {
         // The exceptions were already processed for this application.
+        jobLogger.log("Exceptions were already processed for the application.");
         return job.complete({
           applicationExceptionStatus:
             application.applicationException.exceptionStatus,
@@ -120,10 +122,12 @@ export class ApplicationController {
             job.variables.applicationId,
             exceptions,
           );
+        jobLogger.log("Exception created.");
         return job.complete({
           applicationExceptionStatus: createdException.exceptionStatus,
         });
       }
+      jobLogger.log("Verified application exception.");
       return job.complete({
         applicationExceptionStatus: ApplicationExceptionStatus.Approved,
       });

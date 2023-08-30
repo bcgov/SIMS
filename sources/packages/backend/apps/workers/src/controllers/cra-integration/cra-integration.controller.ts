@@ -51,6 +51,7 @@ export class CRAIntegrationController {
       >
     >,
   ): Promise<MustReturnJobActionAcknowledgement> {
+    const jobLogger = new Logger(job.type);
     try {
       const incomeRequest =
         await this.incomeVerificationService.createIncomeVerification(
@@ -64,10 +65,9 @@ export class CRAIntegrationController {
       await this.incomeVerificationService.checkForCRAIncomeVerificationBypass(
         identifier.id,
       );
-
+      jobLogger.log("CRA income verification created.");
       return job.complete({ incomeVerificationId: identifier.id });
     } catch (error: unknown) {
-      const jobLogger = new Logger(job.type);
       const errorMessage = `Unexpected error while creating the CRA income verification. ${error}`;
       jobLogger.error(errorMessage);
       return job.fail(errorMessage);
@@ -92,14 +92,15 @@ export class CRAIntegrationController {
       >
     >,
   ): Promise<MustReturnJobActionAcknowledgement> {
+    const jobLogger = new Logger(job.type);
     try {
       const incomeVerificationCompleted =
         await this.incomeVerificationService.isIncomeVerificationCompleted(
           job.variables.incomeVerificationId,
         );
+      jobLogger.log("CRA income verification completed.");
       return job.complete({ incomeVerificationCompleted });
     } catch (error: unknown) {
-      const jobLogger = new Logger(job.type);
       const errorMessage = `Unexpected error while checking the CRA income verification. ${error}`;
       jobLogger.error(errorMessage);
       return job.fail(errorMessage);

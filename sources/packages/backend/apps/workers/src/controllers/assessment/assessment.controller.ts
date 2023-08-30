@@ -60,14 +60,15 @@ export class AssessmentController {
       >
     >,
   ): Promise<MustReturnJobActionAcknowledgement> {
+    const jobLogger = new Logger(job.type);
     try {
       await this.studentAssessmentService.associateWorkflowId(
         job.variables.assessmentId,
         job.processInstanceKey,
       );
+      jobLogger.log("Associated the assessment id.");
       return job.complete();
     } catch (error: unknown) {
-      const jobLogger = new Logger(job.type);
       if (error instanceof CustomNamedError) {
         switch (error.name) {
           case ASSESSMENT_ALREADY_ASSOCIATED_TO_WORKFLOW:
@@ -119,6 +120,7 @@ export class AssessmentController {
         assessmentDTO,
         job.customHeaders,
       );
+      jobLogger.log("Assessment consolidated data loaded.");
       return job.complete(outputVariables);
     } catch (error: unknown) {
       const errorMessage = `Unexpected error while loading assessment consolidated data. ${error}`;
@@ -139,14 +141,15 @@ export class AssessmentController {
       ZeebeJob<SaveAssessmentDataJobInDTO, ICustomHeaders, IOutputVariables>
     >,
   ): Promise<MustReturnJobActionAcknowledgement> {
+    const jobLogger = new Logger(job.type);
     try {
       await this.studentAssessmentService.updateAssessmentData(
         job.variables.assessmentId,
         job.variables.assessmentData,
       );
+      jobLogger.log("Assessment data saved.");
       return job.complete();
     } catch (error: unknown) {
-      const jobLogger = new Logger(job.type);
       const errorMessage = `Unexpected error saving the assessment data. ${error}`;
       jobLogger.error(errorMessage);
       return job.fail(errorMessage);
@@ -169,14 +172,15 @@ export class AssessmentController {
       >
     >,
   ): Promise<MustReturnJobActionAcknowledgement> {
+    const jobLogger = new Logger(job.type);
     try {
       await this.studentAssessmentService.updateNOAApprovalStatus(
         job.variables.assessmentId,
         job.customHeaders.status,
       );
+      jobLogger.log("NOA status updated.");
       return job.complete();
     } catch (error: unknown) {
-      const jobLogger = new Logger(job.type);
       const errorMessage = `Unexpected error while updating the NOA status. ${error}`;
       jobLogger.error(errorMessage);
       return job.fail(errorMessage);

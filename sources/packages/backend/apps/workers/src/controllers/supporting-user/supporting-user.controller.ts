@@ -39,12 +39,14 @@ export class SupportingUserController {
       >
     >,
   ): Promise<MustReturnJobActionAcknowledgement> {
+    const jobLogger = new Logger(job.type);
     try {
       const hasSupportingUsers =
         await this.supportingUserService.hasSupportingUsers(
           job.variables.applicationId,
         );
       if (hasSupportingUsers) {
+        jobLogger.log("Supporting users already exists.");
         return job.complete();
       }
       const supportingUsers =
@@ -55,9 +57,9 @@ export class SupportingUserController {
       const createdSupportingUsersIds = supportingUsers.map(
         (supportingUser) => supportingUser.id,
       );
+      jobLogger.log("Created supporting users.");
       return job.complete({ createdSupportingUsersIds });
     } catch (error: unknown) {
-      const jobLogger = new Logger(job.type);
       const errorMessage = `Unexpected error while creating supporting users. ${error}`;
       jobLogger.error(errorMessage);
       return job.fail(errorMessage);
@@ -93,6 +95,7 @@ export class SupportingUserController {
         supportingUser.supportingData,
         job.customHeaders,
       );
+      jobLogger.log("Supporting user data loaded.");
       return job.complete(outputVariables);
     } catch (error: unknown) {
       const errorMessage = `Unexpected error while loading supporting user data. ${error}`;

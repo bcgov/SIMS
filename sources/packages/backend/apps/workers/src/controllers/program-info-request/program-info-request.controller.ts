@@ -50,6 +50,7 @@ export class ProgramInfoRequestController {
       }
       if (application.pirStatus) {
         // PIR status was already set, just return it.
+        jobLogger.log("PIR status was already set.");
         return job.complete({
           programInfoStatus: application.pirStatus,
         });
@@ -59,6 +60,7 @@ export class ProgramInfoRequestController {
         job.customHeaders.programInfoStatus,
         job.variables.studentDataSelectedProgram,
       );
+      jobLogger.log("PIR status updated.");
       return job.complete({
         programInfoStatus: job.customHeaders.programInfoStatus,
       });

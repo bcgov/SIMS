@@ -56,14 +56,15 @@ export class DisbursementController {
       >
     >,
   ): Promise<MustReturnJobActionAcknowledgement> {
+    const jobLogger = new Logger(job.type);
     try {
       await this.disbursementScheduleSharedService.createDisbursementSchedules(
         job.variables.assessmentId,
         job.variables.disbursementSchedules,
       );
+      jobLogger.log("Created disbursement schedule");
       return job.complete();
     } catch (error: unknown) {
-      const jobLogger = new Logger(job.type);
       if (error instanceof CustomNamedError) {
         switch (error.name) {
           case DISBURSEMENT_SCHEDULES_ALREADY_CREATED:
@@ -95,13 +96,14 @@ export class DisbursementController {
       ZeebeJob<AssignMSFAAJobInDTO, ICustomHeaders, IOutputVariables>
     >,
   ): Promise<MustReturnJobActionAcknowledgement> {
+    const jobLogger = new Logger(job.type);
     try {
       await this.disbursementScheduleService.associateMSFAANumber(
         job.variables.assessmentId,
       );
+      jobLogger.error("Associated the MSFAA number to the disbursements.");
       return job.complete();
     } catch (error: unknown) {
-      const jobLogger = new Logger(job.type);
       if (error instanceof CustomNamedError) {
         switch (error.name) {
           case DISBURSEMENT_NOT_FOUND:
