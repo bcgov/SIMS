@@ -6,13 +6,11 @@ import {
   Param,
   ParseIntPipe,
   Patch,
-  UnauthorizedException,
   UnprocessableEntityException,
 } from "@nestjs/common";
 import {
   ApiNotFoundResponse,
   ApiTags,
-  ApiUnauthorizedResponse,
   ApiUnprocessableEntityResponse,
 } from "@nestjs/swagger";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";

@@ -22,12 +22,12 @@ import {
   ApplicationOfferingChangeRequestService,
   EducationProgramOfferingService,
 } from "../../services";
-import { OfferingSummaryPurpose } from "./models/education-program-offering.dto";
 import { ClientTypeBaseRoute } from "../../types";
 import BaseController from "../BaseController";
 import {
   EducationProgramOfferingSummaryViewAPIOutDTO,
   OfferingDetailsAPIOutDTO,
+  OfferingSummaryPurpose,
 } from "./models/education-program-offering.dto";
 import { OptionItemAPIOutDTO } from "../models/common.dto";
 import { EducationProgramOfferingControllerService } from "./education-program-offering.controller.service";

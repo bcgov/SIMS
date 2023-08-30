@@ -14,7 +14,6 @@ import {
 import { DataSource, Brackets, Repository, In } from "typeorm";
 import { PaginatedResults, PaginationOptions } from "../../utilities";
 import { NotificationActionsService, SystemUsersService } from "@sims/services";
-import { StudentApplicationOfferingChangeRequest } from "../../route-controllers/application-offering-change-request/models/application-offering-change-request.models";
 
 @Injectable()
 export class ApplicationOfferingChangeRequestService {
