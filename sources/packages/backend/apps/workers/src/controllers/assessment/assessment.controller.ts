@@ -28,7 +28,7 @@ import {
 import { filterObjectProperties } from "../../utilities";
 import {
   ASSESSMENT_ALREADY_ASSOCIATED_TO_WORKFLOW,
-  ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE,
+  ASSESSMENT_ALREADY_ASSOCIATED_WITH_DIFFERENT_WORKFLOW,
   ASSESSMENT_NOT_FOUND,
   Workers,
 } from "@sims/services/constants";
@@ -63,7 +63,7 @@ export class AssessmentController {
     >,
   ): Promise<MustReturnJobActionAcknowledgement> {
     try {
-      await this.studentAssessmentService.associateWorkflowId(
+      await this.studentAssessmentService.associateWorkflowInstance(
         job.variables.assessmentId,
         job.processInstanceKey,
       );
@@ -74,8 +74,9 @@ export class AssessmentController {
           case ASSESSMENT_ALREADY_ASSOCIATED_TO_WORKFLOW:
             return job.complete();
           case ASSESSMENT_NOT_FOUND:
-          case ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE:
             return job.error(error.name, error.message);
+          case ASSESSMENT_ALREADY_ASSOCIATED_WITH_DIFFERENT_WORKFLOW:
+            return job.cancelWorkflow();
         }
       }
       return job.fail(
