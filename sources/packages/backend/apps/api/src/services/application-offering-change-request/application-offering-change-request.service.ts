@@ -368,7 +368,7 @@ export class ApplicationOfferingChangeRequestService {
           application: { student: { id: options?.studentId } },
         },
       });
-    return applicationOfferingChangeRequest.applicationOfferingChangeRequestStatus;
+    return applicationOfferingChangeRequest?.applicationOfferingChangeRequestStatus;
   }
 
   /**
