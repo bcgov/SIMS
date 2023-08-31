@@ -1,4 +1,4 @@
-import { Controller } from "@nestjs/common";
+import { Controller, Logger } from "@nestjs/common";
 import { ZeebeWorker } from "../../zeebe";
 import {
   ZeebeJob,
@@ -24,6 +24,7 @@ import {
 import { APPLICATION_ID } from "@sims/services/workflow/variables/assessment-gateway";
 import { MaxJobsToActivate } from "../../types";
 import { Workers } from "@sims/services/constants";
+import { createUnexpectedJobFail } from "../../utilities";
 
 @Controller()
 export class ApplicationController {
@@ -52,18 +53,26 @@ export class ApplicationController {
       >
     >,
   ): Promise<MustReturnJobActionAcknowledgement> {
-    const updateResult = await this.applicationService.updateStatus(
-      job.variables.applicationId,
-      job.customHeaders.fromStatus,
-      job.customHeaders.toStatus,
-    );
-    if (!updateResult.affected) {
-      return job.error(
-        APPLICATION_STATUS_NOT_UPDATED,
-        "The application status was not updated either because the application id was not found or the application is not in the expected status.",
+    const jobLogger = new Logger(job.type);
+    try {
+      const updateResult = await this.applicationService.updateStatus(
+        job.variables.applicationId,
+        job.customHeaders.fromStatus,
+        job.customHeaders.toStatus,
       );
+      if (!updateResult.affected) {
+        const message =
+          "The application status was not updated either because the application id was not found or the application is not in the expected status.";
+        jobLogger.error(message);
+        return job.error(APPLICATION_STATUS_NOT_UPDATED, message);
+      }
+      jobLogger.log("Updated the application status.");
+      return job.complete();
+    } catch (error: unknown) {
+      return createUnexpectedJobFail(error, job, {
+        logger: jobLogger,
+      });
     }
-    return job.complete();
   }
 
   /**
@@ -85,36 +94,48 @@ export class ApplicationController {
       >
     >,
   ): Promise<MustReturnJobActionAcknowledgement> {
-    const application = await this.applicationService.getApplicationById(
-      job.variables.applicationId,
-      { loadDynamicData: true },
-    );
-    if (!application) {
-      return job.error(APPLICATION_NOT_FOUND, "Application id not found.");
-    }
-    if (application.applicationException) {
-      // The exceptions were already processed for this application.
+    const jobLogger = new Logger(job.type);
+    try {
+      const application = await this.applicationService.getApplicationById(
+        job.variables.applicationId,
+        { loadDynamicData: true },
+      );
+      if (!application) {
+        const message = "Application id not found.";
+        jobLogger.error(message);
+        return job.error(APPLICATION_NOT_FOUND, message);
+      }
+      if (application.applicationException) {
+        // The exceptions were already processed for this application.
+        jobLogger.log("Exceptions were already processed for the application.");
+        return job.complete({
+          applicationExceptionStatus:
+            application.applicationException.exceptionStatus,
+        });
+      }
+      // Check for application exceptions present in the application dynamic data.
+      const exceptions = this.applicationExceptionService.searchExceptions(
+        application.data,
+      );
+      if (exceptions.length) {
+        const createdException =
+          await this.applicationExceptionService.createException(
+            job.variables.applicationId,
+            exceptions,
+          );
+        jobLogger.log("Exception created.");
+        return job.complete({
+          applicationExceptionStatus: createdException.exceptionStatus,
+        });
+      }
+      jobLogger.log("Verified application exception.");
       return job.complete({
-        applicationExceptionStatus:
-          application.applicationException.exceptionStatus,
+        applicationExceptionStatus: ApplicationExceptionStatus.Approved,
+      });
+    } catch (error: unknown) {
+      return createUnexpectedJobFail(error, job, {
+        logger: jobLogger,
       });
     }
-    // Check for application exceptions present in the application dynamic data.
-    const exceptions = this.applicationExceptionService.searchExceptions(
-      application.data,
-    );
-    if (exceptions.length) {
-      const createdException =
-        await this.applicationExceptionService.createException(
-          job.variables.applicationId,
-          exceptions,
-        );
-      return job.complete({
-        applicationExceptionStatus: createdException.exceptionStatus,
-      });
-    }
-    return job.complete({
-      applicationExceptionStatus: ApplicationExceptionStatus.Approved,
-    });
   }
 }
