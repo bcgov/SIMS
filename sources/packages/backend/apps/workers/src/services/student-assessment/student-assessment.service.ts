@@ -13,6 +13,7 @@ import {
   ASSESSMENT_NOT_FOUND,
   ASSESSMENT_ALREADY_ASSOCIATED_TO_WORKFLOW,
   ASSESSMENT_ALREADY_ASSOCIATED_WITH_DIFFERENT_WORKFLOW,
+  INVALID_OPERATION_IN_THE_CURRENT_STATUS,
 } from "@sims/services/constants";
 import { NotificationActionsService, SystemUsersService } from "@sims/services";
 
@@ -50,6 +51,25 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
         throw new CustomNamedError(
           "Assessment id was not found.",
           ASSESSMENT_NOT_FOUND,
+        );
+      }
+      // Check if the assessment is in one of the initial statuses. Any status different than "Submitted" and "Queued" should
+      // cancel the workflow because there is no point executing it.
+      // A workflow in these statuses can be associated and updated to "In progress" nicely. The expectation is that it would
+      // be primarily "Queued" but there is no harm in allowing "Submitted" also.
+      // The main intention is to prevent the workflow association from happening in any other status, for instance,
+      // for the case when workers are down and a workflow is triggered, the assessment can have its status updated
+      // (e.g. be canceled) before the workers are up and running again, which can potentially make the workflow execution no longer needed.
+      const initialStatuses = [
+        StudentAssessmentStatus.Submitted,
+        StudentAssessmentStatus.Queued,
+      ];
+      if (!initialStatuses.includes(assessment.studentAssessmentStatus)) {
+        throw new CustomNamedError(
+          `The assessment is not in any initial status that would allow the workflow association. Expected statuses: ${initialStatuses.join(
+            ", ",
+          )}`,
+          INVALID_OPERATION_IN_THE_CURRENT_STATUS,
         );
       }
       if (!assessment.assessmentWorkflowId) {

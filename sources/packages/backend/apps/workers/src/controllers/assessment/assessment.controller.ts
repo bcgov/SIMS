@@ -30,6 +30,7 @@ import {
   ASSESSMENT_ALREADY_ASSOCIATED_TO_WORKFLOW,
   ASSESSMENT_ALREADY_ASSOCIATED_WITH_DIFFERENT_WORKFLOW,
   ASSESSMENT_NOT_FOUND,
+  INVALID_OPERATION_IN_THE_CURRENT_STATUS,
   Workers,
 } from "@sims/services/constants";
 import {
@@ -75,6 +76,7 @@ export class AssessmentController {
             return job.complete();
           case ASSESSMENT_NOT_FOUND:
             return job.error(error.name, error.message);
+          case INVALID_OPERATION_IN_THE_CURRENT_STATUS:
           case ASSESSMENT_ALREADY_ASSOCIATED_WITH_DIFFERENT_WORKFLOW:
             return job.cancelWorkflow();
         }
