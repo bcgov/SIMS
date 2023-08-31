@@ -53,6 +53,7 @@ import {
   OFFERING_PROGRAM_YEAR_MISMATCH,
 } from "../../constants";
 import { InjectLogger, LoggerService } from "@sims/utilities/logger";
+import { ApplicationOfferingChangeRequestControllerService } from "./application-offering-change-request.controller.service";
 
 /**
  * Application offering change request controller for institutions client.
@@ -65,6 +66,7 @@ import { InjectLogger, LoggerService } from "@sims/utilities/logger";
 @HasLocationAccess("locationId")
 export class ApplicationOfferingChangeRequestInstitutionsController extends BaseController {
   constructor(
+    private readonly applicationOfferingChangeRequestControllerService: ApplicationOfferingChangeRequestControllerService,
     private readonly applicationOfferingChangeRequestService: ApplicationOfferingChangeRequestService,
     private readonly applicationService: ApplicationService,
   ) {
@@ -238,36 +240,15 @@ export class ApplicationOfferingChangeRequestInstitutionsController extends Base
   @ApiNotFoundResponse({
     description: "Not able to find an Application Offering Change Request.",
   })
-  async getById(
+  async getApplicationOfferingChangeRequest(
     @Param("applicationOfferingChangeRequestId", ParseIntPipe)
     applicationOfferingChangeRequestId: number,
     @Param("locationId", ParseIntPipe) locationId: number,
   ): Promise<ApplicationOfferingChangesAPIOutDTO> {
-    const request = await this.applicationOfferingChangeRequestService.getById(
+    return this.applicationOfferingChangeRequestControllerService.getApplicationOfferingChangeRequest(
       applicationOfferingChangeRequestId,
       { locationId },
     );
-    if (!request) {
-      throw new NotFoundException(
-        "Not able to find an Application Offering Change Request.",
-      );
-    }
-    return {
-      id: request.id,
-      status: request.applicationOfferingChangeRequestStatus,
-      applicationId: request.application.id,
-      applicationNumber: request.application.applicationNumber,
-      locationName: request.application.location.name,
-      activeOfferingId: request.activeOffering.id,
-      requestedOfferingId: request.requestedOffering.id,
-      requestedOfferingDescription: request.requestedOffering.name,
-      requestedOfferingProgramId: request.requestedOffering.educationProgram.id,
-      requestedOfferingProgramName:
-        request.requestedOffering.educationProgram.name,
-      reason: request.reason,
-      assessedNoteDescription: request.assessedNote?.description,
-      studentFullName: getUserFullName(request.application.student.user),
-    };
   }
 
   /**

@@ -6,31 +6,44 @@ import {
   ParseBoolPipe,
   ParseIntPipe,
   Query,
+  UnauthorizedException,
   UnprocessableEntityException,
 } from "@nestjs/common";
 import {
   ApiNotFoundResponse,
   ApiTags,
+  ApiUnauthorizedResponse,
   ApiUnprocessableEntityResponse,
 } from "@nestjs/swagger";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
-import { AllowAuthorizedParty } from "../../auth/decorators";
+import { AllowAuthorizedParty, UserToken } from "../../auth/decorators";
 import { OfferingIntensity, OfferingTypes } from "@sims/sims-db";
-import { EducationProgramOfferingService } from "../../services";
+import {
+  ApplicationOfferingChangeRequestService,
+  EducationProgramOfferingService,
+} from "../../services";
 import { ClientTypeBaseRoute } from "../../types";
 import BaseController from "../BaseController";
-import { OfferingDetailsAPIOutDTO } from "./models/education-program-offering.dto";
+import {
+  EducationProgramOfferingSummaryViewAPIOutDTO,
+  OfferingDetailsAPIOutDTO,
+  OfferingSummaryPurpose,
+} from "./models/education-program-offering.dto";
 import { OptionItemAPIOutDTO } from "../models/common.dto";
 import { EducationProgramOfferingControllerService } from "./education-program-offering.controller.service";
 import { ParseEnumQueryPipe } from "../utils/custom-validation-pipe";
+import { StudentUserToken } from "../../auth";
+import { DataSource } from "typeorm";
 
 @AllowAuthorizedParty(AuthorizedParties.student)
 @Controller("education-program-offering")
 @ApiTags(`${ClientTypeBaseRoute.Student}-education-program-offering`)
 export class EducationProgramOfferingStudentsController extends BaseController {
   constructor(
+    private readonly dataSource: DataSource,
     private readonly educationProgramOfferingService: EducationProgramOfferingService,
     private readonly educationProgramOfferingControllerService: EducationProgramOfferingControllerService,
+    private readonly applicationOfferingChangeRequestService: ApplicationOfferingChangeRequestService,
   ) {
     super();
   }
@@ -92,5 +105,66 @@ export class EducationProgramOfferingStudentsController extends BaseController {
       studyStartDate: offering.studyStartDate,
       studyEndDate: offering.studyEndDate,
     };
+  }
+
+  /**
+   * Gets the offering simplified details, not including, for instance,
+   * validations, approvals and extensive data.
+   * Useful to have an overview of the offering details, for instance,
+   * when the user needs need to have quick access to data in order to
+   * support operations like confirmation of enrolment or scholastic
+   * standing requests or offering change request.
+   * @param offeringId offering.
+   * @param purpose indicating the purpose to allow for the appropriate authorization flow to be used.
+   * @param studentUserToken student user token for authorization.
+   * @returns offering details.
+   */
+  @ApiUnauthorizedResponse({
+    description: "The student is not authorized for the provided offering.",
+  })
+  @ApiNotFoundResponse({
+    description: "Not able to find the Education Program offering.",
+  })
+  @Get("offering/:offeringId/summary-details")
+  async getOfferingSummaryDetails(
+    @Param("offeringId", ParseIntPipe) offeringId: number,
+    @Query("purpose", new ParseEnumQueryPipe(OfferingSummaryPurpose))
+    purpose: OfferingSummaryPurpose,
+    @UserToken() studentUserToken: StudentUserToken,
+  ): Promise<EducationProgramOfferingSummaryViewAPIOutDTO> {
+    const validatedApplicationOfferingForStudent =
+      await this.validateApplicationOfferingForStudent(
+        purpose,
+        offeringId,
+        studentUserToken.studentId,
+      );
+    if (!validatedApplicationOfferingForStudent) {
+      throw new UnauthorizedException(
+        "Student is not authorized for the provided offering.",
+      );
+    }
+    return this.educationProgramOfferingControllerService.getOfferingById(
+      offeringId,
+    );
+  }
+
+  /** Validates student authorization for the given education program offering.
+   * @param purpose indicating the purpose to allow for the appropriate authorization flow to be used.
+   * @param offeringId offering id.
+   * @param studentId student id.
+   * @returns true if the student is authorized for the given offering, otherwise false.
+   */
+  private async validateApplicationOfferingForStudent(
+    purpose: OfferingSummaryPurpose,
+    offeringId: number,
+    studentId: number,
+  ): Promise<boolean> {
+    if (purpose === OfferingSummaryPurpose.ApplicationOfferingChange) {
+      return this.applicationOfferingChangeRequestService.validateApplicationOfferingForStudent(
+        offeringId,
+        studentId,
+      );
+    }
+    return false;
   }
 }

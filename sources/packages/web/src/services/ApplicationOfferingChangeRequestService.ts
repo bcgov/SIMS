@@ -8,6 +8,9 @@ import {
   ApplicationOfferingChangesAPIOutDTO,
   ApplicationOfferingChangeSummaryDetailAPIOutDTO,
   CreateApplicationOfferingChangeRequestAPIInDTO,
+  StudentApplicationOfferingChangeRequestAPIInDTO,
+  ApplicationOfferingDetailsAPIOutDTO,
+  ApplicationOfferingChangeRequestStatusAPIOutDTO,
 } from "@/services/http/dto";
 
 export class ApplicationOfferingChangeRequestService {
@@ -126,6 +129,32 @@ export class ApplicationOfferingChangeRequestService {
   }
 
   /**
+   * Gets the Application Offering Change Request details for student view.
+   * @param applicationOfferingChangeRequestId the Application Offering Change Request id.
+   * @returns Application Offering Change Request details.
+   */
+  async getApplicationOfferingDetails(
+    applicationOfferingChangeRequestId: number,
+  ): Promise<ApplicationOfferingDetailsAPIOutDTO> {
+    return ApiClient.ApplicationOfferingChangeRequestApi.getApplicationOfferingDetails(
+      applicationOfferingChangeRequestId,
+    );
+  }
+
+  /**
+   * Gets the Application Offering Change Request status.
+   * @param applicationOfferingChangeRequestId the application offering change request id.
+   * @returns the application offering change request status.
+   */
+  async getApplicationOfferingChangeRequestStatus(
+    applicationOfferingChangeRequestId: number,
+  ): Promise<ApplicationOfferingChangeRequestStatusAPIOutDTO> {
+    return ApiClient.ApplicationOfferingChangeRequestApi.getApplicationOfferingChangeRequestStatus(
+      applicationOfferingChangeRequestId,
+    );
+  }
+
+  /**
    * Creates a new application offering change request.
    * @param locationId location id.
    * @param payload information to create the new request.
@@ -136,6 +165,21 @@ export class ApplicationOfferingChangeRequestService {
   ): Promise<void> {
     await ApiClient.ApplicationOfferingChangeRequestApi.createApplicationOfferingChangeRequest(
       locationId,
+      payload,
+    );
+  }
+
+  /**
+   * Update the application offering change request status.
+   * @param applicationOfferingChangeRequestId application offering change request id.
+   * @param payload information to update the application offering change request.
+   */
+  async updateApplicationOfferingChangeRequestStatus(
+    applicationOfferingChangeRequestId: number,
+    payload: StudentApplicationOfferingChangeRequestAPIInDTO,
+  ): Promise<void> {
+    await ApiClient.ApplicationOfferingChangeRequestApi.updateApplicationOfferingChangeRequestStatus(
+      applicationOfferingChangeRequestId,
       payload,
     );
   }

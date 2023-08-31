@@ -18,6 +18,9 @@ import StudentOverawardsBalance from "@/views/student/StudentOverawardsBalance.v
 import StudentAccountApplicationInProgress from "@/views/student/StudentAccountApplicationInProgress.vue";
 import StudentAssessmentAward from "@/views/student/StudentAssessmentAward.vue";
 import StudentAppealRequests from "@/views/student/StudentAppealRequests.vue";
+import ApplicationOfferingChangeFormView from "@/views/student/application-offering-change-request/ApplicationOfferingChangeFormView.vue";
+import RequestedApplicationOfferingDetails from "@/views/student/application-offering-change-request/tabs/RequestedApplicationOfferingDetails.vue";
+import ActiveApplicationOfferingDetails from "@/views/student/application-offering-change-request/tabs/ActiveApplicationOfferingDetails.vue";
 import {
   StudentRoutesConst,
   SharedRouteConst,
@@ -146,7 +149,9 @@ export const studentRoutes: Array<RouteRecordRaw> = [
         path: AppRoutes.StudentApplicationDetails,
         name: StudentRoutesConst.STUDENT_APPLICATION_DETAILS,
         component: StudentApplicationDetails,
-        props: true,
+        props: (route) => ({
+          id: parseInt(route.params.id as string),
+        }),
         meta: {
           clientType: ClientIdType.Student,
         },
@@ -167,6 +172,53 @@ export const studentRoutes: Array<RouteRecordRaw> = [
         meta: {
           clientType: ClientIdType.Student,
         },
+      },
+      {
+        path: AppRoutes.StudentApplicationOfferingChangeRequest,
+        name: StudentRoutesConst.STUDENT_APPLICATION_OFFERING_CHANGE_REQUEST,
+        redirect: {
+          name: StudentRoutesConst.STUDENT_REQUESTED_APPLICATION_OFFERING_CHANGE,
+        },
+        component: ApplicationOfferingChangeFormView,
+        props: (route) => ({
+          applicationOfferingChangeRequestId: parseInt(
+            route.params.applicationOfferingChangeRequestId as string,
+          ),
+          applicationId: parseInt(route.params.applicationId as string),
+        }),
+        meta: {
+          clientType: ClientIdType.Student,
+        },
+        children: [
+          {
+            path: AppRoutes.StudentRequestedApplicationOfferingDetails,
+            name: StudentRoutesConst.STUDENT_REQUESTED_APPLICATION_OFFERING_CHANGE,
+            component: RequestedApplicationOfferingDetails,
+            props: (route) => ({
+              applicationOfferingChangeRequestId: parseInt(
+                route.params.applicationOfferingChangeRequestId as string,
+              ),
+              applicationId: parseInt(route.params.applicationId as string),
+            }),
+            meta: {
+              clientType: ClientIdType.Student,
+            },
+          },
+          {
+            path: AppRoutes.StudentActiveApplicationOfferingDetails,
+            name: StudentRoutesConst.STUDENT_ACTIVE_APPLICATION_DETAILS,
+            component: ActiveApplicationOfferingDetails,
+            props: (route) => ({
+              applicationOfferingChangeRequestId: parseInt(
+                route.params.applicationOfferingChangeRequestId as string,
+              ),
+              applicationId: parseInt(route.params.applicationId as string),
+            }),
+            meta: {
+              clientType: ClientIdType.Student,
+            },
+          },
+        ],
       },
       {
         path: AppRoutes.StudentAccountActivity,
@@ -217,11 +269,6 @@ export const studentRoutes: Array<RouteRecordRaw> = [
               case AuthStatus.RedirectHome:
                 next({
                   name: StudentRoutesConst.STUDENT_DASHBOARD,
-                });
-                break;
-              case AuthStatus.ForbiddenUser:
-                next({
-                  name: SharedRouteConst.FORBIDDEN_USER,
                 });
                 break;
               default:

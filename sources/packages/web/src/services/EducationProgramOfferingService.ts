@@ -28,6 +28,7 @@ import {
 } from "@/constants";
 import { DATE_ONLY_ISO_FORMAT, useFormatters } from "@/composables";
 import { FileUploadProgressEventArgs } from "@/services/http/common/FileUploadProgressEvent";
+import { OfferingSummaryPurpose } from "@/types/contracts/OfferingSummaryPurpose";
 
 export class EducationProgramOfferingService {
   // Share Instance
@@ -380,12 +381,14 @@ export class EducationProgramOfferingService {
    * @param offeringId offering.
    * @param options method options:
    * - `locationId`: location for authorization.
+   * - `purpose`: indicates the purpose to allow for the appropriate authorization flow to be used.
    * @returns offering details.
    */
   async getOfferingSummaryDetailsById(
     offeringId: number,
     options?: {
       locationId?: number;
+      purpose?: OfferingSummaryPurpose;
     },
   ): Promise<EducationProgramOfferingSummaryViewAPIOutDTO> {
     return ApiClient.EducationProgramOffering.getOfferingSummaryDetailsById(

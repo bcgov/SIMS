@@ -24,7 +24,7 @@
         <div class="pb-2" v-if="subTitle">{{ subTitle }}</div>
         <slot name="content">Please add the modal content here!</slot>
       </v-card-text>
-      <v-divider class="mx-6 mt-1 mb-0"></v-divider>
+      <hr class="mx-6 mt-0 horizontal-divider" />
       <v-card-actions>
         <v-spacer></v-spacer>
         <div class="mx-4 mb-2">

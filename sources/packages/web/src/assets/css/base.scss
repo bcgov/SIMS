@@ -176,6 +176,11 @@ strong {
   color: $brand-black;
 }
 
+.label-bold-large-height {
+  @extend .label-bold;
+  line-height: $line-height-header-xlg !important;
+}
+
 // normal label primary
 .label-bold-primary {
   @extend .label-bold;
