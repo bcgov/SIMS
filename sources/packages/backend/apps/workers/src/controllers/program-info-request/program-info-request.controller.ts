@@ -66,7 +66,9 @@ export class ProgramInfoRequestController {
         programInfoStatus: job.customHeaders.programInfoStatus,
       });
     } catch (error: unknown) {
-      return createUnexpectedJobFail(error, job, jobLogger);
+      return createUnexpectedJobFail(error, job, {
+        logger: jobLogger,
+      });
     }
   }
 }

@@ -77,7 +77,9 @@ export class DisbursementController {
             return job.error(error.name, error.message);
         }
       }
-      return createUnexpectedJobFail(error, job, jobLogger);
+      return createUnexpectedJobFail(error, job, {
+        logger: jobLogger,
+      });
     }
   }
 
@@ -115,7 +117,9 @@ export class DisbursementController {
             return job.complete();
         }
       }
-      return createUnexpectedJobFail(error, job, jobLogger);
+      return createUnexpectedJobFail(error, job, {
+        logger: jobLogger,
+      });
     }
   }
 }

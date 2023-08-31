@@ -85,7 +85,9 @@ export class AssessmentController {
             return job.error(error.name, error.message);
         }
       }
-      return createUnexpectedJobFail(error, job, jobLogger);
+      return createUnexpectedJobFail(error, job, {
+        logger: jobLogger,
+      });
     }
   }
 
@@ -126,7 +128,9 @@ export class AssessmentController {
       jobLogger.log("Assessment consolidated data loaded.");
       return job.complete(outputVariables);
     } catch (error: unknown) {
-      return createUnexpectedJobFail(error, job, jobLogger);
+      return createUnexpectedJobFail(error, job, {
+        logger: jobLogger,
+      });
     }
   }
 
@@ -151,7 +155,9 @@ export class AssessmentController {
       jobLogger.log("Assessment data saved.");
       return job.complete();
     } catch (error: unknown) {
-      return createUnexpectedJobFail(error, job, jobLogger);
+      return createUnexpectedJobFail(error, job, {
+        logger: jobLogger,
+      });
     }
   }
 
@@ -180,7 +186,9 @@ export class AssessmentController {
       jobLogger.log("NOA status updated.");
       return job.complete();
     } catch (error: unknown) {
-      return createUnexpectedJobFail(error, job, jobLogger);
+      return createUnexpectedJobFail(error, job, {
+        logger: jobLogger,
+      });
     }
   }
 
@@ -196,17 +204,18 @@ export class AssessmentController {
       ZeebeJob<WorkflowWrapUpJobInDTO, ICustomHeaders, IOutputVariables>
     >,
   ): Promise<MustReturnJobActionAcknowledgement> {
+    const jobLogger = new Logger(job.type);
     try {
       await this.studentAssessmentService.updateAssessmentStatusAndSaveWorkflowData(
         job.variables.assessmentId,
         job.variables.workflowData,
       );
+      jobLogger.log("Updated assessment status and saved the workflow data.");
       return job.complete();
     } catch (error: unknown) {
-      const jobLogger = new Logger(job.type);
-      const errorMessage = `Failed while updating assessment status and saving workflow data. ${error}`;
-      jobLogger.error(errorMessage);
-      return job.fail(errorMessage);
+      return createUnexpectedJobFail(error, job, {
+        logger: jobLogger,
+      });
     }
   }
 

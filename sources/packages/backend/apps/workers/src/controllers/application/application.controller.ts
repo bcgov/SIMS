@@ -69,7 +69,9 @@ export class ApplicationController {
       jobLogger.log("Updated the application status.");
       return job.complete();
     } catch (error: unknown) {
-      return createUnexpectedJobFail(error, job, jobLogger);
+      return createUnexpectedJobFail(error, job, {
+        logger: jobLogger,
+      });
     }
   }
 
@@ -131,7 +133,9 @@ export class ApplicationController {
         applicationExceptionStatus: ApplicationExceptionStatus.Approved,
       });
     } catch (error: unknown) {
-      return createUnexpectedJobFail(error, job, jobLogger);
+      return createUnexpectedJobFail(error, job, {
+        logger: jobLogger,
+      });
     }
   }
 }

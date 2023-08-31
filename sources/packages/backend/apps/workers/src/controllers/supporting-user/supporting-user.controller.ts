@@ -63,7 +63,9 @@ export class SupportingUserController {
       jobLogger.log("Created supporting users.");
       return job.complete({ createdSupportingUsersIds });
     } catch (error: unknown) {
-      return createUnexpectedJobFail(error, job, jobLogger);
+      return createUnexpectedJobFail(error, job, {
+        logger: jobLogger,
+      });
     }
   }
 
@@ -99,7 +101,9 @@ export class SupportingUserController {
       jobLogger.log("Supporting user data loaded.");
       return job.complete(outputVariables);
     } catch (error: unknown) {
-      return createUnexpectedJobFail(error, job, jobLogger);
+      return createUnexpectedJobFail(error, job, {
+        logger: jobLogger,
+      });
     }
   }
 }

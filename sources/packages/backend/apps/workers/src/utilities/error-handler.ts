@@ -7,16 +7,19 @@ import { ZeebeJob, MustReturnJobActionAcknowledgement } from "zeebe-node";
  * in case any unexpected job failure.
  * @param error error message to be logged.
  * @param job zeebe job.
- * @param logger logger object if any,
+ * @param options options,
+ * - "logger" logger object if any,
  * else a new logger instance will be created.
  * @returns a job fail acknowledgement to the worker.
  */
 export function createUnexpectedJobFail(
   error: unknown,
   job: ZeebeJob,
-  logger?: Logger,
+  options?: {
+    logger?: Logger;
+  },
 ): MustReturnJobActionAcknowledgement {
-  const jobLogger = logger ?? new Logger(job.type);
+  const jobLogger = options?.logger ?? new Logger(job.type);
   const errorMessage = `Unexpected error while processing job. ${parseJSONError(
     error,
   )}`;

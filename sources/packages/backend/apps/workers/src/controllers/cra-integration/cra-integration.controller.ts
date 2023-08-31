@@ -69,7 +69,9 @@ export class CRAIntegrationController {
       jobLogger.log("CRA income verification created.");
       return job.complete({ incomeVerificationId: identifier.id });
     } catch (error: unknown) {
-      return createUnexpectedJobFail(error, job, jobLogger);
+      return createUnexpectedJobFail(error, job, {
+        logger: jobLogger,
+      });
     }
   }
 
@@ -100,7 +102,9 @@ export class CRAIntegrationController {
       jobLogger.log("CRA income verification completed.");
       return job.complete({ incomeVerificationCompleted });
     } catch (error: unknown) {
-      return createUnexpectedJobFail(error, job, jobLogger);
+      return createUnexpectedJobFail(error, job, {
+        logger: jobLogger,
+      });
     }
   }
 }
