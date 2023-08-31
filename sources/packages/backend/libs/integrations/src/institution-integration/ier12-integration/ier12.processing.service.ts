@@ -14,6 +14,7 @@ import {
 import {
   combineDecimalPlaces,
   getFileNameAsCurrentTimestamp,
+  getTotalYearsOfStudy,
 } from "@sims/utilities";
 import { IER12IntegrationService } from "./ier12.integration.service";
 import {
@@ -23,7 +24,10 @@ import {
   IERAddressInfo,
   YNFlag,
 } from "./models/ier12-integration.model";
-import { StudentAssessmentService } from "@sims/integrations/services";
+import {
+  DisbursementReceiptService,
+  StudentAssessmentService,
+} from "@sims/integrations/services";
 
 @Injectable()
 export class IER12ProcessingService {
@@ -32,6 +36,7 @@ export class IER12ProcessingService {
     config: ConfigService,
     private readonly ier12IntegrationService: IER12IntegrationService,
     private readonly studentAssessmentService: StudentAssessmentService,
+    private readonly disbursementReceiptService: DisbursementReceiptService,
   ) {
     this.institutionIntegrationConfig = config.institutionIntegration;
   }
@@ -61,13 +66,13 @@ export class IER12ProcessingService {
     }
     this.logger.log(`Found ${pendingAssessments.length} assessments.`);
     const fileRecords: Record<string, IER12Record[]> = {};
-    pendingAssessments.forEach((pendingAssessment) => {
+    pendingAssessments.forEach(async (pendingAssessment) => {
       const institutionCode =
         pendingAssessment.offering.institutionLocation.institutionCode;
       if (!fileRecords[institutionCode]) {
         fileRecords[institutionCode] = [];
       }
-      const ier12Records = this.createIER12Record(pendingAssessment);
+      const ier12Records = await this.createIER12Record(pendingAssessment);
       fileRecords[institutionCode].push(...ier12Records);
     });
     const uploadResult: IER12UploadResult[] = [];
@@ -146,9 +151,9 @@ export class IER12ProcessingService {
    * @param pendingAssessment pending assessment of institutions.
    * @returns IER 12 record.
    */
-  private createIER12Record(
+  private async createIER12Record(
     pendingAssessment: StudentAssessment,
-  ): IER12Record[] {
+  ): Promise<IER12Record[]> {
     const application = pendingAssessment.application;
     const student = application.student;
     const user = student.user;
@@ -158,6 +163,53 @@ export class IER12ProcessingService {
     const address = student.contactInfo.address;
     const applicationProgramYear = application.programYear;
     const [scholasticStanding] = application.studentScholasticStandings;
+    const cslAmount = this.getSumOfAssessmentAwards(pendingAssessment, {
+      awardTypeInclusions: [DisbursementValueType.CanadaLoan],
+    });
+    const bcslAmount = this.getSumOfAssessmentAwards(pendingAssessment, {
+      awardTypeInclusions: [DisbursementValueType.BCLoan],
+    });
+    const epAmount = this.getSumOfAssessmentAwards(pendingAssessment, {
+      awardTypeExclusions: [
+        DisbursementValueType.CanadaLoan,
+        DisbursementValueType.BCLoan,
+        DisbursementValueType.BCTotalGrant,
+      ],
+    });
+    const studentGroupCode =
+      pendingAssessment.workflowData.studentData.dependantStatus === "dependant"
+        ? "A"
+        : "B";
+    const cipCode = educationProgram.cipCode.replace(".", "");
+    const programLength = getTotalYearsOfStudy(
+      educationProgram.completionYears,
+    );
+    const tuitionFees = combineDecimalPlaces(offering.actualTuitionCosts);
+    const booksAndSuppliesCost = combineDecimalPlaces(
+      offering.programRelatedCosts,
+    );
+    const mandatoryFees = combineDecimalPlaces(offering.mandatoryFees);
+    const exceptionExpenses = combineDecimalPlaces(
+      offering.exceptionalExpenses,
+    );
+    const programYear = applicationProgramYear.programYear.replace("-", "");
+    const applicationStatusCode = this.getApplicationStatusCode(
+      application.applicationStatus,
+    );
+    const scholasticStandingEffectiveDate = scholasticStanding
+      ? this.getScholasticStandingEffectiveDate(
+          scholasticStanding.changeType,
+          new Date(offering.studyEndDate),
+        )
+      : null;
+    const withdrawalDate =
+      scholasticStanding?.changeType ===
+      StudentScholasticStandingChangeType.StudentWithdrewFromProgram
+        ? new Date(offering.studyEndDate)
+        : null;
+    const parentalAssets = combineDecimalPlaces(
+      pendingAssessment.workflowData.calculatedData.parentalAssets ?? 0,
+    );
     // TODO: Mapping has been done based on the first analysis of IER12.
     // Mapping needs to be updated when the complete analysis is done.
     const disbursementSchedules = pendingAssessment.disbursementSchedules;
@@ -168,70 +220,70 @@ export class IER12ProcessingService {
       provinceState: address.provinceState,
       postalCode: address.postalCode,
     };
-    return disbursementSchedules.map<IER12Record>((disbursement) => ({
-      assessmentId: pendingAssessment.id,
-      disbursementId: disbursement.id,
-      applicationNumber: application.applicationNumber,
-      institutionStudentNumber: application.data.studentNumber,
-      sin: sinValidation.sin,
-      studentLastName: user.lastName,
-      studentGivenName: user.firstName,
-      birthDate: new Date(student.birthDate),
-      studentGroupCode: "A", // TODO: Dheepak
-      addressInfo,
-      programName: educationProgram.name,
-      programDescription: educationProgram.description,
-      credentialType: educationProgram.credentialType,
-      fieldOfStudyCode: educationProgram.fieldOfStudyCode,
-      currentProgramYear: offering.yearOfStudy,
-      cipCode: educationProgram.cipCode.replace(".", ""),
-      nocCode: educationProgram.nocCode,
-      sabcCode: educationProgram.sabcCode,
-      institutionProgramCode: educationProgram.institutionProgramCode,
-      programLength: +educationProgram.completionYears, // TODO: Dheepak reference the util.
-      studyStartDate: new Date(offering.studyStartDate),
-      studyEndDate: new Date(offering.studyEndDate),
-      tuitionFees: combineDecimalPlaces(offering.actualTuitionCosts),
-      booksAndSuppliesCost: combineDecimalPlaces(offering.programRelatedCosts),
-      mandatoryFees: combineDecimalPlaces(offering.mandatoryFees),
-      exceptionExpenses: combineDecimalPlaces(offering.exceptionalExpenses),
-      totalFundedWeeks: pendingAssessment.assessmentData.weeks,
-      courseLoad: 100, // Hard coded as IER12 currently includes full time applications only.
-      offeringIntensityIndicator: "F", // Hard coded as IER12 currently includes full time applications only.
-      applicationSubmittedDate: application.submittedDate,
-      programYear: applicationProgramYear.programYear.replace("-", ""),
-      applicationStatusCode: this.getApplicationStatusCode(
-        application.applicationStatus,
-      ),
-      applicationStatusDate: application.applicationStatusUpdatedOn,
-      cslAmount: 100, // TODO: Dheepak reference the util.
-      bcslAmount: 100, // TODO: Dheepak reference the util.
-      epAmount: 100, // TODO: Dheepak reference the util.
-      provincialDefaultFlag: YNFlag.N, // TODO: Dheepak reference the util.
-      provincialOverawardFlag: YNFlag.N, // TODO: Dheepak reference the util.
-      federalOverawardFlag: YNFlag.N, // TODO: Dheepak reference the util.
-      restrictionFlag: YNFlag.N, // TODO: Dheepak reference the util.
-      scholasticStandingEffectiveDate: scholasticStanding
-        ? this.getScholasticStandingEffectiveDate(
-            scholasticStanding.changeType,
-            new Date(offering.studyEndDate),
-          )
-        : null,
-      assessmentDate: pendingAssessment.assessmentDate,
-      withdrawalDate:
-        scholasticStanding?.changeType ===
-        StudentScholasticStandingChangeType.StudentWithdrewFromProgram
-          ? new Date(offering.studyEndDate)
+    const ier12Records: IER12Record[] = [];
+    for (const disbursement of disbursementSchedules) {
+      const disbursementReceipt =
+        await this.disbursementReceiptService.getDisbursementReceiptByDisbursementSchedule(
+          disbursement.id,
+        );
+      const ier12Record: IER12Record = {
+        assessmentId: pendingAssessment.id,
+        disbursementId: disbursement.id,
+        applicationNumber: application.applicationNumber,
+        institutionStudentNumber: application.data.studentNumber,
+        sin: sinValidation.sin,
+        studentLastName: user.lastName,
+        studentGivenName: user.firstName,
+        birthDate: new Date(student.birthDate),
+        studentGroupCode,
+        addressInfo,
+        programName: educationProgram.name,
+        programDescription: educationProgram.description,
+        credentialType: educationProgram.credentialType,
+        fieldOfStudyCode: educationProgram.fieldOfStudyCode,
+        currentProgramYear: offering.yearOfStudy,
+        cipCode,
+        nocCode: educationProgram.nocCode,
+        sabcCode: educationProgram.sabcCode,
+        institutionProgramCode: educationProgram.institutionProgramCode,
+        programLength,
+        studyStartDate: new Date(offering.studyStartDate),
+        studyEndDate: new Date(offering.studyEndDate),
+        tuitionFees,
+        booksAndSuppliesCost,
+        mandatoryFees,
+        exceptionExpenses,
+        totalFundedWeeks: pendingAssessment.assessmentData.weeks,
+        courseLoad: 100, // Hard coded as IER12 currently includes full time applications only.
+        offeringIntensityIndicator: "F", // Hard coded as IER12 currently includes full time applications only.
+        applicationSubmittedDate: application.submittedDate,
+        programYear,
+        applicationStatusCode,
+        applicationStatusDate: application.applicationStatusUpdatedOn,
+        cslAmount,
+        bcslAmount,
+        epAmount,
+        provincialDefaultFlag: YNFlag.N, // TODO: Dheepak reference the util.
+        provincialOverawardFlag: YNFlag.N, // TODO: Dheepak reference the util.
+        federalOverawardFlag: YNFlag.N, // TODO: Dheepak reference the util.
+        restrictionFlag: YNFlag.N, // TODO: Dheepak reference the util.
+        scholasticStandingEffectiveDate,
+        assessmentDate: pendingAssessment.assessmentDate,
+        withdrawalDate,
+        partnerFlag: YNFlag.N, // TODO: Dheepak reference the util.
+        parentalAssets,
+        coeStatus: disbursement.coeStatus,
+        disbursementScheduleStatus: disbursement.disbursementScheduleStatus,
+        earliestDateOfDisbursement: new Date(disbursement.disbursementDate),
+        dateOfDisbursement: disbursementReceipt.disburseDate
+          ? new Date(disbursementReceipt.disburseDate)
           : null,
-      partnerFlag: YNFlag.N, // TODO: Dheepak reference the util.
-      parentalAssets: combineDecimalPlaces(100), // TODO: Dheepak read from workflow data.
-      coeStatus: disbursement.coeStatus,
-      disbursementScheduleStatus: disbursement.disbursementScheduleStatus,
-      earliestDateOfDisbursement: new Date(disbursement.disbursementDate),
-      dateOfDisbursement: new Date(),
-      disbursementCancelDate: disbursement.updatedAt,
-      fundingDetails: this.getFundingDetails(disbursement.disbursementValues),
-    }));
+        disbursementCancelDate: disbursement.updatedAt,
+        fundingDetails: this.getFundingDetails(disbursement.disbursementValues),
+      };
+      ier12Records.push(ier12Record);
+    }
+    return ier12Records;
   }
 
   /**

@@ -1,10 +1,18 @@
-import { DisbursementSchedule, DisbursementValue } from "@sims/sims-db";
+import {
+  COEStatus,
+  DisbursementSchedule,
+  DisbursementScheduleStatus,
+  DisbursementValue,
+} from "@sims/sims-db";
 import { END_OF_LINE, round, StringBuilder } from "@sims/utilities";
 import {
+  ApplicationStatusCode,
   DATE_FORMAT,
   IER12FileLine,
+  IERAddressInfo,
   NUMBER_FILLER,
   SPACE_FILLER,
+  YNFlag,
 } from "./models/ier12-integration.model";
 
 /**
@@ -14,101 +22,266 @@ import {
  */
 export class IER12FileDetail implements IER12FileLine {
   assessmentId: number;
+  disbursementId: number;
   applicationNumber: string;
+  institutionStudentNumber?: string;
   sin: string;
   studentLastName: string;
-  studentGivenName: string;
-  birthDate: string;
+  studentGivenName?: string;
+  birthDate: Date;
+  studentGroupCode: "A" | "B";
+  // Analysis pending for the field.
+  studentMaritalStatusCode?: string;
+  // Analysis pending for the field.
+  studentDisabilityStatusCode?: string;
+  // Analysis pending for the field.
+  applicationDisabilityStatusFlag?: string;
+  addressInfo: IERAddressInfo;
   programName: string;
   programDescription: string;
   credentialType: string;
-  cipCode: number;
-  nocCode: string;
-  sabcCode: string;
-  institutionProgramCode: string;
+  fieldOfStudyCode: number;
+  // Analysis pending for the field.
+  areaOfStudyCode?: string;
+  // Analysis pending for the field.
+  levelOfStudyCode?: string;
+  currentProgramYear: number;
+  cipCode: string;
+  nocCode?: string;
+  sabcCode?: string;
+  institutionProgramCode?: string;
   programLength: number;
-  studyStartDate: string;
-  studyEndDate: string;
+  studyStartDate: Date;
+  studyEndDate: Date;
   tuitionFees: number;
-  programRelatedCosts: number;
+  booksAndSuppliesCost: number;
   mandatoryFees: number;
   exceptionExpenses: number;
   totalFundedWeeks: number;
-  disbursementSchedules: DisbursementSchedule[];
+  courseLoad: number;
+  offeringIntensityIndicator: string;
+  applicationSubmittedDate: Date;
+  programYear: string;
+  applicationStatusCode: ApplicationStatusCode;
+  applicationStatusDate: Date;
+  cslAmount: number;
+  bcslAmount: number;
+  epAmount: number;
+  provincialDefaultFlag: YNFlag;
+  // Analysis pending for the field.
+  federalDefaultFlag?: YNFlag;
+  provincialOverawardFlag: YNFlag;
+  federalOverawardFlag: YNFlag;
+  restrictionFlag: YNFlag;
+  scholasticStandingEffectiveDate: Date;
+  // Analysis pending for the field.
+  scholasticStandingCode?: string;
+  assessmentDate: Date;
+  withdrawalDate: Date;
+  // Analysis pending for the field.
+  applicantAndPartnerExpectedContribution?: number;
+  // Analysis pending for the field.
+  parentExpectedContribution?: number;
+  // Analysis pending for the field.
+  totalExpectedContribution?: number;
+  // Analysis pending for the field.
+  dependantChildQuantity?: number;
+  // Analysis pending for the field.
+  dependantChildInDaycareQuantity?: number;
+  // Analysis pending for the field.
+  dependentInfantQuantity?: number;
+  // Analysis pending for the field.
+  dependantOtherQuantity?: number;
+  // Analysis pending for the field.
+  dependantPostSecondaryQuantity?: number;
+  // Analysis pending for the field.
+  totalDependantQuantity?: number;
+  // Analysis pending for the field.
+  familyMembersQuantity?: number;
+  // Analysis pending for the field.
+  parent1Flag?: YNFlag;
+  // Analysis pending for the field.
+  parent2Flag?: YNFlag;
+  partnerFlag: YNFlag;
+  parentalAssets: number;
+  // Analysis pending for the field.
+  parentalAssetsExpectedContribution?: number;
+  // Analysis pending for the field.
+  parentalIncomeExpectedContribution?: number;
+  // Analysis pending for the field.
+  parentalVoluntaryContribution?: number;
+  // Analysis pending for the field.
+  parentalDiscretionaryIncome?: number;
+  // Analysis pending for the field.
+  parentalDiscretionaryAnnualIncomeFormulaResult?: number;
+  // Analysis pending for the field.
+  studentLivingAtHomeFlag?: YNFlag;
+  // Analysis pending for the field.
+  partnerInSchoolFlag?: YNFlag;
+  // Analysis pending for the field.
+  otherEducationalExpenses?: number;
+  // Analysis pending for the field.
+  totalEducationalExpenses?: number;
+  // Analysis pending for the field.
+  extraLocalTransportationCosts?: number;
+  // Analysis pending for the field.
+  extraShelterCosts?: number;
+  // Analysis pending for the field.
+  dependantLivingAllowance?: number;
+  // Analysis pending for the field.
+  studentLivingAllowance?: number;
+  // Analysis pending for the field.
+  totalLivingAllowance?: number;
+  // Analysis pending for the field.
+  alimonyCosts?: number;
+  // Analysis pending for the field.
+  otherDiscretionaryCosts?: number;
+  // Analysis pending for the field.
+  returnTransportationCosts?: number;
+  // Analysis pending for the field.
+  partnerStudentLoanPaymentCosts?: number;
+  // Analysis pending for the field.
+  childcareCosts?: number;
+  // Analysis pending for the field.
+  totalNonEducationalCosts?: number;
+  // Analysis pending for the field.
+  totalExpenses?: number;
+  // Analysis pending for the field.
+  assessedNeed?: number;
+  // Analysis pending for the field.
+  studentEligibleAward?: number;
+  // Analysis pending for the field.
+  mssAssessedNeedFlag?: YNFlag;
+  // Analysis pending for the field.
+  mssAssessedNeed?: number;
+  // Analysis pending for the field.
+  mssAssessedNeedNormalOrAppeal?: number;
+  // Analysis pending for the field.
+  mssChildcareCosts?: number;
+  // Analysis pending for the field.
+  mssTuitionAndSupplies?: number;
+  // Analysis pending for the field.
+  mssMiscCostsAllowance?: number;
+  // Analysis pending for the field.
+  mssTransportCostsAllowance?: number;
+  // Analysis pending for the field.
+  mssExtraTransportCosts?: number;
+  // Analysis pending for the field.
+  applicationEventCode?: string;
+  // Analysis pending for the field.
+  applicationEventDate?: Date;
+  // Analysis pending for the field.
+  documentProducedDate?: Date;
+  coeStatus: COEStatus;
+  disbursementScheduleStatus: DisbursementScheduleStatus;
+  earliestDateOfDisbursement: Date;
+  dateOfDisbursement?: Date;
+  // Analysis pending for the field.
+  disbursementExpiryDate?: Date;
+  disbursementCancelDate: Date;
+  /**
+   * Disbursement funding type and funding amount in a key value format.
+   * last 2 digits in funding amount holds the decimal value.
+   * e.g. `{"CSLF":100000,"BCSL":150000}` which represents `{"CSLF":1000.00,"BCSL":1500.00}`
+   */
+  fundingDetails: Record<string, number>;
 
   getFixedFormat(): string {
-    const records = this.disbursementSchedules.map((disbursement) => {
-      const record = new StringBuilder();
-      record.appendWithStartFiller(this.assessmentId, 10, NUMBER_FILLER);
-      record.appendWithStartFiller(disbursement.id, 10, NUMBER_FILLER);
-      record.append(this.applicationNumber, 10);
-      record.append(this.sin, 9);
-      record.appendWithEndFiller(this.studentLastName, 25, SPACE_FILLER);
-      record.appendWithEndFiller(this.studentGivenName ?? "", 15, SPACE_FILLER);
-      record.appendDate(this.birthDate, DATE_FORMAT);
-      record.appendWithEndFiller(this.programName, 25, SPACE_FILLER);
-      record.appendWithEndFiller(this.programDescription, 50, SPACE_FILLER);
-      record.appendWithEndFiller(this.credentialType, 25, SPACE_FILLER);
-      record.append(this.cipCode.toString(), 6);
-      record.append(this.nocCode, 4);
-      record.appendWithEndFiller(this.sabcCode ?? "", 4, SPACE_FILLER);
-      record.appendWithEndFiller(
-        this.institutionProgramCode ?? "",
-        25,
-        SPACE_FILLER,
-      );
-      record.append(this.programLength.toString(), 1);
-      record.appendDate(this.studyStartDate, DATE_FORMAT);
-      record.appendDate(this.studyEndDate, DATE_FORMAT);
-      record.appendWithStartFiller(
-        this.tuitionFees.toString(),
-        8,
-        NUMBER_FILLER,
-      );
-      record.appendWithStartFiller(
-        this.programRelatedCosts.toString(),
-        8,
-        NUMBER_FILLER,
-      );
-      record.appendWithStartFiller(
-        this.mandatoryFees.toString(),
-        8,
-        NUMBER_FILLER,
-      );
-      record.appendWithStartFiller(
-        this.exceptionExpenses.toString(),
-        8,
-        NUMBER_FILLER,
-      );
-      record.appendWithStartFiller(
-        this.totalFundedWeeks.toString(),
-        2,
-        NUMBER_FILLER,
-      );
-      record.repeatAppend(SPACE_FILLER, 3); //We have hardcoded the courseLoad to null as its only for FullTime.
-      record.append("F", 1); //This implementation is only for FullTime, so hardcoding it to F.
-      record.appendWithEndFiller(disbursement.coeStatus, 10, SPACE_FILLER);
-      record.appendWithEndFiller(
-        disbursement.disbursementScheduleStatus,
-        10,
-        SPACE_FILLER,
-      );
-      record.appendDate(disbursement.disbursementDate, DATE_FORMAT);
-      disbursement.dateSent
-        ? record.appendDate(disbursement.dateSent, DATE_FORMAT)
-        : record.repeatAppend(SPACE_FILLER, 8);
-      disbursement.disbursementValues.forEach(
-        (disbursementValue: DisbursementValue) => {
-          record.append(disbursementValue.valueCode, 4);
-          record.appendWithStartFiller(
-            round(disbursementValue.valueAmount),
-            8,
-            NUMBER_FILLER,
-          );
-        },
-      );
-      return record.toString();
-    });
-    return records.join(END_OF_LINE);
+    const record = new StringBuilder();
+    record.appendWithStartFiller(this.assessmentId, 10, NUMBER_FILLER);
+    record.appendWithStartFiller(this.disbursementId, 10, NUMBER_FILLER);
+    record.append(this.applicationNumber, 10);
+    record.appendWithEndFiller(this.institutionStudentNumber, 12, SPACE_FILLER);
+    record.append(this.sin, 9);
+    record.appendWithEndFiller(this.studentLastName, 25, SPACE_FILLER);
+    record.appendWithEndFiller(this.studentGivenName ?? "", 15, SPACE_FILLER);
+    record.appendDate(this.birthDate, DATE_FORMAT);
+    record.appendWithEndFiller(this.studentGroupCode, 4, SPACE_FILLER);
+    record.appendWithEndFiller(
+      this.studentMaritalStatusCode ?? "",
+      4,
+      SPACE_FILLER,
+    );
+    record.appendWithEndFiller(
+      this.studentDisabilityStatusCode ?? "",
+      4,
+      SPACE_FILLER,
+    );
+    record.appendWithEndFiller(
+      this.applicationDisabilityStatusFlag ?? "",
+      1,
+      SPACE_FILLER,
+    );
+    record.appendWithEndFiller(this.addressInfo.addressLine1, 25, SPACE_FILLER);
+    record.appendWithEndFiller(
+      this.addressInfo.addressLine2 ?? "",
+      25,
+      SPACE_FILLER,
+    );
+    record.appendWithEndFiller(this.addressInfo.city, 25, SPACE_FILLER);
+    record.appendWithEndFiller(this.addressInfo.provinceState, 4, SPACE_FILLER);
+    record.appendWithEndFiller(this.addressInfo.postalCode, 16, SPACE_FILLER);
+    record.appendWithEndFiller(this.programName, 25, SPACE_FILLER);
+    record.appendWithEndFiller(this.programDescription, 50, SPACE_FILLER);
+    record.appendWithEndFiller(this.credentialType, 25, SPACE_FILLER);
+    record.appendWithStartFiller(this.fieldOfStudyCode, 4, NUMBER_FILLER);
+    record.appendWithEndFiller(this.areaOfStudyCode ?? "", 4, SPACE_FILLER);
+    record.appendWithEndFiller(this.levelOfStudyCode ?? "", 4, SPACE_FILLER);
+    record.appendWithStartFiller(this.currentProgramYear, 2, NUMBER_FILLER);
+    record.append(this.cipCode, 6);
+    record.appendWithStartFiller(this.nocCode ?? "", 5, NUMBER_FILLER);
+    record.appendWithEndFiller(this.sabcCode ?? "", 4, SPACE_FILLER);
+    record.appendWithEndFiller(
+      this.institutionProgramCode ?? "",
+      25,
+      SPACE_FILLER,
+    );
+    record.append(this.programLength.toString(), 1);
+    record.appendDate(this.studyStartDate, DATE_FORMAT);
+    record.appendDate(this.studyEndDate, DATE_FORMAT);
+    record.appendWithStartFiller(this.tuitionFees.toString(), 8, NUMBER_FILLER);
+    record.appendWithStartFiller(
+      this.programRelatedCosts.toString(),
+      8,
+      NUMBER_FILLER,
+    );
+    record.appendWithStartFiller(
+      this.mandatoryFees.toString(),
+      8,
+      NUMBER_FILLER,
+    );
+    record.appendWithStartFiller(
+      this.exceptionExpenses.toString(),
+      8,
+      NUMBER_FILLER,
+    );
+    record.appendWithStartFiller(
+      this.totalFundedWeeks.toString(),
+      2,
+      NUMBER_FILLER,
+    );
+    record.repeatAppend(SPACE_FILLER, 3); //We have hardcoded the courseLoad to null as its only for FullTime.
+    record.append("F", 1); //This implementation is only for FullTime, so hardcoding it to F.
+    record.appendWithEndFiller(disbursement.coeStatus, 10, SPACE_FILLER);
+    record.appendWithEndFiller(
+      disbursement.disbursementScheduleStatus,
+      10,
+      SPACE_FILLER,
+    );
+    record.appendDate(disbursement.disbursementDate, DATE_FORMAT);
+    disbursement.dateSent
+      ? record.appendDate(disbursement.dateSent, DATE_FORMAT)
+      : record.repeatAppend(SPACE_FILLER, 8);
+    disbursement.disbursementValues.forEach(
+      (disbursementValue: DisbursementValue) => {
+        record.append(disbursementValue.valueCode, 4);
+        record.appendWithStartFiller(
+          round(disbursementValue.valueAmount),
+          8,
+          NUMBER_FILLER,
+        );
+      },
+    );
+    return record.toString();
   }
 }

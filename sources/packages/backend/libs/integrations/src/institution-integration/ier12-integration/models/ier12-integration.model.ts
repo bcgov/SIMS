@@ -50,9 +50,9 @@ export interface IER12Record {
   levelOfStudyCode?: string;
   currentProgramYear: number;
   cipCode: string;
-  nocCode?: string; // TODO: Dheepak String in DB.Check if NOC Code can be optional
-  sabcCode?: string; // TODO: Dheepak Check if SABC Code can be optional
-  institutionProgramCode?: string; // TODO: Dheepak Check if Institution program Code can be optional
+  nocCode?: string;
+  sabcCode?: string;
+  institutionProgramCode?: string;
   programLength: number;
   studyStartDate: Date;
   studyEndDate: Date;
@@ -178,7 +178,7 @@ export interface IER12Record {
   coeStatus: COEStatus;
   disbursementScheduleStatus: DisbursementScheduleStatus;
   earliestDateOfDisbursement: Date;
-  dateOfDisbursement: Date;
+  dateOfDisbursement?: Date;
   // Analysis pending for the field.
   disbursementExpiryDate?: Date;
   disbursementCancelDate: Date;

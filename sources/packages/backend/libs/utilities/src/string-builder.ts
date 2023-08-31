@@ -68,11 +68,19 @@ export class StringBuilder {
 
   /**
    * Appends a date in a specific format to the current content.
-   * @param date
-   * @param dateFormat
+   * @param date date to be formatted.
+   * @param dateFormat format.
    */
-  public appendDate(date: Date | string, dateFormat: string) {
-    this.append(dayjs(date).format(dateFormat));
+  public appendDate(
+    date: Date | string,
+    dateFormat: string,
+    options?: { dateFiller?: string },
+  ) {
+    const formattedDate =
+      !date && options?.dateFiller
+        ? "".padStart(dateFormat.length, options.dateFiller)
+        : dayjs(date).format(dateFormat);
+    this.append(formattedDate);
   }
 
   /**

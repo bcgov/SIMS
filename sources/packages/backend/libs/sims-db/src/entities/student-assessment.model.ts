@@ -317,8 +317,8 @@ export type Assessment = FullTimeAssessment | PartTimeAssessment;
  */
 export interface WorkflowData {
   studentData: {
-    dependantStatus: string;
-    relationshipStatus: string;
+    dependantStatus: "dependant" | "independant";
+    relationshipStatus: "single" | "married" | "other";
   };
   calculatedData: {
     parentalAssets: number;
