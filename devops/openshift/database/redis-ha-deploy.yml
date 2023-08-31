@@ -156,7 +156,8 @@ objects:
       selector:
         matchLabels:
           app: ${NAME}
-      minAvailable: 2
+      minAvailable: 6
+      maxUnavailable: 2
       disruptionsAllowed: 1
 parameters:
   - name: NAME

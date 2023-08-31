@@ -104,7 +104,8 @@ objects:
       selector:
         matchLabels:
           app: ${NAME}
-      minAvailable: 1
+      minAvailable: 2
+      maxUnavailable: 1
       disruptionsAllowed: 1
 parameters:
   - name: NAME
