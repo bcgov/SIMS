@@ -94,7 +94,7 @@ export class ApplicationOfferingChangeRequestStudentsController extends BaseCont
       );
     if (!applicationOfferingChangeRequestStatus) {
       throw new NotFoundException(
-        "Not able to get the Application Offering Change Request Status.",
+        "Application Offering Change Request not found.",
       );
     }
     return { status: applicationOfferingChangeRequestStatus };

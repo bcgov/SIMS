@@ -97,8 +97,9 @@ export class ApplicationOfferingChangeRequest extends RecordDataModel {
   @Column({
     name: "student_consent",
     type: "boolean",
+    nullable: true,
   })
-  studentConsent: boolean;
+  studentConsent?: boolean;
 
   /**
    * Ministry user that approved or denied the application specific offering request change.

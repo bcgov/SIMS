@@ -14,21 +14,21 @@ export class ApplicationOfferingChangeRequestControllerService {
 
   /**
    * Get the Application Offering Change Request by its id for the institution.
-   * @param id the Application Offering Change Request id.
+   * @param applicationOfferingChangeRequestId the Application Offering Change Request id.
    * @param options method options:
    * - `locationId`: location id for institution authorization.
    * @returns application offering change request.
    */
   async getApplicationOfferingChangeRequest(
     applicationOfferingChangeRequestId: number,
-    options?: {
-      locationId?: number;
+    options: {
+      locationId: number;
     },
   ): Promise<ApplicationOfferingChangesAPIOutDTO>;
 
   /**
    * Get the Application Offering Change Request by its id for the student.
-   * @param id the Application Offering Change Request id.
+   * @param applicationOfferingChangeRequestId the Application Offering Change Request id.
    * @param options method options:
    * - `studentId`: student id for student authorization.
    * - `applicationOfferingDetails`: boolean true indicates that only the required application offering details for the student are requested.
@@ -36,15 +36,15 @@ export class ApplicationOfferingChangeRequestControllerService {
    */
   async getApplicationOfferingChangeRequest(
     applicationOfferingChangeRequestId: number,
-    options?: {
-      studentId?: number;
-      applicationOfferingDetails?: boolean;
+    options: {
+      studentId: number;
+      applicationOfferingDetails: boolean;
     },
   ): Promise<ApplicationOfferingDetailsAPIOutDTO>;
 
   /**
    * Get the Application Offering Change Request by its id.
-   * @param id the Application Offering Change Request id.
+   * @param applicationOfferingChangeRequestId the Application Offering Change Request id.
    * @param options method options:
    * - `studentId`: student id for student authorization.
    * - `locationId`: location id for institution authorization.
@@ -53,7 +53,7 @@ export class ApplicationOfferingChangeRequestControllerService {
    */
   async getApplicationOfferingChangeRequest(
     applicationOfferingChangeRequestId: number,
-    options?: {
+    options: {
       studentId?: number;
       locationId?: number;
       applicationOfferingDetails?: boolean;

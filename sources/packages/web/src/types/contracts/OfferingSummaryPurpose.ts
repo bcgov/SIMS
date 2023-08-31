@@ -3,7 +3,7 @@
  */
 export enum OfferingSummaryPurpose {
   /**
-   * Purpose - Application Offering Change
+   * Purpose - Application Offering Change.
    */
   ApplicationOfferingChange = "application-offering-change",
 }

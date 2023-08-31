@@ -13,8 +13,10 @@
           institution to make proposed changes to your application (on your
           behalf).
         </p>
-        <content-group-info class="div-scroll"
-          ><h4 class="label-bold color-blue mb-5">StudentAid BC Declaration</h4>
+        <content-group-info
+          ><div class="mb-5">
+            <span class="label-bold color-blue">StudentAid BC Declaration</span>
+          </div>
           <title-value propertyTitle="StudentAid BC consent"
             ><template #value
               ><span
