@@ -236,35 +236,27 @@ export class IER12FileDetail implements IER12FileLine {
       25,
       SPACE_FILLER,
     );
-    record.append(this.programLength.toString(), 1);
+    record.append(this.programLength, 1);
     record.appendDate(this.studyStartDate, DATE_FORMAT);
     record.appendDate(this.studyEndDate, DATE_FORMAT);
-    record.appendWithStartFiller(this.tuitionFees.toString(), 8, NUMBER_FILLER);
-    record.appendWithStartFiller(
-      this.programRelatedCosts.toString(),
-      8,
-      NUMBER_FILLER,
-    );
-    record.appendWithStartFiller(
-      this.mandatoryFees.toString(),
-      8,
-      NUMBER_FILLER,
-    );
-    record.appendWithStartFiller(
-      this.exceptionExpenses.toString(),
-      8,
-      NUMBER_FILLER,
-    );
-    record.appendWithStartFiller(
-      this.totalFundedWeeks.toString(),
-      2,
-      NUMBER_FILLER,
-    );
-    record.repeatAppend(SPACE_FILLER, 3); //We have hardcoded the courseLoad to null as its only for FullTime.
-    record.append("F", 1); //This implementation is only for FullTime, so hardcoding it to F.
-    record.appendWithEndFiller(disbursement.coeStatus, 10, SPACE_FILLER);
+    record.appendWithStartFiller(this.tuitionFees, 8, NUMBER_FILLER);
+    record.appendWithStartFiller(this.booksAndSuppliesCost, 8, NUMBER_FILLER);
+    record.appendWithStartFiller(this.mandatoryFees, 8, NUMBER_FILLER);
+    record.appendWithStartFiller(this.exceptionExpenses, 8, NUMBER_FILLER);
+    record.appendWithStartFiller(this.totalFundedWeeks, 2, NUMBER_FILLER);
+    record.append(this.courseLoad, 3);
+    record.append(this.offeringIntensityIndicator, 1);
+    record.appendDate(this.applicationSubmittedDate, DATE_FORMAT);
+    record.append(this.programYear, 8);
+    record.append(this.applicationStatusCode, 8);
+    record.appendDate(this.applicationStatusDate, DATE_FORMAT);
+    record.appendWithStartFiller(this.cslAmount, 10, NUMBER_FILLER);
+    record.appendWithStartFiller(this.bcslAmount, 10, NUMBER_FILLER);
+    record.appendWithStartFiller(this.epAmount, 10, NUMBER_FILLER);
+
+    record.appendWithEndFiller(this.coeStatus, 10, SPACE_FILLER);
     record.appendWithEndFiller(
-      disbursement.disbursementScheduleStatus,
+      this.disbursementScheduleStatus,
       10,
       SPACE_FILLER,
     );

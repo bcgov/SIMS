@@ -11,13 +11,16 @@ export class StringBuilder {
 
   /**
    * Appends a string to the current content.
-   * @param s
+   * @param input input to append.
+   * @param maxLength maximum length to be considered from
+   * input.
    */
-  public append(s: string, maxLength?: number) {
-    if (maxLength && s.length > maxLength) {
-      s = s.substring(0, maxLength);
+  public append(input: string | number, maxLength?: number) {
+    let convertedString = input.toString();
+    if (maxLength && convertedString.length > maxLength) {
+      convertedString = convertedString.substring(0, maxLength);
     }
-    this.contents.push(s);
+    this.contents.push(convertedString);
   }
 
   /**
