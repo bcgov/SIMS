@@ -148,6 +148,16 @@ objects:
               requests:
                 storage: ${PVC_SIZE}
           storageClassName: ${STORAGE_CLASS}
+  - apiVersion: policy/v1
+    kind: PodDisruptionBudget
+    metadata:
+      name: ${NAME}-pdb
+    spec:
+      selector:
+        matchLabels:
+          app: ${NAME}
+      minAvailable: 2
+      disruptionsAllowed: 1
 parameters:
   - name: NAME
     description: The name of the application for labelling all artifacts.

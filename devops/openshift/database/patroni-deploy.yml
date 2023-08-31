@@ -182,6 +182,16 @@ objects:
         resources:
           requests:
             storage: ${PVC_SIZE}
+- apiVersion: policy/v1
+  kind: PodDisruptionBudget
+  metadata:
+    name: ${NAME}-pdb
+  spec:
+    selector:
+      matchLabels:
+        app: ${NAME}
+    minAvailable: 1
+    disruptionsAllowed: 1
 parameters:
 - name: NAME
   value: patroni

@@ -12,9 +12,6 @@ objects:
       name: ${NAME}
     spec:
       replicas: "${{REPLICAS}}"
-      disruptionBudget:
-        maxUnavailable: 0
-        minAvailable: "${{REPLICAS}}"
       revisionHistoryLimit: 10
       selector:
         deploymentconfig: ${NAME}
@@ -240,6 +237,16 @@ objects:
       minReplicas:  "${{REPLICAS}}"
       maxReplicas: 10
       targetCPUUtilizationPercentage: 80
+  - apiVersion: policy/v1
+    kind: PodDisruptionBudget
+    metadata:
+      name: ${NAME}-pdb
+    spec:
+      selector:
+        matchLabels:
+          app: ${NAME}
+      minAvailable: 1
+      disruptionsAllowed: 1
 parameters:
   - name: NAME
     required: true
@@ -254,15 +261,15 @@ parameters:
   - name: SERVICE_NAME
     value: api
   - name: CPU_LIMIT
-    value: "1.0"
+    value: "0.2"
   - name: MEMORY_LIMIT
-    value: "2000M"
+    value: "256M"
   - name: CPU_REQUEST
-    value: "0.5"
+    value: "0.1"
   - name: MEMORY_REQUEST
-    value: "1000M"
+    value: "128M"
   - name: REPLICAS
-    value: "1"
+    value: "2"
   - name: PORT
     required: true
   - name: DB_SERVICE
