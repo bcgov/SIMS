@@ -109,7 +109,7 @@ export class ApplicationOfferingChangeRequestStudentsController extends BaseCont
   @Patch(":applicationOfferingChangeRequestId")
   @ApiNotFoundResponse({
     description:
-      "The student does not have access to the application offering change request.",
+      "Application offering change not found or not in valid status to be updated.",
   })
   @ApiUnprocessableEntityResponse({
     description:
