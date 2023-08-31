@@ -66,31 +66,30 @@ export class AssessmentController {
       >
     >,
   ): Promise<MustReturnJobActionAcknowledgement> {
-    const jobLogger = new Logger(job.type);
+    const logger = new Logger(job.type);
     try {
       await this.studentAssessmentService.associateWorkflowInstance(
         job.variables.assessmentId,
         job.processInstanceKey,
       );
-      jobLogger.log("Associated the assessment id.");
+      logger.log("Associated the assessment id.");
       return job.complete();
     } catch (error: unknown) {
       if (error instanceof CustomNamedError) {
         switch (error.name) {
           case ASSESSMENT_ALREADY_ASSOCIATED_TO_WORKFLOW:
-            jobLogger.log(`${error.name} ${error.message}`);
+            logger.log(error.getSummaryMessage());
             return job.complete();
           case ASSESSMENT_NOT_FOUND:
-            jobLogger.error(`${error.name} ${error.message}`);
+            logger.error(error.getSummaryMessage());
             return job.error(error.name, error.message);
           case INVALID_OPERATION_IN_THE_CURRENT_STATUS:
           case ASSESSMENT_ALREADY_ASSOCIATED_WITH_DIFFERENT_WORKFLOW:
+            logger.error(error.getSummaryMessage());
             return job.cancelWorkflow();
         }
       }
-      return createUnexpectedJobFail(error, job, {
-        logger: jobLogger,
-      });
+      return createUnexpectedJobFail(error, job, { logger });
     }
   }
 

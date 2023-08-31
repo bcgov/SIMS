@@ -14,7 +14,7 @@ import {
   QueueProcessSummary,
   QueueProcessSummaryResult,
 } from "../models/processors.models";
-import { ApplicationStatus } from "@sims/sims-db";
+import { ApplicationStatus, StudentAssessmentStatus } from "@sims/sims-db";
 
 /**
  * Process the workflow cancellation.

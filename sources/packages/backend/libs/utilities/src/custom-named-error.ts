@@ -10,4 +10,22 @@ export class CustomNamedError extends Error {
     this.objectInfo = objectInfo;
   }
   readonly objectInfo: unknown;
+
+  /**
+   * Get a user friendly error message to be displayed
+   * in the format "Message (ERROR_CODE).".
+   * @returns user friendly error message.
+   */
+  getSummaryMessage() {
+    if (!this.message) {
+      // If message is not present just return the error name.
+      return this.name;
+    }
+    // Remove the sentence period, if present, to have the error name appended.
+    let message = this.message;
+    if (message.endsWith(".")) {
+      message = this.message.trim().slice(0, -1);
+    }
+    return `${message} (${this.name}).`;
+  }
 }

@@ -68,7 +68,7 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
         throw new CustomNamedError(
           `The assessment is not in any initial status that would allow the workflow association. Expected statuses: ${initialStatuses.join(
             ", ",
-          )}`,
+          )}.`,
           INVALID_OPERATION_IN_THE_CURRENT_STATUS,
         );
       }
