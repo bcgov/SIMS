@@ -190,7 +190,6 @@ objects:
     selector:
       matchLabels:
         app: ${NAME}
-    minAvailable: 3
     maxUnavailable: 1
 parameters:
 - name: NAME
