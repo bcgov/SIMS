@@ -1,6 +1,10 @@
 import { Injectable } from "@nestjs/common";
-import { RecordDataModelService, StudentAssessment } from "@sims/sims-db";
-import { DataSource } from "typeorm";
+import {
+  ApplicationStatus,
+  RecordDataModelService,
+  StudentAssessment,
+} from "@sims/sims-db";
+import { ArrayContains, DataSource } from "typeorm";
 import { addDays, dateEqualTo } from "@sims/utilities";
 
 /**
@@ -27,23 +31,48 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
     return this.repo.find({
       select: {
         id: true,
+        assessmentData: true as unknown,
+        workflowData: true as unknown,
+        assessmentDate: true,
         application: {
           applicationNumber: true,
+          data: true as unknown,
+          submittedDate: true,
+          applicationStatus: true,
+          applicationStatusUpdatedOn: true,
           student: {
             sinValidation: { sin: true },
             user: { lastName: true, firstName: true },
             birthDate: true,
+            contactInfo: true as unknown,
+            studentRestrictions: {
+              id: true,
+              isActive: true,
+              restriction: { id: true, restrictionCode: true },
+            },
           },
+          programYear: {
+            id: true,
+            programYear: true,
+          },
+          studentScholasticStandings: { id: true, changeType: true },
         },
         offering: {
+          id: true,
           educationProgram: {
             name: true,
             description: true,
             credentialType: true,
+            fieldOfStudyCode: true,
             cipCode: true,
             nocCode: true,
             sabcCode: true,
             institutionProgramCode: true,
+            completionYears: true,
+          },
+          institutionLocation: {
+            id: true,
+            institutionCode: true,
           },
           yearOfStudy: true,
           studyStartDate: true,
@@ -52,28 +81,55 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
           programRelatedCosts: true,
           mandatoryFees: true,
           exceptionalExpenses: true,
-          studyBreaks: { totalFundedWeeks: true },
         },
         disbursementSchedules: {
           id: true,
           coeStatus: true,
           disbursementScheduleStatus: true,
           disbursementDate: true,
-          dateSent: true,
-          disbursementValues: { id: true, valueCode: true, valueAmount: true },
+          updatedAt: true,
+          disbursementValues: {
+            id: true,
+            valueCode: true,
+            valueAmount: true,
+            valueType: true,
+          },
         },
       },
       relations: {
         disbursementSchedules: { disbursementValues: true },
-        application: { student: { sinValidation: true, user: true } },
+        application: {
+          student: {
+            sinValidation: true,
+            user: true,
+            studentRestrictions: { restriction: true },
+          },
+          studentScholasticStandings: true,
+          programYear: true,
+        },
         offering: { institutionLocation: true, educationProgram: true },
       },
       where: [
         {
+          // TODO: This condition must be replaced with assessment status as completed in both places.
+          application: {
+            applicationStatus: ArrayContains([
+              ApplicationStatus.Assessment,
+              ApplicationStatus.Enrolment,
+              ApplicationStatus.Completed,
+            ]),
+          },
           assessmentDate: dateEqualTo(processingDate),
           offering: { institutionLocation: { hasIntegration: true } },
         },
         {
+          application: {
+            applicationStatus: ArrayContains([
+              ApplicationStatus.Assessment,
+              ApplicationStatus.Enrolment,
+              ApplicationStatus.Completed,
+            ]),
+          },
           disbursementSchedules: { updatedAt: dateEqualTo(processingDate) },
           offering: { institutionLocation: { hasIntegration: true } },
         },

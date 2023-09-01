@@ -243,7 +243,7 @@ export class IER12ProcessingService {
         coeStatus: disbursement.coeStatus,
         disbursementScheduleStatus: disbursement.disbursementScheduleStatus,
         earliestDateOfDisbursement: new Date(disbursement.disbursementDate),
-        dateOfDisbursement: disbursementReceipt.disburseDate
+        dateOfDisbursement: disbursementReceipt?.disburseDate
           ? new Date(disbursementReceipt.disburseDate)
           : null,
         disbursementCancelDate:
@@ -299,7 +299,7 @@ export class IER12ProcessingService {
    * @returns
    */
   private checkActiveRestriction(
-    studentRestrictions?: StudentRestriction[],
+    studentRestrictions: StudentRestriction[],
     options?: { restrictionCode?: string },
   ) {
     if (!studentRestrictions || !studentRestrictions.length) {
