@@ -1,28 +1,22 @@
 import { Injectable } from "@nestjs/common";
 import {
-  ApplicationStatus,
+  DisbursementSchedule,
+  DisbursementScheduleStatus,
   DisbursementValue,
-  DisbursementValueType,
   StudentAssessment,
-  StudentScholasticStandingChangeType,
 } from "@sims/sims-db";
 import { LoggerService, InjectLogger } from "@sims/utilities/logger";
 import {
   ConfigService,
   InstitutionIntegrationConfig,
 } from "@sims/utilities/config";
-import {
-  combineDecimalPlaces,
-  getFileNameAsCurrentTimestamp,
-  getTotalYearsOfStudy,
-} from "@sims/utilities";
+import { getFileNameAsCurrentTimestamp } from "@sims/utilities";
 import { IER12IntegrationService } from "./ier12.integration.service";
 import {
-  ApplicationStatusCode,
   IER12Record,
   IER12UploadResult,
   IERAddressInfo,
-  YNFlag,
+  IERAward,
 } from "./models/ier12-integration.model";
 import {
   DisbursementReceiptService,
@@ -163,55 +157,10 @@ export class IER12ProcessingService {
     const address = student.contactInfo.address;
     const applicationProgramYear = application.programYear;
     const [scholasticStanding] = application.studentScholasticStandings;
-    const cslAmount = this.getSumOfAssessmentAwards(pendingAssessment, {
-      awardTypeInclusions: [DisbursementValueType.CanadaLoan],
-    });
-    const bcslAmount = this.getSumOfAssessmentAwards(pendingAssessment, {
-      awardTypeInclusions: [DisbursementValueType.BCLoan],
-    });
-    const epAmount = this.getSumOfAssessmentAwards(pendingAssessment, {
-      awardTypeExclusions: [
-        DisbursementValueType.CanadaLoan,
-        DisbursementValueType.BCLoan,
-        DisbursementValueType.BCTotalGrant,
-      ],
-    });
-    const studentGroupCode =
-      pendingAssessment.workflowData.studentData.dependantStatus === "dependant"
-        ? "A"
-        : "B";
-    const cipCode = educationProgram.cipCode.replace(".", "");
-    const programLength = getTotalYearsOfStudy(
-      educationProgram.completionYears,
+    const assessmentAwards = this.getAssessmentAwards(
+      pendingAssessment.disbursementSchedules,
     );
-    const tuitionFees = combineDecimalPlaces(offering.actualTuitionCosts);
-    const booksAndSuppliesCost = combineDecimalPlaces(
-      offering.programRelatedCosts,
-    );
-    const mandatoryFees = combineDecimalPlaces(offering.mandatoryFees);
-    const exceptionExpenses = combineDecimalPlaces(
-      offering.exceptionalExpenses,
-    );
-    const programYear = applicationProgramYear.programYear.replace("-", "");
-    const applicationStatusCode = this.getApplicationStatusCode(
-      application.applicationStatus,
-    );
-    const scholasticStandingEffectiveDate = scholasticStanding
-      ? this.getScholasticStandingEffectiveDate(
-          scholasticStanding.changeType,
-          new Date(offering.studyEndDate),
-        )
-      : null;
-    const withdrawalDate =
-      scholasticStanding?.changeType ===
-      StudentScholasticStandingChangeType.StudentWithdrewFromProgram
-        ? new Date(offering.studyEndDate)
-        : null;
-    const parentalAssets = combineDecimalPlaces(
-      pendingAssessment.workflowData.calculatedData.parentalAssets ?? 0,
-    );
-    // TODO: Mapping has been done based on the first analysis of IER12.
-    // Mapping needs to be updated when the complete analysis is done.
+
     const disbursementSchedules = pendingAssessment.disbursementSchedules;
     const addressInfo: IERAddressInfo = {
       addressLine1: address.addressLine1,
@@ -234,52 +183,55 @@ export class IER12ProcessingService {
         sin: sinValidation.sin,
         studentLastName: user.lastName,
         studentGivenName: user.firstName,
-        birthDate: new Date(student.birthDate),
-        studentGroupCode,
+        studentBirthDate: new Date(student.birthDate),
+        dependantStatus:
+          pendingAssessment.workflowData.studentData.dependantStatus,
         addressInfo,
         programName: educationProgram.name,
         programDescription: educationProgram.description,
         credentialType: educationProgram.credentialType,
         fieldOfStudyCode: educationProgram.fieldOfStudyCode,
         currentProgramYear: offering.yearOfStudy,
-        cipCode,
+        cipCode: educationProgram.cipCode,
         nocCode: educationProgram.nocCode,
         sabcCode: educationProgram.sabcCode,
         institutionProgramCode: educationProgram.institutionProgramCode,
-        programLength,
+        programCompletionYears: educationProgram.completionYears,
         studyStartDate: new Date(offering.studyStartDate),
         studyEndDate: new Date(offering.studyEndDate),
-        tuitionFees,
-        booksAndSuppliesCost,
-        mandatoryFees,
-        exceptionExpenses,
+        tuitionFees: offering.actualTuitionCosts,
+        booksAndSuppliesCost: offering.programRelatedCosts,
+        mandatoryFees: offering.mandatoryFees,
+        exceptionExpenses: offering.exceptionalExpenses,
         totalFundedWeeks: pendingAssessment.assessmentData.weeks,
-        courseLoad: 100, // Hard coded as IER12 currently includes full time applications only.
-        offeringIntensityIndicator: "F", // Hard coded as IER12 currently includes full time applications only.
         applicationSubmittedDate: application.submittedDate,
-        programYear,
-        applicationStatusCode,
+        programYear: applicationProgramYear.programYear,
+        applicationStatus: application.applicationStatus,
         applicationStatusDate: application.applicationStatusUpdatedOn,
-        cslAmount,
-        bcslAmount,
-        epAmount,
-        provincialDefaultFlag: YNFlag.N, // TODO: Dheepak reference the util.
-        provincialOverawardFlag: YNFlag.N, // TODO: Dheepak reference the util.
-        federalOverawardFlag: YNFlag.N, // TODO: Dheepak reference the util.
-        restrictionFlag: YNFlag.N, // TODO: Dheepak reference the util.
-        scholasticStandingEffectiveDate,
+        assessmentAwards,
+        hasProvincialDefaultRestriction: false, // TODO: Dheepak reference the util.
+        hasProvincialOveraward: false, // TODO: Dheepak reference the util.
+        hasFederalOveraward: false, // TODO: Dheepak reference the util.
+        hasRestriction: false, // TODO: Dheepak reference the util.
+        scholasticStandingChangeType: scholasticStanding?.changeType,
         assessmentDate: pendingAssessment.assessmentDate,
-        withdrawalDate,
-        partnerFlag: YNFlag.N, // TODO: Dheepak reference the util.
-        parentalAssets,
+        hasPartner: false, // TODO: Dheepak reference the util.
+        parentalAssets:
+          pendingAssessment.workflowData.calculatedData.parentalAssets,
         coeStatus: disbursement.coeStatus,
         disbursementScheduleStatus: disbursement.disbursementScheduleStatus,
         earliestDateOfDisbursement: new Date(disbursement.disbursementDate),
         dateOfDisbursement: disbursementReceipt.disburseDate
           ? new Date(disbursementReceipt.disburseDate)
           : null,
-        disbursementCancelDate: disbursement.updatedAt,
-        fundingDetails: this.getFundingDetails(disbursement.disbursementValues),
+        disbursementCancelDate:
+          disbursement.disbursementScheduleStatus ===
+          DisbursementScheduleStatus.Cancelled
+            ? disbursement.updatedAt
+            : null,
+        disbursementAwards: this.getDisbursementAwards(
+          disbursement.disbursementValues,
+        ),
       };
       ier12Records.push(ier12Record);
     }
@@ -287,105 +239,35 @@ export class IER12ProcessingService {
   }
 
   /**
-   * Identifies the given types of scholastic standing changes and
-   * returns the effective date which is study period end date of the
-   * offering which is created as a result of scholastic standing change.
-   * The change types `Student did not complete program` and `Student withdrew from program`
-   * are ignored.
-   * @param scholasticStandingChangeType scholastic standing change type.
-   * @param studyEndDate study end date.
-   * @returns scholastic standing effective date.
-   */
-  private getScholasticStandingEffectiveDate(
-    scholasticStandingChangeType: StudentScholasticStandingChangeType,
-    studyEndDate: Date,
-  ): Date | null {
-    if (
-      scholasticStandingChangeType ===
-        StudentScholasticStandingChangeType.StudentCompletedProgramEarly ||
-      scholasticStandingChangeType ===
-        StudentScholasticStandingChangeType.ChangeInIntensity
-    ) {
-      return studyEndDate;
-    }
-    return null;
-  }
-
-  /**
-   * Get application status code based on application status.
-   * @param applicationStatus application status.
-   * @returns application status code.
-   */
-  private getApplicationStatusCode(
-    applicationStatus: ApplicationStatus,
-  ): ApplicationStatusCode {
-    switch (applicationStatus) {
-      case ApplicationStatus.Submitted:
-        return ApplicationStatusCode.Submitted;
-      case ApplicationStatus.InProgress:
-        return ApplicationStatusCode.InProgress;
-      case ApplicationStatus.Assessment:
-        return ApplicationStatusCode.Assessment;
-      case ApplicationStatus.Enrolment:
-        return ApplicationStatusCode.Enrolment;
-      case ApplicationStatus.Completed:
-        return ApplicationStatusCode.Completed;
-      case ApplicationStatus.Cancelled:
-        return ApplicationStatusCode.Cancelled;
-    }
-  }
-
-  /**
-   * Get funding type and funding amount in a key value format.
-   * last 2 digits in funding amount holds the decimal value.
-   * e.g. `{"CSLF":100000,"BCSL":150000}` which represents `{"CSLF":1000.00,"BCSL":1500.00}`
+   * Get all disbursement award details for IER.
    * @param disbursementValues disbursement values.
-   * @returns funding details.
+   * @returns award details.
    */
-  private getFundingDetails(
+  private getDisbursementAwards(
     disbursementValues: DisbursementValue[],
-  ): Record<string, number> {
-    const fundingDetails: Record<string, number> = {};
-    disbursementValues.forEach((disbursementValue) => {
-      fundingDetails[disbursementValue.valueCode] = combineDecimalPlaces(
-        disbursementValue.valueAmount,
-      );
-    });
-    return fundingDetails;
+  ): IERAward[] {
+    return disbursementValues.map<IERAward>((disbursementValue) => ({
+      valueType: disbursementValue.valueType,
+      valueCode: disbursementValue.valueCode,
+      valueAmount: disbursementValue.valueAmount,
+    }));
   }
 
   /**
-   * Get the sum of all awards which belong to the disbursements in a single assessment.
-   * @param disbursements disbursements of a given assessment.
-   * @param awardType award type.
-   * @returns sum of awards.
+   * Get all disbursement award details for IER of all disbursements that belong
+   * to a given assessment.
+   * @param disbursementSchedules disbursement schedules.
+   * @returns assessment award details.
    */
-  private getSumOfAssessmentAwards(
-    assessment: StudentAssessment,
-    options?: {
-      awardTypeInclusions?: DisbursementValueType[];
-      awardTypeExclusions?: DisbursementValueType[];
-    },
-  ): number {
-    let totalAwardsAmount = 0;
-    assessment.disbursementSchedules.forEach((disbursement) => {
-      const disbursementAwardsAmount = disbursement.disbursementValues
-        .filter(
-          (disbursementValue) =>
-            (!options?.awardTypeInclusions?.length ||
-              options.awardTypeInclusions.includes(
-                disbursementValue.valueType,
-              )) &&
-            (!options?.awardTypeExclusions?.length ||
-              !options.awardTypeExclusions.includes(
-                disbursementValue.valueType,
-              )),
-        )
-        .map((disbursementValue) => disbursementValue.valueAmount)
-        .reduce((accumulator, currentValue) => accumulator + currentValue);
-      totalAwardsAmount += disbursementAwardsAmount;
-    });
-    return totalAwardsAmount;
+  private getAssessmentAwards(disbursementSchedules: DisbursementSchedule[]) {
+    const assessmentAwards: IERAward[] = [];
+    for (const disbursement of disbursementSchedules) {
+      const disbursementAwards = this.getDisbursementAwards(
+        disbursement.disbursementValues,
+      );
+      assessmentAwards.push(...disbursementAwards);
+    }
+    return assessmentAwards;
   }
 
   @InjectLogger()

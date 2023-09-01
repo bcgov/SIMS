@@ -1,10 +1,5 @@
-import {
-  COEStatus,
-  DisbursementSchedule,
-  DisbursementScheduleStatus,
-  DisbursementValue,
-} from "@sims/sims-db";
-import { END_OF_LINE, round, StringBuilder } from "@sims/utilities";
+import { COEStatus, DisbursementScheduleStatus } from "@sims/sims-db";
+import { StringBuilder } from "@sims/utilities";
 import {
   ApplicationStatusCode,
   DATE_FORMAT,
@@ -14,11 +9,14 @@ import {
   SPACE_FILLER,
   YNFlag,
 } from "./models/ier12-integration.model";
+import { FullTimeAwardTypes } from "@sims/integrations/models";
 
 /**
  * Record of a IER12 file.
  * The documentation about it is available on the document
  * 'SIMSSFAS - Institution File layouts In Analysis Folder'.
+ * TODO:All the fields which are pending for the analysis are marked as optional.
+ * During the implementation once after analysis is complete, please evaluate if the field is still optional.
  */
 export class IER12FileDetail implements IER12FileLine {
   assessmentId: number;
@@ -28,7 +26,7 @@ export class IER12FileDetail implements IER12FileLine {
   sin: string;
   studentLastName: string;
   studentGivenName?: string;
-  birthDate: Date;
+  studentBirthDate: Date;
   studentGroupCode: "A" | "B";
   // Analysis pending for the field.
   studentMaritalStatusCode?: string;
@@ -103,7 +101,7 @@ export class IER12FileDetail implements IER12FileLine {
   // Analysis pending for the field.
   parent2Flag?: YNFlag;
   partnerFlag: YNFlag;
-  parentalAssets: number;
+  parentalAssets?: number;
   // Analysis pending for the field.
   parentalAssetsExpectedContribution?: number;
   // Analysis pending for the field.
@@ -195,7 +193,7 @@ export class IER12FileDetail implements IER12FileLine {
     record.append(this.sin, 9);
     record.appendWithEndFiller(this.studentLastName, 25, SPACE_FILLER);
     record.appendWithEndFiller(this.studentGivenName ?? "", 15, SPACE_FILLER);
-    record.appendDate(this.birthDate, DATE_FORMAT);
+    record.appendDate(this.studentBirthDate, DATE_FORMAT);
     record.appendWithEndFiller(this.studentGroupCode, 4, SPACE_FILLER);
     record.appendWithEndFiller(
       this.studentMaritalStatusCode ?? "",
@@ -253,26 +251,268 @@ export class IER12FileDetail implements IER12FileLine {
     record.appendWithStartFiller(this.cslAmount, 10, NUMBER_FILLER);
     record.appendWithStartFiller(this.bcslAmount, 10, NUMBER_FILLER);
     record.appendWithStartFiller(this.epAmount, 10, NUMBER_FILLER);
-
+    record.append(this.provincialDefaultFlag, 1);
+    record.append(this.federalDefaultFlag ?? SPACE_FILLER, 1);
+    record.append(this.provincialOverawardFlag, 1);
+    record.append(this.federalOverawardFlag, 1);
+    record.append(this.restrictionFlag, 1);
+    record.appendDate(this.scholasticStandingEffectiveDate, DATE_FORMAT, {
+      dateFiller: SPACE_FILLER,
+    });
+    record.appendWithEndFiller(this.scholasticStandingCode, 4, SPACE_FILLER);
+    record.appendDate(this.assessmentDate, DATE_FORMAT);
+    record.appendDate(this.withdrawalDate, DATE_FORMAT, {
+      dateFiller: SPACE_FILLER,
+    });
+    record.appendWithStartFiller(
+      this.applicantAndPartnerExpectedContribution ?? 0,
+      10,
+      NUMBER_FILLER,
+    );
+    record.appendWithStartFiller(
+      this.parentExpectedContribution ?? 0,
+      10,
+      NUMBER_FILLER,
+    );
+    record.appendWithStartFiller(
+      this.totalExpectedContribution ?? 0,
+      10,
+      NUMBER_FILLER,
+    );
+    record.appendWithStartFiller(
+      this.dependantChildQuantity ?? 0,
+      3,
+      NUMBER_FILLER,
+    );
+    record.appendWithStartFiller(
+      this.dependantChildInDaycareQuantity ?? 0,
+      3,
+      NUMBER_FILLER,
+    );
+    record.appendWithStartFiller(
+      this.dependentInfantQuantity ?? 0,
+      3,
+      NUMBER_FILLER,
+    );
+    record.appendWithStartFiller(
+      this.dependantOtherQuantity ?? 0,
+      3,
+      NUMBER_FILLER,
+    );
+    record.appendWithStartFiller(
+      this.dependantPostSecondaryQuantity ?? 0,
+      3,
+      NUMBER_FILLER,
+    );
+    record.appendWithStartFiller(
+      this.totalDependantQuantity ?? 0,
+      3,
+      NUMBER_FILLER,
+    );
+    record.appendWithStartFiller(
+      this.familyMembersQuantity ?? 0,
+      3,
+      NUMBER_FILLER,
+    );
+    record.append(this.parent1Flag ?? SPACE_FILLER, 1);
+    record.append(this.parent2Flag ?? SPACE_FILLER, 1);
+    record.append(this.partnerFlag, 1);
+    record.appendWithStartFiller(this.parentalAssets ?? 0, 10, NUMBER_FILLER);
+    record.appendWithStartFiller(
+      this.parentalAssetsExpectedContribution ?? 0,
+      10,
+      NUMBER_FILLER,
+    );
+    record.appendWithStartFiller(
+      this.parentalIncomeExpectedContribution ?? 0,
+      10,
+      NUMBER_FILLER,
+    );
+    record.appendWithStartFiller(
+      this.parentalVoluntaryContribution ?? 0,
+      10,
+      NUMBER_FILLER,
+    );
+    record.appendWithStartFiller(
+      this.parentalDiscretionaryIncome ?? 0,
+      10,
+      NUMBER_FILLER,
+    );
+    record.appendWithStartFiller(
+      this.parentalDiscretionaryAnnualIncomeFormulaResult ?? 0,
+      10,
+      NUMBER_FILLER,
+    );
+    record.append(this.studentLivingAtHomeFlag ?? SPACE_FILLER, 1);
+    record.append(this.partnerInSchoolFlag ?? SPACE_FILLER, 1);
+    record.appendWithStartFiller(
+      this.otherEducationalExpenses ?? 0,
+      10,
+      NUMBER_FILLER,
+    );
+    record.appendWithStartFiller(
+      this.totalEducationalExpenses ?? 0,
+      10,
+      NUMBER_FILLER,
+    );
+    record.appendWithStartFiller(
+      this.extraLocalTransportationCosts ?? 0,
+      10,
+      NUMBER_FILLER,
+    );
+    record.appendWithStartFiller(
+      this.extraShelterCosts ?? 0,
+      10,
+      NUMBER_FILLER,
+    );
+    record.appendWithStartFiller(
+      this.dependantLivingAllowance ?? 0,
+      10,
+      NUMBER_FILLER,
+    );
+    record.appendWithStartFiller(
+      this.studentLivingAllowance ?? 0,
+      10,
+      NUMBER_FILLER,
+    );
+    record.appendWithStartFiller(
+      this.totalLivingAllowance ?? 0,
+      10,
+      NUMBER_FILLER,
+    );
+    record.appendWithStartFiller(this.alimonyCosts ?? 0, 10, NUMBER_FILLER);
+    record.appendWithStartFiller(
+      this.otherDiscretionaryCosts ?? 0,
+      10,
+      NUMBER_FILLER,
+    );
+    record.appendWithStartFiller(
+      this.returnTransportationCosts ?? 0,
+      10,
+      NUMBER_FILLER,
+    );
+    record.appendWithStartFiller(
+      this.partnerStudentLoanPaymentCosts ?? 0,
+      10,
+      NUMBER_FILLER,
+    );
+    record.appendWithStartFiller(this.childcareCosts ?? 0, 10, NUMBER_FILLER);
+    record.appendWithStartFiller(
+      this.totalNonEducationalCosts ?? 0,
+      10,
+      NUMBER_FILLER,
+    );
+    record.appendWithStartFiller(this.totalExpenses ?? 0, 10, NUMBER_FILLER);
+    record.appendWithStartFiller(this.assessedNeed ?? 0, 10, NUMBER_FILLER);
+    record.appendWithStartFiller(
+      this.studentEligibleAward ?? 0,
+      10,
+      NUMBER_FILLER,
+    );
+    record.append(this.mssAssessedNeedFlag ?? SPACE_FILLER, 1);
+    record.appendWithStartFiller(this.mssAssessedNeed ?? 0, 10, NUMBER_FILLER);
+    record.appendWithStartFiller(
+      this.mssAssessedNeedNormalOrAppeal ?? 0,
+      10,
+      NUMBER_FILLER,
+    );
+    record.appendWithStartFiller(
+      this.mssChildcareCosts ?? 0,
+      10,
+      NUMBER_FILLER,
+    );
+    record.appendWithStartFiller(
+      this.mssTuitionAndSupplies ?? 0,
+      10,
+      NUMBER_FILLER,
+    );
+    record.appendWithStartFiller(
+      this.mssMiscCostsAllowance ?? 0,
+      10,
+      NUMBER_FILLER,
+    );
+    record.appendWithStartFiller(
+      this.mssTransportCostsAllowance ?? 0,
+      10,
+      NUMBER_FILLER,
+    );
+    record.appendWithStartFiller(
+      this.mssExtraTransportCosts ?? 0,
+      10,
+      NUMBER_FILLER,
+    );
+    record.appendWithStartFiller(
+      this.applicationEventCode ?? "",
+      4,
+      SPACE_FILLER,
+    );
+    record.appendDate(this.applicationEventDate, DATE_FORMAT, {
+      dateFiller: SPACE_FILLER,
+    });
+    record.appendDate(this.documentProducedDate, DATE_FORMAT, {
+      dateFiller: SPACE_FILLER,
+    });
     record.appendWithEndFiller(this.coeStatus, 10, SPACE_FILLER);
     record.appendWithEndFiller(
       this.disbursementScheduleStatus,
       10,
       SPACE_FILLER,
     );
-    record.appendDate(disbursement.disbursementDate, DATE_FORMAT);
-    disbursement.dateSent
-      ? record.appendDate(disbursement.dateSent, DATE_FORMAT)
-      : record.repeatAppend(SPACE_FILLER, 8);
-    disbursement.disbursementValues.forEach(
-      (disbursementValue: DisbursementValue) => {
-        record.append(disbursementValue.valueCode, 4);
-        record.appendWithStartFiller(
-          round(disbursementValue.valueAmount),
-          8,
-          NUMBER_FILLER,
-        );
-      },
+    record.appendDate(this.earliestDateOfDisbursement, DATE_FORMAT);
+    record.appendDate(this.dateOfDisbursement, DATE_FORMAT, {
+      dateFiller: SPACE_FILLER,
+    });
+    record.appendDate(this.disbursementExpiryDate, DATE_FORMAT, {
+      dateFiller: SPACE_FILLER,
+    });
+    record.appendDate(this.disbursementCancelDate, DATE_FORMAT, {
+      dateFiller: SPACE_FILLER,
+    });
+
+    record.appendWithStartFiller(
+      this.fundingDetails[FullTimeAwardTypes.CSLF] ?? 0,
+      10,
+      NUMBER_FILLER,
+    );
+    record.appendWithStartFiller(
+      this.fundingDetails[FullTimeAwardTypes.BCSL] ?? 0,
+      10,
+      NUMBER_FILLER,
+    );
+    record.appendWithStartFiller(
+      this.fundingDetails[FullTimeAwardTypes.CSGP] ?? 0,
+      10,
+      NUMBER_FILLER,
+    );
+    record.appendWithStartFiller(
+      this.fundingDetails[FullTimeAwardTypes.CSGD] ?? 0,
+      10,
+      NUMBER_FILLER,
+    );
+    record.appendWithStartFiller(
+      this.fundingDetails[FullTimeAwardTypes.CSGF] ?? 0,
+      10,
+      NUMBER_FILLER,
+    );
+    record.appendWithStartFiller(
+      this.fundingDetails[FullTimeAwardTypes.CSGT] ?? 0,
+      10,
+      NUMBER_FILLER,
+    );
+    record.appendWithStartFiller(
+      this.fundingDetails[FullTimeAwardTypes.BCAG] ?? 0,
+      10,
+      NUMBER_FILLER,
+    );
+    record.appendWithStartFiller(
+      this.fundingDetails[FullTimeAwardTypes.SBSD] ?? 0,
+      10,
+      NUMBER_FILLER,
+    );
+    record.appendWithStartFiller(
+      this.fundingDetails[FullTimeAwardTypes.BGPD] ?? 0,
+      10,
+      NUMBER_FILLER,
     );
     return record.toString();
   }
