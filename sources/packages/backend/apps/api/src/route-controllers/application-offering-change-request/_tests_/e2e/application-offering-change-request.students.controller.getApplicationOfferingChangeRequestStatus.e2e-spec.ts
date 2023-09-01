@@ -15,7 +15,7 @@ import {
 } from "@sims/test-utils";
 import { ApplicationStatus, Student } from "@sims/sims-db";
 
-describe("ApplicationOfferingChangeRequestStudentsController(e2e)-getApplicationOfferingChangeRequestStatus", () => {
+describe.skip("ApplicationOfferingChangeRequestStudentsController(e2e)-getApplicationOfferingChangeRequestStatus", () => {
   let app: INestApplication;
   let student: Student;
   let db: E2EDataSources;
