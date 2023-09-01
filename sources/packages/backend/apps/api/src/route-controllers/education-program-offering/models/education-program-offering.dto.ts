@@ -232,6 +232,16 @@ export class OfferingBulkInsertValidationResultAPIOutDTO {
 }
 
 /**
+ * Indicates the offering summary purpose.
+ */
+export enum OfferingSummaryPurpose {
+  /**
+   * Purpose - Application Offering Change.
+   */
+  ApplicationOfferingChange = "application-offering-change",
+}
+
+/**
  * Represents an error considered not critical for
  * an offering and provides a user-friendly message
  * and a type that uniquely identifies this warning

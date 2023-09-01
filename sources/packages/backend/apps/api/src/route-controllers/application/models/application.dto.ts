@@ -175,5 +175,6 @@ export class CompletedApplicationDetailsAPIOutDTO extends EnrolmentApplicationDe
   assessmentTriggerType: AssessmentTriggerType;
   appealStatus?: StudentAppealStatus;
   scholasticStandingChangeType?: StudentScholasticStandingChangeType;
+  applicationOfferingChangeRequestId?: number;
   applicationOfferingChangeRequestStatus?: ApplicationOfferingChangeRequestStatus;
 }

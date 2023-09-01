@@ -9,7 +9,10 @@
       >
       </body-header>
       <content-group class="mt-4">
-        <toggle-content :toggled="!requestedAssessment.length">
+        <toggle-content
+          :toggled="!requestedAssessment.length"
+          message="No requests found."
+        >
           <DataTable
             :value="requestedAssessment"
             :paginator="true"
@@ -64,6 +67,7 @@ import {
 export default defineComponent({
   emits: [
     "viewStudentAppeal",
+    "viewStudentApplicationOfferingChange",
     "viewApplicationException",
     "viewOfferingRequest",
   ],
@@ -101,6 +105,9 @@ export default defineComponent({
       switch (data.requestType) {
         case RequestAssessmentTypeAPIOutDTO.StudentAppeal:
           context.emit("viewStudentAppeal", data.id);
+          break;
+        case RequestAssessmentTypeAPIOutDTO.ApplicationOfferingChangeRequest:
+          context.emit("viewStudentApplicationOfferingChange", data.id);
           break;
         case RequestAssessmentTypeAPIOutDTO.StudentException:
           context.emit("viewApplicationException", data.id);

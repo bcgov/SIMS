@@ -8,6 +8,7 @@ export const mutations: MutationTree<StudentState> = {
     const formatters = useFormatters();
     state.sinValidStatus = formatters.parseSINValidStatus(student.validSin);
     state.firstName = student.firstName;
+    state.fullName = student.fullName;
   },
 
   setHasStudentAccount(state: StudentState, hasStudentAccount: boolean) {

@@ -92,6 +92,16 @@ export class ApplicationOfferingChangeRequest extends RecordDataModel {
   assessedDate?: Date;
 
   /**
+   * Student consent to the application offering change request.
+   */
+  @Column({
+    name: "student_consent",
+    type: "boolean",
+    nullable: true,
+  })
+  studentConsent?: boolean;
+
+  /**
    * Ministry user that approved or denied the application specific offering request change.
    */
   @ManyToOne(() => User, { eager: false, cascade: false })

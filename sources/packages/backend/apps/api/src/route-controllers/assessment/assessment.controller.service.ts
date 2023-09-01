@@ -307,6 +307,8 @@ export class AssessmentControllerService {
         offeringId: assessment.offering.id,
         programId: assessment.offering.educationProgram.id,
         studentAppealId: assessment.studentAppeal?.id,
+        applicationOfferingChangeRequestId:
+          assessment.applicationOfferingChangeRequest?.id,
         applicationExceptionId: assessment.application.applicationException?.id,
         studentScholasticStandingId: assessment.studentScholasticStanding?.id,
       }),

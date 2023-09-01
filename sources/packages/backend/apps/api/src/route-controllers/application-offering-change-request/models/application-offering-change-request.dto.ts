@@ -4,11 +4,14 @@ import {
   REASON_MAX_LENGTH,
 } from "@sims/sims-db";
 import {
+  IsBoolean,
+  IsEnum,
   IsIn,
   IsNotEmpty,
   IsOptional,
   IsPositive,
   MaxLength,
+  ValidateIf,
 } from "class-validator";
 import { PaginationOptionsAPIInDTO } from "../../models/pagination.dto";
 
@@ -106,6 +109,22 @@ export class ApplicationOfferingChangesAPIOutDTO {
   studentFullName: string;
 }
 
+export class ApplicationOfferingDetailsAPIOutDTO {
+  applicationNumber: string;
+  locationName: string;
+  status: ApplicationOfferingChangeRequestStatus;
+  requestedOfferingId: number;
+  activeOfferingId: number;
+  reason: string;
+}
+
+/**
+ * Application Offering Change Request Status.
+ */
+export class ApplicationOfferingChangeRequestStatusAPIOutDTO {
+  status: ApplicationOfferingChangeRequestStatus;
+}
+
 /**
  * Information provided by the institution to create a new Application Offering Change Request.
  */
@@ -117,6 +136,21 @@ export class CreateApplicationOfferingChangeRequestAPIInDTO {
   @IsNotEmpty()
   @MaxLength(REASON_MAX_LENGTH)
   reason: string;
+}
+
+/**
+ * Details to update the application offering change request by student.
+ */
+export class StudentApplicationOfferingChangeRequestAPIInDTO {
+  @IsBoolean()
+  @ValidateIf(
+    (value: StudentApplicationOfferingChangeRequestAPIInDTO) =>
+      value.applicationOfferingChangeRequestStatus ===
+      ApplicationOfferingChangeRequestStatus.InProgressWithSABC,
+  )
+  studentConsent: boolean;
+  @IsEnum(ApplicationOfferingChangeRequestStatus)
+  applicationOfferingChangeRequestStatus: ApplicationOfferingChangeRequestStatus;
 }
 
 /**

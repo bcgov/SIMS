@@ -16,7 +16,11 @@
     <hr class="horizontal-divider" />
     <h2 class="category-header-large primary-color">Application Details</h2>
     <p>Review the active program and offering details below.</p>
-    <offering-view :offeringId="offeringId" :locationId="locationId" />
+    <offering-view
+      :offeringId="offeringId"
+      :locationId="locationId"
+      :studyCostAccess="true"
+    />
     <hr class="horizontal-divider" />
     <h2 class="category-header-large primary-color">Request details</h2>
     <p>

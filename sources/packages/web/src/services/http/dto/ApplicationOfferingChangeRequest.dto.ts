@@ -73,10 +73,37 @@ export interface ApplicationOfferingChangesAPIOutDTO {
 }
 
 /**
+ * Application Offering Change Request details for student view.
+ */
+export interface ApplicationOfferingDetailsAPIOutDTO {
+  applicationNumber: string;
+  locationName: string;
+  status: ApplicationOfferingChangeRequestStatus;
+  requestedOfferingId: number;
+  activeOfferingId: number;
+  reason: string;
+}
+
+/**
+ * Application Offering Change Request Status.
+ */
+export class ApplicationOfferingChangeRequestStatusAPIOutDTO {
+  status: ApplicationOfferingChangeRequestStatus;
+}
+
+/**
  * Information provided by the institution to create a new Application Offering Change Request.
  */
 export interface CreateApplicationOfferingChangeRequestAPIInDTO {
   applicationId: number;
   offeringId: number;
   reason: string;
+}
+
+/**
+ * Information to update the application offering change request by student.
+ */
+export interface StudentApplicationOfferingChangeRequestAPIInDTO {
+  studentConsent: boolean;
+  applicationOfferingChangeRequestStatus: ApplicationOfferingChangeRequestStatus;
 }

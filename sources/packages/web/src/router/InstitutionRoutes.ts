@@ -762,11 +762,6 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
                   name: InstitutionRoutesConst.INSTITUTION_DASHBOARD,
                 });
                 break;
-              case AuthStatus.ForbiddenUser:
-                next({
-                  name: SharedRouteConst.FORBIDDEN_USER,
-                });
-                break;
               default: {
                 next({
                   name: SharedRouteConst.FORBIDDEN_USER,
