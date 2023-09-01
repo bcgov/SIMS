@@ -47,12 +47,14 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
         where: { id: assessmentId },
         lock: { mode: "pessimistic_write" },
       });
+
       if (!assessment) {
         throw new CustomNamedError(
           "Assessment id was not found.",
           ASSESSMENT_NOT_FOUND,
         );
       }
+
       // Check if the assessment is in one of the initial statuses. Any status different than "Submitted" and "Queued" should
       // cancel the workflow because there is no point executing it.
       // A workflow in these statuses can be associated and updated to "In progress" nicely. The expectation is that it would
@@ -72,29 +74,31 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
           INVALID_OPERATION_IN_THE_CURRENT_STATUS,
         );
       }
-      if (!assessment.assessmentWorkflowId) {
-        // Assessment is available to be associated with the workflow instance id.
-        const now = new Date();
-        await assessmentRepo.update(assessmentId, {
-          assessmentWorkflowId,
-          studentAssessmentStatus: StudentAssessmentStatus.InProgress,
-          studentAssessmentStatusUpdatedOn: now,
-          modifier: auditUser,
-          updatedAt: now,
-        });
-        return;
-      }
-      if (assessment.assessmentWorkflowId !== assessmentWorkflowId) {
+
+      // Check it there is already a workflow id associated with the assessment.
+      if (assessment.assessmentWorkflowId) {
+        if (assessment.assessmentWorkflowId !== assessmentWorkflowId) {
+          throw new CustomNamedError(
+            `The assessment is already associated with another workflow instance. Current associated instance id ${assessment.assessmentWorkflowId}.`,
+            ASSESSMENT_ALREADY_ASSOCIATED_WITH_DIFFERENT_WORKFLOW,
+          );
+        }
+        // The workflow was already associated with the workflow, no need to update it again.
         throw new CustomNamedError(
-          `The assessment is already associated with another workflow instance. Current associated instance id ${assessment.assessmentWorkflowId}.`,
-          ASSESSMENT_ALREADY_ASSOCIATED_WITH_DIFFERENT_WORKFLOW,
+          `The assessment is already associated to the workflow.`,
+          ASSESSMENT_ALREADY_ASSOCIATED_TO_WORKFLOW,
         );
       }
-      // The workflow was already associated with the workflow, no need to update it again.
-      throw new CustomNamedError(
-        `The assessment is already associated to the workflow.`,
-        ASSESSMENT_ALREADY_ASSOCIATED_TO_WORKFLOW,
-      );
+
+      // Assessment is available to be associated with the workflow instance id.
+      const now = new Date();
+      await assessmentRepo.update(assessmentId, {
+        assessmentWorkflowId,
+        studentAssessmentStatus: StudentAssessmentStatus.InProgress,
+        studentAssessmentStatusUpdatedOn: now,
+        modifier: auditUser,
+        updatedAt: now,
+      });
     });
   }
 

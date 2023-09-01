@@ -102,7 +102,7 @@ export class DisbursementController {
       await this.disbursementScheduleService.associateMSFAANumber(
         job.variables.assessmentId,
       );
-      jobLogger.error("Associated the MSFAA number to the disbursements.");
+      jobLogger.log("Associated the MSFAA number to the disbursements.");
       return job.complete();
     } catch (error: unknown) {
       if (error instanceof CustomNamedError) {

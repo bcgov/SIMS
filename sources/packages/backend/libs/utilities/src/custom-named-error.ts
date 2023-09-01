@@ -16,7 +16,7 @@ export class CustomNamedError extends Error {
    * in the format "Message (ERROR_CODE).".
    * @returns user friendly error message.
    */
-  getSummaryMessage() {
+  getSummaryMessage(): string {
     if (!this.message) {
       // If message is not present just return the error name.
       return this.name;
