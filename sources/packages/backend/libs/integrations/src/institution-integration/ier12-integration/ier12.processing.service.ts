@@ -302,10 +302,7 @@ export class IER12ProcessingService {
     studentRestrictions: StudentRestriction[],
     options?: { restrictionCode?: string },
   ) {
-    if (!studentRestrictions || !studentRestrictions.length) {
-      return false;
-    }
-    return studentRestrictions.some(
+    return studentRestrictions?.some(
       (studentRestriction) =>
         studentRestriction.isActive &&
         (!options?.restrictionCode ||

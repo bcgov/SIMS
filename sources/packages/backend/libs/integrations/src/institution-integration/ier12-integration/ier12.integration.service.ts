@@ -83,14 +83,17 @@ export class IER12IntegrationService extends SFTPIntegrationBase<void> {
         ierRecord.applicationStatus,
       );
       ierFileDetail.applicationStatusDate = ierRecord.applicationStatusDate;
+      // Sum of all canada loan awards which belongs to an assessment.
       ierFileDetail.cslAmount = this.getSumOfAwards(
         ierRecord.assessmentAwards,
         { awardTypeInclusions: [DisbursementValueType.CanadaLoan] },
       );
+      // Sum of all BC loan awards which belongs to an assessment.
       ierFileDetail.bcslAmount = this.getSumOfAwards(
         ierRecord.assessmentAwards,
         { awardTypeInclusions: [DisbursementValueType.BCLoan] },
       );
+      // Sum of all grant awards which belongs to an assessment.
       ierFileDetail.epAmount = this.getSumOfAwards(ierRecord.assessmentAwards, {
         awardTypeExclusions: [
           DisbursementValueType.CanadaLoan,
@@ -232,7 +235,7 @@ export class IER12IntegrationService extends SFTPIntegrationBase<void> {
       .map((disbursementValue) => disbursementValue.valueAmount)
       .reduce((accumulator, currentValue) => accumulator + currentValue);
 
-    return totalAwardsAmount;
+    return combineDecimalPlaces(totalAwardsAmount);
   }
 
   /**
