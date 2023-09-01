@@ -85,7 +85,7 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
         }
         // The workflow was already associated with the workflow, no need to update it again.
         throw new CustomNamedError(
-          `The assessment is already associated to the workflow.`,
+          "The assessment is already associated to the workflow.",
           ASSESSMENT_ALREADY_ASSOCIATED_TO_WORKFLOW,
         );
       }

@@ -72,7 +72,9 @@ export class AssessmentController {
         job.variables.assessmentId,
         job.processInstanceKey,
       );
-      logger.log("Associated the assessment id.");
+      logger.log(
+        `Assessment id ${job.variables.assessmentId} associated to workflow ${job.processInstanceKey}.`,
+      );
       return job.complete();
     } catch (error: unknown) {
       if (error instanceof CustomNamedError) {
