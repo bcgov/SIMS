@@ -248,6 +248,17 @@ objects:
       minReplicas: "${{REPLICAS}}"
       maxReplicas: 10
       targetCPUUtilizationPercentage: 80
+  - apiVersion: policy/v1
+    kind: PodDisruptionBudget
+    metadata:
+      name: ${NAME}-pdb
+    spec:
+      selector:
+        matchLabels:
+          app: ${NAME}
+      minAvailable: 2
+      maxUnavailable: 1
+      disruptionsAllowed: 1
 parameters:
   - name: NAME
     required: true
