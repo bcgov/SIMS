@@ -188,7 +188,7 @@ export class MSFAAIntegrationService extends SFTPIntegrationBase<MSFAASFTPRespon
       }
 
       // Generate the records.
-      let lineNumber = 1;
+      let lineNumber = 2; // Take into account the removed header line.
       const receivedRecords: MSFAAResponseReceivedRecord[] = [];
       const cancelledRecords: MSFAAResponseCancelledRecord[] = [];
       let sinTotalInRecord = 0;

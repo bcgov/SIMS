@@ -149,7 +149,7 @@ export class CRAIntegrationService extends SFTPIntegrationBase<CRASFTPResponseFi
     const statusRecords: CRAResponseStatusRecord[] = [];
     const totalIncomeRecords: CRAResponseTotalIncomeRecord[] = [];
     fileLines.forEach((line: string, index: number) => {
-      const lineNumber = index + 1;
+      const lineNumber = index + 2; // Take into account the removed header line.
       const craRecord = new CRAResponseRecordIdentification(line, lineNumber);
       switch (craRecord.transactionSubCode) {
         case TransactionSubCodes.ResponseStatusRecord:
