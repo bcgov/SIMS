@@ -5,22 +5,18 @@ import {
   createTestingAppModule,
   FakeStudentUsersTypes,
   getStudentToken,
-  InstitutionTokenTypes,
-  getAuthRelatedEntities,
   getStudentByFakeStudentUserType,
 } from "../../../../testHelpers";
 import {
   saveFakeApplicationOfferingRequestChange,
   createE2EDataSources,
   E2EDataSources,
-  createFakeInstitutionLocation,
   saveFakeApplication,
 } from "@sims/test-utils";
-import { InstitutionLocation, Student } from "@sims/sims-db";
+import { ApplicationStatus, Student } from "@sims/sims-db";
 
 describe("ApplicationOfferingChangeRequestStudentsController(e2e)-getApplicationOfferingChangeRequest", () => {
   let app: INestApplication;
-  let collegeFLocation: InstitutionLocation;
   let student: Student;
   let db: E2EDataSources;
 
@@ -28,11 +24,6 @@ describe("ApplicationOfferingChangeRequestStudentsController(e2e)-getApplication
     const { nestApplication, dataSource } = await createTestingAppModule();
     app = nestApplication;
     db = createE2EDataSources(dataSource);
-    const { institution: collegeF } = await getAuthRelatedEntities(
-      db.dataSource,
-      InstitutionTokenTypes.CollegeFUser,
-    );
-    collegeFLocation = createFakeInstitutionLocation({ institution: collegeF });
     student = await getStudentByFakeStudentUserType(
       FakeStudentUsersTypes.FakeStudentUserType1,
       dataSource,
@@ -41,13 +32,15 @@ describe("ApplicationOfferingChangeRequestStudentsController(e2e)-getApplication
 
   it("Should return the application offering change request details when provided with the application offering change request id.", async () => {
     // Arrange
-    const application = await saveFakeApplication(db.dataSource, {
-      institutionLocation: collegeFLocation,
-      student,
-    });
+    const application = await saveFakeApplication(
+      db.dataSource,
+      {
+        student,
+      },
+      { applicationStatus: ApplicationStatus.Completed },
+    );
     const applicationOfferingChangeRequest =
       await saveFakeApplicationOfferingRequestChange(db, {
-        institutionLocation: collegeFLocation,
         application,
       });
     const token = await getStudentToken(
@@ -75,7 +68,9 @@ describe("ApplicationOfferingChangeRequestStudentsController(e2e)-getApplication
 
   it("Should throw a HttpStatus Not Found (404) when the application offering change request is not associated with the authenticated student.", async () => {
     // Arrange
-    const application = await saveFakeApplication(db.dataSource);
+    const application = await saveFakeApplication(db.dataSource, undefined, {
+      applicationStatus: ApplicationStatus.Completed,
+    });
     const applicationOfferingChangeRequest =
       await saveFakeApplicationOfferingRequestChange(db, {
         application,
@@ -90,7 +85,7 @@ describe("ApplicationOfferingChangeRequestStudentsController(e2e)-getApplication
       .auth(token, BEARER_AUTH_TYPE)
       .expect(HttpStatus.NOT_FOUND)
       .expect({
-        statusCode: 404,
+        statusCode: HttpStatus.NOT_FOUND,
         message: "Not able to find an Application Offering Change Request.",
         error: "Not Found",
       });

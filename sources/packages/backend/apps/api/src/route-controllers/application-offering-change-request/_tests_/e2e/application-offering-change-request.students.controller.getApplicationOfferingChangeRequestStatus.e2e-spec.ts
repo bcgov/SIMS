@@ -13,7 +13,7 @@ import {
   E2EDataSources,
   saveFakeApplication,
 } from "@sims/test-utils";
-import { Student } from "@sims/sims-db";
+import { ApplicationStatus, Student } from "@sims/sims-db";
 
 describe("ApplicationOfferingChangeRequestStudentsController(e2e)-getApplicationOfferingChangeRequestStatus", () => {
   let app: INestApplication;
@@ -32,9 +32,13 @@ describe("ApplicationOfferingChangeRequestStudentsController(e2e)-getApplication
 
   it("Should return the application offering change request status when provided with the application offering change request id.", async () => {
     // Arrange
-    const application = await saveFakeApplication(db.dataSource, {
-      student,
-    });
+    const application = await saveFakeApplication(
+      db.dataSource,
+      {
+        student,
+      },
+      { applicationStatus: ApplicationStatus.Completed },
+    );
     const applicationOfferingChangeRequest =
       await saveFakeApplicationOfferingRequestChange(db, {
         application,
@@ -56,7 +60,9 @@ describe("ApplicationOfferingChangeRequestStudentsController(e2e)-getApplication
 
   it("Should throw a HttpStatus Not Found (404) when the application offering status change request is not associated with the authenticated student.", async () => {
     // Arrange
-    const application = await saveFakeApplication(db.dataSource);
+    const application = await saveFakeApplication(db.dataSource, undefined, {
+      applicationStatus: ApplicationStatus.Completed,
+    });
     const applicationOfferingChangeRequest =
       await saveFakeApplicationOfferingRequestChange(db, {
         application,
@@ -71,7 +77,7 @@ describe("ApplicationOfferingChangeRequestStudentsController(e2e)-getApplication
       .auth(token, BEARER_AUTH_TYPE)
       .expect(HttpStatus.NOT_FOUND)
       .expect({
-        statusCode: 404,
+        statusCode: HttpStatus.NOT_FOUND,
         message: "Application Offering Change Request not found.",
         error: "Not Found",
       });
