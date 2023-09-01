@@ -19,7 +19,7 @@ import {
   Student,
 } from "@sims/sims-db";
 
-describe.skip("ApplicationOfferingChangeRequestStudentsController(e2e)-updateApplicationOfferingChangeRequestStatus", () => {
+describe("ApplicationOfferingChangeRequestStudentsController(e2e)-updateApplicationOfferingChangeRequestStatus", () => {
   let app: INestApplication;
   let student: Student;
   let db: E2EDataSources;
