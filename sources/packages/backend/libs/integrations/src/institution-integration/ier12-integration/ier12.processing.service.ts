@@ -4,6 +4,7 @@ import {
   DisbursementScheduleStatus,
   DisbursementValue,
   StudentAssessment,
+  StudentRestriction,
 } from "@sims/sims-db";
 import { LoggerService, InjectLogger } from "@sims/utilities/logger";
 import {
@@ -22,6 +23,8 @@ import {
   DisbursementReceiptService,
   StudentAssessmentService,
 } from "@sims/integrations/services";
+import { DisbursementOverawardService } from "@sims/services";
+import { FullTimeAwardTypes } from "@sims/integrations/models";
 
 @Injectable()
 export class IER12ProcessingService {
@@ -31,6 +34,7 @@ export class IER12ProcessingService {
     private readonly ier12IntegrationService: IER12IntegrationService,
     private readonly studentAssessmentService: StudentAssessmentService,
     private readonly disbursementReceiptService: DisbursementReceiptService,
+    private readonly disbursementOverawardService: DisbursementOverawardService,
   ) {
     this.institutionIntegrationConfig = config.institutionIntegration;
   }
@@ -170,6 +174,19 @@ export class IER12ProcessingService {
       provinceState: address.provinceState,
       postalCode: address.postalCode,
     };
+    const hasProvincialDefaultRestriction = this.checkActiveRestriction(
+      student.studentRestrictions,
+      { restrictionCode: "B2" },
+    );
+    const hasRestriction = this.checkActiveRestriction(
+      student.studentRestrictions,
+    );
+    const hasPartner =
+      pendingAssessment.workflowData.studentData.relationshipStatus ===
+      "married";
+    const overawards =
+      await this.disbursementOverawardService.getOverawardBalance([student.id]);
+    const studentOverawardsBalance = overawards[student.id];
     const ier12Records: IER12Record[] = [];
     for (const disbursement of disbursementSchedules) {
       const disbursementReceipt =
@@ -210,13 +227,17 @@ export class IER12ProcessingService {
         applicationStatus: application.applicationStatus,
         applicationStatusDate: application.applicationStatusUpdatedOn,
         assessmentAwards,
-        hasProvincialDefaultRestriction: false, // TODO: Dheepak reference the util.
-        hasProvincialOveraward: false, // TODO: Dheepak reference the util.
-        hasFederalOveraward: false, // TODO: Dheepak reference the util.
-        hasRestriction: false, // TODO: Dheepak reference the util.
+        hasProvincialDefaultRestriction,
+        hasProvincialOveraward: studentOverawardsBalance
+          ? studentOverawardsBalance[FullTimeAwardTypes.BCSL] > 0
+          : false,
+        hasFederalOveraward: studentOverawardsBalance
+          ? studentOverawardsBalance[FullTimeAwardTypes.CSLF] > 0
+          : false,
+        hasRestriction,
         scholasticStandingChangeType: scholasticStanding?.changeType,
         assessmentDate: pendingAssessment.assessmentDate,
-        hasPartner: false, // TODO: Dheepak reference the util.
+        hasPartner,
         parentalAssets:
           pendingAssessment.workflowData.calculatedData.parentalAssets,
         coeStatus: disbursement.coeStatus,
@@ -269,6 +290,28 @@ export class IER12ProcessingService {
       assessmentAwards.push(...disbursementAwards);
     }
     return assessmentAwards;
+  }
+
+  /**
+   * Check if student has an active restriction.
+   * @param studentRestrictions student restrictions
+   * @param options
+   * @returns
+   */
+  private checkActiveRestriction(
+    studentRestrictions?: StudentRestriction[],
+    options?: { restrictionCode?: string },
+  ) {
+    if (!studentRestrictions || !studentRestrictions.length) {
+      return false;
+    }
+    return studentRestrictions.some(
+      (studentRestriction) =>
+        studentRestriction.isActive &&
+        (!options?.restrictionCode ||
+          studentRestriction.restriction.restrictionCode ===
+            options.restrictionCode),
+    );
   }
 
   @InjectLogger()

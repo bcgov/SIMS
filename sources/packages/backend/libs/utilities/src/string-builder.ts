@@ -77,11 +77,11 @@ export class StringBuilder {
   public appendDate(
     date: Date | string,
     dateFormat: string,
-    options?: { dateFiller?: string },
+    options?: { filler?: string },
   ) {
     const formattedDate =
-      !date && options?.dateFiller
-        ? "".padStart(dateFormat.length, options.dateFiller)
+      !date && options?.filler
+        ? "".padStart(dateFormat.length, options.filler)
         : dayjs(date).format(dateFormat);
     this.append(formattedDate);
   }

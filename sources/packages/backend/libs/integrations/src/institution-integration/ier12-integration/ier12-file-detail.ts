@@ -257,12 +257,12 @@ export class IER12FileDetail implements IER12FileLine {
     record.append(this.federalOverawardFlag, 1);
     record.append(this.restrictionFlag, 1);
     record.appendDate(this.scholasticStandingEffectiveDate, DATE_FORMAT, {
-      dateFiller: SPACE_FILLER,
+      filler: SPACE_FILLER,
     });
     record.appendWithEndFiller(this.scholasticStandingCode, 4, SPACE_FILLER);
     record.appendDate(this.assessmentDate, DATE_FORMAT);
     record.appendDate(this.withdrawalDate, DATE_FORMAT, {
-      dateFiller: SPACE_FILLER,
+      filler: SPACE_FILLER,
     });
     record.appendWithStartFiller(
       this.applicantAndPartnerExpectedContribution ?? 0,
@@ -447,10 +447,10 @@ export class IER12FileDetail implements IER12FileLine {
       SPACE_FILLER,
     );
     record.appendDate(this.applicationEventDate, DATE_FORMAT, {
-      dateFiller: SPACE_FILLER,
+      filler: SPACE_FILLER,
     });
     record.appendDate(this.documentProducedDate, DATE_FORMAT, {
-      dateFiller: SPACE_FILLER,
+      filler: SPACE_FILLER,
     });
     record.appendWithEndFiller(this.coeStatus, 10, SPACE_FILLER);
     record.appendWithEndFiller(
@@ -460,13 +460,13 @@ export class IER12FileDetail implements IER12FileLine {
     );
     record.appendDate(this.earliestDateOfDisbursement, DATE_FORMAT);
     record.appendDate(this.dateOfDisbursement, DATE_FORMAT, {
-      dateFiller: SPACE_FILLER,
+      filler: SPACE_FILLER,
     });
     record.appendDate(this.disbursementExpiryDate, DATE_FORMAT, {
-      dateFiller: SPACE_FILLER,
+      filler: SPACE_FILLER,
     });
     record.appendDate(this.disbursementCancelDate, DATE_FORMAT, {
-      dateFiller: SPACE_FILLER,
+      filler: SPACE_FILLER,
     });
 
     record.appendWithStartFiller(

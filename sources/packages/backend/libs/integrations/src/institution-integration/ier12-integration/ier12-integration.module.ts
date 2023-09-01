@@ -1,5 +1,9 @@
 import { Global, Module } from "@nestjs/common";
-import { WorkflowClientService } from "@sims/services";
+import {
+  DisbursementOverawardService,
+  NoteSharedService,
+  WorkflowClientService,
+} from "@sims/services";
 import { ConfigModule } from "@sims/utilities/config";
 import { IER12IntegrationService } from "./ier12.integration.service";
 import { IER12ProcessingService } from "./ier12.processing.service";
@@ -19,6 +23,8 @@ import {
     WorkflowClientService,
     IER12IntegrationService,
     DisbursementReceiptService,
+    DisbursementOverawardService,
+    NoteSharedService,
   ],
   exports: [IER12ProcessingService, IER12IntegrationService],
 })
