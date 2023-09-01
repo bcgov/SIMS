@@ -60,15 +60,16 @@ export class IER12ProcessingService {
     }
     this.logger.log(`Found ${pendingAssessments.length} assessments.`);
     const fileRecords: Record<string, IER12Record[]> = {};
-    pendingAssessments.forEach(async (pendingAssessment) => {
+    for (const assessment of pendingAssessments) {
       const institutionCode =
-        pendingAssessment.offering.institutionLocation.institutionCode;
+        assessment.offering.institutionLocation.institutionCode;
       if (!fileRecords[institutionCode]) {
         fileRecords[institutionCode] = [];
       }
-      const ier12Records = await this.createIER12Record(pendingAssessment);
+      const ier12Records = await this.createIER12Record(assessment);
       fileRecords[institutionCode].push(...ier12Records);
-    });
+    }
+
     const uploadResult: IER12UploadResult[] = [];
     try {
       this.logger.log("Creating IER 12 content...");
