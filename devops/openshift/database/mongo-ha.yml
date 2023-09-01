@@ -241,4 +241,3 @@ objects:
         matchLabels:
           app: ${NAME}
       maxUnavailable: 1
-      disruptionsAllowed: 1

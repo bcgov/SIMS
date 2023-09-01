@@ -192,7 +192,6 @@ objects:
         app: ${NAME}
     minAvailable: 3
     maxUnavailable: 1
-    disruptionsAllowed: 1
 parameters:
 - name: NAME
   value: patroni

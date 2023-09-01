@@ -158,7 +158,6 @@ objects:
           app: ${NAME}
       minAvailable: 6
       maxUnavailable: 2
-      disruptionsAllowed: 1
 parameters:
   - name: NAME
     description: The name of the application for labelling all artifacts.

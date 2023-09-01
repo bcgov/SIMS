@@ -178,7 +178,6 @@ objects:
         matchLabels:
           app: ${NAME}
       maxUnavailable: 1
-      disruptionsAllowed: 1
 parameters:
   - name: NAME
     displayName: Name
