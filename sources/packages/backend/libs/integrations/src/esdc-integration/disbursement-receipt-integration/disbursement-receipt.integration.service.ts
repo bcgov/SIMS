@@ -49,7 +49,7 @@ export class DisbursementReceiptIntegrationService extends SFTPIntegrationBase<D
     let totalSINHashCalculated = 0;
     const records: DisbursementReceiptDetail[] = [];
     fileLines.forEach((line, index) => {
-      const record = new DisbursementReceiptDetail(line, index + 1);
+      const record = new DisbursementReceiptDetail(line, index + 2); // Take into account the removed header line.
       totalSINHashCalculated += +record.studentSIN;
       records.push(record);
     });
