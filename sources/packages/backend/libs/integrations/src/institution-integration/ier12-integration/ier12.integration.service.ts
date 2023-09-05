@@ -55,6 +55,7 @@ export class IER12IntegrationService extends SFTPIntegrationBase<void> {
       ierFileDetail.credentialType = ierRecord.credentialType;
       ierFileDetail.fieldOfStudyCode = ierRecord.fieldOfStudyCode;
       ierFileDetail.currentProgramYear = ierRecord.currentProgramYear;
+      // Removing the given character as per IER 12 specification.
       ierFileDetail.cipCode = ierRecord.cipCode.replace(".", "");
       ierFileDetail.nocCode = ierRecord.nocCode;
       ierFileDetail.sabcCode = ierRecord.sabcCode;
@@ -79,7 +80,7 @@ export class IER12IntegrationService extends SFTPIntegrationBase<void> {
       ierFileDetail.offeringIntensityIndicator = "F"; // Hard coded as IER12 currently includes full time applications only.
       ierFileDetail.applicationSubmittedDate =
         ierRecord.applicationSubmittedDate;
-
+      // Removing the given character as per IER 12 specification.
       ierFileDetail.programYear = ierRecord.programYear.replace("-", "");
       ierFileDetail.applicationStatusCode = this.getApplicationStatusCode(
         ierRecord.applicationStatus,
@@ -220,6 +221,9 @@ export class IER12IntegrationService extends SFTPIntegrationBase<void> {
    * Get the sum of all awards which belong to the disbursements in a single assessment.
    * @param disbursements disbursements of a given assessment.
    * @param awardType award type.
+   * @param options award summation options:
+   * - `awardTypeInclusions`: awards which are included for summation.
+   * - `awardTypeExclusions`: awards which are excluded for summation.
    * @returns sum of awards.
    */
   private getSumOfAwards(
@@ -254,7 +258,7 @@ export class IER12IntegrationService extends SFTPIntegrationBase<void> {
     assessmentTriggerType: AssessmentTriggerType,
     scholasticStandingChangeType: StudentScholasticStandingChangeType,
     studyEndDate: Date,
-  ) {
+  ): Date | null {
     if (
       assessmentTriggerType ===
         AssessmentTriggerType.ScholasticStandingChange &&
@@ -269,9 +273,9 @@ export class IER12IntegrationService extends SFTPIntegrationBase<void> {
   /**
    * Convert boolean value to YNFlag type.
    * @param value value.
-   * @returns YNFlag value.
+   * @returns flag value.
    */
-  private convertToYNFlag(value: boolean) {
+  private convertToYNFlag(value: boolean): YNFlag {
     return value ? YNFlag.Y : YNFlag.N;
   }
 }

@@ -19,8 +19,8 @@ import { FullTimeAwardTypes } from "@sims/integrations/models";
  * Record of a IER12 file.
  * The documentation about it is available on the document
  * 'SIMSSFAS - Institution File layouts In Analysis Folder'.
- * TODO:All the fields which are pending for the analysis are marked as optional.
- * During the implementation once after analysis is complete, please evaluate if the field is still optional.
+ * TODO:All the fields which are pending for the analysis are marked as optional and comments are added to it.
+ * During the implementation once after analysis is complete, please evaluate it's data type if the field is still optional.
  */
 export class IER12FileDetail implements IER12FileLine {
   assessmentId: number;

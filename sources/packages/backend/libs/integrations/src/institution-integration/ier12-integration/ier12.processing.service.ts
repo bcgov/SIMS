@@ -178,10 +178,11 @@ export class IER12ProcessingService {
     const hasPartner =
       pendingAssessment.workflowData.studentData.relationshipStatus ===
       "married";
-    const overawards =
+    const overawardBalance =
       await this.disbursementOverawardService.getOverawardBalance([student.id]);
-    const studentOverawardsBalance = overawards[student.id];
+    const studentOverawardsBalance = overawardBalance[student.id];
     const ier12Records: IER12Record[] = [];
+    // Create IER12 records per disbursement.
     for (const disbursement of disbursementSchedules) {
       const [disbursementReceipt] = disbursement.disbursementReceipts;
       const ier12Record: IER12Record = {
@@ -273,7 +274,9 @@ export class IER12ProcessingService {
    * @param disbursementSchedules disbursement schedules.
    * @returns assessment award details.
    */
-  private getAssessmentAwards(disbursementSchedules: DisbursementSchedule[]) {
+  private getAssessmentAwards(
+    disbursementSchedules: DisbursementSchedule[],
+  ): IERAward[] {
     const assessmentAwards: IERAward[] = [];
     for (const disbursement of disbursementSchedules) {
       const disbursementAwards = this.getDisbursementAwards(
@@ -287,13 +290,15 @@ export class IER12ProcessingService {
   /**
    * Check if student has an active restriction.
    * @param studentRestrictions student restrictions
-   * @param options
-   * @returns
+   * @param options check restriction options:
+   * - `restrictionCode`: restriction code.
+   * @returns value which indicates
+   * if a student has active restriction.
    */
   private checkActiveRestriction(
     studentRestrictions: StudentRestriction[],
     options?: { restrictionCode?: string },
-  ) {
+  ): boolean {
     return studentRestrictions?.some(
       (studentRestriction) =>
         studentRestriction.isActive &&
