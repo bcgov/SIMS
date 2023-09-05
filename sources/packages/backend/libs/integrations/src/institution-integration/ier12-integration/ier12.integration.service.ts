@@ -219,8 +219,7 @@ export class IER12IntegrationService extends SFTPIntegrationBase<void> {
 
   /**
    * Get the sum of all awards which belong to the disbursements in a single assessment.
-   * @param disbursements disbursements of a given assessment.
-   * @param awardType award type.
+   * @param awards award details.
    * @param options award summation options:
    * - `awardTypeInclusions`: awards which are included for summation.
    * - `awardTypeExclusions`: awards which are excluded for summation.

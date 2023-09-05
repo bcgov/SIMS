@@ -12,6 +12,7 @@ import {
   AssessmentStatus,
   DisbursementSchedule,
   EducationProgramOffering,
+  RelationshipStatus,
   StudentAppeal,
   StudentAssessmentStatus,
   User,
@@ -318,7 +319,7 @@ export type Assessment = FullTimeAssessment | PartTimeAssessment;
 export interface WorkflowData {
   studentData: {
     dependantStatus: "dependant" | "independant";
-    relationshipStatus: "single" | "married" | "other";
+    relationshipStatus: RelationshipStatus;
   };
   calculatedData: {
     parentalAssets: number;

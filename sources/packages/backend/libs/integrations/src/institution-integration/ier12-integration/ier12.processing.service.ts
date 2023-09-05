@@ -3,6 +3,7 @@ import {
   DisbursementSchedule,
   DisbursementScheduleStatus,
   DisbursementValue,
+  RelationshipStatus,
   StudentAssessment,
   StudentRestriction,
 } from "@sims/sims-db";
@@ -82,6 +83,8 @@ export class IER12ProcessingService {
       }
     } catch (error) {
       this.logger.error(`Error while uploading content for IER 12: ${error}`);
+      // TODO: On error, the error message must added to the upload result and
+      // processing must continue for the next institution without aborting.
       throw error;
     }
     return uploadResult;
@@ -142,7 +145,7 @@ export class IER12ProcessingService {
   /**
    * Create the Request content for the IER 12 file by populating the content.
    * @param pendingAssessment pending assessment of institutions.
-   * @returns IER 12 record.
+   * @returns IER 12 records for the student assessment.
    */
   private async createIER12Record(
     pendingAssessment: StudentAssessment,
@@ -177,7 +180,7 @@ export class IER12ProcessingService {
         });
     const hasPartner =
       pendingAssessment.workflowData.studentData.relationshipStatus ===
-      "married";
+      RelationshipStatus.Married;
     const overawardBalance =
       await this.disbursementOverawardService.getOverawardBalance([student.id]);
     const studentOverawardsBalance = overawardBalance[student.id];
@@ -299,6 +302,7 @@ export class IER12ProcessingService {
     studentRestrictions: StudentRestriction[],
     options?: { restrictionCode?: string },
   ): boolean {
+    console.log("Restrictions", studentRestrictions);
     return studentRestrictions?.some(
       (studentRestriction) =>
         studentRestriction.isActive &&
