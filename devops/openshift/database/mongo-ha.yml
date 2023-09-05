@@ -239,5 +239,6 @@ objects:
     spec:
       selector:
         matchLabels:
-          app: ${MONGODB_SERVICE_NAME}
+          app: forms
+          statefulset: ${MONGODB_SERVICE_NAME}
       maxUnavailable: 1
