@@ -101,7 +101,7 @@ objects:
     spec:
       selector:
         matchLabels:
-          app: ${NAME}
+          deploymentconfig: ${NAME}
       maxUnavailable: 1
 parameters:
   - name: NAME

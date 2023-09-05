@@ -235,9 +235,10 @@ objects:
   - apiVersion: policy/v1
     kind: PodDisruptionBudget
     metadata:
-      name: ${NAME}-pdb
+      name: ${MONGODB_SERVICE_NAME}-pdb
     spec:
       selector:
         matchLabels:
-          app: ${NAME}
+          app: forms
+          statefulset: ${MONGODB_SERVICE_NAME}
       maxUnavailable: 1
