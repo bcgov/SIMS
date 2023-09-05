@@ -13,6 +13,7 @@ import {
   COEDeniedReason,
   DisbursementScheduleStatus,
   MSFAANumber,
+  DisbursementReceipt,
 } from ".";
 import { ColumnNames, TableNames } from "../constant";
 import { dateOnlyTransformer } from "../transformers/date-only.transformer";
@@ -196,4 +197,20 @@ export class DisbursementSchedule extends RecordDataModel {
     referencedColumnName: ColumnNames.ID,
   })
   msfaaNumber?: MSFAANumber;
+
+  /**
+   * Disbursement receipts for a disbursement schedule.
+   ** Every disbursement schedule has disbursement receipt
+   ** of type FE and BC.
+   */
+  @OneToMany(
+    () => DisbursementReceipt,
+    (disbursementReceipt) => disbursementReceipt.disbursementSchedule,
+    {
+      eager: false,
+      cascade: false,
+      nullable: true,
+    },
+  )
+  disbursementReceipts?: DisbursementReceipt[];
 }

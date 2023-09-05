@@ -11,6 +11,7 @@ import {
 } from "./models/ier12-integration.model";
 import {
   ApplicationStatus,
+  AssessmentTriggerType,
   DisbursementValueType,
   StudentScholasticStandingChangeType,
 } from "@sims/sims-db";
@@ -48,6 +49,7 @@ export class IER12IntegrationService extends SFTPIntegrationBase<void> {
       ierFileDetail.studentBirthDate = ierRecord.studentBirthDate;
       ierFileDetail.studentGroupCode =
         ierRecord.dependantStatus === "dependant" ? "A" : "B";
+      ierFileDetail.addressInfo = ierRecord.addressInfo;
       ierFileDetail.programName = ierRecord.programName;
       ierFileDetail.programDescription = ierRecord.programDescription;
       ierFileDetail.credentialType = ierRecord.credentialType;
@@ -114,18 +116,17 @@ export class IER12IntegrationService extends SFTPIntegrationBase<void> {
         ierRecord.hasRestriction,
       );
       ierFileDetail.scholasticStandingEffectiveDate =
-        ierRecord.scholasticStandingChangeType
-          ? this.getScholasticStandingEffectiveDate(
-              ierRecord.scholasticStandingChangeType,
-              ierRecord.studyEndDate,
-            )
-          : null;
+        this.getScholasticStandingEffectiveDate(
+          ierRecord.assessmentTriggerType,
+          ierRecord.scholasticStandingChangeType,
+          ierRecord.studyEndDate,
+        );
       ierFileDetail.assessmentDate = ierRecord.assessmentDate;
-      ierFileDetail.withdrawalDate =
-        ierRecord.scholasticStandingChangeType ===
-        StudentScholasticStandingChangeType.StudentWithdrewFromProgram
-          ? ierRecord.studyEndDate
-          : null;
+      ierFileDetail.withdrawalDate = this.getWithdrawalDate(
+        ierRecord.assessmentTriggerType,
+        ierRecord.scholasticStandingChangeType,
+        ierRecord.studyEndDate,
+      );
       ierFileDetail.partnerFlag = this.convertToYNFlag(ierRecord.hasPartner);
       ierFileDetail.parentalAssets = ierRecord.parentalAssets
         ? combineDecimalPlaces(ierRecord.parentalAssets)
@@ -153,19 +154,23 @@ export class IER12IntegrationService extends SFTPIntegrationBase<void> {
    * offering which is created as a result of scholastic standing change.
    * The change types `Student did not complete program` and `Student withdrew from program`
    * are ignored.
+   * @param assessmentTriggerType assessment trigger type.
    * @param scholasticStandingChangeType scholastic standing change type.
    * @param studyEndDate study end date.
    * @returns scholastic standing effective date.
    */
   private getScholasticStandingEffectiveDate(
+    assessmentTriggerType: AssessmentTriggerType,
     scholasticStandingChangeType: StudentScholasticStandingChangeType,
     studyEndDate: Date,
   ): Date | null {
     if (
-      scholasticStandingChangeType ===
+      assessmentTriggerType ===
+        AssessmentTriggerType.ScholasticStandingChange &&
+      (scholasticStandingChangeType ===
         StudentScholasticStandingChangeType.StudentCompletedProgramEarly ||
-      scholasticStandingChangeType ===
-        StudentScholasticStandingChangeType.ChangeInIntensity
+        scholasticStandingChangeType ===
+          StudentScholasticStandingChangeType.ChangeInIntensity)
     ) {
       return studyEndDate;
     }
@@ -236,6 +241,29 @@ export class IER12IntegrationService extends SFTPIntegrationBase<void> {
       .reduce((accumulator, currentValue) => accumulator + currentValue);
 
     return combineDecimalPlaces(totalAwardsAmount);
+  }
+
+  /**
+   * Get withdrawal date for an assessment which is created due to scholastic standing change.
+   * @param assessmentTriggerType assessment trigger type.
+   * @param scholasticStandingChangeType scholastic standing change type.
+   * @param studyEndDate study end date.
+   * @returns withdrawal date.
+   */
+  private getWithdrawalDate(
+    assessmentTriggerType: AssessmentTriggerType,
+    scholasticStandingChangeType: StudentScholasticStandingChangeType,
+    studyEndDate: Date,
+  ) {
+    if (
+      assessmentTriggerType ===
+        AssessmentTriggerType.ScholasticStandingChange &&
+      scholasticStandingChangeType ===
+        StudentScholasticStandingChangeType.StudentWithdrewFromProgram
+    ) {
+      return studyEndDate;
+    }
+    return null;
   }
 
   /**

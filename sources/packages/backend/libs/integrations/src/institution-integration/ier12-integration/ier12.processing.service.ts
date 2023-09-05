@@ -19,10 +19,7 @@ import {
   IERAddressInfo,
   IERAward,
 } from "./models/ier12-integration.model";
-import {
-  DisbursementReceiptService,
-  StudentAssessmentService,
-} from "@sims/integrations/services";
+import { StudentAssessmentService } from "@sims/integrations/services";
 import { DisbursementOverawardService } from "@sims/services";
 import { FullTimeAwardTypes } from "@sims/integrations/models";
 
@@ -33,7 +30,6 @@ export class IER12ProcessingService {
     config: ConfigService,
     private readonly ier12IntegrationService: IER12IntegrationService,
     private readonly studentAssessmentService: StudentAssessmentService,
-    private readonly disbursementReceiptService: DisbursementReceiptService,
     private readonly disbursementOverawardService: DisbursementOverawardService,
   ) {
     this.institutionIntegrationConfig = config.institutionIntegration;
@@ -77,12 +73,10 @@ export class IER12ProcessingService {
     const uploadResult: IER12UploadResult[] = [];
     try {
       this.logger.log("Creating IER 12 content...");
-      for (const [institutionCode, ier12Records] of Object.entries(
-        fileRecords,
-      )) {
+      for (const [institutionCode, ierRecords] of Object.entries(fileRecords)) {
         const ierUploadResult = await this.uploadIER12Content(
           institutionCode,
-          ier12Records,
+          ierRecords,
         );
         uploadResult.push(ierUploadResult);
       }
@@ -165,7 +159,6 @@ export class IER12ProcessingService {
     const assessmentAwards = this.getAssessmentAwards(
       pendingAssessment.disbursementSchedules,
     );
-
     const disbursementSchedules = pendingAssessment.disbursementSchedules;
     const addressInfo: IERAddressInfo = {
       addressLine1: address.addressLine1,
@@ -174,13 +167,14 @@ export class IER12ProcessingService {
       provinceState: address.provinceState,
       postalCode: address.postalCode,
     };
-    const hasProvincialDefaultRestriction = this.checkActiveRestriction(
-      student.studentRestrictions,
-      { restrictionCode: "B2" },
-    );
     const hasRestriction = this.checkActiveRestriction(
       student.studentRestrictions,
     );
+    const hasProvincialDefaultRestriction = !hasRestriction
+      ? false
+      : this.checkActiveRestriction(student.studentRestrictions, {
+          restrictionCode: "B2",
+        });
     const hasPartner =
       pendingAssessment.workflowData.studentData.relationshipStatus ===
       "married";
@@ -189,10 +183,7 @@ export class IER12ProcessingService {
     const studentOverawardsBalance = overawards[student.id];
     const ier12Records: IER12Record[] = [];
     for (const disbursement of disbursementSchedules) {
-      const disbursementReceipt =
-        await this.disbursementReceiptService.getDisbursementReceiptByDisbursementSchedule(
-          disbursement.id,
-        );
+      const [disbursementReceipt] = disbursement.disbursementReceipts;
       const ier12Record: IER12Record = {
         assessmentId: pendingAssessment.id,
         disbursementId: disbursement.id,
@@ -235,6 +226,7 @@ export class IER12ProcessingService {
           ? studentOverawardsBalance[FullTimeAwardTypes.CSLF] > 0
           : false,
         hasRestriction,
+        assessmentTriggerType: pendingAssessment.triggerType,
         scholasticStandingChangeType: scholasticStanding?.changeType,
         assessmentDate: pendingAssessment.assessmentDate,
         hasPartner,

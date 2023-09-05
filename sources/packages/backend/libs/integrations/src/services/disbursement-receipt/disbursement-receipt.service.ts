@@ -131,18 +131,4 @@ export class DisbursementReceiptService extends RecordDataModelService<Disbursem
     });
     return generatedId;
   }
-
-  /**
-   * Get disbursement receipt by disbursement schedule.
-   * @param disbursementScheduleId
-   * @returns disbursement receipt.
-   */
-  async getDisbursementReceiptByDisbursementSchedule(
-    disbursementScheduleId: number,
-  ): Promise<DisbursementReceipt> {
-    return this.repo.findOne({
-      select: { id: true, disburseDate: true },
-      where: { disbursementSchedule: { id: disbursementScheduleId } },
-    });
-  }
 }

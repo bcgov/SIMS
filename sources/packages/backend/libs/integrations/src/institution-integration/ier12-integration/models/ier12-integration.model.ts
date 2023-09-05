@@ -1,6 +1,7 @@
 import {
   AddressInfo,
   ApplicationStatus,
+  AssessmentTriggerType,
   COEStatus,
   DisbursementScheduleStatus,
   DisbursementValue,
@@ -61,6 +62,7 @@ export interface IER12Record {
   hasProvincialOveraward: boolean;
   hasFederalOveraward: boolean;
   hasRestriction: boolean;
+  assessmentTriggerType: AssessmentTriggerType;
   scholasticStandingChangeType?: StudentScholasticStandingChangeType;
   assessmentDate: Date;
   hasPartner: boolean;

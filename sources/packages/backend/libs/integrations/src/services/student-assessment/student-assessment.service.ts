@@ -1,10 +1,6 @@
 import { Injectable } from "@nestjs/common";
-import {
-  ApplicationStatus,
-  RecordDataModelService,
-  StudentAssessment,
-} from "@sims/sims-db";
-import { ArrayContains, DataSource } from "typeorm";
+import { RecordDataModelService, StudentAssessment } from "@sims/sims-db";
+import { DataSource } from "typeorm";
 import { addDays, dateEqualTo } from "@sims/utilities";
 
 /**
@@ -34,15 +30,18 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
         assessmentData: true as unknown,
         workflowData: true as unknown,
         assessmentDate: true,
+        triggerType: true,
         application: {
+          id: true,
           applicationNumber: true,
           data: true as unknown,
           submittedDate: true,
           applicationStatus: true,
           applicationStatusUpdatedOn: true,
           student: {
-            sinValidation: { sin: true },
-            user: { lastName: true, firstName: true },
+            id: true,
+            sinValidation: { id: true, sin: true },
+            user: { id: true, lastName: true, firstName: true },
             birthDate: true,
             contactInfo: true as unknown,
             studentRestrictions: {
@@ -60,6 +59,7 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
         offering: {
           id: true,
           educationProgram: {
+            id: true,
             name: true,
             description: true,
             credentialType: true,
@@ -94,10 +94,17 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
             valueAmount: true,
             valueType: true,
           },
+          disbursementReceipts: {
+            id: true,
+            disburseDate: true,
+          },
         },
       },
       relations: {
-        disbursementSchedules: { disbursementValues: true },
+        disbursementSchedules: {
+          disbursementValues: true,
+          disbursementReceipts: true,
+        },
         application: {
           student: {
             sinValidation: true,
@@ -111,25 +118,10 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
       },
       where: [
         {
-          // TODO: This condition must be replaced with assessment status as completed in both places.
-          application: {
-            applicationStatus: ArrayContains([
-              ApplicationStatus.Assessment,
-              ApplicationStatus.Enrolment,
-              ApplicationStatus.Completed,
-            ]),
-          },
           assessmentDate: dateEqualTo(processingDate),
           offering: { institutionLocation: { hasIntegration: true } },
         },
         {
-          application: {
-            applicationStatus: ArrayContains([
-              ApplicationStatus.Assessment,
-              ApplicationStatus.Enrolment,
-              ApplicationStatus.Completed,
-            ]),
-          },
           disbursementSchedules: { updatedAt: dateEqualTo(processingDate) },
           offering: { institutionLocation: { hasIntegration: true } },
         },

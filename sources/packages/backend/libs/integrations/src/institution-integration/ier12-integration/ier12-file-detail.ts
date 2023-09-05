@@ -189,7 +189,11 @@ export class IER12FileDetail implements IER12FileLine {
     record.appendWithStartFiller(this.assessmentId, 10, NUMBER_FILLER);
     record.appendWithStartFiller(this.disbursementId, 10, NUMBER_FILLER);
     record.append(this.applicationNumber, 10);
-    record.appendWithEndFiller(this.institutionStudentNumber, 12, SPACE_FILLER);
+    record.appendWithEndFiller(
+      this.institutionStudentNumber ?? "",
+      12,
+      SPACE_FILLER,
+    );
     record.append(this.sin, 9);
     record.appendWithEndFiller(this.studentLastName, 25, SPACE_FILLER);
     record.appendWithEndFiller(this.studentGivenName ?? "", 15, SPACE_FILLER);
@@ -237,16 +241,16 @@ export class IER12FileDetail implements IER12FileLine {
     record.append(this.programLength, 1);
     record.appendDate(this.studyStartDate, DATE_FORMAT);
     record.appendDate(this.studyEndDate, DATE_FORMAT);
-    record.appendWithStartFiller(this.tuitionFees, 8, NUMBER_FILLER);
-    record.appendWithStartFiller(this.booksAndSuppliesCost, 8, NUMBER_FILLER);
-    record.appendWithStartFiller(this.mandatoryFees, 8, NUMBER_FILLER);
-    record.appendWithStartFiller(this.exceptionExpenses, 8, NUMBER_FILLER);
+    record.appendWithStartFiller(this.tuitionFees, 10, NUMBER_FILLER);
+    record.appendWithStartFiller(this.booksAndSuppliesCost, 10, NUMBER_FILLER);
+    record.appendWithStartFiller(this.mandatoryFees, 10, NUMBER_FILLER);
+    record.appendWithStartFiller(this.exceptionExpenses, 10, NUMBER_FILLER);
     record.appendWithStartFiller(this.totalFundedWeeks, 2, NUMBER_FILLER);
     record.append(this.courseLoad, 3);
     record.append(this.offeringIntensityIndicator, 1);
     record.appendDate(this.applicationSubmittedDate, DATE_FORMAT);
     record.append(this.programYear, 8);
-    record.append(this.applicationStatusCode, 8);
+    record.append(this.applicationStatusCode, 4);
     record.appendDate(this.applicationStatusDate, DATE_FORMAT);
     record.appendWithStartFiller(this.cslAmount, 10, NUMBER_FILLER);
     record.appendWithStartFiller(this.bcslAmount, 10, NUMBER_FILLER);
@@ -259,7 +263,11 @@ export class IER12FileDetail implements IER12FileLine {
     record.appendDate(this.scholasticStandingEffectiveDate, DATE_FORMAT, {
       filler: SPACE_FILLER,
     });
-    record.appendWithEndFiller(this.scholasticStandingCode, 4, SPACE_FILLER);
+    record.appendWithEndFiller(
+      this.scholasticStandingCode ?? "",
+      4,
+      SPACE_FILLER,
+    );
     record.appendDate(this.assessmentDate, DATE_FORMAT);
     record.appendDate(this.withdrawalDate, DATE_FORMAT, {
       filler: SPACE_FILLER,
@@ -468,47 +476,55 @@ export class IER12FileDetail implements IER12FileLine {
     record.appendDate(this.disbursementCancelDate, DATE_FORMAT, {
       filler: SPACE_FILLER,
     });
-
+    record.append(FullTimeAwardTypes.CSLF, 4);
     record.appendWithStartFiller(
       this.fundingDetails[FullTimeAwardTypes.CSLF] ?? 0,
       10,
       NUMBER_FILLER,
     );
+    record.append(FullTimeAwardTypes.BCSL, 4);
     record.appendWithStartFiller(
       this.fundingDetails[FullTimeAwardTypes.BCSL] ?? 0,
       10,
       NUMBER_FILLER,
     );
+    record.append(FullTimeAwardTypes.CSGP, 4);
     record.appendWithStartFiller(
       this.fundingDetails[FullTimeAwardTypes.CSGP] ?? 0,
       10,
       NUMBER_FILLER,
     );
+    record.append(FullTimeAwardTypes.CSGD, 4);
     record.appendWithStartFiller(
       this.fundingDetails[FullTimeAwardTypes.CSGD] ?? 0,
       10,
       NUMBER_FILLER,
     );
+    record.append(FullTimeAwardTypes.CSGF, 4);
     record.appendWithStartFiller(
       this.fundingDetails[FullTimeAwardTypes.CSGF] ?? 0,
       10,
       NUMBER_FILLER,
     );
+    record.append(FullTimeAwardTypes.CSGT, 4);
     record.appendWithStartFiller(
       this.fundingDetails[FullTimeAwardTypes.CSGT] ?? 0,
       10,
       NUMBER_FILLER,
     );
+    record.append(FullTimeAwardTypes.BCAG, 4);
     record.appendWithStartFiller(
       this.fundingDetails[FullTimeAwardTypes.BCAG] ?? 0,
       10,
       NUMBER_FILLER,
     );
+    record.append(FullTimeAwardTypes.SBSD, 4);
     record.appendWithStartFiller(
       this.fundingDetails[FullTimeAwardTypes.SBSD] ?? 0,
       10,
       NUMBER_FILLER,
     );
+    record.append(FullTimeAwardTypes.BGPD, 4);
     record.appendWithStartFiller(
       this.fundingDetails[FullTimeAwardTypes.BGPD] ?? 0,
       10,
