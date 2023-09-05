@@ -655,6 +655,7 @@ export class ApplicationStudentsController extends BaseController {
       assessmentTriggerType: application.currentAssessment.triggerType,
       appealStatus: appeal?.status,
       scholasticStandingChangeType: scholasticStandingChange?.changeType,
+      applicationOfferingChangeRequestId: applicationOfferingChangeRequest?.id,
       applicationOfferingChangeRequestStatus:
         applicationOfferingChangeRequest?.applicationOfferingChangeRequestStatus,
     };

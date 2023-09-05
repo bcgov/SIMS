@@ -242,7 +242,8 @@ describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", ()
       },
     );
     // Create pending application offering change request.
-    await saveFakeApplicationOfferingRequestChange(db, { application });
+    const pendingApplicationOfferingChangeRequest =
+      await saveFakeApplicationOfferingRequestChange(db, { application });
     const endpoint = `/students/application/${application.id}/completed`;
     const token = await getStudentToken(
       FakeStudentUsersTypes.FakeStudentUserType1,
@@ -260,6 +261,8 @@ describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", ()
         },
         assessmentTriggerType: application.currentAssessment.triggerType,
         appealStatus: StudentAppealStatus.Pending,
+        applicationOfferingChangeRequestId:
+          pendingApplicationOfferingChangeRequest.id,
         applicationOfferingChangeRequestStatus:
           ApplicationOfferingChangeRequestStatus.InProgressWithStudent,
       });

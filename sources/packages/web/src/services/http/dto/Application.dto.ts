@@ -121,5 +121,6 @@ export interface CompletedApplicationDetailsAPIOutDTO
   secondDisbursement?: DisbursementDetailsAPIOutDTO;
   appealStatus?: StudentAppealStatus;
   scholasticStandingChangeType?: StudentScholasticStandingChangeType;
+  applicationOfferingChangeRequestId?: number;
   applicationOfferingChangeRequestStatus?: ApplicationOfferingChangeRequestStatus;
 }

@@ -19,6 +19,7 @@ import {
 import { AxiosRequestConfig } from "axios";
 import ApiClient from "./ApiClient";
 import { FileUploadProgressEventArgs } from "@/services/http/common/FileUploadProgressEvent";
+import { OfferingSummaryPurpose } from "@/types/contracts/OfferingSummaryPurpose";
 
 export class EducationProgramOfferingApi extends HttpBaseClient {
   /**
@@ -323,17 +324,19 @@ export class EducationProgramOfferingApi extends HttpBaseClient {
    * @param offeringId offering.
    * @param options method options:
    * - `locationId`: location for authorization.
+   * - `purpose`: indicates the purpose to allow for the appropriate authorization flow to be used.
    * @returns offering details.
    */
   async getOfferingSummaryDetailsById(
     offeringId: number,
     options?: {
       locationId?: number;
+      purpose?: OfferingSummaryPurpose;
     },
   ): Promise<EducationProgramOfferingSummaryViewAPIOutDTO> {
     const url = options?.locationId
       ? `education-program-offering/location/${options.locationId}/offering/${offeringId}/summary-details`
-      : `education-program-offering/offering/${offeringId}/summary-details`;
+      : `education-program-offering/offering/${offeringId}/summary-details?purpose=${options?.purpose}`;
     return this.getCall<EducationProgramOfferingSummaryViewAPIOutDTO>(
       this.addClientRoot(url),
     );

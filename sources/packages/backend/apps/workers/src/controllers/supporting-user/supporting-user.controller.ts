@@ -1,4 +1,4 @@
-import { Controller } from "@nestjs/common";
+import { Controller, Logger } from "@nestjs/common";
 import { ZeebeWorker } from "../../zeebe";
 import {
   ZeebeJob,
@@ -12,7 +12,10 @@ import {
   CreateSupportingUsersJobInDTO,
   CreateSupportingUsersJobOutDTO,
 } from "..";
-import { filterObjectProperties } from "../../utilities";
+import {
+  createUnexpectedJobFail,
+  filterObjectProperties,
+} from "../../utilities";
 import { SUPPORTING_USER_NOT_FOUND } from "../../constants";
 import { APPLICATION_ID } from "@sims/services/workflow/variables/assessment-gateway";
 import {
@@ -39,22 +42,31 @@ export class SupportingUserController {
       >
     >,
   ): Promise<MustReturnJobActionAcknowledgement> {
-    const hasSupportingUsers =
-      await this.supportingUserService.hasSupportingUsers(
-        job.variables.applicationId,
+    const jobLogger = new Logger(job.type);
+    try {
+      const hasSupportingUsers =
+        await this.supportingUserService.hasSupportingUsers(
+          job.variables.applicationId,
+        );
+      if (hasSupportingUsers) {
+        jobLogger.log("Supporting users already exists.");
+        return job.complete();
+      }
+      const supportingUsers =
+        await this.supportingUserService.createSupportingUsers(
+          job.variables.applicationId,
+          job.variables.supportingUsersTypes,
+        );
+      const createdSupportingUsersIds = supportingUsers.map(
+        (supportingUser) => supportingUser.id,
       );
-    if (hasSupportingUsers) {
-      return job.complete();
+      jobLogger.log("Created supporting users.");
+      return job.complete({ createdSupportingUsersIds });
+    } catch (error: unknown) {
+      return createUnexpectedJobFail(error, job, {
+        logger: jobLogger,
+      });
     }
-    const supportingUsers =
-      await this.supportingUserService.createSupportingUsers(
-        job.variables.applicationId,
-        job.variables.supportingUsersTypes,
-      );
-    const createdSupportingUsersIds = supportingUsers.map(
-      (supportingUser) => supportingUser.id,
-    );
-    return job.complete({ createdSupportingUsersIds });
   }
 
   @ZeebeWorker(Workers.LoadSupportingUserData, {
@@ -70,20 +82,28 @@ export class SupportingUserController {
       >
     >,
   ): Promise<MustReturnJobActionAcknowledgement> {
-    const supportingUser =
-      await this.supportingUserService.getSupportingUserById(
-        job.variables.supportingUserId,
+    const jobLogger = new Logger(job.type);
+    try {
+      const supportingUser =
+        await this.supportingUserService.getSupportingUserById(
+          job.variables.supportingUserId,
+        );
+      if (!supportingUser) {
+        const message =
+          "Supporting user not found while checking for supporting user response.";
+        jobLogger.error(message);
+        job.error(SUPPORTING_USER_NOT_FOUND, message);
+      }
+      const outputVariables = filterObjectProperties(
+        supportingUser.supportingData,
+        job.customHeaders,
       );
-    if (!supportingUser) {
-      job.error(
-        SUPPORTING_USER_NOT_FOUND,
-        "Supporting user not found while checking for supporting user response.",
-      );
+      jobLogger.log("Supporting user data loaded.");
+      return job.complete(outputVariables);
+    } catch (error: unknown) {
+      return createUnexpectedJobFail(error, job, {
+        logger: jobLogger,
+      });
     }
-    const outputVariables = filterObjectProperties(
-      supportingUser.supportingData,
-      job.customHeaders,
-    );
-    return job.complete(outputVariables);
   }
 }

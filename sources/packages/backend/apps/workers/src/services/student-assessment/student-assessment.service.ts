@@ -4,6 +4,7 @@ import {
   RecordDataModelService,
   StudentAppealStatus,
   StudentAssessment,
+  StudentAssessmentStatus,
   WorkflowData,
 } from "@sims/sims-db";
 import { CustomNamedError } from "@sims/utilities";
@@ -11,7 +12,8 @@ import { DataSource, EntityManager, IsNull, UpdateResult } from "typeorm";
 import {
   ASSESSMENT_NOT_FOUND,
   ASSESSMENT_ALREADY_ASSOCIATED_TO_WORKFLOW,
-  ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE,
+  ASSESSMENT_ALREADY_ASSOCIATED_WITH_DIFFERENT_WORKFLOW,
+  INVALID_OPERATION_IN_THE_CURRENT_STATUS,
 } from "@sims/services/constants";
 import { NotificationActionsService, SystemUsersService } from "@sims/services";
 
@@ -29,42 +31,74 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
   }
 
   /**
-   * Associates the workflow instance if the assessment is not associated already.
+   * Associates the workflow instance to the assessment record,
+   * updating its status to "In progress".
    * @param assessmentId assessment id.
    * @param assessmentWorkflowId workflow instance id.
    */
-  async associateWorkflowId(
+  async associateWorkflowInstance(
     assessmentId: number,
     assessmentWorkflowId: string,
   ): Promise<void> {
     return this.dataSource.transaction(async (entityManager) => {
+      const auditUser = await this.systemUsersService.systemUser();
       const assessmentRepo = entityManager.getRepository(StudentAssessment);
       const assessment = await assessmentRepo.findOne({
         where: { id: assessmentId },
         lock: { mode: "pessimistic_write" },
       });
+
       if (!assessment) {
         throw new CustomNamedError(
           "Assessment id was not found.",
           ASSESSMENT_NOT_FOUND,
         );
       }
-      if (!assessment.assessmentWorkflowId) {
-        // Assessment is available to be associated with the workflow instance id.
-        await assessmentRepo.update(assessmentId, { assessmentWorkflowId });
-        return;
-      }
-      if (assessment.assessmentWorkflowId !== assessmentWorkflowId) {
+
+      // Check if the assessment is in one of the initial statuses. Any status different than "Submitted" and "Queued" should
+      // cancel the workflow because there is no point executing it.
+      // A workflow in these statuses can be associated and updated to "In progress" nicely. The expectation is that it would
+      // be primarily "Queued" but there is no harm in allowing "Submitted" also.
+      // The main intention is to prevent the workflow association from happening in any other status, for instance,
+      // for the case when workers are down and a workflow is triggered, the assessment can have its status updated
+      // (e.g. be canceled) before the workers are up and running again, which can potentially make the workflow execution no longer needed.
+      const initialStatuses = [
+        StudentAssessmentStatus.Submitted,
+        StudentAssessmentStatus.Queued,
+      ];
+      if (!initialStatuses.includes(assessment.studentAssessmentStatus)) {
         throw new CustomNamedError(
-          `The assessment is already associated with another workflow instance. Current associated instance id ${assessment.assessmentWorkflowId}.`,
-          ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE,
+          `The assessment is not in any initial status that would allow the workflow association. Expected statuses: ${initialStatuses.join(
+            ", ",
+          )}.`,
+          INVALID_OPERATION_IN_THE_CURRENT_STATUS,
         );
       }
-      // The workflow was already associated with the workflow, no need to update it again.
-      throw new CustomNamedError(
-        `The assessment is already associated to the workflow.`,
-        ASSESSMENT_ALREADY_ASSOCIATED_TO_WORKFLOW,
-      );
+
+      // Check it there is already a workflow id associated with the assessment.
+      if (assessment.assessmentWorkflowId) {
+        if (assessment.assessmentWorkflowId !== assessmentWorkflowId) {
+          throw new CustomNamedError(
+            `The assessment is already associated with another workflow instance. Current associated instance id ${assessment.assessmentWorkflowId}.`,
+            ASSESSMENT_ALREADY_ASSOCIATED_WITH_DIFFERENT_WORKFLOW,
+          );
+        }
+        // The workflow was already associated with the workflow, no need to update it again.
+        throw new CustomNamedError(
+          "The assessment is already associated to the workflow.",
+          ASSESSMENT_ALREADY_ASSOCIATED_TO_WORKFLOW,
+        );
+      }
+
+      // Assessment is available to be associated with the workflow instance id.
+      const now = new Date();
+      await assessmentRepo.update(assessmentId, {
+        assessmentWorkflowId,
+        studentAssessmentStatus: StudentAssessmentStatus.InProgress,
+        studentAssessmentStatusUpdatedOn: now,
+        modifier: auditUser,
+        updatedAt: now,
+      });
     });
   }
 
@@ -254,7 +288,14 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
     assessmentId: number,
     workflowData: WorkflowData,
   ): Promise<void> {
-    await this.repo.update({ id: assessmentId }, { workflowData });
-    // TODO: update assessment status.
+    const auditUser = await this.systemUsersService.systemUser();
+    const now = new Date();
+    await this.repo.update(assessmentId, {
+      workflowData,
+      studentAssessmentStatus: StudentAssessmentStatus.Completed,
+      studentAssessmentStatusUpdatedOn: now,
+      modifier: auditUser,
+      updatedAt: now,
+    });
   }
 }

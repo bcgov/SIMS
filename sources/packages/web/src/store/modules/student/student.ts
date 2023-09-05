@@ -16,6 +16,7 @@ export class StudentState {
   sinValidStatus: SINValidStatus = new SINValidStatus();
   restrictions: StudentRestriction[] = [];
   firstName = "";
+  fullName = "";
 }
 
 const state: StudentState = {
@@ -23,6 +24,7 @@ const state: StudentState = {
   sinValidStatus: new SINValidStatus(),
   restrictions: [],
   firstName: "",
+  fullName: "",
 };
 
 const namespaced = true;

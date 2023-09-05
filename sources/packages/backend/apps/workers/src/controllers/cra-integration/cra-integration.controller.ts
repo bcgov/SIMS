@@ -1,4 +1,4 @@
-import { Controller } from "@nestjs/common";
+import { Controller, Logger } from "@nestjs/common";
 import { ZeebeWorker } from "../../zeebe";
 import {
   ZeebeJob,
@@ -22,6 +22,7 @@ import {
 } from "@sims/services/workflow/variables/cra-integration-income-verification";
 import { MaxJobsToActivate } from "../../types";
 import { Workers } from "@sims/services/constants";
+import { createUnexpectedJobFail } from "../../utilities";
 
 @Controller()
 export class CRAIntegrationController {
@@ -51,20 +52,27 @@ export class CRAIntegrationController {
       >
     >,
   ): Promise<MustReturnJobActionAcknowledgement> {
-    const incomeRequest =
-      await this.incomeVerificationService.createIncomeVerification(
-        job.variables.applicationId,
-        job.variables.taxYear,
-        job.variables.reportedIncome,
-        job.variables.supportingUserId,
+    const jobLogger = new Logger(job.type);
+    try {
+      const incomeRequest =
+        await this.incomeVerificationService.createIncomeVerification(
+          job.variables.applicationId,
+          job.variables.taxYear,
+          job.variables.reportedIncome,
+          job.variables.supportingUserId,
+        );
+      const [identifier] = incomeRequest.identifiers;
+
+      await this.incomeVerificationService.checkForCRAIncomeVerificationBypass(
+        identifier.id,
       );
-    const [identifier] = incomeRequest.identifiers;
-
-    await this.incomeVerificationService.checkForCRAIncomeVerificationBypass(
-      identifier.id,
-    );
-
-    return job.complete({ incomeVerificationId: identifier.id });
+      jobLogger.log("CRA income verification created.");
+      return job.complete({ incomeVerificationId: identifier.id });
+    } catch (error: unknown) {
+      return createUnexpectedJobFail(error, job, {
+        logger: jobLogger,
+      });
+    }
   }
 
   /**
@@ -85,10 +93,18 @@ export class CRAIntegrationController {
       >
     >,
   ): Promise<MustReturnJobActionAcknowledgement> {
-    const incomeVerificationCompleted =
-      await this.incomeVerificationService.isIncomeVerificationCompleted(
-        job.variables.incomeVerificationId,
-      );
-    return job.complete({ incomeVerificationCompleted });
+    const jobLogger = new Logger(job.type);
+    try {
+      const incomeVerificationCompleted =
+        await this.incomeVerificationService.isIncomeVerificationCompleted(
+          job.variables.incomeVerificationId,
+        );
+      jobLogger.log("CRA income verification completed.");
+      return job.complete({ incomeVerificationCompleted });
+    } catch (error: unknown) {
+      return createUnexpectedJobFail(error, job, {
+        logger: jobLogger,
+      });
+    }
   }
 }

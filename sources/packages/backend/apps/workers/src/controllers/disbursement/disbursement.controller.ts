@@ -1,4 +1,4 @@
-import { Controller } from "@nestjs/common";
+import { Controller, Logger } from "@nestjs/common";
 import { ZeebeWorker } from "../../zeebe";
 import {
   ZeebeJob,
@@ -32,6 +32,7 @@ import {
   DISBURSEMENT_MSFAA_ALREADY_ASSOCIATED,
   DISBURSEMENT_NOT_FOUND,
 } from "../../constants";
+import { createUnexpectedJobFail } from "../../utilities";
 
 @Controller()
 export class DisbursementController {
@@ -56,25 +57,29 @@ export class DisbursementController {
       >
     >,
   ): Promise<MustReturnJobActionAcknowledgement> {
+    const jobLogger = new Logger(job.type);
     try {
       await this.disbursementScheduleSharedService.createDisbursementSchedules(
         job.variables.assessmentId,
         job.variables.disbursementSchedules,
       );
+      jobLogger.log("Created disbursement schedule");
       return job.complete();
     } catch (error: unknown) {
       if (error instanceof CustomNamedError) {
         switch (error.name) {
           case DISBURSEMENT_SCHEDULES_ALREADY_CREATED:
+            jobLogger.log(`${error.name} ${error.message}`);
             return job.complete();
           case ASSESSMENT_NOT_FOUND:
           case ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE:
+            jobLogger.error(`${error.name} ${error.message}`);
             return job.error(error.name, error.message);
         }
       }
-      return job.fail(
-        `Unexpected error while creating disbursement schedules. ${error}`,
-      );
+      return createUnexpectedJobFail(error, job, {
+        logger: jobLogger,
+      });
     }
   }
 
@@ -92,10 +97,12 @@ export class DisbursementController {
       ZeebeJob<AssignMSFAAJobInDTO, ICustomHeaders, IOutputVariables>
     >,
   ): Promise<MustReturnJobActionAcknowledgement> {
+    const jobLogger = new Logger(job.type);
     try {
       await this.disbursementScheduleService.associateMSFAANumber(
         job.variables.assessmentId,
       );
+      jobLogger.log("Associated the MSFAA number to the disbursements.");
       return job.complete();
     } catch (error: unknown) {
       if (error instanceof CustomNamedError) {
@@ -103,14 +110,16 @@ export class DisbursementController {
           case DISBURSEMENT_NOT_FOUND:
           case INVALID_OPERATION_IN_THE_CURRENT_STATUS:
           case APPLICATION_INVALID_DATA_TO_CREATE_MSFAA_ERROR:
+            jobLogger.error(`${error.name} ${error.message}`);
             return job.error(error.name, error.message);
           case DISBURSEMENT_MSFAA_ALREADY_ASSOCIATED:
+            jobLogger.log(`${error.name} ${error.message}`);
             return job.complete();
         }
       }
-      return job.fail(
-        `Unexpected error while associating the MSFAA number to the disbursements. ${error}`,
-      );
+      return createUnexpectedJobFail(error, job, {
+        logger: jobLogger,
+      });
     }
   }
 }

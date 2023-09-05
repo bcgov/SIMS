@@ -39,6 +39,7 @@ export interface AssessmentHistorySummaryAPIOutDTO {
   offeringId?: number;
   programId?: number;
   studentAppealId?: number;
+  applicationOfferingChangeRequestId?: number;
   applicationExceptionId?: number;
   studentScholasticStandingId?: number;
   // This flag decides, the row is unsuccessful week or not.

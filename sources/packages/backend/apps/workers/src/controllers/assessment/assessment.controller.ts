@@ -25,11 +25,15 @@ import {
   SupportingUser,
   SupportingUserType,
 } from "@sims/sims-db";
-import { filterObjectProperties } from "../../utilities";
+import {
+  createUnexpectedJobFail,
+  filterObjectProperties,
+} from "../../utilities";
 import {
   ASSESSMENT_ALREADY_ASSOCIATED_TO_WORKFLOW,
-  ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE,
+  ASSESSMENT_ALREADY_ASSOCIATED_WITH_DIFFERENT_WORKFLOW,
   ASSESSMENT_NOT_FOUND,
+  INVALID_OPERATION_IN_THE_CURRENT_STATUS,
   Workers,
 } from "@sims/services/constants";
 import {
@@ -62,25 +66,32 @@ export class AssessmentController {
       >
     >,
   ): Promise<MustReturnJobActionAcknowledgement> {
+    const logger = new Logger(job.type);
     try {
-      await this.studentAssessmentService.associateWorkflowId(
+      await this.studentAssessmentService.associateWorkflowInstance(
         job.variables.assessmentId,
         job.processInstanceKey,
+      );
+      logger.log(
+        `Assessment id ${job.variables.assessmentId} associated to workflow ${job.processInstanceKey}.`,
       );
       return job.complete();
     } catch (error: unknown) {
       if (error instanceof CustomNamedError) {
         switch (error.name) {
           case ASSESSMENT_ALREADY_ASSOCIATED_TO_WORKFLOW:
+            logger.log(error.getSummaryMessage());
             return job.complete();
           case ASSESSMENT_NOT_FOUND:
-          case ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE:
+            logger.error(error.getSummaryMessage());
             return job.error(error.name, error.message);
+          case INVALID_OPERATION_IN_THE_CURRENT_STATUS:
+          case ASSESSMENT_ALREADY_ASSOCIATED_WITH_DIFFERENT_WORKFLOW:
+            logger.error(error.getSummaryMessage());
+            return job.cancelWorkflow();
         }
       }
-      return job.fail(
-        `Not able to associate the assessment id ${job.variables.assessmentId} with the workflow instance id ${job.processInstanceKey}. ${error}`,
-      );
+      return createUnexpectedJobFail(error, job, { logger });
     }
   }
 
@@ -103,18 +114,28 @@ export class AssessmentController {
       ZeebeJob<AssessmentDataJobInDTO, ICustomHeaders, IOutputVariables>
     >,
   ): Promise<MustReturnJobActionAcknowledgement> {
-    const assessment = await this.studentAssessmentService.getById(
-      job.variables.assessmentId,
-    );
-    if (!assessment) {
-      return job.error(ASSESSMENT_NOT_FOUND, "Assessment not found.");
+    const jobLogger = new Logger(job.type);
+    try {
+      const assessment = await this.studentAssessmentService.getById(
+        job.variables.assessmentId,
+      );
+      if (!assessment) {
+        const message = "Assessment not found.";
+        jobLogger.error(message);
+        return job.error(ASSESSMENT_NOT_FOUND, message);
+      }
+      const assessmentDTO = this.transformToAssessmentDTO(assessment);
+      const outputVariables = filterObjectProperties(
+        assessmentDTO,
+        job.customHeaders,
+      );
+      jobLogger.log("Assessment consolidated data loaded.");
+      return job.complete(outputVariables);
+    } catch (error: unknown) {
+      return createUnexpectedJobFail(error, job, {
+        logger: jobLogger,
+      });
     }
-    const assessmentDTO = this.transformToAssessmentDTO(assessment);
-    const outputVariables = filterObjectProperties(
-      assessmentDTO,
-      job.customHeaders,
-    );
-    return job.complete(outputVariables);
   }
 
   /**
@@ -129,11 +150,19 @@ export class AssessmentController {
       ZeebeJob<SaveAssessmentDataJobInDTO, ICustomHeaders, IOutputVariables>
     >,
   ): Promise<MustReturnJobActionAcknowledgement> {
-    await this.studentAssessmentService.updateAssessmentData(
-      job.variables.assessmentId,
-      job.variables.assessmentData,
-    );
-    return job.complete();
+    const jobLogger = new Logger(job.type);
+    try {
+      await this.studentAssessmentService.updateAssessmentData(
+        job.variables.assessmentId,
+        job.variables.assessmentData,
+      );
+      jobLogger.log("Assessment data saved.");
+      return job.complete();
+    } catch (error: unknown) {
+      return createUnexpectedJobFail(error, job, {
+        logger: jobLogger,
+      });
+    }
   }
 
   /**
@@ -152,11 +181,19 @@ export class AssessmentController {
       >
     >,
   ): Promise<MustReturnJobActionAcknowledgement> {
-    await this.studentAssessmentService.updateNOAApprovalStatus(
-      job.variables.assessmentId,
-      job.customHeaders.status,
-    );
-    return job.complete();
+    const jobLogger = new Logger(job.type);
+    try {
+      await this.studentAssessmentService.updateNOAApprovalStatus(
+        job.variables.assessmentId,
+        job.customHeaders.status,
+      );
+      jobLogger.log("NOA status updated.");
+      return job.complete();
+    } catch (error: unknown) {
+      return createUnexpectedJobFail(error, job, {
+        logger: jobLogger,
+      });
+    }
   }
 
   /**
@@ -171,17 +208,18 @@ export class AssessmentController {
       ZeebeJob<WorkflowWrapUpJobInDTO, ICustomHeaders, IOutputVariables>
     >,
   ): Promise<MustReturnJobActionAcknowledgement> {
+    const jobLogger = new Logger(job.type);
     try {
       await this.studentAssessmentService.updateAssessmentStatusAndSaveWorkflowData(
         job.variables.assessmentId,
         job.variables.workflowData,
       );
+      jobLogger.log("Updated assessment status and saved the workflow data.");
       return job.complete();
     } catch (error: unknown) {
-      const jobLogger = new Logger(job.type);
-      const errorMessage = `Failed while updating assessment status and saving workflow data. ${error}`;
-      jobLogger.error(errorMessage);
-      return job.fail(errorMessage);
+      return createUnexpectedJobFail(error, job, {
+        logger: jobLogger,
+      });
     }
   }
 

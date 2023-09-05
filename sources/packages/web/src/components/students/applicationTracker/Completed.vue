@@ -21,7 +21,15 @@
     content="Your institution is proposing changes to your application. Please review the details and allow (or decline) the proposed change from your institution. Allowing the change will enable StudentAid BC to make a final decision on the proposed changes, which will result in a new assessment if the changes are approved. Please review the changes carefully and contact your institution if you require more information."
   >
     <template #actions>
-      <v-btn color="primary">Review changes</v-btn>
+      <v-btn
+        color="primary"
+        @click="
+          viewApplicationOfferingChangeRequest(
+            assessmentDetails.applicationOfferingChangeRequestId,
+          )
+        "
+        >Review changes</v-btn
+      >
     </template>
   </application-status-tracker-banner>
   <!-- Student application change request - in progress with ministry -->
@@ -165,6 +173,8 @@ import { CompletedApplicationDetailsAPIOutDTO } from "@/services/http/dto/Applic
 import ApplicationStatusTrackerBanner from "@/components/students/applicationTracker/generic/ApplicationStatusTrackerBanner.vue";
 import DisbursementBanner from "@/components/students/applicationTracker/DisbursementBanner.vue";
 import MultipleDisbursementBanner from "@/components/students/applicationTracker/MultipleDisbursementBanner.vue";
+import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
+import { useRouter } from "vue-router";
 
 export default defineComponent({
   components: {
@@ -179,6 +189,7 @@ export default defineComponent({
     },
   },
   setup(props) {
+    const router = useRouter();
     const assessmentDetails = ref({} as CompletedApplicationDetailsAPIOutDTO);
     const multipleCOEDenialReason = ref<string>();
 
@@ -202,6 +213,22 @@ export default defineComponent({
       );
     });
 
+    /**
+     * Navigate to the form to view the application offering change request.
+     * @param applicationOfferingChangeRequestId application offering change request id to have the request created.
+     */
+    const viewApplicationOfferingChangeRequest = (
+      applicationOfferingChangeRequestId: number | undefined,
+    ) => {
+      router.push({
+        name: StudentRoutesConst.STUDENT_REQUESTED_APPLICATION_OFFERING_CHANGE,
+        params: {
+          applicationOfferingChangeRequestId,
+          applicationId: props.applicationId,
+        },
+      });
+    };
+
     return {
       assessmentDetails,
       multipleCOEDenialReason,
@@ -211,6 +238,7 @@ export default defineComponent({
       hasDisbursementEvent,
       StudentScholasticStandingChangeType,
       ApplicationOfferingChangeRequestStatus,
+      viewApplicationOfferingChangeRequest,
     };
   },
 });
