@@ -302,7 +302,6 @@ export class IER12ProcessingService {
     studentRestrictions: StudentRestriction[],
     options?: { restrictionCode?: string },
   ): boolean {
-    console.log("Restrictions", studentRestrictions);
     return studentRestrictions?.some(
       (studentRestriction) =>
         studentRestriction.isActive &&
