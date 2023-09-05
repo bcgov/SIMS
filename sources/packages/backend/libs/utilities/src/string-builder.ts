@@ -71,8 +71,12 @@ export class StringBuilder {
 
   /**
    * Appends a date in a specific format to the current content.
+   * When filler is provided and date value is null it is replaced by the
+   * filler using length of date format.
    * @param date date to be formatted.
    * @param dateFormat format.
+   * @param options options:
+   * - `filler`: filler to replace when date is not provided.
    */
   public appendDate(
     date: Date | string,
