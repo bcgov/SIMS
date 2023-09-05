@@ -232,3 +232,12 @@ objects:
             resources:
               requests:
                 storage: "${VOLUME_CAPACITY}"
+  - apiVersion: policy/v1
+    kind: PodDisruptionBudget
+    metadata:
+      name: ${NAME}-pdb
+    spec:
+      selector:
+        matchLabels:
+          app: ${NAME}
+      maxUnavailable: 1

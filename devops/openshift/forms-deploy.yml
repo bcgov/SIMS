@@ -26,9 +26,6 @@ objects:
       name: ${NAME}
     spec:
       replicas: "${{REPLICAS}}"
-      disruptionBudget:
-        maxUnavailable: 1
-        minAvailable: "${{REPLICAS}}"
       selector:
         app: ${NAME}
       strategy:
@@ -172,7 +169,15 @@ objects:
       minReplicas: "${{REPLICAS}}"
       maxReplicas: 10
       targetCPUUtilizationPercentage: 80
-
+  - apiVersion: policy/v1
+    kind: PodDisruptionBudget
+    metadata:
+      name: ${NAME}-pdb
+    spec:
+      selector:
+        matchLabels:
+          app: ${NAME}
+      maxUnavailable: 1
 parameters:
   - name: NAME
     displayName: Name
@@ -217,12 +222,12 @@ parameters:
     displayName: Resources CPU Request
     description: The resources CPU request (in cores) for this build.
     required: true
-    value: 250m
+    value: "0.1"
   - name: CPU_LIMIT
     displayName: Resources CPU Limit
     description: The resources CPU limit (in cores) for this build.
     required: true
-    value: "2"
+    value: "0.5"
   - name: MEMORY_REQUEST
     displayName: Resources Memory Request
     description: The resources Memory request (in Mi, Gi, etc) for this build.
@@ -232,4 +237,4 @@ parameters:
     displayName: Resources Memory Limit
     description: The resources Memory limit (in Mi, Gi, etc) for this build.
     required: true
-    value: 2Gi
+    value: 512Mi
