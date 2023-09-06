@@ -6,13 +6,13 @@ export $(shell sed 's/=.*//' ../../.env)
 export $(shell sed 's/=.*//' .env-e2e-tests)
 
 backend-unit-tests:
-	@cd ../packages/backend && npm i && npm run test:cov
+	@cd ../packages/backend && npm i && npm run test
 
 e2e-tests-api:
 	@echo "+\n++ Make: Starting containers for API E2E tests \n+"
 	@docker-compose run --name api-e2e-$(BUILD_REF) api npm run test:e2e:api
-	@mkdir -p coverage/api
-	@docker cp api-e2e-$(BUILD_REF):app/apps/api/coverage/clover.xml coverage/api
+#	@mkdir -p coverage/api
+#	@docker cp api-e2e-$(BUILD_REF):app/apps/api/coverage/clover.xml coverage/api
 	@docker rm api-e2e-$(BUILD_REF)
 	@docker-compose down --rmi all -v
 
