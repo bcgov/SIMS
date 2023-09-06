@@ -58,30 +58,30 @@ describe("ApplicationOfferingChangeRequestStudentsController(e2e)-getApplication
       });
   });
 
-  // it("Should throw a HttpStatus Not Found (404) when the application offering status change request is not associated with the authenticated student.", async () => {
-  //   // Arrange
-  //   const application = await saveFakeApplication(db.dataSource, undefined, {
-  //     applicationStatus: ApplicationStatus.Completed,
-  //   });
-  //   const applicationOfferingChangeRequest =
-  //     await saveFakeApplicationOfferingRequestChange(db, {
-  //       application,
-  //     });
-  //   const token = await getStudentToken(
-  //     FakeStudentUsersTypes.FakeStudentUserType1,
-  //   );
-  //   const endpoint = `/students/application-offering-change-request/${applicationOfferingChangeRequest.id}/application-offering-change-request-status`;
-  //   // Act/Assert
-  //   await request(app.getHttpServer())
-  //     .get(endpoint)
-  //     .auth(token, BEARER_AUTH_TYPE)
-  //     .expect(HttpStatus.NOT_FOUND)
-  //     .expect({
-  //       statusCode: HttpStatus.NOT_FOUND,
-  //       message: "Application Offering Change Request not found.",
-  //       error: "Not Found",
-  //     });
-  // });
+  it("Should throw a HttpStatus Not Found (404) when the application offering status change request is not associated with the authenticated student.", async () => {
+    // Arrange
+    const application = await saveFakeApplication(db.dataSource, undefined, {
+      applicationStatus: ApplicationStatus.Completed,
+    });
+    const applicationOfferingChangeRequest =
+      await saveFakeApplicationOfferingRequestChange(db, {
+        application,
+      });
+    const token = await getStudentToken(
+      FakeStudentUsersTypes.FakeStudentUserType1,
+    );
+    const endpoint = `/students/application-offering-change-request/${applicationOfferingChangeRequest.id}/application-offering-change-request-status`;
+    // Act/Assert
+    await request(app.getHttpServer())
+      .get(endpoint)
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.NOT_FOUND)
+      .expect({
+        statusCode: HttpStatus.NOT_FOUND,
+        message: "Application Offering Change Request not found.",
+        error: "Not Found",
+      });
+  });
 
   afterAll(async () => {
     await app?.close();
