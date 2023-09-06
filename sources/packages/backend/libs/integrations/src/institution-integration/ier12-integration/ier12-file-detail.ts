@@ -1,9 +1,5 @@
 import { COEStatus, DisbursementScheduleStatus } from "@sims/sims-db";
-import {
-  StringBuilder,
-  emptyNumberFiller,
-  emptyStringFiller,
-} from "@sims/utilities";
+import { AdvancedStringBuilder } from "@sims/utilities";
 import {
   ApplicationStatusCode,
   DATE_FORMAT,
@@ -75,11 +71,11 @@ export class IER12FileDetail implements IER12FileLine {
   provincialOverawardFlag: YNFlag;
   federalOverawardFlag: YNFlag;
   restrictionFlag: YNFlag;
-  scholasticStandingEffectiveDate: Date;
+  scholasticStandingEffectiveDate?: Date;
   // Analysis pending for the field.
   scholasticStandingCode?: string;
   assessmentDate: Date;
-  withdrawalDate: Date;
+  withdrawalDate?: Date;
   // Analysis pending for the field.
   applicantAndPartnerExpectedContribution?: number;
   // Analysis pending for the field.
@@ -180,7 +176,7 @@ export class IER12FileDetail implements IER12FileLine {
   dateOfDisbursement?: Date;
   // Analysis pending for the field.
   disbursementExpiryDate?: Date;
-  disbursementCancelDate: Date;
+  disbursementCancelDate?: Date;
   /**
    * Disbursement funding type and funding amount in a key value format.
    * last 2 digits in funding amount holds the decimal value.
@@ -189,336 +185,155 @@ export class IER12FileDetail implements IER12FileLine {
   fundingDetails: Record<string, number>;
 
   getFixedFormat(): string {
-    const record = new StringBuilder();
-    record.appendWithStartFiller(this.assessmentId, 10, NUMBER_FILLER);
-    record.appendWithStartFiller(this.disbursementId, 10, NUMBER_FILLER);
+    const record = new AdvancedStringBuilder(
+      SPACE_FILLER,
+      NUMBER_FILLER,
+      SPACE_FILLER,
+    );
+    record.appendNumberWithFiller(this.assessmentId, 10);
+    record.appendNumberWithFiller(this.disbursementId, 10);
     record.append(this.applicationNumber, 10);
-    record.appendWithEndFiller(
-      emptyStringFiller(this.institutionStudentNumber),
-      12,
-      SPACE_FILLER,
-    );
+    record.appendOptionalStringWithFiller(this.institutionStudentNumber, 12);
     record.append(this.sin, 9);
-    record.appendWithEndFiller(this.studentLastName, 25, SPACE_FILLER);
-    record.appendWithEndFiller(
-      emptyStringFiller(this.studentGivenName),
-      15,
-      SPACE_FILLER,
-    );
+    record.appendStringWithFiller(this.studentLastName, 25);
+    record.appendOptionalStringWithFiller(this.studentGivenName, 15);
     record.appendDate(this.studentBirthDate, DATE_FORMAT);
-    record.appendWithEndFiller(this.studentGroupCode, 4, SPACE_FILLER);
-    record.appendWithEndFiller(
-      emptyStringFiller(this.studentMaritalStatusCode),
-      4,
-      SPACE_FILLER,
-    );
-    record.appendWithEndFiller(
-      emptyStringFiller(this.studentDisabilityStatusCode),
-      4,
-      SPACE_FILLER,
-    );
-    record.appendWithEndFiller(
-      emptyStringFiller(this.applicationDisabilityStatusFlag),
+    record.appendStringWithFiller(this.studentGroupCode, 4);
+    record.appendOptionalStringWithFiller(this.studentMaritalStatusCode, 4);
+    record.appendOptionalStringWithFiller(this.studentDisabilityStatusCode, 4);
+    record.appendOptionalStringWithFiller(
+      this.applicationDisabilityStatusFlag,
       1,
-      SPACE_FILLER,
     );
-    record.appendWithEndFiller(this.addressInfo.addressLine1, 25, SPACE_FILLER);
-    record.appendWithEndFiller(
-      emptyStringFiller(this.addressInfo.addressLine2),
-      25,
-      SPACE_FILLER,
-    );
-    record.appendWithEndFiller(this.addressInfo.city, 25, SPACE_FILLER);
-    record.appendWithEndFiller(this.addressInfo.provinceState, 4, SPACE_FILLER);
-    record.appendWithEndFiller(this.addressInfo.postalCode, 16, SPACE_FILLER);
-    record.appendWithEndFiller(this.programName, 25, SPACE_FILLER);
-    record.appendWithEndFiller(this.programDescription, 50, SPACE_FILLER);
-    record.appendWithEndFiller(this.credentialType, 25, SPACE_FILLER);
-    record.appendWithStartFiller(this.fieldOfStudyCode, 4, NUMBER_FILLER);
-    record.appendWithEndFiller(
-      emptyStringFiller(this.areaOfStudyCode),
-      4,
-      SPACE_FILLER,
-    );
-    record.appendWithEndFiller(
-      emptyStringFiller(this.levelOfStudyCode),
-      4,
-      SPACE_FILLER,
-    );
-    record.appendWithStartFiller(this.currentProgramYear, 2, NUMBER_FILLER);
+    record.appendStringWithFiller(this.addressInfo.addressLine1, 25);
+    record.appendOptionalStringWithFiller(this.addressInfo.addressLine2, 25);
+    record.appendStringWithFiller(this.addressInfo.city, 25);
+    record.appendStringWithFiller(this.addressInfo.provinceState, 4);
+    record.appendStringWithFiller(this.addressInfo.postalCode, 16);
+    record.appendStringWithFiller(this.programName, 25);
+    record.appendStringWithFiller(this.programDescription, 50);
+    record.appendStringWithFiller(this.credentialType, 25);
+    record.appendNumberWithFiller(this.fieldOfStudyCode, 4);
+    record.appendOptionalStringWithFiller(this.areaOfStudyCode, 4);
+    record.appendOptionalStringWithFiller(this.levelOfStudyCode, 4);
+    record.appendNumberWithFiller(this.currentProgramYear, 2);
     record.append(this.cipCode, 6);
     record.appendWithStartFiller(this.nocCode ?? 0, 5, NUMBER_FILLER); // NOC code can only be number in program.
-    record.appendWithEndFiller(
-      emptyStringFiller(this.sabcCode),
-      4,
-      SPACE_FILLER,
-    );
-    record.appendWithEndFiller(
-      emptyStringFiller(this.institutionProgramCode),
-      25,
-      SPACE_FILLER,
-    );
+    record.appendOptionalStringWithFiller(this.sabcCode, 4);
+    record.appendOptionalStringWithFiller(this.institutionProgramCode, 25);
     record.append(this.programLength, 1);
     record.appendDate(this.studyStartDate, DATE_FORMAT);
     record.appendDate(this.studyEndDate, DATE_FORMAT);
-    record.appendWithStartFiller(this.tuitionFees, 10, NUMBER_FILLER);
-    record.appendWithStartFiller(this.booksAndSuppliesCost, 10, NUMBER_FILLER);
-    record.appendWithStartFiller(this.mandatoryFees, 10, NUMBER_FILLER);
-    record.appendWithStartFiller(this.exceptionExpenses, 10, NUMBER_FILLER);
-    record.appendWithStartFiller(this.totalFundedWeeks, 2, NUMBER_FILLER);
+    record.appendNumberWithFiller(this.tuitionFees, 10);
+    record.appendNumberWithFiller(this.booksAndSuppliesCost, 10);
+    record.appendNumberWithFiller(this.mandatoryFees, 10);
+    record.appendNumberWithFiller(this.exceptionExpenses, 10);
+    record.appendNumberWithFiller(this.totalFundedWeeks, 2);
     record.append(this.courseLoad, 3);
     record.append(this.offeringIntensityIndicator, 1);
     record.appendDate(this.applicationSubmittedDate, DATE_FORMAT);
     record.append(this.programYear, 8);
     record.append(this.applicationStatusCode, 4);
     record.appendDate(this.applicationStatusDate, DATE_FORMAT);
-    record.appendWithStartFiller(this.cslAmount, 10, NUMBER_FILLER);
-    record.appendWithStartFiller(this.bcslAmount, 10, NUMBER_FILLER);
-    record.appendWithStartFiller(this.epAmount, 10, NUMBER_FILLER);
+    record.appendNumberWithFiller(this.cslAmount, 10);
+    record.appendNumberWithFiller(this.bcslAmount, 10);
+    record.appendNumberWithFiller(this.epAmount, 10);
     record.append(this.provincialDefaultFlag, 1);
-    record.append(emptyStringFiller(this.federalDefaultFlag, SPACE_FILLER), 1);
+    record.appendOptionalStringWithFiller(this.federalDefaultFlag, 1);
     record.append(this.provincialOverawardFlag, 1);
     record.append(this.federalOverawardFlag, 1);
     record.append(this.restrictionFlag, 1);
-    record.appendDate(this.scholasticStandingEffectiveDate, DATE_FORMAT, {
-      filler: SPACE_FILLER,
-    });
-    record.appendWithEndFiller(
-      emptyStringFiller(this.scholasticStandingCode),
-      4,
-      SPACE_FILLER,
+    record.appendOptionalDate(
+      this.scholasticStandingEffectiveDate,
+      DATE_FORMAT,
     );
+    record.appendOptionalStringWithFiller(this.scholasticStandingCode, 4);
     record.appendDate(this.assessmentDate, DATE_FORMAT);
-    record.appendDate(this.withdrawalDate, DATE_FORMAT, {
-      filler: SPACE_FILLER,
-    });
-    record.appendWithStartFiller(
-      emptyNumberFiller(this.applicantAndPartnerExpectedContribution),
+    record.appendOptionalDate(this.withdrawalDate, DATE_FORMAT);
+    record.appendOptionalNumberWithFiller(
+      this.applicantAndPartnerExpectedContribution,
       10,
-      NUMBER_FILLER,
     );
-    record.appendWithStartFiller(
-      emptyNumberFiller(this.parentExpectedContribution),
-      10,
-      NUMBER_FILLER,
-    );
-    record.appendWithStartFiller(
-      emptyNumberFiller(this.totalExpectedContribution),
-      10,
-      NUMBER_FILLER,
-    );
-    record.appendWithStartFiller(
-      emptyNumberFiller(this.dependantChildQuantity),
+    record.appendOptionalNumberWithFiller(this.parentExpectedContribution, 10);
+    record.appendOptionalNumberWithFiller(this.totalExpectedContribution, 10);
+    record.appendOptionalNumberWithFiller(this.dependantChildQuantity, 3);
+    record.appendOptionalNumberWithFiller(
+      this.dependantChildInDaycareQuantity,
       3,
-      NUMBER_FILLER,
     );
-    record.appendWithStartFiller(
-      emptyNumberFiller(this.dependantChildInDaycareQuantity),
+    record.appendOptionalNumberWithFiller(this.dependentInfantQuantity, 3);
+    record.appendOptionalNumberWithFiller(this.dependantOtherQuantity, 3);
+    record.appendOptionalNumberWithFiller(
+      this.dependantPostSecondaryQuantity,
       3,
-      NUMBER_FILLER,
     );
-    record.appendWithStartFiller(
-      emptyNumberFiller(this.dependentInfantQuantity),
-      3,
-      NUMBER_FILLER,
-    );
-    record.appendWithStartFiller(
-      emptyNumberFiller(this.dependantOtherQuantity),
-      3,
-      NUMBER_FILLER,
-    );
-    record.appendWithStartFiller(
-      emptyNumberFiller(this.dependantPostSecondaryQuantity),
-      3,
-      NUMBER_FILLER,
-    );
-    record.appendWithStartFiller(
-      emptyNumberFiller(this.totalDependantQuantity),
-      3,
-      NUMBER_FILLER,
-    );
-    record.appendWithStartFiller(
-      emptyNumberFiller(this.familyMembersQuantity),
-      3,
-      NUMBER_FILLER,
-    );
-    record.append(emptyStringFiller(this.parent1Flag, SPACE_FILLER), 1);
-    record.append(emptyStringFiller(this.parent2Flag, SPACE_FILLER), 1);
+    record.appendOptionalNumberWithFiller(this.totalDependantQuantity, 3);
+    record.appendOptionalNumberWithFiller(this.familyMembersQuantity, 3);
+    record.appendOptionalStringWithFiller(this.parent1Flag, 1);
+    record.appendOptionalStringWithFiller(this.parent2Flag, 1);
     record.append(this.partnerFlag, 1);
-    record.appendWithStartFiller(this.parentalAssets, 10, NUMBER_FILLER);
-    record.appendWithStartFiller(
-      emptyNumberFiller(this.parentalAssetsExpectedContribution),
+    record.appendNumberWithFiller(this.parentalAssets, 10);
+    record.appendOptionalNumberWithFiller(
+      this.parentalAssetsExpectedContribution,
       10,
-      NUMBER_FILLER,
     );
-    record.appendWithStartFiller(
-      emptyNumberFiller(this.parentalIncomeExpectedContribution),
+    record.appendOptionalNumberWithFiller(
+      this.parentalIncomeExpectedContribution,
       10,
-      NUMBER_FILLER,
     );
-    record.appendWithStartFiller(
-      emptyNumberFiller(this.parentalVoluntaryContribution),
+    record.appendOptionalNumberWithFiller(
+      this.parentalVoluntaryContribution,
       10,
-      NUMBER_FILLER,
     );
-    record.appendWithStartFiller(
-      emptyNumberFiller(this.parentalDiscretionaryIncome),
+    record.appendOptionalNumberWithFiller(this.parentalDiscretionaryIncome, 10);
+    record.appendOptionalNumberWithFiller(
+      this.parentalDiscretionaryAnnualIncomeFormulaResult,
       10,
-      NUMBER_FILLER,
     );
-    record.appendWithStartFiller(
-      emptyNumberFiller(this.parentalDiscretionaryAnnualIncomeFormulaResult),
+    record.appendOptionalStringWithFiller(this.studentLivingAtHomeFlag, 1);
+    record.appendOptionalStringWithFiller(this.partnerInSchoolFlag, 1);
+    record.appendOptionalNumberWithFiller(this.otherEducationalExpenses, 10);
+    record.appendOptionalNumberWithFiller(this.totalEducationalExpenses, 10);
+    record.appendOptionalNumberWithFiller(
+      this.extraLocalTransportationCosts,
       10,
-      NUMBER_FILLER,
     );
-    record.append(
-      emptyStringFiller(this.studentLivingAtHomeFlag, SPACE_FILLER),
-      1,
-    );
-    record.append(emptyStringFiller(this.partnerInSchoolFlag, SPACE_FILLER), 1);
-    record.appendWithStartFiller(
-      emptyNumberFiller(this.otherEducationalExpenses),
+    record.appendOptionalNumberWithFiller(this.extraShelterCosts, 10);
+    record.appendOptionalNumberWithFiller(this.dependantLivingAllowance, 10);
+    record.appendOptionalNumberWithFiller(this.studentLivingAllowance, 10);
+    record.appendOptionalNumberWithFiller(this.totalLivingAllowance, 10);
+    record.appendOptionalNumberWithFiller(this.alimonyCosts, 10);
+    record.appendOptionalNumberWithFiller(this.otherDiscretionaryCosts, 10);
+    record.appendOptionalNumberWithFiller(this.returnTransportationCosts, 10);
+    record.appendOptionalNumberWithFiller(
+      this.partnerStudentLoanPaymentCosts,
       10,
-      NUMBER_FILLER,
     );
-    record.appendWithStartFiller(
-      emptyNumberFiller(this.totalEducationalExpenses),
+    record.appendOptionalNumberWithFiller(this.childcareCosts, 10);
+    record.appendOptionalNumberWithFiller(this.totalNonEducationalCosts, 10);
+    record.appendOptionalNumberWithFiller(this.totalExpenses, 10);
+    record.appendOptionalNumberWithFiller(this.assessedNeed, 10);
+    record.appendOptionalNumberWithFiller(this.studentEligibleAward, 10);
+    record.appendOptionalStringWithFiller(this.mssAssessedNeedFlag, 1);
+    record.appendOptionalNumberWithFiller(this.mssAssessedNeed, 10);
+    record.appendOptionalNumberWithFiller(
+      this.mssAssessedNeedNormalOrAppeal,
       10,
-      NUMBER_FILLER,
     );
-    record.appendWithStartFiller(
-      emptyNumberFiller(this.extraLocalTransportationCosts),
-      10,
-      NUMBER_FILLER,
-    );
-    record.appendWithStartFiller(
-      emptyNumberFiller(this.extraShelterCosts),
-      10,
-      NUMBER_FILLER,
-    );
-    record.appendWithStartFiller(
-      emptyNumberFiller(this.dependantLivingAllowance),
-      10,
-      NUMBER_FILLER,
-    );
-    record.appendWithStartFiller(
-      emptyNumberFiller(this.studentLivingAllowance),
-      10,
-      NUMBER_FILLER,
-    );
-    record.appendWithStartFiller(
-      emptyNumberFiller(this.totalLivingAllowance),
-      10,
-      NUMBER_FILLER,
-    );
-    record.appendWithStartFiller(
-      emptyNumberFiller(this.alimonyCosts),
-      10,
-      NUMBER_FILLER,
-    );
-    record.appendWithStartFiller(
-      emptyNumberFiller(this.otherDiscretionaryCosts),
-      10,
-      NUMBER_FILLER,
-    );
-    record.appendWithStartFiller(
-      emptyNumberFiller(this.returnTransportationCosts),
-      10,
-      NUMBER_FILLER,
-    );
-    record.appendWithStartFiller(
-      emptyNumberFiller(this.partnerStudentLoanPaymentCosts),
-      10,
-      NUMBER_FILLER,
-    );
-    record.appendWithStartFiller(
-      emptyNumberFiller(this.childcareCosts),
-      10,
-      NUMBER_FILLER,
-    );
-    record.appendWithStartFiller(
-      emptyNumberFiller(this.totalNonEducationalCosts),
-      10,
-      NUMBER_FILLER,
-    );
-    record.appendWithStartFiller(
-      emptyNumberFiller(this.totalExpenses),
-      10,
-      NUMBER_FILLER,
-    );
-    record.appendWithStartFiller(
-      emptyNumberFiller(this.assessedNeed),
-      10,
-      NUMBER_FILLER,
-    );
-    record.appendWithStartFiller(
-      emptyNumberFiller(this.studentEligibleAward),
-      10,
-      NUMBER_FILLER,
-    );
-    record.append(emptyStringFiller(this.mssAssessedNeedFlag, SPACE_FILLER), 1);
-    record.appendWithStartFiller(
-      emptyNumberFiller(this.mssAssessedNeed),
-      10,
-      NUMBER_FILLER,
-    );
-    record.appendWithStartFiller(
-      emptyNumberFiller(this.mssAssessedNeedNormalOrAppeal),
-      10,
-      NUMBER_FILLER,
-    );
-    record.appendWithStartFiller(
-      emptyNumberFiller(this.mssChildcareCosts),
-      10,
-      NUMBER_FILLER,
-    );
-    record.appendWithStartFiller(
-      emptyNumberFiller(this.mssTuitionAndSupplies),
-      10,
-      NUMBER_FILLER,
-    );
-    record.appendWithStartFiller(
-      emptyNumberFiller(this.mssMiscCostsAllowance),
-      10,
-      NUMBER_FILLER,
-    );
-    record.appendWithStartFiller(
-      emptyNumberFiller(this.mssTransportCostsAllowance),
-      10,
-      NUMBER_FILLER,
-    );
-    record.appendWithStartFiller(
-      emptyNumberFiller(this.mssExtraTransportCosts),
-      10,
-      NUMBER_FILLER,
-    );
-    record.appendWithEndFiller(
-      emptyStringFiller(this.applicationEventCode),
-      4,
-      SPACE_FILLER,
-    );
-    record.appendDate(this.applicationEventDate, DATE_FORMAT, {
-      filler: SPACE_FILLER,
-    });
-    record.appendDate(this.documentProducedDate, DATE_FORMAT, {
-      filler: SPACE_FILLER,
-    });
-    record.appendWithEndFiller(this.coeStatus, 10, SPACE_FILLER);
-    record.appendWithEndFiller(
-      this.disbursementScheduleStatus,
-      10,
-      SPACE_FILLER,
-    );
+    record.appendOptionalNumberWithFiller(this.mssChildcareCosts, 10);
+    record.appendOptionalNumberWithFiller(this.mssTuitionAndSupplies, 10);
+    record.appendOptionalNumberWithFiller(this.mssMiscCostsAllowance, 10);
+    record.appendOptionalNumberWithFiller(this.mssTransportCostsAllowance, 10);
+    record.appendOptionalNumberWithFiller(this.mssExtraTransportCosts, 10);
+    record.appendOptionalStringWithFiller(this.applicationEventCode, 4);
+    record.appendOptionalDate(this.applicationEventDate, DATE_FORMAT);
+    record.appendOptionalDate(this.documentProducedDate, DATE_FORMAT);
+    record.appendStringWithFiller(this.coeStatus, 10);
+    record.appendStringWithFiller(this.disbursementScheduleStatus, 10);
     record.appendDate(this.earliestDateOfDisbursement, DATE_FORMAT);
-    record.appendDate(this.dateOfDisbursement, DATE_FORMAT, {
-      filler: SPACE_FILLER,
-    });
-    record.appendDate(this.disbursementExpiryDate, DATE_FORMAT, {
-      filler: SPACE_FILLER,
-    });
-    record.appendDate(this.disbursementCancelDate, DATE_FORMAT, {
-      filler: SPACE_FILLER,
-    });
+    record.appendOptionalDate(this.dateOfDisbursement, DATE_FORMAT);
+    record.appendOptionalDate(this.disbursementExpiryDate, DATE_FORMAT);
+    record.appendOptionalDate(this.disbursementCancelDate, DATE_FORMAT);
     record.append(this.getAwardDetails(FullTimeAwardTypes.CSLF), 14);
     record.append(this.getAwardDetails(FullTimeAwardTypes.BCSL), 14);
     record.append(this.getAwardDetails(FullTimeAwardTypes.CSGP), 14);

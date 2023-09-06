@@ -71,23 +71,11 @@ export class StringBuilder {
 
   /**
    * Appends a date in a specific format to the current content.
-   * When filler is provided and date value is null it is replaced by the
-   * filler using length of date format.
    * @param date date to be formatted.
    * @param dateFormat format.
-   * @param options options:
-   * - `filler`: filler to replace when date is not provided.
    */
-  public appendDate(
-    date: Date | string,
-    dateFormat: string,
-    options?: { filler?: string },
-  ) {
-    const formattedDate =
-      !date && options?.filler
-        ? "".padStart(dateFormat.length, options.filler)
-        : dayjs(date).format(dateFormat);
-    this.append(formattedDate);
+  public appendDate(date: Date | string, dateFormat: string) {
+    this.append(dayjs(date).format(dateFormat));
   }
 
   /**
@@ -96,5 +84,64 @@ export class StringBuilder {
    */
   public toString(): string {
     return this.contents.join("");
+  }
+}
+
+/**
+ * Advanced string builder with specialized functions.
+ */
+export class AdvancedStringBuilder extends StringBuilder {
+  private readonly stringFiller: string;
+  private readonly numberFiller: string;
+  private readonly dateFiller: string;
+  constructor(stringFiller: string, numberFiller: string, dateFiller: string) {
+    super();
+    this.stringFiller = stringFiller;
+    this.numberFiller = numberFiller;
+    this.dateFiller = dateFiller;
+  }
+  /**
+   * Append string value with filler.
+   * @param value string value.
+   * @param length maximum length.
+   */
+  appendStringWithFiller(value: string, length: number): void {
+    this.appendWithEndFiller(value, length, this.stringFiller);
+  }
+  /**
+   * Append number value with filler.
+   * @param value number value.
+   * @param length maximum length.
+   */
+  appendNumberWithFiller(value: number, length: number): void {
+    this.appendWithStartFiller(value, length, this.numberFiller);
+  }
+  /**
+   * Append optional string value with filler.
+   * @param value string value.
+   * @param length maximum length.
+   */
+  appendOptionalStringWithFiller(value: string, length: number): void {
+    this.appendStringWithFiller(value ?? "", length);
+  }
+  /**
+   * Append optional number value with filler.
+   * @param value number value.
+   * @param length maximum length.
+   */
+  appendOptionalNumberWithFiller(value: number, length: number): void {
+    this.appendNumberWithFiller(value ?? 0, length);
+  }
+  /**
+   * Append optional date value with filler.
+   * @param date optional date value.
+   * @param dateFormat date format.
+   */
+  appendOptionalDate(date: Date | string, dateFormat: string): void {
+    if (date) {
+      this.appendDate(date, dateFormat);
+      return;
+    }
+    this.append("".padStart(dateFormat.length, this.dateFiller));
   }
 }

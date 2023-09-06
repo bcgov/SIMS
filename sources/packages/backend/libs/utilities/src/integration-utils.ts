@@ -22,25 +22,3 @@ export function getTotalYearsOfStudy(completionYears: string): number {
       return 1;
   }
 }
-
-/**
- * Filler to replace a string with default value, when given value is
- * null or empty.
- * @param value provided value.
- * @param defaultValue default value to replace.
- * @returns value replaced with filler if required.
- */
-export function emptyStringFiller(value: string, defaultValue = ""): string {
-  return value ?? defaultValue;
-}
-
-/**
- * Filler to replace a number with default value, when given value is
- * null.
- * @param value provided value.
- * @param defaultValue default value to replace.
- * @returns value replaced with filler if required.
- */
-export function emptyNumberFiller(value: number, defaultValue = 0): number {
-  return value ?? defaultValue;
-}

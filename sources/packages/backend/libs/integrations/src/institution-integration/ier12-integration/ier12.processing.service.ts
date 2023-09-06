@@ -5,6 +5,7 @@ import {
   DisbursementValue,
   RelationshipStatus,
   StudentAssessment,
+  StudentRestriction,
 } from "@sims/sims-db";
 import { LoggerService, InjectLogger } from "@sims/utilities/logger";
 import {
@@ -170,14 +171,14 @@ export class IER12ProcessingService {
       provinceState: address.provinceState,
       postalCode: address.postalCode,
     };
-    const hasRestriction = !!student.studentRestrictions?.length;
-    const hasProvincialDefaultRestriction = hasRestriction
-      ? student.studentRestrictions.some(
-          (studentRestriction) =>
-            studentRestriction.restriction.restrictionCode ===
-            PROVINCIAL_DEFAULT_RESTRICTION_CODE,
-        )
-      : false;
+    const hasRestriction = this.checkActiveRestriction(
+      student.studentRestrictions,
+    );
+    const hasProvincialDefaultRestriction = !hasRestriction
+      ? false
+      : this.checkActiveRestriction(student.studentRestrictions, {
+          restrictionCode: PROVINCIAL_DEFAULT_RESTRICTION_CODE,
+        });
     const hasPartner =
       pendingAssessment.workflowData.studentData.relationshipStatus ===
       RelationshipStatus.Married;
@@ -284,6 +285,27 @@ export class IER12ProcessingService {
       (disbursementSchedule) => disbursementSchedule.disbursementValues,
     );
     return assessmentAwards;
+  }
+
+  /**
+   * Check if student has an active restriction.
+   * @param studentRestrictions student restrictions
+   * @param options check restriction options:
+   * - `restrictionCode`: restriction code.
+   * @returns value which indicates
+   * if a student has active restriction.
+   */
+  private checkActiveRestriction(
+    studentRestrictions: StudentRestriction[],
+    options?: { restrictionCode?: string },
+  ): boolean {
+    return studentRestrictions?.some(
+      (studentRestriction) =>
+        studentRestriction.isActive &&
+        (!options?.restrictionCode ||
+          studentRestriction.restriction.restrictionCode ===
+            options.restrictionCode),
+    );
   }
 
   @InjectLogger()
