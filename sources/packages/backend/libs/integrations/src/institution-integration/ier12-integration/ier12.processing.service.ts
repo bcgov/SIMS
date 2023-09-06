@@ -94,7 +94,7 @@ export class IER12ProcessingService {
   /**
    * Upload the content in SFTP server location.
    * @param institutionCode Institution code for the file generated.
-   * @param fileRecords total records for an institution.
+   * @param ier12Records total records for an institution.
    * @returns Updated records count with filepath.
    */
   async uploadIER12Content(
