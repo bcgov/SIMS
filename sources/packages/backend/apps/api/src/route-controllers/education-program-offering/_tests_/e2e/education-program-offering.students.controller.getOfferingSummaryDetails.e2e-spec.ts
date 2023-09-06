@@ -105,7 +105,7 @@ describe("EducationProgramOfferingStudentsController(e2e)-getOfferingSummaryDeta
       });
   });
 
-  it("Should throw the Unauthorized (401) exception when the student is not authorized for the provided offering.", async () => {
+  it("Should throw the Not Found (404) exception when the student is not authorized for the provided offering.", async () => {
     // Arrange
     const savedUser = await db.user.save(createFakeUser());
     const fakeOffering = createFakeEducationProgramOffering({
@@ -133,15 +133,15 @@ describe("EducationProgramOfferingStudentsController(e2e)-getOfferingSummaryDeta
     await request(app.getHttpServer())
       .get(endpoint)
       .auth(token, BEARER_AUTH_TYPE)
-      .expect(HttpStatus.UNAUTHORIZED)
+      .expect(HttpStatus.NOT_FOUND)
       .expect({
-        statusCode: HttpStatus.UNAUTHORIZED,
-        message: "Student is not authorized for the provided offering.",
-        error: "Unauthorized",
+        statusCode: HttpStatus.NOT_FOUND,
+        message: "Not able to find the Education Program offering.",
+        error: "Not Found",
       });
   });
 
-  it("Should throw the Unauthorized (401) exception when the offering summary purpose is not provided.", async () => {
+  it("Should throw the Not Found (404) exception when the offering summary purpose is not provided.", async () => {
     // Arrange
     const savedUser = await db.user.save(createFakeUser());
     const fakeOffering = createFakeEducationProgramOffering({
@@ -169,11 +169,11 @@ describe("EducationProgramOfferingStudentsController(e2e)-getOfferingSummaryDeta
     await request(app.getHttpServer())
       .get(endpoint)
       .auth(token, BEARER_AUTH_TYPE)
-      .expect(HttpStatus.UNAUTHORIZED)
+      .expect(HttpStatus.NOT_FOUND)
       .expect({
-        statusCode: HttpStatus.UNAUTHORIZED,
-        message: "Student is not authorized for the provided offering.",
-        error: "Unauthorized",
+        statusCode: HttpStatus.NOT_FOUND,
+        message: "Not able to find the Education Program offering.",
+        error: "Not Found",
       });
   });
 
