@@ -5,7 +5,6 @@ import {
   DisbursementValue,
   RelationshipStatus,
   StudentAssessment,
-  StudentRestriction,
 } from "@sims/sims-db";
 import { LoggerService, InjectLogger } from "@sims/utilities/logger";
 import {
@@ -23,6 +22,7 @@ import {
 import { StudentAssessmentService } from "@sims/integrations/services";
 import { DisbursementOverawardService } from "@sims/services";
 import { FullTimeAwardTypes } from "@sims/integrations/models";
+import { PROVINCIAL_DEFAULT_RESTRICTION_CODE } from "@sims/services/constants";
 
 @Injectable()
 export class IER12ProcessingService {
@@ -170,14 +170,14 @@ export class IER12ProcessingService {
       provinceState: address.provinceState,
       postalCode: address.postalCode,
     };
-    const hasRestriction = this.checkActiveRestriction(
-      student.studentRestrictions,
-    );
-    const hasProvincialDefaultRestriction = !hasRestriction
-      ? false
-      : this.checkActiveRestriction(student.studentRestrictions, {
-          restrictionCode: "B2",
-        });
+    const hasRestriction = !!student.studentRestrictions?.length;
+    const hasProvincialDefaultRestriction = hasRestriction
+      ? student.studentRestrictions.some(
+          (studentRestriction) =>
+            studentRestriction.restriction.restrictionCode ===
+            PROVINCIAL_DEFAULT_RESTRICTION_CODE,
+        )
+      : false;
     const hasPartner =
       pendingAssessment.workflowData.studentData.relationshipStatus ===
       RelationshipStatus.Married;
@@ -280,35 +280,10 @@ export class IER12ProcessingService {
   private getAssessmentAwards(
     disbursementSchedules: DisbursementSchedule[],
   ): IERAward[] {
-    const assessmentAwards: IERAward[] = [];
-    for (const disbursement of disbursementSchedules) {
-      const disbursementAwards = this.getDisbursementAwards(
-        disbursement.disbursementValues,
-      );
-      assessmentAwards.push(...disbursementAwards);
-    }
-    return assessmentAwards;
-  }
-
-  /**
-   * Check if student has an active restriction.
-   * @param studentRestrictions student restrictions
-   * @param options check restriction options:
-   * - `restrictionCode`: restriction code.
-   * @returns value which indicates
-   * if a student has active restriction.
-   */
-  private checkActiveRestriction(
-    studentRestrictions: StudentRestriction[],
-    options?: { restrictionCode?: string },
-  ): boolean {
-    return studentRestrictions?.some(
-      (studentRestriction) =>
-        studentRestriction.isActive &&
-        (!options?.restrictionCode ||
-          studentRestriction.restriction.restrictionCode ===
-            options.restrictionCode),
+    const assessmentAwards = disbursementSchedules.flatMap<IERAward>(
+      (disbursementSchedule) => disbursementSchedule.disbursementValues,
     );
+    return assessmentAwards;
   }
 
   @InjectLogger()

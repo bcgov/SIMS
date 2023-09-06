@@ -519,60 +519,28 @@ export class IER12FileDetail implements IER12FileLine {
     record.appendDate(this.disbursementCancelDate, DATE_FORMAT, {
       filler: SPACE_FILLER,
     });
-    record.append(FullTimeAwardTypes.CSLF, 4);
-    record.appendWithStartFiller(
-      emptyNumberFiller(this.fundingDetails[FullTimeAwardTypes.CSLF]),
-      10,
-      NUMBER_FILLER,
-    );
-    record.append(FullTimeAwardTypes.BCSL, 4);
-    record.appendWithStartFiller(
-      emptyNumberFiller(this.fundingDetails[FullTimeAwardTypes.BCSL]),
-      10,
-      NUMBER_FILLER,
-    );
-    record.append(FullTimeAwardTypes.CSGP, 4);
-    record.appendWithStartFiller(
-      emptyNumberFiller(this.fundingDetails[FullTimeAwardTypes.CSGP]),
-      10,
-      NUMBER_FILLER,
-    );
-    record.append(FullTimeAwardTypes.CSGD, 4);
-    record.appendWithStartFiller(
-      emptyNumberFiller(this.fundingDetails[FullTimeAwardTypes.CSGD]),
-      10,
-      NUMBER_FILLER,
-    );
-    record.append(FullTimeAwardTypes.CSGF, 4);
-    record.appendWithStartFiller(
-      emptyNumberFiller(this.fundingDetails[FullTimeAwardTypes.CSGF]),
-      10,
-      NUMBER_FILLER,
-    );
-    record.append(FullTimeAwardTypes.CSGT, 4);
-    record.appendWithStartFiller(
-      emptyNumberFiller(this.fundingDetails[FullTimeAwardTypes.CSGT]),
-      10,
-      NUMBER_FILLER,
-    );
-    record.append(FullTimeAwardTypes.BCAG, 4);
-    record.appendWithStartFiller(
-      emptyNumberFiller(this.fundingDetails[FullTimeAwardTypes.BCAG]),
-      10,
-      NUMBER_FILLER,
-    );
-    record.append(FullTimeAwardTypes.SBSD, 4);
-    record.appendWithStartFiller(
-      emptyNumberFiller(this.fundingDetails[FullTimeAwardTypes.SBSD]),
-      10,
-      NUMBER_FILLER,
-    );
-    record.append(FullTimeAwardTypes.BGPD, 4);
-    record.appendWithStartFiller(
-      emptyNumberFiller(this.fundingDetails[FullTimeAwardTypes.BGPD]),
-      10,
-      NUMBER_FILLER,
-    );
+    record.append(this.getAwardDetails(FullTimeAwardTypes.CSLF), 14);
+    record.append(this.getAwardDetails(FullTimeAwardTypes.BCSL), 14);
+    record.append(this.getAwardDetails(FullTimeAwardTypes.CSGP), 14);
+    record.append(this.getAwardDetails(FullTimeAwardTypes.CSGD), 14);
+    record.append(this.getAwardDetails(FullTimeAwardTypes.CSGF), 14);
+    record.append(this.getAwardDetails(FullTimeAwardTypes.CSGT), 14);
+    record.append(this.getAwardDetails(FullTimeAwardTypes.BCAG), 14);
+    record.append(this.getAwardDetails(FullTimeAwardTypes.SBSD), 14);
+    record.append(this.getAwardDetails(FullTimeAwardTypes.BGPD), 14);
     return record.toString();
+  }
+
+  /**
+   * Get award details in IER12 format of a given award from funding details.
+   * @param awardType award type.
+   * @returns award details.
+   */
+  private getAwardDetails(awardType: FullTimeAwardTypes): string {
+    const fundingAmount = this.fundingDetails[awardType] ?? 0;
+    const fundingAmountPadded = fundingAmount
+      .toString()
+      .padStart(10, NUMBER_FILLER);
+    return `${awardType}${fundingAmountPadded}`;
   }
 }

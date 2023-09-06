@@ -186,20 +186,15 @@ export class IER12IntegrationService extends SFTPIntegrationBase<void> {
   private getApplicationStatusCode(
     applicationStatus: ApplicationStatus,
   ): ApplicationStatusCode {
-    switch (applicationStatus) {
-      case ApplicationStatus.Submitted:
-        return ApplicationStatusCode.Submitted;
-      case ApplicationStatus.InProgress:
-        return ApplicationStatusCode.InProgress;
-      case ApplicationStatus.Assessment:
-        return ApplicationStatusCode.Assessment;
-      case ApplicationStatus.Enrolment:
-        return ApplicationStatusCode.Enrolment;
-      case ApplicationStatus.Completed:
-        return ApplicationStatusCode.Completed;
-      case ApplicationStatus.Cancelled:
-        return ApplicationStatusCode.Cancelled;
-    }
+    const applicationStatusMap = {
+      [ApplicationStatus.Submitted]: ApplicationStatusCode.Submitted,
+      [ApplicationStatus.InProgress]: ApplicationStatusCode.InProgress,
+      [ApplicationStatus.Assessment]: ApplicationStatusCode.Assessment,
+      [ApplicationStatus.Enrolment]: ApplicationStatusCode.Enrolment,
+      [ApplicationStatus.Completed]: ApplicationStatusCode.Completed,
+      [ApplicationStatus.Cancelled]: ApplicationStatusCode.Cancelled,
+    };
+    return applicationStatusMap[applicationStatus];
   }
 
   /**
@@ -271,7 +266,7 @@ export class IER12IntegrationService extends SFTPIntegrationBase<void> {
 
   /**
    * Convert boolean value to YNFlag type.
-   * @param value value.
+   * @param value value to be converted.
    * @returns flag value.
    */
   private convertToYNFlag(value: boolean): YNFlag {
