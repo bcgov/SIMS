@@ -14,19 +14,25 @@ import {
   saveFakeApplication,
 } from "@sims/test-utils";
 import {
+  ApplicationOfferingChangeRequest,
   ApplicationOfferingChangeRequestStatus,
   ApplicationStatus,
   Student,
 } from "@sims/sims-db";
+import { Repository } from "typeorm";
 
 describe("ApplicationOfferingChangeRequestStudentsController(e2e)-updateApplicationOfferingChangeRequest", () => {
   let app: INestApplication;
   let student: Student;
   let db: E2EDataSources;
+  let applicationOfferingChangeRequestRepo: Repository<ApplicationOfferingChangeRequest>;
 
   beforeAll(async () => {
     const { nestApplication, dataSource } = await createTestingAppModule();
     app = nestApplication;
+    applicationOfferingChangeRequestRepo = dataSource.getRepository(
+      ApplicationOfferingChangeRequest,
+    );
     db = createE2EDataSources(dataSource);
     student = await getStudentByFakeStudentUserType(
       FakeStudentUsersTypes.FakeStudentUserType1,
@@ -61,6 +67,15 @@ describe("ApplicationOfferingChangeRequestStudentsController(e2e)-updateApplicat
       })
       .auth(token, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK);
+    // Check if the application offering change request was updated as expected.
+    const updatedApplicationOfferingChangeRequest =
+      await applicationOfferingChangeRequestRepo.findOne({
+        select: { applicationOfferingChangeRequestStatus: true },
+        where: { id: applicationOfferingChangeRequest.id },
+      });
+    expect(
+      updatedApplicationOfferingChangeRequest.applicationOfferingChangeRequestStatus,
+    ).toBe(ApplicationOfferingChangeRequestStatus.InProgressWithSABC);
   });
 
   it("Should throw a HttpStatus Not Found (404) error when an application offering change update is requested for an application not in completed state.", async () => {
@@ -171,7 +186,7 @@ describe("ApplicationOfferingChangeRequestStudentsController(e2e)-updateApplicat
       });
   });
 
-  it("Should throw a HttpStatus Unprocessable Entity (422) error when an invalid application offering change request is made.", async () => {
+  it("Should throw a HttpStatus Unprocessable Entity (422) error when an invalid application offering change request status is provided.", async () => {
     // Arrange
     const application = await saveFakeApplication(
       db.dataSource,
