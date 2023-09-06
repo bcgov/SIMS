@@ -1,5 +1,5 @@
 import { COEStatus, DisbursementScheduleStatus } from "@sims/sims-db";
-import { AdvancedStringBuilder } from "@sims/utilities";
+import { SpecializedStringBuilder } from "@sims/utilities";
 import {
   ApplicationStatusCode,
   DATE_FORMAT,
@@ -185,11 +185,12 @@ export class IER12FileDetail implements IER12FileLine {
   fundingDetails: Record<string, number>;
 
   getFixedFormat(): string {
-    const record = new AdvancedStringBuilder(
-      SPACE_FILLER,
-      NUMBER_FILLER,
-      SPACE_FILLER,
-    );
+    const record = new SpecializedStringBuilder({
+      stringFiller: SPACE_FILLER,
+      numberFiller: NUMBER_FILLER,
+      dateFiller: SPACE_FILLER,
+      dateFormat: DATE_FORMAT,
+    });
     record.appendNumberWithFiller(this.assessmentId, 10);
     record.appendNumberWithFiller(this.disbursementId, 10);
     record.append(this.applicationNumber, 10);
@@ -197,7 +198,7 @@ export class IER12FileDetail implements IER12FileLine {
     record.append(this.sin, 9);
     record.appendStringWithFiller(this.studentLastName, 25);
     record.appendOptionalStringWithFiller(this.studentGivenName, 15);
-    record.appendDate(this.studentBirthDate, DATE_FORMAT);
+    record.appendFormattedDate(this.studentBirthDate);
     record.appendStringWithFiller(this.studentGroupCode, 4);
     record.appendOptionalStringWithFiller(this.studentMaritalStatusCode, 4);
     record.appendOptionalStringWithFiller(this.studentDisabilityStatusCode, 4);
@@ -222,8 +223,8 @@ export class IER12FileDetail implements IER12FileLine {
     record.appendOptionalStringWithFiller(this.sabcCode, 4);
     record.appendOptionalStringWithFiller(this.institutionProgramCode, 25);
     record.append(this.programLength, 1);
-    record.appendDate(this.studyStartDate, DATE_FORMAT);
-    record.appendDate(this.studyEndDate, DATE_FORMAT);
+    record.appendFormattedDate(this.studyStartDate);
+    record.appendFormattedDate(this.studyEndDate);
     record.appendNumberWithFiller(this.tuitionFees, 10);
     record.appendNumberWithFiller(this.booksAndSuppliesCost, 10);
     record.appendNumberWithFiller(this.mandatoryFees, 10);
@@ -231,10 +232,10 @@ export class IER12FileDetail implements IER12FileLine {
     record.appendNumberWithFiller(this.totalFundedWeeks, 2);
     record.append(this.courseLoad, 3);
     record.append(this.offeringIntensityIndicator, 1);
-    record.appendDate(this.applicationSubmittedDate, DATE_FORMAT);
+    record.appendFormattedDate(this.applicationSubmittedDate);
     record.append(this.programYear, 8);
     record.append(this.applicationStatusCode, 4);
-    record.appendDate(this.applicationStatusDate, DATE_FORMAT);
+    record.appendFormattedDate(this.applicationStatusDate);
     record.appendNumberWithFiller(this.cslAmount, 10);
     record.appendNumberWithFiller(this.bcslAmount, 10);
     record.appendNumberWithFiller(this.epAmount, 10);
@@ -243,13 +244,10 @@ export class IER12FileDetail implements IER12FileLine {
     record.append(this.provincialOverawardFlag, 1);
     record.append(this.federalOverawardFlag, 1);
     record.append(this.restrictionFlag, 1);
-    record.appendOptionalDate(
-      this.scholasticStandingEffectiveDate,
-      DATE_FORMAT,
-    );
+    record.appendOptionalFormattedDate(this.scholasticStandingEffectiveDate);
     record.appendOptionalStringWithFiller(this.scholasticStandingCode, 4);
-    record.appendDate(this.assessmentDate, DATE_FORMAT);
-    record.appendOptionalDate(this.withdrawalDate, DATE_FORMAT);
+    record.appendFormattedDate(this.assessmentDate);
+    record.appendOptionalFormattedDate(this.withdrawalDate);
     record.appendOptionalNumberWithFiller(
       this.applicantAndPartnerExpectedContribution,
       10,
@@ -326,14 +324,14 @@ export class IER12FileDetail implements IER12FileLine {
     record.appendOptionalNumberWithFiller(this.mssTransportCostsAllowance, 10);
     record.appendOptionalNumberWithFiller(this.mssExtraTransportCosts, 10);
     record.appendOptionalStringWithFiller(this.applicationEventCode, 4);
-    record.appendOptionalDate(this.applicationEventDate, DATE_FORMAT);
-    record.appendOptionalDate(this.documentProducedDate, DATE_FORMAT);
+    record.appendOptionalFormattedDate(this.applicationEventDate);
+    record.appendOptionalFormattedDate(this.documentProducedDate);
     record.appendStringWithFiller(this.coeStatus, 10);
     record.appendStringWithFiller(this.disbursementScheduleStatus, 10);
-    record.appendDate(this.earliestDateOfDisbursement, DATE_FORMAT);
-    record.appendOptionalDate(this.dateOfDisbursement, DATE_FORMAT);
-    record.appendOptionalDate(this.disbursementExpiryDate, DATE_FORMAT);
-    record.appendOptionalDate(this.disbursementCancelDate, DATE_FORMAT);
+    record.appendFormattedDate(this.earliestDateOfDisbursement);
+    record.appendOptionalFormattedDate(this.dateOfDisbursement);
+    record.appendOptionalFormattedDate(this.disbursementExpiryDate);
+    record.appendOptionalFormattedDate(this.disbursementCancelDate);
     record.append(this.getAwardDetails(FullTimeAwardTypes.CSLF), 14);
     record.append(this.getAwardDetails(FullTimeAwardTypes.BCSL), 14);
     record.append(this.getAwardDetails(FullTimeAwardTypes.CSGP), 14);
