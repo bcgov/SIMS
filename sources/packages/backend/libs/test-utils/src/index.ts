@@ -29,3 +29,4 @@ export * from "./data-source/e2e-data-source";
 export * from "./factories/disbursement-receipt";
 export * from "./factories/disbursement-receipt-value";
 export * from "./factories/application-offering-change-request";
+export * from "./factories/designation-agreement-locations";
