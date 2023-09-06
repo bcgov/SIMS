@@ -6,7 +6,7 @@ export $(shell sed 's/=.*//' ../../.env)
 export $(shell sed 's/=.*//' .env-e2e-tests)
 
 backend-unit-tests:
-	@cd ../packages/backend && npm i && npm run test
+	@cd ../packages/backend && npm i && npm run test:cov
 
 e2e-tests-api:
 	@echo "+\n++ Make: Starting containers for API E2E tests \n+"
