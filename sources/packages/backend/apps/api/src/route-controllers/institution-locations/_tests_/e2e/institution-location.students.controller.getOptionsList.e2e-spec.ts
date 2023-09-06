@@ -22,7 +22,7 @@ describe("InstitutionLocationStudentsController(e2e)-getOptionsList", () => {
     db = createE2EDataSources(dataSource);
   });
 
-  it("Should get the list of all designated institution location when student requests.", async () => {
+  it("Should get the list of all designated institution location which should contain the newly created designated location as well when student requests.", async () => {
     // Arrange
     const [designatedLocation, nonDesignatedLocation] =
       await saveFakeDesignationAgreementLocation(db, {
