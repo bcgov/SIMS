@@ -15,21 +15,20 @@ import {
 describe("InstitutionLocationStudentsController(e2e)-getOptionsList", () => {
   let app: INestApplication;
   let db: E2EDataSources;
-  // let student: Student;
 
   beforeAll(async () => {
     const { nestApplication, dataSource } = await createTestingAppModule();
     app = nestApplication;
     db = createE2EDataSources(dataSource);
-  });
-
-  it("Should get the list of all designated institution location when student requests.", async () => {
-    // Arrange
     // Before running the test, making the existing location as non designated.
     await db.designationAgreementLocation.update(
       { approved: true },
       { approved: false },
     );
+  });
+
+  it("Should get the list of all designated institution location when student requests.", async () => {
+    // Arrange
     const designatedLocations = await saveFakeDesignationAgreementLocation(db, {
       noOfLocations: 2,
     });

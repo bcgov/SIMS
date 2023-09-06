@@ -71,23 +71,23 @@ export function createFakeDesignationAgreement(
   fakeDesignationAgreement.submittedDate = now;
   fakeDesignationAgreement.creator = newFakeUser;
   fakeDesignationAgreement.createdAt = now;
-  (fakeDesignationAgreement.startDate = formatDate(
+  fakeDesignationAgreement.startDate = formatDate(
     addDays(-10, new Date()),
     "YYYYMMDD",
-  )),
-    (fakeDesignationAgreement.endDate = formatDate(
-      addDays(90, new Date()),
-      "YYYYMMDD",
-    )),
-    (fakeDesignationAgreement.designationAgreementLocations =
-      newFakeInstitutionLocation.map((location: InstitutionLocation) => {
-        const newLocation = new DesignationAgreementLocation();
-        newLocation.institutionLocation = location;
-        newLocation.requested = true;
-        newLocation.creator = newFakeUser;
-        newLocation.createdAt = now;
-        return newLocation;
-      }));
+  );
+  fakeDesignationAgreement.endDate = formatDate(
+    addDays(90, new Date()),
+    "YYYYMMDD",
+  );
+  fakeDesignationAgreement.designationAgreementLocations =
+    newFakeInstitutionLocation.map((location: InstitutionLocation) => {
+      const newLocation = new DesignationAgreementLocation();
+      newLocation.institutionLocation = location;
+      newLocation.requested = true;
+      newLocation.creator = newFakeUser;
+      newLocation.createdAt = now;
+      return newLocation;
+    });
 
   return fakeDesignationAgreement;
 }
