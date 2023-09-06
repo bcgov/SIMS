@@ -9,13 +9,13 @@ import { createFakeUser } from "@sims/test-utils";
  * Create and save fake designation agreement location/s.
  * @param db e2e data sources.
  * @param options options,
- * - `noOfLocations` number of locations.
+ * - `numberOfLocations` number of locations.
  * @returns created and saved fake designation agreement location/s.
  * */
 export async function saveFakeDesignationAgreementLocation(
   db: E2EDataSources,
   options: {
-    noOfLocations: number;
+    numberOfLocations: number;
   },
 ): Promise<DesignationAgreementLocation[]> {
   const fakeInstitution = await db.institution.save(createFakeInstitution());
@@ -23,7 +23,7 @@ export async function saveFakeDesignationAgreementLocation(
   const fakeInstitutionLocations = await db.institutionLocation.save(
     createMultipleFakeInstitutionLocations(
       fakeInstitution,
-      options.noOfLocations,
+      options.numberOfLocations,
     ),
   );
   const fakeUser = await db.user.save(createFakeUser());

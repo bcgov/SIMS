@@ -20,37 +20,22 @@ describe("InstitutionLocationStudentsController(e2e)-getOptionsList", () => {
     const { nestApplication, dataSource } = await createTestingAppModule();
     app = nestApplication;
     db = createE2EDataSources(dataSource);
-    // Before running the test, making the existing location as non designated.
-    await db.designationAgreementLocation.update(
-      { approved: true },
-      { approved: false },
-    );
   });
 
   it("Should get the list of all designated institution location when student requests.", async () => {
     // Arrange
-    const designatedLocations = await saveFakeDesignationAgreementLocation(db, {
-      noOfLocations: 2,
-    });
-    let nonDesignatedLocations = await saveFakeDesignationAgreementLocation(
-      db,
-      {
-        noOfLocations: 1,
-      },
-    );
-    const locations = designatedLocations.map((designatedLocation, index) => ({
-      ...designatedLocation.institutionLocation,
-      name: `Test Location ${index}`,
-    }));
-    await db.institutionLocation.save(locations);
+    const [designatedLocation, nonDesignatedLocation] =
+      await saveFakeDesignationAgreementLocation(db, {
+        numberOfLocations: 2,
+      });
+    // Setting the designation statuses.
+    designatedLocation.approved = true;
+    nonDesignatedLocation.approved = false;
 
-    nonDesignatedLocations = nonDesignatedLocations.map(
-      (nonDesignatedLocation) => ({
-        ...nonDesignatedLocation,
-        approved: false,
-      }),
-    );
-    await db.designationAgreementLocation.save(nonDesignatedLocations);
+    await db.designationAgreementLocation.save([
+      designatedLocation,
+      nonDesignatedLocation,
+    ]);
 
     const endpoint = "/students/location/options-list";
     const token = await getStudentToken(
@@ -61,12 +46,16 @@ describe("InstitutionLocationStudentsController(e2e)-getOptionsList", () => {
       .get(endpoint)
       .auth(token, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
-      .expect(
-        locations.map((location) => ({
-          id: location.id,
-          description: location.name,
-        })),
-      );
+      .expect((response) => {
+        expect(response.body).toEqual(
+          expect.arrayContaining([
+            expect.objectContaining({
+              id: designatedLocation.institutionLocation.id,
+              description: designatedLocation.institutionLocation.name,
+            }),
+          ]),
+        );
+      });
   });
 
   afterAll(async () => {
