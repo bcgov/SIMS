@@ -26,6 +26,7 @@ import {
   createFakeDisbursementSchedule,
   createFakeDisbursementValue,
   createFakeEducationProgramOffering,
+  createFakeInstitutionLocation,
   createFakeStudentAssessment,
   createFakeUser,
 } from "..";
@@ -55,7 +56,7 @@ export function createFakeApplication(relations?: {
     .number({ max: 9999999999, min: 1000000000 })
     .toString();
   application.applicationException = relations?.applicationException;
-  application.location = relations?.location;
+  application.location = relations?.location ?? createFakeInstitutionLocation();
   return application;
 }
 

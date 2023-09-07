@@ -115,7 +115,7 @@ export class ApplicationOfferingChangeRequestStudentsController extends BaseCont
     description:
       "Invalid application offering change status or student consent not provided",
   })
-  async updateApplicationOfferingChangeRequestStatus(
+  async updateApplicationOfferingChangeRequest(
     @Param("applicationOfferingChangeRequestId", ParseIntPipe)
     applicationOfferingChangeRequestId: number,
     @UserToken()
