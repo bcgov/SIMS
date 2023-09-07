@@ -2,17 +2,16 @@ import {
   Controller,
   DefaultValuePipe,
   Get,
+  NotFoundException,
   Param,
   ParseBoolPipe,
   ParseIntPipe,
   Query,
-  UnauthorizedException,
   UnprocessableEntityException,
 } from "@nestjs/common";
 import {
   ApiNotFoundResponse,
   ApiTags,
-  ApiUnauthorizedResponse,
   ApiUnprocessableEntityResponse,
 } from "@nestjs/swagger";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
@@ -119,9 +118,6 @@ export class EducationProgramOfferingStudentsController extends BaseController {
    * @param studentUserToken student user token for authorization.
    * @returns offering details.
    */
-  @ApiUnauthorizedResponse({
-    description: "The student is not authorized for the provided offering.",
-  })
   @ApiNotFoundResponse({
     description: "Not able to find the Education Program offering.",
   })
@@ -139,8 +135,8 @@ export class EducationProgramOfferingStudentsController extends BaseController {
         studentUserToken.studentId,
       );
     if (!validatedApplicationOfferingForStudent) {
-      throw new UnauthorizedException(
-        "Student is not authorized for the provided offering.",
+      throw new NotFoundException(
+        "Not able to find the Education Program offering.",
       );
     }
     return this.educationProgramOfferingControllerService.getOfferingById(

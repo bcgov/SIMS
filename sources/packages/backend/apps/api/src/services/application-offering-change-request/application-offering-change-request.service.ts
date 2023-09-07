@@ -418,7 +418,10 @@ export class ApplicationOfferingChangeRequestService {
         id: applicationOfferingChangeId,
         applicationOfferingChangeRequestStatus:
           options?.applicationOfferingChangeRequestStatus,
-        application: { student: { id: options?.studentId } },
+        application: {
+          applicationStatus: ApplicationStatus.Completed,
+          student: { id: options?.studentId },
+        },
       },
     });
   }
