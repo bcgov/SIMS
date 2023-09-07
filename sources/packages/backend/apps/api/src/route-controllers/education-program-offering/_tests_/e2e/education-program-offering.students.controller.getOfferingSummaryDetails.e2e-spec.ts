@@ -31,18 +31,6 @@ describe("EducationProgramOfferingStudentsController(e2e)-getOfferingSummaryDeta
   let applicationRepo: Repository<Application>;
   let assessmentRepo: Repository<StudentAssessment>;
 
-  const deliveryMethod = (offering: EducationProgramOffering) => {
-    if (
-      offering.educationProgram.deliveredOnline &&
-      offering.educationProgram.deliveredOnSite
-    ) {
-      return "Blended";
-    } else if (offering.educationProgram.deliveredOnSite) {
-      return "Onsite";
-    }
-    return "Online";
-  };
-
   beforeAll(async () => {
     const { nestApplication, dataSource } = await createTestingAppModule();
     app = nestApplication;
@@ -180,4 +168,16 @@ describe("EducationProgramOfferingStudentsController(e2e)-getOfferingSummaryDeta
   afterAll(async () => {
     await app?.close();
   });
+
+  const deliveryMethod = (offering: EducationProgramOffering) => {
+    if (
+      offering.educationProgram.deliveredOnline &&
+      offering.educationProgram.deliveredOnSite
+    ) {
+      return "Blended";
+    } else if (offering.educationProgram.deliveredOnSite) {
+      return "Onsite";
+    }
+    return "Online";
+  };
 });
