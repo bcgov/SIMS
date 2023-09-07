@@ -11,7 +11,7 @@
     "^.+\\.(t|j)s$": "ts-jest"
   },
   "testTimeout": 60000,
-  "workerIdleMemoryLimit": 0.2,
+  "workerIdleMemoryLimit": 0.5,
   "setupFiles": [
     "<rootDir>/../../env-setup.js"
   ],

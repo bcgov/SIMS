@@ -48,6 +48,18 @@ jobs:
         working-directory: "./sources/tests/"
         run: |
           make e2e-tests-api
+      - name: Tests Coverage
+        if: ${{ github.actor != 'dependabot[bot]' }}
+        uses: slavcodev/coverage-monitor-action@v1
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          status_context: "E2E SIMS API Coverage Report"
+          comment_context: "E2E SIMS API Coverage Report"
+          coverage_path: "sources/tests/coverage/api/clover.xml"
+          threshold_alert: 1
+          threshold_warning: 50
+          threshold_metric: "lines"
+          comment_footer: false
   workers-e2e-tests:
     name: Workflow Workers E2E Tests
     runs-on: ubuntu-latest
