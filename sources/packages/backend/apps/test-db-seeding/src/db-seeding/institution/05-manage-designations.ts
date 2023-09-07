@@ -42,11 +42,11 @@ export class DesignationAgreementService {
       await this.institutionLocationRepo.save(fakeInstitutionLocations);
 
     // Create fake designation agreement.
-    const fakeDesignationAgreement = createFakeDesignationAgreement(
+    const fakeDesignationAgreement = createFakeDesignationAgreement({
       fakeInstitution,
-      fakeInstitutionUser.user,
-      createdFakInstitutionLocations,
-    );
+      fakeInstitutionLocations: createdFakInstitutionLocations,
+      fakeUser: fakeInstitutionUser.user,
+    });
     await this.designationAgreementRepo.save(fakeDesignationAgreement);
   }
 }
