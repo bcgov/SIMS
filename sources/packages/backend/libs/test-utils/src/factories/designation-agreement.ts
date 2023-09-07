@@ -28,12 +28,12 @@ export function createFakeDesignationAgreement(
     fakeUser: User;
   },
   options?: {
-    designationStatus?: DesignationAgreementStatus;
+    initialValue?: Partial<DesignationAgreement>;
   },
 ): DesignationAgreement {
   const now = new Date();
-  const status = options?.designationStatus
-    ? options?.designationStatus
+  const status = options?.initialValue?.designationStatus
+    ? options.initialValue.designationStatus
     : DesignationAgreementStatus.Approved;
   const fakeDesignationAgreement = new DesignationAgreement();
   fakeDesignationAgreement.institution = relations.fakeInstitution;
