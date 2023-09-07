@@ -65,7 +65,7 @@ export function createFakeDesignationAgreement(
     ],
   };
   const newFakeUser = relations.fakeUser;
-  const newFakeInstitutionLocation = relations.fakeInstitutionLocations;
+  const newFakeInstitutionLocations = relations.fakeInstitutionLocations;
   fakeDesignationAgreement.designationStatus = status;
   fakeDesignationAgreement.submittedBy = newFakeUser;
   fakeDesignationAgreement.submittedDate = now;
@@ -80,7 +80,7 @@ export function createFakeDesignationAgreement(
     "YYYYMMDD",
   );
   fakeDesignationAgreement.designationAgreementLocations =
-    newFakeInstitutionLocation.map((location: InstitutionLocation) => {
+    newFakeInstitutionLocations.map((location: InstitutionLocation) => {
       const newLocation = new DesignationAgreementLocation();
       newLocation.institutionLocation = location;
       newLocation.requested = true;
