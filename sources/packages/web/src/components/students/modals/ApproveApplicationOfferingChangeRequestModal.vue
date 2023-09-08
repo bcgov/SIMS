@@ -50,7 +50,7 @@
 </template>
 <script lang="ts">
 import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
-import { ref, defineComponent } from "vue";
+import { ref, defineComponent, reactive } from "vue";
 import { useModalDialog } from "@/composables";
 import { StudentApplicationOfferingChangeRequestAPIInDTO } from "@/services/http/dto";
 import { ApplicationOfferingChangeRequestStatus, VForm } from "@/types";
@@ -65,12 +65,12 @@ export default defineComponent({
     const { showDialog, showModal, resolvePromise } = useModalDialog<
       StudentApplicationOfferingChangeRequestAPIInDTO | boolean
     >();
-    const approveApplicationOfferingChangeRequestModal = ref(
+    const approveApplicationOfferingChangeRequestModal = reactive(
       {} as StudentApplicationOfferingChangeRequestAPIInDTO,
     );
     const approveApplicationOfferingChangeRequest = ref({} as VForm);
     const cancel = () => {
-      approveApplicationOfferingChangeRequestModal.value.studentConsent = false;
+      approveApplicationOfferingChangeRequestModal.studentConsent = false;
       approveApplicationOfferingChangeRequest.value.resetValidation();
       resolvePromise(false);
     };
@@ -80,9 +80,9 @@ export default defineComponent({
       if (!validationResult.valid) {
         return;
       }
-      approveApplicationOfferingChangeRequestModal.value.applicationOfferingChangeRequestStatus =
+      approveApplicationOfferingChangeRequestModal.applicationOfferingChangeRequestStatus =
         ApplicationOfferingChangeRequestStatus.InProgressWithSABC;
-      const payload = { ...approveApplicationOfferingChangeRequestModal.value };
+      const payload = { ...approveApplicationOfferingChangeRequestModal };
       resolvePromise(payload);
       approveApplicationOfferingChangeRequest.value.reset();
     };
