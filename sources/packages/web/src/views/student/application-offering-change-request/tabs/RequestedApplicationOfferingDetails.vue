@@ -15,7 +15,7 @@
       </template>
       <hr class="horizontal-divider" />
       <h2 class="category-header-large primary-color">Application Details</h2>
-      <p v-if="changeRequestNotApproved">
+      <p v-if="changeRequestInProgressWithStudent">
         Below displays the requested changes from your institution. You can
         compare your
         <span class="font-bold">active application details</span> by switching
@@ -24,7 +24,7 @@
       <offering-view :offeringId="changeRequest.requestedOfferingId" />
       <hr class="horizontal-divider" />
       <h2 class="category-header-large primary-color">Request details</h2>
-      <p v-if="changeRequestNotApproved">
+      <p v-if="changeRequestInProgressWithStudent">
         Contact your institution for more information if there are no
         differences in the requested change above. There may be proposed changes
         that aren't displayed such as study costs.
@@ -80,17 +80,17 @@ export default defineComponent({
           Location: changeRequest.value.locationName,
         } as Record<string, string>),
     );
-    const changeRequestNotApproved = computed(() => {
+    const changeRequestInProgressWithStudent = computed(() => {
       return (
-        changeRequest.value.status !==
-        ApplicationOfferingChangeRequestStatus.Approved
+        changeRequest.value.status ===
+        ApplicationOfferingChangeRequestStatus.InProgressWithStudent
       );
     });
     return {
       changeRequest,
       studentFullName,
       headerDetailsData,
-      changeRequestNotApproved,
+      changeRequestInProgressWithStudent,
       ApplicationOfferingChangeRequestStatus,
     };
   },

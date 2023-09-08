@@ -31,7 +31,7 @@
             ></title-value
           ></content-group-info
         ><v-checkbox
-          v-model="formModel.studentConsent"
+          v-model="approveApplicationOfferingChangeRequestModal.studentConsent"
           label="I agree to the terms and conditions of the StudentAid BC Declaration
           form"
           hide-details="auto"
@@ -50,7 +50,7 @@
 </template>
 <script lang="ts">
 import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
-import { ref, defineComponent, reactive } from "vue";
+import { ref, defineComponent } from "vue";
 import { useModalDialog } from "@/composables";
 import { StudentApplicationOfferingChangeRequestAPIInDTO } from "@/services/http/dto";
 import { ApplicationOfferingChangeRequestStatus, VForm } from "@/types";
@@ -69,12 +69,9 @@ export default defineComponent({
       {} as StudentApplicationOfferingChangeRequestAPIInDTO,
     );
     const approveApplicationOfferingChangeRequest = ref({} as VForm);
-    const formModel = reactive(
-      {} as StudentApplicationOfferingChangeRequestAPIInDTO,
-    );
     const cancel = () => {
       approveApplicationOfferingChangeRequest.value.reset();
-      formModel.studentConsent = false;
+      approveApplicationOfferingChangeRequestModal.value.studentConsent = false;
       approveApplicationOfferingChangeRequest.value.resetValidation();
       resolvePromise(false);
     };
@@ -86,7 +83,7 @@ export default defineComponent({
       }
       approveApplicationOfferingChangeRequestModal.value.applicationOfferingChangeRequestStatus =
         ApplicationOfferingChangeRequestStatus.InProgressWithSABC;
-      const payload = { ...formModel };
+      const payload = { ...approveApplicationOfferingChangeRequestModal.value };
       resolvePromise(payload);
       approveApplicationOfferingChangeRequest.value.reset();
     };
@@ -95,7 +92,6 @@ export default defineComponent({
       showModal,
       cancel,
       allowChange,
-      formModel,
       approveApplicationOfferingChangeRequest,
       approveApplicationOfferingChangeRequestModal,
     };
