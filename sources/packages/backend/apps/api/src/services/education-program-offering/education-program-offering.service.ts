@@ -1202,14 +1202,6 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
         });
         promises.push(deleteAssessmentPromise);
       }
-      if (application.applicationStatus === ApplicationStatus.Completed) {
-        const startAssessmentPromise =
-          this.workflowClientService.startApplicationAssessment(
-            application.workflowName,
-            application.currentAssessment.id,
-          );
-        promises.push(startAssessmentPromise);
-      }
       if (promises.length >= maxPromisesAllowed) {
         // Waits for promises to be process when it reaches maximum allowable parallel
         // count.

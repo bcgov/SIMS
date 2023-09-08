@@ -352,10 +352,6 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
       );
     }
 
-    await this.studentAssessmentService.assertAllAssessmentsCompleted(
-      appealToUpdate.application.id,
-    );
-
     const auditUser = { id: auditUserId } as User;
     const auditDate = new Date();
 

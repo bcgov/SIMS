@@ -132,59 +132,6 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
   }
 
   /**
-   * Starts the assessment workflow of one Student Application.
-   * @param assessmentId Student assessment that need to be processed.
-   * @deprecated the queues are supposed to be the only responsible for starting the workflows.
-   */
-  async startAssessment(assessmentId: number): Promise<void> {
-    const assessment = await this.repo
-      .createQueryBuilder("assessment")
-      .select([
-        "assessment.id",
-        "assessment.assessmentWorkflowId",
-        "assessment.triggerType",
-        "application.id",
-        "application.applicationStatus",
-        "application.data",
-      ])
-      .innerJoin("assessment.application", "application")
-      .where("assessment.id = :assessmentId", { assessmentId })
-      .getOne();
-
-    if (assessment.assessmentWorkflowId) {
-      throw new CustomNamedError(
-        `Student assessment was already started and has a workflow associated with. Assessment id ${assessmentId}`,
-        ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE,
-      );
-    }
-
-    if (
-      assessment.triggerType === AssessmentTriggerType.OriginalAssessment &&
-      assessment.application.applicationStatus !== ApplicationStatus.Submitted
-    ) {
-      throw new CustomNamedError(
-        `An assessment with a trigger type '${AssessmentTriggerType.OriginalAssessment}' can only be started with a Student Application in the status '${ApplicationStatus.Submitted}'. Assessment id ${assessmentId}`,
-        ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE,
-      );
-    }
-
-    if (
-      assessment.triggerType !== AssessmentTriggerType.OriginalAssessment &&
-      assessment.application.applicationStatus !== ApplicationStatus.Completed
-    ) {
-      throw new CustomNamedError(
-        `An assessment with a trigger type other than '${AssessmentTriggerType.OriginalAssessment}' can only be started with a Student Application in the status '${ApplicationStatus.Completed}'. Assessment id ${assessmentId}`,
-        ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE,
-      );
-    }
-
-    await this.startAssessmentQueue.add({
-      workflowName: assessment.application.data.workflowName,
-      assessmentId: assessment.id,
-    });
-  }
-
-  /**
    * Updates assessment and application statuses when
    * the student is confirming the NOA (Notice of Assessment).
    * @param assessmentId assessment id to be updated.
@@ -361,6 +308,7 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
    * finished yet (submitted/pending). If there is a student assessment
    * already being processed, throws an exception.
    * @param application application to have the assessments verified.
+   * @deprecated new queues need to be used.
    */
   async assertAllAssessmentsCompleted(application: number) {
     const hasIncompleteAssessment = await this.hasIncompleteAssessment(
