@@ -70,7 +70,6 @@ export default defineComponent({
     );
     const approveApplicationOfferingChangeRequest = ref({} as VForm);
     const cancel = () => {
-      approveApplicationOfferingChangeRequest.value.reset();
       approveApplicationOfferingChangeRequestModal.value.studentConsent = false;
       approveApplicationOfferingChangeRequest.value.resetValidation();
       resolvePromise(false);
