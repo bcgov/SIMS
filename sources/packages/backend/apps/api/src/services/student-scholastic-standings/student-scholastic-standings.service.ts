@@ -107,10 +107,6 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
         INVALID_OPERATION_IN_THE_CURRENT_STATUS,
       );
     }
-    // Check if any assessment already in progress for this application.
-    await this.studentAssessmentService.assertAllAssessmentsCompleted(
-      application.id,
-    );
 
     // Save scholastic standing and create reassessment.
     return this.saveScholasticStandingCreateReassessment(
