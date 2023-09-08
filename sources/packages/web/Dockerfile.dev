@@ -24,11 +24,14 @@ COPY . .
 # Building app
 RUN npm run build-local
 
+# Set a nginx a user to run the process
+USER nginx
+
 # Exposing application port
 EXPOSE ${PORT}
 
 # Get a nginx image to have only the compiled app ready for production.
-FROM nginx AS production-stage
+FROM nginx:1.20 AS production-stage
 
 RUN mkdir /app
 
