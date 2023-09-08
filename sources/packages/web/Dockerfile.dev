@@ -1,5 +1,5 @@
 # "build-stage", based on Node.js, to build and compile the frontend
-FROM node:16.17.0-alpine3.16 as build-stage
+FROM node:16.17.0-alpine3.16 AS build-stage
 
 LABEL maintainer="BC GOV"
 
@@ -28,7 +28,7 @@ RUN npm run build-local
 EXPOSE ${PORT}
 
 # Get a nginx image to have only the compiled app ready for production.
-FROM nginx as production-stage
+FROM nginx AS production-stage
 
 RUN mkdir /app
 
