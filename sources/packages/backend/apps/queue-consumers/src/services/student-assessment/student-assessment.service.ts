@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { StudentAssessment } from "@sims/sims-db";
+import { ApplicationData, StudentAssessment } from "@sims/sims-db";
 import { Repository } from "typeorm";
 import { InjectRepository } from "@nestjs/typeorm";
 
@@ -35,5 +35,19 @@ export class StudentAssessmentService {
         id: assessmentId,
       },
     });
+  }
+
+  async getApplicationDynamicData(
+    assessmentId: number,
+  ): Promise<Partial<ApplicationData>> {
+    const data = await this.studentAssessmentRepo
+      .createQueryBuilder("studentAssessment")
+      .select("application.data ->> 'workflowName'", "workflowName")
+      .innerJoin("studentAssessment.application", "application")
+      .where("studentAssessment.id = :assessmentId", { assessmentId })
+      .getRawOne();
+    return {
+      workflowName: data.workflowName,
+    };
   }
 }

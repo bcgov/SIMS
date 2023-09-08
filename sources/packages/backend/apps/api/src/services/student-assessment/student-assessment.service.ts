@@ -134,6 +134,7 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
   /**
    * Starts the assessment workflow of one Student Application.
    * @param assessmentId Student assessment that need to be processed.
+   * @deprecated the queues are supposed to be the only responsible for starting the workflows.
    */
   async startAssessment(assessmentId: number): Promise<void> {
     const assessment = await this.repo

@@ -25,6 +25,7 @@ import {
   ProcessArchiveApplicationsScheduler,
   ECEProcessIntegrationScheduler,
   ECEResponseIntegrationScheduler,
+  AssessmentWorkflowEnqueuerScheduler,
 } from "./processors";
 import {
   DisbursementScheduleSharedService,
@@ -53,7 +54,11 @@ import {
   SINValidationModule,
 } from "@sims/integrations/esdc-integration";
 import { CRAIntegrationModule } from "@sims/integrations/cra-integration/cra-integration.module";
-import { StudentAssessmentService, ApplicationService } from "./services";
+import {
+  StudentAssessmentService,
+  ApplicationService,
+  WorkflowEnqueuerService,
+} from "./services";
 import { SFASIntegrationModule } from "@sims/integrations/sfas-integration";
 import { ATBCIntegrationModule } from "@sims/integrations/atbc-integration";
 import { ECEIntegrationModule } from "@sims/integrations/institution-integration/ece-integration";
@@ -116,6 +121,8 @@ import { ECEIntegrationModule } from "@sims/integrations/institution-integration
     ApplicationService,
     ConfirmationOfEnrollmentService,
     MSFAANumberSharedService,
+    AssessmentWorkflowEnqueuerScheduler,
+    WorkflowEnqueuerService,
   ],
 })
 export class QueueConsumersModule {}
