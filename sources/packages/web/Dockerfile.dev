@@ -1,5 +1,5 @@
-# Base Image
-FROM node:16.17.0-alpine3.16
+# "build-stage", based on Node.js, to build and compile the frontend
+FROM node:16.17.0-alpine3.16 as build-stage
 
 LABEL maintainer="BC GOV"
 
@@ -22,10 +22,22 @@ RUN npm ci
 COPY . .
 
 # Building app
-RUN npm run build
+RUN npm run build-local
 
 # Exposing application port
 EXPOSE ${PORT}
 
-# Entry point
-CMD [ "npm", "run", "serve" ]
+# Get a nginx image to have only the compiled app ready for production.
+FROM nginx as production-stage
+
+RUN mkdir /app
+
+# Copy the app built on build-stage to the resulting container.
+COPY --from=build-stage /app/dist /app
+
+# Copying the configuration file.
+COPY nginx.conf /etc/nginx/nginx.conf
+
+# Daemon off makes nginx to run on the foreground with only one process.
+# Docker will kill the container if the process dies.
+CMD ["nginx", "-g", "daemon off;"]

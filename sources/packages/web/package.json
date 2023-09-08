@@ -7,7 +7,7 @@
     "build": "NODE_OPTIONS=--max_old_space_size=1024 vue-cli-service build",
     "test:unit": "vue-cli-service test:unit",
     "lint": "vue-cli-service lint",
-    "build-local": "vue-cli-service build"
+    "build-local": "vue-cli-service build --mode development"
   },
   "dependencies": {
     "@bcgov/bc-sans": "^2.0.0",

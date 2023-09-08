@@ -153,6 +153,11 @@ api: ## <Helper> :: Executes into the workspace container.
 	@echo "+\n++Shelling into local workspace ...++\n+"
 	@docker-compose exec api bash
 
+# Local Web (nginx)
+web-local:
+	@echo "+\n++ Make: Run local web (nginx).\n+"
+	@docker-compose -f docker-compose.yml up web
+
 local-db:
 	@echo "Make: Shelling into database workspace ..."
 	@docker-compose -f docker-compose.yml exec postgres psql -U $(POSTGRESQL_USER) -W $(POSTGRES_DB)
