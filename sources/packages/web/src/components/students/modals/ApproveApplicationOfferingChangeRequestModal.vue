@@ -31,7 +31,7 @@
             ></title-value
           ></content-group-info
         ><v-checkbox
-          v-model="formModel.studentConsent"
+          v-model="approveApplicationOfferingChangeRequestModal.studentConsent"
           label="I agree to the terms and conditions of the StudentAid BC Declaration
           form"
           hide-details="auto"
@@ -65,16 +65,12 @@ export default defineComponent({
     const { showDialog, showModal, resolvePromise } = useModalDialog<
       StudentApplicationOfferingChangeRequestAPIInDTO | boolean
     >();
-    const approveApplicationOfferingChangeRequestModal = ref(
+    const approveApplicationOfferingChangeRequestModal = reactive(
       {} as StudentApplicationOfferingChangeRequestAPIInDTO,
     );
     const approveApplicationOfferingChangeRequest = ref({} as VForm);
-    const formModel = reactive(
-      {} as StudentApplicationOfferingChangeRequestAPIInDTO,
-    );
     const cancel = () => {
-      approveApplicationOfferingChangeRequest.value.reset();
-      formModel.studentConsent = false;
+      approveApplicationOfferingChangeRequestModal.studentConsent = false;
       approveApplicationOfferingChangeRequest.value.resetValidation();
       resolvePromise(false);
     };
@@ -84,9 +80,9 @@ export default defineComponent({
       if (!validationResult.valid) {
         return;
       }
-      approveApplicationOfferingChangeRequestModal.value.applicationOfferingChangeRequestStatus =
+      approveApplicationOfferingChangeRequestModal.applicationOfferingChangeRequestStatus =
         ApplicationOfferingChangeRequestStatus.InProgressWithSABC;
-      const payload = { ...formModel };
+      const payload = { ...approveApplicationOfferingChangeRequestModal };
       resolvePromise(payload);
       approveApplicationOfferingChangeRequest.value.reset();
     };
@@ -95,7 +91,6 @@ export default defineComponent({
       showModal,
       cancel,
       allowChange,
-      formModel,
       approveApplicationOfferingChangeRequest,
       approveApplicationOfferingChangeRequestModal,
     };
