@@ -40,21 +40,21 @@ describe(
       );
     });
 
-    it("Should cancel the assessment pending disbursements and rollback overawards when the cancelled application has overawards and also one sent and one pending disbursements.", async () => {
+    // TODO: Scenarios to be created.
+    it("Should queue an assessment when an active application has at least one pending assessment.", async () => {
       // Arrange
 
       // Application submitted with original assessment.
-      const application = await saveFakeApplication(db.dataSource);
+      await saveFakeApplication(db.dataSource);
 
       // Queued job.
       const job = createMock<Job<void>>();
 
       // Act
-      const result = await processor.enqueueAssessmentOperations(job);
+      await processor.enqueueAssessmentOperations(job);
 
       // Assert
-      console.log(application);
-      console.log(result);
+      // TODO: Asserts to be created.
     });
   },
 );

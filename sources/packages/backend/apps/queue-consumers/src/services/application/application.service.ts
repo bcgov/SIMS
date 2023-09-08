@@ -58,7 +58,18 @@ export class ApplicationService {
     return updateResult.affected;
   }
 
+  /**
+   * Finds all applications with some pending student assessment to be
+   * processed by the workflow, ignoring applications that already have
+   * some workflow in progress or were already queued for execution.
+   * All pending student assessment will be returned ordered by its creation
+   * date to allow the select of the next on to be executed (usually only one
+   * record would be expected).
+   * @returns applications with pending assessments to be executed.
+   */
   async getApplicationsToStartAssessments(): Promise<Application[]> {
+    // Sub query to validate if an application has assessment already being
+    // processed by the workflow.
     const inProgressStatusesExistsQuery = this.studentAssessmentRepo
       .createQueryBuilder("studentAssessment")
       .select("1")
@@ -67,31 +78,35 @@ export class ApplicationService {
         "studentAssessment.studentAssessmentStatus IN (:...inProgressStatuses)",
       )
       .getQuery();
-
-    return this.applicationRepo
-      .createQueryBuilder("application")
-      .select("application.id")
-      .addSelect("studentAssessment.id")
-      .innerJoin("application.studentAssessments", "studentAssessment")
-      .where(
-        new Brackets((qb) => {
-          qb.where("application.currentProcessingAssessment IS NULL").orWhere(
-            "application.currentProcessingAssessment != application.currentAssessment",
-          );
-        }),
-      )
-      .andWhere(
-        "studentAssessment.studentAssessmentStatus = :submittedStatus",
-        {
-          submittedStatus: StudentAssessmentStatus.Submitted,
-        },
-      )
-      .andWhere(`NOT EXISTS (${inProgressStatusesExistsQuery})`)
-      .setParameter("inProgressStatuses", [
-        StudentAssessmentStatus.Queued,
-        StudentAssessmentStatus.InProgress,
-      ])
-      .orderBy("studentAssessment.createdAt")
-      .getMany();
+    return (
+      this.applicationRepo
+        .createQueryBuilder("application")
+        .select(["application.id", "studentAssessment.id"])
+        .innerJoin("application.studentAssessments", "studentAssessment")
+        // currentProcessingAssessment will be null for the original assessment and it must be
+        // updated every time that a workflow is triggered.
+        // When currentProcessingAssessment and currentAssessment are different it indicates that
+        // there is a assessment workflow pending to be executed.
+        .where(
+          new Brackets((qb) => {
+            qb.where("application.currentProcessingAssessment IS NULL").orWhere(
+              "application.currentProcessingAssessment != application.currentAssessment",
+            );
+          }),
+        )
+        .andWhere(
+          "studentAssessment.studentAssessmentStatus = :submittedStatus",
+          {
+            submittedStatus: StudentAssessmentStatus.Submitted,
+          },
+        )
+        .andWhere(`NOT EXISTS (${inProgressStatusesExistsQuery})`)
+        .setParameter("inProgressStatuses", [
+          StudentAssessmentStatus.Queued,
+          StudentAssessmentStatus.InProgress,
+        ])
+        .orderBy("studentAssessment.createdAt")
+        .getMany()
+    );
   }
 }

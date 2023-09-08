@@ -14,6 +14,10 @@ export class ProcessSummaryResult {
    * Errors that happened during the file processing.
    */
   errors: string[] = [];
+  /**
+   * Summary result for child processes.
+   */
+  children?: ProcessSummaryResult[];
 }
 
 /**
