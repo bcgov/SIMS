@@ -14,7 +14,7 @@ FROM
   sims.applications a
 WHERE
   sa.application_id = a.id
-  AND a."application_status" IN (
+  AND a.application_status IN (
     'Submitted',
     'In Progress',
     'Assessment',
@@ -24,11 +24,14 @@ WHERE
 
 -- Update all assessments associated with no longer active applications.
 UPDATE
-  sims.student_assessments sa
+  sims.student_assessments
 SET
-  student_assessment_status = 'Cancelled'
+  student_assessment_status = 'Cancelled' :: sims.student_assessment_status
 FROM
-  sims.applications a
+  sims.applications
 WHERE
-  sa.application_id = a.id
-  AND a."application_status" IN ('Cancelled', 'Overwritten')
+  application_id = sims.applications.id
+  AND sims.applications.application_status IN (
+    'Cancelled' :: sims.application_status,
+    'Overwritten' :: sims.application_status
+  )

@@ -11,27 +11,19 @@ import {
   StudentAssessmentStatus,
 } from "@sims/sims-db";
 import { Brackets, DataSource } from "typeorm";
-import { InjectQueue } from "@nestjs/bull";
-import { Queue } from "bull";
-import { CustomNamedError, QueueNames } from "@sims/utilities";
+import { CustomNamedError } from "@sims/utilities";
 import {
-  ASSESSMENT_ALREADY_IN_PROGRESS,
   ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE,
   ASSESSMENT_NOT_FOUND,
 } from "./student-assessment.constants";
 import { AssessmentHistory } from "./student-assessment.models";
-import { StartAssessmentQueueInDTO } from "@sims/services/queue";
 
 /**
  * Manages the student assessment related operations.
  */
 @Injectable()
 export class StudentAssessmentService extends RecordDataModelService<StudentAssessment> {
-  constructor(
-    dataSource: DataSource,
-    @InjectQueue(QueueNames.StartApplicationAssessment)
-    private readonly startAssessmentQueue: Queue<StartAssessmentQueueInDTO>,
-  ) {
+  constructor(dataSource: DataSource) {
     super(dataSource.getRepository(StudentAssessment));
   }
 
