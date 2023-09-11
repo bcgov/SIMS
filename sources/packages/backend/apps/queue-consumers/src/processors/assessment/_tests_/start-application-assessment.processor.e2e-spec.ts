@@ -34,8 +34,8 @@ describe(
       const dummyException = new Error("Dummy error");
       const job = createMock<Job<StartAssessmentQueueInDTO>>({
         data: {
-          workflowName: undefined,
-          assessmentId: undefined,
+          workflowName: "dummy-workflow-name",
+          assessmentId: 9999,
         },
       });
       zbClientMock.createProcessInstance = jest.fn().mockImplementation(() => {
