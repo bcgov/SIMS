@@ -75,21 +75,32 @@ export class WorkflowEnqueuerService {
       result.summary.push(
         `Found ${application.studentAssessments.length} pending assessment(s). Queueing assessment ${nextAssessment.id}.`,
       );
+      // Update application and student assessment.
       await this.dataSource.transaction(async (entityManager) => {
         result.summary.push(
           `Associating application currentProcessingAssessment as assessment id ${nextAssessment.id}.`,
         );
-        await entityManager.getRepository(Application).update(application.id, {
-          currentProcessingAssessment: { id: nextAssessment.id },
-        });
+        const applicationUpdateResult = await entityManager
+          .getRepository(Application)
+          .update(application.id, {
+            currentProcessingAssessment: { id: nextAssessment.id },
+          });
+        if (!applicationUpdateResult.affected) {
+          throw new Error("Application update did not affected any records.");
+        }
         result.summary.push(
           `Updating assessment status to ${StudentAssessmentStatus.Queued}.`,
         );
-        await entityManager
+        const assessmentUpdateResults = await entityManager
           .getRepository(StudentAssessment)
           .update(nextAssessment.id, {
             studentAssessmentStatus: StudentAssessmentStatus.Queued,
           });
+        if (!assessmentUpdateResults.affected) {
+          throw new Error(
+            "Student assessment update did not affected any records.",
+          );
+        }
       });
       result.summary.push(
         `Adding assessment to queue ${QueueNames.StartApplicationAssessment}.`,
