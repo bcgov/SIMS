@@ -61,9 +61,9 @@ export class ApplicationService {
   /**
    * Finds all applications with some pending student assessment to be
    * processed by the workflow, ignoring applications that already have
-   * some workflow in progress or were already queued for execution.
-   * All pending student assessment will be returned ordered by its creation
-   * date to allow the select of the next on to be executed (usually only one
+   * some workflows in progress or were already queued for execution.
+   * All pending student assessments will be returned ordered by its creation
+   * date to allow the select of the next one to be executed (usually only one
    * record would be expected).
    * @returns applications with pending assessments to be executed.
    */

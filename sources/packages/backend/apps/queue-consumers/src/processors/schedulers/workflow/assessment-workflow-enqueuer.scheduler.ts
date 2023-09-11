@@ -43,6 +43,7 @@ export class AssessmentWorkflowEnqueuerScheduler extends BaseScheduler<void> {
       await this.workflowEnqueuerService.enqueueStartAssessmentWorkflows();
     await summary.info("All application assessments queued.");
     await this.cleanSchedulerQueueHistory();
+    // TODO: logs improvement.
     return [summary.getSummary(), result];
   }
 

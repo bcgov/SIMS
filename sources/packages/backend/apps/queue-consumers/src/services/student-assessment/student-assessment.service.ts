@@ -37,9 +37,14 @@ export class StudentAssessmentService {
     });
   }
 
+  /**
+   * The the student application dynamic data using the assessment id.
+   * @param assessmentId assessment id.
+   * @returns student application dynamic data.
+   */
   async getApplicationDynamicData(
     assessmentId: number,
-  ): Promise<Partial<ApplicationData>> {
+  ): Promise<ApplicationData> {
     const data = await this.studentAssessmentRepo
       .createQueryBuilder("studentAssessment")
       .select("application.data ->> 'workflowName'", "workflowName")
