@@ -26,12 +26,9 @@ WHERE
 UPDATE
   sims.student_assessments
 SET
-  student_assessment_status = 'Cancelled' :: sims.student_assessment_status
+  student_assessment_status = 'Cancelled'
 FROM
   sims.applications
 WHERE
   application_id = sims.applications.id
-  AND sims.applications.application_status IN (
-    'Cancelled' :: sims.application_status,
-    'Overwritten' :: sims.application_status
-  )
+  AND sims.applications.application_status IN ('Cancelled', 'Overwritten')
