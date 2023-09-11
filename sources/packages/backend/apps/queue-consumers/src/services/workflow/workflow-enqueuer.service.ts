@@ -29,7 +29,7 @@ export class WorkflowEnqueuerService {
    * Search applications with pending assessments to be processed by the assessment workflow.
    * If no other assessment is being processed for that application the oldest pending
    * assessment will be queue for start.
-   * @returns
+   * @returns process summary log.
    */
   async enqueueStartAssessmentWorkflows(): Promise<ProcessSummaryResult> {
     const result = new ProcessSummaryResult();
@@ -106,7 +106,7 @@ export class WorkflowEnqueuerService {
         `Adding assessment to queue ${QueueNames.StartApplicationAssessment}.`,
       );
       await this.startAssessmentQueue.add({ assessmentId: nextAssessment.id });
-      result.summary.push(`Assessment queued for start.`);
+      result.summary.push("Assessment queued for start.");
     } catch (error: unknown) {
       result.errors.push(
         `Error while enqueueing assessment workflow to be processed. ${parseJSONError(
