@@ -4,9 +4,12 @@ import { Queue } from "bull";
 import { StartAssessmentQueueInDTO } from "@sims/services/queue";
 import { InjectQueue } from "@nestjs/bull";
 import { QueueNames, parseJSONError, processInParallel } from "@sims/utilities";
-import { Application, StudentAssessmentStatus } from "@sims/sims-db";
-import { Repository } from "typeorm";
-import { InjectRepository } from "@nestjs/typeorm";
+import {
+  Application,
+  StudentAssessment,
+  StudentAssessmentStatus,
+} from "@sims/sims-db";
+import { DataSource } from "typeorm";
 import { ProcessSummaryResult } from "@sims/integrations/models";
 
 /**
@@ -16,8 +19,7 @@ import { ProcessSummaryResult } from "@sims/integrations/models";
 @Injectable()
 export class WorkflowEnqueuerService {
   constructor(
-    @InjectRepository(Application)
-    private readonly applicationRepo: Repository<Application>,
+    private readonly dataSource: DataSource,
     private readonly applicationService: ApplicationService,
     @InjectQueue(QueueNames.StartApplicationAssessment)
     private readonly startAssessmentQueue: Queue<StartAssessmentQueueInDTO>,
@@ -73,12 +75,22 @@ export class WorkflowEnqueuerService {
       result.summary.push(
         `Found ${application.studentAssessments.length} pending assessment(s). Queueing assessment ${nextAssessment.id}.`,
       );
-      nextAssessment.studentAssessmentStatus = StudentAssessmentStatus.Queued;
-      application.currentProcessingAssessment = nextAssessment;
-      result.summary.push(
-        `Updating assessment status to ${StudentAssessmentStatus.Queued}.`,
-      );
-      await this.applicationRepo.save(application);
+      await this.dataSource.transaction(async (entityManager) => {
+        result.summary.push(
+          `Associating application currentProcessingAssessment as assessment id ${nextAssessment.id}.`,
+        );
+        await entityManager.getRepository(Application).update(application.id, {
+          currentProcessingAssessment: { id: nextAssessment.id },
+        });
+        result.summary.push(
+          `Updating assessment status to ${StudentAssessmentStatus.Queued}.`,
+        );
+        await entityManager
+          .getRepository(StudentAssessment)
+          .update(nextAssessment.id, {
+            studentAssessmentStatus: StudentAssessmentStatus.Queued,
+          });
+      });
       result.summary.push(
         `Adding assessment to queue ${QueueNames.StartApplicationAssessment}.`,
       );
