@@ -31,7 +31,6 @@ import {
   STUDENT_APPEAL_INVALID_OPERATION,
   STUDENT_APPEAL_NOT_FOUND,
 } from "./constants";
-import { StudentAssessmentService } from "../student-assessment/student-assessment.service";
 import { NotificationActionsService } from "@sims/services/notifications";
 import { NoteSharedService } from "@sims/services";
 
@@ -43,7 +42,6 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
   constructor(
     private readonly dataSource: DataSource,
     private readonly studentAppealRequestsService: StudentAppealRequestsService,
-    private readonly studentAssessmentService: StudentAssessmentService,
     private readonly notificationActionsService: NotificationActionsService,
     private readonly noteSharedService: NoteSharedService,
   ) {

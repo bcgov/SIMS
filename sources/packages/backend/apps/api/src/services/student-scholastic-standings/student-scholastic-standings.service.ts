@@ -20,7 +20,6 @@ import {
   INVALID_OPERATION_IN_THE_CURRENT_STATUS,
 } from "../application/application.service";
 import { ScholasticStanding } from "./student-scholastic-standings.model";
-import { StudentAssessmentService } from "../student-assessment/student-assessment.service";
 import { StudentRestrictionService } from "../restriction/student-restriction.service";
 import { APPLICATION_CHANGE_NOT_ELIGIBLE } from "../../constants";
 import { SCHOLASTIC_STANDING_MINIMUM_UNSUCCESSFUL_WEEKS } from "../../utilities";
@@ -40,7 +39,6 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
 
   constructor(
     private readonly dataSource: DataSource,
-    private readonly studentAssessmentService: StudentAssessmentService,
     private readonly studentRestrictionService: StudentRestrictionService,
     private readonly notificationActionsService: NotificationActionsService,
     private readonly studentRestrictionSharedService: StudentRestrictionSharedService,
