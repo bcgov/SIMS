@@ -31,4 +31,10 @@ FROM
   sims.applications
 WHERE
   application_id = sims.applications.id
-  AND sims.applications.application_status IN ('Cancelled', 'Overwritten')
+  AND sims.applications.application_status NOT IN (
+    'Submitted',
+    'In Progress',
+    'Assessment',
+    'Enrolment',
+    'Completed'
+  );

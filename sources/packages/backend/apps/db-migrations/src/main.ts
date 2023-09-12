@@ -13,7 +13,7 @@ import { ormConfig } from "./data-source";
     await dataSource.query(`SET search_path TO ${ormConfig.schema}, public;`);
     await dataSource.query(`SET SCHEMA '${ormConfig.schema}';`);
     console.info(`**** Running migration ****`);
-    await dataSource.runMigrations({ transaction: "each" });
+    await dataSource.runMigrations();
     console.info(`**** Running setupDB: [Complete] ****`);
   } catch (error) {
     console.error(`Exception occurs during setup db process: ${error}`);
