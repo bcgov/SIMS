@@ -1,5 +1,5 @@
-# "build-stage", based on Node.js, to build and compile the frontend.
-FROM node:16.17.0-alpine3.16 AS build-stage
+# "builder" stage, based on Node.js, to build and compile the frontend.
+FROM node:16.17.0-alpine3.16 AS builder
 
 LABEL maintainer="BC GOV"
 
@@ -21,16 +21,16 @@ COPY . .
 # Building app
 RUN npm run build-local
 
-# Get a nginx image to have only the compiled app ready for production.
-FROM nginx:1.22 AS production-stage
+# Get a nginx image to have only the compiled app in the resulting image.
+FROM nginx:1.22 AS deployer
 
 RUN mkdir /app
 
 
 RUN mkdir /etc/nginx/templates
 
-# Copy the app built on build-stage to the resulting container.
-COPY --from=build-stage /app/dist /app
+# Copy the app built on builder stage to the resulting container.
+COPY --from=builder /app/dist /app
 
 # Copying the main configuration file.
 COPY nginx.conf /etc/nginx/nginx.conf
