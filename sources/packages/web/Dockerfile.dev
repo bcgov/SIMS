@@ -26,8 +26,6 @@ FROM nginx:1.22 AS production-stage
 
 RUN mkdir /app
 
-# Set a nginx user to run the process.
-# USER nginx
 
 RUN mkdir /etc/nginx/templates
 
@@ -41,6 +39,13 @@ COPY nginx.conf /etc/nginx/nginx.conf
 # It will be processed to transform the vars in the template files into 
 # evaluated values and save the resulting file as /etc/nginx/conf.d/default.conf.
 COPY default.conf.template /etc/nginx/templates/
+
+# Changing ownwership of some nginx directories as it will run as nginx user.
+RUN chown nginx /var/cache/nginx/ -R
+RUN chown nginx /etc/nginx/ -R
+
+# Set a nginx user to run the process.
+USER nginx
 
 # Daemon off makes nginx to run on the foreground with only one process.
 # Docker will kill the container if the process dies.
