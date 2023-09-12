@@ -1,37 +1,31 @@
-# "build-stage", based on Node.js, to build and compile the frontend
+# "build-stage", based on Node.js, to build and compile the frontend.
 FROM node:16.17.0-alpine3.16 AS build-stage
 
 LABEL maintainer="BC GOV"
 
-# Updating container path variable with node bin
-ENV PATH $PATH:/app/node_modules/.bin
-
-# Application Port
+# Application Port.
 ENV PORT 8080
 
-# Setting app as work dir
+# Setting app as work dir.
 WORKDIR /app
 
-# Copying package.json and package-lock.json
+# Copying package.json and package-lock.json.
 COPY ./package*.json ./
 
-# Installing dependencies
+# Installing dependencies.
 RUN npm ci
 
-# Copying sources
+# Copying sources.
 COPY . .
 
 # Building app
 RUN npm run build-local
 
-# Set a nginx a user to run the process
-USER nginx
-
-# Exposing application port
-EXPOSE ${PORT}
-
 # Get a nginx image to have only the compiled app ready for production.
-FROM nginx:1.20 AS production-stage
+FROM nginx:1.22 AS production-stage
+
+# Exposing application port.
+EXPOSE ${PORT}
 
 RUN mkdir /app
 

@@ -6,12 +6,14 @@ RUN npm ci
 COPY . ./
 RUN npm run build
 
-FROM registry.access.redhat.com/ubi8/nginx-120 AS deployer
+FROM registry.access.redhat.com/ubi8/nginx-122 AS deployer
 
 RUN mkdir /app
 
+WORKDIR /app
+
 # Copy the app built on build-stage to the resulting container.
-COPY --from=builder /opt/app-root/src/dist /app
+COPY --from=builder /opt/app-root/src/dist .
 
 # Copying the configuration file.
 COPY nginx.conf /etc/nginx/nginx.conf
