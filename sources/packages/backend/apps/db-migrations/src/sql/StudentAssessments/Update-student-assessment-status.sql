@@ -1,10 +1,13 @@
--- Updates all assessments associated with active applications.
+/**
+ Updates all assessments associated with active applications.
+ By default all records were created with 'Submitted' hence there is
+ no need to have it added to below CASE conditions.
+ */
 UPDATE
   sims.student_assessments sa
 SET
   student_assessment_status = (
     CASE
-      WHEN sa.assessment_workflow_id IS NULL THEN 'Submitted'
       WHEN sa.assessment_data IS NOT NULL THEN 'Completed'
       WHEN sa.assessment_workflow_id IS NOT NULL
       AND sa.assessment_data IS NULL THEN 'In progress'
