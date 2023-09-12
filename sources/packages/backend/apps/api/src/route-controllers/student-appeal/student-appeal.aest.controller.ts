@@ -12,7 +12,6 @@ import {
 import {
   ASSESSMENT_ALREADY_IN_PROGRESS,
   StudentAppealService,
-  StudentAssessmentService,
 } from "../../services";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import {
@@ -57,7 +56,6 @@ import { StudentAppealControllerService } from "./student-appeal.controller.serv
 export class StudentAppealAESTController extends BaseController {
   constructor(
     private readonly studentAppealService: StudentAppealService,
-    private readonly studentAssessmentService: StudentAssessmentService,
     private readonly studentAppealControllerService: StudentAppealControllerService,
   ) {
     super();
@@ -107,20 +105,11 @@ export class StudentAppealAESTController extends BaseController {
     @UserToken() userToken: IUserToken,
   ): Promise<void> {
     try {
-      const savedAppeal = await this.studentAppealService.approveRequests(
+      await this.studentAppealService.approveRequests(
         appealId,
         payload.requests,
         userToken.userId,
       );
-
-      // The appeal approval will create a student assessment to be processed only
-      // if at least one request was approved, hence sometimes an appeal will not result
-      // is an assessment creation if all requests are declined.
-      if (savedAppeal.studentAssessment) {
-        await this.studentAssessmentService.startAssessment(
-          savedAppeal.studentAssessment.id,
-        );
-      }
     } catch (error: unknown) {
       if (error instanceof CustomNamedError) {
         switch (error.name) {

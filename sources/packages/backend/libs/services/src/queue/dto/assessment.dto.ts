@@ -1,5 +1,5 @@
 export interface StartAssessmentQueueInDTO {
-  workflowName: string;
+  workflowName?: string;
   assessmentId: number;
 }
 
