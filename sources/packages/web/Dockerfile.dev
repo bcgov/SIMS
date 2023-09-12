@@ -24,8 +24,8 @@ RUN npm run build-local
 # Get a nginx image to have only the compiled app ready for production.
 FROM nginx:1.22 AS production-stage
 
-# Exposing application port.
-EXPOSE ${PORT}
+# Set a nginx user to run the process.
+USER nginx
 
 RUN mkdir /app
 
