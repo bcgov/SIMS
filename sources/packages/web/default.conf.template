@@ -1,0 +1,9 @@
+# nginx default configuration.
+server {
+  listen       ${PORT};
+  location / {
+    root   /app;
+    index  index.html;
+    try_files $uri $uri/ /index.html;
+  }
+}

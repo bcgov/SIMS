@@ -15,8 +15,13 @@ WORKDIR /app
 # Copy the app built on build-stage to the resulting container.
 COPY --from=builder /opt/app-root/src/dist .
 
-# Copying the configuration file.
+# Copying the main configuration file.
 COPY nginx.conf /etc/nginx/nginx.conf
+
+# Copying the configuration template file to templates dir. 
+# It will be processed to transform the vars in the template files into 
+# evaluated values and save the resulting file as /etc/nginx/conf.d/default.conf.
+COPY default.conf.template /etc/nginx/templates/
 
 # Daemon off makes nginx to run on the foreground with only one process.
 # Docker will kill the container if the process dies.
