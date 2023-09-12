@@ -109,9 +109,9 @@ export class WorkflowEnqueuerService {
       result.summary.push("Assessment queued for start.");
     } catch (error: unknown) {
       result.errors.push(
-        `Error while enqueueing assessment workflow to be processed. ${parseJSONError(
-          error,
-        )}`,
+        `Error while enqueueing assessment workflow to be processed for application id ${
+          application.id
+        }. ${parseJSONError(error)}`,
       );
     }
     return result;
