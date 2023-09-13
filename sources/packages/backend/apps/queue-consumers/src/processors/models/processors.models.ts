@@ -1,4 +1,5 @@
 import { LoggerService } from "@nestjs/common";
+import { ProcessSummary } from "@sims/utilities/logger";
 
 export interface QueueProcessSummaryResult {
   /**
@@ -80,6 +81,24 @@ export class QueueProcessSummary {
       warnings: this.warnings.length ? this.warnings : undefined,
       errors: this.errors.length ? this.errors : undefined,
     };
+  }
+
+  /**
+   * Writes all the log entries.
+   * @param processSummary process summary logs.
+   * @param logger optionally provides a job logger
+   * in case one is not present.
+   */
+  async logProcessSummaryToJobLogger(
+    processSummary: ProcessSummary,
+    logger?: JobLogger,
+  ): Promise<void> {
+    const jobLogger = this.loggers?.jobLogger ?? logger;
+    for (const logEntry of processSummary.flattenLogs()) {
+      await jobLogger.log(
+        `${logEntry.level.toUpperCase()}: ${logEntry.message}`,
+      );
+    }
   }
 }
 

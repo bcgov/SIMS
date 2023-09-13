@@ -5,5 +5,5 @@
  * @returns json string in a prettier format.
  */
 export function parseJSONError(value: unknown): string {
-  return JSON.stringify(value, null, 2);
+  return JSON.stringify(value, Object.getOwnPropertyNames(value), 2);
 }
