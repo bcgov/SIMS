@@ -1950,7 +1950,8 @@
                   "addons": [],
                   "fieldSet": false,
                   "inline": false,
-                  "id": "ecibhe"
+                  "id": "ecibhe",
+                  "lockKey": true
                 },
                 {
                   "title": "Custom program and offering",
@@ -1983,7 +1984,7 @@
                       "refreshOnChange": false,
                       "customClass": "banner-info",
                       "key": "html12",
-                      "customConditional": "show = data.programnotListed || data.offeringnotListed;",
+                      "customConditional": "show = data.myProgramNotListed.programnotListed || data.myStudyPeriodIsntListed.offeringnotListed;",
                       "type": "htmlelement",
                       "input": false,
                       "tableView": false,
@@ -2025,7 +2026,7 @@
                         "unique": false
                       },
                       "conditional": {
-                        "show": null,
+                        "show": "",
                         "when": null,
                         "eq": ""
                       },
@@ -2045,7 +2046,6 @@
                       "addons": [],
                       "tag": "p",
                       "id": "evaf9nc",
-                      "isNew": false,
                       "tags": []
                     },
                     {
@@ -2888,7 +2888,8 @@
                   "lazyLoad": false,
                   "theme": "default",
                   "breadcrumb": "default",
-                  "id": "e00cj6a"
+                  "id": "e00cj6a",
+                  "tags": []
                 },
                 {
                   "title": "programDesc",
@@ -23777,7 +23778,7 @@
               "hidden": false,
               "clearOnHide": true,
               "validate": {
-                "required": false,
+                "required": true,
                 "custom": "",
                 "customPrivate": false
               },
@@ -23792,8 +23793,7 @@
               },
               "properties": {},
               "customClass": "",
-              "lockKey": true,
-              "isNew": false
+              "lockKey": true
             },
             {
               "key": "partTimeAwardTypePanelContent",
