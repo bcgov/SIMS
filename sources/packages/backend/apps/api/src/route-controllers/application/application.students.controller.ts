@@ -24,7 +24,6 @@ import {
   APPLICATION_NOT_FOUND,
   APPLICATION_NOT_VALID,
   EducationProgramOfferingService,
-  StudentAssessmentService,
   INVALID_OPERATION_IN_THE_CURRENT_STATUS,
   ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE,
   CRAIncomeVerificationService,
@@ -89,7 +88,6 @@ export class ApplicationStudentsController extends BaseController {
     private readonly programYearService: ProgramYearService,
     private readonly offeringService: EducationProgramOfferingService,
     private readonly confirmationOfEnrollmentService: ConfirmationOfEnrollmentService,
-    private readonly assessmentService: StudentAssessmentService,
     private readonly applicationControllerService: ApplicationControllerService,
     private readonly craIncomeVerificationService: CRAIncomeVerificationService,
     private readonly supportingUserService: SupportingUserService,
@@ -236,16 +234,14 @@ export class ApplicationStudentsController extends BaseController {
         studyStartDate,
         studyEndDate,
       );
-      const { createdAssessment } =
-        await this.applicationService.submitApplication(
-          applicationId,
-          studentToken.userId,
-          student.id,
-          programYear.id,
-          submissionResult.data.data,
-          payload.associatedFiles,
-        );
-      await this.assessmentService.startAssessment(createdAssessment.id);
+      await this.applicationService.submitApplication(
+        applicationId,
+        studentToken.userId,
+        student.id,
+        programYear.id,
+        submissionResult.data.data,
+        payload.associatedFiles,
+      );
     } catch (error) {
       switch (error.name) {
         case APPLICATION_NOT_FOUND:

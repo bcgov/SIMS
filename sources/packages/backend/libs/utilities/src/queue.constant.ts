@@ -26,4 +26,5 @@ export enum QueueNames {
   ATBCResponseIntegration = "atbc-response-integration",
   ProcessNotifications = "process-notifications",
   ProcessArchiveApplications = "archive-applications",
+  AssessmentWorkflowEnqueuer = "assessment-workflow-enqueuer",
 }

@@ -11,27 +11,19 @@ import {
   StudentAssessmentStatus,
 } from "@sims/sims-db";
 import { Brackets, DataSource } from "typeorm";
-import { InjectQueue } from "@nestjs/bull";
-import { Queue } from "bull";
-import { CustomNamedError, QueueNames } from "@sims/utilities";
+import { CustomNamedError } from "@sims/utilities";
 import {
-  ASSESSMENT_ALREADY_IN_PROGRESS,
   ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE,
   ASSESSMENT_NOT_FOUND,
 } from "./student-assessment.constants";
 import { AssessmentHistory } from "./student-assessment.models";
-import { StartAssessmentQueueInDTO } from "@sims/services/queue";
 
 /**
  * Manages the student assessment related operations.
  */
 @Injectable()
 export class StudentAssessmentService extends RecordDataModelService<StudentAssessment> {
-  constructor(
-    dataSource: DataSource,
-    @InjectQueue(QueueNames.StartApplicationAssessment)
-    private readonly startAssessmentQueue: Queue<StartAssessmentQueueInDTO>,
-  ) {
+  constructor(dataSource: DataSource) {
     super(dataSource.getRepository(StudentAssessment));
   }
 
@@ -129,58 +121,6 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
       query.andWhere("assessment.triggerType = :triggerType", { triggerType });
     }
     return query.getMany();
-  }
-
-  /**
-   * Starts the assessment workflow of one Student Application.
-   * @param assessmentId Student assessment that need to be processed.
-   */
-  async startAssessment(assessmentId: number): Promise<void> {
-    const assessment = await this.repo
-      .createQueryBuilder("assessment")
-      .select([
-        "assessment.id",
-        "assessment.assessmentWorkflowId",
-        "assessment.triggerType",
-        "application.id",
-        "application.applicationStatus",
-        "application.data",
-      ])
-      .innerJoin("assessment.application", "application")
-      .where("assessment.id = :assessmentId", { assessmentId })
-      .getOne();
-
-    if (assessment.assessmentWorkflowId) {
-      throw new CustomNamedError(
-        `Student assessment was already started and has a workflow associated with. Assessment id ${assessmentId}`,
-        ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE,
-      );
-    }
-
-    if (
-      assessment.triggerType === AssessmentTriggerType.OriginalAssessment &&
-      assessment.application.applicationStatus !== ApplicationStatus.Submitted
-    ) {
-      throw new CustomNamedError(
-        `An assessment with a trigger type '${AssessmentTriggerType.OriginalAssessment}' can only be started with a Student Application in the status '${ApplicationStatus.Submitted}'. Assessment id ${assessmentId}`,
-        ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE,
-      );
-    }
-
-    if (
-      assessment.triggerType !== AssessmentTriggerType.OriginalAssessment &&
-      assessment.application.applicationStatus !== ApplicationStatus.Completed
-    ) {
-      throw new CustomNamedError(
-        `An assessment with a trigger type other than '${AssessmentTriggerType.OriginalAssessment}' can only be started with a Student Application in the status '${ApplicationStatus.Completed}'. Assessment id ${assessmentId}`,
-        ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE,
-      );
-    }
-
-    await this.startAssessmentQueue.add({
-      workflowName: assessment.application.data.workflowName,
-      assessmentId: assessment.id,
-    });
   }
 
   /**
@@ -330,46 +270,5 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
       .getRawAndEntities();
 
     return mapFromRawAndEntities<AssessmentHistory>(queryResult, "status");
-  }
-
-  /**
-   * Checks if some student assessment is still being processed.
-   * Only one student assessment can be processed at a given time because
-   * any assessment can generate Over Awards and they must be taken into
-   * the consideration every time.
-   * * Alongside with the check, the DB has an index to prevent that a new
-   * * assessment record is created when there is already one with the
-   * * assessment data not populated (submitted/pending).
-   * @param application application to have the assessments verified.
-   * @returns true if there is an assessment that is not finalized yet.
-   */
-  async hasIncompleteAssessment(application: number): Promise<boolean> {
-    const queryResult = await this.repo
-      .createQueryBuilder("assessment")
-      .select("1")
-      .innerJoin("assessment.application", "application")
-      .andWhere("application.id = :application", { application })
-      .andWhere("assessment.assessmentData IS NULL")
-      .limit(1)
-      .getRawOne();
-    return !!queryResult;
-  }
-
-  /**
-   * Validate if the student has any student assessment that it is not
-   * finished yet (submitted/pending). If there is a student assessment
-   * already being processed, throws an exception.
-   * @param application application to have the assessments verified.
-   */
-  async assertAllAssessmentsCompleted(application: number) {
-    const hasIncompleteAssessment = await this.hasIncompleteAssessment(
-      application,
-    );
-    if (hasIncompleteAssessment) {
-      throw new CustomNamedError(
-        "There is already an assessment waiting to be completed. Another assessment cannot be initiated at this time.",
-        ASSESSMENT_ALREADY_IN_PROGRESS,
-      );
-    }
   }
 }

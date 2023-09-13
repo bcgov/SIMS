@@ -34,7 +34,6 @@ import {
   ApplicationWithdrawalImportTextService,
   FormService,
   INVALID_OPERATION_IN_THE_CURRENT_STATUS,
-  StudentAssessmentService,
   StudentScholasticStandingsService,
 } from "../../services";
 import { ApiProcessError, ClientTypeBaseRoute } from "../../types";
@@ -77,7 +76,6 @@ export class ScholasticStandingInstitutionsController extends BaseController {
   constructor(
     private readonly formService: FormService,
     private readonly studentScholasticStandingsService: StudentScholasticStandingsService,
-    private readonly studentAssessmentService: StudentAssessmentService,
     private readonly scholasticStandingControllerService: ScholasticStandingControllerService,
     private readonly applicationWithdrawalImportTextService: ApplicationWithdrawalImportTextService,
   ) {
@@ -115,20 +113,12 @@ export class ScholasticStandingInstitutionsController extends BaseController {
       if (!submissionResult.valid) {
         throw new BadRequestException("Invalid submission.");
       }
-      const scholasticStanding =
-        await this.studentScholasticStandingsService.processScholasticStanding(
-          locationId,
-          applicationId,
-          userToken.userId,
-          submissionResult.data.data,
-        );
-
-      // Start assessment.
-      if (scholasticStanding.studentAssessment) {
-        await this.studentAssessmentService.startAssessment(
-          scholasticStanding.studentAssessment.id,
-        );
-      }
+      await this.studentScholasticStandingsService.processScholasticStanding(
+        locationId,
+        applicationId,
+        userToken.userId,
+        submissionResult.data.data,
+      );
     } catch (error: unknown) {
       if (error instanceof CustomNamedError) {
         switch (error.name) {
