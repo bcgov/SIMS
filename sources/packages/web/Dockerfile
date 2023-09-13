@@ -14,6 +14,8 @@ RUN npm run build
 
 FROM registry.access.redhat.com/ubi8/nginx-122 AS deployer
 
+USER default
+
 WORKDIR /opt/app-root/src
 
 # Copy the app built on build-stage to the resulting container.
