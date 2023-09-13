@@ -24,20 +24,19 @@ RUN npm run build-local
 # Get a nginx image to have only the compiled app in the resulting image.
 FROM nginx:1.22 AS deployer
 
-RUN mkdir /app
-
+RUN mkdir -p /opt/app-root/src
 
 RUN mkdir /etc/nginx/templates
 
 # Copy the app built on builder stage to the resulting container.
-COPY --from=builder /app/dist /app
+COPY --from=builder /app/dist /opt/app-root/src
 
 # Copying the main configuration file.
 COPY nginx.conf /etc/nginx/nginx.conf
 
 # Copying the configuration template file to templates dir. 
 # It will be processed to transform the vars in the template files into 
-# evaluated values and save the resulting file as /etc/nginx/conf.d/default.conf.
+# evaluated values and save the resulting files into /etc/nginx/conf.d/ dir.
 COPY default.conf.template /etc/nginx/templates/
 
 # Changing ownwership of some nginx directories as it will run as nginx user.

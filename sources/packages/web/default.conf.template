@@ -2,7 +2,7 @@
 server {
   listen       ${PORT};
   location / {
-    root   /app;
+    root   /opt/app-root/src;
     index  index.html;
     try_files $uri $uri/ /index.html;
   }
