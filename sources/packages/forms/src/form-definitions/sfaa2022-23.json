@@ -23758,7 +23758,7 @@
               "tableView": true,
               "inputType": "radio",
               "label": "<strong>Do you want to receive loans and grants, or only grants?</strong>",
-              "key": "partTimeAwardTypes",
+              "key": "partTimeAwardTypesToBeConsidered",
               "values": [
                 {
                   "value": "loansAndGrants",
