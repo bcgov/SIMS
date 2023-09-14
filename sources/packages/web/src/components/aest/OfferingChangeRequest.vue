@@ -5,7 +5,7 @@
 <script lang="ts">
 import { onMounted, ref, defineComponent } from "vue";
 import { EducationProgramOfferingService } from "@/services/EducationProgramOfferingService";
-import { OfferingStatus, OfferingRelationType } from "@/types";
+import { OfferingStatus } from "@/types";
 import { EducationProgramOfferingAPIOutDTO } from "@/services/http/dto";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import { BannerTypes } from "@/types/contracts/Banner";
@@ -16,16 +16,6 @@ export default defineComponent({
     OfferingForm,
   },
   props: {
-    relationType: {
-      type: String,
-      required: true,
-      default: OfferingRelationType.ActualOffering,
-      validator: (val: string) => val in OfferingRelationType,
-    },
-    programId: {
-      type: Number,
-      required: true,
-    },
     offeringId: {
       type: Number,
       required: true,
@@ -38,18 +28,10 @@ export default defineComponent({
     const initialData = ref({} as EducationProgramOfferingAPIOutDTO);
 
     onMounted(async () => {
-      let offering: EducationProgramOfferingAPIOutDTO;
-      if (props.relationType === OfferingRelationType.ActualOffering) {
-        offering =
-          await EducationProgramOfferingService.shared.getOfferingDetails(
-            props.offeringId,
-          );
-      } else {
-        offering =
-          await EducationProgramOfferingService.shared.getPrecedingOfferingByActualOfferingId(
-            props.offeringId,
-          );
-      }
+      const offering =
+        await EducationProgramOfferingService.shared.getOfferingDetails(
+          props.offeringId,
+        );
       initialData.value = offering;
       context.emit("getHeaderDetails", {
         institutionName: offering.institutionName,

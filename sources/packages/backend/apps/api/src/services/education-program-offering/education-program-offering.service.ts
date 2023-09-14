@@ -985,7 +985,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     const query = this.dataSource
       .getRepository(Application)
       .createQueryBuilder("application")
-      .select("count(application.id)", "applicationsCount")
+      .select(["count(application.id)", "offering.precedingOffering.id"])
       .innerJoin("application.currentAssessment", "assessment")
       .innerJoin(
         EducationProgramOffering,
@@ -1001,12 +1001,14 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
           ],
         },
       )
-      .andWhere("offering.id = :offeringId", { offeringId });
+      .andWhere("offering.id = :offeringId", { offeringId })
+      .groupBy("offering.precedingOffering.id");
 
     const precedingOffering = await query.getRawOne();
 
     return {
-      applicationsCount: +precedingOffering?.applicationsCount,
+      applicationsCount: +precedingOffering?.count,
+      precedingOfferingId: +precedingOffering?.offering_preceding_offering_id,
     };
   }
 

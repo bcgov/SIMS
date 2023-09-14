@@ -68,6 +68,7 @@ import {
   StudentAppealControllerService,
   RestrictionControllerService,
   ApplicationOfferingChangeRequestAESTController,
+  ApplicationOfferingChangeRequestControllerService,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
 import {
@@ -170,6 +171,7 @@ import {
     RestrictionSharedService,
     MSFAANumberSharedService,
     ApplicationOfferingChangeRequestService,
+    ApplicationOfferingChangeRequestControllerService,
   ],
 })
 export class AppAESTModule {}

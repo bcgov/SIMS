@@ -54,7 +54,7 @@ export interface CompletedApplicationOfferingChangesAPIOutDTO {
 }
 
 /**
- * Application Offering Change Request details.
+ * Application Offering Change Request details for institution view.
  */
 export interface ApplicationOfferingChangesAPIOutDTO {
   id: number;
@@ -73,7 +73,7 @@ export interface ApplicationOfferingChangesAPIOutDTO {
 }
 
 /**
- * Application Offering Change Request details for student view.
+ * Application Offering Request details for student view.
  */
 export interface ApplicationOfferingDetailsAPIOutDTO {
   applicationNumber: string;
@@ -85,10 +85,35 @@ export interface ApplicationOfferingDetailsAPIOutDTO {
 }
 
 /**
+ * Application Offering Request details for ministry view.
+ */
+export interface ApplicationOfferingDetailsReviewAPIOutDTO {
+  applicationNumber: string;
+  locationName: string;
+  status: ApplicationOfferingChangeRequestStatus;
+  requestedOfferingId: number;
+  activeOfferingId: number;
+  reason: string;
+  assessedNoteDescription: string;
+  studentFullName: string;
+  assessedDate: Date;
+  assessedBy: string;
+  institutionId: number;
+  institutionName: string;
+  submittedDate: Date;
+  updatedDate: Date;
+}
+
+/**
  * Application Offering Change Request Status.
  */
-export class ApplicationOfferingChangeRequestStatusAPIOutDTO {
+export interface ApplicationOfferingChangeRequestStatusAPIOutDTO {
   status: ApplicationOfferingChangeRequestStatus;
+}
+
+export interface ApplicationOfferingChangeAssessmentAPIInDTO {
+  status: ApplicationOfferingChangeRequestStatus;
+  assessmentNotes: string;
 }
 
 /**

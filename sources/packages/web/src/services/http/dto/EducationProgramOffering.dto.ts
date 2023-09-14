@@ -27,6 +27,7 @@ export interface OfferingChangeRequestAPIOutDTO {
  */
 export interface PrecedingOfferingSummaryAPIOutDTO {
   applicationsCount: number;
+  precedingOfferingId: number;
 }
 
 export interface OfferingChangeAssessmentAPIInDTO {

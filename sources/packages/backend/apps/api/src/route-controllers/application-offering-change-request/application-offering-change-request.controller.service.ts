@@ -3,6 +3,7 @@ import { ApplicationOfferingChangeRequestService } from "../../services";
 import {
   ApplicationOfferingChangesAPIOutDTO,
   ApplicationOfferingDetailsAPIOutDTO,
+  ApplicationOfferingDetailsReviewAPIOutDTO,
 } from "./models/application-offering-change-request.dto";
 import { getUserFullName } from "../../utilities";
 
@@ -11,6 +12,20 @@ export class ApplicationOfferingChangeRequestControllerService {
   constructor(
     private readonly applicationOfferingChangeRequestService: ApplicationOfferingChangeRequestService,
   ) {}
+
+  /**
+   * Get the Application Offering Change Request by its id for the ministry.
+   * @param applicationOfferingChangeRequestId the Application Offering Change Request id.
+   * @param options method options:
+   * - `applicationOfferingDetailsReview`: boolean true indicates that only a certain required application offering details are requested.
+   * @returns application offering change request.
+   */
+  async getApplicationOfferingChangeRequest(
+    applicationOfferingChangeRequestId: number,
+    options: {
+      applicationOfferingDetailsReview: boolean;
+    },
+  ): Promise<ApplicationOfferingDetailsReviewAPIOutDTO>;
 
   /**
    * Get the Application Offering Change Request by its id for the institution.
@@ -48,18 +63,22 @@ export class ApplicationOfferingChangeRequestControllerService {
    * @param options method options:
    * - `studentId`: student id for student authorization.
    * - `locationId`: location id for institution authorization.
-   * - `applicationOfferingDetails`: boolean true indicates that only the required application offering details for the student are requested.
+   * - `applicationOfferingDetails`: boolean true indicates that the required application offering details for the institution are requested.
+   * - `applicationOfferingDetailsReview`: boolean true indicates that the required application offering details for the ministry are requested.
    * @returns application offering change request.
    */
   async getApplicationOfferingChangeRequest(
     applicationOfferingChangeRequestId: number,
-    options: {
+    options?: {
       studentId?: number;
       locationId?: number;
       applicationOfferingDetails?: boolean;
+      applicationOfferingDetailsReview?: boolean;
     },
   ): Promise<
-    ApplicationOfferingChangesAPIOutDTO | ApplicationOfferingDetailsAPIOutDTO
+    | ApplicationOfferingChangesAPIOutDTO
+    | ApplicationOfferingDetailsAPIOutDTO
+    | ApplicationOfferingDetailsReviewAPIOutDTO
   > {
     const request = await this.applicationOfferingChangeRequestService.getById(
       applicationOfferingChangeRequestId,
@@ -80,6 +99,22 @@ export class ApplicationOfferingChangeRequestControllerService {
     };
     if (options?.applicationOfferingDetails) {
       return applicationOfferingDetails;
+    }
+    if (options?.applicationOfferingDetailsReview) {
+      return {
+        ...applicationOfferingDetails,
+        assessedNoteDescription: request.assessedNote?.description,
+        studentFullName: getUserFullName(request.application.student.user),
+        assessedDate: request.assessedDate,
+        assessedBy: getUserFullName({
+          firstName: request.assessedBy?.firstName,
+          lastName: request.assessedBy?.lastName,
+        }),
+        institutionId: request.application.location.institution.id,
+        institutionName: request.application.location.institution.operatingName,
+        submittedDate: request.createdAt,
+        updatedDate: request.updatedAt,
+      };
     }
     return {
       ...applicationOfferingDetails,

@@ -11,6 +11,8 @@ import {
   StudentApplicationOfferingChangeRequestAPIInDTO,
   ApplicationOfferingDetailsAPIOutDTO,
   ApplicationOfferingChangeRequestStatusAPIOutDTO,
+  ApplicationOfferingChangeAssessmentAPIInDTO,
+  ApplicationOfferingDetailsReviewAPIOutDTO,
 } from "@/services/http/dto";
 
 export class ApplicationOfferingChangeRequestService {
@@ -110,7 +112,7 @@ export class ApplicationOfferingChangeRequestService {
   }
 
   /**
-   * Gets the Application Offering Change Request details.
+   * Gets the Application Offering Change Request details for institution.
    * @param applicationOfferingChangeRequestId the Application Offering Change Request id.
    * @param options method options:
    * - `locationId`: location for authorization.
@@ -125,6 +127,19 @@ export class ApplicationOfferingChangeRequestService {
     return ApiClient.ApplicationOfferingChangeRequestApi.getById(
       applicationOfferingChangeRequestId,
       { locationId: options?.locationId },
+    );
+  }
+
+  /**
+   * Gets the Application Offering Change Request details for ministry view.
+   * @param applicationOfferingChangeRequestId the Application Offering Change Request id.
+   * @returns Application Offering Change Request details.
+   */
+  async getApplicationOfferingDetailsForReview(
+    applicationOfferingChangeRequestId: number,
+  ): Promise<ApplicationOfferingDetailsReviewAPIOutDTO> {
+    return ApiClient.ApplicationOfferingChangeRequestApi.getApplicationOfferingDetailsForReview(
+      applicationOfferingChangeRequestId,
     );
   }
 
@@ -176,7 +191,9 @@ export class ApplicationOfferingChangeRequestService {
    */
   async updateApplicationOfferingChangeRequestStatus(
     applicationOfferingChangeRequestId: number,
-    payload: StudentApplicationOfferingChangeRequestAPIInDTO,
+    payload:
+      | ApplicationOfferingChangeAssessmentAPIInDTO
+      | StudentApplicationOfferingChangeRequestAPIInDTO,
   ): Promise<void> {
     await ApiClient.ApplicationOfferingChangeRequestApi.updateApplicationOfferingChangeRequestStatus(
       applicationOfferingChangeRequestId,

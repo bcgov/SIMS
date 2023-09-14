@@ -29,29 +29,49 @@
       />
     </div>
     <!-- Assessment details if assessed by ministry -->
-    <div class="row mt-1" v-if="showApprovalDetails">
-      <header-title-value
-        :title="approvalLabel.assessedByLabel"
-        :value="headerDetails.assessedBy"
-      />
+    <div class="row mt-1" v-if="showReviewDetails">
       <div
-        class="mx-2 vertical-divider"
-        v-if="headerDetails.assessedDate"
-      ></div>
-      <header-title-value
-        :title="approvalLabel.assessedDateLabel"
-        v-if="headerDetails.assessedDate"
-        :value="dateOnlyLongString(headerDetails.assessedDate)"
-      />
-      <div
-        class="mx-2 vertical-divider"
-        v-if="headerDetails.effectiveEndDate"
-      ></div>
-      <header-title-value
-        v-if="headerDetails.effectiveEndDate"
-        title="Effective end date"
-        :value="dateOnlyLongString(headerDetails.effectiveEndDate)"
-      />
+        class="row pl-4"
+        v-if="
+          headerDetails.status ===
+          ApplicationOfferingChangeRequestStatus.DeclinedByStudent
+        "
+      >
+        <header-title-value
+          :title="reviewLabel.assessedByLabel"
+          value="Student"
+        />
+        <div class="mx-2 vertical-divider"></div>
+        <header-title-value
+          :title="reviewLabel.assessedDateLabel"
+          :value="dateOnlyLongString(headerDetails.updatedDate)"
+        />
+      </div>
+      <div class="row pl-4">
+        <header-title-value
+          :title="reviewLabel.assessedByLabel"
+          v-if="headerDetails.assessedBy"
+          :value="headerDetails.assessedBy"
+        />
+        <div
+          class="mx-2 vertical-divider"
+          v-if="headerDetails.assessedDate"
+        ></div>
+        <header-title-value
+          :title="reviewLabel.assessedDateLabel"
+          v-if="headerDetails.assessedDate"
+          :value="dateOnlyLongString(headerDetails.assessedDate)"
+        />
+        <div
+          class="mx-2 vertical-divider"
+          v-if="headerDetails.effectiveEndDate"
+        ></div>
+        <header-title-value
+          v-if="headerDetails.effectiveEndDate"
+          title="Effective end date"
+          :value="dateOnlyLongString(headerDetails.effectiveEndDate)"
+        />
+      </div>
     </div>
   </div>
 </template>
@@ -62,7 +82,8 @@ import {
   ProgramStatus,
   ClientIdType,
   OfferingStatus,
-  ProgramOfferingApprovalLabels,
+  ApplicationOfferingChangeRequestStatus,
+  ReviewLabels,
 } from "@/types";
 import HeaderTitleValue from "@/components/generic/HeaderTitleValue.vue";
 import { useFormatters } from "@/composables";
@@ -86,19 +107,27 @@ export default defineComponent({
   setup(props) {
     const router = useRouter();
     const { dateOnlyLongString } = useFormatters();
-    const showApprovalDetails = computed(
+    const showReviewDetails = computed(
       () =>
-        props.headerDetails.assessedBy &&
+        (props.headerDetails.assessedBy || props.headerDetails.updatedDate) &&
         (props.headerDetails.status === ProgramStatus.Approved ||
           props.headerDetails.status === ProgramStatus.Declined ||
           props.headerDetails.status === OfferingStatus.Approved ||
-          props.headerDetails.status === OfferingStatus.CreationDeclined),
+          props.headerDetails.status === OfferingStatus.CreationDeclined ||
+          props.headerDetails.status ===
+            ApplicationOfferingChangeRequestStatus.Approved ||
+          props.headerDetails.status ===
+            ApplicationOfferingChangeRequestStatus.DeclinedBySABC ||
+          props.headerDetails.status ===
+            ApplicationOfferingChangeRequestStatus.DeclinedByStudent),
     );
-    const approvalLabel = computed((): ProgramOfferingApprovalLabels => {
+    const reviewLabel = computed((): ReviewLabels => {
       if (
         props.headerDetails.assessedBy &&
         (props.headerDetails.status === ProgramStatus.Approved ||
-          props.headerDetails.status === OfferingStatus.Approved)
+          props.headerDetails.status === OfferingStatus.Approved ||
+          props.headerDetails.applicationOfferingChangeRequestStatus ===
+            ApplicationOfferingChangeRequestStatus.Approved)
       ) {
         return {
           assessedByLabel: "Approved By",
@@ -107,7 +136,11 @@ export default defineComponent({
       }
       if (
         props.headerDetails.status === ProgramStatus.Declined ||
-        props.headerDetails.status === OfferingStatus.CreationDeclined
+        props.headerDetails.status === OfferingStatus.CreationDeclined ||
+        props.headerDetails.status ===
+          ApplicationOfferingChangeRequestStatus.DeclinedBySABC ||
+        props.headerDetails.status ===
+          ApplicationOfferingChangeRequestStatus.DeclinedByStudent
       ) {
         return {
           assessedByLabel: "Declined By",
@@ -135,8 +168,9 @@ export default defineComponent({
       ProgramStatus,
       goToInstitutionProfile,
       dateOnlyLongString,
-      approvalLabel,
-      showApprovalDetails,
+      reviewLabel,
+      showReviewDetails,
+      ApplicationOfferingChangeRequestStatus,
     };
   },
 });

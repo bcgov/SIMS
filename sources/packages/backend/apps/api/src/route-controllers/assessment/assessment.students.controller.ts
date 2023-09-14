@@ -142,13 +142,13 @@ export class AssessmentStudentsController extends BaseController {
     const studentInProgressAndDeclinedApplicationOfferingChangeRequestsPromise =
       this.assessmentControllerService.getApplicationOfferingChangeRequestsByStatus(
         applicationId,
-        userToken.studentId,
         [
           ApplicationOfferingChangeRequestStatus.InProgressWithStudent,
           ApplicationOfferingChangeRequestStatus.InProgressWithSABC,
           ApplicationOfferingChangeRequestStatus.DeclinedByStudent,
           ApplicationOfferingChangeRequestStatus.DeclinedBySABC,
         ],
+        userToken.studentId,
       );
     const [
       pendingAndDeniedAppeals,

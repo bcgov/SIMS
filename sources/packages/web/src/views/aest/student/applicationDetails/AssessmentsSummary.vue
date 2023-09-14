@@ -14,6 +14,9 @@
       class="mb-5"
       :applicationId="applicationId"
       @viewStudentAppeal="goToStudentAppeal"
+      @viewStudentApplicationOfferingChange="
+        goToStudentApplicationOfferingChangeRequest
+      "
       @viewApplicationException="goToApplicationException"
       @viewOfferingRequest="goToOfferingRequest"
     />
@@ -22,6 +25,9 @@
       :applicationId="applicationId"
       :viewRequestTypes="assessmentRequestTypes"
       @viewStudentAppeal="goToStudentAppeal"
+      @viewStudentApplicationOfferingChange="
+        goToStudentApplicationOfferingChangeRequest
+      "
       @viewAssessment="gotToViewAssessment"
       @viewOfferingRequest="goToOfferingRequest"
       @viewApplicationException="goToApplicationException"
@@ -115,6 +121,18 @@ export default defineComponent({
         },
       });
     };
+    const goToStudentApplicationOfferingChangeRequest = (
+      applicationOfferingChangeRequestId: number,
+    ) => {
+      router.push({
+        name: AESTRoutesConst.STUDENT_APPLICATION_OFFERING_CHANGE_REQUEST,
+        params: {
+          applicationOfferingChangeRequestId,
+          applicationId: props.applicationId,
+          studentId: props.studentId,
+        },
+      });
+    };
 
     return {
       AESTRoutesConst,
@@ -124,6 +142,7 @@ export default defineComponent({
       goToScholasticStanding,
       goToOfferingRequest,
       assessmentRequestTypes,
+      goToStudentApplicationOfferingChangeRequest,
     };
   },
 });

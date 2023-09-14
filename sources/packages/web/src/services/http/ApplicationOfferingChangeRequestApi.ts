@@ -11,6 +11,8 @@ import {
   StudentApplicationOfferingChangeRequestAPIInDTO,
   ApplicationOfferingDetailsAPIOutDTO,
   ApplicationOfferingChangeRequestStatusAPIOutDTO,
+  ApplicationOfferingChangeAssessmentAPIInDTO,
+  ApplicationOfferingDetailsReviewAPIOutDTO,
 } from "@/services/http/dto";
 import { getPaginationQueryString } from "@/helpers";
 
@@ -130,6 +132,20 @@ export class ApplicationOfferingChangeRequestApi extends HttpBaseClient {
   }
 
   /**
+   * Gets the Application Offering Change Request details for the ministry.
+   * @param applicationOfferingChangeRequestId the Application Offering Change Request id.
+   * @returns Application Offering Change Request details.
+   */
+  async getApplicationOfferingDetailsForReview(
+    applicationOfferingChangeRequestId: number,
+  ): Promise<ApplicationOfferingDetailsReviewAPIOutDTO> {
+    const url = `application-offering-change-request/${applicationOfferingChangeRequestId}`;
+    return this.getCall<ApplicationOfferingDetailsReviewAPIOutDTO>(
+      this.addClientRoot(url),
+    );
+  }
+
+  /**
    * Gets the Application Offering Change Request details for the student.
    * @param applicationOfferingChangeRequestId the Application Offering Change Request id.
    * @returns Application Offering Change Request details.
@@ -177,7 +193,9 @@ export class ApplicationOfferingChangeRequestApi extends HttpBaseClient {
    */
   async updateApplicationOfferingChangeRequestStatus(
     applicationOfferingChangeRequestId: number,
-    payload: StudentApplicationOfferingChangeRequestAPIInDTO,
+    payload:
+      | ApplicationOfferingChangeAssessmentAPIInDTO
+      | StudentApplicationOfferingChangeRequestAPIInDTO,
   ): Promise<void> {
     const url = `application-offering-change-request/${applicationOfferingChangeRequestId}`;
     await this.patchCall(this.addClientRoot(url), payload);

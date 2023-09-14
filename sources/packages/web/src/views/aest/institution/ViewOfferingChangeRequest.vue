@@ -39,6 +39,9 @@
     <template #alerts
       ><offering-application-banner
         :offeringId="offeringId"
+        :precedingOfferingApplicationsCount="
+          precedingOffering.applicationsCount
+        "
       ></offering-application-banner>
     </template>
     <template #tab-header>
@@ -51,16 +54,12 @@
       <v-window-item value="requested-change"
         ><offering-change-request
           :offeringId="offeringId"
-          :programId="programId"
-          :relationType="OfferingRelationType.ActualOffering"
           @getHeaderDetails="getHeaderDetails"
         ></offering-change-request>
       </v-window-item>
       <v-window-item value="active-offering">
         <offering-change-request
-          :offeringId="offeringId"
-          :programId="programId"
-          :relationType="OfferingRelationType.PrecedingOffering"
+          :offeringId="precedingOffering.precedingOfferingId"
         ></offering-change-request>
       </v-window-item>
     </v-window>
@@ -77,7 +76,10 @@ import {
   OfferingRelationType,
   Role,
 } from "@/types";
-import { OfferingChangeAssessmentAPIInDTO } from "@/services/http/dto";
+import {
+  OfferingChangeAssessmentAPIInDTO,
+  PrecedingOfferingSummaryAPIOutDTO,
+} from "@/services/http/dto";
 import { EducationProgramOfferingService } from "@/services/EducationProgramOfferingService";
 import { ModalDialog, useSnackBar } from "@/composables";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
@@ -86,6 +88,7 @@ import OfferingChangeRequest from "@/components/aest/OfferingChangeRequest.vue";
 import OfferingApplicationBanner from "@/components/aest/OfferingApplicationBanner.vue";
 import AssessOfferingChangeModal from "@/components/aest/institution/modals/AssessOfferingChangeModal.vue";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
+import { onMounted } from "vue";
 
 export default defineComponent({
   components: {
@@ -109,11 +112,19 @@ export default defineComponent({
   setup(props) {
     const tab = ref("requested-change");
     const headerDetails = ref({} as ProgramOfferingHeader);
+    const precedingOffering = ref({} as PrecedingOfferingSummaryAPIOutDTO);
     const assessOfferingChangeModalRef = ref(
       {} as ModalDialog<OfferingChangeAssessmentAPIInDTO | boolean>,
     );
     const snackBar = useSnackBar();
     const router = useRouter();
+
+    onMounted(async () => {
+      precedingOffering.value =
+        await EducationProgramOfferingService.shared.getPrecedingOfferingSummary(
+          props.offeringId,
+        );
+    });
 
     //TODO: This callback implementation needs to be removed when the program and offering header component
     //TODO: is enhanced to load header values with it's own API call.
@@ -162,6 +173,7 @@ export default defineComponent({
       assessOfferingChangeModalRef,
       assessOfferingChange,
       Role,
+      precedingOffering,
     };
   },
 });

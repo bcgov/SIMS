@@ -192,6 +192,7 @@ export class OfferingChangeRequestAPIOutDTO {
  */
 export class PrecedingOfferingSummaryAPIOutDTO {
   applicationsCount: number;
+  precedingOfferingId: number;
 }
 
 export class OfferingChangeAssessmentAPIInDTO {
