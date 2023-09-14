@@ -10,7 +10,6 @@ import {
 import { WorkflowEnqueuerService } from "../../../services";
 import {
   InjectLogger,
-  LogLevels,
   LoggerService,
   ProcessSummary,
 } from "@sims/utilities/logger";
@@ -47,6 +46,9 @@ export class AssessmentWorkflowEnqueuerScheduler extends BaseScheduler<void> {
       "Checking application assessments to be queued for start.",
     );
     const processSummary = new ProcessSummary();
+    processSummary.warn("Sample warning.");
+    processSummary.error("Sample error.");
+
     try {
       await this.workflowEnqueuerService.enqueueStartAssessmentWorkflows(
         processSummary,
@@ -63,9 +65,9 @@ export class AssessmentWorkflowEnqueuerScheduler extends BaseScheduler<void> {
     } finally {
       this.logger.logProcessSummary(processSummary);
       await summary.logProcessSummaryToJobLogger(processSummary);
-      await this.cleanSchedulerQueueHistory();
-      return summary.getSummary();
     }
+    await this.cleanSchedulerQueueHistory();
+    return summary.getSummary();
   }
 
   @InjectLogger()

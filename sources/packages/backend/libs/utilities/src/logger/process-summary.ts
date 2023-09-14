@@ -145,7 +145,6 @@ export class ProcessSummary {
   /**
    * Organize the summary scope per log scope.
    * @example
-   * Log Summary
    * Summary (info)
    * Some summary log 1.
    * Some summary log 1.
@@ -161,7 +160,6 @@ export class ProcessSummary {
     const logEntries: LogEntry[] = [];
     const summaryLogs = this.logs[LogScopes.Summary];
     if (summaryLogs.length) {
-      logEntries.push({ message: "Log Summary", level: LogLevels.Info });
       const logLevels = Object.values(LogLevels);
       for (const logLevel of logLevels) {
         const logsForLevelSummary = summaryLogs.filter(
@@ -169,7 +167,7 @@ export class ProcessSummary {
         );
         if (logsForLevelSummary?.length) {
           logEntries.push({
-            message: `Summary (${logLevel})`,
+            message: `Summary for ${logLevel.toUpperCase()} log`,
             level: logLevel,
           });
           for (const log of logsForLevelSummary) {
