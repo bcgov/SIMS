@@ -1984,7 +1984,7 @@
                       "refreshOnChange": false,
                       "customClass": "banner-info",
                       "key": "html12",
-                      "customConditional": "show = data.myProgramNotListed.programnotListed || data.myStudyPeriodIsntListed.offeringnotListed;",
+                      "customConditional": "show = data.myProgramNotListed.programnotListed || (data.myStudyPeriodIsntListed && data.myStudyPeriodIsntListed.offeringnotListed);",
                       "type": "htmlelement",
                       "input": false,
                       "tableView": false,
