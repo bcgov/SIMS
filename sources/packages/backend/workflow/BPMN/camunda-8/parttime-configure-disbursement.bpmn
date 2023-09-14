@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_0uxv5b2" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.14.0" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.1.0">
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_0uxv5b2" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.5.1" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.1.0">
   <bpmn:process id="parttime-configure-disbursement" name="parttime-configure-disbursement" isExecutable="true">
     <bpmn:exclusiveGateway id="Gateway_0hiv6nu">
       <bpmn:incoming>Flow_16jouca</bpmn:incoming>
@@ -55,19 +55,20 @@
     <bpmn:intermediateThrowEvent id="Event_1koar33" name="Configure Payload">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
-          <zeebe:output source="=[&#10;  {&#10;    disbursementDate: disbursmenentScheduleDate1,&#10;    negotiatedExpiryDate: disbursmenentScheduleDate1,&#10;    disbursements: [&#10;      {&#10;        valueCode: &#34;CSLP&#34;,&#10;        valueType: &#34;Canada Loan&#34;,&#10;        valueAmount: decimal(adjustedFinalFederalAwardNetCSLPAmount,0),&#10;        awardEligibility: true&#10;      },&#10;      {&#10;        valueCode: &#34;CSGP&#34;,&#10;        valueType: &#34;Canada Grant&#34;,&#10;        valueAmount: decimal(finalFederalAwardNetCSGPAmount, 0),&#10;        awardEligibility: awardEligibilityCSGP&#10;      },&#10;      {&#10;        valueCode: &#34;CSGD&#34;,&#10;        valueType: &#34;Canada Grant&#34;,&#10;        valueAmount: decimal(finalFederalAwardNetCSGDAmount, 0),&#10;        awardEligibility: awardEligibilityCSGD&#10;      },&#10;      {&#10;        valueCode: &#34;CSPT&#34;,&#10;        valueType: &#34;Canada Grant&#34;,&#10;        valueAmount: decimal(finalFederalAwardNetCSPTAmount, 0),&#10;        awardEligibility: awardEligibilityCSPT&#10;      },&#10;      {&#10;        valueCode: &#34;BCAG&#34;,&#10;        valueType: &#34;BC Grant&#34;,&#10;        valueAmount: decimal(finalProvincialAwardNetBCAGAmount, 0),&#10;        awardEligibility: awardEligibilityBCAG&#10;      },&#10;      {&#10;        valueCode: &#34;SBSD&#34;,&#10;        valueType: &#34;BC Grant&#34;,&#10;        valueAmount: decimal(finalProvincialAwardNetSBSDAmount, 0),&#10;        awardEligibility: awardEligibilitySBSD&#10;      }&#10;    ]&#10;    [item.awardEligibility != false]&#10;  }&#10;]" target="disbursementSchedules" />
+          <zeebe:output source="=[&#10;  {&#10;    disbursementDate: disbursmenentScheduleDate1,&#10;    negotiatedExpiryDate: disbursmenentScheduleDate1,&#10;    disbursements: [&#10;      {&#10;        valueCode: &#34;CSLP&#34;,&#10;        valueType: &#34;Canada Loan&#34;,&#10;        valueAmount: decimal(finalFederalAwardNetCSLPAmount,0),&#10;        awardEligibility: true&#10;      },&#10;      {&#10;        valueCode: &#34;CSGP&#34;,&#10;        valueType: &#34;Canada Grant&#34;,&#10;        valueAmount: decimal(finalFederalAwardNetCSGPAmount, 0),&#10;        awardEligibility: awardEligibilityCSGP&#10;      },&#10;      {&#10;        valueCode: &#34;CSGD&#34;,&#10;        valueType: &#34;Canada Grant&#34;,&#10;        valueAmount: decimal(finalFederalAwardNetCSGDAmount, 0),&#10;        awardEligibility: awardEligibilityCSGD&#10;      },&#10;      {&#10;        valueCode: &#34;CSPT&#34;,&#10;        valueType: &#34;Canada Grant&#34;,&#10;        valueAmount: decimal(finalFederalAwardNetCSPTAmount, 0),&#10;        awardEligibility: awardEligibilityCSPT&#10;      },&#10;      {&#10;        valueCode: &#34;BCAG&#34;,&#10;        valueType: &#34;BC Grant&#34;,&#10;        valueAmount: decimal(finalProvincialAwardNetBCAGAmount, 0),&#10;        awardEligibility: awardEligibilityBCAG&#10;      },&#10;      {&#10;        valueCode: &#34;SBSD&#34;,&#10;        valueType: &#34;BC Grant&#34;,&#10;        valueAmount: decimal(finalProvincialAwardNetSBSDAmount, 0),&#10;        awardEligibility: awardEligibilitySBSD&#10;      }&#10;    ]&#10;    [item.awardEligibility != false]&#10;  }&#10;]" target="disbursementSchedules" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
-      <bpmn:incoming>Flow_1khr0jk</bpmn:incoming>
+      <bpmn:incoming>Flow_12dnfdw</bpmn:incoming>
+      <bpmn:incoming>Flow_1bx16ip</bpmn:incoming>
       <bpmn:outgoing>Flow_1kesibu</bpmn:outgoing>
     </bpmn:intermediateThrowEvent>
     <bpmn:intermediateThrowEvent id="Event_0aunmqb" name="Configure Payload">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
-          <zeebe:output source="=[&#10;  {&#10;    disbursementDate: disbursmenentScheduleDate1,&#10;    negotiatedExpiryDate: disbursmenentScheduleDate1,&#10;    disbursements: [&#10;      {&#10;        valueCode: &#34;CSLP&#34;,&#10;        valueType: &#34;Canada Loan&#34;,&#10;        valueAmount: ceiling(adjustedFinalFederalAwardNetCSLPAmount),&#10;        awardEligibility: true&#10;      },&#10;      {&#10;        valueCode: &#34;CSGP&#34;,&#10;        valueType: &#34;Canada Grant&#34;,&#10;        valueAmount: ceiling(finalFederalAwardNetCSGPAmount / 2),&#10;        awardEligibility: awardEligibilityCSGP&#10;      },&#10;      {&#10;        valueCode: &#34;CSGD&#34;,&#10;        valueType: &#34;Canada Grant&#34;,&#10;        valueAmount: ceiling(finalFederalAwardNetCSGDAmount /2),&#10;        awardEligibility: awardEligibilityCSGD&#10;      },&#10;      {&#10;        valueCode: &#34;CSPT&#34;,&#10;        valueType: &#34;Canada Grant&#34;,&#10;        valueAmount: ceiling(finalFederalAwardNetCSPTAmount / 2),&#10;        awardEligibility: awardEligibilityCSPT&#10;      },&#10;      {&#10;        valueCode: &#34;BCAG&#34;,&#10;        valueType: &#34;BC Grant&#34;,&#10;        valueAmount: ceiling(finalProvincialAwardNetBCAGAmount / 2),&#10;        awardEligibility: awardEligibilityBCAG&#10;      },&#10;      {&#10;        valueCode: &#34;SBSD&#34;,&#10;        valueType: &#34;BC Grant&#34;,&#10;        valueAmount: ceiling(finalProvincialAwardNetSBSDAmount / 2),&#10;        awardEligibility: awardEligibilitySBSD&#10;      }&#10;    ]&#10;    [item.awardEligibility != false]&#10;  },&#10;    {&#10;    disbursementDate: disbursmenentScheduleDate2,&#10;    negotiatedExpiryDate: disbursmenentScheduleDate2,&#10;    disbursements: [&#10;        {&#10;            valueCode: &#34;CSGP&#34;,&#10;            valueType: &#34;Canada Grant&#34;,&#10;            valueAmount: ceiling(finalFederalAwardNetCSGPAmount / 2),&#10;            awardEligibility: awardEligibilityCSGP&#10;          },&#10;          {&#10;            valueCode: &#34;CSGD&#34;,&#10;            valueType: &#34;Canada Grant&#34;,&#10;            valueAmount: ceiling(finalFederalAwardNetCSGDAmount /2),&#10;            awardEligibility: awardEligibilityCSGD&#10;          },&#10;          {&#10;            valueCode: &#34;CSPT&#34;,&#10;            valueType: &#34;Canada Grant&#34;,&#10;            valueAmount: ceiling(finalFederalAwardNetCSPTAmount / 2),&#10;            awardEligibility: awardEligibilityCSPT&#10;          },&#10;          {&#10;            valueCode: &#34;BCAG&#34;,&#10;            valueType: &#34;BC Grant&#34;,&#10;            valueAmount: ceiling(finalProvincialAwardNetBCAGAmount / 2),&#10;            awardEligibility: awardEligibilityBCAG&#10;          },&#10;          {&#10;            valueCode: &#34;SBSD&#34;,&#10;            valueType: &#34;BC Grant&#34;,&#10;            valueAmount: ceiling(finalProvincialAwardNetSBSDAmount / 2),&#10;            awardEligibility: awardEligibilitySBSD&#10;          }&#10;    ]&#10;    [item.awardEligibility != false]&#10;  }&#10;]&#10;" target="disbursementSchedules" />
+          <zeebe:output source="=[&#10;  {&#10;    disbursementDate: disbursmenentScheduleDate1,&#10;    negotiatedExpiryDate: disbursmenentScheduleDate1,&#10;    disbursements: [&#10;      {&#10;        valueCode: &#34;CSLP&#34;,&#10;        valueType: &#34;Canada Loan&#34;,&#10;        valueAmount: ceiling(finalFederalAwardNetCSLPAmount),&#10;        awardEligibility: true&#10;      },&#10;      {&#10;        valueCode: &#34;CSGP&#34;,&#10;        valueType: &#34;Canada Grant&#34;,&#10;        valueAmount: ceiling(finalFederalAwardNetCSGPAmount / 2),&#10;        awardEligibility: awardEligibilityCSGP&#10;      },&#10;      {&#10;        valueCode: &#34;CSGD&#34;,&#10;        valueType: &#34;Canada Grant&#34;,&#10;        valueAmount: ceiling(finalFederalAwardNetCSGDAmount /2),&#10;        awardEligibility: awardEligibilityCSGD&#10;      },&#10;      {&#10;        valueCode: &#34;CSPT&#34;,&#10;        valueType: &#34;Canada Grant&#34;,&#10;        valueAmount: ceiling(finalFederalAwardNetCSPTAmount / 2),&#10;        awardEligibility: awardEligibilityCSPT&#10;      },&#10;      {&#10;        valueCode: &#34;BCAG&#34;,&#10;        valueType: &#34;BC Grant&#34;,&#10;        valueAmount: ceiling(finalProvincialAwardNetBCAGAmount / 2),&#10;        awardEligibility: awardEligibilityBCAG&#10;      },&#10;      {&#10;        valueCode: &#34;SBSD&#34;,&#10;        valueType: &#34;BC Grant&#34;,&#10;        valueAmount: ceiling(finalProvincialAwardNetSBSDAmount / 2),&#10;        awardEligibility: awardEligibilitySBSD&#10;      }&#10;    ]&#10;    [item.awardEligibility != false]&#10;  },&#10;    {&#10;    disbursementDate: disbursmenentScheduleDate2,&#10;    negotiatedExpiryDate: disbursmenentScheduleDate2,&#10;    disbursements: [&#10;        {&#10;            valueCode: &#34;CSGP&#34;,&#10;            valueType: &#34;Canada Grant&#34;,&#10;            valueAmount: ceiling(finalFederalAwardNetCSGPAmount / 2),&#10;            awardEligibility: awardEligibilityCSGP&#10;          },&#10;          {&#10;            valueCode: &#34;CSGD&#34;,&#10;            valueType: &#34;Canada Grant&#34;,&#10;            valueAmount: ceiling(finalFederalAwardNetCSGDAmount /2),&#10;            awardEligibility: awardEligibilityCSGD&#10;          },&#10;          {&#10;            valueCode: &#34;CSPT&#34;,&#10;            valueType: &#34;Canada Grant&#34;,&#10;            valueAmount: ceiling(finalFederalAwardNetCSPTAmount / 2),&#10;            awardEligibility: awardEligibilityCSPT&#10;          },&#10;          {&#10;            valueCode: &#34;BCAG&#34;,&#10;            valueType: &#34;BC Grant&#34;,&#10;            valueAmount: ceiling(finalProvincialAwardNetBCAGAmount / 2),&#10;            awardEligibility: awardEligibilityBCAG&#10;          },&#10;          {&#10;            valueCode: &#34;SBSD&#34;,&#10;            valueType: &#34;BC Grant&#34;,&#10;            valueAmount: ceiling(finalProvincialAwardNetSBSDAmount / 2),&#10;            awardEligibility: awardEligibilitySBSD&#10;          }&#10;    ]&#10;    [item.awardEligibility != false]&#10;  }&#10;]&#10;" target="disbursementSchedules" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
-      <bpmn:incoming>Flow_121a1jn</bpmn:incoming>
+      <bpmn:incoming>Flow_0f8d1jy</bpmn:incoming>
       <bpmn:outgoing>Flow_0dr1i43</bpmn:outgoing>
     </bpmn:intermediateThrowEvent>
     <bpmn:sequenceFlow id="Flow_0pl9xpo" name="offeringStudyStartDate after Today" sourceRef="Gateway_0hiv6nu" targetRef="Event_0qz9wzt">
@@ -81,11 +82,14 @@
     <bpmn:sequenceFlow id="Flow_0vow7x8" name="yes 2 Potential Disbursements" sourceRef="Gateway_1enmsgy" targetRef="Event_14qii8a">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=offeringWeeks &gt;= 17</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_1bx16ip" name="no 1 Disbursement" sourceRef="Gateway_1enmsgy" targetRef="Event_1koar33">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=offeringWeeks &lt; 17</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="Flow_1dv5ufr" sourceRef="Event_14qii8a" targetRef="Gateway_18insz0" />
     <bpmn:sequenceFlow id="Flow_1vbepy0" name="2 Disbursements" sourceRef="Gateway_18insz0" targetRef="Event_1khr1nv">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=date(disbursmenentScheduleDate2Potential) &gt; today()</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="Flow_12dnfdw" name="1 Disbursement" sourceRef="Gateway_18insz0" targetRef="Event_1quyp5j">
+    <bpmn:sequenceFlow id="Flow_12dnfdw" name="1 Disbursement" sourceRef="Gateway_18insz0" targetRef="Event_1koar33">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=date(disbursmenentScheduleDate2Potential) &lt;= today()</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:startEvent id="Event_0i5ejaz">
@@ -94,7 +98,7 @@
     <bpmn:sequenceFlow id="Flow_16jouca" sourceRef="Event_0i5ejaz" targetRef="Gateway_0hiv6nu" />
     <bpmn:sequenceFlow id="Flow_0dr1i43" sourceRef="Event_0aunmqb" targetRef="Gateway_1pqqwt9" />
     <bpmn:sequenceFlow id="Flow_1kesibu" sourceRef="Event_1koar33" targetRef="Gateway_1pqqwt9" />
-    <bpmn:sequenceFlow id="Flow_0f8d1jy" sourceRef="Event_1khr1nv" targetRef="Event_1mgbi5j" />
+    <bpmn:sequenceFlow id="Flow_0f8d1jy" sourceRef="Event_1khr1nv" targetRef="Event_0aunmqb" />
     <bpmn:exclusiveGateway id="Gateway_17hh8u0">
       <bpmn:incoming>Flow_0kgyqie</bpmn:incoming>
       <bpmn:incoming>Flow_0695lro</bpmn:incoming>
@@ -112,30 +116,6 @@
       <bpmn:outgoing>Flow_12dnfdw</bpmn:outgoing>
       <bpmn:outgoing>Flow_1vbepy0</bpmn:outgoing>
     </bpmn:exclusiveGateway>
-    <bpmn:intermediateThrowEvent id="Event_1mgbi5j" name="partTimeAwardTypeCalculation">
-      <bpmn:extensionElements>
-        <zeebe:ioMapping>
-          <zeebe:output source="=if studentDataPartTimeAwardTypesToBeConsidered = &#34;grantsOnly&#34; then 0 else finalFederalAwardNetCSLPAmount" target="adjustedFinalFederalAwardNetCSLPAmount" />
-        </zeebe:ioMapping>
-      </bpmn:extensionElements>
-      <bpmn:incoming>Flow_0f8d1jy</bpmn:incoming>
-      <bpmn:outgoing>Flow_121a1jn</bpmn:outgoing>
-    </bpmn:intermediateThrowEvent>
-    <bpmn:sequenceFlow id="Flow_121a1jn" sourceRef="Event_1mgbi5j" targetRef="Event_0aunmqb" />
-    <bpmn:intermediateThrowEvent id="Event_1quyp5j" name="partTimeAwardTypeCalculation">
-      <bpmn:extensionElements>
-        <zeebe:ioMapping>
-          <zeebe:output source="=if studentDataPartTimeAwardTypesToBeConsidered = &#34;grantsOnly&#34; then 0 else finalFederalAwardNetCSLPAmount" target="adjustedFinalFederalAwardNetCSLPAmount" />
-        </zeebe:ioMapping>
-      </bpmn:extensionElements>
-      <bpmn:incoming>Flow_12dnfdw</bpmn:incoming>
-      <bpmn:incoming>Flow_1bx16ip</bpmn:incoming>
-      <bpmn:outgoing>Flow_1khr0jk</bpmn:outgoing>
-    </bpmn:intermediateThrowEvent>
-    <bpmn:sequenceFlow id="Flow_1khr0jk" sourceRef="Event_1quyp5j" targetRef="Event_1koar33" />
-    <bpmn:sequenceFlow id="Flow_1bx16ip" name="no 1 Disbursement" sourceRef="Gateway_1enmsgy" targetRef="Event_1quyp5j">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=offeringWeeks &lt; 17</bpmn:conditionExpression>
-    </bpmn:sequenceFlow>
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="parttime-configure-disbursement">
@@ -160,10 +140,31 @@
           <dc:Bounds x="745.5" y="196" width="77" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1khr1nv_di" bpmnElement="Event_1khr1nv">
+        <dc:Bounds x="1272" y="122" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1247" y="165" width="86" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_14qii8a_di" bpmnElement="Event_14qii8a">
         <dc:Bounds x="912" y="122" width="36" height="36" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="887" y="165" width="86" height="40" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0ttwbth_di" bpmnElement="Event_0ttwbth">
+        <dc:Bounds x="1592" y="192" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1koar33_di" bpmnElement="Event_1koar33">
+        <dc:Bounds x="1402" y="272" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1398" y="315" width="48" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0aunmqb_di" bpmnElement="Event_0aunmqb">
+        <dc:Bounds x="1402" y="122" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1396" y="165" width="48" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_0i5ejaz_di" bpmnElement="Event_0i5ejaz">
@@ -172,46 +173,13 @@
       <bpmndi:BPMNShape id="Gateway_17hh8u0_di" bpmnElement="Gateway_17hh8u0" isMarkerVisible="true">
         <dc:Bounds x="575" y="185" width="50" height="50" />
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1pqqwt9_di" bpmnElement="Gateway_1pqqwt9" isMarkerVisible="true">
+        <dc:Bounds x="1505" y="185" width="50" height="50" />
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Gateway_18insz0_di" bpmnElement="Gateway_18insz0" isMarkerVisible="true">
         <dc:Bounds x="1115" y="115" width="50" height="50" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="1106" y="77.5" width="68" height="27" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Gateway_1pqqwt9_di" bpmnElement="Gateway_1pqqwt9" isMarkerVisible="true">
-        <dc:Bounds x="1605" y="255" width="50" height="50" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_0ttwbth_di" bpmnElement="Event_0ttwbth">
-        <dc:Bounds x="1742" y="262" width="36" height="36" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_0aunmqb_di" bpmnElement="Event_0aunmqb">
-        <dc:Bounds x="1502" y="122" width="36" height="36" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="1496" y="165" width="48" height="27" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_1koar33_di" bpmnElement="Event_1koar33">
-        <dc:Bounds x="1502" y="402" width="36" height="36" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="1496" y="364.5" width="48" height="27" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_1mgbi5j_di" bpmnElement="Event_1mgbi5j">
-        <dc:Bounds x="1372" y="122" width="36" height="36" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="1349" y="165" width="87" height="27" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_1quyp5j_di" bpmnElement="Event_1quyp5j">
-        <dc:Bounds x="1372" y="402" width="36" height="36" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="1347" y="445" width="87" height="27" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_1khr1nv_di" bpmnElement="Event_1khr1nv">
-        <dc:Bounds x="1262" y="122" width="36" height="36" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="1237" y="165" width="86" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_0pl9xpo_di" bpmnElement="Flow_0pl9xpo">
@@ -250,10 +218,10 @@
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1bx16ip_di" bpmnElement="Flow_1bx16ip">
         <di:waypoint x="710" y="235" />
-        <di:waypoint x="710" y="420" />
-        <di:waypoint x="1372" y="420" />
+        <di:waypoint x="710" y="290" />
+        <di:waypoint x="1402" y="290" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="715" y="343" width="69" height="27" />
+          <dc:Bounds x="725" y="256" width="69" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1dv5ufr_di" bpmnElement="Flow_1dv5ufr">
@@ -262,17 +230,17 @@
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1vbepy0_di" bpmnElement="Flow_1vbepy0">
         <di:waypoint x="1165" y="140" />
-        <di:waypoint x="1262" y="140" />
+        <di:waypoint x="1272" y="140" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="1163" y="123" width="84" height="14" />
+          <dc:Bounds x="1168" y="123" width="84" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_12dnfdw_di" bpmnElement="Flow_12dnfdw">
         <di:waypoint x="1140" y="165" />
-        <di:waypoint x="1140" y="420" />
-        <di:waypoint x="1372" y="420" />
+        <di:waypoint x="1140" y="290" />
+        <di:waypoint x="1402" y="290" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="1122" y="375" width="78" height="14" />
+          <dc:Bounds x="1150" y="243" width="78" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_16jouca_di" bpmnElement="Flow_16jouca">
@@ -280,34 +248,26 @@
         <di:waypoint x="285" y="210" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0dr1i43_di" bpmnElement="Flow_0dr1i43">
-        <di:waypoint x="1538" y="140" />
-        <di:waypoint x="1630" y="140" />
-        <di:waypoint x="1630" y="255" />
+        <di:waypoint x="1438" y="140" />
+        <di:waypoint x="1530" y="140" />
+        <di:waypoint x="1530" y="185" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1kesibu_di" bpmnElement="Flow_1kesibu">
-        <di:waypoint x="1538" y="420" />
-        <di:waypoint x="1630" y="420" />
-        <di:waypoint x="1630" y="305" />
+        <di:waypoint x="1438" y="290" />
+        <di:waypoint x="1530" y="290" />
+        <di:waypoint x="1530" y="235" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0f8d1jy_di" bpmnElement="Flow_0f8d1jy">
-        <di:waypoint x="1298" y="140" />
-        <di:waypoint x="1372" y="140" />
+        <di:waypoint x="1308" y="140" />
+        <di:waypoint x="1402" y="140" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0yqg0r8_di" bpmnElement="Flow_0yqg0r8">
         <di:waypoint x="625" y="210" />
         <di:waypoint x="685" y="210" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1p03d1g_di" bpmnElement="Flow_1p03d1g">
-        <di:waypoint x="1655" y="280" />
-        <di:waypoint x="1742" y="280" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_121a1jn_di" bpmnElement="Flow_121a1jn">
-        <di:waypoint x="1408" y="140" />
-        <di:waypoint x="1502" y="140" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1khr0jk_di" bpmnElement="Flow_1khr0jk">
-        <di:waypoint x="1408" y="420" />
-        <di:waypoint x="1502" y="420" />
+        <di:waypoint x="1555" y="210" />
+        <di:waypoint x="1592" y="210" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
