@@ -23813,7 +23813,7 @@
               "tags": [],
               "conditional": {
                 "show": "true",
-                "when": "partTimeAwardTypes",
+                "when": "partTimeAwardTypesToBeConsidered",
                 "eq": "loansAndGrants"
               },
               "properties": {},
