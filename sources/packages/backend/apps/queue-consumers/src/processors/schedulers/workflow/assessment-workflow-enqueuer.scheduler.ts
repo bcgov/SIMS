@@ -46,9 +46,6 @@ export class AssessmentWorkflowEnqueuerScheduler extends BaseScheduler<void> {
       "Checking application assessments to be queued for start.",
     );
     const processSummary = new ProcessSummary();
-    processSummary.warn("Sample warning.");
-    processSummary.error("Sample error.");
-
     try {
       await this.workflowEnqueuerService.enqueueStartAssessmentWorkflows(
         processSummary,
