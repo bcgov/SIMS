@@ -7,10 +7,9 @@
   />
 </template>
 <script lang="ts">
-import { ref, defineComponent } from "vue";
+import { ref, defineComponent, watchEffect } from "vue";
 import { PrecedingOfferingSummaryAPIOutDTO } from "@/services/http/dto";
 import { BannerTypes } from "@/types/contracts/Banner";
-import { watchEffect } from "vue";
 export default defineComponent({
   props: {
     offeringId: {
