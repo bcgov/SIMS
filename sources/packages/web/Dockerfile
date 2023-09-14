@@ -12,7 +12,7 @@ RUN sed 's/${PORT}/'"${PORT}"'/g' default.conf.template > default.conf
 
 RUN npm run build
 
-FROM registry.access.redhat.com/ubi8/nginx-120 AS deployer
+FROM registry.access.redhat.com/ubi8/nginx-122 AS deployer
 
 USER default
 
