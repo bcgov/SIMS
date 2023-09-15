@@ -263,7 +263,7 @@ build-web:
 	test -n "$(BUILD_REF)"
 	test -n "$(WEB_BUILD_REF)"
 	@echo "+\n++ BUILDING WEB with tag: $(BUILD_REF)\n+"
-	@oc -n $(BUILD_NAMESPACE) process -f $(BUILD_TEMPLATE_PATH) -p TAG=$(BUILD_REF) -p SOURCE_REPOSITORY_REF=$(BUILD_REF) -p BASE_IMAGE_NAME="nodejs-16" -p BASE_IMAGE_TAG="1" -p BASE_IMAGE_REPO="artifacts.developer.gov.bc.ca/redhat-access-docker-remote/ubi8/" -p SOURCE_CONTEXT_DIR=$(SOURCE_CONTEXT_DIR)web -p NAME=$(WEB_BUILD_REF) | oc -n $(BUILD_NAMESPACE) apply -f -
+	@oc -n $(BUILD_NAMESPACE) process -f $(BUILD_TEMPLATE_PATH) -p TAG=$(BUILD_REF) -p SOURCE_REPOSITORY_REF=$(BUILD_REF) -p BASE_IMAGE_NAME="nginx-122" -p BASE_IMAGE_TAG="1" -p BASE_IMAGE_REPO="artifacts.developer.gov.bc.ca/redhat-access-docker-remote/ubi8/" -p SOURCE_CONTEXT_DIR=$(SOURCE_CONTEXT_DIR)web -p NAME=$(WEB_BUILD_REF) | oc -n $(BUILD_NAMESPACE) apply -f -
 	@oc -n $(BUILD_NAMESPACE) start-build bc/$(WEB_BUILD_REF) --wait
 
 init-patroni:

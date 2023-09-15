@@ -1,4 +1,4 @@
-FROM registry.access.redhat.com/ubi8/nodejs-16:1-5 AS builder
+FROM artifacts.developer.gov.bc.ca/redhat-access-docker-remote/ubi8/nodejs-16:1-5 AS builder
 
 # Application Port.
 ENV PORT 3030
@@ -12,7 +12,7 @@ RUN sed 's/${PORT}/'"${PORT}"'/g' default.conf.template > default.conf
 
 RUN npm run build
 
-FROM registry.access.redhat.com/ubi8/nginx-122 AS deployer
+FROM artifacts.developer.gov.bc.ca/redhat-access-docker-remote/ubi8/nginx-122 AS deployer
 
 USER default
 
