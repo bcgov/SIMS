@@ -93,7 +93,10 @@ export class QueueProcessSummary {
     processSummary: ProcessSummary,
     logger?: JobLogger,
   ): Promise<void> {
-    const jobLogger = this.loggers?.jobLogger ?? logger;
+    const jobLogger = logger ?? this.loggers?.jobLogger;
+    if (!jobLogger) {
+      throw new Error("No job logger was provided.");
+    }
     for (const logEntry of processSummary.flattenLogs()) {
       await jobLogger.log(
         `${logEntry.level.toUpperCase()}: ${logEntry.message}`,

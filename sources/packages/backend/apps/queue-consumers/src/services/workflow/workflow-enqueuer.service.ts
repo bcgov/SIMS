@@ -29,7 +29,7 @@ export class WorkflowEnqueuerService {
    * Search applications with pending assessments to be processed by the assessment workflow.
    * If no other assessment is being processed for that application the oldest pending
    * assessment will be queue for start.
-   * @summary process summary to group all the logs.
+   * @param summary process summary to group all the logs.
    */
   async enqueueStartAssessmentWorkflows(
     summary: ProcessSummary,
