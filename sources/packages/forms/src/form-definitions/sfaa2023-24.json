@@ -1950,7 +1950,8 @@
                   "addons": [],
                   "fieldSet": false,
                   "inline": false,
-                  "id": "ecibhe"
+                  "id": "ecibhe",
+                  "lockKey": true
                 },
                 {
                   "title": "Custom program and offering",
@@ -1983,7 +1984,7 @@
                       "refreshOnChange": false,
                       "customClass": "banner-info",
                       "key": "html12",
-                      "customConditional": "show = data.programnotListed || data.offeringnotListed;",
+                      "customConditional": "show = data.myProgramNotListed.programnotListed || (data.myStudyPeriodIsntListed && data.myStudyPeriodIsntListed.offeringnotListed);",
                       "type": "htmlelement",
                       "input": false,
                       "tableView": false,
@@ -2025,7 +2026,7 @@
                         "unique": false
                       },
                       "conditional": {
-                        "show": null,
+                        "show": "",
                         "when": null,
                         "eq": ""
                       },
@@ -2044,7 +2045,8 @@
                       "allowMultipleMasks": false,
                       "addons": [],
                       "tag": "p",
-                      "id": "evaf9nc"
+                      "id": "evaf9nc",
+                      "tags": []
                     },
                     {
                       "label": "HTML",
@@ -2886,7 +2888,8 @@
                   "lazyLoad": false,
                   "theme": "default",
                   "breadcrumb": "default",
-                  "id": "e00cj6a"
+                  "id": "e00cj6a",
+                  "tags": []
                 },
                 {
                   "title": "programDesc",
@@ -12691,8 +12694,7 @@
               "inputType": "radio",
               "fieldSet": false,
               "id": "etykfub",
-              "tags": [],
-              "isNew": false
+              "tags": []
             },
             {
               "label": "<strong>Do you have any dependants?</strong>",
@@ -23273,7 +23275,8 @@
               "inputType": "text",
               "inputMask": "",
               "decimalLimit": 2,
-              "requireDecimal": true
+              "requireDecimal": true,
+              "tags": []
             },
             {
               "title": "CRA consent panel",
@@ -23621,6 +23624,244 @@
           "id": "e910xkr",
           "addons": [],
           "lazyLoad": false
+        },
+        {
+          "title": "Part time award types panel",
+          "theme": "default",
+          "breadcrumb": "default",
+          "breadcrumbClickable": false,
+          "buttonSettings": {
+            "previous": false,
+            "cancel": false,
+            "next": false
+          },
+          "scrollToTop": false,
+          "tooltip": "",
+          "customClass": "",
+          "collapsible": false,
+          "hidden": false,
+          "hideLabel": true,
+          "disabled": false,
+          "modalEdit": false,
+          "key": "PartTimeAwardTypePanel",
+          "tags": [],
+          "properties": {},
+          "customConditional": "",
+          "conditional": {
+            "json": "",
+            "show": "true",
+            "when": "howWillYouBeAttendingTheProgram",
+            "eq": "Part Time"
+          },
+          "nextPage": "",
+          "logic": [],
+          "attributes": {},
+          "overlay": {
+            "style": "",
+            "page": "",
+            "left": "",
+            "top": "",
+            "width": "",
+            "height": ""
+          },
+          "type": "panel",
+          "label": "2020 Tax Return Income Panel",
+          "tabindex": "",
+          "input": false,
+          "tableView": false,
+          "components": [
+            {
+              "label": "HTML",
+              "labelWidth": "",
+              "labelMargin": "",
+              "tag": "h3",
+              "className": "category-header-medium primary-color",
+              "attrs": [
+                {
+                  "attr": "",
+                  "value": ""
+                }
+              ],
+              "content": "Award Types",
+              "refreshOnChange": false,
+              "customClass": "",
+              "hidden": false,
+              "modalEdit": false,
+              "key": "html96",
+              "tags": [],
+              "properties": {},
+              "conditional": {
+                "show": "",
+                "when": null,
+                "eq": "",
+                "json": ""
+              },
+              "customConditional": "",
+              "logic": [],
+              "attributes": {},
+              "overlay": {
+                "style": "",
+                "page": "",
+                "left": "",
+                "top": "",
+                "width": "",
+                "height": ""
+              },
+              "type": "htmlelement",
+              "input": false,
+              "tableView": false,
+              "placeholder": "",
+              "prefix": "",
+              "suffix": "",
+              "multiple": false,
+              "defaultValue": null,
+              "protected": false,
+              "unique": false,
+              "persistent": false,
+              "clearOnHide": true,
+              "refreshOn": "",
+              "redrawOn": "",
+              "dataGridLabel": false,
+              "labelPosition": "top",
+              "description": "",
+              "errorLabel": "",
+              "tooltip": "",
+              "hideLabel": false,
+              "tabindex": "",
+              "disabled": false,
+              "autofocus": false,
+              "dbIndex": false,
+              "customDefaultValue": "",
+              "calculateValue": "",
+              "calculateServer": false,
+              "widget": null,
+              "validateOn": "change",
+              "validate": {
+                "required": false,
+                "custom": "",
+                "customPrivate": false,
+                "strictDateValidation": false,
+                "multiple": false,
+                "unique": false
+              },
+              "allowCalculateOverride": false,
+              "encrypted": false,
+              "showCharCount": false,
+              "showWordCount": false,
+              "allowMultipleMasks": false,
+              "addons": [],
+              "id": "eoetsejm"
+            },
+            {
+              "autofocus": false,
+              "input": true,
+              "tableView": true,
+              "inputType": "radio",
+              "label": "<strong>Do you want to receive loans and grants, or only grants?</strong>",
+              "key": "partTimeAwardTypesToBeConsidered",
+              "values": [
+                {
+                  "value": "loansAndGrants",
+                  "label": "Loans and Grants",
+                  "shortcut": ""
+                },
+                {
+                  "value": "grantsOnly",
+                  "label": "Grants Only",
+                  "shortcut": ""
+                }
+              ],
+              "defaultValue": "",
+              "protected": false,
+              "fieldSet": false,
+              "persistent": true,
+              "hidden": false,
+              "clearOnHide": true,
+              "validate": {
+                "required": true,
+                "custom": "",
+                "customPrivate": false
+              },
+              "type": "radio",
+              "labelPosition": "top",
+              "optionsLabelPosition": "right",
+              "tags": [],
+              "conditional": {
+                "show": "",
+                "when": null,
+                "eq": ""
+              },
+              "properties": {},
+              "customClass": "",
+              "lockKey": true
+            },
+            {
+              "key": "partTimeAwardTypePanelContent",
+              "label": "Content",
+              "input": false,
+              "tag": "p",
+              "attrs": [
+                {
+                  "value": "",
+                  "attr": ""
+                }
+              ],
+              "className": "alert alert-info fa fa-info-circle",
+              "content": "<strong> Info!</strong><br /> I understand that if I qualify for student loan funding, I am required to start making payments on the first day of the seventh month after leaving studies; my payments are made up of interest and principal; and interest will not be charged during the six month non-repayment period and that interest will start accruing on the 1st day of the seventh month after leaving studies.",
+              "type": "htmlelement",
+              "hideLabel": false,
+              "tags": [],
+              "conditional": {
+                "show": "true",
+                "when": "partTimeAwardTypesToBeConsidered",
+                "eq": "loansAndGrants"
+              },
+              "properties": {},
+              "customClass": "banner-info",
+              "customConditional": ""
+            }
+          ],
+          "allowPrevious": false,
+          "placeholder": "",
+          "prefix": "",
+          "suffix": "",
+          "multiple": false,
+          "defaultValue": null,
+          "protected": false,
+          "unique": false,
+          "persistent": false,
+          "clearOnHide": false,
+          "refreshOn": "",
+          "redrawOn": "",
+          "dataGridLabel": false,
+          "labelPosition": "top",
+          "description": "",
+          "errorLabel": "",
+          "autofocus": false,
+          "dbIndex": false,
+          "customDefaultValue": "",
+          "calculateValue": "",
+          "calculateServer": false,
+          "widget": null,
+          "validateOn": "change",
+          "validate": {
+            "required": false,
+            "custom": "",
+            "customPrivate": false,
+            "strictDateValidation": false,
+            "multiple": false,
+            "unique": false
+          },
+          "allowCalculateOverride": false,
+          "encrypted": false,
+          "showCharCount": false,
+          "showWordCount": false,
+          "allowMultipleMasks": false,
+          "tree": false,
+          "id": "e910xkr",
+          "addons": [],
+          "lazyLoad": false,
+          "lockKey": true
         },
         {
           "title": "Financial circumstances panel",
@@ -24845,7 +25086,8 @@
               "addons": [],
               "inputType": "radio",
               "fieldSet": false,
-              "id": "e3ruu1"
+              "id": "e3ruu1",
+              "tags": []
             },
             {
               "title": "Exemption request for exceptional expenses Panel",
