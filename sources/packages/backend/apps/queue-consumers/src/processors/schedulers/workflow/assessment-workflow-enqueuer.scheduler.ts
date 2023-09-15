@@ -1,12 +1,18 @@
 import { InjectQueue, Process, Processor } from "@nestjs/bull";
 import { Job, Queue } from "bull";
 import { BaseScheduler } from "../base-scheduler";
-import { QueueNames } from "@sims/utilities";
+import { QueueNames, parseJSONError } from "@sims/utilities";
 import { QueueService } from "@sims/services/queue";
-import { QueueProcessSummary } from "../../models/processors.models";
+import {
+  QueueProcessSummary,
+  QueueProcessSummaryResult,
+} from "../../models/processors.models";
 import { WorkflowEnqueuerService } from "../../../services";
-import { InjectLogger, LoggerService } from "@sims/utilities/logger";
-import { ProcessSummaryResult } from "@sims/integrations/models";
+import {
+  InjectLogger,
+  LoggerService,
+  ProcessSummary,
+} from "@sims/utilities/logger";
 
 /**
  * Search for assessments that have some pending operation, for instance,
@@ -31,7 +37,7 @@ export class AssessmentWorkflowEnqueuerScheduler extends BaseScheduler<void> {
   @Process()
   async enqueueAssessmentOperations(
     job: Job<void>,
-  ): Promise<ProcessSummaryResult[]> {
+  ): Promise<QueueProcessSummaryResult> {
     const summary = new QueueProcessSummary({
       appLogger: this.logger,
       jobLogger: job,
@@ -39,12 +45,29 @@ export class AssessmentWorkflowEnqueuerScheduler extends BaseScheduler<void> {
     await summary.info(
       "Checking application assessments to be queued for start.",
     );
-    const result =
-      await this.workflowEnqueuerService.enqueueStartAssessmentWorkflows();
-    await summary.info("All application assessments queued.");
+    // Process summary to be populated by the enqueueStartAssessmentWorkflows.
+    // In case an unexpected error happen the finally block will still be able to
+    // output the partial information captured by the processSummary.
+    const processSummary = new ProcessSummary();
+    try {
+      await this.workflowEnqueuerService.enqueueStartAssessmentWorkflows(
+        processSummary,
+      );
+      await summary.info(
+        "All application assessments queued with success, check logs for further details.",
+      );
+    } catch (error: unknown) {
+      await summary.error(
+        `Unexpected error while executing the job check logs for further details. ${parseJSONError(
+          error,
+        )}`,
+      );
+    } finally {
+      this.logger.logProcessSummary(processSummary);
+      await summary.logProcessSummaryToJobLogger(processSummary);
+    }
     await this.cleanSchedulerQueueHistory();
-    // TODO: logs improvement.
-    return [summary.getSummary(), result];
+    return summary.getSummary();
   }
 
   @InjectLogger()
