@@ -3,7 +3,7 @@
     :submitLabel="submitLabel"
     :formMode="formMode"
     :processing="processing"
-    :data="data"
+    :offeringId="offeringId"
     @loaded="formLoaded"
     @validateOffering="validateOffering"
     @saveOffering="saveOffering"
@@ -32,7 +32,6 @@
 import {
   FormIOChangeEvent,
   FormIOForm,
-  OfferingFormModel,
   OfferingFormModes,
   OfferingStatus,
 } from "@/types";
@@ -60,9 +59,9 @@ export default defineComponent({
     submit: null,
   },
   props: {
-    data: {
-      type: Object as PropType<OfferingFormModel>,
-      default: {} as OfferingFormModel,
+    offeringId: {
+      type: Number,
+      required: true,
     },
     formMode: {
       type: String as PropType<OfferingFormModes>,

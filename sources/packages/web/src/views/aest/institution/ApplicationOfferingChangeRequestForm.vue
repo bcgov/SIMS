@@ -21,7 +21,7 @@
           </v-row>
         </template>
       </header-navigator>
-      <program-offering-detail-header
+      <application-offering-change-details-header
         class="m-4"
         :headerDetails="headerDetails"
       />
@@ -32,11 +32,7 @@
         applicationOfferingChangeRequestDetails.status ===
         ApplicationOfferingChangeRequestStatus.InProgressWithStudent
       "
-      ><offering-application-banner
-        :offeringId="
-          applicationOfferingChangeRequestDetails.requestedOfferingId
-        "
-      ></offering-application-banner>
+      ><application-offering-change-request-banner />
     </template>
     <template #tab-header>
       <student-application-offering-change-details
@@ -61,7 +57,7 @@
     </template>
     <v-window v-model="tab">
       <v-window-item value="requested-change"
-        ><offering-change-request
+        ><offering-form
           v-if="applicationOfferingChangeRequestDetails.requestedOfferingId"
           :offeringId="
             applicationOfferingChangeRequestDetails.requestedOfferingId
@@ -69,7 +65,7 @@
         />
       </v-window-item>
       <v-window-item value="active-offering">
-        <offering-change-request
+        <offering-form
           v-if="applicationOfferingChangeRequestDetails.activeOfferingId"
           :offeringId="applicationOfferingChangeRequestDetails.activeOfferingId"
         />
@@ -83,23 +79,23 @@
 import { ref, defineComponent, computed, onMounted } from "vue";
 import { RouteLocationRaw } from "vue-router";
 import {
-  ProgramOfferingHeader,
+  ApplicationOfferingChangeRequestHeader,
   ApplicationOfferingChangeRequestStatus,
 } from "@/types";
 import { ApplicationOfferingDetailsReviewAPIOutDTO } from "@/services/http/dto";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
-import ProgramOfferingDetailHeader from "@/components/common/ProgramOfferingDetailHeader.vue";
-import OfferingApplicationBanner from "@/components/aest/OfferingApplicationBanner.vue";
-import OfferingChangeRequest from "@/components/aest/OfferingChangeRequest.vue";
+import ApplicationOfferingChangeDetailsHeader from "@/components/aest/institution/ApplicationOfferingChangeDetailsHeader.vue";
+import ApplicationOfferingChangeRequestBanner from "@/components/aest/institution/ApplicationOfferingChangeRequestBanner.vue";
 import { ApplicationOfferingChangeRequestService } from "@/services/ApplicationOfferingChangeRequestService";
 import StudentApplicationOfferingChangeDetails from "@/components/aest/StudentApplicationOfferingChangeDetails.vue";
+import OfferingForm from "@/components/common/OfferingForm.vue";
 
 export default defineComponent({
   components: {
-    ProgramOfferingDetailHeader,
-    OfferingChangeRequest,
-    OfferingApplicationBanner,
+    ApplicationOfferingChangeRequestBanner,
     StudentApplicationOfferingChangeDetails,
+    ApplicationOfferingChangeDetailsHeader,
+    OfferingForm,
   },
   props: {
     studentId: {
@@ -118,7 +114,7 @@ export default defineComponent({
 
   setup(props) {
     const tab = ref("requested-change");
-    const headerDetails = ref({} as ProgramOfferingHeader);
+    const headerDetails = ref({} as ApplicationOfferingChangeRequestHeader);
     const applicationOfferingChangeRequestDetails = ref(
       {} as ApplicationOfferingDetailsReviewAPIOutDTO,
     );
@@ -161,6 +157,8 @@ export default defineComponent({
       ApplicationOfferingChangeRequestStatus,
       goBackRouteParams,
       applicationOfferingChangeRequestDetails,
+      ApplicationOfferingChangeDetailsHeader,
+      ApplicationOfferingChangeRequestBanner,
     };
   },
 });

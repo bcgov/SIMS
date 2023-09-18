@@ -39,9 +39,6 @@
     <template #alerts
       ><offering-application-banner
         :offeringId="offeringId"
-        :precedingOfferingApplicationsCount="
-          precedingOffering.applicationsCount
-        "
       ></offering-application-banner>
     </template>
     <template #tab-header>
@@ -52,15 +49,12 @@
     </template>
     <v-window v-model="tab">
       <v-window-item value="requested-change"
-        ><offering-change-request
-          :offeringId="offeringId"
-          @getHeaderDetails="getHeaderDetails"
-        ></offering-change-request>
+        ><offering-form :offeringId="offeringId"></offering-form>
       </v-window-item>
       <v-window-item value="active-offering">
-        <offering-change-request
-          :offeringId="precedingOffering.precedingOfferingId"
-        ></offering-change-request>
+        <offering-form
+          :offeringId="offering.precedingOfferingId"
+        ></offering-form>
       </v-window-item>
     </v-window>
     <assess-offering-change-modal ref="assessOfferingChangeModalRef" />
@@ -77,14 +71,13 @@ import {
   Role,
 } from "@/types";
 import {
+  EducationProgramOfferingAPIOutDTO,
   OfferingChangeAssessmentAPIInDTO,
-  PrecedingOfferingSummaryAPIOutDTO,
 } from "@/services/http/dto";
 import { EducationProgramOfferingService } from "@/services/EducationProgramOfferingService";
 import { ModalDialog, useSnackBar } from "@/composables";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import ProgramOfferingDetailHeader from "@/components/common/ProgramOfferingDetailHeader.vue";
-import OfferingChangeRequest from "@/components/aest/OfferingChangeRequest.vue";
 import OfferingApplicationBanner from "@/components/aest/OfferingApplicationBanner.vue";
 import AssessOfferingChangeModal from "@/components/aest/institution/modals/AssessOfferingChangeModal.vue";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
@@ -92,7 +85,6 @@ import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
 export default defineComponent({
   components: {
     ProgramOfferingDetailHeader,
-    OfferingChangeRequest,
     OfferingApplicationBanner,
     AssessOfferingChangeModal,
     CheckPermissionRole,
@@ -111,7 +103,7 @@ export default defineComponent({
   setup(props) {
     const tab = ref("requested-change");
     const headerDetails = ref({} as ProgramOfferingHeader);
-    const precedingOffering = ref({} as PrecedingOfferingSummaryAPIOutDTO);
+    const offering = ref({} as EducationProgramOfferingAPIOutDTO);
     const assessOfferingChangeModalRef = ref(
       {} as ModalDialog<OfferingChangeAssessmentAPIInDTO | boolean>,
     );
@@ -119,17 +111,19 @@ export default defineComponent({
     const router = useRouter();
 
     onMounted(async () => {
-      precedingOffering.value =
-        await EducationProgramOfferingService.shared.getPrecedingOfferingSummary(
+      offering.value =
+        await EducationProgramOfferingService.shared.getOfferingDetails(
           props.offeringId,
         );
+      headerDetails.value = {
+        institutionName: offering.value.institutionName,
+        submittedDate: offering.value.submittedDate,
+        status: offering.value.offeringStatus,
+        assessedBy: offering.value.assessedBy,
+        assessedDate: offering.value.assessedDate,
+        locationName: offering.value.locationName,
+      };
     });
-
-    //TODO: This callback implementation needs to be removed when the program and offering header component
-    //TODO: is enhanced to load header values with it's own API call.
-    const getHeaderDetails = (data: ProgramOfferingHeader) => {
-      headerDetails.value = data;
-    };
 
     const assessOfferingChange = async (offeringStatus: OfferingStatus) => {
       const responseData = await assessOfferingChangeModalRef.value.showModal(
@@ -167,12 +161,11 @@ export default defineComponent({
       OfferingStatus,
       AESTRoutesConst,
       tab,
-      getHeaderDetails,
       OfferingRelationType,
       assessOfferingChangeModalRef,
       assessOfferingChange,
       Role,
-      precedingOffering,
+      offering,
     };
   },
 });

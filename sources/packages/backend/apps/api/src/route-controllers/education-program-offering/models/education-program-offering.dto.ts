@@ -114,6 +114,7 @@ export class EducationProgramOfferingAPIOutDTO {
   hasOfferingWILComponent: string;
   offeringDeclaration: boolean;
   offeringStatus: OfferingStatus;
+  precedingOfferingId: number;
   offeringType: OfferingTypes;
   offeringWILComponentType?: string;
   showYearOfStudy?: boolean;
@@ -192,7 +193,6 @@ export class OfferingChangeRequestAPIOutDTO {
  */
 export class PrecedingOfferingSummaryAPIOutDTO {
   applicationsCount: number;
-  precedingOfferingId: number;
 }
 
 export class OfferingChangeAssessmentAPIInDTO {

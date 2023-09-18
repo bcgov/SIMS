@@ -62,7 +62,7 @@
     </template>
     <offering-form-submit
       submitLabel="Update offering now"
-      :data="initialData"
+      :offeringId="offeringId"
       :formMode="formMode"
       :locationId="locationId"
       :programId="programId"

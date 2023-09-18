@@ -1,8 +1,5 @@
 import { EducationProgramsSummaryAPIOutDTO } from "@/services/http/dto";
-import {
-  ApplicationOfferingChangeRequestStatus,
-  OfferingStatus,
-} from "@/types";
+import { OfferingStatus } from "@/types";
 import { Expose } from "class-transformer";
 
 /**
@@ -53,21 +50,17 @@ export class EntranceRequirements {
 }
 
 export interface ProgramOfferingHeader {
-  institutionId: number;
-  institutionName: string;
-  submittedDate: string;
-  status:
-    | ProgramStatus
-    | OfferingStatus
-    | ApplicationOfferingChangeRequestStatus;
-  assessedBy: string;
-  assessedDate: string;
-  updatedDate?: string; // This field is only for application offering change request.
+  institutionId?: number;
+  institutionName?: string;
+  submittedDate?: Date;
+  status: ProgramStatus | OfferingStatus;
+  assessedBy?: string;
+  assessedDate?: Date;
   effectiveEndDate?: Date; // This field is only for programs.
   locationName?: string; // This field is offering specific.
 }
 
-export interface ReviewLabels {
+export interface ProgramOfferingApprovalLabels {
   assessedByLabel: string;
   assessedDateLabel: string;
 }

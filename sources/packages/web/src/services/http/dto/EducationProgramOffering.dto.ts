@@ -27,7 +27,6 @@ export interface OfferingChangeRequestAPIOutDTO {
  */
 export interface PrecedingOfferingSummaryAPIOutDTO {
   applicationsCount: number;
-  precedingOfferingId: number;
 }
 
 export interface OfferingChangeAssessmentAPIInDTO {
@@ -122,6 +121,7 @@ export interface EducationProgramOfferingAPIOutDTO {
   hasOfferingWILComponent: string;
   offeringDeclaration: boolean;
   offeringStatus: OfferingStatus;
+  precedingOfferingId: number;
   offeringType: OfferingTypes;
   offeringWILComponentType?: string;
   showYearOfStudy?: boolean;

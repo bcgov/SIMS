@@ -51,7 +51,7 @@ export default defineComponent({
       required: true,
     },
     applicationNumber: {
-      type: Number,
+      type: String,
       required: true,
     },
     locationName: {

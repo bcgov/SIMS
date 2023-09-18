@@ -40,7 +40,7 @@
         }"
       />
     </template>
-    <offering-form :data="initialData"></offering-form>
+    <offering-form :offeringId="offeringId"></offering-form>
     <assess-offering-modal
       ref="assessOfferingModalRef"
       :offeringStatus="offeringApprovalStatus"

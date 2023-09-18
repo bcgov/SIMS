@@ -32,7 +32,6 @@ export interface OfferingsFilter {
  */
 export interface PrecedingOfferingSummaryModel {
   applicationsCount: number;
-  precedingOfferingId: number;
 }
 
 /**

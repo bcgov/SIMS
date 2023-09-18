@@ -26,7 +26,7 @@
     </template>
     <offering-form-submit
       submitLabel="Request a change now"
-      :data="initialData"
+      :offeringId="offeringId"
       :formMode="OfferingFormModes.Editable"
       :locationId="locationId"
       :programId="programId"

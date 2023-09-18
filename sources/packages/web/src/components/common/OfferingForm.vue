@@ -46,9 +46,13 @@
 
 <script lang="ts">
 import { FormIOForm, OfferingFormModel, OfferingFormModes } from "@/types";
-import { defineComponent, PropType, computed } from "vue";
+import { defineComponent, PropType, computed, ref, onMounted } from "vue";
 import { useOffering } from "@/composables";
-import { EducationProgramOfferingAPIInDTO } from "@/services/http/dto";
+import {
+  EducationProgramOfferingAPIInDTO,
+  EducationProgramOfferingAPIOutDTO,
+} from "@/services/http/dto";
+import { EducationProgramOfferingService } from "@/services/EducationProgramOfferingService";
 
 interface SubmitArgs {
   validationOnly: true;
@@ -66,14 +70,13 @@ export default defineComponent({
     cancel: null,
   },
   props: {
-    data: {
-      type: Object as PropType<OfferingFormModel>,
+    offeringId: {
+      type: Number,
       required: true,
-      default: {} as OfferingFormModel,
     },
     formMode: {
       type: String as PropType<OfferingFormModes>,
-      required: true,
+      required: false,
       default: OfferingFormModes.Readonly,
     },
     submitLabel: {
@@ -83,13 +86,20 @@ export default defineComponent({
     },
     processing: {
       type: Boolean,
-      required: true,
+      required: false,
       default: false,
     },
   },
   setup(props, context) {
+    const data = ref({} as EducationProgramOfferingAPIOutDTO);
+    onMounted(async () => {
+      const offering =
+        await EducationProgramOfferingService.shared.getOfferingDetails(
+          props.offeringId,
+        );
+      data.value = offering;
+    });
     const { mapOfferingChipStatus } = useOffering();
-
     const submitOffering = (
       form: FormIOForm<EducationProgramOfferingAPIInDTO>,
       args: SubmitArgs,
@@ -113,9 +123,9 @@ export default defineComponent({
      */
     const formData = computed(
       (): OfferingFormModel => ({
-        ...props.data,
-        offeringChipStatus: props.data.offeringStatus
-          ? mapOfferingChipStatus(props.data.offeringStatus)
+        ...data.value,
+        offeringChipStatus: data.value.offeringStatus
+          ? mapOfferingChipStatus(data.value.offeringStatus)
           : undefined,
         mode: props.formMode,
       }),

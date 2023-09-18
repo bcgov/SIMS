@@ -23,7 +23,6 @@
           :offeringId="offeringId"
           :programId="programId"
           :relationType="OfferingRelationType.ActualOffering"
-          @getHeaderDetails="getHeaderDetails"
         ></offering-change-request>
       </v-window-item>
       <v-window-item value="active-offering">
@@ -38,7 +37,7 @@
 </template>
 
 <script lang="ts">
-import { ref, defineComponent } from "vue";
+import { ref, defineComponent, onMounted } from "vue";
 import {
   OfferingStatus,
   ProgramOfferingHeader,
@@ -46,12 +45,11 @@ import {
 } from "@/types";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import ProgramOfferingDetailHeader from "@/components/common/ProgramOfferingDetailHeader.vue";
-import OfferingChangeRequest from "@/components/aest/OfferingChangeRequest.vue";
+import { EducationProgramOfferingService } from "@/services/EducationProgramOfferingService";
 
 export default defineComponent({
   components: {
     ProgramOfferingDetailHeader,
-    OfferingChangeRequest,
   },
   props: {
     programId: {
@@ -63,22 +61,30 @@ export default defineComponent({
       required: true,
     },
   },
-  setup() {
+  setup(props) {
     const tab = ref("requested-change");
     const headerDetails = ref({} as ProgramOfferingHeader);
 
-    //TODO: This callback implementation needs to be removed when the program and offering header component
-    //TODO: is enhanced to load header values with it's own API call.
-    const getHeaderDetails = (data: ProgramOfferingHeader) => {
-      headerDetails.value = data;
-    };
+    onMounted(async () => {
+      const offering =
+        await EducationProgramOfferingService.shared.getOfferingDetails(
+          props.offeringId,
+        );
+      headerDetails.value = {
+        institutionName: offering.institutionName,
+        submittedDate: offering.submittedDate,
+        status: offering.offeringStatus,
+        assessedBy: offering.assessedBy,
+        assessedDate: offering.assessedDate,
+        locationName: offering.locationName,
+      };
+    });
 
     return {
       headerDetails,
       OfferingStatus,
       AESTRoutesConst,
       tab,
-      getHeaderDetails,
       OfferingRelationType,
     };
   },
