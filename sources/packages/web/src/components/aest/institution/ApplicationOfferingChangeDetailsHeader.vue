@@ -15,7 +15,7 @@
       ></div>
       <header-title-value title="Institution"
         ><template #value
-          ><span class="link-primary" @click="goToInstitutionProfile()">
+          ><span class="link-primary" @click="navigateToInstitutionProfile()">
             {{ headerDetails.institutionName }}
           </span>
         </template></header-title-value
@@ -145,7 +145,7 @@ export default defineComponent({
       };
     });
 
-    const goToInstitutionProfile = () => {
+    const navigateToInstitutionProfile = () => {
       if (AuthService.shared.authClientType === ClientIdType.Institution) {
         router.push({
           name: InstitutionRoutesConst.INSTITUTION_PROFILE,
@@ -158,7 +158,7 @@ export default defineComponent({
     };
     return {
       ProgramStatus,
-      goToInstitutionProfile,
+      navigateToInstitutionProfile,
       dateOnlyLongString,
       reviewLabel,
       showReviewDetails,
