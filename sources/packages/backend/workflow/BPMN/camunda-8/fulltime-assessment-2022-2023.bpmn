@@ -1774,7 +1774,7 @@ or (calculatedDataPartnerFedralProvincialPDReceiptCost &gt; 0)</bpmn:conditionEx
     <bpmn:intermediateThrowEvent id="Event_1hfnheg" name="calculatedDataStudentMaritalStatusCode">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
-          <zeebe:output source="=if calculatedDataTotalEligibleDependants &#62; 0 then &#34;SP&#34; else &#34;SI&#34;" target="calulatedDataStudentMaritalStatusCode" />
+          <zeebe:output source="=if calculatedDataTotalEligibleDependants &#62; 0 then &#34;SP&#34; else &#34;SI&#34;" target="calculatedDataStudentMaritalStatusCode" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_0mhxp8e</bpmn:incoming>
