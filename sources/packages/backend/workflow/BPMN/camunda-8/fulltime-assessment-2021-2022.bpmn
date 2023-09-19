@@ -1663,10 +1663,10 @@ or (calculatedDataPartnerFedralProvincialPDReceiptCost &gt; 0)</bpmn:conditionEx
       <bpmn:outgoing>Flow_0djgmcr</bpmn:outgoing>
     </bpmn:intermediateThrowEvent>
     <bpmn:sequenceFlow id="Flow_09cjv05" sourceRef="Gateway_1qh6zrs" targetRef="Activity_048jfh0" />
-    <bpmn:intermediateThrowEvent id="Event_09fw0dz" name="calulatedDataStudentMaritalStatusCode ">
+    <bpmn:intermediateThrowEvent id="Event_09fw0dz" name="calculatedDataStudentMaritalStatusCode">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
-          <zeebe:output source="=&#34;MA&#34;" target="calulatedDataStudentMaritalStatusCode" />
+          <zeebe:output source="=&#34;MA&#34;" target="calculatedDataStudentMaritalStatusCode" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1cl7iq9</bpmn:incoming>
@@ -1691,10 +1691,10 @@ or (calculatedDataPartnerFedralProvincialPDReceiptCost &gt; 0)</bpmn:conditionEx
       <bpmn:incoming>Flow_142ei9l</bpmn:incoming>
       <bpmn:outgoing>Flow_0mhxp8e</bpmn:outgoing>
     </bpmn:intermediateThrowEvent>
-    <bpmn:intermediateThrowEvent id="Event_18110sl" name="calulatedDataStudentMaritalStatusCode ">
+    <bpmn:intermediateThrowEvent id="Event_18110sl" name="calculatedDataStudentMaritalStatusCode">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
-          <zeebe:output source="=if calculatedDataTotalEligibleDependants &#62; 0 then &#34;SP&#34; else &#34;SI&#34;" target="calulatedDataStudentMaritalStatusCode " />
+          <zeebe:output source="=if calculatedDataTotalEligibleDependants &#62; 0 then &#34;SP&#34; else &#34;SI&#34;" target="calculatedDataStudentMaritalStatusCode" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_0mhxp8e</bpmn:incoming>
@@ -1708,10 +1708,10 @@ or (calculatedDataPartnerFedralProvincialPDReceiptCost &gt; 0)</bpmn:conditionEx
       <bpmn:incoming>Flow_1v4bf7g</bpmn:incoming>
       <bpmn:outgoing>Flow_16yjr4j</bpmn:outgoing>
     </bpmn:exclusiveGateway>
-    <bpmn:intermediateThrowEvent id="Event_0r8wyou" name="calulatedDataStudentMaritalStatusCode">
+    <bpmn:intermediateThrowEvent id="Event_0r8wyou" name="calculatedDataStudentMaritalStatusCode">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
-          <zeebe:output source="=&#34;SI&#34;" target="calulatedDataStudentMaritalStatusCode" />
+          <zeebe:output source="=&#34;SI&#34;" target="calculatedDataStudentMaritalStatusCode" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_16yjr4j</bpmn:incoming>
@@ -3059,7 +3059,7 @@ dmnFullTimeCalculatedDataLivingCategory</bpmn:text>
       <bpmndi:BPMNShape id="Event_09fw0dz_di" bpmnElement="Event_09fw0dz">
         <dc:Bounds x="2022" y="685" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="1998" y="728" width="84" height="40" />
+          <dc:Bounds x="1998" y="728" width="85" height="40" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_1g9i3gp" bpmnElement="Event_123oime">
@@ -3077,7 +3077,7 @@ dmnFullTimeCalculatedDataLivingCategory</bpmn:text>
       <bpmndi:BPMNShape id="Event_18110sl_di" bpmnElement="Event_18110sl">
         <dc:Bounds x="2022" y="602" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="1998" y="645" width="84" height="40" />
+          <dc:Bounds x="1998" y="645" width="85" height="40" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Gateway_0w90zd7_di" bpmnElement="Gateway_0w90zd7" isMarkerVisible="true">
@@ -3086,7 +3086,7 @@ dmnFullTimeCalculatedDataLivingCategory</bpmn:text>
       <bpmndi:BPMNShape id="Event_0r8wyou_di" bpmnElement="Event_0r8wyou">
         <dc:Bounds x="2052" y="412" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="2028" y="455" width="84" height="40" />
+          <dc:Bounds x="2028" y="455" width="85" height="40" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_05mslks_di" bpmnElement="Activity_1jqxw00">

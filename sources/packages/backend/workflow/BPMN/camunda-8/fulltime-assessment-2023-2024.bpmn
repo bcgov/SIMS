@@ -1754,10 +1754,10 @@ or (calculatedDataPartnerFedralProvincialPDReceiptCost &gt; 0)</bpmn:conditionEx
       <bpmn:outgoing>Flow_189jv8b</bpmn:outgoing>
     </bpmn:intermediateThrowEvent>
     <bpmn:sequenceFlow id="Flow_11zs37x" sourceRef="Event_0hkddfy" targetRef="Event_177w8t8" />
-    <bpmn:intermediateThrowEvent id="Event_0hkddfy" name="calulatedDataStudentMaritalStatusCode">
+    <bpmn:intermediateThrowEvent id="Event_0hkddfy" name="calculatedDataStudentMaritalStatusCode">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
-          <zeebe:output source="=&#34;SI&#34;" target="calulatedDataStudentMaritalStatusCode" />
+          <zeebe:output source="=&#34;SI&#34;" target="calculatedDataStudentMaritalStatusCode" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_16yjr4j</bpmn:incoming>
@@ -1781,20 +1781,20 @@ or (calculatedDataPartnerFedralProvincialPDReceiptCost &gt; 0)</bpmn:conditionEx
       <bpmn:incoming>Flow_1q59j4l</bpmn:incoming>
       <bpmn:outgoing>Flow_1cl7iq9</bpmn:outgoing>
     </bpmn:intermediateThrowEvent>
-    <bpmn:intermediateThrowEvent id="Event_1aiob46" name="calulatedDataStudentMaritalStatusCode ">
+    <bpmn:intermediateThrowEvent id="Event_1aiob46" name="calculatedDataStudentMaritalStatusCode">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
-          <zeebe:output source="=if calculatedDataTotalEligibleDependants &#62; 0 then &#34;SP&#34; else &#34;SI&#34;" target="calulatedDataStudentMaritalStatusCode " />
+          <zeebe:output source="=if calculatedDataTotalEligibleDependants &#62; 0 then &#34;SP&#34; else &#34;SI&#34;" target="calculatedDataStudentMaritalStatusCode" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_0mhxp8e</bpmn:incoming>
       <bpmn:outgoing>Flow_0amrvf1</bpmn:outgoing>
     </bpmn:intermediateThrowEvent>
     <bpmn:sequenceFlow id="Flow_0amrvf1" sourceRef="Event_1aiob46" targetRef="Event_0bdny14" />
-    <bpmn:intermediateThrowEvent id="Event_12mfqm9" name="calulatedDataStudentMaritalStatusCode">
+    <bpmn:intermediateThrowEvent id="Event_12mfqm9" name="calculatedDataStudentMaritalStatusCode">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
-          <zeebe:output source="=&#34;MA&#34;" target="calulatedDataStudentMaritalStatusCode" />
+          <zeebe:output source="=&#34;MA&#34;" target="calculatedDataStudentMaritalStatusCode" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1cl7iq9</bpmn:incoming>
@@ -3115,7 +3115,7 @@ limitWeeklyEIPerParent</bpmn:text>
       <bpmndi:BPMNShape id="Event_0hkddfy_di" bpmnElement="Event_0hkddfy">
         <dc:Bounds x="2052" y="412" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="2028" y="455" width="84" height="40" />
+          <dc:Bounds x="2028" y="455" width="85" height="40" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_185d50a" bpmnElement="Event_0s8ztj5">
@@ -3133,13 +3133,13 @@ limitWeeklyEIPerParent</bpmn:text>
       <bpmndi:BPMNShape id="Event_1aiob46_di" bpmnElement="Event_1aiob46">
         <dc:Bounds x="2052" y="602" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="2028" y="645" width="84" height="40" />
+          <dc:Bounds x="2028" y="645" width="85" height="40" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_12mfqm9_di" bpmnElement="Event_12mfqm9">
         <dc:Bounds x="2052" y="685" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="2028" y="728" width="84" height="40" />
+          <dc:Bounds x="2028" y="728" width="85" height="40" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_14jfj5g_di" bpmnElement="Event_14jfj5g">
