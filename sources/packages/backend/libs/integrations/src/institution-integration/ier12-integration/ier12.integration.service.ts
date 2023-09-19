@@ -214,6 +214,7 @@ export class IER12IntegrationService extends SFTPIntegrationBase<void> {
       ierFileDetail.fundingDetails = this.getFundingDetails(
         ierRecord.disbursementAwards,
       );
+      ierFileDetail.documentProducedDate = ierRecord.disbursementSentDate;
       return ierFileDetail;
     });
     ierFileLines.push(...fileRecords);
@@ -384,6 +385,8 @@ export class IER12IntegrationService extends SFTPIntegrationBase<void> {
     const levelOfStudyCodeMap: Record<string, number> = {
       qualifyingStudies: 1,
       undergraduateDegree: 3,
+      graduateCertificate: 5,
+      graduateDiploma: 5,
       graduateDegreeOrMasters: 5,
       postGraduateOrDoctorate: 6,
       undergraduateDiploma: 7,

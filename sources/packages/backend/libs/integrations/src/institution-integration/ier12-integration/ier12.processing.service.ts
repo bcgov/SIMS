@@ -281,6 +281,7 @@ export class IER12ProcessingService {
           workflowData.calculatedData.totalNonEducationalCost,
         totalAssessedCost: assessmentData.totalAssessedCost,
         totalAssessmentNeed: assessmentData.totalAssessmentNeed,
+        disbursementSentDate: disbursement.dateSent,
       };
       ier12Records.push(ier12Record);
     }

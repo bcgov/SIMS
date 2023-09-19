@@ -147,7 +147,6 @@ export class IER12FileDetail implements IER12FileLine {
   applicationEventCode?: string;
   // Analysis pending for the field.
   applicationEventDate?: Date;
-  // Analysis pending for the field.
   documentProducedDate?: Date;
   coeStatus: COEStatus;
   disbursementScheduleStatus: DisbursementScheduleStatus;

@@ -89,6 +89,7 @@ export interface IER12Record {
   earliestDateOfDisbursement: Date;
   dateOfDisbursement?: Date;
   disbursementCancelDate?: Date;
+  disbursementSentDate?: Date;
   disbursementAwards: IERAward[];
 }
 
