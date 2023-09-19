@@ -167,6 +167,25 @@ describe(
       });
     });
 
+    it(`Should not queue a '${StudentAssessmentStatus.Submitted}' assessment if currentAssessment and currentProcessingAssessment are the same already.`, async () => {
+      // Arrange
+
+      // Application submitted with original assessment.
+      const application = await createDefaultApplication();
+      // Force currentAssessment and currentProcessingAssessment to be the same to test the SQL condition.
+      application.currentProcessingAssessment = application.currentAssessment;
+      await db.application.save(application);
+
+      // Queued job.
+      const job = createMock<Job<void>>();
+
+      // Act
+      await processor.enqueueAssessmentOperations(job);
+
+      // Assert
+      expect(startApplicationAssessmentQueueMock.add).not.toBeCalled();
+    });
+
     /**
      * Get a default application with only one original assessment to test
      * multiple positive and negative scenarios ensuring that the only variant
