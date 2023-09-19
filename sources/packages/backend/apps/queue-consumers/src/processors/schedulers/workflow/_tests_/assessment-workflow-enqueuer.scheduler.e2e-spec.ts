@@ -70,23 +70,9 @@ describe(
 
       // Assert
       // Load application and related assessments for assertion.
-      const updatedApplication = await db.application.findOne({
-        select: {
-          id: true,
-          currentAssessment: {
-            id: true,
-          },
-          currentProcessingAssessment: {
-            id: true,
-            studentAssessmentStatus: true,
-          },
-        },
-        relations: {
-          currentAssessment: true,
-          currentProcessingAssessment: true,
-        },
-        where: { id: application.id },
-      });
+      const updatedApplication = await loadApplicationDataForAssertions(
+        application.id,
+      );
       // Assert item was added to the queue.
       const queueData = {
         assessmentId: updatedApplication.currentProcessingAssessment.id,
@@ -134,24 +120,9 @@ describe(
 
       // Assert
       // Load application and related assessments for assertion.
-      const updatedApplication = await db.application.findOne({
-        select: {
-          id: true,
-          currentAssessment: {
-            id: true,
-          },
-          currentProcessingAssessment: {
-            id: true,
-            studentAssessmentStatus: true,
-          },
-        },
-        relations: {
-          currentAssessment: true,
-          currentProcessingAssessment: true,
-          studentAssessments: true,
-        },
-        where: { id: application.id },
-      });
+      const updatedApplication = await loadApplicationDataForAssertions(
+        application.id,
+      );
       // Assert oldest submitted assessment was added to the queue.
       const queueData = {
         assessmentId: oldestAssessment.id,
@@ -215,6 +186,33 @@ describe(
         await db.studentAssessment.save(application.currentAssessment);
       }
       return application;
+    };
+
+    /**
+     * Load application and assessment data needed to execute the assert operations.
+     * @param applicationId application id.
+     * @returns application with related assessments (currentAssessment and currentProcessingAssessment).
+     */
+    const loadApplicationDataForAssertions = (
+      applicationId: number,
+    ): Promise<Application> => {
+      return db.application.findOne({
+        select: {
+          id: true,
+          currentAssessment: {
+            id: true,
+          },
+          currentProcessingAssessment: {
+            id: true,
+            studentAssessmentStatus: true,
+          },
+        },
+        relations: {
+          currentAssessment: true,
+          currentProcessingAssessment: true,
+        },
+        where: { id: applicationId },
+      });
     };
   },
 );
