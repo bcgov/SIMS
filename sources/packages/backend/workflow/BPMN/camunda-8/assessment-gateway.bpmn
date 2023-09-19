@@ -420,6 +420,9 @@
           <zeebe:output source="=null" target="studentDataTaxReturnIncome" />
           <zeebe:output source="=[]" target="parentSubprocesses" />
           <zeebe:output source="=null" target="calculatedDataParentalAssets" />
+          <zeebe:output source="=null" target="calculatedDataParentalAssetContribution" />
+          <zeebe:output source="=null" target="calculatedDataParentalContribution" />
+          <zeebe:output source="=null" target="calculatedDataTotalDiscretionaryIncome" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:outgoing>Flow_1ef3map</bpmn:outgoing>
@@ -649,16 +652,6 @@
     <bpmn:callActivity id="Activity_09v8xl0" name="Assessment">
       <bpmn:extensionElements>
         <zeebe:calledElement processId="=&#34;parttime-assessment-&#34; + programYear" propagateAllChildVariables="true" />
-        <zeebe:ioMapping>
-          <zeebe:input source="=null" target="calculatedDataParentalAssetContribution" />
-          <zeebe:input source="=null" target="calculatedDataParentalContribution" />
-          <zeebe:input source="=null" target="calculatedDataTotalDiscretionaryIncome" />
-          <zeebe:input source="=null" target="calculatedDataDependantTotalMSOLAllowance" />
-          <zeebe:input source="=null" target="calaulatedDataTotalNonEducationalCost" />
-          <zeebe:input source="=null" target="calculatedDataStudentMSOLAllowance" />
-          <zeebe:input source="=null" target="calculatedDataTotalChildCareCost" />
-          <zeebe:input source="=null" target="calulatedDataStudentMaritalStatusCode" />
-        </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_0e3pl88</bpmn:incoming>
       <bpmn:outgoing>Flow_1k200x2</bpmn:outgoing>
@@ -728,11 +721,6 @@
     <bpmn:callActivity id="Activity_0t108ac" name="Assessment">
       <bpmn:extensionElements>
         <zeebe:calledElement processId="=&#34;fulltime-assessment-&#34; + programYear" propagateAllChildVariables="true" />
-        <zeebe:ioMapping>
-          <zeebe:input source="=null" target="calculatedDataParentalAssetContribution" />
-          <zeebe:input source="=null" target="calculatedDataParentalContribution" />
-          <zeebe:input source="=null" target="calculatedDataTotalDiscretionaryIncome" />
-        </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_0hfjqs0</bpmn:incoming>
       <bpmn:outgoing>Flow_1j6gqvf</bpmn:outgoing>
