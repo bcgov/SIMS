@@ -331,7 +331,7 @@ export class AssessmentControllerService {
   }
 
   /**
-   * Get all pending and declined requests related to an application which would result
+   * Get all pending and declined requests related to an application which would result in
    * a new assessment when that request is approved.
    * @param applicationId application id.
    * @param options options for request assessments,
@@ -388,12 +388,16 @@ export class AssessmentControllerService {
       options?.studentId,
     );
     const applicationOfferingChangeRequests =
-      await this.getApplicationOfferingChangeRequestsByStatus(applicationId, [
-        ApplicationOfferingChangeRequestStatus.InProgressWithStudent,
-        ApplicationOfferingChangeRequestStatus.InProgressWithSABC,
-        ApplicationOfferingChangeRequestStatus.DeclinedByStudent,
-        ApplicationOfferingChangeRequestStatus.DeclinedBySABC,
-      ]);
+      await this.getApplicationOfferingChangeRequestsByStatus(
+        applicationId,
+        [
+          ApplicationOfferingChangeRequestStatus.InProgressWithStudent,
+          ApplicationOfferingChangeRequestStatus.InProgressWithSABC,
+          ApplicationOfferingChangeRequestStatus.DeclinedByStudent,
+          ApplicationOfferingChangeRequestStatus.DeclinedBySABC,
+        ],
+        options?.studentId,
+      );
     return requestAssessmentSummary
       .concat(appeals)
       .concat(applicationOfferingChangeRequests);

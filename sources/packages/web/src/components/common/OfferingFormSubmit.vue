@@ -9,7 +9,7 @@
     @saveOffering="saveOffering"
     @changed="formChanged"
     @cancel="$emit('cancel')"
-  ></offering-form>
+  />
   <confirm-modal
     title="Do you want to proceed?"
     cancelLabel="No"

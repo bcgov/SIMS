@@ -69,7 +69,7 @@
       :enableValidationsOnInit="true"
       @submit="submit"
       @cancel="goBack"
-    ></offering-form-submit>
+    />
   </full-page-container>
 </template>
 

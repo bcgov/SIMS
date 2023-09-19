@@ -32,7 +32,7 @@
       :programId="programId"
       @submit="submit"
       @cancel="goToEditLocationOfferings"
-    ></offering-form-submit>
+    />
   </full-page-container>
 </template>
 

@@ -79,7 +79,6 @@
 <script lang="ts">
 import {
   ApplicationOfferingChangeRequestHeader,
-  ProgramStatus,
   ClientIdType,
   ApplicationOfferingChangeRequestStatus,
   ReviewLabels,
@@ -157,7 +156,6 @@ export default defineComponent({
       });
     };
     return {
-      ProgramStatus,
       navigateToInstitutionProfile,
       dateOnlyLongString,
       reviewLabel,

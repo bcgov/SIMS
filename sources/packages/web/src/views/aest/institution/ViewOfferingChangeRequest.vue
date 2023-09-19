@@ -49,12 +49,10 @@
     </template>
     <v-window v-model="tab">
       <v-window-item value="requested-change"
-        ><offering-form :offeringId="offeringId"></offering-form>
+        ><offering-form :offeringId="offeringId" />
       </v-window-item>
       <v-window-item value="active-offering">
-        <offering-form
-          :offeringId="offering.precedingOfferingId"
-        ></offering-form>
+        <offering-form :offeringId="offering.precedingOfferingId" />
       </v-window-item>
     </v-window>
     <assess-offering-change-modal ref="assessOfferingChangeModalRef" />
