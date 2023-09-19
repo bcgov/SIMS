@@ -67,6 +67,7 @@ export default defineComponent({
       AssessmentTriggerType.OfferingChange,
       AssessmentTriggerType.ScholasticStandingChange,
       AssessmentTriggerType.OriginalAssessment,
+      AssessmentTriggerType.ApplicationOfferingChange,
     ];
 
     const goToStudentAppeal = (appealId: number) => {

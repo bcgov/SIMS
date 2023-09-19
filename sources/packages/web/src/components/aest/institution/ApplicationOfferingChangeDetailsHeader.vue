@@ -38,6 +38,9 @@
           ApplicationOfferingChangeRequestStatus.DeclinedByStudent
         "
       >
+        <div class="mr-2">
+          <v-icon icon="fa:fas fa-times-circle" size="20" color="error" />
+        </div>
         <header-title-value
           :title="reviewLabel.assessedByLabel"
           value="Student"
@@ -57,6 +60,26 @@
             ApplicationOfferingChangeRequestStatus.DeclinedBySABC
         "
       >
+        <div class="mr-2">
+          <v-icon
+            icon="fa:fas fa-times-circle"
+            v-if="
+              headerDetails.status ===
+              ApplicationOfferingChangeRequestStatus.DeclinedBySABC
+            "
+            size="20"
+            color="error"
+          />
+          <v-icon
+            icon="fa:fas fa-check-circle"
+            v-if="
+              headerDetails.status ===
+              ApplicationOfferingChangeRequestStatus.Approved
+            "
+            size="20"
+            color="success"
+          />
+        </div>
         <header-title-value
           :title="reviewLabel.assessedByLabel"
           v-if="headerDetails.assessedBy"
