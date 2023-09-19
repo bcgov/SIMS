@@ -420,6 +420,9 @@
           <zeebe:output source="=null" target="studentDataTaxReturnIncome" />
           <zeebe:output source="=[]" target="parentSubprocesses" />
           <zeebe:output source="=null" target="calculatedDataParentalAssets" />
+          <zeebe:output source="=null" target="calculatedDataParentalAssetContribution" />
+          <zeebe:output source="=null" target="calculatedDataParentalContribution" />
+          <zeebe:output source="=null" target="calculatedDataTotalDiscretionaryIncome" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:outgoing>Flow_1ef3map</bpmn:outgoing>
@@ -709,7 +712,7 @@
     <bpmn:intermediateThrowEvent id="Event_0w0bgro" name="Configure workflow data">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
-          <zeebe:output source="={ &#10;  studentData: {&#10;    dependantStatus: studentDataDependantstatus,&#10;    relationshipStatus: studentDataRelationshipStatus,&#10;    livingWithParents: studentDataLivingWithParents&#10;  },&#10;  calculatedData: {&#10;    parentalAssets: calculatedDataParentalAssets,&#10;    studentMaritalStatusCode: calculatedDataStudentMaritalStatusCode,&#10;    totalEligibleDependents: calculatedDataTotalEligibleDependents,&#10;    familySize: calculatedDataFamilySize,&#10;    parentalAssetContribution: calculatedDataParentalAssetContribution,&#10;    parentalContribution: calculatedDataParentalContribution,&#10;    parentDiscretionaryIncome: calculatedDataTotalDiscretionaryIncome,&#10;    dependantTotalMSOLAllowance: calculatedDataDependantTotalMSOLAllowance,&#10;    studentMSOLAllowance: calculatedDataStudentMSOLAllowance,&#10;    totalChildCareCost: calculatedDataTotalChildCareCost,&#10;    totalNonEducationalCost: calaulatedDataTotalNonEducationalCost&#10;  }&#10;}" target="workflowData" />
+          <zeebe:output source="={ &#10;  studentData: {&#10;    dependantStatus: studentDataDependantstatus,&#10;    relationshipStatus: studentDataRelationshipStatus,&#10;    livingWithParents: studentDataLivingWithParents&#10;  },&#10;  calculatedData: {&#10;    parentalAssets: calculatedDataParentalAssets,&#10;    studentMaritalStatusCode: calculatedDataStudentMaritalStatusCode,&#10;    totalEligibleDependents: calculatedDataTotalEligibleDependants,&#10;    familySize: calculatedDataFamilySize,&#10;    parentalAssetContribution: calculatedDataParentalAssetContribution,&#10;    parentalContribution: calculatedDataParentalContribution,&#10;    parentDiscretionaryIncome: calculatedDataTotalDiscretionaryIncome,&#10;    dependantTotalMSOLAllowance: calculatedDataDependantTotalMSOLAllowance,&#10;    studentMSOLAllowance: calculatedDataStudentMSOLAllowance,&#10;    totalChildCareCost: calculatedDataTotalChildCareCost,&#10;    totalNonEducationalCost: calaulatedDataTotalNonEducationalCost&#10;  }&#10;}" target="workflowData" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_0z518wc</bpmn:incoming>
