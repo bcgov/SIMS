@@ -25,7 +25,17 @@ function getMockedQueueProviders(): Provider[] {
   // The 'BullQueue_' suffix is needed to properly mock the expected
   // symbol used by the @InjectQueue decorator.
   return Object.values(QueueNames).map<Provider>((queue) => ({
-    provide: `BullQueue_${queue}`,
+    provide: getQueueProviderName(queue),
     useValue: createMock<Queue>({ name: queue }),
   }));
+}
+
+/**
+ * Get the unique mock name for a queue that can be used to retrieve
+ * the mocked object for later jest operations and checks.
+ * @param queueName queue to create the name.
+ * @returns queue mock name.
+ */
+export function getQueueProviderName(queueName: QueueNames): string {
+  return `BullQueue_${queueName}`;
 }
