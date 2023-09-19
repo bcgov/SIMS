@@ -423,6 +423,9 @@
           <zeebe:output source="=null" target="calculatedDataParentalAssetContribution" />
           <zeebe:output source="=null" target="calculatedDataParentalContribution" />
           <zeebe:output source="=null" target="calculatedDataTotalDiscretionaryIncome" />
+          <zeebe:output source="=null" target="calulatedDataStudentMaritalStatusCode" />
+          <zeebe:output source="=null" target="calculatedDataDependantTotalMSOLAllowance" />
+          <zeebe:output source="=null" target="calaulatedDataTotalNonEducationalCosts" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:outgoing>Flow_1ef3map</bpmn:outgoing>
