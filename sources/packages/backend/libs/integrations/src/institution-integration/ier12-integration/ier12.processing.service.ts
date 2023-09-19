@@ -3,6 +3,7 @@ import {
   DisbursementSchedule,
   DisbursementScheduleStatus,
   DisbursementValue,
+  FullTimeAssessment,
   RelationshipStatus,
   StudentAssessment,
   StudentRestriction,
@@ -185,6 +186,9 @@ export class IER12ProcessingService {
     const overawardBalance =
       await this.disbursementOverawardService.getOverawardBalance([student.id]);
     const studentOverawardsBalance = overawardBalance[student.id];
+    const assessmentData =
+      pendingAssessment.assessmentData as FullTimeAssessment;
+    const workflowData = pendingAssessment.workflowData;
     const ier12Records: IER12Record[] = [];
     // Create IER12 records per disbursement.
     for (const disbursement of disbursementSchedules) {
@@ -198,8 +202,7 @@ export class IER12ProcessingService {
         studentLastName: user.lastName,
         studentGivenName: user.firstName,
         studentBirthDate: new Date(student.birthDate),
-        dependantStatus:
-          pendingAssessment.workflowData.studentData.dependantStatus,
+        studentDependantStatus: workflowData.studentData.dependantStatus,
         addressInfo,
         programName: educationProgram.name,
         programDescription: educationProgram.description,
@@ -217,7 +220,7 @@ export class IER12ProcessingService {
         booksAndSuppliesCost: offering.programRelatedCosts,
         mandatoryFees: offering.mandatoryFees,
         exceptionExpenses: offering.exceptionalExpenses,
-        totalFundedWeeks: pendingAssessment.assessmentData.weeks,
+        totalFundedWeeks: assessmentData.weeks,
         applicationSubmittedDate: application.submittedDate,
         programYear: applicationProgramYear.programYear,
         applicationStatus: application.applicationStatus,
@@ -235,8 +238,7 @@ export class IER12ProcessingService {
         scholasticStandingChangeType: scholasticStanding?.changeType,
         assessmentDate: pendingAssessment.assessmentDate,
         hasPartner,
-        parentalAssets:
-          pendingAssessment.workflowData.calculatedData.parentalAssets,
+        parentalAssets: workflowData.calculatedData.parentalAssets,
         coeStatus: disbursement.coeStatus,
         disbursementScheduleStatus: disbursement.disbursementScheduleStatus,
         earliestDateOfDisbursement: new Date(disbursement.disbursementDate),
@@ -251,6 +253,34 @@ export class IER12ProcessingService {
         disbursementAwards: this.getDisbursementAwards(
           disbursement.disbursementValues,
         ),
+        studentMaritalStatusCode:
+          workflowData.calculatedData.studentMaritalStatusCode,
+        studentAndSupportingUserContribution:
+          assessmentData.studentTotalFederalContribution +
+          assessmentData.studentTotalProvincialContribution +
+          (assessmentData.parentAssessedContribution ?? 0) +
+          (assessmentData.partnerAssessedContribution ?? 0),
+        parentExpectedContribution: assessmentData.parentAssessedContribution,
+        totalEligibleDependents:
+          workflowData.calculatedData.totalEligibleDependents,
+        familySize: workflowData.calculatedData.familySize,
+        parentalAssetContribution:
+          workflowData.calculatedData.parentalAssetContribution,
+        parentalContribution: workflowData.calculatedData.parentalContribution,
+        parentDiscretionaryIncome:
+          workflowData.calculatedData.parentDiscretionaryIncome,
+        studentLivingWithParents:
+          workflowData.studentData.livingWithParents === "yes",
+        dependantTotalMSOLAllowance:
+          workflowData.calculatedData.dependantTotalMSOLAllowance,
+        studentMSOLAllowance: workflowData.calculatedData.studentMSOLAllowance,
+        totalLivingAllowance: assessmentData.livingAllowance,
+        alimonyCost: assessmentData.alimonyOrChildSupport,
+        childcareCost: workflowData.calculatedData.totalChildCareCost,
+        totalNonEducationalCost:
+          workflowData.calculatedData.totalNonEducationalCost,
+        totalAssessedCost: assessmentData.totalAssessedCost,
+        totalAssessmentNeed: assessmentData.totalAssessmentNeed,
       };
       ier12Records.push(ier12Record);
     }

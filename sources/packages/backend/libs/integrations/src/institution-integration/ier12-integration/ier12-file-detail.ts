@@ -7,6 +7,7 @@ import {
   IERAddressInfo,
   NUMBER_FILLER,
   SPACE_FILLER,
+  ScholasticStandingCode,
   YNFlag,
 } from "./models/ier12-integration.model";
 import { FullTimeAwardTypes } from "@sims/integrations/models";
@@ -28,8 +29,7 @@ export class IER12FileDetail implements IER12FileLine {
   studentGivenName?: string;
   studentBirthDate: Date;
   studentGroupCode: "A" | "B";
-  // Analysis pending for the field.
-  studentMaritalStatusCode?: string;
+  studentMaritalStatusCode: "SI" | "SP" | "MA";
   // Analysis pending for the field.
   studentDisabilityStatusCode?: string;
   // Analysis pending for the field.
@@ -41,8 +41,7 @@ export class IER12FileDetail implements IER12FileLine {
   fieldOfStudyCode: number;
   // Analysis pending for the field.
   areaOfStudyCode?: string;
-  // Analysis pending for the field.
-  levelOfStudyCode?: string;
+  levelOfStudyCode: number;
   currentProgramYear: number;
   cipCode: string;
   nocCode?: string;
@@ -72,16 +71,12 @@ export class IER12FileDetail implements IER12FileLine {
   federalOverawardFlag: YNFlag;
   restrictionFlag: YNFlag;
   scholasticStandingEffectiveDate?: Date;
-  // Analysis pending for the field.
-  scholasticStandingCode?: string;
+  scholasticStandingCode?: ScholasticStandingCode;
   assessmentDate: Date;
   withdrawalDate?: Date;
-  // Analysis pending for the field.
-  applicantAndPartnerExpectedContribution?: number;
-  // Analysis pending for the field.
+  applicantAndPartnerExpectedContribution: number;
   parentExpectedContribution?: number;
-  // Analysis pending for the field.
-  totalExpectedContribution?: number;
+  totalExpectedContribution: number;
   // Analysis pending for the field.
   dependantChildQuantity?: number;
   // Analysis pending for the field.
@@ -92,62 +87,46 @@ export class IER12FileDetail implements IER12FileLine {
   dependantOtherQuantity?: number;
   // Analysis pending for the field.
   dependantPostSecondaryQuantity?: number;
-  // Analysis pending for the field.
   totalDependantQuantity?: number;
-  // Analysis pending for the field.
-  familyMembersQuantity?: number;
+  familyMembersQuantity: number;
   // Analysis pending for the field.
   parent1Flag?: string;
   // Analysis pending for the field.
   parent2Flag?: string;
   partnerFlag: YNFlag;
   parentalAssets?: number;
-  // Analysis pending for the field.
   parentalAssetsExpectedContribution?: number;
-  // Analysis pending for the field.
   parentalIncomeExpectedContribution?: number;
   // Analysis pending for the field.
   parentalVoluntaryContribution?: number;
-  // Analysis pending for the field.
   parentalDiscretionaryIncome?: number;
   // Analysis pending for the field.
   parentalDiscretionaryAnnualIncomeFormulaResult?: number;
-  // Analysis pending for the field.
-  studentLivingAtHomeFlag?: string;
+  studentLivingAtHomeFlag: YNFlag;
   // Analysis pending for the field.
   partnerInSchoolFlag?: string;
   // Analysis pending for the field.
   otherEducationalExpenses?: number;
-  // Analysis pending for the field.
-  totalEducationalExpenses?: number;
+  totalEducationalExpenses: number;
   // Analysis pending for the field.
   extraLocalTransportationCosts?: number;
   // Analysis pending for the field.
   extraShelterCosts?: number;
-  // Analysis pending for the field.
   dependantLivingAllowance?: number;
-  // Analysis pending for the field.
-  studentLivingAllowance?: number;
-  // Analysis pending for the field.
-  totalLivingAllowance?: number;
-  // Analysis pending for the field.
-  alimonyCosts?: number;
+  studentLivingAllowance: number;
+  totalLivingAllowance: number;
+  alimonyCost?: number;
   // Analysis pending for the field.
   otherDiscretionaryCosts?: number;
   // Analysis pending for the field.
   returnTransportationCosts?: number;
   // Analysis pending for the field.
   partnerStudentLoanPaymentCosts?: number;
-  // Analysis pending for the field.
-  childcareCosts?: number;
-  // Analysis pending for the field.
-  totalNonEducationalCosts?: number;
-  // Analysis pending for the field.
-  totalExpenses?: number;
-  // Analysis pending for the field.
-  assessedNeed?: number;
-  // Analysis pending for the field.
-  studentEligibleAward?: number;
+  childcareCost?: number;
+  totalNonEducationalCost: number;
+  totalExpenses: number;
+  assessedNeed: number;
+  studentEligibleAward: number;
   // Analysis pending for the field.
   mssAssessedNeedFlag?: string;
   // Analysis pending for the field.
@@ -200,7 +179,7 @@ export class IER12FileDetail implements IER12FileLine {
     record.appendOptionalStringWithFiller(this.studentGivenName, 15);
     record.appendFormattedDate(this.studentBirthDate);
     record.appendStringWithFiller(this.studentGroupCode, 4);
-    record.appendOptionalStringWithFiller(this.studentMaritalStatusCode, 4);
+    record.appendStringWithFiller(this.studentMaritalStatusCode, 4);
     record.appendOptionalStringWithFiller(this.studentDisabilityStatusCode, 4);
     record.appendOptionalStringWithFiller(
       this.applicationDisabilityStatusFlag,
@@ -216,7 +195,7 @@ export class IER12FileDetail implements IER12FileLine {
     record.appendStringWithFiller(this.credentialType, 25);
     record.appendNumberWithFiller(this.fieldOfStudyCode, 4);
     record.appendOptionalStringWithFiller(this.areaOfStudyCode, 4);
-    record.appendOptionalStringWithFiller(this.levelOfStudyCode, 4);
+    record.appendNumberWithFiller(this.levelOfStudyCode, 4);
     record.appendNumberWithFiller(this.currentProgramYear, 2);
     record.append(this.cipCode, 6);
     record.appendWithStartFiller(this.nocCode ?? 0, 5, NUMBER_FILLER); // NOC code can only be number in program.
@@ -248,12 +227,12 @@ export class IER12FileDetail implements IER12FileLine {
     record.appendOptionalStringWithFiller(this.scholasticStandingCode, 4);
     record.appendFormattedDate(this.assessmentDate);
     record.appendOptionalFormattedDate(this.withdrawalDate);
-    record.appendOptionalNumberWithFiller(
+    record.appendNumberWithFiller(
       this.applicantAndPartnerExpectedContribution,
       10,
     );
     record.appendOptionalNumberWithFiller(this.parentExpectedContribution, 10);
-    record.appendOptionalNumberWithFiller(this.totalExpectedContribution, 10);
+    record.appendNumberWithFiller(this.totalExpectedContribution, 10);
     record.appendOptionalNumberWithFiller(this.dependantChildQuantity, 3);
     record.appendOptionalNumberWithFiller(
       this.dependantChildInDaycareQuantity,
@@ -266,7 +245,7 @@ export class IER12FileDetail implements IER12FileLine {
       3,
     );
     record.appendOptionalNumberWithFiller(this.totalDependantQuantity, 3);
-    record.appendOptionalNumberWithFiller(this.familyMembersQuantity, 3);
+    record.appendNumberWithFiller(this.familyMembersQuantity, 3);
     record.appendOptionalStringWithFiller(this.parent1Flag, 1);
     record.appendOptionalStringWithFiller(this.parent2Flag, 1);
     record.append(this.partnerFlag, 1);
@@ -288,30 +267,30 @@ export class IER12FileDetail implements IER12FileLine {
       this.parentalDiscretionaryAnnualIncomeFormulaResult,
       10,
     );
-    record.appendOptionalStringWithFiller(this.studentLivingAtHomeFlag, 1);
+    record.appendStringWithFiller(this.studentLivingAtHomeFlag, 1);
     record.appendOptionalStringWithFiller(this.partnerInSchoolFlag, 1);
     record.appendOptionalNumberWithFiller(this.otherEducationalExpenses, 10);
-    record.appendOptionalNumberWithFiller(this.totalEducationalExpenses, 10);
+    record.appendNumberWithFiller(this.totalEducationalExpenses, 10);
     record.appendOptionalNumberWithFiller(
       this.extraLocalTransportationCosts,
       10,
     );
     record.appendOptionalNumberWithFiller(this.extraShelterCosts, 10);
     record.appendOptionalNumberWithFiller(this.dependantLivingAllowance, 10);
-    record.appendOptionalNumberWithFiller(this.studentLivingAllowance, 10);
-    record.appendOptionalNumberWithFiller(this.totalLivingAllowance, 10);
-    record.appendOptionalNumberWithFiller(this.alimonyCosts, 10);
+    record.appendNumberWithFiller(this.studentLivingAllowance, 10);
+    record.appendNumberWithFiller(this.totalLivingAllowance, 10);
+    record.appendOptionalNumberWithFiller(this.alimonyCost, 10);
     record.appendOptionalNumberWithFiller(this.otherDiscretionaryCosts, 10);
     record.appendOptionalNumberWithFiller(this.returnTransportationCosts, 10);
     record.appendOptionalNumberWithFiller(
       this.partnerStudentLoanPaymentCosts,
       10,
     );
-    record.appendOptionalNumberWithFiller(this.childcareCosts, 10);
-    record.appendOptionalNumberWithFiller(this.totalNonEducationalCosts, 10);
-    record.appendOptionalNumberWithFiller(this.totalExpenses, 10);
-    record.appendOptionalNumberWithFiller(this.assessedNeed, 10);
-    record.appendOptionalNumberWithFiller(this.studentEligibleAward, 10);
+    record.appendOptionalNumberWithFiller(this.childcareCost, 10);
+    record.appendNumberWithFiller(this.totalNonEducationalCost, 10);
+    record.appendNumberWithFiller(this.totalExpenses, 10);
+    record.appendNumberWithFiller(this.assessedNeed, 10);
+    record.appendNumberWithFiller(this.studentEligibleAward, 10);
     record.appendOptionalStringWithFiller(this.mssAssessedNeedFlag, 1);
     record.appendOptionalNumberWithFiller(this.mssAssessedNeed, 10);
     record.appendOptionalNumberWithFiller(

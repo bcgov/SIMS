@@ -7,6 +7,7 @@ import {
   IER12FileLine,
   IER12Record,
   IERAward,
+  ScholasticStandingCode,
   YNFlag,
 } from "./models/ier12-integration.model";
 import {
@@ -48,12 +49,17 @@ export class IER12IntegrationService extends SFTPIntegrationBase<void> {
       ierFileDetail.studentGivenName = ierRecord.studentGivenName;
       ierFileDetail.studentBirthDate = ierRecord.studentBirthDate;
       ierFileDetail.studentGroupCode =
-        ierRecord.dependantStatus === "dependant" ? "A" : "B";
+        ierRecord.studentDependantStatus === "dependant" ? "A" : "B";
+      ierFileDetail.studentMaritalStatusCode =
+        ierRecord.studentMaritalStatusCode;
       ierFileDetail.addressInfo = ierRecord.addressInfo;
       ierFileDetail.programName = ierRecord.programName;
       ierFileDetail.programDescription = ierRecord.programDescription;
       ierFileDetail.credentialType = ierRecord.credentialType;
       ierFileDetail.fieldOfStudyCode = ierRecord.fieldOfStudyCode;
+      ierFileDetail.levelOfStudyCode = this.getLevelOfStudyCode(
+        ierRecord.credentialType,
+      );
       ierFileDetail.currentProgramYear = ierRecord.currentProgramYear;
       // Removing the given character as per IER 12 specification.
       ierFileDetail.cipCode = ierRecord.cipCode.replace(".", "");
@@ -122,23 +128,88 @@ export class IER12IntegrationService extends SFTPIntegrationBase<void> {
           ierRecord.scholasticStandingChangeType,
           ierRecord.studyEndDate,
         );
+      ierFileDetail.scholasticStandingCode = this.getScholasticStandingCode(
+        ierRecord.assessmentTriggerType,
+        ierRecord.scholasticStandingChangeType,
+      );
       ierFileDetail.assessmentDate = ierRecord.assessmentDate;
       ierFileDetail.withdrawalDate = this.getWithdrawalDate(
         ierRecord.assessmentTriggerType,
         ierRecord.scholasticStandingChangeType,
         ierRecord.studyEndDate,
       );
+      ierFileDetail.applicantAndPartnerExpectedContribution =
+        combineDecimalPlaces(ierRecord.studentAndSupportingUserContribution);
+      ierFileDetail.parentExpectedContribution =
+        ierRecord.parentExpectedContribution
+          ? combineDecimalPlaces(ierRecord.parentExpectedContribution)
+          : 0;
+      ierFileDetail.totalExpectedContribution = combineDecimalPlaces(
+        ierRecord.studentAndSupportingUserContribution,
+      );
+      ierFileDetail.totalDependantQuantity = ierRecord.totalEligibleDependents;
+      ierFileDetail.familyMembersQuantity = ierRecord.familySize;
       ierFileDetail.partnerFlag = this.convertToYNFlag(ierRecord.hasPartner);
       ierFileDetail.parentalAssets = ierRecord.parentalAssets
         ? combineDecimalPlaces(ierRecord.parentalAssets)
         : 0;
+      ierFileDetail.parentalAssetsExpectedContribution =
+        ierRecord.parentalAssetContribution
+          ? combineDecimalPlaces(ierRecord.parentalAssetContribution)
+          : 0;
+      ierFileDetail.parentalIncomeExpectedContribution =
+        ierRecord.parentalContribution
+          ? combineDecimalPlaces(ierRecord.parentalContribution)
+          : 0;
+      ierFileDetail.parentalDiscretionaryIncome =
+        ierRecord.parentDiscretionaryIncome
+          ? combineDecimalPlaces(ierRecord.parentDiscretionaryIncome)
+          : 0;
+      ierFileDetail.studentLivingAtHomeFlag = this.convertToYNFlag(
+        ierRecord.studentLivingWithParents,
+      );
+      ierFileDetail.totalEducationalExpenses = combineDecimalPlaces(
+        ierRecord.exceptionExpenses +
+          ierRecord.tuitionFees +
+          ierRecord.booksAndSuppliesCost,
+      );
+      ierFileDetail.dependantLivingAllowance =
+        ierRecord.dependantTotalMSOLAllowance
+          ? combineDecimalPlaces(ierRecord.dependantTotalMSOLAllowance)
+          : 0;
+      ierFileDetail.studentLivingAllowance = combineDecimalPlaces(
+        ierRecord.studentMSOLAllowance,
+      );
+      ierFileDetail.totalLivingAllowance = combineDecimalPlaces(
+        ierRecord.totalLivingAllowance,
+      );
+      ierFileDetail.alimonyCost = ierRecord.alimonyCost
+        ? combineDecimalPlaces(ierRecord.alimonyCost)
+        : 0;
+      ierFileDetail.childcareCost = ierRecord.childcareCost
+        ? combineDecimalPlaces(ierRecord.childcareCost)
+        : 0;
+      ierFileDetail.totalNonEducationalCost = combineDecimalPlaces(
+        ierRecord.totalNonEducationalCost,
+      );
+      ierFileDetail.totalExpenses = combineDecimalPlaces(
+        ierRecord.totalAssessedCost,
+      );
+      ierFileDetail.assessedNeed = combineDecimalPlaces(
+        ierRecord.totalAssessmentNeed,
+      );
+      ierFileDetail.studentEligibleAward = this.getSumOfAwards(
+        ierRecord.assessmentAwards,
+        {
+          awardTypeExclusions: [DisbursementValueType.BCTotalGrant],
+        },
+      );
       ierFileDetail.coeStatus = ierRecord.coeStatus;
       ierFileDetail.disbursementScheduleStatus =
         ierRecord.disbursementScheduleStatus;
       ierFileDetail.earliestDateOfDisbursement =
         ierRecord.earliestDateOfDisbursement;
       ierFileDetail.dateOfDisbursement = ierRecord.dateOfDisbursement;
-
       ierFileDetail.disbursementCancelDate = ierRecord.disbursementCancelDate;
       ierFileDetail.fundingDetails = this.getFundingDetails(
         ierRecord.disbursementAwards,
@@ -176,6 +247,37 @@ export class IER12IntegrationService extends SFTPIntegrationBase<void> {
       return studyEndDate;
     }
     return null;
+  }
+
+  /**
+   * Get scholastic standing code.
+   * Scholastic standing code does not consider the
+   * scholastic standing change type `Student withdrew from program`.
+   * @param assessmentTriggerType
+   * @param scholasticStandingChangeType
+   * @returns scholastic standing code.
+   */
+  private getScholasticStandingCode(
+    assessmentTriggerType: AssessmentTriggerType,
+    scholasticStandingChangeType: StudentScholasticStandingChangeType,
+  ): ScholasticStandingCode | null {
+    if (
+      assessmentTriggerType !==
+        AssessmentTriggerType.ScholasticStandingChange ||
+      scholasticStandingChangeType ===
+        StudentScholasticStandingChangeType.StudentWithdrewFromProgram
+    ) {
+      return null;
+    }
+    const scholasticStandingCodeMap = {
+      [StudentScholasticStandingChangeType.StudentDidNotCompleteProgram]:
+        ScholasticStandingCode.UC,
+      [StudentScholasticStandingChangeType.StudentCompletedProgramEarly]:
+        ScholasticStandingCode.EC,
+      [StudentScholasticStandingChangeType.ChangeInIntensity]:
+        ScholasticStandingCode.CI,
+    };
+    return scholasticStandingCodeMap[scholasticStandingChangeType];
   }
 
   /**
@@ -271,5 +373,22 @@ export class IER12IntegrationService extends SFTPIntegrationBase<void> {
    */
   private convertToYNFlag(value: boolean): YNFlag {
     return value ? YNFlag.Y : YNFlag.N;
+  }
+
+  /**
+   * Get level of study code from credential type.
+   * @param credentialType credential type.
+   * @returns level of study code.
+   */
+  private getLevelOfStudyCode(credentialType: string): number {
+    const levelOfStudyCodeMap: Record<string, number> = {
+      qualifyingStudies: 1,
+      undergraduateDegree: 3,
+      graduateDegreeOrMasters: 5,
+      postGraduateOrDoctorate: 6,
+      undergraduateDiploma: 7,
+      undergraduateCertificate: 8,
+    };
+    return levelOfStudyCodeMap[credentialType];
   }
 }

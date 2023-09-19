@@ -34,7 +34,24 @@ export interface IER12Record {
   studentLastName: string;
   studentGivenName?: string;
   studentBirthDate: Date;
-  dependantStatus: "dependant" | "independant";
+  studentDependantStatus: "dependant" | "independant";
+  studentMaritalStatusCode: "SI" | "SP" | "MA";
+  studentAndSupportingUserContribution: number;
+  parentExpectedContribution?: number;
+  totalEligibleDependents?: number;
+  familySize: number;
+  parentalAssetContribution?: number;
+  parentalContribution?: number;
+  parentDiscretionaryIncome?: number;
+  studentLivingWithParents: boolean;
+  dependantTotalMSOLAllowance?: number;
+  studentMSOLAllowance: number;
+  totalLivingAllowance: number;
+  alimonyCost?: number;
+  childcareCost?: number;
+  totalNonEducationalCost: number;
+  totalAssessedCost: number;
+  totalAssessmentNeed: number;
   addressInfo: IERAddressInfo;
   programName: string;
   programDescription: string;
@@ -82,6 +99,12 @@ export enum ApplicationStatusCode {
   Enrolment = "COER",
   Completed = "COMP",
   Cancelled = "CANC",
+}
+
+export enum ScholasticStandingCode {
+  UC = "UC",
+  EC = "EC",
+  CI = "CI",
 }
 
 export enum YNFlag {

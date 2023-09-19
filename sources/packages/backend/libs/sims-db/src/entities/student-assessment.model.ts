@@ -275,7 +275,7 @@ interface BaseAssessment {
 /**
  * Interface for FullTime assessment payload.
  */
-interface FullTimeAssessment extends BaseAssessment {
+export interface FullTimeAssessment extends BaseAssessment {
   federalAssessmentNeed: number;
   provincialAssessmentNeed: number;
   exceptionalEducationCost: number;
@@ -296,7 +296,7 @@ interface FullTimeAssessment extends BaseAssessment {
 /**
  * Interface for PartTime assessment payload.
  */
-interface PartTimeAssessment extends BaseAssessment {
+export interface PartTimeAssessment extends BaseAssessment {
   miscellaneousCost: number;
   totalAcademicExpenses: number;
 }
@@ -320,8 +320,19 @@ export interface WorkflowData {
   studentData: {
     dependantStatus: "dependant" | "independant";
     relationshipStatus: RelationshipStatus;
+    livingWithParents: string;
   };
   calculatedData: {
-    parentalAssets: number;
+    parentalAssets?: number;
+    studentMaritalStatusCode: "SI" | "SP" | "MA";
+    totalEligibleDependents?: number;
+    familySize: number;
+    parentalAssetContribution?: number;
+    parentalContribution?: number;
+    parentDiscretionaryIncome?: number;
+    dependantTotalMSOLAllowance?: number;
+    studentMSOLAllowance: number;
+    totalChildCareCost?: number;
+    totalNonEducationalCost: number;
   };
 }
