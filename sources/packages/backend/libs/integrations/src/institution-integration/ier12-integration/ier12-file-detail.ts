@@ -319,6 +319,9 @@ export class IER12FileDetail implements IER12FileLine {
     record.append(this.getAwardDetails(FullTimeAwardTypes.BCAG), 14);
     record.append(this.getAwardDetails(FullTimeAwardTypes.SBSD), 14);
     record.append(this.getAwardDetails(FullTimeAwardTypes.BGPD), 14);
+    // Filler to populate the award details on 10th position.
+    record.appendStringWithFiller("", 4);
+    record.appendNumberWithFiller(0, 10);
     return record.toString();
   }
 
