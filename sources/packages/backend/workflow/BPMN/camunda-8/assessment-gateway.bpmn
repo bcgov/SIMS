@@ -423,7 +423,7 @@
           <zeebe:output source="=null" target="calculatedDataParentalAssetContribution" />
           <zeebe:output source="=null" target="calculatedDataParentalContribution" />
           <zeebe:output source="=null" target="calculatedDataTotalDiscretionaryIncome" />
-          <zeebe:output source="=null" target="calulatedDataStudentMaritalStatusCode" />
+          <zeebe:output source="=null" target="calculatedDataStudentMaritalStatusCode" />
           <zeebe:output source="=null" target="calculatedDataDependantTotalMSOLAllowance" />
           <zeebe:output source="=null" target="calaulatedDataTotalNonEducationalCost" />
           <zeebe:output source="=null" target="calculatedDataStudentMSOLAllowance" />
