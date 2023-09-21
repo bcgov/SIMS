@@ -54,6 +54,7 @@ export class StartApplicationAssessmentProcessor {
     } finally {
       this.logger.logProcessSummary(processSummary);
       await logProcessSummaryToJobLogger(processSummary, job);
+      // Todo: add queue history cleaning logic as in schedulers.
     }
   }
 
