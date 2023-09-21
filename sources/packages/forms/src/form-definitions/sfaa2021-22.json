@@ -10223,9 +10223,9 @@
               "tags": [],
               "properties": {},
               "conditional": {
-                "show": null,
-                "when": null,
-                "eq": "",
+                "show": "true",
+                "when": "howWillYouBeAttendingTheProgram",
+                "eq": "Full Time",
                 "json": ""
               },
               "customConditional": "",
@@ -10339,9 +10339,9 @@
               "tags": [],
               "properties": {},
               "conditional": {
-                "show": null,
-                "when": null,
-                "eq": "",
+                "show": "true",
+                "when": "howWillYouBeAttendingTheProgram",
+                "eq": "Full Time",
                 "json": ""
               },
               "customConditional": "",
@@ -10764,9 +10764,9 @@
               "attributes": {},
               "validateOn": "change",
               "conditional": {
-                "show": null,
-                "when": null,
-                "eq": ""
+                "show": "true",
+                "when": "howWillYouBeAttendingTheProgram",
+                "eq": "Full Time"
               },
               "overlay": {
                 "style": "",
@@ -16580,9 +16580,9 @@
               "tags": [],
               "properties": {},
               "conditional": {
-                "show": null,
-                "when": null,
-                "eq": "",
+                "show": "true",
+                "when": "howWillYouBeAttendingTheProgram",
+                "eq": "Full Time",
                 "json": ""
               },
               "customConditional": "",
@@ -18153,9 +18153,9 @@
               "tags": [],
               "properties": {},
               "conditional": {
-                "show": null,
-                "when": null,
-                "eq": "",
+                "show": "true",
+                "when": "howWillYouBeAttendingTheProgram",
+                "eq": "Full Time",
                 "json": ""
               },
               "customConditional": "",
@@ -23881,9 +23881,9 @@
           "customConditional": "",
           "conditional": {
             "json": "",
-            "show": null,
-            "when": null,
-            "eq": ""
+            "show": "true",
+            "when": "howWillYouBeAttendingTheProgram",
+            "eq": "Full Time"
           },
           "logic": [],
           "attributes": {},
@@ -24833,9 +24833,9 @@
           "customConditional": "",
           "conditional": {
             "json": "",
-            "show": null,
-            "when": null,
-            "eq": ""
+            "show": "true",
+            "when": "howWillYouBeAttendingTheProgram",
+            "eq": "Full Time"
           },
           "logic": [],
           "attributes": {},
@@ -27232,9 +27232,9 @@
           "customConditional": "",
           "conditional": {
             "json": "",
-            "show": null,
-            "when": null,
-            "eq": ""
+            "show": "true",
+            "when": "howWillYouBeAttendingTheProgram",
+            "eq": "Full Time"
           },
           "logic": [],
           "attributes": {},
@@ -27686,9 +27686,9 @@
               "tags": [],
               "properties": {},
               "conditional": {
-                "show": null,
-                "when": null,
-                "eq": "",
+                "show": "true",
+                "when": "howWillYouBeAttendingTheProgram",
+                "eq": "Full Time",
                 "json": ""
               },
               "customConditional": "",
@@ -27942,9 +27942,9 @@
               "tags": [],
               "properties": {},
               "conditional": {
-                "show": null,
-                "when": null,
-                "eq": "",
+                "show": "true",
+                "when": "howWillYouBeAttendingTheProgram",
+                "eq": "Full Time",
                 "json": ""
               },
               "customConditional": "",
@@ -28198,9 +28198,9 @@
               "tags": [],
               "properties": {},
               "conditional": {
-                "show": null,
-                "when": null,
-                "eq": "",
+                "show": "true",
+                "when": "howWillYouBeAttendingTheProgram",
+                "eq": "Full Time",
                 "json": ""
               },
               "customConditional": "",
@@ -28674,9 +28674,9 @@
           "customConditional": "",
           "conditional": {
             "json": "",
-            "show": null,
-            "when": null,
-            "eq": ""
+            "show": "true",
+            "when": "howWillYouBeAttendingTheProgram",
+            "eq": "Full Time"
           },
           "logic": [],
           "attributes": {},
@@ -30081,9 +30081,9 @@
           "customConditional": "",
           "conditional": {
             "json": "",
-            "show": null,
-            "when": null,
-            "eq": ""
+            "show": "true",
+            "when": "howWillYouBeAttendingTheProgram",
+            "eq": "Full Time"
           },
           "logic": [],
           "attributes": {},
@@ -30497,9 +30497,9 @@
           "customConditional": "",
           "conditional": {
             "json": "",
-            "show": null,
-            "when": null,
-            "eq": ""
+            "show": "true",
+            "when": "howWillYouBeAttendingTheProgram",
+            "eq": "Full Time"
           },
           "logic": [],
           "attributes": {},
