@@ -31,7 +31,6 @@ describe(
 
     it("Should throw an error when the workflow createProcessInstance method throws an error.", async () => {
       // Arrange
-      const dummyException = new Error("Dummy error");
       const job = createMock<Job<StartAssessmentQueueInDTO>>({
         data: {
           workflowName: "dummy-workflow-name",
