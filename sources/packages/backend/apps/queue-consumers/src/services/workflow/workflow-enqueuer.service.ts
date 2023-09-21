@@ -37,27 +37,23 @@ export class WorkflowEnqueuerService {
     try {
       summary.info(
         "Checking database for applications with assessments waiting to be triggered.",
-        LogScopes.Summary,
       );
       const applications =
         await this.applicationService.getApplicationsToStartAssessments();
-      summary.info(
-        `Found ${applications.length} applications.`,
-        LogScopes.Summary,
-      );
+      summary.info(`Found ${applications.length} applications.`);
       if (!applications.length) {
         return;
       }
-      summary.children = await processInParallel(
+      const children = await processInParallel(
         (application: Application) => this.queueNextAssessment(application),
         applications,
       );
-      summary.info("All assessments were processed.", LogScopes.Summary);
+      summary.children(...children);
+      summary.info("All assessments were processed.");
     } catch (error: unknown) {
       summary.error(
         "Error while enqueueing assessment workflows to be processed.",
         error,
-        LogScopes.Summary,
       );
     }
   }

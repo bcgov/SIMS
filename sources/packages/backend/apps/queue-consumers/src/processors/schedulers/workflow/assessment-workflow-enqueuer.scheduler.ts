@@ -1,18 +1,18 @@
 import { InjectQueue, Process, Processor } from "@nestjs/bull";
 import { Job, Queue } from "bull";
 import { BaseScheduler } from "../base-scheduler";
-import { QueueNames, parseJSONError } from "@sims/utilities";
+import { QueueNames } from "@sims/utilities";
 import { QueueService } from "@sims/services/queue";
-import {
-  QueueProcessSummary,
-  QueueProcessSummaryResult,
-} from "../../models/processors.models";
 import { WorkflowEnqueuerService } from "../../../services";
 import {
   InjectLogger,
   LoggerService,
   ProcessSummary,
 } from "@sims/utilities/logger";
+import {
+  getSuccessMessageWithAttentionCheck,
+  logProcessSummaryToJobLogger,
+} from "../../../utilities";
 
 /**
  * Search for assessments that have some pending operation, for instance,
@@ -35,39 +35,33 @@ export class AssessmentWorkflowEnqueuerScheduler extends BaseScheduler<void> {
    * @returns processing result.
    */
   @Process()
-  async enqueueAssessmentOperations(
-    job: Job<void>,
-  ): Promise<QueueProcessSummaryResult> {
-    const summary = new QueueProcessSummary({
-      appLogger: this.logger,
-      jobLogger: job,
-    });
-    await summary.info(
-      "Checking application assessments to be queued for start.",
-    );
-    // Process summary to be populated by the enqueueStartAssessmentWorkflows.
-    // In case an unexpected error happen the finally block will still be able to
-    // output the partial information captured by the processSummary.
+  async enqueueAssessmentOperations(job: Job<void>): Promise<string[]> {
     const processSummary = new ProcessSummary();
     try {
+      processSummary.info(
+        "Checking application assessments to be queued for start.",
+      );
+      // Process summary to be populated by the enqueueStartAssessmentWorkflows.
+      // In case an unexpected error happen the finally block will still be able to
+      // output the partial information captured by the processSummary.
+      const serviceProcessSummary = new ProcessSummary();
+      processSummary.children(serviceProcessSummary);
       await this.workflowEnqueuerService.enqueueStartAssessmentWorkflows(
+        serviceProcessSummary,
+      );
+      return getSuccessMessageWithAttentionCheck(
+        "Process finalized with success.",
         processSummary,
       );
-      await summary.info(
-        "All application assessments queued with success, check logs for further details.",
-      );
     } catch (error: unknown) {
-      await summary.error(
-        `Unexpected error while executing the job check logs for further details. ${parseJSONError(
-          error,
-        )}`,
-      );
+      const errorMessage = "Unexpected error while executing the job.";
+      processSummary.error(errorMessage, error);
+      return [errorMessage];
     } finally {
       this.logger.logProcessSummary(processSummary);
-      await summary.logProcessSummaryToJobLogger(processSummary);
+      await logProcessSummaryToJobLogger(processSummary, job);
+      await this.cleanSchedulerQueueHistory();
     }
-    await this.cleanSchedulerQueueHistory();
-    return summary.getSummary();
   }
 
   @InjectLogger()
