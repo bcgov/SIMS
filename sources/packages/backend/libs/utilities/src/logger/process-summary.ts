@@ -110,8 +110,9 @@ export class ProcessSummary {
   }
 
   /**
-   *
-   * @param children
+   * Appends a collection o children logs (or a single one)
+   * to the list of combined log entries.
+   * @param children children (or child) to be appended.
    */
   children(...children: ProcessSummary[]) {
     this.logs[LogScopes.Combined].push(children);
