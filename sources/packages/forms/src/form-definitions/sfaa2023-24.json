@@ -1984,7 +1984,7 @@
                       "refreshOnChange": false,
                       "customClass": "banner-info",
                       "key": "html12",
-                      "customConditional": "show = data.myProgramNotListed.programnotListed || (data.myStudyPeriodIsntListed && data.myStudyPeriodIsntListed.offeringnotListed);",
+                      "customConditional": "show = data.programnotListed || data.offeringnotListed;",
                       "type": "htmlelement",
                       "input": false,
                       "tableView": false,
@@ -2045,8 +2045,7 @@
                       "allowMultipleMasks": false,
                       "addons": [],
                       "tag": "p",
-                      "id": "evaf9nc",
-                      "tags": []
+                      "id": "evaf9nc"
                     },
                     {
                       "label": "HTML",
@@ -10223,9 +10222,9 @@
               "tags": [],
               "properties": {},
               "conditional": {
-                "show": null,
-                "when": null,
-                "eq": "",
+                "show": "true",
+                "when": "howWillYouBeAttendingTheProgram",
+                "eq": "Full Time",
                 "json": ""
               },
               "customConditional": "",
@@ -10339,9 +10338,9 @@
               "tags": [],
               "properties": {},
               "conditional": {
-                "show": null,
-                "when": null,
-                "eq": "",
+                "show": "true",
+                "when": "howWillYouBeAttendingTheProgram",
+                "eq": "Full Time",
                 "json": ""
               },
               "customConditional": "",
@@ -10764,9 +10763,9 @@
               "attributes": {},
               "validateOn": "change",
               "conditional": {
-                "show": null,
-                "when": null,
-                "eq": ""
+                "show": "true",
+                "when": "howWillYouBeAttendingTheProgram",
+                "eq": "Full Time"
               },
               "overlay": {
                 "style": "",
@@ -16580,9 +16579,9 @@
               "tags": [],
               "properties": {},
               "conditional": {
-                "show": null,
-                "when": null,
-                "eq": "",
+                "show": "true",
+                "when": "howWillYouBeAttendingTheProgram",
+                "eq": "Full Time",
                 "json": ""
               },
               "customConditional": "",
@@ -16809,7 +16808,7 @@
               "defaultValue": ""
             },
             {
-              "label": "<strong>Will your partner be a full-time post-secondary student for some or all of your study period?</strong>",
+              "label": "<strong>Will your partner be a full-time post-secondary student for some or all of your study period?</strong>",
               "labelPosition": "top",
               "labelWidth": "",
               "labelMargin": "",
@@ -17330,7 +17329,7 @@
               "id": "e1rvvnw"
             },
             {
-              "label": "<strong>Will your partner be in receipt of Employment Insurance benefits during the your study period?</strong>",
+              "label": "<strong>Will your partner be in receipt of Employment Insurance benefits during the your study period?</strong>",
               "labelPosition": "top",
               "labelWidth": "",
               "labelMargin": "",
@@ -17442,7 +17441,7 @@
                 "eq": "yes"
               },
               "type": "panel",
-              "label": "Will your partner be in receipt of Employment Insurance benefits during the your study period Panel",
+              "label": "Will your partner be in receipt of Employment Insurance benefits during the your study period Panel",
               "input": false,
               "tableView": false,
               "components": [
@@ -17681,7 +17680,7 @@
               "defaultValue": ""
             },
             {
-              "title": "Will your partner be in receipt of federal or provincial permanent disability benefits during the your study period Panel",
+              "title": "Will your partner be in receipt of federal or provincial permanent disability benefits during the your study period Panel",
               "breadcrumbClickable": false,
               "buttonSettings": {
                 "previous": false,
@@ -17842,7 +17841,7 @@
               "id": "eh2gbg4"
             },
             {
-              "label": "<strong>Will your partner be paying a Canada Student Loan and/or a provincial student loan regular scheduled payments during the your study period?</strong>",
+              "label": "<strong>Will your partner be paying a Canada Student Loan and/or a provincial student loan regular scheduled payments during the your study period?</strong>",
               "labelPosition": "top",
               "labelWidth": "",
               "labelMargin": "",
@@ -18097,7 +18096,7 @@
               "id": "e5j24i"
             },
             {
-              "label": "<strong>Will your partner be paying for child support and/or spousal support during the your study period?</strong>",
+              "label": "<strong>Will your partner be paying for child support and/or spousal support during the your study period?</strong>",
               "labelPosition": "top",
               "labelWidth": "",
               "labelMargin": "",
@@ -18153,9 +18152,9 @@
               "tags": [],
               "properties": {},
               "conditional": {
-                "show": null,
-                "when": null,
-                "eq": "",
+                "show": "true",
+                "when": "howWillYouBeAttendingTheProgram",
+                "eq": "Full Time",
                 "json": ""
               },
               "customConditional": "",
@@ -23047,7 +23046,7 @@
                   "value": ""
                 }
               ],
-              "content": "2020 Income tax return",
+              "content": "2020 Income tax return",
               "refreshOnChange": false,
               "customClass": "",
               "hidden": false,
@@ -23626,244 +23625,6 @@
           "lazyLoad": false
         },
         {
-          "title": "Part time award types panel",
-          "theme": "default",
-          "breadcrumb": "default",
-          "breadcrumbClickable": false,
-          "buttonSettings": {
-            "previous": false,
-            "cancel": false,
-            "next": false
-          },
-          "scrollToTop": false,
-          "tooltip": "",
-          "customClass": "",
-          "collapsible": false,
-          "hidden": false,
-          "hideLabel": true,
-          "disabled": false,
-          "modalEdit": false,
-          "key": "PartTimeAwardTypePanel",
-          "tags": [],
-          "properties": {},
-          "customConditional": "",
-          "conditional": {
-            "json": "",
-            "show": "true",
-            "when": "howWillYouBeAttendingTheProgram",
-            "eq": "Part Time"
-          },
-          "nextPage": "",
-          "logic": [],
-          "attributes": {},
-          "overlay": {
-            "style": "",
-            "page": "",
-            "left": "",
-            "top": "",
-            "width": "",
-            "height": ""
-          },
-          "type": "panel",
-          "label": "2020 Tax Return Income Panel",
-          "tabindex": "",
-          "input": false,
-          "tableView": false,
-          "components": [
-            {
-              "label": "HTML",
-              "labelWidth": "",
-              "labelMargin": "",
-              "tag": "h3",
-              "className": "category-header-medium primary-color",
-              "attrs": [
-                {
-                  "attr": "",
-                  "value": ""
-                }
-              ],
-              "content": "Award Types",
-              "refreshOnChange": false,
-              "customClass": "",
-              "hidden": false,
-              "modalEdit": false,
-              "key": "html96",
-              "tags": [],
-              "properties": {},
-              "conditional": {
-                "show": "",
-                "when": null,
-                "eq": "",
-                "json": ""
-              },
-              "customConditional": "",
-              "logic": [],
-              "attributes": {},
-              "overlay": {
-                "style": "",
-                "page": "",
-                "left": "",
-                "top": "",
-                "width": "",
-                "height": ""
-              },
-              "type": "htmlelement",
-              "input": false,
-              "tableView": false,
-              "placeholder": "",
-              "prefix": "",
-              "suffix": "",
-              "multiple": false,
-              "defaultValue": null,
-              "protected": false,
-              "unique": false,
-              "persistent": false,
-              "clearOnHide": true,
-              "refreshOn": "",
-              "redrawOn": "",
-              "dataGridLabel": false,
-              "labelPosition": "top",
-              "description": "",
-              "errorLabel": "",
-              "tooltip": "",
-              "hideLabel": false,
-              "tabindex": "",
-              "disabled": false,
-              "autofocus": false,
-              "dbIndex": false,
-              "customDefaultValue": "",
-              "calculateValue": "",
-              "calculateServer": false,
-              "widget": null,
-              "validateOn": "change",
-              "validate": {
-                "required": false,
-                "custom": "",
-                "customPrivate": false,
-                "strictDateValidation": false,
-                "multiple": false,
-                "unique": false
-              },
-              "allowCalculateOverride": false,
-              "encrypted": false,
-              "showCharCount": false,
-              "showWordCount": false,
-              "allowMultipleMasks": false,
-              "addons": [],
-              "id": "eoetsejm"
-            },
-            {
-              "autofocus": false,
-              "input": true,
-              "tableView": true,
-              "inputType": "radio",
-              "label": "<strong>Do you want to receive loans and grants, or only grants?</strong>",
-              "key": "partTimeAwardTypesToBeConsidered",
-              "values": [
-                {
-                  "value": "loansAndGrants",
-                  "label": "Loans and Grants",
-                  "shortcut": ""
-                },
-                {
-                  "value": "grantsOnly",
-                  "label": "Grants Only",
-                  "shortcut": ""
-                }
-              ],
-              "defaultValue": "",
-              "protected": false,
-              "fieldSet": false,
-              "persistent": true,
-              "hidden": false,
-              "clearOnHide": true,
-              "validate": {
-                "required": true,
-                "custom": "",
-                "customPrivate": false
-              },
-              "type": "radio",
-              "labelPosition": "top",
-              "optionsLabelPosition": "right",
-              "tags": [],
-              "conditional": {
-                "show": "",
-                "when": null,
-                "eq": ""
-              },
-              "properties": {},
-              "customClass": "",
-              "lockKey": true
-            },
-            {
-              "key": "partTimeAwardTypePanelContent",
-              "label": "Content",
-              "input": false,
-              "tag": "p",
-              "attrs": [
-                {
-                  "value": "",
-                  "attr": ""
-                }
-              ],
-              "className": "alert alert-info fa fa-info-circle",
-              "content": "<strong> Info!</strong><br /> I understand that if I qualify for student loan funding, I am required to start making payments on the first day of the seventh month after leaving studies; my payments are made up of interest and principal; and interest will not be charged during the six month non-repayment period and that interest will start accruing on the 1st day of the seventh month after leaving studies.",
-              "type": "htmlelement",
-              "hideLabel": false,
-              "tags": [],
-              "conditional": {
-                "show": "true",
-                "when": "partTimeAwardTypesToBeConsidered",
-                "eq": "loansAndGrants"
-              },
-              "properties": {},
-              "customClass": "banner-info",
-              "customConditional": ""
-            }
-          ],
-          "allowPrevious": false,
-          "placeholder": "",
-          "prefix": "",
-          "suffix": "",
-          "multiple": false,
-          "defaultValue": null,
-          "protected": false,
-          "unique": false,
-          "persistent": false,
-          "clearOnHide": false,
-          "refreshOn": "",
-          "redrawOn": "",
-          "dataGridLabel": false,
-          "labelPosition": "top",
-          "description": "",
-          "errorLabel": "",
-          "autofocus": false,
-          "dbIndex": false,
-          "customDefaultValue": "",
-          "calculateValue": "",
-          "calculateServer": false,
-          "widget": null,
-          "validateOn": "change",
-          "validate": {
-            "required": false,
-            "custom": "",
-            "customPrivate": false,
-            "strictDateValidation": false,
-            "multiple": false,
-            "unique": false
-          },
-          "allowCalculateOverride": false,
-          "encrypted": false,
-          "showCharCount": false,
-          "showWordCount": false,
-          "allowMultipleMasks": false,
-          "tree": false,
-          "id": "e910xkr",
-          "addons": [],
-          "lazyLoad": false,
-          "lockKey": true
-        },
-        {
           "title": "Financial circumstances panel",
           "labelWidth": "",
           "labelMargin": "",
@@ -23881,9 +23642,9 @@
           "customConditional": "",
           "conditional": {
             "json": "",
-            "show": null,
-            "when": null,
-            "eq": ""
+            "show": "true",
+            "when": "howWillYouBeAttendingTheProgram",
+            "eq": "Full Time"
           },
           "logic": [],
           "attributes": {},
@@ -24833,9 +24594,9 @@
           "customConditional": "",
           "conditional": {
             "json": "",
-            "show": null,
-            "when": null,
-            "eq": ""
+            "show": "true",
+            "when": "howWillYouBeAttendingTheProgram",
+            "eq": "Full Time"
           },
           "logic": [],
           "attributes": {},
@@ -25066,8 +24827,8 @@
               "widget": null,
               "validateOn": "change",
               "conditional": {
-                "show": null,
-                "when": null,
+                "show": "",
+                "when": "",
                 "eq": ""
               },
               "overlay": {
@@ -27232,9 +26993,9 @@
           "customConditional": "",
           "conditional": {
             "json": "",
-            "show": null,
-            "when": null,
-            "eq": ""
+            "show": "true",
+            "when": "howWillYouBeAttendingTheProgram",
+            "eq": "Full Time"
           },
           "logic": [],
           "attributes": {},
@@ -27686,9 +27447,9 @@
               "tags": [],
               "properties": {},
               "conditional": {
-                "show": null,
-                "when": null,
-                "eq": "",
+                "show": "true",
+                "when": "howWillYouBeAttendingTheProgram",
+                "eq": "Full Time",
                 "json": ""
               },
               "customConditional": "",
@@ -27942,9 +27703,9 @@
               "tags": [],
               "properties": {},
               "conditional": {
-                "show": null,
-                "when": null,
-                "eq": "",
+                "show": "true",
+                "when": "howWillYouBeAttendingTheProgram",
+                "eq": "Full Time",
                 "json": ""
               },
               "customConditional": "",
@@ -28198,9 +27959,9 @@
               "tags": [],
               "properties": {},
               "conditional": {
-                "show": null,
-                "when": null,
-                "eq": "",
+                "show": "true",
+                "when": "howWillYouBeAttendingTheProgram",
+                "eq": "Full Time",
                 "json": ""
               },
               "customConditional": "",
@@ -28674,9 +28435,9 @@
           "customConditional": "",
           "conditional": {
             "json": "",
-            "show": null,
-            "when": null,
-            "eq": ""
+            "show": "true",
+            "when": "howWillYouBeAttendingTheProgram",
+            "eq": "Full Time"
           },
           "logic": [],
           "attributes": {},
@@ -28853,7 +28614,9 @@
               "addons": [],
               "inputType": "radio",
               "fieldSet": false,
-              "id": "eo9gian"
+              "id": "eo9gian",
+              "tags": [],
+              "isNew": false
             },
             {
               "title": "Room and board rent panel",
@@ -30081,9 +29844,9 @@
           "customConditional": "",
           "conditional": {
             "json": "",
-            "show": null,
-            "when": null,
-            "eq": ""
+            "show": "true",
+            "when": "howWillYouBeAttendingTheProgram",
+            "eq": "Full Time"
           },
           "logic": [],
           "attributes": {},
@@ -30497,9 +30260,9 @@
           "customConditional": "",
           "conditional": {
             "json": "",
-            "show": null,
-            "when": null,
-            "eq": ""
+            "show": "true",
+            "when": "howWillYouBeAttendingTheProgram",
+            "eq": "Full Time"
           },
           "logic": [],
           "attributes": {},
