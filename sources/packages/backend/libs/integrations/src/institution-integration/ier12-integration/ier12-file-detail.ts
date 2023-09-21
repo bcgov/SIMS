@@ -45,7 +45,7 @@ export class IER12FileDetail implements IER12FileLine {
   fieldOfStudyCode: number;
   // Analysis pending for the field.
   areaOfStudyCode?: string;
-  levelOfStudyCode: number;
+  levelOfStudyCode: string;
   currentProgramYear: number;
   cipCode: string;
   nocCode?: string;
@@ -198,7 +198,7 @@ export class IER12FileDetail implements IER12FileLine {
     record.appendStringWithFiller(this.credentialType, 25);
     record.appendNumberWithFiller(this.fieldOfStudyCode, 4);
     record.appendOptionalStringWithFiller(this.areaOfStudyCode, 4);
-    record.appendNumberWithFiller(this.levelOfStudyCode, 4);
+    record.appendStringWithFiller(this.levelOfStudyCode, 4);
     record.appendNumberWithFiller(this.currentProgramYear, 2);
     record.append(this.cipCode, 6);
     record.appendWithStartFiller(this.nocCode ?? 0, 5, NUMBER_FILLER); // NOC code can only be number in program.

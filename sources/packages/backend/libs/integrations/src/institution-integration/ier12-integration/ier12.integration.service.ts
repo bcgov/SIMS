@@ -378,7 +378,7 @@ export class IER12IntegrationService extends SFTPIntegrationBase<void> {
    * @param credentialType credential type.
    * @returns level of study code.
    */
-  private getLevelOfStudyCode(credentialType: string): number {
+  private getLevelOfStudyCode(credentialType: string): string {
     const levelOfStudyCodeMap: Record<string, number> = {
       qualifyingStudies: 1,
       undergraduateDegree: 3,
@@ -389,6 +389,7 @@ export class IER12IntegrationService extends SFTPIntegrationBase<void> {
       undergraduateDiploma: 7,
       undergraduateCertificate: 8,
     };
-    return levelOfStudyCodeMap[credentialType];
+    const levelOfStudyCode = levelOfStudyCodeMap[credentialType];
+    return levelOfStudyCode.toString();
   }
 }
