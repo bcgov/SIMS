@@ -10,6 +10,7 @@ import {
   User,
 } from "@sims/sims-db";
 import {
+  ArrayContains,
   DataSource,
   EntityManager,
   In,
@@ -132,7 +133,9 @@ export class StudentRestrictionSharedService extends RecordDataModelService<Stud
         where: {
           id: In(ids),
           restriction: {
-            notificationType: Not(RestrictionNotificationType.NoEffect),
+            notificationType: Not(
+              ArrayContains([RestrictionNotificationType.NoEffect]),
+            ),
           },
         },
       });
