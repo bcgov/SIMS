@@ -10,7 +10,7 @@ import {
   StudentAssessmentStatus,
 } from "@sims/sims-db";
 import { DataSource } from "typeorm";
-import { LogScopes, ProcessSummary } from "@sims/utilities/logger";
+import { ProcessSummary } from "@sims/utilities/logger";
 
 /**
  * Manages the operations to search assessments that requires some
