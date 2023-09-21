@@ -5,6 +5,7 @@ import {
   COEStatus,
   DisbursementScheduleStatus,
   DisbursementValue,
+  StudentMaritalStatusCode,
   StudentScholasticStandingChangeType,
 } from "@sims/sims-db";
 
@@ -35,7 +36,7 @@ export interface IER12Record {
   studentGivenName?: string;
   studentBirthDate: Date;
   studentDependantStatus: "dependant" | "independant";
-  studentMaritalStatusCode: "SI" | "SP" | "MA";
+  studentMaritalStatusCode: StudentMaritalStatusCode;
   studentAndSupportingUserContribution: number;
   parentExpectedContribution?: number;
   totalEligibleDependents?: number;

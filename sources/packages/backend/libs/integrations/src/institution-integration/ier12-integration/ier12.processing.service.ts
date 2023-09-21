@@ -3,6 +3,7 @@ import {
   DisbursementSchedule,
   DisbursementScheduleStatus,
   DisbursementValue,
+  FormYesNoOptions,
   FullTimeAssessment,
   RelationshipStatus,
   StudentAssessment,
@@ -270,7 +271,7 @@ export class IER12ProcessingService {
         parentDiscretionaryIncome:
           workflowData.calculatedData.parentDiscretionaryIncome,
         studentLivingWithParents:
-          workflowData.studentData.livingWithParents === "yes",
+          workflowData.studentData.livingWithParents === FormYesNoOptions.Yes,
         dependantTotalMSOLAllowance:
           workflowData.calculatedData.dependantTotalMSOLAllowance,
         studentMSOLAllowance: workflowData.calculatedData.studentMSOLAllowance,

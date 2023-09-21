@@ -1,4 +1,8 @@
-import { COEStatus, DisbursementScheduleStatus } from "@sims/sims-db";
+import {
+  COEStatus,
+  DisbursementScheduleStatus,
+  StudentMaritalStatusCode,
+} from "@sims/sims-db";
 import { SpecializedStringBuilder } from "@sims/utilities";
 import {
   ApplicationStatusCode,
@@ -29,7 +33,7 @@ export class IER12FileDetail implements IER12FileLine {
   studentGivenName?: string;
   studentBirthDate: Date;
   studentGroupCode: "A" | "B";
-  studentMaritalStatusCode: "SI" | "SP" | "MA";
+  studentMaritalStatusCode: StudentMaritalStatusCode;
   // Analysis pending for the field.
   studentDisabilityStatusCode?: string;
   // Analysis pending for the field.

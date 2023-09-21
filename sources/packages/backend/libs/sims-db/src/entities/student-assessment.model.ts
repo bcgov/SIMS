@@ -12,6 +12,7 @@ import {
   AssessmentStatus,
   DisbursementSchedule,
   EducationProgramOffering,
+  FormYesNoOptions,
   RelationshipStatus,
   StudentAppeal,
   StudentAssessmentStatus,
@@ -320,11 +321,11 @@ export interface WorkflowData {
   studentData: {
     dependantStatus: "dependant" | "independant";
     relationshipStatus: RelationshipStatus;
-    livingWithParents: string;
+    livingWithParents: FormYesNoOptions;
   };
   calculatedData: {
     parentalAssets?: number;
-    studentMaritalStatusCode: "SI" | "SP" | "MA";
+    studentMaritalStatusCode: StudentMaritalStatusCode;
     totalEligibleDependents?: number;
     familySize: number;
     parentalAssetContribution?: number;
@@ -336,3 +337,5 @@ export interface WorkflowData {
     totalNonEducationalCost: number;
   };
 }
+
+export type StudentMaritalStatusCode = "SI" | "SP" | "MA";

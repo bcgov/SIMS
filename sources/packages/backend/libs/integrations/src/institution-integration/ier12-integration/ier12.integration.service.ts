@@ -263,10 +263,7 @@ export class IER12IntegrationService extends SFTPIntegrationBase<void> {
     scholasticStandingChangeType: StudentScholasticStandingChangeType,
   ): ScholasticStandingCode | null {
     if (
-      assessmentTriggerType !==
-        AssessmentTriggerType.ScholasticStandingChange ||
-      scholasticStandingChangeType ===
-        StudentScholasticStandingChangeType.StudentWithdrewFromProgram
+      assessmentTriggerType !== AssessmentTriggerType.ScholasticStandingChange
     ) {
       return null;
     }
