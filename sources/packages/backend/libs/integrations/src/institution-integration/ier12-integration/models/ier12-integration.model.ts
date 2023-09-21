@@ -103,8 +103,17 @@ export enum ApplicationStatusCode {
 }
 
 export enum ScholasticStandingCode {
+  /**
+   * Unsuccessful completion.
+   */
   UC = "UC",
+  /**
+   * Early completion.
+   */
   EC = "EC",
+  /**
+   * Change in intensity.
+   */
   CI = "CI",
 }
 

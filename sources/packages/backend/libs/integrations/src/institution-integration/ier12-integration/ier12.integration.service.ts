@@ -254,8 +254,8 @@ export class IER12IntegrationService extends SFTPIntegrationBase<void> {
    * Get scholastic standing code.
    * Scholastic standing code does not consider the
    * scholastic standing change type `Student withdrew from program`.
-   * @param assessmentTriggerType
-   * @param scholasticStandingChangeType
+   * @param assessmentTriggerType assessment trigger type.
+   * @param scholasticStandingChangeType scholastic standing change type.
    * @returns scholastic standing code.
    */
   private getScholasticStandingCode(
