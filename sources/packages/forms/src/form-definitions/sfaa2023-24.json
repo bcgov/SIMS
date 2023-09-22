@@ -26998,9 +26998,9 @@
               "tags": [],
               "properties": {},
               "conditional": {
-                "show": null,
-                "when": null,
-                "eq": "",
+                "show": "true",
+                "when": "howWillYouBeAttendingTheProgram",
+                "eq": "Full Time",
                 "json": ""
               },
               "customConditional": "",
