@@ -9,6 +9,7 @@ import {
   createTestingAppModule,
   describeProcessorRootTest,
 } from "../../../../test/helpers";
+import { LogLevels, ProcessSummary } from "@sims/utilities/logger";
 
 describe(
   describeProcessorRootTest(QueueNames.StartApplicationAssessment),
@@ -29,7 +30,7 @@ describe(
       jest.resetAllMocks();
     });
 
-    it("Should throw an error when the workflow createProcessInstance method throws an error.", async () => {
+    it("Should log an error when the workflow createProcessInstance method throws an unexpected error.", async () => {
       // Arrange
       const dummyException = new Error("Dummy error");
       const job = createMock<Job<StartAssessmentQueueInDTO>>({
@@ -41,9 +42,32 @@ describe(
       zbClientMock.createProcessInstance = jest.fn().mockImplementation(() => {
         throw dummyException;
       });
+      // Capture the processSummary for later assertion.
+      let processSummary: ProcessSummary;
+      processor.logger.logProcessSummary = jest.fn((providedProcessSummary) => {
+        processSummary = providedProcessSummary;
+      });
 
-      // Act and Assert.
-      await expect(processor.startAssessment(job)).rejects.toBe(dummyException);
+      // Act
+      const result = await processor.startAssessment(job);
+
+      // Assert.
+
+      // Assert process summary was provided.
+      expect(processSummary).toBeDefined();
+      // Assert expected result message.
+      expect(result).toBe(
+        "Unexpected error while executing the job, check logs for further details.",
+      );
+      // Assert error message was added to the logs.
+      const hasExpectedLogErrorMessage = processSummary
+        .flattenLogs()
+        .some(
+          (log) =>
+            log.level === LogLevels.Error &&
+            log.message.includes("Dummy error"),
+        );
+      expect(hasExpectedLogErrorMessage).toBeTruthy();
     });
 
     it("Should invoke the workflow create instance method with the received job parameters.", async () => {

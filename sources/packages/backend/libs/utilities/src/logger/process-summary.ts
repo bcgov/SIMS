@@ -36,9 +36,13 @@ export enum LogLevels {
 /**
  * Log entry.
  */
-interface LogEntry {
-  message: string;
-  level: LogLevels;
+class LogEntry {
+  constructor(
+    public message: string,
+    public level: LogLevels,
+    public indentationLevel = 0,
+  ) {}
+  date = new Date();
 }
 
 /**
@@ -47,15 +51,17 @@ interface LogEntry {
 export type ScopedLogLevel = Record<LogScopes, LogEntry[]>;
 
 /**
+ * Allows a log entry that represents either a single log
+ * or a new collection of child entries.
+ */
+type LogInfoEntry = LogEntry | ProcessSummary[];
+
+/**
  * Allow the logs aggregation for a process summary and optionally
  * allow the same logs to be saved to different outputs.
  */
 export class ProcessSummary {
-  private readonly logs: Record<LogScopes, LogEntry[]>;
-  /**
-   * Child processes that must be grouped also.
-   */
-  children: ProcessSummary[] = [];
+  private readonly logs: Record<LogScopes, LogInfoEntry[]>;
 
   /**
    * Creates a new instance of {@link ProcessSummary}.
@@ -75,7 +81,7 @@ export class ProcessSummary {
    * @param scope log scoped.
    */
   info(message: string, scope: LogScopes = LogScopes.Combined): void {
-    this.logs[scope].push({ message, level: LogLevels.Info });
+    this.logs[scope].push(new LogEntry(message, LogLevels.Info));
   }
 
   /**
@@ -84,7 +90,7 @@ export class ProcessSummary {
    * @param scope log scoped.
    */
   warn(message: string, scope: LogScopes = LogScopes.Combined): void {
-    this.logs[scope].push({ message, level: LogLevels.Warn });
+    this.logs[scope].push(new LogEntry(message, LogLevels.Warn));
   }
 
   /**
@@ -100,7 +106,16 @@ export class ProcessSummary {
   ): void {
     const errorDescription = error ? parseJSONError(error) : "";
     const errorMessage = `${message} ${errorDescription}`.trim();
-    this.logs[scope].push({ message: errorMessage, level: LogLevels.Error });
+    this.logs[scope].push(new LogEntry(errorMessage, LogLevels.Error));
+  }
+
+  /**
+   * Appends a collection o children logs (or a single one)
+   * to the list of combined log entries.
+   * @param children children (or child) to be appended.
+   */
+  children(...children: ProcessSummary[]) {
+    this.logs[LogScopes.Combined].push(children);
   }
 
   /**
@@ -110,8 +125,26 @@ export class ProcessSummary {
    */
   flattenLogs(): LogEntry[] {
     const logEntries: LogEntry[] = [];
-    this.flattenLogsRecursively(this, logEntries);
+    this.flattenLogsRecursively(this, logEntries, 0);
     return logEntries;
+  }
+
+  /**
+   * Count and create a summary of all the log levers
+   * entries presents in this process summary.
+   * @returns sum of entries grouped by log level.
+   */
+  getLogLevelSum(): Record<LogLevels, number> {
+    const result = {
+      [LogLevels.Info]: 0,
+      [LogLevels.Warn]: 0,
+      [LogLevels.Error]: 0,
+    };
+    const logs = this.flattenLogs();
+    logs.forEach((log) => {
+      result[log.level]++;
+    });
+    return result;
   }
 
   /**
@@ -123,21 +156,37 @@ export class ProcessSummary {
   private flattenLogsRecursively(
     processSummary: ProcessSummary,
     logEntries: LogEntry[],
+    indentationLevel: number,
   ): void {
     // Summary
     const summary = processSummary.getSummaryPerLogLevel();
     if (summary.length) {
+      summary.forEach((entry) => {
+        entry.indentationLevel = indentationLevel;
+      });
       logEntries.push(...summary);
     }
     // Combined
     const combined = processSummary.logs[LogScopes.Combined];
     if (combined.length) {
-      logEntries.push({ message: "Log details", level: LogLevels.Info });
-      logEntries.push(...combined);
-    }
-    if (processSummary.children?.length) {
-      for (const childProcessSummary of processSummary.children) {
-        this.flattenLogsRecursively(childProcessSummary, logEntries);
+      logEntries.push(
+        new LogEntry("Log details", LogLevels.Info, indentationLevel),
+      );
+      for (const logInfoEntry of combined) {
+        if (logInfoEntry instanceof LogEntry) {
+          logInfoEntry.indentationLevel = indentationLevel;
+          logEntries.push(logInfoEntry);
+          continue;
+        }
+        if (logInfoEntry?.length) {
+          for (const childProcessSummary of logInfoEntry) {
+            this.flattenLogsRecursively(
+              childProcessSummary,
+              logEntries,
+              indentationLevel + 1,
+            );
+          }
+        }
       }
     }
   }
@@ -163,15 +212,14 @@ export class ProcessSummary {
       const logLevels = Object.values(LogLevels);
       for (const logLevel of logLevels) {
         const logsForLevelSummary = summaryLogs.filter(
-          (log) => log.level === logLevel,
+          (log: LogEntry) => log.level === logLevel,
         );
         if (logsForLevelSummary?.length) {
-          logEntries.push({
-            message: `Summary for ${logLevel.toUpperCase()} log`,
-            level: logLevel,
-          });
+          logEntries.push(
+            new LogEntry(`Summary for ${logLevel.toUpperCase()} log`, logLevel),
+          );
           for (const log of logsForLevelSummary) {
-            logEntries.push(log);
+            logEntries.push(log as LogEntry);
           }
         }
       }
