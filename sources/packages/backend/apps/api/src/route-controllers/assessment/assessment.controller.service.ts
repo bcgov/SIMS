@@ -401,6 +401,7 @@ export class AssessmentControllerService {
       .concat(appeals)
       .concat(applicationOfferingChangeRequests)
       .sort(
+        // sort by the latest submitted request first.
         (firstRequest, secondRequest) =>
           secondRequest.submittedDate.getTime() -
           firstRequest.submittedDate.getTime(),
