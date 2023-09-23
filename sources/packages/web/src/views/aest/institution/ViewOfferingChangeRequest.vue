@@ -7,28 +7,26 @@
         subTitle="View Request"
       >
         <template #buttons>
-          <v-row class="p-0 m-0">
-            <check-permission-role
-              :role="Role.InstitutionApproveDeclineOfferingChanges"
-            >
-              <template #="{ notAllowed }">
-                <v-btn
-                  color="primary"
-                  variant="outlined"
-                  @click="assessOfferingChange(OfferingStatus.ChangeDeclined)"
-                  :disabled="notAllowed"
-                  >Decline reassessment</v-btn
-                >
-                <v-btn
-                  class="ml-2"
-                  color="primary"
-                  @click="assessOfferingChange(OfferingStatus.Approved)"
-                  :disabled="notAllowed"
-                  >Approve reassessment</v-btn
-                >
-              </template>
-            </check-permission-role>
-          </v-row>
+          <check-permission-role
+            :role="Role.InstitutionApproveDeclineOfferingChanges"
+          >
+            <template #="{ notAllowed }">
+              <v-btn
+                color="primary"
+                variant="outlined"
+                @click="assessOfferingChange(OfferingStatus.ChangeDeclined)"
+                :disabled="notAllowed"
+                >Decline reassessment</v-btn
+              >
+              <v-btn
+                class="ml-2"
+                color="primary"
+                @click="assessOfferingChange(OfferingStatus.Approved)"
+                :disabled="notAllowed"
+                >Approve reassessment</v-btn
+              >
+            </template>
+          </check-permission-role>
         </template>
       </header-navigator>
       <program-offering-detail-header
