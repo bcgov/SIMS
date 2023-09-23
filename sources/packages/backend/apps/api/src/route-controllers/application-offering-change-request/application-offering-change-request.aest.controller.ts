@@ -88,7 +88,7 @@ export class ApplicationOfferingChangeRequestAESTController extends BaseControll
   ): Promise<ApplicationOfferingDetailsReviewAPIOutDTO> {
     return this.applicationOfferingChangeRequestControllerService.getApplicationOfferingChangeRequest(
       applicationOfferingChangeRequestId,
-      { applicationOfferingDetailsReview: true },
+      { hasAuditAndNoteDetails: true },
     );
   }
 }

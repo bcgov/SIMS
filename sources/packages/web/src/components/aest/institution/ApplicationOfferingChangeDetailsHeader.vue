@@ -46,10 +46,9 @@ import {
   ApplicationOfferingChangeRequestStatus,
 } from "@/types";
 import { useFormatters } from "@/composables";
-import { computed, defineComponent } from "vue";
+import { computed, defineComponent, watchEffect, ref } from "vue";
 import { useRouter } from "vue-router";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
-import { watchEffect, ref } from "vue";
 
 interface ReviewLabels {
   assessedByLabel: string;
