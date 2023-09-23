@@ -148,7 +148,7 @@ export class AssessmentStudentsController extends BaseController {
           ApplicationOfferingChangeRequestStatus.DeclinedByStudent,
           ApplicationOfferingChangeRequestStatus.DeclinedBySABC,
         ],
-        userToken.studentId,
+        { studentId: userToken.studentId },
       );
     const [
       pendingAndDeniedAppeals,

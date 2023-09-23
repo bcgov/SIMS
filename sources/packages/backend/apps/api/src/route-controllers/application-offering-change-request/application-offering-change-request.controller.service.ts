@@ -17,13 +17,13 @@ export class ApplicationOfferingChangeRequestControllerService {
    * Get the Application Offering Change Request by its id for the ministry.
    * @param applicationOfferingChangeRequestId the Application Offering Change Request id.
    * @param options method options:
-   * - `applicationOfferingDetailsReview`: boolean true indicates that only a certain required application offering details are requested.
+   * - `hasAuditAndNoteDetails`: boolean true indicates that only a certain required application offering details are requested.
    * @returns application offering change request.
    */
   async getApplicationOfferingChangeRequest(
     applicationOfferingChangeRequestId: number,
     options: {
-      applicationOfferingDetailsReview: boolean;
+      hasAuditAndNoteDetails: boolean;
     },
   ): Promise<ApplicationOfferingDetailsReviewAPIOutDTO>;
 
@@ -64,7 +64,7 @@ export class ApplicationOfferingChangeRequestControllerService {
    * - `studentId`: student id for student authorization.
    * - `locationId`: location id for institution authorization.
    * - `applicationOfferingDetails`: boolean true indicates that the required application offering details for the institution are requested.
-   * - `applicationOfferingDetailsReview`: boolean true indicates that the required application offering details for the ministry are requested.
+   * - `hasAuditAndNoteDetails`: boolean true indicates that the required application offering details for the ministry are requested.
    * @returns application offering change request.
    */
   async getApplicationOfferingChangeRequest(
@@ -73,7 +73,7 @@ export class ApplicationOfferingChangeRequestControllerService {
       studentId?: number;
       locationId?: number;
       applicationOfferingDetails?: boolean;
-      applicationOfferingDetailsReview?: boolean;
+      hasAuditAndNoteDetails?: boolean;
     },
   ): Promise<
     | ApplicationOfferingChangesAPIOutDTO
@@ -100,16 +100,13 @@ export class ApplicationOfferingChangeRequestControllerService {
     if (options?.applicationOfferingDetails) {
       return applicationOfferingDetails;
     }
-    if (options?.applicationOfferingDetailsReview) {
+    if (options?.hasAuditAndNoteDetails) {
       return {
         ...applicationOfferingDetails,
         assessedNoteDescription: request.assessedNote?.description,
         studentFullName: getUserFullName(request.application.student.user),
         assessedDate: request.assessedDate,
-        assessedBy: getUserFullName({
-          firstName: request.assessedBy?.firstName,
-          lastName: request.assessedBy?.lastName,
-        }),
+        assessedBy: getUserFullName(request.assessedBy),
         institutionId: request.application.location.institution.id,
         institutionName: request.application.location.institution.operatingName,
         submittedDate: request.createdAt,

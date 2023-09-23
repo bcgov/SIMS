@@ -3,13 +3,13 @@
     :submitLabel="submitLabel"
     :formMode="formMode"
     :processing="processing"
-    :offeringId="offeringId"
+    :data="data"
     @loaded="formLoaded"
     @validateOffering="validateOffering"
     @saveOffering="saveOffering"
     @changed="formChanged"
     @cancel="$emit('cancel')"
-  />
+  ></offering-form>
   <confirm-modal
     title="Do you want to proceed?"
     cancelLabel="No"
@@ -32,6 +32,7 @@
 import {
   FormIOChangeEvent,
   FormIOForm,
+  OfferingFormModel,
   OfferingFormModes,
   OfferingStatus,
 } from "@/types";
@@ -59,9 +60,9 @@ export default defineComponent({
     submit: null,
   },
   props: {
-    offeringId: {
-      type: Number,
-      required: true,
+    data: {
+      type: Object as PropType<OfferingFormModel>,
+      default: {} as OfferingFormModel,
     },
     formMode: {
       type: String as PropType<OfferingFormModes>,

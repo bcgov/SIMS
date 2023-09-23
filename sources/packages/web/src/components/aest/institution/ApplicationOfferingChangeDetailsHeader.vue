@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <div class="row">
+  <div class="m-3">
+    <v-row>
       <header-title-value
         title="Submitted date"
         :value="
@@ -9,10 +9,7 @@
             : '-'
         "
       />
-      <div
-        v-if="headerDetails.institutionName"
-        class="mx-2 vertical-divider"
-      ></div>
+      <Separator v-if="headerDetails.institutionName"></Separator>
       <header-title-value title="Institution"
         ><template #value
           ><span class="link-primary" @click="navigateToInstitutionProfile()">
@@ -20,104 +17,46 @@
           </span>
         </template></header-title-value
       >
-      <div
-        v-if="headerDetails.locationName"
-        class="mx-2 vertical-divider"
-      ></div>
+      <Separator v-if="headerDetails.locationName" />
       <header-title-value
         v-if="headerDetails.locationName"
         title="Location"
         :value="headerDetails.locationName"
       />
-    </div>
-    <div class="row mt-1" v-if="showReviewDetails">
-      <div
-        class="row pl-4"
-        v-if="
-          headerDetails.status ===
-          ApplicationOfferingChangeRequestStatus.DeclinedByStudent
-        "
-      >
-        <div class="mr-2">
-          <v-icon icon="fa:fas fa-times-circle" size="20" color="error" />
-        </div>
-        <header-title-value
-          :title="reviewLabel.assessedByLabel"
-          value="Student"
-        />
-        <div class="mx-2 vertical-divider"></div>
-        <header-title-value
-          :title="reviewLabel.assessedDateLabel"
-          :value="dateOnlyLongString(headerDetails.updatedDate)"
-        />
-      </div>
-      <div
-        class="row pl-4"
-        v-if="
-          headerDetails.status ===
-            ApplicationOfferingChangeRequestStatus.Approved ||
-          headerDetails.status ===
-            ApplicationOfferingChangeRequestStatus.DeclinedBySABC
-        "
-      >
-        <div class="mr-2">
-          <v-icon
-            icon="fa:fas fa-times-circle"
-            v-if="
-              headerDetails.status ===
-              ApplicationOfferingChangeRequestStatus.DeclinedBySABC
-            "
-            size="20"
-            color="error"
-          />
-          <v-icon
-            icon="fa:fas fa-check-circle"
-            v-if="
-              headerDetails.status ===
-              ApplicationOfferingChangeRequestStatus.Approved
-            "
-            size="20"
-            color="success"
-          />
-        </div>
-        <header-title-value
-          :title="reviewLabel.assessedByLabel"
-          v-if="headerDetails.assessedBy"
-          :value="headerDetails.assessedBy"
-        />
-        <div
-          class="mx-2 vertical-divider"
-          v-if="headerDetails.assessedDate"
-        ></div>
-        <header-title-value
-          :title="reviewLabel.assessedDateLabel"
-          v-if="headerDetails.assessedDate"
-          :value="dateOnlyLongString(headerDetails.assessedDate)"
-        />
-      </div>
-    </div>
+    </v-row>
+    <v-row class="mt-4" v-if="showReviewDetails">
+      <header-title-value
+        :iconLabel="iconLabel"
+        :iconColor="iconColor"
+        :title="assessedByLabel"
+        :value="assessedByLabelValue"
+      />
+      <Separator />
+      <header-title-value
+        :title="assessedDateLabel"
+        :value="assessedDateLabelValue"
+      />
+    </v-row>
   </div>
 </template>
 
 <script lang="ts">
 import {
   ApplicationOfferingChangeRequestHeader,
-  ClientIdType,
   ApplicationOfferingChangeRequestStatus,
-  ReviewLabels,
 } from "@/types";
-import HeaderTitleValue from "@/components/generic/HeaderTitleValue.vue";
 import { useFormatters } from "@/composables";
 import { computed, defineComponent } from "vue";
 import { useRouter } from "vue-router";
-import {
-  AESTRoutesConst,
-  InstitutionRoutesConst,
-} from "@/constants/routes/RouteConstants";
-import { AuthService } from "@/services/AuthService";
+import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
+import { watchEffect, ref } from "vue";
+
+interface ReviewLabels {
+  assessedByLabel: string;
+  assessedDateLabel: string;
+}
 
 export default defineComponent({
-  components: { HeaderTitleValue },
   props: {
     headerDetails: {
       type: Object,
@@ -126,23 +65,73 @@ export default defineComponent({
     },
   },
   setup(props) {
+    const iconLabel = ref("");
+    const iconColor = ref("");
+    const assessedByLabel = ref("");
+    const assessedByLabelValue = ref("");
+    const assessedDateLabel = ref("");
+    const assessedDateLabelValue = ref("");
     const router = useRouter();
     const { dateOnlyLongString } = useFormatters();
     const showReviewDetails = computed(
       () =>
         (props.headerDetails.assessedBy || props.headerDetails.updatedDate) &&
-        (props.headerDetails.status ===
-          ApplicationOfferingChangeRequestStatus.Approved ||
-          props.headerDetails.status ===
-            ApplicationOfferingChangeRequestStatus.DeclinedBySABC ||
-          props.headerDetails.status ===
-            ApplicationOfferingChangeRequestStatus.DeclinedByStudent),
+        [
+          ApplicationOfferingChangeRequestStatus.Approved,
+          ApplicationOfferingChangeRequestStatus.DeclinedBySABC,
+          ApplicationOfferingChangeRequestStatus.DeclinedByStudent,
+        ].includes(props.headerDetails.status),
     );
+    const checkHeaderDetailsStatus = (
+      statuses: ApplicationOfferingChangeRequestStatus[],
+    ): boolean => {
+      return statuses.includes(props.headerDetails.status);
+    };
+    watchEffect(() => {
+      if (
+        [
+          ApplicationOfferingChangeRequestStatus.DeclinedByStudent,
+          ApplicationOfferingChangeRequestStatus.DeclinedBySABC,
+        ].includes(props.headerDetails.status)
+      ) {
+        iconLabel.value = "fa:fas fa-times-circle";
+        iconColor.value = "error";
+        assessedByLabel.value = "Declined By";
+        assessedDateLabel.value = "Declined";
+        if (
+          props.headerDetails.status ===
+          ApplicationOfferingChangeRequestStatus.DeclinedByStudent
+        ) {
+          assessedByLabelValue.value = "Student";
+          assessedDateLabelValue.value = dateOnlyLongString(
+            props.headerDetails.updatedDate,
+          );
+        }
+      } else if (
+        props.headerDetails.status ===
+        ApplicationOfferingChangeRequestStatus.Approved
+      ) {
+        iconLabel.value = "fa:fas fa-check-circle";
+        iconColor.value = "success";
+        assessedByLabel.value = "Approved By";
+        assessedDateLabel.value = "Approved";
+      }
+      if (
+        [
+          ApplicationOfferingChangeRequestStatus.DeclinedBySABC,
+          ApplicationOfferingChangeRequestStatus.Approved,
+        ].includes(props.headerDetails.status)
+      ) {
+        assessedByLabelValue.value = props.headerDetails.assessedBy;
+        assessedDateLabelValue.value = dateOnlyLongString(
+          props.headerDetails.assessedDate,
+        );
+      }
+    });
     const reviewLabel = computed((): ReviewLabels => {
       if (
-        props.headerDetails.assessedBy &&
         props.headerDetails.status ===
-          ApplicationOfferingChangeRequestStatus.Approved
+        ApplicationOfferingChangeRequestStatus.Approved
       ) {
         return {
           assessedByLabel: "Approved By",
@@ -150,11 +139,10 @@ export default defineComponent({
         };
       }
       if (
-        (props.headerDetails.assessedBy &&
-          props.headerDetails.status ===
-            ApplicationOfferingChangeRequestStatus.DeclinedBySABC) ||
-        props.headerDetails.status ===
-          ApplicationOfferingChangeRequestStatus.DeclinedByStudent
+        [
+          ApplicationOfferingChangeRequestStatus.DeclinedBySABC,
+          ApplicationOfferingChangeRequestStatus.DeclinedByStudent,
+        ].includes(props.headerDetails.status)
       ) {
         return {
           assessedByLabel: "Declined By",
@@ -168,11 +156,6 @@ export default defineComponent({
     });
 
     const navigateToInstitutionProfile = () => {
-      if (AuthService.shared.authClientType === ClientIdType.Institution) {
-        router.push({
-          name: InstitutionRoutesConst.INSTITUTION_PROFILE,
-        });
-      }
       router.push({
         name: AESTRoutesConst.INSTITUTION_PROFILE,
         params: { institutionId: props.headerDetails.institutionId },
@@ -184,6 +167,13 @@ export default defineComponent({
       reviewLabel,
       showReviewDetails,
       ApplicationOfferingChangeRequestStatus,
+      checkHeaderDetailsStatus,
+      iconLabel,
+      iconColor,
+      assessedByLabel,
+      assessedByLabelValue,
+      assessedDateLabel,
+      assessedDateLabelValue,
     };
   },
 });

@@ -79,6 +79,7 @@ import ProgramOfferingDetailHeader from "@/components/common/ProgramOfferingDeta
 import OfferingApplicationBanner from "@/components/aest/OfferingApplicationBanner.vue";
 import AssessOfferingChangeModal from "@/components/aest/institution/modals/AssessOfferingChangeModal.vue";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
+import OfferingForm from "@/components/common/OfferingForm.vue";
 
 export default defineComponent({
   components: {
@@ -86,6 +87,7 @@ export default defineComponent({
     OfferingApplicationBanner,
     AssessOfferingChangeModal,
     CheckPermissionRole,
+    OfferingForm,
   },
   props: {
     programId: {

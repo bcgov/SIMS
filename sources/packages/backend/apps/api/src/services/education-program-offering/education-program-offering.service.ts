@@ -666,7 +666,6 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     offeringId: number,
     options?: {
       locationId?: number;
-      isPrecedingOffering?: boolean;
     },
   ): Promise<EducationProgramOffering> {
     const offeringQuery = this.repo
@@ -694,7 +693,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
         "offering.submittedDate",
         "offering.courseLoad",
         "offering.offeringStatus",
-        "offering.precedingOffering.id",
+        "precedingOffering.id",
         "assessedBy.firstName",
         "assessedBy.lastName",
         "institutionLocation.name",

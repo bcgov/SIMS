@@ -52,7 +52,7 @@ export class EntranceRequirements {
 export interface ProgramOfferingHeader {
   institutionId?: number;
   institutionName?: string;
-  submittedDate?: Date;
+  submittedDate: Date;
   status: ProgramStatus | OfferingStatus;
   assessedBy?: string;
   assessedDate?: Date;

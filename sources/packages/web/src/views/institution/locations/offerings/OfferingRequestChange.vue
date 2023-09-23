@@ -26,13 +26,13 @@
     </template>
     <offering-form-submit
       submitLabel="Request a change now"
-      :offeringId="offeringId"
+      :data="initialData"
       :formMode="OfferingFormModes.Editable"
       :locationId="locationId"
       :programId="programId"
       @submit="submit"
       @cancel="goToEditLocationOfferings"
-    />
+    ></offering-form-submit>
   </full-page-container>
 </template>
 

@@ -62,14 +62,14 @@
     </template>
     <offering-form-submit
       submitLabel="Update offering now"
-      :offeringId="offeringId"
+      :data="initialData"
       :formMode="formMode"
       :locationId="locationId"
       :programId="programId"
       :enableValidationsOnInit="true"
       @submit="submit"
       @cancel="goBack"
-    />
+    ></offering-form-submit>
   </full-page-container>
 </template>
 

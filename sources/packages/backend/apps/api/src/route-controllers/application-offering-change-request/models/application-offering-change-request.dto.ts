@@ -50,6 +50,15 @@ export class InProgressApplicationOfferingChangesAPIOutDTO {
   status: ApplicationOfferingChangeRequestStatus;
 }
 
+export interface ApplicationOfferingDetails {
+  studentName: string;
+  applicationNumber: string;
+  locationName: string;
+  reasonForChange: string;
+  accessedNoteDescription: string;
+  applicationOfferingChangeRequestStatus: ApplicationOfferingChangeRequestStatus;
+}
+
 /**
  * Completed application offering change details.
  */
@@ -119,10 +128,10 @@ export class ApplicationOfferingChangesAPIOutDTO extends ApplicationOfferingDeta
  * Application Offering Change Request details (Ministry).
  */
 export class ApplicationOfferingDetailsReviewAPIOutDTO extends ApplicationOfferingDetailsAPIOutDTO {
-  assessedNoteDescription: string;
+  assessedNoteDescription?: string;
   studentFullName: string;
-  assessedDate: Date;
-  assessedBy: string;
+  assessedDate?: Date;
+  assessedBy?: string;
   institutionId: number;
   institutionName: string;
   submittedDate: Date;

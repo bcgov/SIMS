@@ -1,73 +1,45 @@
 <template>
-  <v-card>
-    <v-container>
-      <body-header :title="studentName" class="m-1" />
+  <body-header-container :enableCardView="true"
+    ><template #header>
+      <body-header :title="applicationOfferingChangeDetails.studentName" />
       <header-title-value
         class="mb-2"
         title="Application#"
-        :value="applicationNumber"
+        :value="applicationOfferingChangeDetails.applicationNumber"
       ></header-title-value>
-      <header-title-value
-        class="mb-6"
-        title="Location"
-        :value="locationName"
-      ></header-title-value>
-      <content-group-info
-        ><div class="mb-2">
-          <h3 class="category-header-medium primary-color">
-            Reason for change
-          </h3>
-          <p>{{ reasonForChange }}</p>
-        </div>
-      </content-group-info>
-      <content-group-info
-        v-if="
-          applicationOfferingChangeRequestStatus ===
-            ApplicationOfferingChangeRequestStatus.Approved ||
-          applicationOfferingChangeRequestStatus ===
-            ApplicationOfferingChangeRequestStatus.DeclinedBySABC
-        "
-        ><div class="mb-2">
-          <h3 class="category-header-medium primary-color">
-            Notes from StudentAid BC
-          </h3>
-          <p>{{ accessedNoteDescription }}</p>
-        </div>
-      </content-group-info>
-    </v-container>
-  </v-card>
+    </template>
+    <content-group-info
+      ><div>
+        <h3 class="category-header-medium primary-color">Reason for change</h3>
+        <p>{{ applicationOfferingChangeDetails.reasonForChange }}</p>
+      </div>
+    </content-group-info>
+    <content-group-info
+      v-if="
+        applicationOfferingChangeDetails.applicationOfferingChangeRequestStatus ===
+          ApplicationOfferingChangeRequestStatus.Approved ||
+        applicationOfferingChangeDetails.applicationOfferingChangeRequestStatus ===
+          ApplicationOfferingChangeRequestStatus.DeclinedBySABC
+      "
+      ><div>
+        <h3 class="category-header-medium primary-color">
+          Notes from StudentAid BC
+        </h3>
+        <p>{{ applicationOfferingChangeDetails.accessedNoteDescription }}</p>
+      </div>
+    </content-group-info>
+  </body-header-container>
 </template>
 
 <script lang="ts">
 import { PropType, defineComponent } from "vue";
-import HeaderTitleValue from "@/components/generic/HeaderTitleValue.vue";
 import { ApplicationOfferingChangeRequestStatus } from "@/types";
+import { ApplicationOfferingDetails } from "@/types/contracts/StudentApplicationOfferingChangeContract";
 
 export default defineComponent({
-  components: { HeaderTitleValue },
   props: {
-    studentName: {
-      type: String,
-      required: true,
-    },
-    applicationNumber: {
-      type: String,
-      required: true,
-    },
-    locationName: {
-      type: String,
-      required: true,
-    },
-    reasonForChange: {
-      type: String,
-      required: true,
-    },
-    accessedNoteDescription: {
-      type: String,
-      required: true,
-    },
-    applicationOfferingChangeRequestStatus: {
-      type: String as PropType<ApplicationOfferingChangeRequestStatus>,
+    applicationOfferingChangeDetails: {
+      type: Object as PropType<ApplicationOfferingDetails>,
       required: true,
     },
   },

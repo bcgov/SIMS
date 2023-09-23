@@ -10,8 +10,3 @@ export interface ApplicationOfferingChangeRequestHeader {
   locationName: string;
   updatedDate?: string;
 }
-
-export interface ReviewLabels {
-  assessedByLabel: string;
-  assessedDateLabel: string;
-}

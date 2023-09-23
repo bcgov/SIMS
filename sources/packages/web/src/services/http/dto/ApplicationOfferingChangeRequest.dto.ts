@@ -111,11 +111,6 @@ export interface ApplicationOfferingChangeRequestStatusAPIOutDTO {
   status: ApplicationOfferingChangeRequestStatus;
 }
 
-export interface ApplicationOfferingChangeAssessmentAPIInDTO {
-  status: ApplicationOfferingChangeRequestStatus;
-  assessmentNotes: string;
-}
-
 /**
  * Information provided by the institution to create a new Application Offering Change Request.
  */

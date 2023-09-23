@@ -46,7 +46,7 @@
 
 <script lang="ts">
 import { FormIOForm, OfferingFormModel, OfferingFormModes } from "@/types";
-import { defineComponent, PropType, computed, ref, onMounted } from "vue";
+import { defineComponent, PropType, computed, ref, watchEffect } from "vue";
 import { useOffering } from "@/composables";
 import {
   EducationProgramOfferingAPIInDTO,
@@ -72,11 +72,15 @@ export default defineComponent({
   props: {
     offeringId: {
       type: Number,
-      required: true,
+      required: false,
+    },
+    data: {
+      type: Object as PropType<OfferingFormModel>,
+      required: false,
     },
     formMode: {
       type: String as PropType<OfferingFormModes>,
-      required: false,
+      required: true,
       default: OfferingFormModes.Readonly,
     },
     submitLabel: {
@@ -91,13 +95,15 @@ export default defineComponent({
     },
   },
   setup(props, context) {
-    const data = ref({} as EducationProgramOfferingAPIOutDTO);
-    onMounted(async () => {
-      const offering =
-        await EducationProgramOfferingService.shared.getOfferingDetails(
-          props.offeringId,
-        );
-      data.value = offering;
+    const offeringData = ref(
+      {} as EducationProgramOfferingAPIOutDTO | OfferingFormModel,
+    );
+    watchEffect(async () => {
+      offeringData.value = props.offeringId
+        ? await EducationProgramOfferingService.shared.getOfferingDetails(
+            props.offeringId,
+          )
+        : (props.data as OfferingFormModel);
     });
     const { mapOfferingChipStatus } = useOffering();
     const submitOffering = (
@@ -123,9 +129,9 @@ export default defineComponent({
      */
     const formData = computed(
       (): OfferingFormModel => ({
-        ...data.value,
-        offeringChipStatus: data.value.offeringStatus
-          ? mapOfferingChipStatus(data.value.offeringStatus)
+        ...offeringData.value,
+        offeringChipStatus: offeringData.value.offeringStatus
+          ? mapOfferingChipStatus(offeringData.value.offeringStatus)
           : undefined,
         mode: props.formMode,
       }),

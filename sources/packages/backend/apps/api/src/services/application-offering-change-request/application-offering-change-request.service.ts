@@ -381,13 +381,16 @@ export class ApplicationOfferingChangeRequestService {
    * Get all the Application Offering Change Requests for the provided application id filtered by the application offering change request statuses.
    * @param applicationId the application id.
    * @param applicationOfferingChangeRequestStatuses list of application offering change request statuses.
-   * @param studentId the student id.
+   * @param options method options:
+   * `studentId`: student id for authorization.
    * @returns application offering change requests.
    */
   async getApplicationOfferingChangeRequestsByStatus(
     applicationId: number,
     applicationOfferingChangeRequestStatuses: ApplicationOfferingChangeRequestStatus[],
-    studentId?: number,
+    options?: {
+      studentId?: number;
+    },
   ): Promise<ApplicationOfferingChangeRequest[]> {
     return this.applicationOfferingChangeRequestRepo.find({
       select: {
@@ -399,7 +402,7 @@ export class ApplicationOfferingChangeRequestService {
         applicationOfferingChangeRequestStatus: In(
           applicationOfferingChangeRequestStatuses,
         ),
-        application: { id: applicationId, student: { id: studentId } },
+        application: { id: applicationId, student: { id: options?.studentId } },
       },
     });
   }

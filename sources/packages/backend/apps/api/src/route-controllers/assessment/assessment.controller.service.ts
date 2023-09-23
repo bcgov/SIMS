@@ -6,7 +6,6 @@ import {
   ApplicationExceptionStatus,
   StudentAssessmentStatus,
   ApplicationOfferingChangeRequestStatus,
-  Application,
 } from "@sims/sims-db";
 import {
   Injectable,
@@ -396,30 +395,40 @@ export class AssessmentControllerService {
           ApplicationOfferingChangeRequestStatus.DeclinedByStudent,
           ApplicationOfferingChangeRequestStatus.DeclinedBySABC,
         ],
-        options?.studentId,
+        { studentId: options?.studentId },
       );
     return requestAssessmentSummary
       .concat(appeals)
-      .concat(applicationOfferingChangeRequests);
+      .concat(applicationOfferingChangeRequests)
+      .sort(
+        (firstRequest, secondRequest) =>
+          secondRequest.submittedDate.getTime() -
+          firstRequest.submittedDate.getTime(),
+      );
   }
 
   /**
    * Get all the Application Offering Change Requests for the provided application id filtered by the application offering change request statuses.
    * @param applicationId the application id.
    * @param applicationOfferingChangeRequestStatuses list of application offering change request statuses.
-   * @param studentId the student id.
+   * @param options method options.
+   * - `studentId` student id.
    * @returns application offering change requests.
    */
   async getApplicationOfferingChangeRequestsByStatus(
     applicationId: number,
     applicationOfferingChangeRequestStatuses: ApplicationOfferingChangeRequestStatus[],
-    studentId?: number,
+    options?: {
+      studentId?: number;
+    },
   ): Promise<RequestAssessmentSummaryAPIOutDTO[]> {
     const filteredApplicationOfferingChangeRequests =
       await this.applicationOfferingChangeRequestService.getApplicationOfferingChangeRequestsByStatus(
         applicationId,
         applicationOfferingChangeRequestStatuses,
-        studentId,
+        {
+          studentId: options?.studentId,
+        },
       );
     return filteredApplicationOfferingChangeRequests.map((request) => ({
       id: request.id,
