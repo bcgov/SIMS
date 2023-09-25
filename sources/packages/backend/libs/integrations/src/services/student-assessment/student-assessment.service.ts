@@ -1,6 +1,10 @@
 import { Injectable } from "@nestjs/common";
-import { RecordDataModelService, StudentAssessment } from "@sims/sims-db";
-import { DataSource } from "typeorm";
+import {
+  ApplicationStatus,
+  RecordDataModelService,
+  StudentAssessment,
+} from "@sims/sims-db";
+import { DataSource, Not } from "typeorm";
 import { addDays, dateEqualTo } from "@sims/utilities";
 
 /**
@@ -120,10 +124,16 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
         {
           assessmentDate: dateEqualTo(processingDate),
           offering: { institutionLocation: { hasIntegration: true } },
+          application: {
+            applicationStatus: Not(ApplicationStatus.Overwritten),
+          },
         },
         {
           disbursementSchedules: { updatedAt: dateEqualTo(processingDate) },
           offering: { institutionLocation: { hasIntegration: true } },
+          application: {
+            applicationStatus: Not(ApplicationStatus.Overwritten),
+          },
         },
       ],
     });

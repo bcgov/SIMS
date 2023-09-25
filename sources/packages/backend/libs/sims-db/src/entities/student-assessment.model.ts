@@ -12,6 +12,7 @@ import {
   AssessmentStatus,
   DisbursementSchedule,
   EducationProgramOffering,
+  FormYesNoOptions,
   RelationshipStatus,
   StudentAppeal,
   StudentAssessmentStatus,
@@ -275,7 +276,7 @@ interface BaseAssessment {
 /**
  * Interface for FullTime assessment payload.
  */
-interface FullTimeAssessment extends BaseAssessment {
+export interface FullTimeAssessment extends BaseAssessment {
   federalAssessmentNeed: number;
   provincialAssessmentNeed: number;
   exceptionalEducationCost: number;
@@ -296,7 +297,7 @@ interface FullTimeAssessment extends BaseAssessment {
 /**
  * Interface for PartTime assessment payload.
  */
-interface PartTimeAssessment extends BaseAssessment {
+export interface PartTimeAssessment extends BaseAssessment {
   miscellaneousCost: number;
   totalAcademicExpenses: number;
 }
@@ -320,8 +321,21 @@ export interface WorkflowData {
   studentData: {
     dependantStatus: "dependant" | "independant";
     relationshipStatus: RelationshipStatus;
+    livingWithParents: FormYesNoOptions;
   };
   calculatedData: {
-    parentalAssets: number;
+    parentalAssets?: number;
+    studentMaritalStatusCode: StudentMaritalStatusCode;
+    totalEligibleDependents?: number;
+    familySize: number;
+    parentalAssetContribution?: number;
+    parentalContribution?: number;
+    parentDiscretionaryIncome?: number;
+    dependantTotalMSOLAllowance?: number;
+    studentMSOLAllowance: number;
+    totalChildCareCost?: number;
+    totalNonEducationalCost: number;
   };
 }
+
+export type StudentMaritalStatusCode = "SI" | "SP" | "MA";
