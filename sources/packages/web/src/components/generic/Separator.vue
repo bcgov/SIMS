@@ -1,3 +1,3 @@
 <template>
-  <span class="mx-1 brand-gray-text">|</span>
+  <span class="mx-2 brand-gray-text vertical-divider" />
 </template>
