@@ -127,7 +127,7 @@ export class ApplicationOfferingChangesAPIOutDTO extends ApplicationOfferingDeta
 /**
  * Application Offering Change Request details (Ministry).
  */
-export class ApplicationOfferingDetailsReviewAPIOutDTO extends ApplicationOfferingDetailsAPIOutDTO {
+export class ApplicationOfferingChangeDetailsAPIOutDTO extends ApplicationOfferingDetailsAPIOutDTO {
   assessedNoteDescription?: string;
   studentFullName: string;
   assessedDate?: Date;

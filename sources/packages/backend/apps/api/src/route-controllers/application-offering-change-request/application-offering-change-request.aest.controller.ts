@@ -8,7 +8,7 @@ import BaseController from "../BaseController";
 import {
   AllInProgressOfferingChangePaginationOptionsAPIInDTO,
   AllInProgressApplicationOfferingChangesAPIOutDTO,
-  ApplicationOfferingDetailsReviewAPIOutDTO,
+  ApplicationOfferingChangeDetailsAPIOutDTO,
 } from "./models/application-offering-change-request.dto";
 import { ApplicationOfferingChangeRequestService } from "../../services";
 import { ApplicationOfferingChangeRequestStatus } from "@sims/sims-db";
@@ -85,7 +85,7 @@ export class ApplicationOfferingChangeRequestAESTController extends BaseControll
   async getApplicationOfferingChangeRequest(
     @Param("applicationOfferingChangeRequestId", ParseIntPipe)
     applicationOfferingChangeRequestId: number,
-  ): Promise<ApplicationOfferingDetailsReviewAPIOutDTO> {
+  ): Promise<ApplicationOfferingChangeDetailsAPIOutDTO> {
     return this.applicationOfferingChangeRequestControllerService.getApplicationOfferingChangeRequest(
       applicationOfferingChangeRequestId,
       { hasAuditAndNoteDetails: true },

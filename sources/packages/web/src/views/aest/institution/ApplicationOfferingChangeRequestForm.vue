@@ -69,7 +69,7 @@ import {
   ApplicationOfferingChangeRequestHeader,
   ApplicationOfferingChangeRequestStatus,
 } from "@/types";
-import { ApplicationOfferingDetailsReviewAPIOutDTO } from "@/services/http/dto";
+import { ApplicationOfferingChangeDetailsAPIOutDTO } from "@/services/http/dto";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import ApplicationOfferingChangeDetailsHeader from "@/components/aest/institution/ApplicationOfferingChangeDetailsHeader.vue";
 import { ApplicationOfferingChangeRequestService } from "@/services/ApplicationOfferingChangeRequestService";
@@ -102,7 +102,7 @@ export default defineComponent({
     const tab = ref("requested-change");
     const headerDetails = ref({} as ApplicationOfferingChangeRequestHeader);
     const applicationOfferingChangeRequestDetails = ref(
-      {} as ApplicationOfferingDetailsReviewAPIOutDTO,
+      {} as ApplicationOfferingChangeDetailsAPIOutDTO,
     );
     const studentApplicationOfferingDetails = ref(
       {} as ApplicationOfferingDetails,

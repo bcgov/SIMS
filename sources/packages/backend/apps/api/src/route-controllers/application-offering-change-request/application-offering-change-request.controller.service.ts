@@ -3,7 +3,7 @@ import { ApplicationOfferingChangeRequestService } from "../../services";
 import {
   ApplicationOfferingChangesAPIOutDTO,
   ApplicationOfferingDetailsAPIOutDTO,
-  ApplicationOfferingDetailsReviewAPIOutDTO,
+  ApplicationOfferingChangeDetailsAPIOutDTO,
 } from "./models/application-offering-change-request.dto";
 import { getUserFullName } from "../../utilities";
 
@@ -25,7 +25,7 @@ export class ApplicationOfferingChangeRequestControllerService {
     options: {
       hasAuditAndNoteDetails: boolean;
     },
-  ): Promise<ApplicationOfferingDetailsReviewAPIOutDTO>;
+  ): Promise<ApplicationOfferingChangeDetailsAPIOutDTO>;
 
   /**
    * Get the Application Offering Change Request by its id for the institution.
@@ -78,7 +78,7 @@ export class ApplicationOfferingChangeRequestControllerService {
   ): Promise<
     | ApplicationOfferingChangesAPIOutDTO
     | ApplicationOfferingDetailsAPIOutDTO
-    | ApplicationOfferingDetailsReviewAPIOutDTO
+    | ApplicationOfferingChangeDetailsAPIOutDTO
   > {
     const request = await this.applicationOfferingChangeRequestService.getById(
       applicationOfferingChangeRequestId,

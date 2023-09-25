@@ -11,7 +11,7 @@ import {
   StudentApplicationOfferingChangeRequestAPIInDTO,
   ApplicationOfferingDetailsAPIOutDTO,
   ApplicationOfferingChangeRequestStatusAPIOutDTO,
-  ApplicationOfferingDetailsReviewAPIOutDTO,
+  ApplicationOfferingChangeDetailsAPIOutDTO,
 } from "@/services/http/dto";
 
 export class ApplicationOfferingChangeRequestService {
@@ -136,7 +136,7 @@ export class ApplicationOfferingChangeRequestService {
    */
   async getApplicationOfferingDetailsForReview(
     applicationOfferingChangeRequestId: number,
-  ): Promise<ApplicationOfferingDetailsReviewAPIOutDTO> {
+  ): Promise<ApplicationOfferingChangeDetailsAPIOutDTO> {
     return ApiClient.ApplicationOfferingChangeRequestApi.getApplicationOfferingDetailsForReview(
       applicationOfferingChangeRequestId,
     );

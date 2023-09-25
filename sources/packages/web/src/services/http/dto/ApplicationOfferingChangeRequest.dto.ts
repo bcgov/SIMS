@@ -87,7 +87,7 @@ export interface ApplicationOfferingDetailsAPIOutDTO {
 /**
  * Application Offering Request details for ministry view.
  */
-export interface ApplicationOfferingDetailsReviewAPIOutDTO {
+export interface ApplicationOfferingChangeDetailsAPIOutDTO {
   applicationNumber: string;
   locationName: string;
   status: ApplicationOfferingChangeRequestStatus;
