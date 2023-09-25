@@ -157,10 +157,10 @@ export class AssessmentStudentsController extends BaseController {
       pendingAndDeniedAppealsPromise,
       studentInProgressAndDeclinedApplicationOfferingChangeRequestsPromise,
     ]);
-    return this.assessmentControllerService.sortAssessmentHistory([
+    return [
       ...pendingAndDeniedAppeals,
       ...studentInProgressAndDeclinedApplicationOfferingChangeRequests,
-    ]);
+    ].sort(this.assessmentControllerService.sortAssessmentHistory);
   }
 
   /**

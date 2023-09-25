@@ -397,11 +397,10 @@ export class AssessmentControllerService {
         ],
         { studentId: options?.studentId },
       );
-    const requestedAssessmentSummary = requestAssessmentSummary
+    return requestAssessmentSummary
       .concat(appeals)
-      .concat(applicationOfferingChangeRequests);
-
-    return this.sortAssessmentHistory(requestedAssessmentSummary);
+      .concat(applicationOfferingChangeRequests)
+      .sort(this.sortAssessmentHistory);
   }
 
   /**
@@ -437,17 +436,15 @@ export class AssessmentControllerService {
   }
 
   /**
-   * Helper method to sort the assessment history by submitted date chronologically backwards.
-   * @param assessmentHistory assessment history to be sorted.
-   * @returns assessmentHistory sorted by the latest submitted request first.
+   * Helper function to sort assessment history by descending submitted date.
+   * @param first first assessment.
+   * @param second second assessment.
+   * @returns the difference of the second submitted date minus the first submitted date in milliseconds.
    */
-  sortAssessmentHistory = (
-    assessmentHistory: RequestAssessmentSummaryAPIOutDTO[],
-  ): RequestAssessmentSummaryAPIOutDTO[] => {
-    return assessmentHistory.sort(
-      (firstRequest, secondRequest) =>
-        secondRequest.submittedDate.getTime() -
-        firstRequest.submittedDate.getTime(),
-    );
-  };
+  sortAssessmentHistory(
+    first: { submittedDate: Date },
+    second: { submittedDate: Date },
+  ): number {
+    return second.submittedDate.getTime() - first.submittedDate.getTime();
+  }
 }
