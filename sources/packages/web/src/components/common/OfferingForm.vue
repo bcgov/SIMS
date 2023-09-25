@@ -130,7 +130,7 @@ export default defineComponent({
     const formData = computed(
       (): OfferingFormModel => ({
         ...offeringData.value,
-        offeringChipStatus: offeringData.value.offeringStatus
+        offeringChipStatus: offeringData.value?.offeringStatus
           ? mapOfferingChipStatus(offeringData.value.offeringStatus)
           : undefined,
         mode: props.formMode,
