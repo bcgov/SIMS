@@ -40,6 +40,7 @@ import { defineComponent, PropType, ref } from "vue";
 import { ModalDialog, useFormioUtils, useSnackBar } from "@/composables";
 import {
   EducationProgramOfferingAPIInDTO,
+  EducationProgramOfferingAPIOutDTO,
   OfferingValidationResultAPIOutDTO,
   ValidationResultAPIOutDTO,
 } from "@/services/http/dto";
@@ -61,8 +62,10 @@ export default defineComponent({
   },
   props: {
     data: {
-      type: Object as PropType<OfferingFormModel>,
-      default: {} as OfferingFormModel,
+      type: Object as PropType<
+        EducationProgramOfferingAPIOutDTO | OfferingFormModel
+      >,
+      default: {} as EducationProgramOfferingAPIOutDTO | OfferingFormModel,
     },
     formMode: {
       type: String as PropType<OfferingFormModes>,
