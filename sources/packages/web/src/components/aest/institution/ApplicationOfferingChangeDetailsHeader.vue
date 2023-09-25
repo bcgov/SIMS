@@ -46,7 +46,7 @@ import {
   ApplicationOfferingChangeRequestStatus,
 } from "@/types";
 import { useFormatters } from "@/composables";
-import { computed, defineComponent, watchEffect, ref } from "vue";
+import { computed, defineComponent, watchEffect, ref, PropType } from "vue";
 import { useRouter } from "vue-router";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 
@@ -58,7 +58,7 @@ interface ReviewLabels {
 export default defineComponent({
   props: {
     headerDetails: {
-      type: Object,
+      type: Object as PropType<ApplicationOfferingChangeRequestHeader>,
       required: true,
       default: {} as ApplicationOfferingChangeRequestHeader,
     },
@@ -72,59 +72,41 @@ export default defineComponent({
     const assessedDateLabelValue = ref("");
     const router = useRouter();
     const { dateOnlyLongString } = useFormatters();
-    const showReviewDetails = computed(
-      () =>
-        (props.headerDetails.assessedBy || props.headerDetails.updatedDate) &&
-        [
-          ApplicationOfferingChangeRequestStatus.Approved,
-          ApplicationOfferingChangeRequestStatus.DeclinedBySABC,
-          ApplicationOfferingChangeRequestStatus.DeclinedByStudent,
-        ].includes(props.headerDetails.status),
+    const showReviewDetails = computed(() =>
+      [
+        ApplicationOfferingChangeRequestStatus.Approved,
+        ApplicationOfferingChangeRequestStatus.DeclinedBySABC,
+        ApplicationOfferingChangeRequestStatus.DeclinedByStudent,
+      ].includes(props.headerDetails.status),
     );
-    const checkHeaderDetailsStatus = (
-      statuses: ApplicationOfferingChangeRequestStatus[],
-    ): boolean => {
-      return statuses.includes(props.headerDetails.status);
-    };
     watchEffect(() => {
-      if (
-        [
-          ApplicationOfferingChangeRequestStatus.DeclinedByStudent,
-          ApplicationOfferingChangeRequestStatus.DeclinedBySABC,
-        ].includes(props.headerDetails.status)
-      ) {
-        iconLabel.value = "fa:fas fa-times-circle";
-        iconColor.value = "error";
-        assessedByLabel.value = "Declined By";
-        assessedDateLabel.value = "Declined";
-        if (
-          props.headerDetails.status ===
-          ApplicationOfferingChangeRequestStatus.DeclinedByStudent
-        ) {
-          assessedByLabelValue.value = "Student";
+      switch (props.headerDetails.status) {
+        case ApplicationOfferingChangeRequestStatus.DeclinedByStudent:
+        case ApplicationOfferingChangeRequestStatus.DeclinedBySABC:
+          iconLabel.value = "fa:fas fa-times-circle";
+          iconColor.value = "error";
+          assessedByLabel.value = "Declined By";
+          assessedDateLabel.value = "Declined";
+          assessedByLabelValue.value =
+            props.headerDetails.status ===
+            ApplicationOfferingChangeRequestStatus.DeclinedByStudent
+              ? "Student"
+              : props.headerDetails.assessedBy;
+          assessedDateLabelValue.value =
+            props.headerDetails.status ===
+            ApplicationOfferingChangeRequestStatus.DeclinedByStudent
+              ? dateOnlyLongString(props.headerDetails.updatedDate)
+              : dateOnlyLongString(props.headerDetails.assessedDate);
+          break;
+        case ApplicationOfferingChangeRequestStatus.Approved:
+          iconLabel.value = "fa:fas fa-check-circle";
+          iconColor.value = "success";
+          assessedByLabel.value = "Approved By";
+          assessedDateLabel.value = "Approved";
+          assessedByLabelValue.value = props.headerDetails.assessedBy;
           assessedDateLabelValue.value = dateOnlyLongString(
-            props.headerDetails.updatedDate,
+            props.headerDetails.assessedDate,
           );
-        }
-      } else if (
-        props.headerDetails.status ===
-        ApplicationOfferingChangeRequestStatus.Approved
-      ) {
-        iconLabel.value = "fa:fas fa-check-circle";
-        iconColor.value = "success";
-        assessedByLabel.value = "Approved By";
-        assessedDateLabel.value = "Approved";
-      }
-      if (
-        [
-          ApplicationOfferingChangeRequestStatus.DeclinedBySABC,
-          ApplicationOfferingChangeRequestStatus.Approved,
-        ].includes(props.headerDetails.status)
-      ) {
-        assessedByLabelValue.value = props.headerDetails.assessedBy;
-        assessedDateLabelValue.value = dateOnlyLongString(
-          props.headerDetails.assessedDate,
-        );
       }
     });
     const reviewLabel = computed((): ReviewLabels => {
@@ -166,7 +148,6 @@ export default defineComponent({
       reviewLabel,
       showReviewDetails,
       ApplicationOfferingChangeRequestStatus,
-      checkHeaderDetailsStatus,
       iconLabel,
       iconColor,
       assessedByLabel,
