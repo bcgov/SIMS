@@ -4,15 +4,13 @@
       <body-header :title="applicationOfferingChangeDetails.studentName" />
       <header-title-value
         class="mb-2"
-        title="Application#"
+        title="Application #"
         :value="applicationOfferingChangeDetails.applicationNumber"
       ></header-title-value>
     </template>
-    <content-group-info
-      ><div>
-        <h3 class="category-header-medium primary-color">Reason for change</h3>
-        <p>{{ applicationOfferingChangeDetails.reasonForChange }}</p>
-      </div>
+    <content-group-info>
+      <h3 class="category-header-medium primary-color">Reason for change</h3>
+      <p>{{ applicationOfferingChangeDetails.reasonForChange }}</p>
     </content-group-info>
     <content-group-info
       v-if="
@@ -21,12 +19,11 @@
         applicationOfferingChangeDetails.applicationOfferingChangeRequestStatus ===
           ApplicationOfferingChangeRequestStatus.DeclinedBySABC
       "
-      ><div>
-        <h3 class="category-header-medium primary-color">
-          Notes from StudentAid BC
-        </h3>
-        <p>{{ applicationOfferingChangeDetails.accessedNoteDescription }}</p>
-      </div>
+    >
+      <h3 class="category-header-medium primary-color">
+        Notes from StudentAid BC
+      </h3>
+      <p>{{ applicationOfferingChangeDetails.accessedNoteDescription }}</p>
     </content-group-info>
   </body-header-container>
 </template>

@@ -9,7 +9,7 @@
             : '-'
         "
       />
-      <Separator v-if="headerDetails.institutionName"></Separator>
+      <separator v-if="headerDetails.institutionName"></separator>
       <header-title-value title="Institution"
         ><template #value
           ><span class="link-primary" @click="navigateToInstitutionProfile()">
@@ -17,7 +17,7 @@
           </span>
         </template></header-title-value
       >
-      <Separator v-if="headerDetails.locationName" />
+      <separator v-if="headerDetails.locationName" />
       <header-title-value
         v-if="headerDetails.locationName"
         title="Location"
@@ -31,7 +31,7 @@
         :title="assessedByLabel"
         :value="assessedByLabelValue"
       />
-      <Separator />
+      <separator />
       <header-title-value
         :title="assessedDateLabel"
         :value="assessedDateLabelValue"

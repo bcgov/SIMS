@@ -77,6 +77,7 @@ import StudentApplicationOfferingChangeDetails from "@/components/aest/StudentAp
 import OfferingForm from "@/components/common/OfferingForm.vue";
 import { BannerTypes } from "@/types/contracts/Banner";
 import { ApplicationOfferingDetails } from "@/types/contracts/StudentApplicationOfferingChangeContract";
+import { useFormatters } from "@/composables";
 
 export default defineComponent({
   components: {
@@ -100,6 +101,7 @@ export default defineComponent({
   },
   setup(props) {
     const tab = ref("requested-change");
+    const { dateOnlyLongString } = useFormatters();
     const headerDetails = ref({} as ApplicationOfferingChangeRequestHeader);
     const applicationOfferingChangeRequestDetails = ref(
       {} as ApplicationOfferingChangeDetailsAPIOutDTO,
@@ -126,20 +128,23 @@ export default defineComponent({
           applicationOfferingChangeRequestDetails.value.status,
       };
       headerDetails.value = {
-        submittedDate:
-          applicationOfferingChangeRequestDetails.value.submittedDate?.toString(),
+        submittedDate: dateOnlyLongString(
+          applicationOfferingChangeRequestDetails.value.submittedDate,
+        ),
         institutionName:
           applicationOfferingChangeRequestDetails.value.institutionName,
         locationName:
           applicationOfferingChangeRequestDetails.value.locationName,
         assessedBy: applicationOfferingChangeRequestDetails.value.assessedBy,
-        assessedDate:
-          applicationOfferingChangeRequestDetails.value.assessedDate?.toString(),
+        assessedDate: dateOnlyLongString(
+          applicationOfferingChangeRequestDetails.value.assessedDate,
+        ),
         institutionId:
           applicationOfferingChangeRequestDetails.value.institutionId,
         status: applicationOfferingChangeRequestDetails.value.status,
-        updatedDate:
-          applicationOfferingChangeRequestDetails.value.updatedDate?.toString(),
+        updatedDate: dateOnlyLongString(
+          applicationOfferingChangeRequestDetails.value.updatedDate,
+        ),
       };
     });
     const goBackRouteParams = computed(

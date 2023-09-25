@@ -397,15 +397,11 @@ export class AssessmentControllerService {
         ],
         { studentId: options?.studentId },
       );
-    return requestAssessmentSummary
+    const requestedAssessmentSummary = requestAssessmentSummary
       .concat(appeals)
-      .concat(applicationOfferingChangeRequests)
-      .sort(
-        // sort by the latest submitted request first.
-        (firstRequest, secondRequest) =>
-          secondRequest.submittedDate.getTime() -
-          firstRequest.submittedDate.getTime(),
-      );
+      .concat(applicationOfferingChangeRequests);
+
+    return this.sortAssessmentHistory(requestedAssessmentSummary);
   }
 
   /**
@@ -439,4 +435,19 @@ export class AssessmentControllerService {
         RequestAssessmentTypeAPIOutDTO.ApplicationOfferingChangeRequest,
     }));
   }
+
+  /**
+   * Helper method to sort the assessment history by submitted date chronologically backwards.
+   * @param assessmentHistory assessment history to be sorted.
+   * @returns assessmentHistory sorted by the latest submitted request first.
+   */
+  sortAssessmentHistory = (
+    assessmentHistory: RequestAssessmentSummaryAPIOutDTO[],
+  ): RequestAssessmentSummaryAPIOutDTO[] => {
+    return assessmentHistory.sort(
+      (firstRequest, secondRequest) =>
+        secondRequest.submittedDate.getTime() -
+        firstRequest.submittedDate.getTime(),
+    );
+  };
 }
