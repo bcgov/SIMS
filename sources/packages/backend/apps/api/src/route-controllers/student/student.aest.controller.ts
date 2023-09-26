@@ -48,7 +48,6 @@ import {
   SINValidationsAPIOutDTO,
   UniqueFileNameParamAPIInDTO,
   UpdateSINValidationAPIInDTO,
-  SensitiveDataStudentProfileAPIOutDTO,
 } from "./models/student.dto";
 import { Response } from "express";
 import { FileInterceptor } from "@nestjs/platform-express";
