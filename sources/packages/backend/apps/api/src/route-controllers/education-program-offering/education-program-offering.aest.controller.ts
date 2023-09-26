@@ -172,30 +172,6 @@ export class EducationProgramOfferingAESTController extends BaseController {
   }
 
   /**
-   * Get preceding offering details.
-   * @param offeringId actual offering id.
-   * @returns Preceding offering details.
-   */
-  @ApiNotFoundResponse({
-    description: "Offering not found.",
-  })
-  @Get(":offeringId/preceding-offering")
-  async getPrecedingOfferingByActualOfferingId(
-    @Param("offeringId", ParseIntPipe) offeringId: number,
-  ): Promise<EducationProgramOfferingAPIOutDTO> {
-    const offering = await this.programOfferingService.getOfferingById(
-      offeringId,
-      { isPrecedingOffering: true },
-    );
-    if (!offering) {
-      throw new NotFoundException("Offering not found.");
-    }
-    return this.educationProgramOfferingControllerService.transformToProgramOfferingDTO(
-      offering,
-    );
-  }
-
-  /**
    * Approve or Decline an offering change
    * requested by institution.
    * @param offeringId offering that is requested for change.

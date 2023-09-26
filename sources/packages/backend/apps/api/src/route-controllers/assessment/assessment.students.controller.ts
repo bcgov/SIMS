@@ -142,13 +142,13 @@ export class AssessmentStudentsController extends BaseController {
     const studentInProgressAndDeclinedApplicationOfferingChangeRequestsPromise =
       this.assessmentControllerService.getApplicationOfferingChangeRequestsByStatus(
         applicationId,
-        userToken.studentId,
         [
           ApplicationOfferingChangeRequestStatus.InProgressWithStudent,
           ApplicationOfferingChangeRequestStatus.InProgressWithSABC,
           ApplicationOfferingChangeRequestStatus.DeclinedByStudent,
           ApplicationOfferingChangeRequestStatus.DeclinedBySABC,
         ],
+        { studentId: userToken.studentId },
       );
     const [
       pendingAndDeniedAppeals,
@@ -160,11 +160,7 @@ export class AssessmentStudentsController extends BaseController {
     return [
       ...pendingAndDeniedAppeals,
       ...studentInProgressAndDeclinedApplicationOfferingChangeRequests,
-    ].sort(
-      (firstRequest, secondRequest) =>
-        secondRequest.submittedDate.getTime() -
-        firstRequest.submittedDate.getTime(),
-    );
+    ].sort(this.assessmentControllerService.sortAssessmentHistory);
   }
 
   /**

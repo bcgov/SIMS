@@ -50,12 +50,12 @@ export class EntranceRequirements {
 }
 
 export interface ProgramOfferingHeader {
-  institutionId: number;
-  institutionName: string;
-  submittedDate: string;
+  institutionId?: number;
+  institutionName?: string;
+  submittedDate: Date;
   status: ProgramStatus | OfferingStatus;
-  assessedBy: string;
-  assessedDate: string;
+  assessedBy?: string;
+  assessedDate?: Date;
   effectiveEndDate?: Date; // This field is only for programs.
   locationName?: string; // This field is offering specific.
 }

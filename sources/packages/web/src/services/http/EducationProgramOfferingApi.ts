@@ -260,22 +260,6 @@ export class EducationProgramOfferingApi extends HttpBaseClient {
     );
   }
 
-  /**
-   * For a given offering which is requested as change
-   * get the details of it's actual(preceding) offering.
-   * @param offeringId actual offering id.
-   * @returns preceding offering details.
-   */
-  async getPrecedingOfferingByActualOfferingId(
-    offeringId: number,
-  ): Promise<EducationProgramOfferingAPIOutDTO> {
-    return this.getCall<EducationProgramOfferingAPIOutDTO>(
-      this.addClientRoot(
-        `education-program-offering/${offeringId}/preceding-offering`,
-      ),
-    );
-  }
-
   async assessOfferingChangeRequest(
     offeringId: number,
     payload: OfferingChangeAssessmentAPIInDTO,
