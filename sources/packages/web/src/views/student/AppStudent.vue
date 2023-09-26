@@ -79,6 +79,8 @@
                 </v-list-item-title>
               </v-list-item>
               <v-divider
+                class="border-opacity-100"
+                :thickness="2"
                 v-if="index < menuItems.length - 1"
                 :key="index"
                 inset

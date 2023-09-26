@@ -26,7 +26,7 @@
                 variant="outlined"
                 :rules="[checkStringDateFormatRule]"
                 hide-details="auto" /></v-col></v-row
-          ><v-divider></v-divider>
+          ><v-divider class="border-opacity-100" :thickness="2" />
           <h4 class="label-bold color-blue">Designate locations</h4>
           <v-row
             v-for="(item, index) in formModel.locationsDesignations"

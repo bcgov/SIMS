@@ -41,7 +41,7 @@
               :propertyValue="institutionProfileDetail.establishedDate"
             />
           </v-col>
-          <v-divider class="mx-4" vertical></v-divider>
+          <v-divider :thickness="2" vertical />
           <v-col>
             <title-value
               propertyTitle="Legal operating name"
