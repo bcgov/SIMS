@@ -35,7 +35,6 @@
       class="m-4"
       :headerDetails="{
         ...educationProgram,
-        institutionId: institutionId,
         status: educationProgram.programStatus,
       }"
     />

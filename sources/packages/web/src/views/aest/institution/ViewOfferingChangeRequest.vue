@@ -114,6 +114,7 @@ export default defineComponent({
           props.offeringId,
         );
       headerDetails.value = {
+        institutionId: offering.value.institutionId,
         institutionName: offering.value.institutionName,
         submittedDate: offering.value.submittedDate,
         status: offering.value.offeringStatus,

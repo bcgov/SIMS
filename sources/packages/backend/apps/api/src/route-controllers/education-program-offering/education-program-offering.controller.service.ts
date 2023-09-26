@@ -334,6 +334,7 @@ export class EducationProgramOfferingControllerService {
       precedingOfferingId: offering.precedingOffering?.id,
       offeringType: offering.offeringType,
       locationName: offering.institutionLocation.name,
+      institutionId: offering.institutionLocation.institution.id,
       institutionName: offering.institutionLocation.institution.operatingName,
       assessedBy: getUserFullName(offering.assessedBy),
       assessedDate: offering.assessedDate,

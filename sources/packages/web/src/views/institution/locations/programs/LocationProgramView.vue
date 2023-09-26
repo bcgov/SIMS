@@ -15,7 +15,6 @@
       <program-offering-detail-header
         :headerDetails="{
           ...educationProgram,
-          institutionId: institutionId,
           status: educationProgram.programStatus,
         }"
       />
