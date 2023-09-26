@@ -133,9 +133,7 @@ export class StudentRestrictionSharedService extends RecordDataModelService<Stud
         where: {
           id: In(ids),
           restriction: {
-            notificationType: Not(
-              ArrayContains([RestrictionNotificationType.NoEffect]),
-            ),
+            notificationType: Not(RestrictionNotificationType.NoEffect),
           },
         },
       });
