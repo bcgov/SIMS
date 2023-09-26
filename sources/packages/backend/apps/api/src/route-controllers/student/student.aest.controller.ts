@@ -252,7 +252,7 @@ export class StudentAESTController extends BaseController {
     ]);
 
     return {
-      ...(student as SensitiveDataStudentProfileAPIOutDTO),
+      ...student,
       hasRestriction: !!studentRestrictions.length,
     };
   }
