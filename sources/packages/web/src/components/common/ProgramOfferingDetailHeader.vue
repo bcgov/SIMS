@@ -11,7 +11,8 @@
         "
       />
       <v-divider
-        class="border-opacity-100 mx-2 my-0 v-divider"
+        class="border-opacity-100 mx-2 my-0"
+        color="secondary"
         :thickness="2"
         vertical
       />
@@ -24,7 +25,8 @@
       >
       <v-divider
         v-if="headerDetails.locationName"
-        class="border-opacity-100 mx-2 my-0 v-divider"
+        class="border-opacity-100 mx-2 my-0"
+        color="secondary"
         :thickness="2"
         vertical
       />
@@ -42,7 +44,8 @@
       />
       <v-divider
         v-if="headerDetails.assessedDate"
-        class="border-opacity-100 mx-2 my-0 v-divider"
+        class="border-opacity-100 mx-2 my-0"
+        color="secondary"
         :thickness="2"
         vertical
       />
@@ -53,7 +56,8 @@
       />
       <v-divider
         v-if="headerDetails.effectiveEndDate"
-        class="border-opacity-100 mx-2 my-0 v-divider"
+        class="border-opacity-100 mx-2 my-0"
+        color="secondary"
         :thickness="2"
         vertical
       />
