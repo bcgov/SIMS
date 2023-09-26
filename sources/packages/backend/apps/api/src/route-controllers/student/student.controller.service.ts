@@ -124,7 +124,7 @@ export class StudentControllerService {
    */
   async getStudentProfile(
     studentId: number,
-    options: { withSensitiveData: boolean },
+    options: { withSensitiveData: true },
   ): Promise<SensitiveDataStudentProfileAPIOutDTO>;
   /**
    * Get the student information that represents the profile.
@@ -135,7 +135,7 @@ export class StudentControllerService {
    */
   async getStudentProfile(
     studentId: number,
-    options?: { withSensitiveData: boolean },
+    options?: { withSensitiveData: true },
   ): Promise<StudentProfileAPIOutDTO | SensitiveDataStudentProfileAPIOutDTO> {
     const student = await this.studentService.getStudentById(studentId);
     if (!student) {
