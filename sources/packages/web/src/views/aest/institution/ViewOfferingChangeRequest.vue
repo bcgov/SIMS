@@ -7,28 +7,26 @@
         subTitle="View Request"
       >
         <template #buttons>
-          <v-row class="p-0 m-0">
-            <check-permission-role
-              :role="Role.InstitutionApproveDeclineOfferingChanges"
-            >
-              <template #="{ notAllowed }">
-                <v-btn
-                  color="primary"
-                  variant="outlined"
-                  @click="assessOfferingChange(OfferingStatus.ChangeDeclined)"
-                  :disabled="notAllowed"
-                  >Decline reassessment</v-btn
-                >
-                <v-btn
-                  class="ml-2"
-                  color="primary"
-                  @click="assessOfferingChange(OfferingStatus.Approved)"
-                  :disabled="notAllowed"
-                  >Approve reassessment</v-btn
-                >
-              </template>
-            </check-permission-role>
-          </v-row>
+          <check-permission-role
+            :role="Role.InstitutionApproveDeclineOfferingChanges"
+          >
+            <template #="{ notAllowed }">
+              <v-btn
+                color="primary"
+                variant="outlined"
+                @click="assessOfferingChange(OfferingStatus.ChangeDeclined)"
+                :disabled="notAllowed"
+                >Decline reassessment</v-btn
+              >
+              <v-btn
+                class="ml-2"
+                color="primary"
+                @click="assessOfferingChange(OfferingStatus.Approved)"
+                :disabled="notAllowed"
+                >Approve reassessment</v-btn
+              >
+            </template>
+          </check-permission-role>
         </template>
       </header-navigator>
       <program-offering-detail-header
@@ -49,19 +47,10 @@
     </template>
     <v-window v-model="tab">
       <v-window-item value="requested-change"
-        ><offering-change-request
-          :offeringId="offeringId"
-          :programId="programId"
-          :relationType="OfferingRelationType.ActualOffering"
-          @getHeaderDetails="getHeaderDetails"
-        ></offering-change-request>
+        ><offering-form :offeringId="offeringId" />
       </v-window-item>
       <v-window-item value="active-offering">
-        <offering-change-request
-          :offeringId="offeringId"
-          :programId="programId"
-          :relationType="OfferingRelationType.PrecedingOffering"
-        ></offering-change-request>
+        <offering-form :offeringId="offering.precedingOfferingId" />
       </v-window-item>
     </v-window>
     <assess-offering-change-modal ref="assessOfferingChangeModalRef" />
@@ -69,7 +58,7 @@
 </template>
 
 <script lang="ts">
-import { ref, defineComponent } from "vue";
+import { ref, defineComponent, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import {
   OfferingStatus,
@@ -77,23 +66,26 @@ import {
   OfferingRelationType,
   Role,
 } from "@/types";
-import { OfferingChangeAssessmentAPIInDTO } from "@/services/http/dto";
+import {
+  EducationProgramOfferingAPIOutDTO,
+  OfferingChangeAssessmentAPIInDTO,
+} from "@/services/http/dto";
 import { EducationProgramOfferingService } from "@/services/EducationProgramOfferingService";
 import { ModalDialog, useSnackBar } from "@/composables";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import ProgramOfferingDetailHeader from "@/components/common/ProgramOfferingDetailHeader.vue";
-import OfferingChangeRequest from "@/components/aest/OfferingChangeRequest.vue";
 import OfferingApplicationBanner from "@/components/aest/OfferingApplicationBanner.vue";
 import AssessOfferingChangeModal from "@/components/aest/institution/modals/AssessOfferingChangeModal.vue";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
+import OfferingForm from "@/components/common/OfferingForm.vue";
 
 export default defineComponent({
   components: {
     ProgramOfferingDetailHeader,
-    OfferingChangeRequest,
     OfferingApplicationBanner,
     AssessOfferingChangeModal,
     CheckPermissionRole,
+    OfferingForm,
   },
   props: {
     programId: {
@@ -109,17 +101,27 @@ export default defineComponent({
   setup(props) {
     const tab = ref("requested-change");
     const headerDetails = ref({} as ProgramOfferingHeader);
+    const offering = ref({} as EducationProgramOfferingAPIOutDTO);
     const assessOfferingChangeModalRef = ref(
       {} as ModalDialog<OfferingChangeAssessmentAPIInDTO | boolean>,
     );
     const snackBar = useSnackBar();
     const router = useRouter();
 
-    //TODO: This callback implementation needs to be removed when the program and offering header component
-    //TODO: is enhanced to load header values with it's own API call.
-    const getHeaderDetails = (data: ProgramOfferingHeader) => {
-      headerDetails.value = data;
-    };
+    onMounted(async () => {
+      offering.value =
+        await EducationProgramOfferingService.shared.getOfferingDetails(
+          props.offeringId,
+        );
+      headerDetails.value = {
+        institutionName: offering.value.institutionName,
+        submittedDate: offering.value.submittedDate,
+        status: offering.value.offeringStatus,
+        assessedBy: offering.value.assessedBy,
+        assessedDate: offering.value.assessedDate,
+        locationName: offering.value.locationName,
+      };
+    });
 
     const assessOfferingChange = async (offeringStatus: OfferingStatus) => {
       const responseData = await assessOfferingChangeModalRef.value.showModal(
@@ -157,11 +159,11 @@ export default defineComponent({
       OfferingStatus,
       AESTRoutesConst,
       tab,
-      getHeaderDetails,
       OfferingRelationType,
       assessOfferingChangeModalRef,
       assessOfferingChange,
       Role,
+      offering,
     };
   },
 });

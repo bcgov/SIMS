@@ -11,6 +11,7 @@ import {
   StudentApplicationOfferingChangeRequestAPIInDTO,
   ApplicationOfferingDetailsAPIOutDTO,
   ApplicationOfferingChangeRequestStatusAPIOutDTO,
+  ApplicationOfferingChangeDetailsAPIOutDTO,
 } from "@/services/http/dto";
 import { getPaginationQueryString } from "@/helpers";
 
@@ -125,6 +126,20 @@ export class ApplicationOfferingChangeRequestApi extends HttpBaseClient {
       ? `location/${options.locationId}/application-offering-change-request/${applicationOfferingChangeRequestId}`
       : `application-offering-change-request/${applicationOfferingChangeRequestId}`;
     return this.getCall<ApplicationOfferingChangesAPIOutDTO>(
+      this.addClientRoot(url),
+    );
+  }
+
+  /**
+   * Gets the Application Offering Change Request details for the ministry.
+   * @param applicationOfferingChangeRequestId the Application Offering Change Request id.
+   * @returns Application Offering Change Request details.
+   */
+  async getApplicationOfferingDetailsForReview(
+    applicationOfferingChangeRequestId: number,
+  ): Promise<ApplicationOfferingChangeDetailsAPIOutDTO> {
+    const url = `application-offering-change-request/${applicationOfferingChangeRequestId}`;
+    return this.getCall<ApplicationOfferingChangeDetailsAPIOutDTO>(
       this.addClientRoot(url),
     );
   }

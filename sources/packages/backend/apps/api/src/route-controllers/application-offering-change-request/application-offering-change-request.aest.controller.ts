@@ -1,5 +1,5 @@
-import { Controller, Get, Query } from "@nestjs/common";
-import { ApiTags } from "@nestjs/swagger";
+import { Controller, Get, Param, ParseIntPipe, Query } from "@nestjs/common";
+import { ApiNotFoundResponse, ApiTags } from "@nestjs/swagger";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { AllowAuthorizedParty, Groups } from "../../auth/decorators";
 import { ClientTypeBaseRoute } from "../../types";
@@ -8,12 +8,14 @@ import BaseController from "../BaseController";
 import {
   AllInProgressOfferingChangePaginationOptionsAPIInDTO,
   AllInProgressApplicationOfferingChangesAPIOutDTO,
+  ApplicationOfferingChangeDetailsAPIOutDTO,
 } from "./models/application-offering-change-request.dto";
 import { ApplicationOfferingChangeRequestService } from "../../services";
 import { ApplicationOfferingChangeRequestStatus } from "@sims/sims-db";
 import { UserGroups } from "../../auth";
 import { getUserFullName } from "../../utilities";
 import { getISODateOnlyString } from "@sims/utilities";
+import { ApplicationOfferingChangeRequestControllerService } from "./application-offering-change-request.controller.service";
 
 /**
  * Application offering change request controller for ministry client.
@@ -25,6 +27,7 @@ import { getISODateOnlyString } from "@sims/utilities";
 export class ApplicationOfferingChangeRequestAESTController extends BaseController {
   constructor(
     private readonly applicationOfferingChangeRequestService: ApplicationOfferingChangeRequestService,
+    private readonly applicationOfferingChangeRequestControllerService: ApplicationOfferingChangeRequestControllerService,
   ) {
     super();
   }
@@ -68,5 +71,24 @@ export class ApplicationOfferingChangeRequestAESTController extends BaseControll
       }),
       count: offeringChange.count,
     };
+  }
+
+  /**
+   * Gets the Application Offering Change Request details.
+   * @param applicationOfferingChangeRequestId the Application Offering Change Request id.
+   * @returns Application Offering Change Request details.
+   */
+  @Get(":applicationOfferingChangeRequestId")
+  @ApiNotFoundResponse({
+    description: "Not able to find an Application Offering Change Request.",
+  })
+  async getApplicationOfferingChangeRequest(
+    @Param("applicationOfferingChangeRequestId", ParseIntPipe)
+    applicationOfferingChangeRequestId: number,
+  ): Promise<ApplicationOfferingChangeDetailsAPIOutDTO> {
+    return this.applicationOfferingChangeRequestControllerService.getApplicationOfferingChangeRequest(
+      applicationOfferingChangeRequestId,
+      { hasAuditAndNoteDetails: true },
+    );
   }
 }

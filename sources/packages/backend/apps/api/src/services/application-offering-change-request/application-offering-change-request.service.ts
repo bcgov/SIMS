@@ -265,6 +265,10 @@ export class ApplicationOfferingChangeRequestService {
         id: true,
         reason: true,
         applicationOfferingChangeRequestStatus: true,
+        createdAt: true,
+        updatedAt: true,
+        assessedDate: true,
+        assessedBy: { id: true, firstName: true, lastName: true },
         activeOffering: {
           id: true,
         },
@@ -282,6 +286,7 @@ export class ApplicationOfferingChangeRequestService {
           location: {
             id: true,
             name: true,
+            institution: { id: true, operatingName: true },
           },
           student: {
             id: true,
@@ -299,7 +304,7 @@ export class ApplicationOfferingChangeRequestService {
       },
       relations: {
         application: {
-          location: true,
+          location: { institution: true },
           student: {
             user: true,
           },
@@ -308,6 +313,7 @@ export class ApplicationOfferingChangeRequestService {
         requestedOffering: {
           educationProgram: true,
         },
+        assessedBy: true,
         assessedNote: true,
       },
       where: {
@@ -374,14 +380,17 @@ export class ApplicationOfferingChangeRequestService {
   /**
    * Get all the Application Offering Change Requests for the provided application id filtered by the application offering change request statuses.
    * @param applicationId the application id.
-   * @param studentId the student id.
    * @param applicationOfferingChangeRequestStatuses list of application offering change request statuses.
+   * @param options method options:
+   * `studentId`: student id for authorization.
    * @returns application offering change requests.
    */
   async getApplicationOfferingChangeRequestsByStatus(
     applicationId: number,
-    studentId: number,
     applicationOfferingChangeRequestStatuses: ApplicationOfferingChangeRequestStatus[],
+    options?: {
+      studentId?: number;
+    },
   ): Promise<ApplicationOfferingChangeRequest[]> {
     return this.applicationOfferingChangeRequestRepo.find({
       select: {
@@ -393,7 +402,7 @@ export class ApplicationOfferingChangeRequestService {
         applicationOfferingChangeRequestStatus: In(
           applicationOfferingChangeRequestStatuses,
         ),
-        application: { id: applicationId, student: { id: studentId } },
+        application: { id: applicationId, student: { id: options?.studentId } },
       },
     });
   }

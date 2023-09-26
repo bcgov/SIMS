@@ -657,18 +657,15 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
 
   /**
    * Get offering details by offering id.
-   * If isPrecedingOffering is supplied then retrieve the preceding offering details.
    * @param offeringId offering id.
    * @param options options for the query:
    * - `locationId`: location for authorization.
-   * - `isPrecedingOffering`: when true preceding offering details are retrieved.
    * @returns offering object.
    */
   async getOfferingById(
     offeringId: number,
     options?: {
       locationId?: number;
-      isPrecedingOffering?: boolean;
     },
   ): Promise<EducationProgramOffering> {
     const offeringQuery = this.repo
@@ -696,6 +693,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
         "offering.submittedDate",
         "offering.courseLoad",
         "offering.offeringStatus",
+        "precedingOffering.id",
         "assessedBy.firstName",
         "assessedBy.lastName",
         "institutionLocation.name",
@@ -712,26 +710,11 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       .innerJoin("offering.educationProgram", "educationProgram")
       .innerJoin("offering.institutionLocation", "institutionLocation")
       .innerJoin("institutionLocation.institution", "institution")
-      .leftJoin("offering.assessedBy", "assessedBy");
-
-    if (options?.isPrecedingOffering) {
-      offeringQuery
-        .where((qb) => {
-          const subQuery = qb
-            .subQuery()
-            .select("precedingOffering.id")
-            .from(EducationProgramOffering, "offering")
-            .innerJoin("offering.precedingOffering", "precedingOffering")
-            .where("offering.id = :offeringId")
-            .getSql();
-          return `offering.id = ${subQuery}`;
-        })
-        .setParameter("offeringId", offeringId);
-    } else {
-      offeringQuery.where("offering.id= :offeringId", {
+      .leftJoin("offering.assessedBy", "assessedBy")
+      .leftJoin("offering.precedingOffering", "precedingOffering")
+      .where("offering.id = :offeringId", {
         offeringId,
       });
-    }
 
     if (options?.locationId) {
       offeringQuery.andWhere("institutionLocation.id = :locationId", {
@@ -1002,9 +985,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
         },
       )
       .andWhere("offering.id = :offeringId", { offeringId });
-
     const precedingOffering = await query.getRawOne();
-
     return {
       applicationsCount: +precedingOffering?.applicationsCount,
     };

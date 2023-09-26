@@ -216,9 +216,9 @@ strong {
 }
 
 .vertical-divider {
-  border: 1px solid #8692a4;
+  border: 1px solid $brand-grey;
   height: $line-height-header-sm;
-  background-color: #8692a4;
+  background-color: $brand-grey;
 }
 
 //TODO: This style has been temporarily used to fix the alignment and responsiveness issue

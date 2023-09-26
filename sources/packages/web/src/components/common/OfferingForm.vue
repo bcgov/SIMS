@@ -46,9 +46,13 @@
 
 <script lang="ts">
 import { FormIOForm, OfferingFormModel, OfferingFormModes } from "@/types";
-import { defineComponent, PropType, computed } from "vue";
+import { defineComponent, PropType, computed, ref, watchEffect } from "vue";
 import { useOffering } from "@/composables";
-import { EducationProgramOfferingAPIInDTO } from "@/services/http/dto";
+import {
+  EducationProgramOfferingAPIInDTO,
+  EducationProgramOfferingAPIOutDTO,
+} from "@/services/http/dto";
+import { EducationProgramOfferingService } from "@/services/EducationProgramOfferingService";
 
 interface SubmitArgs {
   validationOnly: true;
@@ -66,10 +70,13 @@ export default defineComponent({
     cancel: null,
   },
   props: {
+    offeringId: {
+      type: Number,
+      required: false,
+    },
     data: {
       type: Object as PropType<OfferingFormModel>,
-      required: true,
-      default: {} as OfferingFormModel,
+      required: false,
     },
     formMode: {
       type: String as PropType<OfferingFormModes>,
@@ -88,8 +95,17 @@ export default defineComponent({
     },
   },
   setup(props, context) {
+    const offeringData = ref(
+      {} as EducationProgramOfferingAPIOutDTO | OfferingFormModel,
+    );
+    watchEffect(async () => {
+      offeringData.value = props.offeringId
+        ? await EducationProgramOfferingService.shared.getOfferingDetails(
+            props.offeringId,
+          )
+        : (props.data as OfferingFormModel);
+    });
     const { mapOfferingChipStatus } = useOffering();
-
     const submitOffering = (
       form: FormIOForm<EducationProgramOfferingAPIInDTO>,
       args: SubmitArgs,
@@ -113,9 +129,9 @@ export default defineComponent({
      */
     const formData = computed(
       (): OfferingFormModel => ({
-        ...props.data,
-        offeringChipStatus: props.data.offeringStatus
-          ? mapOfferingChipStatus(props.data.offeringStatus)
+        ...offeringData.value,
+        offeringChipStatus: offeringData.value?.offeringStatus
+          ? mapOfferingChipStatus(offeringData.value.offeringStatus)
           : undefined,
         mode: props.formMode,
       }),

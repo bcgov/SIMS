@@ -330,7 +330,7 @@ export class AssessmentControllerService {
   }
 
   /**
-   * Get all pending and declined requests related to an application which would result
+   * Get all pending and declined requests related to an application which would result in
    * a new assessment when that request is approved.
    * @param applicationId application id.
    * @param options options for request assessments,
@@ -386,26 +386,45 @@ export class AssessmentControllerService {
       applicationId,
       options?.studentId,
     );
-    return requestAssessmentSummary.concat(appeals);
+    const applicationOfferingChangeRequests =
+      await this.getApplicationOfferingChangeRequestsByStatus(
+        applicationId,
+        [
+          ApplicationOfferingChangeRequestStatus.InProgressWithStudent,
+          ApplicationOfferingChangeRequestStatus.InProgressWithSABC,
+          ApplicationOfferingChangeRequestStatus.DeclinedByStudent,
+          ApplicationOfferingChangeRequestStatus.DeclinedBySABC,
+        ],
+        { studentId: options?.studentId },
+      );
+    return requestAssessmentSummary
+      .concat(appeals)
+      .concat(applicationOfferingChangeRequests)
+      .sort(this.sortAssessmentHistory);
   }
 
   /**
    * Get all the Application Offering Change Requests for the provided application id filtered by the application offering change request statuses.
    * @param applicationId the application id.
-   * @param studentId the student id.
    * @param applicationOfferingChangeRequestStatuses list of application offering change request statuses.
+   * @param options method options.
+   * - `studentId` student id.
    * @returns application offering change requests.
    */
   async getApplicationOfferingChangeRequestsByStatus(
     applicationId: number,
-    studentId: number,
     applicationOfferingChangeRequestStatuses: ApplicationOfferingChangeRequestStatus[],
+    options?: {
+      studentId?: number;
+    },
   ): Promise<RequestAssessmentSummaryAPIOutDTO[]> {
     const filteredApplicationOfferingChangeRequests =
       await this.applicationOfferingChangeRequestService.getApplicationOfferingChangeRequestsByStatus(
         applicationId,
-        studentId,
         applicationOfferingChangeRequestStatuses,
+        {
+          studentId: options?.studentId,
+        },
       );
     return filteredApplicationOfferingChangeRequests.map((request) => ({
       id: request.id,
@@ -414,5 +433,18 @@ export class AssessmentControllerService {
       requestType:
         RequestAssessmentTypeAPIOutDTO.ApplicationOfferingChangeRequest,
     }));
+  }
+
+  /**
+   * Helper function to sort assessment history by descending submitted date.
+   * @param first first assessment.
+   * @param second second assessment.
+   * @returns the difference of the second submitted date minus the first submitted date in milliseconds.
+   */
+  sortAssessmentHistory(
+    first: { submittedDate: Date },
+    second: { submittedDate: Date },
+  ): number {
+    return second.submittedDate.getTime() - first.submittedDate.getTime();
   }
 }

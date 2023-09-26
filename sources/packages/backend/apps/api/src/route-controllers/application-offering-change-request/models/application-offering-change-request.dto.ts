@@ -50,6 +50,15 @@ export class InProgressApplicationOfferingChangesAPIOutDTO {
   status: ApplicationOfferingChangeRequestStatus;
 }
 
+export interface ApplicationOfferingDetails {
+  studentName: string;
+  applicationNumber: string;
+  locationName: string;
+  reasonForChange: string;
+  accessedNoteDescription: string;
+  applicationOfferingChangeRequestStatus: ApplicationOfferingChangeRequestStatus;
+}
+
 /**
  * Completed application offering change details.
  */
@@ -91,24 +100,8 @@ export class InProgressOfferingChangePaginationOptionsAPIInDTO extends Paginatio
 }
 
 /**
- * Application Offering Change Request details.
+ * Application Offering Change Request details (Student).
  */
-export class ApplicationOfferingChangesAPIOutDTO {
-  id: number;
-  status: ApplicationOfferingChangeRequestStatus;
-  applicationId: number;
-  applicationNumber: string;
-  locationName: string;
-  activeOfferingId: number;
-  requestedOfferingId: number;
-  requestedOfferingDescription: string;
-  requestedOfferingProgramId: number;
-  requestedOfferingProgramName: string;
-  reason?: string;
-  assessedNoteDescription?: string;
-  studentFullName: string;
-}
-
 export class ApplicationOfferingDetailsAPIOutDTO {
   applicationNumber: string;
   locationName: string;
@@ -116,6 +109,33 @@ export class ApplicationOfferingDetailsAPIOutDTO {
   requestedOfferingId: number;
   activeOfferingId: number;
   reason: string;
+}
+
+/**
+ * Application Offering Change Request details (Institution).
+ */
+export class ApplicationOfferingChangesAPIOutDTO extends ApplicationOfferingDetailsAPIOutDTO {
+  id: number;
+  applicationId: number;
+  requestedOfferingDescription: string;
+  requestedOfferingProgramId: number;
+  requestedOfferingProgramName: string;
+  assessedNoteDescription?: string;
+  studentFullName: string;
+}
+
+/**
+ * Application Offering Change Request details (Ministry).
+ */
+export class ApplicationOfferingChangeDetailsAPIOutDTO extends ApplicationOfferingDetailsAPIOutDTO {
+  assessedNoteDescription?: string;
+  studentFullName: string;
+  assessedDate?: Date;
+  assessedBy?: string;
+  institutionId: number;
+  institutionName: string;
+  submittedDate: Date;
+  updatedDate: Date;
 }
 
 /**
