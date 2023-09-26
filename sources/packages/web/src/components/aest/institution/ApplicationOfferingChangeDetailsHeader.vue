@@ -11,7 +11,7 @@
       />
       <v-divider
         v-if="headerDetails.institutionName"
-        class="border-opacity-100 mx-2 my-0"
+        class="border-opacity-100 mx-2 my-0 v-divider"
         :thickness="2"
         vertical
       />
@@ -24,7 +24,7 @@
       >
       <v-divider
         v-if="headerDetails.locationName"
-        class="border-opacity-100 mx-2 my-0"
+        class="border-opacity-100 mx-2 my-0 v-divider"
         :thickness="2"
         vertical
       />
@@ -41,7 +41,11 @@
         :title="assessedByLabel"
         :value="assessedByLabelValue"
       />
-      <v-divider class="border-opacity-100 mx-2 my-0" :thickness="2" vertical />
+      <v-divider
+        class="border-opacity-100 mx-2 my-0 v-divider"
+        :thickness="2"
+        vertical
+      />
       <header-title-value
         :title="assessedDateLabel"
         :value="assessedDateLabelValue"

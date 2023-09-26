@@ -10,7 +10,11 @@
             : '-'
         "
       />
-      <v-divider class="border-opacity-100 mx-2 my-0" :thickness="2" vertical />
+      <v-divider
+        class="border-opacity-100 mx-2 my-0 v-divider"
+        :thickness="2"
+        vertical
+      />
       <header-title-value title="Institution name"
         ><template #value
           ><span class="link-primary" @click="goToInstitutionProfile()">
@@ -20,7 +24,7 @@
       >
       <v-divider
         v-if="headerDetails.locationName"
-        class="border-opacity-100 mx-2 my-0"
+        class="border-opacity-100 mx-2 my-0 v-divider"
         :thickness="2"
         vertical
       />
@@ -38,7 +42,7 @@
       />
       <v-divider
         v-if="headerDetails.assessedDate"
-        class="border-opacity-100 mx-2 my-0"
+        class="border-opacity-100 mx-2 my-0 v-divider"
         :thickness="2"
         vertical
       />
@@ -49,7 +53,7 @@
       />
       <v-divider
         v-if="headerDetails.effectiveEndDate"
-        class="border-opacity-100 mx-2 my-0"
+        class="border-opacity-100 mx-2 my-0 v-divider"
         :thickness="2"
         vertical
       />
