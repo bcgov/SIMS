@@ -34,14 +34,12 @@ describe("ApplicationOfferingChangeRequestAESTController(e2e)-getApplicationOffe
       await saveFakeApplicationOfferingRequestChange(db, {
         application,
       });
+    const token = await getAESTToken(AESTGroups.BusinessAdministrators);
     const endpoint = `/aest/application-offering-change-request/${applicationOfferingChangeRequest.id}`;
     // Act/Assert
     await request(app.getHttpServer())
       .get(endpoint)
-      .auth(
-        await getAESTToken(AESTGroups.BusinessAdministrators),
-        BEARER_AUTH_TYPE,
-      )
+      .auth(token, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
       .expect({
         status:
@@ -71,14 +69,12 @@ describe("ApplicationOfferingChangeRequestAESTController(e2e)-getApplicationOffe
 
   it("Should throw a HttpStatus Not Found (404) when an incorrect application offering change request is retrieved.", async () => {
     // Arrange
+    const token = await getAESTToken(AESTGroups.BusinessAdministrators);
     const endpoint = `/aest/application-offering-change-request/9999`;
     // Act/Assert
     await request(app.getHttpServer())
       .get(endpoint)
-      .auth(
-        await getAESTToken(AESTGroups.BusinessAdministrators),
-        BEARER_AUTH_TYPE,
-      )
+      .auth(token, BEARER_AUTH_TYPE)
       .expect(HttpStatus.NOT_FOUND)
       .expect({
         statusCode: HttpStatus.NOT_FOUND,
