@@ -10524,8 +10524,7 @@
               "showWordCount": false,
               "allowMultipleMasks": false,
               "addons": [],
-              "id": "e7vkza",
-              "isNew": false
+              "id": "e7vkza"
             },
             {
               "label": "<strong>In the time since you left high school to your first day of classes, have you spent two periods of 12 consecutive months each, in the full time labour force?</strong>",
@@ -12572,7 +12571,7 @@
               "dataGridLabel": false,
               "labelPosition": "top",
               "description": "",
-              "tooltip": "Dependants represent anyone who you support financially.",
+              "tooltip": "",
               "hideLabel": false,
               "tabindex": "",
               "disabled": false,
@@ -12584,7 +12583,7 @@
               "widget": null,
               "validateOn": "change",
               "conditional": {
-                "show": "",
+                "show": null,
                 "when": null,
                 "eq": ""
               },
@@ -12604,8 +12603,7 @@
               "addons": [],
               "inputType": "radio",
               "fieldSet": false,
-              "id": "e2utfe",
-              "tags": []
+              "id": "e2utfe"
             },
             {
               "title": "Add Dependants Panel",
@@ -14370,7 +14368,7 @@
               "id": "esww5zq"
             },
             {
-              "label": "<strong>Are any of the dependants listed above supported by you financially but not under your sole custody?</strong>",
+              "label": "<strong>Do you have any dependents that you support financially but do not have sole custody of?</strong>",
               "optionsLabelPosition": "right",
               "inline": false,
               "tableView": false,
@@ -14431,9 +14429,9 @@
               "widget": null,
               "validateOn": "change",
               "conditional": {
-                "show": "true",
-                "when": "hasDependents",
-                "eq": "yes"
+                "show": null,
+                "when": null,
+                "eq": ""
               },
               "overlay": {
                 "style": "",
@@ -14451,8 +14449,7 @@
               "addons": [],
               "inputType": "radio",
               "fieldSet": false,
-              "id": "eftpw4a",
-              "tags": []
+              "id": "eftpw4a"
             },
             {
               "title": "Dependents that you support financially but do not have sole custody",
