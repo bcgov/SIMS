@@ -10524,7 +10524,8 @@
               "showWordCount": false,
               "allowMultipleMasks": false,
               "addons": [],
-              "id": "e7vkza"
+              "id": "e7vkza",
+              "isNew": false
             },
             {
               "label": "<strong>In the time since you left high school to your first day of classes, have you spent two periods of 12 consecutive months each, in the full time labour force?</strong>",
