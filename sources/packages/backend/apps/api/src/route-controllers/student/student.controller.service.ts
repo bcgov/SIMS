@@ -112,6 +112,8 @@ export class StudentControllerService {
   /**
    * Get the student information that represents the profile.
    * @param studentId student id to retrieve the data.
+   * @param options options:
+   * - `withSensitiveData` boolean option to return sensitive data such as SIN.
    * @returns student profile details.
    */
   async getStudentProfile(
