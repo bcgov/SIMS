@@ -132,8 +132,9 @@ export interface EducationProgramOfferingAPIOutDTO {
   submittedDate: Date;
   courseLoad?: number;
   hasExistingApplication?: boolean;
-  locationName?: string;
-  institutionName?: string;
+  locationName: string;
+  institutionId: number;
+  institutionName: string;
   validationWarnings: string[];
   validationInfos: string[];
 }

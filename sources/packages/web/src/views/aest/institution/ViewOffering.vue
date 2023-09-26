@@ -36,7 +36,6 @@
         :headerDetails="{
           ...initialData,
           status: initialData.offeringStatus,
-          institutionId: institutionId,
         }"
       />
     </template>
