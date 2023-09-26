@@ -10,7 +10,6 @@ import {
   User,
 } from "@sims/sims-db";
 import {
-  ArrayContains,
   DataSource,
   EntityManager,
   In,
