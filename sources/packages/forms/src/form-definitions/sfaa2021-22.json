@@ -10385,9 +10385,9 @@
           "customConditional": "",
           "conditional": {
             "json": "",
-            "show": null,
-            "when": null,
-            "eq": ""
+            "show": "true",
+            "when": "howWillYouBeAttendingTheProgram",
+            "eq": "Full Time"
           },
           "logic": [],
           "attributes": {},
@@ -10586,9 +10586,9 @@
               "attributes": {},
               "validateOn": "change",
               "conditional": {
-                "show": "true",
-                "when": "howWillYouBeAttendingTheProgram",
-                "eq": "Full Time"
+                "show": "",
+                "when": "",
+                "eq": ""
               },
               "overlay": {
                 "style": "",
@@ -10606,7 +10606,8 @@
               "inputType": "radio",
               "fieldSet": false,
               "id": "eqf8qus",
-              "addons": []
+              "addons": [],
+              "tags": []
             }
           ],
           "id": "erpkbb"
