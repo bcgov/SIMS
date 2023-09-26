@@ -10,7 +10,7 @@
             : '-'
         "
       />
-      <div class="mx-2 vertical-divider"></div>
+      <v-divider class="border-opacity-100 mx-2 my-0" :thickness="2" vertical />
       <header-title-value title="Institution name"
         ><template #value
           ><span class="link-primary" @click="goToInstitutionProfile()">
@@ -18,10 +18,12 @@
           </span>
         </template></header-title-value
       >
-      <div
+      <v-divider
         v-if="headerDetails.locationName"
-        class="mx-2 vertical-divider"
-      ></div>
+        class="border-opacity-100 mx-2 my-0"
+        :thickness="2"
+        vertical
+      />
       <header-title-value
         v-if="headerDetails.locationName"
         title="Location"
@@ -34,19 +36,23 @@
         :title="approvalLabel.assessedByLabel"
         :value="headerDetails.assessedBy"
       />
-      <div
-        class="mx-2 vertical-divider"
+      <v-divider
         v-if="headerDetails.assessedDate"
-      ></div>
+        class="border-opacity-100 mx-2 my-0"
+        :thickness="2"
+        vertical
+      />
       <header-title-value
         :title="approvalLabel.assessedDateLabel"
         v-if="headerDetails.assessedDate"
         :value="dateOnlyLongString(headerDetails.assessedDate)"
       />
-      <div
-        class="mx-2 vertical-divider"
+      <v-divider
         v-if="headerDetails.effectiveEndDate"
-      ></div>
+        class="border-opacity-100 mx-2 my-0"
+        :thickness="2"
+        vertical
+      />
       <header-title-value
         v-if="headerDetails.effectiveEndDate"
         title="Effective end date"
