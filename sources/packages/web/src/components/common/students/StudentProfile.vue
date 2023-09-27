@@ -98,8 +98,15 @@
 import { onMounted, ref, defineComponent } from "vue";
 import { StudentService } from "@/services/StudentService";
 import { useFormatters } from "@/composables";
-import { StudentProfile } from "@/types";
 import { AddressAPIOutDTO } from "@/services/http/dto";
+import { StudentProfile } from "@/types";
+
+/**
+ *  Used to combine institution and ministry DTOs and make SIN explicitly mandatory.
+ */
+interface SharedStudentProfile extends Omit<StudentProfile, "sin"> {
+  sin: string;
+}
 
 export default defineComponent({
   props: {
@@ -109,13 +116,13 @@ export default defineComponent({
     },
   },
   setup(props) {
-    const studentDetail = ref({} as StudentProfile);
+    const studentDetail = ref({} as SharedStudentProfile);
     const address = ref({} as AddressAPIOutDTO);
     const { sinDisplayFormat, emptyStringFiller } = useFormatters();
     onMounted(async () => {
-      studentDetail.value = await StudentService.shared.getStudentProfile(
+      studentDetail.value = (await StudentService.shared.getStudentProfile(
         props.studentId,
-      );
+      )) as SharedStudentProfile;
       address.value = studentDetail.value.contact.address;
     });
     return {

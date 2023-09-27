@@ -242,13 +242,18 @@ export class StudentAESTController extends BaseController {
     @Param("studentId", ParseIntPipe) studentId: number,
   ): Promise<AESTStudentProfileAPIOutDTO> {
     const [student, studentRestrictions] = await Promise.all([
-      this.studentControllerService.getStudentProfile(studentId),
+      this.studentControllerService.getStudentProfile(studentId, {
+        withSensitiveData: true,
+      }),
       this.studentRestrictionService.getStudentRestrictionsById(studentId, {
         onlyActive: true,
       }),
     ]);
 
-    return { ...student, hasRestriction: !!studentRestrictions.length };
+    return {
+      ...student,
+      hasRestriction: !!studentRestrictions.length,
+    };
   }
 
   /**

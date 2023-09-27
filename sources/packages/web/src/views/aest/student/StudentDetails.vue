@@ -40,7 +40,8 @@ import { onMounted, ref, defineComponent } from "vue";
 import { StudentService } from "@/services/StudentService";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import StudentRestrictionChip from "@/components/generic/StudentRestrictionChip.vue";
-import { StudentRestrictionStatus, StudentProfile } from "@/types";
+import { StudentRestrictionStatus } from "@/types";
+import { AESTStudentProfileAPIOutDTO } from "@/services/http/dto";
 
 export default defineComponent({
   components: { StudentRestrictionChip },
@@ -51,7 +52,7 @@ export default defineComponent({
     },
   },
   setup(props) {
-    const studentDetails = ref({} as StudentProfile);
+    const studentDetails = ref({} as AESTStudentProfileAPIOutDTO);
     const items = ref([
       {
         label: "Profile",
@@ -112,9 +113,9 @@ export default defineComponent({
     ]);
 
     onMounted(async () => {
-      studentDetails.value = await StudentService.shared.getStudentProfile(
+      studentDetails.value = (await StudentService.shared.getStudentProfile(
         props.studentId,
-      );
+      )) as AESTStudentProfileAPIOutDTO;
     });
 
     return {

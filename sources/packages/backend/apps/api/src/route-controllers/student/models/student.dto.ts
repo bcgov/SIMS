@@ -181,10 +181,13 @@ export class StudentProfileAPIOutDTO {
   contact: ContactInformationAPIOutDTO;
   validSin: boolean;
   disabilityStatus: DisabilityStatus;
+}
+
+export class InstitutionStudentProfileAPIOutDTO extends StudentProfileAPIOutDTO {
   sin: string;
 }
 
-export class AESTStudentProfileAPIOutDTO extends StudentProfileAPIOutDTO {
+export class AESTStudentProfileAPIOutDTO extends InstitutionStudentProfileAPIOutDTO {
   hasRestriction: boolean;
 }
 

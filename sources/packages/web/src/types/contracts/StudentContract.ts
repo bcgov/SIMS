@@ -1,13 +1,20 @@
 import {
   AddressDetailsFormAPIDTO,
+  AESTStudentProfileAPIOutDTO,
+  InstitutionStudentProfileAPIOutDTO,
   SINValidationsAPIOutDTO,
   StudentProfileAPIOutDTO,
 } from "@/services/http/dto";
 import { IdentityProviders } from "@/types";
 
-export interface StudentProfile extends StudentProfileAPIOutDTO {
-  birthDateFormatted: string;
-}
+export type StudentProfile =
+  | (
+      | StudentProfileAPIOutDTO
+      | InstitutionStudentProfileAPIOutDTO
+      | AESTStudentProfileAPIOutDTO
+    ) & {
+      birthDateFormatted: string;
+    };
 
 /**
  * Disability status of student.

@@ -20,6 +20,7 @@ import {
   StudentProfileAPIOutDTO,
   StudentFileDetailsAPIOutDTO,
   StudentUploadFileAPIOutDTO,
+  InstitutionStudentProfileAPIOutDTO,
 } from "./models/student.dto";
 import { transformAddressDetailsForAddressBlockForm } from "../utils/address-utils";
 
@@ -113,14 +114,36 @@ export class StudentControllerService {
    * @param studentId student id to retrieve the data.
    * @returns student profile details.
    */
-  async getStudentProfile(studentId: number): Promise<StudentProfileAPIOutDTO> {
+  async getStudentProfile(studentId: number): Promise<StudentProfileAPIOutDTO>;
+  /**
+   * Get the student information that represents the profile.
+   * @param studentId student id to retrieve the data.
+   * @param options options:
+   * - `withSensitiveData` boolean option to return sensitive data such as SIN.
+   * @returns student profile details.
+   */
+  async getStudentProfile(
+    studentId: number,
+    options: { withSensitiveData: true },
+  ): Promise<InstitutionStudentProfileAPIOutDTO>;
+  /**
+   * Get the student information that represents the profile.
+   * @param studentId student id to retrieve the data.
+   * @param options options:
+   * - `withSensitiveData` boolean option to return sensitive data such as SIN.
+   * @returns student profile details.
+   */
+  async getStudentProfile(
+    studentId: number,
+    options?: { withSensitiveData: true },
+  ): Promise<StudentProfileAPIOutDTO | InstitutionStudentProfileAPIOutDTO> {
     const student = await this.studentService.getStudentById(studentId);
     if (!student) {
       throw new NotFoundException("Student not found.");
     }
 
     const address = student.contactInfo.address ?? ({} as AddressInfo);
-    return {
+    const studentProfile = {
       firstName: student.user.firstName,
       lastName: student.user.lastName,
       fullName: getUserFullName(student.user),
@@ -133,8 +156,12 @@ export class StudentControllerService {
       },
       disabilityStatus: student.disabilityStatus,
       validSin: student.sinValidation.isValidSIN,
-      sin: student.sinValidation.sin,
     };
+
+    if (options?.withSensitiveData) {
+      return { ...studentProfile, sin: student.sinValidation.sin };
+    }
+    return studentProfile;
   }
 
   /**

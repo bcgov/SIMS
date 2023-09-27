@@ -82,7 +82,9 @@ export class StudentInstitutionsController extends BaseController {
   async getStudentProfile(
     @Param("studentId", ParseIntPipe) studentId: number,
   ): Promise<StudentProfileAPIOutDTO> {
-    return this.studentControllerService.getStudentProfile(studentId);
+    return this.studentControllerService.getStudentProfile(studentId, {
+      withSensitiveData: true,
+    });
   }
 
   /**
