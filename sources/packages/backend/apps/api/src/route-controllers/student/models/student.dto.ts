@@ -183,9 +183,11 @@ export class StudentProfileAPIOutDTO {
   disabilityStatus: DisabilityStatus;
 }
 
-export class SensitiveDataStudentProfileAPIOutDTO extends StudentProfileAPIOutDTO {
+class SensitiveDataStudentProfileAPIOutDTO extends StudentProfileAPIOutDTO {
   sin: string;
 }
+
+export class InstitutionStudentProfileAPIOutDTO extends SensitiveDataStudentProfileAPIOutDTO {}
 
 export class AESTStudentProfileAPIOutDTO extends SensitiveDataStudentProfileAPIOutDTO {
   hasRestriction: boolean;

@@ -20,7 +20,7 @@ import {
   StudentProfileAPIOutDTO,
   StudentFileDetailsAPIOutDTO,
   StudentUploadFileAPIOutDTO,
-  SensitiveDataStudentProfileAPIOutDTO,
+  InstitutionStudentProfileAPIOutDTO,
 } from "./models/student.dto";
 import { transformAddressDetailsForAddressBlockForm } from "../utils/address-utils";
 
@@ -125,7 +125,7 @@ export class StudentControllerService {
   async getStudentProfile(
     studentId: number,
     options: { withSensitiveData: true },
-  ): Promise<SensitiveDataStudentProfileAPIOutDTO>;
+  ): Promise<InstitutionStudentProfileAPIOutDTO>;
   /**
    * Get the student information that represents the profile.
    * @param studentId student id to retrieve the data.
@@ -136,7 +136,7 @@ export class StudentControllerService {
   async getStudentProfile(
     studentId: number,
     options?: { withSensitiveData: true },
-  ): Promise<StudentProfileAPIOutDTO | SensitiveDataStudentProfileAPIOutDTO> {
+  ): Promise<StudentProfileAPIOutDTO | InstitutionStudentProfileAPIOutDTO> {
     const student = await this.studentService.getStudentById(studentId);
     if (!student) {
       throw new NotFoundException("Student not found.");
