@@ -9,7 +9,13 @@
             : '-'
         "
       />
-      <separator v-if="headerDetails.institutionName"></separator>
+      <v-divider
+        v-if="headerDetails.institutionName"
+        class="border-opacity-100 mx-2 my-0"
+        color="secondary"
+        :thickness="2"
+        vertical
+      />
       <header-title-value title="Institution"
         ><template #value
           ><span class="link-primary" @click="navigateToInstitutionProfile()">
@@ -17,7 +23,13 @@
           </span>
         </template></header-title-value
       >
-      <separator v-if="headerDetails.locationName" />
+      <v-divider
+        v-if="headerDetails.locationName"
+        class="border-opacity-100 mx-2 my-0"
+        color="secondary"
+        :thickness="2"
+        vertical
+      />
       <header-title-value
         v-if="headerDetails.locationName"
         title="Location"
@@ -31,7 +43,12 @@
         :title="assessedByLabel"
         :value="assessedByLabelValue"
       />
-      <separator />
+      <v-divider
+        class="border-opacity-100 mx-2 my-0"
+        color="secondary"
+        :thickness="2"
+        vertical
+      />
       <header-title-value
         :title="assessedDateLabel"
         :value="assessedDateLabelValue"

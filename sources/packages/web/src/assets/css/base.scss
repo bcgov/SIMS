@@ -215,12 +215,6 @@ strong {
   border: 1px solid #e8e8e8;
 }
 
-.vertical-divider {
-  border: 1px solid $brand-grey;
-  height: $line-height-header-sm;
-  background-color: $brand-grey;
-}
-
 //TODO: This style has been temporarily used to fix the alignment and responsiveness issue
 //TODO: as an outcome of Vuetify beta upgrade.
 .v-dialog .v-overlay__content {

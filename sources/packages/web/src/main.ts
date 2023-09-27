@@ -34,7 +34,6 @@ import FooterButtons from "@/components/generic/FooterButtons.vue";
 import TitleValue from "@/components/generic/TitleValue.vue";
 import HeaderTitleValue from "@/components/generic/HeaderTitleValue.vue";
 import StatusInfoLabel from "@/components/generic/StatusInfoLabel.vue";
-import Separator from "@/components/generic/Separator.vue";
 
 AppConfigService.shared.init().then(() => {
   createApp(App)
@@ -61,6 +60,5 @@ AppConfigService.shared.init().then(() => {
     .component("FooterButtons", FooterButtons)
     .component("TitleValue", TitleValue)
     .component("HeaderTitleValue", HeaderTitleValue)
-    .component("Separator", Separator)
     .mount("#app");
 });
