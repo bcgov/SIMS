@@ -44,9 +44,17 @@ export interface StudentProfileAPIOutDTO {
   contact: ContactInformationAPIOutDTO;
   validSin: boolean;
   disabilityStatus: DisabilityStatus;
-  sin: string;
   sinConsent: boolean;
-  hasRestriction?: boolean;
+}
+
+export interface InstitutionStudentProfileAPIOutDTO
+  extends StudentProfileAPIOutDTO {
+  sin: string;
+}
+
+export interface AESTStudentProfileAPIOutDTO
+  extends InstitutionStudentProfileAPIOutDTO {
+  hasRestriction: boolean;
 }
 
 /**
