@@ -9,7 +9,7 @@
         ><error-summary
           :errors="assessApplicationOfferingChangeRequestForm.errors"
         />
-        <p class="mt-4">
+        <p class="my-4">
           Outline the reasoning for
           <span
             v-if="
@@ -20,11 +20,10 @@
           ><span v-else>approving</span>
           this request. Please add the application number.
         </p>
-        <p class="label-bold my-2">Notes</p>
+        <p class="label-bold mb-1">Notes</p>
         <v-textarea
           variant="outlined"
           hide-details="auto"
-          class="my-2"
           v-model="note"
           :rules="[checkNotesLengthRule]"
           required
