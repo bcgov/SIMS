@@ -33,7 +33,6 @@
         <zeebe:taskDefinition type="load-supporting-user-data" />
         <zeebe:taskHeaders>
           <zeebe:header key="totalIncome" value="$.totalIncome" />
-          <zeebe:header key="partnerFulltimeStudent" value="$.partnerFulltimeStudent" />
         </zeebe:taskHeaders>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_0hhegzg</bpmn:incoming>
