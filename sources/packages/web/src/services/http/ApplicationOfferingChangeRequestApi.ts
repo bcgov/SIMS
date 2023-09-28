@@ -12,6 +12,7 @@ import {
   ApplicationOfferingDetailsAPIOutDTO,
   ApplicationOfferingChangeRequestStatusAPIOutDTO,
   ApplicationOfferingChangeDetailsAPIOutDTO,
+  ApplicationOfferingChangeAssessmentAPIInDTO,
 } from "@/services/http/dto";
 import { getPaginationQueryString } from "@/helpers";
 
@@ -192,7 +193,9 @@ export class ApplicationOfferingChangeRequestApi extends HttpBaseClient {
    */
   async updateApplicationOfferingChangeRequestStatus(
     applicationOfferingChangeRequestId: number,
-    payload: StudentApplicationOfferingChangeRequestAPIInDTO,
+    payload:
+      | StudentApplicationOfferingChangeRequestAPIInDTO
+      | ApplicationOfferingChangeAssessmentAPIInDTO,
   ): Promise<void> {
     const url = `application-offering-change-request/${applicationOfferingChangeRequestId}`;
     await this.patchCall(this.addClientRoot(url), payload);

@@ -13,8 +13,26 @@
             ApplicationOfferingChangeRequestStatus.InProgressWithSABC
           "
         >
-          <v-btn color="primary" variant="outlined">Decline reassessment</v-btn>
-          <v-btn class="ml-2" color="primary">Approve reassessment</v-btn>
+          <v-btn
+            color="primary"
+            variant="outlined"
+            @click="
+              assessApplicationOfferingChangeRequest(
+                ApplicationOfferingChangeRequestStatus.DeclinedBySABC,
+              )
+            "
+            >Decline reassessment</v-btn
+          >
+          <v-btn
+            class="ml-2"
+            color="primary"
+            @click="
+              assessApplicationOfferingChangeRequest(
+                ApplicationOfferingChangeRequestStatus.Approved,
+              )
+            "
+            >Approve reassessment</v-btn
+          >
         </template>
       </header-navigator>
       <application-offering-change-details-header
@@ -58,32 +76,39 @@
         />
       </v-window-item>
     </v-window>
-    <assess-offering-change-modal ref="assessOfferingChangeModal" />
+    <assess-application-offering-change-request-modal
+      ref="assessApplicationOfferingChangeRequestModal"
+    />
   </full-page-container>
 </template>
 
 <script lang="ts">
 import { ref, defineComponent, computed, onMounted } from "vue";
-import { RouteLocationRaw } from "vue-router";
+import { useRouter, RouteLocationRaw } from "vue-router";
 import {
   ApplicationOfferingChangeRequestHeader,
   ApplicationOfferingChangeRequestStatus,
 } from "@/types";
-import { ApplicationOfferingChangeDetailsAPIOutDTO } from "@/services/http/dto";
+import {
+  ApplicationOfferingChangeAssessmentAPIInDTO,
+  ApplicationOfferingChangeDetailsAPIOutDTO,
+} from "@/services/http/dto";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import ApplicationOfferingChangeDetailsHeader from "@/components/aest/institution/ApplicationOfferingChangeDetailsHeader.vue";
 import { ApplicationOfferingChangeRequestService } from "@/services/ApplicationOfferingChangeRequestService";
 import StudentApplicationOfferingChangeDetails from "@/components/aest/StudentApplicationOfferingChangeDetails.vue";
+import AssessApplicationOfferingChangeRequestModal from "@/components/aest/AssessApplicationOfferingChangeRequestModal.vue";
 import OfferingForm from "@/components/common/OfferingForm.vue";
 import { BannerTypes } from "@/types/contracts/Banner";
 import { ApplicationOfferingDetails } from "@/types/contracts/StudentApplicationOfferingChangeContract";
-import { useFormatters } from "@/composables";
+import { ModalDialog, useFormatters, useSnackBar } from "@/composables";
 
 export default defineComponent({
   components: {
     StudentApplicationOfferingChangeDetails,
     ApplicationOfferingChangeDetailsHeader,
     OfferingForm,
+    AssessApplicationOfferingChangeRequestModal,
   },
   props: {
     studentId: {
@@ -109,6 +134,11 @@ export default defineComponent({
     const studentApplicationOfferingDetails = ref(
       {} as ApplicationOfferingDetails,
     );
+    const assessApplicationOfferingChangeRequestModal = ref(
+      {} as ModalDialog<ApplicationOfferingChangeAssessmentAPIInDTO>,
+    );
+    const snackBar = useSnackBar();
+    const router = useRouter();
     onMounted(async () => {
       applicationOfferingChangeRequestDetails.value =
         await ApplicationOfferingChangeRequestService.shared.getApplicationOfferingDetailsForReview(
@@ -147,6 +177,33 @@ export default defineComponent({
         ),
       };
     });
+
+    const assessApplicationOfferingChangeRequest = async (
+      applicationOfferingChangeRequestStatus: ApplicationOfferingChangeRequestStatus,
+    ) => {
+      const responseData =
+        await assessApplicationOfferingChangeRequestModal.value.showModal(
+          applicationOfferingChangeRequestStatus,
+        );
+      if (responseData) {
+        try {
+          await ApplicationOfferingChangeRequestService.shared.updateApplicationOfferingChangeRequestStatus(
+            props.applicationOfferingChangeRequestId,
+            responseData as ApplicationOfferingChangeAssessmentAPIInDTO,
+          );
+          router.push({
+            name: AESTRoutesConst.ASSESSMENTS_SUMMARY,
+          });
+          const snackbarMessage =
+            "Your decision was submitted. You can refer to the outcome below.";
+          snackBar.success(snackbarMessage);
+        } catch {
+          snackBar.error(
+            "Unexpected error while submitting application offering change request.",
+          );
+        }
+      }
+    };
     const goBackRouteParams = computed(
       () =>
         ({
@@ -166,6 +223,8 @@ export default defineComponent({
       goBackRouteParams,
       studentApplicationOfferingDetails,
       applicationOfferingChangeRequestDetails,
+      assessApplicationOfferingChangeRequest,
+      assessApplicationOfferingChangeRequestModal,
     };
   },
 });

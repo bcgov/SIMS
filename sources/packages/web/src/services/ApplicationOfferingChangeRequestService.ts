@@ -12,6 +12,7 @@ import {
   ApplicationOfferingDetailsAPIOutDTO,
   ApplicationOfferingChangeRequestStatusAPIOutDTO,
   ApplicationOfferingChangeDetailsAPIOutDTO,
+  ApplicationOfferingChangeAssessmentAPIInDTO,
 } from "@/services/http/dto";
 
 export class ApplicationOfferingChangeRequestService {
@@ -190,7 +191,9 @@ export class ApplicationOfferingChangeRequestService {
    */
   async updateApplicationOfferingChangeRequestStatus(
     applicationOfferingChangeRequestId: number,
-    payload: StudentApplicationOfferingChangeRequestAPIInDTO,
+    payload:
+      | StudentApplicationOfferingChangeRequestAPIInDTO
+      | ApplicationOfferingChangeAssessmentAPIInDTO,
   ): Promise<void> {
     await ApiClient.ApplicationOfferingChangeRequestApi.updateApplicationOfferingChangeRequestStatus(
       applicationOfferingChangeRequestId,
