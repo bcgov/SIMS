@@ -114,6 +114,5 @@ export class ApplicationOfferingChangeRequestAESTController extends BaseControll
     payload: ApplicationOfferingChangeAssessmentAPIInDTO,
   ): Promise<void> {
     // TODO: API to be done in the next PR.
-    console.log(applicationOfferingChangeRequestId, payload);
   }
 }

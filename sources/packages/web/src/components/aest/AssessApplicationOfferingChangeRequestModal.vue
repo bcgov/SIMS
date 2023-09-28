@@ -87,12 +87,16 @@ export default defineComponent({
       if (!validationResult.valid) {
         return;
       }
-      showParameter.value ===
-      ApplicationOfferingChangeRequestStatus.DeclinedBySABC
-        ? (assessApplicationOfferingChangeRequestModal.value.applicationOfferingChangeRequestStatus =
-            ApplicationOfferingChangeRequestStatus.DeclinedBySABC)
-        : (assessApplicationOfferingChangeRequestModal.value.applicationOfferingChangeRequestStatus =
-            ApplicationOfferingChangeRequestStatus.Approved);
+      if (
+        showParameter.value ===
+        ApplicationOfferingChangeRequestStatus.DeclinedBySABC
+      ) {
+        assessApplicationOfferingChangeRequestModal.value.applicationOfferingChangeRequestStatus =
+          ApplicationOfferingChangeRequestStatus.DeclinedBySABC;
+      } else {
+        assessApplicationOfferingChangeRequestModal.value.applicationOfferingChangeRequestStatus =
+          ApplicationOfferingChangeRequestStatus.Approved;
+      }
       assessApplicationOfferingChangeRequestModal.value.note = note.value;
       resolvePromise(assessApplicationOfferingChangeRequestModal.value);
       assessApplicationOfferingChangeRequestForm.value.reset();
