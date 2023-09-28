@@ -29,7 +29,7 @@
           :rules="[checkNotesLengthRule]"
           required
         />
-        <p class="pt-1">
+        <p class="pt-1 brand-gray-text">
           Notes will be visible to StudentAid staff and institutions. This will
           not be shown to students.
         </p>
