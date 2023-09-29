@@ -90,6 +90,9 @@ export class AssessmentControllerService {
         assessment.offering.studyStartDate,
       ),
       offeringStudyEndDate: getDateOnlyFormat(assessment.offering.studyEndDate),
+      eligibleAmount: this.sumDisbursementValueAmounts(
+        assessment.disbursementSchedules,
+      ),
       disbursement: this.populateDisbursementAwardValues(
         assessment.disbursementSchedules,
         { maskMSFAA: options?.maskMSFAA },
@@ -150,6 +153,28 @@ export class AssessmentControllerService {
       });
     });
     return disbursementDetails;
+  }
+
+  /**
+   * Calculate the sum of 'valueAmount' for each DisbursementValue within an array of DisbursementSchedules.
+   * @param disbursementSchedules disbursement schedule details.
+   * @returns The total sum of 'valueAmount' across all DisbursementSchedules.
+   */
+  private sumDisbursementValueAmounts(
+    disbursementSchedules: DisbursementSchedule[],
+  ) {
+    let totalValueAmount = 0;
+    disbursementSchedules.forEach((disbursementSchedule) => {
+      if (
+        disbursementSchedule.disbursementValues &&
+        disbursementSchedule.disbursementValues.length > 0
+      ) {
+        disbursementSchedule.disbursementValues.forEach((disbursementValue) => {
+          totalValueAmount += disbursementValue.valueAmount;
+        });
+      }
+    });
+    return totalValueAmount;
   }
 
   /**
