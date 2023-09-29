@@ -163,18 +163,15 @@ export class AssessmentControllerService {
   private sumDisbursementValueAmounts(
     disbursementSchedules: DisbursementSchedule[],
   ) {
-    let totalValueAmount = 0;
-    disbursementSchedules.forEach((disbursementSchedule) => {
-      if (
-        disbursementSchedule.disbursementValues &&
-        disbursementSchedule.disbursementValues.length > 0
-      ) {
-        disbursementSchedule.disbursementValues.forEach((disbursementValue) => {
-          totalValueAmount += disbursementValue.valueAmount;
-        });
-      }
-    });
-    return totalValueAmount;
+    return disbursementSchedules.reduce((totalValueAmount, schedule) => {
+      return (
+        totalValueAmount +
+        (schedule.disbursementValues || []).reduce(
+          (sum, disbursementValue) => sum + disbursementValue.valueAmount,
+          0,
+        )
+      );
+    }, 0);
   }
 
   /**
