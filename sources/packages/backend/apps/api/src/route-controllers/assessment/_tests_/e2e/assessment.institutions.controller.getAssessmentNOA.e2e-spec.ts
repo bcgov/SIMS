@@ -23,6 +23,7 @@ import {
   AssessmentStatus,
   Institution,
   InstitutionLocation,
+  OfferingIntensity,
 } from "@sims/sims-db";
 import { getDateOnlyFormat } from "@sims/utilities";
 import { MASKED_MSFAA_NUMBER } from "../../../../../src/services";
@@ -65,21 +66,39 @@ describe("AssessmentInstitutionsController(e2e)-getAssessmentNOA", () => {
       },
     );
     await db.msfaaNumber.save(currentMSFAA);
-    const application = await saveFakeApplicationDisbursements(db.dataSource, {
-      institution: collegeF,
-      institutionLocation: collegeFLocation,
-      student,
-      msfaaNumber: currentMSFAA,
-    });
+    const application = await saveFakeApplicationDisbursements(
+      db.dataSource,
+      {
+        institution: collegeF,
+        institutionLocation: collegeFLocation,
+        student,
+        msfaaNumber: currentMSFAA,
+      },
+      {
+        offeringIntensity: OfferingIntensity.fullTime,
+        createSecondDisbursement: true,
+      },
+    );
     const assessment = application.currentAssessment;
-    const [firstDisbursementSchedule] =
-      application.currentAssessment.disbursementSchedules;
+    const [firstDisbursementSchedule, secondDisbursementSchedule] =
+      assessment.disbursementSchedules;
 
-    const awards = {};
-    firstDisbursementSchedule.disbursementValues.forEach((disbursement) => {
-      awards[`disbursement1${disbursement.valueCode.toLowerCase()}`] =
-        disbursement.valueAmount;
-    });
+    const firstDisbursementScheduleAwards = {};
+    firstDisbursementSchedule.disbursementValues.forEach(
+      (firstDisbursement) => {
+        firstDisbursementScheduleAwards[
+          `disbursement1${firstDisbursement.valueCode.toLowerCase()}`
+        ] = firstDisbursement.valueAmount;
+      },
+    );
+    const secondDisbursementScheduleAwards = {};
+    secondDisbursementSchedule.disbursementValues.forEach(
+      (secondDisbursement) => {
+        secondDisbursementScheduleAwards[
+          `disbursement2${secondDisbursement.valueCode.toLowerCase()}`
+        ] = secondDisbursement.valueAmount;
+      },
+    );
 
     const endpoint = `/institutions/assessment/student/${student.id}/application/${application.id}/assessment/${assessment.id}/noa`;
     const institutionUserToken = await getInstitutionToken(
@@ -112,8 +131,155 @@ describe("AssessmentInstitutionsController(e2e)-getAssessmentNOA", () => {
             firstDisbursementSchedule.disbursementScheduleStatus,
           disbursement1TuitionRemittance:
             firstDisbursementSchedule.tuitionRemittanceRequestedAmount,
-          ...awards,
+          ...firstDisbursementScheduleAwards,
+          disbursement2COEStatus: secondDisbursementSchedule.coeStatus,
+          disbursement2Date: getDateOnlyFormat(
+            secondDisbursementSchedule.disbursementDate,
+          ),
+          disbursement2Id: secondDisbursementSchedule.id,
+          disbursement2MSFAACancelledDate:
+            secondDisbursementSchedule.msfaaNumber?.cancelledDate,
+          disbursement2MSFAADateSigned:
+            secondDisbursementSchedule.msfaaNumber?.dateSigned,
+          disbursement2MSFAAId: secondDisbursementSchedule.msfaaNumber?.id,
+          disbursement2MSFAANumber: MASKED_MSFAA_NUMBER,
+          disbursement2Status:
+            secondDisbursementSchedule.disbursementScheduleStatus,
+          disbursement2TuitionRemittance:
+            secondDisbursementSchedule.tuitionRemittanceRequestedAmount,
+          ...secondDisbursementScheduleAwards,
         },
+        eligibleAmount: assessment.disbursementSchedules.reduce(
+          (totalValueAmount, schedule) => {
+            return (
+              totalValueAmount +
+              (schedule.disbursementValues || []).reduce(
+                (sum, disbursementValue) => sum + disbursementValue.valueAmount,
+                0,
+              )
+            );
+          },
+          0,
+        ),
+        fullName: getUserFullName(application.student.user),
+        locationName: assessment.offering.institutionLocation.name,
+        noaApprovalStatus: assessment.noaApprovalStatus,
+        offeringIntensity: assessment.offering.offeringIntensity,
+        offeringStudyEndDate: getDateOnlyFormat(
+          assessment.offering.studyEndDate,
+        ),
+        offeringStudyStartDate: getDateOnlyFormat(
+          assessment.offering.studyStartDate,
+        ),
+        programName: assessment.offering.educationProgram.name,
+      });
+  });
+
+  it("Should get the student noa details for an eligible partime application when an eligible public institution user tries to access it.", async () => {
+    // Arrange
+
+    // Student has an application to the institution eligible for NOA.
+    const student = await saveFakeStudent(db.dataSource);
+
+    const currentMSFAA = createFakeMSFAANumber(
+      { student },
+      {
+        msfaaState: MSFAAStates.Signed,
+      },
+    );
+    await db.msfaaNumber.save(currentMSFAA);
+    const application = await saveFakeApplicationDisbursements(
+      db.dataSource,
+      {
+        institution: collegeF,
+        institutionLocation: collegeFLocation,
+        student,
+        msfaaNumber: currentMSFAA,
+      },
+      { createSecondDisbursement: true },
+    );
+    const assessment = application.currentAssessment;
+    const [firstDisbursementSchedule, secondDisbursementSchedule] =
+      assessment.disbursementSchedules;
+
+    const firstDisbursementScheduleAwards = {};
+    firstDisbursementSchedule.disbursementValues.forEach(
+      (firstDisbursement) => {
+        firstDisbursementScheduleAwards[
+          `disbursement1${firstDisbursement.valueCode.toLowerCase()}`
+        ] = firstDisbursement.valueAmount;
+      },
+    );
+    const secondDisbursementScheduleAwards = {};
+    secondDisbursementSchedule.disbursementValues.forEach(
+      (secondDisbursement) => {
+        secondDisbursementScheduleAwards[
+          `disbursement2${secondDisbursement.valueCode.toLowerCase()}`
+        ] = secondDisbursement.valueAmount;
+      },
+    );
+
+    const endpoint = `/institutions/assessment/student/${student.id}/application/${application.id}/assessment/${assessment.id}/noa`;
+    const institutionUserToken = await getInstitutionToken(
+      InstitutionTokenTypes.CollegeFUser,
+    );
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .get(endpoint)
+      .auth(institutionUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK)
+      .expect({
+        applicationId: application.id,
+        applicationNumber: application.applicationNumber,
+        applicationStatus: application.applicationStatus,
+        assessment: assessment.assessmentData,
+        disbursement: {
+          disbursement1COEStatus: firstDisbursementSchedule.coeStatus,
+          disbursement1Date: getDateOnlyFormat(
+            firstDisbursementSchedule.disbursementDate,
+          ),
+          disbursement1Id: firstDisbursementSchedule.id,
+          disbursement1MSFAACancelledDate:
+            firstDisbursementSchedule.msfaaNumber?.cancelledDate,
+          disbursement1MSFAADateSigned:
+            firstDisbursementSchedule.msfaaNumber?.dateSigned,
+          disbursement1MSFAAId: firstDisbursementSchedule.msfaaNumber?.id,
+          disbursement1MSFAANumber: MASKED_MSFAA_NUMBER,
+          disbursement1Status:
+            firstDisbursementSchedule.disbursementScheduleStatus,
+          disbursement1TuitionRemittance:
+            firstDisbursementSchedule.tuitionRemittanceRequestedAmount,
+          ...firstDisbursementScheduleAwards,
+          disbursement2COEStatus: secondDisbursementSchedule.coeStatus,
+          disbursement2Date: getDateOnlyFormat(
+            secondDisbursementSchedule.disbursementDate,
+          ),
+          disbursement2Id: secondDisbursementSchedule.id,
+          disbursement2MSFAACancelledDate:
+            secondDisbursementSchedule.msfaaNumber?.cancelledDate,
+          disbursement2MSFAADateSigned:
+            secondDisbursementSchedule.msfaaNumber?.dateSigned,
+          disbursement2MSFAAId: secondDisbursementSchedule.msfaaNumber?.id,
+          disbursement2MSFAANumber: MASKED_MSFAA_NUMBER,
+          disbursement2Status:
+            secondDisbursementSchedule.disbursementScheduleStatus,
+          disbursement2TuitionRemittance:
+            secondDisbursementSchedule.tuitionRemittanceRequestedAmount,
+          ...secondDisbursementScheduleAwards,
+        },
+        eligibleAmount: assessment.disbursementSchedules.reduce(
+          (totalValueAmount, schedule) => {
+            return (
+              totalValueAmount +
+              (schedule.disbursementValues || []).reduce(
+                (sum, disbursementValue) => sum + disbursementValue.valueAmount,
+                0,
+              )
+            );
+          },
+          0,
+        ),
         fullName: getUserFullName(application.student.user),
         locationName: assessment.offering.institutionLocation.name,
         noaApprovalStatus: assessment.noaApprovalStatus,
