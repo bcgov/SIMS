@@ -208,7 +208,7 @@ export class ApplicationOfferingChangeRequestService {
     applicationOfferingChangeRequestId: number,
     payload: ApplicationOfferingChangeAssessmentAPIInDTO,
   ): Promise<void> {
-    await ApiClient.ApplicationOfferingChangeRequestApi.updateApplicationOfferingChangeRequestStatus(
+    await ApiClient.ApplicationOfferingChangeRequestApi.updateAESTApplicationOfferingChangeRequestStatus(
       applicationOfferingChangeRequestId,
       payload,
     );
