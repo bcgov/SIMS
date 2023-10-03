@@ -158,8 +158,12 @@ export class IER12IntegrationService extends SFTPIntegrationBase<void> {
         ierRecord.dependantPostSecondaryQuantity;
       ierFileDetail.totalDependantQuantity = ierRecord.totalEligibleDependents;
       ierFileDetail.familyMembersQuantity = ierRecord.familySize;
-      ierFileDetail.parent1Flag = this.convertToYNFlag(ierRecord.hasOneParent);
-      ierFileDetail.parent2Flag = this.convertToYNFlag(ierRecord.hasTwoParents);
+      ierFileDetail.parent1Flag = this.convertToYNFlag(
+        ierRecord.numberOfParents > 0,
+      );
+      ierFileDetail.parent2Flag = this.convertToYNFlag(
+        ierRecord.numberOfParents === 2,
+      );
       ierFileDetail.partnerFlag = this.convertToYNFlag(ierRecord.hasPartner);
       ierFileDetail.parentalAssets = ierRecord.parentalAssets
         ? combineDecimalPlaces(ierRecord.parentalAssets)
@@ -187,7 +191,7 @@ export class IER12IntegrationService extends SFTPIntegrationBase<void> {
         ierRecord.studentLivingWithParents,
       );
       ierFileDetail.partnerInSchoolFlag = this.convertToYNFlag(
-        ierRecord.hasPartnerInSchool,
+        ierRecord.partnerStudentStudyWeeks > 0,
       );
       ierFileDetail.totalEducationalExpenses = combineDecimalPlaces(
         ierRecord.exceptionExpenses +

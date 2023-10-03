@@ -26,6 +26,7 @@ import { StudentAssessmentService } from "@sims/integrations/services";
 import { DisbursementOverawardService } from "@sims/services";
 import { FullTimeAwardTypes } from "@sims/integrations/models";
 import { PROVINCIAL_DEFAULT_RESTRICTION_CODE } from "@sims/services/constants";
+import { AwardOverawardBalance } from "@sims/services/disbursement-overaward/disbursement-overaward.models";
 
 @Injectable()
 export class IER12ProcessingService {
@@ -228,12 +229,14 @@ export class IER12ProcessingService {
         applicationStatusDate: application.applicationStatusUpdatedOn,
         assessmentAwards,
         hasProvincialDefaultRestriction,
-        hasProvincialOveraward: studentOverawardsBalance
-          ? studentOverawardsBalance[FullTimeAwardTypes.BCSL] > 0
-          : false,
-        hasFederalOveraward: studentOverawardsBalance
-          ? studentOverawardsBalance[FullTimeAwardTypes.CSLF] > 0
-          : false,
+        hasProvincialOveraward: this.checkOutstandingOveraward(
+          studentOverawardsBalance,
+          FullTimeAwardTypes.BCSL,
+        ),
+        hasFederalOveraward: this.checkOutstandingOveraward(
+          studentOverawardsBalance,
+          FullTimeAwardTypes.CSLF,
+        ),
         hasRestriction,
         assessmentTriggerType: pendingAssessment.triggerType,
         scholasticStandingChangeType: scholasticStanding?.changeType,
@@ -275,12 +278,7 @@ export class IER12ProcessingService {
         totalEligibleDependents:
           workflowData.calculatedData.totalEligibleDependents,
         familySize: workflowData.calculatedData.familySize,
-        hasOneParent: workflowData.studentData.numberOfParents
-          ? workflowData.studentData.numberOfParents > 0
-          : false,
-        hasTwoParents: workflowData.studentData.numberOfParents
-          ? workflowData.studentData.numberOfParents == 2
-          : false,
+        numberOfParents: workflowData.studentData.numberOfParents ?? 0,
         parentalAssetContribution:
           workflowData.calculatedData.parentalAssetContribution,
         parentalContribution: workflowData.calculatedData.parentalContribution,
@@ -288,9 +286,8 @@ export class IER12ProcessingService {
           workflowData.calculatedData.parentDiscretionaryIncome,
         studentLivingWithParents:
           workflowData.studentData.livingWithParents === FormYesNoOptions.Yes,
-        hasPartnerInSchool: workflowData.calculatedData.partnerStudentStudyWeeks
-          ? workflowData.calculatedData.partnerStudentStudyWeeks > 0
-          : false,
+        partnerStudentStudyWeeks:
+          workflowData.calculatedData.partnerStudentStudyWeeks ?? 0,
         dependantTotalMSOLAllowance:
           workflowData.calculatedData.dependantTotalMSOLAllowance,
         studentMSOLAllowance: workflowData.calculatedData.studentMSOLAllowance,
@@ -357,6 +354,21 @@ export class IER12ProcessingService {
           studentRestriction.restriction.restrictionCode ===
             options.restrictionCode),
     );
+  }
+
+  /**
+   * Check for any outstanding overaward by award type.
+   * @param studentOverawardsBalance student overaward balance.
+   * @param awardType award type.
+   * @returns flag which indicates if there is any outstanding overaward.
+   */
+  private checkOutstandingOveraward(
+    studentOverawardsBalance: AwardOverawardBalance,
+    awardType: FullTimeAwardTypes.CSLF | FullTimeAwardTypes.BCSL,
+  ): boolean {
+    return studentOverawardsBalance
+      ? studentOverawardsBalance[awardType] > 0
+      : false;
   }
 
   @InjectLogger()

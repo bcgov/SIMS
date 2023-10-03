@@ -45,10 +45,9 @@ export interface IER12Record {
   dependantInfantQuantity?: number;
   dependantDeclaredOnTaxesQuantity?: number;
   dependantPostSecondaryQuantity?: number;
-  hasPartnerInSchool?: boolean;
+  partnerStudentStudyWeeks: number;
   familySize: number;
-  hasOneParent?: boolean;
-  hasTwoParents?: boolean;
+  numberOfParents: number;
   parentalAssetContribution?: number;
   parentalContribution?: number;
   parentDiscretionaryIncome?: number;
