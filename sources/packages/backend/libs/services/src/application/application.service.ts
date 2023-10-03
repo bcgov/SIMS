@@ -16,10 +16,10 @@ export class ApplicationService {
   /**
    * TODO: ANN
    */
-  async hasMultipleApplicationSubmission(
+  async hasMultipleApplicationSubmissions(
     applicationNumber: string,
   ): Promise<Boolean> {
-    const applicationSubmissions = this.applicationRepo.find({
+    const applicationSubmissions = await this.applicationRepo.find({
       select: {
         id: true,
       },
@@ -27,6 +27,6 @@ export class ApplicationService {
         applicationNumber: applicationNumber,
       },
     });
-    return (await applicationSubmissions).length > 1 ? true : false;
+    return applicationSubmissions.length > 1 ? true : false;
   }
 }

@@ -1,6 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import {
   ApplicationStatus,
+  COEStatus,
   DisbursementSchedule,
   DisbursementScheduleStatus,
   DisbursementValue,
@@ -15,7 +16,11 @@ import {
   ConfigService,
   InstitutionIntegrationConfig,
 } from "@sims/utilities/config";
-import { getFileNameAsCurrentTimestamp } from "@sims/utilities";
+import {
+  addDays,
+  getFileNameAsCurrentTimestamp,
+  isSameOrAfterDate,
+} from "@sims/utilities";
 import { IER12IntegrationService } from "./ier12.integration.service";
 import {
   ApplicationEventCode,
@@ -24,7 +29,10 @@ import {
   IERAddressInfo,
   IERAward,
 } from "./models/ier12-integration.model";
-import { StudentAssessmentService } from "@sims/integrations/services";
+import {
+  StudentAssessmentService,
+  StudentRestrictionService,
+} from "@sims/integrations/services";
 import {
   ApplicationService,
   DisbursementOverawardService,
@@ -41,6 +49,7 @@ export class IER12ProcessingService {
     private readonly studentAssessmentService: StudentAssessmentService,
     private readonly disbursementOverawardService: DisbursementOverawardService,
     private readonly applicationService: ApplicationService,
+    private readonly studentRestrictionService: StudentRestrictionService,
   ) {
     this.institutionIntegrationConfig = config.institutionIntegration;
   }
@@ -290,6 +299,7 @@ export class IER12ProcessingService {
         disbursementSentDate: disbursement.dateSent,
         applicationEventCode: await this.getApplicationEventCode(
           pendingAssessment,
+          disbursement,
         ),
       };
       ier12Records.push(ier12Record);
@@ -299,15 +309,18 @@ export class IER12ProcessingService {
 
   /**
    * Todo: ann comment
+   * if there complexity, try to split each case ann
    */
   private async getApplicationEventCode(
     pendingAssessment: StudentAssessment,
+    currentDisbursementSchedule: DisbursementSchedule,
   ): Promise<ApplicationEventCode> {
     const application = pendingAssessment.application;
     switch (application.applicationStatus) {
-      case ApplicationStatus.Assessment:
+      case ApplicationStatus.Assessment: {
+        // Check if the application has more than one submissions.
         switch (
-          await this.applicationService.hasMultipleApplicationSubmission(
+          await this.applicationService.hasMultipleApplicationSubmissions(
             application.applicationNumber,
           )
         ) {
@@ -316,6 +329,57 @@ export class IER12ProcessingService {
           case false:
             return ApplicationEventCode.ASMT;
         }
+        break;
+      }
+      case ApplicationStatus.Enrolment: {
+        switch (currentDisbursementSchedule.coeStatus) {
+          case COEStatus.required:
+            return ApplicationEventCode.COER;
+          case COEStatus.declined:
+            return ApplicationEventCode.COED;
+        }
+        break;
+      }
+      case ApplicationStatus.Completed: {
+        switch (currentDisbursementSchedule.disbursementScheduleStatus) {
+          case DisbursementScheduleStatus.Cancelled:
+            return ApplicationEventCode.DISC;
+          case DisbursementScheduleStatus.Pending: {
+            switch (currentDisbursementSchedule.coeStatus) {
+              case COEStatus.required:
+                // Completed applications can have second COE, waiting for confirmation
+                // on original assessment and anu COE waiting for confirmation on re-assessment.
+                return ApplicationEventCode.COER;
+              case COEStatus.completed: {
+                // Check if disbursement is not sent due to restriction.
+                if (
+                  isSameOrAfterDate(
+                    currentDisbursementSchedule.disbursementDate,
+                    addDays(5),
+                  )
+                ) {
+                  switch (
+                    await this.studentRestrictionService.hasActiveStopFullTimeDisbursement(
+                      application.student.id,
+                    )
+                  ) {
+                    case true:
+                      return ApplicationEventCode.DISR;
+                    case false:
+                      return ApplicationEventCode.COEA;
+                  }
+                }
+                return ApplicationEventCode.COEA;
+              }
+              case COEStatus.declined:
+                // Completed application can have a second COE declined on original assessment
+                // and any COE declined on re-assessment.
+                return ApplicationEventCode.COED;
+            }
+          }
+        }
+        break;
+      }
     }
   }
 
