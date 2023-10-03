@@ -46,9 +46,8 @@ export default defineComponent({
     const note = ref("");
     const { showDialog, showModal, resolvePromise, showParameter } =
       useModalDialog<ApplicationOfferingChangeAssessmentAPIInDTO | boolean>();
-    const assessApplicationOfferingChangeRequestModal = ref(
-      {} as ApplicationOfferingChangeAssessmentAPIInDTO,
-    );
+    const assessApplicationOfferingChangeRequestModal =
+      {} as ApplicationOfferingChangeAssessmentAPIInDTO;
     const assessApplicationOfferingChangeRequestForm = ref({} as VForm);
     const { checkNotesLengthRule } = useRules();
     const title = computed(() =>
@@ -79,10 +78,10 @@ export default defineComponent({
       if (!validationResult.valid) {
         return;
       }
-      assessApplicationOfferingChangeRequestModal.value.applicationOfferingChangeRequestStatus =
+      assessApplicationOfferingChangeRequestModal.applicationOfferingChangeRequestStatus =
         showParameter.value;
-      assessApplicationOfferingChangeRequestModal.value.note = note.value;
-      resolvePromise(assessApplicationOfferingChangeRequestModal.value);
+      assessApplicationOfferingChangeRequestModal.note = note.value;
+      resolvePromise(assessApplicationOfferingChangeRequestModal);
       assessApplicationOfferingChangeRequestForm.value.reset();
     };
     return {
