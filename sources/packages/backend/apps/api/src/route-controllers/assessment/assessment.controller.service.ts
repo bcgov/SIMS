@@ -162,7 +162,7 @@ export class AssessmentControllerService {
    */
   private sumDisbursementValueAmounts(
     disbursementSchedules: DisbursementSchedule[],
-  ) {
+  ): number {
     return disbursementSchedules.reduce((totalValueAmount, schedule) => {
       return (
         totalValueAmount +
