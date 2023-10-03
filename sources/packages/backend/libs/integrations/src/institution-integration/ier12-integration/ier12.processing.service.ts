@@ -1,5 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import {
+  ApplicationStatus,
   DisbursementSchedule,
   DisbursementScheduleStatus,
   DisbursementValue,
@@ -17,13 +18,17 @@ import {
 import { getFileNameAsCurrentTimestamp } from "@sims/utilities";
 import { IER12IntegrationService } from "./ier12.integration.service";
 import {
+  ApplicationEventCode,
   IER12Record,
   IER12UploadResult,
   IERAddressInfo,
   IERAward,
 } from "./models/ier12-integration.model";
 import { StudentAssessmentService } from "@sims/integrations/services";
-import { DisbursementOverawardService } from "@sims/services";
+import {
+  ApplicationService,
+  DisbursementOverawardService,
+} from "@sims/services";
 import { FullTimeAwardTypes } from "@sims/integrations/models";
 import { PROVINCIAL_DEFAULT_RESTRICTION_CODE } from "@sims/services/constants";
 
@@ -35,6 +40,7 @@ export class IER12ProcessingService {
     private readonly ier12IntegrationService: IER12IntegrationService,
     private readonly studentAssessmentService: StudentAssessmentService,
     private readonly disbursementOverawardService: DisbursementOverawardService,
+    private readonly applicationService: ApplicationService,
   ) {
     this.institutionIntegrationConfig = config.institutionIntegration;
   }
@@ -73,7 +79,6 @@ export class IER12ProcessingService {
       const ier12Records = await this.createIER12Record(assessment);
       fileRecords[institutionCode].push(...ier12Records);
     }
-
     const uploadResult: IER12UploadResult[] = [];
     try {
       this.logger.log("Creating IER 12 content...");
@@ -283,10 +288,35 @@ export class IER12ProcessingService {
         totalAssessedCost: assessmentData.totalAssessedCost,
         totalAssessmentNeed: assessmentData.totalAssessmentNeed,
         disbursementSentDate: disbursement.dateSent,
+        applicationEventCode: await this.getApplicationEventCode(
+          pendingAssessment,
+        ),
       };
       ier12Records.push(ier12Record);
     }
     return ier12Records;
+  }
+
+  /**
+   * Todo: ann comment
+   */
+  private async getApplicationEventCode(
+    pendingAssessment: StudentAssessment,
+  ): Promise<ApplicationEventCode> {
+    const application = pendingAssessment.application;
+    switch (application.applicationStatus) {
+      case ApplicationStatus.Assessment:
+        switch (
+          await this.applicationService.hasMultipleApplicationSubmission(
+            application.applicationNumber,
+          )
+        ) {
+          case true:
+            return ApplicationEventCode.REIA;
+          case false:
+            return ApplicationEventCode.ASMT;
+        }
+    }
   }
 
   /**
