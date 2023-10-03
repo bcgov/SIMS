@@ -4,6 +4,7 @@ import { ConfigService } from "@sims/utilities/config";
 import { IER12FileDetail } from "./ier12-file-detail";
 import {
   ApplicationStatusCode,
+  DISCRETIONARY_INCOME_PERCENTAGE,
   IER12FileLine,
   IER12Record,
   IERAward,
@@ -147,8 +148,18 @@ export class IER12IntegrationService extends SFTPIntegrationBase<void> {
       ierFileDetail.totalExpectedContribution = combineDecimalPlaces(
         ierRecord.studentAndSupportingUserContribution,
       );
+      ierFileDetail.dependantChildQuantity = ierRecord.dependantChildQuantity;
+      ierFileDetail.dependantChildInDaycareQuantity =
+        ierRecord.dependantChildInDaycareQuantity;
+      ierFileDetail.dependantInfantQuantity = ierRecord.dependantInfantQuantity;
+      ierFileDetail.dependantOtherQuantity =
+        ierRecord.dependantDeclaredOnTaxesQuantity;
+      ierFileDetail.dependantPostSecondaryQuantity =
+        ierRecord.dependantPostSecondaryQuantity;
       ierFileDetail.totalDependantQuantity = ierRecord.totalEligibleDependents;
       ierFileDetail.familyMembersQuantity = ierRecord.familySize;
+      ierFileDetail.parent1Flag = this.convertToYNFlag(ierRecord.hasOneParent);
+      ierFileDetail.parent2Flag = this.convertToYNFlag(ierRecord.hasTwoParents);
       ierFileDetail.partnerFlag = this.convertToYNFlag(ierRecord.hasPartner);
       ierFileDetail.parentalAssets = ierRecord.parentalAssets
         ? combineDecimalPlaces(ierRecord.parentalAssets)
@@ -165,8 +176,18 @@ export class IER12IntegrationService extends SFTPIntegrationBase<void> {
         ierRecord.parentDiscretionaryIncome
           ? combineDecimalPlaces(ierRecord.parentDiscretionaryIncome)
           : 0;
+      ierFileDetail.parentalDiscretionaryAnnualIncomeFormulaResult =
+        ierRecord.parentDiscretionaryIncome
+          ? combineDecimalPlaces(
+              ierRecord.parentDiscretionaryIncome *
+                DISCRETIONARY_INCOME_PERCENTAGE,
+            )
+          : 0;
       ierFileDetail.studentLivingAtHomeFlag = this.convertToYNFlag(
         ierRecord.studentLivingWithParents,
+      );
+      ierFileDetail.partnerInSchoolFlag = this.convertToYNFlag(
+        ierRecord.hasPartnerInSchool,
       );
       ierFileDetail.totalEducationalExpenses = combineDecimalPlaces(
         ierRecord.exceptionExpenses +

@@ -261,10 +261,26 @@ export class IER12ProcessingService {
           assessmentData.studentTotalProvincialContribution +
           (assessmentData.parentAssessedContribution ?? 0) +
           (assessmentData.partnerAssessedContribution ?? 0),
+        dependantChildQuantity:
+          workflowData.calculatedData.dependantChildQuantity,
+        dependantChildInDaycareQuantity:
+          workflowData.calculatedData.dependantChildInDaycareQuantity,
+        dependantInfantQuantity:
+          workflowData.calculatedData.dependantInfantQuantity,
+        dependantDeclaredOnTaxesQuantity:
+          workflowData.calculatedData.dependantDeclaredOnTaxesQuantity,
+        dependantPostSecondaryQuantity:
+          workflowData.calculatedData.dependantPostSecondaryQuantity,
         parentExpectedContribution: assessmentData.parentAssessedContribution,
         totalEligibleDependents:
           workflowData.calculatedData.totalEligibleDependents,
         familySize: workflowData.calculatedData.familySize,
+        hasOneParent: workflowData.studentData.numberOfParents
+          ? workflowData.studentData.numberOfParents > 0
+          : false,
+        hasTwoParents: workflowData.studentData.numberOfParents
+          ? workflowData.studentData.numberOfParents == 2
+          : false,
         parentalAssetContribution:
           workflowData.calculatedData.parentalAssetContribution,
         parentalContribution: workflowData.calculatedData.parentalContribution,
@@ -272,6 +288,9 @@ export class IER12ProcessingService {
           workflowData.calculatedData.parentDiscretionaryIncome,
         studentLivingWithParents:
           workflowData.studentData.livingWithParents === FormYesNoOptions.Yes,
+        hasPartnerInSchool: workflowData.calculatedData.partnerStudentStudyWeeks
+          ? workflowData.calculatedData.partnerStudentStudyWeeks > 0
+          : false,
         dependantTotalMSOLAllowance:
           workflowData.calculatedData.dependantTotalMSOLAllowance,
         studentMSOLAllowance: workflowData.calculatedData.studentMSOLAllowance,

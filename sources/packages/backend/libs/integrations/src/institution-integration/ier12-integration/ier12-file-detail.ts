@@ -81,22 +81,15 @@ export class IER12FileDetail implements IER12FileLine {
   applicantAndPartnerExpectedContribution: number;
   parentExpectedContribution?: number;
   totalExpectedContribution: number;
-  // Analysis pending for the field.
   dependantChildQuantity?: number;
-  // Analysis pending for the field.
   dependantChildInDaycareQuantity?: number;
-  // Analysis pending for the field.
-  dependentInfantQuantity?: number;
-  // Analysis pending for the field.
+  dependantInfantQuantity?: number;
   dependantOtherQuantity?: number;
-  // Analysis pending for the field.
   dependantPostSecondaryQuantity?: number;
   totalDependantQuantity?: number;
   familyMembersQuantity: number;
-  // Analysis pending for the field.
-  parent1Flag?: string;
-  // Analysis pending for the field.
-  parent2Flag?: string;
+  parent1Flag?: YNFlag;
+  parent2Flag?: YNFlag;
   partnerFlag: YNFlag;
   parentalAssets?: number;
   parentalAssetsExpectedContribution?: number;
@@ -104,10 +97,8 @@ export class IER12FileDetail implements IER12FileLine {
   // Analysis pending for the field.
   parentalVoluntaryContribution?: number;
   parentalDiscretionaryIncome?: number;
-  // Analysis pending for the field.
   parentalDiscretionaryAnnualIncomeFormulaResult?: number;
   studentLivingAtHomeFlag: YNFlag;
-  // Analysis pending for the field.
   partnerInSchoolFlag?: string;
   // Analysis pending for the field.
   otherEducationalExpenses?: number;
@@ -241,7 +232,7 @@ export class IER12FileDetail implements IER12FileLine {
       this.dependantChildInDaycareQuantity,
       3,
     );
-    record.appendOptionalNumberWithFiller(this.dependentInfantQuantity, 3);
+    record.appendOptionalNumberWithFiller(this.dependantInfantQuantity, 3);
     record.appendOptionalNumberWithFiller(this.dependantOtherQuantity, 3);
     record.appendOptionalNumberWithFiller(
       this.dependantPostSecondaryQuantity,

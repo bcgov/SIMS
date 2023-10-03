@@ -40,7 +40,15 @@ export interface IER12Record {
   studentAndSupportingUserContribution: number;
   parentExpectedContribution?: number;
   totalEligibleDependents?: number;
+  dependantChildQuantity?: number;
+  dependantChildInDaycareQuantity?: number;
+  dependantInfantQuantity?: number;
+  dependantDeclaredOnTaxesQuantity?: number;
+  dependantPostSecondaryQuantity?: number;
+  hasPartnerInSchool?: boolean;
   familySize: number;
+  hasOneParent?: boolean;
+  hasTwoParents?: boolean;
   parentalAssetContribution?: number;
   parentalContribution?: number;
   parentDiscretionaryIncome?: number;
@@ -133,3 +141,4 @@ export type IERAward = Pick<
 export const DATE_FORMAT = "YYYYMMDD";
 export const SPACE_FILLER = " ";
 export const NUMBER_FILLER = "0";
+export const DISCRETIONARY_INCOME_PERCENTAGE = 0.15;
