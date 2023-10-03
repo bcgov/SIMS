@@ -102,7 +102,7 @@ export class ApplicationOfferingChangeRequestAESTController extends BaseControll
   }
 
   /**
-   * Updates an application offering change request.
+   * Approves or declines an application offering change request.
    * @param applicationOfferingChangeRequestId application offering change request id.
    * @param payload information to update the application offering change request.
    */
@@ -113,6 +113,6 @@ export class ApplicationOfferingChangeRequestAESTController extends BaseControll
     @Body()
     payload: ApplicationOfferingChangeAssessmentAPIInDTO,
   ): Promise<void> {
-    // TODO: API to be done in the next PR.
+    // TODO: API including the addition of ministry role to be done in the next PR.
   }
 }

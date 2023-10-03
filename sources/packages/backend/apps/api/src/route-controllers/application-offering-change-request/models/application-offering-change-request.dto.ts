@@ -1,6 +1,6 @@
 import {
   ApplicationOfferingChangeRequestStatus,
-  NOTE_MAX_LENGTH,
+  NOTE_DESCRIPTION_MAX_LENGTH,
   OfferingIntensity,
   REASON_MAX_LENGTH,
 } from "@sims/sims-db";
@@ -176,9 +176,12 @@ export class StudentApplicationOfferingChangeRequestAPIInDTO {
 
 export class ApplicationOfferingChangeAssessmentAPIInDTO {
   @IsNotEmpty()
-  @MaxLength(NOTE_MAX_LENGTH)
+  @MaxLength(NOTE_DESCRIPTION_MAX_LENGTH)
   note: string;
-  @IsEnum(ApplicationOfferingChangeRequestStatus)
+  @IsIn([
+    ApplicationOfferingChangeRequestStatus.Approved,
+    ApplicationOfferingChangeRequestStatus.DeclinedBySABC,
+  ])
   applicationOfferingChangeRequestStatus: ApplicationOfferingChangeRequestStatus;
 }
 

@@ -191,9 +191,22 @@ export class ApplicationOfferingChangeRequestService {
    */
   async updateApplicationOfferingChangeRequestStatus(
     applicationOfferingChangeRequestId: number,
-    payload:
-      | StudentApplicationOfferingChangeRequestAPIInDTO
-      | ApplicationOfferingChangeAssessmentAPIInDTO,
+    payload: StudentApplicationOfferingChangeRequestAPIInDTO,
+  ): Promise<void> {
+    await ApiClient.ApplicationOfferingChangeRequestApi.updateApplicationOfferingChangeRequestStatus(
+      applicationOfferingChangeRequestId,
+      payload,
+    );
+  }
+
+  /**
+   * Approves or declines the application offering change request status.
+   * @param applicationOfferingChangeRequestId application offering change request id.
+   * @param payload information to update the application offering change request.
+   */
+  async updateAESTApplicationOfferingChangeRequestStatus(
+    applicationOfferingChangeRequestId: number,
+    payload: ApplicationOfferingChangeAssessmentAPIInDTO,
   ): Promise<void> {
     await ApiClient.ApplicationOfferingChangeRequestApi.updateApplicationOfferingChangeRequestStatus(
       applicationOfferingChangeRequestId,

@@ -187,16 +187,16 @@ export default defineComponent({
         );
       if (responseData) {
         try {
-          await ApplicationOfferingChangeRequestService.shared.updateApplicationOfferingChangeRequestStatus(
+          await ApplicationOfferingChangeRequestService.shared.updateAESTApplicationOfferingChangeRequestStatus(
             props.applicationOfferingChangeRequestId,
             responseData as ApplicationOfferingChangeAssessmentAPIInDTO,
           );
           router.push({
             name: AESTRoutesConst.ASSESSMENTS_SUMMARY,
           });
-          const snackbarMessage =
-            "Your decision was submitted. You can refer to the outcome below.";
-          snackBar.success(snackbarMessage);
+          snackBar.success(
+            "Your decision was submitted. You can refer to the outcome below.",
+          );
         } catch {
           snackBar.error(
             "Unexpected error while submitting application offering change request.",

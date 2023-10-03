@@ -193,9 +193,20 @@ export class ApplicationOfferingChangeRequestApi extends HttpBaseClient {
    */
   async updateApplicationOfferingChangeRequestStatus(
     applicationOfferingChangeRequestId: number,
-    payload:
-      | StudentApplicationOfferingChangeRequestAPIInDTO
-      | ApplicationOfferingChangeAssessmentAPIInDTO,
+    payload: StudentApplicationOfferingChangeRequestAPIInDTO,
+  ): Promise<void> {
+    const url = `application-offering-change-request/${applicationOfferingChangeRequestId}`;
+    await this.patchCall(this.addClientRoot(url), payload);
+  }
+
+  /**
+   * Approve or decline the application offering change request status.
+   * @param applicationOfferingChangeRequestId application offering change request id.
+   * @param payload information to update the application offering change request status and save the declaration.
+   */
+  async updateAESTApplicationOfferingChangeRequestStatus(
+    applicationOfferingChangeRequestId: number,
+    payload: ApplicationOfferingChangeAssessmentAPIInDTO,
   ): Promise<void> {
     const url = `application-offering-change-request/${applicationOfferingChangeRequestId}`;
     await this.patchCall(this.addClientRoot(url), payload);

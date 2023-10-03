@@ -1,27 +1,15 @@
 <template>
   <v-form ref="assessApplicationOfferingChangeRequestForm">
-    <modal-dialog-base
-      :showDialog="showDialog"
-      :title="getTitle"
-      :max-width="780"
-    >
+    <modal-dialog-base :showDialog="showDialog" :title="title" :max-width="780">
       <template #content
         ><error-summary
           :errors="assessApplicationOfferingChangeRequestForm.errors"
         />
         <p class="my-4">
-          Outline the reasoning for
-          <span
-            v-if="
-              showParameter ===
-              ApplicationOfferingChangeRequestStatus.DeclinedBySABC
-            "
-            >declining</span
-          ><span v-else>approving</span>
-          this request. Please add the application number.
+          {{ subject }}
         </p>
-        <p class="label-bold mb-1">Notes</p>
         <v-textarea
+          label="Notes"
           variant="outlined"
           hide-details="auto"
           v-model="note"
@@ -35,7 +23,7 @@
       </template>
       <template #footer>
         <footer-buttons
-          :primaryLabel="getPrimaryLabel"
+          :primaryLabel="primaryLabel"
           @secondaryClick="cancel"
           @primaryClick="assessChange"
         />
@@ -63,13 +51,18 @@ export default defineComponent({
     );
     const assessApplicationOfferingChangeRequestForm = ref({} as VForm);
     const { checkNotesLengthRule } = useRules();
-    const getTitle = computed(() =>
+    const title = computed(() =>
       showParameter.value ===
       ApplicationOfferingChangeRequestStatus.DeclinedBySABC
         ? "Decline for reassessment"
         : "Approve for reassessment",
     );
-    const getPrimaryLabel = computed(() =>
+    const subject = computed(() =>
+      showParameter.value === ApplicationOfferingChangeRequestStatus.Approved
+        ? "Outline the reasoning for approving this request. Please add the application number."
+        : "Outline the reasoning for declining this request. Please add the application number.",
+    );
+    const primaryLabel = computed(() =>
       showParameter.value ===
       ApplicationOfferingChangeRequestStatus.DeclinedBySABC
         ? "Decline now"
@@ -86,16 +79,8 @@ export default defineComponent({
       if (!validationResult.valid) {
         return;
       }
-      if (
-        showParameter.value ===
-        ApplicationOfferingChangeRequestStatus.DeclinedBySABC
-      ) {
-        assessApplicationOfferingChangeRequestModal.value.applicationOfferingChangeRequestStatus =
-          ApplicationOfferingChangeRequestStatus.DeclinedBySABC;
-      } else {
-        assessApplicationOfferingChangeRequestModal.value.applicationOfferingChangeRequestStatus =
-          ApplicationOfferingChangeRequestStatus.Approved;
-      }
+      assessApplicationOfferingChangeRequestModal.value.applicationOfferingChangeRequestStatus =
+        showParameter.value;
       assessApplicationOfferingChangeRequestModal.value.note = note.value;
       resolvePromise(assessApplicationOfferingChangeRequestModal.value);
       assessApplicationOfferingChangeRequestForm.value.reset();
@@ -107,12 +92,12 @@ export default defineComponent({
       cancel,
       assessChange,
       note,
-      getTitle,
-      getPrimaryLabel,
+      title,
+      subject,
+      primaryLabel,
       checkNotesLengthRule,
       ApplicationOfferingChangeRequestStatus,
       assessApplicationOfferingChangeRequestForm,
-      assessApplicationOfferingChangeRequestModal,
     };
   },
 });
