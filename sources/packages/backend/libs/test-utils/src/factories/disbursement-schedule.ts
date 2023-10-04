@@ -34,3 +34,18 @@ export function createFakeDisbursementSchedule(relations?: {
   schedule.disbursementScheduleStatus = DisbursementScheduleStatus.Pending;
   return schedule;
 }
+
+export function createDisbursementScheduleAwards(
+  disbursementSchedule,
+  disbursementNumber,
+) {
+  const disbursementScheduleAwards = {};
+
+  disbursementSchedule.disbursementValues.forEach((disbursementValue) => {
+    disbursementScheduleAwards[
+      `disbursement${disbursementNumber}${disbursementValue.valueCode.toLowerCase()}`
+    ] = disbursementValue.valueAmount;
+  });
+
+  return disbursementScheduleAwards;
+}

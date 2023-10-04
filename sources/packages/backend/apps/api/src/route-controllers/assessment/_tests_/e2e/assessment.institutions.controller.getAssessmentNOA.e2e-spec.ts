@@ -18,6 +18,7 @@ import {
   MSFAAStates,
   E2EDataSources,
   createE2EDataSources,
+  createDisbursementScheduleAwards,
 } from "@sims/test-utils";
 import {
   AssessmentStatus,
@@ -83,21 +84,14 @@ describe("AssessmentInstitutionsController(e2e)-getAssessmentNOA", () => {
     const [firstDisbursementSchedule, secondDisbursementSchedule] =
       assessment.disbursementSchedules;
 
-    const firstDisbursementScheduleAwards = {};
-    firstDisbursementSchedule.disbursementValues.forEach(
-      (firstDisbursement) => {
-        firstDisbursementScheduleAwards[
-          `disbursement1${firstDisbursement.valueCode.toLowerCase()}`
-        ] = firstDisbursement.valueAmount;
-      },
+    const firstDisbursementScheduleAwards = createDisbursementScheduleAwards(
+      firstDisbursementSchedule,
+      1,
     );
-    const secondDisbursementScheduleAwards = {};
-    secondDisbursementSchedule.disbursementValues.forEach(
-      (secondDisbursement) => {
-        secondDisbursementScheduleAwards[
-          `disbursement2${secondDisbursement.valueCode.toLowerCase()}`
-        ] = secondDisbursement.valueAmount;
-      },
+
+    const secondDisbursementScheduleAwards = createDisbursementScheduleAwards(
+      secondDisbursementSchedule,
+      2,
     );
 
     const endpoint = `/institutions/assessment/student/${student.id}/application/${application.id}/assessment/${assessment.id}/noa`;
@@ -175,7 +169,7 @@ describe("AssessmentInstitutionsController(e2e)-getAssessmentNOA", () => {
       });
   });
 
-  it("Should get the student noa details for an eligible partime application when an eligible public institution user tries to access it.", async () => {
+  it("Should get the student noa details for an eligible part time application when an eligible public institution user tries to access it.", async () => {
     // Arrange
 
     // Student has an application to the institution eligible for NOA.
@@ -196,27 +190,23 @@ describe("AssessmentInstitutionsController(e2e)-getAssessmentNOA", () => {
         student,
         msfaaNumber: currentMSFAA,
       },
-      { createSecondDisbursement: true },
+      {
+        offeringIntensity: OfferingIntensity.partTime,
+        createSecondDisbursement: true,
+      },
     );
     const assessment = application.currentAssessment;
     const [firstDisbursementSchedule, secondDisbursementSchedule] =
       assessment.disbursementSchedules;
 
-    const firstDisbursementScheduleAwards = {};
-    firstDisbursementSchedule.disbursementValues.forEach(
-      (firstDisbursement) => {
-        firstDisbursementScheduleAwards[
-          `disbursement1${firstDisbursement.valueCode.toLowerCase()}`
-        ] = firstDisbursement.valueAmount;
-      },
+    const firstDisbursementScheduleAwards = createDisbursementScheduleAwards(
+      firstDisbursementSchedule,
+      1,
     );
-    const secondDisbursementScheduleAwards = {};
-    secondDisbursementSchedule.disbursementValues.forEach(
-      (secondDisbursement) => {
-        secondDisbursementScheduleAwards[
-          `disbursement2${secondDisbursement.valueCode.toLowerCase()}`
-        ] = secondDisbursement.valueAmount;
-      },
+
+    const secondDisbursementScheduleAwards = createDisbursementScheduleAwards(
+      secondDisbursementSchedule,
+      2,
     );
 
     const endpoint = `/institutions/assessment/student/${student.id}/application/${application.id}/assessment/${assessment.id}/noa`;
