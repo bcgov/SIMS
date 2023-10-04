@@ -53,7 +53,7 @@ describe(
       jest.resetAllMocks();
     });
 
-    it.only("Should cancel the assessment pending disbursements and rollback overawards when the cancelled application has overawards and also one sent and one pending disbursements.", async () => {
+    it("Should cancel the assessment pending disbursements and rollback overawards when the cancelled application has overawards and also one sent and one pending disbursements.", async () => {
       // Arrange
       const workflowInstanceId = faker.random
         .number({
