@@ -89,6 +89,14 @@ export class CancelApplicationAssessmentProcessor {
           error instanceof ZeebeGRPCError &&
           error.code !== ZeebeGRPCErrorTypes.NOT_FOUND
         ) {
+          await summary.info(
+            `Changing student assessment status to ${StudentAssessmentStatus.Cancelled}.`,
+          );
+          this.dataSource
+            .getRepository(StudentAssessment)
+            .update(assessment.id, {
+              studentAssessmentStatus: StudentAssessmentStatus.Cancelled,
+            });
           // An unexpected error happen and the process must be aborted.
           this.logger.error(error);
           throw error;
@@ -99,13 +107,6 @@ export class CancelApplicationAssessmentProcessor {
             "This can happen if the workflow was already completed or if it was cancelled, for instance, manually using the workflow UI. " +
             "This is not considered an error and the cancellation can proceed.",
         );
-      } finally {
-        await summary.info(
-          `Changing student assessment status to ${StudentAssessmentStatus.Cancelled}.`,
-        );
-        this.dataSource.getRepository(StudentAssessment).update(assessment.id, {
-          studentAssessmentStatus: StudentAssessmentStatus.Cancelled,
-        });
       }
     } else {
       // Unless there is some data integrity issue this scenario can happen only if the student application was submitted
