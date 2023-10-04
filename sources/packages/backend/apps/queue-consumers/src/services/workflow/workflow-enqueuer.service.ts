@@ -174,17 +174,6 @@ export class WorkflowEnqueuerService {
       );
       // Update application and student assessment.
       await this.dataSource.transaction(async (entityManager) => {
-        // summary.info(
-        //   `Associating application currentProcessingAssessment as assessment id ${nextAssessment.id}.`,
-        // );
-        // const applicationUpdateResult = await entityManager
-        //   .getRepository(Application)
-        //   .update(application.id, {
-        //     currentProcessingAssessment: { id: nextAssessment.id },
-        //   });
-        // if (!applicationUpdateResult.affected) {
-        //   throw new Error("Application update did not affected any records.");
-        // }
         summary.info(
           `Updating assessment status to ${StudentAssessmentStatus.CancellationQueued}.`,
         );

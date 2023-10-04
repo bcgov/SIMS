@@ -46,7 +46,6 @@ import {
   dateDifference,
   decimalRound,
   FieldSortOrder,
-  QueueNames,
 } from "@sims/utilities";
 import {
   OFFERING_INVALID_OPERATION_IN_THE_CURRENT_STATE,
@@ -65,19 +64,11 @@ import {
 import { EducationProgramOfferingValidationService } from "./education-program-offering-validation.service";
 import * as os from "os";
 import { LoggerService, InjectLogger } from "@sims/utilities/logger";
-import { WorkflowClientService } from "@sims/services";
-import { Job, Queue } from "bull";
-import { CancelAssessmentQueueInDTO } from "@sims/services/queue";
-import { InjectQueue } from "@nestjs/bull";
-
 @Injectable()
 export class EducationProgramOfferingService extends RecordDataModelService<EducationProgramOffering> {
   constructor(
     private readonly dataSource: DataSource,
-    private readonly workflowClientService: WorkflowClientService,
     private readonly offeringValidationService: EducationProgramOfferingValidationService,
-    @InjectQueue(QueueNames.CancelApplicationAssessment)
-    private readonly cancelAssessmentQueue: Queue<CancelAssessmentQueueInDTO>,
   ) {
     super(dataSource.getRepository(EducationProgramOffering));
   }
