@@ -9,6 +9,13 @@ import {
 import { getISODateOnlyString } from "@sims/utilities";
 import * as faker from "faker";
 
+/**
+ * Disbursement awards.
+ */
+interface DisbursementAwards {
+  [disbursementValueCode: string]: number;
+}
+
 export function createFakeDisbursementSchedule(relations?: {
   studentAssessment?: StudentAssessment;
   auditUser?: User;
@@ -33,13 +40,6 @@ export function createFakeDisbursementSchedule(relations?: {
   schedule.tuitionRemittanceRequestedAmount = 0;
   schedule.disbursementScheduleStatus = DisbursementScheduleStatus.Pending;
   return schedule;
-}
-
-/**
- * Disbursement awards.
- */
-interface DisbursementAwards {
-  [disbursementValueCode: string]: number;
 }
 
 /**
