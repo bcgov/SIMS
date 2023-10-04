@@ -54,7 +54,7 @@ describe("AssessmentInstitutionsController(e2e)-getAssessmentNOA", () => {
     );
   });
 
-  it("Should get the student noa details for an eligible application when an eligible public institution user tries to access it.", async () => {
+  it("Should get the student noa details for an eligible full time application when an eligible public institution user tries to access it.", async () => {
     // Arrange
 
     // Student has an application to the institution eligible for NOA.
