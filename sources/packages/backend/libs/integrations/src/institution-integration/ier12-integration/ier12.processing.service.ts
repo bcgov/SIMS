@@ -23,10 +23,12 @@ import {
   IERAward,
 } from "./models/ier12-integration.model";
 import { StudentAssessmentService } from "@sims/integrations/services";
-import { DisbursementOverawardService } from "@sims/services";
+import {
+  DisbursementOverawardService,
+  AwardOverawardBalance,
+} from "@sims/services";
 import { FullTimeAwardTypes } from "@sims/integrations/models";
 import { PROVINCIAL_DEFAULT_RESTRICTION_CODE } from "@sims/services/constants";
-import { AwardOverawardBalance } from "@sims/services/disbursement-overaward/disbursement-overaward.models";
 
 @Injectable()
 export class IER12ProcessingService {

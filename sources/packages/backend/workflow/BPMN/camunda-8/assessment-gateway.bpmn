@@ -419,7 +419,6 @@
           <zeebe:output source="=null" target="partner1TotalIncome" />
           <zeebe:output source="=null" target="studentDataTaxReturnIncome" />
           <zeebe:output source="=[]" target="parentSubprocesses" />
-          <zeebe:output source="=null" target="calculatedDataParentalAssets" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:outgoing>Flow_1ef3map</bpmn:outgoing>
