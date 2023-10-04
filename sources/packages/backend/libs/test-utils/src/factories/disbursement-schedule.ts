@@ -36,8 +36,8 @@ export function createFakeDisbursementSchedule(relations?: {
 }
 
 export function createDisbursementScheduleAwards(
-  disbursementSchedule,
-  disbursementNumber,
+  disbursementSchedule: DisbursementSchedule,
+  disbursementNumber: number,
 ) {
   const disbursementScheduleAwards = {};
 
