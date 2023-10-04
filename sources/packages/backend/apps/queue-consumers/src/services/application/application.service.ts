@@ -58,6 +58,17 @@ export class ApplicationService {
     return updateResult.affected;
   }
 
+  // Sub query to validate if an application has assessment already being
+  // processed by the workflow.
+  inProgressStatusesExistsQuery = this.studentAssessmentRepo
+    .createQueryBuilder("studentAssessment")
+    .select("1")
+    .where("studentAssessment.application.id = application.id")
+    .andWhere(
+      "studentAssessment.studentAssessmentStatus IN (:...inProgressStatuses)",
+    )
+    .getQuery();
+
   /**
    * Finds all applications with some pending student assessment to be
    * processed by the workflow, ignoring applications that already have
@@ -68,16 +79,6 @@ export class ApplicationService {
    * @returns applications with pending assessments to be executed.
    */
   async getApplicationsToStartAssessments(): Promise<Application[]> {
-    // Sub query to validate if an application has assessment already being
-    // processed by the workflow.
-    const inProgressStatusesExistsQuery = this.studentAssessmentRepo
-      .createQueryBuilder("studentAssessment")
-      .select("1")
-      .where("studentAssessment.application.id = application.id")
-      .andWhere(
-        "studentAssessment.studentAssessmentStatus IN (:...inProgressStatuses)",
-      )
-      .getQuery();
     return (
       this.applicationRepo
         .createQueryBuilder("application")
@@ -103,7 +104,7 @@ export class ApplicationService {
             submittedStatus: StudentAssessmentStatus.Submitted,
           },
         )
-        .andWhere(`NOT EXISTS (${inProgressStatusesExistsQuery})`)
+        .andWhere(`NOT EXISTS (${this.inProgressStatusesExistsQuery})`)
         .setParameter("inProgressStatuses", [
           StudentAssessmentStatus.Queued,
           StudentAssessmentStatus.InProgress,
@@ -111,5 +112,25 @@ export class ApplicationService {
         .orderBy("studentAssessment.createdAt")
         .getMany()
     );
+  }
+
+  /**
+   * Finds all applications with some pending student assessment to be canceled.
+   * All pending student assessments will be returned ordered by its creation
+   * date to allow the select of the next one to be executed (usually only one
+   * record would be expected).
+   * @returns applications with pending assessments to be executed.
+   */
+  async getApplicationsToCancelAssessments(): Promise<Application[]> {
+    return this.applicationRepo
+      .createQueryBuilder("application")
+      .select(["application.id", "studentAssessment.id"])
+      .innerJoin("application.studentAssessments", "studentAssessment")
+      .andWhere(`EXISTS (${this.inProgressStatusesExistsQuery})`)
+      .setParameter("inProgressStatuses", [
+        StudentAssessmentStatus.CancellationRequested,
+      ])
+      .orderBy("studentAssessment.createdAt")
+      .getMany();
   }
 }

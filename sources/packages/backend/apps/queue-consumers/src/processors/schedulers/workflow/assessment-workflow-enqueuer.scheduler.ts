@@ -46,6 +46,11 @@ export class AssessmentWorkflowEnqueuerScheduler extends BaseScheduler<void> {
       // output the partial information captured by the processSummary.
       const serviceProcessSummary = new ProcessSummary();
       processSummary.children(serviceProcessSummary);
+
+      await this.workflowEnqueuerService.enqueueCancelAssessmentWorkflows(
+        serviceProcessSummary,
+      );
+
       await this.workflowEnqueuerService.enqueueStartAssessmentWorkflows(
         serviceProcessSummary,
       );

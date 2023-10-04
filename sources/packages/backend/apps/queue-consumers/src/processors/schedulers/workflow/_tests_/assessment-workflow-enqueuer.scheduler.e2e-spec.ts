@@ -18,11 +18,15 @@ import {
 import { Not } from "typeorm";
 import {
   Application,
+  ApplicationStatus,
   AssessmentTriggerType,
   StudentAssessmentStatus,
   User,
 } from "@sims/sims-db";
-import { StartAssessmentQueueInDTO } from "@sims/services/queue";
+import {
+  CancelAssessmentQueueInDTO,
+  StartAssessmentQueueInDTO,
+} from "@sims/services/queue";
 
 describe(
   describeProcessorRootTest(QueueNames.AssessmentWorkflowEnqueuer),
@@ -31,6 +35,7 @@ describe(
     let db: E2EDataSources;
     let processor: AssessmentWorkflowEnqueuerScheduler;
     let startApplicationAssessmentQueueMock: Queue<StartAssessmentQueueInDTO>;
+    let cancelApplicationAssessmentQueueMock: Queue<CancelAssessmentQueueInDTO>;
     let auditUser: User;
 
     beforeAll(async () => {
@@ -41,6 +46,10 @@ describe(
       // Mocked StartApplicationAssessment queue.
       startApplicationAssessmentQueueMock = app.get(
         getQueueProviderName(QueueNames.StartApplicationAssessment),
+      );
+      // Mocked CancelApplicationAssessment queue.
+      cancelApplicationAssessmentQueueMock = app.get(
+        getQueueProviderName(QueueNames.CancelApplicationAssessment),
       );
       // Processor under test.
       processor = app.get(AssessmentWorkflowEnqueuerScheduler);
@@ -184,6 +193,44 @@ describe(
 
       // Assert
       expect(startApplicationAssessmentQueueMock.add).not.toBeCalled();
+    });
+
+    it(`Should queue the assessment when an application has one assessment with status '${StudentAssessmentStatus.CancellationRequested}'.`, async () => {
+      // Arrange
+
+      // Application submitted with original assessment and completed assessment.
+      const application = await createDefaultApplication(
+        StudentAssessmentStatus.CancellationRequested,
+      );
+      application.applicationStatus = ApplicationStatus.Overwritten;
+      // Force currentAssessment and currentProcessingAssessment to be the same to test the SQL condition.
+      application.currentProcessingAssessment = application.currentAssessment;
+      application.studentAssessments = [application.currentAssessment];
+      await db.application.save(application);
+
+      // Queued job.
+      const job = createMock<Job<void>>();
+
+      // Act
+      await processor.enqueueAssessmentOperations(job);
+
+      // Assert
+      // Load application and related assessments for assertion.
+      const updatedApplication = await loadApplicationDataForAssertions(
+        application.id,
+      );
+
+      // Assert item was added to the queue.
+      const queueData = {
+        assessmentId: updatedApplication.currentProcessingAssessment.id,
+      } as CancelAssessmentQueueInDTO;
+      expect(cancelApplicationAssessmentQueueMock.add).toBeCalledWith(
+        queueData,
+      );
+
+      expect(
+        updatedApplication.currentProcessingAssessment.studentAssessmentStatus,
+      ).toBe(StudentAssessmentStatus.CancellationQueued);
     });
 
     /**

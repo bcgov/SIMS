@@ -10,7 +10,7 @@ import {
   mapFromRawAndEntities,
   StudentAssessmentStatus,
 } from "@sims/sims-db";
-import { Brackets, DataSource } from "typeorm";
+import { Brackets, DataSource, UpdateResult } from "typeorm";
 import { CustomNamedError } from "@sims/utilities";
 import {
   ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE,
@@ -270,5 +270,20 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
       .getRawAndEntities();
 
     return mapFromRawAndEntities<AssessmentHistory>(queryResult, "status");
+  }
+
+  /**
+   * Updates the student assessment with the student assessment status.
+   * @param assessmentId assessment id to be update.
+   * @param studentAssessmentStatus new student assessment status.
+   * @returns update result.
+   */
+  async updateStudentAssessmentStatus(
+    assessmentId: number,
+    studentAssessmentStatus: StudentAssessmentStatus,
+  ): Promise<UpdateResult> {
+    return this.repo.update(assessmentId, {
+      studentAssessmentStatus,
+    });
   }
 }

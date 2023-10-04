@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { DataSource, In, Not, Brackets } from "typeorm";
+import { DataSource, In, Not, Brackets, Repository } from "typeorm";
 import { LoggerService, InjectLogger } from "@sims/utilities/logger";
 import {
   RecordDataModelService,
@@ -18,6 +18,7 @@ import {
   ApplicationData,
   getUserFullNameLikeSearch,
   transformToApplicationEntitySortField,
+  StudentAssessmentStatus,
 } from "@sims/sims-db";
 import { StudentFileService } from "../student-file/student-file.service";
 import {
@@ -33,7 +34,7 @@ import {
   PaginatedResults,
   offeringBelongToProgramYear,
 } from "../../utilities";
-import { CustomNamedError, QueueNames } from "@sims/utilities";
+import { CustomNamedError } from "@sims/utilities";
 import {
   SFASApplicationService,
   SFASPartTimeApplicationsService,
@@ -52,10 +53,8 @@ import {
 import { SequenceControlService } from "@sims/services";
 import { ConfigService } from "@sims/utilities/config";
 import { NotificationActionsService } from "@sims/services/notifications";
-import { InjectQueue } from "@nestjs/bull";
-import { Queue } from "bull";
-import { CancelAssessmentQueueInDTO } from "@sims/services/queue";
 import { InstitutionLocationService } from "../institution-location/institution-location.service";
+import { StudentAssessmentService } from "../student-assessment/student-assessment.service";
 
 export const APPLICATION_DRAFT_NOT_FOUND = "APPLICATION_DRAFT_NOT_FOUND";
 export const MORE_THAN_ONE_APPLICATION_DRAFT_ERROR =
@@ -82,8 +81,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
     private readonly offeringService: EducationProgramOfferingService,
     private readonly notificationActionsService: NotificationActionsService,
     private readonly institutionLocationService: InstitutionLocationService,
-    @InjectQueue(QueueNames.CancelApplicationAssessment)
-    private readonly cancelAssessmentQueue: Queue<CancelAssessmentQueueInDTO>,
+    private readonly studentAssessmentService: StudentAssessmentService,
   ) {
     super(dataSource.getRepository(Application));
   }
@@ -273,11 +271,12 @@ export class ApplicationService extends RecordDataModelService<Application> {
       newApplication.currentAssessment = originalAssessment;
       await applicationRepository.save([application, newApplication]);
     });
-    // Deleting the existing workflow, if there is one.
+    // Requesting cancellation for the current assessment if workflow id exists.
     if (application.currentAssessment.assessmentWorkflowId) {
-      await this.cancelAssessmentQueue.add({
-        assessmentId: application.currentAssessment.id,
-      });
+      await this.studentAssessmentService.updateStudentAssessmentStatus(
+        application.currentAssessment.id,
+        StudentAssessmentStatus.CancellationRequested,
+      );
     }
 
     return { application, createdAssessment: originalAssessment };
@@ -1007,9 +1006,10 @@ export class ApplicationService extends RecordDataModelService<Application> {
     // Delete workflow and rollback overawards if the workflow started.
     // Workflow doest not exists for draft or submitted application, for instance.
     if (application.currentAssessment?.assessmentWorkflowId) {
-      await this.cancelAssessmentQueue.add({
-        assessmentId: application.currentAssessment.id,
-      });
+      await this.studentAssessmentService.updateStudentAssessmentStatus(
+        application.currentAssessment.id,
+        StudentAssessmentStatus.CancellationRequested,
+      );
     }
     return application;
   }

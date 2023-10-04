@@ -20,6 +20,7 @@ import {
   DatabaseConstraintNames,
   PostgresDriverError,
   mapFromRawAndEntities,
+  StudentAssessmentStatus,
 } from "@sims/sims-db";
 import {
   DataSource,
@@ -65,7 +66,6 @@ import { EducationProgramOfferingValidationService } from "./education-program-o
 import * as os from "os";
 import { LoggerService, InjectLogger } from "@sims/utilities/logger";
 import { WorkflowClientService } from "@sims/services";
-import { CreateProcessInstanceResponse } from "zeebe-node";
 import { Job, Queue } from "bull";
 import { CancelAssessmentQueueInDTO } from "@sims/services/queue";
 import { InjectQueue } from "@nestjs/bull";
@@ -1106,6 +1106,8 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
         // then set the application as cancelled as it cannot be re-assessed.
         else {
           application.applicationStatus = ApplicationStatus.Cancelled;
+          application.currentAssessment.studentAssessmentStatus =
+            StudentAssessmentStatus.CancellationRequested;
         }
 
         application.modifier = auditUser;
@@ -1152,46 +1154,6 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
           .save(applications);
       }
     });
-
-    // Once the impacted applications are updated with new current assessment
-    // start the assessment workflows and delete the existing workflow instances.
-    if (applications?.length > 0) {
-      await this.startOfferingChangeAssessments(applications);
-    }
-  }
-
-  /**
-   * For an offering change start the assessment workflows for all new assessments
-   * and delete the existing workflow instances of previous assessments.
-   * @param applications applications impacted by offering change.
-   */
-  private async startOfferingChangeAssessments(
-    applications: ApplicationAssessmentSummary[],
-  ): Promise<void> {
-    const promises: Promise<Job | CreateProcessInstanceResponse>[] = [];
-    // Used to limit the number of asynchronous operations
-    // that will start at the same time based on length of cpus.
-    // TODO: Currently the parallel processing is limited logical CPU core count but this approach
-    // TODO: needs to be revisited.
-    const maxPromisesAllowed = os.cpus().length;
-    for (const application of applications) {
-      // When the assessment data is populated, the workflow is complete.
-      // Only running workflow instances can be deleted.
-      if (application.assessmentWorkflowId && !application.hasAssessmentData) {
-        const deleteAssessmentPromise = this.cancelAssessmentQueue.add({
-          assessmentId: application.assessmentId,
-        });
-        promises.push(deleteAssessmentPromise);
-      }
-      if (promises.length >= maxPromisesAllowed) {
-        // Waits for promises to be process when it reaches maximum allowable parallel
-        // count.
-        await Promise.all(promises);
-        promises.splice(0, promises.length);
-      }
-    }
-    // Processing any pending promise if not completed.
-    await Promise.all(promises);
   }
 
   /**

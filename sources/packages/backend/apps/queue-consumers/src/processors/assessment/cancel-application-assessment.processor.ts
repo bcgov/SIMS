@@ -91,6 +91,8 @@ export class CancelApplicationAssessmentProcessor {
             "This can happen if the workflow was already completed or if it was cancelled, for instance, manually using the workflow UI. " +
             "This is not considered an error and the cancellation can proceed.",
         );
+      } finally {
+        this.dataSource.getRepository(StudentAssessment);
       }
     } else {
       // Unless there is some data integrity issue this scenario can happen only if the student application was submitted
