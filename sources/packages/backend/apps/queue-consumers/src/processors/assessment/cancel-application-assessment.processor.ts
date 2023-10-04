@@ -14,7 +14,11 @@ import {
   QueueProcessSummary,
   QueueProcessSummaryResult,
 } from "../models/processors.models";
-import { ApplicationStatus } from "@sims/sims-db";
+import {
+  ApplicationStatus,
+  StudentAssessment,
+  StudentAssessmentStatus,
+} from "@sims/sims-db";
 
 /**
  * Process the workflow cancellation.
@@ -75,6 +79,10 @@ export class CancelApplicationAssessmentProcessor {
         await this.workflowClientService.deleteApplicationAssessment(
           assessment.assessmentWorkflowId,
         );
+        // TODO syncup question
+        this.dataSource.getRepository(StudentAssessment).update(assessment.id, {
+          studentAssessmentStatus: StudentAssessmentStatus.Cancelled,
+        });
         await summary.info("Workflow instance successfully cancelled.");
       } catch (error: unknown) {
         if (
@@ -92,7 +100,12 @@ export class CancelApplicationAssessmentProcessor {
             "This is not considered an error and the cancellation can proceed.",
         );
       } finally {
-        this.dataSource.getRepository(StudentAssessment);
+        await summary.info(
+          `Changing student assessment status to ${StudentAssessmentStatus.Cancelled}.`,
+        );
+        this.dataSource.getRepository(StudentAssessment).update(assessment.id, {
+          studentAssessmentStatus: StudentAssessmentStatus.Cancelled,
+        });
       }
     } else {
       // Unless there is some data integrity issue this scenario can happen only if the student application was submitted

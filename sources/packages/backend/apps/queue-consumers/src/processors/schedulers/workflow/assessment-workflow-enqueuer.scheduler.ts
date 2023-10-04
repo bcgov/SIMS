@@ -47,13 +47,24 @@ export class AssessmentWorkflowEnqueuerScheduler extends BaseScheduler<void> {
       const serviceProcessSummary = new ProcessSummary();
       processSummary.children(serviceProcessSummary);
 
-      await this.workflowEnqueuerService.enqueueCancelAssessmentWorkflows(
-        serviceProcessSummary,
-      );
-
-      await this.workflowEnqueuerService.enqueueStartAssessmentWorkflows(
-        serviceProcessSummary,
-      );
+      try {
+        await this.workflowEnqueuerService.enqueueCancelAssessmentWorkflows(
+          serviceProcessSummary,
+        );
+      } catch (error: unknown) {
+        const errorMessage =
+          "Unexpected error while enqueueing cancel assessment workflows.";
+        processSummary.error(errorMessage, error);
+      }
+      try {
+        await this.workflowEnqueuerService.enqueueStartAssessmentWorkflows(
+          serviceProcessSummary,
+        );
+      } catch (error: unknown) {
+        const errorMessage =
+          "Unexpected error while enqueueing start assessment workflows.";
+        processSummary.error(errorMessage, error);
+      }
       return getSuccessMessageWithAttentionCheck(
         "Process finalized with success.",
         processSummary,

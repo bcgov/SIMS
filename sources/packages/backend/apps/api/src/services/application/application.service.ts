@@ -269,15 +269,10 @@ export class ApplicationService extends RecordDataModelService<Application> {
       newApplication.creator = auditUser;
       newApplication.studentAssessments = [originalAssessment];
       newApplication.currentAssessment = originalAssessment;
+      application.currentAssessment.studentAssessmentStatus =
+        StudentAssessmentStatus.CancellationRequested;
       await applicationRepository.save([application, newApplication]);
     });
-    // Requesting cancellation for the current assessment if workflow id exists.
-    if (application.currentAssessment.assessmentWorkflowId) {
-      await this.studentAssessmentService.updateStudentAssessmentStatus(
-        application.currentAssessment.id,
-        StudentAssessmentStatus.CancellationRequested,
-      );
-    }
 
     return { application, createdAssessment: originalAssessment };
   }
@@ -1002,15 +997,9 @@ export class ApplicationService extends RecordDataModelService<Application> {
     application.applicationStatusUpdatedOn = now;
     application.modifier = { id: auditUserId } as User;
     application.updatedAt = now;
+    application.currentAssessment.studentAssessmentStatus =
+      StudentAssessmentStatus.CancellationRequested;
     await this.repo.save(application);
-    // Delete workflow and rollback overawards if the workflow started.
-    // Workflow doest not exists for draft or submitted application, for instance.
-    if (application.currentAssessment?.assessmentWorkflowId) {
-      await this.studentAssessmentService.updateStudentAssessmentStatus(
-        application.currentAssessment.id,
-        StudentAssessmentStatus.CancellationRequested,
-      );
-    }
     return application;
   }
 
