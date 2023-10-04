@@ -10,6 +10,7 @@ export * from "./notifications/notifications.module";
 export * from "./sequence-control/sequence-control.service";
 export * from "./disbursement-schedule/disbursement-schedule.models";
 export * from "./disbursement-schedule/disbursement-schedule-shared.service";
+export * from "./disbursement-overaward/disbursement-overaward.models";
 export * from "./disbursement-overaward/disbursement-overaward.service";
 export * from "./restriction/student-restriction-shared.service";
 export * from "./system-users/index";
