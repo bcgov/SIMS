@@ -163,15 +163,15 @@ export class AssessmentControllerService {
   private sumDisbursementValueAmounts(
     disbursementSchedules: DisbursementSchedule[],
   ): number {
-    return disbursementSchedules.reduce((totalValueAmount, schedule) => {
-      return (
-        totalValueAmount +
-        (schedule.disbursementValues || []).reduce(
-          (sum, disbursementValue) => sum + disbursementValue.valueAmount,
-          0,
-        )
+    return disbursementSchedules
+      .flatMap(
+        (disbursementSchedule) => disbursementSchedule.disbursementValues,
+      )
+      .reduce(
+        (accumulator, disbursementValue) =>
+          accumulator + disbursementValue.valueAmount,
+        0,
       );
-    }, 0);
   }
 
   /**
