@@ -156,9 +156,9 @@ export class AssessmentControllerService {
   }
 
   /**
-   * Calculate the sum of 'valueAmount' for each DisbursementValue within an array of DisbursementSchedules.
+   * Calculate the sum of value amount for each disbursement value within the disbursement schedules.
    * @param disbursementSchedules disbursement schedule details.
-   * @returns The total sum of 'valueAmount' across all DisbursementSchedules.
+   * @returns The total sum of value amount across all disbursement schedules.
    */
   private sumDisbursementValueAmounts(
     disbursementSchedules: DisbursementSchedule[],
