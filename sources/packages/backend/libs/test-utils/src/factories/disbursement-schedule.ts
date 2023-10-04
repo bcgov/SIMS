@@ -43,7 +43,7 @@ interface DisbursementAwards {
 }
 
 /**
- *  Creates disbursement schedule awards based on the given schedule and disbursement number.
+ * Creates disbursement schedule awards based on the given schedule and disbursement number.
  * @param disbursementSchedule Disbursement schedule containing disbursement values.
  * @param disbursementNumber Number associated with the disbursement schedule (e.g., 1 for the first, 2 for the second).
  * @returns Disbursement awards with keys like 'disbursement1code' and values as amounts.
