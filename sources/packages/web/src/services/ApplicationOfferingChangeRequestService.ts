@@ -204,11 +204,11 @@ export class ApplicationOfferingChangeRequestService {
    * @param applicationOfferingChangeRequestId application offering change request id.
    * @param payload information to update the application offering change request.
    */
-  async updateAESTApplicationOfferingChangeRequestStatus(
+  async assessApplicationOfferingChangeRequest(
     applicationOfferingChangeRequestId: number,
     payload: ApplicationOfferingChangeAssessmentAPIInDTO,
   ): Promise<void> {
-    await ApiClient.ApplicationOfferingChangeRequestApi.updateAESTApplicationOfferingChangeRequestStatus(
+    await ApiClient.ApplicationOfferingChangeRequestApi.assessApplicationOfferingChangeRequest(
       applicationOfferingChangeRequestId,
       payload,
     );

@@ -204,7 +204,7 @@ export class ApplicationOfferingChangeRequestApi extends HttpBaseClient {
    * @param applicationOfferingChangeRequestId application offering change request id.
    * @param payload information to update the application offering change request status and save the declaration.
    */
-  async updateAESTApplicationOfferingChangeRequestStatus(
+  async assessApplicationOfferingChangeRequest(
     applicationOfferingChangeRequestId: number,
     payload: ApplicationOfferingChangeAssessmentAPIInDTO,
   ): Promise<void> {

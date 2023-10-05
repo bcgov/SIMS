@@ -187,7 +187,7 @@ export default defineComponent({
         );
       if (responseData) {
         try {
-          await ApplicationOfferingChangeRequestService.shared.updateAESTApplicationOfferingChangeRequestStatus(
+          await ApplicationOfferingChangeRequestService.shared.assessApplicationOfferingChangeRequest(
             props.applicationOfferingChangeRequestId,
             responseData as ApplicationOfferingChangeAssessmentAPIInDTO,
           );
