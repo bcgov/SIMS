@@ -18,10 +18,10 @@ import {
   MSFAAStates,
   E2EDataSources,
   createE2EDataSources,
-  createDisbursementScheduleAwards,
 } from "@sims/test-utils";
 import {
   AssessmentStatus,
+  DisbursementSchedule,
   Institution,
   InstitutionLocation,
   OfferingIntensity,
@@ -84,15 +84,13 @@ describe("AssessmentInstitutionsController(e2e)-getAssessmentNOA", () => {
     const [firstDisbursementSchedule, secondDisbursementSchedule] =
       assessment.disbursementSchedules;
 
-    const firstDisbursementScheduleAwards = createDisbursementScheduleAwards(
+    const firstDisbursementScheduleAwards = createNOADisbursementScheduleAwards(
       firstDisbursementSchedule,
       1,
     );
 
-    const secondDisbursementScheduleAwards = createDisbursementScheduleAwards(
-      secondDisbursementSchedule,
-      2,
-    );
+    const secondDisbursementScheduleAwards =
+      createNOADisbursementScheduleAwards(secondDisbursementSchedule, 2);
 
     const endpoint = `/institutions/assessment/student/${student.id}/application/${application.id}/assessment/${assessment.id}/noa`;
     const institutionUserToken = await getInstitutionToken(
@@ -143,18 +141,7 @@ describe("AssessmentInstitutionsController(e2e)-getAssessmentNOA", () => {
             secondDisbursementSchedule.tuitionRemittanceRequestedAmount,
           ...secondDisbursementScheduleAwards,
         },
-        eligibleAmount: assessment.disbursementSchedules.reduce(
-          (totalValueAmount, schedule) => {
-            return (
-              totalValueAmount +
-              (schedule.disbursementValues || []).reduce(
-                (sum, disbursementValue) => sum + disbursementValue.valueAmount,
-                0,
-              )
-            );
-          },
-          0,
-        ),
+        eligibleAmount: 2,
         fullName: getUserFullName(application.student.user),
         locationName: assessment.offering.institutionLocation.name,
         noaApprovalStatus: assessment.noaApprovalStatus,
@@ -199,15 +186,13 @@ describe("AssessmentInstitutionsController(e2e)-getAssessmentNOA", () => {
     const [firstDisbursementSchedule, secondDisbursementSchedule] =
       assessment.disbursementSchedules;
 
-    const firstDisbursementScheduleAwards = createDisbursementScheduleAwards(
+    const firstDisbursementScheduleAwards = createNOADisbursementScheduleAwards(
       firstDisbursementSchedule,
       1,
     );
 
-    const secondDisbursementScheduleAwards = createDisbursementScheduleAwards(
-      secondDisbursementSchedule,
-      2,
-    );
+    const secondDisbursementScheduleAwards =
+      createNOADisbursementScheduleAwards(secondDisbursementSchedule, 2);
 
     const endpoint = `/institutions/assessment/student/${student.id}/application/${application.id}/assessment/${assessment.id}/noa`;
     const institutionUserToken = await getInstitutionToken(
@@ -258,18 +243,7 @@ describe("AssessmentInstitutionsController(e2e)-getAssessmentNOA", () => {
             secondDisbursementSchedule.tuitionRemittanceRequestedAmount,
           ...secondDisbursementScheduleAwards,
         },
-        eligibleAmount: assessment.disbursementSchedules.reduce(
-          (totalValueAmount, schedule) => {
-            return (
-              totalValueAmount +
-              (schedule.disbursementValues || []).reduce(
-                (sum, disbursementValue) => sum + disbursementValue.valueAmount,
-                0,
-              )
-            );
-          },
-          0,
-        ),
+        eligibleAmount: 2,
         fullName: getUserFullName(application.student.user),
         locationName: assessment.offering.institutionLocation.name,
         noaApprovalStatus: assessment.noaApprovalStatus,
@@ -409,6 +383,34 @@ describe("AssessmentInstitutionsController(e2e)-getAssessmentNOA", () => {
         error: "Forbidden",
       });
   });
+
+  /**
+   * Disbursement awards.
+   */
+  interface DisbursementAwards {
+    [disbursementValueCode: string]: number;
+  }
+
+  /**
+   * Creates disbursement schedule awards based on the given schedule and disbursement number.
+   * @param disbursementSchedule Disbursement schedule containing disbursement values.
+   * @param disbursementNumber Number associated with the disbursement schedule (e.g., 1 for the first, 2 for the second).
+   * @returns Disbursement awards with keys like 'disbursement1code' and values as amounts.
+   */
+  function createNOADisbursementScheduleAwards(
+    disbursementSchedule: DisbursementSchedule,
+    disbursementNumber: 1 | 2,
+  ): DisbursementAwards {
+    const disbursementScheduleAwards: DisbursementAwards = {};
+
+    disbursementSchedule.disbursementValues.forEach((disbursementValue) => {
+      disbursementScheduleAwards[
+        `disbursement${disbursementNumber}${disbursementValue.valueCode.toLowerCase()}`
+      ] = disbursementValue.valueAmount;
+    });
+
+    return disbursementScheduleAwards;
+  }
 
   afterAll(async () => {
     await app?.close();
