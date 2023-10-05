@@ -361,7 +361,7 @@ export class IER12IntegrationService extends SFTPIntegrationBase<void> {
             !options.awardTypeExclusions.includes(award.valueType)),
       )
       .map((disbursementValue) => disbursementValue.valueAmount)
-      .reduce((accumulator, currentValue) => accumulator + currentValue);
+      .reduce((accumulator, currentValue) => accumulator + currentValue, 0);
 
     return combineDecimalPlaces(totalAwardsAmount);
   }
