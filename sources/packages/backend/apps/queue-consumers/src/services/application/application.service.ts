@@ -117,11 +117,10 @@ export class ApplicationService {
   }
 
   /**
-   * Finds all applications with some pending student assessment to be canceled.
-   * All pending student assessments will be returned ordered by its creation
-   * date to allow the select of the next one to be executed (usually only one
-   * record would be expected).
-   * @returns applications with pending assessments to be executed.
+   * Finds all applications with some student assessment with cancellation requested.
+   * All student assessments to be cancelled will be returned ordered by its creation
+   * date to allow the select of the next one to be cancelled.
+   * @returns applications with assessment to be cancelled.
    */
   async getApplicationsToCancelAssessments(): Promise<Application[]> {
     return this.applicationRepo

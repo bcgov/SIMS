@@ -66,9 +66,9 @@ export class WorkflowEnqueuerService {
   }
 
   /**
-   * Search applications with pending assessments to be processed by the assessment workflow.
-   * If no other assessment is being processed for that application the oldest pending
-   * assessment will be queue for start.
+   * Search applications with assessments to be cancelled.
+   * If no other assessment is being cancelled for that application the oldest
+   * assessment to be cancelled will be queued.
    * @param summary process summary to group all the logs.
    */
   async enqueueCancelAssessmentWorkflows(

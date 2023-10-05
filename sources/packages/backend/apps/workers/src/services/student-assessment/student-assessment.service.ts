@@ -299,8 +299,8 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
       modifier: auditUser,
       updatedAt: now,
     };
-    // In case the student assessment is in process of being canceled or is already canceled,
-    // do not update status and update date.
+    // In case the student assessment is in process of being cancelled or is already cancelled,
+    // it does not update status and update date.
     if (
       [
         StudentAssessmentStatus.CancellationRequested,

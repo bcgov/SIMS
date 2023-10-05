@@ -1097,6 +1097,8 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
         // then set the application as cancelled as it cannot be re-assessed.
         else {
           application.applicationStatus = ApplicationStatus.Cancelled;
+
+          // Updates the current assessment status to cancellation required.
           application.currentAssessment.studentAssessmentStatus =
             StudentAssessmentStatus.CancellationRequested;
           application.currentAssessment.modifier = auditUser;

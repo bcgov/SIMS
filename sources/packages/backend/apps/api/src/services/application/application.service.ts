@@ -268,7 +268,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
       newApplication.studentAssessments = [originalAssessment];
       newApplication.currentAssessment = originalAssessment;
 
-      // Updates the current assessment status to cancellation required.
+      // Updates the current assessment status to cancellation requested.
       application.currentAssessment.studentAssessmentStatus =
         StudentAssessmentStatus.CancellationRequested;
       application.currentAssessment.modifier = { id: auditUserId } as User;
@@ -1002,7 +1002,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
     application.modifier = { id: auditUserId } as User;
     application.updatedAt = now;
 
-    // Updates the current assessment status to cancellation required.
+    // Updates the current assessment status to cancellation requested.
     application.currentAssessment.studentAssessmentStatus =
       StudentAssessmentStatus.CancellationRequested;
     application.currentAssessment.modifier = { id: auditUserId } as User;
