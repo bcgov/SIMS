@@ -21,8 +21,10 @@ import {
 } from "@sims/test-utils";
 import {
   AssessmentStatus,
+  DisbursementSchedule,
   Institution,
   InstitutionLocation,
+  OfferingIntensity,
 } from "@sims/sims-db";
 import { getDateOnlyFormat } from "@sims/utilities";
 import { MASKED_MSFAA_NUMBER } from "../../../../../src/services";
@@ -52,7 +54,7 @@ describe("AssessmentInstitutionsController(e2e)-getAssessmentNOA", () => {
     );
   });
 
-  it("Should get the student noa details for an eligible application when an eligible public institution user tries to access it.", async () => {
+  it("Should get the student noa details for an eligible full time application when an eligible public institution user tries to access it.", async () => {
     // Arrange
 
     // Student has an application to the institution eligible for NOA.
@@ -65,21 +67,30 @@ describe("AssessmentInstitutionsController(e2e)-getAssessmentNOA", () => {
       },
     );
     await db.msfaaNumber.save(currentMSFAA);
-    const application = await saveFakeApplicationDisbursements(db.dataSource, {
-      institution: collegeF,
-      institutionLocation: collegeFLocation,
-      student,
-      msfaaNumber: currentMSFAA,
-    });
+    const application = await saveFakeApplicationDisbursements(
+      db.dataSource,
+      {
+        institution: collegeF,
+        institutionLocation: collegeFLocation,
+        student,
+        msfaaNumber: currentMSFAA,
+      },
+      {
+        offeringIntensity: OfferingIntensity.fullTime,
+        createSecondDisbursement: true,
+      },
+    );
     const assessment = application.currentAssessment;
-    const [firstDisbursementSchedule] =
-      application.currentAssessment.disbursementSchedules;
+    const [firstDisbursementSchedule, secondDisbursementSchedule] =
+      assessment.disbursementSchedules;
 
-    const awards = {};
-    firstDisbursementSchedule.disbursementValues.forEach((disbursement) => {
-      awards[`disbursement1${disbursement.valueCode.toLowerCase()}`] =
-        disbursement.valueAmount;
-    });
+    const firstDisbursementScheduleAwards = createNOADisbursementScheduleAwards(
+      firstDisbursementSchedule,
+      1,
+    );
+
+    const secondDisbursementScheduleAwards =
+      createNOADisbursementScheduleAwards(secondDisbursementSchedule, 2);
 
     const endpoint = `/institutions/assessment/student/${student.id}/application/${application.id}/assessment/${assessment.id}/noa`;
     const institutionUserToken = await getInstitutionToken(
@@ -112,8 +123,127 @@ describe("AssessmentInstitutionsController(e2e)-getAssessmentNOA", () => {
             firstDisbursementSchedule.disbursementScheduleStatus,
           disbursement1TuitionRemittance:
             firstDisbursementSchedule.tuitionRemittanceRequestedAmount,
-          ...awards,
+          ...firstDisbursementScheduleAwards,
+          disbursement2COEStatus: secondDisbursementSchedule.coeStatus,
+          disbursement2Date: getDateOnlyFormat(
+            secondDisbursementSchedule.disbursementDate,
+          ),
+          disbursement2Id: secondDisbursementSchedule.id,
+          disbursement2MSFAACancelledDate:
+            secondDisbursementSchedule.msfaaNumber?.cancelledDate,
+          disbursement2MSFAADateSigned:
+            secondDisbursementSchedule.msfaaNumber?.dateSigned,
+          disbursement2MSFAAId: secondDisbursementSchedule.msfaaNumber?.id,
+          disbursement2MSFAANumber: MASKED_MSFAA_NUMBER,
+          disbursement2Status:
+            secondDisbursementSchedule.disbursementScheduleStatus,
+          disbursement2TuitionRemittance:
+            secondDisbursementSchedule.tuitionRemittanceRequestedAmount,
+          ...secondDisbursementScheduleAwards,
         },
+        eligibleAmount: 2,
+        fullName: getUserFullName(application.student.user),
+        locationName: assessment.offering.institutionLocation.name,
+        noaApprovalStatus: assessment.noaApprovalStatus,
+        offeringIntensity: assessment.offering.offeringIntensity,
+        offeringStudyEndDate: getDateOnlyFormat(
+          assessment.offering.studyEndDate,
+        ),
+        offeringStudyStartDate: getDateOnlyFormat(
+          assessment.offering.studyStartDate,
+        ),
+        programName: assessment.offering.educationProgram.name,
+      });
+  });
+
+  it("Should get the student noa details for an eligible part time application when an eligible public institution user tries to access it.", async () => {
+    // Arrange
+
+    // Student has an application to the institution eligible for NOA.
+    const student = await saveFakeStudent(db.dataSource);
+
+    const currentMSFAA = createFakeMSFAANumber(
+      { student },
+      {
+        msfaaState: MSFAAStates.Signed,
+      },
+    );
+    await db.msfaaNumber.save(currentMSFAA);
+    const application = await saveFakeApplicationDisbursements(
+      db.dataSource,
+      {
+        institution: collegeF,
+        institutionLocation: collegeFLocation,
+        student,
+        msfaaNumber: currentMSFAA,
+      },
+      {
+        offeringIntensity: OfferingIntensity.partTime,
+        createSecondDisbursement: true,
+      },
+    );
+    const assessment = application.currentAssessment;
+    const [firstDisbursementSchedule, secondDisbursementSchedule] =
+      assessment.disbursementSchedules;
+
+    const firstDisbursementScheduleAwards = createNOADisbursementScheduleAwards(
+      firstDisbursementSchedule,
+      1,
+    );
+
+    const secondDisbursementScheduleAwards =
+      createNOADisbursementScheduleAwards(secondDisbursementSchedule, 2);
+
+    const endpoint = `/institutions/assessment/student/${student.id}/application/${application.id}/assessment/${assessment.id}/noa`;
+    const institutionUserToken = await getInstitutionToken(
+      InstitutionTokenTypes.CollegeFUser,
+    );
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .get(endpoint)
+      .auth(institutionUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK)
+      .expect({
+        applicationId: application.id,
+        applicationNumber: application.applicationNumber,
+        applicationStatus: application.applicationStatus,
+        assessment: assessment.assessmentData,
+        disbursement: {
+          disbursement1COEStatus: firstDisbursementSchedule.coeStatus,
+          disbursement1Date: getDateOnlyFormat(
+            firstDisbursementSchedule.disbursementDate,
+          ),
+          disbursement1Id: firstDisbursementSchedule.id,
+          disbursement1MSFAACancelledDate:
+            firstDisbursementSchedule.msfaaNumber?.cancelledDate,
+          disbursement1MSFAADateSigned:
+            firstDisbursementSchedule.msfaaNumber?.dateSigned,
+          disbursement1MSFAAId: firstDisbursementSchedule.msfaaNumber?.id,
+          disbursement1MSFAANumber: MASKED_MSFAA_NUMBER,
+          disbursement1Status:
+            firstDisbursementSchedule.disbursementScheduleStatus,
+          disbursement1TuitionRemittance:
+            firstDisbursementSchedule.tuitionRemittanceRequestedAmount,
+          ...firstDisbursementScheduleAwards,
+          disbursement2COEStatus: secondDisbursementSchedule.coeStatus,
+          disbursement2Date: getDateOnlyFormat(
+            secondDisbursementSchedule.disbursementDate,
+          ),
+          disbursement2Id: secondDisbursementSchedule.id,
+          disbursement2MSFAACancelledDate:
+            secondDisbursementSchedule.msfaaNumber?.cancelledDate,
+          disbursement2MSFAADateSigned:
+            secondDisbursementSchedule.msfaaNumber?.dateSigned,
+          disbursement2MSFAAId: secondDisbursementSchedule.msfaaNumber?.id,
+          disbursement2MSFAANumber: MASKED_MSFAA_NUMBER,
+          disbursement2Status:
+            secondDisbursementSchedule.disbursementScheduleStatus,
+          disbursement2TuitionRemittance:
+            secondDisbursementSchedule.tuitionRemittanceRequestedAmount,
+          ...secondDisbursementScheduleAwards,
+        },
+        eligibleAmount: 2,
         fullName: getUserFullName(application.student.user),
         locationName: assessment.offering.institutionLocation.name,
         noaApprovalStatus: assessment.noaApprovalStatus,
@@ -253,6 +383,34 @@ describe("AssessmentInstitutionsController(e2e)-getAssessmentNOA", () => {
         error: "Forbidden",
       });
   });
+
+  /**
+   * Disbursement awards.
+   */
+  interface DisbursementAwards {
+    [disbursementValueCode: string]: number;
+  }
+
+  /**
+   * Creates disbursement schedule awards based on the given schedule and disbursement number.
+   * @param disbursementSchedule Disbursement schedule containing disbursement values.
+   * @param disbursementNumber Number associated with the disbursement schedule (e.g., 1 for the first, 2 for the second).
+   * @returns Disbursement awards with keys like 'disbursement1code' and values as amounts.
+   */
+  function createNOADisbursementScheduleAwards(
+    disbursementSchedule: DisbursementSchedule,
+    disbursementNumber: 1 | 2,
+  ): DisbursementAwards {
+    const disbursementScheduleAwards: DisbursementAwards = {};
+
+    disbursementSchedule.disbursementValues.forEach((disbursementValue) => {
+      disbursementScheduleAwards[
+        `disbursement${disbursementNumber}${disbursementValue.valueCode.toLowerCase()}`
+      ] = disbursementValue.valueAmount;
+    });
+
+    return disbursementScheduleAwards;
+  }
 
   afterAll(async () => {
     await app?.close();

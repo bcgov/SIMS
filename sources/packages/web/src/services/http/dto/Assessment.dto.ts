@@ -58,6 +58,7 @@ export interface AssessmentNOAAPIOutDTO {
   offeringStudyEndDate: string;
   msfaaNumber: string;
   disbursement: unknown;
+  eligibleAmount: number;
   noaApprovalStatus: AssessmentStatus;
   applicationStatus: ApplicationStatus;
 }

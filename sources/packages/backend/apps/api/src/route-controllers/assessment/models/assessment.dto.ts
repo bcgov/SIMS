@@ -65,6 +65,7 @@ export class AssessmentNOAAPIOutDTO {
   offeringIntensity: OfferingIntensity;
   offeringStudyStartDate: string;
   offeringStudyEndDate: string;
+  eligibleAmount: number;
   disbursement: Record<string, string | number>;
   noaApprovalStatus: AssessmentStatus;
   applicationStatus: ApplicationStatus;
