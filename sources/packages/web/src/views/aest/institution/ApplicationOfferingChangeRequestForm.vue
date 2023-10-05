@@ -135,7 +135,7 @@ export default defineComponent({
       {} as ApplicationOfferingDetails,
     );
     const assessApplicationOfferingChangeRequestModal = ref(
-      {} as ModalDialog<ApplicationOfferingChangeAssessmentAPIInDTO>,
+      {} as ModalDialog<ApplicationOfferingChangeAssessmentAPIInDTO | boolean>,
     );
     const snackBar = useSnackBar();
     const router = useRouter();
