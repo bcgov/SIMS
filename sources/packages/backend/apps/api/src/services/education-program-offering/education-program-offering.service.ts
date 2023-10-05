@@ -1099,6 +1099,10 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
           application.applicationStatus = ApplicationStatus.Cancelled;
           application.currentAssessment.studentAssessmentStatus =
             StudentAssessmentStatus.CancellationRequested;
+          application.currentAssessment.modifier = auditUser;
+          application.currentAssessment.studentAssessmentStatusUpdatedOn =
+            currentDate;
+          application.currentAssessment.updatedAt = currentDate;
         }
 
         application.modifier = auditUser;

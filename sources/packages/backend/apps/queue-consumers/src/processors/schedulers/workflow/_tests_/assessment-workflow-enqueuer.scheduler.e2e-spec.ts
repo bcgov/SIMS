@@ -233,6 +233,40 @@ describe(
       ).toBe(StudentAssessmentStatus.CancellationQueued);
     });
 
+    it(`Should not queue the assessment when an application has one assessment with status '${StudentAssessmentStatus.CancellationRequested}' but has another assessment with status '${StudentAssessmentStatus.CancellationQueued}'.`, async () => {
+      // Arrange
+
+      // Application submitted with original assessment and completed assessment.
+      const application = await createDefaultApplication(
+        StudentAssessmentStatus.CancellationQueued,
+      );
+      const submittedAssessment = createFakeStudentAssessment({
+        application,
+        auditUser,
+      });
+      submittedAssessment.studentAssessmentStatus =
+        StudentAssessmentStatus.CancellationRequested;
+      await db.studentAssessment.save(submittedAssessment);
+
+      application.applicationStatus = ApplicationStatus.Overwritten;
+      // Force currentAssessment and currentProcessingAssessment to be the same to test the SQL condition.
+      application.currentProcessingAssessment = application.currentAssessment;
+      application.studentAssessments = [
+        application.currentAssessment,
+        submittedAssessment,
+      ];
+      await db.application.save(application);
+
+      // Queued job.
+      const job = createMock<Job<void>>();
+
+      // Act
+      await processor.enqueueAssessmentOperations(job);
+
+      // Assert
+      expect(cancelApplicationAssessmentQueueMock.add).not.toBeCalled();
+    });
+
     /**
      * Get a default application with only one original assessment to test
      * multiple positive and negative scenarios ensuring that the only variant
