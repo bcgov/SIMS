@@ -1,6 +1,6 @@
 <template>
   <v-form ref="assessApplicationOfferingChangeRequestForm">
-    <modal-dialog-base :showDialog="showDialog" :title="title" :max-width="780">
+    <modal-dialog-base :showDialog="showDialog" :title="title">
       <template #content
         ><error-summary
           :errors="assessApplicationOfferingChangeRequestForm.errors"
