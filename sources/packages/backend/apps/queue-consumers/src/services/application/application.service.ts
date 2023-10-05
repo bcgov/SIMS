@@ -58,9 +58,11 @@ export class ApplicationService {
     return updateResult.affected;
   }
 
-  // Sub query to validate if an application has assessment already being
-  // processed by the workflow.
-  inProgressStatusesExistsQuery = this.studentAssessmentRepo
+  /**
+   * Sub query to validate if an application has assessment already being
+   * processed by the workflow.
+   */
+  private inProgressStatusesExistsQuery = this.studentAssessmentRepo
     .createQueryBuilder("studentAssessment")
     .select("1")
     .where("studentAssessment.application.id = application.id")
@@ -126,9 +128,15 @@ export class ApplicationService {
       .createQueryBuilder("application")
       .select(["application.id", "studentAssessment.id"])
       .innerJoin("application.studentAssessments", "studentAssessment")
-      .andWhere(`EXISTS (${this.inProgressStatusesExistsQuery})`)
+      .andWhere(
+        "studentAssessment.studentAssessmentStatus = :submittedStatus",
+        {
+          submittedStatus: StudentAssessmentStatus.CancellationRequested,
+        },
+      )
+      .andWhere(` NOT EXISTS (${this.inProgressStatusesExistsQuery})`)
       .setParameter("inProgressStatuses", [
-        StudentAssessmentStatus.CancellationRequested,
+        StudentAssessmentStatus.CancellationQueued,
       ])
       .orderBy("studentAssessment.createdAt")
       .getMany();

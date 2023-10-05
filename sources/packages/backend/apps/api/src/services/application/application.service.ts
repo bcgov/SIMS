@@ -267,8 +267,14 @@ export class ApplicationService extends RecordDataModelService<Application> {
       newApplication.creator = auditUser;
       newApplication.studentAssessments = [originalAssessment];
       newApplication.currentAssessment = originalAssessment;
+
+      // Updates the current assessment status to cancellation required.
       application.currentAssessment.studentAssessmentStatus =
         StudentAssessmentStatus.CancellationRequested;
+      application.currentAssessment.modifier = { id: auditUserId } as User;
+      application.currentAssessment.studentAssessmentStatusUpdatedOn = now;
+      application.currentAssessment.updatedAt = now;
+
       await applicationRepository.save([application, newApplication]);
     });
 
@@ -995,8 +1001,14 @@ export class ApplicationService extends RecordDataModelService<Application> {
     application.applicationStatusUpdatedOn = now;
     application.modifier = { id: auditUserId } as User;
     application.updatedAt = now;
+
+    // Updates the current assessment status to cancellation required.
     application.currentAssessment.studentAssessmentStatus =
       StudentAssessmentStatus.CancellationRequested;
+    application.currentAssessment.modifier = { id: auditUserId } as User;
+    application.currentAssessment.studentAssessmentStatusUpdatedOn = now;
+    application.currentAssessment.updatedAt = now;
+
     await this.repo.save(application);
     return application;
   }

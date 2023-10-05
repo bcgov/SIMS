@@ -41,13 +41,12 @@ export class AssessmentWorkflowEnqueuerScheduler extends BaseScheduler<void> {
       processSummary.info(
         "Checking application assessments to be queued for start.",
       );
-      // Process summary to be populated by the enqueueStartAssessmentWorkflows.
+      // Process summary to be populated by each enqueueing workflow call.
       // In case an unexpected error happen the finally block will still be able to
       // output the partial information captured by the processSummary.
-      const serviceProcessSummary = new ProcessSummary();
-      processSummary.children(serviceProcessSummary);
-
       try {
+        const serviceProcessSummary = new ProcessSummary();
+        processSummary.children(serviceProcessSummary);
         await this.workflowEnqueuerService.enqueueCancelAssessmentWorkflows(
           serviceProcessSummary,
         );
@@ -57,6 +56,8 @@ export class AssessmentWorkflowEnqueuerScheduler extends BaseScheduler<void> {
         processSummary.error(errorMessage, error);
       }
       try {
+        const serviceProcessSummary = new ProcessSummary();
+        processSummary.children(serviceProcessSummary);
         await this.workflowEnqueuerService.enqueueStartAssessmentWorkflows(
           serviceProcessSummary,
         );

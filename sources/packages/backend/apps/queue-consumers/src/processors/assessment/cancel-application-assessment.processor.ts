@@ -79,24 +79,12 @@ export class CancelApplicationAssessmentProcessor {
         await this.workflowClientService.deleteApplicationAssessment(
           assessment.assessmentWorkflowId,
         );
-        // TODO syncup question
-        this.dataSource.getRepository(StudentAssessment).update(assessment.id, {
-          studentAssessmentStatus: StudentAssessmentStatus.Cancelled,
-        });
         await summary.info("Workflow instance successfully cancelled.");
       } catch (error: unknown) {
         if (
           error instanceof ZeebeGRPCError &&
           error.code !== ZeebeGRPCErrorTypes.NOT_FOUND
         ) {
-          await summary.info(
-            `Changing student assessment status to ${StudentAssessmentStatus.Cancelled}.`,
-          );
-          this.dataSource
-            .getRepository(StudentAssessment)
-            .update(assessment.id, {
-              studentAssessmentStatus: StudentAssessmentStatus.Cancelled,
-            });
           // An unexpected error happen and the process must be aborted.
           this.logger.error(error);
           throw error;
@@ -116,6 +104,14 @@ export class CancelApplicationAssessmentProcessor {
       );
     }
     return this.dataSource.transaction(async (transactionEntityManager) => {
+      await summary.info(
+        `Changing student assessment status to ${StudentAssessmentStatus.Cancelled}.`,
+      );
+      await transactionEntityManager
+        .getRepository(StudentAssessment)
+        .update(assessment.id, {
+          studentAssessmentStatus: StudentAssessmentStatus.Cancelled,
+        });
       // Overawards rollback.
       // This method is safe to be called independently of the workflow state but it makes sense only after the
       // application moves from the 'In progress' status when the disbursements are generated.

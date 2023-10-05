@@ -14,6 +14,7 @@ import {
 } from "@sims/sims-db";
 import { DataSource } from "typeorm";
 import { ProcessSummary } from "@sims/utilities/logger";
+import { SystemUsersService } from "@sims/services";
 
 /**
  * Manages the operations to search assessments that requires some
@@ -24,6 +25,7 @@ export class WorkflowEnqueuerService {
   constructor(
     private readonly dataSource: DataSource,
     private readonly applicationService: ApplicationService,
+    private readonly systemUsersService: SystemUsersService,
     @InjectQueue(QueueNames.StartApplicationAssessment)
     private readonly startAssessmentQueue: Queue<StartAssessmentQueueInDTO>,
     @InjectQueue(QueueNames.CancelApplicationAssessment)
@@ -156,7 +158,7 @@ export class WorkflowEnqueuerService {
   }
 
   /**
-   * Queue the next pending assessment for an application.
+   * Queue the next pending assessment for cancellation for an application.
    * @param application application with pending assessments.
    * @returns process summary.
    */
@@ -172,22 +174,26 @@ export class WorkflowEnqueuerService {
       summary.info(
         `Found ${application.studentAssessments.length} pending assessment(s) cancellation. Queueing assessment ${nextAssessment.id} for cancellation.`,
       );
-      // Update application and student assessment.
-      await this.dataSource.transaction(async (entityManager) => {
-        summary.info(
-          `Updating assessment status to ${StudentAssessmentStatus.CancellationQueued}.`,
+
+      summary.info(
+        `Updating assessment status to ${StudentAssessmentStatus.CancellationQueued}.`,
+      );
+      const now = new Date();
+      const systemUser = await this.systemUsersService.systemUser();
+      const assessmentUpdateResults = await this.dataSource
+        .getRepository(StudentAssessment)
+        .update(nextAssessment.id, {
+          studentAssessmentStatus: StudentAssessmentStatus.CancellationQueued,
+          studentAssessmentStatusUpdatedOn: now,
+          modifier: systemUser,
+          updatedAt: now,
+        });
+      if (!assessmentUpdateResults.affected) {
+        throw new Error(
+          "Student assessment update did not affected any records.",
         );
-        const assessmentUpdateResults = await entityManager
-          .getRepository(StudentAssessment)
-          .update(nextAssessment.id, {
-            studentAssessmentStatus: StudentAssessmentStatus.CancellationQueued,
-          });
-        if (!assessmentUpdateResults.affected) {
-          throw new Error(
-            "Student assessment update did not affected any records.",
-          );
-        }
-      });
+      }
+
       summary.info(
         `Adding assessment to queue ${QueueNames.CancelApplicationAssessment}.`,
       );
