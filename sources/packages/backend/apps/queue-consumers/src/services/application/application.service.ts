@@ -110,6 +110,8 @@ export class ApplicationService {
         .setParameter("inProgressStatuses", [
           StudentAssessmentStatus.Queued,
           StudentAssessmentStatus.InProgress,
+          StudentAssessmentStatus.CancellationRequested,
+          StudentAssessmentStatus.CancellationQueued,
         ])
         .orderBy("studentAssessment.createdAt")
         .getMany()
@@ -133,7 +135,7 @@ export class ApplicationService {
           submittedStatus: StudentAssessmentStatus.CancellationRequested,
         },
       )
-      .andWhere(` NOT EXISTS (${this.inProgressStatusesExistsQuery})`)
+      .andWhere(`NOT EXISTS (${this.inProgressStatusesExistsQuery})`)
       .setParameter("inProgressStatuses", [
         StudentAssessmentStatus.CancellationQueued,
       ])

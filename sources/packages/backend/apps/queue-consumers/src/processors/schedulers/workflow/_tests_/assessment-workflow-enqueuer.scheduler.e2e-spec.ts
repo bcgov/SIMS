@@ -195,16 +195,14 @@ describe(
       expect(startApplicationAssessmentQueueMock.add).not.toBeCalled();
     });
 
-    it(`Should queue the assessment when an application has one assessment with status '${StudentAssessmentStatus.CancellationRequested}'.`, async () => {
+    it(`Should queue the assessment cancellation when an application has one assessment with status '${StudentAssessmentStatus.CancellationRequested}'.`, async () => {
       // Arrange
 
-      // Application submitted with original assessment and completed assessment.
+      // Application with a cancellation requested assessment.
       const application = await createDefaultApplication(
         StudentAssessmentStatus.CancellationRequested,
       );
       application.applicationStatus = ApplicationStatus.Overwritten;
-      // Force currentAssessment and currentProcessingAssessment to be the same to test the SQL condition.
-      application.currentProcessingAssessment = application.currentAssessment;
       application.studentAssessments = [application.currentAssessment];
       await db.application.save(application);
 
@@ -222,21 +220,21 @@ describe(
 
       // Assert item was added to the queue.
       const queueData = {
-        assessmentId: updatedApplication.currentProcessingAssessment.id,
+        assessmentId: updatedApplication.currentAssessment.id,
       } as CancelAssessmentQueueInDTO;
       expect(cancelApplicationAssessmentQueueMock.add).toBeCalledWith(
         queueData,
       );
 
-      expect(
-        updatedApplication.currentProcessingAssessment.studentAssessmentStatus,
-      ).toBe(StudentAssessmentStatus.CancellationQueued);
+      expect(updatedApplication.currentAssessment.studentAssessmentStatus).toBe(
+        StudentAssessmentStatus.CancellationQueued,
+      );
     });
 
-    it(`Should not queue the assessment when an application has one assessment with status '${StudentAssessmentStatus.CancellationRequested}' but has another assessment with status '${StudentAssessmentStatus.CancellationQueued}'.`, async () => {
+    it(`Should not queue the assessment cancellation when an application has one assessment with status '${StudentAssessmentStatus.CancellationRequested}' but has another assessment with status '${StudentAssessmentStatus.CancellationQueued}'.`, async () => {
       // Arrange
 
-      // Application submitted with original assessment and completed assessment.
+      // Application with a cancellation queued assessment.
       const application = await createDefaultApplication(
         StudentAssessmentStatus.CancellationQueued,
       );
@@ -249,8 +247,6 @@ describe(
       await db.studentAssessment.save(submittedAssessment);
 
       application.applicationStatus = ApplicationStatus.Overwritten;
-      // Force currentAssessment and currentProcessingAssessment to be the same to test the SQL condition.
-      application.currentProcessingAssessment = application.currentAssessment;
       application.studentAssessments = [
         application.currentAssessment,
         submittedAssessment,
@@ -301,6 +297,7 @@ describe(
           id: true,
           currentAssessment: {
             id: true,
+            studentAssessmentStatus: true,
           },
           currentProcessingAssessment: {
             id: true,
