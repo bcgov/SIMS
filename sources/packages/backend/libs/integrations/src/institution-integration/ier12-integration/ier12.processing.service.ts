@@ -1,6 +1,5 @@
 import { Injectable } from "@nestjs/common";
 import {
-  Application,
   ApplicationStatus,
   COEStatus,
   DisbursementSchedule,
@@ -508,31 +507,28 @@ export class IER12ProcessingService {
     | ApplicationEventCode.DISR
     | ApplicationEventCode.COEA
   > {
-    switch (currentDisbursementSchedule.coeStatus) {
-      case COEStatus.completed: {
-        // Check if disbursement is not sent due to restriction.
-        if (
-          isSameOrAfterDate(
-            currentDisbursementSchedule.disbursementDate,
-            addDays(DISBURSEMENT_FILE_GENERATION_ANTICIPATION_DAYS),
-          )
-        ) {
-          return this.eventCodeForCompletedApplicationWithPendingDisbursementAndCompletedCOE(
-            studentId,
-          );
-        }
-        return ApplicationEventCode.COEA;
-      }
-      default:
-        // COE status required and declined will come here.
-        // COE status is required - Completed applications can have second COE, waiting for confirmation
-        // on original assessment and anu COE waiting for confirmation on re-assessment.
-        // COE status is declined - Completed application can have a second COE declined on original assessment
-        // and any COE declined on re-assessment.
-        return this.applicationEventCodeDuringEnrolmentAndCompleted(
-          currentDisbursementSchedule.coeStatus,
+    if (currentDisbursementSchedule.coeStatus === COEStatus.completed) {
+      // Check if disbursement is not sent due to restriction.
+      if (
+        isSameOrAfterDate(
+          currentDisbursementSchedule.disbursementDate,
+          addDays(DISBURSEMENT_FILE_GENERATION_ANTICIPATION_DAYS),
+        )
+      ) {
+        return this.eventCodeForCompletedApplicationWithPendingDisbursementAndCompletedCOE(
+          studentId,
         );
+      }
+      return ApplicationEventCode.COEA;
     }
+    // COE status required and declined will come here.
+    // COE status is required - Completed applications can have second COE, waiting for confirmation
+    // on original assessment and anu COE waiting for confirmation on re-assessment.
+    // COE status is declined - Completed application can have a second COE declined on original assessment
+    // and any COE declined on re-assessment.
+    return this.applicationEventCodeDuringEnrolmentAndCompleted(
+      currentDisbursementSchedule.coeStatus,
+    );
   }
 
   /**

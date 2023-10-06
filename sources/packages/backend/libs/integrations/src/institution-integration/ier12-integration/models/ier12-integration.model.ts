@@ -137,7 +137,6 @@ export const NUMBER_FILLER = "0";
 
 /**
  * Application event code for IER file.
- * todo: RECA, COEM, DISP are highlighted with brown, double check with team and add it to the ticket.
  */
 export enum ApplicationEventCode {
   /**
