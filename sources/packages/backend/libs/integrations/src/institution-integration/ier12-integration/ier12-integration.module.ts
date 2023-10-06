@@ -12,6 +12,8 @@ import {
   StudentAssessmentService,
   SshService,
   StudentRestrictionService,
+  DisbursementScheduleErrorsService,
+  DisbursementValueService,
 } from "@sims/integrations/services";
 
 @Global()
@@ -27,6 +29,8 @@ import {
     NoteSharedService,
     ApplicationService,
     StudentRestrictionService,
+    DisbursementScheduleErrorsService,
+    DisbursementValueService,
   ],
   exports: [IER12ProcessingService, IER12IntegrationService],
 })
