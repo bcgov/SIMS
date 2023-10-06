@@ -1,4 +1,12 @@
-import { Controller, Get, Param, ParseIntPipe, Query } from "@nestjs/common";
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  ParseIntPipe,
+  Patch,
+  Query,
+} from "@nestjs/common";
 import { ApiNotFoundResponse, ApiTags } from "@nestjs/swagger";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { AllowAuthorizedParty, Groups } from "../../auth/decorators";
@@ -9,6 +17,7 @@ import {
   AllInProgressOfferingChangePaginationOptionsAPIInDTO,
   AllInProgressApplicationOfferingChangesAPIOutDTO,
   ApplicationOfferingChangeDetailsAPIOutDTO,
+  ApplicationOfferingChangeAssessmentAPIInDTO,
 } from "./models/application-offering-change-request.dto";
 import { ApplicationOfferingChangeRequestService } from "../../services";
 import { ApplicationOfferingChangeRequestStatus } from "@sims/sims-db";
@@ -90,5 +99,20 @@ export class ApplicationOfferingChangeRequestAESTController extends BaseControll
       applicationOfferingChangeRequestId,
       { hasAuditAndNoteDetails: true },
     );
+  }
+
+  /**
+   * Approves or declines an application offering change request.
+   * @param applicationOfferingChangeRequestId application offering change request id.
+   * @param payload information to update the application offering change request.
+   */
+  @Patch(":applicationOfferingChangeRequestId")
+  async updateApplicationOfferingChangeRequest(
+    @Param("applicationOfferingChangeRequestId", ParseIntPipe)
+    applicationOfferingChangeRequestId: number,
+    @Body()
+    payload: ApplicationOfferingChangeAssessmentAPIInDTO,
+  ): Promise<void> {
+    // TODO: API including the addition of ministry role to be done in the next PR.
   }
 }

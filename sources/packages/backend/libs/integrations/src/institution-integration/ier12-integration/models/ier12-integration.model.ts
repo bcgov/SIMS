@@ -40,7 +40,14 @@ export interface IER12Record {
   studentAndSupportingUserContribution: number;
   parentExpectedContribution?: number;
   totalEligibleDependents?: number;
+  dependantChildQuantity?: number;
+  dependantChildInDaycareQuantity?: number;
+  dependantInfantQuantity?: number;
+  dependantDeclaredOnTaxesQuantity?: number;
+  dependantPostSecondaryQuantity?: number;
+  partnerStudentStudyWeeks: number;
   familySize: number;
+  numberOfParents: number;
   parentalAssetContribution?: number;
   parentalContribution?: number;
   parentDiscretionaryIncome?: number;
@@ -188,3 +195,5 @@ export enum ApplicationEventCode {
    */
   DISC = "DISC",
 }
+
+export const DISCRETIONARY_INCOME_PERCENTAGE = 0.15;
