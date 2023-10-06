@@ -185,11 +185,17 @@ export default defineComponent({
         await assessApplicationOfferingChangeRequestModal.value.showModal(
           applicationOfferingChangeRequestStatus,
         );
-      if (responseData) {
+      if (responseData && typeof responseData === "object") {
         try {
           await ApplicationOfferingChangeRequestService.shared.assessApplicationOfferingChangeRequest(
             props.applicationOfferingChangeRequestId,
-            responseData as ApplicationOfferingChangeAssessmentAPIInDTO,
+            {
+              ...responseData,
+              applicationId: props.applicationId,
+              offeringId:
+                applicationOfferingChangeRequestDetails.value
+                  .requestedOfferingId,
+            } as ApplicationOfferingChangeAssessmentAPIInDTO,
           );
           router.push({
             name: AESTRoutesConst.ASSESSMENTS_SUMMARY,

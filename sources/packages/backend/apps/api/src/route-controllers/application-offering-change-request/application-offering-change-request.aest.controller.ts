@@ -9,7 +9,12 @@ import {
 } from "@nestjs/common";
 import { ApiNotFoundResponse, ApiTags } from "@nestjs/swagger";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
-import { AllowAuthorizedParty, Groups } from "../../auth/decorators";
+import {
+  AllowAuthorizedParty,
+  Groups,
+  Roles,
+  UserToken,
+} from "../../auth/decorators";
 import { ClientTypeBaseRoute } from "../../types";
 import { PaginatedResultsAPIOutDTO } from "../models/pagination.dto";
 import BaseController from "../BaseController";
@@ -21,7 +26,7 @@ import {
 } from "./models/application-offering-change-request.dto";
 import { ApplicationOfferingChangeRequestService } from "../../services";
 import { ApplicationOfferingChangeRequestStatus } from "@sims/sims-db";
-import { UserGroups } from "../../auth";
+import { IUserToken, UserGroups } from "../../auth";
 import { getUserFullName } from "../../utilities";
 import { getISODateOnlyString } from "@sims/utilities";
 import { ApplicationOfferingChangeRequestControllerService } from "./application-offering-change-request.controller.service";
@@ -105,14 +110,24 @@ export class ApplicationOfferingChangeRequestAESTController extends BaseControll
    * Approves or declines an application offering change request.
    * @param applicationOfferingChangeRequestId application offering change request id.
    * @param payload information to update the application offering change request.
+   * @param userToken user approving or declining the application offering change request.
    */
+  // @Roles(Role.InstitutionApproveDeclineOfferingChangeRequest)
   @Patch(":applicationOfferingChangeRequestId")
   async updateApplicationOfferingChangeRequest(
     @Param("applicationOfferingChangeRequestId", ParseIntPipe)
     applicationOfferingChangeRequestId: number,
     @Body()
     payload: ApplicationOfferingChangeAssessmentAPIInDTO,
+    @UserToken() userToken: IUserToken,
   ): Promise<void> {
-    // TODO: API including the addition of ministry role to be done in the next PR.
+    this.applicationOfferingChangeRequestService.assessApplicationOfferingChangeRequest(
+      applicationOfferingChangeRequestId,
+      payload.applicationId,
+      payload.offeringId,
+      payload.applicationOfferingChangeRequestStatus,
+      payload.note,
+      userToken.userId,
+    );
   }
 }

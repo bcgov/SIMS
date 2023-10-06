@@ -129,6 +129,8 @@ export interface StudentApplicationOfferingChangeRequestAPIInDTO {
 }
 
 export interface ApplicationOfferingChangeAssessmentAPIInDTO {
+  applicationId: number;
+  offeringId: number;
   note: string;
   applicationOfferingChangeRequestStatus: ApplicationOfferingChangeRequestStatus;
 }

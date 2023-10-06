@@ -10,6 +10,10 @@ import {
   getUserFullNameLikeSearch,
   transformToApplicationOfferingChangeEntitySortField,
   transformToApplicationEntitySortField,
+  Note,
+  NoteType,
+  AssessmentTriggerType,
+  StudentAssessment,
 } from "@sims/sims-db";
 import { DataSource, Brackets, Repository, In } from "typeorm";
 import { PaginatedResults, PaginationOptions } from "../../utilities";
@@ -515,12 +519,16 @@ export class ApplicationOfferingChangeRequestService {
    * @param applicationOfferingChangeRequestId application offering change request id for which to update the status.
    * @param applicationOfferingChangeRequestStatus the application offering change request status to be updated.
    * @param studentConsent student consent to approve the application offering change request.
+   * @param userId user id of the user making the request.
    */
   async updateApplicationOfferingChangeRequest(
     applicationOfferingChangeRequestId: number,
     applicationOfferingChangeRequestStatus: ApplicationOfferingChangeRequestStatus,
     studentConsent: boolean,
+    userId: number,
   ): Promise<void> {
+    const auditUser = { id: userId } as User;
+    const currentDate = new Date();
     await this.applicationOfferingChangeRequestRepo.update(
       {
         id: applicationOfferingChangeRequestId,
@@ -528,7 +536,83 @@ export class ApplicationOfferingChangeRequestService {
       {
         applicationOfferingChangeRequestStatus,
         studentConsent,
+        studentActionDate: currentDate,
+        modifier: auditUser,
+        updatedAt: currentDate,
       },
     );
+  }
+
+  /**
+   * Update the application offering change request status for the given application offering change request id.
+   * @param applicationOfferingChangeRequestId application offering change request id for which to update the status.
+   * @param applicationId application id related to the application offering change request.
+   * @param offeringId requested offering id related to this application offering change request.
+   * @param applicationOfferingChangeRequestStatus the application offering change request status to be updated.
+   * @param assessmentNote note added while updating the application offering change request.
+   * @param userId user id of the user making the approve or decline request.
+   */
+  async assessApplicationOfferingChangeRequest(
+    applicationOfferingChangeRequestId: number,
+    applicationId: number,
+    offeringId: number,
+    applicationOfferingChangeRequestStatus: ApplicationOfferingChangeRequestStatus,
+    assessmentNote: string,
+    userId: number,
+  ): Promise<void> {
+    const auditUser = { id: userId } as User;
+    const currentDate = new Date();
+    const application = new Application();
+    // Create the note for assessment.
+    const note = new Note();
+    note.description = assessmentNote;
+    note.noteType = NoteType.Application;
+    note.creator = auditUser;
+    note.createdAt = currentDate;
+    // Create a new assessment.
+    application.currentAssessment = {
+      application: { id: applicationId } as Application,
+      triggerType: AssessmentTriggerType.ApplicationOfferingChange,
+      offering: { id: offeringId } as EducationProgramOffering,
+      creator: auditUser,
+      createdAt: currentDate,
+      submittedBy: auditUser,
+      submittedDate: currentDate,
+    } as StudentAssessment;
+    await this.dataSource.transaction(async (transactionalEntityManager) => {
+      // Save the note.
+      const noteEntity = await transactionalEntityManager
+        .getRepository(Note)
+        .save(note);
+      // Update the application offering change request.
+      await transactionalEntityManager
+        .getRepository(ApplicationOfferingChangeRequest)
+        .update(
+          {
+            id: applicationOfferingChangeRequestId,
+          },
+          {
+            applicationOfferingChangeRequestStatus,
+            assessedNote: noteEntity,
+            modifier: auditUser,
+            updatedAt: currentDate,
+            assessedBy: auditUser,
+            assessedDate: currentDate,
+          },
+        );
+      // Save the application.
+      await transactionalEntityManager
+        .getRepository(Application)
+        .save(application);
+
+      // // Save the application.
+      // await transactionalEntityManager
+      //   .getRepository(Application)
+      //   .createQueryBuilder()
+      //   .update()
+      //   .set({ currentAssessment: application.currentAssessment })
+      //   .where({ id: applicationId })
+      //   .execute();
+    });
   }
 }
