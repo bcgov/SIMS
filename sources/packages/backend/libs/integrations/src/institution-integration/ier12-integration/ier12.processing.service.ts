@@ -1,5 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import {
+  Application,
   ApplicationStatus,
   COEStatus,
   DisbursementSchedule,
@@ -30,6 +31,8 @@ import {
   IERAward,
 } from "./models/ier12-integration.model";
 import {
+  DisbursementScheduleErrorsService,
+  DisbursementValueService,
   StudentAssessmentService,
   StudentRestrictionService,
 } from "@sims/integrations/services";
@@ -39,6 +42,7 @@ import {
 } from "@sims/services";
 import { FullTimeAwardTypes } from "@sims/integrations/models";
 import { PROVINCIAL_DEFAULT_RESTRICTION_CODE } from "@sims/services/constants";
+import { DISBURSEMENT_FILE_GENERATION_ANTICIPATION_DAYS } from "@sims/integrations/constants";
 
 @Injectable()
 export class IER12ProcessingService {
@@ -50,6 +54,8 @@ export class IER12ProcessingService {
     private readonly disbursementOverawardService: DisbursementOverawardService,
     private readonly applicationService: ApplicationService,
     private readonly studentRestrictionService: StudentRestrictionService,
+    private readonly disbursementScheduleErrorsService: DisbursementScheduleErrorsService,
+    private readonly disbursementValueService: DisbursementValueService,
   ) {
     this.institutionIntegrationConfig = config.institutionIntegration;
   }
@@ -308,78 +314,224 @@ export class IER12ProcessingService {
   }
 
   /**
-   * Todo: ann comment
-   * if there complexity, try to split each case ann
+   * Get application event code (i.e current state of an application)
+   * @param assessment assessment of institutions.
+   * @param currentDisbursementSchedule current disbursement schedule.
+   * @returns application event code.
    */
   private async getApplicationEventCode(
-    pendingAssessment: StudentAssessment,
+    assessment: StudentAssessment,
     currentDisbursementSchedule: DisbursementSchedule,
   ): Promise<ApplicationEventCode> {
-    const application = pendingAssessment.application;
+    const application = assessment.application;
     switch (application.applicationStatus) {
-      case ApplicationStatus.Assessment: {
-        // Check if the application has more than one submissions.
-        switch (
-          await this.applicationService.hasMultipleApplicationSubmissions(
-            application.applicationNumber,
+      case ApplicationStatus.Assessment:
+        return this.applicationEventCodeDuringAssessment(
+          application.applicationNumber,
+        );
+
+      case ApplicationStatus.Enrolment:
+        return this.applicationEventCodeDuringEnrolmentAndCompleted(
+          currentDisbursementSchedule.coeStatus,
+        );
+
+      case ApplicationStatus.Completed:
+        return this.applicationEventCodeDuringCompleted(
+          currentDisbursementSchedule,
+          application.student.id,
+        );
+
+      case ApplicationStatus.Cancelled:
+        return ApplicationEventCode.DISC;
+    }
+  }
+
+  /**
+   * Get application event code for an application with assessment status.
+   * @param applicationNumber application number.
+   * @returns application event code.
+   */
+  private async applicationEventCodeDuringAssessment(
+    applicationNumber: string,
+  ): Promise<ApplicationEventCode.REIA | ApplicationEventCode.ASMT> {
+    // Check if the application has more than one submissions.
+    switch (
+      await this.applicationService.hasMultipleApplicationSubmissions(
+        applicationNumber,
+      )
+    ) {
+      case true:
+        return ApplicationEventCode.REIA;
+      case false:
+        return ApplicationEventCode.ASMT;
+    }
+  }
+
+  /**
+   * Get application event code for an application with enrollment/completed status.
+   * @param coeStatus coe status.
+   * @returns application event code.
+   */
+  private async applicationEventCodeDuringEnrolmentAndCompleted(
+    coeStatus: COEStatus,
+  ): Promise<ApplicationEventCode.COER | ApplicationEventCode.COED> {
+    // Check if the application has more than one submissions.
+    switch (coeStatus) {
+      case COEStatus.required:
+        return ApplicationEventCode.COER;
+      case COEStatus.declined:
+        return ApplicationEventCode.COED;
+    }
+  }
+
+  /**
+   * Get application event code for an application with completed status.
+   * @param currentDisbursementSchedule current disbursement schedule.
+   * @param studentId student id.
+   * @returns application event code.
+   */
+  private async applicationEventCodeDuringCompleted(
+    currentDisbursementSchedule: DisbursementSchedule,
+    studentId: number,
+  ): Promise<
+    | ApplicationEventCode.COER
+    | ApplicationEventCode.COED
+    | ApplicationEventCode.DISC
+    | ApplicationEventCode.DISR
+    | ApplicationEventCode.COEA
+    | ApplicationEventCode.DISE
+    | ApplicationEventCode.DISW
+    | ApplicationEventCode.DISS
+  > {
+    switch (currentDisbursementSchedule.disbursementScheduleStatus) {
+      case DisbursementScheduleStatus.Cancelled:
+        return ApplicationEventCode.DISC;
+      case DisbursementScheduleStatus.Pending:
+        return this.eventCodeForCompletedApplicationWithPendingDisbursement(
+          currentDisbursementSchedule,
+          studentId,
+        );
+      case DisbursementScheduleStatus.Sent:
+        return this.eventCodeForCompletedApplicationWithSentDisbursement(
+          currentDisbursementSchedule.id,
+        );
+    }
+  }
+
+  /**
+   * Get application event code for an application with completed status
+   * with sent disbursement and with no feedback errors and any disbursement
+   * award (full amount or a partial) was withheld due to a restriction.
+   * @param currentDisbursementScheduleId current disbursement schedule id.
+   * @returns application event code.
+   */
+  private async eventCodeForCompletedApplicationWithAwardWithheldDueToRestriction(
+    currentDisbursementScheduleId: number,
+  ): Promise<ApplicationEventCode.DISW | ApplicationEventCode.DISS> {
+    // Check if any disbursement award (full amount or a partial)
+    // was withheld due to a restriction.
+    switch (
+      await this.disbursementValueService.hasAnyFullOrPartialAwardWithheldDueToRestriction(
+        currentDisbursementScheduleId,
+      )
+    ) {
+      case true:
+        return ApplicationEventCode.DISW;
+      case false:
+        return ApplicationEventCode.DISS;
+    }
+  }
+
+  /**
+   * Get application event code for an application with completed status
+   * with sent disbursement.
+   * @param currentDisbursementScheduleId current disbursement schedule id.
+   * @returns application event code.
+   */
+  private async eventCodeForCompletedApplicationWithSentDisbursement(
+    currentDisbursementScheduleId: number,
+  ): Promise<
+    | ApplicationEventCode.DISE
+    | ApplicationEventCode.DISW
+    | ApplicationEventCode.DISS
+  > {
+    // Check if the disbursement has any feedback error.
+    switch (
+      await this.disbursementScheduleErrorsService.hasFTDisbursementFeedbackErrors(
+        currentDisbursementScheduleId,
+      )
+    ) {
+      case true:
+        return ApplicationEventCode.DISE;
+      case false: {
+        return this.eventCodeForCompletedApplicationWithAwardWithheldDueToRestriction(
+          currentDisbursementScheduleId,
+        );
+      }
+    }
+  }
+
+  /**
+   * Get application event code for an application with completed status
+   * with pending disbursement and completed COE.
+   * @param studentId student id.
+   * @returns application event code.
+   */
+  private async eventCodeForCompletedApplicationWithPendingDisbursementAndCompletedCOE(
+    studentId: number,
+  ): Promise<ApplicationEventCode.DISR | ApplicationEventCode.COEA> {
+    switch (
+      await this.studentRestrictionService.hasActiveStopFullTimeDisbursement(
+        studentId,
+      )
+    ) {
+      case true:
+        return ApplicationEventCode.DISR;
+      case false:
+        return ApplicationEventCode.COEA;
+    }
+  }
+
+  /**
+   * Get application event code for an application with completed status
+   * with pending disbursement.
+   * @param currentDisbursementSchedule current disbursement schedule.
+   * @param studentId student id.
+   * @returns application event code.
+   */
+  private async eventCodeForCompletedApplicationWithPendingDisbursement(
+    currentDisbursementSchedule: DisbursementSchedule,
+    studentId: number,
+  ): Promise<
+    | ApplicationEventCode.COER
+    | ApplicationEventCode.COED
+    | ApplicationEventCode.DISR
+    | ApplicationEventCode.COEA
+  > {
+    switch (currentDisbursementSchedule.coeStatus) {
+      case COEStatus.completed: {
+        // Check if disbursement is not sent due to restriction.
+        if (
+          isSameOrAfterDate(
+            currentDisbursementSchedule.disbursementDate,
+            addDays(DISBURSEMENT_FILE_GENERATION_ANTICIPATION_DAYS),
           )
         ) {
-          case true:
-            return ApplicationEventCode.REIA;
-          case false:
-            return ApplicationEventCode.ASMT;
+          return this.eventCodeForCompletedApplicationWithPendingDisbursementAndCompletedCOE(
+            studentId,
+          );
         }
-        break;
+        return ApplicationEventCode.COEA;
       }
-      case ApplicationStatus.Enrolment: {
-        switch (currentDisbursementSchedule.coeStatus) {
-          case COEStatus.required:
-            return ApplicationEventCode.COER;
-          case COEStatus.declined:
-            return ApplicationEventCode.COED;
-        }
-        break;
-      }
-      case ApplicationStatus.Completed: {
-        switch (currentDisbursementSchedule.disbursementScheduleStatus) {
-          case DisbursementScheduleStatus.Cancelled:
-            return ApplicationEventCode.DISC;
-          case DisbursementScheduleStatus.Pending: {
-            switch (currentDisbursementSchedule.coeStatus) {
-              case COEStatus.required:
-                // Completed applications can have second COE, waiting for confirmation
-                // on original assessment and anu COE waiting for confirmation on re-assessment.
-                return ApplicationEventCode.COER;
-              case COEStatus.completed: {
-                // Check if disbursement is not sent due to restriction.
-                if (
-                  isSameOrAfterDate(
-                    currentDisbursementSchedule.disbursementDate,
-                    addDays(5),
-                  )
-                ) {
-                  switch (
-                    await this.studentRestrictionService.hasActiveStopFullTimeDisbursement(
-                      application.student.id,
-                    )
-                  ) {
-                    case true:
-                      return ApplicationEventCode.DISR;
-                    case false:
-                      return ApplicationEventCode.COEA;
-                  }
-                }
-                return ApplicationEventCode.COEA;
-              }
-              case COEStatus.declined:
-                // Completed application can have a second COE declined on original assessment
-                // and any COE declined on re-assessment.
-                return ApplicationEventCode.COED;
-            }
-          }
-        }
-        break;
-      }
+      default:
+        // COE status required and declined will come here.
+        // COE status is required - Completed applications can have second COE, waiting for confirmation
+        // on original assessment and anu COE waiting for confirmation on re-assessment.
+        // COE status is declined - Completed application can have a second COE declined on original assessment
+        // and any COE declined on re-assessment.
+        return this.applicationEventCodeDuringEnrolmentAndCompleted(
+          currentDisbursementSchedule.coeStatus,
+        );
     }
   }
 

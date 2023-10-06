@@ -4,7 +4,7 @@ import { ArrayContains, Repository } from "typeorm";
 import { InjectRepository } from "@nestjs/typeorm";
 
 /**
- * Service layer for restrictions.
+ * Service layer for student restriction.
  */
 @Injectable()
 export class StudentRestrictionService {
@@ -14,10 +14,14 @@ export class StudentRestrictionService {
   ) {}
 
   /**
-   * Todo: ann
+   * Checks if there is any active stop full time disbursement restriction
+   * for a student.
+   * @param studentId student id.
+   * @returns true if there is any active stop full time disbursement
+   * restriction for a student.
    */
-  async hasActiveStopFullTimeDisbursement(studentId: number): Promise<Boolean> {
-    const activeRestrictions = await this.studentRestrictionRepo.find({
+  async hasActiveStopFullTimeDisbursement(studentId: number): Promise<boolean> {
+    return !!(await this.studentRestrictionRepo.findOne({
       select: {
         id: true,
       },
@@ -32,7 +36,6 @@ export class StudentRestrictionService {
           ]),
         },
       },
-    });
-    return activeRestrictions.length > 0 ? true : false;
+    }));
   }
 }
