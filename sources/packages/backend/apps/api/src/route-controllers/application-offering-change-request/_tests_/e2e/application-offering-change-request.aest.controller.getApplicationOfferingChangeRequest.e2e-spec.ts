@@ -52,6 +52,7 @@ describe("ApplicationOfferingChangeRequestAESTController(e2e)-getApplicationOffe
           applicationOfferingChangeRequest.requestedOffering.id,
         activeOfferingId: applicationOfferingChangeRequest.activeOffering.id,
         reason: applicationOfferingChangeRequest.reason,
+        studentId: applicationOfferingChangeRequest.application.student.id,
         studentFullName: getUserFullName(
           applicationOfferingChangeRequest.application.student.user,
         ),
