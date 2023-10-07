@@ -64,7 +64,6 @@ describe("ApplicationOfferingChangeRequestAESTController(e2e)-getApplicationOffe
           applicationOfferingChangeRequest.application.location.institution
             .operatingName,
         submittedDate: applicationOfferingChangeRequest.createdAt.toISOString(),
-        updatedDate: applicationOfferingChangeRequest.updatedAt.toISOString(),
       });
   });
 
