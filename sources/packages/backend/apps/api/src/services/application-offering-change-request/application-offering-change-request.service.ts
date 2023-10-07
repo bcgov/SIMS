@@ -17,7 +17,11 @@ import {
 } from "@sims/sims-db";
 import { DataSource, Brackets, Repository, In } from "typeorm";
 import { PaginatedResults, PaginationOptions } from "../../utilities";
-import { NotificationActionsService, SystemUsersService } from "@sims/services";
+import {
+  NoteSharedService,
+  NotificationActionsService,
+  SystemUsersService,
+} from "@sims/services";
 
 @Injectable()
 export class ApplicationOfferingChangeRequestService {
@@ -29,6 +33,7 @@ export class ApplicationOfferingChangeRequestService {
     private readonly applicationOfferingChangeRequestRepo: Repository<ApplicationOfferingChangeRequest>,
     private readonly notificationActionsService: NotificationActionsService,
     private readonly systemUsersService: SystemUsersService,
+    private readonly noteSharedService: NoteSharedService,
   ) {}
 
   /**
@@ -270,7 +275,7 @@ export class ApplicationOfferingChangeRequestService {
         reason: true,
         applicationOfferingChangeRequestStatus: true,
         createdAt: true,
-        updatedAt: true,
+        studentActionDate: true,
         assessedDate: true,
         assessedBy: { id: true, firstName: true, lastName: true },
         activeOffering: {
@@ -548,6 +553,7 @@ export class ApplicationOfferingChangeRequestService {
    * @param applicationOfferingChangeRequestId application offering change request id for which to update the status.
    * @param applicationId application id related to the application offering change request.
    * @param offeringId requested offering id related to this application offering change request.
+   * @param studentId student id of the student related to the application offering change request.
    * @param applicationOfferingChangeRequestStatus the application offering change request status to be updated.
    * @param assessmentNote note added while updating the application offering change request.
    * @param userId user id of the user making the approve or decline request.
@@ -556,6 +562,7 @@ export class ApplicationOfferingChangeRequestService {
     applicationOfferingChangeRequestId: number,
     applicationId: number,
     offeringId: number,
+    studentId: number,
     applicationOfferingChangeRequestStatus: ApplicationOfferingChangeRequestStatus,
     assessmentNote: string,
     userId: number,
@@ -563,27 +570,34 @@ export class ApplicationOfferingChangeRequestService {
     const auditUser = { id: userId } as User;
     const currentDate = new Date();
     const application = new Application();
-    // Create the note for assessment.
-    const note = new Note();
-    note.description = assessmentNote;
-    note.noteType = NoteType.Application;
-    note.creator = auditUser;
-    note.createdAt = currentDate;
-    // Create a new assessment.
-    application.currentAssessment = {
-      application: { id: applicationId } as Application,
-      triggerType: AssessmentTriggerType.ApplicationOfferingChange,
-      offering: { id: offeringId } as EducationProgramOffering,
-      creator: auditUser,
-      createdAt: currentDate,
-      submittedBy: auditUser,
-      submittedDate: currentDate,
-    } as StudentAssessment;
+    application.id = applicationId;
+    // Create a new assessment if the application offering change request status is approved.
+    if (
+      applicationOfferingChangeRequestStatus ===
+      ApplicationOfferingChangeRequestStatus.Approved
+    ) {
+      application.currentAssessment = {
+        application: { id: applicationId } as Application,
+        triggerType: AssessmentTriggerType.ApplicationOfferingChange,
+        offering: { id: offeringId } as EducationProgramOffering,
+        applicationOfferingChangeRequest: {
+          id: applicationOfferingChangeRequestId,
+        } as ApplicationOfferingChangeRequest,
+        creator: auditUser,
+        createdAt: currentDate,
+        submittedBy: auditUser,
+        submittedDate: currentDate,
+      } as StudentAssessment;
+    }
     await this.dataSource.transaction(async (transactionalEntityManager) => {
       // Save the note.
-      const noteEntity = await transactionalEntityManager
-        .getRepository(Note)
-        .save(note);
+      const noteEntity = await this.noteSharedService.createStudentNote(
+        studentId,
+        NoteType.Application,
+        assessmentNote,
+        userId,
+        transactionalEntityManager,
+      );
       // Update the application offering change request.
       await transactionalEntityManager
         .getRepository(ApplicationOfferingChangeRequest)
@@ -601,18 +615,14 @@ export class ApplicationOfferingChangeRequestService {
           },
         );
       // Save the application.
-      await transactionalEntityManager
-        .getRepository(Application)
-        .save(application);
-
-      // // Save the application.
-      // await transactionalEntityManager
-      //   .getRepository(Application)
-      //   .createQueryBuilder()
-      //   .update()
-      //   .set({ currentAssessment: application.currentAssessment })
-      //   .where({ id: applicationId })
-      //   .execute();
+      if (
+        applicationOfferingChangeRequestStatus ===
+        ApplicationOfferingChangeRequestStatus.Approved
+      ) {
+        await transactionalEntityManager
+          .getRepository(Application)
+          .save(application);
+      }
     });
   }
 }

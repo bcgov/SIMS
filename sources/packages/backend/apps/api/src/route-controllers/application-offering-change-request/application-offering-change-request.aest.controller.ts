@@ -2,12 +2,18 @@ import {
   Body,
   Controller,
   Get,
+  NotFoundException,
   Param,
   ParseIntPipe,
   Patch,
   Query,
+  UnprocessableEntityException,
 } from "@nestjs/common";
-import { ApiNotFoundResponse, ApiTags } from "@nestjs/swagger";
+import {
+  ApiNotFoundResponse,
+  ApiTags,
+  ApiUnprocessableEntityResponse,
+} from "@nestjs/swagger";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import {
   AllowAuthorizedParty,
@@ -26,7 +32,7 @@ import {
 } from "./models/application-offering-change-request.dto";
 import { ApplicationOfferingChangeRequestService } from "../../services";
 import { ApplicationOfferingChangeRequestStatus } from "@sims/sims-db";
-import { IUserToken, UserGroups } from "../../auth";
+import { IUserToken, Role, UserGroups } from "../../auth";
 import { getUserFullName } from "../../utilities";
 import { getISODateOnlyString } from "@sims/utilities";
 import { ApplicationOfferingChangeRequestControllerService } from "./application-offering-change-request.controller.service";
@@ -112,8 +118,15 @@ export class ApplicationOfferingChangeRequestAESTController extends BaseControll
    * @param payload information to update the application offering change request.
    * @param userToken user approving or declining the application offering change request.
    */
-  // @Roles(Role.InstitutionApproveDeclineOfferingChangeRequest)
+  @Roles(Role.InstitutionApproveDeclineApplicationOfferingChangeRequest)
   @Patch(":applicationOfferingChangeRequestId")
+  @ApiNotFoundResponse({
+    description:
+      "Application offering change not found or not in valid status to be updated.",
+  })
+  @ApiUnprocessableEntityResponse({
+    description: "Invalid application offering change status",
+  })
   async updateApplicationOfferingChangeRequest(
     @Param("applicationOfferingChangeRequestId", ParseIntPipe)
     applicationOfferingChangeRequestId: number,
@@ -121,10 +134,36 @@ export class ApplicationOfferingChangeRequestAESTController extends BaseControll
     payload: ApplicationOfferingChangeAssessmentAPIInDTO,
     @UserToken() userToken: IUserToken,
   ): Promise<void> {
-    this.applicationOfferingChangeRequestService.assessApplicationOfferingChangeRequest(
+    const applicationOfferingChangeRequest =
+      await this.applicationOfferingChangeRequestService.applicationOfferingChangeRequestExists(
+        applicationOfferingChangeRequestId,
+        {
+          applicationOfferingChangeRequestStatus:
+            ApplicationOfferingChangeRequestStatus.InProgressWithSABC,
+        },
+      );
+    if (!applicationOfferingChangeRequest) {
+      throw new NotFoundException(
+        "Application offering change not found or not in valid status to be updated.",
+      );
+    }
+    if (
+      !(
+        payload.applicationOfferingChangeRequestStatus ===
+          ApplicationOfferingChangeRequestStatus.DeclinedBySABC ||
+        payload.applicationOfferingChangeRequestStatus ===
+          ApplicationOfferingChangeRequestStatus.Approved
+      )
+    ) {
+      throw new UnprocessableEntityException(
+        "Invalid application offering change request status.",
+      );
+    }
+    await this.applicationOfferingChangeRequestService.assessApplicationOfferingChangeRequest(
       applicationOfferingChangeRequestId,
       payload.applicationId,
       payload.offeringId,
+      payload.studentId,
       payload.applicationOfferingChangeRequestStatus,
       payload.note,
       userToken.userId,

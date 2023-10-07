@@ -104,13 +104,14 @@ export class ApplicationOfferingChangeRequestControllerService {
       return {
         ...applicationOfferingDetails,
         assessedNoteDescription: request.assessedNote?.description,
+        studentId: request.application.student.id,
         studentFullName: getUserFullName(request.application.student.user),
         assessedDate: request.assessedDate,
         assessedBy: getUserFullName(request.assessedBy),
         institutionId: request.application.location.institution.id,
         institutionName: request.application.location.institution.operatingName,
         submittedDate: request.createdAt,
-        updatedDate: request.updatedAt,
+        studentActionDate: request.studentActionDate,
       };
     }
     return {

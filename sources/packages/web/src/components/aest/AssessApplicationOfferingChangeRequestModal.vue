@@ -22,11 +22,18 @@
         </p>
       </template>
       <template #footer>
-        <footer-buttons
-          :primaryLabel="primaryLabel"
-          @secondaryClick="cancel"
-          @primaryClick="assessChange"
-        />
+        <check-permission-role
+          :role="Role.InstitutionApproveDeclineApplicationOfferingChangeRequest"
+        >
+          <template #="{ notAllowed }">
+            <footer-buttons
+              :primaryLabel="primaryLabel"
+              @secondaryClick="cancel"
+              @primaryClick="assessChange"
+              :disablePrimaryButton="notAllowed"
+            />
+          </template>
+        </check-permission-role>
       </template>
     </modal-dialog-base>
   </v-form>
@@ -36,11 +43,13 @@ import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
 import { ref, defineComponent, computed } from "vue";
 import { useModalDialog, useRules } from "@/composables";
 import { ApplicationOfferingChangeAssessmentAPIInDTO } from "@/services/http/dto";
-import { ApplicationOfferingChangeRequestStatus, VForm } from "@/types";
+import { ApplicationOfferingChangeRequestStatus, VForm, Role } from "@/types";
+import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
 
 export default defineComponent({
   components: {
     ModalDialogBase,
+    CheckPermissionRole,
   },
   setup() {
     const note = ref("");
@@ -85,6 +94,7 @@ export default defineComponent({
       assessApplicationOfferingChangeRequestForm.value.reset();
     };
     return {
+      Role,
       showDialog,
       showModal,
       showParameter,

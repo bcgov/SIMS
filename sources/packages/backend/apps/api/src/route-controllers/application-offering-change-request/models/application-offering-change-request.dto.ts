@@ -130,13 +130,14 @@ export class ApplicationOfferingChangesAPIOutDTO extends ApplicationOfferingDeta
  */
 export class ApplicationOfferingChangeDetailsAPIOutDTO extends ApplicationOfferingDetailsAPIOutDTO {
   assessedNoteDescription?: string;
+  studentId: number;
   studentFullName: string;
   assessedDate?: Date;
   assessedBy?: string;
   institutionId: number;
   institutionName: string;
   submittedDate: Date;
-  updatedDate: Date;
+  studentActionDate?: Date;
 }
 
 /**
@@ -182,6 +183,8 @@ export class ApplicationOfferingChangeAssessmentAPIInDTO {
   applicationId: number;
   @IsPositive()
   offeringId: number;
+  @IsPositive()
+  studentId: number;
   @IsIn([
     ApplicationOfferingChangeRequestStatus.Approved,
     ApplicationOfferingChangeRequestStatus.DeclinedBySABC,

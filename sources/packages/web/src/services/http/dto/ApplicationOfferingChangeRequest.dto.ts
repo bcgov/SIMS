@@ -95,13 +95,14 @@ export interface ApplicationOfferingChangeDetailsAPIOutDTO {
   activeOfferingId: number;
   reason: string;
   assessedNoteDescription: string;
+  studentId: number;
   studentFullName: string;
   assessedDate: Date;
   assessedBy: string;
   institutionId: number;
   institutionName: string;
   submittedDate: Date;
-  updatedDate: Date;
+  studentActionDate?: Date;
 }
 
 /**
@@ -131,6 +132,7 @@ export interface StudentApplicationOfferingChangeRequestAPIInDTO {
 export interface ApplicationOfferingChangeAssessmentAPIInDTO {
   applicationId: number;
   offeringId: number;
+  studentId: number;
   note: string;
   applicationOfferingChangeRequestStatus: ApplicationOfferingChangeRequestStatus;
 }

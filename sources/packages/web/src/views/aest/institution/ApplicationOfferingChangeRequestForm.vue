@@ -12,27 +12,36 @@
             applicationOfferingChangeRequestDetails.status ===
             ApplicationOfferingChangeRequestStatus.InProgressWithSABC
           "
-        >
-          <v-btn
-            color="primary"
-            variant="outlined"
-            @click="
-              assessApplicationOfferingChangeRequest(
-                ApplicationOfferingChangeRequestStatus.DeclinedBySABC,
-              )
+          ><check-permission-role
+            :role="
+              Role.InstitutionApproveDeclineApplicationOfferingChangeRequest
             "
-            >Decline reassessment</v-btn
           >
-          <v-btn
-            class="ml-2"
-            color="primary"
-            @click="
-              assessApplicationOfferingChangeRequest(
-                ApplicationOfferingChangeRequestStatus.Approved,
-              )
-            "
-            >Approve reassessment</v-btn
-          >
+            <template #="{ notAllowed }">
+              <v-btn
+                color="primary"
+                variant="outlined"
+                @click="
+                  assessApplicationOfferingChangeRequest(
+                    ApplicationOfferingChangeRequestStatus.DeclinedBySABC,
+                  )
+                "
+                :disabled="notAllowed"
+                >Decline reassessment</v-btn
+              >
+              <v-btn
+                class="ml-2"
+                color="primary"
+                @click="
+                  assessApplicationOfferingChangeRequest(
+                    ApplicationOfferingChangeRequestStatus.Approved,
+                  )
+                "
+                :disabled="notAllowed"
+                >Approve reassessment</v-btn
+              >
+            </template>
+          </check-permission-role>
         </template>
       </header-navigator>
       <application-offering-change-details-header
@@ -88,6 +97,7 @@ import { useRouter, RouteLocationRaw } from "vue-router";
 import {
   ApplicationOfferingChangeRequestHeader,
   ApplicationOfferingChangeRequestStatus,
+  Role,
 } from "@/types";
 import {
   ApplicationOfferingChangeAssessmentAPIInDTO,
@@ -102,6 +112,7 @@ import OfferingForm from "@/components/common/OfferingForm.vue";
 import { BannerTypes } from "@/types/contracts/Banner";
 import { ApplicationOfferingDetails } from "@/types/contracts/StudentApplicationOfferingChangeContract";
 import { ModalDialog, useFormatters, useSnackBar } from "@/composables";
+import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
 
 export default defineComponent({
   components: {
@@ -109,6 +120,7 @@ export default defineComponent({
     ApplicationOfferingChangeDetailsHeader,
     OfferingForm,
     AssessApplicationOfferingChangeRequestModal,
+    CheckPermissionRole,
   },
   props: {
     studentId: {
@@ -172,8 +184,8 @@ export default defineComponent({
         institutionId:
           applicationOfferingChangeRequestDetails.value.institutionId,
         status: applicationOfferingChangeRequestDetails.value.status,
-        updatedDate: dateOnlyLongString(
-          applicationOfferingChangeRequestDetails.value.updatedDate,
+        studentActionDate: dateOnlyLongString(
+          applicationOfferingChangeRequestDetails.value.studentActionDate,
         ),
       };
     });
@@ -195,6 +207,8 @@ export default defineComponent({
               offeringId:
                 applicationOfferingChangeRequestDetails.value
                   .requestedOfferingId,
+              studentId:
+                applicationOfferingChangeRequestDetails.value.studentId,
             } as ApplicationOfferingChangeAssessmentAPIInDTO,
           );
           router.push({
@@ -221,6 +235,7 @@ export default defineComponent({
         } as RouteLocationRaw),
     );
     return {
+      Role,
       headerDetails,
       AESTRoutesConst,
       BannerTypes,
