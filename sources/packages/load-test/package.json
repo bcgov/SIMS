@@ -5,7 +5,7 @@
   "scripts": {
     "build": "webpack",
     "application-submission": "npm run build && k6 run ./dist/application-submission.test.js",
-    "form-io-get-application": "npm run build && k6 run ./dist/form-io-get-application.test.js"
+    "form-io-get-application": "npm run build && k6.exe run --out dashboard ./dist/form-io-get-application.test.js"
   },
   "license": "ISC",
   "devDependencies": {
