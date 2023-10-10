@@ -110,6 +110,9 @@ export class ApplicationService {
         .setParameter("inProgressStatuses", [
           StudentAssessmentStatus.Queued,
           StudentAssessmentStatus.InProgress,
+          // This conditions may not be directly related to the current application logic but has been added to ensure that
+          // at any given time now or future the queue does not pick an application to cancel when there is already an
+          // assessment for that application which is queued for cancellation.
           StudentAssessmentStatus.CancellationRequested,
           StudentAssessmentStatus.CancellationQueued,
         ])
@@ -125,21 +128,23 @@ export class ApplicationService {
    * @returns applications with assessment to be cancelled.
    */
   async getApplicationsToCancelAssessments(): Promise<Application[]> {
-    return this.applicationRepo
-      .createQueryBuilder("application")
-      .select(["application.id", "studentAssessment.id"])
-      .innerJoin("application.studentAssessments", "studentAssessment")
-      .andWhere(
-        "studentAssessment.studentAssessmentStatus = :submittedStatus",
-        {
-          submittedStatus: StudentAssessmentStatus.CancellationRequested,
-        },
-      )
-      .andWhere(`NOT EXISTS (${this.inProgressStatusesExistsQuery})`)
-      .setParameter("inProgressStatuses", [
-        StudentAssessmentStatus.CancellationQueued,
-      ])
-      .orderBy("studentAssessment.createdAt")
-      .getMany();
+    return (
+      this.applicationRepo
+        .createQueryBuilder("application")
+        .select(["application.id", "studentAssessment.id"])
+        .innerJoin("application.studentAssessments", "studentAssessment")
+        .andWhere("studentAssessment.studentAssessmentStatus = :status", {
+          status: StudentAssessmentStatus.CancellationRequested,
+        })
+        // This condition may not be directly related to the current application logic but has been added to ensure that
+        // at any given time now or future the queue does not pick an application to cancel when there is already an
+        // assessment for that application which is queued for cancellation.
+        .andWhere(`NOT EXISTS (${this.inProgressStatusesExistsQuery})`)
+        .setParameter("inProgressStatuses", [
+          StudentAssessmentStatus.CancellationQueued,
+        ])
+        .orderBy("studentAssessment.createdAt")
+        .getMany()
+    );
   }
 }

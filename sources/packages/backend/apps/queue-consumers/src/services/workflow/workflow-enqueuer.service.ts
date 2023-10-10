@@ -70,8 +70,7 @@ export class WorkflowEnqueuerService {
 
   /**
    * Search applications with assessments to be cancelled.
-   * If no other assessment is being cancelled for that application the oldest
-   * assessment to be cancelled will be queued.
+   * Enqueues the oldest assessment for the application with cancellation request status.
    * @param summary process summary to group all the logs.
    */
   async enqueueCancelAssessmentWorkflows(
@@ -171,7 +170,7 @@ export class WorkflowEnqueuerService {
     const summary = new ProcessSummary();
     try {
       summary.info(
-        `Queueing next pending assessment for application id ${application.id}.`,
+        `Queueing next assessment cancellation requested for application id ${application.id}.`,
       );
       const [nextAssessment] = application.studentAssessments;
       summary.info(

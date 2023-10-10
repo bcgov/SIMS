@@ -294,7 +294,7 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
       select: { studentAssessmentStatus: true },
       where: { id: assessmentId },
     });
-    const assessmentUpdate = {
+    const assessmentUpdate: Partial<StudentAssessment> = {
       workflowData,
       modifier: auditUser,
       updatedAt: now,
