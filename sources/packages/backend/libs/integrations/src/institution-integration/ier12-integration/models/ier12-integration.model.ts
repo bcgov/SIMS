@@ -218,3 +218,12 @@ export type CompletedApplicationWithSentDisbursement =
   | ApplicationEventCode.DISE
   | ApplicationEventCode.DISW
   | ApplicationEventCode.DISS;
+
+/**
+ * Application event code for completed application with pending disbursement.
+ */
+export type CompletedApplicationWithPendingDisbursement =
+  | ApplicationEventCode.COER
+  | ApplicationEventCode.COED
+  | ApplicationEventCode.DISR
+  | ApplicationEventCode.COEA;
