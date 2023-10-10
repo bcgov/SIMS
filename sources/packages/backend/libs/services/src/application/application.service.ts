@@ -23,7 +23,7 @@ export class ApplicationService {
   async hasMultipleApplicationSubmissions(
     applicationNumber: string,
   ): Promise<boolean> {
-    const applicationSubmissions = await this.applicationRepo.find({
+    const applicationSubmissions = await this.applicationRepo.count({
       select: {
         id: true,
       },
@@ -31,6 +31,6 @@ export class ApplicationService {
         applicationNumber: applicationNumber,
       },
     });
-    return applicationSubmissions.length > 1;
+    return applicationSubmissions > 1;
   }
 }
