@@ -61,7 +61,7 @@ export class DisbursementScheduleErrorsService extends RecordDataModelService<Di
   async hasFTDisbursementFeedbackErrors(
     disbursementScheduleId: number,
   ): Promise<boolean> {
-    return !!(await this.repo.findOne({
+    return this.repo.exist({
       select: { id: true },
       where: {
         disbursementSchedule: {
@@ -69,6 +69,6 @@ export class DisbursementScheduleErrorsService extends RecordDataModelService<Di
         },
         errorCode: In(FT_DISBURSEMENT_FEEDBACK_ERRORS),
       },
-    }));
+    });
   }
 }

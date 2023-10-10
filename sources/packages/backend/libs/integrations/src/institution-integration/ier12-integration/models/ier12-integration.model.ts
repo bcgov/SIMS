@@ -197,3 +197,24 @@ export enum ApplicationEventCode {
 }
 
 export const DISCRETIONARY_INCOME_PERCENTAGE = 0.15;
+
+/**
+ * Application event code for completed application.
+ */
+export type CompletedApplicationEventCode =
+  | ApplicationEventCode.COER
+  | ApplicationEventCode.COED
+  | ApplicationEventCode.DISC
+  | ApplicationEventCode.DISR
+  | ApplicationEventCode.COEA
+  | ApplicationEventCode.DISE
+  | ApplicationEventCode.DISW
+  | ApplicationEventCode.DISS;
+
+/**
+ * Application event code for completed application with sent disbursement.
+ */
+export type CompletedApplicationWithSentDisbursement =
+  | ApplicationEventCode.DISE
+  | ApplicationEventCode.DISW
+  | ApplicationEventCode.DISS;

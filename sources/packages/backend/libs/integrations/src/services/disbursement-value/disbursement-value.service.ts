@@ -23,7 +23,7 @@ export class DisbursementValueService {
   async hasAnyFullOrPartialAwardWithheldDueToRestriction(
     disbursementScheduleId: number,
   ): Promise<boolean> {
-    return !!(await this.disbursementValueRepo.findOne({
+    return this.disbursementValueRepo.exist({
       select: { id: true },
       where: {
         disbursementSchedule: {
@@ -34,6 +34,6 @@ export class DisbursementValueService {
           id: Not(IsNull()),
         },
       },
-    }));
+    });
   }
 }

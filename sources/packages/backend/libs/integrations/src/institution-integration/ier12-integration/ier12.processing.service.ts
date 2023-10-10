@@ -24,6 +24,8 @@ import {
 import { IER12IntegrationService } from "./ier12.integration.service";
 import {
   ApplicationEventCode,
+  CompletedApplicationEventCode,
+  CompletedApplicationWithSentDisbursement,
   IER12Record,
   IER12UploadResult,
   IERAddressInfo,
@@ -319,7 +321,9 @@ export class IER12ProcessingService {
         totalAssessmentNeed: assessmentData.totalAssessmentNeed,
         disbursementSentDate: disbursement.dateSent,
         applicationEventCode: await this.getApplicationEventCode(
-          pendingAssessment,
+          pendingAssessment.application.applicationNumber,
+          pendingAssessment.application.applicationStatus,
+          pendingAssessment.application.student.id,
           disbursement,
         ),
       };
@@ -330,20 +334,21 @@ export class IER12ProcessingService {
 
   /**
    * Get application event code (i.e current state of an application)
-   * @param assessment assessment of institutions.
+   * @param applicationNumber application number.
+   * @param applicationStatus application status.
+   * @param studentId student id.
    * @param currentDisbursementSchedule current disbursement schedule.
    * @returns application event code.
    */
   private async getApplicationEventCode(
-    assessment: StudentAssessment,
+    applicationNumber: string,
+    applicationStatus: ApplicationStatus,
+    studentId: number,
     currentDisbursementSchedule: DisbursementSchedule,
   ): Promise<ApplicationEventCode> {
-    const application = assessment.application;
-    switch (application.applicationStatus) {
+    switch (applicationStatus) {
       case ApplicationStatus.Assessment:
-        return this.applicationEventCodeDuringAssessment(
-          application.applicationNumber,
-        );
+        return this.applicationEventCodeDuringAssessment(applicationNumber);
 
       case ApplicationStatus.Enrolment:
         return this.applicationEventCodeDuringEnrolmentAndCompleted(
@@ -353,7 +358,7 @@ export class IER12ProcessingService {
       case ApplicationStatus.Completed:
         return this.applicationEventCodeDuringCompleted(
           currentDisbursementSchedule,
-          application.student.id,
+          studentId,
         );
 
       case ApplicationStatus.Cancelled:
@@ -370,16 +375,13 @@ export class IER12ProcessingService {
     applicationNumber: string,
   ): Promise<ApplicationEventCode.REIA | ApplicationEventCode.ASMT> {
     // Check if the application has more than one submissions.
-    switch (
+    const hasMultipleApplicationSubmissions =
       await this.applicationService.hasMultipleApplicationSubmissions(
         applicationNumber,
-      )
-    ) {
-      case true:
-        return ApplicationEventCode.REIA;
-      case false:
-        return ApplicationEventCode.ASMT;
-    }
+      );
+    return hasMultipleApplicationSubmissions
+      ? ApplicationEventCode.REIA
+      : ApplicationEventCode.ASMT;
   }
 
   /**
@@ -408,16 +410,7 @@ export class IER12ProcessingService {
   private async applicationEventCodeDuringCompleted(
     currentDisbursementSchedule: DisbursementSchedule,
     studentId: number,
-  ): Promise<
-    | ApplicationEventCode.COER
-    | ApplicationEventCode.COED
-    | ApplicationEventCode.DISC
-    | ApplicationEventCode.DISR
-    | ApplicationEventCode.COEA
-    | ApplicationEventCode.DISE
-    | ApplicationEventCode.DISW
-    | ApplicationEventCode.DISS
-  > {
+  ): Promise<CompletedApplicationEventCode> {
     switch (currentDisbursementSchedule.disbursementScheduleStatus) {
       case DisbursementScheduleStatus.Cancelled:
         return ApplicationEventCode.DISC;
@@ -465,11 +458,7 @@ export class IER12ProcessingService {
    */
   private async eventCodeForCompletedApplicationWithSentDisbursement(
     currentDisbursementScheduleId: number,
-  ): Promise<
-    | ApplicationEventCode.DISE
-    | ApplicationEventCode.DISW
-    | ApplicationEventCode.DISS
-  > {
+  ): Promise<CompletedApplicationWithSentDisbursement> {
     // Check if the disbursement has any feedback error.
     switch (
       await this.disbursementScheduleErrorsService.hasFTDisbursementFeedbackErrors(
@@ -479,7 +468,7 @@ export class IER12ProcessingService {
       case true:
         return ApplicationEventCode.DISE;
       case false: {
-        return this.eventCodeForCompletedApplicationWithAwardWithheldDueToRestriction(
+        return await this.eventCodeForCompletedApplicationWithAwardWithheldDueToRestriction(
           currentDisbursementScheduleId,
         );
       }
@@ -495,16 +484,13 @@ export class IER12ProcessingService {
   private async eventCodeForCompletedApplicationWithPendingDisbursementAndCompletedCOE(
     studentId: number,
   ): Promise<ApplicationEventCode.DISR | ApplicationEventCode.COEA> {
-    switch (
+    const hasActiveStopFullTimeDisbursement =
       await this.studentRestrictionService.hasActiveStopFullTimeDisbursement(
         studentId,
-      )
-    ) {
-      case true:
-        return ApplicationEventCode.DISR;
-      case false:
-        return ApplicationEventCode.COEA;
-    }
+      );
+    return hasActiveStopFullTimeDisbursement
+      ? ApplicationEventCode.DISR
+      : ApplicationEventCode.COEA;
   }
 
   /**
