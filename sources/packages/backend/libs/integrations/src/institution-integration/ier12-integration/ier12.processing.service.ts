@@ -467,11 +467,10 @@ export class IER12ProcessingService {
     ) {
       case true:
         return ApplicationEventCode.DISE;
-      case false: {
-        return await this.eventCodeForCompletedApplicationWithAwardWithheldDueToRestriction(
+      case false:
+        return this.eventCodeForCompletedApplicationWithAwardWithheldDueToRestriction(
           currentDisbursementScheduleId,
         );
-      }
     }
   }
 
