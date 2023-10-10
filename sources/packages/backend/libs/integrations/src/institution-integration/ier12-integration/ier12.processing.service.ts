@@ -496,7 +496,7 @@ export class IER12ProcessingService {
   private eventCodeForCompletedApplicationWithPendingDisbursementAndCompletedCOE(
     disbursementDate: string,
     studentRestrictions?: StudentRestriction[],
-  ): Promise<ApplicationEventCode.DISR | ApplicationEventCode.COEA> {
+  ): ApplicationEventCode.DISR | ApplicationEventCode.COEA {
     // Check if disbursement is not sent due to restriction.
     if (
       isSameOrAfterDate(
@@ -523,7 +523,7 @@ export class IER12ProcessingService {
   private eventCodeForCompletedApplicationWithPendingDisbursement(
     currentDisbursementSchedule: DisbursementSchedule,
     studentRestrictions?: StudentRestriction[],
-  ): Promise<CompletedApplicationWithPendingDisbursement> {
+  ): CompletedApplicationWithPendingDisbursement {
     if (currentDisbursementSchedule.coeStatus === COEStatus.completed) {
       return this.eventCodeForCompletedApplicationWithPendingDisbursementAndCompletedCOE(
         currentDisbursementSchedule.disbursementDate,

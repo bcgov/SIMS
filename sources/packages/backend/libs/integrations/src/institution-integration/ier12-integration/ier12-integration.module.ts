@@ -11,7 +11,6 @@ import { IER12ProcessingService } from "./ier12.processing.service";
 import {
   StudentAssessmentService,
   SshService,
-  StudentRestrictionService,
   DisbursementScheduleErrorsService,
   DisbursementValueService,
 } from "@sims/integrations/services";
@@ -28,7 +27,6 @@ import {
     DisbursementOverawardService,
     NoteSharedService,
     ApplicationService,
-    StudentRestrictionService,
     DisbursementScheduleErrorsService,
     DisbursementValueService,
   ],
