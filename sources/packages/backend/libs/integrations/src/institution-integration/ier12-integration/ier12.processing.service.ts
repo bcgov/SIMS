@@ -438,16 +438,13 @@ export class IER12ProcessingService {
   ): Promise<ApplicationEventCode.DISW | ApplicationEventCode.DISS> {
     // Check if any disbursement award (full amount or a partial)
     // was withheld due to a restriction.
-    switch (
+    const hasAnyFullOrPartialAwardWithheldDueToRestriction =
       await this.disbursementValueService.hasAnyFullOrPartialAwardWithheldDueToRestriction(
         currentDisbursementScheduleId,
-      )
-    ) {
-      case true:
-        return ApplicationEventCode.DISW;
-      case false:
-        return ApplicationEventCode.DISS;
-    }
+      );
+    return hasAnyFullOrPartialAwardWithheldDueToRestriction
+      ? ApplicationEventCode.DISW
+      : ApplicationEventCode.DISS;
   }
 
   /**
@@ -460,18 +457,15 @@ export class IER12ProcessingService {
     currentDisbursementScheduleId: number,
   ): Promise<CompletedApplicationWithSentDisbursement> {
     // Check if the disbursement has any feedback error.
-    switch (
+    const hasFTDisbursementFeedbackErrors =
       await this.disbursementScheduleErrorsService.hasFTDisbursementFeedbackErrors(
         currentDisbursementScheduleId,
-      )
-    ) {
-      case true:
-        return ApplicationEventCode.DISE;
-      case false:
-        return this.eventCodeForCompletedApplicationWithAwardWithheldDueToRestriction(
+      );
+    return hasFTDisbursementFeedbackErrors
+      ? ApplicationEventCode.DISE
+      : this.eventCodeForCompletedApplicationWithAwardWithheldDueToRestriction(
           currentDisbursementScheduleId,
         );
-    }
   }
 
   /**
@@ -585,7 +579,7 @@ export class IER12ProcessingService {
    * if a student has active restriction.
    */
   private checkActiveRestriction(
-    studentRestrictions?: StudentRestriction[],
+    studentRestrictions: StudentRestriction[],
     options?: { restrictionCode?: string },
   ): boolean {
     return studentRestrictions?.some(
