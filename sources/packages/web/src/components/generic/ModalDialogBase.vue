@@ -14,17 +14,17 @@
     >
       <v-card-title>
         <slot name="header">
-          <h2 v-if="title" class="category-header-large primary-color">
+          <h2 v-if="title" class="category-header-large primary-color mt-3">
             {{ title }}
           </h2>
         </slot>
       </v-card-title>
-      <v-divider class="border-opacity-100" :thickness="2" inset />
+      <v-divider class="border-opacity-100 my-1" :thickness="2" inset />
       <v-card-text class="pt-0">
         <div class="pb-2" v-if="subTitle">{{ subTitle }}</div>
         <slot name="content">Please add the modal content here!</slot>
       </v-card-text>
-      <v-divider class="border-opacity-100" :thickness="2" inset />
+      <v-divider class="border-opacity-100 my-1" :thickness="2" inset />
 
       <v-card-actions>
         <v-spacer></v-spacer>

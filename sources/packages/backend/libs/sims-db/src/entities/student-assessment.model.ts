@@ -322,6 +322,7 @@ export interface WorkflowData {
     dependantStatus: "dependant" | "independant";
     relationshipStatus: RelationshipStatus;
     livingWithParents: FormYesNoOptions;
+    numberOfParents?: number;
   };
   calculatedData: {
     parentalAssets?: number;
@@ -335,6 +336,12 @@ export interface WorkflowData {
     studentMSOLAllowance: number;
     totalChildCareCost?: number;
     totalNonEducationalCost: number;
+    dependantChildQuantity?: number;
+    dependantChildInDaycareQuantity?: number;
+    dependantInfantQuantity?: number;
+    dependantDeclaredOnTaxesQuantity?: number;
+    dependantPostSecondaryQuantity?: number;
+    partnerStudentStudyWeeks?: number;
   };
 }
 

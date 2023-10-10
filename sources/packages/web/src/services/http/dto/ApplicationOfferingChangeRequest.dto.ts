@@ -127,3 +127,8 @@ export interface StudentApplicationOfferingChangeRequestAPIInDTO {
   studentConsent: boolean;
   applicationOfferingChangeRequestStatus: ApplicationOfferingChangeRequestStatus;
 }
+
+export interface ApplicationOfferingChangeAssessmentAPIInDTO {
+  note: string;
+  applicationOfferingChangeRequestStatus: ApplicationOfferingChangeRequestStatus;
+}
