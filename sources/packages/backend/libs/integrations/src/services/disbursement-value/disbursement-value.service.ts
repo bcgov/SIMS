@@ -30,9 +30,6 @@ export class DisbursementValueService {
           id: disbursementScheduleId,
         },
         restrictionAmountSubtracted: MoreThan(0),
-        restrictionSubtracted: {
-          id: Not(IsNull()),
-        },
       },
     });
   }
