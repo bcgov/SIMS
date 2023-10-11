@@ -29,6 +29,7 @@ import {
 } from "@sims/services";
 import { FullTimeAwardTypes } from "@sims/integrations/models";
 import { PROVINCIAL_DEFAULT_RESTRICTION_CODE } from "@sims/services/constants";
+import { ApplicationEventCodeUtilsService } from "./utils-service";
 
 @Injectable()
 export class IER12ProcessingService {
@@ -38,6 +39,7 @@ export class IER12ProcessingService {
     private readonly ier12IntegrationService: IER12IntegrationService,
     private readonly studentAssessmentService: StudentAssessmentService,
     private readonly disbursementOverawardService: DisbursementOverawardService,
+    private readonly applicationEventCodeUtilsService: ApplicationEventCodeUtilsService,
   ) {
     this.institutionIntegrationConfig = config.institutionIntegration;
   }
@@ -301,6 +303,13 @@ export class IER12ProcessingService {
         totalAssessedCost: assessmentData.totalAssessedCost,
         totalAssessmentNeed: assessmentData.totalAssessmentNeed,
         disbursementSentDate: disbursement.dateSent,
+        applicationEventCode:
+          await this.applicationEventCodeUtilsService.getApplicationEventCode(
+            application.applicationNumber,
+            application.applicationStatus,
+            disbursement,
+            activeStudentRestriction,
+          ),
       };
       ier12Records.push(ier12Record);
     }
