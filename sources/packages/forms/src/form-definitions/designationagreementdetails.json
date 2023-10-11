@@ -88,8 +88,7 @@
       "showWordCount": false,
       "allowMultipleMasks": false,
       "addons": [],
-      "id": "ei26eq6",
-      "isNew": false
+      "id": "ei26eq6"
     },
     {
       "label": "Columns",
@@ -3718,7 +3717,7 @@
                           "value": ""
                         }
                       ],
-                      "content": "<a href=\"https://studentaidbc.ca/sites/all/files/school-officials/Schedule_D_Designation_Agreement.pdf\" target=\"_blank\">Schedule D - Information Sharing agreement</a>",
+                      "content": "<a href=\"https://studentaidbc.ca/sites/all/files/school-officials/sims-information-sharing-agreement.pdf\" target=\"_blank\">Schedule D - Information Sharing agreement</a>",
                       "refreshOnChange": false,
                       "customClass": "",
                       "hidden": false,
@@ -3727,7 +3726,7 @@
                       "tags": [],
                       "properties": {},
                       "conditional": {
-                        "show": null,
+                        "show": "",
                         "when": null,
                         "eq": "",
                         "json": ""
@@ -4607,8 +4606,7 @@
                   "addons": [],
                   "tree": false,
                   "lazyLoad": false,
-                  "id": "e6p4w",
-                  "isNew": false
+                  "id": "e6p4w"
                 }
               ],
               "placeholder": "",
@@ -4787,8 +4785,7 @@
       "tree": true,
       "id": "eu5weci",
       "addons": [],
-      "lazyLoad": false,
-      "isNew": false
+      "lazyLoad": false
     },
     {
       "label": "View Mode (submission or viewOnly)",
