@@ -8,7 +8,6 @@ import {
   FormYesNoOptions,
   FullTimeAssessment,
   RelationshipStatus,
-  Restriction,
   RestrictionActionType,
   StudentAssessment,
   StudentRestriction,
