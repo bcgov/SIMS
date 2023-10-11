@@ -203,7 +203,6 @@ describe(
         StudentAssessmentStatus.CancellationRequested,
       );
       application.applicationStatus = ApplicationStatus.Overwritten;
-      application.studentAssessments = [application.currentAssessment];
       await db.application.save(application);
 
       // Queued job.

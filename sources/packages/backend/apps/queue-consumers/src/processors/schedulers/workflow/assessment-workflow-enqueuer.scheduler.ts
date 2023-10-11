@@ -70,6 +70,11 @@ export class AssessmentWorkflowEnqueuerScheduler extends BaseScheduler<void> {
     }
   }
 
+  /**
+   * Enqueues the process and creates a new process summary for the queue process.
+   * @param parentProcessSummary parent process summary.
+   * @param enqueueProcess enqueue process function to be called.
+   */
   private async executeEnqueueProcess(
     parentProcessSummary: ProcessSummary,
     enqueueProcess: (summary: ProcessSummary) => Promise<void>,
