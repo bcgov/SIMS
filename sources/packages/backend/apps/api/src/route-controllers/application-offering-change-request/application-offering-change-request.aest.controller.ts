@@ -117,7 +117,7 @@ export class ApplicationOfferingChangeRequestAESTController extends BaseControll
   @Patch(":applicationOfferingChangeRequestId")
   @ApiNotFoundResponse({
     description:
-      "Application offering change not found or not in valid status to be updated.",
+      "Application offering change not found or not in valid status to be approved/declined.",
   })
   async updateApplicationOfferingChangeRequest(
     @Param("applicationOfferingChangeRequestId", ParseIntPipe)
@@ -136,7 +136,7 @@ export class ApplicationOfferingChangeRequestAESTController extends BaseControll
       );
     if (!applicationOfferingChangeRequest) {
       throw new NotFoundException(
-        "Application offering change not found or not in valid status to be updated.",
+        "Application offering change not found or not in valid status to be approved/declined.",
       );
     }
     await this.applicationOfferingChangeRequestService.assessApplicationOfferingChangeRequest(

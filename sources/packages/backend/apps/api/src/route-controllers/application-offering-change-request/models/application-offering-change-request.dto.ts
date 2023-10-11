@@ -183,7 +183,9 @@ export class ApplicationOfferingChangeAssessmentAPIInDTO {
     ApplicationOfferingChangeRequestStatus.Approved,
     ApplicationOfferingChangeRequestStatus.DeclinedBySABC,
   ])
-  applicationOfferingChangeRequestStatus: ApplicationOfferingChangeRequestStatus;
+  applicationOfferingChangeRequestStatus:
+    | ApplicationOfferingChangeRequestStatus.Approved
+    | ApplicationOfferingChangeRequestStatus.DeclinedBySABC;
 }
 
 /**

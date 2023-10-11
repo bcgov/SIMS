@@ -523,15 +523,15 @@ export class ApplicationOfferingChangeRequestService {
    * @param applicationOfferingChangeRequestId application offering change request id for which to update the status.
    * @param applicationOfferingChangeRequestStatus the application offering change request status to be updated.
    * @param studentConsent student consent to approve the application offering change request.
-   * @param userId user id of the user making the request.
+   * @param auditUserId user that should be considered the one that is causing the changes.
    */
   async updateApplicationOfferingChangeRequest(
     applicationOfferingChangeRequestId: number,
     applicationOfferingChangeRequestStatus: ApplicationOfferingChangeRequestStatus,
     studentConsent: boolean,
-    userId: number,
+    auditUserId: number,
   ): Promise<void> {
-    const auditUser = { id: userId } as User;
+    const auditUser = { id: auditUserId } as User;
     const currentDate = new Date();
     await this.applicationOfferingChangeRequestRepo.update(
       {
@@ -556,7 +556,9 @@ export class ApplicationOfferingChangeRequestService {
    */
   async assessApplicationOfferingChangeRequest(
     applicationOfferingChangeRequestId: number,
-    applicationOfferingChangeRequestStatus: ApplicationOfferingChangeRequestStatus,
+    applicationOfferingChangeRequestStatus:
+      | ApplicationOfferingChangeRequestStatus.Approved
+      | ApplicationOfferingChangeRequestStatus.DeclinedBySABC,
     assessmentNote: string,
     userId: number,
   ): Promise<void> {
