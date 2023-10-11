@@ -52,9 +52,15 @@ export default defineComponent({
     ModalDialogBase,
     CheckPermissionRole,
   },
+  props: {
+    processing: {
+      type: Boolean,
+      required: true,
+      default: false,
+    },
+  },
   setup() {
     const note = ref("");
-    const processing = ref(false);
     const { showDialog, showModal, resolvePromise, showParameter } =
       useModalDialog<ApplicationOfferingChangeAssessmentAPIInDTO | false>();
     const assessApplicationOfferingChangeRequestModal =
@@ -84,7 +90,6 @@ export default defineComponent({
       resolvePromise(false);
     };
     const assessChange = async () => {
-      processing.value = true;
       const validationResult =
         await assessApplicationOfferingChangeRequestForm.value.validate();
       if (!validationResult.valid) {
@@ -95,7 +100,6 @@ export default defineComponent({
       assessApplicationOfferingChangeRequestModal.note = note.value;
       resolvePromise(assessApplicationOfferingChangeRequestModal);
       assessApplicationOfferingChangeRequestForm.value.reset();
-      processing.value = false;
     };
     return {
       Role,
@@ -104,7 +108,6 @@ export default defineComponent({
       showParameter,
       cancel,
       assessChange,
-      processing,
       note,
       title,
       subject,

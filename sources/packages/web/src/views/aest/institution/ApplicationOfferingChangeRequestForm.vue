@@ -87,6 +87,7 @@
     </v-window>
     <assess-application-offering-change-request-modal
       ref="assessApplicationOfferingChangeRequestModal"
+      :processing="processing"
     />
   </full-page-container>
 </template>
@@ -151,6 +152,7 @@ export default defineComponent({
     );
     const snackBar = useSnackBar();
     const router = useRouter();
+    const processing = ref(false);
     onMounted(async () => {
       applicationOfferingChangeRequestDetails.value =
         await ApplicationOfferingChangeRequestService.shared.getApplicationOfferingDetailsForReview(
@@ -199,6 +201,7 @@ export default defineComponent({
         );
       if (responseData) {
         try {
+          processing.value = true;
           await ApplicationOfferingChangeRequestService.shared.assessApplicationOfferingChangeRequest(
             props.applicationOfferingChangeRequestId,
             responseData,
@@ -213,6 +216,8 @@ export default defineComponent({
           snackBar.error(
             "Unexpected error while submitting application offering change request.",
           );
+        } finally {
+          processing.value = false;
         }
       }
     };
@@ -232,6 +237,7 @@ export default defineComponent({
       AESTRoutesConst,
       BannerTypes,
       tab,
+      processing,
       ApplicationOfferingChangeRequestStatus,
       goBackRouteParams,
       studentApplicationOfferingDetails,
