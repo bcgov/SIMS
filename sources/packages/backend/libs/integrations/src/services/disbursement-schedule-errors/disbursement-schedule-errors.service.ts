@@ -55,7 +55,7 @@ export class DisbursementScheduleErrorsService extends RecordDataModelService<Di
   /**
    * Checks if there is any full-time disbursement feedback errors.
    * @param disbursementScheduleId disbursement schedule id.
-   * @returns true, if there any full-time disbursement feedback
+   * @returns true, if there is any full-time disbursement feedback
    * errors.
    */
   async hasFullTimeDisbursementFeedbackErrors(
