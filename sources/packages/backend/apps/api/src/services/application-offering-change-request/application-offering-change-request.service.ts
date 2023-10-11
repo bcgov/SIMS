@@ -10,7 +10,6 @@ import {
   getUserFullNameLikeSearch,
   transformToApplicationOfferingChangeEntitySortField,
   transformToApplicationEntitySortField,
-  Note,
   NoteType,
   AssessmentTriggerType,
   StudentAssessment,
@@ -549,20 +548,14 @@ export class ApplicationOfferingChangeRequestService {
   }
 
   /**
-   * Update the application offering change request status for the given application offering change request id for the ministry user.
+   * Assess the application offering change request status for the given application offering change request id for the ministry user.
    * @param applicationOfferingChangeRequestId application offering change request id for which to update the status.
-   * @param applicationId application id related to the application offering change request.
-   * @param offeringId requested offering id related to this application offering change request.
-   * @param studentId student id of the student related to the application offering change request.
    * @param applicationOfferingChangeRequestStatus the application offering change request status to be updated.
    * @param assessmentNote note added while updating the application offering change request.
    * @param userId user id of the user making the approve or decline request.
    */
   async assessApplicationOfferingChangeRequest(
     applicationOfferingChangeRequestId: number,
-    applicationId: number,
-    offeringId: number,
-    studentId: number,
     applicationOfferingChangeRequestStatus: ApplicationOfferingChangeRequestStatus,
     assessmentNote: string,
     userId: number,
@@ -570,11 +563,42 @@ export class ApplicationOfferingChangeRequestService {
     const auditUser = { id: userId } as User;
     const currentDate = new Date();
     const application = new Application();
-    application.id = applicationId;
+    const applicationOFferingChangeRequest =
+      await this.applicationOfferingChangeRequestRepo.findOne({
+        select: {
+          id: true,
+          requestedOffering: {
+            id: true,
+          },
+          application: {
+            id: true,
+            student: {
+              id: true,
+              user: {
+                id: true,
+                firstName: true,
+                lastName: true,
+              },
+            },
+          },
+        },
+        relations: {
+          application: {
+            student: {
+              user: true,
+            },
+          },
+          requestedOffering: true,
+        },
+        where: {
+          id: applicationOfferingChangeRequestId,
+        },
+      });
+    application.id = applicationOFferingChangeRequest.application.id;
     await this.dataSource.transaction(async (transactionalEntityManager) => {
       // Save the note.
       const noteEntity = await this.noteSharedService.createStudentNote(
-        studentId,
+        applicationOFferingChangeRequest.application.student.id,
         NoteType.Application,
         assessmentNote,
         userId,
@@ -603,9 +627,13 @@ export class ApplicationOfferingChangeRequestService {
       ) {
         // Create a new assessment if the application offering change request status is approved.
         application.currentAssessment = {
-          application: { id: applicationId } as Application,
+          application: {
+            id: applicationOFferingChangeRequest.application.id,
+          } as Application,
           triggerType: AssessmentTriggerType.ApplicationOfferingChange,
-          offering: { id: offeringId } as EducationProgramOffering,
+          offering: {
+            id: applicationOFferingChangeRequest.requestedOffering.id,
+          } as EducationProgramOffering,
           applicationOfferingChangeRequest: {
             id: applicationOfferingChangeRequestId,
           } as ApplicationOfferingChangeRequest,

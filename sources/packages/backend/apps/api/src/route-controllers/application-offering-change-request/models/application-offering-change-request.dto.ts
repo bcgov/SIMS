@@ -179,12 +179,6 @@ export class ApplicationOfferingChangeAssessmentAPIInDTO {
   @IsNotEmpty()
   @MaxLength(NOTE_DESCRIPTION_MAX_LENGTH)
   note: string;
-  @IsPositive()
-  applicationId: number;
-  @IsPositive()
-  offeringId: number;
-  @IsPositive()
-  studentId: number;
   @IsIn([
     ApplicationOfferingChangeRequestStatus.Approved,
     ApplicationOfferingChangeRequestStatus.DeclinedBySABC,

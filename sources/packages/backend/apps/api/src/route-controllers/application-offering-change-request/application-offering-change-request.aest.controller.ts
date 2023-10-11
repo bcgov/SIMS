@@ -141,9 +141,6 @@ export class ApplicationOfferingChangeRequestAESTController extends BaseControll
     }
     await this.applicationOfferingChangeRequestService.assessApplicationOfferingChangeRequest(
       applicationOfferingChangeRequestId,
-      payload.applicationId,
-      payload.offeringId,
-      payload.studentId,
       payload.applicationOfferingChangeRequestStatus,
       payload.note,
       userToken.userId,

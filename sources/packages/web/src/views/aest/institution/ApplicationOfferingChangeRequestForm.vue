@@ -201,15 +201,7 @@ export default defineComponent({
         try {
           await ApplicationOfferingChangeRequestService.shared.assessApplicationOfferingChangeRequest(
             props.applicationOfferingChangeRequestId,
-            {
-              ...responseData,
-              applicationId: props.applicationId,
-              offeringId:
-                applicationOfferingChangeRequestDetails.value
-                  .requestedOfferingId,
-              studentId:
-                applicationOfferingChangeRequestDetails.value.studentId,
-            } as ApplicationOfferingChangeAssessmentAPIInDTO,
+            responseData,
           );
           router.push({
             name: AESTRoutesConst.ASSESSMENTS_SUMMARY,
