@@ -7,7 +7,7 @@ import { InjectRepository } from "@nestjs/typeorm";
  * Service layer for Application.
  */
 @Injectable()
-export class ApplicationService {
+export class ApplicationSharedService {
   constructor(
     @InjectRepository(Application)
     private readonly applicationRepo: Repository<Application>,

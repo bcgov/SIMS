@@ -18,9 +18,9 @@ export interface ECertDisbursementSchedule extends DisbursementSchedule {
 
 /**
  * Full time disbursement feedback errors, there are 96 FT feedback errors.
- ** As part of this ticket plan is to keep it as a const, In future we will
- ** need to save these codes (both FT and PT) in DB. We have a placeholder
- ** ticket created for it.
+ * Todo:  As part of this ticket plan is to keep it as a const, In future we will
+ * need to save these codes (both FT and PT) in DB. We have a placeholder
+ * ticket created for it.
  */
 export const FULL_TIME_DISBURSEMENT_FEEDBACK_ERRORS = [
   "EDU-00010",

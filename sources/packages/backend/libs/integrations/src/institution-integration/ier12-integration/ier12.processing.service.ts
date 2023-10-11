@@ -8,6 +8,7 @@ import {
   FormYesNoOptions,
   FullTimeAssessment,
   RelationshipStatus,
+  Restriction,
   RestrictionActionType,
   StudentAssessment,
   StudentRestriction,
@@ -39,7 +40,7 @@ import {
   StudentAssessmentService,
 } from "@sims/integrations/services";
 import {
-  ApplicationService,
+  ApplicationSharedService,
   DisbursementOverawardService,
   AwardOverawardBalance,
 } from "@sims/services";
@@ -55,7 +56,7 @@ export class IER12ProcessingService {
     private readonly ier12IntegrationService: IER12IntegrationService,
     private readonly studentAssessmentService: StudentAssessmentService,
     private readonly disbursementOverawardService: DisbursementOverawardService,
-    private readonly applicationService: ApplicationService,
+    private readonly applicationSharedService: ApplicationSharedService,
     private readonly disbursementScheduleErrorsService: DisbursementScheduleErrorsService,
     private readonly disbursementValueService: DisbursementValueService,
   ) {
@@ -215,6 +216,9 @@ export class IER12ProcessingService {
     const ier12Records: IER12Record[] = [];
     // Create IER12 records per disbursement.
     for (const disbursement of disbursementSchedules) {
+      const activeStudentRestriction = student.studentRestrictions
+        ?.filter((studentRestriction) => studentRestriction.isActive)
+        ?.map((eachRestriction) => eachRestriction.restriction.actionType);
       const [disbursementReceipt] = disbursement.disbursementReceipts;
       const ier12Record: IER12Record = {
         assessmentId: pendingAssessment.id,
@@ -324,7 +328,7 @@ export class IER12ProcessingService {
           application.applicationNumber,
           application.applicationStatus,
           disbursement,
-          student.studentRestrictions,
+          activeStudentRestriction,
         ),
       };
       ier12Records.push(ier12Record);
@@ -337,14 +341,17 @@ export class IER12ProcessingService {
    * @param applicationNumber application number.
    * @param applicationStatus application status.
    * @param currentDisbursementSchedule current disbursement schedule.
-   * @param studentRestrictions student restrictions.
+   * @param activeRestrictionsActionTypes action types for active student restrictions.
    * @returns application event code.
    */
   private async getApplicationEventCode(
     applicationNumber: string,
     applicationStatus: ApplicationStatus,
-    currentDisbursementSchedule: DisbursementSchedule,
-    studentRestrictions?: StudentRestriction[],
+    currentDisbursementSchedule: Pick<
+      DisbursementSchedule,
+      "id" | "coeStatus" | "disbursementDate" | "disbursementScheduleStatus"
+    >,
+    activeRestrictionsActionTypes?: RestrictionActionType[][],
   ): Promise<ApplicationEventCode> {
     switch (applicationStatus) {
       case ApplicationStatus.Assessment:
@@ -357,7 +364,7 @@ export class IER12ProcessingService {
       case ApplicationStatus.Completed:
         return this.applicationEventCodeDuringCompleted(
           currentDisbursementSchedule,
-          studentRestrictions,
+          activeRestrictionsActionTypes,
         );
       case ApplicationStatus.Cancelled:
         return ApplicationEventCode.DISC;
@@ -374,7 +381,7 @@ export class IER12ProcessingService {
   ): Promise<ApplicationEventCode.REIA | ApplicationEventCode.ASMT> {
     // Check if the application has more than one submissions.
     const hasMultipleApplicationSubmissions =
-      await this.applicationService.hasMultipleApplicationSubmissions(
+      await this.applicationSharedService.hasMultipleApplicationSubmissions(
         applicationNumber,
       );
     return hasMultipleApplicationSubmissions
@@ -390,7 +397,6 @@ export class IER12ProcessingService {
   private applicationEventCodeDuringEnrolmentAndCompleted(
     coeStatus: COEStatus,
   ): ApplicationEventCode.COER | ApplicationEventCode.COED {
-    // Check if the application has more than one submissions.
     switch (coeStatus) {
       case COEStatus.required:
         return ApplicationEventCode.COER;
@@ -402,12 +408,15 @@ export class IER12ProcessingService {
   /**
    * Get application event code for an application with completed status.
    * @param currentDisbursementSchedule current disbursement schedule.
-   * @param studentRestrictions student restrictions.
+   * @param activeRestrictionsActionTypes action types for active student restrictions.
    * @returns application event code.
    */
   private async applicationEventCodeDuringCompleted(
-    currentDisbursementSchedule: DisbursementSchedule,
-    studentRestrictions?: StudentRestriction[],
+    currentDisbursementSchedule: Pick<
+      DisbursementSchedule,
+      "id" | "coeStatus" | "disbursementDate" | "disbursementScheduleStatus"
+    >,
+    activeRestrictionsActionTypes?: RestrictionActionType[][],
   ): Promise<CompletedApplicationEventCode> {
     switch (currentDisbursementSchedule.disbursementScheduleStatus) {
       case DisbursementScheduleStatus.Cancelled:
@@ -415,7 +424,7 @@ export class IER12ProcessingService {
       case DisbursementScheduleStatus.Pending:
         return this.eventCodeForCompletedApplicationWithPendingDisbursement(
           currentDisbursementSchedule,
-          studentRestrictions,
+          activeRestrictionsActionTypes,
         );
       case DisbursementScheduleStatus.Sent:
         return this.eventCodeForCompletedApplicationWithSentDisbursement(
@@ -469,18 +478,15 @@ export class IER12ProcessingService {
   /**
    * Checks if there is any active stop full time disbursement restriction
    * for a student.
-   * @param studentRestrictions  student restrictions
+   * @param activeRestrictionsActionTypes action types for active student restrictions.
    * @returns true if there is any active stop full time disbursement
    * restriction for a student.
    */
   private hasActiveStopFullTimeDisbursement(
-    studentRestrictions?: StudentRestriction[],
+    activeRestrictionsActionTypes?: RestrictionActionType[][],
   ): boolean {
-    return studentRestrictions?.some(
-      (studentRestriction) =>
-        studentRestriction.restriction.actionType?.includes(
-          RestrictionActionType.StopFullTimeDisbursement,
-        ) && studentRestriction.isActive === true,
+    return activeRestrictionsActionTypes?.some((actionType) =>
+      actionType?.includes(RestrictionActionType.StopFullTimeDisbursement),
     );
   }
 
@@ -488,12 +494,12 @@ export class IER12ProcessingService {
    * Get application event code for an application with completed status
    * with pending disbursement and completed COE.
    * @param disbursementDate disbursement date.
-   * @param studentRestrictions  student restrictions
+   * @param activeRestrictionsActionTypes action types for active student restrictions.
    * @returns application event code.
    */
   private eventCodeForCompletedApplicationWithPendingDisbursementAndCompletedCOE(
     disbursementDate: string,
-    studentRestrictions?: StudentRestriction[],
+    activeRestrictionsActionTypes?: RestrictionActionType[][],
   ): ApplicationEventCode.DISR | ApplicationEventCode.COEA {
     // Check if disbursement is not sent due to restriction.
     if (
@@ -503,7 +509,7 @@ export class IER12ProcessingService {
       )
     ) {
       const hasActiveStopFullTimeDisbursement =
-        this.hasActiveStopFullTimeDisbursement(studentRestrictions);
+        this.hasActiveStopFullTimeDisbursement(activeRestrictionsActionTypes);
       return hasActiveStopFullTimeDisbursement
         ? ApplicationEventCode.DISR
         : ApplicationEventCode.COEA;
@@ -515,17 +521,20 @@ export class IER12ProcessingService {
    * Get application event code for an application with completed status
    * with pending disbursement.
    * @param currentDisbursementSchedule current disbursement schedule.
-   * @param studentRestrictions  student restrictions
+   * @param activeRestrictionsActionTypes action types for active student restrictions.
    * @returns application event code.
    */
   private eventCodeForCompletedApplicationWithPendingDisbursement(
-    currentDisbursementSchedule: DisbursementSchedule,
-    studentRestrictions?: StudentRestriction[],
+    currentDisbursementSchedule: Pick<
+      DisbursementSchedule,
+      "coeStatus" | "disbursementDate"
+    >,
+    activeRestrictionsActionTypes?: RestrictionActionType[][],
   ): CompletedApplicationWithPendingDisbursement {
     if (currentDisbursementSchedule.coeStatus === COEStatus.completed) {
       return this.eventCodeForCompletedApplicationWithPendingDisbursementAndCompletedCOE(
         currentDisbursementSchedule.disbursementDate,
-        studentRestrictions,
+        activeRestrictionsActionTypes,
       );
     }
     // COE status required and declined will come here.

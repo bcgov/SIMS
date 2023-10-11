@@ -1,6 +1,6 @@
 import { Global, Module } from "@nestjs/common";
 import {
-  ApplicationService,
+  ApplicationSharedService,
   DisbursementOverawardService,
   NoteSharedService,
   WorkflowClientService,
@@ -26,7 +26,7 @@ import {
     IER12IntegrationService,
     DisbursementOverawardService,
     NoteSharedService,
-    ApplicationService,
+    ApplicationSharedService,
     DisbursementScheduleErrorsService,
     DisbursementValueService,
   ],
