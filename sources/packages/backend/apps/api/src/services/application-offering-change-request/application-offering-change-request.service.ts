@@ -549,7 +549,7 @@ export class ApplicationOfferingChangeRequestService {
   }
 
   /**
-   * Update the application offering change request status for the given application offering change request id.
+   * Update the application offering change request status for the given application offering change request id for the ministry user.
    * @param applicationOfferingChangeRequestId application offering change request id for which to update the status.
    * @param applicationId application id related to the application offering change request.
    * @param offeringId requested offering id related to this application offering change request.
@@ -571,24 +571,6 @@ export class ApplicationOfferingChangeRequestService {
     const currentDate = new Date();
     const application = new Application();
     application.id = applicationId;
-    // Create a new assessment if the application offering change request status is approved.
-    if (
-      applicationOfferingChangeRequestStatus ===
-      ApplicationOfferingChangeRequestStatus.Approved
-    ) {
-      application.currentAssessment = {
-        application: { id: applicationId } as Application,
-        triggerType: AssessmentTriggerType.ApplicationOfferingChange,
-        offering: { id: offeringId } as EducationProgramOffering,
-        applicationOfferingChangeRequest: {
-          id: applicationOfferingChangeRequestId,
-        } as ApplicationOfferingChangeRequest,
-        creator: auditUser,
-        createdAt: currentDate,
-        submittedBy: auditUser,
-        submittedDate: currentDate,
-      } as StudentAssessment;
-    }
     await this.dataSource.transaction(async (transactionalEntityManager) => {
       // Save the note.
       const noteEntity = await this.noteSharedService.createStudentNote(
@@ -619,6 +601,19 @@ export class ApplicationOfferingChangeRequestService {
         applicationOfferingChangeRequestStatus ===
         ApplicationOfferingChangeRequestStatus.Approved
       ) {
+        // Create a new assessment if the application offering change request status is approved.
+        application.currentAssessment = {
+          application: { id: applicationId } as Application,
+          triggerType: AssessmentTriggerType.ApplicationOfferingChange,
+          offering: { id: offeringId } as EducationProgramOffering,
+          applicationOfferingChangeRequest: {
+            id: applicationOfferingChangeRequestId,
+          } as ApplicationOfferingChangeRequest,
+          creator: auditUser,
+          createdAt: currentDate,
+          submittedBy: auditUser,
+          submittedDate: currentDate,
+        } as StudentAssessment;
         await transactionalEntityManager
           .getRepository(Application)
           .save(application);

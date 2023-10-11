@@ -27,6 +27,7 @@
         >
           <template #="{ notAllowed }">
             <footer-buttons
+              :processing="processing"
               :primaryLabel="primaryLabel"
               @secondaryClick="cancel"
               @primaryClick="assessChange"
@@ -53,8 +54,9 @@ export default defineComponent({
   },
   setup() {
     const note = ref("");
+    const processing = ref(false);
     const { showDialog, showModal, resolvePromise, showParameter } =
-      useModalDialog<ApplicationOfferingChangeAssessmentAPIInDTO | boolean>();
+      useModalDialog<ApplicationOfferingChangeAssessmentAPIInDTO | false>();
     const assessApplicationOfferingChangeRequestModal =
       {} as ApplicationOfferingChangeAssessmentAPIInDTO;
     const assessApplicationOfferingChangeRequestForm = ref({} as VForm);
@@ -82,6 +84,7 @@ export default defineComponent({
       resolvePromise(false);
     };
     const assessChange = async () => {
+      processing.value = true;
       const validationResult =
         await assessApplicationOfferingChangeRequestForm.value.validate();
       if (!validationResult.valid) {
@@ -92,6 +95,7 @@ export default defineComponent({
       assessApplicationOfferingChangeRequestModal.note = note.value;
       resolvePromise(assessApplicationOfferingChangeRequestModal);
       assessApplicationOfferingChangeRequestForm.value.reset();
+      processing.value = false;
     };
     return {
       Role,
@@ -100,6 +104,7 @@ export default defineComponent({
       showParameter,
       cancel,
       assessChange,
+      processing,
       note,
       title,
       subject,

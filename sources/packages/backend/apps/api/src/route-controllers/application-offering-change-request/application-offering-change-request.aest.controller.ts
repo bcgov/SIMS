@@ -124,9 +124,6 @@ export class ApplicationOfferingChangeRequestAESTController extends BaseControll
     description:
       "Application offering change not found or not in valid status to be updated.",
   })
-  @ApiUnprocessableEntityResponse({
-    description: "Invalid application offering change status",
-  })
   async updateApplicationOfferingChangeRequest(
     @Param("applicationOfferingChangeRequestId", ParseIntPipe)
     applicationOfferingChangeRequestId: number,
@@ -145,18 +142,6 @@ export class ApplicationOfferingChangeRequestAESTController extends BaseControll
     if (!applicationOfferingChangeRequest) {
       throw new NotFoundException(
         "Application offering change not found or not in valid status to be updated.",
-      );
-    }
-    if (
-      !(
-        payload.applicationOfferingChangeRequestStatus ===
-          ApplicationOfferingChangeRequestStatus.DeclinedBySABC ||
-        payload.applicationOfferingChangeRequestStatus ===
-          ApplicationOfferingChangeRequestStatus.Approved
-      )
-    ) {
-      throw new UnprocessableEntityException(
-        "Invalid application offering change request status.",
       );
     }
     await this.applicationOfferingChangeRequestService.assessApplicationOfferingChangeRequest(

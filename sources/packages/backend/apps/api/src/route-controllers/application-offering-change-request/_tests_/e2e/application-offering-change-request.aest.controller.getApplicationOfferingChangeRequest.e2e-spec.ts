@@ -25,7 +25,7 @@ describe("ApplicationOfferingChangeRequestAESTController(e2e)-getApplicationOffe
     db = createE2EDataSources(dataSource);
   });
 
-  it("Should return the application offering change request details when provided with the application offering change request id.", async () => {
+  it("Should return the application offering change request details when provided with the application offering change request id and the application offering change request is in progress with the student.", async () => {
     // Arrange
     const application = await saveFakeApplication(db.dataSource, undefined, {
       applicationStatus: ApplicationStatus.Completed,

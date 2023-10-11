@@ -147,7 +147,7 @@ export default defineComponent({
       {} as ApplicationOfferingDetails,
     );
     const assessApplicationOfferingChangeRequestModal = ref(
-      {} as ModalDialog<ApplicationOfferingChangeAssessmentAPIInDTO | boolean>,
+      {} as ModalDialog<ApplicationOfferingChangeAssessmentAPIInDTO | false>,
     );
     const snackBar = useSnackBar();
     const router = useRouter();
@@ -197,7 +197,7 @@ export default defineComponent({
         await assessApplicationOfferingChangeRequestModal.value.showModal(
           applicationOfferingChangeRequestStatus,
         );
-      if (responseData && typeof responseData === "object") {
+      if (responseData) {
         try {
           await ApplicationOfferingChangeRequestService.shared.assessApplicationOfferingChangeRequest(
             props.applicationOfferingChangeRequestId,
