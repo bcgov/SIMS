@@ -237,19 +237,14 @@ describe(
       const application = await createDefaultApplication(
         StudentAssessmentStatus.CancellationQueued,
       );
-      const submittedAssessment = createFakeStudentAssessment({
+      const cancellationRequestedAssessment = createFakeStudentAssessment({
         application,
         auditUser,
       });
-      submittedAssessment.studentAssessmentStatus =
+      cancellationRequestedAssessment.studentAssessmentStatus =
         StudentAssessmentStatus.CancellationRequested;
-      await db.studentAssessment.save(submittedAssessment);
-
+      await db.studentAssessment.save(cancellationRequestedAssessment);
       application.applicationStatus = ApplicationStatus.Overwritten;
-      application.studentAssessments = [
-        application.currentAssessment,
-        submittedAssessment,
-      ];
       await db.application.save(application);
 
       // Queued job.
