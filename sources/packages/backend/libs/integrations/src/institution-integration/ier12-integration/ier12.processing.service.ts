@@ -355,7 +355,6 @@ export class IER12ProcessingService {
     switch (applicationStatus) {
       case ApplicationStatus.Assessment:
         return this.applicationEventCodeDuringAssessment(applicationNumber);
-
       case ApplicationStatus.Enrolment:
         return this.applicationEventCodeDuringEnrolmentAndCompleted(
           currentDisbursementSchedule.coeStatus,
