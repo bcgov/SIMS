@@ -1,5 +1,6 @@
 import { Global, Module } from "@nestjs/common";
 import {
+  ApplicationSharedService,
   DisbursementOverawardService,
   NoteSharedService,
   WorkflowClientService,
@@ -10,6 +11,8 @@ import { IER12ProcessingService } from "./ier12.processing.service";
 import {
   StudentAssessmentService,
   SshService,
+  DisbursementScheduleErrorsService,
+  DisbursementValueService,
 } from "@sims/integrations/services";
 
 @Global()
@@ -23,6 +26,9 @@ import {
     IER12IntegrationService,
     DisbursementOverawardService,
     NoteSharedService,
+    ApplicationSharedService,
+    DisbursementScheduleErrorsService,
+    DisbursementValueService,
   ],
   exports: [IER12ProcessingService, IER12IntegrationService],
 })

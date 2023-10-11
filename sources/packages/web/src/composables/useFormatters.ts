@@ -7,11 +7,9 @@ import { Address, InstitutionUserRoles, SINStatusEnum } from "@/types";
 import dayjs, { QUnitType, OpUnitType } from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 import utc from "dayjs/plugin/utc";
-import isSameOrAfter from "dayjs/plugin/isSameOrAfter";
 
 dayjs.extend(customParseFormat);
 dayjs.extend(utc);
-dayjs.extend(isSameOrAfter);
 
 const DEFAULT_EMPTY_VALUE = "-";
 export const DATE_ONLY_ISO_FORMAT = "YYYY-MM-DD";

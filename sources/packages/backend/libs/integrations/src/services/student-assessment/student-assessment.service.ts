@@ -51,7 +51,11 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
             studentRestrictions: {
               id: true,
               isActive: true,
-              restriction: { id: true, restrictionCode: true },
+              restriction: {
+                id: true,
+                restrictionCode: true,
+                actionType: true,
+              },
             },
           },
           programYear: {

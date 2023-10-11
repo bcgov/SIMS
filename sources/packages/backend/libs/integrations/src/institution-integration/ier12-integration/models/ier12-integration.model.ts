@@ -99,6 +99,7 @@ export interface IER12Record {
   disbursementCancelDate?: Date;
   disbursementSentDate?: Date;
   disbursementAwards: IERAward[];
+  applicationEventCode: ApplicationEventCode;
 }
 
 export enum ApplicationStatusCode {
@@ -140,4 +141,89 @@ export type IERAward = Pick<
 export const DATE_FORMAT = "YYYYMMDD";
 export const SPACE_FILLER = " ";
 export const NUMBER_FILLER = "0";
+
+/**
+ * Application event code for IER file.
+ */
+export enum ApplicationEventCode {
+  /**
+   * Disbursement was configured as a result of the initial
+   * assessment and waiting for the 21 day prior to study start
+   * date to be approved.
+   */
+  ASMT = "ASMT",
+  /**
+   * Disbursement configuration has bee updated due to a reassessment
+   * resulting from an incomplete application has been edited.
+   */
+  REIA = "REIA",
+  /**
+   * A COE request has been generated and sent to school.
+   */
+  COER = "COER",
+  /**
+   * A COE request has been approved by school.
+   */
+  COEA = "COEA",
+  /**
+   * A COE request has been denied by school.
+   */
+  COED = "COED",
+  /**
+   * A disbursement has been sent but generated errors
+   * on the Finastra end (eCert and MSFAA feedback file
+   * errors detected).
+   */
+  DISE = "DISE",
+  /**
+   *A disbursement has not been sent to Finastra
+   * because of restriction.
+   */
+  DISR = "DISR",
+  /**
+   * A disbursement has been sent to Finastra
+   * but some funding was withheld due to restriction.
+   */
+  DISW = "DISW",
+  /**
+   * A disbursement has been sent to Finastra
+   * (which we treat as = student receiving the money).
+   */
+  DISS = "DISS",
+  /**
+   * A disbursement request was cancelled.
+   */
+  DISC = "DISC",
+}
+
 export const DISCRETIONARY_INCOME_PERCENTAGE = 0.15;
+
+/**
+ * Application event code for completed application.
+ */
+export type CompletedApplicationEventCode =
+  | ApplicationEventCode.COER
+  | ApplicationEventCode.COED
+  | ApplicationEventCode.DISC
+  | ApplicationEventCode.DISR
+  | ApplicationEventCode.COEA
+  | ApplicationEventCode.DISE
+  | ApplicationEventCode.DISW
+  | ApplicationEventCode.DISS;
+
+/**
+ * Application event code for completed application with sent disbursement.
+ */
+export type CompletedApplicationWithSentDisbursement =
+  | ApplicationEventCode.DISE
+  | ApplicationEventCode.DISW
+  | ApplicationEventCode.DISS;
+
+/**
+ * Application event code for completed application with pending disbursement.
+ */
+export type CompletedApplicationWithPendingDisbursement =
+  | ApplicationEventCode.COER
+  | ApplicationEventCode.COED
+  | ApplicationEventCode.DISR
+  | ApplicationEventCode.COEA;
