@@ -13,7 +13,7 @@
               class="formio-href"
               rel="noopener"
               target="_blank"
-              href="https://studentaidbc.ca/policy-and-procedures/partner-portal-information"
+              href="https://www.bceid.ca/"
               >here</a
             >.
           </p>
