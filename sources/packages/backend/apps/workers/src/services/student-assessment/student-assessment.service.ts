@@ -290,12 +290,31 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
   ): Promise<void> {
     const auditUser = await this.systemUsersService.systemUser();
     const now = new Date();
-    await this.repo.update(assessmentId, {
+    const studentAssessment = await this.repo.findOne({
+      select: { studentAssessmentStatus: true },
+      where: { id: assessmentId },
+    });
+    const assessmentUpdate: Partial<StudentAssessment> = {
       workflowData,
-      studentAssessmentStatus: StudentAssessmentStatus.Completed,
-      studentAssessmentStatusUpdatedOn: now,
       modifier: auditUser,
       updatedAt: now,
-    });
+    };
+    // In case the student assessment is in process of being cancelled or is already cancelled,
+    // it does not update status and update date.
+    if (
+      [
+        StudentAssessmentStatus.CancellationRequested,
+        StudentAssessmentStatus.CancellationQueued,
+        StudentAssessmentStatus.Cancelled,
+      ].includes(studentAssessment.studentAssessmentStatus)
+    ) {
+      await this.repo.update(assessmentId, assessmentUpdate);
+    } else {
+      await this.repo.update(assessmentId, {
+        ...assessmentUpdate,
+        studentAssessmentStatus: StudentAssessmentStatus.Completed,
+        studentAssessmentStatusUpdatedOn: now,
+      });
+    }
   }
 }

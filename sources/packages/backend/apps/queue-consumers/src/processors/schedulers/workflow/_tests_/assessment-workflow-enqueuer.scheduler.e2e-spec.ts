@@ -18,11 +18,15 @@ import {
 import { Not } from "typeorm";
 import {
   Application,
+  ApplicationStatus,
   AssessmentTriggerType,
   StudentAssessmentStatus,
   User,
 } from "@sims/sims-db";
-import { StartAssessmentQueueInDTO } from "@sims/services/queue";
+import {
+  CancelAssessmentQueueInDTO,
+  StartAssessmentQueueInDTO,
+} from "@sims/services/queue";
 
 describe(
   describeProcessorRootTest(QueueNames.AssessmentWorkflowEnqueuer),
@@ -31,6 +35,7 @@ describe(
     let db: E2EDataSources;
     let processor: AssessmentWorkflowEnqueuerScheduler;
     let startApplicationAssessmentQueueMock: Queue<StartAssessmentQueueInDTO>;
+    let cancelApplicationAssessmentQueueMock: Queue<CancelAssessmentQueueInDTO>;
     let auditUser: User;
 
     beforeAll(async () => {
@@ -41,6 +46,10 @@ describe(
       // Mocked StartApplicationAssessment queue.
       startApplicationAssessmentQueueMock = app.get(
         getQueueProviderName(QueueNames.StartApplicationAssessment),
+      );
+      // Mocked CancelApplicationAssessment queue.
+      cancelApplicationAssessmentQueueMock = app.get(
+        getQueueProviderName(QueueNames.CancelApplicationAssessment),
       );
       // Processor under test.
       processor = app.get(AssessmentWorkflowEnqueuerScheduler);
@@ -186,6 +195,68 @@ describe(
       expect(startApplicationAssessmentQueueMock.add).not.toBeCalled();
     });
 
+    it(`Should queue the assessment cancellation when an application has one assessment with status '${StudentAssessmentStatus.CancellationRequested}'.`, async () => {
+      // Arrange
+
+      // Application with a cancellation requested assessment.
+      const application = await createDefaultApplication(
+        StudentAssessmentStatus.CancellationRequested,
+      );
+      application.applicationStatus = ApplicationStatus.Overwritten;
+      await db.application.save(application);
+
+      // Queued job.
+      const job = createMock<Job<void>>();
+
+      // Act
+      await processor.enqueueAssessmentOperations(job);
+
+      // Assert
+      // Load application and related assessments for assertion.
+      const updatedApplication = await loadApplicationDataForAssertions(
+        application.id,
+      );
+
+      // Assert item was added to the queue.
+      const queueData = {
+        assessmentId: updatedApplication.currentAssessment.id,
+      } as CancelAssessmentQueueInDTO;
+      expect(cancelApplicationAssessmentQueueMock.add).toBeCalledWith(
+        queueData,
+      );
+
+      expect(updatedApplication.currentAssessment.studentAssessmentStatus).toBe(
+        StudentAssessmentStatus.CancellationQueued,
+      );
+    });
+
+    it(`Should not queue the assessment cancellation when an application has one assessment with status '${StudentAssessmentStatus.CancellationRequested}' but has another assessment with status '${StudentAssessmentStatus.CancellationQueued}'.`, async () => {
+      // Arrange
+
+      // Application with a cancellation queued assessment.
+      const application = await createDefaultApplication(
+        StudentAssessmentStatus.CancellationQueued,
+      );
+      const cancellationRequestedAssessment = createFakeStudentAssessment({
+        application,
+        auditUser,
+      });
+      cancellationRequestedAssessment.studentAssessmentStatus =
+        StudentAssessmentStatus.CancellationRequested;
+      await db.studentAssessment.save(cancellationRequestedAssessment);
+      application.applicationStatus = ApplicationStatus.Overwritten;
+      await db.application.save(application);
+
+      // Queued job.
+      const job = createMock<Job<void>>();
+
+      // Act
+      await processor.enqueueAssessmentOperations(job);
+
+      // Assert
+      expect(cancelApplicationAssessmentQueueMock.add).not.toBeCalled();
+    });
+
     /**
      * Get a default application with only one original assessment to test
      * multiple positive and negative scenarios ensuring that the only variant
@@ -220,6 +291,7 @@ describe(
           id: true,
           currentAssessment: {
             id: true,
+            studentAssessmentStatus: true,
           },
           currentProcessingAssessment: {
             id: true,

@@ -18,6 +18,7 @@ import {
   ApplicationData,
   getUserFullNameLikeSearch,
   transformToApplicationEntitySortField,
+  StudentAssessmentStatus,
 } from "@sims/sims-db";
 import { StudentFileService } from "../student-file/student-file.service";
 import {
@@ -33,7 +34,7 @@ import {
   PaginatedResults,
   offeringBelongToProgramYear,
 } from "../../utilities";
-import { CustomNamedError, QueueNames } from "@sims/utilities";
+import { CustomNamedError } from "@sims/utilities";
 import {
   SFASApplicationService,
   SFASPartTimeApplicationsService,
@@ -52,9 +53,6 @@ import {
 import { SequenceControlService } from "@sims/services";
 import { ConfigService } from "@sims/utilities/config";
 import { NotificationActionsService } from "@sims/services/notifications";
-import { InjectQueue } from "@nestjs/bull";
-import { Queue } from "bull";
-import { CancelAssessmentQueueInDTO } from "@sims/services/queue";
 import { InstitutionLocationService } from "../institution-location/institution-location.service";
 
 export const APPLICATION_DRAFT_NOT_FOUND = "APPLICATION_DRAFT_NOT_FOUND";
@@ -82,8 +80,6 @@ export class ApplicationService extends RecordDataModelService<Application> {
     private readonly offeringService: EducationProgramOfferingService,
     private readonly notificationActionsService: NotificationActionsService,
     private readonly institutionLocationService: InstitutionLocationService,
-    @InjectQueue(QueueNames.CancelApplicationAssessment)
-    private readonly cancelAssessmentQueue: Queue<CancelAssessmentQueueInDTO>,
   ) {
     super(dataSource.getRepository(Application));
   }
@@ -271,14 +267,16 @@ export class ApplicationService extends RecordDataModelService<Application> {
       newApplication.creator = auditUser;
       newApplication.studentAssessments = [originalAssessment];
       newApplication.currentAssessment = originalAssessment;
+
+      // Updates the current assessment status to cancellation requested.
+      application.currentAssessment.studentAssessmentStatus =
+        StudentAssessmentStatus.CancellationRequested;
+      application.currentAssessment.modifier = auditUser;
+      application.currentAssessment.studentAssessmentStatusUpdatedOn = now;
+      application.currentAssessment.updatedAt = now;
+
       await applicationRepository.save([application, newApplication]);
     });
-    // Deleting the existing workflow, if there is one.
-    if (application.currentAssessment.assessmentWorkflowId) {
-      await this.cancelAssessmentQueue.add({
-        assessmentId: application.currentAssessment.id,
-      });
-    }
 
     return { application, createdAssessment: originalAssessment };
   }
@@ -999,18 +997,20 @@ export class ApplicationService extends RecordDataModelService<Application> {
     }
     // Updates the application status to cancelled.
     const now = new Date();
+    const auditUser = { id: auditUserId } as User;
     application.applicationStatus = ApplicationStatus.Cancelled;
     application.applicationStatusUpdatedOn = now;
-    application.modifier = { id: auditUserId } as User;
+    application.modifier = auditUser;
     application.updatedAt = now;
+
+    // Updates the current assessment status to cancellation requested.
+    application.currentAssessment.studentAssessmentStatus =
+      StudentAssessmentStatus.CancellationRequested;
+    application.currentAssessment.modifier = auditUser;
+    application.currentAssessment.studentAssessmentStatusUpdatedOn = now;
+    application.currentAssessment.updatedAt = now;
+
     await this.repo.save(application);
-    // Delete workflow and rollback overawards if the workflow started.
-    // Workflow doest not exists for draft or submitted application, for instance.
-    if (application.currentAssessment?.assessmentWorkflowId) {
-      await this.cancelAssessmentQueue.add({
-        assessmentId: application.currentAssessment.id,
-      });
-    }
     return application;
   }
 

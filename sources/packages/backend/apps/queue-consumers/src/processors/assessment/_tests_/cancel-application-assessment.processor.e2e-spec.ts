@@ -102,6 +102,7 @@ describe(
         `Cancelling application assessment id ${studentAssessment.id}`,
         `Found workflow id ${workflowInstanceId}.`,
         "Workflow instance successfully cancelled.",
+        "Changing student assessment status to Cancelled.",
         "Rolling back overawards, if any.",
         "Assessment cancelled with success.",
       ]);

@@ -14,7 +14,11 @@ import {
   QueueProcessSummary,
   QueueProcessSummaryResult,
 } from "../models/processors.models";
-import { ApplicationStatus } from "@sims/sims-db";
+import {
+  ApplicationStatus,
+  StudentAssessment,
+  StudentAssessmentStatus,
+} from "@sims/sims-db";
 
 /**
  * Process the workflow cancellation.
@@ -100,6 +104,14 @@ export class CancelApplicationAssessmentProcessor {
       );
     }
     return this.dataSource.transaction(async (transactionEntityManager) => {
+      await summary.info(
+        `Changing student assessment status to ${StudentAssessmentStatus.Cancelled}.`,
+      );
+      await transactionEntityManager
+        .getRepository(StudentAssessment)
+        .update(assessment.id, {
+          studentAssessmentStatus: StudentAssessmentStatus.Cancelled,
+        });
       // Overawards rollback.
       // This method is safe to be called independently of the workflow state but it makes sense only after the
       // application moves from the 'In progress' status when the disbursements are generated.
