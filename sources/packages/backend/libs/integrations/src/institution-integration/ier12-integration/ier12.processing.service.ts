@@ -403,7 +403,7 @@ export class IER12ProcessingService {
       case COEStatus.declined:
         return ApplicationEventCode.COED;
       default:
-        throw "Unexpected coe status.";
+        throw new Error("Unexpected coe status.");
     }
   }
 
