@@ -22,7 +22,7 @@ module.exports = {
     filename: "[name].js",
   },
   target: "web",
-  externals: /^(k6|https?\:\/\/)(\/.*)?/,
+  externals: /^(k6|https?:\/\/)(\/.*)?/,
   devtool: "source-map",
   optimization: {
     minimize: true,
