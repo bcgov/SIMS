@@ -20,11 +20,10 @@ export class DisbursementValueService {
    * @returns true if there is any partial or full award amount, that
    * was withheld due to a restriction.
    */
-  async hasAnyFullOrPartialAwardWithheldDueToRestriction(
+  async hasAwardWithheldDueToRestriction(
     disbursementScheduleId: number,
   ): Promise<boolean> {
     return this.disbursementValueRepo.exist({
-      select: { id: true },
       where: {
         disbursementSchedule: {
           id: disbursementScheduleId,

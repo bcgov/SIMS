@@ -354,13 +354,11 @@ export class IER12ProcessingService {
         return this.applicationEventCodeDuringEnrolmentAndCompleted(
           currentDisbursementSchedule.coeStatus,
         );
-
       case ApplicationStatus.Completed:
         return this.applicationEventCodeDuringCompleted(
           currentDisbursementSchedule,
           studentRestrictions,
         );
-
       case ApplicationStatus.Cancelled:
         return ApplicationEventCode.DISC;
     }
@@ -438,11 +436,11 @@ export class IER12ProcessingService {
   ): Promise<ApplicationEventCode.DISW | ApplicationEventCode.DISS> {
     // Check if any disbursement award (full amount or a partial)
     // was withheld due to a restriction.
-    const hasAnyFullOrPartialAwardWithheldDueToRestriction =
-      await this.disbursementValueService.hasAnyFullOrPartialAwardWithheldDueToRestriction(
+    const hasAwardWithheldDueToRestriction =
+      await this.disbursementValueService.hasAwardWithheldDueToRestriction(
         currentDisbursementScheduleId,
       );
-    return hasAnyFullOrPartialAwardWithheldDueToRestriction
+    return hasAwardWithheldDueToRestriction
       ? ApplicationEventCode.DISW
       : ApplicationEventCode.DISS;
   }
@@ -457,11 +455,11 @@ export class IER12ProcessingService {
     currentDisbursementScheduleId: number,
   ): Promise<CompletedApplicationWithSentDisbursement> {
     // Check if the disbursement has any feedback error.
-    const hasFTDisbursementFeedbackErrors =
-      await this.disbursementScheduleErrorsService.hasFTDisbursementFeedbackErrors(
+    const hasFullTimeDisbursementFeedbackErrors =
+      await this.disbursementScheduleErrorsService.hasFullTimeDisbursementFeedbackErrors(
         currentDisbursementScheduleId,
       );
-    return hasFTDisbursementFeedbackErrors
+    return hasFullTimeDisbursementFeedbackErrors
       ? ApplicationEventCode.DISE
       : this.eventCodeForCompletedApplicationWithAwardWithheldDueToRestriction(
           currentDisbursementScheduleId,

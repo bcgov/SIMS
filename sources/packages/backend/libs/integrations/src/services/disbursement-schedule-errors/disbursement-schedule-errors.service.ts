@@ -6,7 +6,7 @@ import {
   DisbursementSchedule,
 } from "@sims/sims-db";
 import { SystemUsersService } from "@sims/services";
-import { FT_DISBURSEMENT_FEEDBACK_ERRORS } from "../disbursement-schedule/disbursement-schedule.models";
+import { FULL_TIME_DISBURSEMENT_FEEDBACK_ERRORS } from "../disbursement-schedule/disbursement-schedule.models";
 
 /**
  * Service layer for Disbursement Schedule Errors
@@ -55,19 +55,18 @@ export class DisbursementScheduleErrorsService extends RecordDataModelService<Di
   /**
    * Checks if there any full time disbursement feedback errors.
    * @param disbursementScheduleId disbursement schedule id.
-   * @returns true, if there any full time disbursement feedback
+   * @returns true, if there any full-time disbursement feedback
    * errors.
    */
-  async hasFTDisbursementFeedbackErrors(
+  async hasFullTimeDisbursementFeedbackErrors(
     disbursementScheduleId: number,
   ): Promise<boolean> {
     return this.repo.exist({
-      select: { id: true },
       where: {
         disbursementSchedule: {
           id: disbursementScheduleId,
         },
-        errorCode: In(FT_DISBURSEMENT_FEEDBACK_ERRORS),
+        errorCode: In(FULL_TIME_DISBURSEMENT_FEEDBACK_ERRORS),
       },
     });
   }

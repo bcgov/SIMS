@@ -24,9 +24,6 @@ export class ApplicationService {
     applicationNumber: string,
   ): Promise<boolean> {
     const applicationSubmissions = await this.applicationRepo.count({
-      select: {
-        id: true,
-      },
       where: {
         applicationNumber: applicationNumber,
       },

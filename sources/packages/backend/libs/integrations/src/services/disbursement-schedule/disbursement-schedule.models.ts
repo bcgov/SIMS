@@ -22,7 +22,7 @@ export interface ECertDisbursementSchedule extends DisbursementSchedule {
  ** need to save these codes (both FT and PT) in DB. We have a placeholder
  ** ticket created for it.
  */
-export const FT_DISBURSEMENT_FEEDBACK_ERRORS = [
+export const FULL_TIME_DISBURSEMENT_FEEDBACK_ERRORS = [
   "EDU-00010",
   "EDU-00011",
   "EDU-00012",

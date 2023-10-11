@@ -149,7 +149,7 @@ export enum ApplicationEventCode {
   /**
    * Disbursement was configured as a result of the initial
    * assessment and waiting for the 21 day prior to study start
-   * date to issue COE request.
+   * date to be approved.
    */
   ASMT = "ASMT",
   /**
@@ -172,7 +172,7 @@ export enum ApplicationEventCode {
   /**
    * A disbursement has been sent but generated errors
    * on the Finastra end (eCert and MSFAA feedback file
-   * errors detected)
+   * errors detected).
    */
   DISE = "DISE",
   /**
