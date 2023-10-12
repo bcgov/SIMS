@@ -40,7 +40,6 @@ export class ApplicationEventCodeUtilsService {
         return this.applicationEventCodeDuringAssessmentUtilsService.applicationEventCodeDuringAssessment(
           applicationNumber,
         );
-
       case ApplicationStatus.Enrolment:
         return this.applicationEventCodeDuringEnrolmentAndCompletedUtilsService.applicationEventCodeDuringEnrolmentAndCompleted(
           currentDisbursementSchedule.coeStatus,

@@ -1,11 +1,12 @@
 import { Injectable } from "@nestjs/common";
-import { DataSource, InsertResult } from "typeorm";
+import { DataSource, In, InsertResult } from "typeorm";
 import {
   RecordDataModelService,
   DisbursementFeedbackErrors,
   DisbursementSchedule,
 } from "@sims/sims-db";
 import { SystemUsersService } from "@sims/services";
+import { FULL_TIME_DISBURSEMENT_FEEDBACK_ERRORS } from "../disbursement-schedule/disbursement-schedule.models";
 
 /**
  * Service layer for Disbursement Schedule Errors
@@ -49,5 +50,24 @@ export class DisbursementScheduleErrorsService extends RecordDataModelService<Di
       .values(errorCodesObject)
       .orIgnore()
       .execute();
+  }
+
+  /**
+   * Checks if there is any full-time disbursement feedback errors.
+   * @param disbursementScheduleId disbursement schedule id.
+   * @returns true, if there is any full-time disbursement feedback
+   * errors.
+   */
+  async hasFullTimeDisbursementFeedbackErrors(
+    disbursementScheduleId: number,
+  ): Promise<boolean> {
+    return this.repo.exist({
+      where: {
+        disbursementSchedule: {
+          id: disbursementScheduleId,
+        },
+        errorCode: In(FULL_TIME_DISBURSEMENT_FEEDBACK_ERRORS),
+      },
+    });
   }
 }

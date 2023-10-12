@@ -78,7 +78,6 @@ export class IER12ProcessingService {
       const ier12Records = await this.createIER12Record(assessment);
       fileRecords[institutionCode].push(...ier12Records);
     }
-
     const uploadResult: IER12UploadResult[] = [];
     try {
       this.logger.log("Creating IER 12 content...");
@@ -198,6 +197,9 @@ export class IER12ProcessingService {
     const ier12Records: IER12Record[] = [];
     // Create IER12 records per disbursement.
     for (const disbursement of disbursementSchedules) {
+      const activeStudentRestriction = student.studentRestrictions
+        ?.filter((studentRestriction) => studentRestriction.isActive)
+        ?.map((eachRestriction) => eachRestriction.restriction.actionType);
       const [disbursementReceipt] = disbursement.disbursementReceipts;
       const ier12Record: IER12Record = {
         assessmentId: pendingAssessment.id,

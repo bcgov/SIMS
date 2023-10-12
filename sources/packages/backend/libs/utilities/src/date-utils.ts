@@ -8,6 +8,7 @@ import * as timezone from "dayjs/plugin/timezone";
 import * as dayOfYear from "dayjs/plugin/dayOfYear";
 import * as isBetween from "dayjs/plugin/isBetween";
 import * as customParseFormat from "dayjs/plugin/customParseFormat";
+import * as isSameOrAfter from "dayjs/plugin/isSameOrAfter";
 import { Between, FindOperator } from "typeorm";
 dayjs.extend(utc);
 dayjs.extend(localizedFormat);
@@ -15,6 +16,7 @@ dayjs.extend(timezone);
 dayjs.extend(dayOfYear);
 dayjs.extend(isBetween);
 dayjs.extend(customParseFormat);
+dayjs.extend(isSameOrAfter);
 
 export const DATE_ONLY_ISO_FORMAT = "YYYY-MM-DD";
 export const DATE_ONLY_FORMAT = "MMM DD YYYY";
@@ -307,3 +309,16 @@ export function formatDate(
   }
   return dayjs(date).format(dateFormat);
 }
+
+/**
+ * Checks if the end date is after or same as the start date.
+ * @param startDate start date.
+ * @param endDate end date.
+ * @returns true if end date is after or same as the start date, otherwise, false.
+ */
+export const isSameOrAfterDate = (
+  startDate: string | Date,
+  endDate: string | Date,
+): boolean => {
+  return dayjs(endDate).isSameOrAfter(startDate);
+};

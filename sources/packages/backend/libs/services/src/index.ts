@@ -29,3 +29,4 @@ export * from "./restriction/restriction-shared.service";
 export * from "./restriction/student-restriction-shared.service";
 export * from "./msfaa-number/msfaa-number-shared.service";
 export * from "./global-http/global-http.module";
+export * from "./application/application-shared.service";
