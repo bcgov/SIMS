@@ -178,10 +178,15 @@ export class ApplicationOfferingChangeAssessmentAPIInDTO {
   @IsNotEmpty()
   @MaxLength(NOTE_DESCRIPTION_MAX_LENGTH)
   note: string;
-  @IsIn([
-    ApplicationOfferingChangeRequestStatus.Approved,
-    ApplicationOfferingChangeRequestStatus.DeclinedBySABC,
-  ])
+  @IsIn(
+    [
+      ApplicationOfferingChangeRequestStatus.Approved,
+      ApplicationOfferingChangeRequestStatus.DeclinedBySABC,
+    ],
+    {
+      message: `Application offering change request must be ${ApplicationOfferingChangeRequestStatus.Approved} or ${ApplicationOfferingChangeRequestStatus.DeclinedBySABC}`,
+    },
+  )
   applicationOfferingChangeRequestStatus:
     | ApplicationOfferingChangeRequestStatus.Approved
     | ApplicationOfferingChangeRequestStatus.DeclinedBySABC;
