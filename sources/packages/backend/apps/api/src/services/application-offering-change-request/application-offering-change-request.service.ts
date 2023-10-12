@@ -564,43 +564,14 @@ export class ApplicationOfferingChangeRequestService {
   ): Promise<void> {
     const auditUser = { id: userId } as User;
     const currentDate = new Date();
-    const application = new Application();
-    const applicationOFferingChangeRequest =
-      await this.applicationOfferingChangeRequestRepo.findOne({
-        select: {
-          id: true,
-          requestedOffering: {
-            id: true,
-          },
-          application: {
-            id: true,
-            student: {
-              id: true,
-              user: {
-                id: true,
-                firstName: true,
-                lastName: true,
-              },
-            },
-          },
-        },
-        relations: {
-          application: {
-            student: {
-              user: true,
-            },
-          },
-          requestedOffering: true,
-        },
-        where: {
-          id: applicationOfferingChangeRequestId,
-        },
-      });
-    application.id = applicationOFferingChangeRequest.application.id;
+    const applicationOfferingChangeRequest = await this.getById(
+      applicationOfferingChangeRequestId,
+    );
+    const application = applicationOfferingChangeRequest.application;
     await this.dataSource.transaction(async (transactionalEntityManager) => {
       // Save the note.
       const noteEntity = await this.noteSharedService.createStudentNote(
-        applicationOFferingChangeRequest.application.student.id,
+        applicationOfferingChangeRequest.application.student.id,
         NoteType.Application,
         assessmentNote,
         userId,
@@ -629,12 +600,10 @@ export class ApplicationOfferingChangeRequestService {
       ) {
         // Create a new assessment if the application offering change request status is approved.
         application.currentAssessment = {
-          application: {
-            id: applicationOFferingChangeRequest.application.id,
-          } as Application,
+          application: applicationOfferingChangeRequest.application,
           triggerType: AssessmentTriggerType.ApplicationOfferingChange,
           offering: {
-            id: applicationOFferingChangeRequest.requestedOffering.id,
+            id: applicationOfferingChangeRequest.requestedOffering.id,
           } as EducationProgramOffering,
           applicationOfferingChangeRequest: {
             id: applicationOfferingChangeRequestId,
