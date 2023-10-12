@@ -2,7 +2,7 @@
  * Methods like setup and default are part of the K6 life cycle.
  * @see https://k6.io/docs/using-k6/test-lifecycle
  * The exported options are part of the K6 configuration.
- * @see https://k6.io/docs/using-k6/test-lifecycle
+ * @see https://k6.io/docs/using-k6/k6-options
  */
 import { check, sleep } from "k6";
 import { APPLICATION_SUBMISSION_PAYLOAD } from "./models";
@@ -19,8 +19,8 @@ interface SetupData {
  * Define test-run behavior.
  */
 export const options = {
-  vus: 100,
-  duration: "120s",
+  vus: 50,
+  duration: "60s",
 };
 
 /**

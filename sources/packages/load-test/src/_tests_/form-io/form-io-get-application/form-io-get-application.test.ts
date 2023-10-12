@@ -2,7 +2,7 @@
  * Methods like setup and default are part of the K6 life cycle.
  * @see https://k6.io/docs/using-k6/test-lifecycle
  * The exported options are part of the K6 configuration.
- * @see https://k6.io/docs/using-k6/test-lifecycle
+ * @see https://k6.io/docs/using-k6/k6-options
  */
 import { check, sleep } from "k6";
 import {
@@ -19,7 +19,7 @@ interface SetupData {
  * Part of the K6 life cycle.
  */
 export const options = {
-  vus: 30,
+  vus: 50,
   duration: "60s",
 };
 
