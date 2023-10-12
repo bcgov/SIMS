@@ -100,6 +100,7 @@ export interface IER12Record {
   disbursementSentDate?: Date;
   disbursementAwards: IERAward[];
   applicationEventCode: ApplicationEventCode;
+  applicationEventDate: Date;
 }
 
 export enum ApplicationStatusCode {

@@ -14,6 +14,7 @@ import {
   DisbursementScheduleStatus,
   MSFAANumber,
   DisbursementReceipt,
+  DisbursementFeedbackErrors,
 } from ".";
 import { ColumnNames, TableNames } from "../constant";
 import { dateOnlyTransformer } from "../transformers/date-only.transformer";
@@ -213,4 +214,20 @@ export class DisbursementSchedule extends RecordDataModel {
     },
   )
   disbursementReceipts?: DisbursementReceipt[];
+
+  /**
+   * todo: ann remove the service to retrive the application event code for FT feedback errors.
+   * Disbursement feedback errors for a disbursement schedule.
+   */
+  @OneToMany(
+    () => DisbursementFeedbackErrors,
+    (disbursementFeedbackErrors) =>
+      disbursementFeedbackErrors.disbursementSchedule,
+    {
+      eager: false,
+      cascade: false,
+      nullable: true,
+    },
+  )
+  disbursementFeedbackErrors?: DisbursementFeedbackErrors[];
 }

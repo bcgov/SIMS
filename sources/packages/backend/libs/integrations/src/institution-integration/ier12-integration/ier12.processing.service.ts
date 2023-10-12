@@ -1,5 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import {
+  Application,
   ApplicationStatus,
   COEStatus,
   DisbursementSchedule,
@@ -46,6 +47,7 @@ import {
 import { FullTimeAwardTypes } from "@sims/integrations/models";
 import { PROVINCIAL_DEFAULT_RESTRICTION_CODE } from "@sims/services/constants";
 import { DISBURSEMENT_FILE_GENERATION_ANTICIPATION_DAYS } from "@sims/integrations/constants";
+import { FULL_TIME_DISBURSEMENT_FEEDBACK_ERRORS } from "@sims/integrations/services/disbursement-schedule/disbursement-schedule.models";
 
 @Injectable()
 export class IER12ProcessingService {
@@ -218,6 +220,12 @@ export class IER12ProcessingService {
       const activeStudentRestriction = student.studentRestrictions
         ?.filter((studentRestriction) => studentRestriction.isActive)
         ?.map((eachRestriction) => eachRestriction.restriction.actionType);
+      const applicationEventCode = await this.getApplicationEventCode(
+        application.applicationNumber,
+        application.applicationStatus,
+        disbursement,
+        activeStudentRestriction,
+      );
       const [disbursementReceipt] = disbursement.disbursementReceipts;
       const ier12Record: IER12Record = {
         assessmentId: pendingAssessment.id,
@@ -323,16 +331,65 @@ export class IER12ProcessingService {
         totalAssessedCost: assessmentData.totalAssessedCost,
         totalAssessmentNeed: assessmentData.totalAssessmentNeed,
         disbursementSentDate: disbursement.dateSent,
-        applicationEventCode: await this.getApplicationEventCode(
-          application.applicationNumber,
-          application.applicationStatus,
+        applicationEventCode: applicationEventCode,
+        applicationEventDate: this.getApplicationEventDate(
+          applicationEventCode,
+          application,
           disbursement,
-          activeStudentRestriction,
         ),
       };
       ier12Records.push(ier12Record);
     }
     return ier12Records;
+  }
+
+  /**
+   * Get application event date.
+   * @param applicationEventCode application event code.
+   * @param application application.
+   * @param disbursementSchedule disbursement schedule.
+   * @returns application event date.
+   */
+  getApplicationEventDate(
+    applicationEventCode: ApplicationEventCode,
+    application: Pick<
+      Application,
+      "applicationStatus" | "applicationStatusUpdatedOn"
+    >,
+    disbursementSchedule: Pick<
+      DisbursementSchedule,
+      | "updatedAt"
+      | "disbursementDate"
+      | "dateSent"
+      | "disbursementFeedbackErrors"
+    >,
+  ): Date {
+    switch (applicationEventCode) {
+      case ApplicationEventCode.COER:
+        return application.applicationStatus === ApplicationStatus.Enrolment
+          ? application.applicationStatusUpdatedOn
+          : disbursementSchedule.updatedAt;
+      case ApplicationEventCode.DISE:
+        // todo: reuse in event code too.
+        const [{ updatedAt }] =
+          disbursementSchedule.disbursementFeedbackErrors?.filter(
+            (disbursementFeedbackErrors) =>
+              FULL_TIME_DISBURSEMENT_FEEDBACK_ERRORS.includes(
+                disbursementFeedbackErrors.errorCode,
+              ),
+          );
+        return updatedAt;
+      case ApplicationEventCode.DISR:
+        return addDays(
+          -DISBURSEMENT_FILE_GENERATION_ANTICIPATION_DAYS,
+          disbursementSchedule.disbursementDate,
+        );
+      case ApplicationEventCode.DISW:
+      case ApplicationEventCode.DISS:
+        return disbursementSchedule.dateSent;
+      default:
+        return disbursementSchedule.updatedAt;
+    }
   }
 
   /**

@@ -96,6 +96,7 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
           disbursementScheduleStatus: true,
           disbursementDate: true,
           updatedAt: true,
+          dateSent: true,
           disbursementValues: {
             id: true,
             valueCode: true,
@@ -105,6 +106,10 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
           disbursementReceipts: {
             id: true,
             disburseDate: true,
+          },
+          disbursementFeedbackErrors: {
+            updatedAt: true,
+            errorCode: true,
           },
         },
       },
