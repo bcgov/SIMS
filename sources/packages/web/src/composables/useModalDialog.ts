@@ -2,6 +2,7 @@ import { Ref, ref } from "vue";
 
 export function useModalDialog<T, TParameter = any>() {
   const showDialog = ref(false);
+  const loading = ref(false);
   const showParameter = ref<TParameter>();
   let promise: (value: T) => void;
 
@@ -23,10 +24,12 @@ export function useModalDialog<T, TParameter = any>() {
     resolvePromise,
     showModal,
     showParameter,
+    loading,
   };
 }
 
 export interface ModalDialog<T, TParameter = any> {
   showModal: (params?: TParameter) => Promise<T>;
   showDialog: Ref<boolean>;
+  loading: Ref<boolean>;
 }
