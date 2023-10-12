@@ -95,7 +95,6 @@ export interface ApplicationOfferingChangeDetailsAPIOutDTO {
   activeOfferingId: number;
   reason: string;
   assessedNoteDescription: string;
-  studentId: number;
   studentFullName: string;
   assessedDate: Date;
   assessedBy: string;

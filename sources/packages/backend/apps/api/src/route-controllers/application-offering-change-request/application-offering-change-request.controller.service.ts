@@ -104,7 +104,6 @@ export class ApplicationOfferingChangeRequestControllerService {
       return {
         ...applicationOfferingDetails,
         assessedNoteDescription: request.assessedNote?.description,
-        studentId: request.application.student.id,
         studentFullName: getUserFullName(request.application.student.user),
         assessedDate: request.assessedDate,
         assessedBy: getUserFullName(request.assessedBy),

@@ -130,7 +130,6 @@ export class ApplicationOfferingChangesAPIOutDTO extends ApplicationOfferingDeta
  */
 export class ApplicationOfferingChangeDetailsAPIOutDTO extends ApplicationOfferingDetailsAPIOutDTO {
   assessedNoteDescription?: string;
-  studentId: number;
   studentFullName: string;
   assessedDate?: Date;
   assessedBy?: string;
