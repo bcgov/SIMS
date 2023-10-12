@@ -552,7 +552,7 @@ export class ApplicationOfferingChangeRequestService {
    * @param applicationOfferingChangeRequestId application offering change request id for which to update the status.
    * @param applicationOfferingChangeRequestStatus the application offering change request status to be updated.
    * @param assessmentNote note added while updating the application offering change request.
-   * @param userId user id of the user making the approve or decline request.
+   * @param auditUserId user that should be considered the one that is causing the changes.
    */
   async assessApplicationOfferingChangeRequest(
     applicationOfferingChangeRequestId: number,
@@ -560,9 +560,9 @@ export class ApplicationOfferingChangeRequestService {
       | ApplicationOfferingChangeRequestStatus.Approved
       | ApplicationOfferingChangeRequestStatus.DeclinedBySABC,
     assessmentNote: string,
-    userId: number,
+    auditUserId: number,
   ): Promise<void> {
-    const auditUser = { id: userId } as User;
+    const auditUser = { id: auditUserId } as User;
     const currentDate = new Date();
     const applicationOfferingChangeRequest = await this.getById(
       applicationOfferingChangeRequestId,
@@ -574,7 +574,7 @@ export class ApplicationOfferingChangeRequestService {
         applicationOfferingChangeRequest.application.student.id,
         NoteType.Application,
         assessmentNote,
-        userId,
+        auditUserId,
         transactionalEntityManager,
       );
       // Update the application offering change request.
