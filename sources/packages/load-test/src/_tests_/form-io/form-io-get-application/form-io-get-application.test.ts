@@ -43,8 +43,5 @@ export default function (setupData: SetupData) {
   check(response, {
     "Created with success": (r) => r.status === 200,
   });
-  if (response.status !== 200) {
-    console.warn(response.status_text);
-  }
   sleep(1);
 }
