@@ -571,7 +571,7 @@ export class ApplicationOfferingChangeRequestService {
     await this.dataSource.transaction(async (transactionalEntityManager) => {
       // Save the note.
       const noteEntity = await this.noteSharedService.createStudentNote(
-        applicationOfferingChangeRequest.application.student.id,
+        application.student.id,
         NoteType.Application,
         assessmentNote,
         auditUserId,
