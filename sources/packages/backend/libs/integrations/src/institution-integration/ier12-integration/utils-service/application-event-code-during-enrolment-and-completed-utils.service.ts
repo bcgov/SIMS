@@ -5,7 +5,6 @@ import {
   DisbursementScheduleStatus,
   RestrictionActionType,
 } from "@sims/sims-db";
-import { LoggerService, InjectLogger } from "@sims/utilities/logger";
 import { addDays, isSameOrAfterDate } from "@sims/utilities";
 import {
   DisbursementScheduleErrorsService,
@@ -185,7 +184,4 @@ export class ApplicationEventCodeDuringEnrolmentAndCompletedUtilsService {
       currentDisbursementSchedule.coeStatus,
     );
   }
-
-  @InjectLogger()
-  logger: LoggerService;
 }

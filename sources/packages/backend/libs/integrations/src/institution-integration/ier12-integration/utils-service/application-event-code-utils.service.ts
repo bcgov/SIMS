@@ -4,7 +4,6 @@ import {
   DisbursementSchedule,
   RestrictionActionType,
 } from "@sims/sims-db";
-import { LoggerService, InjectLogger } from "@sims/utilities/logger";
 import { ApplicationEventCode } from "../models/ier12-integration.model";
 import {
   ApplicationEventCodeDuringAssessmentUtilsService,
@@ -53,7 +52,4 @@ export class ApplicationEventCodeUtilsService {
         return ApplicationEventCode.DISC;
     }
   }
-
-  @InjectLogger()
-  logger: LoggerService;
 }

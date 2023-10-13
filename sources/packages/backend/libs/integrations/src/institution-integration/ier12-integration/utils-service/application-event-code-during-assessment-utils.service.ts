@@ -1,5 +1,4 @@
 import { Injectable } from "@nestjs/common";
-import { LoggerService, InjectLogger } from "@sims/utilities/logger";
 import { ApplicationSharedService } from "@sims/services";
 import { ApplicationEventCode } from "../models/ier12-integration.model";
 
@@ -26,7 +25,4 @@ export class ApplicationEventCodeDuringAssessmentUtilsService {
       ? ApplicationEventCode.REIA
       : ApplicationEventCode.ASMT;
   }
-
-  @InjectLogger()
-  logger: LoggerService;
 }
