@@ -61,7 +61,10 @@ export class ApplicationEventDateUtilsService {
    * @returns full-time feedback error updated at date.
    */
   private getFullTimeFeedbackErrorUpdateAt(
-    disbursementFeedbackErrors: DisbursementFeedbackErrors[],
+    disbursementFeedbackErrors: Pick<
+      DisbursementFeedbackErrors,
+      "errorCode" | "updatedAt"
+    >[],
   ): Date {
     const [{ updatedAt }] = disbursementFeedbackErrors.filter(
       (disbursementFeedbackErrors) =>

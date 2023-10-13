@@ -14,6 +14,7 @@ import {
   CompletedApplicationEventCode,
   CompletedApplicationWithPendingDisbursement,
   CompletedApplicationWithSentDisbursement,
+  DisbursementScheduleForApplicationEventCodeDuringCompleted,
 } from "../models/ier12-integration.model";
 import { FULL_TIME_DISBURSEMENT_FEEDBACK_ERRORS } from "@sims/integrations/services/disbursement-schedule/disbursement-schedule.models";
 
@@ -48,14 +49,7 @@ export class ApplicationEventCodeDuringEnrolmentAndCompletedUtilsService {
    * @returns application event code.
    */
   async applicationEventCodeDuringCompleted(
-    currentDisbursementSchedule: Pick<
-      DisbursementSchedule,
-      | "id"
-      | "coeStatus"
-      | "disbursementDate"
-      | "disbursementScheduleStatus"
-      | "disbursementFeedbackErrors"
-    >,
+    currentDisbursementSchedule: DisbursementScheduleForApplicationEventCodeDuringCompleted,
     activeRestrictionsActionTypes?: RestrictionActionType[][],
   ): Promise<CompletedApplicationEventCode> {
     switch (currentDisbursementSchedule.disbursementScheduleStatus) {
@@ -102,7 +96,10 @@ export class ApplicationEventCodeDuringEnrolmentAndCompletedUtilsService {
    * errors.
    */
   private hasFullTimeDisbursementFeedbackErrors(
-    disbursementFeedbackErrors?: DisbursementFeedbackErrors[],
+    disbursementFeedbackErrors?: Pick<
+      DisbursementFeedbackErrors,
+      "errorCode"
+    >[],
   ): boolean | undefined {
     return disbursementFeedbackErrors?.some((disbursementFeedbackError) =>
       FULL_TIME_DISBURSEMENT_FEEDBACK_ERRORS.includes(
@@ -120,7 +117,7 @@ export class ApplicationEventCodeDuringEnrolmentAndCompletedUtilsService {
    */
   private async eventCodeForCompletedApplicationWithSentDisbursement(
     currentDisbursementScheduleId: number,
-    disbursementFeedbackErrors: DisbursementFeedbackErrors[],
+    disbursementFeedbackErrors: Pick<DisbursementFeedbackErrors, "errorCode">[],
   ): Promise<CompletedApplicationWithSentDisbursement> {
     // Check if the disbursement has any feedback error.
     const hasFullTimeDisbursementFeedbackErrors =

@@ -3,6 +3,7 @@ import {
   ApplicationStatus,
   AssessmentTriggerType,
   COEStatus,
+  DisbursementSchedule,
   DisbursementScheduleStatus,
   DisbursementValue,
   StudentMaritalStatusCode,
@@ -228,3 +229,15 @@ export type CompletedApplicationWithPendingDisbursement =
   | ApplicationEventCode.COED
   | ApplicationEventCode.DISR
   | ApplicationEventCode.COEA;
+
+/**
+ * Disbursement schedule for application event code during application completed status.
+ */
+export type DisbursementScheduleForApplicationEventCodeDuringCompleted = Pick<
+  DisbursementSchedule,
+  | "id"
+  | "coeStatus"
+  | "disbursementDate"
+  | "disbursementScheduleStatus"
+  | "disbursementFeedbackErrors"
+>;
