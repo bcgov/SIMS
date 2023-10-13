@@ -241,3 +241,11 @@ export type DisbursementScheduleForApplicationEventCodeDuringCompleted = Pick<
   | "disbursementScheduleStatus"
   | "disbursementFeedbackErrors"
 >;
+
+/**
+ * Disbursement schedule for application event date.
+ */
+export type DisbursementScheduleForApplicationEventDate = Pick<
+  DisbursementSchedule,
+  "updatedAt" | "disbursementDate" | "dateSent" | "disbursementFeedbackErrors"
+>;

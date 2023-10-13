@@ -3,9 +3,11 @@ import {
   Application,
   ApplicationStatus,
   DisbursementFeedbackErrors,
-  DisbursementSchedule,
 } from "@sims/sims-db";
-import { ApplicationEventCode } from "../models/ier12-integration.model";
+import {
+  ApplicationEventCode,
+  DisbursementScheduleForApplicationEventDate,
+} from "../models/ier12-integration.model";
 import { FULL_TIME_DISBURSEMENT_FEEDBACK_ERRORS } from "@sims/integrations/services/disbursement-schedule/disbursement-schedule.models";
 import { DISBURSEMENT_FILE_GENERATION_ANTICIPATION_DAYS } from "@sims/services/constants";
 import { addDays } from "@sims/utilities";
@@ -25,13 +27,7 @@ export class ApplicationEventDateUtilsService {
       Application,
       "applicationStatus" | "applicationStatusUpdatedOn"
     >,
-    disbursementSchedule: Pick<
-      DisbursementSchedule,
-      | "updatedAt"
-      | "disbursementDate"
-      | "dateSent"
-      | "disbursementFeedbackErrors"
-    >,
+    disbursementSchedule: DisbursementScheduleForApplicationEventDate,
   ): Date {
     switch (applicationEventCode) {
       case ApplicationEventCode.COER:
