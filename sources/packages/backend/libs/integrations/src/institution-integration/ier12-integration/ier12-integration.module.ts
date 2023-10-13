@@ -11,9 +11,14 @@ import { IER12ProcessingService } from "./ier12.processing.service";
 import {
   StudentAssessmentService,
   SshService,
-  DisbursementScheduleErrorsService,
   DisbursementValueService,
 } from "@sims/integrations/services";
+import {
+  ApplicationEventCodeDuringAssessmentUtilsService,
+  ApplicationEventCodeDuringEnrolmentAndCompletedUtilsService,
+  ApplicationEventCodeUtilsService,
+  ApplicationEventDateUtilsService,
+} from "./utils-service";
 
 @Global()
 @Module({
@@ -27,8 +32,11 @@ import {
     DisbursementOverawardService,
     NoteSharedService,
     ApplicationSharedService,
-    DisbursementScheduleErrorsService,
     DisbursementValueService,
+    ApplicationEventCodeUtilsService,
+    ApplicationEventCodeDuringAssessmentUtilsService,
+    ApplicationEventCodeDuringEnrolmentAndCompletedUtilsService,
+    ApplicationEventDateUtilsService,
   ],
   exports: [IER12ProcessingService, IER12IntegrationService],
 })
