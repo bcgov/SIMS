@@ -87,6 +87,7 @@
     </v-window>
     <assess-application-offering-change-request-modal
       ref="assessApplicationOfferingChangeRequestModal"
+      :processing="assessApplicationOfferingChangeRequestModal.loading"
     />
   </full-page-container>
 </template>
@@ -199,6 +200,7 @@ export default defineComponent({
         );
       if (responseData) {
         try {
+          assessApplicationOfferingChangeRequestModal.value.loading = true;
           await ApplicationOfferingChangeRequestService.shared.assessApplicationOfferingChangeRequest(
             props.applicationOfferingChangeRequestId,
             responseData,

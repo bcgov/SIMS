@@ -119,7 +119,7 @@ export class ApplicationOfferingChangeRequestAESTController extends BaseControll
     description:
       "Application offering change not found or not in valid status to be approved/declined.",
   })
-  async updateApplicationOfferingChangeRequest(
+  async assessApplicationOfferingChangeRequest(
     @Param("applicationOfferingChangeRequestId", ParseIntPipe)
     applicationOfferingChangeRequestId: number,
     @Body()

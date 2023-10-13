@@ -578,21 +578,13 @@ export class ApplicationOfferingChangeRequestService {
         transactionalEntityManager,
       );
       // Update the application offering change request.
-      await transactionalEntityManager
-        .getRepository(ApplicationOfferingChangeRequest)
-        .update(
-          {
-            id: applicationOfferingChangeRequestId,
-          },
-          {
-            applicationOfferingChangeRequestStatus,
-            assessedNote: noteEntity,
-            modifier: auditUser,
-            updatedAt: currentDate,
-            assessedBy: auditUser,
-            assessedDate: currentDate,
-          },
-        );
+      applicationOfferingChangeRequest.applicationOfferingChangeRequestStatus =
+        applicationOfferingChangeRequestStatus;
+      applicationOfferingChangeRequest.assessedNote = noteEntity;
+      applicationOfferingChangeRequest.modifier = auditUser;
+      applicationOfferingChangeRequest.updatedAt = currentDate;
+      applicationOfferingChangeRequest.assessedBy = auditUser;
+      applicationOfferingChangeRequest.assessedDate = currentDate;
       // Save the application.
       if (
         applicationOfferingChangeRequestStatus ===
@@ -600,23 +592,19 @@ export class ApplicationOfferingChangeRequestService {
       ) {
         // Create a new assessment if the application offering change request status is approved.
         application.currentAssessment = {
-          application: applicationOfferingChangeRequest.application,
+          application,
           triggerType: AssessmentTriggerType.ApplicationOfferingChange,
-          offering: {
-            id: applicationOfferingChangeRequest.requestedOffering.id,
-          } as EducationProgramOffering,
-          applicationOfferingChangeRequest: {
-            id: applicationOfferingChangeRequestId,
-          } as ApplicationOfferingChangeRequest,
+          offering: applicationOfferingChangeRequest.requestedOffering,
+          applicationOfferingChangeRequest,
           creator: auditUser,
           createdAt: currentDate,
           submittedBy: auditUser,
           submittedDate: currentDate,
         } as StudentAssessment;
-        await transactionalEntityManager
-          .getRepository(Application)
-          .save(application);
       }
+      await transactionalEntityManager
+        .getRepository(ApplicationOfferingChangeRequest)
+        .save(applicationOfferingChangeRequest);
     });
   }
 }

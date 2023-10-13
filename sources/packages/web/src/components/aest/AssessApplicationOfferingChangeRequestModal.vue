@@ -27,7 +27,7 @@
         >
           <template #="{ notAllowed }">
             <footer-buttons
-              :processing="loading"
+              :processing="processing"
               :primaryLabel="primaryLabel"
               @secondaryClick="cancel"
               @primaryClick="assessChange"
@@ -52,9 +52,16 @@ export default defineComponent({
     ModalDialogBase,
     CheckPermissionRole,
   },
+  props: {
+    processing: {
+      type: Boolean,
+      required: true,
+      default: false,
+    },
+  },
   setup() {
     const note = ref("");
-    const { showDialog, showModal, resolvePromise, showParameter, loading } =
+    const { showDialog, showModal, resolvePromise, showParameter } =
       useModalDialog<ApplicationOfferingChangeAssessmentAPIInDTO | false>();
     const assessApplicationOfferingChangeRequestModal =
       {} as ApplicationOfferingChangeAssessmentAPIInDTO;
@@ -83,7 +90,6 @@ export default defineComponent({
       resolvePromise(false);
     };
     const assessChange = async () => {
-      loading.value = true;
       const validationResult =
         await assessApplicationOfferingChangeRequestForm.value.validate();
       if (!validationResult.valid) {
@@ -102,7 +108,6 @@ export default defineComponent({
       showParameter,
       cancel,
       assessChange,
-      loading,
       note,
       title,
       subject,
