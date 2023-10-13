@@ -57,7 +57,7 @@ export class ApplicationEventDateUtilsService {
 
   /**
    * Get full-time feedback error updated at date.
-   * @param disbursementFeedbackErrors  disbursement feedback errors.
+   * @param disbursementFeedbackErrors disbursement feedback errors.
    * @returns full-time feedback error updated at date.
    */
   private getFullTimeFeedbackErrorUpdateAt(
