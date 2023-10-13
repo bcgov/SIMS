@@ -216,7 +216,6 @@ export class DisbursementSchedule extends RecordDataModel {
   disbursementReceipts?: DisbursementReceipt[];
 
   /**
-   * todo: ann remove the service to retrive the application event code for FT feedback errors.
    * Disbursement feedback errors for a disbursement schedule.
    */
   @OneToMany(
