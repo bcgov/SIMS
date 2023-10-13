@@ -103,7 +103,7 @@ export class ApplicationEventCodeDuringEnrolmentAndCompletedUtilsService {
    */
   private hasFullTimeDisbursementFeedbackErrors(
     disbursementFeedbackErrors?: DisbursementFeedbackErrors[],
-  ): boolean {
+  ): boolean | undefined {
     return disbursementFeedbackErrors?.some((disbursementFeedbackError) =>
       FULL_TIME_DISBURSEMENT_FEEDBACK_ERRORS.includes(
         disbursementFeedbackError.errorCode,
