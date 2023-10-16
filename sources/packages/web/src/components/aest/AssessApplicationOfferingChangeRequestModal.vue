@@ -27,7 +27,7 @@
         >
           <template #="{ notAllowed }">
             <footer-buttons
-              :processing="processing"
+              :processing="loading"
               :primaryLabel="primaryLabel"
               @secondaryClick="cancel"
               @primaryClick="assessChange"
@@ -51,13 +51,6 @@ export default defineComponent({
   components: {
     ModalDialogBase,
     CheckPermissionRole,
-  },
-  props: {
-    processing: {
-      type: Boolean,
-      required: true,
-      default: false,
-    },
   },
   setup() {
     const note = ref("");
@@ -104,7 +97,9 @@ export default defineComponent({
       assessApplicationOfferingChangeRequestModal.applicationOfferingChangeRequestStatus =
         showParameter.value;
       assessApplicationOfferingChangeRequestModal.note = note.value;
-      resolvePromise(assessApplicationOfferingChangeRequestModal, true);
+      resolvePromise(assessApplicationOfferingChangeRequestModal, {
+        keepModalOpen: true,
+      });
       assessApplicationOfferingChangeRequestForm.value.reset();
     };
     return {

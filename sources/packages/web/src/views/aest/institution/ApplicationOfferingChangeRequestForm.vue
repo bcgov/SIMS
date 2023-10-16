@@ -87,7 +87,6 @@
     </v-window>
     <assess-application-offering-change-request-modal
       ref="assessApplicationOfferingChangeRequestModal"
-      :processing="assessApplicationOfferingChangeRequestModal.loading"
     />
   </full-page-container>
 </template>
@@ -210,12 +209,12 @@ export default defineComponent({
           snackBar.success(
             "Your decision was submitted. You can refer to the outcome below.",
           );
+          assessApplicationOfferingChangeRequestModal.value.hideModal();
         } catch {
           snackBar.error(
             "Unexpected error while submitting application offering change request.",
           );
-        } finally {
-          assessApplicationOfferingChangeRequestModal.value.hideModal();
+          assessApplicationOfferingChangeRequestModal.value.loading = false;
         }
       }
     };
