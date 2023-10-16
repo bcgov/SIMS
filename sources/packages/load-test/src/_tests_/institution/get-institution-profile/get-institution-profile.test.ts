@@ -6,21 +6,27 @@
  */
 import { check, sleep } from "k6";
 import {
-  createFormAuthHeader,
-  getFormByAlias,
-} from "../../../utils/form-io-api/form-io-api";
+  AuthorizedParties,
+  getAPICall,
+} from "../../../utils/sims-api/sims-api";
+import { UserPasswordCredential, getCachedToken } from "../../../utils/auth";
+import { getInstitutionAdminCredentials } from "../../../utils/sims-api";
 
 interface SetupData {
-  formIOHeader: Record<string, string>;
+  credentials: UserPasswordCredential;
 }
 
 /**
  * Define test-run behavior.
- * Part of the K6 life cycle.
+ * Ramping up to 120 during 10s to allow Keycloak to
+ * digest the requests. All VUs created at the same time
+ * was resulting on a internal server error (500).
  */
 export const options = {
-  vus: 50,
-  duration: "60s",
+  stages: [
+    { target: 120, duration: "10s" },
+    { target: 120, duration: "10m" },
+  ],
 };
 
 /**
@@ -29,8 +35,8 @@ export const options = {
  * @returns data to be consumed
  */
 export function setup(): SetupData {
-  const formIOHeader = createFormAuthHeader();
-  return { formIOHeader };
+  const credentials = getInstitutionAdminCredentials();
+  return { credentials };
 }
 
 /**
@@ -39,9 +45,12 @@ export function setup(): SetupData {
  * @param setupData setup data returned by setup method.
  */
 export default function (setupData: SetupData) {
-  const response = getFormByAlias("sfaa2023-24", setupData.formIOHeader);
+  const response = getAPICall(
+    "institutions/institution",
+    setupData.credentials
+  );
   check(response, {
-    "Created with success": (r) => r.status === 200,
+    "Retrieved with success": (r) => r.status === 200,
   });
   sleep(1);
 }
