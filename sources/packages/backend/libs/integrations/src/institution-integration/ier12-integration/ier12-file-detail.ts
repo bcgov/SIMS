@@ -295,8 +295,8 @@ export class IER12FileDetail implements IER12FileLine {
     record.appendOptionalNumberWithFiller(this.mssMiscCostsAllowance, 10);
     record.appendOptionalNumberWithFiller(this.mssTransportCostsAllowance, 10);
     record.appendOptionalNumberWithFiller(this.mssExtraTransportCosts, 10);
-    record.appendOptionalStringWithFiller(this.applicationEventCode, 4);
-    record.appendOptionalFormattedDate(this.applicationEventDate);
+    record.appendStringWithFiller(this.applicationEventCode, 4);
+    record.appendFormattedDate(this.applicationEventDate);
     record.appendOptionalFormattedDate(this.documentProducedDate);
     record.appendStringWithFiller(this.coeStatus, 10);
     record.appendStringWithFiller(this.disbursementScheduleStatus, 10);
