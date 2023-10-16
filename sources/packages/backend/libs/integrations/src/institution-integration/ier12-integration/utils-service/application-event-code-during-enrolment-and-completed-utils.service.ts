@@ -14,6 +14,7 @@ import {
   CompletedApplicationEventCode,
   CompletedApplicationWithPendingDisbursement,
   CompletedApplicationWithSentDisbursement,
+  DisbursementFeedbackErrorsForApplicationEventDate,
   DisbursementScheduleForApplicationEventCodeDuringCompleted,
 } from "../models/ier12-integration.model";
 import { FULL_TIME_DISBURSEMENT_FEEDBACK_ERRORS } from "@sims/integrations/services/disbursement-schedule/disbursement-schedule.models";
@@ -96,10 +97,7 @@ export class ApplicationEventCodeDuringEnrolmentAndCompletedUtilsService {
    * errors.
    */
   private hasFullTimeDisbursementFeedbackErrors(
-    disbursementFeedbackErrors?: Pick<
-      DisbursementFeedbackErrors,
-      "errorCode"
-    >[],
+    disbursementFeedbackErrors?: DisbursementFeedbackErrorsForApplicationEventDate[],
   ): boolean | undefined {
     return disbursementFeedbackErrors?.some((disbursementFeedbackError) =>
       FULL_TIME_DISBURSEMENT_FEEDBACK_ERRORS.includes(
@@ -117,7 +115,7 @@ export class ApplicationEventCodeDuringEnrolmentAndCompletedUtilsService {
    */
   private async eventCodeForCompletedApplicationWithSentDisbursement(
     currentDisbursementScheduleId: number,
-    disbursementFeedbackErrors: Pick<DisbursementFeedbackErrors, "errorCode">[],
+    disbursementFeedbackErrors: DisbursementFeedbackErrorsForApplicationEventDate[],
   ): Promise<CompletedApplicationWithSentDisbursement> {
     // Check if the disbursement has any feedback error.
     const hasFullTimeDisbursementFeedbackErrors =

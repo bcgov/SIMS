@@ -3,6 +3,7 @@ import {
   ApplicationStatus,
   AssessmentTriggerType,
   COEStatus,
+  DisbursementFeedbackErrors,
   DisbursementSchedule,
   DisbursementScheduleStatus,
   DisbursementValue,
@@ -248,4 +249,12 @@ export type DisbursementScheduleForApplicationEventCodeDuringCompleted = Pick<
 export type DisbursementScheduleForApplicationEventDate = Pick<
   DisbursementSchedule,
   "updatedAt" | "disbursementDate" | "dateSent" | "disbursementFeedbackErrors"
+>;
+
+/**
+ * Disbursement feedback error for application event date.
+ */
+export type DisbursementFeedbackErrorsForApplicationEventDate = Pick<
+  DisbursementFeedbackErrors,
+  "errorCode"
 >;
