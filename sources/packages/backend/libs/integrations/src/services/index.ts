@@ -17,3 +17,4 @@ export * from "./atbc/atbc.service";
 export * from "./atbc/models/atbc.model";
 export * from "./sin-validation/sin-validation.service";
 export * from "./institution-location/institution-location.service";
+export * from "./disbursement-value/disbursement-value.service";

@@ -41,13 +41,19 @@ export class AssessmentWorkflowEnqueuerScheduler extends BaseScheduler<void> {
       processSummary.info(
         "Checking application assessments to be queued for start.",
       );
-      // Process summary to be populated by the enqueueStartAssessmentWorkflows.
-      // In case an unexpected error happen the finally block will still be able to
-      // output the partial information captured by the processSummary.
-      const serviceProcessSummary = new ProcessSummary();
-      processSummary.children(serviceProcessSummary);
-      await this.workflowEnqueuerService.enqueueStartAssessmentWorkflows(
-        serviceProcessSummary,
+      // Check for applications with assessments to be cancelled.
+      await this.executeEnqueueProcess(
+        processSummary,
+        this.workflowEnqueuerService.enqueueCancelAssessmentWorkflows.bind(
+          this.workflowEnqueuerService,
+        ),
+      );
+      // Check for applications with assessments to be started.
+      await this.executeEnqueueProcess(
+        processSummary,
+        this.workflowEnqueuerService.enqueueStartAssessmentWorkflows.bind(
+          this.workflowEnqueuerService,
+        ),
       );
       return getSuccessMessageWithAttentionCheck(
         "Process finalized with success.",
@@ -61,6 +67,29 @@ export class AssessmentWorkflowEnqueuerScheduler extends BaseScheduler<void> {
       this.logger.logProcessSummary(processSummary);
       await logProcessSummaryToJobLogger(processSummary, job);
       await this.cleanSchedulerQueueHistory();
+    }
+  }
+
+  /**
+   * Enqueues the process and creates a new process summary for the queue process.
+   * @param parentProcessSummary parent process summary.
+   * @param enqueueProcess enqueue process function to be called.
+   */
+  private async executeEnqueueProcess(
+    parentProcessSummary: ProcessSummary,
+    enqueueProcess: (summary: ProcessSummary) => Promise<void>,
+  ): Promise<void> {
+    try {
+      // Process summary to be populated by each enqueueing workflow call.
+      // In case an unexpected error happen the finally block will still be able to
+      // output the partial information captured by the processSummary.
+      const serviceProcessSummary = new ProcessSummary();
+      parentProcessSummary.children(serviceProcessSummary);
+      await enqueueProcess(serviceProcessSummary);
+    } catch (error: unknown) {
+      const errorMessage =
+        "Unexpected error while enqueueing start assessment workflows.";
+      parentProcessSummary.error(errorMessage, error);
     }
   }
 

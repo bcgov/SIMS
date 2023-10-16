@@ -51,7 +51,11 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
             studentRestrictions: {
               id: true,
               isActive: true,
-              restriction: { id: true, restrictionCode: true },
+              restriction: {
+                id: true,
+                restrictionCode: true,
+                actionType: true,
+              },
             },
           },
           programYear: {
@@ -92,6 +96,7 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
           disbursementScheduleStatus: true,
           disbursementDate: true,
           updatedAt: true,
+          dateSent: true,
           disbursementValues: {
             id: true,
             valueCode: true,
@@ -102,12 +107,17 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
             id: true,
             disburseDate: true,
           },
+          disbursementFeedbackErrors: {
+            updatedAt: true,
+            errorCode: true,
+          },
         },
       },
       relations: {
         disbursementSchedules: {
           disbursementValues: true,
           disbursementReceipts: true,
+          disbursementFeedbackErrors: true,
         },
         application: {
           student: {
@@ -130,6 +140,17 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
         },
         {
           disbursementSchedules: { updatedAt: dateEqualTo(processingDate) },
+          offering: { institutionLocation: { hasIntegration: true } },
+          application: {
+            applicationStatus: Not(ApplicationStatus.Overwritten),
+          },
+        },
+        {
+          disbursementSchedules: {
+            disbursementFeedbackErrors: {
+              updatedAt: dateEqualTo(processingDate),
+            },
+          },
           offering: { institutionLocation: { hasIntegration: true } },
           application: {
             applicationStatus: Not(ApplicationStatus.Overwritten),

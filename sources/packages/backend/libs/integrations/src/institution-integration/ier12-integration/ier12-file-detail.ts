@@ -5,6 +5,7 @@ import {
 } from "@sims/sims-db";
 import { SpecializedStringBuilder } from "@sims/utilities";
 import {
+  ApplicationEventCode,
   ApplicationStatusCode,
   DATE_FORMAT,
   IER12FileLine,
@@ -138,10 +139,8 @@ export class IER12FileDetail implements IER12FileLine {
   mssTransportCostsAllowance?: number;
   // Analysis pending for the field.
   mssExtraTransportCosts?: number;
-  // Analysis pending for the field.
-  applicationEventCode?: string;
-  // Analysis pending for the field.
-  applicationEventDate?: Date;
+  applicationEventCode: ApplicationEventCode;
+  applicationEventDate: Date;
   documentProducedDate?: Date;
   coeStatus: COEStatus;
   disbursementScheduleStatus: DisbursementScheduleStatus;

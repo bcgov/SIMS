@@ -11,7 +11,7 @@
       <banner
         v-if="programData.hasOfferings"
         :type="BannerTypes.Success"
-        header="Students have applied financial aid for this program"
+        header="Program details no longer editable"
         summary="This program has study period offerings attached to it, and the program details can no longer be edited. If revisions are required other than to program name or program description, you must create a new program with the correct details."
       >
         <template #actions>

@@ -29,6 +29,10 @@ import {
 } from "@sims/services";
 import { FullTimeAwardTypes } from "@sims/integrations/models";
 import { PROVINCIAL_DEFAULT_RESTRICTION_CODE } from "@sims/services/constants";
+import {
+  ApplicationEventCodeUtilsService,
+  ApplicationEventDateUtilsService,
+} from "./utils-service";
 
 @Injectable()
 export class IER12ProcessingService {
@@ -38,6 +42,8 @@ export class IER12ProcessingService {
     private readonly ier12IntegrationService: IER12IntegrationService,
     private readonly studentAssessmentService: StudentAssessmentService,
     private readonly disbursementOverawardService: DisbursementOverawardService,
+    private readonly applicationEventCodeUtilsService: ApplicationEventCodeUtilsService,
+    private readonly applicationEventDateUtilsService: ApplicationEventDateUtilsService,
   ) {
     this.institutionIntegrationConfig = config.institutionIntegration;
   }
@@ -76,7 +82,6 @@ export class IER12ProcessingService {
       const ier12Records = await this.createIER12Record(assessment);
       fileRecords[institutionCode].push(...ier12Records);
     }
-
     const uploadResult: IER12UploadResult[] = [];
     try {
       this.logger.log("Creating IER 12 content...");
@@ -196,6 +201,16 @@ export class IER12ProcessingService {
     const ier12Records: IER12Record[] = [];
     // Create IER12 records per disbursement.
     for (const disbursement of disbursementSchedules) {
+      const activeStudentRestriction = student.studentRestrictions
+        ?.filter((studentRestriction) => studentRestriction.isActive)
+        ?.map((eachRestriction) => eachRestriction.restriction.actionType);
+      const applicationEventCode =
+        await this.applicationEventCodeUtilsService.getApplicationEventCode(
+          application.applicationNumber,
+          application.applicationStatus,
+          disbursement,
+          activeStudentRestriction,
+        );
       const [disbursementReceipt] = disbursement.disbursementReceipts;
       const ier12Record: IER12Record = {
         assessmentId: pendingAssessment.id,
@@ -301,6 +316,13 @@ export class IER12ProcessingService {
         totalAssessedCost: assessmentData.totalAssessedCost,
         totalAssessmentNeed: assessmentData.totalAssessmentNeed,
         disbursementSentDate: disbursement.dateSent,
+        applicationEventCode: applicationEventCode,
+        applicationEventDate:
+          this.applicationEventDateUtilsService.getApplicationEventDate(
+            applicationEventCode,
+            application,
+            disbursement,
+          ),
       };
       ier12Records.push(ier12Record);
     }
