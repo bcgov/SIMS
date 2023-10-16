@@ -3,6 +3,8 @@ import {
   ApplicationStatus,
   AssessmentTriggerType,
   COEStatus,
+  DisbursementFeedbackErrors,
+  DisbursementSchedule,
   DisbursementScheduleStatus,
   DisbursementValue,
   StudentMaritalStatusCode,
@@ -100,6 +102,7 @@ export interface IER12Record {
   disbursementSentDate?: Date;
   disbursementAwards: IERAward[];
   applicationEventCode: ApplicationEventCode;
+  applicationEventDate: Date;
 }
 
 export enum ApplicationStatusCode {
@@ -227,3 +230,31 @@ export type CompletedApplicationWithPendingDisbursement =
   | ApplicationEventCode.COED
   | ApplicationEventCode.DISR
   | ApplicationEventCode.COEA;
+
+/**
+ * Disbursement schedule for application event code during application completed status.
+ */
+export type DisbursementScheduleForApplicationEventCodeDuringCompleted = Pick<
+  DisbursementSchedule,
+  | "id"
+  | "coeStatus"
+  | "disbursementDate"
+  | "disbursementScheduleStatus"
+  | "disbursementFeedbackErrors"
+>;
+
+/**
+ * Disbursement schedule for application event date.
+ */
+export type DisbursementScheduleForApplicationEventDate = Pick<
+  DisbursementSchedule,
+  "updatedAt" | "disbursementDate" | "dateSent" | "disbursementFeedbackErrors"
+>;
+
+/**
+ * Disbursement feedback error for application event date.
+ */
+export type DisbursementFeedbackErrorsForApplicationEventDate = Pick<
+  DisbursementFeedbackErrors,
+  "errorCode"
+>;

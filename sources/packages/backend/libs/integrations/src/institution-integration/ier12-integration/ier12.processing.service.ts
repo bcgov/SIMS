@@ -29,7 +29,10 @@ import {
 } from "@sims/services";
 import { FullTimeAwardTypes } from "@sims/integrations/models";
 import { PROVINCIAL_DEFAULT_RESTRICTION_CODE } from "@sims/services/constants";
-import { ApplicationEventCodeUtilsService } from "./utils-service";
+import {
+  ApplicationEventCodeUtilsService,
+  ApplicationEventDateUtilsService,
+} from "./utils-service";
 
 @Injectable()
 export class IER12ProcessingService {
@@ -40,6 +43,7 @@ export class IER12ProcessingService {
     private readonly studentAssessmentService: StudentAssessmentService,
     private readonly disbursementOverawardService: DisbursementOverawardService,
     private readonly applicationEventCodeUtilsService: ApplicationEventCodeUtilsService,
+    private readonly applicationEventDateUtilsService: ApplicationEventDateUtilsService,
   ) {
     this.institutionIntegrationConfig = config.institutionIntegration;
   }
@@ -200,6 +204,13 @@ export class IER12ProcessingService {
       const activeStudentRestriction = student.studentRestrictions
         ?.filter((studentRestriction) => studentRestriction.isActive)
         ?.map((eachRestriction) => eachRestriction.restriction.actionType);
+      const applicationEventCode =
+        await this.applicationEventCodeUtilsService.getApplicationEventCode(
+          application.applicationNumber,
+          application.applicationStatus,
+          disbursement,
+          activeStudentRestriction,
+        );
       const [disbursementReceipt] = disbursement.disbursementReceipts;
       const ier12Record: IER12Record = {
         assessmentId: pendingAssessment.id,
@@ -305,12 +316,12 @@ export class IER12ProcessingService {
         totalAssessedCost: assessmentData.totalAssessedCost,
         totalAssessmentNeed: assessmentData.totalAssessmentNeed,
         disbursementSentDate: disbursement.dateSent,
-        applicationEventCode:
-          await this.applicationEventCodeUtilsService.getApplicationEventCode(
-            application.applicationNumber,
-            application.applicationStatus,
+        applicationEventCode: applicationEventCode,
+        applicationEventDate:
+          this.applicationEventDateUtilsService.getApplicationEventDate(
+            applicationEventCode,
+            application,
             disbursement,
-            activeStudentRestriction,
           ),
       };
       ier12Records.push(ier12Record);

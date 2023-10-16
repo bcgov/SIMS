@@ -6,22 +6,21 @@ import {
   RestrictionActionType,
 } from "@sims/sims-db";
 import { addDays, isSameOrAfterDate } from "@sims/utilities";
-import {
-  DisbursementScheduleErrorsService,
-  DisbursementValueService,
-} from "@sims/integrations/services";
+import { DisbursementValueService } from "@sims/integrations/services";
 import { DISBURSEMENT_FILE_GENERATION_ANTICIPATION_DAYS } from "@sims/integrations/constants";
 import {
   ApplicationEventCode,
   CompletedApplicationEventCode,
   CompletedApplicationWithPendingDisbursement,
   CompletedApplicationWithSentDisbursement,
+  DisbursementFeedbackErrorsForApplicationEventDate,
+  DisbursementScheduleForApplicationEventCodeDuringCompleted,
 } from "../models/ier12-integration.model";
+import { FULL_TIME_DISBURSEMENT_FEEDBACK_ERRORS } from "@sims/integrations/services/disbursement-schedule/disbursement-schedule.models";
 
 @Injectable()
 export class ApplicationEventCodeDuringEnrolmentAndCompletedUtilsService {
   constructor(
-    private readonly disbursementScheduleErrorsService: DisbursementScheduleErrorsService,
     private readonly disbursementValueService: DisbursementValueService,
   ) {}
 
@@ -50,10 +49,7 @@ export class ApplicationEventCodeDuringEnrolmentAndCompletedUtilsService {
    * @returns application event code.
    */
   async applicationEventCodeDuringCompleted(
-    currentDisbursementSchedule: Pick<
-      DisbursementSchedule,
-      "id" | "coeStatus" | "disbursementDate" | "disbursementScheduleStatus"
-    >,
+    currentDisbursementSchedule: DisbursementScheduleForApplicationEventCodeDuringCompleted,
     activeRestrictionsActionTypes?: RestrictionActionType[][],
   ): Promise<CompletedApplicationEventCode> {
     switch (currentDisbursementSchedule.disbursementScheduleStatus) {
@@ -67,6 +63,7 @@ export class ApplicationEventCodeDuringEnrolmentAndCompletedUtilsService {
       case DisbursementScheduleStatus.Sent:
         return this.eventCodeForCompletedApplicationWithSentDisbursement(
           currentDisbursementSchedule.id,
+          currentDisbursementSchedule.disbursementFeedbackErrors,
         );
     }
   }
@@ -93,19 +90,35 @@ export class ApplicationEventCodeDuringEnrolmentAndCompletedUtilsService {
   }
 
   /**
+   * Checks if there is any full-time disbursement feedback errors.
+   * @param disbursementFeedbackErrors disbursement feedback errors.
+   * @returns true, if there is any full-time disbursement feedback
+   * errors.
+   */
+  private hasFullTimeDisbursementFeedbackErrors(
+    disbursementFeedbackErrors?: DisbursementFeedbackErrorsForApplicationEventDate[],
+  ): boolean | undefined {
+    return disbursementFeedbackErrors?.some((disbursementFeedbackError) =>
+      FULL_TIME_DISBURSEMENT_FEEDBACK_ERRORS.includes(
+        disbursementFeedbackError.errorCode,
+      ),
+    );
+  }
+
+  /**
    * Get application event code for an application with completed status
    * with sent disbursement.
    * @param currentDisbursementScheduleId current disbursement schedule id.
+   * @param disbursementFeedbackErrors disbursement feedback errors.
    * @returns application event code.
    */
   private async eventCodeForCompletedApplicationWithSentDisbursement(
     currentDisbursementScheduleId: number,
+    disbursementFeedbackErrors: DisbursementFeedbackErrorsForApplicationEventDate[],
   ): Promise<CompletedApplicationWithSentDisbursement> {
     // Check if the disbursement has any feedback error.
     const hasFullTimeDisbursementFeedbackErrors =
-      await this.disbursementScheduleErrorsService.hasFullTimeDisbursementFeedbackErrors(
-        currentDisbursementScheduleId,
-      );
+      this.hasFullTimeDisbursementFeedbackErrors(disbursementFeedbackErrors);
     return hasFullTimeDisbursementFeedbackErrors
       ? ApplicationEventCode.DISE
       : this.eventCodeForCompletedApplicationWithAwardWithheldDueToRestriction(
