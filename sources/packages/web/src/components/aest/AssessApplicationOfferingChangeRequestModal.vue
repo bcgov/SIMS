@@ -68,7 +68,6 @@ export default defineComponent({
       showParameter,
       hideModal,
       setLoading,
-      getLoading,
       loading,
     } = useModalDialog<ApplicationOfferingChangeAssessmentAPIInDTO | false>();
     const assessApplicationOfferingChangeRequestModal =
@@ -116,7 +115,6 @@ export default defineComponent({
       showParameter,
       hideModal,
       setLoading,
-      getLoading,
       loading,
       cancel,
       assessChange,
