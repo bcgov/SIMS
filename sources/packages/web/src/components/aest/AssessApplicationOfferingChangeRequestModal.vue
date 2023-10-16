@@ -98,7 +98,7 @@ export default defineComponent({
       assessApplicationOfferingChangeRequestModal.applicationOfferingChangeRequestStatus =
         showParameter.value;
       assessApplicationOfferingChangeRequestModal.note = note.value;
-      resolvePromise(assessApplicationOfferingChangeRequestModal);
+      resolvePromise(assessApplicationOfferingChangeRequestModal, true);
       assessApplicationOfferingChangeRequestForm.value.reset();
     };
     return {

@@ -6,8 +6,8 @@ export function useModalDialog<T, TParameter = any>() {
   const showParameter = ref<TParameter>();
   let promise: (value: T) => void;
 
-  const resolvePromise = (value: T) => {
-    showDialog.value = false;
+  const resolvePromise = (value: T, keepModalOpen = false) => {
+    showDialog.value = keepModalOpen;
     promise(value);
   };
 

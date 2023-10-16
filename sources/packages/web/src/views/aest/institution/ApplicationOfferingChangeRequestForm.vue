@@ -217,6 +217,7 @@ export default defineComponent({
           );
         } finally {
           assessApplicationOfferingChangeRequestModal.value.loading = false;
+          assessApplicationOfferingChangeRequestModal.value.showDialog = false;
         }
       }
     };
