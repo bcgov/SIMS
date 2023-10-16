@@ -199,7 +199,7 @@ export default defineComponent({
         );
       if (responseData) {
         try {
-          assessApplicationOfferingChangeRequestModal.value.setLoading(true);
+          assessApplicationOfferingChangeRequestModal.value.loading = true;
           await ApplicationOfferingChangeRequestService.shared.assessApplicationOfferingChangeRequest(
             props.applicationOfferingChangeRequestId,
             responseData,

@@ -25,14 +25,9 @@ export function useModalDialog<T, TParameter = any>() {
     loading.value = false;
   };
 
-  const setLoading = (isLoading = true) => {
-    loading.value = isLoading;
-  };
-
   return {
     showDialog,
     hideModal,
-    setLoading,
     resolvePromise,
     showModal,
     showParameter,
@@ -43,7 +38,6 @@ export function useModalDialog<T, TParameter = any>() {
 export interface ModalDialog<T, TParameter = any> {
   showModal: (params?: TParameter) => Promise<T>;
   hideModal: () => void;
-  setLoading: (isLoading: boolean) => void;
   showDialog: Ref<boolean>;
   loading: Ref<boolean>;
 }
