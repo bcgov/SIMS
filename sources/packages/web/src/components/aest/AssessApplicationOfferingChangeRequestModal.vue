@@ -61,8 +61,16 @@ export default defineComponent({
   },
   setup() {
     const note = ref("");
-    const { showDialog, showModal, resolvePromise, showParameter } =
-      useModalDialog<ApplicationOfferingChangeAssessmentAPIInDTO | false>();
+    const {
+      showDialog,
+      showModal,
+      resolvePromise,
+      showParameter,
+      hideModal,
+      setLoading,
+      getLoading,
+      loading,
+    } = useModalDialog<ApplicationOfferingChangeAssessmentAPIInDTO | false>();
     const assessApplicationOfferingChangeRequestModal =
       {} as ApplicationOfferingChangeAssessmentAPIInDTO;
     const assessApplicationOfferingChangeRequestForm = ref({} as VForm);
@@ -106,6 +114,10 @@ export default defineComponent({
       showDialog,
       showModal,
       showParameter,
+      hideModal,
+      setLoading,
+      getLoading,
+      loading,
       cancel,
       assessChange,
       note,

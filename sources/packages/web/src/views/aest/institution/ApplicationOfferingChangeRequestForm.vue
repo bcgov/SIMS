@@ -190,7 +190,6 @@ export default defineComponent({
         ),
       };
     });
-
     const assessApplicationOfferingChangeRequest = async (
       applicationOfferingChangeRequestStatus: ApplicationOfferingChangeRequestStatus,
     ) => {
@@ -200,7 +199,7 @@ export default defineComponent({
         );
       if (responseData) {
         try {
-          assessApplicationOfferingChangeRequestModal.value.loading = true;
+          assessApplicationOfferingChangeRequestModal.value.setLoading(true);
           await ApplicationOfferingChangeRequestService.shared.assessApplicationOfferingChangeRequest(
             props.applicationOfferingChangeRequestId,
             responseData,
@@ -216,8 +215,7 @@ export default defineComponent({
             "Unexpected error while submitting application offering change request.",
           );
         } finally {
-          assessApplicationOfferingChangeRequestModal.value.loading = false;
-          assessApplicationOfferingChangeRequestModal.value.showDialog = false;
+          assessApplicationOfferingChangeRequestModal.value.hideModal();
         }
       }
     };
