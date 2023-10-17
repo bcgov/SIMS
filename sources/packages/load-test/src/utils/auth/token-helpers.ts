@@ -43,7 +43,7 @@ function needRenewJwtToken(jwtExp: number, maxSecondsToExpired = 0): boolean {
  * - `uniqueTokenCache` different cache key when there are variations of
  * a token under the same client. If not provided the user name will be
  * used instead.
- * @returns a token that can be used to perform a API calls. Intended to be
+ * @returns a token that can be used to perform API calls. Intended to be
  * used only for the load tests.
  */
 export function getCachedToken(
