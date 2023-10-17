@@ -1,29 +1,14 @@
 import {
   Application,
   ApplicationStatus,
-  COEStatus,
   DisbursementFeedbackErrors,
-  DisbursementSchedule,
-  DisbursementScheduleStatus,
-  RestrictionActionType,
 } from "@sims/sims-db";
 import {
   ApplicationEventCode,
   DisbursementScheduleForApplicationEventDate,
 } from "../../../models/ier12-integration.model";
-import {
-  ApplicationEventCodeDuringAssessmentUtilsService,
-  ApplicationEventCodeDuringEnrolmentAndCompletedUtilsService,
-  ApplicationEventCodeUtilsService,
-  ApplicationEventDateUtilsService,
-} from "../..";
-import {
-  DATE_ONLY_ISO_FORMAT,
-  addDays,
-  addToDateOnlyString,
-  formatDate,
-} from "@sims/utilities";
-import { createMock } from "@golevelup/ts-jest";
+import { ApplicationEventDateUtilsService } from "../..";
+import { addDays, addToDateOnlyString } from "@sims/utilities";
 import { FULL_TIME_DISBURSEMENT_FEEDBACK_ERRORS } from "@sims/integrations/services/disbursement-schedule/disbursement-schedule.models";
 import { DISBURSEMENT_FILE_GENERATION_ANTICIPATION_DAYS } from "@sims/services/constants";
 
@@ -34,6 +19,7 @@ describe("ApplicationEventDateUtilsService-getApplicationEventDate", () => {
     "applicationStatus" | "applicationStatusUpdatedOn"
   >;
   let payloadDisbursementSchedule: DisbursementScheduleForApplicationEventDate;
+
   beforeAll(() => {
     applicationEventDateUtilsService = new ApplicationEventDateUtilsService();
     // Arrange.
@@ -74,7 +60,7 @@ describe("ApplicationEventDateUtilsService-getApplicationEventDate", () => {
 
   it(
     `Should return ${payloadDisbursementSchedule.updatedAt} when application event code` +
-      `  is ${ApplicationEventCode.COER} and application status is not ${ApplicationStatus.Enrolment}.`,
+      `  is ${ApplicationEventCode.COER} and application status is not ${ApplicationStatus.Completed}.`,
     async () => {
       // Act
       const applicationEventDate =

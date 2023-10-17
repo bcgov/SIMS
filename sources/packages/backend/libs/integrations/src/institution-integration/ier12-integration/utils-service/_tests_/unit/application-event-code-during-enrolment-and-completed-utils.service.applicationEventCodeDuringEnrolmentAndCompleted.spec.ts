@@ -3,10 +3,10 @@ import { ApplicationEventCode } from "../../../models/ier12-integration.model";
 import { ApplicationEventCodeDuringEnrolmentAndCompletedUtilsService } from "../..";
 import { DisbursementValueService } from "@sims/integrations/services";
 import { createMock } from "@golevelup/ts-jest";
-// todo: ann double check the unit test file name with the team.
 
 describe("ApplicationEventCodeDuringEnrolmentAndCompletedUtilsService-applicationEventCodeDuringEnrolmentAndCompleted", () => {
   let applicationEventCodeDuringEnrolmentAndCompletedUtilsService: ApplicationEventCodeDuringEnrolmentAndCompletedUtilsService;
+
   beforeAll(() => {
     const disbursementValueService = createMock<DisbursementValueService>();
     applicationEventCodeDuringEnrolmentAndCompletedUtilsService =
@@ -35,8 +35,8 @@ describe("ApplicationEventCodeDuringEnrolmentAndCompletedUtilsService-applicatio
     expect(applicationEventCode).toBe(ApplicationEventCode.COED);
   });
 
-  it(`Should throw error when the coe status is ${COEStatus.completed}.`, () => {
-    // Assert
+  it(`Should throw an error when the coe status is other than ${COEStatus.required} or ${COEStatus.declined}.`, () => {
+    // Arrange, act and assert.
     expect(() => {
       applicationEventCodeDuringEnrolmentAndCompletedUtilsService.applicationEventCodeDuringEnrolmentAndCompleted(
         COEStatus.completed,

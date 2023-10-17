@@ -10,15 +10,15 @@ import {
 import { DisbursementValueService } from "@sims/integrations/services";
 import { ApplicationEventCodeDuringEnrolmentAndCompletedUtilsService } from "../..";
 import { DISBURSEMENT_FILE_GENERATION_ANTICIPATION_DAYS } from "@sims/services/constants";
-import { DATE_ONLY_ISO_FORMAT, formatDate } from "@sims/utilities";
+import { DATE_ONLY_ISO_FORMAT, addDays, formatDate } from "@sims/utilities";
 import { FULL_TIME_DISBURSEMENT_FEEDBACK_ERRORS } from "@sims/integrations/services/disbursement-schedule/disbursement-schedule.models";
 import { createMock } from "@golevelup/ts-jest";
 
-// todo: ann check all it description.
 describe("applicationEventCodeDuringEnrolmentAndCompletedUtilsService-applicationEventCodeDuringCompleted", () => {
   let applicationEventCodeDuringEnrolmentAndCompletedUtilsService: ApplicationEventCodeDuringEnrolmentAndCompletedUtilsService;
   let disbursementValueService: DisbursementValueService;
   let payload: DisbursementScheduleForApplicationEventCodeDuringCompleted;
+
   beforeAll(() => {
     disbursementValueService = createMock<DisbursementValueService>();
     applicationEventCodeDuringEnrolmentAndCompletedUtilsService =
@@ -52,12 +52,21 @@ describe("applicationEventCodeDuringEnrolmentAndCompletedUtilsService-applicatio
 
   it(
     `Should return ${ApplicationEventCode.COEA} when the disbursement schedule status is ${DisbursementScheduleStatus.Pending}, ` +
-      `coe status is ${COEStatus.completed} and disbursement date is before the cutoff date(i.e disbursement date + ${DISBURSEMENT_FILE_GENERATION_ANTICIPATION_DAYS}).`,
+      ` COE status is ${COEStatus.completed} and today is before the cutoff date(i.e disbursement date + ${DISBURSEMENT_FILE_GENERATION_ANTICIPATION_DAYS}).`,
     async () => {
       // Arrange and act.
       const applicationEventCode =
         await applicationEventCodeDuringEnrolmentAndCompletedUtilsService.applicationEventCodeDuringCompleted(
-          payload,
+          {
+            ...payload,
+            disbursementDate: formatDate(
+              addDays(
+                DISBURSEMENT_FILE_GENERATION_ANTICIPATION_DAYS + 1,
+                new Date(),
+              ),
+              DATE_ONLY_ISO_FORMAT,
+            ),
+          },
         );
       // Assert.
       expect(applicationEventCode).toBe(ApplicationEventCode.COEA);
@@ -66,7 +75,7 @@ describe("applicationEventCodeDuringEnrolmentAndCompletedUtilsService-applicatio
 
   it(
     `Should return ${ApplicationEventCode.DISR} when the disbursement schedule status is ${DisbursementScheduleStatus.Pending}, ` +
-      `coe status is ${COEStatus.completed}, disbursement date is same or after the cutoff date(i.e disbursement date + ${DISBURSEMENT_FILE_GENERATION_ANTICIPATION_DAYS}) ` +
+      `COE status is ${COEStatus.completed}, disbursement date is same or after the cutoff date(i.e disbursement date + ${DISBURSEMENT_FILE_GENERATION_ANTICIPATION_DAYS}) ` +
       `and has atleast one ${RestrictionActionType.StopFullTimeDisbursement}.`,
     async () => {
       // Arrange and act.
@@ -82,7 +91,7 @@ describe("applicationEventCodeDuringEnrolmentAndCompletedUtilsService-applicatio
 
   it(
     `Should return ${ApplicationEventCode.COEA} when the disbursement schedule status is ${DisbursementScheduleStatus.Pending}, ` +
-      `coe status is ${COEStatus.completed}, disbursement date is same or after the cutoff date(i.e disbursement date + ${DISBURSEMENT_FILE_GENERATION_ANTICIPATION_DAYS}) ` +
+      `COE status is ${COEStatus.completed}, disbursement date is same or after the cutoff date(i.e disbursement date + ${DISBURSEMENT_FILE_GENERATION_ANTICIPATION_DAYS}) ` +
       `and des not have any ${RestrictionActionType.StopFullTimeDisbursement}.`,
     async () => {
       // Arrange and act.
@@ -98,7 +107,7 @@ describe("applicationEventCodeDuringEnrolmentAndCompletedUtilsService-applicatio
 
   it(
     `Should return ${ApplicationEventCode.COER} when the disbursement schedule status is ${DisbursementScheduleStatus.Pending}, ` +
-      `coe status is ${COEStatus.required}.`,
+      `COE status is ${COEStatus.required}.`,
     async () => {
       // Arrange and act.
       const applicationEventCode =
@@ -115,7 +124,7 @@ describe("applicationEventCodeDuringEnrolmentAndCompletedUtilsService-applicatio
 
   it(
     `Should return ${ApplicationEventCode.COED} when the disbursement schedule status is ${DisbursementScheduleStatus.Pending}, ` +
-      `coe status is ${COEStatus.declined}.`,
+      `COE status is ${COEStatus.declined}.`,
     async () => {
       // Arrange and act.
       const applicationEventCode =
@@ -138,9 +147,7 @@ describe("applicationEventCodeDuringEnrolmentAndCompletedUtilsService-applicatio
       const applicationEventCode =
         await applicationEventCodeDuringEnrolmentAndCompletedUtilsService.applicationEventCodeDuringCompleted(
           {
-            id: payload.id,
-            coeStatus: COEStatus.declined,
-            disbursementDate: "XXXX-XX-XX",
+            ...payload,
             disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
             disbursementFeedbackErrors: [
               {
@@ -156,20 +163,19 @@ describe("applicationEventCodeDuringEnrolmentAndCompletedUtilsService-applicatio
 
   it(
     `Should return ${ApplicationEventCode.DISW} when the disbursement schedule status is ${DisbursementScheduleStatus.Sent}, ` +
-      `, does not have any full time disbursement feedback errors and an award was withheld due to a restriction.`,
+      `, does not have any full time disbursement feedback errors and an award was withheld due to some restriction.`,
     async () => {
       // Arrange.
-      // Mocked hasAwardWithheldDueToRestriction to return true, i.e some award was withheld due to a restriction.
+      // Mocked hasAwardWithheldDueToRestriction to return true, i.e some award was withheld due to some restriction.
       disbursementValueService.hasAwardWithheldDueToRestriction = jest
         .fn()
         .mockResolvedValue(true);
+
       // Arrange and act.
       const applicationEventCode =
         await applicationEventCodeDuringEnrolmentAndCompletedUtilsService.applicationEventCodeDuringCompleted(
           {
-            id: payload.id,
-            coeStatus: COEStatus.declined,
-            disbursementDate: "XXXX-XX-XX",
+            ...payload,
             disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
             disbursementFeedbackErrors: [
               {
@@ -192,13 +198,12 @@ describe("applicationEventCodeDuringEnrolmentAndCompletedUtilsService-applicatio
       disbursementValueService.hasAwardWithheldDueToRestriction = jest
         .fn()
         .mockResolvedValue(false);
+
       // Arrange and act.
       const applicationEventCode =
         await applicationEventCodeDuringEnrolmentAndCompletedUtilsService.applicationEventCodeDuringCompleted(
           {
-            id: payload.id,
-            coeStatus: COEStatus.declined,
-            disbursementDate: "XXXX-XX-XX",
+            ...payload,
             disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
             disbursementFeedbackErrors: [
               {

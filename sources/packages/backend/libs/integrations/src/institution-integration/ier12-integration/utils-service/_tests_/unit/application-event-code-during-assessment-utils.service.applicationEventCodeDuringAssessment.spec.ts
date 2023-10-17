@@ -18,7 +18,7 @@ describe("ApplicationEventCodeDuringAssessmentUtilsService-applicationEventCodeD
     jest.resetAllMocks();
   });
 
-  it(`Should return ${ApplicationEventCode.REIA} when there are multiple submission to the application.`, async () => {
+  it(`Should return ${ApplicationEventCode.REIA} when there are multiple submissions to the application.`, async () => {
     // Arrange
     // Mocked hasMultipleApplicationSubmissions to return true, i.e has multiple submissions.
     applicationSharedService.hasMultipleApplicationSubmissions = jest
