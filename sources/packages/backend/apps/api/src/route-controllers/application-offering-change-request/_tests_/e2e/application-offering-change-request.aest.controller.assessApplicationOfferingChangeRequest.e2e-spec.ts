@@ -64,7 +64,7 @@ describe("ApplicationOfferingChangeRequestAESTController(e2e)-assessApplicationO
         select: {
           id: true,
           applicationOfferingChangeRequestStatus: true,
-          assessedNote: { id: true, description: true },
+          assessedNote: { description: true },
         },
         relations: { assessedNote: true },
         where: { id: applicationOfferingChangeRequest.id },
