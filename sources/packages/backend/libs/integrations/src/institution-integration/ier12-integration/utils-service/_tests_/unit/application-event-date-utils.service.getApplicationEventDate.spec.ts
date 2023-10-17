@@ -41,8 +41,8 @@ describe("ApplicationEventDateUtilsService-getApplicationEventDate", () => {
   });
 
   it(
-    `Should return ${payloadApplication.applicationStatusUpdatedOn} when application event code` +
-      `  is ${ApplicationEventCode.COER} and application status is ${ApplicationStatus.Enrolment}.`,
+    `Should return payloadApplication.applicationStatusUpdatedOn when application event code` +
+      ` is ${ApplicationEventCode.COER} and application status is ${ApplicationStatus.Enrolment}.`,
     async () => {
       // Act
       const applicationEventDate =
@@ -59,8 +59,8 @@ describe("ApplicationEventDateUtilsService-getApplicationEventDate", () => {
   );
 
   it(
-    `Should return ${payloadDisbursementSchedule.updatedAt} when application event code` +
-      `  is ${ApplicationEventCode.COER} and application status is not ${ApplicationStatus.Completed}.`,
+    `Should return payloadDisbursementSchedule.updatedAt when application event code` +
+      ` is ${ApplicationEventCode.COER} and application status is not ${ApplicationStatus.Enrolment}.`,
     async () => {
       // Act
       const applicationEventDate =
@@ -91,12 +91,7 @@ describe("ApplicationEventDateUtilsService-getApplicationEventDate", () => {
     expect(applicationEventDate).toBe(updatedAt);
   });
 
-  it(`Should return ${addDays(
-    -DISBURSEMENT_FILE_GENERATION_ANTICIPATION_DAYS,
-    payloadDisbursementSchedule.disbursementDate,
-  )} when application event code is ${
-    ApplicationEventCode.DISR
-  }.`, async () => {
+  it(`Should return payloadDisbursementSchedule.disbursementDate - DISBURSEMENT_FILE_GENERATION_ANTICIPATION_DAYS when application event code is ${ApplicationEventCode.DISR}.`, async () => {
     // Act
     const applicationEventDate =
       applicationEventDateUtilsService.getApplicationEventDate(
@@ -105,7 +100,7 @@ describe("ApplicationEventDateUtilsService-getApplicationEventDate", () => {
         payloadDisbursementSchedule,
       );
     // Assert
-    expect(applicationEventDate).toBe(
+    expect(applicationEventDate).toStrictEqual(
       addDays(
         -DISBURSEMENT_FILE_GENERATION_ANTICIPATION_DAYS,
         payloadDisbursementSchedule.disbursementDate,
@@ -113,7 +108,7 @@ describe("ApplicationEventDateUtilsService-getApplicationEventDate", () => {
     );
   });
 
-  it(`Should return ${payloadDisbursementSchedule.dateSent} when application event code is ${ApplicationEventCode.DISW}.`, async () => {
+  it(`Should return payloadDisbursementSchedule.dateSent when application event code is ${ApplicationEventCode.DISW}.`, async () => {
     // Act
     const applicationEventDate =
       applicationEventDateUtilsService.getApplicationEventDate(
@@ -125,7 +120,7 @@ describe("ApplicationEventDateUtilsService-getApplicationEventDate", () => {
     expect(applicationEventDate).toBe(payloadDisbursementSchedule.dateSent);
   });
 
-  it(`Should return ${payloadDisbursementSchedule.dateSent} when application event code is ${ApplicationEventCode.DISS}.`, async () => {
+  it(`Should return payloadDisbursementSchedule.dateSent when application event code is ${ApplicationEventCode.DISS}.`, async () => {
     // Act
     const applicationEventDate =
       applicationEventDateUtilsService.getApplicationEventDate(
@@ -138,7 +133,7 @@ describe("ApplicationEventDateUtilsService-getApplicationEventDate", () => {
   });
 
   it(
-    `Should return ${payloadDisbursementSchedule.updatedAt} when application event code is other than` +
+    `Should return payloadDisbursementSchedule.updatedAt when application event code is other than` +
       ` ${ApplicationEventCode.COER}, ${ApplicationEventCode.DISE}, ${ApplicationEventCode.DISR}, ${ApplicationEventCode.DISW}, ${ApplicationEventCode.DISS}.`,
     async () => {
       // Act

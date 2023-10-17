@@ -52,7 +52,7 @@ describe("applicationEventCodeDuringEnrolmentAndCompletedUtilsService-applicatio
 
   it(
     `Should return ${ApplicationEventCode.COEA} when the disbursement schedule status is ${DisbursementScheduleStatus.Pending}, ` +
-      ` COE status is ${COEStatus.completed} and today is before the cutoff date(i.e disbursement date + ${DISBURSEMENT_FILE_GENERATION_ANTICIPATION_DAYS}).`,
+      `COE status is ${COEStatus.completed} and today is before the cutoff date(i.e disbursement date + ${DISBURSEMENT_FILE_GENERATION_ANTICIPATION_DAYS}).`,
     async () => {
       // Arrange and act.
       const applicationEventCode =
@@ -92,7 +92,7 @@ describe("applicationEventCodeDuringEnrolmentAndCompletedUtilsService-applicatio
   it(
     `Should return ${ApplicationEventCode.COEA} when the disbursement schedule status is ${DisbursementScheduleStatus.Pending}, ` +
       `COE status is ${COEStatus.completed}, disbursement date is same or after the cutoff date(i.e disbursement date + ${DISBURSEMENT_FILE_GENERATION_ANTICIPATION_DAYS}) ` +
-      `and des not have any ${RestrictionActionType.StopFullTimeDisbursement}.`,
+      `and does not have any ${RestrictionActionType.StopFullTimeDisbursement}.`,
     async () => {
       // Arrange and act.
       const applicationEventCode =
@@ -162,8 +162,8 @@ describe("applicationEventCodeDuringEnrolmentAndCompletedUtilsService-applicatio
   );
 
   it(
-    `Should return ${ApplicationEventCode.DISW} when the disbursement schedule status is ${DisbursementScheduleStatus.Sent}, ` +
-      `, does not have any full time disbursement feedback errors and an award was withheld due to some restriction.`,
+    `Should return ${ApplicationEventCode.DISW} when the disbursement schedule status is ${DisbursementScheduleStatus.Sent},` +
+      ` does not have any full time disbursement feedback errors and an award was withheld due to some restriction.`,
     async () => {
       // Arrange.
       // Mocked hasAwardWithheldDueToRestriction to return true, i.e some award was withheld due to some restriction.
@@ -190,8 +190,8 @@ describe("applicationEventCodeDuringEnrolmentAndCompletedUtilsService-applicatio
   );
 
   it(
-    `Should return ${ApplicationEventCode.DISS} when the disbursement schedule status is ${DisbursementScheduleStatus.Sent}, ` +
-      `, does not have any full time disbursement feedback errors and none of the award was withheld due to any restriction.`,
+    `Should return ${ApplicationEventCode.DISS} when the disbursement schedule status is ${DisbursementScheduleStatus.Sent},` +
+      ` does not have any full time disbursement feedback errors and none of the award was withheld due to any restriction.`,
     async () => {
       // Arrange.
       // Mocked hasAwardWithheldDueToRestriction to return false, i.e none of the award was withheld due to any restriction.
