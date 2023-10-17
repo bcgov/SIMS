@@ -17,7 +17,7 @@ import {
   UpdateNOAStatusJobInDTO,
 } from "../../assessment.dto";
 import { AssessmentStatus } from "@sims/sims-db";
-import { createFakeUpdateNOAStatusPayload } from "./update-noa-status";
+import { createFakeUpdateNOAStatusPayload } from "./update-noa-status-factory";
 
 describe("AssessmentController(e2e)-updateNOAStatus", () => {
   let db: E2EDataSources;
@@ -29,7 +29,7 @@ describe("AssessmentController(e2e)-updateNOAStatus", () => {
     assessmentController = nestApplication.get(AssessmentController);
   });
 
-  it(`Should update NOA status when noa approval status is null.`, async () => {
+  it("Should update NOA status when noa approval status is null.", async () => {
     // Arrange
     const savedApplication = await saveFakeApplication(db.dataSource);
     const updateNOAStatusPayload = createFakeUpdateNOAStatusPayload(
