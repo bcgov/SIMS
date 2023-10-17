@@ -112,7 +112,7 @@ export default defineComponent({
           assessedDateLabelValue.value =
             props.headerDetails.status ===
             ApplicationOfferingChangeRequestStatus.DeclinedByStudent
-              ? dateOnlyLongString(props.headerDetails.updatedDate)
+              ? dateOnlyLongString(props.headerDetails.studentActionDate)
               : dateOnlyLongString(props.headerDetails.assessedDate);
           break;
         case ApplicationOfferingChangeRequestStatus.Approved:

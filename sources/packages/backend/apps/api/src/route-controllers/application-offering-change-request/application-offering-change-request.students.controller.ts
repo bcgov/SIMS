@@ -162,6 +162,7 @@ export class ApplicationOfferingChangeRequestStudentsController extends BaseCont
       applicationOfferingChangeRequestId,
       payload.applicationOfferingChangeRequestStatus,
       payload.studentConsent,
+      userToken.userId,
     );
   }
 }
