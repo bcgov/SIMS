@@ -11,15 +11,10 @@ import {
   MockedZeebeJobResult,
 } from "../../../../../test/utils/worker-job-mock";
 import { createTestingAppModule } from "../../../../../test/helpers";
-import { createFakeWorkflowWrapUpPayload } from "./workflow-wrap-up";
+import { createFakeWorkflowWrapUpPayload } from "./workflow-wrap-up-factory";
 import { AssessmentController } from "../../assessment.controller";
 import { WorkflowWrapUpJobInDTO } from "../../assessment.dto";
-import {
-  FormYesNoOptions,
-  RelationshipStatus,
-  StudentAssessmentStatus,
-  WorkflowData,
-} from "@sims/sims-db";
+import { StudentAssessmentStatus, WorkflowData } from "@sims/sims-db";
 import { SystemUsersService } from "@sims/services";
 
 describe("AssessmentController(e2e)-workflowWrapUp", () => {
