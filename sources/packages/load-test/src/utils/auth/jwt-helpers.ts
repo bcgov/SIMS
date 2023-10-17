@@ -1,6 +1,11 @@
 import encoding from "k6/encoding";
 
 /**
+ * JWT token separator.
+ */
+const TOKEN_SEPARATOR = ".";
+
+/**
  * JWT token.
  */
 export interface JWTToken {
@@ -22,11 +27,20 @@ export interface JWTToken {
  * @returns decoded token header and payload.
  */
 export function decodeJWT(token: string): JWTToken {
-  const [encodedHeader, encodedPayload] = token.split(".");
-  let header = JSON.parse(encoding.b64decode(encodedHeader, "rawstd", "s"));
-  let payload = JSON.parse(encoding.b64decode(encodedPayload, "rawstd", "s"));
+  const [encodedHeader, encodedPayload] = token.split(TOKEN_SEPARATOR);
+  let header = decodeTokenPart(encodedHeader);
+  let payload = decodeTokenPart(encodedPayload);
   return {
     header,
     payload,
-  };
+  } as JWTToken;
+}
+
+/**
+ * Decode token header/payload.
+ * @param encodedTokenPart encoded part to be decoded.
+ * @returns decoded part.
+ */
+function decodeTokenPart(encodedTokenPart: string): unknown {
+  return JSON.parse(encoding.b64decode(encodedTokenPart, "rawstd", "s"));
 }
