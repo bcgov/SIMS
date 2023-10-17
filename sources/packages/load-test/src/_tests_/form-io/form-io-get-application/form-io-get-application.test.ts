@@ -8,7 +8,7 @@ import { check, sleep } from "k6";
 import {
   createFormAuthHeader,
   getFormByAlias,
-} from "../../../utils/form-io-api/form-io-api";
+} from "../../../utils/form-io-api";
 
 interface SetupData {
   formIOHeader: Record<string, string>;

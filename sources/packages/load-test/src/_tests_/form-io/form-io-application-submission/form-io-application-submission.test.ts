@@ -9,7 +9,7 @@ import { APPLICATION_SUBMISSION_PAYLOAD } from "./models";
 import {
   createFormAuthHeader,
   formSubmission,
-} from "../../../utils/form-io-api/form-io-api";
+} from "../../../utils/form-io-api";
 
 interface SetupData {
   formIOHeader: Record<string, string>;
