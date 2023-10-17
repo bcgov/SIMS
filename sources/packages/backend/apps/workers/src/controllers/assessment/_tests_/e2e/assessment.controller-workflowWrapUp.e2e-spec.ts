@@ -3,7 +3,6 @@ import {
   E2EDataSources,
   saveFakeApplication,
 } from "@sims/test-utils";
-
 import { ICustomHeaders, IOutputVariables } from "zeebe-node";
 import {
   createFakeWorkerJob,
@@ -21,6 +20,7 @@ describe("AssessmentController(e2e)-workflowWrapUp", () => {
   let db: E2EDataSources;
   let assessmentController: AssessmentController;
   let systemUsersService: SystemUsersService;
+
   beforeAll(async () => {
     const { nestApplication, dataSource } = await createTestingAppModule();
     db = createE2EDataSources(dataSource);

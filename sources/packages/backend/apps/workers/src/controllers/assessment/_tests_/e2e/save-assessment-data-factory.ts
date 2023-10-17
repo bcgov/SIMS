@@ -5,6 +5,7 @@ import { SaveAssessmentDataJobInDTO } from "../../assessment.dto";
 /**
  * Creates a fake save assessment data payload.
  * @param assessmentId assessment id.
+ * @param assessmentData assessment data.
  * @returns fake save assessment data payload.
  */
 export function createFakeSaveAssessmentDataPayload(

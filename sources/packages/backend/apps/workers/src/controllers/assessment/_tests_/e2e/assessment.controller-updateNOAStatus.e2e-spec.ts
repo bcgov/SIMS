@@ -3,7 +3,6 @@ import {
   E2EDataSources,
   saveFakeApplication,
 } from "@sims/test-utils";
-
 import { IOutputVariables } from "zeebe-node";
 import {
   createFakeWorkerJob,

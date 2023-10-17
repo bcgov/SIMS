@@ -3,7 +3,6 @@ import {
   E2EDataSources,
   saveFakeApplication,
 } from "@sims/test-utils";
-
 import { ICustomHeaders, IOutputVariables } from "zeebe-node";
 import {
   createFakeWorkerJob,
@@ -52,7 +51,7 @@ describe("AssessmentController(e2e)-saveAssessmentData", () => {
     // Asserts that the assessment data is saved.
     const expectedAssessment = await db.studentAssessment.findOne({
       select: {
-        assessmentData: {},
+        assessmentData: true as unknown,
       },
       where: { id: savedApplication.currentAssessment.id },
     });
