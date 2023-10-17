@@ -16,6 +16,7 @@ import {
   ECEResponseFileProcessingNotification,
   NotificationEmailMessage,
   ApplicationOfferingChangeRequestInProgressWithStudentNotification,
+  ApplicationOfferingChangeRequestCompletedByMinistryNotification,
 } from "..";
 import { GCNotifyService } from "./gc-notify.service";
 import { NotificationService } from "./notification.service";
@@ -177,6 +178,42 @@ export class NotificationActionsService {
       userId: notification.userId,
       messageType:
         NotificationMessageType.ApplicationOfferingChangeRequestInProgressWithStudent,
+      messagePayload: messagePayload,
+    };
+    // Save notification into notification table.
+    await this.notificationService.saveNotifications(
+      [notificationToSend],
+      auditUserId,
+      { entityManager },
+    );
+  }
+
+  /**
+   * Creates a notification when an Application Offering Change Request is completed by the ministry.
+   * @param notification input parameters to generate the notification.
+   * @param auditUserId user that should be considered the one that is causing the changes.
+   * @param entityManager optional entity manager to execute in transaction.
+   */
+  async saveApplicationOfferingChangeRequestCompletedByMinistry(
+    notification: ApplicationOfferingChangeRequestCompletedByMinistryNotification,
+    auditUserId: number,
+    entityManager?: EntityManager,
+  ): Promise<void> {
+    const templateId = await this.notificationMessageService.getTemplateId(
+      NotificationMessageType.ApplicationOfferingChangeRequestCompletedByMinistry,
+    );
+    const messagePayload: NotificationEmailMessage = {
+      email_address: notification.toAddress,
+      template_id: templateId,
+      personalisation: {
+        givenNames: notification.givenNames ?? "",
+        lastName: notification.lastName,
+      },
+    };
+    const notificationToSend = {
+      userId: notification.userId,
+      messageType:
+        NotificationMessageType.ApplicationOfferingChangeRequestCompletedByMinistry,
       messagePayload: messagePayload,
     };
     // Save notification into notification table.

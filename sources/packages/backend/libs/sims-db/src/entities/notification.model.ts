@@ -140,4 +140,8 @@ export enum NotificationMessageType {
    *  An Application Offering Change Request is in progress with the student.
    */
   ApplicationOfferingChangeRequestInProgressWithStudent = 13,
+  /**
+   * An Application Offering Change Request completed by ministry.
+   */
+  ApplicationOfferingChangeRequestCompletedByMinistry = 14,
 }

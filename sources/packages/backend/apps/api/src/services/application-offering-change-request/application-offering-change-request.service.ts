@@ -302,6 +302,7 @@ export class ApplicationOfferingChangeRequestService {
               id: true,
               firstName: true,
               lastName: true,
+              email: true,
             },
           },
         },
@@ -548,7 +549,7 @@ export class ApplicationOfferingChangeRequestService {
   }
 
   /**
-   * Assess the application offering change request status for the given application offering change request id for the ministry user.
+   * Assess the application offering change request status for the given application offering change request id for the ministry user and create a notification for the same.
    * @param applicationOfferingChangeRequestId application offering change request id for which to update the status.
    * @param applicationOfferingChangeRequestStatus the application offering change request status to be updated.
    * @param assessmentNote note added while updating the application offering change request.
@@ -605,6 +606,21 @@ export class ApplicationOfferingChangeRequestService {
       await transactionalEntityManager
         .getRepository(ApplicationOfferingChangeRequest)
         .save(applicationOfferingChangeRequest);
+      // Send the application offering change request completed notification.
+      const systemUser = await this.systemUsersService.systemUser();
+      await this.notificationActionsService.saveApplicationOfferingChangeRequestCompletedByMinistry(
+        {
+          givenNames:
+            applicationOfferingChangeRequest.application.student.user.firstName,
+          lastName:
+            applicationOfferingChangeRequest.application.student.user.lastName,
+          toAddress:
+            applicationOfferingChangeRequest.application.student.user.email,
+          userId: applicationOfferingChangeRequest.application.student.user.id,
+        },
+        systemUser.id,
+        transactionalEntityManager,
+      );
     });
   }
 }
