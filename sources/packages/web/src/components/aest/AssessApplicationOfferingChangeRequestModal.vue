@@ -22,11 +22,19 @@
         </p>
       </template>
       <template #footer>
-        <footer-buttons
-          :primaryLabel="primaryLabel"
-          @secondaryClick="cancel"
-          @primaryClick="assessChange"
-        />
+        <check-permission-role
+          :role="Role.InstitutionApproveDeclineApplicationOfferingChangeRequest"
+        >
+          <template #="{ notAllowed }">
+            <footer-buttons
+              :processing="loading"
+              :primaryLabel="primaryLabel"
+              @secondaryClick="cancel"
+              @primaryClick="assessChange"
+              :disablePrimaryButton="notAllowed"
+            />
+          </template>
+        </check-permission-role>
       </template>
     </modal-dialog-base>
   </v-form>
@@ -36,16 +44,24 @@ import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
 import { ref, defineComponent, computed } from "vue";
 import { useModalDialog, useRules } from "@/composables";
 import { ApplicationOfferingChangeAssessmentAPIInDTO } from "@/services/http/dto";
-import { ApplicationOfferingChangeRequestStatus, VForm } from "@/types";
+import { ApplicationOfferingChangeRequestStatus, VForm, Role } from "@/types";
+import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
 
 export default defineComponent({
   components: {
     ModalDialogBase,
+    CheckPermissionRole,
   },
   setup() {
     const note = ref("");
-    const { showDialog, showModal, resolvePromise, showParameter } =
-      useModalDialog<ApplicationOfferingChangeAssessmentAPIInDTO | boolean>();
+    const {
+      showDialog,
+      showModal,
+      resolvePromise,
+      showParameter,
+      hideModal,
+      loading,
+    } = useModalDialog<ApplicationOfferingChangeAssessmentAPIInDTO | false>();
     const assessApplicationOfferingChangeRequestModal =
       {} as ApplicationOfferingChangeAssessmentAPIInDTO;
     const assessApplicationOfferingChangeRequestForm = ref({} as VForm);
@@ -81,13 +97,18 @@ export default defineComponent({
       assessApplicationOfferingChangeRequestModal.applicationOfferingChangeRequestStatus =
         showParameter.value;
       assessApplicationOfferingChangeRequestModal.note = note.value;
-      resolvePromise(assessApplicationOfferingChangeRequestModal);
+      resolvePromise(assessApplicationOfferingChangeRequestModal, {
+        keepModalOpen: true,
+      });
       assessApplicationOfferingChangeRequestForm.value.reset();
     };
     return {
+      Role,
       showDialog,
       showModal,
       showParameter,
+      hideModal,
+      loading,
       cancel,
       assessChange,
       note,

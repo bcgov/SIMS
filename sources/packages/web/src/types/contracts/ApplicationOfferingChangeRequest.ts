@@ -8,5 +8,5 @@ export interface ApplicationOfferingChangeRequestHeader {
   assessedBy: string;
   assessedDate: string;
   locationName: string;
-  updatedDate?: string;
+  studentActionDate?: string;
 }

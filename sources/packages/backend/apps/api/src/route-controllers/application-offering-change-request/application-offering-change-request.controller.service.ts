@@ -110,7 +110,7 @@ export class ApplicationOfferingChangeRequestControllerService {
         institutionId: request.application.location.institution.id,
         institutionName: request.application.location.institution.operatingName,
         submittedDate: request.createdAt,
-        updatedDate: request.updatedAt,
+        studentActionDate: request.studentActionDate,
       };
     }
     return {

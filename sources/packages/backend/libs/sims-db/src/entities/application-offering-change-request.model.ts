@@ -32,7 +32,7 @@ export class ApplicationOfferingChangeRequest extends RecordDataModel {
    */
   @ManyToOne(() => Application, {
     eager: false,
-    cascade: false,
+    cascade: ["update"],
     nullable: false,
   })
   @JoinColumn({

@@ -31,7 +31,5 @@ export function combineDecimalPlaces(
 ): number {
   const multiplier = Math.pow(10, decimalPlaces);
   // Round the number up to the number of decimal places.
-  const roundedValue = Math.round(decimalNumber * multiplier) / multiplier;
-  // Combine the decimals into the integer part before returning.
-  return roundedValue * multiplier;
+  return Math.round(decimalNumber * multiplier);
 }
