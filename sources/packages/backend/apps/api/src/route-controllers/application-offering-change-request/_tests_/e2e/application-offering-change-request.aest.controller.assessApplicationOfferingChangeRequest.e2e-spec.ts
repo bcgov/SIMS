@@ -19,7 +19,7 @@ import {
 } from "@sims/sims-db";
 import { Repository } from "typeorm";
 
-describe("ApplicationOfferingChangeRequestAESTController(e2e)-getAllInProgressApplications", () => {
+describe("ApplicationOfferingChangeRequestAESTController(e2e)-assessApplicationOfferingChangeRequest", () => {
   let app: INestApplication;
   let db: E2EDataSources;
   let applicationOfferingChangeRequestRepo: Repository<ApplicationOfferingChangeRequest>;
