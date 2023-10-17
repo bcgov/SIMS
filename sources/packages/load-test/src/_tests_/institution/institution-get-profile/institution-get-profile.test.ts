@@ -5,11 +5,8 @@
  * @see https://k6.io/docs/using-k6/k6-options
  */
 import { check, sleep } from "k6";
-import {
-  AuthorizedParties,
-  getAPICall,
-} from "../../../utils/sims-api/sims-api";
-import { UserPasswordCredential, getCachedToken } from "../../../utils/auth";
+import { getAPICall } from "../../../utils/sims-api/sims-api";
+import { UserPasswordCredential } from "../../../utils/auth";
 import { getInstitutionAdminCredentials } from "../../../utils/sims-api";
 
 interface SetupData {
@@ -19,8 +16,9 @@ interface SetupData {
 /**
  * Define test-run behavior.
  * Ramping up to 120 during 10s to allow Keycloak to
- * digest the requests. All VUs created at the same time
- * was resulting on a internal server error (500).
+ * digest the requests. When all VUs are created at the
+ * same time it was resulting on an Keycloak internal
+ * server error (500).
  */
 export const options = {
   stages: [
