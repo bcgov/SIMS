@@ -37,7 +37,7 @@ export interface ApplicationOfferingChangeRequestInProgressWithStudentNotificati
   userId: number;
 }
 
-export interface ApplicationOfferingChangeRequestCompletedByMinistryNotification {
+export interface ApplicationOfferingChangeRequestCompleteNotification {
   givenNames: string;
   lastName: string;
   toAddress: string;

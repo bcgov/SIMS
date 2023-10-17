@@ -16,7 +16,7 @@ import {
   ECEResponseFileProcessingNotification,
   NotificationEmailMessage,
   ApplicationOfferingChangeRequestInProgressWithStudentNotification,
-  ApplicationOfferingChangeRequestCompletedByMinistryNotification,
+  ApplicationOfferingChangeRequestCompleteNotification,
 } from "..";
 import { GCNotifyService } from "./gc-notify.service";
 import { NotificationService } from "./notification.service";
@@ -158,7 +158,7 @@ export class NotificationActionsService {
    * @param auditUserId user that should be considered the one that is causing the changes.
    * @param entityManager optional entity manager to execute in transaction.
    */
-  async saveApplicationOfferingChangeRequestInProgressWithStudent(
+  async saveApplicationOfferingChangeRequestInProgressWithStudentNotification(
     notification: ApplicationOfferingChangeRequestInProgressWithStudentNotification,
     auditUserId: number,
     entityManager?: EntityManager,
@@ -194,10 +194,10 @@ export class NotificationActionsService {
    * @param auditUserId user that should be considered the one that is causing the changes.
    * @param entityManager optional entity manager to execute in transaction.
    */
-  async saveApplicationOfferingChangeRequestCompletedByMinistry(
-    notification: ApplicationOfferingChangeRequestCompletedByMinistryNotification,
+  async saveApplicationOfferingChangeRequestCompleteNotification(
+    notification: ApplicationOfferingChangeRequestCompleteNotification,
     auditUserId: number,
-    entityManager?: EntityManager,
+    entityManager: EntityManager,
   ): Promise<void> {
     const templateId = await this.notificationMessageService.getTemplateId(
       NotificationMessageType.ApplicationOfferingChangeRequestCompletedByMinistry,
