@@ -7,9 +7,9 @@ import {
 import { AssessmentStatus } from "@sims/sims-db";
 
 /**
- * Creates a fake update noa status payload.
+ * Creates a fake update NOA status payload.
  * @param assessmentId assessment id.
- * @returns fake update noa status payload.
+ * @returns fake update NOA status payload.
  */
 export function createFakeUpdateNOAStatusPayload(
   assessmentId: number,

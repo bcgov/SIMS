@@ -13,7 +13,7 @@ import {
 import { createTestingAppModule } from "../../../../../test/helpers";
 import { AssessmentController } from "../../assessment.controller";
 import { SaveAssessmentDataJobInDTO } from "../../assessment.dto";
-import { createFakeSaveAssessmentDataPayload } from "./save-assessment-data";
+import { createFakeSaveAssessmentDataPayload } from "./save-assessment-data-factory";
 
 describe("AssessmentController(e2e)-saveAssessmentData", () => {
   let db: E2EDataSources;
@@ -25,7 +25,7 @@ describe("AssessmentController(e2e)-saveAssessmentData", () => {
     assessmentController = nestApplication.get(AssessmentController);
   });
 
-  it(`Should save student assessment data when it had not been updated yet.`, async () => {
+  it("Should save student assessment data when it had not been updated yet.", async () => {
     // Arrange
     const savedApplication = await saveFakeApplication(db.dataSource);
     const assessmentData = { totalAssessmentNeed: 9999 };
