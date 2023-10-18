@@ -31,7 +31,7 @@ describe("AssessmentController(e2e)-workflowWrapUp", () => {
   it(`Should update assessment status to completed when it does not have a status ${StudentAssessmentStatus.InProgress}.`, async () => {
     // Arrange
     const savedApplication = await saveFakeApplication(db.dataSource);
-    const workflowData: WorkflowData = {
+    const workflowData = {
       studentData: {
         dependantStatus: "independant",
       },
