@@ -98,6 +98,71 @@ describe("ApplicationOfferingChangeRequestAESTController(e2e)-assessApplicationO
     ).toBe(applicationOfferingChangeRequest.requestedOffering.id);
   });
 
+  it("Should not create a new assessment when the application offering change request has been declined by the ministry user.", async () => {
+    // Arrange
+    const application = await saveFakeApplication(db.dataSource, undefined, {
+      applicationStatus: ApplicationStatus.Completed,
+    });
+    const applicationOfferingChangeRequest =
+      await saveFakeApplicationOfferingRequestChange(
+        db,
+        {
+          application,
+        },
+        {
+          initialValues: {
+            applicationOfferingChangeRequestStatus:
+              ApplicationOfferingChangeRequestStatus.InProgressWithSABC,
+          },
+        },
+      );
+    const note = "Some dummy note.";
+    const payload = {
+      note,
+      applicationOfferingChangeRequestStatus:
+        ApplicationOfferingChangeRequestStatus.DeclinedBySABC,
+    };
+    const token = await getAESTToken(AESTGroups.BusinessAdministrators);
+    const endpoint = `/aest/application-offering-change-request/${applicationOfferingChangeRequest.id}`;
+    // Act/Assert
+    await request(app.getHttpServer())
+      .patch(endpoint)
+      .send(payload)
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK);
+    // Check if the application offering change request was assessed as expected.
+    const updatedApplicationOfferingChangeRequest =
+      await db.applicationOfferingChangeRequest.findOne({
+        select: {
+          id: true,
+          applicationOfferingChangeRequestStatus: true,
+          assessedNote: { description: true },
+          application: {
+            id: true,
+            currentAssessment: {
+              id: true,
+              triggerType: true,
+            },
+          },
+        },
+        relations: {
+          assessedNote: true,
+          application: { currentAssessment: true },
+        },
+        where: { id: applicationOfferingChangeRequest.id },
+      });
+    expect(
+      updatedApplicationOfferingChangeRequest.applicationOfferingChangeRequestStatus,
+    ).toBe(ApplicationOfferingChangeRequestStatus.DeclinedBySABC);
+    expect(
+      updatedApplicationOfferingChangeRequest.assessedNote.description,
+    ).toBe(note);
+    expect(
+      updatedApplicationOfferingChangeRequest.application.currentAssessment
+        .triggerType,
+    ).toBe(AssessmentTriggerType.OriginalAssessment);
+  });
+
   it("Should throw a HttpStatus Not Found (404) error when an application offering change is not in a valid status to be assessed.", async () => {
     // Arrange
     const application = await saveFakeApplication(db.dataSource, undefined, {
