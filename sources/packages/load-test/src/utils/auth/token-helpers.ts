@@ -1,8 +1,11 @@
 import http from "k6/http";
-import { AuthorizedParties } from "../sims-api/sims-api";
 import { KEY_CLOAK_TOKEN_URL } from "../../../config.env";
 import { decodeJWT } from "./jwt-helpers";
-import { TokenCacheResponse, UserPasswordCredential } from "./models";
+import {
+  AuthorizedParties,
+  TokenCacheResponse,
+  UserPasswordCredential,
+} from "./models";
 
 /**
  * Default amount of time to a token be expired and be
