@@ -3,7 +3,7 @@ import {
   FORMS_URL,
   FORMIO_ROOT_EMAIL,
   FORMIO_ROOT_PASSWORD,
-} from "../../config.env";
+} from "../../../config.env";
 
 /**
  * Form.io authentication header.
