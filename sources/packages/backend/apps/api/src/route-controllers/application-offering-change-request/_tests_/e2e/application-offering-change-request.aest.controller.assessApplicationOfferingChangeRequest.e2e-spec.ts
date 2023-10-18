@@ -16,18 +16,15 @@ import {
   ApplicationOfferingChangeRequestStatus,
   ApplicationStatus,
 } from "@sims/sims-db";
-import { SystemUsersService } from "@sims/services";
 
 describe("ApplicationOfferingChangeRequestAESTController(e2e)-assessApplicationOfferingChangeRequest", () => {
   let app: INestApplication;
   let db: E2EDataSources;
-  let systemUsersService: SystemUsersService;
 
   beforeAll(async () => {
     const { nestApplication, dataSource } = await createTestingAppModule();
     app = nestApplication;
     db = createE2EDataSources(dataSource);
-    systemUsersService = nestApplication.get(SystemUsersService);
   });
 
   it("Should assess the application offering change request for the provided application offering change request id.", async () => {
