@@ -1,11 +1,13 @@
 import {
   ApplicationStatus,
   COEStatus,
-  DisbursementSchedule,
   DisbursementScheduleStatus,
   RestrictionActionType,
 } from "@sims/sims-db";
-import { ApplicationEventCode } from "../../../models/ier12-integration.model";
+import {
+  ApplicationEventCode,
+  DisbursementScheduleForApplicationEventCode,
+} from "../../../models/ier12-integration.model";
 import {
   ApplicationEventCodeDuringAssessmentUtilsService,
   ApplicationEventCodeDuringEnrolmentAndCompletedUtilsService,
@@ -18,10 +20,7 @@ describe("ApplicationEventCodeUtilsService-getApplicationEventCode", () => {
   let applicationEventCodeUtilsService: ApplicationEventCodeUtilsService;
   let applicationEventCodeDuringAssessmentUtilsService: ApplicationEventCodeDuringAssessmentUtilsService;
   let applicationEventCodeDuringEnrolmentAndCompletedUtilsService: ApplicationEventCodeDuringEnrolmentAndCompletedUtilsService;
-  let payload: Pick<
-    DisbursementSchedule,
-    "id" | "coeStatus" | "disbursementDate" | "disbursementScheduleStatus"
-  >;
+  let payload: DisbursementScheduleForApplicationEventCode;
   let applicationNumber: string;
   let activeRestrictionsActionTypes: RestrictionActionType[][];
 
@@ -34,9 +33,9 @@ describe("ApplicationEventCodeUtilsService-getApplicationEventCode", () => {
       applicationEventCodeDuringAssessmentUtilsService,
       applicationEventCodeDuringEnrolmentAndCompletedUtilsService,
     );
+
     // Arrange.
     payload = {
-      id: 9999,
       coeStatus: COEStatus.completed,
       disbursementDate: formatDate(new Date(), DATE_ONLY_ISO_FORMAT),
       disbursementScheduleStatus: DisbursementScheduleStatus.Pending,
@@ -46,13 +45,20 @@ describe("ApplicationEventCodeUtilsService-getApplicationEventCode", () => {
   });
 
   it(`Should return ${ApplicationEventCode.DISC} when the application status is ${ApplicationStatus.Cancelled}.`, async () => {
+    // Arrange
+    const currentDisbursementSchedule = {
+      ...payload,
+      coeStatus: COEStatus.required,
+    };
+
     // Act
     const applicationEventCode =
       await applicationEventCodeUtilsService.getApplicationEventCode(
         applicationNumber,
         ApplicationStatus.Cancelled,
-        payload,
+        currentDisbursementSchedule,
       );
+
     // Assert
     expect(applicationEventCode).toBe(ApplicationEventCode.DISC);
   });
@@ -64,6 +70,7 @@ describe("ApplicationEventCodeUtilsService-getApplicationEventCode", () => {
       ApplicationStatus.Assessment,
       payload,
     );
+
     // Assert
     expect(
       applicationEventCodeDuringAssessmentUtilsService.applicationEventCodeDuringAssessment,
@@ -77,6 +84,7 @@ describe("ApplicationEventCodeUtilsService-getApplicationEventCode", () => {
       ApplicationStatus.Enrolment,
       payload,
     );
+
     // Assert
     expect(
       applicationEventCodeDuringEnrolmentAndCompletedUtilsService.applicationEventCodeDuringEnrolmentAndCompleted,
@@ -91,6 +99,7 @@ describe("ApplicationEventCodeUtilsService-getApplicationEventCode", () => {
       payload,
       activeRestrictionsActionTypes,
     );
+
     // Assert
     expect(
       applicationEventCodeDuringEnrolmentAndCompletedUtilsService.applicationEventCodeDuringCompleted,

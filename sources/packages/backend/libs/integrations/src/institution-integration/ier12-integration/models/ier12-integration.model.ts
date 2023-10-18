@@ -234,13 +234,13 @@ export type CompletedApplicationWithPendingDisbursement =
 /**
  * Disbursement schedule for application event code during application completed status.
  */
-export type DisbursementScheduleForApplicationEventCodeDuringCompleted = Pick<
+export type DisbursementScheduleForApplicationEventCode = Pick<
   DisbursementSchedule,
-  | "id"
   | "coeStatus"
   | "disbursementDate"
   | "disbursementScheduleStatus"
   | "disbursementFeedbackErrors"
+  | "disbursementValues"
 >;
 
 /**

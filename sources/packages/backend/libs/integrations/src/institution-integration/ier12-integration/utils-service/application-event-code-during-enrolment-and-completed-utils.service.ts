@@ -3,10 +3,10 @@ import {
   COEStatus,
   DisbursementSchedule,
   DisbursementScheduleStatus,
+  DisbursementValue,
   RestrictionActionType,
 } from "@sims/sims-db";
 import { addDays, isSameOrAfterDate } from "@sims/utilities";
-import { DisbursementValueService } from "@sims/integrations/services";
 import { DISBURSEMENT_FILE_GENERATION_ANTICIPATION_DAYS } from "@sims/integrations/constants";
 import {
   ApplicationEventCode,
@@ -14,16 +14,12 @@ import {
   CompletedApplicationWithPendingDisbursement,
   CompletedApplicationWithSentDisbursement,
   DisbursementFeedbackErrorsForApplicationEventDate,
-  DisbursementScheduleForApplicationEventCodeDuringCompleted,
+  DisbursementScheduleForApplicationEventCode,
 } from "../models/ier12-integration.model";
 import { FULL_TIME_DISBURSEMENT_FEEDBACK_ERRORS } from "@sims/integrations/services/disbursement-schedule/disbursement-schedule.models";
 
 @Injectable()
 export class ApplicationEventCodeDuringEnrolmentAndCompletedUtilsService {
-  constructor(
-    private readonly disbursementValueService: DisbursementValueService,
-  ) {}
-
   /**
    * Get application event code for an application with enrollment/completed status.
    * @param coeStatus coe status.
@@ -38,7 +34,7 @@ export class ApplicationEventCodeDuringEnrolmentAndCompletedUtilsService {
       case COEStatus.declined:
         return ApplicationEventCode.COED;
       default:
-        throw new Error("Unexpected coe status.");
+        throw new Error("Unexpected COE status.");
     }
   }
 
@@ -48,10 +44,10 @@ export class ApplicationEventCodeDuringEnrolmentAndCompletedUtilsService {
    * @param activeRestrictionsActionTypes action types for active student restrictions.
    * @returns application event code.
    */
-  async applicationEventCodeDuringCompleted(
-    currentDisbursementSchedule: DisbursementScheduleForApplicationEventCodeDuringCompleted,
+  applicationEventCodeDuringCompleted(
+    currentDisbursementSchedule: DisbursementScheduleForApplicationEventCode,
     activeRestrictionsActionTypes?: RestrictionActionType[][],
-  ): Promise<CompletedApplicationEventCode> {
+  ): CompletedApplicationEventCode {
     switch (currentDisbursementSchedule.disbursementScheduleStatus) {
       case DisbursementScheduleStatus.Cancelled:
         return ApplicationEventCode.DISC;
@@ -60,30 +56,50 @@ export class ApplicationEventCodeDuringEnrolmentAndCompletedUtilsService {
           currentDisbursementSchedule,
           activeRestrictionsActionTypes,
         );
+      // Todo: ann remove id, currentDisbursementSchedule.id, check the respective test case too,
       case DisbursementScheduleStatus.Sent:
         return this.eventCodeForCompletedApplicationWithSentDisbursement(
-          currentDisbursementSchedule.id,
+          currentDisbursementSchedule.disbursementValues,
           currentDisbursementSchedule.disbursementFeedbackErrors,
         );
     }
   }
 
   /**
+   * Checks if there is any partial or full award amount, that
+   * was withheld due to a restriction during an e-cert generation.
+   * @param disbursementValues disbursement values.
+   * @returns true if there is any partial or full award amount, that
+   * was withheld due to a restriction.
+   */
+  private hasAwardWithheldDueToRestriction(
+    disbursementValues: Pick<
+      DisbursementValue,
+      "restrictionAmountSubtracted"
+    >[],
+  ): boolean {
+    return disbursementValues.some(
+      (disbursementValue) => disbursementValue.restrictionAmountSubtracted > 0,
+    );
+  }
+
+  /**
    * Get application event code for an application with completed status
    * with sent disbursement and with no feedback errors and any disbursement
    * award (full amount or a partial) was withheld due to a restriction.
-   * @param currentDisbursementScheduleId current disbursement schedule id.
+   * @param disbursementValues disbursement values.
    * @returns application event code.
    */
-  private async eventCodeForCompletedApplicationWithAwardWithheldDueToRestriction(
-    currentDisbursementScheduleId: number,
-  ): Promise<ApplicationEventCode.DISW | ApplicationEventCode.DISS> {
+  private eventCodeForCompletedApplicationWithAwardWithheldDueToRestriction(
+    disbursementValues: Pick<
+      DisbursementValue,
+      "restrictionAmountSubtracted"
+    >[],
+  ): ApplicationEventCode.DISW | ApplicationEventCode.DISS {
     // Check if any disbursement award (full amount or a partial)
     // was withheld due to a restriction.
     const hasAwardWithheldDueToRestriction =
-      await this.disbursementValueService.hasAwardWithheldDueToRestriction(
-        currentDisbursementScheduleId,
-      );
+      this.hasAwardWithheldDueToRestriction(disbursementValues);
     return hasAwardWithheldDueToRestriction
       ? ApplicationEventCode.DISW
       : ApplicationEventCode.DISS;
@@ -108,21 +124,24 @@ export class ApplicationEventCodeDuringEnrolmentAndCompletedUtilsService {
   /**
    * Get application event code for an application with completed status
    * with sent disbursement.
-   * @param currentDisbursementScheduleId current disbursement schedule id.
+   * @param disbursementValues disbursement values.
    * @param disbursementFeedbackErrors disbursement feedback errors.
    * @returns application event code.
    */
-  private async eventCodeForCompletedApplicationWithSentDisbursement(
-    currentDisbursementScheduleId: number,
+  private eventCodeForCompletedApplicationWithSentDisbursement(
+    disbursementValues: Pick<
+      DisbursementValue,
+      "restrictionAmountSubtracted"
+    >[],
     disbursementFeedbackErrors: DisbursementFeedbackErrorsForApplicationEventDate[],
-  ): Promise<CompletedApplicationWithSentDisbursement> {
+  ): CompletedApplicationWithSentDisbursement {
     // Check if the disbursement has any feedback error.
     const hasFullTimeDisbursementFeedbackErrors =
       this.hasFullTimeDisbursementFeedbackErrors(disbursementFeedbackErrors);
     return hasFullTimeDisbursementFeedbackErrors
       ? ApplicationEventCode.DISE
       : this.eventCodeForCompletedApplicationWithAwardWithheldDueToRestriction(
-          currentDisbursementScheduleId,
+          disbursementValues,
         );
   }
 

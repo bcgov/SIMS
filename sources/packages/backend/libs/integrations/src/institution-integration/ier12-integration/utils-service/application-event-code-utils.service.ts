@@ -1,10 +1,9 @@
 import { Injectable } from "@nestjs/common";
+import { ApplicationStatus, RestrictionActionType } from "@sims/sims-db";
 import {
-  ApplicationStatus,
-  DisbursementSchedule,
-  RestrictionActionType,
-} from "@sims/sims-db";
-import { ApplicationEventCode } from "../models/ier12-integration.model";
+  ApplicationEventCode,
+  DisbursementScheduleForApplicationEventCode,
+} from "../models/ier12-integration.model";
 import {
   ApplicationEventCodeDuringAssessmentUtilsService,
   ApplicationEventCodeDuringEnrolmentAndCompletedUtilsService,
@@ -28,10 +27,7 @@ export class ApplicationEventCodeUtilsService {
   async getApplicationEventCode(
     applicationNumber: string,
     applicationStatus: ApplicationStatus,
-    currentDisbursementSchedule: Pick<
-      DisbursementSchedule,
-      "id" | "coeStatus" | "disbursementDate" | "disbursementScheduleStatus"
-    >,
+    currentDisbursementSchedule: DisbursementScheduleForApplicationEventCode,
     activeRestrictionsActionTypes?: RestrictionActionType[][],
   ): Promise<ApplicationEventCode> {
     switch (applicationStatus) {

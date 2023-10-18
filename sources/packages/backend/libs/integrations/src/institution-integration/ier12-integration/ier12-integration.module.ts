@@ -11,7 +11,6 @@ import { IER12ProcessingService } from "./ier12.processing.service";
 import {
   StudentAssessmentService,
   SshService,
-  DisbursementValueService,
 } from "@sims/integrations/services";
 import {
   ApplicationEventCodeDuringAssessmentUtilsService,
@@ -32,7 +31,6 @@ import {
     DisbursementOverawardService,
     NoteSharedService,
     ApplicationSharedService,
-    DisbursementValueService,
     ApplicationEventCodeUtilsService,
     ApplicationEventCodeDuringAssessmentUtilsService,
     ApplicationEventCodeDuringEnrolmentAndCompletedUtilsService,
