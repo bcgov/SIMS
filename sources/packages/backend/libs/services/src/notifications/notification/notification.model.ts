@@ -37,6 +37,13 @@ export interface ApplicationOfferingChangeRequestInProgressWithStudentNotificati
   userId: number;
 }
 
+export interface ApplicationOfferingChangeRequestCompleteNotification {
+  givenNames: string;
+  lastName: string;
+  toAddress: string;
+  userId: number;
+}
+
 export interface StudentRestrictionAddedNotification {
   givenNames: string;
   lastName: string;
