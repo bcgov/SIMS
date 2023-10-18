@@ -31,17 +31,10 @@ describe("AssessmentController(e2e)-updateNOAStatus", () => {
   it("Should update NOA status when noa approval status is null.", async () => {
     // Arrange
     const savedApplication = await saveFakeApplication(db.dataSource);
-    const updateNOAStatusPayload = createFakeUpdateNOAStatusPayload(
-      savedApplication.currentAssessment.id,
-    );
 
     // Act
     const result = await assessmentController.updateNOAStatus(
-      createFakeWorkerJob<
-        UpdateNOAStatusJobInDTO,
-        UpdateNOAStatusHeaderDTO,
-        IOutputVariables
-      >(updateNOAStatusPayload),
+      createFakeUpdateNOAStatusPayload(savedApplication.currentAssessment.id),
     );
 
     // Asserts

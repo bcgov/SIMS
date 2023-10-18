@@ -46,11 +46,10 @@ describe("AssessmentController(e2e)-workflowWrapUp", () => {
 
     // Act
     const result = await assessmentController.workflowWrapUp(
-      createFakeWorkerJob<
-        WorkflowWrapUpJobInDTO,
-        ICustomHeaders,
-        IOutputVariables
-      >(workflowWrapUpPayload),
+      createFakeWorkflowWrapUpPayload(
+        savedApplication.currentAssessment.id,
+        workflowData,
+      ),
     );
 
     // Asserts

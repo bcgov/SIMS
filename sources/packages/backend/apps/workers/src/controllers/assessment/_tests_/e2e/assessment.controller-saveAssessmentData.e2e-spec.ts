@@ -28,18 +28,13 @@ describe("AssessmentController(e2e)-saveAssessmentData", () => {
     // Arrange
     const savedApplication = await saveFakeApplication(db.dataSource);
     const assessmentData = { totalAssessmentNeed: 9999 };
-    const saveAssessmentDataPayload = createFakeSaveAssessmentDataPayload(
-      savedApplication.currentAssessment.id,
-      assessmentData,
-    );
 
     // Act
     const result = await assessmentController.saveAssessmentData(
-      createFakeWorkerJob<
-        SaveAssessmentDataJobInDTO,
-        ICustomHeaders,
-        IOutputVariables
-      >(saveAssessmentDataPayload),
+      createFakeSaveAssessmentDataPayload(
+        savedApplication.currentAssessment.id,
+        assessmentData,
+      ),
     );
 
     // Asserts
