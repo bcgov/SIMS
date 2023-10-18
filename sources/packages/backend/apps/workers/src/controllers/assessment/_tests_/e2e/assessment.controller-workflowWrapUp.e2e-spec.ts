@@ -3,16 +3,13 @@ import {
   E2EDataSources,
   saveFakeApplication,
 } from "@sims/test-utils";
-import { ICustomHeaders, IOutputVariables } from "zeebe-node";
 import {
-  createFakeWorkerJob,
   FAKE_WORKER_JOB_RESULT_PROPERTY,
   MockedZeebeJobResult,
 } from "../../../../../test/utils/worker-job-mock";
 import { createTestingAppModule } from "../../../../../test/helpers";
 import { createFakeWorkflowWrapUpPayload } from "./workflow-wrap-up-factory";
 import { AssessmentController } from "../../assessment.controller";
-import { WorkflowWrapUpJobInDTO } from "../../assessment.dto";
 import { StudentAssessmentStatus, WorkflowData } from "@sims/sims-db";
 import { SystemUsersService } from "@sims/services";
 

@@ -3,15 +3,12 @@ import {
   E2EDataSources,
   saveFakeApplication,
 } from "@sims/test-utils";
-import { ICustomHeaders, IOutputVariables } from "zeebe-node";
 import {
-  createFakeWorkerJob,
   FAKE_WORKER_JOB_RESULT_PROPERTY,
   MockedZeebeJobResult,
 } from "../../../../../test/utils/worker-job-mock";
 import { createTestingAppModule } from "../../../../../test/helpers";
 import { AssessmentController } from "../../assessment.controller";
-import { SaveAssessmentDataJobInDTO } from "../../assessment.dto";
 import { createFakeSaveAssessmentDataPayload } from "./save-assessment-data-factory";
 
 describe("AssessmentController(e2e)-saveAssessmentData", () => {
