@@ -99,7 +99,7 @@ describe("ApplicationEventDateUtilsService-getApplicationEventDate", () => {
     expect(applicationEventDate).toBe(updatedAt);
   });
 
-  it(`Should return payloadDisbursementSchedule.disbursementDate - DISBURSEMENT_FILE_GENERATION_ANTICIPATION_DAYS when application event code is ${ApplicationEventCode.DISR}.`, () => {
+  it(`Should return payloadDisbursementSchedule.disbursementDate - ${DISBURSEMENT_FILE_GENERATION_ANTICIPATION_DAYS} when application event code is ${ApplicationEventCode.DISR}.`, () => {
     // Act
     const applicationEventDate =
       applicationEventDateUtilsService.getApplicationEventDate(
