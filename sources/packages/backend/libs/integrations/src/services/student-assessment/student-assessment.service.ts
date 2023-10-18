@@ -102,6 +102,7 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
             valueCode: true,
             valueAmount: true,
             valueType: true,
+            restrictionAmountSubtracted: true,
           },
           disbursementReceipts: {
             id: true,
