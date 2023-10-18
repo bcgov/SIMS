@@ -27,7 +27,9 @@ describe("AssessmentController(e2e)-saveAssessmentData", () => {
   it("Should save student assessment data when it had not been updated yet.", async () => {
     // Arrange
     const savedApplication = await saveFakeApplication(db.dataSource);
-    const assessmentData = { totalAssessmentNeed: 9999 };
+    savedApplication.currentAssessment.assessmentData = null;
+    await db.studentAssessment.save(savedApplication.currentAssessment);
+    const assessmentData = { totalAssessmentNeed: 1111 };
 
     // Act
     const result = await assessmentController.saveAssessmentData(
@@ -47,9 +49,11 @@ describe("AssessmentController(e2e)-saveAssessmentData", () => {
     const expectedAssessment = await db.studentAssessment.findOne({
       select: {
         assessmentData: true as unknown,
+        assessmentDate: true,
       },
       where: { id: savedApplication.currentAssessment.id },
     });
     expect(expectedAssessment.assessmentData).toEqual(assessmentData);
+    expect(expectedAssessment.assessmentDate).toBeInstanceOf(Date);
   });
 });

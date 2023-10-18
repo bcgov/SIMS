@@ -39,10 +39,6 @@ describe("AssessmentController(e2e)-workflowWrapUp", () => {
     savedApplication.currentAssessment.studentAssessmentStatus =
       StudentAssessmentStatus.InProgress;
     await db.studentAssessment.save(savedApplication.currentAssessment);
-    const workflowWrapUpPayload = createFakeWorkflowWrapUpPayload(
-      savedApplication.currentAssessment.id,
-      workflowData,
-    );
 
     // Act
     const result = await assessmentController.workflowWrapUp(
