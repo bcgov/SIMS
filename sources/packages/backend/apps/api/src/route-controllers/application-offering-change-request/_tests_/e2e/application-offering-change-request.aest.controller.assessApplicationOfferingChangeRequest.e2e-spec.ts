@@ -15,6 +15,7 @@ import {
 import {
   ApplicationOfferingChangeRequestStatus,
   ApplicationStatus,
+  AssessmentTriggerType,
 } from "@sims/sims-db";
 
 describe("ApplicationOfferingChangeRequestAESTController(e2e)-assessApplicationOfferingChangeRequest", () => {
@@ -66,8 +67,19 @@ describe("ApplicationOfferingChangeRequestAESTController(e2e)-assessApplicationO
           id: true,
           applicationOfferingChangeRequestStatus: true,
           assessedNote: { description: true },
+          application: {
+            id: true,
+            currentAssessment: {
+              id: true,
+              triggerType: true,
+              offering: { id: true },
+            },
+          },
         },
-        relations: { assessedNote: true },
+        relations: {
+          assessedNote: true,
+          application: { currentAssessment: { offering: true } },
+        },
         where: { id: applicationOfferingChangeRequest.id },
       });
     expect(
@@ -76,6 +88,14 @@ describe("ApplicationOfferingChangeRequestAESTController(e2e)-assessApplicationO
     expect(
       updatedApplicationOfferingChangeRequest.assessedNote.description,
     ).toBe(note);
+    expect(
+      updatedApplicationOfferingChangeRequest.application.currentAssessment
+        .triggerType,
+    ).toBe(AssessmentTriggerType.ApplicationOfferingChange);
+    expect(
+      updatedApplicationOfferingChangeRequest.application.currentAssessment
+        .offering.id,
+    ).toBe(applicationOfferingChangeRequest.requestedOffering.id);
   });
 
   it("Should throw a HttpStatus Not Found (404) error when an application offering change is not in a valid status to be assessed.", async () => {
