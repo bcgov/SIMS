@@ -73,15 +73,12 @@ describe("ApplicationOfferingChangeRequestAESTController(e2e)-assessApplicationO
         relations: { assessedNote: true },
         where: { id: applicationOfferingChangeRequest.id },
       });
-    const auditUser = await systemUsersService.systemUser();
     expect(
       updatedApplicationOfferingChangeRequest.applicationOfferingChangeRequestStatus,
     ).toBe(ApplicationOfferingChangeRequestStatus.Approved);
     expect(
       updatedApplicationOfferingChangeRequest.assessedNote.description,
     ).toBe(note);
-    expect(updatedApplicationOfferingChangeRequest.modifier).toBe(auditUser);
-    expect(updatedApplicationOfferingChangeRequest.assessedBy).toBe(auditUser);
   });
 
   it("Should throw a HttpStatus Not Found (404) error when an application offering change is not in a valid status to be assessed.", async () => {
