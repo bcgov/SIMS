@@ -258,3 +258,11 @@ export type DisbursementFeedbackErrorsForApplicationEventDate = Pick<
   DisbursementFeedbackErrors,
   "errorCode"
 >;
+
+/**
+ * Disbursement value for application event code.
+ */
+export type DisbursementValueForApplicationEventCode = Pick<
+  DisbursementValue,
+  "restrictionAmountSubtracted"
+>;

@@ -3,7 +3,6 @@ import {
   COEStatus,
   DisbursementSchedule,
   DisbursementScheduleStatus,
-  DisbursementValue,
   RestrictionActionType,
 } from "@sims/sims-db";
 import { addDays, isSameOrAfterDate } from "@sims/utilities";
@@ -15,6 +14,7 @@ import {
   CompletedApplicationWithSentDisbursement,
   DisbursementFeedbackErrorsForApplicationEventDate,
   DisbursementScheduleForApplicationEventCode,
+  DisbursementValueForApplicationEventCode,
 } from "../models/ier12-integration.model";
 import { FULL_TIME_DISBURSEMENT_FEEDBACK_ERRORS } from "@sims/integrations/services/disbursement-schedule/disbursement-schedule.models";
 
@@ -56,7 +56,6 @@ export class ApplicationEventCodeDuringEnrolmentAndCompletedUtilsService {
           currentDisbursementSchedule,
           activeRestrictionsActionTypes,
         );
-      // Todo: ann remove id, currentDisbursementSchedule.id, check the respective test case too,
       case DisbursementScheduleStatus.Sent:
         return this.eventCodeForCompletedApplicationWithSentDisbursement(
           currentDisbursementSchedule.disbursementValues,
@@ -73,10 +72,7 @@ export class ApplicationEventCodeDuringEnrolmentAndCompletedUtilsService {
    * was withheld due to a restriction.
    */
   private hasAwardWithheldDueToRestriction(
-    disbursementValues: Pick<
-      DisbursementValue,
-      "restrictionAmountSubtracted"
-    >[],
+    disbursementValues: DisbursementValueForApplicationEventCode[],
   ): boolean {
     return disbursementValues.some(
       (disbursementValue) => disbursementValue.restrictionAmountSubtracted > 0,
@@ -91,10 +87,7 @@ export class ApplicationEventCodeDuringEnrolmentAndCompletedUtilsService {
    * @returns application event code.
    */
   private eventCodeForCompletedApplicationWithAwardWithheldDueToRestriction(
-    disbursementValues: Pick<
-      DisbursementValue,
-      "restrictionAmountSubtracted"
-    >[],
+    disbursementValues: DisbursementValueForApplicationEventCode[],
   ): ApplicationEventCode.DISW | ApplicationEventCode.DISS {
     // Check if any disbursement award (full amount or a partial)
     // was withheld due to a restriction.
@@ -129,10 +122,7 @@ export class ApplicationEventCodeDuringEnrolmentAndCompletedUtilsService {
    * @returns application event code.
    */
   private eventCodeForCompletedApplicationWithSentDisbursement(
-    disbursementValues: Pick<
-      DisbursementValue,
-      "restrictionAmountSubtracted"
-    >[],
+    disbursementValues: DisbursementValueForApplicationEventCode[],
     disbursementFeedbackErrors: DisbursementFeedbackErrorsForApplicationEventDate[],
   ): CompletedApplicationWithSentDisbursement {
     // Check if the disbursement has any feedback error.
