@@ -121,7 +121,7 @@ describe("InstitutionAESTController(e2e)-searchInstitutions", () => {
 
   it("Should throw bad request error when no search criteria exist.", async () => {
     // Arrange
-    const endpoint = `/aest/institution/search`;
+    const endpoint = "/aest/institution/search";
     const token = await getAESTToken(AESTGroups.MOFOperations);
 
     // Act/Assert
@@ -130,7 +130,7 @@ describe("InstitutionAESTController(e2e)-searchInstitutions", () => {
       .auth(token, BEARER_AUTH_TYPE)
       .expect(HttpStatus.BAD_REQUEST)
       .expect({
-        statusCode: 400,
+        statusCode: HttpStatus.BAD_REQUEST,
         message: [
           "legalName must be shorter than or equal to 250 characters",
           "legalName should not be empty",

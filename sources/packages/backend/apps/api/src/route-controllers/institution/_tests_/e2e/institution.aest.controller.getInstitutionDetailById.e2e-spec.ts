@@ -82,7 +82,7 @@ describe("InstitutionAESTController(e2e)-getInstitutionDetailById", () => {
 
   it("Should throw not found error when an institution with given institution id dos not exist.", async () => {
     // Arrange
-    const endpoint = `/aest/institution/9999`;
+    const endpoint = "/aest/institution/9999";
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
 
     // Act/Assert
@@ -91,7 +91,7 @@ describe("InstitutionAESTController(e2e)-getInstitutionDetailById", () => {
       .auth(token, BEARER_AUTH_TYPE)
       .expect(HttpStatus.NOT_FOUND)
       .expect({
-        statusCode: 404,
+        statusCode: HttpStatus.NOT_FOUND,
         message: "Institution not found.",
         error: "Not Found",
       });
