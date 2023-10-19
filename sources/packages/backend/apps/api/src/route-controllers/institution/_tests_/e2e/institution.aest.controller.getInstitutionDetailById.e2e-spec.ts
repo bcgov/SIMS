@@ -18,7 +18,7 @@ import {
 } from "@sims/sims-db/constant";
 import { getISODateOnlyString } from "@sims/utilities";
 
-describe("InstitutionAESTController(e2e)-searchInstitutions", () => {
+describe("InstitutionAESTController(e2e)-getInstitutionDetailById", () => {
   let app: INestApplication;
   let db: E2EDataSources;
 
