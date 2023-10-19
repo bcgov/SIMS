@@ -240,6 +240,8 @@ export class IER12IntegrationService extends SFTPIntegrationBase<void> {
         ierRecord.disbursementAwards,
       );
       ierFileDetail.documentProducedDate = ierRecord.disbursementSentDate;
+      ierFileDetail.applicationEventCode = ierRecord.applicationEventCode;
+      ierFileDetail.applicationEventDate = ierRecord.applicationEventDate;
       return ierFileDetail;
     });
     ierFileLines.push(...fileRecords);
