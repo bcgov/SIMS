@@ -17,7 +17,6 @@ describe("InstitutionAESTController(e2e)-searchInstitutions", () => {
   let app: INestApplication;
   let db: E2EDataSources;
   const FAKE_INSTITUTION_NAME = "Search E2E Test institution name";
-  const FAKE_INSTITUTION_LEGAL_NAME = "Search E2E Test institution legal name";
 
   beforeAll(async () => {
     const { nestApplication, dataSource } = await createTestingAppModule();
@@ -29,9 +28,11 @@ describe("InstitutionAESTController(e2e)-searchInstitutions", () => {
     // Arrange
     const institution = createFakeInstitution();
     institution.operatingName = FAKE_INSTITUTION_NAME;
-    institution.legalOperatingName = FAKE_INSTITUTION_LEGAL_NAME;
+    // Using business guid to keep the legal operating name unique for institution.
+    institution.legalOperatingName = institution.businessGuid;
     await db.institution.save(institution);
-    const legalNameSearchText = "Search E2E Test institution legal";
+    // Modifying the text to uppercase to validate non case sensitive search.
+    const legalNameSearchText = institution.legalOperatingName.toUpperCase();
     const mailingAddress = institution.institutionAddress.mailingAddress;
     const expectedSearchResult: SearchInstitutionAPIOutDTO[] = [
       {
@@ -57,21 +58,18 @@ describe("InstitutionAESTController(e2e)-searchInstitutions", () => {
       .get(endpoint)
       .auth(token, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
-      .then((response) => {
-        const searchResult = response.body as SearchInstitutionAPIOutDTO[];
-        expect(searchResult).toEqual(
-          expect.arrayContaining(expectedSearchResult),
-        );
-      });
+      .expect(expectedSearchResult);
   });
 
   it("Should return institutions when searched by legal name and operating name.", async () => {
     // Arrange
     const institution = createFakeInstitution();
     institution.operatingName = FAKE_INSTITUTION_NAME;
-    institution.legalOperatingName = FAKE_INSTITUTION_LEGAL_NAME;
+    // Using business guid to keep the legal operating name unique for institution.
+    institution.legalOperatingName = institution.businessGuid;
     await db.institution.save(institution);
-    const searchText = "Search E2E Test institution";
+    const operatingNameSearchText = "Search E2E Test institution";
+    const legalNameSearchText = institution.legalOperatingName;
     const mailingAddress = institution.institutionAddress.mailingAddress;
     const expectedSearchResult: SearchInstitutionAPIOutDTO[] = [
       {
@@ -89,7 +87,7 @@ describe("InstitutionAESTController(e2e)-searchInstitutions", () => {
       },
     ];
 
-    const endpoint = `/aest/institution/search?legalName=${searchText}&operatingName=${searchText}`;
+    const endpoint = `/aest/institution/search?legalName=${legalNameSearchText}&operatingName=${operatingNameSearchText}`;
     const token = await getAESTToken(AESTGroups.Operations);
 
     // Act/Assert
@@ -97,12 +95,7 @@ describe("InstitutionAESTController(e2e)-searchInstitutions", () => {
       .get(endpoint)
       .auth(token, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
-      .then((response) => {
-        const searchResult = response.body as SearchInstitutionAPIOutDTO[];
-        expect(searchResult).toEqual(
-          expect.arrayContaining(expectedSearchResult),
-        );
-      });
+      .expect(expectedSearchResult);
   });
 
   it("Should return empty result when search criteria does not return any institution.", async () => {

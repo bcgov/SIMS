@@ -12,10 +12,6 @@ import {
   createFakeInstitution,
 } from "@sims/test-utils";
 import { InstitutionDetailAPIOutDTO } from "../../models/institution.dto";
-import {
-  INSTITUTION_TYPE_BC_PRIVATE,
-  INSTITUTION_TYPE_BC_PUBLIC,
-} from "@sims/sims-db/constant";
 import { getISODateOnlyString } from "@sims/utilities";
 
 describe("InstitutionAESTController(e2e)-getInstitutionDetailById", () => {
@@ -36,10 +32,6 @@ describe("InstitutionAESTController(e2e)-getInstitutionDetailById", () => {
       select: { id: true, name: true },
       where: { id: institution.institutionType.id },
     });
-    const isBCPrivate =
-      INSTITUTION_TYPE_BC_PRIVATE === institution.institutionType.id;
-    const isBCPublic =
-      INSTITUTION_TYPE_BC_PUBLIC === institution.institutionType.id;
     const expectedInstitutionDetails: InstitutionDetailAPIOutDTO = {
       legalOperatingName: institution.legalOperatingName,
       operatingName: institution.operatingName,
@@ -65,9 +57,9 @@ describe("InstitutionAESTController(e2e)-getInstitutionDetailById", () => {
         canadaPostalCode: mailingAddress.postalCode,
         selectedCountry: mailingAddress.selectedCountry,
       },
-      isBCPrivate,
-      isBCPublic,
-      hasBusinessGuid: !!institution.businessGuid,
+      isBCPrivate: true,
+      isBCPublic: false,
+      hasBusinessGuid: true,
     };
     const endpoint = `/aest/institution/${institution.id}`;
     const token = await getAESTToken(AESTGroups.Operations);
