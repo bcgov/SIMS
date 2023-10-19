@@ -21,6 +21,7 @@ import {
   Institution,
   InstitutionLocation,
   InstitutionRestriction,
+  InstitutionType,
   InstitutionUserAuth,
   InstitutionUserTypeAndRole,
   MSFAANumber,
@@ -88,6 +89,7 @@ export function createE2EDataSources(dataSource: DataSource): E2EDataSources {
     federalRestriction: dataSource.getRepository(FederalRestriction),
     institution: dataSource.getRepository(Institution),
     institutionLocation: dataSource.getRepository(InstitutionLocation),
+    institutionType: dataSource.getRepository(InstitutionType),
     institutionRestriction: dataSource.getRepository(InstitutionRestriction),
     institutionUserAuth: dataSource.getRepository(InstitutionUserAuth),
     institutionUserTypeAndRole: dataSource.getRepository(
@@ -154,6 +156,7 @@ export interface E2EDataSources {
   federalRestriction: Repository<FederalRestriction>;
   institution: Repository<Institution>;
   institutionLocation: Repository<InstitutionLocation>;
+  institutionType: Repository<InstitutionType>;
   institutionRestriction: Repository<InstitutionRestriction>;
   institutionUserAuth: Repository<InstitutionUserAuth>;
   institutionUserTypeAndRole: Repository<InstitutionUserTypeAndRole>;
