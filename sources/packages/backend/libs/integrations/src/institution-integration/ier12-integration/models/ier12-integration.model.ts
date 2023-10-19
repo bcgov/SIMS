@@ -234,13 +234,13 @@ export type CompletedApplicationWithPendingDisbursement =
 /**
  * Disbursement schedule for application event code during application completed status.
  */
-export type DisbursementScheduleForApplicationEventCodeDuringCompleted = Pick<
+export type DisbursementScheduleForApplicationEventCode = Pick<
   DisbursementSchedule,
-  | "id"
   | "coeStatus"
   | "disbursementDate"
   | "disbursementScheduleStatus"
   | "disbursementFeedbackErrors"
+  | "disbursementValues"
 >;
 
 /**
@@ -257,4 +257,12 @@ export type DisbursementScheduleForApplicationEventDate = Pick<
 export type DisbursementFeedbackErrorsForApplicationEventDate = Pick<
   DisbursementFeedbackErrors,
   "errorCode"
+>;
+
+/**
+ * Disbursement value for application event code.
+ */
+export type DisbursementValueForApplicationEventCode = Pick<
+  DisbursementValue,
+  "restrictionAmountSubtracted"
 >;
