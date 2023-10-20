@@ -72,7 +72,7 @@ describe("InstitutionAESTController(e2e)-getInstitutionDetailById", () => {
       .expect(expectedInstitutionDetails);
   });
 
-  it("Should throw not found error when an institution with given institution id dos not exist.", async () => {
+  it("Should throw not found error when an institution with given institution id does not exist.", async () => {
     // Arrange
     const endpoint = "/aest/institution/9999";
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
