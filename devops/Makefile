@@ -493,6 +493,7 @@ db-backup-build-patroni:
 	@echo "+\n++ Creating build resources for database backups on $(BUILD_NAMESPACE)\n+"
 	oc -n $(BUILD_NAMESPACE) process -f ./openshift/database-backup/backup-build.yaml \
 		-p NAME=$(PATRONI_SIMSDB_BACKUP_APP_NAME) OUTPUT_IMAGE_TAG=$(PATRONI_SIMSDB_BACKUP_TAG_NAME) \
+		-p GIT_REF=$(PATRONI_SIMSDB_BACKUP_TAG_NAME) \
 		-p BASE_IMAGE_FOR_BUILD=quay.io/fedora/postgresql-14:14 \
 		| oc -n $(BUILD_NAMESPACE) apply -f -
 
