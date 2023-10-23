@@ -1,0 +1,22 @@
+{
+  "name": "sims-load-test",
+  "version": "1.0.0",
+  "description": "SIMS load testing.",
+  "scripts": {
+    "build": "webpack",
+    "form-io-application-submission": "npm run build && k6 run ./dist/form-io-application-submission.test.js",
+    "form-io-get-application": "npm run build && k6 run ./dist/form-io-get-application.test.js",
+    "institution-get-profile": "npm run build && k6 run ./dist/institution-get-profile.test.js"
+  },
+  "license": "ISC",
+  "devDependencies": {
+    "ts-loader": "^9.4.4",
+    "typescript": "^5.2.2",
+    "webpack": "^5.88.2",
+    "webpack-cli": "^5.1.4",
+    "webpack-glob-entries": "^1.0.1"
+  },
+  "dependencies": {
+    "@types/k6": "^0.46.3"
+  }
+}

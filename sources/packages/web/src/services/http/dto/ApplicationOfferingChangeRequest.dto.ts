@@ -101,7 +101,7 @@ export interface ApplicationOfferingChangeDetailsAPIOutDTO {
   institutionId: number;
   institutionName: string;
   submittedDate: Date;
-  updatedDate: Date;
+  studentActionDate?: Date;
 }
 
 /**

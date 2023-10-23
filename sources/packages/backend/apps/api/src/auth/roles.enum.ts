@@ -30,5 +30,6 @@ export enum Role {
   InstitutionCreateNote = "institution-create-note",
   InstitutionApproveDeclineDesignation = "institution-approve-decline-designation",
   InstitutionApproveDeclineOfferingChanges = "institution-approve-decline-offering-changes",
+  InstitutionApproveDeclineApplicationOfferingChangeRequest = "institution-approve-decline-application-offering-change-request",
   StudentReissueMSFAA = "student-reissue-msfaa",
 }

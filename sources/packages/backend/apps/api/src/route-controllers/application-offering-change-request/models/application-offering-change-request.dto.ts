@@ -136,7 +136,7 @@ export class ApplicationOfferingChangeDetailsAPIOutDTO extends ApplicationOfferi
   institutionId: number;
   institutionName: string;
   submittedDate: Date;
-  updatedDate: Date;
+  studentActionDate?: Date;
 }
 
 /**
@@ -182,7 +182,9 @@ export class ApplicationOfferingChangeAssessmentAPIInDTO {
     ApplicationOfferingChangeRequestStatus.Approved,
     ApplicationOfferingChangeRequestStatus.DeclinedBySABC,
   ])
-  applicationOfferingChangeRequestStatus: ApplicationOfferingChangeRequestStatus;
+  applicationOfferingChangeRequestStatus:
+    | ApplicationOfferingChangeRequestStatus.Approved
+    | ApplicationOfferingChangeRequestStatus.DeclinedBySABC;
 }
 
 /**

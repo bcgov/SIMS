@@ -10,10 +10,17 @@ import {
   getUserFullNameLikeSearch,
   transformToApplicationOfferingChangeEntitySortField,
   transformToApplicationEntitySortField,
+  NoteType,
+  AssessmentTriggerType,
+  StudentAssessment,
 } from "@sims/sims-db";
 import { DataSource, Brackets, Repository, In } from "typeorm";
 import { PaginatedResults, PaginationOptions } from "../../utilities";
-import { NotificationActionsService, SystemUsersService } from "@sims/services";
+import {
+  NoteSharedService,
+  NotificationActionsService,
+  SystemUsersService,
+} from "@sims/services";
 
 @Injectable()
 export class ApplicationOfferingChangeRequestService {
@@ -25,6 +32,7 @@ export class ApplicationOfferingChangeRequestService {
     private readonly applicationOfferingChangeRequestRepo: Repository<ApplicationOfferingChangeRequest>,
     private readonly notificationActionsService: NotificationActionsService,
     private readonly systemUsersService: SystemUsersService,
+    private readonly noteSharedService: NoteSharedService,
   ) {}
 
   /**
@@ -266,7 +274,7 @@ export class ApplicationOfferingChangeRequestService {
         reason: true,
         applicationOfferingChangeRequestStatus: true,
         createdAt: true,
-        updatedAt: true,
+        studentActionDate: true,
         assessedDate: true,
         assessedBy: { id: true, firstName: true, lastName: true },
         activeOffering: {
@@ -294,6 +302,7 @@ export class ApplicationOfferingChangeRequestService {
               id: true,
               firstName: true,
               lastName: true,
+              email: true,
             },
           },
         },
@@ -496,7 +505,7 @@ export class ApplicationOfferingChangeRequestService {
         .getRepository(ApplicationOfferingChangeRequest)
         .save(newRequest);
       const systemUser = await this.systemUsersService.systemUser();
-      await this.notificationActionsService.saveApplicationOfferingChangeRequestInProgressWithStudent(
+      await this.notificationActionsService.saveApplicationOfferingChangeRequestInProgressWithStudentNotification(
         {
           givenNames: application.student.user.firstName,
           lastName: application.student.user.lastName,
@@ -515,12 +524,16 @@ export class ApplicationOfferingChangeRequestService {
    * @param applicationOfferingChangeRequestId application offering change request id for which to update the status.
    * @param applicationOfferingChangeRequestStatus the application offering change request status to be updated.
    * @param studentConsent student consent to approve the application offering change request.
+   * @param auditUserId user that should be considered the one that is causing the changes.
    */
   async updateApplicationOfferingChangeRequest(
     applicationOfferingChangeRequestId: number,
     applicationOfferingChangeRequestStatus: ApplicationOfferingChangeRequestStatus,
     studentConsent: boolean,
+    auditUserId: number,
   ): Promise<void> {
+    const auditUser = { id: auditUserId } as User;
+    const currentDate = new Date();
     await this.applicationOfferingChangeRequestRepo.update(
       {
         id: applicationOfferingChangeRequestId,
@@ -528,7 +541,84 @@ export class ApplicationOfferingChangeRequestService {
       {
         applicationOfferingChangeRequestStatus,
         studentConsent,
+        studentActionDate: currentDate,
+        modifier: auditUser,
+        updatedAt: currentDate,
       },
     );
+  }
+
+  /**
+   * Assess the application offering change request status for the given application offering change request id for the ministry user and create a notification for the same.
+   * @param applicationOfferingChangeRequestId application offering change request id for which to update the status.
+   * @param applicationOfferingChangeRequestStatus the application offering change request status to be updated.
+   * @param assessmentNote note added while updating the application offering change request.
+   * @param auditUserId user that should be considered the one that is causing the changes.
+   */
+  async assessApplicationOfferingChangeRequest(
+    applicationOfferingChangeRequestId: number,
+    applicationOfferingChangeRequestStatus:
+      | ApplicationOfferingChangeRequestStatus.Approved
+      | ApplicationOfferingChangeRequestStatus.DeclinedBySABC,
+    assessmentNote: string,
+    auditUserId: number,
+  ): Promise<void> {
+    const auditUser = { id: auditUserId } as User;
+    const currentDate = new Date();
+    const applicationOfferingChangeRequest = await this.getById(
+      applicationOfferingChangeRequestId,
+    );
+    const application = applicationOfferingChangeRequest.application;
+    await this.dataSource.transaction(async (transactionalEntityManager) => {
+      // Save the note.
+      const noteEntity = await this.noteSharedService.createStudentNote(
+        application.student.id,
+        NoteType.Application,
+        assessmentNote,
+        auditUserId,
+        transactionalEntityManager,
+      );
+      // Update the application offering change request.
+      applicationOfferingChangeRequest.applicationOfferingChangeRequestStatus =
+        applicationOfferingChangeRequestStatus;
+      applicationOfferingChangeRequest.assessedNote = noteEntity;
+      applicationOfferingChangeRequest.modifier = auditUser;
+      applicationOfferingChangeRequest.updatedAt = currentDate;
+      applicationOfferingChangeRequest.assessedBy = auditUser;
+      applicationOfferingChangeRequest.assessedDate = currentDate;
+      // Save the application.
+      if (
+        applicationOfferingChangeRequestStatus ===
+        ApplicationOfferingChangeRequestStatus.Approved
+      ) {
+        // Create a new assessment if the application offering change request status is approved.
+        application.currentAssessment = {
+          application,
+          triggerType: AssessmentTriggerType.ApplicationOfferingChange,
+          offering: applicationOfferingChangeRequest.requestedOffering,
+          applicationOfferingChangeRequest,
+          creator: auditUser,
+          createdAt: currentDate,
+          submittedBy: auditUser,
+          submittedDate: currentDate,
+        } as StudentAssessment;
+      }
+      await transactionalEntityManager
+        .getRepository(ApplicationOfferingChangeRequest)
+        .save(applicationOfferingChangeRequest);
+      // Send the application offering change request completed notification.
+      const systemUser = await this.systemUsersService.systemUser();
+      const user = applicationOfferingChangeRequest.application.student.user;
+      await this.notificationActionsService.saveApplicationOfferingChangeRequestCompleteNotification(
+        {
+          givenNames: user.firstName,
+          lastName: user.lastName,
+          toAddress: user.email,
+          userId: user.id,
+        },
+        systemUser.id,
+        transactionalEntityManager,
+      );
+    });
   }
 }

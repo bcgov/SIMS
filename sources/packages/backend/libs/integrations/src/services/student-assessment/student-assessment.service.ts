@@ -96,15 +96,21 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
           disbursementScheduleStatus: true,
           disbursementDate: true,
           updatedAt: true,
+          dateSent: true,
           disbursementValues: {
             id: true,
             valueCode: true,
             valueAmount: true,
             valueType: true,
+            restrictionAmountSubtracted: true,
           },
           disbursementReceipts: {
             id: true,
             disburseDate: true,
+          },
+          disbursementFeedbackErrors: {
+            updatedAt: true,
+            errorCode: true,
           },
         },
       },
@@ -112,6 +118,7 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
         disbursementSchedules: {
           disbursementValues: true,
           disbursementReceipts: true,
+          disbursementFeedbackErrors: true,
         },
         application: {
           student: {
@@ -134,6 +141,17 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
         },
         {
           disbursementSchedules: { updatedAt: dateEqualTo(processingDate) },
+          offering: { institutionLocation: { hasIntegration: true } },
+          application: {
+            applicationStatus: Not(ApplicationStatus.Overwritten),
+          },
+        },
+        {
+          disbursementSchedules: {
+            disbursementFeedbackErrors: {
+              updatedAt: dateEqualTo(processingDate),
+            },
+          },
           offering: { institutionLocation: { hasIntegration: true } },
           application: {
             applicationStatus: Not(ApplicationStatus.Overwritten),
