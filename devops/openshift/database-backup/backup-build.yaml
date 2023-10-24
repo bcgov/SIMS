@@ -51,7 +51,7 @@ parameters:
     displayName: Git Reference
     description: The git reference or branch.
     required: true
-    value: master
+    value: 2.7.0
   - name: SOURCE_CONTEXT_DIR
     displayName: Source Context Directory
     description: The source context directory.
