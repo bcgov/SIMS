@@ -1003,12 +1003,14 @@ export class ApplicationService extends RecordDataModelService<Application> {
     application.modifier = auditUser;
     application.updatedAt = now;
 
-    // Updates the current assessment status to cancellation requested.
-    application.currentAssessment.studentAssessmentStatus =
-      StudentAssessmentStatus.CancellationRequested;
-    application.currentAssessment.modifier = auditUser;
-    application.currentAssessment.studentAssessmentStatusUpdatedOn = now;
-    application.currentAssessment.updatedAt = now;
+    // Updates the current assessment status to cancellation requested if there is one. Applications with draft status do not have a current assessment.
+    if (application.currentAssessment) {
+      application.currentAssessment.studentAssessmentStatus =
+        StudentAssessmentStatus.CancellationRequested;
+      application.currentAssessment.modifier = auditUser;
+      application.currentAssessment.studentAssessmentStatusUpdatedOn = now;
+      application.currentAssessment.updatedAt = now;
+    }
 
     await this.repo.save(application);
     return application;
