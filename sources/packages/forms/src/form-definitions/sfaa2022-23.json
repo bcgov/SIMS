@@ -10223,9 +10223,9 @@
               "tags": [],
               "properties": {},
               "conditional": {
-                "show": "true",
-                "when": "howWillYouBeAttendingTheProgram",
-                "eq": "Full Time",
+                "show": null,
+                "when": null,
+                "eq": "",
                 "json": ""
               },
               "customConditional": "",
@@ -10339,9 +10339,9 @@
               "tags": [],
               "properties": {},
               "conditional": {
-                "show": "true",
-                "when": "howWillYouBeAttendingTheProgram",
-                "eq": "Full Time",
+                "show": null,
+                "when": null,
+                "eq": "",
                 "json": ""
               },
               "customConditional": "",
@@ -10368,6 +10368,294 @@
           "id": "etmjo4"
         },
         {
+          "title": "Disability information panel",
+          "labelWidth": "",
+          "labelMargin": "",
+          "theme": "default",
+          "tooltip": "",
+          "customClass": "",
+          "collapsible": false,
+          "hidden": false,
+          "disabled": false,
+          "modalEdit": false,
+          "key": "DisabilityInformationPanel",
+          "tags": [],
+          "properties": {},
+          "customConditional": "",
+          "conditional": {
+            "json": "",
+            "show": "",
+            "when": null,
+            "eq": ""
+          },
+          "logic": [],
+          "attributes": {},
+          "overlay": {
+            "style": "",
+            "page": "",
+            "left": "",
+            "top": "",
+            "width": "",
+            "height": ""
+          },
+          "type": "panel",
+          "label": "Panel",
+          "breadcrumb": "default",
+          "tabindex": "",
+          "input": false,
+          "placeholder": "",
+          "prefix": "",
+          "suffix": "",
+          "multiple": false,
+          "defaultValue": null,
+          "protected": false,
+          "unique": false,
+          "persistent": false,
+          "clearOnHide": false,
+          "refreshOn": "",
+          "redrawOn": "",
+          "tableView": false,
+          "dataGridLabel": false,
+          "labelPosition": "top",
+          "description": "",
+          "errorLabel": "",
+          "autofocus": false,
+          "dbIndex": false,
+          "customDefaultValue": "",
+          "calculateValue": "",
+          "calculateServer": false,
+          "widget": null,
+          "validateOn": "change",
+          "validate": {
+            "required": false,
+            "custom": "",
+            "customPrivate": false,
+            "strictDateValidation": false,
+            "multiple": false,
+            "unique": false
+          },
+          "allowCalculateOverride": false,
+          "encrypted": false,
+          "showCharCount": false,
+          "showWordCount": false,
+          "allowMultipleMasks": false,
+          "addons": [],
+          "tree": false,
+          "lazyLoad": false,
+          "components": [
+            {
+              "label": "HTML",
+              "labelWidth": "",
+              "labelMargin": "",
+              "tag": "h3",
+              "className": "category-header-medium primary-color",
+              "attrs": [
+                {
+                  "attr": "",
+                  "value": ""
+                }
+              ],
+              "content": "Disability Information",
+              "refreshOnChange": false,
+              "customClass": "",
+              "hidden": false,
+              "modalEdit": false,
+              "key": "html122",
+              "tags": [],
+              "properties": {},
+              "conditional": {
+                "show": "",
+                "when": null,
+                "eq": "",
+                "json": ""
+              },
+              "customConditional": "",
+              "logic": [],
+              "attributes": {},
+              "overlay": {
+                "style": "",
+                "page": "",
+                "left": "",
+                "top": "",
+                "width": "",
+                "height": ""
+              },
+              "type": "htmlelement",
+              "input": false,
+              "tableView": false,
+              "placeholder": "",
+              "prefix": "",
+              "suffix": "",
+              "multiple": false,
+              "defaultValue": null,
+              "protected": false,
+              "unique": false,
+              "persistent": false,
+              "clearOnHide": true,
+              "refreshOn": "",
+              "redrawOn": "",
+              "dataGridLabel": false,
+              "labelPosition": "top",
+              "description": "",
+              "errorLabel": "",
+              "tooltip": "",
+              "hideLabel": false,
+              "tabindex": "",
+              "disabled": false,
+              "autofocus": false,
+              "dbIndex": false,
+              "customDefaultValue": "",
+              "calculateValue": "",
+              "calculateServer": false,
+              "widget": null,
+              "validateOn": "change",
+              "validate": {
+                "required": false,
+                "custom": "",
+                "customPrivate": false,
+                "strictDateValidation": false,
+                "multiple": false,
+                "unique": false
+              },
+              "allowCalculateOverride": false,
+              "encrypted": false,
+              "showCharCount": false,
+              "showWordCount": false,
+              "allowMultipleMasks": false,
+              "addons": [],
+              "id": "e7vkza"
+            },
+            {
+              "label": "<strong>Are you a student with disabilities and wish to be assessed for disability funding?</strong>",
+              "labelPosition": "top",
+              "labelWidth": "",
+              "labelMargin": "",
+              "optionsLabelPosition": "right",
+              "description": "",
+              "tooltip": "",
+              "customClass": "",
+              "tabindex": "",
+              "inline": false,
+              "hidden": false,
+              "hideLabel": false,
+              "autofocus": false,
+              "disabled": false,
+              "tableView": true,
+              "modalEdit": false,
+              "values": [
+                {
+                  "value": "yes",
+                  "label": "Yes, I have a disability and want this application to be assessed for disability funding.",
+                  "shortcut": ""
+                },
+                {
+                  "value": "noIWantToAccessOtherFundingTypesWhileIWaitForAVerificationDecision",
+                  "label": "No, I want to access other funding types while I wait for a verification decision.",
+                  "shortcut": ""
+                },
+                {
+                  "value": "noIDoNotHaveADisability",
+                  "label": "No, I do not have a disability.",
+                  "shortcut": ""
+                }
+              ],
+              "dataType": "",
+              "persistent": true,
+              "protected": false,
+              "dbIndex": false,
+              "encrypted": false,
+              "redrawOn": "",
+              "clearOnHide": true,
+              "customDefaultValue": "",
+              "calculateValue": "",
+              "calculateServer": false,
+              "allowCalculateOverride": false,
+              "validate": {
+                "required": true,
+                "onlyAvailableItems": false,
+                "customMessage": "",
+                "custom": "",
+                "customPrivate": false,
+                "json": "",
+                "strictDateValidation": false,
+                "multiple": false,
+                "unique": false
+              },
+              "errorLabel": "Employment Information",
+              "errors": "",
+              "key": "applicationPDPPDStatus",
+              "tags": [],
+              "properties": {},
+              "conditional": {
+                "show": "",
+                "when": null,
+                "eq": "",
+                "json": ""
+              },
+              "customConditional": "",
+              "logic": [],
+              "attributes": {
+                "data-cy": "fullTimeJob"
+              },
+              "overlay": {
+                "style": "",
+                "page": "",
+                "left": "",
+                "top": "",
+                "width": "",
+                "height": ""
+              },
+              "type": "radio",
+              "input": true,
+              "lockKey": true,
+              "placeholder": "",
+              "prefix": "",
+              "suffix": "",
+              "multiple": false,
+              "unique": false,
+              "refreshOn": "",
+              "dataGridLabel": false,
+              "widget": null,
+              "validateOn": "change",
+              "showCharCount": false,
+              "showWordCount": false,
+              "allowMultipleMasks": false,
+              "addons": [],
+              "inputType": "radio",
+              "fieldSet": false,
+              "id": "evq38w",
+              "defaultValue": ""
+            },
+            {
+              "key": "disabilityInformationPanelContent",
+              "label": "Content",
+              "input": false,
+              "tag": "p",
+              "attrs": [
+                {
+                  "value": "",
+                  "attr": ""
+                }
+              ],
+              "className": "alert alert-info fa fa-info-circle",
+              "content": "<strong> Info!</strong><br /> A student cannot receive funding until StudentAidBC has verified your disability status.",
+              "type": "htmlelement",
+              "hideLabel": false,
+              "tags": [],
+              "conditional": {
+                "show": "true",
+                "when": "applicationPDPPDStatus",
+                "eq": "yes"
+              },
+              "properties": {},
+              "customClass": "banner-info"
+            }
+          ],
+          "id": "erpkbb",
+          "hideLabel": true,
+          "lockKey": true
+        },
+        {
           "title": "Emplyment information panel",
           "labelWidth": "",
           "labelMargin": "",
@@ -10385,9 +10673,9 @@
           "customConditional": "",
           "conditional": {
             "json": "",
-            "show": "true",
-            "when": "howWillYouBeAttendingTheProgram",
-            "eq": "Full Time"
+            "show": null,
+            "when": null,
+            "eq": ""
           },
           "logic": [],
           "attributes": {},
@@ -10527,6 +10815,185 @@
               "id": "e7vkza"
             },
             {
+              "label": "<strong>Will you be working a full-time job of 32 hours per week for more than half of your study period?</strong>",
+              "labelPosition": "top",
+              "labelWidth": "",
+              "labelMargin": "",
+              "optionsLabelPosition": "right",
+              "description": "",
+              "tooltip": "A “full time job” is defined as working at least 32 hours per week, including vacation time, statutory holidays, in-lieu days and approved leaves of absence.  If you are employed full-time for at least 50 percent of your study period, you are not eligible for F/T fundin",
+              "customClass": "",
+              "tabindex": "",
+              "inline": false,
+              "hidden": false,
+              "hideLabel": false,
+              "autofocus": false,
+              "disabled": false,
+              "tableView": true,
+              "modalEdit": false,
+              "values": [
+                {
+                  "value": "yes",
+                  "label": "Yes",
+                  "shortcut": ""
+                },
+                {
+                  "value": "no",
+                  "label": "No",
+                  "shortcut": ""
+                }
+              ],
+              "dataType": "",
+              "persistent": true,
+              "protected": false,
+              "dbIndex": false,
+              "encrypted": false,
+              "redrawOn": "",
+              "clearOnHide": true,
+              "customDefaultValue": "",
+              "calculateValue": "",
+              "calculateServer": false,
+              "allowCalculateOverride": false,
+              "validate": {
+                "required": true,
+                "onlyAvailableItems": false,
+                "customMessage": "",
+                "custom": "",
+                "customPrivate": false,
+                "json": "",
+                "strictDateValidation": false,
+                "multiple": false,
+                "unique": false
+              },
+              "errorLabel": "Employment Information",
+              "errors": "",
+              "key": "fullTimeJob",
+              "tags": [],
+              "properties": {},
+              "conditional": {
+                "show": null,
+                "when": null,
+                "eq": "",
+                "json": ""
+              },
+              "customConditional": "",
+              "logic": [],
+              "attributes": {
+                "data-cy": "fullTimeJob"
+              },
+              "overlay": {
+                "style": "",
+                "page": "",
+                "left": "",
+                "top": "",
+                "width": "",
+                "height": ""
+              },
+              "type": "radio",
+              "input": true,
+              "lockKey": true,
+              "placeholder": "",
+              "prefix": "",
+              "suffix": "",
+              "multiple": false,
+              "unique": false,
+              "refreshOn": "",
+              "dataGridLabel": false,
+              "widget": null,
+              "validateOn": "change",
+              "showCharCount": false,
+              "showWordCount": false,
+              "allowMultipleMasks": false,
+              "addons": [],
+              "inputType": "radio",
+              "fieldSet": false,
+              "id": "evq38w",
+              "defaultValue": "",
+              "isNew": false
+            },
+            {
+              "label": "HTML",
+              "labelWidth": "",
+              "labelMargin": "",
+              "tag": "p",
+              "className": "alert alert-warning fa fa-info-circle",
+              "attrs": [
+                {
+                  "attr": "",
+                  "value": ""
+                }
+              ],
+              "content": "<strong> You’re not eligible for StudentAid BC funding </strong> <br/> \nStudents who work 32 hours a week or more are not eligible for StudentAid BC funding because your primary occupation is considered to be employment.",
+              "refreshOnChange": false,
+              "customClass": "banner-warning",
+              "hidden": false,
+              "modalEdit": false,
+              "key": "html8",
+              "tags": [],
+              "properties": {},
+              "conditional": {
+                "show": true,
+                "when": "fullTimeJob",
+                "eq": "yes",
+                "json": ""
+              },
+              "customConditional": "",
+              "logic": [],
+              "attributes": {},
+              "overlay": {
+                "style": "",
+                "page": "",
+                "left": "",
+                "top": "",
+                "width": "",
+                "height": ""
+              },
+              "type": "htmlelement",
+              "input": false,
+              "tableView": false,
+              "placeholder": "",
+              "prefix": "",
+              "suffix": "",
+              "multiple": false,
+              "defaultValue": null,
+              "protected": false,
+              "unique": false,
+              "persistent": false,
+              "clearOnHide": true,
+              "refreshOn": "",
+              "redrawOn": "",
+              "dataGridLabel": false,
+              "labelPosition": "top",
+              "description": "",
+              "errorLabel": "",
+              "tooltip": "",
+              "hideLabel": false,
+              "tabindex": "",
+              "disabled": false,
+              "autofocus": false,
+              "dbIndex": false,
+              "customDefaultValue": "",
+              "calculateValue": "",
+              "calculateServer": false,
+              "widget": null,
+              "validateOn": "change",
+              "validate": {
+                "required": false,
+                "custom": "",
+                "customPrivate": false,
+                "strictDateValidation": false,
+                "multiple": false,
+                "unique": false
+              },
+              "allowCalculateOverride": false,
+              "encrypted": false,
+              "showCharCount": false,
+              "showWordCount": false,
+              "allowMultipleMasks": false,
+              "addons": [],
+              "id": "ek1digi"
+            },
+            {
               "label": "<strong>In the time since you left high school to your first day of classes, have you spent two periods of 12 consecutive months each, in the full time labour force?</strong>",
               "optionsLabelPosition": "right",
               "inline": false,
@@ -10586,8 +11053,8 @@
               "attributes": {},
               "validateOn": "change",
               "conditional": {
-                "show": "",
-                "when": "",
+                "show": null,
+                "when": null,
                 "eq": ""
               },
               "overlay": {
@@ -10606,8 +11073,7 @@
               "inputType": "radio",
               "fieldSet": false,
               "id": "eqf8qus",
-              "addons": [],
-              "tags": []
+              "addons": []
             }
           ],
           "id": "erpkbb"
@@ -12571,7 +13037,7 @@
               "dataGridLabel": false,
               "labelPosition": "top",
               "description": "",
-              "tooltip": "Dependants represent anyone who you support financially.",
+              "tooltip": "",
               "hideLabel": false,
               "tabindex": "",
               "disabled": false,
@@ -12583,7 +13049,7 @@
               "widget": null,
               "validateOn": "change",
               "conditional": {
-                "show": "",
+                "show": null,
                 "when": null,
                 "eq": ""
               },
@@ -12603,8 +13069,7 @@
               "addons": [],
               "inputType": "radio",
               "fieldSet": false,
-              "id": "e2utfe",
-              "tags": []
+              "id": "e2utfe"
             },
             {
               "title": "Add Dependants Panel",
@@ -14369,7 +14834,7 @@
               "id": "esww5zq"
             },
             {
-              "label": "<strong>Are any of the dependants listed above supported by you financially but not under your sole custody?</strong>",
+              "label": "<strong>Do you have any dependents that you support financially but do not have sole custody of?</strong>",
               "optionsLabelPosition": "right",
               "inline": false,
               "tableView": false,
@@ -14430,9 +14895,9 @@
               "widget": null,
               "validateOn": "change",
               "conditional": {
-                "show": "true",
-                "when": "hasDependents",
-                "eq": "yes"
+                "show": null,
+                "when": null,
+                "eq": ""
               },
               "overlay": {
                 "style": "",
@@ -14450,8 +14915,7 @@
               "addons": [],
               "inputType": "radio",
               "fieldSet": false,
-              "id": "eftpw4a",
-              "tags": []
+              "id": "eftpw4a"
             },
             {
               "title": "Dependents that you support financially but do not have sole custody",
@@ -16405,9 +16869,9 @@
               "tags": [],
               "properties": {},
               "conditional": {
-                "show": "true",
-                "when": "howWillYouBeAttendingTheProgram",
-                "eq": "Full Time",
+                "show": null,
+                "when": null,
+                "eq": "",
                 "json": ""
               },
               "customConditional": "",
@@ -17978,9 +18442,9 @@
               "tags": [],
               "properties": {},
               "conditional": {
-                "show": "true",
-                "when": "howWillYouBeAttendingTheProgram",
-                "eq": "Full Time",
+                "show": null,
+                "when": null,
+                "eq": "",
                 "json": ""
               },
               "customConditional": "",
@@ -23706,9 +24170,9 @@
           "customConditional": "",
           "conditional": {
             "json": "",
-            "show": "true",
-            "when": "howWillYouBeAttendingTheProgram",
-            "eq": "Full Time"
+            "show": null,
+            "when": null,
+            "eq": ""
           },
           "logic": [],
           "attributes": {},
@@ -24658,9 +25122,9 @@
           "customConditional": "",
           "conditional": {
             "json": "",
-            "show": "true",
-            "when": "howWillYouBeAttendingTheProgram",
-            "eq": "Full Time"
+            "show": null,
+            "when": null,
+            "eq": ""
           },
           "logic": [],
           "attributes": {},
@@ -26823,9 +27287,9 @@
               "tags": [],
               "properties": {},
               "conditional": {
-                "show": "true",
-                "when": "howWillYouBeAttendingTheProgram",
-                "eq": "Full Time",
+                "show": null,
+                "when": null,
+                "eq": "",
                 "json": ""
               },
               "customConditional": "",
@@ -27057,9 +27521,9 @@
           "customConditional": "",
           "conditional": {
             "json": "",
-            "show": "true",
-            "when": "howWillYouBeAttendingTheProgram",
-            "eq": "Full Time"
+            "show": null,
+            "when": null,
+            "eq": ""
           },
           "logic": [],
           "attributes": {},
@@ -27511,9 +27975,9 @@
               "tags": [],
               "properties": {},
               "conditional": {
-                "show": "true",
-                "when": "howWillYouBeAttendingTheProgram",
-                "eq": "Full Time",
+                "show": null,
+                "when": null,
+                "eq": "",
                 "json": ""
               },
               "customConditional": "",
@@ -27767,9 +28231,9 @@
               "tags": [],
               "properties": {},
               "conditional": {
-                "show": "true",
-                "when": "howWillYouBeAttendingTheProgram",
-                "eq": "Full Time",
+                "show": null,
+                "when": null,
+                "eq": "",
                 "json": ""
               },
               "customConditional": "",
@@ -28023,9 +28487,9 @@
               "tags": [],
               "properties": {},
               "conditional": {
-                "show": "true",
-                "when": "howWillYouBeAttendingTheProgram",
-                "eq": "Full Time",
+                "show": null,
+                "when": null,
+                "eq": "",
                 "json": ""
               },
               "customConditional": "",
@@ -28499,9 +28963,9 @@
           "customConditional": "",
           "conditional": {
             "json": "",
-            "show": "true",
-            "when": "howWillYouBeAttendingTheProgram",
-            "eq": "Full Time"
+            "show": null,
+            "when": null,
+            "eq": ""
           },
           "logic": [],
           "attributes": {},
@@ -29906,9 +30370,9 @@
           "customConditional": "",
           "conditional": {
             "json": "",
-            "show": "true",
-            "when": "howWillYouBeAttendingTheProgram",
-            "eq": "Full Time"
+            "show": null,
+            "when": null,
+            "eq": ""
           },
           "logic": [],
           "attributes": {},
@@ -30322,9 +30786,9 @@
           "customConditional": "",
           "conditional": {
             "json": "",
-            "show": "true",
-            "when": "howWillYouBeAttendingTheProgram",
-            "eq": "Full Time"
+            "show": null,
+            "when": null,
+            "eq": ""
           },
           "logic": [],
           "attributes": {},

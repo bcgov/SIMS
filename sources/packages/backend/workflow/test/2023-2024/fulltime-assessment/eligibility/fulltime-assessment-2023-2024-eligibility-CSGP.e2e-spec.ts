@@ -9,7 +9,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-eligibility-CSGP
     // Arrange
     const assessmentConsolidatedData =
       createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
-    assessmentConsolidatedData.studentPDStatus = true;
+    assessmentConsolidatedData.studentDataApplicationPDPPDStatus = true;
     // Act
     const calculatedAssessment = await executeFulltimeAssessmentForProgramYear(
       PROGRAM_YEAR,

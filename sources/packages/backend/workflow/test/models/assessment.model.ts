@@ -55,7 +55,6 @@ export interface AssessmentConsolidatedData extends JSONDoc {
   studentDataHasDependents: YesNoOptions;
   studentDataLivingWithParents: YesNoOptions;
   studentDataYouthInCare: YesNoOptions;
-  studentPDStatus: boolean;
   studentTaxYear: number;
   programLocation: Provinces;
   institutionLocationProvince: Provinces;
@@ -127,6 +126,7 @@ export interface AssessmentConsolidatedData extends JSONDoc {
   partner1TotalIncome?: number;
   assessmentId?: number;
   studentDataSelectedOffering: number;
+  studentDataApplicationPDPPDStatus: boolean;
 }
 
 export interface AssessmentModel {
