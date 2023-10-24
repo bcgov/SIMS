@@ -617,7 +617,7 @@
     <bpmn:sequenceFlow id="Flow_1eulup9" sourceRef="Event_1sg75ph" targetRef="Activity_1wciqrl" />
     <bpmn:sequenceFlow id="Flow_1lihxee" sourceRef="Gateway_16zyh99" targetRef="Gateway_0rn7rsj" />
     <bpmn:sequenceFlow id="Flow_0jvb1k3" name="Exempt" sourceRef="Gateway_0rn7rsj" targetRef="Event_0sz9je4">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=studentDataIndigenousStatus = "yes" or studentDataApplicationPDPPDStatus = true or calculatedDataTotalEligibleDependants &gt; 0 or studentDataYouthInCare = "yes"</bpmn:conditionExpression>
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=studentDataIndigenousStatus = "yes" or calculatedDataApplicationPDPPDStatus = true or calculatedDataTotalEligibleDependants &gt; 0 or studentDataYouthInCare = "yes"</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="Flow_06xlqzm" sourceRef="Gateway_0rn7rsj" targetRef="Gateway_0ufg06t" />
     <bpmn:sequenceFlow id="Flow_0i89lua" sourceRef="Event_0sz9je4" targetRef="Gateway_1435f79" />
@@ -625,7 +625,7 @@
     <bpmn:sequenceFlow id="Flow_0edfgvv" sourceRef="Gateway_16zyh99" targetRef="Gateway_18ykorq" />
     <bpmn:sequenceFlow id="Flow_0dls7cw" sourceRef="Gateway_18ykorq" targetRef="Gateway_0spmxnq" />
     <bpmn:sequenceFlow id="Flow_1jawjn3" name="Exempt" sourceRef="Gateway_18ykorq" targetRef="Event_09fnlak">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=studentDataIndigenousStatus = "yes" or studentDataApplicationPDPPDStatus = true or calculatedDataTotalEligibleDependants &gt; 0 or studentDataYouthInCare = "yes"</bpmn:conditionExpression>
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=studentDataIndigenousStatus = "yes" or calculatedDataApplicationPDPPDStatus = true or calculatedDataTotalEligibleDependants &gt; 0 or studentDataYouthInCare = "yes"</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="Flow_07zdno5" name="Above Income Threshold" sourceRef="Gateway_0spmxnq" targetRef="Event_08zc04r">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=calculatedDataTotalFamilyIncome &gt;= dmnFullTimeCalculatedDataIncomeThreshold.calculatedDataProvincialFSCIncomeThreshold</bpmn:conditionExpression>
@@ -1257,7 +1257,7 @@ or (calculatedDataPartnerFedralProvincialPDReceiptCost &gt; 0)</bpmn:conditionEx
           <zeebe:output source="=if studentDataGovernmentFundingCosts = null&#10;then 0&#10;else&#10;  studentDataGovernmentFundingCosts" target="studentDataGovernmentFundingCosts" />
           <zeebe:output source="=if studentDataNongovernmentFundingCosts = null&#10;then 0&#10;else&#10;  studentDataNongovernmentFundingCosts" target="studentDataNongovernmentFundingCosts" />
           <zeebe:output source="=if studentDataParentVoluntaryContributionsCosts = null&#10;then 0&#10;else&#10;  studentDataParentVoluntaryContributionsCosts" target="studentDataParentVoluntaryContributionsCosts" />
-          <zeebe:output source="=if studentDataApplicationPDPPDStatus = &#34;yes&#34;&#10;then true&#10;else&#10;  false" target="studentDataApplicationPDPPDStatus" />
+          <zeebe:output source="=if studentDataApplicationPDPPDStatus = &#34;yes&#34;&#10;then true&#10;else&#10;  false" target="calculatedDataApplicationPDPPDStatus" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1tcyqyg</bpmn:incoming>
@@ -1455,7 +1455,7 @@ or (calculatedDataPartnerFedralProvincialPDReceiptCost &gt; 0)</bpmn:conditionEx
     <bpmn:intermediateThrowEvent id="Event_1ki3afc" name="awardEligibilitySBSD">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
-          <zeebe:output source="=if institutionType = &#34;BC Public&#34; or institutionType = &#34;BC Private&#34; then (&#10;if ((calculatedDataFederalAssessedNeed + calculatedDataProvincialAssessedNeed) &#62;= 1)&#10;  and studentDataApplicationPDPPDStatus = true&#10;then true &#10;else false&#10;)&#10;else&#10;false" target="awardEligibilitySBSD" />
+          <zeebe:output source="=if institutionType = &#34;BC Public&#34; or institutionType = &#34;BC Private&#34; then (&#10;if ((calculatedDataFederalAssessedNeed + calculatedDataProvincialAssessedNeed) &#62;= 1)&#10;  and calculatedDataApplicationPDPPDStatus = true&#10;then true &#10;else false&#10;)&#10;else&#10;false" target="awardEligibilitySBSD" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_157t178</bpmn:incoming>
@@ -1464,7 +1464,7 @@ or (calculatedDataPartnerFedralProvincialPDReceiptCost &gt; 0)</bpmn:conditionEx
     <bpmn:intermediateThrowEvent id="Event_0pjh86g" name="awardEligibilityBGPD">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
-          <zeebe:output source="=if institutionType = &#34;BC Public&#34; or institutionType = &#34;BC Private&#34; then (&#10;if ((calculatedDataFederalAssessedNeed + calculatedDataProvincialAssessedNeed) &#62;= 1) &#10;  and studentDataApplicationPDPPDStatus = true &#10;then true &#10;else false&#10;)&#10;else&#10;false" target="awardEligibilityBGPD" />
+          <zeebe:output source="=if institutionType = &#34;BC Public&#34; or institutionType = &#34;BC Private&#34; then (&#10;if ((calculatedDataFederalAssessedNeed + calculatedDataProvincialAssessedNeed) &#62;= 1) &#10;  and calculatedDataApplicationPDPPDStatus = true &#10;then true &#10;else false&#10;)&#10;else&#10;false" target="awardEligibilityBGPD" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_0ri2jnh</bpmn:incoming>
@@ -1518,7 +1518,7 @@ or (calculatedDataPartnerFedralProvincialPDReceiptCost &gt; 0)</bpmn:conditionEx
     <bpmn:intermediateThrowEvent id="Event_084hvhv" name="awardEligibilityCSGP">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
-          <zeebe:output source="=if ((calculatedDataFederalAssessedNeed + calculatedDataProvincialAssessedNeed) &#62;= 1)&#10;  and studentDataApplicationPDPPDStatus = true&#10;then true else false" target="awardEligibilityCSGP" />
+          <zeebe:output source="=if ((calculatedDataFederalAssessedNeed + calculatedDataProvincialAssessedNeed) &#62;= 1)&#10;  and calculatedDataApplicationPDPPDStatus = true&#10;then true else false" target="awardEligibilityCSGP" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_0qivez3</bpmn:incoming>
@@ -2051,10 +2051,10 @@ dmnFullTimeCalculatedDataIncomeThreshold</bpmn:text>
     <bpmn:association id="Association_0eiso39" sourceRef="Event_0rpww4j" targetRef="TextAnnotation_0xf4j19" />
     <bpmn:association id="Association_1fiiodq" sourceRef="Gateway_13qzd4v" targetRef="TextAnnotation_1bl1ra2" />
     <bpmn:textAnnotation id="TextAnnotation_06i946l">
-      <bpmn:text>Financial need min $1 AND studentDataApplicationPDPPDStatus is true, then sbsdEligibility is YES</bpmn:text>
+      <bpmn:text>Financial need min $1 AND calculatedDataApplicationPDPPDStatus is true, then sbsdEligibility is YES</bpmn:text>
     </bpmn:textAnnotation>
     <bpmn:textAnnotation id="TextAnnotation_1l9376k">
-      <bpmn:text>Financial need min $1 AND studentDataApplicationPDPPDStatus is true, then bgpdEligibility is YES</bpmn:text>
+      <bpmn:text>Financial need min $1 AND calculatedDataApplicationPDPPDStatus is true, then bgpdEligibility is YES</bpmn:text>
     </bpmn:textAnnotation>
     <bpmn:textAnnotation id="TextAnnotation_072y7a3">
       <bpmn:text>Assessment need is greater than or equal to 1 and programlength is greater than 2 years and programCredentialType is NOT Master, PHD or unclassified, then then BOTH bcagEligibility and bcag2YearsEligibility is YES</bpmn:text>
@@ -2079,7 +2079,7 @@ dmnFullTimeCalculatedDataIncomeThreshold</bpmn:text>
     </bpmn:textAnnotation>
     <bpmn:association id="Association_0k52tdi" sourceRef="Event_1yndxhv" targetRef="TextAnnotation_0cerfoa" />
     <bpmn:textAnnotation id="TextAnnotation_1lzmhpu">
-      <bpmn:text>Financial need min $1 AND studentDataApplicationPDPPDStatus is true, then csgpEligibility is YES</bpmn:text>
+      <bpmn:text>Financial need min $1 AND calculatedDataApplicationPDPPDStatus is true, then csgpEligibility is YES</bpmn:text>
     </bpmn:textAnnotation>
     <bpmn:association id="Association_01prvbh" sourceRef="Event_084hvhv" targetRef="TextAnnotation_1lzmhpu" />
     <bpmn:textAnnotation id="TextAnnotation_1myp6tg">

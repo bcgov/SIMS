@@ -126,7 +126,7 @@ export interface AssessmentConsolidatedData extends JSONDoc {
   partner1TotalIncome?: number;
   assessmentId?: number;
   studentDataSelectedOffering: number;
-  studentDataApplicationPDPPDStatus: boolean;
+  studentDataApplicationPDPPDStatus: string;
 }
 
 export interface AssessmentModel {

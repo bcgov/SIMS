@@ -46,7 +46,7 @@ export function createFakeAssessmentConsolidatedData(
     offeringMandatoryFees: 500,
     offeringExceptionalExpenses: 500,
     offeringWeeks: 16,
-    studentDataApplicationPDPPDStatus: false,
+    studentDataApplicationPDPPDStatus: "noIDoNotHaveADisability",
   };
 }
 

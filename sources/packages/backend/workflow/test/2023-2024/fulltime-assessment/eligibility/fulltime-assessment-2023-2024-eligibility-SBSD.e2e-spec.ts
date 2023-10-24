@@ -21,7 +21,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-eligibility-SBSD
         // Arrange
         const assessmentConsolidatedData =
           createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
-        assessmentConsolidatedData.studentDataApplicationPDPPDStatus = true;
+        assessmentConsolidatedData.studentDataApplicationPDPPDStatus = "yes";
         assessmentConsolidatedData.institutionType = institutionType;
         // Act
         const calculatedAssessment =
@@ -29,6 +29,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-eligibility-SBSD
             PROGRAM_YEAR,
             assessmentConsolidatedData,
           );
+        console.log(calculatedAssessment.variables);
         // Assert
         expect(calculatedAssessment.variables.awardEligibilitySBSD).toBe(true);
         expect(
@@ -47,7 +48,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-eligibility-SBSD
         // Arrange
         const assessmentConsolidatedData =
           createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
-        assessmentConsolidatedData.studentDataApplicationPDPPDStatus = true;
+        assessmentConsolidatedData.studentDataApplicationPDPPDStatus = "yes";
         assessmentConsolidatedData.institutionType = institutionType;
         // Act
         const calculatedAssessment =

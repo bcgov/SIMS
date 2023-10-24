@@ -294,7 +294,7 @@
           <zeebe:output source="=if studentDataDaycareCosts11YearsOrUnder = null&#10;then 0&#10;else&#10;  studentDataDaycareCosts11YearsOrUnder" target="studentDataDaycareCosts11YearsOrUnder" />
           <zeebe:output source="=if studentDataDaycareCosts12YearsOrOver = null&#10;then 0&#10;else&#10;  studentDataDaycareCosts12YearsOrOver" target="studentDataDaycareCosts12YearsOrOver" />
           <zeebe:output source="=if calculatedDataScholarshipsBursaries = null&#10;then 0&#10;else&#10;  calculatedDataScholarshipsBursaries" target="calculatedDataScholarshipsBursaries" />
-          <zeebe:output source="=if studentDataApplicationPDPPDStatus = &#34;yes&#34;&#10;then true&#10;else&#10;  false" target="studentDataApplicationPDPPDStatus" />
+          <zeebe:output source="=if studentDataApplicationPDPPDStatus = &#34;yes&#34;&#10;then true&#10;else&#10;  false" target="calculatedDataApplicationPDPPDStatus" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1tcyqyg</bpmn:incoming>
@@ -408,7 +408,7 @@
     <bpmn:intermediateThrowEvent id="Event_084hvhv" name="awardEligibilityCSGP">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
-          <zeebe:output source="=if (calculatedDataTotalAssessedNeed &#62;= 1)&#10;  and studentDataApplicationPDPPDStatus = true&#10;then true&#10;else false" target="awardEligibilityCSGP" />
+          <zeebe:output source="=if (calculatedDataTotalAssessedNeed &#62;= 1)&#10;  and calculatedDataApplicationPDPPDStatus = true&#10;then true&#10;else false" target="awardEligibilityCSGP" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_0qivez3</bpmn:incoming>
@@ -417,7 +417,7 @@
     <bpmn:intermediateThrowEvent id="Event_1ki3afc" name="awardEligibilitySBSD">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
-          <zeebe:output source="=if (institutionType = &#34;BC Public&#34; or &#34;BC Private&#34;) &#10;  and (calculatedDataTotalAssessedNeed &#62;= 1) &#10;  and studentDataApplicationPDPPDStatus = true&#10;then true &#10;else false" target="awardEligibilitySBSD" />
+          <zeebe:output source="=if (institutionType = &#34;BC Public&#34; or &#34;BC Private&#34;) &#10;  and (calculatedDataTotalAssessedNeed &#62;= 1) &#10;  and calculatedDataApplicationPDPPDStatus = true&#10;then true &#10;else false" target="awardEligibilitySBSD" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_157t178</bpmn:incoming>
@@ -629,10 +629,10 @@ dmnX (comes from dmn)</bpmn:text>
       <bpmn:text>Assessment need is greater than or equal to 1 and programlength is less than 2 years and programCredentialType is certificate or diploma , then bcagEligibility is YES</bpmn:text>
     </bpmn:textAnnotation>
     <bpmn:textAnnotation id="TextAnnotation_06i946l">
-      <bpmn:text>Financial need min $1 AND studentDataApplicationPDPPDStatus is true, then sbsdEligibility is YES</bpmn:text>
+      <bpmn:text>Financial need min $1 AND calculatedDataApplicationPDPPDStatus is true, then sbsdEligibility is YES</bpmn:text>
     </bpmn:textAnnotation>
     <bpmn:textAnnotation id="TextAnnotation_1lzmhpu">
-      <bpmn:text>Financial need min $1 AND studentDataApplicationPDPPDStatus is true, then csgpEligibility is YES</bpmn:text>
+      <bpmn:text>Financial need min $1 AND calculatedDataApplicationPDPPDStatus is true, then csgpEligibility is YES</bpmn:text>
     </bpmn:textAnnotation>
     <bpmn:association id="Association_0k52tdi" sourceRef="Event_1yndxhv" targetRef="TextAnnotation_0cerfoa" />
     <bpmn:association id="Association_01prvbh" sourceRef="Event_084hvhv" targetRef="TextAnnotation_1lzmhpu" />
