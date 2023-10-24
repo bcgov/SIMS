@@ -14,7 +14,7 @@ export NEW_DB := $(or $(NEW_DB), $$NEW_DB)
 export JOB_NAME := $(or $(JOB_NAME), $$JN)
 export SITE_MINDER_LOGOUT_URL := $(or $(SITE_MINDER_LOGOUT_URL), https://logontest7.gov.bc.ca/clp-cgi/logoff.cgi)
 export PATRONI_SIMSDB_BACKUP_APP_NAME := $(or $(PATRONI_SIMSDB_BACKUP_APP_NAME), patroni-simsdb-backup)
-# PATRONI_SIMSDB_BACKUP_TAG_NAME is both the version of the backup container and the tag name created for the build.
+# PATRONI_SIMSDB_BACKUP_TAG_NAME is both the version of the backup container or the tag name created for the build.
 export PATRONI_SIMSDB_BACKUP_TAG_NAME := $(or $(PATRONI_SIMSDB_BACKUP_TAG_NAME), 2.7.0)
 export PATRONI_SIMSDB_BACKUP_CONFIGMAP_NAME := $(or $(PATRONI_SIMSDB_BACKUP_CONFIGMAP_NAME), patroni-simsdb-backup-conf)
 export PATRONI_SIMSDB_BACKUP_CONFIG_FILE_NAME := $(or $(PATRONI_SIMSDB_BACKUP_CONFIG_FILE_NAME), patroni-simsdb-backup.conf)
