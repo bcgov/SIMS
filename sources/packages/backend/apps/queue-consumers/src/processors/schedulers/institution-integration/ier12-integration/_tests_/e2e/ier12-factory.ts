@@ -8,16 +8,15 @@ import {
   E2EDataSources,
   createFakeStudent,
   createFakeUser,
+  ensureProgramYearExists,
   saveFakeApplicationDisbursements,
   saveFakeStudent,
 } from "@sims/test-utils";
 import { createFakeSINValidation } from "@sims/test-utils/factories/sin-validation";
-import {
-  IER12Disbursement,
-  IER12TestInputData,
-} from "./models/ier12-integration.scheduler.models";
-import { getISODateOnlyString } from "@sims/utilities";
+import { IER12Disbursement, IER12TestInputData } from "./models/data-inputs";
+import { addDays, getISODateOnlyString } from "@sims/utilities";
 import * as faker from "faker";
+import dayjs from "dayjs";
 
 /**
  * Save all IER12 related records providing all data that
@@ -30,7 +29,16 @@ import * as faker from "faker";
 export async function saveIER12TestInputData(
   db: E2EDataSources,
   testInputData: IER12TestInputData,
+  options?: {
+    programYearPrefix?: number;
+  },
 ): Promise<Application> {
+  // If a program year prefix is not provided, create one with the year 2000 as default.
+  const programYear = await ensureProgramYearExists(
+    db,
+    options?.programYearPrefix ?? 2000,
+  );
+
   // User
   const fakeUser = createFakeUser();
   fakeUser.firstName = testInputData.student.firstName;
@@ -56,7 +64,7 @@ export async function saveIER12TestInputData(
   });
   // Application
   const createSecondDisbursement =
-    testInputData.assessment.disbursements.length === 2;
+    testInputData.assessment.disbursementSchedules.length === 2;
   const testInputApplication = testInputData.application;
   const application = await saveFakeApplicationDisbursements(
     db.dataSource,
@@ -67,11 +75,10 @@ export async function saveIER12TestInputData(
   application.studentNumber = testInputApplication.studentNumber;
   application.relationshipStatus = testInputApplication.relationshipStatus;
   application.submittedDate = testInputApplication.submittedDate;
-  application.applicationStatus = testInputApplication.status;
-  application.applicationStatusUpdatedOn = testInputApplication.statusDate;
-  application.programYear = await db.programYear.findOneBy({
-    programYear: testInputApplication.programYear,
-  });
+  application.applicationStatus = testInputApplication.applicationStatus;
+  application.applicationStatusUpdatedOn =
+    testInputApplication.applicationStatusUpdatedOn;
+  application.programYear = programYear;
   await db.application.save(application);
   // Assessment.
   const testInputAssessment = testInputData.assessment;
@@ -85,7 +92,7 @@ export async function saveIER12TestInputData(
   assessment.disbursementSchedules.forEach((disbursement, index) => {
     mapTestInputToDisbursementAndAwards(
       disbursement,
-      testInputAssessment.disbursements[index],
+      testInputAssessment.disbursementSchedules[index],
     );
   });
   await db.studentAssessment.save(assessment);
@@ -107,11 +114,17 @@ export async function saveIER12TestInputData(
     programUpdate,
   );
   // Offering
-  const testInputOffering = testInputData.educationProgram.offering;
+  // Set the number of weeks to some number beyond 17 if there are two disbursements
+  // since two disbursements are supposed to be create to offerings longer than 17 weeks.
+  const offeringEndDateWeeks = createSecondDisbursement ? 18 : 10;
+  const testInputOffering = testInputData.offering;
   const offeringUpdate = {
     yearOfStudy: testInputOffering.yearOfStudy,
-    studyStartDate: getISODateOnlyString(testInputOffering.studyStartDate),
-    studyEndDate: getISODateOnlyString(testInputOffering.studyEndDate),
+    studyStartDate:
+      testInputOffering.studyStartDate ?? addDays(15, programYear.startDate),
+    studyEndDate:
+      testInputOffering.studyEndDate ??
+      addDays(7 * offeringEndDateWeeks, programYear.startDate),
     actualTuitionCosts: testInputOffering.actualTuitionCosts,
     programRelatedCosts: testInputOffering.programRelatedCosts,
     mandatoryFees: testInputOffering.mandatoryFees,

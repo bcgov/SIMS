@@ -158,6 +158,10 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
           },
         },
       ],
+      order: {
+        assessmentDate: "ASC",
+        disbursementSchedules: { disbursementDate: "ASC" },
+      },
     });
   }
 }
