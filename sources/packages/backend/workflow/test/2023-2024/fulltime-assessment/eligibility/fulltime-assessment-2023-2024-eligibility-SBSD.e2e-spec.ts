@@ -29,7 +29,6 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-eligibility-SBSD
             PROGRAM_YEAR,
             assessmentConsolidatedData,
           );
-        console.log(calculatedAssessment.variables);
         // Assert
         expect(calculatedAssessment.variables.awardEligibilitySBSD).toBe(true);
         expect(
