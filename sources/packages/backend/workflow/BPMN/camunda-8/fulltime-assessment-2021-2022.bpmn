@@ -18,8 +18,8 @@
     <bpmn:group id="Group_0lj7iyw" />
     <bpmn:group id="Group_0blswz8" />
     <bpmn:group id="Group_10itrde" />
-    <bpmn:group id="Group_0jyp8jl" />
-    <bpmn:group id="Group_1gxdbyx" />
+    <bpmn:group id="Group_0by8fz6" />
+    <bpmn:group id="Group_0sp2khb" />
   </bpmn:collaboration>
   <bpmn:process id="fulltime-assessment-2021-2022" isExecutable="true">
     <bpmn:laneSet id="LaneSet_0i75wz3">
@@ -29,13 +29,10 @@
         <bpmn:flowNodeRef>Event_1v0z5f4</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Event_0l38vd4</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Event_0jry7fc</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Gateway_1hun062</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Event_1w75eo8</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Event_19k9jpj</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Gateway_0um3yvb</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>StartEvent_1</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Event_0hxxmu9</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Event_0rpww4j</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Gateway_0zmvhsj</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Gateway_13qzd4v</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Event_00c1iyh</bpmn:flowNodeRef>
@@ -49,12 +46,12 @@
         <bpmn:flowNodeRef>Event_1bl5l5x</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Event_1tx3et1</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Gateway_0qwoqqh</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Activity_1jqxw00</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Activity_048jfh0</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Activity_1jqxw00</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Gateway_1qh6zrs</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Event_1duborc</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Event_105ptqe</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Event_0zn13zd</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Gateway_1qh6zrs</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Event_177w8t8</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Event_0bdny14</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Event_1k4n9fq</bpmn:flowNodeRef>
@@ -67,13 +64,17 @@
         <bpmn:flowNodeRef>Event_1y105g5</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Event_076thnd</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Gateway_0w90zd7</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Event_0r8wyou</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Event_18110sl</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Event_09fw0dz</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Event_0hkddfy</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Event_1aiob46</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Event_12mfqm9</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Event_123oime</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Event_0s8ztj5</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Event_10ajge8</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Event_195epxw</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Event_1ms14ig</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Event_0zfn3be</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Gateway_1hun062</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>StartEvent_1</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Event_0rpww4j</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Event_1882i4u</bpmn:flowNodeRef>
       </bpmn:lane>
       <bpmn:lane id="Lane_0ejpwa7" name="Primary Assessed Need and Award Configuration">
         <bpmn:flowNodeRef>Activity_1ty6u6b</bpmn:flowNodeRef>
@@ -109,6 +110,7 @@
         <bpmn:flowNodeRef>Activity_1q23mfd</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Gateway_1nwlf2f</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Gateway_1mpwnv1</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Event_0gemin6</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Event_0re3zsg</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Activity_1ug0vzz</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Event_175iz5m</bpmn:flowNodeRef>
@@ -176,11 +178,10 @@
         <bpmn:flowNodeRef>Event_1vx49ib</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Event_0e39jby</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Event_14jfj5g</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Event_0a5tcyb</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Event_03czdun</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Event_1j6ep9h</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Event_01mpmyo</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Event_0gemin6</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Event_1k4bg94</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Event_1gknm5h</bpmn:flowNodeRef>
         <bpmn:childLaneSet id="LaneSet_0v6vyq5">
           <bpmn:lane id="Lane_0l32w49" name="Award Calculation">
             <bpmn:flowNodeRef>Gateway_1138sgq</bpmn:flowNodeRef>
@@ -256,6 +257,7 @@
             <bpmn:flowNodeRef>Activity_1q23mfd</bpmn:flowNodeRef>
             <bpmn:flowNodeRef>Gateway_1nwlf2f</bpmn:flowNodeRef>
             <bpmn:flowNodeRef>Gateway_1mpwnv1</bpmn:flowNodeRef>
+            <bpmn:flowNodeRef>Event_0gemin6</bpmn:flowNodeRef>
             <bpmn:flowNodeRef>Event_0re3zsg</bpmn:flowNodeRef>
             <bpmn:flowNodeRef>Activity_1ug0vzz</bpmn:flowNodeRef>
             <bpmn:flowNodeRef>Event_175iz5m</bpmn:flowNodeRef>
@@ -285,11 +287,10 @@
             <bpmn:flowNodeRef>Event_1yndxhv</bpmn:flowNodeRef>
             <bpmn:flowNodeRef>Event_084hvhv</bpmn:flowNodeRef>
             <bpmn:flowNodeRef>Event_14jfj5g</bpmn:flowNodeRef>
-            <bpmn:flowNodeRef>Event_0a5tcyb</bpmn:flowNodeRef>
+            <bpmn:flowNodeRef>Event_03czdun</bpmn:flowNodeRef>
             <bpmn:flowNodeRef>Event_1j6ep9h</bpmn:flowNodeRef>
-            <bpmn:flowNodeRef>Event_01mpmyo</bpmn:flowNodeRef>
-            <bpmn:flowNodeRef>Event_0gemin6</bpmn:flowNodeRef>
             <bpmn:flowNodeRef>Event_1k4bg94</bpmn:flowNodeRef>
+            <bpmn:flowNodeRef>Event_1gknm5h</bpmn:flowNodeRef>
           </bpmn:lane>
         </bpmn:childLaneSet>
       </bpmn:lane>
@@ -546,6 +547,16 @@
       <bpmn:outgoing>Flow_1fd7dws</bpmn:outgoing>
       <bpmn:outgoing>Flow_1m3vlcp</bpmn:outgoing>
     </bpmn:parallelGateway>
+    <bpmn:intermediateThrowEvent id="Event_0gemin6" name="Calculate calculatedDataTotalChildSpousalSupport">
+      <bpmn:extensionElements>
+        <zeebe:ioMapping>
+          <zeebe:output source="=if &#10;  dmnFullTimeCalculatedDataProgramYearMaximums.limitWeeklyAlimonyChildSupport * offeringWeeks &#60; studentDataChildSupportAndOrSpousalSupport &#10;then&#10;  dmnFullTimeCalculatedDataProgramYearMaximums.limitWeeklyAlimonyChildSupport * offeringWeeks else studentDataChildSupportAndOrSpousalSupport" target="calculatedDataChildSpousalSupport" />
+          <zeebe:output source="=if &#10;  studentDataRelationshipStatus = &#34;married&#34;&#10;  and&#10;  calculatedDataPartnerStudentStudyWeeks &#62;=12&#10;then&#10;  studentDataChildSupportAndOrSpousalSupport / 2&#10;else&#10;  calculatedDataChildSpousalSupport" target="calculatedDataTotalChildSpousalSupport" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1u2i1ok</bpmn:incoming>
+      <bpmn:outgoing>Flow_16yczpa</bpmn:outgoing>
+    </bpmn:intermediateThrowEvent>
     <bpmn:intermediateThrowEvent id="Event_0re3zsg" name="Calculate calculatedDataTotalChildCareCost">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
@@ -607,7 +618,7 @@
     <bpmn:sequenceFlow id="Flow_1eulup9" sourceRef="Event_1sg75ph" targetRef="Activity_1wciqrl" />
     <bpmn:sequenceFlow id="Flow_1lihxee" sourceRef="Gateway_16zyh99" targetRef="Gateway_0rn7rsj" />
     <bpmn:sequenceFlow id="Flow_0jvb1k3" name="Exempt" sourceRef="Gateway_0rn7rsj" targetRef="Event_0sz9je4">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=studentDataIndigenousStatus = "yes" or calculatedDataApplicationPDPPDStatus = true or calculatedDataTotalEligibleDependants &gt; 0 or studentDataYouthInCare = "yes"</bpmn:conditionExpression>
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=studentDataIndigenousStatus = "yes" or calculatedDataPDPPDStatus = true or calculatedDataTotalEligibleDependants &gt; 0 or studentDataYouthInCare = "yes"</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="Flow_06xlqzm" sourceRef="Gateway_0rn7rsj" targetRef="Gateway_0ufg06t" />
     <bpmn:sequenceFlow id="Flow_0i89lua" sourceRef="Event_0sz9je4" targetRef="Gateway_1435f79" />
@@ -615,7 +626,7 @@
     <bpmn:sequenceFlow id="Flow_0edfgvv" sourceRef="Gateway_16zyh99" targetRef="Gateway_18ykorq" />
     <bpmn:sequenceFlow id="Flow_0dls7cw" sourceRef="Gateway_18ykorq" targetRef="Gateway_0spmxnq" />
     <bpmn:sequenceFlow id="Flow_1jawjn3" name="Exempt" sourceRef="Gateway_18ykorq" targetRef="Event_09fnlak">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=studentDataIndigenousStatus = "yes" or calculatedDataApplicationPDPPDStatus = true or calculatedDataTotalEligibleDependants &gt; 0 or studentDataYouthInCare = "yes"</bpmn:conditionExpression>
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=studentDataIndigenousStatus = "yes" or calculatedDataPDPPDStatus = true or calculatedDataTotalEligibleDependants &gt; 0 or studentDataYouthInCare = "yes"</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="Flow_07zdno5" name="Above Income Threshold" sourceRef="Gateway_0spmxnq" targetRef="Event_08zc04r">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=calculatedDataTotalFamilyIncome &gt;= dmnFullTimeCalculatedDataIncomeThreshold.calculatedDataProvincialFSCIncomeThreshold</bpmn:conditionExpression>
@@ -660,7 +671,7 @@ or (calculatedDataPartnerFedralProvincialPDReceiptCost &gt; 0)</bpmn:conditionEx
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= (studentDataRelationshipStatus = "single" or studentDataRelationshipStatus = "other") and studentDataDependantstatus = "independant"</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="Flow_1f17df8" name="Dependant" sourceRef="Gateway_1mgn0u8" targetRef="Activity_1ug0vzz">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= studentDataRelationshipStatus = "single" and studentDataDependantstatus = "dependant"</bpmn:conditionExpression>
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=studentDataRelationshipStatus = "single" and studentDataDependantstatus = "dependant"</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="Flow_01ijr39" sourceRef="Gateway_0wg9yz8" targetRef="Gateway_1nsy8sj" />
     <bpmn:sequenceFlow id="Flow_19233hh" sourceRef="Gateway_1g0qy1m" targetRef="Gateway_1138sgq" />
@@ -674,8 +685,8 @@ or (calculatedDataPartnerFedralProvincialPDReceiptCost &gt; 0)</bpmn:conditionEx
     <bpmn:sequenceFlow id="Flow_05i0jt4" sourceRef="Gateway_08tdyvv" targetRef="Activity_10ktupo" />
     <bpmn:sequenceFlow id="Flow_1m3vlcp" sourceRef="Gateway_1mpwnv1" targetRef="Activity_1q23mfd" />
     <bpmn:sequenceFlow id="Flow_0snldy8" sourceRef="Activity_1q23mfd" targetRef="Gateway_1nwlf2f" />
-    <bpmn:sequenceFlow id="Flow_1mukp8v" sourceRef="Gateway_1nwlf2f" targetRef="Event_0a5tcyb" />
-    <bpmn:sequenceFlow id="Flow_0ooa29u" sourceRef="Event_1k4bg94" targetRef="Event_01mpmyo" />
+    <bpmn:sequenceFlow id="Flow_1mukp8v" sourceRef="Gateway_1nwlf2f" targetRef="Event_03czdun" />
+    <bpmn:sequenceFlow id="Flow_0ooa29u" sourceRef="Event_1k4bg94" targetRef="Event_1gknm5h" />
     <bpmn:sequenceFlow id="Flow_16yczpa" sourceRef="Event_0gemin6" targetRef="Event_1k4bg94" />
     <bpmn:sequenceFlow id="Flow_1u2i1ok" sourceRef="Event_0re3zsg" targetRef="Event_0gemin6" />
     <bpmn:sequenceFlow id="Flow_0sn56ca" sourceRef="Event_14jfj5g" targetRef="Event_0re3zsg" />
@@ -1130,11 +1141,6 @@ or (calculatedDataPartnerFedralProvincialPDReceiptCost &gt; 0)</bpmn:conditionEx
       <bpmn:incoming>Flow_0g6wvij</bpmn:incoming>
       <bpmn:outgoing>Flow_0riboyg</bpmn:outgoing>
     </bpmn:intermediateThrowEvent>
-    <bpmn:exclusiveGateway id="Gateway_1hun062" name="studentDataNumberOfParents">
-      <bpmn:incoming>Flow_0y2zl5a</bpmn:incoming>
-      <bpmn:outgoing>Flow_0s3qj3d</bpmn:outgoing>
-      <bpmn:outgoing>Flow_164wwvw</bpmn:outgoing>
-    </bpmn:exclusiveGateway>
     <bpmn:intermediateThrowEvent id="Event_1w75eo8" name="calculatedDataTotalParentEligibleDependants">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
@@ -1174,8 +1180,8 @@ or (calculatedDataPartnerFedralProvincialPDReceiptCost &gt; 0)</bpmn:conditionEx
     <bpmn:sequenceFlow id="Flow_0rfkk59" sourceRef="Activity_048jfh0" targetRef="Activity_1jqxw00" />
     <bpmn:sequenceFlow id="Flow_0aakdl6" sourceRef="Activity_1jqxw00" targetRef="Activity_08reh45" />
     <bpmn:sequenceFlow id="Flow_1q59j4l" sourceRef="Gateway_0qwoqqh" targetRef="Event_123oime" />
-    <bpmn:sequenceFlow id="Flow_1cl7iq9" sourceRef="Event_123oime" targetRef="Event_195epxw" />
-    <bpmn:sequenceFlow id="Flow_0mhxp8e" sourceRef="Event_0s8ztj5" targetRef="Event_10ajge8" />
+    <bpmn:sequenceFlow id="Flow_1cl7iq9" sourceRef="Event_123oime" targetRef="Event_0zfn3be" />
+    <bpmn:sequenceFlow id="Flow_0mhxp8e" sourceRef="Event_0s8ztj5" targetRef="Event_1ms14ig" />
     <bpmn:sequenceFlow id="Flow_08mnfio" name="yes" sourceRef="Gateway_0zmvhsj" targetRef="Event_00c1iyh">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=studentDataIsYourSpouseACanadianCitizen = "yes"</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
@@ -1224,10 +1230,6 @@ or (calculatedDataPartnerFedralProvincialPDReceiptCost &gt; 0)</bpmn:conditionEx
       <bpmn:outgoing>Flow_142ei9l</bpmn:outgoing>
       <bpmn:outgoing>Flow_1ekiozl</bpmn:outgoing>
     </bpmn:exclusiveGateway>
-    <bpmn:startEvent id="StartEvent_1" name="start">
-      <bpmn:extensionElements />
-      <bpmn:outgoing>Flow_1tcyqyg</bpmn:outgoing>
-    </bpmn:startEvent>
     <bpmn:intermediateThrowEvent id="Event_0hxxmu9" name="Define Total Income">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
@@ -1237,30 +1239,11 @@ or (calculatedDataPartnerFedralProvincialPDReceiptCost &gt; 0)</bpmn:conditionEx
           <zeebe:output source="=if&#10;  parent1CRAReportedIncome = null&#10;then &#10;  parent1TotalIncome&#10;else&#10;  parent1CRAReportedIncome" target="calculatedDataParent1TotalIncome" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
-      <bpmn:incoming>Flow_0j0eoj2</bpmn:incoming>
+      <bpmn:incoming>Flow_1goqpi4</bpmn:incoming>
       <bpmn:outgoing>Flow_0dqxcli</bpmn:outgoing>
-    </bpmn:intermediateThrowEvent>
-    <bpmn:intermediateThrowEvent id="Event_0rpww4j" name="Set values for null addtributes">
-      <bpmn:extensionElements>
-        <zeebe:ioMapping>
-          <zeebe:output source="=if studentDataLivingathomeRent = null&#10;then &#34;no&#34;&#10;else&#10;  studentDataLivingathomeRent" target="studentDataLivingathomeRent" />
-          <zeebe:output source="=if studentDataTransportationCost = null&#10;then 0&#10;else&#10;  studentDataTransportationCost" target="studentDataTransportationCost" />
-          <zeebe:output source="=if studentDataDaycareCosts11YearsOrUnder = null&#10;then 0&#10;else&#10;  studentDataDaycareCosts11YearsOrUnder" target="studentDataDaycareCosts11YearsOrUnder" />
-          <zeebe:output source="=if studentDataDaycareCosts12YearsOrOver = null&#10;then 0&#10;else&#10;  studentDataDaycareCosts12YearsOrOver" target="studentDataDaycareCosts12YearsOrOver" />
-          <zeebe:output source="=if studentDataChildSupportAndOrSpousalSupport = null&#10;then 0&#10;else&#10;  studentDataChildSupportAndOrSpousalSupport" target="studentDataChildSupportAndOrSpousalSupport" />
-          <zeebe:output source="=if calculatedDataScholarshipsBursaries = null&#10;then 0&#10;else&#10;  calculatedDataScholarshipsBursaries" target="calculatedDataScholarshipsBursaries" />
-          <zeebe:output source="=if studentDataGovernmentFundingCosts = null&#10;then 0&#10;else&#10;  studentDataGovernmentFundingCosts" target="studentDataGovernmentFundingCosts" />
-          <zeebe:output source="=if studentDataNongovernmentFundingCosts = null&#10;then 0&#10;else&#10;  studentDataNongovernmentFundingCosts" target="studentDataNongovernmentFundingCosts" />
-          <zeebe:output source="=if studentDataParentVoluntaryContributionsCosts = null&#10;then 0&#10;else&#10;  studentDataParentVoluntaryContributionsCosts" target="studentDataParentVoluntaryContributionsCosts" />
-          <zeebe:output source="=if studentDataApplicationPDPPDStatus = &#34;yes&#34;&#10;then true&#10;else&#10;  false" target="calculatedDataApplicationPDPPDStatus" />
-        </zeebe:ioMapping>
-      </bpmn:extensionElements>
-      <bpmn:incoming>Flow_1tcyqyg</bpmn:incoming>
-      <bpmn:outgoing>Flow_0j0eoj2</bpmn:outgoing>
     </bpmn:intermediateThrowEvent>
     <bpmn:sequenceFlow id="Flow_0dqxcli" sourceRef="Event_0hxxmu9" targetRef="Gateway_0um3yvb" />
     <bpmn:sequenceFlow id="Flow_1tcyqyg" sourceRef="StartEvent_1" targetRef="Event_0rpww4j" />
-    <bpmn:sequenceFlow id="Flow_0j0eoj2" sourceRef="Event_0rpww4j" targetRef="Event_0hxxmu9" />
     <bpmn:exclusiveGateway id="Gateway_0zmvhsj" name="isYourSpouseACanadianCitizen">
       <bpmn:incoming>Flow_1ekiozl</bpmn:incoming>
       <bpmn:outgoing>Flow_08mnfio</bpmn:outgoing>
@@ -1367,7 +1350,7 @@ or (calculatedDataPartnerFedralProvincialPDReceiptCost &gt; 0)</bpmn:conditionEx
       <bpmn:outgoing>Flow_1q59j4l</bpmn:outgoing>
     </bpmn:exclusiveGateway>
     <bpmn:sequenceFlow id="Flow_05fykma" sourceRef="Event_177w8t8" targetRef="Event_1duborc" />
-    <bpmn:sequenceFlow id="Flow_16yjr4j" sourceRef="Gateway_0w90zd7" targetRef="Event_0r8wyou" />
+    <bpmn:sequenceFlow id="Flow_16yjr4j" sourceRef="Gateway_0w90zd7" targetRef="Event_0hkddfy" />
     <bpmn:intermediateThrowEvent id="Event_0cktmsz" name="calculatetotalscholarships">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
@@ -1450,7 +1433,7 @@ or (calculatedDataPartnerFedralProvincialPDReceiptCost &gt; 0)</bpmn:conditionEx
     <bpmn:intermediateThrowEvent id="Event_1ki3afc" name="awardEligibilitySBSD">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
-          <zeebe:output source="=if institutionType = &#34;BC Public&#34; or &#34;BC Private&#34; then (&#10;if ((calculatedDataFederalAssessedNeed + calculatedDataProvincialAssessedNeed) &#62;= 1)&#10;  and calculatedDataApplicationPDPPDStatus = true&#10;then true &#10;else false&#10;)&#10;else&#10;false" target="awardEligibilitySBSD" />
+          <zeebe:output source="=if institutionType = &#34;BC Public&#34; or institutionType = &#34;BC Private&#34; then (&#10;if ((calculatedDataFederalAssessedNeed + calculatedDataProvincialAssessedNeed) &#62;= 1)&#10;  and calculatedDataPDPPDStatus = true&#10;then true &#10;else false&#10;)&#10;else&#10;false" target="awardEligibilitySBSD" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_157t178</bpmn:incoming>
@@ -1459,7 +1442,7 @@ or (calculatedDataPartnerFedralProvincialPDReceiptCost &gt; 0)</bpmn:conditionEx
     <bpmn:intermediateThrowEvent id="Event_0pjh86g" name="awardEligibilityBGPD">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
-          <zeebe:output source="=if institutionType = &#34;BC Public&#34; or &#34;BC Private&#34; then (&#10;if ((calculatedDataFederalAssessedNeed + calculatedDataProvincialAssessedNeed) &#62;= 1) &#10;  and calculatedDataApplicationPDPPDStatus = true &#10;then true &#10;else false&#10;)&#10;else&#10;false" target="awardEligibilityBGPD" />
+          <zeebe:output source="=if institutionType = &#34;BC Public&#34; or institutionType = &#34;BC Private&#34; then (&#10;if ((calculatedDataFederalAssessedNeed + calculatedDataProvincialAssessedNeed) &#62;= 1) &#10;  and calculatedDataPDPPDStatus = true &#10;then true &#10;else false&#10;)&#10;else&#10;false" target="awardEligibilityBGPD" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_0ri2jnh</bpmn:incoming>
@@ -1468,7 +1451,7 @@ or (calculatedDataPartnerFedralProvincialPDReceiptCost &gt; 0)</bpmn:conditionEx
     <bpmn:intermediateThrowEvent id="Event_0arma0u" name="awardEligibilityBCAG2Year">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
-          <zeebe:output source="=if institutionType = &#34;BC Public&#34; then (&#10;if ((calculatedDataFederalAssessedNeed + calculatedDataProvincialAssessedNeed) &#62;= 1)&#10;  and (programCredentialType = &#34;undergraduateCertificate&#34;&#10;       or programCredentialType = &#34;undergraduateDiploma&#34;&#10;       or programCredentialType = &#34;undergraduateDegree&#34;&#10;       or programCredentialType = &#34;graduateCertificate&#34;&#10;       or programCredentialType = &#34;graduateDiploma&#34;&#10;       or programCredentialType = &#34;qualifyingStudies&#34;&#10;       or programCredentialType = &#34;qualifyingStudies&#34;)&#10;           and (programLength = &#34;2YearsToLessThan3Years&#34;&#10;              or programLength = &#34;3YearsToLessThan4Years&#34;&#10;              or programLength = &#34;4YearsToLessThan5Years&#34;&#10;              or programLength = &#34;5YearsOrMore&#34;)&#10;then true&#10;else false&#10;)&#10;else false" target="awardEligibilityBCAG2Year" />
+          <zeebe:output source="=if institutionType = &#34;BC Public&#34; then (&#10;if ((calculatedDataFederalAssessedNeed + calculatedDataProvincialAssessedNeed) &#62;= 1)&#10;  and (programCredentialType = &#34;undergraduateCertificate&#34;&#10;       or programCredentialType = &#34;undergraduateDiploma&#34;&#10;       or programCredentialType = &#34;undergraduateDegree&#34;&#10;       or programCredentialType = &#34;graduateCertificate&#34;&#10;       or programCredentialType = &#34;graduateDiploma&#34;&#10;       or programCredentialType = &#34;qualifyingStudies&#34;)&#10;           and (programLength = &#34;2YearsToLessThan3Years&#34;&#10;              or programLength = &#34;3YearsToLessThan4Years&#34;&#10;              or programLength = &#34;4YearsToLessThan5Years&#34;&#10;              or programLength = &#34;5YearsOrMore&#34;)&#10;then true&#10;else false&#10;)&#10;else false" target="awardEligibilityBCAG2Year" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_0utsrvh</bpmn:incoming>
@@ -1513,7 +1496,7 @@ or (calculatedDataPartnerFedralProvincialPDReceiptCost &gt; 0)</bpmn:conditionEx
     <bpmn:intermediateThrowEvent id="Event_084hvhv" name="awardEligibilityCSGP">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
-          <zeebe:output source="=if ((calculatedDataFederalAssessedNeed + calculatedDataProvincialAssessedNeed) &#62;= 1)&#10;  and calculatedDataApplicationPDPPDStatus = true&#10;then true else false" target="awardEligibilityCSGP" />
+          <zeebe:output source="=if ((calculatedDataFederalAssessedNeed + calculatedDataProvincialAssessedNeed) &#62;= 1)&#10;  and calculatedDataPDPPDStatus = true&#10;then true else false" target="awardEligibilityCSGP" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_0qivez3</bpmn:incoming>
@@ -1591,16 +1574,6 @@ or (calculatedDataPartnerFedralProvincialPDReceiptCost &gt; 0)</bpmn:conditionEx
       <bpmn:outgoing>Flow_0djgmcr</bpmn:outgoing>
     </bpmn:intermediateThrowEvent>
     <bpmn:sequenceFlow id="Flow_09cjv05" sourceRef="Gateway_1qh6zrs" targetRef="Activity_048jfh0" />
-    <bpmn:sequenceFlow id="Flow_1l0g9nv" sourceRef="Event_09fw0dz" targetRef="Event_1k4n9fq" />
-    <bpmn:sequenceFlow id="Flow_0otihoy" sourceRef="Event_18110sl" targetRef="Event_0bdny14" />
-    <bpmn:sequenceFlow id="Flow_03s68ur" sourceRef="Event_0r8wyou" targetRef="Event_177w8t8" />
-    <bpmn:businessRuleTask id="Activity_1jqxw00" name="dmnFullTimeProgramYearMaximums">
-      <bpmn:extensionElements>
-        <zeebe:calledDecision decisionId="dmnFullTimeProgramYearMaximums" resultVariable="dmnFullTimeCalculatedDataProgramYearMaximums" />
-      </bpmn:extensionElements>
-      <bpmn:incoming>Flow_0rfkk59</bpmn:incoming>
-      <bpmn:outgoing>Flow_0aakdl6</bpmn:outgoing>
-    </bpmn:businessRuleTask>
     <bpmn:businessRuleTask id="Activity_048jfh0" name="dmnFullTimeLivingCategory">
       <bpmn:extensionElements>
         <zeebe:calledDecision decisionId="dmnFullTimeLivingCategory" resultVariable="dmnFullTimeCalculatedDataLivingCategory" />
@@ -1608,6 +1581,19 @@ or (calculatedDataPartnerFedralProvincialPDReceiptCost &gt; 0)</bpmn:conditionEx
       <bpmn:incoming>Flow_09cjv05</bpmn:incoming>
       <bpmn:outgoing>Flow_0rfkk59</bpmn:outgoing>
     </bpmn:businessRuleTask>
+    <bpmn:businessRuleTask id="Activity_1jqxw00" name="dmnFullTimeProgramYearMaximums">
+      <bpmn:extensionElements>
+        <zeebe:calledDecision decisionId="dmnFullTimeProgramYearMaximums" resultVariable="dmnFullTimeCalculatedDataProgramYearMaximums" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0rfkk59</bpmn:incoming>
+      <bpmn:outgoing>Flow_0aakdl6</bpmn:outgoing>
+    </bpmn:businessRuleTask>
+    <bpmn:exclusiveGateway id="Gateway_1qh6zrs">
+      <bpmn:incoming>Flow_1qca6yi</bpmn:incoming>
+      <bpmn:incoming>Flow_1ydy4cj</bpmn:incoming>
+      <bpmn:incoming>Flow_0ug361k</bpmn:incoming>
+      <bpmn:outgoing>Flow_09cjv05</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
     <bpmn:intermediateThrowEvent id="Event_1duborc" name="Calculate Family Income">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
@@ -1635,19 +1621,13 @@ or (calculatedDataPartnerFedralProvincialPDReceiptCost &gt; 0)</bpmn:conditionEx
       <bpmn:incoming>Flow_189jv8b</bpmn:incoming>
       <bpmn:outgoing>Flow_1ydy4cj</bpmn:outgoing>
     </bpmn:intermediateThrowEvent>
-    <bpmn:exclusiveGateway id="Gateway_1qh6zrs">
-      <bpmn:incoming>Flow_1qca6yi</bpmn:incoming>
-      <bpmn:incoming>Flow_1ydy4cj</bpmn:incoming>
-      <bpmn:incoming>Flow_0ug361k</bpmn:incoming>
-      <bpmn:outgoing>Flow_09cjv05</bpmn:outgoing>
-    </bpmn:exclusiveGateway>
     <bpmn:intermediateThrowEvent id="Event_177w8t8" name="calculatedDataFamilySize">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
           <zeebe:output source="=calculatedDataTotalParentEligibleDependants + studentDataNumberOfParents + 1" target="calculatedDataFamilySize" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
-      <bpmn:incoming>Flow_03s68ur</bpmn:incoming>
+      <bpmn:incoming>Flow_11zs37x</bpmn:incoming>
       <bpmn:outgoing>Flow_05fykma</bpmn:outgoing>
     </bpmn:intermediateThrowEvent>
     <bpmn:intermediateThrowEvent id="Event_0bdny14" name="calculatedDataFamilySize">
@@ -1656,7 +1636,7 @@ or (calculatedDataPartnerFedralProvincialPDReceiptCost &gt; 0)</bpmn:conditionEx
           <zeebe:output source="=calculatedDataTotalEligibleDependants + 1" target="calculatedDataFamilySize" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
-      <bpmn:incoming>Flow_0otihoy</bpmn:incoming>
+      <bpmn:incoming>Flow_0amrvf1</bpmn:incoming>
       <bpmn:outgoing>Flow_00b4sbw</bpmn:outgoing>
     </bpmn:intermediateThrowEvent>
     <bpmn:intermediateThrowEvent id="Event_1k4n9fq" name="calculatedDataFamilySize">
@@ -1665,56 +1645,39 @@ or (calculatedDataPartnerFedralProvincialPDReceiptCost &gt; 0)</bpmn:conditionEx
           <zeebe:output source="=calculatedDataTotalEligibleDependants + 2" target="calculatedDataFamilySize" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
-      <bpmn:incoming>Flow_1l0g9nv</bpmn:incoming>
+      <bpmn:incoming>Flow_0mxw3wj</bpmn:incoming>
       <bpmn:outgoing>Flow_189jv8b</bpmn:outgoing>
     </bpmn:intermediateThrowEvent>
+    <bpmn:sequenceFlow id="Flow_11zs37x" sourceRef="Event_0hkddfy" targetRef="Event_177w8t8" />
+    <bpmn:sequenceFlow id="Flow_0amrvf1" sourceRef="Event_1aiob46" targetRef="Event_0bdny14" />
+    <bpmn:sequenceFlow id="Flow_0mxw3wj" sourceRef="Event_12mfqm9" targetRef="Event_1k4n9fq" />
     <bpmn:intermediateThrowEvent id="Event_14jfj5g" name="calculatedDataTotalMSOLAllowance">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
-          <zeebe:output source="=sum([calculatedDataStudentMSOLAllowance,&#10;    calculatedDataDependantTotalMSOLAllowance][item != null])" target="calculatedDataTotalMSOLAllowance" />
+          <zeebe:output source="=sum([calculatedDataStudentMSOLAllowance,&#10;     calculatedDataDependantTotalMSOLAllowance][item != null])" target="calculatedDataTotalMSOLAllowance" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
-      <bpmn:incoming>Flow_0busi1x</bpmn:incoming>
+      <bpmn:incoming>Flow_1s3jb8o</bpmn:incoming>
       <bpmn:outgoing>Flow_0sn56ca</bpmn:outgoing>
     </bpmn:intermediateThrowEvent>
-    <bpmn:intermediateThrowEvent id="Event_0a5tcyb" name="calculatedDataDependantTotalMSOLAllowance">
+    <bpmn:intermediateThrowEvent id="Event_03czdun" name="calculatedDataDependantTotalMSOLAllowance">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
           <zeebe:output source="=calculatedDataDependantMSOLAllowance * calculatedDataTotalEligibleDependants" target="calculatedDataDependantTotalMSOLAllowance" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1mukp8v</bpmn:incoming>
-      <bpmn:outgoing>Flow_0busi1x</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1s3jb8o</bpmn:outgoing>
     </bpmn:intermediateThrowEvent>
-    <bpmn:sequenceFlow id="Flow_0busi1x" sourceRef="Event_0a5tcyb" targetRef="Event_14jfj5g" />
+    <bpmn:sequenceFlow id="Flow_1s3jb8o" sourceRef="Event_03czdun" targetRef="Event_14jfj5g" />
     <bpmn:intermediateThrowEvent id="Event_1j6ep9h" name="Calculate totalCosts">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
           <zeebe:output source="=sum([&#10;  offeringExceptionalExpenses,&#10;  calculatedDataTotalTutionCost,&#10;  calculatedDataTotalBookCost,&#10;  calculatedDataTotalMSOLAllowance,&#10;  calculatedDataTotalTransportationCost,&#10;  calculatedDataChildSpousalSupport&#10;][item != null])" target="calculatedDataTotalCosts" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
-      <bpmn:incoming>Flow_0vcwyii</bpmn:incoming>
+      <bpmn:incoming>Flow_0cucoye</bpmn:incoming>
       <bpmn:outgoing>Flow_0637m9v</bpmn:outgoing>
-    </bpmn:intermediateThrowEvent>
-    <bpmn:intermediateThrowEvent id="Event_01mpmyo" name="calaulatedDataTotalNonEducationalCost">
-      <bpmn:extensionElements>
-        <zeebe:ioMapping>
-          <zeebe:output source="=sum([calculatedDataTotalMSOLAllowance,&#10;     calculatedDataTotalTransportationCost,&#10;     calculatedDataTotalChildSpousalSupport&#10;   ][item != null]&#10;)" target="calaulatedDataTotalNonEducationalCost" />
-        </zeebe:ioMapping>
-      </bpmn:extensionElements>
-      <bpmn:incoming>Flow_0ooa29u</bpmn:incoming>
-      <bpmn:outgoing>Flow_0vcwyii</bpmn:outgoing>
-    </bpmn:intermediateThrowEvent>
-    <bpmn:sequenceFlow id="Flow_0vcwyii" sourceRef="Event_01mpmyo" targetRef="Event_1j6ep9h" />
-    <bpmn:intermediateThrowEvent id="Event_0gemin6" name="Calculate calculatedDataTotalChildSpousalSupport">
-      <bpmn:extensionElements>
-        <zeebe:ioMapping>
-          <zeebe:output source="=if &#10;  dmnFullTimeCalculatedDataProgramYearMaximums.limitWeeklyAlimonyChildSupport * offeringWeeks &#60; studentDataChildSupportAndOrSpousalSupport &#10;then&#10;  dmnFullTimeCalculatedDataProgramYearMaximums.limitWeeklyAlimonyChildSupport * offeringWeeks else studentDataChildSupportAndOrSpousalSupport" target="calculatedDataChildSpousalSupport" />
-          <zeebe:output source="=if &#10;  studentDataRelationshipStatus = &#34;married&#34;&#10;  and&#10;  calculatedDataPartnerStudentStudyWeeks &#62;=12&#10;then&#10;  studentDataChildSupportAndOrSpousalSupport / 2&#10;else&#10;  calculatedDataChildSpousalSupport" target="calculatedDataTotalChildSpousalSupport" />
-        </zeebe:ioMapping>
-      </bpmn:extensionElements>
-      <bpmn:incoming>Flow_1u2i1ok</bpmn:incoming>
-      <bpmn:outgoing>Flow_16yczpa</bpmn:outgoing>
     </bpmn:intermediateThrowEvent>
     <bpmn:intermediateThrowEvent id="Event_1k4bg94" name="Calculate calculatedDataTotalSecondResidence">
       <bpmn:extensionElements>
@@ -1724,6 +1687,16 @@ or (calculatedDataPartnerFedralProvincialPDReceiptCost &gt; 0)</bpmn:conditionEx
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_16yczpa</bpmn:incoming>
       <bpmn:outgoing>Flow_0ooa29u</bpmn:outgoing>
+    </bpmn:intermediateThrowEvent>
+    <bpmn:sequenceFlow id="Flow_0cucoye" sourceRef="Event_1gknm5h" targetRef="Event_1j6ep9h" />
+    <bpmn:intermediateThrowEvent id="Event_1gknm5h" name="calaulatedDataTotalNonEducationalCost">
+      <bpmn:extensionElements>
+        <zeebe:ioMapping>
+          <zeebe:output source="=sum([calculatedDataTotalMSOLAllowance,&#10;     calculatedDataTotalTransportationCost,&#10;     calculatedDataTotalChildSpousalSupport&#10;   ][item != null]&#10;)" target="calaulatedDataTotalNonEducationalCost" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0ooa29u</bpmn:incoming>
+      <bpmn:outgoing>Flow_0cucoye</bpmn:outgoing>
     </bpmn:intermediateThrowEvent>
     <bpmn:intermediateThrowEvent id="Event_1kdusuh" name="calculatedDataTotalParentEligibleDependants">
       <bpmn:extensionElements>
@@ -1807,32 +1780,32 @@ or (calculatedDataPartnerFedralProvincialPDReceiptCost &gt; 0)</bpmn:conditionEx
       <bpmn:incoming>Flow_1v4bf7g</bpmn:incoming>
       <bpmn:outgoing>Flow_16yjr4j</bpmn:outgoing>
     </bpmn:exclusiveGateway>
-    <bpmn:intermediateThrowEvent id="Event_0r8wyou" name="calculatedDataStudentMaritalStatusCode">
+    <bpmn:intermediateThrowEvent id="Event_0hkddfy" name="calculatedDataStudentMaritalStatusCode">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
           <zeebe:output source="=&#34;SI&#34;" target="calculatedDataStudentMaritalStatusCode" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_16yjr4j</bpmn:incoming>
-      <bpmn:outgoing>Flow_03s68ur</bpmn:outgoing>
+      <bpmn:outgoing>Flow_11zs37x</bpmn:outgoing>
     </bpmn:intermediateThrowEvent>
-    <bpmn:intermediateThrowEvent id="Event_18110sl" name="calculatedDataStudentMaritalStatusCode">
+    <bpmn:intermediateThrowEvent id="Event_1aiob46" name="calculatedDataStudentMaritalStatusCode">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
           <zeebe:output source="=if calculatedDataTotalEligibleDependants &#62; 0 then &#34;SP&#34; else &#34;SI&#34;" target="calculatedDataStudentMaritalStatusCode" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
-      <bpmn:incoming>Flow_0bbr531</bpmn:incoming>
-      <bpmn:outgoing>Flow_0otihoy</bpmn:outgoing>
+      <bpmn:incoming>Flow_01zoape</bpmn:incoming>
+      <bpmn:outgoing>Flow_0amrvf1</bpmn:outgoing>
     </bpmn:intermediateThrowEvent>
-    <bpmn:intermediateThrowEvent id="Event_09fw0dz" name="calculatedDataStudentMaritalStatusCode">
+    <bpmn:intermediateThrowEvent id="Event_12mfqm9" name="calculatedDataStudentMaritalStatusCode">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
           <zeebe:output source="=&#34;MA&#34;" target="calculatedDataStudentMaritalStatusCode" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
-      <bpmn:incoming>Flow_0i9i5pv</bpmn:incoming>
-      <bpmn:outgoing>Flow_1l0g9nv</bpmn:outgoing>
+      <bpmn:incoming>Flow_0cp9ish</bpmn:incoming>
+      <bpmn:outgoing>Flow_0mxw3wj</bpmn:outgoing>
     </bpmn:intermediateThrowEvent>
     <bpmn:intermediateThrowEvent id="Event_123oime" name="calculatedDataTotalEligibleDependants">
       <bpmn:extensionElements>
@@ -1852,7 +1825,8 @@ or (calculatedDataPartnerFedralProvincialPDReceiptCost &gt; 0)</bpmn:conditionEx
       <bpmn:incoming>Flow_142ei9l</bpmn:incoming>
       <bpmn:outgoing>Flow_0mhxp8e</bpmn:outgoing>
     </bpmn:intermediateThrowEvent>
-    <bpmn:intermediateThrowEvent id="Event_10ajge8" name="Calculate dependant quantity">
+    <bpmn:sequenceFlow id="Flow_01zoape" sourceRef="Event_1ms14ig" targetRef="Event_1aiob46" />
+    <bpmn:intermediateThrowEvent id="Event_1ms14ig" name="Calculate dependant quantity">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
           <zeebe:output source="=if studentDataDependants = null then 0 else&#10;count(&#10; studentDataDependants[&#10; // Dependent children aged 12- 18 years (i.e until they are 19 years old) and not declared on taxes&#10; // due to disability.&#10; date(item.dateOfBirth) &#60;= (today() - duration(&#34;P12Y&#34;))&#10; and date(item.dateOfBirth) &#62; (today() - duration(&#34;P19Y&#34;))&#10; and item.declaredOnTaxes = &#34;no&#34;]&#10;)" target="calculatedDataDependantChildQuantity" />
@@ -1863,10 +1837,9 @@ or (calculatedDataPartnerFedralProvincialPDReceiptCost &gt; 0)</bpmn:conditionEx
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_0mhxp8e</bpmn:incoming>
-      <bpmn:outgoing>Flow_0bbr531</bpmn:outgoing>
+      <bpmn:outgoing>Flow_01zoape</bpmn:outgoing>
     </bpmn:intermediateThrowEvent>
-    <bpmn:sequenceFlow id="Flow_0bbr531" sourceRef="Event_10ajge8" targetRef="Event_18110sl" />
-    <bpmn:intermediateThrowEvent id="Event_195epxw" name="Calculate dependant quantity">
+    <bpmn:intermediateThrowEvent id="Event_0zfn3be" name="Calculate dependant quantity">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
           <zeebe:output source="=if studentDataDependants = null then 0 else&#10;count(&#10; studentDataDependants[&#10; // Dependent children aged 12- 18 years (i.e until they are 19 years old) and not declared on taxes&#10; // due to disability.&#10; date(item.dateOfBirth) &#60;= (today() - duration(&#34;P12Y&#34;))&#10; and date(item.dateOfBirth) &#62; (today() - duration(&#34;P19Y&#34;))&#10; and item.declaredOnTaxes = &#34;no&#34;]&#10;)" target="calculatedDataDependantChildQuantity" />
@@ -1877,9 +1850,46 @@ or (calculatedDataPartnerFedralProvincialPDReceiptCost &gt; 0)</bpmn:conditionEx
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1cl7iq9</bpmn:incoming>
-      <bpmn:outgoing>Flow_0i9i5pv</bpmn:outgoing>
+      <bpmn:outgoing>Flow_0cp9ish</bpmn:outgoing>
     </bpmn:intermediateThrowEvent>
-    <bpmn:sequenceFlow id="Flow_0i9i5pv" sourceRef="Event_195epxw" targetRef="Event_09fw0dz" />
+    <bpmn:sequenceFlow id="Flow_0cp9ish" sourceRef="Event_0zfn3be" targetRef="Event_12mfqm9" />
+    <bpmn:exclusiveGateway id="Gateway_1hun062" name="studentDataNumberOfParents">
+      <bpmn:incoming>Flow_0y2zl5a</bpmn:incoming>
+      <bpmn:outgoing>Flow_0s3qj3d</bpmn:outgoing>
+      <bpmn:outgoing>Flow_164wwvw</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:startEvent id="StartEvent_1" name="start">
+      <bpmn:extensionElements />
+      <bpmn:outgoing>Flow_1tcyqyg</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:intermediateThrowEvent id="Event_0rpww4j" name="Set values for null addtributes">
+      <bpmn:extensionElements>
+        <zeebe:ioMapping>
+          <zeebe:output source="=if studentDataLivingathomeRent = null&#10;then &#34;no&#34;&#10;else&#10;  studentDataLivingathomeRent" target="studentDataLivingathomeRent" />
+          <zeebe:output source="=if studentDataTransportationCost = null&#10;then 0&#10;else&#10;  studentDataTransportationCost" target="studentDataTransportationCost" />
+          <zeebe:output source="=if studentDataDaycareCosts11YearsOrUnder = null&#10;then 0&#10;else&#10;  studentDataDaycareCosts11YearsOrUnder" target="studentDataDaycareCosts11YearsOrUnder" />
+          <zeebe:output source="=if studentDataDaycareCosts12YearsOrOver = null&#10;then 0&#10;else&#10;  studentDataDaycareCosts12YearsOrOver" target="studentDataDaycareCosts12YearsOrOver" />
+          <zeebe:output source="=if studentDataChildSupportAndOrSpousalSupport = null&#10;then 0&#10;else&#10;  studentDataChildSupportAndOrSpousalSupport" target="studentDataChildSupportAndOrSpousalSupport" />
+          <zeebe:output source="=if calculatedDataScholarshipsBursaries = null&#10;then 0&#10;else&#10;  calculatedDataScholarshipsBursaries" target="calculatedDataScholarshipsBursaries" />
+          <zeebe:output source="=if studentDataGovernmentFundingCosts = null&#10;then 0&#10;else&#10;  studentDataGovernmentFundingCosts" target="studentDataGovernmentFundingCosts" />
+          <zeebe:output source="=if studentDataNongovernmentFundingCosts = null&#10;then 0&#10;else&#10;  studentDataNongovernmentFundingCosts" target="studentDataNongovernmentFundingCosts" />
+          <zeebe:output source="=if studentDataParentVoluntaryContributionsCosts = null&#10;then 0&#10;else&#10;  studentDataParentVoluntaryContributionsCosts" target="studentDataParentVoluntaryContributionsCosts" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1tcyqyg</bpmn:incoming>
+      <bpmn:outgoing>Flow_1u26ach</bpmn:outgoing>
+    </bpmn:intermediateThrowEvent>
+    <bpmn:sequenceFlow id="Flow_1u26ach" sourceRef="Event_0rpww4j" targetRef="Event_1882i4u" />
+    <bpmn:sequenceFlow id="Flow_1goqpi4" sourceRef="Event_1882i4u" targetRef="Event_0hxxmu9" />
+    <bpmn:intermediateThrowEvent id="Event_1882i4u" name="Define PD/PPD Status">
+      <bpmn:extensionElements>
+        <zeebe:ioMapping>
+          <zeebe:output source="=if studentDataApplicationPDPPDStatus = &#34;yes&#34;&#10;then true&#10;else&#10;  false" target="calculatedDataPDPPDStatus" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1u26ach</bpmn:incoming>
+      <bpmn:outgoing>Flow_1goqpi4</bpmn:outgoing>
+    </bpmn:intermediateThrowEvent>
     <bpmn:textAnnotation id="TextAnnotation_0k0cdo7">
       <bpmn:text>IN
 programYear
@@ -2045,16 +2055,12 @@ dmnFullTimeCalculatedDataIncomeThreshold</bpmn:text>
       <bpmn:text>if no - substitute student provided information</bpmn:text>
     </bpmn:textAnnotation>
     <bpmn:association id="Association_0dshwlo" sourceRef="Activity_08reh45" targetRef="TextAnnotation_124efbc" />
-    <bpmn:textAnnotation id="TextAnnotation_0xf4j19">
-      <bpmn:text>If values can be null and will be used add them here</bpmn:text>
-    </bpmn:textAnnotation>
-    <bpmn:association id="Association_0eiso39" sourceRef="Event_0rpww4j" targetRef="TextAnnotation_0xf4j19" />
     <bpmn:association id="Association_1fiiodq" sourceRef="Gateway_13qzd4v" targetRef="TextAnnotation_1bl1ra2" />
     <bpmn:textAnnotation id="TextAnnotation_06i946l">
-      <bpmn:text>Financial need min $1 AND calculatedDataApplicationPDPPDStatus is true, then sbsdEligibility is YES</bpmn:text>
+      <bpmn:text>Financial need min $1 AND calculatedDataPDPPDStatus is true, then sbsdEligibility is YES</bpmn:text>
     </bpmn:textAnnotation>
     <bpmn:textAnnotation id="TextAnnotation_1l9376k">
-      <bpmn:text>Financial need min $1 AND calculatedDataApplicationPDPPDStatus is true, then bgpdEligibility is YES</bpmn:text>
+      <bpmn:text>Financial need min $1 AND calculatedDataPDPPDStatus is true, then bgpdEligibility is YES</bpmn:text>
     </bpmn:textAnnotation>
     <bpmn:textAnnotation id="TextAnnotation_072y7a3">
       <bpmn:text>Assessment need is greater than or equal to 1 and programlength is greater than 2 years and programCredentialType is NOT Master, PHD or unclassified, then then BOTH bcagEligibility and bcag2YearsEligibility is YES</bpmn:text>
@@ -2079,7 +2085,7 @@ dmnFullTimeCalculatedDataIncomeThreshold</bpmn:text>
     </bpmn:textAnnotation>
     <bpmn:association id="Association_0k52tdi" sourceRef="Event_1yndxhv" targetRef="TextAnnotation_0cerfoa" />
     <bpmn:textAnnotation id="TextAnnotation_1lzmhpu">
-      <bpmn:text>Financial need min $1 AND calculatedDataApplicationPDPPDStatus is true, then csgpEligibility is YES</bpmn:text>
+      <bpmn:text>Financial need min $1 AND calculatedDataPDPPDStatus is true, then csgpEligibility is YES</bpmn:text>
     </bpmn:textAnnotation>
     <bpmn:association id="Association_01prvbh" sourceRef="Event_084hvhv" targetRef="TextAnnotation_1lzmhpu" />
     <bpmn:textAnnotation id="TextAnnotation_1myp6tg">
@@ -2102,7 +2108,6 @@ dmnFullTimeX (comes from dmnFullTime)</bpmn:text>
     <bpmn:textAnnotation id="TextAnnotation_0ymh6jx">
       <bpmn:text>custom assignment for institutionLocationProvince</bpmn:text>
     </bpmn:textAnnotation>
-    <bpmn:association id="Association_1i7iirc" sourceRef="StartEvent_1" targetRef="TextAnnotation_0ymh6jx" />
     <bpmn:textAnnotation id="TextAnnotation_02y3s1q">
       <bpmn:text>Program Related Costs = Book Costs</bpmn:text>
     </bpmn:textAnnotation>
@@ -2117,6 +2122,17 @@ dmnFullTimeX (comes from dmnFullTime)</bpmn:text>
       <bpmn:text>step 10</bpmn:text>
     </bpmn:textAnnotation>
     <bpmn:association id="Association_1rpfcuj" sourceRef="Event_0e39jby" targetRef="TextAnnotation_0kajsz1" />
+    <bpmn:textAnnotation id="TextAnnotation_0mz1bk7">
+      <bpmn:text>IN
+studentDataRelationshipStatus
+studentDataHasDependents
+studentDataLivingWithParents
+studentDataLivingathomeRent
+
+OUT
+dmnFullTimeCalculatedDataLivingCategory</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_0nm5s3i" sourceRef="Activity_048jfh0" targetRef="TextAnnotation_0mz1bk7" />
     <bpmn:textAnnotation id="TextAnnotation_10pqvkj">
       <bpmn:text>IN
 programYear
@@ -2130,17 +2146,15 @@ limitWeeklyCPPperParent
 limitWeeklyEIPerParent</bpmn:text>
     </bpmn:textAnnotation>
     <bpmn:association id="Association_0cwtfug" sourceRef="Activity_1jqxw00" targetRef="TextAnnotation_10pqvkj" />
-    <bpmn:association id="Association_0nm5s3i" sourceRef="Activity_048jfh0" targetRef="TextAnnotation_0mz1bk7" />
-    <bpmn:textAnnotation id="TextAnnotation_0mz1bk7">
-      <bpmn:text>IN
-studentDataRelationshipStatus
-studentDataHasDependents
-studentDataLivingWithParents
-studentDataLivingathomeRent
-
-OUT
-dmnFullTimeCalculatedDataLivingCategory</bpmn:text>
+    <bpmn:association id="Association_1i7iirc" sourceRef="StartEvent_1" targetRef="TextAnnotation_0ymh6jx" />
+    <bpmn:textAnnotation id="TextAnnotation_0xf4j19">
+      <bpmn:text>If values can be null and will be used add them here</bpmn:text>
     </bpmn:textAnnotation>
+    <bpmn:association id="Association_0eiso39" sourceRef="Event_0rpww4j" targetRef="TextAnnotation_0xf4j19" />
+    <bpmn:textAnnotation id="TextAnnotation_0k3h3ct">
+      <bpmn:text>Determine if the PD/PPD needs to be considered for award generation</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_07u88c1" sourceRef="Event_1882i4u" targetRef="TextAnnotation_0k3h3ct" />
   </bpmn:process>
   <bpmn:category id="Category_0fcvyng">
     <bpmn:categoryValue id="CategoryValue_11muwzy" value="Step 8" />
@@ -2305,6 +2319,12 @@ dmnFullTimeCalculatedDataLivingCategory</bpmn:text>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Gateway_1sk7bsv_di" bpmnElement="Gateway_1mpwnv1">
         <dc:Bounds x="3255" y="1115" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0gemin6_di" bpmnElement="Event_0gemin6">
+        <dc:Bounds x="3832" y="1122" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="3808" y="1165" width="85" height="53" />
+        </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_0re3zsg_di" bpmnElement="Event_0re3zsg">
         <dc:Bounds x="3722" y="1122" width="36" height="36" />
@@ -2590,12 +2610,6 @@ dmnFullTimeCalculatedDataLivingCategory</bpmn:text>
           <dc:Bounds x="1298" y="545" width="85" height="40" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Gateway_1hun062_di" bpmnElement="Gateway_1hun062" isMarkerVisible="true">
-        <dc:Bounds x="1195" y="405" width="50" height="50" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="1175" y="462" width="90" height="27" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_1vnx20q" bpmnElement="Event_1w75eo8">
         <dc:Bounds x="1452" y="302" width="36" height="36" />
         <bpmndi:BPMNLabel>
@@ -2611,22 +2625,10 @@ dmnFullTimeCalculatedDataLivingCategory</bpmn:text>
       <bpmndi:BPMNShape id="Gateway_0um3yvb_di" bpmnElement="Gateway_0um3yvb" isMarkerVisible="true">
         <dc:Bounds x="805" y="595" width="50" height="50" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
-        <dc:Bounds x="432" y="602" width="36" height="36" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="439" y="578" width="23" height="14" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_0hxxmu9_di" bpmnElement="Event_0hxxmu9">
         <dc:Bounds x="632" y="602" width="36" height="36" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="621" y="645" width="59" height="27" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_0rpww4j_di" bpmnElement="Event_0rpww4j">
-        <dc:Bounds x="502" y="602" width="36" height="36" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="476" y="565" width="88" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Gateway_0aijiec_di" bpmnElement="Gateway_0zmvhsj" isMarkerVisible="true">
@@ -2824,34 +2826,34 @@ dmnFullTimeCalculatedDataLivingCategory</bpmn:text>
           <dc:Bounds x="9555" y="2250" width="90" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_05mslks_di" bpmnElement="Activity_1jqxw00">
-        <dc:Bounds x="2610" y="580" width="100" height="80" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_03qidyv_di" bpmnElement="Activity_048jfh0">
         <dc:Bounds x="2420" y="580" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_1duborc_di" bpmnElement="Event_1duborc">
-        <dc:Bounds x="2272" y="412" width="36" height="36" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="2249" y="456" width="82" height="27" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_14zsww4" bpmnElement="Event_105ptqe">
-        <dc:Bounds x="2272" y="602" width="36" height="36" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="2249" y="645" width="82" height="27" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_0rciazs" bpmnElement="Event_0zn13zd">
-        <dc:Bounds x="2272" y="685" width="36" height="36" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="2249" y="728" width="82" height="27" />
-        </bpmndi:BPMNLabel>
+      <bpmndi:BPMNShape id="Activity_05mslks_di" bpmnElement="Activity_1jqxw00">
+        <dc:Bounds x="2620" y="580" width="100" height="80" />
+        <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Gateway_1qh6zrs_di" bpmnElement="Gateway_1qh6zrs" isMarkerVisible="true">
         <dc:Bounds x="2355" y="595" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1duborc_di" bpmnElement="Event_1duborc">
+        <dc:Bounds x="2262" y="412" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2239" y="456" width="82" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_14zsww4" bpmnElement="Event_105ptqe">
+        <dc:Bounds x="2262" y="602" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2239" y="645" width="82" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0rciazs" bpmnElement="Event_0zn13zd">
+        <dc:Bounds x="2262" y="685" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2239" y="728" width="82" height="27" />
+        </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_0lgoogq" bpmnElement="Event_177w8t8">
         <dc:Bounds x="2152" y="412" width="36" height="36" />
@@ -2872,12 +2874,12 @@ dmnFullTimeCalculatedDataLivingCategory</bpmn:text>
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_14jfj5g_di" bpmnElement="Event_14jfj5g">
-        <dc:Bounds x="3622" y="1122" width="36" height="36" />
+        <dc:Bounds x="3632" y="1122" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="3599" y="1165" width="82" height="40" />
+          <dc:Bounds x="3609" y="1165" width="82" height="40" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_0a5tcyb_di" bpmnElement="Event_0a5tcyb">
+      <bpmndi:BPMNShape id="Event_03czdun_di" bpmnElement="Event_03czdun">
         <dc:Bounds x="3532" y="1122" width="36" height="36" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="3507" y="1165" width="87" height="40" />
@@ -2889,22 +2891,16 @@ dmnFullTimeCalculatedDataLivingCategory</bpmn:text>
           <dc:Bounds x="4077" y="1165" width="49" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_01mpmyo_di" bpmnElement="Event_01mpmyo">
-        <dc:Bounds x="4002" y="1122" width="36" height="36" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="3977" y="1165" width="86" height="40" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_0gemin6_di" bpmnElement="Event_0gemin6">
-        <dc:Bounds x="3822" y="1122" width="36" height="36" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="3798" y="1165" width="85" height="53" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_1k4bg94_di" bpmnElement="Event_1k4bg94">
-        <dc:Bounds x="3912" y="1122" width="36" height="36" />
+        <dc:Bounds x="3922" y="1122" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="3888" y="1165" width="85" height="53" />
+          <dc:Bounds x="3898" y="1165" width="85" height="53" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1gknm5h_di" bpmnElement="Event_1gknm5h">
+        <dc:Bounds x="4012" y="1122" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="3987" y="1165" width="86" height="40" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_0jl5yiv" bpmnElement="Event_1kdusuh">
@@ -2958,46 +2954,70 @@ dmnFullTimeCalculatedDataLivingCategory</bpmn:text>
       <bpmndi:BPMNShape id="Gateway_0w90zd7_di" bpmnElement="Gateway_0w90zd7" isMarkerVisible="true">
         <dc:Bounds x="1955" y="405" width="50" height="50" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_0r8wyou_di" bpmnElement="Event_0r8wyou">
+      <bpmndi:BPMNShape id="Event_0hkddfy_di" bpmnElement="Event_0hkddfy">
         <dc:Bounds x="2042" y="412" width="36" height="36" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="2018" y="455" width="85" height="40" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_18110sl_di" bpmnElement="Event_18110sl">
+      <bpmndi:BPMNShape id="Event_1aiob46_di" bpmnElement="Event_1aiob46">
         <dc:Bounds x="2042" y="602" width="36" height="36" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="2018" y="645" width="85" height="40" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_09fw0dz_di" bpmnElement="Event_09fw0dz">
+      <bpmndi:BPMNShape id="Event_12mfqm9_di" bpmnElement="Event_12mfqm9">
         <dc:Bounds x="2042" y="685" width="36" height="36" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="2018" y="728" width="85" height="40" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_1g9i3gp" bpmnElement="Event_123oime">
-        <dc:Bounds x="1802" y="685" width="36" height="36" />
+        <dc:Bounds x="1772" y="685" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="1779" y="728" width="85" height="40" />
+          <dc:Bounds x="1749" y="728" width="85" height="40" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_185d50a" bpmnElement="Event_0s8ztj5">
-        <dc:Bounds x="1802" y="602" width="36" height="36" />
+        <dc:Bounds x="1772" y="602" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="1779" y="645" width="85" height="40" />
+          <dc:Bounds x="1749" y="645" width="85" height="40" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_10ajge8_di" bpmnElement="Event_10ajge8">
-        <dc:Bounds x="1912" y="602" width="36" height="36" />
+      <bpmndi:BPMNShape id="Event_1ms14ig_di" bpmnElement="Event_1ms14ig">
+        <dc:Bounds x="1892" y="602" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="1904" y="645" width="53" height="40" />
+          <dc:Bounds x="1890" y="645" width="53" height="40" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_195epxw_di" bpmnElement="Event_195epxw">
-        <dc:Bounds x="1912" y="685" width="36" height="36" />
+      <bpmndi:BPMNShape id="Event_0zfn3be_di" bpmnElement="Event_0zfn3be">
+        <dc:Bounds x="1892" y="685" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="1904" y="728" width="53" height="40" />
+          <dc:Bounds x="1884" y="728" width="53" height="40" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1hun062_di" bpmnElement="Gateway_1hun062" isMarkerVisible="true">
+        <dc:Bounds x="1195" y="405" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1175" y="462" width="90" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="342" y="602" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="348" y="648" width="23" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0rpww4j_di" bpmnElement="Event_0rpww4j">
+        <dc:Bounds x="422" y="602" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="396" y="565" width="88" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1882i4u_di" bpmnElement="Event_1882i4u">
+        <dc:Bounds x="522" y="602" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="502" y="645" width="76" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="TextAnnotation_0k0cdo7_di" bpmnElement="TextAnnotation_0k0cdo7">
@@ -3148,10 +3168,6 @@ dmnFullTimeCalculatedDataLivingCategory</bpmn:text>
         <dc:Bounds x="950" y="280" width="100" height="70" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="TextAnnotation_0xf4j19_di" bpmnElement="TextAnnotation_0xf4j19">
-        <dc:Bounds x="470" y="706" width="160" height="40" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="TextAnnotation_06i946l_di" bpmnElement="TextAnnotation_06i946l">
         <dc:Bounds x="7942" y="1720" width="448" height="30" />
         <bpmndi:BPMNLabel />
@@ -3208,12 +3224,20 @@ dmnFullTimeCalculatedDataLivingCategory</bpmn:text>
         <dc:Bounds x="9550" y="2135" width="100" height="30" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_0mz1bk7_di" bpmnElement="TextAnnotation_0mz1bk7">
+        <dc:Bounds x="2420" y="223" width="207" height="142" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="TextAnnotation_10pqvkj_di" bpmnElement="TextAnnotation_10pqvkj">
         <dc:Bounds x="2620" y="182" width="241" height="156" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="TextAnnotation_0mz1bk7_di" bpmnElement="TextAnnotation_0mz1bk7">
-        <dc:Bounds x="2420" y="223" width="207" height="142" />
+      <bpmndi:BPMNShape id="TextAnnotation_0xf4j19_di" bpmnElement="TextAnnotation_0xf4j19">
+        <dc:Bounds x="360" y="720" width="160" height="40" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_0k3h3ct_di" bpmnElement="TextAnnotation_0k3h3ct">
+        <dc:Bounds x="560" y="725" width="238" height="35" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_1fd7dws_di" bpmnElement="Flow_1fd7dws">
@@ -3487,19 +3511,19 @@ dmnFullTimeCalculatedDataLivingCategory</bpmn:text>
         <di:waypoint x="3532" y="1140" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0ooa29u_di" bpmnElement="Flow_0ooa29u">
-        <di:waypoint x="3948" y="1140" />
-        <di:waypoint x="4002" y="1140" />
+        <di:waypoint x="3958" y="1140" />
+        <di:waypoint x="4012" y="1140" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_16yczpa_di" bpmnElement="Flow_16yczpa">
-        <di:waypoint x="3858" y="1140" />
-        <di:waypoint x="3912" y="1140" />
+        <di:waypoint x="3868" y="1140" />
+        <di:waypoint x="3922" y="1140" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1u2i1ok_di" bpmnElement="Flow_1u2i1ok">
         <di:waypoint x="3758" y="1140" />
-        <di:waypoint x="3822" y="1140" />
+        <di:waypoint x="3832" y="1140" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0sn56ca_di" bpmnElement="Flow_0sn56ca">
-        <di:waypoint x="3658" y="1140" />
+        <di:waypoint x="3668" y="1140" />
         <di:waypoint x="3722" y="1140" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1icw7q8_di" bpmnElement="Flow_1icw7q8">
@@ -3668,19 +3692,19 @@ dmnFullTimeCalculatedDataLivingCategory</bpmn:text>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_189jv8b_di" bpmnElement="Flow_189jv8b">
         <di:waypoint x="2188" y="703" />
-        <di:waypoint x="2272" y="703" />
+        <di:waypoint x="2262" y="703" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1ydy4cj_di" bpmnElement="Flow_1ydy4cj">
-        <di:waypoint x="2308" y="703" />
+        <di:waypoint x="2298" y="703" />
         <di:waypoint x="2380" y="703" />
         <di:waypoint x="2380" y="645" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_00b4sbw_di" bpmnElement="Flow_00b4sbw">
         <di:waypoint x="2188" y="620" />
-        <di:waypoint x="2272" y="620" />
+        <di:waypoint x="2262" y="620" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0ug361k_di" bpmnElement="Flow_0ug361k">
-        <di:waypoint x="2308" y="620" />
+        <di:waypoint x="2298" y="620" />
         <di:waypoint x="2355" y="620" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1ekiozl_di" bpmnElement="Flow_1ekiozl">
@@ -3693,7 +3717,7 @@ dmnFullTimeCalculatedDataLivingCategory</bpmn:text>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_142ei9l_di" bpmnElement="Flow_142ei9l">
         <di:waypoint x="855" y="620" />
-        <di:waypoint x="1802" y="620" />
+        <di:waypoint x="1772" y="620" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="759" y="587" width="62" height="27" />
         </bpmndi:BPMNLabel>
@@ -3707,29 +3731,29 @@ dmnFullTimeCalculatedDataLivingCategory</bpmn:text>
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1qca6yi_di" bpmnElement="Flow_1qca6yi">
-        <di:waypoint x="2308" y="430" />
+        <di:waypoint x="2298" y="430" />
         <di:waypoint x="2380" y="430" />
         <di:waypoint x="2380" y="595" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0rfkk59_di" bpmnElement="Flow_0rfkk59">
         <di:waypoint x="2520" y="620" />
-        <di:waypoint x="2610" y="620" />
+        <di:waypoint x="2620" y="620" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0aakdl6_di" bpmnElement="Flow_0aakdl6">
-        <di:waypoint x="2710" y="620" />
+        <di:waypoint x="2720" y="620" />
         <di:waypoint x="2810" y="620" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1q59j4l_di" bpmnElement="Flow_1q59j4l">
         <di:waypoint x="1635" y="703" />
-        <di:waypoint x="1802" y="703" />
+        <di:waypoint x="1772" y="703" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1cl7iq9_di" bpmnElement="Flow_1cl7iq9">
-        <di:waypoint x="1838" y="703" />
-        <di:waypoint x="1912" y="703" />
+        <di:waypoint x="1808" y="703" />
+        <di:waypoint x="1892" y="703" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0mhxp8e_di" bpmnElement="Flow_0mhxp8e">
-        <di:waypoint x="1838" y="620" />
-        <di:waypoint x="1912" y="620" />
+        <di:waypoint x="1808" y="620" />
+        <di:waypoint x="1892" y="620" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_08mnfio_di" bpmnElement="Flow_08mnfio">
         <di:waypoint x="1025" y="703" />
@@ -3883,16 +3907,12 @@ dmnFullTimeCalculatedDataLivingCategory</bpmn:text>
         <di:waypoint x="805" y="620" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1tcyqyg_di" bpmnElement="Flow_1tcyqyg">
-        <di:waypoint x="468" y="620" />
-        <di:waypoint x="502" y="620" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0j0eoj2_di" bpmnElement="Flow_0j0eoj2">
-        <di:waypoint x="538" y="620" />
-        <di:waypoint x="632" y="620" />
+        <di:waypoint x="378" y="620" />
+        <di:waypoint x="422" y="620" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_05fykma_di" bpmnElement="Flow_05fykma">
         <di:waypoint x="2188" y="430" />
-        <di:waypoint x="2272" y="430" />
+        <di:waypoint x="2262" y="430" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_16yjr4j_di" bpmnElement="Flow_16yjr4j">
         <di:waypoint x="2005" y="430" />
@@ -4046,33 +4066,41 @@ dmnFullTimeCalculatedDataLivingCategory</bpmn:text>
         <di:waypoint x="2405" y="620" />
         <di:waypoint x="2420" y="620" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1l0g9nv_di" bpmnElement="Flow_1l0g9nv">
-        <di:waypoint x="2078" y="703" />
-        <di:waypoint x="2152" y="703" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0otihoy_di" bpmnElement="Flow_0otihoy">
-        <di:waypoint x="2078" y="620" />
-        <di:waypoint x="2152" y="620" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_03s68ur_di" bpmnElement="Flow_03s68ur">
+      <bpmndi:BPMNEdge id="Flow_11zs37x_di" bpmnElement="Flow_11zs37x">
         <di:waypoint x="2078" y="430" />
         <di:waypoint x="2152" y="430" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0busi1x_di" bpmnElement="Flow_0busi1x">
-        <di:waypoint x="3568" y="1140" />
-        <di:waypoint x="3622" y="1140" />
+      <bpmndi:BPMNEdge id="Flow_0amrvf1_di" bpmnElement="Flow_0amrvf1">
+        <di:waypoint x="2078" y="620" />
+        <di:waypoint x="2152" y="620" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0vcwyii_di" bpmnElement="Flow_0vcwyii">
-        <di:waypoint x="4038" y="1140" />
+      <bpmndi:BPMNEdge id="Flow_0mxw3wj_di" bpmnElement="Flow_0mxw3wj">
+        <di:waypoint x="2078" y="703" />
+        <di:waypoint x="2152" y="703" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1s3jb8o_di" bpmnElement="Flow_1s3jb8o">
+        <di:waypoint x="3568" y="1140" />
+        <di:waypoint x="3632" y="1140" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0cucoye_di" bpmnElement="Flow_0cucoye">
+        <di:waypoint x="4048" y="1140" />
         <di:waypoint x="4082" y="1140" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0bbr531_di" bpmnElement="Flow_0bbr531">
-        <di:waypoint x="1948" y="620" />
+      <bpmndi:BPMNEdge id="Flow_01zoape_di" bpmnElement="Flow_01zoape">
+        <di:waypoint x="1928" y="620" />
         <di:waypoint x="2042" y="620" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0i9i5pv_di" bpmnElement="Flow_0i9i5pv">
-        <di:waypoint x="1948" y="703" />
+      <bpmndi:BPMNEdge id="Flow_0cp9ish_di" bpmnElement="Flow_0cp9ish">
+        <di:waypoint x="1928" y="703" />
         <di:waypoint x="2042" y="703" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1u26ach_di" bpmnElement="Flow_1u26ach">
+        <di:waypoint x="458" y="620" />
+        <di:waypoint x="522" y="620" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1goqpi4_di" bpmnElement="Flow_1goqpi4">
+        <di:waypoint x="558" y="620" />
+        <di:waypoint x="632" y="620" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Association_0kgl807_di" bpmnElement="Association_0kgl807">
         <di:waypoint x="3370" y="1100" />
@@ -4210,10 +4238,6 @@ dmnFullTimeCalculatedDataLivingCategory</bpmn:text>
         <di:waypoint x="2860" y="580" />
         <di:waypoint x="2861" y="309" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Association_0eiso39_di" bpmnElement="Association_0eiso39">
-        <di:waypoint x="520" y="638" />
-        <di:waypoint x="519" y="706" />
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Association_1fiiodq_di" bpmnElement="Association_1fiiodq">
         <di:waypoint x="1003" y="408" />
         <di:waypoint x="1010" y="350" />
@@ -4254,10 +4278,6 @@ dmnFullTimeCalculatedDataLivingCategory</bpmn:text>
         <di:waypoint x="650" y="602" />
         <di:waypoint x="650" y="546" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Association_1i7iirc_di" bpmnElement="Association_1i7iirc">
-        <di:waypoint x="438" y="607" />
-        <di:waypoint x="356" y="524" />
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Association_0yu7d9q_di" bpmnElement="Association_0yu7d9q">
         <di:waypoint x="3006" y="1180" />
         <di:waypoint x="3006" y="1225" />
@@ -4278,13 +4298,25 @@ dmnFullTimeCalculatedDataLivingCategory</bpmn:text>
         <di:waypoint x="9600" y="2207" />
         <di:waypoint x="9600" y="2165" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Association_0cwtfug_di" bpmnElement="Association_0cwtfug">
-        <di:waypoint x="2661" y="580" />
-        <di:waypoint x="2668" y="338" />
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Association_0nm5s3i_di" bpmnElement="Association_0nm5s3i">
         <di:waypoint x="2470" y="580" />
         <di:waypoint x="2470" y="365" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_0cwtfug_di" bpmnElement="Association_0cwtfug">
+        <di:waypoint x="2670" y="580" />
+        <di:waypoint x="2670" y="338" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_1i7iirc_di" bpmnElement="Association_1i7iirc">
+        <di:waypoint x="356" y="603" />
+        <di:waypoint x="340" y="524" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_0eiso39_di" bpmnElement="Association_0eiso39">
+        <di:waypoint x="440" y="638" />
+        <di:waypoint x="440" y="720" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_07u88c1_di" bpmnElement="Association_07u88c1">
+        <di:waypoint x="549" y="635" />
+        <di:waypoint x="601" y="725" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="Group_0lerduq_di" bpmnElement="Group_0lerduq">
         <dc:Bounds x="4170" y="920" width="700" height="850" />
@@ -4338,16 +4370,16 @@ dmnFullTimeCalculatedDataLivingCategory</bpmn:text>
         <dc:Bounds x="1455" y="660" width="90" height="230" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Group_0blswz8_di" bpmnElement="Group_0blswz8">
-        <dc:Bounds x="2240" y="390" width="100" height="380" />
+        <dc:Bounds x="2230" y="390" width="100" height="380" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_0tru0ww" bpmnElement="Group_10itrde">
         <dc:Bounds x="2120" y="390" width="100" height="380" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Group_0jyp8jl_di" bpmnElement="Group_0jyp8jl">
+      <bpmndi:BPMNShape id="Group_0by8fz6_di" bpmnElement="Group_0by8fz6">
         <dc:Bounds x="2010" y="390" width="100" height="380" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Group_1gxdbyx_di" bpmnElement="Group_1gxdbyx">
-        <dc:Bounds x="1875" y="590" width="110" height="180" />
+      <bpmndi:BPMNShape id="Group_0sp2khb_di" bpmnElement="Group_0sp2khb">
+        <dc:Bounds x="1860" y="590" width="110" height="200" />
       </bpmndi:BPMNShape>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
