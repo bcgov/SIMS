@@ -1,5 +1,5 @@
 {
-  "title": "SFAA2022-23",
+ "title": "SFAA2022-23",
   "name": "SFAA2022-23",
   "path": "sfaa2022-23",
   "type": "form",
@@ -10384,9 +10384,9 @@
           "customConditional": "",
           "conditional": {
             "json": "",
-            "show": "true",
-            "when": "howWillYouBeAttendingTheProgram",
-            "eq": "Full Time"
+            "show": "",
+            "when": "",
+            "eq": ""
           },
           "logic": [],
           "attributes": {},
@@ -10612,8 +10612,7 @@
               "id": "eqf8qus",
               "addons": [],
               "tags": [],
-              "lockKey": true,
-              "isNew": false
+              "lockKey": true
             },
             {
               "key": "disabilityInformationPanelContent",
