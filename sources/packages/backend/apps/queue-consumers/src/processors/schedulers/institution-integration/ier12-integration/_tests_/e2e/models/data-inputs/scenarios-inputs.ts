@@ -11,7 +11,7 @@ import {
   AWARDS_ONE_OF_TWO_DISBURSEMENT,
   AWARDS_TWO_OF_TWO_DISBURSEMENT,
   JOHN_DOE_FROM_CANADA,
-  OFFERING_2023_2024_SET_DEC_FULL_TIME,
+  OFFERING_FULL_TIME,
   PROGRAM_UNDERGRADUATE_CERTIFICATE_WITHOUT_INSTITUTION_PROGRAM_CODE,
   WORKFLOW_DATA_SINGLE_INDEPENDENT_WITH_NO_DEPENDENTS,
 } from ".";
@@ -26,7 +26,6 @@ export const STUDENT_SINGLE_INDEPENDENT_WITH_NO_DEPENDENTS_2023_2024: IER12TestI
       submittedDate: new Date("2023-10-20"),
       applicationStatus: ApplicationStatus.Completed,
       applicationStatusUpdatedOn: new Date("2023-10-21"),
-      programYear: "2023-2024",
     },
     assessment: {
       triggerType: AssessmentTriggerType.OriginalAssessment,
@@ -54,5 +53,5 @@ export const STUDENT_SINGLE_INDEPENDENT_WITH_NO_DEPENDENTS_2023_2024: IER12TestI
     },
     educationProgram:
       PROGRAM_UNDERGRADUATE_CERTIFICATE_WITHOUT_INSTITUTION_PROGRAM_CODE,
-    offering: OFFERING_2023_2024_SET_DEC_FULL_TIME,
+    offering: OFFERING_FULL_TIME,
   };

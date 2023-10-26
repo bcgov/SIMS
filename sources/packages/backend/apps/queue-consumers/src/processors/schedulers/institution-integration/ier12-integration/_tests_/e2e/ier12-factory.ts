@@ -1,6 +1,7 @@
 import {
   Application,
   DisbursementSchedule,
+  DisbursementScheduleStatus,
   DisbursementValue,
   FullTimeAssessment,
 } from "@sims/sims-db";
@@ -14,9 +15,8 @@ import {
 } from "@sims/test-utils";
 import { createFakeSINValidation } from "@sims/test-utils/factories/sin-validation";
 import { IER12Disbursement, IER12TestInputData } from "./models/data-inputs";
-import { addDays, getISODateOnlyString } from "@sims/utilities";
+import { addDays, dateDifference, getISODateOnlyString } from "@sims/utilities";
 import * as faker from "faker";
-import dayjs from "dayjs";
 
 /**
  * Save all IER12 related records providing all data that
@@ -31,6 +31,7 @@ export async function saveIER12TestInputData(
   testInputData: IER12TestInputData,
   options?: {
     programYearPrefix?: number;
+    submittedDate?: Date;
   },
 ): Promise<Application> {
   // If a program year prefix is not provided, create one with the year 2000 as default.
@@ -38,6 +39,8 @@ export async function saveIER12TestInputData(
     db,
     options?.programYearPrefix ?? 2000,
   );
+  // Submission date to be used a base date to non-program-year related dates.
+  const referenceSubmission = options?.submittedDate ?? new Date();
 
   // User
   const fakeUser = createFakeUser();
@@ -62,9 +65,23 @@ export async function saveIER12TestInputData(
     student: fakeStudent,
     sinValidation,
   });
-  // Application
+  // Supporting shared variables.
   const createSecondDisbursement =
     testInputData.assessment.disbursementSchedules.length === 2;
+  // Set the number of weeks to some number beyond 17 if there are two disbursements
+  // since two disbursements are supposed to be create to offerings longer than 17 weeks.
+  const offeringEndDateWeeks = createSecondDisbursement ? 18 : 10;
+  // Set offering start date to few days after the program year start data.
+  const studyStartDate =
+    testInputData.offering.studyStartDate ??
+    getISODateOnlyString(addDays(15, programYear.startDate));
+  // Set the offering end date to few weeks after the program year start data.
+  const studyEndDate =
+    testInputData.offering.studyEndDate ??
+    getISODateOnlyString(
+      addDays(7 * offeringEndDateWeeks, programYear.startDate),
+    );
+  // Application
   const testInputApplication = testInputData.application;
   const application = await saveFakeApplicationDisbursements(
     db.dataSource,
@@ -74,27 +91,48 @@ export async function saveIER12TestInputData(
   application.applicationNumber = testInputApplication.applicationNumber;
   application.studentNumber = testInputApplication.studentNumber;
   application.relationshipStatus = testInputApplication.relationshipStatus;
-  application.submittedDate = testInputApplication.submittedDate;
+  application.submittedDate =
+    testInputApplication.submittedDate ?? referenceSubmission;
   application.applicationStatus = testInputApplication.applicationStatus;
   application.applicationStatusUpdatedOn =
-    testInputApplication.applicationStatusUpdatedOn;
+    testInputApplication.applicationStatusUpdatedOn ?? referenceSubmission;
   application.programYear = programYear;
   await db.application.save(application);
   // Assessment.
   const testInputAssessment = testInputData.assessment;
   const assessment = application.currentAssessment;
   assessment.triggerType = testInputAssessment.triggerType;
-  assessment.assessmentDate = testInputAssessment.assessmentDate;
+  // Simulates that the assessment date was produced one day after the reference date
+  // in case the assessmentDate was not provided. It helps creating different dates
+  // which allows a better data assertion.
+  assessment.assessmentDate =
+    testInputAssessment.assessmentDate ?? addDays(1, referenceSubmission);
   assessment.assessmentData =
     testInputAssessment.assessmentData as FullTimeAssessment;
   assessment.workflowData = testInputAssessment.workflowData;
   // Schedules and awards mapping.
-  assessment.disbursementSchedules.forEach((disbursement, index) => {
+  const [firstDisbursement, secondDisbursement] =
+    assessment.disbursementSchedules;
+  const [firstDisbursementTestInput, secondDisbursementTestInput] =
+    testInputAssessment.disbursementSchedules;
+  mapTestInputToDisbursementAndAwards(
+    firstDisbursement,
+    firstDisbursementTestInput,
+    studyStartDate,
+    referenceSubmission,
+  );
+  if (createSecondDisbursement) {
+    // Calculate the middle date between offering start/end dates.
+    const midOfferingDateDays =
+      dateDifference(studyEndDate, studyStartDate) / 2;
+    const midOfferingDate = addDays(midOfferingDateDays, studyStartDate);
     mapTestInputToDisbursementAndAwards(
-      disbursement,
-      testInputAssessment.disbursementSchedules[index],
+      secondDisbursement,
+      secondDisbursementTestInput,
+      getISODateOnlyString(midOfferingDate),
+      referenceSubmission,
     );
-  });
+  }
   await db.studentAssessment.save(assessment);
   // Program
   const testInputProgram = testInputData.educationProgram;
@@ -114,17 +152,11 @@ export async function saveIER12TestInputData(
     programUpdate,
   );
   // Offering
-  // Set the number of weeks to some number beyond 17 if there are two disbursements
-  // since two disbursements are supposed to be create to offerings longer than 17 weeks.
-  const offeringEndDateWeeks = createSecondDisbursement ? 18 : 10;
   const testInputOffering = testInputData.offering;
   const offeringUpdate = {
     yearOfStudy: testInputOffering.yearOfStudy,
-    studyStartDate:
-      testInputOffering.studyStartDate ?? addDays(15, programYear.startDate),
-    studyEndDate:
-      testInputOffering.studyEndDate ??
-      addDays(7 * offeringEndDateWeeks, programYear.startDate),
+    studyStartDate,
+    studyEndDate,
     actualTuitionCosts: testInputOffering.actualTuitionCosts,
     programRelatedCosts: testInputOffering.programRelatedCosts,
     mandatoryFees: testInputOffering.mandatoryFees,
@@ -148,13 +180,28 @@ export async function saveIER12TestInputData(
 function mapTestInputToDisbursementAndAwards(
   disbursement: DisbursementSchedule,
   testInputDisbursement: IER12Disbursement,
+  disbursementDate: string,
+  referenceSubmission: Date,
 ): void {
   disbursement.coeStatus = testInputDisbursement.coeStatus;
   disbursement.disbursementScheduleStatus =
     testInputDisbursement.disbursementScheduleStatus;
-  disbursement.disbursementDate = testInputDisbursement.disbursementDate;
-  disbursement.updatedAt = testInputDisbursement.updatedAt;
-  disbursement.dateSent = testInputDisbursement.dateSent;
+  disbursement.disbursementDate = disbursementDate;
+
+  if (
+    disbursement.disbursementScheduleStatus === DisbursementScheduleStatus.Sent
+  ) {
+    const fallbackSentDate = new Date(disbursementDate);
+    disbursement.updatedAt =
+      testInputDisbursement.updatedAt ?? fallbackSentDate;
+    // Disbursements can be sent few days after its date.
+    disbursement.dateSent =
+      testInputDisbursement.dateSent ?? addDays(-1, fallbackSentDate);
+  } else {
+    disbursement.updatedAt =
+      testInputDisbursement.updatedAt ?? referenceSubmission;
+    disbursement.dateSent = testInputDisbursement.dateSent;
+  }
   disbursement.disbursementValues =
     testInputDisbursement.disbursementValues.map(
       (value) => value as DisbursementValue,

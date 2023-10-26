@@ -16,8 +16,8 @@ export function createFakeProgramYear(programYearPrefix?: number): ProgramYear {
   programYear.partnerFormName = `${programYear.formName}-partner`;
   programYear.programYearPrefix = programYearPrefix.toString();
   programYear.maxLifetimeBCLoanAmount = 50000;
-  programYear.startDate = `${startingYear}-08-01`;
-  programYear.endDate = `${endingYear}-07-31`;
+  programYear.startDate = `${startingYear}-09-01`;
+  programYear.endDate = `${endingYear}-08-31`;
   return programYear;
 }
 

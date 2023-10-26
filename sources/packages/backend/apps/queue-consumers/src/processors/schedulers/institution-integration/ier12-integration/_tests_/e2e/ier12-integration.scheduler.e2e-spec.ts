@@ -9,7 +9,6 @@ import {
 import {
   E2EDataSources,
   createE2EDataSources,
-  ensureProgramYearExists,
   getUploadedFile,
 } from "@sims/test-utils";
 import * as Client from "ssh2-sftp-client";
@@ -19,7 +18,6 @@ import {
   AssessmentTriggerType,
   COEStatus,
   DisbursementScheduleStatus,
-  ProgramYear,
   RelationshipStatus,
 } from "@sims/sims-db";
 import { IER12IntegrationScheduler } from "../../ier12-integration.scheduler";
@@ -29,21 +27,36 @@ import {
   AWARDS_ONE_OF_TWO_DISBURSEMENT,
   AWARDS_TWO_OF_TWO_DISBURSEMENT,
   JOHN_DOE_FROM_CANADA,
-  OFFERING_2023_2024_SET_DEC_FULL_TIME,
+  OFFERING_FULL_TIME,
   PROGRAM_UNDERGRADUATE_CERTIFICATE_WITHOUT_INSTITUTION_PROGRAM_CODE,
-  STUDENT_SINGLE_INDEPENDENT_WITH_NO_DEPENDENTS_2023_2024,
   WORKFLOW_DATA_SINGLE_INDEPENDENT_WITH_NO_DEPENDENTS,
 } from "./models/data-inputs";
 import { GeneratedDateQueueInDTO } from "../../models/ier.model";
 
 jest.setTimeout(120000);
 
+// TODO
+// Improve saveIER12TestInputData
+// 1 - Segregate the method into smaller private methods.
+// 2 - Does the IER12TestInputData needs further improvements?
+// 3 - Maybe try to use for pick for the IER12TestInputData child properties.
+// E2E asserts
+// 1 - Assert the file name
+// 2 - Assert the process log output.
+// 3 - Create/reuse helper methods to simulate the below.
+// 3.1 - hasMultipleApplicationSubmissions
+// 3.2 - hasActiveStopFullTimeDisbursement
+// 3.3 - hasAwardWithheldDueToRestriction
+// 3.4 - hasFullTimeDisbursementFeedbackErrors
+// 3.5 - Consider creation a helper for one of the above and create the PR.
+
 describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
   let app: INestApplication;
   let processor: IER12IntegrationScheduler;
   let db: E2EDataSources;
   let sftpClientMock: DeepMocked<Client>;
-  let sharedProgramYear: ProgramYear;
+  let sharedProgramYearPrefix: number;
+  let referenceSubmissionDate: Date;
 
   beforeAll(async () => {
     const { nestApplication, dataSource, sshClientMock } =
@@ -53,8 +66,9 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
     sftpClientMock = sshClientMock;
     // Processor under test.
     processor = app.get(IER12IntegrationScheduler);
-    // Default program year.
-    sharedProgramYear = await ensureProgramYearExists(db, 2000);
+    // Default program year prefix.
+    sharedProgramYearPrefix = 2000;
+    referenceSubmissionDate = new Date("2000-06-01");
   });
 
   beforeEach(async () => {
@@ -74,30 +88,29 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
         applicationNumber: "9879879879",
         studentNumber: "12345678",
         relationshipStatus: RelationshipStatus.Single,
-        submittedDate: new Date("2023-10-20"),
+        submittedDate: undefined,
         applicationStatus: ApplicationStatus.Completed,
-        applicationStatusUpdatedOn: new Date("2023-10-21"),
-        programYear: "2023-2024",
+        applicationStatusUpdatedOn: undefined,
       },
       assessment: {
         triggerType: AssessmentTriggerType.OriginalAssessment,
-        assessmentDate: new Date("2023-10-22"),
+        assessmentDate: undefined,
         workflowData: WORKFLOW_DATA_SINGLE_INDEPENDENT_WITH_NO_DEPENDENTS,
         assessmentData: ASSESSMENT_DATA_SINGLE_INDEPENDENT,
         disbursementSchedules: [
           {
             coeStatus: COEStatus.completed,
             disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
-            disbursementDate: "2023-01-23",
-            updatedAt: new Date("2023-01-24"),
-            dateSent: new Date("2023-01-18"),
+            disbursementDate: undefined,
+            updatedAt: undefined,
+            dateSent: undefined,
             disbursementValues: AWARDS_ONE_OF_TWO_DISBURSEMENT,
           },
           {
             coeStatus: COEStatus.required,
             disbursementScheduleStatus: DisbursementScheduleStatus.Pending,
-            disbursementDate: "2023-06-23",
-            updatedAt: new Date("2023-06-24"),
+            disbursementDate: undefined,
+            updatedAt: undefined,
             dateSent: undefined,
             disbursementValues: AWARDS_TWO_OF_TWO_DISBURSEMENT,
           },
@@ -105,18 +118,17 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
       },
       educationProgram:
         PROGRAM_UNDERGRADUATE_CERTIFICATE_WITHOUT_INSTITUTION_PROGRAM_CODE,
-      offering: OFFERING_2023_2024_SET_DEC_FULL_TIME,
+      offering: OFFERING_FULL_TIME,
     };
+    const application = await saveIER12TestInputData(db, testInputData, {
+      programYearPrefix: sharedProgramYearPrefix,
+      submittedDate: referenceSubmissionDate,
+    });
 
-    const application = await saveIER12TestInputData(
-      db,
-      STUDENT_SINGLE_INDEPENDENT_WITH_NO_DEPENDENTS_2023_2024,
-    );
     // Queued job payload.
     const data = {
       generatedDate: getISODateOnlyString(
-        STUDENT_SINGLE_INDEPENDENT_WITH_NO_DEPENDENTS_2023_2024.assessment
-          .assessmentDate,
+        application.currentAssessment.assessmentDate,
       ),
     };
     // Queued job.
@@ -143,14 +155,14 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
       .toString()
       .padStart(10, "0");
     expect(line1).toBe(
-      `${assessmentId}${firstDisbursementId}9879879879            242963189Doe                      John           19980113B   SI       Address Line 1           Address Line 2           Victoria                 BC  Z1Z1Z1          Program                  Program description                               undergraduateCertificate 0001    8   0512123401234ADR2                         62023060120231231000033330000004444000000555500000066660018100F2023102020232024COMP20231021000000000000011198000000400300N NNN            20231022        000119930000000011000001199300000000000000000000001NNN000006540000000000000000000000000000000000000000000000000000NN0000000000000144430000000000000000000000000000000000007777000000003300000000440000000000000000000000000000000000000000000000002200000000550000000066000001520100 0000000000000000000000000000000000000000000000000000000000000000000000DISS2023011820230118Completed Sent      20230123                        CSLF0001099800BCSL0000000000CSGP0000200100CSGD0000000000CSGF0000000000CSGT0000000000BCAG0000000000SBSD0000000000BGPD0000000000    0000000000`,
+      `${assessmentId}${firstDisbursementId}9879879879            242963189Doe                      John           19980113B   SI       Address Line 1           Address Line 2           Victoria                 BC  Z1Z1Z1          Program                  Program description                               undergraduateCertificate 0001    8   0512123401234ADR2                         62000081620001205000033330000004444000000555500000066660050100F2000060120002001COMP20000601000010000000006000000009600000N NNN            20000602        000166429600000000000001664296000000000000000000001NNN000000000000000000000000000000000000000000000000000000000000NN0000000000000144430000000000000000000000000000000000007777000000000NaN000009874600000000000000000000000000000000000000000000002200000120000100023789650010300000 0000000000000000000000000000000000000000000000000000000000000000000000DISS2000081520000815Completed Sent      20000816                        CSLF0000100000BCSL0000000000CSGP0000200000CSGD0000300000CSGF0000400000CSGT0000500000BCAG0000700000SBSD0000900000BGPD0000800000    0000000000`,
     );
     // Line 2 validations.
     const secondDisbursementId = secondDisbursement.id
       .toString()
       .padStart(10, "0");
     expect(line2).toBe(
-      `${assessmentId}${secondDisbursementId}9879879879            242963189Doe                      John           19980113B   SI       Address Line 1           Address Line 2           Victoria                 BC  Z1Z1Z1          Program                  Program description                               undergraduateCertificate 0001    8   0512123401234ADR2                         62023060120231231000033330000004444000000555500000066660018100F2023102020232024COMP20231021000000000000011198000000400300N NNN            20231022        000119930000000011000001199300000000000000000000001NNN000006540000000000000000000000000000000000000000000000000000NN0000000000000144430000000000000000000000000000000000007777000000003300000000440000000000000000000000000000000000000000000000002200000000550000000066000001520100 0000000000000000000000000000000000000000000000000000000000000000000000COER20230624        Required  Pending   20230623                        CSLF0000000000BCSL0000020000CSGP0000200200CSGD0000000000CSGF0000000000CSGT0000000000BCAG0000000000SBSD0000000000BGPD0000000000    0000000000`,
+      `${assessmentId}${secondDisbursementId}9879879879            242963189Doe                      John           19980113B   SI       Address Line 1           Address Line 2           Victoria                 BC  Z1Z1Z1          Program                  Program description                               undergraduateCertificate 0001    8   0512123401234ADR2                         62000081620001205000033330000004444000000555500000066660050100F2000060120002001COMP20000601000010000000006000000009600000N NNN            20000602        000166429600000000000001664296000000000000000000001NNN000000000000000000000000000000000000000000000000000000000000NN0000000000000144430000000000000000000000000000000000007777000000000NaN000009874600000000000000000000000000000000000000000000002200000120000100023789650010300000 0000000000000000000000000000000000000000000000000000000000000000000000COER20000601        Required  Pending   20001011                        CSLF0000000000BCSL0000600000CSGP0000200000CSGD0000300000CSGF0000400000CSGT0000500000BCAG0000700000SBSD0000900000BGPD0000800000    0000000000`,
     );
   });
 });
