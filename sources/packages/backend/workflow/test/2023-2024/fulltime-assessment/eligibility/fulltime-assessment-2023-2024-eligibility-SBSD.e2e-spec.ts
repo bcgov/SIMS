@@ -21,7 +21,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-eligibility-SBSD
         // Arrange
         const assessmentConsolidatedData =
           createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
-        assessmentConsolidatedData.studentPDStatus = true;
+        assessmentConsolidatedData.studentDataApplicationPDPPDStatus = "yes";
         assessmentConsolidatedData.institutionType = institutionType;
         // Act
         const calculatedAssessment =
@@ -47,7 +47,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-eligibility-SBSD
         // Arrange
         const assessmentConsolidatedData =
           createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
-        assessmentConsolidatedData.studentPDStatus = true;
+        assessmentConsolidatedData.studentDataApplicationPDPPDStatus = "yes";
         assessmentConsolidatedData.institutionType = institutionType;
         // Act
         const calculatedAssessment =

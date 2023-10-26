@@ -54,7 +54,6 @@ export interface ApplicationLocationJobOutDTO {
 }
 
 export interface ApplicationStudentJobOutDTO {
-  studentPDStatus?: boolean;
   craReportedIncome?: number;
   taxYear?: number;
 }

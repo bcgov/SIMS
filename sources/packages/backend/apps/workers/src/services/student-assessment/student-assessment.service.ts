@@ -138,7 +138,6 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
         "institution.id",
         "institutionType.name",
         "student.id",
-        "student.studentPDVerified",
         "supportingUser.id",
         "supportingUser.supportingUserType",
         "supportingUser.supportingData",

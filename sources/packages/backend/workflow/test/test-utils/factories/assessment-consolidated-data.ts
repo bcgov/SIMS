@@ -34,7 +34,6 @@ export function createFakeAssessmentConsolidatedData(
     studentDataHasDependents: YesNoOptions.No,
     studentDataLivingWithParents: YesNoOptions.No,
     studentDataYouthInCare: YesNoOptions.No,
-    studentPDStatus: false,
     studentTaxYear: +programStartYear - 1,
     programLocation: Provinces.BritishColumbia,
     institutionLocationProvince: Provinces.BritishColumbia,
@@ -47,6 +46,7 @@ export function createFakeAssessmentConsolidatedData(
     offeringMandatoryFees: 500,
     offeringExceptionalExpenses: 500,
     offeringWeeks: 16,
+    studentDataApplicationPDPPDStatus: "noIDoNotHaveADisability",
   };
 }
 

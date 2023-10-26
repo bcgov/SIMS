@@ -14,6 +14,8 @@ export NEW_DB := $(or $(NEW_DB), $$NEW_DB)
 export JOB_NAME := $(or $(JOB_NAME), $$JN)
 export SITE_MINDER_LOGOUT_URL := $(or $(SITE_MINDER_LOGOUT_URL), https://logontest7.gov.bc.ca/clp-cgi/logoff.cgi)
 export PATRONI_SIMSDB_BACKUP_APP_NAME := $(or $(PATRONI_SIMSDB_BACKUP_APP_NAME), patroni-simsdb-backup)
+# PATRONI_SIMSDB_BACKUP_TAG_NAME is both the version of the backup container or the tag name created for the build.
+export PATRONI_SIMSDB_BACKUP_TAG_NAME := $(or $(PATRONI_SIMSDB_BACKUP_TAG_NAME), 2.7.0)
 export PATRONI_SIMSDB_BACKUP_CONFIGMAP_NAME := $(or $(PATRONI_SIMSDB_BACKUP_CONFIGMAP_NAME), patroni-simsdb-backup-conf)
 export PATRONI_SIMSDB_BACKUP_CONFIG_FILE_NAME := $(or $(PATRONI_SIMSDB_BACKUP_CONFIG_FILE_NAME), patroni-simsdb-backup.conf)
 export BYPASS_CRA_INCOME_VERIFICATION := $(or $(BYPASS_CRA_INCOME_VERIFICATION), false)
@@ -231,7 +233,7 @@ build-db-migrations:
 	test -n "$(BUILD_REF)"
 	test -n "$(DB_MIGRATIONS_BUILD_REF)"
 	@echo "+\n++ BUILDING DB migrations with tag: $(BUILD_REF)\n+"
-	@oc -n $(BUILD_NAMESPACE) process -f $(BUILD_TEMPLATE_PATH) -p TAG=$(BUILD_REF) -p SOURCE_REPOSITORY_REF=$(BUILD_REF) -p BASE_IMAGE_NAME="nodejs-16" -p BASE_IMAGE_TAG="1" -p BASE_IMAGE_REPO="artifacts.developer.gov.bc.ca/redhat-access-docker-remote/ubi8/" -p SOURCE_CONTEXT_DIR=$(SOURCE_CONTEXT_DIR)backend -p DOCKER_FILE_PATH=apps/db-migrations/Dockerfile -p NAME=$(DB_MIGRATIONS_BUILD_REF) | oc -n $(BUILD_NAMESPACE) apply -f -
+	@oc -n $(BUILD_NAMESPACE) process -f $(BUILD_TEMPLATE_PATH) -p TAG=$(BUILD_REF) -p SOURCE_REPOSITORY_REF=$(BUILD_REF) -p BASE_IMAGE_NAME="nodejs-18" -p BASE_IMAGE_TAG="1-71.1697652955" -p BASE_IMAGE_REPO="artifacts.developer.gov.bc.ca/redhat-access-docker-remote/ubi8/" -p SOURCE_CONTEXT_DIR=$(SOURCE_CONTEXT_DIR)backend -p DOCKER_FILE_PATH=apps/db-migrations/Dockerfile -p NAME=$(DB_MIGRATIONS_BUILD_REF) | oc -n $(BUILD_NAMESPACE) apply -f -
 	@oc -n $(BUILD_NAMESPACE) start-build bc/$(DB_MIGRATIONS_BUILD_REF) --wait
 
 build-api:
@@ -239,7 +241,7 @@ build-api:
 	test -n "$(BUILD_REF)"
 	test -n "$(API_BUILD_REF)"
 	@echo "+\n++ BUILDING API with tag: $(BUILD_REF)\n+"
-	@oc -n $(BUILD_NAMESPACE) process -f $(BUILD_TEMPLATE_PATH) -p TAG=$(BUILD_REF) -p SOURCE_REPOSITORY_REF=$(BUILD_REF) -p BASE_IMAGE_NAME="nodejs-16" -p BASE_IMAGE_TAG="1" -p BASE_IMAGE_REPO="artifacts.developer.gov.bc.ca/redhat-access-docker-remote/ubi8/" -p SOURCE_CONTEXT_DIR=$(SOURCE_CONTEXT_DIR)backend -p DOCKER_FILE_PATH=apps/api/Dockerfile -p NAME=$(API_BUILD_REF) | oc -n $(BUILD_NAMESPACE) apply -f -
+	@oc -n $(BUILD_NAMESPACE) process -f $(BUILD_TEMPLATE_PATH) -p TAG=$(BUILD_REF) -p SOURCE_REPOSITORY_REF=$(BUILD_REF) -p BASE_IMAGE_NAME="nodejs-18" -p BASE_IMAGE_TAG="1-71.1697652955" -p BASE_IMAGE_REPO="artifacts.developer.gov.bc.ca/redhat-access-docker-remote/ubi8/" -p SOURCE_CONTEXT_DIR=$(SOURCE_CONTEXT_DIR)backend -p DOCKER_FILE_PATH=apps/api/Dockerfile -p NAME=$(API_BUILD_REF) | oc -n $(BUILD_NAMESPACE) apply -f -
 	@oc -n $(BUILD_NAMESPACE) start-build bc/$(API_BUILD_REF) --wait
 
 build-workers:
@@ -247,7 +249,7 @@ build-workers:
 	test -n "$(BUILD_REF)"
 	test -n "$(WORKERS_BUILD_REF)"
 	@echo "+\n++ BUILDING WORKERS with tag: $(BUILD_REF)\n+"
-	@oc -n $(BUILD_NAMESPACE) process -f $(BUILD_TEMPLATE_PATH) -p TAG=$(BUILD_REF) -p SOURCE_REPOSITORY_REF=$(BUILD_REF) -p BASE_IMAGE_NAME="nodejs-16" -p BASE_IMAGE_TAG="1" -p BASE_IMAGE_REPO="artifacts.developer.gov.bc.ca/redhat-access-docker-remote/ubi8/" -p SOURCE_CONTEXT_DIR=$(SOURCE_CONTEXT_DIR)backend -p DOCKER_FILE_PATH=apps/workers/Dockerfile -p NAME=$(WORKERS_BUILD_REF) | oc -n $(BUILD_NAMESPACE) apply -f -
+	@oc -n $(BUILD_NAMESPACE) process -f $(BUILD_TEMPLATE_PATH) -p TAG=$(BUILD_REF) -p SOURCE_REPOSITORY_REF=$(BUILD_REF) -p BASE_IMAGE_NAME="nodejs-18" -p BASE_IMAGE_TAG="1-71.1697652955" -p BASE_IMAGE_REPO="artifacts.developer.gov.bc.ca/redhat-access-docker-remote/ubi8/" -p SOURCE_CONTEXT_DIR=$(SOURCE_CONTEXT_DIR)backend -p DOCKER_FILE_PATH=apps/workers/Dockerfile -p NAME=$(WORKERS_BUILD_REF) | oc -n $(BUILD_NAMESPACE) apply -f -
 	@oc -n $(BUILD_NAMESPACE) start-build bc/$(WORKERS_BUILD_REF) --wait
 
 build-queue-consumers:
@@ -255,7 +257,7 @@ build-queue-consumers:
 	test -n "$(BUILD_REF)"
 	test -n "$(QUEUE_CONSUMERS_BUILD_REF)"
 	@echo "+\n++ BUILDING QUEUE_CONSUMERS with tag: $(BUILD_REF)\n+"
-	@oc -n $(BUILD_NAMESPACE) process -f $(BUILD_TEMPLATE_PATH) -p TAG=$(BUILD_REF) -p SOURCE_REPOSITORY_REF=$(BUILD_REF) -p BASE_IMAGE_NAME="nodejs-16" -p BASE_IMAGE_TAG="1" -p BASE_IMAGE_REPO="artifacts.developer.gov.bc.ca/redhat-access-docker-remote/ubi8/" -p SOURCE_CONTEXT_DIR=$(SOURCE_CONTEXT_DIR)backend -p DOCKER_FILE_PATH=apps/queue-consumers/Dockerfile -p NAME=$(QUEUE_CONSUMERS_BUILD_REF) | oc -n $(BUILD_NAMESPACE) apply -f -
+	@oc -n $(BUILD_NAMESPACE) process -f $(BUILD_TEMPLATE_PATH) -p TAG=$(BUILD_REF) -p SOURCE_REPOSITORY_REF=$(BUILD_REF) -p BASE_IMAGE_NAME="nodejs-18" -p BASE_IMAGE_TAG="1-71.1697652955" -p BASE_IMAGE_REPO="artifacts.developer.gov.bc.ca/redhat-access-docker-remote/ubi8/" -p SOURCE_CONTEXT_DIR=$(SOURCE_CONTEXT_DIR)backend -p DOCKER_FILE_PATH=apps/queue-consumers/Dockerfile -p NAME=$(QUEUE_CONSUMERS_BUILD_REF) | oc -n $(BUILD_NAMESPACE) apply -f -
 	@oc -n $(BUILD_NAMESPACE) start-build bc/$(QUEUE_CONSUMERS_BUILD_REF) --wait
 
 build-web:
@@ -491,7 +493,8 @@ db-backup-build-patroni:
 	test -n "$(PATRONI_SIMSDB_BACKUP_APP_NAME)"
 	@echo "+\n++ Creating build resources for database backups on $(BUILD_NAMESPACE)\n+"
 	oc -n $(BUILD_NAMESPACE) process -f ./openshift/database-backup/backup-build.yaml \
-		-p NAME=$(PATRONI_SIMSDB_BACKUP_APP_NAME) OUTPUT_IMAGE_TAG=v1 \
+		-p NAME=$(PATRONI_SIMSDB_BACKUP_APP_NAME) OUTPUT_IMAGE_TAG=$(PATRONI_SIMSDB_BACKUP_TAG_NAME) \
+		-p GIT_REF=$(PATRONI_SIMSDB_BACKUP_TAG_NAME) \
 		-p BASE_IMAGE_FOR_BUILD=quay.io/fedora/postgresql-14:14 \
 		| oc -n $(BUILD_NAMESPACE) apply -f -
 
@@ -524,7 +527,7 @@ db-backup-deploy-patroni:
   	-p NAME=$(PATRONI_SIMSDB_BACKUP_APP_NAME) \
   	-p IMAGE_NAMESPACE=$(BUILD_NAMESPACE) \
   	-p SOURCE_IMAGE_NAME=$(PATRONI_SIMSDB_BACKUP_APP_NAME) \
-  	-p TAG_NAME=v1 \
+  	-p TAG_NAME=$(PATRONI_SIMSDB_BACKUP_TAG_NAME) \
 		-p FTP_SECRET_KEY=$(PATRONI_SIMSDB_BACKUP_APP_NAME)-ftp-secret \
   	-p BACKUP_VOLUME_NAME=$(PATRONI_SIMSDB_BACKUP_APP_NAME)-pvc \
 		-p BACKUP_VOLUME_SIZE=20Gi \
