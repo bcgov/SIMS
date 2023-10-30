@@ -10,13 +10,13 @@ export function createFakeProgramYear(programYearPrefix?: number): ProgramYear {
   const programYear = new ProgramYear();
   programYear.formName = `SFAA${startingYear}-${endingYear}`;
   programYear.programYear = `${startingYear}-${endingYear}`;
-  programYear.programYearDesc = `Study starting between September 1st, ${startingYear} and August 31st, ${endingYear}`;
+  programYear.programYearDesc = `Study starting between August 01, ${startingYear} and July 31, ${endingYear}`;
   programYear.active = true;
   programYear.parentFormName = `${programYear.formName}-parent`;
   programYear.partnerFormName = `${programYear.formName}-partner`;
   programYear.programYearPrefix = programYearPrefix.toString();
-  programYear.maxLifetimeBCLoanAmount = 50000;
-  programYear.startDate = `${startingYear}-09-01`;
+  programYear.startDate = `${startingYear}-08-01`;
+  programYear.endDate = `${endingYear}-07-31`;
   programYear.endDate = `${endingYear}-08-31`;
   return programYear;
 }

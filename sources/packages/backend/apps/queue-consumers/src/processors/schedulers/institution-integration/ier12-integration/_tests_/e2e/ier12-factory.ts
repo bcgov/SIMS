@@ -4,9 +4,14 @@ import {
   DisbursementScheduleStatus,
   DisbursementValue,
   FullTimeAssessment,
+  InstitutionLocation,
+  ProgramYear,
+  Student,
+  StudentAssessment,
 } from "@sims/sims-db";
 import {
   E2EDataSources,
+  createFakeInstitutionLocation,
   createFakeStudent,
   createFakeUser,
   ensureProgramYearExists,
@@ -14,7 +19,15 @@ import {
   saveFakeStudent,
 } from "@sims/test-utils";
 import { createFakeSINValidation } from "@sims/test-utils/factories/sin-validation";
-import { IER12Disbursement, IER12TestInputData } from "./models/data-inputs";
+import {
+  IER12Application,
+  IER12Assessment,
+  IER12Disbursement,
+  IER12Offering,
+  IER12Program,
+  IER12Student,
+  IER12TestInputData,
+} from "./models/data-inputs";
 import { addDays, dateDifference, getISODateOnlyString } from "@sims/utilities";
 import * as faker from "faker";
 
@@ -41,30 +54,6 @@ export async function saveIER12TestInputData(
   );
   // Submission date to be used a base date to non-program-year related dates.
   const referenceSubmission = options?.submittedDate ?? new Date();
-
-  // User
-  const fakeUser = createFakeUser();
-  fakeUser.firstName = testInputData.student.firstName;
-  fakeUser.lastName = testInputData.student.lastName;
-  // Student
-  const fakeStudent = createFakeStudent(fakeUser);
-  fakeStudent.birthDate = getISODateOnlyString(testInputData.student.birthDate);
-  fakeStudent.contactInfo = {
-    address: {
-      ...testInputData.student.addressInfo,
-      country: "canada",
-      selectedCountry: "Canada",
-    },
-    phone: faker.phone.phoneNumber(),
-  };
-  // SIN validation
-  const sinValidation = createFakeSINValidation({ student: fakeStudent });
-  sinValidation.sin = testInputData.student.sin;
-  // Student
-  const student = await saveFakeStudent(db.dataSource, {
-    student: fakeStudent,
-    sinValidation,
-  });
   // Supporting shared variables.
   const createSecondDisbursement =
     testInputData.assessment.disbursementSchedules.length === 2;
@@ -81,11 +70,113 @@ export async function saveIER12TestInputData(
     getISODateOnlyString(
       addDays(7 * offeringEndDateWeeks, programYear.startDate),
     );
+  // User, Student, and SIN validation.
+  const student = await saveIER12StudentFromTestInput(
+    db,
+    testInputData.student,
+  );
+  // Location
+  const institutionLocation = createFakeInstitutionLocation();
+  institutionLocation.institutionCode = "ZZZY";
+  institutionLocation.hasIntegration = true;
   // Application
-  const testInputApplication = testInputData.application;
+  const application = await saveIER12ApplicationFromTestInput(
+    db,
+    testInputData.application,
+    student,
+    institutionLocation,
+    programYear,
+    createSecondDisbursement,
+    referenceSubmission,
+  );
+  // Assessment and its awards.
+  const assessment = await saveIER12AssessmentFromTestInput(
+    db,
+    testInputData.assessment,
+    application.currentAssessment,
+    studyStartDate,
+    studyEndDate,
+    referenceSubmission,
+    createSecondDisbursement,
+  );
+  // Program
+  await updateIER12ProgramFromTestInput(
+    db,
+    assessment.offering.educationProgram.id,
+    testInputData.educationProgram,
+  );
+  // Offering
+  await updateIER12OfferingFromTestInput(
+    db,
+    assessment.offering.id,
+    testInputData.offering,
+    studyStartDate,
+    studyEndDate,
+  );
+  return application;
+}
+
+/**
+ * Creates and saves the students populated from the test input.
+ * @param db data source helper.
+ * @param testInputStudent data to create the student, its user, and
+ * associated SIN validation.
+ * @returns saved student.
+ */
+async function saveIER12StudentFromTestInput(
+  db: E2EDataSources,
+  testInputStudent: IER12Student,
+): Promise<Student> {
+  // User
+  const fakeUser = createFakeUser();
+  fakeUser.firstName = testInputStudent.firstName;
+  fakeUser.lastName = testInputStudent.lastName;
+  // Student
+  const fakeStudent = createFakeStudent(fakeUser);
+  fakeStudent.birthDate = getISODateOnlyString(testInputStudent.birthDate);
+  fakeStudent.contactInfo = {
+    address: {
+      ...testInputStudent.addressInfo,
+      // The country and the selectedCountry variables are not part of IER12, hence keeping as constants.
+      country: "canada",
+      selectedCountry: "Canada",
+    },
+    phone: faker.phone.phoneNumber(),
+  };
+  // SIN validation
+  const sinValidation = createFakeSINValidation({ student: fakeStudent });
+  sinValidation.sin = testInputStudent.sin;
+  // Student
+  return saveFakeStudent(db.dataSource, {
+    student: fakeStudent,
+    sinValidation,
+  });
+}
+
+/**
+ * Creates and saves the application populated from the test input
+ * alongside with its disbursements.
+ * @param db data source helper.
+ * @param testInputApplication data to create the application and its dependencies.
+ * @param student previously saved student.
+ * @param institutionLocation previously created institution location.
+ * @param programYear previously saved program year.
+ * @param createSecondDisbursement indicates if a second disbursement should be created.
+ * @param referenceSubmission date when the application was submitted.
+ * @returns the saved applications and its dependencies.
+ */
+async function saveIER12ApplicationFromTestInput(
+  db: E2EDataSources,
+  testInputApplication: IER12Application,
+  student: Student,
+  institutionLocation: InstitutionLocation,
+  programYear: ProgramYear,
+  createSecondDisbursement: boolean,
+  referenceSubmission: Date,
+): Promise<Application> {
   const application = await saveFakeApplicationDisbursements(
     db.dataSource,
-    { student, disbursementValues: [] },
+    { student, institutionLocation, disbursementValues: [] },
     { createSecondDisbursement },
   );
   application.applicationNumber = testInputApplication.applicationNumber;
@@ -98,9 +189,31 @@ export async function saveIER12TestInputData(
     testInputApplication.applicationStatusUpdatedOn ?? referenceSubmission;
   application.programYear = programYear;
   await db.application.save(application);
-  // Assessment.
-  const testInputAssessment = testInputData.assessment;
-  const assessment = application.currentAssessment;
+  return application;
+}
+
+/**
+ * Populates the assessments and its awards from the test input data
+ * and saves them all.
+ * @param db data source helper.
+ * @param testInputAssessment assessment and awards test input data.
+ * @param assessment previously saved assessment to be updated.
+ * @param studyStartDate offering start date.
+ * @param studyEndDate offering end date.
+ * @param referenceSubmission
+ * @param createSecondDisbursement used for reference to the assessment date
+ * and possible auditing for the awards.
+ * @returns the saved assessment and its dependencies.
+ */
+async function saveIER12AssessmentFromTestInput(
+  db: E2EDataSources,
+  testInputAssessment: IER12Assessment,
+  assessment: StudentAssessment,
+  studyStartDate: string,
+  studyEndDate: string,
+  referenceSubmission: Date,
+  createSecondDisbursement: boolean,
+): Promise<StudentAssessment> {
   assessment.triggerType = testInputAssessment.triggerType;
   // Simulates that the assessment date was produced one day after the reference date
   // in case the assessmentDate was not provided. It helps creating different dates
@@ -133,9 +246,20 @@ export async function saveIER12TestInputData(
       referenceSubmission,
     );
   }
-  await db.studentAssessment.save(assessment);
-  // Program
-  const testInputProgram = testInputData.educationProgram;
+  return db.studentAssessment.save(assessment);
+}
+
+/**
+ * Updates a previously saved program with the data from the test input.
+ * @param db data source helper.
+ * @param programId program id to be updated.
+ * @param testInputProgram program test input data.
+ */
+async function updateIER12ProgramFromTestInput(
+  db: E2EDataSources,
+  programId: number,
+  testInputProgram: IER12Program,
+): Promise<void> {
   const programUpdate = {
     name: testInputProgram.name,
     description: testInputProgram.description,
@@ -147,12 +271,24 @@ export async function saveIER12TestInputData(
     institutionProgramCode: testInputProgram.institutionProgramCode,
     completionYears: testInputProgram.completionYears,
   };
-  await db.educationProgram.update(
-    assessment.offering.educationProgram.id,
-    programUpdate,
-  );
-  // Offering
-  const testInputOffering = testInputData.offering;
+  await db.educationProgram.update(programId, programUpdate);
+}
+
+/**
+ * Updates a previously saved offering with the data from the test input.
+ * @param db data source helper.
+ * @param offeringId offering id to be updated.
+ * @param testInputOffering offering test input data.
+ * @param studyStartDate offering start date.
+ * @param studyEndDate offering end date.
+ */
+async function updateIER12OfferingFromTestInput(
+  db: E2EDataSources,
+  offeringId: number,
+  testInputOffering: IER12Offering,
+  studyStartDate: string,
+  studyEndDate: string,
+): Promise<void> {
   const offeringUpdate = {
     yearOfStudy: testInputOffering.yearOfStudy,
     studyStartDate,
@@ -163,20 +299,16 @@ export async function saveIER12TestInputData(
     exceptionalExpenses: testInputOffering.exceptionalExpenses,
     offeringIntensity: testInputOffering.offeringIntensity,
   };
-  await db.educationProgramOffering.update(
-    assessment.offering.id,
-    offeringUpdate,
-  );
-  // Location
-  const locationUpdate = { hasIntegration: true };
-  await db.institutionLocation.update(
-    assessment.offering.institutionLocation.id,
-    locationUpdate,
-  );
-
-  return application;
+  await db.educationProgramOffering.update(offeringId, offeringUpdate);
 }
 
+/**
+ * Maps the test input values to the disbursements and its awards.
+ * @param disbursement disbursement being populated.
+ * @param testInputDisbursement test input to populate the disbursement and its awards.
+ * @param disbursementDate disbursement date.
+ * @param referenceSubmission optionally used for auditing dates as a fallback.
+ */
 function mapTestInputToDisbursementAndAwards(
   disbursement: DisbursementSchedule,
   testInputDisbursement: IER12Disbursement,
@@ -207,20 +339,3 @@ function mapTestInputToDisbursementAndAwards(
       (value) => value as DisbursementValue,
     );
 }
-
-/**
- * Saves a list of MSFAA test records.
- * @param db data source helper.
- * @param msfaaDataInputs input data for the MSFAA records to be created.
- * @returns all MSFAA records created. The result order may differ
- * from the array input order.
- */
-// export async function saveMSFAATestInputsData(
-//   db: E2EDataSources,
-//   msfaaDataInputs: MSFAATestInputData[],
-// ): Promise<MSFAANumber[]> {
-//   const saveMSFAAPromises = msfaaDataInputs.map((msfaa) =>
-//     saveMSFAATestInputData(db, msfaa),
-//   );
-//   return Promise.all(saveMSFAAPromises);
-// }
