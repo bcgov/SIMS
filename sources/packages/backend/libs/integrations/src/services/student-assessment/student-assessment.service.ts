@@ -42,6 +42,7 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
           submittedDate: true,
           applicationStatus: true,
           applicationStatusUpdatedOn: true,
+          studentNumber: true,
           student: {
             id: true,
             sinValidation: { id: true, sin: true },
