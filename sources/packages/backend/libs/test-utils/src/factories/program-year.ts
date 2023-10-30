@@ -1,6 +1,12 @@
 import { ProgramYear } from "@sims/sims-db";
 import { E2EDataSources } from "../data-source/e2e-data-source";
 
+/**
+ * Creates a program year.
+ * @param programYearPrefix first year in the program to be used
+ * as a reference for the program year name and start/end dates.
+ * @returns the created program year ready to be saved.
+ */
 export function createFakeProgramYear(programYearPrefix?: number): ProgramYear {
   if (programYearPrefix === undefined) {
     programYearPrefix = 2022;
@@ -14,6 +20,7 @@ export function createFakeProgramYear(programYearPrefix?: number): ProgramYear {
   programYear.active = true;
   programYear.parentFormName = `${programYear.formName}-parent`;
   programYear.partnerFormName = `${programYear.formName}-partner`;
+  programYear.maxLifetimeBCLoanAmount = 50000;
   programYear.programYearPrefix = programYearPrefix.toString();
   programYear.startDate = `${startingYear}-08-01`;
   programYear.endDate = `${endingYear}-07-31`;

@@ -1,5 +1,4 @@
 export * from "./data-inputs.models";
-export * from "./scenarios-inputs";
 export * from "./students-inputs";
 export * from "./workflow-data-input";
 export * from "./disbursement-values-inputs";

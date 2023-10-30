@@ -1,3 +1,8 @@
+/**
+ * As much as possible the IR12 models use the DB models as a reference (e.g. using Pick<>) and the
+ * overall idea is that these models represent the specific set of properties that would impact the
+ * IER12 file content directly or participating in its calculations.
+ */
 import {
   IERAddressInfo,
   IERAward,
@@ -14,6 +19,10 @@ import {
   StudentMaritalStatusCode,
 } from "@sims/sims-db";
 
+/**
+ * Student, User, and SIN data combined to create the student
+ * as needed for the IER12 generation.
+ */
 export interface IER12Student {
   lastName: string;
   firstName?: string;
@@ -22,6 +31,9 @@ export interface IER12Student {
   addressInfo: IERAddressInfo;
 }
 
+/**
+ * Application properties needed for the IER12 generation.
+ */
 export type IER12Application = Pick<
   Application,
   | "applicationNumber"
@@ -32,6 +44,9 @@ export type IER12Application = Pick<
   | "applicationStatusUpdatedOn"
 >;
 
+/**
+ * Assessment properties needed for the IER12 generation.
+ */
 export interface IER12Assessment {
   triggerType: AssessmentTriggerType;
   assessmentDate: Date;
@@ -41,8 +56,7 @@ export interface IER12Assessment {
 }
 
 /**
- * Full-time assessment properties needed
- * for the IER12 generation.
+ * Full-time assessment properties needed for the IER12 generation.
  */
 export type IER12FullTimeAssessment = Pick<
   FullTimeAssessment,
@@ -57,6 +71,9 @@ export type IER12FullTimeAssessment = Pick<
   | "weeks"
 >;
 
+/**
+ * Workflow data properties needed for the IER12 generation.
+ */
 export interface IER12WorkflowData {
   studentData: {
     dependantStatus: "dependant" | "independant";
@@ -86,8 +103,7 @@ export interface IER12WorkflowData {
 }
 
 /**
- * Disbursement properties needed
- * for the IER12 generation.
+ * Disbursement properties needed for the IER12 generation.
  */
 export type IER12Disbursement = Pick<
   DisbursementSchedule,
@@ -98,6 +114,9 @@ export type IER12Disbursement = Pick<
   | "dateSent"
 > & { disbursementValues: IERAward[] };
 
+/**
+ * Program properties needed for the IER12 generation.
+ */
 export type IER12Program = Pick<
   EducationProgram,
   | "name"
@@ -111,6 +130,9 @@ export type IER12Program = Pick<
   | "completionYears"
 >;
 
+/**
+ * Offering properties needed for the IER12 generation.
+ */
 export type IER12Offering = Pick<
   EducationProgramOffering,
   | "yearOfStudy"
@@ -124,8 +146,7 @@ export type IER12Offering = Pick<
 >;
 
 /**
- * IE12 related data needed to be controlled for
- * the fixed text record assertion.
+ * IE12 related data needed to be controlled for the fixed text record assertion.
  */
 export interface IER12TestInputData {
   student: IER12Student;
