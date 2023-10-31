@@ -7,8 +7,11 @@ import { QueueProcessSummaryResult } from "../../../../../../../processors/model
  * - `length` the fixed length. Default 10.
  * @returns converted text value.
  */
-export function numberToText(value: number, length = 10): string {
-  return value.toString().padStart(length, "0");
+export function numberToText(
+  value: number,
+  options?: { length: number },
+): string {
+  return value.toString().padStart(options?.length ?? 10, "0");
 }
 
 /**
