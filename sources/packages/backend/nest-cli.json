@@ -106,6 +106,15 @@
       "compilerOptions": {
         "tsConfigPath": "libs/integrations/tsconfig.lib.json"
       }
+    },
+    "load-test-gateway": {
+      "type": "application",
+      "root": "apps/load-test-gateway",
+      "entryFile": "main",
+      "sourceRoot": "apps/load-test-gateway/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/load-test-gateway/tsconfig.app.json"
+      }
     }
   },
   "monorepo": true,
