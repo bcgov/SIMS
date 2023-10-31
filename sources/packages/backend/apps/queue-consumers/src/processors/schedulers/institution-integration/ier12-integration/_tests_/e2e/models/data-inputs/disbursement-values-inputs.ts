@@ -58,22 +58,22 @@ export const AWARDS_SINGLE_DISBURSEMENT_NO_BC_FUNDING: IERAward[] = [
   {
     valueType: DisbursementValueType.CanadaGrant,
     valueCode: "CSGP",
-    valueAmount: 2000,
+    valueAmount: 7599,
   },
   {
     valueType: DisbursementValueType.CanadaGrant,
     valueCode: "CSGD",
-    valueAmount: 3000,
+    valueAmount: 650,
   },
   {
     valueType: DisbursementValueType.CanadaGrant,
     valueCode: "CSGF",
-    valueAmount: 4000,
+    valueAmount: 1500,
   },
   {
     valueType: DisbursementValueType.CanadaGrant,
     valueCode: "CSGT",
-    valueAmount: 5000,
+    valueAmount: 2350,
   },
 ];
 
@@ -129,46 +129,46 @@ export const AWARDS_TWO_OF_TWO_DISBURSEMENT: IERAward[] = [
   {
     valueType: DisbursementValueType.CanadaGrant,
     valueCode: "CSGP",
-    valueAmount: 2000,
+    valueAmount: 1234,
   },
   {
     valueType: DisbursementValueType.CanadaGrant,
     valueCode: "CSGD",
-    valueAmount: 3000,
+    valueAmount: 5978,
   },
   {
     valueType: DisbursementValueType.CanadaGrant,
     valueCode: "CSGF",
-    valueAmount: 4000,
+    valueAmount: 9101,
   },
   {
     valueType: DisbursementValueType.CanadaGrant,
     valueCode: "CSGT",
-    valueAmount: 5000,
+    valueAmount: 12131,
   },
   {
     valueType: DisbursementValueType.BCLoan,
     valueCode: "BCSL",
-    valueAmount: 6000,
+    valueAmount: 15161,
   },
   {
     valueType: DisbursementValueType.BCGrant,
     valueCode: "BCAG",
-    valueAmount: 7000,
+    valueAmount: 1819,
   },
   {
     valueType: DisbursementValueType.BCGrant,
     valueCode: "BGPD",
-    valueAmount: 8000,
+    valueAmount: 2021,
   },
   {
     valueType: DisbursementValueType.BCGrant,
     valueCode: "SBSD",
-    valueAmount: 9000,
+    valueAmount: 22,
   },
   {
     valueType: DisbursementValueType.BCGrant,
     valueCode: "BCSG",
-    valueAmount: 10000,
+    valueAmount: 99,
   },
 ];
