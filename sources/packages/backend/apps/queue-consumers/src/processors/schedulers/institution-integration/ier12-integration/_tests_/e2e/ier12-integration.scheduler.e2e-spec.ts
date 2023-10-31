@@ -49,18 +49,6 @@ import {
 } from "./utils/string-utils";
 import { createIER12SchedulerJobMock, isValidFileTimestamp } from "./utils";
 
-// TODO: Remove before PR review.
-jest.setTimeout(120000);
-
-// TODO
-// E2E asserts
-// 1 - Create/reuse helper methods to simulate the below.
-// 1.1 - hasMultipleApplicationSubmissions
-// 1.2 - hasActiveStopFullTimeDisbursement
-// 1.3 - hasAwardWithheldDueToRestriction
-// 1.4 - hasFullTimeDisbursementFeedbackErrors
-// 1.5 - Consider creation a helper for one of the above and create the PR.
-
 describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
   let app: INestApplication;
   let processor: IER12IntegrationScheduler;
