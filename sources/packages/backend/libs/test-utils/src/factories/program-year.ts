@@ -47,5 +47,5 @@ export async function ensureProgramYearExists(
   if (existingProgramYear) {
     return existingProgramYear;
   }
-  return await db.programYear.save(fakeProgramYear);
+  return db.programYear.save(fakeProgramYear);
 }

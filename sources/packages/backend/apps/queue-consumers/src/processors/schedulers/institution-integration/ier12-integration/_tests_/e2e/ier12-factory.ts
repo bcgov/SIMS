@@ -35,13 +35,12 @@ import * as faker from "faker";
  * Save all IER12 related records providing all data that
  * will be part of the IER12 file generation.
  * @param db data source helper.
- * @param testInputData msfaa test input data.
+ * @param testInputData IER12 test input data.
  * @param options method options:
  * - `programYearPrefix` program year prefix to create or find the program year to
  * be associated. Default 2000, would will create the program year 2000-2001.
  * - `submittedDate` date that the application was submitted.
- * @returns a saved MSFAA record that uses the input test
- * data to be created.
+ * @returns a saved application with all related data needed for an IER12 record creation.
  */
 export async function saveIER12TestInputData(
   db: E2EDataSources,
@@ -191,8 +190,7 @@ async function saveIER12ApplicationFromTestInput(
   application.applicationStatusUpdatedOn =
     testInputApplication.applicationStatusUpdatedOn ?? referenceSubmission;
   application.programYear = programYear;
-  await db.application.save(application);
-  return application;
+  return db.application.save(application);
 }
 
 /**
@@ -274,7 +272,7 @@ function mapTestInputToDisbursementAndAwards(
     const fallbackSentDate = new Date(disbursementDate);
     disbursement.updatedAt =
       testInputDisbursement.updatedAt ?? fallbackSentDate;
-    // Disbursements can be sent few days after its date.
+    // Disbursements can be sent few days before its date.
     disbursement.dateSent =
       testInputDisbursement.dateSent ?? addDays(-1, fallbackSentDate);
   } else {
