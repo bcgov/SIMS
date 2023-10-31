@@ -42,11 +42,7 @@ import {
   WORKFLOW_DATA_SINGLE_INDEPENDENT_WITH_NO_DEPENDENTS,
 } from "./models/data-inputs";
 import { QueueProcessSummaryResult } from "../../../../../../processors/models/processors.models";
-import {
-  assessmentIdToText,
-  disbursementIdToText,
-  getSuccessSummaryMessages,
-} from "./utils/string-utils";
+import { numberToText, getSuccessSummaryMessages } from "./utils/string-utils";
 import { createIER12SchedulerJobMock, isValidFileTimestamp } from "./utils";
 
 describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
@@ -160,14 +156,14 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
     const [line1, line2] = uploadedFile.fileLines;
     const [firstDisbursement, secondDisbursement] =
       application.currentAssessment.disbursementSchedules;
-    const assessmentId = assessmentIdToText(application.currentAssessment.id);
+    const assessmentId = numberToText(application.currentAssessment.id);
     // Line 1 validations.
-    const firstDisbursementId = disbursementIdToText(firstDisbursement.id);
+    const firstDisbursementId = numberToText(firstDisbursement.id);
     expect(line1).toBe(
       `${assessmentId}${firstDisbursementId}${defaultApplicationNumber}A1B2C3D4    242963189Doe                      John           19980113B   SI       Address Line 1           Address Line 2           Victoria                 BC  Z1Z1Z1          Program                  Program description                               undergraduateCertificate 0001    8   0512123401234ADR2                         62000081620001205000033330000004444000000555500000066660050100F2000060120002001COMP20000601000010000000015161000008040500N NNN            20000602        000166429600000000000001664296000000000000000000001NNN000000000000000000000000000000000000000000000000000000000000NN0000000000000144430000000000000000000000000000000000007777000000336667000009874600000000000000000000000000000000000000000000002200000120000100023789650009656600 0000000000000000000000000000000000000000000000000000000000000000000000DISS2000081520000815Completed Sent      20000816                        CSLF0000100000BCSL0000000000CSGP0000200000CSGD0000300000CSGF0000400000CSGT0000500000BCAG0000700000SBSD0000900000BGPD0000800000    0000000000`,
     );
     // Line 2 validations.
-    const secondDisbursementId = disbursementIdToText(secondDisbursement.id);
+    const secondDisbursementId = numberToText(secondDisbursement.id);
     expect(line2).toBe(
       `${assessmentId}${secondDisbursementId}${defaultApplicationNumber}A1B2C3D4    242963189Doe                      John           19980113B   SI       Address Line 1           Address Line 2           Victoria                 BC  Z1Z1Z1          Program                  Program description                               undergraduateCertificate 0001    8   0512123401234ADR2                         62000081620001205000033330000004444000000555500000066660050100F2000060120002001COMP20000601000010000000015161000008040500N NNN            20000602        000166429600000000000001664296000000000000000000001NNN000000000000000000000000000000000000000000000000000000000000NN0000000000000144430000000000000000000000000000000000007777000000336667000009874600000000000000000000000000000000000000000000002200000120000100023789650009656600 0000000000000000000000000000000000000000000000000000000000000000000000COER20000601        Required  Pending   20001011                        CSLF0000000000BCSL0001516100CSGP0000123400CSGD0000597800CSGF0000910100CSGT0001213100BCAG0000181900SBSD0000002200BGPD0000202100    0000000000`,
     );
@@ -233,9 +229,9 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
     const [line1] = uploadedFile.fileLines;
     const [firstDisbursement] =
       application.currentAssessment.disbursementSchedules;
-    const assessmentId = assessmentIdToText(application.currentAssessment.id);
+    const assessmentId = numberToText(application.currentAssessment.id);
     // Line 1 validations.
-    const firstDisbursementId = disbursementIdToText(firstDisbursement.id);
+    const firstDisbursementId = numberToText(firstDisbursement.id);
     expect(line1).toBe(
       `${assessmentId}${firstDisbursementId}${defaultApplicationNumber}12345679    242963189Jane With Really Long Mon               19980113B   MA       Some Foreign Street Addre                         New York                     SOME POSTAL CODEProgram                  Program description                               undergraduateCertificate 0001    8   0512123401234ADR2                         62000081620001010000033330000004444000000555500000066660019100F2000060120002001ASMT20000601000010000000006000000004800000N NNN            20000602        000966867900000000000009668679003002001003000003005NNY000000000000000000000000000000000000000000000000000000000000NY0000000000000144430000000000000000000000000000000000007777000000150056000000000000000000000000000000000000000000003000000000050000000065430000009876120005500000 0000000000000000000000000000000000000000000000000000000000000000000000ASMT20000601        Completed Pending   20000816                        CSLF0000100000BCSL0000600000CSGP0000200000CSGD0000300000CSGF0000400000CSGT0000500000BCAG0000700000SBSD0000900000BGPD0000800000    0000000000`,
     );
@@ -301,9 +297,9 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
     const [line1] = uploadedFile.fileLines;
     const [firstDisbursement] =
       application.currentAssessment.disbursementSchedules;
-    const assessmentId = assessmentIdToText(application.currentAssessment.id);
+    const assessmentId = numberToText(application.currentAssessment.id);
     // Line 1 validations.
-    const firstDisbursementId = disbursementIdToText(firstDisbursement.id);
+    const firstDisbursementId = numberToText(firstDisbursement.id);
     expect(line1).toBe(
       `${assessmentId}${firstDisbursementId}${defaultApplicationNumber}44444444    242963189Doe                      John           19980113A   SI       Address Line 1           Address Line 2           Victoria                 BC  Z1Z1Z1          Some Program With DescripSome program with description too long            graduateDiploma          0001    5   0512123401234ADR2XYZ                      62000081620001010000033330000004444000000555500000066660019100F2000060120002001COMP20000601000000000000000000000001209900N NNN            20000602        000321200000000160000003212000000000000000000000003YYN000001429700000097000000005090000000000000000145500000002183YN0000000000000144430000000000000000000000000012129800007777000000070045000000000000000000000000000000000000000000000000000000050099000065004000046000000001209900 0000000000000000000000000000000000000000000000000000000000000000000000DISS2000081520000815Completed Sent      20000816                        CSLF0000000000BCSL0000000000CSGP0000759900CSGD0000065000CSGF0000150000CSGT0000235000BCAG0000000000SBSD0000000000BGPD0000000000    0000000000`,
     );
@@ -388,9 +384,9 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
     const [line1] = uploadedFile.fileLines;
     const [firstDisbursement] =
       application.currentAssessment.disbursementSchedules;
-    const assessmentId = assessmentIdToText(application.currentAssessment.id);
+    const assessmentId = numberToText(application.currentAssessment.id);
     // Line 1 validations.
-    const firstDisbursementId = disbursementIdToText(firstDisbursement.id);
+    const firstDisbursementId = numberToText(firstDisbursement.id);
     expect(line1).toBe(
       `${assessmentId}${firstDisbursementId}${defaultApplicationNumber}1           242963189Doe                      John           19980113B   SI       Address Line 1           Address Line 2           Victoria                 BC  Z1Z1Z1          Some Program With DescripSome program with description too long            graduateDiploma          0001    5   0512123401234ADR2XYZ                      62000081620001010000033330000004444000000555500000066660019100F2000060120002001COMP20000601000010000000006000000004800000N NNY            20000602        000321200000000160000003212000000000000000000000001NNN000000000000000000000000000000000000000000000000000000000000NN0000000000000144430000000000000000000000000000000000007777000000070045000000000000000000000000000000000000000000000000000000002200000065004000046000000005500000 0000000000000000000000000000000000000000000000000000000000000000000000DISR20000811        Completed Pending   20000816                        CSLF0000100000BCSL0000600000CSGP0000200000CSGD0000300000CSGF0000400000CSGT0000500000BCAG0000700000SBSD0000900000BGPD0000800000    0000000000`,
     );
