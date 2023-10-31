@@ -36,6 +36,10 @@ import * as faker from "faker";
  * will be part of the IER12 file generation.
  * @param db data source helper.
  * @param testInputData msfaa test input data.
+ * @param options method options:
+ * - `programYearPrefix` program year prefix to create or find the program year to
+ * be associated. Default 2000, would will create the program year 2000-2001.
+ * - `submittedDate` date that the application was submitted.
  * @returns a saved MSFAA record that uses the input test
  * data to be created.
  */
@@ -52,7 +56,7 @@ export async function saveIER12TestInputData(
     db,
     options?.programYearPrefix ?? 2000,
   );
-  // Submission date to be used a base date to non-program-year related dates.
+  // Submission date to be used as base date to non-program-year related dates.
   const referenceSubmission = options?.submittedDate ?? new Date();
   // Supporting shared variables.
   const createSecondDisbursement =
@@ -60,11 +64,11 @@ export async function saveIER12TestInputData(
   // Set the number of weeks to some number beyond 17 if there are two disbursements
   // since two disbursements are supposed to be create to offerings longer than 17 weeks.
   const offeringEndDateWeeks = createSecondDisbursement ? 18 : 10;
-  // Set offering start date to few days after the program year start data.
+  // Set offering start date to few days after the program year start date.
   const studyStartDate =
     testInputData.offering.studyStartDate ??
     getISODateOnlyString(addDays(15, programYear.startDate));
-  // Set the offering end date to few weeks after the program year start data.
+  // Set the offering end date to few weeks after the program year start date.
   const studyEndDate =
     testInputData.offering.studyEndDate ??
     getISODateOnlyString(
@@ -97,7 +101,6 @@ export async function saveIER12TestInputData(
     studyStartDate,
     studyEndDate,
     referenceSubmission,
-    createSecondDisbursement,
   );
   // Program
   await updateIER12ProgramFromTestInput(
@@ -117,7 +120,7 @@ export async function saveIER12TestInputData(
 }
 
 /**
- * Creates and saves the students populated from the test input.
+ * Creates and saves the students populated from the test input data.
  * @param db data source helper.
  * @param testInputStudent data to create the student, its user, and
  * associated SIN validation.
@@ -154,7 +157,7 @@ async function saveIER12StudentFromTestInput(
 }
 
 /**
- * Creates and saves the application populated from the test input
+ * Creates and saves the application populated from the test input data
  * alongside with its disbursements.
  * @param db data source helper.
  * @param testInputApplication data to create the application and its dependencies.
@@ -200,8 +203,7 @@ async function saveIER12ApplicationFromTestInput(
  * @param assessment previously saved assessment to be updated.
  * @param studyStartDate offering start date.
  * @param studyEndDate offering end date.
- * @param referenceSubmission
- * @param createSecondDisbursement used for reference to the assessment date
+ * @param referenceSubmission used for reference to the assessment date
  * and possible auditing for the awards.
  * @returns the saved assessment and its dependencies.
  */
@@ -212,7 +214,6 @@ async function saveIER12AssessmentFromTestInput(
   studyStartDate: string,
   studyEndDate: string,
   referenceSubmission: Date,
-  createSecondDisbursement: boolean,
 ): Promise<StudentAssessment> {
   assessment.triggerType = testInputAssessment.triggerType;
   // Simulates that the assessment date was produced one day after the reference date
@@ -234,7 +235,7 @@ async function saveIER12AssessmentFromTestInput(
     studyStartDate,
     referenceSubmission,
   );
-  if (createSecondDisbursement) {
+  if (secondDisbursement) {
     // Calculate the middle date between offering start/end dates.
     const midOfferingDateDays =
       dateDifference(studyEndDate, studyStartDate) / 2;
@@ -247,6 +248,44 @@ async function saveIER12AssessmentFromTestInput(
     );
   }
   return db.studentAssessment.save(assessment);
+}
+
+/**
+ * Maps the test input values to the disbursements and its awards.
+ * @param disbursement disbursement being populated.
+ * @param testInputDisbursement test input to populate the disbursement and its awards.
+ * @param disbursementDate disbursement date.
+ * @param referenceSubmission optionally used for auditing dates as a fallback.
+ */
+function mapTestInputToDisbursementAndAwards(
+  disbursement: DisbursementSchedule,
+  testInputDisbursement: IER12Disbursement,
+  disbursementDate: string,
+  referenceSubmission: Date,
+): void {
+  disbursement.coeStatus = testInputDisbursement.coeStatus;
+  disbursement.disbursementScheduleStatus =
+    testInputDisbursement.disbursementScheduleStatus;
+  disbursement.disbursementDate = disbursementDate;
+
+  if (
+    disbursement.disbursementScheduleStatus === DisbursementScheduleStatus.Sent
+  ) {
+    const fallbackSentDate = new Date(disbursementDate);
+    disbursement.updatedAt =
+      testInputDisbursement.updatedAt ?? fallbackSentDate;
+    // Disbursements can be sent few days after its date.
+    disbursement.dateSent =
+      testInputDisbursement.dateSent ?? addDays(-1, fallbackSentDate);
+  } else {
+    disbursement.updatedAt =
+      testInputDisbursement.updatedAt ?? referenceSubmission;
+    disbursement.dateSent = testInputDisbursement.dateSent;
+  }
+  disbursement.disbursementValues =
+    testInputDisbursement.disbursementValues.map(
+      (value) => value as DisbursementValue,
+    );
 }
 
 /**
@@ -300,42 +339,4 @@ async function updateIER12OfferingFromTestInput(
     offeringIntensity: testInputOffering.offeringIntensity,
   };
   await db.educationProgramOffering.update(offeringId, offeringUpdate);
-}
-
-/**
- * Maps the test input values to the disbursements and its awards.
- * @param disbursement disbursement being populated.
- * @param testInputDisbursement test input to populate the disbursement and its awards.
- * @param disbursementDate disbursement date.
- * @param referenceSubmission optionally used for auditing dates as a fallback.
- */
-function mapTestInputToDisbursementAndAwards(
-  disbursement: DisbursementSchedule,
-  testInputDisbursement: IER12Disbursement,
-  disbursementDate: string,
-  referenceSubmission: Date,
-): void {
-  disbursement.coeStatus = testInputDisbursement.coeStatus;
-  disbursement.disbursementScheduleStatus =
-    testInputDisbursement.disbursementScheduleStatus;
-  disbursement.disbursementDate = disbursementDate;
-
-  if (
-    disbursement.disbursementScheduleStatus === DisbursementScheduleStatus.Sent
-  ) {
-    const fallbackSentDate = new Date(disbursementDate);
-    disbursement.updatedAt =
-      testInputDisbursement.updatedAt ?? fallbackSentDate;
-    // Disbursements can be sent few days after its date.
-    disbursement.dateSent =
-      testInputDisbursement.dateSent ?? addDays(-1, fallbackSentDate);
-  } else {
-    disbursement.updatedAt =
-      testInputDisbursement.updatedAt ?? referenceSubmission;
-    disbursement.dateSent = testInputDisbursement.dateSent;
-  }
-  disbursement.disbursementValues =
-    testInputDisbursement.disbursementValues.map(
-      (value) => value as DisbursementValue,
-    );
 }

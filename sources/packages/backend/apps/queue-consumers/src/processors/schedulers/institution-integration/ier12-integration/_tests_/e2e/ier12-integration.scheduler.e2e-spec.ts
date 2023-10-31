@@ -241,7 +241,7 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
     );
   });
 
-  it("Should generate an IER12 file with one record for a dependant and living with parents student with no dependents and one sent disbursement with no BC funding.", async () => {
+  it("Should generate an IER12 file with one record for a dependant and living with parents student with one sent disbursement with no BC funding.", async () => {
     // Arrange
     const testInputData = {
       student: JOHN_DOE_FROM_CANADA,
