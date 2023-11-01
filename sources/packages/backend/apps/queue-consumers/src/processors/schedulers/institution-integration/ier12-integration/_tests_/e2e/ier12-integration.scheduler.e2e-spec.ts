@@ -41,7 +41,6 @@ import {
   WORKFLOW_DATA_MARRIED_WITH_DEPENDENTS,
   WORKFLOW_DATA_SINGLE_INDEPENDENT_WITH_NO_DEPENDENTS,
 } from "./models/data-inputs";
-import { QueueProcessSummaryResult } from "../../../../../../processors/models/processors.models";
 import { numberToText, getSuccessSummaryMessages } from "./utils/string-utils";
 import { createIER12SchedulerJobMock, isValidFileTimestamp } from "./utils";
 
@@ -50,9 +49,18 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
   let processor: IER12IntegrationScheduler;
   let db: E2EDataSources;
   let sftpClientMock: DeepMocked<Client>;
-  let sharedProgramYearPrefix: number;
-  let referenceSubmissionDate: Date;
   let getFileNameAsCurrentTimestampMock: jest.SpyInstance;
+  /**
+   * Default program year prefix.
+   */
+  const sharedProgramYearPrefix = 2000;
+  /**
+   * Default application submission date.
+   */
+  const referenceSubmissionDate = new Date("2000-06-01");
+  /**
+   * Default application number.
+   */
   const defaultApplicationNumber = "9900000001";
 
   beforeAll(async () => {
@@ -64,9 +72,6 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
     sftpClientMock = sshClientMock;
     // Processor under test.
     processor = app.get(IER12IntegrationScheduler);
-    // Default program year prefix.
-    sharedProgramYearPrefix = 2000;
-    referenceSubmissionDate = new Date("2000-06-01");
     // Intercept file timestamp.
     getFileNameAsCurrentTimestampMock = jest.spyOn(
       dateUtils,
@@ -371,14 +376,8 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
     const [timestampResult] = getFileNameAsCurrentTimestampMock.mock.results;
     expect(isValidFileTimestamp(timestampResult.value)).toBe(true);
     expect(ier12Results).toStrictEqual([
-      {
-        summary: [
-          `The uploaded file: Institution-Request\\ZZZY\\IER_012_${timestampResult.value}.txt`,
-          "The number of records: 1",
-        ],
-      } as QueueProcessSummaryResult,
+      getSuccessSummaryMessages(timestampResult.value),
     ]);
-
     // Assert file output.
     expect(uploadedFile.fileLines?.length).toBe(1);
     const [line1] = uploadedFile.fileLines;
