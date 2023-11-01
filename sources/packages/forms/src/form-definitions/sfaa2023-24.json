@@ -10171,9 +10171,9 @@
             },
             {
               "clearOnHide": false,
-              "key": "everInCustodyOfChildWelfareInformationPanel",
+              "key": "custodyOfChildWelfareInformationPanel",
               "input": false,
-              "title": "Care Or Custody Of A Director Of Child Welfare In B.C Panel",
+              "title": "Ever In The Care Or Custody Of A Director Of Child Welfare In B.C Panel",
               "theme": "default",
               "tableView": false,
               "components": [
@@ -10183,7 +10183,7 @@
                   "tableView": true,
                   "inputType": "radio",
                   "label": "<strong>Are you, or were you at the time of your 19th birthday, in continuing care or custody of a director of child welfare in B.C.?</strong>",
-                  "key": "everInCustodyOfChildWelfare",
+                  "key": "custodyOfChildWelfare",
                   "values": [
                     {
                       "value": "yes",
@@ -10231,7 +10231,8 @@
                 "eq": "yes"
               },
               "properties": {},
-              "lockKey": true
+              "lockKey": true,
+              "isNew": false
             },
             {
               "label": "<strong>At the time of your course study start date, will you have been out of high school for 4 years?</strong>",
@@ -15595,7 +15596,7 @@
           "encrypted": false,
           "redrawOn": "data",
           "customDefaultValue": "",
-          "calculateValue": "if (\r\n  data.hasDependents === \"no\" &&\r\n  data.relationshipStatus === \"single\" &&\r\n  data.outOfHighSchoolFor4Years === \"no\" &&\r\n  data.howWillYouBeAttendingTheProgram === \"Full Time\" &&\r\n  !(data.everInCustodyOfChildWelfare === \"yes\")\r\n) {\r\n  instance.setValue(true);\r\n} else {\r\n  instance.setValue(false);\r\n}",
+          "calculateValue": "if (\r\n  data.hasDependents === \"no\" &&\r\n  data.relationshipStatus === \"single\" &&\r\n  data.outOfHighSchoolFor4Years === \"no\" &&\r\n  data.howWillYouBeAttendingTheProgram === \"Full Time\" &&\r\n  data.custodyOfChildWelfare !== \"yes\"\r\n) {\r\n  instance.setValue(true);\r\n} else {\r\n  instance.setValue(false);\r\n}\r\n",
           "calculateServer": true,
           "key": "showParentInformation",
           "tags": [],
