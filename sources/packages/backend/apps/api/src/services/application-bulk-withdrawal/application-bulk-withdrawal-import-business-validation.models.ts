@@ -32,7 +32,6 @@ const userFriendlyNames = {
 
 /**
  * Possible warnings unique identifiers.
- * !These keys are also consumed in the UI to display/hide warning banners.
  */
 export enum ApplicationWithdrawalValidationWarnings {
   ApplicationNotFound = "applicationNotFound",
@@ -256,7 +255,7 @@ export interface ApplicationWithdrawalValidationResult {
    */
   index: number;
   /**
-   * validated application bulk withdrawal model.
+   * Validated application bulk withdrawal model.
    */
   applicationBulkWithdrawalBusinessValidationModel: ApplicationBulkWithdrawalImportBusinessValidationModel;
   /**
@@ -269,6 +268,9 @@ export interface ApplicationWithdrawalValidationResult {
   errors: string[];
 }
 
+/**
+ * Application data for the application bulk withdrawal.
+ */
 export interface ApplicationData {
   sin: string;
   locationId: number;
