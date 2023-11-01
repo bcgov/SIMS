@@ -216,7 +216,7 @@ export class IER12ProcessingService {
         assessmentId: pendingAssessment.id,
         disbursementId: disbursement.id,
         applicationNumber: application.applicationNumber,
-        institutionStudentNumber: application.data.studentNumber,
+        institutionStudentNumber: application.studentNumber,
         sin: sinValidation.sin,
         studentLastName: user.lastName,
         studentGivenName: user.firstName,
