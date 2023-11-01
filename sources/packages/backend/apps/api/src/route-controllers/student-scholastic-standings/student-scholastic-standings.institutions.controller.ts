@@ -63,11 +63,7 @@ import {
   uploadLimits,
 } from "../../utilities";
 import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
-import {
-  ApplicationBulkWithdrawalHeader,
-  ApplicationWithdrawalImportTextModel,
-  ApplicationWithdrawalTextValidationResult,
-} from "../../services/application-bulk-withdrawal/application-bulk-withdrawal-import-text.models";
+import { ApplicationWithdrawalTextValidationResult } from "../../services/application-bulk-withdrawal/application-bulk-withdrawal-import-text.models";
 import { FileData } from "../../services/application-bulk-withdrawal/application-bulk-withdrawal-import-business-validation.models";
 
 /**

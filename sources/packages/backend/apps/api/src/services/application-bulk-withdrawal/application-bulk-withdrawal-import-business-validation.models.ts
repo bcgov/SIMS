@@ -1,6 +1,5 @@
 import {
   Equals,
-  IsBoolean,
   IsDate,
   IsEnum,
   IsIn,
