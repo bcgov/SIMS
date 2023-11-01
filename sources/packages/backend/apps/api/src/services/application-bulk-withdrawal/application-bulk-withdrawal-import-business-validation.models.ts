@@ -21,15 +21,6 @@ import {
 } from "./application-bulk-withdrawal-import-text.models";
 import { IsValidSIN } from "../../utilities/class-validation";
 
-const userFriendlyNames = {
-  application: "Application",
-  institutionCode: "The institution code",
-  applicationStatus: "Application status",
-  isCompleted: "be completed",
-  archived: "archived",
-  record: "The record was not found",
-};
-
 /**
  * Possible warnings unique identifiers.
  */
@@ -83,17 +74,6 @@ export class ValidationContext {
 
 export class ApplicationBulkWithdrawalImportBusinessValidationModel {
   /**
-   * Data record type.
-   */
-  @ValidateIf(
-    (object: ApplicationBulkWithdrawalImportBusinessValidationModel) =>
-      object.applicationFound,
-  )
-  @Equals(RecordType.ApplicationBulkWithdrawalDataRecordType, {
-    message: `${DataTextHeaders.recordType} must be valid.`,
-  })
-  recordType: RecordType;
-  /**
    * SIN.
    */
   @ValidateIf(
@@ -139,7 +119,8 @@ export class ApplicationBulkWithdrawalImportBusinessValidationModel {
    * Application found.
    */
   @IsIn([true], {
-    message: `${userFriendlyNames.application} is not present in SIMS and is a part of the SFAS system.`,
+    message:
+      "The application is not present in SIMS and is a part of the SFAS system.",
     context: ValidationContext.CreateWarning(
       ApplicationWithdrawalValidationWarnings.ApplicationNotFound,
     ),
@@ -153,7 +134,7 @@ export class ApplicationBulkWithdrawalImportBusinessValidationModel {
       object.applicationFound,
   )
   @IsIn([true], {
-    message: `${userFriendlyNames.application} does not belong to this institution.`,
+    message: "The application does not belong to this institution.",
   })
   applicationBelongsToInstitution: boolean;
   /**
@@ -172,7 +153,7 @@ export class ApplicationBulkWithdrawalImportBusinessValidationModel {
       object.applicationFound,
   )
   @IsIn([true], {
-    message: `${userFriendlyNames.institutionCode} provided is incorrect.`,
+    message: "The institution code provided is incorrect.",
   })
   hasCorrectInstitutionCode: boolean;
   /**
@@ -184,7 +165,7 @@ export class ApplicationBulkWithdrawalImportBusinessValidationModel {
   )
   @IsEnum(ApplicationStatus)
   @IsIn([ApplicationStatus.Completed], {
-    message: `${userFriendlyNames.application} is not in the ${ApplicationStatus.Completed} status.`,
+    message: `The application is not in the ${ApplicationStatus.Completed} status.`,
   })
   applicationStatus: ApplicationStatus;
   /**
@@ -195,7 +176,7 @@ export class ApplicationBulkWithdrawalImportBusinessValidationModel {
       object.applicationFound,
   )
   @IsIn([false], {
-    message: `Application is already ${userFriendlyNames.archived} and cannot be withdrawn.`,
+    message: `Application is already archived and cannot be withdrawn.`,
   })
   isArchived: boolean;
   /**
@@ -207,7 +188,7 @@ export class ApplicationBulkWithdrawalImportBusinessValidationModel {
   )
   @IsIn([false], {
     message: (validationArguments: ValidationArguments) =>
-      `The ${userFriendlyNames.application} is already withdrawn with the date: ${validationArguments.object["withdrawalDate"]}.`,
+      `The application is already withdrawn with the date: ${validationArguments.object["withdrawalDate"]}.`,
     context: ValidationContext.CreateWarning(
       ApplicationWithdrawalValidationWarnings.HasPreviouslyBeenWithdrawn,
     ),
@@ -221,7 +202,7 @@ export class ApplicationBulkWithdrawalImportBusinessValidationModel {
       object.applicationFound,
   )
   @IsIn([true], {
-    message: `${userFriendlyNames.record} and will be skipped.`,
+    message: "The record was not found and will be skipped.",
     context: ValidationContext.CreateWarning(
       ApplicationWithdrawalValidationWarnings.NoMatchingRecordFound,
     ),

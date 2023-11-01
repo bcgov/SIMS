@@ -83,7 +83,6 @@ export class ApplicationBulkWithdrawalImportService {
       } else {
         businessValidationModel.applicationFound = false;
       }
-      businessValidationModel.recordType = textValidation.textModel.recordType;
       businessValidationModel.sin = textValidation.textModel.sin;
       businessValidationModel.applicationNumber =
         textValidation.textModel.applicationNumber;
