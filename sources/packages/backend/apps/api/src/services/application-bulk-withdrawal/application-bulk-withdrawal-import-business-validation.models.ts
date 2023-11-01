@@ -26,6 +26,7 @@ const userFriendlyNames = {
   applicationBelongsToInstitution: "Application belongs to institution",
   validSIN: "Valid SIN",
   hasCorrectInstitutionCode: "Has correct institution code",
+  institutionCode: "The institution code",
   hasPreviouslyBeenWithdrawn: "Has previously been withdrawn",
   applicationStatus: "Application status",
   isCompleted: "be completed",
@@ -191,6 +192,9 @@ export class ApplicationBulkWithdrawalImportBusinessValidationModel {
   )
   @IsBoolean({
     message: `${userFriendlyNames.hasCorrectInstitutionCode} must be a boolean value.`,
+  })
+  @IsIn([true], {
+    message: `${userFriendlyNames.institutionCode} provided is incorrect.`,
   })
   hasCorrectInstitutionCode: boolean;
   /**
