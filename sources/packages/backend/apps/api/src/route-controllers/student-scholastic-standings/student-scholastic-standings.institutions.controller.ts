@@ -32,8 +32,8 @@ import {
   APPLICATION_NOT_FOUND,
   ASSESSMENT_ALREADY_IN_PROGRESS,
   ApplicationWithdrawalImportTextService,
-  ApplicationBulkWithdrawalImportBusinessService,
-  ApplicationBulkWithdrawalImportBusinessValidationService,
+  ApplicationBulkWithdrawalImportService,
+  ApplicationBulkWithdrawalImportValidationService,
   FormService,
   INVALID_OPERATION_IN_THE_CURRENT_STATUS,
   StudentScholasticStandingsService,
@@ -68,6 +68,7 @@ import {
   ApplicationWithdrawalImportTextModel,
   ApplicationWithdrawalTextValidationResult,
 } from "../../services/application-bulk-withdrawal/application-bulk-withdrawal-import-text.models";
+import { FileData } from "../../services/application-bulk-withdrawal/application-bulk-withdrawal-import-business-validation.models";
 
 /**
  * Scholastic standing controller for institutions Client.
@@ -81,8 +82,8 @@ export class ScholasticStandingInstitutionsController extends BaseController {
     private readonly studentScholasticStandingsService: StudentScholasticStandingsService,
     private readonly scholasticStandingControllerService: ScholasticStandingControllerService,
     private readonly applicationWithdrawalImportTextService: ApplicationWithdrawalImportTextService,
-    private readonly applicationWithdrawalImportBusinessService: ApplicationBulkWithdrawalImportBusinessService,
-    private readonly applicationWithdrawalImportBusinessValidationService: ApplicationBulkWithdrawalImportBusinessValidationService,
+    private readonly applicationWithdrawalImportService: ApplicationBulkWithdrawalImportService,
+    private readonly applicationWithdrawalImportValidationService: ApplicationBulkWithdrawalImportValidationService,
   ) {
     super();
   }
@@ -205,19 +206,11 @@ export class ScholasticStandingInstitutionsController extends BaseController {
   ): Promise<PrimaryIdentifierAPIOutDTO[]> {
     // Read the entire file content.
     const fileContent = file.buffer.toString();
-    // Get the file header model.
-    let textHeader: ApplicationBulkWithdrawalHeader;
-    // Convert the file raw content into text models.
-    let textModels: ApplicationWithdrawalImportTextModel[];
+    // Get the file data.
+    let fileData: FileData;
     try {
-      textHeader =
-        this.applicationWithdrawalImportTextService.readText(
-          fileContent,
-        ).header;
-      textModels =
-        this.applicationWithdrawalImportTextService.readText(
-          fileContent,
-        ).applicationWithdrawalModels;
+      fileData =
+        this.applicationWithdrawalImportTextService.readText(fileContent);
     } catch (error: unknown) {
       if (
         error instanceof CustomNamedError &&
@@ -244,25 +237,25 @@ export class ScholasticStandingInstitutionsController extends BaseController {
     // Validate the text models.
     const textValidations =
       this.applicationWithdrawalImportTextService.validateTextModels(
-        textModels,
+        fileData.applicationWithdrawalModels,
       );
     // Assert successful validation.
     this.assertTextValidationsAreValid(textValidations);
-    const businessValidationModels =
-      await this.applicationWithdrawalImportBusinessService.generateBusinessValidationModels(
+    const validationModels =
+      await this.applicationWithdrawalImportService.generateApplicationBulkWithdrawalValidationModels(
         textValidations,
-        textHeader,
+        fileData.header,
         userToken.authorizations.institutionId,
         userToken.authorizations.adminLocationsIds,
       );
     // Validate all the application bulk withdrawal models.
-    const applicationBulkWithdrawalBusinessValidations =
-      this.applicationWithdrawalImportBusinessValidationService.validateApplicationBulkWithdrawalBusinessModels(
-        businessValidationModels,
+    const applicationBulkWithdrawalValidations =
+      this.applicationWithdrawalImportValidationService.validateApplicationBulkWithdrawalModels(
+        validationModels,
         true,
       );
-    this.applicationWithdrawalImportBusinessValidationService.assertBusinessValidationsAreValid(
-      applicationBulkWithdrawalBusinessValidations,
+    this.applicationWithdrawalImportValidationService.assertValidationsAreValid(
+      applicationBulkWithdrawalValidations,
     );
     if (validationOnly) {
       // If the endpoint is called only to perform the validation and no error was found

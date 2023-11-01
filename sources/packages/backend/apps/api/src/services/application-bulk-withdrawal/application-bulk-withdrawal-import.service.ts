@@ -4,22 +4,25 @@ import {
   ApplicationBulkWithdrawalHeader,
   ApplicationWithdrawalTextValidationResult,
 } from "./application-bulk-withdrawal-import-text.models";
-import { DataSource, In } from "typeorm";
-import { Application, RecordDataModelService } from "@sims/sims-db";
+import { DataSource, In, Repository } from "typeorm";
+import { Application } from "@sims/sims-db";
 import {
   ApplicationBulkWithdrawalImportBusinessValidationModel,
   ApplicationData,
 } from "./application-bulk-withdrawal-import-business-validation.models";
+import { InjectRepository } from "@nestjs/typeorm";
 
 type ApplicationSINDataMap = Record<string, ApplicationData>;
 /**
  * Handles the application withdrawal bulk insert preparation.
  */
 @Injectable()
-export class ApplicationBulkWithdrawalImportBusinessService extends RecordDataModelService<Application> {
-  constructor(private readonly dataSource: DataSource) {
-    super(dataSource.getRepository(Application));
-  }
+export class ApplicationBulkWithdrawalImportService {
+  constructor(
+    private readonly dataSource: DataSource,
+    @InjectRepository(Application)
+    private readonly applicationRepo: Repository<Application>,
+  ) {}
 
   /**
    * Generates the application bulk withdrawal business validation model.
@@ -29,7 +32,7 @@ export class ApplicationBulkWithdrawalImportBusinessService extends RecordDataMo
    * @param allowedLocationIds set of allowed location ids for the given institution.
    * @returns application bulk withdrawal business models to be validated and persisted.
    */
-  async generateBusinessValidationModels(
+  async generateApplicationBulkWithdrawalValidationModels(
     textValidations: ApplicationWithdrawalTextValidationResult[],
     textHeader: ApplicationBulkWithdrawalHeader,
     institutionId: number,
@@ -39,10 +42,11 @@ export class ApplicationBulkWithdrawalImportBusinessService extends RecordDataMo
     const applicationNumbers = textValidations.map(
       (textValidation) => textValidation.textModel.applicationNumber,
     );
-    const applicationSINData = await this.getSINForApplications(
-      applicationNumbers,
-      institutionId,
-    );
+    const applicationSINData =
+      await this.getApplicationBulkWithdrawalValidationDetails(
+        applicationNumbers,
+        institutionId,
+      );
     applicationSINData.forEach((record) => {
       applicationSINDataMap[record.applicationNumber] = {
         applicationStatus: record.applicationStatus,
@@ -61,30 +65,29 @@ export class ApplicationBulkWithdrawalImportBusinessService extends RecordDataMo
       const applicationData =
         applicationSINDataMap[textValidation.textModel.applicationNumber];
       if (applicationData) {
-        businessValidationModel["applicationFound"] = true;
-        businessValidationModel["applicationBelongsToInstitution"] =
+        businessValidationModel.applicationFound = true;
+        businessValidationModel.applicationBelongsToInstitution =
           allowedLocationIds.includes(applicationData.locationId);
-        businessValidationModel["validSIN"] =
+        businessValidationModel.studentSINMatch =
           textValidation.textModel.sin === applicationData.sin;
-        businessValidationModel["hasCorrectInstitutionCode"] =
+        businessValidationModel.hasCorrectInstitutionCode =
           textHeader.originator === applicationData.locationCode;
-        businessValidationModel["isArchived"] = applicationData.isArchived;
-        businessValidationModel["applicationStatus"] =
+        businessValidationModel.isArchived = applicationData.isArchived;
+        businessValidationModel.applicationStatus =
           applicationData.applicationStatus;
-        businessValidationModel["hasPreviouslyBeenWithdrawn"] =
+        businessValidationModel.hasPreviouslyBeenWithdrawn =
           applicationData.hasPreviouslyBeenWithdrawn;
-        businessValidationModel["isRecordMatch"] =
-          businessValidationModel["applicationBelongsToInstitution"] &&
-          businessValidationModel["validSIN"];
+        businessValidationModel.isRecordMatch =
+          businessValidationModel.applicationBelongsToInstitution &&
+          businessValidationModel.studentSINMatch;
       } else {
-        businessValidationModel["applicationFound"] = false;
+        businessValidationModel.applicationFound = false;
       }
-      businessValidationModel["recordType"] =
-        textValidation.textModel.recordType;
-      businessValidationModel["sin"] = textValidation.textModel.sin;
-      businessValidationModel["applicationNumber"] =
+      businessValidationModel.recordType = textValidation.textModel.recordType;
+      businessValidationModel.sin = textValidation.textModel.sin;
+      businessValidationModel.applicationNumber =
         textValidation.textModel.applicationNumber;
-      businessValidationModel["withdrawalDate"] =
+      businessValidationModel.withdrawalDate =
         textValidation.textModel.withdrawalDate;
       businessValidationModels.push(businessValidationModel);
     });
@@ -97,11 +100,11 @@ export class ApplicationBulkWithdrawalImportBusinessService extends RecordDataMo
    * @param institutionId institution id.
    * @returns applications containing the required information.
    */
-  async getSINForApplications(
+  private async getApplicationBulkWithdrawalValidationDetails(
     applicationNumbers: string[],
     institutionId: number,
   ): Promise<Application[]> {
-    return await this.repo.find({
+    return this.applicationRepo.find({
       select: {
         id: true,
         applicationNumber: true,

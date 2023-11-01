@@ -20,20 +20,14 @@ import {
   DataTextHeaders,
   RecordType,
 } from "./application-bulk-withdrawal-import-text.models";
+import { IsValidSIN } from "../../utilities/class-validation";
 
 const userFriendlyNames = {
   application: "Application",
-  applicationFound: "Application found",
-  applicationBelongsToInstitution: "Application belongs to institution",
-  validSIN: "Valid SIN",
-  hasCorrectInstitutionCode: "Has correct institution code",
   institutionCode: "The institution code",
-  hasPreviouslyBeenWithdrawn: "Has previously been withdrawn",
   applicationStatus: "Application status",
   isCompleted: "be completed",
-  isArchived: "Is archived",
   archived: "archived",
-  recordMatch: "Record match",
   record: "The record was not found",
 };
 
@@ -108,12 +102,9 @@ export class ApplicationBulkWithdrawalImportBusinessValidationModel {
     (object: ApplicationBulkWithdrawalImportBusinessValidationModel) =>
       object.applicationFound,
   )
-  @IsNumberString(
-    { no_symbols: true },
-    {
-      message: `${DataTextHeaders.sin} must be a valid number.`,
-    },
-  )
+  @IsValidSIN({
+    message: `${DataTextHeaders.sin} must be a valid SIN.`,
+  })
   @Length(SIN_NUMBER_LENGTH, SIN_NUMBER_LENGTH, {
     message: `${DataTextHeaders.sin} must be of length ${SIN_NUMBER_LENGTH}.`,
   })
@@ -149,9 +140,6 @@ export class ApplicationBulkWithdrawalImportBusinessValidationModel {
   /**
    * Application found.
    */
-  @IsBoolean({
-    message: `${userFriendlyNames.applicationFound} must be a boolean value.`,
-  })
   @IsIn([true], {
     message: `${userFriendlyNames.application} is not present in SIMS and is a part of the SFAS system.`,
     context: ValidationContext.CreateWarning(
@@ -166,9 +154,6 @@ export class ApplicationBulkWithdrawalImportBusinessValidationModel {
     (object: ApplicationBulkWithdrawalImportBusinessValidationModel) =>
       object.applicationFound,
   )
-  @IsBoolean({
-    message: `${userFriendlyNames.applicationBelongsToInstitution}  must be a boolean value.`,
-  })
   @IsIn([true], {
     message: `${userFriendlyNames.application} does not belong to this institution.`,
   })
@@ -180,10 +165,7 @@ export class ApplicationBulkWithdrawalImportBusinessValidationModel {
     (object: ApplicationBulkWithdrawalImportBusinessValidationModel) =>
       object.applicationFound,
   )
-  @IsBoolean({
-    message: `${userFriendlyNames.validSIN} must be a boolean value.`,
-  })
-  validSIN: boolean;
+  studentSINMatch: boolean;
   /**
    * Has correct institution code.
    */
@@ -191,9 +173,6 @@ export class ApplicationBulkWithdrawalImportBusinessValidationModel {
     (object: ApplicationBulkWithdrawalImportBusinessValidationModel) =>
       object.applicationFound,
   )
-  @IsBoolean({
-    message: `${userFriendlyNames.hasCorrectInstitutionCode} must be a boolean value.`,
-  })
   @IsIn([true], {
     message: `${userFriendlyNames.institutionCode} provided is incorrect.`,
   })
@@ -217,9 +196,6 @@ export class ApplicationBulkWithdrawalImportBusinessValidationModel {
     (object: ApplicationBulkWithdrawalImportBusinessValidationModel) =>
       object.applicationFound,
   )
-  @IsBoolean({
-    message: `${userFriendlyNames.isArchived} must be a boolean value.`,
-  })
   @IsIn([false], {
     message: `Application is already ${userFriendlyNames.archived} and cannot be withdrawn.`,
   })
@@ -231,9 +207,6 @@ export class ApplicationBulkWithdrawalImportBusinessValidationModel {
     (object: ApplicationBulkWithdrawalImportBusinessValidationModel) =>
       object.applicationFound,
   )
-  @IsBoolean({
-    message: `The ${userFriendlyNames.hasPreviouslyBeenWithdrawn} must be a boolean value.`,
-  })
   @IsIn([false], {
     message: (validationArguments: ValidationArguments) =>
       `The ${userFriendlyNames.application} is already withdrawn with the date: ${validationArguments.object["withdrawalDate"]}.`,
@@ -249,9 +222,6 @@ export class ApplicationBulkWithdrawalImportBusinessValidationModel {
     (object: ApplicationBulkWithdrawalImportBusinessValidationModel) =>
       object.applicationFound,
   )
-  @IsBoolean({
-    message: `${userFriendlyNames.recordMatch} must be a boolean value.`,
-  })
   @IsIn([true], {
     message: `${userFriendlyNames.record} and will be skipped.`,
     context: ValidationContext.CreateWarning(

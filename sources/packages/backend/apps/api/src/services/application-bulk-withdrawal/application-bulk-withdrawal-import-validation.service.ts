@@ -12,7 +12,7 @@ import { flattenErrors } from "../../utilities/class-validation";
 import { CustomNamedError } from "@sims/utilities";
 import {
   APPLICATION_BULK_WITHDRAWAL_VALIDATION_CRITICAL_ERROR,
-  APPLICATION_WITHDRAWAL_BUSINESS_VALIDATION_ERROR,
+  APPLICATION_WITHDRAWAL_VALIDATION_ERROR,
 } from "../../constants";
 import { ApiProcessError } from "../../types";
 import { ApplicationBulkWithdrawalValidationResultAPIOutDTO } from "../../route-controllers/student-scholastic-standings/models/student-scholastic-standings.dto";
@@ -21,7 +21,7 @@ import { ApplicationBulkWithdrawalValidationResultAPIOutDTO } from "../../route-
  * Executes the validations on an offering model.
  */
 @Injectable()
-export class ApplicationBulkWithdrawalImportBusinessValidationService {
+export class ApplicationBulkWithdrawalImportValidationService {
   /**
    * Validate offering models and provide the result for every model.
    * @param businessValidationModels application bulk withdrawal business validation models to be validated.
@@ -30,7 +30,7 @@ export class ApplicationBulkWithdrawalImportBusinessValidationService {
    * @returns validation result or an exception in the case of a failed validation
    * combined with the silently parameter defined as false.
    */
-  validateApplicationBulkWithdrawalBusinessModels(
+  validateApplicationBulkWithdrawalModels(
     businessValidationModels: ApplicationBulkWithdrawalImportBusinessValidationModel[],
     silently = false,
   ): ApplicationWithdrawalValidationResult[] {
@@ -77,7 +77,7 @@ export class ApplicationBulkWithdrawalImportBusinessValidationService {
    * a BadRequestException in case of some failure.
    * @param businessValidationsResult business validation results to be verified.
    */
-  assertBusinessValidationsAreValid(
+  assertValidationsAreValid(
     businessValidationsResult: ApplicationWithdrawalValidationResult[],
   ) {
     const businessValidations = businessValidationsResult.filter(
@@ -104,7 +104,7 @@ export class ApplicationBulkWithdrawalImportBusinessValidationService {
       throw new BadRequestException(
         new ApiProcessError(
           "One or more fields have validation errors.",
-          APPLICATION_WITHDRAWAL_BUSINESS_VALIDATION_ERROR,
+          APPLICATION_WITHDRAWAL_VALIDATION_ERROR,
           errorValidationResults,
         ),
       );

@@ -152,7 +152,7 @@ export const APPLICATION_WITHDRAWAL_INVALID_TEXT_FILE_ERROR =
   "APPLICATION_WITHDRAWAL_INVALID_TEXT_FILE_ERROR";
 /**
  * An error was found during the application bulk withdrawal validation and the process
- * must be stopped. Every offering validation will generate an error but
+ * must be stopped. Every application bulk withdrawal validation can generate an error but
  * some errors are classified as warnings and therefore are not considered
  * critical, which means that critical errors are the only ones that will
  * cause the process to be interrupted.
@@ -162,5 +162,5 @@ export const APPLICATION_BULK_WITHDRAWAL_VALIDATION_CRITICAL_ERROR =
 /**
  * One or more application withdrawal business validation errors have occurred.
  */
-export const APPLICATION_WITHDRAWAL_BUSINESS_VALIDATION_ERROR =
-  "APPLICATION_WITHDRAWAL_BUSINESS_VALIDATION_ERROR";
+export const APPLICATION_WITHDRAWAL_VALIDATION_ERROR =
+  "APPLICATION_WITHDRAWAL_VALIDATION_ERROR";

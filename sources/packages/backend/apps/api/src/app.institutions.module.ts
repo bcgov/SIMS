@@ -29,8 +29,8 @@ import {
   StudentAppealRequestsService,
   ApplicationOfferingChangeRequestService,
   ApplicationWithdrawalImportTextService,
-  ApplicationBulkWithdrawalImportBusinessService,
-  ApplicationBulkWithdrawalImportBusinessValidationService,
+  ApplicationBulkWithdrawalImportService,
+  ApplicationBulkWithdrawalImportValidationService,
 } from "./services";
 import {
   ApplicationControllerService,
@@ -168,8 +168,8 @@ import {
     ApplicationOfferingChangeRequestService,
     ApplicationOfferingChangeRequestControllerService,
     ApplicationWithdrawalImportTextService,
-    ApplicationBulkWithdrawalImportBusinessService,
-    ApplicationBulkWithdrawalImportBusinessValidationService,
+    ApplicationBulkWithdrawalImportService,
+    ApplicationBulkWithdrawalImportValidationService,
   ],
 })
 export class AppInstitutionsModule {}
