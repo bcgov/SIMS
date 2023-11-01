@@ -1,5 +1,4 @@
 import {
-  Equals,
   IsDate,
   IsEnum,
   IsIn,
@@ -17,7 +16,6 @@ import {
   ApplicationBulkWithdrawalHeader,
   ApplicationWithdrawalImportTextModel,
   DataTextHeaders,
-  RecordType,
 } from "./application-bulk-withdrawal-import-text.models";
 import { IsValidSIN } from "../../utilities/class-validation";
 
