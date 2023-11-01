@@ -14,6 +14,7 @@ import {
 } from "./application-bulk-withdrawal-import-text.models";
 import { APPLICATION_WITHDRAWAL_INVALID_TEXT_FILE_ERROR } from "../../constants";
 import { CustomNamedError } from "@sims/utilities";
+import { FileData } from "./application-bulk-withdrawal-import-business-validation.models";
 
 /**
  * Handles the application withdrawal bulk insert preparation.
@@ -25,7 +26,7 @@ export class ApplicationWithdrawalImportTextService {
    * @param textContent text content to generate the models.
    * @returns text object models.
    */
-  readText(textContent: string): ApplicationWithdrawalImportTextModel[] {
+  readText(textContent: string): FileData {
     const applicationWithdrawalModels: ApplicationWithdrawalImportTextModel[] =
       [];
     // Remove BOM(Byte order mark), if present.
@@ -84,7 +85,7 @@ export class ApplicationWithdrawalImportTextService {
         data.applicationNumber;
       applicationWithdrawalImportTextModel.withdrawalDate = data.withdrawalDate;
     });
-    return applicationWithdrawalModels;
+    return { header, applicationWithdrawalModels };
   }
 
   /**

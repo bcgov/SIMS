@@ -8,6 +8,7 @@ import {
 import { ApplicationBulkWithdrawal } from "@/types/contracts/institution/ScholasticStanding";
 import { FileUploadProgressEventArgs } from "./http/common/FileUploadProgressEvent";
 import {
+  APPLICATION_WITHDRAWAL_BUSINESS_VALIDATION_ERROR,
   APPLICATION_WITHDRAWAL_INVALID_TEXT_FILE_ERROR,
   APPLICATION_WITHDRAWAL_TEXT_CONTENT_FORMAT_ERROR,
 } from "@/constants";
@@ -100,6 +101,7 @@ export class ScholasticStandingService {
       const bulkInsertValidationErrorTypes = [
         APPLICATION_WITHDRAWAL_TEXT_CONTENT_FORMAT_ERROR,
         APPLICATION_WITHDRAWAL_INVALID_TEXT_FILE_ERROR,
+        APPLICATION_WITHDRAWAL_BUSINESS_VALIDATION_ERROR,
       ];
       if (
         error instanceof ApiProcessError &&

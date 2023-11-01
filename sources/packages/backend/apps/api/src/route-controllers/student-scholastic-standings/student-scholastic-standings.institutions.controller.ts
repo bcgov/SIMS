@@ -32,6 +32,8 @@ import {
   APPLICATION_NOT_FOUND,
   ASSESSMENT_ALREADY_IN_PROGRESS,
   ApplicationWithdrawalImportTextService,
+  ApplicationBulkWithdrawalImportBusinessService,
+  ApplicationBulkWithdrawalImportBusinessValidationService,
   FormService,
   INVALID_OPERATION_IN_THE_CURRENT_STATUS,
   StudentScholasticStandingsService,
@@ -62,6 +64,7 @@ import {
 } from "../../utilities";
 import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
 import {
+  ApplicationBulkWithdrawalHeader,
   ApplicationWithdrawalImportTextModel,
   ApplicationWithdrawalTextValidationResult,
 } from "../../services/application-bulk-withdrawal/application-bulk-withdrawal-import-text.models";
@@ -78,6 +81,8 @@ export class ScholasticStandingInstitutionsController extends BaseController {
     private readonly studentScholasticStandingsService: StudentScholasticStandingsService,
     private readonly scholasticStandingControllerService: ScholasticStandingControllerService,
     private readonly applicationWithdrawalImportTextService: ApplicationWithdrawalImportTextService,
+    private readonly applicationWithdrawalImportBusinessService: ApplicationBulkWithdrawalImportBusinessService,
+    private readonly applicationWithdrawalImportBusinessValidationService: ApplicationBulkWithdrawalImportBusinessValidationService,
   ) {
     super();
   }
@@ -196,14 +201,23 @@ export class ScholasticStandingInstitutionsController extends BaseController {
     @UploadedFile() file: Express.Multer.File,
     @Query("validation-only", new DefaultValuePipe(false), ParseBoolPipe)
     validationOnly: boolean,
+    @UserToken() userToken: IInstitutionUserToken,
   ): Promise<PrimaryIdentifierAPIOutDTO[]> {
     // Read the entire file content.
     const fileContent = file.buffer.toString();
+    // Get the file header model.
+    let textHeader: ApplicationBulkWithdrawalHeader;
     // Convert the file raw content into text models.
     let textModels: ApplicationWithdrawalImportTextModel[];
     try {
+      textHeader =
+        this.applicationWithdrawalImportTextService.readText(
+          fileContent,
+        ).header;
       textModels =
-        this.applicationWithdrawalImportTextService.readText(fileContent);
+        this.applicationWithdrawalImportTextService.readText(
+          fileContent,
+        ).applicationWithdrawalModels;
     } catch (error: unknown) {
       if (
         error instanceof CustomNamedError &&
@@ -234,8 +248,22 @@ export class ScholasticStandingInstitutionsController extends BaseController {
       );
     // Assert successful validation.
     this.assertTextValidationsAreValid(textValidations);
-    // TODO Add business validation for application bulk withdrawal.
-
+    const businessValidationModels =
+      await this.applicationWithdrawalImportBusinessService.generateBusinessValidationModels(
+        textValidations,
+        textHeader,
+        userToken.authorizations.institutionId,
+        userToken.authorizations.adminLocationsIds,
+      );
+    // Validate all the application bulk withdrawal models.
+    const applicationBulkWithdrawalBusinessValidations =
+      this.applicationWithdrawalImportBusinessValidationService.validateApplicationBulkWithdrawalBusinessModels(
+        businessValidationModels,
+        true,
+      );
+    this.applicationWithdrawalImportBusinessValidationService.assertBusinessValidationsAreValid(
+      applicationBulkWithdrawalBusinessValidations,
+    );
     if (validationOnly) {
       // If the endpoint is called only to perform the validation and no error was found
       // return an empty array because no record will be created.
