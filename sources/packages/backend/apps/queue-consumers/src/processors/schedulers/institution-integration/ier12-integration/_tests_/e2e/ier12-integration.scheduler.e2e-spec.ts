@@ -81,7 +81,8 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
 
   beforeEach(async () => {
     jest.clearAllMocks();
-    // Update all applications to Overwritten.
+    // Update all applications to Overwritten to ensure the SQL query to get the IER12 records will
+    // select only the records created to the test scenarios in this file.
     await db.application.update(
       { applicationStatus: Not(ApplicationStatus.Overwritten) },
       { applicationStatus: ApplicationStatus.Overwritten },
