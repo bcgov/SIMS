@@ -1,5 +1,4 @@
 import { Injectable } from "@nestjs/common";
-import { LoggerService, InjectLogger } from "@sims/utilities/logger";
 import {
   ApplicationBulkWithdrawalHeader,
   ApplicationWithdrawalTextValidationResult,
@@ -12,7 +11,8 @@ import {
 } from "./application-bulk-withdrawal-import-business-validation.models";
 import { InjectRepository } from "@nestjs/typeorm";
 
-type ApplicationSINDataMap = Record<string, ApplicationData>;
+type ApplicationDataMap = Record<string, ApplicationData>;
+
 /**
  * Handles the application withdrawal bulk insert preparation.
  */
@@ -38,17 +38,17 @@ export class ApplicationBulkWithdrawalImportService {
     institutionId: number,
     allowedLocationIds: number[],
   ): Promise<ApplicationBulkWithdrawalImportBusinessValidationModel[]> {
-    const applicationSINDataMap: ApplicationSINDataMap = {};
+    const applicationDataMap: ApplicationDataMap = {};
     const applicationNumbers = textValidations.map(
       (textValidation) => textValidation.textModel.applicationNumber,
     );
-    const applicationSINData =
+    const applicationData =
       await this.getApplicationBulkWithdrawalValidationDetails(
         applicationNumbers,
         institutionId,
       );
-    applicationSINData.forEach((record) => {
-      applicationSINDataMap[record.applicationNumber] = {
+    applicationData.forEach((record) => {
+      applicationDataMap[record.applicationNumber] = {
         applicationStatus: record.applicationStatus,
         isArchived: record.isArchived,
         sin: record.student.sinValidation.sin,
@@ -63,7 +63,7 @@ export class ApplicationBulkWithdrawalImportService {
       const businessValidationModel =
         {} as ApplicationBulkWithdrawalImportBusinessValidationModel;
       const applicationData =
-        applicationSINDataMap[textValidation.textModel.applicationNumber];
+        applicationDataMap[textValidation.textModel.applicationNumber];
       if (applicationData) {
         businessValidationModel.applicationFound = true;
         businessValidationModel.applicationBelongsToInstitution =
@@ -125,7 +125,4 @@ export class ApplicationBulkWithdrawalImportService {
       },
     });
   }
-
-  @InjectLogger()
-  logger: LoggerService;
 }
