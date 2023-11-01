@@ -5,34 +5,34 @@
  * @see https://k6.io/docs/using-k6/k6-options
  */
 import { check, sleep } from "k6";
-import { APPLICATION_SUBMISSION_PAYLOAD } from "./models";
 import {
-  createFormAuthHeader,
-  formSubmission,
-} from "../../../utils/form-io-api";
+  workflowAssessmentSubmission,
+  workflowPrepareAssessmentData,
+} from "../../utils/load-test-api/load-test-api";
 import { Options } from "k6/options";
+import execution from "k6/execution";
+
+const ITERATIONS = 100;
 
 interface SetupData {
-  formIOHeader: Record<string, string>;
+  assessmentIds: number[];
 }
 
-/**
- * Define test-run behavior.
- */
-export const options: Options = {
-  vus: 50,
-  duration: "60s",
-};
-
-/**
- * Set up data for processing, share data among VUs.
- * Part of the K6 life cycle.
- * @returns data to be consumed
- */
 export function setup(): SetupData {
-  const formIOHeader = createFormAuthHeader();
-  return { formIOHeader };
+  const assessmentIds = workflowPrepareAssessmentData(ITERATIONS);
+  return { assessmentIds };
 }
+
+export const options: Options = {
+  scenarios: {
+    submitAssessment: {
+      executor: "shared-iterations",
+      vus: 10,
+      iterations: ITERATIONS,
+      maxDuration: "1h",
+    },
+  },
+};
 
 /**
  * Test scenario to executed as many times as defined by the test options.
@@ -40,11 +40,10 @@ export function setup(): SetupData {
  * @param setupData setup data returned by setup method.
  */
 export default function (setupData: SetupData) {
-  const submitResponse = formSubmission(
-    "sfaa2023-24",
-    APPLICATION_SUBMISSION_PAYLOAD,
-    setupData.formIOHeader
-  );
+  const assessmentId =
+    setupData.assessmentIds[execution.scenario.iterationInTest];
+  console.log(assessmentId);
+  const submitResponse = workflowAssessmentSubmission(assessmentId);
   check(submitResponse, {
     "Created with success": (r) => r.status === 201,
   });
