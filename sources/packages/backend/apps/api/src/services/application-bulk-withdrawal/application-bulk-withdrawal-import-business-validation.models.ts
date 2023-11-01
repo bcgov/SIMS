@@ -7,6 +7,7 @@ import {
   IsNumberString,
   Length,
   ValidateIf,
+  ValidationArguments,
 } from "class-validator";
 import {
   APPLICATION_NUMBER_LENGTH,
@@ -234,7 +235,8 @@ export class ApplicationBulkWithdrawalImportBusinessValidationModel {
     message: `The ${userFriendlyNames.hasPreviouslyBeenWithdrawn} must be a boolean value.`,
   })
   @IsIn([false], {
-    message: `The ${userFriendlyNames.application} is already withdrawn.`,
+    message: (validationArguments: ValidationArguments) =>
+      `The ${userFriendlyNames.application} is already withdrawn with the date: ${validationArguments.object["withdrawalDate"]}.`,
     context: ValidationContext.CreateWarning(
       ApplicationWithdrawalValidationWarnings.HasPreviouslyBeenWithdrawn,
     ),
