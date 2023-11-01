@@ -227,11 +227,7 @@ export class ApplicationBulkWithdrawalImportBusinessValidationModel {
       object.applicationFound,
   )
   @IsBoolean({
-    message: () =>
-      `The ${userFriendlyNames.hasPreviouslyBeenWithdrawn} must be a boolean value.`,
-    context: ValidationContext.CreateWarning(
-      ApplicationWithdrawalValidationWarnings.HasPreviouslyBeenWithdrawn,
-    ),
+    message: `The ${userFriendlyNames.hasPreviouslyBeenWithdrawn} must be a boolean value.`,
   })
   @IsIn([false], {
     message: `The ${userFriendlyNames.application} is already withdrawn.`,
