@@ -42,7 +42,8 @@ import {
   WORKFLOW_DATA_SINGLE_INDEPENDENT_WITH_NO_DEPENDENTS,
 } from "./models/data-inputs";
 import { numberToText, getSuccessSummaryMessages } from "./utils/string-utils";
-import { createIER12SchedulerJobMock, isValidFileTimestamp } from "./utils";
+import { createIER12SchedulerJobMock } from "./utils";
+import { isValidFileTimestamp } from "@sims/test-utils/utils";
 
 describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
   let app: INestApplication;
@@ -145,8 +146,6 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
 
     // Act
     const ier12Results = await processor.processIER12File(job);
-    db.application.createQueryBuilder();
-
     // Assert
     const uploadedFile = getUploadedFile(sftpClientMock);
     // Assert process result.
