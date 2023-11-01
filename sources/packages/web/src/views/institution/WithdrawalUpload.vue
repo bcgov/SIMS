@@ -290,7 +290,6 @@ export default defineComponent({
       BannerTypes,
       uploadForm,
       ACCEPTED_FILE_TYPE,
-      //textFileUploadKey,
       ApplicationWithdrawalUploadHeaders,
       showPossibleFileChangeError,
       uploadProgress,
