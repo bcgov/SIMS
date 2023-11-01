@@ -76,10 +76,6 @@ export class ApplicationBulkWithdrawalImportBusinessValidationModel {
   /**
    * SIN.
    */
-  @ValidateIf(
-    (object: ApplicationBulkWithdrawalImportBusinessValidationModel) =>
-      object.applicationFound,
-  )
   @IsValidSIN({
     message: `${DataTextHeaders.sin} must be a valid SIN.`,
   })
@@ -90,10 +86,6 @@ export class ApplicationBulkWithdrawalImportBusinessValidationModel {
   /**
    * Application Number.
    */
-  @ValidateIf(
-    (object: ApplicationBulkWithdrawalImportBusinessValidationModel) =>
-      object.applicationFound,
-  )
   @IsNumberString(
     { no_symbols: true },
     {
@@ -107,10 +99,6 @@ export class ApplicationBulkWithdrawalImportBusinessValidationModel {
   /**
    * Withdrawal Date.
    */
-  @ValidateIf(
-    (object: ApplicationBulkWithdrawalImportBusinessValidationModel) =>
-      object.applicationFound,
-  )
   @IsDate({
     message: `${DataTextHeaders.withdrawalDate} must be a valid withdrawal date.`,
   })
