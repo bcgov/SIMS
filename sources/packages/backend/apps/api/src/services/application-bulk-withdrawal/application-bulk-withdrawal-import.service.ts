@@ -3,7 +3,7 @@ import {
   ApplicationBulkWithdrawalHeader,
   ApplicationWithdrawalTextValidationResult,
 } from "./application-bulk-withdrawal-import-text.models";
-import { DataSource, In, Repository } from "typeorm";
+import { In, Repository } from "typeorm";
 import { Application } from "@sims/sims-db";
 import {
   ApplicationBulkWithdrawalImportBusinessValidationModel,
@@ -19,7 +19,6 @@ type ApplicationDataMap = Record<string, ApplicationData>;
 @Injectable()
 export class ApplicationBulkWithdrawalImportService {
   constructor(
-    private readonly dataSource: DataSource,
     @InjectRepository(Application)
     private readonly applicationRepo: Repository<Application>,
   ) {}

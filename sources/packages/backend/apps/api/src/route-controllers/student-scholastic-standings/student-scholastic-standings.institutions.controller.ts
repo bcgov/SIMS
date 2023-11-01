@@ -64,7 +64,7 @@ import {
 } from "../../utilities";
 import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
 import { ApplicationWithdrawalTextValidationResult } from "../../services/application-bulk-withdrawal/application-bulk-withdrawal-import-text.models";
-import { FileData } from "../../services/application-bulk-withdrawal/application-bulk-withdrawal-import-business-validation.models";
+import { BulkWithdrawalFileData } from "../../services/application-bulk-withdrawal/application-bulk-withdrawal-import-business-validation.models";
 
 /**
  * Scholastic standing controller for institutions Client.
@@ -202,10 +202,9 @@ export class ScholasticStandingInstitutionsController extends BaseController {
   ): Promise<PrimaryIdentifierAPIOutDTO[]> {
     // Read the entire file content.
     const fileContent = file.buffer.toString();
-    // Get the file data.
-    let fileData: FileData;
+    let withdrawalFileData: BulkWithdrawalFileData;
     try {
-      fileData =
+      withdrawalFileData =
         this.applicationWithdrawalImportTextService.readText(fileContent);
     } catch (error: unknown) {
       if (
@@ -233,14 +232,14 @@ export class ScholasticStandingInstitutionsController extends BaseController {
     // Validate the text models.
     const textValidations =
       this.applicationWithdrawalImportTextService.validateTextModels(
-        fileData.applicationWithdrawalModels,
+        withdrawalFileData.applicationWithdrawalModels,
       );
     // Assert successful validation.
     this.assertTextValidationsAreValid(textValidations);
     const validationModels =
       await this.applicationWithdrawalImportService.generateApplicationBulkWithdrawalValidationModels(
         textValidations,
-        fileData.header,
+        withdrawalFileData.header,
         userToken.authorizations.institutionId,
         userToken.authorizations.adminLocationsIds,
       );

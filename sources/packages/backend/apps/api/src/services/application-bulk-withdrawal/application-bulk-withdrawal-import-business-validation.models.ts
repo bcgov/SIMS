@@ -122,7 +122,7 @@ export class ApplicationBulkWithdrawalImportBusinessValidationModel {
   @IsIn([true], {
     message: "The application does not belong to this institution.",
   })
-  applicationBelongsToInstitution: boolean;
+  applicationBelongsToInstitution?: boolean;
   /**
    * Valid SIN.
    */
@@ -130,7 +130,7 @@ export class ApplicationBulkWithdrawalImportBusinessValidationModel {
     (object: ApplicationBulkWithdrawalImportBusinessValidationModel) =>
       object.applicationFound,
   )
-  studentSINMatch: boolean;
+  studentSINMatch?: boolean;
   /**
    * Has correct institution code.
    */
@@ -141,7 +141,7 @@ export class ApplicationBulkWithdrawalImportBusinessValidationModel {
   @IsIn([true], {
     message: "The institution code provided is incorrect.",
   })
-  hasCorrectInstitutionCode: boolean;
+  hasCorrectInstitutionCode?: boolean;
   /**
    * Application Status.
    */
@@ -153,7 +153,7 @@ export class ApplicationBulkWithdrawalImportBusinessValidationModel {
   @IsIn([ApplicationStatus.Completed], {
     message: `The application is not in the ${ApplicationStatus.Completed} status.`,
   })
-  applicationStatus: ApplicationStatus;
+  applicationStatus?: ApplicationStatus;
   /**
    * Application archived.
    */
@@ -164,7 +164,7 @@ export class ApplicationBulkWithdrawalImportBusinessValidationModel {
   @IsIn([false], {
     message: `Application is already archived and cannot be withdrawn.`,
   })
-  isArchived: boolean;
+  isArchived?: boolean;
   /**
    * Has previously been withdrawn.
    */
@@ -179,7 +179,7 @@ export class ApplicationBulkWithdrawalImportBusinessValidationModel {
       ApplicationWithdrawalValidationWarnings.HasPreviouslyBeenWithdrawn,
     ),
   })
-  hasPreviouslyBeenWithdrawn: boolean;
+  hasPreviouslyBeenWithdrawn?: boolean;
   /**
    * Is record match .ie. SIN, application number and institution must match a record in database.
    */
@@ -193,13 +193,13 @@ export class ApplicationBulkWithdrawalImportBusinessValidationModel {
       ApplicationWithdrawalValidationWarnings.NoMatchingRecordFound,
     ),
   })
-  isRecordMatch: boolean;
+  isRecordMatch?: boolean;
 }
 
 /**
  * Application bulk withdrawal header and data models.
  */
-export interface FileData {
+export interface BulkWithdrawalFileData {
   header: ApplicationBulkWithdrawalHeader;
   applicationWithdrawalModels: ApplicationWithdrawalImportTextModel[];
 }
