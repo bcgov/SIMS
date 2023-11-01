@@ -26,6 +26,7 @@ const userFriendlyNames = {
   applicationBelongsToInstitution: "Application belongs to institution",
   validSIN: "Valid SIN",
   hasCorrectInstitutionCode: "Has correct institution code",
+  hasPreviouslyBeenWithdrawn: "Has previously been withdrawn",
   applicationStatus: "Application status",
   isCompleted: "be completed",
   isArchived: "Is archived",
@@ -226,7 +227,14 @@ export class ApplicationBulkWithdrawalImportBusinessValidationModel {
       object.applicationFound,
   )
   @IsBoolean({
-    message: () => `The ${userFriendlyNames.application} is already withdrawn.`,
+    message: () =>
+      `The ${userFriendlyNames.hasPreviouslyBeenWithdrawn} must be a boolean value.`,
+    context: ValidationContext.CreateWarning(
+      ApplicationWithdrawalValidationWarnings.HasPreviouslyBeenWithdrawn,
+    ),
+  })
+  @IsIn([false], {
+    message: `The ${userFriendlyNames.application} is already withdrawn.`,
     context: ValidationContext.CreateWarning(
       ApplicationWithdrawalValidationWarnings.HasPreviouslyBeenWithdrawn,
     ),
