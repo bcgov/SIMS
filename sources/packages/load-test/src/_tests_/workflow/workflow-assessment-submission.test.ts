@@ -12,7 +12,7 @@ import {
 import { Options } from "k6/options";
 import execution from "k6/execution";
 
-const ITERATIONS = 100;
+const ITERATIONS = 500;
 
 interface SetupData {
   assessmentIds: number[];
@@ -32,6 +32,7 @@ export const options: Options = {
       maxDuration: "1h",
     },
   },
+  setupTimeout: "10m",
 };
 
 /**
@@ -42,7 +43,7 @@ export const options: Options = {
 export default function (setupData: SetupData) {
   const assessmentId =
     setupData.assessmentIds[execution.scenario.iterationInTest];
-  console.log(assessmentId);
+  console.log("starting assessment for", assessmentId);
   const submitResponse = workflowAssessmentSubmission(assessmentId);
   check(submitResponse, {
     "Created with success": (r) => r.status === 201,
