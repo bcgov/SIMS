@@ -15,7 +15,7 @@ on:
 
 jobs:
   recoverRedis:
-    name: Deploy secrets to Openshift
+    name: Redis recovery in Openshift
     runs-on: ubuntu-latest
     environment: ${{ inputs.environment }}
     env:
@@ -31,7 +31,7 @@ jobs:
       - name: Log in to OpenShift
         run: |
           oc login --token=${{ secrets.SA_TOKEN }} --server=https://api.silver.devops.gov.bc.ca:6443
-      - name: Update secrets
+      - name: Redis cluster meet
         working-directory: "./devops/"
         run: |
           make redis-cluster-meet
