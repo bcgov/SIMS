@@ -14,7 +14,7 @@ on:
         default: ""
 
 jobs:
-  updateSecrets:
+  recoverRedis:
     name: Deploy secrets to Openshift
     runs-on: ubuntu-latest
     environment: ${{ inputs.environment }}
