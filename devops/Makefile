@@ -22,6 +22,7 @@ export BYPASS_CRA_INCOME_VERIFICATION := $(or $(BYPASS_CRA_INCOME_VERIFICATION),
 export BYPASS_APPLICATION_SUBMIT_VALIDATIONS := $(or $(BYPASS_APPLICATION_SUBMIT_VALIDATIONS), false)
 export SWAGGER_ENABLED := $(or ${SWAGGER_ENABLED}, true)
 export APPLICATION_ARCHIVE_DAYS := $(or ${APPLICATION_ARCHIVE_DAYS}, 43)
+export REDIS_PORT := $(or ${REDIS_PORT}, 6379)
 export API_PORT := $(or ${API_PORT}, 7070)
 export QUEUE_CONSUMERS_PORT := $(or ${QUEUE_CONSUMERS_PORT}, 7000)
 export WEB_PORT := $(or ${WEB_PORT}, 3030)
@@ -288,14 +289,14 @@ deploy-redis:
 # Make sure that all the redis pods are up and running before initializing the cluster.
 init-redis-cluster:
 	REDIS_PASSWORD=$$(oc get secret -n $(NAMESPACE) redis-creds -o jsonpath='{.data.password}' | base64 -d); \
-	REDIS_NODES=$$(oc get pods -n $(NAMESPACE) -l app=redis -o jsonpath='{range .items[*]}{.status.podIP}:6379 ' | sed 's/ :6379 $$/ /'); \
+	REDIS_NODES=$$(oc get pods -n $(NAMESPACE) -l app=redis -o jsonpath='{range .items[*]}{.status.podIP}:$(REDIS_PORT) ' | sed 's/ :$(REDIS_PORT) $$/ /'); \
 	oc exec -n $(NAMESPACE) -it redis-0 -- redis-cli -a $$REDIS_PASSWORD --cluster create $$REDIS_NODES --cluster-replicas 1
 
 # Command to tell one Redis node to connect to another node and join the cluster. 
 # This is typically done when you are setting up a Redis Cluster or adding new nodes to an existing cluster to ensure they are aware of each other and can communicate effectively.
 redis-cluster-meet:
 	REDIS_PASSWORD=$$(oc get secret -n $(NAMESPACE) redis-creds -o jsonpath='{.data.password}' | base64 -d); \
-  oc get pods -n $(NAMESPACE) -l app=redis -o jsonpath='{range.items[*]}{.status.podIP} 6379 {end}' | xargs -n2 oc exec -n $(NAMESPACE) -it redis-0 -- redis-cli -a $$REDIS_PASSWORD -c CLUSTER MEET
+  oc get pods -n $(NAMESPACE) -l app=redis -o jsonpath='{range.items[*]}{.status.podIP} $(REDIS_PORT) {end}' | xargs -n2 oc exec -n $(NAMESPACE) -it redis-0 -- redis-cli -a $$REDIS_PASSWORD -c CLUSTER MEET
 
 create-db:
 	test -n $(DB_NAME)
