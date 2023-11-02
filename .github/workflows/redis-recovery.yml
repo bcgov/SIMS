@@ -1,5 +1,5 @@
-name: Redis recovery to Openshift
-run-name: Redis recovery to Openshift from ${{ inputs.gitRef }} to ${{ inputs.environment }}
+name: Redis recovery in Openshift
+run-name: Redis recovery in Openshift from ${{ inputs.gitRef }} to ${{ inputs.environment }}
 
 on:
   workflow_dispatch:
