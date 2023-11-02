@@ -58,7 +58,7 @@ export class ApplicationBulkWithdrawalImportService {
     });
     const businessValidationModels: ApplicationBulkWithdrawalImportBusinessValidationModel[] =
       [];
-    textValidations.forEach((textValidation) => {
+    textValidations.map((textValidation) => {
       const businessValidationModel =
         {} as ApplicationBulkWithdrawalImportBusinessValidationModel;
       const applicationData =
