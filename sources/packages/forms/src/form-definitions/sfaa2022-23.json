@@ -10071,21 +10071,21 @@
               "breadcrumb": "default",
               "id": "ef3gfa",
               "addons": [],
-              "lazyLoad": false
+              "lazyLoad": false,
+              "tags": []
             },
             {
-              "label": "<strong>Were you ever a youth in continuing care or custody of a director of child welfare in BC (ward of the court – this means the provincial government is/was your legal guardian)? </strong>",
+              "label": "<strong>Were you ever considered a child or youth under government care?</strong>",
               "labelPosition": "top",
               "labelWidth": "",
               "labelMargin": "",
               "optionsLabelPosition": "right",
               "description": "",
-              "tooltip": "",
+              "tooltip": "Ministry of Children and Family Development (MCFD) or Indigenous Child and Family Service Agency [ICFSA] care, care through the Ministry of Social Development and Poverty Reduction [SDPR] Child in the Home of Relative Program or government care through a Canadian province or territory outside of B.C.",
               "customClass": "",
               "tabindex": "",
               "inline": false,
               "hidden": false,
-              "hideLabel": false,
               "autofocus": false,
               "disabled": false,
               "tableView": true,
@@ -10130,7 +10130,7 @@
               "tags": [],
               "properties": {},
               "conditional": {
-                "show": null,
+                "show": "",
                 "when": null,
                 "eq": "",
                 "json": ""
@@ -10168,6 +10168,71 @@
               "fieldSet": false,
               "id": "en74evs",
               "defaultValue": ""
+            },
+            {
+              "clearOnHide": false,
+              "key": "custodyOfChildWelfareInformationPanel",
+              "input": false,
+              "title": "Ever In The Care Or Custody Of A Director Of Child Welfare In B.C Panel",
+              "theme": "default",
+              "tableView": false,
+              "components": [
+                {
+                  "autofocus": false,
+                  "input": true,
+                  "tableView": true,
+                  "inputType": "radio",
+                  "label": "<strong>Are you, or were you at the time of your 19th birthday, in continuing care or custody of a director of child welfare in B.C.?</strong>",
+                  "key": "custodyOfChildWelfare",
+                  "values": [
+                    {
+                      "value": "yes",
+                      "label": "Yes",
+                      "shortcut": ""
+                    },
+                    {
+                      "value": "no",
+                      "label": "No",
+                      "shortcut": ""
+                    }
+                  ],
+                  "defaultValue": "",
+                  "protected": false,
+                  "fieldSet": false,
+                  "persistent": true,
+                  "hidden": false,
+                  "clearOnHide": true,
+                  "validate": {
+                    "required": false,
+                    "custom": "",
+                    "customPrivate": false
+                  },
+                  "type": "radio",
+                  "labelPosition": "top",
+                  "optionsLabelPosition": "right",
+                  "tags": [],
+                  "conditional": {
+                    "show": "true",
+                    "when": "youthInCare",
+                    "eq": "yes"
+                  },
+                  "properties": {},
+                  "lockKey": true,
+                  "tooltip": "This means that the provincial government is currently your legal guardian if you are younger than 19 or was your legal guardian at the time of your 19th birthday."
+                }
+              ],
+              "type": "panel",
+              "breadcrumb": "default",
+              "hideLabel": true,
+              "tags": [],
+              "conditional": {
+                "show": "true",
+                "when": "youthInCare",
+                "eq": "yes"
+              },
+              "properties": {},
+              "lockKey": true,
+              "isNew": false
             },
             {
               "label": "<strong>At the time of your course study start date, will you have been out of high school for 4 years?</strong>",
@@ -10366,6 +10431,241 @@
             }
           ],
           "id": "etmjo4"
+        },
+        {
+          "title": "Disability information panel",
+          "labelWidth": "",
+          "labelMargin": "",
+          "theme": "default",
+          "tooltip": "",
+          "customClass": "",
+          "collapsible": false,
+          "hidden": false,
+          "disabled": false,
+          "modalEdit": false,
+          "key": "disabilityInformationPanel",
+          "tags": [],
+          "properties": {},
+          "customConditional": "",
+          "conditional": {
+            "json": "",
+            "show": "",
+            "when": "",
+            "eq": ""
+          },
+          "logic": [],
+          "attributes": {},
+          "overlay": {
+            "style": "",
+            "page": "",
+            "left": "",
+            "top": "",
+            "width": "",
+            "height": ""
+          },
+          "type": "panel",
+          "label": "Panel",
+          "breadcrumb": "default",
+          "tabindex": "",
+          "input": false,
+          "placeholder": "",
+          "prefix": "",
+          "suffix": "",
+          "multiple": false,
+          "defaultValue": null,
+          "protected": false,
+          "unique": false,
+          "persistent": false,
+          "clearOnHide": false,
+          "refreshOn": "",
+          "redrawOn": "",
+          "tableView": false,
+          "dataGridLabel": false,
+          "labelPosition": "top",
+          "description": "",
+          "errorLabel": "",
+          "autofocus": false,
+          "dbIndex": false,
+          "customDefaultValue": "",
+          "calculateValue": "",
+          "calculateServer": false,
+          "widget": null,
+          "validateOn": "change",
+          "validate": {
+            "required": false,
+            "custom": "",
+            "customPrivate": false,
+            "strictDateValidation": false,
+            "multiple": false,
+            "unique": false
+          },
+          "allowCalculateOverride": false,
+          "encrypted": false,
+          "showCharCount": false,
+          "showWordCount": false,
+          "allowMultipleMasks": false,
+          "addons": [],
+          "tree": false,
+          "lazyLoad": false,
+          "components": [
+            {
+              "label": "HTML",
+              "labelWidth": "",
+              "labelMargin": "",
+              "tag": "h3",
+              "className": "category-header-medium primary-color",
+              "attrs": [
+                {
+                  "attr": "",
+                  "value": ""
+                }
+              ],
+              "content": "Disability Information",
+              "refreshOnChange": false,
+              "customClass": "",
+              "hidden": false,
+              "modalEdit": false,
+              "key": "html122",
+              "tags": [],
+              "properties": {},
+              "conditional": {
+                "show": "",
+                "when": null,
+                "eq": "",
+                "json": ""
+              },
+              "customConditional": "",
+              "logic": [],
+              "attributes": {},
+              "overlay": {
+                "style": "",
+                "page": "",
+                "left": "",
+                "top": "",
+                "width": "",
+                "height": ""
+              },
+              "type": "htmlelement",
+              "input": false,
+              "tableView": false,
+              "placeholder": "",
+              "prefix": "",
+              "suffix": "",
+              "multiple": false,
+              "defaultValue": null,
+              "protected": false,
+              "unique": false,
+              "persistent": false,
+              "clearOnHide": true,
+              "refreshOn": "",
+              "redrawOn": "",
+              "dataGridLabel": false,
+              "labelPosition": "top",
+              "description": "",
+              "errorLabel": "",
+              "tooltip": "",
+              "hideLabel": false,
+              "tabindex": "",
+              "disabled": false,
+              "autofocus": false,
+              "dbIndex": false,
+              "customDefaultValue": "",
+              "calculateValue": "",
+              "calculateServer": false,
+              "widget": null,
+              "validateOn": "change",
+              "validate": {
+                "required": false,
+                "custom": "",
+                "customPrivate": false,
+                "strictDateValidation": false,
+                "multiple": false,
+                "unique": false
+              },
+              "allowCalculateOverride": false,
+              "encrypted": false,
+              "showCharCount": false,
+              "showWordCount": false,
+              "allowMultipleMasks": false,
+              "addons": [],
+              "id": "e7vkza"
+            },
+            {
+              "autofocus": false,
+              "input": true,
+              "tableView": true,
+              "inputType": "radio",
+              "label": "<strong>Are you a student with disabilities and wish to be assessed for disability funding?</strong>",
+              "key": "applicationPDPPDStatus",
+              "values": [
+                {
+                  "value": "yes",
+                  "label": "Yes, I have a disability and want this application to be assessed for disability funding.",
+                  "shortcut": ""
+                },
+                {
+                  "value": "noIWantToAccessOtherFundingTypes",
+                  "label": "No, I want to access other funding types while I wait for a verification decision.",
+                  "shortcut": ""
+                },
+                {
+                  "value": "noIDoNotHaveADisability",
+                  "label": "No, I do not have a disability.",
+                  "shortcut": ""
+                }
+              ],
+              "defaultValue": "",
+              "protected": false,
+              "fieldSet": false,
+              "persistent": true,
+              "hidden": false,
+              "clearOnHide": true,
+              "validate": {
+                "required": true,
+                "onlyAvailableItems": true,
+                "custom": "",
+                "customPrivate": false
+              },
+              "type": "radio",
+              "labelPosition": "top",
+              "optionsLabelPosition": "right",
+              "tags": [],
+              "conditional": {
+                "show": "",
+                "when": null,
+                "eq": ""
+              },
+              "properties": {},
+              "lockKey": true
+            },
+            {
+              "key": "disabilityInformationPanelContent",
+              "label": "Content",
+              "input": false,
+              "tag": "p",
+              "attrs": [
+                {
+                  "value": "",
+                  "attr": ""
+                }
+              ],
+              "className": "alert alert-info fa fa-info-circle",
+              "content": "<strong> Info!</strong><br /> A student cannot receive funding until StudentAidBC has verified your disability status.",
+              "type": "htmlelement",
+              "hideLabel": false,
+              "tags": [],
+              "conditional": {
+                "show": "true",
+                "when": "applicationPDPPDStatus",
+                "eq": "yes"
+              },
+              "properties": {},
+              "customClass": "banner-info"
+            }
+          ],
+          "id": "erpkbb",
+          "hideLabel": true,
+          "lockKey": true
         },
         {
           "title": "Emplyment information panel",
@@ -15296,7 +15596,7 @@
           "encrypted": false,
           "redrawOn": "data",
           "customDefaultValue": "",
-          "calculateValue": "if (data.hasDependents === 'no' && (data.relationshipStatus === 'single') && data.outOfHighSchoolFor4Years === 'no' && data.howWillYouBeAttendingTheProgram === \"Full Time\") {\n  instance.setValue (true);\n}\nelse {\n  instance.setValue (false);\n}",
+          "calculateValue": "if (\r\n  data.hasDependents === \"no\" &&\r\n  data.relationshipStatus === \"single\" &&\r\n  data.outOfHighSchoolFor4Years === \"no\" &&\r\n  data.howWillYouBeAttendingTheProgram === \"Full Time\" &&\r\n  data.custodyOfChildWelfare !== \"yes\"\r\n) {\r\n  instance.setValue(true);\r\n} else {\r\n  instance.setValue(false);\r\n}\r\n",
           "calculateServer": true,
           "key": "showParentInformation",
           "tags": [],

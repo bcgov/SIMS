@@ -273,7 +273,6 @@ export class AssessmentController {
           institutionLocation?.data.address?.provinceState,
       },
       student: {
-        studentPDStatus: application.student.studentPDVerified,
         craReportedIncome: studentCRAIncome?.craReportedIncome,
         taxYear: studentCRAIncome?.taxYear,
       },
