@@ -17,7 +17,11 @@ import {
   ApplicationWithdrawalImportTextModel,
   DataTextHeaders,
 } from "./application-bulk-withdrawal-import-text.models";
-import { IsValidSIN, ValidationResult } from "../../utilities/class-validation";
+import {
+  IsValidSIN,
+  ValidationContext,
+  ValidationResult,
+} from "../../utilities/class-validation";
 
 /**
  * Possible warnings unique identifiers.
@@ -26,48 +30,6 @@ export enum ApplicationWithdrawalValidationWarnings {
   ApplicationNotFound = "applicationNotFound",
   NoMatchingRecordFound = "noMatchingRecordFound",
   HasPreviouslyBeenWithdrawn = "hasPreviouslyBeenWithdrawn",
-}
-
-/**
- * Types of non-critical errors that will not prevent
- * the offering from being saved.
- */
-export enum ValidationContextTypes {
-  Warning = "warning",
-}
-
-/**
- * Represent the context of an error that has an additional context to
- * express a possible warning or some relevant information captured during
- * the validation process.
- * All validations when failed will generate an error. The ones that have
- * the warning or information contexts will not be considered critical.
- */
-export class ValidationContext {
-  /**
-   * Creates an error context that will make the error downgrade to
-   * a condition of a warning information will force the offering
-   * to be reviewed by the Ministry.
-   * @param warningTypeCode warning code that uniquely identifies this condition.
-   * @returns the warning context.
-   */
-  static CreateWarning(
-    warningTypeCode: ApplicationWithdrawalValidationWarnings,
-  ): ValidationContext {
-    const newContext = new ValidationContext();
-    newContext.type = ValidationContextTypes.Warning;
-    newContext.typeCode = warningTypeCode;
-    return newContext;
-  }
-
-  /**
-   * Context type.
-   */
-  type: ValidationContextTypes;
-  /**
-   * Unique identifier of the validation error.
-   */
-  typeCode: ApplicationWithdrawalValidationWarnings;
 }
 
 export class ApplicationBulkWithdrawalImportBusinessValidationModel {
