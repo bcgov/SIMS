@@ -8,7 +8,7 @@ import {
 } from "../../../../../../../test/helpers";
 import {
   E2EDataSources,
-  createDisbursementFeedbackError,
+  createFakeDisbursementFeedbackError,
   createE2EDataSources,
   getUploadedFile,
   saveFakeStudentRestriction,
@@ -429,7 +429,7 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
     const [errorCode] = FULL_TIME_DISBURSEMENT_FEEDBACK_ERRORS;
     const [disbursementSchedule] =
       application.currentAssessment.disbursementSchedules;
-    const feedbackError = createDisbursementFeedbackError(
+    const feedbackError = createFakeDisbursementFeedbackError(
       { disbursementSchedule },
       { initialValues: { errorCode, updatedAt: dateUtils.addDays(-1) } },
     );

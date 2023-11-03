@@ -11,7 +11,7 @@ import {
  * - `initialValues` initial feedback error record values.
  * @returns disbursement feedback error to be saved.
  */
-export function createDisbursementFeedbackError(
+export function createFakeDisbursementFeedbackError(
   relations: {
     disbursementSchedule: DisbursementSchedule;
   },

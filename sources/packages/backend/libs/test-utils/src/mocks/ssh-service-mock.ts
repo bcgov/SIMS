@@ -41,8 +41,8 @@ export function createSSHServiceMock(
 }
 
 /**
- * Get the parameters provided to the put method of the SSH client that
- * represents the data that would be uploaded to the SFTP in a real scenario.
+ * Get the parameters provided to the put method of the SSH client that represents the
+ * remote file path and the data that would be uploaded to the SFTP in a real scenario.
  * @param sshClientMock SSH mocked client.
  * @returns file name and file content of the supposed-to-be uploaded file.
  */
