@@ -56,9 +56,7 @@ export class ApplicationBulkWithdrawalImportService {
         hasPreviouslyBeenWithdrawn: !!record.studentScholasticStandings.length,
       };
     });
-    const businessValidationModels: ApplicationBulkWithdrawalImportBusinessValidationModel[] =
-      [];
-    textValidations.map((textValidation) => {
+    const businessValidationModels = textValidations.map((textValidation) => {
       const businessValidationModel =
         {} as ApplicationBulkWithdrawalImportBusinessValidationModel;
       const applicationData =
@@ -87,7 +85,7 @@ export class ApplicationBulkWithdrawalImportService {
         textValidation.textModel.applicationNumber;
       businessValidationModel.withdrawalDate =
         textValidation.textModel.withdrawalDate;
-      businessValidationModels.push(businessValidationModel);
+      return businessValidationModel;
     });
     return businessValidationModels;
   }

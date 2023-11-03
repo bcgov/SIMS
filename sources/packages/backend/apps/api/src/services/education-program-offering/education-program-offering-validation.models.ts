@@ -32,6 +32,7 @@ import {
   PeriodMinLength,
   PeriodMaxLength,
   IsDateAfter,
+  ValidationResult,
 } from "../../utilities/class-validation";
 import { Type } from "class-transformer";
 import { ProgramAllowsOfferingIntensity } from "./custom-validators/program-allows-offering-intensity";
@@ -635,15 +636,6 @@ export class OfferingValidationModel {
 }
 
 /**
- * Validation warning with a unique type and
- * a user-friendly message to be displayed.
- */
-export interface ValidationResult {
-  typeCode: OfferingValidationWarnings | OfferingValidationInfos;
-  message: string;
-}
-
-/**
  * Results of the offering model validation with the
  * offering status when possible. If the offering contains
  * critical errors the status will not be defined.
@@ -667,11 +659,11 @@ export interface OfferingValidationResult {
   /**
    * Infos, if any.
    */
-  infos: ValidationResult[];
+  infos: ValidationResult<OfferingValidationInfos>[];
   /**
    * Warnings, if any.
    */
-  warnings: ValidationResult[];
+  warnings: ValidationResult<OfferingValidationWarnings>[];
   /**
    * Users friendly errors list, if any.
    */

@@ -1,14 +1,15 @@
 import { BadRequestException, Injectable } from "@nestjs/common";
 import {
-  ValidationResult,
-  ValidationContext,
-  ValidationContextTypes,
   ApplicationBulkWithdrawalImportBusinessValidationModel,
   ApplicationWithdrawalValidationResult,
+  ApplicationWithdrawalValidationWarnings,
 } from "./application-bulk-withdrawal-import-business-validation.models";
-import { validateSync, ValidationError } from "class-validator";
+import { validateSync } from "class-validator";
 import { plainToClass } from "class-transformer";
-import { flattenErrors } from "../../utilities/class-validation";
+import {
+  ValidationResult,
+  extractValidationsByType,
+} from "../../utilities/class-validation";
 import { CustomNamedError } from "@sims/utilities";
 import {
   APPLICATION_BULK_WITHDRAWAL_VALIDATION_CRITICAL_ERROR,
@@ -48,9 +49,13 @@ export class ApplicationBulkWithdrawalImportValidationService {
         applicationBulkWithdrawalBusinessValidationModel,
       );
       const allErrors: string[] = [];
-      const allWarnings: ValidationResult[] = [];
+      const allWarnings: ValidationResult<ApplicationWithdrawalValidationWarnings>[] =
+        [];
       validationsErrors.forEach((error) => {
-        const validation = this.extractValidationsByType(error);
+        const validation = extractValidationsByType<
+          ApplicationWithdrawalValidationWarnings,
+          undefined
+        >(error);
         allErrors.push(...validation.errors);
         allWarnings.push(...validation.warnings);
       });
@@ -109,41 +114,5 @@ export class ApplicationBulkWithdrawalImportValidationService {
         ),
       );
     }
-  }
-
-  /**
-   * Inspect the validation error and its children when an error
-   * happen as it can have an additional context (must be considered a warning)
-   * or it is a critical error (has no warning context).
-   * @param error error to be inspected.
-   * @returns errors and warnings.
-   */
-  private extractValidationsByType(error: ValidationError): {
-    errors: string[];
-    warnings: ValidationResult[];
-  } {
-    const errors: string[] = [];
-    const warnings: ValidationResult[] = [];
-    const flattenedErrors = flattenErrors(error);
-    flattenedErrors.forEach((error) => {
-      Object.keys(error.constraints).forEach((errorConstraintKey) => {
-        let associatedContext: ValidationContext = undefined;
-        if (error.contexts) {
-          associatedContext = error.contexts[
-            errorConstraintKey
-          ] as ValidationContext;
-        }
-        const errorDescription = error.constraints[errorConstraintKey];
-        if (associatedContext?.type === ValidationContextTypes.Warning) {
-          warnings.push({
-            typeCode: associatedContext.typeCode,
-            message: errorDescription,
-          });
-        } else {
-          errors.push(errorDescription);
-        }
-      });
-    });
-    return { errors, warnings };
   }
 }

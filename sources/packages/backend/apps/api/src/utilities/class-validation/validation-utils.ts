@@ -1,4 +1,5 @@
 import { ValidationError } from "class-validator";
+import { ValidationContext, ValidationContextTypes } from "../../services";
 
 /**
  * Extract all error messages from all validation errors and its children.
@@ -60,4 +61,60 @@ function generateFlattenedErrors(
       generateFlattenedErrors(childError, flattenedConstraints),
     );
   }
+}
+
+/**
+ * Inspect the validation error and its children checking when an error
+ * happen as has an additional context (must be considered a warning or a info)
+ * or it is a critical error (has no warning or info context).
+ * @param error error to be inspected.
+ * @returns errors, warnings and infos.
+ */
+export function extractValidationsByType<T, S>(
+  error: ValidationError,
+): {
+  errors: string[];
+  warnings: ValidationResult<T>[];
+  infos: ValidationResult<S>[];
+} {
+  const errors: string[] = [];
+  const warnings: ValidationResult<T>[] = [];
+  const infos: ValidationResult<S>[] = [];
+  const flattenedErrors = flattenErrors(error);
+  flattenedErrors.forEach((error) => {
+    Object.keys(error.constraints).forEach((errorConstraintKey) => {
+      let associatedContext: ValidationContext = undefined;
+      if (error.contexts) {
+        associatedContext = error.contexts[
+          errorConstraintKey
+        ] as ValidationContext;
+      }
+      const errorDescription = error.constraints[errorConstraintKey];
+      if (associatedContext?.type === ValidationContextTypes.Warning) {
+        warnings.push({
+          typeCode: associatedContext.typeCode as T,
+          message: errorDescription,
+        });
+      } else if (
+        associatedContext?.type === ValidationContextTypes.Information
+      ) {
+        infos.push({
+          typeCode: associatedContext.typeCode as S,
+          message: errorDescription,
+        });
+      } else {
+        errors.push(errorDescription);
+      }
+    });
+  });
+  return { errors, warnings, infos };
+}
+
+/**
+ * Validation warnings and infos with a unique typecode and
+ * a user-friendly message to be displayed.
+ */
+export interface ValidationResult<T> {
+  typeCode: T;
+  message: string;
 }

@@ -17,7 +17,7 @@ import {
   ApplicationWithdrawalImportTextModel,
   DataTextHeaders,
 } from "./application-bulk-withdrawal-import-text.models";
-import { IsValidSIN } from "../../utilities/class-validation";
+import { IsValidSIN, ValidationResult } from "../../utilities/class-validation";
 
 /**
  * Possible warnings unique identifiers.
@@ -205,15 +205,6 @@ export interface BulkWithdrawalFileData {
 }
 
 /**
- * Validation warning with a unique type and
- * a user-friendly message to be displayed.
- */
-export interface ValidationResult {
-  typeCode: ApplicationWithdrawalValidationWarnings;
-  message: string;
-}
-
-/**
  * Results of the application bulk withdrawal model validation.
  */
 export interface ApplicationWithdrawalValidationResult {
@@ -228,7 +219,7 @@ export interface ApplicationWithdrawalValidationResult {
   /**
    * Warnings, if any.
    */
-  warnings: ValidationResult[];
+  warnings: ValidationResult<ApplicationWithdrawalValidationWarnings>[];
   /**
    * Users friendly errors list, if any.
    */
