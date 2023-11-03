@@ -1,9 +1,11 @@
 import { JwtService } from "@nestjs/jwt";
 import { UserPasswordCredential } from "@sims/utilities/config";
-import { AuthorizedParties, KeycloakConfig } from "../../auth";
-import { KeycloakService, TOKEN_RENEWAL_SECONDS } from "../../services";
+import { AuthorizedParties } from "../../auth";
+import { TOKEN_RENEWAL_SECONDS } from "../../services";
 import { TokenCacheResponse } from "../../services/auth/token-cache.service.models";
 import { needRenewJwtToken } from "../../utilities";
+import { KeycloakService } from "@sims/auth/services";
+import { KeycloakConfig } from "@sims/auth/config";
 
 /**
  * Bearer type used by supertest package.

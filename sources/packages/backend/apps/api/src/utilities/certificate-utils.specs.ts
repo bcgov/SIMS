@@ -1,7 +1,6 @@
-import * as fs from "fs";
+import { convertStringToPEM } from "@sims/auth/utilities/certificate-utils";
 
 // Target module
-import { convertStringToPEM } from "./certificate-utils";
 
 describe("Test string convertion to PEM format", () => {
   it("Should add header and footer when a text is provided", () => {

@@ -6,8 +6,8 @@ import {
 } from "./search-bceid.model";
 import getAccountDetailsMock from "./mockups/getAccountDetails.mock";
 import searchBCeIDAccountsMock from "./mockups/searchBCeIDAccounts.mock";
-import { KeycloakService } from "../auth/keycloak/keycloak.service";
 import { HttpService } from "@nestjs/axios";
+import { KeycloakService } from "@sims/auth/services";
 
 // This service is intended to return only fake data for development purposes only.
 // It allows the simulation of the response from BCeID Web Service.

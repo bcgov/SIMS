@@ -42,6 +42,12 @@
       ],
       "@sims/integrations/*": [
         "libs/integrations/src/*"
+      ],
+      "@sims/auth": [
+        "libs/auth/src"
+      ],
+      "@sims/auth/*": [
+        "libs/auth/src/*"
       ]
     }
   }

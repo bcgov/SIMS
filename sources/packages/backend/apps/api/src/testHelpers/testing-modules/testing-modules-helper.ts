@@ -2,7 +2,6 @@ import { INestApplication } from "@nestjs/common";
 import { Test, TestingModule } from "@nestjs/testing";
 import { DataSource } from "typeorm";
 import { AppModule } from "../../app.module";
-import { KeycloakConfig } from "../../auth";
 import { setGlobalPipes } from "../../utilities";
 import {
   QueueModuleMock,
@@ -12,6 +11,7 @@ import {
 import { QueueModule } from "@sims/services/queue";
 import { ZeebeModule } from "@sims/services";
 import { DiscoveryModule } from "@golevelup/nestjs-discovery";
+import { KeycloakConfig } from "@sims/auth/config";
 
 /**
  * Result from a createTestingModule to support E2E tests creation.

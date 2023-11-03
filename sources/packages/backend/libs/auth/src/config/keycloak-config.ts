@@ -1,6 +1,4 @@
-import { KeycloakService } from "../services/auth/keycloak/keycloak.service";
-import { OpenIdConfig } from "../services/auth/keycloak/openid-config.model";
-import { RealmConfig } from "../services/auth/keycloak/realm-config.model";
+import { KeycloakService, OpenIdConfig, RealmConfig } from "../services";
 import { convertStringToPEM } from "../utilities/certificate-utils";
 
 /**
