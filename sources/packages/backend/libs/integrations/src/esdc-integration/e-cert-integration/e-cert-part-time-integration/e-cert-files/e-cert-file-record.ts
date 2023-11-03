@@ -197,10 +197,10 @@ export class ECertPartTimeFileRecord extends ECertFileRecord {
         this.totalCanadaGrantAmount,
         5,
         NUMBER_FILLER,
-      ); //39
+      );
       record.appendWithStartFiller(this.CSGPPTAmount, 5, NUMBER_FILLER);
       record.repeatAppend(NUMBER_FILLER, 5); // CSGP NBD MI Amt, No longer used.
-      record.appendWithStartFiller(this.CSGPPDAmount, 5, NUMBER_FILLER); //42
+      record.appendWithStartFiller(this.CSGPPDAmount, 5, NUMBER_FILLER);
       record.appendWithStartFiller(this.CSGPPTDEPAmount, 5, NUMBER_FILLER);
       record.repeatAppend(NUMBER_FILLER, 5); // Amount of Grant for Services and Equipment for Students with Permanent Disabilities (CSGP-PDSE) at the study start, No longer used.
       record.appendWithStartFiller(this.totalBCGrantAmount, 5, NUMBER_FILLER);
