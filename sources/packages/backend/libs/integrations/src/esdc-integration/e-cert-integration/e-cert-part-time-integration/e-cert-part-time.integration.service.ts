@@ -3,8 +3,8 @@ import {
   RecordTypeCodes,
   CSGD,
   CSGP,
-  CSGPT,
   ECertRecord,
+  CSPT,
 } from "../models/e-cert-integration-model";
 import { ECertPartTimeFileHeader } from "./e-cert-files/e-cert-file-header";
 import { ECertPartTimeFileFooter } from "./e-cert-files/e-cert-file-footer";
@@ -61,28 +61,28 @@ export class ECertPartTimeIntegrationService extends ECertIntegrationService {
     // Detail records
     // Calculated values
     const fileRecords = ecertRecords.map((ecertRecord) => {
-      const totalCSGPPTAmount = getDisbursementEffectiveAmountByValueCode(
+      const CSGPPTAmount = getDisbursementEffectiveAmountByValueCode(
         ecertRecord.awards,
-        CSGD,
+        CSPT,
       );
-      const totalCSGPPDAmount = getDisbursementEffectiveAmountByValueCode(
+      const CSGPPDAmount = getDisbursementEffectiveAmountByValueCode(
         ecertRecord.awards,
         CSGP,
       );
-      const totalCSGPPTDEPAmount = getDisbursementEffectiveAmountByValueCode(
+      const CSGPPTDEPAmount = getDisbursementEffectiveAmountByValueCode(
         ecertRecord.awards,
-        CSGPT,
+        CSGD,
       );
 
       const disbursementAmount = getTotalDisbursementEffectiveAmount(
         ecertRecord.awards,
         [DisbursementValueType.CanadaLoan],
       );
-      const totalGrantAmount = getTotalDisbursementEffectiveAmount(
+      const totalCanadaGrantAmount = getTotalDisbursementEffectiveAmount(
         ecertRecord.awards,
         [DisbursementValueType.CanadaGrant, DisbursementValueType.BCTotalGrant],
       );
-      const totalBCSGAmount = getTotalDisbursementEffectiveAmount(
+      const totalBCGrantAmount = getTotalDisbursementEffectiveAmount(
         ecertRecord.awards,
         [DisbursementValueType.BCTotalGrant],
       );
@@ -120,11 +120,11 @@ export class ECertPartTimeIntegrationService extends ECertIntegrationService {
       );
       record.studentNumber = ecertRecord.studentNumber;
       record.ppdFlag = getPPDFlag(ecertRecord.ppdFlag);
-      record.totalGrantAmount = totalGrantAmount;
-      record.totalBCSGAmount = totalBCSGAmount;
-      record.totalCSGPPTAmount = totalCSGPPTAmount;
-      record.totalCSGPPDAmount = totalCSGPPDAmount;
-      record.totalCSGPPTDEPAmount = totalCSGPPTDEPAmount;
+      record.totalCanadaGrantAmount = totalCanadaGrantAmount;
+      record.totalBCGrantAmount = totalBCGrantAmount;
+      record.CSGPPTAmount = CSGPPTAmount;
+      record.CSGPPDAmount = CSGPPDAmount;
+      record.CSGPPTDEPAmount = CSGPPTDEPAmount;
       return record;
     });
     fileLines.push(...fileRecords);

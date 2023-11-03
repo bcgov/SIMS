@@ -621,12 +621,16 @@ export class ECertGenerationService {
     disbursements: ECertDisbursementSchedule[],
   ) {
     for (const disbursement of disbursements) {
-      disbursement.tuitionRemittanceEffectiveAmount =
+      const maxTuitionRemittance =
         this.confirmationOfEnrollmentService.getMaxTuitionRemittance(
           disbursement.disbursementValues,
           disbursement.studentAssessment.application.currentAssessment.offering,
           MaxTuitionRemittanceTypes.Effective,
         );
+      disbursement.tuitionRemittanceEffectiveAmount =
+        disbursement.tuitionRemittanceRequestedAmount > maxTuitionRemittance
+          ? maxTuitionRemittance
+          : disbursement.tuitionRemittanceRequestedAmount;
     }
   }
 }

@@ -24,7 +24,7 @@ export const ECERT_PART_TIME_FILE_CODE = "PBC.EDU.PTCERTS.D";
  * created for Full-Time/ Part-Time feedback file.
  */
 export const ECERT_FULL_TIME_FEEDBACK_FILE_CODE = "EDU.PBC.FTECERTSFB.*";
-export const ECERT_PART_TIME_FEEDBACK_FILE_CODE = "EDU.PBC.ECERTSFB.PT.*";
+export const ECERT_PART_TIME_FEEDBACK_FILE_CODE = "TEDU.PBC.NEW.ECERTSFB.PT.*";
 
 /**
  * Amount of days before a disbursement schedule date is due that

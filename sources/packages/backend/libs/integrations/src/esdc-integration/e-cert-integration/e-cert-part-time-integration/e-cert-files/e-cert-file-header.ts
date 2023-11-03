@@ -25,7 +25,7 @@ export class ECertPartTimeFileHeader extends ECertFileHeader {
     header.appendDate(this.processDate, DATE_FORMAT);
     header.appendDate(this.processDate, TIME_FORMAT);
     header.appendWithStartFiller(this.sequence, 6, NUMBER_FILLER);
-    header.repeatAppend(SPACE_FILLER, 698); // Trailing space.
+    header.repeatAppend(SPACE_FILLER, 692); // Trailing space.
     return header.toString();
   }
 
