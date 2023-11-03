@@ -37,6 +37,8 @@ import {
   FormService,
   INVALID_OPERATION_IN_THE_CURRENT_STATUS,
   StudentScholasticStandingsService,
+  ApplicationWithdrawalTextValidationResult,
+  BulkWithdrawalFileData,
 } from "../../services";
 import { ApiProcessError, ClientTypeBaseRoute } from "../../types";
 import { CustomNamedError } from "@sims/utilities";
@@ -63,8 +65,6 @@ import {
   uploadLimits,
 } from "../../utilities";
 import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
-import { ApplicationWithdrawalTextValidationResult } from "../../services/application-bulk-withdrawal/application-bulk-withdrawal-import-text.models";
-import { BulkWithdrawalFileData } from "../../services/application-bulk-withdrawal/application-bulk-withdrawal-validation.models";
 
 /**
  * Scholastic standing controller for institutions Client.

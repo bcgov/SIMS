@@ -68,7 +68,7 @@ export class ApplicationBulkWithdrawalValidationModel {
    */
   @IsIn([true], {
     message:
-      "The application is not present in SIMS and is a part of the SFAS system.",
+      "Application number not found. The withdrawal request for this application will not be processed.",
     context: ValidationContext.CreateWarning(
       ApplicationWithdrawalValidationWarnings.ApplicationNotFound,
     ),
@@ -177,7 +177,7 @@ export interface ApplicationWithdrawalValidationResult {
   /**
    * Validated application bulk withdrawal model.
    */
-  applicationBulkWithdrawalValidationModel: ApplicationBulkWithdrawalValidationModel;
+  validationModel: ApplicationBulkWithdrawalValidationModel;
   /**
    * Warnings, if any.
    */

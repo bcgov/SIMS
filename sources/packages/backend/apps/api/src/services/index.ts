@@ -43,3 +43,5 @@ export * from "./application-offering-change-request/application-offering-change
 export * from "./application-bulk-withdrawal/application-bulk-withdrawal-import-text.service";
 export * from "./application-bulk-withdrawal/application-bulk-withdrawal-import.service";
 export * from "./application-bulk-withdrawal/application-bulk-withdrawal-import-validation.service";
+export * from "./application-bulk-withdrawal/application-bulk-withdrawal-validation.models";
+export * from "./application-bulk-withdrawal/application-bulk-withdrawal-import-text.models";

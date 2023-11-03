@@ -68,12 +68,9 @@ export class ScholasticStandingControllerService {
       const errorValidationResults: ApplicationBulkWithdrawalValidationResultAPIOutDTO[] =
         validations.map((validation) => ({
           recordIndex: validation.index,
-          applicationNumber:
-            validation.applicationBulkWithdrawalValidationModel
-              .applicationNumber,
-          withdrawalDate:
-            validation.applicationBulkWithdrawalValidationModel.withdrawalDate,
-          sin: validation.applicationBulkWithdrawalValidationModel.sin,
+          applicationNumber: validation.validationModel.applicationNumber,
+          withdrawalDate: validation.validationModel.withdrawalDate,
+          sin: validation.validationModel.sin,
           errors: validation.errors,
           warnings: validation.warnings,
           infos: [],

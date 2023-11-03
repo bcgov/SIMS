@@ -41,11 +41,11 @@ export class ApplicationBulkWithdrawalImportService {
     const applicationNumbers = textValidations.map(
       (textValidation) => textValidation.textModel.applicationNumber,
     );
-    const applicationData = await this.getApplicationValidationData(
+    const applicationValidationData = await this.getApplicationValidationData(
       applicationNumbers,
       institutionId,
     );
-    applicationData.forEach((record) => {
+    applicationValidationData.forEach((record) => {
       applicationDataMap[record.applicationNumber] = {
         applicationStatus: record.applicationStatus,
         isArchived: record.isArchived,
@@ -87,8 +87,8 @@ export class ApplicationBulkWithdrawalImportService {
   }
 
   /**
-   * Get the SIN and location information for each of the provided applications.
-   * @param applicationNumbers application numbers for which the SIN and location information needs to be retrieved.
+   * Get the application validation details for all the applications.
+   * @param applicationNumbers application numbers for which the application details need to be retrieved.
    * @param institutionId institution id.
    * @returns applications containing the required information.
    */

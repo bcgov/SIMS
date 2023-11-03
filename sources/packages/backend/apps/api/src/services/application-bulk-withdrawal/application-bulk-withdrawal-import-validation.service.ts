@@ -30,16 +30,14 @@ export class ApplicationBulkWithdrawalImportValidationService {
     return validationModels.map((model, index) => {
       // Ensures that the object received is a class. This is needed to the
       // proper validation metadata be available to the validation be performed.
-      const applicationBulkWithdrawalValidationModel = plainToClass(
+      const validationModel = plainToClass(
         ApplicationBulkWithdrawalValidationModel,
         model,
         {
           enableImplicitConversion: true,
         },
       );
-      const validationsErrors = validateSync(
-        applicationBulkWithdrawalValidationModel,
-      );
+      const validationsErrors = validateSync(validationModel);
       const allErrors: string[] = [];
       const allWarnings: ValidationResult<ApplicationWithdrawalValidationWarnings>[] =
         [];
@@ -52,7 +50,7 @@ export class ApplicationBulkWithdrawalImportValidationService {
         allWarnings.push(...validation.warnings);
       });
 
-      if (!!allErrors.length) {
+      if (allErrors.length) {
         throw new CustomNamedError(
           "The application bulk withdrawal has critical errors.",
           APPLICATION_BULK_WITHDRAWAL_VALIDATION_CRITICAL_ERROR,
@@ -62,7 +60,7 @@ export class ApplicationBulkWithdrawalImportValidationService {
 
       return {
         index,
-        applicationBulkWithdrawalValidationModel,
+        validationModel,
         warnings: allWarnings,
         errors: allErrors,
       };
