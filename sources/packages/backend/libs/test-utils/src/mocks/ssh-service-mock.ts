@@ -50,6 +50,11 @@ export function getUploadedFile(
   sshClientMock: DeepMocked<Client>,
 ): UploadedFile {
   const uploadedFile = {} as UploadedFile;
+  if (!sshClientMock.put.mock.calls.length) {
+    throw new Error(
+      "SSH client mock was not invoked which means that there was no attempt to upload a file.",
+    );
+  }
   const [[input, remoteFilePath]] = sshClientMock.put.mock.calls;
   if (input) {
     uploadedFile.fileLines = input.toString().split(END_OF_LINE);
