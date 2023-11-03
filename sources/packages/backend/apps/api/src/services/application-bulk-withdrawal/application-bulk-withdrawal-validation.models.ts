@@ -7,11 +7,7 @@ import {
   ValidateIf,
   ValidationArguments,
 } from "class-validator";
-import {
-  APPLICATION_NUMBER_LENGTH,
-  ApplicationStatus,
-  SIN_NUMBER_LENGTH,
-} from "@sims/sims-db";
+import { APPLICATION_NUMBER_LENGTH, ApplicationStatus } from "@sims/sims-db";
 import {
   ApplicationBulkWithdrawalHeader,
   ApplicationWithdrawalImportTextModel,
@@ -38,9 +34,6 @@ export class ApplicationBulkWithdrawalValidationModel {
    */
   @IsValidSIN({
     message: `${DataTextHeaders.sin} must be a valid SIN.`,
-  })
-  @Length(SIN_NUMBER_LENGTH, SIN_NUMBER_LENGTH, {
-    message: `${DataTextHeaders.sin} must be of length ${SIN_NUMBER_LENGTH}.`,
   })
   sin: string;
   /**
