@@ -61,8 +61,6 @@ export class ApplicationBulkWithdrawalImportService {
         applicationDataMap[textValidation.textModel.applicationNumber];
       if (applicationData) {
         validationModel.applicationFound = true;
-        validationModel.applicationBelongsToInstitution =
-          allowedLocationIds.includes(applicationData.locationId);
         validationModel.studentSINMatch =
           textValidation.textModel.sin === applicationData.sin;
         validationModel.hasCorrectInstitutionCode =
@@ -71,9 +69,7 @@ export class ApplicationBulkWithdrawalImportService {
         validationModel.applicationStatus = applicationData.applicationStatus;
         validationModel.hasPreviouslyBeenWithdrawn =
           applicationData.hasPreviouslyBeenWithdrawn;
-        validationModel.isRecordMatch =
-          validationModel.applicationBelongsToInstitution &&
-          validationModel.studentSINMatch;
+        validationModel.isRecordMatch = validationModel.studentSINMatch;
       } else {
         validationModel.applicationFound = false;
       }

@@ -68,17 +68,6 @@ export class ApplicationBulkWithdrawalValidationModel {
   })
   applicationFound: boolean;
   /**
-   * Application belongs to institution.
-   */
-  @ValidateIf(
-    (object: ApplicationBulkWithdrawalValidationModel) =>
-      object.applicationFound,
-  )
-  @IsIn([true], {
-    message: "The application does not belong to this institution.",
-  })
-  applicationBelongsToInstitution?: boolean;
-  /**
    * Valid SIN.
    */
   @ValidateIf(
