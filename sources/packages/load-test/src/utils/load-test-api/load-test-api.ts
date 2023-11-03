@@ -3,7 +3,9 @@ import { BASE_LOAD_TEST_GATEWAY_URL } from "../../../config.env";
 
 export function workflowPrepareAssessmentData(iterations: number): number[] {
   const response = http.post(
-    `${BASE_LOAD_TEST_GATEWAY_URL}/workflow/prepare-assessment-data/${iterations}`
+    `${BASE_LOAD_TEST_GATEWAY_URL}/workflow/prepare-assessment-data/${iterations}`,
+    undefined,
+    { timeout: "120s" }
   );
   const data = response.json() as number[];
   return data;

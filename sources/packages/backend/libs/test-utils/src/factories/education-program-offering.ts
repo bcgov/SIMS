@@ -10,6 +10,7 @@ import {
   User,
   OfferingStatus,
   Institution,
+  StudyBreaksAndWeeks,
 } from "@sims/sims-db";
 import { getISODateOnlyString } from "@sims/utilities";
 
@@ -43,6 +44,9 @@ export function createFakeEducationProgramOffering(relations?: {
   offering.offeringDeclaration = true;
   offering.studyStartDate = getISODateOnlyString(faker.date.recent(1));
   offering.studyEndDate = getISODateOnlyString(faker.date.soon(30));
+  offering.studyBreaks = {
+    totalFundedWeeks: 16,
+  } as StudyBreaksAndWeeks;
   offering.offeringStatus = OfferingStatus.Approved;
   return offering;
 }

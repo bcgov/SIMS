@@ -1,39 +1,34 @@
 import { Controller, Param, ParseIntPipe, Patch, Post } from "@nestjs/common";
-import { WorkflowDataPreparationService } from "../../services";
+import { WorkflowDataLoadService } from "../../services";
 import { ZBClient } from "zeebe-node";
-import { Application } from "@sims/sims-db";
 
 @Controller("workflow")
 export class WorkflowController {
   constructor(
-    private readonly workflowDataPreparationService: WorkflowDataPreparationService,
+    private readonly workflowDataLoadService: WorkflowDataLoadService,
     private readonly zeebeClient: ZBClient,
   ) {}
   @Post("prepare-assessment-data/:iterations")
   async prepareAssessmentData(
     @Param("iterations", ParseIntPipe) iterations: number,
   ): Promise<number[]> {
-    const submittedApplicationPromise: Promise<Application>[] = [];
-    for (let i = 1; i <= iterations; i++) {
-      submittedApplicationPromise.push(
-        this.workflowDataPreparationService.createApplicationAndAssessment(),
+    const submittedApplications =
+      await this.workflowDataLoadService.loadApplicationAssessmentData(
+        iterations,
       );
-    }
-    const applications = await Promise.all(submittedApplicationPromise);
-    return applications.map((app) => app.id);
+    return submittedApplications.map((app) => app.currentAssessment.id);
   }
 
   @Patch("submit-assessment/:assessmentId")
   async submitAssessment(
     @Param("assessmentId", ParseIntPipe) assessmentId: number,
   ): Promise<void> {
-    console.log("Assessment started for: ", assessmentId);
     await this.zeebeClient.createProcessInstanceWithResult({
       bpmnProcessId: "assessment-gateway",
       variables: {
         assessmentId: assessmentId,
       },
-      requestTimeout: 9000,
+      requestTimeout: 90000,
     });
   }
 }
