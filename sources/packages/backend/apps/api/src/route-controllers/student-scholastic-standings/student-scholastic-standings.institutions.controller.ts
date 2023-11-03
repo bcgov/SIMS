@@ -64,7 +64,7 @@ import {
 } from "../../utilities";
 import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
 import { ApplicationWithdrawalTextValidationResult } from "../../services/application-bulk-withdrawal/application-bulk-withdrawal-import-text.models";
-import { BulkWithdrawalFileData } from "../../services/application-bulk-withdrawal/application-bulk-withdrawal-import-business-validation.models";
+import { BulkWithdrawalFileData } from "../../services/application-bulk-withdrawal/application-bulk-withdrawal-validation.models";
 
 /**
  * Scholastic standing controller for institutions Client.
@@ -247,9 +247,8 @@ export class ScholasticStandingInstitutionsController extends BaseController {
     const applicationBulkWithdrawalValidations =
       this.applicationWithdrawalImportValidationService.validateApplicationBulkWithdrawalModels(
         validationModels,
-        true,
       );
-    this.applicationWithdrawalImportValidationService.assertValidationsAreValid(
+    this.scholasticStandingControllerService.assertValidationsAreValid(
       applicationBulkWithdrawalValidations,
     );
     if (validationOnly) {

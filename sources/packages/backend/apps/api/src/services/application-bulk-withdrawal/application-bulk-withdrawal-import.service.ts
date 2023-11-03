@@ -6,9 +6,9 @@ import {
 import { In, Repository } from "typeorm";
 import { Application } from "@sims/sims-db";
 import {
-  ApplicationBulkWithdrawalImportBusinessValidationModel,
+  ApplicationBulkWithdrawalValidationModel,
   ApplicationData,
-} from "./application-bulk-withdrawal-import-business-validation.models";
+} from "./application-bulk-withdrawal-validation.models";
 import { InjectRepository } from "@nestjs/typeorm";
 
 type ApplicationDataMap = Record<string, ApplicationData>;
@@ -24,28 +24,27 @@ export class ApplicationBulkWithdrawalImportService {
   ) {}
 
   /**
-   * Generates the application bulk withdrawal business validation model.
-   * @param textValidations text validation models to be converted to the business validation models.
+   * Generates the application bulk withdrawal validation model.
+   * @param textValidations text validation models to be converted to the validation models.
    * @param textHeader text header model.
    * @param institutionId institution id.
    * @param allowedLocationIds set of allowed location ids for the given institution.
-   * @returns application bulk withdrawal business models to be validated and persisted.
+   * @returns application bulk withdrawal models to be validated and persisted.
    */
   async generateApplicationBulkWithdrawalValidationModels(
     textValidations: ApplicationWithdrawalTextValidationResult[],
     textHeader: ApplicationBulkWithdrawalHeader,
     institutionId: number,
     allowedLocationIds: number[],
-  ): Promise<ApplicationBulkWithdrawalImportBusinessValidationModel[]> {
+  ): Promise<ApplicationBulkWithdrawalValidationModel[]> {
     const applicationDataMap: ApplicationDataMap = {};
     const applicationNumbers = textValidations.map(
       (textValidation) => textValidation.textModel.applicationNumber,
     );
-    const applicationData =
-      await this.getApplicationBulkWithdrawalValidationDetails(
-        applicationNumbers,
-        institutionId,
-      );
+    const applicationData = await this.getApplicationValidationData(
+      applicationNumbers,
+      institutionId,
+    );
     applicationData.forEach((record) => {
       applicationDataMap[record.applicationNumber] = {
         applicationStatus: record.applicationStatus,
@@ -56,38 +55,35 @@ export class ApplicationBulkWithdrawalImportService {
         hasPreviouslyBeenWithdrawn: !!record.studentScholasticStandings.length,
       };
     });
-    const businessValidationModels = textValidations.map((textValidation) => {
-      const businessValidationModel =
-        {} as ApplicationBulkWithdrawalImportBusinessValidationModel;
+    const validationModels = textValidations.map((textValidation) => {
+      const validationModel = {} as ApplicationBulkWithdrawalValidationModel;
       const applicationData =
         applicationDataMap[textValidation.textModel.applicationNumber];
       if (applicationData) {
-        businessValidationModel.applicationFound = true;
-        businessValidationModel.applicationBelongsToInstitution =
+        validationModel.applicationFound = true;
+        validationModel.applicationBelongsToInstitution =
           allowedLocationIds.includes(applicationData.locationId);
-        businessValidationModel.studentSINMatch =
+        validationModel.studentSINMatch =
           textValidation.textModel.sin === applicationData.sin;
-        businessValidationModel.hasCorrectInstitutionCode =
+        validationModel.hasCorrectInstitutionCode =
           textHeader.originator === applicationData.locationCode;
-        businessValidationModel.isArchived = applicationData.isArchived;
-        businessValidationModel.applicationStatus =
-          applicationData.applicationStatus;
-        businessValidationModel.hasPreviouslyBeenWithdrawn =
+        validationModel.isArchived = applicationData.isArchived;
+        validationModel.applicationStatus = applicationData.applicationStatus;
+        validationModel.hasPreviouslyBeenWithdrawn =
           applicationData.hasPreviouslyBeenWithdrawn;
-        businessValidationModel.isRecordMatch =
-          businessValidationModel.applicationBelongsToInstitution &&
-          businessValidationModel.studentSINMatch;
+        validationModel.isRecordMatch =
+          validationModel.applicationBelongsToInstitution &&
+          validationModel.studentSINMatch;
       } else {
-        businessValidationModel.applicationFound = false;
+        validationModel.applicationFound = false;
       }
-      businessValidationModel.sin = textValidation.textModel.sin;
-      businessValidationModel.applicationNumber =
+      validationModel.sin = textValidation.textModel.sin;
+      validationModel.applicationNumber =
         textValidation.textModel.applicationNumber;
-      businessValidationModel.withdrawalDate =
-        textValidation.textModel.withdrawalDate;
-      return businessValidationModel;
+      validationModel.withdrawalDate = textValidation.textModel.withdrawalDate;
+      return validationModel;
     });
-    return businessValidationModels;
+    return validationModels;
   }
 
   /**
@@ -96,7 +92,7 @@ export class ApplicationBulkWithdrawalImportService {
    * @param institutionId institution id.
    * @returns applications containing the required information.
    */
-  private async getApplicationBulkWithdrawalValidationDetails(
+  private async getApplicationValidationData(
     applicationNumbers: string[],
     institutionId: number,
   ): Promise<Application[]> {

@@ -32,7 +32,7 @@ export enum ApplicationWithdrawalValidationWarnings {
   HasPreviouslyBeenWithdrawn = "hasPreviouslyBeenWithdrawn",
 }
 
-export class ApplicationBulkWithdrawalImportBusinessValidationModel {
+export class ApplicationBulkWithdrawalValidationModel {
   /**
    * SIN.
    */
@@ -78,7 +78,7 @@ export class ApplicationBulkWithdrawalImportBusinessValidationModel {
    * Application belongs to institution.
    */
   @ValidateIf(
-    (object: ApplicationBulkWithdrawalImportBusinessValidationModel) =>
+    (object: ApplicationBulkWithdrawalValidationModel) =>
       object.applicationFound,
   )
   @IsIn([true], {
@@ -89,7 +89,7 @@ export class ApplicationBulkWithdrawalImportBusinessValidationModel {
    * Valid SIN.
    */
   @ValidateIf(
-    (object: ApplicationBulkWithdrawalImportBusinessValidationModel) =>
+    (object: ApplicationBulkWithdrawalValidationModel) =>
       object.applicationFound,
   )
   studentSINMatch?: boolean;
@@ -97,7 +97,7 @@ export class ApplicationBulkWithdrawalImportBusinessValidationModel {
    * Has correct institution code.
    */
   @ValidateIf(
-    (object: ApplicationBulkWithdrawalImportBusinessValidationModel) =>
+    (object: ApplicationBulkWithdrawalValidationModel) =>
       object.applicationFound,
   )
   @IsIn([true], {
@@ -108,7 +108,7 @@ export class ApplicationBulkWithdrawalImportBusinessValidationModel {
    * Application Status.
    */
   @ValidateIf(
-    (object: ApplicationBulkWithdrawalImportBusinessValidationModel) =>
+    (object: ApplicationBulkWithdrawalValidationModel) =>
       object.applicationFound,
   )
   @IsEnum(ApplicationStatus)
@@ -120,7 +120,7 @@ export class ApplicationBulkWithdrawalImportBusinessValidationModel {
    * Application archived.
    */
   @ValidateIf(
-    (object: ApplicationBulkWithdrawalImportBusinessValidationModel) =>
+    (object: ApplicationBulkWithdrawalValidationModel) =>
       object.applicationFound,
   )
   @IsIn([false], {
@@ -131,7 +131,7 @@ export class ApplicationBulkWithdrawalImportBusinessValidationModel {
    * Has previously been withdrawn.
    */
   @ValidateIf(
-    (object: ApplicationBulkWithdrawalImportBusinessValidationModel) =>
+    (object: ApplicationBulkWithdrawalValidationModel) =>
       object.applicationFound,
   )
   @IsIn([false], {
@@ -146,7 +146,7 @@ export class ApplicationBulkWithdrawalImportBusinessValidationModel {
    * Is record match .ie. SIN, application number and institution must match a record in database.
    */
   @ValidateIf(
-    (object: ApplicationBulkWithdrawalImportBusinessValidationModel) =>
+    (object: ApplicationBulkWithdrawalValidationModel) =>
       object.applicationFound,
   )
   @IsIn([true], {
@@ -177,7 +177,7 @@ export interface ApplicationWithdrawalValidationResult {
   /**
    * Validated application bulk withdrawal model.
    */
-  applicationBulkWithdrawalBusinessValidationModel: ApplicationBulkWithdrawalImportBusinessValidationModel;
+  applicationBulkWithdrawalValidationModel: ApplicationBulkWithdrawalValidationModel;
   /**
    * Warnings, if any.
    */

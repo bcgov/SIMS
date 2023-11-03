@@ -14,7 +14,7 @@ import {
 } from "./application-bulk-withdrawal-import-text.models";
 import { APPLICATION_WITHDRAWAL_INVALID_TEXT_FILE_ERROR } from "../../constants";
 import { CustomNamedError } from "@sims/utilities";
-import { BulkWithdrawalFileData } from "./application-bulk-withdrawal-import-business-validation.models";
+import { BulkWithdrawalFileData } from "./application-bulk-withdrawal-validation.models";
 
 /**
  * Handles the application withdrawal bulk insert preparation.

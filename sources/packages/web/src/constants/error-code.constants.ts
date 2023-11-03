@@ -95,7 +95,7 @@ export const APPLICATION_WITHDRAWAL_TEXT_CONTENT_FORMAT_ERROR =
 export const APPLICATION_WITHDRAWAL_INVALID_TEXT_FILE_ERROR =
   "APPLICATION_WITHDRAWAL_INVALID_TEXT_FILE_ERROR";
 /**
- * The text content has one or more business validation errors.
+ * The text content has one or more validation errors.
  */
 export const APPLICATION_WITHDRAWAL_VALIDATION_ERROR =
   "APPLICATION_WITHDRAWAL_VALIDATION_ERROR";
