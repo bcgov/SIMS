@@ -23,8 +23,8 @@
     "@sims/utilities": "<rootDir>/../../libs/utilities/src",
     "@sims/test-utils/(.*)": "<rootDir>/../../libs/test-utils/src/$1",
     "@sims/test-utils": "<rootDir>/../../libs/test-utils/src",
-    "@sims/integrations/(.*)": "<rootDir>/../../libs/integrations/src/$1",
-    "@sims/integrations": "<rootDir>/../../libs/integrations/src"
+    "@sims/auth/(.*)": "<rootDir>/../../libs/auth/src/$1",
+    "@sims/auth": "<rootDir>/../../libs/auth/src"
   },
   "coveragePathIgnorePatterns": [
     "node_modules",
