@@ -173,6 +173,10 @@ export const AWARDS_TWO_OF_TWO_DISBURSEMENT: IERAward[] = [
   },
 ];
 
+/**
+ * Represents the scenario where a restriction is applied and the BC funding must be held.
+ * All the BC related funds will not be disbursed.
+ */
 export const AWARDS_SINGLE_DISBURSEMENT_RESTRICTION_WITHHELD_FUNDS: IERAward[] =
   [
     {
@@ -189,6 +193,7 @@ export const AWARDS_SINGLE_DISBURSEMENT_RESTRICTION_WITHHELD_FUNDS: IERAward[] =
     {
       valueType: DisbursementValueType.BCGrant,
       valueCode: "BCAG",
-      valueAmount: 7000,
+      valueAmount: 324,
+      restrictionAmountSubtracted: 324,
     },
   ];
