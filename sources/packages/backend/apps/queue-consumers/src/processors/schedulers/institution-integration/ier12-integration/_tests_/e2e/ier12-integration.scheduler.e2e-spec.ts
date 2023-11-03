@@ -32,6 +32,7 @@ import {
   AWARDS_ONE_OF_TWO_DISBURSEMENT,
   AWARDS_SINGLE_DISBURSEMENT,
   AWARDS_SINGLE_DISBURSEMENT_NO_BC_FUNDING,
+  AWARDS_SINGLE_DISBURSEMENT_RESTRICTION_WITHHELD_FUNDS,
   AWARDS_TWO_OF_TWO_DISBURSEMENT,
   JANE_MONONYMOUS_FROM_OTHER_COUNTRY,
   JOHN_DOE_FROM_CANADA,
@@ -390,7 +391,7 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
     );
   });
 
-  it("Should generate an IER12 file with one record for a student with one sent disbursement that had a feedback error reported.", async () => {
+  it("Should generate an IER12 file with one record for a student with one sent disbursement that had a feedback error reported (DISE).", async () => {
     // Arrange
     const testInputData = {
       student: JANE_MONONYMOUS_FROM_OTHER_COUNTRY,
@@ -462,6 +463,74 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
     const firstDisbursementId = numberToText(firstDisbursement.id);
     expect(line1).toBe(
       `${assessmentId}${firstDisbursementId}${defaultApplicationNumber}            242963189Jane With Really Long Mon               19980113B   SI       Some Foreign Street Addre                         New York                     SOME POSTAL CODESome Program With DescripSome program with description too long            graduateDiploma          0001    5   0512123401234ADR2XYZ                      62000081620001010000033330000004444000000555500000066660019100F2000060120002001COMP20000601000000000000000000000001209900N NNN            20000602        000321200000000160000003212000000000000000000000001NNN000000000000000000000000000000000000000000000000000000000000NN0000000000000144430000000000000000000000000000000000007777000000070045000000000000000000000000000000000000000000000000000000002200000065004000046000000001209900 0000000000000000000000000000000000000000000000000000000000000000000000DISE2023110220000815Completed Sent      20000816                        CSLF0000000000BCSL0000000000CSGP0000759900CSGD0000065000CSGF0000150000CSGT0000235000BCAG0000000000SBSD0000000000BGPD0000000000    0000000000`,
+    );
+  });
+
+  it("Should generate an IER12 file with one record for a student with one sent disbursement that had some funds withheld due to a restriction (DISW).", async () => {
+    // Arrange
+    const testInputData = {
+      student: JOHN_DOE_FROM_CANADA,
+      application: {
+        applicationNumber: defaultApplicationNumber,
+        studentNumber: undefined,
+        relationshipStatus: RelationshipStatus.Married,
+        applicationStatus: ApplicationStatus.Completed,
+        applicationStatusUpdatedOn: undefined,
+      },
+      assessment: {
+        triggerType: AssessmentTriggerType.OriginalAssessment,
+        assessmentDate: undefined,
+        workflowData: WORKFLOW_DATA_MARRIED_WITH_DEPENDENTS,
+        assessmentData: ASSESSMENT_DATA_MARRIED,
+        disbursementSchedules: [
+          {
+            coeStatus: COEStatus.completed,
+            disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
+            disbursementDate: undefined,
+            updatedAt: undefined,
+            dateSent: undefined,
+            disbursementValues:
+              AWARDS_SINGLE_DISBURSEMENT_RESTRICTION_WITHHELD_FUNDS,
+          },
+        ],
+      },
+      educationProgram:
+        PROGRAM_UNDERGRADUATE_CERTIFICATE_WITHOUT_INSTITUTION_PROGRAM_CODE,
+      offering: OFFERING_FULL_TIME,
+    };
+    const application = await saveIER12TestInputData(db, testInputData, {
+      programYearPrefix: sharedProgramYearPrefix,
+      submittedDate: referenceSubmissionDate,
+    });
+
+    // Queued job.
+    const job = createIER12SchedulerJobMock(
+      application.currentAssessment.assessmentDate,
+    );
+
+    // Act
+    const ier12Results = await processor.processIER12File(job);
+
+    // Assert
+    // Assert process result.
+    expect(ier12Results).toBeDefined();
+    // File timestamp.
+    const [timestampResult] = getFileNameAsCurrentTimestampMock.mock.results;
+    expect(isValidFileTimestamp(timestampResult.value)).toBe(true);
+    expect(ier12Results).toStrictEqual([
+      getSuccessSummaryMessages(timestampResult.value),
+    ]);
+    // Assert file output.
+    const uploadedFile = getUploadedFile(sftpClientMock);
+    expect(uploadedFile.fileLines?.length).toBe(1);
+    const [line1] = uploadedFile.fileLines;
+    const [firstDisbursement] =
+      application.currentAssessment.disbursementSchedules;
+    const assessmentId = numberToText(application.currentAssessment.id);
+    // Line 1 validations.
+    const firstDisbursementId = numberToText(firstDisbursement.id);
+    expect(line1).toBe(
+      `${assessmentId}${firstDisbursementId}${defaultApplicationNumber}            242963189Doe                      John           19980113B   MA       Address Line 1           Address Line 2           Victoria                 BC  Z1Z1Z1          Program                  Program description                               undergraduateCertificate 0001    8   0512123401234ADR2                         62000081620001010000033330000004444000000555500000066660019100F2000060120002001COMP20000601000010000000006598000000700000N NNN            20000602        000966867900000000000009668679003002001003000003005NNY000000000000000000000000000000000000000000000000000000000000NY0000000000000144430000000000000000000000000000000000007777000000150056000000000000000000000000000000000000000000003000000000050000000065430000009876120001459800 0000000000000000000000000000000000000000000000000000000000000000000000DISW2000081520000815Completed Sent      20000816                        CSLF0000100000BCSL0000659800CSGP0000000000CSGD0000000000CSGF0000000000CSGT0000000000BCAG0000700000SBSD0000000000BGPD0000000000    0000000000`,
     );
   });
 });

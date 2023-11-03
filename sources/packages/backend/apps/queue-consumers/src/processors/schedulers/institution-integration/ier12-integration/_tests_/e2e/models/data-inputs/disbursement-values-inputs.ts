@@ -172,3 +172,23 @@ export const AWARDS_TWO_OF_TWO_DISBURSEMENT: IERAward[] = [
     valueAmount: 99,
   },
 ];
+
+export const AWARDS_SINGLE_DISBURSEMENT_RESTRICTION_WITHHELD_FUNDS: IERAward[] =
+  [
+    {
+      valueType: DisbursementValueType.CanadaLoan,
+      valueCode: "CSLF",
+      valueAmount: 1000,
+    },
+    {
+      valueType: DisbursementValueType.BCLoan,
+      valueCode: "BCSL",
+      valueAmount: 6598,
+      restrictionAmountSubtracted: 6598,
+    },
+    {
+      valueType: DisbursementValueType.BCGrant,
+      valueCode: "BCAG",
+      valueAmount: 7000,
+    },
+  ];
