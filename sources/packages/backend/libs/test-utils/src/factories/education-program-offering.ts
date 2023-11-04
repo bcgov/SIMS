@@ -19,6 +19,11 @@ export function createFakeEducationProgramOffering(relations?: {
   institution?: Institution;
   institutionLocation?: InstitutionLocation;
 }): EducationProgramOffering {
+  // Case an institution location is provided already associated with
+  // an institution ensure that the relationship will be kept and
+  // another institution will not be generated.
+  const institution =
+    relations?.institutionLocation?.institution ?? relations.institution;
   const offering = new EducationProgramOffering();
   offering.name = faker.random.word();
   offering.actualTuitionCosts = faker.random.number(1000);
@@ -30,7 +35,7 @@ export function createFakeEducationProgramOffering(relations?: {
   offering.educationProgram =
     relations?.program ??
     createFakeEducationProgram({
-      institution: relations?.institution,
+      institution,
       auditUser: relations.auditUser,
     });
   offering.institutionLocation =

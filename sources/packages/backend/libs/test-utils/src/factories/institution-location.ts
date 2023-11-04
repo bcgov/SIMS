@@ -45,6 +45,7 @@ export function createFakeInstitutionLocation(
       count: 4,
       upcase: true,
     });
+  institutionLocation.hasIntegration = options?.initialValue?.hasIntegration;
   return institutionLocation;
 }
 
