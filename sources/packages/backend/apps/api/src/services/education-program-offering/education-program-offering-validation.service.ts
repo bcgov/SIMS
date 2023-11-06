@@ -3,8 +3,6 @@ import { OfferingStatus } from "@sims/sims-db";
 import {
   OfferingValidationResult,
   OfferingValidationModel,
-  OfferingValidationInfos,
-  OfferingValidationWarnings,
 } from "./education-program-offering-validation.models";
 import { validateSync } from "class-validator";
 import { plainToClass } from "class-transformer";

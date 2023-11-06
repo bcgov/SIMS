@@ -88,7 +88,7 @@ export class ApplicationBulkWithdrawalValidationModel {
       object.applicationFound,
   )
   @IsIn([true], {
-    message: "The institution code provided is incorrect.",
+    message: "The institution location code provided is incorrect.",
   })
   hasCorrectInstitutionCode?: boolean;
   /**
@@ -122,7 +122,7 @@ export class ApplicationBulkWithdrawalValidationModel {
   )
   @IsIn([false], {
     message: (validationArguments: ValidationArguments) =>
-      `The application is already withdrawn with the date: ${validationArguments.object["withdrawalDate"]}.`,
+      `The application is already withdrawn with the date: ${validationArguments.object["withdrawalDate"]} and is going to be skipped.`,
     context: ValidationContext.CreateWarning(
       ApplicationWithdrawalValidationWarnings.HasPreviouslyBeenWithdrawn,
     ),

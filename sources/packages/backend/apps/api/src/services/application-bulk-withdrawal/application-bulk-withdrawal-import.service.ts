@@ -1,7 +1,10 @@
 import { Injectable } from "@nestjs/common";
 import { ApplicationWithdrawalTextValidationResult } from "./application-bulk-withdrawal-import-text.models";
 import { In, Repository } from "typeorm";
-import { Application } from "@sims/sims-db";
+import {
+  Application,
+  StudentScholasticStandingChangeType,
+} from "@sims/sims-db";
 import {
   ApplicationBulkWithdrawalValidationModel,
   ApplicationData,
@@ -92,7 +95,9 @@ export class ApplicationBulkWithdrawalImportService {
         applicationStatus: true,
         location: { id: true, institutionCode: true },
         student: { id: true, sinValidation: { sin: true } },
-        studentScholasticStandings: { id: true },
+        studentScholasticStandings: {
+          id: true,
+        },
       },
       relations: {
         location: true,
@@ -101,7 +106,13 @@ export class ApplicationBulkWithdrawalImportService {
       },
       where: {
         applicationNumber: In(applicationNumbers),
-        location: { institution: { id: institutionId } },
+        location: {
+          institution: { id: institutionId },
+        },
+        studentScholasticStandings: {
+          changeType:
+            StudentScholasticStandingChangeType.StudentWithdrewFromProgram,
+        },
       },
     });
   }

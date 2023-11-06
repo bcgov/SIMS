@@ -9,8 +9,6 @@ import { Allow, IsEnum, IsIn, IsNotEmpty, MaxLength } from "class-validator";
 import { Type } from "class-transformer";
 import {
   OfferingDeliveryOptions,
-  OfferingValidationInfos,
-  OfferingValidationWarnings,
   WILComponentOptions,
 } from "../../../services";
 
@@ -250,6 +248,6 @@ export enum OfferingSummaryPurpose {
  * or info.
  */
 class ValidationResultAPIOutDTO {
-  typeCode: OfferingValidationWarnings | OfferingValidationInfos;
+  typeCode: string;
   message: string;
 }
