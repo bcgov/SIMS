@@ -67,9 +67,8 @@ export function getUploadedFiles(
       "SSH client mock was not invoked which means that there was no attempt to upload a file.",
     );
   }
-  return sshClientMock.put.mock.calls.map((call) => {
+  return sshClientMock.put.mock.calls.map(([input, remoteFilePath]) => {
     const uploadedFile = {} as UploadedFile;
-    const [input, remoteFilePath] = call;
     if (input) {
       uploadedFile.fileLines = input.toString().split(END_OF_LINE);
     }
