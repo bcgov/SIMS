@@ -39,6 +39,7 @@
         :notes="notes"
         @submitData="addNote"
         :allowedRole="Role.InstitutionCreateNote"
+        :allowAddingNotes="true"
       ></notes>
     </body-header-container>
   </tab-container>

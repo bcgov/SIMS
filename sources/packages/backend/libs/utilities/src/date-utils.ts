@@ -9,7 +9,7 @@ import * as dayOfYear from "dayjs/plugin/dayOfYear";
 import * as isBetween from "dayjs/plugin/isBetween";
 import * as customParseFormat from "dayjs/plugin/customParseFormat";
 import * as isSameOrAfter from "dayjs/plugin/isSameOrAfter";
-import { Between, FindOperator } from "typeorm";
+import { And, FindOperator, LessThan, MoreThanOrEqual } from "typeorm";
 dayjs.extend(utc);
 dayjs.extend(localizedFormat);
 dayjs.extend(timezone);
@@ -201,17 +201,17 @@ export function addToDateOnlyString(
 }
 
 /**
- * @param date in which the search has to happen
- * from midnight to next day midnight.
- * @returns typeorm findOperator object between the date.
+ * Creates the find operator to filter an entire day from the
+ * midnight(inclusive) till the next day midnight (exclusive).
+ * @param date day to be selected.
+ * @returns typeorm {@see FindOperator} to execute the select.
  */
-export const dateEqualTo = (date?: Date): FindOperator<Date> => {
-  // TODO method can be updated when typeorm updates the AND operator in the where clause.
-  return Between(
-    new Date(date.setHours(0, 0, 0, 0)),
-    new Date(date.setDate(date.getDate() + 1)),
-  );
-};
+export function dateEqualTo(date: Date): FindOperator<Date> {
+  const startDate = new Date(date);
+  startDate.setHours(0, 0, 0, 0);
+  const endDate = addDays(1, startDate);
+  return And(MoreThanOrEqual(startDate), LessThan(endDate));
+}
 
 /**
  * Return a PST timestamp with date and time in continuous format

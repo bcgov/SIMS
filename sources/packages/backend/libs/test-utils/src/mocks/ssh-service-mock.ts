@@ -41,8 +41,8 @@ export function createSSHServiceMock(
 }
 
 /**
- * Get the parameters provided to the put method of the SSH client that
- * represents the data that would be uploaded to the SFTP in a real scenario.
+ * Get the parameters provided to the put method of the SSH client that represents the
+ * remote file path and the data that would be uploaded to the SFTP in a real scenario.
  * @param sshClientMock SSH mocked client.
  * @returns file name and file content of the supposed-to-be uploaded file.
  */
@@ -50,6 +50,11 @@ export function getUploadedFile(
   sshClientMock: DeepMocked<Client>,
 ): UploadedFile {
   const uploadedFile = {} as UploadedFile;
+  if (!sshClientMock.put.mock.calls.length) {
+    throw new Error(
+      "SSH client mock was not invoked which means that there was no attempt to upload a file.",
+    );
+  }
   const [[input, remoteFilePath]] = sshClientMock.put.mock.calls;
   if (input) {
     uploadedFile.fileLines = input.toString().split(END_OF_LINE);
