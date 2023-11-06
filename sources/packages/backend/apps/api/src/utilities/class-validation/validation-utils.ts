@@ -69,36 +69,34 @@ function generateFlattenedErrors(
  * @param error error to be inspected.
  * @returns errors, warnings and infos.
  */
-export function extractValidationsByType<T, S>(
-  error: ValidationError,
-): {
+export function extractValidationsByType(error: ValidationError): {
   errors: string[];
-  warnings: ValidationResult<T>[];
-  infos: ValidationResult<S>[];
+  warnings: ValidationResult[];
+  infos: ValidationResult[];
 } {
   const errors: string[] = [];
-  const warnings: ValidationResult<T>[] = [];
-  const infos: ValidationResult<S>[] = [];
+  const warnings: ValidationResult[] = [];
+  const infos: ValidationResult[] = [];
   const flattenedErrors = flattenErrors(error);
   flattenedErrors.forEach((error) => {
     Object.keys(error.constraints).forEach((errorConstraintKey) => {
-      let associatedContext: ValidationContext<T, S> = undefined;
+      let associatedContext: ValidationContext<string> = undefined;
       if (error.contexts) {
         associatedContext = error.contexts[
           errorConstraintKey
-        ] as ValidationContext<T, S>;
+        ] as ValidationContext<string>;
       }
       const errorDescription = error.constraints[errorConstraintKey];
       if (associatedContext?.type === ValidationContextTypes.Warning) {
         warnings.push({
-          typeCode: associatedContext.typeCode as T,
+          typeCode: associatedContext.typeCode,
           message: errorDescription,
         });
       } else if (
         associatedContext?.type === ValidationContextTypes.Information
       ) {
         infos.push({
-          typeCode: associatedContext.typeCode as S,
+          typeCode: associatedContext.typeCode,
           message: errorDescription,
         });
       } else {
@@ -116,15 +114,15 @@ export function extractValidationsByType<T, S>(
  * All validations when failed will generate an error. The ones that have
  * the warning or information contexts will not be considered critical.
  */
-export class ValidationContext<T, S> {
+export class ValidationContext<T> {
   /**
    * Creates an error context that will make the error downgrade to
    * a condition of a warning information.
    * @param warningTypeCode warning code that uniquely identifies this condition.
    * @returns the warning context.
    */
-  static CreateWarning<T, S>(warningTypeCode: T): ValidationContext<T, S> {
-    const newContext = new ValidationContext<T, S>();
+  static CreateWarning<T>(warningTypeCode: T): ValidationContext<T> {
+    const newContext = new ValidationContext<T>();
     newContext.type = ValidationContextTypes.Warning;
     newContext.typeCode = warningTypeCode;
     return newContext;
@@ -136,8 +134,8 @@ export class ValidationContext<T, S> {
    * @param infoTypeCode information code that uniquely identifies this condition.
    * @returns the information context.
    */
-  static CreateInfo<T, S>(infoTypeCode: S): ValidationContext<T, S> {
-    const newContext = new ValidationContext<T, S>();
+  static CreateInfo<T>(infoTypeCode: T): ValidationContext<T> {
+    const newContext = new ValidationContext<T>();
     newContext.type = ValidationContextTypes.Information;
     newContext.typeCode = infoTypeCode;
     return newContext;
@@ -150,7 +148,7 @@ export class ValidationContext<T, S> {
   /**
    * Unique identifier of the validation error.
    */
-  typeCode: T | S;
+  typeCode: T;
 }
 
 /**
@@ -165,7 +163,7 @@ export enum ValidationContextTypes {
  * Validation warnings and infos with a unique typecode and
  * a user-friendly message to be displayed.
  */
-export interface ValidationResult<T> {
-  typeCode: T;
+export interface ValidationResult {
+  typeCode: string;
   message: string;
 }

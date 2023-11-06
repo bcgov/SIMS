@@ -153,7 +153,7 @@ export interface ApplicationWithdrawalValidationResult {
   /**
    * Warnings, if any.
    */
-  warnings: ValidationResult<ApplicationWithdrawalValidationWarnings>[];
+  warnings: ValidationResult[];
   /**
    * Users friendly errors list, if any.
    */

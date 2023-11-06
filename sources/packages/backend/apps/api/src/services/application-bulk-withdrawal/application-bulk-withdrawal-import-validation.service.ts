@@ -10,8 +10,6 @@ import {
   ValidationResult,
   extractValidationsByType,
 } from "../../utilities/class-validation";
-import { CustomNamedError } from "@sims/utilities";
-import { APPLICATION_BULK_WITHDRAWAL_VALIDATION_CRITICAL_ERROR } from "../../constants";
 
 /**
  * Executes the validations on an offering model.
@@ -39,13 +37,9 @@ export class ApplicationBulkWithdrawalImportValidationService {
       );
       const validationsErrors = validateSync(validationModel);
       const allErrors: string[] = [];
-      const allWarnings: ValidationResult<ApplicationWithdrawalValidationWarnings>[] =
-        [];
+      const allWarnings: ValidationResult[] = [];
       validationsErrors.forEach((error) => {
-        const validation = extractValidationsByType<
-          ApplicationWithdrawalValidationWarnings,
-          undefined
-        >(error);
+        const validation = extractValidationsByType(error);
         allErrors.push(...validation.errors);
         allWarnings.push(...validation.warnings);
       });
