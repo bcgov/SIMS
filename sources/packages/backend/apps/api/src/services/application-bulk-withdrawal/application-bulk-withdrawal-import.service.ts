@@ -27,7 +27,7 @@ export class ApplicationBulkWithdrawalImportService {
    * @param institutionId institution id.
    * @returns application bulk withdrawal models to be validated and persisted.
    */
-  async generateApplicationBulkWithdrawalValidationModels(
+  async generateValidationModels(
     textValidations: ApplicationWithdrawalTextValidationResult[],
     originator: string,
     institutionId: number,

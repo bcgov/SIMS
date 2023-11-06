@@ -237,7 +237,7 @@ export class ScholasticStandingInstitutionsController extends BaseController {
       textValidations,
     );
     const validationModels =
-      await this.applicationWithdrawalImportService.generateApplicationBulkWithdrawalValidationModels(
+      await this.applicationWithdrawalImportService.generateValidationModels(
         textValidations,
         withdrawalFileData.header.originator,
         userToken.authorizations.institutionId,
