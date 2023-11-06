@@ -108,7 +108,6 @@ export class ScholasticStandingControllerService {
           recordIndex: validation.index,
           applicationNumber: validation.validationModel.applicationNumber,
           withdrawalDate: validation.validationModel.withdrawalDate,
-          sin: validation.validationModel.sin,
           errors: validation.errors,
           warnings: validation.warnings,
           infos: [],
