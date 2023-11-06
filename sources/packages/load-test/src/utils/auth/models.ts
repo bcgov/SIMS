@@ -7,6 +7,13 @@ export interface UserPasswordCredential {
 }
 
 /**
+ * Client secret authentication credential.
+ */
+export interface ClientSecretCredential {
+  clientSecret: string;
+}
+
+/**
  * Cached token information.
  */
 export interface TokenCacheResponse {
@@ -22,4 +29,5 @@ export enum AuthorizedParties {
   Student = "student",
   AEST = "aest",
   SupportingUsers = "supporting-users",
+  LoadTestGateway = "load-test-gateway",
 }

@@ -83,7 +83,7 @@ export class WorkflowDataLoadService {
     applications: Application[],
     offering: EducationProgramOffering,
   ) {
-    await this.applicationRepo.insert(applications);
+    await this.applicationRepo.save(applications);
     applications.forEach((application) => {
       const studentAssessment = createFakeStudentAssessment(
         {
@@ -99,6 +99,16 @@ export class WorkflowDataLoadService {
       );
       application.currentAssessment = studentAssessment;
     });
-    return this.applicationRepo.save(applications);
+    await this.assessmentRepo.insert(
+      applications.map((app) => app.currentAssessment),
+    );
+    applications.forEach(async (application) => {
+      await this.applicationRepo.update(
+        { id: application.id },
+        { currentAssessment: application.currentAssessment },
+      );
+    });
+
+    return applications;
   }
 }
