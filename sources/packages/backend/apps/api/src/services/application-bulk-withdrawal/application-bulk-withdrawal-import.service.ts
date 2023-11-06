@@ -1,8 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import {
-  ApplicationBulkWithdrawalHeader,
-  ApplicationWithdrawalTextValidationResult,
-} from "./application-bulk-withdrawal-import-text.models";
+import { ApplicationWithdrawalTextValidationResult } from "./application-bulk-withdrawal-import-text.models";
 import { In, Repository } from "typeorm";
 import { Application } from "@sims/sims-db";
 import {
@@ -26,13 +23,13 @@ export class ApplicationBulkWithdrawalImportService {
   /**
    * Generates the application bulk withdrawal validation model.
    * @param textValidations text validation models to be converted to the validation models.
-   * @param textHeader text header model.
+   * @param originator institution that sent the file.
    * @param institutionId institution id.
    * @returns application bulk withdrawal models to be validated and persisted.
    */
   async generateApplicationBulkWithdrawalValidationModels(
     textValidations: ApplicationWithdrawalTextValidationResult[],
-    textHeader: ApplicationBulkWithdrawalHeader,
+    originator: string,
     institutionId: number,
   ): Promise<ApplicationBulkWithdrawalValidationModel[]> {
     const applicationDataMap: ApplicationDataMap = {};
@@ -57,24 +54,22 @@ export class ApplicationBulkWithdrawalImportService {
       const validationModel = {} as ApplicationBulkWithdrawalValidationModel;
       const applicationData =
         applicationDataMap[textValidation.textModel.applicationNumber];
+      validationModel.sin = textValidation.textModel.sin;
+      validationModel.applicationNumber =
+        textValidation.textModel.applicationNumber;
+      validationModel.withdrawalDate = textValidation.textModel.withdrawalDate;
+      validationModel.applicationFound = false;
       if (applicationData) {
         validationModel.applicationFound = true;
         validationModel.studentSINMatch =
           textValidation.textModel.sin === applicationData.sin;
         validationModel.hasCorrectInstitutionCode =
-          textHeader.originator === applicationData.locationCode;
+          originator === applicationData.locationCode;
         validationModel.isArchived = applicationData.isArchived;
         validationModel.applicationStatus = applicationData.applicationStatus;
         validationModel.hasPreviouslyBeenWithdrawn =
           applicationData.hasPreviouslyBeenWithdrawn;
-        validationModel.isRecordMatch = validationModel.studentSINMatch;
-      } else {
-        validationModel.applicationFound = false;
       }
-      validationModel.sin = textValidation.textModel.sin;
-      validationModel.applicationNumber =
-        textValidation.textModel.applicationNumber;
-      validationModel.withdrawalDate = textValidation.textModel.withdrawalDate;
       return validationModel;
     });
     return validationModels;

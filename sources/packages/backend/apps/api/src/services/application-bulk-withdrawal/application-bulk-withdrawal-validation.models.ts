@@ -74,6 +74,12 @@ export class ApplicationBulkWithdrawalValidationModel {
     (object: ApplicationBulkWithdrawalValidationModel) =>
       object.applicationFound,
   )
+  @IsIn([true], {
+    message: "The record was not found and will be skipped.",
+    context: ValidationContext.CreateWarning(
+      ApplicationWithdrawalValidationWarnings.NoMatchingRecordFound,
+    ),
+  })
   studentSINMatch?: boolean;
   /**
    * Has correct institution code.
@@ -124,20 +130,6 @@ export class ApplicationBulkWithdrawalValidationModel {
     ),
   })
   hasPreviouslyBeenWithdrawn?: boolean;
-  /**
-   * Is record match .ie. SIN, application number and institution must match a record in database.
-   */
-  @ValidateIf(
-    (object: ApplicationBulkWithdrawalValidationModel) =>
-      object.applicationFound,
-  )
-  @IsIn([true], {
-    message: "The record was not found and will be skipped.",
-    context: ValidationContext.CreateWarning(
-      ApplicationWithdrawalValidationWarnings.NoMatchingRecordFound,
-    ),
-  })
-  isRecordMatch?: boolean;
 }
 
 /**
