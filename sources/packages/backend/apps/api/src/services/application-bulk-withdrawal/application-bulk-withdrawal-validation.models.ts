@@ -99,7 +99,6 @@ export class ApplicationBulkWithdrawalValidationModel {
     (object: ApplicationBulkWithdrawalValidationModel) =>
       object.applicationFound,
   )
-  @IsEnum(ApplicationStatus)
   @IsIn([ApplicationStatus.Completed], {
     message: `The application is not in the ${ApplicationStatus.Completed} status.`,
   })
