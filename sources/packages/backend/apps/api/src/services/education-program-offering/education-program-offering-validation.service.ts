@@ -56,13 +56,10 @@ export class EducationProgramOfferingValidationService {
       });
       const validationsErrors = validateSync(offeringModel);
       const allErrors: string[] = [];
-      const allWarnings: ValidationResult<OfferingValidationWarnings>[] = [];
-      const allInfos: ValidationResult<OfferingValidationInfos>[] = [];
+      const allWarnings: ValidationResult[] = [];
+      const allInfos: ValidationResult[] = [];
       validationsErrors.forEach((error) => {
-        const validation = extractValidationsByType<
-          OfferingValidationWarnings,
-          OfferingValidationInfos
-        >(error);
+        const validation = extractValidationsByType(error);
         allErrors.push(...validation.errors);
         allWarnings.push(...validation.warnings);
         allInfos.push(...validation.infos);
