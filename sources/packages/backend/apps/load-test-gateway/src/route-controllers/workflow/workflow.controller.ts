@@ -12,11 +12,11 @@ export class WorkflowController {
   async prepareAssessmentData(
     @Param("iterations", ParseIntPipe) iterations: number,
   ): Promise<number[]> {
-    const submittedApplications =
+    const assessments =
       await this.workflowDataLoadService.loadApplicationAssessmentData(
         iterations,
       );
-    return submittedApplications.map((app) => app.currentAssessment.id);
+    return assessments.map((assessment) => assessment.id);
   }
 
   @Patch("submit-assessment/:assessmentId")

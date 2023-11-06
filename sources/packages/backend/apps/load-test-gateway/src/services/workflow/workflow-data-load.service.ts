@@ -39,7 +39,14 @@ export class WorkflowDataLoadService {
     private readonly assessmentRepo: Repository<StudentAssessment>,
   ) {}
 
-  async loadApplicationAssessmentData(dataIterations: number) {
+  /**
+   * Load the application and assessment data required for the load test.
+   * @param dataIterations load test iterations.
+   * @returns student assessments.
+   */
+  async loadApplicationAssessmentData(
+    dataIterations: number,
+  ): Promise<StudentAssessment[]> {
     const preliminaryData = await this.createApplicationPreliminaryData();
     const applications: Application[] = [];
     for (let i = 1; i <= dataIterations; i++) {
@@ -56,7 +63,7 @@ export class WorkflowDataLoadService {
       );
       applications.push(application);
     }
-    return this.saveApplicationAssessment(
+    return this.saveApplicationAssessments(
       applications,
       preliminaryData.offering,
     );
@@ -64,7 +71,7 @@ export class WorkflowDataLoadService {
 
   /**
    * Create preliminary data required to build the iteration of applications.
-   * @returns
+   * @returns preliminary data.
    */
   private async createApplicationPreliminaryData(): Promise<ApplicationPreliminaryData> {
     const auditUser = await this.userRepo.save(createFakeUser());
@@ -76,13 +83,15 @@ export class WorkflowDataLoadService {
   }
 
   /**
-   *
-   * @param preliminaryData
+   * Save the application and assessment data.
+   * @param applications applications.
+   * @param offering offering.
+   * @returns assessments.
    */
-  private async saveApplicationAssessment(
+  private async saveApplicationAssessments(
     applications: Application[],
     offering: EducationProgramOffering,
-  ) {
+  ): Promise<StudentAssessment[]> {
     await this.applicationRepo.save(applications);
     applications.forEach((application) => {
       const studentAssessment = createFakeStudentAssessment(
@@ -99,9 +108,12 @@ export class WorkflowDataLoadService {
       );
       application.currentAssessment = studentAssessment;
     });
-    await this.assessmentRepo.insert(
-      applications.map((app) => app.currentAssessment),
-    );
+
+    const assessments = applications.map((app) => app.currentAssessment);
+
+    await this.assessmentRepo.insert(assessments);
+
+    //Update the current assessment for the applications.
     applications.forEach(async (application) => {
       await this.applicationRepo.update(
         { id: application.id },
@@ -109,6 +121,6 @@ export class WorkflowDataLoadService {
       );
     });
 
-    return applications;
+    return assessments;
   }
 }

@@ -13,6 +13,9 @@ import { Options } from "k6/options";
 import execution from "k6/execution";
 import { getLoadTestGatewayCredentials } from "../../utils/load-test-api/load-test-api-creds";
 
+/**
+ * Load test number of iterations to run.
+ */
 const ITERATIONS = 100;
 /**
  * Virtual users to run load test.
