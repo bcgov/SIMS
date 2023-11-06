@@ -16,13 +16,13 @@ import { getLoadTestGatewayCredentials } from "../../utils/load-test-api/load-te
 /**
  * Load test number of iterations to run.
  */
-const ITERATIONS = 100;
+const ITERATIONS = 50;
 /**
  * Virtual users to run load test.
  * Please ensure that the number of virtual users
  * must always be less than the iterations.
  */
-const VIRTUAL_USERS = 10;
+const VIRTUAL_USERS = 15;
 
 interface SetupData {
   assessmentIds: number[];

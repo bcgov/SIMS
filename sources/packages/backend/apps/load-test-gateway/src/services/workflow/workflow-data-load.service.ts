@@ -114,12 +114,12 @@ export class WorkflowDataLoadService {
     await this.assessmentRepo.insert(assessments);
 
     //Update the current assessment for the applications.
-    applications.forEach(async (application) => {
+    for (const application of applications) {
       await this.applicationRepo.update(
         { id: application.id },
         { currentAssessment: application.currentAssessment },
       );
-    });
+    }
 
     return assessments;
   }
