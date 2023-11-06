@@ -241,7 +241,6 @@ export class ScholasticStandingInstitutionsController extends BaseController {
         textValidations,
         withdrawalFileData.header,
         userToken.authorizations.institutionId,
-        userToken.authorizations.adminLocationsIds,
       );
     // Validate all the application bulk withdrawal models.
     const applicationBulkWithdrawalValidations =

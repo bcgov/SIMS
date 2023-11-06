@@ -28,14 +28,12 @@ export class ApplicationBulkWithdrawalImportService {
    * @param textValidations text validation models to be converted to the validation models.
    * @param textHeader text header model.
    * @param institutionId institution id.
-   * @param allowedLocationIds set of allowed location ids for the given institution.
    * @returns application bulk withdrawal models to be validated and persisted.
    */
   async generateApplicationBulkWithdrawalValidationModels(
     textValidations: ApplicationWithdrawalTextValidationResult[],
     textHeader: ApplicationBulkWithdrawalHeader,
     institutionId: number,
-    allowedLocationIds: number[],
   ): Promise<ApplicationBulkWithdrawalValidationModel[]> {
     const applicationDataMap: ApplicationDataMap = {};
     const applicationNumbers = textValidations.map(
