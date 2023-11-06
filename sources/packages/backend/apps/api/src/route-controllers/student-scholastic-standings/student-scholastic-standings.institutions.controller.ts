@@ -244,7 +244,7 @@ export class ScholasticStandingInstitutionsController extends BaseController {
       );
     // Validate all the application bulk withdrawal models.
     const applicationBulkWithdrawalValidations =
-      this.applicationWithdrawalImportValidationService.validateApplicationBulkWithdrawalModels(
+      this.applicationWithdrawalImportValidationService.validateModels(
         validationModels,
       );
     // Assert successful validation.

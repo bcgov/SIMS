@@ -21,7 +21,7 @@ export class ApplicationBulkWithdrawalImportValidationService {
    * @returns validation result or an exception in the case of a failed validation
    * combined with the silently parameter defined as false.
    */
-  validateApplicationBulkWithdrawalModels(
+  validateModels(
     validationModels: ApplicationBulkWithdrawalValidationModel[],
   ): ApplicationWithdrawalValidationResult[] {
     return validationModels.map((model, index) => {
