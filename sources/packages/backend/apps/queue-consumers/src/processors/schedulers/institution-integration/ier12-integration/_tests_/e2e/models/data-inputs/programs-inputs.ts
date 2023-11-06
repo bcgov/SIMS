@@ -8,7 +8,7 @@ export const PROGRAM_UNDERGRADUATE_CERTIFICATE_WITHOUT_INSTITUTION_PROGRAM_CODE:
     fieldOfStudyCode: 1,
     cipCode: "12.1234",
     nocCode: "1234",
-    sabcCode: "ADR2",
+    sabcCode: "ADR1",
     institutionProgramCode: undefined,
     completionYears: "5YearsOrMore",
   };
