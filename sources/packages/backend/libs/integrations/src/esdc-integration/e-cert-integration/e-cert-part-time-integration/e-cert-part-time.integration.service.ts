@@ -61,11 +61,11 @@ export class ECertPartTimeIntegrationService extends ECertIntegrationService {
     // Detail records
     // Calculated values
     const fileRecords = ecertRecords.map((ecertRecord) => {
-      const CSGPPTAmount = getDisbursementEffectiveAmountByValueCode(
+      const csgpPTAmount = getDisbursementEffectiveAmountByValueCode(
         ecertRecord.awards,
         CSPT,
       );
-      const CSGPPDAmount = getDisbursementEffectiveAmountByValueCode(
+      const csgpPDAmount = getDisbursementEffectiveAmountByValueCode(
         ecertRecord.awards,
         CSGP,
       );
@@ -122,9 +122,9 @@ export class ECertPartTimeIntegrationService extends ECertIntegrationService {
       record.ppdFlag = getPPDFlag(ecertRecord.ppdFlag);
       record.totalCanadaGrantAmount = totalCanadaGrantAmount;
       record.totalBCGrantAmount = totalBCGrantAmount;
-      record.CSGPPTAmount = CSGPPTAmount;
-      record.CSGPPDAmount = CSGPPDAmount;
-      record.CSGPPTDEPAmount = CSGPPTDEPAmount;
+      record.csgpPTAmount = csgpPTAmount;
+      record.csgpPDAmount = csgpPDAmount;
+      record.csgpPTDEPAmount = CSGPPTDEPAmount;
       return record;
     });
     fileLines.push(...fileRecords);

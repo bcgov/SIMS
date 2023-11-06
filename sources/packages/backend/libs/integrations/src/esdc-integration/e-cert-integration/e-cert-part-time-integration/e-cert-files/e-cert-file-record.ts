@@ -134,15 +134,15 @@ export class ECertPartTimeFileRecord extends ECertFileRecord {
   /**
    * Amount of Grant for Part-time Studies (CSGP-PT) at the study start.
    */
-  CSGPPTAmount: number;
+  csgpPTAmount: number;
   /**
    * Amount of Grant for Students with Permanent Disabilities (CSGP-PD) at the study start.
    */
-  CSGPPDAmount: number;
+  csgpPDAmount: number;
   /**
    * Amount Grant for Part-time Students with Dependants (CSGP-PTDEP) at the study start.
    */
-  CSGPPTDEPAmount: number;
+  csgpPTDEPAmount: number;
   /**
    * CourseLoad for the PartTime course.
    */
@@ -198,10 +198,10 @@ export class ECertPartTimeFileRecord extends ECertFileRecord {
         5,
         NUMBER_FILLER,
       );
-      record.appendWithStartFiller(this.CSGPPTAmount, 5, NUMBER_FILLER);
+      record.appendWithStartFiller(this.csgpPTAmount, 5, NUMBER_FILLER);
       record.repeatAppend(NUMBER_FILLER, 5); // CSGP NBD MI Amt, No longer used.
-      record.appendWithStartFiller(this.CSGPPDAmount, 5, NUMBER_FILLER);
-      record.appendWithStartFiller(this.CSGPPTDEPAmount, 5, NUMBER_FILLER);
+      record.appendWithStartFiller(this.csgpPDAmount, 5, NUMBER_FILLER);
+      record.appendWithStartFiller(this.csgpPTDEPAmount, 5, NUMBER_FILLER);
       record.repeatAppend(NUMBER_FILLER, 5); // Amount of Grant for Services and Equipment for Students with Permanent Disabilities (CSGP-PDSE) at the study start, No longer used.
       record.appendWithStartFiller(this.totalBCGrantAmount, 5, NUMBER_FILLER);
       record.repeatAppend(NUMBER_FILLER, 5); // BC Part-time grant amount 2 - Reserved for future use
