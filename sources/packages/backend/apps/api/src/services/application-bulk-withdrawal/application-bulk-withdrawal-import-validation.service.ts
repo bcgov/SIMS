@@ -50,14 +50,6 @@ export class ApplicationBulkWithdrawalImportValidationService {
         allWarnings.push(...validation.warnings);
       });
 
-      if (allErrors.length) {
-        throw new CustomNamedError(
-          "The application bulk withdrawal has critical errors.",
-          APPLICATION_BULK_WITHDRAWAL_VALIDATION_CRITICAL_ERROR,
-          allErrors,
-        );
-      }
-
       return {
         index,
         validationModel,
