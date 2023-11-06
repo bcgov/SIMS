@@ -50,7 +50,7 @@ export class ApplicationBulkWithdrawalImportService {
         hasPreviouslyBeenWithdrawn: !!record.studentScholasticStandings.length,
       };
     });
-    const validationModels = textValidations.map((textValidation) => {
+    return textValidations.map((textValidation) => {
       const validationModel = {} as ApplicationBulkWithdrawalValidationModel;
       const applicationData =
         applicationDataMap[textValidation.textModel.applicationNumber];
@@ -72,7 +72,6 @@ export class ApplicationBulkWithdrawalImportService {
       }
       return validationModel;
     });
-    return validationModels;
   }
 
   /**
