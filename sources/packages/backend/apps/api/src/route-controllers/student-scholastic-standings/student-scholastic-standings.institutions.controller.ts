@@ -37,7 +37,6 @@ import {
   FormService,
   INVALID_OPERATION_IN_THE_CURRENT_STATUS,
   StudentScholasticStandingsService,
-  ApplicationWithdrawalTextValidationResult,
   BulkWithdrawalFileData,
 } from "../../services";
 import { ApiProcessError, ClientTypeBaseRoute } from "../../types";
@@ -47,7 +46,6 @@ import { FormNames } from "../../services/form/constants";
 import {
   APPLICATION_CHANGE_NOT_ELIGIBLE,
   APPLICATION_WITHDRAWAL_INVALID_TEXT_FILE_ERROR,
-  APPLICATION_WITHDRAWAL_TEXT_CONTENT_FORMAT_ERROR,
 } from "../../constants";
 import {
   ApplicationBulkWithdrawalValidationResultAPIOutDTO,
@@ -235,7 +233,9 @@ export class ScholasticStandingInstitutionsController extends BaseController {
         withdrawalFileData.applicationWithdrawalModels,
       );
     // Assert successful validation.
-    this.assertTextValidationsAreValid(textValidations);
+    this.scholasticStandingControllerService.assertTextValidationsAreValid(
+      textValidations,
+    );
     const validationModels =
       await this.applicationWithdrawalImportService.generateApplicationBulkWithdrawalValidationModels(
         textValidations,
@@ -247,6 +247,7 @@ export class ScholasticStandingInstitutionsController extends BaseController {
       this.applicationWithdrawalImportValidationService.validateApplicationBulkWithdrawalModels(
         validationModels,
       );
+    // Assert successful validation.
     this.scholasticStandingControllerService.assertValidationsAreValid(
       applicationBulkWithdrawalValidations,
     );
@@ -258,37 +259,5 @@ export class ScholasticStandingInstitutionsController extends BaseController {
 
     // TODO create a block to do database updates for Application withdrawal.
     return [];
-  }
-
-  /**
-   * Verify if all text file validations were performed with success and throw
-   * a BadRequestException in case of some failure.
-   * @param textValidations validations to be verified.
-   */
-  private assertTextValidationsAreValid(
-    textValidations: ApplicationWithdrawalTextValidationResult[],
-  ) {
-    const textValidationsErrors = textValidations.filter(
-      (textValidation) => textValidation.errors.length,
-    );
-    if (textValidationsErrors.length) {
-      // At least one error was detected and the text must be fixed.
-      const validationResults: ApplicationBulkWithdrawalValidationResultAPIOutDTO[] =
-        textValidationsErrors.map((validation) => ({
-          recordIndex: validation.index,
-          applicationNumber: validation.textModel.applicationNumber,
-          withdrawalDate: validation.textModel.withdrawalDate,
-          errors: validation.errors,
-          infos: [],
-          warnings: [],
-        }));
-      throw new BadRequestException(
-        new ApiProcessError(
-          "One or more text data fields received are not in the correct format.",
-          APPLICATION_WITHDRAWAL_TEXT_CONTENT_FORMAT_ERROR,
-          validationResults,
-        ),
-      );
-    }
   }
 }

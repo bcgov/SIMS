@@ -3,7 +3,10 @@ import {
   Injectable,
   NotFoundException,
 } from "@nestjs/common";
-import { StudentScholasticStandingsService } from "../../services";
+import {
+  ApplicationWithdrawalTextValidationResult,
+  StudentScholasticStandingsService,
+} from "../../services";
 import {
   ApplicationBulkWithdrawalValidationResultAPIOutDTO,
   ScholasticStandingSubmittedDetailsAPIOutDTO,
@@ -11,7 +14,10 @@ import {
 import { transformToActiveApplicationDataAPIOutDTO } from "../institution-locations/models/application.dto";
 import { ApplicationWithdrawalValidationResult } from "../../services/application-bulk-withdrawal/application-bulk-withdrawal-validation.models";
 import { ApiProcessError } from "../../types";
-import { APPLICATION_WITHDRAWAL_VALIDATION_ERROR } from "../../constants";
+import {
+  APPLICATION_WITHDRAWAL_TEXT_CONTENT_FORMAT_ERROR,
+  APPLICATION_WITHDRAWAL_VALIDATION_ERROR,
+} from "../../constants";
 
 /**
  * Scholastic standing controller service.
@@ -49,6 +55,38 @@ export class ScholasticStandingControllerService {
       ...scholasticStanding.submittedData,
       ...transformToActiveApplicationDataAPIOutDTO(application, offering),
     };
+  }
+
+  /**
+   * Verify if all text file validations were performed with success and throw
+   * a BadRequestException in case of some failure.
+   * @param textValidations validations to be verified.
+   */
+  assertTextValidationsAreValid(
+    textValidations: ApplicationWithdrawalTextValidationResult[],
+  ) {
+    const textValidationsErrors = textValidations.filter(
+      (textValidation) => textValidation.errors.length,
+    );
+    if (textValidationsErrors.length) {
+      // At least one error was detected and the text must be fixed.
+      const validationResults: ApplicationBulkWithdrawalValidationResultAPIOutDTO[] =
+        textValidationsErrors.map((validation) => ({
+          recordIndex: validation.index,
+          applicationNumber: validation.textModel.applicationNumber,
+          withdrawalDate: validation.textModel.withdrawalDate,
+          errors: validation.errors,
+          infos: [],
+          warnings: [],
+        }));
+      throw new BadRequestException(
+        new ApiProcessError(
+          "One or more text data fields received are not in the correct format.",
+          APPLICATION_WITHDRAWAL_TEXT_CONTENT_FORMAT_ERROR,
+          validationResults,
+        ),
+      );
+    }
   }
 
   /**
