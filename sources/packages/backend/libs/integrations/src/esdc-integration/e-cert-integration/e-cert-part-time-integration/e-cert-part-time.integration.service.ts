@@ -69,7 +69,7 @@ export class ECertPartTimeIntegrationService extends ECertIntegrationService {
         ecertRecord.awards,
         CSGP,
       );
-      const CSGPPTDEPAmount = getDisbursementEffectiveAmountByValueCode(
+      const csgpPTDEPAmount = getDisbursementEffectiveAmountByValueCode(
         ecertRecord.awards,
         CSGD,
       );
@@ -124,7 +124,7 @@ export class ECertPartTimeIntegrationService extends ECertIntegrationService {
       record.totalBCGrantAmount = totalBCGrantAmount;
       record.csgpPTAmount = csgpPTAmount;
       record.csgpPDAmount = csgpPDAmount;
-      record.csgpPTDEPAmount = CSGPPTDEPAmount;
+      record.csgpPTDEPAmount = csgpPTDEPAmount;
       return record;
     });
     fileLines.push(...fileRecords);
