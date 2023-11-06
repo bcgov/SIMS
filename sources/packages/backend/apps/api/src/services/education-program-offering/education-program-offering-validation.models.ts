@@ -603,11 +603,11 @@ export interface OfferingValidationResult {
   /**
    * Infos, if any.
    */
-  infos: ValidationResult<OfferingValidationInfos>[];
+  infos: ValidationResult[];
   /**
    * Warnings, if any.
    */
-  warnings: ValidationResult<OfferingValidationWarnings>[];
+  warnings: ValidationResult[];
   /**
    * Users friendly errors list, if any.
    */

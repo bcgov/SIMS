@@ -2,7 +2,6 @@ import { Injectable } from "@nestjs/common";
 import {
   ApplicationBulkWithdrawalValidationModel,
   ApplicationWithdrawalValidationResult,
-  ApplicationWithdrawalValidationWarnings,
 } from "./application-bulk-withdrawal-validation.models";
 import { validateSync } from "class-validator";
 import { plainToClass } from "class-transformer";
