@@ -323,6 +323,8 @@ export class IER12ProcessingService {
             application,
             disbursement,
           ),
+        currentOfferingId: offering.id,
+        parentOfferingId: offering.parentOffering?.id,
       };
       ier12Records.push(ier12Record);
     }

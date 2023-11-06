@@ -103,6 +103,8 @@ export interface IER12Record {
   disbursementAwards: IERAward[];
   applicationEventCode: ApplicationEventCode;
   applicationEventDate: Date;
+  currentOfferingId: number;
+  parentOfferingId?: number;
 }
 
 export enum ApplicationStatusCode {

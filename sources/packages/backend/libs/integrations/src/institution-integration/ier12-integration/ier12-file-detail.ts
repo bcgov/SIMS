@@ -53,6 +53,8 @@ export class IER12FileDetail implements IER12FileLine {
   sabcCode?: string;
   institutionProgramCode?: string;
   programLength: number;
+  currentOfferingId: number;
+  parentOfferingId?: number;
   studyStartDate: Date;
   studyEndDate: Date;
   tuitionFees: number;
@@ -195,6 +197,10 @@ export class IER12FileDetail implements IER12FileLine {
     record.appendOptionalStringWithFiller(this.sabcCode, 4);
     record.appendOptionalStringWithFiller(this.institutionProgramCode, 25);
     record.append(this.programLength, 1);
+    record.appendWithStartFiller(this.currentOfferingId, 10, NUMBER_FILLER);
+    record.appendOptionalNumberWithFiller(this.parentOfferingId, 10);
+    // Currently we are sending 30 whitespace after the parent offering id.
+    record.appendWithEndFiller("", 30, SPACE_FILLER);
     record.appendFormattedDate(this.studyStartDate);
     record.appendFormattedDate(this.studyEndDate);
     record.appendNumberWithFiller(this.tuitionFees, 10);

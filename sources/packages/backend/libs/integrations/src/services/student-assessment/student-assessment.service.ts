@@ -67,6 +67,7 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
         },
         offering: {
           id: true,
+          parentOffering: { id: true },
           educationProgram: {
             id: true,
             name: true,
@@ -130,7 +131,11 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
           studentScholasticStandings: true,
           programYear: true,
         },
-        offering: { institutionLocation: true, educationProgram: true },
+        offering: {
+          institutionLocation: true,
+          educationProgram: true,
+          parentOffering: true,
+        },
       },
       where: [
         {
