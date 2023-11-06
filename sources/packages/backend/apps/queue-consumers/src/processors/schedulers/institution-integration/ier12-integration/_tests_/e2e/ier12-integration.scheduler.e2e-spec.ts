@@ -669,7 +669,7 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
       },
       assessment: {
         triggerType: AssessmentTriggerType.OriginalAssessment,
-        // Add o one hour to ensure the proper file upload order.
+        // Add one hour to ensure the proper file upload order.
         assessmentDate: dayjs(referenceSubmissionDate).add(1, "h").toDate(),
         workflowData: WORKFLOW_DATA_MARRIED_WITH_DEPENDENTS,
         assessmentData: ASSESSMENT_DATA_MARRIED,
