@@ -20,7 +20,7 @@ export function workflowLoadAssessmentData(
 ): number[] {
   const headers = getAuthHeader(credentials);
   const response = http.post(
-    `${BASE_LOAD_TEST_GATEWAY_URL}/workflow/prepare-assessment-data/${iterations}`,
+    `${BASE_LOAD_TEST_GATEWAY_URL}/workflow/load-assessment-data/${iterations}`,
     undefined,
     { headers, timeout: LOAD_TEST_GATEWAY_CLIENT_HTTP_TIMEOUT }
   );
