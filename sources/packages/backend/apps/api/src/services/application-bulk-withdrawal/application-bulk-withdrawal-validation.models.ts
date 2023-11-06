@@ -137,7 +137,7 @@ export class ApplicationBulkWithdrawalValidationModel {
  */
 export interface BulkWithdrawalFileData {
   header: ApplicationBulkWithdrawalHeader;
-  applicationWithdrawalModels: ApplicationWithdrawalImportTextModel[];
+  records: ApplicationWithdrawalImportTextModel[];
 }
 
 /**

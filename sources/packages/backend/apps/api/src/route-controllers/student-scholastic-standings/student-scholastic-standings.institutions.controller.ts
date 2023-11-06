@@ -230,7 +230,7 @@ export class ScholasticStandingInstitutionsController extends BaseController {
     // Validate the text models.
     const textValidations =
       this.applicationWithdrawalImportTextService.validateTextModels(
-        withdrawalFileData.applicationWithdrawalModels,
+        withdrawalFileData.records,
       );
     // Assert successful validation.
     this.scholasticStandingControllerService.assertTextValidationsAreValid(

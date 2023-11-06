@@ -85,7 +85,7 @@ export class ApplicationWithdrawalImportTextService {
         data.applicationNumber;
       applicationWithdrawalImportTextModel.withdrawalDate = data.withdrawalDate;
     });
-    return { header, applicationWithdrawalModels };
+    return { header, records: applicationWithdrawalModels };
   }
 
   /**
