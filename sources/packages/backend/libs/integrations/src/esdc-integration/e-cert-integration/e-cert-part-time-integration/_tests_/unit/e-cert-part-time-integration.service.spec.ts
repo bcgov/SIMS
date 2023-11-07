@@ -144,9 +144,9 @@ describe("ECertPartTimeIntegrationService-createRequestContent", () => {
           ppdFlag: "N",
           totalCanadaGrantAmount: 3909,
           totalBCGrantAmount: 333,
-          CSGPPTAmount: 1800,
-          CSGPPDAmount: 999,
-          CSGPPTDEPAmount: 777,
+          csgpPTAmount: 1800,
+          csgpPDAmount: 999,
+          csgpPTDEPAmount: 777,
         }),
         expect.objectContaining({
           recordTypeCode: "99",
