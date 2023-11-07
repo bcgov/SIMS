@@ -1,4 +1,4 @@
-import { convertStringToPEM } from "@sims/auth/utilities/certificate-utils";
+import { convertStringToPEM } from "@sims/auth/utilities";
 
 // Target module
 

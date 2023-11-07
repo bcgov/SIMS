@@ -253,14 +253,4 @@ export class ConfigService {
   get apiVersion(): string {
     return this.getCachedConfig("apiVersionConfig", process.env.VERSION);
   }
-
-  /**
-   * Load test API port.
-   */
-  get loadTestAPIPort(): number {
-    return this.getCachedConfig(
-      "loadTestAPIPortConfig",
-      +process.env.LOAD_TEST_API_PORT || 3005,
-    );
-  }
 }

@@ -1,7 +1,7 @@
 import { ExecutionContext, Injectable } from "@nestjs/common";
 import { Reflector } from "@nestjs/core";
 import { AuthGuard } from "@nestjs/passport";
-import { IS_PUBLIC } from "../../utils/auth.constants";
+import { IS_PUBLIC } from "../../constants/auth.constants";
 
 /**
  * Enable global validation for authenticated users and

@@ -7,7 +7,7 @@
 import { check, sleep } from "k6";
 import {
   workflowAssessmentSubmission,
-  workflowLoadAssessmentData,
+  workflowCreateAssessmentData,
 } from "../../utils/load-test-api/load-test-api";
 import { Options } from "k6/options";
 import execution from "k6/execution";
@@ -35,7 +35,7 @@ interface SetupData {
  */
 export function setup(): SetupData {
   const credentials = getLoadTestGatewayCredentials();
-  const assessmentIds = workflowLoadAssessmentData(ITERATIONS, credentials);
+  const assessmentIds = workflowCreateAssessmentData(ITERATIONS, credentials);
   return { assessmentIds };
 }
 
@@ -51,7 +51,7 @@ export const options: Options = {
 };
 
 /**
- * Test scenario to executed as many times as defined by the test options.
+ * Test scenario to be executed as many times as defined by the test options.
  * Part of the K6 life cycle.
  * @param setupData setup data returned by setup method.
  */

@@ -16,7 +16,7 @@ import {
   createFakeUser,
 } from "@sims/test-utils";
 import { DataSource, Repository } from "typeorm";
-import { APPLICATION_DATA_SINGLE_INDEPENDENT } from "../../utils/application.constants";
+import { APPLICATION_DATA_SINGLE_INDEPENDENT } from "../../constants/application.constants";
 
 interface ApplicationPreliminaryData {
   offering: EducationProgramOffering;
@@ -44,7 +44,7 @@ export class WorkflowDataLoadService {
    * @param dataIterations load test iterations.
    * @returns student assessments.
    */
-  async loadApplicationAssessmentData(
+  async createApplicationAssessmentData(
     dataIterations: number,
   ): Promise<StudentAssessment[]> {
     const preliminaryData = await this.createApplicationPreliminaryData();

@@ -1,5 +1,5 @@
 import { KeycloakService, OpenIdConfig, RealmConfig } from "../services";
-import { convertStringToPEM } from "../utilities/certificate-utils";
+import { convertStringToPEM } from "../utilities";
 
 /**
  * Manage the loading of Keycloak specific configs that are required to
