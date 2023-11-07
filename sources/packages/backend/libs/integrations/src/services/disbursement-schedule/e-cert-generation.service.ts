@@ -627,10 +627,10 @@ export class ECertGenerationService {
           disbursement.studentAssessment.application.currentAssessment.offering,
           MaxTuitionRemittanceTypes.Effective,
         );
-      disbursement.tuitionRemittanceEffectiveAmount =
-        disbursement.tuitionRemittanceRequestedAmount > maxTuitionRemittance
-          ? maxTuitionRemittance
-          : disbursement.tuitionRemittanceRequestedAmount;
+      disbursement.tuitionRemittanceEffectiveAmount = Math.min(
+        disbursement.tuitionRemittanceRequestedAmount,
+        maxTuitionRemittance,
+      );
     }
   }
 }
