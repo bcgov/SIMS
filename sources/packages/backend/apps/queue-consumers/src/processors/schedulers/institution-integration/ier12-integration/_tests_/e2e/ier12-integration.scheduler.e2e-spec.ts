@@ -57,7 +57,6 @@ import { isValidFileTimestamp } from "@sims/test-utils/utils";
 import { FULL_TIME_DISBURSEMENT_FEEDBACK_ERRORS } from "@sims/integrations/services/disbursement-schedule/disbursement-schedule.models";
 import * as dayjs from "dayjs";
 
-jest.setTimeout(9999999);
 describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
   let app: INestApplication;
   let processor: IER12IntegrationScheduler;
