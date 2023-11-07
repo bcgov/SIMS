@@ -32,7 +32,6 @@ import {
   APPLICATION_NOT_FOUND,
   ASSESSMENT_ALREADY_IN_PROGRESS,
   ApplicationWithdrawalImportTextService,
-  ApplicationBulkWithdrawalImportService,
   ApplicationBulkWithdrawalImportValidationService,
   FormService,
   INVALID_OPERATION_IN_THE_CURRENT_STATUS,
@@ -76,7 +75,6 @@ export class ScholasticStandingInstitutionsController extends BaseController {
     private readonly studentScholasticStandingsService: StudentScholasticStandingsService,
     private readonly scholasticStandingControllerService: ScholasticStandingControllerService,
     private readonly applicationWithdrawalImportTextService: ApplicationWithdrawalImportTextService,
-    private readonly applicationWithdrawalImportService: ApplicationBulkWithdrawalImportService,
     private readonly applicationWithdrawalImportValidationService: ApplicationBulkWithdrawalImportValidationService,
   ) {
     super();
@@ -236,8 +234,9 @@ export class ScholasticStandingInstitutionsController extends BaseController {
     this.scholasticStandingControllerService.assertTextValidationsAreValid(
       textValidations,
     );
+    // Generate the validation models.
     const validationModels =
-      await this.applicationWithdrawalImportService.generateValidationModels(
+      await this.applicationWithdrawalImportTextService.generateValidationModels(
         textValidations,
         withdrawalFileData.header.originator,
         userToken.authorizations.institutionId,
