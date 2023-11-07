@@ -43,7 +43,7 @@ function needRenewJwtToken(jwtExp: number, maxSecondsToExpired = 0): boolean {
  * cache key when there are variations of a token under the same client.
  * For instance, for the Ministry, a token for each group can be acquired.
  * @param authorizedParty Keycloak client.
- * @param credentials user and password to acquire the token (the user must have
+ * @param credentials credential to obtain authentication token (for password authentication the user must have
  * a hardcoded password to bypass the Keycloak identity provider).
  * @param options.
  * - `uniqueTokenCache` different cache key when there are variations of
@@ -84,7 +84,7 @@ export function getCachedToken(
 /**
  * Get a token for a Keycloak client.
  * @param authorizedParty Keycloak client.
- * @param credentials user and password that must be set for the user.
+ * @param credentials credential to obtain authentication token.
  * @returns access token string.
  */
 export function getToken(

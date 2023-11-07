@@ -12,7 +12,7 @@ export class WorkflowAssessmentSubmissionController {
 
   /**
    * Create application and assessment data required for the load test.
-   * @param dataIterations load test iterations.
+   * @param iterations load test iterations.
    * @returns student assessments.
    */
   @Post("setup/:iterations")
