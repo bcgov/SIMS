@@ -154,4 +154,5 @@ export interface IER12TestInputData {
   assessment: IER12Assessment;
   educationProgram: IER12Program;
   offering: IER12Offering;
+  parentOfferingAvailable?: boolean;
 }

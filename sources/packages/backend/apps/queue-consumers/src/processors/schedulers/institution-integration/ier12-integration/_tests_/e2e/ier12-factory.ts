@@ -4,6 +4,7 @@ import {
   DisbursementScheduleStatus,
   DisbursementValue,
   EducationProgram,
+  EducationProgramOffering,
   FullTimeAssessment,
   InstitutionLocation,
   ProgramYear,
@@ -12,6 +13,7 @@ import {
 } from "@sims/sims-db";
 import {
   E2EDataSources,
+  createFakeEducationProgramOffering,
   createFakeStudent,
   createFakeUser,
   ensureProgramYearExists,
@@ -115,6 +117,18 @@ export async function saveIER12TestInputData(
     assessment.offering.educationProgram.id,
     testInputData.educationProgram,
   );
+
+  // Parent offering, if needed.
+  const parentOffering = testInputData.parentOfferingAvailable
+    ? await db.educationProgramOffering.save(
+        createFakeEducationProgramOffering({
+          institutionLocation: assessment.offering.institutionLocation,
+          auditUser: assessment.offering.educationProgram.submittedBy,
+          program: assessment.offering.educationProgram,
+        }),
+      )
+    : undefined;
+
   // Offering
   await updateIER12OfferingFromTestInput(
     db,
@@ -122,6 +136,9 @@ export async function saveIER12TestInputData(
     testInputData.offering,
     studyStartDate,
     studyEndDate,
+    {
+      parentOffering,
+    },
   );
   return application;
 }
@@ -328,6 +345,8 @@ async function updateIER12ProgramFromTestInput(
  * @param testInputOffering offering test input data.
  * @param studyStartDate offering start date.
  * @param studyEndDate offering end date.
+ * @param relations, relations,
+ * -  `parentOffering` parent offering.
  */
 async function updateIER12OfferingFromTestInput(
   db: E2EDataSources,
@@ -335,6 +354,9 @@ async function updateIER12OfferingFromTestInput(
   testInputOffering: IER12Offering,
   studyStartDate: string,
   studyEndDate: string,
+  relations?: {
+    parentOffering: EducationProgramOffering;
+  },
 ): Promise<void> {
   const offeringUpdate = {
     yearOfStudy: testInputOffering.yearOfStudy,
@@ -345,6 +367,7 @@ async function updateIER12OfferingFromTestInput(
     mandatoryFees: testInputOffering.mandatoryFees,
     exceptionalExpenses: testInputOffering.exceptionalExpenses,
     offeringIntensity: testInputOffering.offeringIntensity,
+    parentOffering: relations?.parentOffering,
   };
   await db.educationProgramOffering.update(offeringId, offeringUpdate);
 }
