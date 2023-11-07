@@ -105,6 +105,12 @@ export function getToken(
   return responseBody.access_token;
 }
 
+/**
+ * Get the payload to obtain authentication token.
+ * @param authorizedParty authorize party.
+ * @param credentials client credential.
+ * @returns payload.
+ */
 function getTokenPayload(
   authorizedParty: AuthorizedParties,
   credentials: AuthenticationCredential

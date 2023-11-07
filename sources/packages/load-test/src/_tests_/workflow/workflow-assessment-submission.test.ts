@@ -12,11 +12,12 @@ import {
 import { Options } from "k6/options";
 import execution from "k6/execution";
 import { getLoadTestGatewayCredentials } from "../../utils/load-test-api/load-test-api-creds";
+import { ClientSecretCredential } from "../../utils/auth";
 
 /**
  * Load test number of iterations to run.
  */
-const ITERATIONS = 50;
+const ITERATIONS = 500;
 /**
  * Virtual users to run load test.
  * Please ensure that the number of virtual users
@@ -26,6 +27,7 @@ const VIRTUAL_USERS = 15;
 
 interface SetupData {
   assessmentIds: number[];
+  credentials: ClientSecretCredential;
 }
 
 /**
@@ -36,7 +38,7 @@ interface SetupData {
 export function setup(): SetupData {
   const credentials = getLoadTestGatewayCredentials();
   const assessmentIds = workflowCreateAssessmentData(ITERATIONS, credentials);
-  return { assessmentIds };
+  return { assessmentIds, credentials };
 }
 
 export const options: Options = {
@@ -56,15 +58,14 @@ export const options: Options = {
  * @param setupData setup data returned by setup method.
  */
 export default function (setupData: SetupData) {
-  const credentials = getLoadTestGatewayCredentials();
   const assessmentId =
     setupData.assessmentIds[execution.scenario.iterationInTest];
   const submitResponse = workflowAssessmentSubmission(
     assessmentId,
-    credentials
+    setupData.credentials
   );
   check(submitResponse, {
-    "Created with success": (r) => r.status === 201,
+    "Executed with success": (r) => r.status === 201,
   });
   sleep(1);
 }

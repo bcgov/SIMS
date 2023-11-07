@@ -24,9 +24,9 @@ export function workflowCreateAssessmentData(
     undefined,
     { headers, timeout: LOAD_TEST_GATEWAY_CLIENT_HTTP_TIMEOUT }
   );
-  const data = response.json() as number[];
-  return data;
+  return response.json() as number[];
 }
+
 /**
  * Submit an assessment for workflow execution.
  * @param assessmentId assessment id.
