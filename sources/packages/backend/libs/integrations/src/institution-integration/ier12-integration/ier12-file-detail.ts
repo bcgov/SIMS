@@ -200,7 +200,7 @@ export class IER12FileDetail implements IER12FileLine {
     record.appendWithStartFiller(this.currentOfferingId, 10, NUMBER_FILLER);
     record.appendOptionalNumberWithFiller(this.parentOfferingId, 10);
     // Currently we are sending 30 whitespace after the parent offering id.
-    record.appendWithEndFiller("", 30, SPACE_FILLER);
+    record.repeatAppend(SPACE_FILLER, 30);
     record.appendFormattedDate(this.studyStartDate);
     record.appendFormattedDate(this.studyEndDate);
     record.appendNumberWithFiller(this.tuitionFees, 10);
