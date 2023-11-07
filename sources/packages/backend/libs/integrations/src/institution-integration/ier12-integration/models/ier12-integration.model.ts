@@ -138,7 +138,7 @@ export type IERAddressInfo = Omit<AddressInfo, "country" | "selectedCountry">;
 
 export type IERAward = Pick<
   DisbursementValue,
-  "valueType" | "valueCode" | "valueAmount"
+  "valueType" | "valueCode" | "valueAmount" | "restrictionAmountSubtracted"
 >;
 
 export const DATE_FORMAT = "YYYYMMDD";
