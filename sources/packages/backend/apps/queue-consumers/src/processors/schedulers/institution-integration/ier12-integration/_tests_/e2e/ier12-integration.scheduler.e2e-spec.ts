@@ -12,6 +12,9 @@ import {
   createE2EDataSources,
   getUploadedFile,
   saveFakeStudentRestriction,
+  createFakeInstitution,
+  createFakeInstitutionLocation,
+  getUploadedFiles,
 } from "@sims/test-utils";
 import * as Client from "ssh2-sftp-client";
 import { ArrayContains, Not } from "typeorm";
@@ -20,6 +23,7 @@ import {
   AssessmentTriggerType,
   COEStatus,
   DisbursementScheduleStatus,
+  InstitutionLocation,
   RelationshipStatus,
   RestrictionActionType,
 } from "@sims/sims-db";
@@ -43,10 +47,15 @@ import {
   WORKFLOW_DATA_MARRIED_WITH_DEPENDENTS,
   WORKFLOW_DATA_SINGLE_INDEPENDENT_WITH_NO_DEPENDENTS,
 } from "./models/data-inputs";
-import { numberToText, getSuccessSummaryMessages } from "./utils/string-utils";
+import {
+  numberToText,
+  getSuccessSummaryMessages,
+  dateToDateOnlyText,
+} from "./utils/string-utils";
 import { createIER12SchedulerJobMock } from "./utils";
 import { isValidFileTimestamp } from "@sims/test-utils/utils";
 import { FULL_TIME_DISBURSEMENT_FEEDBACK_ERRORS } from "@sims/integrations/services/disbursement-schedule/disbursement-schedule.models";
+import * as dayjs from "dayjs";
 
 describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
   let app: INestApplication;
@@ -66,6 +75,16 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
    * Default application number.
    */
   const defaultApplicationNumber = "9900000001";
+  /**
+   * Location to be shared among the tests.
+   * Belongs to a different institution than locationB.
+   */
+  let locationA: InstitutionLocation;
+  /**
+   * Location to be shared among the tests.
+   * Belongs to a different institution than locationA.
+   */
+  let locationB: InstitutionLocation;
 
   beforeAll(async () => {
     process.env.INSTITUTION_REQUEST_FOLDER = "Institution-Request";
@@ -81,6 +100,23 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
       dateUtils,
       "getFileNameAsCurrentTimestamp",
     );
+    // Create and save institutions A and B.
+    const [institutionA, institutionB] = await db.institution.save([
+      createFakeInstitution(),
+      createFakeInstitution(),
+    ]);
+    // Create a location for institution A.
+    locationA = createFakeInstitutionLocation(
+      { institution: institutionA },
+      { initialValue: { hasIntegration: true, institutionCode: "ZZZY" } },
+    );
+    // Create a location for institution B.
+    locationB = createFakeInstitutionLocation(
+      { institution: institutionB },
+      { initialValue: { hasIntegration: true, institutionCode: "ZZZZ" } },
+    );
+    // Save all locations.
+    await db.institutionLocation.save([locationA, locationB]);
   });
 
   beforeEach(async () => {
@@ -137,10 +173,15 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
         PROGRAM_UNDERGRADUATE_CERTIFICATE_WITHOUT_INSTITUTION_PROGRAM_CODE,
       offering: OFFERING_FULL_TIME,
     };
-    const application = await saveIER12TestInputData(db, testInputData, {
-      programYearPrefix: sharedProgramYearPrefix,
-      submittedDate: referenceSubmissionDate,
-    });
+    const application = await saveIER12TestInputData(
+      db,
+      testInputData,
+      { institutionLocation: locationA },
+      {
+        programYearPrefix: sharedProgramYearPrefix,
+        submittedDate: referenceSubmissionDate,
+      },
+    );
 
     // Queued job.
     const job = createIER12SchedulerJobMock(
@@ -156,7 +197,10 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
     const [timestampResult] = getFileNameAsCurrentTimestampMock.mock.results;
     expect(isValidFileTimestamp(timestampResult.value)).toBe(true);
     expect(ier12Results).toStrictEqual([
-      getSuccessSummaryMessages(timestampResult.value, { expectedRecords: 2 }),
+      getSuccessSummaryMessages(timestampResult.value, {
+        institutionCode: locationA.institutionCode,
+        expectedRecords: 2,
+      }),
     ]);
     // Assert file output.
     const uploadedFile = getUploadedFile(sftpClientMock);
@@ -168,12 +212,12 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
     // Line 1 validations.
     const firstDisbursementId = numberToText(firstDisbursement.id);
     expect(line1).toBe(
-      `${assessmentId}${firstDisbursementId}${defaultApplicationNumber}A1B2C3D4    242963189Doe                      John           19980113B   SI       Address Line 1           Address Line 2           Victoria                 BC  Z1Z1Z1          Program                  Program description                               undergraduateCertificate 0001    8   0512123401234ADR2                         62000081620001205000033330000004444000000555500000066660050100F2000060120002001COMP20000601000010000000015161000008040500N NNN            20000602        000166429600000000000001664296000000000000000000001NNN000000000000000000000000000000000000000000000000000000000000NN0000000000000144430000000000000000000000000000000000007777000000336667000009874600000000000000000000000000000000000000000000002200000120000100023789650009656600 0000000000000000000000000000000000000000000000000000000000000000000000DISS2000081520000815Completed Sent      20000816                        CSLF0000100000BCSL0000000000CSGP0000200000CSGD0000300000CSGF0000400000CSGT0000500000BCAG0000700000SBSD0000900000BGPD0000800000    0000000000`,
+      `${assessmentId}${firstDisbursementId}${defaultApplicationNumber}A1B2C3D4    242963189Doe                      John           19980113B   SI       Address Line 1           Address Line 2           Victoria                 BC  Z1Z1Z1          Program                  Program description                               undergraduateCertificate 0001    8   0512123401234ADR1                         62000081620001205000033330000004444000000555500000066660050100F2000060120002001COMP20000601000010000000015161000008040500N NNN            20000602        000166429600000000000001664296000000000000000000001NNN000000000000000000000000000000000000000000000000000000000000NN0000000000000144430000000000000000000000000000000000007777000000336667000009874600000000000000000000000000000000000000000000002200000120000100023789650009656600 0000000000000000000000000000000000000000000000000000000000000000000000DISS2000081520000815Completed Sent      20000816                        CSLF0000100000BCSL0000000000CSGP0000200000CSGD0000300000CSGF0000400000CSGT0000500000BCAG0000700000SBSD0000900000BGPD0000800000    0000000000`,
     );
     // Line 2 validations.
     const secondDisbursementId = numberToText(secondDisbursement.id);
     expect(line2).toBe(
-      `${assessmentId}${secondDisbursementId}${defaultApplicationNumber}A1B2C3D4    242963189Doe                      John           19980113B   SI       Address Line 1           Address Line 2           Victoria                 BC  Z1Z1Z1          Program                  Program description                               undergraduateCertificate 0001    8   0512123401234ADR2                         62000081620001205000033330000004444000000555500000066660050100F2000060120002001COMP20000601000010000000015161000008040500N NNN            20000602        000166429600000000000001664296000000000000000000001NNN000000000000000000000000000000000000000000000000000000000000NN0000000000000144430000000000000000000000000000000000007777000000336667000009874600000000000000000000000000000000000000000000002200000120000100023789650009656600 0000000000000000000000000000000000000000000000000000000000000000000000COER20000601        Required  Pending   20001011                        CSLF0000000000BCSL0001516100CSGP0000123400CSGD0000597800CSGF0000910100CSGT0001213100BCAG0000181900SBSD0000002200BGPD0000202100    0000000000`,
+      `${assessmentId}${secondDisbursementId}${defaultApplicationNumber}A1B2C3D4    242963189Doe                      John           19980113B   SI       Address Line 1           Address Line 2           Victoria                 BC  Z1Z1Z1          Program                  Program description                               undergraduateCertificate 0001    8   0512123401234ADR1                         62000081620001205000033330000004444000000555500000066660050100F2000060120002001COMP20000601000010000000015161000008040500N NNN            20000602        000166429600000000000001664296000000000000000000001NNN000000000000000000000000000000000000000000000000000000000000NN0000000000000144430000000000000000000000000000000000007777000000336667000009874600000000000000000000000000000000000000000000002200000120000100023789650009656600 0000000000000000000000000000000000000000000000000000000000000000000000COER20000601        Required  Pending   20001011                        CSLF0000000000BCSL0001516100CSGP0000123400CSGD0000597800CSGF0000910100CSGT0001213100BCAG0000181900SBSD0000002200BGPD0000202100    0000000000`,
     );
   });
 
@@ -208,10 +252,15 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
         PROGRAM_UNDERGRADUATE_CERTIFICATE_WITHOUT_INSTITUTION_PROGRAM_CODE,
       offering: OFFERING_FULL_TIME,
     };
-    const application = await saveIER12TestInputData(db, testInputData, {
-      programYearPrefix: sharedProgramYearPrefix,
-      submittedDate: referenceSubmissionDate,
-    });
+    const application = await saveIER12TestInputData(
+      db,
+      testInputData,
+      { institutionLocation: locationB },
+      {
+        programYearPrefix: sharedProgramYearPrefix,
+        submittedDate: referenceSubmissionDate,
+      },
+    );
 
     // Queued job.
     const job = createIER12SchedulerJobMock(
@@ -228,7 +277,9 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
     const [timestampResult] = getFileNameAsCurrentTimestampMock.mock.results;
     expect(isValidFileTimestamp(timestampResult.value)).toBe(true);
     expect(ier12Results).toStrictEqual([
-      getSuccessSummaryMessages(timestampResult.value),
+      getSuccessSummaryMessages(timestampResult.value, {
+        institutionCode: locationB.institutionCode,
+      }),
     ]);
     // Assert file output.
     const uploadedFile = getUploadedFile(sftpClientMock);
@@ -240,7 +291,7 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
     // Line 1 validations.
     const firstDisbursementId = numberToText(firstDisbursement.id);
     expect(line1).toBe(
-      `${assessmentId}${firstDisbursementId}${defaultApplicationNumber}12345679    242963189Jane With Really Long Mon               19980113B   MA       Some Foreign Street Addre                         New York                     SOME POSTAL CODEProgram                  Program description                               undergraduateCertificate 0001    8   0512123401234ADR2                         62000081620001010000033330000004444000000555500000066660019100F2000060120002001ASMT20000601000010000000006000000004800000N NNN            20000602        000966867900000000000009668679003002001003000003005NNY000000000000000000000000000000000000000000000000000000000000NY0000000000000144430000000000000000000000000000000000007777000000150056000000000000000000000000000000000000000000003000000000050000000065430000009876120005500000 0000000000000000000000000000000000000000000000000000000000000000000000ASMT20000601        Completed Pending   20000816                        CSLF0000100000BCSL0000600000CSGP0000200000CSGD0000300000CSGF0000400000CSGT0000500000BCAG0000700000SBSD0000900000BGPD0000800000    0000000000`,
+      `${assessmentId}${firstDisbursementId}${defaultApplicationNumber}12345679    242963189Jane With Really Long Mon               19980113B   MA       Some Foreign Street Addre                         New York                     SOME POSTAL CODEProgram                  Program description                               undergraduateCertificate 0001    8   0512123401234ADR1                         62000081620001010000033330000004444000000555500000066660019100F2000060120002001ASMT20000601000010000000006000000004800000N NNN            20000602        000966867900000000000009668679003002001003000003005NNY000000000000000000000000000000000000000000000000000000000000NY0000000000000144430000000000000000000000000000000000007777000000150056000000000000000000000000000000000000000000003000000000050000000065430000009876120005500000 0000000000000000000000000000000000000000000000000000000000000000000000ASMT20000601        Completed Pending   20000816                        CSLF0000100000BCSL0000600000CSGP0000200000CSGD0000300000CSGF0000400000CSGT0000500000BCAG0000700000SBSD0000900000BGPD0000800000    0000000000`,
     );
   });
 
@@ -275,10 +326,15 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
       educationProgram: PROGRAM_GRADUATE_DIPLOMA_WITH_INSTITUTION_PROGRAM_CODE,
       offering: OFFERING_FULL_TIME,
     };
-    const application = await saveIER12TestInputData(db, testInputData, {
-      programYearPrefix: sharedProgramYearPrefix,
-      submittedDate: referenceSubmissionDate,
-    });
+    const application = await saveIER12TestInputData(
+      db,
+      testInputData,
+      { institutionLocation: locationA },
+      {
+        programYearPrefix: sharedProgramYearPrefix,
+        submittedDate: referenceSubmissionDate,
+      },
+    );
 
     // Queued job.
     const job = createIER12SchedulerJobMock(
@@ -295,7 +351,9 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
     const [timestampResult] = getFileNameAsCurrentTimestampMock.mock.results;
     expect(isValidFileTimestamp(timestampResult.value)).toBe(true);
     expect(ier12Results).toStrictEqual([
-      getSuccessSummaryMessages(timestampResult.value),
+      getSuccessSummaryMessages(timestampResult.value, {
+        institutionCode: locationA.institutionCode,
+      }),
     ]);
     // Assert file output.
     const uploadedFile = getUploadedFile(sftpClientMock);
@@ -341,10 +399,15 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
       educationProgram: PROGRAM_GRADUATE_DIPLOMA_WITH_INSTITUTION_PROGRAM_CODE,
       offering: OFFERING_FULL_TIME,
     };
-    const application = await saveIER12TestInputData(db, testInputData, {
-      programYearPrefix: sharedProgramYearPrefix,
-      submittedDate: referenceSubmissionDate,
-    });
+    const application = await saveIER12TestInputData(
+      db,
+      testInputData,
+      { institutionLocation: locationB },
+      {
+        programYearPrefix: sharedProgramYearPrefix,
+        submittedDate: referenceSubmissionDate,
+      },
+    );
     // Finds a restriction that stops the funding.
     const stopFullTimeDisbursementRestriction = await db.restriction.findOne({
       where: {
@@ -375,7 +438,9 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
     const [timestampResult] = getFileNameAsCurrentTimestampMock.mock.results;
     expect(isValidFileTimestamp(timestampResult.value)).toBe(true);
     expect(ier12Results).toStrictEqual([
-      getSuccessSummaryMessages(timestampResult.value),
+      getSuccessSummaryMessages(timestampResult.value, {
+        institutionCode: locationB.institutionCode,
+      }),
     ]);
     // Assert file output.
     const uploadedFile = getUploadedFile(sftpClientMock);
@@ -421,10 +486,15 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
       educationProgram: PROGRAM_GRADUATE_DIPLOMA_WITH_INSTITUTION_PROGRAM_CODE,
       offering: OFFERING_FULL_TIME,
     };
-    const application = await saveIER12TestInputData(db, testInputData, {
-      programYearPrefix: sharedProgramYearPrefix,
-      submittedDate: referenceSubmissionDate,
-    });
+    const application = await saveIER12TestInputData(
+      db,
+      testInputData,
+      { institutionLocation: locationA },
+      {
+        programYearPrefix: sharedProgramYearPrefix,
+        submittedDate: referenceSubmissionDate,
+      },
+    );
     // Create a feedback error associated with the disbursement.
     const [errorCode] = FULL_TIME_DISBURSEMENT_FEEDBACK_ERRORS;
     const [disbursementSchedule] =
@@ -450,7 +520,9 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
     const [timestampResult] = getFileNameAsCurrentTimestampMock.mock.results;
     expect(isValidFileTimestamp(timestampResult.value)).toBe(true);
     expect(ier12Results).toStrictEqual([
-      getSuccessSummaryMessages(timestampResult.value),
+      getSuccessSummaryMessages(timestampResult.value, {
+        institutionCode: locationA.institutionCode,
+      }),
     ]);
     // Assert file output.
     const uploadedFile = getUploadedFile(sftpClientMock);
@@ -461,8 +533,11 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
     const assessmentId = numberToText(application.currentAssessment.id);
     // Line 1 validations.
     const firstDisbursementId = numberToText(firstDisbursement.id);
+    const feedbackErrorUpdatedDate = dateToDateOnlyText(
+      feedbackError.updatedAt,
+    );
     expect(line1).toBe(
-      `${assessmentId}${firstDisbursementId}${defaultApplicationNumber}            242963189Jane With Really Long Mon               19980113B   SI       Some Foreign Street Addre                         New York                     SOME POSTAL CODESome Program With DescripSome program with description too long            graduateDiploma          0001    5   0512123401234ADR2XYZ                      62000081620001010000033330000004444000000555500000066660019100F2000060120002001COMP20000601000000000000000000000001209900N NNN            20000602        000321200000000160000003212000000000000000000000001NNN000000000000000000000000000000000000000000000000000000000000NN0000000000000144430000000000000000000000000000000000007777000000070045000000000000000000000000000000000000000000000000000000002200000065004000046000000001209900 0000000000000000000000000000000000000000000000000000000000000000000000DISE2023110220000815Completed Sent      20000816                        CSLF0000000000BCSL0000000000CSGP0000759900CSGD0000065000CSGF0000150000CSGT0000235000BCAG0000000000SBSD0000000000BGPD0000000000    0000000000`,
+      `${assessmentId}${firstDisbursementId}${defaultApplicationNumber}            242963189Jane With Really Long Mon               19980113B   SI       Some Foreign Street Addre                         New York                     SOME POSTAL CODESome Program With DescripSome program with description too long            graduateDiploma          0001    5   0512123401234ADR2XYZ                      62000081620001010000033330000004444000000555500000066660019100F2000060120002001COMP20000601000000000000000000000001209900N NNN            20000602        000321200000000160000003212000000000000000000000001NNN000000000000000000000000000000000000000000000000000000000000NN0000000000000144430000000000000000000000000000000000007777000000070045000000000000000000000000000000000000000000000000000000002200000065004000046000000001209900 0000000000000000000000000000000000000000000000000000000000000000000000DISE${feedbackErrorUpdatedDate}20000815Completed Sent      20000816                        CSLF0000000000BCSL0000000000CSGP0000759900CSGD0000065000CSGF0000150000CSGT0000235000BCAG0000000000SBSD0000000000BGPD0000000000    0000000000`,
     );
   });
 
@@ -498,10 +573,15 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
         PROGRAM_UNDERGRADUATE_CERTIFICATE_WITHOUT_INSTITUTION_PROGRAM_CODE,
       offering: OFFERING_FULL_TIME,
     };
-    const application = await saveIER12TestInputData(db, testInputData, {
-      programYearPrefix: sharedProgramYearPrefix,
-      submittedDate: referenceSubmissionDate,
-    });
+    const application = await saveIER12TestInputData(
+      db,
+      testInputData,
+      { institutionLocation: locationB },
+      {
+        programYearPrefix: sharedProgramYearPrefix,
+        submittedDate: referenceSubmissionDate,
+      },
+    );
 
     // Queued job.
     const job = createIER12SchedulerJobMock(
@@ -518,7 +598,9 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
     const [timestampResult] = getFileNameAsCurrentTimestampMock.mock.results;
     expect(isValidFileTimestamp(timestampResult.value)).toBe(true);
     expect(ier12Results).toStrictEqual([
-      getSuccessSummaryMessages(timestampResult.value),
+      getSuccessSummaryMessages(timestampResult.value, {
+        institutionCode: locationB.institutionCode,
+      }),
     ]);
     // Assert file output.
     const uploadedFile = getUploadedFile(sftpClientMock);
@@ -530,7 +612,140 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
     // Line 1 validations.
     const firstDisbursementId = numberToText(firstDisbursement.id);
     expect(line1).toBe(
-      `${assessmentId}${firstDisbursementId}${defaultApplicationNumber}            242963189Doe                      John           19980113B   MA       Address Line 1           Address Line 2           Victoria                 BC  Z1Z1Z1          Program                  Program description                               undergraduateCertificate 0001    8   0512123401234ADR2                         62000081620001010000033330000004444000000555500000066660019100F2000060120002001COMP20000601000010000000006598000000032400N NNN            20000602        000966867900000000000009668679003002001003000003005NNY000000000000000000000000000000000000000000000000000000000000NY0000000000000144430000000000000000000000000000000000007777000000150056000000000000000000000000000000000000000000003000000000050000000065430000009876120000792200 0000000000000000000000000000000000000000000000000000000000000000000000DISW2000081520000815Completed Sent      20000816                        CSLF0000100000BCSL0000659800CSGP0000000000CSGD0000000000CSGF0000000000CSGT0000000000BCAG0000032400SBSD0000000000BGPD0000000000    0000000000`,
+      `${assessmentId}${firstDisbursementId}${defaultApplicationNumber}            242963189Doe                      John           19980113B   MA       Address Line 1           Address Line 2           Victoria                 BC  Z1Z1Z1          Program                  Program description                               undergraduateCertificate 0001    8   0512123401234ADR1                         62000081620001010000033330000004444000000555500000066660019100F2000060120002001COMP20000601000010000000006598000000032400N NNN            20000602        000966867900000000000009668679003002001003000003005NNY000000000000000000000000000000000000000000000000000000000000NY0000000000000144430000000000000000000000000000000000007777000000150056000000000000000000000000000000000000000000003000000000050000000065430000009876120000792200 0000000000000000000000000000000000000000000000000000000000000000000000DISW2000081520000815Completed Sent      20000816                        CSLF0000100000BCSL0000659800CSGP0000000000CSGD0000000000CSGF0000000000CSGT0000000000BCAG0000032400SBSD0000000000BGPD0000000000    0000000000`,
+    );
+  });
+
+  it("Should generate 2 IER12 files for locations from different institutions using distinct institution codes.", async () => {
+    // Arrange
+    const testInputDataLocationA = {
+      student: JOHN_DOE_FROM_CANADA,
+      application: {
+        applicationNumber: defaultApplicationNumber,
+        studentNumber: undefined,
+        relationshipStatus: RelationshipStatus.Married,
+        applicationStatus: ApplicationStatus.Completed,
+        applicationStatusUpdatedOn: undefined,
+      },
+      assessment: {
+        triggerType: AssessmentTriggerType.OriginalAssessment,
+        assessmentDate: referenceSubmissionDate,
+        workflowData: WORKFLOW_DATA_MARRIED_WITH_DEPENDENTS,
+        assessmentData: ASSESSMENT_DATA_MARRIED,
+        disbursementSchedules: [
+          {
+            coeStatus: COEStatus.completed,
+            disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
+            disbursementDate: undefined,
+            updatedAt: undefined,
+            dateSent: undefined,
+            disbursementValues:
+              AWARDS_SINGLE_DISBURSEMENT_RESTRICTION_WITHHELD_FUNDS,
+          },
+        ],
+      },
+      educationProgram:
+        PROGRAM_UNDERGRADUATE_CERTIFICATE_WITHOUT_INSTITUTION_PROGRAM_CODE,
+      offering: OFFERING_FULL_TIME,
+    };
+    const applicationA = await saveIER12TestInputData(
+      db,
+      testInputDataLocationA,
+      { institutionLocation: locationA },
+      {
+        programYearPrefix: sharedProgramYearPrefix,
+        submittedDate: referenceSubmissionDate,
+      },
+    );
+
+    const testInputDataLocationB = {
+      student: JOHN_DOE_FROM_CANADA,
+      application: {
+        applicationNumber: defaultApplicationNumber,
+        studentNumber: undefined,
+        relationshipStatus: RelationshipStatus.Married,
+        applicationStatus: ApplicationStatus.Completed,
+        applicationStatusUpdatedOn: undefined,
+      },
+      assessment: {
+        triggerType: AssessmentTriggerType.OriginalAssessment,
+        // Add one hour to ensure the proper file upload order.
+        assessmentDate: dayjs(referenceSubmissionDate).add(1, "h").toDate(),
+        workflowData: WORKFLOW_DATA_MARRIED_WITH_DEPENDENTS,
+        assessmentData: ASSESSMENT_DATA_MARRIED,
+        disbursementSchedules: [
+          {
+            coeStatus: COEStatus.completed,
+            disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
+            disbursementDate: undefined,
+            updatedAt: undefined,
+            dateSent: undefined,
+            disbursementValues:
+              AWARDS_SINGLE_DISBURSEMENT_RESTRICTION_WITHHELD_FUNDS,
+          },
+        ],
+      },
+      educationProgram:
+        PROGRAM_UNDERGRADUATE_CERTIFICATE_WITHOUT_INSTITUTION_PROGRAM_CODE,
+      offering: OFFERING_FULL_TIME,
+    };
+    const applicationB = await saveIER12TestInputData(
+      db,
+      testInputDataLocationB,
+      { institutionLocation: locationB },
+      {
+        programYearPrefix: sharedProgramYearPrefix,
+        submittedDate: referenceSubmissionDate,
+      },
+    );
+
+    // Queued job.
+    const job = createIER12SchedulerJobMock(referenceSubmissionDate);
+
+    // Act
+    const ier12Results = await processor.processIER12File(job);
+
+    // Assert
+    // Assert process result.
+    expect(ier12Results).toBeDefined();
+    // File timestamp.
+    const [firstTimestampResult, secondTimestampResult] =
+      getFileNameAsCurrentTimestampMock.mock.results;
+    expect(isValidFileTimestamp(firstTimestampResult.value)).toBe(true);
+    expect(isValidFileTimestamp(secondTimestampResult.value)).toBe(true);
+    expect(ier12Results).toStrictEqual([
+      getSuccessSummaryMessages(firstTimestampResult.value, {
+        institutionCode: locationA.institutionCode,
+      }),
+      getSuccessSummaryMessages(secondTimestampResult.value, {
+        institutionCode: locationB.institutionCode,
+      }),
+    ]);
+    // Assert file output.
+    const [fileA, fileB] = getUploadedFiles(sftpClientMock);
+    // Location A file validation.
+    expect(fileA).toBeDefined();
+    expect(fileA.fileLines?.length).toBe(1);
+    const [fileALine1] = fileA.fileLines;
+    const [firstDisbursementA] =
+      applicationA.currentAssessment.disbursementSchedules;
+    const assessmentAId = numberToText(applicationA.currentAssessment.id);
+    // Line 1 validations.
+    const firstDisbursementAId = numberToText(firstDisbursementA.id);
+    expect(fileALine1).toBe(
+      `${assessmentAId}${firstDisbursementAId}${defaultApplicationNumber}            242963189Doe                      John           19980113B   MA       Address Line 1           Address Line 2           Victoria                 BC  Z1Z1Z1          Program                  Program description                               undergraduateCertificate 0001    8   0512123401234ADR1                         62000081620001010000033330000004444000000555500000066660019100F2000060120002001COMP20000601000000000000000000000000000000N NNN            20000601        000966867900000000000009668679003002001003000003005NNY000000000000000000000000000000000000000000000000000000000000NY0000000000000144430000000000000000000000000000000000007777000000150056000000000000000000000000000000000000000000003000000000050000000065430000009876120000000000 0000000000000000000000000000000000000000000000000000000000000000000000DISS2000081520000815Completed Sent      20000816                        CSLF0000000000BCSL0000000000CSGP0000000000CSGD0000000000CSGF0000000000CSGT0000000000BCAG0000000000SBSD0000000000BGPD0000000000    0000000000`,
+    );
+    // Location B file validation.
+    expect(fileB).toBeDefined();
+    expect(fileB.fileLines?.length).toBe(1);
+    const [fileBLine1] = fileB.fileLines;
+    const [firstDisbursementB] =
+      applicationB.currentAssessment.disbursementSchedules;
+    const assessmentBId = numberToText(applicationB.currentAssessment.id);
+    // Line 1 validations.
+    const firstDisbursementBId = numberToText(firstDisbursementB.id);
+    expect(fileBLine1).toBe(
+      `${assessmentBId}${firstDisbursementBId}${defaultApplicationNumber}            242963189Doe                      John           19980113B   MA       Address Line 1           Address Line 2           Victoria                 BC  Z1Z1Z1          Program                  Program description                               undergraduateCertificate 0001    8   0512123401234ADR1                         62000081620001010000033330000004444000000555500000066660019100F2000060120002001COMP20000601000010000000006598000000032400N NNN            20000601        000966867900000000000009668679003002001003000003005NNY000000000000000000000000000000000000000000000000000000000000NY0000000000000144430000000000000000000000000000000000007777000000150056000000000000000000000000000000000000000000003000000000050000000065430000009876120000792200 0000000000000000000000000000000000000000000000000000000000000000000000DISW2000081520000815Completed Sent      20000816                        CSLF0000100000BCSL0000659800CSGP0000000000CSGD0000000000CSGF0000000000CSGT0000000000BCAG0000032400SBSD0000000000BGPD0000000000    0000000000`,
     );
   });
 });

@@ -8,6 +8,7 @@ import {
   DisbursementScheduleStatus,
   DisbursementValue,
   DisbursementValueType,
+  EducationProgram,
   EducationProgramOffering,
   Institution,
   InstitutionLocation,
@@ -68,6 +69,8 @@ export function createFakeApplication(relations?: {
  * - `institutionLocation` related location.
  * - `disbursementValues` related disbursement schedules.
  * - `student` related student.
+ * - `msfaaNumber` related MSFAA number.
+ * - `program` related education program.
  * @param options additional options:
  * - `applicationStatus` if provided sets the application status of the application or else defaults to Assessment status.
  * - `offeringIntensity` if provided sets the offering intensity for the created fakeApplication.
@@ -86,6 +89,7 @@ export async function saveFakeApplicationDisbursements(
     disbursementValues?: DisbursementValue[];
     student?: Student;
     msfaaNumber?: MSFAANumber;
+    program?: EducationProgram;
   },
   options?: {
     applicationStatus?: ApplicationStatus;
@@ -159,6 +163,7 @@ export async function saveFakeApplicationDisbursements(
  * - `institution` related institution.
  * - `institutionLocation` related location.
  * - `student` related student.
+ * - `program` related education program.
  * @param options additional options:
  * - `applicationStatus` application status for the application.
  * - `offeringIntensity` if provided sets the offering intensity for the created fakeApplication, otherwise sets it to fulltime by default.
@@ -170,6 +175,7 @@ export async function saveFakeApplication(
     institution?: Institution;
     institutionLocation?: InstitutionLocation;
     student?: Student;
+    program?: EducationProgram;
   },
   options?: {
     applicationStatus?: ApplicationStatus;
@@ -204,6 +210,7 @@ export async function saveFakeApplication(
   const fakeOffering = createFakeEducationProgramOffering({
     institution: relations?.institution,
     institutionLocation: relations?.institutionLocation,
+    program: relations?.program,
     auditUser: savedUser,
   });
   fakeOffering.offeringIntensity =
@@ -213,10 +220,10 @@ export async function saveFakeApplication(
   if (savedApplication.applicationStatus !== ApplicationStatus.Draft) {
     // Original assessment.
     const fakeOriginalAssessment = createFakeStudentAssessment({
+      application: savedApplication,
+      offering: savedOffering,
       auditUser: savedUser,
     });
-    fakeOriginalAssessment.application = savedApplication;
-    fakeOriginalAssessment.offering = savedOffering;
     const savedOriginalAssessment = await studentAssessmentRepo.save(
       fakeOriginalAssessment,
     );

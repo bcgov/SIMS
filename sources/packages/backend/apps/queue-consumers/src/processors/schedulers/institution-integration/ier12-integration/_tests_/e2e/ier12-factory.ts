@@ -3,6 +3,7 @@ import {
   DisbursementSchedule,
   DisbursementScheduleStatus,
   DisbursementValue,
+  EducationProgram,
   FullTimeAssessment,
   InstitutionLocation,
   ProgramYear,
@@ -11,7 +12,6 @@ import {
 } from "@sims/sims-db";
 import {
   E2EDataSources,
-  createFakeInstitutionLocation,
   createFakeStudent,
   createFakeUser,
   ensureProgramYearExists,
@@ -36,6 +36,8 @@ import * as faker from "faker";
  * will be part of the IER12 file generation.
  * @param db data source helper.
  * @param testInputData IER12 test input data.
+ * @param relations IER12 relations:
+ * - `institutionLocation` related IER12 location.
  * @param options method options:
  * - `programYearPrefix` program year prefix to create or find the program year to
  * be associated. Default 2000, would will create the program year 2000-2001.
@@ -45,6 +47,9 @@ import * as faker from "faker";
 export async function saveIER12TestInputData(
   db: E2EDataSources,
   testInputData: IER12TestInputData,
+  relations: {
+    institutionLocation: InstitutionLocation;
+  },
   options?: {
     programYearPrefix?: number;
     submittedDate?: Date;
@@ -78,19 +83,22 @@ export async function saveIER12TestInputData(
     db,
     testInputData.student,
   );
-  // Location
-  const institutionLocation = createFakeInstitutionLocation();
-  institutionLocation.institutionCode = "ZZZY";
-  institutionLocation.hasIntegration = true;
+  // Check if a program already exists for the institution to reuse it.
+  // SABC codes are unique inside for the same institution.
+  const program = await db.educationProgram.findOneBy({
+    institution: { id: relations.institutionLocation.institution.id },
+    sabcCode: testInputData.educationProgram.sabcCode,
+  });
   // Application
   const application = await saveIER12ApplicationFromTestInput(
     db,
     testInputData.application,
     student,
-    institutionLocation,
+    relations.institutionLocation,
     programYear,
     createSecondDisbursement,
     referenceSubmission,
+    program,
   );
   // Assessment and its awards.
   const assessment = await saveIER12AssessmentFromTestInput(
@@ -165,6 +173,7 @@ async function saveIER12StudentFromTestInput(
  * @param programYear previously saved program year.
  * @param createSecondDisbursement indicates if a second disbursement should be created.
  * @param referenceSubmission date when the application was submitted.
+ * @param program education program that will have the offering created.
  * @returns the saved applications and its dependencies.
  */
 async function saveIER12ApplicationFromTestInput(
@@ -175,10 +184,11 @@ async function saveIER12ApplicationFromTestInput(
   programYear: ProgramYear,
   createSecondDisbursement: boolean,
   referenceSubmission: Date,
+  program?: EducationProgram,
 ): Promise<Application> {
   const application = await saveFakeApplicationDisbursements(
     db.dataSource,
-    { student, institutionLocation, disbursementValues: [] },
+    { student, institutionLocation, program, disbursementValues: [] },
     { createSecondDisbursement },
   );
   application.applicationNumber = testInputApplication.applicationNumber;
