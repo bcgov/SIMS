@@ -29,7 +29,6 @@ import {
   StudentAppealRequestsService,
   ApplicationOfferingChangeRequestService,
   ApplicationWithdrawalImportTextService,
-  ApplicationBulkWithdrawalImportService,
   ApplicationBulkWithdrawalImportValidationService,
 } from "./services";
 import {
@@ -168,7 +167,6 @@ import {
     ApplicationOfferingChangeRequestService,
     ApplicationOfferingChangeRequestControllerService,
     ApplicationWithdrawalImportTextService,
-    ApplicationBulkWithdrawalImportService,
     ApplicationBulkWithdrawalImportValidationService,
   ],
 })
