@@ -4,12 +4,12 @@ import {
   DisbursementScheduleStatus,
   DisbursementValue,
   EducationProgram,
+  EducationProgramOffering,
   FullTimeAssessment,
   InstitutionLocation,
   ProgramYear,
   Student,
   StudentAssessment,
-  User,
 } from "@sims/sims-db";
 import {
   E2EDataSources,
@@ -117,6 +117,18 @@ export async function saveIER12TestInputData(
     assessment.offering.educationProgram.id,
     testInputData.educationProgram,
   );
+
+  // Parent offering, if needed.
+  const parentOffering = testInputData.parentOfferingAvailable
+    ? await db.educationProgramOffering.save(
+        createFakeEducationProgramOffering({
+          institutionLocation: assessment.offering.institutionLocation,
+          auditUser: assessment.offering.educationProgram.submittedBy,
+          program: assessment.offering.educationProgram,
+        }),
+      )
+    : undefined;
+
   // Offering
   await updateIER12OfferingFromTestInput(
     db,
@@ -125,12 +137,7 @@ export async function saveIER12TestInputData(
     studyStartDate,
     studyEndDate,
     {
-      institutionLocation: assessment.offering.institutionLocation,
-      auditUser: assessment.offering.educationProgram.submittedBy,
-      program: assessment.offering.educationProgram,
-    },
-    {
-      parentOffering: testInputData.parentOfferingAvailable,
+      parentOffering,
     },
   );
   return application;
@@ -339,12 +346,7 @@ async function updateIER12ProgramFromTestInput(
  * @param studyStartDate offering start date.
  * @param studyEndDate offering end date.
  * @param relations, relations,
- * - `institutionLocation` institution location.
- * - `auditUser` audit user.
- * - `program` education program.
- * @param options, options,
- * - `parentOffering` if true will create a parent offering and
- * will attach it to the offering.
+ * -  `parentOffering` parent offering.
  */
 async function updateIER12OfferingFromTestInput(
   db: E2EDataSources,
@@ -353,20 +355,9 @@ async function updateIER12OfferingFromTestInput(
   studyStartDate: string,
   studyEndDate: string,
   relations?: {
-    institutionLocation: InstitutionLocation;
-    auditUser: User;
-    program: EducationProgram;
-  },
-  options?: {
-    parentOffering?: boolean;
+    parentOffering: EducationProgramOffering;
   },
 ): Promise<void> {
-  const parentOffering = options?.parentOffering
-    ? await db.educationProgramOffering.save(
-        createFakeEducationProgramOffering(relations),
-      )
-    : undefined;
-
   const offeringUpdate = {
     yearOfStudy: testInputOffering.yearOfStudy,
     studyStartDate,
@@ -376,7 +367,7 @@ async function updateIER12OfferingFromTestInput(
     mandatoryFees: testInputOffering.mandatoryFees,
     exceptionalExpenses: testInputOffering.exceptionalExpenses,
     offeringIntensity: testInputOffering.offeringIntensity,
-    parentOffering,
+    parentOffering: relations?.parentOffering,
   };
   await db.educationProgramOffering.update(offeringId, offeringUpdate);
 }

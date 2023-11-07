@@ -627,7 +627,7 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
     const currentOfferingId = numberToText(
       application.currentAssessment.offering.id,
     );
-    const [offering] = await db.educationProgramOffering.find({
+    const offering = await db.educationProgramOffering.findOne({
       select: {
         id: true,
         parentOffering: {
