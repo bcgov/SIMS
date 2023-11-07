@@ -197,7 +197,7 @@ export class IER12FileDetail implements IER12FileLine {
     record.appendOptionalStringWithFiller(this.sabcCode, 4);
     record.appendOptionalStringWithFiller(this.institutionProgramCode, 25);
     record.append(this.programLength, 1);
-    record.appendWithStartFiller(this.currentOfferingId, 10, NUMBER_FILLER);
+    record.appendNumberWithFiller(this.currentOfferingId, 10);
     record.appendOptionalNumberWithFiller(this.parentOfferingId, 10);
     // Currently we are sending 30 whitespace after the parent offering id.
     record.repeatAppend(SPACE_FILLER, 30);

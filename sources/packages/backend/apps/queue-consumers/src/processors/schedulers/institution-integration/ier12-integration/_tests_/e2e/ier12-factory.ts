@@ -9,9 +9,11 @@ import {
   ProgramYear,
   Student,
   StudentAssessment,
+  User,
 } from "@sims/sims-db";
 import {
   E2EDataSources,
+  createFakeEducationProgramOffering,
   createFakeStudent,
   createFakeUser,
   ensureProgramYearExists,
@@ -122,6 +124,14 @@ export async function saveIER12TestInputData(
     testInputData.offering,
     studyStartDate,
     studyEndDate,
+    {
+      institutionLocation: assessment.offering.institutionLocation,
+      auditUser: assessment.offering.educationProgram.submittedBy,
+      program: assessment.offering.educationProgram,
+    },
+    {
+      parentOffering: testInputData.parentOfferingAvailable,
+    },
   );
   return application;
 }
@@ -328,6 +338,13 @@ async function updateIER12ProgramFromTestInput(
  * @param testInputOffering offering test input data.
  * @param studyStartDate offering start date.
  * @param studyEndDate offering end date.
+ * @param relations, relations,
+ * - `institutionLocation` institution location.
+ * - `auditUser` audit user.
+ * - `program` education program.
+ * @param options, options,
+ * - `parentOffering` if true will create a parent offering and
+ * will attach it to the offering.
  */
 async function updateIER12OfferingFromTestInput(
   db: E2EDataSources,
@@ -335,7 +352,21 @@ async function updateIER12OfferingFromTestInput(
   testInputOffering: IER12Offering,
   studyStartDate: string,
   studyEndDate: string,
+  relations?: {
+    institutionLocation: InstitutionLocation;
+    auditUser: User;
+    program: EducationProgram;
+  },
+  options?: {
+    parentOffering?: boolean;
+  },
 ): Promise<void> {
+  const parentOffering = options?.parentOffering
+    ? await db.educationProgramOffering.save(
+        createFakeEducationProgramOffering(relations),
+      )
+    : undefined;
+
   const offeringUpdate = {
     yearOfStudy: testInputOffering.yearOfStudy,
     studyStartDate,
@@ -345,6 +376,7 @@ async function updateIER12OfferingFromTestInput(
     mandatoryFees: testInputOffering.mandatoryFees,
     exceptionalExpenses: testInputOffering.exceptionalExpenses,
     offeringIntensity: testInputOffering.offeringIntensity,
+    parentOffering,
   };
   await db.educationProgramOffering.update(offeringId, offeringUpdate);
 }
