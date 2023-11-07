@@ -5,10 +5,7 @@
  * @see https://k6.io/docs/using-k6/k6-options
  */
 import { check, sleep } from "k6";
-import {
-  workflowAssessmentSubmission,
-  workflowCreateAssessmentData,
-} from "../../utils/load-test-api/load-test-api";
+import { loadTestPostCall } from "../../utils/load-test-api/load-test-api";
 import { Options } from "k6/options";
 import execution from "k6/execution";
 import { getLoadTestGatewayCredentials } from "../../utils/load-test-api/load-test-api-creds";
@@ -36,8 +33,10 @@ interface SetupData {
  * @returns setup data.
  */
 export function setup(): SetupData {
+  const setupEndpoint = `workflow-assessment-submission/setup/${ITERATIONS}`;
   const credentials = getLoadTestGatewayCredentials();
-  const assessmentIds = workflowCreateAssessmentData(ITERATIONS, credentials);
+  const response = loadTestPostCall(setupEndpoint, credentials);
+  const assessmentIds = response.json() as number[];
   return { assessmentIds, credentials };
 }
 
@@ -60,8 +59,9 @@ export const options: Options = {
 export default function (setupData: SetupData) {
   const assessmentId =
     setupData.assessmentIds[execution.scenario.iterationInTest];
-  const submitResponse = workflowAssessmentSubmission(
-    assessmentId,
+  const executeEndpoint = `workflow-assessment-submission/execute/${assessmentId}`;
+  const submitResponse = loadTestPostCall(
+    executeEndpoint,
     setupData.credentials
   );
   check(submitResponse, {

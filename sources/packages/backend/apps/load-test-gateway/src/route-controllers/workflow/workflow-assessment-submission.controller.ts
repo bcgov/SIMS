@@ -3,8 +3,8 @@ import { WorkflowDataLoadService } from "../../services";
 import { ZBClient } from "zeebe-node";
 import { ZEEBE_PROCESS_INSTANCE_COMPLETE_TIMEOUT } from "../../constants/system-configurations-constants";
 
-@Controller("workflow")
-export class WorkflowController {
+@Controller("workflow-assessment-submission")
+export class WorkflowAssessmentSubmissionController {
   constructor(
     private readonly workflowDataLoadService: WorkflowDataLoadService,
     private readonly zeebeClient: ZBClient,
@@ -15,8 +15,8 @@ export class WorkflowController {
    * @param dataIterations load test iterations.
    * @returns student assessments.
    */
-  @Post("create-assessment-data/:iterations")
-  async createAssessmentData(
+  @Post("setup/:iterations")
+  async setup(
     @Param("iterations", ParseIntPipe) iterations: number,
   ): Promise<number[]> {
     const assessments =
@@ -30,8 +30,8 @@ export class WorkflowController {
    * Submit an assessment for workflow execution.
    * @param assessmentId assessment id.
    */
-  @Post("submit-assessment/:assessmentId")
-  async submitAssessment(
+  @Post("execute/:assessmentId")
+  async execute(
     @Param("assessmentId", ParseIntPipe) assessmentId: number,
   ): Promise<void> {
     await this.zeebeClient.createProcessInstanceWithResult({

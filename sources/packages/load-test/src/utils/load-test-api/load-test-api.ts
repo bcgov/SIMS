@@ -9,40 +9,26 @@ import {
 const LOAD_TEST_GATEWAY_CLIENT_HTTP_TIMEOUT = "120s";
 
 /**
- * Create assessment data required to execute a load test.
- * @param iterations load test iterations.
+ * Call the post endpoint of load test gateway.
+ * @param endpoint load test endpoint.
  * @param credentials load test gateway client credentials.
- * @returns created assessment ids.
- */
-export function workflowCreateAssessmentData(
-  iterations: number,
-  credentials: ClientSecretCredential
-): number[] {
-  const headers = getAuthHeader(credentials);
-  const response = http.post(
-    `${BASE_LOAD_TEST_GATEWAY_URL}/workflow/create-assessment-data/${iterations}`,
-    undefined,
-    { headers, timeout: LOAD_TEST_GATEWAY_CLIENT_HTTP_TIMEOUT }
-  );
-  return response.json() as number[];
-}
-
-/**
- * Submit an assessment for workflow execution.
- * @param assessmentId assessment id.
- * @param credentials load test gateway client credentials.
+ * @param options load test post call options.
+ * - `payload` payload.
  * @returns response.
  */
-export function workflowAssessmentSubmission(
-  assessmentId: number,
-  credentials: ClientSecretCredential
+export function loadTestPostCall(
+  endpoint: string,
+  credentials: ClientSecretCredential,
+  options?: { payload?: unknown }
 ): RefinedResponse<ResponseType> {
+  const payload = options?.payload
+    ? JSON.stringify(options.payload)
+    : undefined;
   const headers = getAuthHeader(credentials);
-  return http.post(
-    `${BASE_LOAD_TEST_GATEWAY_URL}/workflow/submit-assessment/${assessmentId}`,
-    undefined,
-    { headers, timeout: LOAD_TEST_GATEWAY_CLIENT_HTTP_TIMEOUT }
-  );
+  return http.post(`${BASE_LOAD_TEST_GATEWAY_URL}/${endpoint}`, payload, {
+    headers,
+    timeout: LOAD_TEST_GATEWAY_CLIENT_HTTP_TIMEOUT,
+  });
 }
 
 /**

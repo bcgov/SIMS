@@ -1,1 +1,1 @@
-export * from "./workflow/workflow.controller";
+export * from "./workflow/workflow-assessment-submission.controller";

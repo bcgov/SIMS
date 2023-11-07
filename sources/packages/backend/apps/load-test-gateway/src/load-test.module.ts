@@ -1,5 +1,5 @@
 import { Module } from "@nestjs/common";
-import { WorkflowController } from "./route-controllers";
+import { WorkflowAssessmentSubmissionController } from "./route-controllers";
 import { ConfigModule } from "@sims/utilities/config";
 import { DatabaseModule } from "@sims/sims-db";
 import { WorkflowDataLoadService } from "./services";
@@ -17,7 +17,7 @@ import { LoggerModule } from "@sims/utilities/logger";
     LoggerModule,
     LoadTestHttpModule,
   ],
-  controllers: [WorkflowController],
+  controllers: [WorkflowAssessmentSubmissionController],
   providers: [WorkflowDataLoadService],
 })
 export class LoadTestModule {}
