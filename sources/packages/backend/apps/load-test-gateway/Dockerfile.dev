@@ -1,0 +1,34 @@
+# Base Image
+FROM node:18.17.1-alpine3.18
+
+LABEL maintainer="BC GOV"
+
+# Updating container path variable with node bin
+ENV PATH $PATH:/app/node_modules/.bin
+
+WORKDIR /app
+
+# Load test gateway Port
+ENV PORT 3005
+
+# Copying root files to image workdir.
+COPY /*.json /*.js ./
+
+# Installing dependencies
+RUN npm ci
+
+# Copying sources.
+COPY ./apps/load-test-gateway ./apps/load-test-gateway
+COPY ./libs ./libs
+
+# Building app
+RUN npm run build load-test-gateway
+
+# Exposing queue port
+EXPOSE ${PORT}
+
+# Executing the image with a non-root user.
+USER node
+
+# Entry point
+CMD [ "npm", "run", "docker:start:load-test-gateway" ]
