@@ -5,7 +5,6 @@ import { PassportModule } from "@nestjs/passport";
 import {
   InstitutionLocationService,
   InstitutionUserAuthService,
-  KeycloakService,
   UserService,
   StudentService,
   SINValidationService,
@@ -15,7 +14,6 @@ import {
 } from "../services";
 import { JwtAuthGuard } from "./guards/jwt-auth.guard";
 import { JwtStrategy } from "./jwt.strategy";
-import { KeycloakConfig } from "./keycloakConfig";
 import {
   InstitutionLocationGuard,
   AuthorizedPartiesGuard,
@@ -34,6 +32,8 @@ import {
   DisbursementOverawardService,
   NoteSharedService,
 } from "@sims/services";
+import { KeycloakService } from "@sims/auth/services";
+import { KeycloakConfig } from "@sims/auth/config";
 
 const jwtModule = JwtModule.register({
   publicKey: KeycloakConfig.PEM_PublicKey,

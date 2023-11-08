@@ -1,4 +1,3 @@
-import { KeycloakConfig } from "../../auth/keycloakConfig";
 import { HttpStatus, INestApplication } from "@nestjs/common";
 import * as request from "supertest";
 import {
@@ -11,6 +10,7 @@ import {
   createTestingAppModule,
   BEARER_AUTH_TYPE,
 } from "../../testHelpers";
+import { KeycloakConfig } from "@sims/auth/config";
 
 describe("Test ATBC Controller", () => {
   let accessToken: string;

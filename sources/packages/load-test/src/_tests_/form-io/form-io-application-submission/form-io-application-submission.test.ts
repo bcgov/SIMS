@@ -10,6 +10,7 @@ import {
   createFormAuthHeader,
   formSubmission,
 } from "../../../utils/form-io-api";
+import { Options } from "k6/options";
 
 interface SetupData {
   formIOHeader: Record<string, string>;
@@ -18,7 +19,7 @@ interface SetupData {
 /**
  * Define test-run behavior.
  */
-export const options = {
+export const options: Options = {
   vus: 50,
   duration: "60s",
 };
