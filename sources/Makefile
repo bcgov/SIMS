@@ -7,6 +7,7 @@ export BUILD_REF :=  $(or $(BUILD_REF), dev)
 export BUILD_ID := $(or $(BUILD_ID), 0)
 export API_PORT := $(or $(API_PORT), 3000)
 export QUEUE_CONSUMERS_PORT := $(or $(QUEUE_CONSUMERS_PORT), 3001)
+export LOAD_TEST_API_PORT := $(or $(LOAD_TEST_API_PORT), 3005)
 export APP_PORT := $(or $(APP_PORT), 8080)
 # Database
 export POSTGRES_PORT := $(or $(POSTGRES_PORT), 5432)
@@ -200,6 +201,12 @@ queue-consumers:
 	@echo "+\n++ Make: Queue only"
 	@docker-compose -f docker-compose.yml build queue-consumers
 	@docker-compose -f docker-compose.yml up -d queue-consumers
+
+# Runs load test gateway application
+load-test-gateway:
+	@echo "+\n++ Make: Queue only"
+	@docker-compose -f docker-compose.yml build load-test-gateway
+	@docker-compose -f docker-compose.yml up -d load-test-gateway
 
 # Runs workers application
 workers:
