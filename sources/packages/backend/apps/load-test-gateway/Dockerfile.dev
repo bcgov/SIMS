@@ -19,7 +19,6 @@ RUN npm ci
 
 # Copying sources.
 COPY ./apps/load-test-gateway ./apps/load-test-gateway
-COPY ./apps/db-migrations ./apps/db-migrations
 COPY ./libs ./libs
 
 # Building app

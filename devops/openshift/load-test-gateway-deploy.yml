@@ -110,27 +110,6 @@ objects:
       to:
         kind: Service
         name: ${NAME}
-  - apiVersion: autoscaling/v1
-    kind: HorizontalPodAutoscaler
-    metadata:
-      name: ${NAME}-hpa
-    spec:
-      scaleTargetRef:
-        apiVersion: apps/v1
-        kind: ReplicationController
-        name: ${NAME}-rc
-      minReplicas: "${{REPLICAS}}"
-      maxReplicas: 10
-      targetCPUUtilizationPercentage: 80
-  - apiVersion: policy/v1
-    kind: PodDisruptionBudget
-    metadata:
-      name: ${NAME}-pdb
-    spec:
-      selector:
-        matchLabels:
-          deploymentconfig: ${NAME}
-      maxUnavailable: 1
 parameters:
   - name: NAME
     required: true
@@ -139,15 +118,15 @@ parameters:
   - name: SERVICE_NAME
     value: queue-consumers
   - name: CPU_LIMIT
-    value: "0.2"
+    value: "0.4"
   - name: MEMORY_LIMIT
-    value: "256M"
+    value: "512M"
   - name: CPU_REQUEST
-    value: "0.1"
+    value: "0.2"
   - name: MEMORY_REQUEST
-    value: "128M"
+    value: "256M"
   - name: REPLICAS
-    value: "2"
+    value: "1"
   - name: DB_SERVICE
     value: patroni-master
   - name: DB_SECRET_NAME
