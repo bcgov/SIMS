@@ -225,7 +225,7 @@ export default defineComponent({
           );
         if (uploadResults.length) {
           // Check for any errors. If no errors found (only warnings found), show success message.
-          if (!validationResults.value.some((result) => result.errors.length)) {
+          if (!uploadResults.some((result) => result.errors.length)) {
             snackBar.success("Success! File validated.");
           }
           validationResults.value = uploadResults;
