@@ -157,7 +157,7 @@ objects:
         termination: edge
         insecureEdgeTerminationPolicy: Redirect
       wildcardPolicy: None
-  - apiVersion: autoscaling/v1
+  - apiVersion: autoscaling/v2
     kind: HorizontalPodAutoscaler
     metadata:
       labels:
@@ -170,7 +170,19 @@ objects:
         name: ${NAME}
       minReplicas: "${{REPLICAS}}"
       maxReplicas: 6
-      targetCPUUtilizationPercentage: 50
+      metrics:
+          - type: Resource
+            resource:
+              name: cpu
+              target:
+                type: AverageValue
+                averageValue: '1.35'
+          - type: Resource
+            resource:
+              name: memory
+              target:
+                type: AverageValue
+                averageValue: "1.8Gi"
   - apiVersion: policy/v1
     kind: PodDisruptionBudget
     metadata:
