@@ -14,7 +14,7 @@ import { ClientSecretCredential } from "../../utils/auth";
 /**
  * Load test number of iterations to run.
  */
-const ITERATIONS = 15;
+const ITERATIONS = 500;
 /**
  * Virtual users to run load test.
  * Please ensure that the number of virtual users

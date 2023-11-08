@@ -204,7 +204,7 @@ queue-consumers:
 
 # Runs load test gateway application
 load-test-gateway:
-	@echo "+\n++ Make: Queue only"
+	@echo "+\n++ Make: Load test gateway only"
 	@docker-compose -f docker-compose.yml build load-test-gateway
 	@docker-compose -f docker-compose.yml up -d load-test-gateway
 

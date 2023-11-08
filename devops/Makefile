@@ -460,8 +460,8 @@ deploy-load-test-gateway:
 	test -n "$(LOAD_TEST_GATEWAY_PORT)"
 	test -n "$(KEYCLOAK_AUTH_URL)"
 	test -n "$(KEYCLOAK_REALM)"
-	@echo "+\n++ Deploying Queues with tag: $(BUILD_REF)\n+"
-	@oc -n $(NAMESPACE) process -f openshift/queue-consumers-deploy.yml \
+	@echo "+\n++ Deploying Load test gateway with tag: $(BUILD_REF)\n+"
+	@oc -n $(NAMESPACE) process -f openshift/load-test-gateway-deploy.yml \
 		-p NAME=$(LOAD_TEST_GATEWAY) \
 		-p LOAD_TEST_GATEWAY_SECRET_NAME=$(LOAD_TEST_GATEWAY_SECRET_NAME) \
 		-p BUILD_NAMESPACE=$(BUILD_NAMESPACE) \
