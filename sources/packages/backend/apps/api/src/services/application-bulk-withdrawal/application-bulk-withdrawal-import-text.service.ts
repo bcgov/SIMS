@@ -152,6 +152,7 @@ export class ApplicationWithdrawalImportTextService {
     const applicationValidationData = await this.getApplicationValidationData(
       applicationNumbers,
       institutionId,
+      originator,
     );
     applicationValidationData.forEach((record) => {
       applicationDataMap[record.applicationNumber] = {
@@ -176,8 +177,6 @@ export class ApplicationWithdrawalImportTextService {
         validationModel.applicationFound = true;
         validationModel.studentSINMatch =
           textValidation.textModel.sin === applicationData.sin;
-        validationModel.hasCorrectInstitutionCode =
-          originator === applicationData.locationCode;
         validationModel.isArchived = applicationData.isArchived;
         validationModel.applicationStatus = applicationData.applicationStatus;
         validationModel.hasPreviouslyBeenWithdrawn =
@@ -191,11 +190,13 @@ export class ApplicationWithdrawalImportTextService {
    * Get the application validation details for all the applications.
    * @param applicationNumbers application numbers for which the application details need to be retrieved.
    * @param institutionId institution id.
+   * @param originator institution that sent the file.
    * @returns applications containing the required information.
    */
   private async getApplicationValidationData(
     applicationNumbers: string[],
     institutionId: number,
+    originator: string,
   ): Promise<Application[]> {
     return this.applicationRepo.find({
       select: {
@@ -217,6 +218,7 @@ export class ApplicationWithdrawalImportTextService {
       where: {
         applicationNumber: In(applicationNumbers),
         location: {
+          institutionCode: originator,
           institution: { id: institutionId },
         },
         studentScholasticStandings: {

@@ -81,17 +81,6 @@ export class ApplicationBulkWithdrawalValidationModel {
   })
   studentSINMatch?: boolean;
   /**
-   * Has correct institution code.
-   */
-  @ValidateIf(
-    (object: ApplicationBulkWithdrawalValidationModel) =>
-      object.applicationFound,
-  )
-  @IsIn([true], {
-    message: "The institution location code provided is incorrect.",
-  })
-  hasCorrectInstitutionCode?: boolean;
-  /**
    * Application Status.
    */
   @ValidateIf(
