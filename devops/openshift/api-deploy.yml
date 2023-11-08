@@ -232,8 +232,8 @@ objects:
     spec:
       scaleTargetRef:
         apiVersion: apps/v1
-        kind: ReplicationController
-        name: ${NAME}-rc
+        kind: DeploymentConfig
+        name: ${NAME}
       minReplicas:  "${{REPLICAS}}"
       maxReplicas: 10
       targetCPUUtilizationPercentage: 80
