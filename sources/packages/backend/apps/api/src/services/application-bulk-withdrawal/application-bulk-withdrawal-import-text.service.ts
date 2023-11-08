@@ -136,13 +136,13 @@ export class ApplicationWithdrawalImportTextService {
   /**
    * Generates the application bulk withdrawal validation model.
    * @param textValidations text validation models to be converted to the validation models.
-   * @param originator institution that sent the file.
+   * @param institutionCode institution code that is sent in the file.
    * @param institutionId institution id.
    * @returns application bulk withdrawal models to be validated and persisted.
    */
   async generateValidationModels(
     textValidations: ApplicationWithdrawalTextValidationResult[],
-    originator: string,
+    institutionCode: string,
     institutionId: number,
   ): Promise<ApplicationBulkWithdrawalValidationModel[]> {
     const applicationDataMap: ApplicationDataMap = {};
@@ -152,7 +152,7 @@ export class ApplicationWithdrawalImportTextService {
     const applicationValidationData = await this.getApplicationValidationData(
       applicationNumbers,
       institutionId,
-      originator,
+      institutionCode,
     );
     applicationValidationData.forEach((record) => {
       applicationDataMap[record.applicationNumber] = {
@@ -161,11 +161,11 @@ export class ApplicationWithdrawalImportTextService {
         sin: record.student.sinValidation.sin,
         locationId: record.location.id,
         locationCode: record.location.institutionCode,
-        hasPreviouslyBeenWithdrawn: !!record.studentScholasticStandings?.filter(
+        hasPreviouslyBeenWithdrawn: record.studentScholasticStandings?.some(
           (scholasticStanding) =>
             scholasticStanding.changeType ===
             StudentScholasticStandingChangeType.StudentWithdrewFromProgram,
-        ).length,
+        ),
       };
     });
     return textValidations.map((textValidation) => {
@@ -222,7 +222,7 @@ export class ApplicationWithdrawalImportTextService {
       where: {
         applicationNumber: In(applicationNumbers),
         location: {
-          institutionCode: institutionCode,
+          institutionCode,
           institution: { id: institutionId },
         },
       },
