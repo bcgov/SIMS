@@ -2,22 +2,26 @@ import { createMock } from "@golevelup/ts-jest";
 import { SshService } from "@sims/integrations/services";
 import { DisbursementValueType, RelationshipStatus } from "@sims/sims-db";
 import { ConfigService } from "@sims/utilities/config";
+import {
+  getCountryCode,
+  getGenderCode,
+  getPartTimeMaritalStatusCode,
+  getPPDFlag,
+} from "@sims/utilities/esdc-utils";
 import { ECertPartTimeFileFooter } from "../../e-cert-files/e-cert-file-footer";
 import { ECertPartTimeFileHeader } from "../../e-cert-files/e-cert-file-header";
 import { ECertPartTimeIntegrationService } from "../../e-cert-part-time.integration.service";
 
 describe("ECertPartTimeIntegrationService-createRequestContent", () => {
   let eCertPartTimeIntegrationService: ECertPartTimeIntegrationService;
-  let eCertPartTimeFileHeader: ECertPartTimeFileHeader;
-  let eCertPartTimeFileFooter: ECertPartTimeFileFooter;
   let configService: ConfigService;
   let sshService: SshService;
 
   beforeAll(() => {
     configService = createMock<ConfigService>();
     sshService = createMock<SshService>();
-    eCertPartTimeFileHeader = new ECertPartTimeFileHeader();
-    eCertPartTimeFileFooter = new ECertPartTimeFileFooter();
+    const eCertPartTimeFileHeader = new ECertPartTimeFileHeader();
+    const eCertPartTimeFileFooter = new ECertPartTimeFileFooter();
     eCertPartTimeIntegrationService = new ECertPartTimeIntegrationService(
       eCertPartTimeFileHeader,
       eCertPartTimeFileFooter,
@@ -30,7 +34,7 @@ describe("ECertPartTimeIntegrationService-createRequestContent", () => {
     jest.resetAllMocks();
   });
 
-  it(`Should create content for part time E-CERT file when requested providing E-CERT records.`, async () => {
+  it("Should create content for part time E-CERT file when requested providing E-CERT records.", async () => {
     // Arrange
     const ecertRecords = [
       {
@@ -99,6 +103,26 @@ describe("ECertPartTimeIntegrationService-createRequestContent", () => {
         ],
       },
     ];
+
+    const [ecertRecord] = ecertRecords;
+    const disbursementAmount = ecertRecord.awards.filter(
+      (award) => award.valueCode === "CSLP",
+    )[0].effectiveAmount;
+    const totalBCGrantAmount = ecertRecord.awards.filter(
+      (award) => award.valueCode === "BCSG",
+    )[0].effectiveAmount;
+    const csgpPTAmount = ecertRecord.awards.filter(
+      (award) => award.valueCode === "CSPT",
+    )[0].effectiveAmount;
+    const csgpPDAmount = ecertRecord.awards.filter(
+      (award) => award.valueCode === "CSGP",
+    )[0].effectiveAmount;
+    const csgpPTDEPAmount = ecertRecord.awards.filter(
+      (award) => award.valueCode === "CSGD",
+    )[0].effectiveAmount;
+    const totalCanadaAndProvincialGrantsAmount =
+      totalBCGrantAmount + csgpPTAmount + csgpPDAmount + csgpPTDEPAmount;
+
     // Act
     const fileLines = eCertPartTimeIntegrationService.createRequestContent(
       ecertRecords,
@@ -106,55 +130,54 @@ describe("ECertPartTimeIntegrationService-createRequestContent", () => {
     );
 
     // Assert
-    expect(fileLines).toEqual(
-      expect.arrayContaining([
-        expect.objectContaining({
-          recordTypeCode: "01",
-          sequence: 1,
-        }),
-        expect.objectContaining({
-          recordType: "02",
-          sin: "445966120",
-          courseLoad: 20,
-          certNumber: 28,
-          disbursementDate: new Date("2023-11-03T00:00:00.000Z"),
-          documentProducedDate: new Date("2023-11-03T20:37:58.422Z"),
-          disbursementAmount: 6554,
-          schoolAmount: 0,
-          educationalStartDate: new Date("2023-09-15T00:00:00.000Z"),
-          educationalEndDate: new Date("2024-08-30T00:00:00.000Z"),
-          federalInstitutionCode: "DDDD",
-          weeksOfStudy: 51,
-          fieldOfStudy: 15,
-          yearOfStudy: 1,
-          enrollmentConfirmationDate: new Date("2023-11-03T19:59:44.913Z"),
-          dateOfBirth: new Date("1973-01-31T00:00:00.000Z"),
-          lastName: "SHAH",
-          firstName: "RAM DEV",
-          addressLine1: "123 Gorge Rd E",
-          addressLine2: "",
-          city: "Victoria",
-          country: "CAN",
-          provinceState: "BC",
-          postalCode: "V1V1V1",
-          emailAddress: "simsthree@test.ca",
-          gender: "M",
-          maritalStatus: "SP",
-          studentNumber: "",
-          ppdFlag: "N",
-          totalCanadaGrantAmount: 3909,
-          totalBCGrantAmount: 333,
-          csgpPTAmount: 1800,
-          csgpPDAmount: 999,
-          csgpPTDEPAmount: 777,
-        }),
-        expect.objectContaining({
-          recordTypeCode: "99",
-          totalAmountDisbursed: 6554,
-          recordCount: 1,
-        }),
-      ]),
-    );
+    expect(fileLines).toEqual([
+      {
+        recordTypeCode: "01",
+        processDate: expect.any(Date),
+        sequence: 1,
+      },
+      {
+        recordType: "02",
+        sin: ecertRecord.sin,
+        courseLoad: ecertRecord.courseLoad,
+        certNumber: ecertRecord.documentNumber,
+        disbursementDate: ecertRecord.disbursementDate,
+        documentProducedDate: ecertRecord.documentProducedDate,
+        disbursementAmount,
+        schoolAmount: ecertRecord.schoolAmount,
+        educationalStartDate: ecertRecord.educationalStartDate,
+        educationalEndDate: ecertRecord.educationalEndDate,
+        federalInstitutionCode: ecertRecord.federalInstitutionCode,
+        weeksOfStudy: ecertRecord.weeksOfStudy,
+        fieldOfStudy: ecertRecord.fieldOfStudy,
+        yearOfStudy: ecertRecord.yearOfStudy,
+        enrollmentConfirmationDate: ecertRecord.enrollmentConfirmationDate,
+        dateOfBirth: ecertRecord.dateOfBirth,
+        lastName: ecertRecord.lastName,
+        firstName: ecertRecord.firstName,
+        addressLine1: ecertRecord.addressLine1,
+        addressLine2: ecertRecord.addressLine2,
+        city: ecertRecord.city,
+        country: getCountryCode(ecertRecord.country),
+        provinceState: ecertRecord.provinceState,
+        postalCode: ecertRecord.postalCode,
+        emailAddress: ecertRecord.email,
+        gender: getGenderCode(ecertRecord.gender),
+        maritalStatus: getPartTimeMaritalStatusCode(ecertRecord.maritalStatus),
+        studentNumber: ecertRecord.studentNumber,
+        ppdFlag: getPPDFlag(ecertRecord.ppdFlag),
+        totalCanadaAndProvincialGrantsAmount,
+        totalBCGrantAmount,
+        csgpPTAmount,
+        csgpPDAmount,
+        csgpPTDEPAmount,
+      },
+      {
+        recordTypeCode: "99",
+        totalAmountDisbursed: disbursementAmount,
+        recordCount: 1,
+      },
+    ]);
 
     for (const line of fileLines) {
       expect(line.getFixedFormat().length).toBe(756);

@@ -122,13 +122,13 @@ export class ECertPartTimeFileRecord extends ECertFileRecord {
   /**
    * Sum of all CSGP grants + BC Provincial Part-time grants from this certificate.
    */
-  totalCanadaGrantAmount: number;
+  totalCanadaAndProvincialGrantsAmount: number;
   /**
    * Certificate number, the generated sequence number for the file.
    */
   certNumber: number;
   /**
-   * BC Part-time grant amount 1.
+   * BC Part-time grant amount.
    */
   totalBCGrantAmount: number;
   /**
@@ -194,7 +194,7 @@ export class ECertPartTimeFileRecord extends ECertFileRecord {
       record.repeatAppend(NUMBER_FILLER, 9); // CAG PD Amt, no longer used.
       record.repeatAppend(NUMBER_FILLER, 9); // CAG LI Amt, no longer used.
       record.appendWithStartFiller(
-        this.totalCanadaGrantAmount,
+        this.totalCanadaAndProvincialGrantsAmount,
         5,
         NUMBER_FILLER,
       );

@@ -78,10 +78,11 @@ export class ECertPartTimeIntegrationService extends ECertIntegrationService {
         ecertRecord.awards,
         [DisbursementValueType.CanadaLoan],
       );
-      const totalCanadaGrantAmount = getTotalDisbursementEffectiveAmount(
-        ecertRecord.awards,
-        [DisbursementValueType.CanadaGrant, DisbursementValueType.BCTotalGrant],
-      );
+      const totalCanadaAndProvincialGrantsAmount =
+        getTotalDisbursementEffectiveAmount(ecertRecord.awards, [
+          DisbursementValueType.CanadaGrant,
+          DisbursementValueType.BCTotalGrant,
+        ]);
       const totalBCGrantAmount = getTotalDisbursementEffectiveAmount(
         ecertRecord.awards,
         [DisbursementValueType.BCTotalGrant],
@@ -120,7 +121,8 @@ export class ECertPartTimeIntegrationService extends ECertIntegrationService {
       );
       record.studentNumber = ecertRecord.studentNumber;
       record.ppdFlag = getPPDFlag(ecertRecord.ppdFlag);
-      record.totalCanadaGrantAmount = totalCanadaGrantAmount;
+      record.totalCanadaAndProvincialGrantsAmount =
+        totalCanadaAndProvincialGrantsAmount;
       record.totalBCGrantAmount = totalBCGrantAmount;
       record.csgpPTAmount = csgpPTAmount;
       record.csgpPDAmount = csgpPDAmount;
