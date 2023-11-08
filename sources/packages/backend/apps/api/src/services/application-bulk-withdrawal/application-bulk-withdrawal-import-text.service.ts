@@ -161,7 +161,11 @@ export class ApplicationWithdrawalImportTextService {
         sin: record.student.sinValidation.sin,
         locationId: record.location.id,
         locationCode: record.location.institutionCode,
-        hasPreviouslyBeenWithdrawn: !!record.studentScholasticStandings.length,
+        hasPreviouslyBeenWithdrawn: !!record.studentScholasticStandings?.filter(
+          (scholasticStanding) =>
+            scholasticStanding.changeType ===
+            StudentScholasticStandingChangeType.StudentWithdrewFromProgram,
+        ).length,
       };
     });
     return textValidations.map((textValidation) => {
@@ -190,13 +194,13 @@ export class ApplicationWithdrawalImportTextService {
    * Get the application validation details for all the applications.
    * @param applicationNumbers application numbers for which the application details need to be retrieved.
    * @param institutionId institution id.
-   * @param originator institution that sent the file.
+   * @param institutionCode institution code that is sent in the file.
    * @returns applications containing the required information.
    */
   private async getApplicationValidationData(
     applicationNumbers: string[],
     institutionId: number,
-    originator: string,
+    institutionCode: string,
   ): Promise<Application[]> {
     return this.applicationRepo.find({
       select: {
@@ -207,7 +211,7 @@ export class ApplicationWithdrawalImportTextService {
         location: { id: true, institutionCode: true },
         student: { id: true, sinValidation: { sin: true } },
         studentScholasticStandings: {
-          id: true,
+          changeType: true,
         },
       },
       relations: {
@@ -218,12 +222,8 @@ export class ApplicationWithdrawalImportTextService {
       where: {
         applicationNumber: In(applicationNumbers),
         location: {
-          institutionCode: originator,
+          institutionCode: institutionCode,
           institution: { id: institutionId },
-        },
-        studentScholasticStandings: {
-          changeType:
-            StudentScholasticStandingChangeType.StudentWithdrewFromProgram,
         },
       },
     });
