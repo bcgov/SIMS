@@ -6,7 +6,7 @@ export const ECERT_PT_SENT_TITLE = "NEW PT ENTITLEMENT";
 /**
  * Amount of Grant for Part-time Studies (CSGP-PT) at the study start.
  */
-export const CSGD = "CSGD";
+export const CSPT = "CSPT";
 /**
  * Amount of Grant for Students with Permanent Disabilities (CSGP-PD) at the study start.
  */
@@ -14,7 +14,7 @@ export const CSGP = "CSGP";
 /**
  * Amount Grant for Part-time Students with Dependants (CSGP-PTDEP) at the study start.
  */
-export const CSGPT = "CSGPT";
+export const CSGD = "CSGD";
 export interface ECertRecord {
   sin: string;
   applicationNumber: string;

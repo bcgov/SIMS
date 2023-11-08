@@ -3,8 +3,8 @@ import {
   RecordTypeCodes,
   CSGD,
   CSGP,
-  CSGPT,
   ECertRecord,
+  CSPT,
 } from "../models/e-cert-integration-model";
 import { ECertPartTimeFileHeader } from "./e-cert-files/e-cert-file-header";
 import { ECertPartTimeFileFooter } from "./e-cert-files/e-cert-file-footer";
@@ -61,28 +61,29 @@ export class ECertPartTimeIntegrationService extends ECertIntegrationService {
     // Detail records
     // Calculated values
     const fileRecords = ecertRecords.map((ecertRecord) => {
-      const totalCSGPPTAmount = getDisbursementEffectiveAmountByValueCode(
+      const csgpPTAmount = getDisbursementEffectiveAmountByValueCode(
         ecertRecord.awards,
-        CSGD,
+        CSPT,
       );
-      const totalCSGPPDAmount = getDisbursementEffectiveAmountByValueCode(
+      const csgpPDAmount = getDisbursementEffectiveAmountByValueCode(
         ecertRecord.awards,
         CSGP,
       );
-      const totalCSGPPTDEPAmount = getDisbursementEffectiveAmountByValueCode(
+      const csgpPTDEPAmount = getDisbursementEffectiveAmountByValueCode(
         ecertRecord.awards,
-        CSGPT,
+        CSGD,
       );
 
       const disbursementAmount = getTotalDisbursementEffectiveAmount(
         ecertRecord.awards,
         [DisbursementValueType.CanadaLoan],
       );
-      const totalGrantAmount = getTotalDisbursementEffectiveAmount(
-        ecertRecord.awards,
-        [DisbursementValueType.CanadaGrant, DisbursementValueType.BCTotalGrant],
-      );
-      const totalBCSGAmount = getTotalDisbursementEffectiveAmount(
+      const totalCanadaAndProvincialGrantsAmount =
+        getTotalDisbursementEffectiveAmount(ecertRecord.awards, [
+          DisbursementValueType.CanadaGrant,
+          DisbursementValueType.BCTotalGrant,
+        ]);
+      const totalBCGrantAmount = getTotalDisbursementEffectiveAmount(
         ecertRecord.awards,
         [DisbursementValueType.BCTotalGrant],
       );
@@ -120,11 +121,12 @@ export class ECertPartTimeIntegrationService extends ECertIntegrationService {
       );
       record.studentNumber = ecertRecord.studentNumber;
       record.ppdFlag = getPPDFlag(ecertRecord.ppdFlag);
-      record.totalGrantAmount = totalGrantAmount;
-      record.totalBCSGAmount = totalBCSGAmount;
-      record.totalCSGPPTAmount = totalCSGPPTAmount;
-      record.totalCSGPPDAmount = totalCSGPPDAmount;
-      record.totalCSGPPTDEPAmount = totalCSGPPTDEPAmount;
+      record.totalCanadaAndProvincialGrantsAmount =
+        totalCanadaAndProvincialGrantsAmount;
+      record.totalBCGrantAmount = totalBCGrantAmount;
+      record.csgpPTAmount = csgpPTAmount;
+      record.csgpPDAmount = csgpPDAmount;
+      record.csgpPTDEPAmount = csgpPTDEPAmount;
       return record;
     });
     fileLines.push(...fileRecords);
