@@ -231,7 +231,7 @@ objects:
       name: ${NAME}-hpa
     spec:
       scaleTargetRef:
-        apiVersion: apps/v1
+        apiVersion: apps.openshift.io/v1
         kind: DeploymentConfig
         name: ${NAME}
       minReplicas:  "${{REPLICAS}}"
