@@ -103,26 +103,6 @@ describe("ECertPartTimeIntegrationService-createRequestContent", () => {
         ],
       },
     ];
-
-    const [ecertRecord] = ecertRecords;
-    const disbursementAmount = ecertRecord.awards.filter(
-      (award) => award.valueCode === "CSLP",
-    )[0].effectiveAmount;
-    const totalBCGrantAmount = ecertRecord.awards.filter(
-      (award) => award.valueCode === "BCSG",
-    )[0].effectiveAmount;
-    const csgpPTAmount = ecertRecord.awards.filter(
-      (award) => award.valueCode === "CSPT",
-    )[0].effectiveAmount;
-    const csgpPDAmount = ecertRecord.awards.filter(
-      (award) => award.valueCode === "CSGP",
-    )[0].effectiveAmount;
-    const csgpPTDEPAmount = ecertRecord.awards.filter(
-      (award) => award.valueCode === "CSGD",
-    )[0].effectiveAmount;
-    const totalCanadaAndProvincialGrantsAmount =
-      totalBCGrantAmount + csgpPTAmount + csgpPDAmount + csgpPTDEPAmount;
-
     // Act
     const fileLines = eCertPartTimeIntegrationService.createRequestContent(
       ecertRecords,
@@ -130,6 +110,7 @@ describe("ECertPartTimeIntegrationService-createRequestContent", () => {
     );
 
     // Assert
+    const [ecertRecord] = ecertRecords;
     expect(fileLines).toEqual([
       {
         recordTypeCode: "01",
@@ -143,7 +124,7 @@ describe("ECertPartTimeIntegrationService-createRequestContent", () => {
         certNumber: ecertRecord.documentNumber,
         disbursementDate: ecertRecord.disbursementDate,
         documentProducedDate: ecertRecord.documentProducedDate,
-        disbursementAmount,
+        disbursementAmount: 6554,
         schoolAmount: ecertRecord.schoolAmount,
         educationalStartDate: ecertRecord.educationalStartDate,
         educationalEndDate: ecertRecord.educationalEndDate,
@@ -166,15 +147,15 @@ describe("ECertPartTimeIntegrationService-createRequestContent", () => {
         maritalStatus: getPartTimeMaritalStatusCode(ecertRecord.maritalStatus),
         studentNumber: ecertRecord.studentNumber,
         ppdFlag: getPPDFlag(ecertRecord.ppdFlag),
-        totalCanadaAndProvincialGrantsAmount,
-        totalBCGrantAmount,
-        csgpPTAmount,
-        csgpPDAmount,
-        csgpPTDEPAmount,
+        totalCanadaAndProvincialGrantsAmount: 3909,
+        totalBCGrantAmount: 333,
+        csgpPTAmount: 1800,
+        csgpPDAmount: 999,
+        csgpPTDEPAmount: 777,
       },
       {
         recordTypeCode: "99",
-        totalAmountDisbursed: disbursementAmount,
+        totalAmountDisbursed: 6554,
         recordCount: 1,
       },
     ]);
