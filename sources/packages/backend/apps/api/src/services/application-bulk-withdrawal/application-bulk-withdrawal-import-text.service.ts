@@ -14,18 +14,36 @@ import {
 } from "./application-bulk-withdrawal-import-text.models";
 import { APPLICATION_WITHDRAWAL_INVALID_TEXT_FILE_ERROR } from "../../constants";
 import { CustomNamedError } from "@sims/utilities";
+import {
+  ApplicationBulkWithdrawalValidationModel,
+  ApplicationData,
+  BulkWithdrawalFileData,
+} from "./application-bulk-withdrawal-validation.models";
+import {
+  Application,
+  StudentScholasticStandingChangeType,
+} from "@sims/sims-db";
+import { InjectRepository } from "@nestjs/typeorm";
+import { In, Repository } from "typeorm";
+
+type ApplicationDataMap = Record<string, ApplicationData>;
 
 /**
  * Handles the application withdrawal bulk insert preparation.
  */
 @Injectable()
 export class ApplicationWithdrawalImportTextService {
+  constructor(
+    @InjectRepository(Application)
+    private readonly applicationRepo: Repository<Application>,
+  ) {}
+
   /**
    * Reads a text content and generate a text object model for each line.
    * @param textContent text content to generate the models.
    * @returns text object models.
    */
-  readText(textContent: string): ApplicationWithdrawalImportTextModel[] {
+  readText(textContent: string): BulkWithdrawalFileData {
     const applicationWithdrawalModels: ApplicationWithdrawalImportTextModel[] =
       [];
     // Remove BOM(Byte order mark), if present.
@@ -84,7 +102,7 @@ export class ApplicationWithdrawalImportTextService {
         data.applicationNumber;
       applicationWithdrawalImportTextModel.withdrawalDate = data.withdrawalDate;
     });
-    return applicationWithdrawalModels;
+    return { header, records: applicationWithdrawalModels };
   }
 
   /**
@@ -112,6 +130,102 @@ export class ApplicationWithdrawalImportTextService {
         textModel: applicationWithdrawalImportTextModel,
         errors: flattenedErrors,
       };
+    });
+  }
+
+  /**
+   * Generates the application bulk withdrawal validation model.
+   * @param textValidations text validation models to be converted to the validation models.
+   * @param institutionCode institution code that is sent in the file.
+   * @param institutionId institution id.
+   * @returns application bulk withdrawal models to be validated and persisted.
+   */
+  async generateValidationModels(
+    textValidations: ApplicationWithdrawalTextValidationResult[],
+    institutionCode: string,
+    institutionId: number,
+  ): Promise<ApplicationBulkWithdrawalValidationModel[]> {
+    const applicationDataMap: ApplicationDataMap = {};
+    const applicationNumbers = textValidations.map(
+      (textValidation) => textValidation.textModel.applicationNumber,
+    );
+    const applicationValidationData = await this.getApplicationValidationData(
+      applicationNumbers,
+      institutionId,
+      institutionCode,
+    );
+    applicationValidationData.forEach((record) => {
+      applicationDataMap[record.applicationNumber] = {
+        applicationStatus: record.applicationStatus,
+        isArchived: record.isArchived,
+        sin: record.student.sinValidation.sin,
+        locationId: record.location.id,
+        locationCode: record.location.institutionCode,
+        hasPreviouslyBeenWithdrawn: record.studentScholasticStandings?.some(
+          (scholasticStanding) =>
+            scholasticStanding.changeType ===
+            StudentScholasticStandingChangeType.StudentWithdrewFromProgram,
+        ),
+      };
+    });
+    return textValidations.map((textValidation) => {
+      const validationModel = {} as ApplicationBulkWithdrawalValidationModel;
+      const applicationData =
+        applicationDataMap[textValidation.textModel.applicationNumber];
+      validationModel.sin = textValidation.textModel.sin;
+      validationModel.applicationNumber =
+        textValidation.textModel.applicationNumber;
+      validationModel.withdrawalDate = textValidation.textModel.withdrawalDate;
+      validationModel.applicationFound = false;
+      if (applicationData) {
+        validationModel.applicationFound = true;
+        validationModel.studentSINMatch =
+          textValidation.textModel.sin === applicationData.sin;
+        validationModel.isArchived = applicationData.isArchived;
+        validationModel.applicationStatus = applicationData.applicationStatus;
+        validationModel.hasPreviouslyBeenWithdrawn =
+          applicationData.hasPreviouslyBeenWithdrawn;
+      }
+      return validationModel;
+    });
+  }
+
+  /**
+   * Get the application validation details for all the applications.
+   * @param applicationNumbers application numbers for which the application details need to be retrieved.
+   * @param institutionId institution id.
+   * @param institutionCode institution code that is sent in the file.
+   * @returns applications containing the required information.
+   */
+  private async getApplicationValidationData(
+    applicationNumbers: string[],
+    institutionId: number,
+    institutionCode: string,
+  ): Promise<Application[]> {
+    return this.applicationRepo.find({
+      select: {
+        id: true,
+        applicationNumber: true,
+        isArchived: true,
+        applicationStatus: true,
+        location: { id: true, institutionCode: true },
+        student: { id: true, sinValidation: { sin: true } },
+        studentScholasticStandings: {
+          changeType: true,
+        },
+      },
+      relations: {
+        location: true,
+        student: { sinValidation: true },
+        studentScholasticStandings: true,
+      },
+      where: {
+        applicationNumber: In(applicationNumbers),
+        location: {
+          institutionCode,
+          institution: { id: institutionId },
+        },
+      },
     });
   }
 

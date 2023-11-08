@@ -61,3 +61,109 @@ function generateFlattenedErrors(
     );
   }
 }
+
+/**
+ * Inspect the validation error and its children checking when an error
+ * happen as has an additional context (must be considered a warning or a info)
+ * or it is a critical error (has no warning or info context).
+ * @param error error to be inspected.
+ * @returns errors, warnings and infos.
+ */
+export function extractValidationsByType(error: ValidationError): {
+  errors: string[];
+  warnings: ValidationResult[];
+  infos: ValidationResult[];
+} {
+  const errors: string[] = [];
+  const warnings: ValidationResult[] = [];
+  const infos: ValidationResult[] = [];
+  const flattenedErrors = flattenErrors(error);
+  flattenedErrors.forEach((error) => {
+    Object.keys(error.constraints).forEach((errorConstraintKey) => {
+      let associatedContext: ValidationContext<string> = undefined;
+      if (error.contexts) {
+        associatedContext = error.contexts[
+          errorConstraintKey
+        ] as ValidationContext<string>;
+      }
+      const errorDescription = error.constraints[errorConstraintKey];
+      if (associatedContext?.type === ValidationContextTypes.Warning) {
+        warnings.push({
+          typeCode: associatedContext.typeCode,
+          message: errorDescription,
+        });
+      } else if (
+        associatedContext?.type === ValidationContextTypes.Information
+      ) {
+        infos.push({
+          typeCode: associatedContext.typeCode,
+          message: errorDescription,
+        });
+      } else {
+        errors.push(errorDescription);
+      }
+    });
+  });
+  return { errors, warnings, infos };
+}
+
+/**
+ * Represent the context of an error that has an additional context to
+ * express a possible warning or some relevant information captured during
+ * the validation process.
+ * All validations when failed will generate an error. The ones that have
+ * the warning or information contexts will not be considered critical.
+ */
+export class ValidationContext<T> {
+  /**
+   * Creates an error context that will make the error downgrade to
+   * a condition of a warning information.
+   * @param warningTypeCode warning code that uniquely identifies this condition.
+   * @returns the warning context.
+   */
+  static CreateWarning<T>(warningTypeCode: T): ValidationContext<T> {
+    const newContext = new ValidationContext<T>();
+    newContext.type = ValidationContextTypes.Warning;
+    newContext.typeCode = warningTypeCode;
+    return newContext;
+  }
+
+  /**
+   * Creates an error context that will make the error downgraded to
+   * a condition of a simple information.
+   * @param infoTypeCode information code that uniquely identifies this condition.
+   * @returns the information context.
+   */
+  static CreateInfo<T>(infoTypeCode: T): ValidationContext<T> {
+    const newContext = new ValidationContext<T>();
+    newContext.type = ValidationContextTypes.Information;
+    newContext.typeCode = infoTypeCode;
+    return newContext;
+  }
+
+  /**
+   * Context type.
+   */
+  type: ValidationContextTypes;
+  /**
+   * Unique identifier of the validation error.
+   */
+  typeCode: T;
+}
+
+/**
+ * Types of non-critical errors.
+ */
+export enum ValidationContextTypes {
+  Warning = "warning",
+  Information = "information",
+}
+
+/**
+ * Validation warnings and infos with a unique typecode and
+ * a user-friendly message to be displayed.
+ */
+export interface ValidationResult {
+  typeCode: string;
+  message: string;
+}

@@ -40,3 +40,6 @@ export * from "./education-program-offering/education-program-offering-validatio
 export * from "./education-program-offering/education-program-offering-validation.service";
 export * from "./application-offering-change-request/application-offering-change-request.service";
 export * from "./application-bulk-withdrawal/application-bulk-withdrawal-import-text.service";
+export * from "./application-bulk-withdrawal/application-bulk-withdrawal-import-validation.service";
+export * from "./application-bulk-withdrawal/application-bulk-withdrawal-validation.models";
+export * from "./application-bulk-withdrawal/application-bulk-withdrawal-import-text.models";
