@@ -81,7 +81,7 @@ export class ApplicationBulkWithdrawalValidationModel {
    */
   @ValidateIf(
     (object: ApplicationBulkWithdrawalValidationModel) =>
-      object.applicationFound,
+      object.applicationFound && !object.hasPreviouslyBeenWithdrawn,
   )
   @IsIn([false], {
     message: "Application is already archived and cannot be withdrawn.",
