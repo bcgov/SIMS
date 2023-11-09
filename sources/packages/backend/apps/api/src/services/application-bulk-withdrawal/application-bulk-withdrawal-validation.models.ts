@@ -67,20 +67,6 @@ export class ApplicationBulkWithdrawalValidationModel {
   })
   applicationFound: boolean;
   /**
-   * Valid SIN.
-   */
-  @ValidateIf(
-    (object: ApplicationBulkWithdrawalValidationModel) =>
-      object.applicationFound,
-  )
-  @IsIn([true], {
-    message: "The record was not found and will be skipped.",
-    context: ValidationContext.CreateWarning(
-      ApplicationWithdrawalValidationWarnings.NoMatchingRecordFound,
-    ),
-  })
-  studentSINMatch?: boolean;
-  /**
    * Application Status.
    */
   @ValidateIf(
