@@ -177,10 +177,11 @@ export class ApplicationWithdrawalImportTextService {
         textValidation.textModel.applicationNumber;
       validationModel.withdrawalDate = textValidation.textModel.withdrawalDate;
       validationModel.applicationFound = false;
-      if (applicationData) {
+      if (
+        applicationData &&
+        textValidation.textModel.sin === applicationData.sin
+      ) {
         validationModel.applicationFound = true;
-        validationModel.studentSINMatch =
-          textValidation.textModel.sin === applicationData.sin;
         validationModel.isArchived = applicationData.isArchived;
         validationModel.applicationStatus = applicationData.applicationStatus;
         validationModel.hasPreviouslyBeenWithdrawn =
