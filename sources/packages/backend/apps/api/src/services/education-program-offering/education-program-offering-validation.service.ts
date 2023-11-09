@@ -3,13 +3,13 @@ import { OfferingStatus } from "@sims/sims-db";
 import {
   OfferingValidationResult,
   OfferingValidationModel,
-  ValidationResult,
-  ValidationContext,
-  ValidationContextTypes,
 } from "./education-program-offering-validation.models";
-import { validateSync, ValidationError } from "class-validator";
+import { validateSync } from "class-validator";
 import { plainToClass } from "class-transformer";
-import { flattenErrors } from "../../utilities/class-validation";
+import {
+  ValidationResult,
+  extractValidationsByType,
+} from "../../utilities/class-validation";
 import { CustomNamedError } from "@sims/utilities";
 import { OFFERING_VALIDATION_CRITICAL_ERROR } from "../../constants";
 
@@ -57,7 +57,7 @@ export class EducationProgramOfferingValidationService {
       const allWarnings: ValidationResult[] = [];
       const allInfos: ValidationResult[] = [];
       validationsErrors.forEach((error) => {
-        const validation = this.extractValidationsByType(error);
+        const validation = extractValidationsByType(error);
         allErrors.push(...validation.errors);
         allWarnings.push(...validation.warnings);
         allInfos.push(...validation.infos);
@@ -85,51 +85,6 @@ export class EducationProgramOfferingValidationService {
         errors: allErrors,
       };
     });
-  }
-
-  /**
-   * Inspect the validation error and its children checking when an error
-   * happen as has an additional context (must be considered a warning or a info)
-   * or it is a critical error (has no warning or info context).
-   * @param error error to be inspected.
-   * @returns errors, warnings and infos.
-   */
-  private extractValidationsByType(error: ValidationError): {
-    errors: string[];
-    warnings: ValidationResult[];
-    infos: ValidationResult[];
-  } {
-    const errors: string[] = [];
-    const warnings: ValidationResult[] = [];
-    const infos: ValidationResult[] = [];
-    const flattenedErrors = flattenErrors(error);
-    flattenedErrors.forEach((error) => {
-      Object.keys(error.constraints).forEach((errorConstraintKey) => {
-        let associatedContext: ValidationContext = undefined;
-        if (error.contexts) {
-          associatedContext = error.contexts[
-            errorConstraintKey
-          ] as ValidationContext;
-        }
-        const errorDescription = error.constraints[errorConstraintKey];
-        if (associatedContext?.type === ValidationContextTypes.Warning) {
-          warnings.push({
-            typeCode: associatedContext.typeCode,
-            message: errorDescription,
-          });
-        } else if (
-          associatedContext?.type === ValidationContextTypes.Information
-        ) {
-          infos.push({
-            typeCode: associatedContext.typeCode,
-            message: errorDescription,
-          });
-        } else {
-          errors.push(errorDescription);
-        }
-      });
-    });
-    return { errors, warnings, infos };
   }
 
   /**

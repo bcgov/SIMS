@@ -32,9 +32,11 @@ import {
   APPLICATION_NOT_FOUND,
   ASSESSMENT_ALREADY_IN_PROGRESS,
   ApplicationWithdrawalImportTextService,
+  ApplicationBulkWithdrawalImportValidationService,
   FormService,
   INVALID_OPERATION_IN_THE_CURRENT_STATUS,
   StudentScholasticStandingsService,
+  BulkWithdrawalFileData,
 } from "../../services";
 import { ApiProcessError, ClientTypeBaseRoute } from "../../types";
 import { CustomNamedError } from "@sims/utilities";
@@ -43,7 +45,6 @@ import { FormNames } from "../../services/form/constants";
 import {
   APPLICATION_CHANGE_NOT_ELIGIBLE,
   APPLICATION_WITHDRAWAL_INVALID_TEXT_FILE_ERROR,
-  APPLICATION_WITHDRAWAL_TEXT_CONTENT_FORMAT_ERROR,
 } from "../../constants";
 import {
   ApplicationBulkWithdrawalValidationResultAPIOutDTO,
@@ -61,10 +62,6 @@ import {
   uploadLimits,
 } from "../../utilities";
 import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
-import {
-  ApplicationWithdrawalImportTextModel,
-  ApplicationWithdrawalTextValidationResult,
-} from "../../services/application-bulk-withdrawal/application-bulk-withdrawal-import-text.models";
 
 /**
  * Scholastic standing controller for institutions Client.
@@ -78,6 +75,7 @@ export class ScholasticStandingInstitutionsController extends BaseController {
     private readonly studentScholasticStandingsService: StudentScholasticStandingsService,
     private readonly scholasticStandingControllerService: ScholasticStandingControllerService,
     private readonly applicationWithdrawalImportTextService: ApplicationWithdrawalImportTextService,
+    private readonly applicationWithdrawalImportValidationService: ApplicationBulkWithdrawalImportValidationService,
   ) {
     super();
   }
@@ -196,13 +194,13 @@ export class ScholasticStandingInstitutionsController extends BaseController {
     @UploadedFile() file: Express.Multer.File,
     @Query("validation-only", new DefaultValuePipe(false), ParseBoolPipe)
     validationOnly: boolean,
+    @UserToken() userToken: IInstitutionUserToken,
   ): Promise<PrimaryIdentifierAPIOutDTO[]> {
     // Read the entire file content.
     const fileContent = file.buffer.toString();
-    // Convert the file raw content into text models.
-    let textModels: ApplicationWithdrawalImportTextModel[];
+    let withdrawalFileData: BulkWithdrawalFileData;
     try {
-      textModels =
+      withdrawalFileData =
         this.applicationWithdrawalImportTextService.readText(fileContent);
     } catch (error: unknown) {
       if (
@@ -230,12 +228,28 @@ export class ScholasticStandingInstitutionsController extends BaseController {
     // Validate the text models.
     const textValidations =
       this.applicationWithdrawalImportTextService.validateTextModels(
-        textModels,
+        withdrawalFileData.records,
       );
     // Assert successful validation.
-    this.assertTextValidationsAreValid(textValidations);
-    // TODO Add business validation for application bulk withdrawal.
-
+    this.scholasticStandingControllerService.assertTextValidationsAreValid(
+      textValidations,
+    );
+    // Generate the validation models.
+    const validationModels =
+      await this.applicationWithdrawalImportTextService.generateValidationModels(
+        textValidations,
+        withdrawalFileData.header.originator,
+        userToken.authorizations.institutionId,
+      );
+    // Validate all the application bulk withdrawal models.
+    const applicationBulkWithdrawalValidations =
+      this.applicationWithdrawalImportValidationService.validateModels(
+        validationModels,
+      );
+    // Assert successful validation.
+    this.scholasticStandingControllerService.assertValidationsAreValid(
+      applicationBulkWithdrawalValidations,
+    );
     if (validationOnly) {
       // If the endpoint is called only to perform the validation and no error was found
       // return an empty array because no record will be created.
@@ -244,37 +258,5 @@ export class ScholasticStandingInstitutionsController extends BaseController {
 
     // TODO create a block to do database updates for Application withdrawal.
     return [];
-  }
-
-  /**
-   * Verify if all text file validations were performed with success and throw
-   * a BadRequestException in case of some failure.
-   * @param textValidations validations to be verified.
-   */
-  private assertTextValidationsAreValid(
-    textValidations: ApplicationWithdrawalTextValidationResult[],
-  ) {
-    const textValidationsErrors = textValidations.filter(
-      (textValidation) => textValidation.errors.length,
-    );
-    if (textValidationsErrors.length) {
-      // At least one error was detected and the text must be fixed.
-      const validationResults: ApplicationBulkWithdrawalValidationResultAPIOutDTO[] =
-        textValidationsErrors.map((validation) => ({
-          recordIndex: validation.index,
-          applicationNumber: validation.textModel.applicationNumber,
-          withdrawalDate: validation.textModel.withdrawalDate,
-          errors: validation.errors,
-          infos: [],
-          warnings: [],
-        }));
-      throw new BadRequestException(
-        new ApiProcessError(
-          "One or more text data fields received are not in the correct format.",
-          APPLICATION_WITHDRAWAL_TEXT_CONTENT_FORMAT_ERROR,
-          validationResults,
-        ),
-      );
-    }
   }
 }

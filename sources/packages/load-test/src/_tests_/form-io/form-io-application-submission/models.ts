@@ -98,5 +98,6 @@ export const APPLICATION_SUBMISSION_PAYLOAD = {
       },
     ],
     supportnocustodyDependants: "no",
+    applicationPDPPDStatus: "noIDoNotHaveADisability",
   },
 };

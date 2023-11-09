@@ -3,7 +3,7 @@ import { stringify } from "qs";
 import { TokenResponse } from "./token-response.model";
 import { RealmConfig } from "./realm-config.model";
 import { OpenIdConfig } from "./openid-config.model";
-import { KeycloakConfig } from "../../../auth/keycloakConfig";
+import { KeycloakConfig } from "../../config";
 import { LoggerService, InjectLogger } from "@sims/utilities/logger";
 import { AuthConfig, ConfigService } from "@sims/utilities/config";
 import { HttpService } from "@nestjs/axios";

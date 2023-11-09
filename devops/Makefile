@@ -25,12 +25,14 @@ export APPLICATION_ARCHIVE_DAYS := $(or ${APPLICATION_ARCHIVE_DAYS}, 43)
 export REDIS_PORT := $(or ${REDIS_PORT}, 6379)
 export API_PORT := $(or ${API_PORT}, 7070)
 export QUEUE_CONSUMERS_PORT := $(or ${QUEUE_CONSUMERS_PORT}, 7000)
+export LOAD_TEST_GATEWAY_PORT := $(or ${LOAD_TEST_GATEWAY_PORT}, 3005)
 export WEB_PORT := $(or ${WEB_PORT}, 3030)
 export DB_NAME := $(or ${DB_NAME}, SIMSDB)
 export DB_MIGRATIONS_BUILD_REF := $(or ${DB_MIGRATIONS_BUILD_REF}, db-migrations-${APP_NAME})
 export API_BUILD_REF := $(or ${API_BUILD_REF}, api-${APP_NAME})
 export WORKERS_BUILD_REF := $(or ${WORKERS_BUILD_REF}, workers-${APP_NAME})
 export QUEUE_CONSUMERS_BUILD_REF := $(or ${QUEUE_CONSUMERS_BUILD_REF}, queue-consumers-${APP_NAME})
+export LOAD_TEST_GATEWAY_BUILD_REF := $(or ${LOAD_TEST_GATEWAY_BUILD_REF}, load-test-gateway-${APP_NAME})
 export WEB_BUILD_REF := $(or ${WEB_BUILD_REF}, web-${APP_NAME})
 export FORMS_BUILD_REF := $(or ${FORMS_BUILD_REF}, forms)
 export FORMIO_ROOT_EMAIL := $(or ${FORMIO_ROOT_EMAIL}, dev_sabc@gov.bc.ca)
@@ -62,6 +64,10 @@ endef
 
 define QUEUE_CONSUMERS
 "$(HOST_PREFIX)queue-consumers-$(APP_NAME)"
+endef
+
+define LOAD_TEST_GATEWAY
+"$(HOST_PREFIX)load-test-gateway-$(APP_NAME)"
 endef
 
 define SWAGGER_NAME
@@ -134,6 +140,8 @@ oc-build-workers: | print-status build-workers
 oc-deploy-workers: | print-status deploy-workers
 oc-build-queue-consumers: | print-status build-queue-consumers
 oc-deploy-queue-consumers: | print-status deploy-queue-consumers
+oc-build-load-test-gateway: | print-status build-load-test-gateway
+oc-deploy-load-test-gateway: | print-status deploy-load-test-gateway
 oc-create-db: | print-status create-db
 oc-build-web: | print-status build-web
 oc-deploy-web: | print-status deploy-web
@@ -260,6 +268,14 @@ build-queue-consumers:
 	@echo "+\n++ BUILDING QUEUE_CONSUMERS with tag: $(BUILD_REF)\n+"
 	@oc -n $(BUILD_NAMESPACE) process -f $(BUILD_TEMPLATE_PATH) -p TAG=$(BUILD_REF) -p SOURCE_REPOSITORY_REF=$(BUILD_REF) -p BASE_IMAGE_NAME="nodejs-18" -p BASE_IMAGE_TAG="1-71.1697652955" -p BASE_IMAGE_REPO="artifacts.developer.gov.bc.ca/redhat-access-docker-remote/ubi8/" -p SOURCE_CONTEXT_DIR=$(SOURCE_CONTEXT_DIR)backend -p DOCKER_FILE_PATH=apps/queue-consumers/Dockerfile -p NAME=$(QUEUE_CONSUMERS_BUILD_REF) | oc -n $(BUILD_NAMESPACE) apply -f -
 	@oc -n $(BUILD_NAMESPACE) start-build bc/$(QUEUE_CONSUMERS_BUILD_REF) --wait
+
+build-load-test-gateway:
+	test -n "$(BUILD_NAMESPACE)"
+	test -n "$(BUILD_REF)"
+	test -n "$(LOAD_TEST_GATEWAY_BUILD_REF)"
+	@echo "+\n++ BUILDING LOAD_TEST_GATEWAY with tag: $(BUILD_REF)\n+"
+	@oc -n $(BUILD_NAMESPACE) process -f $(BUILD_TEMPLATE_PATH) -p TAG=$(BUILD_REF) -p SOURCE_REPOSITORY_REF=$(BUILD_REF) -p BASE_IMAGE_NAME="nodejs-18" -p BASE_IMAGE_TAG="1-71.1697652955" -p BASE_IMAGE_REPO="artifacts.developer.gov.bc.ca/redhat-access-docker-remote/ubi8/" -p SOURCE_CONTEXT_DIR=$(SOURCE_CONTEXT_DIR)backend -p DOCKER_FILE_PATH=apps/load-test-gateway/Dockerfile -p NAME=$(LOAD_TEST_GATEWAY_BUILD_REF) | oc -n $(BUILD_NAMESPACE) apply -f -
+	@oc -n $(BUILD_NAMESPACE) start-build bc/$(LOAD_TEST_GATEWAY_BUILD_REF) --wait
 
 build-web:
 	test -n "$(BUILD_NAMESPACE)"
@@ -432,6 +448,32 @@ deploy-queue-consumers:
 		-p APPLICATION_ARCHIVE_DAYS=$(APPLICATION_ARCHIVE_DAYS) \
 		| oc -n $(NAMESPACE) apply -f -
 	$(call rollout_and_wait,dc/$(QUEUE_CONSUMERS))
+
+deploy-load-test-gateway:
+	test -n "$(NAMESPACE)"
+	test -n "$(BUILD_NAMESPACE)"
+	test -n "$(BUILD_REF)"
+	test -n "$(LOAD_TEST_GATEWAY_BUILD_REF)"
+	test -n "$(DB_SERVICE_NAME)"
+	test -n "$(LOAD_TEST_GATEWAY_SECRET_NAME)"
+	test -n "$(LOAD_TEST_GATEWAY)"
+	test -n "$(LOAD_TEST_GATEWAY_PORT)"
+	test -n "$(KEYCLOAK_AUTH_URL)"
+	test -n "$(KEYCLOAK_REALM)"
+	@echo "+\n++ Deploying Load test gateway with tag: $(BUILD_REF)\n+"
+	@oc -n $(NAMESPACE) process -f openshift/load-test-gateway-deploy.yml \
+		-p NAME=$(LOAD_TEST_GATEWAY) \
+		-p LOAD_TEST_GATEWAY_SECRET_NAME=$(LOAD_TEST_GATEWAY_SECRET_NAME) \
+		-p BUILD_NAMESPACE=$(BUILD_NAMESPACE) \
+		-p DB_SERVICE=$(DB_SERVICE_NAME) \
+		-p IMAGE_STREAM_TAG="$(LOAD_TEST_GATEWAY_BUILD_REF):$(BUILD_REF)" \
+		-p BUILD_TAG=$(BUILD_REF) \
+		-p PORT=$(LOAD_TEST_GATEWAY_PORT) \
+		-p HOST_NAME=$(HOST) \
+		-p KEYCLOAK_AUTH_URL=$(KEYCLOAK_AUTH_URL) \
+		-p KEYCLOAK_REALM=$(KEYCLOAK_REALM) \
+		| oc -n $(NAMESPACE) apply -f -
+	$(call rollout_and_wait,dc/$(LOAD_TEST_GATEWAY))
 
 deploy-web:
 	test -n "$(NAMESPACE)"

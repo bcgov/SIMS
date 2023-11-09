@@ -19,6 +19,8 @@
     "docker:start:workers": "node dist/apps/workers/main.js",
     "start:prod:queue-consumers": "node dist/apps/queue-consumers/main.js",
     "docker:start:queue-consumers": "node dist/apps/queue-consumers/main.js",
+    "start:prod:load-test-gateway": "node dist/apps/load-test-gateway/main.js",
+    "docker:start:load-test-gateway": "node dist/apps/load-test-gateway/main.js",
     "test": "cross-env ENVIRONMENT=test jest --forceExit",
     "test:watch": "jest --watch ",
     "test:cov": "cross-env ENVIRONMENT=test jest --coverage --forceExit",
@@ -156,7 +158,8 @@
       "^@sims/services(|/.*)$": "<rootDir>/libs/services/src/$1",
       "^@sims/utilities(|/.*)$": "<rootDir>/libs/utilities/src/$1",
       "^@sims/test-utils(|/.*)$": "<rootDir>/libs/test-utils/src/$1",
-      "^@sims/integrations(|/.*)$": "<rootDir>/libs/integrations/src/$1"
+      "^@sims/integrations(|/.*)$": "<rootDir>/libs/integrations/src/$1",
+      "^@sims/auth(|/.*)$": "<rootDir>/libs/auth/src/$1"
     }
   }
 }

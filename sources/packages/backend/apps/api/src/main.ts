@@ -3,13 +3,13 @@ import "reflect-metadata";
 import { NestFactory, HttpAdapterHost } from "@nestjs/core";
 import { NestExpressApplication } from "@nestjs/platform-express";
 import { AppModule } from "./app.module";
-import { KeycloakConfig } from "./auth/keycloakConfig";
 import { LoggerService } from "@sims/utilities/logger";
 import { AppAllExceptionsFilter } from "./app.exception.filter";
 import { exit } from "process";
 import { setGlobalPipes } from "./utilities/auth-utils";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 import { Request, Response } from "express";
+import { KeycloakConfig } from "@sims/auth/config";
 
 async function bootstrap() {
   await KeycloakConfig.load();

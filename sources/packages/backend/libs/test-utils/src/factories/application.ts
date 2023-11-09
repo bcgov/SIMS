@@ -34,28 +34,34 @@ import {
 import { createFakeProgramYear } from "./program-year";
 import { createFakeStudent } from "./student";
 
-export function createFakeApplication(relations?: {
-  student?: Student;
-  programYear?: ProgramYear;
-  currentStudentAssessment?: StudentAssessment;
-  applicationException?: ApplicationException;
-  location?: InstitutionLocation;
-}): Application {
+export function createFakeApplication(
+  relations?: {
+    student?: Student;
+    programYear?: ProgramYear;
+    currentStudentAssessment?: StudentAssessment;
+    applicationException?: ApplicationException;
+    location?: InstitutionLocation;
+  },
+  options?: { initialValue?: Partial<Application> },
+): Application {
   const application = new Application();
-  application.data = {} as ApplicationData;
+  application.data = options?.initialValue.data ?? ({} as ApplicationData);
   application.programYear = relations?.programYear ?? createFakeProgramYear();
   // TODO get programYear from relations instead of setting the id here.
   application.programYear.id = 2;
   application.student = relations?.student ?? createFakeStudent();
-  application.applicationStatusUpdatedOn = new Date();
-  application.applicationStatus = ApplicationStatus.Submitted;
-  application.relationshipStatus = RelationshipStatus.Single;
+  application.applicationStatusUpdatedOn =
+    options?.initialValue?.applicationStatusUpdatedOn ?? new Date();
+  application.applicationStatus =
+    options?.initialValue?.applicationStatus ?? ApplicationStatus.Submitted;
+  application.relationshipStatus =
+    options?.initialValue?.relationshipStatus ?? RelationshipStatus.Single;
   application.currentAssessment = relations?.currentStudentAssessment;
   // Application numbers are expected to be a string of number
   // with fixed length of 10 characters.
-  application.applicationNumber = faker.random
-    .number({ max: 9999999999, min: 1000000000 })
-    .toString();
+  application.applicationNumber =
+    options?.initialValue?.applicationNumber ??
+    faker.random.number({ max: 9999999999, min: 1000000000 }).toString();
   application.applicationException = relations?.applicationException;
   application.location = relations?.location ?? createFakeInstitutionLocation();
   return application;

@@ -2,8 +2,8 @@ import { Test, TestingModule } from "@nestjs/testing";
 import { HttpStatus, INestApplication } from "@nestjs/common";
 import * as request from "supertest";
 import { AppModule } from "../../app.module";
-import { KeycloakConfig } from "../../auth/keycloakConfig";
-import { KeycloakService } from "../../services/auth/keycloak/keycloak.service";
+import { KeycloakConfig } from "@sims/auth/config";
+import { KeycloakService } from "@sims/auth/services";
 
 describe.skip("Users controller (e2e)", () => {
   // Use the student client to retrieve the token from.

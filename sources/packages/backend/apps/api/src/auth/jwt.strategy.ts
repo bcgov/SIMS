@@ -1,7 +1,6 @@
 import { ExtractJwt, Strategy } from "passport-jwt";
 import { PassportStrategy } from "@nestjs/passport";
 import { Injectable } from "@nestjs/common";
-import { KeycloakConfig } from "./keycloakConfig";
 import {
   IInstitutionUserToken,
   StudentUserToken,
@@ -10,6 +9,7 @@ import {
 } from ".";
 import { InstitutionUserAuthService, UserService } from "../services";
 import { AuthorizedParties } from "./authorized-parties.enum";
+import { KeycloakConfig } from "@sims/auth/config";
 
 /**
  * Inspect the header looking for the authentication header,

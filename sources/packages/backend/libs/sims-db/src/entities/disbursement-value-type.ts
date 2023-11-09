@@ -9,7 +9,7 @@ export enum DisbursementValueType {
   CanadaLoan = "Canada Loan",
   /**
    * Represents different types of federal grants
-   * that will be reported to ESDC (e.g. CSGP, CSGD, CSGT).
+   * that will be reported to ESDC (e.g. CSGP, CSGD, CSPT).
    */
   CanadaGrant = "Canada Grant",
   /**

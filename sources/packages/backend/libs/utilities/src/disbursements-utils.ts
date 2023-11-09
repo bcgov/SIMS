@@ -67,7 +67,7 @@ export function getTotalDisbursementEffectiveAmount(
 }
 
 /**
- * Get the award effective amount by the award value code (e.g. CSGD, CSGP, CSGPT).
+ * Get the award effective amount by the award value code (e.g. CSGD, CSGP, CSPT).
  * !Effective award value is available only after the e-Cert is generated
  * !and the overaward deductions or possible restrictions are applied.
  * @param awards list of awards (disbursement values).

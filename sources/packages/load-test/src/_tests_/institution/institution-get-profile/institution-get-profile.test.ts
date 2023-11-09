@@ -8,6 +8,7 @@ import { check, sleep } from "k6";
 import { getAPICall } from "../../../utils/sims-api/sims-api";
 import { UserPasswordCredential } from "../../../utils/auth";
 import { getInstitutionAdminCredentials } from "../../../utils/sims-api";
+import { Options } from "k6/options";
 
 interface SetupData {
   credentials: UserPasswordCredential;
@@ -20,7 +21,7 @@ interface SetupData {
  * same time it was resulting on an Keycloak internal
  * server error (500).
  */
-export const options = {
+export const options: Options = {
   stages: [
     { target: 120, duration: "10s" },
     { target: 120, duration: "10m" },

@@ -3,6 +3,7 @@ import { KEY_CLOAK_TOKEN_URL } from "../../../config.env";
 import { decodeJWT } from "./jwt-helpers";
 import {
   AuthorizedParties,
+  ClientSecretCredential,
   TokenCacheResponse,
   UserPasswordCredential,
 } from "./models";
@@ -17,6 +18,8 @@ const TOKEN_RENEWAL_SECONDS = 30;
  * Caches the token already acquired.
  */
 const tokenCache: Record<string, TokenCacheResponse> = {};
+
+type AuthenticationCredential = UserPasswordCredential | ClientSecretCredential;
 
 /**
  * Define if a token need to be renewed based in the jwt exp property.
@@ -40,7 +43,7 @@ function needRenewJwtToken(jwtExp: number, maxSecondsToExpired = 0): boolean {
  * cache key when there are variations of a token under the same client.
  * For instance, for the Ministry, a token for each group can be acquired.
  * @param authorizedParty Keycloak client.
- * @param credentials user and password to acquire the token (the user must have
+ * @param credentials credential to obtain authentication token (for password authentication the user must have
  * a hardcoded password to bypass the Keycloak identity provider).
  * @param options.
  * - `uniqueTokenCache` different cache key when there are variations of
@@ -51,12 +54,16 @@ function needRenewJwtToken(jwtExp: number, maxSecondsToExpired = 0): boolean {
  */
 export function getCachedToken(
   authorizedParty: AuthorizedParties,
-  credentials: UserPasswordCredential,
+  credentials: AuthenticationCredential,
   options?: { uniqueTokenCache?: string }
 ): string {
-  const tokenCacheKey = `load_test_token_cache_${
-    options?.uniqueTokenCache ?? credentials.userName
-  }`;
+  let credentialTokenKey: string = authorizedParty;
+  if (authorizedParty !== AuthorizedParties.LoadTestGateway) {
+    const usernamePasswordCredential = credentials as UserPasswordCredential;
+    credentialTokenKey =
+      options?.uniqueTokenCache ?? usernamePasswordCredential.userName;
+  }
+  const tokenCacheKey = `load_test_token_cache_${credentialTokenKey}`;
   if (
     !tokenCache[tokenCacheKey] ||
     needRenewJwtToken(
@@ -77,20 +84,15 @@ export function getCachedToken(
 /**
  * Get a token for a Keycloak client.
  * @param authorizedParty Keycloak client.
- * @param credentials user and password that must be set for the user.
+ * @param credentials credential to obtain authentication token.
  * @returns access token string.
  */
 export function getToken(
   authorizedParty: AuthorizedParties,
-  credentials: UserPasswordCredential
+  credentials: AuthenticationCredential
 ): string {
   const headers = { "Content-Type": "application/x-www-form-urlencoded" };
-  const payload = {
-    grant_type: "password",
-    client_id: authorizedParty,
-    username: credentials.userName,
-    password: credentials.password,
-  };
+  const payload = getTokenPayload(authorizedParty, credentials);
   const response = http.post(KEY_CLOAK_TOKEN_URL, payload, {
     headers,
   });
@@ -101,4 +103,31 @@ export function getToken(
   }
   const responseBody = JSON.parse(response.body.toString());
   return responseBody.access_token;
+}
+
+/**
+ * Get the payload to obtain authentication token.
+ * @param authorizedParty authorize party.
+ * @param credentials client credential.
+ * @returns payload.
+ */
+function getTokenPayload(
+  authorizedParty: AuthorizedParties,
+  credentials: AuthenticationCredential
+) {
+  if (authorizedParty === AuthorizedParties.LoadTestGateway) {
+    const clientSecretCredential = credentials as ClientSecretCredential;
+    return {
+      grant_type: "client_credentials",
+      client_id: authorizedParty,
+      client_secret: clientSecretCredential.clientSecret,
+    };
+  }
+  const usernamePasswordCredential = credentials as UserPasswordCredential;
+  return {
+    grant_type: "password",
+    client_id: authorizedParty,
+    username: usernamePasswordCredential.userName,
+    password: usernamePasswordCredential.password,
+  };
 }

@@ -156,7 +156,39 @@ services:
     depends_on:
       - postgres
       - redis
-  # - Queues
+  # - Queue consumers
+  # Load test gateway
+  load-test-gateway:
+    image: load-test-gateway-${PROJECT_NAME}:${BUILD_REF}-${BUILD_ID}
+    container_name: load-test-gateway-${PROJECT_NAME}-${BUILD_REF}-${BUILD_ID}
+    build:
+      context: ./packages/backend
+      dockerfile: ./apps/load-test-gateway/Dockerfile.dev
+    environment:
+      - NODE_ENV=docker
+      - POSTGRES_HOST=postgres
+      - POSTGRES_PORT=${POSTGRES_PORT}
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - DISABLE_ORM_CACHE=true
+      - ZEEBE_ADDRESS=zeebe:26500
+      - ZEEBE_CLIENT_ID=${ZEEBE_CLIENT_ID}
+      - ZEEBE_CLIENT_SECRET=${ZEEBE_CLIENT_SECRET}
+      - ZEEBE_AUTHORIZATION_SERVER_URL=${ZEEBE_AUTHORIZATION_SERVER_URL}
+      - KEYCLOAK_AUTH_URL=${KEYCLOAK_AUTH_URL}
+      - KEYCLOAK_REALM=${KEYCLOAK_REALM}
+      - LOAD_TEST_API_PORT=${LOAD_TEST_API_PORT}
+    ports:
+      - ${LOAD_TEST_API_PORT}:${LOAD_TEST_API_PORT}
+    volumes:
+      - ./packages/backend/apps/load-test-gateway/src:/app/src
+    networks:
+      - local-network
+    restart: always
+    depends_on:
+      - postgres
+  # - Load test gateway
   # Web
   web:
     image: web-${PROJECT_NAME}:${BUILD_REF}-${BUILD_ID}

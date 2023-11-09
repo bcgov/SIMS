@@ -224,6 +224,10 @@ export default defineComponent({
             },
           );
         if (uploadResults.length) {
+          // Check for any errors. If no errors found (only warnings found), show success message.
+          if (!uploadResults.some((result) => result.errors.length)) {
+            snackBar.success("Success! File validated.");
+          }
           validationResults.value = uploadResults;
         } else if (validationOnly) {
           snackBar.success("Success! File validated.");
@@ -266,7 +270,6 @@ export default defineComponent({
     const resetForm = () => {
       validationResults.value = [];
       withdrawalFiles.value = [];
-      //textFileUploadKey.value++;
     };
 
     const loading = computed(
@@ -287,7 +290,6 @@ export default defineComponent({
       BannerTypes,
       uploadForm,
       ACCEPTED_FILE_TYPE,
-      //textFileUploadKey,
       ApplicationWithdrawalUploadHeaders,
       showPossibleFileChangeError,
       uploadProgress,

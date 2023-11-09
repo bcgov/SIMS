@@ -122,27 +122,27 @@ export class ECertPartTimeFileRecord extends ECertFileRecord {
   /**
    * Sum of all CSGP grants + BC Provincial Part-time grants from this certificate.
    */
-  totalGrantAmount: number;
+  totalCanadaAndProvincialGrantsAmount: number;
   /**
    * Certificate number, the generated sequence number for the file.
    */
   certNumber: number;
   /**
-   * BC Part-time grant amount 1.
+   * BC Part-time grant amount.
    */
-  totalBCSGAmount: number;
+  totalBCGrantAmount: number;
   /**
    * Amount of Grant for Part-time Studies (CSGP-PT) at the study start.
    */
-  totalCSGPPTAmount: number;
+  csgpPTAmount: number;
   /**
    * Amount of Grant for Students with Permanent Disabilities (CSGP-PD) at the study start.
    */
-  totalCSGPPDAmount: number;
+  csgpPDAmount: number;
   /**
    * Amount Grant for Part-time Students with Dependants (CSGP-PTDEP) at the study start.
    */
-  totalCSGPPTDEPAmount: number;
+  csgpPTDEPAmount: number;
   /**
    * CourseLoad for the PartTime course.
    */
@@ -186,20 +186,24 @@ export class ECertPartTimeFileRecord extends ECertFileRecord {
       record.appendDate(this.educationalStartDate, DATE_FORMAT);
       record.appendDate(this.educationalEndDate, DATE_FORMAT);
       record.appendWithEndFiller(this.federalInstitutionCode, 4, SPACE_FILLER);
-      record.appendWithStartFiller(this.fieldOfStudy, 4, NUMBER_FILLER);
+      record.appendWithEndFiller(this.fieldOfStudy.toString(), 4, SPACE_FILLER);
       record.append(this.yearOfStudy.toString(), 1);
       record.appendWithStartFiller(this.weeksOfStudy, 3, NUMBER_FILLER);
       record.appendDate(this.documentProducedDate, DATE_FORMAT);
       record.repeatAppend(SPACE_FILLER, 8); // TODO Cancel Date, E-cert cancellation date.
       record.repeatAppend(NUMBER_FILLER, 9); // CAG PD Amt, no longer used.
       record.repeatAppend(NUMBER_FILLER, 9); // CAG LI Amt, no longer used.
-      record.appendWithStartFiller(this.totalGrantAmount, 5, NUMBER_FILLER);
-      record.appendWithStartFiller(this.totalCSGPPTAmount, 5, NUMBER_FILLER);
+      record.appendWithStartFiller(
+        this.totalCanadaAndProvincialGrantsAmount,
+        5,
+        NUMBER_FILLER,
+      );
+      record.appendWithStartFiller(this.csgpPTAmount, 5, NUMBER_FILLER);
       record.repeatAppend(NUMBER_FILLER, 5); // CSGP NBD MI Amt, No longer used.
-      record.appendWithStartFiller(this.totalCSGPPDAmount, 5, NUMBER_FILLER);
-      record.appendWithStartFiller(this.totalCSGPPTDEPAmount, 5, NUMBER_FILLER);
+      record.appendWithStartFiller(this.csgpPDAmount, 5, NUMBER_FILLER);
+      record.appendWithStartFiller(this.csgpPTDEPAmount, 5, NUMBER_FILLER);
       record.repeatAppend(NUMBER_FILLER, 5); // Amount of Grant for Services and Equipment for Students with Permanent Disabilities (CSGP-PDSE) at the study start, No longer used.
-      record.appendWithStartFiller(this.totalBCSGAmount, 5, NUMBER_FILLER);
+      record.appendWithStartFiller(this.totalBCGrantAmount, 5, NUMBER_FILLER);
       record.repeatAppend(NUMBER_FILLER, 5); // BC Part-time grant amount 2 - Reserved for future use
       record.repeatAppend(SPACE_FILLER, 10); // Space filler.
       record.repeatAppend(SPACE_FILLER, 8); // CSGP MP Date, No longer used.
@@ -215,7 +219,7 @@ export class ECertPartTimeFileRecord extends ECertFileRecord {
       record.appendWithStartFiller(this.schoolAmount, 7, NUMBER_FILLER);
       record.appendWithStartFiller(this.courseLoad, 2, NUMBER_FILLER);
       record.append(this.ppdFlag, 1);
-      record.repeatAppend(SPACE_FILLER, 25); // Space filler.
+      record.repeatAppend(SPACE_FILLER, 24); // Space filler.
       return record.toString();
     } catch (error: unknown) {
       throw new Error(
