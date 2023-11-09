@@ -4,7 +4,6 @@ import {
   IsNumberString,
   Length,
   ValidateIf,
-  ValidationArguments,
 } from "class-validator";
 import { APPLICATION_NUMBER_LENGTH, ApplicationStatus } from "@sims/sims-db";
 import {
@@ -82,10 +81,10 @@ export class ApplicationBulkWithdrawalValidationModel {
    */
   @ValidateIf(
     (object: ApplicationBulkWithdrawalValidationModel) =>
-      object.applicationFound,
+      object.applicationFound && !object.hasPreviouslyBeenWithdrawn,
   )
   @IsIn([false], {
-    message: `Application is already archived and cannot be withdrawn.`,
+    message: "Application is already archived and cannot be withdrawn.",
   })
   isArchived?: boolean;
   /**
@@ -96,8 +95,8 @@ export class ApplicationBulkWithdrawalValidationModel {
       object.applicationFound,
   )
   @IsIn([false], {
-    message: (validationArguments: ValidationArguments) =>
-      `The application is already withdrawn with the date: ${validationArguments.object["withdrawalDate"]} and is going to be skipped.`,
+    message:
+      "This application is already withdrawn and is going to be skipped.",
     context: ValidationContext.CreateWarning(
       ApplicationWithdrawalValidationWarnings.HasPreviouslyBeenWithdrawn,
     ),
