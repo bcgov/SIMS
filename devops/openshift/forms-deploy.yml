@@ -176,13 +176,13 @@ objects:
               name: cpu
               target:
                 type: AverageValue
-                averageValue: '1.35'
+                averageValue: '0.8'
           - type: Resource
             resource:
               name: memory
               target:
                 type: AverageValue
-                averageValue: "1.8Gi"
+                averageValue: "1Gi"
   - apiVersion: policy/v1
     kind: PodDisruptionBudget
     metadata:
