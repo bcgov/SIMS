@@ -8,7 +8,7 @@ import { YesNoOptions } from "@sims/test-utils";
 describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-eligibility-CSGD.`, () => {
   it(
     "Should determine CSGD as eligible when total assessed need is greater than 0 " +
-      ", total eligible dependant is atleast 1 and total family income is less than the " +
+      ", total eligible dependant is at least 1 and total family income is less than the " +
       "threshold for a married student.",
     async () => {
       // Arrange
