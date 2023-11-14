@@ -29,7 +29,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-eligibility-CSGP
     },
   );
 
-  it("Should determine CSGP as not eligible when application PD/PPD status is not true.", async () => {
+  it("Should determine CSGP as not eligible when application PD/PPD status is not 'yes'.", async () => {
     // Arrange
     const assessmentConsolidatedData =
       createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
