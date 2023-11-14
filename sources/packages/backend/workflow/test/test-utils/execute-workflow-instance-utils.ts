@@ -27,3 +27,25 @@ export async function executeFulltimeAssessmentForProgramYear(
     requestTimeout: PROCESS_INSTANCE_CREATE_TIMEOUT,
   });
 }
+
+/**
+ * Executes the parttime-assessment-* BPMN workflow.
+ * @param programYear program year to be invoked.
+ * @param assessmentConsolidatedData assessment data.
+ * @returns result of the workflow execution.
+ */
+export async function executePartTimeAssessmentForProgramYear(
+  programYear: string,
+  assessmentConsolidatedData: AssessmentConsolidatedData,
+): Promise<CreateProcessInstanceWithResultResponse<CalculatedAssessmentModel>> {
+  return ZeebeMockedClient.getMockedZeebeInstance().createProcessInstanceWithResult<
+    AssessmentConsolidatedData,
+    CalculatedAssessmentModel
+  >({
+    bpmnProcessId: `parttime-assessment-${programYear}`,
+    variables: {
+      ...assessmentConsolidatedData,
+    },
+    requestTimeout: PROCESS_INSTANCE_CREATE_TIMEOUT,
+  });
+}

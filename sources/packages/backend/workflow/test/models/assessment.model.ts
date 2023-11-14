@@ -48,7 +48,7 @@ export interface AssessmentConsolidatedData extends JSONDoc {
   studentDataDependantstatus: "dependant" | "independant";
   programYear: string;
   programYearStartDate: string;
-  studentDataRelationshipStatus: "single" | "dependent" | "married";
+  studentDataRelationshipStatus: "single" | "other" | "married";
   studentDataTaxReturnIncome: number;
   studentDataWhenDidYouGraduateOrLeaveHighSchool: string;
   studentDataIndigenousStatus: YesNoOptions;
@@ -178,12 +178,22 @@ export interface CalculatedAssessmentModel {
   calculatedDataFamilySize: number;
   totalFederalContribution: number;
   totalProvincialContribution: number;
+
+  // Common variable used in both full-time and part-time.
   // CSGP
   awardEligibilityCSGP: boolean;
+  // CSGD
+  awardEligibilityCSGD: boolean;
+  // BCAG
+  awardEligibilityBCAG: boolean;
+  // SBSD
+  awardEligibilitySBSD: boolean;
+
+  // Full time.
+  // CSGP
   federalAwardNetCSGPAmount: number;
   provincialAwardNetCSGPAmount: number;
   // CSGD
-  awardEligibilityCSGD: boolean;
   federalAwardNetCSGDAmount: number;
   provincialAwardNetCSGDAmount: number;
   // CSGF
@@ -195,7 +205,6 @@ export interface CalculatedAssessmentModel {
   federalAwardNetCSGTAmount: number;
   provincialAwardNetCSGTAmount: number;
   // BCAG
-  awardEligibilityBCAG: boolean;
   federalAwardNetBCAGAmount: number;
   provincialAwardNetBCAGAmount: number;
   // BCAG2Year
@@ -205,7 +214,19 @@ export interface CalculatedAssessmentModel {
   federalAwardNetBGPDAmount: number;
   provincialAwardNetBGPDAmount: number;
   // SBSD
-  awardEligibilitySBSD: boolean;
   federalAwardNetSBSDAmount: number;
   provincialAwardNetSBSDAmount: number;
+
+  // Part time.
+  // CSPT
+  awardEligibilityCSPT: boolean;
+  finalFederalAwardNetCSPTAmount: number;
+  // CSGP
+  finalFederalAwardNetCSGPAmount: number;
+  // CSGD
+  finalFederalAwardNetCSGDAmount: number;
+  // BCAG
+  finalProvincialAwardNetBCAGAmount: number;
+  // SBSD
+  finalProvincialAwardNetSBSDAmount: number;
 }
