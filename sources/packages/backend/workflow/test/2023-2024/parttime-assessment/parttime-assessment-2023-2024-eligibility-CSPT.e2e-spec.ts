@@ -7,9 +7,8 @@ import { YesNoOptions } from "@sims/test-utils";
 
 describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-eligibility-CSPT.`, () => {
   it(
-    "Should determine CSPT as eligible when calculatedDataTotalAssessedNeed is greater than 0 " +
-      "and calculatedDataTotalFamilyIncome is less than dmnPartTimeAwardFamilySizeVariables.limitAwardCSPTThresholdIncome " +
-      "for a married student with a canadian spouse.",
+    "Should determine CSPT as eligible when total assessed need is greater than 0 " +
+      "and total family income is less than the threshold for a married student with a canadian spouse.",
     async () => {
       // Arrange
       const assessmentConsolidatedData =
@@ -35,7 +34,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-eligibility-CSPT
   );
 
   it(
-    "Should determine CSPT as not eligible when calculatedDataTotalFamilyIncome is less than dmnPartTimeAwardFamilySizeVariables.limitAwardCSPTThresholdIncome " +
+    "Should determine CSPT as not eligible when total family income is less than the threshold " +
       "(i.e student income is less than threshold) for a single student.",
     async () => {
       // Arrange

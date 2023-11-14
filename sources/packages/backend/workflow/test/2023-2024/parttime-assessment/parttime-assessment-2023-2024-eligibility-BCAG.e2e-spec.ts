@@ -8,7 +8,7 @@ import { CredentialType, InstitutionTypes } from "../../models";
 
 describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-eligibility-BCAG.`, () => {
   it(
-    "Should determine BCAG as eligible when calculatedDataTotalAssessedNeed is greater than 0 " +
+    "Should determine BCAG as eligible when total assessed need is greater than 0 " +
       `, institution type is ${InstitutionTypes.BCPublic}, total family income is less than the ` +
       `and program credential type is ${CredentialType.UnderGraduateDegree} for separated student.`,
     async () => {

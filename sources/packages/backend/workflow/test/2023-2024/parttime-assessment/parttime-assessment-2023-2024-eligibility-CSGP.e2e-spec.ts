@@ -6,7 +6,7 @@ import {
 
 describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-eligibility-CSGP.`, () => {
   it(
-    "Should determine CSGP as eligible when calculatedDataTotalAssessedNeed is greater than 0 " +
+    "Should determine CSGP as eligible when total assessed need is greater than 0 " +
       "and application PD/PPD status is true for a single student.",
     async () => {
       // Arrange
