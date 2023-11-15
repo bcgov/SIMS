@@ -50,6 +50,9 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-eligibility-SBSD
 
     // Assert
     expect(calculatedAssessment.variables.awardEligibilitySBSD).toBe(false);
+    expect(
+      calculatedAssessment.variables.finalProvincialAwardNetSBSDAmount,
+    ).toBe(0);
   });
 
   it("Should determine SBSD as not eligible when application PD/PPD status is 'noIDoNotHaveADisability'.", async () => {
@@ -67,5 +70,8 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-eligibility-SBSD
 
     // Assert
     expect(calculatedAssessment.variables.awardEligibilitySBSD).toBe(false);
+    expect(
+      calculatedAssessment.variables.finalProvincialAwardNetSBSDAmount,
+    ).toBe(0);
   });
 });

@@ -60,6 +60,9 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-eligibility-BCAG
 
     // Assert
     expect(calculatedAssessment.variables.awardEligibilityBCAG).toBe(false);
+    expect(
+      calculatedAssessment.variables.finalProvincialAwardNetBCAGAmount,
+    ).toBe(0);
   });
 
   it(`Should determine BCAG as not eligible when program credential type is ${CredentialType.GraduateDegreeOrMasters}.`, async () => {
@@ -77,5 +80,8 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-eligibility-BCAG
 
     // Assert
     expect(calculatedAssessment.variables.awardEligibilityBCAG).toBe(false);
+    expect(
+      calculatedAssessment.variables.finalProvincialAwardNetBCAGAmount,
+    ).toBe(0);
   });
 });

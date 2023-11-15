@@ -43,5 +43,8 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-eligibility-CSGP
 
     // Assert
     expect(calculatedAssessment.variables.awardEligibilityCSGP).toBe(false);
+    expect(calculatedAssessment.variables.finalFederalAwardNetCSGPAmount).toBe(
+      0,
+    );
   });
 });

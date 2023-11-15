@@ -11,7 +11,7 @@ import {
 describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-eligibility-CSGD.`, () => {
   it(
     "Should determine CSGD as eligible when total assessed need is greater than or equal to 1 " +
-      ", total eligible dependant is at least 1 and total family income is less than the threshold.",
+      ", total eligible dependants is at least 1 and total family income is less than the threshold.",
     async () => {
       // Arrange
       const assessmentConsolidatedData =
@@ -55,6 +55,9 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-eligibility-CSGD
 
     // Assert
     expect(calculatedAssessment.variables.awardEligibilityCSGD).toBe(false);
+    expect(calculatedAssessment.variables.finalFederalAwardNetCSGDAmount).toBe(
+      0,
+    );
   });
 
   it("Should determine CSGD as not eligible when there is no total eligible dependant.", async () => {
@@ -71,5 +74,8 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-eligibility-CSGD
 
     // Assert
     expect(calculatedAssessment.variables.awardEligibilityCSGD).toBe(false);
+    expect(calculatedAssessment.variables.finalFederalAwardNetCSGDAmount).toBe(
+      0,
+    );
   });
 });
