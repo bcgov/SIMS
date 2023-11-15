@@ -21,6 +21,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-eligibility-BCAG
       for (const programCredentialType of EXPECTED_PROGRAM_CREDENTIAL_TYPES) {
         it(`programCredentialType is ${programCredentialType}`, async () => {
           // Arrange
+          // By default createFakeConsolidatedPartTimeData has total assessed need is greater 1.
           const assessmentConsolidatedData =
             createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
           assessmentConsolidatedData.institutionType =
