@@ -236,18 +236,30 @@ objects:
       to:
         kind: Service
         name: ${NAME}
-  - apiVersion: autoscaling/v1
+  - apiVersion: autoscaling/v2
     kind: HorizontalPodAutoscaler
     metadata:
       name: ${NAME}-hpa
     spec:
       scaleTargetRef:
-        apiVersion: apps/v1
-        kind: ReplicationController
-        name: ${NAME}-rc
+        apiVersion: apps.openshift.io/v1
+        kind: DeploymentConfig
+        name: ${NAME}
       minReplicas: "${{REPLICAS}}"
       maxReplicas: 10
-      targetCPUUtilizationPercentage: 80
+      metrics:
+          - type: Resource
+            resource:
+              name: cpu
+              target:
+                type: AverageValue
+                averageValue: "0.18"
+          - type: Resource
+            resource:
+              name: memory
+              target:
+                type: AverageValue
+                averageValue: "230M"
   - apiVersion: policy/v1
     kind: PodDisruptionBudget
     metadata:
