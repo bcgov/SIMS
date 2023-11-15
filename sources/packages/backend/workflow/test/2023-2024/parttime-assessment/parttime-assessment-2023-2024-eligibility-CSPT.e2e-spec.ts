@@ -38,7 +38,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-eligibility-CSPT
       `parttime-assessment-${PROGRAM_YEAR}`,
       assessmentConsolidatedData,
     );
-    console.log(calculatedAssessment);
+
     // Assert
     expect(calculatedAssessment.variables.awardEligibilityCSPT).toBe(false);
     expect(calculatedAssessment.variables.finalFederalAwardNetCSPTAmount).toBe(
