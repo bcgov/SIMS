@@ -176,7 +176,7 @@ objects:
               name: cpu
               target:
                 type: AverageValue
-                averageValue: '0.8'
+                averageValue: "0.8"
           - type: Resource
             resource:
               name: memory
