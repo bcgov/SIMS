@@ -1,54 +1,60 @@
 import { PROGRAM_YEAR } from "../constants/program-year.constants";
 import {
   createFakeConsolidatedPartTimeData,
-  executePartTimeAssessmentForProgramYear,
+  executeAssessment,
 } from "../../test-utils";
-import { YesNoOptions } from "@sims/test-utils";
 import { CredentialType, InstitutionTypes } from "../../models";
 
 describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-eligibility-BCAG.`, () => {
-  it(
-    "Should determine BCAG as eligible when total assessed need is greater than 0 " +
-      `, institution type is ${InstitutionTypes.BCPublic}, total family income is less than the threshold ` +
-      `and program credential type is ${CredentialType.UnderGraduateDegree} for separated student.`,
-    async () => {
-      // Arrange
-      const assessmentConsolidatedData =
-        createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
-      assessmentConsolidatedData.studentDataRelationshipStatus = "other";
-      assessmentConsolidatedData.studentDataDependantstatus = "independant";
-      assessmentConsolidatedData.institutionType = InstitutionTypes.BCPublic;
-      assessmentConsolidatedData.programCredentialType =
-        CredentialType.UnderGraduateDegree;
+  // Expected and not expected credentials types.
+  const EXPECTED_PROGRAM_CREDENTIAL_TYPES = [
+    CredentialType.UnderGraduateDegree,
+    CredentialType.GraduateCertificate,
+    CredentialType.GraduateDiploma,
+    CredentialType.QualifyingStudies,
+  ];
 
-      // Act
-      const calculatedAssessment =
-        await executePartTimeAssessmentForProgramYear(
-          PROGRAM_YEAR,
-          assessmentConsolidatedData,
-        );
+  describe(
+    "Should determine BCAG as eligible when total assessed need is greater than or equal to 1 " +
+      `, institution type is ${InstitutionTypes.BCPublic}, total family income is less than the threshold and`,
+    () => {
+      for (const programCredentialType of EXPECTED_PROGRAM_CREDENTIAL_TYPES) {
+        it(`programCredentialType is ${programCredentialType}`, async () => {
+          // Arrange
+          const assessmentConsolidatedData =
+            createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
+          assessmentConsolidatedData.institutionType =
+            InstitutionTypes.BCPublic;
+          assessmentConsolidatedData.programCredentialType =
+            programCredentialType;
 
-      // Assert
-      expect(calculatedAssessment.variables.awardEligibilityBCAG).toBe(true);
-      expect(
-        calculatedAssessment.variables.finalProvincialAwardNetBCAGAmount,
-      ).toBeGreaterThan(0);
+          // Act
+          const calculatedAssessment = await executeAssessment(
+            `parttime-assessment-${PROGRAM_YEAR}`,
+            assessmentConsolidatedData,
+          );
+
+          // Assert
+          expect(calculatedAssessment.variables.awardEligibilityBCAG).toBe(
+            true,
+          );
+          expect(
+            calculatedAssessment.variables.finalProvincialAwardNetBCAGAmount,
+          ).toBeGreaterThan(0);
+        });
+      }
     },
   );
 
-  it(`Should determine BCAG as not eligible when institution type is ${InstitutionTypes.BCPrivate} for a married student.`, async () => {
+  it(`Should determine BCAG as not eligible when institution type is ${InstitutionTypes.BCPrivate}.`, async () => {
     // Arrange
     const assessmentConsolidatedData =
       createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
-    assessmentConsolidatedData.studentDataRelationshipStatus = "married";
-    assessmentConsolidatedData.studentDataIsYourSpouseACanadianCitizen =
-      YesNoOptions.Yes;
-    assessmentConsolidatedData.studentDataDependantstatus = "independant";
     assessmentConsolidatedData.institutionType = InstitutionTypes.BCPrivate;
 
     // Act
-    const calculatedAssessment = await executePartTimeAssessmentForProgramYear(
-      PROGRAM_YEAR,
+    const calculatedAssessment = await executeAssessment(
+      `parttime-assessment-${PROGRAM_YEAR}`,
       assessmentConsolidatedData,
     );
 
@@ -56,7 +62,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-eligibility-BCAG
     expect(calculatedAssessment.variables.awardEligibilityBCAG).toBe(false);
   });
 
-  it(`Should determine BCAG as not eligible when program credential type is ${CredentialType.GraduateDegreeOrMasters} for a single student.`, async () => {
+  it(`Should determine BCAG as not eligible when program credential type is ${CredentialType.GraduateDegreeOrMasters}.`, async () => {
     // Arrange
     const assessmentConsolidatedData =
       createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
@@ -64,8 +70,8 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-eligibility-BCAG
       CredentialType.GraduateDegreeOrMasters;
 
     // Act
-    const calculatedAssessment = await executePartTimeAssessmentForProgramYear(
-      PROGRAM_YEAR,
+    const calculatedAssessment = await executeAssessment(
+      `parttime-assessment-${PROGRAM_YEAR}`,
       assessmentConsolidatedData,
     );
 

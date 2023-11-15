@@ -7,42 +7,20 @@ import {
 import { PROCESS_INSTANCE_CREATE_TIMEOUT } from "./constants/system-configurations-constants";
 
 /**
- * Executes the fulltime-assessment-* BPMN workflow.
- * @param programYear program year to be invoked.
+ * Executes the fulltime-assessment-* or parttime-assessment-* BPMN workflow.
+ * @param bpmnProcessId bpm process id to be invoked.
  * @param assessmentConsolidatedData assessment data.
  * @returns result of the workflow execution.
  */
-export async function executeFulltimeAssessmentForProgramYear(
-  programYear: string,
+export async function executeAssessment(
+  bpmnProcessId: string,
   assessmentConsolidatedData: AssessmentConsolidatedData,
 ): Promise<CreateProcessInstanceWithResultResponse<CalculatedAssessmentModel>> {
   return ZeebeMockedClient.getMockedZeebeInstance().createProcessInstanceWithResult<
     AssessmentConsolidatedData,
     CalculatedAssessmentModel
   >({
-    bpmnProcessId: `fulltime-assessment-${programYear}`,
-    variables: {
-      ...assessmentConsolidatedData,
-    },
-    requestTimeout: PROCESS_INSTANCE_CREATE_TIMEOUT,
-  });
-}
-
-/**
- * Executes the parttime-assessment-* BPMN workflow.
- * @param programYear program year to be invoked.
- * @param assessmentConsolidatedData assessment data.
- * @returns result of the workflow execution.
- */
-export async function executePartTimeAssessmentForProgramYear(
-  programYear: string,
-  assessmentConsolidatedData: AssessmentConsolidatedData,
-): Promise<CreateProcessInstanceWithResultResponse<CalculatedAssessmentModel>> {
-  return ZeebeMockedClient.getMockedZeebeInstance().createProcessInstanceWithResult<
-    AssessmentConsolidatedData,
-    CalculatedAssessmentModel
-  >({
-    bpmnProcessId: `parttime-assessment-${programYear}`,
+    bpmnProcessId: bpmnProcessId,
     variables: {
       ...assessmentConsolidatedData,
     },

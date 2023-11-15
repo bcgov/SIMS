@@ -179,7 +179,7 @@ export interface CalculatedAssessmentModel {
   totalFederalContribution: number;
   totalProvincialContribution: number;
 
-  // Common variable used in both full-time and part-time.
+  // Common variables used in both full-time and part-time.
   // CSGP
   awardEligibilityCSGP: boolean;
   // CSGD

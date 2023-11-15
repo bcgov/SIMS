@@ -5,7 +5,7 @@ import {
 } from "../../../models";
 import {
   createFakeConsolidatedFulltimeData,
-  executeFulltimeAssessmentForProgramYear,
+  executeAssessment,
 } from "../../../test-utils";
 import { PROGRAM_YEAR } from "../../constants/program-year.constants";
 
@@ -40,11 +40,10 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-eligibility-BCAG
             programCredentialType;
           assessmentConsolidatedData.programLength = programLength;
           // Act
-          const calculatedAssessment =
-            await executeFulltimeAssessmentForProgramYear(
-              PROGRAM_YEAR,
-              assessmentConsolidatedData,
-            );
+          const calculatedAssessment = await executeAssessment(
+            `fulltime-assessment-${PROGRAM_YEAR}`,
+            assessmentConsolidatedData,
+          );
           // Assert
           expect(calculatedAssessment.variables.awardEligibilityBCAG).toBe(
             true,
@@ -71,11 +70,10 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-eligibility-BCAG
             programCredentialType;
           assessmentConsolidatedData.programLength = programLength;
           // Act
-          const calculatedAssessment =
-            await executeFulltimeAssessmentForProgramYear(
-              PROGRAM_YEAR,
-              assessmentConsolidatedData,
-            );
+          const calculatedAssessment = await executeAssessment(
+            `fulltime-assessment-${PROGRAM_YEAR}`,
+            assessmentConsolidatedData,
+          );
           // Assert
           expect(calculatedAssessment.variables.awardEligibilityBCAG).toBe(
             false,
@@ -100,11 +98,10 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-eligibility-BCAG
         assessmentConsolidatedData.programLength =
           ProgramLengthOptions.OneToTwoYears;
         // Act
-        const calculatedAssessment =
-          await executeFulltimeAssessmentForProgramYear(
-            PROGRAM_YEAR,
-            assessmentConsolidatedData,
-          );
+        const calculatedAssessment = await executeAssessment(
+          `fulltime-assessment-${PROGRAM_YEAR}`,
+          assessmentConsolidatedData,
+        );
         // Assert
         expect(calculatedAssessment.variables.awardEligibilityBCAG).toBe(false);
       });

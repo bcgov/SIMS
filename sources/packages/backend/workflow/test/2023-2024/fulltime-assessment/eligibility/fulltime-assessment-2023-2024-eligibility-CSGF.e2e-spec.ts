@@ -1,7 +1,7 @@
 import { CredentialType, ProgramLengthOptions } from "../../../models";
 import {
   createFakeConsolidatedFulltimeData,
-  executeFulltimeAssessmentForProgramYear,
+  executeAssessment,
 } from "../../../test-utils";
 import { PROGRAM_YEAR } from "../../constants/program-year.constants";
 import {
@@ -52,11 +52,10 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-eligibility-CSGF
               ),
             ];
             // Act
-            const calculatedAssessment =
-              await executeFulltimeAssessmentForProgramYear(
-                PROGRAM_YEAR,
-                assessmentConsolidatedData,
-              );
+            const calculatedAssessment = await executeAssessment(
+              `fulltime-assessment-${PROGRAM_YEAR}`,
+              assessmentConsolidatedData,
+            );
             // Assert
             expect(
               calculatedAssessment.variables.calculatedDataTotalFamilyIncome,
@@ -99,11 +98,10 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-eligibility-CSGF
               ),
             ];
             // Act
-            const calculatedAssessment =
-              await executeFulltimeAssessmentForProgramYear(
-                PROGRAM_YEAR,
-                assessmentConsolidatedData,
-              );
+            const calculatedAssessment = await executeAssessment(
+              `fulltime-assessment-${PROGRAM_YEAR}`,
+              assessmentConsolidatedData,
+            );
             // Assert
             expect(calculatedAssessment.variables.awardEligibilityCSGF).toBe(
               false,
@@ -133,8 +131,8 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-eligibility-CSGF
       ),
     ];
     // Act
-    const calculatedAssessment = await executeFulltimeAssessmentForProgramYear(
-      PROGRAM_YEAR,
+    const calculatedAssessment = await executeAssessment(
+      `fulltime-assessment-${PROGRAM_YEAR}`,
       assessmentConsolidatedData,
     );
     // Assert
