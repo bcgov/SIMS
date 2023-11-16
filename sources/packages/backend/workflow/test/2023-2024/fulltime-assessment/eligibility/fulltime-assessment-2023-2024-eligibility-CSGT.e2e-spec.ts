@@ -1,6 +1,6 @@
 import {
   createFakeConsolidatedFulltimeData,
-  executeAssessment,
+  executeFullTimeAssessmentForProgramYear,
 } from "../../../test-utils";
 import { PROGRAM_YEAR } from "../../constants/program-year.constants";
 import { addToDateOnlyString } from "@sims/utilities";
@@ -13,8 +13,8 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-eligibility-CSGT
     assessmentConsolidatedData.studentDataWhenDidYouGraduateOrLeaveHighSchool =
       addToDateOnlyString(new Date(), -10, "years");
     // Act
-    const calculatedAssessment = await executeAssessment(
-      `fulltime-assessment-${PROGRAM_YEAR}`,
+    const calculatedAssessment = await executeFullTimeAssessmentForProgramYear(
+      PROGRAM_YEAR,
       assessmentConsolidatedData,
     );
     // Assert
@@ -34,8 +34,8 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-eligibility-CSGT
     assessmentConsolidatedData.studentDataWhenDidYouGraduateOrLeaveHighSchool =
       addToDateOnlyString(new Date(), -9, "years");
     // Act
-    const calculatedAssessment = await executeAssessment(
-      `fulltime-assessment-${PROGRAM_YEAR}`,
+    const calculatedAssessment = await executeFullTimeAssessmentForProgramYear(
+      PROGRAM_YEAR,
       assessmentConsolidatedData,
     );
     // Assert

@@ -1,7 +1,7 @@
 import { InstitutionTypes } from "../../../models";
 import {
   createFakeConsolidatedFulltimeData,
-  executeAssessment,
+  executeFullTimeAssessmentForProgramYear,
 } from "../../../test-utils";
 import { PROGRAM_YEAR } from "../../constants/program-year.constants";
 
@@ -24,10 +24,11 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-eligibility-SBSD
         assessmentConsolidatedData.studentDataApplicationPDPPDStatus = "yes";
         assessmentConsolidatedData.institutionType = institutionType;
         // Act
-        const calculatedAssessment = await executeAssessment(
-          `fulltime-assessment-${PROGRAM_YEAR}`,
-          assessmentConsolidatedData,
-        );
+        const calculatedAssessment =
+          await executeFullTimeAssessmentForProgramYear(
+            PROGRAM_YEAR,
+            assessmentConsolidatedData,
+          );
         // Assert
         expect(calculatedAssessment.variables.awardEligibilitySBSD).toBe(true);
         expect(
@@ -49,10 +50,11 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-eligibility-SBSD
         assessmentConsolidatedData.studentDataApplicationPDPPDStatus = "yes";
         assessmentConsolidatedData.institutionType = institutionType;
         // Act
-        const calculatedAssessment = await executeAssessment(
-          `fulltime-assessment-${PROGRAM_YEAR}`,
-          assessmentConsolidatedData,
-        );
+        const calculatedAssessment =
+          await executeFullTimeAssessmentForProgramYear(
+            PROGRAM_YEAR,
+            assessmentConsolidatedData,
+          );
         // Assert
         expect(calculatedAssessment.variables.awardEligibilitySBSD).toBe(false);
       });
@@ -64,8 +66,8 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-eligibility-SBSD
     const assessmentConsolidatedData =
       createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
     // Act
-    const calculatedAssessment = await executeAssessment(
-      `fulltime-assessment-${PROGRAM_YEAR}`,
+    const calculatedAssessment = await executeFullTimeAssessmentForProgramYear(
+      PROGRAM_YEAR,
       assessmentConsolidatedData,
     );
     // Assert

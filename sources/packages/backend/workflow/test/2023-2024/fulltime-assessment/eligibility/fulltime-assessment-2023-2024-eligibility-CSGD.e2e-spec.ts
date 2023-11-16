@@ -1,6 +1,6 @@
 import {
   createFakeConsolidatedFulltimeData,
-  executeAssessment,
+  executeFullTimeAssessmentForProgramYear,
 } from "../../../test-utils";
 import { PROGRAM_YEAR } from "../../constants/program-year.constants";
 import {
@@ -43,8 +43,8 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-eligibility-CSGD
       ),
     ];
     // Act
-    const calculatedAssessment = await executeAssessment(
-      `fulltime-assessment-${PROGRAM_YEAR}`,
+    const calculatedAssessment = await executeFullTimeAssessmentForProgramYear(
+      PROGRAM_YEAR,
       assessmentConsolidatedData,
     );
     // Assert
@@ -75,8 +75,8 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-eligibility-CSGD
       ),
     ];
     // Act
-    const calculatedAssessment = await executeAssessment(
-      `fulltime-assessment-${PROGRAM_YEAR}`,
+    const calculatedAssessment = await executeFullTimeAssessmentForProgramYear(
+      PROGRAM_YEAR,
       assessmentConsolidatedData,
     );
     // Assert
@@ -95,8 +95,8 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-eligibility-CSGD
       ),
     ];
     // Act
-    const calculatedAssessment = await executeAssessment(
-      `fulltime-assessment-${PROGRAM_YEAR}`,
+    const calculatedAssessment = await executeFullTimeAssessmentForProgramYear(
+      PROGRAM_YEAR,
       assessmentConsolidatedData,
     );
     // Assert

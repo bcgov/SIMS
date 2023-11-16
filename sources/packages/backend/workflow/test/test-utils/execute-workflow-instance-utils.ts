@@ -12,7 +12,7 @@ import { PROCESS_INSTANCE_CREATE_TIMEOUT } from "./constants/system-configuratio
  * @param assessmentConsolidatedData assessment data.
  * @returns result of the workflow execution.
  */
-export async function executeAssessment(
+async function executeAssessment(
   bpmnProcessId: string,
   assessmentConsolidatedData: AssessmentConsolidatedData,
 ): Promise<CreateProcessInstanceWithResultResponse<CalculatedAssessmentModel>> {
@@ -26,4 +26,36 @@ export async function executeAssessment(
     },
     requestTimeout: PROCESS_INSTANCE_CREATE_TIMEOUT,
   });
+}
+
+/**
+ * Executes the fulltime-assessment-* BPMN workflow.
+ * @param programYear program year to be invoked.
+ * @param assessmentConsolidatedData assessment data.
+ * @returns result of the workflow execution.
+ */
+export async function executeFullTimeAssessmentForProgramYear(
+  programYear: string,
+  assessmentConsolidatedData: AssessmentConsolidatedData,
+): Promise<CreateProcessInstanceWithResultResponse<CalculatedAssessmentModel>> {
+  return executeAssessment(
+    `fulltime-assessment-${programYear}`,
+    assessmentConsolidatedData,
+  );
+}
+
+/**
+ * Executes the parttime-assessment-* BPMN workflow.
+ * @param programYear program year to be invoked.
+ * @param assessmentConsolidatedData assessment data.
+ * @returns result of the workflow execution.
+ */
+export async function executePartTimeAssessmentForProgramYear(
+  programYear: string,
+  assessmentConsolidatedData: AssessmentConsolidatedData,
+): Promise<CreateProcessInstanceWithResultResponse<CalculatedAssessmentModel>> {
+  return executeAssessment(
+    `parttime-assessment-${programYear}`,
+    assessmentConsolidatedData,
+  );
 }
