@@ -26,6 +26,7 @@ import {
   ECEProcessIntegrationScheduler,
   ECEResponseIntegrationScheduler,
   AssessmentWorkflowEnqueuerScheduler,
+  AssessmentWorkflowEnqueueRetryScheduler,
 } from "./processors";
 import {
   DisbursementScheduleSharedService,
@@ -123,6 +124,7 @@ import { ECEIntegrationModule } from "@sims/integrations/institution-integration
     MSFAANumberSharedService,
     AssessmentWorkflowEnqueuerScheduler,
     WorkflowEnqueuerService,
+    AssessmentWorkflowEnqueueRetryScheduler,
   ],
 })
 export class QueueConsumersModule {}

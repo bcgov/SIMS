@@ -59,6 +59,20 @@ export class CancelApplicationAssessmentProcessor {
     }
 
     if (
+      assessment.studentAssessmentStatus !==
+      StudentAssessmentStatus.CancellationQueued
+    ) {
+      await job.discard();
+      const warnMessage = `Assessment id ${job.data.assessmentId} has already been cancelled.`;
+      this.logger.warn(warnMessage);
+      summary.warn(warnMessage);
+      summary.info(
+        "Workflow process not executed due to the assessment have been already processed.",
+      );
+      return summary.getSummary();
+    }
+
+    if (
       ![ApplicationStatus.Cancelled, ApplicationStatus.Overwritten].includes(
         assessment.application.applicationStatus,
       )

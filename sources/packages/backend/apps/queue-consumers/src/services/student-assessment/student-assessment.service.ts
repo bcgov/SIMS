@@ -1,6 +1,10 @@
 import { Injectable } from "@nestjs/common";
-import { ApplicationData, StudentAssessment } from "@sims/sims-db";
-import { Repository } from "typeorm";
+import {
+  ApplicationData,
+  StudentAssessment,
+  StudentAssessmentStatus,
+} from "@sims/sims-db";
+import { LessThan, Repository } from "typeorm";
 import { InjectRepository } from "@nestjs/typeorm";
 
 /**
@@ -27,6 +31,7 @@ export class StudentAssessmentService {
         application: {
           applicationStatus: true,
         },
+        studentAssessmentStatus: true,
       },
       relations: {
         application: true,
@@ -54,5 +59,43 @@ export class StudentAssessmentService {
     return {
       workflowName: data.workflowName,
     };
+  }
+
+  /**
+   * Retrieve assessment cancellations to be retried up to a date.
+   * @param retryDate max date to retrieve assessment cancellations to be retried.
+   * @returns student assessment cancellations to be retried.
+   */
+  async getAssessmentCancellationsRequestedToBeRetried(
+    retryDate: Date,
+  ): Promise<StudentAssessment[]> {
+    return this.studentAssessmentRepo.find({
+      select: {
+        id: true,
+      },
+      where: {
+        studentAssessmentStatus: StudentAssessmentStatus.CancellationQueued,
+        updatedAt: LessThan(retryDate),
+      },
+    });
+  }
+
+  /**
+   * Retrieve assessment start to be retried up to a date.
+   * @param retryDate max date to retrieve assessment start to be retried.
+   * @returns student assessment start to be retried.
+   */
+  async getAssessmentQueuedToBeRetried(
+    retryDate: Date,
+  ): Promise<StudentAssessment[]> {
+    return this.studentAssessmentRepo.find({
+      select: {
+        id: true,
+      },
+      where: {
+        studentAssessmentStatus: StudentAssessmentStatus.Queued,
+        updatedAt: LessThan(retryDate),
+      },
+    });
   }
 }
