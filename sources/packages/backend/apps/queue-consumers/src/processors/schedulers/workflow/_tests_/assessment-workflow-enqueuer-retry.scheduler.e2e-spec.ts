@@ -198,12 +198,10 @@ describe(
         await queueService.queueConfigurationDetails(
           QueueNames.AssessmentWorkflowQueueRetry,
         );
-      const now = new Date();
       return addHours(
         -(
           queueConfig.queueConfiguration.amountHoursAssessmentRetry + hourOffset
         ),
-        now,
       );
     };
 

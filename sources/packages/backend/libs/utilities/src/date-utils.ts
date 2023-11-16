@@ -189,7 +189,7 @@ export const addDays = (daysToAdd: number, date?: Date | string): Date => {
  * @returns a new date with hours added.
  */
 export const addHours = (hoursToAdd: number, date?: Date | string): Date => {
-  return dayjs(date ? date : new Date())
+  return dayjs(date || new Date())
     .add(hoursToAdd, "hour")
     .toDate();
 };

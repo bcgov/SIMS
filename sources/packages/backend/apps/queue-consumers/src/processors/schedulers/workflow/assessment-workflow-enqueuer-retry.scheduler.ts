@@ -95,10 +95,8 @@ export class AssessmentWorkflowEnqueueRetryScheduler extends BaseScheduler<void>
         await this.queueService.queueConfigurationDetails(
           this.schedulerQueue.name as QueueNames,
         );
-      const now = new Date();
       const retryDate = addHours(
         -queueConfig.queueConfiguration.amountHoursAssessmentRetry,
-        now,
       );
       await enqueueProcess(serviceProcessSummary, retryDate);
     } catch (error: unknown) {
