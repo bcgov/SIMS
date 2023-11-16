@@ -63,11 +63,11 @@ export class StudentAssessmentService {
 
   /**
    * Retrieve assessment cancellations to be retried up to a date.
-   * @param retryDate max date to retrieve assessment cancellations to be retried.
+   * @param retryMaxDate max date to retrieve assessment cancellations to be retried.
    * @returns student assessment cancellations to be retried.
    */
   async getAssessmentCancellationsRequestedToBeRetried(
-    retryDate: Date,
+    retryMaxDate: Date,
   ): Promise<StudentAssessment[]> {
     return this.studentAssessmentRepo.find({
       select: {
@@ -75,18 +75,18 @@ export class StudentAssessmentService {
       },
       where: {
         studentAssessmentStatus: StudentAssessmentStatus.CancellationQueued,
-        updatedAt: LessThan(retryDate),
+        updatedAt: LessThan(retryMaxDate),
       },
     });
   }
 
   /**
    * Retrieve assessment start to be retried up to a date.
-   * @param retryDate max date to retrieve assessment start to be retried.
+   * @param retryMaxDate max date to retrieve assessment start to be retried.
    * @returns student assessment start to be retried.
    */
   async getAssessmentQueuedToBeRetried(
-    retryDate: Date,
+    retryMaxDate: Date,
   ): Promise<StudentAssessment[]> {
     return this.studentAssessmentRepo.find({
       select: {
@@ -94,7 +94,7 @@ export class StudentAssessmentService {
       },
       where: {
         studentAssessmentStatus: StudentAssessmentStatus.Queued,
-        updatedAt: LessThan(retryDate),
+        updatedAt: LessThan(retryMaxDate),
       },
     });
   }

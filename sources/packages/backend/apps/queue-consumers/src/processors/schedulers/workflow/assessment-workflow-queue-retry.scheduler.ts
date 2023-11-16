@@ -82,7 +82,10 @@ export class AssessmentWorkflowQueueRetryScheduler extends BaseScheduler<void> {
    */
   private async executeEnqueueProcess(
     parentProcessSummary: ProcessSummary,
-    enqueueProcess: (summary: ProcessSummary, retryDate: Date) => Promise<void>,
+    enqueueProcess: (
+      summary: ProcessSummary,
+      retryMaxDate: Date,
+    ) => Promise<void>,
   ): Promise<void> {
     try {
       // Process summary to be populated by each enqueueing workflow call.
@@ -95,10 +98,10 @@ export class AssessmentWorkflowQueueRetryScheduler extends BaseScheduler<void> {
         await this.queueService.queueConfigurationDetails(
           this.schedulerQueue.name as QueueNames,
         );
-      const retryDate = addHours(
+      const retryMaxDate = addHours(
         -queueConfig.queueConfiguration.amountHoursAssessmentRetry,
       );
-      await enqueueProcess(serviceProcessSummary, retryDate);
+      await enqueueProcess(serviceProcessSummary, retryMaxDate);
     } catch (error: unknown) {
       const errorMessage =
         "Unexpected error while enqueueing start assessment workflows.";
