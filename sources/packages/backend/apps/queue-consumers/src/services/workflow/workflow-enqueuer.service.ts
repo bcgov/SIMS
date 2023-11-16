@@ -105,19 +105,19 @@ export class WorkflowEnqueuerService {
   /**
    * Search applications with assessments queued to be retried.
    * @param summary process summary to group all the logs.
-   * @param retryDate max date for the assessment to have cancelled queued status.
+   * @param retryMaxDate max date for the assessment to have cancelled queued status.
    */
   async enqueueStartAssessmentRetryWorkflows(
     summary: ProcessSummary,
-    retryDate: Date,
+    retryMaxDate: Date,
   ): Promise<void> {
     try {
       summary.info(
-        `Checking database for assessments waiting to be retried up to ${retryDate}.`,
+        `Checking database for assessments waiting to be retried up to ${retryMaxDate}.`,
       );
       const assessments =
         await this.studentAssessmentService.getAssessmentQueuedToBeRetried(
-          retryDate,
+          retryMaxDate,
         );
       summary.info(`Found ${assessments.length} assessments.`);
       if (!assessments.length) {
@@ -141,19 +141,19 @@ export class WorkflowEnqueuerService {
   /**
    * Search applications with assessments cancellations to be retried.
    * @param summary process summary to group all the logs.
-   * @param retryDate max date for the assessment to have cancelled queued status.
+   * @param retryMaxDate max date for the assessment to have cancelled queued status.
    */
   async enqueueCancelAssessmentRetryWorkflows(
     summary: ProcessSummary,
-    retryDate: Date,
+    retryMaxDate: Date,
   ): Promise<void> {
     try {
       summary.info(
-        `Checking database for assessment cancellations requested to be retried up to ${retryDate}.`,
+        `Checking database for assessment cancellations requested to be retried up to ${retryMaxDate}.`,
       );
       const assessments =
         await this.studentAssessmentService.getAssessmentCancellationsRequestedToBeRetried(
-          retryDate,
+          retryMaxDate,
         );
       summary.info(`Found ${assessments.length} assessments.`);
       if (!assessments.length) {
