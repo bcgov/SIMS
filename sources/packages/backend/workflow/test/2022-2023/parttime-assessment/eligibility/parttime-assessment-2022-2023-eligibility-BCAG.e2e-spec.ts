@@ -1,9 +1,9 @@
-import { PROGRAM_YEAR } from "../constants/program-year.constants";
+import { PROGRAM_YEAR } from "../../constants/program-year.constants";
 import {
   createFakeConsolidatedPartTimeData,
   executePartTimeAssessmentForProgramYear,
-} from "../../test-utils";
-import { CredentialType, InstitutionTypes } from "../../models";
+} from "../../../test-utils";
+import { CredentialType, InstitutionTypes } from "../../../models";
 
 describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-eligibility-BCAG.`, () => {
   // Expected and not expected credentials types.

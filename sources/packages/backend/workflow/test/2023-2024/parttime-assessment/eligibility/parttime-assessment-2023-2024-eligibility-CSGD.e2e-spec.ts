@@ -1,12 +1,12 @@
-import { PROGRAM_YEAR } from "../constants/program-year.constants";
+import { PROGRAM_YEAR } from "../../constants/program-year.constants";
 import {
   createFakeConsolidatedPartTimeData,
   executePartTimeAssessmentForProgramYear,
-} from "../../test-utils";
+} from "../../../test-utils";
 import {
   DependentEligibility,
   createFakeStudentDependentEligible,
-} from "../../test-utils/factories";
+} from "../../../test-utils/factories";
 
 describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-eligibility-CSGD.`, () => {
   it(

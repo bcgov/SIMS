@@ -1,11 +1,11 @@
-import { PROGRAM_YEAR } from "../constants/program-year.constants";
+import { InstitutionTypes } from "../../../models";
 import {
-  createFakeConsolidatedPartTimeData,
-  executePartTimeAssessmentForProgramYear,
-} from "../../test-utils";
-import { InstitutionTypes } from "../../models";
+  createFakeConsolidatedFulltimeData,
+  executeFullTimeAssessmentForProgramYear,
+} from "../../../test-utils";
+import { PROGRAM_YEAR } from "../../constants/program-year.constants";
 
-describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-eligibility-SBSD.`, () => {
+describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-eligibility-SBSD.`, () => {
   // Expected and not expected institution types.
   const EXPECTED_INSTITUTION_TYPES = [
     InstitutionTypes.BCPublic,
@@ -15,72 +15,62 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-eligibility-SBSD
     (type) => !EXPECTED_INSTITUTION_TYPES.includes(type),
   );
 
-  describe("Should determine SBSD as eligible when total assessment need is greater than or equal to 1, application PD/PPD status is 'yes' and", () => {
+  describe("Should determine SBSD as eligible when the institutionType type is the expected one and financial need is at least $1 and the student has PD status true.", () => {
     for (const institutionType of EXPECTED_INSTITUTION_TYPES) {
       it(`institutionType is ${institutionType}`, async () => {
         // Arrange
         const assessmentConsolidatedData =
-          createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
-        assessmentConsolidatedData.institutionType = institutionType;
+          createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
         assessmentConsolidatedData.studentDataApplicationPDPPDStatus = "yes";
-
+        assessmentConsolidatedData.institutionType = institutionType;
         // Act
         const calculatedAssessment =
-          await executePartTimeAssessmentForProgramYear(
+          await executeFullTimeAssessmentForProgramYear(
             PROGRAM_YEAR,
             assessmentConsolidatedData,
           );
-
         // Assert
         expect(calculatedAssessment.variables.awardEligibilitySBSD).toBe(true);
         expect(
-          calculatedAssessment.variables.finalProvincialAwardNetSBSDAmount,
+          calculatedAssessment.variables.federalAwardNetSBSDAmount,
+        ).toBeGreaterThan(0);
+        expect(
+          calculatedAssessment.variables.provincialAwardNetSBSDAmount,
         ).toBeGreaterThan(0);
       });
     }
   });
 
-  describe("Should determine SBSD as not eligible when", () => {
+  describe("Should determine SBSD as not eligible when the institutionType type is not the expected one and financial need is at least $1 and the student has PD status true.", () => {
     for (const institutionType of NOT_EXPECTED_INSTITUTION_TYPES) {
       it(`institutionType is ${institutionType}`, async () => {
         // Arrange
         const assessmentConsolidatedData =
-          createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
+          createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
+        assessmentConsolidatedData.studentDataApplicationPDPPDStatus = "yes";
         assessmentConsolidatedData.institutionType = institutionType;
-
         // Act
         const calculatedAssessment =
-          await executePartTimeAssessmentForProgramYear(
+          await executeFullTimeAssessmentForProgramYear(
             PROGRAM_YEAR,
             assessmentConsolidatedData,
           );
-
         // Assert
         expect(calculatedAssessment.variables.awardEligibilitySBSD).toBe(false);
-        expect(
-          calculatedAssessment.variables.finalProvincialAwardNetSBSDAmount,
-        ).toBe(0);
       });
     }
   });
 
-  it("Should determine SBSD as not eligible when application PD/PPD status is 'noIDoNotHaveADisability'.", async () => {
+  it("Should determine SBSD as not eligible when the institutionType type is the expected one and financial need is at least $1 and the student has PD status false.", async () => {
     // Arrange
     const assessmentConsolidatedData =
-      createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
-    assessmentConsolidatedData.studentDataApplicationPDPPDStatus =
-      "noIDoNotHaveADisability";
-
+      createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
     // Act
-    const calculatedAssessment = await executePartTimeAssessmentForProgramYear(
+    const calculatedAssessment = await executeFullTimeAssessmentForProgramYear(
       PROGRAM_YEAR,
       assessmentConsolidatedData,
     );
-
     // Assert
     expect(calculatedAssessment.variables.awardEligibilitySBSD).toBe(false);
-    expect(
-      calculatedAssessment.variables.finalProvincialAwardNetSBSDAmount,
-    ).toBe(0);
   });
 });
