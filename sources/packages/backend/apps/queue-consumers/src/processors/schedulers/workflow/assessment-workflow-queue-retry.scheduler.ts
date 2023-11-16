@@ -24,7 +24,7 @@ import { QueueConfiguration } from "@sims/sims-db";
  * Retry assessments.
  */
 @Processor(QueueNames.AssessmentWorkflowQueueRetry)
-export class AssessmentWorkflowEnqueueRetryScheduler extends BaseScheduler<void> {
+export class AssessmentWorkflowQueueRetryScheduler extends BaseScheduler<void> {
   constructor(
     @InjectQueue(QueueNames.AssessmentWorkflowQueueRetry)
     schedulerQueue: Queue<void>,

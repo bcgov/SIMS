@@ -23,14 +23,14 @@ import {
   QueueService,
   StartAssessmentQueueInDTO,
 } from "@sims/services/queue";
-import { AssessmentWorkflowEnqueueRetryScheduler } from "../assessment-workflow-enqueuer-retry.scheduler";
+import { AssessmentWorkflowQueueRetryScheduler } from "../assessment-workflow-queue-retry.scheduler";
 
 describe(
   describeProcessorRootTest(QueueNames.AssessmentWorkflowQueueRetry),
   () => {
     let app: INestApplication;
     let db: E2EDataSources;
-    let retryProcessor: AssessmentWorkflowEnqueueRetryScheduler;
+    let retryProcessor: AssessmentWorkflowQueueRetryScheduler;
     let startApplicationAssessmentQueueMock: Queue<StartAssessmentQueueInDTO>;
     let cancelApplicationAssessmentQueueMock: Queue<CancelAssessmentQueueInDTO>;
     let queueService: QueueService;
@@ -48,7 +48,7 @@ describe(
         getQueueProviderName(QueueNames.CancelApplicationAssessment),
       );
       // Processor under test.
-      retryProcessor = app.get(AssessmentWorkflowEnqueueRetryScheduler);
+      retryProcessor = app.get(AssessmentWorkflowQueueRetryScheduler);
       queueService = app.get(QueueService);
     });
 

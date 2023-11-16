@@ -67,7 +67,7 @@ export class CancelApplicationAssessmentProcessor {
       this.logger.warn(warnMessage);
       summary.warn(warnMessage);
       summary.info(
-        "Workflow process not executed due to the assessment have been already processed.",
+        "Workflow process not executed due to the assessment cancellation have been already processed.",
       );
       return summary.getSummary();
     }

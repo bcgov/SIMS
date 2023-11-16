@@ -184,7 +184,7 @@ describe(
         `Assessment id ${studentAssessment.id} has already been cancelled.`,
       );
       expect(result.summary).toContain(
-        "Workflow process not executed due to the assessment have been already processed.",
+        "Workflow process not executed due to the assessment cancellation have been already processed.",
       );
       expect(job.discard).toBeCalled();
     });
