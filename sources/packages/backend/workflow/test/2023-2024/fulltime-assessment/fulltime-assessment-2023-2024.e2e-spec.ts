@@ -2,7 +2,7 @@ import { OfferingIntensity } from "@sims/sims-db";
 import { AssessmentModel } from "../../models";
 import {
   createFakeAssessmentConsolidatedData,
-  executeFulltimeAssessmentForProgramYear,
+  executeFullTimeAssessmentForProgramYear,
 } from "../../test-utils";
 import { PROGRAM_YEAR } from "../constants/program-year.constants";
 
@@ -42,7 +42,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}.`, () => {
       studentTotalProvincialContribution: 78.45576923076923,
     };
     // Act
-    const calculatedAssessment = await executeFulltimeAssessmentForProgramYear(
+    const calculatedAssessment = await executeFullTimeAssessmentForProgramYear(
       PROGRAM_YEAR,
       assessmentConsolidatedData,
     );

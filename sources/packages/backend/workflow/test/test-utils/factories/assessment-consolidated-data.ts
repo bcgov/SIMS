@@ -51,6 +51,46 @@ export function createFakeAssessmentConsolidatedData(
 }
 
 /**
+ * Create fake part time consolidated data
+ * based on program year.
+ * @param programYear program year.
+ * @returns part time assessment consolidated data.
+ */
+export function createFakePartTimeAssessmentConsolidatedData(
+  programYear: string,
+): AssessmentConsolidatedData {
+  const [programStartYear] = programYear.split("-");
+  return {
+    ...getDefaultAssessmentConsolidatedData(),
+    studentDataDependantstatus: "independant",
+    programYear,
+    programYearStartDate: `${programStartYear}-08-02`,
+    studentDataRelationshipStatus: "single",
+    studentDataTaxReturnIncome: 40001,
+    studentDataWhenDidYouGraduateOrLeaveHighSchool: "2017-03-02",
+    studentDataIndigenousStatus: YesNoOptions.No,
+    studentDataHasDependents: YesNoOptions.No,
+    studentDataLivingWithParents: YesNoOptions.No,
+    studentDataYouthInCare: YesNoOptions.No,
+    studentTaxYear: +programStartYear - 1,
+    programLocation: Provinces.BritishColumbia,
+    institutionLocationProvince: Provinces.BritishColumbia,
+    institutionType: InstitutionTypes.BCPublic,
+    programLength: ProgramLengthOptions.OneToTwoYears,
+    programCredentialType: CredentialType.UnderGraduateDegree,
+    offeringDelivered: OfferingDeliveryOptions.Onsite,
+    offeringProgramRelatedCosts: 5001,
+    offeringActualTuitionCosts: 20001,
+    offeringMandatoryFees: 501,
+    offeringExceptionalExpenses: 501,
+    offeringWeeks: 15,
+    studentDataApplicationPDPPDStatus: "noIDoNotHaveADisability",
+    offeringCourseLoad: 40,
+    studentDataCRAReportedIncome: 10001,
+    partner1CRAReportedIncome: 15001,
+  };
+}
+/**
  * Camunda workflow engine expects the variables which are not assigned with values
  * to be set as null.
  * @returns assessment consolidated default values.
@@ -128,6 +168,24 @@ export function createFakeConsolidatedFulltimeData(
   const assessmentConsolidatedData =
     createFakeAssessmentConsolidatedData(programYear);
   assessmentConsolidatedData.offeringIntensity = OfferingIntensity.fullTime;
+  assessmentConsolidatedData.offeringStudyStartDate = `${programEndYear}-02-01`;
+  assessmentConsolidatedData.offeringStudyEndDate = `${programEndYear}-05-24`;
+  return assessmentConsolidatedData;
+}
+
+/**
+ * Create fake part time consolidated data
+ * based on program year.
+ * @param programYear program year.
+ * @returns assessment consolidated data for part time application.
+ */
+export function createFakeConsolidatedPartTimeData(
+  programYear: string,
+): AssessmentConsolidatedData {
+  const [, programEndYear] = programYear.split("-");
+  const assessmentConsolidatedData =
+    createFakePartTimeAssessmentConsolidatedData(programYear);
+  assessmentConsolidatedData.offeringIntensity = OfferingIntensity.partTime;
   assessmentConsolidatedData.offeringStudyStartDate = `${programEndYear}-02-01`;
   assessmentConsolidatedData.offeringStudyEndDate = `${programEndYear}-05-24`;
   return assessmentConsolidatedData;
