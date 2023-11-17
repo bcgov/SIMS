@@ -63,11 +63,11 @@ export class CancelApplicationAssessmentProcessor {
       StudentAssessmentStatus.CancellationQueued
     ) {
       await job.discard();
-      const warnMessage = `Assessment id ${job.data.assessmentId} has already been cancelled.`;
+      const warnMessage = `Assessment id ${job.data.assessmentId} is not in ${StudentAssessmentStatus.CancellationQueued} status.`;
       this.logger.warn(warnMessage);
       summary.warn(warnMessage);
       summary.info(
-        "Workflow process not executed due to the assessment cancellation have been already processed.",
+        "Workflow process not executed due to the assessment cancellation not being in the correct status.",
       );
       return summary.getSummary();
     }

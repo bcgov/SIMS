@@ -181,10 +181,10 @@ describe(
       // Assert
       expect(zbClientMock.cancelProcessInstance).not.toHaveBeenCalled();
       expect(result.warnings).toContain(
-        `Assessment id ${studentAssessment.id} has already been cancelled.`,
+        `Assessment id ${job.data.assessmentId} is not in ${StudentAssessmentStatus.CancellationQueued} status.`,
       );
       expect(result.summary).toContain(
-        "Workflow process not executed due to the assessment cancellation have been already processed.",
+        "Workflow process not executed due to the assessment cancellation not being in the correct status.",
       );
       expect(job.discard).toBeCalled();
     });

@@ -114,7 +114,7 @@ describe(
       // Assert
       // Assert expected result message.
       expect(result).toBe(
-        "Workflow process not executed due to the assessment have been already processed.",
+        "Workflow process not executed due to the assessment not being in the correct status.",
       );
       // Assert warn message was added to the logs.
       const hasExpectedLogWarnMessage = processSummary
@@ -123,7 +123,7 @@ describe(
           (log) =>
             log.level === LogLevels.Warn &&
             log.message.includes(
-              `Assessment id ${application.currentAssessment.id} has already been processed.`,
+              `Assessment id ${job.data.assessmentId} is not in ${StudentAssessmentStatus.Queued} status.`,
             ),
         );
       expect(hasExpectedLogWarnMessage).toBeTruthy();

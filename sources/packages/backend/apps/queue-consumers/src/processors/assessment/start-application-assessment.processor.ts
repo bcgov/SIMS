@@ -40,10 +40,10 @@ export class StartApplicationAssessmentProcessor {
       ) {
         await job.discard();
         processSummary.warn(
-          `Assessment id ${job.data.assessmentId} has already been processed.`,
+          `Assessment id ${job.data.assessmentId} is not in ${StudentAssessmentStatus.Queued} status.`,
         );
         const endProcessMessage =
-          "Workflow process not executed due to the assessment have been already processed.";
+          "Workflow process not executed due to the assessment not being in the correct status.";
         processSummary.info(endProcessMessage);
         return endProcessMessage;
       }
