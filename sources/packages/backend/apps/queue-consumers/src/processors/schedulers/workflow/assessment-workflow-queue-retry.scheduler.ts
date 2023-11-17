@@ -20,7 +20,7 @@ import { QueueConfiguration } from "@sims/sims-db";
  * Retry assessments.
  */
 @Processor(QueueNames.AssessmentWorkflowQueueRetry)
-export class AssessmentWorkflowQueueRetryScheduler extends BaseScheduler<void> {
+export class WorkflowQueueRetryScheduler extends BaseScheduler<void> {
   constructor(
     @InjectQueue(QueueNames.AssessmentWorkflowQueueRetry)
     schedulerQueue: Queue<void>,
@@ -61,7 +61,6 @@ export class AssessmentWorkflowQueueRetryScheduler extends BaseScheduler<void> {
     } catch (error: unknown) {
       const errorMessage = "Unexpected error while executing the job.";
       processSummary.error(errorMessage, error);
-      return [errorMessage];
     } finally {
       this.logger.logProcessSummary(processSummary);
       await logProcessSummaryToJobLogger(processSummary, job);
@@ -98,7 +97,7 @@ export class AssessmentWorkflowQueueRetryScheduler extends BaseScheduler<void> {
       await enqueueProcess(serviceProcessSummary, retryMaxDate);
     } catch (error: unknown) {
       const errorMessage =
-        "Unexpected error while enqueueing start assessment workflows.";
+        "Unexpected error while enqueueing assessment workflows.";
       parentProcessSummary.error(errorMessage, error);
     }
   }

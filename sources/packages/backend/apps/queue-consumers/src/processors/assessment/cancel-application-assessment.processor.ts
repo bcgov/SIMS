@@ -67,7 +67,7 @@ export class CancelApplicationAssessmentProcessor {
       this.logger.warn(warnMessage);
       summary.warn(warnMessage);
       summary.info(
-        "Workflow process not executed due to the assessment cancellation not being in the correct status.",
+        "Workflow cancellation process not executed due to the assessment cancellation not being in the correct status.",
       );
       return summary.getSummary();
     }

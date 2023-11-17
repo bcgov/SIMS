@@ -13,27 +13,24 @@ import {
   saveFakeApplication,
 } from "@sims/test-utils";
 import { Not } from "typeorm";
-import {
-  Application,
-  QueueConfiguration,
-  StudentAssessmentStatus,
-} from "@sims/sims-db";
+import { QueueConfiguration, StudentAssessmentStatus } from "@sims/sims-db";
 import {
   CancelAssessmentQueueInDTO,
   QueueService,
   StartAssessmentQueueInDTO,
 } from "@sims/services/queue";
-import { AssessmentWorkflowQueueRetryScheduler } from "../assessment-workflow-queue-retry.scheduler";
+import { WorkflowQueueRetryScheduler } from "../assessment-workflow-queue-retry.scheduler";
 
 describe(
   describeProcessorRootTest(QueueNames.AssessmentWorkflowQueueRetry),
   () => {
     let app: INestApplication;
     let db: E2EDataSources;
-    let retryProcessor: AssessmentWorkflowQueueRetryScheduler;
+    let retryProcessor: WorkflowQueueRetryScheduler;
     let startApplicationAssessmentQueueMock: Queue<StartAssessmentQueueInDTO>;
     let cancelApplicationAssessmentQueueMock: Queue<CancelAssessmentQueueInDTO>;
     let queueService: QueueService;
+    let queueConfig: QueueConfiguration;
 
     beforeAll(async () => {
       const { nestApplication, dataSource } = await createTestingAppModule();
@@ -48,8 +45,11 @@ describe(
         getQueueProviderName(QueueNames.CancelApplicationAssessment),
       );
       // Processor under test.
-      retryProcessor = app.get(AssessmentWorkflowQueueRetryScheduler);
+      retryProcessor = app.get(WorkflowQueueRetryScheduler);
       queueService = app.get(QueueService);
+      queueConfig = await queueService.queueConfigurationDetails(
+        QueueNames.AssessmentWorkflowQueueRetry,
+      );
     });
 
     beforeEach(async () => {
@@ -63,15 +63,16 @@ describe(
       );
     });
 
-    it("Should queue an assessment with 'queued' status when it has this status for more than the time configured for the queue.", async () => {
+    it(`Should queue an assessment with ${StudentAssessmentStatus.Queued} status when it has this status for more than the time configured for the queue.`, async () => {
       // Arrange
       const application = await saveFakeApplication(db.dataSource);
       const currentAssessment = application.currentAssessment;
       currentAssessment.studentAssessmentStatus =
         StudentAssessmentStatus.Queued;
       // Gets one hour more than the needed time for the assessment retry.
-      currentAssessment.updatedAt =
-        await getAmountOfHoursAssessmentRetryWithHourOffset(1);
+      currentAssessment.studentAssessmentStatusUpdatedOn = await addHours(
+        -(queueConfig.queueConfiguration.amountHoursAssessmentRetry + 1),
+      );
       await db.studentAssessment.save(currentAssessment);
 
       // Retry job.
@@ -81,26 +82,23 @@ describe(
       await retryProcessor.enqueueAssessmentRetryOperations(job);
 
       // Assert
-      // Load application and related assessments for assertion.
-      const updatedApplication = await loadApplicationDataForAssertions(
-        application.id,
-      );
       // Assert item was added to the queue.
       const queueData = {
-        assessmentId: updatedApplication.currentAssessment.id,
+        assessmentId: application.currentAssessment.id,
       };
       expect(startApplicationAssessmentQueueMock.add).toBeCalledWith(queueData);
     });
 
-    it("Should queue an assessment for cancellation with 'cancelation queued' status when it has this status for more than the time configured for the queue.", async () => {
+    it(`Should queue an assessment for cancellation with ${StudentAssessmentStatus.CancellationQueued} status when it has this status for more than the time configured for the queue.`, async () => {
       // Arrange
       const application = await saveFakeApplication(db.dataSource);
       const currentAssessment = application.currentAssessment;
       currentAssessment.studentAssessmentStatus =
         StudentAssessmentStatus.CancellationQueued;
       // Gets one hour more than the needed time for the assessment retry.
-      currentAssessment.updatedAt =
-        await getAmountOfHoursAssessmentRetryWithHourOffset(1);
+      currentAssessment.studentAssessmentStatusUpdatedOn = await addHours(
+        -(queueConfig.queueConfiguration.amountHoursAssessmentRetry + 1),
+      );
       await db.studentAssessment.save(currentAssessment);
       // Retry job.
       const job = createMock<Job<void>>();
@@ -109,20 +107,16 @@ describe(
       await retryProcessor.enqueueAssessmentRetryOperations(job);
 
       // Assert
-      // Load application and related assessments for assertion.
-      const updatedApplication = await loadApplicationDataForAssertions(
-        application.id,
-      );
       // Assert item was added to the queue.
       const queueData = {
-        assessmentId: updatedApplication.currentAssessment.id,
+        assessmentId: application.currentAssessment.id,
       } as CancelAssessmentQueueInDTO;
       expect(cancelApplicationAssessmentQueueMock.add).toBeCalledWith(
         queueData,
       );
     });
 
-    it("Should not queue an assessment with 'queued' status when it has this status for less than the time configured for the queue.", async () => {
+    it(`Should not queue an assessment with ${StudentAssessmentStatus.Queued} status when it has this status for less than the time configured for the queue.`, async () => {
       // Arrange
       const application = await saveFakeApplication(db.dataSource);
       const currentAssessment = application.currentAssessment;
@@ -130,8 +124,9 @@ describe(
         StudentAssessmentStatus.Queued;
 
       // Gets one hour less than the needed time for the assessment retry.
-      currentAssessment.updatedAt =
-        await getAmountOfHoursAssessmentRetryWithHourOffset(-1);
+      currentAssessment.studentAssessmentStatusUpdatedOn = await addHours(
+        -(queueConfig.queueConfiguration.amountHoursAssessmentRetry - 1),
+      );
       await db.studentAssessment.save(currentAssessment);
 
       // Retry job.
@@ -141,20 +136,16 @@ describe(
       await retryProcessor.enqueueAssessmentRetryOperations(job);
 
       // Assert
-      // Load application and related assessments for assertion.
-      const updatedApplication = await loadApplicationDataForAssertions(
-        application.id,
-      );
       // Assert item was added to the queue.
       const queueData = {
-        assessmentId: updatedApplication.currentAssessment.id,
+        assessmentId: currentAssessment.id,
       };
       expect(startApplicationAssessmentQueueMock.add).not.toBeCalledWith(
         queueData,
       );
     });
 
-    it("Should not queue an assessment cancellation with 'cancellation queued' status when it has this status for less than the time configured for the queue.", async () => {
+    it(`Should not queue an assessment cancellation with ${StudentAssessmentStatus.CancellationQueued} status when it has this status for less than the time configured for the queue.`, async () => {
       // Arrange
       const application = await saveFakeApplication(db.dataSource);
       const currentAssessment = application.currentAssessment;
@@ -162,8 +153,9 @@ describe(
         StudentAssessmentStatus.CancellationQueued;
 
       // Gets one hour less than the needed time for the assessment retry.
-      currentAssessment.updatedAt =
-        await getAmountOfHoursAssessmentRetryWithHourOffset(-1);
+      currentAssessment.studentAssessmentStatusUpdatedOn = await addHours(
+        -(queueConfig.queueConfiguration.amountHoursAssessmentRetry - 1),
+      );
       await db.studentAssessment.save(currentAssessment);
 
       // Retry job.
@@ -173,58 +165,13 @@ describe(
       await retryProcessor.enqueueAssessmentRetryOperations(job);
 
       // Assert
-      // Load application and related assessments for assertion.
-      const updatedApplication = await loadApplicationDataForAssertions(
-        application.id,
-      );
       // Assert item was added to the queue.
       const queueData = {
-        assessmentId: updatedApplication.currentAssessment.id,
+        assessmentId: currentAssessment.id,
       };
       expect(startApplicationAssessmentQueueMock.add).not.toBeCalledWith(
         queueData,
       );
     });
-
-    /**
-     * Gets date calculated from the current date minus the amount of hours assessment retry plus an hour offset.
-     * @param hourOffset hour offset.
-     * @returns a date calculated from the current date minus the amount of hours assessment retry plus an hour offset.
-     */
-    const getAmountOfHoursAssessmentRetryWithHourOffset = async (
-      hourOffset: number,
-    ): Promise<Date> => {
-      const queueConfig: QueueConfiguration =
-        await queueService.queueConfigurationDetails(
-          QueueNames.AssessmentWorkflowQueueRetry,
-        );
-      return addHours(
-        -(
-          queueConfig.queueConfiguration.amountHoursAssessmentRetry + hourOffset
-        ),
-      );
-    };
-
-    /**
-     * Load application and assessment data needed to execute the assert operations.
-     * @param applicationId application id.
-     * @returns application with related assessments (currentAssessment and currentProcessingAssessment).
-     */
-    const loadApplicationDataForAssertions = (
-      applicationId: number,
-    ): Promise<Application> => {
-      return db.application.findOne({
-        select: {
-          id: true,
-          currentAssessment: {
-            id: true,
-          },
-        },
-        relations: {
-          currentAssessment: true,
-        },
-        where: { id: applicationId },
-      });
-    };
   },
 );

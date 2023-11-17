@@ -58,7 +58,7 @@ describe(
       const job = createMock<Job<StartAssessmentQueueInDTO>>({
         data: {
           workflowName: "dummy-workflow-name",
-          assessmentId: application.currentAssessment.id,
+          assessmentId: currentAssessment.id,
         },
       });
       zbClientMock.createProcessInstance = jest.fn().mockImplementation(() => {
@@ -139,7 +139,7 @@ describe(
       await db.studentAssessment.save(currentAssessment);
       const workflowName = "dummy workflow name";
 
-      const variables = { assessmentId: application.currentAssessment.id };
+      const variables = { assessmentId: currentAssessment.id };
       // Queued job.
       const job = createMock<Job<StartAssessmentQueueInDTO>>({
         data: {

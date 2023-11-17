@@ -62,39 +62,22 @@ export class StudentAssessmentService {
   }
 
   /**
-   * Retrieve assessment cancellations to be retried up to a date.
-   * @param retryMaxDate max date to retrieve assessment cancellations to be retried.
-   * @returns student assessment cancellations to be retried.
+   * Retrieve assessment to be retried up to a date.
+   * @param retryMaxDate max date to retrieve assessment to be retried.
+   * @param studentAssessmentStatus student assessment status to be queried.
+   * @returns student assessment to be retried.
    */
-  async getAssessmentCancellationsRequestedToBeRetried(
+  async getAssessmentToBeRetried(
     retryMaxDate: Date,
+    studentAssessmentStatus: StudentAssessmentStatus,
   ): Promise<StudentAssessment[]> {
     return this.studentAssessmentRepo.find({
       select: {
         id: true,
       },
       where: {
-        studentAssessmentStatus: StudentAssessmentStatus.CancellationQueued,
-        updatedAt: LessThan(retryMaxDate),
-      },
-    });
-  }
-
-  /**
-   * Retrieve assessment start to be retried up to a date.
-   * @param retryMaxDate max date to retrieve assessment start to be retried.
-   * @returns student assessment start to be retried.
-   */
-  async getAssessmentQueuedToBeRetried(
-    retryMaxDate: Date,
-  ): Promise<StudentAssessment[]> {
-    return this.studentAssessmentRepo.find({
-      select: {
-        id: true,
-      },
-      where: {
-        studentAssessmentStatus: StudentAssessmentStatus.Queued,
-        updatedAt: LessThan(retryMaxDate),
+        studentAssessmentStatus,
+        studentAssessmentStatusUpdatedOn: LessThan(retryMaxDate),
       },
     });
   }
