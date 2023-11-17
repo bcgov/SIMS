@@ -3,12 +3,8 @@ import { Job, Queue } from "bull";
 import { BaseScheduler } from "../base-scheduler";
 import { addHours, QueueNames } from "@sims/utilities";
 import { QueueService } from "@sims/services/queue";
-import {
-  StudentAssessmentService,
-  WorkflowEnqueuerService,
-} from "../../../services";
+import { WorkflowEnqueuerService } from "../../../services";
 import {} from "../../models/processors.models";
-import { SystemUsersService } from "@sims/services/system-users";
 import {
   InjectLogger,
   LoggerService,
